@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-217610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79CD90B21B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A51490B21D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99FC51C22F3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:33:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30BA91C230AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F961BA863;
-	Mon, 17 Jun 2024 13:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D21919B5B2;
+	Mon, 17 Jun 2024 13:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="edG+un33"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PMg8avdZ"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B303A19B5B1
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79DA1B5839
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632188; cv=none; b=o8Gs/cEvMqBwdibvRStXP7amCicVIklUtIF1CMp9TKidjh9lRa5bRY9YpqiFH8HMWQg+euxAOLeGgeBQlcR5YwyKAAhXZ0qMchYSXrIcU8vwHKlP9dRw/xaZqqSrbFut490oQnbhYqs4qwGtLIP7t9GQ980zn2RktSMyXfA3pfA=
+	t=1718632189; cv=none; b=Zj+lCKQRZqfGs4m4XmoAvbbB7vjex7YPINnUjq88N25J3f2UOip1ya5GM5zBtcKSwev7rnnFHTAwHfa5nUM2bCqDfruva4Z1jOK7RI18DcTDNiMW1hbhaZ/4J/MiGGQhHedFDhPN3KmIslXDeqhRuKQhooCbwIVaNb+hxZTmccQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632188; c=relaxed/simple;
-	bh=+vMkV4nmlC5o3WoCL8T3Cf/sOOrCOwcnxXg4rxYbHm8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JFNjYRdleR7TPveJ4enXzpoJmtA/098bVwGigosziIyE/AJxvlxVRnw85qfIRhKQ6tr3+EpuyY/w2H0QJmPzvTUiFHXm8wJy1FPHFcUeay3QWfCV9mXN+70yIMSV4K8dxSvErOP3qcrU+VT3CriRygdZLJMD2+L/SbYDbbjf0Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=edG+un33; arc=none smtp.client-ip=209.85.222.169
+	s=arc-20240116; t=1718632189; c=relaxed/simple;
+	bh=V5OVdhy+qCvjDRbv3yGURnLSWDE3JAmTDMZiE2ZFhuA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Merol63TFcSRYb4zbcjBE+cveN9t1Tccitie0JronuEOzWkB25MOoqZCL71a168jun1wh1u1ZbhUblzsEdSU5SNPFbEs+vY6tOHoZ/YT9UCAS6dQBl9y8HKk8zXa3f4O5Yo+vi+YXPBPxO3hf4JmSfuU/iyv+xygEDiP6w9fsxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PMg8avdZ; arc=none smtp.client-ip=209.85.167.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7955841fddaso361853485a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:49:45 -0700 (PDT)
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3c9d70d93dbso2772250b6e.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:49:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718632185; x=1719236985; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zEZzvAHWKcqdW88FUmiOeBtiUSRBF94/JlX6CLy/U9k=;
-        b=edG+un33NDf/L/gU5FsDbS8KKdaTv0hErGY0U5f+mAWMD4KVQOgIL94GOtbGoPkRe8
-         o8K15BmlDN9GCziTgZ/qkiDT0Nn2AEx4Gq77X+7/90F4mJv9f/rSYvy+6MMEa62McGp0
-         m08oqunbSfAKMC9npHZfdSgq4F2Mhod5hHi1mnB6oLEUtrpdZosEjd4+saAqW0bzwKKW
-         cmnAzCBzme1tCqBaH+W9aB8ER63gerAGljhNkFSpcIya2XKGvvj8jpd5vgvigRWEmxPh
-         nmGLZkaycNLi0OdCzEK6SBM8eb+y/J07e0T+F30CUkt0qaPHtJC/i9CymMZJLO/xGMak
-         DIyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718632185; x=1719236985;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718632187; x=1719236987; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zEZzvAHWKcqdW88FUmiOeBtiUSRBF94/JlX6CLy/U9k=;
-        b=M8lmlXBgvIgQsC0edkgSe2pBMzSwU9s2lUSDxWkBdppHqSXAl3iyvQJOTbjUrkiCqV
-         2iq+lrkj8V2fnQ6tbkZlxStCOBsDltZkrnW4+/zw90qs3WZfx4+XKychp2eGvlt4eohH
-         xMCdufaUUKMQGlv9YDOEDJeyVvaXw/8GnNdFnW3IcwCyojLZ3HD8RESbABhfSUDql5xs
-         aZKzDxL8gSWl0E59GlafufgHVQRp8+CO2GCnMgo4+OyPNuvqM0WGULTc+l6hkfjVxzTv
-         Q6pTM89Q8uvdhQC5Dt9Dio1F+m/+qThCpA2MLmictv+uAVvXFg0n599Wjm4mhS3hhR0j
-         aLjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUURKZScnAhk/zEicDizOwvalHyLHr+K8CgQn6C0+dA+txt7jk7evTT9lobiCo+5VeFdyFJ8bxHvNYef051IgVUfM31e8m+H3nkYYpa
-X-Gm-Message-State: AOJu0YwFvpeqtxslxaNIbxLJQ20nPbuCE6FlQGqyWEjSG52V2soGYrri
-	pPZBJA4gBcji+sPppJ7GVwZTNsWibnWJwl04fElDrgLwvpChx2O3ZhecpqczBC8=
-X-Google-Smtp-Source: AGHT+IGl+FE2+2KgsFe4nDCWU6ldgP4GuYAR3dN1AUsj37hFWlNJf2lL8nOBoXUFKBqFYKKh6gBcWA==
-X-Received: by 2002:a05:620a:24c9:b0:795:233c:6980 with SMTP id af79cd13be357-79810103071mr2016071085a.20.1718632184654;
-        Mon, 17 Jun 2024 06:49:44 -0700 (PDT)
+        bh=uOw9ZuYF7yVVJfGh3LeTM6VDPH42QqBSzznALZp99zM=;
+        b=PMg8avdZSFF3ZwMcIHKvjVEI2tXg58BzFK48JfZedLfIYTrVw7aT1nmmaHBb7okwOA
+         JznbVIL8xsXdzu8GJY9R5or5b91ZVqlNpjPf2fLbHXtPjCKSCAokpk9Ol4EN0lxBczob
+         xZDrrr1ehbMLTtyDpUcMpXJMxBJWwMirVZYE7FSTzn1SAA9JgJq2qS960bdpRg57NoC5
+         6jS4+F9rRpyxJ7EHVqrpv8wi7iCXFy6seDDA8z4QV/eYixU7OptDa6jpTPB/WXBqkoNR
+         r73MRSIh2/yEkbJ3UzD4Jb55SgWH5XgHkUczllz5RuAsJBIhVU9tP2Tb4s8XLrpJ16WP
+         UJNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718632187; x=1719236987;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uOw9ZuYF7yVVJfGh3LeTM6VDPH42QqBSzznALZp99zM=;
+        b=T01wkxSLJ57HGvQvQiMzZCKEIrm7vStsduNIzB48QhB7xfQPVRaXjD3iQPGzpvlslb
+         ng5UeQ/DnpJUTME9qEOtps0kVvVqs38P01ytccmxxzX82tFgMeudo26dCgMMdtxFUQtr
+         wyAxS9ZyNwBlSgedNWWIVlLUMheC6lbAAmEoSdaBcMIvHx4m4NMwLU7Hye6OueqNIjoY
+         GI6Hf1a4bzb0ukxkl3q13fNGeS0z++2/dM9n0q6kMLR5h56oumDx6cCw0QRUi9xEiLxt
+         zRNRPrRtRwN1DGCIjE0YZyIpXXit5i73wXh8fZxGD9wa9LRWCPE3iLvtUdde2FNdyiNS
+         62gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoRqNtJdB2su0MJQ4nUg6j+yRK/KWgKW6WUcKzLfm9fEILPSheeJPOOFSRFTPexymIW1PSx/cE1FQ/3GXZFPaySC+BeLU7lWKPx3aU
+X-Gm-Message-State: AOJu0YxtsZwoJNtZqew092jtHK8OzllEGX8ur8neeTIBfh2APXOzDmWT
+	JsakKwN5yQ5ZmMlGUp1dFu5+e2Kv4r0ZBB5Qj2G00938ZcTqvCOH6zs8nDtXX5M=
+X-Google-Smtp-Source: AGHT+IFJGSJ8d0p4WXCzz2NyljOfF1k3KjSXOWFFs3OCSrxLmfdmtEDsU18y1hD0hfEhjyu+NXEwMw==
+X-Received: by 2002:a05:6870:8188:b0:255:1bb8:85ec with SMTP id 586e51a60fabf-2584288e46bmr10661973fac.12.1718632186790;
+        Mon, 17 Jun 2024 06:49:46 -0700 (PDT)
 Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaecc004sm432892285a.31.2024.06.17.06.49.42
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaecc004sm432892285a.31.2024.06.17.06.49.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 06:49:44 -0700 (PDT)
+        Mon, 17 Jun 2024 06:49:46 -0700 (PDT)
 From: Trevor Gamblin <tgamblin@baylibre.com>
-Subject: [PATCH v3 00/41] iio: simplify with regmap_set_bits(),
- regmap_clear_bits()
-Date: Mon, 17 Jun 2024 09:49:40 -0400
-Message-Id: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
+Date: Mon, 17 Jun 2024 09:49:41 -0400
+Subject: [PATCH v3 01/41] iio: accel: fxls8962af-core: Make use of
+ regmap_set_bits(), regmap_clear_bits()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,9 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAPQ+cGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
- vPSU3UzU4B8JSMDIxMDM0MTXZCi1HJd81QzgxRDU8tUc9MUJaDigqLUtMwKsEHRsbW1AEPlT+1
- YAAAA
+Message-Id: <20240617-review-v3-1-88d1338c4cca@baylibre.com>
+References: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
+In-Reply-To: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
 To: Jonathan Cameron <jic23@kernel.org>, 
  Lars-Peter Clausen <lars@metafoo.de>, 
  Dmitry Rokosov <ddrokosov@sberdevices.ru>, 
@@ -111,120 +112,70 @@ Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
  Trevor Gamblin <tgamblin@baylibre.com>
 X-Mailer: b4 0.13.0
 
-Simplify the way regmap is accessed in iio drivers.
-
 Instead of using regmap_update_bits() and passing the mask twice, use
 regmap_set_bits().
 
 Instead of using regmap_update_bits() and passing val = 0, use
 regmap_clear_bits().
 
-The series is marked as v3, but the previous two revisions were single
-patches. There was also a resend of v1 due to not properly CCing the
-mailing lists on the first attempt. Trailers were pulled in from those
-where relevant.
-
-Link to v2: https://lore.kernel.org/linux-iio/20240613133927.3851344-1-tgamblin@baylibre.com/
-Link to v1: https://lore.kernel.org/linux-iio/20240611165214.4091591-1-tgamblin@baylibre.com/
-
 Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
 ---
-Trevor Gamblin (41):
-      iio: accel: fxls8962af-core: Make use of regmap_set_bits(), regmap_clear_bits()
-      iio: accel: kxsd9: Make use of regmap_clear_bits()
-      iio: accel: msa311: make use of regmap_clear_bits()
-      iio: adc: ad4130: make use of regmap_clear_bits()
-      iio: adc: axp20x_adc: make use of regmap_set_bits()
-      iio: adc: axp288_adc: make use of regmap_set_bits()
-      iio: adc: bcm_iproc_adc: make use of regmap_clear_bits()
-      iio: adc: berlin2-adc: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: adc: cpcap-adc: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: adc: fsl-imx25-gcq: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: adc: ina2xx-adc: make use of regmap_clear_bits()
-      iio: adc: intel_mrfld_adc: make use of regmap_clear_bits()
-      iio: adc: meson_saradc: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: adc: mp2629_adc: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: adc: qcom-spmi-rradc: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: adc: rn5t618-adc: make use of regmap_set_bits()
-      iio: adc: sc27xx_adc: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: adc: stm32-dfsdm-adc: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: dac: ltc2688: make use of regmap_set_bits()
-      iio: dac: stm32-dac-core: make use of regmap_set_bits()
-      iio: gyro: bmg160_core: make use of regmap_clear_bits()
-      iio: gyro: mpu3050-core: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: health: afe4403: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: health: afe4404: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: health: max30100: make use of regmap_set_bits()
-      iio: health: max30102: make use of regmap_set_bits()
-      iio: imu: inv_icm42600: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: light: adux1020: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: light: iqs621-als: make use of regmap_clear_bits()
-      iio: light: isl29018: make use of regmap_clear_bits()
-      iio: light: st_uvis25_core: make use of regmap_clear_bits()
-      iio: light: veml6030: make use of regmap_clear_bits()
-      iio: magnetometer: ak8974: make use of regmap_set_bits()
-      iio: magnetometer: mmc35240: make use of regmap_set_bits()
-      iio: pressure: bmp280-core: make use of regmap_clear_bits()
-      iio: proximity: sx9324: make use of regmap_set_bits()
-      iio: proximity: sx9360: make use of regmap_set_bits()
-      iio: proximity: sx9500: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: proximity: sx_common: make use of regmap_clear_bits(), regmap_set_bits()
-      iio: temperature: mlx90632: make use of regmap_clear_bits()
-      iio: trigger: stm32-timer-trigger: make use of regmap_clear_bits(), regmap_set_bits()
+ drivers/iio/accel/fxls8962af-core.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
- drivers/iio/accel/fxls8962af-core.c                |  18 ++--
- drivers/iio/accel/kxsd9.c                          |   6 +-
- drivers/iio/accel/msa311.c                         |   8 +-
- drivers/iio/adc/ad4130.c                           |   4 +-
- drivers/iio/adc/axp20x_adc.c                       |   5 +-
- drivers/iio/adc/axp288_adc.c                       |   4 +-
- drivers/iio/adc/bcm_iproc_adc.c                    |   8 +-
- drivers/iio/adc/berlin2-adc.c                      |  24 +++--
- drivers/iio/adc/cpcap-adc.c                        |  46 ++++------
- drivers/iio/adc/fsl-imx25-gcq.c                    |  16 ++--
- drivers/iio/adc/ina2xx-adc.c                       |   3 +-
- drivers/iio/adc/intel_mrfld_adc.c                  |   4 +-
- drivers/iio/adc/meson_saradc.c                     | 101 +++++++++------------
- drivers/iio/adc/mp2629_adc.c                       |  19 ++--
- drivers/iio/adc/qcom-spmi-rradc.c                  |  50 +++++-----
- drivers/iio/adc/rn5t618-adc.c                      |   5 +-
- drivers/iio/adc/sc27xx_adc.c                       |  41 ++++-----
- drivers/iio/adc/stm32-dfsdm-adc.c                  |  29 +++---
- drivers/iio/dac/ltc2688.c                          |   5 +-
- drivers/iio/dac/stm32-dac-core.c                   |   5 +-
- drivers/iio/gyro/bmg160_core.c                     |   4 +-
- drivers/iio/gyro/mpu3050-core.c                    |  33 +++----
- drivers/iio/health/afe4403.c                       |   9 +-
- drivers/iio/health/afe4404.c                       |   9 +-
- drivers/iio/health/max30100.c                      |   5 +-
- drivers/iio/health/max30102.c                      |   5 +-
- drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c |  14 ++-
- drivers/iio/imu/inv_icm42600/inv_icm42600_core.c   |   9 +-
- drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c    |   4 +-
- drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c    |   4 +-
- drivers/iio/light/adux1020.c                       |  13 ++-
- drivers/iio/light/iqs621-als.c                     |   4 +-
- drivers/iio/light/isl29018.c                       |   6 +-
- drivers/iio/light/st_uvis25_core.c                 |   4 +-
- drivers/iio/light/veml6030.c                       |   4 +-
- drivers/iio/magnetometer/ak8974.c                  |  11 +--
- drivers/iio/magnetometer/mmc35240.c                |   8 +-
- drivers/iio/pressure/bmp280-core.c                 |   4 +-
- drivers/iio/proximity/sx9324.c                     |   5 +-
- drivers/iio/proximity/sx9360.c                     |   5 +-
- drivers/iio/proximity/sx9500.c                     |  12 +--
- drivers/iio/proximity/sx_common.c                  |   9 +-
- drivers/iio/temperature/mlx90632.c                 |   4 +-
- drivers/iio/trigger/stm32-timer-trigger.c          |  34 ++++---
- 44 files changed, 273 insertions(+), 347 deletions(-)
----
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-change-id: 20240614-review-7e60d159e75d
+diff --git a/drivers/iio/accel/fxls8962af-core.c b/drivers/iio/accel/fxls8962af-core.c
+index 4fbc01bda62e..d25e31613413 100644
+--- a/drivers/iio/accel/fxls8962af-core.c
++++ b/drivers/iio/accel/fxls8962af-core.c
+@@ -228,8 +228,8 @@ static int fxls8962af_power_off(struct fxls8962af_data *data)
+ 
+ static int fxls8962af_standby(struct fxls8962af_data *data)
+ {
+-	return regmap_update_bits(data->regmap, FXLS8962AF_SENS_CONFIG1,
+-				  FXLS8962AF_SENS_CONFIG1_ACTIVE, 0);
++	return regmap_clear_bits(data->regmap, FXLS8962AF_SENS_CONFIG1,
++				 FXLS8962AF_SENS_CONFIG1_ACTIVE);
+ }
+ 
+ static int fxls8962af_active(struct fxls8962af_data *data)
+@@ -785,9 +785,8 @@ static int fxls8962af_reset(struct fxls8962af_data *data)
+ 	unsigned int reg;
+ 	int ret;
+ 
+-	ret = regmap_update_bits(data->regmap, FXLS8962AF_SENS_CONFIG1,
+-				 FXLS8962AF_SENS_CONFIG1_RST,
+-				 FXLS8962AF_SENS_CONFIG1_RST);
++	ret = regmap_set_bits(data->regmap, FXLS8962AF_SENS_CONFIG1,
++			      FXLS8962AF_SENS_CONFIG1_RST);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -830,9 +829,8 @@ static int fxls8962af_buffer_postenable(struct iio_dev *indio_dev)
+ 	fxls8962af_standby(data);
+ 
+ 	/* Enable buffer interrupt */
+-	ret = regmap_update_bits(data->regmap, FXLS8962AF_INT_EN,
+-				 FXLS8962AF_INT_EN_BUF_EN,
+-				 FXLS8962AF_INT_EN_BUF_EN);
++	ret = regmap_set_bits(data->regmap, FXLS8962AF_INT_EN,
++			      FXLS8962AF_INT_EN_BUF_EN);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -851,8 +849,8 @@ static int fxls8962af_buffer_predisable(struct iio_dev *indio_dev)
+ 	fxls8962af_standby(data);
+ 
+ 	/* Disable buffer interrupt */
+-	ret = regmap_update_bits(data->regmap, FXLS8962AF_INT_EN,
+-				 FXLS8962AF_INT_EN_BUF_EN, 0);
++	ret = regmap_clear_bits(data->regmap, FXLS8962AF_INT_EN,
++				FXLS8962AF_INT_EN_BUF_EN);
+ 	if (ret)
+ 		return ret;
+ 
 
-Best regards,
 -- 
-Trevor Gamblin <tgamblin@baylibre.com>
+2.45.2
 
 
