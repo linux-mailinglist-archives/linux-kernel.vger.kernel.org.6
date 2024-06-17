@@ -1,280 +1,244 @@
-Return-Path: <linux-kernel+bounces-217063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DE990AA21
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:48:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A9A90A9C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238201F218F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D38EA288E8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890D2199E8F;
-	Mon, 17 Jun 2024 09:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F081019308E;
+	Mon, 17 Jun 2024 09:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUQFEN30"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e0eoA3Rw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="60VR4dPt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e0eoA3Rw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="60VR4dPt"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79470195385;
-	Mon, 17 Jun 2024 09:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5022F190673;
+	Mon, 17 Jun 2024 09:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718617106; cv=none; b=rD2+5/FR3zS1+Yb3YIpVulkcT8Cm+eCTzyNtc6Mwkb7O3Br734XL4aEW7LIptHmprIYGKoIG4CykUlvaJtXPouuggJcevzMwSjou0cxYyfgb/RQ/75UiBaSnxD0NjxcbEZuiHbZbjyjE5Z89OHp0XfNYYsR9VzuiKw2p0m69BU0=
+	t=1718617070; cv=none; b=Ret+ZKYY3TbGmXpD59WqRmKh5AfLjYYkMvqGsHrrt9y6nIGN+lCpPBYjL8C/VZGmEjMFInjoyJo+EiCasl/Tgffn8nEA6Nc0VBTrxLE0Xw0Bg4SM/zVKu04eveDrwAoYhtQEMHAj5Rr4tCgPK6CAyyKNGF5UfQ/pOiBL496iud0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718617106; c=relaxed/simple;
-	bh=zI05ebigLL7N6f3sXqMqhzsK28Pw7x4WApkpZvz6too=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GQ/5EW1Fl2zeIdFqLuLhU/TEEhrFbz9XpAIzULu+UoJUM9c2cTubez6QknCAexSHXNLxrb6Ta62qUdHW7BXe53/PU0BPuX8jyC5n8b+nGyDomo+93CCQTEfkXdRypmyto3zI9eS3uWxOKnCXNkJ0Ywv3sjtZWlDVdEi6l3LWIaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUQFEN30; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2A66BC4DDE9;
-	Mon, 17 Jun 2024 09:38:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718617106;
-	bh=zI05ebigLL7N6f3sXqMqhzsK28Pw7x4WApkpZvz6too=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lUQFEN30XhqTfT7IQQ4qIisjXDkFp7PtRCZuJ0L8K3dDDw6njTygwm/NyupcGkBI+
-	 wpKtno3GV9fBIXmwtHq1p9xeQvb0cAIewMXe8JGti0T5RU3piopgEsyfEiE4ANVOUw
-	 ntrod8MjIM3la0TmXdOKrK73L4q6/5Tf5F5BtVKzeZFQEqowY4DYnfMPIwupU+hCbt
-	 CfbpTrDN2cXIPsdZJSLda0VIEkhHHcgvWx/kOVdUoOcz2XyzYW0sNSKL4b7VC34tRX
-	 zM4/ONmThLD1orqV9Tu8m605jpoApB+PjzQTp+HvacUEc3MWwgNBvthW17/ErGWzyY
-	 kYMMqukh4yXTQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8DBC2BA1A;
-	Mon, 17 Jun 2024 09:38:26 +0000 (UTC)
-From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Mon, 17 Jun 2024 12:37:12 +0300
-Subject: [PATCH v10 38/38] dmaengine: cirrus: remove platform code
+	s=arc-20240116; t=1718617070; c=relaxed/simple;
+	bh=6GJI8RyV4Rxgbr0HGunZUiPB2c9B8M95YOgm2k5GYIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uy12kYpESvpLidfbm0vQYkScPK9OeI1PWfb5OaMGEjzWiSHVImPeZ3KKwtZ788jI/sDN4rnhbuPADWrO6kG9y+joKQrh6ys56F2hXxPwxzTUCUVNQIynvit2mo1Yqika7kCtOUk71uM0G39TL3RDZpVzeghElTdEUb+473Pc20U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e0eoA3Rw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=60VR4dPt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e0eoA3Rw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=60VR4dPt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1C3045FE13;
+	Mon, 17 Jun 2024 09:37:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718617066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
+	b=e0eoA3RwXAUApO9OKFPUvDLR7Su4DXfOVMavcXGgWD2mB625CNUBJPgxynUWq0RXpTy8U1
+	dNsdSNXz/cOIs0WeOmwg1BkKaXMXVSMq6zA50xqDvsb5sW1PN5LCTejML6iMlLLvh9ChwR
+	vRsoNbrAf5iy8S1rJq8pbDgMGE3USQs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718617066;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
+	b=60VR4dPt9IjY7qkDextIsvc8s7WdXcsVzYK2nbo624/PVrX35T0zYvjSGzWKaS1ETvUHRr
+	KnV99vuMnASrOjDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=e0eoA3Rw;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=60VR4dPt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718617066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
+	b=e0eoA3RwXAUApO9OKFPUvDLR7Su4DXfOVMavcXGgWD2mB625CNUBJPgxynUWq0RXpTy8U1
+	dNsdSNXz/cOIs0WeOmwg1BkKaXMXVSMq6zA50xqDvsb5sW1PN5LCTejML6iMlLLvh9ChwR
+	vRsoNbrAf5iy8S1rJq8pbDgMGE3USQs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718617066;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
+	b=60VR4dPt9IjY7qkDextIsvc8s7WdXcsVzYK2nbo624/PVrX35T0zYvjSGzWKaS1ETvUHRr
+	KnV99vuMnASrOjDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E24913AAA;
+	Mon, 17 Jun 2024 09:37:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lkRuA+oDcGYgeAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 17 Jun 2024 09:37:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A9A78A0886; Mon, 17 Jun 2024 11:37:45 +0200 (CEST)
+Date: Mon, 17 Jun 2024 11:37:45 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: NeilBrown <neilb@suse.de>, Amir Goldstein <amir73il@gmail.com>,
+	James Clark <james.clark@arm.com>, ltp@lists.linux.it,
+	linux-nfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+Message-ID: <20240617093745.nhnc7e7efdldnjzl@quack3>
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+ <20240615-fahrrad-bauordnung-a349bacd8c82@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240617-ep93xx-v10-38-662e640ed811@maquefel.me>
-References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
-In-Reply-To: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
-To: Vinod Koul <vkoul@kernel.org>, 
- Nikita Shubin <nikita.shubin@maquefel.me>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, 
- Arnd Bergmann <arnd@arndb.de>
-X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718617100; l=6035;
- i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=gcVvzgliElNyoUeXsoUh8/tTM1CO0hurjz+xqTW1O7o=;
- b=weQ8E5DbI6cgQuaTgkOZMdX+CYDNMSQMp/0AXXzTKz0P9GTlIDu8ZB7addXXhlODVsAulejMqyfM
- 6cQBwZMLBJt5wcUDRgsPfw7vYQF15wQcJ5EzCuopq0a0NgZ7bU/0
-X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
- pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
-X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
- with auth_id=65
-X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
-Reply-To: nikita.shubin@maquefel.me
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240615-fahrrad-bauordnung-a349bacd8c82@brauner>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,gmail.com,arm.com,lists.linux.it,vger.kernel.org,zeniv.linux.org.uk,suse.cz];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 1C3045FE13
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-From: Nikita Shubin <nikita.shubin@maquefel.me>
+On Sat 15-06-24 07:35:42, Christian Brauner wrote:
+> On Wed, 12 Jun 2024 17:09:55 +1000, NeilBrown wrote:
+> > When a file is opened and created with open(..., O_CREAT) we get
+> > both the CREATE and OPEN fsnotify events and would expect them in that
+> > order.   For most filesystems we get them in that order because
+> > open_last_lookups() calls fsnofify_create() and then do_open() (from
+> > path_openat()) calls vfs_open()->do_dentry_open() which calls
+> > fsnotify_open().
+> > 
+> > [...]
+> 
+> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> Patches in the vfs.fixes branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.fixes
+> 
+> [1/1] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open used.
+>       https://git.kernel.org/vfs/vfs/c/7536b2f06724
 
-Remove DMA platform header, from now on we use device tree for DMA
-clients.
+I have reviewed the patch you've committed since I wasn't quite sure which
+changes you're going to apply after your discussion with Amir. And I have
+two comments:
 
-Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
----
- drivers/dma/ep93xx_dma.c                 |  48 ++++++++++++++-
- include/linux/platform_data/dma-ep93xx.h | 100 -------------------------------
- 2 files changed, 46 insertions(+), 102 deletions(-)
-
-diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
-index 17c8e2badee2..43c4241af7f5 100644
---- a/drivers/dma/ep93xx_dma.c
-+++ b/drivers/dma/ep93xx_dma.c
-@@ -17,6 +17,7 @@
- #include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
-@@ -25,8 +26,6 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
--#include <linux/platform_data/dma-ep93xx.h>
--
- #include "dmaengine.h"
- 
- /* M2P registers */
-@@ -106,6 +105,26 @@
- #define DMA_MAX_CHAN_BYTES		0xffff
- #define DMA_MAX_CHAN_DESCRIPTORS	32
- 
-+/*
-+ * M2P channels.
-+ *
-+ * Note that these values are also directly used for setting the PPALLOC
-+ * register.
-+ */
-+#define EP93XX_DMA_I2S1			0
-+#define EP93XX_DMA_I2S2			1
-+#define EP93XX_DMA_AAC1			2
-+#define EP93XX_DMA_AAC2			3
-+#define EP93XX_DMA_AAC3			4
-+#define EP93XX_DMA_I2S3			5
-+#define EP93XX_DMA_UART1		6
-+#define EP93XX_DMA_UART2		7
-+#define EP93XX_DMA_UART3		8
-+#define EP93XX_DMA_IRDA			9
-+/* M2M channels */
-+#define EP93XX_DMA_SSP			10
-+#define EP93XX_DMA_IDE			11
+@@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
+  */
+ int vfs_open(const struct path *path, struct file *file)
+ {
++	int ret;
 +
- enum ep93xx_dma_type {
- 	M2P_DMA,
- 	M2M_DMA,
-@@ -242,6 +261,31 @@ static struct ep93xx_dma_chan *to_ep93xx_dma_chan(struct dma_chan *chan)
- 	return container_of(chan, struct ep93xx_dma_chan, chan);
+ 	file->f_path = *path;
+-	return do_dentry_open(file, NULL);
++	ret = do_dentry_open(file, NULL);
++	if (!ret)
++		/*
++		 * Once we return a file with FMODE_OPENED, __fput() will call
++		 * fsnotify_close(), so we need fsnotify_open() here for symmetry.
++		 */
++		fsnotify_open(file);
++	return ret;
  }
+
+AFAICT this will have a side-effect that now fsnotify_open() will be
+generated even for O_PATH open. It is true that fsnotify_close() is getting
+generated for them already and we should strive for symmetry. Conceptually
+it doesn't make sense to me to generate fsnotify events for O_PATH
+opens/closes but maybe I miss something. Amir, any opinion here?
+
+@@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
+ 	int acc_mode;
+ 	int error;
  
-+static inline bool ep93xx_dma_chan_is_m2p(struct dma_chan *chan)
-+{
-+	if (device_is_compatible(chan->device->dev, "cirrus,ep9301-dma-m2p"))
-+		return true;
++	if (file->f_mode & FMODE_OPENED)
++		fsnotify_open(file);
 +
-+	return !strcmp(dev_name(chan->device->dev), "ep93xx-dma-m2p");
-+}
-+
-+/*
-+ * ep93xx_dma_chan_direction - returns direction the channel can be used
-+ *
-+ * This function can be used in filter functions to find out whether the
-+ * channel supports given DMA direction. Only M2P channels have such
-+ * limitation, for M2M channels the direction is configurable.
-+ */
-+static inline enum dma_transfer_direction
-+ep93xx_dma_chan_direction(struct dma_chan *chan)
-+{
-+	if (!ep93xx_dma_chan_is_m2p(chan))
-+		return DMA_TRANS_NONE;
-+
-+	/* even channels are for TX, odd for RX */
-+	return (chan->chan_id % 2 == 0) ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
-+}
-+
- /**
-  * ep93xx_dma_set_active - set new active descriptor chain
-  * @edmac: channel
-diff --git a/include/linux/platform_data/dma-ep93xx.h b/include/linux/platform_data/dma-ep93xx.h
-deleted file mode 100644
-index 9ec5cdd5a1eb..000000000000
---- a/include/linux/platform_data/dma-ep93xx.h
-+++ /dev/null
-@@ -1,100 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __ASM_ARCH_DMA_H
--#define __ASM_ARCH_DMA_H
--
--#include <linux/types.h>
--#include <linux/device.h>
--#include <linux/dmaengine.h>
--#include <linux/dma-mapping.h>
--#include <linux/property.h>
--#include <linux/string.h>
--
--/*
-- * M2P channels.
-- *
-- * Note that these values are also directly used for setting the PPALLOC
-- * register.
-- */
--#define EP93XX_DMA_I2S1		0
--#define EP93XX_DMA_I2S2		1
--#define EP93XX_DMA_AAC1		2
--#define EP93XX_DMA_AAC2		3
--#define EP93XX_DMA_AAC3		4
--#define EP93XX_DMA_I2S3		5
--#define EP93XX_DMA_UART1	6
--#define EP93XX_DMA_UART2	7
--#define EP93XX_DMA_UART3	8
--#define EP93XX_DMA_IRDA		9
--/* M2M channels */
--#define EP93XX_DMA_SSP		10
--#define EP93XX_DMA_IDE		11
--
--/**
-- * struct ep93xx_dma_data - configuration data for the EP93xx dmaengine
-- * @port: peripheral which is requesting the channel
-- * @direction: TX/RX channel
-- * @name: optional name for the channel, this is displayed in /proc/interrupts
-- *
-- * This information is passed as private channel parameter in a filter
-- * function. Note that this is only needed for slave/cyclic channels.  For
-- * memcpy channels %NULL data should be passed.
-- */
--struct ep93xx_dma_data {
--	int				port;
--	enum dma_transfer_direction	direction;
--	const char			*name;
--};
--
--/**
-- * struct ep93xx_dma_chan_data - platform specific data for a DMA channel
-- * @name: name of the channel, used for getting the right clock for the channel
-- * @base: mapped registers
-- * @irq: interrupt number used by this channel
-- */
--struct ep93xx_dma_chan_data {
--	const char			*name;
--	void __iomem			*base;
--	int				irq;
--};
--
--/**
-- * struct ep93xx_dma_platform_data - platform data for the dmaengine driver
-- * @channels: array of channels which are passed to the driver
-- * @num_channels: number of channels in the array
-- *
-- * This structure is passed to the DMA engine driver via platform data. For
-- * M2P channels, contract is that even channels are for TX and odd for RX.
-- * There is no requirement for the M2M channels.
-- */
--struct ep93xx_dma_platform_data {
--	struct ep93xx_dma_chan_data	*channels;
--	size_t				num_channels;
--};
--
--static inline bool ep93xx_dma_chan_is_m2p(struct dma_chan *chan)
--{
--	if (device_is_compatible(chan->device->dev, "cirrus,ep9301-dma-m2p"))
--		return true;
--
--	return !strcmp(dev_name(chan->device->dev), "ep93xx-dma-m2p");
--}
--
--/**
-- * ep93xx_dma_chan_direction - returns direction the channel can be used
-- * @chan: channel
-- *
-- * This function can be used in filter functions to find out whether the
-- * channel supports given DMA direction. Only M2P channels have such
-- * limitation, for M2M channels the direction is configurable.
-- */
--static inline enum dma_transfer_direction
--ep93xx_dma_chan_direction(struct dma_chan *chan)
--{
--	if (!ep93xx_dma_chan_is_m2p(chan))
--		return DMA_TRANS_NONE;
--
--	/* even channels are for TX, odd for RX */
--	return (chan->chan_id % 2 == 0) ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
--}
--
--#endif /* __ASM_ARCH_DMA_H */
+ 	if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+ 		error = complete_walk(nd);
+ 		if (error)
 
+Frankly, this works but looks as an odd place to put this notification to.
+Why not just placing it just next to where fsnotify_create() is generated
+in open_last_lookups()? Like:
+
+        if (open_flag & O_CREAT)
+                inode_lock(dir->d_inode);
+        else
+                inode_lock_shared(dir->d_inode);
+        dentry = lookup_open(nd, file, op, got_write);
+-	if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
+-		fsnotify_create(dir->d_inode, dentry);
++	if (!IS_ERR(dentry)) {
++		if (file->f_mode & FMODE_CREATED)
++	                fsnotify_create(dir->d_inode, dentry);
++		if (file->f_mode & FMODE_OPENED)
++			fsnotify_open(file);
++	}
+        if (open_flag & O_CREAT)
+                inode_unlock(dir->d_inode);
+        else
+                inode_unlock_shared(dir->d_inode);
+
+That looks like a place where it is much more obvious this is for
+atomic_open() handling? Now I admit I'm not really closely familiar with
+the atomic_open() paths so maybe I miss something and do_open() is better.
+
+								Honza
 -- 
-2.43.2
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
