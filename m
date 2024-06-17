@@ -1,189 +1,178 @@
-Return-Path: <linux-kernel+bounces-216890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB55190A81E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:07:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 908BF90A822
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA821C2414B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E501F24B43
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD44190043;
-	Mon, 17 Jun 2024 08:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jDNnOtPK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF22190053;
+	Mon, 17 Jun 2024 08:08:02 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E25618628D;
-	Mon, 17 Jun 2024 08:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF2A18628D;
+	Mon, 17 Jun 2024 08:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718611657; cv=none; b=Kvb3EuOzOGrRMxUOX69PBoVMjvSNcFfSkKLvfmlXmdFnfAEpdrqxYfxHnYA6uV+uAXmPQZDUiyjwbv2CxVW3q9bWoFw8occE1nio70EQxzHSdQY1Am8R6gX+RrFqGMn22kS7WLtpEHyNcPY+VganIXj8gSA36DtSwMP8yqse4OE=
+	t=1718611682; cv=none; b=MivNoeqoV66d0HFG4yhGjjybQfNWIz/YPdIxpnr/UpXgfWNxKN+/5Q4HwSh5O/p+lXSuCoPR+33EQNu1shNJa2vV5dclLmBOK76Vvym7kksKuDiVxKAVZN2Qxq9glkah+JC1BGmca3SuoTZvOAND4DB+N0m8rLaVCfbuj6VPWhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718611657; c=relaxed/simple;
-	bh=36kcjfNBQBQ7BrQRqoUTR+7LEakNMlF6+LyRwnMX5tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k24IroASq707ttC4A9kGTVmbMFXRnFo0CzK5a5Vzi1LG998kn7Oh+FO9ID8xdLVC0MBtNRXbf4dApRX8T9E/eyvR5jUmSYcD1AMVu6FHgkyiGW9Ykw29rEpLHdQlnU3ND5LQlVY4bIqFUe15ZV16f3NESrvgGMLdOdMt8e7sDWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jDNnOtPK; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718611656; x=1750147656;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=36kcjfNBQBQ7BrQRqoUTR+7LEakNMlF6+LyRwnMX5tk=;
-  b=jDNnOtPK4UUANfd07YB1A3Rb1tuo8DD18yRW4WXGWf5dErItnui8j8kY
-   AG0HDn2yL1AVzq5OHL8qOdsCC4bbsfa7j6eg1flxs9iaPiCRAWIYIBcXY
-   nGNkFKWGGed5XnNtMs4Fm4n867ulADBiYAYHlPvN81+HQRlpqKzdOl1Gk
-   eboZdFFrOZWUxpjKMYHzS15WIX8Z0RjaG96VbFUB375Hlezp4kVUJduGQ
-   ra3A3rapx/cyw7LtHDx6yOouf6pyv1ZLl9GUOc0d5dp413LrjcR2xQ9Jk
-   OjJGDxep4xThOmcp9QnbD9TV210UD/s6H1kKFYN+lHlWPQtagZ7O7Ppoq
-   Q==;
-X-CSE-ConnectionGUID: WntByvsQRQ6Ecb5RFlCnbQ==
-X-CSE-MsgGUID: 53Wvj70VQ2urVkHweMTvHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="37952311"
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="37952311"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 01:07:35 -0700
-X-CSE-ConnectionGUID: 8kKG7+d4RvqauFqpa3eQIw==
-X-CSE-MsgGUID: Dk4GaEnPRH+Qn1mfBjt3UA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="41253740"
-Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.159.76])
-  by orviesa009.jf.intel.com with ESMTP; 17 Jun 2024 01:07:31 -0700
-Date: Mon, 17 Jun 2024 16:07:29 +0800
-From: Yuan Yao <yuan.yao@linux.intel.com>
-To: isaku.yamahata@intel.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	isaku.yamahata@gmail.com, Paolo Bonzini <pbonzini@redhat.com>,
-	erdemaktas@google.com, Sean Christopherson <seanjc@google.com>,
-	Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
-	chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
-	Binbin Wu <binbin.wu@linux.intel.com>
-Subject: Re: [PATCH v19 085/130] KVM: TDX: Complete interrupts after tdexit
-Message-ID: <20240617080729.j5nottky5bjmgdmf@yy-desk-7060>
-References: <cover.1708933498.git.isaku.yamahata@intel.com>
- <aa6a927214a5d29d5591a0079f4374b05a82a03f.1708933498.git.isaku.yamahata@intel.com>
+	s=arc-20240116; t=1718611682; c=relaxed/simple;
+	bh=7u1il9aHHFXxYlJZ1uZuvLEv/db5bI8nohdzBZYDeuk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SL7qghakPgK5GZXZ31sGh+CDqXsfpsLaPS/dXciEZZYiak9nLG6DITLsmkM8j77wr0BHzhyLrhAOZU2MMJrKKjk0/zJpnjyHq5aLbyK5JYqnskzbKRe2Tcltf5JMuG0Oeo7waubpicBjiXFpUJ7wssWjE/swUfE2YYeFVEXVHfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: b1406d942c8011ef9305a59a3cc225df-20240617
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:7730c8e0-bc28-498e-a478-9a61b35a5c8b,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACT
+	ION:release,TS:23
+X-CID-INFO: VERSION:1.1.38,REQID:7730c8e0-bc28-498e-a478-9a61b35a5c8b,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACTIO
+	N:release,TS:23
+X-CID-META: VersionHash:82c5f88,CLOUDID:504ddc7c59fe1f0bab54ca3c0e6ab65d,BulkI
+	D:240614185458SXRYECY3,BulkQuantity:7,Recheck:0,SF:17|19|44|64|66|38|24|10
+	2,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40|20,QS:nil,BE
+	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_FCD
+X-UUID: b1406d942c8011ef9305a59a3cc225df-20240617
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <luoxuanqiang@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1967790496; Mon, 17 Jun 2024 16:07:51 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id E8965B80758A;
+	Mon, 17 Jun 2024 16:07:50 +0800 (CST)
+X-ns-mid: postfix-666FEED6-75382868
+Received: from [10.42.12.252] (unknown [10.42.12.252])
+	by node2.com.cn (NSMail) with ESMTPA id 1FB71B80758A;
+	Mon, 17 Jun 2024 08:07:50 +0000 (UTC)
+Message-ID: <22779d46-8e8b-4ea5-07d6-bebb17a04051@kylinos.cn>
+Date: Mon, 17 Jun 2024 16:07:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aa6a927214a5d29d5591a0079f4374b05a82a03f.1708933498.git.isaku.yamahata@intel.com>
-User-Agent: NeoMutt/20171215
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH net v2] Fix race for duplicate reqsk on identical SYN
+Content-Language: en-US
+To: Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: davem@davemloft.net, dccp@vger.kernel.org, dsahern@kernel.org,
+ fw@strlen.de, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com
+References: <7075bb26-ede9-0dc7-fe93-e18703e5ddaa@kylinos.cn>
+ <20240614222433.19580-1-kuniyu@amazon.com>
+ <CANn89i+RP1K+mOd5V7LOKMFtMhy0rZrpFDCDQ-RbQ31GkYbc9g@mail.gmail.com>
+From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+In-Reply-To: <CANn89i+RP1K+mOd5V7LOKMFtMhy0rZrpFDCDQ-RbQ31GkYbc9g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 26, 2024 at 12:26:27AM -0800, isaku.yamahata@intel.com wrote:
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
->
-> This corresponds to VMX __vmx_complete_interrupts().  Because TDX
-> virtualize vAPIC, KVM only needs to care NMI injection.
->
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-> ---
-> v19:
-> - move tdvps_management_check() to this patch
-> - typo: complete -> Complete in short log
-> ---
->  arch/x86/kvm/vmx/tdx.c | 10 ++++++++++
->  arch/x86/kvm/vmx/tdx.h |  4 ++++
->  2 files changed, 14 insertions(+)
->
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 83dcaf5b6fbd..b8b168f74dfe 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -535,6 +535,14 @@ void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
->  	 */
->  }
->
-> +static void tdx_complete_interrupts(struct kvm_vcpu *vcpu)
-> +{
-> +	/* Avoid costly SEAMCALL if no nmi was injected */
-> +	if (vcpu->arch.nmi_injected)
-> +		vcpu->arch.nmi_injected = td_management_read8(to_tdx(vcpu),
-> +							      TD_VCPU_PEND_NMI);
-> +}
 
-Looks this leads to NMI injection delay or even won't be
-reinjected if KVM_REQ_EVENT is not set on the target cpu
-when more than 1 NMIs are pending there.
+=E5=9C=A8 2024/6/15 14:40, Eric Dumazet =E5=86=99=E9=81=93:
+> On Sat, Jun 15, 2024 at 12:24=E2=80=AFAM Kuniyuki Iwashima <kuniyu@amaz=
+on.com> wrote:
+> =E4=BD=A0=E5=A5=BD Eric=E5=92=8CKuniyuk,
+>> From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+>> Date: Fri, 14 Jun 2024 20:42:07 +0800
+>>> =E5=9C=A8 2024/6/14 18:54, Florian Westphal =E5=86=99=E9=81=93:
+>>>> luoxuanqiang <luoxuanqiang@kylinos.cn> wrote:
+>>>>>    include/net/inet_connection_sock.h |  2 +-
+>>>>>    net/dccp/ipv4.c                    |  2 +-
+>>>>>    net/dccp/ipv6.c                    |  2 +-
+>>>>>    net/ipv4/inet_connection_sock.c    | 15 +++++++++++----
+>>>>>    net/ipv4/tcp_input.c               | 11 ++++++++++-
+>>>>>    5 files changed, 24 insertions(+), 8 deletions(-)
+>>>>>
+>>>>> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_=
+connection_sock.h
+>>>>> index 7d6b1254c92d..8773d161d184 100644
+>>>>> --- a/include/net/inet_connection_sock.h
+>>>>> +++ b/include/net/inet_connection_sock.h
+>>>>> @@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct so=
+ck *sk,
+>>>>>                                   struct request_sock *req,
+>>>>>                                   struct sock *child);
+>>>>>    void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct reque=
+st_sock *req,
+>>>>> -                             unsigned long timeout);
+>>>>> +                             unsigned long timeout, bool *found_du=
+p_sk);
+>>>> Nit:
+>>>>
+>>>> I think it would be preferrable to change retval to bool rather than
+>>>> bool *found_dup_sk extra arg, so one can do
+>> +1
+>>
+>>
+>>>> bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_s=
+ock *req,
+>>>>                                 unsigned long timeout)
+>>>> {
+>>>>      if (!reqsk_queue_hash_req(req, timeout))
+>>>>              return false;
+>>>>
+>>>> i.e. let retval indicate wheter reqsk was inserted or not.
+>>>>
+>>>> Patch looks good to me otherwise.
+>>> Thank you for your confirmation!
+>>>
+>>> Regarding your suggestion, I had considered it before,
+>>> but besides tcp_conn_request() calling inet_csk_reqsk_queue_hash_add(=
+),
+>>> dccp_v4(v6)_conn_request() also calls it. However, there is no
+>>> consideration for a failed insertion within that function, so it's
+>>> reasonable to let the caller decide whether to check for duplicate
+>>> reqsk.
+>> I guess you followed 01770a1661657 where found_dup_sk was introduced,
+>> but note that the commit is specific to TCP SYN Cookie and TCP Fast Op=
+en
+>> and DCCP is not related.
+>>
+>> Then, own_req is common to TCP and DCCP, so found_dup_sk was added as =
+an
+>> additional argument.
+>>
+>> However, another similar commit 5e0724d027f05 actually added own_req c=
+heck
+>> in DCCP path.
+>>
+>> I personally would'nt care if DCCP was not changed to handle such a
+>> failure because DCCP will be removed next year, but I still prefer
+>> Florian's suggestion.
+>>
+> Other things to consider :
+>
+> - I presume this patch targets net tree, and luoxuanqiang needs the
+> fix to reach stable trees.
+>
+> - This means a Fixes: tag is needed
+>
+> - This also means that we should favor a patch with no or trivial
+> conflicts for stable backports.
+>
+> Should the patch target the net-next tree, then the requirements can
+> be different.
 
-On normal VM, KVM uses NMI window vmexit for injection
-successful case to rasie the KVM_REQ_EVENT again for remain
-pending NMIs, see handle_nmi_window(). KVM also checks
-vectoring info after VMEXIT for case that the NMI is not
-injected successfully in this vmentry vmexit round, and
-raise KVM_REQ_EVENT to try again, see __vmx_complete_interrupts().
+Hi Kuniyuk and Florian,
 
-In TDX, consider there's no way to get vectoring info or
-handle nmi window vmexit, below checking should cover both
-scenarios for NMI injection:
+I've created version 3 based on your suggestions, but I've kept the use
+of 'found_dup_sk' since we need to pass NULL in DCCP to maintain its
+logic unchanged. Could you please review this update and let me know if
+it's okay? Thank you!
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index e9c9a185bb7b..9edf446acd3b 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -835,9 +835,12 @@ void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- static void tdx_complete_interrupts(struct kvm_vcpu *vcpu)
- {
-        /* Avoid costly SEAMCALL if no nmi was injected */
--       if (vcpu->arch.nmi_injected)
-+       if (vcpu->arch.nmi_injected) {
-                vcpu->arch.nmi_injected = td_management_read8(to_tdx(vcpu),
-                                                              TD_VCPU_PEND_NMI);
-+               if (vcpu->arch.nmi_injected || vcpu->arch.nmi_pending)
-+                       kvm_make_request(KVM_REQ_EVENT, vcpu);
-+       }
- }
+BRs!
 
-> +
->  struct tdx_uret_msr {
->  	u32 msr;
->  	unsigned int slot;
-> @@ -663,6 +671,8 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu)
->  	vcpu->arch.regs_avail &= ~VMX_REGS_LAZY_LOAD_SET;
->  	trace_kvm_exit(vcpu, KVM_ISA_VMX);
->
-> +	tdx_complete_interrupts(vcpu);
-> +
->  	return EXIT_FASTPATH_NONE;
->  }
->
-> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-> index 44eab734e702..0d8a98feb58e 100644
-> --- a/arch/x86/kvm/vmx/tdx.h
-> +++ b/arch/x86/kvm/vmx/tdx.h
-> @@ -142,6 +142,8 @@ static __always_inline void tdvps_vmcs_check(u32 field, u8 bits)
->  			 "Invalid TD VMCS access for 16-bit field");
->  }
->
-> +static __always_inline void tdvps_management_check(u64 field, u8 bits) {}
-> +
->  #define TDX_BUILD_TDVPS_ACCESSORS(bits, uclass, lclass)				\
->  static __always_inline u##bits td_##lclass##_read##bits(struct vcpu_tdx *tdx,	\
->  							u32 field)		\
-> @@ -200,6 +202,8 @@ TDX_BUILD_TDVPS_ACCESSORS(16, VMCS, vmcs);
->  TDX_BUILD_TDVPS_ACCESSORS(32, VMCS, vmcs);
->  TDX_BUILD_TDVPS_ACCESSORS(64, VMCS, vmcs);
->
-> +TDX_BUILD_TDVPS_ACCESSORS(8, MANAGEMENT, management);
-> +
->  static __always_inline u64 td_tdcs_exec_read64(struct kvm_tdx *kvm_tdx, u32 field)
->  {
->  	struct tdx_module_args out;
-> --
-> 2.25.1
->
->
 
