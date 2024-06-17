@@ -1,399 +1,281 @@
-Return-Path: <linux-kernel+bounces-216788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA6290A67C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F2F90A67E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1829E2819A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:08:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD4E2868B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BAA187353;
-	Mon, 17 Jun 2024 07:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559E2186E37;
+	Mon, 17 Jun 2024 07:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQWCdB8M"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JINPzISh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C098879D3;
-	Mon, 17 Jun 2024 07:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9107B79D3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718608088; cv=none; b=UUatXDrmsy9ZO2cJZBelq6dUNRYE4nAfj6EqL4Zi9aXKPbMZuYZZSHjuzlAZ82fUHr8WmSW9rDdiKJWxa3L4BB8ZQ7DvvS6Tb1zaEHSpsyNGX9t06ErOfXPS1qhZ5mweil1fbYkmLbeUlbqiWdP0bv4rQoK1SZsrT4nOgv5l0kk=
+	t=1718608113; cv=none; b=MImnhkermI5DuGgXMY8kcnGoYTuNm/mQoUhZsZ4bLhI2oKMvvVgNrXOtY5HUY+9bX70D7BVyP3yP3iydLnXeI5/CQ4DWco0aeqxVBd643XUt01Va00COWVrw/4JoyQhLs9d/nZG2FE0LPjpmtBuTtiemLRyiMGapjCXk0NWBP6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718608088; c=relaxed/simple;
-	bh=/hV02jB8gmWed00h4zs5eMEP9wSXXhMK13AogFlkfCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kl8hFptudHDiAr/AIz6o1HoH5+f3T6Y76mb/9pgM7V8tF2TonNSWdht5mMUG7cO+1ZTsM9URBA3PsNAyY0QXEcab1AY795CKfqoica5ktkv/tneE2tPlCJmRCDNFtsgv2AvGbYn1M47MngTeR4XzxFU8fNNoWHbaE7v1CnlC70o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQWCdB8M; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso55554451fa.0;
-        Mon, 17 Jun 2024 00:08:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718608085; x=1719212885; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FoCW1BgGcZMuZF9y7iRf3s0Ub7Hp0RCpNkgiGwon8YY=;
-        b=iQWCdB8M5gun4aICacS0jtzpq0isVDal6E/lHA0oLmbspn//MqFSl+lhRxVE3x4xLr
-         rS7I7aTTdZvo+C2m13G9xKQaw+yPgIe4HreePQly7wtVRuVcAEe+mPmMPip6D0djbHZQ
-         xTtGXYtswBCWXUtWWgyFeo9hrHIN/nxi+iWEFpH3DD8cDE4p86CDs/5ZU82+jg/aKEQo
-         JgN+PYnGVWci1q7njWjCBgo//XRvG3FUKkK16/WV0uXMjruERmN9QuW3IVv3XZA4w6OK
-         6fvOoQu0+XJJgyfNHGaBSafLLAAWgOUyeSkLPBfF/OuErA0ur7PyS/eFr5mBER7l/sGK
-         8Gug==
+	s=arc-20240116; t=1718608113; c=relaxed/simple;
+	bh=USrfOZY7YjcJr3YXnlPp2uzKRs8/h1OqgvruayPDXP4=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ak5W2W4DeK3b7eIhGdEIXKRfMsyEF5TGkwoNVw4Ej0EKazQTuK86JU3FAd2w3+Wt0QIKUdx4Vs9lCmXo+8p4rB32BjQb8l6n+UVrPV4N0Mr+5UYyTcHRPgVYpyw7gKSZg48YvSnepwK/UDsiRRZcICchAH3a9v24riFfJojwCwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JINPzISh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718608109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VFnZWNFJWyA94C2L1f2HcpW9Z4CdvGnFQUz/35+GLvM=;
+	b=JINPzIShqMojpuPMtU+mK4jzRnP1cWUUsHnue8l2p5vECQ9VxGzYbQyQ0JNGErEog6P/p1
+	otsrsNWdGYx3arYVeIFZ050fX5OCRD/0QvO5Mr5VzAoVNdFehHLCFxYMJBKtF/B/WBxono
+	sd3CtFeJ9LpOUpgmkTVIg9deMZGeJ10=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-160-t8AuUOctPYSefQ3VkpRAuw-1; Mon, 17 Jun 2024 03:08:26 -0400
+X-MC-Unique: t8AuUOctPYSefQ3VkpRAuw-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6ad8a2dbd97so51993326d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 00:08:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718608085; x=1719212885;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FoCW1BgGcZMuZF9y7iRf3s0Ub7Hp0RCpNkgiGwon8YY=;
-        b=E8780z5CK7lANnX06TCLoJLNdcklqmso8cXYJzPr0xU2G0xD8Hr/UCTQ+VRyVb9rCU
-         +E2tt6A/lMDv3C7aVobqR1T7v5m4kQ7zgZlIxGJ9J7u+Q8pOuLXnVyhSfFSAaCV3rQ/w
-         y+AfTsu1InBM23n1UfjsbBTXixwWZsZP78/8U2NZrpaD9oFU+NVowuV3ZjlVK4OrFxfO
-         CTfrRaVilZM7Q9cRMq8hEgPncKq9BMu5L1rz/YZtOQG26uZqgpqe0ApSlKVF25JrcUMr
-         1NfHwAi/3EiD9Icft1NvW5hhYaMexQ09QCE7ASGH7VLcLEvseBClOAiFuzs51RY5NIgU
-         d7EA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRJxjMYvIQTaQbArPLJ1qvRZczZkDkAhohOvwsR/IHwwsuYYM/9ZyYJDw6cVjz7qeT7i0baCPnyvLtviH9D69ew6p/62RqJteh4jWtw6rL2dEt1Z2lkKsUS0uOn/KMqxdgCffuT9+dlqInQXEOW7FsddabGn0Vq0i9iRgMPm3wnhNckw==
-X-Gm-Message-State: AOJu0Ywytk/wv/7TfhbJ+3hvJXp1lIFrR0+R/DponBmFPuU6iSM3jXPq
-	Mo+cT2JwCOUG2ENMRdQFHDB+FmkWdixnQjcsAcMdk1NRimqFDWVe
-X-Google-Smtp-Source: AGHT+IEzUUQR0RzGjaGn8edp82oyyXNbVghZFfR9mpmISEbYy2bhxagrMqm1ut1LrBI2Vqi+7pRteA==
-X-Received: by 2002:a05:6512:2384:b0:52c:8a39:83d7 with SMTP id 2adb3069b0e04-52ca6e9073amr7286523e87.52.1718608084312;
-        Mon, 17 Jun 2024 00:08:04 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca28723d1sm1158340e87.131.2024.06.17.00.08.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 00:08:03 -0700 (PDT)
-Message-ID: <6e5d6734-eae0-49fd-a1ed-beda00e37209@gmail.com>
-Date: Mon, 17 Jun 2024 10:08:02 +0300
+        d=1e100.net; s=20230601; t=1718608105; x=1719212905;
+        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VFnZWNFJWyA94C2L1f2HcpW9Z4CdvGnFQUz/35+GLvM=;
+        b=KJpagmY+jgMkeOv7Dl2Pr0+U3Y92XfE/cCxv2RmyoNr0fED5jL/JSzjOGLQiGIuL2S
+         l6DuSorrNgpBlAgKTkU4o0IIbaWY+KTYW032VLOICBVVgfDaVUlL75DcIr/CIb6w5aev
+         bWR2k7uln1fVlPsOEDxCniQSc8ByTEdmAaYPq9nyhLTTzvko92YtWbsJHdRgY5ZCOQP2
+         4nizsxSnL0d2qt0gSP66gTjPftQd70DjXVIe3FfoLN8LN4tFSr7ICNNiTIwiV//2ts9W
+         EklZD5Vb9oGSwjVsUvOxbA7xNqTPwk6+UoDVbCbOCknrwmzn17W2W+Rpj0UV/NCDv88b
+         orZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVx2rD/uh2rqReqq/U4pKDp6vI/LHZSyqAM6yIljeDlP0WY5auK+bsRUCRgstVA/si25B4532S9AsR84mHWXyeB++ZfWihpPJJRcte1
+X-Gm-Message-State: AOJu0Ywdqt7krDAPEhtw/MItEH0kzZ5SQPv+KYWExqNBmThRTFJl1Z3J
+	WKnwznl1ycJVq7eWqz8PrwrK5/oLuDgGqCJOS2E8SUI9ojELTNaSsYTS1BBVXfJ4pPcZKzSZym+
+	hies0Z8G92Y852Vth8FcYtToc8Xt8ykqJ84j9+x/Mido5AxeV7ikpmVpESw+BgpT0Zh/TMj82v2
+	ggD9VtBIG+Qt24exeVgX2J0OBclxC/11txY00U
+X-Received: by 2002:a0c:e78d:0:b0:6b0:6400:3b6f with SMTP id 6a1803df08f44-6b2afc78e7emr89614646d6.8.1718608105380;
+        Mon, 17 Jun 2024 00:08:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHngmpoF0G1Kpc6044Rkne2yjimTQKfws9kfGdgowCpRPFvfoKKY3G5g8yuJotyXboNdv+HW7uPscrnjkgdiZM=
+X-Received: by 2002:a0c:e78d:0:b0:6b0:6400:3b6f with SMTP id
+ 6a1803df08f44-6b2afc78e7emr89614506d6.8.1718608105010; Mon, 17 Jun 2024
+ 00:08:25 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 17 Jun 2024 07:08:24 +0000
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240603185647.2310748-1-amorenoz@redhat.com> <20240603185647.2310748-7-amorenoz@redhat.com>
+ <f7t4j9vo44g.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] iio: light: ROHM BH1745 colour sensor
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
- Mudit Sharma <muditsharma.info@gmail.com>, lars@metafoo.de,
- krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org,
- ivan.orlov0322@gmail.com, javier.carrasco.cruz@gmail.com,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org,
- "Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>,
- "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>
-References: <20240606162948.83903-1-muditsharma.info@gmail.com>
- <20240606162948.83903-2-muditsharma.info@gmail.com>
- <20240608172227.17996c75@jic23-huawei>
- <CANhJrGM9czj0RL3OLCgRHEKc2QOjG9P0AZTrZxvYUk65TCpHRg@mail.gmail.com>
- <20240611181407.00003f61@Huawei.com>
- <c9c0d585-617d-4181-afa2-c5743848f5c9@gmail.com>
- <20240615192348.182eb1b8@jic23-huawei>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240615192348.182eb1b8@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <f7t4j9vo44g.fsf@redhat.com>
+Date: Mon, 17 Jun 2024 07:08:24 +0000
+Message-ID: <CAG=2xmPW=1HzojWhHaE3z_x5u_Dv1zPVmMn4cSmV6DF4fzq5KA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 6/9] net: openvswitch: store sampling
+ probability in cb.
+To: Aaron Conole <aconole@redhat.com>
+Cc: netdev@vger.kernel.org, echaudro@redhat.com, horms@kernel.org, 
+	i.maximets@ovn.org, dev@openvswitch.org, Pravin B Shelar <pshelar@ovn.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/15/24 21:23, Jonathan Cameron wrote:
-> On Wed, 12 Jun 2024 09:07:01 +0300
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->> On 6/11/24 20:14, Jonathan Cameron wrote:
->>> On Mon, 10 Jun 2024 08:58:44 +0300
->>> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
->>>    
->>>> la 8. kesäk. 2024 klo 19.22 Jonathan Cameron (jic23@kernel.org) kirjoitti:
->>>>>
->>>>> On Thu,  6 Jun 2024 17:29:42 +0100
->>>>> Mudit Sharma <muditsharma.info@gmail.com> wrote:
->>>>>      
->>>>>> Add support for BH1745, which is an I2C colour sensor with red, green,
->>>>>> blue and clear channels. It has a programmable active low interrupt
->>>>>> pin. Interrupt occurs when the signal from the selected interrupt
->>>>>> source channel crosses set interrupt threshold high or low level.
->>>>>>
->>>>>> This driver includes device attributes to configure the following:
->>>>>> - Interrupt pin latch: The interrupt pin can be configured to
->>>>>>     be latched (until interrupt register (0x60) is read or initialized)
->>>>>>     or update after each measurement.
->>>>>> - Interrupt source: The colour channel that will cause the interrupt
->>>>>>     when channel will cross the set threshold high or low level.
->>>>>>
->>>>>> This driver also includes device attributes to present valid
->>>>>> configuration options/values for:
->>>>>> - Integration time
->>>>>> - Interrupt colour source
->>>>>> - Hardware gain
->>>>>>      
->>>>   
->>>>>> +
->>>>>> +#define BH1745_CHANNEL(_colour, _si, _addr)                                   \
->>>>>> +     {                                                                     \
->>>>>> +             .type = IIO_INTENSITY, .modified = 1,                         \
->>>>>> +             .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),                 \
->>>>>> +             .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_HARDWAREGAIN) | \
->>>>>
->>>>> Provide _SCALE instead of HARDWAREGAIN
->>>>> As it's an intensity channel (and units are tricky for color sensors given
->>>>> frequency dependence etc) all you need to do is ensure that if you halve
->>>>> the _scale and measure the same light source, the computed
->>>>> _RAW * _SCALE value remains constant.
->>>>
->>>> ...Which is likely to cause also the integration time setting to
->>>> impact the SCALE.
->>>>
->>>> You may or may not want to see the GTS-helpers
->>>> (drivers/iio/industrialio-gts-helper.c) - which have their own tricky
->>>> corners. I think Jonathan once suggested to me to keep the
->>>> HARDWAREGAIN as a read-only attribute to ease seeing what is going on.
->>>> For the last couple of days I've been reworking the BU27034 driver to
->>>> work with the new sensor variant - and I can definitely see the value
->>>> of the read-only HARDWAREGAIN when we have per channel gain settings +
->>>> integration time setting which all contribute to the scale...
->>>
->>> I'm wondering if that was good advice, but it's definitely better
->>> than letting userspace control the gain and integration time separately
->>
->> I woke up last night at 03.14 AM thinking of this :rolleyes:
-> 
-> Ah.  I'm one for failing to get to sleep due to late night musing.
-> No idea if I muse because I'm not sleeping, or not sleep because
-> of musing!
+On Fri, Jun 14, 2024 at 12:55:59PM GMT, Aaron Conole wrote:
+> Adrian Moreno <amorenoz@redhat.com> writes:
+>
+> > The behavior of actions might not be the exact same if they are being
+> > executed inside a nested sample action. Store the probability of the
+> > parent sample action in the skb's cb area.
+>
+> What does that mean?
+>
 
-Either way, not getting sleep at night is rarely amusing. :/ Sometimes 
-it is actually one of the early signs of a burn out.
+Emit action, for instance, needs the probability so that psample
+consumers know what was the sampling rate applied. Also, the way we
+should inform about packet drops (via kfree_skb_reason) changes (see
+patch 7/9).
 
->>> as there is no sensible way to know how to control that beyond -
->>
->> I agree and disagree :)
->> I agree that it is simpler to just change the scale when readings get
->> saturated - or when more accuracy is needed. Hence, implementing the
->> scale change as is done now makes very much sense.
->>
->> However, I can imagine that sometimes the measurement time plays a role
->> - and people would like to have more fine grained control over things.
->> In that case, if driver only allows changing things via the scale, then
->> the driver is probably doing autonomous choices regarding the
->> integration time - which may not be optimal for all cases (*citation
->> needed).
-> 
-> Agreed even without the complexity you mention later- there will be cases
-> where people want ugly (noisy) data quickly so will crank the gain up
-> to reduce the integration time.
-> How often they apply to light sensors is an interesting question.
-> 
->>
->> As you may remember, I implemented the ROHM RGB and ALS sensors (the
->> BU270xx series) so that the integration time can be set as well as the
->> gain. These sensors (at least the BU27034, don't remember all the dirty
->> details of the RGB sensors) had per-channel gain and a global
->> integration time settings. Hence, the scale can be set separately for
->> each channel. I invented a restriction that setting the per-channel
->> scale tried to maintain the integration time and change the gain - but
->> if it was not possible, the scale change changes also the integration
->> time in order to yield the desired scale.
->>
->> Problem was that the integration time was a global setting, and changing
->> it for one channel results scale change also on the other channel(s).
->>
->> To mitigate such side-effects I implemented logic that the scale change
->> for other channels (caused by the integration time change) is
->> compensated by changing the gain for these unrelated channels. Eg, if
->> scale change for channel #1 required doubling the integration time -
->> which effectively doubled the "gain contributed by integration time"
->> also for the channel #2 and #3 - then the HARDWAREGAIN for the unrelated
->> channels #2 and #3 is halved in order to keep their scale unchanged. Great.
->>
->> Except that this is not always possible. The HWGAIN for these unrelated
->> channels may have been already set to the other extreme, and further
->> reducing/increasing is not possible. Or, there may be unsupported
->> multipliers (gaps) in the gain range, so that setting the hardwaregain
->> to required value is not possible.
->>
->> Here I just decided to return an error to caller and disallow such scale
->> change.
->>
->> This is very much annoying solution but I ran out of good ideas. Adding
->> more logic to the driver to work around this felt like asking for a
->> nose-bleed. I was sure I ended up adding a bug or two, and resulting
->> code that was so hairy I could never look at it again :) We can call
->> that as an unmaintainable mess.
->>
-> 
-> Yeah. I vaguely recall this one was a bit nasty and result wasn't
-> entirely satisfying.
-> 
->> Still, what makes this even more annoying is that it might be possible
->> to support the requested scale by selecting yet another integration
->> time. Eg, imagine a situation where we have 2 channels. Both channels
->> support gains
->>
->> 1x, 2x, 8x, 16x, 32x. 4x is not supported.
->>
->> Let's further say we have integration times 50mS 100mS, 200mS, 400mS -
->> causing "effective gains" 1x, 2x, 4x and, 8x
->>
->> Now, say channel #1 is using gain 2x, channel #2 is using 8x.
->> Integration time is set to 400mS.
->>
->> Assume the user would like to double the scale for channel #2. This
->> means the "total gain" should be halved. The HWGAIN can't be halved
->> because 8x => 4x is not supported, so driver decides to drop the
->> integration time from 400mS to 200mS instead. That'd do the trick.
->>
->> Then the driver goes to check if the channel #1 can maintain the scale
->> with this integration time. Gain caused by integration time is now
->> halved so HWGAIN for channel #1 should be doubled to mitigate the
->> effect. Well, the new gain for channel #1 should now go from 2x => 4x -
->> which is not supported, and the driver returns error and rejects the change.
->>
->> Still, the hardware could be set-up to use integration time 50mS
->> (dropping the gain for channels from 8x => 1x eg. 8 times smaller), and
->> channel #2 HWGAIN go from 8x => 2x (4 times smaller) thus doubling the
->> scale. The channel #1 wants to maintain scale, so HWGAIN for channel #1
->> should go 8 times greater, from 2x => 16x which is possible.
->>
->> To make this even more annoying - the available_scales lists the 'halved
->> scale' for the channel #1 as supported because there is a way to achieve
->> it. So, the user can't really easily figure out what went wrong. Having
->> the read-only HARDWAREGAIN and knowing the gains sensor's channels
->> support would give a hint - but this is far from obvious. listing the
->> supported hardwaregains might make things a bit better - but using the
->> standard "available" entry in sysfs might make user to assume setting
->> the hardwaregain is possible.
-> 
-> That would be an odd bit of interface indeed.
-> 
->>
->> We may invent a new entry to list the supported hardwaregains - and I
->> believe adding the logic to find supported gain-timing combinations is
->> then easier (and less error-prone) in user-land applications than it is
->> in driver - but I am wondering if it actually would be better just allow
->> setting both the hardwaregain and integration time individually for
->> those applications which may care... Well, I am probably just missing
->> some culprit supporting setting the hardwaregain causes.
-> 
-> We could do something similar to what we did recently for a power mode
-> switch on an IMU.  The interface is also less than ideal though but
-> was exploring a similar problem:
-> [PATCH v4 2/2] iio: imu: inv_icm42600: add support of accel low-power mode
-> https://lore.kernel.org/all/20240605195949.766677-3-inv.git-commit@tdk.com/
+> > Use the probability in emit_sample to pass it down to psample.
+> >
+> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> > ---
+> >  include/uapi/linux/openvswitch.h |  3 ++-
+> >  net/openvswitch/actions.c        | 25 ++++++++++++++++++++++---
+> >  net/openvswitch/datapath.h       |  3 +++
+> >  net/openvswitch/vport.c          |  1 +
+> >  4 files changed, 28 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
+> > index a0e9dde0584a..9d675725fa2b 100644
+> > --- a/include/uapi/linux/openvswitch.h
+> > +++ b/include/uapi/linux/openvswitch.h
+> > @@ -649,7 +649,8 @@ enum ovs_flow_attr {
+> >   * Actions are passed as nested attributes.
+> >   *
+> >   * Executes the specified actions with the given probability on a per-packet
+> > - * basis.
+> > + * basis. Nested actions will be able to access the probability value of the
+> > + * parent @OVS_ACTION_ATTR_SAMPLE.
+> >   */
+> >  enum ovs_sample_attr {
+> >  	OVS_SAMPLE_ATTR_UNSPEC,
+> > diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
+> > index 3b4dba0ded59..33f6d93ba5e4 100644
+> > --- a/net/openvswitch/actions.c
+> > +++ b/net/openvswitch/actions.c
+> > @@ -1048,12 +1048,15 @@ static int sample(struct datapath *dp, struct sk_buff *skb,
+> >  	struct nlattr *sample_arg;
+> >  	int rem = nla_len(attr);
+> >  	const struct sample_arg *arg;
+> > +	u32 init_probability;
+> >  	bool clone_flow_key;
+> > +	int err;
+> >
+> >  	/* The first action is always 'OVS_SAMPLE_ATTR_ARG'. */
+> >  	sample_arg = nla_data(attr);
+> >  	arg = nla_data(sample_arg);
+> >  	actions = nla_next(sample_arg, &rem);
+> > +	init_probability = OVS_CB(skb)->probability;
+> >
+> >  	if ((arg->probability != U32_MAX) &&
+> >  	    (!arg->probability || get_random_u32() > arg->probability)) {
+> > @@ -1062,9 +1065,21 @@ static int sample(struct datapath *dp, struct sk_buff *skb,
+> >  		return 0;
+> >  	}
+> >
+> > +	if (init_probability) {
+> > +		OVS_CB(skb)->probability = ((u64)OVS_CB(skb)->probability *
+> > +					    arg->probability / U32_MAX);
+> > +	} else {
+> > +		OVS_CB(skb)->probability = arg->probability;
+> > +	}
+> > +
+>
+> I'm confused by this.  Eventually, integer arithmetic will practically
+> guarantee that nested sample() calls will go to 0.  So eventually, the
+> test above will be impossible to meet mathematically.
+>
+> OTOH, you could argue that a 1% of 50% is low anyway, but it still would
+> have a positive probability count, and still be possible for
+> get_random_u32() call to match.
+>
 
-I took a quick look at this. So, changing the "power-mode" enum enables 
-doing the not-so-standard changes.
+Using OVS's probability semantics, we can express probabilities as low
+as (100/U32_MAX)% which is pretty low indeed. However, just because the
+probability of executing the action is low I don't think we should not
+report it.
 
-> That was much simpler than this. The device has two power modes
-> (trading off power vs noise).  The lowest sampling frequencies only
-> worked in low power mode and the highest only in low noise mode.
-> A few in the middle were available in both modes.  We defaulted to
-> choosing low power if available.  The aim was to design an interface
-> where everything worked as normal if you didn't grab the 'expert'
-> controls. So it defaults to a preference for low power (here
-> equivalent would be defaults to lowest hardware gain) but we provided
-> an ability to override - if possible. So you could specify what you
-> wanted the gain to be and if that was possible whilst retaining the
-> sampling frequency (here that would be the scale) then the change
-> would be made. If not it wouldn't an reading the mode back (here
-> that would be reading hardware gain) would return the actual setting
-> achieved.  In that case the power mode setting isn't sticky. To enter
-> the low noise mode you have to be at a sampling frequency where it
-> is supported.  That sort of restriction might not work here.
-> 
-> In that case the control grabbed to override the power mode is not
-> standard ABI so we an be fairly sure no normal software will tweak
-> it but in the rare occasion where a user needs it the tweak is
-> available.
-> 
-> Here we might need a similar 'out of ABI' trick to make it clear that
-> scale is the main control to use.
+Rethinking the integer arithmetics, it's true that we should avoid
+hitting zero on the division, eg: nesting 6x 1% sampling rates will make
+the result be zero which will make probability restoration fail on the
+way back. Threrefore, the new probability should be at least 1.
 
-Thank you for the ideas. Adding a entry to enable 'not standard 
-settings' definitely sounds like a way to explore. I think I'll return 
-to this later :)
 
->> I believe there are many use-cases where it would work if we just
->> allowed the channel #1 scale to change as a side-effect of changing
->> channel #1 scale. Still, I am very reluctant to do this as there could
->> be different type of data coming from these channels, and different
->> consumers for this data. Allowing another application to unintentionally
->> change the data for other app would in my opinion be very nasty.
-> 
-> You've lost me here.
+> I'm not sure about this particular change.  Why do we need it?
+>
 
-Sorry. I did not really manage to explain it too well.
+Why do we need to propagate the probability down to nested "sample"
+actions? or why do we need to store the probability in the cb area in
+the first place?
 
-Basically, I just further pondered handling the the case where:
-- a requested change of channel #A scale could not be done purely by 
-changing the gain but would require an integration time change.
-AND
-- the channel #B gain change caused by integration time change could not 
-be compensated by changing #B hardwaregain.
+The former: Just for correctness as only storing the last one would be
+incorrect. Although I don't know of any use for nested "sample" actions.
+The latter: To pass it down to psample so that sample receivers know how
+the sampling rate applied (and, e.g: do throughput estimations like OVS
+does with IPFIX).
 
-I was just saying that allowing this channel #A scale change even though 
-it would also impact the scale of channel #B would probably be Ok for 
-many users. I think that a few of the users could be prepared for other 
-channels to change as well, and go read back all channels' scales after 
-changing one.
 
-Then I was further speculating that there might be cases where channel 
-#A data and channel #B data were consumed by different applications. It 
-was all just speculation. For example, the original BU27034 had two 
-channels for visible light and one for IR. So I built an imaginary 
-device which ran two different user applications, one interested on 
-visible light for darkening my sunglasses and the other interested on IR 
-channel and then toggling the cooling fan to keep my vacation drinks at 
-optimum temperature. :)
+> >  	clone_flow_key = !arg->exec;
+> > -	return clone_execute(dp, skb, key, 0, actions, rem, last,
+> > -			     clone_flow_key);
+> > +	err = clone_execute(dp, skb, key, 0, actions, rem, last,
+> > +			    clone_flow_key);
+> > +
+> > +	if (!last)
+>
+> Is this right?  Don't we only want to set the probability on the last
+> action?  Should the test be 'if (last)'?
+>
 
-Here, if the sunglasses application changing the scale for visible light 
-caused also the scale of the IR channel to change, my fan-application 
-would unexpectedly start pick up differently scaled values and the 
-temperature of my drinks would be all wrong.
+This is restoring the parent's probability after the actions in the
+current sample action have been executed.
 
->> The problem is not exactly urgent though and I am not working on an
->> application suffering from it. But it managed to interrupt my glymphatic
->> system while it was cleaning-up my brains last night. I will use it as
->> an excuse if you find any errors from this babbling :)
-> 
-> For this complexity I definitely want a known user who cares.
-> It's complex and we'd need to construct the userspace to use it.
+If it was the last action there is no need to restore the probability
+back to the parent's (or zero if it's there's only one level) since no
+further action will require it. And more importantly, if it's the last
+action, the packet gets free'ed inside that "branch" so we must not
+access its memory.
 
-Agreed. It's nice someone drops me back on earth when I start drifting 
-too far :) Thanks!
 
-> Gut feeling is normally people are actually cranking scaling of light
-> channels up and down together as hopefully they are approximately balanced
-> for 'white' giving similar scales on all sensors (by filters or fixed gains)
-
-I appreciate your insight on how people usually use these devices :) 
-It's very valuable to me.
-
-> and people would only need to care if they were trying to measure a weak
-> blue signal in a red world. If we have a case that doesn't work well
-> for that sort of global scaling (I can sort of see that as a possible
-> problem due to the transition states not being possible) then we
-> should make sure that one works!
-
-Yes. I think some users will eventually hit to a scale transition which 
-will be NACKed by the driver. Also, I don't think this problem will be 
-specific to the BU27034 sensor, but in some form this will be possible 
-for many gain-time-scale type devices. I just don't have a good generic 
-solution in my mind right now.
-
-Oh, besides, it seems raining stopped. Time to turn off my computer and 
-go out to the yard :)
-
-Yours,
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+> > +		OVS_CB(skb)->probability = init_probability;
+> > +
+> > +	return err;
+> >  }
+> >
+> >  /* When 'last' is true, clone() should always consume the 'skb'.
+> > @@ -1313,6 +1328,7 @@ static int execute_emit_sample(struct datapath *dp, struct sk_buff *skb,
+> >  	struct psample_metadata md = {};
+> >  	struct vport *input_vport;
+> >  	const struct nlattr *a;
+> > +	u32 rate;
+> >  	int rem;
+> >
+> >  	for (a = nla_data(attr), rem = nla_len(attr); rem > 0;
+> > @@ -1337,8 +1353,11 @@ static int execute_emit_sample(struct datapath *dp, struct sk_buff *skb,
+> >
+> >  	md.in_ifindex = input_vport->dev->ifindex;
+> >  	md.trunc_size = skb->len - OVS_CB(skb)->cutlen;
+> > +	md.rate_as_probability = 1;
+> > +
+> > +	rate = OVS_CB(skb)->probability ? OVS_CB(skb)->probability : U32_MAX;
+> >
+> > -	psample_sample_packet(&psample_group, skb, 0, &md);
+> > +	psample_sample_packet(&psample_group, skb, rate, &md);
+> >  #endif
+> >
+> >  	return 0;
+> > diff --git a/net/openvswitch/datapath.h b/net/openvswitch/datapath.h
+> > index 0cd29971a907..9ca6231ea647 100644
+> > --- a/net/openvswitch/datapath.h
+> > +++ b/net/openvswitch/datapath.h
+> > @@ -115,12 +115,15 @@ struct datapath {
+> >   * fragmented.
+> >   * @acts_origlen: The netlink size of the flow actions applied to this skb.
+> >   * @cutlen: The number of bytes from the packet end to be removed.
+> > + * @probability: The sampling probability that was applied to this skb; 0 means
+> > + * no sampling has occurred; U32_MAX means 100% probability.
+> >   */
+> >  struct ovs_skb_cb {
+> >  	struct vport		*input_vport;
+> >  	u16			mru;
+> >  	u16			acts_origlen;
+> >  	u32			cutlen;
+> > +	u32			probability;
+> >  };
+> >  #define OVS_CB(skb) ((struct ovs_skb_cb *)(skb)->cb)
+> >
+> > diff --git a/net/openvswitch/vport.c b/net/openvswitch/vport.c
+> > index 972ae01a70f7..8732f6e51ae5 100644
+> > --- a/net/openvswitch/vport.c
+> > +++ b/net/openvswitch/vport.c
+> > @@ -500,6 +500,7 @@ int ovs_vport_receive(struct vport *vport, struct sk_buff *skb,
+> >  	OVS_CB(skb)->input_vport = vport;
+> >  	OVS_CB(skb)->mru = 0;
+> >  	OVS_CB(skb)->cutlen = 0;
+> > +	OVS_CB(skb)->probability = 0;
+> >  	if (unlikely(dev_net(skb->dev) != ovs_dp_get_net(vport->dp))) {
+> >  		u32 mark;
+>
 
 
