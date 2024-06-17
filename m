@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-218013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B7190B7FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:26:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D4A90B7FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F02282792
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6442B1F2178B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DD316EB5A;
-	Mon, 17 Jun 2024 17:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B16016DC28;
+	Mon, 17 Jun 2024 17:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mW58t3qi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8JaZiW4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BF416A93D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E5616EB72;
+	Mon, 17 Jun 2024 17:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718645195; cv=none; b=pmtZ+a2kXFzP0g+HrX3rdU9DiksChGKo8NqsY5dTAotSz9sMWJ7MF2Lss3Nd69fO1OLhHToJa88G5AQoJtHH9i9t/rbR0R/7OaGMPRDrJnqLkq56wPhm+RGgEnKZrJLognuLAHkOReDzdk4bkixddaFxQnTXcNqInML4w03FUmU=
+	t=1718645198; cv=none; b=VAaN0P7WeVOQu/8lSnbO6hSwfsrL+YdDjwWimgVakK5vM/idUn2CbgsP9Kb3+E5o54hKwDYo645IYFHVt64twgWAXg2zhyQqKIZPdQTsoUgIS6vBUVyAXWzzEi8arWOYvQ09x8FzF+jdG9ipN/FsNDzJ8KfXZDE61XM2NjDAE1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718645195; c=relaxed/simple;
-	bh=RBQUQZRRgitr539noZdkXKL/kl543yn4dVs2rg+GSnI=;
+	s=arc-20240116; t=1718645198; c=relaxed/simple;
+	bh=mGYQvXUGMdu10xeflRHa+x5lMbk5O6JrX6/PT+IMeqg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lgAbYodrGzfE0GX6Za38DBtLLmhC7cq3KKL0yTm81axMX2W78iztmj0dV8zSz3oiGPQErYG+etUCNmMTPrpL4LTvzoML2PgCZ7QHVz8Me2FyxvG4ZCVkCvXW8GePrJilKIvvFet+3hrXhYdp1O4akNNgyVlpyCsMny2NISWErCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mW58t3qi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB861C4AF1C;
-	Mon, 17 Jun 2024 17:26:32 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ee33vwP+ZRm0y4Qj5MYI7tilnTLM5bAxDSHlNK9rwIX80h1eP2TjGyPPXVM/BENDkCxY//LHk4ZwRHN6xS8U1s7tVUxbynJnIVNUphwNOIUgSV7U8UxR8Tysh9ajsYodpatZrYcr/7QXQJk/AgHv1dwBYwiWuhDtgQO6Eo4CJQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q8JaZiW4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FA4EC2BD10;
+	Mon, 17 Jun 2024 17:26:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718645194;
-	bh=RBQUQZRRgitr539noZdkXKL/kl543yn4dVs2rg+GSnI=;
+	s=k20201202; t=1718645198;
+	bh=mGYQvXUGMdu10xeflRHa+x5lMbk5O6JrX6/PT+IMeqg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mW58t3qi4nQG8MAdHJ4d0yYbcoPcHNHvSMWtVPgFcl0mvMoLjGvIHcG2gSTwcKsg5
-	 E3KAiK45EvkHosqlgaJ2zkIEPrbhZk2rRQZ/JHIpptOtinJat71ggByGrf60/6s/GN
-	 jgb8AvyK6/qL94k0WQA9Kj85WGo4yfyZ1p2eL+nzTgjhySqhoobzqMpJsrKPLYvQJB
-	 TS5TOlCctYHkSnkrkfn8k52oDGWwMLCW19PH+RjTLF0/dMwMdUbTOsL8rsq/IPV0YL
-	 /ygVUbf37fG3T3LlCsq3YdDu0mDLLa9U1HFoxtXVltbLOO/jFKAsnu5HH/vwOkN2X9
-	 O2oVYJSfNDPDg==
+	b=q8JaZiW4OG+GOQh8WXMzw4XQW21R7AnjZb6U9YPJntmp/CfAIMk/gvsWbRXOw4CHB
+	 WA2uH0HnE9azUtDBOdCVvtmYU798gEvZgWQt2h4mPtjeHST3tABPuUYz4SMdwYxptD
+	 WRHGp5ubpq9JGX9bIAqKqMSvviADachIX2Q3QEw1FOeHI5GP00kRFoDnYth5lYknUn
+	 KHOJ3xzvMfeusbW17/563m0hq2nfL7d2XarBkanuiqmSIhxpngL/oh777iehbUPuHK
+	 GnH34eXBraI1ZBPCkIJ5uvUYDrrgtsxr/leH+KeRf7XBn2o66Tk6ddPH3iGPvX4drt
+	 lITf4UyDCG6Yw==
 From: Mark Brown <broonie@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org, 
- lgirdwood@gmail.com, linux-kernel@vger.kernel.org, 
- krzysztof.kozlowski@linaro.org, neil.armstrong@linaro.org
-In-Reply-To: <20240510175835.286775-1-srinivas.kandagatla@linaro.org>
-References: <20240510175835.286775-1-srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 0/2] ASoC: codecs: lpass: add support for v2.6 rx macro
-Message-Id: <171864519230.209755.2369055216085451531.b4-ty@kernel.org>
-Date: Mon, 17 Jun 2024 18:26:32 +0100
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240616074936.151267-1-animeshagarwal28@gmail.com>
+References: <20240616074936.151267-1-animeshagarwal28@gmail.com>
+Subject: Re: [PATCH v2 2/2] ASoC: dt-bindings: realtek,rt5631: Convert to
+ dtschema
+Message-Id: <171864519512.209755.10728526082941128699.b4-ty@kernel.org>
+Date: Mon, 17 Jun 2024 18:26:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,16 +63,10 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Fri, 10 May 2024 18:58:33 +0100, srinivas.kandagatla@linaro.org wrote:
-> This patchset adds support to reading codec version and also adds
-> support for v2.6 codec version in rx macro.
+On Sun, 16 Jun 2024 13:19:30 +0530, Animesh Agarwal wrote:
+> Convert the ALC5631/RT5631 audio CODEC bindings to DT Schema.
 > 
-> LPASS 2.6 has changes in some of the rx block which are required to get
-> headset functional correctly.
 > 
-> Tested this on X13s and x1e80100 crd.
-> 
-> [...]
 
 Applied to
 
@@ -77,10 +74,8 @@ Applied to
 
 Thanks!
 
-[1/2] ASoC: codecs: lpass-macro: add helpers to get codec version
-      commit: 378918d5918116b95300dd7f03913a1d0841f223
-[2/2] ASoC: codec: lpass-rx-macro: add suppor for 2.6 codec version
-      (no commit info)
+[2/2] ASoC: dt-bindings: realtek,rt5631: Convert to dtschema
+      commit: 20346f5c7bc9f83c74b5efed163ae4e2ea7616a9
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
