@@ -1,252 +1,120 @@
-Return-Path: <linux-kernel+bounces-216760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA5790A62A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:55:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E6F90A631
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DE81F23DD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:55:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1FD61C20AFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6190E186E56;
-	Mon, 17 Jun 2024 06:55:27 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B18187321;
+	Mon, 17 Jun 2024 06:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GCj5plbZ"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2E11862A1;
-	Mon, 17 Jun 2024 06:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8382819BC6;
+	Mon, 17 Jun 2024 06:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718607326; cv=none; b=Ocxr4a9rqsxH+98Xyhait8OR4oQcpJXL2acHl/pI9IoEBzW1E3NBhTqztrcWnNly08j2lot8GIXjhBldo8WFXJu59YyHzq7js+c+vG9gwoyMDKFQhufyZNVNCv5YsIlRN2m4j6/LcYe5Ti4NuY0FeWsCUGVgK6IZWpOeYIXifw8=
+	t=1718607474; cv=none; b=InUUqv6VPwpyd+r9KVmTI8ZCfw7MBbHv4DJAqtgDiOQfrDNq+1MbdrpgDzOezyktoiRyXxVM+wYR1InQgpbkXkOym3o4D1OboNgLDTsBZXgqLYHv9uIrRkBU583wjg8uH2ow2C/9ehXTdULsfxadzIETNNZ/weXt6RZ9GxiWK3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718607326; c=relaxed/simple;
-	bh=EbPM1ua44OR0qDCHbt7If6j3enB1A/91OBJIk+WTcZ0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RiGEsZn6/gq0DheIX+T/RsVGkvk8oDMcE3GiLjluThYBURnoyPy0BIB/XkspV/pS3VvLKr4GNlL1zSB16tD2rZaTMpmrSl57EHYYKKyWdGz57a6F+LjbWkG2toRpOIJSwHoLTYOkl37rcdES92N9BIWZ6BBKD7Vi3zdZK6Fyeq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 45H6t0rlD2868264, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 45H6t0rlD2868264
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Jun 2024 14:55:00 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 17 Jun 2024 14:55:00 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 17 Jun 2024 14:55:00 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Mon, 17 Jun 2024 14:55:00 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com"
-	<edumazet@google.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "andrew@lunn.ch"
-	<andrew@lunn.ch>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "horms@kernel.org"
-	<horms@kernel.org>,
-        "rkannoth@marvell.com" <rkannoth@marvell.com>,
-        "Ping-Ke
- Shih" <pkshih@realtek.com>,
-        Larry Chiu <larry.chiu@realtek.com>
-Subject: RE: [PATCH net-next v20 10/13] rtase: Implement ethtool function
-Thread-Topic: [PATCH net-next v20 10/13] rtase: Implement ethtool function
-Thread-Index: AQHauLe4t8TnjFOscEGW3MirT25lzrHEW4aAgAC1QoA=
-Date: Mon, 17 Jun 2024 06:54:59 +0000
-Message-ID: <82ea81963af9482aa45d0463a21956b5@realtek.com>
-References: <20240607084321.7254-1-justinlai0215@realtek.com>
-	<20240607084321.7254-11-justinlai0215@realtek.com>
- <20240612173505.095c4117@kernel.org>
-In-Reply-To: <20240612173505.095c4117@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1718607474; c=relaxed/simple;
+	bh=cswSiNhzuIX+L0XOTRE4WAI/IsUzciePZm+xz0kFYY4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=YeGZGS+vkjPko2CFrut0QqIqRETrO1I2XT6zpCvHz2CqKBx4hfeiJIU2onzN0ppipe5GJ8GE1J5G8j+ty/ANQl+mDh2f4wRLLv4oO0opA5/5fd4KoUwiqxKRyrHfDxcedPBYsfTwMc8IVoPvv01qZXWo9SauzRWSGPkM6d+UWIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GCj5plbZ; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718607423; x=1719212223; i=markus.elfring@web.de;
+	bh=xYrgvg9WCy9r9u5H7qn2mdlOD8NoWnHTZFUH9pAD1xQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=GCj5plbZrqt60p1OqOM56a4JCCTVsMe2MCHDuSnFcWd8H3SKEjRtvgUhpHPlFxr0
+	 AfNvgrBsAVU5VugDCyQjEqz/GpSYKBrvvNYHzyjM8/XCVMK60t6ckdPrCVZEx4SiP
+	 hID6uSohRtcOm6Iq4vpjEAWDBU7x4Jdr+X0AUchPul/0qrQy3o3ow1lhfeewTJHw1
+	 rdHz6GzEZexLUUEiQVYIqbaJqH+27pgbYSUCtFdX6jlPtdc2h1sUL1znF+GVfwCa4
+	 I8wvZiQLbnL/b3xoFHxRHDuPApPDbYO3891wggaB+v0sy78zV1jbgSSlrTfqgxXHq
+	 oVH5Nnt339gSg7nUoQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MEUS0-1sBxPZ0DKk-000iy7; Mon, 17
+ Jun 2024 08:57:03 +0200
+Message-ID: <6a41fd88-5496-462a-86d2-446c2990fcf7@web.de>
+Date: Mon, 17 Jun 2024 08:56:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+User-Agent: Mozilla Thunderbird
+To: Paul Cercueil <paul@crapouillou.net>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, linux-iio@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
+References: <20240605110845.86740-4-paul@crapouillou.net>
+Subject: Re: [PATCH v10 3/6] iio: core: Add new DMABUF interface
+ infrastructure
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240605110845.86740-4-paul@crapouillou.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mUazHyeVCXYVnz6oK+LWMeQZXEK3hfSQQEB660iCeLwFYnqkjQ+
+ Ud585WwQdmOnvKsazfb+JBL625SKwogz20mU04M7cTelcw3J6jvrcay8aCvzIgt5Zo/u0tG
+ HA8BNYiVjjRu1Y+4OsPoPx6KQH/SZ/sPPYoYD8KqvEsuerJYNwyB4WIq2T3jsfm4PgHe3GT
+ 6DwW9Rzy0tHqw4LOWDrPA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:EpUgWLDuQOE=;TpqYd2BsYAhSrklupWm0bdGxi0w
+ k0gP4myeMywXz7z2416cAKfPZc+sozlXCm/dg03s156BdOSpNvAWLhscEVizpeQGJ02tGKcs+
+ gPpHtLG9/4DSygIbsZCwwGVPv2tYnhthrp5KD5bNINXFLg8ymCfDhgNDu1QiKmG0LiXN/kYTC
+ tyZia5fF2hlrZlk+Mp8kxXJgv9UgtBL/FmNNSPm6N7jOTR4Zcdgt0cJXiJEJ5aNLFfHYF1TED
+ sqA3TpJuSMnBqp6+Y27A4GFBqiMckBrfdUi+aB1w9Jo9aVv0/5sHHtuWD7Mufed2c3xZm8bFi
+ 6P/eXkYxEGfvYjuTun684PUf8EPFV0MxlSafXkax97B0gf7RMsDhoZ/57lr/LEPbYd5/MMGpo
+ 2FZcmWJJfumMFT/IEiEfiR4teoq7q4oHTPBre96PjFDkipfK0DXEysOlrBb+tFcfYbjIwlF3T
+ 6Y3XM6LdKz4qEO97XcWy/wPj8GbkMKxKFI1QJs0PRE79Kk587L8rJgWiHZKCZ80uvRyCzXJCI
+ /t6zPRNRF6ePoZIKc/44UiTxO/fQ1zMmlaRzVy56MQ8x2G3ANq75aaCd9qVNk4v0wRaTB5Lu0
+ uA43DJQ1ptxtQhryfZiI0B3NSnmo4fO95dmi7e1GlRXJk1Udd4JIcfjaeXw6fLTmobKBJAeQe
+ s3a1aiZESl6a5AD2Kc1QybZRvr4ec/TYMtpTSxix+F+QAvs4PwefO+Ljy+3Y6lEH5cgLdmGuZ
+ 6xuPuGo9iZgV77V+kDtZMkQ+soB22ssbAGAuVuIsUgYD7b72EPWZkPvIfjmmh3OCCEewBvW+R
+ CzKOponlPubLU84J17FFUB0n3ggAX9n0xY2QTca53XWm4=
 
-> On Fri, 7 Jun 2024 16:43:18 +0800 Justin Lai wrote:
-> > Implement the ethtool function to support users to obtain network card
-> > information, including obtaining various device settings, Report
-> > whether physical link is up, Report pause parameters, Set pause
-> > parameters, Return a set of strings that describe the requested
-> > objects, Get number of strings that @get_strings will write, Return
-> > extended statistics about the device.
->=20
-> You don't implement get_strings any more.
+=E2=80=A6
+> +++ b/drivers/iio/industrialio-buffer.c
+=E2=80=A6
+>  static int iio_buffer_chrdev_release(struct inode *inode, struct file *=
+filep)
+>  {
+=E2=80=A6
+>  	wake_up(&buffer->pollq);
+>
+> +	mutex_lock(&buffer->dmabufs_mutex);
+> +
+> +	/* Close all attached DMABUFs */
+=E2=80=A6
+> +	mutex_unlock(&buffer->dmabufs_mutex);
+> +
+>  	kfree(ib);
+=E2=80=A6
 
-Sorry, I will modify it.
+Would you become interested to apply a statement like =E2=80=9Cguard(mutex=
+)(&buffer->dmabufs_mutex);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/mutex.h#L1=
+96
 
->=20
-> > +static void rtase_get_drvinfo(struct net_device *dev,
-> > +                           struct ethtool_drvinfo *drvinfo) {
-> > +     const struct rtase_private *tp =3D netdev_priv(dev);
-> > +
-> > +     strscpy(drvinfo->driver, KBUILD_MODNAME, 32);
->=20
-> sizeof(drvinfo->driver) instead of the literal 32?
-
-It seems like a better approach, I'll switch to using
-sizeof(drvinfo->driver), thank you.
-
->=20
-> > +     strscpy(drvinfo->bus_info, pci_name(tp->pdev), 32);
->=20
-> Can you double check that overwriting these fields is actually needed?
-> I think core will fill this in for you in ethtool_get_drvinfo()
-
-I have removed this line of code for testing. Before removing the code,
-I could obtain bus info by entering "ethtool -i". However, after removing
-the code, entering "ethtool -i" no longer retrieves the bus info.
-Therefore, I believe that this line of code is still necessary.
-
->=20
-> > +     if ((value & (RTASE_FORCE_TXFLOW_EN |
-> RTASE_FORCE_RXFLOW_EN)) =3D=3D
-> > +         (RTASE_FORCE_TXFLOW_EN | RTASE_FORCE_RXFLOW_EN)) {
-> > +             pause->rx_pause =3D 1;
-> > +             pause->tx_pause =3D 1;
-> > +     } else if ((value & RTASE_FORCE_TXFLOW_EN)) {
->=20
-> unnecessary parenthesis
->=20
-> > +             pause->tx_pause =3D 1;
-> > +     } else if ((value & RTASE_FORCE_RXFLOW_EN)) {
->=20
-> same here
->=20
-
-Sorry, I will remove the unnecessary parentheses, thank you.
-
-> > +             pause->rx_pause =3D 1;
-> > +     }
-> > +}
-> > +
-> > +static int rtase_set_pauseparam(struct net_device *dev,
-> > +                             struct ethtool_pauseparam *pause) {
-> > +     const struct rtase_private *tp =3D netdev_priv(dev);
-> > +     u16 value =3D rtase_r16(tp, RTASE_CPLUS_CMD);
-> > +
-> > +     if (pause->autoneg)
-> > +             return -EOPNOTSUPP;
-> > +
-> > +     value &=3D ~(RTASE_FORCE_TXFLOW_EN |
-> RTASE_FORCE_RXFLOW_EN);
-> > +
-> > +     if (pause->tx_pause)
-> > +             value |=3D RTASE_FORCE_TXFLOW_EN;
-> > +
-> > +     if (pause->rx_pause)
-> > +             value |=3D RTASE_FORCE_RXFLOW_EN;
-> > +
-> > +     rtase_w16(tp, RTASE_CPLUS_CMD, value);
-> > +     return 0;
-> > +}
-> > +
-> > +static void rtase_get_eth_mac_stats(struct net_device *dev,
-> > +                                 struct ethtool_eth_mac_stats
-> *stats)
-> > +{
-> > +     struct rtase_private *tp =3D netdev_priv(dev);
-> > +     const struct rtase_counters *counters;
-> > +
-> > +     counters =3D tp->tally_vaddr;
-> > +     if (!counters)
->=20
-> you fail probe if this is NULL, why check if here?
->=20
-
-Sorry, this check seems unnecessary, I will remove it.
-
-> > +             return;
-> > +
-> > +     rtase_dump_tally_counter(tp);
-> > +
-> > +     stats->FramesTransmittedOK =3D le64_to_cpu(counters->tx_packets);
-> > +     stats->SingleCollisionFrames =3D
-> le32_to_cpu(counters->tx_one_collision);
-> > +     stats->MultipleCollisionFrames =3D
-> > +             le32_to_cpu(counters->tx_multi_collision);
-> > +     stats->FramesReceivedOK =3D le64_to_cpu(counters->rx_packets);
-> > +     stats->FrameCheckSequenceErrors =3D
-> > + le32_to_cpu(counters->rx_errors);
->=20
-> You dont report this in rtase_get_stats64() as crc errors, are these real=
-ly CRC /
-> FCS errors or other errors?
-
-Our rx_error indeed refers to crc_error. I will assign the value of
-rx_error to the crc_error in rtase_get_stats64().
-
->=20
-> > +     stats->AlignmentErrors =3D le16_to_cpu(counters->align_errors);
-> > +     stats->FramesAbortedDueToXSColls =3D
-> le16_to_cpu(counters->tx_aborted);
-> > +     stats->FramesLostDueToIntMACXmitError =3D
-> > +             le64_to_cpu(counters->tx_errors);
-> > +     stats->FramesLostDueToIntMACRcvError =3D
-> > +             le16_to_cpu(counters->rx_missed);
->=20
-> Are you sure this is the correct statistic to report as?
-> What's the definition of rx_missed in the datasheet?
-
-What we refer to as rx miss is the packets that can't be received because
-the fifo in the MAC is full. We consider this a type of MAC error, identica=
-l
-to the definition of FramesLostDueToIntMACRcvError.
-
->=20
-> Also is 16 bits enough for a packet counter at 5Gbps?
-> Don't you have to periodically accumulate this counter so that it doesn't=
- wrap
-> around?
-
-Indeed, this counter may wrap, but we don't need to accumulate it, because
-an increase in the number of rx_miss largely indicates that the system
-processing speed is not fast enough. Therefore, the size of this counter
-doesn't need to be too large.
-
->=20
-> > +     stats->MulticastFramesReceivedOK =3D
-> le32_to_cpu(counters->rx_multicast);
-> > +     stats->BroadcastFramesReceivedOK =3D
-> > +le64_to_cpu(counters->rx_broadcast);
-> > +}
-> > +
-> > +static const struct ethtool_ops rtase_ethtool_ops =3D {
-> > +     .get_drvinfo =3D rtase_get_drvinfo,
-> > +     .get_link =3D ethtool_op_get_link,
-> > +     .get_link_ksettings =3D rtase_get_settings,
-> > +     .get_pauseparam =3D rtase_get_pauseparam,
-> > +     .set_pauseparam =3D rtase_set_pauseparam,
-> > +     .get_eth_mac_stats =3D rtase_get_eth_mac_stats,
-> > +     .get_ts_info =3D ethtool_op_get_ts_info, };
-> > +
-> >  static void rtase_init_netdev_ops(struct net_device *dev)  {
-> >       dev->netdev_ops =3D &rtase_netdev_ops;
-> > +     dev->ethtool_ops =3D &rtase_ethtool_ops;
-> >  }
-> >
-> >  static void rtase_reset_interrupt(struct pci_dev *pdev,
-
+Regards,
+Markus
 
