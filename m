@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-217898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1EA90B78E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:13:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FA190B5B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98BB7B26534
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:03:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666412830D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E215A129E9C;
-	Mon, 17 Jun 2024 15:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A285E542;
+	Mon, 17 Jun 2024 16:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQ18fZZw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XuQ8UDAC"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95441D951F;
-	Mon, 17 Jun 2024 15:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B905B6FDC;
+	Mon, 17 Jun 2024 16:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718639943; cv=none; b=BYd0fhtGpv9PrTRHJgKs7Tsk+oQWKjPNVsh/zI39dsfIt7Bw67CBxIcCnyCjCmuzhALZiHHYsNBcEBZ6TRgLFtDvdHDhoqttccb4HjpsAOTXV5jOl4yv4+FYbCs5/2f6/Bj6uPT0Epmwzlc/M/LVt78WlantRyCi5YlwtR9Gvic=
+	t=1718640090; cv=none; b=VkoAdeSyntsjxX04vSW/ju12tQoGsxNtUnedQX1GKKBd81INmG7F52qNergx7oRbgJPmTauJPvP3XGQpCnIZUpY3HAyYSIrdDfYjPVI05DqFRvUakH+vHQ5/d5yokmlCvZxFZS7O3idbQ/f51uWll7x3HBOXKjPlF5gSnhjA6Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718639943; c=relaxed/simple;
-	bh=dvaCCGm0T4LQoDBLCKOzZ/DnxCXT6xS8nFEQzuVr9pI=;
+	s=arc-20240116; t=1718640090; c=relaxed/simple;
+	bh=u6lCC0FMi8rEvDdwKGwBtaMyItIW3VVu+/3OO594yEA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b9YTtyU32Ss0cZPeXtwGEB8GocHgpbgkNPJ0gMuFeuOOYxg7HfsJCBj7kv12Ke3GKeDYmWkpHZr6jshxKLgtIfbH7aJumNFcjAmWCTe2YhTDSt5UyQ6c894AD33sFQjqiEF0Q5UhuEh8+u5gWXd8c596brzS36lau6a/Cvy6iEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQ18fZZw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42DFFC2BD10;
-	Mon, 17 Jun 2024 15:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718639942;
-	bh=dvaCCGm0T4LQoDBLCKOzZ/DnxCXT6xS8nFEQzuVr9pI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UQ18fZZwwfZptDfOHc7FNjvDcuKaK3FOljY9jsRYNLYttiNXyJ6Hf0X58hQPO+ICw
-	 wyByChjxK7/i2DmV0Nr5hVU84OuzEwVygqKgHXVVUhCS1XNV5r9do2hrDyEp7Ea29o
-	 r6yHOxuquJ6E+92N3Za06UvBNa1sQ8RIQrnfw1nUat0r34QEam8/iGV+yFlv++1zxf
-	 OPKmQgqQ0QaQp38nmS3UtJf/09+7T2Iou7364ql4U6TPn6oXkycWogdvr9tMdsqtPv
-	 RmP1Q/ywqGceuCXyR7xvI9UlHQtnpq7LpSbErF3HlbK4g4njV5EvwUFsCMy2+zznLb
-	 OJGD4n7BxjC6A==
-Message-ID: <f691c7f9-cd81-4bdf-a794-95118cb26686@kernel.org>
-Date: Mon, 17 Jun 2024 17:58:56 +0200
+	 In-Reply-To:Content-Type; b=QO9BzDng2wyJVrvl+qN91xc6j7Ew6ZxWAc4JN3cg0I8mn2/cOsPZ3bhuXisVbHUmMImGbbrogQr60JcXMiJ3Mh9h6yhZWheKjrezZIzTSRCerBWJRxaDbEGhnHFy2m52Vp/46dhJ5Y+4rHVzJ0F/fT2QHcBCntNTQ9guJGMn4Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XuQ8UDAC; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f1da33826so625263066b.0;
+        Mon, 17 Jun 2024 09:01:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718640087; x=1719244887; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YVUk9wA0RxZg2M8UQ0OYA0L8MdQA1uyTPEgVuaW3yaQ=;
+        b=XuQ8UDACaHxmoiNLuWT3AJc7t+YiBTNpi0D9yQHPDuaM9446AAVfbPjH4b4zPgVQCO
+         QrM4M15Lrg0l+wN8hWkB726nwsS7YOtyPpCTHiNE5HRG19xx06njSAiN/kK4YxZdh9e9
+         3qNhXD64cCZMsFANdbz9N33avDFWdgREsKQPr059LX8OdlZZ7pXf1W/CqFhUtO2LL8tN
+         SROrRdjfCRpskJA+HkPsM+VL2X5m1KH3JP7yS1N7OJakbYmFSVMs4Ntr5tujCOBXi0fH
+         0PclhC03OhvuEnrOC+Ht+icIDRhWc6sn7tTgYmDB+ICbmBs882d3Mwkb9ZjKH9AAkJ/R
+         WHNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718640087; x=1719244887;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YVUk9wA0RxZg2M8UQ0OYA0L8MdQA1uyTPEgVuaW3yaQ=;
+        b=jJWD2nPNqFohy3kmWFrn+K1wDt1zXwSJrEMQiwLTXGp3VIfBNQzHeRG8QeuOj3B8HS
+         ZhjVBn6eYjuXTW2+SqOmePsVzLdwqSHZIY29YpCm2Tn37mOlNwz192qMJl8/1bWvMpqX
+         fhu+U0NrjgqSxNEywSD2/3LAlgxtUmOveJB5RljxnR9dyuhw3R/c4lasZJqse1bHCL4b
+         H4hxNrXkpYnSzuRmKRWhYA73clF3H4JIBdAFhEbXEIFwaAp+RxkIHCKRiEIwD75UO+Bg
+         W75ZxuAmiRlmfDaA64KwaiXmV5KtOBOSxfKPu6VC+nH0uc7OHIewidWhXpIWhWFn+twt
+         JdVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw1XLdR1JRcXXRSlXgukqWTS8ZEyeK854OT0xIP/uysXg9FVkFwd99tvzTfa3rYXhjJK6pPK9oaOG0B3KP3pnTeTZrE0dO3JC3LfuMDIUGd111E8bg6HCXz7nHUOnBMXepHpGLeV5K
+X-Gm-Message-State: AOJu0YyKWKRFWH3OxkIlhoMVzp4b6C+CNMlhgBSmL7K2Y9fVlr7kfgcT
+	TtJoaXPCBVNdTbSjX61T2dKhYG8cY2NSj3Yy1gJYYALQbHHhf17mp3UHlQ==
+X-Google-Smtp-Source: AGHT+IErnLWYXPDmTXIWUGBUGOu7bX0bZbAIATutBzZYSHBadoRR7sRAwqHsNHpwge0ec8VsjkVkGA==
+X-Received: by 2002:a17:907:9689:b0:a68:fcc9:6c1c with SMTP id a640c23a62f3a-a6f60bdc4d3mr1009559866b.0.1718640086658;
+        Mon, 17 Jun 2024 09:01:26 -0700 (PDT)
+Received: from [10.76.84.188] ([5.2.194.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56da336fsm522935666b.41.2024.06.17.09.01.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 09:01:25 -0700 (PDT)
+Message-ID: <bbc2f159-d673-4652-a6b9-a528f905b67c@gmail.com>
+Date: Mon, 17 Jun 2024 19:01:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,233 +75,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] dt-bindings: phy: rockchip-emmc-phy: Convert to
- dtschema
-To: Shresth Prasad <shresthprasad7@gmail.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- heiko@sntech.de, sebastian.reichel@collabora.com, andy.yan@rock-chips.com,
- s.hauer@pengutronix.de, jbx6244@yandex.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com,
- skhan@linuxfoundation.org
-References: <20240617085341.34332-2-shresthprasad7@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/5] iio: adc: ad7192: use
+ devm_regulator_get_enable_read_voltage
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+ <20240612-iio-adc-ref-supply-refactor-v2-1-fa622e7354e9@baylibre.com>
+ <20240615130858.22043725@jic23-huawei>
+ <dbf947a3-3d3b-4686-a707-a813b6a4ce5a@gmail.com>
+ <CAMknhBFJ01Xu69Arvd3S=dbADGFmzaYKm2XBtw_CtnjtYwnnew@mail.gmail.com>
+ <2d47aeef-5ee0-4e6f-a408-ba5d737d2c5a@gmail.com>
+ <8dd5f4b9-809f-43d8-ba5c-5f7be23107a4@baylibre.com>
+ <15a0c2d8-9df4-4a26-bdf4-01f9c3f76ca7@gmail.com>
+ <CAMknhBE=fEDdYPe1VeZwWWuvqf5TcUdM_LQGOugHCxGhSGP8-w@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240617085341.34332-2-shresthprasad7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Alisa-Dariana Roman <alisadariana@gmail.com>
+In-Reply-To: <CAMknhBE=fEDdYPe1VeZwWWuvqf5TcUdM_LQGOugHCxGhSGP8-w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 17/06/2024 10:53, Shresth Prasad wrote:
-> Convert txt bindings of Rockchip EMMC PHY to dtschema to allow
-> for validation.
+On 17.06.2024 18:28, David Lechner wrote:
+> On Mon, Jun 17, 2024 at 9:10 AM Alisa-Dariana Roman
+> <alisadariana@gmail.com> wrote:
+>>
+>> On 17.06.2024 16:48, David Lechner wrote:
+>>> On 6/17/24 8:38 AM, Alisa-Dariana Roman wrote:
+>>>> On 17.06.2024 16:22, David Lechner wrote:
+>>>>> On Mon, Jun 17, 2024 at 4:35 AM Alisa-Dariana Roman
+>>>>> <alisadariana@gmail.com> wrote:
+>>>>>>
+>>>>>> On 15.06.2024 15:08, Jonathan Cameron wrote:
+>>>>>>> On Wed, 12 Jun 2024 16:03:05 -0500
+>>>>>>> David Lechner <dlechner@baylibre.com> wrote:
+>>>>>>>
+>>>>>>>> This makes use of the new devm_regulator_get_enable_read_voltage()
+>>>>>>>> function to reduce boilerplate code.
+>>>>>>>>
+>>>>>>>> Error messages have changed slightly since there are now fewer places
+>>>>>>>> where we print an error. The rest of the logic of selecting which
+>>>>>>>> supply to use as the reference voltage remains the same.
+>>>>>>>>
+>>>>>>>> Also 1000 is replaced by MILLI in a few places for consistency.
+>>>>>>>>
+>>>>>>>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>>>>>>>
+>>>>>>> Complicated bit of code, but seems correct.
+>>>>>>> However, it crossed with Alisa-Dariana switching adding a
+>>>>>>> struct device *dev = &spi->dev to probe() that I picked up earlier
+>>>>>>> today.
+>>>>>>>
+>>>>>>> I could unwind that but given Alisa-Dariana has a number of
+>>>>>>> other patches on this driver in flight, I'd like the two of you
+>>>>>>> to work out the best resolution between you.  Maybe easiest option
+>>>>>>> is that Alisa-Dariana sends this a first patch of the next
+>>>>>>> series I should pick up.
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>>
+>>>>>>> Jonathan
+>>>>>> I will add this patch to my series and send it shortly.
+>>>>>>
+>>>>>> Kind regards,
+>>>>>> Alisa-Dariana Roman.
+>>>>>
+>>>>> Great, thanks!
+>>>>
+>>>> Just one quick question:
+>>>>
+>>>> I am getting two such warnings when running the checkpatch script:
+>>>>
+>>>> WARNING: else is not generally useful after a break or return
+>>>> #1335: FILE: ./drivers/iio/adc/ad7192.c:1335:
+>>>> +        return dev_err_probe(dev, ret, "Failed to get AVDD voltage\n");
+>>>> +    } else {
+>>>>
+>>>> Should I switch the last two branches to get rid of the warnings or just ignore them?
+>>>>
+>>>
+>>> In the other patches, I was able to reorder things to avoid this
+>>> warning, but since this one was more complicated, I just ignored
+>>> this warning.
+>>>
+>>> We can't just remove the else in this case because the return
+>>> is inside of an `else if`.
+>>
+>>          /* AVDD can optionally be used as reference voltage */
+>>          ret = devm_regulator_get_enable_read_voltage(dev, "avdd");
+>>          if (ret == -ENODEV || ret == -EINVAL) {
+>>                  /*
+>>                   * We get -EINVAL if avdd is a supply with unknown voltage. We
+>>                   * still need to enable it since it is also a power supply.
+>>                   */
+>>                  ret = devm_regulator_get_enable(dev, "avdd");
+>>                  if (ret)
+>>                          return dev_err_probe(dev, ret,
+>>                                               "Failed to enable AVDD supply\n");
+>>
+>>                  avdd_mv = 0;
+>>          } else if (ret >= 0) {
+>>                  avdd_mv = ret / MILLI;
+>>          } else {
+>>                  return dev_err_probe(dev, ret, "Failed to get AVDD voltage\n");
+>>          }
+>>
+>> Would switching the last two branches, in order to get rid of the
+>> warnings, make the code harder to understand?
+>>
 > 
-> Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
-> ---
+> I did it in the other order because usually we like to handle the
+> error case first.
+> 
+> To make it more like the other patches, we could do something like
+> this. The only thing i don't like about it is that `ret` on the very
+> last line could come from two different places. But it is logically
+> sound in the current form.
+> 
+>      /* AVDD can optionally be used as reference voltage */
+>      ret = devm_regulator_get_enable_read_voltage(dev, "avdd");
+>      if (ret == -ENODEV || ret == -EINVAL) {
+>          /*
+>           * We get -EINVAL if avdd is a supply with unknown voltage. We
+>           * still need to enable it since it is also a power supply.
+>           */
+>          ret = devm_regulator_get_enable(dev, "avdd");
+>          if (ret)
+>              return dev_err_probe(dev, ret,
+>                           "Failed to enable AVDD supply\n");
+>      } else if (ret < 0) {
+>          return dev_err_probe(dev, ret, "Failed to get AVDD voltage\n");
+>      }
+> 
+>      avdd_mv = ret <= 0 ? 0 : ret / MILLI;
 
+Maybe this would make it a bit clearer, but yes, the ret == 0 could 
+still come from two different places :(.
 
-...
-
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    const: emmcclk
-> +
-> +  clocks:
-> +    maxItems: 1
-
-Keep order from DTS coding style, so clocks then clock-names.
-
-> +
-> +  drive-impedance-ohm:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Specifies the drive impedance in Ohm.
-> +    enum: [33, 40, 50, 66, 100]
-> +    default: 50
-> +
-> +  rockchip,enable-strobe-pulldown:
-> +    type: boolean
-> +    description: |
-> +      Enable internal pull-down for the strobe
-> +      line.  If not set, pull-down is not used.
-> +
-> +  rockchip,output-tapdelay-select:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Specifies the phyctrl_otapdlysec register.
-> +    default: 0x4
-> +    maximum: 0xf
-> +
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#phy-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    grf: syscon@ff770000 {
-
-Drop label... actually entire node looks not needed.
-
-> +      compatible = "rockchip,rk3399-grf", "syscon", "simple-mfd";
-
-Drop
-
-> +      reg = <0xff770000 0x10000>;
-
-Drop
-
-
-> +      #address-cells = <1>;
-> +      #size-cells = <1>;
-> +
-> +      emmcphy: phy@f780 {
-
-Drop label
-
-> +        compatible = "rockchip,rk3399-emmc-phy";
-> +        reg = <0xf780 0x20>;
-> +        clocks = <&sdhci>;
-> +        clock-names = "emmcclk";
-> +        drive-impedance-ohm = <50>;
-> +        #phy-cells = <0>;
-> +      };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt b/Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
-> deleted file mode 100644
-> index 57d28c0d5696..000000000000
-> --- a/Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
-> +++ /dev/null
-> @@ -1,43 +0,0 @@
-> -Rockchip EMMC PHY
-> ------------------------
-> -
-> -Required properties:
-> - - compatible: rockchip,rk3399-emmc-phy
-> - - #phy-cells: must be 0
-> - - reg: PHY register address offset and length in "general
-> -   register files"
-> -
-> -Optional properties:
-> - - clock-names: Should contain "emmcclk".  Although this is listed as optional
-> -		(because most boards can get basic functionality without having
-> -		access to it), it is strongly suggested.
-> -		See ../clock/clock-bindings.txt for details.
-> - - clocks: Should have a phandle to the card clock exported by the SDHCI driver.
-> - - drive-impedance-ohm: Specifies the drive impedance in Ohm.
-> -                        Possible values are 33, 40, 50, 66 and 100.
-> -                        If not set, the default value of 50 will be applied.
-> - - rockchip,enable-strobe-pulldown: Enable internal pull-down for the strobe
-> -                                    line.  If not set, pull-down is not used.
-> - - rockchip,output-tapdelay-select: Specifies the phyctrl_otapdlysec register.
-> -                                    If not set, the register defaults to 0x4.
-> -                                    Maximum value 0xf.
-> -
-> -Example:
-> -
-> -
-> -grf: syscon@ff770000 {
-> -	compatible = "rockchip,rk3399-grf", "syscon", "simple-mfd";
-> -	#address-cells = <1>;
-> -	#size-cells = <1>;
-> -
-> -...
-> -
-> -	emmcphy: phy@f780 {
-> -		compatible = "rockchip,rk3399-emmc-phy";
-> -		reg = <0xf780 0x20>;
-> -		clocks = <&sdhci>;
-> -		clock-names = "emmcclk";
-> -		drive-impedance-ohm = <50>;
-> -		#phy-cells = <0>;
-> -	};
-> -};
-> diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
-> index 79798c747476..6e1b1cdea680 100644
-> --- a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
-> +++ b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
-> @@ -176,9 +176,12 @@ allOf:
->              Documentation/devicetree/bindings/phy/rockchip-pcie-phy.txt
->  
->        patternProperties:
-> -        "phy@[0-9a-f]+$":
-> -          description:
-> -            Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
-> +        "^phy@[0-9a-f]+$":
-> +          type: object
-> +
-
-Drop blank line
-
-> +          $ref: /schemas/phy/rockchip,rk3399-emmc-phy.yaml#
-> +
-
-Drop blank line
-
-> +          unevaluatedProperties: false
->  
->    - if:
->        properties:
-
-Nothing in example? Isn't the example for 3399?
-
-We want only one complete example of such multi-children devices, so the
-example can be moved and included in existing one here.
-
-
-Best regards,
-Krzysztof
+avdd_mv = ret == 0 ? 0 : ret / MILLI;
 
 
