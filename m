@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-218025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1628D90B826
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:34:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE4190B82A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B1ABB262EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C9701F21FE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3685F1849FE;
-	Mon, 17 Jun 2024 17:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FA6185E57;
+	Mon, 17 Jun 2024 17:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf46dFkN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgmZL74y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3541741C1;
-	Mon, 17 Jun 2024 17:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0814A185E4A;
+	Mon, 17 Jun 2024 17:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718645652; cv=none; b=fIitcmdQ8vkH6dOkLQP6OyHzTU47d/uDy00o7ruzKzyN36+haHtOOLqxl7+ZHPzzvVbGixCn7lCtXrJe+0C9fkcr3OC8cThwoRCz7X7ytWib3GT9tIEUzQW1+mMBPgd+JtOwnYLB9om+KvMxxBvRsw8rvAEjuohKUNHxZ2dlCPg=
+	t=1718645723; cv=none; b=BtnjaDQq/eTASh9EWZ5odSZOIWuxYbFlDPDLb7E3w/KvyPQk+CEOSZRS32/f//wjTthF42RT0m6HTr5j/BpoieIWZ26vP0UqNNvce75FlmBndg56npjcZpTBry2olJIwfBqhKaCfOw60nJF7L6GwJtFcfwFMnFmf0Oem44w6E5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718645652; c=relaxed/simple;
-	bh=NRv3U2R3LJxqX4F/jGBJXWK96Mq2JY0f+Kl4Ugjxk8o=;
+	s=arc-20240116; t=1718645723; c=relaxed/simple;
+	bh=N+D9s0iQm1QFAZH8d1oDVC79oWtkLdBqUBlcc8U0MT4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T8ZhstaESuGJ3KlpsbaCScW/UwWURLEum3u+3xXW/clsJQf7wT78xeTEL/eDECF0c1s+0DSujBufxzxqk88+o1ljkz7zv9syPtTDI6idNNn3HqSV/q/zitXWR9rKtZNx5kPbO4bfiPlz6bcQ8AxZPzPrspodfRaRB3zxsgINq0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf46dFkN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF8FDC2BD10;
-	Mon, 17 Jun 2024 17:33:56 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lKb0W8TxQ77IvIWSiy6L6M997yRvlZ4iFNE6ra+/h7SY9rl40woSsYdzi0Kr9V5zYHrsN8DS/GRg+wnMvqWZKz97726oP5Vas/Xx6wA7JZ3G4k+Wrq3uf8VkngTgLEjRnHqDTK//Fksgn/3OvEeowgTHzUI1xC/z8Vr8sYGy9Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgmZL74y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0645FC2BD10;
+	Mon, 17 Jun 2024 17:35:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718645651;
-	bh=NRv3U2R3LJxqX4F/jGBJXWK96Mq2JY0f+Kl4Ugjxk8o=;
+	s=k20201202; t=1718645722;
+	bh=N+D9s0iQm1QFAZH8d1oDVC79oWtkLdBqUBlcc8U0MT4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Zf46dFkNX+pSGPdK7wzf3wkuUXYGLO4wUR9ToHFlk51Har187NKu2//uchJA2DZ4y
-	 hlZ97xlpk5griBxFrMUdP7XxcOugdCmg9XdDNwmBNUKo7t+0rRxu3wYzZ0PrY7fPV8
-	 fgwbiqoML/ZMghk+QvuOdO8yOUFHXSOTH03ewSkDncGSERVBBFsNLVtmEjpdciHDTo
-	 gE2NpkAWzDA9tqBZ73i81iW1nzMjFDS5+EKBeOlq8SSjZbqAezUFzpF8A60qdsGuRF
-	 RyDNtKtblYUvhp1lWKIjAKQRkYf1nhstYT0d/UBpQVueD7Y63zatDFdCxhmV9KTr3s
-	 ol47N7jKMdmfQ==
-Message-ID: <0ea8ae6e-d841-4a5c-8a23-603ed9b4fa61@kernel.org>
-Date: Mon, 17 Jun 2024 19:33:49 +0200
+	b=JgmZL74yb/+v7OfZqVPbfnnkIfuVyOOqB1Sw2086sxHQqX2w4gGvfQMkV3Uqi15w5
+	 3Qvyft2og/8N0I5tSWqz7MlU0bLVQT0XWd6w1hAa4VaZeDVMTRrhvjXdjh/l/QBEtx
+	 BA8VrwRk/f9zlnUP7YXFN9Twx1rIN3t7G21Lhz2m9wKNlhP8TMR2akE40JbPPr5PEB
+	 jnsFgJUqRwwMB7tjHKC7hyLaKxGYz6dxGkdVXy2JuI7Sq6kzuwSI+/nWAuXsaLhsbO
+	 YGqloCEawvQszdNE+CcC5inYkgEfccsiwFHnT+6xBKPzoOsFowgBTMgQo17t/8s05b
+	 DkUS2FptIfBrQ==
+Message-ID: <237035a7-3b71-4245-863b-f905ba97cda1@kernel.org>
+Date: Mon, 17 Jun 2024 19:35:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,6 +71,7 @@ Cc: Orson Zhai <orsonzhai@gmail.com>,
 References: <20240616-dt-bindings-mfd-syscon-split-v2-0-571b5850174a@linaro.org>
  <20240616-dt-bindings-mfd-syscon-split-v2-6-571b5850174a@linaro.org>
  <20240617-zoology-silica-2c8c78363b32@spud>
+ <20240617-purge-family-c0c62b8e73d8@spud>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -116,137 +117,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240617-zoology-silica-2c8c78363b32@spud>
+In-Reply-To: <20240617-purge-family-c0c62b8e73d8@spud>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/06/2024 18:44, Conor Dooley wrote:
->> +$id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: System Controller Registers R/W Common Properties
->> +
->> +description: |
+On 17/06/2024 18:46, Conor Dooley wrote:
+>>>  
+>>> +# Need a select with all compatibles listed for compatibility with older
+>>> +# dtschema (<2024.02), so this will not be selected for other schemas having
+>>> +# syscon fallback.
+>>>  select:
+>>>    properties:
+>>>      compatible:
+>>>        contains:
+>>>          enum:
+>>> -          - syscon
+>>
+>> Wow, this is noisy. Is it not possible to achieve something similar by
+>> making the select check for not: compatible: contains: simple-mfd? Or
+>> did I misunderstand the intention here?
 > 
-> This | can go, right?
+> Ah, you'd match things then like the intel,lgm-syscon, right?
 
-Ack
-
-> 
->> +  System controller node represents a register region containing a set
->> +  of miscellaneous registers. The registers are not cohesive enough to
->> +  represent as any specific type of device. The typical use-case is
->> +  for some other node's driver, or platform-specific code, to acquire
->> +  a reference to the syscon node (e.g. by phandle, node path, or
->> +  search using a specific compatible value), interrogate the node (or
->> +  associated OS driver) to determine the location of the registers,
->> +  and access the registers directly.
->> +
->> +maintainers:
->> +  - Lee Jones <lee@kernel.org>
->> +
->> +select:
->> +  properties:
->> +    compatible:
->> +      contains:
->> +        enum:
-> 
-> And this can be const, given it's unlikely to grow?
-
-ack
-
-> 
->> +          - syscon
->> +
->> +  required:
->> +    - compatible
->> +
->> +properties:
->> +  compatible:
->> +    contains:
->> +      const: syscon
->> +    minItems: 2
->> +    maxItems: 5  # Should be enough
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  reg-io-width:
->> +    description: |
-> 
-> Same with this one.
-
-ack
-
-> 
->> +      The size (in bytes) of the IO accesses that should be performed
->> +      on the device.
->> +    enum: [1, 2, 4, 8]
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: simple-mfd
->> +    then:
->> +      properties:
->> +        compatible:
->> +          minItems: 3
->> +          maxItems: 5
->> +
->> +additionalProperties: true
->> +
->> +examples:
->> +  - |
->> +    syscon: syscon@1c00000 {
->> +        compatible = "allwinner,sun8i-h3-system-controller", "syscon";
->> +        reg = <0x01c00000 0x1000>;
->> +    };
->> +...
->> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
->> index d6fa58c9e4de..d4e9533cf3fe 100644
->> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
->> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
->> @@ -4,7 +4,7 @@
->>  $id: http://devicetree.org/schemas/mfd/syscon.yaml#
->>  $schema: http://devicetree.org/meta-schemas/core.yaml#
->>  
->> -title: System Controller Registers R/W
->> +title: System Controller Devices
->>  
->>  description: |
->>    System controller node represents a register region containing a set
->> @@ -19,123 +19,196 @@ description: |
->>  maintainers:
->>    - Lee Jones <lee@kernel.org>
->>  
->> +# Need a select with all compatibles listed for compatibility with older
->> +# dtschema (<2024.02), so this will not be selected for other schemas having
->> +# syscon fallback.
->>  select:
->>    properties:
->>      compatible:
->>        contains:
->>          enum:
->> -          - syscon
-> 
-> Wow, this is noisy. Is it not possible to achieve something similar by
-> making the select check for not: compatible: contains: simple-mfd? Or
-> did I misunderstand the intention here?
-
-See comment from Rob for v1. This is needed for older schema, although
-2024.02 worked fine in my tests. The point is to select all schemas, not
-by compatible property, because then we match this schema to anything
-having syscon.
-
-Kind of similar how it is woth arm,primecell.
-
-
+Yes.
 
 Best regards,
 Krzysztof
