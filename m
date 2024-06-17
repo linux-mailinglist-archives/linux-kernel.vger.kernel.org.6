@@ -1,193 +1,210 @@
-Return-Path: <linux-kernel+bounces-217249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20CC790AD68
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:55:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1587990AD6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38C4E1C22DCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:55:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0F69283C4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1924B195396;
-	Mon, 17 Jun 2024 11:55:11 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5A119538A;
+	Mon, 17 Jun 2024 11:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J/HahEGD"
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA2B19308B;
-	Mon, 17 Jun 2024 11:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CA2195381
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718625310; cv=none; b=j0sZ3xx6sob8F/qOlcjIL9qTIPp2FKOF3v4FG9Nynv8QcjLFCg0HwPxxZZ/il0MaGvZYcsY//PKihGISpJw3WNB1KMb8GoubFeiEm68gxmt2ZQ4qCpE8g7RF6hIj+oicO5kcjp8bjTLSa2NMsbygTIDTFnrHbvxJIv8jUjvhW8c=
+	t=1718625336; cv=none; b=CsghzD85MPht9kTII7L0emAJ2E6kMA+ksqCiOPYBkx3K9Bc3ucjxZqxC31ieE5/5qZu1vRp4r7N8P9kOBqC4HEpbNUys09aO9aRRWLCY5SmBGmrJrOUuiHVxSWYL2d7rRRo/hUqtPGla1m4YAjZi47p6TT37d003fTTjh3SRjN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718625310; c=relaxed/simple;
-	bh=dB32catZqEoQQB/UFYcx6SPTdmDhLF8vJ7YC+ZQFOGE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LsQbJm45bToXN9/7q3QAE+eToqQx+rLLwmXaHdfcSJ2ACfqg2Winx4CykPNpVNCb1CDevieVLaz29RSbIi+qOjcTvN9ya3F7xLep9GJTC2naWNVSK3s2Ff3EZc0JqKdLi3JTZuNDhTEI+0ej/DKvGj2eLN1tJkl12MG7wck7Nkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0AB92FF809;
-	Mon, 17 Jun 2024 11:55:03 +0000 (UTC)
-Message-ID: <8624ccf8-e9e2-4a95-a25c-7d3166bb3256@ovn.org>
-Date: Mon, 17 Jun 2024 13:55:02 +0200
+	s=arc-20240116; t=1718625336; c=relaxed/simple;
+	bh=NffCHPh04kxLV1M+4sDkfZRGJ0KtbpqGWJtIcQ8WSyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iMfZ4Cdf9Id1QXMEFVODbiIieYMfAzqBk9cHhRvjTl7O6bHCOvkdHKDn6FqnwvdaHGbDODefKwmzoa5pQf/yGOGnr+/weULut+VtH/mApgKC5UHdJYVbNJ3I9vF8L2DOKhyfayrmi0aMlSdYXuCbj/sMZ/pYXM+E8oFFAp8YRRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J/HahEGD; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-80b8d0d19e8so1086276241.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 04:55:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718625334; x=1719230134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XV8Tu4yudfofDqv7fDAng14xyMI6FIAAjDu0Vw4P4zQ=;
+        b=J/HahEGDyl+QRvnTQhAyXZX5FJAZLg0XFwd9Adj703lSMOnEub2HivEXqHBo6OgEuK
+         R8qlatYseEpH4gWKRJ68oCYMEIUz5CZOweTlaqyJIL+xfPv64M41a0DGeb3YniE6Q4Qa
+         iEMjbtYUo8mYWgYw85TLw5i/IzjlWVzNyW96/XL1IHSeV62SK/YI98pJi4xH95+SbLmB
+         kpcQI5c14D7wX63tF93v4QiO7I6AOAgOKqh3uu9LWIcAP6Phf3JRS5JF9/TsBBZWeaHy
+         C687GyJv+3IO/hNcgOlGAmUsGmS5SGXBIDapgpJxsbyLB4apsT1Fb6c3grwa3jzAkmz2
+         uJ+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718625334; x=1719230134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XV8Tu4yudfofDqv7fDAng14xyMI6FIAAjDu0Vw4P4zQ=;
+        b=RiErH+VogbbKNPM4SHQz/5L/IuL32bpGPdoMoUw4GZ9REYtC0EtgWCxr9cFAtLseQF
+         3XJR5yfyQCeyaMqz427DF+4FyVjca9uQOd5ADJZ0bX2fczOWkSawIu/q5DgQiudAfNXw
+         nfXZyclIYyEFU3zRiFfGZuDJ8vt27TNJrHMrJWQnoNYuAzXJhOLOp8Fv+oaUHkt7g7/B
+         YlAu40+xUKJUCKujFrj8PLeF1+hjNMjcOeexZPR9darQ3o4RK8hxEKw16B3pZAlYa9Gl
+         YQFtMqysVJpnFjM3i0duLV3qDSbEH+xcdjbTdx6wlwfc7BuL311jTLT734B0sG4EkgL8
+         u9jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXQIk019EbrnVGtqkQkdpApzY3njrbyTehz0BxNm2fY2hQQAJ+TEzEKTWDh3zXYVM3HjyzjDB6yiYUxxVeFxouCDLc1J2LxKU67St3
+X-Gm-Message-State: AOJu0Yx3ioykT7j7LjryCpi6+oSNnIXl44BOwrR4ru9kmKdDCnGSqho7
+	TQN49zSPLCo+n1ZwLPXgqaVZjumwlOSlWNo2XFc2K/pchISsd7dlGrCb2tat/Hc+gD1hzFk0oHC
+	HVNVW7VUWOfv9gGxw+xHvWIiiCqU=
+X-Google-Smtp-Source: AGHT+IEIyYlMDM5bd9lCVKySv9/fFUx+T5N0Y5Y7EVhWkghUKBG4aDI1IEd6aEgK4ezk3W516XFLIS5iH7N3r5dKZ7A=
+X-Received: by 2002:a05:6102:3b85:b0:48d:bd49:1fe with SMTP id
+ ada2fe7eead31-48dbd490291mr5131098137.1.1718625333769; Mon, 17 Jun 2024
+ 04:55:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: i.maximets@ovn.org, aconole@redhat.com, echaudro@redhat.com,
- horms@kernel.org, dev@openvswitch.org, Pravin B Shelar <pshelar@ovn.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 7/9] net: openvswitch: do not notify drops
- inside sample
-To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
-References: <20240603185647.2310748-1-amorenoz@redhat.com>
- <20240603185647.2310748-8-amorenoz@redhat.com>
-Content-Language: en-US
-From: Ilya Maximets <i.maximets@ovn.org>
-Autocrypt: addr=i.maximets@ovn.org; keydata=
- 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
-In-Reply-To: <20240603185647.2310748-8-amorenoz@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: i.maximets@ovn.org
+References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
+ <c180d2a0-1e34-41f0-bae8-1205d04a5f6b@linux.alibaba.com> <82d31425-86d7-16fa-d09b-fcb203de0986@126.com>
+ <7087d0af-93d8-4d49-94f4-dc846a4e2b98@linux.alibaba.com> <CAGsJ_4xgqDrTsQRYB_VKn+KC6rvYeJF6TQwhT5JnLi-b4nFTOQ@mail.gmail.com>
+ <6dc8df31-eb01-4382-8467-c5510f75531e@linux.alibaba.com>
+In-Reply-To: <6dc8df31-eb01-4382-8467-c5510f75531e@linux.alibaba.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 17 Jun 2024 19:55:21 +0800
+Message-ID: <CAGsJ_4zOOK0-AiLsN0Sw_q3ikPNuk8ofZHsYfV1WkK_6-QsmVw@mail.gmail.com>
+Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
+ non-CMA THP-sized page
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: yangge1116 <yangge1116@126.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, liuzixing@hygon.cn, 
+	Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/3/24 20:56, Adrian Moreno wrote:
-> The OVS_ACTION_ATTR_SAMPLE action is, in essence,
-> observability-oriented.
-> 
-> Apart from some corner case in which it's used a replacement of clone()
-> for old kernels, it's really only used for sFlow, IPFIX and now,
-> local emit_sample.
-> 
-> With this in mind, it doesn't make much sense to report
-> OVS_DROP_LAST_ACTION inside sample actions.
-> 
-> For instance, if the flow:
-> 
->   actions:sample(..,emit_sample(..)),2
-> 
-> triggers a OVS_DROP_LAST_ACTION skb drop event, it would be extremely
-> confusing for users since the packet did reach its destination.
-> 
-> This patch makes internal action execution silently consume the skb
-> instead of notifying a drop for this case.
-> 
-> Unfortunately, this patch does not remove all potential sources of
-> confusion since, if the sample action itself is the last action, e.g:
-> 
->     actions:sample(..,emit_sample(..))
-> 
-> we actually _should_ generate a OVS_DROP_LAST_ACTION event, but we aren't.
-> 
-> Sadly, this case is difficult to solve without breaking the
-> optimization by which the skb is not cloned on last sample actions.
-> But, given explicit drop actions are now supported, OVS can just add one
-> after the last sample() and rewrite the flow as:
-> 
->     actions:sample(..,emit_sample(..)),drop
-> 
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
->  net/openvswitch/actions.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-> index 33f6d93ba5e4..54fc1abcff95 100644
-> --- a/net/openvswitch/actions.c
-> +++ b/net/openvswitch/actions.c
-> @@ -82,6 +82,15 @@ static struct action_fifo __percpu *action_fifos;
->  static struct action_flow_keys __percpu *flow_keys;
->  static DEFINE_PER_CPU(int, exec_actions_level);
->  
-> +static inline void ovs_drop_skb_last_action(struct sk_buff *skb)
-> +{
-> +	/* Do not emit packet drops inside sample(). */
-> +	if (OVS_CB(skb)->probability)
-> +		consume_skb(skb);
-> +	else
-> +		ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
-> +}
-> +
->  /* Make a clone of the 'key', using the pre-allocated percpu 'flow_keys'
->   * space. Return NULL if out of key spaces.
->   */
-> @@ -1061,7 +1070,7 @@ static int sample(struct datapath *dp, struct sk_buff *skb,
->  	if ((arg->probability != U32_MAX) &&
->  	    (!arg->probability || get_random_u32() > arg->probability)) {
->  		if (last)
-> -			ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
-> +			ovs_drop_skb_last_action(skb);
->  		return 0;
->  	}
->  
-> @@ -1579,7 +1588,7 @@ static int do_execute_actions(struct datapath *dp, struct sk_buff *skb,
->  		}
->  	}
->  
-> -	ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
-> +	ovs_drop_skb_last_action(skb);
+On Mon, Jun 17, 2024 at 7:36=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2024/6/17 18:43, Barry Song wrote:
+> > On Thu, Jun 6, 2024 at 3:07=E2=80=AFPM Baolin Wang
+> > <baolin.wang@linux.alibaba.com> wrote:
+> >>
+> >>
+> >>
+> >> On 2024/6/4 20:36, yangge1116 wrote:
+> >>>
+> >>>
+> >>> =E5=9C=A8 2024/6/4 =E4=B8=8B=E5=8D=888:01, Baolin Wang =E5=86=99=E9=
+=81=93:
+> >>>> Cc Johannes, Zi and Vlastimil.
+> >>>>
+> >>>> On 2024/6/4 17:14, yangge1116@126.com wrote:
+> >>>>> From: yangge <yangge1116@126.com>
+> >>>>>
+> >>>>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list fo=
+r
+> >>>>> THP-sized allocations") no longer differentiates the migration type
+> >>>>> of pages in THP-sized PCP list, it's possible to get a CMA page fro=
+m
+> >>>>> the list, in some cases, it's not acceptable, for example, allocati=
+ng
+> >>>>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
+> >>>>>
+> >>>>> The patch forbids allocating non-CMA THP-sized page from THP-sized
+> >>>>> PCP list to avoid the issue above.
+> >>>>>
+> >>>>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+> >>>>> THP-sized allocations")
+> >>>>> Signed-off-by: yangge <yangge1116@126.com>
+> >>>>> ---
+> >>>>>    mm/page_alloc.c | 10 ++++++++++
+> >>>>>    1 file changed, 10 insertions(+)
+> >>>>>
+> >>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> >>>>> index 2e22ce5..0bdf471 100644
+> >>>>> --- a/mm/page_alloc.c
+> >>>>> +++ b/mm/page_alloc.c
+> >>>>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone
+> >>>>> *preferred_zone,
+> >>>>>        WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
+> >>>>>        if (likely(pcp_allowed_order(order))) {
+> >>>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>>>> +        if (!IS_ENABLED(CONFIG_CMA) || alloc_flags & ALLOC_CMA ||
+> >>>>> +                        order !=3D HPAGE_PMD_ORDER) {
+> >>>>
+> >>>> Seems you will also miss the non-CMA THP from the PCP, so I wonder i=
+f
+> >>>> we can add a migratetype comparison in __rmqueue_pcplist(), and if
+> >>>> it's not suitable, then fallback to buddy?
+> >>>
+> >>> Yes, we may miss some non-CMA THPs in the PCP. But, if add a migratet=
+ype
+> >>> comparison in __rmqueue_pcplist(), we may need to compare many times
+> >>> because of pcp batch.
+> >>
+> >> I mean we can only compare once, focusing on CMA pages.
+> >>
+> >> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> >> index 3734fe7e67c0..960a3b5744d8 100644
+> >> --- a/mm/page_alloc.c
+> >> +++ b/mm/page_alloc.c
+> >> @@ -2973,6 +2973,11 @@ struct page *__rmqueue_pcplist(struct zone *zon=
+e,
+> >> unsigned int order,
+> >>                   }
+> >>
+> >>                   page =3D list_first_entry(list, struct page, pcp_lis=
+t);
+> >> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >> +               if (order =3D=3D HPAGE_PMD_ORDER &&
+> >> !is_migrate_movable(migratetype) &&
+> >> +                   is_migrate_cma(get_pageblock_migratetype(page)))
+> >> +                       return NULL;
+> >> +#endif
+> >
+> > This doesn't seem ideal either. It's possible that the PCP still has ma=
+ny
+> > non-CMA folios, but due to bad luck, the first entry is "always" CMA.
+> > In this case,
+> > allocations with is_migrate_movable(migratetype) =3D=3D false will alwa=
+ys lose the
+> > chance to use the PCP.   It also appears to incur a PCP spin lock/unloc=
+k.
+>
+> Yes, just some ideas to to mitigate the issue...
+>
+> >
+> > I don't see an ideal solution unless we bring back the CMA PCP :-)
+>
+> Tend to agree, and adding a CMA PCP seems the overhead can be acceptable?
 
-I don't think I agree with this one.  If we have a sample() action with
-a lot of different actions inside and we reached the end while the last
-action didn't consume the skb, then we should report that.  E.g.
-"sample(emit_sample(),push_vlan(),set(eth())),2"  should report that the
-cloned skb was dropped.  "sample(push_vlan(),emit_sample())" should not.
+yes. probably. Hi Ge,
 
-The only actions that are actually consuming the skb are "output",
-"userspace", "recirc" and now "emit_sample".  "output" and "recirc" are
-consuming the skb "naturally" by stealing it when it is the last action.
-"userspace" has an explicit check to consume the skb if it is the last
-action.  "emit_sample" should have the similar check.  It should likely
-be added at the point of action introduction instead of having a separate
-patch.
+Could we printk the size before and after adding 1 to NR_PCP_LISTS?
+Does it increase one cacheline?
 
-Best regards, Ilya Maximets.
+struct per_cpu_pages {
+spinlock_t lock; /* Protects lists field */
+int count; /* number of pages in the list */
+int high; /* high watermark, emptying needed */
+int high_min; /* min high watermark */
+int high_max; /* max high watermark */
+int batch; /* chunk size for buddy add/remove */
+u8 flags; /* protected by pcp->lock */
+u8 alloc_factor; /* batch scaling factor during allocate */
+#ifdef CONFIG_NUMA
+u8 expire; /* When 0, remote pagesets are drained */
+#endif
+short free_count; /* consecutive free count */
+
+/* Lists of pages, one per migrate type stored on the pcp-lists */
+struct list_head lists[NR_PCP_LISTS];
+} ____cacheline_aligned_in_smp;
 
