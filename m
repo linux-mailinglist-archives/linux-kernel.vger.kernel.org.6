@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-217310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E3890AE24
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:44:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5032590ADFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840BD1F226E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:44:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52FFE1C21746
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA31196C96;
-	Mon, 17 Jun 2024 12:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E88F19596C;
+	Mon, 17 Jun 2024 12:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nntBnYVE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="C897/DBW"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA79196C72;
-	Mon, 17 Jun 2024 12:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A7F8836;
+	Mon, 17 Jun 2024 12:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718628264; cv=none; b=ZrjT+R2D/yn1r0lY+7fX50S9JY26r1oYumNpNz+5n8CAhvA580ssceUcQM/zryFlcreMvzAbysrxtvYaobhirxISHTmzL5zdgNSCKGA6o6/uUzyb69z7zO3ON/MCAXA+UEjoUXwHyAQ84xoZzjsfPq/247BrJZGs/uqMWJrICQY=
+	t=1718627564; cv=none; b=TXDQ0QniKIh2WQtAHUSI/pMZA5IWYFnBgqeGrTJPCbU8mipPaURvgwFb5YLFVdXsMm9lZcihuorcHImG4sAsAcUlkJkfhkr4zyKjzltRsapcO3qH2nbYBSMqbw6fWsw59By7OjumquRlmlnS7hEZRUZpmyDoGOXbUTuUsS1F5QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718628264; c=relaxed/simple;
-	bh=bk3jaCTgEwyFqgeARzSHMxmOvQdgz0Ppwlp60WKOmQw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FD3e1PkYi/M4tGxxE9BKUy6hm++Zh1wFXzx8hz9G77SmjDZ7eRYdQCCTVKh56W9Ew3piviVLyv/1UseGnRTOklLv0T6Gi66Y6NBzB39GSzRaRfr6tGyhk8JW7IHVY04eLEs1KJQshHQmzeyU43K1fCGPrfrvU/ge/Mx34wTEdmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nntBnYVE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F878C4AF1C;
-	Mon, 17 Jun 2024 12:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718628263;
-	bh=bk3jaCTgEwyFqgeARzSHMxmOvQdgz0Ppwlp60WKOmQw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nntBnYVEohFkLJK2lrDYhAJL6Dirglm7fViLEJx1cun+AEuKLjAubktVJcRIVtxox
-	 FxovPk10y+7rfn8sOdCoAfU1Mfs771FeOzuAYF1x699ODbPSfY/F4lU0sKGnPK89x/
-	 qtNgP8t1NYd2ZWHdB5KjOV6feKx6NVslrchwnFIv0sV/6p7FiJnYZwP0f5BUY0z/F5
-	 TvpkzAOHgr+qKuOTmBKS+QzqUgvUpA0E4P4pO1vf4anw+1yliUZA04dQ6ao3PG5H7Z
-	 LEbIcA9OrAn3iTpZo+HOYJ/ZoAPalXO0mPCL90aGfvvRf/nPpkTbfBHtY2Nt4XXHPL
-	 BsZqgjaoqYmZg==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: [PATCH] riscv: enable HAVE_ARCH_STACKLEAK
-Date: Mon, 17 Jun 2024 20:30:29 +0800
-Message-ID: <20240617123029.723-1-jszhang@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718627564; c=relaxed/simple;
+	bh=SZu+21b3EOadKSJGfSaiut50TflCHmgMEiyIEWkOcys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y+sUb1lHRuZAosv/ZU6PEN6eWAv7ApU+kc52+LgpAcKp6lqkFp2ghHRFFqE83XqcB2mF1OAmrCxsXHa/tDlsAvbiQOS9ogpIuMKGMx0sOmwH1Ev80CLWfBp5BJqyNcmv6lkvsjvdqXqw6/AFbTPv8ZJ1POMZMk20iLK45IoGKGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=C897/DBW; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718627543; x=1719232343; i=markus.elfring@web.de;
+	bh=SZu+21b3EOadKSJGfSaiut50TflCHmgMEiyIEWkOcys=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=C897/DBWZf1CbuvUCm5dAxJ9NPEVeHtsXU29NX/+eMumtMjGnJJ7Wp6HuVzQAq40
+	 Wiu81HXcYrjpcDpccoFpEGHJfR4KiuA4KVwsewC63ogy8KloBcVm6AlTUamov/EFr
+	 HvSdrAygEjibnlT0lfrw0jZrB2CmENTj60JUcgyMXygW7FtdDNf7x+4flTJ4RbXFs
+	 6xscsA4pT03Z67Nr4J6uwyH0IJg3UOlriA6LUJZUHgVhH9rxP64u13EmOBLcjyWKe
+	 SVGCe2MP9s6CkNwmfI+4EJGP2SX2vLQShjoWgW+8LKgjLExaJXvAeTX3pt3oJo8Ct
+	 oKPBPKH6i7yScmVjXA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZB07-1roiM21AYL-00OQmw; Mon, 17
+ Jun 2024 14:32:23 +0200
+Message-ID: <919c9f61-f884-4aae-9dca-9e0d863c34a8@web.de>
+Date: Mon, 17 Jun 2024 14:32:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 3/7] ASoC: codecs: wcd937x: add wcd937x codec driver
+To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+ Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
+ Banajit Goswami <bgoswami@quicinc.com>, Conor Dooley <conor+dt@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Takashi Iwai <tiwai@suse.com>, LKML <linux-kernel@vger.kernel.org>,
+ Rohit kumar <quic_rohkumar@quicinc.com>
+References: <20240611074557.604250-4-quic_mohs@quicinc.com>
+ <6e1dd5d1-8c5d-44f5-99e8-f42cfbdeee04@web.de>
+ <a6d17f27-51f4-47a5-8798-37bcdf3b103d@sirena.org.uk>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <a6d17f27-51f4-47a5-8798-37bcdf3b103d@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oDEJkjUPAIlsV7AVUDwOgL/buRmui/li+1rQnY3ZUutBcaSilQa
+ 2PfoBEenwXHssLsnbrpNbLdar/Mh6Eyngc73oReWAS965iNWMFL8SBi3iVl0l87RkJz+kS6
+ ctOUUlfrXcboE7cb8AVxQj4+PTqAN+UwCfe/7LIgsXEgWjBWtAnqpC2ostWXFjToXgEjSJM
+ 5v4DO/wWq0aITpIRWIBcw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4GwFPzN+sU0=;S6bpsAzm4afugR5kRmJsyhi4MIJ
+ n1RZ4mG0AsibYjNbATV4nsOoT25bKJS5170HqLLv0LLZBk10lDjvgU8LJJAFZdCeFtDUxyY7t
+ wtM/XUhgAz4G8YX5A4doawtftrHLxkuB0gbw9mCP90sK/2IamTq/E48T0E/jkP4YZtv1qLrrA
+ yEdDTCIkPEe0AEjm2l0grxbF8SqMKIquUD+8UevdHBk8HW/0cztWcYD0WK98UzddwivzXdrP3
+ XCiUoxIHZU7FsLFIDG1a9aE1IdN+25v/pNO7HRPMU4hhq/F9OW5GIzKdGFknqYshV0wgoHROL
+ 77G6uHZTMyexC5BoE1cL50Wd4ni7Ty/Ok6rWUbvgoA8LiKSQslhu7Za7evqNlpcfT35jgqORX
+ olGEsb9DdFat/UNzy79AWCjtMWI9cxh6/8YMrnoFW5BpKPmhn57MVTOEIOi8d/fJp3jvVv27r
+ TnBM8cS/XMrAKX9D3EGIPZNoa8s6vL3zBTrs4IppxxsesONmlO55aZiNGYzyuHK+Q1UJMValC
+ 3jRpGJoNxmhf8ia54hZhs2/MkO+rK3Ebq4ZbRbmySIP8WDvTGVCQz5/uPRnZmimrbMydkT7rW
+ AoUe2wRX5VF77w6Z6rYVpZ8KeARR6vUJBLA64HdakIaLOrZQOnwFRDPkO8IWSl3sVHGpTco5m
+ y+JeUuyv1toUR/CWEH+XAakZ6mBkB2DIVbIgu+AxHtaT3kSJXo9xEtzAjxoOaQSxjMppzkXVn
+ 46KSqGnSxiRBZflddVv9HIXTPgPtu6DEU2BNsAVfiQ9h1umsmJ3ApumRj3jX0Zv/ew4+ncYzB
+ C0auqCReTkzFbFksOdhFdZBg0qyVOJlhXRwdFvWfuGFEU=
 
-Add support for the stackleak feature. Whenever the kernel returns to user
-space the kernel stack is filled with a poison value.
+>>> This patch adds basic SoundWire codec driver to support for
+>>> WCD9370/WCD9375 TX and RX devices.
+>> =E2=80=A6
+>>
+>> Please improve such a change description with an imperative wording.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.10-rc3#n94
+>
+> Feel free to ignore Markus, he has a long history of sending
+> unhelpful review comments and continues to ignore repeated requests
+> to stop.
 
-At the same time, disables the plugin in EFI stub code because EFI stub
-is out of scope for the protection.
+Does such feedback indicate that you find advice from the referenced infor=
+mation source
+also questionable anyhow?
 
-Tested on qemu and milkv duo:
-/ # echo STACKLEAK_ERASING > /sys/kernel/debug/provoke-crash/DIRECT
-[   38.675575] lkdtm: Performing direct entry STACKLEAK_ERASING
-[   38.678448] lkdtm: stackleak stack usage:
-[   38.678448]   high offset: 288 bytes
-[   38.678448]   current:     496 bytes
-[   38.678448]   lowest:      1328 bytes
-[   38.678448]   tracked:     1328 bytes
-[   38.678448]   untracked:   448 bytes
-[   38.678448]   poisoned:    14312 bytes
-[   38.678448]   low offset:  8 bytes
-[   38.689887] lkdtm: OK: the rest of the thread stack is properly erased
-
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- arch/riscv/Kconfig                    | 1 +
- arch/riscv/kernel/entry.S             | 4 ++++
- drivers/firmware/efi/libstub/Makefile | 3 ++-
- 3 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 0525ee2d63c7..9cbfdffec96c 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -118,6 +118,7 @@ config RISCV
- 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
- 	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
- 	select HAVE_ARCH_SECCOMP_FILTER
-+	select HAVE_ARCH_STACKLEAK
- 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 68a24cf9481a..80ff55a26d13 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -130,6 +130,10 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
- #endif
- 	bnez s0, 1f
- 
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+	call	stackleak_erase_on_task_stack
-+#endif
-+
- 	/* Save unwound kernel stack pointer in thread_info */
- 	addi s0, sp, PT_SIZE_ON_STACK
- 	REG_S s0, TASK_TI_KERNEL_SP(tp)
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index 06f0428a723c..3a9521c57641 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -28,7 +28,8 @@ cflags-$(CONFIG_ARM)		+= -DEFI_HAVE_STRLEN -DEFI_HAVE_STRNLEN \
- 				   -DEFI_HAVE_MEMCHR -DEFI_HAVE_STRRCHR \
- 				   -DEFI_HAVE_STRCMP -fno-builtin -fpic \
- 				   $(call cc-option,-mno-single-pic-base)
--cflags-$(CONFIG_RISCV)		+= -fpic -DNO_ALTERNATIVE -mno-relax
-+cflags-$(CONFIG_RISCV)		+= -fpic -DNO_ALTERNATIVE -mno-relax \
-+				   $(DISABLE_STACKLEAK_PLUGIN)
- cflags-$(CONFIG_LOONGARCH)	+= -fpie
- 
- cflags-$(CONFIG_EFI_PARAMS_FROM_FDT)	+= -I$(srctree)/scripts/dtc/libfdt
--- 
-2.43.0
-
+Regards,
+Markus
 
