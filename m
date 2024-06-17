@@ -1,104 +1,154 @@
-Return-Path: <linux-kernel+bounces-217178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C0690AC8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:04:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776B490AC88
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31A64B264C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:01:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904F31C2142D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A391922F8;
-	Mon, 17 Jun 2024 11:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DE473164;
+	Mon, 17 Jun 2024 11:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YElRHHtu"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o+1WFjLe"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD012381A1;
-	Mon, 17 Jun 2024 11:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203265025E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718622089; cv=none; b=g6GOvI79RJOufNyrJFsSyDe1yHFWm7JRPLdvUVqsUFoNYg6soG3K6J0y37ti7C+7EZISI5pYldhwbXKpDvP7+eOtliGMlq9FFD6kK5286S5FslbpIpnvDwFgEpGSRM/CrZ0kOn9dy8qr3j1BFwQzDkhUpxlcQ1d+1z66h/544mg=
+	t=1718622064; cv=none; b=gZ1JXzbXwNLrblc2Y96fXIHYngQasROFzeWgA0DzDYoaqnNCSQcRzfIWahwkykEjMOWEjvlQNLrwjLcI521NO21e1xTCwrqPcgb9TYU5CXBPEiOI7g2tsOLubAPxyYim8rRG92+PVJZ72hTWPJLZBV06G7quseO7E6MzY8tupLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718622089; c=relaxed/simple;
-	bh=aXrsEorqV27TsaHzSIp9daL/Gd1q/102esAXS6wbGfA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oiiBbniChuK0Fr8zRzzbxCmaC7m7GhXSQ/NbWZX2Rcg3727NMKUQFq17GevZ1goANqHL6mM2HGVINkq0OWijG8HHEaHsu1foZphx/JpZU6oo8pnEU7nS50vlh6EDR3b+TZY5Hyrfh3LWJtlwuBQi8l4PAyxX8ssLAFZrdBeAXvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YElRHHtu; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6266ffdba8so424283166b.1;
-        Mon, 17 Jun 2024 04:01:27 -0700 (PDT)
+	s=arc-20240116; t=1718622064; c=relaxed/simple;
+	bh=cKofoxhoSF5ZQPhIVi4G0l+IsmRHCdzIQcUF+FD2XyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQvXoZteheUf+hLBPHxX3CRU93+5cDDlauMBPrLZScAYT8/u8K0BwxKC2SZudQdrvZfkvoS0lWPBEpj6/yDQMTDWs1Nfo864rvJ9h/qQ3uPlqPy1Xfwzetbv1pvp4ArSqutYwm4Tt4koK11b9unQntBJJlJ/d002mfL9LmL+koQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o+1WFjLe; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ec002caeb3so56208651fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 04:01:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718622086; x=1719226886; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aXrsEorqV27TsaHzSIp9daL/Gd1q/102esAXS6wbGfA=;
-        b=YElRHHtuhjj5G3URe3O8BzrM+q3BuSZi4oo2toW1Yg+6luOsh09vMWwCfCpcbIq+6u
-         MRPlaNkzv+PkyDaYd1XZSVDTvhuL+EHyqr+cFbW5J1d9UGX88ILG3XgKXRTlYDJgXPmc
-         FF+O+2qXObJwSj7guvueBt+lsJEMW6l7DSONGlXq8bT1vLrOFME+lD16VfVLVOruXmN2
-         w7TD9/GzDetek7v94WeCbd+OHYvyRx9KVZhkiMv2gCQDkW7B4camfn9DmREM5jXJli4g
-         osP8W/f1PNheh/ax5DMNP9J9Fl7/aCYnO9JjknTfSogDTuDSpDrTEyEoxZqH0zlq7dSO
-         qb4w==
+        d=linaro.org; s=google; t=1718622061; x=1719226861; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/SjNe9vmU5byAvsAKJbghGk4V4PXep6SvlVxJjNPLCM=;
+        b=o+1WFjLe5iHMnIJFK6/5EHggVUxNKTkLC5bRpkyDnPnH4mFa9+xozoX8waK8199/JW
+         wJGUHx6s3Kih4j3glwb8ZjxrwL04nPOLGbObdjoUlunI8gdKtckGmgHxBkS5mygTnlIM
+         Ivi49dwortHOAfnXqMSMN0iWi/6qzz7viR0tnXgIKNvTcyOjrmCTESjzYPd8UGbOg6wB
+         VsHriqkSsoOPbLysJopShTYMlBt6lxsc8eUdUXvExM8bgMAfXDFTBVLWr6mGoSDisjL8
+         GfsvUrLQWVPc7SEhSy3KNGMmuEeXl9VNFPs5/JqOeDznd7jyAlGwfjkBMLbKv6NMtFaS
+         X8Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718622086; x=1719226886;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aXrsEorqV27TsaHzSIp9daL/Gd1q/102esAXS6wbGfA=;
-        b=xTWdXZ4GH1tPYepd3+JzfleR9p7K1VV2PluNhO3dvM5CJioENwdd71LGNkWtsQM6dO
-         pCsEs4pdDKAvKw17xBailRTYgkJUYVqJq4aVvhtYzeLIlP8uttbNJzDry6Lx0PXDnwLa
-         vW6oZsBI4DfcjGoITc/oGsoVksegan0iOnfEcRBuDogj936aVMan5yug8en6Uznr7bMM
-         N4bsVtnJK/ptNhwluMG3kc72Uc823fv2WeYn1vdLuLyYwEHiwlsp17r9gtJyVl8gkgAb
-         1jx3W4xHCwLF5ThgO99KutAG9x2n59RbgVGuEWTscCgs4c8Qq5Dsb1liWezBNpCU19R5
-         gtRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWV92vMzJ/X4Tk/+JugfQk/FhAi2qgPopv2d9Nw+nE9bor/JGdWzs7S8Pg2weO+FQAcIHHG5rpyv9ZK1SkoQ4KPnfELpq47xCDSS8JfTUI5ixi+iLHDL76feYfHuGCUpE2/ylqdFqu
-X-Gm-Message-State: AOJu0YwHRuRp3OjTqAv3lRoaM5FzeLTH2lbyaobJAQmBOLaTlTZZ5YJg
-	/+WWE3pSvtUyDzJ4kjqGzroOl19HYFA8FeMSzrpMvSBXjXPdR5D1a7e+vXfAPAd7s27++lEXhHF
-	QiOBCGyOifhGsjS+aQK4hM7U8+7U=
-X-Google-Smtp-Source: AGHT+IF976uDJnhP4QDJdov/DzoJd5I4aPHLyWfc2Ahy9yFEJIdQ9MOW2yDGG1QLLjUPyFAs9Z/yALG+IIqeYIJpmEY=
-X-Received: by 2002:a17:907:9412:b0:a6f:4f3f:e6d8 with SMTP id
- a640c23a62f3a-a6f60d20ecdmr929788066b.20.1718622085854; Mon, 17 Jun 2024
- 04:01:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718622061; x=1719226861;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/SjNe9vmU5byAvsAKJbghGk4V4PXep6SvlVxJjNPLCM=;
+        b=j+crNcME2rkdG4qPluNKl7iW52OR4JWXGlRtcR+mRwdCsmnmYUCDziNgrFby6M1aKO
+         YRlRK9to2hi9BpmRivcSH4/L7VBNbmIsWLqIdRyA2wAPA+FlD3+WqVfzFf2NlOgmnshu
+         s8JxM+00OQ8Xg18CuyfiXg2k8Rq7M9fVrV7FiREXUdseQaLeA0RlrNMk/dibByeSwAWV
+         tOt8CzjtHAnRhmxPZIKKG+sVV7nrb6s1wisTA3+RXI+OaNNfgkbUZmMRFZ8ococLdemr
+         BvHrRpLhAJx2ttRQkjvzCueM8ww0KIjcfgSbgGOCJVN+kaLFqVs3oHuIXpvzuT1M4iYl
+         yIkA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5P3EP69iVh4AZVTIx6x5tBA4+1mJ8WvYTwih+D5T+DJufotXNzsOqM7hsclla3yEoukFJDZIEJymPk4kl51VazHosHcA7CmHO+6Wq
+X-Gm-Message-State: AOJu0YzmIAc8SqB6FQtjNudLcj9h1UoyQhgFZpMBwFJbf5xrU+7KFaPh
+	NeblNT1OBYvW75Ml2L5UESfL/BR62Xso2Of6JhNF41GjCyTi22pu3OM1xDNyYc8=
+X-Google-Smtp-Source: AGHT+IEXhLINf4w3Jt6vhMBeIEaqYtSUuf/UGyq0ougmpEhxyfRWYmFs/qW8gnDYQ7pYqWK6RaW5Ug==
+X-Received: by 2002:a05:6512:10ce:b0:52c:bd0a:dd32 with SMTP id 2adb3069b0e04-52cbd0add64mr1873804e87.46.1718622061319;
+        Mon, 17 Jun 2024 04:01:01 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282de47sm1203069e87.66.2024.06.17.04.01.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 04:01:00 -0700 (PDT)
+Date: Mon, 17 Jun 2024 14:00:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: krzysztof.kozlowski@linaro.org, djakov@kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel@quicinc.com
+Subject: Re: [RFC PATCH 0/2] arm64: qcom: Add BWMON support for SA8775p
+Message-ID: <3yrji5rrzrfj3j4bekvhos36mgafbdcufsslk5daqfn7y5k2qz@k3nrrlbnlsmb>
+References: <20240617092940.1724962-1-quic_tengfan@quicinc.com>
+ <yb3ni6o22zdm2lqodj7utdb2dlg3jkbwzutxhmljxle3syoe5y@op2prslmri4y>
+ <d997f42d-0616-4180-ae36-9d2ebd60d15f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me> <20240617-ep93xx-v10-13-662e640ed811@maquefel.me>
-In-Reply-To: <20240617-ep93xx-v10-13-662e640ed811@maquefel.me>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 17 Jun 2024 13:00:49 +0200
-Message-ID: <CAHp75VcMS_xp6gT1OCudxKstMnF8uXE5_TXWF3JYs27k3jPDMA@mail.gmail.com>
-Subject: Re: [PATCH v10 13/38] pwm: ep93xx: add DT support for Cirrus EP93xx
-To: nikita.shubin@maquefel.me
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d997f42d-0616-4180-ae36-9d2ebd60d15f@quicinc.com>
 
-On Mon, Jun 17, 2024 at 11:38=E2=80=AFAM Nikita Shubin via B4 Relay
-<devnull+nikita.shubin.maquefel.me@kernel.org> wrote:
->
-> From: Nikita Shubin <nikita.shubin@maquefel.me>
->
-> Add OF ID match table.
+On Mon, Jun 17, 2024 at 06:42:42PM GMT, Tengfei Fan wrote:
+> 
+> 
+> On 6/17/2024 5:43 PM, Dmitry Baryshkov wrote:
+> > On Mon, Jun 17, 2024 at 05:29:38PM GMT, Tengfei Fan wrote:
+> > > Add CPU and LLCC BWMON nodes and their corresponding OPP tables for
+> > > SA8775p SoC.
+> > 
+> > This series is marked as RFC, Request For Comments. What kind of
+> > comments are expected for the series?
+> > 
+> 
+> I found that the BWMON patch for x1e80100[1] is currently under review.
+> There are upstream comments suggesting that we reference the same shared OPP
+> table from all the BWMONs that share the same OPP table. However, there will
+> be some DTBS CHECK warnings[2] if we do reference the same shared OPP table.
+> 
+> Therefore, I pushed this patch series to collect some comments on whether we
+> can have separate OPP tables for each BWMON, as the OPP table of
+> "pmu@90b5400" and "pmu@90b6400" in this patch series.
 
-...
+Thank you for the explanation. Now why wasn't this a part of the cover
+letter?
 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> 
+> [1]
+> https://lore.kernel.org/lkml/4ef1d9a9-6a0e-4324-b6d5-2ae225855b03@linaro.org/
+> 
+> [2]
+> arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: pmu@90b5400: 'opp-table' is a
+> required property from schema $id:
+> http://devicetree.org/schemas/interconnect/qcom,msm8998-bwmon.yaml#
+> 
+> > > 
+> > > Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> > > ---
+> > > 
+> > > This patch series depends on patch series:
+> > > "[PATCH 2/4] soc: qcom: icc-bwmon: Allow for interrupts to be shared across instances"
+> > > https://lore.kernel.org/lkml/20240604011157.2358019-3-quic_sibis@quicinc.com/
+> > > 
+> > > Tengfei Fan (2):
+> > >    dt-bindings: interconnect: qcom-bwmon: Document SA8775p bwmon
+> > >      compatibles
+> > >    arm64: dts: qcom: sa8775p: Add CPU and LLCC BWMON
+> > > 
+> > >   .../interconnect/qcom,msm8998-bwmon.yaml      |   2 +
+> > >   arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 115 ++++++++++++++++++
+> > >   2 files changed, 117 insertions(+)
+> > > 
+> > > 
+> > > base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+> > > -- 
+> > > 2.25.1
+> > > 
+> > 
+> 
+> -- 
+> Thx and BRs,
+> Tengfei Fan
 
-Not a big deal, but this is a bit weird. It doesn't prevent the patch
-from landing upstream, but in the future just use the most recent one.
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+With best wishes
+Dmitry
 
