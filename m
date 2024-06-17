@@ -1,244 +1,129 @@
-Return-Path: <linux-kernel+bounces-217024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A9A90A9C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:38:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7BB90AA22
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D38EA288E8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:38:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA511C22FE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F081019308E;
-	Mon, 17 Jun 2024 09:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A252A199E97;
+	Mon, 17 Jun 2024 09:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e0eoA3Rw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="60VR4dPt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e0eoA3Rw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="60VR4dPt"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cr6MxLhN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5022F190673;
-	Mon, 17 Jun 2024 09:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6991953A3;
+	Mon, 17 Jun 2024 09:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718617070; cv=none; b=Ret+ZKYY3TbGmXpD59WqRmKh5AfLjYYkMvqGsHrrt9y6nIGN+lCpPBYjL8C/VZGmEjMFInjoyJo+EiCasl/Tgffn8nEA6Nc0VBTrxLE0Xw0Bg4SM/zVKu04eveDrwAoYhtQEMHAj5Rr4tCgPK6CAyyKNGF5UfQ/pOiBL496iud0=
+	t=1718617108; cv=none; b=ILemi8Z/zUwxWFyf/IUew1eS8PotPG2efUKo3JPFj5MkZvvAO9O1THwNopoj4bjsdFr+SVZ9rILZHQYhlFXE2oYIi2c/Tixeti3Ib27ZqstXrgdqtg2y+tDs5ni3SVdLBN7cy039R43syjzIyFtwLTh36Z+b/Pf2niOwWmlsnNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718617070; c=relaxed/simple;
-	bh=6GJI8RyV4Rxgbr0HGunZUiPB2c9B8M95YOgm2k5GYIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uy12kYpESvpLidfbm0vQYkScPK9OeI1PWfb5OaMGEjzWiSHVImPeZ3KKwtZ788jI/sDN4rnhbuPADWrO6kG9y+joKQrh6ys56F2hXxPwxzTUCUVNQIynvit2mo1Yqika7kCtOUk71uM0G39TL3RDZpVzeghElTdEUb+473Pc20U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e0eoA3Rw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=60VR4dPt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e0eoA3Rw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=60VR4dPt; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1C3045FE13;
-	Mon, 17 Jun 2024 09:37:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718617066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
-	b=e0eoA3RwXAUApO9OKFPUvDLR7Su4DXfOVMavcXGgWD2mB625CNUBJPgxynUWq0RXpTy8U1
-	dNsdSNXz/cOIs0WeOmwg1BkKaXMXVSMq6zA50xqDvsb5sW1PN5LCTejML6iMlLLvh9ChwR
-	vRsoNbrAf5iy8S1rJq8pbDgMGE3USQs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718617066;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
-	b=60VR4dPt9IjY7qkDextIsvc8s7WdXcsVzYK2nbo624/PVrX35T0zYvjSGzWKaS1ETvUHRr
-	KnV99vuMnASrOjDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=e0eoA3Rw;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=60VR4dPt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718617066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
-	b=e0eoA3RwXAUApO9OKFPUvDLR7Su4DXfOVMavcXGgWD2mB625CNUBJPgxynUWq0RXpTy8U1
-	dNsdSNXz/cOIs0WeOmwg1BkKaXMXVSMq6zA50xqDvsb5sW1PN5LCTejML6iMlLLvh9ChwR
-	vRsoNbrAf5iy8S1rJq8pbDgMGE3USQs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718617066;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SflxasanEA/QtBQMFtVqAWfy8whSAsE2lNZEdzjNdd4=;
-	b=60VR4dPt9IjY7qkDextIsvc8s7WdXcsVzYK2nbo624/PVrX35T0zYvjSGzWKaS1ETvUHRr
-	KnV99vuMnASrOjDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E24913AAA;
-	Mon, 17 Jun 2024 09:37:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lkRuA+oDcGYgeAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 17 Jun 2024 09:37:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A9A78A0886; Mon, 17 Jun 2024 11:37:45 +0200 (CEST)
-Date: Mon, 17 Jun 2024 11:37:45 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: NeilBrown <neilb@suse.de>, Amir Goldstein <amir73il@gmail.com>,
-	James Clark <james.clark@arm.com>, ltp@lists.linux.it,
-	linux-nfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
- ->atomic_open used.
-Message-ID: <20240617093745.nhnc7e7efdldnjzl@quack3>
-References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
- <20240615-fahrrad-bauordnung-a349bacd8c82@brauner>
+	s=arc-20240116; t=1718617108; c=relaxed/simple;
+	bh=X4TgZvR8YTRuJlHakvo1qNbgCFhjwBTkNSAlyUW534c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tx9JO4JJNgkhQXJ19Yejr4Ns/4QB7bvogzo2B16s1VNl5yKv14Ulox8lVu8k3jxJJBgN0jEEzme9O5Eu3hiomWFJ26K1fxxmy3LiWrmhXrIoqEEd8IAxp7jUPABK6y5sUFA6G9qeo6PvwQ+jPGk1Nafm+B7RNQInv+d0PLCLQO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cr6MxLhN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45GNgrPq015294;
+	Mon, 17 Jun 2024 09:38:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=XZWR+LPUU8g++qZHyoVAYs
+	vrY/YFVlLvCNv77TwxLuc=; b=cr6MxLhNLXcfyxcRodtoBEJDiGiJ9JZw1gMLNO
+	RXdTdc3ZbYaZQMNC+6S71b1FzLXQU+gg1DGznSnkh0gRCBV9PkykA1z6GK1zXjRD
+	N//I1arVQ0MbBnsW3RdZxA59laQwIxH9HXviqVK2E7SJS8Wb1MTVKCm14rjHv//k
+	VhDaOuohk8kQQdj+cLNxcc9ybZjdACfjiNu/yqQ6GmVIoxIXTWFq/IltE09eXLv8
+	jbcBCH7Qn2BNxXGzXBa8LBo2fCPioEdH/CoNVXzikZKc0tZjUkrU6BXI/OrWr1v/
+	wNH9CVc2sAqX2Nz2aFWygyCrnMr07ywl4D9pUKqFm0EpAJAg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys0an3en7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 09:38:21 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H9cJbJ021271
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 09:38:19 GMT
+Received: from luoj-gv.qualcomm.com (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
+ 2024 02:38:17 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bryan.odonoghue@linaro.org>,
+        kernel test
+ robot <lkp@intel.com>
+Subject: [PATCH v2] clk: qcom: nsscc-qca8k: Fix the MDIO functions undefined issue
+Date: Mon, 17 Jun 2024 17:38:06 +0800
+Message-ID: <20240617093806.3461165-1-quic_luoj@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240615-fahrrad-bauordnung-a349bacd8c82@brauner>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,gmail.com,arm.com,lists.linux.it,vger.kernel.org,zeniv.linux.org.uk,suse.cz];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 1C3045FE13
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WO2qlUJu_vFuNd3LErenDaK_3CZK0Uob
+X-Proofpoint-ORIG-GUID: WO2qlUJu_vFuNd3LErenDaK_3CZK0Uob
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_08,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0 clxscore=1015
+ suspectscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0 mlxlogscore=876
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406170073
 
-On Sat 15-06-24 07:35:42, Christian Brauner wrote:
-> On Wed, 12 Jun 2024 17:09:55 +1000, NeilBrown wrote:
-> > When a file is opened and created with open(..., O_CREAT) we get
-> > both the CREATE and OPEN fsnotify events and would expect them in that
-> > order.   For most filesystems we get them in that order because
-> > open_last_lookups() calls fsnofify_create() and then do_open() (from
-> > path_openat()) calls vfs_open()->do_dentry_open() which calls
-> > fsnotify_open().
-> > 
-> > [...]
-> 
-> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-> Patches in the vfs.fixes branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.fixes
-> 
-> [1/1] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open used.
->       https://git.kernel.org/vfs/vfs/c/7536b2f06724
+The clock controller driver of QCA8K depends on MDIO_BUS because
+of mdio_module_driver used to register the driver.
 
-I have reviewed the patch you've committed since I wasn't quite sure which
-changes you're going to apply after your discussion with Amir. And I have
-two comments:
+This patch fixes the following undefined symbols.
+ERROR: modpost: "mdio_driver_register"
+[drivers/clk/qcom/nsscc-qca8k.ko] undefined!
+ERROR: modpost: "mdio_driver_unregister"
+[drivers/clk/qcom/nsscc-qca8k.ko] undefined!
+ERROR: modpost: "__mdiobus_write"
+[drivers/clk/qcom/nsscc-qca8k.ko] undefined!
+ERROR: modpost: "__mdiobus_read"
+[drivers/clk/qcom/nsscc-qca8k.ko] undefined!
 
-@@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
-  */
- int vfs_open(const struct path *path, struct file *file)
- {
-+	int ret;
-+
- 	file->f_path = *path;
--	return do_dentry_open(file, NULL);
-+	ret = do_dentry_open(file, NULL);
-+	if (!ret)
-+		/*
-+		 * Once we return a file with FMODE_OPENED, __fput() will call
-+		 * fsnotify_close(), so we need fsnotify_open() here for symmetry.
-+		 */
-+		fsnotify_open(file);
-+	return ret;
- }
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406161634.B27sOs8B-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202406162047.QkUMa2fG-lkp@intel.com/
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+Changes in v2:
+	*update the depends on MDIO_BUS.
+---
+ drivers/clk/qcom/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-AFAICT this will have a side-effect that now fsnotify_open() will be
-generated even for O_PATH open. It is true that fsnotify_close() is getting
-generated for them already and we should strive for symmetry. Conceptually
-it doesn't make sense to me to generate fsnotify events for O_PATH
-opens/closes but maybe I miss something. Amir, any opinion here?
-
-@@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
- 	int acc_mode;
- 	int error;
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 4432b1cce478..1e468e48401b 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -251,7 +251,7 @@ config IPQ_GCC_9574
  
-+	if (file->f_mode & FMODE_OPENED)
-+		fsnotify_open(file);
-+
- 	if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
- 		error = complete_walk(nd);
- 		if (error)
-
-Frankly, this works but looks as an odd place to put this notification to.
-Why not just placing it just next to where fsnotify_create() is generated
-in open_last_lookups()? Like:
-
-        if (open_flag & O_CREAT)
-                inode_lock(dir->d_inode);
-        else
-                inode_lock_shared(dir->d_inode);
-        dentry = lookup_open(nd, file, op, got_write);
--	if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
--		fsnotify_create(dir->d_inode, dentry);
-+	if (!IS_ERR(dentry)) {
-+		if (file->f_mode & FMODE_CREATED)
-+	                fsnotify_create(dir->d_inode, dentry);
-+		if (file->f_mode & FMODE_OPENED)
-+			fsnotify_open(file);
-+	}
-        if (open_flag & O_CREAT)
-                inode_unlock(dir->d_inode);
-        else
-                inode_unlock_shared(dir->d_inode);
-
-That looks like a place where it is much more obvious this is for
-atomic_open() handling? Now I admit I'm not really closely familiar with
-the atomic_open() paths so maybe I miss something and do_open() is better.
-
-								Honza
+ config IPQ_NSSCC_QCA8K
+ 	tristate "QCA8K(QCA8386 or QCA8084) NSS Clock Controller"
+-	depends on MDIO_BUS || COMPILE_TEST
++	depends on MDIO_BUS
+ 	help
+ 	  Support for NSS(Network SubSystem) clock controller on
+ 	  qca8386/qca8084 chip.
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
