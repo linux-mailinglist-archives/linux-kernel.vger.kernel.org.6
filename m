@@ -1,53 +1,91 @@
-Return-Path: <linux-kernel+bounces-217386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7CD90AF0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:22:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E64AA90AECE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 740782846A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:22:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C0691F27BBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A19B19AD74;
-	Mon, 17 Jun 2024 13:18:02 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B7F197A76;
+	Mon, 17 Jun 2024 13:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="b5TzQBVo"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E457C19885F;
-	Mon, 17 Jun 2024 13:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48841197559
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630281; cv=none; b=tVKv/NbKoOagHFRlPVdsCjnVh0Z3HfP3FegeDnm4/WVnZ8Za20Zg2VVkEX4f8tY0lJH3vg4N9SVuysEjkxC+nJptFEouHbzB01dXemLWZ789s5BSbWpKLhUWoIyYxwuryEPwMpQUu7tR/jS5eiNhqEdUDp4i9bOVAL0fZzPmuB0=
+	t=1718630077; cv=none; b=bRwD8EuFxgURgIMyeEb3AptVtfTkoRuJ+7WHNjsCSSFJmuDyOf8e+2wZDGtKo6q1Hb78Rqd5n3WmVvV+0kEUIsiPJM+SmSEbKB5kb9kA3vKPRFW2y7QAM7Y7bm04JtApTaJ1yvxGXKb6CpvyGxcUtCOXq89bYQ6i6ncgB7l106A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630281; c=relaxed/simple;
-	bh=DQpyE4LcoP5CQrtouqqIWkyt30utSJoMGx1TjK1UjWg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mCZNaU6t+yxtgUkAN+ATwMS6C5Q3W2EF4aF8mzhz9SEUwhyx3G07mi0BNur6D6kGP28723/+f0zZJG9OQDnC3XxMWzGl5mqDCjJfU3KN3ZXgTHGNmFZDWYy9eVji0VZUctgCknauBB2LolqF88N2IPLRwEO5OCNHTbrHz3fnn28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W2r0f16sWznVxD;
-	Mon, 17 Jun 2024 21:13:06 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id BC16814011B;
-	Mon, 17 Jun 2024 21:17:57 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 17 Jun 2024 21:17:57 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>
-Subject: [PATCH net-next v8 13/13] mm: page_frag: add a entry in MAINTAINERS for page_frag
-Date: Mon, 17 Jun 2024 21:14:12 +0800
-Message-ID: <20240617131413.25189-14-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240617131413.25189-1-linyunsheng@huawei.com>
-References: <20240617131413.25189-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1718630077; c=relaxed/simple;
+	bh=f1DDzJv3xHeLtz/8Uh38H6uqD2mqnmTd8LGL7fsQk2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FtU4xf+lve1sn4Sn3jvAieTUPGekD0Q9uDr7FalTbwcdfSJQosRTDVXtjO0WdQDR/ltpfsRFGI7TmHjIKf3BWhcK50zmW3Ay97foSSBh3JcnHy3Zl0+nz4+RRHC791gr0pbasXyTweTEqi8m3Pahh1qW8HvTSTZVXtG/EWZAIVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=b5TzQBVo; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-707040e3018so1020123a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1718630074; x=1719234874; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+aKuxY2Fk4OLcsa0CSr6w7+nYt28fnnuhVioZfggdrc=;
+        b=b5TzQBVof+D7ozqzsldxhUi+UlO8wz63mvtDIHt7ZOyrANkb3Jt/1cJFe9lw3yRAsg
+         zfIx7E1VXmeSpIa//3xZ3bzRO7xjchhBhWHlgdv8JjT1vXuUARmgZ8NyfV5i2nGioha5
+         k/AJSlszpZQWW+x+QD/qX/kWBgMpfFxzrP+39MmYwQEB+Hjrc8RoG5Lc7VIwO867L22C
+         z2OUSyifBCYrIDDkcAolReyRSww9UwbwRfqX3bLsbPpVesVDULoZxD9TU2cCnaj6Nkkf
+         LNRmZPWGD5+1L/VUFPGiuggrJ6fIXy3o2NbVy9ZrHxW+Aj6s0YKFX3fle79OWnpdSyYq
+         X0DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718630074; x=1719234874;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+aKuxY2Fk4OLcsa0CSr6w7+nYt28fnnuhVioZfggdrc=;
+        b=HgkUe6RlDqc37SKPL7H8kMVwke7CINEXEX0CaRLRy4n+eTiicFCanmNMXrAqlYAwYc
+         574+EWB3gUz90ktFBJMPE7SFQw4yoWouaRWlQUhAXb1/5hBDuRuzufDEwWxEs3QL272x
+         MRLCoQ5mzxy5jxVjoNVldw8+iSMz54arL7ZtT1PeM+93gtRRvZIqHnCbFo8XtPrO5rpY
+         4yA3NxgFZXxznK8PWVDSR/qTPi0eqxe0Bvf8tORiNodGYqBfQEJG+hCnCoARxoF9kBM4
+         bQKHJBWNvlafoh/vP05Mmr0jfa5c4TybxX6aHK+zP4KqSgOEBhHEaBl/QPOkxfbiPk2g
+         JrFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVy0ZIC/08zLZU2fPPOtZXrVdtWyOE8VIJqiUovmM0NwSoJDJ6/ZBDBqxXjRSg5oggdyiVYEoEkJTlEVDTnj6uCGQVGzaNrAToaZS+E
+X-Gm-Message-State: AOJu0YwlrI7kkvEhNPwLQsd8SEs1oZ6ko//5hHgL6m8LfG510M5ciwbN
+	lDuWI0bUd44qjMYGG+QYVg7/9PGOUgNukZWlZNxggXpfUxkiLH5h9jUiuDcuGaY=
+X-Google-Smtp-Source: AGHT+IHD4rO7F/Egqxpgx8GA7LvUPhaTN7BCgz2f2PAN52kUoSotiU50nIDGx9zF+6fxgOrcqL1j1g==
+X-Received: by 2002:a17:902:da83:b0:1f4:b18a:3f25 with SMTP id d9443c01a7336-1f8629fee64mr128841735ad.60.1718630074305;
+        Mon, 17 Jun 2024 06:14:34 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.245])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f0260csm78801785ad.200.2024.06.17.06.14.29
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 17 Jun 2024 06:14:34 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	sunilvl@ventanamicro.com,
+	aou@eecs.berkeley.edu,
+	linux-riscv@lists.infradead.org,
+	bhelgaas@google.com,
+	james.morse@arm.com,
+	jeremy.linton@arm.com,
+	Jonathan.Cameron@huawei.com,
+	pierre.gondois@arm.com,
+	sudeep.holla@arm.com,
+	tiantao6@huawei.com
+Cc: Yunhui Cui <cuiyunhui@bytedance.com>
+Subject: [PATCH v6 1/3] riscv: cacheinfo: remove the useless input parameter (node) of ci_leaf_init()
+Date: Mon, 17 Jun 2024 21:14:23 +0800
+Message-Id: <20240617131425.7526-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,47 +93,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf200006.china.huawei.com (7.185.36.61)
 
-After this patchset, page_frag is a small subsystem/library
-on its own, so add a entry in MAINTAINERS for to indicate
-the new subsystem/library's maintainer, maillist, status and
-file lists of page_frag.
+ci_leaf_init() is a declared static function. The implementation of the
+function body and the caller do not use the parameter (struct device_node
+*node) input parameter, so remove it.
 
-Alexander is the orginal author of page_frag, add him in the
-MAINTAINERS too.
-
-CC: Alexander Duyck <alexander.duyck@gmail.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Fixes: 6a24915145c9 ("Revert "riscv: Set more data to cacheinfo"")
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/riscv/kernel/cacheinfo.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e66b7d4324ae..16ff7a33c199 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16951,6 +16951,17 @@ F:	mm/page-writeback.c
- F:	mm/readahead.c
- F:	mm/truncate.c
+diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
+index 09e9b88110d1..30a6878287ad 100644
+--- a/arch/riscv/kernel/cacheinfo.c
++++ b/arch/riscv/kernel/cacheinfo.c
+@@ -64,7 +64,6 @@ uintptr_t get_cache_geometry(u32 level, enum cache_type type)
+ }
  
-+PAGE FRAG
-+M:	Alexander Duyck <alexander.duyck@gmail.com>
-+M:	Yunsheng Lin <linyunsheng@huawei.com>
-+L:	linux-mm@kvack.org
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/mm/page_frags.rst
-+F:	include/linux/page_frag_cache.h
-+F:	mm/page_frag_cache.c
-+F:	mm/page_frag_test.c
-+
- PAGE POOL
- M:	Jesper Dangaard Brouer <hawk@kernel.org>
- M:	Ilias Apalodimas <ilias.apalodimas@linaro.org>
+ static void ci_leaf_init(struct cacheinfo *this_leaf,
+-			 struct device_node *node,
+ 			 enum cache_type type, unsigned int level)
+ {
+ 	this_leaf->level = level;
+@@ -80,11 +79,11 @@ int populate_cache_leaves(unsigned int cpu)
+ 	int levels = 1, level = 1;
+ 
+ 	if (of_property_read_bool(np, "cache-size"))
+-		ci_leaf_init(this_leaf++, np, CACHE_TYPE_UNIFIED, level);
++		ci_leaf_init(this_leaf++, CACHE_TYPE_UNIFIED, level);
+ 	if (of_property_read_bool(np, "i-cache-size"))
+-		ci_leaf_init(this_leaf++, np, CACHE_TYPE_INST, level);
++		ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
+ 	if (of_property_read_bool(np, "d-cache-size"))
+-		ci_leaf_init(this_leaf++, np, CACHE_TYPE_DATA, level);
++		ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
+ 
+ 	prev = np;
+ 	while ((np = of_find_next_cache_node(np))) {
+@@ -97,11 +96,11 @@ int populate_cache_leaves(unsigned int cpu)
+ 		if (level <= levels)
+ 			break;
+ 		if (of_property_read_bool(np, "cache-size"))
+-			ci_leaf_init(this_leaf++, np, CACHE_TYPE_UNIFIED, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_UNIFIED, level);
+ 		if (of_property_read_bool(np, "i-cache-size"))
+-			ci_leaf_init(this_leaf++, np, CACHE_TYPE_INST, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
+ 		if (of_property_read_bool(np, "d-cache-size"))
+-			ci_leaf_init(this_leaf++, np, CACHE_TYPE_DATA, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
+ 		levels = level;
+ 	}
+ 	of_node_put(np);
 -- 
-2.33.0
+2.20.1
 
 
