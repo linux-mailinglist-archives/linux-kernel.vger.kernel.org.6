@@ -1,105 +1,118 @@
-Return-Path: <linux-kernel+bounces-216935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7B690A8C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:49:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE02190A8C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D29E9B27DC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:49:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 919BF1C20B7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A4F19066A;
-	Mon, 17 Jun 2024 08:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52336190663;
+	Mon, 17 Jun 2024 08:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="Z7WrvZrG"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hsjKArLq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650D5190463;
-	Mon, 17 Jun 2024 08:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C779EEC3;
+	Mon, 17 Jun 2024 08:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718614185; cv=none; b=b8qdk2MyesBB+2z/BCv/CO+cMOugJJVu4XFp00dp8wpr9uAjjbRpfSG0B/O4KswZc3uYCeCmaw3caNoixX8zxym7xV9JnBfRRdbHpALCZVvJvoM2yuU0V6oOwtgauFfvUmPYnlc4ajh3TFLiJ5HWoiG7xEpcopDR+dEyGo9t3Uk=
+	t=1718614275; cv=none; b=cBHvgrnArAvgvrOqrRBegqgXtvFWGk071eVm5Q5k73iDxSyb/diP1xzOe5fkUtRKDmYHYHCf1El2B7i+DDh3oAhJILm/pyGIij6FVSuC2BwQG3/PTtlDplOHGK4m18LzL1ucqNn9ZAXwDc7zdUyPTmC3r8Y5cNZGVdN5u/+Aies=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718614185; c=relaxed/simple;
-	bh=xG3H4SUiJTh6xwopJFfd72vmoAk7JKkimOYJ3eNKzM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IhKmkhBnkx2CCyk4rfK3OTGq8DZPpsAiVKQmPI147TQxQjjjyCRwhOEm6+Eou8Ko2owupj8+PFO1FNe61A+A/BGHrkvmRUMR/hzRdnX42h/pxbYG7+Ss+sf9ctPX+IIAecg6UUMvr0BG4MTpephH28Lt7G9gIwrT/vvIdn+ZKv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=Z7WrvZrG; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=ASHs9FmRI1GdRpdQ4G//vd+YFqsUwo8o4b/Ho+LAxY0=;
-	t=1718614183; x=1719046183; b=Z7WrvZrGGEUEnWEWr+yejkJVzurPiK6VkPUnOXI367/CxQN
-	izmAw8W2i0h9AVmGaIWKy1+JMTcamkKeBcrWDvlTwJwgj91MA2u8ahqNJAnNY1F3pFWhC1m6ikuVM
-	n+19hQ1Lgkgx0W/ni38ndq4jTWOUvUO5jRJBuk5Qb7I7EpnYihNIuBTG4VC5TAxw2f8JqG9ejA+Q4
-	oiHB+0zUtlbSFFCap3MLRqfEA1oHOGmfanHNHhTEBHzlkj4wC4OJlVaBYjcRbcCyVl2CfesxldoW8
-	87cYBPqGS6UEtjryP7JGp7bYhNAED2KKfKQsXrBSJIBIaDadbu7A8jmCAUosTUcA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sJ83Z-0008E4-9Y; Mon, 17 Jun 2024 10:49:41 +0200
-Message-ID: <50be24b4-54d6-4784-9ab9-83a90bf91a9d@leemhuis.info>
-Date: Mon, 17 Jun 2024 10:49:40 +0200
+	s=arc-20240116; t=1718614275; c=relaxed/simple;
+	bh=yWk1f5RDguOyR7Gg3nSVJwE4d+GpJeHhRsijXvBsBqk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c90440gbux7dr0avPE/I7BGfph3q10s/j8TuEg3oE7BcU4PNf0hLUH6v6LRLX+lXCIrLnLbyfHr4ft4R7nCzBfo/ttZf0C+TwkLcPV3cSZ+Qtp9nb94ljS7nFq7eOGN2lz5V0BnR97EFlSYNGbH8J4VahDLfjNWQmnJ+Qf/UDVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hsjKArLq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H0eMFL003342;
+	Mon, 17 Jun 2024 08:51:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=/QgBAmFIwBYhNduTNsLR1o
+	U7XZNdLd530ancVu2h5VE=; b=hsjKArLq2NvGY5njhGaGAa7xprzgXvd7Upbg4P
+	QJ3pxsKr/8+37Qjl2qgQGg2rleUulhum5CphGMLdC9G3Ok10gwbhMK9kiethBEam
+	LjPl0Ypvz4fwinvdImLxls3xc9BWXnas7okmDhUIzcRaGVyJKhPkFWYkzYRPRGNf
+	JZAcQOk4lKKIj6j7A7c0gsV2hrcdN6oc+v1HPagRHuOZ/GmcEIHac8XlyueMK9AR
+	tIv1bhM9EDwKcZYXd8Koh0P/IgQxrzSMLwUQtnLXJEgdExsun3qZVI/bLgbRPjpU
+	GOz3AWBmijVcaVwHFDN7/plXgIbeDSqRKpQzvwrQcBCMbSbQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys31u34vq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 08:51:06 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H8p2J8015201
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 08:51:03 GMT
+Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 17 Jun 2024 01:50:59 -0700
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        stable
+	<stable@kernel.org>
+Subject: [PATCH v1] misc: fastrpc: Increase user PD initmem size
+Date: Mon, 17 Jun 2024 14:20:50 +0530
+Message-ID: <20240617085051.28534-1-quic_ekangupt@quicinc.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: pmic_glink: disable UCSI on sc8280xp
-To: Johan Hovold <johan@kernel.org>, regressions@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-References: <20240608114529.23060-1-johan+linaro@kernel.org>
- <Zm_sJb3_xfMgLsnj@hovoldconsulting.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <Zm_sJb3_xfMgLsnj@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718614183;2c46ea1d;
-X-HE-SMSGID: 1sJ83Z-0008E4-9Y
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: lySQ3wJjgvnoUMYCkcVs4WM_2bizqwCB
+X-Proofpoint-ORIG-GUID: lySQ3wJjgvnoUMYCkcVs4WM_2bizqwCB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_07,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 adultscore=0 priorityscore=1501
+ spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=856 bulkscore=0
+ suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406170068
 
-On 17.06.24 09:56, Johan Hovold wrote:
-> [ Trimming CC list ]
-> On Sat, Jun 08, 2024 at 01:45:29PM +0200, Johan Hovold wrote:
->> Disconnecting an external display triggers a hypervisor reset on the
->> Lenovo ThinkPad X13s since 6.10-rc1 which enabled UCSI. Disable it again
->> until the regression has been fixed properly.
->
-> I noticed
+For user PD initialization, initmem is allocated and sent to DSP for
+initial memory requirements like shell loading. For unsigned PD
+offloading, current memory size is not sufficient which would
+result in PD initialization failures. Increase initial memory size
+to 5MB.
 
-First off: many thx for telling me about the problem!
+Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
+Cc: stable <stable@kernel.org>
+Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+---
+ drivers/misc/fastrpc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> that this one did not make into the regression tracker.
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+index 5204fda51da3..11a230af0b10 100644
+--- a/drivers/misc/fastrpc.c
++++ b/drivers/misc/fastrpc.c
+@@ -38,7 +38,7 @@
+ #define FASTRPC_INIT_HANDLE	1
+ #define FASTRPC_DSP_UTILITIES_HANDLE	2
+ #define FASTRPC_CTXID_MASK (0xFF0)
+-#define INIT_FILELEN_MAX (2 * 1024 * 1024)
++#define INIT_FILELEN_MAX (5 * 1024 * 1024)
+ #define INIT_FILE_NAMELEN_MAX (128)
+ #define FASTRPC_DEVICE_NAME	"fastrpc"
+ 
+-- 
+2.43.0
 
-FWIW, it did:
-
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/20240608114529.23060-1-johan+linaro@kernel.org/
-
-> This
-> may be related to the fact that this is the second time I'm disabling
-> UCSI on sc8280xp and apparently I used the same patch Subject last time
-> so they end up in the same thread on lore:
-> 	https://lore.kernel.org/lkml/20240608114529.23060-1-johan+linaro@kernel.org/
-
-Kinda. The thread is not the problem. I told regzbot about the subject
-for the fix a few days ago and it then dutifully looked up if a commit
-with that subject ended up in next or mainline already. Which normally
-is the right thing to do -- but in this case it went sideways for
-obvious reasons. :-/ Not sure yet how to handle that better; maybe that
-falls into the ugly category called "there are bigger fish to fry,
-ignore this corner case for now".
-
-Again, thx for telling me about this!
-
-Ciao, Thorsten
 
