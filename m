@@ -1,220 +1,114 @@
-Return-Path: <linux-kernel+bounces-218346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2363790BCEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:30:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7358F90BCF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5462EB21590
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:30:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3C3EB22503
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4B01991AF;
-	Mon, 17 Jun 2024 21:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7DC1946D0;
+	Mon, 17 Jun 2024 21:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="zmL/tEBM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0tAakol"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7560B18F2E1;
-	Mon, 17 Jun 2024 21:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22C0163A97;
+	Mon, 17 Jun 2024 21:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718659792; cv=none; b=N/9o86bphvLesYV5vCicCIokjc4dSEhBzJPr3OnUMr3CcIhd9BzY1bQoct2D+jGBgPBp8mwi17a1oT/jd6R01oqrHNwvGO4bjPcvn3YVYUh8k9pEWMld9pTmDBcBqhP7Ba1ReylMSM+qVp9SIEbiQfPfJHvbPpje0kp1X4FVsNU=
+	t=1718659825; cv=none; b=NUEs49NPO3BuEa9FUb/Ooux4wObAI+nZvi/Esjb/x+cDG96op3X+PdN4qpispf9XXNmJV0wTMNeVuxAgSqJN7Mr+G7zoVDl4GavIUonnQk1rd61A6Bz4yG6g3riNl9erV0EgepTonUvrMqewMuQWrz8WXuOxOa1UxRQm9BtYG6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718659792; c=relaxed/simple;
-	bh=Ut0KAyrVV4smqcRV54hBWMF2hJaIfY47Llm6WJvhIYM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rCaNbX9KUG7l8gJWw8h1TX/OTAjTlZqxAfyrAdwKXEHPkHG9RQ9A7nQUf7iztSmPDYU4UpK8MB1U7zq749uA4RIBcj8v1LAfsefP5+pGf8FAExGSX7nmN5sJgXhswY57/1rj3EhwKJe1YHkN+oop+/FeIjBNFH/Lw0iehiLaUFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=zmL/tEBM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC6A4C2BD10;
-	Mon, 17 Jun 2024 21:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1718659792;
-	bh=Ut0KAyrVV4smqcRV54hBWMF2hJaIfY47Llm6WJvhIYM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=zmL/tEBMrfdGilrS36BdO+Nqc6pivOT+eFsbUpD7PzogUbAj0zq+5VJPNi6yfMJtW
-	 jOd8Fi901UZR4AUlpU6QjTv0eYjG/RXPESwadqPOcurAcyoV6Tu4uaM0Hf/dgTJOJW
-	 9Jn2l6i4fepY3sAzeD4IDhjRVN4o5gCy1azVLd9U=
-Date: Mon, 17 Jun 2024 14:29:51 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
- "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, Omar Sandoval
- <osandov@osandov.com>, David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Hao Ge <gehao@kylinos.cn>,
- linux-debuggers@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] mm: convert page type macros to enum
-Message-Id: <20240617142951.08a9cdc791c8edeeca50509b@linux-foundation.org>
-In-Reply-To: <87bk3z1f76.fsf@oracle.com>
-References: <20240607202954.1198180-1-stephen.s.brennan@oracle.com>
-	<20240607212738.bf55318aebd7172fadaa11c5@linux-foundation.org>
-	<87ikygo1yb.fsf@oracle.com>
-	<87bk3z1f76.fsf@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718659825; c=relaxed/simple;
+	bh=j1KCV27yNbGjdb+9lMBc1aIP5sKVrx02spTkpZzT0nU=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=bn/CA5nPDvWRWaegdNA1pnwSjviF6u9yQ81VHKPVyJO9HfXOs5Vh9p/1EJRSlISFjYHlFrZfX5rxFnObDIppcpCB8FXldl46d29tESGOw41RAK+XcCZayogM6wodAiuQI7wGpPhcQ6F2z/FFwa8wDjk2B61Bgp0Pc3NdcH2xF58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0tAakol; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C537C2BD10;
+	Mon, 17 Jun 2024 21:30:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718659825;
+	bh=j1KCV27yNbGjdb+9lMBc1aIP5sKVrx02spTkpZzT0nU=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=E0tAakolevv8B09S6xnSohGo99lveg4RVPsDyvInPbJafmUFtuP37HWer+dIQSfwn
+	 sCa9IYwMO1faH+xNDXVRryfz1cHKK6ltxp4kGK8IejizgYEWHxNGUXEQwRXZyMIMNE
+	 /QH8i1jZSVvEZ4gD3nJXekOkE6U05P1/8LQacOPRTPUrJduVhYbafQC3Njg6oR0BSq
+	 HtIjidgJiWBy8zEGflbHo0A9ZD/rbQXtZmThydXRvqClsC6UTDGJPhOd8CFsFhDPRQ
+	 mFryI4ZKyTfy8zUJGHbPB60HDI2BhmOqPgG5FvoCrRhWsTQa/VIGGXElLd1U0lWev8
+	 3CLN4VlcDAH2A==
+Date: Mon, 17 Jun 2024 15:30:24 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+In-Reply-To: <20240617-iio-adc-ad4695-v2-2-63ef6583f25d@baylibre.com>
+References: <20240617-iio-adc-ad4695-v2-0-63ef6583f25d@baylibre.com>
+ <20240617-iio-adc-ad4695-v2-2-63ef6583f25d@baylibre.com>
+Message-Id: <171865982439.3455065.3692466445202658610.robh@kernel.org>
+Subject: Re: [PATCH v2 2/4] dt-bindings: iio: adc: add AD4695 and similar
+ ADCs
 
-On Mon, 17 Jun 2024 13:34:21 -0700 Stephen Brennan <stephen.s.brennan@oracle.com> wrote:
 
-> >>> Fixes: 46df8e73a4a3 ("mm: free up PG_slab")
-> >>
-> >> Should we backport this into 6.9.x?
-> >
-> > Hi Andrew,
-> >
-> > Looks like commit 46df8e73a4a3 ("mm: free up PG_slab") is introduced in
-> > the v6.10-rc's, and not backported to 6.9. So PG_slab is still part of
+On Mon, 17 Jun 2024 14:53:13 -0500, David Lechner wrote:
+> Add device tree bindings for AD4695 and similar ADCs.
 > 
-> Hi Andrew,
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 > 
-> I saw that you've merged this into mm-unstable, thank you!
+> v2 changes:
+> * Drop *-wlcsp compatible strings
+> * Don't use fallback compatible strings
+> * Reword supply descriptions
+> * Use standard channel properties instead of adi,pin-pairing
+> * Fix unnecessary | character
+> * Fix missing blank line
+> * Add header file with common mode channel macros
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad4695.yaml    | 290 +++++++++++++++++++++
+>  MAINTAINERS                                        |  10 +
+>  include/dt-bindings/iio/adi,ad4695.h               |   9 +
+>  3 files changed, 309 insertions(+)
 > 
-> Since 46df8e73a4a3 ("mm: free up PG_slab") is part of the current 6.10
-> RC, it would be great if this patch could be part of the 6.10 release so
-> we don't release a kernel missing the PG_slab info.
-> 
-> Can you confirm if mm-unstable will get merged in this release cycle? Or
-> else, would it be possible to include it in a branch that will?
 
-Turns out the patch as sent was based on David's "mm: allow reuse of
-the lower 16 bit of the page type with an actual type", which changed
-the page flags a lot,  I redid this patch thusly:
+My bot found errors running 'make dt_binding_check' on your patch:
 
---- a/include/linux/page-flags.h~mm-convert-page-type-macros-to-enum
-+++ a/include/linux/page-flags.h
-@@ -944,15 +944,22 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpois
-  * mistaken for a page type value.
-  */
- 
--#define PAGE_TYPE_BASE	0xf0000000
--/* Reserve		0x0000007f to catch underflows of _mapcount */
--#define PAGE_MAPCOUNT_RESERVE	-128
--#define PG_buddy	0x00000080
--#define PG_offline	0x00000100
--#define PG_table	0x00000200
--#define PG_guard	0x00000400
--#define PG_hugetlb	0x00000800
--#define PG_slab		0x00001000
-+enum pagetype {
-+	/*
-+	 * Reserve 0xffff0000 - 0xfffffffe to catch _mapcount underflows and
-+	 * allow owners that set a type to reuse the lower 16 bit for their own
-+	 * purposes.
-+	 */
-+	PG_buddy	= 0x00000080,
-+	PG_offline	= 0x00000100,
-+	PG_table	= 0x00000200,
-+	PG_guard	= 0x00000400,
-+	PG_hugetlb	= 0x00000800,
-+	PG_slab		= 0x00001000,
-+
-+	PAGE_TYPE_BASE	= 0xf0000000,
-+	PAGE_MAPCOUNT_RESERVE	= -128,
-+};
- 
- #define PageType(page, flag)						\
- 	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-_
+yamllint warnings/errors:
 
-(please check carefully)
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml: single-channel: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml: common-mode-channel: missing type definition
 
-and David's later "mm: allow reuse of the lower 16 bit of the page type
-with an actual type" becomes 
+doc reference errors (make refcheckdocs):
 
- include/linux/mm_types.h   |    5 +++++
- include/linux/page-flags.h |   16 ++++++++--------
- 2 files changed, 13 insertions(+), 8 deletions(-)
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240617-iio-adc-ad4695-v2-2-63ef6583f25d@baylibre.com
 
---- a/include/linux/mm_types.h~mm-allow-reuse-of-the-lower-16-bit-of-the-page-type-with-an-actual-type
-+++ a/include/linux/mm_types.h
-@@ -157,6 +157,11 @@ struct page {
- 		 *
- 		 * See page-flags.h for a list of page types which are currently
- 		 * stored here.
-+		 *
-+		 * Owners of typed folios may reuse the lower 16 bit of the
-+		 * head page page_type field after setting the page type,
-+		 * but must reset these 16 bit to -1 before clearing the
-+		 * page type.
- 		 */
- 		unsigned int page_type;
- 
---- a/include/linux/page-flags.h~mm-allow-reuse-of-the-lower-16-bit-of-the-page-type-with-an-actual-type
-+++ a/include/linux/page-flags.h
-@@ -951,15 +951,15 @@ enum pagetype {
- 	 * allow owners that set a type to reuse the lower 16 bit for their own
- 	 * purposes.
- 	 */
--	PG_buddy	= 0x00000080,
--	PG_offline	= 0x00000100,
--	PG_table	= 0x00000200,
--	PG_guard	= 0x00000400,
--	PG_hugetlb	= 0x00000800,
--	PG_slab		= 0x00001000,
-+	PG_buddy	= 0x40000000,
-+	PG_offline	= 0x20000000,
-+	PG_table	= 0x10000000,
-+	PG_guard	= 0x08000000,
-+	PG_hugetlb	= 0x04008000,
-+	PG_slab		= 0x02000000,
- 
--	PAGE_TYPE_BASE	= 0xf0000000,
--	PAGE_MAPCOUNT_RESERVE	= -128,
-+	PAGE_TYPE_BASE	= 0x80000000,
-+	PAGE_MAPCOUNT_RESERVE	=  (~0x0000ffff),
- };
- 
- #define PageType(page, flag)						\
-_
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-and that patch's fixup becomes
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
---- a/include/linux/page-flags.h~mm-allow-reuse-of-the-lower-16-bit-of-the-page-type-with-an-actual-type-fix
-+++ a/include/linux/page-flags.h
-@@ -955,7 +955,7 @@ enum pagetype {
- 	PG_offline	= 0x20000000,
- 	PG_table	= 0x10000000,
- 	PG_guard	= 0x08000000,
--	PG_hugetlb	= 0x04008000,
-+	PG_hugetlb	= 0x04000000,
- 	PG_slab		= 0x02000000,
- 
- 	PAGE_TYPE_BASE	= 0x80000000,
-_
+pip3 install dtschema --upgrade
 
-and "mm/zsmalloc: use a proper page type" becomes, in part,
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
---- a/include/linux/page-flags.h~mm-zsmalloc-use-a-proper-page-type
-+++ a/include/linux/page-flags.h
-@@ -957,6 +957,7 @@ enum pagetype {
- 	PG_guard	= 0x08000000,
- 	PG_hugetlb	= 0x04000000,
- 	PG_slab		= 0x02000000,
-+	PG_zsmalloc	= 0x01000000,
- 
- 	PAGE_TYPE_BASE	= 0x80000000,
- 	PAGE_MAPCOUNT_RESERVE	=  (~0x0000ffff),
-
-
-
-and the end result is identical to yesterday's mm-everything so that's
-all good.
-
-However I wouldn't want to send the altered version of "mm: convert
-page type macros to enum" into 6.10-rcX because it gets so altered by
-David's mm-unstable changes for the next merge window.  The new version
-of the hotfixes patch won't have had any valid testing on its own.
-
-So I'll temporarily drop David's "mm: page_type, zsmalloc and
-page_mapcount_reset()" series from mm-unstable.  To permit the new "mm:
-convert page type macros to enum" to get some linux-next exposure. 
-David, please remind me to restore that series in a week or so?
 
