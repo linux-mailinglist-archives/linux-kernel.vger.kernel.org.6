@@ -1,183 +1,152 @@
-Return-Path: <linux-kernel+bounces-217345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCFD90AE8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:03:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B6590AE8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 505541C22D04
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:03:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12B1287236
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1766197A72;
-	Mon, 17 Jun 2024 13:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04B819755E;
+	Mon, 17 Jun 2024 13:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="temkr+ko"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gsElOoC5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1A018FC6F
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4CA17FAA4;
+	Mon, 17 Jun 2024 13:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718629371; cv=none; b=N2x6+RVCXZaPir0mqhTF/xa7Kp1Y4VE8DMquuaxBESgE+XLZniLVP7dUtxTVufqWHUjgz2WVzKnw/6UYWyzO/IceKacwsODoC48ghVfkQASV5awufQ/Ux7CgYsqX/uwoq+Sy8m/JDHUt3Zhc6xLYvx1YMcNSvsejwNHZTjeLBa0=
+	t=1718629391; cv=none; b=WC7QGRuJgRdLMYfxdqyhn2XqbOzsG0MCyAwTH85g2mFRMHeqGh2ioN0qBarjvjms41JbMhPuUqCEgghLknyHSj9r2XKtwO53telgTuzArfe4qbW/lth0rGhVXwoW2fiUrVZKQ8TDkJtnnJDXE9EqArRkhKACCojPT5iHnZSK60Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718629371; c=relaxed/simple;
-	bh=TRpITMfhSedBWCyK8bo5vy9+rNDpUJBCcfGkU+oVsl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GryOnANOy+goFyeCNka29jUXyR2VRRpllvh27jNOSxKkuDfithv88cred8h2i91IsgxymMMpAtzh9Zb+hqzWfiAji94D4fELCZvAWmySXTNDL2g81Usb919elu32QYnF1ERWbeEh9p1nuOSgjQas07upy11VZiHgGt0f6942I1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=temkr+ko; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso7515290a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:02:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1718629368; x=1719234168; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IPWu6UjDZMnQVTRsZX0tk4x7xzpqv9lDVHERGvbzAHw=;
-        b=temkr+koJoVWlHdG/HBKUxDCmvwXgmgR+Q24OF4DQwwS2ZntPNQs2VBl4HL7X8MrZn
-         r2Z2F1vSe+3TsqS9lPf9X+ZR9nCzLS9mRGCP7pyjwPXpB6szM8lykMP7YBwxK02bu40P
-         fjMDHwymsZMMvEyp/h+kZ26FF9ik4zHq7oDmasPb1YR08RyDG8m5PdAlona0gSuPVF2/
-         g3q0agwQcIrkF4mqr0v/YPdM/ICE7cxDgpZKDiXIKFBROV6PMYr4xsSqXEHT6JwB6ERW
-         hLI4HIWawOQ7a0U9uqelJoGlAzAayACKbFA19WesD3sdu4lJGp0oP+KDkZELWARPzn25
-         WMTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718629368; x=1719234168;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IPWu6UjDZMnQVTRsZX0tk4x7xzpqv9lDVHERGvbzAHw=;
-        b=W4rKzsmUIrAKv6HGD2CwGjDZ4pp5Et/htYgUEI0JTUiJsHvmuiOy1/hZac9kCZYCQ0
-         s67I9MNPNj281l7R86S0Qu6RnXCS1bqn6l3sCD/OjarP+7dMJvkt1tp/yzU/hvWd8bo2
-         Woez3y3tZr1jtoKTSIJFHEULLRoSVQNzcO9ldcad4OlunLe7mG60oCGvuOhUkmm0GSO0
-         sWnmk7yosp+5dxHS7npmoCIbAF2d65t6O4DfTAUgD52K2BhghwO88WXBJOB9p1WnJ/kT
-         2E0OCVel/dcP5/Q6851DOvCloUOd4KJDBW+Vy4k5DkYancNfoHG0EDOpWuufS6G3Wcfp
-         Vt9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXoAQnxJzYosqc6oBqffW3oWK8StLsFdc2+nIPD5RucNTM65lsnoApls6A4svW7JWhkx9xcXjPtzwxKx4SShhsM2MbBcWiAX9IUr935
-X-Gm-Message-State: AOJu0YwLggDG6cKMEHmvyJMUcF7eQPU0gHN/4QWLCYYdpSJjQyIR35pZ
-	5Pgd3MC/xIUbhEoKJZkzUwm9U5Uylic7J6lwzpBbAUS/ag0DKGoYyYa06VbyIlA=
-X-Google-Smtp-Source: AGHT+IGcudZokFT78RyZ7cYSlZbHBwzJ8nGrQcqcTLF+Nm30y+RQMLNd7Az1DxCGUnWXSUhfn6Te8w==
-X-Received: by 2002:a17:906:c0cc:b0:a6f:16c7:9130 with SMTP id a640c23a62f3a-a6f60d2976bmr640523766b.28.1718629367294;
-        Mon, 17 Jun 2024 06:02:47 -0700 (PDT)
-Received: from localhost ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cddba1b0esm2137421a12.84.2024.06.17.06.02.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 06:02:46 -0700 (PDT)
-Date: Mon, 17 Jun 2024 15:02:43 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Parav Pandit <parav@nvidia.com>
-Cc: Jason Wang <jasowang@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Cindy Lu <lulu@redhat.com>, Dragos Tatulea <dtatulea@nvidia.com>,
-	"mst@redhat.com" <mst@redhat.com>,
-	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 1/2] vdpa: support set mac address from vdpa tool
-Message-ID: <ZnAz8xchRroVOyCY@nanopsycho.orion>
-References: <20240611053239.516996-1-lulu@redhat.com>
- <20240611185810.14b63d7d@kernel.org>
- <ZmlAYcRHMqCgYBJD@nanopsycho.orion>
- <CACGkMEtKFZwPpzjNBv2j6Y5L=jYTrW4B8FnSLRMWb_AtqqSSDQ@mail.gmail.com>
- <PH0PR12MB5481BAABF5C43F9500D2852CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
- <ZnAETXPWG2BvyqSc@nanopsycho.orion>
- <PH0PR12MB5481F6F62D8E47FB6DFAD206DCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
- <ZnAgefA1ge11bbFp@nanopsycho.orion>
- <PH0PR12MB548116966222E720D831AA4CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1718629391; c=relaxed/simple;
+	bh=M7VLjVNrIB50tU6t1nZPg0R5+ccYl0nZK24JAKpUyGA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=agO92kYsVImS09udgJGdWeit8onnv4lRTz6G6oAIbKfBZah3/I3kzvsHApyDZfERRgI+RFr7hCzubJeoR7FuafzaauGPirKUDQrK25guz6WD2QiTiDfWjJXoOw616BW4TYH3J8Z9yguPwb/eMLTeF7NjNmNTiZVLym2VACQcSCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gsElOoC5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2AA1C2BD10;
+	Mon, 17 Jun 2024 13:03:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718629390;
+	bh=M7VLjVNrIB50tU6t1nZPg0R5+ccYl0nZK24JAKpUyGA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gsElOoC5Re9d+pr1YwYIbWAqs0jcEb8b9D3zbWSWoKQmulj0zAzNwtAXGk6qcZMXW
+	 LxUnKTFOvwT/jytTzKiu32J3hw5JzND/mubc1g98vHM0xh3ZtmWWD7x3QouH+KaO20
+	 GA0a6UGFP6mISSKKHn3yttKaKylK2r6GzUFI3uXUomBk3TpOsk1t43pOmtFcjGWmn9
+	 /ufVatJxmgzlU5/RcUjQQzuiVLkzmdyq98N3pp8goVtzEd31A+6nSIsjjHWuGuWCdj
+	 jlAkof1uOnGtfGxWUo3K4/trtjhcS2rZ85cIl/SqoXpDhV3rrvc1vnMUs9ftKnenHy
+	 eC19HNvl9PJCQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sJC0p-004b1B-Ra;
+	Mon, 17 Jun 2024 14:03:07 +0100
+Date: Mon, 17 Jun 2024 14:03:06 +0100
+Message-ID: <86h6drk9h1.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Shivamurthy Shastri
+ <shivamurthy.shastri@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	anna-maria@linutronix.de,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com,
+	bhelgaas@google.com,
+	rdunlap@infradead.org,
+	vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com,
+	apatel@ventanamicro.com,
+	kevin.tian@intel.com,
+	nipun.gupta@amd.com,
+	den@valinux.co.jp,
+	andrew@lunn.ch,
+	gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	alex.williamson@redhat.com,
+	will@kernel.org,
+	lorenzo.pieralisi@arm.com,
+	jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org,
+	robin.murphy@arm.com,
+	lpieralisi@kernel.org,
+	nm@ti.com,
+	kristo@kernel.org,
+	vkoul@kernel.org,
+	okaya@kernel.org,
+	agross@kernel.org,
+	andersson@kernel.org,
+	mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com,
+	yuzenghui@huawei.com
+Subject: Re: [PATCH v3 14/24] genirq/gic-v3-mbi: Remove unused wired MSI mechanics
+In-Reply-To: <87plsfu3sz.ffs@tglx>
+References: <20240614102403.13610-1-shivamurthy.shastri@linutronix.de>
+	<20240614102403.13610-15-shivamurthy.shastri@linutronix.de>
+	<86le36jf0q.wl-maz@kernel.org>
+	<87plsfu3sz.ffs@tglx>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PH0PR12MB548116966222E720D831AA4CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, shivamurthy.shastri@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Mon, Jun 17, 2024 at 01:48:02PM CEST, parav@nvidia.com wrote:
->
->> From: Jiri Pirko <jiri@resnulli.us>
->> Sent: Monday, June 17, 2024 5:10 PM
->> 
->> Mon, Jun 17, 2024 at 11:44:53AM CEST, parav@nvidia.com wrote:
->> >
->> >> From: Jiri Pirko <jiri@resnulli.us>
->> >> Sent: Monday, June 17, 2024 3:09 PM
->> >>
->> >> Mon, Jun 17, 2024 at 04:57:23AM CEST, parav@nvidia.com wrote:
->> >> >
->> >> >
->> >> >> From: Jason Wang <jasowang@redhat.com>
->> >> >> Sent: Monday, June 17, 2024 7:18 AM
->> >> >>
->> >> >> On Wed, Jun 12, 2024 at 2:30 PM Jiri Pirko <jiri@resnulli.us> wrote:
->> >> >> >
->> >> >> > Wed, Jun 12, 2024 at 03:58:10AM CEST, kuba@kernel.org wrote:
->> >> >> > >On Tue, 11 Jun 2024 13:32:32 +0800 Cindy Lu wrote:
->> >> >> > >> Add new UAPI to support the mac address from vdpa tool
->> >> >> > >> Function
->> >> >> > >> vdpa_nl_cmd_dev_config_set_doit() will get the MAC address
->> >> >> > >> from the vdpa tool and then set it to the device.
->> >> >> > >>
->> >> >> > >> The usage is: vdpa dev set name vdpa_name mac
->> >> >> > >> **:**:**:**:**:**
->> >> >> > >
->> >> >> > >Why don't you use devlink?
->> >> >> >
->> >> >> > Fair question. Why does vdpa-specific uapi even exist? To have
->> >> >> > driver-specific uapi Does not make any sense to me :/
->> >> >>
->> >> >> It came with devlink first actually, but switched to a dedicated uAPI.
->> >> >>
->> >> >> Parav(cced) may explain more here.
->> >> >>
->> >> >Devlink configures function level mac that applies to all protocol
->> >> >devices
->> >> (vdpa, rdma, netdev) etc.
->> >> >Additionally, vdpa device level mac can be different (an additional
->> >> >one) to
->> >> apply to only vdpa traffic.
->> >> >Hence dedicated uAPI was added.
->> >>
->> >> There is 1:1 relation between vdpa instance and devlink port, isn't it?
->> >> Then we have:
->> >>        devlink port function set DEV/PORT_INDEX hw_addr ADDR
->> >>
->> >Above command is privilege command done by the hypervisor on the port
->> function.
->> >Vpda level setting the mac is similar to a function owner driver setting the
->> mac on the self netdev (even though devlink side has configured some mac for
->> it).
->> >For example,
->> >$ ip link set dev wlan1 address 00:11:22:33:44:55
->> 
->> Hmm, under what sceratio exacly this is needed?
->The administrator on the host creating a vdpa device for the VM wants to configure the mac address for the VM.
->This administrator may not have the access to the devlink port function.
->Or he may just prefer a different MAC (theoretical case).
+On Mon, 17 Jun 2024 13:55:24 +0100,
+Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> On Sat, Jun 15 2024 at 18:24, Marc Zyngier wrote:
+> > On Fri, 14 Jun 2024 11:23:53 +0100,
+> > Shivamurthy Shastri <shivamurthy.shastri@linutronix.de> wrote:
+> >>  static struct msi_domain_info mbi_pmsi_domain_info = {
+> >> -	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+> >> -		   MSI_FLAG_LEVEL_CAPABLE),
+> >> +	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS),
+> >>  	.ops	= &mbi_pmsi_ops,
+> >>  	.chip	= &mbi_pmsi_irq_chip,
+> >>  };
+> >
+> > This patch doesn't do what it says. It simply kills any form of level
+> > MSI support for *endpoints*, and has nothing to do with any sort of
+> > "wire to MSI".
+> >
+> > What replaces it?
+> 
+> Patch 9/24 switches the wire to MSI with level support over. This just
+> removes the leftovers.
 
-Right, but that is not reason for new uapi but rather reason to alter
-existing devlink model to have the "host side". We discussed this many
-times.
+That's not what I read.
 
+Patch 9/24 rewrites the mbigen driver. Which has nothing to do with
+what the gic-v3-mbi code does. They are different blocks, and the sole
+machine that has the mbigen IP doesn't have any gic-v3-mbi support.
+All they have in common are 3 random letters.
 
->
->> I mean, the VM that has VDPA device can actually do that too. 
->VM cannot do. Virtio spec do not allow modifying the mac address.
+What you are doing here is to kill any support for *devices* that need
+to signal level-triggered MSIs in that driver, and nothing to do with
+wire-MSI translation.
 
-I see. Any good reason to not allow that?
+So what replaces it?
 
+	M.
 
->
->> That is the actual function owner.
->vdpa is not mapping a whole VF to the VM.
->It is getting some synthetic PCI device composed using several software (kernel) and user space layers.
->so VM is not the function owner.
-
-Sure, but owner of the netdev side, to what the mac is related. That is
-my point.
+-- 
+Without deviation from the norm, progress is not possible.
 
