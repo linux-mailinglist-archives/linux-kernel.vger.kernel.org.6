@@ -1,162 +1,191 @@
-Return-Path: <linux-kernel+bounces-217979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6293B90B73E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:00:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5848390B796
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8444281C89
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:00:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E248FB26DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0AA168482;
-	Mon, 17 Jun 2024 16:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E0C168486;
+	Mon, 17 Jun 2024 17:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxC9qhVJ"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="w1J4C8+N"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F33166306
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B4F335C0
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718643595; cv=none; b=ClxuMbkbDZpj86btlDKpBImWdfxhzDh2HbA2EBBifuxkq0KDhg14+OZSEPOsbB97sICB1PFQU/tiTRI1keOJQC9nt55jehvrTzqNftwMiUfrBpkybw+XIopXEQ9jg0B+XuKuV32AVZYAYw3BHYn1LM0DTY6dufAu0qBiFu+pmpQ=
+	t=1718643683; cv=none; b=karVSuXe1WopLAhCJ3UFCkUcnR39DZ/Z7sXMev7mqbJiWR/ENavHUSgiv5iRyUgMh4iqsgirY7lyCe0h4cS458kEAKXz1z9PZIJxSUqxOClHJ76vLYItNdjVJrDc3ijGR/RbSEoaFiq2bP97/Yi2FwBIKTPAhGOd59ROCS1u1cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718643595; c=relaxed/simple;
-	bh=9bd+nL5Qo2BdVE2faxqfZ9C8XrEg65OcZZiq9C2Spf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TdAtMOr4spjL9VRqLLF7XbpZU0/JwRaJr+FHJ+GtlncizSe7c0smawDYvD4ZoFqfs8HQtC61jIEKMfxqdTB2Sh+Gy393K142WpdpROesU+c8GFCbsmvx2RSgcJa/mgXxwQFkXIm7E/O9sCzwRtWth/wJ34aQFqVpuHh+dtY7bDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxC9qhVJ; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70413de08c7so3271198b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:59:53 -0700 (PDT)
+	s=arc-20240116; t=1718643683; c=relaxed/simple;
+	bh=ggtgEFWxLY5KzKGMkn+w0yd/JsuWTu5QxX/rhOCIS4Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QNZZUX4Iahu3NA82+hqfz4sfExHS2Z9qgX9oPxHB/NuV1Cnp7B+2eG/ADXXxijrX1XaBxCp1JKuNe6eaQgqtseOiOzbBFbpFz3m5efTnnxF0mqfiVvKYEavyYhYW9z2anBuX+ab4nFLmXq753BfzuO79yyWjZmYEgE0K95wm24A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=w1J4C8+N; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-633629c3471so22871287b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:01:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718643593; x=1719248393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kz7h6S7CY33xNf+Mf+d3dXD+GMd4vrHEwzJ+6/NbRPc=;
-        b=DxC9qhVJcpUtWSckg0qt8PN9NpBe/WNx/LhAqZRBJrmnlxBySUtcmu8zq7485EPN3S
-         ZD+SA0aEIbaPFHlPlgAeH1Xd0xg0BapmNG5BAPDvasZZsuDAi38VGXJ/c85o3HiKNySr
-         uT0JckqV5qwpnDxGXJUcM2KoB1bDCxVHibKOI/bTz2AqUITxeTt1phX0chfHzKvACdM0
-         esSu9TqaZY19M5nNQTNIOLuvO7LmxDyWuH6dEEcCXq4jFFiuDIsSDWGoE706QM7ebSWI
-         NVZK2PSAuSaN+JZP2nzi3KPIXnlIVvDl1AYfNZfzqe7fh1ytqm4r+jsL8RPFE+CUTjpM
-         lPuw==
+        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1718643678; x=1719248478; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ggtgEFWxLY5KzKGMkn+w0yd/JsuWTu5QxX/rhOCIS4Q=;
+        b=w1J4C8+NlpOfDJRuGsVYeFv267jikvxxl/+IZv9zo/I8ljfx28Gefd2WPu24hyVEpC
+         U2d++tvSEU2bWReVYutDE/PHry3NW/g5MH+W9KtRbpOXpevlPKByHbHKV2fTSBkBvDgn
+         /Hx7ML/3pMDWq+qzF/rocTk4ICML2tSrO89Lb7SJq0IEOFY9BOEAWapOfvyngToyyFPh
+         h+bXUC1kAmHl8Hl7Xy3ZJVOUIKL1U+ibbDi7EDpCyGDZ7nq61okBY3BLkcGRkMF+jtGU
+         AQ9PlL3J5jxekXs7giThJrueqT/urQ/RsNdR6gJKBAaRyVQovfMGBdz96//wlZPTzjqP
+         1mLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718643593; x=1719248393;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718643678; x=1719248478;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kz7h6S7CY33xNf+Mf+d3dXD+GMd4vrHEwzJ+6/NbRPc=;
-        b=UaVjlbZnb04PfYXpTQWuA3heEqn6INv87tNpRhC2EZ3VJxK4985FdNKjJZtIQUjC2q
-         JZlYVD5z1EEps6vqxkmVchUMqGzGM4MtFkaHNn81ddCnf2cLZ2jnBHGBL9XlsU3DMCdW
-         bRLpmoZVS0L7fOgclJ5apsFIhUq5NLBgGI9lGY/7tFpMplvyAKtfDGxaLfyQlNqse4ed
-         +lED6tuObmhgFpGmdo1gc8iPk36Eqq0Y49Lb9bRmKYMwTAQei1VfkH1D9yTti9ceRWOO
-         YILYut955/RiHmg5LiHf7jnxLp/oqvkyE2XLrsdBxaAwaDlnJMjtv++HQUoa3RfEk2+6
-         ZdDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNKwCd7wu4m+/CHl+2Z/KMNNmEdYy8r+Gx69qvktpT9+znqab8aUyY8M8Ggl1I3LUxZqD3djLJiynqjva2wyI473Y3eSSwJLFLFI9u
-X-Gm-Message-State: AOJu0Yzrm/ZL1yuaByxNZr3/zjTUfmSBMZr4k6y52/GzFHorcAv+wNCa
-	xPrGWopipUhGH4pXFG29eR2FVc/EDMwUt5EEXnYHX3hT2SK0P+J3
-X-Google-Smtp-Source: AGHT+IEVDLF22+KVbDDCRk+q+Z6pxruF61ha6vbfUbnX9IZGegvbIWt7yO77Vtm/3m8BA5T2A2SMTQ==
-X-Received: by 2002:a05:6a00:cc5:b0:705:a18a:6863 with SMTP id d2e1a72fcca58-705d7112674mr12256175b3a.4.1718643593066;
-        Mon, 17 Jun 2024 09:59:53 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3bf1csm7510722b3a.137.2024.06.17.09.59.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 09:59:52 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 17 Jun 2024 09:59:50 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>
-Subject: Re: Page select register restrictions in regmap core
-Message-ID: <78c93d6b-af0e-4d96-b213-e1e402524361@roeck-us.net>
-References: <e3e11724-794d-423e-9326-ffe8eed5119c@roeck-us.net>
- <4b22e04f-3142-4a5a-a8d1-366c4b8bbb73@sirena.org.uk>
+        bh=ggtgEFWxLY5KzKGMkn+w0yd/JsuWTu5QxX/rhOCIS4Q=;
+        b=vvIZRu9X7wzft3/WxI57mdibfQmLktZsoGBDSwsitBHN19u/UgO7LxmXwPJ0klLcN+
+         HDNNvi0ESljO3sUhhX9lpQ1NllBCzV5F/5uhM2NmCgVZlCHc4C0ZKTsUCVx6yDuTq3Uz
+         WonwwjelrmatzMHRBKSfL7Fnz1JT8Mjt8Ndhd3xgR4GNjRD8Uv1ecs2qLsvN2N1d+MXm
+         7tnZmhIPT12L9kuwjohiLfTOaytW9nqVy6omp9BEHds6WLEeHAnDt6Y4ITbz2661rNd1
+         an9WaXVDm8RsJTkhFi4bZtzNOEOnJSrJvWVVNV0vpVlgEhYBNQoqt62sGX/gGxbM7aaA
+         Fjfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWt2yIVsDsLhbqb/UXV3Nb68sMljfbrOS2pF3akcgiBVbtzlprTICls7objqFvMD+vHfzr++cyUQVlYDe0Y1ljbNKnoQ2FR8PYViSAu
+X-Gm-Message-State: AOJu0Yxn1XAXVqndUnzuRhynVNzzpul4Av8AXYERmqZhDGB09asXlfp+
+	13jnZG5+8qQEqkE8ZXzBATcxZBwaP+JncseFdGECps5wHgnIzhJeK/wfE54kxc+e9c+85xczymD
+	GYSOR1A==
+X-Google-Smtp-Source: AGHT+IGYt8/+KocbII2zUsPuRJ3mIodDvR+z8fRfG01lIdIcVc6Ike2X4YyTaJBofg5P86q6wjAViQ==
+X-Received: by 2002:a81:8d4c:0:b0:627:778f:b0a8 with SMTP id 00721157ae682-63223b3c02amr98797427b3.42.1718643678545;
+        Mon, 17 Jun 2024 10:01:18 -0700 (PDT)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-631189a7d33sm14887667b3.33.2024.06.17.10.01.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 10:01:17 -0700 (PDT)
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfdff9771f8so4659985276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:01:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUe032G9PrfunTiS8HE5en1JdgkV+NkGgRscomb6YWD665c5bCUFXGKENHer+XlXx3pRbnm2c2OC5REyrzoNqG2+v7+ZXV+YXmNyopK
+X-Received: by 2002:a25:2e4e:0:b0:dfa:ccb2:b18 with SMTP id
+ 3f1490d57ef6-dff153422ddmr9460718276.6.1718643677298; Mon, 17 Jun 2024
+ 10:01:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b22e04f-3142-4a5a-a8d1-366c4b8bbb73@sirena.org.uk>
+References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
+ <97eadcba7cabe56f0f4b4d753bd3d53f8540ef4b.camel@pengutronix.de>
+ <CAAObsKAQ=pWQ8MR1W7WwK1nVEeiCFNC3k+NZKsu4Fkts-_+zWg@mail.gmail.com>
+ <CAPj87rO7zyDsqUWnkF0pZeNFnNK2UnAVJy4RmB3jmPkKQ+zbEw@mail.gmail.com> <CAAObsKBm3D_3ctFyK-rfpM-PU6ox1yoaMA1EES9yR-nRmU4rYw@mail.gmail.com>
+In-Reply-To: <CAAObsKBm3D_3ctFyK-rfpM-PU6ox1yoaMA1EES9yR-nRmU4rYw@mail.gmail.com>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Mon, 17 Jun 2024 19:01:05 +0200
+X-Gmail-Original-Message-ID: <CAAObsKAt563VNzDcF4rGkWPcxBPzKcq=Hj5RY6K20FWR43nvUQ@mail.gmail.com>
+Message-ID: <CAAObsKAt563VNzDcF4rGkWPcxBPzKcq=Hj5RY6K20FWR43nvUQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org, 
+	Oded Gabbay <ogabbay@kernel.org>, Russell King <linux+etnaviv@armlinux.org.uk>, 
+	Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, Daniel Stone <daniels@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi Lucas,
 
-On Mon, Jun 17, 2024 at 04:08:08PM +0100, Mark Brown wrote:
-> On Mon, Jun 17, 2024 at 07:20:28AM -0700, Guenter Roeck wrote:
-> 
-> >         .window_start     = 0,
-> >         .window_len       = SPD5118_PAGE_SIZE,			// 128
-> >         .range_min        = 0,
-> >         .range_max        = SPD5118_PAGE_SIZE - 1,		// 127
-> 
-> 
-> >         .window_start     = SPD5118_PAGE_SIZE,			// 128
-> >         .window_len       = SPD5118_PAGE_SIZE,			// 128
-> >         .range_min        = SPD5118_PAGE_SIZE,			// 128
-> >         .range_max        = 9 * SPD5118_PAGE_SIZE - 1,		// 0x47f
-> 
-> You appear to be trying to define ranges that overlap with the windows
-> that you're trying to expose.  I can't understand what that's trying to
-> represent or how that would work.  The window is the physical registers
-> that the host can actually see, the range is the virtual addresses which
-> users of the region should use to access registers behind the window.
-> This should be a range of register values which don't physically exist
-> on the device.  I really can't understand what a sensible handling of an
+Do you have any idea on how not to break userspace if we expose a render no=
+de?
 
-Can you point me to an example ? All examples I can find have overlapping
-values for .range_min/.range_max and .window_start/.window_len, and pretty
-much all of them start range_min with 0.
+Cheers,
 
-> overlap would be, any attempt to access the window should recursively
-> trigger selection of the range so no actual register should work.  I
-> can't tell what it's trying to model.
-> 
+Tomeu
 
-page 0: 0x00-0x7f	Volatile registers, page selector at 0x0b
-	0x80-0xff	page 0 of non-volatile memory
-page 1:	0x0b		page selector register	<-- this is what trips the check
-	0x80-0xff	page 1 of non-volatile memory
-...
-page 7:	0x0b		page selector register
-	0x80-0xff	page 7 of non-volatile memory
-
-> This configuration would also be rejected by the next test which
-> verifies that the window does not overlap with the range.
-> 
-
-No, it isn't. The windows in the two ranges don't overlap, and neither
-do the ranges. The only overlap is the selector register. The check you
-refer to explicitly does not apply to a single range.
-
-> > This works just fine if I comment out the select register validation in
-> > the regmap core (the one which generates the error). Is there a reason
-> > for having this restriction, or would it be possible to drop it ?
-> 
-> I'm very surprised this does anything useful TBH, possibly that's a bug
-> of some kind.  A configuration with the selector within the range is
-> nonsensical as far as I can see since the range can't be accessed
-> without programming the selector, the range should be purely virtual
-> registers and the selector must be a physical register.
-
-Pretty much all drivers I looked at start the range with 0, having
-the selector register within the range is explicitly accepted by the
-regmap code, and pretty much all drivers using regmap for page
-selection do that. The difference here is that the page selector
-register is in the first range and visible from all pages, but the
-other volatile registers are only visible in page 0.
-Yes, I would agree that this doesn't make much sense, but it is what
-the spd5118 standard calls for, and at least the Renesas/IDT spd5188
-chip implements it that way.
-
-Anyway, how should I model this ?
-
-Thanks,
-Guenter
+On Wed, Jun 12, 2024 at 4:26=E2=80=AFPM Tomeu Vizoso <tomeu@tomeuvizoso.net=
+> wrote:
+>
+> On Mon, May 20, 2024 at 1:19=E2=80=AFPM Daniel Stone <daniel@fooishbar.or=
+g> wrote:
+> >
+> > Hi,
+> >
+> > On Mon, 20 May 2024 at 08:39, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrot=
+e:
+> > > On Fri, May 10, 2024 at 10:34=E2=80=AFAM Lucas Stach <l.stach@pengutr=
+onix.de> wrote:
+> > > > Am Mittwoch, dem 24.04.2024 um 08:37 +0200 schrieb Tomeu Vizoso:
+> > > > > If we expose a render node for NPUs without rendering capabilitie=
+s, the
+> > > > > userspace stack will offer it to compositors and applications for
+> > > > > rendering, which of course won't work.
+> > > > >
+> > > > > Userspace is probably right in not questioning whether a render n=
+ode
+> > > > > might not be capable of supporting rendering, so change it in the=
+ kernel
+> > > > > instead by exposing a /dev/accel node.
+> > > > >
+> > > > > Before we bring the device up we don't know whether it is capable=
+ of
+> > > > > rendering or not (depends on the features of its blocks), so firs=
+t try
+> > > > > to probe a rendering node, and if we find out that there is no re=
+ndering
+> > > > > hardware, abort and retry with an accel node.
+> > > >
+> > > > On the other hand we already have precedence of compute only DRM
+> > > > devices exposing a render node: there are AMD GPUs that don't expos=
+e a
+> > > > graphics queue and are thus not able to actually render graphics. M=
+esa
+> > > > already handles this in part via the PIPE_CAP_GRAPHICS and I think =
+we
+> > > > should simply extend this to not offer a EGL display on screens wit=
+hout
+> > > > that capability.
+> > >
+> > > The problem with this is that the compositors I know don't loop over
+> > > /dev/dri files, trying to create EGL screens and moving to the next
+> > > one until they find one that works.
+> > >
+> > > They take the first render node (unless a specific one has been
+> > > configured), and assumes it will be able to render with it.
+> > >
+> > > To me it seems as if userspace expects that /dev/dri/renderD* devices
+> > > can be used for rendering and by breaking this assumption we would be
+> > > breaking existing software.
+> >
+> > Mm, it's sort of backwards from that. Compositors just take a
+> > non-render DRM node for KMS, then ask GBM+EGL to instantiate a GPU
+> > which can work with that. When run in headless mode, we don't take
+> > render nodes directly, but instead just create an EGLDisplay or
+> > VkPhysicalDevice and work backwards to a render node, rather than
+> > selecting a render node and going from there.
+> >
+> > So from that PoV I don't think it's really that harmful. The only
+> > complication is in Mesa, where it would see an etnaviv/amdgpu/...
+> > render node and potentially try to use it as a device. As long as Mesa
+> > can correctly skip, there should be no userspace API implications.
+> >
+> > That being said, I'm not entirely sure what the _benefit_ would be of
+> > exposing a render node for a device which can't be used by any
+> > 'traditional' DRM consumers, i.e. GL/Vulkan/winsys.
+>
+> What I don't understand yet from Lucas proposal is how this isn't
+> going to break existing userspace.
+>
+> I mean, even if we find a good way of having userspace skip
+> non-rendering render nodes, what about existing userspace that isn't
+> able to do that? Any updates to newer kernels are going to break them.
+>
+> Regards,
+>
+> Tomeu
 
