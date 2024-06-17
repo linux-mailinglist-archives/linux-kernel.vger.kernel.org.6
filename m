@@ -1,118 +1,175 @@
-Return-Path: <linux-kernel+bounces-216936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE02190A8C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:51:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7099490A8CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 919BF1C20B7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DB641C209AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52336190663;
-	Mon, 17 Jun 2024 08:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D5019066A;
+	Mon, 17 Jun 2024 08:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hsjKArLq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r9C08OtD"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C779EEC3;
-	Mon, 17 Jun 2024 08:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34620171B0
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718614275; cv=none; b=cBHvgrnArAvgvrOqrRBegqgXtvFWGk071eVm5Q5k73iDxSyb/diP1xzOe5fkUtRKDmYHYHCf1El2B7i+DDh3oAhJILm/pyGIij6FVSuC2BwQG3/PTtlDplOHGK4m18LzL1ucqNn9ZAXwDc7zdUyPTmC3r8Y5cNZGVdN5u/+Aies=
+	t=1718614334; cv=none; b=uQMM0RMHon34ykNpd4EHmUSKTaQMPVCeFma2RO0Uj/eMOKAFmTxUscrWoxQg/njd9npTrvyHseQSvP085ZvQNXFOjHSHUXwSJfGx5lzXr4IAEbZZJioRm72sqb0d0w7y3madbfrwXc8eLrtConzMSdm2YU3OZcW/SVLhdrWyv1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718614275; c=relaxed/simple;
-	bh=yWk1f5RDguOyR7Gg3nSVJwE4d+GpJeHhRsijXvBsBqk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c90440gbux7dr0avPE/I7BGfph3q10s/j8TuEg3oE7BcU4PNf0hLUH6v6LRLX+lXCIrLnLbyfHr4ft4R7nCzBfo/ttZf0C+TwkLcPV3cSZ+Qtp9nb94ljS7nFq7eOGN2lz5V0BnR97EFlSYNGbH8J4VahDLfjNWQmnJ+Qf/UDVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hsjKArLq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H0eMFL003342;
-	Mon, 17 Jun 2024 08:51:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=/QgBAmFIwBYhNduTNsLR1o
-	U7XZNdLd530ancVu2h5VE=; b=hsjKArLq2NvGY5njhGaGAa7xprzgXvd7Upbg4P
-	QJ3pxsKr/8+37Qjl2qgQGg2rleUulhum5CphGMLdC9G3Ok10gwbhMK9kiethBEam
-	LjPl0Ypvz4fwinvdImLxls3xc9BWXnas7okmDhUIzcRaGVyJKhPkFWYkzYRPRGNf
-	JZAcQOk4lKKIj6j7A7c0gsV2hrcdN6oc+v1HPagRHuOZ/GmcEIHac8XlyueMK9AR
-	tIv1bhM9EDwKcZYXd8Koh0P/IgQxrzSMLwUQtnLXJEgdExsun3qZVI/bLgbRPjpU
-	GOz3AWBmijVcaVwHFDN7/plXgIbeDSqRKpQzvwrQcBCMbSbQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys31u34vq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 08:51:06 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H8p2J8015201
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 08:51:03 GMT
-Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 17 Jun 2024 01:50:59 -0700
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        stable
-	<stable@kernel.org>
-Subject: [PATCH v1] misc: fastrpc: Increase user PD initmem size
-Date: Mon, 17 Jun 2024 14:20:50 +0530
-Message-ID: <20240617085051.28534-1-quic_ekangupt@quicinc.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1718614334; c=relaxed/simple;
+	bh=FrE0pMO5zOzAVNmLstWP2Lj37py+4lIC+/1IX14+ZjQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ksgWY2EGw0S0L0akHlPMUUFs0av8xXV5At7B5ghoqpmVsgMt8m30csnAJSzKCaxotuUJGiFrXV6Q6KKO3IqjmIk81NnbhVOBhivMmfyQDPq3kx1tJPiwyo2F7UQEXxZujIvIPXgIeiHM6fhamtNQI2cMpuP81sjgau5OOwWRKrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r9C08OtD; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-705c739b878so3325518b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:52:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718614332; x=1719219132; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OD8I+pqbh08jPvP+8sl9T3dgjSbA5oObfEw3j/UACYU=;
+        b=r9C08OtDXADoLN/0U16++u9YMfYRoIEonKwHEYIPlktEhDff48v/an4X6AUPjyu7n0
+         Jtv/Uxf47fKiDuqttwxIJa5iZdHn3UoegiXQNXi3Srvt9kNVdvUKFlYt1cJz0/yH1x6F
+         FGgZpu/v9nYJLtumytrdzGphazAteGu8AGYlo5klT3ChaVu1WfdqA0SfKc2/2Q2hOnq1
+         DaqGjw83kKTb8sXM9tnQ/iD7olGUGhGCNV/GsfTFJU1QCXMlSCibKglfaP3LuhnBIX/A
+         SsZQADH2JdY2xKxhYoRPTrOFI6Y3dDGuZip0OzRfj4Urd34KQxZlmg1g229nN4y2Dzpx
+         3Kvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718614332; x=1719219132;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OD8I+pqbh08jPvP+8sl9T3dgjSbA5oObfEw3j/UACYU=;
+        b=qEjK22lyCQCa+BAhXimE5OZ8t4KmP5Sn+m99ERuDNUu9GS8cSh6iL/k/o7LIOsRK/B
+         e4sx1FbQbsAXdc8RGl+dSEqxFG3hTqbSIaiMKDzv61Wspf8QuP/92U91sALfb6m9+TLE
+         Y9LEcb+kuHuGTvDk75xOWuEM9lPtDW3NxjT8Lkhj3dlhuBVnkpt1yBdYY4GKIA2Pabs1
+         WJnD2paY1m/wtphPfTdv6VLrtxi8Oo8h1Alg0sNbs3ZM0irsqmNDxaIOATNM5pTZfW9e
+         wNrHnJwQdfiZfiiZltaproWiqBUkpn+BQ1n2qmVMW1pBUH8i0K0vJ4ygHJYt2oDDnW8E
+         GyqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJAKGMoQGPCi++BeWBDMawhsIyzBQrVP1h4X6Dny5epqs0NcjDan84eWnF6rX3Yf71D7/ZGeC2eYACqY7KaOp6XOTRLGbtGAL+8dAN
+X-Gm-Message-State: AOJu0YzyW6yckIl/D1eSJYTkVTGjnR5LkN/P+OFysU6Jy00yNtMITbgk
+	o08QxTMmp0s3YxcwoQGWxbc0eoC8X2iZeL+o+ANDSJNhTK0zim5SwUXhTlDUdJzEL8exmqpRp6G
+	VFLvbSjTZ/FluAV4gEoH+0MN4C1IuUMU1iDIejvdiLGwweQXe
+X-Google-Smtp-Source: AGHT+IFpZsJvXA4Le6UsTGH1ECeAiGoJDC+BU1YbChDPuO8xaV6bxhxQjlfx58coHp0UwfES1CQs9fQI+fZF5DZH2sc=
+X-Received: by 2002:a17:90b:1c02:b0:2c2:db4e:16eb with SMTP id
+ 98e67ed59e1d1-2c4da54259amr14844970a91.7.1718614332307; Mon, 17 Jun 2024
+ 01:52:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: lySQ3wJjgvnoUMYCkcVs4WM_2bizqwCB
-X-Proofpoint-ORIG-GUID: lySQ3wJjgvnoUMYCkcVs4WM_2bizqwCB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_07,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 phishscore=0 adultscore=0 priorityscore=1501
- spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=856 bulkscore=0
- suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406170068
+References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
+ <20230105145159.1089531-3-kajetan.puchalski@arm.com> <20230711175814.zfavcn7xn3ia5va4@airbuntu>
+ <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com> <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
+ <20230917010516.54dgcmms44wyfrvx@airbuntu> <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
+ <d54d6115-a4d6-466b-a4a2-9c064194f06e@arm.com> <CAKfTPtB21aY9cgi5dSHB0jRp6pE85AfGcHrHjrcpMwi3fJL0FA@mail.gmail.com>
+ <286d4cf8-814b-41a2-8d5f-2673dc737f45@arm.com> <CAKfTPtBh6ZDv7=1Tst1kjQjD=UjDG1DAaQOUCXvzP4ZhD94iTg@mail.gmail.com>
+ <7ba09d9e-61dc-4d36-a401-0f89915fadfb@arm.com>
+In-Reply-To: <7ba09d9e-61dc-4d36-a401-0f89915fadfb@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 17 Jun 2024 10:52:01 +0200
+Message-ID: <CAKfTPtBZvnk11fXB6QgmE_jtNje5N3a5RyB7cFZMRPGbJJ+7KA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org, daniel.lezcano@linaro.org, 
+	Dietmar.Eggemann@arm.com, dsmythies@telus.net, yu.chen.surf@gmail.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Qais Yousef <qyousef@layalina.io>
+Content-Type: text/plain; charset="UTF-8"
 
-For user PD initialization, initmem is allocated and sent to DSP for
-initial memory requirements like shell loading. For unsigned PD
-offloading, current memory size is not sufficient which would
-result in PD initialization failures. Increase initial memory size
-to 5MB.
+On Wed, 12 Jun 2024 at 11:16, Lukasz Luba <lukasz.luba@arm.com> wrote:
+>
+>
+>
+> On 6/12/24 10:04, Vincent Guittot wrote:
+> > On Wed, 12 Jun 2024 at 09:25, Lukasz Luba <lukasz.luba@arm.com> wrote:
+> >>
+> >> Hi Vincent,
+> >>
+> >> My apologies for delay, I was on sick leave.
+> >>
+> >> On 5/28/24 15:07, Vincent Guittot wrote:
+> >>> On Tue, 28 May 2024 at 11:59, Lukasz Luba <lukasz.luba@arm.com> wrote:
+> >>>>
+> >>>> Hi Vincent,
+> >>>>
+> >>>> On 5/28/24 10:29, Vincent Guittot wrote:
+> >>>>> Hi All,
+> >>>>>
+> >>>>> I'm quite late on this thread but this patchset creates a major
+> >>>>> regression for psci cpuidle driver when using the OSI mode (OS
+> >>>>> initiated mode).  In such a case, cpuidle driver takes care only of
+> >>>>> CPUs power state and the deeper C-states ,which includes cluster and
+> >>>>> other power domains, are handled with power domain framework. In such
+> >>>>> configuration ,cpuidle has only 2 c-states : WFI and cpu off states
+> >>>>> and others states that include the clusters, are managed by genpd and
+> >>>>> its governor.
+> >>>>>
+> >>>>> This patch selects cpuidle c-state N-1 as soon as the utilization is
+> >>>>> above CPU capacity / 64 which means at most a level of 16 on the big
+> >>>>> core but can be as low as 4 on little cores. These levels are very low
+> >>>>> and the main result is that as soon as there is very little activity
+> >>>>> on a CPU, cpuidle always selects WFI states whatever the estimated
+> >>>>> sleep duration and which prevents any deeper states. Another effect is
+> >>>>> that it also keeps the tick firing every 1ms in my case.
+> >>>>
+> >>>> Thanks for reporting this.
+> >>>> Could you add what regression it's causing, please?
+> >>>> Performance or higher power?
+> >>>
+> >>> It's not a perf but rather a power regression. I don't have a power
+> >>> counter so it's difficult to give figures but I found it while running
+> >>> a unitary test below on my rb5:
+> >>> run 500us every 19457ms on medium core (uclamp_min: 600).
+> >>
+> >> Mid cores are built differently, they have low static power (leakage).
+> >> Therefore, for them the residency in deeper idle state should be
+> >> longer than for Big CPU. When you power off the CPU you loose your
+> >> cache data/code. The data needs to be stored in the L3 or
+> >> further memory. When the cpu is powered on again, it needs code & data.
+> >> Thus, it will transfer that data/code from L3 or from DDR. That
+> >> information transfer has energy cost (it's not for free). The cost
+> >> of data from DDR is very high.
+> >> Then we have to justify if the energy lost while sleeping in shallower
+> >> idle state can be higher than loading data/code from outside.
+> >> For different CPU it would be different.
+> >
+> > I'm aware of these points and the residency time of an idle state is
+> > set to reflect this cost. In my case, the idle time is far above the
+> > residency time which means that we should get some energy saving.
+> > cpu off 4.488ms
+> > cluster off 9.987ms
+> > vs
+> > sleep duration 18.000ms
+> >
+> > Also, the policy of selecting a shallower idle state than the final
+> > selected one doesn't work with PSCI OSI because cpuidle is only aware
+> > of per CPU idle states but it is not aware of the cluster or
+> > deeper/wider idle states so cpuidle doesn't know what will be the
+> > final selected idle state. This is a major problem, in addition to
+> > keep the tick firing
+>
+> I think we are aligned with this.
+> Something has to change in this implementation of idle gov.
+>
+> I'm a bit more skeptical about your second point with PSCI.
+> That standard might be to strong to change.
 
-Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
-Cc: stable <stable@kernel.org>
-Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
----
- drivers/misc/fastrpc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 5204fda51da3..11a230af0b10 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -38,7 +38,7 @@
- #define FASTRPC_INIT_HANDLE	1
- #define FASTRPC_DSP_UTILITIES_HANDLE	2
- #define FASTRPC_CTXID_MASK (0xFF0)
--#define INIT_FILELEN_MAX (2 * 1024 * 1024)
-+#define INIT_FILELEN_MAX (5 * 1024 * 1024)
- #define INIT_FILE_NAMELEN_MAX (128)
- #define FASTRPC_DEVICE_NAME	"fastrpc"
- 
--- 
-2.43.0
-
+I'm not expecting to change PSCI but the cpuidle governor must keep in
+mind that it doesn't have the full picture of the final selected idle
+state of the system. Typically this means that doing a minus 1 on the
+index of the selected cpuidle state is not correct and it must take
+into account the final idle states selected outside cpuidle.
 
