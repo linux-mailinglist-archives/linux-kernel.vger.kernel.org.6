@@ -1,538 +1,380 @@
-Return-Path: <linux-kernel+bounces-217966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7FC90B6FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:49:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758CF90B700
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19B0285FFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:49:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6474F1C22FB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1D21662EF;
-	Mon, 17 Jun 2024 16:49:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368D617C8;
-	Mon, 17 Jun 2024 16:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEFF1662EF;
+	Mon, 17 Jun 2024 16:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FP4GyC2D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6EA29414;
+	Mon, 17 Jun 2024 16:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718642939; cv=none; b=kG99nCvAwbxBRI9E9bnO7hFJYSaBEpZH3AJ/ela0rBgDK8VKiEM5QM2hNwAF8Ha2P64kg8oY6X2qxVVQoQRBSjFEi6qyNuZ0cVCt9Mf99iuBGTe5eR6+q5zNw8ONxvsXRQh4autscEUEOPOwVX+AH/zDW4KejlKVfmGbo7GRl/g=
+	t=1718642999; cv=none; b=eFu2/kfcAXQpfnp6lo0ZLThVtsf1Ll2Kg/u1qTQ16HNSheM0YzGH1d0EmxX/B5qyqQnKqjnnLprtPE0ahRKJ1J1OZp5eEnHkYxh2xtVEJgCq5zLKpth7INEcm+G1Q3t9M3vXzAvlmQrqTXnk3/92v5o3h2YagfuQCuCWgnv4q7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718642939; c=relaxed/simple;
-	bh=Sw4WMbh4MR37Sjul7GaT+1B0IUYI69+si4+4QmM1hIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cy3Ebwq1XyWGp5UQMtskIrboKcDHQjiqdaYMPzxULZKaRpu5ENFFv0rEsI2DOSWtQwcJ+ZPHi3OD+76D07U4eiGJYzlxhX5vZI2uKLxDNw/l7NKmvI/aiMUjwG6DGQIC7tZ56yauAHl+DMiEUiGHwT1Q3xoUaqIB5mvUyNFGYRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A45ADA7;
-	Mon, 17 Jun 2024 09:49:20 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8BE663F64C;
-	Mon, 17 Jun 2024 09:48:53 -0700 (PDT)
-Date: Mon, 17 Jun 2024 17:48:51 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 3/6] firmware: arm_scmi: add initial support for i.MX
- BBM protocol
-Message-ID: <ZnBo84P1Av0pZ324@pluto>
-References: <20240524-imx95-bbm-misc-v2-v4-0-dc456995d590@nxp.com>
- <20240524-imx95-bbm-misc-v2-v4-3-dc456995d590@nxp.com>
+	s=arc-20240116; t=1718642999; c=relaxed/simple;
+	bh=xFDv5itLWWHNazNZbHJF9p1ZpfZrnLXE/9upJcBITBA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FYxj8BzczxCkHuItPUJmENi/6g1IU6vXyx4+gY2PNOIejzsVxSedBLSswB0WhXLTwI9JObHtWstMHAce1/D69umADPDeAdPFp5Fpjv8f6rWI7gKaTUDPpCqQaAONmbtycnPgpCYjGyuipGlGtZivRL/lQZ75jWvH0O8ZhvfM54k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FP4GyC2D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AB4FC2BD10;
+	Mon, 17 Jun 2024 16:49:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718642999;
+	bh=xFDv5itLWWHNazNZbHJF9p1ZpfZrnLXE/9upJcBITBA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=FP4GyC2DXPMjQQfKfSVTN7650WDP6rpnHyZYeRcHlaR0T14PQTFKKSJNAUkkMbXAN
+	 6d4CWvLOoO/FzKZMX+GzRZHcP+gvV5W5BjyQSCwJ/jP7blh+zYP2Q5gsVRlf5h3dgR
+	 m9GEdQmrctcMsQ/5X/t8NjBZfLHY6W10Urle9nRDaMQyjs/i+QSWh/8nXzzWuE02mp
+	 U3b124GTMCh4kFYPUJ8w5z8ndRyOTGaBLEO64Gs92s6YuLzNdq0OnIoyBOwBCEKbfz
+	 /adOSi9yeSqAUrmwTcCtUlZrKk5KJe4CAY+CAWbL3hSO1aoketBTrMIG5J8EODd0Pk
+	 EjrWdsEKnUZLg==
+Message-ID: <e651206265ac0736ee2ac8ba8cafefb15822c163.camel@kernel.org>
+Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_nl_listener_get_doit
+From: Jeff Layton <jlayton@kernel.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>, syzbot
+	 <syzbot+4207adf14e7c0981d28d@syzkaller.appspotmail.com>
+Cc: Dai.Ngo@oracle.com, chuck.lever@oracle.com, kolga@netapp.com, 
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, neilb@suse.de, 
+	syzkaller-bugs@googlegroups.com, tom@talpey.com
+Date: Mon, 17 Jun 2024 12:49:56 -0400
+In-Reply-To: <ZnBjsQazkJK0MyNk@lore-desk>
+References: <000000000000322bec061aeb58a3@google.com>
+	 <ZnBjsQazkJK0MyNk@lore-desk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524-imx95-bbm-misc-v2-v4-3-dc456995d590@nxp.com>
 
-On Fri, May 24, 2024 at 04:56:45PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> i.MX95 has a battery-backed module(BBM), which has persistent storage (GPR),
-> an RTC, and the ON/OFF button. The System Manager(SM) firmware use SCMI vendor
-> protocol(SCMI BBM) to let agent be able to use GPR, RTC and ON/OFF
-> button.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+On Mon, 2024-06-17 at 18:26 +0200, Lorenzo Bianconi wrote:
+> > Hello,
+> >=20
+> > syzbot found the following issue on:
+> >=20
+> > HEAD commit:=C2=A0=C2=A0=C2=A0 cea2a26553ac mailmap: Add my outdated ad=
+dresses to
+> > the map..
+> > git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
+> > console output:
+> > https://syzkaller.appspot.com/x/log.txt?x=3D169fd8ee980000
+> > kernel config:=C2=A0
+> > https://syzkaller.appspot.com/x/.config?x=3Dfa0ce06dcc735711
+> > dashboard link:
+> > https://syzkaller.appspot.com/bug?extid=3D4207adf14e7c0981d28d
+> > compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Debian clang version 15.0=
+.6, GNU ld (GNU Binutils
+> > for Debian) 2.40
+> >=20
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >=20
+> > Downloadable assets:
+> > disk image:
+> > https://storage.googleapis.com/syzbot-assets/1f7ce933512f/disk-cea2a265=
+.raw.xz
+> > vmlinux:
+> > https://storage.googleapis.com/syzbot-assets/0ce3b9940616/vmlinux-cea2a=
+265.xz
+> > kernel image:
+> > https://storage.googleapis.com/syzbot-assets/19e24094ea37/bzImage-cea2a=
+265.xz
+> >=20
+> > IMPORTANT: if you fix the issue, please add the following tag to
+> > the commit:
+> > Reported-by: syzbot+4207adf14e7c0981d28d@syzkaller.appspotmail.com
+> >=20
+> > INFO: task syz-executor.1:17770 blocked for more than 143 seconds.
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.10.0-rc3-syzkaller-00022-g=
+cea2a26553ac #0
+> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> > message.
+> > task:syz-executor.1=C2=A0 state:D stack:23800 pid:17770 tgid:17767
+> > ppid:11381=C2=A0 flags:0x00000006
+> > Call Trace:
+> > =C2=A0<TASK>
+> > =C2=A0context_switch kernel/sched/core.c:5408 [inline]
+> > =C2=A0__schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+> > =C2=A0__schedule_loop kernel/sched/core.c:6822 [inline]
+> > =C2=A0schedule+0x14b/0x320 kernel/sched/core.c:6837
+> > =C2=A0schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+> > =C2=A0__mutex_lock_common kernel/locking/mutex.c:684 [inline]
+> > =C2=A0__mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+> > =C2=A0nfsd_nl_listener_get_doit+0x115/0x5d0 fs/nfsd/nfsctl.c:2124
+> > =C2=A0genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+> > =C2=A0genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+> > =C2=A0genl_rcv_msg+0xb16/0xec0 net/netlink/genetlink.c:1210
+> > =C2=A0netlink_rcv_skb+0x1e5/0x430 net/netlink/af_netlink.c:2564
+> > =C2=A0genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+> > =C2=A0netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+> > =C2=A0netlink_unicast+0x7ec/0x980 net/netlink/af_netlink.c:1361
+> > =C2=A0netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1905
+> > =C2=A0sock_sendmsg_nosec net/socket.c:730 [inline]
+> > =C2=A0__sock_sendmsg+0x223/0x270 net/socket.c:745
+> > =C2=A0____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
+> > =C2=A0___sys_sendmsg net/socket.c:2639 [inline]
+> > =C2=A0__sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
+> > =C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > =C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> > =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7f24ed27cea9
+> > RSP: 002b:00007f24ee0080c8 EFLAGS: 00000246 ORIG_RAX:
+> > 000000000000002e
+> > RAX: ffffffffffffffda RBX: 00007f24ed3b3f80 RCX: 00007f24ed27cea9
+> > RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000005
+> > RBP: 00007f24ed2ebff4 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> >=20
+> >=20
+> > ---
+> > This report is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ=C2=A0for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >=20
+> > syzbot will keep track of this issue. See:
+> > https://goo.gl/tpsmEJ#status=C2=A0for how to communicate with syzbot.
+> >=20
+> > If the report is already addressed, let syzbot know by replying
+> > with:
+> > #syz fix: exact-commit-title
+> >=20
+> > If you want to overwrite report's subsystems, reply with:
+> > #syz set subsystems: new-subsystem
+> > (See the list of subsystem names on the web dashboard)
+> >=20
+> > If the report is a duplicate of another one, reply with:
+> > #syz dup: exact-subject-of-another-report
+> >=20
+> > If you want to undo deduplication, reply with:
+> > #syz undup
+> >=20
+>=20
+> #syz test
+> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git=C2=A04ddfda=
+4
+> 17a50
+>=20
+> From be9676fba16c0b8769c3b6094f35da39b1ba3953 Mon Sep 17 00:00:00
+> 2001
+> Message-ID:
+> <be9676fba16c0b8769c3b6094f35da39b1ba3953.1718640518.git.lorenzo@kern
+> el.org>
+> From: Lorenzo Bianconi <lorenzo@kernel.org>
+> Date: Mon, 17 Jun 2024 16:26:26 +0200
+> Subject: [PATCH] NFSD: grab nfsd_mutex in
+> nfsd_nl_rpc_status_get_dumpit()
+>=20
+> Grab nfsd_mutex lock in nfsd_nl_rpc_status_get_dumpit routine and
+> remove
+> nfsd_nl_rpc_status_get_start() and nfsd_nl_rpc_status_get_done().
+> This
+> patch fix the syzbot log reported below:
+>=20
+> INFO: task syz-executor.1:17770 blocked for more than 143 seconds.
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.10.0-rc3-syzkaller-00022-gce=
+a2a26553ac #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> message.
+> task:syz-executor.1=C2=A0 state:D stack:23800 pid:17770 tgid:17767
+> ppid:11381=C2=A0 flags:0x00000006
+> Call Trace:
+> =C2=A0<TASK>
+> =C2=A0context_switch kernel/sched/core.c:5408 [inline]
+> =C2=A0__schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+> =C2=A0__schedule_loop kernel/sched/core.c:6822 [inline]
+> =C2=A0schedule+0x14b/0x320 kernel/sched/core.c:6837
+> =C2=A0schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+> =C2=A0__mutex_lock_common kernel/locking/mutex.c:684 [inline]
+> =C2=A0__mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+> =C2=A0nfsd_nl_listener_get_doit+0x115/0x5d0 fs/nfsd/nfsctl.c:2124
+> =C2=A0genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+> =C2=A0genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+> =C2=A0genl_rcv_msg+0xb16/0xec0 net/netlink/genetlink.c:1210
+> =C2=A0netlink_rcv_skb+0x1e5/0x430 net/netlink/af_netlink.c:2564
+> =C2=A0genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+> =C2=A0netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+> =C2=A0netlink_unicast+0x7ec/0x980 net/netlink/af_netlink.c:1361
+> =C2=A0netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1905
+> =C2=A0sock_sendmsg_nosec net/socket.c:730 [inline]
+> =C2=A0__sock_sendmsg+0x223/0x270 net/socket.c:745
+> =C2=A0____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
+> =C2=A0___sys_sendmsg net/socket.c:2639 [inline]
+> =C2=A0__sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
+> =C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> =C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f24ed27cea9
+> RSP: 002b:00007f24ee0080c8 EFLAGS: 00000246 ORIG_RAX:
+> 000000000000002e
+> RAX: ffffffffffffffda RBX: 00007f24ed3b3f80 RCX: 00007f24ed27cea9
+> RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000005
+> RBP: 00007f24ed2ebff4 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+>=20
+> Fixes: 1bd773b4f0c9 ("nfsd: hold nfsd_mutex across entire netlink
+> operation")
+> Fixes: bd9d6a3efa97 ("NFSD: add rpc_status netlink support")
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 > ---
->  drivers/firmware/arm_scmi/Kconfig          |   2 +
->  drivers/firmware/arm_scmi/Makefile         |   1 +
->  drivers/firmware/arm_scmi/imx/Kconfig      |  14 ++
->  drivers/firmware/arm_scmi/imx/Makefile     |   2 +
->  drivers/firmware/arm_scmi/imx/imx-sm-bbm.c | 380 +++++++++++++++++++++++++++++
->  include/linux/scmi_imx_protocol.h          |  42 ++++
->  6 files changed, 441 insertions(+)
-> 
-> diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
-> index aa5842be19b2..79846cbaf71b 100644
-> --- a/drivers/firmware/arm_scmi/Kconfig
-> +++ b/drivers/firmware/arm_scmi/Kconfig
-> @@ -180,4 +180,6 @@ config ARM_SCMI_POWER_CONTROL
->  	  called scmi_power_control. Note this may needed early in boot to catch
->  	  early shutdown/reboot SCMI requests.
->  
-> +source "drivers/firmware/arm_scmi/imx/Kconfig"
+> =C2=A0Documentation/netlink/specs/nfsd.yaml |=C2=A0 2 --
+> =C2=A0fs/nfsd/netlink.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 2 --
+> =C2=A0fs/nfsd/netlink.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 3 --
+> =C2=A0fs/nfsd/nfsctl.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | 48 ++++++-------------------
+> --
+> =C2=A04 files changed, 11 insertions(+), 44 deletions(-)
+>=20
+> diff --git a/Documentation/netlink/specs/nfsd.yaml
+> b/Documentation/netlink/specs/nfsd.yaml
+> index 5a98e5a06c68..c87658114852 100644
+> --- a/Documentation/netlink/specs/nfsd.yaml
+> +++ b/Documentation/netlink/specs/nfsd.yaml
+> @@ -132,8 +132,6 @@ operations:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 doc: dump pending nfsd rpc
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 attribute-set: rpc-status
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dump:
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pre: nfsd-nl-rpc-status-get-s=
+tart
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 post: nfsd-nl-rpc-status-get-=
+done
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reply:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 attributes:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+- xid
+> diff --git a/fs/nfsd/netlink.c b/fs/nfsd/netlink.c
+> index 137701153c9e..ca54aa583530 100644
+> --- a/fs/nfsd/netlink.c
+> +++ b/fs/nfsd/netlink.c
+> @@ -49,9 +49,7 @@ static const struct nla_policy
+> nfsd_pool_mode_set_nl_policy[NFSD_A_POOL_MODE_MOD
+> =C2=A0static const struct genl_split_ops nfsd_nl_ops[] =3D {
+> =C2=A0	{
+> =C2=A0		.cmd	=3D NFSD_CMD_RPC_STATUS_GET,
+> -		.start	=3D nfsd_nl_rpc_status_get_start,
+> =C2=A0		.dumpit	=3D nfsd_nl_rpc_status_get_dumpit,
+> -		.done	=3D nfsd_nl_rpc_status_get_done,
+> =C2=A0		.flags	=3D GENL_CMD_CAP_DUMP,
+> =C2=A0	},
+> =C2=A0	{
+> diff --git a/fs/nfsd/netlink.h b/fs/nfsd/netlink.h
+> index 9459547de04e..8eb903f24c41 100644
+> --- a/fs/nfsd/netlink.h
+> +++ b/fs/nfsd/netlink.h
+> @@ -15,9 +15,6 @@
+> =C2=A0extern const struct nla_policy
+> nfsd_sock_nl_policy[NFSD_A_SOCK_TRANSPORT_NAME + 1];
+> =C2=A0extern const struct nla_policy
+> nfsd_version_nl_policy[NFSD_A_VERSION_ENABLED + 1];
+> =C2=A0
+> -int nfsd_nl_rpc_status_get_start(struct netlink_callback *cb);
+> -int nfsd_nl_rpc_status_get_done(struct netlink_callback *cb);
+> -
+> =C2=A0int nfsd_nl_rpc_status_get_dumpit(struct sk_buff *skb,
+> =C2=A0				=C2=A0 struct netlink_callback *cb);
+> =C2=A0int nfsd_nl_threads_set_doit(struct sk_buff *skb, struct genl_info
+> *info);
+> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> index e5d2cc74ef77..78091a73b33b 100644
+> --- a/fs/nfsd/nfsctl.c
+> +++ b/fs/nfsd/nfsctl.c
+> @@ -1468,28 +1468,6 @@ static int create_proc_exports_entry(void)
+> =C2=A0
+> =C2=A0unsigned int nfsd_net_id;
+> =C2=A0
+> -/**
+> - * nfsd_nl_rpc_status_get_start - Prepare rpc_status_get dumpit
+> - * @cb: netlink metadata and command arguments
+> - *
+> - * Return values:
+> - *=C2=A0=C2=A0 %0: The rpc_status_get command may proceed
+> - *=C2=A0=C2=A0 %-ENODEV: There is no NFSD running in this namespace
+> - */
+> -int nfsd_nl_rpc_status_get_start(struct netlink_callback *cb)
+> -{
+> -	struct nfsd_net *nn =3D net_generic(sock_net(cb->skb->sk),
+> nfsd_net_id);
+> -	int ret =3D -ENODEV;
+> -
+> -	mutex_lock(&nfsd_mutex);
+> -	if (nn->nfsd_serv)
+> -		ret =3D 0;
+> -	else
+> -		mutex_unlock(&nfsd_mutex);
+> -
+> -	return ret;
+> -}
+> -
+> =C2=A0static int nfsd_genl_rpc_status_compose_msg(struct sk_buff *skb,
+> =C2=A0					=C2=A0=C2=A0=C2=A0 struct netlink_callback
+> *cb,
+> =C2=A0					=C2=A0=C2=A0=C2=A0 struct nfsd_genl_rqstp
+> *rqstp)
+> @@ -1566,8 +1544,16 @@ static int
+> nfsd_genl_rpc_status_compose_msg(struct sk_buff *skb,
+> =C2=A0int nfsd_nl_rpc_status_get_dumpit(struct sk_buff *skb,
+> =C2=A0				=C2=A0 struct netlink_callback *cb)
+> =C2=A0{
+> -	struct nfsd_net *nn =3D net_generic(sock_net(skb->sk),
+> nfsd_net_id);
+> =C2=A0	int i, ret, rqstp_index =3D 0;
+> +	struct nfsd_net *nn;
 > +
-
-It could be that we fold all the Vendor drivers under
-drivers/firmware/arm_scmi/vendors once it is merged...but we will take
-care of this reowrk/refctor...still not sure about this details.
-
->  endmenu
-> diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
-> index fd59f58ce8a2..fb9407fef60c 100644
-> --- a/drivers/firmware/arm_scmi/Makefile
-> +++ b/drivers/firmware/arm_scmi/Makefile
-> @@ -16,6 +16,7 @@ scmi-module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
->  
->  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
->  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o
-> +obj-$(CONFIG_ARM_SCMI_PROTOCOL) += imx/
->  
->  obj-$(CONFIG_ARM_SCMI_POWER_CONTROL) += scmi_power_control.o
->  
-> diff --git a/drivers/firmware/arm_scmi/imx/Kconfig b/drivers/firmware/arm_scmi/imx/Kconfig
-> new file mode 100644
-> index 000000000000..4b6ac7febe8f
-> --- /dev/null
-> +++ b/drivers/firmware/arm_scmi/imx/Kconfig
-> @@ -0,0 +1,14 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +menu "ARM SCMI NXP i.MX Vendor Protocols"
+> +	mutex_lock(&nfsd_mutex);
 > +
-> +config IMX_SCMI_BBM_EXT
-> +	tristate "i.MX SCMI BBM EXTENSION"
-> +	depends on ARM_SCMI_PROTOCOL || (COMPILE_TEST && OF)
-> +	default y if ARCH_MXC
-> +	help
-> +	  This enables i.MX System BBM control logic which supports RTC
-> +	  and BUTTON.
-> +
-> +	  This driver can also be built as a module.
-> +
-> +endmenu
-> diff --git a/drivers/firmware/arm_scmi/imx/Makefile b/drivers/firmware/arm_scmi/imx/Makefile
-> new file mode 100644
-> index 000000000000..a7dbdd20dbb9
-> --- /dev/null
-> +++ b/drivers/firmware/arm_scmi/imx/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_IMX_SCMI_BBM_EXT) += imx-sm-bbm.o
-> diff --git a/drivers/firmware/arm_scmi/imx/imx-sm-bbm.c b/drivers/firmware/arm_scmi/imx/imx-sm-bbm.c
-> new file mode 100644
-> index 000000000000..3f8321d247ae
-> --- /dev/null
-> +++ b/drivers/firmware/arm_scmi/imx/imx-sm-bbm.c
-> @@ -0,0 +1,380 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * System Control and Management Interface (SCMI) NXP BBM Protocol
-> + *
-> + * Copyright 2024 NXP
-> + */
-> +
-> +#define pr_fmt(fmt) "SCMI Notifications BBM - " fmt
-> +
-> +#include <linux/bits.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/scmi_protocol.h>
-> +#include <linux/scmi_imx_protocol.h>
-> +
-> +#include "../protocols.h"
-> +#include "../notify.h"
-> +
-> +#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x10000
-> +
-> +enum scmi_imx_bbm_protocol_cmd {
-> +	IMX_BBM_GPR_SET = 0x3,
-> +	IMX_BBM_GPR_GET = 0x4,
-> +	IMX_BBM_RTC_ATTRIBUTES = 0x5,
-> +	IMX_BBM_RTC_TIME_SET = 0x6,
-> +	IMX_BBM_RTC_TIME_GET = 0x7,
-> +	IMX_BBM_RTC_ALARM_SET = 0x8,
-> +	IMX_BBM_BUTTON_GET = 0x9,
-> +	IMX_BBM_RTC_NOTIFY = 0xA,
-> +	IMX_BBM_BUTTON_NOTIFY = 0xB,
-> +};
-> +
-> +#define GET_RTCS_NR(x)	le32_get_bits((x), GENMASK(23, 16))
-> +#define GET_GPRS_NR(x)	le32_get_bits((x), GENMASK(15, 0))
-> +
-> +#define SCMI_IMX_BBM_NOTIFY_RTC_UPDATED		BIT(2)
-> +#define SCMI_IMX_BBM_NOTIFY_RTC_ROLLOVER	BIT(1)
-> +#define SCMI_IMX_BBM_NOTIFY_RTC_ALARM		BIT(0)
-> +
-> +#define SCMI_IMX_BBM_RTC_ALARM_ENABLE_FLAG	BIT(0)
-> +
-> +#define SCMI_IMX_BBM_NOTIFY_RTC_FLAG	\
-> +	(SCMI_IMX_BBM_NOTIFY_RTC_UPDATED | SCMI_IMX_BBM_NOTIFY_RTC_ROLLOVER | \
-> +	 SCMI_IMX_BBM_NOTIFY_RTC_ALARM)
-> +
-> +#define SCMI_IMX_BBM_EVENT_RTC_MASK		GENMASK(31, 24)
-> +
-> +struct scmi_imx_bbm_info {
-> +	u32 version;
-> +	int nr_rtc;
-> +	int nr_gpr;
-> +};
-> +
-> +struct scmi_msg_imx_bbm_protocol_attributes {
-> +	__le32 attributes;
-> +};
-> +
-> +struct scmi_imx_bbm_set_time {
-> +	__le32 id;
-> +	__le32 flags;
-> +	__le32 value_low;
-> +	__le32 value_high;
-> +};
-> +
-> +struct scmi_imx_bbm_get_time {
-> +	__le32 id;
-> +	__le32 flags;
-> +};
-> +
-> +struct scmi_imx_bbm_alarm_time {
-> +	__le32 id;
-> +	__le32 flags;
-> +	__le32 value_low;
-> +	__le32 value_high;
-> +};
-> +
-> +struct scmi_msg_imx_bbm_rtc_notify {
-> +	__le32 rtc_id;
-> +	__le32 flags;
-> +};
-> +
-> +struct scmi_msg_imx_bbm_button_notify {
-> +	__le32 flags;
-> +};
-> +
-> +struct scmi_imx_bbm_notify_payld {
-> +	__le32 flags;
-> +};
-> +
-> +static int scmi_imx_bbm_attributes_get(const struct scmi_protocol_handle *ph,
-> +				       struct scmi_imx_bbm_info *pi)
-> +{
-> +	int ret;
-> +	struct scmi_xfer *t;
-> +	struct scmi_msg_imx_bbm_protocol_attributes *attr;
-> +
-> +	ret = ph->xops->xfer_get_init(ph, PROTOCOL_ATTRIBUTES, 0, sizeof(*attr), &t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	attr = t->rx.buf;
-> +
-> +	ret = ph->xops->do_xfer(ph, t);
-> +	if (!ret) {
-> +		pi->nr_rtc = GET_RTCS_NR(attr->attributes);
-> +		pi->nr_gpr = GET_GPRS_NR(attr->attributes);
+> +	nn =3D net_generic(sock_net(skb->sk), nfsd_net_id);
+> +	if (!nn->nfsd_serv) {
+> +		ret =3D -ENODEV;
+> +		goto out_unlock;
 > +	}
-> +
-> +	ph->xops->xfer_put(ph, t);
-> +
+> =C2=A0
+> =C2=A0	rcu_read_lock();
+> =C2=A0
+> @@ -1644,22 +1630,10 @@ int nfsd_nl_rpc_status_get_dumpit(struct
+> sk_buff *skb,
+> =C2=A0	ret =3D skb->len;
+> =C2=A0out:
+> =C2=A0	rcu_read_unlock();
+> -
+> -	return ret;
+> -}
+> -
+> -/**
+> - * nfsd_nl_rpc_status_get_done - rpc_status_get dumpit post-
+> processing
+> - * @cb: netlink metadata and command arguments
+> - *
+> - * Return values:
+> - *=C2=A0=C2=A0 %0: Success
+> - */
+> -int nfsd_nl_rpc_status_get_done(struct netlink_callback *cb)
+> -{
+> +out_unlock:
+> =C2=A0	mutex_unlock(&nfsd_mutex);
+> =C2=A0
+> -	return 0;
 > +	return ret;
-> +}
-> +
-> +static int scmi_imx_bbm_notify(const struct scmi_protocol_handle *ph,
-> +			       u32 src_id, int message_id, bool enable)
-> +{
-> +	int ret;
-> +	struct scmi_xfer *t;
-> +
-> +	if (message_id == IMX_BBM_RTC_NOTIFY) {
-> +		struct scmi_msg_imx_bbm_rtc_notify *rtc_notify;
-> +
-> +		ret = ph->xops->xfer_get_init(ph, message_id,
-> +					      sizeof(*rtc_notify), 0, &t);
-> +		if (ret)
-> +			return ret;
-> +
-> +		rtc_notify = t->tx.buf;
-> +		rtc_notify->rtc_id = cpu_to_le32(0);
-> +		rtc_notify->flags =
-> +			cpu_to_le32(enable ? SCMI_IMX_BBM_NOTIFY_RTC_FLAG : 0);
-> +	} else if (message_id == IMX_BBM_BUTTON_NOTIFY) {
-> +		struct scmi_msg_imx_bbm_button_notify *button_notify;
-> +
-> +		ret = ph->xops->xfer_get_init(ph, message_id,
-> +					      sizeof(*button_notify), 0, &t);
-> +		if (ret)
-> +			return ret;
-> +
-> +		button_notify = t->tx.buf;
-> +		button_notify->flags = cpu_to_le32(enable ? 1 : 0);
-> +	} else {
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = ph->xops->do_xfer(ph, t);
-> +
-> +	ph->xops->xfer_put(ph, t);
-> +	return ret;
-> +}
-> +
-> +static enum scmi_imx_bbm_protocol_cmd evt_2_cmd[] = {
-> +	IMX_BBM_RTC_NOTIFY,
-> +	IMX_BBM_BUTTON_NOTIFY
-> +};
-> +
-> +static int scmi_imx_bbm_set_notify_enabled(const struct scmi_protocol_handle *ph,
-> +					   u8 evt_id, u32 src_id, bool enable)
-> +{
-> +	int ret, cmd_id;
-> +
-> +	if (evt_id >= ARRAY_SIZE(evt_2_cmd))
-> +		return -EINVAL;
-> +
-> +	cmd_id = evt_2_cmd[evt_id];
-> +	ret = scmi_imx_bbm_notify(ph, src_id, cmd_id, enable);
-> +	if (ret)
-> +		pr_debug("FAIL_ENABLED - evt[%X] dom[%d] - ret:%d\n",
-> +			 evt_id, src_id, ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static void *scmi_imx_bbm_fill_custom_report(const struct scmi_protocol_handle *ph,
-> +					     u8 evt_id, ktime_t timestamp,
-> +					     const void *payld, size_t payld_sz,
-> +					     void *report, u32 *src_id)
-> +{
-> +	const struct scmi_imx_bbm_notify_payld *p = payld;
-> +	struct scmi_imx_bbm_notif_report *r = report;
-> +
-> +	if (sizeof(*p) != payld_sz)
-> +		return NULL;
-> +
-> +	if (evt_id == SCMI_EVENT_IMX_BBM_RTC) {
-> +		r->is_rtc = true;
-> +		r->is_button = false;
-> +		r->timestamp = timestamp;
-> +		r->rtc_id = le32_get_bits(p->flags, SCMI_IMX_BBM_EVENT_RTC_MASK);
-> +		r->rtc_evt = le32_get_bits(p->flags, SCMI_IMX_BBM_NOTIFY_RTC_FLAG);
-> +		dev_dbg(ph->dev, "RTC: %d evt: %x\n", r->rtc_id, r->rtc_evt);
-> +		*src_id = r->rtc_evt;
-> +	} else if (evt_id == SCMI_EVENT_IMX_BBM_BUTTON) {
-> +		r->is_rtc = false;
-> +		r->is_button = true;
-> +		r->timestamp = timestamp;
-> +		dev_dbg(ph->dev, "BBM Button\n");
-> +		*src_id = 0;
-> +	} else {
-> +		WARN_ON_ONCE(1);
-> +		return NULL;
-> +	}
-> +
-> +	return r;
-> +}
-> +
-> +static const struct scmi_event scmi_imx_bbm_events[] = {
-> +	{
-> +		.id = SCMI_EVENT_IMX_BBM_RTC,
-> +		.max_payld_sz = sizeof(struct scmi_imx_bbm_notify_payld),
-> +		.max_report_sz = sizeof(struct scmi_imx_bbm_notif_report),
-> +	},
-> +	{
-> +		.id = SCMI_EVENT_IMX_BBM_BUTTON,
-> +		.max_payld_sz = sizeof(struct scmi_imx_bbm_notify_payld),
-> +		.max_report_sz = sizeof(struct scmi_imx_bbm_notif_report),
-> +	},
-> +};
-> +
-> +static const struct scmi_event_ops scmi_imx_bbm_event_ops = {
-> +	.set_notify_enabled = scmi_imx_bbm_set_notify_enabled,
-> +	.fill_custom_report = scmi_imx_bbm_fill_custom_report,
-> +};
-> +
-> +static const struct scmi_protocol_events scmi_imx_bbm_protocol_events = {
-> +	.queue_sz = SCMI_PROTO_QUEUE_SZ,
-> +	.ops = &scmi_imx_bbm_event_ops,
-> +	.evts = scmi_imx_bbm_events,
-> +	.num_events = ARRAY_SIZE(scmi_imx_bbm_events),
-> +	.num_sources = 1,
-> +};
-> +
-> +static int scmi_imx_bbm_protocol_init(const struct scmi_protocol_handle *ph)
-> +{
-> +	u32 version;
-> +	int ret;
-> +	struct scmi_imx_bbm_info *binfo;
-> +
-> +	ret = ph->xops->version_get(ph, &version);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_info(ph->dev, "NXP SM BBM Version %d.%d\n",
-> +		 PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
-> +
-> +	binfo = devm_kzalloc(ph->dev, sizeof(*binfo), GFP_KERNEL);
-> +	if (!binfo)
-> +		return -ENOMEM;
-> +
-> +	ret = scmi_imx_bbm_attributes_get(ph, binfo);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return ph->set_priv(ph, binfo, version);
-> +}
+> =C2=A0}
+> =C2=A0
+> =C2=A0/**
 
-I would move this init down below, right before the scmi_imx_bbm and
-after the proto_ops definition,  for consistency and readability.
-
-> +
-> +static int scmi_imx_bbm_rtc_time_set(const struct scmi_protocol_handle *ph,
-> +				     u32 rtc_id, u64 sec)
-> +{
-> +	struct scmi_imx_bbm_info *pi = ph->get_priv(ph);
-> +	struct scmi_imx_bbm_set_time *cfg;
-> +	struct scmi_xfer *t;
-> +	int ret;
-> +
-> +	if (rtc_id >= pi->nr_rtc)
-> +		return -EINVAL;
-> +
-> +	ret = ph->xops->xfer_get_init(ph, IMX_BBM_RTC_TIME_SET, sizeof(*cfg), 0, &t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	cfg = t->tx.buf;
-> +	cfg->id = cpu_to_le32(rtc_id);
-> +	cfg->flags = 0;
-> +	cfg->value_low = cpu_to_le32(lower_32_bits(sec));
-> +	cfg->value_high = cpu_to_le32(upper_32_bits(sec));
-> +
-> +	ret = ph->xops->do_xfer(ph, t);
-> +
-> +	ph->xops->xfer_put(ph, t);
-> +
-> +	return ret;
-> +}
-> +
-> +static int scmi_imx_bbm_rtc_time_get(const struct scmi_protocol_handle *ph,
-> +				     u32 rtc_id, u64 *value)
-> +{
-> +	struct scmi_imx_bbm_info *pi = ph->get_priv(ph);
-> +	struct scmi_imx_bbm_get_time *cfg;
-> +	struct scmi_xfer *t;
-> +	int ret;
-> +
-> +	if (rtc_id >= pi->nr_rtc)
-> +		return -EINVAL;
-> +
-> +	ret = ph->xops->xfer_get_init(ph, IMX_BBM_RTC_TIME_GET, sizeof(*cfg),
-> +				      sizeof(u64), &t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	cfg = t->tx.buf;
-> +	cfg->id = cpu_to_le32(rtc_id);
-> +	cfg->flags = 0;
-> +
-> +	ret = ph->xops->do_xfer(ph, t);
-> +	if (!ret)
-> +		*value = get_unaligned_le64(t->rx.buf);
-> +
-> +	ph->xops->xfer_put(ph, t);
-> +
-> +	return ret;
-> +}
-> +
-> +static int scmi_imx_bbm_rtc_alarm_set(const struct scmi_protocol_handle *ph,
-> +				      u32 rtc_id, u64 sec)
-> +{
-> +	struct scmi_imx_bbm_info *pi = ph->get_priv(ph);
-> +	struct scmi_imx_bbm_alarm_time *cfg;
-> +	struct scmi_xfer *t;
-> +	int ret;
-> +
-> +	if (rtc_id >= pi->nr_rtc)
-> +		return -EINVAL;
-> +
-> +	ret = ph->xops->xfer_get_init(ph, IMX_BBM_RTC_ALARM_SET, sizeof(*cfg), 0, &t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	cfg = t->tx.buf;
-> +	cfg->id = cpu_to_le32(rtc_id);
-> +	cfg->flags = SCMI_IMX_BBM_RTC_ALARM_ENABLE_FLAG;
-> +	cfg->value_low = cpu_to_le32(lower_32_bits(sec));
-> +	cfg->value_high = cpu_to_le32(upper_32_bits(sec));
-> +
-> +	ret = ph->xops->do_xfer(ph, t);
-> +
-> +	ph->xops->xfer_put(ph, t);
-> +
-> +	return ret;
-> +}
-> +
-> +static int scmi_imx_bbm_button_get(const struct scmi_protocol_handle *ph, u32 *state)
-> +{
-> +	struct scmi_xfer *t;
-> +	int ret;
-> +
-> +	ret = ph->xops->xfer_get_init(ph, IMX_BBM_BUTTON_GET, 0, sizeof(u32), &t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ph->xops->do_xfer(ph, t);
-> +	if (!ret)
-> +		*state = get_unaligned_le32(t->rx.buf);
-> +
-> +	ph->xops->xfer_put(ph, t);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct scmi_imx_bbm_proto_ops scmi_imx_bbm_proto_ops = {
-> +	.rtc_time_get = scmi_imx_bbm_rtc_time_get,
-> +	.rtc_time_set = scmi_imx_bbm_rtc_time_set,
-> +	.rtc_alarm_set = scmi_imx_bbm_rtc_alarm_set,
-> +	.button_get = scmi_imx_bbm_button_get,
-> +};
-> +
-
-...just here the init
-
-> +static const struct scmi_protocol scmi_imx_bbm = {
-> +	.id = SCMI_PROTOCOL_IMX_BBM,
-> +	.owner = THIS_MODULE,
-> +	.instance_init = &scmi_imx_bbm_protocol_init,
-> +	.ops = &scmi_imx_bbm_proto_ops,
-> +	.events = &scmi_imx_bbm_protocol_events,
-> +	.supported_version = SCMI_PROTOCOL_SUPPORTED_VERSION,
-> +	.vendor_id = "NXP",
-> +	.sub_vendor_id = "i.MX95 EVK",
-> +};
-> +
-
-Beside this, LGTM.
-
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-
-Thanks,
-Cristian
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
