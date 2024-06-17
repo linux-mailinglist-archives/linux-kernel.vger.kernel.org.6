@@ -1,186 +1,249 @@
-Return-Path: <linux-kernel+bounces-217206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDEE090ACD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:23:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4012490ACE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7C92871EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0AC9288C3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E6C194AC8;
-	Mon, 17 Jun 2024 11:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819F0194C82;
+	Mon, 17 Jun 2024 11:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXLqEEdA"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ux4Jf4p+"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE419194A6C;
-	Mon, 17 Jun 2024 11:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821851946BF;
+	Mon, 17 Jun 2024 11:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718623425; cv=none; b=BT30CFDPTvoM/TIBh1StwK8rUHbYjCCtx3DG5gplCoCWnjM+XeyHQ3ZFQGSvzARb9+n7jATJXRxAKo6QJomEzHQAkqaeOtdCqD4NBQrCOpTCMfNv4OpORaH8r7XnGvy5Q4g083A4Nt4mJsLy8D2mLUvLXbV+TmAZuqlKqRzMg40=
+	t=1718623485; cv=none; b=OLPJES9EeIOR0YHTsb6bKg4sCHcfD2TfmsHX8eu6mmktZ82FVO5yszlSdQnxa9XNFVMrUSQurfSFmCUxl2kHrRV4lIvKfutpkQncPkYgCJYbS230UDlpO4IaseoWLxNBJVupQJ9svr2fdN8GpmUlXoPAFvFoQYrZyf3+U0GYIcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718623425; c=relaxed/simple;
-	bh=uxut/VKniq7Xv3BBMUvRa/bj7ZQEeeWaT4NmlF4fEn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R5UGY/tjsQ7Z51vmlioYDybJmvOmJnpmEW6Jwjt2Z+5gznER9c+fjeSqN091a/EwkCyx02L7bQEacSCp45pzNs1VgrbVNSRk/Fy33Kubg8H+QCbShA1Gbf1ATfPutcaX4phoKpmGtd8cAwLvaVtkC+99dlM67CMGwiCBMKFku6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZXLqEEdA; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4218314a6c7so35378095e9.0;
-        Mon, 17 Jun 2024 04:23:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718623422; x=1719228222; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zLjaJql39nOUd+8mDmxJM45dfY7Mw8T6CJxgtFascNk=;
-        b=ZXLqEEdAdeFcLTvKwyBbfiLxjLAluHNepY2MU2EGrA3uXTWxiAicXr2nVT6i/NLsFG
-         DKnLd3V/lT0IjugzCT1PlUlaObVDt42vOxN0BUmlW8SSl+/l51GRKrGq2JoGiBm7CLYN
-         NPprLZaTh6IDRY81BOZtKGJxmrgPw+WRe2nsA5eOPsois/iVSNe7/w6Fatbc3y1luAgS
-         q4uVMi4saOpntq+rhVF+f4H4sEXJKBNGsK5SDyvj6HHtYf1KSeYohI1zIoHgVXPBZ9PN
-         nJUb0jtjcZ2wa4EOtroHUaLFKiikYrA/8DL1xsvxei3ZOlRJsh6AJ9g2Yvg6otX8I2A8
-         F6qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718623422; x=1719228222;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zLjaJql39nOUd+8mDmxJM45dfY7Mw8T6CJxgtFascNk=;
-        b=irKMABmQKilcDxBxt8MZCVIvZHweadhiWmWvgIVJolF+DYo1f7eXLvVpYnDy685vlJ
-         wTrfgkrcCBJVqgzaS+x7aiS3SUeB9cN84f+8aNgKUOS+yzWWNlDXuoC962yXAd5k+hKA
-         EJugFww1VqCr8iBML+1KphYnS3LSMqm+rFcglh+OlyQsN8CKW1xibgc/+CSsBtAjLv7y
-         O1z+B8hmOMfZHuVr7i9Ycu/AGBlryRWKRBQHS7LKHZipt6jcZAWw78tkkg4UjlaEZ28G
-         vnPXcYkSO1igOaGR2hgogt99WGapqmHlK/1PbFjZdxxtBOfuN97n7rhghdrFA91kNpQB
-         QJ6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6GZCcx0FhoYCHCGvB4DpmSxTx3pr9sarPugwcP32X2gpfo5mXQONMnlodGYwu7fFNzgRJPtKKilTliJrXXKkPNk76AO6nDiKZEu7Bhsfn4lTWVmEmuhjdkJAHf8oMMVaFVlPllkUhUK65rQ==
-X-Gm-Message-State: AOJu0Yy5xZ5E6Gfp12Qek9R01D2nxai+IkqJV0lT8nDWEdcO7SkdESi+
-	NktWza7qVqnLdrDKQ/vCxiax9w7uCAZNAaKShfW88ZYYVD5tOVzH
-X-Google-Smtp-Source: AGHT+IFyYZlKpO2lommicvAdahrc9RQXhi3i8rPIWbE/EksLzQ314FLmZu/bL/GJF9HoEnRCShMEdA==
-X-Received: by 2002:a05:600c:5492:b0:421:d8d4:75e3 with SMTP id 5b1f17b1804b1-4230485bac2mr61488035e9.40.1718623421648;
-        Mon, 17 Jun 2024 04:23:41 -0700 (PDT)
-Received: from f (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320bf2sm156110645e9.31.2024.06.17.04.23.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 04:23:40 -0700 (PDT)
-Date: Mon, 17 Jun 2024 13:23:31 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: "Ma, Yu" <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tim.c.chen@linux.intel.com, 
-	tim.c.chen@intel.com, pan.deng@intel.com, tianyou.li@intel.com
-Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to
- put_unused_fd()
-Message-ID: <suehfaqsibehz3vws6oourswenaz7bbbn75a7joi5cxi6komyk@3fxp7v3bg5qk>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240614163416.728752-4-yu.ma@intel.com>
- <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
- <e316cbe9-0e66-414f-8948-ba3b56187a98@intel.com>
+	s=arc-20240116; t=1718623485; c=relaxed/simple;
+	bh=eaGIv4aNnjyodwJuzlJ/GaTpMfiWBxYzeoYrErNR4uQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IlMEgJUm2ygqFTy/IGqPH0G2AgicSgTFdxzrXPXa3RlmUqRs4+Gevc6RaYxExTkTj2m7K2cjNWYQqWAWVS+AgVvLb0Y58OtPyoPfGYNIn5eFcVZSyuDllxxsF/4AXqdDCulpsIQP8oMLkhj3p2qQyTgZcCJd1zPSbCH4zIaXCtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ux4Jf4p+; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H8QOdR013701;
+	Mon, 17 Jun 2024 13:24:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ihd8JZG+nI+ageiVBS3hq5sjCegkaeHknt9LK/X6/1M=; b=ux4Jf4p+Y3hysvf7
+	F+iuZ1qR8apPHEwU+kNDncimJCJWMDlMnXr02oMQ83nzurKCa45K9GvP6sK52p/f
+	GEVbbk4alTESbn8+x2X7+4bYe3HWryK/qhuhNn4TySFvDwIriF8CtdY0M5yrZ+AP
+	zC/mOeiZcJskKOKcMSJsBDiBKxQ73YdmY711H92TpQU/4ydBMZpIU6w6xmTtg/U6
+	76Sf6Muq/tjjb08ogee9FBt2Mg8VgdVM6Cch9LlPnvelW2urWGx+VT1/jkg6/VcA
+	nPcvFkr/UyumtAlIrH1NHFvKpBqqWjyj3mAUMqeoNc+Mk5l+aOjlA52LO9Cv46yZ
+	2hd+OA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ys035e84u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 13:24:11 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0FA104002D;
+	Mon, 17 Jun 2024 13:24:06 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 809252132CA;
+	Mon, 17 Jun 2024 13:23:37 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 17 Jun
+ 2024 13:23:36 +0200
+Message-ID: <09010b02-fb55-4c4b-9d0c-36bd0b370dc8@foss.st.com>
+Date: Mon, 17 Jun 2024 13:23:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next,PATCH 2/2] net: stmmac: dwmac-stm32: stm32: add
+ management of stm32mp25 for stm32
+To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240614130812.72425-1-christophe.roullier@foss.st.com>
+ <20240614130812.72425-3-christophe.roullier@foss.st.com>
+ <4c2f1bac-4957-4814-bf62-816340bd9ff6@denx.de>
+Content-Language: en-US
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <4c2f1bac-4957-4814-bf62-816340bd9ff6@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e316cbe9-0e66-414f-8948-ba3b56187a98@intel.com>
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_10,2024-06-17_01,2024-05-17_01
 
-On Sun, Jun 16, 2024 at 11:47:40AM +0800, Ma, Yu wrote:
-> 
-> On 6/15/2024 12:41 PM, Mateusz Guzik wrote:
-> > So you are moving this to another locked area, but one which does not
-> > execute in the benchmark?
-> 
-> The consideration here as mentioned is to reduce the performance impact (if
-> to reserve the sanity check, and have the same functionality) by moving it
-> from critical path to non-critical, as put_unused_fd() is mostly used for
-> error handling when fd is allocated successfully but struct file failed to
-> obtained in the next step.
-> 
+Hi Marek,
 
-As mentioned by Christian in his mail this check can just be removed.
+On 6/14/24 15:58, Marek Vasut wrote:
+> On 6/14/24 3:08 PM, Christophe Roullier wrote:
+>
+> [...]
+>
+>> +static int stm32mp2_configure_syscfg(struct plat_stmmacenet_data 
+>> *plat_dat)
+>> +{
+>> +    struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+>> +    u32 reg = dwmac->mode_reg;
+>> +    int val = 0;
+>> +
+>> +    switch (plat_dat->mac_interface) {
+>> +    case PHY_INTERFACE_MODE_MII:
+>> +        break;
+>
+> dwmac->enable_eth_ck does not apply to MII mode ? Why ?
 
->         error = -EMFILE;
->         if (fd < fdt->max_fds) {
+It is like MP1 and MP13, nothing to set in syscfg register for case MII 
+mode wo crystal.
 
-I would likely() on it.
-
->                 if (~fdt->open_fds[0]) {
->                         fd = find_next_zero_bit(fdt->open_fds,
-> BITS_PER_LONG, fd);
->                         goto fastreturn;
->                 }
->                 fd = find_next_fd(fdt, fd);
->         }
-> 
->         if (unlikely(fd >= fdt->max_fds)) {
->                 error = expand_files(files, fd);
->                 if (error < 0)
->                         goto out;
->                 if (error)
->                         goto repeat;
->         }
-> fastreturn:
->         if (unlikely(fd >= end))
->                 goto out;
->         if (start <= files->next_fd)
->                 files->next_fd = fd + 1;
-> 
->        ....
-> 
-
-This is not a review, but it does read fine.
-
-LTP (https://github.com/linux-test-project/ltp.git) has a bunch of fd
-tests, I would make sure they still pass before posting a v2.
-
-I would definitely try moving out the lock to its own cacheline --
-currently it resides with the bitmaps (and first 4 fds of the embedded
-array).
-
-I expect it to provide some win on top of the current patchset, but
-whether it will be sufficient to justify it I have no idea.
-
-Something of this sort:
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index 2944d4aa413b..423cb599268a 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -50,11 +50,11 @@ struct files_struct {
-    * written part on a separate cache line in SMP
-    */
-        spinlock_t file_lock ____cacheline_aligned_in_smp;
--       unsigned int next_fd;
-+       unsigned int next_fd ____cacheline_aligned_in_smp;
-        unsigned long close_on_exec_init[1];
-        unsigned long open_fds_init[1];
-        unsigned long full_fds_bits_init[1];
--       struct file __rcu * fd_array[NR_OPEN_DEFAULT];
-+       struct file __rcu * fd_array[NR_OPEN_DEFAULT] ____cacheline_aligned_in_smp;
- };
-
- struct file_operations;
-
-(feel free to just take)
-
-All that said, I have to note blogbench has numerous bugs. For example
-it collects stats by merely bumping a global variable (not even with
-atomics), so some updates are straight up lost.
-
-To my understanding it was meant to test filesystems and I'm guessing
-threading (instead of separate processes) was only used to make it
-easier to share statistics. Given the current scales this
-unintentionally transitioned into bottlenecking on the file_lock
-instead.
-
-There were scalability changes made about 9 years ago and according to
-git log they were benchmarked by Eric Dumazet, while benchmark code was
-not shared. I suggest CC'ing the guy with your v2 and asking if he can
-bench.  Even if he is no longer in position to do it perhaps he can rope
-someone in (or even better share his benchmark).
+>
+>> +    case PHY_INTERFACE_MODE_GMII:
+>> +        if (dwmac->enable_eth_ck)
+>> +            val |= SYSCFG_ETHCR_ETH_CLK_SEL;
+>> +        break;
+>> +    case PHY_INTERFACE_MODE_RMII:
+>> +        val = SYSCFG_ETHCR_ETH_SEL_RMII;
+>> +        if (dwmac->enable_eth_ck)
+>> +            val |= SYSCFG_ETHCR_ETH_REF_CLK_SEL;
+>> +        break;
+>> +    case PHY_INTERFACE_MODE_RGMII:
+>> +    case PHY_INTERFACE_MODE_RGMII_ID:
+>> +    case PHY_INTERFACE_MODE_RGMII_RXID:
+>> +    case PHY_INTERFACE_MODE_RGMII_TXID:
+>> +        val = SYSCFG_ETHCR_ETH_SEL_RGMII;
+>> +        if (dwmac->enable_eth_ck)
+>> +            val |= SYSCFG_ETHCR_ETH_CLK_SEL;
+>> +        break;
+>> +    default:
+>> +        dev_err(dwmac->dev, "Mode %s not supported",
+>> +            phy_modes(plat_dat->mac_interface));
+>> +        /* Do not manage others interfaces */
+>> +        return -EINVAL;
+>> +    }
+>> +
+>> +    dev_dbg(dwmac->dev, "Mode %s", phy_modes(plat_dat->mac_interface));
+>> +
+>> +    /*  select PTP (IEEE1588) clock selection from RCC 
+>> (ck_ker_ethxptp) */
+>
+> Drop extra leading space.
+> Sentence starts with capital letter.
+ok
+>
+>> +    val |= SYSCFG_ETHCR_ETH_PTP_CLK_SEL;
+>> +
+>> +    /* Update ETHCR (set register) */
+>> +    return regmap_update_bits(dwmac->regmap, reg,
+>> +                 SYSCFG_MP2_ETH_MASK, val);
+>> +}
+>> +
+>>   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+>>   {
+>>       int ret;
+>> @@ -292,6 +346,21 @@ static int stm32mp1_set_mode(struct 
+>> plat_stmmacenet_data *plat_dat)
+>>       return stm32mp1_configure_pmcr(plat_dat);
+>>   }
+>>   +static int stm32mp2_set_mode(struct plat_stmmacenet_data *plat_dat)
+>> +{
+>> +    int ret;
+>> +
+>> +    ret = stm32mp1_select_ethck_external(plat_dat);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = stm32mp1_validate_ethck_rate(plat_dat);
+>> +    if (ret)
+>> +        return ret;
+>
+>
+> Is it necessary to duplicate this entire function instead of some:
+>
+> if (is_mp2)
+>   return stm32mp2_configure_syscfg(plat_dat);
+> else
+>   return stm32mp1_configure_syscfg(plat_dat);
+>
+> ?
+ok I would like to avoid to use is_mp2 boolean but you are right it is 
+simplify visibility of the code.
+>
+>> +    return stm32mp2_configure_syscfg(plat_dat);
+>> +}
+>> +
+>>   static int stm32mcu_set_mode(struct plat_stmmacenet_data *plat_dat)
+>>   {
+>>       struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+>> @@ -348,12 +417,6 @@ static int stm32_dwmac_parse_data(struct 
+>> stm32_dwmac *dwmac,
+>>           return PTR_ERR(dwmac->clk_rx);
+>>       }
+>>   -    if (dwmac->ops->parse_data) {
+>> -        err = dwmac->ops->parse_data(dwmac, dev);
+>> -        if (err)
+>> -            return err;
+>> -    }
+>> -
+>>       /* Get mode register */
+>>       dwmac->regmap = syscon_regmap_lookup_by_phandle(np, "st,syscon");
+>>       if (IS_ERR(dwmac->regmap))
+>> @@ -365,20 +428,14 @@ static int stm32_dwmac_parse_data(struct 
+>> stm32_dwmac *dwmac,
+>>           return err;
+>>       }
+>>   -    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
+>> -    err = of_property_read_u32_index(np, "st,syscon", 2, 
+>> &dwmac->mode_mask);
+>> -    if (err) {
+>> -        if (dwmac->ops->is_mp13)
+>> -            dev_err(dev, "Sysconfig register mask must be set 
+>> (%d)\n", err);
+>> -        else
+>> -            dev_dbg(dev, "Warning sysconfig register mask not set\n");
+>> -    }
+>> +    if (dwmac->ops->parse_data)
+>> +        err = dwmac->ops->parse_data(dwmac, dev);
+>
+> Why is this change here ? What is the purpose ?
+> This should be documented in commit message too.
+>
+> The indirect call is not necessary either, simply do
+>
+> if (is_mp2)
+>   return err;
+>
+> ... do mp15/13 stuff here ...
+>
+> return err;
+Right, with use of is_mp2 variable it is more simple
+>
+> [...]
 
