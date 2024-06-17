@@ -1,111 +1,101 @@
-Return-Path: <linux-kernel+bounces-217601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848DA90B1FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:30:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A97890B1AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E6471F25CF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:30:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E3511C22804
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADE21B29B6;
-	Mon, 17 Jun 2024 13:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FlAH4DUk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725FE199EA8;
+	Mon, 17 Jun 2024 13:33:14 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E3219068F;
-	Mon, 17 Jun 2024 13:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9D1194A43
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631924; cv=none; b=HS7kDSg9NTB+B1XKEd546zR1PyM7pLl2TbJxTJhg8OAsOxF6VYgjNm34qPa1PpmbSL7UGT321FeZwDWcFJdBDToIMO9Lxj69dCp9Q2EqCs3gWmDOmQzi98tpyM5AaO3IZRDconnxt7tugxi2oq+wBGFDZGGOCCyBttU73/tK91Q=
+	t=1718631194; cv=none; b=pTNh1Rij8OPlGc751FvYcg803GCnl0NqF65v5gdzndof/8HfjB3VUq3X8+L2C4USnDF0mz/FPRRyQqUyBql8ZruNmtS3FqFCKthLnxW0OMhTQV7Nk2oRERMhXaYh7YzOlrZA4qKkgG8O0S7z/SsgJaxPXF+0rstVaIG2Ivrka8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631924; c=relaxed/simple;
-	bh=4iVfyEz9rC5f5VhbEizq/D4gDbwzw56EP8r/d+CALXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H7WRTBVZC0TqobbgJ66q4iJVtXXBaJGWm7eq4uPM27llHWcOaZi+hepOATkr2zdtVOgFRvTW8Q0dI3XZiTR+na9Bo+aWjZrwSzRPDkOnXz8pvjn2b1DNJSF6WjulzcCPVVdz/1FrPmanE/G4u6MlYkjw6LgIDgkbxtaDCOL9OOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FlAH4DUk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64783C2BD10;
-	Mon, 17 Jun 2024 13:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718631923;
-	bh=4iVfyEz9rC5f5VhbEizq/D4gDbwzw56EP8r/d+CALXA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FlAH4DUkW1fOUYBYa90CiYLEhyPwhHj7gWkqqw8iS7jJJmVEDYBMUZtl2LDO6+4kR
-	 NAQlfwuYGf5OH8S/RabV+UY1lvNd615atdQLwJiLtMMCHHznPNIagjH+6JIFvMLWcn
-	 fOKmrJom+rr3vJXeB/BrG5ErfCQY2Vu4i8OaIjMQJ1CcNRgvq0LEqMjg6sxAQCrWFW
-	 WL9WIyL3mMg4hkLHD3m5npeG2PBCO+NefrJQm8umO8P0brhsQ+JQS60HZO0I6IvndQ
-	 9xqtwnS38uxG0R9MfwbU84d93oWeNZH9zFSM2MizMZMdCzGQjGLGWKifHdsL0ZAouw
-	 Fu1/kjOZ6/SAw==
-Date: Mon, 17 Jun 2024 21:31:17 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Yangyu Chen <cyy@cyyself.name>, linux-riscv@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 7/9] riscv: dts: add initial SpacemiT K1 SoC device
- tree
-Message-ID: <ZnA6pZLkI2StP8Hh@xhacker>
-References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
- <tencent_701082E2DAE48E2FB857316321778D737C08@qq.com>
- <ZnAw9QrSD-svYqQ5@xhacker>
- <20240617-carat-poise-ee63ed6a224e@wendy>
+	s=arc-20240116; t=1718631194; c=relaxed/simple;
+	bh=SmyG6Eoc//AkzX1uumr7PmduUREuFi7OxTGIbkmXVBY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hL9z6i16T0LQco9TT/v9aG42X3IG+HFf0Gs3UG/xVuoRjGlMLA7PN1B3+lKr9OY/MMfRJNtIaqzogF2r9dXSa/bgDDEGju5oyLLwpaV4oQ7URQiB6e5ocR7KFSecypVW724YAIGxpRX7R8PPXZR/RQOFuk4b6PyPGBr4hSl/I0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-375ea274166so29700505ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:33:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718631192; x=1719235992;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SmyG6Eoc//AkzX1uumr7PmduUREuFi7OxTGIbkmXVBY=;
+        b=CgTR+CCGZueJEZrYXNgUV7DUp2Xs/gihcHtK3eZCeO3Ne2H2g3/M6bxpysgmfjK+/I
+         BrVln6Z7MBmiFHnhGwAEnkiZ7MrRaZAivVyzq5ZpUEwav6C/TdZ1kVuGfKt9eXZoJmzL
+         UlUFdLX3lU/LGOvkGCgVKf3Ll0XxKmnttUaZGBiXKwTfODA1P5R/8IuS6So8N6/NoHID
+         AeuTTyyOBCu39TpO/yVkwGEjk4qkhOyluE8nbPNYWRD4u+eHyOdksWLRCG+NLnxQ1irE
+         wNYFvDH3heijO8f/txeHBV4ssqX56cFCh8buZYloWGXCjI437QtNOXxNy0oIfwPWOJWc
+         gxVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqwrc8P2sHHdEZnE23plyC9o5EiU3nwtszr3XI5e1+DvRZX3bJJNZ0SaptpEk+47rwPOTHtIJj7v4PEoRVcHLnglV8G37kBzkq279v
+X-Gm-Message-State: AOJu0YxZ7XTofO/mebuNeyTdHwbryzHsC9sD40w757Oz60IEgJUB8YRP
+	LIbz2MpXuJQcuxSLiRO/j4coksYuSeGt4aKbjagsRKtz7Gwgj/BpduAO5r2d5M4ro6r178MfYaO
+	qeY5UiBzUsp4jrQRFqMck0QIxx6BVdSRTl1B7y0Xuhzggp4CVAxJ9wOU=
+X-Google-Smtp-Source: AGHT+IGX9zfHpzk56r67iN/P61ob8v67anACI84pSuiDqzQ9F8vk7vIQ58lj4OrW4BRfbYZj/Cu0bgQ4H7QYhM6b7u71+5UrCV/R
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240617-carat-poise-ee63ed6a224e@wendy>
+X-Received: by 2002:a05:6e02:1e0d:b0:375:8af5:8d15 with SMTP id
+ e9e14a558f8ab-375e0fe2df1mr5603295ab.5.1718631191882; Mon, 17 Jun 2024
+ 06:33:11 -0700 (PDT)
+Date: Mon, 17 Jun 2024 06:33:11 -0700
+In-Reply-To: <0000000000007de0cf06140124c0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b14275061b160102@google.com>
+Subject: Re: [syzbot] WARNING in unmap_page_range (3)
+From: syzbot <syzbot+e145145f0c83d4deb8fa@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, david@redhat.com, 
+	liam.howlett@oracle.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	lstoakes@gmail.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 17, 2024 at 02:29:46PM +0100, Conor Dooley wrote:
-> On Mon, Jun 17, 2024 at 08:49:57PM +0800, Jisheng Zhang wrote:
-> > On Mon, Jun 17, 2024 at 01:20:52AM +0800, Yangyu Chen wrote:
-> > > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
-> > > 
-> > > Key features:
-> > > - 4 cores per cluster, 2 clusters on chip
-> > > - UART IP is Intel XScale UART
-> > > 
-> > > Some key considerations:
-> > > - ISA string is inferred from vendor documentation[2]
-> > > - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
-> > > - No coherent DMA on this board
-> > >     Inferred by taking vendor ethernet and MMC drivers to the mainline
-> > >     kernel. Without dma-noncoherent in soc node, the driver fails.
-> > > - No cache nodes now
-> > >     The parameters from vendor dts are likely to be wrong. It has 512
-> > >     sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
-> > >     When the size of the cache line is 64B, it is a directly mapped
-> > >     cache rather than a set-associative cache, the latter is commonly
-> > >     used. Thus, I didn't use the parameters from vendor dts.
-> > > 
-> > > Currently only support booting into console with only uart, other
-> > > features will be added soon later.
-> > 
-> > Hi Yangyu,
-> > 
-> > Per recent practice of cv1800b and th1520 upstream, I think a complete
-> > initial support would include pinctrl, clk and reset, I have received
-> > the complains from the community. So can you please bring the pinctrl
-> > clk  and reset at the same time?
-> 
-> What sort of complaints have you got? That the support is too minimal to
-> be useful?
+This bug is marked as fixed by commit:
+mm/memory: Fix missing pte marker for !page on pte zaps
 
-For example https://lore.kernel.org/linux-riscv/95c20c6c-66cd-4f87-920b-5da766317e19@sifive.com/
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-Now, I think it's better to "model the clocks/resets/other dependencies"
-in the initial support. So lacking of pinctrl, clk and reset doesn't
-fully describe the hardware.
+#syz fix: exact-commit-title
+
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
+
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=e145145f0c83d4deb8fa
+
+---
+[1] I expect the commit to be present in:
+
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 10 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
