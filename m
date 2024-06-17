@@ -1,195 +1,172 @@
-Return-Path: <linux-kernel+bounces-217281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E77590ADBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:15:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A506290ADC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3364B22AD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD22A1C23100
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6508119538A;
-	Mon, 17 Jun 2024 12:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qs8ss6U4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5371B195386;
+	Mon, 17 Jun 2024 12:15:46 +0000 (UTC)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBF8194C6A;
-	Mon, 17 Jun 2024 12:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181BD2F32;
+	Mon, 17 Jun 2024 12:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718626496; cv=none; b=iXHozUjeKaiu48aEhPSJG3Y/Zv+QSKA0yE2FPQLFc0GkyQH7swzpZxCwRKn+DZ6e4QcfyqTb2Nuk2LqA5rCYa2lk/KORUof3EOn1wSYlZW6Y/sE+Ur2wz4LOf2Mma0CDE55euq8yYxvo/VfbBvcHrVnHaOCAjpRH8S+MtI7jpoA=
+	t=1718626545; cv=none; b=MzuJTAKCJC6Plvs2SIzX2vM/WcI0L+uwtUm27Zg1pSynduOxOONpB0E8hml61kXTgDfHs54Elxz9WwWYpf/LfdFT3/GIzNN2hpsPvVehnUyAvyvv4wTN7XFn9IllgBjZ5M6J9Btxa/KUGE88SVHteu6Eh9RvhGZUd70O/8ZSlQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718626496; c=relaxed/simple;
-	bh=a0cp4Hz33Y1b2iBpPfrRIQ04RCyUMw93h8Ro20UVsZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M4zbTrAiWm7xa5orBKdDCljVxpZjVYEsvMkWJRJsZArEfxlXj1x5qbVgRgdKqhqlFBVt5ui6PpWuy/xZwdwEOGdsyhQQFlTxSyLyOcA+6U8W2GmXU76nHPc1MwvUZFhGnkx2/QJy8pW+aP+4ZwOjZADRyKAtwR7FV2KMMgOxwb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qs8ss6U4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93DEAC2BD10;
-	Mon, 17 Jun 2024 12:14:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718626496;
-	bh=a0cp4Hz33Y1b2iBpPfrRIQ04RCyUMw93h8Ro20UVsZA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qs8ss6U4PoYUczsrqvSyKqWJ5d65+D+HjD/+Y2CZywl+Fp2ue5LWHyVq4FX6MCK6I
-	 z32SxhwVuvuM1eya189ZEy2YbJJ+DXJwc4bhYnfCB44IxMLPujxl0Lxs97aG4CWn9H
-	 dSnEVDPK4TBQePsM8Li8h4Y1nCtKz1UGWoLr2JKLZC1U21U4VdBx/l+5tNQzcJRNK7
-	 32m2rZ8Go+Scgs76fc3MS9dmYSzqYR095X+ChU/SR88TxYguU09zy5tBX/VmQczG/b
-	 l+TTsj//DaUr82qbdKgsPhUZ+bs5zFX/3hwhaUx01LmA28egyTNgK9/1Mi9bT6Ou1O
-	 zKKdaV7xwDtEA==
-Message-ID: <83a45f7c-d90b-44d3-b57e-9dad21045e27@kernel.org>
-Date: Mon, 17 Jun 2024 14:14:49 +0200
+	s=arc-20240116; t=1718626545; c=relaxed/simple;
+	bh=AWQ35KpayndOCVI1ag4/S3eM6Bocg203IdjyV7oVxGg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YkRf7F93Zb/De9dNzA6UNKdrNtOUUlAXL8ZwdZ1NlyFgJKst4rw7YzawXwd16NGY4qpFeC7pTEHVtDG3TPHtwxLvX8FwAlT4GQLnn9Z5M9eHuUCvPZVc8bi0mzAyHugYpQ6mkMPVUUi8AgIwwopSs7BWnFqDZ94Nt6PPOus2YZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6326f1647f6so26308087b3.0;
+        Mon, 17 Jun 2024 05:15:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718626542; x=1719231342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1g4X1nRnxWYP7yqfEl8cswCfU85i+/AuoKwcpOm05Ts=;
+        b=Nh+PtMpHyfOQ6nychHSadmTtkbuox8IS9q8i1Fp7Gd4obTwgC1OINTa3InU8AIyjem
+         lVaKxQxI1TTLjPlh5l5L+OsQeE4FqQrw9iz6ebr+oKsaWgYKJ4fEZjU+gFp80RRkKzdF
+         YbHRzfw1lS3sCvwk+mVmxqgbCN7ksKrs2y1GJ3o4jh9POFP3e6+Pcd9hSh75z4/81M6s
+         +5CTX5BcssV8Sa2qrNIAsOpbZgJNlUhppJi0/N/Gn/Lk9iUhB3EcM8ZtAkWm4dfsAgm7
+         xHtaSrSrPG7B1KoG/hTUNTPNBEtpldU1eCEcZvigxo9NOkK9TdHRbRBV19epKGRWts1R
+         /iQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqVAnKU8A+TwpyR00+FQbkPMpG7QqPX6GgfhUKotOX9T5jaFwwyXUMKQ7KtUjMVlu2/4+t0jK0TBVl2sq4XfsNdRFqW17f2yaWlm9yf9xrvmyboGY4/H67+vHOXCovDlrWrxhMm0gwHUinqdHe7OB7mqpnPRAOi7YhYT2Vnd53zoX74H4QvnfBiFqSSwg6J/25IAVf/ja8n26s8BdnX7hsrJ1Tz0BW/A==
+X-Gm-Message-State: AOJu0YzCp5nLlYbpsFQ6O8hFzphRhQ/vknIL7v6sQ9sTVUjNGQyHDR3+
+	sh6Q/W+/DbWoLsNI7Qgn0qLHamMjmfY4Q6QsZ5oc+o3QhewcNCqZFAfkzxb/
+X-Google-Smtp-Source: AGHT+IGqOFkkms6qXLd1nnBoJfN9n8yXsvei6L9uqb4/bf9DEAoVIl22ZjE0s0N8kH1Tb8vYoNDM+A==
+X-Received: by 2002:a81:a849:0:b0:627:d23a:4505 with SMTP id 00721157ae682-632225565c4mr87103277b3.3.1718626541908;
+        Mon, 17 Jun 2024 05:15:41 -0700 (PDT)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-631188b312bsm14043877b3.34.2024.06.17.05.15.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 05:15:41 -0700 (PDT)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-63186c222eeso37883557b3.2;
+        Mon, 17 Jun 2024 05:15:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV2eExOPfkLMTuAzl89h8YYWHqZX3el+xUsobuBMZDaABbhBWRKouuSo8KYP9RRUIE3WJnwBc3ArM9t7QsKaUNzIhJmJmgTAUdgA5rZAa4tpHwOyB7NqrSLJ6sKYgQiSYf9b43AGNx4M7uGXz5AYlbmH6nl2Ka7pty8sPjoRhbraaW1AjjW6TrTDLnngHcGUD/CYBSuInXS70vKsZ6oSm1mHQI27MytQw==
+X-Received: by 2002:a81:b2c2:0:b0:627:7e65:979 with SMTP id
+ 00721157ae682-632230507f4mr90233747b3.24.1718626541245; Mon, 17 Jun 2024
+ 05:15:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] ASoC: dt-bindings: lpc32xx: Add lpc32xx i2s DT
- binding
-To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
- Russell King <linux@armlinux.org.uk>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, "J.M.B. Downing"
- <jonathan.downing@nautel.com>, Arnd Bergmann <arnd@arndb.de>,
- Chancel Liu <chancel.liu@nxp.com>, Michael Ellerman <mpe@ellerman.id.au>,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-References: <20240611094810.27475-1-piotr.wojtaszczyk@timesys.com>
- <20240614163500.386747-1-piotr.wojtaszczyk@timesys.com>
- <20240614163500.386747-2-piotr.wojtaszczyk@timesys.com>
- <83cbf43e-c927-449f-8b7e-5c8d3ee8cece@kernel.org>
- <CAG+cZ06EeXUDiLsDXkz+6EHqJwpvv2MWwfpvB8AYw0=ZhUkTfQ@mail.gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAG+cZ06EeXUDiLsDXkz+6EHqJwpvv2MWwfpvB8AYw0=ZhUkTfQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240611113204.3004-1-paul.barker.ct@bp.renesas.com> <20240611113204.3004-4-paul.barker.ct@bp.renesas.com>
+In-Reply-To: <20240611113204.3004-4-paul.barker.ct@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Jun 2024 14:15:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUgbnFoHWsB8NPu+Whn+FBkQ_EogS3yH+g-1wGTxensgQ@mail.gmail.com>
+Message-ID: <CAMuHMdUgbnFoHWsB8NPu+Whn+FBkQ_EogS3yH+g-1wGTxensgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/9] pinctrl: renesas: rzg2l: Support output enable on RZ/G2L
+To: Paul Barker <paul.barker.ct@bp.renesas.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/06/2024 11:33, Piotr Wojtaszczyk wrote:
-> On Sat, Jun 15, 2024 at 12:01 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> Do not attach (thread) your patchsets to some other threads (unrelated
->> or older versions). This buries them deep in the mailbox and might
->> interfere with applying entire sets.
-> 
-> I'm sorry about that, it won't happen again.
-> 
->>> +  dma-vc-names:
->>
->> Missing vendor prefix... but I don't really get what's the point of this
->> property.
-> 
-> Is "nxp,lpc3xxx-dma-vc-names" acceptable?
+Hi Paul,
 
-No, because it does not help me to understand:
-" what's the point of this property."
+On Tue, Jun 11, 2024 at 1:33=E2=80=AFPM Paul Barker
+<paul.barker.ct@bp.renesas.com> wrote:
+> On the RZ/G2L SoC family, the direction of the Ethernet TXC/TX_CLK
+> signal is selectable to support an Ethernet PHY operating in either MII
+> or RGMII mode. By default, the signal is configured as an input and MII
+> mode is supported. The ETH_MODE register can be modified to configure
+> this signal as an output to support RGMII mode.
+>
+> As this signal is by default an input, and can optionally be switched to
+> an output, it maps neatly onto an `output-enable` property in the device
+> tree.
+>
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> ---
+> Changes v1->v2:
+>   * Use oen_read and oen_write function pointers to be compatible with
+>     recent patches adding RZ/V2H support.
 
-> 
->>
->>> +    $ref: /schemas/types.yaml#/definitions/string-array
->>> +    description: |
->>> +      names of virtual pl08x dma channels for tx and rx
->>> +      directions in this order.
->>> +    minItems: 2
->>> +    maxItems: 2
->>
->> What part of hardware or board configuration this represents?
->>
->> It wasn't here and nothing in changelog explained it.
-> 
-> That's information which DMA signal and mux setting an I2S interface uses.
-> It's a name (bus_id field) of platform data entry from phy3250.c in
-> [PATCH v3 3/4].
+Thanks for your patch!
 
-platform entries from driver do not seem related at all to hardware
-description. You know encode driver model into bindings, so obviously no-go.
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -994,6 +994,61 @@ static bool rzg2l_ds_is_supported(struct rzg2l_pinct=
+rl *pctrl, u32 caps,
+>         return false;
+>  }
+>
+> +static int rzg2l_pin_to_oen_bit(const struct rzg2l_hwcfg *hwcfg, u32 cap=
+s,
+> +                               u32 port, u8 pin)
+> +{
+> +       if (!(caps & PIN_CFG_OEN) || pin > hwcfg->oen_max_pin)
+> +               return -EINVAL;
+> +
+> +       /*
+> +        * We can determine which Ethernet interface we're dealing with f=
+rom
+> +        * the caps.
+> +        */
+> +       if (caps & PIN_CFG_IO_VMC_ETH0)
+> +               return 0;
+> +       if (caps & PIN_CFG_IO_VMC_ETH1)
+> +               return 1;
+> +
+> +       return -EINVAL;
+> +}
+> +
+> +static u32 rzg2l_read_oen(struct rzg2l_pinctrl *pctrl, u32 caps, unsigne=
+d int _pin)
 
-> It's used by snd_soc_dai_init_dma_data() in [PATCH v3 4/4] to give the
-> dmaengine a
-> hint which dma config to use. The LPC32xx doesn't have yet a dmamux driver like
+rzg2l_oen_read()
 
-and if I change driver platform data to foo and bar, does the DTS work? No.
+> +{
+> +       u32 port =3D RZG2L_PIN_ID_TO_PORT(_pin);
+> +       u8 pin =3D RZG2L_PIN_ID_TO_PIN(_pin);
+> +       int bit;
+> +
+> +       bit =3D rzg2l_pin_to_oen_bit(pctrl->data->hwcfg, caps, port, pin)=
+;
+> +       if (bit < 0)
+> +               return 0;
+> +
+> +       return !(readb(pctrl->base + ETH_MODE) & BIT(bit));
+> +}
+> +
+> +static int rzg2l_write_oen(struct rzg2l_pinctrl *pctrl, u32 caps, unsign=
+ed int _pin, u8 oen)
 
-> lpc18xx-dmamux.c therefore it still uses platform data entries for
-> pl08x dma channels
-> and 'SND_DMAENGINE_PCM_FLAG_NO_DT | SND_DMAENGINE_PCM_FLAG_COMPAT'
-> flags in the devm_snd_dmaengine_pcm_register().
-> Typically instead of this platform data you would use regular 'dma'
-> and 'dma-names' if it had
-> proper dmamux driver like lpc18xx-dmamux.c
+rzg2l_oen_write()
 
-Exactly. Use these.
+With these fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> 
->>
->> Drop.
->>
->>
->>> +
->>> +  "#sound-dai-cells":
->>> +    const: 0
->>> +
-> 
-> The "dai-common.yam" doesn't declare a default value for this so
+Gr{oetje,eeting}s,
 
-Where is my comment to which you refer to? Please do not drop context
-from replies. I have no clue what you want to discuss here.
+                        Geert
 
-> isn't it required? It's declared in others yaml files like:
-> Documentation/devicetree/bindings/sound/qcom,q6apm.yaml
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
-Best regards,
-Krzysztof
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
