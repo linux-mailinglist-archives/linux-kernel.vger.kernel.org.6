@@ -1,219 +1,210 @@
-Return-Path: <linux-kernel+bounces-218046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D8890B886
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:53:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 667EA90B895
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA831285B34
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:53:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8AE1F22A63
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47C8194A7B;
-	Mon, 17 Jun 2024 17:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3759F192B88;
+	Mon, 17 Jun 2024 17:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJvI+Jbl"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XJKuA1wC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D8343165;
-	Mon, 17 Jun 2024 17:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B1116CD3D;
+	Mon, 17 Jun 2024 17:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718646777; cv=none; b=FUrOZCmUNjwSlHb13tz7fZ+djJc5O99SH78kfJ6q70FQCAYfnP8Ll+lwAK0yJKBajjp6ugg7KbV8WEhNMlznvl1Gj98A8HqdJE1dilr44rv+3YbIkkDA7WN+aOTGkQPMDpNPkghyrTw9FxF27YkrilcOlyVa7pAyvkP/eI2QiTs=
+	t=1718646920; cv=none; b=pA51l2/OkpPX2zoyCCH0CZ7ARLh/W06GIbkSQidFjesFMpcCbvIaigFe0zNRyh7nhyd8loWlP5kSsULafK23eWwbSv0ZSQnMT1t+XXE6o9zqaEqhHMXi54GHQM97cxIDjT58gRk/CdFoSMe2SZHrxSnsCFK8Pv0rJW9mypHnUaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718646777; c=relaxed/simple;
-	bh=4gsJQl6qIuVWg7RhN46VmapVAsYSwUdCY7u3dkVR+gE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tqYtZ/zRxVmlUjtsDeLgqJfU/ZE9OrN6nRW296lYXdplr72SO1kLbEW6sxTDcJfjef2V0Vf9o61vmvkfMOK36sjRwnqMOpM//8nA26sx8aTwPRhOuY8nX8ZsL4svMwWNbEd//i+XzHDc8p4g50pqceomdpkebEK+scYpr4oLS9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJvI+Jbl; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35f22d3abf1so4200228f8f.1;
-        Mon, 17 Jun 2024 10:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718646774; x=1719251574; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TpAELCdjsBD+JrbERWD7mTd4OMlGherBa7u+JgUwCuU=;
-        b=OJvI+JblguvKGVK+cKS5/Y1J+iPdmCU6EpTZkh1BJcQvrf4hencWnze+98rj0W+5EE
-         qGX4gcd8av+qUlxqfVvmzsNb0XSWNEycXVYsVAY4M6LuViV0jK1EYRaaYmEm7GwlYxLd
-         a1EGKm9hqQ+pZ6Vit4jwiDVdbkCbmsK8EmMXCsY1WiFBAAFp8273ciC7TCogfcwKghVS
-         y/mpn6AkrEi/sJuPtXfkAkI8vvO2MBWq61H/JgfJv2x52bZymVhg7DwGZAIowjKIIVjy
-         LkxDpB2WDlFl6SjGTTrylP/X8O/HTE4h0vrF3cS5rNwTh/HAjkjwGr51BBnpLvWQoZ/F
-         diYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718646774; x=1719251574;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TpAELCdjsBD+JrbERWD7mTd4OMlGherBa7u+JgUwCuU=;
-        b=F6ih09aXGXTy7yoMigH3gvPEBfTp3yqOj+F1D4PKIL3JLpo81n2YdG62xnEx+c9Ncm
-         tp7N82jf95NmoJtFVqfn6wRtUr603E2+L90Bdh1kcaSdcJfbRmLClwZvWBJqgiZTRXCo
-         6UFqqVGddzKbzrH7qGOQz+fFf6Znki26drKBXLMLSThmhILMDBWytkke3W5YKO74qd65
-         APCwF5mTRTXjdEEGsExScVAqG83lmXUPhMsdiA/6BPqFG3O+3VM4Bof5+3LCVHkNS47X
-         5lw/TH1VIHJNi9Wi4MyfzwTPF6uV9hVzCT4YWJ6kiCE4oTd19W+vy/JBRmwxmk1cMhy+
-         QUMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8yw/wfKSJRj4jH9Ifto4+AA5apFJgxD7BANjXfKGfH57fCUy1Dm0aU+L0mchmVGn/hCX5uVSS30NSygzzmLoggDJ99T7QCUklYWOXxR6GavhmmHnSpnIBWOaVnhAqQ4RBOh0yLIp/QN6TBLWBGrsDwqX4bX+eEBxT9hFaxHJqwy0zGPYEdXqYD0a3Y8TeTAuEIhEBk0ou98Hw//2g5Ky6Z3qqfL0eMpHQwt5VMwUIwvkhoaS07xFGrBNoixIoy9YnqQ8xil0SHSb253Q+O5H5cgohsT/pxqpxFYDI8Ks2VOAm0g9CXsQyPiwh+81eg276FiBiMLqHZ3z/9n/HtAnyclUjt712Zq8fnFNvLviGQ0TjbohHNkNGoCYdIyrQh7p8/CUXGYptegbLI8SiHYeKGrjbyVyer7oa77HVGttP6cZOuAOvvHn2TR4c6y5a7sfZUUMVbfFu3+0kAoCKGyM2B9AOAUP7LyHVw+wvrwzgc5UzQ6DR9KDJtUDkCBG56vYnA2R7uOFwiHYibatwIRE5cej2kSp+h9KKvitnQlAbToLyDbU2iWjf
-X-Gm-Message-State: AOJu0YyKeXhR7A9hqsPVjUq989Kx9dNfyHtCYgr67TOAlaOoqnNpOoi6
-	Dejxd+7677Vhm3vnqBQIqie1pfBRs1SRjR4aWgAv9Lw64y3RwIMR
-X-Google-Smtp-Source: AGHT+IGl45hl8z5GTV7cP0mMya2j77Ernk+fngMh6lTe4ik8n3cM/4R8lGNxKRhI8iXovlNIXIeAXQ==
-X-Received: by 2002:adf:efc9:0:b0:35f:219d:e529 with SMTP id ffacd0b85a97d-3607a78338cmr10492439f8f.47.1718646774132;
-        Mon, 17 Jun 2024 10:52:54 -0700 (PDT)
-Received: from [192.168.42.223] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ecdce5sm531595666b.108.2024.06.17.10.52.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 10:52:53 -0700 (PDT)
-Message-ID: <fa9f8d25-9f68-4f63-a070-639e23917827@gmail.com>
-Date: Mon, 17 Jun 2024 18:52:54 +0100
+	s=arc-20240116; t=1718646920; c=relaxed/simple;
+	bh=/MKX8zWua164F+o5W2SmDmo38TgloRooE2/wMgG4hOc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Sy4wFMJrnzlInnvrZN/Aj9XmOJkgkQvwetJWap1m2/2aQb/lm1Jw8vpDPZhvZq1UrSZ1SfVx4QT9lVu7U6V0GKY+2kNV1Nzx0SyZfEr238lmOxEzr2ibL/sOaQTHaWxilNS4F8YM27OAV3DG7msVFxr/c4CqM8aPptrrApMQ6Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XJKuA1wC; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718646919; x=1750182919;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=/MKX8zWua164F+o5W2SmDmo38TgloRooE2/wMgG4hOc=;
+  b=XJKuA1wCotKDqGCim2jZl4zFfDWaLyJGfM0pbndzVuiED0Wiq9HJQkfP
+   VUkWg2zqHvxbgkz99QamTWYICq4vI+gLNdXk/l5jhzWcRZCI66VU5krNG
+   53RnIAGyEixL4Vq/xMlre/UNDLFE3UHjsXiile+w/wt02XP6Vtf4+VVFX
+   rveS3+qe/FpeSGyJ59Dn9cN5ctPERjWlYMDvztWaPmeM68sAfOi60ESNO
+   sEcEh/rwWb/AsSthyo6TrOk4cJVyxgPq1HE885WOkLtwjkxDGHPHbNnHl
+   SA8if+/1PoOxwrx9svDi0fSA5YV/YxbfzmC+Wx9iUVEXNaDGh5O3qU+u2
+   A==;
+X-CSE-ConnectionGUID: d2I3aOgpTnGSkxoGcu4UBA==
+X-CSE-MsgGUID: DmfnGH7mSVOA5CnRppCU3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15454769"
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="15454769"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:55:18 -0700
+X-CSE-ConnectionGUID: a6YoO4xoQG2b7gX3udiXMQ==
+X-CSE-MsgGUID: rONlxxEqQQyd+C4MCtn4gA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="41198172"
+Received: from schen9-mobl2.jf.intel.com (HELO [10.24.8.70]) ([10.24.8.70])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:55:18 -0700
+Message-ID: <fd4eb382a87baed4b49e3cf2cd25e7047f9aede2.camel@linux.intel.com>
+Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to
+ put_unused_fd()
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, Yu Ma <yu.ma@intel.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	tim.c.chen@intel.com, pan.deng@intel.com, tianyou.li@intel.com
+Date: Mon, 17 Jun 2024 10:55:17 -0700
+In-Reply-To: <lzotoc5jwq4o4oij26tnzm5n2sqwqgw6ve2yr3vb4rz2mg4cee@iysfvyt77gkx>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+	 <20240614163416.728752-4-yu.ma@intel.com>
+	 <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
+	 <lzotoc5jwq4o4oij26tnzm5n2sqwqgw6ve2yr3vb4rz2mg4cee@iysfvyt77gkx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 05/13] page_pool: convert to use netmem
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Sergey Shtylyov <s.shtylyov@omp.ru>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Nikolay Aleksandrov <razor@blackwall.org>, David Wei <dw@davidwei.uk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
- Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
-References: <20240613013557.1169171-1-almasrymina@google.com>
- <20240613013557.1169171-6-almasrymina@google.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240613013557.1169171-6-almasrymina@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 6/13/24 02:35, Mina Almasry wrote:
-> Abstrace the memory type from the page_pool so we can later add support
-> for new memory types. Convert the page_pool to use the new netmem type
-> abstraction, rather than use struct page directly.
-> 
-> As of this patch the netmem type is a no-op abstraction: it's always a
-> struct page underneath. All the page pool internals are converted to
-> use struct netmem instead of struct page, and the page pool now exports
-> 2 APIs:
-> 
-> 1. The existing struct page API.
-> 2. The new struct netmem API.
+On Sat, 2024-06-15 at 07:07 +0200, Mateusz Guzik wrote:
+> On Sat, Jun 15, 2024 at 06:41:45AM +0200, Mateusz Guzik wrote:
+> > On Fri, Jun 14, 2024 at 12:34:16PM -0400, Yu Ma wrote:
+> > > alloc_fd() has a sanity check inside to make sure the FILE object map=
+ping to the
+> >=20
+> > Total nitpick: FILE is the libc thing, I would refer to it as 'struct
+> > file'. See below for the actual point.
+> >=20
+> > > Combined with patch 1 and 2 in series, pts/blogbench-1.1.0 read impro=
+ved by
+> > > 32%, write improved by 15% on Intel ICX 160 cores configuration with =
+v6.8-rc6.
+> > >=20
+> > > Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> > > Signed-off-by: Yu Ma <yu.ma@intel.com>
+> > > ---
+> > >  fs/file.c | 14 ++++++--------
+> > >  1 file changed, 6 insertions(+), 8 deletions(-)
+> > >=20
+> > > diff --git a/fs/file.c b/fs/file.c
+> > > index a0e94a178c0b..59d62909e2e3 100644
+> > > --- a/fs/file.c
+> > > +++ b/fs/file.c
+> > > @@ -548,13 +548,6 @@ static int alloc_fd(unsigned start, unsigned end=
+, unsigned flags)
+> > >  	else
+> > >  		__clear_close_on_exec(fd, fdt);
+> > >  	error =3D fd;
+> > > -#if 1
+> > > -	/* Sanity check */
+> > > -	if (rcu_access_pointer(fdt->fd[fd]) !=3D NULL) {
+> > > -		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
+> > > -		rcu_assign_pointer(fdt->fd[fd], NULL);
+> > > -	}
+> > > -#endif
+> > > =20
+> >=20
+> > I was going to ask when was the last time anyone seen this fire and
+> > suggest getting rid of it if enough time(tm) passed. Turns out it does
+> > show up sometimes, latest result I found is 2017 vintage:
+> > https://groups.google.com/g/syzkaller-bugs/c/jfQ7upCDf9s/m/RQjhDrZ7AQAJ
+> >=20
+> > So you are moving this to another locked area, but one which does not
+> > execute in the benchmark?
+> >=20
+> > Patch 2/3 states 28% read and 14% write increase, this commit message
+> > claims it goes up to 32% and 15% respectively -- pretty big. I presume
+> > this has to do with bouncing a line containing the fd.
+> >=20
+> > I would argue moving this check elsewhere is about as good as removing
+> > it altogether, but that's for the vfs overlords to decide.
+> >=20
+> > All that aside, looking at disasm of alloc_fd it is pretty clear there
+> > is time to save, for example:
+> >=20
+> > 	if (unlikely(nr >=3D fdt->max_fds)) {
+> > 		if (fd >=3D end) {
+> > 			error =3D -EMFILE;
+> > 			goto out;
+> > 		}
+> > 		error =3D expand_files(fd, fd);
+> > 		if (error < 0)
+> > 			goto out;
+> > 		if (error)
+> > 			goto repeat;
+> > 	}
+> >=20
+>=20
+> Now that I wrote it I noticed the fd < end check has to be performed
+> regardless of max_fds -- someone could have changed rlimit to a lower
+> value after using a higher fd. But the main point stands: the call to
+> expand_files and associated error handling don't have to be there.
 
-nits below,
+To really prevent someone from mucking with rlimit, we should probably
+take the task_lock to prevent do_prlimit() racing with this function.
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+task_lock(current->group_leader);
 
+Tim
 
-> Keeping the existing API is transitional; we do not want to refactor all
-> the current drivers using the page pool at once.
-> 
-> The netmem abstraction is currently a no-op. The page_pool uses
-> page_to_netmem() to convert allocated pages to netmem, and uses
-> netmem_to_page() to convert the netmem back to pages to pass to mm APIs,
-> 
-> Follow up patches to this series add non-paged netmem support to the
-> page_pool. This change is factored out on its own to limit the code
-> churn to this 1 patch, for ease of code review.
-> 
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
->   #endif /* _NET_NETMEM_H */
-> diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
-> index 873631c79ab16..5e129d5304f53 100644
-> --- a/include/net/page_pool/helpers.h
-> +++ b/include/net/page_pool/helpers.h
-> @@ -55,6 +55,8 @@
->   #include <linux/dma-mapping.h>
->   
->   #include <net/page_pool/types.h>
-> +#include <net/net_debug.h>
-> +#include <net/netmem.h>
->   
->   #ifdef CONFIG_PAGE_POOL_STATS
->   /* Deprecated driver-facing API, use netlink instead */
-> @@ -103,7 +105,7 @@ static inline struct page *page_pool_dev_alloc_pages(struct page_pool *pool)
->    * Get a page fragment from the page allocator or page_pool caches.
->    *
->    * Return:
-> - * Return allocated page fragment, otherwise return NULL.
-> + * Return allocated page fragment, otherwise return 0.
+>=20
+> > This elides 2 branches and a func call in the common case. Completely
+> > untested, maybe has some brainfarts, feel free to take without credit
+> > and further massage the routine.
+> >=20
+> > Moreover my disasm shows that even looking for a bit results in
+> > a func call(!) to _find_next_zero_bit -- someone(tm) should probably
+> > massage it into another inline.
+> >=20
+> > After the above massaging is done and if it turns out the check has to
+> > stay, you can plausibly damage-control it with prefetch -- issue it
+> > immediately after finding the fd number, before any other work.
+> >=20
+> > All that said, by the above I'm confident there is still *some*
+> > performance left on the table despite the lock.
+> >=20
+> > >  out:
+> > >  	spin_unlock(&files->file_lock);
+> > > @@ -572,7 +565,7 @@ int get_unused_fd_flags(unsigned flags)
+> > >  }
+> > >  EXPORT_SYMBOL(get_unused_fd_flags);
+> > > =20
+> > > -static void __put_unused_fd(struct files_struct *files, unsigned int=
+ fd)
+> > > +static inline void __put_unused_fd(struct files_struct *files, unsig=
+ned int fd)
+> > >  {
+> > >  	struct fdtable *fdt =3D files_fdtable(files);
+> > >  	__clear_open_fd(fd, fdt);
+> > > @@ -583,7 +576,12 @@ static void __put_unused_fd(struct files_struct =
+*files, unsigned int fd)
+> > >  void put_unused_fd(unsigned int fd)
+> > >  {
+> > >  	struct files_struct *files =3D current->files;
+> > > +	struct fdtable *fdt =3D files_fdtable(files);
+> > >  	spin_lock(&files->file_lock);
+> > > +	if (unlikely(rcu_access_pointer(fdt->fd[fd]))) {
+> > > +		printk(KERN_WARNING "put_unused_fd: slot %d not NULL!\n", fd);
+> > > +		rcu_assign_pointer(fdt->fd[fd], NULL);
+> > > +	}
+> > >  	__put_unused_fd(files, fd);
+> > >  	spin_unlock(&files->file_lock);
+> > >  }
+>=20
 
-It's a page_pool_dev_alloc_frag()'s comment, and the function
-still returns a pointer.
-
-...
->   static inline void *page_pool_alloc_va(struct page_pool *pool,
-> @@ -172,7 +174,8 @@ static inline void *page_pool_alloc_va(struct page_pool *pool,
->   	struct page *page;
->   
->   	/* Mask off __GFP_HIGHMEM to ensure we can use page_address() */
-> -	page = page_pool_alloc(pool, &offset, size, gfp & ~__GFP_HIGHMEM);
-> +	page = netmem_to_page(
-> +		page_pool_alloc(pool, &offset, size, gfp & ~__GFP_HIGHMEM));
->   	if (unlikely(!page))
->   		return NULL;
->   
-> @@ -189,7 +192,7 @@ static inline void *page_pool_alloc_va(struct page_pool *pool,
->    * it returns va of the allocated page or page fragment.
->    *
->    * Return:
-> - * Return the va for the allocated page or page fragment, otherwise return NULL.
-> + * Return the va for the allocated page or page fragment, otherwise return 0.
-
-ditto
-
->    */
->   static inline void *page_pool_dev_alloc_va(struct page_pool *pool,
->   					   unsigned int *size)
-> @@ -212,6 +215,11 @@ page_pool_get_dma_dir(const struct page_pool *pool)
->   	return pool->p.dma_dir;
->   }
->   
-> +static inline void page_pool_fragment_netmem(netmem_ref netmem, long nr)
-> +{
-> +	atomic_long_set(&netmem_to_page(netmem)->pp_ref_count, nr);
-> +}
-...
-
--- 
-Pavel Begunkov
 
