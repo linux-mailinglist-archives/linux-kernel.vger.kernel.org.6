@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-217243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D01B90AD49
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:48:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B552D90AD55
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5C501F21D4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C14284A35
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994B9195384;
-	Mon, 17 Jun 2024 11:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755EA194C85;
+	Mon, 17 Jun 2024 11:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoW/inhH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpA8sHn4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40BB1946BC;
-	Mon, 17 Jun 2024 11:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846B4186E56;
+	Mon, 17 Jun 2024 11:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718624904; cv=none; b=T37BaCb3uXcoKin2GM2fH6xKhJTYNxRzKsBquN7hdYXOnuk6x1dmeD1S4ppSwUonLC7QEzOcWoaTfEVUxP13pk8PWKZ65p+XC8rlR7aDy2DdlQ1TmCIlsdRsoaR8hzoRv9AzwrE/gOxyWLtsD0SmKYeila5ZUrTmfLHhcE2QK+M=
+	t=1718625004; cv=none; b=Ig7/of5LBSQErcoSBAbSfFxKZYH1Ly1EmLI5JkgodDZx28VezLKmOhfnE49ak5H9Xt8ZqYtWfpGUX4/GpzOKBGbUJTkjCP559JNOrFycFyMJGYDQ7i3zy3tKib+tHdH80NDLLGUP1G1Ijqejfjzvc3+aOlX/kntmbIqg15h1HL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718624904; c=relaxed/simple;
-	bh=8mrUC6mVjItynfICh+9jvCqG2bG3xJrYYmUAT7/n2IY=;
+	s=arc-20240116; t=1718625004; c=relaxed/simple;
+	bh=OqoQ6ZxH5cHIMs3+jLFrcIOTsDPqWQXiXFgsGcvQtmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Unyqdy9mPtvpUXA8iOnbWBMUVOg+9grMfPf0DfDe+WDKNwOfhKvoqJ3ihfjgJEuXP9hBIcxwMoqPSjsGuIYTdJVukEnmPhXMM4/LJvRWmejhOhGg1YuJSgW4rg7+PlLXhASYTwrI2H8k0fMKllC4RCSdwPisOi+ObttEh3ByCyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UoW/inhH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE404C2BD10;
-	Mon, 17 Jun 2024 11:48:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q+vmeHhTWobZGRqrmhNT6BADkBav8/Ug/KLosFKyINYMveYCmZ++9H5R5Qbw9ZyYD5CPf6Me3GLv0+NeXuMeHApPm4ZEI6V/Fs/34aXVpzY3rmePJVQkqHjWkwcU+gEQsnjw3Po/LCeTeeCuSX8blPvwxSbPhlHgkxBmuWtSDsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpA8sHn4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 710F0C2BD10;
+	Mon, 17 Jun 2024 11:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718624903;
-	bh=8mrUC6mVjItynfICh+9jvCqG2bG3xJrYYmUAT7/n2IY=;
+	s=k20201202; t=1718625004;
+	bh=OqoQ6ZxH5cHIMs3+jLFrcIOTsDPqWQXiXFgsGcvQtmc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UoW/inhH3vClfVH+2Jv1vfwiBJ+oOejjBQaGAKozdbZyzVsQfT41G4jOgBGWGUmsE
-	 I2TkMLU1k5TV2j5tsigmEtLKVypaS+VxXB16NtGzAMTHpqYXPe/qt2+AwSPBtcn8VP
-	 ZTlDYratz4D87W7TTh3X5vk+mfQOhrXKFH/mIl0ngcJ5sOYMxUMMyas7hfcl0syk2u
-	 FwQY1hlG6rcehnkHnslreqdRxOlnW198B37fcEmgNc6SB3VzA9Vb70dUnUEBpOjoX8
-	 igGRNvt7TJUp3wOFU/ZTtWU7/fn17gsri4/VA00Vbqjyx2ueheGeLqfOeFno8YFV2P
-	 3dWgY5OVm9vZA==
-Date: Mon, 17 Jun 2024 14:48:18 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Omer Shpigelman <oshpigelman@habana.ai>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"ogabbay@kernel.org" <ogabbay@kernel.org>,
-	Zvika Yehudai <zyehudai@habana.ai>
-Subject: Re: [PATCH 01/15] net: hbl_cn: add habanalabs Core Network driver
-Message-ID: <20240617114818.GB6805@unreal>
-References: <20240613082208.1439968-1-oshpigelman@habana.ai>
- <20240613082208.1439968-2-oshpigelman@habana.ai>
- <a0e8f31e-fa12-4f48-853d-16c78bce1d76@intel.com>
- <83a6029e-1e45-4ce7-99bb-a3643ddbf8ab@habana.ai>
+	b=HpA8sHn4I/uwMAoESG+goOFTmifzrpBQCu9dGkOqZXt8LYQqIz5QC28pY7Sf0V0im
+	 Rg3jeH3eikunEuigeTgUzbTZ+0Imva19O0s2muNxA4UevqUFDN3pgh2gkZqiPaumdk
+	 vcSLpVPa9akY/UIDqIsvq5tskgFgDB2P4D3sgld14Q56O303qkj5x6nQhfEvRRQi4M
+	 Gk0JUzOUemjLwycr4PfdBBZYJkpP7j747BOm1btJ2rnG35Qrq2fQkzKmtodhX7c5Fi
+	 Hx77E015tcScm9SmYjLY9TNQ7XuuFlhEtg/818x62PvlE5UBoaSBkrYLy4pAeurPpG
+	 nK8oyrEht/AUQ==
+Date: Mon, 17 Jun 2024 12:49:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Frank Li <Frank.Li@nxp.com>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2] dt-bindings: drop stale Anson Huang from maintainers
+Message-ID: <440bb6fa-2e26-4a64-8c53-bebf706a1079@sirena.org.uk>
+References: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jfSjzlj0zX5Rl/R2"
+Content-Disposition: inline
+In-Reply-To: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
+X-Cookie: Life is the urge to ecstasy.
+
+
+--jfSjzlj0zX5Rl/R2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <83a6029e-1e45-4ce7-99bb-a3643ddbf8ab@habana.ai>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 08:08:26AM +0000, Omer Shpigelman wrote:
-> On 6/13/24 16:01, Przemek Kitszel wrote:
-> > [Some people who received this message don't often get email from przemyslaw.kitszel@intel.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> >
-> > On 6/13/24 10:21, Omer Shpigelman wrote:
-> >> Add the hbl_cn driver which will serve both Ethernet and InfiniBand
-> >> drivers.
-> >> hbl_cn is the layer which is used by the satellite drivers for many shared
-> >> operations that are needed by both EN and IB subsystems like QPs, CQs etc.
-> >> The CN driver is initialized via auxiliary bus by the habanalabs driver.
-> >>
-> >> Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
-> >> Co-developed-by: Abhilash K V <kvabhilash@habana.ai>
-> >> Signed-off-by: Abhilash K V <kvabhilash@habana.ai>
-> >> Co-developed-by: Andrey Agranovich <aagranovich@habana.ai>
-> >> Signed-off-by: Andrey Agranovich <aagranovich@habana.ai>
-> >> Co-developed-by: Bharat Jauhari <bjauhari@habana.ai>
-> >> Signed-off-by: Bharat Jauhari <bjauhari@habana.ai>
-> >> Co-developed-by: David Meriin <dmeriin@habana.ai>
-> >> Signed-off-by: David Meriin <dmeriin@habana.ai>
-> >> Co-developed-by: Sagiv Ozeri <sozeri@habana.ai>
-> >> Signed-off-by: Sagiv Ozeri <sozeri@habana.ai>
-> >> Co-developed-by: Zvika Yehudai <zyehudai@habana.ai>
-> >> Signed-off-by: Zvika Yehudai <zyehudai@habana.ai>
-> >> ---
-> >>   .../device_drivers/ethernet/index.rst         |    1 +
-> >>   .../device_drivers/ethernet/intel/hbl.rst     |   82 +
-> >>   MAINTAINERS                                   |   11 +
-> >>   drivers/net/ethernet/intel/Kconfig            |   20 +
-> >>   drivers/net/ethernet/intel/Makefile           |    1 +
-> >>   drivers/net/ethernet/intel/hbl_cn/Makefile    |    9 +
-> >>   .../net/ethernet/intel/hbl_cn/common/Makefile |    3 +
-> >>   .../net/ethernet/intel/hbl_cn/common/hbl_cn.c | 5954 +++++++++++++++++
-> >>   .../net/ethernet/intel/hbl_cn/common/hbl_cn.h | 1627 +++++
-> >>   .../ethernet/intel/hbl_cn/common/hbl_cn_drv.c |  220 +
-> >>   .../intel/hbl_cn/common/hbl_cn_memory.c       |   40 +
-> >>   .../ethernet/intel/hbl_cn/common/hbl_cn_phy.c |   33 +
-> >>   .../ethernet/intel/hbl_cn/common/hbl_cn_qp.c  |   13 +
-> >>   include/linux/habanalabs/cpucp_if.h           |  125 +-
-> >>   include/linux/habanalabs/hl_boot_if.h         |    9 +-
-> >>   include/linux/net/intel/cn.h                  |  474 ++
-> >>   include/linux/net/intel/cn_aux.h              |  298 +
-> >>   include/linux/net/intel/cni.h                 |  636 ++
-> >>   18 files changed, 9545 insertions(+), 11 deletions(-)
-> >
-> > this is a very big patch, it asks for a split; what's worse, it's
-> > proportional to the size of this series:
-> >  146 files changed, 148514 insertions(+), 70 deletions(-)
-> > which is just too big
-> >
-> > [...]
-> >
-> 
-> Yeah, well I'm limited to 15 patches per patch set according to the kernel
-> doc so I had to have this big patch.
-> Our changes are contained in 4 different drivers and all of the changes
-> should be merged together so the HW will be operational.
-> Hence I had to squeeze some code to a big patch.
+On Mon, Jun 17, 2024 at 08:58:28AM +0200, Krzysztof Kozlowski wrote:
+> Emails to Anson Huang bounce:
+>=20
+>   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access den=
+ied.
+>=20
+> Add IMX platform maintainers for bindings which would become orphaned.
 
-Submit your code in multiple steps. One driver at a time.
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Thanks
+--jfSjzlj0zX5Rl/R2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwItoACgkQJNaLcl1U
+h9D5Wwf/Q7ZtAKp5HRIsqeh8PBxnOEEF8ljY8bCew6Q7rvMXTsxiI2WXFX0ykufr
+bDY0Ho5rMIUGwQf/F1v+q6ZS6TEUbnawVgxkKBRJTDeK8Uxs9bXPSfCu8oZY888f
+YzPOYmhnDVtIWvoHZFUO6klplmBwPYQn3WqXYi4M2eap2IHsTxAUrrcyiL4uLVAG
+yqNRTuUyg4+YAkj/te942l7M/obYkf3Nxb/1HM3vZypXDeUhg+ubgr3TKF8LRpg3
+LBmfcA+m586XLOoQUPbLcilqogjAJuokkNwNMia0ny9IINWjZ6izZ/1Oe/fCnHSn
+vX0livBtYHzSS6lauBj/V6L4gSTz+w==
+=b38n
+-----END PGP SIGNATURE-----
+
+--jfSjzlj0zX5Rl/R2--
 
