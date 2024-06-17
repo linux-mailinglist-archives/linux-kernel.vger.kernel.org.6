@@ -1,214 +1,130 @@
-Return-Path: <linux-kernel+bounces-218098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3596C90B93E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:14:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E9E990B977
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8ABD1F2387E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:14:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86983288C00
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E88194AFF;
-	Mon, 17 Jun 2024 18:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D9419CCFF;
+	Mon, 17 Jun 2024 18:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlLEcbew"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iA5WsBDv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA7A192B88;
-	Mon, 17 Jun 2024 18:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B2319D076;
+	Mon, 17 Jun 2024 18:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718647991; cv=none; b=UFU9Ciu7bU2tVnKLsmdFtpGcMHqv65bO4KdOxJTYUL5sYop1Vm8n92pzWO7d8epBTmAMmpj+pGc2LVk8cF+H7D8IO/LNo8QYtlmvAZbCClFBhk0HKbabFTcN0gJVftViJoii6mCb+BMnjDYzprrtFC5Xg2ETxaA+ah5/1jGJgoQ=
+	t=1718648005; cv=none; b=rSSwsL9bQG8Icl56XIjsQC7wDFR2G38d2nn9sOghzNNQ+gOx5DWmVtf/CfWuDBfd17OAqhWhpvdVWndyFeVlWd9jbHD4gIH/yzTcmkpbE2T0C+jUO9ZrAg70FaLOShYlUPc9CmS3LrqO3E1hYBMxW94TW4Vofa2AsS8MhpJrW6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718647991; c=relaxed/simple;
-	bh=hRLVvLtRBbOdvUPno8a93Vzcp5jl8gtbD85/dJV2oDk=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=YPdQ6whchcI0UGtLQ+oCyu/0Ne+rdIhSkr5cPCoXnXl5bwdap5E40wvd/55eAdd0Q2yHyhJVliKhtS3r4OT6DyCqUp1hY1gtUZAXnfeOZzElnPkgXANnNpY9lTpB5MklNRmUkX/O67l8lge1LL2eMwJkb10v2qJOJ0/ES/jIbTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KlLEcbew; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-6f97a4c4588so2829443a34.2;
-        Mon, 17 Jun 2024 11:13:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718647988; x=1719252788; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wnDgtRUgKAlSFYmIuJjQW/N6laowqIFFEW1+oJmutvU=;
-        b=KlLEcbewk7h6zmGsCJhFMwfBX80bMe9Af+jSQO8fBE7wdZDqfyNqf73lw5Hg4QASIG
-         bfrOVw0p9ZxWpV1qvIK4idgbQJ6cVCTkuoGr7GfgL0g6bDVQbN7tSWfzUUKpzJVEDAGI
-         fbWFrUwW6G6pv2S9KuwHDukfMYXrJVAcf1uJ+sX1bg1T0EgE8jwVbLIdt6LJTKmMvsDY
-         FLqPDcTbi6TTFHM1kH+c+BSCHsWfbu44hJaTfBd8F3orwJskwmMoL2ST1eqDddEH8DgV
-         cmCOIJlckVhDTHu4vE7OM24u8abShyErJn5Zt805uDBzv0JnJxEJMxbNaKexHRJ65lzw
-         GHGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718647988; x=1719252788;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wnDgtRUgKAlSFYmIuJjQW/N6laowqIFFEW1+oJmutvU=;
-        b=DAfEyC802YnorjZYyGyBh8AAV5BqZupdI8q9PnGUZ3Rsmi/YA1so2lmwWpGAwC/d5R
-         PMXTWTGM+/Zsm+7x2h8tDcguQ8IWewfzrysSGDAth7S/tMj2HtiKLx5r+NNDvh+M+MmI
-         V+3W6I/iSLcGrm1ihtLNC/+fjqHmPllcFfNb06vrhTdXba1zr/2d4IkAHhXJiP5C5++8
-         Dgk+kVCOMDqSXkmHg7ynygnAC4IxjpDS3v7/EM3aeWeFLUlFB1hESG1eWmcTI8gq66+Z
-         /VleJioB4bQ9CS/T/Q6PXCHM9w3a1kukDq7CJw4FNgL6JRma7l3xlMzGXrTlNkR6b7XE
-         Xc0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWjDrdFsncnKZzXe9c8n2jWC1ynaY/Vghy2krESaSRSEl+dNydyhi5mUs3jOn38KkCTNJyZ4uRkkmdlfib5JjXUOPoBDfqXcHF8PD/jurmorPrBMETLtlStF2cr+Xy7tJy2yOlT
-X-Gm-Message-State: AOJu0YyHk7jnKG3wQx3u5pZbjjGDDClp6OJFswlOdGy5R/27y3NF+PQG
-	uU6U/o5Wse3/e3Nbg9tCg2EPgPvJnnH9Ao9khP/swPJr0IzCWSbT
-X-Google-Smtp-Source: AGHT+IEobT5WZZ9llfzIFkvOO66J52WFUiWGnt25JF+3NqHKxdUDb76NjANoVgeOSeZ/Qa2KtCilqw==
-X-Received: by 2002:a05:6830:1da8:b0:6f9:eb37:b49a with SMTP id 46e09a7af769-6fb93b5b890mr10915095a34.36.1718647988217;
-        Mon, 17 Jun 2024 11:13:08 -0700 (PDT)
-Received: from localhost (56.148.86.34.bc.googleusercontent.com. [34.86.148.56])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5bf289csm57828316d6.26.2024.06.17.11.13.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 11:13:07 -0700 (PDT)
-Date: Mon, 17 Jun 2024 14:13:07 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: intel-wired-lan@lists.osuosl.org, 
- Tony Nguyen <anthony.l.nguyen@intel.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Mina Almasry <almasrymina@google.com>, 
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <66707cb3444bd_21d16f294b0@willemb.c.googlers.com.notmuch>
-In-Reply-To: <ad06d2bb-df1d-41cd-8e5a-8758db768f74@intel.com>
-References: <20240528134846.148890-1-aleksander.lobakin@intel.com>
- <20240528134846.148890-12-aleksander.lobakin@intel.com>
- <66588346c20fd_3a92fb294da@willemb.c.googlers.com.notmuch>
- <ad06d2bb-df1d-41cd-8e5a-8758db768f74@intel.com>
-Subject: Re: [PATCH iwl-next 11/12] idpf: convert header split mode to libeth
- + napi_build_skb()
+	s=arc-20240116; t=1718648005; c=relaxed/simple;
+	bh=ojRbcXMAcD1hhCMCV6YEMc1FKR66O4C+wbO5n22upEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pzfvEi1TvNmXWjmRj5o78rhZ3BHV81qzIdUM/pWK7YM8fgPfnsdr37NA+hAak4oDjqw3/9bl9ApyrG5Pgu8fqn2skjRkP1PLA0Qa8wMkHKc0aIsejfq2DmRX0FyTHzox9s0Vh5dP8FiUTzC4iVZ1jKkdNwJD4IzIxpbUmElyDVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iA5WsBDv; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718648003; x=1750184003;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ojRbcXMAcD1hhCMCV6YEMc1FKR66O4C+wbO5n22upEU=;
+  b=iA5WsBDvbCd0v6GHdpZJtgZPz6/aKbxzKwbRkjvrC8Zeezp/qYMOh3Zq
+   KoMb231+4xrPFwN9aJwsQS7ybwnz6t3emF0XC4O+1V+4FLz53ofjpRTnj
+   kkoiJBM6ZmRZi8DlU8LK9AG7ouW+3MjMm4foiGk1Mplx8HGNqk1i10WCR
+   HxT+Jq4ggpr06PYhFpaqfq7juAhbcmuDvXss3NLyOsOe5EuZLEEC7h+mb
+   2U5BxI59bfJR+Xg6cN5F5lhh+jTE2fBkEfTHkILMi8JVKJ1BkUnO6aPdo
+   +lS2ZDvhAIHFq4/97NwAyHBfzMkej/W2A0cNUJPmE9oxITFQL67f+8iB6
+   A==;
+X-CSE-ConnectionGUID: tX0XyucpRYKLWTtyNMicaw==
+X-CSE-MsgGUID: oSfoTl6DT2mgv+HTSOdxNQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15259712"
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="15259712"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:13:22 -0700
+X-CSE-ConnectionGUID: iJ6LKUecRfOwivxKplNFyg==
+X-CSE-MsgGUID: 6FEFvl53TWS0tVisgxPUog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="41145570"
+Received: from mshehzad-mobl.amr.corp.intel.com (HELO desk) ([10.209.21.13])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:13:22 -0700
+Date: Mon, 17 Jun 2024 11:13:15 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>
+Subject: Re: [PATCH PATCH 8/9] x86/bugs: Declutter vulnerable CPU list
+Message-ID: <20240617181315.z3mbmv6hv5frtu6a@desk>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <20240617-add-cpu-type-v1-8-b88998c01e76@linux.intel.com>
+ <14d5ed1b-db72-4676-bce2-1ff3637a7e56@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14d5ed1b-db72-4676-bce2-1ff3637a7e56@citrix.com>
 
-Alexander Lobakin wrote:
-> From: Willem De Bruijn <willemdebruijn.kernel@gmail.com>
-> Date: Thu, 30 May 2024 09:46:46 -0400
-> =
+On Mon, Jun 17, 2024 at 10:38:32AM +0100, Andrew Cooper wrote:
+[...]
+> > +	VULNBL_INTEL(IVYBRIDGE,		SRBDS),
+> > +	VULNBL_INTEL(HASWELL,		SRBDS),
+> > +	VULNBL_INTEL(HASWELL_L,		SRBDS),
+> > +	VULNBL_INTEL(HASWELL_G,		SRBDS),
+> > +	VULNBL_INTEL(HASWELL_X,		MMIO),
+> > +	VULNBL_INTEL(BROADWELL_D,	MMIO),
+> > +	VULNBL_INTEL(BROADWELL_G,	SRBDS),
+> > +	VULNBL_INTEL(BROADWELL_X,	MMIO),
+> > +	VULNBL_INTEL(BROADWELL,		SRBDS),
+> > +	VULNBL_INTEL(SKYLAKE_X,		MMIO | RETBLEED | GDS),
+> > +	VULNBL_INTEL(SKYLAKE_L,		MMIO | RETBLEED | GDS | SRBDS),
+> > +	VULNBL_INTEL(SKYLAKE,		MMIO | RETBLEED | GDS | SRBDS),
+> > +	VULNBL_INTEL(KABYLAKE_L,	MMIO | RETBLEED | GDS | SRBDS),
+> > +	VULNBL_INTEL(KABYLAKE,		MMIO | RETBLEED | GDS | SRBDS),
+> > +	VULNBL_INTEL(CANNONLAKE_L,	RETBLEED),
+> > +	VULNBL_INTEL(ICELAKE_L,		MMIO | MMIO_SBDS | RETBLEED | GDS),
+> > +	VULNBL_INTEL(ICELAKE_D,		MMIO | GDS),
+> > +	VULNBL_INTEL(ICELAKE_X,		MMIO | GDS),
+> > +	VULNBL_INTEL(COMETLAKE,		MMIO | MMIO_SBDS | RETBLEED | GDS),
+> > +	VULNBL_INTEL(TIGERLAKE_L,	GDS),
+> > +	VULNBL_INTEL(TIGERLAKE,		GDS),
+> > +	VULNBL_INTEL(LAKEFIELD,		MMIO | MMIO_SBDS | RETBLEED),
+> > +	VULNBL_INTEL(ROCKETLAKE,	MMIO | RETBLEED | GDS),
+> > +	VULNBL_INTEL(ALDERLAKE,		RFDS),
+> > +	VULNBL_INTEL(ALDERLAKE_L,	RFDS),
+> > +	VULNBL_INTEL(RAPTORLAKE,	RFDS),
+> > +	VULNBL_INTEL(RAPTORLAKE_P,	RFDS),
+> > +	VULNBL_INTEL(RAPTORLAKE_S,	RFDS),
+> > +	VULNBL_INTEL(ATOM_GRACEMONT,	RFDS),
+> > +	VULNBL_INTEL(ATOM_TREMONT,	MMIO | MMIO_SBDS | RFDS),
+> > +	VULNBL_INTEL(ATOM_TREMONT_D,	MMIO | RFDS),
+> > +	VULNBL_INTEL(ATOM_TREMONT_L,	MMIO | MMIO_SBDS | RFDS),
+> > +	VULNBL_INTEL(ATOM_GOLDMONT,	RFDS),
+> > +	VULNBL_INTEL(ATOM_GOLDMONT_D,	RFDS),
+> > +	VULNBL_INTEL(ATOM_GOLDMONT_PLUS, RFDS),
+> 
+> Take the opportunity to realign and fix this ?
 
-> > Alexander Lobakin wrote:
-> >> Currently, idpf uses the following model for the header buffers:
-> >>
-> >> * buffers are allocated via dma_alloc_coherent();
-> >> * when receiving, napi_alloc_skb() is called and then the header is
-> >>   copied to the newly allocated linear part.
-> >>
-> >> This is far from optimal as DMA coherent zone is slow on many system=
-s
-> >> and memcpy() neutralizes the idea and benefits of the header split. =
-
-> > =
-
-> > In the previous revision this assertion was called out, as we have
-> > lots of experience with the existing implementation and a previous on=
-e
-> > based on dynamic allocation one that performed much worse. You would
-> =
-
-> napi_build_skb() is not a dynamic allocation. In contrary,
-> napi_alloc_skb() from the current implementation actually *is* a dynami=
-c
-> allocation. It allocates a page frag for every header buffer each time.=
-
-> =
-
-> Page Pool refills header buffers from its pool of recycled frags.
-> Plus, on x86_64, truesize of a header buffer is 1024, meaning it picks
-> a new page from the pool every 4th buffer. During the testing of common=
-
-> workloads, I had literally zero new page allocations, as the skb core
-> recycles frags from skbs back to the pool.
-> =
-
-> IOW, the current version you're defending actually performs more dynami=
-c
-> allocations on hotpath than this one =C2=AF\_(=E3=83=84)_/=C2=AF
-> =
-
-> (I explained all this several times already)
-> =
-
-> > share performance numbers in the next revision
-> =
-
-> I can't share numbers in the outside, only percents.
-> =
-
-> I shared before/after % in the cover letter. Every test yielded more
-> Mpps after this change, esp. non-XDP_PASS ones when you don't have
-> networking stack overhead.
-
-This is the main concern: AF_XDP has no existing users, but TCP/IP is
-used in production environments. So we cannot risk TCP/IP regressions
-in favor of somewhat faster AF_XDP. Secondary is that a functional
-implementation of AF_XDP soon with optimizations later is preferable
-over the fastest solution later.
- =
-
-> > =
-
-> > https://lore.kernel.org/netdev/0b1cc400-3f58-4b9c-a08b-39104b9f2d2d@i=
-ntel.com/T/#me85d509365aba9279275e9b181248247e1f01bb0
-> > =
-
-> > This may be so integral to this patch series that asking to back it
-> > out now sets back the whole effort. That is not my intent.
-> > =
-
-> > And I appreciate that in principle there are many potential
-> > optizations.
-> > =
-
-> > But this (OOT) driver is already in use and regressions in existing
-> > workloads is a serious headache. As is significant code churn wrt
-> > other still OOT feature patch series.
-> > =
-
-> > This series (of series) modifies the driver significantly, beyond the=
-
-> > narrow scope of adding XDP and AF_XDP.
-> =
-
-> Yes, because all this is needed in order for XDP to work properly and
-> quick enough to be competitive. OOT XDP implementation is not
-> competitive and performs much worse even in comparison to the upstream =
-ice.
-> =
-
-> (for example, the idea of doing memcpy() before running XDP only to do
->  XDP_DROP and quickly drop frames sounds horrible)
-> =
-
-> Any serious series modification would mean a ton of rework only to
-> downgrade the overall functionality, why do that?
-
-As I said before, it is not my intent to set back the effort by asking
-for changes now.
-
-Only to caution to not expand the patch series even more (it grew from
-3 to 6 series) and to remind that performance of established workloads
-remain paramount.
- =
-
-> Thanks,
-> Olek
-
-
+I assume by also adding a tab to all the other entries?
 
