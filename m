@@ -1,325 +1,189 @@
-Return-Path: <linux-kernel+bounces-216889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4765790A81D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:06:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB55190A81E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75B0AB2532F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:06:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA821C2414B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527CE18FDCB;
-	Mon, 17 Jun 2024 08:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD44190043;
+	Mon, 17 Jun 2024 08:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LKLc7JbQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jDNnOtPK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021F318628D;
-	Mon, 17 Jun 2024 08:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E25618628D;
+	Mon, 17 Jun 2024 08:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718611589; cv=none; b=fnAOpOWAjXQjAEt8V+LGUYrV9yB64xEWtqTJakRYrurYgP665X12WK2Y35VrBFagwCYjhdAyqGLlua094cfso5J8HK0BTDA675J6/nmW6kbTO6P++61vhvwnb9w6lZebTr1I5ycYVC3M87tvOFqPxNssfwvcFTvbqzKL8cO2M6M=
+	t=1718611657; cv=none; b=Kvb3EuOzOGrRMxUOX69PBoVMjvSNcFfSkKLvfmlXmdFnfAEpdrqxYfxHnYA6uV+uAXmPQZDUiyjwbv2CxVW3q9bWoFw8occE1nio70EQxzHSdQY1Am8R6gX+RrFqGMn22kS7WLtpEHyNcPY+VganIXj8gSA36DtSwMP8yqse4OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718611589; c=relaxed/simple;
-	bh=qV0f68IO2hFc1RMbpFCNfD+bhD/X0kb584yxIMUptks=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=K6Z4yelJC0EwccfZcK0izo7oY9pN6UVZErXeUJARf8SKYhd1iiHFVk08wUnXgGv/Q9sLXwHYY3/O28XheIutcr5aEDeOHVdz3K7koF7F/Lte3rFOjjAH7r9cXJ69+WNH9sH58MrjVRykDOpW6hu/ntjptF6z7STNgWK2IBZSwwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LKLc7JbQ; arc=none smtp.client-ip=198.175.65.17
+	s=arc-20240116; t=1718611657; c=relaxed/simple;
+	bh=36kcjfNBQBQ7BrQRqoUTR+7LEakNMlF6+LyRwnMX5tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k24IroASq707ttC4A9kGTVmbMFXRnFo0CzK5a5Vzi1LG998kn7Oh+FO9ID8xdLVC0MBtNRXbf4dApRX8T9E/eyvR5jUmSYcD1AMVu6FHgkyiGW9Ykw29rEpLHdQlnU3ND5LQlVY4bIqFUe15ZV16f3NESrvgGMLdOdMt8e7sDWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jDNnOtPK; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718611587; x=1750147587;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=qV0f68IO2hFc1RMbpFCNfD+bhD/X0kb584yxIMUptks=;
-  b=LKLc7JbQb/1tg6+DY1i7iMLe5omkyyEHehJ8ZlX8ApYCymWqHJAr7m6I
-   jobhlpmtFbhQlOEDDGj7l6Mc14Y1Aol2zNzH6nt0R7CS96U8PkMjB6oUl
-   +reAjNTLuDX9kSBH6Y+MSfLimUvaNEgyYDOe4GWRL4KNwHZ7S1mTGk1Pu
-   +9rJjxCiyzC3lY+YD/vFTvar+CrTp6aFAcRxVj76UTwDkluCRZ53+7tK8
-   A6WTvowD99HEIC2OYy0bBk3EBpMjnmFgNj/q3o2WLVlNWlKTSxVpMIM42
-   YS0Rse3CdtWKdJttHTnb9fJbc/HkGVaUBG32FBZBaJGfaU7ywelmSiYhd
-   A==;
-X-CSE-ConnectionGUID: VJDzYodIRzaiJ7Ha/TFsng==
-X-CSE-MsgGUID: yN3Bctb4QBO+oBZ+NXcM/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="15549746"
+  t=1718611656; x=1750147656;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=36kcjfNBQBQ7BrQRqoUTR+7LEakNMlF6+LyRwnMX5tk=;
+  b=jDNnOtPK4UUANfd07YB1A3Rb1tuo8DD18yRW4WXGWf5dErItnui8j8kY
+   AG0HDn2yL1AVzq5OHL8qOdsCC4bbsfa7j6eg1flxs9iaPiCRAWIYIBcXY
+   nGNkFKWGGed5XnNtMs4Fm4n867ulADBiYAYHlPvN81+HQRlpqKzdOl1Gk
+   eboZdFFrOZWUxpjKMYHzS15WIX8Z0RjaG96VbFUB375Hlezp4kVUJduGQ
+   ra3A3rapx/cyw7LtHDx6yOouf6pyv1ZLl9GUOc0d5dp413LrjcR2xQ9Jk
+   OjJGDxep4xThOmcp9QnbD9TV210UD/s6H1kKFYN+lHlWPQtagZ7O7Ppoq
+   Q==;
+X-CSE-ConnectionGUID: WntByvsQRQ6Ecb5RFlCnbQ==
+X-CSE-MsgGUID: 53Wvj70VQ2urVkHweMTvHA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="37952311"
 X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="15549746"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 01:06:27 -0700
-X-CSE-ConnectionGUID: ntyVLAjBRIKz4a3KN+HdOQ==
-X-CSE-MsgGUID: UvY3X5dbQXW3H7RMiL1UGA==
+   d="scan'208";a="37952311"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 01:07:35 -0700
+X-CSE-ConnectionGUID: 8kKG7+d4RvqauFqpa3eQIw==
+X-CSE-MsgGUID: Dk4GaEnPRH+Qn1mfBjt3UA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="41221785"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.85])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 01:06:23 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>, Alex
- Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, Dongliang Mu
- <dzm91@hust.edu.cn>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] doc-guide: add help documentation
- checktransupdate.rst
-In-Reply-To: <20240615035323.909650-2-dzm91@hust.edu.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240615035323.909650-1-dzm91@hust.edu.cn>
- <20240615035323.909650-2-dzm91@hust.edu.cn>
-Date: Mon, 17 Jun 2024 11:06:19 +0300
-Message-ID: <87v828gfic.fsf@intel.com>
+   d="scan'208";a="41253740"
+Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.159.76])
+  by orviesa009.jf.intel.com with ESMTP; 17 Jun 2024 01:07:31 -0700
+Date: Mon, 17 Jun 2024 16:07:29 +0800
+From: Yuan Yao <yuan.yao@linux.intel.com>
+To: isaku.yamahata@intel.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	isaku.yamahata@gmail.com, Paolo Bonzini <pbonzini@redhat.com>,
+	erdemaktas@google.com, Sean Christopherson <seanjc@google.com>,
+	Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
+	chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
+	Binbin Wu <binbin.wu@linux.intel.com>
+Subject: Re: [PATCH v19 085/130] KVM: TDX: Complete interrupts after tdexit
+Message-ID: <20240617080729.j5nottky5bjmgdmf@yy-desk-7060>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <aa6a927214a5d29d5591a0079f4374b05a82a03f.1708933498.git.isaku.yamahata@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa6a927214a5d29d5591a0079f4374b05a82a03f.1708933498.git.isaku.yamahata@intel.com>
+User-Agent: NeoMutt/20171215
 
-On Sat, 15 Jun 2024, Dongliang Mu <dzm91@hust.edu.cn> wrote:
-> This commit adds help documents - Documentation/doc-guide/checktransupdat=
-e.rst
-> and Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
-> for scripts/checktransupdate.py, including English and Chinese versions
+On Mon, Feb 26, 2024 at 12:26:27AM -0800, isaku.yamahata@intel.com wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
 >
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> This corresponds to VMX __vmx_complete_interrupts().  Because TDX
+> virtualize vAPIC, KVM only needs to care NMI injection.
+>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 > ---
-> v1->v2: fix some issues according to Randy
->  Documentation/doc-guide/checktransupdate.rst  | 63 +++++++++++++++++++
->  Documentation/doc-guide/index.rst             |  1 +
->  .../zh_CN/doc-guide/checktransupdate.rst      | 62 ++++++++++++++++++
->  .../translations/zh_CN/doc-guide/index.rst    |  1 +
->  4 files changed, 127 insertions(+)
->  create mode 100644 Documentation/doc-guide/checktransupdate.rst
->  create mode 100644 Documentation/translations/zh_CN/doc-guide/checktrans=
-update.rst
+> v19:
+> - move tdvps_management_check() to this patch
+> - typo: complete -> Complete in short log
+> ---
+>  arch/x86/kvm/vmx/tdx.c | 10 ++++++++++
+>  arch/x86/kvm/vmx/tdx.h |  4 ++++
+>  2 files changed, 14 insertions(+)
 >
-> diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentation=
-/doc-guide/checktransupdate.rst
-> new file mode 100644
-> index 000000000000..4ece330882d6
-> --- /dev/null
-> +++ b/Documentation/doc-guide/checktransupdate.rst
-> @@ -0,0 +1,63 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +Check translation update
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> +
-> +This script helps track the translation status of the documentation in
-> +different locales, i.e.,=C2=A0whether the documentation is up-to-date wi=
-th
-> +the English counterpart.
-> +
-> +How it works
-> +------------
-> +
-> +It uses ``git log`` command to track the latest English commit from the
-> +translation commit (order by author date) and the latest English commits
-> +from HEAD. If any differences occur, the file is considered as out-of-da=
-te,
-> +then commits that need to be updated will be collected and reported.
-> +
-> +Features implemented
-> +--------------------
-> +
-> +-  check all files in a certain locale
-> +-  check a single file or a set of files
-> +-  provide options to change output format
-> +
-> +Usage
-> +-----
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 83dcaf5b6fbd..b8b168f74dfe 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -535,6 +535,14 @@ void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+>  	 */
+>  }
+>
+> +static void tdx_complete_interrupts(struct kvm_vcpu *vcpu)
+> +{
+> +	/* Avoid costly SEAMCALL if no nmi was injected */
+> +	if (vcpu->arch.nmi_injected)
+> +		vcpu->arch.nmi_injected = td_management_read8(to_tdx(vcpu),
+> +							      TD_VCPU_PEND_NMI);
+> +}
 
-Why not document the argument parser and tell people ot run
-'checktransupdate.py --help' here? Duplicating the usage here is just a
-maintenance burden.
+Looks this leads to NMI injection delay or even won't be
+reinjected if KVM_REQ_EVENT is not set on the target cpu
+when more than 1 NMIs are pending there.
 
-BR,
-Jani.
+On normal VM, KVM uses NMI window vmexit for injection
+successful case to rasie the KVM_REQ_EVENT again for remain
+pending NMIs, see handle_nmi_window(). KVM also checks
+vectoring info after VMEXIT for case that the NMI is not
+injected successfully in this vmentry vmexit round, and
+raise KVM_REQ_EVENT to try again, see __vmx_complete_interrupts().
 
+In TDX, consider there's no way to get vectoring info or
+handle nmi window vmexit, below checking should cover both
+scenarios for NMI injection:
 
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index e9c9a185bb7b..9edf446acd3b 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -835,9 +835,12 @@ void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ static void tdx_complete_interrupts(struct kvm_vcpu *vcpu)
+ {
+        /* Avoid costly SEAMCALL if no nmi was injected */
+-       if (vcpu->arch.nmi_injected)
++       if (vcpu->arch.nmi_injected) {
+                vcpu->arch.nmi_injected = td_management_read8(to_tdx(vcpu),
+                                                              TD_VCPU_PEND_NMI);
++               if (vcpu->arch.nmi_injected || vcpu->arch.nmi_pending)
++                       kvm_make_request(KVM_REQ_EVENT, vcpu);
++       }
+ }
 
-
 > +
-> +::
+>  struct tdx_uret_msr {
+>  	u32 msr;
+>  	unsigned int slot;
+> @@ -663,6 +671,8 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu)
+>  	vcpu->arch.regs_avail &= ~VMX_REGS_LAZY_LOAD_SET;
+>  	trace_kvm_exit(vcpu, KVM_ISA_VMX);
+>
+> +	tdx_complete_interrupts(vcpu);
 > +
-> +   checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-co=
-mmits] [--print-updated-files | --no-print-updated-files] [--debug | --no-d=
-ebug] [files ...]
+>  	return EXIT_FASTPATH_NONE;
+>  }
+>
+> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+> index 44eab734e702..0d8a98feb58e 100644
+> --- a/arch/x86/kvm/vmx/tdx.h
+> +++ b/arch/x86/kvm/vmx/tdx.h
+> @@ -142,6 +142,8 @@ static __always_inline void tdvps_vmcs_check(u32 field, u8 bits)
+>  			 "Invalid TD VMCS access for 16-bit field");
+>  }
+>
+> +static __always_inline void tdvps_management_check(u64 field, u8 bits) {}
 > +
-> +Options
-> +~~~~~~~
+>  #define TDX_BUILD_TDVPS_ACCESSORS(bits, uclass, lclass)				\
+>  static __always_inline u##bits td_##lclass##_read##bits(struct vcpu_tdx *tdx,	\
+>  							u32 field)		\
+> @@ -200,6 +202,8 @@ TDX_BUILD_TDVPS_ACCESSORS(16, VMCS, vmcs);
+>  TDX_BUILD_TDVPS_ACCESSORS(32, VMCS, vmcs);
+>  TDX_BUILD_TDVPS_ACCESSORS(64, VMCS, vmcs);
+>
+> +TDX_BUILD_TDVPS_ACCESSORS(8, MANAGEMENT, management);
 > +
-> +-  ``-l``, ``--locale``: locale to check when file is not specified
-> +-  ``--[no-]print-commits``: whether to print commits between origin and
-> +   translation
-> +-  ``--[no-]print-updated-files``: whether to print files that do no
-> +   need to be updated
-> +-  ``files``: files to check, if this option is specified, the locale
-> +   option will be ignored.
-> +
-> +Samples
-> +~~~~~~~
-> +
-> +-  ``./scripts/checktransupdate.py -l zh_CN``
-> +   This will print all the files that need to be updated in the zh_CN lo=
-cale.
-> +-  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/proc=
-ess/coding-style.rst``
-> +   This will only print the status of the specified file.
-> +
-> +Then the output is something like:
-> +
-> +::
-> +
-> +    Documentation/translations/zh_CN/process/coding-style.rst       (2 c=
-ommits)
-> +    commit 6813216bbdba ("Documentation: coding-style: ask function-like=
- macros to evaluate parameters")
-> +    commit 185ea7676ef3 ("Documentation: coding-style: Update syntax hig=
-hlighting for code-blocks")
-> +
-> +Features to be implemented
-> +----------------------------
-> +
-> +- track the translation status of files that have no translation
-> +- files can be a folder instead of only a file
-> diff --git a/Documentation/doc-guide/index.rst b/Documentation/doc-guide/=
-index.rst
-> index 7c7d97784626..24d058faa75c 100644
-> --- a/Documentation/doc-guide/index.rst
-> +++ b/Documentation/doc-guide/index.rst
-> @@ -12,6 +12,7 @@ How to write kernel documentation
->     parse-headers
->     contributing
->     maintainer-profile
-> +   checktransupdate
->=20=20
->  .. only::  subproject and html
->=20=20
-> diff --git a/Documentation/translations/zh_CN/doc-guide/checktransupdate.=
-rst b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
-> new file mode 100644
-> index 000000000000..37c0bb518ab8
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
-> @@ -0,0 +1,62 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/doc-guide/checktransupdate.rst
-> +
-> +:=E8=AF=91=E8=80=85: =E6=85=95=E5=86=AC=E4=BA=AE Dongliang Mu <dzm91@hus=
-t.edu.cn>
-> +
-> +=E6=A3=80=E6=9F=A5=E7=BF=BB=E8=AF=91=E6=9B=B4=E6=96=B0
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +=E8=BF=99=E4=B8=AA=E8=84=9A=E6=9C=AC=E5=B8=AE=E5=8A=A9=E8=B7=9F=E8=B8=AA=
-=E4=B8=8D=E5=90=8C=E8=AF=AD=E8=A8=80=E7=9A=84=E6=96=87=E6=A1=A3=E7=BF=BB=E8=
-=AF=91=E7=8A=B6=E6=80=81=EF=BC=8C=E5=8D=B3=E6=96=87=E6=A1=A3=E6=98=AF=E5=90=
-=A6=E4=B8=8E=E5=AF=B9=E5=BA=94=E7=9A=84=E8=8B=B1=E6=96=87=E7=89=88=E6=9C=AC=
-=E4=BF=9D=E6=8C=81=E6=9B=B4=E6=96=B0=E3=80=82
-> +
-> +=E5=B7=A5=E4=BD=9C=E5=8E=9F=E7=90=86
-> +------------
-> +
-> +=E5=AE=83=E4=BD=BF=E7=94=A8 ``git log`` =E5=91=BD=E4=BB=A4=E6=9D=A5=E8=
-=B7=9F=E8=B8=AA=E7=BF=BB=E8=AF=91=E6=8F=90=E4=BA=A4=E7=9A=84=E6=9C=80=E6=96=
-=B0=E8=8B=B1=E6=96=87=E6=8F=90=E4=BA=A4=EF=BC=88=E6=8C=89=E4=BD=9C=E8=80=85=
-=E6=97=A5=E6=9C=9F=E6=8E=92=E5=BA=8F=EF=BC=89=E5=92=8C=E8=8B=B1=E6=96=87=E6=
-=96=87=E6=A1=A3=E7=9A=84
-> +=E6=9C=80=E6=96=B0=E6=8F=90=E4=BA=A4=E3=80=82=E5=A6=82=E6=9E=9C=E6=9C=89=
-=E4=BB=BB=E4=BD=95=E5=B7=AE=E5=BC=82=EF=BC=8C=E5=88=99=E8=AF=A5=E6=96=87=E4=
-=BB=B6=E8=A2=AB=E8=AE=A4=E4=B8=BA=E6=98=AF=E8=BF=87=E6=9C=9F=E7=9A=84=EF=BC=
-=8C=E7=84=B6=E5=90=8E=E9=9C=80=E8=A6=81=E6=9B=B4=E6=96=B0=E7=9A=84=E6=8F=90=
-=E4=BA=A4=E5=B0=86=E8=A2=AB=E6=94=B6=E9=9B=86=E5=B9=B6=E6=8A=A5=E5=91=8A=E3=
-=80=82
-> +
-> +=E5=AE=9E=E7=8E=B0=E7=9A=84=E5=8A=9F=E8=83=BD
-> +--------------------
-> +
-> +- =E6=A3=80=E6=9F=A5=E7=89=B9=E5=AE=9A=E8=AF=AD=E8=A8=80=E4=B8=AD=E7=9A=
-=84=E6=89=80=E6=9C=89=E6=96=87=E4=BB=B6
-> +- =E6=A3=80=E6=9F=A5=E5=8D=95=E4=B8=AA=E6=96=87=E4=BB=B6=E6=88=96=E4=B8=
-=80=E7=BB=84=E6=96=87=E4=BB=B6
-> +- =E6=8F=90=E4=BE=9B=E6=9B=B4=E6=94=B9=E8=BE=93=E5=87=BA=E6=A0=BC=E5=BC=
-=8F=E7=9A=84=E9=80=89=E9=A1=B9
-> +
-> +=E7=94=A8=E6=B3=95
-> +-----
-> +
-> +::
-> +
-> +   checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-co=
-mmits] [--print-updated-files | --no-print-updated-files] [--debug | --no-d=
-ebug] [files ...]
-> +
-> +=E9=80=89=E9=A1=B9
-> +~~~~~~~
-> +
-> +-  ``-l``, ``--locale``: =E6=A3=80=E6=9F=A5=E6=8C=87=E5=AE=9A=E7=9A=84=
-=E6=96=87=E4=BB=B6=E8=AF=AD=E8=A8=80=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=9C=AA=E6=
-=8C=87=E5=AE=9A=E6=96=87=E4=BB=B6
-> +-  ``--[no-]print-commits``: =E6=98=AF=E5=90=A6=E6=89=93=E5=8D=B0=E8=8B=
-=B1=E6=96=87=E5=8E=9F=E5=A7=8B=E7=89=88=E6=9C=AC=E5=92=8C=E7=BF=BB=E8=AF=91=
-=E7=89=88=E6=9C=AC=E4=B9=8B=E9=97=B4=E7=9A=84=E6=8F=90=E4=BA=A4
-> +-  ``--[no-]print-updated-files``: =E6=98=AF=E5=90=A6=E6=89=93=E5=8D=B0=
-=E6=97=A0=E9=9C=80=E6=9B=B4=E6=96=B0=E7=9A=84=E6=96=87=E4=BB=B6
-> +-  ``files``: =E8=A6=81=E6=A3=80=E6=9F=A5=E7=9A=84=E6=96=87=E4=BB=B6=EF=
-=BC=8C=E5=A6=82=E6=9E=9C=E6=8C=87=E5=AE=9A=E4=BA=86=E6=AD=A4=E9=80=89=E9=A1=
-=B9=EF=BC=8C=E5=B0=86=E5=BF=BD=E7=95=A5=E8=AF=AD=E8=A8=80=E9=80=89=E9=A1=B9
-> +
-> +=E7=A4=BA=E4=BE=8B
-> +~~~~~~~
-> +
-> +-  ``./scripts/checktransupdate.py -l zh_CN``
-> +   =E8=BF=99=E5=B0=86=E6=89=93=E5=8D=B0 zh_CN =E8=AF=AD=E8=A8=80=E4=B8=
-=AD=E9=9C=80=E8=A6=81=E6=9B=B4=E6=96=B0=E7=9A=84=E6=89=80=E6=9C=89=E6=96=87=
-=E4=BB=B6=E3=80=82
-> +-  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/proc=
-ess/coding-style.rst``
-> +   =E8=BF=99=E5=B0=86=E5=8F=AA=E6=89=93=E5=8D=B0=E6=8C=87=E5=AE=9A=E6=96=
-=87=E4=BB=B6=E7=9A=84=E7=8A=B6=E6=80=81=E3=80=82
-> +
-> +=E7=84=B6=E5=90=8E=E8=BE=93=E5=87=BA=E7=B1=BB=E4=BC=BC=E5=A6=82=E4=B8=8B=
-=E7=9A=84=E5=86=85=E5=AE=B9=EF=BC=9A
-> +
-> +::
-> +
-> +    Documentation/translations/zh_CN/process/coding-style.rst       (2 c=
-ommits)
-> +    commit 6813216bbdba ("Documentation: coding-style: ask function-like=
- macros to evaluate parameters")
-> +    commit 185ea7676ef3 ("Documentation: coding-style: Update syntax hig=
-hlighting for code-blocks")
-> +
-> +=E5=BE=85=E5=AE=9E=E7=8E=B0=E7=9A=84=E5=8A=9F=E8=83=BD
-> +-------------
-> +
-> +- =E8=B7=9F=E8=B8=AA=E6=B2=A1=E6=9C=89=E7=BF=BB=E8=AF=91=E8=BF=87=E7=9A=
-=84=E6=96=87=E4=BB=B6=E7=9A=84=E7=BF=BB=E8=AF=91=E7=8A=B6=E6=80=81
-> +- =E6=96=87=E4=BB=B6=E5=8F=82=E6=95=B0=E5=8F=AF=E4=BB=A5=E6=98=AF=E6=96=
-=87=E4=BB=B6=E5=A4=B9=E8=80=8C=E4=B8=8D=E4=BB=85=E4=BB=85=E6=98=AF=E5=8D=95=
-=E4=B8=AA=E6=96=87=E4=BB=B6
-> diff --git a/Documentation/translations/zh_CN/doc-guide/index.rst b/Docum=
-entation/translations/zh_CN/doc-guide/index.rst
-> index 78c2e9a1697f..0ac1fc9315ea 100644
-> --- a/Documentation/translations/zh_CN/doc-guide/index.rst
-> +++ b/Documentation/translations/zh_CN/doc-guide/index.rst
-> @@ -18,6 +18,7 @@
->     parse-headers
->     contributing
->     maintainer-profile
-> +   checktransupdate
->=20=20
->  .. only::  subproject and html
-
---=20
-Jani Nikula, Intel
+>  static __always_inline u64 td_tdcs_exec_read64(struct kvm_tdx *kvm_tdx, u32 field)
+>  {
+>  	struct tdx_module_args out;
+> --
+> 2.25.1
+>
+>
 
