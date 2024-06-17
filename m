@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-217001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930B990AA5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:57:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FCA290AA73
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8295B24A66
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:29:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D11CAB280B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC911922DC;
-	Mon, 17 Jun 2024 09:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A32519306A;
+	Mon, 17 Jun 2024 09:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ldSC//pc"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="J+aC9VAd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC111288BD;
-	Mon, 17 Jun 2024 09:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEA1161320;
+	Mon, 17 Jun 2024 09:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616551; cv=none; b=mZq1lRs+muSgoECIOV/iZer5TK8xOzR4wbP2lJTryU/NHs4mjSnI5SfyuSG20KpNJQqwmxcHgVj7Y5GDg6Rwp2Pp8AvOLFNzFBu0SsWmHbKlAhscbbPJjy7q3pVqyWFMc24bP76BEwJylP60XyUeNWoH5nHPrP7SpantZ9Wi/dM=
+	t=1718616615; cv=none; b=Tx7j52miqqemaXrCbRVGaskBmv8OBah8TJvXKZoQObUtOv/JkTffQozYFQhasxnchrQ2UtqcL1CuSFUk2kysfmB7H+g5AUPVfMGOjXBf4waOtTwTKhtxTsPbSjfrFJkpl/5RY4wFGTKvqbDRH3tLLe9AEQlv8KjnxFH4bkRqwtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616551; c=relaxed/simple;
-	bh=HZ/UTAshROOqgyvi8MzzZCcTl6EpUHJPAXf2QBcR/is=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WJPUHShn5iqMdvyt1Wl/Mbt3DftmPaOpBoD/wvUTd1/p85R97AQTpHvDZXiKoKSQPd8LBrYpeuLKi41tiRJxdYKz6GzGuxQwWQUQMNo8zaZNMD9pRuxMTF4HQqPDtFlYUqNS1lg1XSeWQorsYU2FLvU3Oe3ArhNJzhBYFepM7lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ldSC//pc; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=G/12lrjs5yDx1fcebds1m2IA2pve+yjYe0GUgmbBDr0=; t=1718616550;
-	x=1719048550; b=ldSC//pcXeur4aF0Wtlzbwp2BvjkW4IshjOFJ7I2e5tOltD2VlrnSXJQYXhMp
-	G2kVgpH3mgqQlsaPiAcMcGtZwfEWkzS8T1xvjMFVnf+jDNohlNTO3FRoRr0g/IekdDhgPPl5bdv2x
-	WnaK3PHpEobJg5SRzrCw/0D17pp3aaGE8wL4tjNSx6WZkUg5FmrjNSPoYJg1WhRtoFC1C4hUOx6Hb
-	C92k4tvx9WGhf1mqR8tB0of54w7D+TTGGndw5bTJ5Zpcdqb3e70hbFiv3Z8KPZaMhT3npxNMS1yMw
-	dY+lg/ybY3D6rvbZd+1VIZGwj0GRSXqdd+ooRt1PSvRt18g0tg==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sJ8fi-0001h2-Pw; Mon, 17 Jun 2024 11:29:06 +0200
-Message-ID: <1b9852d1-4454-4f62-bd8a-fb6167dc0576@leemhuis.info>
-Date: Mon, 17 Jun 2024 11:29:05 +0200
+	s=arc-20240116; t=1718616615; c=relaxed/simple;
+	bh=vNP4WEhhgNj7o4q3OOnMwZZ0lQTCOjiNm3jP0K3Ak7o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hfsvHbNGszmwaBDAVs7WsVpAsUfX3v5FuZ/ue4rPIDBjwoMAj8PjD123XtZ3uQv9ZpsB3+U7jrrhC9+jXAhChWN2buujqpZ7nK860zzW92CQkD6kyxLtudZYl8zk523E7ElQnjx/oad6G5AQJQ9rTMD1Daz1vEQOVnu6Z6f97nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=J+aC9VAd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45GN9UIr009282;
+	Mon, 17 Jun 2024 09:30:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=UIzYqNnlh81SFzJY56vFg1
+	ODSZdnhxpy/HUIyAB6IDk=; b=J+aC9VAdI3jNb2Y17Q9S7Hc8/6cVxEeDBl3xSD
+	wJ3eSk5iAy2oOwX80b2kxfPZnor+N/yGKF1HsoBQ9vy+iFm/3yV2iqFebDu2/bxB
+	DoayMGDXhUYB+qS01iqMl9NixDo/IZkYRuoFRsLRcCo7QrapTQgfXwHUoi/C0qdX
+	skoJ5hgU59dYm7dKQNz0QMfaokHxslQh0wro/uLQzHCTXQ797rEzjDu1DePdh2r1
+	qJqXw6CvORiz/hiFg2kBubPlc7SVenal1TBAYqwHP066Cri+Udt1mYMIeLs1mCLm
+	RZ6Wi5cMNc0KykfaXNGvOjKoXFvSomZUTmTDEMc8DtAsxD4Q==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys0nfbgj0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 09:30:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H9U2jf000649
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 09:30:02 GMT
+Received: from tengfan-gv.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 17 Jun 2024 02:29:55 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+To: <krzysztof.kozlowski@linaro.org>, <djakov@kernel.org>, <robh@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Tengfei Fan <quic_tengfan@quicinc.com>
+Subject: [RFC PATCH 0/2] arm64: qcom: Add BWMON support for SA8775p
+Date: Mon, 17 Jun 2024 17:29:38 +0800
+Message-ID: <20240617092940.1724962-1-quic_tengfan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] spi: omap2-mcspi: not working with kernel v6.10
-To: =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?=
- <jpaulo.silvagoncalves@gmail.com>, Mark Brown <broonie@kernel.org>,
- Vaishnav Achath <vaishnav.a@ti.com>,
- Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- joao.goncalves@toradex.com,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <20240612170030.3qatttsgrwjg2m5s@joaog-nb>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <20240612170030.3qatttsgrwjg2m5s@joaog-nb>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718616550;d30e9acd;
-X-HE-SMSGID: 1sJ8fi-0001h2-Pw
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8g9kyy5441e1V1ZMtA0ZI-TtMm8M19nt
+X-Proofpoint-ORIG-GUID: 8g9kyy5441e1V1ZMtA0ZI-TtMm8M19nt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_08,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ adultscore=0 clxscore=1011 suspectscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=605 impostorscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406170072
 
-[CCing the regression list, as it should be in the loop for regressions:
-https://docs.kernel.org/admin-guide/reporting-regressions.html]
+Add CPU and LLCC BWMON nodes and their corresponding OPP tables for
+SA8775p SoC.
 
-On 12.06.24 19:00, João Paulo Gonçalves wrote:
-> 
-> It appears that omap2-mcspi broke on kernel v6.10. I was testing an EEPROM like
-> SPI FRAM using this DT:
-> 
-> &main_spi1 {
-> 	pinctrl-0 = <&pinctrl_spi1>,
-> 		    <&pinctrl_gpio_4>;
-> 	cs-gpios =  <&mcu_gpio0 4 GPIO_ACTIVE_LOW>;
-> 	status = "okay";
-> 
-> 	fram@0 {
-> 		compatible = "fujitsu,mb85rs256", "atmel,at25";
-> 		reg = <0>;
-> 		address-width = <16>;
-> 		size = <32768>;
-> 		spi-max-frequency = <33000000>;
-> 		pagesize = <1>;
-> 	};
-> };
-> 
-> On kernel v6.9, spi works fine and is possible to read/write the FRAM. However,
-> on kernel v6.10-rc3 it gives me an Oops after a timeout:
-> [...]
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
 
-Thx for the report. Hmm, no developer replied yet. I suspect that means
-they have no idea what causes this. In that case the thing that really
-helps would be if you could use a git bisection to find the change that
-causes this.
+This patch series depends on patch series:
+"[PATCH 2/4] soc: qcom: icc-bwmon: Allow for interrupts to be shared across instances"
+https://lore.kernel.org/lkml/20240604011157.2358019-3-quic_sibis@quicinc.com/
 
-Anyway, to ensure that does not fall though the cracks, let me add this
-to the tracking:
+Tengfei Fan (2):
+  dt-bindings: interconnect: qcom-bwmon: Document SA8775p bwmon
+    compatibles
+  arm64: dts: qcom: sa8775p: Add CPU and LLCC BWMON
 
-#regzbot report ^
-#regzbot introduced: v6.9..v6.10-rc3
-#regzbot summary: spi: omap2-mcspi: omap2-mcspi broke, Oops after a timeout
+ .../interconnect/qcom,msm8998-bwmon.yaml      |   2 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 115 ++++++++++++++++++
+ 2 files changed, 117 insertions(+)
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+-- 
+2.25.1
+
 
