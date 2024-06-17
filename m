@@ -1,115 +1,173 @@
-Return-Path: <linux-kernel+bounces-217013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3DB990AAEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:21:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A621D90AAF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CC76B26000
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAD55B316D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC432188CD0;
-	Mon, 17 Jun 2024 09:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B640D193065;
+	Mon, 17 Jun 2024 09:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PbqQOMOP"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="SMv6SDFZ"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E60B192B88
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBBB192B82
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616880; cv=none; b=Hn+qMyWDDHz9GzCinuAALfrNS0E0r/dndH3NbvGfVNnqKIZo9qc8tunIOJXE014YtYrS/QKCCdQx1j2ooWCRAdQ2RavuxriLgJjqQVj+jBgXQ0efrE0t/PyUg9DM01jwMtVd8VUTWA/j6km4kOkyWgoT7JBvRynBC4Ku9CfW7NQ=
+	t=1718616922; cv=none; b=df9xd+sSQBjVuVDd5UHHycM1B2pwwxQk6kXGln7k6ALSo7AUJZzePzeJGgFAqKW9q0+L6alwXnK8FQ1Fj+WMw8yGUhYIBvjYfGfToS1TcMRREe0Wf6SL9Ipil5EJnluG4+zD6iBgZQMzp7RzOlgnbUuvB+st6A6+50geUsSGXhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616880; c=relaxed/simple;
-	bh=eQ3GEmVfz/NFFavQ5n+cPs0wp3Jo10dh1DwRVPw1aME=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FHPjcpmsOMkw2KCrVsg/YHOkX1zwVf79vCTcr4ylgigg+k6P9hN9m5temB4OeLmnhuZNHqQiwXBnDBOgJM2HQVWJfabMb7GTOJToH9EKDPh6yqj0/6kHXkYzPj7ZR+s2+DRq5TXVXeZuMHeM3QjXn8N2LsGP4SKErjaGJEUBPM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PbqQOMOP; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c4b92c09bso5547715e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:34:38 -0700 (PDT)
+	s=arc-20240116; t=1718616922; c=relaxed/simple;
+	bh=QeyjTSziSsVFe1DChrP/yRnOREqQL0sosAgzfMWH/J8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hmil6GGJ82wuc8/hTasktsS/v/ZV8GnEfAtzU/SaykcQ/YmYJfquv5aQ3fZdkxWS2rj6RvleYHHKVKduiViGoo/oB1XV+3JbmDNJv+rH23gTNKRT0hQuoQz0e/W6QA46qgy+LmqNtkGUJFLQoWLZ7OpEbe5zWfeExLC0UBkpvx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=SMv6SDFZ; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-797a7f9b52eso327882785a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:35:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718616877; x=1719221677; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pZqlfzq0gqd8L9nHKEtDudKTVJ2RTjWVZ3OJQhA6rBE=;
-        b=PbqQOMOPL+ZjqEOB2y7P3WMc7nwjms/hKhbpjzmpBdWoX8Wea+u8Md/MMdbE67z9Qa
-         fUe+RmpDytiSpJJ/2M0rdzFXPAGtl5aSjzJcn/mmKDkAzVsUC+ONIiyX8DEVkgXvbK/n
-         LvmLsAcz49Vn5PGl6dU1ciOkqJ4o+zuChoCZuKEf9LS6SDBY2UxaGgqnpXPS00GL7V5n
-         2p2vuLpVI+WzhymLz6pivD0YrI0/ROB1NeMLBIUT5MW4ucwei+Pje+ZeM9nHo04x8489
-         0rIxiYByQrNgkJ8KHPlPjSKDXK3BXkt16M/BZ7+dqyGK06e7BGmlBjrFqcqiM1Y6O/vH
-         1/0A==
+        d=citrix.com; s=google; t=1718616920; x=1719221720; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=hZzV45iNv0Ldf9zk8+wWWXuniGWZT5cS9IFQO5nsD4k=;
+        b=SMv6SDFZGsQ2cng1kRTcug84syzHiuXCNBZ42axgHRsC3BggWWRZUMWmTKuNO/IqFT
+         mdwrFXVlKFf2fwyVT+djVUngDPRauODJmvdgiw+alwpMsdm01dEo20sunFZ2q0q83vsm
+         89roBV80JOLo+roVucRrFRmhNv5GkW2LPt23w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718616877; x=1719221677;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pZqlfzq0gqd8L9nHKEtDudKTVJ2RTjWVZ3OJQhA6rBE=;
-        b=X1CNVNlQoFf/0ouHZ6tg3ahm2dgk4qIaTwV3IJTJAnTW8lTOlmJ4ECZvEjCgGJ2/wf
-         2eGQecaDWKCMbbPh9w+waK4NAoc5eZMQvNgJlFzQGHONtx2XQswiQuuIo4T+IcL64c3T
-         YfTd5FAMKiBuDmaOvE/21rPTAeW9+6/g0pkDNaKAHP0lUOvrkOd8leoQlsdGL7bjoB7l
-         t/QF59hwfkakM2zv8t7UazHmrwz2o42sTXOZMpPPz42C0YAGwxENzw4n41SMmNfHWKWk
-         dtXPabwIcCHIe06boSWAxFWoj48usEhHrDbDzTQJHurBvTtXn/Fo0BlnSMC+C58KGVsl
-         5inQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNbXJMwP667X5yM1HmZN/0l8OVIPB7RvB9HHyViyzqIS77UUpjsrvYYF1DM3sMt1BEbrERbch3jw9zb+0RYWQk7Am06s1GLARqGkPR
-X-Gm-Message-State: AOJu0YwUApd2rDzREZzbDTWuG9cSNIEHCV9bieY2P+FPrm1g2Uop+Jo4
-	c6mzqmr3ZALOVP5db12s++snoNp1f52335KjiZ61qqrzD55MyQqogoaFTA70BqHnqPMM49SO4vL
-	t
-X-Google-Smtp-Source: AGHT+IGTlennQ1HIxAYqKG4+OH6QB/vWUXrpLW9Q5q5XLEK9WNED7iZgfkSiN+EXrJNQbyVatzIneA==
-X-Received: by 2002:a05:6512:1c2:b0:52b:863a:59b4 with SMTP id 2adb3069b0e04-52ca6e6e576mr6799194e87.41.1718616876583;
-        Mon, 17 Jun 2024 02:34:36 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f602e0c2sm152224985e9.14.2024.06.17.02.34.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 02:34:36 -0700 (PDT)
-Date: Mon, 17 Jun 2024 12:34:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 net] ptp: fix integer overflow in max_vclocks_store
-Message-ID: <ee8110ed-6619-4bd7-9024-28c1f2ac24f4@moroto.mountain>
+        d=1e100.net; s=20230601; t=1718616920; x=1719221720;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hZzV45iNv0Ldf9zk8+wWWXuniGWZT5cS9IFQO5nsD4k=;
+        b=nQIpySKGx/VMriBjQU3QglD8OGMZLvY3+Mo3sqr4b3JLS8GW9qoRd1ocYwJDLWp6fp
+         Mxom2VDThpA5+kawuEzi7kNrC80tmzEZQk3LXUGw5EDjhG1gt6T29+nEjwt7GXuvw4bf
+         13k0ayVkIrGOAtUPy6FWQedOzkPj1GzOkvgH0R1GlPhGGZTBOHSu/NM1mbXlilX+bmff
+         yR1XOaqR41DzceM3Lwuidc4+qkweeZnaYkme5d8GUidhZvu3Sl+XaTh/Ip3hBB6WSYgV
+         IUEDSmLoIBedwFB/YpSW4pu+F0n/GQkOor3qncivmKFs5L5myvpdOy35apd2M3iuUeHa
+         njgw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1rG8wcsQshuikYYYk4D/ACZ5+ZtGrLinal/VsC8iKfWmhE6FNyh4OKPJo9TVnLHCs5SeBZuyJqko/n2HadEn9gKeUgiaNxq6NCxj2
+X-Gm-Message-State: AOJu0YxT9nhBpZQwvoMLUldhvel6XKMPhPo6msySlpH5UY+WwmWX6twA
+	L+Q7qDPEWGyuokqQ/4Zp8v1TQ/V2UjyH78c1G+qM2D/QFB5BirbWYb6itfIHDCU=
+X-Google-Smtp-Source: AGHT+IF2aZVz2wdsoed5g5hsJNVZ5D0M7nSHyyRJA+LASgY7f1atiDw7hH6bBcRtto7990SD6YfPFg==
+X-Received: by 2002:ad4:4381:0:b0:6b0:6965:511 with SMTP id 6a1803df08f44-6b2afc6ca64mr87440946d6.7.1718616920332;
+        Mon, 17 Jun 2024 02:35:20 -0700 (PDT)
+Received: from [10.125.226.166] ([160.101.139.1])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5bf2832sm53569346d6.24.2024.06.17.02.35.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 02:35:19 -0700 (PDT)
+Message-ID: <f4242edf-6c78-421c-8e21-63627b13c35f@citrix.com>
+Date: Mon, 17 Jun 2024 10:35:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH PATCH 1/9] x86/cpu/topology: Add x86_cpu_type to struct
+ cpuinfo_topology
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <20240617-add-cpu-type-v1-1-b88998c01e76@linux.intel.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20240617-add-cpu-type-v1-1-b88998c01e76@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 32bit systems, the "4 * max" multiply can overflow.  Use kcalloc()
-to do the allocation to prevent this.
+On 17/06/2024 10:11 am, Pawan Gupta wrote:
+> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+> index cb4f6c513c48..f310a7fb4e00 100644
+> --- a/arch/x86/include/asm/processor.h
+> +++ b/arch/x86/include/asm/processor.h
+> @@ -95,6 +95,9 @@ struct cpuinfo_topology {
+>  	// Core ID relative to the package
+>  	u32			core_id;
+>  
+> +	// CPU-type e.g. performance, efficiency etc.
+> +	u8			cpu_type;
+> +
 
-Fixes: 44c494c8e30e ("ptp: track available ptp vclocks information")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: It's better to use kcalloc() instead of size_mul().
+End of the structure?  At least that way new additions are less likely
+to add more padding.
 
- drivers/ptp/ptp_sysfs.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> diff --git a/arch/x86/kernel/cpu/topology_common.c b/arch/x86/kernel/cpu/topology_common.c
+> index 9a6069e7133c..be82c8769bb2 100644
+> --- a/arch/x86/kernel/cpu/topology_common.c
+> +++ b/arch/x86/kernel/cpu/topology_common.c
+> @@ -140,6 +140,14 @@ static void parse_topology(struct topo_scan *tscan, bool early)
+>  	}
+>  }
+>  
+> +static void topo_set_cpu_type(struct cpuinfo_x86 *c)
+> +{
+> +	c->topo.cpu_type = X86_CPU_TYPE_UNKNOWN;
+> +
+> +	if (c->x86_vendor == X86_VENDOR_INTEL && cpuid_eax(0) >= 0x1a)
 
-diff --git a/drivers/ptp/ptp_sysfs.c b/drivers/ptp/ptp_sysfs.c
-index a15460aaa03b..6b1b8f57cd95 100644
---- a/drivers/ptp/ptp_sysfs.c
-+++ b/drivers/ptp/ptp_sysfs.c
-@@ -296,8 +296,7 @@ static ssize_t max_vclocks_store(struct device *dev,
- 	if (max < ptp->n_vclocks)
- 		goto out;
- 
--	size = sizeof(int) * max;
--	vclock_index = kzalloc(size, GFP_KERNEL);
-+	vclock_index = kcalloc(max, sizeof(int), GFP_KERNEL);
- 	if (!vclock_index) {
- 		err = -ENOMEM;
- 		goto out;
--- 
-2.43.0
+c->cpuid_level ?
 
+~Andrew
 
