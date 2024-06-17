@@ -1,258 +1,119 @@
-Return-Path: <linux-kernel+bounces-217960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6862F90B6EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:47:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F121190B6F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EA131C2372D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:47:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34861C235EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8303516630D;
-	Mon, 17 Jun 2024 16:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AEB166316;
+	Mon, 17 Jun 2024 16:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Br9rhF+w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="iWpLN9U9"
+Received: from mx0b-00823401.pphosted.com (mx0b-00823401.pphosted.com [148.163.152.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A85517C8;
-	Mon, 17 Jun 2024 16:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3639C161904
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718642794; cv=none; b=f9fLylV2tS2CS6as5hS2AZyRDdEfQ0V9mIUVvtEEGhw7hZbFePYV32C5Y0JsqFXhoCytit24dISCmQUGOpPEp1s2KbLYLCppFm5zQWP4xkXsip3Ome2cNHAS+0zkKMLFzNOtlAga1ckPNRSiFOVrTsfNHuW2me4acmTTLAZeUvs=
+	t=1718642833; cv=none; b=u+F7OAPm/Ha/AljikRKdRMnkNk5I0Xn03Pvxu6kqYNB/exlGgAKluhzw3cEUzllEOVNmmLJXmDdfZukLC80uHbY9s27CO1oMgeoCL+lRzY1V3e78sezpjlmiUV+M3X+S5yS8ipuyfNXM5oGkYvhi0yk7eFRiqeBajgQL0xYzD6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718642794; c=relaxed/simple;
-	bh=vd97vaQMsq53OVRgUZpwAbni9g8Y6CZ7AU9B12DalEI=;
+	s=arc-20240116; t=1718642833; c=relaxed/simple;
+	bh=h2YviOske7O2TPcfa5tW0K0jMjjD7vn02FDgSx2WDcc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ia0iSB7sLYXQTzutUMzH8oFIumtwMI0Uqq5NerNBLdMRBkp/jh7qNn8khuMr93oVyC4HCQhSo2Le/YWN7voqPSP5ojkAR+s81Hh/2MA/V0d8KSy1pWZcWgIU/ZAyX2c50ogURc1w0xHKckPd2o/l35or64OzsV3AqwLqQgznmoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Br9rhF+w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76CADC4AF48;
-	Mon, 17 Jun 2024 16:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718642794;
-	bh=vd97vaQMsq53OVRgUZpwAbni9g8Y6CZ7AU9B12DalEI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Br9rhF+wxtiKOtp20GpJdDvnB1wXyvG2QyUfT94QGAyrN0CphiQ3WEkgixJML/GeH
-	 UyvMEbqji1JzhEGfjCNeW3NwPWLHouEUpbGAfBZ7tmIcew6U1At4lTJeFO+maKdG83
-	 NRLd9BMW8ztDkldVVTQ+yyq7mXEYQMLHrDGX+22ps26F7JfEpdREP9kCzlfscA89MJ
-	 S9/lcyOVqCHZCBrDMFJh4Ovse87r6MsVNGM/oHbiO/fshIHXv7uGQoNlW2YGfET/g+
-	 jQH7YGLsA6wsf6CweLor5w31IxFdKAb00pT2cViRf4lrfivPbfMTcC6EDgS7XB2v44
-	 QKg5ctIw7g6sQ==
-Date: Mon, 17 Jun 2024 17:46:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Khuong Dinh <khuong@os.amperecomputing.com>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com, Nishanth Menon <nm@ti.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2 6/7] dt-bindings: mfd: syscon: Split and enforce
- documenting MFD children
-Message-ID: <20240617-purge-family-c0c62b8e73d8@spud>
-References: <20240616-dt-bindings-mfd-syscon-split-v2-0-571b5850174a@linaro.org>
- <20240616-dt-bindings-mfd-syscon-split-v2-6-571b5850174a@linaro.org>
- <20240617-zoology-silica-2c8c78363b32@spud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QD1UDTfcum/N9ynpw1rNBqUoI+s+AzLCrJHGnmANmj9YpDTd1XkRTa6Qd3s1CE4qtjWaEe597/yWsFmxp1KA/54hrESNY730XF2SbcBGTGm+BRPdDTQIMudxSXwlWpTE2bTwn3wUk4U8XCcBCkw335bh4/SO1U82i1wNFbP+rjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=iWpLN9U9; arc=none smtp.client-ip=148.163.152.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355091.ppops.net [127.0.0.1])
+	by mx0b-00823401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HCO9C5026396;
+	Mon, 17 Jun 2024 16:46:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM202306;
+	 bh=X4dJsGQtk2DxwZFqhEBHgDozUFxcgumfjnL0nm6nunA=; b=iWpLN9U9iFC0
+	EDJewOCyZbJFQwbUYgrdKiDYVTHygeHeRbyxvL6zAwx8YnrfiH2aPpkMo1FTb9Ot
+	Xa2/ET8a0JxA8Xr1y6aaxA/QwgfW0O3KuTbEIrpuP6WuHyqzVhcYJ6ZOoQcJ4CkM
+	dnJeZahy/wwWU3lWNAeb1ktZnvslqofjAQkl8Hw5bPxbPH5XiJdaPvV2m7lGgkeg
+	iunl2rACf7m4F6oAdQ4hrv+LrBZmWrY4aZaB+4WJg2zEVJRoN4RxXfbsTzSG6tPC
+	KWmQ/E5UEJgVDkNCObqg8Udp3I3heV8wByyrufJzj8kN5DJyEHxGNJu6m1wKDvgF
+	vrzIdnau3Q==
+Received: from ilclpfpp01.lenovo.com ([144.188.128.67])
+	by mx0b-00823401.pphosted.com (PPS) with ESMTPS id 3ysr2gjx30-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 16:46:36 +0000 (GMT)
+Received: from ilclmmrp01.lenovo.com (ilclmmrp01.mot.com [100.65.83.165])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ilclpfpp01.lenovo.com (Postfix) with ESMTPS id 4W2wl0181xzfBZq;
+	Mon, 17 Jun 2024 16:46:36 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by ilclmmrp01.lenovo.com (Postfix) with ESMTPSA id 4W2wl00RlQz3nd87;
+	Mon, 17 Jun 2024 16:46:36 +0000 (UTC)
+Date: Mon, 17 Jun 2024 11:46:35 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Zi Shen Lim <zlim.lnx@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Puranjay Mohan <puranjay12@gmail.com>
+Subject: Re: [PATCH bpf-next v6 3/3] arm64/cfi,bpf: Use DEFINE_CFI_TYPE in
+ arm64
+Message-ID: <g3qlk7mpcn4wussku5jubbfnxn6ihhysenlmmlocmvw6gc724r@fem2y2oactzc>
+References: <illfkwuxwq3adca2h4shibz2xub62kku3g2wte4sqp7xj7cwkb@ckn3qg7zxjuv>
+ <c6fsgv7bjt2d2ejz2uuin2g475fkvpyenp32wehdqlcf6ihqgx@5gicsaw4u37f>
+ <CAADnVQK6Vh-pv_ewS0RjBBfL5KUsMXpdMNFvv5F0OPWzABEsAw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="f3lcdY1GhHNaaFOV"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240617-zoology-silica-2c8c78363b32@spud>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQK6Vh-pv_ewS0RjBBfL5KUsMXpdMNFvv5F0OPWzABEsAw@mail.gmail.com>
+X-Proofpoint-GUID: De9ZZ3vPhjb_CdLWo1RUJ5PlMKvTN6lD
+X-Proofpoint-ORIG-GUID: De9ZZ3vPhjb_CdLWo1RUJ5PlMKvTN6lD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ bulkscore=0 phishscore=0 mlxlogscore=566 adultscore=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406170130
 
+On Wed, Jun 12, 2024 at 10:07:09AM GMT, Alexei Starovoitov wrote:
+> On Wed, Jun 12, 2024 at 8:32 AM Maxwell Bland <mbland@motorola.com> wrote:
+> 
+> Please avoid the code churn.
+> Just squash it into the previous patch.
 
---f3lcdY1GhHNaaFOV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sweet, thank you and done:
+https://lore.kernel.org/all/ptrugmna4xb5o5lo4xislf4rlz7avdmd4pfho5fjwtjj7v422u@iqrwfrbwuxrq/
 
-On Mon, Jun 17, 2024 at 05:44:52PM +0100, Conor Dooley wrote:
-> On Sun, Jun 16, 2024 at 03:19:26PM +0200, Krzysztof Kozlowski wrote:
-> > Simple syscon nodes can be documented in common syscon.yaml, however
-> > devices with simple-mfd compatible, thus with some children, should have
-> > their own schema listing these children.  Such listing makes the binding
-> > specific, allows better validation (so the incorrect child would not
-> > appear in the simple-mfd node) and actually enforces repeated rule for
-> > simple-mfd devices:
-> >=20
-> >   "simple-mfd" is only for simple devices, where the children do not
-> >   depend on the parent.
-> >=20
-> > Currently the syscon+simple-mfd binding is quite broad and allows
-> > any child or property, thus above rule cannot be enforced.
-> >=20
-> > Split the syscon.yaml binding into:
-> > 1. Common syscon properties, used potentially by many bindings.
-> > 2. Simple syscon devices (NO simple-mfd!).
-> >=20
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >=20
-> > ---
-> >=20
-> > Depends on:
-> > 1. Patch in MFD: https://lore.kernel.org/all/171828959006.2643902.83082=
-27314531523435.b4-ty@kernel.org/
-> > 2. Previous patches in the series.
-> > ---
-> >  .../devicetree/bindings/mfd/syscon-common.yaml     |  72 +++++
-> >  Documentation/devicetree/bindings/mfd/syscon.yaml  | 294 +++++++++++++=
---------
-> >  2 files changed, 251 insertions(+), 115 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/mfd/syscon-common.yaml b=
-/Documentation/devicetree/bindings/mfd/syscon-common.yaml
-> > new file mode 100644
-> > index 000000000000..c3ff3a7afce3
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mfd/syscon-common.yaml
-> > @@ -0,0 +1,72 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: System Controller Registers R/W Common Properties
-> > +
-> > +description: |
->=20
-> This | can go, right?
->=20
-> > +  System controller node represents a register region containing a set
-> > +  of miscellaneous registers. The registers are not cohesive enough to
-> > +  represent as any specific type of device. The typical use-case is
-> > +  for some other node's driver, or platform-specific code, to acquire
-> > +  a reference to the syscon node (e.g. by phandle, node path, or
-> > +  search using a specific compatible value), interrogate the node (or
-> > +  associated OS driver) to determine the location of the registers,
-> > +  and access the registers directly.
-> > +
-> > +maintainers:
-> > +  - Lee Jones <lee@kernel.org>
-> > +
-> > +select:
-> > +  properties:
-> > +    compatible:
-> > +      contains:
-> > +        enum:
->=20
-> And this can be const, given it's unlikely to grow?
->=20
-> > +          - syscon
-> > +
-> > +  required:
-> > +    - compatible
-> > +
-> > +properties:
-> > +  compatible:
-> > +    contains:
-> > +      const: syscon
-> > +    minItems: 2
-> > +    maxItems: 5  # Should be enough
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  reg-io-width:
-> > +    description: |
->=20
-> Same with this one.
->=20
-> > +      The size (in bytes) of the IO accesses that should be performed
-> > +      on the device.
-> > +    enum: [1, 2, 4, 8]
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: simple-mfd
-> > +    then:
-> > +      properties:
-> > +        compatible:
-> > +          minItems: 3
-> > +          maxItems: 5
-> > +
-> > +additionalProperties: true
-> > +
-> > +examples:
-> > +  - |
-> > +    syscon: syscon@1c00000 {
-> > +        compatible =3D "allwinner,sun8i-h3-system-controller", "syscon=
-";
-> > +        reg =3D <0x01c00000 0x1000>;
-> > +    };
-> > +...
-> > diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Docume=
-ntation/devicetree/bindings/mfd/syscon.yaml
-> > index d6fa58c9e4de..d4e9533cf3fe 100644
-> > --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > @@ -4,7 +4,7 @@
-> >  $id: http://devicetree.org/schemas/mfd/syscon.yaml#
-> >  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > =20
-> > -title: System Controller Registers R/W
-> > +title: System Controller Devices
-> > =20
-> >  description: |
-> >    System controller node represents a register region containing a set
-> > @@ -19,123 +19,196 @@ description: |
-> >  maintainers:
-> >    - Lee Jones <lee@kernel.org>
-> > =20
-> > +# Need a select with all compatibles listed for compatibility with old=
-er
-> > +# dtschema (<2024.02), so this will not be selected for other schemas =
-having
-> > +# syscon fallback.
-> >  select:
-> >    properties:
-> >      compatible:
-> >        contains:
-> >          enum:
-> > -          - syscon
->=20
-> Wow, this is noisy. Is it not possible to achieve something similar by
-> making the select check for not: compatible: contains: simple-mfd? Or
-> did I misunderstand the intention here?
+Waited 'til Monday to lower the frequency.
 
-Ah, you'd match things then like the intel,lgm-syscon, right?
-
---f3lcdY1GhHNaaFOV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBoYwAKCRB4tDGHoIJi
-0uYIAP9U0vg1Om+wI+Ea8a94/cOvSL1g+49lge2yhs2csIzjoQD+MDs+0h94sqXN
-B3YNAZJSO//xDpVCwRLiP51eOKZJCQU=
-=xOgQ
------END PGP SIGNATURE-----
-
---f3lcdY1GhHNaaFOV--
 
