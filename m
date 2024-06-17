@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-218286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8FEC90BC1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:24:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D2990BC1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C4241C20823
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3452D283765
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9582B198E85;
-	Mon, 17 Jun 2024 20:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452C51990AB;
+	Mon, 17 Jun 2024 20:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BKEnu3FH"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="E7UVGwuX"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2B318C356;
-	Mon, 17 Jun 2024 20:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B929519005E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 20:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718655795; cv=none; b=ptOphIn6KDQi6dGOsBj4Srh+8s9i5vx5XHHg0HEa3j3hRX/CyC/HEqTJsuMmAhAUF4YFqHbxnDw7FVLbzWFjDU0RK6+9fsQpVAqiqKT4XlzKQlse4NomvTdPsw1y5ovI8kStk4oxUIn+Z1sqktTq4oqMsgEuH/IQD066GaTYhgA=
+	t=1718655844; cv=none; b=plk/+mFTvJqI9aXODZpccOlkF0m8eUbN8lmWgVp6s5rTPbS9KI/A6X5aY3Taz3FbRKVHixFxsb4ZsLvcOYVvrGGodtMd9N7r2LZrv01pZ83fG+S0OAFAT1+DxXK2viRgG+m7RVw2r318hN7Swb6ga4B0ddWoulzfrJO959GC6m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718655795; c=relaxed/simple;
-	bh=wPFlEF1YxGWvnXt+UGKCZ/qmJZ8yp1ER+M+fmZUtcUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pfLI3e5vg/sjdWfosDBl6aqSZO4GE2rirbbYF5r02K/0qLD60VJ4YXPeUSLJiJPO+fpOI51l9ekA01m5Aj414M4Hh27BKxgIFqs9Y3fUfAMBfdJ3r2cd0ZdsEe14TvpVRLfcHI2zXlH3qUdTzWV+wnT+tzOw1YbekrZ0tX+9F/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BKEnu3FH; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718655757; x=1719260557; i=markus.elfring@web.de;
-	bh=wPFlEF1YxGWvnXt+UGKCZ/qmJZ8yp1ER+M+fmZUtcUY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=BKEnu3FH9vi2Y9qEWKLS/+d8sFWsJAp9Qj4yaQ/eSG3Teo45LtKj7bhCGTRVFpLh
-	 pmgsWGVg1gTGLrAANCJEDypgL98I7rfjXhdXu16LbAzpUilmQWqnXzgWqA17tgyDC
-	 RPHt3g8VTPi8pnGk8qtCsaBAgzmyIOsyPAA2yhRlt6dglBwChleFnK+gDKFlvipij
-	 8Y94EjsMlqzZpD0vh5ezj6PjjBYDWiZ/J7RnNSmeMSB+s4nVgv6q4noMK7zHc2UD8
-	 s2PThjGz9h2M66gh1LWndFKsv75KCQ0rLxNLWnGBQvSy14pQ7U6hZhl9YZ2BGj1on
-	 KYINHNA0mgbTPRF+tQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4N98-1sTin51qH0-00uYEY; Mon, 17
- Jun 2024 22:22:37 +0200
-Message-ID: <06b000c0-2ba3-4e83-8f6f-fcb8fd7d955b@web.de>
-Date: Mon, 17 Jun 2024 22:22:34 +0200
+	s=arc-20240116; t=1718655844; c=relaxed/simple;
+	bh=zkHuXWx8sTa/oNFKVsylABjyDEiMRGafzuDbOPJQ5wY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=objaOZEAi/FAT3BE/9Y8t9iEytgDvEemFx11sGn4P6yigu+yJJCRghMTN37Uvf/UZ13NC5bREWNFATmqRb0WlsjCmu9dcS4KcxBKLPIgYjWYdKIML1CrIwCMk2YptcSXG4cvkvFPRALumCw2xlqtyhUCckWuCA82dKJYyI70/w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=E7UVGwuX; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111aeso2574716a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718655841; x=1719260641; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=htUQv2quqma4VO2V330/QazjqgtbFEOYp5UR9RkEEGk=;
+        b=E7UVGwuXeO17nlxTabAgDSAmM1Zcsk3Kyqprvi04Pqvbav1VlEQZsg8OGAOrCoYVUk
+         Ux94QgQ57NGMoaJQb2n/gTb39kq1psHfFgzxGrpV6C0VGdWPDRGi6+L1FB2ZUvF8QlOr
+         GZWgMMgU1TJRyGlQQr+NGWcx6VT78faj1MIOg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718655841; x=1719260641;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=htUQv2quqma4VO2V330/QazjqgtbFEOYp5UR9RkEEGk=;
+        b=mCGplzt1aJ/2s6o8mqa1umiQeFNBHzj/onqqZjqWVqlu/Y2m//zThdoznrCpP4Uwkg
+         4x7kck7WmaCUqtwPVLuWMWT0DkVU/hsGpWMEOKeaF8n9X1nLUiZskHqvrbQCxR1mou5/
+         BIB3AmOAFvebQbWVvdu+s1FyQP4yJkycsv4qDGLVAjBls76Rbv+4YkULqiFc5hcD/4mb
+         ATZ562Zhr1dedSKmJh+9Qxh9+HXcCxD2shHrNE6U2hzA50uYhlcK3VSPG65TVmB2ZiiK
+         dMGcmu1qeJZ9sPwCIGLkvmYTI+aQmE3v7lONnrUajY4oSYsYQCkVXfpw/hr1zzq59My3
+         GArw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrxg/u+I+4bM62KgGzwy334yr0LkPQwXkgV0eObrQUpKleLWF6SSFZ/thK3h1C6blHg+RxJOnvOijcVsSlN46Ai2k8RL9SwbycMYXn
+X-Gm-Message-State: AOJu0YwyIz2lFvE1G6UydUiJlTDc6QM46d834ckN0v1GNh0jHF+nsK7y
+	MmgOy0Pqc7eaRXcIZNzRrCO80cLI13g78MssuSguVhQi9E3hx4oe1+DM5EXI99HRwq9aEJ8dJu2
+	ksmpFMw==
+X-Google-Smtp-Source: AGHT+IE/hYABClOBrgsQE0CLfSmhtCAhiAqDoEyhi/4slhnVZc7N+4mBvhVSNSwXwTJs801VR9k+QQ==
+X-Received: by 2002:a05:6402:8c9:b0:57c:cdb5:cd68 with SMTP id 4fb4d7f45d1cf-57ccdb5d22dmr5009378a12.10.1718655840767;
+        Mon, 17 Jun 2024 13:24:00 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72ce07esm6817386a12.12.2024.06.17.13.24.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 13:24:00 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111aeso2574652a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:24:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUsy1stknyq8l23Kxd6IksBuYIWmfijeglMtASn4VotNZP/11P1ULaQFUnqBfBKzNOt0lpHpnzYO/IyJ0OFVX/XqnMLBJtL+Dvf47s9
+X-Received: by 2002:a50:f699:0:b0:57c:6afc:d2b0 with SMTP id
+ 4fb4d7f45d1cf-57cbd64969amr8464309a12.1.1718655839701; Mon, 17 Jun 2024
+ 13:23:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v20 02/13] rtase: Implement the .ndo_open function
-To: Simon Horman <horms@kernel.org>, Justin Lai <justinlai0215@realtek.com>,
- netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Hariprasad Kelam <hkelam@marvell.com>,
- Jiri Pirko <jiri@resnulli.us>, Larry Chiu <larry.chiu@realtek.com>,
- Ping-Ke Shih <pkshih@realtek.com>, Ratheesh Kannoth <rkannoth@marvell.com>
-References: <20240607084321.7254-3-justinlai0215@realtek.com>
- <1d01ece4-bf4e-4266-942c-289c032bf44d@web.de>
- <ef7c83dea1d849ad94acef81819f9430@realtek.com>
- <6b284a02-15e2-4eba-9d5f-870a8baa08e8@web.de>
- <0c57021d0bfc444ebe640aa4c5845496@realtek.com>
- <20240617185956.GY8447@kernel.org>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240617185956.GY8447@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Lc/0lPeIknXC+2mJLAHxQI9vHcnuZ5BJ2Y8Ilu2I/szlWScorLa
- F5wgk6FyprnTmEpigGddIqhEdLIcADF8yJCoN2GEvNgf6tmjLBok37UhRI0jzTSvYrAD7lv
- n1B8ARyZqiaPn7Ksy85dcWaTByCimFLbRTVqZM3zTePqREB8d97jNJ0ZZ0ovnY+VkDUNAQZ
- JVI9IkLf8OviJKDr8wEkw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:QkFZKWs7BT4=;G8PB0RBsiNIwrWBnokHcU9Z/Ygs
- +8l5bJw/wQq1l+S2cs0uOH99dXbo1WOSnSCBxQeUkG0w8gZMoihEoaqt0tqGT/vqe+yvs8EH1
- O6ysLv3slZUR0ynmiKrwOQ6P5KDtAl8lzhMq6sZPFrvlU85OkLIpgrnas9APqjq/dGi9merPb
- S0mBjoDmt5Nxo9WrcWE7rMAcYQAyIuRD7XwMbHIOqCW7PUCbRfxPD0C03XbpjrWtj7/pJXEA/
- Qwi5XB+rhP1/lv4qkvpQnkPbfXXXQbMZ4OQDmh6JlzNJkjYMParjoMKxEvx91jJRvzk2KQaq8
- LH7l33/3ONTMfmD9ij4S8kOzpkjU4EdiCax4qCw4wcdfzy875gbitgqFZecV+TJkgZ2PYCU2Z
- b0O8PP230kxJZeRELjneElpFQ5ETYBkOHYHdtlkw+8PSwoX8Wv5y+VZ0AlIn40jiB+sAVyAoK
- 4x/+2y3N2ZrRJ/hXknE/cw1YrMfJVJtw4ijRCQBuGrkwbNXnNPuF2Mm2fvxHw7G+zHnG0/GFx
- GYRaNLYutU215ZGnQm2wyrzeUaQNgBR6axg8wP9TfpnVnAFi8STU29vnfBZAuUCTy4OFlwjbk
- fOL1EBv6ygW47lnpOsow64HpogyExOflz0Jqha8J+pd4dlCwl2IVNHMkFcr9ItbeCuydvjHPZ
- 8Suibm424jdiwxoDMKtQN+LR/viQxebho9bJc/s5kShdPuqwrbbu9sV2h/5D1CcwHxEHiIvrf
- nmc66CJ/FAftIEtKmUvaPN5pxbplayAwN69Ajd1fup9XfjVUir3lGeXv7KFSj3DzL1GTfDYWM
- PzVAqGgFXLSNQLbzIW9C3Ohh1LvHNZ8FInOpjM+/dg/lM=
+References: <20240617114712.45d4743f8bacb832dea4b5a9@linux-foundation.org>
+ <CAHk-=wjiUzOHfHaWgUcByAygaG6w_BKOqbTN6EHrDHaXb_i+xA@mail.gmail.com> <ZnCZvOHqbp-itE_-@casper.infradead.org>
+In-Reply-To: <ZnCZvOHqbp-itE_-@casper.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 17 Jun 2024 13:23:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgEjJA7rNaDsmG_YUwr7Nw5BGP=tMaKK2=DPWm6r6hxKA@mail.gmail.com>
+Message-ID: <CAHk-=wgEjJA7rNaDsmG_YUwr7Nw5BGP=tMaKK2=DPWm6r6hxKA@mail.gmail.com>
+Subject: Re: [GIT PULL] hotfixes for 6.10-rc5
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Rafael Aquini <aquini@redhat.com>, 
+	Jiri Slaby <jirislaby@kernel.org>, Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, 
+	mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-> I would also suggest reading Markus's advice with due care,
-> as it is not always aligned with best practice for Networking code.
+On Mon, 17 Jun 2024 at 13:17, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> This patch wasn't even cc'd to linux-mm, so I never saw it.  I would
+> have NAKed it based on this already being fixed.
 
-I dare to propose further collateral evolution according to available programming interfaces.
+I actually cc'd y ou partly because you were part of that earlier fix,
+but also because of the implicit question:
 
-Regards,
-Markus
+  "So it's very possible that the
+
+        if (IS_ENABLED(CONFIG_32BIT) || in_compat_syscall())
+                return 0;
+
+   test in __thp_get_unmapped_area() should be extended to take requested
+   address randomization into account"
+
+and whether we maybe could do better?
+
+For x86-64, the default for min compat bits is 28 - which is
+presumably plenty - but maybe we have issues elsewhere?
+
+               Linus
 
