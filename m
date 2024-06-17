@@ -1,117 +1,146 @@
-Return-Path: <linux-kernel+bounces-217221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18ADF90ACFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:31:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1437090AD00
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46271F263D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:31:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E61431C21975
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC526194AD8;
-	Mon, 17 Jun 2024 11:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7718194C69;
+	Mon, 17 Jun 2024 11:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hnqAzZCi"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="xk9Nq4I4"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B442A193065;
-	Mon, 17 Jun 2024 11:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9021946BC
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718623856; cv=none; b=fx2V47F35SusV/K3nPo7jaBSs4o8VpD6uLoPqwb4nChp5A7t9EI4Kfc2wDjno+Wde8ufNvuHh2D3BDW0ThbZ3XXcJR065s1L8efrSzn9YbdrAesx2aK33UXiFeZBv09ETBf1d01vdeiEM32rP+24sX950ipLogCzWlwcoumXxbs=
+	t=1718623882; cv=none; b=cHtrekIl+LcUKwAQYWr9UZLMwHavWMBML85/W6EEkBOgSSixt1VW/Yu4nVmfNRz6VgBbnUPpfMa+Kp2QxRRLF0yKcttHxJI2/ueFCIE76SiTbMlV0yJJFuCTTKVj2KxfXqPvOXG9Z8CiTyTrNHkgLd/OeypewAtRfbPQvDb4jGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718623856; c=relaxed/simple;
-	bh=HzBwIhrvBDEM5gpG4WaMTS01iW2I1HhXUnZuP86SIlY=;
+	s=arc-20240116; t=1718623882; c=relaxed/simple;
+	bh=cCoXQV3kYF7W4zbN+zvGdFQuynk8VUtSE0YxweJekic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLJuHiuBzoV0MzV715qrXHJHWh58Uri9P22ELbVmKdHcR6n1tlrjCnpxmiI0SmqGDUEgDX9RyqDteFhQppyHUR2EyZme9k9SHTMRbire53DT4U0wI9keeJnvoiv/x8zqfGpC+YhzajE7gHJgfKHDh2e9VzfTQmJv4Do5UJA+BVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hnqAzZCi; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718623852;
-	bh=HzBwIhrvBDEM5gpG4WaMTS01iW2I1HhXUnZuP86SIlY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hnqAzZCiyk1aGB6H02eNX0ndmijhYXmeo8UhmiPnvoqkJ/Z8oNxbyDYrr7gqz+U/8
-	 FQaragdjVfcnexMovURVKJPysXA0KgPY4ysd/8kLXIdGkj/RIyTDh2Uu6ig6XEKQp0
-	 YkjZx9CViut6Mp5jAbyw7+1j7dhozmCO9qJOlbb5h0fM7c1HZSZzbE2UnsEQw6aG7n
-	 4BvNkU8cvT+9ACjNXIZPTgeUMHl9FlIFm5ngHbkec9vBYroVE4eIYBhFFHJYwxjsew
-	 rGZEQ+auVWYN3Mdx9M5HoN523vzdbtKAuTMX3nMG03mH6OxTrenBH/fWtAVoqJKKyN
-	 7QB1p2bjBYN6w==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D73A137804C8;
-	Mon, 17 Jun 2024 11:30:52 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 72F681060734; Mon, 17 Jun 2024 13:30:52 +0200 (CEST)
-Date: Mon, 17 Jun 2024 13:30:52 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Jianfeng Liu <liujianfeng1994@gmail.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	ezequiel@vanguardiasur.com.ar, frattaroli.nicolas@gmail.com, heiko@sntech.de, 
-	kernel@collabora.com, krzk+dt@kernel.org, linkmauve@linkmauve.fr, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	nicolas.dufresne@collabora.com, p.zabel@pengutronix.de, robh@kernel.org
-Subject: Re: [PATCH v6 4/6] media: hantro: Add RK3588 VEPU121
-Message-ID: <o6iccgurpi7sraq7plxaccz37i44te4jaqicnp2nqbke2qtskh@4kboulg3zywx>
-References: <20240613135034.31684-5-sebastian.reichel@collabora.com>
- <20240617025022.25122-1-liujianfeng1994@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BSQl1MzTfGcqHxaHdqCMyvr0OvRtsIoYBHwxWFZ+9a3dpje4DGRziO9Uny08MoQWc3jc+MijKqtpt6cSViPUQhde4qJuclunQQvD1LoDMEVeOOd4METkM0LEbk3Pyi4MulM/Umb0cQgGYkcPigUdA/tLFqV3GrDldnpsuvhEvGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=xk9Nq4I4; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4217a96de38so30938715e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 04:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1718623876; x=1719228676; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TgVC6xwTMFPOUKFAMsWw+F8yDLHqZOwZjG2EMVIlrFk=;
+        b=xk9Nq4I4Pmhxl05WUMPKxHg09v1+PVElruoTgX+hyaAPFW4E2PrbOfF/zsf30lGy/Z
+         g3KNTg+umlONiMtgXaeghp6ZRMNSSyc3uZoUqrGaLC2TowpeSo4FeBOYiOIj+8sRfKO7
+         fohT3pmvg+vwgwObQZ78ADhN9I+atIRiVcRRfvi3cfUa7VNLBoFRszq4KP0aiEMN8p/G
+         2LFoCknTELepfWWwqQejcOZdjikD1RKxvCFwp4pNBkWrrsuOZ1kRuMWb2DKZhOqAfrUq
+         abH7c+6+Cc6P2cCL1zKMjSKSTo4rYkh47f1yC3u9k8n8xvWCtKFYpXRgdaiPtutR5lpT
+         0zQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718623876; x=1719228676;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TgVC6xwTMFPOUKFAMsWw+F8yDLHqZOwZjG2EMVIlrFk=;
+        b=bQ5Pefw6XY7XBUj1JXBQ4RMJP9GFWS+xxqhmR/KRXF9NUE0oGGykWGbclVUYSiIk69
+         800srm/BwxAVjcYU/BsvRgAXfd7sL5M1s6akI2WsrT+xlIsI77bK0m8I+yhLtlC6/GO/
+         ovJF8Q2FA59cqzHLY0L6Hd8NldyNJnw+XSbN/vWKwnmRfIgUixyPyPlKW6F3Rybe5tbf
+         3/HbVusOm98TQtqFDuugZTDMORKFmXpjgj/U15F2XS9JP0SsHnWWb5+4ak+4dqxxaVGX
+         bDcS/+izJiOGL3B/1EsPYwgJ+ym8WJVDK8gh10ZWS49j8blbWLWv9mR6kpou3rcquQC/
+         FjCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0amOoOVNhTTmRPvipO5I6Yc7rckEhvzbfvi+1VFGdD9KMIhtcc2yJMFzGEp7oKo94BdZZXr1YxTymQ9J+K/173cV5JXtzSwEdS1FG
+X-Gm-Message-State: AOJu0YzKzGzLIBwrhv9AoSLGVefdrnO9P6Klc3Rxgk+QrDGWO7K4wakV
+	eRvSR1yAlZM+mhC8139QqrrpRWupd3Grm8N/JGBaFcitowmYDO5YtYiRTITf7vU=
+X-Google-Smtp-Source: AGHT+IFQdNTBFMjluYuYDNiSDw0jBvXyuET+DmpHPyKJrukjPXm7sadAvuTx8wiCI2gh9SgZquoIXA==
+X-Received: by 2002:a05:600c:1d07:b0:421:7435:88d7 with SMTP id 5b1f17b1804b1-42304844106mr87253345e9.26.1718623876032;
+        Mon, 17 Jun 2024 04:31:16 -0700 (PDT)
+Received: from localhost ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286eefa63sm193971445e9.1.2024.06.17.04.31.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 04:31:15 -0700 (PDT)
+Date: Mon, 17 Jun 2024 13:31:11 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: luoxuanqiang <luoxuanqiang@kylinos.cn>
+Cc: edumazet@google.com, kuniyu@amazon.com, davem@davemloft.net,
+	dccp@vger.kernel.org, dsahern@kernel.org, fw@strlen.de,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	alexandre.ferrieux@orange.com
+Subject: Re: [PATCH net v3] Fix race for duplicate reqsk on identical SYN
+Message-ID: <ZnAef_DSlzfNP0wh@nanopsycho.orion>
+References: <20240617075640.207570-1-luoxuanqiang@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4reipacbikci5md7"
-Content-Disposition: inline
-In-Reply-To: <20240617025022.25122-1-liujianfeng1994@gmail.com>
-
-
---4reipacbikci5md7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240617075640.207570-1-luoxuanqiang@kylinos.cn>
 
-Hi,
+Mon, Jun 17, 2024 at 09:56:40AM CEST, luoxuanqiang@kylinos.cn wrote:
+>When bonding is configured in BOND_MODE_BROADCAST mode, if two identical
+>SYN packets are received at the same time and processed on different CPUs,
+>it can potentially create the same sk (sock) but two different reqsk
+>(request_sock) in tcp_conn_request().
+>
+>These two different reqsk will respond with two SYNACK packets, and since
+>the generation of the seq (ISN) incorporates a timestamp, the final two
+>SYNACK packets will have different seq values.
+>
+>The consequence is that when the Client receives and replies with an ACK
+>to the earlier SYNACK packet, we will reset(RST) it.
+>
+>========================================================================
+>
+>This behavior is consistently reproducible in my local setup,
+>which comprises:
+>
+>                  | NETA1 ------ NETB1 |
+>PC_A --- bond --- |                    | --- bond --- PC_B
+>                  | NETA2 ------ NETB2 |
+>
+>- PC_A is the Server and has two network cards, NETA1 and NETA2. I have
+>  bonded these two cards using BOND_MODE_BROADCAST mode and configured
+>  them to be handled by different CPU.
+>
+>- PC_B is the Client, also equipped with two network cards, NETB1 and
+>  NETB2, which are also bonded and configured in BOND_MODE_BROADCAST mode.
+>
+>If the client attempts a TCP connection to the server, it might encounter
+>a failure. Capturing packets from the server side reveals:
+>
+>10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
+>10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
+>localhost > 10.10.10.10.45182: Flags [S.], seq 2967855116,
+>localhost > 10.10.10.10.45182: Flags [S.], seq 2967855123, <==
+>10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
+>10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
+>localhost > 10.10.10.10.45182: Flags [R], seq 2967855117, <==
+>localhost > 10.10.10.10.45182: Flags [R], seq 2967855117,
+>
+>Two SYNACKs with different seq numbers are sent by localhost,
+>resulting in an anomaly.
+>
+>========================================================================
+>
+>The attempted solution is as follows:
+>In the tcp_conn_request(), while inserting reqsk into the ehash table,
+>it also checks if an entry already exists. If found, it avoids
+>reinsertion and releases it.
+>
+>Simultaneously, In the reqsk_queue_hash_req(), the start of the
+>req->rsk_timer is adjusted to be after successful insertion.
+>
+>Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
 
-On Mon, Jun 17, 2024 at 10:50:22AM GMT, Jianfeng Liu wrote:
-> Hi Sebastian,
->=20
-> Thu, 13 Jun 2024 15:48:45 +0200, Sebastian Reichel wrote:
-> >+	{ .compatible =3D "rockchip,rk3588-vepu121", .data =3D &rk3568_vpu_var=
-iant, },
->=20
-> rk3568_vpu_variant is decoder's data, typo?
-
-See first sentence of the commit message.
-
--- Sebastian.
-
---4reipacbikci5md7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZwHmgACgkQ2O7X88g7
-+poayg/4kaCjw30iGYWhUbN3lrFew1L0jfg9s4DrgwLa4Mni+dk0QDVauaYcZPGg
-BAEDHvhkwbFY8yBkzuQLu3UWBdXDwlj9BpOtVT25kHorgUe9ZKmUuiAeFkjWjYC6
-66dNjUPhVtMcbrVvdw4iRTfX2ADxjYfF92yPMQ9uOqkMWThV7lshwWTRgOCbSsm7
-zs8VH+RLwdYIAGm6GFVJsZsDG0sHnalPd3q/Jw6wwZvnaLP6d5rGsC3I56vOOH38
-9vS/EuJxrKIL6cbWTrNkY8V4JHH0e83zoLcR+XdwVaJ2Yilqi7EK50JI4UyfIJ2L
-/poeWNwHc57BigUlOjpCzNC8D9748NDMz+CqPnDXJlxGU3MK6ugq6e41nurC++DL
-9uLk+mlGxoH0A+SuakrzYms+xD0NsybpA42/R5n/pYHq1+PwTezb9j3U6/b+blj/
-GL5C7/dwV1MugPOfuWpzCaBWkfHZOZDU603CamBAAk/RmOgcvgvIlTOh9/JJBxVr
-2zfmfnrcd38hGeOPIqdT3P451zmqKVBMaDdgJYvWxMt9pwu4M9/wRYIvJ8vAppad
-LrBMtILqCCfj5zW4Lqmv72Fwn9DA+dJs8ca9OYZVt+G4b65RBbxQ/0gNKp2qWLXa
-HAnDmSyVBsrP3tJq4BDCn236mYV8m0crsPmSOpmWXZv5NLjAPA==
-=KuxJ
------END PGP SIGNATURE-----
-
---4reipacbikci5md7--
+You are missing "Fixes" tag.
 
