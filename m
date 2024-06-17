@@ -1,161 +1,232 @@
-Return-Path: <linux-kernel+bounces-216684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731D290A2FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:05:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590E290A302
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 466761C212F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 04:05:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E75EB2132A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 04:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3821317625D;
-	Mon, 17 Jun 2024 04:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28A9180A71;
+	Mon, 17 Jun 2024 04:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvGhA6PL"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="VZ/v6+RV"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11olkn2062.outbound.protection.outlook.com [40.92.18.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89BCC136
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 04:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718597124; cv=none; b=qzDHt2XTRjUxZFi9OyFuRJ6NoE56T50kxCpat96dx5O4BLd2h1xOSiPrHkB2F2mx8WhwMC+UsiLk7dFoD/CHy8Q+1oSHRozI4k5rZsTCoMD3ssT8hG13HGLlPH33rpc7Y4H0Jdezvn9KUT7Wtlp6DuqYUYZVZax5JNkLFtTb6hM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718597124; c=relaxed/simple;
-	bh=1Z7PVXS03jeg28KD/sVy81FM6xwzFE6cYTtmGrFr2lQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W8JoTStKTWRBvM9/75jPDBksDTUxhOKU6mzOWnEbMp/oWRxYfmf5hr80bnzzRGrMzyk9yYRGdr+S/LsX18iybpA3Y/2NVRipJkk75GEIg90s80HzjjefKFPlodDPRf02FDhcORoJgAKfv/ht4ZAEOQlbNsH4TvHhQvJRqvWhzGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvGhA6PL; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6269885572so862766866b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 21:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718597121; x=1719201921; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wnHs+ttpIhxBtZZDEGrGjnsJJbPUFcnFdNuNGHL5qFw=;
-        b=CvGhA6PLIaN/KisWJqJhTGN0lMCEzIoDXLVAlJ35HEwMpOmmHGz0lUHs3mGspWybFT
-         FOqEn1vj4wrN6HeJcVpCi+IzUWj0SUrojHwtOloPK9j70PSTg13303+fW8wFzu6qj8Ls
-         yHKOD5AViyB52YNRcX0q5g3Kn+gAn8vHBdGUPnqwM4TB6PG4UTORKLx+cTRxjcBRQKQ0
-         BjHYZmt7ur4fJ3ieYybtTRY14CXrKwDLh+7PwYmP7yCA83y92wI/OIV9P3QYEt5tF39S
-         C6BU5ClnuiRCCUwbKp7HiBYXfgvTWIOYAeh7Hm6J8t6tSEtX38KwtPGulqz0IYYTgutN
-         1UhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718597121; x=1719201921;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wnHs+ttpIhxBtZZDEGrGjnsJJbPUFcnFdNuNGHL5qFw=;
-        b=ORturdC3lGUc02IExK+liIvmqvpNE2NIyCWD7kXXHG4C5UKYobLHuis/PdF3KnFS6k
-         TrZ4hTeymE/lVAQU6wJc/i9rP5YJipSyLyFUckaD01ywHnegn/nvEYBkYHoPJMmybBvh
-         3caZzJvvK5jJgniDAG7mrw7IJJRolZBH9hhLv8y4rTBEG+mpYSwZJWUSG9yCXBeBdR4G
-         EeiuijURicCR6I7PcBQFWVPPJPrVEGf+iJ6ELfqfYD/Fu8iziLJzcsmu0rsqwr7UEwRl
-         E4jHf7xDvvAlosAbGE/EE5tUJmaIISsccxIUtmNDCxM7KrhsKTSVtGNngV5E0UcecPem
-         Gq/Q==
-X-Gm-Message-State: AOJu0Yza7qgggy5Kwidbsbf9+1rhQ/91ocEJYox65QWssw3iutJb7zCs
-	n/3QhHaNN3GYeFkFFbYpocctUzUWmYUGXQikr0/qMZ8NDyO6a/i9IIJNWVPS08SNMB1ehwTq9E7
-	zHsNpm6agwnpUUx20kH3t8An3cx2Qcrbt
-X-Google-Smtp-Source: AGHT+IEbT+on5FURdXp9jqDXHPmoqNjT/fKeJA2db5/Rid6w7kFKR+PSWZE9DAWlIUEk1wOU9yIsBWQ/EiUsdc6bUlc=
-X-Received: by 2002:a17:907:774e:b0:a6f:7902:7516 with SMTP id
- a640c23a62f3a-a6f790276a5mr300248466b.14.1718597120793; Sun, 16 Jun 2024
- 21:05:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB3810A2A;
+	Mon, 17 Jun 2024 04:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.18.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718597180; cv=fail; b=Z5CK8CklfepN6N3Cf/oUeQa8wPJPB/mh1boFg7/1nn9aoGThA8jSXzcyWJDBipe0O+0No9K5VG8q86BvYY/Xw0BwSsyJneVJyfbU07gtCScM98lq+WCrYiWt756EvE6uqF8cqOlCMDCzyGp/eBFAE9iifYqZamtocpFMhgjaZns=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718597180; c=relaxed/simple;
+	bh=3DYu666y+uW2udMQ1LH8sT2CcS93AJtgJeLsggLXJIY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=r5KsY16+EQRpU5o7wdE1Y8PFjH8wXSWLGSPHvMmQqrwga34X45PLR7xWzkJY+jaOGuio1+XKKGwG0FFfK2mfZ8AbEuOcf0Y+Lx8GaF7NCe2cXxi6mxmQjog6FQ4u/n+PYiwa0GC5yLkC3zlHX85NSx/IuNe25nlanDsa7TOjVvA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=VZ/v6+RV; arc=fail smtp.client-ip=40.92.18.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GQ2edO/7vnIs7yG9Qem+Ga08jaVWDrU1Ib843iu+DrQjoIsJBdeJFD6ZMMDErsgKL3InUOtRDbjro1lzUdtZymn22BZ1JbBHayMhEK/zKV6W78CAxXjIR+ZSs/JcXzU2oHmcRKJY3660ho80yYfQ8tXj1Hdf6mSRs3+ode2etBH66ugT2saXxZAhQERAWC/BofDNZIImG9CC2YYm7xFbek1o4ZwcVbfvoXbRBVrtMWW8azxyfk+hhRUOC3NXbgUWO8wQmZezm3w1yBOr16DvcH48YC8E2CYplurm2n5G2cvaWhlK/NYk+yQfMVwYcqLogrOyRTOUsiX9hFcOxR6Mpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/zI7G52kAvmPQ+ebPAQUKDO8+uZrUG2Pk1M6l1K3GgU=;
+ b=fJ4ScllnXgLR+nNCIKNiKbeC84zJHFb8a2Bo0BYmwbOPo9TrT2QgkjxB3bYh5RN1t8ttsoLc1aLKY4pKJGTvx3LBqFDeVLvqgly9rrEVYr4qMulPLP7NE5AlyyPKlDZ559l1nW1pPrehDnnmkNeiBWgi+bp8jVdSabHgPp9Ecj2vX722YTBCneWYDggbH+jMQVvJOizfwMzyX+bz0hDE0lTE4e5uMufJaC4EZcE1yyrRx3iifmXIr3BUL2rvHRa17wTvRYDg8b/KwNwEUzTGTEaCXDq3YFJQM1s2kj5QZWLxr82lr4ROVkTnElRYPTrTNt2XRNff5a7zjqThoA+J3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/zI7G52kAvmPQ+ebPAQUKDO8+uZrUG2Pk1M6l1K3GgU=;
+ b=VZ/v6+RVj6G8aiXWN09dG/iJ8FB5XIx+Ii17r6seLqnd+fGZ3yucvXXfcNAmJNJuxqeLX7Jx2Y/fO6jaLEnDfgY6OGPqyziBP3l60OAG2dvP5nPt89u1q9osSUqSckjTHxzyhYr0a/A+MrE59aGpBgfXMhdrCa9lu/X9XztNRd/uMp/j+hcyk0FNlFgWr859UMWBG+DAkRZ0PCeTdQFEOXIwLAq49U+7yt2Y5ia0CnVylQVfN3mKvyajZMqjejJxvHi78x81ch69pb0omUyTfLRn9um6aqZ0/iC5R6x4mhFcEUxMnc4/HMIR3vN5g4Unr1kJGOVO1H4h+RcQ6vmqHA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SJ0PR02MB7645.namprd02.prod.outlook.com (2603:10b6:a03:329::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
+ 2024 04:06:15 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7677.024; Mon, 17 Jun 2024
+ 04:06:15 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+CC: Steven Price <steven.price@arm.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, James Morse
+	<james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>, Suzuki K
+ Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Joey Gouly <joey.gouly@arm.com>, Alexandru
+ Elisei <alexandru.elisei@arm.com>, Christoffer Dall
+	<christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, Ganapatrao
+ Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: RE: [PATCH v3 00/14] arm64: Support for running as a guest in Arm CCA
+Thread-Topic: [PATCH v3 00/14] arm64: Support for running as a guest in Arm
+ CCA
+Thread-Index:
+ AQHatysPRYaUedD8SEOOWptuNOqVvrG7hVGQgADmoQCAAA8XwIAEWhgAgABd+QCAABqzAIAKGFwQ
+Date: Mon, 17 Jun 2024 04:06:15 +0000
+Message-ID:
+ <SN6PR02MB4157B95E74A3865C44F6132ED4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240605093006.145492-1-steven.price@arm.com>
+ <SN6PR02MB415739D48B10C26D2673F3FED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <ZmMjam3-L807AFR-@arm.com>
+ <SN6PR02MB41571B5C2C9C59B0DF5F4E7ED4FB2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <ZmbWpNOc7MiJEjqL@arm.com>
+ <SN6PR02MB4157E83EAFA5EBEF5C5889BFD4C62@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <Zmc73jAL2XdLU49P@arm.com>
+In-Reply-To: <Zmc73jAL2XdLU49P@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [o1v+mIqT5cE6fPVXe6lez/pjj9e6s2cc]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SJ0PR02MB7645:EE_
+x-ms-office365-filtering-correlation-id: d9b524dc-9896-43a4-eb53-08dc8e82d550
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199025|1602099009|440099025|4302099010|3412199022|102099029;
+x-microsoft-antispam-message-info:
+ 5H/M3KBLlSN0ivzLZk+2yUgRgnrNX70F8NByob0nZ4Rb9ILB/K43ZTrbtpYlbmZvjPY54G0Sg67fvj4DXLpccpUbfhloBiu086gduFvHZQ/oA5dCM0LCk7KV+OLfT1oCglNSdwOnpPtxCiHbKf0kiZvpxSv6VpqkASoFhHM2bkSThwgkj+h18TSMWbu1/N+LGUmUvh/qAXaaODJ4+siJBq5LOG8JwMqmVL3PYmrV1BHZEenrg2KcRWEAqwMBz/pBQj85VdPyaBKEqmFQaH9I66t/gmN0xUB3uR38Lb0UzOr1CZW5jO5Omh+WT0qqeisXsKFJGHPOCiVQnyACKMw9VWhrlPJUcks/7H4YOOHjpc+RpmPGWr79vsA7GpoM52ojcNwhZVyLKoCinGgUXeu+NdBAFDpp/Ks3sS4x/aK8HYib3jzR3H7HIW8DOGRJjRrsf9ecJxMv5ZwdCxc+I7wClXoh71An7/7AIUp0tWuZ+dFr3XiQt23s3Vudtn1zv7GFstUCSvsWNspWmLk1QJ3nSNUTHQbbD0e16/9HWQ+KLWUA1fJEy59jmjaWOcsxkqEzVHYSsXfboxZlJ2B6sN8h6GTkhUCFynFz8L+rOroVIDZBjQp4Av4ggpkMwe1nGUvgtOKw/d1rmnarLN2akuef3c9JvxTqrQaLkGwgZzdK0SOMRKH0hTkxhYtaYydqRII5
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?RxrpkyEIR1HTnG/HHZENwjdTjzoTYwes/hThO/xlISbUI/2Bc2piZICiSOyq?=
+ =?us-ascii?Q?MjlAOVR8w0VTVM7TUIwOXA18ha7/Jdre9IR0jcG4rqCh3KcFJAuuBXieHUEQ?=
+ =?us-ascii?Q?5zIDSpphFTz27GFWlXnWwf0t9i1JQW/UEUkI6BqeRJVTCAkCywLBOtgMdacR?=
+ =?us-ascii?Q?GwkGWPspwmhEGKh1szS8LrpZ5v2lO4OSGbO4O3mb51uQGKBPfnCdisEj1dz1?=
+ =?us-ascii?Q?ONLCYFo6kjdX+w1H4j9PivVbxYKLGUJ+ycMdxpoK+IS+uQsigS45wt1UY3KF?=
+ =?us-ascii?Q?cFUQUu+i7T/ULWV+SzoHIEJiyV1vAKDfNDfkbL/N35YIFlFlF0Mkz8d5Hsve?=
+ =?us-ascii?Q?lKkEN2k557QHmrPaUpYXCHu9XsaiqwhxTpXA5b+HCwdJ4hLTxn4CmvY4fE/2?=
+ =?us-ascii?Q?eofWeZg6H2bqZKoJsCAcCm1PEOGPcgCNEhDG4z3oTb4XvE1mwUbNF9H7ZZaf?=
+ =?us-ascii?Q?vFqD+UrlfBthln48xXmIi3E5X+ujWCXBVGTQlsKXvhDts11Mck0OZXB+6zwQ?=
+ =?us-ascii?Q?yj9uMnHC7+EJYjXf8En21NtIZpIrhGV1qymzR/LVGKYsmSGMADT4gXsIEIwN?=
+ =?us-ascii?Q?McDJ3UZROCiEbe+FuN+yPjuqWMaeM4o2ZYySl00lkl7tiRWcGRgA6GnUCCHs?=
+ =?us-ascii?Q?GVQHDY5u6lx7dKRw7HUEn0/0R3uZg9vFicIrROM+ihAbS1wt5WN6YuYxGVfK?=
+ =?us-ascii?Q?FHeAHmS+XGv3E/TtNVyLYHhtSEFUqffi74dqxmkOB+P94kjJ2f3nJu+riMMi?=
+ =?us-ascii?Q?kXxM6Kp5PKg4xvIM3+fvX88aYsyNjmIk3J1NkgCZ5dWTZyuaAHHyqcXPrKjr?=
+ =?us-ascii?Q?O+U+ic+qSfNxAgC1+pVrc2z2ntNFaKrpKxwOloKs9W4YF3JUOq7TFHccthz7?=
+ =?us-ascii?Q?8iZ5St19xtl8AgnW5wvpjqOw0/wYZ+U5lMq8AgqFGUp6jwJSax6Aeq6Xt1AF?=
+ =?us-ascii?Q?Z4gsCkWWFR4OFPsOFkuAGlzfsgcDVUL0vSXJCHTLUDJ4wGzEbSbMZaPzCn2T?=
+ =?us-ascii?Q?elLFH+8O0J4LYAZEDjfgGq05vZNRsBbHXRTzYsnenucVcFE6xyt8cxW4lM+U?=
+ =?us-ascii?Q?OS4TFOtS2uXvL9iT70UkNOZ8kkM0bZ+pN4cfhdheaiCqwpm/SIhLiH1hOICG?=
+ =?us-ascii?Q?+1SOP1LxTIVPMLDLP6ZWU1W5BKaG01nns70PEwmdJW9dkTsYgFL/KzSdNx9o?=
+ =?us-ascii?Q?55m373M1qfbstE8X9j4k30m+oGAOhVjgr81my1ZKHW8cx9qYTOKN4i2BWwY?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5534c03a-4b8a-4ebc-aff9-2e66c7ba59d8.bugreport@ubisectech.com>
-In-Reply-To: <5534c03a-4b8a-4ebc-aff9-2e66c7ba59d8.bugreport@ubisectech.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Mon, 17 Jun 2024 14:05:09 +1000
-Message-ID: <CAPM=9twiDQ0Yv8p-oWWWZnnFViMiN79U6VGSC-wisSE-oYOEqg@mail.gmail.com>
-Subject: Re: WARNING in drm_mode_create_lease_ioctl
-To: Ubisectech Sirius <bugreport@ubisectech.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
-	"maarten.lankhorst" <maarten.lankhorst@linux.intel.com>, mripard <mripard@kernel.org>, 
-	tzimmermann <tzimmermann@suse.de>, dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9b524dc-9896-43a4-eb53-08dc8e82d550
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2024 04:06:15.5251
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB7645
 
-Cc'ing dri-devel
+From: Catalin Marinas <catalin.marinas@arm.com> Sent: Monday, June 10, 2024=
+ 10:46 AM
+>=20
+> On Mon, Jun 10, 2024 at 05:03:44PM +0000, Michael Kelley wrote:
+> > From: Catalin Marinas <catalin.marinas@arm.com> Sent: Monday, June 10, =
+2024 3:34 AM
+> > > I wonder whether something like __GFP_DECRYPTED could be used to get
+> > > shared memory from the allocation time and avoid having to change the
+> > > vmalloc() ranges. This way functions like netvsc_init_buf() would get
+> > > decrypted memory from the start and vmbus_establish_gpadl() would not
+> > > need to call set_memory_decrypted() on a vmalloc() address.
+> >
+> > I would not have any conceptual objections to such an approach. But I'm
+> > certainly not an expert in that area so I'm not sure what it would take
+> > to make that work for vmalloc(). I presume that __GFP_DECRYPTED
+> > should also work for kmalloc()?
+> >
+> > I've seen the separate discussion about a designated pool of decrypted
+> > memory, to avoid always allocating a new page and decrypting when a
+> > smaller allocation is sufficient. If such a pool could also work for pa=
+ge size
+> > or larger allocations, it would have the additional benefit of concentr=
+ating
+> > decrypted allocations in fewer 2 Meg large pages vs. scattering whereve=
+r
+> > and forcing the break-up of more large page mappings in the direct map.
+>=20
+> Yeah, my quick, not fully tested hack here:
+>=20
+> https://lore.kernel.org/linux-arm-kernel/ZmNJdSxSz-sYpVgI@arm.com/=20
+>=20
+> It's the underlying page allocator that gives back decrypted pages when
+> the flag is passed, so it should work for alloc_pages() and friends. The
+> kmalloc() changes only ensure that we have separate caches for this
+> memory and they are not merged. It needs some more work on kmem_cache,
+> maybe introducing a SLAB_DECRYPTED flag as well as not to rely on the
+> GFP flag.
+>=20
+> For vmalloc(), we'd need a pgprot_decrypted() macro to ensure the
+> decrypted pages are marked with the appropriate attributes (arch
+> specific), otherwise it's fairly easy to wire up if alloc_pages() gives
+> back decrypted memory.
+>=20
+> > I'll note that netvsc devices can be added or removed from a running VM=
+.
+> > The vmalloc() memory allocated by netvsc_init_buf() can be freed, and/o=
+r
+> > additional calls to netvsc_init_buf() can be made at any time -- they a=
+ren't
+> > limited to initial Linux boot.  So the mechanism for getting decrypted
+> > memory at allocation time must be reasonably dynamic.
+>=20
+> I think the above should work. But, of course, we'd have to get this
+> past the mm maintainers, it's likely that I missed something.
 
-Does https://lore.kernel.org/dri-devel/20240617035258.2774032-1-airlied@gmail.com/T/#u
-help?
+Having thought about this a few days, I like the model of telling the
+memory allocators to decrypt/re-encrypt the memory, instead of the
+caller having to explicitly do set_memory_decrypted()/encrypted().
+I'll add some further comments to the thread with your initial
+implementation.
 
-Thanks,
+>=20
+> > Rejecting vmalloc() addresses may work for the moment -- I don't know
+> > when CCA guests might be tried on Hyper-V.  The original SEV-SNP and TD=
+X
+> > work started that way as well. :-) Handling the vmalloc() case was adde=
+d
+> > later, though I think on x86 the machinery to also flip all the alias P=
+TEs was
+> > already mostly or completely in place, probably for other reasons. So
+> > fixing the vmalloc() case was more about not assuming that the underlyi=
+ng
+> > physical address range is contiguous. Instead, each page must be proces=
+sed
+> > independently, which was straightforward.
+>=20
+> There may be a slight performance impact but I guess that's not on a
+> critical path. Walking the page tables and changing the vmalloc ptes
+> should be fine but for each page, we'd have to break the linear map,
+> flush the TLBs, re-create the linear map. Those TLBs may become a
+> bottleneck, especially on hardware with lots of CPUs and the
+> microarchitecture. Note that even with a __GFP_DECRYPTED attribute, we'd
+> still need to go for individual pages in the linear map.
 
-Dave.
+Agreed. While synthetic devices can come-and-go anytime, it's pretty
+rare in the grand scheme of things. I guess we would have to try it on
+a system with high CPU count, but even if the code needed to "pace
+itself" to avoid hammering the TLBs too hard, that would be OK.
 
-On Mon, 17 Jun 2024 at 13:12, Ubisectech Sirius
-<bugreport@ubisectech.com> wrote:
->
-> Hello.
-> We are Ubisectech Sirius Team, the vulnerability lab of China ValiantSec. Recently, our team has discovered a issue in Linux kernel 6.8.  Attached to the email were a PoC file of the issue.
->
-> Stack dump:
->
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 18929 at mm/page_alloc.c:4545 __alloc_pages+0x402/0x21b0 mm/page_alloc.c:4545
-> Modules linked in:
-> CPU: 1 PID: 18929 Comm: syz-executor.3 Not tainted 6.8.0 #1
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> RIP: 0010:__alloc_pages+0x402/0x21b0 mm/page_alloc.c:4545
-> Code: ff 00 0f 84 15 fe ff ff 80 ce 01 e9 0d fe ff ff 83 fe 0a 0f 86 0e fd ff ff 80 3d c7 cf 6a 0d 00 75 0b c6 05 be cf 6a 0d 01 90 <0f> 0b 90 45 31 e4 e9 87 fe ff ff e8 5e 3e 9b ff 84 c0 0f 85 7a fe
-> RSP: 0018:ffffc90001cc7808 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 1ffff92000398f14
-> RDX: 0000000000000001 RSI: 000000000000000b RDI: 0000000000040dc0
-> RBP: ffffc90001cc7ab8 R08: 0000000000000007 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 00000000007a1200
-> R13: 000000000000000b R14: 0000000000040dc0 R15: 000000000000000b
-> FS:  00007f1717ba5640(0000) GS:ffff88807ec00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000203d0000 CR3: 000000001f5c0000 CR4: 0000000000750ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> PKRU: 55555554
-> Call Trace:
->  <TASK>
->  __alloc_pages_node include/linux/gfp.h:238 [inline]
->  alloc_pages_node include/linux/gfp.h:261 [inline]
->  __kmalloc_large_node+0x88/0x1a0 mm/slub.c:3926
->  __do_kmalloc_node mm/slub.c:3969 [inline]
->  __kmalloc+0x370/0x480 mm/slub.c:3994
->  kmalloc_array include/linux/slab.h:627 [inline]
->  kcalloc include/linux/slab.h:658 [inline]
->  fill_object_idr drivers/gpu/drm/drm_lease.c:389 [inline]
->  drm_mode_create_lease_ioctl+0x4ca/0x1f70 drivers/gpu/drm/drm_lease.c:522
->  drm_ioctl_kernel+0x1eb/0x3f0 drivers/gpu/drm/drm_ioctl.c:744
->  drm_ioctl+0x582/0xb70 drivers/gpu/drm/drm_ioctl.c:841
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:871 [inline]
->  __se_sys_ioctl fs/ioctl.c:857 [inline]
->  __x64_sys_ioctl+0x1a1/0x210 fs/ioctl.c:857
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xd5/0x270 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x6f/0x77
-> RIP: 0033:0x7f1716e8eeed
-> Code: c3 e8 97 2b 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f1717ba5028 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f1716fe3f80 RCX: 00007f1716e8eeed
-> RDX: 00000000200003c0 RSI: 00000000c01864c6 RDI: 0000000000000003
-> RBP: 00007f1716f13014 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 000000000000000b R14: 00007f1716fe3f80 R15: 00007f1717b85000
->  </TASK>
->
->
-> Thank you for taking the time to read this email and we look forward to working with you further.
->
->
->
->
->
->
->
->
->
->
+Michael
 
