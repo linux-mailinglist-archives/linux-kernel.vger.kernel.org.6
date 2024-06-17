@@ -1,58 +1,61 @@
-Return-Path: <linux-kernel+bounces-217404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C419190AF44
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2AD90AF48
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76C7B1F21167
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:28:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A41F71F210CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD7C1A01B7;
-	Mon, 17 Jun 2024 13:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95231A0B06;
+	Mon, 17 Jun 2024 13:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMz0sBN2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpeBujbl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66C119FA99;
-	Mon, 17 Jun 2024 13:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFA11A01CA;
+	Mon, 17 Jun 2024 13:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630470; cv=none; b=SwujxhTkNsmwd+MGSbO/WScR2Hs1ZkURXcT09iBqHlzxCQGlVI5ln1SELAvKIrI54vMlBfp6Z6WY28J+V4OhF5l18DDyNs6Pn7o+/Sk+154xBFwhvFUE+gEmMqpaSJkIu8G7XtwV9Q8GB3+5TfcQ520uHJK3kaRnhUqK5fzHIr0=
+	t=1718630472; cv=none; b=AnfuwMUHhWPZpv5qkVmJSVldbnDfUyXwU0NxbE4IA8JgKvr+st+Q8jRi3erpXrENMfaQ/+gXF/2A+dc0UsHmNiCtBDLiITw+ZUVV73xYT9M13i+ouXgsW+xm5uhrpfoClrSpIJobJwJkzdNpWrIYpJ+RMRvSPVckkGO8ffiKk0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630470; c=relaxed/simple;
-	bh=oeoJwNKvryvK/Lmdw9qzBXq4NmsphNr/T/hF0R+fjTM=;
+	s=arc-20240116; t=1718630472; c=relaxed/simple;
+	bh=7sMmr0W+ZNWG77z3Z80KDAuawwS/RyzpRiRosMOSNDs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d0ODZ4p0TGTjdK10hRTNiwd6EL1pdGPHkg/n4UOmfqOGV8Deqrs/RxW/zg//7/0kYIVXZ/GVzfwaDDm+5L8jbU04DPiyIClBzxiU4fTjkf0z3mfwWnTAGwNAWirsRoCqu8cTW8YAQd7IIvCqEQdJjtJMoS1Uh9SfGnrRWydHUD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMz0sBN2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C370C4AF49;
-	Mon, 17 Jun 2024 13:21:09 +0000 (UTC)
+	 MIME-Version; b=orvdO7oCOIrabCfTV1BrIw6GDOUd/40xQQHnU3Y27WLsoLO4b9EUcQYK6L2D62bWQRnTfHcvVwpycEUO8msoQ5+CuCJiZMm0s6yxhswETt/5FFQm0L9Pv+WiuobjNUnBHFN+AVxOMvXjzbkLVmXtN7rm2ytV2t07Vd66Vcyvaxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpeBujbl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B26C4AF48;
+	Mon, 17 Jun 2024 13:21:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718630470;
-	bh=oeoJwNKvryvK/Lmdw9qzBXq4NmsphNr/T/hF0R+fjTM=;
+	s=k20201202; t=1718630471;
+	bh=7sMmr0W+ZNWG77z3Z80KDAuawwS/RyzpRiRosMOSNDs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EMz0sBN2Sfd355NB7vWdZnfKVhY/CnUMIpVEZ7bCLwHnS4wu3+Iuerf4hlJgoD1Ox
-	 FhnadA8g+b4f82/cen23meO+7ymgC7KwruxQqfhbXaSwXIoUVc+UiLd/NOHRA9ZS6E
-	 uNLOf4/UZQwHuMuV4EEIFAF2PlBZJf2wCH9WPKyGyqDoul2ddimod5dUAL7n+0GbjF
-	 YkLbKO60zxirQCa2dyleribnluKcDJA+30GEQL2b0UZ7P10BLCGJljQDaDcRYlXIyW
-	 UZtjSej+122kCYQHU6C3d7tUs89IDh1gXs8vYF50AD4nLHLjtLt42aWTBWpvu2yBEA
-	 51nwyZuyX09ZQ==
+	b=HpeBujblA+1/7ldew/UZooSzaKVE8QXvN5HRJyCgj4R9K+zH6npkEi+MmeH6BlWBU
+	 4wjaHGGp0QJzQF3DHU4Fi8eBfKTSCOOH59xK8/31YEsdm0d5fqYd4BQ86u9tLhds4C
+	 k16sfi6l/XKv6p3ozKCilgg3Cx/EMCchSjgkLvr42NZbMS37zCu0s8PS+vDgkhamiu
+	 pqaHZyDHLDOLFqFdcCefti6NyDfx+pIyPwg70yW7nL4XgpeTqHBGrAdLDgOH5jiCha
+	 z6WXnBJM8FeAiNPG/p+3rTzgTLMQy6D6UfXYqezrO0gKF8uOUo5Y/y9INAO5ZKyG87
+	 XagceqRYbwebg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Rajas Paranjpe <paranjperajas@gmail.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+Cc: Nicolas Escande <nico.escande@gmail.com>,
+	Johannes Berg <johannes.berg@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
-	rafael@kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.9 13/44] ACPI: AC: Properly notify powermanagement core about changes
-Date: Mon, 17 Jun 2024 09:19:26 -0400
-Message-ID: <20240617132046.2587008-13-sashal@kernel.org>
+	johannes@sipsolutions.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.9 14/44] wifi: mac80211: mesh: init nonpeer_pm to active by default in mesh sdata
+Date: Mon, 17 Jun 2024 09:19:27 -0400
+Message-ID: <20240617132046.2587008-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240617132046.2587008-1-sashal@kernel.org>
 References: <20240617132046.2587008-1-sashal@kernel.org>
@@ -62,76 +65,55 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.9.5
 Content-Transfer-Encoding: 8bit
 
-From: Thomas Weißschuh <linux@weissschuh.net>
+From: Nicolas Escande <nico.escande@gmail.com>
 
-[ Upstream commit ac62f52138f752d6c74adc6321e4996d84caf5bb ]
+[ Upstream commit 6f6291f09a322c1c1578badac8072d049363f4e6 ]
 
-The powermanagement core does various actions when a powersupply changes.
-It calls into notifiers, LED triggers, other power supplies and emits an uevent.
+With a ath9k device I can see that:
+	iw phy phy0 interface add mesh0 type mp
+	ip link set mesh0 up
+	iw dev mesh0 scan
 
-To make sure that all these actions happen properly call power_supply_changed().
+Will start a scan with the Power Management bit set in the Frame Control Field.
+This is because we set this bit depending on the nonpeer_pm variable of the mesh
+iface sdata and when there are no active links on the interface it remains to
+NL80211_MESH_POWER_UNKNOWN.
 
-Reported-by: Rajas Paranjpe <paranjperajas@gmail.com>
-Closes: https://github.com/MrChromebox/firmware/issues/420#issuecomment-2132251318
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+As soon as links starts to be established, it wil switch to
+NL80211_MESH_POWER_ACTIVE as it is the value set by befault on the per sta
+nonpeer_pm field.
+As we want no power save by default, (as expressed with the per sta ini values),
+lets init it to the expected default value of NL80211_MESH_POWER_ACTIVE.
+
+Also please note that we cannot change the default value from userspace prior to
+establishing a link as using NL80211_CMD_SET_MESH_CONFIG will not work before
+NL80211_CMD_JOIN_MESH has been issued. So too late for our initial scan.
+
+Signed-off-by: Nicolas Escande <nico.escande@gmail.com>
+Link: https://msgid.link/20240527141759.299411-1-nico.escande@gmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/ac.c  | 4 ++--
- drivers/acpi/sbs.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ net/mac80211/mesh.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/acpi/ac.c b/drivers/acpi/ac.c
-index 2d4a35e6dd18d..09a87fa222c78 100644
---- a/drivers/acpi/ac.c
-+++ b/drivers/acpi/ac.c
-@@ -145,7 +145,7 @@ static void acpi_ac_notify(acpi_handle handle, u32 event, void *data)
- 						  dev_name(&adev->dev), event,
- 						  (u32) ac->state);
- 		acpi_notifier_call_chain(adev, event, (u32) ac->state);
--		kobject_uevent(&ac->charger->dev.kobj, KOBJ_CHANGE);
-+		power_supply_changed(ac->charger);
- 	}
- }
- 
-@@ -268,7 +268,7 @@ static int acpi_ac_resume(struct device *dev)
- 	if (acpi_ac_get_state(ac))
- 		return 0;
- 	if (old_state != ac->state)
--		kobject_uevent(&ac->charger->dev.kobj, KOBJ_CHANGE);
-+		power_supply_changed(ac->charger);
- 
- 	return 0;
- }
-diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
-index 94e3c000df2e1..dc8164b182dcc 100644
---- a/drivers/acpi/sbs.c
-+++ b/drivers/acpi/sbs.c
-@@ -610,7 +610,7 @@ static void acpi_sbs_callback(void *context)
- 	if (sbs->charger_exists) {
- 		acpi_ac_get_present(sbs);
- 		if (sbs->charger_present != saved_charger_state)
--			kobject_uevent(&sbs->charger->dev.kobj, KOBJ_CHANGE);
-+			power_supply_changed(sbs->charger);
- 	}
- 
- 	if (sbs->manager_present) {
-@@ -622,7 +622,7 @@ static void acpi_sbs_callback(void *context)
- 			acpi_battery_read(bat);
- 			if (saved_battery_state == bat->present)
- 				continue;
--			kobject_uevent(&bat->bat->dev.kobj, KOBJ_CHANGE);
-+			power_supply_changed(bat->bat);
- 		}
- 	}
- }
+diff --git a/net/mac80211/mesh.c b/net/mac80211/mesh.c
+index cbc9b5e40cb35..6d4510221c98e 100644
+--- a/net/mac80211/mesh.c
++++ b/net/mac80211/mesh.c
+@@ -1776,6 +1776,7 @@ void ieee80211_mesh_init_sdata(struct ieee80211_sub_if_data *sdata)
+ 	ifmsh->last_preq = jiffies;
+ 	ifmsh->next_perr = jiffies;
+ 	ifmsh->csa_role = IEEE80211_MESH_CSA_ROLE_NONE;
++	ifmsh->nonpeer_pm = NL80211_MESH_POWER_ACTIVE;
+ 	/* Allocate all mesh structures when creating the first mesh interface. */
+ 	if (!mesh_allocated)
+ 		ieee80211s_init();
 -- 
 2.43.0
 
