@@ -1,186 +1,223 @@
-Return-Path: <linux-kernel+bounces-218239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF8990BB9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:59:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED85490BBA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F26C285D59
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:59:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 714E7285CE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DE318FC67;
-	Mon, 17 Jun 2024 19:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C7718FDD1;
+	Mon, 17 Jun 2024 20:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="MPUPtlA7"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eiVRXLWt"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42217188CD9
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135D7EEB3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 20:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718654385; cv=none; b=GS561sTGdowozmrQH6woADfKQJUSmfTcO/sIsfqZaIMqD2jVDC/+fOsL9h2Cdcmov+RcbG53WMX6ICnd8UfSexoXYPOtq13RuYwoqd0umxWvuL7ayBvDrekezCtb/CL5WkxoyL694HFuq+45Ubi8uXwcYuVy270/36Oawr2xSmI=
+	t=1718654438; cv=none; b=uanS0EdcWvxFhF35wvsK2RbBOMdRv8FglVWt0lnp16YDvAP5mkk/zz0fVbLzXT3mUaILu29CSqrLgF+5JmXluhfL+eSPtY4JL0IlrJ+oJJ9MY97YcQdu3dqOF1cjMLxVcsudTMhNvsmaAiEWIsEDcrLKCruYp5BK3VuQF3cgEC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718654385; c=relaxed/simple;
-	bh=08Im5tTtgDtaXbg/OAZrWCIVoI5T9qmWGX+gu7QrY6c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XGh4IKnEuPMVP6HZRpxYxZgse+1KVUJgymEImIk/UstKYOyBQKBhlbNIys6kwlYpWVbL8GqYCPfELg0vtR7Zqj91q/fInQUcdTqZQZ9LGLHU/AKLBkpp+JV/EKPHjvGtgXbvH2MB8MKGS1k0cIGwwOvGX8R42ZT6OZWNkkblIWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=MPUPtlA7; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec0f3b9bb8so31821391fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:59:42 -0700 (PDT)
+	s=arc-20240116; t=1718654438; c=relaxed/simple;
+	bh=EqkXfrkP3gPWSS5BM/zdIIbEjuJc6A1pmdfuyj5xnAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mHoUp6PRaYqVErlH+xp+2NNVPK0y2JzO/mll5I0p5UZk3X1ZrKK6Fal7kY0qssVTLUlPcmG+JWVvp5D8CNR2dz/gvcdfYuqUZgxys770mRRpUVphQ55I22hOgBHG7NnzfveviszT+yQO1SxrVRsVoKe5NF4NhRPk3xAdgOiFY0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eiVRXLWt; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f361af4cb6so1422312a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:00:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1718654381; x=1719259181; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EyLxAVnNatw43iRM4OrcutPI3eZaU5xCt0a5Bh/nUZ8=;
-        b=MPUPtlA744BKBCUnEGeOw+Sok3XcRGyhgqo5gezsnIWarE8eYcNTWJPr5L7YvN8NXl
-         G4tqe0tuVAXBR2wW86XL0lm8bttsNc9WcxYoBXsAsvxS4uLcxy1edL7E3bawgrFFhrSn
-         43jSHpqnfOJApdcydmahI1Hm/Y6YY4jh72rb3CQsb5PkTQnBU9p49E03+IvtGlIT7Qcn
-         RPkaMQ4+df15eio/0CBKtnpw0JiB7VrMRGJkAtM5wYKXjyJsXQWf//A0FcubNT6iIVQP
-         gCJp7vzbze0Ro0iR6xaqC0Eka9S9/YuSCDLqwX/xOvQXszygwR+O/vYi+DUBZ1Hd6k9m
-         bQ3g==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718654436; x=1719259236; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iYek31CMWeGWStaRdAqqq52yGHBws7Yomjqrz+qAjRQ=;
+        b=eiVRXLWtSjFukC5Og08EWyIRUiOmS/IdS19BKUtV0ccbNs/z4FQueIVH6iJtum3fp7
+         Xygv9wxWof3JBzz2IEQPoI7FSOZHTWcR/6MEFWp7z+C8LCNLtd3jcNWoaqXZHv6qHNrO
+         3L2Mzq0rNcctDgt4rfPDb6b3cgJTBjv+J8Y9au5JXLy8EuBzvLXZkXfTXerwVs0PbRaq
+         4ayn7G+yfHS1Xj5AjA9a7WW2lWC4slWPVFK9KbztW8uAQ4m2H2cHGKf2MR/RJLu4dbVy
+         rXAB6gBKuLjoVRBsUQnosbXDgpAaW2m/mqKzFRE/ibSApQnacYT7LukyYURG8isG1IaY
+         vZ/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718654381; x=1719259181;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EyLxAVnNatw43iRM4OrcutPI3eZaU5xCt0a5Bh/nUZ8=;
-        b=t02ZA63WesV+BtCeglLDdMpTpxqbn3Q97QWzYIs9E+g21jIFVSvH3LyXvYwylpz8d9
-         70Te38gMXekTK1wcha0rpXFq7wIzAB4ZZm0uMv5g1PI0wj/vk5qQG1/UAFDKZXnx9o3A
-         WwJlhDLAhfcNOJmbhUiAQz6ROoHLuZ3L3hdJka/GJi2ih8TA8nOy/tFmPyUZKHSeVIvd
-         qRL5MUkXfMqG4535A8PfAIx3IKN+5qMwpJOi6GPrqXrQC9ZC2tryfXNsXtwlW6J/7HxX
-         s22DEvUEAiLBLHjQEXgK9UoyyzrhX7ItlGR8qEeYSIVVwNriMnHluQoVjQr6CqNJ/uYm
-         tAzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcS/D4eZw4V1mv0JJCe8EXPrXJfWoDdXW0Vn49VfsZiXB7yZ4E333/zCkfP/qAJ8QSVZNYOLkaSWp+Am22m6y434CWMySG8AsMTInj
-X-Gm-Message-State: AOJu0Yyyn9osRtHNDEXrrVxirzJpSWYseTce7Im7gh47vAAevkv8nltz
-	atylLHoSoQwoLRNH8qRHvysjTc2q+hpWKm6AvP1CJTmzQSz707B2K0Scn6cf77U=
-X-Google-Smtp-Source: AGHT+IH4U5vzLeiz8hkqcYJKHqjJ00u0IYrLAWlmG3iRs3wJv+s+wvbGOotZo0aQPKNGhmClr2ICTA==
-X-Received: by 2002:a2e:300f:0:b0:2eb:d87f:7d71 with SMTP id 38308e7fff4ca-2ec0e5b5f69mr73029701fa.8.1718654381332;
-        Mon, 17 Jun 2024 12:59:41 -0700 (PDT)
-Received: from localhost.localdomain ([104.28.231.254])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e73e8sm205545885e9.43.2024.06.17.12.59.39
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 17 Jun 2024 12:59:40 -0700 (PDT)
-From: Ignat Korchagin <ignat@cloudflare.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Florent Revest <revest@chromium.org>,
-	kernel-team@cloudflare.com,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	stable@vger.kernel.org
-Subject: [PATCH net v2] net: do not leave a dangling sk pointer, when socket creation fails
-Date: Mon, 17 Jun 2024 20:59:34 +0100
-Message-Id: <20240617195934.64810-1-ignat@cloudflare.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+        d=1e100.net; s=20230601; t=1718654436; x=1719259236;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iYek31CMWeGWStaRdAqqq52yGHBws7Yomjqrz+qAjRQ=;
+        b=X2Yf9PeSip3NXwsaC+fTnBsepI1Aix7m3yX0dOsXsL9oB8XwkiSCa0qPN6eSTjGv3p
+         jx7k2oNakefCYd48KlSudNDMMTN7CJ0HxzMhDCv2Bivahwkk5to7UtjVYI14aKHl0pzh
+         010g3K9KhWUpfsZ8L7EV5uL8wEZvfbyIms+J9yt730de9M3nFwyoV40Ftue+t6C1T1t+
+         uEWFSsJ8i/jjWmFomq4cxkW+PEKYgjVZlMsahldDb+6VQVtgiudfpA3eGxyCUP3Q2NE4
+         +NiQoGHBHMUsdqDTrAiZIplXk2iAEGntKvW0nHDqO7mXODD3b/yuu4i+5sKTp+ivsW+k
+         /LFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmHtD2P4Sm/utHBg6flAB4yWcaT0gnmn1KRTWJdZdKKnzXwh2b5peGN3N33w4C3/TViA2hrfKgAB05MBcsByIPXjN+XofIJH5OxAHS
+X-Gm-Message-State: AOJu0YzP54qshwC8Ui0ikZEap815VLVWvWJTDgziTbL41omLnyuh0Cix
+	0ffi58QqRcREVGtW98+MVUuxSa1DNlg0yeVFmt91e5aUVYdCuLtpt6WckWPmxVU=
+X-Google-Smtp-Source: AGHT+IFMjlP+SVw1E4LmDkxm7P2UoCTWoaRJ4n+SsjcmixURN8uVC4n27kpVn99kklmXI/wCzYSI/A==
+X-Received: by 2002:a05:6830:154c:b0:6eb:7d32:ead4 with SMTP id 46e09a7af769-6fb9376615fmr12941380a34.9.1718654435891;
+        Mon, 17 Jun 2024 13:00:35 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb801b0443sm1544134a34.49.2024.06.17.13.00.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 13:00:35 -0700 (PDT)
+Message-ID: <4ff58005-4a71-491f-9400-cdecf2c25d66@baylibre.com>
+Date: Mon, 17 Jun 2024 15:00:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] iio: adc: ad7192: use
+ devm_regulator_get_enable_read_voltage
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+ <20240612-iio-adc-ref-supply-refactor-v2-1-fa622e7354e9@baylibre.com>
+ <20240615130858.22043725@jic23-huawei>
+ <dbf947a3-3d3b-4686-a707-a813b6a4ce5a@gmail.com>
+ <CAMknhBFJ01Xu69Arvd3S=dbADGFmzaYKm2XBtw_CtnjtYwnnew@mail.gmail.com>
+ <2d47aeef-5ee0-4e6f-a408-ba5d737d2c5a@gmail.com>
+ <8dd5f4b9-809f-43d8-ba5c-5f7be23107a4@baylibre.com>
+ <15a0c2d8-9df4-4a26-bdf4-01f9c3f76ca7@gmail.com>
+ <CAMknhBE=fEDdYPe1VeZwWWuvqf5TcUdM_LQGOugHCxGhSGP8-w@mail.gmail.com>
+ <bbc2f159-d673-4652-a6b9-a528f905b67c@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <bbc2f159-d673-4652-a6b9-a528f905b67c@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-A KASAN enabled kernel will log something like below (decoded and stripped):
-[   78.328507][  T299] ==================================================================
-[ 78.329018][ T299] BUG: KASAN: slab-use-after-free in __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-[   78.329366][  T299] Read of size 8 at addr ffff888007110dd8 by task traceroute/299
-[   78.329366][  T299]
-[   78.329366][  T299] CPU: 2 PID: 299 Comm: traceroute Tainted: G            E      6.10.0-rc2+ #2
-[   78.329366][  T299] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[   78.329366][  T299] Call Trace:
-[   78.329366][  T299]  <TASK>
-[ 78.329366][ T299] dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1))
-[ 78.329366][ T299] print_report (mm/kasan/report.c:378 mm/kasan/report.c:488)
-[ 78.329366][ T299] ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-[ 78.329366][ T299] kasan_report (mm/kasan/report.c:603)
-[ 78.329366][ T299] ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-[ 78.329366][ T299] kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
-[ 78.329366][ T299] __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-[ 78.329366][ T299] bpf_get_socket_ptr_cookie (./arch/x86/include/asm/preempt.h:94 ./include/linux/sock_diag.h:42 net/core/filter.c:5094 net/core/filter.c:5092)
-[ 78.329366][ T299] bpf_prog_875642cf11f1d139___sock_release+0x6e/0x8e
-[ 78.329366][ T299] bpf_trampoline_6442506592+0x47/0xaf
-[ 78.329366][ T299] __sock_release (net/socket.c:652)
-[ 78.329366][ T299] __sock_create (net/socket.c:1601)
-...
-[   78.329366][  T299] Allocated by task 299 on cpu 2 at 78.328492s:
-[ 78.329366][ T299] kasan_save_stack (mm/kasan/common.c:48)
-[ 78.329366][ T299] kasan_save_track (mm/kasan/common.c:68)
-[ 78.329366][ T299] __kasan_slab_alloc (mm/kasan/common.c:312 mm/kasan/common.c:338)
-[ 78.329366][ T299] kmem_cache_alloc_noprof (mm/slub.c:3941 mm/slub.c:4000 mm/slub.c:4007)
-[ 78.329366][ T299] sk_prot_alloc (net/core/sock.c:2075)
-[ 78.329366][ T299] sk_alloc (net/core/sock.c:2134)
-[ 78.329366][ T299] inet_create (net/ipv4/af_inet.c:327 net/ipv4/af_inet.c:252)
-[ 78.329366][ T299] __sock_create (net/socket.c:1572)
-[ 78.329366][ T299] __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
-[ 78.329366][ T299] __x64_sys_socket (net/socket.c:1718)
-[ 78.329366][ T299] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
-[ 78.329366][ T299] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-[   78.329366][  T299]
-[   78.329366][  T299] Freed by task 299 on cpu 2 at 78.328502s:
-[ 78.329366][ T299] kasan_save_stack (mm/kasan/common.c:48)
-[ 78.329366][ T299] kasan_save_track (mm/kasan/common.c:68)
-[ 78.329366][ T299] kasan_save_free_info (mm/kasan/generic.c:582)
-[ 78.329366][ T299] poison_slab_object (mm/kasan/common.c:242)
-[ 78.329366][ T299] __kasan_slab_free (mm/kasan/common.c:256)
-[ 78.329366][ T299] kmem_cache_free (mm/slub.c:4437 mm/slub.c:4511)
-[ 78.329366][ T299] __sk_destruct (net/core/sock.c:2117 net/core/sock.c:2208)
-[ 78.329366][ T299] inet_create (net/ipv4/af_inet.c:397 net/ipv4/af_inet.c:252)
-[ 78.329366][ T299] __sock_create (net/socket.c:1572)
-[ 78.329366][ T299] __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
-[ 78.329366][ T299] __x64_sys_socket (net/socket.c:1718)
-[ 78.329366][ T299] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
-[ 78.329366][ T299] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+On 6/17/24 11:01 AM, Alisa-Dariana Roman wrote:
+> On 17.06.2024 18:28, David Lechner wrote:
+>> On Mon, Jun 17, 2024 at 9:10 AM Alisa-Dariana Roman
+>> <alisadariana@gmail.com> wrote:
+>>>
+>>> On 17.06.2024 16:48, David Lechner wrote:
+>>>> On 6/17/24 8:38 AM, Alisa-Dariana Roman wrote:
+>>>>> On 17.06.2024 16:22, David Lechner wrote:
+>>>>>> On Mon, Jun 17, 2024 at 4:35 AM Alisa-Dariana Roman
+>>>>>> <alisadariana@gmail.com> wrote:
+>>>>>>>
+>>>>>>> On 15.06.2024 15:08, Jonathan Cameron wrote:
+>>>>>>>> On Wed, 12 Jun 2024 16:03:05 -0500
+>>>>>>>> David Lechner <dlechner@baylibre.com> wrote:
+>>>>>>>>
+>>>>>>>>> This makes use of the new devm_regulator_get_enable_read_voltage()
+>>>>>>>>> function to reduce boilerplate code.
+>>>>>>>>>
+>>>>>>>>> Error messages have changed slightly since there are now fewer places
+>>>>>>>>> where we print an error. The rest of the logic of selecting which
+>>>>>>>>> supply to use as the reference voltage remains the same.
+>>>>>>>>>
+>>>>>>>>> Also 1000 is replaced by MILLI in a few places for consistency.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>>>>>>>>
+>>>>>>>> Complicated bit of code, but seems correct.
+>>>>>>>> However, it crossed with Alisa-Dariana switching adding a
+>>>>>>>> struct device *dev = &spi->dev to probe() that I picked up earlier
+>>>>>>>> today.
+>>>>>>>>
+>>>>>>>> I could unwind that but given Alisa-Dariana has a number of
+>>>>>>>> other patches on this driver in flight, I'd like the two of you
+>>>>>>>> to work out the best resolution between you.  Maybe easiest option
+>>>>>>>> is that Alisa-Dariana sends this a first patch of the next
+>>>>>>>> series I should pick up.
+>>>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>>
+>>>>>>>> Jonathan
+>>>>>>> I will add this patch to my series and send it shortly.
+>>>>>>>
+>>>>>>> Kind regards,
+>>>>>>> Alisa-Dariana Roman.
+>>>>>>
+>>>>>> Great, thanks!
+>>>>>
+>>>>> Just one quick question:
+>>>>>
+>>>>> I am getting two such warnings when running the checkpatch script:
+>>>>>
+>>>>> WARNING: else is not generally useful after a break or return
+>>>>> #1335: FILE: ./drivers/iio/adc/ad7192.c:1335:
+>>>>> +        return dev_err_probe(dev, ret, "Failed to get AVDD voltage\n");
+>>>>> +    } else {
+>>>>>
+>>>>> Should I switch the last two branches to get rid of the warnings or just ignore them?
+>>>>>
+>>>>
+>>>> In the other patches, I was able to reorder things to avoid this
+>>>> warning, but since this one was more complicated, I just ignored
+>>>> this warning.
+>>>>
+>>>> We can't just remove the else in this case because the return
+>>>> is inside of an `else if`.
+>>>
+>>>          /* AVDD can optionally be used as reference voltage */
+>>>          ret = devm_regulator_get_enable_read_voltage(dev, "avdd");
+>>>          if (ret == -ENODEV || ret == -EINVAL) {
+>>>                  /*
+>>>                   * We get -EINVAL if avdd is a supply with unknown voltage. We
+>>>                   * still need to enable it since it is also a power supply.
+>>>                   */
+>>>                  ret = devm_regulator_get_enable(dev, "avdd");
+>>>                  if (ret)
+>>>                          return dev_err_probe(dev, ret,
+>>>                                               "Failed to enable AVDD supply\n");
+>>>
+>>>                  avdd_mv = 0;
+>>>          } else if (ret >= 0) {
+>>>                  avdd_mv = ret / MILLI;
+>>>          } else {
+>>>                  return dev_err_probe(dev, ret, "Failed to get AVDD voltage\n");
+>>>          }
+>>>
+>>> Would switching the last two branches, in order to get rid of the
+>>> warnings, make the code harder to understand?
+>>>
+>>
+>> I did it in the other order because usually we like to handle the
+>> error case first.
+>>
+>> To make it more like the other patches, we could do something like
+>> this. The only thing i don't like about it is that `ret` on the very
+>> last line could come from two different places. But it is logically
+>> sound in the current form.
+>>
+>>      /* AVDD can optionally be used as reference voltage */
+>>      ret = devm_regulator_get_enable_read_voltage(dev, "avdd");
+>>      if (ret == -ENODEV || ret == -EINVAL) {
+>>          /*
+>>           * We get -EINVAL if avdd is a supply with unknown voltage. We
+>>           * still need to enable it since it is also a power supply.
+>>           */
+>>          ret = devm_regulator_get_enable(dev, "avdd");
+>>          if (ret)
+>>              return dev_err_probe(dev, ret,
+>>                           "Failed to enable AVDD supply\n");
+>>      } else if (ret < 0) {
+>>          return dev_err_probe(dev, ret, "Failed to get AVDD voltage\n");
+>>      }
+>>
+>>      avdd_mv = ret <= 0 ? 0 : ret / MILLI;
+> 
+> Maybe this would make it a bit clearer, but yes, the ret == 0 could still come from two different places :(.
+> 
+> avdd_mv = ret == 0 ? 0 : ret / MILLI;
+> 
 
-Fix this by clearing the struct socket reference in sk_common_release() to cover
-all protocol families create functions.
-
-Fixes: c5dbb89fc2ac ("bpf: Expose bpf_get_socket_cookie to tracing programs")
-Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/netdev/20240613194047.36478-1-kuniyu@amazon.com/T/
----
-Changes in v2:
-  * moved the NULL-ing of the socket reference to sk_common_release() (as
-    suggested by Kuniyuki Iwashima)
-  * trimmed down the KASAN report in the commit message to show only relevant
-    info
-
- net/core/sock.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 8629f9aecf91..575af557c46b 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -3742,6 +3742,17 @@ void sk_common_release(struct sock *sk)
- 
- 	sk->sk_prot->unhash(sk);
- 
-+	/*
-+	 * struct net_proto_family create functions like inet_create() or
-+	 * inet6_create() have an error path, which call this function. This sk
-+	 * may have already been associated with a struct socket, so ensure to
-+	 * clear this reference not to leave a dangling pointer in the
-+	 * struct socket instance.
-+	 */
-+
-+	if (sk->sk_socket)
-+		sk->sk_socket->sk = NULL;
-+
- 	/*
- 	 * In this point socket cannot receive new packets, but it is possible
- 	 * that some packets are in flight because some CPU runs receiver and
--- 
-2.39.2
+We could make a ret2 local variable inside of the if block to avoid writing over ret.
 
 
