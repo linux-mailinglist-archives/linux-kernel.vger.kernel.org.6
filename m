@@ -1,189 +1,164 @@
-Return-Path: <linux-kernel+bounces-217352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559A290AE9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:04:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ABA890AE92
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B64D1C24BB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0304E1F28C59
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BC7198E8F;
-	Mon, 17 Jun 2024 13:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86B4197554;
+	Mon, 17 Jun 2024 13:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="YBUx7G5t"
-Received: from sender3-op-o17.zoho.com (sender3-op-o17.zoho.com [136.143.184.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AzE+SCyt"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65986198A35
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718629424; cv=pass; b=hXGiOMzUz58oLz+tKzgb5/jroYHYHCGmhOSeyc53VYLLzQ1hnCyPPZDF+e0jlljxpgymiHYE7/EzQ65tqJJ+AZgtNbotQOuoAjMBXS6v5kA+yG7mQagG68jEUsIOi+QwPqTAf2Vj+0epKbzcNTn7f4cDHatKWeImkWtv9cLYPE8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718629424; c=relaxed/simple;
-	bh=CuGTFeJasRxMadI0ng6WyEm9q4/tGwznB34rAmPFSqk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=p2CLpT6d1WfoxtAkFVec3MjG6ao22LAqxMBMWuE+XGIIXyZFDkhEU2xVXF9AA0Ovt2r0euYO2CI+TG7pux4SgKRfygNoi2J5G6uyF60EvW1GuG5CdT5sc7EDlSPhJtrhh6KDcM+cAcR5gDc74dAJp70FcKc7yaFzMY5Blhw2gcs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=YBUx7G5t; arc=pass smtp.client-ip=136.143.184.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1718629401; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=UUlz104YmEjcGZbvcbLNgBXntRRPSvjU9dEhZlj6DzPyiYo5tSmUdm3PqZEYtrotdWQdPBLvLwgvdn/HTw1L/x2TBkvOJ67dd+hlGvxHC9w+F88WD0hzZVNlR0a6K2ab/zL3aJgZvHqUJ9mj143F2z+tX/HpPcQbFhk3fPl6Kxg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1718629401; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=CuGTFeJasRxMadI0ng6WyEm9q4/tGwznB34rAmPFSqk=; 
-	b=IlVCn1LkKh0gK++oCKswwiZfHMltZOE9izvdnNyw3xFeoOLjegxzVs0ljkElTbMvMPOFAUq5xxTIWMr8GmYbpDnosfnn67jDAM3/gN/ZyO4qumcJ4/7Pv2ghxmqkyAUl/v6APTAB8ptD8HCZEFwi73qejwKICoWmq9EczslcpxA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1718629401;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=CuGTFeJasRxMadI0ng6WyEm9q4/tGwznB34rAmPFSqk=;
-	b=YBUx7G5ten6qzSBNx26aB0iMeWj2A8wjBa5mvV5GQiB9u43TGPcRZ5XB3qpIHOjE
-	e6oZ38scjbTg+y57tR3uoRS9MES933jjNkilSDHEA62f/PmIoszKTn3JWgd5uPIlVOZ
-	d8sf++sY0025S3ERvLgBeUooMLfY9w6WM2mzlxSTV6wvMc9vcDeSBI671R/OttIDhRd
-	jbZTW9TYeujJDcAzv/n7/YLuCKfKJfNUePDdiC04sIJrdCEISLlFCn0bcdwZQmbOJwC
-	qeT/wBrnnby5uRUtSvKnCF8/g8/FTHoJVDSdYakyX/L8at5HEH8mOPR9xd1I9J5mxAm
-	x7vHvpy94g==
-Received: by mx.zohomail.com with SMTPS id 1718629398718172.63846711808583;
-	Mon, 17 Jun 2024 06:03:18 -0700 (PDT)
-Message-ID: <b4ebdbce2f44c06806a650e72b1b6eb9a16dffe6.camel@icenowy.me>
-Subject: Re: [PATCH 1/2] drm/amdgpu: make duplicated EOP packet for GFX7/8
- have real content
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Alex
- Deucher <alexander.deucher@amd.com>, Pan Xinhui <Xinhui.Pan@amd.com>, David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Pierre-Eric
- Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-Date: Mon, 17 Jun 2024 21:03:13 +0800
-In-Reply-To: <88337509-3ad7-47aa-b70f-5294f7f1e486@amd.com>
-References: <20240617105846.1516006-1-uwu@icenowy.me>
-	 <20240617105846.1516006-2-uwu@icenowy.me>
-	 <88337509-3ad7-47aa-b70f-5294f7f1e486@amd.com>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAA8194A61
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718629417; cv=none; b=YI0Sl9ZY5qIQOmM48nOzi59jJp7fQc3Er3iirdT6ROKDiu0KtQwhUBnPNMixzyRFvVbU7iXBzM33eDMIMeGP8X5ZCYJ2lUDor/O6Wj5TkqLEa7t9eDp9KrzGSEmusLJJj90JyRlfrRQF5zioyfxA6MqNxZxcfM15Qu4HjtDWubw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718629417; c=relaxed/simple;
+	bh=YWvpQ0ab4Dp6gKq8jwDSX4NydsgeD85hsgBWMfw0Wak=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fFU0h6LPvzYePQYicnJsPgdRvhyLc4/gV/d943vdQWaLaUtPzdaFnSsZwXaG5fFRutYpzR8gJs6IuD1cbPRfS0ECX46xtmyNywEEE/kJ7vNFBx3WQh3p038jQCPNS9UOBX52ejjjHljQOkvgwGtbJsuNBZ7BP537WJm+b3NdsC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AzE+SCyt; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c6994e2f1so2410492a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718629414; x=1719234214; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K0h98bfk6InRRrhm6wwIHnjZdloO4BC8T6hc9Gmbf7c=;
+        b=AzE+SCytGUOjt/YFp8MrG2VCasMypd9BFoZYkOCW/Ql95Z5emayfBWmx5nwZUxc13L
+         9Hw3I9YLfC1PaVVkhm9uH0dblqzlW9OpJaHQAb1H69nk5ka7eWmJVr3wIohHXh/7aWz5
+         ItkY0ljkngwrWhdQeeWdypO9icEavIKAh4jjIifvO3NAwAJDyr/wkM+axEQeEwXuhaWn
+         55ebNukKSzFTMAKM8iu8cj9CYt5JdxOrQlWkqoPLWQCPU6b9Xe43k00Vw+hvEBFX1Nxs
+         /PaD8E09M6jAHgFSHbf7VVyOEOsB1KdO2r8NOTsLvcEDKREnL68ArAZ6zexXX9OehnFk
+         WxZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718629414; x=1719234214;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K0h98bfk6InRRrhm6wwIHnjZdloO4BC8T6hc9Gmbf7c=;
+        b=fPH7ua2+9V1A9L1X3Uy2v5mMASWLFd0aqD5sDVYjDwa1lXcq66DDoSHwVqU9YVQQmN
+         zg3womE4eo2B6od2QOqRu5PdYiQVkK9rYPF8KCPPozH1wxg/Vxg4l8Y4nNTLmnsF93KZ
+         mGdnFJWVTSJ3x5eySmMyibWMUyJXpU1aYjIUy7j+f9ECmT4sfT60yU4pLxz10mbm1jgt
+         amO8jXDu+YrYWh7QhnguuWrqyAYzeUb+8Nz4eT4hhfAyzeyq3BdrLJ85y7aCJaBD2XCt
+         EzuDgUCX1p+xW8VrIo3/4p9FH/V9scVbn2N+y6W4DoMHwc2sG3CCqkHNr37F6nYdVR39
+         t3JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgTF51N22iSr9qK55UJ4sc78bUJzqCW4xiaU2nfjkxE4xd1Kma47fO2U8GjmChrY1vfDarEHR/Svyb/mo1w5qlKefCbcyeUzpQ7jbP
+X-Gm-Message-State: AOJu0Yxz81OuKf+kuISY9f+/RozncHAnYpcqmZhj+6taitBtQDcjdvIi
+	RXdZ7skf1jfTDnEjkayYYK7NPXaklyWzOXMafoNwHH4XOUtcOHkecEPnqLtqCoI=
+X-Google-Smtp-Source: AGHT+IExtTHGNouiNFqgjEiT+LPP433XAeDYx1y6ZS3ofgzCUaUo3A3zQURDTqIS8cL0nLldaqPNSQ==
+X-Received: by 2002:a50:c056:0:b0:57c:6338:328a with SMTP id 4fb4d7f45d1cf-57cbd6c7589mr9110762a12.30.1718629413597;
+        Mon, 17 Jun 2024 06:03:33 -0700 (PDT)
+Received: from [127.0.1.1] ([78.10.207.147])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72daa67sm6404349a12.38.2024.06.17.06.03.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 06:03:33 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/6] ASoC: Few constifications (mostly arguments)
+Date: Mon, 17 Jun 2024 15:03:18 +0200
+Message-Id: <20240617-n-asoc-const-auto-selectable-formats-v1-0-8004f346ee38@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABc0cGYC/x2N0QrCMAwAf2Xk2UA7q4K/Ij7EmGpgNtJ0Qxj7d
+ 8vu7V7uVnCpKg7XYYUqi7pa6RIPA/CbyktQn91hDGMK53jBguTGyFa8Ic3N0GUSbvSYBLPVDzX
+ HeMzMp9BJCXrqWyXrb9/c7tv2BxQCUup2AAAA
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>, 
+ Cezary Rojewski <cezary.rojewski@intel.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2065;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=YWvpQ0ab4Dp6gKq8jwDSX4NydsgeD85hsgBWMfw0Wak=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmcDQZw8CQ6TtEuwrDOfeyUso35j7jNCqTLG3G5
+ N7+xDUTMyiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZnA0GQAKCRDBN2bmhouD
+ 1zYrD/wM2IO5gZH/cQKpnk2qBqusJLmMij0sMKKL+5bcwpi23FojEa+GuWh2EMwPnjTj4utyPdh
+ 7JyboAxvTe3MZGlgXPUZr//nic+0BYW3WSW2dSWyS3VNGxTMjA8C3VMl7miscFV5+tjWrIKG/a+
+ NDQzoAU9ilfXFt3ZWvOxUetiq5VTtYUFRMhLtYdOUzI2HyVSTAMvOAOzplMXLw0Kn1NM4zjOyY8
+ 33Tr3e8c11tHUS8Awv97pIb8lfTuQTgT8C9oR4zvRRQUXvP34ADYrAbV7Ydf8+J5nebLRFoJD43
+ SNXtRXhICMRfQTXFZPoKoVE0tGA+8uNNhGVmwL9cfpMI4MIo6lE1MS5Q7v+33zdAdEo8jzCfRD9
+ mpcj8evTj7sZkVbmZ6HMHj7wZgwAdto+7I9K4W5Be0yisk2WSDiUrpo88c/gEEqNr+zJ7WgRakk
+ zfD7QmCqNEGROVVso0LlINeb+qEiIWUAKol8e0JDrt75EycYs59LTFfFmdI4Ax2s1zl4m1yx/8m
+ Cfk2cLZ+24AvyedFrIbf6y+NFPbCXrV14Pjc044trBQlKBO64vdetO0eFcHTD7sTiDFgjHlRqvv
+ 9XzFHZRmmhR/46sCgsTx9t0k7DsM7QpepXg1Y/w/+eQELXsW6XWyG3D386IXRB5d5ber3QVrd9C
+ NNtbwNuw38cNWKQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-5ZyoIDIwMjQtMDYtMTfmmJ/mnJ/kuIDnmoQgMTQ6MzUgKzAyMDDvvIxDaHJpc3RpYW4gS8O2bmln
-5YaZ6YGT77yaCj4gQW0gMTcuMDYuMjQgdW0gMTI6NTggc2NocmllYiBJY2Vub3d5IFpoZW5nOgo+
-ID4gVGhlIGR1cGxpY2F0aW9uIG9mIEVPUCBwYWNrZXRzIGZvciBHRlg3LzgsIHdpdGggdGhlIGZv
-cm1lciBvbmUgaGF2ZQo+ID4gc2VxLTEgd3JpdHRlbiBhbmQgdGhlIGxhdHRlciBvbmUgaGF2ZSBz
-ZXEgd3JpdHRlbiwgc2VlbXMgdG8gY29uZnVzZQo+ID4gc29tZQo+ID4gaGFyZHdhcmUgcGxhdGZv
-cm0gKGUuZy4gTG9vbmdzb24gN0Egc2VyaWVzIFBDSWUgY29udHJvbGxlcnMpLgo+ID4gCj4gPiBN
-YWtlIHRoZSBjb250ZW50IG9mIHRoZSBkdXBsaWNhdGVkIEVPUCBwYWNrZXQgdGhlIHNhbWUgd2l0
-aCB0aGUKPiA+IHJlYWwKPiA+IG9uZSwgb25seSBtYXNraW5nIGFueSBwb3NzaWJsZSBpbnRlcnJ1
-cHRzLgo+IAo+IFdlbGwgY29tcGxldGVseSBOQUsgdG8gdGhhdCwgZXhhY3RseSB0aGF0IGRpc2Fi
-bGVzIHRoZSB3b3JrYXJvdW5kLgo+IAo+IFRoZSBDUFUgbmVlZHMgdG8gc2VlIHR3byBkaWZmZXJl
-bnQgdmFsdWVzIHdyaXR0ZW4gaGVyZS4KCldoeSBkbyB0aGUgQ1BVIG5lZWQgdG8gc2VlIHR3byBk
-aWZmZXJlbnQgdmFsdWVzIGhlcmU/IE9ubHkgdGhlIHNlY29uZApwYWNrZXQgd2lsbCByYWlzZSBh
-biBpbnRlcnJ1cHQgYmVmb3JlIGFuZCBhZnRlciBhcHBseWluZyB0aGlzIHBhdGNoLAphbmQgdGhl
-IGZpcnN0IHBhY2tldCdzIHJlc3VsdCBzaG91bGQganVzdCBiZSBvdmVycmlkZW4gb24gb3JkaW5h
-cnkKcGxhdGZvcm1zLiBUaGUgQ1BVIHdvbid0IHNlZSB0aGUgZmlyc3Qgb25lLCB1bnRpbCBpdCdz
-IHBvbGxpbmcgZm9yIHRoZQphZGRyZXNzIGZvciBhIHZlcnkgc2hvcnQgaW50ZXJ2YWwsIHNvIHNo
-b3J0IHRoYXQgdGhlIEdQVSBDUCBjb3VsZG4ndApleGVjdXRlIDIgY29tbWFuZHMuCgpPciBkbyB5
-b3UgbWVhbiB0aGUgR1BVIG5lZWRzIHRvIHNlZSB0d28gZGlmZmVyZW50IHZhbHVlcyBiZWluZyB3
-cml0dGVuLApvciB0aGV5IHdpbGwgYmUgbWVyZ2VkIGludG8gb25seSBvbmUgd3JpdGUgcmVxdWVz
-dD8KClBsZWFzZSBnaXZlIG91dCBtb3JlIGluZm9ybWF0aW9uIGFib3V0IHRoaXMgd29ya2Fyb3Vu
-ZCwgb3RoZXJ3aXNlIHRoZQpHUFUgaGFuZyBwcm9ibGVtIG9uIExvb25nc29uIHBsYXRmb3JtcyB3
-aWxsIHBlcnNpc3QuCgo+IAo+IFJlZ2FyZHMsCj4gQ2hyaXN0aWFuLgo+IAo+ID4gCj4gPiBGaXhl
-czogYmYyNmRhOTI3YTFjICgiZHJtL2FtZGdwdTogYWRkIGNhY2hlIGZsdXNoIHdvcmthcm91bmQg
-dG8KPiA+IGdmeDggZW1pdF9mZW5jZSIpCj4gPiBGaXhlczogYTJlNzNmNTZmYTYyICgiZHJtL2Ft
-ZGdwdTogQWRkIHN1cHBvcnQgZm9yIENJSyBwYXJ0cyIpCj4gPiBTaWduZWQtb2ZmLWJ5OiBJY2Vu
-b3d5IFpoZW5nIDx1d3VAaWNlbm93eS5tZT4KPiA+IC0tLQo+ID4gwqAgZHJpdmVycy9ncHUvZHJt
-L2FtZC9hbWRncHUvZ2Z4X3Y3XzAuYyB8IDEyICsrKysrLS0tLS0tLQo+ID4gwqAgZHJpdmVycy9n
-cHUvZHJtL2FtZC9hbWRncHUvZ2Z4X3Y4XzAuYyB8IDEyICsrKystLS0tLS0tLQo+ID4gwqAgMiBm
-aWxlcyBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDE1IGRlbGV0aW9ucygtKQo+ID4gCj4gPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZ2Z4X3Y3XzAuYwo+ID4gYi9k
-cml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9nZnhfdjdfMC5jCj4gPiBpbmRleCA1NDFkYmQ3MGQ4
-Yzc1Li43NzhmMjdmMWEzNGZlIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9h
-bWRncHUvZ2Z4X3Y3XzAuYwo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZ2Z4
-X3Y3XzAuYwo+ID4gQEAgLTIxMTcsOSArMjExNyw4IEBAIHN0YXRpYyB2b2lkCj4gPiBnZnhfdjdf
-MF9yaW5nX2VtaXRfZmVuY2VfZ2Z4KHN0cnVjdCBhbWRncHVfcmluZyAqcmluZywgdTY0IGFkZHIs
-Cj4gPiDCoCB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgYm9vbCB3cml0ZTY0Yml0ID0gZmxhZ3MgJiBB
-TURHUFVfRkVOQ0VfRkxBR182NEJJVDsKPiA+IMKgwqDCoMKgwqDCoMKgwqBib29sIGludF9zZWwg
-PSBmbGFncyAmIEFNREdQVV9GRU5DRV9GTEFHX0lOVDsKPiA+IC3CoMKgwqDCoMKgwqDCoC8qIFdv
-cmthcm91bmQgZm9yIGNhY2hlIGZsdXNoIHByb2JsZW1zLiBGaXJzdCBzZW5kIGEgZHVtbXkKPiA+
-IEVPUAo+ID4gLcKgwqDCoMKgwqDCoMKgICogZXZlbnQgZG93biB0aGUgcGlwZSB3aXRoIHNlcSBv
-bmUgYmVsb3cuCj4gPiAtwqDCoMKgwqDCoMKgwqAgKi8KPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDC
-oC8qIFdvcmthcm91bmQgZm9yIGNhY2hlIGZsdXNoIHByb2JsZW1zLCBzZW5kIEVPUCB0d2ljZS4g
-Ki8KPiA+IMKgwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCBQQUNLRVQzKFBB
-Q0tFVDNfRVZFTlRfV1JJVEVfRU9QLAo+ID4gNCkpOwo+ID4gwqDCoMKgwqDCoMKgwqDCoGFtZGdw
-dV9yaW5nX3dyaXRlKHJpbmcsIChFT1BfVENMMV9BQ1RJT05fRU4gfAo+ID4gwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBFT1Bf
-VENfQUNUSU9OX0VOIHwKPiA+IEBAIC0yMTI3LDExICsyMTI2LDEwIEBAIHN0YXRpYyB2b2lkCj4g
-PiBnZnhfdjdfMF9yaW5nX2VtaXRfZmVuY2VfZ2Z4KHN0cnVjdCBhbWRncHVfcmluZyAqcmluZywg
-dTY0IGFkZHIsCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIEVWRU5UX0lOREVYKDUpKSk7Cj4gPiDCoMKgwqDCoMKgwqDC
-oMKgYW1kZ3B1X3Jpbmdfd3JpdGUocmluZywgYWRkciAmIDB4ZmZmZmZmZmMpOwo+ID4gwqDCoMKg
-wqDCoMKgwqDCoGFtZGdwdV9yaW5nX3dyaXRlKHJpbmcsICh1cHBlcl8zMl9iaXRzKGFkZHIpICYg
-MHhmZmZmKSB8Cj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBEQVRBX1NFTCgxKSB8IElOVF9TRUwoMCkpOwo+ID4gLcKgwqDC
-oMKgwqDCoMKgYW1kZ3B1X3Jpbmdfd3JpdGUocmluZywgbG93ZXJfMzJfYml0cyhzZXEgLSAxKSk7
-Cj4gPiAtwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCB1cHBlcl8zMl9iaXRz
-KHNlcSAtIDEpKTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoERBVEFfU0VMKHdyaXRlNjRiaXQgPyAyIDogMSkgfAo+ID4g
-SU5UX1NFTCgwKSk7Cj4gPiArwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCBs
-b3dlcl8zMl9iaXRzKHNlcSkpOwo+ID4gK8KgwqDCoMKgwqDCoMKgYW1kZ3B1X3Jpbmdfd3JpdGUo
-cmluZywgdXBwZXJfMzJfYml0cyhzZXEpKTsKPiA+IMKgIAo+ID4gLcKgwqDCoMKgwqDCoMKgLyog
-VGhlbiBzZW5kIHRoZSByZWFsIEVPUCBldmVudCBkb3duIHRoZSBwaXBlLiAqLwo+ID4gwqDCoMKg
-wqDCoMKgwqDCoGFtZGdwdV9yaW5nX3dyaXRlKHJpbmcsIFBBQ0tFVDMoUEFDS0VUM19FVkVOVF9X
-UklURV9FT1AsCj4gPiA0KSk7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgYW1kZ3B1X3Jpbmdfd3JpdGUo
-cmluZywgKEVPUF9UQ0wxX0FDVElPTl9FTiB8Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEVPUF9UQ19BQ1RJT05fRU4g
-fAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2dmeF92OF8wLmMK
-PiA+IGIvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZ2Z4X3Y4XzAuYwo+ID4gaW5kZXggMmYw
-ZTcyY2FlZTFhZi4uMzlhN2Q2MGYxZmQ2OSAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9hbWQvYW1kZ3B1L2dmeF92OF8wLmMKPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1k
-Z3B1L2dmeF92OF8wLmMKPiA+IEBAIC02MTUzLDkgKzYxNTMsNyBAQCBzdGF0aWMgdm9pZAo+ID4g
-Z2Z4X3Y4XzBfcmluZ19lbWl0X2ZlbmNlX2dmeChzdHJ1Y3QgYW1kZ3B1X3JpbmcgKnJpbmcsIHU2
-NCBhZGRyLAo+ID4gwqDCoMKgwqDCoMKgwqDCoGJvb2wgd3JpdGU2NGJpdCA9IGZsYWdzICYgQU1E
-R1BVX0ZFTkNFX0ZMQUdfNjRCSVQ7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgYm9vbCBpbnRfc2VsID0g
-ZmxhZ3MgJiBBTURHUFVfRkVOQ0VfRkxBR19JTlQ7Cj4gPiDCoCAKPiA+IC3CoMKgwqDCoMKgwqDC
-oC8qIFdvcmthcm91bmQgZm9yIGNhY2hlIGZsdXNoIHByb2JsZW1zLiBGaXJzdCBzZW5kIGEgZHVt
-bXkKPiA+IEVPUAo+ID4gLcKgwqDCoMKgwqDCoMKgICogZXZlbnQgZG93biB0aGUgcGlwZSB3aXRo
-IHNlcSBvbmUgYmVsb3cuCj4gPiAtwqDCoMKgwqDCoMKgwqAgKi8KPiA+ICvCoMKgwqDCoMKgwqDC
-oC8qIFdvcmthcm91bmQgZm9yIGNhY2hlIGZsdXNoIHByb2JsZW1zLCBzZW5kIEVPUCB0d2ljZS4g
-Ki8KPiA+IMKgwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCBQQUNLRVQzKFBB
-Q0tFVDNfRVZFTlRfV1JJVEVfRU9QLAo+ID4gNCkpOwo+ID4gwqDCoMKgwqDCoMKgwqDCoGFtZGdw
-dV9yaW5nX3dyaXRlKHJpbmcsIChFT1BfVENMMV9BQ1RJT05fRU4gfAo+ID4gwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBFT1Bf
-VENfQUNUSU9OX0VOIHwKPiA+IEBAIC02MTY0LDEyICs2MTYyLDEwIEBAIHN0YXRpYyB2b2lkCj4g
-PiBnZnhfdjhfMF9yaW5nX2VtaXRfZmVuY2VfZ2Z4KHN0cnVjdCBhbWRncHVfcmluZyAqcmluZywg
-dTY0IGFkZHIsCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIEVWRU5UX0lOREVYKDUpKSk7Cj4gPiDCoMKgwqDCoMKgwqDC
-oMKgYW1kZ3B1X3Jpbmdfd3JpdGUocmluZywgYWRkciAmIDB4ZmZmZmZmZmMpOwo+ID4gwqDCoMKg
-wqDCoMKgwqDCoGFtZGdwdV9yaW5nX3dyaXRlKHJpbmcsICh1cHBlcl8zMl9iaXRzKGFkZHIpICYg
-MHhmZmZmKSB8Cj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBEQVRBX1NFTCgxKSB8IElOVF9TRUwoMCkpOwo+ID4gLcKgwqDC
-oMKgwqDCoMKgYW1kZ3B1X3Jpbmdfd3JpdGUocmluZywgbG93ZXJfMzJfYml0cyhzZXEgLSAxKSk7
-Cj4gPiAtwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCB1cHBlcl8zMl9iaXRz
-KHNlcSAtIDEpKTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgREFUQV9TRUwod3JpdGU2NGJpdCA/IDIgOiAxKSB8Cj4gPiBJTlRfU0VMKDApKTsK
-PiA+ICvCoMKgwqDCoMKgwqDCoGFtZGdwdV9yaW5nX3dyaXRlKHJpbmcsIGxvd2VyXzMyX2JpdHMo
-c2VxKSk7Cj4gPiArwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCB1cHBlcl8z
-Ml9iaXRzKHNlcSkpOwo+ID4gwqAgCj4gPiAtwqDCoMKgwqDCoMKgwqAvKiBUaGVuIHNlbmQgdGhl
-IHJlYWwgRU9QIGV2ZW50IGRvd24gdGhlIHBpcGU6Cj4gPiAtwqDCoMKgwqDCoMKgwqAgKiBFVkVO
-VF9XUklURV9FT1AgLSBmbHVzaCBjYWNoZXMsIHNlbmQgaW50ICovCj4gPiDCoMKgwqDCoMKgwqDC
-oMKgYW1kZ3B1X3Jpbmdfd3JpdGUocmluZywgUEFDS0VUMyhQQUNLRVQzX0VWRU5UX1dSSVRFX0VP
-UCwKPiA+IDQpKTsKPiA+IMKgwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCAo
-RU9QX1RDTDFfQUNUSU9OX0VOIHwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgRU9QX1RDX0FDVElPTl9FTiB8Cj4gCgo=
+Make few pointers in ASoC functions as pointers to const, so the code is
+clearer to read, a bit safer and allows further constifications (e.g.
+placing some data as rodata).
+
+Best regards,
+Krzysztof
+
+---
+Krzysztof Kozlowski (6):
+      ASoC: Constify of_phandle_args in snd_soc_dai_driver
+      ASoC: Constify of_phandle_args in snd_soc_dai_link_component
+      ASoC: Constify passed data to core function
+      ASoC: Constify DAI passed to get_channel_map
+      ASoC: Constify return of snd_soc_dai_get_pcm_stream()
+      ALSA: Cleanup trailing white-spaces
+
+ include/sound/soc-dai.h            | 26 +++++++------
+ include/sound/soc.h                | 19 +++++-----
+ sound/core/control_compat.c        |  2 +-
+ sound/core/device.c                |  4 +-
+ sound/core/hwdep.c                 | 10 ++---
+ sound/core/init.c                  |  3 +-
+ sound/core/memalloc.c              |  2 +-
+ sound/core/memory.c                |  2 +-
+ sound/core/pcm.c                   | 22 +++++------
+ sound/core/pcm_compat.c            |  2 +-
+ sound/core/pcm_lib.c               | 41 ++++++++++----------
+ sound/core/pcm_misc.c              |  2 +-
+ sound/core/pcm_native.c            | 76 +++++++++++++++++++-------------------
+ sound/core/seq_device.c            |  2 +-
+ sound/soc/codecs/lpass-rx-macro.c  |  2 +-
+ sound/soc/codecs/lpass-tx-macro.c  |  2 +-
+ sound/soc/codecs/lpass-va-macro.c  |  2 +-
+ sound/soc/codecs/lpass-wsa-macro.c |  2 +-
+ sound/soc/codecs/wcd9335.c         |  2 +-
+ sound/soc/codecs/wcd934x.c         |  2 +-
+ sound/soc/intel/avs/pcm.c          |  4 +-
+ sound/soc/soc-core.c               |  4 +-
+ sound/soc/soc-dai.c                | 14 +++----
+ sound/soc/soc-pcm.c                | 26 ++++++-------
+ sound/soc/soc-utils.c              |  8 ++--
+ 25 files changed, 141 insertions(+), 140 deletions(-)
+---
+base-commit: cf32e2eb8404572eaacd219dde4e703fad349299
+change-id: 20240617-n-asoc-const-auto-selectable-formats-13fcc5000044
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
