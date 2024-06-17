@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-218208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6C590BACE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:26:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E50490BB06
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 878821F220E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:26:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B6D4B23173
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4C51991BA;
-	Mon, 17 Jun 2024 19:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0394198E80;
+	Mon, 17 Jun 2024 19:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDYRw7bD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhqFL1bc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1289A1991A9;
-	Mon, 17 Jun 2024 19:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DAB1991A9;
+	Mon, 17 Jun 2024 19:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718652347; cv=none; b=QNTI7ToD9HqCBlHO9lXiecc67OaPHY3aOMCJQGcurKDV6VeZwzlBJTp9Ja8Mm/IbR2xyU1lBuco2BKzxrlfVhviZGCoJr52rhze4yFMv7lrfSzGgzYFMEEx5Etg1De3cJ8YIpWuMJ8HwcQwqspxb4W+Z+/TuDDyT/iVBxL97gNc=
+	t=1718652603; cv=none; b=EurMS34kJvuveyIDNeTtmKrtdVBu+hU80Eh3vkfyi39UFWJpONiJGrWCBd2127yfSmmPBkWCHCEJ2+5K8ULD7G4MjVauM5iM89ytIqD8eYwS3LnttcIM4h7VeF2rhO8sKNkGtY2ru+jFUFjbpENf3mzw9koNLNaPajAuyZ+5p/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718652347; c=relaxed/simple;
-	bh=fiPM/txyC1MgvzsfZK1mZXhxNQ0K9EUihP4zzTA/5qI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+x+NnrMoGlH22AcQuha2WUS5s4VMexxfLV/WLX8PijZR+vVJdyX54jewA2JSiE0ai15Zhc6OsmmeGpjnXtOSYLQZT821O/Cr4IvgpcYphmh6/xO/j6BGgsLSeYIZ07+6S51YnhDGyPrGgMm6FnQd0bdYdMbk79mIO3spEAnrmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDYRw7bD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070C3C2BD10;
-	Mon, 17 Jun 2024 19:25:45 +0000 (UTC)
+	s=arc-20240116; t=1718652603; c=relaxed/simple;
+	bh=BHpVM5S0GjsiRz2Mu5h5JP2x/wqrDe6o0UiG+yaosU0=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=Qizb5HPj06IN4lSwNxMM1P3AE2mYEi6ya2tX/CjgWNlioJ5t/Xt8W4LWxz1l+sBuOmNfPkE/qICsNwgULnf695JkxZVqt7HIpUeDT7W3HJ1nf/z4dSU9WwZMfMlkqI2ZNigmQhVjyK6o3u9JjhiekpOxpqVi1+nojCqG8MpFxZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhqFL1bc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 902D6C2BD10;
+	Mon, 17 Jun 2024 19:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718652346;
-	bh=fiPM/txyC1MgvzsfZK1mZXhxNQ0K9EUihP4zzTA/5qI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VDYRw7bDOjeDOYj2rjUOlZyqGfr9UF0GR0AoQg5GbMvVBVGqpFFC86cxbiPLonUay
-	 Vk4sVTZKdkIVsoNdh5UHzdIPmi1SX0KRCEYBErrpUe2AOCnZhsMJgXVvMWNCWaGgkf
-	 c6M5GPnv3mrkGdeQ3z44X+1XNEaXlpdObEi622Uzq/jqfpExCnnQA8j0bgTd6iQDRh
-	 Iz7zAz84xXUSlsKS1ALSidDUhjuWSvpKDit3YIkkF9NpPe1dBwC+IUTmBY3+1YI1qE
-	 vjHe2jd1eFSHFu/CobLXJkRRP0Fr62/jiNBOkwKBOAVUcwnoP/LeEh9bH489bxmVa9
-	 XN92TWuqkZ8gQ==
-Date: Mon, 17 Jun 2024 21:25:42 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] docs: i2c: summary: document 'local' and 'remote'
- targets
-Message-ID: <boehtgry7j7ulhrw7tenkmzxujahmxfn25imvb7zw2ibtmebbk@u3jryw4v2y7h>
-References: <20240614081239.7128-8-wsa+renesas@sang-engineering.com>
- <20240614081239.7128-13-wsa+renesas@sang-engineering.com>
- <4zxr4rlqnjqbqh3oxmd2ufqi6uk4pxa3tniuya5pgjtqi6tswc@utq4r2zt6z6b>
- <ed75fyc2xcsnwubq42eposf6ayt5aj2jmqz6mthugk6vm2zpi4@qqwlmuwayoo5>
- <y34k2k25xdr5z4v7oejp4da237s4o5qym5npihyydwlbsdh75c@vhmfl7sw3pbm>
- <7d5f800f-fc65-4fbf-adad-616d51501c62@linux.microsoft.com>
+	s=k20201202; t=1718652602;
+	bh=BHpVM5S0GjsiRz2Mu5h5JP2x/wqrDe6o0UiG+yaosU0=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=OhqFL1bcDnPvchUBx5UcIMfvG8avkpbb+yRu1UBobKU9w5uo7A5nDQa5afVvwkZF0
+	 IERyl79LStBUfhgD86XJziuQWLPhytHZLyGE9AApfDt8xxYwSqyZI71CT+mHay+uMq
+	 4JUHtf3ERg5ZUDkJfyua+I+tq7tb/Jp8yl1ggEC9RBEC5wc5dxYK1MYo7h7DS4xZh+
+	 V8cccPW+YuVvrOGHennTvIfBatoMgS1W4LOOA+4bQREYsPsw7bzZpeHTuQ/9MNhtVi
+	 yOLRN6CswBMZ7i/NBI33fYgG9JQ4n10QmH2/Pmd28JqXXYlpYAPDe6CXUPSncTdB3q
+	 v4qX+J5KDNxew==
+Date: Mon, 17 Jun 2024 13:30:01 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d5f800f-fc65-4fbf-adad-616d51501c62@linux.microsoft.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: linux-iio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>, 
+ Jonathan Cameron <jic23@kernel.org>
+In-Reply-To: <20240617183215.4080-2-francesco@dolcini.it>
+References: <20240617183215.4080-1-francesco@dolcini.it>
+ <20240617183215.4080-2-francesco@dolcini.it>
+Message-Id: <171865260138.3045376.15728867066959921704.robh@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: adc: add ti,ads1119
 
-Hi,
 
-On Mon, Jun 17, 2024 at 09:57:12AM GMT, Easwar Hariharan wrote:
-> On 6/17/2024 4:58 AM, Andi Shyti wrote:
-> > On Sun, Jun 16, 2024 at 09:14:40PM GMT, Wolfram Sang wrote:
-> >>> I am not a big fan of the use of the word client. It's not used
-> >>> anywhere in the documentation and it's too generic as a name for
-> >>> giving it a specific meaning.
-> >>>
-> >>> I've seen already some confusion amongst reviewers and
-> >>> maintainers when Easwar sent the patch in drm.
-> >>>
-> >>> If it depends on me, I would stick to the only controller/target
-> >>> and render obsolet the use of the word "client" in the i2c
-> >>> context.
-> >>
-> >> Have you read the paragraph "Synonyms" from patch 6? I don't think we
-> >> can obsolete client because:
-> >>
-> >> $ git grep 'struct i2c_client \*client' | wc -l
-> >> 6100
+On Mon, 17 Jun 2024 20:32:14 +0200, Francesco Dolcini wrote:
+> From: João Paulo Gonçalves <joao.goncalves@toradex.com>
 > 
-> > at least saying that "target" is the
-> > preferred name for what was called "client" until now.
+> Add devicetree bindings for Texas Instruments ADS1119 16-bit ADC
+> with I2C interface.
 > 
-> I'm in agreement on obsoleting "client" as well. On the pace of change,
-> I'll defer to you. I was trying to elicit a recommendation on future use
-> of "client" when I asked:
+> Datasheet: https://www.ti.com/lit/gpn/ads1119
+> Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> v3:
+>  - add avdd and dvdd supplies
+>  - add Reviewed-by: Conor Dooley <conor.dooley@microchip.com
 > 
-> ===
-> What's the combined effect of this documentation update in terms of the
-> recommendation for switching over the Linux kernel? Are we to use
-> controller/client or controller/target?
-> ===
+> v2:
+>  - add diff-channels and single-channel
+>  - add XOR check to make diff/single channel property required
+>  - add interrupts, reset-gpios and vref-supply to the example
+>  - fix missing additionalProperties/unevaluatedProperties warning in channels
+>  - remove ti,gain and ti,datarate as they aren't fixed hw properties
+>  - remove unnecessary |
+> ---
+>  .../bindings/iio/adc/ti,ads1119.yaml          | 155 ++++++++++++++++++
+>  MAINTAINERS                                   |   7 +
+>  2 files changed, 162 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
 > 
-> "Synonyms" from patch 6 does say that controller/target is preferred but
-> couched it in the caveat "If speaking about I2C in general" and
-> adapter/client when "discuss[ing] implementation details." I was trying
-> to give space for an unambiguous recommendation.
 
-Exactly, this is what I referred to in my previous e-mails.
-These two statements sound a bit ambiguous to me, as well.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Maybe we are wasting time at discussing minor details, but I
-consider this part important in order to give way to the major
-refactoring that Wolfram started at the beginning.
+yamllint warnings/errors:
 
-Of course, as of now, I agree that replacing every "client" to
-"target" might not make much sense.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml: single-channel: missing type definition
 
-Thanks,
-Andi
+doc reference errors (make refcheckdocs):
 
-> I think we are on the same page here if we just remove the caveats.
-> 
-> Thanks,
-> Easwar
-> 
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240617183215.4080-2-francesco@dolcini.it
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
