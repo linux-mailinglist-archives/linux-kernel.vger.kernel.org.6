@@ -1,178 +1,548 @@
-Return-Path: <linux-kernel+bounces-217179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933DA90AC8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:04:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1C690AC8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D18E1F23525
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431011C22882
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784B819069B;
-	Mon, 17 Jun 2024 11:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB7D136E3E;
+	Mon, 17 Jun 2024 11:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="AdSe1kuB"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CzRuj/LC"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3AD381A1
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252F273164
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718622233; cv=none; b=MM/fXZMDclVZt6Xr7DxZFgKS099sm7UjJ7ovsjoCNSP/1npgiMuKWxcrfgAG4jWS0OsI4uyEyYqTIZIzaHDQCeWu+wKjtpIo9eLVPELHrg/fThlJ0KvKDlA27JvbCJjRk1tyBrtxEsUEt4xYIPBsMVjSKicNxMPz0171Ovd+QTw=
+	t=1718622256; cv=none; b=QbI6a0gw5N9raeVeiYtWW2WeTDZpjhyLbH3hLxA2sBbxPEr+SyNonitCY/odEPSRQk1jIhyV0oIVcbPvHztDqtF0b0/ov6D7kLMNqwexUBXTrbsobA0l9S6PuA+Fk9t7xGLrAeam4M6mw69Im4qxc4chxD//HBd7RH4/1TnDOi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718622233; c=relaxed/simple;
-	bh=XHe6rv1MpYBSa+Mt6pzf+eG/Y/znxxbmr96cmN4mCDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fLcSTZBBV8jKSHdBo27v/YW7DeqTnsTzEaex70T2mopOE1EMzWY0rOAZ7Wdgwr8MQkkjZM0nghXkcOt3i6iZl+ZMDhqSQdxovFjSiZBbhksTInPpexDQI+qd/wLGx9NfpAcCwQmkhb0sN8nu+609lwO7DD3YWFiFNlAASP7TK0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=AdSe1kuB; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52c8342af5eso4503031e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 04:03:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1718622230; x=1719227030; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cnrEAgmCGZ8eT4SPyQ/ikR+mYDl+xm5NyyJ0BeqIo60=;
-        b=AdSe1kuBc+NuRB9c182eOfQyHBtVCGshAW9XyQLIAaeTOoMCtHaLbGtfpbDhdWwUMc
-         /PYqQnAG4TNnWFUxyEGs/ia0wzRuxNbl1QjP2ig+4H77dw4j0NUWIj2q5FNYXQDdh1sj
-         KJm5XTu3aWegyEDg6M3T1d5MHWma4VQIMUpF0mmhbIrGxaB/7F/26hygK/mcJFqeLW+1
-         F8CHm7HTqmOOKc1VDdOwnv/UL1ty1qtfPatR1dhZmCg96yLY1+iDGwLO4wz+4hWKRJzn
-         8fh+7SaOoUe+RhUHfBcWrDnMzH91UeUmnG85jDb9Pp+IUvpTYCi/Xk6g1s4/xoZ9cOFH
-         DdHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718622230; x=1719227030;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cnrEAgmCGZ8eT4SPyQ/ikR+mYDl+xm5NyyJ0BeqIo60=;
-        b=wXkxTCYeX8MVjjve84mXnkvGJOq5soXMUH/MsrGYJbjU2a9AgAcEhiRJCFkyLhHwjN
-         TuXCxWFup2zLmpUY8MGQ9V6lgjeakL9ErrLLkhnzmE+yEBVc7Xan6oyvSwHj5Z04L4nG
-         EKECplMZ+AZ7Uw5KJh1h02rdjly4i8PBoSKH670V0gFlYbeVSDV8gG6pGN6wjzPVrI9q
-         y7ZZu171/zMWUZW8Xu4E4rtRRBFCY9ptijJ44VkViYavpN7OjxVRqVc+qC2QdtqkDfMm
-         zoVireaLVt+3x56f+N4xUFY0IXUNYuJEsTlYHqS8la6i0IrE4+HHOWbpBBqTLPakNUbI
-         rYkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp96Usap+3+8p/gyePosRK390SfDh67jlORvF7mFDZL63Y/RVH026pXou8tQDN6WV+t5NzT4yCcwzgDbIPyKleXuITOJ+eWcYvtj/N
-X-Gm-Message-State: AOJu0YxZ86m1FnjMA+8zFIXe5OnR76VrvKmZWVWB8VNbsdbCA4BaZSFG
-	F42YqPXffpzEU5EN80a2DGTXbnj2GCoVUewzimlCeKF44FAzCy/gCT4Toq9W+WQ=
-X-Google-Smtp-Source: AGHT+IGRyD5Y9cfdFlHIRF5cLz5ElDkrxpQElmYKzRwP7fqAcoTbWBKETyf7X4XpDZNPL7KXuAFInQ==
-X-Received: by 2002:a19:5e4c:0:b0:52b:c12e:b226 with SMTP id 2adb3069b0e04-52ca6e9a36dmr5256140e87.68.1718622229740;
-        Mon, 17 Jun 2024 04:03:49 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f602ee95sm159457825e9.13.2024.06.17.04.03.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 04:03:49 -0700 (PDT)
-Date: Mon, 17 Jun 2024 12:03:48 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	vincent.donnefort@arm.com, ke.wang@unisoc.com,
-	linux-kernel@vger.kernel.org, christian.loehle@arm.com
-Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding
- actual_cpu_capacity
-Message-ID: <20240617110348.pyofhzekzoqda7fo@airbuntu>
-References: <20240606070645.3295-1-xuewen.yan@unisoc.com>
- <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
- <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
- <20240616222003.agcz5osb2nkli75h@airbuntu>
- <CAB8ipk-ejDKQTr8nAmK9MkhL2Ra=0J==p3Q+U-4K18G6MeJhQw@mail.gmail.com>
+	s=arc-20240116; t=1718622256; c=relaxed/simple;
+	bh=GMaKubgsfJBFZJ6lVBtP+LM4VZiQ9fRzR+9EAv7Bn/k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bEDaVxnIaJLsqMiZ5QZwJewWx8hq+q/Oe7cUz627gEPArzZLjAdpV47SMGqc01mbXmzanwoUVl7jfsVhkCMdHgNhc1HXD1KQKaoXpNPVMyHLaaixB46TpJCZLl3jaO/TEYKKMDQ9VsFoaxhxpHZubnsSmqAm2nzk0CwCfWPyppM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CzRuj/LC; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718622252;
+	bh=GMaKubgsfJBFZJ6lVBtP+LM4VZiQ9fRzR+9EAv7Bn/k=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=CzRuj/LC7923NzRcxcy2v/RR/EXw3VmesbMFKT14Jk7entBNgBMnIdqr/UQuOui8x
+	 9D0urNkB7HgEFMOkCGYX2cODZUGH12Ag7zp803j+VJsuvyQKtP16wGJr7wCtcyvC9x
+	 YFPb5uDRG1WC8QB3B6jp7G2jAaZtSEmqN1ELSV0aftMkn1/78dlOLG+l16HLXaFtLL
+	 zqL18+9lyK9+Pq3ZrLezfIwZJM9ikLQpIYmpnM/eccZo4GJkvPop2CerxKjNZt1U45
+	 zpocKECEv/akYif39oNw7xMrEbjK9TbISXfvczuK26VYvfXaE2ZwgoVlwtJ8lsw6JA
+	 3RkGbRvhyG/+w==
+Received: from [100.95.196.25] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: koike)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2AE263780480;
+	Mon, 17 Jun 2024 11:04:06 +0000 (UTC)
+Message-ID: <16dcbd4e-dadb-4400-9b36-04b4e3a74b95@collabora.com>
+Date: Mon, 17 Jun 2024 08:04:04 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] drm/ci: add tests on vkms
+From: Helen Koike <helen.koike@collabora.com>
+To: Vignesh Raman <vignesh.raman@collabora.com>,
+ dri-devel@lists.freedesktop.org
+Cc: airlied@gmail.com, daniel@ffwll.ch, rodrigosiqueiramelo@gmail.com,
+ melissa.srw@gmail.com, mairacanal@riseup.net, hamohammed.sa@gmail.com,
+ robdclark@gmail.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, daniels@collabora.com, guilherme.gallo@collabora.com,
+ sergi.blanch.torne@collabora.com, linux-kernel@vger.kernel.org
+References: <20240614161835.55553-1-vignesh.raman@collabora.com>
+ <44f18a9b-5ef2-471a-9d31-1efd488ef45f@collabora.com>
+Content-Language: en-US
+In-Reply-To: <44f18a9b-5ef2-471a-9d31-1efd488ef45f@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAB8ipk-ejDKQTr8nAmK9MkhL2Ra=0J==p3Q+U-4K18G6MeJhQw@mail.gmail.com>
 
-On 06/17/24 15:27, Xuewen Yan wrote:
-> Hi Qais,
+
+
+On 14/06/2024 13:54, Helen Koike wrote:
 > 
-> On Mon, Jun 17, 2024 at 6:20 AM Qais Yousef <qyousef@layalina.io> wrote:
-> >
-> > On 06/12/24 16:11, Xuewen Yan wrote:
-> > > Hi Qais
-> > >
-> > > On Mon, Jun 10, 2024 at 6:55 AM Qais Yousef <qyousef@layalina.io> wrote:
-> > > >
-> > > > On 06/06/24 15:06, Xuewen Yan wrote:
-> > > > > Because the effective_cpu_util() would return a util which
-> > > > > maybe bigger than the actual_cpu_capacity, this could cause
-> > > > > the pd_busy_time calculation errors.
-> > > > > So clamp the cpu_busy_time with the eenv->cpu_cap, which is
-> > > > > the actual_cpu_capacity.
-> > > >
-> > > > I actually think capping by pd_cap is something we should remove. Saturated
-> > > > systems aren't calculated properly especially when uclamp_max is used.
-> > > >
-> > > > But this might a bigger change and out of scope of what you're proposing..
-> > >
-> > > I agree, there are other things to consider before doing this.
-> > >
-> > > >
-> > > > Did this 'wrong' calculation cause an actual problem for task placement?
-> > > > I assume the pd looked 'busier' because some CPUs were too busy.
-> > >
-> > > This will not only affect calculations in scenarios with high temperatures.
-> > > Sometimes, users will set scalimg_max_freq to actively limit the CPU frequency,
-> > > so that even if the CPU load is large, the CPU frequency will not be very high.
-> > > At this time, even if tasks are placed on other CPUs in the same PD,
-> > > the energy increment may not be too large, thus affecting core selection.
-> > >
-> > > >
-> > > > Was the system in overutilzied state? Usually if one CPU is that busy
-> > > > overutilized should be set and we'd skip EAS - unless uclamp_max was used.
-> > >
-> > > As Christian said, This case occurs not only in the overutil scenario,
-> > > this scenario holds true as long as the actual-cpu-capacity caused by
-> > > the reduction in max cpu frequency is smaller than the cpu util.
-> >
-> > Hmm. Sorry I might be thick here, but shouldn't fits_capacity() use
-> > capacity_of() which should return capacity based on get_actual_cpu_capacity()
-> > to compare if we are overutilized? If we are higher than this value that you
-> > need to cap, then the CPU must be overutilized and we shouldn't be in feec() in
-> > the first place, no? Unless the rq is capped with uclamp_max that is.
 > 
-> Sorry, I miss the "fits_capacity() use capacity_of()", and without
-> uclamp_max, the rd is over-utilized,
-> and would not use feec().
-> But I notice the uclamp_max, if the rq's uclamp_max is smaller than
-> SCHED_CAPACITY_SCALE,
-> and is bigger than actual_cpu_capacity, the util_fits_cpu() would
-> return true, and the rd is not over-utilized.
-> Is this setting intentional?
+> On 14/06/2024 13:18, Vignesh Raman wrote:
+>> Add job that runs igt on top of vkms.
+>>
+>> Acked-by: Maíra Canal <mcanal@igalia.com>
+>> Acked-by: Helen Koike <helen.koike@collabora.com>
+>> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+>> Acked-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>> Tested-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>> Acked-by: Maxime Ripard <mripard@kernel.org>
+>> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+>> ---
+>>
+>> v2:
+>> - do not mv modules to /lib/modules in the job definition, leave it to
+>>    crosvm-runner.sh
+>>
+>> v3:
+>> - Enable CONFIG_DRM_VKMS in x86_64.config and update xfails
+>>
+>> v4:
+>> - Build vkms as module and test with latest IGT.
+>>    This patch depends on 
+>> https://lore.kernel.org/dri-devel/20240130150340.687871-1-vignesh.raman@collabora.com/
+>>
+>> v5:
+>> - Test with the updated IGT and update xfails
+>>
+>> v6:
+>> - Add metadata header for each flake test. Update skips file.
+>>    https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1201477
+> 
+> Thanks!
+> 
+> If there are no more comments until monday I'm applying this.
+> 
+> Thanks all for reviewing and testing.
+> 
+> Regards,
+> Helen
 
-Hmm. To a great extent yes. We didn't want to take all types of rq pressure
-into account for uclamp_max. But this corner case could be debatable.
+Applied to drm-misc-next.
 
-Is this the source of your problem? If you change util_fits_cpu() to return
-false here, would this fix the problem you're seeing?
+Thanks
+Helen
 
 > 
-> >
-> > I generally think our current definition of overutilized is wrong and the use
-> > case you're talking about should hold true if it's just a single CPU that is
-> > overutilized. But I can't see how you end up in feec() if the util is higher
-> > than the CPU in our current code base.
-> >
-> > What did I miss?
-> >
-> > And should effective_cpu_util() return a value higher than
-> > get_actual_cpu_capacity()?
-> 
-> I also thought about changing this at first, but because this function
-> is called in many places,
-> I am not 100% sure that changing it will not have any unexpected consequences,
-> so I only changed feec():)
-
-Yes I had similar doubts. But the question had to be asked :-)
+>>
+>> ---
+>>   MAINTAINERS                                   |   1 +
+>>   drivers/gpu/drm/ci/build.sh                   |   1 -
+>>   drivers/gpu/drm/ci/gitlab-ci.yml              |   1 +
+>>   drivers/gpu/drm/ci/igt_runner.sh              |   6 +-
+>>   drivers/gpu/drm/ci/image-tags.yml             |   2 +-
+>>   drivers/gpu/drm/ci/test.yml                   |  24 +++-
+>>   drivers/gpu/drm/ci/x86_64.config              |   1 +
+>>   drivers/gpu/drm/ci/xfails/vkms-none-fails.txt |  57 +++++++++
+>>   .../gpu/drm/ci/xfails/vkms-none-flakes.txt    |  69 ++++++++++
+>>   drivers/gpu/drm/ci/xfails/vkms-none-skips.txt | 119 ++++++++++++++++++
+>>   10 files changed, 275 insertions(+), 6 deletions(-)
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/vkms-none-fails.txt
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/vkms-none-skips.txt
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 8aee861d18f9..94065f5028cf 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -7036,6 +7036,7 @@ L:    dri-devel@lists.freedesktop.org
+>>   S:    Maintained
+>>   T:    git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>>   F:    Documentation/gpu/vkms.rst
+>> +F:    drivers/gpu/drm/ci/xfails/vkms*
+>>   F:    drivers/gpu/drm/vkms/
+>>   DRM DRIVER FOR VIRTUALBOX VIRTUAL GPU
+>> diff --git a/drivers/gpu/drm/ci/build.sh b/drivers/gpu/drm/ci/build.sh
+>> index a67871fdcd3f..e938074ac8e7 100644
+>> --- a/drivers/gpu/drm/ci/build.sh
+>> +++ b/drivers/gpu/drm/ci/build.sh
+>> @@ -157,7 +157,6 @@ fi
+>>   mkdir -p artifacts/install/lib
+>>   mv install/* artifacts/install/.
+>> -rm -rf artifacts/install/modules
+>>   ln -s common artifacts/install/ci-common
+>>   cp .config artifacts/${CI_JOB_NAME}_config
+>> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml 
+>> b/drivers/gpu/drm/ci/gitlab-ci.yml
+>> index 1b29c3b6406b..80fb0f57ae46 100644
+>> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
+>> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+>> @@ -123,6 +123,7 @@ stages:
+>>     - msm
+>>     - rockchip
+>>     - virtio-gpu
+>> +  - software-driver
+>>   # YAML anchors for rule conditions
+>>   # --------------------------------
+>> diff --git a/drivers/gpu/drm/ci/igt_runner.sh 
+>> b/drivers/gpu/drm/ci/igt_runner.sh
+>> index d49ad434b580..79f41d7da772 100755
+>> --- a/drivers/gpu/drm/ci/igt_runner.sh
+>> +++ b/drivers/gpu/drm/ci/igt_runner.sh
+>> @@ -30,10 +30,10 @@ case "$DRIVER_NAME" in
+>>               export IGT_FORCE_DRIVER="panfrost"
+>>           fi
+>>           ;;
+>> -    amdgpu)
+>> +    amdgpu|vkms)
+>>           # Cannot use HWCI_KERNEL_MODULES as at that point we don't 
+>> have the module in /lib
+>> -        mv /install/modules/lib/modules/* /lib/modules/.
+>> -        modprobe amdgpu
+>> +        mv /install/modules/lib/modules/* /lib/modules/. || true
+>> +        modprobe --first-time $DRIVER_NAME
+>>           ;;
+>>   esac
+>> diff --git a/drivers/gpu/drm/ci/image-tags.yml 
+>> b/drivers/gpu/drm/ci/image-tags.yml
+>> index 60323ebc7304..13eda37bdf05 100644
+>> --- a/drivers/gpu/drm/ci/image-tags.yml
+>> +++ b/drivers/gpu/drm/ci/image-tags.yml
+>> @@ -4,7 +4,7 @@ variables:
+>>      DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
+>>      DEBIAN_X86_64_BUILD_IMAGE_PATH: "debian/x86_64_build"
+>> -   DEBIAN_BUILD_TAG: "2023-10-08-config"
+>> +   DEBIAN_BUILD_TAG: "2024-06-10-vkms"
+>>      KERNEL_ROOTFS_TAG: "2023-10-06-amd"
+>> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
+>> index 322cce714657..ee908b66aad2 100644
+>> --- a/drivers/gpu/drm/ci/test.yml
+>> +++ b/drivers/gpu/drm/ci/test.yml
+>> @@ -338,7 +338,7 @@ meson:g12b:
+>>       RUNNER_TAG: mesa-ci-x86-64-lava-meson-g12b-a311d-khadas-vim3
+>>   virtio_gpu:none:
+>> -  stage: virtio-gpu
+>> +  stage: software-driver
+>>     variables:
+>>       CROSVM_GALLIUM_DRIVER: llvmpipe
+>>       DRIVER_NAME: virtio_gpu
+>> @@ -358,3 +358,25 @@ virtio_gpu:none:
+>>       - debian/x86_64_test-gl
+>>       - testing:x86_64
+>>       - igt:x86_64
+>> +
+>> +vkms:none:
+>> +  stage: software-driver
+>> +  variables:
+>> +    DRIVER_NAME: vkms
+>> +    GPU_VERSION: none
+>> +  extends:
+>> +    - .test-gl
+>> +    - .test-rules
+>> +  tags:
+>> +    - kvm
+>> +  script:
+>> +    - ln -sf $CI_PROJECT_DIR/install /install
+>> +    - mv install/bzImage /lava-files/bzImage
+>> +    - mkdir -p /lib/modules
+>> +    - mkdir -p $CI_PROJECT_DIR/results
+>> +    - ln -sf $CI_PROJECT_DIR/results /results
+>> +    - ./install/crosvm-runner.sh ./install/igt_runner.sh
+>> +  needs:
+>> +    - debian/x86_64_test-gl
+>> +    - testing:x86_64
+>> +    - igt:x86_64
+>> diff --git a/drivers/gpu/drm/ci/x86_64.config 
+>> b/drivers/gpu/drm/ci/x86_64.config
+>> index 1cbd49a5b23a..8eaba388b141 100644
+>> --- a/drivers/gpu/drm/ci/x86_64.config
+>> +++ b/drivers/gpu/drm/ci/x86_64.config
+>> @@ -24,6 +24,7 @@ CONFIG_DRM=y
+>>   CONFIG_DRM_PANEL_SIMPLE=y
+>>   CONFIG_PWM_CROS_EC=y
+>>   CONFIG_BACKLIGHT_PWM=y
+>> +CONFIG_DRM_VKMS=m
+>>   # Strip out some stuff we don't need for graphics testing, to reduce
+>>   # the build.
+>> diff --git a/drivers/gpu/drm/ci/xfails/vkms-none-fails.txt 
+>> b/drivers/gpu/drm/ci/xfails/vkms-none-fails.txt
+>> new file mode 100644
+>> index 000000000000..691c383b21a0
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/ci/xfails/vkms-none-fails.txt
+>> @@ -0,0 +1,57 @@
+>> +core_hotunplug@hotrebind,Fail
+>> +core_hotunplug@hotrebind-lateclose,Fail
+>> +core_hotunplug@hotreplug,Fail
+>> +core_hotunplug@hotreplug-lateclose,Fail
+>> +core_hotunplug@hotunbind-rebind,Fail
+>> +core_hotunplug@hotunplug-rescan,Fail
+>> +core_hotunplug@unbind-rebind,Fail
+>> +core_hotunplug@unplug-rescan,Fail
+>> +device_reset@cold-reset-bound,Fail
+>> +device_reset@reset-bound,Fail
+>> +device_reset@unbind-cold-reset-rebind,Fail
+>> +device_reset@unbind-reset-rebind,Fail
+>> +dumb_buffer@invalid-bpp,Fail
+>> +kms_content_protection@atomic,Crash
+>> +kms_content_protection@atomic-dpms,Crash
+>> +kms_content_protection@content-type-change,Crash
+>> +kms_content_protection@lic-type-0,Crash
+>> +kms_content_protection@lic-type-1,Crash
+>> +kms_content_protection@srm,Crash
+>> +kms_content_protection@type1,Crash
+>> +kms_content_protection@uevent,Crash
+>> +kms_cursor_crc@cursor-rapid-movement-128x128,Fail
+>> +kms_cursor_crc@cursor-rapid-movement-128x42,Fail
+>> +kms_cursor_crc@cursor-rapid-movement-256x256,Fail
+>> +kms_cursor_crc@cursor-rapid-movement-256x85,Fail
+>> +kms_cursor_crc@cursor-rapid-movement-32x10,Fail
+>> +kms_cursor_crc@cursor-rapid-movement-32x32,Fail
+>> +kms_cursor_crc@cursor-rapid-movement-512x170,Fail
+>> +kms_cursor_crc@cursor-rapid-movement-512x512,Fail
+>> +kms_cursor_crc@cursor-rapid-movement-64x21,Fail
+>> +kms_cursor_crc@cursor-rapid-movement-64x64,Fail
+>> +kms_cursor_legacy@basic-flip-before-cursor-atomic,Fail
+>> +kms_cursor_legacy@basic-flip-before-cursor-legacy,Fail
+>> +kms_cursor_legacy@cursor-vs-flip-atomic,Fail
+>> +kms_cursor_legacy@cursor-vs-flip-legacy,Fail
+>> +kms_cursor_legacy@cursor-vs-flip-toggle,Fail
+>> +kms_cursor_legacy@cursor-vs-flip-varying-size,Fail
+>> +kms_cursor_legacy@flip-vs-cursor-atomic,Fail
+>> +kms_cursor_legacy@flip-vs-cursor-crc-atomic,Fail
+>> +kms_cursor_legacy@flip-vs-cursor-crc-legacy,Fail
+>> +kms_cursor_legacy@flip-vs-cursor-legacy,Fail
+>> +kms_flip@flip-vs-modeset-vs-hang,Fail
+>> +kms_flip@flip-vs-panning-vs-hang,Fail
+>> +kms_flip@flip-vs-suspend,Timeout
+>> +kms_flip@flip-vs-suspend-interruptible,Timeout
+>> +kms_flip@plain-flip-fb-recreate,Fail
+>> +kms_lease@lease-uevent,Fail
+>> +kms_pipe_crc_basic@nonblocking-crc,Fail
+>> +kms_pipe_crc_basic@nonblocking-crc-frame-sequence,Fail
+>> +kms_writeback@writeback-check-output,Fail
+>> +kms_writeback@writeback-check-output-XRGB2101010,Fail
+>> +kms_writeback@writeback-fb-id,Fail
+>> +kms_writeback@writeback-fb-id-XRGB2101010,Fail
+>> +kms_writeback@writeback-invalid-parameters,Fail
+>> +kms_writeback@writeback-pixel-formats,Fail
+>> +perf@i915-ref-count,Fail
+>> +tools_test@tools_test,Fail
+>> diff --git a/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt 
+>> b/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt
+>> new file mode 100644
+>> index 000000000000..eeaa1d5825af
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt
+>> @@ -0,0 +1,69 @@
+>> +# Board Name: vkms
+>> +# Bug Report: 
+>> https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+>> +# Failure Rate: 50
+>> +# IGT Version: 1.28-g0df7b9b97
+>> +# Linux Version: 6.9.0-rc7
+>> +kms_cursor_legacy@long-nonblocking-modeset-vs-cursor-atomic
+>> +
+>> +# Board Name: vkms
+>> +# Bug Report: 
+>> https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+>> +# Failure Rate: 50
+>> +# IGT Version: 1.28-g0df7b9b97
+>> +# Linux Version: 6.9.0-rc7
+>> +kms_flip@basic-flip-vs-wf_vblank
+>> +
+>> +# Board Name: vkms
+>> +# Bug Report: 
+>> https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+>> +# Failure Rate: 50
+>> +# IGT Version: 1.28-g0df7b9b97
+>> +# Linux Version: 6.9.0-rc7
+>> +kms_flip@flip-vs-expired-vblank-interruptible
+>> +
+>> +# Board Name: vkms
+>> +# Bug Report: 
+>> https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+>> +# Failure Rate: 50
+>> +# IGT Version: 1.28-g0df7b9b97
+>> +# Linux Version: 6.9.0-rc7
+>> +kms_flip@flip-vs-wf_vblank-interruptible
+>> +
+>> +# Board Name: vkms
+>> +# Bug Report: 
+>> https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+>> +# Failure Rate: 50
+>> +# IGT Version: 1.28-g0df7b9b97
+>> +# Linux Version: 6.9.0-rc7
+>> +kms_flip@plain-flip-fb-recreate-interruptible
+>> +
+>> +# Board Name: vkms
+>> +# Bug Report: 
+>> https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+>> +# Failure Rate: 50
+>> +# IGT Version: 1.28-g0df7b9b97
+>> +# Linux Version: 6.9.0-rc7
+>> +kms_flip@plain-flip-ts-check
+>> +
+>> +# Board Name: vkms
+>> +# Bug Report: 
+>> https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+>> +# Failure Rate: 50
+>> +# IGT Version: 1.28-g0df7b9b97
+>> +# Linux Version: 6.9.0-rc7
+>> +kms_flip@plain-flip-ts-check-interruptible
+>> +
+>> +# Board Name: vkms
+>> +# Bug Report: 
+>> https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+>> +# Failure Rate: 50
+>> +# IGT Version: 1.28-g0df7b9b97
+>> +# Linux Version: 6.9.0-rc7
+>> +kms_flip@flip-vs-absolute-wf_vblank
+>> +
+>> +# Board Name: vkms
+>> +# Bug Report: 
+>> https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+>> +# Failure Rate: 50
+>> +# IGT Version: 1.28-g0df7b9b97
+>> +# Linux Version: 6.9.0-rc7
+>> +kms_flip@flip-vs-absolute-wf_vblank-interruptible
+>> +
+>> +# Board Name: vkms
+>> +# Bug Report: 
+>> https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+>> +# Failure Rate: 50
+>> +# IGT Version: 1.28-g0df7b9b97
+>> +# Linux Version: 6.9.0-rc7
+>> +kms_flip@flip-vs-blocking-wf-vblank
+>> diff --git a/drivers/gpu/drm/ci/xfails/vkms-none-skips.txt 
+>> b/drivers/gpu/drm/ci/xfails/vkms-none-skips.txt
+>> new file mode 100644
+>> index 000000000000..fd5d1271115f
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/ci/xfails/vkms-none-skips.txt
+>> @@ -0,0 +1,119 @@
+>> +# keeps printing vkms_vblank_simulate: vblank timer overrun and never 
+>> ends
+>> +kms_invalid_mode@int-max-clock
+>> +
+>> +# Kernel panic
+>> +kms_cursor_crc@cursor-rapid-movement-32x10
+>> +# Oops: 0000 [#1] PREEMPT SMP NOPTI
+>> +# CPU: 0 PID: 2635 Comm: kworker/u8:13 Not tainted 
+>> 6.9.0-rc7-g40935263a1fd #1
+>> +# Hardware name: ChromiumOS crosvm, BIOS 0
+>> +# Workqueue: vkms_composer vkms_composer_worker [vkms]
+>> +# RIP: 0010:compose_active_planes+0x1c7/0x4e0 [vkms]
+>> +# Code: c9 0f 84 6a 01 00 00 8b 42 30 2b 42 28 41 39 c5 0f 8c 6f 01 
+>> 00 00 49 83 c7 01 49 39 df 74 3b 4b 8b 34 fc 48 8b 96 48 01 00 00 <8b> 
+>> 42 78 89 c1 83 e1 0a a8 20 74 b1 45 89 f5 41 f7 d5 44 03 6a 34
+>> +# RSP: 0018:ffffbb4700c17d58 EFLAGS: 00010246
+>> +# RAX: 0000000000000400 RBX: 0000000000000002 RCX: 0000000000000002
+>> +# RDX: 0000000000000000 RSI: ffffa2ad0788c000 RDI: 00000000fff479a8
+>> +# RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
+>> +# R10: ffffa2ad0bb14000 R11: 0000000000000000 R12: ffffa2ad03e21700
+>> +# R13: 0000000000000003 R14: 0000000000000004 R15: 0000000000000000
+>> +# FS:  0000000000000000(0000) GS:ffffa2ad2bc00000(0000) 
+>> knlGS:0000000000000000
+>> +# CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> +# CR2: 0000000000000078 CR3: 000000010bd30000 CR4: 0000000000350ef0
+>> +# Call Trace:
+>> +#  <TASK>
+>> +#  ? __die+0x1e/0x60
+>> +#  ? page_fault_oops+0x17b/0x490
+>> +#  ? exc_page_fault+0x6d/0x230
+>> +#  ? asm_exc_page_fault+0x26/0x30
+>> +#  ? compose_active_planes+0x1c7/0x4e0 [vkms]
+>> +#  ? compose_active_planes+0x2a3/0x4e0 [vkms]
+>> +#  ? srso_return_thunk+0x5/0x5f
+>> +#  vkms_composer_worker+0x205/0x240 [vkms]
+>> +#  process_one_work+0x1f4/0x6b0
+>> +#  ? lock_is_held_type+0x9e/0x110
+>> +#  worker_thread+0x17e/0x350
+>> +#  ? __pfx_worker_thread+0x10/0x10
+>> +#  kthread+0xce/0x100
+>> +#  ? __pfx_kthread+0x10/0x10
+>> +#  ret_from_fork+0x2f/0x50
+>> +#  ? __pfx_kthread+0x10/0x10
+>> +#  ret_from_fork_asm+0x1a/0x30
+>> +#  </TASK>
+>> +# Modules linked in: vkms
+>> +# CR2: 0000000000000078
+>> +# ---[ end trace 0000000000000000 ]---
+>> +# RIP: 0010:compose_active_planes+0x1c7/0x4e0 [vkms]
+>> +# Code: c9 0f 84 6a 01 00 00 8b 42 30 2b 42 28 41 39 c5 0f 8c 6f 01 
+>> 00 00 49 83 c7 01 49 39 df 74 3b 4b 8b 34 fc 48 8b 96 48 01 00 00 <8b> 
+>> 42 78 89 c1 83 e1 0a a8 20 74 b1 45 89 f5 41 f7 d5 44 03 6a 34
+>> +# RSP: 0018:ffffbb4700c17d58 EFLAGS: 00010246
+>> +# RAX: 0000000000000400 RBX: 0000000000000002 RCX: 0000000000000002
+>> +# RDX: 0000000000000000 RSI: ffffa2ad0788c000 RDI: 00000000fff479a8
+>> +# RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
+>> +# R10: ffffa2ad0bb14000 R11: 0000000000000000 R12: ffffa2ad03e21700
+>> +# R13: 0000000000000003 R14: 0000000000000004 R15: 0000000000000000
+>> +# FS:  0000000000000000(0000) GS:ffffa2ad2bc00000(0000) 
+>> knlGS:0000000000000000
+>> +# CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> +
+>> +kms_cursor_crc@cursor-rapid-movement-256x85
+>> +# [drm:drm_crtc_add_crc_entry] *ERROR* Overflow of CRC buffer, 
+>> userspace reads too slow.
+>> +# Oops: 0000 [#1] PREEMPT SMP NOPTI
+>> +# CPU: 1 PID: 10 Comm: kworker/u8:0 Not tainted 
+>> 6.9.0-rc7-g646381cde463 #1
+>> +# Hardware name: ChromiumOS crosvm, BIOS 0
+>> +# Workqueue: vkms_composer vkms_composer_worker [vkms]
+>> +# RIP: 0010:compose_active_planes+0x1c7/0x4e0 [vkms]
+>> +# Code: c9 0f 84 6a 01 00 00 8b 42 30 2b 42 28 41 39 c5 0f 8c 6f 01 
+>> 00 00 49 83 c7 01 49 39 df 74 3b 4b 8b 34 fc 48 8b 96 48 01 00 00 <8b> 
+>> 42 78 89 c1 83 e1 0a a8 20 74 b1 45 89 f5 41 f7 d5 44 03 6a 34
+>> +# RSP: 0018:ffffa7e980057d58 EFLAGS: 00010246
+>> +# RAX: 0000000000000400 RBX: 0000000000000002 RCX: 0000000000000002
+>> +# RDX: 0000000000000000 RSI: ffff977987aa5c00 RDI: 000000001b43a85f
+>> +# RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+>> +# R10: ffff977981bf0000 R11: 0000000000000000 R12: ffff977989622590
+>> +# R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000000
+>> +# FS:  0000000000000000(0000) GS:ffff9779abd00000(0000) 
+>> knlGS:0000000000000000
+>> +# CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> +# CR2: 0000000000000078 CR3: 0000000109b38000 CR4: 0000000000350ef0
+>> +# Call Trace:
+>> +#  <TASK>
+>> +#  ? __die+0x1e/0x60
+>> +#  ? page_fault_oops+0x17b/0x490
+>> +#  ? exc_page_fault+0x6d/0x230
+>> +#  ? asm_exc_page_fault+0x26/0x30
+>> +#  ? compose_active_planes+0x1c7/0x4e0 [vkms]
+>> +#  ? compose_active_planes+0x2a3/0x4e0 [vkms]
+>> +#  ? srso_return_thunk+0x5/0x5f
+>> +#  vkms_composer_worker+0x205/0x240 [vkms]
+>> +#  process_one_work+0x1f4/0x6b0
+>> +#  ? lock_is_held_type+0x9e/0x110
+>> +#  worker_thread+0x17e/0x350
+>> +#  ? __pfx_worker_thread+0x10/0x10
+>> +#  kthread+0xce/0x100
+>> +#  ? __pfx_kthread+0x10/0x10
+>> +#  ret_from_fork+0x2f/0x50
+>> +#  ? __pfx_kthread+0x10/0x10
+>> +#  ret_from_fork_asm+0x1a/0x30
+>> +#  </TASK>
+>> +# Modules linked in: vkms
+>> +# CR2: 0000000000000078
+>> +# ---[ end trace 0000000000000000 ]---
+>> +# RIP: 0010:compose_active_planes+0x1c7/0x4e0 [vkms]
+>> +# Code: c9 0f 84 6a 01 00 00 8b 42 30 2b 42 28 41 39 c5 0f 8c 6f 01 
+>> 00 00 49 83 c7 01 49 39 df 74 3b 4b 8b 34 fc 48 8b 96 48 01 00 00 <8b> 
+>> 42 78 89 c1 83 e1 0a a8 20 74 b1 45 89 f5 41 f7 d5 44 03 6a 34
+>> +# RSP: 0018:ffffa7e980057d58 EFLAGS: 00010246
+>> +# RAX: 0000000000000400 RBX: 0000000000000002 RCX: 0000000000000002
+>> +# RDX: 0000000000000000 RSI: ffff977987aa5c00 RDI: 000000001b43a85f
+>> +# RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+>> +# R10: ffff977981bf0000 R11: 0000000000000000 R12: ffff977989622590
+>> +# R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000000
+>> +# FS:  0000000000000000(0000) GS:ffff9779abd00000(0000) 
+>> knlGS:0000000000000000
+>> +# CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> +# CR2: 0000000000000078 CR3: 0000000109b38000 CR4: 0000000000350ef0
+>> +
+>> +# Skip driver specific tests
+>> +^amdgpu.*
+>> +msm_.*
+>> +nouveau_.*
+>> +panfrost_.*
+>> +^v3d.*
+>> +^vc4.*
+>> +^vmwgfx*
+>> +
+>> +# Skip intel specific tests
+>> +gem_.*
+>> +i915_.*
+>> +xe_.*
 
