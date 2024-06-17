@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-218371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F60890BD79
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:24:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4561F90BD7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 234C21F228DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:24:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAF47B21D32
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79580199248;
-	Mon, 17 Jun 2024 22:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23385199238;
+	Mon, 17 Jun 2024 22:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="KRMZuhUa"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="VdD0t9BZ"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B3919885D;
-	Mon, 17 Jun 2024 22:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A5D19146C;
+	Mon, 17 Jun 2024 22:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718663088; cv=none; b=Q0InjnB0ocLpgLHjsz6lv3G5Itky1xyNiEZ1xZHOiUY8KSFWXRSvospDkb1vILFBIKhqOByeh4rWLOI5DQU+NwJ+ur5iTBdV9mWoYeNA4HYHwREPzHvyJ+LHn4Dorq9H6Z7Mwv7zbaJ5fdUC6hBiQoxAE4d7TC9MJxrHIS+xDII=
+	t=1718663117; cv=none; b=VExqfrNs46j2SlDNVfeMExdp8TrgGZApdjzfpX94vv/oIJG5EFCfEh/GuZdvzSvWfIt+4u1SnjOHA/MZ/XERczhQLeVUiXvorDii9jAgG8v2o12lFzaCoAT72pHc9Wx5/cECM380OcFRTyTTipUjNGJTSpz7C4dUI4ZZ0vAyYf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718663088; c=relaxed/simple;
-	bh=dxYZ3rto3urXZxH/ox23h1g+ipYLkUqCdFX07jBAauU=;
+	s=arc-20240116; t=1718663117; c=relaxed/simple;
+	bh=yr8aF+6cl0PvM7Z4K4YPH/pvE+gJlEklbIIjCHB8nC0=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BYJakSp/vgQdGyGMEHFLX28ph9AjQ59YpzRm+Cg8QF557/aWKqk2FTBP4z6oAIEgIPcg5fo3FW4KxTwuR07lsszpnYBACkr15jPmXeCicTbXDM0swJ0Mr8bUfSpRbY4mTdqoIXii2nz4lg9/US0fL2YVtttsnNgKFO0Lyp0HBEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=KRMZuhUa; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version:Content-Type; b=Gza++854I40SPGxB+84kELih75c/sjU8dd/Hyy5lJZtoVykxvlm8gDWld31UTAm5sU/eBy0WLBimi9Z6bGxdJyiCCXmvW0NmFTOVRIstqBVbXgKqea7t2aFDV3pm5WT6du8zeatj1voEzeZQ0sEXCnh1QMHG0ylgSVx65qCqwRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=VdD0t9BZ; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net AFAC145E2A
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B65F145E2A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1718663085; bh=6TWn/l9pktBcbkbB492KVy81g2F+cmsxbVam3E418SA=;
+	t=1718663115; bh=C4irShnxUq3Qay/2WqB7RvyVUXEGysIQbUzCnN557I4=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=KRMZuhUaeiCZzdqINKn5jcDyn3JaUqRc7NcM+/nll5LWRBRmP6u9WqGYItKrPQKIn
-	 4asJDAIhGc6tfUAaFXQMJLa+DUyU4GVcx8UE4gI9hwqGe5nStPWnUbagn7Z1yoN9ia
-	 slAc1Hn0Bn8LbIIa4vWlpsx5rFeOqpu3IKwSLOhJeAjV7XQD7mXd1EVRGlJa6xDyC8
-	 3VwLXDsxclFBktvdWX8opPPF2pSVDKUE4SFSsTxN+YNTR1TY+BoupYCbzCp6cJ6Q3m
-	 Sp/w89C+jiMsA2EXbz3jwqnkjKStPBus1E4qcqKle3l8FiW99eYMfB8hXyOPG/33T1
-	 zTTh3E2kXRWSw==
+	b=VdD0t9BZfjVRwVNQ7jaQhAr9a4E9hkxKVtwflz/o/CZYyWCUA+uhNRKcjIk1PQ10R
+	 OFvfeKrBxPQuohtGa8XCoit6wVBjSSpXyQ8ANwS0aAkvqNWl5CRRQ5KyWBF2YxfhQJ
+	 YwwWcabOxRiX/GzvotTI46HLcIh1P+O8/xHh/CQ0FbnsoczR5CmodIUtGaR8k824id
+	 mcHM6SSPalgvt1ZQwRebCFzDvlGGZWQ+b4Tvk22GGOzCe8jf1AaEYymcv4GQqM/WtF
+	 ODCTa98flzrzdPe5AIE3FB3juAj5SddLFMVFC6NglpcRgnDFxSHrrCELIc7xJxMbM4
+	 CN1hPv7sKJJxw==
 Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id AFAC145E2A;
-	Mon, 17 Jun 2024 22:24:45 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPSA id B65F145E2A;
+	Mon, 17 Jun 2024 22:25:15 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
-To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org, Krzysztof
- Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- arnd@arndb.de
-Subject: Re: [PATCH] Documentation: Remove unused "mtdset=" from
- kernel-parameters.txt
-In-Reply-To: <20240614182508.600113-1-thuth@redhat.com>
-References: <20240614182508.600113-1-thuth@redhat.com>
-Date: Mon, 17 Jun 2024 16:24:44 -0600
-Message-ID: <87tthrgqc3.fsf@trenco.lwn.net>
+To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org, Alexander
+ Shiyan <shc_work@mail.ru>, Olof Johansson <olof@lixom.net>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh
+ Raghavendra <vigneshr@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] Documentation: Remove unused "spia_*" kernel parameters
+In-Reply-To: <20240614184041.601056-1-thuth@redhat.com>
+References: <20240614184041.601056-1-thuth@redhat.com>
+Date: Mon, 17 Jun 2024 16:25:14 -0600
+Message-ID: <87plsfgqb9.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,9 +67,10 @@ Content-Type: text/plain
 
 Thomas Huth <thuth@redhat.com> writes:
 
-> The kernel parameter "mtdset" has been removed two years ago in
-> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support") and
-> thus should be removed from the documentation now, too.
+> The kernel module parameters "spia_io_base", "spia_fio_base",
+> "spia_pedr" and "spia_peddr" have been removed via commit e377ca1e32f6
+> ("ARM: clps711x: p720t: Special driver for handling NAND memory is removed").
+> Time to remove them from the documentation now, too.
 >
 > Signed-off-by: Thomas Huth <thuth@redhat.com>
 > ---
@@ -79,17 +78,18 @@ Thomas Huth <thuth@redhat.com> writes:
 >  1 file changed, 5 deletions(-)
 >
 > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 87d5bee924fe..ff02e1a02e12 100644
+> index ff02e1a02e12..dd8436c98735 100644
 > --- a/Documentation/admin-guide/kernel-parameters.txt
 > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -3631,11 +3631,6 @@
->  	mtdparts=	[MTD]
->  			See drivers/mtd/parsers/cmdlinepart.c
+> @@ -6273,11 +6273,6 @@
+>  			Not specifying this option is equivalent to
+>  			spec_store_bypass_disable=auto.
 >  
-> -	mtdset=		[ARM]
-> -			ARM/S3C2412 JIVE boot control
+> -	spia_io_base=	[HW,MTD]
+> -	spia_fio_base=
+> -	spia_pedr=
+> -	spia_peddr=
 > -
-> -			See arch/arm/mach-s3c/mach-jive.c
 
 Applied, thanks.
 
