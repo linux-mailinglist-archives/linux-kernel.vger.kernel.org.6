@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-217014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11AEC90A9AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D84B90A9AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8831F25B44
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:35:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7A771F25D3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F6F19306C;
-	Mon, 17 Jun 2024 09:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BE0194087;
+	Mon, 17 Jun 2024 09:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lTemQ+Kw"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="laYIaRMo"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D983E190053
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBB9193062
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616908; cv=none; b=S0n8ScV8cIIOKWGmCyHQhfrlwrrGf7LUNF9U04wEmDmSLN9OqKODKqDt+TWzk0wIRZdv3OzSm+KGgnBzZ/YCkiSRQDvmVGbMIcfoV4KBBBidc0T+UirSOdIriz2iRJxEaLYQVcEQG+yuBr81VPzJ4aLSNottWGnVpsFvmgqWw7A=
+	t=1718616910; cv=none; b=Iv4JXcdrrbqJ1ccaROPCV49BAs0YmItKEbmJ5chwH3eRZMGmXTVCsNmm0m8Zr/uiNm1eiykIBBHNR/NWhenDd/KiKEYkImIUaTrUs2DfnZXHfg3YuslOFkejI5MQNDnvPgiGSDAzrQgynmU1XOG0gIMIhH6yX5X3HXozf1B+cPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616908; c=relaxed/simple;
-	bh=pGsKYSsuVqYhnQGqi4IUCl0rXwhURd33quQLgivZ3+k=;
+	s=arc-20240116; t=1718616910; c=relaxed/simple;
+	bh=WwPANurgbHg/bZQ8Fx5BluELw0V5Ey9S41+qZoHECKw=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y73uEXPBsRU316vHZhe0PWY4B1sOzI5LHnWDX2HkLfcORLMnMQ9U6gvuYKH71cyJmiCNLsSJlf+66db3tjlcREWpXda9Utw2HcepOXGtZYJJYa6puQIA7Uv7m1fJ9DuC6BlmGuh0efGG9q14z9W44qaG2oRrciu+ZfIJJbeCSM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lTemQ+Kw; arc=none smtp.client-ip=209.85.128.47
+	 Content-Type:MIME-Version; b=NkxZnp5G+6hnHtw2iIYCRhu7I7cEd4Hi/H9TAg2as0V087lfFFRmOzIml5cAHZWqktMYiP8/z4DWPrTD9/gGLJmfwZolVZAhKC+A6P1eBDHaF9Yo6AOVll0pgvIXKh/ZIfkbyAQs32GRXB+ok3cISj5n3DKgyyp+ckNwk6+k0Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=laYIaRMo; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42189d3c7efso43236515e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:35:06 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42108856c33so31733195e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718616905; x=1719221705; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718616907; x=1719221707; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=pGsKYSsuVqYhnQGqi4IUCl0rXwhURd33quQLgivZ3+k=;
-        b=lTemQ+Kw+ojX0sDCbGlEKD8ALBuEUScwLLm7wRcV2/bFeJlM/Ik/Fm5sokh/VEjHOq
-         P5Ip2x4PqEpIR1lXjUmRKLg7/3fS50V+pmte/FsdgIcokyv+0DTTqyVrdEYZtmvcdCYO
-         DxzcEI1jrOtgXhDWwcg18uypSKgxFN3FSczRxx8GTxn9XCqIl+hxJ4g92TcZ4nRHcmP0
-         tdx1pCv/AB7Ww5nmNrL4NxZaDiUlAMQeUaes1goUihRrPJbYPfiTE33bu9G8ODcgnlAp
-         4nkyg3cCgx1PJmsV7n81PaX7Gx0KWDs/dWaGmyZIdzLR5HqploRnxQsXB4nQsu+oNXgI
-         p3pQ==
+        bh=WwPANurgbHg/bZQ8Fx5BluELw0V5Ey9S41+qZoHECKw=;
+        b=laYIaRMo9eTZTr+eQnuWlaemUDPoPbUpImpZArYPjWBxDaWTixAr0mMUYzL14h/OYz
+         fBxKQCup2TjqFj0DoJ9Eip4hO6ZOkRm+XVZn2RVC2iCBOQcltJNIlAHsUd5Hynwv5iCn
+         XNpbxoRLyhM01QgZzWCGwg5vgQl/Whs3ee+xYQkEFJ4zLrAndRJZZ8nkq8t2z+/WbLsS
+         4ZVCPyg8a99/Oi+Ax5JkzT8Zn9UWKn7ENmpPv9XOU7ioqz6krAxXIrPFiv5spfuCDOOp
+         ZiNCkvYaZhOxRWqJ+jWo5RKcJyDIYQVOLdbljibQGSx0OlMiZ2a2YJ/4kdKPm0fWjERc
+         PRRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718616905; x=1719221705;
+        d=1e100.net; s=20230601; t=1718616907; x=1719221707;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pGsKYSsuVqYhnQGqi4IUCl0rXwhURd33quQLgivZ3+k=;
-        b=m5u9MVqo+KNxmY8Lw/oZjitkLFRb0APVk20eqBU6IWWkTpLB/fy1glwxBoYpLG/FUA
-         4To2YAXvLWLexWmB+hOPX2P9qJyXq8yhxsbEFUFQBOjvhKDc/E2Vq2hJ8GYiMOSS8hHO
-         M+ZSBf/HMWUVmDPK3iuT28s0a0vWpF3OeQsPyUnQ+TRPajkHEPh61u8KC7kC1algunPa
-         jO1YEdY01SHcxkonS/etF/XHuy2b/6yniDw1RyAqSkp7Gi3qfWQ+KdfbZ4pB/yBr6X1Y
-         ln9gmbcFAvu4zICFojd3cSMQRJ0EgSF37nhoysJdJ5HPNKaaKpLdScKW2HHx9HF9hJ4h
-         83iA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuLv3kHrCK9xwzxRy5RL3fPicQT1tSAnxt9Ug2YfAC9FMbdUHxB6UwR7ZguzL7zILIBmfEscoZrzSjKhTyEZL8Y2USEjRBuCO3t+9U
-X-Gm-Message-State: AOJu0YxKan/OrDTiwPK6dcHOGTUNieu0aFAzIIkZLti/sb4b++hIqV+s
-	+Ak3acO9IRDNswN8UFOTbIyAZanAngVAcGAX8/qVeLDYoqYtv03p1X29AFcJHTo=
-X-Google-Smtp-Source: AGHT+IHUl9su+9vEGw2u/MC6cJy6tBHnuW8Q+azq1tOrCWK3Hcpkd3jQ3R0UUBO09JjSMYv6YCAO0w==
-X-Received: by 2002:a05:600c:5118:b0:422:2044:a0dd with SMTP id 5b1f17b1804b1-42304825795mr77677235e9.18.1718616905237;
-        Mon, 17 Jun 2024 02:35:05 -0700 (PDT)
+        bh=WwPANurgbHg/bZQ8Fx5BluELw0V5Ey9S41+qZoHECKw=;
+        b=ZS6P/MzuuaFKMYO3XWl22cwIEB0cjWx8J3BHL4REZAPJqHki50T85WLwzV+qgM+tAT
+         5S1CjKJCVSA0HhdD1jxH4wMVC83bR4EqUG1aJ7orfg6bPfs+eMHeDVLAIu2/YD0vdGZR
+         XiDSjYtuRv4LvaRfNcbd+75UBaSjcSf2VzPqHlZzIj1Mev9nX3l/bPvjWT6F3c3Nq11r
+         tt+gyNd5VKN4u+510Fu6gKRhBziByMZH39H3ZIoixRkhSyPDw/moZMHwBXm0JFdjIa8Y
+         nKIVzowA994lZJp1txF0Sej9/kr3OyuTDj0YdTcaqXDFiReZXa6uBhEAeDCJSqaAXTUf
+         +H0A==
+X-Forwarded-Encrypted: i=1; AJvYcCW6RSZsCfNmy/jYUbc0TWTmf3UmP6pWuotX76lROoXQz3EojZvJdo3WM7P+OdIc76IQ1ywyYsFmyj8yTBBV3+VjCcAMY3u7vA16lSlh
+X-Gm-Message-State: AOJu0YxUEGAGvPGgQfQZQagp0xwdmls95h4fjPRo9dsGfF0usY9ii5Jg
+	rIsGk++nC7jDi/XTElTfaMYp5G5oSszyiZ1W6T0F3WW7KYvjSRxFAEvzRsGCDsk=
+X-Google-Smtp-Source: AGHT+IHGBx6pwB4k41f89sBwcN8cCQm1ojJM5khJQyC79+T1Ome1GJwJ/0v9xv2Ru99cLLhiuDCO8A==
+X-Received: by 2002:a05:600c:46cd:b0:422:291:6b3e with SMTP id 5b1f17b1804b1-422b6dc8178mr119672225e9.1.1718616906922;
+        Mon, 17 Jun 2024 02:35:06 -0700 (PDT)
 Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f5f33c43sm156505395e9.7.2024.06.17.02.35.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286eef970sm188935625e9.10.2024.06.17.02.35.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 02:35:04 -0700 (PDT)
-Message-ID: <dec7f7542d1445818a02d2adbd4d5942fe80ce7d.camel@linaro.org>
-Subject: Re: [PATCH 1/2] mfd: syscon: add of_syscon_register_regmap() API
+        Mon, 17 Jun 2024 02:35:06 -0700 (PDT)
+Message-ID: <c8c2dce5680f3ac859bbedfd13edd99a2d6d1067.camel@linaro.org>
+Subject: Re: [PATCH 2/2] soc: samsung: exynos-pmu: update to use
+ of_syscon_register_regmap()
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: Peter Griffin <peter.griffin@linaro.org>, lee@kernel.org, arnd@arndb.de,
   krzk@kernel.org, alim.akhtar@samsung.com
@@ -75,10 +76,10 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
   linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org,
  saravanak@google.com,  willmcvicker@google.com, semen.protsenko@linaro.org,
  kernel-team@android.com
-Date: Mon, 17 Jun 2024 10:35:03 +0100
-In-Reply-To: <20240614140421.3172674-2-peter.griffin@linaro.org>
+Date: Mon, 17 Jun 2024 10:35:05 +0100
+In-Reply-To: <20240614140421.3172674-3-peter.griffin@linaro.org>
 References: <20240614140421.3172674-1-peter.griffin@linaro.org>
-	 <20240614140421.3172674-2-peter.griffin@linaro.org>
+	 <20240614140421.3172674-3-peter.griffin@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.50.3-1 
@@ -90,19 +91,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Fri, 2024-06-14 at 15:04 +0100, Peter Griffin wrote:
-> The of_syscon_register_regmap() API allows an externally created regmap
-> to be registered with syscon. This regmap can then be returned to client
-> drivers using the syscon_regmap_lookup_by_phandle() APIs.
+> For SoCs like gs101 that need a special regmap, register this with
+> of_syscon_register_regmap api, so it can be returned by
+> syscon_regmap_lookup_by_phandle() and friends.
 >=20
-> The API is used by platforms where mmio access to the syscon registers is
-> not possible, and a underlying soc driver like exynos-pmu provides a SoC
-> specific regmap that can issue a SMC or hypervisor call to write the
-> register.
+> For SoCs that don't require a custom regmap, revert back to syscon
+> creating the mmio regmap rather than duplicating the logic here.
 >=20
-> This approach keeps the SoC complexities out of syscon, but allows common
-> drivers such as=C2=A0 syscon-poweroff, syscon-reboot and friends that are=
- used
-> by many SoCs already to be re-used.
+> exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
+> the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
+> is kept around until fw_devlink support for syscon property is added
+> for the pinctrl-samsung driver that also runs at postcore_initcall
+> level.
+>=20
+> All other exynos client drivers can revert back to
+> syscon_regmap_lookup_by_phandle().
 >=20
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
@@ -111,6 +114,5 @@ having to patch it to use exynos_get_pmu_regmap_by_phandle() instead
 of the standard syscon_regmap_lookup_by_phandle():
 
 Tested-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-
 
 
