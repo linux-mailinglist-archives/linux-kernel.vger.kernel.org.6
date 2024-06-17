@@ -1,220 +1,129 @@
-Return-Path: <linux-kernel+bounces-217548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAD190B14E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:16:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A909A90B132
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26CC11F22F14
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:16:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC141F2418D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22B019FBD9;
-	Mon, 17 Jun 2024 13:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34141AB370;
+	Mon, 17 Jun 2024 13:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxiWX9A/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fVoE/9pY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE78F19FBC2;
-	Mon, 17 Jun 2024 13:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6A51AAE20
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630856; cv=none; b=rc4MDx31YCa/m5W9us56NLLL3v5adwqFjEqUxzX/0Blxfk0cOcIKOf+JLIfwAUHmXyS113Bsl1GDojsFzrNoUlx+OaRkctXhdcvKVM4LOYKt2QxJ2CbqlQMBnWFsPCL/MSfCcmgD+ooOaMEi/ihPCOcCD9kChFj91ahsMuiRMEo=
+	t=1718630840; cv=none; b=Vln7jD3f0JKVgdx3wsTQfHSLCJGtDYKficxn50Lq1cCK/0JPQC5nIuUpwQn+GGEJLCzUCf0eAxmia9LH31DadZ7mtBhjlOkay/AI1eMXtTx7nerC2m/EInmT6aZlyN6ZFHDMvJn9fYmnRuXdb+fllfVy0BshwJwUpkWFi7I5oDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630856; c=relaxed/simple;
-	bh=fSSCSXLeOzmRV7GPuyzZNQRkSoTvXuyzp8El8fot1eA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kTvACXEZjudRBhCL1UZNQozzm+Or/7EKc3P+sMhcz1CC5EGXrfDwOhI7cG75Y3JbjLOKOoGpWaAnOBS92NwWNMOz4fNLCh5/UuI+k7AL4Hz737Hz5A81O/YpXT8A3nWPBNclNzM4vLGaPaz5INLpkZFHBOM1rcGw5yg5E5xuVMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxiWX9A/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3FB5C4AF1D;
-	Mon, 17 Jun 2024 13:27:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718630855;
-	bh=fSSCSXLeOzmRV7GPuyzZNQRkSoTvXuyzp8El8fot1eA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uxiWX9A/DhSXqsyzGvz9QhDZm8+dc1/CZNW+ZDYJ1eeswBYIZMzd8lnrFLf+ePdJx
-	 hjvNphA6FsmP1pqKEhblnuUOR3wU4KWdvqw3ogsVnWLUzQac0iHj5G2puy21RWg7gI
-	 k+px2PBR58Eu+Lge5fUQ0gp5hgCsiQ4zsW5mdGH/YRUew4eQK5AFYITKL1+b5T6AS+
-	 fx7KLTKgVvpSQb9VifutxNQPUsZAbX9k61LsKeKjf9fuXdjQOB+e9k9M6mM+rU1M8Y
-	 l2dveweHQh51BD5HJaqNf3rQqfZQYuq9O1QQE3fmNLrGLLCxh+80A0TCf6XfVOXiJM
-	 bz4z8EioDhHxw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 13/13] kconfig: remove wrong expr_trans_bool()
-Date: Mon, 17 Jun 2024 09:27:02 -0400
-Message-ID: <20240617132710.2590101-13-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240617132710.2590101-1-sashal@kernel.org>
-References: <20240617132710.2590101-1-sashal@kernel.org>
+	s=arc-20240116; t=1718630840; c=relaxed/simple;
+	bh=BVnGMwoCZw7PxuD/QNYyTuQeJ5mFD9HFP2ibNF1eTeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T3RHwy96q47+dxEegJ/xYpb0wznlihxzqHTIq1Jil8gsPwaHs3OACZb6UtAaR/NxsRSWJ1yTWO04yVsWi9lC6Dm03zoLNqymXGPmrESv1cPvqSPMAY5jifXvf4j7LCLC92BRR1s30fMyQtjMDZpnwgKrAVMe6Nm65QZ1rmOWCWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fVoE/9pY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718630837;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q84CXo0wUI7hBoP/Wd2wSAm0e9Fj0ilpl/ZCzDP0aQQ=;
+	b=fVoE/9pYF/4QP5Y2SzVh5tCPk6w6WxxBx97pOkpPBHc7zKEJyvV/rcsH87Y/xPghD3Xmlf
+	P/YW5Qt24JDxrVvGq4kIId+5hh3mUffgx6dqDRTq3ewdOAD0SyqvKY0BXNunOwqnOvzQ6n
+	3eAkxw8B6Ebnog8vsWrit2h7iWVGIHM=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-468-HpE1E4J2P3uBK9e5hHzm9A-1; Mon, 17 Jun 2024 09:27:15 -0400
+X-MC-Unique: HpE1E4J2P3uBK9e5hHzm9A-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52c84d02b7fso3327589e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:27:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718630833; x=1719235633;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q84CXo0wUI7hBoP/Wd2wSAm0e9Fj0ilpl/ZCzDP0aQQ=;
+        b=RlI3jKJR8bCOcknO+/DcxgXXAbxrEgIMuuyTSussaBEfLejR4r1VHgeLDbgxXW2a3m
+         gNVfS6+Zg4V7tqOIfaaFYmexNSqSIq9PJjgj9zYNoEPI52jBywhpUBcdJ1tnVT6zRRq9
+         MlV/cS0hsyTVKneqzwakgzCfaC2XY5za0CN8PnCB2MJIfgHLUiHbbUGgMH3j50bK/QA4
+         B4fZkhcpDFb+Oeu+DRvF+29EdRRwteHo0/0MN1T0WzKKGBjC74/8SuUFCgxORGW11iRQ
+         qRq2rOijC6h/hgisqz3J4nPfmTItdQLfCCvi+5n1WTABKupRJik/vYyrtqdlZU6E0MoQ
+         bn1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWwvjynCoTHQybvR8aVnDfZQIhnoVa3C0Qk1YYW0o0alds/QpJQHUlS8p8DprXP+eMb3WZkohhV4Si8WFdCzy8COpVYYbPRuFvgKu9s
+X-Gm-Message-State: AOJu0YzMetY8bBCMsFGm7eptUzH2KawsFo9Y2c48Sqr2fdw4TXK+eT/T
+	VCZgZYy6fOq2NxaD2Og3Mi8RCcynN/fjDHjK2ixMhrLnSdDQU55D9mh1UVephH53hZs41BlR99a
+	oUrTio1W7SsoipmFlajCzoRfIs3ipPOQ9Q1j9H9/THzsyT6+Q43uOjeqqKbgKIA==
+X-Received: by 2002:a05:6512:20c6:b0:52c:881b:73c0 with SMTP id 2adb3069b0e04-52ca6e64378mr6296637e87.17.1718630833651;
+        Mon, 17 Jun 2024 06:27:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEpnKGZZT8Zk3aPPgtEsPpln7bsKIoo+bG+Ridg0DdcuVdy5+34CRZh9UkBKQn9c7obciZzKg==
+X-Received: by 2002:a05:6512:20c6:b0:52c:881b:73c0 with SMTP id 2adb3069b0e04-52ca6e64378mr6296612e87.17.1718630833121;
+        Mon, 17 Jun 2024 06:27:13 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:7439:b500:58cc:2220:93ce:7c4a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509348esm11832788f8f.17.2024.06.17.06.27.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 06:27:12 -0700 (PDT)
+Date: Mon, 17 Jun 2024 09:27:06 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg KH <gregkh@linuxfoundation.org>, kvm@vger.kernel.org,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vringh: add MODULE_DESCRIPTION()
+Message-ID: <20240617092653-mutt-send-email-mst@kernel.org>
+References: <20240516-md-vringh-v1-1-31bf37779a5a@quicinc.com>
+ <7da04855-13a1-49f9-9336-424a9b6c6ad8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.219
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7da04855-13a1-49f9-9336-424a9b6c6ad8@quicinc.com>
 
-From: Masahiro Yamada <masahiroy@kernel.org>
+On Sat, Jun 15, 2024 at 02:50:11PM -0700, Jeff Johnson wrote:
+> On 5/16/2024 6:57 PM, Jeff Johnson wrote:
+> > Fix the allmodconfig 'make w=1' issue:
+> > 
+> > WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vhost/vringh.o
+> > 
+> > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> > ---
+> >  drivers/vhost/vringh.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/vhost/vringh.c b/drivers/vhost/vringh.c
+> > index 7b8fd977f71c..73e153f9b449 100644
+> > --- a/drivers/vhost/vringh.c
+> > +++ b/drivers/vhost/vringh.c
+> > @@ -1614,4 +1614,5 @@ EXPORT_SYMBOL(vringh_need_notify_iotlb);
+> >  
+> >  #endif
+> >  
+> > +MODULE_DESCRIPTION("host side of a virtio ring");
+> >  MODULE_LICENSE("GPL");
+> > 
+> > ---
+> > base-commit: 7f094f0e3866f83ca705519b1e8f5a7d6ecce232
+> > change-id: 20240516-md-vringh-c43803ae0ba4
+> > 
+> 
+> Just following up to see if anything else is needed to pick this up.
 
-[ Upstream commit 77a92660d8fe8d29503fae768d9f5eb529c88b36 ]
+I tagged this, will be in the next pull.
 
-expr_trans_bool() performs an incorrect transformation.
-
-[Test Code]
-
-    config MODULES
-            def_bool y
-            modules
-
-    config A
-            def_bool y
-            select C if B != n
-
-    config B
-            def_tristate m
-
-    config C
-            tristate
-
-[Result]
-
-    CONFIG_MODULES=y
-    CONFIG_A=y
-    CONFIG_B=m
-    CONFIG_C=m
-
-This output is incorrect because CONFIG_C=y is expected.
-
-Documentation/kbuild/kconfig-language.rst clearly explains the function
-of the '!=' operator:
-
-    If the values of both symbols are equal, it returns 'n',
-    otherwise 'y'.
-
-Therefore, the statement:
-
-    select C if B != n
-
-should be equivalent to:
-
-    select C if y
-
-Or, more simply:
-
-    select C
-
-Hence, the symbol C should be selected by the value of A, which is 'y'.
-
-However, expr_trans_bool() wrongly transforms it to:
-
-    select C if B
-
-Therefore, the symbol C is selected by (A && B), which is 'm'.
-
-The comment block of expr_trans_bool() correctly explains its intention:
-
-  * bool FOO!=n => FOO
-    ^^^^
-
-If FOO is bool, FOO!=n can be simplified into FOO. This is correct.
-
-However, the actual code performs this transformation when FOO is
-tristate:
-
-    if (e->left.sym->type == S_TRISTATE) {
-                             ^^^^^^^^^^
-
-While it can be fixed to S_BOOLEAN, there is no point in doing so
-because expr_tranform() already transforms FOO!=n to FOO when FOO is
-bool. (see the "case E_UNEQUAL" part)
-
-expr_trans_bool() is wrong and unnecessary.
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- scripts/kconfig/expr.c | 29 -----------------------------
- scripts/kconfig/expr.h |  1 -
- scripts/kconfig/menu.c |  2 --
- 3 files changed, 32 deletions(-)
-
-diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
-index 81ebf8108ca74..81dfdf4470f75 100644
---- a/scripts/kconfig/expr.c
-+++ b/scripts/kconfig/expr.c
-@@ -396,35 +396,6 @@ static struct expr *expr_eliminate_yn(struct expr *e)
- 	return e;
- }
- 
--/*
-- * bool FOO!=n => FOO
-- */
--struct expr *expr_trans_bool(struct expr *e)
--{
--	if (!e)
--		return NULL;
--	switch (e->type) {
--	case E_AND:
--	case E_OR:
--	case E_NOT:
--		e->left.expr = expr_trans_bool(e->left.expr);
--		e->right.expr = expr_trans_bool(e->right.expr);
--		break;
--	case E_UNEQUAL:
--		// FOO!=n -> FOO
--		if (e->left.sym->type == S_TRISTATE) {
--			if (e->right.sym == &symbol_no) {
--				e->type = E_SYMBOL;
--				e->right.sym = NULL;
--			}
--		}
--		break;
--	default:
--		;
--	}
--	return e;
--}
--
- /*
-  * e1 || e2 -> ?
-  */
-diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-index 5c3443692f346..385a47daa3643 100644
---- a/scripts/kconfig/expr.h
-+++ b/scripts/kconfig/expr.h
-@@ -302,7 +302,6 @@ void expr_free(struct expr *e);
- void expr_eliminate_eq(struct expr **ep1, struct expr **ep2);
- int expr_eq(struct expr *e1, struct expr *e2);
- tristate expr_calc_value(struct expr *e);
--struct expr *expr_trans_bool(struct expr *e);
- struct expr *expr_eliminate_dups(struct expr *e);
- struct expr *expr_transform(struct expr *e);
- int expr_contains_symbol(struct expr *dep, struct symbol *sym);
-diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
-index a5fbd6ccc006e..e5ad6313cfa1d 100644
---- a/scripts/kconfig/menu.c
-+++ b/scripts/kconfig/menu.c
-@@ -401,8 +401,6 @@ void menu_finalize(struct menu *parent)
- 				dep = expr_transform(dep);
- 				dep = expr_alloc_and(expr_copy(basedep), dep);
- 				dep = expr_eliminate_dups(dep);
--				if (menu->sym && menu->sym->type != S_TRISTATE)
--					dep = expr_trans_bool(dep);
- 				prop->visible.expr = dep;
- 
- 				/*
--- 
-2.43.0
+Thanks!
 
 
