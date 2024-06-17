@@ -1,119 +1,155 @@
-Return-Path: <linux-kernel+bounces-216949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924B590A8FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:05:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D7990A8FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EB37B285FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 603051C24821
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24880190684;
-	Mon, 17 Jun 2024 09:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898B419067B;
+	Mon, 17 Jun 2024 09:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vGoCGs47"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fM9YY5+S"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6651190675
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0059A1836FC;
+	Mon, 17 Jun 2024 09:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718615078; cv=none; b=XhvjNthoumjFWJuwascNjhtxF2QiyPCgThdHlh2y/IBwe7QFbLWadNEQt3hqtjcZ7JPHGwFaUKIDyl+xl9Uh19qQ+GEbCqcv3NIQaVQR54gOj/dYpQ2ikxkoYPvJm0+gdgtU4BNPyyokCU76lqlBiEjYzDnuxu5Dx+OgyJwTNKI=
+	t=1718615104; cv=none; b=MbHr5TxWfvMdQyGVhrvQ7rAvg6ihveqVrDtaNzkzr2Dj3c6t9Ag8U5b0B5sdXF/QB/XAfC+kdATzot94YcN8bYpQA0NNQqjR8E6DCmFQaLCxI7Y52mXNo83Mit85i0IkdHkzwNVxuhtOUkd3V4/JCV2sLxv7z21BBpo+Eq8k0to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718615078; c=relaxed/simple;
-	bh=q+3Vz3i2TsdrpjkC9PcCy29rOh22Klo7SY6unJ5sDoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IdzOsg+npXLi4qmRb/xD9dSCiaJVgehWSyVS8O1+9rBoB6gpMFlopHqir9zWL48yQMpQPSfOWw7IR5jSv7v1bgLQmvtxf3xsnw+WFI6DQ38ALMggCpU/9aCNQaUplPfQ+7FQ3xpwnHqmGfsQO/aZXdp3v140zkrzV3gQRhhDW1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vGoCGs47; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c84a21b8cso3800291e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:04:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718615075; x=1719219875; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q+3Vz3i2TsdrpjkC9PcCy29rOh22Klo7SY6unJ5sDoA=;
-        b=vGoCGs47kxRptQjiGTVxeYjnhX0LWod79vxU5Bytx/liuaTpF0ZOm1JtFUZ+pC5ef0
-         7IXXUGSVK3TpWElWLzU/ipEmt4dbdygNG3+1r4f3a2LyigprVxykD3vFxakpG9xJ2MbX
-         zT4ckfaSd0ACyuq6fD9CH69IJJ4N/KVp6GSpy972dyQqZ4NEleSBmHWRT5UU9ZFfFXmV
-         ZNIXilcIsZcV5+skW3moENeErWEaM8hwREcaRjDpgNQIly0ZE6xMDsUiEgfHIAp4GOVH
-         6u+YutQ9brb1BFaoxiucn4RaUqQpvgXVaMvKTg9gLdeA81W/ehL7jhPPVMODz7iViD/B
-         yxhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718615075; x=1719219875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q+3Vz3i2TsdrpjkC9PcCy29rOh22Klo7SY6unJ5sDoA=;
-        b=slk0Yf3Io8D4XPWGXmzNColw6Smoy36rF+Wi8BMUFpLTUbWeYHZxWeGhrGyZ3ytr9f
-         T/Qf+D5utbu+n/HGuJIvCjaQ7tMgaL3nBUi9swfqwdJCgy49rO8sYjiOgCyfx3oqtjvO
-         Tm8gZV716YFmNKOtLIc0V8uSs4u/glY4eU0CHvjmkJzYhJbrxkk8VJb0Z8TrN7NKvvxS
-         lMJk8iYf2fOCph6KzWe06ItGCYfB0Ifd6GG8OqI1Qv0bX6fDGgfjK+FAASVw4Zpyie+4
-         U+dDOlazyZ4YldTOnS6Sfx4+4LskTRQO0OU+jWjUV1HtLfKhDKBUcxhchsz8uX0Dvm6+
-         aaUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/8843KgMI/K1/x7LUiFfFMyYvfXrHLvxr+AnARKeeBlXM/okfmpV4Us1Ln19AOXQhZ6QS1q0IbI/5BRmPcg7fPA9TXwViRKdlrdkn
-X-Gm-Message-State: AOJu0YwpXzSpokoE/NYEipvewf3QNPJ6Ie21c6retnOocGfHaGXiTde4
-	3QqTb1ZV5g4vGk3POjf2CusD+IkXv5NLx8kRYqKOZS8CW18R+thdDVQ2EhkiX/F0psWBIQPsZkG
-	XWo42nDdoJMURi3a6J4aMxHjvcq8GFszf/rv9UA==
-X-Google-Smtp-Source: AGHT+IF+HJZcRpUbZaoti30eFGkz57My4se7oV+eTI19fCyAo/6voMtDXYoZMTNQnN/HrQtJfz8h91nbF6hk4mFYQKI=
-X-Received: by 2002:a05:6512:ba0:b0:52c:8dea:c56f with SMTP id
- 2adb3069b0e04-52ca6cc6e6bmr3777612e87.25.1718615072794; Mon, 17 Jun 2024
- 02:04:32 -0700 (PDT)
+	s=arc-20240116; t=1718615104; c=relaxed/simple;
+	bh=bJyr/aO6dAr6Q8n3K309ag9Uvh8BkTlic8lhxJq16yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Enpy9DHnsemm5c72qadFL70mcKseRtSEl9q1oMKDOGpQP1PrdAli0C4ddf0yM8LhZBHiilT4pAOkwzbmN10E1RFhbTpPLQLk6+um6/kW3ICy8NG1OXMKGN14MpO8ElLW7HSs2rSTsyVC10uDxHCujkZrZ2AWRNle0xk+eVwJlT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fM9YY5+S; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4D8D840E01A5;
+	Mon, 17 Jun 2024 09:04:59 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ObG_vPpV5sYZ; Mon, 17 Jun 2024 09:04:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718615095; bh=6PftBkAsybJq5wobZkn4YNmGhgUEBQQ3Lg1pMZ4UKX0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fM9YY5+Sbw/y7zIIoxZQBPodCHfF2Ldl8dPnYAml/QDIIh2OADxEVudmDT1VwmB6s
+	 l3foABm6DKNhMwUFo876QaWuasTe44MBjvYFZGLAokceOiyv+qlgVVwIxjXMo6zaJg
+	 sRZ1ITda+OH7iDt3t768G9rbbx9lh0D4fCEn1SlkVCdgeXjvzXGXhzHZ59iWKb2peW
+	 aGmIOEyCL2zzGwDmGP+IXZ1Sl17YFAHOBppf5+NXd6em8xW6HecPviRK2E76kAPF/2
+	 y5DsgotF4l8N4oVxZtLBB152PrrfW1N+H1YZ0oVyZtW0LcFfFoBYyVEpmIuSYtj/sQ
+	 mbrJKYqCqb3loUiG4VgL9oyjgoZEuWV40R9jdkRvtrReXOFTJhqeFE0gfGAwptpANh
+	 M6HAowoYUV1bBLDEQbxeammlyiNvqiTOCmbvza0KtTtTz0q4jEc/DP5lyBaW7P/lz/
+	 rpmqHGS/wkwG5naT1mMscb33dK9iUON4wGOX1bCW8P6NBjJvhzS7lOP5NIKpE1NUbh
+	 nML1aoGd4gqFp/1BRNSP0V7SBNILWGUmbiOzUhdchKuxjfIQvdEv4J/8RKG9txAxi2
+	 14CULug0iz/GGVvMDPEa6k0/2n1CJmQ4mK2HSfP8cHxjEJQX76ijX9VX6K+AAOpRmX
+	 ag2yM21XKxhJ31JBWVD/gAFE=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EDA2940E0219;
+	Mon, 17 Jun 2024 09:04:34 +0000 (UTC)
+Date: Mon, 17 Jun 2024 11:04:28 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	lkp@intel.com, zack.rusin@broadcom.com,
+	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
+	tzimmermann@suse.de, mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com, linux-iio@vger.kernel.org,
+	jic23@kernel.org, lars@metafoo.de, nuno.sa@analog.com,
+	dragos.bogdan@analog.com, anshulusr@gmail.com,
+	andrea.collamati@gmail.com, oe-kbuild-all@lists.linux.dev,
+	x86@kernel.org
+Subject: Re: [PATCH 2/2] iio: dac: Fix dependencies of AD9739A
+Message-ID: <20240617090428.GBZm_8HMQ9XJe_VQga@fat_crate.local>
+References: <202406152104.FxakP1MB-lkp@intel.com>
+ <20240616012511.198243-1-alexey.makhalov@broadcom.com>
+ <20240616012511.198243-2-alexey.makhalov@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611102744.v2.1.I2b014f90afc4729b6ecc7b5ddd1f6dedcea4625b@changeid>
-In-Reply-To: <20240611102744.v2.1.I2b014f90afc4729b6ecc7b5ddd1f6dedcea4625b@changeid>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 17 Jun 2024 11:04:21 +0200
-Message-ID: <CACRpkda4KbfWnMwFyJAFKeyvJ3A32D1WuEQd=VQpQcg02-+32Q@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/mediatek: Call drm_atomic_helper_shutdown() at
- shutdown time
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Fei Shao <fshao@chromium.org>, 
-	Maxime Ripard <mripard@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240616012511.198243-2-alexey.makhalov@broadcom.com>
 
-On Tue, Jun 11, 2024 at 7:28=E2=80=AFPM Douglas Anderson <dianders@chromium=
-.org> wrote:
+On Sat, Jun 15, 2024 at 06:25:11PM -0700, Alexey Makhalov wrote:
+> 0-DAY CI Kernel Test automation reported an issue:
+> 
+>    ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_read':
+>    regmap-spi.c:(.text+0xf): undefined reference to `spi_write_then_read'
+>    ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_gather_write':
+>    regmap-spi.c:(.text+0x2b4): undefined reference to `spi_sync'
+>    ld: drivers/base/regmap/regmap-spi.o: in function `spi_sync_transfer.constprop.0':
+>    regmap-spi.c:(.text+0x337): undefined reference to `spi_sync'
+>    ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_async_write':
+>    regmap-spi.c:(.text+0x445): undefined reference to `spi_async'
+>    ld: drivers/iio/dac/ad9739a.o: in function `ad9739a_driver_init':
+>    ad9739a.c:(.init.text+0x10): undefined reference to `__spi_register_driver'
+> 
+> Kconfig warnings: (for reference only)
+>    WARNING: unmet direct dependencies detected for REGMAP_SPI
+>    Depends on [n]: SPI [=n]
+>    Selected by [y]:
+>    - AD9739A [=y] && IIO [=y] && (SPI [=n] || COMPILE_TEST [=y])
+> 
+> The issue is caused by CONFIG_AD9739A=y when CONFIG_SPI is not set.
+> 
+> Add explicit dependency on SPI and conditional selection of REGMAP_SPI.
+> 
+> Fixes: e77603d5468b ("iio: dac: support the ad9739a RF DAC")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406152104.FxakP1MB-lkp@intel.com/
+> Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
+> ---
+>  drivers/iio/dac/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> index 3c2bf620f00f..d095f4d26e49 100644
+> --- a/drivers/iio/dac/Kconfig
+> +++ b/drivers/iio/dac/Kconfig
+> @@ -133,8 +133,8 @@ config AD5624R_SPI
+>  
+>  config AD9739A
+>  	tristate "Analog Devices AD9739A RF DAC spi driver"
+> -	depends on SPI || COMPILE_TEST
+> -	select REGMAP_SPI
+> +	depends on SPI
+> +	select REGMAP_SPI if SPI_MASTER
+>  	select IIO_BACKEND
+>  	help
+>  	  Say yes here to build support for Analog Devices AD9739A Digital-to
+> -- 
 
-> Based on grepping through the source code this driver appears to be
-> missing a call to drm_atomic_helper_shutdown() at system shutdown
-> time. Among other things, this means that if a panel is in use that it
-> won't be cleanly powered off at system shutdown time.
->
-> The fact that we should call drm_atomic_helper_shutdown() in the case
-> of OS shutdown/restart comes straight out of the kernel doc "driver
-> instance overview" in drm_drv.c.
->
-> This driver users the component model and shutdown happens in the base
-> driver. The "drvdata" for this driver will always be valid if
-> shutdown() is called and as of commit 2a073968289d
-> ("drm/atomic-helper: drm_atomic_helper_shutdown(NULL) should be a
-> noop") we don't need to confirm that "drm" is non-NULL.
->
-> Suggested-by: Maxime Ripard <mripard@kernel.org>
-> Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> Reviewed-by: Fei Shao <fshao@chromium.org>
-> Tested-by: Fei Shao <fshao@chromium.org>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+FWIW, I appreciate it you fixing other breakages. However, there's a patch for
+that already, on its way:
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=fixes-togreg&id=75183e461ce033605c3e85518a9f3d4e4ef848a3
 
-Yours,
-Linus Walleij
+Don't get discouraged, though, when fixing something that is not in our
+immediate area of interest!
+
+:-)
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
