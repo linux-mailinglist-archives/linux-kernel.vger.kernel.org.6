@@ -1,149 +1,135 @@
-Return-Path: <linux-kernel+bounces-217585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7677A90B1CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD63990B1CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DFC41C2308B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:26:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D314A1C23185
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C70319AA73;
-	Mon, 17 Jun 2024 13:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC2D1ABCBA;
+	Mon, 17 Jun 2024 13:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JmmNUZEl"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="U+3Yx4vN"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053D019755E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1C3198853
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631473; cv=none; b=mN/p8RiQXVie+x/lwfjgoNj0nGfV5OhBthaV1Ys/OklP7EdE2acUOBybbInuScsepnTbcqv6huhvEDPY6Iro1e2kkiOeV+IdCITbcTQrAp49+AGY/SXYyFwTKfyqUFIWw+RYWJ5pOd2gf99N0TBCixFNb82qY6frUFrHSPtyaAo=
+	t=1718631504; cv=none; b=DthjxFGlvcBGnGFQTsyWOO/6jFfek+LpHgXTNpZECzvvci2yPcPG/P70GNofW+ID8rKi36zuQqctLZt9K0T+Xw7Z7dzgleB3rc2J5jQKzrun992oPWujOpo5BqVbpLkVEvQxBC4yKDnBAVeKC64FkLhWsIF6LInhkcLFXjsVM5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631473; c=relaxed/simple;
-	bh=NQdNeU4qXN5u/cvfa4YmP9hOej+wTGdqze0LpXU32tc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fse+em9myAyYG/QMV1LHmh2KX2El6tlSy3c5UCbd0A3hdmDolNtoF+w2lBUc3eBAzBoGfGvaO7w4uXEujCBh/fgO6IIb0pvfLGiJVGPYGw69rUOwNtTtjPTgGJqteuvK8ZnJL0yU9KwAbK5zDYqHHmdDrcwnH+AY1oc8c7PMXZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JmmNUZEl; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: syzbot+ffd2270f0bca3322ee00@syzkaller.appspotmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718631469;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4jP1+vtfIGE42YbPzKjJ+ikH9kugd8yGrOn34t3cgUc=;
-	b=JmmNUZEl/Of1JNkmG8XVZJWeQJtG0IROqBW7YJXev4MQAT+otKKXKh29t4Wt+NY8TORvR3
-	8pft0C5TeV4BTGcWaV7OntJKJfxYGl8ytkMVshf4wpkQXQEblnuHlVq8lI1bhSWcxonccZ
-	Xv0YVHc97dYQNhzMSc/2mpu0fRPmeV0=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Mon, 17 Jun 2024 09:37:46 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+ffd2270f0bca3322ee00@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_journal_res_get
-Message-ID: <kewuj4cgmjbmetwovhdmltrgsfeqd7zdsfll3szgb3shkpmtm3@ocpkmxty4man>
-References: <000000000000aaf271061ac4c9ab@google.com>
+	s=arc-20240116; t=1718631504; c=relaxed/simple;
+	bh=akWFXFL9APSeZUybdYwbaKWZJ+YSl23R6WS8xUNuMz4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NkZkdBzpyc90bOfTj+gHW2141xYoIvHZULn3wID6n20IL0oz3AbK/VZa2fl5sb/60pBwO3stH0E2UE4Hc+bSPdTQKEBzRpftBm3iUOt0VaDRs+1RDXR4GKl2Tpjk6cANOfwndbz2rl+pd0KnjsBxXCYfwJtjh8WxuQ8Bb9dmhZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=U+3Yx4vN; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1718631496;
+	bh=akWFXFL9APSeZUybdYwbaKWZJ+YSl23R6WS8xUNuMz4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=U+3Yx4vNAiPitIxm1W3qEsYpkCOC/D0rM4UzLSFkheUmCZ0efYVicNfA8w8l14WGx
+	 ZTJB4/Ecew6fjurxAgwvnX5+Ee1AByQjroNY9Jz0NY0Hf8sqFuZV3f0W7DOGLr0Dzu
+	 8YQ20DhF2cA1vtYDSa4dP/QbH4weuk2FPW8NlVRA=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id C2D1566A19;
+	Mon, 17 Jun 2024 09:38:10 -0400 (EDT)
+Message-ID: <6e14e41b728437743fddebf78f7981ea15f6b8a8.camel@xry111.site>
+Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
+ unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
+From: Xi Ruoyao <xry111@xry111.site>
+To: Huacai Chen <chenhuacai@kernel.org>, chenglulu <chenglulu@loongson.cn>
+Cc: Jinyang He <hejinyang@loongson.cn>, Nathan Chancellor
+ <nathan@kernel.org>,  Peter Zijlstra <peterz@infradead.org>, WANG Xuerui
+ <kernel@xen0n.name>, Tiezhu Yang <yangtiezhu@loongson.cn>,  Nick
+ Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>,  Youling Tang
+ <tangyouling@kylinos.cn>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org,  llvm@lists.linux.dev,
+ mengqinggang@loongson.cn, cailulu@loongson.cn,  wanglei@loongson.cn,
+ luweining@loongson.cn, Yujie Liu <yujie.liu@intel.com>,  Heng Qi
+ <hengqi@linux.alibaba.com>, Tejun Heo <tj@kernel.org>
+Date: Mon, 17 Jun 2024 21:38:08 +0800
+In-Reply-To: <CAAhV-H6j0WgN6QpHBYcdprdWBpcQq4ObYK5YcE=TVsDNxGFEtA@mail.gmail.com>
+References: <20240604150741.30252-1-xry111@xry111.site>
+	 <20240605054328.GA279426@thelio-3990X>
+	 <b55b8cb2c52f2c3701c83353586130b8dc237ee2.camel@xry111.site>
+	 <20240605062548.GF279426@thelio-3990X>
+	 <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
+	 <444ec2031ef6ca016cbfa8dfedc51bddc8529ba7.camel@xry111.site>
+	 <ada035690e446909c3cdbf9a43a92def96020615.camel@xry111.site>
+	 <82b7e6ea-c2cb-6364-ebe9-bff928028408@loongson.cn>
+	 <1c132209a612e2e8953f0b458fc01853120db9a9.camel@xry111.site>
+	 <2bf11cd2-8449-acda-f5ad-659c38cb018e@loongson.cn>
+	 <96a2e8a80c06772b64fcbdba42e1dae2d68a53a7.camel@xry111.site>
+	 <2bd6ae20-ec56-c1a2-c5dd-e8c978a376d3@loongson.cn>
+	 <329dac82e09dfc75e77ae93ebbeacdec1dc9ff7f.camel@xry111.site>
+	 <CAAhV-H5Wz=U4kbX+tXt1qoCr6RaEDkzZXV7B=tgU_8o+X-NtVQ@mail.gmail.com>
+	 <a97cd0f2e2cac10253d6b5cdd0ace3db3b220535.camel@xry111.site>
+	 <CAAhV-H7hhh3Jes0jMrg82+KJCa7GQZW=F9bDtktFh=eazMDX9w@mail.gmail.com>
+	 <12099e6fb7ba377f3dcf6686e0b37200b9818708.camel@xry111.site>
+	 <CAAhV-H6j0WgN6QpHBYcdprdWBpcQq4ObYK5YcE=TVsDNxGFEtA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000aaf271061ac4c9ab@google.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jun 13, 2024 at 05:39:19AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    8867bbd4a056 mm: arm64: Fix the out-of-bounds issue in con..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1210c3fc980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ffd2270f0bca3322ee00
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16aecfba980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171b3126980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/6ea21f50498b/disk-8867bbd4.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/e2fed09364aa/vmlinux-8867bbd4.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4860173c7a18/Image-8867bbd4.gz.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/bd29adaaf7ea/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+ffd2270f0bca3322ee00@syzkaller.appspotmail.com
-> 
-> bcachefs (loop0): flushing journal and stopping allocators, journal seq 11
-> bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 11
-> ------------[ cut here ]------------
-> kernel BUG at fs/bcachefs/journal.h:375!
-> Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 1 PID: 6249 Comm: syz-executor102 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-> pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : bch2_journal_res_get+0x1a8/0x1b4 fs/bcachefs/journal.h:375
-> lr : bch2_journal_res_get+0x1a8/0x1b4 fs/bcachefs/journal.h:375
-> sp : ffff80009b3076e0
-> x29: ffff80009b3076e0 x28: 1fffe0001bf4957f x27: 0000000000000002
-> x26: dfff800000000000 x25: 1ffff00013660ee8 x24: dfff800000000000
-> x23: 1ffff00013660eec x22: dfff800000000000 x21: 0000000000000005
-> x20: ffff0000dfa4a5c0 x19: ffff80009b307760 x18: 0000000000000008
-> x17: 6c706d6f63207372 x16: ffff80008ae4f3c0 x15: 0000000000000002
-> x14: 1ffff00013660eec x13: 0000000000000000 x12: 0000000000000000
-> x11: ffff700013660eee x10: 0000000000ff0100 x9 : 0000000000000000
-> x8 : ffff0000d62fbc80 x7 : 0000000000000000 x6 : 0000000000000000
-> x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000010
-> x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-> Call trace:
->  bch2_journal_res_get+0x1a8/0x1b4 fs/bcachefs/journal.h:375
->  bch2_journal_meta+0x9c/0x268 fs/bcachefs/journal.c:828
->  bch2_fs_journal_stop+0x188/0x348 fs/bcachefs/journal.c:1179
->  __bch2_fs_read_only+0x2a4/0x3d0 fs/bcachefs/super.c:291
->  __bch2_fs_read_write+0x2f0/0x434 fs/bcachefs/super.c:507
->  bch2_fs_read_write+0xa8/0xf0 fs/bcachefs/super.c:520
->  bch2_remount+0x2bc/0x460 fs/bcachefs/fs.c:1731
->  legacy_reconfigure+0xfc/0x114 fs/fs_context.c:685
->  reconfigure_super+0x1d0/0x6f0 fs/super.c:1072
->  vfs_cmd_reconfigure fs/fsopen.c:267 [inline]
->  vfs_fsconfig_locked fs/fsopen.c:296 [inline]
->  __do_sys_fsconfig fs/fsopen.c:476 [inline]
->  __se_sys_fsconfig fs/fsopen.c:349 [inline]
->  __arm64_sys_fsconfig+0x8b8/0xc40 fs/fsopen.c:349
->  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
->  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-> Code: 17ffffab 9770cd61 d4210000 9770cd5f (d4210000) 
-> ---[ end trace 0000000000000000 ]---
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-#syz fix: bcachefs: Fix early init error path in journal code
+On Mon, 2024-06-17 at 21:11 +0800, Huacai Chen wrote:
+
+
+
+> > select HAVE_OBJTOOL if AS_HAS_EXPLICIT_RELOCS && AS_HAS_THIN_ADD_SUB &&=
+ !CC_IS_CLANG && !RUST
+> Maybe we needn't consider RUST here?
+
+Rustc does use $fp that objtool cannot handle as at now.  It can be
+demonstrated with an over-aligned type, similar to Clang:
+
+$ cat t.rs
+#[repr(C, align(64))]
+struct X(i32);
+
+extern { fn f(x: &X) -> i64; }
+
+#[no_mangle]
+fn g() -> i64 {
+    let x =3D X(114514);
+    unsafe {f(&x)}
+}
+$ rustc t.rs --emit=3Dasm --crate-type=3Dstaticlib -O
+$ grep fp t.s
+	st.d	$fp, $sp, 112
+	addi.d	$fp, $sp, 128
+	addi.d	$sp, $fp, -128
+	ld.d	$fp, $sp, 112
+
+The kernel uses rust-bindgen to generate some .rs file from C headers.=20
+And __attribute__((aligned(x))) is directly translated to
+repr(align(x)).  As __attribute__((aligned(x))) is very common in the
+kernel I expect objtool will fail to handle some object code from rustc.
+
+> And can we think AS_HAS_THIN_ADD_SUB always imply
+> AS_HAS_EXPLICIT_RELOCS here?
+
+Maybe, AFAIK there's no assembler using thin add-sub but not explicit
+relocs.
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
