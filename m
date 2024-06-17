@@ -1,92 +1,96 @@
-Return-Path: <linux-kernel+bounces-217861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC6390B549
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:53:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 984EC90B54A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3864A1C21D1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AB00283050
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCFF823B8;
-	Mon, 17 Jun 2024 15:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B0713048C;
+	Mon, 17 Jun 2024 15:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrbvDZL1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Dg1qfJ4n"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE1153A9;
-	Mon, 17 Jun 2024 15:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A399A12F373
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 15:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718638502; cv=none; b=b1SbdtZ9F/lNJW85apyjRVS4xGFSiEnI5YRBCzrPKsI8yRono3WE7GrFNo183vx1MYhWKz7odU5T8DzbSeSzb4+178bry+r2MZW4oI+YHbvkJF8hU/yA2FAB8bVpYw3Fb/PCnD751RbKqaFbVUy2J79DxZBrF2RevTpglxf4bI8=
+	t=1718638551; cv=none; b=f1vQe3tq5W2TeRwzrXFVLFGJVnG8IGL4T+EK/DX9aDMDdNhLE86GBtVH5csj32QYd55zAwMCj1woJxB+I6RZRGYthaTMwHme4rICoQjM56Ag+O3GFrLYaFII8LdAwO9sLZ0dzZkr6P44cOwq5DrEG/tdb9aUmLaAPHr3QnYcrBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718638502; c=relaxed/simple;
-	bh=grR1s7RKpWZF13XxMA4FtYCxgLp3SDkiH+HdqW2aTRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCyvRZIcFZeIsz5uX0AbGJtQ3pzxzIlqdZ8lK/fiTO2HLWTWbWaLJBiPhsnhETGG0xuWy8+TWehRM0N41QPHii091OLOFbBM2s/WpM1+38QHa8FrtF0JcRWJCl7Cmo2TdskMq8mE9lL8CIkX6lVkTbllyPEiFP1GHnYddkgJCBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NrbvDZL1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82637C2BD10;
-	Mon, 17 Jun 2024 15:35:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718638502;
-	bh=grR1s7RKpWZF13XxMA4FtYCxgLp3SDkiH+HdqW2aTRU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NrbvDZL1FByS8PJzARaNP/hjLo6drwAbQ4xt9kDqTK1T6+TnR04c72ORjW2kBzTPh
-	 lYewQVbK+gmlx9uUnd9tk9qnkAemR3cHgnPTQKOKaorwG/wsDrOfe8d9fp4bJLGr5Z
-	 UZXC4K8kKTNgvNHheXAa8ub+WBUZtR+DVWdDN7/DYSmtWnmXxsbXfUxhdSO+vatlhV
-	 ZIINXQY819csOavUVe1nyQTS2AfYJlslQKjrVJdB2fmDigbH8mD7yTusjt5yPoF7Wb
-	 0X2Di82fPHWRn1fDVK0yOFwk0X9FIHpr52CgYdGvwWE4IRCMEbr8jbXF99wscqrdc0
-	 wKCMR8rHUqp1w==
-Date: Mon, 17 Jun 2024 16:34:58 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mfd: Explain lack of child dependency in
- simple-mfd
-Message-ID: <20240617-paternity-subdivide-a0613f609a3d@spud>
-References: <20240616080659.8777-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1718638551; c=relaxed/simple;
+	bh=c7Ne3E0RAcjQQpufIt0xSyD5MfaGm6a4FInMzdzowj0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oCreTyA7+vrlkqTdoQlMqHWms05tn1uB29GWYqNhgn4yulSe9wAs2dQlaRiJPcNY0Nfj2/2bR2KxAFfNO/8aA5brNC4sDhysU6S9Erw8UOMSHriDS5YA9revVehjuC2GNDOlBnpGRR3Sh4ifs6R/5KPzHN9SpkrJNvuBh0Qv3cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Dg1qfJ4n; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1718638547;
+	bh=c7Ne3E0RAcjQQpufIt0xSyD5MfaGm6a4FInMzdzowj0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Dg1qfJ4nJNei4EcLrlqmvHQWJppfrXCN7kivxzBGhmIM2ab6rjlzWx+NICGMZ0ugP
+	 51Wy6tiAeSsI0PwkoCHx8oSKaQsqEWE1n779LcQyOJ29JgMW1yqyFiakej18s/nbQS
+	 np8+MGxOvGWHBGVVsF+YVpHKhJmhP9WmT1xnoWno=
+Received: from [IPv6:240e:358:11e5:c700:dc73:854d:832e:2] (unknown [IPv6:240e:358:11e5:c700:dc73:854d:832e:2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 7428967547;
+	Mon, 17 Jun 2024 11:35:41 -0400 (EDT)
+Message-ID: <e27a5acebe5c7d1e09edbc9dc49f52b672d72988.camel@xry111.site>
+Subject: Re: [PATCH 1/2] drm/amdgpu: make duplicated EOP packet for GFX7/8
+ have real content
+From: Xi Ruoyao <xry111@xry111.site>
+To: Icenowy Zheng <uwu@icenowy.me>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Pan
+ Xinhui <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>,  Pierre-Eric Pelloux-Prayer
+ <pierre-eric.pelloux-prayer@amd.com>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+Date: Mon, 17 Jun 2024 23:35:33 +0800
+In-Reply-To: <1e5f86991635b9045e91fab6397cda87555f85ff.camel@icenowy.me>
+References: <20240617105846.1516006-1-uwu@icenowy.me>
+	 <20240617105846.1516006-2-uwu@icenowy.me>
+	 <88337509-3ad7-47aa-b70f-5294f7f1e486@amd.com>
+	 <b4ebdbce2f44c06806a650e72b1b6eb9a16dffe6.camel@icenowy.me>
+	 <09fbcd1f-c7b1-47e3-9146-17f8189978a8@amd.com>
+	 <e88d4722fa3bbd7104b140debdd85cb212628944.camel@icenowy.me>
+	 <d44651a7-0c07-4b84-8828-f1d405359aeb@amd.com>
+	 <1e5f86991635b9045e91fab6397cda87555f85ff.camel@icenowy.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gsj6t7Q5c2e6Vkqz"
-Content-Disposition: inline
-In-Reply-To: <20240616080659.8777-1-krzysztof.kozlowski@linaro.org>
 
-
---gsj6t7Q5c2e6Vkqz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jun 16, 2024 at 10:06:59AM +0200, Krzysztof Kozlowski wrote:
-> Common mistake of usage of 'simple-mfd' compatible is a dependency of
-> children on resources acquired and managed by the parent, e.g. clocks.
-> Extend the simple-mfd documentation to cover this case.
+On Mon, 2024-06-17 at 22:30 +0800, Icenowy Zheng wrote:
+> > Two consecutive writes to the same bus address are perfectly legal
+> > from=20
+> > the PCIe specification and can happen all the time, even without this
+> > specific hw workaround.
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Yes I know it, and I am not from Loongson, just some user trying to
+> mess around it.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+There are some purposed "workarounds" like reducing the link speed (from
+x16 to x8), tweaking the power management setting, etc.  Someone even
+claims improving the heat sink of the LS7A chip can help to work around
+this issue but I'm really skeptical...
 
---gsj6t7Q5c2e6Vkqz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBXogAKCRB4tDGHoIJi
-0tbOAQDXJwLF1nqecw8UoRRNUVWYrYdaiKCPro3pn9ArMNWKkQEA2Ng8VHqlAK+2
-0sIPvf2BnMO5vyAlwORx4SRSFYOTfgw=
-=RQg7
------END PGP SIGNATURE-----
-
---gsj6t7Q5c2e6Vkqz--
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
