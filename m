@@ -1,259 +1,112 @@
-Return-Path: <linux-kernel+bounces-218066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D3490B8DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:03:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A318890B96A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4544C1C23CA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:03:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5301028358F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33EF19AD6A;
-	Mon, 17 Jun 2024 17:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB0219B5A6;
+	Mon, 17 Jun 2024 18:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="JCzkD8PA"
-Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="IaNjVhRy"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1C7198822;
-	Mon, 17 Jun 2024 17:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739E21993BE;
+	Mon, 17 Jun 2024 18:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718647169; cv=none; b=ZJD+yEQpfbUeNwLGl1h0RJxkhou+cIMKmiDnd9bf4CtCY+hDOFbK7hY9AQkGy4xsHD73MIXmhI/kHqtUAGF9NEo4yiNdga5WKbgtMa2y0E0aWJVVfu2qjQ70Jy1NNy4ZSlVwHpX7s80EX+VilsJx9RMaQOsBH0tjhQlTxEoGQe0=
+	t=1718648001; cv=none; b=jRzqnuJ1nF9eCUQySdDh7qAFVrPR79CX+Z784jOywT24orh0aKONvJst4EWOF6kqeTmFv3aFuPqHgDEoqkOrxwhdKikJLGj21htvf/oYqmudGzZpJmtzQDnXBbATMlMdsVI/I1q1yq3g61QYcBHG603S7Lz7kscddT7ahCbjqyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718647169; c=relaxed/simple;
-	bh=uGyPNIMlpr25ZmedrDnTmh5uTwrDeVJvbccUSHxxb/0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UfwWcEjWD0ge0+HPtapZoCOUZe7Msg5Ie+y3YV8eXHGB7nceUi2uhEEmgODvyv0a3xuPRQPsI3ODgTAGq2ijsL9haskxGErweT/MLsd1EKXlCZ3vN+2HCUtHUElnVTg/7A0Luh/QesASYE3uaOOYYeTtJwpbqdJKylbufZBxXJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=JCzkD8PA; arc=none smtp.client-ip=207.171.190.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1718647167; x=1750183167;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cyr40ZYKbs+9RQg+CBiTJjuDFxvMBR/t/WbaK149Hso=;
-  b=JCzkD8PAvcIU07keM0nA8yjDK7KieDGUTpd8S1iQVnGbmucKOsHEOjQ3
-   owLGVT8oxD2Y1lS24hZMXHxc0LkpeaU/A4s/QcJBLcNQWFpa1LsxSXXcX
-   t9daHhpMLf8NdESO3IFoDwavpILMnuBp2MuaiPbZv9xVKszEUJK1AUUvT
-   c=;
-X-IronPort-AV: E=Sophos;i="6.08,245,1712620800"; 
-   d="scan'208";a="350790092"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 17:59:20 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:40873]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.22.54:2525] with esmtp (Farcaster)
- id 4d10abfa-6a97-40fd-9836-5ca99ad9f469; Mon, 17 Jun 2024 17:59:19 +0000 (UTC)
-X-Farcaster-Flow-ID: 4d10abfa-6a97-40fd-9836-5ca99ad9f469
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 17 Jun 2024 17:59:18 +0000
-Received: from 88665a182662.ant.amazon.com (10.187.171.38) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 17 Jun 2024 17:59:15 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <luoxuanqiang@kylinos.cn>
-CC: <alexandre.ferrieux@orange.com>, <davem@davemloft.net>,
-	<dccp@vger.kernel.org>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<fw@strlen.de>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH net v3] Fix race for duplicate reqsk on identical SYN
-Date: Mon, 17 Jun 2024 10:59:07 -0700
-Message-ID: <20240617175907.60655-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240617075640.207570-1-luoxuanqiang@kylinos.cn>
-References: <20240617075640.207570-1-luoxuanqiang@kylinos.cn>
+	s=arc-20240116; t=1718648001; c=relaxed/simple;
+	bh=oZqVWvku/3wzgM7EoqTwvP3AdUcWOcwhRu6vy9hsujw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=puzBqwrZU2u91BCFlrRK15Nysk8N7kKhB3viNTfgeUgsy27FQ5d9thiNX5O7E6Sa5atvVYEVpvZVP/mnZJ62GKxoA6ZtwQeUqOhEZ2h+yBnlW2YFiqSLQhx1jKHvFTauc0dUFa7W/JDuXxbPCDx3ecpjIJpSLsib2//YuvHPuNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=IaNjVhRy reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 238e5fc1c563fd29; Mon, 17 Jun 2024 20:13:16 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0F8C516606FD;
+	Mon, 17 Jun 2024 20:13:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1718647996;
+	bh=oZqVWvku/3wzgM7EoqTwvP3AdUcWOcwhRu6vy9hsujw=;
+	h=From:To:Cc:Subject:Date;
+	b=IaNjVhRykSBMld0JSQ76dZuThhBHX0affopQxzMJMH5KF5xCk3dQzdMGHTe0vT6Lw
+	 DO8gNoBDf8XXCBZPIzz5l1B9py/rQjgu2LxKeBlEQ1W52YTleM0gJp6qh7KpapUQe1
+	 0a3466vbpGtKft4OMNLE4u3uecPeCMLoRa/lT5vV3n/PN+rUojyREl626RJq9VGznz
+	 oiD7z3Bhpc2bnE/nt2t5SyB29P1y1W7XkvBxGQz8UMC+wyqYsdkgi5qRsNKW18nF8c
+	 7OuaoCzRIPHDN2pGq+RKPYFD6q8AcAqi8J9qP3722GhScuIuSAPajRIVNmLgAqERDP
+	 ZufN8cim6+WsA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>, Shawn Guo <shawnguo@kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Thara Gopinath <thara.gopinath@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-wireless@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Subject:
+ [PATCH v1 00/14] thermal: Eliminate trip IDs from thermal driver interface
+Date: Mon, 17 Jun 2024 19:41:25 +0200
+Message-ID: <8409966.T7Z3S40VBb@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D041UWB004.ant.amazon.com (10.13.139.143) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfedvhedguddvvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepudegpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhm
+ pdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=14 Fuz1=14 Fuz2=14
 
-From: luoxuanqiang <luoxuanqiang@kylinos.cn>
-Date: Mon, 17 Jun 2024 15:56:40 +0800
-> When bonding is configured in BOND_MODE_BROADCAST mode, if two identical
-> SYN packets are received at the same time and processed on different CPUs,
-> it can potentially create the same sk (sock) but two different reqsk
-> (request_sock) in tcp_conn_request().
-> 
-> These two different reqsk will respond with two SYNACK packets, and since
-> the generation of the seq (ISN) incorporates a timestamp, the final two
-> SYNACK packets will have different seq values.
-> 
-> The consequence is that when the Client receives and replies with an ACK
-> to the earlier SYNACK packet, we will reset(RST) it.
-> 
-> ========================================================================
-> 
-> This behavior is consistently reproducible in my local setup,
-> which comprises:
-> 
->                   | NETA1 ------ NETB1 |
-> PC_A --- bond --- |                    | --- bond --- PC_B
->                   | NETA2 ------ NETB2 |
-> 
-> - PC_A is the Server and has two network cards, NETA1 and NETA2. I have
->   bonded these two cards using BOND_MODE_BROADCAST mode and configured
->   them to be handled by different CPU.
-> 
-> - PC_B is the Client, also equipped with two network cards, NETB1 and
->   NETB2, which are also bonded and configured in BOND_MODE_BROADCAST mode.
-> 
-> If the client attempts a TCP connection to the server, it might encounter
-> a failure. Capturing packets from the server side reveals:
-> 
-> 10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
-> 10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
-> localhost > 10.10.10.10.45182: Flags [S.], seq 2967855116,
-> localhost > 10.10.10.10.45182: Flags [S.], seq 2967855123, <==
-> 10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
-> 10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
-> localhost > 10.10.10.10.45182: Flags [R], seq 2967855117, <==
-> localhost > 10.10.10.10.45182: Flags [R], seq 2967855117,
-> 
-> Two SYNACKs with different seq numbers are sent by localhost,
-> resulting in an anomaly.
-> 
-> ========================================================================
-> 
-> The attempted solution is as follows:
-> In the tcp_conn_request(), while inserting reqsk into the ehash table,
-> it also checks if an entry already exists. If found, it avoids
-> reinsertion and releases it.
-> 
-> Simultaneously, In the reqsk_queue_hash_req(), the start of the
-> req->rsk_timer is adjusted to be after successful insertion.
-> 
-> Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
-> ---
->  include/net/inet_connection_sock.h |  4 ++--
->  net/dccp/ipv4.c                    |  2 +-
->  net/dccp/ipv6.c                    |  2 +-
->  net/ipv4/inet_connection_sock.c    | 19 +++++++++++++------
->  net/ipv4/tcp_input.c               |  9 ++++++++-
->  5 files changed, 25 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_connection_sock.h
-> index 7d6b1254c92d..8ebab6220dbc 100644
-> --- a/include/net/inet_connection_sock.h
-> +++ b/include/net/inet_connection_sock.h
-> @@ -263,8 +263,8 @@ struct dst_entry *inet_csk_route_child_sock(const struct sock *sk,
->  struct sock *inet_csk_reqsk_queue_add(struct sock *sk,
->  				      struct request_sock *req,
->  				      struct sock *child);
-> -void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
-> -				   unsigned long timeout);
-> +bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
-> +				   unsigned long timeout, bool *found_dup_sk);
->  struct sock *inet_csk_complete_hashdance(struct sock *sk, struct sock *child,
->  					 struct request_sock *req,
->  					 bool own_req);
-> diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
-> index ff41bd6f99c3..13aafdeb9205 100644
-> --- a/net/dccp/ipv4.c
-> +++ b/net/dccp/ipv4.c
-> @@ -657,7 +657,7 @@ int dccp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
->  	if (dccp_v4_send_response(sk, req))
->  		goto drop_and_free;
->  
-> -	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
-> +	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL);
->  	reqsk_put(req);
->  	return 0;
->  
-> diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
-> index 85f4b8fdbe5e..493cdb12ce2b 100644
-> --- a/net/dccp/ipv6.c
-> +++ b/net/dccp/ipv6.c
-> @@ -400,7 +400,7 @@ static int dccp_v6_conn_request(struct sock *sk, struct sk_buff *skb)
->  	if (dccp_v6_send_response(sk, req))
->  		goto drop_and_free;
->  
-> -	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
-> +	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL);
->  	reqsk_put(req);
->  	return 0;
->  
-> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
-> index d81f74ce0f02..2fa9b33ae26a 100644
-> --- a/net/ipv4/inet_connection_sock.c
-> +++ b/net/ipv4/inet_connection_sock.c
-> @@ -1122,25 +1122,32 @@ static void reqsk_timer_handler(struct timer_list *t)
->  	inet_csk_reqsk_queue_drop_and_put(oreq->rsk_listener, oreq);
->  }
->  
-> -static void reqsk_queue_hash_req(struct request_sock *req,
-> -				 unsigned long timeout)
-> +static bool reqsk_queue_hash_req(struct request_sock *req,
-> +				 unsigned long timeout, bool *found_dup_sk)
->  {
+Hi Everyone,
 
-Given any changes here in reqsk_queue_hash_req() conflicts with 4.19
-(oldest stable) and DCCP does not check found_dup_sk, you can define
-found_dup_sk here, then you need not touch DCCP at all.
+Trip IDs, which should be internal to the thermal core, are still used in the
+thermal driver interface in some places, but fortunately it does not take too
+much effort to get rid of them.
+
+First of all, the .set_trip_temp() zone callback uses a trip ID as one of its
+arguments, but this isn't really necessary and there are a few weaknesses
+related to doing that.  Please see the changelog of patch [04/14] for details.
+
+Apart from that, several drivers use the thermal_zone_get_trip() helper
+function for trip point lookup which can be differently.  Patches [06-12/14]
+address those cases (please see the individual patch changelogs for details).
+
+The remaining patches in the series are preliminary changes or cleanups.
+
+The series is based on the two cleanup series posted previously:
+
+https://lore.kernel.org/linux-pm/5794974.DvuYhMxLoT@kreacher/T/#t
+https://lore.kernel.org/linux-pm/12458899.O9o76ZdvQC@kreacher/T/#t
+
+that have been included into the linux-next thermal material.
+
+This series is available from the thermal-core-experimental branch
+in linux-pm.git.
+
+Thanks!
 
 
-> +	if (!inet_ehash_insert(req_to_sk(req), NULL, found_dup_sk))
-> +		return false;
-> +
-> +	/* The timer needs to be setup after a successful insertion. */
->  	timer_setup(&req->rsk_timer, reqsk_timer_handler, TIMER_PINNED);
->  	mod_timer(&req->rsk_timer, jiffies + timeout);
->  
-> -	inet_ehash_insert(req_to_sk(req), NULL, NULL);
->  	/* before letting lookups find us, make sure all req fields
->  	 * are committed to memory and refcnt initialized.
->  	 */
->  	smp_wmb();
->  	refcount_set(&req->rsk_refcnt, 2 + 1);
-> +	return true;
->  }
->  
-> -void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
-> -				   unsigned long timeout)
-> +bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
-> +				   unsigned long timeout, bool *found_dup_sk)
->  {
-> -	reqsk_queue_hash_req(req, timeout);
-> +	if (!reqsk_queue_hash_req(req, timeout, found_dup_sk))
-> +		return false;
-> +
->  	inet_csk_reqsk_queue_added(sk);
-> +	return true;
->  }
->  EXPORT_SYMBOL_GPL(inet_csk_reqsk_queue_hash_add);
->  
-> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> index 9c04a9c8be9d..e006c374f781 100644
-> --- a/net/ipv4/tcp_input.c
-> +++ b/net/ipv4/tcp_input.c
-> @@ -7255,8 +7255,15 @@ int tcp_conn_request(struct request_sock_ops *rsk_ops,
->  	} else {
->  		tcp_rsk(req)->tfo_listener = false;
->  		if (!want_cookie) {
-> +			bool found_dup_sk = false;
-> +
->  			req->timeout = tcp_timeout_init((struct sock *)req);
-> -			inet_csk_reqsk_queue_hash_add(sk, req, req->timeout);
-> +			if (unlikely(!inet_csk_reqsk_queue_hash_add(sk, req, req->timeout,
-> +								    &found_dup_sk))) {
-> +				reqsk_free(req);
-> +				return 0;
-> +			}
-> +
->  		}
->  		af_ops->send_synack(sk, dst, &fl, req, &foc,
->  				    !want_cookie ? TCP_SYNACK_NORMAL :
-> -- 
-> 2.25.1
+
 
