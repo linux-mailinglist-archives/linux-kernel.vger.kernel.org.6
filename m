@@ -1,187 +1,132 @@
-Return-Path: <linux-kernel+bounces-217215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E5190ACEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:28:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6147090ACEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C601C2100F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:28:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54C9DB24A6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA59194A7E;
-	Mon, 17 Jun 2024 11:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BC2194AC3;
+	Mon, 17 Jun 2024 11:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="W8Fvm97T";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="W8Fvm97T"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="DFUwqRo8"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EC5194158;
-	Mon, 17 Jun 2024 11:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C311946BF
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718623696; cv=none; b=A1RUwJUA+twLDkYqxzf1jxDjhDMlDDYcD41fonAsMzgW+ovh9FNZPd6hyOoCLec7DBDl7IYLOhe6nOI8NzRU2qZOGXaRqE8LN1txsBl3yM8qm5h5HE7wps6O7Ucr10yOliGkXQnNNz7XvhxGfR63n/5drtRYIkiEa9FWymzQGAA=
+	t=1718623714; cv=none; b=usB4VA9er8XgZR/jrxjfqhwD8jy+FrZK2FnFChk4V1jfktrZxLlA09Z90Tw78iwznxfoeu0A+6cDDt1cTr/6mmWDIb4ogIVs849eiExk3HIH1M/A8ogCE09h56twVB8n+BE/Qmv97EGGNQj7+k8zukSAFVk3QO7VXID3Aj62uq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718623696; c=relaxed/simple;
-	bh=rZtwfZcAcbhNNbZEwXAxnoSf+Xv255V7gujoHtNJcWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jh0bbDbfSkpMfgGZ042Z8TRgiForXoCQX+3GkxVan766zS9U7Rec/m9jpEoP8y4EnozgvbWg3YXbzwAwBld70trJO6hzovIH7NidoX4SCR5kwn/WAL1AVs5K37X9WPjfKKXMO+WPezufLjd23k0WBtbndvjT2IAnvPuwyLbyMl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=W8Fvm97T; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=W8Fvm97T; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1718623714; c=relaxed/simple;
+	bh=ALlaYV7IX5QfttmBRFxf4LFufdBkr2eW6Ax1VslEm38=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BxA+M0C41inUVjtgi/+DJjFvmnPlW7cpSD42CHX4xbq93HzYczsS17RC183LDnMql0IpBXSRd46oUr8ZPtcWPxrM74MJgDenv6LfkrGvxhOQHwsRY6w1k4PZrAZ9f0sK3+FgCvYKRpvNCvbIzSbJ4+PNnHCPoVY9VOiBDfa4834=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=DFUwqRo8; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1718623703;
+	bh=xN/bQdiQ7QunPgDWnHIxIsBeNMFeFeDKxugA/ptH56U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=DFUwqRo8lcJWUK+iQILpyWm7Uf2kMXYORMEAw7xtKE6RbkO+HT1vSn17XJfPwP6xG
+	 2B60u0Wh7t/j+3Lf9t3Pu08WpR3gAR24pUEbSmdo1Ms0FQpB3s7+4YamWeBSMC7eZU
+	 85rj2ZE9XVQH9sGLrBHaebuBD9BcLHMtvhXe0hOLheXirfTiB69DJ85MlhpEuaPLBj
+	 N8dwAk8ItVnZuQ1qoLi1AiWqVcPhNzaTq5czCuzqFOw5FoWxdr7nfv3JRLbUn4zg+k
+	 UmeG2fx+AZ2mgZWkNDfazHRRDMULpVv+iWIXVqGf/ImDCMmB+8JIMnSGYRLD/m8pA8
+	 xuyYF13tZkyJw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5C164380D6;
-	Mon, 17 Jun 2024 11:28:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718623691; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Yeijq2vbhF/Nh3y0N533Ledk3xH/c5yeo/BXp9/K9o=;
-	b=W8Fvm97TTDC6l3bkw57tZhol1FXXu+BS3KiRc7xQgzk5F2Yj8vZSFJy48U/m2qP7ozTi70
-	2bskO3WCK8OWZY4rV+MmzsXpsmqS2AmzGEF9Qo3NN0t0l3qqIE1IqxzyEa/z5Euyex9KUk
-	ivw+8mYTgbxuQcLbScfcSyivBwg+R4g=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718623691; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Yeijq2vbhF/Nh3y0N533Ledk3xH/c5yeo/BXp9/K9o=;
-	b=W8Fvm97TTDC6l3bkw57tZhol1FXXu+BS3KiRc7xQgzk5F2Yj8vZSFJy48U/m2qP7ozTi70
-	2bskO3WCK8OWZY4rV+MmzsXpsmqS2AmzGEF9Qo3NN0t0l3qqIE1IqxzyEa/z5Euyex9KUk
-	ivw+8mYTgbxuQcLbScfcSyivBwg+R4g=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2559C13AAA;
-	Mon, 17 Jun 2024 11:28:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uQEqAMsdcGZ8HAAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Mon, 17 Jun 2024 11:28:11 +0000
-Date: Mon, 17 Jun 2024 13:28:05 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: cve@kernel.org, linux-kernel@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>
-Cc: linux-cve-announce@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: CVE-2024-35840: mptcp: use OPTION_MPTCP_MPJ_SYNACK in
- subflow_finish_connect()
-Message-ID: <ZnAdxYLsEwDrF31j@tiehlicka>
-References: <2024051756-CVE-2024-35840-99fa@gregkh>
- <ZmFtaijTs6mOpB5B@tiehlicka>
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W2ngp42kZz4wb1;
+	Mon, 17 Jun 2024 21:28:21 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Jinglin Wen <jinglin.wen@shingroup.cn>, npiggin@gmail.com
+Cc: christophe.leroy@csgroup.eu, naveen.n.rao@linux.ibm.com,
+ masahiroy@kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, jinglin.wen@shingroup.cn
+Subject: Re: [PATCH] powerpc: Fixed duplicate copying in the early boot.
+In-Reply-To: <20240617023509.5674-1-jinglin.wen@shingroup.cn>
+References: <20240617023509.5674-1-jinglin.wen@shingroup.cn>
+Date: Mon, 17 Jun 2024 21:28:19 +1000
+Message-ID: <87le336c6k.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmFtaijTs6mOpB5B@tiehlicka>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.995];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_FIVE(0.00)[5]
+Content-Type: text/plain
 
-On Thu 06-06-24 10:03:59, Michal Hocko wrote:
-> Hi,
-> what is the actual security threat here? As far as I can see, the
-> problem that the commit requested here addresses seems to be rather
-> functional, rather than responding to an unexpected packet options with
-> a reset, we actually establish a connection with some garbage parameters
-> (likely unpredictable). Which is unfortunate but I do not see any
-> security implications.
+Jinglin Wen <jinglin.wen@shingroup.cn> writes:
+> According to the code logic, when the kernel is loaded to address 0,
+> no copying operation should be performed, but it is currently being
+> done.
+>
+> This patch fixes the issue where the kernel code was incorrectly
+> duplicated to address 0 when booting from address 0.
+>
+> Signed-off-by: Jinglin Wen <jinglin.wen@shingroup.cn>
+> ---
+>  arch/powerpc/kernel/head_64.S | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Does the silence mean that there are no actual security implications
-here?
+Thanks for the improved change log.
 
-> On Fri 17-05-24 16:27:13, Greg KH wrote:
-> > Description
-> > ===========
-> > 
-> > In the Linux kernel, the following vulnerability has been resolved:
-> > 
-> > mptcp: use OPTION_MPTCP_MPJ_SYNACK in subflow_finish_connect()
-> > 
-> > subflow_finish_connect() uses four fields (backup, join_id, thmac, none)
-> > that may contain garbage unless OPTION_MPTCP_MPJ_SYNACK has been set
-> > in mptcp_parse_option()
-> > 
-> > The Linux kernel CVE team has assigned CVE-2024-35840 to this issue.
-> > 
-> > 
-> > Affected and fixed versions
-> > ===========================
-> > 
-> > 	Issue introduced in 5.7 with commit f296234c98a8 and fixed in 5.15.148 with commit 413b91350732
-> > 	Issue introduced in 5.7 with commit f296234c98a8 and fixed in 6.1.75 with commit 51e4cb032d49
-> > 	Issue introduced in 5.7 with commit f296234c98a8 and fixed in 6.6.14 with commit ad3e8f5c3d5c
-> > 	Issue introduced in 5.7 with commit f296234c98a8 and fixed in 6.7.2 with commit 76e8de7273a2
-> > 	Issue introduced in 5.7 with commit f296234c98a8 and fixed in 6.8 with commit be1d9d9d38da
-> > 
-> > Please see https://www.kernel.org for a full list of currently supported
-> > kernel versions by the kernel community.
-> > 
-> > Unaffected versions might change over time as fixes are backported to
-> > older supported kernel versions.  The official CVE entry at
-> > 	https://cve.org/CVERecord/?id=CVE-2024-35840
-> > will be updated if fixes are backported, please check that for the most
-> > up to date information about this issue.
-> > 
-> > 
-> > Affected files
-> > ==============
-> > 
-> > The file(s) affected by this issue are:
-> > 	net/mptcp/subflow.c
-> > 
-> > 
-> > Mitigation
-> > ==========
-> > 
-> > The Linux kernel CVE team recommends that you update to the latest
-> > stable kernel version for this, and many other bugfixes.  Individual
-> > changes are never tested alone, but rather are part of a larger kernel
-> > release.  Cherry-picking individual commits is not recommended or
-> > supported by the Linux kernel community at all.  If however, updating to
-> > the latest release is impossible, the individual changes to resolve this
-> > issue can be found at these commits:
-> > 	https://git.kernel.org/stable/c/413b913507326972135d2977975dbff8b7f2c453
-> > 	https://git.kernel.org/stable/c/51e4cb032d49ce094605f27e45eabebc0408893c
-> > 	https://git.kernel.org/stable/c/ad3e8f5c3d5c53841046ef7a947c04ad45a20721
-> > 	https://git.kernel.org/stable/c/76e8de7273a22a00d27e9b8b7d4d043d6433416a
-> > 	https://git.kernel.org/stable/c/be1d9d9d38da922bd4beeec5b6dd821ff5a1dfeb
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+The subject could probably still be clearer, maybe:
+  Fix unnecessary copy to 0 when kernel is booted at address 0
 
--- 
-Michal Hocko
-SUSE Labs
+Looks like this was introduced by:
+
+  Fixes: b270bebd34e3 ("powerpc/64s: Run at the kernel virtual address earlier in boot")
+  Cc: stable@vger.kernel.org # v6.4+
+
+Let me know if you think otherwise.
+
+Just out of interest, how are you hitting this bug? AFAIK none of our
+"normal" boot loaders will load the kernel at 0. 
+
+> diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
+> index 4690c219bfa4..6c73551bdc50 100644
+> --- a/arch/powerpc/kernel/head_64.S
+> +++ b/arch/powerpc/kernel/head_64.S
+> @@ -647,7 +647,9 @@ __after_prom_start:
+>   * Note: This process overwrites the OF exception vectors.
+>   */
+>  	LOAD_REG_IMMEDIATE(r3, PAGE_OFFSET)
+> -	mr.	r4,r26			/* In some cases the loader may  */
+> +	tophys(r4,r26)
+> +	cmplwi	cr0,r4,0	/* runtime base addr is zero */
+> +	mr	r4,r26			/* In some cases the loader may */
+>  	beq	9f			/* have already put us at zero */
+	
+That is a pretty minimal fix, but I think the code would be clearer if
+we just compared the source and destination addresses.
+
+Something like the diff below. Can you confirm that works for you.
+
+cheers
+
+diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
+index 4690c219bfa4..6ad1435303f9 100644
+--- a/arch/powerpc/kernel/head_64.S
++++ b/arch/powerpc/kernel/head_64.S
+@@ -647,8 +647,9 @@ __after_prom_start:
+  * Note: This process overwrites the OF exception vectors.
+  */
+ 	LOAD_REG_IMMEDIATE(r3, PAGE_OFFSET)
+-	mr.	r4,r26			/* In some cases the loader may  */
+-	beq	9f			/* have already put us at zero */
++	mr	r4, r26			// Load the source address into r4
++	cmpld	cr0, r3, r4		// Check if source == dest
++	beq	9f			// If so skip the copy
+ 	li	r6,0x100		/* Start offset, the first 0x100 */
+ 					/* bytes were copied earlier.	 */
+ 
 
