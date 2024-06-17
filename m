@@ -1,195 +1,150 @@
-Return-Path: <linux-kernel+bounces-218162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33E090B9F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:43:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0885F90B9FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4233D1F249C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 994522823E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C203D198856;
-	Mon, 17 Jun 2024 18:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7623E198E71;
+	Mon, 17 Jun 2024 18:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LU89wOgN"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eEoUSeql"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA6716E867
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1EE441F;
+	Mon, 17 Jun 2024 18:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718649796; cv=none; b=JrgcaGVKrD6LDXl2FrxwuO7jXHg1w+su/9aIfCMceRlDJZf+4Cy9w9pj9t3sz6lKpWsXy9pFLap2gEBmyeeMOfyy7ebpbmofBP2r8ftPKADKrECoC/BcKVN0Vgw+XIfcmLfPvIUArAor1RCXAn/yUM+uIVlS1DjQY57Ji/j28YA=
+	t=1718649960; cv=none; b=oBjH2LE9WbuVRdhP7Df7f5mdSGDkWLNwmAHCcVacUz4lADXyZhrvZM4JCNk63dDdGx+31AxNI+5Te1a9L38sR78KTy33kuXpAX7VdZVvXZkast9hifZqfTwc5Zo7EAJ1Iu6faxuUnjyOR0JNwMmegOv+x3kYuMfsH7mfHi+JA1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718649796; c=relaxed/simple;
-	bh=3yrTxQ3DG6T5oCgKuUEorhYhmhZ0MuzsCEvv1oQ/q9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AjOD8u2oJyj3xHeFxf9PS9MkXhS5dMHPQWyQc7Pu4/8rJDhV5snSZ8TdZj70sYgYKFb3bVMNN61ldmHd6C757bckyyvToSGeJuIRRLDFixVC2Z4Fcrkxfr3I2yO8zbX14cN8q14teAdeAeDkeRkdKl/o2D7xLJf1YkSFdtkUSGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LU89wOgN; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f862f7c7edso28548855ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:43:15 -0700 (PDT)
+	s=arc-20240116; t=1718649960; c=relaxed/simple;
+	bh=6kWQpS9eLM072jgzABjjZKWSIyTdU2QIJ0UNEyUE0bM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XZWiWzwQDh94yJW8MtHXwiuw3dGDqyFkz1dmDmY425dlJOrxeaSd9X5B727Vx6QYgZUOx55Cl4PlN0BDXSubUr1/yJmJENLlCVQLUcA48i0RlozCFBL8UguJO8RjZnPimehsc97HZl+MJJubSDWNKYdX5Y5y9LMaJqUtdVlxVM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eEoUSeql; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-354b722fe81so4230285f8f.3;
+        Mon, 17 Jun 2024 11:45:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718649795; x=1719254595; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CoPiKI0U6LA2omS7Ipp4BoMP/HdGi49YS+lwtk8HxUE=;
-        b=LU89wOgNlZ0Z+4Fov/RhnQnNVfCwhFk7quC0L0q38LsXoW6aj577U0up+SGwZyDzq1
-         /xP9lIIcAVn5DwVbwkrBbb4EMiq0rbuLm/HIa3C/aMgnER/KCmhz0mKqFJ64/ME+yqGS
-         g1X1uV/TRwpnqkBee5//DdYVaeSe/ncpGOJxu3n69sycNNdGmj+AsL2yxyNi84KGt/eG
-         Jg0r2vZFhIHdDZOeq0IA9OCu6Z/7SjrHCPj3ESTtW0sDwbJuQEg51kVMrTuJtiqsTE9L
-         YINNfQojbIhrNx2FRJ9c8MTjcqyb8P0KAq8jKlJkZnLmLkV1VCUGtvnLdZcZ/jWsjN4a
-         LZiQ==
+        d=gmail.com; s=20230601; t=1718649957; x=1719254757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RNDprGsvBjQ5lpg+8nT0XkdPxAQlru1DaA56wCGwcSM=;
+        b=eEoUSeqlVjUQKjal769EFVcCBW348V93cIm9JrrTWrNHFJ/cpB7UTFCF1tfml3s9/7
+         krGqOHBPQ84rtFErBnXdAS96CPDC3xyuEijg5X61R85ttqf+KFnv8fAUUx6ulPCp6gu7
+         pC6PKeyrDlW5xO3TV5uJ0RhNywAgvAGl4Zpk5myb/Ryo6A4H8o/ZjTS1XqWzVvoEYB3E
+         ebrC8EI3SSKerOELiyPZe0Sfmml30vzUyA3lJ29vMA4N3UgT37N+E3z4sEzUQ5Ida2zM
+         WF6lndasD2oa349zD8Mj19YVxHyXMQWq6VIcElDoJRTSaWXHXZk7fJ/rNu3UXTi2/Dr1
+         7BRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718649795; x=1719254595;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CoPiKI0U6LA2omS7Ipp4BoMP/HdGi49YS+lwtk8HxUE=;
-        b=ey/A6Kq1IXd03B+XrENxxjslaY5vvEqHQxbBHxbZuJqmxYbvvKnlt4+INjVttaRIQX
-         VqNWuWnvYN3Hhqp0FUfCeaj4jRnbjDO4orfC4guTn0CducVj2EELgo+Ag95BPUKf8Vla
-         e8+a4DvVq9mPDWG6ZifRYBtF15+Beo9kwKwfrhTU5YMnwrzj4DsHTg7Wh0rdf6euwlLG
-         0sP3s4Tg5oCif/ab5gFmAVLZ2AruV6P/QHGHUA9Um3Ld1ifuqItqGwWixgKEpuqsXDKc
-         ypb8yS94/LJxzXTJfzCyw3obZIWpQiWrEvAYWjPY65qjeMGGTyk8HFAFYLhSLt5aOFGU
-         0YwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTp5YaWmYodefKdwKaE+A47QpqGWanIl5bGmLKGcgXhceHjy/BKuHApbTeuDlBVf+JPB0nvDoXy4/Ll2+q9H/5r5iz5UZaAA3IzJuy
-X-Gm-Message-State: AOJu0YwPTZbVtlg8WiwuzRejbQqcH8biXFULGguIqM2caGV08+PdAF6e
-	YkjSNZ0/k+3DDZge5c9ggRpgHSol+70Hae6IF0tisEepr0a5f0m3f0NikERDzA==
-X-Google-Smtp-Source: AGHT+IGqZHWP33nG1x4wd+f3SUeCgN7e2qGKlwEFDGEt4WU3Ux+p18XxGUVIa8UdaXOz8okfKa4XwQ==
-X-Received: by 2002:a17:902:d4c7:b0:1f4:b859:cb60 with SMTP id d9443c01a7336-1f8625c04a7mr118124205ad.10.1718649794346;
-        Mon, 17 Jun 2024 11:43:14 -0700 (PDT)
-Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f8988c2e97sm6789405ad.170.2024.06.17.11.43.13
+        d=1e100.net; s=20230601; t=1718649957; x=1719254757;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RNDprGsvBjQ5lpg+8nT0XkdPxAQlru1DaA56wCGwcSM=;
+        b=F4mbt1YOZO1kGcCt4EzEMKi8VxMxlkInTjLUxSZ2PSVMFWvYJu/vjzYKPjxELx4/wz
+         f0MmQbW5UCVsQ4ztMNnvJc+CD/7mNG9VkSv+Zc/JMInc+OBVUJoNmzzSkD0xbt4UTTWp
+         oFo/slOeg02U3GPdSI/aUPMN08mUQ2M3TNB2hVRCzkXzfa63tka1e3GVVZcV//6IF2sX
+         AIcoAfDb9YQzbNk3ItvtKdFFdEuEa5Elqp7+64hXHv7/0KopNLof6ToC1g6MAjhTcnB5
+         y34qaHYFQA8dOIet56rS2KX3+J2TJvph62qfVpOL9dZb0LD5t5ebGvtm9t2++MKTUSU6
+         BKUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtb0EWRNphJGGVnQcOfs4TPoBhWvAa07v3YoUnH27eTjzW8oRM8n1kmcMlaUpwa/lQRHqwSFnHWx1xBFTM8aX0iz/iPY4HKQqa12/I/4rDjHU3uhEidMT5zV+7vxjaMger5UJFgCcJPCbEaJH18bvMTTrhf0s3LzOBFCwpHrHmLht9
+X-Gm-Message-State: AOJu0Yzb7NJwys5j350fPFowX4z+8nWmBy3Jv6VKq7RL+fBkU1jZm0HO
+	8+i3SCfKiOd4i15NncLA6dVtd5sP9dbNxwg5hFDiOtDQI9uEyO/+
+X-Google-Smtp-Source: AGHT+IEfr0TY7yXXoteO4w7tww2cogvFqswv9L2uCG4Ka71RmqqqN/X2AtgALlXI49v+50ryBr/SnQ==
+X-Received: by 2002:a5d:468a:0:b0:360:709c:5040 with SMTP id ffacd0b85a97d-3607a736520mr7972239f8f.2.1718649957041;
+        Mon, 17 Jun 2024 11:45:57 -0700 (PDT)
+Received: from debian.fritz.box ([93.184.186.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750f249csm12410327f8f.75.2024.06.17.11.45.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 11:43:13 -0700 (PDT)
-Date: Mon, 17 Jun 2024 18:43:10 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Lei Liu <liulei.rjpt@vivo.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v3] binder_alloc: Replace kcalloc with kvcalloc to
- mitigate OOM issues
-Message-ID: <ZnCDvpFveS6X0a1g@google.com>
-References: <20240614040930.11119-1-liulei.rjpt@vivo.com>
- <ZmyOJJmA7h6sZ_8A@google.com>
- <c46a07f5-f504-4c6f-af54-cfa00f987ce3@vivo.com>
+        Mon, 17 Jun 2024 11:45:56 -0700 (PDT)
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: 
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>
+Subject: [PATCH v4 0/2] power: supply: add support for MAX1720x standalone fuel
+Date: Mon, 17 Jun 2024 20:45:02 +0200
+Message-Id: <20240617184504.304211-1-dima.fedrau@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c46a07f5-f504-4c6f-af54-cfa00f987ce3@vivo.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 12:01:26PM +0800, Lei Liu wrote:
-> On 6/15/2024 at 2:38, Carlos Llamas wrote:
-> > My understanding is that kvcalloc() == kcalloc() if there is enough
-> > contiguous memory no?
-> > 
-> > I would expect the performance to be the same at best.
-> 
-> 1.The main reason is memory fragmentation, where we are unable to
-> allocate contiguous order3 memory. Additionally, using the GFP_KERNEL
-> allocation flag in the kernel's __alloc_pages_slowpath function results
-> in multiple retry attempts, and if direct_reclaim and memory_compact
-> are unsuccessful, OOM occurs.
-> 
-> 2.When fragmentation is severe, we observed that kvmalloc is faster
-> than kmalloc, as it eliminates the need for multiple retry attempts to
-> allocate order3. In such cases, falling back to order0 may result in
-> higher allocation efficiency.
-> 
-> 3.Another crucial point is that in the kernel, allocations greater than
-> order3 are considered PAGE_ALLOC_COSTLY_ORDER. This leads to a reduced
-> number of retry attempts in __alloc_pages_slowpath, which explains the
-> increased time for order3 allocation in fragmented scenarios.
-> 
-> In summary, under high memory pressure scenarios, the system is prone
-> to fragmentation. Instead of waiting for order3 allocation, it is more
-> efficient to allow kvmalloc to automatically select between order0 and
-> order3, reducing wait times in high memory pressure scenarios. This is
-> also the reason why kvmalloc can improve throughput.
+Changes to max1721x_battery.c:
+  - reading manufacturer, model name and serial number is only possible
+    when SBS functions of the IC are enabled.(nNVCfg0.enSBS) Factory
+    default is off. Manufacturer is "Maxim Integrated" and the model name
+    can be derived by register MAX172XX_DEV_NAME. Serial number is not
+    available anymore.
+  - According to the datasheet MAX172XX_BAT_PRESENT is at BIT(3) not
+    BIT(4). Furthermore the naming is misleading, when BIT(3) is set the
+    battery is not present.
+  - Removed DeviceName, ManufacturerName and SerialNumber from struct
+    max17211_device_info
 
-Yes, all this makes sense. What I don't understand is how "performance
-of kvcalloc is better". This is not supposed to be.
+Changes in V2:
+  - Changed E-Mail in Patch (2/2) Signed-Off
 
-> > I'm not so sure about the results and performance improvements that are
-> > claimed here. However, the switch to kvcalloc() itself seems reasonable
-> > to me.
-> > 
-> > I'll run these tests myself as the results might have some noise. I'll
-> > get back with the results.
-> > 
-> > Thanks,
-> > Carlos Llamas
-> 
-> Okay, thank you for the suggestion. I look forward to receiving your
-> test results and continuing our discussion.
-> 
+Changes in V3:
+  - Changed E-Mail in Patch (2/2) Author
 
-I ran several iterations of the benchmark test on a Pixel device and as
-expected I didn't see any significant differences. This is a good thing,
-but either we need to understand how you obtained a better performance
-from using kvcalloc(), or it would be better to drop this claim from the
-commit log.
+Changes in V4:
+  - add compatibles "maxim,max17201, "maxim,max17205" in bindings
+  - use generic node name fuel-gauge@36 instead of max17201@36 in bindings
+  - remove status in bindings
+  - fix spelling mistakes in commit message
+  - fix indentation in Kconfig
+  - fix typos in max1720x_battery.c
+  - Drop bat and bat_desc from info struct.
+  - MAX172XX_DEV_NAME and MAX172XX_DESIGN_CAP aren't volatile, adjust regmap
+  - constify max1720x_manufacturer, max17201_model, max17205_model
+  - constify max1720x_battery_props
+  - Remove braces around reg in max172xx_current_to_voltage
+  - Skip initialization of reg_val in max1720x_battery_get_property
+  - Remove braces around FIELD_GET() in max1720x_battery_get_property
+  - In case POWER_SUPPLY_PROP_PRESENT there is an early return if ret < 0.
+    Return 0 if regmap_read fails, device is not responding in case
+    battery is not inserted
+  - Implement multi-byte readings instead of i2c_smbus_read_word_data
+  - Drop ancillary from info
+  - Drop both calls to i2c_set_clientdata in max1720x_probe
+  - Get rid of max1720x_remove
+  - Remove comma after sentinel in max1720x_of_match
+  - Fix alignment of max1720x_i2c_driver
+  - Fix return value of dev_err_probe after max1720x_probe_sense_resistor
+    to use ret instead of PTR_ERR(info->bat)
 
-The following are two individual samples of each form. However, if we
-could average the output and get rid of the noise it seems the numbers
-are pretty much the same.
+Dimitri Fedrau (2):
+  dt-bindings: power: supply: add support for MAX17201/MAX17205 fuel
+    gauge
+  power: supply: add support for MAX1720x standalone fuel gauge
 
-Sample with kcalloc():
-------------------------------------------------------------------
-Benchmark                        Time             CPU   Iterations
-------------------------------------------------------------------
-BM_sendVec_binder/4          19983 ns         9832 ns        60255
-BM_sendVec_binder/8          19766 ns         9690 ns        71699
-BM_sendVec_binder/16         19785 ns         9722 ns        72086
-BM_sendVec_binder/32         20067 ns         9864 ns        71535
-BM_sendVec_binder/64         20077 ns         9941 ns        69141
-BM_sendVec_binder/128        20147 ns         9944 ns        71016
-BM_sendVec_binder/256        20424 ns        10044 ns        69451
-BM_sendVec_binder/512        20518 ns        10064 ns        69179
-BM_sendVec_binder/1024       21073 ns        10319 ns        67599
-BM_sendVec_binder/2048       21482 ns        10502 ns        66767
-BM_sendVec_binder/4096       22308 ns        10809 ns        63841
-BM_sendVec_binder/8192       24022 ns        11649 ns        60795
-BM_sendVec_binder/16384      27172 ns        13426 ns        51940
-BM_sendVec_binder/32768      32853 ns        16345 ns        42211
-BM_sendVec_binder/65536      80177 ns        39787 ns        17557
+ .../bindings/power/supply/maxim,max1720x.yaml |  55 +++
+ drivers/power/supply/Kconfig                  |  12 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/max1720x_battery.c       | 363 ++++++++++++++++++
+ 4 files changed, 431 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,max1720x.yaml
+ create mode 100644 drivers/power/supply/max1720x_battery.c
 
-Sample with kvalloc():
-------------------------------------------------------------------
-Benchmark                        Time             CPU   Iterations
-------------------------------------------------------------------
-BM_sendVec_binder/4          19900 ns         9711 ns        68626
-BM_sendVec_binder/8          19903 ns         9756 ns        71524
-BM_sendVec_binder/16         19601 ns         9541 ns        71069
-BM_sendVec_binder/32         19514 ns         9530 ns        72469
-BM_sendVec_binder/64         20042 ns        10006 ns        69753
-BM_sendVec_binder/128        20142 ns         9965 ns        70392
-BM_sendVec_binder/256        20274 ns         9958 ns        70173
-BM_sendVec_binder/512        20305 ns         9966 ns        70347
-BM_sendVec_binder/1024       20883 ns        10250 ns        67813
-BM_sendVec_binder/2048       21364 ns        10455 ns        67366
-BM_sendVec_binder/4096       22350 ns        10888 ns        65689
-BM_sendVec_binder/8192       24113 ns        11707 ns        58149
-BM_sendVec_binder/16384      27122 ns        13346 ns        52515
-BM_sendVec_binder/32768      32158 ns        15901 ns        44139
-BM_sendVec_binder/65536      87594 ns        43627 ns        16040
+-- 
+2.39.2
 
-To reiterate, the switch to kvcalloc() sounds good to me. Let's just fix
-the commit log and Greg's suggestions too.
-
-Thanks,
-Carlos Llamas
 
