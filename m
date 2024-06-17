@@ -1,101 +1,141 @@
-Return-Path: <linux-kernel+bounces-217731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88AA290B44A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:28:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B866F90B338
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BFF7B392C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:10:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732A92811CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4A7154424;
-	Mon, 17 Jun 2024 14:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7912F13C8E4;
+	Mon, 17 Jun 2024 14:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDV6/8UU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bBk91bAt"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF47153BD7;
-	Mon, 17 Jun 2024 14:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFE713C81B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718634315; cv=none; b=P9Md0z4O/YGaFel1a5Xb6b5zTJGNYmB6Rv12IhFhVJtGl2MjDDUJ1nSs2z+dJXeTQTMWCatIGgTXnO6z8U7BnyHeyc7To+TWPk2CkC6CSacI+xcoczTl952AE/qNmfg4uWcrH7X151DBFCSH/iKhDlrjL2SURW2jwWQYn1nouoA=
+	t=1718633520; cv=none; b=N/n8HpAes8FRU2CdDzQNBDM2byd7j+vA60Z8kUKFKyqe62idpWO7FKLIRQYt7xQ0eADIJRmSHgdaVRgBjLWya07qaDEJd2GKwoblg4mcGHlFTOJGdHSYXZdnqQjW629aQ4k9ER5jeM7vm5HX3AWkjfqZVuhHOKjy8EEiDn2Fsgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718634315; c=relaxed/simple;
-	bh=ME8qz19GOaLNX/5j98PmYI8BvZeCSpM159rOsXAygRM=;
+	s=arc-20240116; t=1718633520; c=relaxed/simple;
+	bh=C2SAVHOyNTSMDiQfOQc+olVCdTZJppGRHLEkFWkECgM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5ul6Y+yggyC+EqrB1oKyNllLrI6EmTya/mxdSgrN96tq/8/fI7CDSJBNVKFozDM+nH+EkbsBiUMngOnHWeLLWSZ5yy94eMcJlS7C9/EuN7UMEl4+ybVrwoiwNu8cBQyEHTgo2uNangpK63qm7roNrpSCDq7QcebYQIU23xu1cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDV6/8UU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3358BC2BD10;
-	Mon, 17 Jun 2024 14:25:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718634315;
-	bh=ME8qz19GOaLNX/5j98PmYI8BvZeCSpM159rOsXAygRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YDV6/8UUivqNYbFD7pVzIrm2TCaXgojnoyOPLZ8dKvelVoqjnZIY3CypZ+pLoZhjQ
-	 /yOIDPBxqKbscqTvLkk1id8weDXk0S4K4w8/a1W4JcE/pXVXr9S0oQgU06wW5djO6s
-	 mPT83UkIWWMJd23Lzc1GvihVyvDyg3gtKgzVn24EhFp0vFLGQihj49qhSeLibl7NPW
-	 WCy484OVZl9zXf2aksjjt5Qs+nvOtHxOCj78TE8W9J3CpcHeiaGHWj39MOvXOIqkXK
-	 FdYpr6ZvDRzkCvsjrKEtEW+G2Fz7TIRFw3zO5nHQF/LE2zQ7p9bigBJysx0AuRDhTQ
-	 TCw3dTJisTd2A==
-Date: Mon, 17 Jun 2024 22:11:17 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Conor Dooley <conor@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
-	linux-riscv@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jesse Taube <jesse@rivosinc.com>
-Subject: Re: [PATCH v1 0/9] riscv: add initial support for SpacemiT K1
-Message-ID: <ZnBEBQjTQtFs-fXt@xhacker>
-References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
- <20240616-exorcism-computing-e11e26084a62@spud>
- <20240616224811.GC3983622@ofsar>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EL9oNewomaNfZqDIhdPYS4t+HRceqS5S5TFCKcfX0rZhYxSQ/3yzSxsJuNNYFRCbKKXS/7Di48R9CAUlRXRSkJKoE4bFrgtTrEie1U+1P5pFqpw5c7PnnvmZen9F8KQjQ80y7aA3j3qNih7szvDh9C+40D6fMhahe3L9lwAKS3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bBk91bAt; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f04afcce1so562774566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718633517; x=1719238317; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C2SAVHOyNTSMDiQfOQc+olVCdTZJppGRHLEkFWkECgM=;
+        b=bBk91bAt/erP5mL3knKkxVdMhFwJru9aAsPt/Z0dcLFBdXbBvSGnVV8Fvc4sValzdw
+         iuMtSCdZZamxlBD4QbQpKg9U///sgFPgGwVA0tZa4aTqjqcayAiy+JKxZGNJpz5SVn/c
+         wtLkRPoJc7U/gBOfleKB8FCtGpRdSlvE/m3edIbYZhsP92j+5y1odQ00TRHse8hq+hsZ
+         Un7S2/+R2S5ceBAyXMbkcxX8mqe1ukgvNxmrB40omSG7g6EWk2T7gyNglH0CAQD5rzkN
+         IweGMOgkrfXp7rdzC9s42LAydeMZ+DGj0MSeD0ZrYKb2IKFuGd1tmJ6D6HopW/tCsz17
+         cj/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718633517; x=1719238317;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C2SAVHOyNTSMDiQfOQc+olVCdTZJppGRHLEkFWkECgM=;
+        b=m8CdHuOfwl16TmwkxrLIFnoYuDjDRvAFuvT2S5TjxjfcvocjYaT6+Ld6pQ6JJNqtqX
+         JKEY+Jr9qleUTOoKcEwgkaDYv78S8Ujq7YhnR69h9sObh/k6kBPeZDu+uON3OgjzdVoQ
+         7ts//SoWyUlS30kLIc1sm6u7s1lt+1NYX3wxxxvqKK5CNgw1eCnTbWWm8TFTZfhmiNjL
+         rdR7+Ez5lh+kuK3n32THhduWjug9QmRKKebnQXeA+Q7OLvZgeeoKs7SOXgaF/tjlZ5WF
+         rtPaYXgXokkRJj4uCMgBaMCFLpNqyRYBSIR5gQnO7SDxbnLp6WoJRepP9oO/EIItxmCd
+         EV6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUYbdnmmFFrS4vvdP1tVZgMGbjKxAyn7VqRXRG+f1TkbCBlNmW+X4EUU0AkJMW7N6u1uN0Z4dUVQFaLvmjPKYLO8MGeJzcZpL6j9weC
+X-Gm-Message-State: AOJu0YyoVM6vSdTjl5NglxRpdXZndHKWVN/rOdPSe11WaACJ8xtPfByK
+	PSP9+gIcu0kD324Vtipa/sR9aewK84iz3jtUJNDtH7YLlnwq8XGcB+T07WkqVk8=
+X-Google-Smtp-Source: AGHT+IFlbSH1GvxfJkQSwG+UrC4v6gx0fdCPmYTDKY3WzRbLOQNkpCirO5vKZ2nfSibqMaANo06JTQ==
+X-Received: by 2002:a17:907:c283:b0:a6f:6661:dbbf with SMTP id a640c23a62f3a-a6f6661de22mr770138066b.71.1718633517028;
+        Mon, 17 Jun 2024 07:11:57 -0700 (PDT)
+Received: from localhost (p200300f65f283b00ca876ee5dd3d1e3b.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:ca87:6ee5:dd3d:1e3b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56dd2dcesm518217066b.93.2024.06.17.07.11.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 07:11:56 -0700 (PDT)
+Date: Mon, 17 Jun 2024 16:11:54 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Junyi Zhao <junyi.zhao@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, 
+	Kelvin Zhang via B4 Relay <devnull+kelvin.zhang.amlogic.com@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, kelvin.zhang@amlogic.com, linux-pwm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] pwm: meson: Add support for Amlogic S4 PWM
+Message-ID: <6bzysc3jwugo3epcxsef7uupk536prsc3phlf3m64n3jjwpxus@2uigg44uotuh>
+References: <20240613-s4-pwm-v8-0-b5bd0a768282@amlogic.com>
+ <20240613-s4-pwm-v8-1-b5bd0a768282@amlogic.com>
+ <1jfrtgj0so.fsf@starbuckisacylon.baylibre.com>
+ <tnwdnwiruoty5yd42bmkupgg6hjxib5lblhqcyouoyx5y3zvnq@2d7cnrei24m4>
+ <1jbk44htqr.fsf@starbuckisacylon.baylibre.com>
+ <948ba34a-1e05-45c4-8ba7-66c72bdb6fa5@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vjzyofe7xtcvocgd"
 Content-Disposition: inline
-In-Reply-To: <20240616224811.GC3983622@ofsar>
+In-Reply-To: <948ba34a-1e05-45c4-8ba7-66c72bdb6fa5@amlogic.com>
 
-On Sun, Jun 16, 2024 at 10:48:11PM +0000, Yixun Lan wrote:
-> Hi Conor
->  Thanks for bringing this up
-> 
-> On 19:35 Sun 16 Jun     , Conor Dooley wrote:
-> > On Mon, Jun 17, 2024 at 01:18:52AM +0800, Yangyu Chen wrote:
-> > 
-> > No MAINTAINERS update, so I figure that means you don't want to maintain
-> > it going forwards? If there's someone out that that does care about the
-> > spacemit k1 (Jesse maybe?), then I'd be more than happy to have them
-> > look after it.
-> Yangyu kind of has limited time, too many stuff for him..
-> 
-> I'd volunteered to help on this if it can fill the gap
-> Also I'd be more than happy if anyone willing step forward to co-maintain..
 
-Does maintainership work like this? Is willing to do enough?
-FWICT, maintainership involves active patch contributing, reviewing and
-maintaining the whole SoC. It is better to take over the maintainership
-after showing enough patch contributions and understanding of the SoC.
+--vjzyofe7xtcvocgd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> -- 
-> Yixun Lan (dlan)
-> Gentoo Linux Developer
-> GPG Key ID AABEFD55
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Hello,
+
+On Mon, Jun 17, 2024 at 04:44:13PM +0800, Junyi Zhao wrote:
+> > > So yes, please use dev_err_probe() also to handle
+> > > devm_add_action_or_reset().
+> >=20
+> > My point here is also that devm_add_action_or_reset() can only fail on
+> > memory allocation, like (devm_)kzalloc. Looking around the kernel, we
+> > tend to not add messages for that and just return the error code,
+> > presumably because those same 'out of memory' messages would proliferate
+> > everywhere.
+>
+> Hi Uwe, I didnt get the clear point.
+> So, if we need "return ret" directly? or keep "dev_err_probe()" to print?
+
+Please keep the dev_err_probe(). There is a problem with that approach
+(as Jerome pointed out), but that is about to be addressed in driver
+core code.
+
+Best regards
+Uwe
+
+--vjzyofe7xtcvocgd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZwRCcACgkQj4D7WH0S
+/k5C6ggAusUDCe62w1qb8jlNP1dXoK6OQvw09sDK1x3v6607Hh9+PZte3/EYmwn1
+AIT2qpIcaBkVb3oB8plPowm3oU62dqZ5Z5ab1QN97qlths09uZiOxkA/MSLTTUx6
+T6GbIn+8OmUDBSa2jyqbFBV5IapU3TgN/PGDUVu3/fp5psvI6tCfyLUpxR1pTXWZ
+M3XM5N2LvVkzyu1O77yBaKOsB+4TVcgRLGwi1MzbqbvbLQoyRscvB18qB4x8Ytsa
+kLCtuCLJfdujJfR6fTWC/1xeXGoK+YnnoELLOj7LaBVpnUzN8StlNOTM2q7Pm354
+ndgwDT55Ok9oedoR5qNzhmx6RPB9qw==
+=M9gi
+-----END PGP SIGNATURE-----
+
+--vjzyofe7xtcvocgd--
 
