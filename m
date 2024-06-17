@@ -1,102 +1,157 @@
-Return-Path: <linux-kernel+bounces-217631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724DD90B262
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:38:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 144D290B59C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53FB21C235E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:38:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9936B33E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5DC1C8FCB;
-	Mon, 17 Jun 2024 13:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50A01D18FA;
+	Mon, 17 Jun 2024 13:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EIvEfnXO"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="oazY+j9j"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7500D1C68BE
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5975C1D0F7A
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632227; cv=none; b=RuSd4tiXr5wub2/ZHJfz7bwXiWG/hEjD7qnjKuSQaR7MQor9yDAhDumzo8xEXFb4RnlQE52Oih/vaR7awUgBd+irPSitrH1HNwr5JU+9e3j9YBCP3dTxrseVjmUkYCfPZ5I8qI/eNtdx98XBpFoNzpm2bBM+dUQkzdRO48agQo8=
+	t=1718632271; cv=none; b=fr/r0w+qPgwn53oke3DCoHnnPxc7ZmZd/Gw46xEvWI+6RuAJV/fJM5oDxJ4+zAZ+i/XNZItSyxommJcZjT31B7VkNHkPwZ+af3I9liA/fm/KQIjhHRHLQp4y41URPVfTLYHFMg0O53FVbiherxzhAQyL/yJs9wbvVPGkAHtUTJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632227; c=relaxed/simple;
-	bh=D5p2SE0eHG1JvQH6hxT3l8r0DOSeEOFDSIG+C0YDKwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pvfe31qOGaFR6kGZAuhwuWYJRDhf3FVMAh8Ag4A/wBGs5bgvH/56fLJ8G2ANsD8XAO5D6KCz7dZWmmi8hNFvizJJODs2F3WI18s4HtOjK5BXUUTRWwG2XiBv5+5g9IJZof1qZeMu/cg6ngkSUgA5JCX8+d5RkrUKfLNMOKiIXx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EIvEfnXO; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: eadavis@qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718632223;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C62PbaCEWfaouXUkkTaXGkDjjhNjBVFwmkpkQFT9P00=;
-	b=EIvEfnXOJg8bh0AbA74ouCqzkJwiFZWf9T1eNE4eN7JHV6iaPo1h7eG87OahDjFBKIMrDj
-	2c59h5PSrxBkzq2hJtB5rnnFP1LV6skqiXqYDcBqaV8dItJcn+MvPbnbe7zF9wZ2XbJ9CY
-	3av/XD1RLQfAkChb+K9+C/Q3KHHXS08=
-X-Envelope-To: syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Mon, 17 Jun 2024 09:50:18 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com, 
-	bfoster@redhat.com, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: bch2_fs_read_write_early needs to hold write
- lock
-Message-ID: <pols2a6hnmgwb6tnszy3d2gqlyomstowhozqp4pu7rbgakdtj5@uozspcarep3h>
-References: <00000000000053e574061ad89521@google.com>
- <tencent_724B611BCF250EBAF7BBE333DF9E271BB208@qq.com>
+	s=arc-20240116; t=1718632271; c=relaxed/simple;
+	bh=lrT4UVJxbYPigfpUfvDqNd6ndl1eVcIzUfVJ/1QCCbs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=snyywR1Kwy9xuirKVltW4M9gJEC1XAuB/9MFgCOFPQcsaIrKzosNQiiRq3ndyZav2hDsIhDSvaw1YSaehr+v6eFcLghX1Dv6dUHvAnL292oJrII5Z/4cTOH3246eYncNiJSeF5ZU42xw2bqzeGCjbYLMSYdjuNhb/sUgk5LuAIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=oazY+j9j; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4405743ac19so37286251cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:51:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718632268; x=1719237068; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tvabn+RMpG3uovvK1+JaZOuuhTQ0Y5v5qxh3XvN8Rq8=;
+        b=oazY+j9jwiHu0wxRO+kO36SdiQE/16HGaJhB4FIWY5UrZ0KsiD6p+Gd9qRuS1Vcw6u
+         C9kjFmUwnRGZ/kYmgeXlDQ9WBmPJUzoeOqDJMKgbItUFuqHB26M2343sNgn0D/PBKclg
+         TpmoiCWRVK0CD0JBqzqNpMNsYf3D7CjWKY7/MCq6AqlaU4eYgGz6i1jArVfQzzUVKV/p
+         VFoneSUaG/HOwh8a3O+hd9q3V+O5gPWPENe6Z1j/OxUqNTMKPMqEQ80UvQ6Nzt4ztsUr
+         UYi49OqvZJtFBZOC8DxCCm41vvVWjNUglGzoLV1i8X9k5nEijO0wiG9v//HY60KfvA7f
+         qoNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718632268; x=1719237068;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tvabn+RMpG3uovvK1+JaZOuuhTQ0Y5v5qxh3XvN8Rq8=;
+        b=eJE9Z9uEcODljtjg4eT48bxwUFB7Wk4JUzZG0/6/5lvglyWtI24Cfq6UzCdpyWP5CN
+         7nqmj6xRXAPfirspHEfi00t/jYHLbQ4hTnCa5+sGwY/yE0bXfVvOLImsIoPIYoOXV1iy
+         m50r+bQZ0oAhzbj3FFp1CafyeAd4MsqjyFHu8dCWmb1Mb38cnf6COcu5T16CTo59KUjC
+         zhA1XrT3P4o6ntrtjjDNJa+0jrQyz/eb6nF0r7M3ES5qZoTaNAKIQ+WIdWHkU7AE9AjE
+         sJt3n/0HLj0H1CCpO0RqAAmjQ0+d2nOdYBzut6UvafYtcdTb+TSLzOqkTNtz/FF+oPBv
+         S/rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDRNp4FxXoydgw2A3wlrOyGU4XTIwdRsiA8k7UMDSK3WvEhs135Oqi4aWTLaXcD8/zmTdBsbwQNeuJDnA29oVUSIsbOSecrmqii0MB
+X-Gm-Message-State: AOJu0Yz6j2Jl1zrfMdAOTq0yp643TYcMVEpZKnGKOCfGcb+t9RFGce4n
+	qgYASKnjtASeDet/00c42kttWT6J5UyjOWJ866fyh0ri4RfERzim7ljlHJfKlJ4=
+X-Google-Smtp-Source: AGHT+IGCNTX7XI85nrdMwm8HgjdhSBF2upAbofRDQ4N0lo0/7MseIEDdacRNTzR/tFRJhwns3PxO2A==
+X-Received: by 2002:ac8:71d7:0:b0:442:198e:cb9 with SMTP id d75a77b69052e-442198e0e4bmr132788711cf.27.1718632268400;
+        Mon, 17 Jun 2024 06:51:08 -0700 (PDT)
+Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaecc004sm432892285a.31.2024.06.17.06.51.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 06:51:08 -0700 (PDT)
+From: Trevor Gamblin <tgamblin@baylibre.com>
+Date: Mon, 17 Jun 2024 09:50:19 -0400
+Subject: [PATCH v3 39/41] iio: proximity: sx_common: make use of
+ regmap_clear_bits(), regmap_set_bits()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_724B611BCF250EBAF7BBE333DF9E271BB208@qq.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240617-review-v3-39-88d1338c4cca@baylibre.com>
+References: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
+In-Reply-To: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Dmitry Rokosov <ddrokosov@sberdevices.ru>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Cosmin Tanislav <cosmin.tanislav@analog.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Hans de Goede <hdegoede@redhat.com>, Ray Jui <rjui@broadcom.com>, 
+ Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Saravanan Sekar <sravanhome@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, 
+ Crt Mori <cmo@melexis.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Trevor Gamblin <tgamblin@baylibre.com>
+X-Mailer: b4 0.13.0
 
-On Sat, Jun 15, 2024 at 07:44:04PM +0800, Edward Adam Davis wrote:
-> bch2_fs_read_write_early() needs to hold state_lock to pretect and sync data.
-> 
-> Reported-by: syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Instead of using regmap_update_bits() and passing the mask twice, use
+regmap_set_bits().
 
-this is incorrect - delete_dead_snapshots() may be called synchronously
-or asynchronously, and if it's called asynchronously we do hold
-state_lock, so this will deadlock
+Instead of using regmap_update_bits() and passing val = 0, use
+regmap_clear_bits().
 
-> ---
->  fs/bcachefs/snapshot.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/bcachefs/snapshot.c b/fs/bcachefs/snapshot.c
-> index 51918acfd726..b27a4327274d 100644
-> --- a/fs/bcachefs/snapshot.c
-> +++ b/fs/bcachefs/snapshot.c
-> @@ -1566,7 +1566,9 @@ int bch2_delete_dead_snapshots(struct bch_fs *c)
->  		return 0;
->  
->  	if (!test_bit(BCH_FS_started, &c->flags)) {
-> +		down_write(&c->state_lock);
->  		ret = bch2_fs_read_write_early(c);
-> +		up_write(&c->state_lock);
->  		bch_err_msg(c, ret, "deleting dead snapshots: error going rw");
->  		if (ret)
->  			return ret;
-> -- 
-> 2.43.0
-> 
+Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+---
+ drivers/iio/proximity/sx_common.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/iio/proximity/sx_common.c b/drivers/iio/proximity/sx_common.c
+index fe07d1444ac3..a95e9814aaf2 100644
+--- a/drivers/iio/proximity/sx_common.c
++++ b/drivers/iio/proximity/sx_common.c
+@@ -111,17 +111,16 @@ static int sx_common_enable_irq(struct sx_common_data *data, unsigned int irq)
+ {
+ 	if (!data->client->irq)
+ 		return 0;
+-	return regmap_update_bits(data->regmap, data->chip_info->reg_irq_msk,
+-				  irq << data->chip_info->irq_msk_offset,
+-				  irq << data->chip_info->irq_msk_offset);
++	return regmap_set_bits(data->regmap, data->chip_info->reg_irq_msk,
++			       irq << data->chip_info->irq_msk_offset);
+ }
+ 
+ static int sx_common_disable_irq(struct sx_common_data *data, unsigned int irq)
+ {
+ 	if (!data->client->irq)
+ 		return 0;
+-	return regmap_update_bits(data->regmap, data->chip_info->reg_irq_msk,
+-				  irq << data->chip_info->irq_msk_offset, 0);
++	return regmap_clear_bits(data->regmap, data->chip_info->reg_irq_msk,
++				 irq << data->chip_info->irq_msk_offset);
+ }
+ 
+ static int sx_common_update_chan_en(struct sx_common_data *data,
+
+-- 
+2.45.2
+
 
