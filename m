@@ -1,117 +1,135 @@
-Return-Path: <linux-kernel+bounces-218171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE75690BA14
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:48:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275C690BA19
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 846D9286ABE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:48:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1749A1C24781
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFEC198A3D;
-	Mon, 17 Jun 2024 18:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C204216191B;
+	Mon, 17 Jun 2024 18:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GFXCBaEv"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QQHHHvNf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6816198A0C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8A3198833
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718650087; cv=none; b=OcqdCqIyLbqndjSw3uAdC0LPmbcZXXBjQ4/03eK4PoA/EB6PBJPr1Tx910iWfeG3Lu1lVMJrDOZWRSw0e83XkgwHboQ6oJRcSP/Myc9EW7FOcWf42Ubi27IMxdn1toYOMUFl35OGFhF378bmkxOJNIIbBZPc5UupWm6bZksBX0s=
+	t=1718650128; cv=none; b=t4DGidM2OPvPJtFKgS5AWbq2tryLIAJ6YYHpPVPRVw+0wlZPAP+Xw+5tiTcWSFkLeB1K/GtPNHpqrxgCr3eAmeFoU0iMk7CqedIZr8+zb01/GVV/xz0sKVmnUJZxS9+SaWyNCt/H4FdafaVM1AJc1nS1swWt283NJGiJM03+9fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718650087; c=relaxed/simple;
-	bh=qeXF72FR93AGBhELVsrcMvphwThBusQ84oeb1Yd3e+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ueiqBl3IWZNP0MCYNVs3qgZBtgCnblvBV1LwR/5EOQP5Jz6SfQ6XKuzbVEt59bT8FKZE2KBK9aSL4kXt8CZ2EmSY5zKUYNu093U869d+fNEBNuuwDcWREEjUz29YCilXbk5S9gGSQiUwI2bddcB/msQxdmm6taIR/Orm2ew19sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GFXCBaEv; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebe3bac6c6so52086771fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718650080; x=1719254880; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FYnJ6sKcKYDve5AuIpVcAVHdyyVXD2FX+mVnM7OJR7o=;
-        b=GFXCBaEvpWYuexpHYbZHfxU1Y9zIonEfVTjaf9SMdDZ+xXfIQOWOBhyjv3vfyAZKUV
-         Ftt+GongLM4rUJknxRAY/UK++DxaRsP45LikX8EUWpHUhgGYJpt3iJWulJai0DhGlGpD
-         gWgd0Wc3+QE3yIAs9PUV+pHmrhLViYOuwvioyipCBwyOoyY6LgdweCc+07yU6bUp1hKx
-         3+UW9IHKbwMRQcsx86gSY/nWhiGRM6tlxcbJmk2nQ5ing02kIUS+DOUHQNTXnlejyrLc
-         iK3f40pUr5VknDsQRj9Q3u12s6DmzZ01J0CN/swDM7I7f5Rw3x5qMOHWPVMXZBlo5H1y
-         2RiQ==
+	s=arc-20240116; t=1718650128; c=relaxed/simple;
+	bh=2pW5K756b3vnOMMzbNNarIqr13h/Yp4f80y1nx+hSeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RuvHEpsuJ0+WH3dIWC6JhRKTTjDoNeNHL+eBwNqt6LIHaAt75LxBCamNz+VgSgIKzDCmAs42ZgxvVmf34skQqX+AkZVnZ3Fu6AiaRAaaz7QKNf4lPsaEcJJ1hi/UoGA41Ri8b/LIH3uJuHUstvmcTcqeQeOH6Lo6FJPApEVgZCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QQHHHvNf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718650124;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZZaXnpTdtezaPILoSmIEc1ZZ9gp2RX1pMrPgPH0P1ko=;
+	b=QQHHHvNfVyQOhnbnt1++JzugD5pRY884A6Y3GMiPWK4Ipa4lXJsqG8Dp7nxu3lCuiXdkWG
+	6Xx32+lMeNUJMAxT5yoQCIDH8jD4BRgcP4f5EYQ0moqYg5JB5Ln6GS+kasWz0Oq49uu2wP
+	hVMlVc3UVqq1+k//Ud1UZuSk7byLtk8=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-381-_TewlSTNOtiPAy6dvGuQuw-1; Mon, 17 Jun 2024 14:48:43 -0400
+X-MC-Unique: _TewlSTNOtiPAy6dvGuQuw-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-62f8a1b2969so94609097b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:48:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718650080; x=1719254880;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FYnJ6sKcKYDve5AuIpVcAVHdyyVXD2FX+mVnM7OJR7o=;
-        b=TxRiSvgJJBHcTRVPydv3Xekmn37MlKT8tvFnfxen0fJTY8IrRpX+hHc83dr6FmEbZU
-         i5dReexIpQUS3OQNr/yuFcxsnImAa0U/vXROFc23X9Vt3xe/QEIIMwKO883R69UNxdNd
-         c7yR1cJGkfCrR9h5G7oyWzPxSyBD+uomd5iO1b0AqkJhU0w7KcwkJo5oA+jVFjpKXKM3
-         cDLNSYuEUEdEXBoVG1JqLdRLvLMAxzutjkJO4csbjAL/3teNCLHp/Ck5UbIKcPifvyLG
-         NOoAFF+V1pQtFTFyryWjg2TI2OLyx4EyQG5jI3hcycEjLHCrHgxvppq3zYShQfzbnfk6
-         mxyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfBb6Q9MkQqjeXxvt/AqP09EhSh1jUwWCvLUT1ay8FDWFS3vRQlGyIKWTEVMVZ++m36WLVrVAMmmVBkywPUmsHRZwFGp/a8y7gEbo0
-X-Gm-Message-State: AOJu0Yx/VB1MlYJ7+nw73eLlALdWW9+/rpHmsG/ka3cMeGCh54KIWhZh
-	Gnvtrghu/byfmfjT4EkTRbc8gS9rjoUTainPT7BwmHPGKMnNOwLvt2lQYjo5lDY=
-X-Google-Smtp-Source: AGHT+IGx+atBJRdGHE+dU/qVvXUgXHTjfuz4zdzX/PqP8kUgeQ1LM6w0fr0vL2L6wwQuaZMSeOstFQ==
-X-Received: by 2002:a2e:8895:0:b0:2eb:ea4a:9923 with SMTP id 38308e7fff4ca-2ec0e5d1415mr83982231fa.23.1718650078858;
-        Mon, 17 Jun 2024 11:47:58 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:cb2:a9df:9f88:17b:c7e7:fa59? ([2a00:f41:cb2:a9df:9f88:17b:c7e7:fa59])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c17d72sm14085621fa.68.2024.06.17.11.47.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 11:47:58 -0700 (PDT)
-Message-ID: <65f248a7-43bb-4f97-ad98-e2ca29e99e51@linaro.org>
-Date: Mon, 17 Jun 2024 20:47:56 +0200
+        d=1e100.net; s=20230601; t=1718650123; x=1719254923;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZZaXnpTdtezaPILoSmIEc1ZZ9gp2RX1pMrPgPH0P1ko=;
+        b=QcxBsDDbJ2bYm5R9R/lGIZWI/UZSGmRW5fST1MHAP0Gq5pxZr6+gGu2U0R+lRcEOtN
+         HcKiowDmdVB0JB+NCMUFUI6pwL+ToBA3mYrBHwQEYovxP7NYyAiOmyDjocCHq7SJUuPd
+         UjTsFrxTtjF90p1tVN+cyGDeHxm+BwVrJqOdMfbKETInHhutJGMar0GzuBQMZlSUA8ib
+         lOc64bd674bvYJfIGS8qv5zVm5f8AVMV6FqLUPXb+MxwHIVjOpq80bavhJtdVm/2849x
+         gmsQai2fbuI7UWVx+3mOSpdaz6MFd8wTpF/ZvW/XtEz1BpILUc+RFddqyGnu0dHkqRU3
+         eGhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOGKSMFhDgkkyik951PRBdcUl3OpfS0IGVU+PLaK45rHaoMHlISCI5KFi8c+lALi977MQNtjMx61KmoNxxUfMcWF9n/d7ni+/ZbGrW
+X-Gm-Message-State: AOJu0YwWJ84rivc49pKH9t7JesPKrfNP9S65u7awBA4e26Um/mN9t4C/
+	RG0DxqI0D0CxIr+XgqdT/EAaS11h+jY3kIiYnTr0aEbZvUn8T21gf9XuL6tMJHhx4Rox7P8eaan
+	n+75XyE8Ry6t7t90Sb4kyACuau0z+k7ylRIovmiHwv7pqdNiXFQmsenZmvkzfaQ==
+X-Received: by 2002:a81:9245:0:b0:617:d8a7:df60 with SMTP id 00721157ae682-6394a6c537dmr4984517b3.40.1718650122509;
+        Mon, 17 Jun 2024 11:48:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFD/nY/QKBHmtUF5IvBSZOGzxA0YnpE8P+v9PhV468bowcK1HtPww2hkYffchrQU0zOplnI7Q==
+X-Received: by 2002:a81:9245:0:b0:617:d8a7:df60 with SMTP id 00721157ae682-6394a6c537dmr4984307b3.40.1718650121979;
+        Mon, 17 Jun 2024 11:48:41 -0700 (PDT)
+Received: from maya.cloud.tilaa.com (maya.cloud.tilaa.com. [164.138.29.33])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5f10739sm57649316d6.146.2024.06.17.11.48.41
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2024 11:48:41 -0700 (PDT)
+Date: Mon, 17 Jun 2024 20:48:04 +0200
+From: Stefano Brivio <sbrivio@redhat.com>
+To: Aaron Conole <aconole@redhat.com>
+Cc: netdev@vger.kernel.org, dev@openvswitch.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B
+ Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, =?UTF-8?B?QWRy?=
+ =?UTF-8?B?acOhbg==?= Moreno <amorenoz@redhat.com>, Simon Horman
+ <horms@kernel.org>
+Subject: Re: [PATCH net-next 6/7] selftests: net: Use the provided dpctl
+ rather than the vswitchd for tests.
+Message-ID: <20240617204804.680a1254@elisabeth>
+In-Reply-To: <20240617180218.1154326-7-aconole@redhat.com>
+References: <20240617180218.1154326-1-aconole@redhat.com>
+	<20240617180218.1154326-7-aconole@redhat.com>
+Organization: Red Hat
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/8] serial: qcom-geni: Fix arg types for
- qcom_geni_serial_poll_bit()
-To: Douglas Anderson <dianders@chromium.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>
-Cc: Yicong Yang <yangyicong@hisilicon.com>, Tony Lindgren <tony@atomide.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Johan Hovold <johan+linaro@kernel.org>,
- John Ogness <john.ogness@linutronix.de>, linux-arm-msm@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
-References: <20240610222515.3023730-1-dianders@chromium.org>
- <20240610152420.v4.4.I24a0de52dd7336908df180fa6b698e001f3aff82@changeid>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240610152420.v4.4.I24a0de52dd7336908df180fa6b698e001f3aff82@changeid>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Mon, 17 Jun 2024 14:02:17 -0400
+Aaron Conole <aconole@redhat.com> wrote:
 
+> The current pmtu test infrastucture requires an installed copy of the
+> ovs-vswitchd userspace.  This means that any automated or constrained
+> environments may not have the requisite tools to run the tests.  However,
+> the pmtu tests don't require any special classifier processing.  Indeed
+> they are only using the vswitchd in the most basic mode - as a NORMAL
+> switch.
+> 
+> However, the ovs-dpctl kernel utility can now program all the needed basic
+> flows to allow traffic to traverse the tunnels and provide support for at
+> least testing some basic pmtu scenarios.  More complicated flow pipelines
+> can be added to the internal ovs test infrastructure, but that is work for
+> the future.  For now, enable the most common cases - wide mega flows with
+> no other prerequisites.
+> 
+> Enhance the pmtu testing to try testing using the internal utility, first.
+> As a fallback, if the internal utility isn't running, then try with the
+> ovs-vswitchd userspace tools.
 
-On 6/11/24 00:24, Douglas Anderson wrote:
-> The "offset" passed in should be unsigned since it's always a positive
-> offset from our memory mapped IO.
-> 
-> The "field" should be u32 since we're anding it with a 32-bit value
-> read from the device.
-> 
-> Suggested-by: Stephen Boyd <swboyd@chromium.org>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Oh, nice, it looks saner than I thought. :)
+
+> Signed-off-by: Aaron Conole <aconole@redhat.com>
 > ---
+>  tools/testing/selftests/net/pmtu.sh | 145 +++++++++++++++++++++++-----
+>  1 file changed, 123 insertions(+), 22 deletions(-)
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
 
-Konrad
+-- 
+Stefano
+
 
