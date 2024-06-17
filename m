@@ -1,117 +1,165 @@
-Return-Path: <linux-kernel+bounces-216552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1DA790A106
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 02:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4214590A18C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 305E32822F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 00:58:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA2352876EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EF7441F;
-	Mon, 17 Jun 2024 00:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47E779FD;
+	Mon, 17 Jun 2024 01:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pYPWEmHR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ke/ofuJo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271F51FDA;
-	Mon, 17 Jun 2024 00:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1BE33DD;
+	Mon, 17 Jun 2024 01:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718585927; cv=none; b=VT+bq8/tfQ2yFKdcj+cr9Y+AIABApxxFQHtMPpPM7QIqZkOQqCLB01YcDy1v6hUJsw/kwwx7uMJcFW7GU5JI4YxP3TVdMfLMcu77g90XzBbhFYEfjwP8wYzP5pQ3sBpkCH7OCJT1caIVc2ne4b1BezmKj7dglFHcBFG4y/oZs+o=
+	t=1718586330; cv=none; b=QSnWRGAgppcTW1Ty//BOCOyqwoX1p/fJSXr3PQOF5ERAlj6vwu22DUOKQMC19slH4TCJ0C8o03TztZAiy64d3zBEZZX4tNDoAcD1Do7cnQ6lx9xkBpqQ08XDccaQJeZIuG28wY94f57Vcylrw/WmiVdnDsfvOof9moRH5m6v83o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718585927; c=relaxed/simple;
-	bh=djTxp1Ej1KaNJ/XiqjjyP38jAsXNqHvO4Bq+AD+sey8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Vm4RFIzNWn1KQV+NZZSIBiWOxwmUyYAF2SK/OWFocHJxYOikBhB3ueVh/3PqGvOcd/O5su/2aUwaEvmi6RGyWwsMVDHHjinc+bTLkLm5o3PKbZh3lhj7dAMPj6C6iYLQHyF56xIS3/cfajnusqypLD2GDpjGHDNupnpUmD78czI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pYPWEmHR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H0QXom003923;
-	Mon, 17 Jun 2024 00:58:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=JvyRp8B6jzZGU+jg5kkTTH
-	ULwuSJCVLpqAXz7xIAq/w=; b=pYPWEmHRSNEIFfJ/DjB3HmRFGZMUza7iB8dY4H
-	mfv7XMBLugqHKPDtOcqlL74IIECKrZlzvrhC9n/bEWRnrVuzXZeRdEcOdoDtYHE3
-	RMl2KGSDkWVRoJ9Too4pXO4Z/Jvilb6aEZK/9QsFonscyO229S7QP2Nl2fZWL8eL
-	neGLKRUK6duLC1B/womt+qKkK2mD128sX/DQNn2ouWHNL4a1fJPgbK27DGvFjnRf
-	J8osQrxIWZUB73nKVGuxj8wKbqEMVqbbR9+GZV7I10Wcmgb9W7hXN9YDPmFaTcdI
-	XVljYNFa0UEpRHG5n57a9GwMY8Zd8pwyeTzhtF6S3rYIXj1A==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys3qf2cqv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 00:58:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H0waC9026911
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 00:58:36 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Jun
- 2024 17:58:35 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 16 Jun 2024 17:58:33 -0700
-Subject: [PATCH] dmaengine: virt-dma: add missing MODULE_DESCRIPTION()
- macro
+	s=arc-20240116; t=1718586330; c=relaxed/simple;
+	bh=qnCn82ABjmEXbcVD/7sbHxm944K/zrwaklVSgYdy8GA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FKe9PTZvxMvltCcdlhPWk2X3t3PFrt1VAAiK55KMNv33tznheRvHV3LnfmBb7Y+04G+ZaIMCrNkRVSfsnBzN5HbapP74nHI4rCwpTXSZRvYkjdg4xjTVrcdyjcL4ufaofT1ckShyThOWdU5KkIzD6szevAKFECWWUck9p62rVB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ke/ofuJo; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718586329; x=1750122329;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qnCn82ABjmEXbcVD/7sbHxm944K/zrwaklVSgYdy8GA=;
+  b=Ke/ofuJoDzmVtx1KYFJDUT6TVv5bWHRQ7WZNxEEQzbo1TIr5LbeXQvgy
+   462llbmpZsuqzWiOYZFsFSEaeVkHFb05NTx2bfrnFxSatoZqibepvPmor
+   3qAShqicKJxRn0BNgyzoDpxQ3tA86YgktfUqwThwSO8CkJdjbv81Ngy2g
+   2oGR5ywR5GQXAfXKv98rDSDEr4Fz5v/HrP/Re90e2s5r5VRpn52/MP4yC
+   ZMYJevE0pDcfWnRXbMn1eZr7A6JMg99MREKguYrQcQhsy6awiv/eBdAGL
+   dROzj9nWpGT6Okh/0apnZSB5ZFjhbWCD/n1aIcnQGOV0bYRBy6QFVyM6z
+   w==;
+X-CSE-ConnectionGUID: mT3+L60PSLaVsw5Ic792qg==
+X-CSE-MsgGUID: D3nnOCjpQ8eTXG6IKdwiHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="12100298"
+X-IronPort-AV: E=Sophos;i="6.08,243,1712646000"; 
+   d="scan'208";a="12100298"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 18:05:28 -0700
+X-CSE-ConnectionGUID: A63o/OJYSIW+malhA+HpBQ==
+X-CSE-MsgGUID: Q5RBf2xVQieMKj4HVDC7+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,243,1712646000"; 
+   d="scan'208";a="41155848"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 16 Jun 2024 18:05:24 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sJ0oD-0003ZS-2x;
+	Mon, 17 Jun 2024 01:05:21 +0000
+Date: Mon, 17 Jun 2024 09:04:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vanillan Wang <songjinjian@hotmail.com>,
+	chandrashekar.devegowda@intel.com,
+	chiranjeevi.rapolu@linux.intel.com, haijun.liu@mediatek.com,
+	m.chetan.kumar@linux.intel.com, ricardo.martinez@linux.intel.com,
+	loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Jinjian Song <jinjian.song@fibocom.com>
+Subject: Re: [net-next v1] net: wwan: t7xx: Add debug port
+Message-ID: <202406170854.MYWoYsla-lkp@intel.com>
+References: <MEYP282MB269762C5070B97CD769C8CD5BBC22@MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240616-md-loongarch-drivers-dma-virt-dma-v1-1-70ed3dcbf8aa@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIADiKb2YC/x3NQQrCMBCF4auUWTuQ1lDFq4iLSTM2A00ikxoKp
- Xc3dve+zf92KKzCBR7dDspViuTU0F86mAKlmVF8MwxmsGbsR4wel5zTTDoF9CqVtaCPhFV0PYd
- 1xt5Gf/dkr9A6H+W3bOfH89XsqDA6pTSFf3mR9N0wUllZ4Th+iGShXZIAAAA=
-To: Vinod Koul <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: W91mFGmpUd3La5QX-k6JHEdvkzw48PWM
-X-Proofpoint-ORIG-GUID: W91mFGmpUd3La5QX-k6JHEdvkzw48PWM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-16_12,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0 phishscore=0
- lowpriorityscore=0 mlxscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406170006
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MEYP282MB269762C5070B97CD769C8CD5BBC22@MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM>
 
-With ARCH=loongarch, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/virt-dma.o
+Hi Vanillan,
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/dma/virt-dma.c | 1 +
- 1 file changed, 1 insertion(+)
+[auto build test WARNING on net-next/main]
 
-diff --git a/drivers/dma/virt-dma.c b/drivers/dma/virt-dma.c
-index a6f4265be0c9..7961172a780d 100644
---- a/drivers/dma/virt-dma.c
-+++ b/drivers/dma/virt-dma.c
-@@ -139,4 +139,5 @@ void vchan_init(struct virt_dma_chan *vc, struct dma_device *dmadev)
- EXPORT_SYMBOL_GPL(vchan_init);
- 
- MODULE_AUTHOR("Russell King");
-+MODULE_DESCRIPTION("Virtual DMA channel support for DMAengine");
- MODULE_LICENSE("GPL");
+url:    https://github.com/intel-lab-lkp/linux/commits/Vanillan-Wang/net-wwan-t7xx-Add-debug-port/20240614-175858
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/MEYP282MB269762C5070B97CD769C8CD5BBC22%40MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM
+patch subject: [net-next v1] net: wwan: t7xx: Add debug port
+config: x86_64-randconfig-161-20240617 (https://download.01.org/0day-ci/archive/20240617/202406170854.MYWoYsla-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240616-md-loongarch-drivers-dma-virt-dma-4b0476d8da43
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406170854.MYWoYsla-lkp@intel.com/
 
+smatch warnings:
+drivers/net/wwan/t7xx/t7xx_port_debug.c:153 port_char_write() warn: unsigned 'txq_mtu' is never less than zero.
+
+vim +/txq_mtu +153 drivers/net/wwan/t7xx/t7xx_port_debug.c
+
+   132	
+   133	static ssize_t port_char_write(struct file *file, const char __user *buf,
+   134				       size_t count, loff_t *ppos)
+   135	{
+   136		unsigned int header_len = sizeof(struct ccci_header);
+   137		size_t  offset, txq_mtu, chunk_len = 0;
+   138		struct t7xx_port *port;
+   139		struct sk_buff *skb;
+   140		bool blocking;
+   141		int ret;
+   142	
+   143		port = file->private_data;
+   144	
+   145		blocking = !(file->f_flags & O_NONBLOCK);
+   146		if (!blocking)
+   147			return -EAGAIN;
+   148	
+   149		if (!port->chan_enable)
+   150			return -EINVAL;
+   151	
+   152		txq_mtu = t7xx_get_port_mtu(port);
+ > 153		if (txq_mtu < 0)
+   154			return -EINVAL;
+   155	
+   156		for (offset = 0; offset < count; offset += chunk_len) {
+   157			chunk_len = min(count - offset, txq_mtu - header_len);
+   158	
+   159			skb = __dev_alloc_skb(chunk_len + header_len, GFP_KERNEL);
+   160			if (!skb)
+   161				return -ENOMEM;
+   162	
+   163			ret = copy_from_user(skb_put(skb, chunk_len), buf + offset, chunk_len);
+   164	
+   165			if (ret) {
+   166				dev_kfree_skb(skb);
+   167				return -EFAULT;
+   168			}
+   169	
+   170			ret = t7xx_port_send_skb(port, skb, 0, 0);
+   171			if (ret) {
+   172				if (ret == -EBUSY && !blocking)
+   173					ret = -EAGAIN;
+   174				dev_kfree_skb_any(skb);
+   175				return ret;
+   176			}
+   177		}
+   178	
+   179		return count;
+   180	}
+   181	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
