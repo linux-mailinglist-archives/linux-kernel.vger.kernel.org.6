@@ -1,53 +1,98 @@
-Return-Path: <linux-kernel+bounces-217150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3771D90AC2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:52:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CC690AC40
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DFB1F294A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:52:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9A71C22B77
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D141946C6;
-	Mon, 17 Jun 2024 10:50:38 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B80C194A57;
+	Mon, 17 Jun 2024 10:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="v0Vf6z7u"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A651BDCD;
-	Mon, 17 Jun 2024 10:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58AE1BDCD
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718621437; cv=none; b=vEK3ME4G+pIF39wB6+etVPiyGdiFXl7e8fBYLTdSBOiP8jiNzJEYB71fDZxfVOIX5guD7nGO3nNnE1d2Nml5kX3IrYAVlu/gZu7ZKcxM37SQEcHupjrEz8LNlWOup/eAc/Bc6CucvH+INoSLbD5qQlVf9V2wpGWQqG2sXgjbTp0=
+	t=1718621629; cv=none; b=PcALCOxH1SEbmxEJHtEqpNE0+WAX2NHcIZ4xmioRyePvqCPk3s3a63N4bidaQxcAAip1YI5xD/Pf95CrFIypwpxt70p5siJnDNRfh6cBRNuWESrMPNRDfFX+xGxz3HjXf4/5/4It8uLcskhqfq3vsfkNHB82FCBrmF0oyzo042g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718621437; c=relaxed/simple;
-	bh=PzIQjdhCtR8TI9yx6a3bY8aIHTsnTDH8hMJJZ8SrSEE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O4gPNuk2Q4jSMOb5NuLWU1ishwwMLXAyx30NotVX70XkPTuGxwzqHFfr7njDloHEpbPH2jcnm0dup/vHy2ilhTf97Qtkef6rhT25ptS43TClRR+249OYkSvpXw3JbG2mwImitpuSmu+Hy7EZaZgKVaPurKQCdIajAscgbQrSJM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 45HAoPwiD3108931, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 45HAoPwiD3108931
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Jun 2024 18:50:25 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 17 Jun 2024 18:50:25 +0800
-Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 17 Jun
- 2024 18:50:24 +0800
-From: Hilda Wu <hildawu@realtek.com>
-To: <marcel@holtmann.org>
-CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <alex_lu@realsil.com.cn>,
-        <max.chou@realtek.com>, <kidman@realtek.com>
-Subject: [PATCH] Bluetooth: btrtl: Set MSFT_EXT_ADDRESS_FILTER quirk for RTL8852B
-Date: Mon, 17 Jun 2024 18:50:20 +0800
-Message-ID: <20240617105020.3246015-1-hildawu@realtek.com>
+	s=arc-20240116; t=1718621629; c=relaxed/simple;
+	bh=oQ9taQuIGKXqlLMzO73KQQgdf0qgUpmXo/ZKMPVyYLc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jZgaWY3LLZFxrrhmscFlPKDAbTEHVmfzQLtQFVuIWEz5aJRuEUC4MDSAMbCFXESTr58cZm7QPr/a3QL60JT9meNUlh3S/5I2wEJpYM6AeqbKobqhayXOAGxOq11wOM3IUgwl88X9vs5Iizww4b9y/sSQgNmbfHImCBzBY++MA2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=v0Vf6z7u; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45HArDw4116880;
+	Mon, 17 Jun 2024 05:53:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718621593;
+	bh=VAtJWnLe0iv9iGpjkvA9QVoarmRijvceBAp+wzgKsNA=;
+	h=From:To:CC:Subject:Date;
+	b=v0Vf6z7uEoPm6g2RajG3UzOXfphLxBd5Uu8D1Wi8BnYVOSwVbJtYVdjv7erVk7d/z
+	 UBoR5YB93Ht6eayuvhaquOAOYDHT17Ahpch8ZAawT1OJX2K+fOTsgCss+slUbrGLBY
+	 7Pc1EmvVCycZkYemBDgst6hFzlkcCcxTw1javCt4=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45HArDWX032572
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 17 Jun 2024 05:53:13 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
+ Jun 2024 05:53:12 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 17 Jun 2024 05:53:12 -0500
+Received: from localhost (uda0496377.dhcp.ti.com [172.24.227.31])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45HArCn3105995;
+	Mon, 17 Jun 2024 05:53:12 -0500
+From: Aradhya Bhatia <a-bhatia1@ti.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Tomi Valkeinen
+	<tomi.valkeinen@ideasonboard.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman
+	<jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
+        Thomas Zimmermann
+	<tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter
+	<daniel@ffwll.ch>
+CC: DRI Development List <dri-devel@lists.freedesktop.org>,
+        Linux Kernel List
+	<linux-kernel@vger.kernel.org>,
+        Dominik Haller <d.haller@phytec.de>, Sam
+ Ravnborg <sam@ravnborg.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Kieran
+ Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Nishanth Menon
+	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Praneeth Bajjuri
+	<praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+        Devarsh Thakkar
+	<devarsht@ti.com>,
+        Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra
+	<j-luthra@ti.com>,
+        Aradhya Bhatia <a-bhatia1@ti.com>
+Subject: [PATCH v3 00/10] drm/bridge: cdns-dsi: Fix the color-shift issue
+Date: Mon, 17 Jun 2024 16:23:01 +0530
+Message-ID: <20240617105311.1587489-1-a-bhatia1@ti.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,28 +102,118 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Set HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER quirk for RTL8852B.
+Hello all,
 
-Signed-off-by: Hilda Wu <hildawu@realtek.com>
----
- drivers/bluetooth/btrtl.c | 1 +
- 1 file changed, 1 insertion(+)
+This series provides some crucial fixes and improvements for the Cadence's DSI
+TX (cdns-dsi) controller found commonly in Texas Instruments' J7 family of SoCs
+as well as in AM62P.
 
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index f2f37143c454..baa0c6119b51 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -1297,6 +1297,7 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
- 			btrealtek_set_flag(hdev, REALTEK_ALT6_CONTINUOUS_TX_CHIP);
- 
- 		if (btrtl_dev->project_id == CHIP_ID_8852A ||
-+		    btrtl_dev->project_id == CHIP_ID_8852B ||
- 		    btrtl_dev->project_id == CHIP_ID_8852C)
- 			set_bit(HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER, &hdev->quirks);
- 
+Along with that, this series aims to fix the color-shift issue that has been
+going on with the DSI controller. This controller requires to be enabled before
+the previous entity enables its stream[0]. It's a strict requirement which, if
+not followed, causes the colors to "shift" on the display. The fix happens in
+2 steps.
+
+    1. The bridge pre_enable calls have been shifted before the crtc_enable and
+       the bridge post_disable calls have been shifted after the crtc_disable.
+       This has been done as per the definition of bridge pre_enable.
+
+       "The display pipe (i.e. clocks and timing signals) feeding this bridge
+       will not yet be running when this callback is called".
+
+       Since CRTC is also a source feeding the bridge, it should not be enabled
+       before the bridges in the pipeline are pre_enabled.
+
+       The sequence of enable after this patch will look like:
+
+	        bridge[n]_pre_enable
+	        ...
+	        bridge[1]_pre_enable
+
+	        crtc_enable
+	        encoder_enable
+
+	        bridge[1]_enable
+	        ...
+	        bridge[n]_enable
+
+       and vice-versa for the bridge chain disable sequence.
+
+
+    2. The cdns-dsi enable / disable sequences have now been moved to pre_enable
+       and post_disable sequences. This is the only way to have cdns-dsi drivers
+       be up and ready before the previous entity is enables its streaming.
+
+The DSI also spec requires the Clock and Data Lanes be ready before the DSI TX
+enables its stream[0]. A patch has been added to make the code wait for that to
+happen. Going ahead with further DSI (and DSS configuration), while the lanes
+are not ready, has been found to be another reason for shift in colors.
+
+All these patches have been tested on TI's vendor tree kernel with more devices,
+but for the mainline, these patches have been tested with J721E based
+BeagleboneAI64 along with a RaspberryPi 7" DSI panel. The extra patches can be
+found in the "next_dsi-v2-tests" branch of my github fork[1] for anyone who
+would like to test them.
+
+Thanks,
+Aradhya
+
+
+[0]: Section 12.6.5.7.3: "Start-up Procedure" [For DSI TX controller]
+     in TDA4VM Technical Reference Manual https://www.ti.com/lit/zip/spruil1
+
+[1]: https://github.com/aradhya07/linux-ab/tree/next_dsi-v3-finals-test
+
+Change Log:
+
+  - Changes in v3:
+    - Reword the commit message for patch "drm/bridge: cdns-dsi: Fix OF node
+      pointer".
+    - Add a new helper API to figure out DSI host input pixel format
+      in patch "drm/mipi-dsi: Add helper to find input format".
+    - Use a common function for bridge pre-enable and enable, and bridge disable
+      and post-disable, to avoid code duplication.
+    - Add T-b tag from Dominik Haller in patch 5/10. (Missed to add it in v2).
+    - Add R-b tag from Dmitry Baryshkov for patch 8/10.
+
+  - Changes in v2:
+    - Drop patch "drm/tidss: Add CRTC mode_fixup"
+    - Split patch "drm/bridge: cdns-dsi: Fix minor bugs" into 4 separate ones
+    - Drop support for early_enable/late_disable APIs and instead re-order the
+      pre_enable / post_disable APIs to be called before / after crtc_enable /
+      crtc_disable.
+    - Drop support for early_enable/late_disable in cdns-dsi and use
+      pre_enable/post_disable APIs instead to do bridge enable/disable.
+
+
+Previous versions:
+
+v1: https://lore.kernel.org/all/20240511153051.1355825-1-a-bhatia1@ti.com/
+v2: https://lore.kernel.org/all/20240530093621.1925863-1-a-bhatia1@ti.com/
+
+Aradhya Bhatia (10):
+  drm/bridge: cdns-dsi: Fix OF node pointer
+  drm/bridge: cdns-dsi: Fix the phy_initialized variable
+  drm/bridge: cdns-dsi: Fix the link and phy init order
+  drm/bridge: cdns-dsi: Fix the clock variable for mode_valid()
+  drm/bridge: cdns-dsi: Wait for Clk and Data Lanes to be ready
+  drm/bridge: cdns-dsi: Reset the DCS write FIFO
+  drm/mipi-dsi: Add helper to find input format
+  drm/bridge: cdns-dsi: Support atomic bridge APIs
+  drm/atomic-helper: Re-order bridge chain pre-enable and post-disable
+  drm/bridge: cdns-dsi: Use pre_enable/post_disable to enable/disable
+
+ .../gpu/drm/bridge/cadence/cdns-dsi-core.c    |  72 +++++---
+ drivers/gpu/drm/drm_atomic_helper.c           | 165 ++++++++++++------
+ drivers/gpu/drm/drm_mipi_dsi.c                |  37 ++++
+ include/drm/drm_atomic_helper.h               |   7 +
+ include/drm/drm_mipi_dsi.h                    |   1 +
+ 5 files changed, 201 insertions(+), 81 deletions(-)
+
+
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
 -- 
 2.34.1
 
