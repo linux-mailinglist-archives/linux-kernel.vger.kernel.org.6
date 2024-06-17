@@ -1,149 +1,179 @@
-Return-Path: <linux-kernel+bounces-218257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D305B90BBC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:09:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F242690BBC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D6B282008
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CAC8281B23
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4605D190056;
-	Mon, 17 Jun 2024 20:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144F7198848;
+	Mon, 17 Jun 2024 20:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ShLEzPPK"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQj5xiWJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B503318F2F5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 20:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426D2190485;
+	Mon, 17 Jun 2024 20:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718654986; cv=none; b=tELFDqxBeg8otP9kEDE6szxdNFvzyhkIm3yWOXg/g2eoqKB6zfsawIDizWizX/PGCREuQ/8P5FNgpd92xm53EOJPwoMpnAjtkx8/FmEXEHrSACkFYEA298jBvythwZ7ezsAb0f9CLR3jZ+eP4neUMPmiykc9E5ctWyAaqQ/FGdA=
+	t=1718654988; cv=none; b=Hc50Kndl0KlS6uv20KYeGGJABAfwHTHx3bbTxZEPRsZ5jtqOBLUomowIkQBOOrQESGSPBvUpysjEBk1rnAjIUnvCCWFV5DBFGnlhbOEeUYWU7QXoLYgbbiRMa0067qhwwy6Ci6ZkkextKl4P7xfN/h1Qjb781/0tNlMEAnipsQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718654986; c=relaxed/simple;
-	bh=lMOHT9AzaSNEukALssulLQMHUV6v697K4yD8C4n+Ca0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FT5OYP2edBMuzriELgHCbZlmz5Xc5yj0qkoRrHtGgYYLSoQOR0nljnusGcebRYhLRarphUcKQQipFtILN8FwQAXPb4okNxywSAiZhcxIyhCHkDflx0KDqBQOXkqrMO2SBRkonNLAHoQ4O87JzFU6lU2S/j11aXJcZ4lzKrjQ0A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ShLEzPPK; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec17eb4493so53397161fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718654983; x=1719259783; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=32irAGR56mVNB9UGYg2c/DMgiXDqjQ+y0dbB2T9WACs=;
-        b=ShLEzPPKEtHAou6ivJtsfQR3B07UIIet5ec5PX0atO4aD9/zoFM5rFXN5O0uype2cB
-         +bkUEFd8LIQwYHuQm4OUBs43GTLJiCgYHST7/c6NFHgmJG4EiLIl8cY4QApXSg0oBiWY
-         4rZFVLXhBS0/SeDx5kZd1MY3WwNsTo+TXd6lo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718654983; x=1719259783;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=32irAGR56mVNB9UGYg2c/DMgiXDqjQ+y0dbB2T9WACs=;
-        b=ZuTcbh9V1HAtVZBrS7MlPpV9zwIQw3IXtBCKHeZy11UXAIEq3Q7RZ3LanwD+8eGewH
-         qKNTR+U2NEknI27xVu/+lomAA0p3X+HtlEs+5ieBty0ereGY757wn5WaZ2tO0a31qNWA
-         32safUGrdJQX1IJDH4ozD2d3RobfpgClEdqogkRyopECCuMFI2lHWB5MuqtSeEZmTXve
-         fSn8ON0VVBqhrDF6xA/6ytYDoobSPCNJgpkMdt48po+iemmWKjjdNNyUtUaxDksXlRsA
-         5de2vsZUj+U9g1CsmFPP1dWgoym3BbCSIioQZtC1rxoo5N6nBJg6Rs8uuw51sUteF40S
-         nkqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQSM6krMOTgnjUx9AOHUW+ZhHMNHKQelUCU8xPETLY8wBDTs5pGXo7FtBdQVC2w4W/6hOFiReY7fHzxkAdvxSq6R4RmbFq3rVbJ+VN
-X-Gm-Message-State: AOJu0Yw3MdynRpGlQH7Zff++bR/RcRXCt0xFqQ/V3fGb0d+8RiFLq/Cg
-	6MGuEgV8AEbmUefwAtyf6j1BinSLEGWiXmtmigLFPH6kIbAl/V3IgRl0FixEgW8JcY+Gw0QjxJO
-	+y8y6RQ==
-X-Google-Smtp-Source: AGHT+IE+HFbOSvuGaQfOP8V+NZ4ooFb09kEdRyfsYFlvSn712Gx4XI4LMJ4J/avxgXw4GM9MUpxyhw==
-X-Received: by 2002:a2e:2410:0:b0:2ec:1779:fd5d with SMTP id 38308e7fff4ca-2ec1779fe9fmr78808641fa.19.1718654982623;
-        Mon, 17 Jun 2024 13:09:42 -0700 (PDT)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f71b94dc2sm339598966b.101.2024.06.17.13.09.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 13:09:41 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f1f33486eso293718466b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:09:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUv3wtKS6VBPloMyOeHYbUBF3e2DDt3P6ybqKeYXNiRvktfko1EdDpUxa6jC3bOfgzMV79AY1HyifnWZ5x5cmis4IKkC5Lsmlw04aud
-X-Received: by 2002:a50:9e85:0:b0:57c:6031:8ebf with SMTP id
- 4fb4d7f45d1cf-57cbd6c74c8mr7654997a12.31.1718654981431; Mon, 17 Jun 2024
- 13:09:41 -0700 (PDT)
+	s=arc-20240116; t=1718654988; c=relaxed/simple;
+	bh=BZ1SlfBgPY598miLffrlWG/dkQ0QQqL1lVBACSpQRuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=f61w9BJvywCOUNiSFLhN6jML9VDa57gN0bbSXscuvt+6dapfwYO4WtcFOi78oG+4VGcg63RM0C+Y4f9SHKXBqL+0ikMKNkS0xoa7iuWYK+nUoPMdrrr7YC0aUsei29vF/GcPhLnK9Fm+hWUIHXGqpklZeKmrvEFfrmDPmDJyljM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQj5xiWJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD7CBC2BD10;
+	Mon, 17 Jun 2024 20:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718654987;
+	bh=BZ1SlfBgPY598miLffrlWG/dkQ0QQqL1lVBACSpQRuw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=EQj5xiWJcwxH0KcdSiNDZ4sJIELvwhF2upFakE/1qNRM30lTec3S5XDon5SkgVlrX
+	 e+kJjgDqaSbANZt1vgcJ+KrPalh0sMAMdVd2hEmlxhZXx6t9I8wErQsYLN2t/nAu0J
+	 W1f5KTMeh73jvJxGBnKhL7zNjNyaGPU4/K6SQccJD5KLMbIrmnTdvRhIPis76tJRSF
+	 696JMtIDDGicPl+Hb5VkIHQcVd1t0oCLYfssDCDmFv2KhkCL/zb59H/rHJRRNa5k4q
+	 LCjrqSJIp8rQm/fkoYl0raqIkJw54c5MDYmCiLLYl1vPH+NgsJ5F3OPDR4XHQFBAs8
+	 giStyWhg24+tw==
+Date: Mon, 17 Jun 2024 15:09:45 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+	Bowman Terry <terry.bowman@amd.com>,
+	Hagan Billy <billy.hagan@amd.com>,
+	Simon Guinot <simon.guinot@seagate.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [PATCH v2] PCI: pciehp: Clear LBMS on hot-remove to prevent link
+ speed reduction
+Message-ID: <20240617200945.GA1224924@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617114712.45d4743f8bacb832dea4b5a9@linux-foundation.org>
-In-Reply-To: <20240617114712.45d4743f8bacb832dea4b5a9@linux-foundation.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 17 Jun 2024 13:09:15 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjiUzOHfHaWgUcByAygaG6w_BKOqbTN6EHrDHaXb_i+xA@mail.gmail.com>
-Message-ID: <CAHk-=wjiUzOHfHaWgUcByAygaG6w_BKOqbTN6EHrDHaXb_i+xA@mail.gmail.com>
-Subject: Re: [GIT PULL] hotfixes for 6.10-rc5
-To: Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Rafael Aquini <aquini@redhat.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516204748.204992-1-Smita.KoralahalliChannabasappa@amd.com>
 
-On Mon, 17 Jun 2024 at 11:47, Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> Rafael Aquini (1):
->       mm: mmap: allow for the maximum number of bits for randomizing mmap_base by default
+On Thu, May 16, 2024 at 08:47:48PM +0000, Smita Koralahalli wrote:
+> Clear Link Bandwidth Management Status (LBMS) if set, on a hot-remove
+> event.
+> 
+> The hot-remove event could result in target link speed reduction if LBMS
+> is set, due to a delay in Presence Detect State Change (PDSC) happening
+> after a Data Link Layer State Change event (DLLSC).
+> 
+> In reality, PDSC and DLLSC events rarely come in simultaneously. Delay in
+> PDSC can sometimes be too late and the slot could have already been
+> powered down just by a DLLSC event. And the delayed PDSC could falsely be
+> interpreted as an interrupt raised to turn the slot on. This false process
+> of powering the slot on, without a link forces the kernel to retrain the
+> link if LBMS is set, to a lower speed to restablish the link thereby
+> bringing down the link speeds [2].
 
-No.
+Not sure we need PDSC and DLLSC details to justify clearing LBMS if it
+has no meaning for an empty slot?
 
-And HELL NO!
+> According to PCIe r6.2 sec 7.5.3.8 [1], it is derived that, LBMS cannot
+> be set for an unconnected link and if set, it serves the purpose of
+> indicating that there is actually a device down an inactive link.
 
-We're not adding *another* new random incomprehensible config option
-that tries to fix a random case that no normal user will understand.
+I see that r6.2 added an implementation note about DLLSC, but I'm not
+a hardware person and can't follow the implication about a device
+present down an inactive link.
 
-Our kernel config is too damn complex as-is. We're not making it worse
-like this. Anybody who cares about this kind of crazy esoteric detail
-can damn well just set their Kconfig manually, instead of forcing this
-kind of insane questions on other people.
+I guess it must be related to the fact that LBMS indicates either
+completion of link retraining or a change in link speed or width
+(which would imply presence of a downstream device).  But in both
+cases I assume the link would be active.
 
-This Kconfig insanity needs to stop. Why do I need to be the person who says
+But IIUC LBMS is set by hardware but never cleared by hardware, so if
+we remove a device and power off the slot, it doesn't seem like LBMS
+could be telling us anything useful (what could we do in response to
+LBMS when the slot is empty?), so it makes sense to me to clear it.
 
-  "STOP ASKING POOR USERS IDIOTIC QUESTIONS THAT THEY CAN'T SANELY ANSWER"
+It seems like pciehp_unconfigure_device() does sort of PCI core and
+driver-related things and possibly could be something shared by all
+hotplug drivers, while remove_board() does things more specific to the
+hotplug model (pciehp, shpchp, etc).
 
-I've pulled, but I'm reverting this commit. We are *not* going down
-this path of insanity.
+From that perspective, clearing LBMS might fit better in
+remove_board().  In that case, I wonder whether it should be done
+after turning off slot power?  This patch clears is *before* turning
+off the power, so I wonder if hardware could possibly set it again
+before the poweroff?
 
-I'd also like to note that the reported 32-bit issue was ALREADY FIXED
-months ago by commit 4ef9ad19e176 ("mm: huge_memory: don't force huge
-page alignment on 32 bit")
+> However, hardware could have already set LBMS when the device was
+> connected to the port i.e when the state was DL_Up or DL_Active. Some
+> hardwares would have even attempted retrain going into recovery mode,
+> just before transitioning to DL_Down.
+> 
+> Thus the set LBMS is never cleared and might force software to cause link
+> speed drops when there is no link [2].
+> 
+> Dmesg before:
+> 	pcieport 0000:20:01.1: pciehp: Slot(59): Link Down
+> 	pcieport 0000:20:01.1: pciehp: Slot(59): Card present
+> 	pcieport 0000:20:01.1: broken device, retraining non-functional downstream link at 2.5GT/s
+> 	pcieport 0000:20:01.1: retraining failed
+> 	pcieport 0000:20:01.1: pciehp: Slot(59): No link
+> 
+> Dmesg after:
+> 	pcieport 0000:20:01.1: pciehp: Slot(59): Link Down
+> 	pcieport 0000:20:01.1: pciehp: Slot(59): Card present
+> 	pcieport 0000:20:01.1: pciehp: Slot(59): No link
 
-It's possible that we should extend that - much saner - fix to also
-look at the number of bits for randomization even outside of 32-bit
-processes, and judge things on the number of bits we're expected to
-randomize mappings on.
+I'm a little confused about the problem being solved here.  Obviously
+the message is extraneous.  I guess the slot is empty, so retraining
+is meaningless and will always fail.  Maybe avoiding it avoids a
+delay?  Is the benefit that we get rid of the message and a delay?
 
-So it's very possible that the
+> [1] PCI Express Base Specification Revision 6.2, Jan 25 2024.
+>     https://members.pcisig.com/wg/PCI-SIG/document/20590
+> [2] Commit a89c82249c37 ("PCI: Work around PCIe link training failures")
+> 
+> Fixes: a89c82249c37 ("PCI: Work around PCIe link training failures")
 
-        if (IS_ENABLED(CONFIG_32BIT) || in_compat_syscall())
-                return 0;
+Lukas asked about this; did you confirm that it is related?  Asking
+because the Fixes tag may cause this to be backported along with
+a89c82249c37.
 
-test in __thp_get_unmapped_area() should be extended to take requested
-address randomization into account.
-
-But there is NO WAY this is fixed with another completely
-incomprehensible Kconfig option.
-
-So I'm really unhappy about this. The whole "add idiotic random
-Kconfig options" needs to stop.
-
-Those options are not something a normal person can understand, and as
-shown by the fact that this patch was already bogus and superseded by
-a much better patch from months ago, clearly said Kconfig options
-WEREN'T EVEN UNDERSTOOD BY VM MAINTAINERS!
-
-Christ. Sorry for the shouting, but dammit, people need to really
-internalize the whole "we don't add crazy Kconfig options".
-
-                    Linus
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+> ---
+> Link to v1:
+> https://lore.kernel.org/all/20240424033339.250385-1-Smita.KoralahalliChannabasappa@amd.com/
+> 
+> v2:
+> 	Cleared LBMS unconditionally. (Ilpo)
+> 	Added Fixes Tag. (Lukas)
+> ---
+>  drivers/pci/hotplug/pciehp_pci.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/pci/hotplug/pciehp_pci.c b/drivers/pci/hotplug/pciehp_pci.c
+> index ad12515a4a12..dae73a8932ef 100644
+> --- a/drivers/pci/hotplug/pciehp_pci.c
+> +++ b/drivers/pci/hotplug/pciehp_pci.c
+> @@ -134,4 +134,7 @@ void pciehp_unconfigure_device(struct controller *ctrl, bool presence)
+>  	}
+>  
+>  	pci_unlock_rescan_remove();
+> +
+> +	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_LNKSTA,
+> +				   PCI_EXP_LNKSTA_LBMS);
+>  }
+> -- 
+> 2.17.1
+> 
 
