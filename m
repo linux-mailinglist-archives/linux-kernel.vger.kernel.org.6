@@ -1,88 +1,125 @@
-Return-Path: <linux-kernel+bounces-216850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F17D190A768
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:36:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17C190A76D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A28285226
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E50CE1C24302
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC9018F2C2;
-	Mon, 17 Jun 2024 07:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2844318F2C3;
+	Mon, 17 Jun 2024 07:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="TikU2bPn"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="DqKmAZzN";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="flsj+zTA"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106DBE554;
-	Mon, 17 Jun 2024 07:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C3A18754D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718609781; cv=none; b=ew5H5Qaenj/DiL6Vhj29yG7q2qeCtRb2NyQOp9oJQUhCFYP2OSVDYHyMTCSMjKXd5rgw4pcsi6xZdsEyXDH5tA/l/8P90yb2P/VMH72Amv/aGUsR4UhaqTkqF7XwrDG5nyA8aasJQalnn+t9lI2LXvk+iha95eAWcylHaBNUUzg=
+	t=1718609826; cv=none; b=TqX16STAdRimXZOXBtyIweBObRkihr49fpcaCOaWJbkYDjdzbVteAs8+DAHu6E4GSdlvEpHfIiXPnIFYbTeRw21854DK6ZmyEWUqc2Uu0nndLbHt4kMwn9aWsVxziOUJ9gf24ZsTBTym54fcWcW82EcZk/BZn3LpMc75OdkTdmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718609781; c=relaxed/simple;
-	bh=iOiT9XbaETPh/FvCvqtFzcLzSYCSL59RFQR96l/c+sY=;
+	s=arc-20240116; t=1718609826; c=relaxed/simple;
+	bh=Q/WSJU/Acv1z2whrZLO6cLrUyK6/M2W4/Xf9GQVSL88=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=p3GuYSR3qclm/ujGiXdFaq24VgRo1kCWhx7XyTfdjue2u9Xu6rlrghTzhtObvI998UL0dsBZODw4xbblyKXhCrW2aw0TNWMr4ElI7iijdVsYE8IKZm7SjyKu40tmguc/w3eR8SBWD/PXlD+j+qvd3xaefMte/iU0WbeDlAKK/XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=TikU2bPn; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from [192.168.68.112] (ppp118-210-79-194.adl-adc-lon-bras32.tpg.internode.on.net [118.210.79.194])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 242482014A;
-	Mon, 17 Jun 2024 15:36:17 +0800 (AWST)
+	 Content-Type:MIME-Version; b=Nmn+v8LchOaR8kEZpos3ftgjgsSMDyz4bktDnj9h3rkcR6j5BUzjH+1sCHFauYpLvaJRSfWLHV+53xtxhiL+T304tDCTVC64DjMvAF7BrABdCWcI6j0Uav7Da/OW/xI0Y/a+d5VQWYOQHbrpCuQMTtm8eq7VfX4Hk1aj4JNrVRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=DqKmAZzN; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=flsj+zTA reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1718609777;
-	bh=iOiT9XbaETPh/FvCvqtFzcLzSYCSL59RFQR96l/c+sY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=TikU2bPnSvNMKifTDiW9nN2PW7diSyrEPF2VcwSk0Gc75oNTixqOtJue9r6SQp9YT
-	 m/Ils3hmxFlKoIdOFroZMBwAFEL2B8hNR27a9Ma2I5lHcrnuKDfjLOWXok4Fn0OKhj
-	 3bvcfXScHtyjk7h8Uf+vOZua7UMu/tQBI6uVzyca7G78KgmRZp38EyO89tYS9w9f8i
-	 RCoAK/OVhGm1bga7v/ZjJCOSxpqjPw7JtaUOXCnmmLIiFEzTtdFi/bQ5ga+FfuQRA7
-	 gfUWDjoHmvuDSYOLiq52zuuaXFa2xAWYpV+eaqe2RF6pTWDp1pNB10FWF9rAA55t99
-	 GWufr9eYjWttg==
-Message-ID: <28297cafdf748dd3e2da3e6b54012bf3c88a1be1.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 0/3] dt-bindings: pinctrl: aspeed: Define missing
- functions and groups
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- linux-aspeed@lists.ozlabs.org,  openbmc@lists.ozlabs.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Mon, 17 Jun 2024 17:06:16 +0930
-In-Reply-To: <CACRpkdanSAkR-czs=OUKLh6dpiRk0QDLR-T0ECrG-Y4cY9=Vmg@mail.gmail.com>
-References: 
-	<20240531-dt-warnings-gpio-ast2600-pinctrl-funcs-groups-v1-0-a6fe2281a1b8@codeconstruct.com.au>
-	 <CACRpkdanSAkR-czs=OUKLh6dpiRk0QDLR-T0ECrG-Y4cY9=Vmg@mail.gmail.com>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1718609823; x=1750145823;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=FTMbcUVKASWLqE0jEH4hIejFLqCbH8Mx8pZbr9RiJgE=;
+  b=DqKmAZzNQLTnB2eKF3ia5qCLAdImoEt/CqTlBSA3UFtYLFPnb6EFGfOl
+   h+Bm9SntwVKFs5N6vDLnK61rWxq25pBkUxqtBG5oISdaRQtQ6uGV4iHI0
+   VlcgJuQFkAeAj2JPKo5qo/m+ogdByBvPAUEdWgvgQ6WWqHhMhLEqRHS/I
+   aVMc7SsnYu3ixmbD74PK9vf4AHGsAO4+sAk5lvtvCK2ga/yHf3BHz8ckP
+   RFT7oSD7aqsuv6Gw7oEW31Ez8XaTURgE3jIgYhydImEjFAkbPA87lQauc
+   qd3uGssTwbf99lbIkqebvl+uLHdC5Euvq3bwFegiqLACYj7FyXA+cPqgw
+   A==;
+X-CSE-ConnectionGUID: igTvgi1xRFugJvm0erxacA==
+X-CSE-MsgGUID: H2rpsFy6Rt6kFW9scmMM6Q==
+X-IronPort-AV: E=Sophos;i="6.08,244,1712613600"; 
+   d="scan'208";a="37419069"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 17 Jun 2024 09:36:55 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2A2B3162E93;
+	Mon, 17 Jun 2024 09:36:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1718609811;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=FTMbcUVKASWLqE0jEH4hIejFLqCbH8Mx8pZbr9RiJgE=;
+	b=flsj+zTA+p1OhyKtA+OpxeEnKM/QvN6jin/J7nK+8KO+xuNOIuAQMGmlPp3jdwv68oS/4+
+	P71+c/Kqf/Wt2rp2EqzSAEQNhHNtNu6y2zxoCFu1wPTSHWhw96HE8PsgNDcq+IVt2W4S0c
+	dHHgmWuonhhbSTF6YKT+vgKupt8AhuElccmlPL/5UDj8KCglF5/pMnbG+i3qzL3arhMjB8
+	hoEDVR7AZCeuLpvPg7goPupI391VYQzBFFNFnxkzrSFXnyJyx8PkXaCSyxmyforuFhJN3u
+	CSu8u9s2BJfIslqpsA949k1W282DVwAmFe8MWpboV6jVG3DeboUDAGE3NBsnvA==
+Message-ID: <4843378eed12ec48996c431db0659a0e8a99bb32.camel@ew.tq-group.com>
+Subject: Re: [PATCH 4/4] mfd: tqmx86: add I2C IRQ support
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux@ew.tq-group.com, Gregor Herburger
+	 <gregor.herburger@ew.tq-group.com>
+Date: Mon, 17 Jun 2024 09:36:50 +0200
+In-Reply-To: <20240614094939.GG3029315@google.com>
+References: <cover.1717499766.git.matthias.schiffer@ew.tq-group.com>
+	 <18d0348f2f7b70329e44f7759bad7e6fe231dba0.1717499766.git.matthias.schiffer@ew.tq-group.com>
+	 <20240613154234.GJ2561462@google.com> <ZmwQkHvCdB3rPGEw@herburgerg-w2>
+	 <20240614094939.GG3029315@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, 2024-06-17 at 09:34 +0200, Linus Walleij wrote:
-> On Fri, May 31, 2024 at 5:03=E2=80=AFAM Andrew Jeffery
-> <andrew@codeconstruct.com.au> wrote:
+On Fri, 2024-06-14 at 10:49 +0100, Lee Jones wrote:
 >=20
-> > This short series cleans up a collection of binding warnings concerning
-> > use of undefined pinctrl functions and groups. Together they make a
-> > reasonable dent in the volume of output from `make dtbs_check` for the
-> > Aspeed devicetrees.
 >=20
-> All patches applied.
+> Note: Careful not to cut away too much context when replying.
 >=20
-> Thanks Andrew!
+> On Fri, 14 Jun 2024, Gregor Herburger wrote:
+>=20
+> > On Thu, Jun 13, 2024 at 04:42:34PM +0100, Lee Jones wrote:
+> > > Just one question; what is (7, 9, 12)?
+> > >=20
+> > > And why is it the same as the GPIO one?  Copy/paste error?
+> > >=20
+> > Those are the IRQ numbers of the PLD. Both blocks, GPIO and I2C, can be
+> > configured to use IRQ12, IRQ9 or IRQ7.
+>=20
+> Might I suggest we make that super clear in the help?
+>=20
+> (IRQ7, IRQ9 {and,or} IRQ12)
 
-That was quick! Thanks!
+Well, 7, 9 and 12 are the values you would pass as the module parameter (an=
+d we don't want to change
+this, as it would be a breaking change). Maybe the following?
 
-Andrew
+"GPIO IRQ number (possible values: 7, 9, 12)"
 
+
+>=20
+> Or similar.
+>=20
+
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
