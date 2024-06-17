@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-218128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4651490B996
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:24:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8609990BA0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE3D81F215DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:24:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 106A5B2CAFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933E2198A3E;
-	Mon, 17 Jun 2024 18:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1BC1990C6;
+	Mon, 17 Jun 2024 18:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W/CQIh/i"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XRAmVA3F"
+Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864B8198A20;
-	Mon, 17 Jun 2024 18:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D7C1990BA
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718648389; cv=none; b=mdWPO0OWX4C/3kBar3F+lZsnpzhjQHBUWawUprRMh2McnyPYHCaUcfcrHVRD/gHwybLdS1hE7KNrMBNUO0rFwipI/BlLO5sS3yOPPZ3liGD9VgaAc0RqlRVFWFV/f5z/e9+5u95AZrLVwSD2IHwJ9MTljKZBlH6ioVdbdiv0srA=
+	t=1718648567; cv=none; b=Cw1ucno1kwOWqbqCOtBWQDjpCck0FnwMOz4XqoMOFsO+JnHYTIedDgRiLiuS/gk3U/JTHVDRsa/S/UH++szy426DCXIZZdS9ZUv9pApuH1y8CBbtooePH5XNJ+uF/I5p2T5W18YpDzQv0e2lbpBNrvSsLN83wkmYgWkB0rz+VhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718648389; c=relaxed/simple;
-	bh=XXsUHvP7AGXNm012Rg79qcH4utzUgd2E/fRDGjz30QY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2r4E1/HL1gsD9quTzeqs40f6oFNU3pm7nKbdjuuBlr4LheVRpZtotzD9GS94+aXHr6WyEraobSi0X0ayu+b6Au9v+DTi9QWF9nuqWf8wAIayzFG0GjiRvKErmuFbMxUbdZ7tQ0p3zRJxCH0hFOAxSsP8I+Edw02j3qfXYKHSuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W/CQIh/i; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718648389; x=1750184389;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XXsUHvP7AGXNm012Rg79qcH4utzUgd2E/fRDGjz30QY=;
-  b=W/CQIh/i0q4+hxBgPO0O64we1FrCdiq9J/YiaIn6uMWMOn1ndx2Ot++h
-   8ec39rVnEU5nl8qKtMKakBxdpg6JwW1dXMWUExRZrOGaq/CaDipQs/1cH
-   p8Edvw18ImXwfD33i6Y2n9DJuR9/4dhZRN09zzSE8Poc/+WPBN1EA0Q7D
-   FrQsKXcMeY85d6cVEI1P0HBrwGvv+aJWAisBwO9URhJaEBSJ6OCADrOC/
-   LwWbcGKXVY1rxDbth5mOpFKTVu+uO4ycOWvAtAjujmcVLdJsVb2Fiijvc
-   Gt1L56E2Cd9efXFUbPYAlDZMdVEH+rHZyUZU2JjSZer8rG+a9C/QRKEkS
-   A==;
-X-CSE-ConnectionGUID: Uw2PSK+GQM+ozhwbIYUlgA==
-X-CSE-MsgGUID: TIAfhfvMSjKjMjGeB4VUkg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15330953"
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="15330953"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:19:48 -0700
-X-CSE-ConnectionGUID: 420FBZXhR9OR/vx18T0yPA==
-X-CSE-MsgGUID: YWp5pRpZQ0Sux8PHwVjVXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="41147004"
-Received: from mshehzad-mobl.amr.corp.intel.com (HELO desk) ([10.209.21.13])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:19:47 -0700
-Date: Mon, 17 Jun 2024 11:19:40 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH PATCH 9/9] x86/rfds: Exclude P-only parts from the RFDS
- affected list
-Message-ID: <20240617181940.aojl7etznk4h5zdm@desk>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <20240617-add-cpu-type-v1-9-b88998c01e76@linux.intel.com>
- <d7c70d92-4d19-4c1e-81c9-d4c0cd34eda8@citrix.com>
- <805fa8d2-c920-415c-8db5-f073607f9e6a@intel.com>
+	s=arc-20240116; t=1718648567; c=relaxed/simple;
+	bh=qhSM1PBvU7joTxqhlWMSmcyf1OdS106mDM5IHpvzoPw=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=CGX6Bq4isoH0+4dDQWjPQFVZy9UkTmvIldEtjwTBcNT+uFcZIZG9uU1nU0t8O5tyCjhNy2g67O7PkjIcThTKN1427deUjXm6kypA7m/Jug5xtM+Y0xn586/XkxyepR+H5Vy1rGy8PDsdkilAi0Xatrfr/0B1TlzZTEAQUm5ZV8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XRAmVA3F; arc=none smtp.client-ip=209.85.166.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-7eee7741583so153431739f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:22:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718648565; x=1719253365; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pny2UzPtVZNTzHF4IsxaYZ+f2GCEeGNxOUJXm/PCpXQ=;
+        b=XRAmVA3FhMsS0UU3/qdRDH9NESEccDgFX/R4F484VsbxHaZh5b8eWHSG8bfjsXuzmP
+         uAP4hzjNxnAyTOOKPk8KduS9cr2ir8qKRpTCiykVHxJPWw1eL61JHRy0ZtgM9Z8xn/OW
+         ZgcIl5U1Iopuc9YzmAaSLAmzvwX6gfwkwdopTVmEb/SEbEKfa11gN589hKvcbIiY3TkD
+         yqp89AyTTZGWi0c+ABmiFx59orZAG+VEciaLtXujWl0rsBnD12z5j10bdsLijjVFV41e
+         3rciAvwxOYn+bi94JStgdJj8XTDmbJAEO2Cd5+M/Q5Omr8WY+fEqEqagO//ormMLplMx
+         Az0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718648565; x=1719253365;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pny2UzPtVZNTzHF4IsxaYZ+f2GCEeGNxOUJXm/PCpXQ=;
+        b=kBH7lPKpquhiljA8h20gGvyoXA9dqzqn67ILEHg+qmaTN+kOWpm5Wu29EaTksygn4W
+         8GyqqkeR+6Iq/QwTXsXBVChRf47VnFOUt5saUejDGb6PfpezF+GO8H/6SPpSefzxu5nr
+         8mG5x04Icb5yFsTJ0KRvk5rjZKu4mIvw7Y/S/ISqI4JQMWFCmzTm/5Sn3cCoq0jx8mY6
+         bE0VR8xKD/xTAFFT116jwQYjt3x0Zfrs5T2kpYFIGfPjNlvO/6TeUZDGoyUyB/vGJjBP
+         /j5zI1QWnIA279dEeEIXVEmorHUEX7WXWn2yak3bFhlLp00NxfZY6VYHJSe23rtNMJgy
+         fP+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUVedV1vZAhQ68MoDsipQY+pdqgEoRvYweIfYnPBoCLfH1v0awN0+/mLFOY9V3sl4mztHV4e+e3H/3460BCnqWvlPF6LsFejQ5Z9KWt
+X-Gm-Message-State: AOJu0Yw+rGLIvZCU/ryHaLL5LSjpBmLhNUw2F24Fyv5OiGe1BrMz2Rnr
+	IvOnUSg5GpoE4eT0qcr2Gw2pzsmq/dzROl1p7WjBnengnmMOOsn7vzRqsf9dicvP9Jkobf/12kP
+	1doj97SggF9cGwY+WP9fKHg==
+X-Google-Smtp-Source: AGHT+IEjud4xQdH2Jdh7XuNPZ20RXq/rHRZKEIbMLpx/a0M5UDBisxWRfV6ZxH0660BmRU4E5fKorzt/Ng9lgPN54A==
+X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
+ (user=coltonlewis job=sendgmr) by 2002:a05:6602:3f87:b0:7eb:823b:9583 with
+ SMTP id ca18e2360f4ac-7ebeb638b3cmr21918139f.3.1718648565639; Mon, 17 Jun
+ 2024 11:22:45 -0700 (PDT)
+Date: Mon, 17 Jun 2024 18:22:44 +0000
+In-Reply-To: <171839594069.633615.6902666817551787618.b4-ty@linux.dev>
+ (message from Oliver Upton on Fri, 14 Jun 2024 20:12:27 +0000)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <805fa8d2-c920-415c-8db5-f073607f9e6a@intel.com>
+Mime-Version: 1.0
+Message-ID: <gsntplsf5szv.fsf@coltonlewis-kvm.c.googlers.com>
+Subject: Re: [PATCH v6] KVM: arm64: Add early_param to control WFx trapping
+From: Colton Lewis <coltonlewis@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: kvm@vger.kernel.org, oliver.upton@linux.dev, yuzenghui@huawei.com, 
+	linux-doc@vger.kernel.org, catalin.marinas@arm.com, corbet@lwn.net, 
+	linux-kernel@vger.kernel.org, suzuki.poulose@arm.com, 
+	linux-arm-kernel@lists.infradead.org, james.morse@arm.com, maz@kernel.org, 
+	will@kernel.org, kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-On Mon, Jun 17, 2024 at 07:34:22AM -0700, Dave Hansen wrote:
-> On 6/17/24 02:43, Andrew Cooper wrote:
-> > On 17/06/2024 10:12 am, Pawan Gupta wrote:
-> >> +	VULNBL_INTEL_CPU_TYPE (RAPTORLAKE,	X86_CPU_TYPE_INTEL_ATOM,	RFDS),
-> >> +	VULNBL_INTEL_CPU_TYPE (ALDERLAKE,	X86_CPU_TYPE_INTEL_ATOM,	RFDS),
-> > 
-> > How does this work?
-> > 
-> > Being __initconst, this is only evaluated on the BSP.
-> > 
-> > P-only and mixed P/E systems won't see X86_CPU_TYPE_INTEL_ATOM, even if
-> > there are ATOM APs to bring up later.
-> 
-> The X86_CPU_TYPE_* is only used on the boot CPU on non-hybrids.  Hybrids
-> (independent of the boot CPU type) should be considered vulnerable no
-> matter what.
+Oliver Upton <oliver.upton@linux.dev> writes:
 
-Yes. This is done in x86_match_cpu_type(), that matches all cpu-types on hybrids:
+> On Thu, 23 May 2024 17:40:55 +0000, Colton Lewis wrote:
+>> Add an early_params to control WFI and WFE trapping. This is to
+>> control the degree guests can wait for interrupts on their own without
+>> being trapped by KVM. Options for each param are trap and notrap. trap
+>> enables the trap. notrap disables the trap. Note that when enabled,
+>> traps are allowed but not guaranteed by the CPU architecture. Absent
+>> an explicitly set policy, default to current behavior: disabling the
+>> trap if only a single task is running and enabling otherwise.
 
-  static bool x86_match_cpu_type(struct cpuinfo_x86 *c, const struct x86_cpu_id)
-  {
-     if (m->cpu_type == X86_CPU_TYPE_ANY)
-         return true;
+>> [...]
 
-     /* Hybrid CPUs are special, they are assumed to match all cpu-types */
-     if (boot_cpu_has(X86_FEATURE_HYBRID_CPU))
-         return true;
+> Applied to kvmarm/next, thanks!
 
-     return c->topo.cpu_type == m->cpu_type;
-  }
+> [1/1] KVM: arm64: Add early_param to control WFx trapping
+>        https://git.kernel.org/kvmarm/kvmarm/c/0b5afe05377d
+
+Thank you! And I will keep your comments in mind in the future.
 
