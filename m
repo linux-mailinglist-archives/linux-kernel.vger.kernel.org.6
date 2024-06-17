@@ -1,87 +1,118 @@
-Return-Path: <linux-kernel+bounces-217187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D78490ACA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:12:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADF290ACAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EABDA2830C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFA3B1C213A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96151946C5;
-	Mon, 17 Jun 2024 11:12:04 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DCE194A63;
+	Mon, 17 Jun 2024 11:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TWun6Tz0"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0302D53AD
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BE5194120;
+	Mon, 17 Jun 2024 11:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718622724; cv=none; b=QsmY/cC2TWjb821Wy+4kjTxzQgFs7isQR1wjy+DaWcFxPPPG1/9nezA7ozt8XyzSemBvIs/itcYWN9k/HASSCSUQI5b42bE5Snh+yA7Ds2poTs9xIWs1SgeU/EpnEAiwrh91/xdRpeBH1nEqq2lFGAqFhldBi2dXdoLlrVihyVs=
+	t=1718622782; cv=none; b=AyRFyY2YfySpAGEjBFaVJISK+CY/EfQNKrKjSOekmIeW5SNyFIxr8i/IDkrUxSTfpMyQtgSEgHKigpDPW3ALRyXkc7+jUri6UHSyuBaIyjiIHOC9dPCsiMzJZ2t41Xuf8iWLkwHy9M/gUde6u9mAXfC3LJO/W+fCVEtKASiOF+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718622724; c=relaxed/simple;
-	bh=PE6q0olYwxVl53uNwFQCaWl+MfMDup6B9fBC5dhuyyo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=O2E3CzPIvhTV7Tn244slJ+XSY8OfzTYPgfQhNAr97L+e8suB0AanQzUFg2R95JrWhz607mel/OQkw0Oa1VCFX2bQkgQs8+FXMczRZ9Es9pNArbjUFK94g2qP/4l1+2onG/sqrqrcmlZZcqZ5yoOsD95mA/UY0J+SRPGpJ/1n+rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ec00e71ab9so293492539f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 04:12:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718622722; x=1719227522;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j6DIpsFhxrZ9UjTQFy5immLersnSHGZDczy0ctoArSw=;
-        b=CE4mEbq1Iqg46dTYFip2cRp0o+61H8qkHQQ8pJjAV64J8iz4J+vbx4Trc+X/33RIRX
-         5MFcBzGyrNSIYk6oVxSRpq4NsH2WIkpShQEo5r108oDerFRuQCtu7UYL+GoCozqD9ezl
-         W7f8dex//TqCtqBfFJVTIuQjz+ytA4iZabWnWuH/RdmOPPio8v7mHpBkxzv4HwLMsZk6
-         +pyYoxNQAK35iwZQRJd7N8toye7tJ3X+Pqd5YGui7SpyqhIM+23Dmb04/pk1MkQ/gMKn
-         jsafc0Nsz7MHkIbsjFgfNMSCQwXR7qt4fBbnXfFdTNkWLt2B20gXQE7kB4xi+1t7j8GH
-         PkKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBTA3IebPw55pyWS+Vupyn7KXbhQf3xo1i2q7+9ejvVoDp3A/6twhet61Av2ff1QrjSjcDlpEiSxqBcayfMY9XzxBxU3InM4DkphxR
-X-Gm-Message-State: AOJu0YyV27urcLOsiBYOhOU0OVyNVAC8NrX5Rn0tyH3kdIo9a80sFKA5
-	Q+iZm99GBEhDLx8yPIhPorcAhXwgyYyprqg6bVNQBolMagWCMVs0v3+6I1R6iXt3ouKa9d5UiYG
-	q2T063mN5uu4k+uVUmHvHuJpyDnbIxUno5lvZxyxG9T5gjSlBWTXlo6U=
-X-Google-Smtp-Source: AGHT+IE2rybxVCWF62xrnUouwzkQUuf4GUhoYlfuponIhKBWCbYYtpI2KD6CG+y3VvxuzxY0KtbrtZenFvLBzVTg7f747OKOTX70
+	s=arc-20240116; t=1718622782; c=relaxed/simple;
+	bh=/L6WYMxSMfjTIoWr9t9k/aRtdxtiTotpKJC0bwZmths=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C3VinOnlC0USxFk4saZMyno8Ffpdc9MCU09NGAB2YNVw9J+bZaBe6DIA/LVYOVpNb9ztWVJ/Ew/iRHSunqxzlqSM52rVGe2CGFfx68Oaz1EdvI6EQ87bsxUPlkRaqDpZrmE3XbKTdcN0Y36vKpt2BS5JBMFXJk2ow35Cs2zrDjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TWun6Tz0; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718622778;
+	bh=/L6WYMxSMfjTIoWr9t9k/aRtdxtiTotpKJC0bwZmths=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TWun6Tz0mrFyu0Doh3GSFs5086lVufoWIuFjkxiKsPZHUQOo5/kxB2MOvTdkHoK4M
+	 l4YUhTOvHS6iKdIwIxJr+SYFYE4R3tSubri3gpAKeg6QauwUwxk8RGrhWTgKsJRkga
+	 WmuEAq1gxUD4FXTikNClu2mpX/GqqqZR9v0VNhWXWVooGlwaZSnITzWYVtrWMAdY/Q
+	 Gc1Sy3KP5c8iVAVzEodL3ey7mM4zKdz2E7c0MAl9n4oWfGTO9aciNFSPuXhlGTSJ4A
+	 mnRmhAVp0wQ90eRATO9s4OC6Pw0gg5PJ3Gn/yeXaoaNP+Ktue2EHgnAsiuTtPDUH6E
+	 goMQ1PX6AMUzA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 42DB93780480;
+	Mon, 17 Jun 2024 11:12:55 +0000 (UTC)
+Message-ID: <33aac6a0-7bdf-48d3-bf79-0f3bf60394f2@collabora.com>
+Date: Mon, 17 Jun 2024 13:12:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:412a:b0:4b9:38aa:497a with SMTP id
- 8926c6da1cb9f-4b963bf8296mr485899173.0.1718622722149; Mon, 17 Jun 2024
- 04:12:02 -0700 (PDT)
-Date: Mon, 17 Jun 2024 04:12:02 -0700
-In-Reply-To: <20240617104841.1588-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000db5e4b061b1408c9@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- __lock_sock (2)
-From: syzbot <syzbot+9486ac2c18a7693c45d6@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 21/22] dt-bindings: thermal: simplify few bindings
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Guillaume La Roque <glaroque@baylibre.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Anson Huang <Anson.Huang@nxp.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Amit Kucheria <amitk@kernel.org>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ zhanghongchen <zhanghongchen@loongson.cn>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, imx@lists.linux.dev,
+ linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
+ <20240614-dt-bindings-thermal-allof-v1-21-30b25a6ae24e@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-21-30b25a6ae24e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Il 14/06/24 11:46, Krzysztof Kozlowski ha scritto:
+> Simplify few bindings which already reference thermal-sensor.yaml schema
+> by dropping unneeded requiring of '#thermal-sensor-cells' and dropping
+> assigned-clocks properties (core schema allows it if 'clocks' are
+> there).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Reported-and-tested-by: syzbot+9486ac2c18a7693c45d6@syzkaller.appspotmail.com
 
-Tested on:
-
-commit:         cea2a265 mailmap: Add my outdated addresses to the map..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=145db12e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
-dashboard link: https://syzkaller.appspot.com/bug?extid=9486ac2c18a7693c45d6
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10d3be0e980000
-
-Note: testing is done by a robot and is best-effort only.
 
