@@ -1,147 +1,202 @@
-Return-Path: <linux-kernel+bounces-217995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A81F90B789
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:12:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D4890B7CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C4F1F2252E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:12:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE56FB23AFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A69C16A946;
-	Mon, 17 Jun 2024 17:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E4016B380;
+	Mon, 17 Jun 2024 17:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="Ncp6BMIZ"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oV1WSX39"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234F816A93C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EDA16A954;
+	Mon, 17 Jun 2024 17:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718644319; cv=none; b=IhcZBsn+A3qjGPCi8ZRKPopczAH5hvwoovdc8P67WjiXAAG9dC/B6fPvJ2aZ8LPMIv4EHQ26Jjn1DiMPKzPNrSJSNSLrJgwGu3RZRMOo+z5YWsZMhejQ+AIV+4zb35Mc2IFVAU1xqwBOys6y3TEC2Qq22s/3jeEipFPRvo7+tYM=
+	t=1718644464; cv=none; b=RXS9QMKgGZqLOwmWISMjMqJZxq5BF0LKlGAMRusAYxy2k76N+VTLYmVdrechu1PNjy4lb52wKIxjEEfRCuGKyU14MpWlvBfUNjwiSVF1GVrXYMuW7FK2WIFkoygrvZmYoievNv4Lx2K9rZvg0i2zjMm6ATgPjXS05ea8HHnMaHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718644319; c=relaxed/simple;
-	bh=bQfLNhr0U8kTl1L3wYkkfLY24a4W+lf/0ASZXstjAi8=;
+	s=arc-20240116; t=1718644464; c=relaxed/simple;
+	bh=MmA+hwtBmtjHSiMtd3wx1Z1tyvk5MSxoK0Na7DKEAQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JA36G/c9YS4LJcWznJqwpX7jo1HYiiZcMx9etiUMFeo5Z10qSjxJv/ecJE+OmkLkydiukojzA/5R6EJr/MPLv5qQyM6KW+tke9eNQJ7UUxNn5WkAxwMSHmz874JeLgm/9Z2RCt5aQatu1807qpvE4UsZfzk2xUcBdcVQqPpwKEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=Ncp6BMIZ; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6f4603237e0so3240890b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:11:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718644317; x=1719249117;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:dkim-signature:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zvckpjEpH2uOs9aOOdBydw6yHWYMDuUzMnQ/KJxhXX4=;
-        b=YtUbEckC+4aLNweGMGvrxG8eMdBMwxvHL2hM5KakDYVJLcgdD3ZKVFtsD0VQP2hn7R
-         Aybh1OTFs86wawDG5lBz0+X3/XF9clMU9nLx0iZuz31WXl8vfnoY1FRzr4jNmAOIWbHT
-         RWJnNlHijtB3QjknS4T/wYDvirIO3IoLOW5K2XYmdtvgyBUHVra36r+91Kxv0UNEkQN0
-         /a3MeQz9lE5IX7zTcziX24xOuqVSnlO6+yWCLy6w20z7Dt8gSztBjXk8cewkDHKvULyk
-         oQd289g4t9IbTOJw86eSxy+mh/R3ubh9cgUAsoiEQ98q7EZodkFKJVIvRFGkdP3dut3T
-         0koA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5Yv2QytHXWyqcUjIvscrZT9KY15Rdq7ptBTJ/Akqa4OP9pTVs/xezKvlYeXoSdxXZlTi9FTUFPFtCRgLYMDRZslAjDd1KOndS9HGe
-X-Gm-Message-State: AOJu0YzboENPqrxv72ZWtSbT66d4FNPdzhDOx+1XkelR7W7TVrU+n2S8
-	kINe2K/J1q/b92UPOCq7fAiSMrlrJFOg+bPIh4BNN1zX/qc26egD
-X-Google-Smtp-Source: AGHT+IEpvx8oDxNqkEou9rQn23Am6pdR4u+cNRu+ZkVqeFYhca1Fq1ymn/C7x9An3U9SJF9ZufUo0A==
-X-Received: by 2002:a05:6a00:9297:b0:6ed:de70:5ef9 with SMTP id d2e1a72fcca58-7061a9c528emr501333b3a.0.1718644316219;
-        Mon, 17 Jun 2024 10:11:56 -0700 (PDT)
-Received: from mail.marliere.net (marliere.net. [24.199.118.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc96868dsm7565177b3a.65.2024.06.17.10.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 10:11:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marliere.net; s=2024;
-	t=1718644314; bh=bQfLNhr0U8kTl1L3wYkkfLY24a4W+lf/0ASZXstjAi8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=AERZKxY8VXN6w1eT/eXoLqANI6mOPmB45/srXuut3khLfJa2tzVtqxiCK/Fes5wB/8ITgGpgBBOSsmU+wggaV3BxNRx+Ljw2wA/pisQLjxw03PXKLggZ6o2s6bP0H3o/pfvuQUKjqER84XosMd+kTbvKbXyLHSP20ohsu6ukRjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oV1WSX39; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9538C2BD10;
+	Mon, 17 Jun 2024 17:14:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718644463;
+	bh=MmA+hwtBmtjHSiMtd3wx1Z1tyvk5MSxoK0Na7DKEAQw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ncp6BMIZ4pWzzQA+l0B603lgqLVX7ZHa6cr6gTLjZhzo82zVWEorL/qvIBIaCplYe
-	 2a3NWK4xv63+zEk7fqibpS2L8wlh5KHpGgdA1Vc/5xEbJ7Dt/00uOFfZeyl9R4Udxe
-	 rYGGRcQMT0C07ZtEwDMjdH3XCx62xmyYS+9CFJn01QochRzZg+gA2YXeTz58mbwg/y
-	 9GDT5ZQUJVEblnN8K6GnPcO4VLAiNjqnpzR7c1it3E1NsFSg5OdAzvZX4wAVxvdLLz
-	 M8o/JfRlBS7szPz4zQNqE4BGs1N9l1YfCdxJvT6TgLB/Ren/h1b0+9QGnIcEukAqPw
-	 jR3Tc1Udee1sQ==
-Date: Mon, 17 Jun 2024 14:11:48 -0300
-From: "Ricardo B. Marliere" <ricardo@marliere.net>
-To: Amit Vadhavana <av2082000@gmail.com>
-Cc: srinivas.kandagatla@linaro.org, alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org, rbmarliere@gmail.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v2] slimbus: Fix struct and documentation alignment in
- stream.c
-Message-ID: <d6cd7441-53f2-4c88-a361-729e3abe81c1@marliere.net>
-References: <20240616203231.43724-1-av2082000@gmail.com>
+	b=oV1WSX39l0oXYDodwVcnNGu6g4yMk+A7cNev9LZ6awpIJ9xMX9gDzkjzVyiiA+9sg
+	 Vet+IFaG3NPnPFjcwM4+83gYFJemwOCgodSuD+cCV4Gtlh1C2lrz2ERg+1GtQJFFm0
+	 T3dacB3gT9y6Ose1tIMAGQ2DZaW6ul4KAem+/dbDAtXFnLFPGR7r+hWL59SPK7yAsn
+	 tqcTBN3yuhpVGuSn0OVOCEYJ/sMnJwZc7nDM/mUCrS3QmfPgXgkJA8/nUB28gCqmol
+	 XouT25EtxDkGVmoYLbZmYVA22YNeBpe+GzWI/aOyCW5l6wdCSBVkqfUjIDukQhrPFg
+	 05YaqubP+3MEg==
+Date: Mon, 17 Jun 2024 18:14:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yangyu Chen <cyy@cyyself.name>
+Cc: Jisheng Zhang <jszhang@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	linux-riscv@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Jesse Taube <jesse@rivosinc.com>
+Subject: Re: [PATCH v1 0/9] riscv: add initial support for SpacemiT K1
+Message-ID: <20240617-connected-avoid-82f0bdc05cdf@spud>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+ <20240616-exorcism-computing-e11e26084a62@spud>
+ <20240616224811.GC3983622@ofsar>
+ <ZnBEBQjTQtFs-fXt@xhacker>
+ <20240617-synapse-carmaker-0a59c7c6edb7@spud>
+ <tencent_26E7381EE1F6C5188428359AF3F908CA680A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Jrl5+92C90Kbr+Af"
+Content-Disposition: inline
+In-Reply-To: <tencent_26E7381EE1F6C5188428359AF3F908CA680A@qq.com>
+
+
+--Jrl5+92C90Kbr+Af
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240616203231.43724-1-av2082000@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On 17 Jun 24 02:02, Amit Vadhavana wrote:
-> The placement of the `segdist_codes` array documentation was corrected
-> to conform with kernel documentation guidelines. The `@segdist_codes`
-> was placed incorrectly within the struct `segdist_code` documentation
-> block, which led to a potential misinterpretation of the code structure.
-> 
-> The `segdist_codes` array documentation was moved outside the struct
-> block, and a separate comment block was provided for it. This change
-> ensures that clarity and proper alignment with kernel documentation
-> standards are maintained.
-> 
-> A kernel-doc warning was addressed:
->     ./drivers/slimbus/stream.c:49: warning: Excess struct member 'segdist_codes' description in 'segdist_code'
-> 
-> Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
-> ---
-> Changes in v2:
->     - Removed `static const` keyword from `segdist_code` structure declaration.
-> 
->  drivers/slimbus/stream.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/slimbus/stream.c b/drivers/slimbus/stream.c
-> index 1d6b38657917..863ab3075d7e 100644
-> --- a/drivers/slimbus/stream.c
-> +++ b/drivers/slimbus/stream.c
-> @@ -18,15 +18,17 @@
->   *		and the first slot of the next  consecutive Segment.
->   * @segdist_code: Segment Distribution Code SD[11:0]
->   * @seg_offset_mask: Segment offset mask in SD[11:0]
-> - * @segdist_codes: List of all possible Segmet Distribution codes.
->   */
-> -static const struct segdist_code {
-> +struct segdist_code {
->  	int ratem;
->  	int seg_interval;
->  	int segdist_code;
->  	u32 seg_offset_mask;
->  
-> -} segdist_codes[] = {
-> +};
-> +
-> +/* segdist_codes - List of all possible Segment Distribution codes. */
-      ^ isn't a '@' character missing here?
+On Tue, Jun 18, 2024 at 12:39:30AM +0800, Yangyu Chen wrote:
+>=20
+>=20
+> > On Jun 17, 2024, at 23:32, Conor Dooley <conor@kernel.org> wrote:
+> >=20
+> > On Mon, Jun 17, 2024 at 10:11:17PM +0800, Jisheng Zhang wrote:
+> >> On Sun, Jun 16, 2024 at 10:48:11PM +0000, Yixun Lan wrote:
+> >>> Hi Conor
+> >>> Thanks for bringing this up
+> >>>=20
+> >>> On 19:35 Sun 16 Jun     , Conor Dooley wrote:
+> >>>> On Mon, Jun 17, 2024 at 01:18:52AM +0800, Yangyu Chen wrote:
+> >>>>=20
+> >>>> No MAINTAINERS update, so I figure that means you don't want to main=
+tain
+> >>>> it going forwards? If there's someone out that that does care about =
+the
+> >>>> spacemit k1 (Jesse maybe?), then I'd be more than happy to have them
+> >>>> look after it.
+> >>> Yangyu kind of has limited time, too many stuff for him..
+> >>>=20
+> >>> I'd volunteered to help on this if it can fill the gap
+> >>> Also I'd be more than happy if anyone willing step forward to co-main=
+tain..
+> >>=20
+> >> Does maintainership work like this? Is willing to do enough?
+> >> FWICT, maintainership involves active patch contributing, reviewing and
+> >> maintaining the whole SoC. It is better to take over the maintainership
+> >> after showing enough patch contributions and understanding of the SoC.
+> >=20
+> > I was going to reply to your other patch about providing more complete
+> > "basic" support for the SoC, but I guess I'll reply here and address
+> > both points. After the k230 and th1520, which were both merged with very
+> > basic support and have made very little progress towards being a useful
+> > platform, I'm pretty reluctant to merge another platform in a super
+> > basic state. I was going to make this point before you brought it up,
+> > but it's good to know I am not the only one with that view. To be clear,
+> > I'm not pointing blame for those platforms, I'd just like to avoid a
+> > repeat. If Yangyu doesn't have time to do any development work on the
+> > platform, I'd like to see someone else (and as I mentioned Jesse is
+> > interested) take on getting some of the basic driver patches written and
+> > merge only when those are accepted. Having no in-tree clock and pinctrl
+> > drivers is definitely a hindrance to other people doing parallel
+> > development of drivers and I'd like to avoid that.
+> >=20
+>=20
+> That's also my concern for the first time when I submitted initial
+> support for K230. However, for SpacemiT K1, things went differently
+> for its UART, and the vendor patched OpenSBI with their NOC-based
+> HSM. They didn't use CLINT-MSWI as SBI HSM driver.
+>=20
+> The vendor uses a special intel pxa uart driver, marked deprecated
+> in the kernel and incompatible with ns16550. If we use ns16550 in
+> the dt, the behavior of uart is like the uart has no interrupt and
+> stops working permanently when fifo overruns, making many developers
+> not know how to start unless they use the SBI HVC console, which
+> needs to turn on CONFIG_NONPORTABLE.
 
-Make sure to re-build the docs and see whether it looks fine.
+This I just do not understand. Why did they use this IP? Is it free?
+Did they use it before for something else? It's a rather strange design
+choice to me.
+
+> For the OpenSBI, the vendor does not provide enough ISA string,
+> which their chip might support, such as Zicboz. Thus, the OpenSBI
+> does not correctly set up the corresponding M-Mode CSR, making the
+> kernel panic when the ISA string contains this extension.
+>=20
+> These two things takes me about one week to get the initial mainline
+> kernel with full ISA extension and UART to work. Providing this
+> information in the commit message helps attract more developers to
+> start developing quickly.
+>=20
+> I don't mind whether this series patch will be merged or not. The
+> meaning of this series is just providing these informations. However,
+> I think some details about bringing up a very basic kernel are
+> essential to attract more developers. If a platform has already
+> attracted some developer's attention. Providing initial support
+> with the commit message to show how to bring it up is not bad.
+>=20
+
+> The point is that if a developer like me has already done this but
+> does not have much time to do further development, should the
+> developer become the maintainer? If not, should a developer submit
+> patches like this to the mailing list to provide this information
+> in the commit message and make it easier for other developers to
+> do further development?
+
+I think, as you did, sending patches for this state is very valuable.
+I'd just like to see someone expand on it before it gets applied, so
+that the initial platform support in the kernel is in a better state.
+
+> > Getting back to your point in this mail, whoever gets the platform to
+> > that state is well suited to looking after it going forwards. Some other
+> > interested parties could also join as reviewers. I don't want to see
+> > people joining as maintainers that are not going to have an interest
+> > in the platform going forward, as that'll just end up with me as the
+> > defacto maintainer.
+> >=20
+>=20
+> I agree. I also have no confidence in joining as a maintainer.
+> That's why I didn't change the MAINTAINERS for the first time.
+
+Yeah, that's fine. Consider this part of the thread my attempt to
+solicit people to maintain the platform, rather than bashing you. I
+appreciate the work you've done :)
 
 Thanks,
--	Ricardo.
+Conor.
 
+--Jrl5+92C90Kbr+Af
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-> +static const struct segdist_code segdist_codes[] = {
->  	{1,	1536,	0x200,	 0xdff},
->  	{2,	768,	0x100,	 0xcff},
->  	{4,	384,	0x080,	 0xc7f},
-> -- 
-> 2.25.1
-> 
-> 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBu6gAKCRB4tDGHoIJi
+0uZNAP9ElcW1Moz3oegHyyj66hfSZofUB2/kWuP+yKNFSIUIBQD/SuEPeV1sBsSV
+lRZoUY0kp5uFGyWIOuzqEQgBdKSxLAo=
+=3m3H
+-----END PGP SIGNATURE-----
+
+--Jrl5+92C90Kbr+Af--
 
