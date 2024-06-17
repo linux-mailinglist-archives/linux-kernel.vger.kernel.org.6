@@ -1,67 +1,59 @@
-Return-Path: <linux-kernel+bounces-217410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D426590AFDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:45:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B04290AF59
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE3C7B314A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F95F1C2166B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EC51A3BA9;
-	Mon, 17 Jun 2024 13:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1DB1AB502;
+	Mon, 17 Jun 2024 13:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="i5qQH4pU"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="URnxip1Q"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8831A38C7;
-	Mon, 17 Jun 2024 13:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DA81A38C7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630482; cv=none; b=MqHa1+LiUssARmedy5SeY7zNGNeGd4OoI3VQS9cRrHJAFPiXHFfbH4tOtMN4OUgzSLrGvFXNzBIAb6R+Vpy5zLsNE5biui8ymuR6+4GnH2ErUR2Hmg5cNdb4EblO23WPoeiquRq2GXk/hj2HhXB/VSt1TOG2hyiRCxy3cRx2SKw=
+	t=1718630488; cv=none; b=uNxYFcWpeZVi+XfIrFAQ2XXWnhinAQN/UigAUPFDfO5zL2nLBcZYNAfOMrTvhXw6AfiL1WB03XO4qba02/v4vq7gEnQ3mAvqUmW2kuYOFGZpJxobfZI3Mw54wEidB2laiyfxJqmzvYNlcxfuUDtki62lKHwgfmrB959cbXROlPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630482; c=relaxed/simple;
-	bh=aizDZvnCDX/j0pRij/wrhNU+Zaq/hXsUCMLAW5X7shE=;
+	s=arc-20240116; t=1718630488; c=relaxed/simple;
+	bh=2F3D4ViPK/1/0WFA+bQj22QbsbJhhW9+IG40Nypkr9U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LFIh2S8tjYT1y7pc7z98oyPpLxq5W8A/KgBiEOP7ewfNSXQrMhtajy+FeXaQ8UGWZ8R65kOiafrqRr08aQjcnJS7kqjFCjsV8An4maOOhgm9k96jgU9WCwOJ7zWv0ps7DSijDNFIGRKYrZCrdyop0ims9Hod9CVdfqZwaLjieak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=i5qQH4pU; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dgzLUyLL44aNtNUZ4cik5aVlKeZ3MyaadjRq+pbLGk0=; b=i5qQH4pUO+Y/XOIW4KPvJ3rbY2
-	Rxqu80nP7jKjm1a+NyjJYN0Th7nVtE4d/P0uyJNd9RRHvi4oUyVvq8H6eUsAcCHDKJwknelnVwpKq
-	jt+bwUn1P3zDRc6CcLIzJmeyPHr7gGtsjc6seHNb+5uwF1gtyb9RpG8Ydvf0YVjwzy6iFaSs0/BQg
-	jsN0KEGloIhShKT1DDil4mKTWBZzu9Lhyiu3WsBV5ZakUj8/ZACVFO8wxOZmmYIvw4DQz0juNTGFf
-	zbj5eySUNdQ+6eXieJLh9vUg3qgHIgpTtFUHKyHPzeEP+qztohMIuGrNWuSjv8DfRpp1V1Ir6YWrY
-	J7RTak/Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57690)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sJCID-0005Ic-0O;
-	Mon, 17 Jun 2024 14:21:05 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sJCIE-0004w5-Ft; Mon, 17 Jun 2024 14:21:06 +0100
-Date: Mon, 17 Jun 2024 14:21:06 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	Michael Nemanov <michael.nemanov@ti.com>,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH wireless v2] wifi: wlcore: fix wlcore AP mode
-Message-ID: <ZnA4QpyOdcYxg8LE@shell.armlinux.org.uk>
-References: <E1sClp4-00Evu7-8v@rmk-PC.armlinux.org.uk>
- <Zm1CKAKCnuc94oIi@shell.armlinux.org.uk>
- <87tthrn8gf.fsf@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VwGmFFh1JpV9cpaf7tdiwQDRw9N2w/HUHa96k9tcDjHrgbDp7Hn1cam8JWe09KRKRLAuvF31SbGfbY95+Z6PtC9zqxmTKudKj0HIfGkNdD+ZDPiuDDmBCZ5Qi+QoB97mQ8P0fQHX3kUoNEvJW5JGJWGXYbmr/qlDBoJy8fv3XR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=URnxip1Q; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: syzbot+9f74cb4006b83e2a3df1@syzkaller.appspotmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718630484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CF8ncAOSZZUP14yQYZNhIjrPI6G3/InI6dmPBgZ8X6c=;
+	b=URnxip1QgMFKqwHKtkQvpXXnXd8shMqasi5zjrxVZWtU7tnYvFdrEK/fXtrQmzjdcOMJjl
+	e3ejlL+DBOyuYIjmMaNM94yRgjHxXC/KJxlt31gGxoCHsRR0nU+19wXuDYNK+h1KRB7SI2
+	G5Z1T3kRVVsq+mYL9JgkLm83AYQnmRs=
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+Date: Mon, 17 Jun 2024 09:21:20 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+9f74cb4006b83e2a3df1@syzkaller.appspotmail.com>
+Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in
+ read_one_super (2)
+Message-ID: <dx5mkmikbckgxyeiq5aru6wvgkx4h63uvvkb72r37ipsczxrux@s56rz3r4yy4v>
+References: <0000000000003565fc061b122e02@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,53 +62,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87tthrn8gf.fsf@kernel.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <0000000000003565fc061b122e02@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jun 17, 2024 at 01:56:48PM +0300, Kalle Valo wrote:
-> "Russell King (Oracle)" <linux@armlinux.org.uk> writes:
+On Mon, Jun 17, 2024 at 01:59:18AM -0700, syzbot wrote:
+> Hello,
 > 
-> > I see all my TI Wilink patches have been marked as "deferred" in the
-> > wireless patchwork. Please could you explain what the plan is with
-> > these patches, especially this one which fixes a serious frustrating
-> > failing that makes AP mode on this hardware very unreliable and thus
-> > useless.
+> syzbot found the following issue on:
 > 
-> I'm just swamped with patches, I'll try to look at these soon.
+> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15286f7a980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9f74cb4006b83e2a3df1
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 > 
-> I wish that TI would take a more active role in upstream, for example
-> reviewing and testing patches would help a lot.
-
-I believe the problem has been that TI have had an attitude of "we
-only support people using 4.19.38, if you can't reproduce the problem
-there we aren't interested". To see the versions they support:
-
-https://git.ti.com/cgit/wilink8-wlan/build-utilites/tree/patches/kernel_patches?h=r8.9&id=a2ee50aa5190ed3b334373d6cd09b1bff56ffcf7
-
-basically, all are ancient.
-
-They also appear take the attitude that all the kernel code is ripe
-for them to hack about with - whcih is why this fix has had to be
-reworked so it isn't removing NL80211_FEATURE_FULL_AP_CLIENT_STATE
-for _all_ kernel wireless drivers!
-
-Also, I think they also require one to use their hostapd and
-wpa_supplicant, probably for a similar reason. I know that in some
-of the patches they've hacked in API changes...
-
-Then one can see the attitude of lock-step firmware and driver
-upgrade - you can't use 8.9.1.x.x firmware with their older driver,
-and you can't use 8.9.0.x.x with their newer driver. That, of course,
-is not acceptable to mainline.
-
-So, given all this, IMHO it's probably a good thing TI aren't trying
-to submit their stuff upstream... that is, unless they are willing
-to learn how to "do things correctly".
-
-Maybe I'm being too hard on TI's wireless division, but that seems to
-be what has been going on.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/27e64d7472ce/disk-2ccbdf43.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/e1c494bb5c9c/vmlinux-2ccbdf43.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/752498985a5e/bzImage-2ccbdf43.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9f74cb4006b83e2a3df1@syzkaller.appspotmail.com
+> 
+> loop2: detected capacity change from 0 to 32789
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in fs/bcachefs/super-io.c:653:3
+> shift exponent 106 is too large for 64-bit type 'unsigned long'
+> CPU: 0 PID: 9174 Comm: syz-executor.2 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+>  ubsan_epilogue lib/ubsan.c:231 [inline]
+>  __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+>  read_one_super+0xfb5/0xfc0 fs/bcachefs/super-io.c:653
+>  __bch2_read_super+0x65a/0x1460 fs/bcachefs/super-io.c:750
+>  bch2_fs_open+0x246/0xdf0 fs/bcachefs/super.c:2074
+>  bch2_mount+0x6b0/0x13a0 fs/bcachefs/fs.c:1919
+>  legacy_get_tree+0xf0/0x190 fs/fs_context.c:662
+>  vfs_get_tree+0x92/0x2a0 fs/super.c:1780
+>  do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+>  do_mount fs/namespace.c:3692 [inline]
+>  __do_sys_mount fs/namespace.c:3898 [inline]
+>  __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f82b087e5aa
+> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f82b1586ef8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007f82b1586f80 RCX: 00007f82b087e5aa
+> RDX: 0000000020011a00 RSI: 0000000020000780 RDI: 00007f82b1586f40
+> RBP: 0000000020011a00 R08: 00007f82b1586f80 R09: 0000000001200014
+> R10: 0000000001200014 R11: 0000000000000206 R12: 0000000020000780
+> R13: 00007f82b1586f40 R14: 00000000000119fa R15: 00000000200007c0
+>  </TASK>
+> ---[ end trace ]---
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+#syz fix: bcachefs: Fix shift overflow in read_one_super()
 
