@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-217494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E65D90B0F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:06:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8980090B126
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7835B29DCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:58:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03442B293B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C989316EB6A;
-	Mon, 17 Jun 2024 13:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90FB1991AD;
+	Mon, 17 Jun 2024 13:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RE5yKVw2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btywrhE3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F295A16EB42;
-	Mon, 17 Jun 2024 13:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1423817737E;
+	Mon, 17 Jun 2024 13:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630721; cv=none; b=PwgenGqNHPvtCpFNMRgZkG1bIbFskVBOfl6WMIAcvgnfuVkrTG5zNzH1h2mBEo/rqq5cmyaAsIYSy3Qho+KWS4yYJAq3b5GJgf2vd37NVPJugIRBYfM1X0Q9yVRBbtXnW72YVE0E0O53/OWwPY3Nw9NUjq2kBYu/lsEJ4dXiehA=
+	t=1718630729; cv=none; b=GZzcTVhcMfGMFOYSb9FYKukKl5g50ifRhzrKd53HtKxh1a6CT7XMNUjvFTRhSi7Ud7/XFwTUZX6V2ggU458KPLwJnLnUu60Ivg5HbGEGhu7Uy9DYSIOlBbsZSPhcSL8fT+kGMzjrzfXPAYNsGxEOxudh+BJ4d4N6JGnGONgEgO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630721; c=relaxed/simple;
-	bh=t+VJMoHbS5aMzSdzqTh+8YeLJC/JfqfBNiQW1Ei54KY=;
+	s=arc-20240116; t=1718630729; c=relaxed/simple;
+	bh=hq8Wn4mgFcQ5ZsgQz/dTNMmh6yB2UphrglQ7l2h1J0s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CjgTLOkIJfBpCjwpwBWXiGq5YiBs7CzKbJ7LxgEtuvtKLEij74njMZ0YlaBkzkwnY0MehfmxFWh5ha2caCja978u4XScgb0ejHXeQVjjV+5G1jenEvGRfl7O58D+ypvyOK/SIlZE5Wr27Hcjakkjfx/znmlgkwe3dAZ3Rh8QWDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RE5yKVw2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36510C4AF4D;
-	Mon, 17 Jun 2024 13:25:19 +0000 (UTC)
+	 MIME-Version; b=DLVBn+5GzVqBj54/MH2l54l3VtjKZWkbbNdHfcelZsIp6zisVGGwIVSEtlNORPd2BehSejaw+uceNXY/F97rS6VuyUBoVH7KzBg4F8ATja+bHQK7P5UHkNctCUY7aO/gI3FQiujq22iDh/BvwMaYkPLSR8igoDgRxUru2aJPJy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btywrhE3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCFC1C4AF4D;
+	Mon, 17 Jun 2024 13:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718630720;
-	bh=t+VJMoHbS5aMzSdzqTh+8YeLJC/JfqfBNiQW1Ei54KY=;
+	s=k20201202; t=1718630728;
+	bh=hq8Wn4mgFcQ5ZsgQz/dTNMmh6yB2UphrglQ7l2h1J0s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RE5yKVw2QFTnHBrJuphAkOpFioG0CgfNrQjG4xyeCCqCwVzuZARPKvcM1fj50TMPi
-	 jSudY4zoQ02TJkPaMLh2DBITOjIWIveigXxHLWJs9veT80S2kde+hFQOh674EH9V3x
-	 W/iPl+asiQQsjgYbS07m4DvkiWs/qNtY1BvyCmeuHJnvYgW80pnob5sZ+FtQvPzu8B
-	 57PIzwatlYai5BV80tvheHjihkqLTraMsi6UlxcpMe/pe6Tm1tmVs83CjQbltuaEkH
-	 Gk/6IWEd2ZCZ1pjYbo5iAAJN+MlHzW+MV6CTW8GyIVzkSZQBrV4NrFSYeFYyx9C8i1
-	 0H6rJKNLe+i0Q==
+	b=btywrhE3j05qxQGaIlGG9fMr0V2RIN9Vclggsd9FdGhIJyDXQQU5tI69IxGWHVzeJ
+	 x+7e54yhqBlg0FFerCF8rS/AYJFs+371CaD4CEINsHb4lnlyP5E/6GWhzcYNDCHt30
+	 J9UOCg5TdQJ3sBONnqfDziQx1EVCMBPmGI0wXZTE51RemxQUFH7xzi5Db4zD8hb1q/
+	 3n42aaIoU2QDipoxM8ICOPU/tH8wdabC9KEdBOuvv7QRHVHJmzxljiO187H+VQP+8R
+	 qnd+pKrVRH7R/LbFBe3MH9FYz7nG5ElZKsVXwIxcx5XdomTZHmjJDQAvCSKB2h9eqk
+	 5Ys0BiGLezpOQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	syzbot+8830db5d3593b5546d2e@syzkaller.appspotmail.com,
+Cc: Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Johannes Berg <johannes.berg@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
-	johannes@sipsolutions.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 13/29] wifi: mac80211: handle tasklet frames before stopping
-Date: Mon, 17 Jun 2024 09:24:17 -0400
-Message-ID: <20240617132456.2588952-13-sashal@kernel.org>
+	kvalo@kernel.org,
+	gregory.greenman@intel.com,
+	shaul.triebitz@intel.com,
+	benjamin.berg@intel.com,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 16/29] wifi: iwlwifi: mvm: Handle BIGTK cipher in kek_kck cmd
+Date: Mon, 17 Jun 2024 09:24:20 -0400
+Message-ID: <20240617132456.2588952-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240617132456.2588952-1-sashal@kernel.org>
 References: <20240617132456.2588952-1-sashal@kernel.org>
@@ -70,81 +69,55 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.94
 Content-Transfer-Encoding: 8bit
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Yedidya Benshimol <yedidya.ben.shimol@intel.com>
 
-[ Upstream commit 177c6ae9725d783f9e96f02593ce8fb2639be22f ]
+[ Upstream commit 08b16d1b5997dc378533318e2a9cd73c7a898284 ]
 
-The code itself doesn't want to handle frames from the driver
-if it's already stopped, but if the tasklet was queued before
-and runs after the stop, then all bets are off. Flush queues
-before actually stopping, RX should be off at this point since
-all the interfaces are removed already, etc.
+The BIGTK cipher field was added to the kek_kck_material_cmd
+but wasn't assigned. Fix that by differentiating between the
+IGTK/BIGTK keys and assign the ciphers fields accordingly.
 
-Reported-by: syzbot+8830db5d3593b5546d2e@syzkaller.appspotmail.com
-Link: https://msgid.link/20240515135318.b05f11385c9a.I41c1b33a2e1814c3a7ef352cd7f2951b91785617@changeid
+Signed-off-by: Yedidya Benshimol <yedidya.ben.shimol@intel.com>
+Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Link: https://msgid.link/20240513132416.7fd0b22b7267.Ie9b581652b74bd7806980364d59e1b2e78e682c0@changeid
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/ieee80211_i.h |  2 ++
- net/mac80211/main.c        | 10 ++++++++--
- net/mac80211/util.c        |  2 ++
- 3 files changed, 12 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/net/mac80211/ieee80211_i.h b/net/mac80211/ieee80211_i.h
-index 3e14d5c9aa1b4..0d8a9bb925384 100644
---- a/net/mac80211/ieee80211_i.h
-+++ b/net/mac80211/ieee80211_i.h
-@@ -1782,6 +1782,8 @@ void ieee80211_link_info_change_notify(struct ieee80211_sub_if_data *sdata,
- void ieee80211_configure_filter(struct ieee80211_local *local);
- u32 ieee80211_reset_erp_info(struct ieee80211_sub_if_data *sdata);
- 
-+void ieee80211_handle_queued_frames(struct ieee80211_local *local);
-+
- u64 ieee80211_mgmt_tx_cookie(struct ieee80211_local *local);
- int ieee80211_attach_ack_skb(struct ieee80211_local *local, struct sk_buff *skb,
- 			     u64 *cookie, gfp_t gfp);
-diff --git a/net/mac80211/main.c b/net/mac80211/main.c
-index 6faba47b7b0ea..89771f0e0ae70 100644
---- a/net/mac80211/main.c
-+++ b/net/mac80211/main.c
-@@ -300,9 +300,8 @@ u32 ieee80211_reset_erp_info(struct ieee80211_sub_if_data *sdata)
- 	       BSS_CHANGED_ERP_SLOT;
- }
- 
--static void ieee80211_tasklet_handler(struct tasklet_struct *t)
-+void ieee80211_handle_queued_frames(struct ieee80211_local *local)
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+index 9a36ce98b5bfc..425588605a262 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+@@ -594,16 +594,25 @@ static void iwl_mvm_wowlan_gtk_type_iter(struct ieee80211_hw *hw,
+ 					 void *_data)
  {
--	struct ieee80211_local *local = from_tasklet(local, t, tasklet);
- 	struct sk_buff *skb;
- 
- 	while ((skb = skb_dequeue(&local->skb_queue)) ||
-@@ -327,6 +326,13 @@ static void ieee80211_tasklet_handler(struct tasklet_struct *t)
- 	}
- }
- 
-+static void ieee80211_tasklet_handler(struct tasklet_struct *t)
-+{
-+	struct ieee80211_local *local = from_tasklet(local, t, tasklet);
+ 	struct wowlan_key_gtk_type_iter *data = _data;
++	__le32 *cipher = NULL;
 +
-+	ieee80211_handle_queued_frames(local);
-+}
-+
- static void ieee80211_restart_work(struct work_struct *work)
- {
- 	struct ieee80211_local *local =
-diff --git a/net/mac80211/util.c b/net/mac80211/util.c
-index 1088d90e355ba..08e6691cdc4a4 100644
---- a/net/mac80211/util.c
-+++ b/net/mac80211/util.c
-@@ -2207,6 +2207,8 @@ u32 ieee80211_sta_get_rates(struct ieee80211_sub_if_data *sdata,
++	if (key->keyidx == 4 || key->keyidx == 5)
++		cipher = &data->kek_kck_cmd->igtk_cipher;
++	if (key->keyidx == 6 || key->keyidx == 7)
++		cipher = &data->kek_kck_cmd->bigtk_cipher;
  
- void ieee80211_stop_device(struct ieee80211_local *local)
- {
-+	ieee80211_handle_queued_frames(local);
-+
- 	ieee80211_led_radio(local, false);
- 	ieee80211_mod_tpt_led_trig(local, 0, IEEE80211_TPT_LEDTRIG_FL_RADIO);
- 
+ 	switch (key->cipher) {
+ 	default:
+ 		return;
+ 	case WLAN_CIPHER_SUITE_BIP_GMAC_256:
+ 	case WLAN_CIPHER_SUITE_BIP_GMAC_128:
+-		data->kek_kck_cmd->igtk_cipher = cpu_to_le32(STA_KEY_FLG_GCMP);
++		if (cipher)
++			*cipher = cpu_to_le32(STA_KEY_FLG_GCMP);
+ 		return;
+ 	case WLAN_CIPHER_SUITE_AES_CMAC:
+-		data->kek_kck_cmd->igtk_cipher = cpu_to_le32(STA_KEY_FLG_CCM);
++	case WLAN_CIPHER_SUITE_BIP_CMAC_256:
++		if (cipher)
++			*cipher = cpu_to_le32(STA_KEY_FLG_CCM);
+ 		return;
+ 	case WLAN_CIPHER_SUITE_CCMP:
+ 		if (!sta)
 -- 
 2.43.0
 
