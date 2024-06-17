@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-218370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 969BD90BD76
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:24:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F60890BD79
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0229F28229C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:24:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 234C21F228DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8023D19924B;
-	Mon, 17 Jun 2024 22:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79580199248;
+	Mon, 17 Jun 2024 22:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ocDojUDg"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="KRMZuhUa"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E7B19146C;
-	Mon, 17 Jun 2024 22:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B3919885D;
+	Mon, 17 Jun 2024 22:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718663062; cv=none; b=FldcUW/XIKPKlYk5duP+64q0qmkbCgPh+/HaPmyytGw3osgDApb1KZ7JruGzuYK2nXmQdFA/bnqmz3GVbZD+Fk3iEXtMyqDkuS0/+Wb6h3qQrxssybJckWSyK+DWhnIA+PPQCZjarwkEzOf6CVSbFU8X9bdZCWytMdyCtwpQVFY=
+	t=1718663088; cv=none; b=Q0InjnB0ocLpgLHjsz6lv3G5Itky1xyNiEZ1xZHOiUY8KSFWXRSvospDkb1vILFBIKhqOByeh4rWLOI5DQU+NwJ+ur5iTBdV9mWoYeNA4HYHwREPzHvyJ+LHn4Dorq9H6Z7Mwv7zbaJ5fdUC6hBiQoxAE4d7TC9MJxrHIS+xDII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718663062; c=relaxed/simple;
-	bh=6KaD+c/VP360n0v2uzvhS5vL9pb25MdxJFy7eHW8OBo=;
+	s=arc-20240116; t=1718663088; c=relaxed/simple;
+	bh=dxYZ3rto3urXZxH/ox23h1g+ipYLkUqCdFX07jBAauU=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FLn+Khli8T5VpefDwitSThLaWQX9p3zbENxHacvWu/7iL/D8eVZIkbJgJskpGT9hMpCoBTPYRvqF5jfaNi49G22xGlMptjBqGy64D885Wk90HA/JoLguiObNMhHysiaedEY5ytEVoop/gerQg54sKDzoowHTI/p8x0Mpi7+M3Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ocDojUDg; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version:Content-Type; b=BYJakSp/vgQdGyGMEHFLX28ph9AjQ59YpzRm+Cg8QF557/aWKqk2FTBP4z6oAIEgIPcg5fo3FW4KxTwuR07lsszpnYBACkr15jPmXeCicTbXDM0swJ0Mr8bUfSpRbY4mTdqoIXii2nz4lg9/US0fL2YVtttsnNgKFO0Lyp0HBEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=KRMZuhUa; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A9BF645E2A
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net AFAC145E2A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1718663060; bh=HPYLTSFUH5oZfQxR9MgPiJfzXvdf8Ci3riP4ABtTYJ4=;
+	t=1718663085; bh=6TWn/l9pktBcbkbB492KVy81g2F+cmsxbVam3E418SA=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ocDojUDgNwiI+LMYiI1BdrILN2gQ5TFJkzqDJ8Vgel4+QQts6kWcQaSwiFfQYrHx+
-	 R8fWUid5TaVYBUgP+55YMtivrQtw22vMvWfjFEaU1LubGJaX+cn9QbFvr1EqhUgf6T
-	 Te3foxHxkrMxlEzbkvGmU524k/lZ93f3lDB5Cl5n1TzzLmkpNrDt2dEuvl9y9HAP1/
-	 CHHZv3H1I7D5BDg+I0NIBhRpo0Xq7QXJ6g1g8qVvofzCvDV8GRnkrJ2mjplFtLeSH5
-	 Dg4aFvR+2e3pLOWWEP46zo9f38Wwl7q7v2KSjrFpWb7v0JshUNYQm7SLGK7Fjz9kHM
-	 s5X/8lKlq8w1A==
+	b=KRMZuhUaeiCZzdqINKn5jcDyn3JaUqRc7NcM+/nll5LWRBRmP6u9WqGYItKrPQKIn
+	 4asJDAIhGc6tfUAaFXQMJLa+DUyU4GVcx8UE4gI9hwqGe5nStPWnUbagn7Z1yoN9ia
+	 slAc1Hn0Bn8LbIIa4vWlpsx5rFeOqpu3IKwSLOhJeAjV7XQD7mXd1EVRGlJa6xDyC8
+	 3VwLXDsxclFBktvdWX8opPPF2pSVDKUE4SFSsTxN+YNTR1TY+BoupYCbzCp6cJ6Q3m
+	 Sp/w89C+jiMsA2EXbz3jwqnkjKStPBus1E4qcqKle3l8FiW99eYMfB8hXyOPG/33T1
+	 zTTh3E2kXRWSw==
 Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id A9BF645E2A;
-	Mon, 17 Jun 2024 22:24:20 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPSA id AFAC145E2A;
+	Mon, 17 Jun 2024 22:24:45 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
-To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org,
- netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: Remove the "rhash_entries=" from
+To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org, Krzysztof
+ Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ arnd@arndb.de
+Subject: Re: [PATCH] Documentation: Remove unused "mtdset=" from
  kernel-parameters.txt
-In-Reply-To: <20240614092134.563082-1-thuth@redhat.com>
-References: <20240614092134.563082-1-thuth@redhat.com>
-Date: Mon, 17 Jun 2024 16:24:19 -0600
-Message-ID: <87y173gqcs.fsf@trenco.lwn.net>
+In-Reply-To: <20240614182508.600113-1-thuth@redhat.com>
+References: <20240614182508.600113-1-thuth@redhat.com>
+Date: Mon, 17 Jun 2024 16:24:44 -0600
+Message-ID: <87tthrgqc3.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,25 +69,27 @@ Content-Type: text/plain
 
 Thomas Huth <thuth@redhat.com> writes:
 
-> "rhash_entries" belonged to the routing cache that has been removed in
-> commit 89aef8921bfb ("ipv4: Delete routing cache.").
+> The kernel parameter "mtdset" has been removed two years ago in
+> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support") and
+> thus should be removed from the documentation now, too.
 >
 > Signed-off-by: Thomas Huth <thuth@redhat.com>
 > ---
->  Documentation/admin-guide/kernel-parameters.txt | 3 ---
->  1 file changed, 3 deletions(-)
+>  Documentation/admin-guide/kernel-parameters.txt | 5 -----
+>  1 file changed, 5 deletions(-)
 >
 > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 756ac1e22813..87d5bee924fe 100644
+> index 87d5bee924fe..ff02e1a02e12 100644
 > --- a/Documentation/admin-guide/kernel-parameters.txt
 > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -5781,9 +5781,6 @@
->  		2	The "airplane mode" button toggles between everything
->  			blocked and everything unblocked.
+> @@ -3631,11 +3631,6 @@
+>  	mtdparts=	[MTD]
+>  			See drivers/mtd/parsers/cmdlinepart.c
 >  
-> -	rhash_entries=	[KNL,NET]
-> -			Set number of hash buckets for route cache
+> -	mtdset=		[ARM]
+> -			ARM/S3C2412 JIVE boot control
 > -
+> -			See arch/arm/mach-s3c/mach-jive.c
 
 Applied, thanks.
 
