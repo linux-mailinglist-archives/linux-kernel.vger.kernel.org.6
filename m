@@ -1,203 +1,143 @@
-Return-Path: <linux-kernel+bounces-218123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D26990B994
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:23:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1E990B98B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5867B2F94D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:22:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21B3D1F25603
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4FF19A2B5;
-	Mon, 17 Jun 2024 18:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB43619AD64;
+	Mon, 17 Jun 2024 18:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nBORirBa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="89M5oUoc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nBORirBa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="89M5oUoc"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amq+9uNr"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C454D19755F
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7938019AD4A
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718648305; cv=none; b=Nb2aWQ+rJhj1BQNFV7y8LZRQ3jRyM39vUC52OC9dbARhxz+OZDNAvhLhpE2emzkIcB6YIOxzEOtLpHIOFtsbog0xm3z34ZKn2HIJdJPNHd7KpxNAnpV2vHw1vPGBSQsOeBa5FoBy1mmRyGjzK3Ze9wpBg1BUo9DnCIdqnbADnvI=
+	t=1718648314; cv=none; b=t43ZE4+StdfrmrYTeExeNuymRMSN0jSYRJ0SMTPKsiMSRXHG6A6ZotMCqi+ZHRp00CSFkmZOzYCwMQUtmUlblFRNtPKZ/Nbrl1t18pnbVrpN08qdv8uxNRoNAd8nCAy3ZZhIIIeCjkoruzaqLF1p3hxyJQ++StFHEx4SE2JBMEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718648305; c=relaxed/simple;
-	bh=+jomKzveyXY2tTRka5xwlhaDV7ne7uUxM+zGwO4hnGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UEW9LcTCg7q1rDdyTZFht7BaaixcjO9Ly4/FhY9WTUp3/T0lyoeWe5S0iJqYJG8dXYWiUA/5daPgpLGBO3pz2nYUmESroFdgrwUB+ZJnJHmhV3xZ4vzHYzDxYA2HA9kFTXay1mUlDZA9nPObVh9TUcceWvNqZM8wiYmXyDVNSDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nBORirBa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=89M5oUoc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nBORirBa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=89M5oUoc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6906C219B8;
-	Mon, 17 Jun 2024 18:18:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718648299; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9y+6syuY0d4lFZbPYpRMim+4VcbHKlTIw3/agQk/TDg=;
-	b=nBORirBa08jmfq2NO/U4y4YUboVTjTcpyYw7U19N5OFxFNgDRA9B19pyBpy9iMPNr2irxh
-	jCQtTehWQXRQoMwiGGhy4dR7TqtlPa2V1R+PDyFXoejny05bGlw0K/OZRfgGBEY+EqNfQl
-	IiCfdY9ntU6UzBUikafjKsEd+v/ji7M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718648299;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9y+6syuY0d4lFZbPYpRMim+4VcbHKlTIw3/agQk/TDg=;
-	b=89M5oUoctl5izBKekMyc9yJIvNlUKeirgB8u3OTsv8up647yqSbjsdu/SvD9yHPXh99Uvj
-	6rpX0LN28U+Qb+AA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718648299; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9y+6syuY0d4lFZbPYpRMim+4VcbHKlTIw3/agQk/TDg=;
-	b=nBORirBa08jmfq2NO/U4y4YUboVTjTcpyYw7U19N5OFxFNgDRA9B19pyBpy9iMPNr2irxh
-	jCQtTehWQXRQoMwiGGhy4dR7TqtlPa2V1R+PDyFXoejny05bGlw0K/OZRfgGBEY+EqNfQl
-	IiCfdY9ntU6UzBUikafjKsEd+v/ji7M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718648299;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9y+6syuY0d4lFZbPYpRMim+4VcbHKlTIw3/agQk/TDg=;
-	b=89M5oUoctl5izBKekMyc9yJIvNlUKeirgB8u3OTsv8up647yqSbjsdu/SvD9yHPXh99Uvj
-	6rpX0LN28U+Qb+AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 03EE0139AB;
-	Mon, 17 Jun 2024 18:18:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zlhvNel9cGa4HQAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Mon, 17 Jun 2024 18:18:17 +0000
-Date: Mon, 17 Jun 2024 20:18:14 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Douglas Anderson <dianders@chromium.org>,
- dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH RESEND] drm/display: Drop obsolete dependency on
- COMPILE_TEST
-Message-ID: <20240617201814.73a07702@endymion.delvare>
-In-Reply-To: <vsrsvmrkqnmxs3ncqv5m2gevzefiq55tr2iolxlmoehsvgcfkn@hyx37vax6r5e>
-References: <20240617103018.515f0bf1@endymion.delvare>
-	<xd2yybtxvzte7gwqwg2vudzvhoekqao2dle6zsuduzjzi3rsay@xhahwof2prph>
-	<20240617132348.5f20bf89@endymion.delvare>
-	<vsrsvmrkqnmxs3ncqv5m2gevzefiq55tr2iolxlmoehsvgcfkn@hyx37vax6r5e>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1718648314; c=relaxed/simple;
+	bh=uzUtkaBs1eFh4Kg9PPe9ZguhkJmdxCgTLkwCF9xPsqo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kw5Z+ErwLId/yPDC9DhSt5ohmysRtxMEfbsmDPxjju/h1MfBusXpX0jc9dNC4D+U2nj86O/ewLv6lrAQsUQ1Lq4teoyHApmhggn67MhpZJse9Sp71zFEqjC6GYXqCqPjL9P0/oXF9jbrTx04R7HWEbSOfVHuPCc95kBb8j9Zn5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amq+9uNr; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bbdc237f0so5201395e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:18:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718648309; x=1719253109; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ceumPs6CQec2Ii8QHoLW6uVvM6OUIg9EFfPHe4qWsWE=;
+        b=amq+9uNrkW+jkpvs8ZvFy3AyRCVHpuv+qhFwAS+xMGN+b7nThHQx7kNMJRWpkPLoWa
+         VReKoabxeS1dklMDZjoRE2sPgT1/xXvbEAKcQUrBtQIRtNmEre91yAfuAAmJhUpvxlai
+         nLTYRUpRtVooqcR6bsvPqwNlHuImagd85esbBFSnB4jHOFyJS4JewjlBnwbJpcil97Vq
+         LAFbjKFq/J5XDgoQPtqKiljvZ5G/Fhmm9Ahcn84ceFemPOQJCWbCIsokkP/md6bD5NSW
+         dVI8Gdqqc4HfvQuYh3GG3smCC7QDHmRvSEXPehTAULWlqjQaJ7h4I1IxvJthlMpFhuIP
+         1cJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718648309; x=1719253109;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ceumPs6CQec2Ii8QHoLW6uVvM6OUIg9EFfPHe4qWsWE=;
+        b=vN7BV975vfwcC7CXLjYezX/UTZA6OEFEr7rRKC1cGby61OUpdqVfZZaGeQasUd59P3
+         yi4AavtmrHMnjtaNJSSrBOjSlhBuykJGQ5NWowMGsTFei4evovcx4GdU1MWE3QMSoYAU
+         s/xEDQRVxHkczksGAF6PIBKAYjzic4MMdOoc2u8iEszKw8VNuYnAjhBd+oIcyKVOv2FD
+         Q9T02N8MyuofUe4NAi6v1NkpJalFBof8Moye+TPWzgEEnUthRhSb/KDc/8+QipoZgwOZ
+         2Te461IAXZVeby7YlovFvXCyJRG0EtFAj4XAb6pdb5jTpCkDBiCVcf3JYGTDLTB2rpl2
+         kIbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwE5PAmNK5wgUqySrxvmzKf0Xt0OczeGirMK/lBB8K5d1JcOwM4va1LzRho5+Pl+fw+yU0WWSXsA6uvs1/oHWuWNagKLNNTFjYBpZy
+X-Gm-Message-State: AOJu0YxZyLX2X4lPs9KRDbz5fFdqy5nwD08/kABO9PwMpL4iO5+cRo7N
+	sifFs79t6FuDD0afUWyEj8Wqt46jAkeMCEeFi7ndKeyl0tuwyY+aAJ4yLv97wVp69fB6Ap2y7ZM
+	dsPXFGWhTMmW47b22hm5voF7GJhA=
+X-Google-Smtp-Source: AGHT+IEXnCfaKbC9VECLKvXP+gGDAdtlS2kXJD36wyau7KK+j3fKiPUEihIWyil45KdwIUkqEaNkbCk4Vt/mqTiW+z4=
+X-Received: by 2002:a05:6512:3618:b0:52c:a7c8:ec42 with SMTP id
+ 2adb3069b0e04-52ca7c8ed39mr6903120e87.0.1718648309268; Mon, 17 Jun 2024
+ 11:18:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	HAS_ORG_HEADER(0.00)[];
-	FREEMAIL_CC(0.00)[chromium.org,lists.freedesktop.org,vger.kernel.org,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch,linux-foundation.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
+References: <20240614040133.24967-1-jason-jh.lin@mediatek.com> <20240614040133.24967-3-jason-jh.lin@mediatek.com>
+In-Reply-To: <20240614040133.24967-3-jason-jh.lin@mediatek.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Mon, 17 Jun 2024 13:18:17 -0500
+Message-ID: <CABb+yY2bwj2BcdJLGe1ZYwCrnXL3LtcePMb=wQPaBKorBSs2yA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mailbox: mtk-cmdq: Move pm_runimte_get and put to
+ mbox_chan_ops API
+To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Singo Chang <singo.chang@mediatek.com>, 
+	Nancy Lin <nancy.lin@mediatek.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 17 Jun 2024 14:55:22 +0300, Dmitry Baryshkov wrote:
-> On Mon, Jun 17, 2024 at 01:23:48PM GMT, Jean Delvare wrote:
-> > Hi Dmitry,
-> > 
-> > Thanks for your feedback.
-> > 
-> > On Mon, 17 Jun 2024 12:57:19 +0300, Dmitry Baryshkov wrote:  
-> > > On Mon, Jun 17, 2024 at 10:30:30AM GMT, Jean Delvare wrote:  
-> > > > Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
-> > > > is possible to test-build any driver which depends on OF on any
-> > > > architecture by explicitly selecting OF. Therefore depending on
-> > > > COMPILE_TEST as an alternative is no longer needed.    
-> > > 
-> > > The goal of this clause is to allow build-testing the driver with OF
-> > > being disabled (meaning that some of OF functions are stubbed and some
-> > > might disappear). I don't see how user-selectable OF provides the same
-> > > result.  
-> > 
-> > Historically, the goal of this clause *was* to allow build-testing the
-> > driver on architectures which did not support OF, and that did make
-> > sense back then. As I understand it, building the driver without OF
-> > support was never a goal per se (if it was, then the driver wouldn't be
-> > set to depend on OF in the first place).
-> > 
-> > Some of my other submissions include the following explanation which
-> > you might find useful (I ended up stripping it on resubmission after
-> > being told I was being too verbose, but maybe it was needed after all):
-> > 
-> > It is actually better to always build such drivers with OF enabled,
-> > so that the test builds are closer to how each driver will actually be
-> > built on its intended target. Building them without OF may not test
-> > much as the compiler will optimize out potentially large parts of the
-> > code. In the worst case, this could even pop false positive warnings.
-> > Dropping COMPILE_TEST here improves the quality of our testing and
-> > avoids wasting time on non-existent issues.  
-> 
-> This doesn't seem to match the COMPILE_TEST usage that I observe in
-> other places. For example, we frequently use 'depends on ARCH_QCOM ||
-> COMPILE_TEST'. Which means that the driver itself doesn't make sense
-> without ARCH_QCOM, but we want for it to be tested on non-ARCH_QCOM
-> cases. I think the same logic applies to 'depends on OF ||
-> COMPILE_TEST' clauses. The driver (DP AUX bus) depends on OF to be fully
-> functional, but it should be compilable even without OF case.
+On Thu, Jun 13, 2024 at 11:01=E2=80=AFPM Jason-JH.Lin <jason-jh.lin@mediate=
+k.com> wrote:
+>
+> When we run kernel with lockdebug option, we will get the BUG below:
+>   BUG: sleeping function called from invalid context at drivers/base/powe=
+r/runtime.c:1164
+>   in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 3616, name: kw=
+orker/u17:3
+>     preempt_count: 1, expected: 0
+>     RCU nest depth: 0, expected: 0
+>     INFO: lockdep is turned off.
+>     irq event stamp: 0
+>     CPU: 1 PID: 3616 Comm: kworker/u17:3 Not tainted 6.1.87-lockdep-14133=
+-g26e933aca785 #1
+>     Hardware name: Google Ciri sku0/unprovisioned board (DT)
+>     Workqueue: imgsys_runner imgsys_runner_func
+>     Call trace:
+>      dump_backtrace+0x100/0x120
+>      show_stack+0x20/0x2c
+>      dump_stack_lvl+0x84/0xb4
+>      dump_stack+0x18/0x48
+>      __might_resched+0x354/0x4c0
+>      __might_sleep+0x98/0xe4
+>      __pm_runtime_resume+0x70/0x124
+>      cmdq_mbox_send_data+0xe4/0xb1c
+>      msg_submit+0x194/0x2dc
+>      mbox_send_message+0x190/0x330
+>      imgsys_cmdq_sendtask+0x1618/0x2224
+>      imgsys_runner_func+0xac/0x11c
+>      process_one_work+0x638/0xf84
+>      worker_thread+0x808/0xcd0
+>      kthread+0x24c/0x324
+>      ret_from_fork+0x10/0x20
+>
+> We found that there is a spin_lock_irqsave protection in msg_submit()
+> of mailbox.c and it is in the atomic context.
+> So when cmdq driver calls pm_runtime_get_sync() in cmdq_mbox_send_data(),
+> it will get this BUG report.
+>
+> To avoid using sleep in atomic context, move pm_runtime_get_sync to
+> mbox_chan_ops->power_get and also move pm_runtime_put_autosuspend to
+> mbox_chan_ops->power_put.
+>
+> Fixes: 8afe816b0c99 ("mailbox: mtk-cmdq-mailbox: Implement Runtime PM wit=
+h autosuspend")
 
-The major difference is that one can't possibly enable ARCH_QCOM if
-building on X86 for example. Therefore COMPILE_TEST is the only way to
-let everyone (including randconfig/allmodconfig build farms) test-build
-your code.
+Can you please share the pattern of mailbox transfers on your platform?
+As in, how often and long are the "channel idle" periods? And when
+active, how many transfers/sec ?
+I see every TX is acked by one RX packet. How long is the typical gap
+between a TX and its ack?
 
-On the other hand, if you want to test-build drm_dp_aux_bus, you can
-simply enable OF, because it is available on all architectures and
-doesn't depend on anything. No need for COMPILE_TEST.
-
-For clarity, I'm not advocating against the use of COMPILE_TEST,
-actually if you check the history of my kernel contributions 10 years
-back, you'll find commits from me adding COMPILE_TEST in addition to
-arch-specific dependencies to many drivers. All I'm saying is that it
-should only be used when it is the only way to enable the build.
-
--- 
-Jean Delvare
-SUSE L3 Support
+Thanks
 
