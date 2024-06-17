@@ -1,127 +1,163 @@
-Return-Path: <linux-kernel+bounces-217439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB1990AF9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:39:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16BC090B00F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BEC41C217E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:39:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C9AA1C21BCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25B419AD5B;
-	Mon, 17 Jun 2024 13:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5051D363D;
+	Mon, 17 Jun 2024 13:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="E+gpl1EW"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSeeEeXm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0F219AD58
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0B11D3621;
+	Mon, 17 Jun 2024 13:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630561; cv=none; b=eeN20VeD8ci+llWtipKdWTsVxIDtB/dBtJ7sCHO658da9/yKqIIGdQxkTUGu3w25CuZvm+bXFfK1iVGVTsHP6K2WKRE2gC7TEp3jlpCN7PMAJVoJ1TV5vVVBdiHYi/XJKJhfwn5OOsqaib2wBwhnWeapFHuykKh1uxl+ISR2ds4=
+	t=1718630654; cv=none; b=gWcxkPMOF7/rF/VoY5d2m2WMfSZLIU1nOEPQ0jUvxYkUnIDs6q1l5ywOxo1Sdw++oi9Mf1hzRu8intjP/SnPc26wpNu8bQeFWd9EExYyxJaqcrfQqjWDlSbNyKikYP+y9EySfYQmxDpPe+cQbdpffmqWDQwlJIFq4rg/hbu08KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630561; c=relaxed/simple;
-	bh=x2/TWbf4pMW/7B3jUbR49NyBzVBSJJKoqAkbb4uuZqs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TPkM2OHCYhecj06L56cqZPBHYoOcoszrJEqziN+d3q/xCrU+LwIiEZ9qC5++CDTd+WPT3oZ1XEQZTV4Co5SFA0A8hIqjwhtaxvAjg5ChPekpbM3be0CqrjFziQnaeHgbeX6b/Dv2Li6GiY6e9n56K99kuhQkTpdYJTsVljBKsLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=E+gpl1EW; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso59260401fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:22:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718630555; x=1719235355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ZbiqmECcZY8mamkHFgAOvFj2yp3N5y/XiTKfM4Svdg=;
-        b=E+gpl1EWGFhN9DRUzAdWNdoTkmKLT9eYD5xha9LrD87RAmtXDphi+hqmeciGHNR8gM
-         EUrsPaMxIrklw2gNLQ4WaC1+MYwwb+ZXHWs6TLUynFZzUjRV3P8wL2yUX0MlbkKhWMFG
-         MEnmnij/3KpPImi85WHJXNgBsnaeNgzr4CTEdMCWU2lm/lPMrlvAbRcUk47lalloAaCh
-         b3gpn+zrfHPsvKwpbz/Ovllpz08Owyx5xWGXfGk/p/IWjsN97lmRa2L4qAR1QbadbYgX
-         /YGUD5f9iMKNEWi78irsYe23lIs+0iACmwl6UC2b5AUt175uqeBgCPJJ9HLs6CRM5P0G
-         mKBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718630555; x=1719235355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2ZbiqmECcZY8mamkHFgAOvFj2yp3N5y/XiTKfM4Svdg=;
-        b=ROFOmC4RIbchJ2XFCdmmMD5uF4BL/yB+HP/MIhj2Ibfj56MzbbU3K1mHzsr1noO6di
-         2DslXwQlp0NWLYaAqKNjAMWNM3re79Wx8Fz0FfAgTJwsR3CH/XQXIxo5yAtRDIYt1qjV
-         5RaCEPMgV/bDZWYGmyQtGwqOFZodxWx2OOU57sLtZhuivnBG3aO7svVPlRIDouFqmXJ/
-         aLvmWSs8GPfkWOvvkmTBekMNtg+/ythnpE0+87HR9omGID5hl7IHkbXcSzuUG3CMf/vg
-         kkT00Gbsgkm4k3WnN4Kz5dn4iAozErs77rjg9ObhgV16Yhg2wxMg7baYixjaNXniu7BV
-         pRZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfuSVBzgVvOuRJuo4SFlDDiAymn/jwAr0DncjgLwYbo62E6DfuHE68YmsrVPtazhVM3pjJ0fOvGpkKRU5mq894OI6q+JEIXEk5TVNt
-X-Gm-Message-State: AOJu0YwqvXHQkqhgo1USPmOkvjjeypUOuLyW5Sy2TmfY7Z/vCWlsK408
-	u1OgnuIrLANL7y3/NwIxRGdhzuYkgnTgsL3J2rGedyHKe7Sg1l3eyIycUFP3YMFLi4Beln3Ciyn
-	d57cVZ/NoBMbpGW7XsK5gQT/qx6svhQKkc71UJw==
-X-Google-Smtp-Source: AGHT+IFTPp5MCmbl5JG32vigsgybvL3dycGFvRHZv60p5LHQHldYQWcRVTiphDUMaheGmt7QEUHyx14Mo+lEkfgLk3w=
-X-Received: by 2002:a2e:9a8b:0:b0:2ec:c8:2755 with SMTP id 38308e7fff4ca-2ec0e5d085amr58381091fa.24.1718630554747;
- Mon, 17 Jun 2024 06:22:34 -0700 (PDT)
+	s=arc-20240116; t=1718630654; c=relaxed/simple;
+	bh=hrFQYKSoSedno6t/TMSRyd6Lxlx09BkJvdjqaOsR+cQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ht1AOIaGg6BHwTbJGhiudvlL61ozHmIWNvSTattsfP/15xRXc/MaIPlzL4SVXaIoFXHTsD4PDUrbGmSfjzEN9fSR8Rd4LPCi2JGm2gv24Snkfuw+ixuHi+IU0plOlbZIt2+s/oEQuM/q8yPPdbFu+Z0OlE+QKdqotxLoyeaGVNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSeeEeXm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33EEDC2BD10;
+	Mon, 17 Jun 2024 13:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718630654;
+	bh=hrFQYKSoSedno6t/TMSRyd6Lxlx09BkJvdjqaOsR+cQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QSeeEeXmMKoEihJRjE9YknALWiFEdoZ72KiWmknXw6u8OCtn6LYmB+9U9sLlG5MF/
+	 JoA4SdSnekjg10nj/BhnhUlJoMjpTdlTrL9zV2VWZ3qdsCTaIgy4WaTzpJWWx1JjAX
+	 ZwqqKPJRjhi91HV3QjWwWD8MO4FSu6lADSTxou4D9YshAwBGRQv0bd00POh7tydqV7
+	 RMKJSOpJ2cx+aiIt0hzS/Dcpm5BgvQbWciVkGkEgEkn5RWgBPKz5dntVcxwhP/JHms
+	 xdOAvQqmlZdgggO1D8R2fT0aEwXNDO8v8XvTpWSa8DRMjwIPvrF6iXGknmMixcdWNR
+	 wpJO3p957s89A==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-input@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 26/35] Input: silead - Always support 10 fingers
+Date: Mon, 17 Jun 2024 09:22:24 -0400
+Message-ID: <20240617132309.2588101-26-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240617132309.2588101-1-sashal@kernel.org>
+References: <20240617132309.2588101-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
- <20240612-iio-adc-ref-supply-refactor-v2-1-fa622e7354e9@baylibre.com>
- <20240615130858.22043725@jic23-huawei> <dbf947a3-3d3b-4686-a707-a813b6a4ce5a@gmail.com>
-In-Reply-To: <dbf947a3-3d3b-4686-a707-a813b6a4ce5a@gmail.com>
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 17 Jun 2024 08:22:23 -0500
-Message-ID: <CAMknhBFJ01Xu69Arvd3S=dbADGFmzaYKm2XBtw_CtnjtYwnnew@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] iio: adc: ad7192: use devm_regulator_get_enable_read_voltage
-To: Alisa-Dariana Roman <alisadariana@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Mark Brown <broonie@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.34
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 4:35=E2=80=AFAM Alisa-Dariana Roman
-<alisadariana@gmail.com> wrote:
->
-> On 15.06.2024 15:08, Jonathan Cameron wrote:
-> > On Wed, 12 Jun 2024 16:03:05 -0500
-> > David Lechner <dlechner@baylibre.com> wrote:
-> >
-> >> This makes use of the new devm_regulator_get_enable_read_voltage()
-> >> function to reduce boilerplate code.
-> >>
-> >> Error messages have changed slightly since there are now fewer places
-> >> where we print an error. The rest of the logic of selecting which
-> >> supply to use as the reference voltage remains the same.
-> >>
-> >> Also 1000 is replaced by MILLI in a few places for consistency.
-> >>
-> >> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> >
-> > Complicated bit of code, but seems correct.
-> > However, it crossed with Alisa-Dariana switching adding a
-> > struct device *dev =3D &spi->dev to probe() that I picked up earlier
-> > today.
-> >
-> > I could unwind that but given Alisa-Dariana has a number of
-> > other patches on this driver in flight, I'd like the two of you
-> > to work out the best resolution between you.  Maybe easiest option
-> > is that Alisa-Dariana sends this a first patch of the next
-> > series I should pick up.
-> >
-> > Thanks,
-> >
-> > Jonathan
-> I will add this patch to my series and send it shortly.
->
-> Kind regards,
-> Alisa-Dariana Roman.
+From: Hans de Goede <hdegoede@redhat.com>
 
-Great, thanks!
+[ Upstream commit 38a38f5a36da9820680d413972cb733349400532 ]
+
+When support for Silead touchscreens was orginal added some touchscreens
+with older firmware versions only supported 5 fingers and this was made
+the default requiring the setting of a "silead,max-fingers=10" uint32
+device-property for all touchscreen models which do support 10 fingers.
+
+There are very few models with the old 5 finger fw, so in practice the
+setting of the "silead,max-fingers=10" is boilerplate which needs to
+be copy and pasted to every touchscreen config.
+
+Reporting that 10 fingers are supported on devices which only support
+5 fingers doesn't cause any problems for userspace in practice, since
+at max 4 finger gestures are supported anyways. Drop the max_fingers
+configuration and simply always assume 10 fingers.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Link: https://lore.kernel.org/r/20240525193854.39130-2-hdegoede@redhat.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/input/touchscreen/silead.c | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/input/touchscreen/silead.c b/drivers/input/touchscreen/silead.c
+index 62f562ad50263..050fa9ca4ec94 100644
+--- a/drivers/input/touchscreen/silead.c
++++ b/drivers/input/touchscreen/silead.c
+@@ -71,7 +71,6 @@ struct silead_ts_data {
+ 	struct regulator_bulk_data regulators[2];
+ 	char fw_name[64];
+ 	struct touchscreen_properties prop;
+-	u32 max_fingers;
+ 	u32 chip_id;
+ 	struct input_mt_pos pos[SILEAD_MAX_FINGERS];
+ 	int slots[SILEAD_MAX_FINGERS];
+@@ -136,7 +135,7 @@ static int silead_ts_request_input_dev(struct silead_ts_data *data)
+ 	touchscreen_parse_properties(data->input, true, &data->prop);
+ 	silead_apply_efi_fw_min_max(data);
+ 
+-	input_mt_init_slots(data->input, data->max_fingers,
++	input_mt_init_slots(data->input, SILEAD_MAX_FINGERS,
+ 			    INPUT_MT_DIRECT | INPUT_MT_DROP_UNUSED |
+ 			    INPUT_MT_TRACK);
+ 
+@@ -256,10 +255,10 @@ static void silead_ts_read_data(struct i2c_client *client)
+ 		return;
+ 	}
+ 
+-	if (buf[0] > data->max_fingers) {
++	if (buf[0] > SILEAD_MAX_FINGERS) {
+ 		dev_warn(dev, "More touches reported then supported %d > %d\n",
+-			 buf[0], data->max_fingers);
+-		buf[0] = data->max_fingers;
++			 buf[0], SILEAD_MAX_FINGERS);
++		buf[0] = SILEAD_MAX_FINGERS;
+ 	}
+ 
+ 	if (silead_ts_handle_pen_data(data, buf))
+@@ -315,7 +314,6 @@ static void silead_ts_read_data(struct i2c_client *client)
+ 
+ static int silead_ts_init(struct i2c_client *client)
+ {
+-	struct silead_ts_data *data = i2c_get_clientdata(client);
+ 	int error;
+ 
+ 	error = i2c_smbus_write_byte_data(client, SILEAD_REG_RESET,
+@@ -325,7 +323,7 @@ static int silead_ts_init(struct i2c_client *client)
+ 	usleep_range(SILEAD_CMD_SLEEP_MIN, SILEAD_CMD_SLEEP_MAX);
+ 
+ 	error = i2c_smbus_write_byte_data(client, SILEAD_REG_TOUCH_NR,
+-					data->max_fingers);
++					  SILEAD_MAX_FINGERS);
+ 	if (error)
+ 		goto i2c_write_err;
+ 	usleep_range(SILEAD_CMD_SLEEP_MIN, SILEAD_CMD_SLEEP_MAX);
+@@ -591,13 +589,6 @@ static void silead_ts_read_props(struct i2c_client *client)
+ 	const char *str;
+ 	int error;
+ 
+-	error = device_property_read_u32(dev, "silead,max-fingers",
+-					 &data->max_fingers);
+-	if (error) {
+-		dev_dbg(dev, "Max fingers read error %d\n", error);
+-		data->max_fingers = 5; /* Most devices handle up-to 5 fingers */
+-	}
+-
+ 	error = device_property_read_string(dev, "firmware-name", &str);
+ 	if (!error)
+ 		snprintf(data->fw_name, sizeof(data->fw_name),
+-- 
+2.43.0
+
 
