@@ -1,163 +1,183 @@
-Return-Path: <linux-kernel+bounces-216698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E469290A357
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:29:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811CC90A35B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D5F31F21E96
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 05:29:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4BB281B4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 05:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2D5181CF9;
-	Mon, 17 Jun 2024 05:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C076C181CE3;
+	Mon, 17 Jun 2024 05:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YnOwnzWU"
-Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYFBRyNw"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFB8181330;
-	Mon, 17 Jun 2024 05:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F8A17F5;
+	Mon, 17 Jun 2024 05:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718602186; cv=none; b=U4wNQKrzPEGXY8RRy5qqvGAVNcMFDxdpy03z3VTOZ1MIkwetAuydxVFdNFidljbfbBRJDe3xulknFiZ4wGR4jbjVZ15dHgG3uMmr1iI60jVGor0zOItpYlvAHj5vfKAWIBys6K1FvBxdPG2j34vxenp2css2xe/HIigT8Eeut7Y=
+	t=1718602467; cv=none; b=E0Y3PBmueTUPFCMbC9E7FSi6EMkoXlVbhT1KDsF4OPzcasRpanNc5NvbSjBu2G4pFNHHIl/lQf2y0TrmkIVzR9Bt1f2Ix3Jzw84+TZ+KRezVky/D7u+rCuRjttUo2Ib9WdFEafLHMr2bITzkRwg2cWjlqjI6DB7LE48pFSLV+Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718602186; c=relaxed/simple;
-	bh=VZl9Dt00+pQFuwUZq2ZbWrXnzRU7zRHOGJ+iYooxmx0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=BIasybgKa8LYCjbjWPpkgBSlUAxA69fIxRU/5bd3p/snz4pEle4+2irU87pj63h7bBmUsZPisRXApePnG78XL5bklNO02UaH4bcFlThCa2k6PMlHd7oos1n9HJuRwPOKy1jIiyEQAuK0+I5EBpvhjIiZUG5WXtu5c5PZHJPAGM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YnOwnzWU; arc=none smtp.client-ip=209.85.216.67
+	s=arc-20240116; t=1718602467; c=relaxed/simple;
+	bh=icaSQIDrys6BH1yXczYwSFZuCZg6/iaQQNbRtTPdyLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UwDNH4h57gtmuAK5nyxXaVC8Lm3O1GddXU9CY1tETJ+6N7Xc10mdyrt3/k9/op5Pvw3WC1GSP1uTizN1TjaWlpT95UySpx3WI2MnZ025RxDgeTJhtlPPts5o7zV07nVapaOuOQvELo0kmJDGcJ6iXbqhKetJgo87kf9BxbgZJrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MYFBRyNw; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-2c4e2cd931aso521199a91.0;
-        Sun, 16 Jun 2024 22:29:44 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so5104081e87.1;
+        Sun, 16 Jun 2024 22:34:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718602184; x=1719206984; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TUsI5R+Z0iy5fF8mDhU7qwVZOawS/mIqRte7Pe8J3zI=;
-        b=YnOwnzWUaZmO/D+ow7ns103fHsew4JkE0bhjlHn2ZOS6wVzASxBOqXnfbRT49c3adA
-         2+B4R6MfoL+o0+q4AcPoNes9DAlJMXJW9ri6tvm1fTYCi6Dbsg0nMG1iJX7R6kbZXP3L
-         pY3pBVkxgBvb0O+otaSy/kyEjOACnEHN9Sq4qL/49ipjbNR6ZtHBfMj2OJ8Ri2AE7eIm
-         BLXdlGZ2xB5H+6m3eq4eVO2HnuukuNP8445tPCnUmfzW+mK1uGNxwOAZOLUCklsAl3+2
-         dbIZUYCF+uVMhI8j2MW8X7FfEI77cMfKo8YEH1BH1HWTfchYTOIulZz97s/1A8tj4qEA
-         aa4g==
+        d=gmail.com; s=20230601; t=1718602463; x=1719207263; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kSpZmf1K082PIUbwqLvXPKnERoeKQ/2WmW8jA1K0LCw=;
+        b=MYFBRyNw+vKVN1rbr+vi3i/ESMhsi1KYjPZkfzbTT9jbgTU5cKjEQE5rD7g8waDewY
+         WaSq/6EgAPRZvA1BVl7ijMgp/clW3tInOqoMQgjTabL6wZGdvWR/h8NSH7UVGVidWfm2
+         cSWhNN2SexqEhUmjJnrK0v4i+8rjeUrPmuOuZKQItKKxp4a9fq2LOZfjtziGROQmoYiH
+         nyQABufn9NAqw2T83f+QPxo1v/r/y8YwDWYpddBcjOrC5XkOkQhZbKqDksxlWMT+8GSe
+         +OecaxCeExsaxC/ojKSoNp8xW5pvTmdQVQktCXlo9hfAFszZHimYcAt0Hw/LUcZBX3QS
+         mNlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718602184; x=1719206984;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TUsI5R+Z0iy5fF8mDhU7qwVZOawS/mIqRte7Pe8J3zI=;
-        b=OnOUjEjHzsl3pvpHV5m2XNG9LYXP5qRv0pqoxYwYaqThLn+Yc0g/HKij9CR6x9D3Nf
-         SMsaXrcoX9NwXDT131K0Q9Apr7C/SZ8utvqZNpwgqbGQZMSIYRuKrNsXESHQwVNG7y2S
-         ts7nyqtuN9sBhMLUuRa5O8yOAEAOu23vO88IhCtPzGRfRzja9GHDejdVwYv88RWAJ97J
-         cYjRZicRBmUqM0PbrhE2GNPpuh0wCo1Hu8IRHecvsNrblVz3m8Vi0VsY7zDv/ZmK52GZ
-         jeeEPO5YGTg3cohzjshhMc3TWZ/UBknGpNLlxasQkR+cd3kR+ftkMQsvo7yeCJ6HThGc
-         br1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXk/StLLP9BKjv5xy2hRKJqisoQ+8rvvSGoP8JuPgTKJel7+oQch4RQiED3lUe/Q4TOvlXmEhpKUnCdNGgixJTJHhV6SBrbRm+SXeblTuWSTJet+rs6umgvbHwvN/c+wT8hwpNTKP2ZnLqkgcTS
-X-Gm-Message-State: AOJu0YwSXZG8fKXMzb7CNu9Y/6+Jfoopwt67jPW+rq9vqtq5BHjoVTKz
-	/jZngjuqt3IIDd4FVjMvo7e2WKeqas/m38sXihXPLj6qgWbz7cGw
-X-Google-Smtp-Source: AGHT+IH3QQcBtYgpWXy8Eibq53Mk2mB6I+M4MbSta2aASqh/Q1m8xZoJHiVBxZsXJ0RpaXUKk29i0w==
-X-Received: by 2002:a17:902:d4c7:b0:1f2:f9b9:8796 with SMTP id d9443c01a7336-1f8627eb9fcmr102562255ad.2.1718602184316;
-        Sun, 16 Jun 2024 22:29:44 -0700 (PDT)
-Received: from localhost.localdomain ([117.147.90.53])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f88daf2b8dsm11699355ad.193.2024.06.16.22.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 22:29:43 -0700 (PDT)
-From: aigourensheng <shechenglong001@gmail.com>
-To: akpm@linux-foundation.org
-Cc: shuah@kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	aigourensheng <shechenglong001@gmail.com>
-Subject: [PATCH] selftests/mm:fix test_prctl_fork_exec return failure
-Date: Mon, 17 Jun 2024 01:29:34 -0400
-Message-Id: <20240617052934.5834-1-shechenglong001@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        d=1e100.net; s=20230601; t=1718602463; x=1719207263;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kSpZmf1K082PIUbwqLvXPKnERoeKQ/2WmW8jA1K0LCw=;
+        b=qxbQlRXLC0kczXZDAn3T9CISBEbaWrZSBb/0gcA5UoIkJZdo83VfrVTpssEnsYHrDq
+         ujzkznPfqGBFxTjeamI2DObiVfEKV8dD3rTkCmrxkhdrfRodUEaMVu3sxBCxHkBrCUGs
+         fhVgROwLhqJqATLfcmgwog1s6NWNt8MzKWrZ5RWv1G493qCsA5swg4gh3iiH5KF6ZoaC
+         yxZOxyT/sM3CoVgiq8SpluxTLePJEwunOsi6k9T56M3oyjyog2kZby47Iat/OnmTTgMM
+         12CCBrsvYqCMkAI3wD75V2FVnyiKKqFqhvqNLKEEjxlN8P1cmZ/O14gvK39y0tCNaBCR
+         SsFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG8k0vwQgZomTcOK+IopFUe79QPvNZ8VTCfqMFJcnhoQB+DBjFHFik9cDcLTp/ekFukBsH5ogBtgvYs8uBAbja1Z4mc6CgJ7IbMtpxFH6E/p8bOFyUdNC+njPz1ET5WbC6obKcgsHR
+X-Gm-Message-State: AOJu0YzI5WbuSPj1B8SDJtlG2LEqqSwEJlNRazolHFEJJHiK8nWKARIw
+	tHA5++RdujyAJzdxBadOX4TmeS5AIftJQEBjJ0ZVaYq3rV1bIPL2+9OWqg==
+X-Google-Smtp-Source: AGHT+IE+oP5gd6y4Ilih3B8Y873F2t0Zlq/eZmOaCtQcy94VN0cVrL+gLRetes43IBmHFwr34RUS3Q==
+X-Received: by 2002:a05:6512:749:b0:52b:bee0:54b0 with SMTP id 2adb3069b0e04-52ca6e90523mr5188931e87.54.1718602462976;
+        Sun, 16 Jun 2024 22:34:22 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca4035856sm1085735e87.178.2024.06.16.22.34.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Jun 2024 22:34:22 -0700 (PDT)
+Message-ID: <59111915-f77b-42e2-af5e-ca479d1a037f@gmail.com>
+Date: Mon, 17 Jun 2024 08:34:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iio: bu27034: Add a read only HWARDWAREGAIN
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1718013518.git.mazziesaccount@gmail.com>
+ <5e88c7b7b0389c6c011f15e05e065791f7561cf5.1718013518.git.mazziesaccount@gmail.com>
+ <20240615185036.7d1934c2@jic23-huawei>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240615185036.7d1934c2@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-after calling fork() in the test_prctl_fork_exec() function,
-the global variable ksm_full_scans_fd is initialized to 0
-in the child process upon entering the main function
-of ./ksm_functional_tests.
-In the function call chain test_child_ksm() ->
-__mmap_and_merge_range -> ksm_merge-> ksm_get_full_scans,
-start_scans = ksm_get_full_scans() will return an error.
-Therefore, the value of ksm_full_scans_fd needs to be
-initialized before calling test_child_ksm in the child process.
+On 6/15/24 20:50, Jonathan Cameron wrote:
+> On Mon, 10 Jun 2024 13:01:40 +0300
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> 
+>> The ROHM BU27034 light sensor has two data channels for measuring
+>> different frequencies of light. The result from these channels is
+>> combined into Lux value while the raw channel values are reported via
+>> intensity channels.
+>>
+>> Both of the intensity channels have adjustable gain setting which
+>> impacts the scale of the raw channels. Eg, doubling the gain will double
+>> the values read from the raw channels, which halves the scale value. The
+>> integration time can also be set for the sensor. This does also have an
+>> impact to the scale of the intensity channels because increasing the
+>> integration time will also increase the values reported via the raw
+>> channels.
+>>
+>> Impact of integration time to the scale and the fact that the scale value
+>> does not start from '1', can make it hard for a human reader to compute the
+>> gain values based on the scale.
+>>
+>> Add read-only HARDWAREGAIN to help debugging.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Other than the thing the bot found with fallthrough on the switch statement
+> not being marked LGTM.
+>> ---
+>>   drivers/iio/light/rohm-bu27034.c | 14 +++++++++++++-
+>>   1 file changed, 13 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/iio/light/rohm-bu27034.c b/drivers/iio/light/rohm-bu27034.c
+>> index 51acad2cafbd..b299ff2aacce 100644
+>> --- a/drivers/iio/light/rohm-bu27034.c
+>> +++ b/drivers/iio/light/rohm-bu27034.c
+>> @@ -149,7 +149,8 @@ static const struct iio_itime_sel_mul bu27034_itimes[] = {
+>>   	.channel = BU27034_CHAN_##_name,				\
+>>   	.channel2 = IIO_MOD_LIGHT_CLEAR,				\
+>>   	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |			\
+>> -			      BIT(IIO_CHAN_INFO_SCALE),			\
+>> +			      BIT(IIO_CHAN_INFO_SCALE) |		\
+>> +			      BIT(IIO_CHAN_INFO_HARDWAREGAIN),		\
+>>   	.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE),	\
+>>   	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),		\
+>>   	.info_mask_shared_by_all_available =				\
+>> @@ -992,6 +993,13 @@ static int bu27034_read_raw(struct iio_dev *idev,
+>>   
+>>   		return IIO_VAL_INT_PLUS_MICRO;
+>>   
+>> +	case IIO_CHAN_INFO_HARDWAREGAIN:
+>> +		ret = bu27034_get_gain(data, chan->channel, val);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		return IIO_VAL_INT;
+>> +
+>>   	case IIO_CHAN_INFO_SCALE:
+>>   		return bu27034_get_scale(data, chan->channel, val, val2);
+>>   
+>> @@ -1036,12 +1044,16 @@ static int bu27034_write_raw_get_fmt(struct iio_dev *indio_dev,
+>>   				     struct iio_chan_spec const *chan,
+>>   				     long mask)
+>>   {
+>> +	struct bu27034_data *data = iio_priv(indio_dev);
+>>   
+>>   	switch (mask) {
+>>   	case IIO_CHAN_INFO_SCALE:
+>>   		return IIO_VAL_INT_PLUS_NANO;
+>>   	case IIO_CHAN_INFO_INT_TIME:
+>>   		return IIO_VAL_INT_PLUS_MICRO;
+>> +	case IIO_CHAN_INFO_HARDWAREGAIN:
+>> +		dev_dbg(data->dev,
+>> +			"HARDWAREGAIN is read-only, use scale to set\n");
+> 
+> return -EINVAL here.  You could use a fall through marking but it gains
+> little so I wouldn't bother.
 
-Signed-off-by: aigourensheng <shechenglong001@gmail.com>
----
- .../selftests/mm/ksm_functional_tests.c       | 38 +++++++++++--------
- 1 file changed, 22 insertions(+), 16 deletions(-)
+Right, thanks.
 
-diff --git a/tools/testing/selftests/mm/ksm_functional_tests.c b/tools/testing/selftests/mm/ksm_functional_tests.c
-index 37de82da9be7..b61803e36d1c 100644
---- a/tools/testing/selftests/mm/ksm_functional_tests.c
-+++ b/tools/testing/selftests/mm/ksm_functional_tests.c
-@@ -656,12 +656,33 @@ static void test_prot_none(void)
- 	munmap(map, size);
- }
- 
-+static void init_global_file_handles(void)
-+{
-+	mem_fd = open("/proc/self/mem", O_RDWR);
-+	if (mem_fd < 0)
-+		ksft_exit_fail_msg("opening /proc/self/mem failed\n");
-+	ksm_fd = open("/sys/kernel/mm/ksm/run", O_RDWR);
-+	if (ksm_fd < 0)
-+		ksft_exit_skip("open(\"/sys/kernel/mm/ksm/run\") failed\n");
-+	ksm_full_scans_fd = open("/sys/kernel/mm/ksm/full_scans", O_RDONLY);
-+	if (ksm_full_scans_fd < 0)
-+		ksft_exit_skip("open(\"/sys/kernel/mm/ksm/full_scans\") failed\n");
-+	pagemap_fd = open("/proc/self/pagemap", O_RDONLY);
-+	if (pagemap_fd < 0)
-+		ksft_exit_skip("open(\"/proc/self/pagemap\") failed\n");
-+	proc_self_ksm_stat_fd = open("/proc/self/ksm_stat", O_RDONLY);
-+	proc_self_ksm_merging_pages_fd = open("/proc/self/ksm_merging_pages",
-+						O_RDONLY);
-+	ksm_use_zero_pages_fd = open("/sys/kernel/mm/ksm/use_zero_pages", O_RDWR);
-+}
-+
- int main(int argc, char **argv)
- {
- 	unsigned int tests = 8;
- 	int err;
- 
- 	if (argc > 1 && !strcmp(argv[1], FORK_EXEC_CHILD_PRG_NAME)) {
-+		init_global_file_handles();
- 		exit(test_child_ksm());
- 	}
- 
-@@ -674,22 +695,7 @@ int main(int argc, char **argv)
- 
- 	pagesize = getpagesize();
- 
--	mem_fd = open("/proc/self/mem", O_RDWR);
--	if (mem_fd < 0)
--		ksft_exit_fail_msg("opening /proc/self/mem failed\n");
--	ksm_fd = open("/sys/kernel/mm/ksm/run", O_RDWR);
--	if (ksm_fd < 0)
--		ksft_exit_skip("open(\"/sys/kernel/mm/ksm/run\") failed\n");
--	ksm_full_scans_fd = open("/sys/kernel/mm/ksm/full_scans", O_RDONLY);
--	if (ksm_full_scans_fd < 0)
--		ksft_exit_skip("open(\"/sys/kernel/mm/ksm/full_scans\") failed\n");
--	pagemap_fd = open("/proc/self/pagemap", O_RDONLY);
--	if (pagemap_fd < 0)
--		ksft_exit_skip("open(\"/proc/self/pagemap\") failed\n");
--	proc_self_ksm_stat_fd = open("/proc/self/ksm_stat", O_RDONLY);
--	proc_self_ksm_merging_pages_fd = open("/proc/self/ksm_merging_pages",
--					      O_RDONLY);
--	ksm_use_zero_pages_fd = open("/sys/kernel/mm/ksm/use_zero_pages", O_RDWR);
-+	init_global_file_handles();
- 
- 	test_unmerge();
- 	test_unmerge_zero_pages();
+> 
+>>   	default:
+>>   		return -EINVAL;
+>>   	}
+> 
+
 -- 
-2.17.1
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
 
 
