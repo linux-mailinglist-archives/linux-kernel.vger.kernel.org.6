@@ -1,77 +1,131 @@
-Return-Path: <linux-kernel+bounces-218295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0030190BC32
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:31:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC6490BC3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11CDA1C22C2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7435F283BC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0714B199259;
-	Mon, 17 Jun 2024 20:30:42 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FC9191465;
+	Mon, 17 Jun 2024 20:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="cjpKOwu1"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF7018FDD6;
-	Mon, 17 Jun 2024 20:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6CCC8E1;
+	Mon, 17 Jun 2024 20:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718656241; cv=none; b=DFBm2IgF/DL+tAcTFLtXHH9r8ihUuqx15NvCy8UBIxmw/6yTHmXRV9DYOrXe6+k8+G2vjJdTsTTP9R083UfTEWIQ7jw2TJsmxFSDwxWIuwDJAzEAQ9sGroN0h8qEvFt1NGiKMforYeqVgT9rcerWemzcWY6lMUmbg+dmtvdS6uA=
+	t=1718656473; cv=none; b=nyTQaBbUwWBfuA7xbkTqpSpWrfLiO9LEXikCKswB8oF1GBK/boJhVMTjVcuoN2WLLQFrrSH5as3/J0mCjHW1W8UVrZ0ff+V8TUhrIRoAx/QwXIYLnBmlAfcmpaf73QigJ7lXsdunsGJpIvJDaV/ftYU7p7vExVzYhr/FN2IS/Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718656241; c=relaxed/simple;
-	bh=82nr2wqrnMIAbD4IDcYEq25agDxWcQZ1RLNzuw+uTsw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sr+bQG2Mp7oyTtxIPucEdS9fEwmOQhDFdG0G8uuql93LhEERXhqPTpRrLJUsGD+7AnbcPP4RI/M4bBmqrCVopxumjxN6rsbLa5bdhj8PU6o8oa8PvEAXqJccc/lClCncMN7LH42YJAsEyF9mk6oS58Y5S9ERN68m6SXPVPP2Vs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e8616c2.versanet.de ([94.134.22.194] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sJIzi-0003be-1t; Mon, 17 Jun 2024 22:30:26 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: dri-devel@lists.freedesktop.org,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Yakir Yang <kuankuan.y@gmail.com>, Jeffy Chen <jeffy.chen@rock-chips.com>,
- Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>,
- linux-clk@vger.kernel.org
-Subject:
- Re: [PATCH 02/13] clk: rockchip: Set parent rate for DCLK_VOP clock on RK3228
-Date: Mon, 17 Jun 2024 22:30:25 +0200
-Message-ID: <19757196.sIn9rWBj0N@diego>
-In-Reply-To: <20240615170417.3134517-3-jonas@kwiboo.se>
-References:
- <20240615170417.3134517-1-jonas@kwiboo.se>
- <20240615170417.3134517-3-jonas@kwiboo.se>
+	s=arc-20240116; t=1718656473; c=relaxed/simple;
+	bh=/Gc+C2UHCtOgADFB+UMA/UmcYodFik9l5bCk3r+xZ3U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u/apbgDTzHAN8ukp0g2cp+lPIM+IYtvHuvMwJnCIufqNsiIkMnnDymvjstIYo+wTSZEroneDnTS/lohIX3wwaYQ+PlwwucGiL7oenqpjNusoqzKA2nUacc4amdB/G0esWnf3J4B/5qZGDvxPDVecXmQsQlf6Phd/CY0ii90bwrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=cjpKOwu1; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=sTO8oI11aLdYRsC1cGz0uoItKaFKpKNhGb0xWrXF7Jg=; t=1718656469; x=1719261269; 
+	b=cjpKOwu1kby5ZOeJX6lF6OxNZggw5lxlrL0Uta9llgGmyu3sHaTU3Mgz49SU1/MCcj+YQUjkxcN
+	qsQ3PmDfxkBltGBkllsZYs50sbI5foFDTLGUHYgbEa5oxopZwirP5q9sZ34S2Sa8JMLo9VHqkM9wP
+	69qpvfPMFlnaTQ90A5QwUB21PchzYiHpnCMH7xi2XN1hr09qIsNg4QRd1gQIs6M6dMjuELt3Hi8C0
+	WQk8QbKK4hwImEIcthzEXN/WsZANurd9+zC61q0UWkC1Hf723Pskpm34KfEzWIIkxKQc5Z7xidQ/3
+	2PohS/Ix6Jl80bkflm7fvPLAwEGG5pKkhF1g==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sJIzx-00000000mcz-0YkK; Mon, 17 Jun 2024 22:30:41 +0200
+Received: from p5b13a475.dip0.t-ipconnect.de ([91.19.164.117] helo=suse-laptop-2.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sJIzx-00000004C3g-1WiU; Mon, 17 Jun 2024 22:30:41 +0200
+Message-ID: <4da8ec47366209cdb4d61045cb6e8b2f872a37a1.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v3 cmpxchg 2/4] sh: Emulate one-byte cmpxchg
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: paulmck@kernel.org
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, elver@google.com, akpm@linux-foundation.org, 
+ tglx@linutronix.de, peterz@infradead.org, dianders@chromium.org,
+ pmladek@suse.com,  torvalds@linux-foundation.org, arnd@arndb.de, Andi Shyti
+ <andi.shyti@linux.intel.com>, Palmer Dabbelt <palmer@rivosinc.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>, linux-sh@vger.kernel.org
+Date: Mon, 17 Jun 2024 22:30:40 +0200
+In-Reply-To: <add0cb7b-6ec2-4b13-b327-8ff93358993e@paulmck-laptop>
+References: <1dee481f-d584-41d6-a5f1-d84375be5fe8@paulmck-laptop>
+	 <20240604170437.2362545-2-paulmck@kernel.org>
+	 <c44890de1c3d54d93fbde09ada558e7cb4a7177c.camel@physik.fu-berlin.de>
+	 <fcfa4d17-ea05-46f2-840d-9486923fd01d@paulmck-laptop>
+	 <fc6bbbcd0b2a79d8fdcbde576ae3e5a52ffab02a.camel@physik.fu-berlin.de>
+	 <972d3e89-ffda-49bc-8c0c-4d23484ca964@paulmck-laptop>
+	 <add0cb7b-6ec2-4b13-b327-8ff93358993e@paulmck-laptop>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Am Samstag, 15. Juni 2024, 19:03:53 CEST schrieb Jonas Karlman:
-> Similar to DCLK_LCDC on RK3328, the DCLK_VOP on RK3228 is typically
-> parented by the hdmiphy clk and it is expected that the DCLK_VOP and
-> hdmiphy clk rate are kept in sync.
-> 
-> Use CLK_SET_RATE_PARENT and CLK_SET_RATE_NO_REPARENT flags, same as used
-> on RK3328, to make full use of all possible supported display modes.
-> 
-> Fixes: 0a9d4ac08ebc ("clk: rockchip: set the clock ids for RK3228 VOP")
-> Fixes: 307a2e9ac524 ("clk: rockchip: add clock controller for rk3228")
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Hi Paul,
 
-did your mailer have a hickup? Somehow I got patch2 (only this one)
-2 times
+On Mon, 2024-06-17 at 09:50 -0700, Paul E. McKenney wrote:
+> On Tue, Jun 04, 2024 at 02:14:54PM -0700, Paul E. McKenney wrote:
+> > On Tue, Jun 04, 2024 at 07:56:49PM +0200, John Paul Adrian Glaubitz wro=
+te:
+> > > Hello,
+> > >=20
+> > > On Tue, 2024-06-04 at 10:50 -0700, Paul E. McKenney wrote:
+> > > > > Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin=
+.de>
+> > > > >=20
+> > > > > I can pick this up through my SH tree unless someone insists this=
+ to
+> > > > > go through some other tree.
+> > > >=20
+> > > > Please do take it, and thank you!  When I see it in -next, I will d=
+rop
+> > > > it from my tree.
+> > >=20
+> > > I'll pick it up over the weekend for which I have planned my usual ke=
+rnel
+> > > review and merge session.
+> >=20
+> > Very good, and again, thank you!
+>=20
+> Just following up...  I don't yet see this from you in -next.  When your
+> version does show up in -next, I will drop my copy from -rcu.
 
+Sorry, I was very busy last week and didn't get around to do any kernel stu=
+ff.
 
+I will take care of it this week, I have not forgotten about it and I never=
+ let
+patches unanswered, and unmerged once I have reviewed them.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
