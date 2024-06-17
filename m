@@ -1,130 +1,107 @@
-Return-Path: <linux-kernel+bounces-217532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8ED90B11B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:10:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B29D490B14A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 656591F2B5C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:10:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B781F294B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E151A532D;
-	Mon, 17 Jun 2024 13:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F60E19FBB8;
+	Mon, 17 Jun 2024 13:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VkTuIvLD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="57XUZurf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrTxOLxC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218981A92F3;
-	Mon, 17 Jun 2024 13:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F0619FBA6;
+	Mon, 17 Jun 2024 13:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630823; cv=none; b=j9m4KD1SFFjj6NjpADEDKsydc3KpNFxeZrP1aoz16dfMpnzh5ya3MOG57YyvG19NT1CNZlsng9hxznycVkTJoNZkwaXOXPRAeG5Zps8bKBaEiQB3uw8NPsBbYVs4f+fRVvNg3dVvDSK4TzI22xGNVEYvbNztdWxft4rPIN8TWZo=
+	t=1718630854; cv=none; b=GUIhKeKJ+S2EAOHeFRDtSPBqZsubnlENJGcYMsjMif6zh6JfYyjC2JEDHUq3C/zhXq4qAlW0ynnzsKQbBnFgK1Gd7KLLPTfmDAsfJVsr1IkKaR9gF7AyfBmv5AUVbUv3Zch44EJnkhYD3XTiWM18T8k/w5BLDIzK9B86AFXsdP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630823; c=relaxed/simple;
-	bh=SdVsJ6L/9rb/Sy/wmxJEimcEbJHhawwqkwqnvH5htC4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=D7eD4MGx43z5s7ekW9EqygV/sC6KWnbTlFmC1gsWRIasjmhOj2NSVz+LYLsb3/NwoBe1MrypHxAEv8RvN6A+pZ6bomrPyWitbOgGyq3OdwsHCDPzjth8mJBLyvjpME9bHAZbiLoY2EW3B68Tl0DUwl5oYNEg5nCQNe1sVs4a6/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VkTuIvLD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=57XUZurf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Jun 2024 13:27:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718630820;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FUtI/9RKIXnQcM74XUylgCsWNRYB5FbCggWcLkU1G1M=;
-	b=VkTuIvLDSIqh6zXccE+rw2BtiD2aq8zr835nY3J6KmmKuWVaUmbIKSo9a3Mb2nNeoaRxFh
-	leZSKoswQDO/mzDqP+shA+wKh9tYll1E9LKVzddyyVv+Koop5mWqfFwGL2+ojIu+NvUSsl
-	sKQ4Nl6tjdG3NleEW4VMGwYP61tqTIH529uo4PG390LBI6sFhRf1dSAtdr82kr5M2I+x2n
-	8Z4B7Ig4s+m87vGhX7NVeUExywwD3/XzRqOUp6Bbgy5TGsdFqSJlsPddilSVO6SVcJrt4r
-	AXGgtyDsz/T1oOZSakct3cIEF9R1cnpU65iXoL/9EUnQyFEnkkNr1vMz4fvgIQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718630820;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FUtI/9RKIXnQcM74XUylgCsWNRYB5FbCggWcLkU1G1M=;
-	b=57XUZurf77fXTBdKtH+jblzitgJzG6bGFKUj7GpMWROHbqFCo+FDMC3878e/pBPQ5+h+0i
-	ejZhqeRCPse6b2CQ==
-From: "tip-bot2 for Thorsten Blum" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: smp/core] smp: Use str_plural() to fix Coccinelle warnings
-Cc: Thorsten Blum <thorsten.blum@toblux.com>,
- Thomas Gleixner <tglx@linutronix.de>, "Paul E. McKenney" <paulmck@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240508154225.309703-2-thorsten.blum@toblux.com>
-References: <20240508154225.309703-2-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1718630854; c=relaxed/simple;
+	bh=pq4Obcyrxwrh9BWrEONsvbAQStNBsMohdM71s9bWxDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QweD4EXYMj0tgb2HyqmoRUXFBHDWxR6hMnsFWIL8AlG/+p7u5b41P4ZSAHrjJ37KQeK4yZa1C9IUM2KUj5wBHcXw3QiMyf8Ke4E83RoojakG2TRIb/PTf/rpbPbkRpo0IcM8Xk4U9nd0JO/b5G/seDVXwEgyJx/avRlBIvHTOt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KrTxOLxC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A18CDC4AF1C;
+	Mon, 17 Jun 2024 13:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718630854;
+	bh=pq4Obcyrxwrh9BWrEONsvbAQStNBsMohdM71s9bWxDI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KrTxOLxCcU3xcndIWxfSTtkGsdfje0cZpswRHEetahoBHP//1W83FwzEuee8jQ1x1
+	 Uu2XLFKqfZ/Lgde1Rd/VUcDhLFhgn1/7ZpXZzJ/272pVqoXbC3W9+kK0ZAdLhdRr+h
+	 eY3/t/sWBJpWWIJQjgmofrSNCbFuUDmUSzNKyMtURp60V9NfU6wMs14SnGnMzh0XOi
+	 DU0oaFz2EQle/N2cOJZOyZC9qYzzBn2RUgaKVuDXIXBcVityEn8r49IMuxufu1kJi7
+	 c08E8o+LSGbGHjmc8U2MRun6voLgOFxvTmlA0EhnDduiMrNkqVlbF0hezlLMeHssOx
+	 n7siSjH2rbzew==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 12/13] kconfig: gconf: give a proper initial state to the Save button
+Date: Mon, 17 Jun 2024 09:27:01 -0400
+Message-ID: <20240617132710.2590101-12-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240617132710.2590101-1-sashal@kernel.org>
+References: <20240617132710.2590101-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171863082016.10875.7195591265773977724.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.10.219
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the smp/core branch of tip:
+From: Masahiro Yamada <masahiroy@kernel.org>
 
-Commit-ID:     c4df15931cb72556fea93bd763ada88e56cbd8e5
-Gitweb:        https://git.kernel.org/tip/c4df15931cb72556fea93bd763ada88e56cbd8e5
-Author:        Thorsten Blum <thorsten.blum@toblux.com>
-AuthorDate:    Wed, 08 May 2024 17:42:26 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 17 Jun 2024 15:17:44 +02:00
+[ Upstream commit 46edf4372e336ef3a61c3126e49518099d2e2e6d ]
 
-smp: Use str_plural() to fix Coccinelle warnings
+Currently, the initial state of the "Save" button is always active.
 
-Fixes the following two Coccinelle/coccicheck warnings reported by
-string_choices.cocci:
+If none of the CONFIG options are changed while loading the .config
+file, the "Save" button should be greyed out.
 
-	opportunity for str_plural(num_cpus)
-	opportunity for str_plural(num_nodes)
+This can be fixed by calling conf_read() after widget initialization.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
-Link: https://lore.kernel.org/r/20240508154225.309703-2-thorsten.blum@toblux.com
-
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/smp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ scripts/kconfig/gconf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/smp.c b/kernel/smp.c
-index f085ebc..1848357 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -25,6 +25,7 @@
- #include <linux/nmi.h>
- #include <linux/sched/debug.h>
- #include <linux/jump_label.h>
-+#include <linux/string_choices.h>
+diff --git a/scripts/kconfig/gconf.c b/scripts/kconfig/gconf.c
+index 5527482c30779..4097999127315 100644
+--- a/scripts/kconfig/gconf.c
++++ b/scripts/kconfig/gconf.c
+@@ -1484,7 +1484,6 @@ int main(int ac, char *av[])
  
- #include <trace/events/ipi.h>
- #define CREATE_TRACE_POINTS
-@@ -982,8 +983,7 @@ void __init smp_init(void)
- 	num_nodes = num_online_nodes();
- 	num_cpus  = num_online_cpus();
- 	pr_info("Brought up %d node%s, %d CPU%s\n",
--		num_nodes, (num_nodes > 1 ? "s" : ""),
--		num_cpus,  (num_cpus  > 1 ? "s" : ""));
-+		num_nodes, str_plural(num_nodes), num_cpus, str_plural(num_cpus));
+ 	conf_parse(name);
+ 	fixup_rootmenu(&rootmenu);
+-	conf_read(NULL);
  
- 	/* Any cleanup work */
- 	smp_cpus_done(setup_max_cpus);
+ 	/* Load the interface and connect signals */
+ 	init_main_window(glade_file);
+@@ -1492,6 +1491,8 @@ int main(int ac, char *av[])
+ 	init_left_tree();
+ 	init_right_tree();
+ 
++	conf_read(NULL);
++
+ 	switch (view_mode) {
+ 	case SINGLE_VIEW:
+ 		display_tree_part();
+-- 
+2.43.0
+
 
