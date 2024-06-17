@@ -1,71 +1,85 @@
-Return-Path: <linux-kernel+bounces-217933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C250890B66B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:32:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B92F90B66C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E1C1F23C88
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:32:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8062D1F222C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A3C15F3EA;
-	Mon, 17 Jun 2024 16:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062C715F308;
+	Mon, 17 Jun 2024 16:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="JWkKiRWp"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="wNFiqS8u"
+Received: from mx0b-00823401.pphosted.com (mx0b-00823401.pphosted.com [148.163.152.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE0015EFC7;
-	Mon, 17 Jun 2024 16:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFD9179BD;
+	Mon, 17 Jun 2024 16:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718641914; cv=none; b=Z/JoesGm4OkRW3x1LTkP6uhx5tQsp5ucV5mvPV7j+tU5htfEsNu2frSKObOqJ+vnGqBwxajNgl1GymhvOfP09wZe9shJSoghNoFBPYzJ09nYvkhw2ZO1hLKeM/C8z9ezdPgJp/vfoTP34IeoWTFXMCSv2BhZrlnkrQjsG4wL5p4=
+	t=1718641945; cv=none; b=Du3KVHkxkkUUkV+Dv5EPD3txPsGu/lHYi6LbHCRfOiTXOxYCpXqpcg+j0XW8YgG8wlW4/4YVxY90jMeEW9ln6dQDh6FvSllKLUUQGZ9/gsSgYMYjdRAflkQpgXxpj2CPVkKFLYpKqa++yRHCeiq8uwTLjJxS54ZsgdvRrA3B+BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718641914; c=relaxed/simple;
-	bh=N/Is03mLCxdJCd/OOK+w/wlLamJmjEQxRrxdjj9UKRA=;
+	s=arc-20240116; t=1718641945; c=relaxed/simple;
+	bh=NMuqlV81yEhMTGA+GXDug56UYmtbasUZWM77Yr9xvNc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+fgf/DZCp+NYUtsSU7NUSb95jWsTb137OrZRWoav/wmu9Ir1OSvO/RjGpDBnSghm/fByIbTLIKbAUmvmuiZs8YH+Xt1qMxMVpGd59v1PdvN1PvJDm2TgW+CwI7Hi83ssgSUH8F2ismS3Ed0fzxN9BI8EIZCK8jnZvG1FMQQyOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=JWkKiRWp; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qWBniu3JtIbetqvPNmngcrc5ex4fHyqXN3JDtvlRCmWctGs59zENjCbZWKW3TCWwYcJlF+Hh5l8T8Xuwc68hhVUmRJJBDvEaFrizNf/ykU7AjgNHnV8vvxHGnXAHC5HOTqa+86Q6/RHCAhs5Sov9KnhfYdtFHO6Z5KBD15Z1LCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=wNFiqS8u; arc=none smtp.client-ip=148.163.152.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355092.ppops.net [127.0.0.1])
+	by mx0b-00823401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HCT0KC005637;
+	Mon, 17 Jun 2024 16:32:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=DKIM202306; bh=JyFXW7AIicPfDE5WIIpiIVa
+	ZETUucedPQnOCDS26UwE=; b=wNFiqS8uVqwBLjtqme90BjvTeNwhuqxwj//Avna
+	BJmuGg/qDUiFrKitQWsjxj18MtEAjChrfteYNOUrbOtmIr9FEPGqNQF9zylfJW9P
+	3KXZCdNes75xjOLRxrZMMKPOWnFMQSsQ3CiLLTdjKMJ1HPhMlyrgG5IoouEj14fy
+	tOoHSpGJTktgepmujpQX56AqTiFnqZCH9k7RsXiWb/9mQbwMB92Pzmf7g2Zrup0k
+	TtBQ7misaSkF6EvumeM+MaJGibC9XFD7NnCmENXx5P/y7cwpjPHygccW5qQcIrxD
+	sLheBnAyYfMjAxJsQZOz1GgSRrxIZDA+ElNOrobtG85CQqQ==
+Received: from va32lpfpp01.lenovo.com ([104.232.228.21])
+	by mx0b-00823401.pphosted.com (PPS) with ESMTPS id 3yss9d2tet-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 16:32:01 +0000 (GMT)
+Received: from va32lmmrp02.lenovo.com (va32lmmrp02.mot.com [10.62.176.191])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W2wPp2gXcz9sbq;
-	Mon, 17 Jun 2024 18:31:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1718641902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KuXIJ7LqfJ3Qb7t/gAz8A9hXQtRUtJOjtWlveOqVqMY=;
-	b=JWkKiRWpGNhxs402fjJ1SGsC2FOtKPjRvo6mKa70tUJkaX1x+g+HSinnBkMxJvipXP6EOo
-	HYkWfrYA0rxbNJvuyHEA48QNv6GtrcYKFVzJcr5Zf9j+oKLARU7yMDuusWVc4IcufP7b+s
-	BxQvCVcHvH15El7O0iNZ3w91lfIsDlRFcEKK9KwDqV+jJFBHbSM9de2fCvYXGD8mKeaatI
-	RPShWka2kHdS+p+bJTH69FL8xBeFnqwFPJyLWo5/vIa3Q6QXnT0zb684x2hvZ/kCxWFUCK
-	nfybmgFIAvhP9gxxbyiIXcOsjpiCExUQP+qLJi9OOzLan/G2zXOtYI1H0nXQrA==
-Date: Mon, 17 Jun 2024 16:31:36 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Dave Chinner <david@fromorbit.com>, djwong@kernel.org,
-	chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 11/11] xfs: enable block size larger than page size
- support
-Message-ID: <20240617163136.ozxrlxljmblcgny3@quentin>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-12-kernel@pankajraghav.com>
- <20240613084725.GC23371@lst.de>
- <Zm+RhjG6DUoat7lO@dread.disaster.area>
- <20240617065104.GA18547@lst.de>
+	by va32lpfpp01.lenovo.com (Postfix) with ESMTPS id 4W2wQ84tzzzldQp;
+	Mon, 17 Jun 2024 16:32:00 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by va32lmmrp02.lenovo.com (Postfix) with ESMTPSA id 4W2wQ81Lxdz2VZ3B;
+	Mon, 17 Jun 2024 16:32:00 +0000 (UTC)
+Date: Mon, 17 Jun 2024 11:31:58 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Zi Shen Lim <zlim.lnx@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Puranjay Mohan <puranjay12@gmail.com>
+Subject: [PATCH bpf-next v7 2/2] arm64/cfi,bpf: Support kCFI + BPF on arm64
+Message-ID: <puj3euv5eafwcx5usqostpohmxgdeq3iout4hqnyk7yt5hcsux@gpiamodhfr54>
+References: <ptrugmna4xb5o5lo4xislf4rlz7avdmd4pfho5fjwtjj7v422u@iqrwfrbwuxrq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,83 +88,175 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240617065104.GA18547@lst.de>
-X-Rspamd-Queue-Id: 4W2wPp2gXcz9sbq
+In-Reply-To: <ptrugmna4xb5o5lo4xislf4rlz7avdmd4pfho5fjwtjj7v422u@iqrwfrbwuxrq>
+X-Proofpoint-ORIG-GUID: Q-4NSrSqrLL73lhblQZq6TmH9TO5VbAw
+X-Proofpoint-GUID: Q-4NSrSqrLL73lhblQZq6TmH9TO5VbAw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ impostorscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406170127
 
-On Mon, Jun 17, 2024 at 08:51:04AM +0200, Christoph Hellwig wrote:
-> On Mon, Jun 17, 2024 at 11:29:42AM +1000, Dave Chinner wrote:
-> > > > +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-> > > > +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-> > > > +	else
-> > > > +		igeo->min_folio_order = 0;
-> > > >  }
-> > > 
-> > > The minimum folio order isn't really part of the inode (allocation)
-> > > geometry, is it?
-> > 
-> > I suggested it last time around instead of calculating the same
-> > constant on every inode allocation. We're already storing in-memory
-> > strunct xfs_inode allocation init values in this structure. e.g. in
-> > xfs_inode_alloc() we see things like this:
-> 
-> While new_diflags2 isn't exactly inode geometry, it at least is part
-> of the inode allocation.  Folio min order for file data has nothing
-> to do with this at all.
-> 
-> > The only other place we might store it is the struct xfs_mount, but
-> > given all the inode allocation constants are already in the embedded
-> > mp->m_ino_geo structure, it just seems like a much better idea to
-> > put it will all the other inode allocation constants than dump it
-> > randomly into the struct xfs_mount....
-> 
-> Well, it is very closely elated to say the m_blockmask field in
-> struct xfs_mount.  The again modern CPUs tend to get a you simple
-> subtraction for free in most pipelines doing other things, so I'm
-> not really sure it's worth caching for use in inode allocation to
-> start with, but I don't care strongly about that.
+From: Puranjay Mohan <puranjay12@gmail.com>
 
-But there will also be an extra conditional apart from subtraction
-right? 
+Currently, bpf_dispatcher_*_func() is marked with `__nocfi` therefore
+calling BPF programs from this interface doesn't cause CFI warnings.
 
-Initially it was something like this:
+When BPF programs are called directly from C: from BPF helpers or
+struct_ops, CFI warnings are generated.
 
-@@ -73,6 +73,7 @@ xfs_inode_alloc(
- 	xfs_ino_t		ino)
- {
- 	struct xfs_inode	*ip;
-+	int			min_order = 0;
+Implement proper CFI prologues for the BPF programs and callbacks and
+drop __nocfi for arm64. Fix the trampoline generation code to emit kCFI
+prologue when a struct_ops trampoline is being prepared.
+
+Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
+Signed-off-by: Maxwell Bland <mbland@motorola.com>
+---
+ arch/arm64/include/asm/cfi.h    | 23 +++++++++++++++++++++++
+ arch/arm64/kernel/alternative.c | 18 ++++++++++++++++++
+ arch/arm64/net/bpf_jit_comp.c   | 21 ++++++++++++++++++---
+ 3 files changed, 59 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/include/asm/cfi.h
+
+diff --git a/arch/arm64/include/asm/cfi.h b/arch/arm64/include/asm/cfi.h
+new file mode 100644
+index 000000000000..670e191f8628
+--- /dev/null
++++ b/arch/arm64/include/asm/cfi.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_ARM64_CFI_H
++#define _ASM_ARM64_CFI_H
++
++#ifdef CONFIG_CFI_CLANG
++#define __bpfcall
++static inline int cfi_get_offset(void)
++{
++	return 4;
++}
++#define cfi_get_offset cfi_get_offset
++extern u32 cfi_bpf_hash;
++extern u32 cfi_bpf_subprog_hash;
++extern u32 cfi_get_func_hash(void *func);
++#else
++#define cfi_bpf_hash 0U
++#define cfi_bpf_subprog_hash 0U
++static inline u32 cfi_get_func_hash(void *func)
++{
++	return 0;
++}
++#endif /* CONFIG_CFI_CLANG */
++#endif /* _ASM_ARM64_CFI_H */
+diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternative.c
+index 8ff6610af496..d7a58eca7665 100644
+--- a/arch/arm64/kernel/alternative.c
++++ b/arch/arm64/kernel/alternative.c
+@@ -8,11 +8,13 @@
+ 
+ #define pr_fmt(fmt) "alternatives: " fmt
+ 
++#include <linux/cfi_types.h>
+ #include <linux/init.h>
+ #include <linux/cpu.h>
+ #include <linux/elf.h>
+ #include <asm/cacheflush.h>
+ #include <asm/alternative.h>
++#include <asm/cfi.h>
+ #include <asm/cpufeature.h>
+ #include <asm/insn.h>
+ #include <asm/module.h>
+@@ -298,3 +300,19 @@ noinstr void alt_cb_patch_nops(struct alt_instr *alt, __le32 *origptr,
+ 		updptr[i] = cpu_to_le32(aarch64_insn_gen_nop());
+ }
+ EXPORT_SYMBOL(alt_cb_patch_nops);
++
++#ifdef CONFIG_CFI_CLANG
++struct bpf_insn;
++/* Must match bpf_func_t / DEFINE_BPF_PROG_RUN() */
++extern unsigned int __bpf_prog_runX(const void *ctx,
++				    const struct bpf_insn *insn);
++DEFINE_CFI_TYPE(cfi_bpf_hash, __bpf_prog_runX);
++/* Must match bpf_callback_t */
++extern u64 __bpf_callback_fn(u64, u64, u64, u64, u64);
++DEFINE_CFI_TYPE(cfi_bpf_subprog_hash, __bpf_callback_fn);
++u32 cfi_get_func_hash(void *func)
++{
++	u32 *hashp = func - cfi_get_offset();
++	return READ_ONCE(*hashp);
++}
++#endif
+diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+index 720336d28856..211e1c29f004 100644
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -17,6 +17,7 @@
+ #include <asm/asm-extable.h>
+ #include <asm/byteorder.h>
+ #include <asm/cacheflush.h>
++#include <asm/cfi.h>
+ #include <asm/debug-monitors.h>
+ #include <asm/insn.h>
+ #include <asm/patching.h>
+@@ -162,6 +163,12 @@ static inline void emit_bti(u32 insn, struct jit_ctx *ctx)
+ 		emit(insn, ctx);
+ }
+ 
++static inline void emit_kcfi(u32 hash, struct jit_ctx *ctx)
++{
++	if (IS_ENABLED(CONFIG_CFI_CLANG))
++		emit(hash, ctx);
++}
++
+ /*
+  * Kernel addresses in the vmalloc space use at most 48 bits, and the
+  * remaining bits are guaranteed to be 0x1. So we can compose the address
+@@ -311,7 +318,6 @@ static int build_prologue(struct jit_ctx *ctx, bool ebpf_from_cbpf,
+ 	const u8 tcc = bpf2a64[TCALL_CNT];
+ 	const u8 fpb = bpf2a64[FP_BOTTOM];
+ 	const u8 arena_vm_base = bpf2a64[ARENA_VM_START];
+-	const int idx0 = ctx->idx;
+ 	int cur_offset;
  
  	/*
- 	 * XXX: If this didn't occur in transactions, we could drop GFP_NOFAIL
-@@ -88,7 +89,8 @@ xfs_inode_alloc(
- 	/* VFS doesn't initialise i_mode or i_state! */
- 	VFS_I(ip)->i_mode = 0;
- 	VFS_I(ip)->i_state = 0;
--	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-+	min_order = max(min_order, ilog2(mp->m_sb.sb_blocksize) - PAGE_SHIFT);
-+	mapping_set_folio_orders(VFS_I(ip)->i_mapping, min_order, MAX_PAGECACHE_ORDER);
+@@ -337,6 +343,9 @@ static int build_prologue(struct jit_ctx *ctx, bool ebpf_from_cbpf,
+ 	 *
+ 	 */
  
- 	XFS_STATS_INC(mp, vn_active);
- 	ASSERT(atomic_read(&ip->i_pincount) == 0);
-@@ -313,6 +315,7 @@ xfs_reinit_inode(
- 	dev_t			dev = inode->i_rdev;
- 	kuid_t			uid = inode->i_uid;
- 	kgid_t			gid = inode->i_gid;
-+	int			min_order = 0;
++	emit_kcfi(is_main_prog ? cfi_bpf_hash : cfi_bpf_subprog_hash, ctx);
++	const int idx0 = ctx->idx;
++
+ 	/* bpf function may be invoked by 3 instruction types:
+ 	 * 1. bl, attached via freplace to bpf prog via short jump
+ 	 * 2. br, attached via freplace to bpf prog via long jump
+@@ -1849,9 +1858,9 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 		jit_data->ro_header = ro_header;
+ 	}
  
- 	error = inode_init_always(mp->m_super, inode);
+-	prog->bpf_func = (void *)ctx.ro_image;
++	prog->bpf_func = (void *)ctx.ro_image + cfi_get_offset();
+ 	prog->jited = 1;
+-	prog->jited_len = prog_size;
++	prog->jited_len = prog_size - cfi_get_offset();
  
-@@ -323,7 +326,8 @@ xfs_reinit_inode(
- 	inode->i_rdev = dev;
- 	inode->i_uid = uid;
- 	inode->i_gid = gid;
--	mapping_set_large_folios(inode->i_mapping);
-+	min_order = max(min_order, ilog2(mp->m_sb.sb_blocksize) - PAGE_SHIFT);
-+	mapping_set_folio_orders(inode->i_mapping, min_order, MAX_PAGECACHE_ORDER);
- 	return error;
- }
+ 	if (!prog->is_func || extra_pass) {
+ 		int i;
+@@ -2104,6 +2113,12 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	/* return address locates above FP */
+ 	retaddr_off = stack_size + 8;
+ 
++	if (flags & BPF_TRAMP_F_INDIRECT) {
++		/*
++		 * Indirect call for bpf_struct_ops
++		 */
++		emit_kcfi(cfi_get_func_hash(func_addr), ctx);
++	}
+ 	/* bpf trampoline may be invoked by 3 instruction types:
+ 	 * 1. bl, attached to bpf prog or kernel function via short jump
+ 	 * 2. br, attached to bpf prog or kernel function via long jump
+-- 
+2.43.0
 
-It does introduce a conditional in the inode allocation hot path so I
-went with what Chinner proposed as it is something we use when we
-initialize an inode.
 
