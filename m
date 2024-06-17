@@ -1,120 +1,94 @@
-Return-Path: <linux-kernel+bounces-216761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E6F90A631
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:58:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F13990A642
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1FD61C20AFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A24402846F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B18187321;
-	Mon, 17 Jun 2024 06:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GCj5plbZ"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51545187560;
+	Mon, 17 Jun 2024 06:59:41 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8382819BC6;
-	Mon, 17 Jun 2024 06:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6E8187540;
+	Mon, 17 Jun 2024 06:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718607474; cv=none; b=InUUqv6VPwpyd+r9KVmTI8ZCfw7MBbHv4DJAqtgDiOQfrDNq+1MbdrpgDzOezyktoiRyXxVM+wYR1InQgpbkXkOym3o4D1OboNgLDTsBZXgqLYHv9uIrRkBU583wjg8uH2ow2C/9ehXTdULsfxadzIETNNZ/weXt6RZ9GxiWK3U=
+	t=1718607580; cv=none; b=u+4SQmUs8lPhu6jM1ZVDwgulIPJmUHQFN/NSYGS/mtvEb9M48vRHuvjE/GPFLrnCMxsqEsQ/WAFpNQ6zwsSFCVjToWkfRDczMdopT91GHmvJzMZnZturIOoOhHmigEQCRhrsE4mVPlCEwdV0kAb62f3Op4LrEQTdAep9rRigM0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718607474; c=relaxed/simple;
-	bh=cswSiNhzuIX+L0XOTRE4WAI/IsUzciePZm+xz0kFYY4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=YeGZGS+vkjPko2CFrut0QqIqRETrO1I2XT6zpCvHz2CqKBx4hfeiJIU2onzN0ppipe5GJ8GE1J5G8j+ty/ANQl+mDh2f4wRLLv4oO0opA5/5fd4KoUwiqxKRyrHfDxcedPBYsfTwMc8IVoPvv01qZXWo9SauzRWSGPkM6d+UWIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GCj5plbZ; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718607423; x=1719212223; i=markus.elfring@web.de;
-	bh=xYrgvg9WCy9r9u5H7qn2mdlOD8NoWnHTZFUH9pAD1xQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GCj5plbZrqt60p1OqOM56a4JCCTVsMe2MCHDuSnFcWd8H3SKEjRtvgUhpHPlFxr0
-	 AfNvgrBsAVU5VugDCyQjEqz/GpSYKBrvvNYHzyjM8/XCVMK60t6ckdPrCVZEx4SiP
-	 hID6uSohRtcOm6Iq4vpjEAWDBU7x4Jdr+X0AUchPul/0qrQy3o3ow1lhfeewTJHw1
-	 rdHz6GzEZexLUUEiQVYIqbaJqH+27pgbYSUCtFdX6jlPtdc2h1sUL1znF+GVfwCa4
-	 I8wvZiQLbnL/b3xoFHxRHDuPApPDbYO3891wggaB+v0sy78zV1jbgSSlrTfqgxXHq
-	 oVH5Nnt339gSg7nUoQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MEUS0-1sBxPZ0DKk-000iy7; Mon, 17
- Jun 2024 08:57:03 +0200
-Message-ID: <6a41fd88-5496-462a-86d2-446c2990fcf7@web.de>
-Date: Mon, 17 Jun 2024 08:56:50 +0200
+	s=arc-20240116; t=1718607580; c=relaxed/simple;
+	bh=E0Gdr2tkWJP5rJIJGJ++lcfqiciXh2RK8nGvYz05Hak=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mk2FNmS3WbduaQi2GPAH9Aoymzzl3JZ0wKd0OrPQQR3DyVl8W0flKJ8AkhfnxN6FpuQOKt2id6Pa/QiUWihbwevxcgNxcJp1GKZT0i54wWByz1t5wceb+fLrAnCP5KU4IxEooVLImTs+SSSJ9CkQHEpF59JCfRf8OVTlNcbXKYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 45H6wFkt034272;
+	Mon, 17 Jun 2024 14:58:15 +0800 (+08)
+	(envelope-from Xuewen.Yan@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4W2gb25HHtz2SFdvk;
+	Mon, 17 Jun 2024 14:53:50 +0800 (CST)
+Received: from BJ10918NBW01.spreadtrum.com (10.0.73.73) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Mon, 17 Jun 2024 14:58:13 +0800
+From: Xuewen Yan <xuewen.yan@unisoc.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <rafael@kernel.org>,
+        <pavel@ucw.cz>
+CC: <ke.wang@unisoc.com>, <guohua.yan@unisoc.com>, <xuewen.yan94@gmail.com>,
+        <di.shen@unisoc.com>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] freezer,sched: Preventing kthreads with D-state from being woken up during freeze
+Date: Mon, 17 Jun 2024 14:57:55 +0800
+Message-ID: <20240617065755.9996-1-xuewen.yan@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Paul Cercueil <paul@crapouillou.net>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, linux-iio@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Sumit Semwal
- <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
-References: <20240605110845.86740-4-paul@crapouillou.net>
-Subject: Re: [PATCH v10 3/6] iio: core: Add new DMABUF interface
- infrastructure
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240605110845.86740-4-paul@crapouillou.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mUazHyeVCXYVnz6oK+LWMeQZXEK3hfSQQEB660iCeLwFYnqkjQ+
- Ud585WwQdmOnvKsazfb+JBL625SKwogz20mU04M7cTelcw3J6jvrcay8aCvzIgt5Zo/u0tG
- HA8BNYiVjjRu1Y+4OsPoPx6KQH/SZ/sPPYoYD8KqvEsuerJYNwyB4WIq2T3jsfm4PgHe3GT
- 6DwW9Rzy0tHqw4LOWDrPA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EpUgWLDuQOE=;TpqYd2BsYAhSrklupWm0bdGxi0w
- k0gP4myeMywXz7z2416cAKfPZc+sozlXCm/dg03s156BdOSpNvAWLhscEVizpeQGJ02tGKcs+
- gPpHtLG9/4DSygIbsZCwwGVPv2tYnhthrp5KD5bNINXFLg8ymCfDhgNDu1QiKmG0LiXN/kYTC
- tyZia5fF2hlrZlk+Mp8kxXJgv9UgtBL/FmNNSPm6N7jOTR4Zcdgt0cJXiJEJ5aNLFfHYF1TED
- sqA3TpJuSMnBqp6+Y27A4GFBqiMckBrfdUi+aB1w9Jo9aVv0/5sHHtuWD7Mufed2c3xZm8bFi
- 6P/eXkYxEGfvYjuTun684PUf8EPFV0MxlSafXkax97B0gf7RMsDhoZ/57lr/LEPbYd5/MMGpo
- 2FZcmWJJfumMFT/IEiEfiR4teoq7q4oHTPBre96PjFDkipfK0DXEysOlrBb+tFcfYbjIwlF3T
- 6Y3XM6LdKz4qEO97XcWy/wPj8GbkMKxKFI1QJs0PRE79Kk587L8rJgWiHZKCZ80uvRyCzXJCI
- /t6zPRNRF6ePoZIKc/44UiTxO/fQ1zMmlaRzVy56MQ8x2G3ANq75aaCd9qVNk4v0wRaTB5Lu0
- uA43DJQ1ptxtQhryfZiI0B3NSnmo4fO95dmi7e1GlRXJk1Udd4JIcfjaeXw6fLTmobKBJAeQe
- s3a1aiZESl6a5AD2Kc1QybZRvr4ec/TYMtpTSxix+F+QAvs4PwefO+Ljy+3Y6lEH5cgLdmGuZ
- 6xuPuGo9iZgV77V+kDtZMkQ+soB22ssbAGAuVuIsUgYD7b72EPWZkPvIfjmmh3OCCEewBvW+R
- CzKOponlPubLU84J17FFUB0n3ggAX9n0xY2QTca53XWm4=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 45H6wFkt034272
 
-=E2=80=A6
-> +++ b/drivers/iio/industrialio-buffer.c
-=E2=80=A6
->  static int iio_buffer_chrdev_release(struct inode *inode, struct file *=
-filep)
->  {
-=E2=80=A6
->  	wake_up(&buffer->pollq);
->
-> +	mutex_lock(&buffer->dmabufs_mutex);
-> +
-> +	/* Close all attached DMABUFs */
-=E2=80=A6
-> +	mutex_unlock(&buffer->dmabufs_mutex);
-> +
->  	kfree(ib);
-=E2=80=A6
+Sometimes althought a kthread was set to be freezable, the thread's
+state also could be TASK_UNINTERRUPTIBLE because of some blocked
+reasons, such as msleep, wait_for_complete, mutex and so on...
+And now, when freezing, the freezer would wakeup them even if
+their conditions have not been met, this may not be necessary,
+and sometimes waking up early for schedule_timeout() may cause
+some driver functions to fail.
+So only wake_up kthreads with TASK_INTERRUPTIBLE state.
 
-Would you become interested to apply a statement like =E2=80=9Cguard(mutex=
-)(&buffer->dmabufs_mutex);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/mutex.h#L1=
-96
+Co-developed-by: Guohua Yan <guohua.yan@unisoc.com>
+Signed-off-by: Guohua Yan <guohua.yan@unisoc.com>
+Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+---
+ kernel/freezer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/kernel/freezer.c b/kernel/freezer.c
+index f57aaf96b829..cc50721616a2 100644
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -168,7 +168,7 @@ bool freeze_task(struct task_struct *p)
+ 	if (!(p->flags & PF_KTHREAD))
+ 		fake_signal_wake_up(p);
+ 	else
+-		wake_up_state(p, TASK_NORMAL);
++		wake_up_state(p, TASK_INTERRUPTIBLE);
+ 
+ 	spin_unlock_irqrestore(&freezer_lock, flags);
+ 	return true;
+-- 
+2.25.1
+
 
