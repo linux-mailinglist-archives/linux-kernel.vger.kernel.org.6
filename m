@@ -1,158 +1,142 @@
-Return-Path: <linux-kernel+bounces-218255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD9090BBBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:07:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 476AD90BBBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D77B41C23734
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:07:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF967281972
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFA218F2E9;
-	Mon, 17 Jun 2024 20:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE6619005B;
+	Mon, 17 Jun 2024 20:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BiLsDW7i"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ortWfGPH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BD418F2E5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 20:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227461684BB;
+	Mon, 17 Jun 2024 20:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718654836; cv=none; b=XwwXikGk3w8Fxj/SFEFWEZedtMc1sxUVVAOn8hV3PFIj2REbtMXr+0wJLjpjFfNymp62i03ZtR01IJzppeRb1WteUJLfmMLnaZCCc1GvnuiomY+8JZT8SHtUqwWpRJuuKnuMK1fPndA6ZA447eA8SgeWhHKy8nbyrVyHkpbN3k8=
+	t=1718654952; cv=none; b=eMHasDFGibbKLn8Sv2A49P5UD9BcUntSHphfNWgA0/bSJ3tiGLJeG1Eevx8GzGHRuUcNTn8cSjcVrZR+YGA4gfQlE1woCqeg3imjVPjYJaD4aTjgMapcVGR75A5uE8NQVRAuWeNCPA5JDKtROCpYc7/9Lrn/XFRWnRfHHkbx3hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718654836; c=relaxed/simple;
-	bh=s2zJM/g9vyXju9U4Z9UniGkbGrLtR1iS2fCCS17YBeQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gVHdMLFOCev60dQguOD0ikVWHoMA3yN8XQzYBEomsMhSt9q7GtjfeAIf8Hev4Cl5SO3WnfOu8A/s8DRwdNYQgV3FpvMSM7GX9vAJ236VU23DZezeTxgiadjWYQgpJGynmm0rF94updNj0zu3zUTyxqOsCe01vVGGfIuXb3MlBEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BiLsDW7i; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b06b78e716so29964756d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718654833; x=1719259633; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SpQL0yvq1dDs98zST/M1XEikwLlL17e1VjSWuuysSL4=;
-        b=BiLsDW7isLfsp2DXo2v2XngWtsBAFpCCUvpS+xBgwq0mxk8dMyPhAMc391RYq1AJL+
-         B4OVcddLTV8Rqay8o4BJi9uVdLwiHKYH28L8BgQ05pQ2f+lBMJl7rv5z2cf2J15S/OSO
-         h+r0hVU91hZrwv3HZOx5eEHewJjkYEUofZhVc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718654833; x=1719259633;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SpQL0yvq1dDs98zST/M1XEikwLlL17e1VjSWuuysSL4=;
-        b=CpB+1s7qJ+J3whYx9ODXSUWc5TpNq4eJwJuS0k40gKoM+RxW8MZfyuaTiOuaAzfdbD
-         JT5+fNTYWvVXqvgVTYifQy+irP5avYN0l8rQIF2fkwJd2p6ETjc+RPPcsQZ9StrnbSkv
-         RKhlmE7czI7a6Vv67fZPcNuS1PfQy61X8VNL7YlOHy14t8sEgY5gj4vWilBe3HeZ8kW/
-         i9JB91DD94mmRTUYazl+I7vpM+5147zfKtoRuMnYhK8z60yh3CPn16IrjkZic9zSUKQi
-         SA7lstfZTIRNbbpvix6bmZ7wdgjkd1IABCtSXXRSYAvmvTEpYXeu+FPicoNwHyOtn2VD
-         IYJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEm5sw4jXsjHdFMnw2C5klpSZcTrnhM7F8D2/p0F2b0xkwQ5HswU16iPvRRdz+GDnnR6S+hEVZ786CLnWEMRj7X2FDwemxWiVU839h
-X-Gm-Message-State: AOJu0Yw0yNwJr6+Q1LXxtPk56rydgRYpLRqqhgNT6AazaGbww19DoetZ
-	zeOfAEVqeIls1L0Ga8ckjxdG8+jRIW+CS9i3pOUD/6T9Tk3/mqwbCmhx7N/tct6biAejdUqe20k
-	=
-X-Google-Smtp-Source: AGHT+IFsovIVHfxR8SXuPqz/ppqNtItRosg4eLme94596nq293zvs3G0GodFl07f5Y2NLudUPxKQ/g==
-X-Received: by 2002:a05:6214:a69:b0:6b0:7716:e9a4 with SMTP id 6a1803df08f44-6b2afc7747emr95246556d6.12.1718654833425;
-        Mon, 17 Jun 2024 13:07:13 -0700 (PDT)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com. [209.85.160.182])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5edbda8sm58524646d6.108.2024.06.17.13.07.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 13:07:12 -0700 (PDT)
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4405dffca81so171cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:07:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUh9m1t7ltK0YycVxScMcR6E6WOynSXZEu2nJU8sw6m9yB1tCk4wZb9U3Bp6A8tHqWuwBITBPUyY4l8U58PyPR0YDgGX34psVqdjH3X
-X-Received: by 2002:a05:622a:1a17:b0:442:1b20:2a9a with SMTP id
- d75a77b69052e-4449daa1b48mr5921cf.23.1718654832085; Mon, 17 Jun 2024 13:07:12
- -0700 (PDT)
+	s=arc-20240116; t=1718654952; c=relaxed/simple;
+	bh=PaIwXTtMekaj3Gv+ZkdLhymam1BV2Xw0/GRJanlgKQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sqEIZBWdv+7cYrBX2/grVs3Od+63urzisxIW3PmrVBC4LXEUju/+hmEdwXwh/TViPArUhJWLWungv3YyGM6SGDO/GMjc3e1npCXqiun6OHYkIkXoaO5pXRHsOErvwhRdNFNeQjKKmDQsT7U1hAKbJKg/U/hzuakOXBarW5ydUxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ortWfGPH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EC7EC2BD10;
+	Mon, 17 Jun 2024 20:09:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718654951;
+	bh=PaIwXTtMekaj3Gv+ZkdLhymam1BV2Xw0/GRJanlgKQU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ortWfGPHbxUnGF2mNIPw2IEH/7vZZRHLMG9rqSdAET4FvWmlzqE28Jr5CSeTmVzvi
+	 iuZVxQEjfbZmMxhJvnno2a2SOr89l7i5GYgH7OWxqDpuUrgiOejO1ZpYOSFwLu469y
+	 C3U1eoZAbtsuf7jRLVCFMsIbIdu/Mc03Q1pY7Di28qVJQpGHPe8oY9xm9POPkdKojy
+	 1aLlURVTAVt+hbH//S1LvTLHUb5xR4o6hl2cq63HXy1FE6PbYYT7EZ8eKNFedJBKrv
+	 V85fT5FYZe4vbF+Rs7qYSwxAnRbdcpcgArXVE21rjyRcIaLk2r7Gkkch2g+09n9G1o
+	 rOvgcZl8gt8Rg==
+Date: Mon, 17 Jun 2024 21:09:04 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
+ <jpaulo.silvagoncalves@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
+ <joao.goncalves@toradex.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Matti Vaittinen <mazziesaccount@gmail.com>,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] iio: trigger: Fix condition for own trigger
+Message-ID: <20240617210904.73774b39@jic23-huawei>
+In-Reply-To: <Zm6yrnDwSye85Hl1@livingston.pivistrello.it>
+References: <20240614143658.3531097-1-jpaulo.silvagoncalves@gmail.com>
+	<20240615115018.2b73d6b3@jic23-huawei>
+	<Zm6yrnDwSye85Hl1@livingston.pivistrello.it>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240615093758.65431-1-tejasvipin76@gmail.com>
-In-Reply-To: <20240615093758.65431-1-tejasvipin76@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 17 Jun 2024 13:06:48 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XRZKL_ppjUKDK61fQkWhHiQCJLfmVBS7wSo4sUux2g8Q@mail.gmail.com>
-Message-ID: <CAD=FV=XRZKL_ppjUKDK61fQkWhHiQCJLfmVBS7wSo4sUux2g8Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: raydium-rm692e5: transition to mipi_dsi
- wrapped functions
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sun, 16 Jun 2024 11:38:54 +0200
+Francesco Dolcini <francesco@dolcini.it> wrote:
 
-On Sat, Jun 15, 2024 at 2:40=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com=
-> wrote:
->
-> @@ -168,48 +147,38 @@ static int rm692e5_prepare(struct drm_panel *panel)
->         struct rm692e5_panel *ctx =3D to_rm692e5_panel(panel);
->         struct drm_dsc_picture_parameter_set pps;
->         struct device *dev =3D &ctx->dsi->dev;
-> -       int ret;
-> +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D ctx->dsi };
->
-> -       ret =3D regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->sup=
-plies);
-> -       if (ret < 0) {
-> -               dev_err(dev, "Failed to enable regulators: %d\n", ret);
-> -               return ret;
-> +       dsi_ctx.accum_err =3D regulator_bulk_enable(ARRAY_SIZE(ctx->suppl=
-ies), ctx->supplies);
-> +       if (dsi_ctx.accum_err) {
-> +               dev_err(dev, "Failed to enable regulators: %d\n", dsi_ctx=
-.accum_err);
-> +               return dsi_ctx.accum_err;
->         }
+> On Sat, Jun 15, 2024 at 11:50:18AM +0100, Jonathan Cameron wrote:
+> > On Fri, 14 Jun 2024 11:36:58 -0300
+> > Jo=C3=A3o Paulo Gon=C3=A7alves <jpaulo.silvagoncalves@gmail.com> wrote:
+> >  =20
+> > > From: Jo=C3=A3o Paulo Gon=C3=A7alves <joao.goncalves@toradex.com>
+> > >=20
+> > > The condition for checking if triggers belong to the same IIO device =
+to
+> > > set attached_own_device is currently inverted, causing
+> > > iio_trigger_using_own() to return an incorrect value. Fix it by testi=
+ng
+> > > for the correct return value of iio_validate_own_trigger().
+> > >=20
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 517985ebc531 ("iio: trigger: Add simple trigger_validation hel=
+per")
+> > > Signed-off-by: Jo=C3=A3o Paulo Gon=C3=A7alves <joao.goncalves@toradex=
+.com> =20
+>=20
+> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+>=20
+> >=20
+> > Ouch.  Can you give an example of resulting user visible result? That
+> > will help people decide whether to pick this up for their distro kernels
+> > etc.  In some cases, looks like we'll get garbage timestamps and in oth=
+ers
+> > may get stale data (or garbage). =20
+>=20
+> This was noticed while me and Joao were working on the ads1119 driver you
+> have been recently reviewing. We wanted to use iio_trigger_using_own()
+> and it was not behaving the right way. We looked into it and found the bu=
+g.
+>=20
+> Given that I do not know the exact impact on the drivers that are using t=
+his
+> function.
+>=20
+> > Odd no one has noticed this in the past whilst testing those dependent
+> > features in particular drivers and I worry a little that we may have bu=
+gs
+> > in the users as a result of iio_trigger_using_own() reporting the inver=
+se
+> > of the intended. I've take a quick look at the users and 'think' they a=
+re
+> > ok, but would definitely like a few others to confirm. =20
+>=20
+> All the users of iio_trigger_using_own() are older than the commit that
+> introduced the bug, it is safe to assume that they need the fix and
+> are expecting the function to behave the same way is documented and it was
+> before the bug was introduced.
+>=20
+> The broken commit is not that old and less than 10 IIO drivers are using =
+this
+> function. Given that I think that is not that odd that it took 1 year to =
+find
+> the bug.
 
-It would be my preference to get rid of the error print here since
-regulator_bulk_enable() already prints an error message.
+Yes. Long tail of IIO devices that are used on the sort of board that only
+gets a kernel update once in a while and well behind mainline.  So indeed
+not that surprising :(=20
 
+Applied to the fixes-togreg branch of iio.git
 
->         rm692e5_reset(ctx);
->
-> -       ret =3D rm692e5_on(ctx);
-> -       if (ret < 0) {
-> -               dev_err(dev, "Failed to initialize panel: %d\n", ret);
-> +       dsi_ctx.accum_err =3D rm692e5_on(ctx);
-> +       if (dsi_ctx.accum_err) {
-> +               dev_err(dev, "Failed to initialize panel: %d\n", dsi_ctx.=
-accum_err);
+Thanks,
 
-I'd probably change rm692e5_on() to take the "dsi_ctx" as a parameter
-and then you don't need to declare a new one there.
+Jonathan
 
-...also, you don't need to add an error message since rm692e5_on()
-will have already printed one (since the "multi" style functions
-always print error messages for you).
+>=20
+> Francesco
+>=20
 
-
-
->                 gpiod_set_value_cansleep(ctx->reset_gpio, 1);
->                 regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->su=
-pplies);
-> -               return ret;
-> +               return dsi_ctx.accum_err;
-
-Not new for your patch, but it seems odd that we don't do this error
-handling (re-assert reset and disable the regulator) for errors later
-in the function. Shouldn't it do that? It feels like the error
-handling should be in an "err" label and we should end up doing that
-any time we return an error code... What do you think?
-
-
--Doug
 
