@@ -1,161 +1,118 @@
-Return-Path: <linux-kernel+bounces-218168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE58D90BA09
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:47:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F40F490BA10
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFDC21C23D1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 033D31C23865
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1B3198A2E;
-	Mon, 17 Jun 2024 18:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339AF16191B;
+	Mon, 17 Jun 2024 18:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="u1Bp8cpa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/BthJua"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7F7194AF6;
-	Mon, 17 Jun 2024 18:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0683D441F;
+	Mon, 17 Jun 2024 18:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718650034; cv=none; b=qCsRUjvXCzDojtzKkAn3yXtpYRGKj3Mw+zIV1yHvEbSwjM2XDWJwE96JkV9O2KZgn9DQdtPqtO4KpxxhL9G1B1tqkzjlfWbtGb5IBdVxfq4TXSkRpVS9m2s7jTnpnvQgOovKCOG9DlLvp3PmrH1MTrHP7BBbjh9a93/hhagf4LI=
+	t=1718650064; cv=none; b=VLpmwbOWYcc0XRT7Mkf9QMV7wMrt5gjnK6r+IgV7VEEe1Ybh1ZFYIn0zonoCama0CUIRQdwIdphi0O4rt4Vib+7fqzC4m6FiFCmoDMZYfv+ju2KsTzmevxCrpNPx+y9ohjB3Zc+r3qF2yfOSyjRS7fLmNtVWxHi6tQlpxKf6UFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718650034; c=relaxed/simple;
-	bh=P9nFVL6PwUB1vuX7YltEykomKEoLB1b3dO/elBvkJdE=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=gGOzi0SQLtxvRdOMXZ/6QqJlg919TT43HD0GezTDbok55rdplwy7/sbGucDxynfcLXHUJ00Ei7n6E499VNo9LxEvJp209nL34wjRURGE4PZjzFi6Nyf4eVPIssDMsJebKWKRxoWhbuqsy24nWjQzBPNdFwExoT0k6ZKtjv02qBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=u1Bp8cpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE0EC2BD10;
-	Mon, 17 Jun 2024 18:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1718650033;
-	bh=P9nFVL6PwUB1vuX7YltEykomKEoLB1b3dO/elBvkJdE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=u1Bp8cpaOA/OEAU9tqGuFRl2CjsWza9+njLV7hNB3cT1gOjoYCKqQGFBjqJquDYUq
-	 a6rcnDxJalMpk+7ipsO5UDGiBO5elFGqu3nhefj8DOArb0QCCuqz8v7gT/JcKtMkvA
-	 IBxENi7jrlhqLWe75jSr8yHkBBstJnQJCarCWpU8=
-Date: Mon, 17 Jun 2024 11:47:12 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hotfixes for 6.10-rc5
-Message-Id: <20240617114712.45d4743f8bacb832dea4b5a9@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718650064; c=relaxed/simple;
+	bh=/ozGT6MoG1jdmExljQPrsfdMg0BohHXcdRltadm6CZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mk4FOTNjRvt6VRLJH42XgE23pWEfhfpV71jH7ruX666YZ8XhYS/I8JPcEGxYPN0HkO6Yyx4f1ba2wLKtIdF6Gihn8JjKcyc7C4vkU2g3C+LXKXol49EVtwhAqeYvz4D1PWAB3CaZF44rZuSmXSmcXlVeycTPc9VEIp2alHtbCcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/BthJua; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35f1bc63981so3462595f8f.1;
+        Mon, 17 Jun 2024 11:47:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718650061; x=1719254861; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0c7fTMC+b14XixWsQaZe1FUuYpGLUd+MlK7JbAqKTdw=;
+        b=b/BthJuaJX4iIgQ7y9B/ejJm7SXfhkG2vBPjjDv/saa6GuXxDgzkUhJb+BeSxMBozU
+         lzEXPWzs5dv2Yd/WioU06cbwbNDZVQodcZn/sNGpuFGWUcpOOTQfpGqxf2OaKqrG8pdx
+         H+41CmYmS7LhjVA8a/Am6xjt0auY3kn/9rc2Xb5Xbq1jYPCb1DGPnaz2m8qUGVeneAGp
+         +moYFJym5VabiNwJGYUou8+CsQ/6oAwU59Mn1hcF5SC9G3jpp2VnxSMIQ1P0wz4b/CEC
+         50GUzZNph0nU4ckphI1hxUGkrC2oE7Ldrt6bi0XljkJofzsAAR4PdW5ALYlFaLyG0zzz
+         Pj/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718650061; x=1719254861;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0c7fTMC+b14XixWsQaZe1FUuYpGLUd+MlK7JbAqKTdw=;
+        b=rAPwcPnbxGWPxx6yvn0UwVYf+cyG6M1bX9ePFCdGpsdUq3Sm40v0aGRyt+XyjUgWEq
+         cOc45lDQhzZ1x7A1cN7ktAM1icliFc57dCDREUpcg2wkIP6pkD2kz3/3j16ych82Q1hU
+         T//lYFN1F7grt8V/GRNwzvU6vXGGtHR4uBFZbO77XiiXedv3ij54iwSzRNEstlngQl5X
+         bAamRH/JsuFhZo+s1lBrNBTvAjiMfmRxYV7t4CFBQIxc9870k9iyRfoCs3larrHr7hNM
+         Wt1+mYPnf2/zKB2s5JM1BQszOhHi+b4WwwFh2nzE/xrK/oxqpuHI/JYILEgN5GkMX7zP
+         h23w==
+X-Forwarded-Encrypted: i=1; AJvYcCVd5xAVhKLIAFZDJVyJSbNHRrht6yzRiD5Xpumb36rSoNEzmwxfuq05ojQf/2hNfUbD6gk76lLEoS81eLcbs2HBjez5RGjneG3VxtizCC1S5cUIwvZ7eeBj0m5cnBBh1XdeA3GMwg5xI95r4aKQ/fAeuYJXCS91v66b5zcHumYAoEgWzw==
+X-Gm-Message-State: AOJu0Yz6LQRB8ZUFWkMdCmNXFs6c0TdeySWlwesOwOTrHUhDfeZ0nQJG
+	zgC5vYZsb/BqiHuyVYaLC0BvKbrXARk71wRGxgtgxKJdc7yJ3EGm
+X-Google-Smtp-Source: AGHT+IF+i2YR5PA4D0SHL0kjeJAcOnJbRmvghNvRJKOXyIEowN1D1mDkrG125uijJQGD18S+oNT4kQ==
+X-Received: by 2002:adf:f684:0:b0:34c:77bd:2508 with SMTP id ffacd0b85a97d-3609ea67765mr382435f8f.11.1718650061218;
+        Mon, 17 Jun 2024 11:47:41 -0700 (PDT)
+Received: from ?IPV6:2a10:d582:37c5:0:ed15:7e1f:11e6:9a9a? ([2a10:d582:37c5:0:ed15:7e1f:11e6:9a9a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a8fsm12371707f8f.110.2024.06.17.11.47.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 11:47:40 -0700 (PDT)
+Message-ID: <7f60db41-8935-4997-b65d-c69785f872e7@gmail.com>
+Date: Mon, 17 Jun 2024 19:47:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] iio: light: ROHM BH1745 colour sensor
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+ robh@kernel.org, ivan.orlov0322@gmail.com, javier.carrasco.cruz@gmail.com,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240606162948.83903-1-muditsharma.info@gmail.com>
+ <20240606162948.83903-2-muditsharma.info@gmail.com>
+ <20240608172227.17996c75@jic23-huawei>
+Content-Language: en-US
+From: Mudit Sharma <muditsharma.info@gmail.com>
+In-Reply-To: <20240608172227.17996c75@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 08/06/2024 17:22, Jonathan Cameron wrote:
+> On Thu,  6 Jun 2024 17:29:42 +0100
+> 
+> Hi Mudit,
+> 
+> Welcome to IIO.
+> 
+> Some comments inline.  Some apply more widely than where I've
+> called them out, so please look for similar cases and tidy them all
+> up for v5.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
 
-Linus, please merge this batch of hotfixes, thanks.
+Hi Jonathan,
 
+Thank you for the review and suggestions on this.
 
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
+I'll address the comments and include related fixes in v5.
 
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-06-17-11-43
-
-for you to fetch changes up to 01c8f9806bde438ca1c8cbbc439f0a14a6694f6c:
-
-  kcov: don't lose track of remote references during softirqs (2024-06-15 10:43:08 -0700)
-
-----------------------------------------------------------------
-19 hotfixes, 8 of which are cc:stable.
-
-Mainly MM singleton fixes.  And a couple of ocfs2 regression fixes.
-
-----------------------------------------------------------------
-Aleksandr Nogikh (1):
-      kcov: don't lose track of remote references during softirqs
-
-Baolin Wang (1):
-      mm: shmem: fix getting incorrect lruvec when replacing a shmem folio
-
-David Hildenbrand (1):
-      Revert "mm: init_mlocked_on_free_v3"
-
-Hugh Dickins (1):
-      mm/migrate: fix kernel BUG at mm/compaction.c:2761!
-
-Jeff Xu (1):
-      mm/memfd: add documentation for MFD_NOEXEC_SEAL MFD_EXEC
-
-Joseph Qi (2):
-      ocfs2: fix NULL pointer dereference in ocfs2_journal_dirty()
-      ocfs2: fix NULL pointer dereference in ocfs2_abort_trigger()
-
-Kefeng Wang (1):
-      mm: fix possible OOB in numa_rebuild_large_mapping()
-
-Lorenzo Stoakes (1):
-      MAINTAINERS: remove Lorenzo as vmalloc reviewer
-
-Mark Brown (1):
-      selftests: mm: make map_fixed_noreplace test names stable
-
-Oleg Nesterov (1):
-      zap_pid_ns_processes: clear TIF_NOTIFY_SIGNAL along with TIF_SIGPENDING
-
-Peter Oberparleiter (1):
-      gcov: add support for GCC 14
-
-Peter Xu (2):
-      mm/page_table_check: fix crash on ZONE_DEVICE
-      mm/debug_vm_pgtable: drop RANDOM_ORVALUE trick
-
-Rafael Aquini (1):
-      mm: mmap: allow for the maximum number of bits for randomizing mmap_base by default
-
-Ran Xiaokai (1):
-      mm: huge_memory: fix misused mapping_large_folio_support() for anon folios
-
-Suren Baghdasaryan (2):
-      lib/alloc_tag: do not register sysctl interface when CONFIG_SYSCTL=n
-      lib/alloc_tag: fix RCU imbalance in pgalloc_tag_get()
-
-Yury Norov (1):
-      gcc: disable '-Warray-bounds' for gcc-9
-
- Documentation/admin-guide/kernel-parameters.txt  |   6 -
- Documentation/userspace-api/index.rst            |   1 +
- Documentation/userspace-api/mfd_noexec.rst       |  86 ++++++++++
- MAINTAINERS                                      |   1 -
- arch/Kconfig                                     |  12 ++
- fs/ocfs2/journal.c                               | 192 +++++++++++++----------
- fs/ocfs2/ocfs2.h                                 |  27 ++++
- fs/ocfs2/super.c                                 |   4 +-
- include/linux/kcov.h                             |   2 +
- include/linux/mm.h                               |   9 +-
- include/linux/pagemap.h                          |   4 +
- include/linux/pgalloc_tag.h                      |  11 +-
- init/Kconfig                                     |   2 +-
- kernel/gcov/gcc_4_7.c                            |   4 +-
- kernel/kcov.c                                    |   1 +
- kernel/pid_namespace.c                           |   1 +
- lib/alloc_tag.c                                  |  16 +-
- mm/debug_vm_pgtable.c                            |  31 +---
- mm/huge_memory.c                                 |  28 ++--
- mm/internal.h                                    |   1 -
- mm/memcontrol.c                                  |   3 +-
- mm/memory.c                                      |  20 +--
- mm/migrate.c                                     |   8 +-
- mm/mm_init.c                                     |  43 +----
- mm/page_alloc.c                                  |   2 +-
- mm/page_table_check.c                            |  11 +-
- mm/shmem.c                                       |   2 +-
- security/Kconfig.hardening                       |  15 --
- tools/testing/selftests/mm/map_fixed_noreplace.c |  24 ++-
- 29 files changed, 345 insertions(+), 222 deletions(-)
- create mode 100644 Documentation/userspace-api/mfd_noexec.rst
+Best regards,
+Mudit Sharma
 
 
