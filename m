@@ -1,256 +1,392 @@
-Return-Path: <linux-kernel+bounces-217784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB0390B681
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E3C90B5D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DAADB39FE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:27:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D85C5B357AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A781C6BE;
-	Mon, 17 Jun 2024 14:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B60C7346B;
+	Mon, 17 Jun 2024 15:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="d7aoavem"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adq+0pOk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35151C2AD
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718636261; cv=pass; b=LgTRHFCwRTSwGUOHYrssyvdZlM6NrRpCy6+1jh7DMR4NRA+IQwFCdqIPZk1Qi/0ztntw1o3C40rWTiqLO6yKN0zIGdrvshfWSCPa3FmqYuEdBD0JPncmYyj2PGqcLyn6sT4HuQmr6p9nPkjo2hlPE0ZPtKf5M5zDOAnFawIbvSQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718636261; c=relaxed/simple;
-	bh=2mLJtNChd1G7wUJAeAvf58sTxBTG5cAWI0tJWUet3Oc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WwB1+fLtNGq/Jg4axElNpClrE32nB0tmhjYgdsdhxkCMm7ao+fotmlMImfCdo08Jpm4IkqHORsgBqttGTDYEFhmS1lAB2JtCA3Xt4GXFAYBjNhlw6fHhGBAZtN2f1OxaJ+Ee+rK8DdyEmLnkMer+5PPAlg3fnjarGZGVP5xgFSU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=d7aoavem; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1718636245; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aNCwsYjfcRZ9W9NfNpaAN13uJi4YbDL3TikJmOLmLuplKVfdGGQHQqsdsD4NwiFL+mBbLyDSUWP48ft7r6TT8CGzpd8RuuMJyyMuvcnd0dTqeeve/E84mX3CtXnbJu88O65tMU/WrMETPZQBFX2Gr5Ta7AYVmrzuWNUVMbUR3/o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1718636245; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=2mLJtNChd1G7wUJAeAvf58sTxBTG5cAWI0tJWUet3Oc=; 
-	b=bSsgH0WC5JIDq6hceVUeNYRjJmIQ+IlsAA6LYAmbu/6nz1Nx0bBMYrwjUIglHr+awrHEqsEZdbJlUKKaR1Kc8xkR6IvjCZUNDFYcKhb+1aAfygqhGYIUYz9wGcJlfGAizjWhEmLvtwk2SPTfAdhBmScoEVXR8Vbnl+goIV8qnwA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1718636245;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=2mLJtNChd1G7wUJAeAvf58sTxBTG5cAWI0tJWUet3Oc=;
-	b=d7aoavemvLHEhRRSQFPSn8fybepuT4Dtm8eeMEMx8INiZVx8Yf5am9Bke1/ArJ5c
-	GwNyRgmhEY3Zsy0bWKOTIQa6XflAiwJSqpYH1CerrqzNshRyNP+YDSefp6gokmSMNjm
-	Nu1OLcZ+C94XHxOaZlGDgN6I7TXDwvway/B7EirJcdgxljzsRua0NKNYMdLMKlgPR2Z
-	AF1vhRfd1PZdGJOIPG/Kd2nz8xe6pl/1ojhodn2OQ5rt+U0B7JJjKGHxLDNH1AlivAv
-	ur6L9ikQl4Op+PkmbpYhU7UYKXdueifWwsPuWhi3ZWzoMrCly4VWpNaI3u/Hm9RCeIb
-	QX+LFjnORQ==
-Received: by mx.zohomail.com with SMTPS id 1718636244680837.8300130243035;
-	Mon, 17 Jun 2024 07:57:24 -0700 (PDT)
-Message-ID: <977af3daf5f7eb048eed0310bc93a321728b6106.camel@icenowy.me>
-Subject: Re: [PATCH 1/2] drm/amdgpu: make duplicated EOP packet for GFX7/8
- have real content
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Alex
- Deucher <alexander.deucher@amd.com>, Pan Xinhui <Xinhui.Pan@amd.com>, David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Pierre-Eric
- Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-Date: Mon, 17 Jun 2024 22:57:19 +0800
-In-Reply-To: <e7a814fc-7b1a-4e32-8868-292be004f920@amd.com>
-References: <20240617105846.1516006-1-uwu@icenowy.me>
-	 <20240617105846.1516006-2-uwu@icenowy.me>
-	 <88337509-3ad7-47aa-b70f-5294f7f1e486@amd.com>
-	 <b4ebdbce2f44c06806a650e72b1b6eb9a16dffe6.camel@icenowy.me>
-	 <09fbcd1f-c7b1-47e3-9146-17f8189978a8@amd.com>
-	 <e88d4722fa3bbd7104b140debdd85cb212628944.camel@icenowy.me>
-	 <d44651a7-0c07-4b84-8828-f1d405359aeb@amd.com>
-	 <1e5f86991635b9045e91fab6397cda87555f85ff.camel@icenowy.me>
-	 <e7a814fc-7b1a-4e32-8868-292be004f920@amd.com>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AF428F3;
+	Mon, 17 Jun 2024 15:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718637312; cv=none; b=dJhv3p480IGADLhbjcRT0BCzFrw9K+kq8/pwW5hjShCiLcRLEPUEBsUkm2TgBM8POMG4+6TCbSiBoCV87scGhNiectxR6r1AkvKSNeHuw5AUkjybId9kuZd03Zv89uJXO+32WAT3n5MtiL7sh2z9O+Yv9BE7KosttnmtBZhP7Io=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718637312; c=relaxed/simple;
+	bh=sNqYN82aT6iqdyV+emqRd6GJICAQXA8CUkaLlNKeyVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ClyhtvoYw/TkyrjMwLrOjOsAVZ2dBdx6484/mWZRjwMBMFZNrH6FuSq7+FAkL+KfcEqXGI/lPye4o7/VHGT8aNBHa9cvdOapHRGVTDqQjcBenjXf+o+IlQfT5IB+G0VT9VrwaC23X6lG5O/1mgxO96+ENi2L5WSHH1LWjs/3jDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adq+0pOk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54CC7C2BD10;
+	Mon, 17 Jun 2024 15:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718637312;
+	bh=sNqYN82aT6iqdyV+emqRd6GJICAQXA8CUkaLlNKeyVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=adq+0pOko/AdQZjHmRX1Lb3GiikyLUThDUBNunbVgvle/FCcV84VttwN+MHGNnWFp
+	 r3BxenlfNL5Arl1GNmFfwnfBBEnOzrlvdPXaJk7wmrkuELwRq1Pz9AXmERhOJZL9kO
+	 kZLx/2N5C/mjm5vpx7ngqQ3nLUBGY2mY7Fzd4ZzY9jzLplx2yxhB+SoyQxsDskpv8f
+	 pAzqxthHa5WDNYNNI0M69KzAoB28QR26CyryseQKJzm8SVTvSsgt4u1IjD3FuuZHLr
+	 y0zk6hSGU10jsLtiVZFyKjm6JNX/tEcillbWm/FuIWxDjuws7kgjwMywHHd1AA/J1K
+	 sncpe10VD7Wng==
+Date: Mon, 17 Jun 2024 23:01:09 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Haylen Chu <heylenay@outlook.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] thermal: cv180x: Add cv180x thermal driver support
+Message-ID: <ZnBPtUaAOksIW4d_@xhacker>
+References: <SG2PR01MB4218013241B3EED779D3BAE8D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
+ <SG2PR01MB42187EC277384F84A3126F0DD7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SG2PR01MB42187EC277384F84A3126F0DD7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
 
-=E5=9C=A8 2024-06-17=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 16:42 +0200=EF=BC=
-=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
-> Am 17.06.24 um 16:30 schrieb Icenowy Zheng:
-> > =E5=9C=A8 2024-06-17=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 15:59 +0200=EF=
-=BC=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
-> > > Am 17.06.24 um 15:43 schrieb Icenowy Zheng:
-> > > > =E5=9C=A8 2024-06-17=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 15:09 +020=
-0=EF=BC=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
-> > > > > Am 17.06.24 um 15:03 schrieb Icenowy Zheng:
-> > > > > > =E5=9C=A8 2024-06-17=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 14:35 =
-+0200=EF=BC=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
-> > > > > > > Am 17.06.24 um 12:58 schrieb Icenowy Zheng:
-> > > > > > > > The duplication of EOP packets for GFX7/8, with the
-> > > > > > > > former
-> > > > > > > > one
-> > > > > > > > have
-> > > > > > > > seq-1 written and the latter one have seq written,
-> > > > > > > > seems to
-> > > > > > > > confuse
-> > > > > > > > some
-> > > > > > > > hardware platform (e.g. Loongson 7A series PCIe
-> > > > > > > > controllers).
-> > > > > > > >=20
-> > > > > > > > Make the content of the duplicated EOP packet the same
-> > > > > > > > with
-> > > > > > > > the
-> > > > > > > > real
-> > > > > > > > one, only masking any possible interrupts.
-> > > > > > > Well completely NAK to that, exactly that disables the
-> > > > > > > workaround.
-> > > > > > >=20
-> > > > > > > The CPU needs to see two different values written here.
-> > > > > > Why do the CPU need to see two different values here? Only
-> > > > > > the
-> > > > > > second
-> > > > > > packet will raise an interrupt before and after applying
-> > > > > > this
-> > > > > > patch,
-> > > > > > and the first packet's result should just be overriden on
-> > > > > > ordinary
-> > > > > > platforms. The CPU won't see the first one, until it's
-> > > > > > polling
-> > > > > > for
-> > > > > > the
-> > > > > > address for a very short interval, so short that the GPU CP
-> > > > > > couldn't
-> > > > > > execute 2 commands.
-> > > > > Yes exactly that. We need to make two writes, one with the
-> > > > > old
-> > > > > value
-> > > > > (seq - 1) and a second with the real value (seq).
-> > > > >=20
-> > > > > Otherwise it is possible that a polling CPU would see the
-> > > > > sequence
-> > > > > before the second EOP is issued with results in incoherent
-> > > > > view
-> > > > > of
-> > > > > memory.
-> > > > In this case shouldn't we write seq-1 before any work, and then
-> > > > write
-> > > > seq after work, like what is done in Mesa?
-> > > No. This hw workaround requires that two consecutive write
-> > > operations
-> > > happen directly behind each other on the PCIe bus with two
-> > > different
-> > > values.
-> > Well to be honest the workaround code in Mesa seems to not be
-> > working
-> > in this way ...
->=20
-> Mesa doesn't have any workaround for that hw issue, the code there
-> uses=20
-> a quite different approach.
+On Tue, Jun 04, 2024 at 12:54:21PM +0000, Haylen Chu wrote:
+> Add support for cv180x SoCs integrated thermal sensors.
+> 
+> Signed-off-by: Haylen Chu <heylenay@outlook.com>
+> ---
+>  drivers/thermal/Kconfig          |   6 +
+>  drivers/thermal/Makefile         |   1 +
+>  drivers/thermal/cv180x_thermal.c | 262 +++++++++++++++++++++++++++++++
+>  3 files changed, 269 insertions(+)
+>  create mode 100644 drivers/thermal/cv180x_thermal.c
+> 
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index 204ed89a3ec9..f53c973a361d 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -514,4 +514,10 @@ config LOONGSON2_THERMAL
+>  	  is higher than the high temperature threshold or lower than the low
+>  	  temperature threshold, the interrupt will occur.
+>  
+> +config CV180X_THERMAL
+> +	tristate "Temperature sensor driver for Sophgo CV180X"
+> +	help
+> +	  If you say yes here you get support for thermal sensor integrated in
+> +	  Sophgo CV180X SoCs.
+> +
+>  endif
+> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+> index 5cdf7d68687f..5b59bde8a579 100644
+> --- a/drivers/thermal/Makefile
+> +++ b/drivers/thermal/Makefile
+> @@ -65,3 +65,4 @@ obj-$(CONFIG_AMLOGIC_THERMAL)     += amlogic_thermal.o
+>  obj-$(CONFIG_SPRD_THERMAL)	+= sprd_thermal.o
+>  obj-$(CONFIG_KHADAS_MCU_FAN_THERMAL)	+= khadas_mcu_fan.o
+>  obj-$(CONFIG_LOONGSON2_THERMAL)	+= loongson2_thermal.o
+> +obj-$(CONFIG_CV180X_THERMAL)	+= cv180x_thermal.o
+> diff --git a/drivers/thermal/cv180x_thermal.c b/drivers/thermal/cv180x_thermal.c
+> new file mode 100644
+> index 000000000000..89425e2b75a2
+> --- /dev/null
+> +++ b/drivers/thermal/cv180x_thermal.c
+> @@ -0,0 +1,262 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2021 Sophgo Inc.
+> + * Copyright (C) 2024 Haylen Chu <heylenay@outlook.com>
+> + */
+> +
+> +#include <linux/bits.h>
+> +#include <linux/clk.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/io.h>
+> +#include <linux/thermal.h>
 
-Ah? Commit bf26da927a1c ("drm/amdgpu: add cache flush workaround to
-gfx8 emit_fence") says "Both PAL and Mesa use it for gfx8 too, so port
-this commit to gfx_v8_0_ring_emit_fence_gfx", so maybe the workaround
-should just be not necessary here?
+can we sort the headers?
 
+> +
+> +#define TEMPSEN_VERSION					0x0
+> +#define TEMPSEN_CTRL					0x4
+> +#define  TEMPSEN_CTRL_EN				BIT(0)
+> +#define  TEMPSEN_CTRL_SEL_MASK				GENMASK(7, 4)
+> +#define  TEMPSEN_CTRL_SEL_OFFSET			4
+> +#define TEMPSEN_STATUS					0x8
+> +#define TEMPSEN_SET					0xc
+> +#define  TEMPSEN_SET_CHOPSEL_MASK			GENMASK(5, 4)
+> +#define  TEMPSEN_SET_CHOPSEL_OFFSET			4
+> +#define  TEMPSEN_SET_CHOPSEL_128T			0
+> +#define  TEMPSEN_SET_CHOPSEL_256T			1
+> +#define  TEMPSEN_SET_CHOPSEL_512T			2
+> +#define  TEMPSEN_SET_CHOPSEL_1024T			3
+> +#define  TEMPSEN_SET_ACCSEL_MASK			GENMASK(7, 6)
+> +#define  TEMPSEN_SET_ACCSEL_OFFSET			6
+> +#define  TEMPSEN_SET_ACCSEL_512T			0
+> +#define  TEMPSEN_SET_ACCSEL_1024T			1
+> +#define  TEMPSEN_SET_ACCSEL_2048T			2
+> +#define  TEMPSEN_SET_ACCSEL_4096T			3
+> +#define  TEMPSEN_SET_CYC_CLKDIV_MASK			GENMASK(15, 8)
+> +#define  TEMPSEN_SET_CYC_CLKDIV_OFFSET			8
+> +#define TEMPSEN_INTR_EN					0x10
+> +#define TEMPSEN_INTR_CLR				0x14
+> +#define TEMPSEN_INTR_STA				0x18
+> +#define TEMPSEN_INTR_RAW				0x1c
+> +#define TEMPSEN_RESULT(n)				(0x20 + (n) * 4)
+> +#define  TEMPSEN_RESULT_RESULT_MASK			GENMASK(12, 0)
+> +#define  TEMPSEN_RESULT_MAX_RESULT_MASK			GENMASK(28, 16)
+> +#define  TEMPSEN_RESULT_CLR_MAX_RESULT			BIT(31)
+> +#define TEMPSEN_AUTO_PERIOD				0x64
+> +#define  TEMPSEN_AUTO_PERIOD_AUTO_CYCLE_MASK		GENMASK(23, 0)
+> +#define  TEMPSEN_AUTO_PERIOD_AUTO_CYCLE_OFFSET		0
+> +
+> +struct cv180x_thermal_zone {
+> +	struct device *dev;
+> +	void __iomem *base;
+> +	struct clk *clk_tempsen;
+> +	u32 chop_period;
+> +	u32 accum_period;
+> +	u32 sample_cycle;
+> +};
+> +
+> +static void cv180x_thermal_init(struct cv180x_thermal_zone *ctz)
+> +{
+> +	void __iomem *base = ctz->base;
+> +	u32 regval;
+> +
+> +	writel(readl(base + TEMPSEN_INTR_RAW), base + TEMPSEN_INTR_CLR);
+> +	writel(TEMPSEN_RESULT_CLR_MAX_RESULT, base + TEMPSEN_RESULT(0));
+> +
+> +	regval = readl(base + TEMPSEN_SET);
+> +	regval &= ~TEMPSEN_SET_CHOPSEL_MASK;
+> +	regval &= ~TEMPSEN_SET_ACCSEL_MASK;
+> +	regval &= ~TEMPSEN_SET_CYC_CLKDIV_MASK;
+> +	regval |= ctz->chop_period << TEMPSEN_SET_CHOPSEL_OFFSET;
+> +	regval |= ctz->accum_period << TEMPSEN_SET_ACCSEL_OFFSET;
+> +	regval |= 0x31 << TEMPSEN_SET_CYC_CLKDIV_OFFSET;
+> +	writel(regval, base + TEMPSEN_SET);
+> +
+> +	regval = readl(base + TEMPSEN_AUTO_PERIOD);
+> +	regval &= ~TEMPSEN_AUTO_PERIOD_AUTO_CYCLE_MASK;
+> +	regval |= ctz->sample_cycle << TEMPSEN_AUTO_PERIOD_AUTO_CYCLE_OFFSET;
+> +	writel(regval, base + TEMPSEN_AUTO_PERIOD);
+> +
+> +	regval = readl(base + TEMPSEN_CTRL);
+> +	regval &= ~TEMPSEN_CTRL_SEL_MASK;
+> +	regval |= 1 << TEMPSEN_CTRL_SEL_OFFSET;
+> +	regval |= TEMPSEN_CTRL_EN;
+> +	writel(regval, base + TEMPSEN_CTRL);
+> +}
+> +
+> +static void cv180x_thermal_deinit(struct cv180x_thermal_zone *ct)
+> +{
+> +	void __iomem *base = ct->base;
+> +	u32 regval;
+> +
+> +	regval = readl(base + TEMPSEN_CTRL);
+> +	regval &= ~(TEMPSEN_CTRL_SEL_MASK | TEMPSEN_CTRL_EN);
+> +	writel(regval, base + TEMPSEN_CTRL);
+> +
+> +	writel(readl(base + TEMPSEN_INTR_RAW), base + TEMPSEN_INTR_CLR);
+> +}
+> +
+> +/*
+> + *	Raw register value to temperature (mC) formula:
+> + *
+> + *		       read_val * 1000 * 716
+> + *	Temperature = ----------------------- - 273000
+> + *				divider
+> + *
+> + *	where divider should be ticks number of accumulation period,
+> + *	e.g. 2048 for TEMPSEN_CTRL_ACCSEL_2048T
+> + */
+> +static int cv180x_calc_temp(struct cv180x_thermal_zone *ctz, u32 result)
+> +{
+> +	u32 divider = (u32)(512 * int_pow(2, ctz->accum_period));
+> +
+> +	return (result * 1000) * 716 / divider - 273000;
+> +}
+> +
+> +static int cv180x_get_temp(struct thermal_zone_device *tdev, int *temperature)
+> +{
+> +	struct cv180x_thermal_zone *ctz = thermal_zone_device_priv(tdev);
+> +	void __iomem *base = ctz->base;
+> +	u32 result;
+> +
+> +	result = readl(base + TEMPSEN_RESULT(0)) & TEMPSEN_RESULT_RESULT_MASK;
+> +	*temperature = cv180x_calc_temp(ctz, result);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct thermal_zone_device_ops cv180x_thermal_ops = {
+> +	.get_temp = cv180x_get_temp,
+> +};
+> +
+> +static const struct of_device_id cv180x_thermal_of_match[] = {
+> +	{ .compatible = "sophgo,cv1800-thermal" },
+> +	{ .compatible = "sophgo,cv180x-thermal" },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, cv180x_thermal_of_match);
+> +
+> +static int
+> +cv180x_parse_dt(struct cv180x_thermal_zone *ctz)
+> +{
+> +	struct device_node *np = ctz->dev->of_node;
+> +
+> +	if (of_property_read_u32(np, "accumulation-period",
+> +				 &ctz->accum_period)) {
+> +		ctz->accum_period = TEMPSEN_SET_ACCSEL_2048T;
+> +	} else {
+> +		if (ctz->accum_period < TEMPSEN_SET_ACCSEL_512T ||
+> +		    ctz->accum_period > TEMPSEN_SET_ACCSEL_4096T) {
+> +			dev_err(ctz->dev, "invalid accumulation period %d\n",
+> +				ctz->accum_period);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	if (of_property_read_u32(np, "chop-period", &ctz->chop_period)) {
+> +		ctz->chop_period = TEMPSEN_SET_CHOPSEL_1024T;
+> +	} else {
+> +		if (ctz->chop_period < TEMPSEN_SET_CHOPSEL_128T ||
+> +		    ctz->chop_period > TEMPSEN_SET_CHOPSEL_1024T) {
+> +			dev_err(ctz->dev, "invalid chop period %d\n",
+> +				ctz->chop_period);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	if (of_property_read_u32(np, "sample-cycle-us", &ctz->sample_cycle))
+> +		ctz->sample_cycle = 1000000;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cv180x_thermal_probe(struct platform_device *pdev)
+> +{
+> +	struct cv180x_thermal_zone *ctz;
+> +	struct thermal_zone_device *tz;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	ctz = devm_kzalloc(&pdev->dev, sizeof(*ctz), GFP_KERNEL);
+> +	if (!ctz)
+> +		return -ENOMEM;
+> +
+> +	ctz->dev = &pdev->dev;
+> +
+> +	ret = cv180x_parse_dt(ctz);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "failed to parse dt\n");
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	ctz->base = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(ctz->base))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(ctz->base),
+> +				     "failed to map tempsen registers\n");
+> +
+> +	ctz->clk_tempsen = devm_clk_get(&pdev->dev, "clk_tempsen");
 
->=20
-> > > To make the software logic around that work without any changes
-> > > we
-> > > use
-> > > the values seq - 1 and seq because those are guaranteed to be
-> > > different
-> > > and not trigger any unwanted software behavior.
-> > >=20
-> > > Only then we can guarantee that we have a coherent view of system
-> > > memory.
-> > Any more details about it?
->=20
-> No, sorry. All I know is that it's a bug in the cache flush logic
-> which=20
-> can be worked around by issuing two write behind each other to the
-> same=20
-> location.
+devm_clk_get_enabled maybe better for easy exit and error handling
+code path. see below
 
-So the issue is that the first EOP write does not properly flush the
-cache? Could EVENT_WRITE be used instead of EVENT_WRITE_EOP in this
-workaround to properly flush it without hurting the fence value?
+And since the so called "clk_tempsen" is the only clk, it's better
+to remove the clk name.
 
+> +	if (IS_ERR(ctz->clk_tempsen))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(ctz->clk_tempsen),
+> +				     "failed to get clk_tempsen\n");
+> +
+> +	clk_prepare_enable(ctz->clk_tempsen);
+> +
+> +	cv180x_thermal_init(ctz);
+> +
+> +	tz = devm_thermal_of_zone_register(&pdev->dev, 0, ctz,
+> +					   &cv180x_thermal_ops);
+> +	if (IS_ERR(tz))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(tz),
+> +				     "failed to register thermal zone\n");
 
->=20
-> > BTW in this case, could I try to write it for 3 times instead of 2,
-> > with seq-1, seq and seq?
->=20
-> That could potentially work as well, but at some point we would need
-> to=20
-> increase the EOP ring buffer size or could run into performance
-> issues.
+Missing undo the clk_prepare_enable. 
 
-Well I will try this. I think the buffer is enlarged in the original
-workaround commit.
-
->=20
-> > > > As what I see, Mesa uses another command buffer to emit a
-> > > > EVENT_WRITE_EOP writing 0, and commit this command buffer
-> > > > before
-> > > > the
-> > > > real command buffer.
-> > > >=20
-> > > > > > Or do you mean the GPU needs to see two different values
-> > > > > > being
-> > > > > > written,
-> > > > > > or they will be merged into only one write request?
-> > > > > >=20
-> > > > > > Please give out more information about this workaround,
-> > > > > > otherwise
-> > > > > > the
-> > > > > > GPU hang problem on Loongson platforms will persist.
-> > > > > Well if Loongson can't handle two consecutive write
-> > > > > operations to
-> > > > > the
-> > > > > same address with different values then you have a massive
-> > > > > platform
-> > > > > bug.
-> > > > I think the issue is triggered when two consecutive write
-> > > > operations
-> > > > and one IRQ is present, which is exactly the case of this
-> > > > function.
-> > > Well then you have a massive platform bug.
-> > >=20
-> > > Two consecutive writes to the same bus address are perfectly
-> > > legal
-> > > from
-> > > the PCIe specification and can happen all the time, even without
-> > > this
-> > > specific hw workaround.
-> > Yes I know it, and I am not from Loongson, just some user trying to
-> > mess around it.
->=20
-> Well to be honest on a platform where even two consecutive writes to
-> the=20
-> same location doesn't work I would have strong doubts that it is
-> stable=20
-> in general.
-
-Well I think the current situation is that the IRQ triggered by the
-second EOP packet arrives before the second write is finished, not the
-second write is totally dropped.
-
->=20
-> Regards,
-> Christian.
-
+> +
+> +	platform_set_drvdata(pdev, ctz);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cv180x_thermal_remove(struct platform_device *pdev)
+> +{
+> +	struct cv180x_thermal_zone *ctz = platform_get_drvdata(pdev);
+> +
+> +	cv180x_thermal_deinit(ctz);
+> +	clk_disable_unprepare(ctz->clk_tempsen);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused cv180x_thermal_suspend(struct device *dev)
+> +{
+> +	struct cv180x_thermal_zone *ctz = dev_get_drvdata(dev);
+> +
+> +	cv180x_thermal_deinit(ctz);
+> +	clk_disable_unprepare(ctz->clk_tempsen);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused cv180x_thermal_resume(struct device *dev)
+> +{
+> +	struct cv180x_thermal_zone *ctz = dev_get_drvdata(dev);
+> +
+> +	clk_prepare_enable(ctz->clk_tempsen);
+> +	cv180x_thermal_init(ctz);
+> +
+> +	return 0;
+> +}
+> +
+> +static SIMPLE_DEV_PM_OPS(cv180x_thermal_pm_ops,
+> +			 cv180x_thermal_suspend, cv180x_thermal_resume);
+> +
+> +static struct platform_driver cv180x_thermal_driver = {
+> +	.probe = cv180x_thermal_probe,
+> +	.remove = cv180x_thermal_remove,
+> +	.driver = {
+> +		.name = "cv180x-thermal",
+> +		.pm = &cv180x_thermal_pm_ops,
+> +		.of_match_table = cv180x_thermal_of_match,
+> +	},
+> +};
+> +
+> +module_platform_driver(cv180x_thermal_driver);
+> +
+> +MODULE_DESCRIPTION("Sophgo CV180x thermal driver");
+> +MODULE_AUTHOR("Haylen Chu <heylenay@outlook.com>");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.45.2
+> 
 
