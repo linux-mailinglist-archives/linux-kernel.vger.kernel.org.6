@@ -1,183 +1,87 @@
-Return-Path: <linux-kernel+bounces-217921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8430990B637
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:23:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB38090B646
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 022EB2857B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:23:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EBB5281C71
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7B714EC5D;
-	Mon, 17 Jun 2024 16:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B761414EC5C;
+	Mon, 17 Jun 2024 16:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZJPYBZr"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="begfLGrf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4721014D2A8;
-	Mon, 17 Jun 2024 16:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F15847A;
+	Mon, 17 Jun 2024 16:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718641387; cv=none; b=qFOOmIq4OaNPOW+f8Gp5AOxpnoN1JEjlmkXlQFNlgPCXGPNnvXFLGVMETUjnz6dTyFCK5GDup5kvSzTyFA91tN703iXVCeJyVqS8ozFmFY20MQr6qwa3BQK5CDemhQZ2CMq5ZkX+4pK62kHrr+EaFis2pITvEc/JN1jEA2zdrac=
+	t=1718641481; cv=none; b=VlMBe4Ac+jIjpCBWWt2NFPLzv/hcCbrTUjS5CCPNfXy6RtveSECL5UCM5zskEOoZ0MawiOMEnxvTRVQ8Z+/Y5YJcJUAfnd/RD7H5Mv8mKg6UBbDLJXcMCQTe5ygFzVNkskIUYHfHJ9aRaxj0xicEuPETN3NFlpRb/BnYhJ7xxWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718641387; c=relaxed/simple;
-	bh=c806Pq/jjjyjfsZo3F+ORvkg3f2xW4JPAlPOkf+oCBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ik6II4kLJeWgDeT2oxGhRRS1zNQFhyTxzDJmgLPrCD2uuZSkz/urOkbLby5z4AmGmM65+MqInODZRZbOpeuSKO7pXT/5OuUTmu3bjuHZv8DRJDYWnZubGQjlqYKSduTjROGXwJy3+0e3xwzO9tCclLa2MEUzva3nYaoJY7nm0Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZJPYBZr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E0FC2BD10;
-	Mon, 17 Jun 2024 16:23:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718641386;
-	bh=c806Pq/jjjyjfsZo3F+ORvkg3f2xW4JPAlPOkf+oCBM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=eZJPYBZrzHnJqXMg0EMapL+0IS3WhguivvHbRJ7NgMOqV+PCg9+wckXy8ozFGU+Pj
-	 yPL9GlB6a6y1pOymwREscg7I7bEy0WWxbbq+DltnRVYbVrIr4j0yatfIklPEsKsMJI
-	 dgbGaUga0+o7yandyj+BSAyWIFCEA2QBri8/Wf1/0XCR8XVsNrVRDrh+i5qJGfuW+8
-	 pJa5QU24TNX8cm/L/WEuuSPIDyxgvEIBgHClkg7Pr0wb3oEncGF9diCDpBUbmxzrb1
-	 GzAbVIX3ivmlnLEOI/KnvDk/CCDogKwOL8jxjEcavFhcn09YR84FNsvUbmx+73AP6S
-	 Y58sJzbW6zq/Q==
-Date: Mon, 17 Jun 2024 17:23:02 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Ian Rogers <irogers@google.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the perf tree with the origin tree
-Message-ID: <ZnBi5u4CdumbMzcB@sirena.org.uk>
+	s=arc-20240116; t=1718641481; c=relaxed/simple;
+	bh=91LV93NxbGXaObbWSRWn/awCE5cjNH9Ay/li5FynBT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DecOT51qP56eEHg10dAjVLJgRooZs08KNyeltGagM/ehOc/o4NYvozyUvhw2ENg5cNr6IWxgqSGkxIA55SXEZNZNPVs7dEkFvBMPuPOrniip2ORh2xVy2ek6TFRjAwnzjfQ9RwIlod3nYoggVLx2IBiP2Yfa1bxds2GLfbNK/74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=begfLGrf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0164C2BD10;
+	Mon, 17 Jun 2024 16:24:38 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="begfLGrf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1718641477;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=91LV93NxbGXaObbWSRWn/awCE5cjNH9Ay/li5FynBT8=;
+	b=begfLGrfkwnWV142KKUjGxqZ3Zi7AJxslVOx8ShCJGRXAxyr3SAwysUeINd7Hyx0rdXrj+
+	Q7qK7bxNfabF/iLFHzE/YWPJV7syZPK7+ymS/rZ1WzjG7h0sYhn4+eTeJEToIiI4xqKDAz
+	D4cjcA58XiRC2v3cmOImkWi+t0ZWLvk=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 4ccbc541 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 17 Jun 2024 16:24:35 +0000 (UTC)
+Date: Mon, 17 Jun 2024 18:24:26 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>,
+	Samuel Neves <sneves@dei.uc.pt>, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v17 5/5] x86: vdso: Wire up getrandom() vDSO
+ implementation
+Message-ID: <ZnBjOjWOoANFwuAx@zx2c4.com>
+References: <20240614190646.2081057-1-Jason@zx2c4.com>
+ <20240614190646.2081057-6-Jason@zx2c4.com>
+ <13483c92-cac5-4a3a-891f-22eb006c533b@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fnD9c00v8oUxmuEJ"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <13483c92-cac5-4a3a-891f-22eb006c533b@nvidia.com>
 
+On Fri, Jun 14, 2024 at 06:53:09PM -0700, John Hubbard wrote:
+> I'm adding linux-kselftest to Cc for visibility, and I've also Cc'd you
+> on a related selftests/vDSO series I just now posted [1].
+> be part of TEST_GEN_PROGS. Fixing it requires other changes, though, as
+> I've done in [2].
 
---fnD9c00v8oUxmuEJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If you can get these into 6.10 soon, I'll rebase atop your fixes so I
+can make this how you like it here.
 
-Hi all,
-
-Today's linux-next merge of the perf tree got a conflict in:
-
-  tools/perf/builtin-record.c
-
-between commit:
-
-  5b3cde198878b ("Revert "perf record: Reduce memory for recording PERF_REC=
-ORD_LOST_SAMPLES event"")
-
-=66rom the origin tree and commit:
-
-  6c1785cd75ef5 ("perf record: Ensure space for lost samples")
-
-=66rom the perf tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 0a8ba1323d64b..019305b94e5fc 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1926,7 +1926,7 @@ static void __record__save_lost_samples(struct record=
- *rec, struct evsel *evsel,
- static void record__read_lost_samples(struct record *rec)
- {
- 	struct perf_session *session =3D rec->session;
--	struct perf_record_lost_samples *lost =3D NULL;
-+	struct perf_record_lost_samples_and_ids lost;
- 	struct evsel *evsel;
-=20
- 	/* there was an error during record__open */
-@@ -1951,19 +1951,13 @@ static void record__read_lost_samples(struct record=
- *rec)
-=20
- 				if (perf_evsel__read(&evsel->core, x, y, &count) < 0) {
- 					pr_debug("read LOST count failed\n");
--					goto out;
-+					return;
- 				}
-=20
- 				if (count.lost) {
--					if (!lost) {
--						lost =3D zalloc(PERF_SAMPLE_MAX_SIZE);
--						if (!lost) {
--							pr_debug("Memory allocation failed\n");
--							return;
--						}
--						lost->header.type =3D PERF_RECORD_LOST_SAMPLES;
--					}
--					__record__save_lost_samples(rec, evsel, lost,
-+					memset(&lost.lost, 0, sizeof(lost));
-+					lost.lost.header.type =3D PERF_RECORD_LOST_SAMPLES;
-+					__record__save_lost_samples(rec, evsel, &lost.lost,
- 								    x, y, count.lost, 0);
- 				}
- 			}
-@@ -1971,20 +1965,12 @@ static void record__read_lost_samples(struct record=
- *rec)
-=20
- 		lost_count =3D perf_bpf_filter__lost_count(evsel);
- 		if (lost_count) {
--			if (!lost) {
--				lost =3D zalloc(PERF_SAMPLE_MAX_SIZE);
--				if (!lost) {
--					pr_debug("Memory allocation failed\n");
--					return;
--				}
--				lost->header.type =3D PERF_RECORD_LOST_SAMPLES;
--			}
--			__record__save_lost_samples(rec, evsel, lost, 0, 0, lost_count,
-+			memset(&lost.lost, 0, sizeof(lost));
-+			lost.lost.header.type =3D PERF_RECORD_LOST_SAMPLES;
-+			__record__save_lost_samples(rec, evsel, &lost.lost, 0, 0, lost_count,
- 						    PERF_RECORD_MISC_LOST_SAMPLES_BPF);
- 		}
- 	}
--out:
--	free(lost);
- }
-=20
- static volatile sig_atomic_t workload_exec_errno;
-@@ -3196,7 +3182,7 @@ static int switch_output_setup(struct record *rec)
- 	unsigned long val;
-=20
- 	/*
--	 * If we're using --switch-output-events, then we imply its=20
-+	 * If we're using --switch-output-events, then we imply its
- 	 * --switch-output=3Dsignal, as we'll send a SIGUSR2 from the side band
- 	 *  thread to its parent.
- 	 */
-
---fnD9c00v8oUxmuEJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwYuUACgkQJNaLcl1U
-h9By0Qf+KHFp3+pZ1bTQsB7zdsbJ8eYB1wcbkVMFReYQafczUoQ8oHzJvoR9DSlb
-SHI7fT/hUxrE5GF5vdsKZMilagYd/AaEuHOzD07UoJsjW2KHYOjtIi52JWe0KQIl
-pom+j8DLWD/Ns9R9GcvtQebKW2BTd7bZeiiTvRjuKKAFb07Sivng1ClQKxqIDcIa
-vxBmYb5y0dTT/UiuJ9xv/d6Nvaere1fX8b1I/KF5FPtliLZ49BAMElR8zwILDMLU
-nKfRxrLcewTL9NN3BtNKElvd2s5WJNIJRqAYl6BfCPZ5DliM2fPY3vZXjHpl6tEO
-Hn8iKUhGdAxIWyn1kEoZZ7TuAOFebg==
-=CyV0
------END PGP SIGNATURE-----
-
---fnD9c00v8oUxmuEJ--
+Jason
 
