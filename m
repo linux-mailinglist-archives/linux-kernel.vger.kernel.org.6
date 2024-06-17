@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-218173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB49B90BA1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:49:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F1790BA1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFD1A1C219EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDD2B1F21716
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF6C198A39;
-	Mon, 17 Jun 2024 18:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E680198E7E;
+	Mon, 17 Jun 2024 18:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1cMJTCuq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zfw3z5CL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="t9et28Y3"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B51364BE;
-	Mon, 17 Jun 2024 18:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6878364BE;
+	Mon, 17 Jun 2024 18:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718650174; cv=none; b=o06ULZ5rHJzeqx/aFSD+mj6j53AAW6qPuJEDwB+9u+lz7twZfzWcRBOBonbVravnjuUrmF/sBGX3MsqnZ9uURaGuq0mWKNhrCB7Nibd5MNoNBf1pa/jZ2iTJEpPn3sK4UvEJEuDEF/pCEYNNPLG33/0kOtJOGdnNb1m8XxW+amc=
+	t=1718650248; cv=none; b=NvY2Q0fjMV1e9lXTRU/kqLQT3Ov4O0Ivqg8ioL2rWgJyJLYf5kul6mKUM/3jcySVPegUtPKsA9s1hpJl3ttAy9ArUrksdXXktyhno9RJ3xH/uG4I941Np2KihSnj1DL7+wzCBelhbHfzQ/4vADy45DWg1B2vb5Ss+JMK3Q+29d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718650174; c=relaxed/simple;
-	bh=q06gzOqeRWxO8BKxyT+dTszpm+khnSzcaW718ffYMoQ=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=FBI+C8qib82LyWpLwzYUHBkZH44dDKOlWlk2i3grqhVSJYZDBC3PHJjVg1PWtJhas1EKb6Wu1UjS0GWyCTpLn2grq0r0I84qVURp5XepyAFN41Chz/9DNxjbzWH+2z8S7bAEaUEY+tfOuRdTjKkUjN2eqzmNhtatOqR3Vj0AJEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1cMJTCuq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zfw3z5CL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Jun 2024 18:49:29 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718650170;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=8k/eL6Ni5D3Fig2MwGzoFiFLIk1Ub6lNDC8Ey4Xq7/g=;
-	b=1cMJTCuqyPUFGlOrOZ+WWqyxCisl6/VqWxB4Api0acKXiFfXU/Tuv7IiBj0u0QRwbccZl7
-	oom/p4WRceO1FDGEQZB3LjElt/TRLFSIGr1G36LJk6enpaiyEXUUlMwaHL/Flpu9Lj90mt
-	egu2Z2Uis7HUZ/qlSBAPYwnwg9BlvdOlVd0CIFjw4xhQfLR0XPZq+FNKjOQmvjbvUgUhyM
-	gKsk0R2ZNZ7FXlPdg2oRLkZsIYck7kfTFFYfk4qTr9r0BLaHXRobUI3FebkDHV6M8Wa2we
-	kF1z8Vqrrnp86fyohe+MUOZmiLbAgeTXH1+To8G3eCsvqLzU82IZNhq5QS9Kcw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718650170;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=8k/eL6Ni5D3Fig2MwGzoFiFLIk1Ub6lNDC8Ey4Xq7/g=;
-	b=Zfw3z5CLv9odUmBYA0rcoIchQUkanv/7RdpL1sJhU05eIyuhoR53zq/Q6TvCaz3261YmLC
-	hH0JBop3aWPMsVDw==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/core] irqdomain: Make build work for CONFIG_GENERIC_IRQ_CHIP=n
-Cc: Borislav Betkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+	s=arc-20240116; t=1718650248; c=relaxed/simple;
+	bh=pIlXwzTrfunMUXJb/xXJ5sOlg/1IsGV67uv1ad4VBfk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jMUh5syEHgJS27tUv7ItfLcPbLq31Evc+W8wRJbfDaJvaAniKHvIi7aEcytaISw6oTXO8oGOtaIQLcmtJrck1KZlRK01KfVd8NSttv225o/WCOGEAGjcq2JsIyFtCHqj2NpoQ4osO06mt29tcdPgWfksv+rGMQ90I6uQTWIBmqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=t9et28Y3; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718650246; x=1750186246;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pIlXwzTrfunMUXJb/xXJ5sOlg/1IsGV67uv1ad4VBfk=;
+  b=t9et28Y3QzO6iud8+m+38yCYntATdyrUWgwcaiFfA4xG7RZAdmnxRusB
+   7Lg2qHw6/Kkw+BY6sQt1Ibx1xaPuw4mybssy6ag7jk4KF4Fo8fwUNGs/7
+   nQ3ajie9CMgX0gnyIYD+fTi0qBd9Kl7ron1NEww11L4SL8tV8le4YQ7Qo
+   aq5c3JwOCubeHogDnBuQUE2rGj/5i+nHCo8wCumT8OXVfW/NGZRs4yIgO
+   U3lc0JnTAoaIxn9VbS1MW5cbNQvgvQ4m3KzU2l45qddp8C7lfaZ/hgzOc
+   OOraJxAQ9bt+/nNkG/b8qX/pRZVPqrtnzAsMwH3jy4YqNFR+zgL4sM/3H
+   g==;
+X-CSE-ConnectionGUID: ZN8F39vCSVmgAkJoWJFifQ==
+X-CSE-MsgGUID: iMFW4qdqSem4hFB60qxTxw==
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="258810120"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Jun 2024 11:50:39 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 17 Jun 2024 11:50:29 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 17 Jun 2024 11:50:26 -0700
+Date: Mon, 17 Jun 2024 18:50:26 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC: Horatiu Vultur <horatiu.vultur@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, "David S. Miller" <davem@davemloft.net>,
+	"Eric Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
+ Hegelund" <Steen.Hegelund@microchip.com>, <linux-kernel@vger.kernel.org>,
+	<kernel-janitors@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH net-next] net: microchip: Constify struct vcap_operations
+Message-ID: <20240617185026.lgpspvyjsygh4lry@DEN-DL-M70577>
+References: <d8e76094d2e98ebb5bfc8205799b3a9db0b46220.1718524644.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171865016969.10875.13044042895933336613.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <d8e76094d2e98ebb5bfc8205799b3a9db0b46220.1718524644.git.christophe.jaillet@wanadoo.fr>
 
-The following commit has been merged into the irq/core branch of tip:
+> "struct vcap_operations" are not modified in these drivers.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> In order to do it, "struct vcap_control" also needs to be adjusted to this
+> new const qualifier.
+> 
+> As an example, on a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text    data     bss     dec     hex filename
+>   15176    1094      16   16286    3f9e drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.o
+> 
+> After:
+> =====
+>    text    data     bss     dec     hex filename
+>   15268     998      16   16282    3f9a drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> I hope this can be applied as a single patch.
+> I think it can be split between lan966x, sparx5 and vcap if really needed.
+> ---
 
-Commit-ID:     8cb2dbf94e44bcde4cff0223f2f900f8fb9083a4
-Gitweb:        https://git.kernel.org/tip/8cb2dbf94e44bcde4cff0223f2f900f8fb9083a4
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 17 Jun 2024 20:31:31 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 17 Jun 2024 20:46:39 +02:00
+LGTM.
 
-irqdomain: Make build work for CONFIG_GENERIC_IRQ_CHIP=n
-
-ld: kernel/irq/irqdomain.o: in function `irq_domain_instantiate':
-kernel/irq/irqdomain.c:296:(.text+0x10dd): undefined reference to `irq_domain_alloc_generic_chips'
-ld: kernel/irq/irqdomain.c:313:(.text+0x1218): undefined reference to `irq_domain_remove_generic_chips'
-ld: kernel/irq/irqdomain.o: in function `irq_domain_remove':
-kernel/irq/irqdomain.c:349:(.text+0x1ddf): undefined reference to `irq_domain_remove_generic_chips'
-
-Provide the required stubs.
-
-Fixes: e6f67ce32e8e ("irqdomain: Add support for generic irq chips creation before publishing a domain")
-Reported-by: Borislav Betkov <bp@alien8.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- include/linux/irq.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 712bcee..1f5dbf1 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -1182,9 +1182,19 @@ int devm_irq_setup_generic_chip(struct device *dev, struct irq_chip_generic *gc,
- 
- struct irq_chip_generic *irq_get_domain_generic_chip(struct irq_domain *d, unsigned int hw_irq);
- 
-+#ifdef CONFIG_GENERIC_IRQ_CHIP
- int irq_domain_alloc_generic_chips(struct irq_domain *d,
- 				   const struct irq_domain_chip_generic_info *info);
- void irq_domain_remove_generic_chips(struct irq_domain *d);
-+#else
-+static inline int
-+irq_domain_alloc_generic_chips(struct irq_domain *d,
-+			       const struct irq_domain_chip_generic_info *info)
-+{
-+	return -EINVAL;
-+}
-+static inline void irq_domain_remove_generic_chips(struct irq_domain *d) { }
-+#endif /* CONFIG_GENERIC_IRQ_CHIP */
- 
- int __irq_alloc_domain_generic_chips(struct irq_domain *d, int irqs_per_chip,
- 				     int num_ct, const char *name,
+Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
 
