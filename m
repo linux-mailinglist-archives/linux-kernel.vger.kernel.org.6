@@ -1,204 +1,158 @@
-Return-Path: <linux-kernel+bounces-218307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2022C90BC58
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:49:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9749390BC57
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5450F284000
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18DDA1F220D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EE61990C4;
-	Mon, 17 Jun 2024 20:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6C518EFF5;
+	Mon, 17 Jun 2024 20:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bOvOFdJ9"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpK/ZzVP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5942535C8
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 20:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25037492;
+	Mon, 17 Jun 2024 20:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718657336; cv=none; b=Gzq8Ujfyi1OwKPFfTLHv4ujfda/Ju05jXAKCXbzZa1uzTiOCONADGqMcxhkuVlVBfYSMtKbxf9KzTlIJm0RHRAvH88Tgzv/71gNqryxEeF5aQCeN4hZ8pRw8wmI2/th4oCsyvaYUk28PsUe/HrFvclKS+a8vNkUfKd2U1AysyW0=
+	t=1718657336; cv=none; b=FsaO/Spu+rSfz1I5nf1sHPHnXcVFQSySJ9hQxYx6LiYmP+wlnGOkULfQKFAmjPdRxM039fgeg9O07j54DEGAu3ISLrZ5wNnp18XHkHTLKBjuQqARzyDDVX0TkH3KccQVcSI1+e/O29VDoUQrR84rgIT0SA3fxnMfuHv4qGMGNMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718657336; c=relaxed/simple;
-	bh=+wg5rGWnub6d6ueoxs/8H2knoEi7JkxL+8IPuLbzhZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AcipYgDsC8VUZcglxOcBcgWY0qDwcRALQ1YGtHMCCM1tbl6nymA10YysvVf5Vrv4X3Vazc7VDNHcSXVYEVLrVCGFUuJPEH81ini80OIMOYaFutxGzP/jq6ZUlTjd8FI4FChxfsH2e0xG85ZtfT03UEI21nND7rE6Ej8VDqE7QXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=bOvOFdJ9; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35f1dc4ab9aso3905168f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1718657332; x=1719262132; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Prxca8WsXgeUFt4L2M3lgOG9HB9DoX/SrgkfE/LHB8=;
-        b=bOvOFdJ9xjH1W5FdxmBv9AcBUc+GA2jyPU/nXMv50RZdB6L3AfRbk/LQEcZPtFYomm
-         gdGLW2sL5Mp9aUHDRclc6VspKgx8b8yGvgXwTQZSY8doC/QTADg5g5zUApAJ67NBWWgp
-         ei3kv54Jgndh/qaRQ5DDXPbq61I//rQNNum5o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718657332; x=1719262132;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Prxca8WsXgeUFt4L2M3lgOG9HB9DoX/SrgkfE/LHB8=;
-        b=jtpngTuQwp2q75R78SaV/pkR7lM+6SAchuyp91zmj4V6OOOnCoDC2/BV8eWnEXS/SU
-         8rfRM9+4M82IP/M3VKjnu3ZfwfRXQaHKRyc32VWijK96NInDWds7hmymp8OMLb3qmt9M
-         z9CynxVkxeiav1CAmGc5/MYX30iqG8cJqlLlgbfVdsgfD5cL1uS7t3Tty4G9lzwKt1jM
-         fM7nlfxSvWOE38HXfuIW/01VQNfdvvG6BLemZ10kDS87Wy1vj1x0I3voZMBJIZR4bHKm
-         j4w7lsDISAYjoj1Q6YeGKNVIKAtmmAA7pZaXZboAaCGkIsKJRAPzi15XpxfTodS8kTST
-         vfEg==
-X-Gm-Message-State: AOJu0YweecAB1L+PyXdArav8l5Es1jFvWGbcqVzt6lXfASM6pY/Uok29
-	Q+ucBDCftDrFHCrr5yGGX69M31qENDct1c7eBz+8A6eO9jwpxX9QD3OzVZDmgQ==
-X-Google-Smtp-Source: AGHT+IHEU62suYWnRXwKdzpdAXSz5KBYd2epiiTyciPo+/4BqNzGad5ovJJPFBopMPwoL4rztkfXKQ==
-X-Received: by 2002:a5d:4b83:0:b0:360:7557:3239 with SMTP id ffacd0b85a97d-3607a763270mr7051286f8f.20.1718657332016;
-        Mon, 17 Jun 2024 13:48:52 -0700 (PDT)
-Received: from [10.66.192.68] ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db62e5sm547701466b.84.2024.06.17.13.48.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 13:48:51 -0700 (PDT)
-Message-ID: <19e8a6dd-b0d4-4e88-9ad2-e38787a5aee8@broadcom.com>
-Date: Mon, 17 Jun 2024 13:48:38 -0700
+	bh=qDU0nc5b8/2R9sgxnm0lx1HmVuNXuFgZxI+rzCtcSns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qn0q548WKn+JbuYfeGkSmxNRRhC6C11ZT7MF2ndSF0MUpg3dDRW4+iOTEzz1eNPtxxI/hZoXcJAQXdocMoAKebMOfbHhLMCICDxeC3ajMNHSoVH9UGvXm7qY+ngx1t/1jpeDIxFKsjYmwQrmWQNRn/iVN8I6NBl6QmxbU2m+Enk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpK/ZzVP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D48CC2BD10;
+	Mon, 17 Jun 2024 20:48:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718657335;
+	bh=qDU0nc5b8/2R9sgxnm0lx1HmVuNXuFgZxI+rzCtcSns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jpK/ZzVPvlwnltMYnWOsPVozCHpUbpuF3W9t0d+mJHw910hP/4zBGg2b+4qNVhcLL
+	 I9D99fA6dZP1qOIHkgTztTp3yXRuyfUeAuu93dKXhEyXXel58pfk288u/NkpXMdsEf
+	 70eTcDn5a82r6Nq8EmmyQOYW5wJsItn2jRg+hGouXWyy3R8FF5hO1QLAEb0MmTU99Q
+	 nN0SZPe9Fcyt95GJJIq6cxduEI5zphi5fJgnm/RRN9/Z1h4ZIOBwITGscgBWc2vwY+
+	 s0nkMYXlouvUdzRMrVs3U6gIBA0NCDJF7PddYyCa7H1VO4eHr4CO2a0DbWFF7Jlrqp
+	 Y0wbiZNrTcTdg==
+Date: Mon, 17 Jun 2024 17:48:50 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf trace: Filter enum arguments with enum names
+Message-ID: <ZnChMidAp7hxBVhI@x1>
+References: <20240615062958.367524-1-howardchu95@gmail.com>
+ <ZnCcliuecJABD5FN@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: dac: Fix dependencies of AD9739A
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- lkp@intel.com, zack.rusin@broadcom.com, dri-devel@lists.freedesktop.org,
- daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, linux-iio@vger.kernel.org,
- jic23@kernel.org, lars@metafoo.de, nuno.sa@analog.com,
- dragos.bogdan@analog.com, anshulusr@gmail.com, andrea.collamati@gmail.com,
- oe-kbuild-all@lists.linux.dev, x86@kernel.org
-References: <202406152104.FxakP1MB-lkp@intel.com>
- <20240616012511.198243-1-alexey.makhalov@broadcom.com>
- <20240616012511.198243-2-alexey.makhalov@broadcom.com>
- <20240617090428.GBZm_8HMQ9XJe_VQga@fat_crate.local>
-Content-Language: en-US
-From: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
- 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 EuY0
-In-Reply-To: <20240617090428.GBZm_8HMQ9XJe_VQga@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZnCcliuecJABD5FN@x1>
 
+On Mon, Jun 17, 2024 at 05:29:17PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Sat, Jun 15, 2024 at 02:29:58PM +0800, Howard Chu wrote:
+> > Before:
+> > 
+> > perf $ ./perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS_PINNED_HARD' --max-events=1
+> > No resolver (strtoul) for "mode" in "timer:hrtimer_start", can't set filter "(mode!=HRTIMER_MODE_ABS_PINNED_HARD) && (common_pid != 281988)"
+> > 
+> > After:
+> > 
+> > perf $ ./perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS_PINNED_HARD' --max-events=1
+> >      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function: 0xffffffffa77a5be0, expires: 12351248764875, softexpires: 12351248764875, mode: HRTIMER_MODE_ABS)
+> 
+> This one I had to apply manually after applying the other two patches:
+> 
+> ⬢[acme@toolbox perf-tools-next]$        git am ./20240615_howardchu95_perf_trace_filter_enum_arguments_with_enum_names.mbx
+> Applying: perf trace: Filter enum arguments with enum names
+> error: patch failed: tools/perf/builtin-trace.c:904
+> error: tools/perf/builtin-trace.c: patch does not apply
+> Patch failed at 0001 perf trace: Filter enum arguments with enum names
+> hint: Use 'git am --show-current-patch=diff' to see the failed patch
+> When you have resolved this problem, run "git am --continue".
+> If you prefer to skip this patch, run "git am --skip" instead.
+> To restore the original branch and stop patching, run "git am --abort".
+> ⬢[acme@toolbox perf-tools-next]$ git am --abort
+> ⬢[acme@toolbox perf-tools-next]$ patch -p1 <  ./20240615_howardchu95_perf_trace_filter_enum_arguments_with_enum_names.mbx
+> patching file tools/perf/builtin-trace.c
+> Hunk #1 succeeded at 894 with fuzz 2 (offset -10 lines).
+> Hunk #2 succeeded at 932 (offset -10 lines).
+> Hunk #3 succeeded at 1905 (offset 3 lines).
+> Hunk #4 succeeded at 3832 (offset 3 lines).
+> Hunk #5 succeeded at 3842 (offset 3 lines).
+> Hunk #6 succeeded at 3883 (offset 3 lines).
+> Hunk #7 succeeded at 3902 (offset 3 lines).
+> ⬢[acme@toolbox perf-tools-next]$ 
+> 
+> 
+> I'll push what I have to that tmp.perf-tools-next on my git repo at:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
 
+I've put it also in the perf_trace-btf_enum branch:
 
-On 6/17/24 2:04 AM, Borislav Petkov wrote:
-> On Sat, Jun 15, 2024 at 06:25:11PM -0700, Alexey Makhalov wrote:
->> 0-DAY CI Kernel Test automation reported an issue:
->>
->>     ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_read':
->>     regmap-spi.c:(.text+0xf): undefined reference to `spi_write_then_read'
->>     ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_gather_write':
->>     regmap-spi.c:(.text+0x2b4): undefined reference to `spi_sync'
->>     ld: drivers/base/regmap/regmap-spi.o: in function `spi_sync_transfer.constprop.0':
->>     regmap-spi.c:(.text+0x337): undefined reference to `spi_sync'
->>     ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_async_write':
->>     regmap-spi.c:(.text+0x445): undefined reference to `spi_async'
->>     ld: drivers/iio/dac/ad9739a.o: in function `ad9739a_driver_init':
->>     ad9739a.c:(.init.text+0x10): undefined reference to `__spi_register_driver'
->>
->> Kconfig warnings: (for reference only)
->>     WARNING: unmet direct dependencies detected for REGMAP_SPI
->>     Depends on [n]: SPI [=n]
->>     Selected by [y]:
->>     - AD9739A [=y] && IIO [=y] && (SPI [=n] || COMPILE_TEST [=y])
->>
->> The issue is caused by CONFIG_AD9739A=y when CONFIG_SPI is not set.
->>
->> Add explicit dependency on SPI and conditional selection of REGMAP_SPI.
->>
->> Fixes: e77603d5468b ("iio: dac: support the ad9739a RF DAC")
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202406152104.FxakP1MB-lkp@intel.com/
->> Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
->> ---
->>   drivers/iio/dac/Kconfig | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
->> index 3c2bf620f00f..d095f4d26e49 100644
->> --- a/drivers/iio/dac/Kconfig
->> +++ b/drivers/iio/dac/Kconfig
->> @@ -133,8 +133,8 @@ config AD5624R_SPI
->>   
->>   config AD9739A
->>   	tristate "Analog Devices AD9739A RF DAC spi driver"
->> -	depends on SPI || COMPILE_TEST
->> -	select REGMAP_SPI
->> +	depends on SPI
->> +	select REGMAP_SPI if SPI_MASTER
->>   	select IIO_BACKEND
->>   	help
->>   	  Say yes here to build support for Analog Devices AD9739A Digital-to
->> -- 
-> 
-> FWIW, I appreciate it you fixing other breakages. However, there's a patch for
-> that already, on its way:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=fixes-togreg&id=75183e461ce033605c3e85518a9f3d4e4ef848a3
-> 
-> Don't get discouraged, though, when fixing something that is not in our
-> immediate area of interest!
-> 
-> :-)
-> 
-> Thx.
-> 
+https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/log/?h=perf_trace-btf_enum
 
-Lesson learned and noted for next time to address only related/new 
-warnings and errors. Thanks!
+Maybe we can then ask Namhyung to merge from that branch into
+perf-tools-next/perf-tools-next.
+
+Namhyung, wdyt? I'll do some more tests and review the code one more
+time early tomorrow, but all seems to be work as expected.
+
+The way it was submitted was a bit convoluted, I was expecting for
+Howard to have the patches the way I put it in the perf_trace-btf_enum
+branch, then use:
+
+⬢[acme@toolbox perf-tools-next]$ rm -f 0*.patch
+⬢[acme@toolbox perf-tools-next]$ git format-patch -n HEAD~4
+0000-cover-letter.patch
+0001-perf-trace-Fix-iteration-of-syscall-ids-in-syscalltb.patch
+0002-perf-trace-BTF-based-enum-pretty-printing-for-syscal.patch
+0003-perf-trace-Augment-non-syscall-tracepoints-with-enum.patch
+0004-perf-trace-Filter-enum-arguments-with-enum-names.patch
+⬢[acme@toolbox perf-tools-next]$
+
+And then use:
+
+git send-email --from "Howard Chu <howardchu95@gmail.com>" \
+                --to "Arnaldo Carvalho de Melo <acme@kernel.org>"
+                --cc "Jiri Olsa <jolsa@kernel.org>" \
+                --cc "Namhyung Kim <namhyung@kernel.org>" \
+                --cc "Ian Rogers <irogers@google.com>" \
+                --cc "Adrian Hunter <adrian.hunter@intel.com>" \
+                --cc "Kan Liang <kan.liang@linux.intel.com>" \
+                --cc linux-kernel@vger.kernel.org \
+                --cc linux-perf-users@vger.kernel.org \
+                --no-validate \
+                --smtp-debug=1 \
+                --no-chain-reply-to 0*.patch
+
+After editing 0000-cover-letter.patch to add an explanation about the
+series. The version of the series would be in the Subject line for the
+cover letter, etc.
+
+Lets try to use this in the next series, concentrating now in reviewing
+if what I have at:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/log/?h=perf_trace-btf_enum
+
+Can already be merged by Namhyung on perf-tools-next/perf-tools-next.
+
+Thanks a lot!
+
+- Arnaldo
 
