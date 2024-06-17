@@ -1,103 +1,118 @@
-Return-Path: <linux-kernel+bounces-217918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DF890B624
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4CD90B622
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D20D3283E95
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33B8C1C22A63
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E65F14D71E;
-	Mon, 17 Jun 2024 16:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B706814D71F;
+	Mon, 17 Jun 2024 16:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSt0rxFs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c9yjD5c0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OCHSGj4f"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3476E14BFBC;
-	Mon, 17 Jun 2024 16:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786381474C6
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718641187; cv=none; b=owe5HOxNvqwfR9MIHY67iGKd4ldoKKKw3TEvRW16OUVIVFIF7d1953jqP/rfPXtqUwWlqkvhfCiV4SPH3W893fL5xZChsyaU6HvOZnlTKLhthLcll80+yAXebIA4wjLAOMxr3Dj3tCFfSlSzzLFV+XHq4BA7ThefslOcUmjJOOI=
+	t=1718641186; cv=none; b=Q14ClZG0puB/Z7zUGVuyCZXmYq0ILIygn9UzAnvldGGjb1yqhxSn+wVVRQXCJbykC4tyTgCqKIr7OzPOfzyYPPvXE0p0Bk31yJolK3F1Jz8/eY/DPas3NbSE4L0cMSATORSq7a6GEdoEPz0v807Hg1xc4Y1vwFmPW3SLAIdf0s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718641187; c=relaxed/simple;
-	bh=kq0sP/MpDIUvWkzVHv03Hs2cqjHxapUk5etdJnS5N3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BDH8MDT+L4cMTk7zwTi99Hij6ZCW1etlfFAkanpaPh3J54vAzVT/f8s+ooddrg6izW/ph0+4Zsxa1G5nfD86VUIhvbaoK7iaZvSP9WBQzZX6eRYpvWKO5C8QmV/oJLcTF4k/oJHKj9d+fCcFMp3vpPoFCh6CbCoeyo1kU+GduP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSt0rxFs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D95CC2BD10;
-	Mon, 17 Jun 2024 16:19:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718641186;
-	bh=kq0sP/MpDIUvWkzVHv03Hs2cqjHxapUk5etdJnS5N3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KSt0rxFsTWZkZE0C9KPZLORhT7pm/Bf7yNzXY2hHC/mKYgEl0Qiehc3Mrwtkbtb0T
-	 MrZD/EJYhcm0qB5Z+kFTBoTnI9MLE0XHEGZH8N6rvmwjunDem1zNfzKY9U868NV/5h
-	 FBCrhYilKel0BqqOp2vNrahbi1oItZlfX8DwK/r+doyQH7rFiE3iHft6ydPG0b0y9O
-	 Bvl3Nl1aT1/2d0YPbNN9Sp9tU7qXCz12XrQoSI5KcuC2h8EFO1CusDylFIUqXX6alW
-	 dWvViMyveZVqgLuMkyPn+RYR3QV/7M83oiEs49bUnTQpn1Qr3311ipBWkicb1FnYax
-	 lyQX2iB5i7+Eg==
-Date: Mon, 17 Jun 2024 17:19:40 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Christophe Roullier <christophe.roullier@foss.st.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next,PATCH v2 1/2] dt-bindings: net: add STM32MP25
- compatible in documentation for stm32
-Message-ID: <20240617-spoils-trailside-99adaea88604@spud>
-References: <20240617154516.277205-1-christophe.roullier@foss.st.com>
- <20240617154516.277205-2-christophe.roullier@foss.st.com>
+	s=arc-20240116; t=1718641186; c=relaxed/simple;
+	bh=/IIwLAg71h7Ka9mSLiQwdsaFgE8fR2kdhUA9bF+cA6w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KYcuvCKzBPT2SYz+jZcpjccSBzPpWs5rlnoq88DtQK40g1rKrWypoz76wTpioCXC2ejZW+afTxY3X0Hi6DGdAX8aqacXU1UpcPEbrZ2XuSS8KwHPEYpuuPE4Mv7w4XucGlKXyeXbzivcIqsEr5Hwd6j1RfLWD5fppdg6FhCctJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c9yjD5c0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OCHSGj4f; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718641182;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uiuI0ne78SCn0dRqC/AA7OSeq1K0b9qMP7aQO3GiU3A=;
+	b=c9yjD5c0rmBkkXgK+g/+45a92f5RYx1M1zhQAj0cZoAsc2vCaoKRCI2GSvXLrxDcLapxi8
+	CeuExVn+rbtI/5a88s6XKv7v2M62uR/oKa/EzQyHcrdv5TW5iaGz7GMYCcrCfdB+XPDpJn
+	yuDp3taCI+Wthli5R230f93MkNkMMFpLA43giMkkbUQUjxrabaNuI9bn3yoeWBY6k3SzMb
+	C2X2ueeaxRHND0Qbgtl7ubt0jUl/IlXCYfjbRuWjLhfRTat61w3HZg/+Wbsd/ApM0D6stN
+	DkkiWqpw/EN/LBv48PZRWd+xlcAFMeI286caZdN8isotddO8+78u/5D1/oy9ew==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718641182;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uiuI0ne78SCn0dRqC/AA7OSeq1K0b9qMP7aQO3GiU3A=;
+	b=OCHSGj4fl0S5vb/+GHyOFycN5xud/B011qQqB4AEftopyb79TSmKd18Ea/IyMmqF0Mr685
+	1wRKWs368hv5l/Bg==
+To: Phil Chang <phil.chang@mediatek.com>
+Cc: alix.wu@mediatek.com, angelogioacchino.delregno@collabora.com,
+ frederic@kernel.org, jy.ho@mediatek.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ matthias.bgg@gmail.com, phil.chang@mediatek.com, tglx@linutronix.de
+Subject: Re: [PATCH v3] hrtimer: check hrtimer with a NULL function
+In-Reply-To: <20240610133136.327-1-phil.chang@mediatek.com>
+References: <87bk496seb.fsf@somnus>
+ <20240610133136.327-1-phil.chang@mediatek.com>
+Date: Mon, 17 Jun 2024 18:19:42 +0200
+Message-ID: <87tthr4k4h.fsf@somnus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CPXMyFh3qeMMXI35"
-Content-Disposition: inline
-In-Reply-To: <20240617154516.277205-2-christophe.roullier@foss.st.com>
+Content-Type: text/plain
 
+Phil Chang <phil.chang@mediatek.com> writes:
 
---CPXMyFh3qeMMXI35
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> To prevent improper usage of hrtimers and avoid potential kernel crashes,
+> this commit introduces a validation check for hrtimers with a valid function callback,
+> discard the hrtimers that have a NULL callback.
+>
+> The `run_hrtimer` executes callbacks for every hrtimer,
+> and these callbacks must not be NULL. A NULL callback can lead to a kernel crash.
+> This update ensures that all hrtimers have properly initialized callbacks
+> before execution.
 
-On Mon, Jun 17, 2024 at 05:45:15PM +0200, Christophe Roullier wrote:
-> New STM32 SOC have 2 GMACs instances.
-> GMAC IP version is SNPS 5.30
->=20
-> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+Definitely better! You could sort it, first problem description and then
+solution:
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+The hrtimer function callback must not be NULL. It has to be specified
+by the callsite but it is not validated by hrtimer code. When a hrtimer
+is queued with a NULL pointer instead of a valid function, the kernel
+crashes with a null pointer dereference when trying to execute the
+callback in __run_hrtimer().
 
---CPXMyFh3qeMMXI35
-Content-Type: application/pgp-signature; name="signature.asc"
+Introduce a validation before queueing the hrtimer in
+hrtimer_start_range_ns().
 
------BEGIN PGP SIGNATURE-----
+>
+> Signed-off-by: Phil Chang <phil.chang@mediatek.com>
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBiHAAKCRB4tDGHoIJi
-0jsuAP9lhc+oKhgHut5k2kN1bwEeV4Ln+08RJ/mFc3/VkuvCtwEAjRVAXhN2+8Ju
-mmIlzsAaCHubydzbWNH3FOCXsRH2KQ0=
-=RElg
------END PGP SIGNATURE-----
+Reviewed-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
---CPXMyFh3qeMMXI35--
+> ---
+>  kernel/time/hrtimer.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+> index 492c14aac642..b8ee320208d4 100644
+> --- a/kernel/time/hrtimer.c
+> +++ b/kernel/time/hrtimer.c
+> @@ -1285,6 +1285,8 @@ void hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
+>  	struct hrtimer_clock_base *base;
+>  	unsigned long flags;
+>  
+> +	if (WARN_ON_ONCE(!timer->function))
+> +		return;
+>  	/*
+>  	 * Check whether the HRTIMER_MODE_SOFT bit and hrtimer.is_soft
+>  	 * match on CONFIG_PREEMPT_RT = n. With PREEMPT_RT check the hard
 
