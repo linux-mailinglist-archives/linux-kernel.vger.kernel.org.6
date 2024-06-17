@@ -1,183 +1,186 @@
-Return-Path: <linux-kernel+bounces-217205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B6890ACD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:23:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDEE090ACD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4AAF28660D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7C92871EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A351946BF;
-	Mon, 17 Jun 2024 11:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E6C194AC8;
+	Mon, 17 Jun 2024 11:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jfrW+++Z"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXLqEEdA"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622F5194A51
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE419194A6C;
+	Mon, 17 Jun 2024 11:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718623394; cv=none; b=U7jgBHEDXXN5HMFVCAsEhlcPIiwriycjlikL06CSMF3qmNajpQrsbA84jJ43z9pOQyEDcBv57MC/rtG8jJ8nncm4W8gPVC+Xm9tG3NFnAXIYhiqaQCGTz5NGRqc7V8v8FHhwalTT494wkEYyT2RvyjKNVT3YwdkpbDrEv4M/dXI=
+	t=1718623425; cv=none; b=BT30CFDPTvoM/TIBh1StwK8rUHbYjCCtx3DG5gplCoCWnjM+XeyHQ3ZFQGSvzARb9+n7jATJXRxAKo6QJomEzHQAkqaeOtdCqD4NBQrCOpTCMfNv4OpORaH8r7XnGvy5Q4g083A4Nt4mJsLy8D2mLUvLXbV+TmAZuqlKqRzMg40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718623394; c=relaxed/simple;
-	bh=StZPGP5/i6bU5Xn6N3H5JCPZRkydWn4sCNBBZMzJ8cs=;
+	s=arc-20240116; t=1718623425; c=relaxed/simple;
+	bh=uxut/VKniq7Xv3BBMUvRa/bj7ZQEeeWaT4NmlF4fEn4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bHXn210wei+Aj0q6QmMkm7P2Qbzs/r6lUwyAwc001ONPataB6gPr7oiqf6XYkmOs398KgYsearWNdwdJNK7HwB08YHjWrmeSmHXgQCh/lPC/l++wNqEnljd6CKXLn4f2ebgakmFd77L9q+rMcOifQm0gjK3m7so+6pMMLm+59b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jfrW+++Z; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35f123bf735so2972987f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 04:23:12 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=R5UGY/tjsQ7Z51vmlioYDybJmvOmJnpmEW6Jwjt2Z+5gznER9c+fjeSqN091a/EwkCyx02L7bQEacSCp45pzNs1VgrbVNSRk/Fy33Kubg8H+QCbShA1Gbf1ATfPutcaX4phoKpmGtd8cAwLvaVtkC+99dlM67CMGwiCBMKFku6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZXLqEEdA; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4218314a6c7so35378095e9.0;
+        Mon, 17 Jun 2024 04:23:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718623391; x=1719228191; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sM9D3IqfgB50OxP9LSaIkbOJs5yF44MMVnRSPz65e9Q=;
-        b=jfrW+++Z8TzHScqOeauKH9oEvVxFKPu3HWLEdjbR+fJbloI7KeI1Vkkpgvdjh7YqOq
-         dZYyczIeIUcPwd0SnAr4ZR5ReQS8y1jylvgos7aaW7z8s21FZExpAZIVDNq1XDrO8bOG
-         njV2IEPApBmm8HOW1Q8xKwSeMPLXKGVMN3qJop4OQ/WEJjv1UofGhJWY37BLjb5holOj
-         KC1NMxiUXYLRInGmu5Y5x1NdYYkhhDLMu67OkmFg3Niy6axcZJsbvOPAwOdhAnjhGK96
-         m91gl6GFWFp4tpjZ3j29cnK8pH1RD8oUuuOkuQcbep6QjNPcr1b/ksFhhw1tLLdGkMd0
-         H4Mg==
+        d=gmail.com; s=20230601; t=1718623422; x=1719228222; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zLjaJql39nOUd+8mDmxJM45dfY7Mw8T6CJxgtFascNk=;
+        b=ZXLqEEdAdeFcLTvKwyBbfiLxjLAluHNepY2MU2EGrA3uXTWxiAicXr2nVT6i/NLsFG
+         DKnLd3V/lT0IjugzCT1PlUlaObVDt42vOxN0BUmlW8SSl+/l51GRKrGq2JoGiBm7CLYN
+         NPprLZaTh6IDRY81BOZtKGJxmrgPw+WRe2nsA5eOPsois/iVSNe7/w6Fatbc3y1luAgS
+         q4uVMi4saOpntq+rhVF+f4H4sEXJKBNGsK5SDyvj6HHtYf1KSeYohI1zIoHgVXPBZ9PN
+         nJUb0jtjcZ2wa4EOtroHUaLFKiikYrA/8DL1xsvxei3ZOlRJsh6AJ9g2Yvg6otX8I2A8
+         F6qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718623391; x=1719228191;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sM9D3IqfgB50OxP9LSaIkbOJs5yF44MMVnRSPz65e9Q=;
-        b=tuLOY4lXP3r6KDig3rbdFUmy5kOSJahPZdPnQG0vVxSvgcwUlI+eMqUp5Ff/6Bi1/I
-         fcESR0c/FIFLyKLdjDBZifwmS6FK0FpW1RqkXQYVgjNSQjq2sM1RkzV6P1U2V7Ri7fEK
-         ki/aMLb4SNmcvK7lU75+pFf5o8HlLyblrB3QjDnvEpysQDqjtXqG47w3T4JbIpNcPIMf
-         NfybkoJaeSLaU+0yc97AgCdQ29Hddyv8vVrZyq4VU/zo9WR4WkiGAUYG7FnZW2XDN0GQ
-         gGNW8geYZG32ft9d+e1/Eqr/nrZZKe5bLD0YrMQSs1A3QR9w9wByEKfm82Au5/r5G/7W
-         /cvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWY82qoVpkhTZhWbfMoCuNM/gnRrLBB/DuO9JOomp0Dk2oEsbXgX1INpgtYKOfijTMQ+dK65AZiGWOnKa0BLFatbM1Ud1LN34U6EIlv
-X-Gm-Message-State: AOJu0Yx6rncbJlVFi730jXDaanV1mjYzZ3r0VY6atHzAMNM0roB45pTb
-	g6GYSx3gGEu8KNKhZSfD4MtfuIlIR1us2fSnTalFTCVPMotTglwmAGOIZBSQX7E=
-X-Google-Smtp-Source: AGHT+IETE+Maao3JAp1ZfgvsbcmTneajMGOq/KKGP7BvZAyqnGu9qO6mLUlHKQfEume52Ehz/Rt4gQ==
-X-Received: by 2002:adf:f902:0:b0:360:727b:8b47 with SMTP id ffacd0b85a97d-3607a7e7c15mr8074845f8f.63.1718623390738;
-        Mon, 17 Jun 2024 04:23:10 -0700 (PDT)
-Received: from myrica ([2.221.137.100])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750acf32sm11673653f8f.49.2024.06.17.04.23.09
+        d=1e100.net; s=20230601; t=1718623422; x=1719228222;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zLjaJql39nOUd+8mDmxJM45dfY7Mw8T6CJxgtFascNk=;
+        b=irKMABmQKilcDxBxt8MZCVIvZHweadhiWmWvgIVJolF+DYo1f7eXLvVpYnDy685vlJ
+         wTrfgkrcCBJVqgzaS+x7aiS3SUeB9cN84f+8aNgKUOS+yzWWNlDXuoC962yXAd5k+hKA
+         EJugFww1VqCr8iBML+1KphYnS3LSMqm+rFcglh+OlyQsN8CKW1xibgc/+CSsBtAjLv7y
+         O1z+B8hmOMfZHuVr7i9Ycu/AGBlryRWKRBQHS7LKHZipt6jcZAWw78tkkg4UjlaEZ28G
+         vnPXcYkSO1igOaGR2hgogt99WGapqmHlK/1PbFjZdxxtBOfuN97n7rhghdrFA91kNpQB
+         QJ6g==
+X-Forwarded-Encrypted: i=1; AJvYcCU6GZCcx0FhoYCHCGvB4DpmSxTx3pr9sarPugwcP32X2gpfo5mXQONMnlodGYwu7fFNzgRJPtKKilTliJrXXKkPNk76AO6nDiKZEu7Bhsfn4lTWVmEmuhjdkJAHf8oMMVaFVlPllkUhUK65rQ==
+X-Gm-Message-State: AOJu0Yy5xZ5E6Gfp12Qek9R01D2nxai+IkqJV0lT8nDWEdcO7SkdESi+
+	NktWza7qVqnLdrDKQ/vCxiax9w7uCAZNAaKShfW88ZYYVD5tOVzH
+X-Google-Smtp-Source: AGHT+IFyYZlKpO2lommicvAdahrc9RQXhi3i8rPIWbE/EksLzQ314FLmZu/bL/GJF9HoEnRCShMEdA==
+X-Received: by 2002:a05:600c:5492:b0:421:d8d4:75e3 with SMTP id 5b1f17b1804b1-4230485bac2mr61488035e9.40.1718623421648;
+        Mon, 17 Jun 2024 04:23:41 -0700 (PDT)
+Received: from f (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320bf2sm156110645e9.31.2024.06.17.04.23.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 04:23:10 -0700 (PDT)
-Date: Mon, 17 Jun 2024 12:23:26 +0100
-From: Jean-Philippe Brucker <jean-philippe@linaro.org>
-To: Peter Maydell <peter.maydell@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev, Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	fvogt@suse.de
-Subject: Re: [PATCH v3 02/14] arm64: Detect if in a realm and set RIPAS RAM
-Message-ID: <20240617112326.GA1193@myrica>
-References: <20240605093006.145492-1-steven.price@arm.com>
- <20240605093006.145492-3-steven.price@arm.com>
- <20240612104023.GB4602@myrica>
- <3301ddd8-f088-48e3-bfac-460891698eac@arm.com>
- <20240613105107.GC417776@myrica>
- <CAFEAcA99bPtEr2OpE45wCgfSArZdtz4tu9rggLNb+=Rujh0ZvQ@mail.gmail.com>
+        Mon, 17 Jun 2024 04:23:40 -0700 (PDT)
+Date: Mon, 17 Jun 2024 13:23:31 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: "Ma, Yu" <yu.ma@intel.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tim.c.chen@linux.intel.com, 
+	tim.c.chen@intel.com, pan.deng@intel.com, tianyou.li@intel.com
+Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to
+ put_unused_fd()
+Message-ID: <suehfaqsibehz3vws6oourswenaz7bbbn75a7joi5cxi6komyk@3fxp7v3bg5qk>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240614163416.728752-4-yu.ma@intel.com>
+ <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
+ <e316cbe9-0e66-414f-8948-ba3b56187a98@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAFEAcA99bPtEr2OpE45wCgfSArZdtz4tu9rggLNb+=Rujh0ZvQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e316cbe9-0e66-414f-8948-ba3b56187a98@intel.com>
 
-On Mon, Jun 17, 2024 at 11:27:31AM +0100, Peter Maydell wrote:
-> On Thu, 13 Jun 2024 at 11:50, Jean-Philippe Brucker
-> <jean-philippe@linaro.org> wrote:
-> >
-> > On Wed, Jun 12, 2024 at 11:59:22AM +0100, Suzuki K Poulose wrote:
-> > > On 12/06/2024 11:40, Jean-Philippe Brucker wrote:
-> > > > On Wed, Jun 05, 2024 at 10:29:54AM +0100, Steven Price wrote:
-> > > > > From: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > > > >
-> > > > > Detect that the VM is a realm guest by the presence of the RSI
-> > > > > interface.
-> > > > >
-> > > > > If in a realm then all memory needs to be marked as RIPAS RAM initially,
-> > > > > the loader may or may not have done this for us. To be sure iterate over
-> > > > > all RAM and mark it as such. Any failure is fatal as that implies the
-> > > > > RAM regions passed to Linux are incorrect - which would mean failing
-> > > > > later when attempting to access non-existent RAM.
-> > > > >
-> > > > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > > > > Co-developed-by: Steven Price <steven.price@arm.com>
-> > > > > Signed-off-by: Steven Price <steven.price@arm.com>
-> > > >
-> > > > > +static bool rsi_version_matches(void)
-> > > > > +{
-> > > > > + unsigned long ver_lower, ver_higher;
-> > > > > + unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
-> > > > > +                                         &ver_lower,
-> > > > > +                                         &ver_higher);
-> > > >
-> > > > There is a regression on QEMU TCG (in emulation mode, not running under KVM):
-> > > >
-> > > >    qemu-system-aarch64 -M virt -cpu max -kernel Image -nographic
-> > > >
-> > > > This doesn't implement EL3 or EL2, so SMC is UNDEFINED (DDI0487J.a R_HMXQS),
-> > > > and we end up with an undef instruction exception. So this patch would
-> > > > also break hardware that only implements EL1 (I don't know if it exists).
-> > >
-> > > Thanks for the report,  Could we not check ID_AA64PFR0_EL1.EL3 >= 0 ? I
-> > > think we do this for kvm-unit-tests, we need the same here.
-> >
-> > Good point, it also fixes this case and is simpler. It assumes RMM doesn't
-> > hide this field, but I can't think of a reason it would.
-> >
-> > This command won't work anymore:
-> >
-> >   qemu-system-aarch64 -M virt,secure=on -cpu max -kernel Image -nographic
-> >
-> > implements EL3 and SMC still treated as undef. QEMU has a special case for
-> > starting at EL2 in this case, but I couldn't find what this is for.
+On Sun, Jun 16, 2024 at 11:47:40AM +0800, Ma, Yu wrote:
 > 
-> That's a bit of an odd config, because it says "emulate EL3 but
-> never use it". QEMU's boot loader starts the kernel at EL2 because
-> the kernel boot protocol requires that (this is more relevant on
-> boards other than virt where EL3 is not command-line disableable).
-> I have a feeling we've occasionally found that somebody's had some
-> corner case reason to use it, though. (eg
-> https://gitlab.com/qemu-project/qemu/-/issues/1899
-> is from somebody who says they use this when booting Windows 11 because
-> it asserts at boot time that EL3 is present and won't boot otherwise.)
-
-Thanks for the pointer. In this case it looks like Linux was used as
-reproducer and not the main use-case, though I wonder if some CIs
-regularly boot this particular configuration.
-
+> On 6/15/2024 12:41 PM, Mateusz Guzik wrote:
+> > So you are moving this to another locked area, but one which does not
+> > execute in the benchmark?
 > 
-> Your underlying problem here seems to be that you don't have
-> a way for the firmware to say "hey, SMC works, you can use it" ?
+> The consideration here as mentioned is to reduce the performance impact (if
+> to reserve the sanity check, and have the same functionality) by moving it
+> from critical path to non-critical, as put_unused_fd() is mostly used for
+> error handling when fd is allocated successfully but struct file failed to
+> obtained in the next step.
+> 
 
-We do: SMCCC recommends to look at the PSCI conduit declared in DT/ACPI.
-Given that RMM mandates using the SMC conduit for both PSCI and RSI calls,
-we could use this discovery mechanism here. The problem is that we have to
-discover it very early at boot, before the DT infrastructure is ready,
-so the implementation is a little awkward. I did post one earlier in this
-thread but it doesn't yet account for ACPI-only boot, which will need
-something similar. Testing ID_AA64PFR0_EL1.EL3 would be much simpler, but
-it would break this config.
+As mentioned by Christian in his mail this check can just be removed.
 
-Thanks,
-Jean
+>         error = -EMFILE;
+>         if (fd < fdt->max_fds) {
 
+I would likely() on it.
+
+>                 if (~fdt->open_fds[0]) {
+>                         fd = find_next_zero_bit(fdt->open_fds,
+> BITS_PER_LONG, fd);
+>                         goto fastreturn;
+>                 }
+>                 fd = find_next_fd(fdt, fd);
+>         }
+> 
+>         if (unlikely(fd >= fdt->max_fds)) {
+>                 error = expand_files(files, fd);
+>                 if (error < 0)
+>                         goto out;
+>                 if (error)
+>                         goto repeat;
+>         }
+> fastreturn:
+>         if (unlikely(fd >= end))
+>                 goto out;
+>         if (start <= files->next_fd)
+>                 files->next_fd = fd + 1;
+> 
+>        ....
+> 
+
+This is not a review, but it does read fine.
+
+LTP (https://github.com/linux-test-project/ltp.git) has a bunch of fd
+tests, I would make sure they still pass before posting a v2.
+
+I would definitely try moving out the lock to its own cacheline --
+currently it resides with the bitmaps (and first 4 fds of the embedded
+array).
+
+I expect it to provide some win on top of the current patchset, but
+whether it will be sufficient to justify it I have no idea.
+
+Something of this sort:
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index 2944d4aa413b..423cb599268a 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -50,11 +50,11 @@ struct files_struct {
+    * written part on a separate cache line in SMP
+    */
+        spinlock_t file_lock ____cacheline_aligned_in_smp;
+-       unsigned int next_fd;
++       unsigned int next_fd ____cacheline_aligned_in_smp;
+        unsigned long close_on_exec_init[1];
+        unsigned long open_fds_init[1];
+        unsigned long full_fds_bits_init[1];
+-       struct file __rcu * fd_array[NR_OPEN_DEFAULT];
++       struct file __rcu * fd_array[NR_OPEN_DEFAULT] ____cacheline_aligned_in_smp;
+ };
+
+ struct file_operations;
+
+(feel free to just take)
+
+All that said, I have to note blogbench has numerous bugs. For example
+it collects stats by merely bumping a global variable (not even with
+atomics), so some updates are straight up lost.
+
+To my understanding it was meant to test filesystems and I'm guessing
+threading (instead of separate processes) was only used to make it
+easier to share statistics. Given the current scales this
+unintentionally transitioned into bottlenecking on the file_lock
+instead.
+
+There were scalability changes made about 9 years ago and according to
+git log they were benchmarked by Eric Dumazet, while benchmark code was
+not shared. I suggest CC'ing the guy with your v2 and asking if he can
+bench.  Even if he is no longer in position to do it perhaps he can rope
+someone in (or even better share his benchmark).
 
