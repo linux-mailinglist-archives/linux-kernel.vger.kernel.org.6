@@ -1,145 +1,141 @@
-Return-Path: <linux-kernel+bounces-217271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD5B90ADA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:09:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5368590ADA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A60A1F2232C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD617284894
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E61D19597C;
-	Mon, 17 Jun 2024 12:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6C0194C8B;
+	Mon, 17 Jun 2024 12:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="p3i7z+U3"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKGYSbZr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEF91953A4;
-	Mon, 17 Jun 2024 12:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F198194AD4;
+	Mon, 17 Jun 2024 12:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718626109; cv=none; b=hY0yV1i8Y0uy0K4yuJFn4dUgHispBHSfs/4jgeOkbSU0b9gFtjJZT4qz62XPLr0+fv5YjVmNncMN3BmW2AQagmFcH0j5NifHYL/RdgnMIzW6z+S+5WBnbnCMLVSFu0tPfJLTaC9TK5brWnk9TlzAIFTos5tDTpYL509SwTJx/Fo=
+	t=1718626146; cv=none; b=f0SK8ymarUFuwyYzZBlXmrSybivlvF3C6eTMlLo7xr4RYHUpxd9t64Hj6M7aIWofOExcOzcq7/nWMrlumOm1LgEIhPBtt8pPMy2w/5Mdo+1tEgf4MBhDwgISCn6VXIJgqlKfYNpbZuwDcWX0CQQEYT9bO6ZbsbfyO5PC9sIh/RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718626109; c=relaxed/simple;
-	bh=TfKKBv8AFhA+vH8mhW8s7HZ2r28DhWriurHkhv7w9+o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bGaRq/uHDrlvaQXI8EyXauYxOCH+4C4cIdYNbBoFw3z4YiaTRu5RT6FMXqmUEgw1WBX/fi5Ke/HhzvmdRYc+BPpculzZUVTSoXRi+DlH2upMoUfmw56jPHK9vDyxM3krK4pamt7GzzIxbD0un2ewwVsu/HmxUvOSXg2bOw7J8tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=p3i7z+U3; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 0123B40009;
-	Mon, 17 Jun 2024 12:08:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718626105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2bbFLl2ripxc9Dqv54mu21YE1HBXoGgxRaBaWn9NKxQ=;
-	b=p3i7z+U3yCQnjYykDY+5OanbA4Bkc++6/CmQ5ttudqGf6fHxaaxptox5joY7/rzFj+JERP
-	ThK2G9nJlrLzc85+e0aOTNZGUiSjrS0keA/9hAZWMIFuywrdzKOIye4miuyswWmphWfmor
-	LiUZ3rUz+Wa5Rezf1TeHuHmd0JNHkTJOv0VjmXYaXrhWPI5JwQLj3n4TpfIyK0OrFjxctF
-	kf6NFyHg/0vLv53mmSwreL6LRu2eY+LP0zj9CbkW7zi0sgNiM3Kue4aBD5MiGsItXJ11ej
-	k/tO9ZQAkkxGoow+p2GRrOibHVFmTCOxUu+bL0ng1w0hVHk1lCRuEoK1ufyxmQ==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Peter Rosin <peda@axentia.se>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Korsgaard <peter.korsgaard@barco.com>,
-	Wolfram Sang <wsa@kernel.org>
-Cc: linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH v3 3/3] i2c: mux: gpio: Add support for the 'settle-time-us' property
-Date: Mon, 17 Jun 2024 14:08:18 +0200
-Message-ID: <20240617120818.81237-4-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240617120818.81237-1-bastien.curutchet@bootlin.com>
-References: <20240617120818.81237-1-bastien.curutchet@bootlin.com>
+	s=arc-20240116; t=1718626146; c=relaxed/simple;
+	bh=LfluWw7DYm39LFePXaV2AcWOiTCAf18yVmNfxU7hQis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZsZpka8h7ts41802E9K6MKWA64NWu6+oFf4DJuVEtnvbIVvkJohKG5dkBxMGFtbHD2o5HY0v7zgpWUJfnoBIPZ9vmF6Rm0F8vWmh0boypnl1nqBux+QdJjTeJeh8f7RqTnGQsopiBVsDUQRP0cGRWJQu2uRM7hhrjEi+FXmz658=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKGYSbZr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E301EC2BD10;
+	Mon, 17 Jun 2024 12:09:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718626146;
+	bh=LfluWw7DYm39LFePXaV2AcWOiTCAf18yVmNfxU7hQis=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nKGYSbZrGsaEEzMIHLPTw1SZSXyYotHDxWq5ZEXrPZIv5FmY0aWKvEiZglgAEuTgK
+	 4IFYYi3x8nYoi6TP577n5kjOp8Td9QjKCGYCqA+9J9R+C/6dXKtIw631WZkgue69Zb
+	 ZmwBSoyLGsqnU68sLKG0G/sclshVWaEu12r8E82q7BFdixcojIZbEFL9wk4Nqvqz/N
+	 56I4l2mgIUp/DvvBhl5pJWzL7/Su+dl1df9gvtYJ6Or5Nt+ne0wECCN3A4XhgqmJYr
+	 E2RyTIvBmoAW0QTNpuRf1tVpi+zBX+p7BBHRZQW1KG9sdu8WRu6DsYLEUY9H6rulK/
+	 vQHi7NTQfRgCQ==
+Message-ID: <316c0751-17dd-4fc8-b424-bc8e875aaf83@kernel.org>
+Date: Mon, 17 Jun 2024 14:09:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] ASoC: dt-bindings: Convert realtek CODEC bindings to
+ DT schema
+To: Daniel Baluta <daniel.baluta@gmail.com>
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240614033812.51312-1-animeshagarwal28@gmail.com>
+ <b214c9db-fd82-4d5f-9cc2-96857da1bef5@kernel.org>
+ <CAEnQRZBPv+OAmNBHe8fWziw8zJKFkH8vd-oe_G-e3OVSX_sTRQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <CAEnQRZBPv+OAmNBHe8fWziw8zJKFkH8vd-oe_G-e3OVSX_sTRQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Some hardware need some time to switch from a bus to another. This can
-cause the first transfers following the selection of a bus to fail.
-There is no way to configure this kind of waiting time in the driver.
+On 17/06/2024 13:18, Daniel Baluta wrote:
+> On Fri, Jun 14, 2024 at 11:32 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 14/06/2024 05:38, Animesh Agarwal wrote:
+>>> Hey all,
+>>> This patch series converts two of the thirteen realtek audio codec
+>>> bindings which are still in txt format to DT schema. I have chosen
+>>> these bindings as they have in tree DTS files.
+>>
+>> ... and the point of DTS is?
+>>
+>> To validate the DTS against bindings and see if they match.
+>>
+>> You received such feedback already.
+> 
+> Hi Krzysztof,
+> 
+> I'm afraid I don't understand your comment here.
+> 
+> Animesh is saying that we are now looking only on bindings that are
+> actually used in the dts files.
 
-Add support for the 'settle-time-us' device-tree property. When set,
-the i2c_mux_gpio_select() applies a delay before returning, leaving
-enough time to the hardware to switch to the new bus.
+Yes and then one should compare the DTS with the binding, because old
+bindings are often incomplete.
 
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
----
- drivers/i2c/muxes/i2c-mux-gpio.c           | 6 ++++++
- include/linux/platform_data/i2c-mux-gpio.h | 2 ++
- 2 files changed, 8 insertions(+)
-
-diff --git a/drivers/i2c/muxes/i2c-mux-gpio.c b/drivers/i2c/muxes/i2c-mux-gpio.c
-index c61e9d9ea695..944577bb09c1 100644
---- a/drivers/i2c/muxes/i2c-mux-gpio.c
-+++ b/drivers/i2c/muxes/i2c-mux-gpio.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/bits.h>
-+#include <linux/delay.h>
- #include <linux/gpio/consumer.h>
- #include <linux/gpio/driver.h>
- #include <linux/i2c.h>
-@@ -37,6 +38,9 @@ static int i2c_mux_gpio_select(struct i2c_mux_core *muxc, u32 chan)
- 
- 	i2c_mux_gpio_set(mux, chan);
- 
-+	if (mux->data.settle_time)
-+		fsleep(mux->data.settle_time);
-+
- 	return 0;
- }
- 
-@@ -116,6 +120,8 @@ static int i2c_mux_gpio_probe_fw(struct gpiomux *mux,
- 	if (device_property_read_u32(dev, "idle-state", &mux->data.idle))
- 		mux->data.idle = I2C_MUX_GPIO_NO_IDLE;
- 
-+	device_property_read_u32(dev, "settle-time-us", &mux->data.settle_time);
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/platform_data/i2c-mux-gpio.h b/include/linux/platform_data/i2c-mux-gpio.h
-index 816a4cd3ccb5..b548588aa1f2 100644
---- a/include/linux/platform_data/i2c-mux-gpio.h
-+++ b/include/linux/platform_data/i2c-mux-gpio.h
-@@ -19,6 +19,7 @@
-  *	position
-  * @n_values: Number of multiplexer positions (busses to instantiate)
-  * @idle: Bitmask to write to MUX when idle or GPIO_I2CMUX_NO_IDLE if not used
-+ * @settle_time: Delay to wait when a new bus is selected
-  */
- struct i2c_mux_gpio_platform_data {
- 	int parent;
-@@ -26,6 +27,7 @@ struct i2c_mux_gpio_platform_data {
- 	const unsigned *values;
- 	int n_values;
- 	unsigned idle;
-+	int settle_time;
- };
- 
- #endif /* _LINUX_I2C_MUX_GPIO_H */
--- 
-2.45.0
+Best regards,
+Krzysztof
 
 
