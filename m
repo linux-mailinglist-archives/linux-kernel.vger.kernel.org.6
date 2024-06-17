@@ -1,210 +1,235 @@
-Return-Path: <linux-kernel+bounces-218047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 667EA90B895
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:55:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FFB490B89F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8AE1F22A63
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4C51C23BF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3759F192B88;
-	Mon, 17 Jun 2024 17:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4DF19414E;
+	Mon, 17 Jun 2024 17:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XJKuA1wC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hbTBsf8E"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B1116CD3D;
-	Mon, 17 Jun 2024 17:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1183019408B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718646920; cv=none; b=pA51l2/OkpPX2zoyCCH0CZ7ARLh/W06GIbkSQidFjesFMpcCbvIaigFe0zNRyh7nhyd8loWlP5kSsULafK23eWwbSv0ZSQnMT1t+XXE6o9zqaEqhHMXi54GHQM97cxIDjT58gRk/CdFoSMe2SZHrxSnsCFK8Pv0rJW9mypHnUaY=
+	t=1718647020; cv=none; b=uAAIGFzDB7UaB6nJTcdMsdXkf5+ni1sTYz2IxiwVIXdo6HA12IjOpk/AyLNnngtvg8GPaVKGg8YeI2nKbVi8CeZzUbVsDsSTo+VX0rjAoYCFCiNkhlZ+QQ1yAme5M/++MaK1WQnZFd2shVD8PAKXJstJesxCF+dD3sivFk9Xa1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718646920; c=relaxed/simple;
-	bh=/MKX8zWua164F+o5W2SmDmo38TgloRooE2/wMgG4hOc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Sy4wFMJrnzlInnvrZN/Aj9XmOJkgkQvwetJWap1m2/2aQb/lm1Jw8vpDPZhvZq1UrSZ1SfVx4QT9lVu7U6V0GKY+2kNV1Nzx0SyZfEr238lmOxEzr2ibL/sOaQTHaWxilNS4F8YM27OAV3DG7msVFxr/c4CqM8aPptrrApMQ6Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XJKuA1wC; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718646919; x=1750182919;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=/MKX8zWua164F+o5W2SmDmo38TgloRooE2/wMgG4hOc=;
-  b=XJKuA1wCotKDqGCim2jZl4zFfDWaLyJGfM0pbndzVuiED0Wiq9HJQkfP
-   VUkWg2zqHvxbgkz99QamTWYICq4vI+gLNdXk/l5jhzWcRZCI66VU5krNG
-   53RnIAGyEixL4Vq/xMlre/UNDLFE3UHjsXiile+w/wt02XP6Vtf4+VVFX
-   rveS3+qe/FpeSGyJ59Dn9cN5ctPERjWlYMDvztWaPmeM68sAfOi60ESNO
-   sEcEh/rwWb/AsSthyo6TrOk4cJVyxgPq1HE885WOkLtwjkxDGHPHbNnHl
-   SA8if+/1PoOxwrx9svDi0fSA5YV/YxbfzmC+Wx9iUVEXNaDGh5O3qU+u2
-   A==;
-X-CSE-ConnectionGUID: d2I3aOgpTnGSkxoGcu4UBA==
-X-CSE-MsgGUID: DmfnGH7mSVOA5CnRppCU3w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15454769"
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="15454769"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:55:18 -0700
-X-CSE-ConnectionGUID: a6YoO4xoQG2b7gX3udiXMQ==
-X-CSE-MsgGUID: rONlxxEqQQyd+C4MCtn4gA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="41198172"
-Received: from schen9-mobl2.jf.intel.com (HELO [10.24.8.70]) ([10.24.8.70])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:55:18 -0700
-Message-ID: <fd4eb382a87baed4b49e3cf2cd25e7047f9aede2.camel@linux.intel.com>
-Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to
- put_unused_fd()
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, Yu Ma <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	tim.c.chen@intel.com, pan.deng@intel.com, tianyou.li@intel.com
-Date: Mon, 17 Jun 2024 10:55:17 -0700
-In-Reply-To: <lzotoc5jwq4o4oij26tnzm5n2sqwqgw6ve2yr3vb4rz2mg4cee@iysfvyt77gkx>
-References: <20240614163416.728752-1-yu.ma@intel.com>
-	 <20240614163416.728752-4-yu.ma@intel.com>
-	 <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
-	 <lzotoc5jwq4o4oij26tnzm5n2sqwqgw6ve2yr3vb4rz2mg4cee@iysfvyt77gkx>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
+	s=arc-20240116; t=1718647020; c=relaxed/simple;
+	bh=YgElG/kLYYqsxODcHai0Njk6U1Rwapx3rdtvB7AtEUc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NpMRPYFeM2t3rJ0ReC7IxFMscUMKdisP79Lg6B+ADFDj80hxlBSgl4T85nNQhxTzS73bbXOLLKSHY4lxNRBX+ESWr77vMCV5G6Nk1NygrzNVrIw8UIG9yNFYot6JuLtavh6hTBHigwfYcLJQ8/hSwc35voGuvY4xFb4t6fu38OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hbTBsf8E; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718647017;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v3+RmOlksDfTAFqNkTKQ0MNP70H7CNovcQRO+KHXRTU=;
+	b=hbTBsf8EmP+wu549xr1XAfRtTlU3QMieIQm6CUkOc8c3QLRriHRChIrxCROoGLwFso0Dzy
+	vlAGMEwQsa6QC5oSlPPHcj4W5psnOT+DVwZcUngl8+6OqXDIWMfDhac1ahFmm5MKaR0HAm
+	E++9Gk7v6FS9k26JoVlm1/1gCvwTek0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-147-fOJ4-S3DPlaZpk_sfowdOQ-1; Mon,
+ 17 Jun 2024 13:56:52 -0400
+X-MC-Unique: fOJ4-S3DPlaZpk_sfowdOQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1D82E19560B8;
+	Mon, 17 Jun 2024 17:56:51 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.16.41])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6AB141956087;
+	Mon, 17 Jun 2024 17:56:48 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org,  dev@openvswitch.org,
+  linux-kernel@vger.kernel.org,  Ilya Maximets <i.maximets@ovn.org>,
+  Stefano Brivio <sbrivio@redhat.com>,  Eric Dumazet <edumazet@google.com>,
+  linux-kselftest@vger.kernel.org,  Jakub Kicinski <kuba@kernel.org>,
+  Paolo Abeni <pabeni@redhat.com>,  Shuah Khan <shuah@kernel.org>,  "David
+ S. Miller" <davem@davemloft.net>
+Subject: Re: [ovs-dev] [RFC net-next 4/7] selftests: openvswitch: Add
+ support for tunnel() key.
+In-Reply-To: <20240616162743.GJ8447@kernel.org> (Simon Horman's message of
+	"Sun, 16 Jun 2024 17:27:43 +0100")
+References: <20240613181333.984810-1-aconole@redhat.com>
+	<20240613181333.984810-5-aconole@redhat.com>
+	<20240616162743.GJ8447@kernel.org>
+Date: Mon, 17 Jun 2024 13:56:46 -0400
+Message-ID: <f7t7cenmp0h.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Sat, 2024-06-15 at 07:07 +0200, Mateusz Guzik wrote:
-> On Sat, Jun 15, 2024 at 06:41:45AM +0200, Mateusz Guzik wrote:
-> > On Fri, Jun 14, 2024 at 12:34:16PM -0400, Yu Ma wrote:
-> > > alloc_fd() has a sanity check inside to make sure the FILE object map=
-ping to the
-> >=20
-> > Total nitpick: FILE is the libc thing, I would refer to it as 'struct
-> > file'. See below for the actual point.
-> >=20
-> > > Combined with patch 1 and 2 in series, pts/blogbench-1.1.0 read impro=
-ved by
-> > > 32%, write improved by 15% on Intel ICX 160 cores configuration with =
-v6.8-rc6.
-> > >=20
-> > > Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > > Signed-off-by: Yu Ma <yu.ma@intel.com>
-> > > ---
-> > >  fs/file.c | 14 ++++++--------
-> > >  1 file changed, 6 insertions(+), 8 deletions(-)
-> > >=20
-> > > diff --git a/fs/file.c b/fs/file.c
-> > > index a0e94a178c0b..59d62909e2e3 100644
-> > > --- a/fs/file.c
-> > > +++ b/fs/file.c
-> > > @@ -548,13 +548,6 @@ static int alloc_fd(unsigned start, unsigned end=
-, unsigned flags)
-> > >  	else
-> > >  		__clear_close_on_exec(fd, fdt);
-> > >  	error =3D fd;
-> > > -#if 1
-> > > -	/* Sanity check */
-> > > -	if (rcu_access_pointer(fdt->fd[fd]) !=3D NULL) {
-> > > -		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
-> > > -		rcu_assign_pointer(fdt->fd[fd], NULL);
-> > > -	}
-> > > -#endif
-> > > =20
-> >=20
-> > I was going to ask when was the last time anyone seen this fire and
-> > suggest getting rid of it if enough time(tm) passed. Turns out it does
-> > show up sometimes, latest result I found is 2017 vintage:
-> > https://groups.google.com/g/syzkaller-bugs/c/jfQ7upCDf9s/m/RQjhDrZ7AQAJ
-> >=20
-> > So you are moving this to another locked area, but one which does not
-> > execute in the benchmark?
-> >=20
-> > Patch 2/3 states 28% read and 14% write increase, this commit message
-> > claims it goes up to 32% and 15% respectively -- pretty big. I presume
-> > this has to do with bouncing a line containing the fd.
-> >=20
-> > I would argue moving this check elsewhere is about as good as removing
-> > it altogether, but that's for the vfs overlords to decide.
-> >=20
-> > All that aside, looking at disasm of alloc_fd it is pretty clear there
-> > is time to save, for example:
-> >=20
-> > 	if (unlikely(nr >=3D fdt->max_fds)) {
-> > 		if (fd >=3D end) {
-> > 			error =3D -EMFILE;
-> > 			goto out;
-> > 		}
-> > 		error =3D expand_files(fd, fd);
-> > 		if (error < 0)
-> > 			goto out;
-> > 		if (error)
-> > 			goto repeat;
-> > 	}
-> >=20
->=20
-> Now that I wrote it I noticed the fd < end check has to be performed
-> regardless of max_fds -- someone could have changed rlimit to a lower
-> value after using a higher fd. But the main point stands: the call to
-> expand_files and associated error handling don't have to be there.
+Simon Horman <horms@kernel.org> writes:
 
-To really prevent someone from mucking with rlimit, we should probably
-take the task_lock to prevent do_prlimit() racing with this function.
+> On Thu, Jun 13, 2024 at 02:13:30PM -0400, Aaron Conole wrote:
+>> This will be used when setting details about the tunnel to use as
+>> transport.  There is a difference between the ODP format between tunnel():
+>> the 'key' flag is not actually a flag field, so we don't support it in the
+>> same way that the vswitchd userspace supports displaying it.
+>> 
+>> Signed-off-by: Aaron Conole <aconole@redhat.com>
+>
+> ...
+>
+>> @@ -1265,6 +1265,165 @@ class ovskey(nla):
+>>                  init=init,
+>>              )
+>>  
+>> +    class ovs_key_tunnel(nla):
+>> +        nla_flags = NLA_F_NESTED
+>> +
+>> +        nla_map = (
+>> +            ("OVS_TUNNEL_KEY_ATTR_ID", "be64"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_IPV4_SRC", "ipaddr"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_IPV4_DST", "ipaddr"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_TOS", "uint8"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_TTL", "uint8"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_DONT_FRAGMENT", "flag"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_CSUM", "flag"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_OAM", "flag"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_GENEVE_OPTS", "array(uint32)"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_TP_SRC", "be16"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_TP_DST", "be16"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_VXLAN_OPTS", "none"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_IPV6_SRC", "ipaddr"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_IPV6_DST", "ipaddr"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_PAD", "none"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_ERSPAN_OPTS", "none"),
+>> +            ("OVS_TUNNEL_KEY_ATTR_IPV4_INFO_BRIDGE", "flag"),
+>> +        )
+>> +
+>> +        def parse(self, flowstr, mask=None):
+>> +            if not flowstr.startswith("tunnel("):
+>> +                return None, None
+>> +
+>> +            k = ovskey.ovs_key_tunnel()
+>> +            if mask is not None:
+>> +                mask = ovskey.ovs_key_tunnel()
+>> +
+>> +            flowstr = flowstr[len("tunnel("):]
+>> +
+>> +            v6_address = None
+>> +
+>> +            fields = [
+>> +                ("tun_id=", r"(\d+)", int, "OVS_TUNNEL_KEY_ATTR_ID",
+>> +                 0xffffffffffffffff, None, None),
+>> +
+>> +                ("src=", r"([0-9a-fA-F\.]+)", str,
+>> +                 "OVS_TUNNEL_KEY_ATTR_IPV4_SRC", "255.255.255.255", "0.0.0.0",
+>> +                 False),
+>> +                ("dst=", r"([0-9a-fA-F\.]+)", str,
+>> +                 "OVS_TUNNEL_KEY_ATTR_IPV4_DST", "255.255.255.255", "0.0.0.0",
+>> +                 False),
+>> +
+>> +                ("ipv6_src=", r"([0-9a-fA-F:]+)", str,
+>> +                 "OVS_TUNNEL_KEY_ATTR_IPV6_SRC",
+>> +                 "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "::", True),
+>> +                ("ipv6_dst=", r"([0-9a-fA-F:]+)", str,
+>> +                 "OVS_TUNNEL_KEY_ATTR_IPV6_DST",
+>> +                 "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "::", True),
+>> +
+>> +                ("tos=", r"(\d+)", int, "OVS_TUNNEL_KEY_ATTR_TOS", 255, 0,
+>> +                 None),
+>> +                ("ttl=", r"(\d+)", int, "OVS_TUNNEL_KEY_ATTR_TTL", 255, 0,
+>> +                 None),
+>> +
+>> +                ("tp_src=", r"(\d+)", int, "OVS_TUNNEL_KEY_ATTR_TP_SRC",
+>> +                 65535, 0, None),
+>> +                ("tp_dst=", r"(\d+)", int, "OVS_TUNNEL_KEY_ATTR_TP_DST",
+>> +                 65535, 0, None),
+>> +            ]
+>> +
+>> +            forced_include = ["OVS_TUNNEL_KEY_ATTR_TTL"]
+>> +
+>> +            for prefix, regex, typ, attr_name, mask_val, default_val, v46_flag in fields:
+>> +                flowstr, value = parse_extract_field(flowstr, prefix, regex, typ, False)
+>> +                if not attr_name:
+>> +                    raise Exception("Bad list value in tunnel fields")
+>> +
+>> +                if value is None and attr_name in forced_include:
+>> +                    value = default_val
+>> +                    mask_val = default_val
+>> +
+>> +                if value is not None:
+>> +                    if v6_address is None and v46_flag is not None:
+>> +                        v6_address = v46_flag
+>
+> By my reading, at this point v6_address will only be None if v46_flag is
+> not None.  IF so, the condition below seems excessive.
 
-task_lock(current->group_leader);
+Agreed - thanks for the suggestions.
 
-Tim
+>> +                    if v6_address is not None and v46_flag is not None \
+>> +                       and v46_flag != v6_address:
+>> +                        raise ValueError("Cannot mix v6 and v4 addresses")
+>
+> I wonder if we can instead express this as (completely untested!):
+>
+>                     if v46_flag is not None:
+>                         if v6_address is None:
+>                             v6_address = v46_flag
+>                         if v46_flag != v6_address:
+>                             raise ValueError("Cannot mix v6 and v4 addresses")
+>
+>> +                    k["attrs"].append([attr_name, value])
+>> +                    if mask is not None:
+>> +                        mask["attrs"].append([attr_name, mask_val])
+>> +                else:
+>> +                    if v6_address is not None and v46_flag is not None \
+>> +                       and v46_flag != v6_address:
+>> +                        continue
+>> +                    if v6_address is None and v46_flag is not None:
+>> +                        continue
+>
+> And I wonder if this is a bit easier on the eyes (also completely untested):
+>
+>                     if v46_flag is not None:
+>                         if v6_address is None or v46_flag != v6_address:
+>                             continue
 
->=20
-> > This elides 2 branches and a func call in the common case. Completely
-> > untested, maybe has some brainfarts, feel free to take without credit
-> > and further massage the routine.
-> >=20
-> > Moreover my disasm shows that even looking for a bit results in
-> > a func call(!) to _find_next_zero_bit -- someone(tm) should probably
-> > massage it into another inline.
-> >=20
-> > After the above massaging is done and if it turns out the check has to
-> > stay, you can plausibly damage-control it with prefetch -- issue it
-> > immediately after finding the fd number, before any other work.
-> >=20
-> > All that said, by the above I'm confident there is still *some*
-> > performance left on the table despite the lock.
-> >=20
-> > >  out:
-> > >  	spin_unlock(&files->file_lock);
-> > > @@ -572,7 +565,7 @@ int get_unused_fd_flags(unsigned flags)
-> > >  }
-> > >  EXPORT_SYMBOL(get_unused_fd_flags);
-> > > =20
-> > > -static void __put_unused_fd(struct files_struct *files, unsigned int=
- fd)
-> > > +static inline void __put_unused_fd(struct files_struct *files, unsig=
-ned int fd)
-> > >  {
-> > >  	struct fdtable *fdt =3D files_fdtable(files);
-> > >  	__clear_open_fd(fd, fdt);
-> > > @@ -583,7 +576,12 @@ static void __put_unused_fd(struct files_struct =
-*files, unsigned int fd)
-> > >  void put_unused_fd(unsigned int fd)
-> > >  {
-> > >  	struct files_struct *files =3D current->files;
-> > > +	struct fdtable *fdt =3D files_fdtable(files);
-> > >  	spin_lock(&files->file_lock);
-> > > +	if (unlikely(rcu_access_pointer(fdt->fd[fd]))) {
-> > > +		printk(KERN_WARNING "put_unused_fd: slot %d not NULL!\n", fd);
-> > > +		rcu_assign_pointer(fdt->fd[fd], NULL);
-> > > +	}
-> > >  	__put_unused_fd(files, fd);
-> > >  	spin_unlock(&files->file_lock);
-> > >  }
->=20
+I folded both of these in and did some quick testing.  Thanks Simon!
+
+>> +                    if mask is not None:
+>> +                        mask["attrs"].append([attr_name, default_val])
+>> +
+>> +            if k["attrs"][0][0] != "OVS_TUNNEL_KEY_ATTR_ID":
+>> +                raise ValueError("Needs a tunid set")
+>
+> ...
+>
+>> @@ -1745,7 +1905,7 @@ class OvsVport(GenericNetlinkSocket):
+>>          )
+>>  
+>>          TUNNEL_DEFAULTS = [("geneve", 6081),
+>> -                           ("vxlan", 4798)]
+>> +                           ("vxlan", 4789)]
+>>  
+>>          for tnl in TUNNEL_DEFAULTS:
+>>              if ptype == tnl[0]:
+>
+> As noted in my response to PATCH 1/7, I think that the
+> change in the hunk above belongs there rather than here.
 
 
