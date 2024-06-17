@@ -1,427 +1,151 @@
-Return-Path: <linux-kernel+bounces-217965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAB790B6F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:48:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8982490B6F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718D328555B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB001F2458E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73486168493;
-	Mon, 17 Jun 2024 16:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49258166305;
+	Mon, 17 Jun 2024 16:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NeXkydqz"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R194lI59"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFB74500C;
-	Mon, 17 Jun 2024 16:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EC61D953D;
+	Mon, 17 Jun 2024 16:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718642864; cv=none; b=a71jLtN5PL1utXkGytd0RWZyoSfHsYFW347K6AslxvUGawX2tIWD24Eqatr9+uj01TcXPwddL52YmSqubPfNb0CBQNYRuYB2tbTO3YHh89Fu/3bXClNNrVaIt3AE8Phki/utAIdUrJpRND+cDH2DWDas+ZLO9zDKF2ADpaAtKhY=
+	t=1718642859; cv=none; b=Z8xvX4esY2060Ovrj3s3xFoTRlLipPFaxSN+eED6WiDlt+qji/qPRp4G2hJEMjoscJ1GeC4+8jqXJd+P98Q5zqsj+cM4BLLg4c86MK6cGZr80U5kEmM/DC1i4vaiPXGGgUYshvVmL3Kfcfg8Y6QjZG6iXdfD639DLR0bfNocYdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718642864; c=relaxed/simple;
-	bh=aM9RnoGXr8emv7Tq4e0WP1W2t4kOtvT3myzG7ANBYtE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=X3mP4ruVjDTr3twxBmEIUps7JOrNX0sTrlVbtEnUdmxNQt6daYkqRadBnvhBoVPhhzWjZFgnh5iMZIqwawBy6UzIiQF3/2jZihdgfB2pgFjVebtpLYsCWPK1olOexX8ffuyQ0lgP/vXMPRmLkz0fjMKmRpgK4dxa8bmKaKERvGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NeXkydqz; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HGaLB5001925;
-	Mon, 17 Jun 2024 16:47:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-type:mime-version:subject:from:in-reply-to:date:cc
-	:content-transfer-encoding:message-id:references:to; s=pp1; bh=P
-	hYpQRcKjYLNv02jVjWeC2p16m9d11AocHNjE7/LYBs=; b=NeXkydqziIaXvjxJo
-	xisfknjclVdmvVYMmABeKU960RwJPf3FLmSn8NOI3vhq1pNQd2rQql/aYb1X1PdM
-	CwLytNDx+8x8jQ4ibU4cUJICcR90h7rQ3bz7/PdTfNAJkfP5tq8hHbGpswoRMbw2
-	NPZgciZlirBmIFFMRHZss4Z0AlpHiXIp2PBExm6l9t99d+FOFEGNN/LbUMG6/F04
-	NWtxOOIhPmrxvgXjF8IPwPTa8k2Wksxyk1RG8iHIElPXpp6NRazgzP8vcQVlbqmX
-	8b30ViPX/wk/c5JN7ABdFpxLYi9eRlTmd7Fc5JQcK37q9n+eLzoHOrYyCFjRDxtz
-	qfmuQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ytrpyg25v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 16:47:26 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45HGhsMJ016207;
-	Mon, 17 Jun 2024 16:47:26 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ytrpyg25r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 16:47:25 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45HFc8sv023889;
-	Mon, 17 Jun 2024 16:47:25 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysp9puv8f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 16:47:25 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45HGlJev55968118
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Jun 2024 16:47:21 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E53F220069;
-	Mon, 17 Jun 2024 16:47:18 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 538C620043;
-	Mon, 17 Jun 2024 16:47:16 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.43.76.136])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 17 Jun 2024 16:47:16 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1718642859; c=relaxed/simple;
+	bh=ExhDcZ4//zTNSSYj74RmnlQmZzjz1qUm2+2ZmpYR86Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=up7hpHKsaJtvhAr1p5Dyf4tkNLRBngvXO8MS8z6PmHga8SRWqbPeW8+S9fMAcaK3zqAUH6WsgQMXkwluWr54ueWqcuLHgxrJqhQAFlm2f9YzJLP5CnfEOSlh11OBDp1CgzIFtRBNbpN/y+z2aRnP9XKIZW3gRO5XwF4Y3YGiNuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R194lI59; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E0CCC3277B;
+	Mon, 17 Jun 2024 16:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718642859;
+	bh=ExhDcZ4//zTNSSYj74RmnlQmZzjz1qUm2+2ZmpYR86Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R194lI59CkumFpQX1GcvmvdU4pUe9jICkjfIBKTOFJzSsR8bfBU2zgrqwc8vHwstG
+	 nNBLREq+rOsEToxk8ocZa4rjMzl497x11FZFfvdNnnQNLSCy2VuHh8j+vPsazeQ7np
+	 jS/YXVIPyfurmqwDaf14Moc6j8PN90pPyLul6FBnC9DBTTyiSeyhFOAlqA2xoYhyTV
+	 g5HPZh7GPGso7hCR86KaRz3SwvFwhaZn7kdQ+qR+lwCO0UFGRsE+LCODu0LA9hs0wI
+	 2riu/8B1FuWuK3t3T4D0J6z5wLg9OSQmPjudurW/qiePm/uzWtII0wT/FJFkQKeJ9Q
+	 vkxaYB+dEs22A==
+Date: Mon, 17 Jun 2024 17:47:32 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Khuong Dinh <khuong@os.amperecomputing.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com, Nishanth Menon <nm@ti.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 3/7] dt-bindings: soc: intel: lgm-syscon: Move to
+ dedicated schema
+Message-ID: <20240617-overnight-chevron-cd481dbc59ba@spud>
+References: <20240616-dt-bindings-mfd-syscon-split-v2-0-571b5850174a@linaro.org>
+ <20240616-dt-bindings-mfd-syscon-split-v2-3-571b5850174a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH] tools/perf: Handle perftool-testsuite_probe testcases
- fail when kernel debuginfo is not present
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <588beeaf-2015-40f4-a34b-e36556e20707@arm.com>
-Date: Mon, 17 Jun 2024 22:17:04 +0530
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        Disha Goel <disgoel@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="8k1Yhdbf/8He0O/S"
+Content-Disposition: inline
+In-Reply-To: <20240616-dt-bindings-mfd-syscon-split-v2-3-571b5850174a@linaro.org>
+
+
+--8k1Yhdbf/8He0O/S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <DA51C986-34EE-4849-B9C4-DB69E2ECF75C@linux.vnet.ibm.com>
-References: <20240617122121.7484-1-atrajeev@linux.vnet.ibm.com>
- <588beeaf-2015-40f4-a34b-e36556e20707@arm.com>
-To: James Clark <james.clark@arm.com>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: PDF8rStCNfiBRYeiGThJsCtGO_CMIBvI
-X-Proofpoint-GUID: RHQcb8kY_a5qBb4qu-H26rxOJr7Ykx5N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1011 mlxlogscore=999 spamscore=0 impostorscore=0 phishscore=0
- priorityscore=1501 adultscore=0 mlxscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406170127
 
-
-
-> On 17 Jun 2024, at 8:30=E2=80=AFPM, James Clark <james.clark@arm.com> =
-wrote:
+On Sun, Jun 16, 2024 at 03:19:23PM +0200, Krzysztof Kozlowski wrote:
+> intel,lgm-syscon is not a simple syscon device - it has children - thus
+> it should be fully documented in its own binding.
 >=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 >=20
+> ---
 >=20
-> On 17/06/2024 13:21, Athira Rajeev wrote:
->> Running "perftool-testsuite_probe" fails as below:
->>=20
->> ./perf test -v "perftool-testsuite_probe"
->> 83: perftool-testsuite_probe  : FAILED
->>=20
->> There are three fails:
->>=20
->> 1. Regexp not found: "\s*probe:inode_permission(?:_\d+)?\s+\(on =
-inode_permission(?:[:\+][0-9A-Fa-f]+)?@.+\)"
->>   -- [ FAIL ] -- perf_probe :: test_adding_kernel :: listing added =
-probe :: perf probe -l (output regexp parsing)
->>=20
+> Context might depend on patch in Lee's MFD tree:
+> https://lore.kernel.org/all/171828959006.2643902.8308227314531523435.b4-t=
+y@kernel.org/
+> and also further patches here depend on this one.
+> ---
+>  Documentation/devicetree/bindings/mfd/syscon.yaml  |  1 -
+>  .../bindings/soc/intel/intel,lgm-syscon.yaml       | 56 ++++++++++++++++=
+++++++
+>  2 files changed, 56 insertions(+), 1 deletion(-)
 >=20
-> On a machine where NO_DEBUGINFO gets set, this one skips for me. But =
-on
-> a machine where there _is_ debug info this test still fails.
->=20
-> But in both cases the probe looks like it was added successfully. So =
-I'm
-> wondering if this one does need to be skipped, or it's just always
-> failing? Do you have this test passing anywhere where there is debug =
-info?
->=20
-> The list command looks like it successfully lists the probe for me in
-> both cases, it just doesn't have an address on the end:
->=20
-> perf list 'probe:*'
->=20
->   probe:inode_permission (on inode_permission)
->=20
-> Does the missing address mean anything or is it just not handled
-> properly by the test?
->=20
-> Ironically the machine that _does_ pass the debug info test also =
-prints
-> this, but it looks like it still adds and lists the probe correctly:
->=20
->  perf probe -l probe:*
->=20
->  Failed to find debug information for address 0xffff80008047ac30
->    probe:inode_permission (on inode_permission)
+> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Document=
+ation/devicetree/bindings/mfd/syscon.yaml
+> index af442767aa96..b9bf5bc05e92 100644
+> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> @@ -77,7 +77,6 @@ properties:
+>                - hisilicon,pcie-sas-subctrl
+>                - hisilicon,peri-subctrl
+>                - hpe,gxp-sysreg
+> -              - intel,lgm-syscon
+>                - loongson,ls1b-syscon
+>                - loongson,ls1c-syscon
+>                - lsi,axxia-syscon
+> diff --git a/Documentation/devicetree/bindings/soc/intel/intel,lgm-syscon=
+=2Eyaml b/Documentation/devicetree/bindings/soc/intel/intel,lgm-syscon.yaml
+> new file mode 100644
+> index 000000000000..0a73b7616a60
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/intel/intel,lgm-syscon.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/intel/intel,lgm-syscon.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Intel Lightning Mountain(LGM) Syscon
+> +
+> +maintainers:
+> +  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.=
+com>
 
-Hi James,
+This email is bouncing FYI.
 
-Thanks for checking this patch.
+--8k1Yhdbf/8He0O/S
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In environment where kernel is compiled with debuginfo:
+-----BEGIN PGP SIGNATURE-----
 
-1) Add probe point
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBopAAKCRB4tDGHoIJi
+0mU6AQCMelblVQzCR1QbJoBZ8rkW9ROijWRXui1XEUzgGVthiwD/aGWKRDu2jypE
+UOhojA9+yW0IbmsZ7KSU00OLDZkwLwk=
+=EkUU
+-----END PGP SIGNATURE-----
 
-# ./perf probe --add inode_permission
-Added new event:
-  probe:inode_permission (on inode_permission)
-
-You can now use it in all perf tools, such as:
-
-perf record -e probe:inode_permission -aR sleep 1
-
-
-2) Check using perf probe -l
-
-# ./perf probe -l
-probe:inode_permission (on inode_permission:2@fs/namei.c)
-
-With debuginfo, the result has additional info.
- The test looks for matching pattern =
-"\s*probe:inode_permission(?:_\d+)?\s+\(on =
-inode_permission(?:[:\+][0-9A-Fa-f]+)?@.+\)=E2=80=9D in result
-where it is expecting "inode_permission:2@fs/namei.c=E2=80=9D . The =
-=E2=80=9C@fs/namei.c=E2=80=9D info needs debuginfo here.
-
-The function I am using in patch to check for debuginfo =
-(skip_if_no_debuginfo) is from "tests/shell/lib/probe_vfs_getname.sh"
-
-skip_if_no_debuginfo() {
-        add_probe_vfs_getname -v 2>&1 | grep -E -q "^(Failed to find the =
-path for the kernel|Debuginfo-analysis is not supported)|(file has no =
-debug information)" && return 2
-        return 1
-}
-
-So the debuginfo test passes in your case since the log has "Failed to =
-find debug information=E2=80=9D which is not present in above grep =
-string.=20
-
-James,
-
-Only =E2=80=9Cperf probe -l=E2=80=9D subtest fails with debuginfo =
-enabled or other two subtests as well? Can you also share result on how =
-other two subtests behaves ?=20
-
-1. Fail 2 :
-   perf probe -nf --max-probes=3D512 -a 'vfs_* $params=E2=80=99
- =20
-
-2. Fail 3 :
-  perf probe 'vfs_read =
-somenonexistingrandomstuffwhichisalsoprettylongorevenlongertoexceed64'
-
-
-Also since you mentioned this gets skipped when debuginfo is not =
-enabled, curious to know what is debuginfo message from your setup with =
-debuginfo disabled.
-
-Thanks again for checking.
-
-Athira
-
->=20
-
-
->=20
->> 2. Regexp not found: "probe:vfs_mknod"
->>   Regexp not found: "probe:vfs_create"
->>   Regexp not found: "probe:vfs_rmdir"
->>   Regexp not found: "probe:vfs_link"
->>   Regexp not found: "probe:vfs_write"
->>   -- [ FAIL ] -- perf_probe :: test_adding_kernel :: wildcard adding =
-support (command exitcode + output regexp parsing)
->>=20
->> 3. Regexp not found: "Failed to find"
->>   Regexp not found: =
-"somenonexistingrandomstuffwhichisalsoprettylongorevenlongertoexceed64"
->>   Regexp not found: "in this function|at this address"
->>   Line did not match any pattern: "The /boot/vmlinux file has no =
-debug information."
->>   Line did not match any pattern: "Rebuild with CONFIG_DEBUG_INFO=3Dy, =
-or install an appropriate debuginfo package."
->>=20
->> These three tests depends on kernel debug info.
->> 1. Fail 1 expects file name along with probe which needs debuginfo
->> 2. Fail 2 :
->>    perf probe -nf --max-probes=3D512 -a 'vfs_* $params'
->>    Debuginfo-analysis is not supported.
->>     Error: Failed to add events.
->>=20
->> 3. Fail 3 :
->>   perf probe 'vfs_read =
-somenonexistingrandomstuffwhichisalsoprettylongorevenlongertoexceed64'
->>   Debuginfo-analysis is not supported.
->>   Error: Failed to add events.
->>=20
->> There is already helper function skip_if_no_debuginfo in
->> lib/probe_vfs_getname.sh which does perf probe and returns
->> "2" if debug info is not present. Use the skip_if_no_debuginfo
->> function and skip only the three tests which needs debuginfo
->> based on the result.
->>=20
->> With the patch:
->>=20
->>    83: perftool-testsuite_probe:
->>   --- start ---
->>   test child forked, pid 3927
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: adding probe =
-inode_permission ::
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: adding probe =
-inode_permission :: -a
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: adding probe =
-inode_permission :: --add
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: listing added =
-probe :: perf list
->>   Regexp not found: "\s*probe:inode_permission(?:_\d+)?\s+\(on =
-inode_permission(?:[:\+][0-9A-Fa-f]+)?@.+\)"
->>   -- [ SKIP ] -- perf_probe :: test_adding_kernel :: 2 2 Skipped due =
-to missing debuginfo :: testcase skipped
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: using added =
-probe
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: deleting added =
-probe
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: listing removed =
-probe (should NOT be listed)
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: dry run :: =
-adding probe
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: force-adding =
-probes :: first probe adding
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: force-adding =
-probes :: second probe adding (without force)
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: force-adding =
-probes :: second probe adding (with force)
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: using doubled =
-probe
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: removing =
-multiple probes
->>   Regexp not found: "probe:vfs_mknod"
->>   Regexp not found: "probe:vfs_create"
->>   Regexp not found: "probe:vfs_rmdir"
->>   Regexp not found: "probe:vfs_link"
->>   Regexp not found: "probe:vfs_write"
->>   -- [ SKIP ] -- perf_probe :: test_adding_kernel :: 2 2 Skipped due =
-to missing debuginfo :: testcase skipped
->>   Regexp not found: "Failed to find"
->>   Regexp not found: =
-"somenonexistingrandomstuffwhichisalsoprettylongorevenlongertoexceed64"
->>   Regexp not found: "in this function|at this address"
->>   Line did not match any pattern: "The /boot/vmlinux file has no =
-debug information."
->>   Line did not match any pattern: "Rebuild with CONFIG_DEBUG_INFO=3Dy, =
-or install an appropriate debuginfo package."
->>   -- [ SKIP ] -- perf_probe :: test_adding_kernel :: 2 2 Skipped due =
-to missing debuginfo :: testcase skipped
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: function with =
-retval :: add
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: function with =
-retval :: record
->>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: function =
-argument probing :: script
->>   ## [ PASS ] ## perf_probe :: test_adding_kernel SUMMARY
->>   ---- end(0) ----
->>   83: perftool-testsuite_probe                                        =
-: Ok
->>=20
->> Only the three specific tests are skipped and remaining
->> ran successfully.
->>=20
->> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
->> ---
->> .../shell/base_probe/test_adding_kernel.sh    | 31 =
-+++++++++++++++++--
->> 1 file changed, 28 insertions(+), 3 deletions(-)
->>=20
->> diff --git a/tools/perf/tests/shell/base_probe/test_adding_kernel.sh =
-b/tools/perf/tests/shell/base_probe/test_adding_kernel.sh
->> index 63bb8974b38e..187dc8d4b163 100755
->> --- a/tools/perf/tests/shell/base_probe/test_adding_kernel.sh
->> +++ b/tools/perf/tests/shell/base_probe/test_adding_kernel.sh
->> @@ -21,8 +21,18 @@
->> THIS_TEST_NAME=3D`basename $0 .sh`
->> TEST_RESULT=3D0
->>=20
->> +# shellcheck source=3Dlib/probe_vfs_getname.sh
->> +. "$(dirname "$0")/../lib/probe_vfs_getname.sh"
->> +
->> TEST_PROBE=3D${TEST_PROBE:-"inode_permission"}
->>=20
->> +# set NO_DEBUGINFO to skip testcase if debuginfo is not present
->> +# skip_if_no_debuginfo returns 2 if debuginfo is not present
->> +skip_if_no_debuginfo
->> +if [ $? -eq 2 ]; then
->> + NO_DEBUGINFO=3D1
->> +fi
->> +
->> check_kprobes_available
->> if [ $? -ne 0 ]; then
->> print_overall_skipped
->> @@ -67,7 +77,12 @@ PERF_EXIT_CODE=3D$?
->> ../common/check_all_patterns_found.pl =
-"\s*probe:${TEST_PROBE}(?:_\d+)?\s+\(on =
-${TEST_PROBE}(?:[:\+]$RE_NUMBER_HEX)?@.+\)" < =
-$LOGS_DIR/adding_kernel_list-l.log
->> CHECK_EXIT_CODE=3D$?
->>=20
->> -print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "listing added probe =
-:: perf probe -l"
->> +if [ $NO_DEBUGINFO ] ; then
->> + print_testcase_skipped $NO_DEBUGINFO $NO_DEBUGINFO "Skipped due to =
-missing debuginfo"
->> +else
->> + print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "listing added probe =
-:: perf probe -l"
->> +fi
->> +
->> (( TEST_RESULT +=3D $? ))
->>=20
->>=20
->> @@ -208,7 +223,12 @@ PERF_EXIT_CODE=3D$?
->> ../common/check_all_patterns_found.pl "probe:vfs_mknod" =
-"probe:vfs_create" "probe:vfs_rmdir" "probe:vfs_link" "probe:vfs_write" =
-< $LOGS_DIR/adding_kernel_adding_wildcard.err
->> CHECK_EXIT_CODE=3D$?
->>=20
->> -print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "wildcard adding =
-support"
->> +if [ $NO_DEBUGINFO ] ; then
->> + print_testcase_skipped $NO_DEBUGINFO $NO_DEBUGINFO "Skipped due to =
-missing debuginfo"
->> +else
->> + print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "wildcard adding =
-support"
->> +fi
->> +
->> (( TEST_RESULT +=3D $? ))
->>=20
->>=20
->> @@ -232,7 +252,12 @@ CHECK_EXIT_CODE=3D$?
->> ../common/check_no_patterns_found.pl "$RE_SEGFAULT" < =
-$LOGS_DIR/adding_kernel_nonexisting.err
->> (( CHECK_EXIT_CODE +=3D $? ))
->>=20
->> -print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "non-existing =
-variable"
->> +if [ $NO_DEBUGINFO ]; then
->> + print_testcase_skipped $NO_DEBUGINFO $NO_DEBUGINFO "Skipped due to =
-missing debuginfo"
->> +else
->> + print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "non-existing =
-variable"
->> +fi
->> +
->> (( TEST_RESULT +=3D $? ))
->>=20
->>=20
-
+--8k1Yhdbf/8He0O/S--
 
