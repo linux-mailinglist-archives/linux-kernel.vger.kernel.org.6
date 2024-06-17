@@ -1,115 +1,106 @@
-Return-Path: <linux-kernel+bounces-218285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DBA90BC19
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8FEC90BC1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F89C1C23D82
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:24:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C4241C20823
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17E8199230;
-	Mon, 17 Jun 2024 20:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9582B198E85;
+	Mon, 17 Jun 2024 20:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="ijh+uWnh"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BKEnu3FH"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091C1196DA4;
-	Mon, 17 Jun 2024 20:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2B318C356;
+	Mon, 17 Jun 2024 20:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718655740; cv=none; b=Eq3BXExS9HgzG5Lq3JNMb3Eta0E4P3CIt1NEWwic3EMeqSgW3dGfa6NNZ4SMlSxSaGP1XQRN7LFvE3P6bP4Bt7jxc0lQtC/aRQth6gMgMoRRFcl7l5bgUKFNgfI5o+aTq12PeGiAvL3pD3Jowxy2toaUAQbfIzu1vJijdDgB4YQ=
+	t=1718655795; cv=none; b=ptOphIn6KDQi6dGOsBj4Srh+8s9i5vx5XHHg0HEa3j3hRX/CyC/HEqTJsuMmAhAUF4YFqHbxnDw7FVLbzWFjDU0RK6+9fsQpVAqiqKT4XlzKQlse4NomvTdPsw1y5ovI8kStk4oxUIn+Z1sqktTq4oqMsgEuH/IQD066GaTYhgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718655740; c=relaxed/simple;
-	bh=lDmE6Oc99oUhAcr5WIwumgLA+GcsneQdxF8Anei0cF8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FuEASu9ybcKBe8Q+wYaWqG8y72wD9uoRUevhEYJrZJQrMbOPppiSn8mcanMDhmxZ+q/0VXM0BXDijhmz/xGV7VhJMgx6rqTyb2RWylHwu+N7SxcBGnVNmc+c53cr7QCNmilUlo8vd6osplvzBH7KsSSxKzRyln1fRG93ivPnoUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=ijh+uWnh; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1718655735;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KE0itf7SPq2y4IgF/9FfRchQi+X27+0vxz0kqB+YZMM=;
-	b=ijh+uWnh8LENHexsTozHC6SCsZIJn8G4mw7xG0hs93oJN1KIgpWNCrQ67kUjpTIq8E+K2G
-	lbJPkDV0kis73ZrBp0t/RC2PvLK5IyiPq2a4ZDeBxcbTUeD71na3sUM+X3Wu/xeSbVf6J3
-	2o4eZVyURX04DEc4qpGkAdxAmhasS6WyyYbbcZq+GDt6sTAnwMXXfZfUUnrs/cwiaEUXiZ
-	mG4rSG7QBXwqWLoFsvJ5JusfPzew6UIw6yXaKRHTk9FRB/0e7Zydl8BujE2WPcmFy2hS5L
-	G7GHchrWa0t8/mPid2Vj2P8Ebxul08P+4FTC8gwPdIUQRblg+GHU0mjSe+H5eQ==
-To: dri-devel@lists.freedesktop.org,
-	lima@lists.freedesktop.org
-Cc: yuq825@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	linux-kernel@vger.kernel.org,
-	Philip Muller <philm@manjaro.org>,
-	Oliver Smith <ollieparanoid@postmarketos.org>,
-	Daniel Smith <danct12@disroot.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/lima: Mark simple_ondemand governor as softdep
-Date: Mon, 17 Jun 2024 22:22:02 +0200
-Message-Id: <fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1718655795; c=relaxed/simple;
+	bh=wPFlEF1YxGWvnXt+UGKCZ/qmJZ8yp1ER+M+fmZUtcUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pfLI3e5vg/sjdWfosDBl6aqSZO4GE2rirbbYF5r02K/0qLD60VJ4YXPeUSLJiJPO+fpOI51l9ekA01m5Aj414M4Hh27BKxgIFqs9Y3fUfAMBfdJ3r2cd0ZdsEe14TvpVRLfcHI2zXlH3qUdTzWV+wnT+tzOw1YbekrZ0tX+9F/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BKEnu3FH; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718655757; x=1719260557; i=markus.elfring@web.de;
+	bh=wPFlEF1YxGWvnXt+UGKCZ/qmJZ8yp1ER+M+fmZUtcUY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=BKEnu3FH9vi2Y9qEWKLS/+d8sFWsJAp9Qj4yaQ/eSG3Teo45LtKj7bhCGTRVFpLh
+	 pmgsWGVg1gTGLrAANCJEDypgL98I7rfjXhdXu16LbAzpUilmQWqnXzgWqA17tgyDC
+	 RPHt3g8VTPi8pnGk8qtCsaBAgzmyIOsyPAA2yhRlt6dglBwChleFnK+gDKFlvipij
+	 8Y94EjsMlqzZpD0vh5ezj6PjjBYDWiZ/J7RnNSmeMSB+s4nVgv6q4noMK7zHc2UD8
+	 s2PThjGz9h2M66gh1LWndFKsv75KCQ0rLxNLWnGBQvSy14pQ7U6hZhl9YZ2BGj1on
+	 KYINHNA0mgbTPRF+tQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4N98-1sTin51qH0-00uYEY; Mon, 17
+ Jun 2024 22:22:37 +0200
+Message-ID: <06b000c0-2ba3-4e83-8f6f-fcb8fd7d955b@web.de>
+Date: Mon, 17 Jun 2024 22:22:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v20 02/13] rtase: Implement the .ndo_open function
+To: Simon Horman <horms@kernel.org>, Justin Lai <justinlai0215@realtek.com>,
+ netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Hariprasad Kelam <hkelam@marvell.com>,
+ Jiri Pirko <jiri@resnulli.us>, Larry Chiu <larry.chiu@realtek.com>,
+ Ping-Ke Shih <pkshih@realtek.com>, Ratheesh Kannoth <rkannoth@marvell.com>
+References: <20240607084321.7254-3-justinlai0215@realtek.com>
+ <1d01ece4-bf4e-4266-942c-289c032bf44d@web.de>
+ <ef7c83dea1d849ad94acef81819f9430@realtek.com>
+ <6b284a02-15e2-4eba-9d5f-870a8baa08e8@web.de>
+ <0c57021d0bfc444ebe640aa4c5845496@realtek.com>
+ <20240617185956.GY8447@kernel.org>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240617185956.GY8447@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Lc/0lPeIknXC+2mJLAHxQI9vHcnuZ5BJ2Y8Ilu2I/szlWScorLa
+ F5wgk6FyprnTmEpigGddIqhEdLIcADF8yJCoN2GEvNgf6tmjLBok37UhRI0jzTSvYrAD7lv
+ n1B8ARyZqiaPn7Ksy85dcWaTByCimFLbRTVqZM3zTePqREB8d97jNJ0ZZ0ovnY+VkDUNAQZ
+ JVI9IkLf8OviJKDr8wEkw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:QkFZKWs7BT4=;G8PB0RBsiNIwrWBnokHcU9Z/Ygs
+ +8l5bJw/wQq1l+S2cs0uOH99dXbo1WOSnSCBxQeUkG0w8gZMoihEoaqt0tqGT/vqe+yvs8EH1
+ O6ysLv3slZUR0ynmiKrwOQ6P5KDtAl8lzhMq6sZPFrvlU85OkLIpgrnas9APqjq/dGi9merPb
+ S0mBjoDmt5Nxo9WrcWE7rMAcYQAyIuRD7XwMbHIOqCW7PUCbRfxPD0C03XbpjrWtj7/pJXEA/
+ Qwi5XB+rhP1/lv4qkvpQnkPbfXXXQbMZ4OQDmh6JlzNJkjYMParjoMKxEvx91jJRvzk2KQaq8
+ LH7l33/3ONTMfmD9ij4S8kOzpkjU4EdiCax4qCw4wcdfzy875gbitgqFZecV+TJkgZ2PYCU2Z
+ b0O8PP230kxJZeRELjneElpFQ5ETYBkOHYHdtlkw+8PSwoX8Wv5y+VZ0AlIn40jiB+sAVyAoK
+ 4x/+2y3N2ZrRJ/hXknE/cw1YrMfJVJtw4ijRCQBuGrkwbNXnNPuF2Mm2fvxHw7G+zHnG0/GFx
+ GYRaNLYutU215ZGnQm2wyrzeUaQNgBR6axg8wP9TfpnVnAFi8STU29vnfBZAuUCTy4OFlwjbk
+ fOL1EBv6ygW47lnpOsow64HpogyExOflz0Jqha8J+pd4dlCwl2IVNHMkFcr9ItbeCuydvjHPZ
+ 8Suibm424jdiwxoDMKtQN+LR/viQxebho9bJc/s5kShdPuqwrbbu9sV2h/5D1CcwHxEHiIvrf
+ nmc66CJ/FAftIEtKmUvaPN5pxbplayAwN69Ajd1fup9XfjVUir3lGeXv7KFSj3DzL1GTfDYWM
+ PzVAqGgFXLSNQLbzIW9C3Ohh1LvHNZ8FInOpjM+/dg/lM=
 
-Lima DRM driver uses devfreq to perform DVFS, while using simple_ondemand
-devfreq governor by default.  This causes driver initialization to fail on
-boot when simple_ondemand governor isn't built into the kernel statically,
-as a result of the missing module dependency and, consequently, the required
-governor module not being included in the initial ramdisk.  Thus, let's mark
-simple_ondemand governor as a softdep for Lima, to have its kernel module
-included in the initial ramdisk.
+> I would also suggest reading Markus's advice with due care,
+> as it is not always aligned with best practice for Networking code.
 
-This is a rather longstanding issue that has forced distributions to build
-devfreq governors statically into their kernels, [1][2] or may have forced
-some users to introduce unnecessary workarounds.
+I dare to propose further collateral evolution according to available programming interfaces.
 
-Having simple_ondemand marked as a softdep for Lima may not resolve this
-issue for all Linux distributions.  In particular, it will remain unresolved
-for the distributions whose utilities for the initial ramdisk generation do
-not handle the available softdep information [3] properly yet.  However, some
-Linux distributions already handle softdeps properly while generating their
-initial ramdisks, [4] and this is a prerequisite step in the right direction
-for the distributions that don't handle them properly yet.
-
-[1] https://gitlab.manjaro.org/manjaro-arm/packages/core/linux-pinephone/-/blob/6.7-megi/config?ref_type=heads#L5749
-[2] https://gitlab.com/postmarketOS/pmaports/-/blob/7f64e287e7732c9eaa029653e73ca3d4ba1c8598/main/linux-postmarketos-allwinner/config-postmarketos-allwinner.aarch64#L4654
-[3] https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/commit/?id=49d8e0b59052999de577ab732b719cfbeb89504d
-[4] https://github.com/archlinux/mkinitcpio/commit/97ac4d37aae084a050be512f6d8f4489054668ad
-
-Cc: Philip Muller <philm@manjaro.org>
-Cc: Oliver Smith <ollieparanoid@postmarketos.org>
-Cc: Daniel Smith <danct12@disroot.org>
-Cc: stable@vger.kernel.org
-Fixes: 1996970773a3 ("drm/lima: Add optional devfreq and cooling device support")
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
----
- drivers/gpu/drm/lima/lima_drv.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/lima/lima_drv.c b/drivers/gpu/drm/lima/lima_drv.c
-index 739c865b556f..10bce18b7c31 100644
---- a/drivers/gpu/drm/lima/lima_drv.c
-+++ b/drivers/gpu/drm/lima/lima_drv.c
-@@ -501,3 +501,4 @@ module_platform_driver(lima_platform_driver);
- MODULE_AUTHOR("Lima Project Developers");
- MODULE_DESCRIPTION("Lima DRM Driver");
- MODULE_LICENSE("GPL v2");
-+MODULE_SOFTDEP("pre: governor_simpleondemand");
+Regards,
+Markus
 
