@@ -1,94 +1,124 @@
-Return-Path: <linux-kernel+bounces-217702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4355D90B323
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:59:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 212F190B32A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C93285709
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB6071F2173D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5EF13A3F1;
-	Mon, 17 Jun 2024 14:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874B713AD14;
+	Mon, 17 Jun 2024 14:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hcBRiCYn"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlcMyTRD"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4399713A3E8;
-	Mon, 17 Jun 2024 14:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9FC13AA48;
+	Mon, 17 Jun 2024 14:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718633274; cv=none; b=gQ1FNjCISo9gE72fEE5v21fwnd6/fVcpWWlQXSfWpKnukel2UKgjX+vAIVC7h4U+HSE6RHgjvieVpxbNkyESfAbMtmg2Km7XByz/RIqCrdFSivZwgi0WTV9tQWHYd7tCbmDCslDnFj+enL9M0fLCt57oxG37DBMQieZQ3mmQqWU=
+	t=1718633301; cv=none; b=S+bD5kGQ9r0/+hFDP795/hnBu8uF6Ri0sQC9iPtjq036qj+/1OWV+y6sWe/dDjSAJkElG1CaJWzoWYrjQP9gIsHfLd1O1LhKgR44MkdQhd0L7DI8FgKJbAtEwfjn7aDGu9pjTVmBqgin2H2MyKG9SSOo/yOxX8pj8oZG1YwCxqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718633274; c=relaxed/simple;
-	bh=oOL+cR0NelQJ7T8PuJAtqUNS6iyKbFEbFFisE1Sv3Vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kq1n6go7hxy7I0CaA1sr8YpB+4OucvlKGYJ7HYijlruy6CZ/AFSp76Ajv5BnOY2AOM3tAkGY/Hy4ncIY94lWFSChH4qot7cWluwzuol3xxjyodqGrAxYIvZqL3E+Qct5fjmqA2PGB4rY3y45TdS0Q3R1MG2W0YH7xArv615Mxu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hcBRiCYn; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=s4pZXybdfEbiEYROzl0ZJRhyHT6yQIYzmvYkpxFhIbk=; b=hcBRiCYncwXqNHy0tmkzHWKEug
-	TNmUb3tUoW41kzQhBuxvp8cSC7QoUwJeWxmlQBjrsVp1Mjx8ffYWzEetF4uWdtDr837uZtWJlpJNy
-	7uARx8lPtTzgBx3WC8UlKCBqJYv0qwXCWOaQXe7hmylJ/ac6ItY4AqzEZQRkAlXCbGrc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sJD1N-000H9J-5N; Mon, 17 Jun 2024 16:07:45 +0200
-Date: Mon, 17 Jun 2024 16:07:45 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"jiri@resnulli.us" <jiri@resnulli.us>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"rkannoth@marvell.com" <rkannoth@marvell.com>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Larry Chiu <larry.chiu@realtek.com>
-Subject: Re: [PATCH net-next v20 10/13] rtase: Implement ethtool function
-Message-ID: <94c758fc-cfcf-4a11-95b6-ca57cc85ed3e@lunn.ch>
-References: <20240607084321.7254-1-justinlai0215@realtek.com>
- <20240607084321.7254-11-justinlai0215@realtek.com>
- <20240612173505.095c4117@kernel.org>
- <82ea81963af9482aa45d0463a21956b5@realtek.com>
+	s=arc-20240116; t=1718633301; c=relaxed/simple;
+	bh=WXbjESbsSniDe5JAAxAHYsoDTBYof7BSAyMy5UDLhcg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ElIty57YUiEdgp+QWi1hLQAHlZ+zrPu7ovlG1VVPOS4JzUD4oSx/7FP6hsko5eU1+ABIwaf+ZBrA0HnXA4c9nehudWP7KjjTnyEww0nHvSf2mL8Y7WQ7O9WsTQPQeIKI+0Df2jemx9MB+kSdBo5cJ3nJj7KIYnJ9iTGE+sAP1us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlcMyTRD; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f737bd5cfeso3778385ad.1;
+        Mon, 17 Jun 2024 07:08:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718633300; x=1719238100; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WXbjESbsSniDe5JAAxAHYsoDTBYof7BSAyMy5UDLhcg=;
+        b=MlcMyTRDAwP4HYq0XrUvwNkqFaeXBao+C7WqognFz0RYCfRa0K2YKtcxjzpRGTmAI+
+         dugY5UjE4H+fXTBfFwtgbgAnJVu0C0/OrCuexxJ4b68GrxJNKWdISVmN070N8Kpz4eXR
+         uelUqDcowFKoHirRS9OTpCceprzxR1jGtSke0mHpZ8fR5ySlJPMzJUdW/4vSGItd9rJf
+         Bekc1xdEdvv4DtmuJ6ODiTWRu1Gl0FX65AAQoGuxDUepTUhnSth8mRIbDt+iFhYVSnCf
+         QoLpWhO3Q+kmoiFbdLYadR4tLsttsw2gd4bswHzEmsRc1PyX9FdbqFdodd7v0VD8duLM
+         vWMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718633300; x=1719238100;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WXbjESbsSniDe5JAAxAHYsoDTBYof7BSAyMy5UDLhcg=;
+        b=bgnxSBsbXKDUaL38DsN6j73uvTWN2XIrCWl3ZXTrBsP/jJOfgP4Jn+rJf/KCrQw36K
+         0WJLr3tkYeergAdxD03skNqGx+lKaQNlKgF0fBsHNx5+CBQzsUXNY1VC7wMDnYZbCAxL
+         HnPt48fMlwzlg9XlnSOgtDd9ZJrSYas7PS+zDPx7mbEPvJYSLrlXuHGo9Ui77/bbeMoz
+         WSO2RBpCyV443aD4WL0cFYTWaJDBu+5GmZs8JURMbsn0yrr1ksB4POuzNFycVYfqSLjb
+         fp1y0MT6YXcA67g4iozvTLtrvyYw7OUJ18aiwBRrdhQTAGgT4K464/k8fzZpaDjENSIs
+         DwNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWW9uVkGSNa63x3pa45Jt5aDRv+gLXAeXD2D02B+j3lU5cfQh/YhMWsDuSqkTDpnbcDWgqoVke63+emKAaXDZ2E813+fLUT6/A2hmLCIq5LXwErLxNNjCDsEieiqUbAYvSraBBCeZCPr8abfjo=
+X-Gm-Message-State: AOJu0Ywe3R3RjCUbXD2gMnQM1QMNB9M1lKi5Qk4m0CPzta0lbCiy4vYm
+	6abJ/3PWtqNaUFqjlS1II59mp9puNCGZc9Di41kToMsn1ItI5tq+TyrxEVSmrfLYO5Yben5GWNt
+	6jHFXw1LZVGo/ZL11+czp/IjtcbY3cY+u
+X-Google-Smtp-Source: AGHT+IGsT72g2JwKho6wZZPiR4BwxAxLlHv99PK4li2By2akfpCprUp6s9FVHkl3+fIYafQVV5D0Bp9ztkF4EA+QkoY=
+X-Received: by 2002:a17:902:dac5:b0:1f7:3ed:e7b2 with SMTP id
+ d9443c01a7336-1f86253a470mr113738725ad.0.1718633299645; Mon, 17 Jun 2024
+ 07:08:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <82ea81963af9482aa45d0463a21956b5@realtek.com>
+References: <CAOMZO5CYDsh70u3To7HYXVki_MzzhFyCCHkigt_Es7o_+XG3oA@mail.gmail.com>
+ <7a8e220d77d7e30a0cfaf984404ef2f57eaa785f.camel@sipsolutions.net>
+ <CAOMZO5BktgtaSPzCf3WOOnkD2n+fj3FeQEfHeT7CYFL+tCHeaw@mail.gmail.com>
+ <fb60b7f5bcf5ba47be54398225075a5bfab7c141.camel@sipsolutions.net>
+ <CAOMZO5CMX_juW4-t6CSd2xdzXkFfBiamuSTjsTB80Ly_TUsxRA@mail.gmail.com>
+ <d49fcc32-bfa8-41d2-8666-af6256b7b4b4@quicinc.com> <50101085cba7fc089339c96f531f797e27c632ff.camel@sipsolutions.net>
+ <35750452-e362-4dfa-803a-3360a4e16cd8@quicinc.com> <6e556f7b6b769c4d70be3e248b98d8d09d51452b.camel@sipsolutions.net>
+ <CAOMZO5CN_kbPcEYsN9SqqfUyrJdq9yaDisfJKL+CnENVTPuq3g@mail.gmail.com> <20240617120804.GA861@willie-the-truck>
+In-Reply-To: <20240617120804.GA861@willie-the-truck>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 17 Jun 2024 11:08:07 -0300
+Message-ID: <CAOMZO5D2Atb=rnvmNLvu8nrsn+3L9X9NbG1bkZx_MenCCmJK2Q@mail.gmail.com>
+Subject: Re: iwlwifi: Regression after migrating to 6.6.32
+To: Will Deacon <will@kernel.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>, Baochen Qiang <quic_bqiang@quicinc.com>, 
+	miriam.rachel.korenblit@intel.com, kvalo@kernel.org, 
+	Jakub Kicinski <kuba@kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > > +     strscpy(drvinfo->bus_info, pci_name(tp->pdev), 32);
-> > 
-> > Can you double check that overwriting these fields is actually needed?
-> > I think core will fill this in for you in ethtool_get_drvinfo()
-> 
-> I have removed this line of code for testing. Before removing the code,
-> I could obtain bus info by entering "ethtool -i". However, after removing
-> the code, entering "ethtool -i" no longer retrieves the bus info.
+Hi Will,
 
-https://elixir.bootlin.com/linux/latest/source/net/ethtool/ioctl.c#L710
+On Mon, Jun 17, 2024 at 9:08=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
+:
 
-	if (ops->get_drvinfo) {
-		ops->get_drvinfo(dev, &rsp->info);
-		if (!rsp->info.bus_info[0] && parent)
-			strscpy(rsp->info.bus_info, dev_name(parent),
-				sizeof(rsp->info.bus_info));
+> If you want to backport that change, then I think you should probably
+> take the whole series:
+>
+> https://lore.kernel.org/all/20240308152829.25754-1-will@kernel.org/
+>
+> (and there were some follow-ups from Michael iirc; you're best off
+> checking the git history for kernel/dma/swiotlb.c).
+>
+> FWIW: we have this series backported to 6.6 in the android15-6.6 tree.
 
-This suggests you have not set the parent device.
+Thanks for the suggestion.
 
-	Andrew
+From this series, only the two patches below are not present in the
+6.6 stable tree:
+
+swiotlb: Enforce page alignment in swiotlb_alloc()
+swiotlb: Reinstate page-alignment for mappings >=3D PAGE_SIZE
+
+I will submit these two to stable and also an additional one:
+
+swiotlb: extend buffer pre-padding to alloc_align_mask if necessary
+
+Thanks,
+
+Fabio Estevam
 
