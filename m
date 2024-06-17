@@ -1,105 +1,149 @@
-Return-Path: <linux-kernel+bounces-218033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C95090B852
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:40:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5062690B856
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28D351C2237A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:40:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 258641C20D42
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDD41891C8;
-	Mon, 17 Jun 2024 17:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43DE1891C9;
+	Mon, 17 Jun 2024 17:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZZS2E4bo"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Suxbqy0a"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619F21891B4
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7258B1891B9
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718646046; cv=none; b=OSSDnZqPE8CKeQysvktgM805rqNDO7HzI+ZQ/VXHLi6A57ZnYrMHIGXxM5IlsfUMgYFc8W/pXPjdKKLKgCxntsZXoajIK3JTcLvOxRRNCFAcxg8+OjuI9jUZbNjG1V7k/GQrpecGk/azN+Nm/KDqdSZs2LZN12XaG8c0pZ9t8eI=
+	t=1718646064; cv=none; b=IxvSHc1p9lYTiG16IZ+xRBFkRHNsgDlTAhuZbByBH1Pjddw08OybCP4ehua3u36uRvj5JxOQQMWt49pNVf2HTbwZPLlKNMUtklnCRNdVIQ7LvJztvIvFbUAWmyKR3QU3RbwhZOiAp/Xqy7JKDT7TmHh7Pb2bXHE2Myx+vwkpoag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718646046; c=relaxed/simple;
-	bh=O44bg5IN3bpweFi97y7tt8VcamC1B+cu2qGxErr7ez8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O5bd1ayedXHEjIRtJVukVG1w1pOl+3+s44qf4HsdVKNk2NH+1cSfSPeo+/s5Khm9LnlVkX8NiDhVjBCk5/CTlC+7ISUmHm5Z8WIVIThwjTB5AyMqjIgzrnK33MpHmAZ84iVquO39hM74hY07kyIobQrHoU6j4IVntPjHuDt6eu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZZS2E4bo; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: shahuang@redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718646042;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=okv/SBVT+t/mscY2NbGXxvwNhjZy/ckRAi7DnSHOqKA=;
-	b=ZZS2E4bouTntLdhRdKDBwzqHEL50a8ctu3G8V36RUt1ypOp+M+UED4Hve02PlfU857ISH9
-	+2z7zqvoPPesAU+CJb5hrVqJLOOec7PeOFz2fNoIuEuztzqoQCLxUP8QmVYYZegmLfJLQS
-	qSyw/Mt5PuufQBHEqPeIIYO+5J3HuoU=
-X-Envelope-To: maz@kernel.org
-X-Envelope-To: kvmarm@lists.linux.dev
-X-Envelope-To: catalin.marinas@arm.com
-X-Envelope-To: james.morse@arm.com
-X-Envelope-To: kvm@vger.kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-kselftest@vger.kernel.org
-X-Envelope-To: pbonzini@redhat.com
-X-Envelope-To: shuah@kernel.org
-X-Envelope-To: suzuki.poulose@arm.com
-X-Envelope-To: will@kernel.org
-X-Envelope-To: yuzenghui@huawei.com
-Date: Mon, 17 Jun 2024 17:40:36 +0000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Shaoqin Huang <shahuang@redhat.com>
-Cc: Marc Zyngier <maz@kernel.org>, kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	James Morse <james.morse@arm.com>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v1 0/2] KVM: arm64: Making BT Field in ID_AA64PFR1_EL1
- writable
-Message-ID: <ZnB1FPw3Eg8-61mL@linux.dev>
-References: <20240617075131.1006173-1-shahuang@redhat.com>
+	s=arc-20240116; t=1718646064; c=relaxed/simple;
+	bh=BJmjf1LIJNYCuuytinW9Y7On5XMCJcBh1ACpNVOQGkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o984ThhNjbjtM7w0MLAoZupc5KX6SqoEzOoX9mBZ8Phdbh9Hk79K8JMtBhAuwTQ2+uzjeHM3NVa4RwGv1EbCM3HVzZb36kxMzAnjVX6CX9ZnbrFH21SC6OZ8vKHWmETyJRFHFV2gWpZSY2wAjIJB1ySyR3+nuSbddGN+D2Mzoyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Suxbqy0a; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bc0a9cea4so4034364e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:41:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718646061; x=1719250861; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kq55y/PD/L2nMZHKqMLWBSD0lhW7pm3VII5rKQRtysY=;
+        b=Suxbqy0a6gJYIar7V+oGzroQQazJF3njkhRUGggw0GgXW/PCmBWfXHvkkXJEhPBXS2
+         Qgh/+IqrXB54HHfeMiZgoPL7Hk3ehlueEhqQ0aDqu84fliDh9wxKwzRUTh2nsqeTi0VD
+         /2xWrQM/YU3Rn6TN7V/a8IlfZEH1G9KILj192xb+uDuo4B6ac2LAqKlf+SDIqUgnTGz/
+         bf63fTdYv9nfQYBK12Yil/u+UUVIKlXvP7JdI26Cp8JUGG1fVaw/qg16zPiGTAjF91Gt
+         aujh8QuJkPbjkLtTVoJkwFUndW0ip+G/sQB9jgN0oFNLVRugD+WEWOmhYFtgrKC9oiwM
+         GhhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718646061; x=1719250861;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kq55y/PD/L2nMZHKqMLWBSD0lhW7pm3VII5rKQRtysY=;
+        b=ZW1E/FUrIaDu4wjn2dUkI83tyPaT58SGEbRi3b6IKcH/J+8lLhL5ZhtmO7Ho9ucVzq
+         jLi+sLaTmxxnPKtVKtF8BYnGAfeercQZCzqAMk1CZwRUBEaVl+9rqfoUZzufOVUSdVBG
+         e4UQhoQqSnxtjPwhQ333Ot7jZY3OwSC0Ta+ILLYd4hbwsSImZ2CmGe+hcUYJpu/iWaCz
+         gXH6UjWpqZTqKZbXpFBqbUcwoyIfBCNop7/jRL3UZ0NEbdrGBUtnHKbOiZvRKcU2vYq5
+         QyDRKNedc3dmpSptpP1+95fujvCnexl5q/vMyMpSO1175c6eU5g5wgFdeKRho81XTyoi
+         IIDg==
+X-Gm-Message-State: AOJu0Yz7e8ipT1G78CrQ6tyU5vvbrfNlSwnKnqKW95tA+65WQqkk4EvR
+	IU6rsC12l30YSnfnk8rPSoDCbN087x7m+2ZxpxuNSQy18c+RVnmIEc8A7ZuPBqA=
+X-Google-Smtp-Source: AGHT+IG18Zlf67kY/yuR4GVWFWSjflpDP80nHZFVDBocWaJkmiI0R8aIiaA+Q2WHlGH6FufaNEOBCw==
+X-Received: by 2002:a05:6512:402a:b0:52c:b196:ea37 with SMTP id 2adb3069b0e04-52cc4767572mr130908e87.0.1718646060728;
+        Mon, 17 Jun 2024 10:41:00 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:cb2:a9df:20fa:cfbe:9ea6:1fe8? ([2a00:f41:cb2:a9df:20fa:cfbe:9ea6:1fe8])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cc477f19bsm28297e87.224.2024.06.17.10.40.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 10:41:00 -0700 (PDT)
+Message-ID: <00090117-d765-4f52-abe0-f8bddc980c75@linaro.org>
+Date: Mon, 17 Jun 2024 19:40:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617075131.1006173-1-shahuang@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 14/15] arm64: dts: qcom: sm8650: add hwkm support to
+ ufs ice
+To: neil.armstrong@linaro.org, Gaurav Kashyap <quic_gaurkash@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ andersson@kernel.org, ebiggers@google.com, srinivas.kandagatla@linaro.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, robh+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ kernel@quicinc.com, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, quic_omprsing@quicinc.com,
+ quic_nguyenb@quicinc.com, bartosz.golaszewski@linaro.org,
+ ulf.hansson@linaro.org, jejb@linux.ibm.com, martin.petersen@oracle.com,
+ mani@kernel.org, davem@davemloft.net, herbert@gondor.apana.org.au,
+ psodagud@quicinc.com, quic_apurupa@quicinc.com, sonalg@quicinc.com
+References: <20240617005825.1443206-1-quic_gaurkash@quicinc.com>
+ <20240617005825.1443206-15-quic_gaurkash@quicinc.com>
+ <109b1e46-f46f-4636-87d5-66266e04ccff@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <109b1e46-f46f-4636-87d5-66266e04ccff@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 03:51:29AM -0400, Shaoqin Huang wrote:
-> In this patch series, we try to make more register fields writable like
-> ID_AA64PFR1_EL1.BT since this can benifit the migration between some of the
-> machines which have different BT values.
+
+
+On 6/17/24 10:28, neil.armstrong@linaro.org wrote:
+> Hi,
 > 
-> Changelog:
-> ----------
-> RFCv1 -> v1:
->   * Fix the compilation error.
->   * Delete the machine specific information and make the description more
->     generable.
+> On 17/06/2024 02:51, Gaurav Kashyap wrote:
+>> The Inline Crypto Engine (ICE) for UFS/EMMC supports the
+>> Hardware Key Manager (HWKM) to securely manage storage
+>> keys. Enable using this hardware on sm8650.
+>>
+>> This requires two changes:
+>> 1. Register size increase: HWKM is an additional piece of hardware
+>>     sitting alongside ICE, and extends the old ICE's register space.
+>> 2. Explicitly tell the ICE driver to use HWKM with ICE so that
+>>     wrapped keys are used in sm8650.
+>>
+>> Reviewed-by: Om Prakash Singh <quic_omprsing@quicinc.com>
+>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sm8650.dtsi | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> index bb0b3c48ee4b..a34c4b7ccbac 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> @@ -2593,9 +2593,11 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>>           ice: crypto@1d88000 {
+>>               compatible = "qcom,sm8650-inline-crypto-engine",
+>>                        "qcom,inline-crypto-engine";
+>> -            reg = <0 0x01d88000 0 0x8000>;
+>> +            reg = <0 0x01d88000 0 0x10000>;
+>>               clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
+>> +
+>> +            qcom,ice-use-hwkm;
+>>           };
+>>           tcsr_mutex: hwlock@1f40000 {
+> 
+> Please split this (and next) in two patches:
+> - one extending the register size + Fixes tag so it can backported to stable kernels
 
-Can you please address Marc's feedback?
+Would also be helpful to know which chipsets require this, so we can
+fix it up. FWIW:
 
-If we only make things writable a field at a time it's going to take
-forever to catch up w/ the architecture.
+rg qcom,ufshc arch/arm64/boot/dts/qcom -l | wc -l
 
-https://lore.kernel.org/kvmarm/86zfrpjkt6.wl-maz@kernel.org/
+returns 17
 
--- 
-Thanks,
-Oliver
+Konrad
 
