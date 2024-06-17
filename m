@@ -1,118 +1,127 @@
-Return-Path: <linux-kernel+bounces-217015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D84B90A9AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:35:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9960B90A9B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7A771F25D3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:35:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C70D28316E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BE0194087;
-	Mon, 17 Jun 2024 09:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED35A1946C6;
+	Mon, 17 Jun 2024 09:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="laYIaRMo"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oi/pzgcx"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBB9193062
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A312F1946C2;
+	Mon, 17 Jun 2024 09:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616910; cv=none; b=Iv4JXcdrrbqJ1ccaROPCV49BAs0YmItKEbmJ5chwH3eRZMGmXTVCsNmm0m8Zr/uiNm1eiykIBBHNR/NWhenDd/KiKEYkImIUaTrUs2DfnZXHfg3YuslOFkejI5MQNDnvPgiGSDAzrQgynmU1XOG0gIMIhH6yX5X3HXozf1B+cPU=
+	t=1718616947; cv=none; b=uXPFzTtizB8yjc/QCzVk0fi+Z336EZQBEDqOPBG9lnnLRafwFY0sgaydBiNihq/6FePPIZX5NbEO/QKiKZmmWAGwZYdp8etAXZX/x58CdH6CUOKEMKu+so+AWrUdVwB6qzcy8u3k1RYBFwB1uvSJRaFVqd2p7+7eJCAmNFjMJNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616910; c=relaxed/simple;
-	bh=WwPANurgbHg/bZQ8Fx5BluELw0V5Ey9S41+qZoHECKw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NkxZnp5G+6hnHtw2iIYCRhu7I7cEd4Hi/H9TAg2as0V087lfFFRmOzIml5cAHZWqktMYiP8/z4DWPrTD9/gGLJmfwZolVZAhKC+A6P1eBDHaF9Yo6AOVll0pgvIXKh/ZIfkbyAQs32GRXB+ok3cISj5n3DKgyyp+ckNwk6+k0Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=laYIaRMo; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42108856c33so31733195e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:35:08 -0700 (PDT)
+	s=arc-20240116; t=1718616947; c=relaxed/simple;
+	bh=ISTGOrNx+qky+Jf5GkYALSgWEhhMC0r4cnJ4/R8olvw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ibCCZdIfBmR2Zy+D/6i1QIFY+63YgvcPBu1AdA1PB4tPwsQZeUsjQfNIALyj470NZLBSgeK2lfqVlArebrC2V2+tWRMK1yceazQuVmjAKTZ50VlXlVyP7zWq/dEh7LmpCMqigfQSZHydU9CrpOaBC97AnvqzQ14eOO5LV8ZLz8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oi/pzgcx; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4218314a6c7so34768705e9.0;
+        Mon, 17 Jun 2024 02:35:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718616907; x=1719221707; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WwPANurgbHg/bZQ8Fx5BluELw0V5Ey9S41+qZoHECKw=;
-        b=laYIaRMo9eTZTr+eQnuWlaemUDPoPbUpImpZArYPjWBxDaWTixAr0mMUYzL14h/OYz
-         fBxKQCup2TjqFj0DoJ9Eip4hO6ZOkRm+XVZn2RVC2iCBOQcltJNIlAHsUd5Hynwv5iCn
-         XNpbxoRLyhM01QgZzWCGwg5vgQl/Whs3ee+xYQkEFJ4zLrAndRJZZ8nkq8t2z+/WbLsS
-         4ZVCPyg8a99/Oi+Ax5JkzT8Zn9UWKn7ENmpPv9XOU7ioqz6krAxXIrPFiv5spfuCDOOp
-         ZiNCkvYaZhOxRWqJ+jWo5RKcJyDIYQVOLdbljibQGSx0OlMiZ2a2YJ/4kdKPm0fWjERc
-         PRRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718616907; x=1719221707;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=gmail.com; s=20230601; t=1718616944; x=1719221744; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WwPANurgbHg/bZQ8Fx5BluELw0V5Ey9S41+qZoHECKw=;
-        b=ZS6P/MzuuaFKMYO3XWl22cwIEB0cjWx8J3BHL4REZAPJqHki50T85WLwzV+qgM+tAT
-         5S1CjKJCVSA0HhdD1jxH4wMVC83bR4EqUG1aJ7orfg6bPfs+eMHeDVLAIu2/YD0vdGZR
-         XiDSjYtuRv4LvaRfNcbd+75UBaSjcSf2VzPqHlZzIj1Mev9nX3l/bPvjWT6F3c3Nq11r
-         tt+gyNd5VKN4u+510Fu6gKRhBziByMZH39H3ZIoixRkhSyPDw/moZMHwBXm0JFdjIa8Y
-         nKIVzowA994lZJp1txF0Sej9/kr3OyuTDj0YdTcaqXDFiReZXa6uBhEAeDCJSqaAXTUf
-         +H0A==
-X-Forwarded-Encrypted: i=1; AJvYcCW6RSZsCfNmy/jYUbc0TWTmf3UmP6pWuotX76lROoXQz3EojZvJdo3WM7P+OdIc76IQ1ywyYsFmyj8yTBBV3+VjCcAMY3u7vA16lSlh
-X-Gm-Message-State: AOJu0YxUEGAGvPGgQfQZQagp0xwdmls95h4fjPRo9dsGfF0usY9ii5Jg
-	rIsGk++nC7jDi/XTElTfaMYp5G5oSszyiZ1W6T0F3WW7KYvjSRxFAEvzRsGCDsk=
-X-Google-Smtp-Source: AGHT+IHGBx6pwB4k41f89sBwcN8cCQm1ojJM5khJQyC79+T1Ome1GJwJ/0v9xv2Ru99cLLhiuDCO8A==
-X-Received: by 2002:a05:600c:46cd:b0:422:291:6b3e with SMTP id 5b1f17b1804b1-422b6dc8178mr119672225e9.1.1718616906922;
-        Mon, 17 Jun 2024 02:35:06 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286eef970sm188935625e9.10.2024.06.17.02.35.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 02:35:06 -0700 (PDT)
-Message-ID: <c8c2dce5680f3ac859bbedfd13edd99a2d6d1067.camel@linaro.org>
-Subject: Re: [PATCH 2/2] soc: samsung: exynos-pmu: update to use
- of_syscon_register_regmap()
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, lee@kernel.org, arnd@arndb.de,
-  krzk@kernel.org, alim.akhtar@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-  linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org,
- saravanak@google.com,  willmcvicker@google.com, semen.protsenko@linaro.org,
- kernel-team@android.com
-Date: Mon, 17 Jun 2024 10:35:05 +0100
-In-Reply-To: <20240614140421.3172674-3-peter.griffin@linaro.org>
-References: <20240614140421.3172674-1-peter.griffin@linaro.org>
-	 <20240614140421.3172674-3-peter.griffin@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+        bh=NItPfN2Qb0jONFGc3TV9yNBIU5BBovoAluD8hqM7ItQ=;
+        b=Oi/pzgcxhbH+1ZLhhaWr6YN40AuJ5sFQJwk79rQSW+OsFoI77NmYUswqcZwDHIGTxd
+         nrKW6hpc/cjfBc+YgouNVefyDvhXaG5NdHxewRFgJkyk/X46V21PibgjV7u69VLMKXTa
+         6Qf+9D+GC4pKIs8V4xbQu58y8aP9dMAv4ELGgNPRtEk2If6ASgc0niZnRNCLmL7ILhrs
+         KSPxIh9V43tPRnqP9G8BqQ7+G3vaB23Xh3sD3mv1heaT+DxgyjHBIq1ZGQUxRjk308Zt
+         T3laH7btUhIpu3mSk+gvmht/5Wy2E5pvvhe/H8sqvDbDL5ooLP2/lzGjA35/CuKsxVXf
+         yfJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718616944; x=1719221744;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NItPfN2Qb0jONFGc3TV9yNBIU5BBovoAluD8hqM7ItQ=;
+        b=U5sIuKaXvq0VNnlgX2Ftha+e27oTGwsUoT3JDY88hg21xgid0Wqu2VRQ2UcSGA4TuQ
+         nLev9VqhMAGYIeoEdIRGMISpdffu/imhj+E0QijBfNah/fjZCQq93jpDMVlFB61UJHvl
+         yP63FvwqGsgf+npFmLgbgI5rTx4IUZC2FXspS1MzbpZyJDECNgePcn9ZYjAPKDVNnVRp
+         Nxqir5uHraTVE2b3Dc0oR2e0rvfdO50ZFvnL2j1OP1L/CrA1nI23BrTADx03YABZ5vgS
+         wMR8+P8U40Vu+d3ZE8mHi7AN0KdWWATo+QAv0IBFT5UaKebkBQmcy8sm870rCCH4d5Tr
+         s3gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDzzklHP1YZn5SjNGQZRgYfY3LxMhGrlpGqT7OCzmwHAqpd3C6p2z2vKJFOvZ6114RZRuB3/N6sc6WMZ5xZlDEyVw4ByYSF40izEDDDO8lku+YuwKQJ6wGDAYYoX8Uw5jw7khWZFGN
+X-Gm-Message-State: AOJu0YxaRnPrUKFGsTZh5BLof4KwdCkalhwmhv1OztsvtiZAUH5rfg/Z
+	BywWElPU8JRM3O++/uRMoNTMqFow9wo5b/yrPCSI6YJ/q2eIT84k
+X-Google-Smtp-Source: AGHT+IHkhFqJsu0zmOOch7REDu686xAm493O5ju1z/aAIv+qBa/8GbjT4Fi1o5mdTMUXXVy7avigzA==
+X-Received: by 2002:adf:f7d1:0:b0:360:9625:c571 with SMTP id ffacd0b85a97d-3609625c5f8mr1581491f8f.48.1718616943752;
+        Mon, 17 Jun 2024 02:35:43 -0700 (PDT)
+Received: from [10.76.84.188] ([5.2.194.157])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104b8bsm11521810f8f.105.2024.06.17.02.35.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 02:35:43 -0700 (PDT)
+Message-ID: <dbf947a3-3d3b-4686-a707-a813b6a4ce5a@gmail.com>
+Date: Mon, 17 Jun 2024 12:35:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] iio: adc: ad7192: use
+ devm_regulator_get_enable_read_voltage
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+ <20240612-iio-adc-ref-supply-refactor-v2-1-fa622e7354e9@baylibre.com>
+ <20240615130858.22043725@jic23-huawei>
+Content-Language: en-US
+From: Alisa-Dariana Roman <alisadariana@gmail.com>
+In-Reply-To: <20240615130858.22043725@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2024-06-14 at 15:04 +0100, Peter Griffin wrote:
-> For SoCs like gs101 that need a special regmap, register this with
-> of_syscon_register_regmap api, so it can be returned by
-> syscon_regmap_lookup_by_phandle() and friends.
->=20
-> For SoCs that don't require a custom regmap, revert back to syscon
-> creating the mmio regmap rather than duplicating the logic here.
->=20
-> exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
-> the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
-> is kept around until fw_devlink support for syscon property is added
-> for the pinctrl-samsung driver that also runs at postcore_initcall
-> level.
->=20
-> All other exynos client drivers can revert back to
-> syscon_regmap_lookup_by_phandle().
->=20
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+On 15.06.2024 15:08, Jonathan Cameron wrote:
+> On Wed, 12 Jun 2024 16:03:05 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+>> This makes use of the new devm_regulator_get_enable_read_voltage()
+>> function to reduce boilerplate code.
+>>
+>> Error messages have changed slightly since there are now fewer places
+>> where we print an error. The rest of the logic of selecting which
+>> supply to use as the reference voltage remains the same.
+>>
+>> Also 1000 is replaced by MILLI in a few places for consistency.
+>>
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> 
+> Complicated bit of code, but seems correct.
+> However, it crossed with Alisa-Dariana switching adding a
+> struct device *dev = &spi->dev to probe() that I picked up earlier
+> today.
+> 
+> I could unwind that but given Alisa-Dariana has a number of
+> other patches on this driver in flight, I'd like the two of you
+> to work out the best resolution between you.  Maybe easiest option
+> is that Alisa-Dariana sends this a first patch of the next
+> series I should pick up.
+> 
+> Thanks,
+> 
+> Jonathan
+I will add this patch to my series and send it shortly.
 
-With this series, the exynos5 usb phy driver works on gs101 without
-having to patch it to use exynos_get_pmu_regmap_by_phandle() instead
-of the standard syscon_regmap_lookup_by_phandle():
-
-Tested-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-
+Kind regards,
+Alisa-Dariana Roman.
 
