@@ -1,195 +1,175 @@
-Return-Path: <linux-kernel+bounces-218254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952E890BBB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:07:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E6490BBB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295932835ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF5F61F22EE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D781991B8;
-	Mon, 17 Jun 2024 20:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6102C198E7E;
+	Mon, 17 Jun 2024 20:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MmUlPfVX"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2068.outbound.protection.outlook.com [40.107.243.68])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="UqRpU7in";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="aj3xVHnM"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7216018FDCD;
-	Mon, 17 Jun 2024 20:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718654768; cv=fail; b=CmT6V+Eww3U6mVxR9jOhvYtd1kfamd7HeupXPOoBxUII1PwSur1bXe+NK7YPLKENM8RR8ePOfU1KzJHishslQ0ZOoK0WGtQ6/QfXLvX60qVVUh9QcuncBLDJIURwm3FTlH+2phtbjJBDZ8RvX0PqZcjquov3NRNlnxdjbQ7wy7w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718654768; c=relaxed/simple;
-	bh=6FdwMlb9PTpqhBN7ZRCboi+YKCb8NjmX/vTY2UROd78=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I6lVR6rdVSn+j2S9LWMpOTIqhOlF/PppbE9zaz5QDOjJm0/DA5m7BZ4sMnMStema2hngx3dLXhLtlwZ92wp5CZJCCyTd3xHqnibMa6cAJzf4XJBSvp9Yk1HNd6COJoPH2J0yYOIgrcfihD/G4czPHRqdxcR1+s3IbKdf6vqnZVE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MmUlPfVX; arc=fail smtp.client-ip=40.107.243.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Rh/TLs5wBTBPqKVjhnE6fjJOr5iCu8I+O/7CIarXvtJTH+9prQqdj2HR7o9bUNNaqd1gGcGUQbenBlQiNKcm9tiXRP/8O92IdrtL8aDzK2cDfzvNxXMRZzJUKA3NBwiBEXzkV3R7vuNLB0uKMVQ3m17ZlYGf0qB8wbcwt3eUbqkJgEyFuBr/OcbhxzTj7MgtLae9DYjdLEdlJU7MK/5nw5mjjwpaBpMo0FMAoZEf0no22N39d6aHauEMHQnBGpO1eqJJ/usYWiRfPHhn8Cv2zbdehEfocwAlut9LtTClhMHRGVU3CJ4rv9qhVoiTy5hDUBshFJTqhbmCsdD8zraKlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tfjI9rw9dxmXO1fk15wQcsHTJ74Ow2Vwn+HbohIAklY=;
- b=EC5hGO2YhpCb3mJPvvoqcXgiiBkZzwNchIf/QosP9tRvXWtTbrbHgPfubjrPoGuQKbGpvm/ZKzvlioC2u6E/PDGHyYjp81XvSZ/q1ENXic4PgRsTdSX/lNSzDUS9Tv+5jGhYT56LtCnKRWbALKVDZgxYFB7Oq4Im3zayR3MIioL7F70HmR3PiIulahMc0wATb55BUpfTP6YUg3q2YtBPK2e2LOcROurmNhgoSjldswpdYM/hRYedZCANbd6154uf7memi3OuEdjxmt4sTSXqbYA/HcuFb+/3Mf8LfZWu+TLg//C5Mm/osHU5vfLOIod27OVwZAnSaNPd6IIqz8dxRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tfjI9rw9dxmXO1fk15wQcsHTJ74Ow2Vwn+HbohIAklY=;
- b=MmUlPfVXINzfmp6SBmii9RZLgJoxMtsVzR5VIX6fJWJKu9nGGw+8YfqGOgCW0rZXFeSuSX65GzTBZNMq+EOGW1dxSQeF/DLrAqc1I6DmUaSncjdB2IjBkfmrzB96Ag/I0sMaOMNrvpCFgdxcDP7umx9tHGsX+7cbAiH1EeZ4LVE=
-Received: from BYAPR05CA0039.namprd05.prod.outlook.com (2603:10b6:a03:74::16)
- by DS0PR12MB8453.namprd12.prod.outlook.com (2603:10b6:8:157::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Mon, 17 Jun
- 2024 20:06:04 +0000
-Received: from CO1PEPF000066ED.namprd05.prod.outlook.com
- (2603:10b6:a03:74:cafe::8d) by BYAPR05CA0039.outlook.office365.com
- (2603:10b6:a03:74::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31 via Frontend
- Transport; Mon, 17 Jun 2024 20:06:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000066ED.mail.protection.outlook.com (10.167.249.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Mon, 17 Jun 2024 20:06:04 +0000
-Received: from ethanolx7ea3host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Jun
- 2024 15:06:03 -0500
-From: Terry Bowman <terry.bowman@amd.com>
-To: <dan.j.williams@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>, <ming4.li@intel.com>,
-	<vishal.l.verma@intel.com>, <jim.harris@samsung.com>,
-	<ilpo.jarvinen@linux.intel.com>, <ardb@kernel.org>,
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <terry.bowman@amd.com>,
-	<Yazen.Ghannam@amd.com>, <Robert.Richter@amd.com>
-Subject: [RFC PATCH 9/9] cxl/pci: Enable interrupts for CXL PCIe ports' AER internal errors
-Date: Mon, 17 Jun 2024 15:04:11 -0500
-Message-ID: <20240617200411.1426554-10-terry.bowman@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240617200411.1426554-1-terry.bowman@amd.com>
-References: <20240617200411.1426554-1-terry.bowman@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8007E542;
+	Mon, 17 Jun 2024 20:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718654738; cv=none; b=pek5coeaXMgd3NIZxpe0yfULdPRukvYQDl67i+x3PfnksBihsiZ/glTl39fTbQSxlb1ocYAAWWJpCGPSQjjUcWZAO5RbcjR+FjwFfuWtGC/UOGgDvrdPayrKT8V+AV2SWqpHp4N2Qh0DMTE+A7uQgguqptL4jYhWPLyT7LH8iNE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718654738; c=relaxed/simple;
+	bh=nwFq+sPhvFKh+jCEwBDyH0vZaK9puv1f3y/cW68qSo8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pICCX2FLVbrhtvW2hUtPbILSS5dSWHdo9xW7uK4RF+Ghlx3sgTa2QfF3lcjZhR5D8feA4t8TG9F3kx6AjXtPfJoFrjnKws4rrfLpIp6o8NfZuJj5OBha7vr3TMkFovVIhbglJ44WZgvQTkP164OoSz/0ETNHeWMB5RvxOOBFIow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=UqRpU7in; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=aj3xVHnM; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1718654736;
+	bh=nwFq+sPhvFKh+jCEwBDyH0vZaK9puv1f3y/cW68qSo8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=UqRpU7inD90FGwbcg1MZsp2/6N5JJtnmm8fMmrXJSvZldG2tKHJzXHBUylpdIUM/i
+	 cYvlHZusBJb0eyv5n8DjPjPHMcOZGccCZN4oUkLuHZJfBF1Sh3gez0V4Zsb4tHc1iT
+	 m46POmxnYxnW0d0S7BjT+5fEWBUY+sZ0F3XDIvhk=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2E74C128730B;
+	Mon, 17 Jun 2024 16:05:36 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id IdLBw6pe5wtl; Mon, 17 Jun 2024 16:05:36 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1718654735;
+	bh=nwFq+sPhvFKh+jCEwBDyH0vZaK9puv1f3y/cW68qSo8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=aj3xVHnMuQNGzVaL8QYNnvq3VYfGdMq1CUHd4NmXRrzEGzvsC5MFlEdpVAaLtZYiC
+	 KCiG6TYq5rTV7QRflQVljULMdy1TghZ9vrihhIxFHAiuQRGQ6saxj5WFdeHk3Z4Y0T
+	 Kb45SyJBHXpTmgZmH8+PJq9QmNUg5MoT/QrZ+6Qk=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4FAB412872CF;
+	Mon, 17 Jun 2024 16:05:35 -0400 (EDT)
+Message-ID: <1302b413a2d7bf3b275133e7fdb04b44bfe2d5e3.camel@HansenPartnership.com>
+Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
+ session support
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org, mpe@ellerman.id.au, 
+	naveen.n.rao@linux.ibm.com
+Date: Mon, 17 Jun 2024 16:05:33 -0400
+In-Reply-To: <5bd68636-ece6-4ba5-a4c0-c0535afc33c8@linux.ibm.com>
+References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+	 <dfc4feaef0d63d616bab8cdec5d409369f9dacf1.camel@HansenPartnership.com>
+	 <5bd68636-ece6-4ba5-a4c0-c0535afc33c8@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066ED:EE_|DS0PR12MB8453:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf1ae36e-3097-488e-9f0f-08dc8f08eadc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|7416011|376011|36860700010|1800799021|82310400023|921017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?U8iCPKh2nNwoqVLMzpirLYCl+Q+TeRDT5HURUMePdoG3wj4hIWWfVQyJTZEb?=
- =?us-ascii?Q?z6Ae/uRzj/V6ItMv9TfCJY1ZaW/wHHrrXsllpcQ19bJWYTAJQ/qx62xrPsho?=
- =?us-ascii?Q?sA0iMXvQ49nzb49iW/kOga6XRT+fYSW/E9S/NZtsTxBjI+id9pEyHBKhYRXo?=
- =?us-ascii?Q?m5NN/ZlHTrGN9lmmvKZPysTReImFH+tjzPAmhRmUOTlzFmbW2gtsESXxZhiV?=
- =?us-ascii?Q?r3pA5tBQWCeVfW+1BjajgNASIiV+7dG4RSPxz8fgAe8TlqiK+TfSM7RaULUU?=
- =?us-ascii?Q?SnuuU5u5yPrc3QAB0LngeeX7W9SIWvfoJzbpQJqkZUSJXW8AuyD89Q6Zla+3?=
- =?us-ascii?Q?aDptiLo5DsyG0iPdLO+RYHheCNUWaOo1Y9Dl0hFVQYnJJ0RAzqMxOzAol+jx?=
- =?us-ascii?Q?dSJP8Tu7H79qTIJcXanjD4ov1MO1uuYfhBuy/a22yeVLP12mtey5gPhH9oOM?=
- =?us-ascii?Q?sNZJxjEZ2Ly8uqKjkEA+rQInX1eaxi5umlsibf1MvNVFQBUMB0Ga/jNIs7mO?=
- =?us-ascii?Q?kgGHVBdLlGZKrMbFMn6RGQDfDT6OW5/SCdLgi/vymOTgvW6r+xR3BXBx5iZz?=
- =?us-ascii?Q?TzEoL0ed0Q67fpaWezk/aV2cTwdQELRBVioD6DGzJ0HVOgU4mOjAzJRnFrtq?=
- =?us-ascii?Q?7qlezsKfCH6BLdbK7PrZ5vm61unCKArcOp8MDaxiFwBVhAwHR2cp1giz0fuZ?=
- =?us-ascii?Q?dmMqy9PInrKLfLWRfaflLyKG6dc65EiENmAG8JzpoqRQzHrz4L8tz1OXKmup?=
- =?us-ascii?Q?kSZCzNQas4QBswv61QllHL5KSJ85/+jNjwTG2IakU7nt+RGk65sQSEro1C1t?=
- =?us-ascii?Q?DzaBapaIdds3G92UiOlSVjB4dGCaykwP7phP3gUH6IlbManN4ij+WcnwYMlZ?=
- =?us-ascii?Q?ZFdDI2oANX0Wycc7Na28tTGZBDDUTJkqjhq1nOFcoiKBuKhqyyr8LsXt8Ec5?=
- =?us-ascii?Q?oKrpUjecMPjqO1ayfj60fFZ4zFewsyS0OtDtAlTxI7vzSLWPtMWSDGfUjhy3?=
- =?us-ascii?Q?6KKVZ7pdlqRp33GNn/5JAHFzLHIfA3CA3yp4pkWzC6Up87VJ9tpqyOJVdchx?=
- =?us-ascii?Q?p6cJ8UPbE189pKspO35kHZlaQzI3Swdqa6mMBqoocI1ObDaXLFLiqDjj8oU0?=
- =?us-ascii?Q?X+hiVtXlEd2WfDLfXHDKl0GIfCv9O09GqPoweLwKifDEOVPHxsCQn/qn2zCC?=
- =?us-ascii?Q?7gCMy9yDruKjbyPcjvPvB0dxk+LdReCN1ZIXmZNffXTO7AgwyijUvjL2KTyz?=
- =?us-ascii?Q?ZUGsoik/TU6LBF/F0qRbkhyEfdW2rDhRjfhVAR06CwkSe7UeBy0pNQQJEH+b?=
- =?us-ascii?Q?hSKt07DI7POYJLmaqlkEvhC0Vx3AMnU9Sb3+X9k/69ReDarWA3s0j6x8pIes?=
- =?us-ascii?Q?0dqTnutvqgLtfdhO4+/vDgUQVyIVPWJM6sb3JyYlmYk4S7EwwINXvJ6elrB5?=
- =?us-ascii?Q?4qdh23dJjus=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(7416011)(376011)(36860700010)(1800799021)(82310400023)(921017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 20:06:04.0886
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf1ae36e-3097-488e-9f0f-08dc8f08eadc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000066ED.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8453
+Content-Transfer-Encoding: 8bit
 
-CXL RAS errors are reported through AER interrupts using the AER status:
-correctbale internal errors (CIE) and AER uncorrectable internal errors
-(UIE).[1] But, the AER CIE/UIE are disabled by default preventing
-notification of CXL RAS errors.[2]
+On Mon, 2024-06-17 at 15:56 -0400, Stefan Berger wrote:
+> 
+> 
+> On 6/17/24 15:42, James Bottomley wrote:
+> > On Mon, 2024-06-17 at 15:34 -0400, Stefan Berger wrote:
+> > > Fix the following type of error message caused by a missing call
+> > > to
+> > > tpm2_sessions_init() in the IBM vTPM driver:
+> > > 
+> > > [    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM
+> > > error
+> > > 0x01C4
+> > > [    2.987140] ima: Error Communicating to TPM chip, result: -14
+> > > 
+> > > Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+> > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > ---
+> > >   drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
+> > >   1 file changed, 4 insertions(+)
+> > > 
+> > > diff --git a/drivers/char/tpm/tpm_ibmvtpm.c
+> > > b/drivers/char/tpm/tpm_ibmvtpm.c
+> > > index d3989b257f42..1e5b107d1f3b 100644
+> > > --- a/drivers/char/tpm/tpm_ibmvtpm.c
+> > > +++ b/drivers/char/tpm/tpm_ibmvtpm.c
+> > > @@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev
+> > > *vio_dev,
+> > >                  rc = tpm2_get_cc_attrs_tbl(chip);
+> > >                  if (rc)
+> > >                          goto init_irq_cleanup;
+> > > +
+> > > +               rc = tpm2_sessions_init(chip);
+> > > +               if (rc)
+> > > +                       goto init_irq_cleanup;
+> > 
+> > This looks wrong: the whole thing is designed to occur in the
+> > bootstrap
+> > phase from tpm_chip_register() (which tpm_ibmvtpm.c definitely
+> > calls),
+> > so why isn't it happening?
+> 
+> Because flags = TPM_OPS_AUTO_STARTUP has not been set for this
+> driver.
+> 
 
-Enable CXL PCIe port RAS notification by unmasking the ports' AER CIE
-and UIE errors.
+In that case, wouldn't the fix be to move tpm_sessions_init() to
+somewhere in tpm_chip_register() that would then be called by this
+driver?  Having to special case it for every driver that doesn't set
+this flag is going to be a huge pain.
 
-[1] CXL3.1 - 12.2.2 CXL Root Ports, Downstream Switch Ports, and Upstream
-             Switch Ports
-[2] PCI6.0 - 7.8.4.3 Uncorrectable Error Mask Register (Offset 08h),
-             7.8.4.6 Correctable Error Mask Register (Offset 14h)
+I think the only reason it's down that far is that it should only be
+called for TPM2 code so it was avoiding doing the check twice, so
+something like this?
 
-Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+James
+
 ---
- drivers/cxl/core/pci.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-index e630eccb733d..73637d39df0a 100644
---- a/drivers/cxl/core/pci.c
-+++ b/drivers/cxl/core/pci.c
-@@ -861,6 +861,12 @@ void cxl_setup_parent_uport(struct device *host, struct cxl_port *port)
- 	struct device *uport_dev = port->uport_dev;
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 5da134f12c9a..4280cbb0f0b1 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -347,6 +347,12 @@ int tpm_auto_startup(struct tpm_chip *chip)
+ {
+ 	int rc;
  
- 	cxl_port_map_regs(uport_dev, map, regs);
-+
-+	if (dev_is_pci(uport_dev)) {
-+		struct pci_dev *pdev = to_pci_dev(uport_dev);
-+
-+		pci_aer_unmask_internal_errors(pdev);
++	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
++		rc = tpm2_sessions_init(chip);
++		if (rc)
++			return rc;
 +	}
- }
- EXPORT_SYMBOL_NS_GPL(cxl_setup_parent_uport, CXL);
- 
-@@ -878,6 +884,12 @@ void cxl_setup_parent_dport(struct device *host, struct cxl_dport *dport)
- 
- 	if (dport->rch)
- 		cxl_disable_rch_root_ints(dport);
 +
-+	if (dev_is_pci(dport_dev)) {
-+		struct pci_dev *pdev = to_pci_dev(dport_dev);
-+
-+		pci_aer_unmask_internal_errors(pdev);
-+	}
- }
- EXPORT_SYMBOL_NS_GPL(cxl_setup_parent_dport, CXL);
+ 	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
+ 		return 0;
  
--- 
-2.34.1
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 1e856259219e..b4f85c8cdbb6 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -773,11 +773,6 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 		rc = 0;
+ 	}
+ 
+-	if (rc)
+-		goto out;
+-
+-	rc = tpm2_sessions_init(chip);
+-
+ out:
+ 	/*
+ 	 * Infineon TPM in field upgrade mode will return no data for the number
 
 
