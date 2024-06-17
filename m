@@ -1,140 +1,149 @@
-Return-Path: <linux-kernel+bounces-218434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672F790BFCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:31:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D9490BFCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88DBF1C20DD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:31:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AC7AB2146E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46014199E8E;
-	Mon, 17 Jun 2024 23:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3246C19A2AE;
+	Mon, 17 Jun 2024 23:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g51AgzHV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pRd+vyGL"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81625DDA6;
-	Mon, 17 Jun 2024 23:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B48D19A2AB
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 23:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718667108; cv=none; b=lnJfwr9QLN1GP4novoYiyBhUbD/fhYScuzGyt9q05bXJrEW4ad0ZINwXysL1NZbUBfAitKJ1j2sonfu3QhAdLN31LE4QAAqVyzEcPc1X47LFNUDSRxnBZFEnwsZ/ScXUXk/NBWTyWiAkXb7KMY927kYM13+0SupxohL5hWyMImo=
+	t=1718667115; cv=none; b=FZA8Jrg8WPnsQdwwVV1VDup3JuMf0WG2MZL/PE0qr4zQfynzKLp+CO7yB1wUydxfopw18rSXG4/PIsPJkGpa1YihnaPa9vz29FfJvvmdYFPXcbtUSsiiJ6mtGpQSoKHJAlPG/6odzz1GcT64eveaN7Wkyq7i6cvlmXiDBUggrFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718667108; c=relaxed/simple;
-	bh=4KZkD3adnWFBE0CL7l4ZcutJUzuc0oVMJV2Ijc+6+ts=;
+	s=arc-20240116; t=1718667115; c=relaxed/simple;
+	bh=7qbkRush5jqH6C4U4mHQ4zNjckTMadOjSd/ADCJT8l0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gh5NMw9rOqmj8ec66B2Te1NcnYvLAe9bATv1MZVdbKs7KKizxLD72AKWxV+M6bCXAOW+TytSiczMr5JC9g5fl8HJoEi5h5nm/PUmxBnALOiOyB2r3QKqR8/rR14DefZ2gJ18eJUsgeDFhF//DP+bbkubIERuWtTk6Gng0c65UWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g51AgzHV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2906C2BD10;
-	Mon, 17 Jun 2024 23:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718667108;
-	bh=4KZkD3adnWFBE0CL7l4ZcutJUzuc0oVMJV2Ijc+6+ts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g51AgzHVXFVuX6oGkjN69HCIu9soTKyZLJzm4ofCyzigdOGRQanOnL35s24Aol1FH
-	 zpXTOqnhgt4mFbc/KwrPpE+mGpwzhyHw1gfihkTb9T/Cbs1ZcMjMtuZdeLeOVGUuf8
-	 hdNaotoUTLyCsSDOOBRAdewJvF2/lMiZreACRkKtZIUm8wZsXqNV7oregbbc2ZmEtZ
-	 +mpfb3S2Xrny33zu+Cq4Fq+QrYuNtGhrBvgkYu2D+OPJa2kVNYFlhdJVCtJ4m+Fza9
-	 vu3/y88gXe3zIfSQACIyaGkvQTm3p3CpKSR8tOFbXiMtuOxApbr4s2SBry50aiHwFi
-	 NBWsWZdhpJc4Q==
-Date: Mon, 17 Jun 2024 16:31:47 -0700
-From: Kees Cook <kees@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Yuntao Liu <liuyuntao12@huawei.com>, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-	gor@linux.ibm.com, Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Leonardo Bras <leobras@redhat.com>, Mark Brown <broonie@kernel.org>,
-	imbrenda@linux.ibm.com, pawan.kumar.gupta@linux.intel.com
-Subject: Re: [PATCH] remove AND operation in choose_random_kstack_offset()
-Message-ID: <202406171618.A92D064@keescook>
-References: <20240617133721.377540-1-liuyuntao12@huawei.com>
- <ZnBbr2CAqBGDe2aN@J2N7QTR9R3>
- <202406171122.B5FDA6A@keescook>
- <d0959336-4430-4062-b909-54d553238468@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WCHunX3VL9K2vrfNPl9LZs5IEZdCqJno4WlDx+mrd00biuIU8xPIT6eOsYrmgIr3E676HEi4b+i9hLYqcAWVaO+OBiXwKoxnRnXhG5GadMSNMqKiIsj0NvJfV3I8FcQ7LCrxGswuURblWYMzPdtlbV5ZnrxeqmX1AwBIpQ0l8wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pRd+vyGL; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-705ff14d159so1315014b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718667113; x=1719271913; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3FO5nJ1Vj3EUf1P5YQy09laiFztkoKBjLr7YQiDGnGU=;
+        b=pRd+vyGL0Tpi3rgrgbnc0naeost6UuElt9l4ylPCTXYNiP1wun5XwhbQx8yXqDfvM0
+         Zwwkf8fKztgneWljqtW+0mpEc08MaYnRp5tvG84xmAkYs1HSMe7lHqJzF/8kpDIg75WU
+         ppCZX7Zsjcw3n3RXaeDLDleleroh50qnDz2W2CPjOGDougUT1Pp+sQjVlm5y4WsJKf8Z
+         5PQ3GZNoBlkYvv09g8SpBTydNnjpsbconA9zrCME+K22/twjmX9fIkzCX7DtV5VjxIjX
+         FxVnXPCBowGMeBIJHG/8KnIa8i8DS+7HNuNfTQQEp7P+DOgZ/GVrKORltXjs8ek/GmTc
+         Wnyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718667113; x=1719271913;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3FO5nJ1Vj3EUf1P5YQy09laiFztkoKBjLr7YQiDGnGU=;
+        b=es+mnHXl+fj2gL5NuUFYout1KbThmE8nb+B+s3JXkt+N6xxjUiMXdIk+x1psRHchho
+         b47KQ2FQIz8rIyk239++RVy4WHq/2w/1fzC8IBCp6eXo/y9n5NgelRcl3UaTCsWBiZhQ
+         g2C+w0QxvfBDXWulw5+sF38REUX971kZhVI/o/T4QwF5U4ParhS6iK5rqjgQSK1tu177
+         G3JhhVIGOXBMbNt5N9y0MeeLhMCT+D2Mv9lkwXq2AbB8wtBNTfHBx1OoNrYO77pLP6H+
+         76dh2EzubrF1+OFJNnwYhWHuEhdUds0+cnzS8YMGmAYHi0961P+X89j2IQ0Eb91rRhss
+         heKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWc07AXOT1evRt1bX7Ds1Rvk42dBlblP2hpd+MZSVSrsVOfurx6oK8nqObcq6Cr79BCTsl8pJCL4SPdV1u4S4Myzb9I9GCNZP5z6aAE
+X-Gm-Message-State: AOJu0YxlnLf4kB0KQUqwGUMgBaN3gbiqqGKaYPcSp959Z6GWkgzQV+GV
+	MdHk4Eun0nvOpmRaZu9vKSKBx/eccVxquiDaglHQVCGFPyuRnVsky+FZ5XbG8Q==
+X-Google-Smtp-Source: AGHT+IFxIYRKh3R8VVqY3cVNqHd4fZRi5puptw2mVg4a461ZGXjuvBxhqJ4fvAcNUguJu+wrN+90pQ==
+X-Received: by 2002:a05:6a20:a11d:b0:1b4:da55:e1ba with SMTP id adf61e73a8af0-1bae7f65a87mr11801799637.9.1718667113110;
+        Mon, 17 Jun 2024 16:31:53 -0700 (PDT)
+Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6b9c9sm7890966b3a.160.2024.06.17.16.31.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 16:31:52 -0700 (PDT)
+Date: Mon, 17 Jun 2024 23:31:49 +0000
+From: Igor Pylypiv <ipylypiv@google.com>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/4] ata: libata-scsi: Report valid sense data for ATA
+ PT if present
+Message-ID: <ZnDHZWZQFtUmwtwE@google.com>
+References: <20240614191835.3056153-1-ipylypiv@google.com>
+ <20240614191835.3056153-4-ipylypiv@google.com>
+ <ZnAUy5C-DXEuliSm@ryzen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d0959336-4430-4062-b909-54d553238468@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZnAUy5C-DXEuliSm@ryzen.lan>
 
-On Mon, Jun 17, 2024 at 10:33:08PM +0200, Arnd Bergmann wrote:
-> On Mon, Jun 17, 2024, at 20:22, Kees Cook wrote:
-> > On Mon, Jun 17, 2024 at 04:52:15PM +0100, Mark Rutland wrote:
-> >> On Mon, Jun 17, 2024 at 01:37:21PM +0000, Yuntao Liu wrote:
-> >> > Since the offset would be bitwise ANDed with 0x3FF in
-> >> > add_random_kstack_offset(), so just remove AND operation here.
-> >> > 
-> >> > Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
-> >> 
-> >> The comments in arm64 and x86 say that they're deliberately capping the
-> >> offset at fewer bits than the result of KSTACK_OFFSET_MAX() masking the
-> >> value with 0x3FF.
-> >> 
-> >> Maybe it's ok to expand that, but if that's the case the commit message
-> >> needs to explain why it's safe add extra bits (2 on arm64, 3 on s39 and
-> >> x86), and those comments need to be updated accordingly.
-> >> 
-> >> As-is, I do not think this patch is ok.
-> >
-> > Yeah, I agree: the truncation is intentional and tuned to the
-> > architecture.
+On Mon, Jun 17, 2024 at 12:49:47PM +0200, Niklas Cassel wrote:
+> On Fri, Jun 14, 2024 at 07:18:34PM +0000, Igor Pylypiv wrote:
+> > Do not generate sense data from ATA status/error registers
+> > if valid sense data is already present.
+> > 
+> > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> > ---
+> >  drivers/ata/libata-scsi.c | 17 +++++++++++------
+> >  1 file changed, 11 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> > index 79e8103ef3a9..4bfe47e7d266 100644
+> > --- a/drivers/ata/libata-scsi.c
+> > +++ b/drivers/ata/libata-scsi.c
+> > @@ -858,12 +858,17 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
+> >  	unsigned char *desc = sb + 8;
+> >  	u8 sense_key, asc, ascq;
 > 
-> It may be intentional, but it's clearly nonsense: there is nothing
-> inherent to the architecture that means we have can go only 256
-> bytes instead of 512 bytes into the 16KB available stack space.
+> Like I suggested in the earlier patch,
 > 
-> As far as I can tell, any code just gets bloated to the point
-> where it fills up the available memory, regardless of how
-> much you give it. I'm sure one can find code paths today that
-> exceed the 16KB, so there is no point pretending that 15.75KB
-> is somehow safe to use while 15.00KB is not.
+> can't you do a:
 > 
-> I'm definitely in favor of making this less architecture
-> specific, we just need to pick a good value, and we may well
-> end up deciding to use less than the default 1KB. We can also
-> go the opposite way and make the limit 4KB but then increase
-> the default stack size to 20KB for kernels that enable
-> randomization.
+> if (qc->flags & ATA_QCFLAG_SENSE_VALID)
+> 	return;
+> 
+> here instead?
+> 
 
-I'm all for more entropy, but arch maintainers had wanted specific
-control over this value, and given the years of bikeshedding over the
-feature, I'm not inclined dive back into that debate, but okay.
+We need to populate the "ATA Status Return sense data descriptor" as per SAT-5
+"Table 209 — ATA command results". By returning early we are skipping the code
+that copies ATA output fields into descriptor/fixed sense data buffer.
 
-FWIW, the here's the actual entropy (due to stack alignment enforced by
-the compiler for the given arch ABI).
-
-standard cap is 0x3FF (10 bits).
-
-arm64: capped at 0x1FF (9 bits), 5 bits effective
-powerpc: uncapped (10 bits), 6 or 7 bits effective
-riscv: uncapped (10 bits), 6 bits effective
-x86: capped at 0xFF (8 bits), 5 (x86_64) or 6 (ia32) bits effective
-s390: capped at 0xFF (8 bits), undocumented effective entropy
-
-So if x86, arm64, and s390 maintainers are okay with it, we can try
-dropping the masks on those architectures. They would gain 2, 1, and 2
-bits respectively.
-
--Kees
-
--- 
-Kees Cook
+> 
+> >  
+> > -	/*
+> > -	 * Use ata_to_sense_error() to map status register bits
+> > -	 * onto sense key, asc & ascq.
+> > -	 */
+> > -	if (qc->err_mask ||
+> > -	    tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
+> > +	if (qc->flags & ATA_QCFLAG_SENSE_VALID) {
+> > +		/*
+> > +		 * Do not generate sense data from ATA status/error
+> > +		 * registers if valid sense data is already present.
+> > +		 */
+> > +	} else if (qc->err_mask ||
+> > +		   tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
+> > +		/*
+> > +		 * Use ata_to_sense_error() to map status register bits
+> > +		 * onto sense key, asc & ascq.
+> > +		 */
+> >  		ata_to_sense_error(qc->ap->print_id, tf->status, tf->error,
+> >  				   &sense_key, &asc, &ascq);
+> >  		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
+> > -- 
+> > 2.45.2.627.g7a2c4fd464-goog
+> > 
 
