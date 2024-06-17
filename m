@@ -1,170 +1,190 @@
-Return-Path: <linux-kernel+bounces-216960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319E690A92C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:11:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D312090A932
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88926285332
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:11:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F7F7B270FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81BE191472;
-	Mon, 17 Jun 2024 09:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC6219149D;
+	Mon, 17 Jun 2024 09:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hOmw52cY"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="kuUPzegr"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80D13FE4A;
-	Mon, 17 Jun 2024 09:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E95191487
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718615467; cv=none; b=dP5wytbVztvPji2284l3aAasTXXounZ4NH95MekbbS8rI8kHJlEa8sM0HOZjTqYFpXlJS9esC9G6l/hPpQEHquPP++lbh5Y9+GnME3aQWhwqqr7274qQpaGEqICoumTEA2SCTzngfuqcvtZeyRRP3XnIMidpGBB/NlzCtPLayiU=
+	t=1718615474; cv=none; b=fZaTF7QluC7nr7rgepKHbceoYScCEfknSNOWxcNAfgDux8eJRw3iN0MeHYA2T/f0CGEy3aP9wn2iC2KTH6lsNCsfQRUglCOebgt8VV7K+csaesM9hfLe38m2s7IJYI2JZyKq8lbaV431hUGBbZGyfQSuKdWwQdkKFuZet5LcvJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718615467; c=relaxed/simple;
-	bh=0vAa6PKyw6NOERQlOIJcTuSJpk9vJSNt+toYxjrtXYQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pdcEL/IhlT5egKPUXAnSrylAdmkRfXWzi7FN9gXniARqIKJO7+hb+aUp6vlmYNseO5j0wjRmmYjQHlRWwsYXqz4UcvWl7jjbWA4utMLMC8Xwd8Q8+4O+jtkjBWuOEifp+2ELd9mG22voXlajTxQoGBbpDggnJE9vkb1LgpEG2JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hOmw52cY; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H8LwXE022485;
-	Mon, 17 Jun 2024 09:10:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=N
-	2Mw6uQnbAvcilPkScR95H4zvLvgapP78kdoxjkL5Uo=; b=hOmw52cYetjjZEq8I
-	PAI2uKeCZ+vp3BFEvkUWSodcw3wLVLRJTdo4IPz91wMZjvfqJyY3q2/bJZA//wDI
-	LS4xG5ywj4m9wCkaCoT8xpY6BkkQTKZbuvTcYxKPSNb1T0ZuPMa/yWleVAOCjcZY
-	PycFJ9Qc/sxL+sCpbEf3c1goH3bsupOq3eiM0KrUHo2ElhtaGBsgD6tQH5OgY43n
-	R6I6UjOEfxB77Ncx7BzuuKESFYH1Fbpio/5esLYVMci8SSFkIvsM5VuFxoFVc1Hx
-	H80yw9FRTWWFZK2Pet1xhRAXq3hCF7pMtPD1AiWqDhXQOVvNK8kSzjMvbW3L+0CG
-	rZyiQ==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ytgbngd14-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 09:10:55 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45H7u2S6011027;
-	Mon, 17 Jun 2024 09:10:54 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yspsmrck3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 09:10:54 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45H9ApgY27460192
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Jun 2024 09:10:53 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 816A85805B;
-	Mon, 17 Jun 2024 09:10:51 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 829E558058;
-	Mon, 17 Jun 2024 09:10:47 +0000 (GMT)
-Received: from [9.43.13.239] (unknown [9.43.13.239])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 17 Jun 2024 09:10:47 +0000 (GMT)
-Message-ID: <1ce94229-631d-420a-976e-6259b136a92e@linux.ibm.com>
-Date: Mon, 17 Jun 2024 14:40:45 +0530
+	s=arc-20240116; t=1718615474; c=relaxed/simple;
+	bh=xiqMCvALfitq6gqhML0HanhNYhLYokK24+duP6/gN70=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IxmFYT7ymNVf0T3yQQSY+i/zyXcZkW5Jdv5h83Ux1qZqAzIZzIPG9ic7NqbQ5t1DSoVqg5VotHutotI7dPNGOCKLK2KuBMQhSvnhPLqLY48WQ6YYBGXgGZ8b+3Lc5plYFWKvHXlprCQA1gouAuNMSI3popZa3/VzPuUZtbZ1bfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=kuUPzegr; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c89d6b4adso3813410e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:11:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718615470; x=1719220270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cpTLDyvCYaFxuBfvH84svdUv4llKayr1HsnUqo2woZU=;
+        b=kuUPzegro9eWz5sjBE/wGy199FU9GunqSRp8NaHVUe247B2+Kz2mamnsEW5YCojwW+
+         vsDJdT2RfODpwBKxAK8URXEM0xfGX9gwJbnFXqmo113u8YopPwx7Ilz51E8i/mEUhbFC
+         6WjWqvE5C/Pe5RiKVSoOZ9IhMjF22tYvb8co5krc9Cg1/6/NVz/rxW0s8QUtEhTUJzLk
+         d9AXd8CWxwA/y2Aoy9Ik+SlTHg8gpDQ6lRqN+vymsLzFKqLkMBlabppE1A8g4zj9Icre
+         GQyb1EsMtabCERBPYNnbyfW5DT5K/eJNzho59YoYyRThCVnUG1xMeVaKOBFe0s4jVojV
+         vd8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718615470; x=1719220270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cpTLDyvCYaFxuBfvH84svdUv4llKayr1HsnUqo2woZU=;
+        b=kPep/ltbriCJ5Yvzb4xpUfT7QbFrEyo4hPLokVRaHZnii8zNpM1r1u+he2U+C+Ma05
+         Gn3Fu+KTTXc+mLCgtjmN/I3kbt5JNiegg/pxPB68cl9+VwWy9xfXKXtcOv8uh0cUmNk+
+         nyvFsRBAcq1wrfyc0ELDwc8spAbt+jjiAvwTrwTTw/BMNXDjWzLanDv+FmUwE5p/58p5
+         EBumJVgJ6qBi462uetNxgRsFg/UN5xKfKUFCv/jR1HD1GYl6IKHoZW8FrG0aTsxX4kn0
+         rJvLWy/VGwMQSMuZw566DpaY5TFlDo78QtFCnl8Ymu7CdQKuPYxwwc+M1wx9rlLdcoxk
+         OQYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtLKKwwPad3bo2ePNKMc4EeQnvuGz+Ma4di7oXART99guSOiWXyUXmQ9E08yg6tPI66iiOZfxPWvaUrxbYK4sNnSfadJ61NzRr7iZn
+X-Gm-Message-State: AOJu0Yxk0CEjyk1fbHXWGxJWmwBv+mw1A7SOwPnSW0JJqYqsp8+EZago
+	4npwnimdqyyFA1asXo7gaV4MxXMoj/uYMj6nuCBQC4u7ND7DQGeNxAOFdFT+V+vBlYv0BIdX4jl
+	yKBhBhWsjQXJfsV1ZTiiamQhmQ3eJeyeBygC8XA==
+X-Google-Smtp-Source: AGHT+IGeRJHP0TcBprcLVK3h+RJ1DP+BlSOB3+uNeQEhD1M8wUzaJmIgdjVHXch7ltaGznllvYCX1BS6ebnN2g7+3yU=
+X-Received: by 2002:a05:6512:ba1:b0:52c:be4f:1e67 with SMTP id
+ 2adb3069b0e04-52cbe4f1eeamr896865e87.24.1718615470514; Mon, 17 Jun 2024
+ 02:11:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Kernel OOPS while creating a NVMe Namespace
-To: Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>
-Cc: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, sachinp@linux.vnet.com,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        shinichiro.kawasaki@wdc.com
-References: <2312e6c3-a069-4388-a863-df7e261b9d70@linux.vnet.ibm.com>
- <ZmdLlaVO-QUug5aj@kbusch-mbp.dhcp.thefacebook.com>
- <e8fa4c36-49e5-40b8-9cea-6b3b61aa3240@grimberg.me>
- <ZmdQuz8vJZMj41Kn@kbusch-mbp.dhcp.thefacebook.com>
- <bccf1e1f-bc45-4052-9504-d852f9ae4e6c@grimberg.me>
- <ZmdVIfnqtweVt9ZN@kbusch-mbp.dhcp.thefacebook.com>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <ZmdVIfnqtweVt9ZN@kbusch-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 5L14OMVf1nwDViWXPy-Ha5421Dp2uIcq
-X-Proofpoint-GUID: 5L14OMVf1nwDViWXPy-Ha5421Dp2uIcq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_07,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
- clxscore=1011 phishscore=0 impostorscore=0 mlxscore=0 malwarescore=0
- suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406170068
+References: <20240605122729.24283-1-brgl@bgdev.pl>
+In-Reply-To: <20240605122729.24283-1-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 17 Jun 2024 11:10:59 +0200
+Message-ID: <CAMRc=MfJkMUtXf96-MKPme=MH4nt71UjH-0DYyMTc_t7tvT7Gw@mail.gmail.com>
+Subject: Re: [PATCH v9 0/4] arm64: dts: qcom: add WiFi modules for several platforms
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jun 5, 2024 at 2:27=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Hi!
+>
+> Here are the DTS changes for several Qualcomm boards from the
+> power-sequencing series. To keep the cover-letter short, I won't repeat
+> all the details, they can be found in the cover-letter for v8. Please
+> consider picking them up into the Qualcomm tree. They have all been
+> thorougly tested with the pwrseq series.
+>
+> Changelog:
+>
+> Since v8:
+> - split the DTS patches out into their own series
+> - Link to v8: https://lore.kernel.org/r/20240528-pwrseq-v8-0-d354d52b763c=
+@linaro.org
+>
+> Since v7:
+> - added DTS changes for sm8650-hdk
+> - added circular dependency detection for pwrseq units
+> - fixed a KASAN reported use-after-free error in remove path
+> - improve Kconfig descriptions
+> - fix typos in bindings and Kconfig
+> - fixed issues reported by smatch
+> - fix the unbind path in PCI pwrctl
+> - lots of minor improvements to the pwrseq core
+>
+> Since v6:
+> - kernel doc fixes
+> - drop myself from the DT bindings maintainers list for ath12k
+> - wait until the PCI bridge device is fully added before creating the
+>   PCI pwrctl platform devices for its sub-nodes, otherwise we may see
+>   sysfs and procfs attribute failures (due to duplication, we're
+>   basically trying to probe the same device twice at the same time)
+> - I kept the regulators for QCA6390's ath11k as required as they only
+>   apply to this specific Qualcomm package
+>
+> Since v5:
+> - unify the approach to modelling the WCN WLAN/BT chips by always exposin=
+g
+>   the PMU node on the device tree and making the WLAN and BT nodes become
+>   consumers of its power outputs; this includes a major rework of the DT
+>   sources, bindings and driver code; there's no more a separate PCI
+>   pwrctl driver for WCN7850, instead its power-up sequence was moved
+>   into the pwrseq driver common for all WCN chips
+> - don't set load_uA from new regulator consumers
+> - fix reported kerneldoc issues
+> - drop voltage ranges for PMU outputs from DT
+> - many minor tweaks and reworks
+>
+> v1: Original RFC:
+>
+> https://lore.kernel.org/lkml/20240104130123.37115-1-brgl@bgdev.pl/T/
+>
+> v2: First real patch series (should have been PATCH v2) adding what I
+>     referred to back then as PCI power sequencing:
+>
+> https://lore.kernel.org/linux-arm-kernel/2024021413-grumbling-unlivable-c=
+145@gregkh/T/
+>
+> v3: RFC for the DT representation of the PMU supplying the WLAN and BT
+>     modules inside the QCA6391 package (was largely separate from the
+>     series but probably should have been called PATCH or RFC v3):
+>
+> https://lore.kernel.org/all/CAMRc=3DMc+GNoi57eTQg71DXkQKjdaoAmCpB=3Dh2ndE=
+pGnmdhVV-Q@mail.gmail.com/T/
+>
+> v4: Second attempt at the full series with changed scope (introduction of
+>     the pwrseq subsystem, should have been RFC v4)
+>
+> https://lore.kernel.org/lkml/20240201155532.49707-1-brgl@bgdev.pl/T/
+>
+> v5: Two different ways of handling QCA6390 and WCN7850:
+>
+> https://lore.kernel.org/lkml/20240216203215.40870-1-brgl@bgdev.pl/
+>
+> Bartosz Golaszewski (3):
+>   arm64: dts: qcom: sm8550-qrd: add the Wifi node
+>   arm64: dts: qcom: sm8650-qrd: add the Wifi node
+>   arm64: dts: qcom: qrb5165-rb5: add the Wifi node
+>
+> Neil Armstrong (1):
+>   arm64: dts: qcom: sm8650-hdk: add the Wifi node
+>
+>  arch/arm64/boot/dts/qcom/qrb5165-rb5.dts | 103 ++++++++++++++++++++---
+>  arch/arm64/boot/dts/qcom/sm8250.dtsi     |   2 +-
+>  arch/arm64/boot/dts/qcom/sm8550-qrd.dts  |  97 +++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sm8550.dtsi     |   2 +-
+>  arch/arm64/boot/dts/qcom/sm8650-hdk.dts  |  89 ++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sm8650-qrd.dts  |  89 ++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi     |   2 +-
+>  7 files changed, 370 insertions(+), 14 deletions(-)
+>
+> --
+> 2.40.1
+>
 
+Gentle ping.
 
-On 6/11/24 01:03, Keith Busch wrote:
-> On Mon, Jun 10, 2024 at 10:17:42PM +0300, Sagi Grimberg wrote:
->> On 10/06/2024 22:15, Keith Busch wrote:
->>> On Mon, Jun 10, 2024 at 10:05:00PM +0300, Sagi Grimberg wrote:
->>>>
->>>> On 10/06/2024 21:53, Keith Busch wrote:
->>>>> On Mon, Jun 10, 2024 at 01:21:00PM +0530, Venkat Rao Bagalkote wrote:
->>>>>> Issue is introduced by the patch: be647e2c76b27f409cdd520f66c95be888b553a3.
->>>>> My mistake. The namespace remove list appears to be getting corrupted
->>>>> because I'm using the wrong APIs to replace a "list_move_tail". This is
->>>>> fixing the issue on my end:
->>>>>
->>>>> ---
->>>>> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
->>>>> index 7c9f91314d366..c667290de5133 100644
->>>>> --- a/drivers/nvme/host/core.c
->>>>> +++ b/drivers/nvme/host/core.c
->>>>> @@ -3959,9 +3959,10 @@ static void nvme_remove_invalid_namespaces(struct nvme_ctrl *ctrl,
->>>>>    	mutex_lock(&ctrl->namespaces_lock);
->>>>>    	list_for_each_entry_safe(ns, next, &ctrl->namespaces, list) {
->>>>> -		if (ns->head->ns_id > nsid)
->>>>> -			list_splice_init_rcu(&ns->list, &rm_list,
->>>>> -					     synchronize_rcu);
->>>>> +		if (ns->head->ns_id > nsid) {
->>>>> +			list_del_rcu(&ns->list);
->>>>> +			list_add_tail_rcu(&ns->list, &rm_list);
->>>>> +		}
->>>>>    	}
->>>>>    	mutex_unlock(&ctrl->namespaces_lock);
->>>>>    	synchronize_srcu(&ctrl->srcu);
->>>>> --
->>>> Can we add a reproducer for this in blktests? I'm assuming that we can
->>>> easily trigger this
->>>> with adding/removing nvmet namespaces?
->>> I'm testing this with Namespace Manamgent commands, which nvmet doesn't
->>> support. You can recreate the issue by detaching the last namespace.
->>>
->>
->> I think the same will happen in a test that creates two namespaces and then
->> echo 0 > ns/enable.
-> 
-> Looks like nvme/016 tess this. It's reporting as "passed" on my end, but
-> I don't think it's actually testing the driver as intended. Still
-> messing with it.
-> 
-I believe nvme/016 creates and deletes the namespace however there's no backstore 
-associated with the loop device and hence nvme/016 is unable to recreate this issue.
-
-To recreate this issue, we need to associate a backstore (either a block-dev or 
-a regular-file) to the loop device and then use it for creating and then deleting 
-the namespace.
-
-I wrote a blktest for this specific regression and I could able to trigger this crash. 
-I would submit this blktest in a separate email. 
-
-Thanks,
---Nilay
-
-
+Bart
 
