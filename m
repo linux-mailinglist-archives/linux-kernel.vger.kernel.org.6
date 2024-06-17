@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-217781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA1F690B42A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:26:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E0490B42B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7868228DECE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:26:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 240221C228B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD7A168497;
-	Mon, 17 Jun 2024 14:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="okudJPyr"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F06168484
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BDB16B380;
+	Mon, 17 Jun 2024 14:55:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345841684AD;
+	Mon, 17 Jun 2024 14:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718636124; cv=none; b=H9JJJfNNxfGzBH0JF0cAb55T2SKMODN0nUH8RGNoOQJ6zBz76Trd7U73kr4ThRsvcbXSsjZTqT7+7suCLdXHiB88pc+EuEW/E9gKDATH29W4vCKIY9PMriiRhFOBjsaDp5wiQJrNgQZBzpI/878EDWZIWJdZhtqhPSMLVceiYwU=
+	t=1718636130; cv=none; b=bcm4EsDyJJqb7Q9Q/I/VhFSpmW1UVjoLkcOtK3emm5NyjuBxcnp07FUk8DFa5PDIbSgUWv6fAaBsdYygsIJ80+k7JufkxUHvCFhHu06I7ZdK/rNycvsAxXRX8y9JNONA9h3G9cMFEInI9V95UQ0alRNEms9RooELArzbRamVzIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718636124; c=relaxed/simple;
-	bh=5HBfKtF6Ab+KJXOhi7rjQP1+URKpGlb2u9ENTfEH5XM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnLonUTVhLVGy1beffxkmGc4A/McgHQz8HoofdJ5TXeIKz/1djGk864MONcr50Mn+Brs9+kFHT6Lrz/uvhlHlHwX+9WOyRKKGA2IuhrtEnnj7CWVWq9cN9h8AfZ6MmOr6rMXWDr50sLSrSdLOnUOO5wNrePa3iibbebxFkx5Yq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=okudJPyr; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-440609dd118so21266621cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1718636122; x=1719240922; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8gljeJeGxAWnVOsW2sid+gU59meZd1BiHrYVsIx/obU=;
-        b=okudJPyrc6lrbW9NpirjjEoJWHwaTfRVqBDcsfWMhl1TGiR0M2nx05mbpwDmySK8FN
-         6UkbNDpA1Mw3FsxaJa25Ws8W8y2C8bEfoMIuvVXgW9RzqFtkvOh1gGQqPzX59AchiqSJ
-         d1OxC9YzRMznjq57mO36xt7PGWtaZ3DVK355nQuvn26qRfnGqI7G94VCbTliitkwk84y
-         SR+FRgbmijbF4M4qTYV8qiuORNvKHHmOBYMF+FHN64Tjl/GdHcBtF5OQVKvllGVfoWTP
-         ljCKzEOta6dCOuqHI3yhNCg5NkXQj6txJwwKGNhuX9oEaxT48U9Lfh2B73OvvrQGhHsj
-         PWYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718636122; x=1719240922;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8gljeJeGxAWnVOsW2sid+gU59meZd1BiHrYVsIx/obU=;
-        b=qsX/8e32/CvkLi9O4klVGDIf9OQdHUYYiE5DDcsmP8dgKjvsm1UJ7ymczve+8/G1wI
-         Z6MKwfRVC4b7BGjsxjMZ4z9KxHMeOyTpGSrq4xzD55uw2jq0Oq6NgyRbAVvn+QU3BxrK
-         FbgLgoBK6FNpx/NL4XXu2Fi38dIg+F2apmoe4VkF206A4/iuBIWdx135MZoVJUZCqMQP
-         pR7uYSrwP+7WMYIb+BzHDHhkzD0t3psgoYSl50+ESH68asjBhtqXaVKXwKWk2dvJw0FQ
-         K/WqbywosRAOr0/53pm1+TrCq7gvhjqv+oOtlR3QrtN2+3U+llkEfgWRHLPlWMBdNhqL
-         fgmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwOEBmb8q6I3CMD8gkF6sulEaOOOOeLAi5tId9CXUcISDp+gvseIWEoINXCm26pUfgPLiYLkLXq3MTC+BCfcNsn7iNnNR8Po+6IFC3
-X-Gm-Message-State: AOJu0Ywu3nKYrXW00oVvxKRshhJ2eReOJ0kkq12ir/xeET5bB1rBRKWz
-	8CRlIaaFCFlQX76Mqf4duQxXrJSC9hZ7dVLYD+AhPOO08uBUj0Fyzrb4T7Kj7UQ=
-X-Google-Smtp-Source: AGHT+IF2uoGlG3xSUI65+NQXmHPaCbaCWcT/PreTgaYbScCBfAppudiPPRnsNM5lnQZNDfID8Cr2aw==
-X-Received: by 2002:ac8:5e07:0:b0:440:5434:d59e with SMTP id d75a77b69052e-442168aae16mr119117071cf.26.1718636121932;
-        Mon, 17 Jun 2024 07:55:21 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441ef3d89ddsm46912991cf.15.2024.06.17.07.55.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 07:55:21 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sJDlR-008oz2-1P;
-	Mon, 17 Jun 2024 11:55:21 -0300
-Date: Mon, 17 Jun 2024 11:55:21 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Zong Li <zong.li@sifive.com>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
-	tjeznach@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, kevin.tian@intel.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-riscv@lists.infradead.org
-Subject: Re: [RFC PATCH v2 01/10] iommu/riscv: add RISC-V IOMMU PMU support
-Message-ID: <20240617145521.GE791043@ziepe.ca>
-References: <20240614142156.29420-1-zong.li@sifive.com>
- <20240614142156.29420-2-zong.li@sifive.com>
+	s=arc-20240116; t=1718636130; c=relaxed/simple;
+	bh=iJk9/d6zOeqXjwm67Z4BMaoI35+DzOEtZYOajmU5ReQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OipfdGsXC/KhFksdRoepWK0xxFaXk3IOOJBoT7Tpoa8hYORrrYY9T3A5LKLPIYAXBWiu+yKl+oyoxjH2QsJBChCtyYk2eMdTZElF8xkEtXFpklgXmaNzCORv1ik4LT32lN//ckEhCsBDNPnD6w3BF8LfEXxk6jrfIC9aPJPbEEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29177DA7;
+	Mon, 17 Jun 2024 07:55:52 -0700 (PDT)
+Received: from [10.57.72.20] (unknown [10.57.72.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2528D3F6A8;
+	Mon, 17 Jun 2024 07:55:24 -0700 (PDT)
+Message-ID: <1dd92421-8eba-48db-99da-4390d9e19abd@arm.com>
+Date: Mon, 17 Jun 2024 15:55:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614142156.29420-2-zong.li@sifive.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/14] arm64: Force device mappings to be non-secure
+ shared
+Content-Language: en-GB
+To: Michael Kelley <mhklinux@outlook.com>, Steven Price
+ <steven.price@arm.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>,
+ "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240605093006.145492-1-steven.price@arm.com>
+ <20240605093006.145492-11-steven.price@arm.com>
+ <SN6PR02MB4157D26A6CE9B3B96032A1D1D4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <SN6PR02MB4157D26A6CE9B3B96032A1D1D4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 14, 2024 at 10:21:47PM +0800, Zong Li wrote:
-> This patch implements the RISC-V IOMMU hardware performance monitor, it
-> includes the counting ans sampling mode.
+On 17/06/2024 04:33, Michael Kelley wrote:
+> From: Steven Price <steven.price@arm.com> Sent: Wednesday, June 5, 2024 2:30 AM
+>>
+>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>
+>> Device mappings (currently) need to be emulated by the VMM so must be
+>> mapped shared with the host.
+>>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>>   arch/arm64/include/asm/pgtable.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+>> index 11d614d83317..c986fde262c0 100644
+>> --- a/arch/arm64/include/asm/pgtable.h
+>> +++ b/arch/arm64/include/asm/pgtable.h
+>> @@ -644,7 +644,7 @@ static inline void set_pud_at(struct mm_struct *mm, unsigned long addr,
+>>   #define pgprot_writecombine(prot) \
+>>   	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_NORMAL_NC) | PTE_PXN | PTE_UXN)
+>>   #define pgprot_device(prot) \
+>> -	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_DEVICE_nGnRE) | PTE_PXN | PTE_UXN)
+>> +	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_DEVICE_nGnRE) | PTE_PXN | PTE_UXN | PROT_NS_SHARED)
+>>   #define pgprot_tagged(prot) \
+>>   	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_NORMAL_TAGGED))
+>>   #define pgprot_mhp	pgprot_tagged
 > 
-> Specification doesn't define the event ID for counting the number of
-> clock cycles, there is no associated iohpmevt0. But we need an event for
-> counting cycle in perf, reserve the maximum number of event ID for it now.
+> In v2 of the patches, Catalin raised a question about the need for
+> pgprot_decrypted(). What was concluded? It still looks to me like
+> pgprot_decrypted() and prot_encrypted() are needed, by
+> dma_direct_mmap() and remap_oldmem_pfn_range(), respectively.
+> Also, assuming Hyper-V supports CCA at some point, the Linux guest
+> drivers for Hyper-V need pgprot_decrypted() in hv_ringbuffer_init().
 
-Why is this part of the nesting series?
+Right, I think we could simply do :
 
-Jason
+diff --git a/arch/arm64/include/asm/pgtable.h 
+b/arch/arm64/include/asm/pgtable.h
+index c986fde262c0..1ed45893d1e6 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -648,6 +648,10 @@ static inline void set_pud_at(struct mm_struct *mm, 
+unsigned long addr,
+  #define pgprot_tagged(prot) \
+         __pgprot_modify(prot, PTE_ATTRINDX_MASK, 
+PTE_ATTRINDX(MT_NORMAL_TAGGED))
+  #define pgprot_mhp     pgprot_tagged
++
++#define pgprot_decrypted(prot) __pgprot_modify(prot, PROT_NS_SHARED, 
+PROT_NS_SHARED)
++#define pgprot_encrypted(prot)  __pgprot_modify(prot, PROT_NS_SHARED, 0)
++
+
+
+Suzuki
 
