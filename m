@@ -1,139 +1,108 @@
-Return-Path: <linux-kernel+bounces-217479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069BF90B053
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 752E590B0A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C591F224E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC891F27084
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA2B198E90;
-	Mon, 17 Jun 2024 13:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6341017C028;
+	Mon, 17 Jun 2024 13:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MOOivvcY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQfC6os0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9B3197A9A;
-	Mon, 17 Jun 2024 13:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A413917C018;
+	Mon, 17 Jun 2024 13:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630695; cv=none; b=tRrmTfa2OWj/PqlsGm/jVepelKA3ckDrSYlBWYtHTizYoatNQnN+8/mTCoi6vGx+btXw860AuAbelcjLe56FCBVZYMs0cYZSx32hVjKwexqpmC2ulEtPSbj4nSO/2XvRgmbaTixBhx/IRvgy09YfYEFueEi0E8qhnOybEq6bYJU=
+	t=1718630732; cv=none; b=Mm9WqImm5O30yzSZ34z9qwEToZilhMgrHqPOG3GPoU+4pW2+a2+kRN5TWQ4VHjEaU7qIsLkmeEcwf7mJXvDiG3iHJA1rC2+rLIHRpA/pOcHVDh2hvXZQMsJdYv2v4Bq2EmB1LKdQj5RuyQxUXZIPKDkkZC2gQwW/6If57RZLu8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630695; c=relaxed/simple;
-	bh=3W7OKXAyhdPAO8/WbYF1gIWUxeS2ZzVMV22aj1YWSPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H21BhmQaBnN2tn70XxQ25Y8FmoKz3Nl13pZdLaIiLlYqh+7sJZvbmctSCFJU/Eu4uCrCjDhCJaR36hsMBoj7K1t6VDonk7p+xu2VSQesotoVXbQ+yjD8wZfQKmR3mxYkErLunT0vr0Da0Td1YaBEPxRqaLXTw0Z6+n43mGKj3Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MOOivvcY; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718630694; x=1750166694;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3W7OKXAyhdPAO8/WbYF1gIWUxeS2ZzVMV22aj1YWSPw=;
-  b=MOOivvcYQUY3oqHCTbuRtvglayhtkHYI9zkY8QrpdtB27syy4duzUME4
-   uwAajMiElokhpzyMeSjN7Q8sddWb3wT+EeNn3rVUjI6C64D9n9P4wy4Iu
-   rukunao0vCaaR2qKpSSLRHzvl/9iB4zHqvZ7yrgtupak4xmod0IvGuFYH
-   o/cab5XVEL1Y+gwhfszLk26jyuqph32z5T9dU/y1RyVk4c/5LwAxXGvMO
-   LcbIUk9QMppJ2brifwUynJTP66x0JHnRpq8oaAesWjG7qS2QXZ5WONs3y
-   /g26dZQR31FWPm4lUhi9SHCOnFXdr9pC3pW5ktzI6z17INoU6pXpVJDu4
-   Q==;
-X-CSE-ConnectionGUID: P7YNUh9zSLKHiNjMgYn1Qg==
-X-CSE-MsgGUID: Wi9yrzuZR46S18uVzNnsRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="18372708"
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="18372708"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 06:24:53 -0700
-X-CSE-ConnectionGUID: PPRLjr1UQsmF05dkhgQ1ZA==
-X-CSE-MsgGUID: eC9cEVyMRymH4ArabPUkbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="41072411"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 17 Jun 2024 06:24:49 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sJCLm-0004KB-34;
-	Mon, 17 Jun 2024 13:24:46 +0000
-Date: Mon, 17 Jun 2024 21:24:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH PATCH 1/9] x86/cpu/topology: Add x86_cpu_type to struct
- cpuinfo_topology
-Message-ID: <202406172104.aOlpCnvb-lkp@intel.com>
-References: <20240617-add-cpu-type-v1-1-b88998c01e76@linux.intel.com>
+	s=arc-20240116; t=1718630732; c=relaxed/simple;
+	bh=SIY+XGznWIjYWRnwlRHisYlKO0m1D5ZxOPn78mfuTHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rjbxwDsWO6uWTqoNxHGYZK7i1pJodiXI0dBLmH+sAPxlaBwniIHuXvly4jG+LW8ER5lJB0IN420UQV2LAkZX+B+Nd1tdFZV85rXKiTbgB3ckBRuEa22mePTgW+6ozbei4aUp0zYe9Mfq/ZYyuk06ua6mdxTkNgBP8DcH2i8mvfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQfC6os0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11CE6C4AF49;
+	Mon, 17 Jun 2024 13:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718630732;
+	bh=SIY+XGznWIjYWRnwlRHisYlKO0m1D5ZxOPn78mfuTHc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rQfC6os0L5dYcjdxy/qKtFJirf6SJl1qTsfzzyx/UMzZssFCRhk3hTlZo1H8XTZ2f
+	 ZWYX4VcjbHfePeObjr39zA4u39tWv7nHr1AkoWA+7Fhc8HeZN9IpVlhPIMXRREhUUX
+	 oGju9wZWy2RBRSYuSY+sAgo6Mvhc4jyQ9QFy7kQRa/TsslDqW4v7cKI5WLnkiP00bT
+	 UMkeyF2YhA+ExzLBlCcSgL2Pn5pMqM0uFglwgvvUJFPms+S8ioDDjNrX0WeNtfniHe
+	 gknAhK8MxMWYY1WXMgSLkessqm0/P7izR3uBmPImpCVftKiOeIX/yi3nYsK3ZGz4k+
+	 qNvT7tenqoVIA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Ayala Beker <ayala.beker@intel.com>,
+	Ilan Peer <ilan.peer@intel.com>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Sasha Levin <sashal@kernel.org>,
+	kvalo@kernel.org,
+	gregory.greenman@intel.com,
+	benjamin.berg@intel.com,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 17/29] wifi: iwlwifi: mvm: properly set 6 GHz channel direct probe option
+Date: Mon, 17 Jun 2024 09:24:21 -0400
+Message-ID: <20240617132456.2588952-17-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240617132456.2588952-1-sashal@kernel.org>
+References: <20240617132456.2588952-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617-add-cpu-type-v1-1-b88998c01e76@linux.intel.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.94
+Content-Transfer-Encoding: 8bit
 
-Hi Pawan,
+From: Ayala Beker <ayala.beker@intel.com>
 
-kernel test robot noticed the following build errors:
+[ Upstream commit 989830d1cf16bd149bf0690d889a9caef95fb5b1 ]
 
-[auto build test ERROR on 83a7eefedc9b56fe7bfeff13b6c7356688ffa670]
+Ensure that the 6 GHz channel is configured with a valid direct BSSID,
+avoiding any invalid or multicast BSSID addresses.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Pawan-Gupta/x86-cpu-topology-Add-x86_cpu_type-to-struct-cpuinfo_topology/20240617-172542
-base:   83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-patch link:    https://lore.kernel.org/r/20240617-add-cpu-type-v1-1-b88998c01e76%40linux.intel.com
-patch subject: [PATCH PATCH 1/9] x86/cpu/topology: Add x86_cpu_type to struct cpuinfo_topology
-config: i386-buildonly-randconfig-004-20240617 (https://download.01.org/0day-ci/archive/20240617/202406172104.aOlpCnvb-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240617/202406172104.aOlpCnvb-lkp@intel.com/reproduce)
+Signed-off-by: Ayala Beker <ayala.beker@intel.com>
+Reviewed-by: Ilan Peer <ilan.peer@intel.com>
+Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Link: https://msgid.link/20240513132416.91a631a0fe60.I2ea2616af9b8a2eaf959b156c69cf65a2f1204d4@changeid
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/scan.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406172104.aOlpCnvb-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> arch/x86/kernel/cpu/topology_common.c:145:21: error: use of undeclared identifier 'X86_CPU_TYPE_UNKNOWN'
-     145 |         c->topo.cpu_type = X86_CPU_TYPE_UNKNOWN;
-         |                            ^
->> arch/x86/kernel/cpu/topology_common.c:148:41: error: use of undeclared identifier 'X86_CPU_TYPE_INTEL_SHIFT'
-     148 |                 c->topo.cpu_type = cpuid_eax(0x1a) >> X86_CPU_TYPE_INTEL_SHIFT;
-         |                                                       ^
-   2 errors generated.
-
-
-vim +/X86_CPU_TYPE_UNKNOWN +145 arch/x86/kernel/cpu/topology_common.c
-
-   142	
-   143	static void topo_set_cpu_type(struct cpuinfo_x86 *c)
-   144	{
- > 145		c->topo.cpu_type = X86_CPU_TYPE_UNKNOWN;
-   146	
-   147		if (c->x86_vendor == X86_VENDOR_INTEL && cpuid_eax(0) >= 0x1a)
- > 148			c->topo.cpu_type = cpuid_eax(0x1a) >> X86_CPU_TYPE_INTEL_SHIFT;
-   149	}
-   150	
-
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/scan.c b/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
+index b20d64dbba1ad..686a55515cdec 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
+@@ -1707,7 +1707,10 @@ iwl_mvm_umac_scan_fill_6g_chan_list(struct iwl_mvm *mvm,
+ 				break;
+ 		}
+ 
+-		if (k == idex_b && idex_b < SCAN_BSSID_MAX_SIZE) {
++		if (k == idex_b && idex_b < SCAN_BSSID_MAX_SIZE &&
++		    !WARN_ONCE(!is_valid_ether_addr(scan_6ghz_params[j].bssid),
++			       "scan: invalid BSSID at index %u, index_b=%u\n",
++			       j, idex_b)) {
+ 			memcpy(&pp->bssid_array[idex_b++],
+ 			       scan_6ghz_params[j].bssid, ETH_ALEN);
+ 		}
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
