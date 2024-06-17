@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-217681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5972690B2E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:53:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81F2A90B2E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62FE28530A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FFEA1C21B94
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF20197A9B;
-	Mon, 17 Jun 2024 13:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEFC198E8E;
+	Mon, 17 Jun 2024 13:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORi7kl31"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="qjyMtkAk"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06651D953A;
-	Mon, 17 Jun 2024 13:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A021D953A;
+	Mon, 17 Jun 2024 13:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632417; cv=none; b=H6m9TESLytwOSQSenTnq0LkI/unDdOUiZxLUkCGQvq+TPTZ8NJuqXt9QNxoCDaRgdWgonboQL/LEjNBfQQRdi3yRGTPsPP9SVDH62XDBJXTm67VWrQ8NSJwpur4oC5yec+OwAvC15NimItG3ZCg3V2OpZUBRoHPawSqdyGt7NyE=
+	t=1718632443; cv=none; b=m58wcb92mOegPlE6AxX59J161vaOsgTs/9AzyP+MLTx+qON6So6DzVbzHLdl/FeBnODlP5YW162wVlWU/tVT8eHEvzvUeEIPFob3+NUhcP0+jQ46zUoSfnwYSllIV1KQCvglO7aW4Y4WPzjSHDDTno86mcBWg6IKzZ4vCHrB4zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632417; c=relaxed/simple;
-	bh=d8J0BnSUrqs2/z/I5CpCqWjmj9DR+K/K4waYXR+Gu20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tUdsBU3ygX/So9DVwVzhbT13YguF7ZujFOWDXeC2H11ioumpD/rHePB5irm8Fsg9eS3tVuQFPdApTf9Afh8M4KKqjD9c7GppOakoMGQxjqzg9A9f49oT/YwwCz+LHILFsF1pPYuaUp5MC3y1Csp7SlfeDjiIWSmxL1uIox9wqzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ORi7kl31; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A794C4AF50;
-	Mon, 17 Jun 2024 13:53:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718632416;
-	bh=d8J0BnSUrqs2/z/I5CpCqWjmj9DR+K/K4waYXR+Gu20=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ORi7kl31MXL+SUdQgt97Ww8UWLftfBFOv+eOxFrAqzwQREuch5fOG/fyzAPolYlwu
-	 HZfGPO6V/NofZEto7JRv/dPIDkzStaxBLqhPtpoEagwWmpstLydM70gJFoga17nESE
-	 /lyD/6jO5YVzYxbyzUlfgvv8wUmD1alKzq/1G6wpSawyIIUTEBGFOhQN0cKA0BB0bB
-	 hlb1SOBDvw/WnlxPJE7V5Cja/t1Ah7IK0b/uBVEtYZEixFQcCNr/inLLqoG2gAXmLA
-	 Ac/Pt0a4lnfHzpMNYq9BPdcf2xpJKRKFT4iBgn/2m5waksVIEwNMYfMehoCMK3l0GG
-	 CYJJVDIp5muyQ==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso7648319a12.3;
-        Mon, 17 Jun 2024 06:53:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXEJGsiw+zMDyyoM26PJ+ob3CNJZMy4+y9r06OD2RNJZ4HjRa7xt1q0kuu3sTXnOaDtZXfWBl4AX4hKal6e8qUswED9/+78Olj38RV9Lz40veN27ugnhHRIPQWH1Rk55gESzYkZ+dxQsQ==
-X-Gm-Message-State: AOJu0YwBOWOyzrEEXrBwkmFqaS/PplLwt9T7x5gfRE9nTGyRSm2Z7VwZ
-	h0OhTs2+AcMDY91hKJT7VciSt5yr2t05HohAmVxVjgl6Tf7yYWsBKySxMUmlt0QFD+Gs3YV8grJ
-	se9DkHDkQNM1UYOUHppUfhae3YbI=
-X-Google-Smtp-Source: AGHT+IE74abFQ3fwm6GbmmB4GzzZArDYRVlIxiLGvFqKC0RlI/d5t4xtIcHy4urMVzI/C63DZ6+XJcywUPp733q+v5A=
-X-Received: by 2002:a50:a454:0:b0:57c:5bdd:1c64 with SMTP id
- 4fb4d7f45d1cf-57cbd6a5a6amr5459568a12.41.1718632414895; Mon, 17 Jun 2024
- 06:53:34 -0700 (PDT)
+	s=arc-20240116; t=1718632443; c=relaxed/simple;
+	bh=OkXAeXiSMR9q2KgPDAvjGfQHai3NsT8ZxFVGcUPxbHs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I9HK3/nbUxl/rFjfvFsvdWVlt6MET0pfB6Qsc8snBdOCd7lwqx3zQM+auwy/l7bIrtP+tibvni4lE7Y+vCxzbLYCtmWgAucev2jYNYLYXpaxFSKfCUeUlMpE2jHbnx39risZtuLbJG6pSJahFFOtbm+yDTtc97kBO4QI8575UrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=qjyMtkAk; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H5aOHK023213;
+	Mon, 17 Jun 2024 08:53:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=Q9ihO4w628bMz136
+	f8/Vddts0+N5M5iKJ+D+B8in+1I=; b=qjyMtkAkuZEpFWv+s2lo5BBU7LjJrDBS
+	ZKCDuUIePqhmbCHI+MojCru3UxTgJFNUI7pcsKAbm17eZOshWtZmk+a0u3VyxDhO
+	6ydHByiRmV3reb/rq20JHKYRfyFZwifOiTSSrKFTmxRBaE89IxnfR8JGeKTDH4UG
+	kAgV2OTeG9OwjAzm2kAXsQHkpcDyXoaOOJZ+/7tK5Ki1JfGdf0Vsydp3u2+YHZYm
+	+/G7sYeNKKrABIR0IxHWsWujQS6573NcLJxl63ZrvEnHOXtiUsG992vdhbXChKmT
+	hGauT7JSvWi3dIcZuCKFef7IvbD9dodXcOKHLCM6R3ZUMC/n2ipc5A==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3ys8by1rbd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 08:53:43 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
+ 2024 14:53:40 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 17 Jun 2024 14:53:40 +0100
+Received: from EDIN6ZZ2FY3.ad.cirrus.com (EDIN6ZZ2FY3.ad.cirrus.com [198.61.65.31])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 735C5820248;
+	Mon, 17 Jun 2024 13:53:40 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        "Simon
+ Trimmer" <simont@opensource.cirrus.com>
+Subject: [PATCH] ASoC: cs35l56: Accept values greater than 0 as IRQ numbers
+Date: Mon, 17 Jun 2024 14:53:38 +0100
+Message-ID: <20240617135338.82006-1-simont@opensource.cirrus.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com> <20240616-b4-mips-ipi-improvements-v1-4-e332687f1692@flygoat.com>
-In-Reply-To: <20240616-b4-mips-ipi-improvements-v1-4-e332687f1692@flygoat.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 17 Jun 2024 21:53:23 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4LsuLYBefKZb5aHx_+fYyWjvO+Bm8h5=NFtSvk6E0Szw@mail.gmail.com>
-Message-ID: <CAAhV-H4LsuLYBefKZb5aHx_+fYyWjvO+Bm8h5=NFtSvk6E0Szw@mail.gmail.com>
-Subject: Re: [PATCH 04/10] MIPS: Move mips_smp_ipi_init call after prepare_cpus
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Serge Semin <fancer.lancer@gmail.com>, 
-	Paul Burton <paulburton@kernel.org>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: Rn7sdFrjrK0EIUNROXcVN37vn7ZbU_iw
+X-Proofpoint-GUID: Rn7sdFrjrK0EIUNROXcVN37vn7ZbU_iw
+X-Proofpoint-Spam-Reason: safe
 
-Hi, Jiaxun
+IRQ lookup functions such as those in ACPI can return error values when
+an IRQ is not defined. The i2c core driver converts the error codes to a
+value of 0 and the SPI bus driver passes them unaltered to client device
+drivers.
 
-On Mon, Jun 17, 2024 at 5:03=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygoat.co=
-m> wrote:
->
-> This will give platform code a genuine chance to setup
-> IPI IRQ in prepare_cpus.
->
-> This is the best place for platforms to setup IPI as smp_setup
-> is too early for IRQ subsystem.
-mips_smp_ipi_init() is an early_initcall() function, why do you say it
-is in smp_setup()?
+The cs35l56 driver should only accept positive non-zero values as IRQ
+numbers.
 
+Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
+Fixes: 8a731fd37f8b ("ASoC: cs35l56: Move utility functions to shared file")
+---
+ sound/soc/codecs/cs35l56-shared.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Huacai
->
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->  arch/mips/kernel/smp.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
-> index fe053fe52147..ddf96c28e2f0 100644
-> --- a/arch/mips/kernel/smp.c
-> +++ b/arch/mips/kernel/smp.c
-> @@ -375,7 +375,6 @@ static int __init mips_smp_ipi_init(void)
->
->         return 0;
->  }
-> -early_initcall(mips_smp_ipi_init);
->  #endif
->
->  /*
-> @@ -460,12 +459,22 @@ void __init smp_cpus_done(unsigned int max_cpus)
->  /* called from main before smp_init() */
->  void __init smp_prepare_cpus(unsigned int max_cpus)
->  {
-> +       int rc;
-> +
->         init_new_context(current, &init_mm);
->         current_thread_info()->cpu =3D 0;
->         mp_ops->prepare_cpus(max_cpus);
->         set_cpu_sibling_map(0);
->         set_cpu_core_map(0);
->         calculate_cpu_foreign_map();
-> +#ifdef CONFIG_GENERIC_IRQ_IPI
-> +       rc =3D mips_smp_ipi_init();
-> +       if (rc) {
-> +               pr_err("Failed to initialize IPI - disabling SMP");
-> +               init_cpu_present(cpumask_of(0));
-> +               return;
-> +       }
-> +#endif
->  #ifndef CONFIG_HOTPLUG_CPU
->         init_cpu_present(cpu_possible_mask);
->  #endif
->
-> --
-> 2.43.0
->
+diff --git a/sound/soc/codecs/cs35l56-shared.c b/sound/soc/codecs/cs35l56-shared.c
+index 27869e14e9c8..880228f89baf 100644
+--- a/sound/soc/codecs/cs35l56-shared.c
++++ b/sound/soc/codecs/cs35l56-shared.c
+@@ -397,7 +397,7 @@ int cs35l56_irq_request(struct cs35l56_base *cs35l56_base, int irq)
+ {
+ 	int ret;
+ 
+-	if (!irq)
++	if (irq < 1)
+ 		return 0;
+ 
+ 	ret = devm_request_threaded_irq(cs35l56_base->dev, irq, NULL, cs35l56_irq,
+-- 
+2.34.1
+
 
