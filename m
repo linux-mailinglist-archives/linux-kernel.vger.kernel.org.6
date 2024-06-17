@@ -1,132 +1,102 @@
-Return-Path: <linux-kernel+bounces-216844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEBA90A748
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:34:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B96B490A750
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B27C6282E8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:34:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC5511C21AE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE6318FDC1;
-	Mon, 17 Jun 2024 07:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6520E19067E;
+	Mon, 17 Jun 2024 07:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="EdcpG68a"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TEXvGHzK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B36818FDB7;
-	Mon, 17 Jun 2024 07:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A894190066
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718609597; cv=none; b=S6HLex/bMsuD+r+ZhAnY+I+QnIjHAdckTneNO7MhMcG0nKTIM7SXdiQm40KzjVitmFhAxULg0QVPrCOc4jH+EJ0y3XOFmh1ZzFKlkeCNqykfkpZy5nnJfJ2LNWUvuRx4WgfuSxnJ1Pn2EHeoeUNQ+9Xbc/o/COMnW68BtJYtDwY=
+	t=1718609618; cv=none; b=Fe4UaxtcOSBuufg77cspMLiPKN4UDxf26cjUDT1qWgVG10iOMVmxSFg8skkedPCYggSVZ+4pyBy+WHn2kL2ocBRzV/FdrLRe4Z6wjgsjRT8VRoz8fCiXGTpCLZKzLLcC1Vdvsb9ZvRaFyZYSM6hCsXkuEyeupoHUKFejH1rZYFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718609597; c=relaxed/simple;
-	bh=pKbpEC1ML8/UOtd8JAYcFpqFhJAXPEPxVelSqBYZ5LM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Bo1z1EFSWxs6yW1T+2IHhCQWMMebKFIwZgW73qKn+hvvBDMT2RAG0u5MLVFgwyNx2lWm8eYIPLBWxbrglBSj+mKUsWGlzuCXawXq6qIifHh3FXr0IpaCjyJ/i5QpsliGTUpRjND8eulnBGjPlvUuuOWaJ2Tea6VjfZvHpnUYl4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=EdcpG68a; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from [192.168.68.112] (ppp118-210-79-194.adl-adc-lon-bras32.tpg.internode.on.net [118.210.79.194])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id ED8492014A;
-	Mon, 17 Jun 2024 15:33:11 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1718609593;
-	bh=jkSFmq+QIQxRLTqnlNiAfSbUBGRyyeuuOZTApiqXJqc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=EdcpG68asKfnCXSZa0TL+Pz/gdPTcrOZB/FtOK/Gn90lLys2gXSwb5movxxiDGJWK
-	 5PsoNoMQTYyPQlIWwrJH6OKy/Qscz5huoNcSp/EQgHKio1fyUwPTibZuswPQWfQoB2
-	 p2LtdxCikIBvRO6DGbZLlarl+XaRVgAXglbfQbuleQ8Z5weadT63R41slT1vomX6R6
-	 0Ooknl61y7WVDnhVkETZ7FuUY++DCxrNPNj81eo4n4IcSpcV9S4/krnq49ia/P4C0v
-	 KF8cPqTOZFzU6BZmr0sCrVGX2IYxknsDuK6xrbxuHxIDDXh9rTdde6vQ5KljDEqfet
-	 CEPxpgWlt7Z4g==
-Message-ID: <946f44526e3016f595bfe463cf0a7f5b4eaa084a.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 1/1] pinctrl: aspeed-g6: Add NCSI pin group config
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Potin Lai <potin.lai.pt@gmail.com>, Linus Walleij
- <linus.walleij@linaro.org>,  Joel Stanley <joel@jms.id.au>
-Cc: linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Patrick Williams <patrick@stwcx.xyz>, Cosmo
- Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>
-Date: Mon, 17 Jun 2024 17:03:11 +0930
-In-Reply-To: <20240613080725.2531580-1-potin.lai.pt@gmail.com>
-References: <20240613080725.2531580-1-potin.lai.pt@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1718609618; c=relaxed/simple;
+	bh=6Be1VBuJBuQx5WhlORRWbQbz/9PnkOafd1jCoOL3EyY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZWCLZZDW2BaHKPUQqEGLFB+l7zYPHvrvv4NLvDr659A68wbU+BsyJBbGO1rDoLeKvThbD7ymdkHQx/RusSvtkXRyZGZwHGjVYtjQgFSsh305h5Z4fMsQh9qpIj3SEi9xoxlMgjSayF2B4SwiUotgPn2DrNgf1n5Bc/4jTcYDJRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TEXvGHzK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718609616;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VGyu5AtFOjrYW0RzXt8zeng+1SKzDJmAJ+4VL1VE6fw=;
+	b=TEXvGHzKOqDbDPLXV9b65cSfHAGYJk065y7BRaz2SyuO39UWukEsnsVRTWPD9PgVfgYnPj
+	3SdtxBi1GP4wIccn/ZvEjq963/htLdjNvGdD1+zjhek13IxP29TQ4YMZGTNj3sljynzD/H
+	qe6RBqy+RhZ+ZBkfOlVlTwiXG6PMHv0=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-586-uM0S3oo2On6hmLCXvq3YQA-1; Mon,
+ 17 Jun 2024 03:33:30 -0400
+X-MC-Unique: uM0S3oo2On6hmLCXvq3YQA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D64B819560B3;
+	Mon, 17 Jun 2024 07:33:28 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.39.192.120])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 068F31956087;
+	Mon, 17 Jun 2024 07:33:24 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: linux-doc@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Adrian Bunk <bunk@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org
+Subject: [PATCH] Documentation: Remove the unused "tp720" from kernel-parameters.txt
+Date: Mon, 17 Jun 2024 09:33:22 +0200
+Message-ID: <20240617073322.40679-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, 2024-06-13 at 16:07 +0800, Potin Lai wrote:
-> In the NCSI pin table, the reference clock output pin (RMIIXRCLKO) is not
-> needed on the management controller side.
->=20
-> To optimize pin usage, add new NCSI pin groupis that excludes RMIIXRCLKO,
-> reducing the number of required pins.
+The "tp720" switch once belonged to the ps2esdi driver, but this
+driver has been removed a long time ago in 2008 in the commit
+2af3e6017e53 ("The ps2esdi driver was marked as BROKEN more than two years ago due to being no longer working for some time.")
+already, so let's remove it from the documentation now, too.
 
-Hmm, I'm not convinced this is specific to NCSI (and it's an
-unfortunate mistake on my part), but we do need to call the groups
-something different than RMII[34]. Did you have any other suggestions?
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 2 --
+ 1 file changed, 2 deletions(-)
 
->=20
-> Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
-> ---
->  drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl=
-/aspeed/pinctrl-aspeed-g6.c
-> index 7938741136a2c..31e4e0b342a00 100644
-> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-> @@ -249,7 +249,9 @@ PIN_DECL_2(E26, GPIOD3, RGMII3RXD3, RMII3RXER);
-> =20
->  FUNC_GROUP_DECL(RGMII3, H24, J22, H22, H23, G22, F22, G23, G24, F23, F26=
-, F25,
->  		E26);
-> -FUNC_GROUP_DECL(RMII3, H24, J22, H22, H23, G23, F23, F26, F25, E26);
-> +GROUP_DECL(RMII3, H24, J22, H22, H23, G23, F23, F26, F25, E26);
-> +GROUP_DECL(NCSI3, J22, H22, H23, G23, F23, F26, F25, E26);
-> +FUNC_DECL_2(RMII3, RMII3, NCSI3);
-> =20
->  #define F24 28
->  SIG_EXPR_LIST_DECL_SESG(F24, NCTS3, NCTS3, SIG_DESC_SET(SCU410, 28));
-> @@ -355,7 +357,9 @@ FUNC_GROUP_DECL(NRTS4, B24);
-> =20
->  FUNC_GROUP_DECL(RGMII4, F24, E23, E24, E25, D26, D24, C25, C26, C24, B26=
-, B25,
->  		B24);
-> -FUNC_GROUP_DECL(RMII4, F24, E23, E24, E25, C25, C24, B26, B25, B24);
-> +GROUP_DECL(RMII4, F24, E23, E24, E25, C25, C24, B26, B25, B24);
-> +GROUP_DECL(NCSI4, E23, E24, E25, C25, C24, B26, B25, B24);
-> +FUNC_DECL_2(RMII4, RMII4, NCSI4);
-> =20
->  #define D22 40
->  SIG_EXPR_LIST_DECL_SESG(D22, SD1CLK, SD1, SIG_DESC_SET(SCU414, 8));
-> @@ -1976,6 +1980,8 @@ static const struct aspeed_pin_group aspeed_g6_grou=
-ps[] =3D {
->  	ASPEED_PINCTRL_GROUP(MDIO2),
->  	ASPEED_PINCTRL_GROUP(MDIO3),
->  	ASPEED_PINCTRL_GROUP(MDIO4),
-> +	ASPEED_PINCTRL_GROUP(NCSI3),
-> +	ASPEED_PINCTRL_GROUP(NCSI4),
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b75852f1a789..89b784ec5ab1 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6619,8 +6619,6 @@
+ 	torture.verbose_sleep_duration= [KNL]
+ 			Duration of each verbose-printk() sleep in jiffies.
+ 
+-	tp720=		[HW,PS2]
+-
+ 	tpm_suspend_pcr=[HW,TPM]
+ 			Format: integer pcr id
+ 			Specify that at suspend time, the tpm driver
+-- 
+2.45.2
 
-You will need to update the binding document as well. I've poked Linus
-W about a series I sent that re-formats the binding function and group
-lists - it would be nice if you rework the patch on top of that:
-
-https://lore.kernel.org/lkml/5bf8e1dddd2b958a102e7b1b9f9c080a34f9deff.camel=
-@codeconstruct.com.au/
-
-Cheers,
-
-Andrew
 
