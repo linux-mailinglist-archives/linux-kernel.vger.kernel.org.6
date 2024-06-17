@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-217868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EF490B55F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:55:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF1B90B56E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CB5C1C2142E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:55:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AAA21F22212
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1305513B789;
-	Mon, 17 Jun 2024 15:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB1713C91C;
+	Mon, 17 Jun 2024 15:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXPal40q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="fyewrraM"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EFB13AD0F;
-	Mon, 17 Jun 2024 15:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297E913C909;
+	Mon, 17 Jun 2024 15:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718638855; cv=none; b=Zqo2hMbfQ5682K52MhU1od0MD6nuEVU5M28CEMHsKkLzLJHG4YSXhEmKvUl3WisHeNjyGMY2X2o6N67yEBv5R1riwuMMrbl5nUiLoYOEofoSRjTUcbStNpheDh3prqmSR47dMggcSFoirQMuZJxxw4xZnDJRmA23pv3E1+XXMu8=
+	t=1718639004; cv=none; b=kwTSqHnb9xZAmPEuaQHVleyFmBDa1W80yn9+EEzHF5lYaxcdNprqr1sK8Bq9iFSCupo9VsZkmQnv8DqlhnTB2zur1FVnJy3jLS7fW8iuPxLapycggyxKPXmVaWqjSZI3XNhQbvgQug8m63DUNExHv8+12XuVQHQZwg2DpjZ9s1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718638855; c=relaxed/simple;
-	bh=42hDqBHzInQELIWlWJ6Z/FBQrQe2GH5qVRKdgXovl2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tm3YI8IiotnKsvdHjr0pu4GRl52E1tU4KgWOzmCyR7NlbTD5Qk2X2Iw5xIhRwEIqI2FZoOrpBaDQ9QNwl4EC3PVY/NAK0hfH6PwS4HNqqNavU4HmXVIjoTHbeztUGXfIyCQa3HiUrL0CgVzrNYYWxbnBgPhkaMcjCQrTMN0U/d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXPal40q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B63FBC2BD10;
-	Mon, 17 Jun 2024 15:40:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718638854;
-	bh=42hDqBHzInQELIWlWJ6Z/FBQrQe2GH5qVRKdgXovl2k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BXPal40qQwXg9yBesIIsPIrSQU6dPocxlDznXC5WIw+h/lK+NrfL/Y+5UEDM6sf4z
-	 ne0VGv/pBIe8ridyIR95LpL8M8owUAc2lWmfBTi1BrkwNFRSb8ZMbzmf9cKTvOXe+h
-	 hwJzj8ASQlc7i64FQwbsp9VqoQ6lDzC/dINSIz5YyD/+Lf1HEWsgYycmT7zDGymzwV
-	 xV0GHRKUNoscXTlOEfFA8dH4db8ETiJFWpK7cl0Z8ijIUm4a/RidmdcKSbv75xQp+B
-	 FMWstlfXlxvBqpQflidLqtuIutF3KQbqhiYV+ZyrEuivPiMzcQu2wF9bKrW9Ka/jn+
-	 AaC4WTDm+0xOQ==
-Date: Mon, 17 Jun 2024 16:40:48 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Yixun Lan <dlan@gentoo.org>, Inochi Amaoto <inochiama@outlook.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Chao Wei <chao.wei@sophgo.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/6] riscv: dts: sophgo: Put sdhci compatible in dt of
- specific SoC
-Message-ID: <20240617-exuberant-protegee-f7d414f0976d@spud>
-References: <20240612-sg2002-v2-0-19a585af6846@bootlin.com>
- <20240612-sg2002-v2-1-19a585af6846@bootlin.com>
- <IA1PR20MB49534C9E29E86B478205E4B3BBC02@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240616235829.GA4000183@ofsar>
- <c75601a1-1389-400e-90b9-99c1e775a866@bootlin.com>
- <ZnA3O14HOiV1SBPV@xhacker>
+	s=arc-20240116; t=1718639004; c=relaxed/simple;
+	bh=5EBDDBE1vnWBgN770hldZP0JQKfpjmzXK7XyfzJtl+c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CSMNyI+qnP7DjnusGG/KpGNMJdWKPPPCq7zVK9vsMI8YDi6h5gLsL2D/006Jdfb6aIqrwc1PognlXOer1E67KL4fQm250LARrnQhN8+ruB9AQZraYkilDa9JLkjifAZkirUuqSDVqoHsSs/d1slWMEMgPqaH6MLDhjP+QC0cExE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=fyewrraM; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HFYCxq023861;
+	Mon, 17 Jun 2024 10:43:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=X91mzxfXMCn2bJmd
+	FzbP55B/9zkijFCsomFlIi3vsw4=; b=fyewrraMYY0/Dq9nZjlT2y7t1Y1pe0Xr
+	oCowargM2HLrfEGT3BZ3NA0YQ6vQRsCLJdSIRXdRyq9bA/s9mnVhKsgm+Y9vtmB9
+	bFl0FZSYLh+n3Dpew5u5wiVE+eYv1fJC4cxql6PmjjHexml6MlWALH66gWcXWia8
+	sqalZkMJIXG+hN90KicIfhktQ3Me15rxLwz08ZJdKiC0OfM8HLl22+mQ/GCe4T5H
+	zbgllvYRaXOVqtE06iN+NddkYajV+0inAojsP/HtKD/WnccXQtB3vzk66FaSmbis
+	F/a5ErFe19MW5kOS9/RTa3+kKzwBUKrjpVXKuPMocEDtq5z+JpqT5Q==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3ys7cjt0f9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 10:43:12 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
+ 2024 16:42:55 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 17 Jun 2024 16:42:55 +0100
+Received: from EDIN6ZZ2FY3.ad.cirrus.com (EDIN6ZZ2FY3.ad.cirrus.com [198.61.65.31])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id CCF43820248;
+	Mon, 17 Jun 2024 15:42:54 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <soyer@irl.hu>, <shenghao-ding@ti.com>, <kevin-lu@ti.com>,
+        <baojun.xu@ti.com>, Simon Trimmer <simont@opensource.cirrus.com>
+Subject: [PATCH v3 0/4] ALSA: hda: Improvements to hda_component
+Date: Mon, 17 Jun 2024 16:41:01 +0100
+Message-ID: <20240617154105.108635-1-simont@opensource.cirrus.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6tC78+3mmqFBDz9z"
-Content-Disposition: inline
-In-Reply-To: <ZnA3O14HOiV1SBPV@xhacker>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: gySmoCg_5vijXd0aN3iIlPqZ_KDUeChw
+X-Proofpoint-ORIG-GUID: gySmoCg_5vijXd0aN3iIlPqZ_KDUeChw
+X-Proofpoint-Spam-Reason: safe
 
+This series of patches moves duplicated members from the
+instanced component structures into a new parent structure and
+introduces locking so that consumers of the interface do not use
+stale data.
 
---6tC78+3mmqFBDz9z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes in v3:
+ - These Fixes separated from this series to make them easier
+   to manage:
+   https://lore.kernel.org/all/20240613133713.75550-1-simont@opensource.cirrus.com/
 
-On Mon, Jun 17, 2024 at 09:16:43PM +0800, Jisheng Zhang wrote:
-> On Mon, Jun 17, 2024 at 11:16:32AM +0200, Thomas Bonnefille wrote:
-> > On 6/17/24 1:58 AM, Yixun Lan wrote:
-> > > On 18:47 Wed 12 Jun     , Inochi Amaoto wrote:
+Simon Trimmer (4):
+  ALSA: hda: hda_component: Introduce component parent structure
+  ALSA: hda: hda_component: Change codecs to use component parent structure
+  ALSA: hda: hda_component: Move codec field into the parent
+  ALSA: hda: hda_component: Protect shared data with a mutex
 
-> > > > Is this change necessary? IIRC, the sdhci is the same across
-> > > > the whole series.
+ sound/pci/hda/cs35l41_hda.c     | 43 +++++++++++--------
+ sound/pci/hda/cs35l56_hda.c     | 25 ++++++-----
+ sound/pci/hda/hda_component.c   | 75 ++++++++++++++++++++-------------
+ sound/pci/hda/hda_component.h   | 48 ++++++++++++++-------
+ sound/pci/hda/patch_realtek.c   | 17 ++++----
+ sound/pci/hda/tas2781_hda_i2c.c | 33 ++++++++-------
+ 6 files changed, 141 insertions(+), 100 deletions(-)
 
-> sorry for being late, I was busy in the past 2.5 month. Per my
-> understanding, the sdhci in cv1800b is the same as the one in
-> sg200x. Maybe I'm wrong, but this was my impression when I cooked
-> the sdhci driver patch for these SoCs.
->=20
-> > > I tend to agree with Inochi here, if it's same across all SoC, then n=
-o bother to
-> > > split, it will cause more trouble to maintain..
-> > >=20
-> >=20
-> > To be honest, I agree with this to, but as a specific compatible for the
-> > SG2002 was created in commit 849e81817b9b, I thought that the best prac=
-tice
-> > was to use it.
->=20
-> I'd like to take this chance to query DT maintainers: FWICT, in the past
-> even if the PLIC is the same between SoCs, adding a new compatible for
-> them seems a must. So when time goes on, the compatbile list would be
-> longer and longer, is it really necessary? Can we just use the existing
-> compatible string?
-> DT maintainers may answered the query in the past, if so, sorry for
-> querying again.
-
-For new integrations of an IP, yes, new specific compatibles please. New
-integrations may have different bugs etc, even if the IP itself is the
-same. If there's different SoCs that are the same die, but with elements
-fused off, then sure, use the same compatible.
-
-I expect the list of compatibles in the binding to grow rather large, but
-that is fine. No one SoC is going to do anything other than something like
-compatible =3D "renesas,$soc-plic", "andestech,corecomplex-plic", "riscv,pl=
-ic";
-which I think is perfectly fine.
-
-
---6tC78+3mmqFBDz9z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBZAAAKCRB4tDGHoIJi
-0l7HAP47j2HyEc+VKIMCrgYDBYv2vBXJXmUQgX5EoSTWn2eiggD9HUVWmEdowlqP
-9Cn3abEuvtkfKb4yr9voKsKLFHWBsQM=
-=hwsr
------END PGP SIGNATURE-----
-
---6tC78+3mmqFBDz9z--
+-- 
+2.34.1
 
