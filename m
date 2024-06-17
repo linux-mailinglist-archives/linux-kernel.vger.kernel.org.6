@@ -1,184 +1,116 @@
-Return-Path: <linux-kernel+bounces-217253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA7790AD6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C8C90AD72
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 443951F238D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:56:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F04E1F23AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C394194C70;
-	Mon, 17 Jun 2024 11:55:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3793194C63
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D405273450;
+	Mon, 17 Jun 2024 11:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNlghp6D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F5A194C7D;
+	Mon, 17 Jun 2024 11:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718625352; cv=none; b=m+ReUsL8yixbSV86jOYaFS/cVPnk1YxJRy4aZD4R35Ib3CjSUNAOhi2qAcc3jJXpHhQtO+Ee0fXZBYexXGtMcpvCcyB44nAUraSLtmMfm4Mdcg0v5ox7eDu6WS/EiuLlEIPfFdvEIid5BNbWxXtBl+HoIhrJ2lTzwLdvFTQG1Ac=
+	t=1718625362; cv=none; b=h6vrYSqdHGFushivJYh0pnx8wE2shKYeXNrvUrbyUWhs8KkW8lbfonSsE1dqZ5QCkxS/3vK1ZBsTAce5TF0v+etwuR9y6zn1uCXPBsIM6Fxz9c5uDE5kEJSv+471oNShjsytVF5htk+O31hWMnY7/i1fYXrlA2CEk4pqwyT5EgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718625352; c=relaxed/simple;
-	bh=hzbdzCNgOajYMka/w3WGxrit2ajekIZLVxfqwUc2JGI=;
+	s=arc-20240116; t=1718625362; c=relaxed/simple;
+	bh=zcF/2nXoBUoTs0IfILCFfijm4oSftAfNtCrvpe11/JU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAtvOqXPzbhHKTaqbIBMPxqu1FPnBrdvjuJE0LFOJ0IJYikvNhfJkkUbany6upR6hJHlDqcXB/YBSdveUWGD8lBUwpydq1wfSn7XUQ23lLm+Fw+yUcGQvJtDQx8+kv2CC9rYavo3WdkJ0nISulOCTeVgkDAy75KFXwTsJe6BpMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C6629FEC;
-	Mon, 17 Jun 2024 04:56:13 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA4813F64C;
-	Mon, 17 Jun 2024 04:55:45 -0700 (PDT)
-Date: Mon, 17 Jun 2024 12:55:38 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	James Morse <james.morse@arm.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	Peter Newman <peternewman@google.com>, dfustini@baylibre.com,
-	amitsinght@marvell.com, David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>
-Subject: Re: [PATCH] x86/resctrl: Don't try to free nonexistent RMIDs
-Message-ID: <ZnAkOhFWzDqhlSyt@e133380.arm.com>
-References: <20240614160843.11006-1-Dave.Martin@arm.com>
- <1e3bba2e-5cf6-4a77-b92d-5c7ab1661d17@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aGic4oUnsrT9kbmVtcj7sB6OM/ANb3IpITLyvJmEUBeRLRR+f64tx/3cmRglNjktfkVyTUMfxqGNbdKbYPxo8LIxD/y00JGuFKcML//xQsvaDshEMUnxiXYUQbQD8WAw0rnatQ0QIJeLm+a/l5PQmUwD0+dvp8o8/FkbcLWC1G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNlghp6D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D453FC4AF1D;
+	Mon, 17 Jun 2024 11:55:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718625361;
+	bh=zcF/2nXoBUoTs0IfILCFfijm4oSftAfNtCrvpe11/JU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MNlghp6DagZTuTPTqt7feyE/Pjb+tLZZgu0Kr3PsMIWSKE0VWP1UYsimkCgtLoE/C
+	 wslQ3UHIOFq9Rsp8QOLEB3fGaD/EiPENVDmb4PCMG2frVOK6RHfxkXYGKig171GY57
+	 jsu/Mw6n/v18YMASJ6qhRyFZNIYHqSDXHzI2zJfjESwb+4kGYW1RJUSymHK0DEZPtA
+	 Q2C27waazGeMCrQy29psngYn2EKl/GCHgE/Tp8BrwNR9QRPRidZXT4ptJrCTRo3LFv
+	 Puz0e6/XdVV3fQhv1ZsxgCmVrezG7nBcKVi2nI4oCZeBCzxwhef5lRUSO53mJZDvBU
+	 px7qdOWQ0JHZg==
+Date: Mon, 17 Jun 2024 12:55:52 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
+	quic_pkumpatl@quicinc.com, Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH v6 3/7] ASoC: codecs: wcd937x: add wcd937x codec driver
+Message-ID: <f741630e-f9e8-45e1-b3e2-4866f0baeac2@sirena.org.uk>
+References: <20240611074557.604250-1-quic_mohs@quicinc.com>
+ <20240611074557.604250-4-quic_mohs@quicinc.com>
+ <2b92c0f9-2595-4b73-8015-1abb825a61a1@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IKXHfzXLDDZvI4f7"
 Content-Disposition: inline
-In-Reply-To: <1e3bba2e-5cf6-4a77-b92d-5c7ab1661d17@intel.com>
+In-Reply-To: <2b92c0f9-2595-4b73-8015-1abb825a61a1@wanadoo.fr>
+X-Cookie: Life is the urge to ecstasy.
 
-Hi Reinette,
 
-On Fri, Jun 14, 2024 at 03:47:58PM -0700, Reinette Chatre wrote:
-> Hi Dave,
-> 
-> On 6/14/24 9:08 AM, Dave Martin wrote:
-> > Commit 6791e0ea3071 ("x86/resctrl: Access per-rmid structures by
-> > index") adds logic to map individual monitoring groups into a
-> > global index space used for tracking allocated RMIDs.
-> > 
-> > That patch keept the logic to ignore requests to free the default
-> 
-> keept -> kept
-> 
-> nitpick: I actually do not know if "that patch" gets same hate as
-> "this patch" so to avoid any potential feedback about this I'd like
-> to suggest that this is rewritten without this term. Perhaps
-> something like: "Requests to free the default RMID in free_rmid()
-> are ignored, and this works fine on x86."
-> 
-> > RMID in free_rmid(), and this works fine on x86.
-> > 
+--IKXHfzXLDDZvI4f7
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-How about recasting the first paragraph into the past tense (since it
-relates a past commit), and rewording as "Requests to free the default
-RMID continued to be ignored in free_rmid(), and this works fine on
-x86."
+On Sun, Jun 16, 2024 at 04:54:58PM +0200, Christophe JAILLET wrote:
+> Le 11/06/2024 =E0 09:45, Mohammad Rafi Shaik a =E9crit=A0:
 
-(I agree that "this patch" would have been ambiguous.  "That patch" was
-an attempt to be clearer, but felt a bit clumsy.  Naming the commit
-again felt worse, though would have been clearer.  I've noticed that
-people who do not have English as their first language tend to use
-"this" and "that" a little differently from native English speakers, so
-there is probably more scope for confusion here that I like to
-assume...)
+> > +static void wcd937x_soc_codec_remove(struct snd_soc_component *compone=
+nt)
+> > +{
+> > +	struct wcd937x_priv *wcd937x =3D snd_soc_component_get_drvdata(compon=
+ent);
+> > +
+> > +	wcd937x_mbhc_deinit(component);
+> > +	free_irq(wcd937x->aux_pdm_wd_int, wcd937x);
+> > +	free_irq(wcd937x->hphl_pdm_wd_int, wcd937x);
+> > +	free_irq(wcd937x->hphr_pdm_wd_int, wcd937x);
 
-> > With arm64 MPAM, there is a latent bug here: on platforms with no
-> > monitors exposed through resctrl, each control group still gets a
-> > different monitoring group ID as seen by the hardware, since the
-> > CLOSID always forms part of the monitoring group ID.  This means
-> > that when removing a control group, the code may try to free this
-> > group's default monitoring group RMID for real.  If there are no
-> > monitors however, the RMID tracking table rmid_ptrs[] would be a
-> > waste of memory and is never allocated, leading to a splat when a
-> > free_rmid() tries to dereference the table.
-> > 
-> > One option would be to treat RMID 0 as special for every CLOSID,
-> > but this would be ugly since we still want to do bookkeeping for
-> > these monitoring group IDs when there are monitors present in the
-> > hardware.
-> > 
-> > Instead, add a gating check of resctrl_arch_mon_capable() in
-> > free_rmid(), and just do nothing if the hardware doesn't have
-> > monitors.
-> > 
-> > This fix mirrors the gating checks already present in
-> > mkdir_rdt_prepare_rmid_alloc() and elsewhere.
-> > 
-> > No functional change on x86.
-> > 
-> > Fixes: 6791e0ea3071 ("x86/resctrl: Access per-rmid structures by index")
-> > Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-> > 
-> > ---
-> > 
-> > Based on v6.10-rc3.
-> > 
-> > Tested on x86 (But so far for the monitors-present case.
-> 
-> Tested by booting with "rdt=!cmt,!mbmtotal,!mbmlocal".
+> These irq have been requested wth devm_request_threaded_irq(), so either
+> this free_irq should be removed, or devm_free_irq() should be used if the
+> order is important.
 
-Thanks (I take it that's your test, not a request to be more specific
-about mine?)
+Yes, this should be fixed.
 
-As it happens I tested with rdt=cmt,mbmtotal,mbmlocal,l3cat,l3cdp
-(though I made no effort to exercise these features other than running
-the selftests).  I can note this in the commit if you prefer.
+--IKXHfzXLDDZvI4f7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> > Testing on Atom would be appreciated.)
-> > 
-> > Tested on arm64 for the no-monitors case.
-> > ---
-> >   arch/x86/kernel/cpu/resctrl/monitor.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-> > index 2345e6836593..366f496ca3ce 100644
-> > --- a/arch/x86/kernel/cpu/resctrl/monitor.c
-> > +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-> > @@ -519,7 +519,8 @@ void free_rmid(u32 closid, u32 rmid)
-> >   	 * allows architectures that ignore the closid parameter to avoid an
-> >   	 * unnecessary check.
-> >   	 */
-> > -	if (idx == resctrl_arch_rmid_idx_encode(RESCTRL_RESERVED_CLOSID,
-> > +	if (!resctrl_arch_mon_capable() ||
-> > +	    idx == resctrl_arch_rmid_idx_encode(RESCTRL_RESERVED_CLOSID,
-> >   						RESCTRL_RESERVED_RMID))
-> >   		return;
-> > 
-> 
-> Thank you for catching this. This reveals how subtle resctrl is by
-> calling free_rmid() in paths for convenience and then relying on an
-> uninitialized variable for correct behavior.
-> 
-> This replaces this subtle assumption with an actual check.
-> 
-> With changelog comments addressed:
-> | Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-> 
-> Reinette
+-----BEGIN PGP SIGNATURE-----
 
-Thanks for that.  I'll wait for your reply before respinning this.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwJEcACgkQJNaLcl1U
+h9BiSgf/a6KPiaGF02vTC6372jxwFNBIm3cNPKZNeyNpRRu/hf1ru8zAJllwGy3w
+jmCbCxYcnIzP5H5Hs/F7DLxQ9zaUbTRSp1irscvX4KGvbR6Jm17p7lrLp7tWz2LF
+sZT5ha4eSzyRnB/1h5a8jtq8TxhSCSfzfKxXJiZPpr8q44lEHrIjurttAJ5jurph
+ucJZ9kaS3oER2djdLu2IizER1e9LW2zCB+T4TwbYkPxfVuAE9EMpxmtUEegkEP1w
+F8EtFjowt9U7IL8whvvAmbUW0hzJRDnKxAyLDsC1xWE9V2fsKGpcGEKig5e0m8kB
+77V/5PeoWOVfqxadcYa00d+xcoFIyQ==
+=kada
+-----END PGP SIGNATURE-----
 
-Cheers
----Dave
+--IKXHfzXLDDZvI4f7--
 
