@@ -1,264 +1,260 @@
-Return-Path: <linux-kernel+bounces-218275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2C290BC03
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:21:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C080490BC0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3D9282A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:21:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 336F7B25FB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D68199220;
-	Mon, 17 Jun 2024 20:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEB4199386;
+	Mon, 17 Jun 2024 20:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATluY9by"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ItABGs4l"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD7C198823;
-	Mon, 17 Jun 2024 20:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBC219DF60;
+	Mon, 17 Jun 2024 20:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718655495; cv=none; b=aufdTaGCQdOq79a/MU7RLTnsgBfzjmIGdukk5KWkuJoXBKAX+5mYmaSclmlgXUU3t9cgrHu75Uf2ekHP3n5DyMrjqMNVe/28LusufPLnzRQglsOnBT/QGiMSCC8JpzZfrq7pOM9wzPALGnj6DQR6lfOj2XUX4Tk075m8ZN/OX/Q=
+	t=1718655501; cv=none; b=EFWNHF/cFIru4oYrNPNOOWZ8/IVpZwGnQBvxnzaZxBVsCFsw2UTqm7yBhdGkALQzNNYtSeop0ox/wCebbvkSgPpyR1ZXqSSV5XNc51c3mXukG26RTrK+VhRF7k5hgrwHD8hv/ufqoxncl2mIp03hxwsiui815STzZYL/3PdXdSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718655495; c=relaxed/simple;
-	bh=OtVJdGEulRR6iKBFNWOxb7iykvDXqHHzSJe5xWSLj/U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JfR/wEjeUJQ5CZL409nqNc3qqHo8wL7VyCt7KVOUDTozXl2X+xbATsRVbDGO/HKJKjyAsIYuEc1dmpZbsdfUnXtTt//SKFe5skennJHnAsEEimuSAoMc1VGvPAIUhloaKoPKgEqWRYOA8D5DpsVOk827pnBGilVvmQypT4qx5wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATluY9by; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so1017385a12.1;
-        Mon, 17 Jun 2024 13:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718655491; x=1719260291; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ihwEhBftKt1w8XQkg13RWLFkeL3798aqGLkbQ6rlJCc=;
-        b=ATluY9bykrMqBoRTzdWM9PliWnhU0PBoa0qt/RtPS9XZbBOWjGJ+LAmAm71nNVwUKx
-         9+kkb9ex4lErTvEe/4FLcx3vnLqlwT8BWPU3DNI2DifsnzC7r6UIr05fTdmQoFoxOIcu
-         Gf+P84Qb+KjX5SRgz4dHP1pKdGSO2RE8O+7TkgkCZgO32BKaMRb80goYWi/hRl7P9Jcu
-         Xi2/o5RuNlkS7noSoc4cP9yye1DH2O7LF2RGu+7kjHdoqJh1qH5qVTdl64/k690kayEL
-         79rhiES+vGjceQK43MxWXE61jEYCPIAflQ4qVVkFbiqxRDOPO2jn1UaCFVFAbsNA2J6l
-         tVRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718655491; x=1719260291;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ihwEhBftKt1w8XQkg13RWLFkeL3798aqGLkbQ6rlJCc=;
-        b=tj0qRRmVSKByUJtwioq2h5xdd3RdX4EXwq64mzafLJt0Bqov/NhyRPJ60v+FrfKrag
-         sI96lfmBAvXWvLM/c4SDMiLTGQj0LehRGOrWRFsCVnN8LK5sPoVZZs1zde6GM4PJBRqt
-         /FpKCKcM3ixULXpKU0CvuDppm+uttWFcCHEluS7XSImnN21h395AVQcHv42Ah+GwaMoD
-         zbRszDl30AWZjTlKqydvRAejy08xXI5uVNkTFmxXmHqrX2GwoU5Zi/D57Cq5MZaMeL71
-         DnQ+yFpJfDZXIZfxd9trjbcYRIC5YgY7+rN6xlg2t/umKmtIPu4feeWHY443+3/u1hXT
-         EZfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYnHkS9xeoLRmCWuZ0P8xAmx/kYVT75Efc6G7iBlUjL9fX6SywtPFz2GhJhWHOO+bwLr2IX0nnJm3+iPd82pk6K2K35BSR/Abujg==
-X-Gm-Message-State: AOJu0YxfHIc197SM/3mRPYbRVBVKjXd3Yc3VLHIcMsmwdKY1TIDgiAPT
-	ioNOeICBwA+kymPCz9X7FLsafC+TifQbqYvAZQPk/ohG+ii1LOGrqYh1cIHh
-X-Google-Smtp-Source: AGHT+IH0twaBCtMlcDcRVhYz45raKGKvcQXzLY/cPs1uD6bo90wAdszMT1pzUcI7XWBu/zJyb4SCcg==
-X-Received: by 2002:aa7:de8b:0:b0:57c:bc03:caa2 with SMTP id 4fb4d7f45d1cf-57cf7ad5216mr304971a12.20.1718655491211;
-        Mon, 17 Jun 2024 13:18:11 -0700 (PDT)
-Received: from andrea.fritz.box (host-79-26-69-235.retail.telecomitalia.it. [79.26.69.235])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cbc4f5870sm6087128a12.4.2024.06.17.13.18.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 13:18:10 -0700 (PDT)
-From: Andrea Parri <parri.andrea@gmail.com>
-To: stern@rowland.harvard.edu,
-	will@kernel.org,
-	peterz@infradead.org,
-	boqun.feng@gmail.com,
-	npiggin@gmail.com,
-	dhowells@redhat.com,
-	j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr,
-	paulmck@kernel.org,
-	akiyks@gmail.com,
-	dlustig@nvidia.com,
-	joel@joelfernandes.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	hernan.poncedeleon@huaweicloud.com,
-	jonas.oberhauser@huaweicloud.com,
-	Andrea Parri <parri.andrea@gmail.com>
-Subject: [PATCH v3] tools/memory-model: Document herd7 (abstract) representation
-Date: Mon, 17 Jun 2024 22:17:59 +0200
-Message-Id: <20240617201759.1670994-1-parri.andrea@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718655501; c=relaxed/simple;
+	bh=iZFx8jgbSOzGiwB9sK7NYuzZ/oY42Xzy+IE0Fykqwyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P5Cm3ta3NIhpWT3m2Mv2Czz/Lxt4pT6jEaRQeaROQQ7/B3ahmYGM9J3j8yE31fyK2NPjMYg2DIFM10/pNwAD6jqdicbSpFWoGfhrEjfqY6cSJOStG3LyrWGoE0KcwOH9G7KKOHsx/ol/bDrQK7SMQL5XJb1py8s4resB7QESvqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ItABGs4l; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HJ01c7024582;
+	Mon, 17 Jun 2024 20:18:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=4
+	BfO0A59aeS+EuUXkTmQ/GMv6VbFKK1FWKlArNStJBg=; b=ItABGs4lJF8StiMZq
+	J03TJRm5nzALh24wV6g2ruRK/VxkH6lvOM8sRL19pOIQGPX5MWwbeTkjh+Xlm+eX
+	cYwx7NFUk9JVqNea3PkjYlTYU+OptSjVWN7SCx8ODufVWsyoW9+RH819SWXmRUQ8
+	iN2mLtBMCo5naNq9ZZnHpMMRl8PoZXXX28jv+K/cj3nX/GeL4y/I3QsCzt7pcjJl
+	qH42MfpnqldrLxJ2IROrv6+PnZZbHcc55bfCxH0BdMtdJtzBQ+OYQ86/sN0wOdSt
+	g3mNsnEb2juOPJpWAB+eImChxqhlJ4Th//OYsSLwVzLNv1xsQJcOf/3Y3C0q98GS
+	zFCdA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yttwc85hs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 20:18:03 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45HHvRLG023889;
+	Mon, 17 Jun 2024 20:18:03 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysp9pw577-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 20:18:03 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45HKI0YU63832458
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Jun 2024 20:18:02 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 63FBB5805E;
+	Mon, 17 Jun 2024 20:18:00 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EC4FE58055;
+	Mon, 17 Jun 2024 20:17:59 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 17 Jun 2024 20:17:59 +0000 (GMT)
+Message-ID: <5427fe09-199b-4b4b-a451-044e8e352595@linux.ibm.com>
+Date: Mon, 17 Jun 2024 16:17:59 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
+ session support
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org, mpe@ellerman.id.au,
+        naveen.n.rao@linux.ibm.com
+References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+ <dfc4feaef0d63d616bab8cdec5d409369f9dacf1.camel@HansenPartnership.com>
+ <5bd68636-ece6-4ba5-a4c0-c0535afc33c8@linux.ibm.com>
+ <1302b413a2d7bf3b275133e7fdb04b44bfe2d5e3.camel@HansenPartnership.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <1302b413a2d7bf3b275133e7fdb04b44bfe2d5e3.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: RQxNUYf2DBrWStycNDpehfHgqmo8xgeN
+X-Proofpoint-GUID: RQxNUYf2DBrWStycNDpehfHgqmo8xgeN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 mlxscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
+ phishscore=0 clxscore=1015 bulkscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406170153
 
-tools/memory-model/ and herdtool7 are closely linked: the latter is
-responsible for (pre)processing each C-like macro of a litmus test,
-and for providing the LKMM with a set of events, or "representation",
-corresponding to the given macro.  Provide herd-representation.txt
-to document the representations of the concurrency macros, following
-their "classification" in Documentation/atomic_t.txt.
 
-Suggested-by: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+
+On 6/17/24 16:05, James Bottomley wrote:
+> On Mon, 2024-06-17 at 15:56 -0400, Stefan Berger wrote:
+>>
+>>
+>> On 6/17/24 15:42, James Bottomley wrote:
+>>> On Mon, 2024-06-17 at 15:34 -0400, Stefan Berger wrote:
+>>>> Fix the following type of error message caused by a missing call
+>>>> to
+>>>> tpm2_sessions_init() in the IBM vTPM driver:
+>>>>
+>>>> [    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM
+>>>> error
+>>>> 0x01C4
+>>>> [    2.987140] ima: Error Communicating to TPM chip, result: -14
+>>>>
+>>>> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+>>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>>>> ---
+>>>>    drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
+>>>>    1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c
+>>>> b/drivers/char/tpm/tpm_ibmvtpm.c
+>>>> index d3989b257f42..1e5b107d1f3b 100644
+>>>> --- a/drivers/char/tpm/tpm_ibmvtpm.c
+>>>> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
+>>>> @@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev
+>>>> *vio_dev,
+>>>>                   rc = tpm2_get_cc_attrs_tbl(chip);
+>>>>                   if (rc)
+>>>>                           goto init_irq_cleanup;
+>>>> +
+>>>> +               rc = tpm2_sessions_init(chip);
+>>>> +               if (rc)
+>>>> +                       goto init_irq_cleanup;
+>>>
+>>> This looks wrong: the whole thing is designed to occur in the
+>>> bootstrap
+>>> phase from tpm_chip_register() (which tpm_ibmvtpm.c definitely
+>>> calls),
+>>> so why isn't it happening?
+>>
+>> Because flags = TPM_OPS_AUTO_STARTUP has not been set for this
+>> driver.
+>>
+> 
+> In that case, wouldn't the fix be to move tpm_sessions_init() to
+> somewhere in tpm_chip_register() that would then be called by this
+> driver?  Having to special case it for every driver that doesn't set
+> this flag is going to be a huge pain.
+
+I think the 2nd fix is to set TPM_OPS_AUTO_STARTUP also for the ibmvtpm 
+driver like the following patch on top of this one, but after more testing:
+
+ From c6bcd3890f1bdc43d9549fbb39fe388adf756358 Mon Sep 17 00:00:00 2001
+From: Stefan Berger <stefanb@linux.ibm.com>
+Date: Mon, 17 Jun 2024 16:05:54 -0400
+Subject: [PATCH] tpm: ibmvtpm: Set TPM_OPS_AUTO_STARTUP flag for
+  initialization
+
+Set the TPM_OPS_AUTO_STARTUP flag for using common initialization code.
+The difference between the old initialization and the new one is that
+for TPM 1.2 tpm1_do_selftest and for TPM 2 tpm2_do_selftest will be called.
+
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
-Changes since v2 [1]:
-  - drop lk-rmw links
+  drivers/char/tpm/tpm_ibmvtpm.c | 15 +--------------
+  1 file changed, 1 insertion(+), 14 deletions(-)
 
-Changes since v1 [2]:
-  - add legenda/notations
-  - add some SRCU, locking macros
-  - update formatting of failure cases
-  - update README file
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index 1e5b107d1f3b..76d048f63d55 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -450,6 +450,7 @@ static bool tpm_ibmvtpm_req_canceled(struct tpm_chip 
+*chip, u8 status)
+  }
 
-[1] https://lore.kernel.org/lkml/20240605134918.365579-1-parri.andrea@gmail.com/
-[2] https://lore.kernel.org/lkml/20240524151356.236071-1-parri.andrea@gmail.com/
+  static const struct tpm_class_ops tpm_ibmvtpm = {
++       .flags = TPM_OPS_AUTO_STARTUP,
+         .recv = tpm_ibmvtpm_recv,
+         .send = tpm_ibmvtpm_send,
+         .cancel = tpm_ibmvtpm_cancel,
+@@ -690,20 +691,6 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+         if (!strcmp(id->compat, "IBM,vtpm20"))
+                 chip->flags |= TPM_CHIP_FLAG_TPM2;
 
- tools/memory-model/Documentation/README       |   7 +-
- .../Documentation/herd-representation.txt     | 106 ++++++++++++++++++
- 2 files changed, 112 insertions(+), 1 deletion(-)
- create mode 100644 tools/memory-model/Documentation/herd-representation.txt
+-       rc = tpm_get_timeouts(chip);
+-       if (rc)
+-               goto init_irq_cleanup;
+-
+-       if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+-               rc = tpm2_get_cc_attrs_tbl(chip);
+-               if (rc)
+-                       goto init_irq_cleanup;
+-
+-               rc = tpm2_sessions_init(chip);
+-               if (rc)
+-                       goto init_irq_cleanup;
+-       }
+-
+         return tpm_chip_register(chip);
+  init_irq_cleanup:
+         do {
+--
+2.45.2
 
-diff --git a/tools/memory-model/Documentation/README b/tools/memory-model/Documentation/README
-index 304162743a5b8..44e7dae73b296 100644
---- a/tools/memory-model/Documentation/README
-+++ b/tools/memory-model/Documentation/README
-@@ -33,7 +33,8 @@ o	You are familiar with Linux-kernel concurrency and the use of
- 
- o	You are familiar with Linux-kernel concurrency and the use
- 	of LKMM, and would like to learn about LKMM's requirements,
--	rationale, and implementation:	explanation.txt
-+	rationale, and implementation:	explanation.txt and
-+	herd-representation.txt
- 
- o	You are interested in the publications related to LKMM, including
- 	hardware manuals, academic literature, standards-committee
-@@ -61,6 +62,10 @@ control-dependencies.txt
- explanation.txt
- 	Detailed description of the memory model.
- 
-+herd-representation.txt
-+	The (abstract) representation of the Linux-kernel concurrency
-+	primitives in terms of events.
-+
- litmus-tests.txt
- 	The format, features, capabilities, and limitations of the litmus
- 	tests that LKMM can evaluate.
-diff --git a/tools/memory-model/Documentation/herd-representation.txt b/tools/memory-model/Documentation/herd-representation.txt
-new file mode 100644
-index 0000000000000..2fe270e902635
---- /dev/null
-+++ b/tools/memory-model/Documentation/herd-representation.txt
-@@ -0,0 +1,106 @@
-+#
-+# Legenda:
-+#	R,	a Load event
-+#	W,	a Store event
-+#	F,	a Fence event
-+#	LKR,	a Lock-Read event
-+#	LKW,	a Lock-Write event
-+#	UL,	an Unlock event
-+#	LF,	a Lock-Fail event
-+#	RL,	a Read-Locked event
-+#	RU,	a Read-Unlocked event
-+#	R*,	a Load event included in RMW
-+#	W*,	a Store event included in RMW
-+#	SRCU,	a Sleepable-Read-Copy-Update event
-+#
-+#	po,	a Program-Order link
-+#	rmw,	a Read-Modify-Write link
-+#
-+# By convention, a blank entry/representation means "same as the preceding entry".
-+#
-+    ------------------------------------------------------------------------------
-+    |                        C macro | Events                                    |
-+    ------------------------------------------------------------------------------
-+    |                    Non-RMW ops |                                           |
-+    ------------------------------------------------------------------------------
-+    |                      READ_ONCE | R[once]                                   |
-+    |                    atomic_read |                                           |
-+    |                     WRITE_ONCE | W[once]                                   |
-+    |                     atomic_set |                                           |
-+    |               smp_load_acquire | R[acquire]                                |
-+    |            atomic_read_acquire |                                           |
-+    |              smp_store_release | W[release]                                |
-+    |             atomic_set_release |                                           |
-+    |                   smp_store_mb | W[once] ->po F[mb]                        |
-+    |                         smp_mb | F[mb]                                     |
-+    |                        smp_rmb | F[rmb]                                    |
-+    |                        smp_wmb | F[wmb]                                    |
-+    |          smp_mb__before_atomic | F[before-atomic]                          |
-+    |           smp_mb__after_atomic | F[after-atomic]                           |
-+    |                    spin_unlock | UL                                        |
-+    |                 spin_is_locked | On success: RL                            |
-+    |                                | On failure: RU                            |
-+    |         smp_mb__after_spinlock | F[after-spinlock]                         |
-+    |      smp_mb__after_unlock_lock | F[after-unlock-lock]                      |
-+    |                  rcu_read_lock | F[rcu-lock]                               |
-+    |                rcu_read_unlock | F[rcu-unlock]                             |
-+    |                synchronize_rcu | F[sync-rcu]                               |
-+    |                rcu_dereference | R[once]                                   |
-+    |             rcu_assign_pointer | W[release]                                |
-+    |                 srcu_read_lock | R[srcu-lock]                              |
-+    |                 srcu_down_read |                                           |
-+    |               srcu_read_unlock | W[srcu-unlock]                            |
-+    |                   srcu_up_read |                                           |
-+    |               synchronize_srcu | SRCU[sync-srcu]                           |
-+    | smp_mb__after_srcu_read_unlock | F[after-srcu-read-unlock]                 |
-+    ------------------------------------------------------------------------------
-+    |       RMW ops w/o return value |                                           |
-+    ------------------------------------------------------------------------------
-+    |                     atomic_add | R*[noreturn] ->rmw W*[once]               |
-+    |                     atomic_and |                                           |
-+    |                      spin_lock | LKR ->po LKW                              |
-+    ------------------------------------------------------------------------------
-+    |        RMW ops w/ return value |                                           |
-+    ------------------------------------------------------------------------------
-+    |              atomic_add_return | F[mb] ->po R*[once]                       |
-+    |                                |     ->rmw W*[once] ->po F[mb]             |
-+    |               atomic_fetch_add |                                           |
-+    |               atomic_fetch_and |                                           |
-+    |                    atomic_xchg |                                           |
-+    |                           xchg |                                           |
-+    |            atomic_add_negative |                                           |
-+    |      atomic_add_return_relaxed | R*[once] ->rmw W*[once]                   |
-+    |       atomic_fetch_add_relaxed |                                           |
-+    |       atomic_fetch_and_relaxed |                                           |
-+    |            atomic_xchg_relaxed |                                           |
-+    |                   xchg_relaxed |                                           |
-+    |    atomic_add_negative_relaxed |                                           |
-+    |      atomic_add_return_acquire | R*[acquire] ->rmw W*[once]                |
-+    |       atomic_fetch_add_acquire |                                           |
-+    |       atomic_fetch_and_acquire |                                           |
-+    |            atomic_xchg_acquire |                                           |
-+    |                   xchg_acquire |                                           |
-+    |    atomic_add_negative_acquire |                                           |
-+    |      atomic_add_return_release | R*[once] ->rmw W*[release]                |
-+    |       atomic_fetch_add_release |                                           |
-+    |       atomic_fetch_and_release |                                           |
-+    |            atomic_xchg_release |                                           |
-+    |                   xchg_release |                                           |
-+    |    atomic_add_negative_release |                                           |
-+    ------------------------------------------------------------------------------
-+    |            Conditional RMW ops |                                           |
-+    ------------------------------------------------------------------------------
-+    |                 atomic_cmpxchg | On success: F[mb] ->po R*[once]           |
-+    |                                |                 ->rmw W*[once] ->po F[mb] |
-+    |                                | On failure: R*[once]                      |
-+    |                        cmpxchg |                                           |
-+    |              atomic_add_unless |                                           |
-+    |         atomic_cmpxchg_relaxed | On success: R*[once] ->rmw W*[once]       |
-+    |                                | On failure: R*[once]                      |
-+    |         atomic_cmpxchg_acquire | On success: R*[acquire] ->rmw W*[once]    |
-+    |                                | On failure: R*[once]                      |
-+    |         atomic_cmpxchg_release | On success: R*[once] ->rmw W*[release]    |
-+    |                                | On failure: R*[once]                      |
-+    |                   spin_trylock | On success: LKR ->po LKW                  |
-+    |                                | On failure: LF                            |
-+    ------------------------------------------------------------------------------
--- 
-2.34.1
+Regards,
+    Stefan
 
+> 
+> I think the only reason it's down that far is that it should only be
+> called for TPM2 code so it was avoiding doing the check twice, so
+> something like this >
+> James
+> 
+> ---
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 5da134f12c9a..4280cbb0f0b1 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -347,6 +347,12 @@ int tpm_auto_startup(struct tpm_chip *chip)
+>   {
+>   	int rc;
+>   
+> +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> +		rc = tpm2_sessions_init(chip);
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+>   	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
+>   		return 0;
+>   
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 1e856259219e..b4f85c8cdbb6 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -773,11 +773,6 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+>   		rc = 0;
+>   	}
+>   
+> -	if (rc)
+> -		goto out;
+> -
+> -	rc = tpm2_sessions_init(chip);
+> -
+>   out:
+>   	/*
+>   	 * Infineon TPM in field upgrade mode will return no data for the number
+> 
 
