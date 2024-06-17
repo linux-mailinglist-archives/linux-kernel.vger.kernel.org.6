@@ -1,352 +1,94 @@
-Return-Path: <linux-kernel+bounces-216754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B69A690A616
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:50:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 940A690A619
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2965B254BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:50:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A3128603C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003D8186299;
-	Mon, 17 Jun 2024 06:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VQnAlKij"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDAF186E55;
+	Mon, 17 Jun 2024 06:51:05 +0000 (UTC)
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B881CD02
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828A9186E28;
+	Mon, 17 Jun 2024 06:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718607023; cv=none; b=euoi/qBpYshdO2imRbPLRWZoBA6V6kEu3RGhvo3St79sanM4m7kSurTCclUu9nJ4LU/lAChtSNmV1w/ltyiDPbCoUepXoOiozeH306xXHpIWAIIDuBn6FUoKiY8TPXslxVcHF24up5Cj3gL1DEz+/5WfsSfBufUCWjvedQ15wbA=
+	t=1718607064; cv=none; b=Q2vh4U7T1nD3letZfC+ULIU5cXgv/dGXIjzNgYAyOnO08XNnevasCtdkizG4eMdaeiYfLLM8nnvXQ2bp2EX+KLSQ/KHXlBpGhnGDJRafCmdmM2u8XDfEvABjGWD/EkDAx9pPrt3m9jUi7SvtJGQP14LRM9HbKINJUmD+lQINwS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718607023; c=relaxed/simple;
-	bh=CE7z+x81nQmJ5TtpcjQf6If5Uv0G2DH5yhSx+OQ1SSo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZwfHthTrKdujDtdudR/w/YaC7H/P0Z5rPbWswtji3HbugpsyWuEX36DxZ+1gNeLRzKllFP9gZIvsHkUCl6j+Bq5nvG45t43xAqIq6cge+ALscMtt4LEwRSCwsny4RqI1qmfbKZHe/XZw4k0tm8JVbCgXmPrP2x0xgvmfl2uG9qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VQnAlKij; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718607021; x=1750143021;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=CE7z+x81nQmJ5TtpcjQf6If5Uv0G2DH5yhSx+OQ1SSo=;
-  b=VQnAlKij6IbI9ubi1g0evF2aAUVYl1mILC/MKWv381G3ANzdCUznTdFn
-   AQaxu78e2czirFrdqYgghLsatHqt1qepFEzs9Tm48rtdccRwn/IlQBPmo
-   F8BEQma7ZLQwCSZCDylFgQoz4GhCGnY4CVrPpa8ZwkwIPYzYwaXdrIUEZ
-   yAxZowfYtENZOZ6FISgymrL+bCMqoJWHblVjP5mJ3mbm0hiSoxCMYB7NR
-   2rNspvFsuBtV94oEpropRZnJDuKPqeVdpUEgkDtVwyFKf/ZtNmVLMAvAk
-   gL2E10vrnfOQzuW61MQ0RaNFjMz3k3rzqXlg8qxOB9Et6ET+t5HBgGMuf
-   g==;
-X-CSE-ConnectionGUID: jPZAvQrtT9eQuQanJ3Zq2g==
-X-CSE-MsgGUID: zrzI3vkIT/aePbxGASlO1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="40835113"
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="40835113"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 23:50:19 -0700
-X-CSE-ConnectionGUID: RBtH8HKPT6SphxZWcE9fjw==
-X-CSE-MsgGUID: kSZncDKMS4KFjzHgnKCz9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="40982900"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 23:50:17 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org,  chrisl@kernel.org,  baohua@kernel.org,
-  kaleshsingh@google.com,  kasong@tencent.com,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  ryan.roberts@arm.com
-Subject: Re: [PATCH v2 0/2] mm: swap: mTHP swap allocator base on swap
- cluster order
-In-Reply-To: <20240615084714.37499-1-21cnbao@gmail.com> (Barry Song's message
-	of "Sat, 15 Jun 2024 20:47:14 +1200")
-References: <20240614195921.a20f1766a78b27339a2a3128@linux-foundation.org>
-	<20240615084714.37499-1-21cnbao@gmail.com>
-Date: Mon, 17 Jun 2024 14:48:26 +0800
-Message-ID: <87bk405akl.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718607064; c=relaxed/simple;
+	bh=IpZp/mW7DMENtlLsoUg2ZdNM2pVMUs566c4uDXHoagY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxHYLx+Q9gXrcc4fKpjXQyi2LBnsOMTGQseWvjjbk8vyAfr5ElibGdXdfHmVZgb3gPtft0nXJ+QhHIOpdM719suw/4ZRiV3XICkHRyZ4VyICHWvKPta+5Qj39cEmBAzhorb8ueeYfZzFTzlhgbKqeoMO1CEcS14KsmlxV+/bgDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-254d001d03dso1946218fac.3;
+        Sun, 16 Jun 2024 23:51:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718607062; x=1719211862;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Sn9t5PlhzvSPMNNXtLlu/LCQ1ItTnvGxpqPZVw4pGg=;
+        b=lww0h+WpBDAHLq8no7qVaDNjjUxhzdcg7ylqm9RuflS7qg2L9YuZdeRx5GzchgaYIw
+         El5ExnLOkiL6lkYfHFN5Ih+UkaT8siXvfhx/HvDrIMMkO30lAjLIV3rvlyhOZrcQoKvo
+         /5qlbtNags+nyUsIALsgXvCIpdXHpJi6caTRZJnLe+8u15aMBP2DqAfcN0b3OOJsZLWn
+         b1XUfU5QrSU3nU317zqvFmU3Hc5QuNu11qDTpZgwiu9PDP+14O4O9YW3SIDDJ6SFRijw
+         bZLyDJEvzUIsJOmPDnvNPhUeIKakQ34dgGkvp4cGyAv13Rgzk+ciFL8QB8JF8kvMfILA
+         7Cpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXj4MPQoicd+42knkHVHMXFDByjSsQPe4nhL4kVbmPvZrfBCeJXUkJsAuUsdPKG3QzeRVwJF9E59Xx/jnmJ2ZJfrd8QfCW9NHMeim0FDYhCL3RjrElUqa/7u1MrWaKf2EOf5SUo
+X-Gm-Message-State: AOJu0YzB4lOe7v0z5orkrKQPYp9s0fNf60dN1XQG/XZlVLF27PJEyAE+
+	cqxV2UmwAxvgUZguTlEZcTxinaRVbmdhWcMOlLx19NKGN0sPXph/
+X-Google-Smtp-Source: AGHT+IHfWy5HY4azx7+8jbNehkTLCPbqguVaeJkk7pvS0tEAPCcTnja5wC36XqD9w+T1+d3jfmuBNA==
+X-Received: by 2002:a05:6870:e243:b0:254:bb5d:468c with SMTP id 586e51a60fabf-258428c33fbmr10403311fac.21.1718607062413;
+        Sun, 16 Jun 2024 23:51:02 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc925fe7sm7047427b3a.19.2024.06.16.23.51.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Jun 2024 23:51:01 -0700 (PDT)
+Date: Mon, 17 Jun 2024 06:50:56 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH net-next] net: mana: Use mana_cleanup_port_context() for
+ rxq cleanup
+Message-ID: <Zm_c0ElvAMMelKMz@liuwe-devbox-debian-v2>
+References: <1718349548-28697-1-git-send-email-shradhagupta@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1718349548-28697-1-git-send-email-shradhagupta@linux.microsoft.com>
 
-Hi, Barry,
+On Fri, Jun 14, 2024 at 12:19:08AM -0700, Shradha Gupta wrote:
+> 
+> To cleanup rxqs in port context structures, instead of duplicating the
+> code, use existing function mana_cleanup_port_context() which does
+> the exact cleanup that's needed.
+> 
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
 
-Barry Song <21cnbao@gmail.com> writes:
-
-> On Sat, Jun 15, 2024 at 2:59=E2=80=AFPM Andrew Morton <akpm@linux-foundat=
-ion.org> wrote:
->>
->> On Fri, 14 Jun 2024 19:51:11 -0700 Chris Li <chrisl@kernel.org> wrote:
->>
->> > > I'm having trouble understanding the overall impact of this on users.
->> > > We fail the mTHP swap allocation and fall back, but things continue =
-to
->> > > operate OK?
->> >
->> > Continue to operate OK in the sense that the mTHP will have to split
->> > into 4K pages before the swap out, aka the fall back. The swap out and
->> > swap in can continue to work as 4K pages, not as the mTHP. Due to the
->> > fallback, the mTHP based zsmalloc compression with 64K buffer will not
->> > happen. That is the effect of the fallback. But mTHP swap out and swap
->> > in is relatively new, it is not really a regression.
->>
->> Sure, but it's pretty bad to merge a new feature only to have it
->> ineffective after a few hours use.
->>
->> > >
->> > > > There is some test number in the V1 thread of this series:
->> > > > https://lore.kernel.org/r/20240524-swap-allocator-v1-0-47861b423b2=
-6@kernel.org
->> > >
->> > > Well, please let's get the latest numbers into the latest patchset.
->> > > Along with a higher-level (and quantitative) description of the user=
- impact.
->> >
->> > I will need Barray's help to collect the number. I don't have the
->> > setup to reproduce his test result.
->> > Maybe a follow up commit message amendment for the test number when I =
-get it?
->
-> Although the issue may seem complex at a systemic level, even a small pro=
-gram can
-> demonstrate the problem and highlight how Chris's patch has improved the
-> situation.
->
-> To demonstrate this, I designed a basic test program that maximally alloc=
-ates
-> two memory blocks:
->
->  *   A memory block of up to 60MB, recommended for HUGEPAGE usage
->  *   A memory block of up to 1MB, recommended for NOHUGEPAGE usage
->
-> In the system configuration, I enabled 64KB mTHP and 64MB zRAM, providing=
- more than
-> enough space for both the 60MB and 1MB allocations in the worst case. Thi=
-s setup
-> allows us to assess two effects:
->
-> 1.  When we don't enable mem2 (small folios), we consistently allocate an=
-d free
->     swap slots aligned with 64KB.  whether there is a risk of failure to =
-obtain
->     swap slots even though the zRAM has sufficient free space?
-> 2.  When we enable mem2 (small folios), the presence of small folios may =
-lead
->     to fragmentation of clusters, potentially impacting the swapout proce=
-ss for
->     large folios negatively.
->
-> (2) can be enabled by "-s", without -s, small folios are disabled.
->
-> The script to configure zRAM and mTHP:
->
-> echo lzo > /sys/block/zram0/comp_algorithm
-> echo 64M > /sys/block/zram0/disksize
-> echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
-> echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled
-> mkswap /dev/zram0
-> swapon /dev/zram0
->
-> The test program I made today after receiving Chris' patchset v2
->
-> (Andrew, Please let me know if you want this small test program to
-> be committed into kernel/tools/ folder. If yes, please let me know,
-> and I will cleanup and prepare a patch):
->
-> #define _GNU_SOURCE
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <unistd.h>
-> #include <string.h>
-> #include <sys/mman.h>
-> #include <errno.h>
-> #include <time.h>
->
-> #define MEMSIZE_MTHP (60 * 1024 * 1024)
-> #define MEMSIZE_SMALLFOLIO (1 * 1024 * 1024)
-> #define ALIGNMENT_MTHP (64 * 1024)
-> #define ALIGNMENT_SMALLFOLIO (4 * 1024)
-> #define TOTAL_DONTNEED_MTHP (16 * 1024 * 1024)
-> #define TOTAL_DONTNEED_SMALLFOLIO (256 * 1024)
-> #define MTHP_FOLIO_SIZE (64 * 1024)
->
-> #define SWPOUT_PATH \
->     "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout"
-> #define SWPOUT_FALLBACK_PATH \
->     "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_fall=
-back"
->
-> static void *aligned_alloc_mem(size_t size, size_t alignment)
-> {
->     void *mem =3D NULL;
->     if (posix_memalign(&mem, alignment, size) !=3D 0) {
->         perror("posix_memalign");
->         return NULL;
->     }
->     return mem;
-> }
->
-> static void random_madvise_dontneed(void *mem, size_t mem_size,
->                                      size_t align_size, size_t total_dont=
-need_size)
-> {
->     size_t num_pages =3D total_dontneed_size / align_size;
->     size_t i;
->     size_t offset;
->     void *addr;
->
->     for (i =3D 0; i < num_pages; ++i) {
->         offset =3D (rand() % (mem_size / align_size)) * align_size;
->         addr =3D (char *)mem + offset;
->         if (madvise(addr, align_size, MADV_DONTNEED) !=3D 0) {
->             perror("madvise dontneed");
->         }
->         memset(addr, 0x11, align_size);
->     }
-> }
->
-> static unsigned long read_stat(const char *path)
-> {
->     FILE *file;
->     unsigned long value;
->
->     file =3D fopen(path, "r");
->     if (!file) {
->         perror("fopen");
->         return 0;
->     }
->
->     if (fscanf(file, "%lu", &value) !=3D 1) {
->         perror("fscanf");
->         fclose(file);
->         return 0;
->     }
->
->     fclose(file);
->     return value;
-> }
->
-> int main(int argc, char *argv[])
-> {
->     int use_small_folio =3D 0;
->     int i;
->     void *mem1 =3D aligned_alloc_mem(MEMSIZE_MTHP, ALIGNMENT_MTHP);
->     if (mem1 =3D=3D NULL) {
->         fprintf(stderr, "Failed to allocate 60MB memory\n");
->         return EXIT_FAILURE;
->     }
->
->     if (madvise(mem1, MEMSIZE_MTHP, MADV_HUGEPAGE) !=3D 0) {
->         perror("madvise hugepage for mem1");
->         free(mem1);
->         return EXIT_FAILURE;
->     }
->
->     for (i =3D 1; i < argc; ++i) {
->         if (strcmp(argv[i], "-s") =3D=3D 0) {
->             use_small_folio =3D 1;
->         }
->     }
->
->     void *mem2 =3D NULL;
->     if (use_small_folio) {
->         mem2 =3D aligned_alloc_mem(MEMSIZE_SMALLFOLIO, ALIGNMENT_MTHP);
->         if (mem2 =3D=3D NULL) {
->             fprintf(stderr, "Failed to allocate 1MB memory\n");
->             free(mem1);
->             return EXIT_FAILURE;
->         }
->
->         if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_NOHUGEPAGE) !=3D 0) {
->             perror("madvise nohugepage for mem2");
->             free(mem1);
->             free(mem2);
->             return EXIT_FAILURE;
->         }
->     }
->
->     for (i =3D 0; i < 100; ++i) {
->         unsigned long initial_swpout;
->         unsigned long initial_swpout_fallback;
->         unsigned long final_swpout;
->         unsigned long final_swpout_fallback;
->         unsigned long swpout_inc;
->         unsigned long swpout_fallback_inc;
->         double fallback_percentage;
->
->         initial_swpout =3D read_stat(SWPOUT_PATH);
->         initial_swpout_fallback =3D read_stat(SWPOUT_FALLBACK_PATH);
->
->         random_madvise_dontneed(mem1, MEMSIZE_MTHP, ALIGNMENT_MTHP,
->                                  TOTAL_DONTNEED_MTHP);
->
->         if (use_small_folio) {
->             random_madvise_dontneed(mem2, MEMSIZE_SMALLFOLIO,
->                                      ALIGNMENT_SMALLFOLIO,
->                                      TOTAL_DONTNEED_SMALLFOLIO);
->         }
->
->         if (madvise(mem1, MEMSIZE_MTHP, MADV_PAGEOUT) !=3D 0) {
->             perror("madvise pageout for mem1");
->             free(mem1);
->             if (mem2 !=3D NULL) {
->                 free(mem2);
->             }
->             return EXIT_FAILURE;
->         }
->
->         if (use_small_folio) {
->             if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_PAGEOUT) !=3D 0) {
->                 perror("madvise pageout for mem2");
->                 free(mem1);
->                 free(mem2);
->                 return EXIT_FAILURE;
->             }
->         }
->
->         final_swpout =3D read_stat(SWPOUT_PATH);
->         final_swpout_fallback =3D read_stat(SWPOUT_FALLBACK_PATH);
->
->         swpout_inc =3D final_swpout - initial_swpout;
->         swpout_fallback_inc =3D final_swpout_fallback - initial_swpout_fa=
-llback;
->
->         fallback_percentage =3D (double)swpout_fallback_inc /
->                               (swpout_fallback_inc + swpout_inc) * 100;
->
->         printf("Iteration %d: swpout inc: %lu, swpout fallback inc: %lu, =
-Fallback percentage: %.2f%%\n",
->                i + 1, swpout_inc, swpout_fallback_inc, fallback_percentag=
-e);
->     }
->
->     free(mem1);
->     if (mem2 !=3D NULL) {
->         free(mem2);
->     }
->
->     return EXIT_SUCCESS;
-> }
-
-Thank you very for your effort to write this test program.
-
-TBH, personally, I thought that this test program isn't practical
-enough.  Can we show performance difference with some normal workloads?
-
-[snip]
-
---
-Best Regards,
-Huang, Ying
+Reviewed-by: Wei Liu <wei.liu@kernel.org>
 
