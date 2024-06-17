@@ -1,109 +1,103 @@
-Return-Path: <linux-kernel+bounces-216914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F00690A877
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:32:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1345D90A879
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A748DB25353
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:32:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13F081C20EE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585CD190473;
-	Mon, 17 Jun 2024 08:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="grK87cQe"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE8319048A;
+	Mon, 17 Jun 2024 08:32:49 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A773A25740
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D798E17F5;
+	Mon, 17 Jun 2024 08:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718613139; cv=none; b=cmyFHutg9icE6zXuIjPehkyXxu5YmCHn2zCziwcQFh1lRdWM+HEgEPSII/5FH8Cq/n3inFuuIEh2Eh4+aRiDAUwHMdkFuVRfxdWwnE1F1409GFBasmzlkCbayrVllKT4AsbVRBnZOu1jrhSS4cUD8FDwvLgWeoUwHk5XabXWVrU=
+	t=1718613169; cv=none; b=aXaTE0/WBaNct6+MDht+11eLaNtAGdaQlxoX9WXnUZ8Ti4580HLWfOCuWLcAHcMOtgrYVQ+zwsVMaLnUjrlFSY26ppcszmUTBo0UYhCj9CzB5ep41K2rQ+s9qIhZ6N3QXBDTgKePgU10uiTtvJUQYkDRM6RP+UG+fTG7AjdUvok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718613139; c=relaxed/simple;
-	bh=FE3iEKlKCJMVD0D4H2XPGzG/BmtORvHVK64W6Si+9nQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dSwe02WAHIzkPJwKAIMz/o0y/TlvkPZYrXPRIY4GF5GOoKRYYzWeREb7Smt6lGF6lrWHml6BL8fkxe6H8UqHTY3rf3RWW+8IiiFCYv+ftJA6hI4rcDPdTCTXiW0ptvwvGcnzeN5CHK5uFm+yHvHXJngvlECC/jSYf2gg0JQi8CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=grK87cQe; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52caebc6137so1825693e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:32:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718613135; x=1719217935; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FE3iEKlKCJMVD0D4H2XPGzG/BmtORvHVK64W6Si+9nQ=;
-        b=grK87cQeKpfsLVcKCca1WDRZfiAillk3uGlqF4TBka8ly7gyrrLwYHQmjgIIuQn6Vo
-         /bNFKb+oq5H0mj+nd8rP+klbi6RiBJ26w4J6nXM6GCMLvEawuBgRZatOuj7ZUdJwIVlr
-         EaNeTHe/JH0TeA4TaQJvNgxTpLEox8vUNMQbm97vhscZAoqy3C5p6Fen+PVgJeULr6Na
-         m2pU1l6B/CczzRN+D8a9tZ1kw+y6iMxMwIG0MqsljWG3wDXK+Gv6HKuyfYR2zQLFvdQD
-         mDkkyTiTdcJn+Xxi3+/UPRCoKW2+wFcBWnbNDhExAhNrgxYXyfXCKt18vdrUFUG2Csol
-         2CXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718613135; x=1719217935;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FE3iEKlKCJMVD0D4H2XPGzG/BmtORvHVK64W6Si+9nQ=;
-        b=Lo7IZvYJBqF9ajc2qgOP1/X3aFrQZCrwwA0B9A23lHRK2mBdljcgCQdXtD+Hkd+bua
-         2WmiBM8yxhsU6BwjrRY/6VoTSwD31neZDAMGxjN/vQUsL0LlXWLg/nxP6FAcRNvbsv+Q
-         eRZ0rkbAc0JT6zaiA7Wti0bDzFCOxFmtuKcP0rKzPFNUewOuOaKcUK/foUzfsod5vrO/
-         x7p1XuJ1WE/5IktQVElZkx47XCm4PtmVkPD2yQjGQqH1xjcT324ZxjRDbq11etp518K0
-         jd4QJ1Uia4VlttMRYXONJ1/8PGJozA9s8E/IIO1sj4hN8wfMHj01rI2/ygQaw5IunCuA
-         78pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoRoQ+8HHzyqW4SU6KbBt+7iDmsZfDeNfe+gxHjl3xe3Zxo0L9xjx2fGx08FMvWFKV2q1j2GnPb9kjgJw8zzBoJki7wKsHeTjK9EQg
-X-Gm-Message-State: AOJu0YxAG572qcpBsd9lHi06Yd5rzfja1u9971yqPJXPJ63OQeMJ2JeR
-	+0dyADRJp3UmhJDt0AqZisLj8nclScto6wWZ+7chRpkGMrEaq8DZfCmlA2knBFoMXULTLXLe9Uz
-	OwchzjNBdMhz3ebTWxOQtMWO/3vX03A3Lvh3hNQ==
-X-Google-Smtp-Source: AGHT+IHsGlzkH4ixE2I4yC9Apel6pNGxFLAlaESfH/KyLi3NbHz3v9EPdEBe+o05FhL2D2zPDZO2on8osUVs7OTikn4=
-X-Received: by 2002:a05:6512:104c:b0:52c:818c:13b8 with SMTP id
- 2adb3069b0e04-52ca6e55abemr7654865e87.4.1718613134835; Mon, 17 Jun 2024
- 01:32:14 -0700 (PDT)
+	s=arc-20240116; t=1718613169; c=relaxed/simple;
+	bh=Y1tg7x8oh3i/tSbVstpypVuDjoXGzBLMNJxjDwo2pWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oSoM552De0rcbnFbzqTOKnhWy07EA8hfamUz1mJtLra5jbjTZs8Ij+CEZJ2iEX9GuJSoUTQhLlfB5R7sx4XigcC4lzSDwcuR6ctviw+dYm5UxTlkc8+i/BfwE6m/uQYCuUCkWTqaOC6hCRUXJkybhZPtyTeISnY/cgiHPjtRgxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.53] (ip5f5aeabd.dynamic.kabel-deutschland.de [95.90.234.189])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8D1FE61E5FE3A;
+	Mon, 17 Jun 2024 10:32:19 +0200 (CEST)
+Message-ID: <04d3dc7d-8266-4d2d-9efb-e9993af9548b@molgen.mpg.de>
+Date: Mon, 17 Jun 2024 10:32:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3f6fc17e-2ab4-43f2-b166-2393a369a263@web.de>
-In-Reply-To: <3f6fc17e-2ab4-43f2-b166-2393a369a263@web.de>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 17 Jun 2024 10:32:03 +0200
-Message-ID: <CACRpkdanLmWrDD6AdzJJx3fJsQWTE64vh+MjOtDTkpzwqqPkuQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: pistachio: Use scope-based resource management
- in pistachio_gpio_register()
-To: Markus Elfring <Markus.Elfring@web.de>, Jonathan Cameron <jic23@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: btusb: Add RTL8852BE device 0489:e125 to
+ device tables
+To: Hilda Wu <hildawu@realtek.com>, marcel@holtmann.org
+Cc: luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alex_lu@realsil.com.cn, max.chou@realtek.com,
+ kidman@realtek.com
+References: <20240617082101.3237350-1-hildawu@realtek.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240617082101.3237350-1-hildawu@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 5, 2024 at 6:02=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
+Dear Hilda,
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 5 Jun 2024 17:46:52 +0200
->
-> Scope-based resource management became supported also for another
-> programming interface by contributions of Jonathan Cameron on 2024-02-17.
-> See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
-> property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
->
-> * Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
->
-> * Reduce the scope for the local variable =E2=80=9Cchild=E2=80=9D.
->
-> * Omit explicit fwnode_handle_put() calls accordingly.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Looks reasonable but I'd like Jonathan's and Andy's review tags on this.
+Thank you for your patch.
 
-Yours,
-Linus Walleij
+Am 17.06.24 um 10:21 schrieb Hilda Wu:
+> Add the support ID(0489:e125) to usb_device_id table for
+
+Please add a space before (.
+
+> Realtek RTL8852B chip.
+> 
+> The device info from /sys/kernel/debug/usb/devices as below.
+
+[…]
+
+> Signed-off-by: Hilda Wu <hildawu@realtek.com>
+> ---
+>   drivers/bluetooth/btusb.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 79aefdb3324d..2d7d47f9d007 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -555,6 +555,8 @@ static const struct usb_device_id quirks_table[] = {
+>   						     BTUSB_WIDEBAND_SPEECH },
+>   	{ USB_DEVICE(0x13d3, 0x3572), .driver_info = BTUSB_REALTEK |
+>   						     BTUSB_WIDEBAND_SPEECH },
+> +	{ USB_DEVICE(0x0489, 0xe125), .driver_info = BTUSB_REALTEK |
+> +						     BTUSB_WIDEBAND_SPEECH },
+
+Please put it at the beginning of the list for the 8852BE devices to 
+kind of sort it.
+
+>   
+>   	/* Realtek 8852BT/8852BE-VT Bluetooth devices */
+>   	{ USB_DEVICE(0x0bda, 0x8520), .driver_info = BTUSB_REALTEK |
+
+
+Kind regards,
+
+Paul
 
