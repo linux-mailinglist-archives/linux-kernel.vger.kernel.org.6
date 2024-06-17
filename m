@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-217102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FB190AA96
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:02:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1151390AA9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB3A1C21440
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EFB3282972
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC6819049F;
-	Mon, 17 Jun 2024 10:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB025193077;
+	Mon, 17 Jun 2024 10:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y9VscPbj"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JQZ6um2B"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E091519307B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A95819047F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718618550; cv=none; b=ZAqWRDhHvUyjtgem2wgTQ5FpnO7cUyxsGyqHLvWTmTGUWn9yWyOe/8+jzsD7+S2As03JXU45/bsKfTJJQVBBkyjvDtyKZ7Xclp9oATj/o0MjXl1teGBYB+35rKSkHkJuyLVnaSq1IY3/3TYmhBmJlkcrR/+YTk4jF8db8Gtbvqo=
+	t=1718618595; cv=none; b=uXR9cj/HrWWXVMDVOb9Bh4n0WZHome4EVSljte/SXROQuwjrDsLvp/PBeV1rOmQ04YY4lmRowJmj1V9EnHhW2XzHRF0TBio0KycEJRf/W3B1tGv2ykRJegvTQUr56T8uwEhFyd1FyQOtHBe33g5GQUi3bxEYLwYXmZC/7XoICds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718618550; c=relaxed/simple;
-	bh=yTSkvQPeLcq+zIoeJ8bnkpUSp77IF3hUoXpLG/uRtng=;
+	s=arc-20240116; t=1718618595; c=relaxed/simple;
+	bh=L5aKYq+K9LHs7OusAkwM8HVmwDPeNKVqgx5oq7ZSd/E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TuZ9Ym+RHG3ULn0ir0cTQVu/mVe9JBONv6Q1NJMbmoXWzO9fI4lVQuIGTmonKQkJ+GNglZD0j/lQOHQqEMfNgkcROTw3+NcBKIXi+RCTmpPISpnQoSOFRtfB7Nn/fWP0T+3R/Dg2Y4I8RiSp6WI+ovywYBKFPJB6LUg0lrJ/jPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y9VscPbj; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so44143011fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 03:02:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718618547; x=1719223347; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f2ZohGJxhqyAKmW/bgp93YikD8cmmnsvoaV72UHkdjc=;
-        b=y9VscPbjMi/fnqhCrFfzg0GN94xIPUr7eLqbL06UY8unHGKKx8WRtv/fHmhtQf4xO1
-         vDY9SXmXETGt7Bk5XKbY7Abb6J5pYV7JQqiWhAd/t2SA9gigXH4J3j5pi4b71RYIKZbl
-         HdOdtzwL0clo/auEjoXSbFlYFg0oqMi8H885NOTeRaG37zdTPyncG16xIEG7Dw1PVMwL
-         eEXzC5BVI0IMofBp5wEdD42TYcJpcl3t8UsMU5g/idk3nb/ri1QXO6LAVkZHODCeTgmR
-         KPe34xjN7bM1QE117cSwcLgh/cVaugPAbq7KFfp7Mzj3LjWJm0MVlxPDESjJEyFKMAxA
-         WSvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718618547; x=1719223347;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f2ZohGJxhqyAKmW/bgp93YikD8cmmnsvoaV72UHkdjc=;
-        b=WCHfBYFl46VIlfax89QJvWYBvL9YMJwECcjGbKai2CIfwe8xAuJqMPW1aN/22Asgla
-         Cc/u/X5iCyusvRYzxbnOQ14dhjpYxZADQmRJ/x2nT/iPQnEXgG5ADcwxh75QEBxh0AZ7
-         SoQ8HreE76nMT6DRGHM61eB/Dox90RfvIjmntgFgnVqUDjC21L1gwmGLYPp1NYcRML64
-         B4DunYyze5pmNrboPPRunv2KCKQjj7wcl+O2SQd53TsH2ranTR6+i6PTPyKeGnIflzve
-         aGCEZAXBGiueS7TgdQgb1aWG3HKzEgPTSRGJzf5HXYtPIMcht4Y4C78K4zunHjhVsDTr
-         tqig==
-X-Forwarded-Encrypted: i=1; AJvYcCVIPtJPVLA2+BC0jxiha4LC0ovsbfTSu1e9KcaJmNRDwPF03Ykj2MF5ShoAhlYkMrTsaxnuYxs3RbKcdmAFzfELcpdmtJC0+aGFFgIs
-X-Gm-Message-State: AOJu0Yz8+c7+cLFw3Xjjw5cA1hxOxpqw1i6ctpUVDwMNgNQRe1S0M/Nb
-	SkCIRZfjo7cbiCWLMg1Z4QHMxTM2hN8ERRXdCbBEkg1P/1tYWawS9LDNsTGRiC0=
-X-Google-Smtp-Source: AGHT+IEBuXxmUii3zvoMKDN3vhvyXR3JH4iWC3OMw6c36KutClASgeHJ87tvcDj0tZ1+CeAE74VzDQ==
-X-Received: by 2002:a05:6512:2206:b0:52c:c156:15c5 with SMTP id 2adb3069b0e04-52cc1561638mr114653e87.41.1718618547080;
-        Mon, 17 Jun 2024 03:02:27 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2872080sm1210511e87.181.2024.06.17.03.02.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 03:02:26 -0700 (PDT)
-Date: Mon, 17 Jun 2024 13:02:25 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Naina Mehta <quic_nainmeht@quicinc.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@linaro.org, 
-	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: sdx75-idp: enable MPSS
- remoteproc node
-Message-ID: <gvrflsxzuliszkayegdlbzyvwc4fnm43zxw3nt5kdtj4h4q7sv@7fvnckbus4a5>
-References: <20240617093428.3616194-1-quic_nainmeht@quicinc.com>
- <20240617093428.3616194-6-quic_nainmeht@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXChRDN+8eZ6LA6FtIMSZ5i+BThhYAyVOz0XHdS6rl6isy4Qu4/h0gTHccJ32YS+pSJu/b//TRc0I02fJu6hVWkxgCv5n/5kOZUcLpJWOJGtRCpCAxee6NReVqPzJVmqul6l7sAtPRFbviKySqfY5qmLtgLtOVIgcu0khvhGPeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JQZ6um2B; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718618593; x=1750154593;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=L5aKYq+K9LHs7OusAkwM8HVmwDPeNKVqgx5oq7ZSd/E=;
+  b=JQZ6um2Bhuhwabez/q/5ByvcGeDh0xQDwlXmbRv62BMb9123t+2n79cx
+   dMtJ0HOTrdfVUnY/2Ed4p4+6dbXNTDUFqSsMoLdDmR7peYlBW/KGMLxMx
+   UN6RxNgWKSOYzUZJFQD0KLSU5xYifK1dHOxi6qWmJWhCYw5wtzHMmQbFo
+   StULRTV//NIZVZv9yURqqbSoAbYjCoSxF70jZcJSo1S1ZgD441vZx3NIT
+   LZvK43C1vp5P/gQKyqnjfw0bYrJ/t6V4IEzmQLjoUMRMLD4QCUe9/cJa9
+   mou6kiKATMWbNa72eKpEGzZSk7flvTloesE4xlDG1HMaRTC/Ht/skE4n9
+   g==;
+X-CSE-ConnectionGUID: a36284zdRoK4zRBUoEnLwQ==
+X-CSE-MsgGUID: jKkbXvvXRkSUOjE78hfV0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="19223103"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="19223103"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 03:03:12 -0700
+X-CSE-ConnectionGUID: H1Q/QF7GTbuFCkwxgUDDKg==
+X-CSE-MsgGUID: jFDmWRUPSL+d49XjExrCZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="41249743"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 17 Jun 2024 03:03:12 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 1A1AB18E; Mon, 17 Jun 2024 13:03:10 +0300 (EEST)
+Date: Mon, 17 Jun 2024 13:03:10 +0300
+From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
+	"lirongqing@baidu.com" <lirongqing@baidu.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH][v2] virt: tdx-guest: Don't free decrypted memory
+Message-ID: <yfoowboa5qwcjkmjggfjx4hm2emhhlwvao3s5rync5anoiyuba@4ezmhhlnb3j7>
+References: <20240614051452.14548-1-lirongqing@baidu.com>
+ <c209517e42fa83cbc3f030293f89813a6c1cfce1.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240617093428.3616194-6-quic_nainmeht@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c209517e42fa83cbc3f030293f89813a6c1cfce1.camel@intel.com>
 
-On Mon, Jun 17, 2024 at 03:04:28PM GMT, Naina Mehta wrote:
-> Enable MPSS remoteproc node on sdx75-idp platform.
+On Fri, Jun 14, 2024 at 04:13:46PM +0000, Edgecombe, Rick P wrote:
+> On Fri, 2024-06-14 at 13:14 +0800, Li RongQing wrote:
+> > In CoCo VMs it is possible for the untrusted host to cause
+> > set_memory_decrypted() to fail such that an error is returned
+> > and the resulting memory is shared. Callers need to take care
+> > to handle these errors to avoid returning decrypted (shared)
+> > memory to the page allocator, which could lead to functional
+> > or security issues.
+> > 
+> > So when set_memory_decrypted fails, leak decrypted memory, and
+> > print an error message
+> > 
+> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> > ---
+> > diff with v1: leak the page, and print error
+> > 
+> >  drivers/virt/coco/tdx-guest/tdx-guest.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/virt/coco/tdx-guest/tdx-guest.c b/drivers/virt/coco/tdx-
+> > guest/tdx-guest.c
+> > index 1253bf7..3a6e76c8 100644
+> > --- a/drivers/virt/coco/tdx-guest/tdx-guest.c
+> > +++ b/drivers/virt/coco/tdx-guest/tdx-guest.c
+> > @@ -125,7 +125,7 @@ static void *alloc_quote_buf(void)
+> >                 return NULL;
+> >  
+> >         if (set_memory_decrypted((unsigned long)addr, count)) {
+> > -               free_pages_exact(addr, len);
+> > +               pr_err("Failed to set Quote buffer decrypted, leak the
+> > buffer\n");
+> >                 return NULL;
+> >         }
 > 
-> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sdx75-idp.dts | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+> I'm not sure we need the error message, because the set_memory() failure we are
+> most worried about already has a WARN.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+Yeah, I think we should just remove the pr_err(). It will be shadowed by
+the stack trace and WARN() anyway.
 
 -- 
-With best wishes
-Dmitry
+  Kiryl Shutsemau / Kirill A. Shutemov
 
