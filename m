@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-216977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DB590A99C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:33:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2141390AA05
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A609B2C031
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:16:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B24A1B25FCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACD6191481;
-	Mon, 17 Jun 2024 09:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA011922F0;
+	Mon, 17 Jun 2024 09:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UcJo24vd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0/S+A3Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7821C1946C2;
-	Mon, 17 Jun 2024 09:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14620194A43;
+	Mon, 17 Jun 2024 09:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718615645; cv=none; b=RRxf9G/qPcoWwgcvKV0DfVxG7yQ59O0ouu3iDgLE7JoAt297qe03n/7hc45Y/c92ePava8BEuBEvYaFWf+ayZnZ7O2Zo63K0Sk9kvx4Rh08QTAHGsEwA7TZMibbb9ipQeEDHggpuoaFHbZPsI9eWfn9BsuhWgZG3NNHz8nFmBEg=
+	t=1718615649; cv=none; b=tJBpROV+ty9NDPgwLl4+TDH69Qx6Xh8utE6U33trIisa4yZYEglCUpDGk91vMiiYxojlwdn8k0koqBn46xE7FRVEp/znjc9WZQ6asEWH6rkwgShoTzeviOZGMkP0tsDFy4oejiaC8F66Ha6n3U0gvfICcD4ZQuxMplROjEtOjq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718615645; c=relaxed/simple;
-	bh=pyCuKjBDzEztSGL5VPV6DvGUsY4tB58LJ6wtMtXdCKw=;
+	s=arc-20240116; t=1718615649; c=relaxed/simple;
+	bh=pE0vsrGZNwEDC2VKKmVgmDKbUEz9TgECCZmW3XAqSV0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YtF2SYC6qQ1bsGwI7MhzdOOWM9eoWQu2a1Jpnz1k0eoMCfDnnsDHT0rMLsOG7ILT9I6uvm2lIUv9tVwBXkguB+LCMYv9KbkA6Qza21cjwTs46+ij7vkVjE6bjdnNNN7m3EmcNb+RxnKIhxIm2fOrj9cSZwa55cLfBCsci5XEPbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UcJo24vd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E61BC3277B;
-	Mon, 17 Jun 2024 09:14:02 +0000 (UTC)
+	 MIME-Version; b=T+VF70P+bo/6A2ul+/q+0y70EjWAzXQeNOaE5XbxaYJNiLU62xOWGTZf/5badg3Itp3YU02rF6xqXWawrujRgtJzipC/Byp6kKucozp1q6cq//IleW+tFzO3cCsm1XVYO77LAcFdmshZx2EF4a1kMGphDXxOF+DmFf3GaEnJ6d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0/S+A3Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E5AC4AF48;
+	Mon, 17 Jun 2024 09:14:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718615645;
-	bh=pyCuKjBDzEztSGL5VPV6DvGUsY4tB58LJ6wtMtXdCKw=;
+	s=k20201202; t=1718615648;
+	bh=pE0vsrGZNwEDC2VKKmVgmDKbUEz9TgECCZmW3XAqSV0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UcJo24vdaFOmcSX4qgULmhUDw9ZyAmfnQojhcYEHB4/oz9kulowztUaKTp8ahoG7S
-	 D46WoR2fBKmXN3mqU1zyQwEslixqAO7jplXOlUNmWmDvsKYBPn/EC4FqNn/bspo+Y4
-	 ku5GNoUkMCyJKLAMhlBtidYiZgItTUBZup5xiSbXy+Os7BDpk9lE2nf0eNNPbBrt1K
-	 Slkoe72fyFSmGHO8CPLOvrOF8+GIK/ZcwMFsQVNJEaBJUn8PQEnjjqJ0zzdnsKnx73
-	 yHQNz0TZVkvcVmFIO/BOHw880IDXkJiBAHNgFv5PJ0cpatvIsD2uGwS21gPtGQkRp5
-	 oLK74dCyrDa8A==
+	b=J0/S+A3ZkUHzGlPOPPkSzulsvIzja4HFi9MdZl83i9a+/GUo1Sq7rBtx8g+ZPGPwr
+	 6R+EOyzsrbEVcBGu0ZHjXdEqLm9zW/jRgSzN63xE4GiJC3yJkqjVoIWBOZ27L7e6Lc
+	 513IegajtNQU+JhVJtOCyIdhdedKyMcDRwmwjT2IHZlYu+Uj9S4+qBfz9/s6t1aC0g
+	 A0crIxgBGe8j0sPGIHwN8w6GyboNSjhi86eFldbW30v139kCLejM0QC4SM3dLAmDDp
+	 IvWcxZD/E10PUhRdt7qV/5wMXmbEChhFIwcftfhkchbGY2jXZD4UMNlQfkLGIGsWte
+	 PfgrDEERCtcBg==
 From: Michael Walle <mwalle@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -57,9 +57,9 @@ Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH v3 04/13] ARM: dts: imx6qdl-kontron-samx6i: cleanup the PMIC node
-Date: Mon, 17 Jun 2024 11:13:32 +0200
-Message-Id: <20240617091341.2375325-5-mwalle@kernel.org>
+Subject: [PATCH v3 05/13] ARM: dts: imx6qdl-kontron-samx6i: fix SPI0 chip selects
+Date: Mon, 17 Jun 2024 11:13:33 +0200
+Message-Id: <20240617091341.2375325-6-mwalle@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240617091341.2375325-1-mwalle@kernel.org>
 References: <20240617091341.2375325-1-mwalle@kernel.org>
@@ -71,39 +71,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove the comment, remove the unused phandle name for the
-VGEN5 output. VGEN5 is not used at all.
+There is a comment in the imx6q variant dtsi claiming that these
+modules will have one more chip select than the imx6dl variant.
+This is wrong. Ordinary GPIOs are used for chip selects and both
+variants of the module share the very same PCB and both have this
+GPIO routed to the SPI0_CS1# pin of the SMARC connector.
 
+Fix it by moving the third chip select description to the common dtsi.
+
+Fixes: 2125212785c9 ("ARM: dts: imx6qdl-kontron-samx6i: add Kontron SMARC SoM Support")
 Signed-off-by: Michael Walle <mwalle@kernel.org>
 ---
- arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ .../dts/nxp/imx/imx6q-kontron-samx6i.dtsi     | 23 -------------------
+ .../dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi   |  5 +++-
+ 2 files changed, 4 insertions(+), 24 deletions(-)
 
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i.dtsi b/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i.dtsi
+index 4d6a0c3e8455..ff062f4fd726 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i.dtsi
+@@ -5,31 +5,8 @@
+ 
+ #include "imx6q.dtsi"
+ #include "imx6qdl-kontron-samx6i.dtsi"
+-#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Kontron SMARC sAMX6i Quad/Dual";
+ 	compatible = "kontron,imx6q-samx6i", "fsl,imx6q";
+ };
+-
+-/* Quad/Dual SoMs have 3 chip-select signals */
+-&ecspi4 {
+-	cs-gpios = <&gpio3 24 GPIO_ACTIVE_LOW>,
+-		   <&gpio3 29 GPIO_ACTIVE_LOW>,
+-		   <&gpio3 25 GPIO_ACTIVE_LOW>;
+-};
+-
+-&pinctrl_ecspi4 {
+-	fsl,pins = <
+-		MX6QDL_PAD_EIM_D21__ECSPI4_SCLK 0x100b1
+-		MX6QDL_PAD_EIM_D28__ECSPI4_MOSI 0x100b1
+-		MX6QDL_PAD_EIM_D22__ECSPI4_MISO 0x100b1
+-
+-		/* SPI4_IMX_CS2# - connected to internal flash */
+-		MX6QDL_PAD_EIM_D24__GPIO3_IO24 0x1b0b0
+-		/* SPI4_IMX_CS0# - connected to SMARC SPI0_CS0# */
+-		MX6QDL_PAD_EIM_D29__GPIO3_IO29 0x1b0b0
+-		/* SPI4_CS3# - connected to  SMARC SPI0_CS1# */
+-		MX6QDL_PAD_EIM_D25__GPIO3_IO25 0x1b0b0
+-	>;
+-};
 diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi
-index 700780bf64f5..8c7f21f986e1 100644
+index 8c7f21f986e1..4a6ab7e7908a 100644
 --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi
 +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi
-@@ -356,10 +356,6 @@ reg_vrefddr: vrefddr {
- 				regulator-always-on;
- 			};
+@@ -244,7 +244,8 @@ &ecspi4 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_ecspi4>;
+ 	cs-gpios = <&gpio3 24 GPIO_ACTIVE_LOW>,
+-		   <&gpio3 29 GPIO_ACTIVE_LOW>;
++		   <&gpio3 29 GPIO_ACTIVE_LOW>,
++		   <&gpio3 25 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
  
--			/*
--			 * Per schematics, of all VGEN's, only VGEN5 has some
--			 * usage ... but even that - over DNI resistor
--			 */
- 			vgen1 {
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <1550000>;
-@@ -380,8 +376,7 @@ vgen4 {
- 				regulator-max-microvolt = <3300000>;
- 			};
+ 	/* default boot source: workaround #1 for errata ERR006282 */
+@@ -459,6 +460,8 @@ MX6QDL_PAD_EIM_D22__ECSPI4_MISO 0x100b1
+ 			MX6QDL_PAD_EIM_D24__GPIO3_IO24 0x1b0b0
+ 			/* SPI_IMX_CS0# - connected to SMARC SPI0_CS0# */
+ 			MX6QDL_PAD_EIM_D29__GPIO3_IO29 0x1b0b0
++			/* SPI4_CS3# - connected to SMARC SPI0_CS1# */
++			MX6QDL_PAD_EIM_D25__GPIO3_IO25 0x1b0b0
+ 		>;
+ 	};
  
--			reg_2p5v_s0: vgen5 {
--				regulator-name = "V_2V5_S0";
-+			vgen5 {
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <3300000>;
- 			};
 -- 
 2.39.2
 
