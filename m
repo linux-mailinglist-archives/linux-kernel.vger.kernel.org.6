@@ -1,302 +1,106 @@
-Return-Path: <linux-kernel+bounces-218235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D703690BB8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:58:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256F090BB6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA8511C22819
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:58:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACEEF284D29
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5258D19923F;
-	Mon, 17 Jun 2024 19:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F8C188CAE;
+	Mon, 17 Jun 2024 19:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CZMsFzBs"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFKIAMqq"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DEC198E7E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52858D53E;
+	Mon, 17 Jun 2024 19:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718654231; cv=none; b=JfC0t6lpqfirnd8ZQT4eXk+wHp1y0EFIGRcCZh38dNYz/FIqq2tDmtRAQDsO7lQf3NO7gsebm2YTWgfj1u4LioURyJKdYozkgG973b3q+A0y8ZkeFgSoHLNYlP3efjGH+HMCqrS1y3ARUNiTvw8eEJ7dfJGWHfL3bw3tnD6zzJU=
+	t=1718654046; cv=none; b=rbSkDE0sVU5eO6euSYrolLEsUwR+Av/L2t+44/hZVhkYtqQp3b0BsI17LjzxjYM824dFvn8ExoTY2uR2Y/Z2+D0vBWmiID98MZd8loQWFelgucxBlW8j/bhPtdquemy79oVef1yuZXmIqU4XJNncATcB0Ap3K0XrQ+MU6t2+MKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718654231; c=relaxed/simple;
-	bh=Kj1jj1jkWY4iweELsF47z0WctpUxRHz3YErTiEr0zfY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VNy+GWeM5BmQkrxRX3KaYYpYfWgPnMjGrXIZNAUiHwwnNJsTxi2q7hJtQtOwmSg5Q+WNmW7Am1YU8mZfGTUIhE4g6cw7BAs8efe3JYwhO8inv8KolKnx5/vxNaP7aVQNVb6P4DN0eqGTHq+3b/2IkPYxG4e3T3QUe181/m0ddXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CZMsFzBs; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d229826727so2698460b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:57:09 -0700 (PDT)
+	s=arc-20240116; t=1718654046; c=relaxed/simple;
+	bh=DQqHUJXrZhYgytXar68LbEUwdnDFVthmbJrH6f3+M4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/agpu4Y3vRc6ITNvobP4h2Z735HAhwvGNoFACxXvJL8F80LCdGziIs/MPdW78Np/TZcj920zzoRSt1T1HtOpXVVMZafJS4J27vpSlljGYrzIDgRsaiVOqPavgZlAGpLl/ySrtq2RsEIIp0luTALZNPwRByzeD8chLyCzwft3xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFKIAMqq; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f6fd08e0f2so32843185ad.3;
+        Mon, 17 Jun 2024 12:54:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718654228; x=1719259028; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vsdfiRmM6h+KvTeYNcXr8NgMjVAHZPZfcMTD3irWkFo=;
-        b=CZMsFzBsfyjDQbWElqvvXMMekAAlnphEbzT95hZdSqgx082tgY13zMfIaTKj/BQnHI
-         SlPCxQ4v1lxUbwb4blmn9Kx3sAfJxpig1qxqcZYkVFUzH1z4Uz6kVuRb6PXc2TXCydyJ
-         YaGqpvSonuCFHha8ISy5iCnc1B0y7KV+M6rDEN9gSM/PrMO3iruSu3SJUaAl8jplIRG7
-         4fV4a3fpf9zI5oOO6nwDxpJfq/4v33poVaUctAbqTEEIv21xiMLlItT2uh5CarZaFKUm
-         hGSrhtXVZA8Cj42hKFN0o5GjCNb3L9LLrbPO48fQmXIoH50SFr+sgjsD6tW5HbOmvXT2
-         ShAw==
+        d=gmail.com; s=20230601; t=1718654044; x=1719258844; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DQqHUJXrZhYgytXar68LbEUwdnDFVthmbJrH6f3+M4Q=;
+        b=MFKIAMqqwmrcPjpcJ2U8RsT1AxKr/SuiXdd7KTXDmHoP4kP3vv/DUzDuelGmoY+Uqs
+         5lo9J5nSLTQv1Gad6i0e6gjVTGi4e8hGkuuRwxOw+mtExPAZGlwdR6lTLhTzSe6xe6lg
+         7Smw5fOnCcOdxVg8k8xS/9gCtmFooX4m18uR/elYTqi5mU7w6Bc+ncrVhjLcZzjl8ShF
+         1/d1EfR9Zt7lTc4t6KP8osin+b+k3Ygc1uh46iqLfoF2/TE+wI8gWfM7RR2wVCE4N+5u
+         O3jNiDh/emkSxPRKaBDJw0McSnjBKLgwk4PsofdozxF6A+FHi9mKtzGZ/ATs6eirUI01
+         ik4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718654228; x=1719259028;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vsdfiRmM6h+KvTeYNcXr8NgMjVAHZPZfcMTD3irWkFo=;
-        b=tz9weZJxynRg1DcXQaRgR5WjWLAXH7d7wX3ANl+59EM7R2n0DUuynGzv1yainEXBNM
-         HziJ8jS7fo6vzidvljFxrFYtHX0Ns2yaKfov7cWx0o7NdNnzX2eSKL+++sA264fqMsqH
-         1baNcDYWi/VOl1hULscH8EiazzS4fAXG5FwgGSZUFVf5KApxJTB1i5qM7lYO9TSYWK30
-         plVGlLwEYfq3sv5fl/4Wk9pSSJ+M7Qajt4cvW4UXyPD+I35d5Hmu90do63cGIZr0cX03
-         gYEY1MbOLSwpbDqs+7a7Y3uZZs6hwyw7GaFaTDWVwRXUfGzVFgDzMTFjQPxD2/iDtXwb
-         5lTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRV6W+3f8ZKDTHmqSqFxTzt1a5EJb8kvnY2KRmGC+t2oOE8nsNjM79y61VXqKiZiL/lqffO6M10afzGRhVOt3Lk6Cj0mU0oTUXKuPk
-X-Gm-Message-State: AOJu0YzrUq8JSmOR16+HT8WOg1inpbQudiN5J68V9tjqLrVKVKFI64Uo
-	JpLD0nTQmZYzsxxQIZ4e0p/RYiFebtATFSDoDH/vw/4mh0HdkyZyKtbf5MNqoRI=
-X-Google-Smtp-Source: AGHT+IG+Mt+zjMH088t6lK+Exi2DE0g2sDRkozh5QQOxNL7x7Vy8ugOJjYJT9utaROtkRzRvX++niw==
-X-Received: by 2002:a05:6808:159b:b0:3d2:16c8:64f4 with SMTP id 5614622812f47-3d24e8fa5afmr11992918b6e.24.1718654226849;
-        Mon, 17 Jun 2024 12:57:06 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d2476e2fa4sm1579492b6e.52.2024.06.17.12.57.05
+        d=1e100.net; s=20230601; t=1718654044; x=1719258844;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DQqHUJXrZhYgytXar68LbEUwdnDFVthmbJrH6f3+M4Q=;
+        b=DYS9b+LNmK+2e4bFkkH3WNnDudbXBuoucvlMnwTHXQdBKCcarK73IidZWiut4VmdPn
+         bQYtrRFpqfwEwxTpiPbsXA7NMdMIq6rjgZMc37GhuS/szTfQw52kc98cIB5Ev7WmvwYA
+         jhNyORyTe12cw0BYKOjkQGIS29NiCROKUjSJE5WeSVGlmZTjmzkPhApS9HsEH1SWlNN7
+         V5N9Pmz232XdQ8PvIzixmJv/JBm7nQSVdDoyYwZB+637/Nr/opHygZpPCiyrbZrwLvxM
+         nTuUGkT5Ybq/49ZXvKrp+oeI/DMSkNi/RjhmTgJbpFttxsTO+mg9poGf0OxsRw1DKTmR
+         +s4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXVrM8/eM7CzWWK1U5aR2uqSMAPuulfYTKkndL+E56Fl3wIG8XzdOKPPGCe9wqm/ril2p6/s3KFt8mHsrk9ixqdq65F6rzewMuOcHYyPdJC4iufhfPD6wnmKpZKAfRoFSIb/V72eZzd
+X-Gm-Message-State: AOJu0YwdUR1JDtHTmPguNkgfV6OF3VOIjoScjD+vMKy1BM2Ds4aGG8u+
+	MDMTVV9/o6FCsPFdDLyeW+q1fI8y4lgEsAZkqYTS/TRuumDU3un6
+X-Google-Smtp-Source: AGHT+IFk8Yj6XtGc1pOKgW/lQjPMWfBclQjaJyUFTViDzfBUzpvXdVF/37gf/vWTdCZAGxJnR/ittw==
+X-Received: by 2002:a17:902:c94d:b0:1f7:1688:9e36 with SMTP id d9443c01a7336-1f86290073cmr124274645ad.48.1718654044461;
+        Mon, 17 Jun 2024 12:54:04 -0700 (PDT)
+Received: from joaog-nb (201-13-139-53.dial-up.telesp.net.br. [201.13.139.53])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e55ebbsm83370875ad.13.2024.06.17.12.54.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 12:57:06 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH v2 4/4] Documentation: iio: Document ad4695 driver
-Date: Mon, 17 Jun 2024 14:53:15 -0500
-Message-ID: <20240617-iio-adc-ad4695-v2-4-63ef6583f25d@baylibre.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240617-iio-adc-ad4695-v2-0-63ef6583f25d@baylibre.com>
-References: <20240617-iio-adc-ad4695-v2-0-63ef6583f25d@baylibre.com>
+        Mon, 17 Jun 2024 12:54:03 -0700 (PDT)
+Date: Mon, 17 Jun 2024 16:53:58 -0300
+From: =?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: Mark Brown <broonie@kernel.org>, Vaishnav Achath <vaishnav.a@ti.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	joao.goncalves@toradex.com,
+	Linux kernel regressions list <regressions@lists.linux.dev>
+Subject: Re: [REGRESSION] spi: omap2-mcspi: not working with kernel v6.10
+Message-ID: <20240617195358.v3ewnsu4jgkygvby@joaog-nb>
+References: <20240612170030.3qatttsgrwjg2m5s@joaog-nb>
+ <1b9852d1-4454-4f62-bd8a-fb6167dc0576@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1b9852d1-4454-4f62-bd8a-fb6167dc0576@leemhuis.info>
 
-The Analog Devices Inc. AD4695 (and similar chips) are complex ADCs that
-will benefit from a detailed driver documentation.
+Hi Thorsten,
 
-This documents the current features supported by the driver.
+On Mon, Jun 17, 2024 at 11:29:05AM +0200, Thorsten Leemhuis wrote:
+> In that case the thing that really
+> helps would be if you could use a git bisection to find the change that
+> causes this.
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
+For me, spi stopped working in commit d153ff4056cb ("spi: omap2-mcspi:
+Add support for MULTI-mode").
 
-v2 changes:
-* Rework DT examples for DT bindings changes
-* Add file to MAINTAINERS
----
- Documentation/iio/ad4695.rst | 153 +++++++++++++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst  |   1 +
- MAINTAINERS                  |   1 +
- 3 files changed, 155 insertions(+)
+Thanks!
 
-diff --git a/Documentation/iio/ad4695.rst b/Documentation/iio/ad4695.rst
-new file mode 100644
-index 000000000000..d5cde1b84d50
---- /dev/null
-+++ b/Documentation/iio/ad4695.rst
-@@ -0,0 +1,153 @@
-+.. SPDX-License-Identifier: GPL-2.0-only
-+
-+=============
-+AD4695 driver
-+=============
-+
-+ADC driver for Analog Devices Inc. AD4695 and similar devices. The module name
-+is ``ad4695``.
-+
-+
-+Supported devices
-+=================
-+
-+The following chips are supported by this driver:
-+
-+* `AD4695 <https://www.analog.com/AD4695>`_
-+* `AD4696 <https://www.analog.com/AD4696>`_
-+* `AD4697 <https://www.analog.com/AD4697>`_
-+* `AD4698 <https://www.analog.com/AD4698>`_
-+
-+
-+Supported features
-+==================
-+
-+SPI wiring modes
-+----------------
-+
-+The driver currently supports the following SPI wiring configuration:
-+
-+4-wire mode
-+^^^^^^^^^^^
-+
-+In this mode, CNV and CS are tied together and there is a single SDO line.
-+
-+.. code-block::
-+
-+    +-------------+         +-------------+
-+    |          CS |<-+------| CS          |
-+    |         CNV |<-+      |             |
-+    |     ADC     |         |     HOST    |
-+    |             |         |             |
-+    |         SDI |<--------| SDO         |
-+    |         SDO |-------->| SDI         |
-+    |        SCLK |<--------| SCLK        |
-+    +-------------+         +-------------+
-+
-+To use this mode, in the device tree, omit the ``cnv-gpios`` and
-+``spi-rx-bus-width`` properties.
-+
-+Channel configuration
-+---------------------
-+
-+Since the chip supports multiple ways to configure each channel, this must be
-+described in the device tree based on what is actually wired up to the inputs.
-+
-+There are three typical configurations:
-+
-+Single-ended where a pin is used with the ``REFGND`` pin, pseudo-differential
-+where a pin is used with the ``COM`` pin and differential where two ``INx``
-+pins are used as a pair
-+
-+Single-ended input
-+^^^^^^^^^^^^^^^^^^
-+
-+Each ``INx`` pin can be used as a single-ended input in conjunction with the
-+``REFGND`` pin. The device tree will look like this:
-+
-+.. code-block::
-+
-+    channel@0 {
-+        reg = <0>; /* not related to the pin number */
-+        single-channel = <0>; /* IN0 */
-+    };
-+
-+This will appear on the IIO bus as the ``voltage0`` channel. The processed value
-+(*raw × scale*) will be the voltage present on the ``IN0`` pin relative to
-+``REFGND``. (Offset is always 0 when pairing with ``REFGND``.)
-+
-+Pseudo-differential input
-+^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+Each ``INx`` pin can be used as a pseudo-differential input in conjunction with
-+the ``COM`` pin. The device tree will look like this:
-+
-+.. code-block::
-+
-+    com-supply = <&vref_div_2>;
-+
-+    channel@1 {
-+        reg = <1>;
-+        single-channel = <1>; /* IN1 */
-+        common-mode-channel = <AD4695_COMMON_MODE_COM>;
-+        bipolar;
-+    };
-+
-+This will appear on the IIO bus as the ``voltage1`` channel. The processed value
-+(*(raw + offset) × scale*) will be the voltage measured on the ``IN1`` pin
-+relative to ``REFGND``. (The offset is determined by the ``com-supply`` voltage.)
-+
-+The macro comes from:
-+
-+.. code-block::
-+
-+    #include <dt-bindings/iio/adi,ad4695.h>
-+
-+Differential input
-+^^^^^^^^^^^^^^^^^^
-+
-+An even-numbered ``INx`` pin and the following odd-numbered ``INx`` pin can be
-+used as a differential pair. The device tree for using ``IN2`` as the positive
-+input and ``IN3`` as the negative input will look like this:
-+
-+.. code-block::
-+
-+    channel@2 {
-+        reg = <2>;
-+        diff-channels = <2>, <3>; /* IN2, IN3 */
-+        bipolar;
-+    };
-+
-+This will appear on the IIO bus as the ``voltage2-voltage3`` channel. The
-+processed value (*raw × scale*) will be the voltage difference between the two
-+pins. (Offset is always 0 for differential channels.)
-+
-+VCC supply
-+----------
-+
-+The chip supports being powered by an external LDO via the ``VCC`` input or an
-+internal LDO via the ``LDO_IN`` input. The driver looks at the device tree to
-+determine which is being used. If ``ldo-supply`` is present, then the internal
-+LDO is used. If ``vcc-supply`` is present, then the external LDO is used and
-+the internal LDO is disabled.
-+
-+Reference voltage
-+-----------------
-+
-+The chip supports an external reference voltage via the ``REF`` input or an
-+internal buffered reference voltage via the ``REFIN`` input. The driver looks
-+at the device tree to determine which is being used. If ``ref-supply`` is
-+present, then the external reference voltage is used and the internal buffer is
-+disabled. If ``refin-supply`` is present, then the internal buffered reference
-+voltage is used.
-+
-+Unimplemented features
-+----------------------
-+
-+- Additional wiring modes
-+- Buffered reads
-+- Threshold events
-+- Oversampling
-+- Gain/offset calibration
-+- GPIO support
-+- CRC support
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 4c13bfa2865c..df69a76bf583 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -17,6 +17,7 @@ Industrial I/O Kernel Drivers
- .. toctree::
-    :maxdepth: 1
- 
-+   ad4695
-    ad7944
-    adis16475
-    adis16480
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e7a338a3eaaa..15f15b6013ce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1217,6 +1217,7 @@ L:	linux-iio@vger.kernel.org
- S:	Supported
- W:	https://ez.analog.com/linux-software-drivers
- F:	Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
-+F:	Documentation/iio/ad4695.rst
- F:	drivers/iio/adc/ad4695.c
- F:	include/dt-bindings/iio/adi,ad4695.h
- 
-
--- 
-2.45.2
-
+Regards,
+João Paulo Gonçalves
 
