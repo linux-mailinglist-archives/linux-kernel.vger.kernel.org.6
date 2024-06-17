@@ -1,105 +1,92 @@
-Return-Path: <linux-kernel+bounces-218129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8609990BA0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:47:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50AF90B99B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 106A5B2CAFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CA981F22BE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1BC1990C6;
-	Mon, 17 Jun 2024 18:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BF419923C;
+	Mon, 17 Jun 2024 18:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XRAmVA3F"
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYTKNQDk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D7C1990BA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102741991D0;
+	Mon, 17 Jun 2024 18:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718648567; cv=none; b=Cw1ucno1kwOWqbqCOtBWQDjpCck0FnwMOz4XqoMOFsO+JnHYTIedDgRiLiuS/gk3U/JTHVDRsa/S/UH++szy426DCXIZZdS9ZUv9pApuH1y8CBbtooePH5XNJ+uF/I5p2T5W18YpDzQv0e2lbpBNrvSsLN83wkmYgWkB0rz+VhI=
+	t=1718648576; cv=none; b=YcNTiNgOjxMqNi3+yja4BuJ1pRW+Q2RdRxosM5bAe9HuZLuoB2kaPZLofW6r74Nj8/JhCyOW/UyHKWxrIU9/eEJ3TUofio5Oa2sMwUPxcZphK6Rh4c+Vop+w8lhrHnUTlcg3Ne8y2enJAPTa40Dp6zMeUaurHetqmPCnXBjhXcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718648567; c=relaxed/simple;
-	bh=qhSM1PBvU7joTxqhlWMSmcyf1OdS106mDM5IHpvzoPw=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=CGX6Bq4isoH0+4dDQWjPQFVZy9UkTmvIldEtjwTBcNT+uFcZIZG9uU1nU0t8O5tyCjhNy2g67O7PkjIcThTKN1427deUjXm6kypA7m/Jug5xtM+Y0xn586/XkxyepR+H5Vy1rGy8PDsdkilAi0Xatrfr/0B1TlzZTEAQUm5ZV8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XRAmVA3F; arc=none smtp.client-ip=209.85.166.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-7eee7741583so153431739f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:22:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718648565; x=1719253365; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pny2UzPtVZNTzHF4IsxaYZ+f2GCEeGNxOUJXm/PCpXQ=;
-        b=XRAmVA3FhMsS0UU3/qdRDH9NESEccDgFX/R4F484VsbxHaZh5b8eWHSG8bfjsXuzmP
-         uAP4hzjNxnAyTOOKPk8KduS9cr2ir8qKRpTCiykVHxJPWw1eL61JHRy0ZtgM9Z8xn/OW
-         ZgcIl5U1Iopuc9YzmAaSLAmzvwX6gfwkwdopTVmEb/SEbEKfa11gN589hKvcbIiY3TkD
-         yqp89AyTTZGWi0c+ABmiFx59orZAG+VEciaLtXujWl0rsBnD12z5j10bdsLijjVFV41e
-         3rciAvwxOYn+bi94JStgdJj8XTDmbJAEO2Cd5+M/Q5Omr8WY+fEqEqagO//ormMLplMx
-         Az0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718648565; x=1719253365;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pny2UzPtVZNTzHF4IsxaYZ+f2GCEeGNxOUJXm/PCpXQ=;
-        b=kBH7lPKpquhiljA8h20gGvyoXA9dqzqn67ILEHg+qmaTN+kOWpm5Wu29EaTksygn4W
-         8GyqqkeR+6Iq/QwTXsXBVChRf47VnFOUt5saUejDGb6PfpezF+GO8H/6SPpSefzxu5nr
-         8mG5x04Icb5yFsTJ0KRvk5rjZKu4mIvw7Y/S/ISqI4JQMWFCmzTm/5Sn3cCoq0jx8mY6
-         bE0VR8xKD/xTAFFT116jwQYjt3x0Zfrs5T2kpYFIGfPjNlvO/6TeUZDGoyUyB/vGJjBP
-         /j5zI1QWnIA279dEeEIXVEmorHUEX7WXWn2yak3bFhlLp00NxfZY6VYHJSe23rtNMJgy
-         fP+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUVedV1vZAhQ68MoDsipQY+pdqgEoRvYweIfYnPBoCLfH1v0awN0+/mLFOY9V3sl4mztHV4e+e3H/3460BCnqWvlPF6LsFejQ5Z9KWt
-X-Gm-Message-State: AOJu0Yw+rGLIvZCU/ryHaLL5LSjpBmLhNUw2F24Fyv5OiGe1BrMz2Rnr
-	IvOnUSg5GpoE4eT0qcr2Gw2pzsmq/dzROl1p7WjBnengnmMOOsn7vzRqsf9dicvP9Jkobf/12kP
-	1doj97SggF9cGwY+WP9fKHg==
-X-Google-Smtp-Source: AGHT+IEjud4xQdH2Jdh7XuNPZ20RXq/rHRZKEIbMLpx/a0M5UDBisxWRfV6ZxH0660BmRU4E5fKorzt/Ng9lgPN54A==
-X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
- (user=coltonlewis job=sendgmr) by 2002:a05:6602:3f87:b0:7eb:823b:9583 with
- SMTP id ca18e2360f4ac-7ebeb638b3cmr21918139f.3.1718648565639; Mon, 17 Jun
- 2024 11:22:45 -0700 (PDT)
-Date: Mon, 17 Jun 2024 18:22:44 +0000
-In-Reply-To: <171839594069.633615.6902666817551787618.b4-ty@linux.dev>
- (message from Oliver Upton on Fri, 14 Jun 2024 20:12:27 +0000)
+	s=arc-20240116; t=1718648576; c=relaxed/simple;
+	bh=NCfs8+3fHX5/tKNCnEGfSHtJp8L4wyAuoa/GOOiGtoo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BS4x1zx8KxvM5KP3JLTuYKFIgHrsJclflQf0QnnF2nHOllrmrx4ZenAwWmHjO+1PyOSJ3GI3/iI15wfygNJmeZpcM46Y46IL4dpoys5RQXtdJC4k6GeXBnUr10RqYiB6Wxq0e1j/tNikKzilSAdh97PCht7ucnwdM0qzdSky724=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYTKNQDk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7838C2BD10;
+	Mon, 17 Jun 2024 18:22:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718648575;
+	bh=NCfs8+3fHX5/tKNCnEGfSHtJp8L4wyAuoa/GOOiGtoo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OYTKNQDkBo4oTu9itBH1S+qnTg9b9i6GMOgnDPStEM6Pa/BynSfWqQ3mgzbBtNcZ1
+	 bhHhT78ngG45kzg9IIAZESHxq+jnZwKuJC4lP1pYyMV0t1ilAraGndXeTiFEdnpsHH
+	 vT/vRStrwMYfu9Zxn1IkG1tK4uU4Fvj4vmdS1PVOLLSOKDGKi+laFMAMs1iqvDx9E/
+	 GPCUHFVkoS1Unx6OZXfJJ1Vq+IE0rbmT2G6OQeHLi65iKl6JdERAaZ1bJRXF2hz22S
+	 vl7GtpyBXdLLSFjhYQXmOrdVVgh7WwStO1Q0JZSINGTAwXILEhWJyEz2tU0p3/lfOl
+	 KroXUSvl1cGKA==
+Date: Mon, 17 Jun 2024 11:22:55 -0700
+From: Kees Cook <kees@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Yuntao Liu <liuyuntao12@huawei.com>, x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-hardening@vger.kernel.org,
+	catalin.marinas@arm.com, will@kernel.org, hca@linux.ibm.com,
+	gor@linux.ibm.com, agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com, svens@linux.ibm.com, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	hpa@zytor.com, gustavoars@kernel.org, arnd@arndb.de,
+	leobras@redhat.com, broonie@kernel.org, imbrenda@linux.ibm.com,
+	pawan.kumar.gupta@linux.intel.com
+Subject: Re: [PATCH] remove AND operation in choose_random_kstack_offset()
+Message-ID: <202406171122.B5FDA6A@keescook>
+References: <20240617133721.377540-1-liuyuntao12@huawei.com>
+ <ZnBbr2CAqBGDe2aN@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <gsntplsf5szv.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [PATCH v6] KVM: arm64: Add early_param to control WFx trapping
-From: Colton Lewis <coltonlewis@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: kvm@vger.kernel.org, oliver.upton@linux.dev, yuzenghui@huawei.com, 
-	linux-doc@vger.kernel.org, catalin.marinas@arm.com, corbet@lwn.net, 
-	linux-kernel@vger.kernel.org, suzuki.poulose@arm.com, 
-	linux-arm-kernel@lists.infradead.org, james.morse@arm.com, maz@kernel.org, 
-	will@kernel.org, kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnBbr2CAqBGDe2aN@J2N7QTR9R3>
 
-Oliver Upton <oliver.upton@linux.dev> writes:
+On Mon, Jun 17, 2024 at 04:52:15PM +0100, Mark Rutland wrote:
+> On Mon, Jun 17, 2024 at 01:37:21PM +0000, Yuntao Liu wrote:
+> > Since the offset would be bitwise ANDed with 0x3FF in
+> > add_random_kstack_offset(), so just remove AND operation here.
+> > 
+> > Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+> 
+> The comments in arm64 and x86 say that they're deliberately capping the
+> offset at fewer bits than the result of KSTACK_OFFSET_MAX() masking the
+> value with 0x3FF.
+> 
+> Maybe it's ok to expand that, but if that's the case the commit message
+> needs to explain why it's safe add extra bits (2 on arm64, 3 on s39 and
+> x86), and those comments need to be updated accordingly.
+> 
+> As-is, I do not think this patch is ok.
 
-> On Thu, 23 May 2024 17:40:55 +0000, Colton Lewis wrote:
->> Add an early_params to control WFI and WFE trapping. This is to
->> control the degree guests can wait for interrupts on their own without
->> being trapped by KVM. Options for each param are trap and notrap. trap
->> enables the trap. notrap disables the trap. Note that when enabled,
->> traps are allowed but not guaranteed by the CPU architecture. Absent
->> an explicitly set policy, default to current behavior: disabling the
->> trap if only a single task is running and enabling otherwise.
+Yeah, I agree: the truncation is intentional and tuned to the
+architecture.
 
->> [...]
-
-> Applied to kvmarm/next, thanks!
-
-> [1/1] KVM: arm64: Add early_param to control WFx trapping
->        https://git.kernel.org/kvmarm/kvmarm/c/0b5afe05377d
-
-Thank you! And I will keep your comments in mind in the future.
+-- 
+Kees Cook
 
