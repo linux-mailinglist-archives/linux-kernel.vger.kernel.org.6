@@ -1,286 +1,260 @@
-Return-Path: <linux-kernel+bounces-217339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05B590AE7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:00:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C0890AE85
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03D98B26C45
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:00:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D7231C240E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C38198842;
-	Mon, 17 Jun 2024 12:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F692198823;
+	Mon, 17 Jun 2024 13:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nO7dBnqt"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VV6O8OIB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D83197A9E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718629117; cv=none; b=uXMHCspe2+/qLzcQkXqlNdmIhsHls6bYo2A3YDxqe2jeE/bqRYTtG3q2yqnrzQ5fRR9HNJZwPsiMbp7bqgJro0XKseYOC2n3vORhaoA0SBoc5TFcm8Rallm+4eY2mn0deKvIantMFPxSZjQCBoY4EN4mHSQKMZj9GmV0yrBKbXU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718629117; c=relaxed/simple;
-	bh=L4Tdv4oNUtCkWu95VCHEftXhaf4yOIeTqNlEkwqKbIs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PmMCeknEcU3wDz6WeflsPwCqzq5nSpwR9UGM2u4by9dsTRf6NfIe4PGGK+nZGJ4z4ZKpUA5UWou1d7oIEiA7EPu6g9tdPR0gpFrTSlak+vZDX1LX6QG8HQ0qp+7qPdTyfZswCVlM0C0vjEzx5M+PtJa4tXwUtn/xMZ0Rzs/Ek0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nO7dBnqt; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: zhouchengming@bytedance.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718629113;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oap4xbzGpve2QvMxgpawfVmVQ/J+LN8RalAjpXNRZCY=;
-	b=nO7dBnqt/V6/Qo3jtcY1ywMmjM7zfOpFgiC9dsruJIIbdXLf7xX72GUOWPVo1CRNEifw7M
-	O1owzF+3GNJTgro3zEYL0Slcy6AfdlhIU+idjvVBHVFm+ycYGUeqRcOus8K0zQRg47eYBk
-	R5aQdEJuerDkX21ggWu7tWtoByBIyHQ=
-X-Envelope-To: minchan@kernel.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: senozhatsky@chromium.org
-X-Envelope-To: nphamcs@gmail.com
-X-Envelope-To: flintglass@gmail.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: yosryahmed@google.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: chengming.zhou@linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-Date: Mon, 17 Jun 2024 20:57:41 +0800
-Subject: [PATCH 2/2] mm/zswap: use only one pool in zswap
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A87E19755E;
+	Mon, 17 Jun 2024 13:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718629209; cv=fail; b=tS/lP4XAAPx171MI43/atgpf9H8aYa/a8HPtiGjNKP0IeJCyqskfTMWFUqLklGMhNzk2XUY/3t9TgCnmutmRs5uHUCmhyVuEhcOzeZGYvNM208Sc3V6ZxGJ3AREQ+cqhxkE47NunXy1ebOai9egjrJGcm7GhOIUy16N/N8dYoZU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718629209; c=relaxed/simple;
+	bh=PdCxM7Z08J2LWwZFrjonwQ0iI8dcNroU8H0F0DFa7JE=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WgU07xF/EL3xGaV+fwkCFfweh5Fz+fsb8QpC330X6QsCKR46ieYtAQRwiIrjPrdsSHfi7vjcW4BWBmN1AEZNghmyMH4kZUAJNeMuI2Llccnhuimx8MCdUxXTP/5w2ZoaaW7exMFtDLdhU3WrApMTuvIagHJZAD1+GNxZQjAl5Qg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VV6O8OIB; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718629207; x=1750165207;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=PdCxM7Z08J2LWwZFrjonwQ0iI8dcNroU8H0F0DFa7JE=;
+  b=VV6O8OIBfIHQaJcr7gRdx7BCLCX7v90zF56bSwm6A//Lg75Ztfx7JA2w
+   8yS486rZPD+CpjNFJJMTnuoXz3sGYYIEK6qoO8i+AVBeuj6+BxyYRuNb3
+   XZhgjEnjtdM041Wup/j4+Ir8t8IuVoRphP/jhuGl1OAQgoIKNmDshC8qU
+   Bukiq5FXMLssAjxMa9wb3B+wP57vUK6bThQoatzWBN0AlrvlW3kgj7UWC
+   c0hW5FGJLmTbmgwP8Xmzlr3mF87xiN0o1+8unwiSKj4bjfCMD5CesoavV
+   x3k+tBbzXEBRBl+hoCx0kwy37u1DoPlrqeoTWmuhxiztz4VDK+OzloVKU
+   Q==;
+X-CSE-ConnectionGUID: IDUBLM9hTA+jFCtu4ReUQw==
+X-CSE-MsgGUID: /03xrHKPTyWmuU7MmF9jPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="32922115"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="32922115"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 06:00:06 -0700
+X-CSE-ConnectionGUID: 4QdnMJceT9e+8JbaUi+uIA==
+X-CSE-MsgGUID: 7HEd4HWJQL6Ieg7LZBQazw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="41122881"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Jun 2024 06:00:06 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 17 Jun 2024 06:00:05 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 17 Jun 2024 06:00:05 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 17 Jun 2024 06:00:05 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.41) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 17 Jun 2024 06:00:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IYbPdMF9/Vk9hgeSfqlwuthqPKzGIFDOPRjI7w9SB10kjS7x23xHYVHCgDWQBd+3cL4hd9/DYJfC0/m+OPstV2zXC+4SjT3QpyMnMDJjg4hManhqR+ExY8a0tBRexh0DwRLWw3URI43Mrz7XFkp0tKh0LQoWa2OVxisxj/BEUJtaTWlnMIwPPlO5am0NcwHKanjka34ul9sL/WJIj7fkpNdrqO8PqJl8Vpyd6+9cAPgo4XR264X2vzQ9JxYwLQKxF6R3WcSlocHElL33OQLH/O1WvLnYflIFQZtmVsd9jIXj0Iedl2TRd8mich+oXQYGuSw4SnPbY6c9fj1uqJkoxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0+ZlTcx8Efb29mL4dyIaBX8z/KCMJcbDL5SrhpM68tg=;
+ b=G29lIQLpl/scjWIaS4/q+OY5iGlJhPZxxj7qTvwvsrE9E0ZBt3cJLfOeJcUJfZfGfLbbuuKqU5ykMNssIWkzNBExkKQpVIL8rEFXAZAWcKaS/pXUSJk5O0QeYN075Itk/ezhnPJ5BbSUEG1Pt/E36kcVhgrB0+jOQDvnAFqZoOcTtATbOaop3eAcL0/KFYkKY2FBRZby6+tDwXFWY7W1v7MGonBacPWwPs7xMzB/wrSXyeHdhWNNLLnkWa4/LvYQUqBwXn1XyJuPyspkAKRiNaBQNmfBAYz4B166xoY6Pyzgag99t/Ciu4WlVRVjnjvhJfZgAkyV6i3vmaI0oUzXPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by IA1PR11MB6396.namprd11.prod.outlook.com (2603:10b6:208:3ab::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
+ 2024 13:00:02 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
+ 13:00:02 +0000
+Message-ID: <da984106-43eb-42cc-a8c0-be859c6e84e9@intel.com>
+Date: Mon, 17 Jun 2024 14:58:59 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] ice: use proper macro for testing bit
+To: Simon Horman <horms@kernel.org>, Petr Oros <poros@redhat.com>
+CC: <netdev@vger.kernel.org>, <ivecera@redhat.com>,
+	<przemyslaw.kitszel@intel.com>, Jesse Brandeburg
+	<jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Marcin
+ Szycik" <marcin.szycik@linux.intel.com>, Konrad Knitter
+	<konrad.knitter@intel.com>, Marcin Domagala <marcinx.domagala@intel.com>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240614094338.467052-1-poros@redhat.com>
+ <20240615151641.GG8447@kernel.org>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <20240615151641.GG8447@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU7P194CA0012.EURP194.PROD.OUTLOOK.COM
+ (2603:10a6:10:553::18) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240617-zsmalloc-lock-mm-everything-v1-2-5e5081ea11b3@linux.dev>
-References: <20240617-zsmalloc-lock-mm-everything-v1-0-5e5081ea11b3@linux.dev>
-In-Reply-To: <20240617-zsmalloc-lock-mm-everything-v1-0-5e5081ea11b3@linux.dev>
-To: Minchan Kim <minchan@kernel.org>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
- Nhat Pham <nphamcs@gmail.com>
-Cc: Takero Funaki <flintglass@gmail.com>, 
- Chengming Zhou <zhouchengming@bytedance.com>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, Chengming Zhou <chengming.zhou@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718629103; l=7170;
- i=chengming.zhou@linux.dev; s=20240617; h=from:subject:message-id;
- bh=L4Tdv4oNUtCkWu95VCHEftXhaf4yOIeTqNlEkwqKbIs=;
- b=BBjbT07sLabE3YgKNeNTNY+hpFA7z5RXhrwdv8lJ4fbQnVsmWqdtttn11LlWrtGy0ReHy0fXP
- jAJh05UZwqUAkHcHksZviYxw5RS3MZdbdlCrh3YQoqLRgKFE7/fK4gV
-X-Developer-Key: i=chengming.zhou@linux.dev; a=ed25519;
- pk=/XPhIutBo+zyUeQyf4Ni5JYk/PEIWxIeUQqy2DYjmhI=
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|IA1PR11MB6396:EE_
+X-MS-Office365-Filtering-Correlation-Id: cdc66f99-e85a-475a-2e5f-08dc8ecd6681
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|7416011|376011|1800799021;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?NERvYWRIZmx3bWlzS0JCYjZ4TGNuNkdtdW9Qd1REUWZnUm9QTlpOYjBiUU9Q?=
+ =?utf-8?B?MzZ4S2JjUGFIUWpsMmlJcmxuTmJGZy9mVnBUYlAzNlNWR0xBa2hnaEpEV1lO?=
+ =?utf-8?B?OGlCWC92R0M4VjA5T0o0b1JzSWtJUzVZNU0wSkRjU3UxeFQ2Vm92cjB2NXIw?=
+ =?utf-8?B?SlBpK1pEdVdDWHdLdXkwcDZwUGU2U0s1MUNCZ3lRTlBTeTVXblBTK0NKQ1FS?=
+ =?utf-8?B?RzQza0Y3TG9kTVFLMHVsN0ptY012cUhUczZkdzVjN0hGN2JWZDlmK3FUK2lP?=
+ =?utf-8?B?ejBabmRtUzRQQmNkMG8yZmdzcTE1RHR6K1p5V3hkSC9RaVZseFFVbytvbitQ?=
+ =?utf-8?B?ZldqaVJDMjRrL1pKQWlLN0lCL0NhYitNUWtWaVBhRS84NGppWjlNTlpETDA1?=
+ =?utf-8?B?cXJ3YXJwWkZ6SVdOUlp2SkN5Tk11d3ZhQnFPZklEaHo2bXpkRmI2RkFoNVJv?=
+ =?utf-8?B?bGtKR29mS1I5WjRTdHZBTmJQTlhGV1grdFZITTF6NmQyQ0tBNU9va1VZTEd3?=
+ =?utf-8?B?QkNETm14cXZoNnFHR0I5UUpGMG5yYXhyRHMvYXdLTVR3VnFETGpDRTZDbFA0?=
+ =?utf-8?B?ZkNXelMwRDY0NzhYUzZxdW10bFBHUkEzVFRpRW9JV2tGK2dLRmZNVE1FYmpE?=
+ =?utf-8?B?U2ZGeWZTY0ZZb0xJeHJlQ2t6L016dElFaHdBMXh2d0Yrb0tjNXM2aWZITlBi?=
+ =?utf-8?B?QVQ3ZFhSd1BmWTl0Q0pmeFF6eEpGNjRieGluN0MrV0FOdC9QVXBUdm9zN05i?=
+ =?utf-8?B?ak1XMUNDR1M5N1c2c3h6TFZJaHh5QzU2Rkc3RzNQQVRWZEdCM0oraXcxaWg1?=
+ =?utf-8?B?RnpwTGZFU3prZjZCcEp3SUhtcFU1U1VTeHo1WVFWWnQ4MGZoaHphTDlFVSsv?=
+ =?utf-8?B?TW40M3c3bFJqT3YvRGdPUllkMVova1dTcDBEOFVQU3Rwcmw5cFptNXo0d0lj?=
+ =?utf-8?B?RkFId3IxVk05c0kyTEhNenFMeDFsRVR0Nkx4cUw5ZFVXaFdGVHY2MFNwNG9M?=
+ =?utf-8?B?UEZKVVVhOXJSc2R6VkdpckdJVUNGNXQ4YUlaeVFBUHltd2RNL2lFRTNFcjBm?=
+ =?utf-8?B?TG5OWStnZkxqbThaMndtcnN4TXB2VjNScEFGcEx3YUM1L0RWUmh6RGNObEdW?=
+ =?utf-8?B?eUpJRWlYa1VlQU9SVGxhS2dUT2JHUHpxK3Rmb1JWTkE4eXA1TE1zYk8ycFZ6?=
+ =?utf-8?B?VFpMV255V3ByU0pVU1pTMUVaR3hQVVpVVDBHNFNVVEdLQnRlZmhkNWZ0MW4z?=
+ =?utf-8?B?SG5neGVHeVpma1pHWjlJanJadm5WZkxvK2ZkLzZvZUNJT0kydCtJdGp5T1Ur?=
+ =?utf-8?B?YnVkMWtnV0hjbk5LcmNaVGhPQnQ4UHQ0NWVlamwwZ1VwbS9JaU1wSVJvbUg0?=
+ =?utf-8?B?UXltSThkQm55RFRWSnREMUwxVmxDbzd4V1lTR1RTZGZKMXgyS2FROTFLMExD?=
+ =?utf-8?B?SFkzUXFoTWVTTTkxckhSa2syQkViZXBNSzlqYjFLOEF4OUFwUE5GeTQwcTZL?=
+ =?utf-8?B?Z0tuQ3BSZmNGUWcvVUVVblUwOGJ3a0ttN2t4TGtvSGlOZ2MwUWR3VzAyejRj?=
+ =?utf-8?B?a3FWTlNWcnY5czg3OE1SZ2g1TVoyNCtoWUFNekh1Q2dwQWJ4Q29sVmhnMnpR?=
+ =?utf-8?B?QXY0dndzbXEycDA1VklBVEFScjIwY1NIQ0ZDT29CR2daM0pHeEk4ZEpJMndm?=
+ =?utf-8?B?clNkMVlKQWJhZmJmcFNyeVlUc1VOSG0vKytnTitOcjhQbDJ5ZnFTVFhPT2tF?=
+ =?utf-8?Q?JKh11iLwgx+L2Zr+S9llGrU1Di8haMzVvMw6FYB?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VjJtMlpsem9pcEVaZitha0MzeVd4MExYMGpJZHZXcklQV2tSOG5UeXg4R3BO?=
+ =?utf-8?B?OUpKdVgrc3k4aE0yOUFnZzUwZ2RyWG1ucSs1Ulpqdk92dmNxZ1JpK05GTkVv?=
+ =?utf-8?B?Q0k2a3o2QU56YlduM0tNS2p0NXFRTHNKakFwY0hoT2l2YlBNOHZ6Sk5RZUlQ?=
+ =?utf-8?B?UFVCam9NZkdyK2R2dGx5NUpCd2NOTis4Zm9xY3dHSlNoY2xnZE5SdkkzR3c1?=
+ =?utf-8?B?VHRHZ3psa0FDazN6WVV0QkMvdHNLeDk4blJ1WlZISGxXT2lDcXg1Y2UrWTBD?=
+ =?utf-8?B?YXN0K2Y3VTFIMXFvZkRZQmtvdTlBWVlUS2hNY2tHMi84OWdxYVB4Qjluc2Ez?=
+ =?utf-8?B?UElFYlNKYzVaWm9tYkw4RDlyUnUxSXlRR3AvbFV3K1lMRkRnSVo4UUl3Mkxx?=
+ =?utf-8?B?QnRnTmpvWFdUWllJOEw5c2EwMnNpTEltbWdvZ2ZVdTZwRWEwZzNsYm9sYllV?=
+ =?utf-8?B?VHFlZGdJamJIUWdoWnNkelVJUzlGMHVvVWNINUFBZWpuMDJNMDRyOXc3a1BQ?=
+ =?utf-8?B?aGhEM2FVdm9JVFl4dDk2bDBuYktjdUFqVm5xNlZST1Fla1NBZUZ6QWduSzZS?=
+ =?utf-8?B?RHE3M1ZPY04yZHVvMCtwMm11RWU5QzFhZUJmSHoxUVlQK2dtenE4SUFLZkoz?=
+ =?utf-8?B?UTJIN0lGWG5kcHBCcHFLaXJKWDZiNnpwTXBpdE5pR1RIOGVLakgrL3FuWGxL?=
+ =?utf-8?B?WkxaL01BREsxUm9FVU5IVnVmS2FvRzQxdWpPMmlSMTJIK3I5bEtMMnlUc3hl?=
+ =?utf-8?B?UlBFSkcvVy9qb3p5dkJVYkt1UXZpV0JmdzBjOEU5MVdraDFHWXRHd1BZTEth?=
+ =?utf-8?B?NTdYeThlOHdOd0JvME5tMEl1NUFYRkl2RVZ3ZFd0ZTlwYk9GeEdpVG51cldn?=
+ =?utf-8?B?RnBDVnVVb3QvZkRDem9RTW9qckMwSkl4RFBnRCtlMmxpQStRVXQxOTlKM2V1?=
+ =?utf-8?B?ZmFHRDFMcGp2TlNIc3VEQTJFVjNOeS9YKzI3eUUybmwyVDczQlpwVnU1bkRa?=
+ =?utf-8?B?OWxiR0ZHRUd3VmZqUHRuM09qZnRCSDIxY282N0hDVUJLMUFLekN3R0I5blps?=
+ =?utf-8?B?THYrR1ljU3VMek5MTjgzN2gzeWhHR0hjdmZyY29HMjJqSGxLbGdkSitxRzFW?=
+ =?utf-8?B?K1RXN1hjenJWVEk0QVFCM3hraVN5OHIxcmhtazdTMExUYTluTGVsdk1DQUJw?=
+ =?utf-8?B?Z0NwSU84eGt1czhpY2RtWG9DQmpWUU1Td2xDTEk1OHJDL1ZJV3p2dVVHazBh?=
+ =?utf-8?B?T3ppUjJ3eUI0VGhKUWxMYnZXdmVaODExalVIRDR4aCtCZkVuQkdLR1Z6Z1Vn?=
+ =?utf-8?B?R2lEN3JsK3hIWWJQYk41MmxQbjdSTmRsTHc3K2VXN25lMVhGczhrcGd2NThI?=
+ =?utf-8?B?L1REWGhGTzhIRVZCQ0MzZDRvb3RWWEk4VlFERytXZ091TUovU3JTV2hSOWQ3?=
+ =?utf-8?B?b1hsVUxzQTE1K3RpU2ZwKzd3QzZFMis2VnU4T3pXbGhwVWovRG84Nk9SeVdS?=
+ =?utf-8?B?OTU1a3o0R1ZUZ1Rhc3VqNWM4bjltbmhlaGZGYnd5RzlzSGN1VFd3VEdIS093?=
+ =?utf-8?B?cHhBeDlUaUI4WEZkbDY4RzJ3RVlqM3ozWldtM1BmR1RJZUpkeFVteXZTNzFN?=
+ =?utf-8?B?NFFGdzRiazFiUU9tc1Y3ZnV4blRuaUtYSEcxcDkrMk9VRTVnRCs2aU5PRGVz?=
+ =?utf-8?B?VDFibWVKUHVUdkp6ZTJGZTVqSTA2aCtLOXg1aDBXek5iMEVPZGtiazYxQjk5?=
+ =?utf-8?B?T0lveXhZSzlrMVY2cjBiU3FleDNWaDI2VkVIUG9SMVZMa0VBRkt5bXZDQkU3?=
+ =?utf-8?B?T3o5WXpuY1dnOTNEbVhpaEJqS28rRWtWUzdhN3UyZm1yaXk1aXhTYWRobkFN?=
+ =?utf-8?B?cCs2Zm9Pd2hhem1FdldFNkRhWkpkZjNISlE3Q3daOWtqMnlxY29vUFduYmk5?=
+ =?utf-8?B?MW1ha29IcTJ4aDZneDl0QzBDWjIrRTk3VTJKcFJteDRrb25ubmxiUlRsaWlq?=
+ =?utf-8?B?Z21SUXdNUVdOTmRwV2hOSmZHYXJXdStYU3Bxb2NNNmJYSUlPWElDQWg1Smln?=
+ =?utf-8?B?c29aYXhuZlU5akZGNER1K3d5TEROS1hoU2doNE52M3lDZ01URzhXL1FnSWgw?=
+ =?utf-8?B?L3VpMFlac0lISmRWa1NYZXZLeTNkeVRWYXdDTlJ3S1FFblFmQjhoL2RHTnpT?=
+ =?utf-8?B?UGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdc66f99-e85a-475a-2e5f-08dc8ecd6681
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 13:00:02.1386
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BAlJuFsTBFVW4oo8l1GnbK+/1q8RUxHVnDFYOHNtgqR35pcu51w2etnsFprigb7NhcHZsmEeEH1NDq+NwLEzQbkTs/TteS6TpBJCs7L5iTw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6396
+X-OriginatorOrg: intel.com
 
-Zswap uses 32 pools to workaround the locking scalability problem in
-zsmalloc, which brings its own problems like memory waste and more
-memory fragmentation.
+From: Simon Horman <horms@kernel.org>
+Date: Sat, 15 Jun 2024 16:16:41 +0100
 
-Testing results show that we can have near performance with only one
-pool in zswap after changing zsmalloc to use per-size_class lock instead
-of pool spinlock.
+> On Fri, Jun 14, 2024 at 11:43:38AM +0200, Petr Oros wrote:
+>> Do not use _test_bit() macro for testing bit. The proper macro for this
+>> is one without underline.
+> 
+> Hi Petr,
+> 
+> it might be nice to include a brief explanation as to
+> why test_bit() is correct.
 
-Testing kernel build (make bzImage -j32) on tmpfs with memory.max=1GB,
-and zswap shrinker enabled with 10GB swapfile on ext4.
+Let me explain this as the author of all those bitops wrappers :D
+Petr is free to include either this or his own brief into v2.
 
-                                real    user    sys
-6.10.0-rc3                      138.18  1241.38 1452.73
-6.10.0-rc3-onepool              149.45  1240.45 1844.69
-6.10.0-rc3-onepool-perclass     138.23  1242.37 1469.71
+_test_bit() is what test_bit() was prior to my const-optimization. It
+directly calls arch_test_bit(), i.e. the arch-specific implementation
+(or the generic one). It's strictly _internal_ and shouldn't be used
+anywhere outside the actual test_bit() macro.
 
-Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
----
- mm/zswap.c | 60 +++++++++++++++++++-----------------------------------------
- 1 file changed, 19 insertions(+), 41 deletions(-)
+test_bit() is a wrapper which checks whether the bitmap and the bit
+number are compile-time constants and if so, it calls the optimized
+function which evaluates this call to a compile-time constant as well.
+If either of them is not a compile-time constant, it just calls _test_bit().
+test_bit() is the actual function to use anywhere in the kernel.
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index e25a6808c2ed..5063c5372e51 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -122,9 +122,6 @@ static unsigned int zswap_accept_thr_percent = 90; /* of max pool size */
- module_param_named(accept_threshold_percent, zswap_accept_thr_percent,
- 		   uint, 0644);
- 
--/* Number of zpools in zswap_pool (empirically determined for scalability) */
--#define ZSWAP_NR_ZPOOLS 32
--
- /* Enable/disable memory pressure-based shrinker. */
- static bool zswap_shrinker_enabled = IS_ENABLED(
- 		CONFIG_ZSWAP_SHRINKER_DEFAULT_ON);
-@@ -160,7 +157,7 @@ struct crypto_acomp_ctx {
-  * needs to be verified that it's still valid in the tree.
-  */
- struct zswap_pool {
--	struct zpool *zpools[ZSWAP_NR_ZPOOLS];
-+	struct zpool *zpool;
- 	struct crypto_acomp_ctx __percpu *acomp_ctx;
- 	struct percpu_ref ref;
- 	struct list_head list;
-@@ -237,7 +234,7 @@ static inline struct xarray *swap_zswap_tree(swp_entry_t swp)
- 
- #define zswap_pool_debug(msg, p)				\
- 	pr_debug("%s pool %s/%s\n", msg, (p)->tfm_name,		\
--		 zpool_get_type((p)->zpools[0]))
-+		 zpool_get_type((p)->zpool))
- 
- /*********************************
- * pool functions
-@@ -246,7 +243,6 @@ static void __zswap_pool_empty(struct percpu_ref *ref);
- 
- static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
- {
--	int i;
- 	struct zswap_pool *pool;
- 	char name[38]; /* 'zswap' + 32 char (max) num + \0 */
- 	gfp_t gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
-@@ -267,18 +263,14 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
- 	if (!pool)
- 		return NULL;
- 
--	for (i = 0; i < ZSWAP_NR_ZPOOLS; i++) {
--		/* unique name for each pool specifically required by zsmalloc */
--		snprintf(name, 38, "zswap%x",
--			 atomic_inc_return(&zswap_pools_count));
--
--		pool->zpools[i] = zpool_create_pool(type, name, gfp);
--		if (!pool->zpools[i]) {
--			pr_err("%s zpool not available\n", type);
--			goto error;
--		}
-+	/* unique name for each pool specifically required by zsmalloc */
-+	snprintf(name, 38, "zswap%x", atomic_inc_return(&zswap_pools_count));
-+	pool->zpool = zpool_create_pool(type, name, gfp);
-+	if (!pool->zpool) {
-+		pr_err("%s zpool not available\n", type);
-+		goto error;
- 	}
--	pr_debug("using %s zpool\n", zpool_get_type(pool->zpools[0]));
-+	pr_debug("using %s zpool\n", zpool_get_type(pool->zpool));
- 
- 	strscpy(pool->tfm_name, compressor, sizeof(pool->tfm_name));
- 
-@@ -311,8 +303,7 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
- error:
- 	if (pool->acomp_ctx)
- 		free_percpu(pool->acomp_ctx);
--	while (i--)
--		zpool_destroy_pool(pool->zpools[i]);
-+	zpool_destroy_pool(pool->zpool);
- 	kfree(pool);
- 	return NULL;
- }
-@@ -361,15 +352,12 @@ static struct zswap_pool *__zswap_pool_create_fallback(void)
- 
- static void zswap_pool_destroy(struct zswap_pool *pool)
- {
--	int i;
--
- 	zswap_pool_debug("destroying", pool);
- 
- 	cpuhp_state_remove_instance(CPUHP_MM_ZSWP_POOL_PREPARE, &pool->node);
- 	free_percpu(pool->acomp_ctx);
- 
--	for (i = 0; i < ZSWAP_NR_ZPOOLS; i++)
--		zpool_destroy_pool(pool->zpools[i]);
-+	zpool_destroy_pool(pool->zpool);
- 	kfree(pool);
- }
- 
-@@ -464,8 +452,7 @@ static struct zswap_pool *zswap_pool_find_get(char *type, char *compressor)
- 	list_for_each_entry_rcu(pool, &zswap_pools, list) {
- 		if (strcmp(pool->tfm_name, compressor))
- 			continue;
--		/* all zpools share the same type */
--		if (strcmp(zpool_get_type(pool->zpools[0]), type))
-+		if (strcmp(zpool_get_type(pool->zpool), type))
- 			continue;
- 		/* if we can't get it, it's about to be destroyed */
- 		if (!zswap_pool_get(pool))
-@@ -492,12 +479,8 @@ unsigned long zswap_total_pages(void)
- 	unsigned long total = 0;
- 
- 	rcu_read_lock();
--	list_for_each_entry_rcu(pool, &zswap_pools, list) {
--		int i;
--
--		for (i = 0; i < ZSWAP_NR_ZPOOLS; i++)
--			total += zpool_get_total_pages(pool->zpools[i]);
--	}
-+	list_for_each_entry_rcu(pool, &zswap_pools, list)
-+		total += zpool_get_total_pages(pool->zpool);
- 	rcu_read_unlock();
- 
- 	return total;
-@@ -802,11 +785,6 @@ static void zswap_entry_cache_free(struct zswap_entry *entry)
- 	kmem_cache_free(zswap_entry_cache, entry);
- }
- 
--static struct zpool *zswap_find_zpool(struct zswap_entry *entry)
--{
--	return entry->pool->zpools[hash_ptr(entry, ilog2(ZSWAP_NR_ZPOOLS))];
--}
--
- /*
-  * Carries out the common pattern of freeing and entry's zpool allocation,
-  * freeing the entry itself, and decrementing the number of stored pages.
-@@ -814,7 +792,7 @@ static struct zpool *zswap_find_zpool(struct zswap_entry *entry)
- static void zswap_entry_free(struct zswap_entry *entry)
- {
- 	zswap_lru_del(&zswap_list_lru, entry);
--	zpool_free(zswap_find_zpool(entry), entry->handle);
-+	zpool_free(entry->pool->zpool, entry->handle);
- 	zswap_pool_put(entry->pool);
- 	if (entry->objcg) {
- 		obj_cgroup_uncharge_zswap(entry->objcg, entry->length);
-@@ -939,7 +917,7 @@ static bool zswap_compress(struct folio *folio, struct zswap_entry *entry)
- 	if (comp_ret)
- 		goto unlock;
- 
--	zpool = zswap_find_zpool(entry);
-+	zpool = entry->pool->zpool;
- 	gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
- 	if (zpool_malloc_support_movable(zpool))
- 		gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
-@@ -968,7 +946,7 @@ static bool zswap_compress(struct folio *folio, struct zswap_entry *entry)
- 
- static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
- {
--	struct zpool *zpool = zswap_find_zpool(entry);
-+	struct zpool *zpool = entry->pool->zpool;
- 	struct scatterlist input, output;
- 	struct crypto_acomp_ctx *acomp_ctx;
- 	u8 *src;
-@@ -1467,7 +1445,7 @@ bool zswap_store(struct folio *folio)
- 	return true;
- 
- store_failed:
--	zpool_free(zswap_find_zpool(entry), entry->handle);
-+	zpool_free(entry->pool->zpool, entry->handle);
- put_pool:
- 	zswap_pool_put(entry->pool);
- freepage:
-@@ -1683,7 +1661,7 @@ static int zswap_setup(void)
- 	pool = __zswap_pool_create_fallback();
- 	if (pool) {
- 		pr_info("loaded using pool %s/%s\n", pool->tfm_name,
--			zpool_get_type(pool->zpools[0]));
-+			zpool_get_type(pool->zpool));
- 		list_add(&pool->list, &zswap_pools);
- 		zswap_has_pool = true;
- 		static_branch_enable(&zswap_ever_enabled);
+IOW, calling _test_bit() avoids potential compile-time optimizations.
 
--- 
-2.45.2
+From what I see in the code, &sensors is not a compile-time constant,
+thus most probably there are no object code changes before and after
+the patch. But anyway, we shouldn't call internal wrappers instead of
+the actual API, so this fix is correct.
 
+> 
+>>
+>> Fixes: 4da71a77fc3b ("ice: read internal temperature sensor")
+>> Signed-off-by: Petr Oros <poros@redhat.com>
+>> Acked-by: Ivan Vecera <ivecera@redhat.com>
+
+To be added to v2:
+
+Reviewed-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+
+Thanks,
+Olek
 
