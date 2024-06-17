@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-217571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7098190B1A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:22:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3096790B1A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7D8283830
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:22:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5506F1C226D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839EF1A0B1C;
-	Mon, 17 Jun 2024 13:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421BA19FA9C;
+	Mon, 17 Jun 2024 13:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="e53mt5Pg"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zf4Pgsm3"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4264199E9E;
-	Mon, 17 Jun 2024 13:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91AF199E92
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631016; cv=none; b=qkR48AdCcFJfsoAFH7Vw9JpepKvqAGuG6woF7mAkkxlIqwwUThI2LaQG+/cRjG0QU7YLuFztedWPgzEakHk8Ta4eNMbpuk3wjMmhCqCFDGozcJJBAejIIbIHsgkl5L3ddGXvDe+UHOI+zcUHLRh6ymen614cPWxbOe6ijeset6k=
+	t=1718630995; cv=none; b=uOZSDOSmoxflMz2c2SE2pEl0gNa8IQ3TdnP9o0EC1iqoEn+0cnn3XYTdeP19KU703hdXIvjYAMaLWxTDn7BELzzUt96EgaOaOSx0fLUmfZsxKeHvD6kzPCrFSRPPgC1DUCPfQq0CB/Zdp04DWB607XToAf6UX97dXqWr73AmG0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631016; c=relaxed/simple;
-	bh=KSb3mRso17rcUhqb1Oro4xaRLDBSd9Y8je7X+EGQxKI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAalEoGnUyNnNps7/L8KRBxyy9TwV8mSoi5NTPkz3bVvkQBvGLD08Q2sSMv9OpD95NTgaGpcspiUlyYsOeYVeenyd0wsxNn8/9/tjTgBDRUPdAHyOaTZ+I/b3iAkcZNH3XA//IOY2R8Aggiw4KYnD40O6VkJM/X7X/fsyzNE0TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=e53mt5Pg; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718631014; x=1750167014;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KSb3mRso17rcUhqb1Oro4xaRLDBSd9Y8je7X+EGQxKI=;
-  b=e53mt5PgulIomW5ZRO2a1Kr5zgEdNHWwCLemuc+aHDPDmFLp3qQ8ppo6
-   hmcCNarB031kIGHXq3GELT4jZjfWKNphrqHBKUkpzq3nQmKMANGQJCoHV
-   xn3fO4WBG7L6iwIFkEuVI36hlwnYbEOL/2n5rFKQhsvI7shSyo577r2Im
-   URXoISN6ji9wSs856g93ptj3KaGAlPaJTUroJZipSCDFkWxXeIhnpIoHU
-   ZOvQgNs0RQlW7tLcLFF922GtDBTZfBO43ebvcjdAxpyJSASwcVxjssTQb
-   3sJNHHfrYwfLUukRhh/5kPfYe6O7k5RuEbuhdTt4VOkZS/bvtg54mF+h9
-   w==;
-X-CSE-ConnectionGUID: vs/KqhXwTIKMnwb8mVJ4mg==
-X-CSE-MsgGUID: jnR8qmdfSTeSCRZB+zW6Sg==
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="asc'?scan'208";a="28519325"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Jun 2024 06:30:13 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 17 Jun 2024 06:30:06 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 17 Jun 2024 06:30:04 -0700
-Date: Mon, 17 Jun 2024 14:29:46 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Jisheng Zhang <jszhang@kernel.org>
-CC: Yangyu Chen <cyy@cyyself.name>, <linux-riscv@lists.infradead.org>, Conor
- Dooley <conor+dt@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul
- Walmsley <paul.walmsley@sifive.com>, Samuel Holland
-	<samuel.holland@sifive.com>, Anup Patel <anup.patel@wdc.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 7/9] riscv: dts: add initial SpacemiT K1 SoC device
- tree
-Message-ID: <20240617-carat-poise-ee63ed6a224e@wendy>
-References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
- <tencent_701082E2DAE48E2FB857316321778D737C08@qq.com>
- <ZnAw9QrSD-svYqQ5@xhacker>
+	s=arc-20240116; t=1718630995; c=relaxed/simple;
+	bh=mNYo8XxzwcBots3Eauz51GHKXnkqqdLvGz8WsU8GYA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RzbGqvWkX3Wyl6rfn9F7lmkqvEYffCGTFeF21Vfxn39f0okJ6YJVJPK3XHg1b60zhXRDRbR8TSmb3FwhAgMoBpWWGvLkgRvt+W2BIYfMPPRVxD0Wfc9nPwxESy24UVWLUft7uJ2S8jTNRZInhjVyh7yMROfcgMOY7hPvzWibO4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zf4Pgsm3; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: syzbot+e6332ce6aa831184a0eb@syzkaller.appspotmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718630991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BDywsyDZsB83JPUteg6tKfFYJf2ez0t3lcHh4VBGFBU=;
+	b=Zf4Pgsm3CGh73rwBAd+akAyuVzXQY3uARUnbgG72T/6EeiGGP4d0ImBRQpz7qj/VJR9o3Y
+	Y2W6hAGq7gqwl2+sLdZ89nfXVHAa9nah4lLMYP3bSXx0Wyjjx0calHrZZIeanLuuCmq2nk
+	8+YtAOpzz/am1Q3Q/R9GRi46HQooBw4=
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+Date: Mon, 17 Jun 2024 09:29:48 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+e6332ce6aa831184a0eb@syzkaller.appspotmail.com>
+Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in
+ bch2_btree_node_read_done
+Message-ID: <5yjeaaweds7ap7s4hrxlhg53mftdyzwe4uvl7opqna43rnr2tl@chbf2ehpimng>
+References: <0000000000000de83f06191f79ad@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oT9/HnCyP3m+8Cht"
-Content-Disposition: inline
-In-Reply-To: <ZnAw9QrSD-svYqQ5@xhacker>
-
---oT9/HnCyP3m+8Cht
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0000000000000de83f06191f79ad@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jun 17, 2024 at 08:49:57PM +0800, Jisheng Zhang wrote:
-> On Mon, Jun 17, 2024 at 01:20:52AM +0800, Yangyu Chen wrote:
-> > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
-> >=20
-> > Key features:
-> > - 4 cores per cluster, 2 clusters on chip
-> > - UART IP is Intel XScale UART
-> >=20
-> > Some key considerations:
-> > - ISA string is inferred from vendor documentation[2]
-> > - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
-> > - No coherent DMA on this board
-> >     Inferred by taking vendor ethernet and MMC drivers to the mainline
-> >     kernel. Without dma-noncoherent in soc node, the driver fails.
-> > - No cache nodes now
-> >     The parameters from vendor dts are likely to be wrong. It has 512
-> >     sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
-> >     When the size of the cache line is 64B, it is a directly mapped
-> >     cache rather than a set-associative cache, the latter is commonly
-> >     used. Thus, I didn't use the parameters from vendor dts.
-> >=20
-> > Currently only support booting into console with only uart, other
-> > features will be added soon later.
->=20
-> Hi Yangyu,
->=20
-> Per recent practice of cv1800b and th1520 upstream, I think a complete
-> initial support would include pinctrl, clk and reset, I have received
-> the complains from the community. So can you please bring the pinctrl
-> clk  and reset at the same time?
-
-What sort of complaints have you got? That the support is too minimal to
-be useful?
-
---oT9/HnCyP3m+8Cht
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnA6SgAKCRB4tDGHoIJi
-0na7AP9um0KeWsttwnNSGE2JtwpFCri+BagSptLaplA4idDWBgD/a2Bs8pedwuex
-lnoPGQJ1Ty98RoIrkROV8cur2alHbQU=
-=LKni
------END PGP SIGNATURE-----
-
---oT9/HnCyP3m+8Cht--
+On Thu, May 23, 2024 at 07:00:25AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    b6394d6f7159 Merge tag 'pull-misc' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17cd3df4980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=713476114e57eef3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e6332ce6aa831184a0eb
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/e8e1377d4772/disk-b6394d6f.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/19fbbb3b6dd5/vmlinux-b6394d6f.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4dcce16af95d/bzImage-b6394d6f.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e6332ce6aa831184a0eb@syzkaller.appspotmail.com
+> 
+> bcachefs (loop2): mounting version 1.7: mi_btree_bitmap opts=metadata_checksum=none,data_checksum=none,nojournal_transaction_names
+> bcachefs (loop2): recovering from clean shutdown, journal seq 8
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:770:13
+> shift exponent 128 is too large for 32-bit type 'unsigned int'
+> CPU: 1 PID: 18326 Comm: syz-executor.2 Not tainted 6.9.0-syzkaller-10729-gb6394d6f7159 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+>  ubsan_epilogue lib/ubsan.c:231 [inline]
+>  __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+>  btree_node_type_is_extents fs/bcachefs/btree_types.h:770 [inline]
+>  bch2_btree_node_read_done+0x35bf/0x6770 fs/bcachefs/btree_io.c:1088
+>  btree_node_read_work+0x68b/0x1260 fs/bcachefs/btree_io.c:1340
+>  bch2_btree_node_read+0x2467/0x2a40
+>  __bch2_btree_root_read fs/bcachefs/btree_io.c:1764 [inline]
+>  bch2_btree_root_read+0x61e/0x970 fs/bcachefs/btree_io.c:1788
+>  read_btree_roots+0x22d/0x7b0 fs/bcachefs/recovery.c:472
+>  bch2_fs_recovery+0x2346/0x3700 fs/bcachefs/recovery.c:800
+>  bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1031
+>  bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2123
+>  bch2_mount+0x71d/0x1320 fs/bcachefs/fs.c:1917
+>  legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+>  vfs_get_tree+0x90/0x2a0 fs/super.c:1780
+>  do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+>  do_mount fs/namespace.c:3692 [inline]
+>  __do_sys_mount fs/namespace.c:3898 [inline]
+>  __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f76c307e5ea
+> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f76c2bbcef8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007f76c2bbcf80 RCX: 00007f76c307e5ea
+> RDX: 0000000020000040 RSI: 00000000200001c0 RDI: 00007f76c2bbcf40
+> RBP: 0000000020000040 R08: 00007f76c2bbcf80 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000202 R12: 00000000200001c0
+> R13: 00007f76c2bbcf40 R14: 0000000000005b22 R15: 0000000020000240
+>  </TASK>
+> ---[ end trace ]---
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+#syz fix: bcachefs: Check for invalid btree IDs
 
