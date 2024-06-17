@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-217593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3977790B289
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:42:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330B590B1E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB78AB22937
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6A271F240D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E441AD9EA;
-	Mon, 17 Jun 2024 13:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67ECF1AD9C9;
+	Mon, 17 Jun 2024 13:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VpAyeIw3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PH+kglPm"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B351AC247;
-	Mon, 17 Jun 2024 13:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC90A1AC247;
+	Mon, 17 Jun 2024 13:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631760; cv=none; b=DGfJq+d0guYjm7qhz4oO9EHQQddLuj1qNHuBvXgJ9TORuMBMp0LyDe+WH+3bkgbzzQDW98wYr00gFPwSXoip/mQykqPl1ilae+VIeeMfmIkusOt4+n61+G4QBa8e2xVWBpclGao12Zya+fQsstPwyypwkYZU0sKYCfrrYShkl5s=
+	t=1718631744; cv=none; b=RfjjhFZVOtOd6voTF6HIlEs0tVuNu4DNF263aL68mXp9NKoP7Naw5sTtnazLgh5myfC7nCcq0g/Yp/phKGPKsl+EdYaq1iGmg5wM9ENf1TgVapBGzadofGhGqrvfNYZWKhIyGXd484VmGBTduSCyjHDvV5JwIJi4cWHVLL47azM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631760; c=relaxed/simple;
-	bh=jAzokita4ObBVuqP6v9/pCm7QzuPOXyw106mBV/23Ck=;
+	s=arc-20240116; t=1718631744; c=relaxed/simple;
+	bh=XybUM66pzGC133M0KdH1g4ly7r8A7aRbNbucQeFTvoc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vEgBr0GvM21ptWZYwY28+L4heCZBmnryBUo6ID+8Tl/XkT+Y2KneyWCrAQrP1ZGJUVHtge3y6rNtnmCpdOD/7UgjlqPqLvRwVtDNVZqlskaZS7w1WZu8vsiR+SxGMkTodtXqeHiLijy7B4XcF0+W/SSYT1itD22Ftk+EnHMfm2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VpAyeIw3; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718631758; x=1750167758;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=jAzokita4ObBVuqP6v9/pCm7QzuPOXyw106mBV/23Ck=;
-  b=VpAyeIw3OdpLPXod5M+S96OkWityDjNtJVoQiMev3Pck472tNeqn2zQb
-   zgAyV7rIRdBf6384tGiwX3PJRKPg2EHeNpGWv7JvFzFzg7urTZ0MF5a/3
-   R9tpo6b8PTpH7G+ovu9u+blhRiSqnTi3zowcG6kFKh7GP1agLemCdmHZe
-   y8MTdD3RmfEe8i9QQoAt9MtYaSzO3ndZ+eAtpYqMALtXQQ7c8C5KFZSwO
-   97FsqRYw7hwag6ITSElDnA7/EY7UOtjEa0uLBhOdQ5CqNgYtURq4C6hlQ
-   8Qk/7m38VM6PUM7rDPaKeO4aZq/fYJYkj/YleNYyGjEOCIOzVDXdzMNgi
-   w==;
-X-CSE-ConnectionGUID: bwpA3hfTRaSL+O0+WqlJ+Q==
-X-CSE-MsgGUID: vY5bH/9vQJSOg6c74npNvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="26140411"
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="26140411"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 06:42:24 -0700
-X-CSE-ConnectionGUID: cyDZ2+c4Q5yMw2iNvTNnbw==
-X-CSE-MsgGUID: MEU7Mh7STxq2kwapeOkp4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="41131257"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 06:42:21 -0700
-Message-ID: <7c667516-b5a2-48e1-afd8-e45906e69053@intel.com>
-Date: Mon, 17 Jun 2024 16:42:13 +0300
+	 In-Reply-To:Content-Type; b=XVJwPXDpo4cruv2WUbf9woXr/J8/1u/8dgFy6hrZt1Y9wwGd7cNwT1mWjBlDpBWR2WvV/8eD9j0NPtlY9DhaiganXQoK8tDZWv5zDRgkoc7bVt1z7L0+EiYW67N/0QQsrvkokFZt+Qi9GPMCFgBUvbvFN0ydL5fPrTejK9tKfic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PH+kglPm; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec0f3b9bb8so28211021fa.1;
+        Mon, 17 Jun 2024 06:42:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718631741; x=1719236541; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lLq64Jy1y7qzLgBK9Is0sT9q7OKvIVCzHqdhb6LFXBE=;
+        b=PH+kglPmYmPRJdM1VACdOF/ZtV91wTm/HR5WjlXGN+4UsLQtOg4S2Im+ZXgjyWRQZE
+         QoG7gLHQIIHNi5FWP+EY24AL8ahgatYlEONYAKtuvl2Z01qpdx5l6MP1xUPfLj/iaw+z
+         T3EYF8ftty5zuLTidXsaF5GwhKd/VUR6YBnkF6Ent/YjnXuLKqkagOlw7vDTPRLb/CD/
+         4+2DXuxstxEdeeK/R6K5JKD+se3wlqeGa5Ks3VElvpe5UHxM+ngKEM7hlfuuZYygTf6V
+         gPCCFo/SVYdwuKsxs1jqFWZMX4DReWbWIUPyFKjaENy/Im89+xvCtNE4F3wjY6zDEHVZ
+         9GNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718631741; x=1719236541;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lLq64Jy1y7qzLgBK9Is0sT9q7OKvIVCzHqdhb6LFXBE=;
+        b=Smpn7pPN5JUEqj+nrQOwX9jiy7meyfYrj0uzOBtrxgDcB70BWDeMRmt0yVqQ5+UQaN
+         IKwxhdk6KEyWYZc+h4h9SOUrpvSPgggiz6Yj7NX2Xma+i98qBG2nbHI/6Fs6lMbjUoTA
+         xLSisZI57YqNgQLgkLbcPgEdfkHU4SDSXWoiwmMh7ehKb86aH3aJb6RgInaqyURxTjSo
+         Dw0oszm4AYY2RbjNMVZPqnQ8HSJY/CgH3rn3uawpk5j5oHik/k6yL1K8aCq5KFRqggvc
+         FunVP51Hxtv1c6mvjUJzS0brZuaptd4qLtF1/+2SWSC8xkSdb7gIwPx1S/5pFTzJ4Rbl
+         5DWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwCtEAUQP/OpgC5DwAG6tWlpZCOaeGZ5rA9rUn8Dag39pdmnt1T7mBOFeS3gPiTzBOSlZY56P9lbWqANISI6lqnD77CGlKYJyhIsSKXM84gsrQAVMpS7qLtBGfrrsoUwYoqDQYpdqaNBl6zRxeGbwabDC11NEnRv3YgJ72Wqsb9trBKqJhaqurpLwd5NbS5tBhxJ1/+8rd94aaZB/SfIsMBuxlFK+XosCaTdi3wNU0Ioml7RG+jY814LPCsmFm6/AXsORCOUU7pW9BqgRFUpD8MqvAm69GN6snTxG2tc56ydJY3Rt+ZOxlr5P3GadvWHO86Fji0e3CLBVeRXdm3rCD4fFRMuATOf1qnTJW14kJSnCxO3ldAwP4rVkKXFl1/GciJB7NjbdtInRbuWaaEDmamkuz7eXv3Sf0bSxehGIrJ1MqXpowkvrdtu2dPKfzRofePgiR4v6Qx3dQAsvUPC5W2+u7wynkpu4W5GrOPSamSt3u9yxar/JPHdT+9mMWBR/VMxyUQnCE21XaDb53Lm9EeFrRHpxF3OcQXLIxZYiYnavVL6skXDZg
+X-Gm-Message-State: AOJu0Yx17SlP6Qcm2/FmZNNXpbJQr5CSMMZqvLHRZE3bHLAe4iDj3j6Q
+	U4GRM9cLX2+SlbyS6ytnWLVU9fqwaLjh0Dwg+JjDio2rI7k9E8lC
+X-Google-Smtp-Source: AGHT+IGqHzJEUi1a7luh9jW8SHVbZk8TdcfnJo2RG3dm48EiRHLhDHgyG2l2mawW7oSV97i58gBdzA==
+X-Received: by 2002:a2e:a443:0:b0:2ec:1a8b:c380 with SMTP id 38308e7fff4ca-2ec1a8bc478mr51361181fa.45.1718631740813;
+        Mon, 17 Jun 2024 06:42:20 -0700 (PDT)
+Received: from [192.168.42.82] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72ce12fsm6461432a12.7.2024.06.17.06.42.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 06:42:20 -0700 (PDT)
+Message-ID: <8bc8c6db-e25e-42ce-8cd2-be50b4a735e2@gmail.com>
+Date: Mon, 17 Jun 2024 14:42:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,139 +75,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2 2/2] perf/core: Fix incorrected time diff in
- tick adjust period
-To: Luo Gengkun <luogengkun@huaweicloud.com>, peterz@infradead.org
-Cc: mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, namhyung@kernel.org,
- irogers@google.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240417115446.2908769-1-luogengkun@huaweicloud.com>
- <20240417115446.2908769-3-luogengkun@huaweicloud.com>
+Subject: Re: [PATCH net-next v12 04/13] netdev: netdevice devmem allocator
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+ Sergey Shtylyov <s.shtylyov@omp.ru>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Nikolay Aleksandrov <razor@blackwall.org>, David Wei <dw@davidwei.uk>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
+ Shailend Chand <shailend@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20240613013557.1169171-1-almasrymina@google.com>
+ <20240613013557.1169171-5-almasrymina@google.com>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240417115446.2908769-3-luogengkun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240613013557.1169171-5-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 17/04/24 14:54, Luo Gengkun wrote:
-> Adrian found that there is a probability that the number of samples
-> is small, which is caused by the unreasonable large sampling period.
+On 6/13/24 02:35, Mina Almasry wrote:
+> Implement netdev devmem allocator. The allocator takes a given struct
+> netdev_dmabuf_binding as input and allocates net_iov from that
+> binding.
 > 
->  # taskset --cpu 0 perf record -F 1000 -e cs -- taskset --cpu 1 ./test
->  [ perf record: Woken up 1 times to write data ]
->  [ perf record: Captured and wrote 0.010 MB perf.data (204 samples) ]
->  # perf script
->  ...
->  test   865   265.377846:         16 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.378900:         15 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.379845:         14 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.380770:         14 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.381647:         15 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.382638:         16 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.383647:         16 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.384704:         15 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.385649:         14 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.386578:        152 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.396383:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.406183:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.415839:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.425445:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.435052:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.444708:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.454314:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.463970:        154 cs:  ffffffff832e927b schedule+0x2b
->  test   865   265.473577:        154 cs:  ffffffff832e927b schedule+0x2b
->  ...
-> 
-> It seems that the Timer Interrupts is not coming every TICK_NSEC when
+> The allocation simply delegates to the binding's genpool for the
+> allocation logic and wraps the returned memory region in a net_iov
+> struct.
 
-No, the period is not adjusted unless the event is active i.e. scheduled in.
-So an event in a task context where the task sleeps a lot will
-likely not be adjusted every tick.
-
-> system is idle. For example, counter increase n during 2 * TICK_NSEC,
-> and it call perf_adjust_period using n and TICK_NSEC, so the final period
-> we calculated will be bigger than expected one. What's more, if the
-> the overflow time is larger than 2 * TICK_NSEC we cannot tune the period
-> using __perf_event_account_interrupt. To fix this problem, perf can
-> calculate the tick interval by itself.
-
-Yes, the period can get stuck being too big:
-
-	perf_adjust_freq_unthr_events() calculates a value that is
-	too big because it incorrectly assumes the count has
-	accumulated only since the last tick, whereas it can have
-	been much longer.
-
-	__perf_event_account_interrupt() has an unexplained limit
-	(2*TICK_NSEC) on the count delta, and won't adjust the
-	period if that is exceeded.
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
 > 
-> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+> Signed-off-by: Willem de Bruijn <willemb@google.com>
+> Signed-off-by: Kaiyuan Zhang <kaiyuanz@google.com>
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> 
 > ---
->  include/linux/perf_event.h |  1 +
->  kernel/events/core.c       | 15 ++++++++++++---
->  2 files changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index afb028c54f33..2708f1d0692c 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -265,6 +265,7 @@ struct hw_perf_event {
->  	 * State for freq target events, see __perf_event_overflow() and
->  	 * perf_adjust_freq_unthr_context().
->  	 */
-> +	u64				freq_tick_stamp;
->  	u64				freq_time_stamp;
->  	u64				freq_count_stamp;
->  #endif
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index cad50d3439f1..0f2025d631aa 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -4112,7 +4112,7 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
->  {
->  	struct perf_event *event;
->  	struct hw_perf_event *hwc;
-> -	u64 now, period = TICK_NSEC;
-> +	u64 now, period, tick_stamp;
->  	s64 delta;
->  
->  	/*
-> @@ -4151,6 +4151,10 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
->  		 */
->  		event->pmu->stop(event, PERF_EF_UPDATE);
->  
-> +		tick_stamp = perf_clock();
-
-Perhaps jiffies would work just as well, but be
-more efficient.
-
-> +		period = tick_stamp - hwc->freq_tick_stamp;
-> +		hwc->freq_tick_stamp = tick_stamp;
-> +
->  		now = local64_read(&event->count);
->  		delta = now - hwc->freq_count_stamp;
->  		hwc->freq_count_stamp = now;
-> @@ -4162,8 +4166,13 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
->  		 * to perf_adjust_period() to avoid stopping it
->  		 * twice.
->  		 */
-> -		if (delta > 0)
-> -			perf_adjust_period(event, period, delta, false);
-> +		if (delta > 0) {
-> +			/*
-> +			 * we skip first tick adjust period
-> +			 */
-> +			if (likely(period != tick_stamp))
-> +				perf_adjust_period(event, period, delta, false);
-> +		}
->  
->  		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
->  	next:
-
+-- 
+Pavel Begunkov
 
