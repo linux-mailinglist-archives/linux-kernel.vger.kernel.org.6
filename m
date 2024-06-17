@@ -1,231 +1,186 @@
-Return-Path: <linux-kernel+bounces-216865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A337590A7A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:47:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2C290A7A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906C51C244EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:47:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD481C24663
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9E31862B0;
-	Mon, 17 Jun 2024 07:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761D51862B0;
+	Mon, 17 Jun 2024 07:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DZJ6rJge"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="V+C8J20B"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682D1E554
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718610416; cv=fail; b=KJao0C8Ste9IoCbWE7sgeAGdq/PwQbQhSSrmxV8RXUAbpa+dpXDmu/apYGAEBqf+b11a0TFObjheYV8PVJ6FBb97e1Q5Hl8ATduXVUGSz3vG9hknzZPBFb91xMvQKAYipCaXLeLBXqeFqA2PzeDobxg2h/PFWlG2K95TMZQ+yGw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718610416; c=relaxed/simple;
-	bh=/NAgCFF1PcJ7Q90JxItz4sOMhfCVb3QWl70j4oaZCgQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JX6qoGHnK0XsFBoyEUmg0jZ+t9CvlO9YKOgMlA4f46yvUSVIbyjHmxJm8T/xBcCBYblzwe7excsZVySZX+H1VU0bCV84xxDVBiUoYkGEUZkicvAOWXgqdmm8f2LL1UXXD1jCDRyKGnsQ/ZEKbDqE/2FSh1mLi+SX9LtYKUEFKeg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DZJ6rJge; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718610416; x=1750146416;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=/NAgCFF1PcJ7Q90JxItz4sOMhfCVb3QWl70j4oaZCgQ=;
-  b=DZJ6rJgeDMBS7J8u2OTfaIK+oRKSomXJN4qC1SbxcdvMcdTSchOXpR7Z
-   h4RcQto/frTnBnpWPWSJySRCSmgpIUuZjJPHfwrhoj5yq3lNwFrQx7jvP
-   LrVuDn/+lp00QdfMxgdJ1mOCgPM2xfmFNaF78vZ8udXMGonhRxs4mEcY3
-   4y9phLg61bsR8A0yprrvLrsueeE5iifcBUAWqKt6ANTY1+9vwF3+AEjOz
-   VEioGmUfyJImb8dh53P7qgjF3FDtCttqnCImWl95cDPSeO6/ygy9YHmng
-   wkAUR/Cl28Eg8fnNEFNtoXb3boWpfDYbiYIErZxnNbBeg7poqy9gj3dHe
-   Q==;
-X-CSE-ConnectionGUID: Ah8ldtx2TIGrGDLyDulnNA==
-X-CSE-MsgGUID: 0DDg7kxuRYW/KKjurvSR+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="40839210"
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="40839210"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 00:46:55 -0700
-X-CSE-ConnectionGUID: cyOyKlZpRla3+OXttIC92A==
-X-CSE-MsgGUID: 3CfpAjlBSFefhwizCPrA4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="41051740"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Jun 2024 00:46:54 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 17 Jun 2024 00:46:54 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 17 Jun 2024 00:46:54 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 17 Jun 2024 00:46:53 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 17 Jun 2024 00:46:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=B8999xgxWGGyK5YgDjGxrbKBm+Wcee52CBLE+Hv+kZZOd3BU1t9CjnBI5GQsBodM/3kR1bKoedWh56MveWy8pYzsvdMf39s1xFxyTuqHr50OsyJ3dQGNGNe+8hkKu9rwW76w2IH0xfKelMr+Hgw/vEJg5ml1wKSRHUJ1/W1xCkOLsYwmA3jC6CMgFGlLYrIPhCTBRgtTAyyKN27w4uZcv2HYJqENbdECqfbZ9jimPQlfa/vhn+rtGV9BGOYrgphpE89Gy8NZXthFV4i7idLEJcgkmc60Mwg9woJoICRrS0OWYaxWFySKRQEGAEFtwqB329iBjlEAocD3STho1gAZUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/NAgCFF1PcJ7Q90JxItz4sOMhfCVb3QWl70j4oaZCgQ=;
- b=KaAwG5VPiJwmvfACBybrCUEMhiXg6fU3nZWi/FMFYJ7Ixis50MqW1i1yGGWDxCGZ9moJfAYfQMp7hAgQbPVr5GkBSm4lXsX8u151QK1zjfsD/z7ZE6n+91SpT0ox1mRHchn8JenoTw7d4kFsqx18QyKsNBzzGUqvYhck5s6xzCIMJTelsAI40MqGghyD4A3ohBQmDJcjxogkrgqBgoYuv01NHDfdqdFYB1Z5Wvw8w8SZaA1hdnoirW9+Sk09v/Rc5PhlnAoJEv4kJPKC68tWyatdi5MA+ZqoabvfoXac2SOJZsXQZHnRNDPImTl2tCPNY2qXHJdsyZd7u4TVmS0+5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by MN2PR11MB4662.namprd11.prod.outlook.com (2603:10b6:208:263::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Mon, 17 Jun
- 2024 07:46:47 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
- 07:46:46 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"Joerg Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>, "Jacob
- Pan" <jacob.jun.pan@linux.intel.com>, Joel Granados <j.granados@samsung.com>
-CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"virtualization@lists.linux-foundation.org"
-	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v7 00/10] IOMMUFD: Deliver IO page faults to user space
-Thread-Topic: [PATCH v7 00/10] IOMMUFD: Deliver IO page faults to user space
-Thread-Index: AQHav7RxBHks2DgcmEqu2PW4b2jzX7HLlWPg
-Date: Mon, 17 Jun 2024 07:46:46 +0000
-Message-ID: <BN9PR11MB5276C1D9AC4D3147F4594FF88CCD2@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240616061155.169343-1-baolu.lu@linux.intel.com>
-In-Reply-To: <20240616061155.169343-1-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|MN2PR11MB4662:EE_
-x-ms-office365-filtering-correlation-id: 55b7c3a9-1951-4d86-25eb-08dc8ea1a3d6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|7416011|376011|1800799021|366013|38070700015|921017;
-x-microsoft-antispam-message-info: =?us-ascii?Q?gal+3WpE+AaQHRFWW040kHLzuNHryuiMKnN89jEFuVIdTM4WXZfZXC2ZJC4B?=
- =?us-ascii?Q?Jh4RBDtpLFyxwNcMIVccdPoEKYhATqLGEWWmAG8UFtZTCxKRERuwSaaSvwy+?=
- =?us-ascii?Q?Z9fvRlRaSmsJIqSxH5PKIn8L1QTs5AnXbwQM42A14tmk0WGeFTzHj75IOwuj?=
- =?us-ascii?Q?TygQhXVTYtM6Y1I30WVwnMOr8MG0P53Y9zEydAi0sRgMjEi4OMrcZC/Ljniz?=
- =?us-ascii?Q?4VSsK5n2mg/wlZMWYSfNhWyd5tmx57UDKZAtPxxgHf9kCOsaBwCOtBVseCe6?=
- =?us-ascii?Q?2b6q5HpBiiiU02C81dCHSaqM69w+hHaMay5bhIob/vq1iw9YWb2xtIiHh2bt?=
- =?us-ascii?Q?ulxwL5TpaoaV45Ad43RhM6bIojpnYzmzTjh2EyEH72ed/Jy3j/vl/4Ri2hs7?=
- =?us-ascii?Q?k6cYnVtPs7MUDKB7EqfK8DtXgjFt6Hn2SWn+rEBIkmOSfq9mrD2Akia0f7fo?=
- =?us-ascii?Q?Az20vEGs902e8VxjPbr+OlqgxQUszhwKt6Gb6z7VqJGYeW1Rqzur98xJon0B?=
- =?us-ascii?Q?hljjvr4YWU23xcCwQNOEChmDcKjYKn2AL/ZthKk6qTYB+qaVKWhGvpvcReG9?=
- =?us-ascii?Q?myJnjpCh0hFlSEUfxR5At6SvsK+qfzwn2mnkfv+7thH2sc4lzPmVQr9Y4Xko?=
- =?us-ascii?Q?5GMU+ZrEblX5GkQLOlMaMhfNLuGVVydknZWWMdAdA+FeH0yb4IBcETk/xcg+?=
- =?us-ascii?Q?3Ird93dACwbLlbHPR122ti5nwN1JK5i9OlelK+liDSeUf3r0tX1cTNc0wP6r?=
- =?us-ascii?Q?EFwyIcfXpkXSlUrleJvoIauKP9namxDdTpQ8rxzhKjwfif+RCkiTTtUTdu5V?=
- =?us-ascii?Q?bxByg8iyjZiyaKwT/mIMaLVvrO9tPsqqPPY7oTZbaw2lwhEKG65qfmJrIrCW?=
- =?us-ascii?Q?BpoDayv9xIDtd8JEc7DE1Prh4NjecgTaXKZBnGYCgUL+/YwLwquJqxloRmsY?=
- =?us-ascii?Q?L8755KvqOXYV1lahsGcRCDoq86OjiCqMaxqvxPhBB/FdEvi2/kqUmL8vZYoh?=
- =?us-ascii?Q?ZbQEzJQv/Vflpiie2JSqcMhyZMqlp3KACqdyUITQuUqJB2dWHeI4KIOTUwdM?=
- =?us-ascii?Q?L6USfumTHYLqP9RS0VKyHBhv6qX5omlV3Tbnvu44yPCU9Cp9T4mHZhfXFIAI?=
- =?us-ascii?Q?2isUk/xPrhef+oNBm3P7RQU5pgKSnau0BEtQB/V+JcFfJ+nzaYV1mrwNA5m2?=
- =?us-ascii?Q?8aqPb6jxiREGsAHb5SgJ815gIPOd5dtO1z9tJFlB0w5nSrYYwrB4qvnyxkcG?=
- =?us-ascii?Q?jsVp0eK+CHVJICQ196qNPs6jskGQl3uL9zS8xwYNX5b/OHHYrNaDOUUWSTD1?=
- =?us-ascii?Q?HUxBBqgEps8cVhoQgI8UXStGxM5M6Zsf9UyaHnbrDyncRg=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(7416011)(376011)(1800799021)(366013)(38070700015)(921017);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?q/mwX+GBbFhyYKZhkicG46WGrdkj1Ub1HsgzZ8i1NT5N832yofxta6/wREFv?=
- =?us-ascii?Q?pz6XcZvb5Y+M2He+2kc1D1DSV+I6fDxUju4Gt13SFnxaas5Xckqb/Pl2+61I?=
- =?us-ascii?Q?POwTTVYxQHlS5IZwA15R+dO9h5FVeMhibQvv2oyUuVwWUJxKnNbSuOXbKcjm?=
- =?us-ascii?Q?2RHq1fPetdlSsCrAl6zA6yWzyWKZACb5by90eu+NP2Z9mftMf+S3AbVsDx6Q?=
- =?us-ascii?Q?Y0ZkjK3BGgxtCHBBm37nQXxOxu2QCvps0pGYHqnUz6MZnZ6ue0Is/4yLIyni?=
- =?us-ascii?Q?0ng+zC4pU9sZV92jZLTI//XdMUY0Sy+1OTbnFwaFdMKQ/UJjok7LAeXltfdI?=
- =?us-ascii?Q?hXov6QoqHdzJNMQyjZmuZNLIvwHTFbpvlLL+xFh1MO2iKFvTpVsZWdNDpAfV?=
- =?us-ascii?Q?4A3eJVMqin1QRMNrZNkjXw/bGgeYbDyK1WPtaLPT5yHU1JuRO8JdUUXMqknU?=
- =?us-ascii?Q?Oo44TVJ9Yo1NPFzGE+SEK+P+DCYpn0cA/YXvsVrp3cZ/aNjNpLpR1jddYeBm?=
- =?us-ascii?Q?1E6g/H1FRLNvY6C4+mhyybh3Khe/KGq8+tJfXauPB9lrNPED99IZlgRs9zti?=
- =?us-ascii?Q?7SA1j1EDPpJRQt36zKk4gF+J3Hq7j1HDL06eX/M4Fw6Gvt/Dgkqh1AVXHpdb?=
- =?us-ascii?Q?4O+gmdkLA3G82laaTIzr8pDAJA5pWc0VCBeR2YfaJucwJx46nJhqUIlJ6eeg?=
- =?us-ascii?Q?+CA2E7BK3bAHWLXSt0GR8oRqGQGHZS5uCbvzCOUZ1M9SqXIRQAWwyYOlz/rd?=
- =?us-ascii?Q?sc/lX4zHgnMNoeq4tc58G1l50RLuW0xcqIp+CivrdupOZkhxYEUQxgKW1QN4?=
- =?us-ascii?Q?h72IKIvdZJbNV6hJMhgWCAawjZDLoSnNIG52Oeig2mz3LX/8w0HgbqksTSoD?=
- =?us-ascii?Q?uCv30lziYg61RXBifxHrXNHmAuKCVQ03wxZt5xk0cT23Lhvh6L6iouAEQHn2?=
- =?us-ascii?Q?ImSH993p0ej5DTllwaEn5arsK3a02q4T7QgVvKEdK/DtHl5LhEeFlLBjfpTx?=
- =?us-ascii?Q?y7H6UAyzliG7jv4hj/8LlMrGTJFw0ZOo9QN738qDipi+0VgV+4RYwmKynrdM?=
- =?us-ascii?Q?TrV73Lh34qqm+37mrko+6Cc5mdMeOONGXJlbNe3aFk0lcnBEMKzhXqX2hGCh?=
- =?us-ascii?Q?eifSR9G48EysLeAvfP3WI9a6xM324Hr1F74SFMeXQkWH0eBFBR5G4Lp+CoCS?=
- =?us-ascii?Q?AipwG7BDLIkLeWEuZYYC2+KQFoHiJ9YstsOmCMzv8PoDXdTAbceUmyyCkf2j?=
- =?us-ascii?Q?GtqzQb48OxJ9oi8NtSsbQrUN3Z/lVrPkom0vJD9CJUnFju/n55KqN/l08INE?=
- =?us-ascii?Q?agQwAjFI4DooxagGBSrCUlkELBHHtMBDzcXaXt4F63qLsJBVuB3ZY6OpH/lu?=
- =?us-ascii?Q?t0hpO0yVeibcrdHiGeMuloLNtpcidWyrSIqyDUpB+qkXB9neFiu/iBTGmf0i?=
- =?us-ascii?Q?2fH7jJQ7klXQt3mY8eaY+D83f3YyXXer6fQY7T6wWXtVsOfNrF+68jKwG63B?=
- =?us-ascii?Q?m1CK4LSrEFqirqoegVzN8J2T93OrKKkycn6OSphh1DdgjhC9glP0dJoRhFQm?=
- =?us-ascii?Q?ziaFfxEJxznf4qICVQxJ0DfjKAx+gzmcWVaJ4DHt?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC53E554
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718610435; cv=none; b=BwOE6Aej4VfIWnuastCRUdVN/06vGoFGjd3I1LVxTeSTVfs5awBiLaa/agXm6UM4CrITse9YhsuhnjySwQIM/XLlAI+7Cg/QVTLO76AE2FUgRJusD0fsxpZKHzpPsmgM/TYIXmi/DDpsoOPHTq+Aun+TI/bfHZfuqUECor72NnE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718610435; c=relaxed/simple;
+	bh=nWtjM95ZtOAfg39pb48tyEJzvfTwzAzAqoQpUuhj4+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o64NimL6MGZ98qDljp7is0DVfYEO44Rzt9KHsZFanVFeVB6uO5P/k/BT9q0hGTA5I/zK3Es0cgg2ygMi2OjR7CQATAMyQW+jgIjvm9JMet0Weem2bTrvCkte2qDvrxaSKGF+FSmyd2o6GvCvDTKTrDZ+rMVNWnaQzFES8rYdOio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=V+C8J20B; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-144-210.elisa-laajakaista.fi [91.158.144.210])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2967239F;
+	Mon, 17 Jun 2024 09:46:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718610415;
+	bh=nWtjM95ZtOAfg39pb48tyEJzvfTwzAzAqoQpUuhj4+A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=V+C8J20BAwNhEJyYIfqtBod2EmwK7B+DAjGmcpL+H6BcpFaq1sZnSxy56KNkUrgHB
+	 1ZSqz3yG9qIDll/WO1l25dLu1ba+deBsYeVAJ3TYy0G2qVcNjwDzSjtiA9ar7GnUOi
+	 kpFE4lL+zCGmZarfO0zi1afLuCNXTADRLp+ebYF8=
+Message-ID: <e5ca9be5-2918-427a-b7eb-28f1915b5d31@ideasonboard.com>
+Date: Mon, 17 Jun 2024 10:47:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55b7c3a9-1951-4d86-25eb-08dc8ea1a3d6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2024 07:46:46.9321
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iPdb+ArN9LHksdm7dpG2NVZAHvTCQ2JJMLdhE1d2lajCcvv8UiVCq/9u/AdSXBaXwQdfrgFmPYmr0oyX0yqzVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4662
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/10] drm: zynqmp_dp: IRQ cleanups and debugfs support
+To: Sean Anderson <sean.anderson@linux.dev>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org
+Cc: linux-arm-kernel@lists.infradead.org, David Airlie <airlied@gmail.com>,
+ linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+ Michal Simek <michal.simek@amd.com>
+References: <20240503192922.2172314-1-sean.anderson@linux.dev>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Content-Language: en-US
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240503192922.2172314-1-sean.anderson@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> From: Lu Baolu <baolu.lu@linux.intel.com>
-> Sent: Sunday, June 16, 2024 2:12 PM
->=20
-> This series implements the functionality of delivering IO page faults to
-> user space through the IOMMUFD framework. One feasible use case is the
-> nested translation. Nested translation is a hardware feature that
-> supports two-stage translation tables for IOMMU. The second-stage
-> translation table is managed by the host VMM, while the first-stage
-> translation table is owned by user space. This allows user space to
-> control the IOMMU mappings for its devices.
->=20
-> When an IO page fault occurs on the first-stage translation table, the
-> IOMMU hardware can deliver the page fault to user space through the
-> IOMMUFD framework. User space can then handle the page fault and
-> respond
-> to the device top-down through the IOMMUFD. This allows user space to
-> implement its own IO page fault handling policies.
->=20
-> User space application that is capable of handling IO page faults should
-> allocate a fault object, and bind the fault object to any domain that it
-> is willing to handle the fault generatd for them. On a successful return
-> of fault object allocation, the user can retrieve and respond to page
-> faults by reading or writing to the file descriptor (FD) returned.
->=20
-> The iommu selftest framework has been updated to test the IO page fault
-> delivery and response functionality.
->=20
-> The series and related patches are available on GitHub:
-> https://github.com/LuBaolu/intel-iommu/commits/iommufd-io-pgfault-
-> delivery-v7
->=20
+Hi Sean,
 
-for the entire series:
+On 03/05/2024 22:29, Sean Anderson wrote:
+> This series cleans up the zyqnmp_dp IRQ and locking situation. Once
+> that's done, it adds debugfs support. The intent is to enable compliance
+> testing or to help debug signal-integrity issues.
+> 
+> Last time I discussed converting the HPD work(s) to a threaded IRQ. I
+> did not end up doing that for this series since the steps would be
+> 
+> - Add locking
+> - Move link retraining to a work function
+> - Harden the IRQ
+> - Merge the works into a threaded IRQ (omitted)
+> 
+> Which with the exception of the final step is the same as leaving those
+> works as-is. Conversion to a threaded IRQ can be done as a follow-up.
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+I tested this, and the "drm: zynqmp_dp: Convert to a hard IRQ" causes a 
+hang for me when unloading the drivers. Unfortunately I'm not in the 
+condition to debug it at the moment.
+
+I have picked the first three patches into drm-misc-next, though, to 
+decrease the number of patches in the series a bit. They looked 
+independent and safe enough to apply.
+
+  Tomi
+
+> 
+> Changes in v5:
+> - Fix AUX bus not getting unregistered
+> - Rebase onto drm-misc/drm-misc-next
+> 
+> Changes in v4:
+> - Rebase onto drm/drm-next
+> 
+> Changes in v3:
+> - Don't delay work
+> - Convert to a hard IRQ
+> - Use AUX IRQs instead of polling
+> - Take dp->lock in zynqmp_dp_hpd_work_func
+> 
+> Changes in v2:
+> - Rearrange zynqmp_dp for better padding
+> - Split off the HPD IRQ work into another commit
+> - Expand the commit message
+> - Document hpd_irq_work
+> - Document debugfs files
+> - Add ignore_aux_errors and ignore_hpd debugfs files to replace earlier
+>    implicit functionality
+> - Attempt to fix unreproducable, spurious build warning
+> - Drop "Optionally ignore DPCD errors" in favor of a debugfs file
+>    directly affecting zynqmp_dp_aux_transfer.
+> 
+> Sean Anderson (10):
+>    drm: zynqmp_kms: Fix AUX bus not getting unregistered
+>    drm: zynqmp_dp: Rearrange zynqmp_dp for better padding
+>    drm: zynqmp_dp: Don't delay work
+>    drm: zynqmp_dp: Add locking
+>    drm: zynqmp_dp: Don't retrain the link in our IRQ
+>    drm: zynqmp_dp: Convert to a hard IRQ
+>    drm: zynqmp_dp: Use AUX IRQs instead of polling
+>    drm: zynqmp_dp: Split off several helper functions
+>    drm: zynqmp_dp: Take dp->lock in zynqmp_dp_hpd_work_func
+>    drm: zynqmp_dp: Add debugfs interface for compliance testing
+> 
+>   Documentation/gpu/drivers.rst     |   1 +
+>   Documentation/gpu/zynqmp.rst      | 149 +++++
+>   MAINTAINERS                       |   1 +
+>   drivers/gpu/drm/xlnx/zynqmp_dp.c  | 883 +++++++++++++++++++++++++++---
+>   drivers/gpu/drm/xlnx/zynqmp_kms.c |  12 +-
+>   5 files changed, 977 insertions(+), 69 deletions(-)
+>   create mode 100644 Documentation/gpu/zynqmp.rst
+> 
+
 
