@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-217298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05FF90ADF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:29:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA84F90ADF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95C7228519C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:29:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30ACEB25E22
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EEC195B0B;
-	Mon, 17 Jun 2024 12:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AA5195B23;
+	Mon, 17 Jun 2024 12:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYWH5srg"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pp9R5ij3"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42903195960;
-	Mon, 17 Jun 2024 12:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53157195971;
+	Mon, 17 Jun 2024 12:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718627343; cv=none; b=liIpbbYmurgrMRZdDR/kAhM2rEwnaNwDmsA7EDEJkduKdgeJDR4iRS4l0z2xJ5B2vp4+OYRpGEgpxW+LXekRIRfqD8bDshOHpJ/iTEKd4kMCJqgaXJ95J5Yf8Gz3HTEgHDHu2uzYIKLWixYdM0+e0tFf9WBVFtppfszea+N98V8=
+	t=1718627351; cv=none; b=FGwRrcfJmNq9+xTxlVZ+NTJVnXhS5TDvJj9njoThokSxRIcbAYr66gq+JgcOFKmxfQu0qp5lgl89/KiuWfQivMp7UBoY1xL587zHCjDFBOfe78/URWO6RkwjvaLZbPqtXsggIG0F1BQyWDJPfbjZuM35e02qwYTV0+GSBw45Yo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718627343; c=relaxed/simple;
-	bh=t6vDfDP0WnUDhtsCtioJQdhwXB9x1/6tdEwfQb8gr7w=;
+	s=arc-20240116; t=1718627351; c=relaxed/simple;
+	bh=kTwLRzuHZ4rQxBNiRcGhOk8o7CrdHie54ZwZ+nRp6Ns=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qob0WPe6S1ZP3T55ggBR767/En5M2cJCevYaxalnXmiQg3ksMsMWE6Kt03+4/1LgPhyOuTSb7AUjdpH4+taVQLL59b+Y0OfxTIpRHM09cYBRYAMnI0zxNqI+UO0T0EDgylAUCEX+sQxKiymbzvcWISvabZtGkSVHoS998my2Xo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYWH5srg; arc=none smtp.client-ip=209.85.214.179
+	 In-Reply-To:To:Cc; b=j/hYl2LLDDUujhWrg/CJcChZRBcdZdvVOQN4LWdA3qTZEbfmOZE4s4lKVXVOlmyEhWjBdsMfbKAjbmFSuNCVx2ZyXkHcQYo+fmXXc7vnbZQzpJFpzLqwW+Pu0HIGGDBdnqG3metvw/s/rHcTMyRW+2qc/FwA6PTuEXBtf58jdZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pp9R5ij3; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f70131063cso33301015ad.2;
-        Mon, 17 Jun 2024 05:29:02 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7042a8ad9f5so3477182b3a.0;
+        Mon, 17 Jun 2024 05:29:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718627341; x=1719232141; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718627350; x=1719232150; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ENjQGXVG6zrSf3b2hbLXRZe8ZGThnN5eIJS2xnyzsB0=;
-        b=SYWH5srgXFYE5gFM2LmftuZ0IqYb5wAwt2cnk3pgNRs59mFjPvIEpIrEbGY1u5lUhT
-         kgJS8KPV4Ni4VppMVTZV0MRZhB2FLtYdgaqtS7IkJ3TDepS+/ibv9SGf3vlmtu3mvhbR
-         wfsUQ5Zweb4Er5YosIhkK42iJI5cZ4RcbgHF126IjmLTTpEQ3BO+xQnTNWzUutR/qhzj
-         GFy3otCHDTnn1E43sYyqFbMWB8+yYe2wtYpSztHWUabUtOYafXtW7ERGbvH1xMbkzNV4
-         2hZ6uBgF2NF0sdORKs4n5Up8Vquc4Nznec1vHp6GwIfYLzJEe9deglEndL9Ja4pqIWwP
-         B6nw==
+        bh=GcWOvKjaH9VWKVfBKzGMg6R3MCBCRcDLPHcl7oHFM04=;
+        b=Pp9R5ij3Qw/vIi5+geKCaHoR1SmK7DBfchaZ1h2Nnxof31MxvXhRuMmVyarg2tk4FY
+         6pIUntvd7QG9vAiHDJ0DOI6cbeJ02vVCZCbOiA0jMZVoWnOGRipm6VLbElYNSOiW3Lnl
+         IRe28oB7dkTnk/HaZei/x3AacXmXe3PnQX1nLw4PaB3OopiHFmZxCRy/D//BG09qYF4w
+         q96XneuCuQ2sSB3hXyXHvwo7ymc/DajquRgvt4c9JDzRseCwJAuBuGOXe2//Qtqmo5ne
+         KniQ/oQ0ivuSnA2v6CfxWxX3T3RoYfTq9tzjFyaF5ObzJFPBgi8Vz6TB6X7AMaxS8G9L
+         JZSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718627341; x=1719232141;
+        d=1e100.net; s=20230601; t=1718627350; x=1719232150;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ENjQGXVG6zrSf3b2hbLXRZe8ZGThnN5eIJS2xnyzsB0=;
-        b=D+sWmj/X3oIoRox3DvyD2ZHb4/RahzqwIOuyEO9XE3U/lG3JjkHQZX2XILO6FxxslQ
-         o1qsRUmB3gNsctTZvhjr+xfpa/dDv4LQNRvte+yhs3SWFeVRAQpLPf6JnT39aZBONCcm
-         ulcUbiihjTolKP7ekxuhibO4UHMM6Tct/7suFIImka3wwlQWQTS8a7Cc9O0kt/z2SqjM
-         whOw/QJpbJb2vTNdJqAcog7WtT2cdcuVyPuLc77OzyVZF+5qYU+g+kGiX5IGGtyKEjYf
-         2Ec4Zb+/0arxaZes6sk74R87m8FohuG2mPoKtSMg1DP6685xKbh/T5ktfH81I7TSXo1F
-         mXfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJIVvuLxlYvSpz5Qh8S6yMvEoAyqb2WcjXru32Oad6jKElOBeN8NXgdWHFudBayNAHuvf54T5Ik5PR5lQBO7Ruvuxa8uq8hKt43uhgmdp0Rz3TbXjNWNNYX1k2IYO8r8T0HHzdRGA/Wg==
-X-Gm-Message-State: AOJu0YwlMYOF8UPtxUJdId4Vl14kaq038UGac9lxfyz9oQ+mupezVjx2
-	cArjW1Pu+wKI7HtBe69vRGOUgA2Di7ERxFG0s69RSV0nke/HgwwF
-X-Google-Smtp-Source: AGHT+IEWH8YEfcqZ8aCC3vP7Rg2A553aHXTV4DlDBjWWBoYM1LboDHCiNYBz/dVm4EElj9SYzXAh3g==
-X-Received: by 2002:a17:902:da8c:b0:1f6:f521:ff88 with SMTP id d9443c01a7336-1f8626d28aemr106670315ad.23.1718627341562;
-        Mon, 17 Jun 2024 05:29:01 -0700 (PDT)
+        bh=GcWOvKjaH9VWKVfBKzGMg6R3MCBCRcDLPHcl7oHFM04=;
+        b=D5EJFZoNyjtR8VwxRP/R+e+acaLdIFyyfHffFKjpMiYrrsc6JOMlF7fqwIfJ0ppxqB
+         7x6mYDsQEwBvdfLqcoRJbkHSmhGGwucFnj758qkXQgG4wZCShbAmIcTmofJEp1GqYA/0
+         D6j+Hzdqhqr1c5drPT2lYnsTZXdVZn1w92GVU3M665igwMwCsTUvaQNx2o0BRVz7e9N2
+         6oeCSIB14OlKzulQWYBJKzc3liFw5T/67oG5r8SiKNWl1TSyGtlO0CBgQUVVZNJLiCaX
+         T+8MjwJK7bN31sVsnJCDNHhrfBXjjoC2rempe4ULLyP74ofXCC8GO5uKWycZNmTW331u
+         pLaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVK7a0BYPDeBdOykgfF5MzLS9rGVF2DcixBu5W/DyOxcKw9OfEnX0xK0JZ3b+Aanb+okqXdYftsEZYx/u57ydw0sjP/h4i6yuRsMVEqo4r0UoBDseyyqx4sNsJ5kCbnl1IS3fuI2maRGg==
+X-Gm-Message-State: AOJu0Yy5nUqYgkE9gaAHMpMgp4cBspY+S3hr1aiIGFoNyKmu6h8t8lIe
+	zBp6Q4FtdNcI+wxL9IVRr5X/M/aQDx3OAbHCXWKF+EYSiAP7+amC
+X-Google-Smtp-Source: AGHT+IHs34JMMxUSWDdC9PVQ+jTFt1dLMIoOHcoE7HAc4QSMWJG3bWQkzm3dwwcsmhdR6Vmh2T9e0g==
+X-Received: by 2002:a05:6a20:a123:b0:1b6:5b3a:9a4c with SMTP id adf61e73a8af0-1bae7d81c8bmr15214725637.2.1718627349711;
+        Mon, 17 Jun 2024 05:29:09 -0700 (PDT)
 Received: from localhost ([103.139.191.219])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1f855f5e21bsm76214255ad.307.2024.06.17.05.28.56
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-705ccb3bf1csm7210162b3a.137.2024.06.17.05.29.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 05:29:01 -0700 (PDT)
+        Mon, 17 Jun 2024 05:29:09 -0700 (PDT)
 From: Kartik Agarwala <agarwala.kartik@gmail.com>
-Date: Mon, 17 Jun 2024 17:58:25 +0530
-Subject: [PATCH v2 2/3] arm64: dts: mediatek: Add missing Avdd-supply
- property for mt6358codec
+Date: Mon, 17 Jun 2024 17:58:26 +0530
+Subject: [PATCH v2 3/3] dt-bindings: mfd: mt6397: Add reference for
+ mediatek,mt6358-sound
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240617-mt6358-v2-2-5d9f0e99941e@gmail.com>
+Message-Id: <20240617-mt6358-v2-3-5d9f0e99941e@gmail.com>
 References: <20240617-mt6358-v2-0-5d9f0e99941e@gmail.com>
 In-Reply-To: <20240617-mt6358-v2-0-5d9f0e99941e@gmail.com>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -93,60 +93,41 @@ Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  linux-mediatek@lists.infradead.org, 
  Kartik Agarwala <agarwala.kartik@gmail.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1155;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=664;
  i=agarwala.kartik@gmail.com; h=from:subject:message-id;
- bh=t6vDfDP0WnUDhtsCtioJQdhwXB9x1/6tdEwfQb8gr7w=;
- b=owEBbQKS/ZANAwAKAXiEk+OPlULqAcsmYgBmcCvz/vyTIuqPsDiI00NxTqHBkb/5udifcp2ZL
- wZL5ej26gKJAjMEAAEKAB0WIQSJkbnrkCGnamD0k/R4hJPjj5VC6gUCZnAr8wAKCRB4hJPjj5VC
- 6gycD/9OEGDj6BiFMD4zkN23OdiwvprN+ma57OcLYu0JEd/8tqvWJE9S9c6imQOB5Cpl1q31bKi
- MYrtHTMQwDaJXW0toYFEERMcFWRUolnSjhpIMlSpek3CKY4slBJJxOUjHXqh882LMhJ1fXBCDP7
- XZSZz7Ffi/jR+7wp9zieGNBUVOygsEa39n61nS89tB3u02RE5IFS+amViuBdO3K7r2ApFcY2VQ2
- L9WqKs23VhYzomo+EsUwbJZUzy5kBZe0jAmhv6jE7OGkffLU1l4H0v/w1t6PsVGeQH/kKiQMU2C
- zl5iXQowjLBDzbwDEgIf7ACVxRggnB5ASROiSewlcAdWSdiRPenPafjAXfvjM9+j3NAAsy/I2ow
- cwGw6+wbM+7QSgl2jg6a4RIpL3A4dzLkGAAkoRyO4aBfpD32C++SQQMIlEPL+d+RqOCrIOf0tsN
- FnQh0gSbnxte3XlqjYhKiKIlNTp870JERD9mj2Sa/kOD3tuEVlQZl1LmWLPy2+tYrQI+5n+qTCb
- HAWccxWELQFFEaSIYTo4YJWyG789X3A7dhd3NTMBcy0dV2bCIPDHITbhvBgtLwi4oADgvU+EQwS
- dfaN0e9rt4WfCfYmKp5828VwBUf01h9HxeHrN1+ZTeyCsj1uOidhBrqpyXsdVnc/Pod/tXtPeKY
- V1+khP8cdR2wrSg==
+ bh=kTwLRzuHZ4rQxBNiRcGhOk8o7CrdHie54ZwZ+nRp6Ns=;
+ b=owEBbQKS/ZANAwAKAXiEk+OPlULqAcsmYgBmcCvzz6KRHv41QQjOaa6CrJR8ssn/l0qpihn7K
+ 50tAMYY05GJAjMEAAEKAB0WIQSJkbnrkCGnamD0k/R4hJPjj5VC6gUCZnAr8wAKCRB4hJPjj5VC
+ 6liwEACPYyQ52WObSkBjIepDcdHpTXzMZUkawClG3gPNK3TJ/JcAR0YECJfhtzxVM+3n6y7QEi7
+ EmxJr/o8H1VnbI9Y/zDuDo+6kGRz1noZiy9x5Vm82vs4KunuVsbgz52y+7SosdFW0LsSD8CF45n
+ D/AgUy1kVAtZFS/PpXQOKbMr9VZ+prOJ4mmduw28LgiHc9vQtrwJceotJ5nBskqEQOSACNpVzhE
+ 52Z3QrcM7GP7iUwvici8hBZ6GAEfHzRI2+iSlvayO6d6BbX3r9FHDtlfYjVWVMLEVBJTiYpTpNQ
+ twQNE8aFAm9YdhqbiIcYVohbScUAL667JjiaLpP13gqyztm9lrYGN8C0PWnIJzfgbqE/zgCVDPM
+ c2ibDYHvEElRBDklvQ670w97PWHAOagoIAdVGYP4E712mQfs8awIcBQ9xjzaQGaEj7RHTDdzDPT
+ ERD6zUbVbuS5LraNSliGBn3JuUY5FrqCYJ0Or/lz1xA9hBicUQvwEFoBs4nBVfL9B9plPC+1X44
+ MnNvv9prYA4/w0+ED+DUQRn78OG6t8Ns824nvFbjOOzdeak6okc/98my9k0e9LrXs20KZw6tYQN
+ By7ClnMVTqO4p5Tx9NqMwAZHiWU+b0Oi8BZAfeyUVoqk7wJev5BH6gpRqKCbyy1UV2zRawt4MNm
+ 30e/T8iXMJKO+uA==
 X-Developer-Key: i=agarwala.kartik@gmail.com; a=openpgp;
  fpr=8991B9EB9021A76A60F493F4788493E38F9542EA
 
-Avdd-supply property is a required property for the mt6358codec.
+Add reference for mediatek,mt6358-sound
 ---
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts     | 4 ++++
- arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts | 4 ++++
- 2 files changed, 8 insertions(+)
+ Documentation/devicetree/bindings/mfd/mt6397.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-index 681deddff..241dc210d 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-@@ -154,6 +154,10 @@ &mt6358_vsram_gpu_reg {
- 	regulator-coupled-max-spread = <100000>;
- };
- 
-+&mt6358codec {
-+	Avdd-supply = <&mt6358_vaud28_reg>;
-+};
-+
- &pio {
- 	i2c_pins_0: i2c0 {
- 		pins_i2c {
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-index 333c516af..b3c988e3c 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-@@ -191,6 +191,10 @@ &mt6358_vsram_gpu_reg {
- 	regulator-coupled-max-spread = <100000>;
- };
- 
-+&mt6358codec {
-+	Avdd-supply = <&mt6358_vaud28_reg>;
-+};
-+
- &pio {
- 	i2c_pins_0: i2c0 {
- 		pins_i2c {
+diff --git a/Documentation/devicetree/bindings/mfd/mt6397.txt b/Documentation/devicetree/bindings/mfd/mt6397.txt
+index 10540aa7a..cf7fcc402 100644
+--- a/Documentation/devicetree/bindings/mfd/mt6397.txt
++++ b/Documentation/devicetree/bindings/mfd/mt6397.txt
+@@ -48,6 +48,7 @@ Optional subnodes:
+ - codec
+ 	Required properties:
+ 		- compatible: "mediatek,mt6397-codec" or "mediatek,mt6358-sound"
++	see ../sound/mediatek,mt6358.yaml
+ - clk
+ 	Required properties:
+ 		- compatible: "mediatek,mt6397-clk"
 
 -- 
 2.34.1
