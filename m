@@ -1,694 +1,474 @@
-Return-Path: <linux-kernel+bounces-218115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D00B90B97A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:19:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0638F90B980
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1D7289086
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:19:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8ED21C247CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD36218EFEA;
-	Mon, 17 Jun 2024 18:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ayuXjJOH"
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-db5eur01on2044.outbound.protection.outlook.com [40.107.15.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F0E194094;
-	Mon, 17 Jun 2024 18:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.15.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718648072; cv=fail; b=A2KmIOmZaRRAJWxUak836VFDESPeoznwI8piWnAGb7okIYurnUIQPkUoNisO6wcZZniG+f4jt4EY800775gIIcNohSdR66ugRFA3i0C95RPpkBbcaNKRqNCfZJQIZPvlLU9hPj2cUiFM3U8SrYoXJWwSCKuNqyqgOc6NaFjtfKY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718648072; c=relaxed/simple;
-	bh=H+aHSUzbpRS4U+KoI38qAZJXF80R9PFNBX5Pq9f16p8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=OoVgVyutUmD9xMCCTZAgr+Wh3itEcodM16cKNCmgbWuVFxAZ5t7WsHGNmI+hiXfdSJcebotUlC88qKw/Nmo/JXjS5C/k7li4cCsfIbdM+cY25fYU9ytSoBKxV+djBRDE7sBvOtttz1IUbSz4IzIjGWJJ0540BQ1jHtDBzsJJTY8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=ayuXjJOH; arc=fail smtp.client-ip=40.107.15.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eWLhlZtm1o22LVfk2wcXnct6lk7YDHK8EasXCeTnGmyFd50zjNP+eQQeYXs8ldukn/6EcQQwQPUYCg9hRI8W7arTzgLk6U4yCMzC0q9/X4064fajD/d/oKtBqeGx718j24cZ/i6Q+nYHYKGPqPM2ohpMjvQQcuAqry8PlFYyb0nb9chb8qyKUrDEEWEkJdcCDb/bM/ocYlPOOKWlFLy788JuR6YSzjFxtEx92365frqQFj6ujqfEJe2qND+pFyaBKGy995TC4/VKqxbC9lyTYShXNLm8ejS82s8yndc5VLwSyv8JJ2C87nfOtronTbF3FDWWwz1L2Sk+KKQMyhPAyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dINiiACI9aH8Z7Ebxj6ToYvFW57CtN+hV8eiaNHoh4k=;
- b=eszISDC9G2bnADnxDm4SieSY6VKuPN4Uyw/d6Z9Uux5EzBaMr0hUKI2VZPoxG9o4HFnytc1d34FJTjGKnkz/EEZfK4aCr+uS/9nbkBwJn/mZ/x/FbMhnDsrXyoJUqXbOhf7eSehkIoAPRcLjlMrsiWzXPGbpPOY/5RmS7Vh7r8hE+FgfgEu7WZ1LsfxIwfAYU++2l7Tywj83nPh7cR9lRrgSKBs6jMrrBW8CxkhwEVPoQ8Kgm6c0ZK2+K0VOc+CfdbcNeHXrbvA3DI4I1KCEZ0STlOQ1vYapJRNt/VgHaV3NL8za0LETKoL+eOwsV6lyx2pyMvBJSSOtbwd/w9O0Ow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dINiiACI9aH8Z7Ebxj6ToYvFW57CtN+hV8eiaNHoh4k=;
- b=ayuXjJOHUiEwvweO1nqpN6xn+VaFk+3VFOTsKuqr+EOmZqljMdeFvQuYndIHB6siJ1nNBW2qjgz+tivNnXYAbY9FdHNlvOI5XtwAvbf3M9kvy44yWNSFIMJ8H4wQwpnQnstX6ARUoyKuuHIor9gFbvZzJgII/EnaluyyJNZwfWQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI1PR04MB7022.eurprd04.prod.outlook.com (2603:10a6:800:126::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
- 2024 18:14:26 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
- 18:14:26 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744DB198E98;
+	Mon, 17 Jun 2024 18:15:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA44518A936;
+	Mon, 17 Jun 2024 18:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718648100; cv=none; b=FUbyOjgnGa/aELSgHeV5C4nqSJq/fwcvFy9X8A8AhhCVyDbqGNwsfwd8yY2OCGaEjRvmY7gyXqJFOxp8pwGWvDB33PuS8bpR3oqNq1fQ5FXRnhK5G8rPzSSvJgAwNb3Jj961MtRKyAgj3BKcblab9y6EeAmkQu5bMcqs9i4pg8E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718648100; c=relaxed/simple;
+	bh=mpmGlclO5ikb0r4SSQjwKdivKLtbIGzilfVMUizDYf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g8Gt+EbeZjusndYC0/LJ4EZAfwaGqefpptcCfn6Ba5zhqILVy6LqbVweB+VSH2cihE9n151E8sKjAOAvNzw4CEqwOBgHn3XsroqXW+o1OPFBRb5u4Mp9HAY3nMS+f1hfS1sYtQAoBrk/5ats4sxdVYDHh65IBO92lpc5VWaZHU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9829EDA7;
+	Mon, 17 Jun 2024 11:15:21 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CFDE3F64C;
+	Mon, 17 Jun 2024 11:14:41 -0700 (PDT)
+Date: Mon, 17 Jun 2024 19:14:24 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] dt-bindings: clock: qoriq-clock: convert to yaml format
-Date: Mon, 17 Jun 2024 14:14:09 -0400
-Message-Id: <20240617181410.921090-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR07CA0048.namprd07.prod.outlook.com
- (2603:10b6:a03:60::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] firmware: arm_scmi: add initial support for i.MX
+ MISC protocol
+Message-ID: <ZnB9ANdbJ9d9MZHD@pluto>
+References: <20240524-imx95-bbm-misc-v2-v4-0-dc456995d590@nxp.com>
+ <20240524-imx95-bbm-misc-v2-v4-4-dc456995d590@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB7022:EE_
-X-MS-Office365-Filtering-Correlation-Id: 379b6d2f-8d95-48a4-2af7-08dc8ef95277
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|52116011|376011|1800799021|366013|38350700011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rW76Tv+f6ipw0frVfPm3h7ck+ir8tHTOYSqeWqW4y0hDFecry7FUhRoQ+G5P?=
- =?us-ascii?Q?FsOz9zQajnCuZDrCCe7aMVR7lLrHOD1r1fmJFPcnNDJRhoT7OzdEKIojcClw?=
- =?us-ascii?Q?Rb9YS+m2QuOYtKLBgL/yPJMyV5fCo6DPVK930vZ2FW8bnXOPZ4zod6+YlsE5?=
- =?us-ascii?Q?/dssSGl81aaOiQJX/IFVeHrIJZiaobYTdUH4jf+szkLFf3BlIj0/zy3Jz0+z?=
- =?us-ascii?Q?AjLNHB7CCjr+pvLfaOrJkHOUQ4QnQneXHXFyPhGQrRIyjU+WOVcRWZ+i52rW?=
- =?us-ascii?Q?1pLZ01VHesEQq9hNy7D68S4zB8pIge12VzygqgmDx4+MuB0X9JMoECp1+i4+?=
- =?us-ascii?Q?PcDfyg0bSWnMt5EPr5JsvW6hvYe7a+PC0hutckPv95QVRSYW4mleYnZ4sL5R?=
- =?us-ascii?Q?DpGKAQRE3m7xyonlSxOQCebbRPuK1UDZ7Wx30nETKxTHwwIZntUWYpYH6DBK?=
- =?us-ascii?Q?qGG9VcP7/87/sZDIK7wvQg2ClwdecFmjnvPT3sK0LudM93rQcGIRl4uB1WCV?=
- =?us-ascii?Q?1KyJjR1dY/vEO6sWhGsXdTjRmjGZ3lYsjuETL8dG94k6z2Y1eDbCRG0vJCly?=
- =?us-ascii?Q?0Hq7FHRrg1DqnOkpi4v7izJ3zoluOiBdVtDGd7UI1yltF+k3J3YoI/uhC32f?=
- =?us-ascii?Q?I8GEVQdttfbYwPXbluxvtU2y91FT41H0/QJJUH5NFoZh6Xgq67/IVO7Pf/V6?=
- =?us-ascii?Q?3gS/icp6v7mZzqBPzTHVA8gZblCWpektFULuhO6zKSTina83kf9IrFLsvpLp?=
- =?us-ascii?Q?JHA2321fcYN+wlSEVA6oO6Uf3fQLqxMLLw7DhxbLp10L/Ca5I0dpZ2GzGB5f?=
- =?us-ascii?Q?zkiaZsZzEzLmP1Jxml+9dgUPZ63RjwDRZgg6O2zbW3AhaaYAwhy22lQ2EmT/?=
- =?us-ascii?Q?iOVtlRY3qrhtV+v7x19Sh+GNpZECGody1J3htwcIQyBRhKNtJy15fX7dTkDu?=
- =?us-ascii?Q?wNKmPbWs8vsVA6I93PbORBnJDyAJ297iQjlBSf0sQ4Yqw31l8e5CoxiLbsGS?=
- =?us-ascii?Q?Y53JgduGNyzXl4+LosEtPhpjq550O/0Ufz2npKkmD7EJFclYBi2yMIC2ffTW?=
- =?us-ascii?Q?IY+G9JcL8q7vllSeo4g82RKLjWtfoV7/L3tnV0vg2wNUUD4ctIMnmTj0ooeh?=
- =?us-ascii?Q?bQwYe7O/F98DXRPhn1GeMdWC5WhZHbGLlu22vKt4glzO2Mqu72PnCfC7q+rp?=
- =?us-ascii?Q?3nKp+mkjbZ7Qh6rilhgNL4DpIzajPfyquWGKuERuBZzDoXuBRdUeRVb2tPQc?=
- =?us-ascii?Q?HAzxgx/0Pj8S4epoXJM+u1AN1yTQPprQxTo6QILuQEQYy89M1NIQhctEC+FG?=
- =?us-ascii?Q?0xzhIbEec5+V9Nwyx70zej5U?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(52116011)(376011)(1800799021)(366013)(38350700011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?E+K38Eg4HVcYnmJKLF7OO/AvLoEM2OmsJj0FZjuBjgqXF+QOSlaB4vrMLSuH?=
- =?us-ascii?Q?en5RmpBzuaBS7batqFuKHPMfjKnsMHfzof1y3Er0tu2+31ZobxliBoZfH1B8?=
- =?us-ascii?Q?CpVuFKZNRL7ab9q/JLAQdaVnpmWSGOiBVHRvQ9DNIhz0TW2mUrWYEyKrebd1?=
- =?us-ascii?Q?PW2mLieT2ulaccAQSkiSCEhYS+BpGH1m2VdUc4yoHuMYYz2nSrL9n60DHOn0?=
- =?us-ascii?Q?VeM+1JgPz5KEUERoqD1vTJsxMa+rvRiFVI4l6cRI+nNYWUi08mpVf1zfj1+B?=
- =?us-ascii?Q?hD/lgFVOo7RlfERaio631xfgS/Lv+QA5kSkcBQgapn+yVgRibmHsiVtRgjzP?=
- =?us-ascii?Q?Lr0YO17W88wteS7b3b/KEkQxKgTMQU1kFdsJuboOl/gIIw8mA/uDvUFvNnRL?=
- =?us-ascii?Q?H7ormCbtcqauuS5msfUWdQTYfxyjGqAfqNUw3Cx1+gLVzGMrIRcYpizq88FU?=
- =?us-ascii?Q?yQvlS43IAgoA4LdpWE74nkUFYcJp1pq4Yo4fbedzzelKAV/kRvA6ZtPmMXs8?=
- =?us-ascii?Q?p78xGG/xhH/eqB9B9TQYZkBoOOY4g76AmTdB5uGW9MP73oHNUgVhJi2nm6PE?=
- =?us-ascii?Q?OvfI1cW+3Zeb2cVv+mXKp+Cv7+T7RQayCI62tY9T711txFb7dZJEQjAA0B+M?=
- =?us-ascii?Q?4p33jljkIAmqyH/W1tvlAgQxGwlSiOKbzHinZtaAhCQf1iDgxMc9CPzQ6XKk?=
- =?us-ascii?Q?4Sd9nxF3ZM42D4o/GLttGefAeFdYLEnDGVcy42Vxlpv63IJXq37IuyjqHgDN?=
- =?us-ascii?Q?sUBx5t6moGYhTjRXbAOnMEJu9FhLWZVGGJ/y9avsIGMTdtnip0+ZtGD4Apef?=
- =?us-ascii?Q?QNVhIcxRmsV3CK0wzTliHqs1TXYWjdVc1xfs8aixjayNCXIAXrK829XMvNQZ?=
- =?us-ascii?Q?6RI50XdF88bqNtAeXQHCWpo6gIncPYsBUHuZKNxjzLlKUn9EvJ9B6MW1+OZl?=
- =?us-ascii?Q?BhqXQBavp9mkVce35qCKQ8eCkJY/0TybXmrd4MCwFJhQWfw6kEn1LGg0sVCy?=
- =?us-ascii?Q?Bx2pj4r4COwZE52Zd3VepND9RktBWRifr10/bUsgd0wbsdxSOPBmzcINhhjo?=
- =?us-ascii?Q?w46IYDrWCnF7XSm32Kn9ovnmE7eqsZjCa0mPTau4NxtXxJYPmylqBn30M/lC?=
- =?us-ascii?Q?HyQlvua0X4wknYNq9yltKlh7dbnJeYv6i2epRHey4LhjX8P/2fuRnAMTyz/p?=
- =?us-ascii?Q?kBfOW6O/0KI0AqXxg7INDtxflpnJQS5UjmUlIX3AJLVwLhy4itApPHuMNPiy?=
- =?us-ascii?Q?8CwQS3GM/Z3v3odhixTvDtsaOXTUAcM19iX1bZ0WJVLh9g9DiMs7VgPCKT2r?=
- =?us-ascii?Q?WHE0+QFOA3UrAPa/A9VDT9BRMhgUDIf1kSXjBzdkHTnIfKd3kDh1EtnmhepJ?=
- =?us-ascii?Q?fhpwAAH3SK85BFBuw08J7caxhhhwV2CkiMn+41kg+wwC4OP2XFs70i8gJUkI?=
- =?us-ascii?Q?VVnyMiAevZAM0tYkmPG5N4UEM/Ab8XPEk/mP5VtwLK8o3U0qDAPOuMWFUBcI?=
- =?us-ascii?Q?vx18hfWGe8TC/MirVaOmupgINloQ1Yby0eAnP/8sPnLNDqOhroEm39ltrEne?=
- =?us-ascii?Q?5s2l5YQDLbr1IALOdps=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 379b6d2f-8d95-48a4-2af7-08dc8ef95277
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 18:14:26.4069
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OHJ/00Z3BdJj1IeScMES4CobCyunQLuAYYVRSiByoWBOGXJYOlA3teqUB3IYifTpIyrusjwu9wIU92Nj2HPHlA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524-imx95-bbm-misc-v2-v4-4-dc456995d590@nxp.com>
 
-Convert qoria-clock DT binding to yaml format. Split to two files
-qoriq-clock.yaml and qoriq-clock-legancy.yaml.
+On Fri, May 24, 2024 at 04:56:46PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> i.MX95 System Manager(SM) firmware includes a SCMI vendor protocol, SCMI
+> MISC protocol which includes controls that are misc settings/actions that
+> must be exposed from the SM to agents. They are device specific and are
+> usually define to access bit fields in various mix block control modules,
+> IOMUX_GPR, and other General Purpose registers, Control Status Registers
+> owned by the SM.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/firmware/arm_scmi/imx/Kconfig       |   9 +
+>  drivers/firmware/arm_scmi/imx/Makefile      |   1 +
+>  drivers/firmware/arm_scmi/imx/imx-sm-misc.c | 303 ++++++++++++++++++++++++++++
+>  include/linux/scmi_imx_protocol.h           |  22 ++
+>  4 files changed, 335 insertions(+)
+> 
 
-Addtional change:
-- Remove clock consumer part in example
-- Fixed example dts error
-- Deprecated legancy node
+Hi,
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- .../clock/fsl,qoriq-clock-legacy.yaml         |  84 +++++++
- .../bindings/clock/fsl,qoriq-clock.yaml       | 203 +++++++++++++++++
- .../devicetree/bindings/clock/qoriq-clock.txt | 212 ------------------
- 3 files changed, 287 insertions(+), 212 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,qoriq-clock-legacy.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,qoriq-clock.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> diff --git a/drivers/firmware/arm_scmi/imx/Kconfig b/drivers/firmware/arm_scmi/imx/Kconfig
+> index 4b6ac7febe8f..e9d015859eaa 100644
+> --- a/drivers/firmware/arm_scmi/imx/Kconfig
+> +++ b/drivers/firmware/arm_scmi/imx/Kconfig
+> @@ -11,4 +11,13 @@ config IMX_SCMI_BBM_EXT
+>  
+>  	  This driver can also be built as a module.
+>  
+> +config IMX_SCMI_MISC_EXT
+> +	tristate "i.MX SCMI MISC EXTENSION"
+> +	depends on ARM_SCMI_PROTOCOL || (COMPILE_TEST && OF)
+> +	default y if ARCH_MXC
+> +	help
+> +	  This enables i.MX System MISC control logic such as gpio expander
+> +	  wakeup
+> +
+> +	  This driver can also be built as a module.
+>  endmenu
+> diff --git a/drivers/firmware/arm_scmi/imx/Makefile b/drivers/firmware/arm_scmi/imx/Makefile
+> index a7dbdd20dbb9..d3ee6d544924 100644
+> --- a/drivers/firmware/arm_scmi/imx/Makefile
+> +++ b/drivers/firmware/arm_scmi/imx/Makefile
+> @@ -1,2 +1,3 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  obj-$(CONFIG_IMX_SCMI_BBM_EXT) += imx-sm-bbm.o
+> +obj-$(CONFIG_IMX_SCMI_MISC_EXT) += imx-sm-misc.o
+> diff --git a/drivers/firmware/arm_scmi/imx/imx-sm-misc.c b/drivers/firmware/arm_scmi/imx/imx-sm-misc.c
+> new file mode 100644
+> index 000000000000..9d0063299310
+> --- /dev/null
+> +++ b/drivers/firmware/arm_scmi/imx/imx-sm-misc.c
+> @@ -0,0 +1,303 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * System control and Management Interface (SCMI) NXP MISC Protocol
+> + *
+> + * Copyright 2024 NXP
+> + */
+> +
+> +#define pr_fmt(fmt) "SCMI Notifications MISC - " fmt
+> +
+> +#include <linux/bits.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/scmi_protocol.h>
+> +#include <linux/scmi_imx_protocol.h>
+> +
+> +#include "../protocols.h"
+> +#include "../notify.h"
+> +
+> +#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x10000
+> +
+> +enum scmi_imx_misc_protocol_cmd {
+> +	SCMI_IMX_MISC_CTRL_SET	= 0x3,
+> +	SCMI_IMX_MISC_CTRL_GET	= 0x4,
+> +	SCMI_IMX_MISC_CTRL_NOTIFY = 0x8,
+> +};
+> +
+> +struct scmi_imx_misc_info {
+> +	u32 version;
+> +	u32 nr_dev_ctrl;
+> +	u32 nr_brd_ctrl;
+> +	u32 nr_reason;
+> +};
+> +
+> +struct scmi_msg_imx_misc_protocol_attributes {
+> +	__le32 attributes;
+> +};
+> +
+> +#define GET_BRD_CTRLS_NR(x)	le32_get_bits((x), GENMASK(31, 24))
+> +#define GET_REASONS_NR(x)	le32_get_bits((x), GENMASK(23, 16))
+> +#define GET_DEV_CTRLS_NR(x)	le32_get_bits((x), GENMASK(15, 0))
+> +#define BRD_CTRL_START_ID	BIT(15)
+> +
+> +struct scmi_imx_misc_ctrl_set_in {
+> +	__le32 id;
+> +	__le32 num;
+> +	__le32 value[MISC_MAX_VAL];
+> +};
+> +
+> +struct scmi_imx_misc_ctrl_notify_in {
+> +	__le32 ctrl_id;
+> +	__le32 flags;
+> +};
+> +
+> +struct scmi_imx_misc_ctrl_notify_payld {
+> +	__le32 ctrl_id;
+> +	__le32 flags;
+> +};
+> +
+> +struct scmi_imx_misc_ctrl_get_out {
+> +	__le32 num;
+> +	__le32 val[MISC_MAX_VAL];
+> +};
+> +
+> +static int scmi_imx_misc_attributes_get(const struct scmi_protocol_handle *ph,
+> +					struct scmi_imx_misc_info *mi)
+> +{
+> +	int ret;
+> +	struct scmi_xfer *t;
+> +	struct scmi_msg_imx_misc_protocol_attributes *attr;
+> +
+> +	ret = ph->xops->xfer_get_init(ph, PROTOCOL_ATTRIBUTES, 0,
+> +				      sizeof(*attr), &t);
+> +	if (ret)
+> +		return ret;
+> +
+> +	attr = t->rx.buf;
+> +
+> +	ret = ph->xops->do_xfer(ph, t);
+> +	if (!ret) {
+> +		mi->nr_dev_ctrl = GET_DEV_CTRLS_NR(attr->attributes);
+> +		mi->nr_brd_ctrl = GET_BRD_CTRLS_NR(attr->attributes);
+> +		mi->nr_reason = GET_REASONS_NR(attr->attributes);
+> +		dev_info(ph->dev, "i.MX MISC NUM DEV CTRL: %d, NUM BRD CTRL: %d,NUM Reason: %d\n",
+> +			 mi->nr_dev_ctrl, mi->nr_brd_ctrl, mi->nr_reason);
+> +	}
+> +
+> +	ph->xops->xfer_put(ph, t);
+> +
+> +	return ret;
+> +}
+> +
+> +static int scmi_imx_misc_ctrl_validate_id(const struct scmi_protocol_handle *ph,
+> +					  u32 ctrl_id)
+> +{
+> +	struct scmi_imx_misc_info *mi = ph->get_priv(ph);
+> +
+> +	if ((ctrl_id < BRD_CTRL_START_ID) && (ctrl_id > mi->nr_dev_ctrl))
+> +		return -EINVAL;
+> +	if (ctrl_id >= BRD_CTRL_START_ID + mi->nr_brd_ctrl)
+> +		return -EINVAL;
 
-diff --git a/Documentation/devicetree/bindings/clock/fsl,qoriq-clock-legacy.yaml b/Documentation/devicetree/bindings/clock/fsl,qoriq-clock-legacy.yaml
-new file mode 100644
-index 0000000000000..97b96a1a58254
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/fsl,qoriq-clock-legacy.yaml
-@@ -0,0 +1,84 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/fsl,qoriq-clock-legacy.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Legacy Clock Block on Freescale QorIQ Platforms
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+description: |
-+  These nodes are deprecated.  Kernels should continue to support
-+  device trees with these nodes, but new device trees should not use them.
-+
-+  Most of the bindings are from the common clock binding[1].
-+  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+properties:
-+  compatible:
-+    enum:
-+      - fsl,qoriq-core-pll-1.0
-+      - fsl,qoriq-core-pll-2.0
-+      - fsl,qoriq-core-mux-1.0
-+      - fsl,qoriq-core-mux-2.0
-+      - fsl,qoriq-sysclk-1.0
-+      - fsl,qoriq-sysclk-2.0
-+      - fsl,qoriq-platform-pll-1.0
-+      - fsl,qoriq-platform-pll-2.0
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 4
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 4
-+
-+  clock-output-names:
-+    minItems: 1
-+    maxItems: 8
-+
-+  '#clock-cells':
-+    minimum: 0
-+    maximum: 1
-+
-+required:
-+  - compatible
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - fsl,qoriq-sysclk-1.0
-+              - fsl,qoriq-sysclk-2.0
-+    then:
-+      properties:
-+        '#clock-cells':
-+          const: 0
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - fsl,qoriq-core-pll-1.0
-+              - fsl,qoriq-core-pll-2.0
-+    then:
-+      properties:
-+        '#clock-cells':
-+          const: 1
-+          description: |
-+            * 0 - equal to the PLL frequency
-+            * 1 - equal to the PLL frequency divided by 2
-+            * 2 - equal to the PLL frequency divided by 4
-+
-diff --git a/Documentation/devicetree/bindings/clock/fsl,qoriq-clock.yaml b/Documentation/devicetree/bindings/clock/fsl,qoriq-clock.yaml
-new file mode 100644
-index 0000000000000..d641756b04635
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/fsl,qoriq-clock.yaml
-@@ -0,0 +1,203 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/fsl,qoriq-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Clock Block on Freescale QorIQ Platforms
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+
-+description: |
-+
-+  Freescale QorIQ chips take primary clocking input from the external
-+  SYSCLK signal. The SYSCLK input (frequency) is multiplied using
-+  multiple phase locked loops (PLL) to create a variety of frequencies
-+  which can then be passed to a variety of internal logic, including
-+  cores and peripheral IP blocks.
-+  Please refer to the Reference Manual for details.
-+
-+  All references to "1.0" and "2.0" refer to the QorIQ chassis version to
-+  which the chip complies.
-+
-+  Chassis Version    Example Chips
-+  ---------------    -------------
-+       1.0      p4080, p5020, p5040
-+       2.0      t4240, b4860
-+
-+  Clock Provider
-+
-+  The clockgen node should act as a clock provider, though in older device
-+  trees the children of the clockgen node are the clock providers.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - fsl,p2041-clockgen
-+          - fsl,p3041-clockgen
-+          - fsl,p4080-clockgen
-+          - fsl,p5020-clockgen
-+          - fsl,p5040-clockgen
-+          - fsl,t1023-clockgen
-+          - fsl,t1024-clockgen
-+          - fsl,t1040-clockgen
-+          - fsl,t1042-clockgen
-+          - fsl,t2080-clockgen
-+          - fsl,t2081-clockgen
-+          - fsl,t4240-clockgen
-+          - fsl,b4420-clockgen
-+          - fsl,b4860-clockgen
-+          - fsl,ls1012a-clockgen
-+          - fsl,ls1021a-clockgen
-+          - fsl,ls1028a-clockgen
-+          - fsl,ls1043a-clockgen
-+          - fsl,ls1046a-clockgen
-+          - fsl,ls1088a-clockgen
-+          - fsl,ls2080a-clockgen
-+          - fsl,lx2160a-clockgen
-+      - enum:
-+          - fsl,qoriq-clockgen-1.0
-+          - fsl,qoriq-clockgen-2.0
-+    minItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  ranges: true
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 1
-+
-+  '#clock-cells':
-+    const: 2
-+    description: |
-+      The first cell of the clock specifier is the clock type, and the
-+      second cell is the clock index for the specified type.
-+
-+        Type#  Name       Index Cell
-+        0  sysclk          must be 0
-+        1  cmux            index (n in CLKCnCSR)
-+        2  hwaccel         index (n in CLKCGnHWACSR)
-+        3  fman            0 for fm1, 1 for fm2
-+        4  platform pll    n=pll/(n+1). For example, when n=1,
-+                          that means output_freq=PLL_freq/2.
-+        5  coreclk         must be 0
-+
-+  clock-frequency:
-+    description: Input system clock frequency (SYSCLK)
-+
-+  clocks:
-+    items:
-+      - description:
-+          sysclk may be provided as an input clock.  Either clock-frequency
-+          or clocks must be provided.
-+      - description:
-+          A second input clock, called "coreclk", may be provided if
-+          core PLLs are based on a different input clock from the
-+          platform PLL.
-+    minItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: sysclk
-+      - const: coreclk
-+
-+patternProperties:
-+  '^mux[0-9]@[a-f0-9]+$':
-+    deprecated: true
-+    $ref: fsl,qoriq-clock-legacy.yaml
-+
-+  '^sysclk+$':
-+    deprecated: true
-+    $ref: fsl,qoriq-clock-legacy.yaml
-+
-+  '^pll[0-9]@[a-f0-9]+$':
-+    deprecated: true
-+    $ref: fsl,qoriq-clock-legacy.yaml
-+
-+  '^platform\-pll@[a-f0-9]+$':
-+    deprecated: true
-+    $ref: fsl,qoriq-clock-legacy.yaml
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    /* clock provider example */
-+    global-utilities@e1000 {
-+        compatible = "fsl,p5020-clockgen", "fsl,qoriq-clockgen-1.0";
-+        reg = <0xe1000 0x1000>;
-+        clock-frequency = <133333333>;
-+        #clock-cells = <2>;
-+    };
-+
-+  - |
-+    /* Legacy example */
-+    global-utilities@e1000 {
-+        compatible = "fsl,p5020-clockgen", "fsl,qoriq-clockgen-1.0";
-+        reg = <0xe1000 0x1000>;
-+        ranges = <0x0 0xe1000 0x1000>;
-+        clock-frequency = <133333333>;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        #clock-cells = <2>;
-+
-+        sysclk: sysclk {
-+            compatible = "fsl,qoriq-sysclk-1.0";
-+            clock-output-names = "sysclk";
-+            #clock-cells = <0>;
-+        };
-+
-+        pll0: pll0@800 {
-+            compatible = "fsl,qoriq-core-pll-1.0";
-+            reg = <0x800 0x4>;
-+            #clock-cells = <1>;
-+            clocks = <&sysclk>;
-+            clock-output-names = "pll0", "pll0-div2";
-+        };
-+
-+        pll1: pll1@820 {
-+            compatible = "fsl,qoriq-core-pll-1.0";
-+            reg = <0x820 0x4>;
-+            #clock-cells = <1>;
-+            clocks = <&sysclk>;
-+            clock-output-names = "pll1", "pll1-div2";
-+        };
-+
-+        mux0: mux0@0 {
-+            compatible = "fsl,qoriq-core-mux-1.0";
-+            reg = <0x0 0x4>;
-+            #clock-cells = <0>;
-+            clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-+            clock-names = "pll0", "pll0-div2", "pll1", "pll1-div2";
-+            clock-output-names = "cmux0";
-+        };
-+
-+        mux1: mux1@20 {
-+            compatible = "fsl,qoriq-core-mux-1.0";
-+            reg = <0x20 0x4>;
-+            #clock-cells = <0>;
-+            clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-+            clock-names = "pll0", "pll0-div2", "pll1", "pll1-div2";
-+            clock-output-names = "cmux1";
-+        };
-+
-+        platform-pll@c00 {
-+            #clock-cells = <1>;
-+            reg = <0xc00 0x4>;
-+            compatible = "fsl,qoriq-platform-pll-1.0";
-+            clocks = <&sysclk>;
-+            clock-output-names = "platform-pll", "platform-pll-div2";
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-deleted file mode 100644
-index 10119d9ef4b11..0000000000000
---- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-+++ /dev/null
-@@ -1,212 +0,0 @@
--* Clock Block on Freescale QorIQ Platforms
--
--Freescale QorIQ chips take primary clocking input from the external
--SYSCLK signal. The SYSCLK input (frequency) is multiplied using
--multiple phase locked loops (PLL) to create a variety of frequencies
--which can then be passed to a variety of internal logic, including
--cores and peripheral IP blocks.
--Please refer to the Reference Manual for details.
--
--All references to "1.0" and "2.0" refer to the QorIQ chassis version to
--which the chip complies.
--
--Chassis Version		Example Chips
-----------------		-------------
--1.0			p4080, p5020, p5040
--2.0			t4240, b4860
--
--1. Clock Block Binding
--
--Required properties:
--- compatible: Should contain a chip-specific clock block compatible
--	string and (if applicable) may contain a chassis-version clock
--	compatible string.
--
--	Chip-specific strings are of the form "fsl,<chip>-clockgen", such as:
--	* "fsl,p2041-clockgen"
--	* "fsl,p3041-clockgen"
--	* "fsl,p4080-clockgen"
--	* "fsl,p5020-clockgen"
--	* "fsl,p5040-clockgen"
--	* "fsl,t1023-clockgen"
--	* "fsl,t1024-clockgen"
--	* "fsl,t1040-clockgen"
--	* "fsl,t1042-clockgen"
--	* "fsl,t2080-clockgen"
--	* "fsl,t2081-clockgen"
--	* "fsl,t4240-clockgen"
--	* "fsl,b4420-clockgen"
--	* "fsl,b4860-clockgen"
--	* "fsl,ls1012a-clockgen"
--	* "fsl,ls1021a-clockgen"
--	* "fsl,ls1028a-clockgen"
--	* "fsl,ls1043a-clockgen"
--	* "fsl,ls1046a-clockgen"
--	* "fsl,ls1088a-clockgen"
--	* "fsl,ls2080a-clockgen"
--	* "fsl,lx2160a-clockgen"
--	Chassis-version clock strings include:
--	* "fsl,qoriq-clockgen-1.0": for chassis 1.0 clocks
--	* "fsl,qoriq-clockgen-2.0": for chassis 2.0 clocks
--- reg: Describes the address of the device's resources within the
--	address space defined by its parent bus, and resource zero
--	represents the clock register set
--
--Optional properties:
--- ranges: Allows valid translation between child's address space and
--	parent's. Must be present if the device has sub-nodes.
--- #address-cells: Specifies the number of cells used to represent
--	physical base addresses.  Must be present if the device has
--	sub-nodes and set to 1 if present
--- #size-cells: Specifies the number of cells used to represent
--	the size of an address. Must be present if the device has
--	sub-nodes and set to 1 if present
--- clock-frequency: Input system clock frequency (SYSCLK)
--- clocks: If clock-frequency is not specified, sysclk may be provided
--	as an input clock.  Either clock-frequency or clocks must be
--	provided.
--	A second input clock, called "coreclk", may be provided if
--	core PLLs are based on a different input clock from the
--	platform PLL.
--- clock-names: Required if a coreclk is present.  Valid names are
--	"sysclk" and "coreclk".
--
--2. Clock Provider
--
--The clockgen node should act as a clock provider, though in older device
--trees the children of the clockgen node are the clock providers.
--
--When the clockgen node is a clock provider, #clock-cells = <2>.
--The first cell of the clock specifier is the clock type, and the
--second cell is the clock index for the specified type.
--
--	Type#	Name		Index Cell
--	0	sysclk		must be 0
--	1	cmux		index (n in CLKCnCSR)
--	2	hwaccel		index (n in CLKCGnHWACSR)
--	3	fman		0 for fm1, 1 for fm2
--	4	platform pll	n=pll/(n+1). For example, when n=1,
--				that means output_freq=PLL_freq/2.
--	5	coreclk		must be 0
--
--3. Example
--
--	clockgen: global-utilities@e1000 {
--		compatible = "fsl,p5020-clockgen", "fsl,qoriq-clockgen-1.0";
--		clock-frequency = <133333333>;
--		reg = <0xe1000 0x1000>;
--		#clock-cells = <2>;
--	};
--
--	fman@400000 {
--		...
--		clocks = <&clockgen 3 0>;
--		...
--	};
--}
--4. Legacy Child Nodes
--
--NOTE: These nodes are deprecated.  Kernels should continue to support
--device trees with these nodes, but new device trees should not use them.
--
--Most of the bindings are from the common clock binding[1].
-- [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible : Should include one of the following:
--	* "fsl,qoriq-core-pll-1.0" for core PLL clocks (v1.0)
--	* "fsl,qoriq-core-pll-2.0" for core PLL clocks (v2.0)
--	* "fsl,qoriq-core-mux-1.0" for core mux clocks (v1.0)
--	* "fsl,qoriq-core-mux-2.0" for core mux clocks (v2.0)
--	* "fsl,qoriq-sysclk-1.0": for input system clock (v1.0).
--		It takes parent's clock-frequency as its clock.
--	* "fsl,qoriq-sysclk-2.0": for input system clock (v2.0).
--		It takes parent's clock-frequency as its clock.
--	* "fsl,qoriq-platform-pll-1.0" for the platform PLL clock (v1.0)
--	* "fsl,qoriq-platform-pll-2.0" for the platform PLL clock (v2.0)
--- #clock-cells: From common clock binding. The number of cells in a
--	clock-specifier. Should be <0> for "fsl,qoriq-sysclk-[1,2].0"
--	clocks, or <1> for "fsl,qoriq-core-pll-[1,2].0" clocks.
--	For "fsl,qoriq-core-pll-[1,2].0" clocks, the single
--	clock-specifier cell may take the following values:
--	* 0 - equal to the PLL frequency
--	* 1 - equal to the PLL frequency divided by 2
--	* 2 - equal to the PLL frequency divided by 4
--
--Recommended properties:
--- clocks: Should be the phandle of input parent clock
--- clock-names: From common clock binding, indicates the clock name
--- clock-output-names: From common clock binding, indicates the names of
--	output clocks
--- reg: Should be the offset and length of clock block base address.
--	The length should be 4.
--
--Legacy Example:
--/ {
--	clockgen: global-utilities@e1000 {
--		compatible = "fsl,p5020-clockgen", "fsl,qoriq-clockgen-1.0";
--		ranges = <0x0 0xe1000 0x1000>;
--		clock-frequency = <133333333>;
--		reg = <0xe1000 0x1000>;
--		#address-cells = <1>;
--		#size-cells = <1>;
--
--		sysclk: sysclk {
--			#clock-cells = <0>;
--			compatible = "fsl,qoriq-sysclk-1.0";
--			clock-output-names = "sysclk";
--		};
--
--		pll0: pll0@800 {
--			#clock-cells = <1>;
--			reg = <0x800 0x4>;
--			compatible = "fsl,qoriq-core-pll-1.0";
--			clocks = <&sysclk>;
--			clock-output-names = "pll0", "pll0-div2";
--		};
--
--		pll1: pll1@820 {
--			#clock-cells = <1>;
--			reg = <0x820 0x4>;
--			compatible = "fsl,qoriq-core-pll-1.0";
--			clocks = <&sysclk>;
--			clock-output-names = "pll1", "pll1-div2";
--		};
--
--		mux0: mux0@0 {
--			#clock-cells = <0>;
--			reg = <0x0 0x4>;
--			compatible = "fsl,qoriq-core-mux-1.0";
--			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
--			clock-names = "pll0", "pll0-div2", "pll1", "pll1-div2";
--			clock-output-names = "cmux0";
--		};
--
--		mux1: mux1@20 {
--			#clock-cells = <0>;
--			reg = <0x20 0x4>;
--			compatible = "fsl,qoriq-core-mux-1.0";
--			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
--			clock-names = "pll0", "pll0-div2", "pll1", "pll1-div2";
--			clock-output-names = "cmux1";
--		};
--
--		platform-pll: platform-pll@c00 {
--			#clock-cells = <1>;
--			reg = <0xc00 0x4>;
--			compatible = "fsl,qoriq-platform-pll-1.0";
--			clocks = <&sysclk>;
--			clock-output-names = "platform-pll", "platform-pll-div2";
--		};
--	};
--};
--
--Example for legacy clock consumer:
--
--/ {
--	cpu0: PowerPC,e5500@0 {
--		...
--		clocks = <&mux0>;
--		...
--	};
--};
--- 
-2.34.1
+...are these conditions fine ? just checking because they seem a bit
+odd...but I am certainly missing something...in case they are ok, is it
+possible to add a comment explaining why those conds lead to -EINVAL ?
 
+> +
+> +	return 0;
+> +}
+> +
+> +static int scmi_imx_misc_ctrl_notify(const struct scmi_protocol_handle *ph,
+> +				     u32 ctrl_id, u32 evt_id, u32 flags)
+> +{
+> +	struct scmi_imx_misc_ctrl_notify_in *in;
+> +	struct scmi_xfer *t;
+> +	int ret;
+> +
+> +	ret = scmi_imx_misc_ctrl_validate_id(ph, ctrl_id);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ph->xops->xfer_get_init(ph, SCMI_IMX_MISC_CTRL_NOTIFY,
+> +				      sizeof(*in), 0, &t);
+> +	if (ret)
+> +		return ret;
+> +
+> +	in = t->tx.buf;
+> +	in->ctrl_id = cpu_to_le32(ctrl_id);
+> +	in->flags = cpu_to_le32(flags);
+> +
+> +	ret = ph->xops->do_xfer(ph, t);
+> +
+> +	ph->xops->xfer_put(ph, t);
+> +
+> +	return ret;
+> +}
+> +
+> +static int
+> +scmi_imx_misc_ctrl_set_notify_enabled(const struct scmi_protocol_handle *ph,
+> +				      u8 evt_id, u32 src_id, bool enable)
+> +{
+> +	int ret;
+> +
+> +	/* misc_ctrl_req_notify is for enablement */
+> +	if (enable)
+> +		return 0;
+> +
+> +	ret = scmi_imx_misc_ctrl_notify(ph, src_id, evt_id, 0);
+> +	if (ret)
+> +		dev_err(ph->dev, "FAIL_ENABLED - evt[%X] src[%d] - ret:%d\n",
+> +			evt_id, src_id, ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int scmi_imx_misc_ctrl_get_num_sources(const struct scmi_protocol_handle *ph)
+> +{
+> +	return GENMASK(15, 0);
+> +}
+
+This is statically defined at compile time..you dont need to provide
+this method, which is just for discover number of possible event sources
+at runtime....just drop it and use .num_sources in scmi_protocol_events
+
+> +
+> +static void *
+> +scmi_imx_misc_ctrl_fill_custom_report(const struct scmi_protocol_handle *ph,
+> +				      u8 evt_id, ktime_t timestamp,
+> +				      const void *payld, size_t payld_sz,
+> +				      void *report, u32 *src_id)
+> +{
+> +	const struct scmi_imx_misc_ctrl_notify_payld *p = payld;
+> +	struct scmi_imx_misc_ctrl_notify_report *r = report;
+> +
+> +	if (sizeof(*p) != payld_sz)
+> +		return NULL;
+> +
+> +	r->timestamp = timestamp;
+> +	r->ctrl_id = p->ctrl_id;
+> +	r->flags = p->flags;
+> +	if (src_id)
+> +		*src_id = r->ctrl_id;
+> +	dev_dbg(ph->dev, "%s: ctrl_id: %d flags: %d\n", __func__,
+> +		r->ctrl_id, r->flags);
+> +
+> +	return r;
+> +}
+> +
+> +static const struct scmi_event_ops scmi_imx_misc_event_ops = {
+> +	.get_num_sources = scmi_imx_misc_ctrl_get_num_sources,
+drop
+
+> +	.set_notify_enabled = scmi_imx_misc_ctrl_set_notify_enabled,
+> +	.fill_custom_report = scmi_imx_misc_ctrl_fill_custom_report,
+> +};
+> +
+> +static const struct scmi_event scmi_imx_misc_events[] = {
+> +	{
+> +		.id = SCMI_EVENT_IMX_MISC_CONTROL,
+> +		.max_payld_sz = sizeof(struct scmi_imx_misc_ctrl_notify_payld),
+> +		.max_report_sz = sizeof(struct scmi_imx_misc_ctrl_notify_report),
+> +	},
+> +};
+> +
+> +static struct scmi_protocol_events scmi_imx_misc_protocol_events = {
+> +	.queue_sz = SCMI_PROTO_QUEUE_SZ,
+> +	.ops = &scmi_imx_misc_event_ops,
+> +	.evts = scmi_imx_misc_events,
+> +	.num_events = ARRAY_SIZE(scmi_imx_misc_events),
+
+	.num_sources = MAX_MISC_CTRL_SOURCES,  // GENMASK(15, 0)
+
+> +};
+> +
+> +static int scmi_imx_misc_protocol_init(const struct scmi_protocol_handle *ph)
+> +{
+> +	struct scmi_imx_misc_info *minfo;
+> +	u32 version;
+> +	int ret;
+> +
+> +	ret = ph->xops->version_get(ph, &version);
+> +	if (ret)
+> +		return ret;
+> +
+> +	dev_info(ph->dev, "NXP SM MISC Version %d.%d\n",
+> +		 PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
+> +
+> +	minfo = devm_kzalloc(ph->dev, sizeof(*minfo), GFP_KERNEL);
+> +	if (!minfo)
+> +		return -ENOMEM;
+> +
+> +	ret = scmi_imx_misc_attributes_get(ph, minfo);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return ph->set_priv(ph, minfo, version);
+> +}
+
+Same as previous patch please move the init downb below near the
+scmi_protocol struct right after the ops
+
+> +
+> +static int scmi_imx_misc_ctrl_get(const struct scmi_protocol_handle *ph,
+> +				  u32 ctrl_id, u32 *num, u32 *val)
+> +{
+> +	struct scmi_imx_misc_ctrl_get_out *out;
+> +	struct scmi_xfer *t;
+> +	int ret, i;
+> +
+> +	ret = scmi_imx_misc_ctrl_validate_id(ph, ctrl_id);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ph->xops->xfer_get_init(ph, SCMI_IMX_MISC_CTRL_GET, sizeof(u32),
+> +				      0, &t);
+> +	if (ret)
+> +		return ret;
+> +
+> +	put_unaligned_le32(ctrl_id, t->tx.buf);
+> +	ret = ph->xops->do_xfer(ph, t);
+> +	if (!ret) {
+> +		out = t->rx.buf;
+> +		*num = le32_to_cpu(out->num);
+
+To stay even more safer, by guarding from malformed *num fields and just
+bail out upfront with an error
+
+	if (*num >= MISC_MAX_VAL ||
+	    *num * sizeof(__le32) > t->rx.len - sizeof(__le32))
+
+and then just
+
+		for (i = 0; i < *num; i++)
+
+> +		for (i = 0; i < *num && i < MISC_MAX_VAL; i++)
+> +			val[i] = le32_to_cpu(out->val[i]);
+> +	}
+> +
+> +	ph->xops->xfer_put(ph, t);
+> +
+> +	return ret;
+> +}
+> +
+> +static int scmi_imx_misc_ctrl_set(const struct scmi_protocol_handle *ph,
+> +				  u32 ctrl_id, u32 num, u32 *val)
+> +{
+> +	struct scmi_imx_misc_ctrl_set_in *in;
+> +	struct scmi_xfer *t;
+> +	int ret, i;
+> +
+> +	ret = scmi_imx_misc_ctrl_validate_id(ph, ctrl_id);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (num > MISC_MAX_VAL)
+> +		return -EINVAL;
+> +
+> +	ret = ph->xops->xfer_get_init(ph, SCMI_IMX_MISC_CTRL_SET, sizeof(*in),
+> +				      0, &t);
+> +	if (ret)
+> +		return ret;
+> +
+> +	in = t->tx.buf;
+> +	in->id = cpu_to_le32(ctrl_id);
+> +	in->num = cpu_to_le32(num);
+> +	for (i = 0; i < num; i++)
+> +		in->value[i] = cpu_to_le32(val[i]);
+> +
+> +	ret = ph->xops->do_xfer(ph, t);
+> +
+> +	ph->xops->xfer_put(ph, t);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct scmi_imx_misc_proto_ops scmi_imx_misc_proto_ops = {
+> +	.misc_ctrl_set = scmi_imx_misc_ctrl_set,
+> +	.misc_ctrl_get = scmi_imx_misc_ctrl_get,
+> +	.misc_ctrl_req_notify = scmi_imx_misc_ctrl_notify,
+> +};
+> +
+> +static const struct scmi_protocol scmi_imx_misc = {
+> +	.id = SCMI_PROTOCOL_IMX_MISC,
+> +	.owner = THIS_MODULE,
+> +	.instance_init = &scmi_imx_misc_protocol_init,
+> +	.ops = &scmi_imx_misc_proto_ops,
+> +	.events = &scmi_imx_misc_protocol_events,
+> +	.supported_version = SCMI_PROTOCOL_SUPPORTED_VERSION,
+> +	.vendor_id = "NXP",
+> +	.sub_vendor_id = "i.MX95 EVK",
+> +};
+> +module_scmi_protocol(scmi_imx_misc);
+> diff --git a/include/linux/scmi_imx_protocol.h b/include/linux/scmi_imx_protocol.h
+> index e59aedaa4aec..e9285abfc191 100644
+> --- a/include/linux/scmi_imx_protocol.h
+> +++ b/include/linux/scmi_imx_protocol.h
+> @@ -13,8 +13,14 @@
+>  #include <linux/notifier.h>
+>  #include <linux/types.h>
+>  
+> +#define SCMI_PAYLOAD_LEN	100
+> +
+> +#define SCMI_ARRAY(X, Y)	((SCMI_PAYLOAD_LEN - (X)) / sizeof(Y))
+> +#define MISC_MAX_VAL		SCMI_ARRAY(8, uint32_t)
+>
+You base all of this on this fixed payload length, but the payload
+really depends on the configured underlying transport: you can use the
+ph->hops->get_max_msg_size to retrieve the configured max payload length
+for the platform you are running on....nad maybe bailout if the minimum
+size required by your protocol is not available with the currently
+configured transport...wouldnt't be more robust and reliable then
+builtin fixing some payload ?
+
+Thanks,
+Cristian
 
