@@ -1,103 +1,150 @@
-Return-Path: <linux-kernel+bounces-216915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1345D90A879
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:32:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BF190A881
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13F081C20EE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:32:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3359A1C23077
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE8319048A;
-	Mon, 17 Jun 2024 08:32:49 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0EF19049B;
+	Mon, 17 Jun 2024 08:33:38 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D798E17F5;
-	Mon, 17 Jun 2024 08:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8463717F5;
+	Mon, 17 Jun 2024 08:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718613169; cv=none; b=aXaTE0/WBaNct6+MDht+11eLaNtAGdaQlxoX9WXnUZ8Ti4580HLWfOCuWLcAHcMOtgrYVQ+zwsVMaLnUjrlFSY26ppcszmUTBo0UYhCj9CzB5ep41K2rQ+s9qIhZ6N3QXBDTgKePgU10uiTtvJUQYkDRM6RP+UG+fTG7AjdUvok=
+	t=1718613218; cv=none; b=UGIhxLg/O9LIYQa9JHrvuprcx85uukv7F5rqMFo/koVjJy9UVr4iGnWdFFJv6SO//9KEb1KKjdQ4gCUmqKbuHYaIUP1oJ7aaeGOmB7181DGjDc3A32Aft59qB9x/V3CbG1Lt48HIUDpZrKdeCcKUToy3LyCOMcwDCbyP0m415PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718613169; c=relaxed/simple;
-	bh=Y1tg7x8oh3i/tSbVstpypVuDjoXGzBLMNJxjDwo2pWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oSoM552De0rcbnFbzqTOKnhWy07EA8hfamUz1mJtLra5jbjTZs8Ij+CEZJ2iEX9GuJSoUTQhLlfB5R7sx4XigcC4lzSDwcuR6ctviw+dYm5UxTlkc8+i/BfwE6m/uQYCuUCkWTqaOC6hCRUXJkybhZPtyTeISnY/cgiHPjtRgxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.53] (ip5f5aeabd.dynamic.kabel-deutschland.de [95.90.234.189])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8D1FE61E5FE3A;
-	Mon, 17 Jun 2024 10:32:19 +0200 (CEST)
-Message-ID: <04d3dc7d-8266-4d2d-9efb-e9993af9548b@molgen.mpg.de>
-Date: Mon, 17 Jun 2024 10:32:18 +0200
+	s=arc-20240116; t=1718613218; c=relaxed/simple;
+	bh=0/BABGy6hfYi/7BxxqO+erOXltp4K2v4Qmh0ZemLHEU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sInFxyoBbMtSFktRQmgAvwR6gJKZa3ZGoH9lALVys/O6rSmFR0HRNV5l0tSZphbx6WULTgxy0z+HzyMX8LlA1li0+kEmF38eq+euOVZmXWbFDoZOLgSooaC8P0qF0PEHnKI+nDfZLZ7Rvyqfh5f9sYo3jxSvGqJz/tM6vq08KFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e8616c2.versanet.de ([94.134.22.194] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sJ7nY-0007XR-Me; Mon, 17 Jun 2024 10:33:08 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ Jacobe Zang <jacobe.zang@wesion.com>
+Cc: nick@khadas.com, efectn@protonmail.com, jagan@edgeble.ai,
+ dsimic@manjaro.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Jacobe Zang <jacobe.zang@wesion.com>
+Subject:
+ Re: [PATCH v2 5/5] arm64: dts: rockchip: Add cpufreq support to Khadas Edge2
+Date: Mon, 17 Jun 2024 10:33:07 +0200
+Message-ID: <5475817.tWeucmBOSa@diego>
+In-Reply-To: <20240617071112.3133101-6-jacobe.zang@wesion.com>
+References:
+ <20240617071112.3133101-1-jacobe.zang@wesion.com>
+ <20240617071112.3133101-6-jacobe.zang@wesion.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btusb: Add RTL8852BE device 0489:e125 to
- device tables
-To: Hilda Wu <hildawu@realtek.com>, marcel@holtmann.org
-Cc: luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, alex_lu@realsil.com.cn, max.chou@realtek.com,
- kidman@realtek.com
-References: <20240617082101.3237350-1-hildawu@realtek.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20240617082101.3237350-1-hildawu@realtek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Dear Hilda,
+Hi Jacobe Zang,
 
-
-Thank you for your patch.
-
-Am 17.06.24 um 10:21 schrieb Hilda Wu:
-> Add the support ID(0489:e125) to usb_device_id table for
-
-Please add a space before (.
-
-> Realtek RTL8852B chip.
+Am Montag, 17. Juni 2024, 09:11:12 CEST schrieb Jacobe Zang:
+> This adjust CPU nodes on Khadas Edge2.
 > 
-> The device info from /sys/kernel/debug/usb/devices as below.
-
-[…]
-
-> Signed-off-by: Hilda Wu <hildawu@realtek.com>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
 > ---
->   drivers/bluetooth/btusb.c | 2 ++
->   1 file changed, 2 insertions(+)
+>  .../arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 79aefdb3324d..2d7d47f9d007 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -555,6 +555,8 @@ static const struct usb_device_id quirks_table[] = {
->   						     BTUSB_WIDEBAND_SPEECH },
->   	{ USB_DEVICE(0x13d3, 0x3572), .driver_info = BTUSB_REALTEK |
->   						     BTUSB_WIDEBAND_SPEECH },
-> +	{ USB_DEVICE(0x0489, 0xe125), .driver_info = BTUSB_REALTEK |
-> +						     BTUSB_WIDEBAND_SPEECH },
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+> index 7d7cc3e76838c..5fb15d3dc23e9 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+> @@ -160,34 +160,42 @@ vdd_3v3_sd: vdd-3v3-sd-regulator {
+>  
+>  &cpu_b0 {
+>  	cpu-supply = <&vdd_cpu_big0_s0>;
+> +	mem-supply = <&vdd_cpu_big0_mem_s0>;
 
-Please put it at the beginning of the list for the 8852BE devices to 
-kind of sort it.
-
->   
->   	/* Realtek 8852BT/8852BE-VT Bluetooth devices */
->   	{ USB_DEVICE(0x0bda, 0x8520), .driver_info = BTUSB_REALTEK |
+as far as I remember there has not been any binding merged that declares
+this supply. Thankfully following the double phandle below, the Edge2 is
+designed to use the same regulator for the mem-supply, so special handling
+isn't even needed.
 
 
-Kind regards,
+Heiko
 
-Paul
+
+>  };
+>  
+>  &cpu_b1 {
+>  	cpu-supply = <&vdd_cpu_big0_s0>;
+> +	mem-supply = <&vdd_cpu_big0_mem_s0>;
+>  };
+>  
+>  &cpu_b2 {
+>  	cpu-supply = <&vdd_cpu_big1_s0>;
+> +	mem-supply = <&vdd_cpu_big1_mem_s0>;
+>  };
+>  
+>  &cpu_b3 {
+>  	cpu-supply = <&vdd_cpu_big1_s0>;
+> +	mem-supply = <&vdd_cpu_big1_mem_s0>;
+>  };
+>  
+>  &cpu_l0 {
+>  	cpu-supply = <&vdd_cpu_lit_s0>;
+> +	mem-supply = <&vdd_cpu_lit_mem_s0>;
+>  };
+>  
+>  &cpu_l1 {
+>  	cpu-supply = <&vdd_cpu_lit_s0>;
+> +	mem-supply = <&vdd_cpu_lit_mem_s0>;
+>  };
+>  
+>  &cpu_l2 {
+>  	cpu-supply = <&vdd_cpu_lit_s0>;
+> +	mem-supply = <&vdd_cpu_lit_mem_s0>;
+>  };
+>  
+>  &cpu_l3 {
+>  	cpu-supply = <&vdd_cpu_lit_s0>;
+> +	mem-supply = <&vdd_cpu_lit_mem_s0>;
+>  };
+>  
+>  &combphy0_ps {
+> @@ -208,7 +216,7 @@ &i2c0 {
+>  	pinctrl-0 = <&i2c0m2_xfer>;
+>  	status = "okay";
+>  
+> -	vdd_cpu_big0_s0: regulator@42 {
+> +	vdd_cpu_big0_s0: vdd_cpu_big0_mem_s0: regulator@42 {
+>  		compatible = "rockchip,rk8602";
+>  		reg = <0x42>;
+>  		fcs,suspend-voltage-selector = <1>;
+> @@ -225,7 +233,7 @@ regulator-state-mem {
+>  		};
+>  	};
+>  
+> -	vdd_cpu_big1_s0: regulator@43 {
+> +	vdd_cpu_big1_s0: vdd_cpu_big1_mem_s0: regulator@43 {
+>  		compatible = "rockchip,rk8603", "rockchip,rk8602";
+>  		reg = <0x43>;
+>  		fcs,suspend-voltage-selector = <1>;
+> 
+
+
+
+
 
