@@ -1,145 +1,157 @@
-Return-Path: <linux-kernel+bounces-217607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2BB790B225
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:33:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A6D90B215
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C3D3B32C42
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38D551F21DDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1718F1B4C44;
-	Mon, 17 Jun 2024 13:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12CB19B3F9;
+	Mon, 17 Jun 2024 13:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFbR6L+k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dTcXDrEx"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CC119B591
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60511B4C4F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632065; cv=none; b=Sfw3RTsz03KUXiADdorXpxrsn4jcezoi7zXa8S8Y70OH77nZguJdYRsejWNWfT5/L/hbXKy2zeeyvAGu6qMkdg5OT5riLDzrLlj2FvSJ3QKvbb9WvDIhwrrQqKaUaX2jhZX1zYGKCt9nTWxJWNYzjiI6NovESuA7Xqw09/kRmf4=
+	t=1718632100; cv=none; b=VzzF4I+kN3yA4hWIE9+r+tMhGqEVa65fCk2oxK97TS1kU6gegCrj2Mg5yWuordGkYAy9JBAOgY7M0TVTJl0z4W5FZIB+rScKr5gkJlRkXJTfJ1kAHn+7OgaL3SMgQHuauqhpzmfSASmIQjfRGlibKt+3nBal/bT4WhGHWLUSdC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632065; c=relaxed/simple;
-	bh=wWRAYn7Ii42QuGior+4MVW+laPzt0BX582bjd0B8LQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BTy2K/TS3z71QJnBPJaVsePD7lgS6S+2Rc5ZxdCJ8z08RL+QlO0rdjGmfWvXDmj9retB9rNvXkY1it3KPkH28i5t8nFFwvmsMG9XkFApITXG5isCzSO9NEJ2wnd9uRp/YmJoFlUiI9DmW7JlcBInzSbOLNQTuAUqySRj04YnZ1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFbR6L+k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC7DC4AF53
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:47:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718632064;
-	bh=wWRAYn7Ii42QuGior+4MVW+laPzt0BX582bjd0B8LQ4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UFbR6L+kwM9z40/S3ZRcr6bcwMsns9uH30KIG8J9kTSaAXHuNddMj01eKvLcW6q3P
-	 93844GiNhFakKVL3DfXVKaUPgg94oo59tSzwFtbu8UQDlRFhD0pt+k5kUR8hAjZItV
-	 agQzomqoK4UhSkgdP45QJQ9F6bEvgR+pR1weKpvHhFjQdfCUUk6Fjlo9p4sg62Qg5u
-	 z4dIl/oxg8daPTIESuXahpWBHDRuUloXGi68TXysU7Md6vtWHGOrOUqtwcp2m/rfN2
-	 WP079IsU19cWF1u7tU6Dm6HAYC/AWdpwfpLlnTQZkWW+3Nhu9PnMAmd7ep6rWxykg/
-	 OX06Ui/wKjR9w==
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f0e153eddso566137166b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:47:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWlaUcTHUCZzzzpCCgidLY90p0iCEdW8hjG5zJ5QrluCWpqfT7cf1BlpcX8USbg5HeX0yBlTZi6k+xfYO/HJ+pfYPqnJUrL60Ji6C/Q
-X-Gm-Message-State: AOJu0YxQxIMatKUp3Q5cNarQMQq5/4NGITtadOFmEDxkYzWnvLV6y66s
-	s7gh04A07t46dqJKAo0r2AWKZtGxGk2qco/uSG05VP5PDBIXU513JqKielVRv2tncya1VWuL4XK
-	O0yqCq3fCIXuqE+1sqYsERyjDcxE=
-X-Google-Smtp-Source: AGHT+IGu4spCnAR/gUgmgSjmW1JeI1VT2iAP/gZA99vnR6EUnwq6gHVnN3HyeQeD7JIrz+fqo/6hp8phZxj26Lckue8=
-X-Received: by 2002:a17:907:a581:b0:a6f:76db:7c60 with SMTP id
- a640c23a62f3a-a6f76db8412mr504637266b.24.1718632063231; Mon, 17 Jun 2024
- 06:47:43 -0700 (PDT)
+	s=arc-20240116; t=1718632100; c=relaxed/simple;
+	bh=XlBC8XmxY4t1dy9Te3CUtaaCes8aSp154MhAUu+Mo4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XMqUCl4e1YLOojviTf+SBY8BU0Xzi7znvOObjlRTQV0iiCo8qP7WDek4RExqg06GP2SEZhYJH7xsOMw3uIqPF8Td9u4em3PD/Q2w4T/A51GYSM8Rsrtbz6OpEYwiNsvn6g883lUK18ZPWsI0qxRS+EJSizx+DX+LfjU3j1oI+g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dTcXDrEx; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f8ef63714cso2614149a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:48:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718632096; x=1719236896; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aWLganjcvsKmuzSLhK4Gg+9DQYYQdBiUVwwZvrufBCA=;
+        b=dTcXDrExjyvqmV2QI/TydR2WXHUxqi7UabJWWXWNCXRSqqB88GF0/tP36OJme23hNF
+         kYfdegZs3fTmPO55u/gullSvpeha19K0DizXA27oaz8BVg1Svheyua/ePjIvtslIKa4u
+         QWpIvLXGG/rflgFAj7fl5wKPvRRes052Con0p//m+of02FcdhxMt05Ao/b27OoXK6cQk
+         mxCF/QSmrY+/b3Xmv4vPFKcShRW+Fm/V4+6Ib1dpxw1UIxyXVGcDfObyE5MONOp2DbmM
+         iFL4rWeOQQfZCd7yzNCPUXV1NT6OZq74UZQl+mPzZ/JVef9aHO4+GmdP0JjgBEUisrx3
+         qZLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718632096; x=1719236896;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aWLganjcvsKmuzSLhK4Gg+9DQYYQdBiUVwwZvrufBCA=;
+        b=QPi8Ngb7Hy1cMXPysawZF7+vueLO7m9cwlLof9xYxrIjkz3kBeHIDAWq6LoECkTK56
+         z7OJn63Wp4633NTr738lWo4umYd4Wl7G3wm9jaWzEUZtloQDTsN6AAKXwLue1t/r4F+L
+         rq3TRJK9gRNb5Mmfl3nm283vF3fIFrLwitEbgXhalpVJULpr2qz2NKmU1E4pbKVJHZ5+
+         NKz0bEPsWrlf0zw4W4QqNXfDforioSodgv3oKia4UVDgWCajlPlsxYYj9AL5xBS/w/V8
+         RHg/aRF+amNfXipdyFKnTljy9tfej3dAUeN2KWzjfaF/AuQQozWq5N/1gEgOxJ+qZkm5
+         x4ug==
+X-Forwarded-Encrypted: i=1; AJvYcCX7VWh1vstLheXlrqoSAVLmOutTwSpNPEjb1YMnY9ZJXVq1htPgtbF6KA2dUePfEsk6PcQ0tYYtvEJ1JD9UV4UDSv2iFS+PV+6Ov7oz
+X-Gm-Message-State: AOJu0Ywx/DrQID/b/S+Xv1xanT6fXmOoCaC967Irz677deMQSB9yDkoy
+	/Wus6PAhu2e83P5q9c/beaehvQe/B9E15qcsEuNZH5cJzsf4zsMm50BDikfI0Vo=
+X-Google-Smtp-Source: AGHT+IHkRtJd/vDpa8HnxwEUUUh80/TzTJPmRFYKwvof3Nxq9J0ov+M7AjFrMMTnUlOZiatmClt/nQ==
+X-Received: by 2002:a05:6830:1202:b0:6f9:90de:c67f with SMTP id 46e09a7af769-6fb937665b7mr11817267a34.10.1718632096492;
+        Mon, 17 Jun 2024 06:48:16 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5b1b0bd9sm1528611a34.27.2024.06.17.06.48.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 06:48:15 -0700 (PDT)
+Message-ID: <8dd5f4b9-809f-43d8-ba5c-5f7be23107a4@baylibre.com>
+Date: Mon, 17 Jun 2024 08:48:15 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604150741.30252-1-xry111@xry111.site> <20240605054328.GA279426@thelio-3990X>
- <b55b8cb2c52f2c3701c83353586130b8dc237ee2.camel@xry111.site>
- <20240605062548.GF279426@thelio-3990X> <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
- <444ec2031ef6ca016cbfa8dfedc51bddc8529ba7.camel@xry111.site>
- <ada035690e446909c3cdbf9a43a92def96020615.camel@xry111.site>
- <82b7e6ea-c2cb-6364-ebe9-bff928028408@loongson.cn> <1c132209a612e2e8953f0b458fc01853120db9a9.camel@xry111.site>
- <2bf11cd2-8449-acda-f5ad-659c38cb018e@loongson.cn> <96a2e8a80c06772b64fcbdba42e1dae2d68a53a7.camel@xry111.site>
- <2bd6ae20-ec56-c1a2-c5dd-e8c978a376d3@loongson.cn> <329dac82e09dfc75e77ae93ebbeacdec1dc9ff7f.camel@xry111.site>
- <CAAhV-H5Wz=U4kbX+tXt1qoCr6RaEDkzZXV7B=tgU_8o+X-NtVQ@mail.gmail.com>
- <a97cd0f2e2cac10253d6b5cdd0ace3db3b220535.camel@xry111.site>
- <CAAhV-H7hhh3Jes0jMrg82+KJCa7GQZW=F9bDtktFh=eazMDX9w@mail.gmail.com>
- <12099e6fb7ba377f3dcf6686e0b37200b9818708.camel@xry111.site>
- <CAAhV-H6j0WgN6QpHBYcdprdWBpcQq4ObYK5YcE=TVsDNxGFEtA@mail.gmail.com> <6e14e41b728437743fddebf78f7981ea15f6b8a8.camel@xry111.site>
-In-Reply-To: <6e14e41b728437743fddebf78f7981ea15f6b8a8.camel@xry111.site>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 17 Jun 2024 21:47:32 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5jLb1E87n=FcbmbH1ZXiEsxnNgLvxWUtCV9vFeaNW1ng@mail.gmail.com>
-Message-ID: <CAAhV-H5jLb1E87n=FcbmbH1ZXiEsxnNgLvxWUtCV9vFeaNW1ng@mail.gmail.com>
-Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
- unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: chenglulu <chenglulu@loongson.cn>, Jinyang He <hejinyang@loongson.cn>, 
-	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Youling Tang <tangyouling@kylinos.cn>, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	mengqinggang@loongson.cn, cailulu@loongson.cn, wanglei@loongson.cn, 
-	luweining@loongson.cn, Yujie Liu <yujie.liu@intel.com>, 
-	Heng Qi <hengqi@linux.alibaba.com>, Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] iio: adc: ad7192: use
+ devm_regulator_get_enable_read_voltage
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+ <20240612-iio-adc-ref-supply-refactor-v2-1-fa622e7354e9@baylibre.com>
+ <20240615130858.22043725@jic23-huawei>
+ <dbf947a3-3d3b-4686-a707-a813b6a4ce5a@gmail.com>
+ <CAMknhBFJ01Xu69Arvd3S=dbADGFmzaYKm2XBtw_CtnjtYwnnew@mail.gmail.com>
+ <2d47aeef-5ee0-4e6f-a408-ba5d737d2c5a@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <2d47aeef-5ee0-4e6f-a408-ba5d737d2c5a@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 9:38=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
-e:
->
-> On Mon, 2024-06-17 at 21:11 +0800, Huacai Chen wrote:
->
->
->
-> > > select HAVE_OBJTOOL if AS_HAS_EXPLICIT_RELOCS && AS_HAS_THIN_ADD_SUB =
-&& !CC_IS_CLANG && !RUST
-> > Maybe we needn't consider RUST here?
->
-> Rustc does use $fp that objtool cannot handle as at now.  It can be
-> demonstrated with an over-aligned type, similar to Clang:
->
-> $ cat t.rs
-> #[repr(C, align(64))]
-> struct X(i32);
->
-> extern { fn f(x: &X) -> i64; }
->
-> #[no_mangle]
-> fn g() -> i64 {
->     let x =3D X(114514);
->     unsafe {f(&x)}
-> }
-> $ rustc t.rs --emit=3Dasm --crate-type=3Dstaticlib -O
-> $ grep fp t.s
->         st.d    $fp, $sp, 112
->         addi.d  $fp, $sp, 128
->         addi.d  $sp, $fp, -128
->         ld.d    $fp, $sp, 112
->
-> The kernel uses rust-bindgen to generate some .rs file from C headers.
-> And __attribute__((aligned(x))) is directly translated to
-> repr(align(x)).  As __attribute__((aligned(x))) is very common in the
-> kernel I expect objtool will fail to handle some object code from rustc.
-My meaning is: the build robot doesn't enable RUST now (maybe I'm
-wrong), and this problem will surely be fixed in future, so we can
-make the condition as simple as possible.
+On 6/17/24 8:38 AM, Alisa-Dariana Roman wrote:
+> On 17.06.2024 16:22, David Lechner wrote:
+>> On Mon, Jun 17, 2024 at 4:35 AM Alisa-Dariana Roman
+>> <alisadariana@gmail.com> wrote:
+>>>
+>>> On 15.06.2024 15:08, Jonathan Cameron wrote:
+>>>> On Wed, 12 Jun 2024 16:03:05 -0500
+>>>> David Lechner <dlechner@baylibre.com> wrote:
+>>>>
+>>>>> This makes use of the new devm_regulator_get_enable_read_voltage()
+>>>>> function to reduce boilerplate code.
+>>>>>
+>>>>> Error messages have changed slightly since there are now fewer places
+>>>>> where we print an error. The rest of the logic of selecting which
+>>>>> supply to use as the reference voltage remains the same.
+>>>>>
+>>>>> Also 1000 is replaced by MILLI in a few places for consistency.
+>>>>>
+>>>>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>>>>
+>>>> Complicated bit of code, but seems correct.
+>>>> However, it crossed with Alisa-Dariana switching adding a
+>>>> struct device *dev = &spi->dev to probe() that I picked up earlier
+>>>> today.
+>>>>
+>>>> I could unwind that but given Alisa-Dariana has a number of
+>>>> other patches on this driver in flight, I'd like the two of you
+>>>> to work out the best resolution between you.  Maybe easiest option
+>>>> is that Alisa-Dariana sends this a first patch of the next
+>>>> series I should pick up.
+>>>>
+>>>> Thanks,
+>>>>
+>>>> Jonathan
+>>> I will add this patch to my series and send it shortly.
+>>>
+>>> Kind regards,
+>>> Alisa-Dariana Roman.
+>>
+>> Great, thanks!
+> 
+> Just one quick question:
+> 
+> I am getting two such warnings when running the checkpatch script:
+> 
+> WARNING: else is not generally useful after a break or return
+> #1335: FILE: ./drivers/iio/adc/ad7192.c:1335:
+> +        return dev_err_probe(dev, ret, "Failed to get AVDD voltage\n");
+> +    } else {
+> 
+> Should I switch the last two branches to get rid of the warnings or just ignore them?
+> 
 
-Huacai
+In the other patches, I was able to reorder things to avoid this
+warning, but since this one was more complicated, I just ignored
+this warning.
 
->
-> > And can we think AS_HAS_THIN_ADD_SUB always imply
-> > AS_HAS_EXPLICIT_RELOCS here?
->
-> Maybe, AFAIK there's no assembler using thin add-sub but not explicit
-> relocs.
->
-> --
-> Xi Ruoyao <xry111@xry111.site>
-> School of Aerospace Science and Technology, Xidian University
->
+We can't just remove the else in this case because the return
+is inside of an `else if`.
 
