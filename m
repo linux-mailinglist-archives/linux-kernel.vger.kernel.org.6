@@ -1,176 +1,279 @@
-Return-Path: <linux-kernel+bounces-218200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71AC90BAB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:17:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2CD90BABA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF8141C22109
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:17:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8BFA282934
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296EA1990BA;
-	Mon, 17 Jun 2024 19:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59D91990C0;
+	Mon, 17 Jun 2024 19:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RcM5b/Jk"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F1PtQ0k/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5955A364BE
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECFD364BE;
+	Mon, 17 Jun 2024 19:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718651844; cv=none; b=icH84igeyPqtS3ehI2SRrrKJoMIoFsomDRTQBRqZ/UblDKayOsS8zXZmrjPjeZWRaJDJX8XuAXFVG4UA8OerOZjgWRy7EbQSE+l/dl2g3IXdzu9P3BLlRsD2UqXCwD34As6DsIgUNGP7W0pDYuvjht9yefR8kSaWkNQCeeg3Yso=
+	t=1718652003; cv=none; b=sEFQ7zm2EgidaQI6yBzls+XETLqybJevVlFpdWiAU7eM3IWF26KzYZEEXXr2mZmEg2wUq0HIyqOCVJdxrSwuK9UFVN5hpV5jwGkn/KdLWdQfwc6BqVn64nPjp+wyO1+NYJD3tAb9N0cc25ruwQIIBB75F32v0fLY3cWkdqcaHyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718651844; c=relaxed/simple;
-	bh=jQKjgH/IeJSbhbllaf+iVIq0r/CllhXzET0SeRnnSRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dZ7KQZw3Oy5Os4HcJQfuzW4A1USlu/32JTSlJ13mIiKuB8mV2gZTfOHDDCNjUy+TbQcVghmsBx5C8o6qSI3SRpyQdaXUBoacuH+4XpLfFXXf19LLQZnHyOZBidhwJhes8WQr7d1Hi52iPCsQYTphyECq7cik3g1GR7BJldw8zys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RcM5b/Jk; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-7eb73444661so13504739f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1718651840; x=1719256640; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uxDCmX69tkQkw7FEhpYwJ22/GtNZFk3dnE10Jhs2Vfw=;
-        b=RcM5b/JkvHHb/X+dWLUVatx1pvkpDokDo4WXM2E0UUG/zyLXEU5nFFIPTq0AM8SVaU
-         WUkZCzfcmILe6DnBN7D3HrtCNae98AiwxylcD4S1rm+bksha3YvsA+DB7NHf118o1hZZ
-         0JpEioi60kD9gMpFiGyjQcWZy/rVeERVhTrdQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718651840; x=1719256640;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uxDCmX69tkQkw7FEhpYwJ22/GtNZFk3dnE10Jhs2Vfw=;
-        b=dl4O7GgUaZKa50w2BcXRlnuEwnFo4F6o8zy0JirzlMQKAV0cnHn9wRkqRR9LP/oCzm
-         BSATVudY4UrjyLHXgRpgZm2ZbQBbxQdJDehGkmpJDwmTs2kRcbndBQsHjlErnpb9Nomf
-         4HNC//PAyNTOdd4tYZyHhtj/MQ9r/t3L2+JDhx5CXOvsUNlhat4bcZSY/PatmTJOCTtE
-         TPr7QwWal8b6mHJc5nuiTcT84c3Hy71LtkVqji3UVlHG5BOTHU6kd4jV4AwKKze/v3rD
-         RG15Q7afZjTIB0IxD6O635KBxTV0yPUnqI2JYoCKtoiMN6EQJK0afqzn7kIF8lrl+urK
-         j6VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWiL+zvMMyq9kXNNLThUSnAPv+1CM1mfNHwe0Lb3j8fBKM4fG9d/x55e0rnbleRT5RBDCJJUGnQasAOW0B4OZPco6S7RDJPxyzu7eME
-X-Gm-Message-State: AOJu0Yx/c0/dPd6Rv9ApPSNXq5oiRS2vX4OJvg2Bi9iOs/wK8gNAH2fG
-	xZHAJEd7dhUPSUvnRaPnmr0v7AZyKJL/CeK0kqc6X0ic1Kn1c/mQyIISyHQLu/M=
-X-Google-Smtp-Source: AGHT+IHOg3FPItf6+cCu8wcgQmloKpiojh3fisdmWTlg+Lr2TYt3VwBpFvvZ6liZuV86R4UCrSrAdA==
-X-Received: by 2002:a05:6602:142:b0:7eb:66a5:d1c with SMTP id ca18e2360f4ac-7ebeaefca76mr980500639f.0.1718651840458;
-        Mon, 17 Jun 2024 12:17:20 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9569ef5a4sm2733310173.117.2024.06.17.12.17.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 12:17:20 -0700 (PDT)
-Message-ID: <93ea1bde-4dac-409b-8c3c-0f6c0239bb1c@linuxfoundation.org>
-Date: Mon, 17 Jun 2024 13:17:19 -0600
+	s=arc-20240116; t=1718652003; c=relaxed/simple;
+	bh=kVGgfkd/8/BTrzjxqzEjPdes+GU/qKguUFWK0wn59tM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EP8oESgQs/WhZCl0KB5MfXdfQeGGU8MXk9wV2Agcm+6y4nXkYSyXTZeUB9W7/JjQjOhHP6oCZkCnI/yqUEuNaLESCW6fAXoYnYuST5AIeCjaOpcraznVMq28+yF550iPj8stCs+OjO+YIE0PSROZIdm1yT+u/RDLOcRpX2J0Uso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F1PtQ0k/; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718652002; x=1750188002;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=kVGgfkd/8/BTrzjxqzEjPdes+GU/qKguUFWK0wn59tM=;
+  b=F1PtQ0k/zK0pvP3fr6KwXGQEoSUI7hkfzLEBt12+gwZmXT2tHN0t8QdD
+   zNeJmDtAk86sZHoBlLtBrc59YkqU60ztJr4RapMjGNLfVz/IabOB8lWTS
+   BRROIMp3ff+Gds2e25QaAugImWE9TNyJSRtbPplzombT9tpon2zPWfD2s
+   wP2V+K74WZY2xgJBWrWTJj86TwAkc4jAF0QjRJXMmZa5ohcbWyHtoKtdy
+   nocaPq1l03vXxp4Zm9ag0vH02GJ5Hs0PGuXPAOPeIipkPO+Q7XX7ZBc54
+   0VEYZ8/Wh+bcHNmxkFALyoUKVtwqhxFyaVDgpLkFYOpVHV92iAajWLl3l
+   g==;
+X-CSE-ConnectionGUID: fi6RaKHrSlCIqigWy4OVqA==
+X-CSE-MsgGUID: WRNnZ8f9TYuDgEq3zEiCQw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15622402"
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="15622402"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 12:20:02 -0700
+X-CSE-ConnectionGUID: mWzsj3dvSqSWWEM0IiYuvw==
+X-CSE-MsgGUID: KrBWaktrSPiIi9BUQ+y2xQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="78755907"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 17 Jun 2024 12:19:57 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sJHtT-0004oP-1n;
+	Mon, 17 Jun 2024 19:19:55 +0000
+Date: Tue, 18 Jun 2024 03:18:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Yin <peteryin.openbmc@gmail.com>, patrick@stwcx.xyz,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v1 6/7] ARM: dts: aspeed: Harma: remove multi-host
+ property
+Message-ID: <202406180305.hrffmKGn-lkp@intel.com>
+References: <20240613152425.1582059-7-peteryin.openbmc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] usercopy: Convert test_user_copy to KUnit test
-To: Kees Cook <kees@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Vitor Massaru Iha
- <vitor@massaru.org>, Ivan Orlov <ivan.orlov0322@gmail.com>,
- David Gow <davidgow@google.com>, Brendan Higgins
- <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- linux-hardening@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240612195412.make.760-kees@kernel.org>
- <20240612195921.2685842-2-kees@kernel.org>
- <90e61842-e933-4d6f-a3b5-c802382fe96a@linuxfoundation.org>
- <202406171157.A97ACED1B@keescook>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <202406171157.A97ACED1B@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240613152425.1582059-7-peteryin.openbmc@gmail.com>
 
-On 6/17/24 13:00, Kees Cook wrote:
-> On Fri, Jun 14, 2024 at 09:50:05AM -0600, Shuah Khan wrote:
->> On 6/12/24 13:59, Kees Cook wrote:
->>> Convert the runtime tests of hardened usercopy to standard KUnit tests.
->>>
->>> Additionally disable usercopy_test_invalid() for systems with separate
->>> address spaces (or no MMU) since it's not sensible to test for address
->>> confusion there (e.g. m68k).
->>>
->>> Co-developed-by: Vitor Massaru Iha <vitor@massaru.org>
->>> Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
->>> Link: https://lore.kernel.org/r/20200721174654.72132-1-vitor@massaru.org
->>> Tested-by: Ivan Orlov <ivan.orlov0322@gmail.com>
->>> Reviewed-by: David Gow <davidgow@google.com>
->>> Signed-off-by: Kees Cook <kees@kernel.org>
->>> ---
->>>    MAINTAINERS                                |   1 +
->>>    lib/Kconfig.debug                          |  21 +-
->>>    lib/Makefile                               |   2 +-
->>>    lib/{test_user_copy.c => usercopy_kunit.c} | 282 ++++++++++-----------
->>>    4 files changed, 151 insertions(+), 155 deletions(-)
->>>    rename lib/{test_user_copy.c => usercopy_kunit.c} (46%)
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 8754ac2c259d..0cd171ec6010 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -11962,6 +11962,7 @@ F:	arch/*/configs/hardening.config
->>>    F:	include/linux/overflow.h
->>>    F:	include/linux/randomize_kstack.h
->>>    F:	kernel/configs/hardening.config
->>> +F:	lib/usercopy_kunit.c
->>>    F:	mm/usercopy.c
->>>    K:	\b(add|choose)_random_kstack_offset\b
->>>    K:	\b__check_(object_size|heap_object)\b
->>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
->>> index 59b6765d86b8..561e346f5cb0 100644
->>> --- a/lib/Kconfig.debug
->>> +++ b/lib/Kconfig.debug
->>> @@ -2505,18 +2505,6 @@ config TEST_VMALLOC
->>>    	  If unsure, say N.
->>> -config TEST_USER_COPY
->>> -	tristate "Test user/kernel boundary protections"
->>> -	depends on m
->>> -	help
->>> -	  This builds the "test_user_copy" module that runs sanity checks
->>> -	  on the copy_to/from_user infrastructure, making sure basic
->>> -	  user/kernel boundary testing is working. If it fails to load,
->>> -	  a regression has been detected in the user/kernel memory boundary
->>> -	  protections.
->>> -
->>> -	  If unsure, say N.
->>> -
->>>    config TEST_BPF
->>>    	tristate "Test BPF filter functionality"
->>>    	depends on m && NET
->>> @@ -2814,6 +2802,15 @@ config SIPHASH_KUNIT_TEST
->>>    	  This is intended to help people writing architecture-specific
->>>    	  optimized versions.  If unsure, say N.
->>> +config USERCOPY_KUNIT_TEST
->>> +	tristate "KUnit Test for user/kernel boundary protections"
->>> +	depends on KUNIT
->>> +	default KUNIT_ALL_TESTS
->>> +	help
->>> +	  This builds the "usercopy_kunit" module that runs sanity checks
->>> +	  on the copy_to/from_user infrastructure, making sure basic
->>> +	  user/kernel boundary testing is working.
->>> +
->>
->> Please carry the following line forward as well to be complete assuming
->> it is relevant.
->>
->> If unsure, say N.
-> 
-> I've explicitly removed that because it would be repetitive if it were
-> included for all KUnit tests.
-> 
+Hi Peter,
 
-Thanks for the explanation.
+kernel test robot noticed the following build warnings:
 
-thanks,
--- Shuah
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.10-rc4 next-20240613]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Yin/ARM-dts-as=
+peed-Harma-revise-hsc-chip/20240613-232915
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-=
+next
+patch link:    https://lore.kernel.org/r/20240613152425.1582059-7-peteryin.=
+openbmc%40gmail.com
+patch subject: [PATCH v1 6/7] ARM: dts: aspeed: Harma: remove multi-host pr=
+operty
+config: arm-randconfig-051-20240614 (https://download.01.org/0day-ci/archiv=
+e/20240618/202406180305.hrffmKGn-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+dtschema version: 2024.6.dev1+g833054f
+reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archive=
+/20240618/202406180305.hrffmKGn-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new versio=
+n of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406180305.hrffmKGn-lkp@i=
+ntel.com/
+
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: bus@1e600000: co=
+mpatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
+   	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.=
+yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: ftgmac@1e660000:=
+ $nodename:0: 'ftgmac@1e660000' does not match '^ethernet(@.*)?$'
+   	from schema $id: http://devicetree.org/schemas/net/faraday,ftgmac100.ya=
+ml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: ftgmac@1e680000:=
+ $nodename:0: 'ftgmac@1e680000' does not match '^ethernet(@.*)?$'
+   	from schema $id: http://devicetree.org/schemas/net/faraday,ftgmac100.ya=
+ml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: ftgmac@1e670000:=
+ $nodename:0: 'ftgmac@1e670000' does not match '^ethernet(@.*)?$'
+   	from schema $id: http://devicetree.org/schemas/net/faraday,ftgmac100.ya=
+ml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: ftgmac@1e690000:=
+ $nodename:0: 'ftgmac@1e690000' does not match '^ethernet(@.*)?$'
+   	from schema $id: http://devicetree.org/schemas/net/faraday,ftgmac100.ya=
+ml#
+>> arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: ftgmac@1e690000:=
+ Unevaluated properties are not allowed ('#address-cells', '#size-cells' we=
+re unexpected)
+   	from schema $id: http://devicetree.org/schemas/net/faraday,ftgmac100.ya=
+ml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: syscon@1e6e2000:=
+ 'smp-memram@180' does not match any of the regexes: '^interrupt-controller=
+@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^silico=
+n-id@[0-9a-f]+$', 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.y=
+aml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: pinctrl: i3c2_de=
+fault:function:0: 'I3C2' is not one of ['ADC0', 'ADC1', 'ADC10', 'ADC11', '=
+ADC12', 'ADC13', 'ADC14', 'ADC15', 'ADC2', 'ADC3', 'ADC4', 'ADC5', 'ADC6', =
+'ADC7', 'ADC8', 'ADC9', 'BMCINT', 'EMMC', 'ESPI', 'ESPIALT', 'FSI1', 'FSI2'=
+, 'FWQSPI', 'FWSPIABR', 'FWSPID', 'FWSPIWP', 'GPIT0', 'GPIT1', 'GPIT2', 'GP=
+IT3', 'GPIT4', 'GPIT5', 'GPIT6', 'GPIT7', 'GPIU0', 'GPIU1', 'GPIU2', 'GPIU3=
+', 'GPIU4', 'GPIU5', 'GPIU6', 'GPIU7', 'I2C1', 'I2C10', 'I2C11', 'I2C12', '=
+I2C13', 'I2C14', 'I2C15', 'I2C16', 'I2C2', 'I2C3', 'I2C4', 'I2C5', 'I2C6', =
+'I2C7', 'I2C8', 'I2C9', 'I3C3', 'I3C4', 'I3C5', 'I3C6', 'JTAGM', 'LHPD', 'L=
+HSIRQ', 'LPC', 'LPCHC', 'LPCPD', 'LPCPME', 'LPCSMI', 'LSIRQ', 'MACLINK1', '=
+MACLINK2', 'MACLINK3', 'MACLINK4', 'MDIO1', 'MDIO2', 'MDIO3', 'MDIO4', 'NCT=
+S1', 'NCTS2', 'NCTS3', 'NCTS4', 'NDCD1', 'NDCD2', 'NDCD3', 'NDCD4', 'NDSR1'=
+, 'NDSR2', 'NDSR3', 'NDSR4', 'NDTR1', 'NDTR2', 'NDTR3', 'NDTR4', 'NRI1', 'N=
+RI2', 'NRI3', 'NRI4', 'NRTS1', 'NRTS2', 'NRTS3', 'NRTS4', 'OSCCLK', 'PEWAKE=
+', 'PWM0', 'PWM1', 'PWM10', 'PWM11', 'PWM12', 'PWM13', 'PWM14', 'PWM15', 'P=
+WM2', 'PWM3', 'PWM4', 'PWM5', 'PWM6', 'PWM7', 'PWM8', 'PWM9', 'RGMII1', 'RG=
+MII2', 'RGMII3', 'RGMII4', 'RMII1', 'RMII2', 'RMII3', 'RMII4', 'RXD1', 'RXD=
+2', 'RXD3', 'RXD4', 'SALT1', 'SALT10', 'SALT11', 'SALT12', 'SALT13', 'SALT1=
+4', 'SALT15', 'SALT16', 'SALT2', 'SALT3', 'SALT4', 'SALT5', 'SALT6', 'SALT7=
+', 'SALT8', 'SALT9', 'SD1', 'SD2', 'SGPM1', 'SGPM2', 'SGPS1', 'SGPS2', 'SIO=
+ONCTRL', 'SIOPBI', 'SIOPBO', 'SIOPWREQ', 'SIOPWRGD', 'SIOS3', 'SIOS5', 'SIO=
+SCI', 'SPI1', 'SPI1ABR', 'SPI1CS1', 'SPI1WP', 'SPI2', 'SPI2CS1', 'SPI2CS2',=
+ 'TACH0', 'TACH1', 'TACH10', 'TACH11', 'TACH12', 'TACH13', 'TACH14', 'TACH1=
+5', 'TACH2', 'TACH3', 'TACH4', 'TACH5', 'TACH6', 'TACH7', 'TACH8', 'TACH9',=
+ 'THRU0', 'THRU1', 'THRU2', 'THRU3', 'TXD1', 'TXD2', 'TXD3', 'TXD4', 'UART1=
+0', 'UART11', 'UART12', 'UART13', 'UART6', 'UART7', 'UART8', 'UART9', 'USBA=
+D', 'USBADP', 'USB2AH', 'USB2AHP', 'USB2BD', 'USB2BH', 'VB', 'VGAHS', 'VGAV=
+S', 'WDTRST1', 'WDTRST2', 'WDTRST3', 'WDTRST4']
+   	from schema $id: http://devicetree.org/schemas/pinctrl/aspeed,ast2600-p=
+inctrl.yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: pinctrl: i3c2_de=
+fault:groups:0: 'I3C2' is not one of ['ADC0', 'ADC1', 'ADC10', 'ADC11', 'AD=
+C12', 'ADC13', 'ADC14', 'ADC15', 'ADC2', 'ADC3', 'ADC4', 'ADC5', 'ADC6', 'A=
+DC7', 'ADC8', 'ADC9', 'BMCINT', 'EMMCG1', 'EMMCG4', 'EMMCG8', 'ESPI', 'ESPI=
+ALT', 'FSI1', 'FSI2', 'FWQSPI', 'FWSPIABR', 'FWSPID', 'FWSPIWP', 'GPIT0', '=
+GPIT1', 'GPIT2', 'GPIT3', 'GPIT4', 'GPIT5', 'GPIT6', 'GPIT7', 'GPIU0', 'GPI=
+U1', 'GPIU2', 'GPIU3', 'GPIU4', 'GPIU5', 'GPIU6', 'GPIU7', 'HVI3C3', 'HVI3C=
+4', 'I2C1', 'I2C10', 'I2C11', 'I2C12', 'I2C13', 'I2C14', 'I2C15', 'I2C16', =
+'I2C2', 'I2C3', 'I2C4', 'I2C5', 'I2C6', 'I2C7', 'I2C8', 'I2C9', 'I3C3', 'I3=
+C4', 'I3C5', 'I3C6', 'JTAGM', 'LHPD', 'LHSIRQ', 'LPC', 'LPCHC', 'LPCPD', 'L=
+PCPME', 'LPCSMI', 'LSIRQ', 'MACLINK1', 'MACLINK2', 'MACLINK3', 'MACLINK4', =
+'MDIO1', 'MDIO2', 'MDIO3', 'MDIO4', 'NCTS1', 'NCTS2', 'NCTS3', 'NCTS4', 'ND=
+CD1', 'NDCD2', 'NDCD3', 'NDCD4', 'NDSR1', 'NDSR2', 'NDSR3', 'NDSR4', 'NDTR1=
+', 'NDTR2', 'NDTR3', 'NDTR4', 'NRI1', 'NRI2', 'NRI3', 'NRI4', 'NRTS1', 'NRT=
+S2', 'NRTS3', 'NRTS4', 'OSCCLK', 'PEWAKE', 'PWM0', 'PWM1', 'PWM10G0', 'PWM1=
+0G1', 'PWM11G0', 'PWM11G1', 'PWM12G0', 'PWM12G1', 'PWM13G0', 'PWM13G1', 'PW=
+M14G0', 'PWM14G1', 'PWM15G0', 'PWM15G1', 'PWM2', 'PWM3', 'PWM4', 'PWM5', 'P=
+WM6', 'PWM7', 'PWM8G0', 'PWM8G1', 'PWM9G0', 'PWM9G1', 'QSPI1', 'QSPI2', 'RG=
+MII1', 'RGMII2', 'RGMII3', 'RGMII4', 'RMII1', 'RMII2', 'RMII3', 'RMII4', 'R=
+XD1', 'RXD2', 'RXD3', 'RXD4', 'SALT1', 'SALT10G0', 'SALT10G1', 'SALT11G0', =
+'SALT11G1', 'SALT12G0', 'SALT12G1', 'SALT13G0', 'SALT13G1', 'SALT14G0', 'SA=
+LT14G1', 'SALT15G0', 'SALT15G1', 'SALT16G0', 'SALT16G1', 'SALT2', 'SALT3', =
+'SALT4', 'SALT5', 'SALT6', 'SALT7', 'SALT8', 'SALT9G0', 'SALT9G1', 'SD1', '=
+SD2', 'SD3', 'SGPM1', 'SGPM2', 'SGPS1', 'SGPS2', 'SIOONCTRL', 'SIOPBI', 'SI=
+OPBO', 'SIOPWREQ', 'SIOPWRGD', 'SIOS3', 'SIOS5', 'SIOSCI', 'SPI1', 'SPI1ABR=
+', 'SPI1CS1', 'SPI1WP', 'SPI2', 'SPI2CS1', 'SPI2CS2', 'TACH0', 'TACH1', 'TA=
+CH10', 'TACH11', 'TACH12', 'TACH13', 'TACH14', 'TACH15', 'TACH2', 'TACH3', =
+'TACH4', 'TACH5', 'TACH6', 'TACH7', 'TACH8', 'TACH9', 'THRU0', 'THRU1', 'TH=
+RU2', 'THRU3', 'TXD1', 'TXD2', 'TXD3', 'TXD4', 'UART10', 'UART11', 'UART12G=
+0', 'UART12G1', 'UART13G0', 'UART13G1', 'UART6', 'UART7', 'UART8', 'UART9',=
+ 'USBA', 'USBB', 'VB', 'VGAHS', 'VGAVS', 'WDTRST1', 'WDTRST2', 'WDTRST3', '=
+WDTRST4']
+   	from schema $id: http://devicetree.org/schemas/pinctrl/aspeed,ast2600-p=
+inctrl.yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: pinctrl: usb11bh=
+id_default:function:0: 'USB11BHID' is not one of ['ADC0', 'ADC1', 'ADC10', =
+'ADC11', 'ADC12', 'ADC13', 'ADC14', 'ADC15', 'ADC2', 'ADC3', 'ADC4', 'ADC5'=
+, 'ADC6', 'ADC7', 'ADC8', 'ADC9', 'BMCINT', 'EMMC', 'ESPI', 'ESPIALT', 'FSI=
+1', 'FSI2', 'FWQSPI', 'FWSPIABR', 'FWSPID', 'FWSPIWP', 'GPIT0', 'GPIT1', 'G=
+PIT2', 'GPIT3', 'GPIT4', 'GPIT5', 'GPIT6', 'GPIT7', 'GPIU0', 'GPIU1', 'GPIU=
+2', 'GPIU3', 'GPIU4', 'GPIU5', 'GPIU6', 'GPIU7', 'I2C1', 'I2C10', 'I2C11', =
+'I2C12', 'I2C13', 'I2C14', 'I2C15', 'I2C16', 'I2C2', 'I2C3', 'I2C4', 'I2C5'=
+, 'I2C6', 'I2C7', 'I2C8', 'I2C9', 'I3C3', 'I3C4', 'I3C5', 'I3C6', 'JTAGM', =
+'LHPD', 'LHSIRQ', 'LPC', 'LPCHC', 'LPCPD', 'LPCPME', 'LPCSMI', 'LSIRQ', 'MA=
+CLINK1', 'MACLINK2', 'MACLINK3', 'MACLINK4', 'MDIO1', 'MDIO2', 'MDIO3', 'MD=
+IO4', 'NCTS1', 'NCTS2', 'NCTS3', 'NCTS4', 'NDCD1', 'NDCD2', 'NDCD3', 'NDCD4=
+', 'NDSR1', 'NDSR2', 'NDSR3', 'NDSR4', 'NDTR1', 'NDTR2', 'NDTR3', 'NDTR4', =
+'NRI1', 'NRI2', 'NRI3', 'NRI4', 'NRTS1', 'NRTS2', 'NRTS3', 'NRTS4', 'OSCCLK=
+', 'PEWAKE', 'PWM0', 'PWM1', 'PWM10', 'PWM11', 'PWM12', 'PWM13', 'PWM14', '=
+PWM15', 'PWM2', 'PWM3', 'PWM4', 'PWM5', 'PWM6', 'PWM7', 'PWM8', 'PWM9', 'RG=
+MII1', 'RGMII2', 'RGMII3', 'RGMII4', 'RMII1', 'RMII2', 'RMII3', 'RMII4', 'R=
+XD1', 'RXD2', 'RXD3', 'RXD4', 'SALT1', 'SALT10', 'SALT11', 'SALT12', 'SALT1=
+3', 'SALT14', 'SALT15', 'SALT16', 'SALT2', 'SALT3', 'SALT4', 'SALT5', 'SALT=
+6', 'SALT7', 'SALT8', 'SALT9', 'SD1', 'SD2', 'SGPM1', 'SGPM2', 'SGPS1', 'SG=
+PS2', 'SIOONCTRL', 'SIOPBI', 'SIOPBO', 'SIOPWREQ', 'SIOPWRGD', 'SIOS3', 'SI=
+OS5', 'SIOSCI', 'SPI1', 'SPI1ABR', 'SPI1CS1', 'SPI1WP', 'SPI2', 'SPI2CS1', =
+'SPI2CS2', 'TACH0', 'TACH1', 'TACH10', 'TACH11', 'TACH12', 'TACH13', 'TACH1=
+4', 'TACH15', 'TACH2', 'TACH3', 'TACH4', 'TACH5', 'TACH6', 'TACH7', 'TACH8'=
+, 'TACH9', 'THRU0', 'THRU1', 'THRU2', 'THRU3', 'TXD1', 'TXD2', 'TXD3', 'TXD=
+4', 'UART10', 'UART11', 'UART12', 'UART13', 'UART6', 'UART7', 'UART8', 'UAR=
+T9', 'USBAD', 'USBADP', 'USB2AH', 'USB2AHP', 'USB2BD', 'USB2BH', 'VB', 'VGA=
+HS', 'VGAVS', 'WDTRST1', 'WDTRST2', 'WDTRST3', 'WDTRST4']
+   	from schema $id: http://devicetree.org/schemas/pinctrl/aspeed,ast2600-p=
+inctrl.yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: pinctrl: usb2ad_=
+default:function:0: 'USB2AD' is not one of ['ADC0', 'ADC1', 'ADC10', 'ADC11=
+', 'ADC12', 'ADC13', 'ADC14', 'ADC15', 'ADC2', 'ADC3', 'ADC4', 'ADC5', 'ADC=
+6', 'ADC7', 'ADC8', 'ADC9', 'BMCINT', 'EMMC', 'ESPI', 'ESPIALT', 'FSI1', 'F=
+SI2', 'FWQSPI', 'FWSPIABR', 'FWSPID', 'FWSPIWP', 'GPIT0', 'GPIT1', 'GPIT2',=
+ 'GPIT3', 'GPIT4', 'GPIT5', 'GPIT6', 'GPIT7', 'GPIU0', 'GPIU1', 'GPIU2', 'G=
+PIU3', 'GPIU4', 'GPIU5', 'GPIU6', 'GPIU7', 'I2C1', 'I2C10', 'I2C11', 'I2C12=
+', 'I2C13', 'I2C14', 'I2C15', 'I2C16', 'I2C2', 'I2C3', 'I2C4', 'I2C5', 'I2C=
+6', 'I2C7', 'I2C8', 'I2C9', 'I3C3', 'I3C4', 'I3C5', 'I3C6', 'JTAGM', 'LHPD'=
+, 'LHSIRQ', 'LPC', 'LPCHC', 'LPCPD', 'LPCPME', 'LPCSMI', 'LSIRQ', 'MACLINK1=
+', 'MACLINK2', 'MACLINK3', 'MACLINK4', 'MDIO1', 'MDIO2', 'MDIO3', 'MDIO4', =
+'NCTS1', 'NCTS2', 'NCTS3', 'NCTS4', 'NDCD1', 'NDCD2', 'NDCD3', 'NDCD4', 'ND=
+SR1', 'NDSR2', 'NDSR3', 'NDSR4', 'NDTR1', 'NDTR2', 'NDTR3', 'NDTR4', 'NRI1'=
+, 'NRI2', 'NRI3', 'NRI4', 'NRTS1', 'NRTS2', 'NRTS3', 'NRTS4', 'OSCCLK', 'PE=
+WAKE', 'PWM0', 'PWM1', 'PWM10', 'PWM11', 'PWM12', 'PWM13', 'PWM14', 'PWM15'=
+, 'PWM2', 'PWM3', 'PWM4', 'PWM5', 'PWM6', 'PWM7', 'PWM8', 'PWM9', 'RGMII1',=
+ 'RGMII2', 'RGMII3', 'RGMII4', 'RMII1', 'RMII2', 'RMII3', 'RMII4', 'RXD1', =
+'RXD2', 'RXD3', 'RXD4', 'SALT1', 'SALT10', 'SALT11', 'SALT12', 'SALT13', 'S=
+ALT14', 'SALT15', 'SALT16', 'SALT2', 'SALT3', 'SALT4', 'SALT5', 'SALT6', 'S=
+ALT7', 'SALT8', 'SALT9', 'SD1', 'SD2', 'SGPM1', 'SGPM2', 'SGPS1', 'SGPS2', =
+'SIOONCTRL', 'SIOPBI', 'SIOPBO', 'SIOPWREQ', 'SIOPWRGD', 'SIOS3', 'SIOS5', =
+'SIOSCI', 'SPI1', 'SPI1ABR', 'SPI1CS1', 'SPI1WP', 'SPI2', 'SPI2CS1', 'SPI2C=
+S2', 'TACH0', 'TACH1', 'TACH10', 'TACH11', 'TACH12', 'TACH13', 'TACH14', 'T=
+ACH15', 'TACH2', 'TACH3', 'TACH4', 'TACH5', 'TACH6', 'TACH7', 'TACH8', 'TAC=
+H9', 'THRU0', 'THRU1', 'THRU2', 'THRU3', 'TXD1', 'TXD2', 'TXD3', 'TXD4', 'U=
+ART10', 'UART11', 'UART12', 'UART13', 'UART6', 'UART7', 'UART8', 'UART9', '=
+USBAD', 'USBADP', 'USB2AH', 'USB2AHP', 'USB2BD', 'USB2BH', 'VB', 'VGAHS', '=
+VGAVS', 'WDTRST1', 'WDTRST2', 'WDTRST3', 'WDTRST4']
+
+--=20
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
