@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-217042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C0B90AA07
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:43:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4213A90AA02
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC831C229B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7E2A28F696
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0365B19750D;
-	Mon, 17 Jun 2024 09:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB3319642C;
+	Mon, 17 Jun 2024 09:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSvm7E+e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsCpNwGN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A476A194A41;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFF31946C6;
 	Mon, 17 Jun 2024 09:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718617104; cv=none; b=qyGV4lX/Ouv2zWk/ziRPJ9vdx5VRyermsjj9c1jBPTes2sYMQSTYgdu/0YCmW0dvJ9nAFoCpD05KWQyzt5ZjWcX/4CubHEKdbZ4PA4R1b4QDwcuD+35oYA0Xs7FBFXgS2t3/rrUvEEVL2U+yTVAdjyXmZAfeLZX94QFdjZ/vJEs=
+	t=1718617104; cv=none; b=hsmLN+W0SORWdIUb6hhEznyvvJdU3c3OqszVBuUDhfY2ALGy3OU4v5Bz1gT5FgApuWDqemRmYenSmEg/3lwoMWV7Um5tzGLLuVsn9Pw0gDl4Z0qa0Qb3WxeA96rEpSxLGURmJcBzqUokuiQJTc1NzuzZVpMO4cjDhvBa7OtuOYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718617104; c=relaxed/simple;
-	bh=IEwtVJw5ttf8Nxs4WzZVqlVnj9yFb3V7VA/7YFn/vKg=;
+	bh=4P6bcFjMz2Z81KccelmzzJW3x4QXkAmbT0oSpWl6AJs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fY4CddJE6eOZ8CKkHuqu/nNB7JQo+B6S4FIcBXJpD4S2ZaKFjsSFM4nE+BpRYgNAyhkaRAwksKRApmZ/tJSXrkL/fzCtGzbUWcWC3zIqK2upXdAf7NEXGnpjl9unvUc1u8dVHUruR8L4keuhlyTzyFLe9y1BGNvoGgQABN7MNdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSvm7E+e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4D820C4DDFF;
+	 In-Reply-To:To:Cc; b=XXUJqeLkXwawcdskfgo1hPy91/1192iT6hhVXuLnE5wAk6DgI+j261i3cd2KuaPiwmR7r1BPJtEBqTIMTFCVszrJEJfNxgkLCBdMAZIEgWAbac7ptWA//j+c7bsN6ZvPVySTDDERxst7XpguyT4M2OlXA+8NkoP7hUtNIOMNwMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsCpNwGN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5F603C4DE09;
 	Mon, 17 Jun 2024 09:38:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1718617104;
-	bh=IEwtVJw5ttf8Nxs4WzZVqlVnj9yFb3V7VA/7YFn/vKg=;
+	bh=4P6bcFjMz2Z81KccelmzzJW3x4QXkAmbT0oSpWl6AJs=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=QSvm7E+eUsXuuBvB1sgT/fRZdzN4jpSRS8trrr6YVDWgjvqhihiqZXg+D+BeRpHmU
-	 m40JYvUdAQA6Je4xj3Qgh54AVXJtoxuB5XE4YCykSvevaWPLMnXyRPa+r6RWYiee+L
-	 RYPMoCBF20Mub46n5TzjwIaQco9qZvHctUD6cdYVqylglmqnypgiRUZvUw//vCjFN/
-	 oPR+iOTfXjMt+BzyhzdABR7N1VFIgw6OP7Wemtxiji42l5rJtxUsk/8dYq8bOv3+lY
-	 wnwba/c+1wwCkLCuexc4CYzoNcQDwtgYphTQ74Dj+uD8lH8ZOuudHX9wArzI8q4rJy
-	 VSHDDeJ2NTNdA==
+	b=tsCpNwGN6afUGHpYZDk3RYYVyHcq0EZnZM7LLN8+jVJR0XagDhcfCS0syleURU9qz
+	 zc01gjZLBDUY0bxaVo++BEWcen5Y4dXWPKEmD5PUbelS8eY/AzFOLh8CIPJPOqsoC1
+	 LrDKAt7KdMSZwgH35Mt12azDzejGYOMnhX1YDrOW87etMQsYf8IOHBOF9SvO/VCIr/
+	 BGyMQIBw5cpvdQdm++RyvLnKKHP0TdO2c6z3GYL7gosv7Eul+J2X+ji5cuSnRBKByz
+	 cpG9YW+0FUG5/7tp7cGefXTResnwDo9RrlUgQ6kFah2ZK6DCueLWm0/sK4BqlzDG/Z
+	 v77g94FPXkAaQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CFBC2BA18;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EFBC2BA1A;
 	Mon, 17 Jun 2024 09:38:24 +0000 (UTC)
 From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Mon, 17 Jun 2024 12:36:49 +0300
-Subject: [PATCH v10 15/38] spi: ep93xx: add DT support for Cirrus EP93xx
+Date: Mon, 17 Jun 2024 12:36:50 +0300
+Subject: [PATCH v10 16/38] dt-bindings: net: Add Cirrus EP93xx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,18 +54,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240617-ep93xx-v10-15-662e640ed811@maquefel.me>
+Message-Id: <20240617-ep93xx-v10-16-662e640ed811@maquefel.me>
 References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
 In-Reply-To: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Arnd Bergmann <arnd@arndb.de>
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+ Nikita Shubin <nikita.shubin@maquefel.me>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718617100; l=4901;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718617100; l=2030;
  i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=Bt1o2cb87iUEqTTj1qSqH0uuj7VeyHE3n45reTOPXeo=;
- b=svNxRxo+dWHElDEEoUpcuPAdOk6Fo8OGDZ6ktUe8i/rHcgeW94KpOrymS7XCY41bw2LT8Urnlcgo
- FctxdcQ5D5p45wvBuJPQ9vbBEmlrEE8oiWYgpinxopYz8uAWVsVW
+ bh=2EI3oik4KHOxom6rjRW5fPr9iZissgfzSJoa2Vw9jd0=;
+ b=oXTNSEjBimv7+u5cuG18isF71bTlqEdBKHy3rS/RsHSfrv/o1QlYlnfhvcyA9rv7zNuP1gN97uYF
+ NWaqlXsDC6mBELBBRX8lh1ZtslQ+f5YoJXgUmvqlhfAlQNgIBCUM
 X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
  pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
 X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
@@ -75,164 +82,79 @@ Reply-To: nikita.shubin@maquefel.me
 
 From: Nikita Shubin <nikita.shubin@maquefel.me>
 
-- add OF ID match table
-- add device tree DMA request, so we can probe defer, in case DMA is not
-  ready yet
-- drop DMA platform code
+Add YAML bindings for ep93xx SoC Ethernet Controller.
 
 Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Reviewed-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/spi/spi-ep93xx.c | 66 +++++++++++++++++-------------------------------
- 1 file changed, 23 insertions(+), 43 deletions(-)
+ .../devicetree/bindings/net/cirrus,ep9301-eth.yaml | 59 ++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-index a1d60e51c053..ffbe0d522bce 100644
---- a/drivers/spi/spi-ep93xx.c
-+++ b/drivers/spi/spi-ep93xx.c
-@@ -18,18 +18,18 @@
- #include <linux/err.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-+#include <linux/dma-direction.h>
-+#include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/bitops.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
-+#include <linux/property.h>
- #include <linux/platform_device.h>
- #include <linux/sched.h>
- #include <linux/scatterlist.h>
- #include <linux/spi/spi.h>
- 
--#include <linux/platform_data/dma-ep93xx.h>
--#include <linux/platform_data/spi-ep93xx.h>
--
- #define SSPCR0			0x0000
- #define SSPCR0_SPO		BIT(6)
- #define SSPCR0_SPH		BIT(7)
-@@ -92,8 +92,6 @@ struct ep93xx_spi {
- 	size_t				fifo_level;
- 	struct dma_chan			*dma_rx;
- 	struct dma_chan			*dma_tx;
--	struct ep93xx_dma_data		dma_rx_data;
--	struct ep93xx_dma_data		dma_tx_data;
- 	struct sg_table			rx_sgt;
- 	struct sg_table			tx_sgt;
- 	void				*zeropage;
-@@ -575,46 +573,23 @@ static int ep93xx_spi_unprepare_hardware(struct spi_controller *host)
- 	return 0;
- }
- 
--static bool ep93xx_spi_dma_filter(struct dma_chan *chan, void *filter_param)
-+static int ep93xx_spi_setup_dma(struct device *dev, struct ep93xx_spi *espi)
- {
--	if (ep93xx_dma_chan_is_m2p(chan))
--		return false;
--
--	chan->private = filter_param;
--	return true;
--}
--
--static int ep93xx_spi_setup_dma(struct ep93xx_spi *espi)
--{
--	dma_cap_mask_t mask;
- 	int ret;
- 
- 	espi->zeropage = (void *)get_zeroed_page(GFP_KERNEL);
- 	if (!espi->zeropage)
- 		return -ENOMEM;
- 
--	dma_cap_zero(mask);
--	dma_cap_set(DMA_SLAVE, mask);
--
--	espi->dma_rx_data.port = EP93XX_DMA_SSP;
--	espi->dma_rx_data.direction = DMA_DEV_TO_MEM;
--	espi->dma_rx_data.name = "ep93xx-spi-rx";
--
--	espi->dma_rx = dma_request_channel(mask, ep93xx_spi_dma_filter,
--					   &espi->dma_rx_data);
--	if (!espi->dma_rx) {
--		ret = -ENODEV;
-+	espi->dma_rx = dma_request_chan(dev, "rx");
-+	if (IS_ERR(espi->dma_rx)) {
-+		ret = dev_err_probe(dev, PTR_ERR(espi->dma_rx), "rx DMA setup failed");
- 		goto fail_free_page;
- 	}
- 
--	espi->dma_tx_data.port = EP93XX_DMA_SSP;
--	espi->dma_tx_data.direction = DMA_MEM_TO_DEV;
--	espi->dma_tx_data.name = "ep93xx-spi-tx";
--
--	espi->dma_tx = dma_request_channel(mask, ep93xx_spi_dma_filter,
--					   &espi->dma_tx_data);
--	if (!espi->dma_tx) {
--		ret = -ENODEV;
-+	espi->dma_tx = dma_request_chan(dev, "tx");
-+	if (IS_ERR(espi->dma_tx)) {
-+		ret = dev_err_probe(dev, PTR_ERR(espi->dma_tx), "tx DMA setup failed");
- 		goto fail_release_rx;
- 	}
- 
-@@ -647,18 +622,11 @@ static void ep93xx_spi_release_dma(struct ep93xx_spi *espi)
- static int ep93xx_spi_probe(struct platform_device *pdev)
- {
- 	struct spi_controller *host;
--	struct ep93xx_spi_info *info;
- 	struct ep93xx_spi *espi;
- 	struct resource *res;
- 	int irq;
- 	int error;
- 
--	info = dev_get_platdata(&pdev->dev);
--	if (!info) {
--		dev_err(&pdev->dev, "missing platform data\n");
--		return -EINVAL;
--	}
--
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
- 		return irq;
-@@ -713,12 +681,17 @@ static int ep93xx_spi_probe(struct platform_device *pdev)
- 		goto fail_release_host;
- 	}
- 
--	if (info->use_dma && ep93xx_spi_setup_dma(espi))
-+	error = ep93xx_spi_setup_dma(&pdev->dev, espi);
-+	if (error == -EPROBE_DEFER)
-+		goto fail_release_host;
+diff --git a/Documentation/devicetree/bindings/net/cirrus,ep9301-eth.yaml b/Documentation/devicetree/bindings/net/cirrus,ep9301-eth.yaml
+new file mode 100644
+index 000000000000..ad0915307095
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/cirrus,ep9301-eth.yaml
+@@ -0,0 +1,59 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/cirrus,ep9301-eth.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	if (error)
- 		dev_warn(&pdev->dev, "DMA setup failed. Falling back to PIO\n");
- 
- 	/* make sure that the hardware is disabled */
- 	writel(0, espi->mmio + SSPCR1);
- 
-+	device_set_node(&host->dev, dev_fwnode(&pdev->dev));
- 	error = devm_spi_register_controller(&pdev->dev, host);
- 	if (error) {
- 		dev_err(&pdev->dev, "failed to register SPI host\n");
-@@ -746,9 +719,16 @@ static void ep93xx_spi_remove(struct platform_device *pdev)
- 	ep93xx_spi_release_dma(espi);
- }
- 
-+static const struct of_device_id ep93xx_spi_of_ids[] = {
-+	{ .compatible = "cirrus,ep9301-spi" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, ep93xx_spi_of_ids);
++title: EP93xx SoC Ethernet Controller
 +
- static struct platform_driver ep93xx_spi_driver = {
- 	.driver		= {
- 		.name	= "ep93xx-spi",
-+		.of_match_table = ep93xx_spi_of_ids,
- 	},
- 	.probe		= ep93xx_spi_probe,
- 	.remove_new	= ep93xx_spi_remove,
++maintainers:
++  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
++  - Nikita Shubin <nikita.shubin@maquefel.me>
++
++allOf:
++  - $ref: ethernet-controller.yaml#
++
++properties:
++  compatible:
++    oneOf:
++      - const: cirrus,ep9301-eth
++      - items:
++          - enum:
++              - cirrus,ep9302-eth
++              - cirrus,ep9307-eth
++              - cirrus,ep9312-eth
++              - cirrus,ep9315-eth
++          - const: cirrus,ep9301-eth
++
++  reg:
++    items:
++      - description: The physical base address and size of IO range
++
++  interrupts:
++    items:
++      - description: Combined signal for various interrupt events
++
++  phy-handle: true
++
++  mdio:
++    $ref: mdio.yaml#
++    unevaluatedProperties: false
++    description: optional node for embedded MDIO controller
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - phy-handle
++
++additionalProperties: false
++
++examples:
++  - |
++    ethernet@80010000 {
++        compatible = "cirrus,ep9301-eth";
++        reg = <0x80010000 0x10000>;
++        interrupt-parent = <&vic1>;
++        interrupts = <7>;
++        phy-handle = <&phy0>;
++    };
 
 -- 
 2.43.2
