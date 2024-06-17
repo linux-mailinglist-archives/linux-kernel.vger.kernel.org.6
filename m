@@ -1,174 +1,205 @@
-Return-Path: <linux-kernel+bounces-217283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B64190ADC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:16:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448F190ADCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCFCD288CA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:16:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A59CFB23678
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413B4194C82;
-	Mon, 17 Jun 2024 12:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5829C194AF1;
+	Mon, 17 Jun 2024 12:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m99/lmxr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J/wW7sfA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7935B7345E;
-	Mon, 17 Jun 2024 12:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08544194AC3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718626561; cv=none; b=U99+O3vDdlK+PPcCRY/SsJdKPg0EhlwrCA8v5N08mwLV/+ej+X8pu+LRcGvBwEW63OWlEhIM6UzqNQCBtlhHrPCIBwo698A9kJu0Ui+5BxugejK7GsVKcKIYT7yttNH5i5IAVoRFOYCR4kDV5oZ9DeuPqnMWurgLb/VBr3VtrKY=
+	t=1718626730; cv=none; b=Alz6a7zmPl3u3b+kZNpmNLZ56YerisOh4BXHEzWng9nGNyLXlSTljs+K1eXa6C3fio8lgliUAIpetZ09ymgrXBG3HOe08Xb/lq/RUI5Y5CHNjnkkSYv8QfQW334I/pSYuPQud/Sj3O1WhafWdNf0XPUjcVVtl9yaWDKe2Ld+tEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718626561; c=relaxed/simple;
-	bh=Xy1Oj+Yh2LEyU1k0tO8Awpbnl/9jCEACA1TTrblQPl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5C6vxIR51uZqZzbpQf9jLYRQAqHM5BwL+FIb84R1Uw6q8frZZLTTgQb+l8d3Kq9U8A34SEMpqBDuT1JaVqSoPIwSerW0/IhCC13zzBdFaOuVJ/w3Y9G+J+xkuk+nWrE1MJVoQiLwUbveth/YVrctfXB00QgQLDwC1SMj+ryAyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m99/lmxr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E6F1C2BD10;
-	Mon, 17 Jun 2024 12:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718626561;
-	bh=Xy1Oj+Yh2LEyU1k0tO8Awpbnl/9jCEACA1TTrblQPl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m99/lmxreh/Kh9CzZ8DLQfrYB3c7u/AH89KvU7aTa+J9Fj8rs/pSUP2PLQIDB52eA
-	 QWt8tUd4C7oA+o0qSbz2zm9Vg67EeFOccrODvmoe7FX2+0+oL2E6oiJvHI87eeqimn
-	 UsQU0RGCdYEeokBZ6mDoHZCOjkiTvNRLkpw9m1rlFWQoV4ZD7GgHgiXeQovfNeqc5i
-	 xwntpVzvCTtImsneEOwzUKXVHbh5TvN9uWoJ87oLcylX9a4rDj9xXUbxlG3Xn7C2jo
-	 tG1DU/CzlMqu6cTL7pnsMtunCC/QVFp8zJnlv2ig4rhrx4QCwTDwbyuVYlIjK3wcVG
-	 TBWNtqviPD7Qg==
-Date: Mon, 17 Jun 2024 14:15:56 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-man@vger.kernel.org, 
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org, 
-	andyrtr@archlinux.org, Luna Jernberg <droidbittin@gmail.com>, 
-	"Dr. Tobias Quathamer" <toddy@debian.org>, Marcos Fouces <marcos@debian.org>, Sam James <sam@gentoo.org>, 
-	Jonathan Corbet <corbet@lwn.net>, man-pages-maintainers@fedoraproject.org, 
-	Petr Gajdos <pgajdos@suse.cz>
-Subject: Re: man-pages-6.9.1 released
-Message-ID: <vqexqoi4imi6e4sm3ddz3vicqslxip24shu42ut37ydanfqnlu@2hpc5rue2d6e>
-References: <cpolays26kcjvekvowwik3di3ut66puls47w3gvdfwep66uaul@ka4omfzltwcs>
- <dncnuuuqpf4pa3toado6hk3inupa6ntlqxdt4x4y4l63mubuoy@kyam5murveos>
+	s=arc-20240116; t=1718626730; c=relaxed/simple;
+	bh=KvunzI4WddNbzqx07uzoYcKYuD+zv2l3SfAVCfDgcos=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hQeRYb4QYDl2AvygqQQ86/ISv37wdEkUjTYe7iyRFjT9VsXT6f3pQEdfMjbYkAneAq42ac8k8DYr/Xpf5n6ZB2N6j41Of1ZBZTczrQUg0XdQAgUYFbhvQx1pOF6gUwL1AmlgCCDTEQQ4vvoEmbuj4PIDQNkDMVSoe6jUUVr4DWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J/wW7sfA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718626727;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tunX5zHKdUC3AI9UXbpm7ZTTyILRGRESycSxcecMcRU=;
+	b=J/wW7sfATPIByg5PHH65D3rWmuQ0jyIpNHD75jtQDTJ6OkhhaxLG+JCA5Wae+CH7QCBVKG
+	zSb1JRhd/Eqd/a+l7uSjgCIgW7siTyYCh2qfhLt1v8z65BdTg3vJJYCbqDmFxIkGMjmxU8
+	+ax82n1h+9DAUKu72QTuqwfjyDW8F+w=
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
+ [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-652-vgIroBymMXmLNV9XZBjy4g-1; Mon, 17 Jun 2024 08:18:46 -0400
+X-MC-Unique: vgIroBymMXmLNV9XZBjy4g-1
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-6f96cda706aso4435922a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 05:18:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718626726; x=1719231526;
+        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tunX5zHKdUC3AI9UXbpm7ZTTyILRGRESycSxcecMcRU=;
+        b=hrwnta0rO6fKZXKUgkwRT6t+c7ka010DY5oAGgmv3cD9GxaSt3pVJX2BwmitGM4qez
+         m4nxGcltIdu4n/dy9jAXKjoh3rRZg4XLPduwz53TLkGeL9NWzpoIfkgekHS5UeVZKi3i
+         TLazfycPGDueojstP4UR+E8cec29et3uaUVO0Zv52MqssFvwzR6qYXFZgiIviWsvE2Ga
+         +o/UTT5eYi9iUDFckhsKzoZDbZPO17alqU3+BScjmmlSBbp1V5YT4YS6AkjZJR+cNjza
+         eE7/W2I+BynEwEY6OWBFyYzItHFstXoK3u6qiT92rRgRMHoRXfBt78FuHO10cNpWOsvU
+         /UuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQUBGzN6oUvtU5F17jLSdxMX1tOc5Am7kSfQOwtobGUi7k7M5IlAn4dUg0e/uxGpxoOmiPornNUuo8vfBYCLz9abcZ33Q5sZCNKE0N
+X-Gm-Message-State: AOJu0Yyhhtj+dy1eC62Szuo09B+PGTrS8sac253qmWc/upLZmaOwyFub
+	DluLtDvF3WfXaqlDIi24ortXl+Y8VB88GqfEEA/ZlELzJUVjcNgXmy2iOp07zFxo/MaG0Vm/Fdf
+	56iNfe95j7M9z2JmC//6RCdq2ABlUbmNhK1n0RtOPYox9v/+W69T5YPOqQrfuRrpc5k5OpyMIUy
+	q9qVG2N7mWk7EvdqAH+ktcCSgVlvgKJaoZ3aok
+X-Received: by 2002:a05:6830:ed3:b0:6f9:5973:f8a9 with SMTP id 46e09a7af769-6fb9350becfmr9976820a34.15.1718626726045;
+        Mon, 17 Jun 2024 05:18:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG8X+Za17I50Yv6y0RBTKSevi/gJ0mG8u7aZJi4dWAzQeI1Az78m6u18o0HaIn0rByznMj0/F6LcjBvczbAIRs=
+X-Received: by 2002:a05:6830:ed3:b0:6f9:5973:f8a9 with SMTP id
+ 46e09a7af769-6fb9350becfmr9976804a34.15.1718626725697; Mon, 17 Jun 2024
+ 05:18:45 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 17 Jun 2024 12:18:44 +0000
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240613181333.984810-1-aconole@redhat.com> <20240613181333.984810-4-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2mxyowtrlcwxgtv6"
-Content-Disposition: inline
-In-Reply-To: <dncnuuuqpf4pa3toado6hk3inupa6ntlqxdt4x4y4l63mubuoy@kyam5murveos>
+In-Reply-To: <20240613181333.984810-4-aconole@redhat.com>
+Date: Mon, 17 Jun 2024 12:18:44 +0000
+Message-ID: <CAG=2xmM_z28JA1hm_PxATrUxB96miqpVRT4-WO+MHfFeaYZwPg@mail.gmail.com>
+Subject: Re: [RFC net-next 3/7] selftests: openvswitch: Add set() and
+ set_masked() support.
+To: Aaron Conole <aconole@redhat.com>
+Cc: netdev@vger.kernel.org, dev@openvswitch.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Pravin B Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Stefano Brivio <sbrivio@redhat.com>, 
+	Ilya Maximets <i.maximets@ovn.org>
+Content-Type: text/plain; charset="UTF-8"
+
+On Thu, Jun 13, 2024 at 02:13:29PM GMT, Aaron Conole wrote:
+> These will be used in upcoming commits to set specific attributes for
+> interacting with tunnels.  Since set() will use the key parsing routine, we
+> also make sure to prepend it with an open paren, for the action parsing to
+> properly understand it.
+>
+> Signed-off-by: Aaron Conole <aconole@redhat.com>
+> ---
+>  .../selftests/net/openvswitch/ovs-dpctl.py    | 39 +++++++++++++++++--
+>  1 file changed, 35 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> index 73768f3af6e5..fee64c31d4d4 100644
+> --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> @@ -284,7 +284,7 @@ class ovsactions(nla):
+>          ("OVS_ACTION_ATTR_UNSPEC", "none"),
+>          ("OVS_ACTION_ATTR_OUTPUT", "uint32"),
+>          ("OVS_ACTION_ATTR_USERSPACE", "userspace"),
+> -        ("OVS_ACTION_ATTR_SET", "none"),
+> +        ("OVS_ACTION_ATTR_SET", "ovskey"),
+>          ("OVS_ACTION_ATTR_PUSH_VLAN", "none"),
+>          ("OVS_ACTION_ATTR_POP_VLAN", "flag"),
+>          ("OVS_ACTION_ATTR_SAMPLE", "none"),
+> @@ -292,7 +292,7 @@ class ovsactions(nla):
+>          ("OVS_ACTION_ATTR_HASH", "none"),
+>          ("OVS_ACTION_ATTR_PUSH_MPLS", "none"),
+>          ("OVS_ACTION_ATTR_POP_MPLS", "flag"),
+> -        ("OVS_ACTION_ATTR_SET_MASKED", "none"),
+> +        ("OVS_ACTION_ATTR_SET_MASKED", "ovskey"),
+>          ("OVS_ACTION_ATTR_CT", "ctact"),
+>          ("OVS_ACTION_ATTR_TRUNC", "uint32"),
+>          ("OVS_ACTION_ATTR_PUSH_ETH", "none"),
+> @@ -469,6 +469,14 @@ class ovsactions(nla):
+>                      print_str += "clone("
+>                      print_str += datum.dpstr(more)
+>                      print_str += ")"
+> +                elif field[0] == "OVS_ACTION_ATTR_SET" or \
+> +                     field[0] == "OVS_ACTION_ATTR_SET_MASKED":
+> +                    print_str += "set"
+> +                    if field[0] == "OVS_ACTION_ATTR_SET_MASKED":
+> +                        print_str += "_masked"
+> +                    print_str += "("
+> +                    print_str += datum.dpstr(more)
+> +                    print_str += ")"
+>                  else:
+>                      try:
+>                          print_str += datum.dpstr(more)
+> @@ -547,6 +555,25 @@ class ovsactions(nla):
+>                  self["attrs"].append(("OVS_ACTION_ATTR_CLONE", subacts))
+>                  actstr = actstr[parsedLen:]
+>                  parsed = True
+> +            elif parse_starts_block(actstr, "set(", False):
+> +                parencount += 1
+> +                k = ovskey()
+> +                actstr = actstr[len("set("):]
+> +                actstr = k.parse(actstr, None)
+> +                self["attrs"].append(("OVS_ACTION_ATTR_SET", k))
+> +                if not actstr.startswith(")"):
+> +                    actstr = ")" + actstr
+> +                parsed = True
+> +            elif parse_starts_block(actstr, "set_masked(", False):
+> +                parencount += 1
+> +                k = ovskey()
+> +                m = ovskey()
+> +                actstr = actstr[len("set_masked("):]
+> +                actstr = k.parse(actstr, m)
+> +                self["attrs"].append(("OVS_ACTION_ATTR_SET_MASKED", [k, m]))
+> +                if not actstr.startswith(")"):
+> +                    actstr = ")" + actstr
+> +                parsed = True
+>              elif parse_starts_block(actstr, "ct(", False):
+>                  parencount += 1
+>                  actstr = actstr[len("ct(") :]
+> @@ -1312,7 +1339,7 @@ class ovskey(nla):
+>                  mask["attrs"].append([field[0], m])
+>              self["attrs"].append([field[0], k])
+>
+> -            flowstr = flowstr[strspn(flowstr, "),") :]
+> +            flowstr = flowstr[strspn(flowstr, "), ") :]
+>
+>          return flowstr
+>
+> @@ -1898,7 +1925,11 @@ class OvsFlow(GenericNetlinkSocket):
+>              ):
+>                  print_str += "drop"
+>              else:
+> -                print_str += actsmsg.dpstr(more)
+> +                if type(actsmsg) == "list":
+
+nit: I belive the recommended way of comparing types is using
+"isinstance":
+
+https://www.flake8rules.com/rules/E721.html
+
+Also, I don't see what can make actmsg be a list. It should always be an
+instance of "ovsactions", right?
 
 
---2mxyowtrlcwxgtv6
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-man@vger.kernel.org, 
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org, 
-	andyrtr@archlinux.org, Luna Jernberg <droidbittin@gmail.com>, 
-	"Dr. Tobias Quathamer" <toddy@debian.org>, Marcos Fouces <marcos@debian.org>, Sam James <sam@gentoo.org>, 
-	Jonathan Corbet <corbet@lwn.net>, man-pages-maintainers@fedoraproject.org, 
-	Petr Gajdos <pgajdos@suse.cz>
-Subject: Re: man-pages-6.9.1 released
-References: <cpolays26kcjvekvowwik3di3ut66puls47w3gvdfwep66uaul@ka4omfzltwcs>
- <dncnuuuqpf4pa3toado6hk3inupa6ntlqxdt4x4y4l63mubuoy@kyam5murveos>
-MIME-Version: 1.0
-In-Reply-To: <dncnuuuqpf4pa3toado6hk3inupa6ntlqxdt4x4y4l63mubuoy@kyam5murveos>
+> +                    for act in actsmsg:
+> +                        print_str += act.dpstr(more)
+> +                else:
+> +                    print_str += actsmsg.dpstr(more)
+>
+>              return print_str
+>
+> --
+> 2.45.1
+>
 
-Hi,
-
-On Mon, Jun 17, 2024 at 01:55:36PM GMT, Alejandro Colomar wrote:
-> man-pages-6.9 had a broken link page: FICLONERANGE.2 pointed to a
-> nonexistent page.  Thus, here's:
->=20
-> 	man-pages-6.9.1 - manual pages for GNU/Linux
->=20
-> Tarball download:
-> <https://www.kernel.org/pub/linux/docs/man-pages/>
-> Git repository:
-> <https://git.kernel.org/cgit/docs/man-pages/man-pages.git/>
-> Online PDF book:
-> <https://mirrors.edge.kernel.org/pub/linux/docs/man-pages/book/>
-
-Huh, kup(1) is reporting some problem, and I'm not being able to upload
-the files.
-
-	$ kup put man-pages-6.9.1.tar{.asc,} /pub/linux/docs/man-pages/
-	Enter passphrase for key '/home/alx/.ssh/korg-alx':=20
-	perl: warning: Setting locale failed.
-	perl: warning: Please check that your locale settings:
-		LANGUAGE =3D (unset),
-		LC_ALL =3D (unset),
-		LANG =3D "C.utf8"
-	    are supported and installed on your system.
-	perl: warning: Falling back to the standard locale ("C").
-	perl: warning: Setting locale failed.
-	perl: warning: Please check that your locale settings:
-		LANGUAGE =3D (unset),
-		LC_ALL =3D (unset),
-		LANG =3D "C.utf8"
-	    are supported and installed on your system.
-	perl: warning: Falling back to the standard locale ("C").
-	perl: warning: Setting locale failed.
-	perl: warning: Please check that your locale settings:
-		LANGUAGE =3D (unset),
-		LC_ALL =3D (unset),
-		LANG =3D "C.utf8"
-	    are supported and installed on your system.
-	perl: warning: Falling back to the standard locale ("C").
-	FATAL: SIGN output impossibly large
-
-	$ ls -lh man-pages-6.9.1.tar*
-	-rw-rw-r-- 1 alx alx  12M Jun 17 13:29 man-pages-6.9.1.tar
-	-rw-rw-r-- 1 alx alx  833 Jun 17 13:29 man-pages-6.9.1.tar.asc
-	-rw-rw-r-- 1 alx alx 2.0M Jun 17 13:29 man-pages-6.9.1.tar.bz2
-	-rw-rw-r-- 1 alx alx 2.7M Jun 17 13:29 man-pages-6.9.1.tar.gz
-	-rw-rw-r-- 1 alx alx 1.9M Jun 17 13:29 man-pages-6.9.1.tar.lz
-	-rw-rw-r-- 1 alx alx 1.8M Jun 17 13:29 man-pages-6.9.1.tar.xz
-	$ gpg --verify man-pages-6.9.1.tar{.asc,}
-	gpg: Signature made Mon Jun 17 13:29:36 2024 CEST
-	gpg:                using RSA key EA3A87F0A4EBA030E45DF2409E8C1AFBBEFFDB32
-	gpg: Good signature from "Alejandro Colomar <alx@alejandro-colomar.es>" [u=
-ltimate]
-	gpg:                 aka "Alejandro Colomar <alx@kernel.org>" [ultimate]
-	gpg:                 aka "Alejandro Colomar Andres <alx.manpages@gmail.com=
->" [ultimate]
-
-I'll try to get this sorted out ASAP.
-
-Have a lovely day!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---2mxyowtrlcwxgtv6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZwKPwACgkQnowa+77/
-2zIqqA/6A8SRXBDlwjrNjQDatqxydYR2jguBO2mrJigrUFy8faFJ3Ug6SnKRxGHr
-KSuk/y4KKTmwxvLUAy3tYFyZynyfEKUmevdBigus6k7AIkq4WPM1CWmXh6b4ZFdd
-5yzjNYB5YeqfLR+2P1/4wjJkWaCSPl9Fm91eLuRwIH2WpSp9cwnPRiae1Y3t8d50
-JVi4Ov6k0JanPYwACFIqFHKJ+CHsoKgFyvJB6e1MFHx5W5Xjx6SSbWfGWs0FwGNl
-xzaEx1UYDIhrTugZoYp/YCTe24UpPMWJ6S/zsJ7V2yOv1YHTqb3e/lQfdlVj4w2R
-v1XapacysZM6iq1gMFnUEsmGYyMAyKnvJbTZoZUD98k3Mx5yOzKevOgF51zcnIgg
-O8XnNdzAOZXnhvhRfL4gdZmn04r5qIPLRVvgneFKTFORzJ5XppM1AGjMWD4q6yeN
-gNFS4KG5Lnovs1dxwTJXX2B0bqab/rFhgWEK+0G4bXcry61TEgWGDhvwZmXHszhK
-nvCXIObz3VFpHswRVTJOBwHMUxri+lLGUM7kOQQ90fkSUCNh4bWxnFgi/0TBZCSN
-sJWzRW2sd8w6kwte6QJ3ofXlkHa1PzB77tbmdz47L9mTgNtMisEdG78thFHZXRKu
-zREynV63MSNr/2F6f1Aq993cqHdEEwEIKXRxrjURAb0drgG2nRQ=
-=r5S7
------END PGP SIGNATURE-----
-
---2mxyowtrlcwxgtv6--
 
