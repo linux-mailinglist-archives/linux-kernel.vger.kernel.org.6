@@ -1,179 +1,116 @@
-Return-Path: <linux-kernel+bounces-218176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5FD90BA23
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:53:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E0D90BA27
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC30E1C23295
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:53:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E76151C23836
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFF5198E85;
-	Mon, 17 Jun 2024 18:53:02 +0000 (UTC)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4834B198A0D;
+	Mon, 17 Jun 2024 18:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="adwwQhkU"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646B21D952E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77ED198856
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718650381; cv=none; b=eOsLmot8Ufn9ClsmazuVL5uNs9gihBAtmq22ALFGMyNVX3f9j+f5eEx6v7x9YlweaqKde+q2IfkByRNPzfy10PJD7YzomKLi+6QKXuPEpBmn3tfI6y0P9FDKM9XBwKKlhZejtltJEt+H+a1q3it6hGw3rX/Q6RvZzvWdfOmIrR4=
+	t=1718650388; cv=none; b=bR/u+CFaK2chu0+iyC4n7hLVHBvfhERRGSg98lJPg8OAB/e6Hc3k9yqjqhmijPI/2TeFprYTrsvRtUKvp/H17u9JHR5DEfbVe56jkewihakzWjkDayfrqHYDcHMgXnqn5usY0JFw5zKX+0VcLhRTpXjTCjxW3P5+/Llg/y0dXuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718650381; c=relaxed/simple;
-	bh=UY0WXIOBDORhqFoocdXv7q/5wTE5OvwFLc7PMpLK1po=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=m7C+3ZGq/OcoDMARR2YrCQ+QcuFqeJuFgdqJeqafHUrVr6t3IsOiG6H50MATaruEMPXVb+ikHIGgmueWXuZl9HaM+Ai4dmvRyudMo8940XDcYA1jLfTgc1U/rI74cFMITptpCphkjKdWmbvKbdDsBtWMqNgWaRTE8WFFm6maCb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 729576195FC1;
-	Mon, 17 Jun 2024 20:52:56 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id p5T_CLvWV-4B; Mon, 17 Jun 2024 20:52:55 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id B32216195FC9;
-	Mon, 17 Jun 2024 20:52:55 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id IVEfxcUz4X1Q; Mon, 17 Jun 2024 20:52:55 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 8F4166195FC1;
-	Mon, 17 Jun 2024 20:52:55 +0200 (CEST)
-Date: Mon, 17 Jun 2024 20:52:55 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Gagan Sidhu <broly@mac.com>
-Cc: ZhaoLong Wang <wangzhaolong1@huawei.com>, 
-	chengzhihao1 <chengzhihao1@huawei.com>, 
-	dpervushin <dpervushin@embeddedalley.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-mtd <linux-mtd@lists.infradead.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, 
-	yangerkun <yangerkun@huawei.com>, yi zhang <yi.zhang@huawei.com>, 
-	daniel@makrotopia.org
-Message-ID: <136290141.252319.1718650375432.JavaMail.zimbra@nod.at>
-In-Reply-To: <3841F21D-CA54-456C-9D9C-F06EEA332A30@mac.com>
-References: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com> <E3E2C13C-1E52-46F2-BE2D-D2592C3369DB@mac.com> <F2DCFCE7-68FA-4C09-AE5B-09F2233575F1@mac.com> <48D8B89B-0402-4D8B-B045-86104C0C797F@mac.com> <303502000.252057.1718647746641.JavaMail.zimbra@nod.at> <90A90DA4-8B68-432D-9577-0D3635AF84BB@mac.com> <296007365.252185.1718649153090.JavaMail.zimbra@nod.at> <3841F21D-CA54-456C-9D9C-F06EEA332A30@mac.com>
-Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
- ftl notifier
+	s=arc-20240116; t=1718650388; c=relaxed/simple;
+	bh=K9KjBKCkpXLAqOUVTwlZWowQdOkv1eWRfWuRpNdDdC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YQAWVO5fNBj2iOyA9dCxIfvei74y7upiKTpbwA3aT0Sli8kacEzYl4L79sKSaoGYsb7z72sOTov2jdRrfCdU0w9h+pRNj5P5YrMaCSesSaIp+uge+XzxapUf5IS5u6f240nVqOWfvsJtBMljJdeQb0tE73SfVnZHYMORwTrvPFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=adwwQhkU; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52bbdb15dd5so5314740e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:53:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718650385; x=1719255185; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MWy7ZuXKNt2Ozc+a401wysn7JDFxJ4mbR0Kx2EK+fP0=;
+        b=adwwQhkUT9dibSw8WUspUawD54qOfBWo96bBCEI7559GbXPD74Kvd5JXSEe8VreSkp
+         y6z6DNdPkwQfaJ3zaQa4BTWfN2lq/u7rU2SK77AbQfIL+p06CcgiiqS0EakfDlv47xVq
+         CjLcK4xWw5SdYmYln47YNo2BaVadWx7bWBwDKZfkNQZOpofNv4eygYWQAiw1FN8BuPFt
+         WGenlCkKhvMUcNF9RVq7e6pPnNqM0+00SSdQXOaDLblEn7mvJGj9tU43imBebP3C9Plc
+         Xkl+FGdbWfna2Js8UbVYt4OxFZ/kKT5KBXA0WnHjjrXaueRotmURX/H6xuDAfoB0bAAy
+         58Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718650385; x=1719255185;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MWy7ZuXKNt2Ozc+a401wysn7JDFxJ4mbR0Kx2EK+fP0=;
+        b=tHlu0HQYvbXb9K7Hh8nBXgxkrTScoR+MtwgShL+qnv+611Qc51lWip0iaRSSEnASeA
+         mIJZwQldGt6+l1Ff1hWNeLZOKkT2euJUgaCyAnukN2E7bYLkp90wIRo+QB+TY9LETNS2
+         2vHSfSZBlc0sJqvsdGS5oU7OKai4xsqWw/VbPulUSw4Vw2o2s8p+uw2lHjEVRujH32N6
+         zx4mcUF5PScPqDWQH9lnklS5mpgs4qZXZs53lH/B1lAmbGhTcg9ZlRb4g06/jVRW4bj5
+         KJsSzaXq+0K7sNJ0PA8AMYp3rXYY7i3WvmLR/0s1V4rlejH4cgVRiZS86fq0ChQ9wChl
+         7U1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUm28KO/OBtYPo7J0cxYXYCQRgkX4hqvGo0V5UWLhEte+0Qai7MVQO7LmB2by+mCZMa1WXnbgmCI9k0/CzoZgM6GQl3HL5qQ2AbZ2yi
+X-Gm-Message-State: AOJu0YxFCtoEgJ8p7GyrkLiNJVHKD2Dt6F/c40BVv+vimuyATFK5io1o
+	+y1LgGfY8AWyvPCt17Ce9F4cvW9QCutu46SwGHvuGTd1BJ8SqsF49y9E6xhV+p8=
+X-Google-Smtp-Source: AGHT+IEWLFZZ0jt8SRhky/z9Jh7PVDX3/2EZDQYZkcA5mbEYl1CnAWhQD/l67EYmxT3DLAleDU3ugg==
+X-Received: by 2002:ac2:43d6:0:b0:52c:a9c2:d363 with SMTP id 2adb3069b0e04-52ca9c316abmr5936135e87.10.1718650385024;
+        Mon, 17 Jun 2024 11:53:05 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:cb2:a9df:9f88:17b:c7e7:fa59? ([2a00:f41:cb2:a9df:9f88:17b:c7e7:fa59])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2825b43sm1301472e87.12.2024.06.17.11.53.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 11:53:04 -0700 (PDT)
+Message-ID: <c45cc12e-40e2-4a1b-8055-b3e956ba2a24@linaro.org>
+Date: Mon, 17 Jun 2024 20:53:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: gluebi: Fix NULL pointer dereference caused by ftl notifier
-Thread-Index: rDTq+bzWquJWh3BCcONeC8Jg3XzswQ==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/8] serial: qcom-geni: Introduce
+ qcom_geni_serial_poll_bitfield()
+To: Douglas Anderson <dianders@chromium.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Yicong Yang <yangyicong@hisilicon.com>, Tony Lindgren <tony@atomide.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Johan Hovold <johan+linaro@kernel.org>,
+ John Ogness <john.ogness@linutronix.de>, linux-arm-msm@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Rob Herring <robh@kernel.org>,
+ Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
+References: <20240610222515.3023730-1-dianders@chromium.org>
+ <20240610152420.v4.5.Ic6411eab8d9d37acc451705f583fb535cd6dadb2@changeid>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240610152420.v4.5.Ic6411eab8d9d37acc451705f583fb535cd6dadb2@changeid>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-[CC'ing Daniel]
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Gagan Sidhu" <broly@mac.com>
-> An: "richard" <richard@nod.at>
-> CC: "ZhaoLong Wang" <wangzhaolong1@huawei.com>, "chengzhihao1" <chengzhih=
-ao1@huawei.com>, "dpervushin"
-> <dpervushin@embeddedalley.com>, "linux-kernel" <linux-kernel@vger.kernel.=
-org>, "linux-mtd"
-> <linux-mtd@lists.infradead.org>, "Miquel Raynal" <miquel.raynal@bootlin.c=
-om>, "Vignesh Raghavendra" <vigneshr@ti.com>,
-> "yangerkun" <yangerkun@huawei.com>, "yi zhang" <yi.zhang@huawei.com>
-> Gesendet: Montag, 17. Juni 2024 20:46:10
-> Betreff: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused =
-by ftl notifier
 
->> On Jun 17, 2024, at 12:32 PM, Richard Weinberger <richard@nod.at> wrote:
->>=20
->> ----- Urspr=C3=BCngliche Mail -----
->>> Von: "Gagan Sidhu" <broly@mac.com>
->>>> AFAICT, this log line is not part of the mainline kernel.
->>>=20
->>> this is mainline. it=E2=80=99s just not 6.x. it=E2=80=99s 4.14.
->>=20
->> I've double checked and disagree.
->> This line comes from:
->> https://git.openwrt.org/?p=3Dopenwrt/openwrt.git;a=3Dblob;f=3Dtarget/lin=
-ux/generic/pending-4.14/480-mtd-set-rootfs-to-be-root-dev.patch;h=3D6cddaf0=
-1b75cb58cfb377f568f2c375af87e2f1b;hb=3Dc3bd1321de1e0d814f5cfc4f494f6b2fb1f5=
-133b
->=20
-> no i know that, that=E2=80=99s the patch i showed you. i meant the rest o=
-f it is
-> mainline. the patch obviously is not.
->>=20
->> In recent OpenWRT kernels I see:
->> https://git.openwrt.org/?p=3Dopenwrt/openwrt.git;a=3Dblob;f=3Dtarget/lin=
-ux/generic/pending-5.15/493-ubi-set-ROOT_DEV-to-ubiblock-rootfs-if-unset.pa=
-tch;h=3D266a6331c2acc0f7c17d9ac72f54659d31b56249;hb=3DHEAD
->>=20
->> Looks like in recent versions the patch in question does *not* cause a
->> regression.
->=20
-> that patch is also applied in my version as well, so i don=E2=80=99t see =
-how this avoids
-> the regression.
->=20
-> https://github.com/torvalds/linux/blob/master/drivers/mtd/mtdcore.c#L774
->=20
-> mine says "[6.051426] mtd: device 12 (rootfs) set to be root filesystem"
->=20
-> which is simply the call from drivers/mtd/mtdcore.c
->=20
-> so the rootfs device is set correctly. it=E2=80=99s just not booting from=
- it.
->=20
-> the regression comes from having GLUEBI+BLOCK enabled, it seems, are they
-> fighting for/operating on the same partition?
+On 6/11/24 00:24, Douglas Anderson wrote:
+> With a small modification the qcom_geni_serial_poll_bit() function
+> could be used to poll more than just a single bit. Let's generalize
+> it. We'll make the qcom_geni_serial_poll_bit() into just a wrapper of
+> the general function.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
 
-I don't know. Let's ask Daniel.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
->=20
->>=20
->>>> (31, 12) would be mtdblock12.
->>>> How does your kernel know that mtdblock12 shall be the rootfs?
->>>=20
->>> this is an openwrt approach: https://openwrt.org/docs/techref/filesyste=
-ms (under
->>> =E2=80=9Ctechnical details=E2=80=9D, third paragraph)
->>>=20
->>> essentially there=E2=80=99s a feature they add to the kernel (via patch=
-) where you can
->>> enable a feature that sets the root device based on the name of the par=
-tition.
->>=20
->> So, this is all not mainline. :-/
->=20
-> i did say openwrt at the start, and i think that=E2=80=99s pretty close t=
-o mainline as
-> it gets.
->=20
-> sometimes these patches aren=E2=80=99t appropriate to push upstream. this=
- one is not the
-> one causing the issue.
->=20
-> it seems to me that there is a problem with GLUEBI+BLOCK playing together=
-.
->=20
-> as far as i can see, the setting of the device is being doing by mtdcore.=
-c
->=20
-> it=E2=80=99s just not working with gluebi and block are enabled, and i ne=
-ed to know
-> whether disabling gluebi will allow it to work.
->=20
-> in other words, is it possible for gluebi to use the partition created by
-> ubi_block, and add the MTD_UBIVOLUME flag?
-
-No. UBIBlock works on top of UBI volumes and creates a block device.
-
-We'll sort this out. :)
-
-Thanks,
-//richard
+Konrad
 
