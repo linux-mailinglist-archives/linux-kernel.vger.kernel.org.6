@@ -1,170 +1,157 @@
-Return-Path: <linux-kernel+bounces-217263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C2D90AD8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:02:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0FCD90AD8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0E71C22E77
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:02:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311042811F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C92C194C7C;
-	Mon, 17 Jun 2024 12:02:35 +0000 (UTC)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5956A194C8B;
+	Mon, 17 Jun 2024 12:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MNnA5+AK"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FE517FAA2;
-	Mon, 17 Jun 2024 12:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF8817FAA2
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718625754; cv=none; b=U3vt4K7qxq8vvZGBj6R0GwXxU/BLdZ3H/yGSPrAOCpUovzxM6rb3S3D2Ts6GlsSfAU59ltYeprPVespQqY/8RI9tSV475vcC9u4N8vTBEcnsblqhvzQb8ds4P3GB+tahgQfSf4v4G1GC6gFV9/pRB0m7xdPZsj04LL9IdV/Tp40=
+	t=1718625784; cv=none; b=SYiOKKXYBTvOTSlrt5hIFOarugW6TERQgWMc08GAUaWH6V5/zsWlyocig4vWOcmrgIiuHJwqT6tBvIyPpPceCNIvYE2AisgqwKgjFhxv+80TD5wwr+ZTPcG2Um76OLiPKWicDV/Nr+2XSDshtLg+CIWcIBOa5pLWgExTUracEak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718625754; c=relaxed/simple;
-	bh=dtNkuBV2A349eNviC6SuKzrMSB8wD5WUXwBXkHuTxOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lyyHcg/LNa/KQB2gWxMUVuYOOXT8SEAbNsBMphVvMEPQfsNRkKgUb+v5jyZjcB93UdFFmpYIHG7wLD8u9dKD6zlW8rnEWyq/rZXwr9eV4bzDKlfVFWUdH/Csx50dEZLcJiKBEtde2uZaHhsa//HN3dJTHrB54pYlsaLUotc+cWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dff302847a8so1751644276.0;
-        Mon, 17 Jun 2024 05:02:32 -0700 (PDT)
+	s=arc-20240116; t=1718625784; c=relaxed/simple;
+	bh=Rr5iGFqpSNRXB+KBYwcPoY3tWHo2mwxMfOhiOo09gUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O6LqYzqHEW9LdmE+XbINwE6cnHfkhnNUCzbOxxOTjk3Kh5mTeY6zIiT9jPiWDwReoUEOrTUwbrdfO60/+0/erqySi0HvdJt0v0vSxUrG/W/jAqI/GT0mEyq0gfhqm+GTGdGlS/hRxZ0posv6jOC8aGCp98lNL1WyeWzXxRv7I1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MNnA5+AK; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42278f3aea4so37451735e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 05:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718625781; x=1719230581; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d8Fhf4JOX+eQHmfKJgo0VL59I075x6PJI/pMFa803UQ=;
+        b=MNnA5+AKVfF0Yc5vs7z38XcJoy+H/gcM0iLwf9FsH4Bp6ZWvfDmGPEDl/JSkVv5FMz
+         YmdLO7VmMuJ8pjKEmeodvvN/Wwumla32IC2mtCUe4m0xFyuCZUmkYHy74+JvkLgYRm34
+         tNYWV7AAUgB+0G4XqA9HWmao5o2jXuRrpaPbowrrO1r7eooNI8WZI0Sb2gr8/kS+uulw
+         4ULZu+JCJBgZ6U4kM2yoUbUdpsepQa17LDEsW7ouRGVkvY9zekWjWf/Sxru9cGRu5SIo
+         T06NSVM1fy7q2OQUdpqdoSqfxExegPWJO9MYHI9qYHLLcWgl8BnPb+9V0l+c4nd3A9DR
+         c/+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718625751; x=1719230551;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j0ex/OBXkM0YaYw4ebPeo5bpa3LK+wkN4LK4vxw7MQc=;
-        b=PKh1CCp2WG61YSn5wbyClfyKwldXw+dD7+7tvEk71C7+xLwtCsOf77jNlQC3vUiTjy
-         EuSdWFMuBpeqcYdJCcWp955vbUufwv/k8G6AzI5KX0xtxBkQ1AQKu92B57s+6Btth53o
-         dwpKrx1FCswevo56duK7ygPwtWTK3BKZY8ejVMwvqenf1a9nlpVYNG7dAnIAKRT6n9gm
-         Wl0gmbfU2Gus0vaa8RSNrW0A1z6BEw6OdNZ/gBHC4C2OXwbx7/bbAnIuhL/HprlbNHoT
-         BCOD0DpgL2akoSL2EDmy0V+bRrLg+Sk18VuvLuRSXAm/MnuoysWusTE+/HE9co4R00jY
-         DvpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyjoEWdUbA+ajgcCwOJIzvFRZ+fNYxPEQKriu4eFV87ZiiI4Y2WGPzDZFSpNgv8+q4cSjOPM0f7ypkwLZeNxITFC/5rbeg+wbIYboKhFR9SIHSudaAehfJPIlt3AUaczhAM4AvWfebVNszP6YuM+xmJtyIQFBTKGI0thuYvuq2Sj30siGDrlDxSzCJBa/SjjKILO63ytdkYCbjlLkZmddrbPQ6VhPh9w==
-X-Gm-Message-State: AOJu0Yx7+rB+EohnSK4/D15hDDUK1UDBEmzk79pypOiO6ViE1IRis6sO
-	DTyTtzeUKaRSTXnJpGOgrI6OkI743ovBbNFHpzk7XfZ+tOt4Ht9vefVpPpK7
-X-Google-Smtp-Source: AGHT+IHZaTv+Be3x/sQ8URZD3zng9ZoU2KUE2qdsdzXf5bttFdVaQmYiarXPIAtHrLec72Qaxg+6gA==
-X-Received: by 2002:a25:4c81:0:b0:dfa:ac81:38eb with SMTP id 3f1490d57ef6-dff153b1745mr8176615276.27.1718625750837;
-        Mon, 17 Jun 2024 05:02:30 -0700 (PDT)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dff048bd22csm1880974276.34.2024.06.17.05.02.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 05:02:30 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dff36345041so1246397276.3;
-        Mon, 17 Jun 2024 05:02:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXDrCt2qPFZ3NwLkL1AeCvOLDZvIGraaPomTHIXcyJVusQc3ZbMDbKakrg6yLRNhlweQ5BzZB3C7y7gSTbDvyy43SdAOQN3TaQdSlGHtqfTXrFfboLhiNJqqzvulfydDG8KrpgN08Xp+QU+0QfarY22ymrao3FtYlEZJteyZutz8GVv12qKLs8Zm/6l0X4p84r5u9NzfLoIon5uPD7A3+aZX+3o/5Likw==
-X-Received: by 2002:a25:a285:0:b0:dff:2d99:9c3c with SMTP id
- 3f1490d57ef6-dff2d99a245mr5109438276.57.1718625750352; Mon, 17 Jun 2024
- 05:02:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718625781; x=1719230581;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d8Fhf4JOX+eQHmfKJgo0VL59I075x6PJI/pMFa803UQ=;
+        b=Vt9q8cjPk0iXCV3Dal0C/DbvLVC1ND3ZxUGiS62/AqpjOEvNa+QG0bvztkqAzZFpx9
+         luxBOC1mBMycmMAU+PGeWlFh/H2PkrRvD0TyEdBp0JnfWNRsmp6bFm29FXiDbEyByMYs
+         rBCdXCc2LxJm/ZRFg1ZhYpynx34UNaHnsxeUvQatJXf6waBQrK8BUWBYnEc1e2WsMRM2
+         Q17YXR2BlXMAPnQEF3Y5NluzLm03Y2qYelrflYmihBlfqLUk5IF4QosMwLxXDXFZfWPI
+         gealfeKCptAJzA9utuWZ+p7JUqoKaPtCcInsy85CIhykVX+jGcmEILaaZggSaJnSFKe9
+         MfeA==
+X-Gm-Message-State: AOJu0YyLunw0MNEmnle5rxF/35HNO4Xj7gyb4IRMEL0PlYf5GLJcKHYf
+	EHJr43sxJO5bvhEDv//ThzSfqwJQgF+Dm7kPqJspRj9aJY0vaghkRmZmyFvcQXI=
+X-Google-Smtp-Source: AGHT+IETqjtVw4vm/BaAXb+7+BMz4Su+YcAJ5zJwSTOWHGTDcdm9ORyc65IHd9xEKGG8oTMrigZ+jg==
+X-Received: by 2002:a05:600c:1d0f:b0:423:4c2:7a43 with SMTP id 5b1f17b1804b1-42304c27b17mr80244375e9.0.1718625781238;
+        Mon, 17 Jun 2024 05:03:01 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6127c1esm156486645e9.23.2024.06.17.05.03.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 05:03:00 -0700 (PDT)
+Date: Mon, 17 Jun 2024 15:02:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Alexey Charkov <alchark@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Andy Yan <andy.yan@rock-chips.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
+Message-ID: <94b9e0fd-2f4f-4d75-ae39-7d780a4e6374@moroto.mountain>
+References: <20240615015734.1612108-1-detlev.casanova@collabora.com>
+ <20240615015734.1612108-2-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611113204.3004-1-paul.barker.ct@bp.renesas.com> <20240611113204.3004-3-paul.barker.ct@bp.renesas.com>
-In-Reply-To: <20240611113204.3004-3-paul.barker.ct@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Jun 2024 14:02:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXe8aaweQJ2=V7ksKTqcJCnqewKhSrrO4h7X924Vbk-_Q@mail.gmail.com>
-Message-ID: <CAMuHMdXe8aaweQJ2=V7ksKTqcJCnqewKhSrrO4h7X924Vbk-_Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] pinctrl: renesas: rzg2l: Clean up and refactor OEN
- read/write functions
-To: Paul Barker <paul.barker.ct@bp.renesas.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240615015734.1612108-2-detlev.casanova@collabora.com>
 
-Hi Paul,
-
-On Tue, Jun 11, 2024 at 1:33=E2=80=AFPM Paul Barker
-<paul.barker.ct@bp.renesas.com> wrote:
-> The variable naming in the various OEN functions has been confusing. We
-> were passing the _pin & bit variables from rzg2l_pinctrl_pinconf_get()
-> and rzg2l_pinctrl_pinconf_set() as the offset & pin argument to the
-> read_oen() and write_oen() functions. This doesn't make sense, the first
-> of these isn't actually an offset and the second is not needed for
-> RZ/V2H but leads to confusion with the bit variable used within these
-> functions.
->
-> To tidy this up, instead pass the _pin variable directly to the
-> read_oen() and write_oen() functions with consistent naming. Then
-> rzg3s_read_oen() and rzg3s_write_oen() can use macros to get the port
-> and pin numbers it needs.
->
-> Also, merge rzg3s_oen_is_supported() into rzg3s_pin_to_oen_bit() to give
-> a single translation function which returns an error if the pin doesn't
-> support OEN. While we're here, remove an unnecessary branch and clarify
-> the variable naming.
->
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-> ---
-> Changes v1->v2:
->   * Merged patches 1 & 2 from the previous series, updated to be
->     compatible with recent patches adding RZ/V2H support.
-
-Thanks for your patch!
-
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-
-> @@ -994,53 +994,43 @@ static bool rzg2l_ds_is_supported(struct rzg2l_pinc=
-trl *pctrl, u32 caps,
->         return false;
->  }
->
-> -static bool rzg3s_oen_is_supported(u32 caps, u8 pin, u8 max_pin)
-> +static int rzg3s_pin_to_oen_bit(const struct rzg2l_hwcfg *hwcfg, u32 cap=
-s, u32 port, u8 pin)
->  {
-> -       if (!(caps & PIN_CFG_OEN))
-> -               return false;
-> +       u8 bit =3D pin * 2;
->
-> -       if (pin > max_pin)
-> -               return false;
-> +       if (!(caps & PIN_CFG_OEN) || pin > hwcfg->oen_max_pin)
-> +               return -EINVAL;
->
-> -       return true;
-> +       if (port =3D=3D hwcfg->oen_max_port)
-> +               bit +=3D 1;
+On Fri, Jun 14, 2024 at 09:56:27PM -0400, Detlev Casanova wrote:
+> +static int rkvdec2_start_streaming(struct vb2_queue *q, unsigned int count)
+> +{
+> +	struct rkvdec2_ctx *ctx = vb2_get_drv_priv(q);
+> +	const struct rkvdec2_coded_fmt_desc *desc;
+> +	int ret, i;
+> +	u32 width, height;
 > +
-> +       return bit;
->  }
->
-> -static u8 rzg3s_pin_to_oen_bit(u32 offset, u8 pin, u8 max_port)
-> +static u32 rzg3s_read_oen(struct rzg2l_pinctrl *pctrl, u32 caps, unsigne=
-d int _pin)
->  {
-> -       if (pin)
-> -               pin *=3D 2;
-> +       u32 port =3D RZG2L_PIN_ID_TO_PORT(_pin);
-> +       u8 pin =3D RZG2L_PIN_ID_TO_PIN(_pin);
+> +	if (V4L2_TYPE_IS_CAPTURE(q->type))
+> +		return 0;
+> +
+> +	desc = ctx->coded_fmt_desc;
+> +	if (WARN_ON(!desc))
+> +		return -EINVAL;
+> +
+> +	width = ctx->decoded_fmt.fmt.pix_mp.width;
+> +	height = ctx->decoded_fmt.fmt.pix_mp.height;
+> +	for (i = 0; i < RKVDEC2_RCB_COUNT; i++) {
+> +		ctx->rcb_bufs[i].cpu =
+> +			dma_alloc_coherent(ctx->dev->dev,
+> +					   RCB_SIZE(i),
+> +					   &ctx->rcb_bufs[i].dma,
+> +					   GFP_KERNEL);
+> +		if (!ctx->rcb_bufs[i].cpu) {
+> +			ret = -ENOMEM;
+> +			goto err_rcb;
+> +		}
+> +	}
+> +
+> +	if (desc->ops->start) {
+> +		ret = desc->ops->start(ctx);
+> +		if (ret)
+> +			goto err_ops_start;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_ops_start:
+> +err_rcb:
+> +	i--;
+> +	while (i) {
+> +		dma_free_coherent(ctx->dev->dev,
+> +				  RCB_SIZE(i),
+> +				  ctx->rcb_bufs[i].cpu,
+> +				  ctx->rcb_bufs[i].dma);
+> +		i--;
+> +	}
 
-It's OK to use RZG2L_PIN_ID_TO_PIN() unconditionally, as RZ/G3S does
-not have any dedicated pins with the OEN capability, right?
+This will leak the first element of the ctx->rcb_bufs[i] array.  The
+traditional way to write this is either while (--i >= 0) or for unsigned
+int i iterators it would be while (i--).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> +
+> +	return ret;
+> +}
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+regards,
+dan carpenter
 
