@@ -1,91 +1,164 @@
-Return-Path: <linux-kernel+bounces-217740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743D690B39A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:13:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F1590B3AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F45F281DB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:13:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32E81F27CBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A49156F5B;
-	Mon, 17 Jun 2024 14:32:11 +0000 (UTC)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46751581F7;
+	Mon, 17 Jun 2024 14:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NNhtZUjo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1C2156F48
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AF51581F6;
+	Mon, 17 Jun 2024 14:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718634731; cv=none; b=oY0Ne6c50y7YiyvRG8Y06lDDZ87AraNmUBAuNByLtScES5USArM1VAgEy57cJ7fdgdyc0pL9uVWIADJMuMFSahb04WYHJ5gwrql2IMxVYliApqqeWZ8/VzFlIeugjF8YSIwjfhUM1XZ6DjHNkY1PIAtzdx+j7Wkq8qQGDia3Jas=
+	t=1718634808; cv=none; b=OCUyIeaSGjEZ60ojXWDFWQWVhC44Rxa0A1PzFTBkThKWxRc1WWs9OJrisz/kxrql/vgMBV1ePkEBfT8iBBjUyx01jYcr7S4tzjtad3yInlAwopFcdaVjMmjpeyuLQGkqxy88Qlp8i6MKVvGg34MDfZxNnmozTySUUxFkoHto1FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718634731; c=relaxed/simple;
-	bh=VJKpdFQPUIW4FN3QIA7aSVbuR+6jevqlt/U/f+yPoRI=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=dkpBSJkekQpWV6Vso5N+Q5UVBpYarHOe5BmCypzGgLlRIGAKIJ8yN80eYKRoGOKxhw5r2IO0Ibc3uTFxorydMGhjHG7jL2G0SgIUJD7BbiQjlw/XQkJDeLW+ZnaEqEK5+7GvLvl7ZCBnhP/oJPiYZeodEULL7dL3XiymyUV0WuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id E1DD161966BD;
-	Mon, 17 Jun 2024 16:31:59 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id ylp9hY2GKHJa; Mon, 17 Jun 2024 16:31:59 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 8404561966BE;
-	Mon, 17 Jun 2024 16:31:59 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JW9koqa3rudw; Mon, 17 Jun 2024 16:31:59 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 5CC9861966BD;
-	Mon, 17 Jun 2024 16:31:59 +0200 (CEST)
-Date: Mon, 17 Jun 2024 16:31:59 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Gagan Sidhu <broly@mac.com>
-Cc: ZhaoLong Wang <wangzhaolong1@huawei.com>, 
-	Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, 
-	chengzhihao1 <chengzhihao1@huawei.com>, 
-	dpervushin <dpervushin@embeddedalley.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-mtd <linux-mtd@lists.infradead.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, 
-	yangerkun <yangerkun@huawei.com>, yi zhang <yi.zhang@huawei.com>
-Message-ID: <976649573.251318.1718634719216.JavaMail.zimbra@nod.at>
-In-Reply-To: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com>
-References: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com>
-Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
- ftl notifier
+	s=arc-20240116; t=1718634808; c=relaxed/simple;
+	bh=PshLMy+s1hvHDP2l9+DVvDPOq/OZjAc/D/4evHSEKwA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LMYq38mNAgKPdC67yNoMK32PTOso58sLFQqnMpzRZGJjDrJDfPxOMTNbIml6y3UGg21IoESqtBMdlsXj0Jhf8m0n5G/NlQqFRUX2Fn3rKxD2I8msA08QI4dXXb21PfBYzgXTTyXtHZkNLNsPAcmg+eGcpyNjuZyCgmFbmUo7ioM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NNhtZUjo; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718634808; x=1750170808;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PshLMy+s1hvHDP2l9+DVvDPOq/OZjAc/D/4evHSEKwA=;
+  b=NNhtZUjo148HU/46FripCwYQN8Ly09f61+oqLRHlNc8CkBcJBkJOijEL
+   1OR4PBpEzjf47UF79maK6KpUQue2BxeQKdyhq3PJWIcycWgk83Kink/ja
+   FXCNz8MMNW7kK2hjbX6rKSBwyZG2PFOfiaNRN/8rC1nZvGMQewvbhqWRY
+   dnV+aAXs/GWodWajhlUMPR7U8RfBoccceISI+XE6xLQxn4fBlSbgaqlyQ
+   5rQisdyg3M52ullFQ4sRv6IsBZ1NC9SfS/unoPpkl/8TSUo3LGjjg+wa4
+   RskKd1zPkT+DCpvka8O8r6egH7qsjY1COtV5f5Onl0sWQIViYYMZpYxQv
+   A==;
+X-CSE-ConnectionGUID: BGM8UEEqSkyXxPOIik60/g==
+X-CSE-MsgGUID: +Zaiai28SGq8geb1j6XKoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="37984456"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="37984456"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 07:33:16 -0700
+X-CSE-ConnectionGUID: KyzmEqehQaKzjLzKuyNlvA==
+X-CSE-MsgGUID: dyo9nvNYRQm+EQW/HYkLew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="46141368"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.111.154]) ([10.125.111.154])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 07:33:15 -0700
+Message-ID: <b34d6b95-64ec-4647-9eab-374dbcc25f8a@intel.com>
+Date: Mon, 17 Jun 2024 07:33:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: gluebi: Fix NULL pointer dereference caused by ftl notifier
-Thread-Index: mFBxGNSof92Nq/KN5lgnAM/4Uq7Bqw==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH PATCH 9/9] x86/rfds: Exclude P-only parts from the RFDS
+ affected list
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <20240617-add-cpu-type-v1-9-b88998c01e76@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240617-add-cpu-type-v1-9-b88998c01e76@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Gagan Sidhu" <broly@mac.com>
-> An: "ZhaoLong Wang" <wangzhaolong1@huawei.com>
-> i have attached a log of this behaviour. and by removing mr wang=E2=80=99=
-s =E2=80=9Cfixes=E2=80=9D, it
-> mounts as we would expect.
->=20
-> this change must be reverted. extremely surprised the openwrt team has no=
-t
-> raised issues over this by now.
+On 6/17/24 02:12, Pawan Gupta wrote:
+> +#define VULNBL_INTEL_CPU_TYPE(vfm, cpu_type, issues)	\
+> +	X86_MATCH_VFM_CPU_TYPE(INTEL_##vfm, cpu_type, issues)
+> +
+...
+>  	/* Match more than Vendor/Family/Model */
+>  	VULNBL_INTEL_STEPPINGS(COMETLAKE_L,	X86_STEPPINGS(0x0, 0x0),	MMIO | RETBLEED),
+>  	VULNBL_INTEL	      (COMETLAKE_L,					MMIO | MMIO_SBDS | RETBLEED | GDS),
+> +	VULNBL_INTEL_CPU_TYPE (RAPTORLAKE,	X86_CPU_TYPE_INTEL_ATOM,	RFDS),
+> +	VULNBL_INTEL_CPU_TYPE (ALDERLAKE,	X86_CPU_TYPE_INTEL_ATOM,	RFDS),
 
-No need to be offended, sometimes use-cases are forgotten.
-Thanks for your report, we'll look into it.
+Could we tweak this a bit to make it more compact?  For instance, if we
+did this:
 
-Thanks,
-//richard
+#define VULNBL_INTEL_TYPE(vfm, cpu_type, issues)	\
+		X86_MATCH_VFM_CPU_TYPE(INTEL_##vfm,	\
+		X86_CPU_TYPE_INTEL_##cpu_type,		\	
+		issues)
+
+We'd end up with entries like this:
+
+	VULNBL_INTEL_TYPE (ALDERLAKE,	ATOM,	RFDS),
+
+I guess "TYPE" is a _bit_ ambiguous.  But it's also pretty patently
+obvious what's going on versus something like this:
+
+	VULNBL_INTEL	  (COMETLAKE_L,	MMIO | MMIO_SBDS | RETBLEED...),
+
+Getting rid of the "X86_CPU_TYPE_INTEL_" string in the table is low
+hanging fruit.  I don't feel as strongly about changing the new macro name.
 
