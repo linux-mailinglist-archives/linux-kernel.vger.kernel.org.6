@@ -1,127 +1,177 @@
-Return-Path: <linux-kernel+bounces-218087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FB290B924
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:10:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5152590B922
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B801C23F55
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:10:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E5128BDC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F981990AB;
-	Mon, 17 Jun 2024 18:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mf40vmQd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D02198841;
+	Mon, 17 Jun 2024 18:09:13 +0000 (UTC)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA070198856;
-	Mon, 17 Jun 2024 18:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B434E194A41
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718647756; cv=none; b=H6+YNRVlZmUxA1tGKKFdHCi7H4flWXByLMx2cwRpvH+7rHlFNKhTMisKCGAiwvvymvEQJqcJC0X20zaOUrWq61ZjSJOXcYCBYgf0G7xSao/KXGiZaXLGy+AsUYL2YUU8ELTeE2WRdhMK4Aaxu1o3fHUiB9XkvcUHLh7FU2m10ow=
+	t=1718647753; cv=none; b=pCrjd2h0HXVG8vpYBrmvUWVw3w2bmZ10zbT3C89wQju54aYS3xkilemesYL4vv28iFF5P9zZaTlqQV4oX1TcK8Z+fEcIQTAWF3tYdNSq5cypfgxupYlANVzQnEoCdG7+ofb7Ulzl0lmVLChe11rKjgxGMl4uqeIjT1Wl0xstfW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718647756; c=relaxed/simple;
-	bh=eTmhoimpvd+XmjL34WKAkgkEP8GEWbc3ZlhhhpMyxTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwZobNH7IkXzqDH3EeuXaNolbJnCs+bu0mLFW0eC+Vh6OJdy/SimP2af0WfFKx0tqQ0QA0TgxE/8Dqas7mxCSdxeRp5vtX85wecBFP5CVGBhT09RuXboSqRPMc/mUcRylZaqVWqLrhz3yzVyEEOq1wtqGLKefF5SXS0DZKNrE18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mf40vmQd; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718647754; x=1750183754;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eTmhoimpvd+XmjL34WKAkgkEP8GEWbc3ZlhhhpMyxTA=;
-  b=Mf40vmQdR1ilcW6mLSFsjjUiPj1wICMzuRy10RvO1lV7PZan18MqVU19
-   VhH13FK+dsuu63PsQxJo+0N4i097lILxvMHnfKdS8s6pQvcG+H6pg0JtU
-   qEG7IWxPmoeBWhglH08W/7EIszu9xtEIRTvmqNxicufViSa2DCJOMJ6ZV
-   MN8gSWip139TBCkoNJy09vJnrqnGjGFmd9EwStC4c4wcp6x91Uyn7A1ch
-   T3hGm6H3tacmGs2qUMxJjdo0cynC4tOlp967LpuCLM5zFNvbt2FhJNplI
-   N4TJysCwgkVX65nK+PJWOXI/1h6HLj8uuBV2/hgnJYXYB0reyUdAgDZFy
-   g==;
-X-CSE-ConnectionGUID: ft64qMONSjanE6cHFAEg7A==
-X-CSE-MsgGUID: AxkOwRBOTjGLEpYmtrNzsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15259316"
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="15259316"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:09:13 -0700
-X-CSE-ConnectionGUID: hfBZzyoiSFqjiUQGu3/IBQ==
-X-CSE-MsgGUID: wdxrYlbbRKaMT5DnPNtKTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="46390025"
-Received: from mshehzad-mobl.amr.corp.intel.com (HELO desk) ([10.209.21.13])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:09:13 -0700
-Date: Mon, 17 Jun 2024 11:09:05 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH PATCH 3/9] perf/x86/intel: Use topology_cpu_type() to get
- cpu-type
-Message-ID: <20240617180905.7ao623w6eyu64hs2@desk>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <20240617-add-cpu-type-v1-3-b88998c01e76@linux.intel.com>
- <7c4978b4-ac69-480e-b8cf-a473b64ed917@intel.com>
+	s=arc-20240116; t=1718647753; c=relaxed/simple;
+	bh=f6scgY6PPn3i0YktPs71dAhdw8Fm0jCjCRTPKF5daSM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=UgzJvO+XIvEHLyz3AuY2Tc8uowwdYqkwgP0wu3qqVDGyS4A0CyS+9RKO6itibJueKP6yFTRYEJB3yJf9nfDJU47fr2fYdipVRiW9jDTZl9TgSZ420VSqt9tJ0iYSD4sBbxaZLpq7ebFRGnA4F/2JbgOnfAkfC/AWLdTgMDMnvEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 5F02A61966C1;
+	Mon, 17 Jun 2024 20:09:07 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id xtigWcKdybrJ; Mon, 17 Jun 2024 20:09:07 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id E73B361966CE;
+	Mon, 17 Jun 2024 20:09:06 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id tipReWDeoSdk; Mon, 17 Jun 2024 20:09:06 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id C3B9A61966C1;
+	Mon, 17 Jun 2024 20:09:06 +0200 (CEST)
+Date: Mon, 17 Jun 2024 20:09:06 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Gagan Sidhu <broly@mac.com>
+Cc: ZhaoLong Wang <wangzhaolong1@huawei.com>, 
+	chengzhihao1 <chengzhihao1@huawei.com>, 
+	dpervushin <dpervushin@embeddedalley.com>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, 
+	yangerkun <yangerkun@huawei.com>, yi zhang <yi.zhang@huawei.com>
+Message-ID: <303502000.252057.1718647746641.JavaMail.zimbra@nod.at>
+In-Reply-To: <48D8B89B-0402-4D8B-B045-86104C0C797F@mac.com>
+References: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com> <14779870-BA54-4ABF-8ABF-FF1D23D172A7@mac.com> <1641029267.251608.1718640023954.JavaMail.zimbra@nod.at> <65E62DA3-EF16-44BD-8E51-E751BD2C496F@mac.com> <1802911356.251780.1718643160760.JavaMail.zimbra@nod.at> <E3E2C13C-1E52-46F2-BE2D-D2592C3369DB@mac.com> <F2DCFCE7-68FA-4C09-AE5B-09F2233575F1@mac.com> <48D8B89B-0402-4D8B-B045-86104C0C797F@mac.com>
+Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
+ ftl notifier
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c4978b4-ac69-480e-b8cf-a473b64ed917@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
+Thread-Topic: gluebi: Fix NULL pointer dereference caused by ftl notifier
+Thread-Index: Cdy4KBaQSTQSx5jOia8rup/ThWcV7A==
 
-On Mon, Jun 17, 2024 at 07:50:53AM -0700, Dave Hansen wrote:
-> On 6/17/24 02:11, Pawan Gupta wrote:
-> > find_hybrid_pmu_for_cpu() uses get_this_hybrid_cpu_type() to get the CPU
-> > type, but it returns an invalid cpu-type when X86_FEATURE_HYBRID_CPU is not
-> > set. Some hybrid variants do enumerate cpu-type regardless of
-> > X86_FEATURE_HYBRID_CPU.
-> 
-> I'm not fully sure what point this is trying to make.
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Gagan Sidhu" <broly@mac.com>
+> https://github.com/torvalds/linux/blob/master/drivers/mtd/ubi/gluebi.c#L2=
+97
+>=20
+> it seems the GLUEBI is setting the mtd to MTD_UBIVOLUME
+>=20
+> https://github.com/torvalds/linux/blob/master/drivers/mtd/ubi/block.c
+>=20
+> where this doesn=E2=80=99t even have the text =E2=80=9Cmtd=E2=80=9D anywh=
+ere.
+>=20
+> but the boot partition is always the ubiblock device.
+>=20
+> so is gluebi taking the same volume and adding the MTD_UBIVOLUME label or
+> something?
 
-Sorry it was not clear. I will rephrase it.
+Yes, GLUEBI emulates a MTD on top of an UBI volume.
+It sets the MTD device type to MTD_UBIVOLUME.
 
-> Is this trying to make the case that get_this_hybrid_cpu_type() and
-> topology_cpu_type() are equivalent or pointing out a difference?
+>>=20
+>> [    5.462504] auto-attach mtd7
+>> [    5.462525] ubi0: default fastmap pool size: 15
+>> [    5.477309] ubi0: default fastmap WL pool size: 7
+>> [    5.486683] ubi0: attaching mtd7
+>> [    5.811240] UBI: EOF marker found, PEBs from 273 will be erased
+>> [    5.811299] ubi0: scanning is finished
+>> [    5.874546] gluebi (pid 1): gluebi_resized: got update notification f=
+or
+>> unknown UBI device 0 volume 1
+>> [    5.892927] ubi0: volume 1 ("rootfs_data") re-sized from 9 to 28 LEBs
+>> [    5.906683] ubi0: attached mtd7 (name "ubi", size 40 MiB)
+>> [    5.917446] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 126976 =
+bytes
+>> [    5.931132] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page size =
+2048
+>> [    5.944654] ubi0: VID header offset: 2048 (aligned 2048), data offset=
+: 4096
+>> [    5.958513] ubi0: good PEBs: 320, bad PEBs: 0, corrupted PEBs: 0
+>> [    5.970472] ubi0: user volume: 2, internal volumes: 1, max. volumes c=
+ount:
+>> 128
+>> [    5.984859] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, im=
+age
+>> sequence number: 1613475955
+>> [    6.003045] ubi0: available PEBs: 0, total reserved PEBs: 320, PEBs r=
+eserved
+>> for bad PEB handling: 15
+>> [    6.021426] rootfs: parsing partitions cmdlinepart
+>> [    6.021444] ubi0: background thread "ubi_bgt0d" started, PID 97
+>> [    6.043694] rootfs: got parser (null)
+>> [    6.051426] mtd: device 12 (rootfs) set to be root filesystem
 
-Pointing out a difference. get_this_hybrid_cpu_type() misses a case when
-cpu-type is enumerated regardless of X86_FEATURE_HYBRID_CPU. I don't think
-checking for the hybrid feature is necessary here, because there is an
-existing fixup for this case:
+AFAICT, this log line is not part of the mainline kernel.
 
-  static struct x86_hybrid_pmu *find_hybrid_pmu_for_cpu(void)
-  {
-          u8 cpu_type = topology_cpu_type(smp_processor_id());
-          int i;
+>> [    6.062891] rootfs_data: parsing partitions cmdlinepart
+>> [    6.073669] rootfs_data: got parser (null)
+>> [    6.211240] block ubiblock0_0: created from ubi0:0(rootfs)
+>> [    6.259545] rtc-pcf8563 0-0051: hctosys: unable to read the hardware =
+clock
+>> [    6.282125] VFS: Cannot open root device "(null)" or unknown-block(31=
+,12):
+>> error -6
+>> [    6.297406] Please append a correct "root=3D" boot option; here are t=
+he
+>> available partitions:
+>> [    6.314054] 1f00             512 mtdblock0
+>> [    6.314060]  (driver?)
+>> [    6.327077] 1f01             256 mtdblock1
+>> [    6.327081]  (driver?)
+>> [    6.340101] 1f02             256 mtdblock2
+>> [    6.340105]  (driver?)
+>> [    6.353124] 1f03             256 mtdblock3
+>> [    6.353129]  (driver?)
+>> [    6.366153] 1f04           45056 mtdblock4
+>> [    6.366158]  (driver?)
+>> [    6.379175] 1f05           40572 mtdblock5
+>> [    6.379179]  (driver?)
+>> [    6.392217] 1f06            4096 mtdblock6
+>> [    6.392222]  (driver?)
+>> [    6.405240] 1f07           40960 mtdblock7
+>> [    6.405244]  (driver?)
+>> [    6.418272] 1f08           32768 mtdblock8
+>> [    6.418277]  (driver?)
+>> [    6.431296] 1f09           40960 mtdblock9
+>> [    6.431300]  (driver?)
+>> [    6.444324] 1f0a            6144 mtdblock10
+>> [    6.444328]  (driver?)
+>> [    6.457518] 1f0b            4608 mtdblock11
+>> [    6.457523]  (driver?)
+>> [    6.470720] fe00           33604 ubiblock0_0
+>> [    6.470724]  (driver?)
+>> [    6.484090] Kernel panic - not syncing: VFS: Unable to mount root fs =
+on
+>> unknown-block(31,12)
 
-          /*
-           * This is running on a CPU model that is known to have hybrid
-           * configurations. But the CPU told us it is not hybrid, shame
-           * on it. There should be a fixup function provided for these
-           * troublesome CPUs (->get_hybrid_cpu_type).
-           */
-          if (cpu_type == HYBRID_INTEL_NONE) {
-                  if (x86_pmu.get_hybrid_cpu_type)
-                          cpu_type = x86_pmu.get_hybrid_cpu_type();
-                  else
-                          return NULL;
-          }
+(31, 12) would be mtdblock12.
+How does your kernel know that mtdblock12 shall be the rootfs?
+
+I have a hard time understanding your current setup.
+
+Thanks,
+//richard
 
