@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-216719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C31E90A4FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:15:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349BA90A505
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9540F1C26266
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:15:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D188E1F2413C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FFB195F31;
-	Mon, 17 Jun 2024 06:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241C518C349;
+	Mon, 17 Jun 2024 06:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldz+Km8V"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H3qHcXXJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B19195FED;
-	Mon, 17 Jun 2024 06:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBE818413A;
+	Mon, 17 Jun 2024 06:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718604450; cv=none; b=FFTzN8vUBPpwjiHM2ShsmrvJ18kstKU7zpEOAQjFUZfEVGkpj7DTk069uBlUbD/LDyZarH3lHN9A4c9Z/7nIGhX42mSSs6qZM6V5U/T5gLZ0SRbV40QMNHJJENZiBTetr+fhQqcZHZUGAep8ZcvLDkLy2E7i2WJDg+3j64lYCeo=
+	t=1718604485; cv=none; b=XSvskNo1eUS5gFfvbhpDbxixBgieQKj5EpXNHjk7FQuTgBJHGXULmURknBmR0r3g1v2nA12z/pVFEP3WOOuDm6bZB1f8QTAfOgOt3Cg1uIhm7jAGMPvvjCkEiOJXivQnwukLWEh4MEvZzIBb0OlEruECSw+aShDX66yfjgbDxh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718604450; c=relaxed/simple;
-	bh=1qHT3ndHCQslu0fWxXaSamlwmG6qZY213KP8J4wc6mk=;
+	s=arc-20240116; t=1718604485; c=relaxed/simple;
+	bh=ZA0s0gNeSjzLRVXJMbeLoXx1v3zjcuvzIR4zDKYuTEI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XggaUux1SF859yT1Prgi4TdLbKarH6Gs7I2qDJjA4c2hdOkFSmAZk8C412eMbWBbmEgtyHKeraJ1tWkykC8Xd7/SGKGCeXOvbQe6UfRHFrK+D82dQi+/c+6Z3xc+tqHRfwtPdCjWb412/vgHThvC2Vx8m7b5JMJqL9qO/WQXwgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ldz+Km8V; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5295e488248so4483564e87.2;
-        Sun, 16 Jun 2024 23:07:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718604446; x=1719209246; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i12zWNu8KlTv7/MNDqzK9U/bdW2I5k7ofAlbTITEnb0=;
-        b=ldz+Km8VUda6LpFv41zY1+XgaacKyb8R3YlLP9+7T0y93d9+wBAHpvOE5DaI2te/FL
-         zu7m239b3fw6bJOde5QZSNGmAzu33phKWYjVSW21HMuUdTvxjyMcR1IEo3LUjzbyua63
-         uGwYqolvEho/oC9SJjiIy9JKrZ9n+KVZmFSVPiucWhPiOWogmssZWEIXzCHwy7CYaziH
-         AzUP6RbdDaAOkkXQ9Nj8GwD5Iwp4ZCEpTec+cFmFtOAqYlg9yyybPVMlZc45+VXHgXgi
-         XoF9q7tlKiAy0+G0+xGqUq8HCuPG6BJtpsxNuqaRIuUHGp3nZAn08aZWQv7GHvP5+nzz
-         Drzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718604446; x=1719209246;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i12zWNu8KlTv7/MNDqzK9U/bdW2I5k7ofAlbTITEnb0=;
-        b=vTpsULKvszpd2lwdT3j3Msh3ZpRqfp4Mr/6KL4pXS+oqBkJW5/h4o77ze+KRlH95wS
-         qUZp3jz2dLc9PWZfRW6ovK7iZ45Gp/CsxA6/P9LgbjovDROM1RLSb3uiUZTkku64W45V
-         1gltiiyhZe1gSpNhcW/hgznQVCc50WOEXHAlcvvNaOzWM37a4CUnRq/zuAqfZzCX6ss2
-         TH+b+bXf6tw8ucgRgrxUft84UG7SxMwEnLiC1bKa3GxRckKL9gMCuaCVK+/qPDKGl4Ww
-         wXlXWJFuHd4sH+JdxeOpC9JRyMn2nPhb3nTyHuAbRpHJR8/6AVE79bDPa5KKRp4PR2+e
-         Ti6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVFnbfIgm9sjPlX14PZpdQekdaiK78Clf2hHPLW/dI9bneMEH04oROBrL4NaemQMa77v39EW5dXtoSo+eQWpdBB8wWnnSIjo+o6a3lZijN5XXqCHPNEGDvtujfFERLMJ8UvzjkCdIGB
-X-Gm-Message-State: AOJu0YxO2JKy9Uj5KJH7i+am4/JVLS4siuqFWCk8jmOQO5IYNCVv0gl8
-	kAuBXPtSVXvMPakKSk02wP/u49jZ/g7vXlXSzPH0lQhZV7uBaydN
-X-Google-Smtp-Source: AGHT+IFOs8sWJOZ1Qx42nJmWJ/bSgd388ge+CDgPhz1DhWOXNvINt96KcZ4XUPBXgcEW8rI8sBWsCQ==
-X-Received: by 2002:a2e:9b54:0:b0:2eb:dc13:2d6b with SMTP id 38308e7fff4ca-2ec0e5c57a5mr55168201fa.13.1718604445880;
-        Sun, 16 Jun 2024 23:07:25 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c17b0csm12351541fa.65.2024.06.16.23.07.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Jun 2024 23:07:25 -0700 (PDT)
-Message-ID: <b462fbc5-0ee0-4bd4-b889-01c09853c407@gmail.com>
-Date: Mon, 17 Jun 2024 09:07:24 +0300
+	 In-Reply-To:Content-Type; b=r9357S47SZmAK0SHhAFkJ4LAaAlGrKTBmTUdKZ5y+GVTowPbMAQYq3eYA2F9v8yYMCt6j4u7auubdi0lrd61qpXdIHgy8N0ZjmWUrSBODYGBieyk1wbr1qICBvARo965xqupLNbEuI2oY3B4hkCVlVBuQF1y2fX8Zkum6zNC7sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H3qHcXXJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B41FC4AF1A;
+	Mon, 17 Jun 2024 06:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718604484;
+	bh=ZA0s0gNeSjzLRVXJMbeLoXx1v3zjcuvzIR4zDKYuTEI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H3qHcXXJT4j/y5MP+2KYdNyDzUstdHrl0CpwOGBNPgeOhRJODHdj7yFIuSMhWQBRq
+	 5HyVbiZmY+8x4P0WiN6SgvQyfTsOMH42dPRBkzwRx7qH56AOPfUNZcwmVtoO0uOzAy
+	 ArKiVtARNOUQr5o2jTZ1jkYRUvJYXQ6yUYtRG/sE+yN2+CaNTzALJx+gwmjgpoRj9i
+	 b7AA2wrEY8kJR1mypOfnFSJwGeXpnTvh3jNbuW0V2hGiNRkT/YPubDK61zztTZh84U
+	 r/xYS63ncxroDWyxoZYDce9ZNB8KGRCJ+DtRi7kKAuWCNVBDsF9MFLe/Q3eSqLVGd2
+	 KkArAb8Skh0LQ==
+Message-ID: <5297d20f-1b7b-437e-8d43-57b8d9f15ea2@kernel.org>
+Date: Mon, 17 Jun 2024 08:08:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,132 +49,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] bu27034: ROHM BU27034NUC to BU27034ANUC
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1718013518.git.mazziesaccount@gmail.com>
- <d43500621a2ad0811f58c8c7c87cbdc7b2abb8c1.1718013518.git.mazziesaccount@gmail.com>
- <20240615184757.2148f7d7@jic23-huawei>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240615184757.2148f7d7@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [RFC PATCH 2/2] dt-bindings: memory: fsl: replace maintainer
+To: Shawn Guo <shawnguo2@yeah.net>
+Cc: Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+References: <20240604142249.1957762-1-mwalle@kernel.org>
+ <20240604142249.1957762-2-mwalle@kernel.org>
+ <364dc212-71dc-4bc9-b4fa-97ba2f92d679@kernel.org> <Zm+sV8dJ+oCOwatg@dragon>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Zm+sV8dJ+oCOwatg@dragon>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/15/24 20:47, Jonathan Cameron wrote:
-> On Mon, 10 Jun 2024 13:01:23 +0300
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->> The ROHM BU27034NUC was cancelled and BU27034ANUC is replacing this
->> sensor. Use the BU27034NUC driver to support the new BU27034ANUC.
+On 17/06/2024 05:24, Shawn Guo wrote:
+> On Tue, Jun 11, 2024 at 10:49:36AM +0200, Krzysztof Kozlowski wrote:
+>> On 04/06/2024 16:22, Michael Walle wrote:
+>>> Li Yang's mail address is bouncing, replace it with Shawn Guo's one.
+>>>
+>>> Signed-off-by: Michael Walle <mwalle@kernel.org>
+>>> ---
+>>> This is marked as an RFC because it is more of a question for Shawn if
+>>> he is willing to take over the maintainership.
+>>> ---
 >>
->> According to ROHM, the BU27034NUC was never mass-produced. Hence dropping
->> the BU27034NUC support and using this driver to support BU27034ANUC
->> should not be a problem to users.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->> Fixes: e52afbd61039 ("iio: light: ROHM BU27034 Ambient Light Sensor")
+>> I suppose this could go via IMX SoC tree, so:
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> This is an odd case.  I don't think a fixes tag is appropriate
-
-Last week I was thinking this purely from a new BU27034ANUC user's point 
-of view. For user of the new sensor it appears the current driver is 
-broken. Hence this felt like a fix. That was last week though...
-
-  and I
-> don't think we can use the original compatible.
-
-I didn't think so either back in March. However, I forgot what so ever 
-plans I had while I was waiting for some internal decision regarding 
-upstreaming of this... I just went back to the mail I sent about this in 
-March, and I see we discussed adding new compatible back then, and I 
-also promised to send this patch as a series of smaller changes... Sorry!
-
->  I don't mind breaking
-> support for the non existent port going forwards and indeed dropping
-> all indication it ever existed, but the old kernel's are out there and
-> even getting this into stable is far from a guarantee there won't be
-> a kernel run on a board that has this compatible but has the old
-> driver.
-
-I agree it's not a guarantee, but it would be the best we can do. At 
-least some stable users would upgrade - have upgraded - could pick 
-stable with fixed driver.
-
->  It's also too big really to be stable material.
-
-I am not really going to argue on that. Asking for the stable 
-maintainers to look at this and port it is indeed a bit too much. I 
-guess we just need to live with having the b0rked version out there.
-
-> So I think the path forwards is a new compatible and drop the old
-> one from the dt bindings and driver.  Thus any new dts for a board
-> that actually has this device will use the new compatible and avoid
-> any risk of encountering the old driver.
-
-Yes. This should be the way forward.
-
-> Maybe we can be more relaxed - what actually happens if you use the
-> existing driver with the new part?
-
-I am pretty sure the world does not explode. I've not tried this so I am 
-not sure if reading the register area where the removed data channel 
-used to be is succeeding. My assumption is it does, but just returns 
-garbage. Furthermore, I am not sure what happens if those removed gains 
-are tried to be set.
-
-So, not tried but I would guess that the read data would just be insane.
-
-> I'm trusting you copied the maths right for the computed
-> channels (that take too long to review!)
-
-I understand the reviewing problem. I feel it is time consuming and 
-sometimes very much energy draining. :) And I _really_ appreciate the 
-work you do with reviewing and maintaining! But trusting me? I suppose 
-we all make mistakes XD
-
->  So everything inline is
-> formatting type stuff.
-
-Thanks! I will fix the compatible and formatting. I agree with all of 
-the comments - but it may take a while until I send the next version. 
-I'm having a vacation and trying to spend my time AFK for next couple of 
-weeks. My old motorbike and tiny boat are calling for me - so amount of 
-code I write is (probably) inversely proportional to the amount of 
-sunshine in Finland ;)
-
->>   	/*
->>   	 * The BU27034 DATA0 and DATA1 channels are both on the visible light
->>   	 * area (mostly). The data0 sensitivity peaks at 500nm, DATA1 at 600nm.
->> -	 * These wave lengths are pretty much on the border of colours making
->> -	 * these a poor candidates for R/G/B standardization. Hence they're both
->> -	 * marked as clear channels
->> +	 * These wave lengths are cyan(ish) and orange(ish), making these
->> +	 * sub-optiomal candidates for R/G/B standardization. Hence they're
->> +	 * both marked as clear channels.
+> A second thought on this one.
 > 
-> I think just indexing them and not giving a modifier is probably better than
-> claiming they are clear.  Leave it more vague basically.
-
-Agree. I just didn't see leaving out the modifier as an option.
-
->>   	 */
->> -	BU27034_CHAN_DATA(DATA0, IIO_MOD_LIGHT_CLEAR),
->> -	BU27034_CHAN_DATA(DATA1, IIO_MOD_LIGHT_CLEAR),
->> -	BU27034_CHAN_DATA(DATA2, IIO_MOD_LIGHT_IR),
->> +	BU27034_CHAN_DATA(DATA0),
->> +	BU27034_CHAN_DATA(DATA1),
->>   	IIO_CHAN_SOFT_TIMESTAMP(4),
->>   };
+> Hi Krzysztof,
 > 
+> Since you are the maintainer for drivers/memory, would it be more
+> reasonable to put you instead of me in there?
+> 
+> Patch dropped for now.
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+Sure, I can grab it.
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+Best regards,
+Krzysztof
 
 
