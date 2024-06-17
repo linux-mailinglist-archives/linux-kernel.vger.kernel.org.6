@@ -1,158 +1,178 @@
-Return-Path: <linux-kernel+bounces-216824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E5E90A710
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0615090A715
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E801C21914
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93181282220
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7B318FC61;
-	Mon, 17 Jun 2024 07:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587CA18C352;
+	Mon, 17 Jun 2024 07:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Cn6yD3BX"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vyCyQtyd"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2063.outbound.protection.outlook.com [40.107.243.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A342118C344
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718609317; cv=none; b=GXHbpdHwiGrB+868AJNdqbJpsIKqoEPIPoGJTMjoSqTYHXmOGo84sFVI80MsTn6lM9Q3A3qufvJMxXlU2x6s5Uv+1N8MPkCMLLhlQRUvz2+s0Og3qk3ijJKGDAnnaUVAHEqmeVSmQFo00of76frbFj6udQtP48flww8xNuP97Gc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718609317; c=relaxed/simple;
-	bh=LbcaeO7g+XXyhIaUIw2LMzHvMLsMS1SLl4XS875bxSQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=tIVdgxQegLq3GkXLszNwOnX7L25VPBnkJNffsAeR2/v0Bv273LX06ZJyJt/CO+MIN/kbf/r+rfkanS7tH7HX7J//B4f4ESVwD2BEEYCJ0KRCPoTGJhJXBX69LCg/lh6iATmWR23jdEB6CS4w//pIlGGC1iCHKI3Xxj/6rq1oKp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Cn6yD3BX; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57c60b13a56so4727341a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 00:28:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1718609314; x=1719214114; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tHyISATt+WJttxke6EIQCpnTGfj4Yi4w9h5lYCsDGOA=;
-        b=Cn6yD3BXNbUHuD6e8UeUFwPued5uoqrTSdRLwLV5djzNp37k3xsuocbuXKhvnDbA5s
-         tQdheveSiI/PGMn1LiNJKKbdUniLY3wbu89tMrMmzqcG2DQWmPrVeLv26GvY4yWS3IhA
-         yByf7bwqOWlCIKujKZOwEUaCcv67kCoX5HBEvVJkbSUM2fRR3ut/pv4UPJBMEctNvyPn
-         RjgZYKjosxuAKp+FdnFlmkItY8F3VTDePg3GP604BBDpHAEW6WV0Zbr/3/2DE6VtLi1f
-         GS6jP0IehEUZUKpy27BaDfQtrYhqOG2oXwKAYruKLFGqo0ou75MWmWmfUWBJoj/UIfDy
-         8LjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718609314; x=1719214114;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tHyISATt+WJttxke6EIQCpnTGfj4Yi4w9h5lYCsDGOA=;
-        b=PN3NiQR/8Gfingz50XyY8tH8RF50BPIPc3uUw4DWLDNmn2l/I2l7q/hHpo/nnY6N+3
-         4om3hGX7M3mnTdXiew3zlvs7WIWHKU6A6FEZeElJ91PKVGM3kyJro1xGlIVetwsp0tUs
-         bmHCblZdxqFQsa0fih8M17Qp9Hs1yqEby/dqbcViG/J6WP9csUA0bM+mf4AW1igDqGyS
-         hdbrKPkwmeCYKt+1UWKy6jdrKyve6tLhgqBhPHOxDIBjOw2QywhT+JeYk3fHR647s8KF
-         fed/e33EFc7Q51DeOysi1seJ9ruhf9JayfRNsudou46K/XKM0zOUj3fRZfDMrPSBG7BP
-         ysCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOtd3dKqo3q2AEGiijjWVLCuFvLtEjuUDO3P4/Rvzf5VGE70AusXUvtfLAVuipy21qcVT9+nHrdLwcfjjmO0iIDvQpuGWix6ZvgANA
-X-Gm-Message-State: AOJu0YyrESPSL441bPL/VbZjnzx7P2w4LsEEIFoiXwQx+JS0gBp/p0S/
-	SmY9kLK1+k3ezEQLkvoafd/cFxmkjrymxbMqii2lRTuaMfruk5AVRsQbkmDJNp8=
-X-Google-Smtp-Source: AGHT+IE/Y4LqXgdNZ0zcQVhr3sQUeAw8IWyATC1u6ONvFcRL9KXrD7KEcyjfA0ImOde2Km0XLQNqxA==
-X-Received: by 2002:a17:907:c081:b0:a6f:77bb:1713 with SMTP id a640c23a62f3a-a6f77bb1889mr294286966b.9.1718609313862;
-        Mon, 17 Jun 2024 00:28:33 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56da328csm494948466b.12.2024.06.17.00.28.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 00:28:33 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0787181D1F;
+	Mon, 17 Jun 2024 07:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718609334; cv=fail; b=sHwYdyLeaDBX+OYi0E8IallsU0M0B7d0HiKTWf9A43FZAxJK0nQ29X8wtb/v9Z/e7byzx1YrhVzOyJk2X15sk2DRjhUeqw2cFdrAmQeX7/HDvGJ2mSHyvygfeNccrCpYqm5bU9G84QheOVu3GKEn+ofajCbPd4S7X9HZd3xmrrU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718609334; c=relaxed/simple;
+	bh=zstUqW0O9iyGwmgmUj/fo5AIT5C2CiL9XT1ogom/D5g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W+rGfTQlsRgVsPg2O6tsHJGqPXBVbsmlWoeMVQ8cgzc8E9q4AJHd49r7kDEwSDZmUcF6yBh52oz+V4Bw5cNty9XbJe1l7zU1OPU/DllpAGVzvJ+5ERHamLoNxl3iM3e9LRc1SADSsL9lHQFDfZNYerh5mQtEprmaZuQVZ7Wqq/c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vyCyQtyd; arc=fail smtp.client-ip=40.107.243.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XrilXAXz0s7Ej++EGw1K/6BVnyy99RT7wKipBsGe2V0tvxMGW29dcyUIuJumA8y9Fb3GvVGURCYy1DY3d4Pr+L3cy7G4YsY0CYRC9PKyFmlz6TkOzTLxfIuXZSQFTsev+0nQ2EU/BBH2I9Af/7JZYBpsFdWQtGt4WkIgcIhmglLaDyzWrLE8vWyJ8puiij/MngAuu/2lP/K5Q2bjt2+6au1g7U5DpbJJYN1/iosesnUQ3Cas5te7d4GS8MQDNf8gJw+ccvhApq+pdy5JiOp/HM/y8keU5CmdpHW4DrC+miTDlC+NQF7My6Y+xW6l1upofc/iml0kDoBQyCT6ytI6aQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/XZg0p/QGUq5x7BRVUEh9zpe9JOJie1jgoF6ipXy9YU=;
+ b=TAdFuzU8Df8LfvNwQbrr+j3XM3RSFq5Zjfxh3+BrzXKzlvt5urfFPHxgdT6LXkBhrXHBi40OpxR1Nrjz3oy7RZsGizZ+YrByecqwk3OLkAurFhRDADxy42n4idlGMYds+Isdri1NXcMxQXOj0Pt03/RJxSnx2rWozA+8krMO13/Ag64J1GygV7l42oUW1Yc4RZByGMF9eHr1mSzcqerVDbHy33pCCm7mlNKNcdgMxpYc97kcDzfbAKRy/avJ3044PYJjW5Z+Ngbg4fCEz3KS6PolqSoJWI9XKZhS0g10cW6i5PVmj5xFj85EaoYuOf/5uRhVslam0td3f6gBW0qwEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/XZg0p/QGUq5x7BRVUEh9zpe9JOJie1jgoF6ipXy9YU=;
+ b=vyCyQtydebcK48pl+T+j0WhLskGiGPd5i1WtuT8BjkC+nYPZIF/09UW6VtM3u9NGKmjvOdyNRO71tOwStiSB6r24vF8k3iaW74xTjDiORJGL57+Rr6QImsyoro3EKFcTQMdY4oAG2qtgCKb8QEbMddK0PD4SLhiA3oed8rs0vEw=
+Received: from BYAPR06CA0072.namprd06.prod.outlook.com (2603:10b6:a03:14b::49)
+ by CH3PR12MB9453.namprd12.prod.outlook.com (2603:10b6:610:1c9::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
+ 2024 07:28:50 +0000
+Received: from SJ1PEPF00001CE0.namprd05.prod.outlook.com
+ (2603:10b6:a03:14b:cafe::98) by BYAPR06CA0072.outlook.office365.com
+ (2603:10b6:a03:14b::49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30 via Frontend
+ Transport; Mon, 17 Jun 2024 07:28:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00001CE0.mail.protection.outlook.com (10.167.242.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Mon, 17 Jun 2024 07:28:49 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Jun
+ 2024 02:28:48 -0500
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39
+ via Frontend Transport; Mon, 17 Jun 2024 02:28:45 -0500
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <venkataprasad.potturu@amd.com>,
+	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>, "Vijendar
+ Mukunda" <Vijendar.Mukunda@amd.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "Syed Saba
+ Kareem" <Syed.SabaKareem@amd.com>, "open list:SOUND - SOC LAYER / DYNAMIC
+ AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/8] ASoC: amd: acp: add a null check for chip_pdev structure
+Date: Mon, 17 Jun 2024 12:58:34 +0530
+Message-ID: <20240617072844.871468-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 17 Jun 2024 09:28:32 +0200
-Message-Id: <D2245MXG8CS1.11EGKFJQLYPTI@fairphone.com>
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Luca Weiss" <luca.weiss@fairphone.com>, "Bjorn Andersson"
- <andersson@kernel.org>, "Konrad Dybcio" <konrad.dybcio@linaro.org>,
- "Stanimir Varbanov" <stanimir.k.varbanov@gmail.com>, "Vikash Garodia"
- <quic_vgarodia@quicinc.com>, "Bryan O'Donoghue"
- <bryan.odonoghue@linaro.org>, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2] media: dt-bindings: qcom,sc7280-venus: Allow one
- IOMMU entry
-X-Mailer: aerc 0.17.0
-References: <20240412-sc7280-venus-bindings-v2-1-48ca8c2ec532@fairphone.com>
- <D1Q6CMZM78VI.ABYGRRV5E61B@fairphone.com>
-In-Reply-To: <D1Q6CMZM78VI.ABYGRRV5E61B@fairphone.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: Vijendar.Mukunda@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE0:EE_|CH3PR12MB9453:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e953331-0078-4f72-7c24-08dc8e9f21be
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|36860700010|376011|1800799021|82310400023;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?w3EVr2N9d4O72QbAoqm/Jd8cI4KDeOxR8tCHXAYMLSBI105efVdT+L2RhlOU?=
+ =?us-ascii?Q?bMHEGUxof62aR6d9vg2L7qYopcU2WaZisGpTyjXUdXbPRjY6i851YSi3xh+6?=
+ =?us-ascii?Q?bfbzmDQzWTa0h18rujXtv2raDS5eIiIs9KjlyUXsvAjPGt5kA6QO9172kfpx?=
+ =?us-ascii?Q?YtX4FCS1dRvg5eEB30+Tt6g8SsumBCgW653ki4S3+SkyjW6U7sRQm4OEPWtt?=
+ =?us-ascii?Q?H8KjEdtx2s/p3l00AfHI/QrQNYzRYktOGxhHH5kR0NQOZp/wWA6ltwzlWaVX?=
+ =?us-ascii?Q?d4H51w26lf7cI94Z7AfJLeKBiadZ9nnnFfv5FOSf5j+P8V6w85cw5D93oZpo?=
+ =?us-ascii?Q?FUl4mZwPet+bBbLwzctCTKpbYce89v/31KL+zSSeZI6D3UdRWcmD8jx8KboI?=
+ =?us-ascii?Q?4Oc7bsuJadvtw1lmCN7Ry8F0tzU1g1OAqhC5Jw9/F0nqAtTQ5jZQbMQCgebO?=
+ =?us-ascii?Q?UPzTEmgh4WQiYWv1ehuwU/TkiR4MGkuX1B3IjXGdfNoGVkyMfiD064EmZWRa?=
+ =?us-ascii?Q?o39eKdEUIszy6ecXvJjKsUBpFt4aztPsui3PX/2W5Msnbff4m5fTDUx0ZhnR?=
+ =?us-ascii?Q?ujcjPwKxpNnFU3UJcVlfMde8m1qc77NEWB6lfFxNcwJ78penzjmhH4T+pRQE?=
+ =?us-ascii?Q?+wJjq1FruYk/W251futbjHVXPbgprrPxldDHuuRk3bftA4/u06N6Vz6FOhKB?=
+ =?us-ascii?Q?gSiPA/oWwdilsyIWPU3+/87wHoMtLzNSoZIR+e3+SrzNBLhUYbMPCSMaGYkh?=
+ =?us-ascii?Q?x+TuHHZs5QMpHfJRPFiyOveeyt5oxwhLZwYoUkdN+6kgCQI6iT8qH06+Mt+B?=
+ =?us-ascii?Q?B0mQtOvlQEBEVUHy94YzxY49atn8UiwNCNgsfFSvRKybvAuWIQgzQ3d5bnnb?=
+ =?us-ascii?Q?70v3MTgGjpTiPRwx5+4EL6udikN9GOU8kEppZtJo8/GANhoBfWIccB3LnTCN?=
+ =?us-ascii?Q?FhPMIV6/HrhXjsjaUdQoGPBxdz+R9D5TDNFtJikggXztPnxGKlu8/WdXJA2c?=
+ =?us-ascii?Q?Hc2KCSJ2qCnqzU9inPbD1kp/kt2+vAEnhdIVTaExdtxLyPcq8phAbOswm8iB?=
+ =?us-ascii?Q?b5qrAZheuXHF1PvGFJLdZf4C7vpBXOefe4uEbBZOgsb6sOI5o0+0TYj0/T4i?=
+ =?us-ascii?Q?VmH9zxV8YDALlRk/O1RFsAXA8UPWBD4e8p3Q67PVSyC/Dw7uiofRtUW07fQQ?=
+ =?us-ascii?Q?afZNn6LzteQDxoRcjbqvFTSy9VdZxSjhDuc6gEwx/uz23m7K+Pjp0Rq257Jc?=
+ =?us-ascii?Q?9+fVcbKS9t7CulNNc20AYmru7Edltm8m6qQqj5IToVB3pxPQacRYlCRyZkC8?=
+ =?us-ascii?Q?41Zkk64+5ZAY5rQhYnEPlO2iDgVJMnyViBJ0QjLtZhWeRqejxC956YncZFHU?=
+ =?us-ascii?Q?aXHYmJ0YnOez6xi4lcV5bRTZwtSs2SL3vh7Hcuxz0YQypEs4qA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(36860700010)(376011)(1800799021)(82310400023);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 07:28:49.5437
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e953331-0078-4f72-7c24-08dc8e9f21be
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9453
 
-On Mon Jun 3, 2024 at 8:39 AM CEST, Luca Weiss wrote:
-> On Fri Apr 12, 2024 at 4:19 PM CEST, Luca Weiss wrote:
-> > Some SC7280-based boards crash when providing the "secure_non_pixel"
-> > context bank, so allow only one iommu in the bindings also.
->
-> Hi all,
->
-> This patch is still pending and not having it causes dt validation
-> warnings for some qcom-sc7280 boards.
+When acp platform device creation is skipped, chip->chip_pdev value will
+remain NULL. Add NULL check for chip->chip_pdev structure in
+snd_acp_resume() function to avoid null pointer dereference.
 
-Hi Rob,
+Fixes: 088a40980efb ("ASoC: amd: acp: add pm ops support for acp pci driver")
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+---
+ sound/soc/amd/acp/acp-pci.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Could you please pick up this patch? Mauro seems to ignore this patch
-either on purpose or by accident and I'd like for this dtbs_check
-failure to finally be fixed.
-
-Regards
-Luca
-
->
-> Regards
-> Luca
->
-> >
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> > ---
-> > Reference:
-> > https://lore.kernel.org/linux-arm-msm/20231201-sc7280-venus-pas-v3-2-bc=
-132dc5fc30@fairphone.com/
-> > ---
-> > Changes in v2:
-> > - Pick up tags
-> > - Otherwise just a resend, v1 was sent in January
-> > - Link to v1: https://lore.kernel.org/r/20240129-sc7280-venus-bindings-=
-v1-1-20a9ba194c60@fairphone.com
-> > ---
-> >  Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.=
-yaml b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-> > index 8f9b6433aeb8..10c334e6b3dc 100644
-> > --- a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-> > +++ b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-> > @@ -43,6 +43,7 @@ properties:
-> >        - const: vcodec_bus
-> > =20
-> >    iommus:
-> > +    minItems: 1
-> >      maxItems: 2
-> > =20
-> >    interconnects:
-> >
-> > ---
-> > base-commit: 9ed46da14b9b9b2ad4edb3b0c545b6dbe5c00d39
-> > change-id: 20240129-sc7280-venus-bindings-6e62a99620de
-> >
-> > Best regards,
+diff --git a/sound/soc/amd/acp/acp-pci.c b/sound/soc/amd/acp/acp-pci.c
+index ad320b29e87d..aa3e72d13451 100644
+--- a/sound/soc/amd/acp/acp-pci.c
++++ b/sound/soc/amd/acp/acp-pci.c
+@@ -199,10 +199,12 @@ static int __maybe_unused snd_acp_resume(struct device *dev)
+ 	ret = acp_init(chip);
+ 	if (ret)
+ 		dev_err(dev, "ACP init failed\n");
+-	child = chip->chip_pdev->dev;
+-	adata = dev_get_drvdata(&child);
+-	if (adata)
+-		acp_enable_interrupts(adata);
++	if (chip->chip_pdev) {
++		child = chip->chip_pdev->dev;
++		adata = dev_get_drvdata(&child);
++		if (adata)
++			acp_enable_interrupts(adata);
++	}
+ 	return ret;
+ }
+ 
+-- 
+2.34.1
 
 
