@@ -1,264 +1,198 @@
-Return-Path: <linux-kernel+bounces-218078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA7990B903
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:07:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B87D090B95C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E902890D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:07:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275381F22276
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78EA19AD65;
-	Mon, 17 Jun 2024 18:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E413019AD9E;
+	Mon, 17 Jun 2024 18:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Oc8S0ZQP"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="tluoamCu"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C628319AD5A;
-	Mon, 17 Jun 2024 18:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718647382; cv=fail; b=qFB/C6vMyX6NtzY5U3YbeUU8SZIASD15eNSA01SSJyvoloH9PmIAa6o6RYhuFBIsXaMaOhVQ367xUr1nrk/5Og4H2j7G9Eg1KgSY8imjQvfGf9tSbYqP5Yvz+tfj1UZyDiygr+DyC0hsL2D+a42uq17aufvz5j/XaPVOaVMAleU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718647382; c=relaxed/simple;
-	bh=1sTDjxtBNCYgA010Dk3F/8eEkxfKsEvZRLCSRcz/n/o=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=uBhE4BrDFs29HjfSiyXbkxqA/yjaE7fyldOA3ZErgSYo8IH5MkyBhuAO8uwiYtD7aDHs2S/CXFkOlcVnGdF3/M9deQ5sDZ/lQ/Qxexf7EiQGUHMcXruzEvYrNp9c1IQRBuebA09KYYwkqrd+2t5iGI8l9osAoC6mHvFyM6Buh5A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Oc8S0ZQP; arc=fail smtp.client-ip=40.107.21.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fykxPq/U/nl8Fl2QzbHBjJwrBtYarNvll3ey+Ze9emc2MBIptu4mcPVFAM3akuVDKDVUxamWby7NwJFSW/15T3c7ti48TPkW5/5XOOBoIqdZyJLO3+HHPVOhKdmmvKOFGgd8niI57R7dF6t2tVlmNwArdVxe0gwFWi4Gwg7jGSczSjkXrLMMtNprnlSjcTVz+DXqHuuicHJF3JQLRW4gbWSYem5uZJgzoTSqys4FGbdR0/1IeSmOg+KgXJCl/z/WDmHqIJOQuHLCU5wKolQ2bONfad6YXzH1WaWKs91bvFfHbXiipgEBkNzoVh/Pw7EJXrxvvt70TcGtxHUiD5IfXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oZhflHKkhPx1x+CqBA76QfJJ4EN9TwtIEAuyXSjIkBI=;
- b=oevF8XH/gfifZpwkn4i8aOL8BsY3arngEiQjRkBPzHOJOUW8lNdsxv58+mHiw/gJqaNB0glP8AzkPRePp3YmotB7wPB15HASm4FUP2IF2HEwcGycj3niciIjMzIzPxs2Ok0wILHdlY4xhEG2hI8iCjxa9YeNWUxifO03gudVfCArEyFdngj7UrdNFAU7alExjgFz5sinLVkkHxYvGA/s92av6qyM/t1y9DJnMgg+iPXIKUkyJ4gjmVA0RWWZcCuKR+K4JjhJTuebKHieIvGViKZUfJCeB338HVvzhFl6cppsafPhyJMSTPpWMcllnO+5F3aRR6YeBQfYQyq5ODfs+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oZhflHKkhPx1x+CqBA76QfJJ4EN9TwtIEAuyXSjIkBI=;
- b=Oc8S0ZQPB9G5lG1al04zf260UMHMLbTrf/9GIPrPT9Snmerd23i3UYrvJHNl6aWSLTG4QJQvGRGd7p/RegmPIWQG4nq0KlDWNlqBFNMKN+vvEvUqMkWJZfpKGWMGsagzspyPNKfIw0QXieHZUKgAAK63g6mvjRPaJbf/GMIov/8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS5PR04MB9972.eurprd04.prod.outlook.com (2603:10a6:20b:682::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
- 2024 18:02:57 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
- 18:02:57 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] dt-bindings: ata: ahci-fsl-qoriq: convert to yaml format
-Date: Mon, 17 Jun 2024 14:02:40 -0400
-Message-Id: <20240617180241.901377-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR20CA0020.namprd20.prod.outlook.com
- (2603:10b6:a03:1f4::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67B71991BA;
+	Mon, 17 Jun 2024 18:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718647999; cv=none; b=XzZDexAOOuknQSUusDE+TyxJz/fFrfLEH9lLyqziIaZhma+Q2Ei/VSrRsUYPzxAZyEeYlYB2FDB9H7bBHDgmSXnY4IEWSnkIKsoe/VvIRk8aFapCbq/Ml5kfrgFFDGj0z3dtISiCn4x26yAYgii73mipPoY21yRzmYM6ljZsl28=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718647999; c=relaxed/simple;
+	bh=7mdftKfiva4yGQi7egcP+5WH/goOfxgEbPUdP8Gm38A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t413cva7PBFKcaHMyleRtmqyhCTu5MrRGUiZB/zf/VMXyLM6vibSlWCbTSJ7L+16j4ovivdv6/VwNLsePklGkekGbz1ytzwYSwdE/BxCQmN34PPtqx3xLiI4eq+3J01Rx2vw/Hw/9sJ8vVVyfZcrNqTjzGI+aWVOf6GxWqWO9d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=tluoamCu reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 2802260fd3be30fa; Mon, 17 Jun 2024 20:13:08 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 5D93F16606FD;
+	Mon, 17 Jun 2024 20:13:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1718647988;
+	bh=7mdftKfiva4yGQi7egcP+5WH/goOfxgEbPUdP8Gm38A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=tluoamCuWUD0K/C0A7uy6JSXNF6o752y8UYiX6jVTIOo9Nl+kvgckzX/dw4VTizVL
+	 cuBG4COwRWM9cS1oYnFU+3S1OhboFbzgZd68PDikfT0O1J7sqMOq5tVSuigAbCXMdF
+	 JM+fec0o0wZ5iwBsNgeno5qnmZsn721IPnOQhqDObscwCS6Q3L4sDVyWXUr4Z8YURz
+	 n33H3M9NsUHxM8XY1FB1QK7EOTKTeO4ojk8Vj8z8WW1J6aaB5lkEP9KXTK9ptd64B+
+	 oU7vg+4F9SxQ3flRtNK4xN9zdqr6kfmePZ8fda/ie9ydcu8/3K0yZyav5DypD2CPwd
+	 deNofIc6Uoevg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Subject:
+ [PATCH v1 09/14] thermal: tegra: Introduce struct trip_temps for critical and
+ hot trips
+Date: Mon, 17 Jun 2024 20:02:50 +0200
+Message-ID: <5022394.0VBMTVartN@kreacher>
+In-Reply-To: <8409966.T7Z3S40VBb@kreacher>
+References: <8409966.T7Z3S40VBb@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS5PR04MB9972:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9db0494a-91d3-4a64-9a62-08dc8ef7b7d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|376011|1800799021|52116011|366013|38350700011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WTBgkwG2ZFTpeQMMZCAu4gi8SUN/VZywLl0B9gbRAfy6482+RTCFLuzwes8i?=
- =?us-ascii?Q?QLUNztxfctuEikUNBT52rXPJ5xJMMyMiIH+5Xz+IJjwfBbj7l4jF8WYp8OxE?=
- =?us-ascii?Q?u1YCiINHbfCjQNGrp1cqAwWqxGUUyQfQ0u0ivw8WKocdYfQMCPnFhVmX2Lxz?=
- =?us-ascii?Q?yeJVdlQoP8csUWO6RXWjSas9mETJXDLk8230hehmIlwHzyswDbLBvsktOXJL?=
- =?us-ascii?Q?Hzwy/O4Cvy+JO0VHKh8qWJMCdmcyhpWJHFTwB3u/gRhHOxINhPFshFA6P7Hk?=
- =?us-ascii?Q?xTeBQ4Wm4oLaqA85hp5hPTrjStVyPYpv/ugrgm0FlSTC7Mf9yvOnPEDqR6yo?=
- =?us-ascii?Q?o4FA1Z4afBSB/3kwArRtlMkOP3qSvYV2DDLht/8zbfmixTX0qsi7XssDjivz?=
- =?us-ascii?Q?CH+YYJXxKJu4R6eY5JLMfzZwRpsBlyBgvoVD1kEPnRLpGXOOSclVHQeF0Q3q?=
- =?us-ascii?Q?F91BCqK5nB3ZJTXmdhHtiCBGIR3xEN1r6pw9KEIKyR9WxgvYcgUGn3m/pz8P?=
- =?us-ascii?Q?UmfxzN2ceOf+bRG2gAhMPIp6nsMHcJae2fIBoIp8wnmLmwVD6QjsPAcBKYj+?=
- =?us-ascii?Q?7qkt1QO6nnbqM63GIB4D1K6ULtTuj7Za0rxjXMsbQ9jbkJYYeiYnhRM9RS8x?=
- =?us-ascii?Q?H5SAehOdFrBb15B4/mDk8fu4jbPT81iMzQzBlqyKnlI/0BJzeM7aEy4nJlle?=
- =?us-ascii?Q?8umdTMmNZN8r/DYwNv3EYYVLQe29QNlu5WbxnB9jhI5GFZW+BXEtWoOXeWfx?=
- =?us-ascii?Q?mwZzrLRmGIMmkfeU7P0yCIZ/Fu41zhtBB9AEmGLPww/I6+1NhY86rilTsu4O?=
- =?us-ascii?Q?ku1Esi+fNeaJwGNucEOPxiP5PNCXKENfsWUWdTW5rykewwvu1HnoJ9QHD0Qw?=
- =?us-ascii?Q?ddAZIdlFjBLG2/t4ZiWEj/BIC32FKDYHip1FnZb5N2I6hvDZNje7HXE4YWu9?=
- =?us-ascii?Q?v0kk9eOnzl31t02mpOuMv06scXtI3MJCn/CIJx21pyOfRsmkKjIJxX0q+s1j?=
- =?us-ascii?Q?OopFsPanQZIpvJIKfFRYxs7ErVqZlWPkCsrK2J5PGGVFovC6156TMLo4z/z0?=
- =?us-ascii?Q?SUnEkKFFo8WO+ujS6pmNbTyxtna+U6Ii1RyE4slvUFmXTSslqiH1E6x30GTB?=
- =?us-ascii?Q?qFAiDmOhM/dKOotlPet8athR0XE9sr704BnWwLo/K+RVJD9wams/3GqWZrrX?=
- =?us-ascii?Q?YAQdg89Vyyy1wmUaVv4Pw3zqwAJRmTcEuiWDiIf5XDNT9GR0PYG1kSQc7UwJ?=
- =?us-ascii?Q?PgMUjd3snmCy3ohZ7kwvy78NDOv2Vb/+T/wgL2zjIoOMrAg1QagkblbHb6+A?=
- =?us-ascii?Q?qJhG69iF3oog8UHgS70cB3fx?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(52116011)(366013)(38350700011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2QTO5YP0pzsMWDp3c7v8T5XbFRB/9Diw9sbEizwlsPZw7Px5QK9t3WIKMyry?=
- =?us-ascii?Q?/ZhXwKY6/fl/P4bG6yK2JkHawRxaLI9p6+sa3AZu6ub9YCanlyIRn+tpiBBd?=
- =?us-ascii?Q?fb42A+19s3LxzuA/O6qRrIFHqsAGRpDToeUOV9n4p05RaMcoiJovQJnz3KIi?=
- =?us-ascii?Q?+N4BWaxXBX3UtBfE4uCCPf5vsWJ9FuDm0yu+nAD5B6mr8uBH2Qf+DtE1lWQU?=
- =?us-ascii?Q?56Zx3tubnNKgXjXvWyEnBPxtCKdvCwtJexX2VT1etY+9k7Ku6CYXiboYD1cU?=
- =?us-ascii?Q?Je+KzTEn6Xg39JiDS2sTJh4fUs5FgibGR1Hcw0mIQBg1EVKReBb/PHzjiRoq?=
- =?us-ascii?Q?DeH+H8o3WCXi49mjQjtX05f5wG3YzPKAPP8ybovTs8qDAgR0By4gJ37ahksy?=
- =?us-ascii?Q?VvWvtlF11KZ1URavIzn3qF2eOL255qEbJuSoZI/4EMEABsdzspJQWSNmNaP9?=
- =?us-ascii?Q?3vL++lqAk+mrVie16OFrbPAiC4Ij9YC8rRhoiRrRdpjsjdA6oKLeKbT+UBx5?=
- =?us-ascii?Q?zeBqaL4a9A5GQlXX6LKwgpLctcL2RJZKkyCrFNzKJGibfzkJRUErderHZHWw?=
- =?us-ascii?Q?+vojTfdkPXntS+5r/GQz6Zmpt/yF8X2AVxqWN3jn59kIHXi1lKTh4Xa0C7Xe?=
- =?us-ascii?Q?2lQomokIAF0xEpO+LP9S1Yi1gIxr5fAzHUdfQ8G4C4xhiZuxjuQmeaS8e7ep?=
- =?us-ascii?Q?ZKDKvEWYUzdtSi+q/NIvSrfEK1agcQzRGuoX3osJzk6/vS+2cg7SXAJRJ0+o?=
- =?us-ascii?Q?Q8BLGAmtSQPXqsuVmAvJfXD0B5Ju7s0dOYY8H/0Gb9aZbklcaYHh2Ky5oyfQ?=
- =?us-ascii?Q?V6JVJy+eUDEC9cG4yEJzgf7r582rMMquhZhmc/0PHcB5ElGIxIVU0o/rOIBa?=
- =?us-ascii?Q?9nAXBJTbrNpD1KrgTlbzWmGWhd9WyfYu5l7GRFg7aNtK2ujygUEV/+MyUmmK?=
- =?us-ascii?Q?UAnKNRv3moY+JnSKhRf7QujkL0ooWZovtj0e1zYLVz1f0RHEX/kEL2nMLjA/?=
- =?us-ascii?Q?ku3V//KxnDpowmCol8ydx2cU5nZz3RyvfOy2wdXTUxIdyLWRKx3rZvrE4jmY?=
- =?us-ascii?Q?cdOi7Lweb1L6AQZmWs6Umnxm3PH2dTCgGUXcnQt59FzpNOqNQGCKlcNSJEqK?=
- =?us-ascii?Q?TCv6rUBMY7bitX2TJKVIP79PDorcZdaved+itYJm766/791OhlBBrC7haZX9?=
- =?us-ascii?Q?fQPY9CgwxTmO0eDiN5k8hyGZpONIcMTXpYTPVJLMMyZyJUwFu1mwh2JDQkP6?=
- =?us-ascii?Q?fRrdhTMhT1Ekq0MTtWeXKrGjsbpByrUB30HPKpxFpAv66rbdaCMwSU3kYAND?=
- =?us-ascii?Q?PKOOEqPBEjonuu2jW6nTVl81SXFpuWrPJmwAaQhLQKU48xqZalu2nNTKFN9p?=
- =?us-ascii?Q?1FaPqGWrH13fpJF9G58VCS+ibIjLe2Bdih36oLERNJh4jljimp+Br+vc2c5w?=
- =?us-ascii?Q?xMmR/kS2lQw5T+DiwwketkLUJGQUg2PnWwvXuRFrex9hSRaboLbVUN45qiyG?=
- =?us-ascii?Q?DrjPaNZwHQ3AipEf1cIhGoT11t+uPObzrlX98cJSWT7E+eUgKHqU9Ur5cSR/?=
- =?us-ascii?Q?Awy39qKaMdXq1jxNHCZ1dBUKVmKWA/xJIkUs5nmh?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9db0494a-91d3-4a64-9a62-08dc8ef7b7d9
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 18:02:57.4034
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kb2t2SVAC4rb4yiwkasrhJSBdceG9ftMJoIUa38IzIZ/CkaiTJQShQkhOAjrLMMTVrZRQBSKGktIhgM8FMmpIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9972
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfedvhedguddvvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeekpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgii
+ tggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=8 Fuz1=8 Fuz2=8
 
-Convert ahci-fsl-qoirq DT binding to yaml format.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Additional changes:
-- Add reg-names list, ahci and sata-ecc
-- Add fsl,ls1028a-ahci and fsl,lx2060a-ahci
+Introduce a helper structure, struct trip_temps, for storing the
+temperatures of the critical and hot trip points.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+This helps to make the code in tegra_tsensor_get_hw_channel_trips()
+somewhat cleaner and will be useful subsequently in eliminating
+iteration over trip indices from the driver.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- .../bindings/ata/ahci-fsl-qoriq.txt           | 21 -------
- .../devicetree/bindings/ata/fsl,ahci.yaml     | 58 +++++++++++++++++++
- 2 files changed, 58 insertions(+), 21 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
- create mode 100644 Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+ drivers/thermal/tegra/tegra30-tsensor.c |   34 ++++++++++++++++++--------------
+ 1 file changed, 20 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt b/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
-deleted file mode 100644
-index 7c3ca0e13de05..0000000000000
---- a/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
-+++ /dev/null
-@@ -1,21 +0,0 @@
--Binding for Freescale QorIQ AHCI SATA Controller
--
--Required properties:
--  - reg: Physical base address and size of the controller's register area.
--  - compatible: Compatibility string. Must be 'fsl,<chip>-ahci', where
--    chip could be ls1021a, ls1043a, ls1046a, ls1088a, ls2080a etc.
--  - clocks: Input clock specifier. Refer to common clock bindings.
--  - interrupts: Interrupt specifier. Refer to interrupt binding.
--
--Optional properties:
--  - dma-coherent: Enable AHCI coherent DMA operation.
--  - reg-names: register area names when there are more than 1 register area.
--
--Examples:
--	sata@3200000 {
--		compatible = "fsl,ls1021a-ahci";
--		reg = <0x0 0x3200000 0x0 0x10000>;
--		interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&platform_clk 1>;
--		dma-coherent;
--	};
-diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-new file mode 100644
-index 0000000000000..162b3bb5427ed
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/ata/fsl,ahci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+Index: linux-pm/drivers/thermal/tegra/tegra30-tsensor.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/tegra/tegra30-tsensor.c
++++ linux-pm/drivers/thermal/tegra/tegra30-tsensor.c
+@@ -303,8 +303,13 @@ stop_channel:
+ 	return 0;
+ }
+ 
++struct trip_temps {
++	int hot_trip;
++	int crit_trip;
++};
 +
-+title: Freescale QorIQ AHCI SATA Controller
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - fsl,ls1021a-ahci
-+      - fsl,ls1043a-ahci
-+      - fsl,ls1028a-ahci
-+      - fsl,ls1088a-ahci
-+      - fsl,ls2080a-ahci
-+      - fsl,lx2160a-ahci
-+
-+  reg:
-+    minItems: 1
-+    maxItems: 2
-+
-+  reg-names:
-+    items:
-+      - const: ahci
-+      - const: sata-ecc
-+    minItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  dma-coherent: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    sata@3200000 {
-+        compatible = "fsl,ls1021a-ahci";
-+        reg = <0x3200000 0x10000>;
-+        interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&platform_clk 1>;
-+        dma-coherent;
-+    };
--- 
-2.34.1
+ static void tegra_tsensor_get_hw_channel_trips(struct thermal_zone_device *tzd,
+-					       int *hot_trip, int *crit_trip)
++					       struct trip_temps *temps)
+ {
+ 	unsigned int i;
+ 
+@@ -312,8 +317,8 @@ static void tegra_tsensor_get_hw_channel
+ 	 * 90C is the maximal critical temperature of all Tegra30 SoC variants,
+ 	 * use it for the default trip if unspecified in a device-tree.
+ 	 */
+-	*hot_trip  = 85000;
+-	*crit_trip = 90000;
++	temps->hot_trip  = 85000;
++	temps->crit_trip = 90000;
+ 
+ 	for (i = 0; i < thermal_zone_get_num_trips(tzd); i++) {
+ 
+@@ -322,14 +327,14 @@ static void tegra_tsensor_get_hw_channel
+ 		thermal_zone_get_trip(tzd, i, &trip);
+ 
+ 		if (trip.type == THERMAL_TRIP_HOT)
+-			*hot_trip = trip.temperature;
++			temps->hot_trip = trip.temperature;
+ 
+ 		if (trip.type == THERMAL_TRIP_CRITICAL)
+-			*crit_trip = trip.temperature;
++			temps->crit_trip = trip.temperature;
+ 	}
+ 
+ 	/* clamp hardware trips to the calibration limits */
+-	*hot_trip = clamp(*hot_trip, 25000, 90000);
++	temps->hot_trip = clamp(temps->hot_trip, 25000, 90000);
+ 
+ 	/*
+ 	 * Kernel will perform a normal system shut down if it will
+@@ -338,7 +343,7 @@ static void tegra_tsensor_get_hw_channel
+ 	 * shut down gracefully before sending signal to the Power
+ 	 * Management controller.
+ 	 */
+-	*crit_trip = clamp(*crit_trip + 5000, 25000, 90000);
++	temps->crit_trip = clamp(temps->crit_trip + 5000, 25000, 90000);
+ }
+ 
+ static int tegra_tsensor_enable_hw_channel(const struct tegra_tsensor *ts,
+@@ -346,7 +351,8 @@ static int tegra_tsensor_enable_hw_chann
+ {
+ 	const struct tegra_tsensor_channel *tsc = &ts->ch[id];
+ 	struct thermal_zone_device *tzd = tsc->tzd;
+-	int err, hot_trip = 0, crit_trip = 0;
++	struct trip_temps temps = { 0 };
++	int err;
+ 	u32 val;
+ 
+ 	if (!tzd) {
+@@ -357,24 +363,24 @@ static int tegra_tsensor_enable_hw_chann
+ 		return 0;
+ 	}
+ 
+-	tegra_tsensor_get_hw_channel_trips(tzd, &hot_trip, &crit_trip);
++	tegra_tsensor_get_hw_channel_trips(tzd, &temps);
+ 
+ 	dev_info_once(ts->dev, "ch%u: PMC emergency shutdown trip set to %dC\n",
+-		      id, DIV_ROUND_CLOSEST(crit_trip, 1000));
++		      id, DIV_ROUND_CLOSEST(temps.crit_trip, 1000));
+ 
+-	hot_trip  = tegra_tsensor_temp_to_counter(ts, hot_trip);
+-	crit_trip = tegra_tsensor_temp_to_counter(ts, crit_trip);
++	temps.hot_trip  = tegra_tsensor_temp_to_counter(ts, temps.hot_trip);
++	temps.crit_trip = tegra_tsensor_temp_to_counter(ts, temps.crit_trip);
+ 
+ 	/* program LEVEL2 counter threshold */
+ 	val = readl_relaxed(tsc->regs + TSENSOR_SENSOR0_CONFIG1);
+ 	val &= ~TSENSOR_SENSOR0_CONFIG1_TH2;
+-	val |= FIELD_PREP(TSENSOR_SENSOR0_CONFIG1_TH2, hot_trip);
++	val |= FIELD_PREP(TSENSOR_SENSOR0_CONFIG1_TH2, temps.hot_trip);
+ 	writel_relaxed(val, tsc->regs + TSENSOR_SENSOR0_CONFIG1);
+ 
+ 	/* program LEVEL3 counter threshold */
+ 	val = readl_relaxed(tsc->regs + TSENSOR_SENSOR0_CONFIG2);
+ 	val &= ~TSENSOR_SENSOR0_CONFIG2_TH3;
+-	val |= FIELD_PREP(TSENSOR_SENSOR0_CONFIG2_TH3, crit_trip);
++	val |= FIELD_PREP(TSENSOR_SENSOR0_CONFIG2_TH3, temps.crit_trip);
+ 	writel_relaxed(val, tsc->regs + TSENSOR_SENSOR0_CONFIG2);
+ 
+ 	/*
+
+
 
 
