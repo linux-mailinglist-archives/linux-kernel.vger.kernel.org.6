@@ -1,160 +1,154 @@
-Return-Path: <linux-kernel+bounces-217928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192A390B657
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FCE90B659
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E63F281429
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:28:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A352813F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6A614F102;
-	Mon, 17 Jun 2024 16:28:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81349847A;
-	Mon, 17 Jun 2024 16:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA4F155A5C;
+	Mon, 17 Jun 2024 16:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="N7NxbYhr"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6331553B7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718641704; cv=none; b=g170PkX2Z8EaB3IQKwMqpoj4nDu9b3tC+wauCr1k/CHiaxzbTwvsKGZeReFrR9IUfiJsznauJSjIpTpe7rQidZ5R3qf2p33dTOFDzPc0Tz8TSORO8hESlLm56DgeHKM8qpwLj+OKc4vVziWmHgIciLgPnH3drunPesI8Fi4jk3s=
+	t=1718641814; cv=none; b=Qzjk8bbRtc8HTJAD/aVXBQnpiYAo3B9IJHLquE4zdEBpOewyVsVjMrDtj+zJKDvabfz0CtCJEeiblGK7HayICPtPUO5vWaZGF1E+0TJfE3xQakZQMGlVLj3aOLob6L19s9i96ocvFMs9OD2vs5CeRSK9M+NLoLWxNQvK7gLk1pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718641704; c=relaxed/simple;
-	bh=uHcLS7kwXtHKKhg0768IzJSfiDSCIBNCfhKdJ+TtzH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYWSF2aqIrMRD26dC8EsorOfmNvz9xd5shYnFIvrGvn7odj+tUlOcrNvP/eYws38anBA+dwtvO3AF5hnkWl9doHbZJKY85pAGoKGeK9AQbbNIqlR5/Yj7L2w3Ul/kZq249CiKezpGAvX/axyVmnrnAT7c65wFXsEjMvZvWm7Xfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DB42DA7;
-	Mon, 17 Jun 2024 09:28:45 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B25E83F64C;
-	Mon, 17 Jun 2024 09:28:19 -0700 (PDT)
-Date: Mon, 17 Jun 2024 17:28:14 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Zhouyi Zhou <zhouzhouyi@gmail.com>, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	lance@osuosl.org
-Subject: Re: [PATCH V3] rcutorture: Add CFcommon.arch for the various arch's
- need
-Message-ID: <ZnBkHosMDhsh4H8g@J2N7QTR9R3>
-References: <20240612013527.1325751-1-zhouzhouyi@gmail.com>
- <def32dd4-b205-45b8-a5ed-e6e28a0ac4f4@paulmck-laptop>
+	s=arc-20240116; t=1718641814; c=relaxed/simple;
+	bh=c4CGIueJgo3FyF0lUSOsJIiD5YkmHOWg5+dfrNt3KDo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aLcdBk6UNDofFREJHMW/9s/zV9oPRgdA7NOJZKLrQp2oAgmU5n6m/+m94mQmdcSay/67Y1PsB6DDk5I7AQsN+xicPYSFb1Vb0mKCidMDNxMBm6cNBHtexIIVIcPAQKU3oXlS05TDYztf7elyc8WUDp4QMrixQSkpqRbTXk2rk4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=N7NxbYhr; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6fa0edb64bdso2486229a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1718641812; x=1719246612; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c4CGIueJgo3FyF0lUSOsJIiD5YkmHOWg5+dfrNt3KDo=;
+        b=N7NxbYhrov6FonSL8kq5eMGaoZxAxl6xARpHiRBgYaQtIOoguDLis8pHRwk0SQ1qHg
+         qn/JR+Cct81n0cXXCc7RipLG4koJiBlrymDDhqfSuoc13VTyODG8nPGiI27plS3KARfm
+         xpNLcIjXx2fzS2HGJqxJzIolNjy9a9vFbcgktwe8I5KMCTZ2Pu5LcAw0oY00DRVwxIZk
+         SuqyGl1ravsuHilfk3hGPaIDC66/ZcA960oIFwKp5gevAFUieCyiHBSx9b485N742IaX
+         8RzqMrj54TciTjBty9G53+bq2EH3Tw7+bzIDs6nJCCwUR/iV6PWqm3EZyCmPOuEcnaDb
+         ArvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718641812; x=1719246612;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c4CGIueJgo3FyF0lUSOsJIiD5YkmHOWg5+dfrNt3KDo=;
+        b=FdtEPRiEeA4lFyIrbS70jPbdZ3zTyb/IdLGT0G30gIbrnT3w+TyCrQ4F9HliKzamrD
+         tkQs3IZmYLqx9WRX96Kh381EktfqrF8lh6CI8zSpRNMr6B0rOvN7dW/2klaW2s2G2iiF
+         B3SKxQB3F9Rw6vOFQitySEeogD0/n0Aly/TUFKHkUI6f2oykwhX3wCHj4pTazaQ4ifbG
+         b2sS6txec/YBVgj0xDshiRFFmuLMb417Eo1WIAmP13iTVYsjDZSXpdNAzX1tfdMPgN1T
+         NvK6Qhif4Su3qGc9OEYTiQqK91ppaM2AUNW/Ur8JjdaubMLrBzVfFfsEMb0fzmzAck+x
+         ejgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU49mKFFN0RyKqBCftIo2k/vnPmDeZTXB2XuYhoyobUwpu3cxMnqaIFtOCp+xnMrjNRZ1ADadh8/RiLoJxYF9iLXccUsZ/q4ieK03aR
+X-Gm-Message-State: AOJu0Yy7wDikOvSnFpyUd3NYX+jWJTj8TqCzx2FikOUlGhm9P4elKhZ6
+	0glpLFBWm2ZqhTvSWB7YU1QdZNXcopg8t0x6D1/XFyPxVHYJXXlilR7SeQq37H4DesLs5gFEwc+
+	pEmAMuDm1A22JWpE5f5GDZWvh2Q5Qmd++GqRrgw==
+X-Google-Smtp-Source: AGHT+IHjzvlrr838N1DpEkEeLzzIsELYsb2zHrhaAqxCRJTNhyRbdCIQiZBSmvhFuWqlSzeRBTrPNi1jOBSJAcQmjjA=
+X-Received: by 2002:a9d:62ca:0:b0:6fd:5445:c6cc with SMTP id
+ 46e09a7af769-6fd5445c914mr6508564a34.23.1718641811875; Mon, 17 Jun 2024
+ 09:30:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <def32dd4-b205-45b8-a5ed-e6e28a0ac4f4@paulmck-laptop>
+References: <20240611094810.27475-1-piotr.wojtaszczyk@timesys.com>
+ <20240614163500.386747-1-piotr.wojtaszczyk@timesys.com> <20240614163500.386747-2-piotr.wojtaszczyk@timesys.com>
+ <83cbf43e-c927-449f-8b7e-5c8d3ee8cece@kernel.org> <CAG+cZ06EeXUDiLsDXkz+6EHqJwpvv2MWwfpvB8AYw0=ZhUkTfQ@mail.gmail.com>
+ <83a45f7c-d90b-44d3-b57e-9dad21045e27@kernel.org> <CAG+cZ06kzikieaD_JCBybwWk8XKZQjJxa34Cg4QHxrxpT+j0eA@mail.gmail.com>
+ <2fe7ba36-05b9-42c7-8726-ea891cfc7afc@kernel.org>
+In-Reply-To: <2fe7ba36-05b9-42c7-8726-ea891cfc7afc@kernel.org>
+From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Date: Mon, 17 Jun 2024 18:30:00 +0200
+Message-ID: <CAG+cZ06XNV=ZZ8Ag00kaz1xWitXDN-yezUoc7M9JwQ5MUu7hTA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] ASoC: dt-bindings: lpc32xx: Add lpc32xx i2s DT binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Russell King <linux@armlinux.org.uk>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, "J.M.B. Downing" <jonathan.downing@nautel.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Chancel Liu <chancel.liu@nxp.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, 
+	linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 07:57:29PM -0700, Paul E. McKenney wrote:
-> On Wed, Jun 12, 2024 at 01:35:27AM +0000, Zhouyi Zhou wrote:
-> > Add CFcommon.arch for the various arch's need for rcutorture.
-> > 
-> > According to [1] and [2], this patch
-> > Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options") by moving
-> > x86 specific kernel option CONFIG_HYPERVISOR_GUEST to CFcommon.arch
-> > 
-> > The patch has been revised and improved under
-> > Paul E. McKenney's guidance [3].
-> > 
-> > [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
-> > [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
-> > [3] https://lore.kernel.org/lkml/cd3709dc-2c08-4ac2-a19b-d8edb66195e3@paulmck-laptop/T/
-> > 
-> > Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
-> > 
-> > Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-> 
-> Much better, thank you!
-> 
-> I queued and pushed for review and testing with the usual editing,
-> so please let me know if I messed anything up.
-> 
-> I added Mark on CC in case he has thoughts from an ARM perspective.
+On Mon, Jun 17, 2024 at 5:48=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 17/06/2024 16:04, Piotr Wojtaszczyk wrote:
+> >>
+> >>> It's used by snd_soc_dai_init_dma_data() in [PATCH v3 4/4] to give th=
+e
+> >>> dmaengine a
+> >>> hint which dma config to use. The LPC32xx doesn't have yet a dmamux d=
+river like
+> >>
+> >> and if I change driver platform data to foo and bar, does the DTS work=
+? No.
+> >
+> > They shouldn't change the same way as expected dma-names shouldn't chan=
+ge.
+> > Lots of drivers expect the dma-names to be "rx", "tx"
+> >
+> >>
+> >>> lpc18xx-dmamux.c therefore it still uses platform data entries for
+> >>> pl08x dma channels
+> >>> and 'SND_DMAENGINE_PCM_FLAG_NO_DT | SND_DMAENGINE_PCM_FLAG_COMPAT'
+> >>> flags in the devm_snd_dmaengine_pcm_register().
+> >>> Typically instead of this platform data you would use regular 'dma'
+> >>> and 'dma-names' if it had
+> >>> proper dmamux driver like lpc18xx-dmamux.c
+> >>
+> >> Exactly. Use these.
+> >
+> > Then I need to write a lpc32xx dma mux driver, device tree binding for
+> > it and adjust the
+> > LPC32xx I2S driver for it. Is this a hard requirement to accept this
+> > patch set for the
+> > legacy LPC32xx SoC?
+>
+> I do not see at all analogy with dma-names. dma-names are used ONLY by
+> the consumer to pick up proper property "dmas" from DT. They are not
+> passed to DMA code. They are not used to configure DMA provider at all.
+>
+> You parse string from DT and pass it further as DMA filtering code. This
+> is abuse of hardware description for programming your driver and their
+> dependencies.
+>
+> Why you cannot hard-code them?
+>
+> Sorry, to be clear: NAK
 
-Ah, thanks!
+That's fine, clear answers are always good.
+I considered to hardcode this as it was in the first version of the patch s=
+et
+but LPC32XX has two I2S interfaces which use different DMA signals
+and mux settings and I really didn't want to pick the virtual DMA channel
+name based on hardcoded I2S node name therefore I thought having a DT
+property to select proper dma channel is a better solution.
 
-From a quick scan, the only thing I spot is that CONFIG_KVM_GUEST is
-also not an arm64 thing, and only exists on x86 & powerpc, so pulling
-that out too would be nice.
-
-That aside, this looks good to me; having the infrastructure to do this
-per-arch is nice!
-
-Mark.
-
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> commit 29cf4c63d04b9752a32e33d46a57717121353ef7
-> Author: Zhouyi Zhou <zhouzhouyi@gmail.com>
-> Date:   Wed Jun 12 01:35:27 2024 +0000
-> 
->     rcutorture: Add CFcommon.arch for the various arch's need
->     
->     Add CFcommon.arch for the various arch's need for rcutorture.
->     
->     In accordance with [1] and [2], this patch moves x86 specific kernel
->     option CONFIG_HYPERVISOR_GUEST to CFcommon.arch
->     
->     [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
->     [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
->     
->     Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
->     
->     Link: https://lore.kernel.org/lkml/cd3709dc-2c08-4ac2-a19b-d8edb66195e3@paulmck-laptop/T/
->     
->     Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
->     Suggested-by: Paul E. McKenney <paulmck@kernel.org>
->     Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
->     Cc: Mark Rutland <mark.rutland@arm.com>
->     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> 
-> diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> index b33cd87536899..ad79784e552d2 100755
-> --- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> +++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> @@ -68,6 +68,8 @@ config_override_param "--gdb options" KcList "$TORTURE_KCONFIG_GDB_ARG"
->  config_override_param "--kasan options" KcList "$TORTURE_KCONFIG_KASAN_ARG"
->  config_override_param "--kcsan options" KcList "$TORTURE_KCONFIG_KCSAN_ARG"
->  config_override_param "--kconfig argument" KcList "$TORTURE_KCONFIG_ARG"
-> +config_override_param "$config_dir/CFcommon.$(uname -m)" KcList \
-> +		      "`cat $config_dir/CFcommon.$(uname -m) 2> /dev/null`"
->  cp $T/KcList $resdir/ConfigFragment
->  
->  base_resdir=`echo $resdir | sed -e 's/\.[0-9]\+$//'`
-> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> index 0e92d85313aa7..cf0387ae53584 100644
-> --- a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> @@ -1,6 +1,5 @@
->  CONFIG_RCU_TORTURE_TEST=y
->  CONFIG_PRINTK_TIME=y
-> -CONFIG_HYPERVISOR_GUEST=y
->  CONFIG_PARAVIRT=y
->  CONFIG_KVM_GUEST=y
->  CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC=n
-> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-> new file mode 100644
-> index 0000000000000..2770560d56a0c
-> --- /dev/null
-> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-> @@ -0,0 +1 @@
-> +CONFIG_HYPERVISOR_GUEST=y
-> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-> new file mode 100644
-> index 0000000000000..2770560d56a0c
-> --- /dev/null
-> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-> @@ -0,0 +1 @@
-> +CONFIG_HYPERVISOR_GUEST=y
+--=20
+Piotr Wojtaszczyk
+Timesys
 
