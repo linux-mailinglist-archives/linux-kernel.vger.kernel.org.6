@@ -1,153 +1,263 @@
-Return-Path: <linux-kernel+bounces-217294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECB490ADE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:25:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0758A90ADDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31DE31F21C42
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:25:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07DFB1C22513
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3D2195FC7;
-	Mon, 17 Jun 2024 12:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="fwTHWlDa";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="g4K2zHoA"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B006B19580C;
+	Mon, 17 Jun 2024 12:24:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA99195FC9
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5906719306B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718627066; cv=none; b=BeQTqEIu0b2jMYmVsvGL9H82ECuyZp7nL4jWn1/+Ft10ZOOBaADt36ApUdNzMuPI/dSnWA3D78DTUr8N3ytmLHTh6zPW8d7BYD72SJufAZjWRZbR/UQNBaAHm/WGsn88yaRn+431YRkX5UpY9+v/tpuS3RXtbQAElFBaIIXBnPM=
+	t=1718627047; cv=none; b=Q2j6aOCILXm+i8efqmsfnRyx0W8pxr4Ol7Iy2YZwhg3AF1ontdqWwb/+t4ejt26sDI1dwUTpGo6l6aB+GV02CMT7L+qA4g2jVTrTNICTC3xR4MPGuW7P1/jvRNpSAlD57HmB8edD6wf02J3ylxXiIMYZifMRlV4oyNXaqdQORG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718627066; c=relaxed/simple;
-	bh=dkMDNulLc5a3KLXLaG9NTS/W6BS8iK9znwy1GGRProY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gox7uTjCiGsWjGvUz6tBvbFUlNieLnQE2jo4TnIIr2G7v34SXAHqldHshuqM7AVXb1uNCc/TO+Kr0sW3tf+Lb/Q+iHdxjCdsnsEhFpynpxsutOdJH+2yru4feVTDYmOX9JUaDUFDViR0xiYA1gSdcQrtE9YKkAjXi3Z3UPkP0n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=fwTHWlDa; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=g4K2zHoA reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1718627064; x=1750163064;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=1DWb/EiOwYhJRYZ8QlGi2CNp9bjqfMiLLHh4hpYPFWY=;
-  b=fwTHWlDai6fhRFNxg5aUL7acCM8uSSOJ8i1L/EQ296j0xm8/DGVZjYWk
-   O6qX9ti+37E1A67eTbL8/vM7/yjzD//jWjxMJrYCuOJQXITtJJITZTEYh
-   YjpNtxMZOuIcoj3V7sHCu7bUVt3Fr++Zhhkkil+vKHePaPP2KVun9CDUt
-   9T3OYqHEJiDDF1gWQYRj1zJa2PTteI/+ZGgiDuodaYtsdMw/5GNNaCv0X
-   PQIDpRk/WbCtp5bGSvfH9kpuHrBPnRflxAxF6E8DD9nZzyJj19Adq6Xy2
-   tX3mfbFsC+Cn9A9Xqy6THw11t4LxdKIwdVeUw12xkNWU6Wuf219/jbkTW
-   A==;
-X-CSE-ConnectionGUID: +LhNIslwQOiSnbUIsBIBGA==
-X-CSE-MsgGUID: S6MTshiITkikvpWnRSPZhQ==
-X-IronPort-AV: E=Sophos;i="6.08,244,1712613600"; 
-   d="scan'208";a="37427062"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 17 Jun 2024 14:24:23 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 13931165A62;
-	Mon, 17 Jun 2024 14:24:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1718627059;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=1DWb/EiOwYhJRYZ8QlGi2CNp9bjqfMiLLHh4hpYPFWY=;
-	b=g4K2zHoAZe44J/CHAJxXu7T6W4h8Qg/VnXzmT/r8JcqkJeYTderXB1FhvapwGh+fdhjzkK
-	z922+oekovB31wuWsCsirI1ZJLHpfdpOTE3n/xH7gmvtVDsxYxZSILuxDcIZTYHesW0pTe
-	IpS7ixmQIRzSwjaNSDwjRwtd4bz3NPholsCHyz7qcsSswUJ6eAgmJUx0aSUsaVG4lXMxyg
-	OFtGKwF37RvvpSJ8TY/oZxemVIg2KnAiPzMpvd48vltXVQhXeowdnhmQqbYfI+Abl5YL19
-	x0kSBufWcURXfGL4EbtPJbAnDBHaxag4SROyAZI5OiM93uYi3EJ/VxTtArqzDA==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Gregor Herburger <gregor.herburger@tq-group.com>,
-	linux@ew.tq-group.com,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v2 5/5] mfd: tqmx86: add I2C IRQ support
-Date: Mon, 17 Jun 2024 14:23:02 +0200
-Message-ID: <b6cc921b24dbe8c2272528c23b683e1180a7234a.1718626665.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1718626665.git.matthias.schiffer@ew.tq-group.com>
-References: <cover.1718626665.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1718627047; c=relaxed/simple;
+	bh=dI5xLPvIQ3Rjg5BN3WRYtA2SyuF5/gHooPHoWWqKW1A=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OVg94af2GiAvgJWyiDMrJa0mRG1QnwhzstW5U10Q7A2/a/IkFJZRtMMLE9ig11yVFMyWDDY+sGIgyWj3uObl3di9cyx2cDmaSUrOFgUeU5UFfrg659ijzrovT87BH+LuNfZ8daZIyoi6UzM7H38WS9KGvYVvFSdBf2zSkSWHxVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3737b6fc28fso44171895ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 05:24:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718627044; x=1719231844;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1V0VE5O382RyNPJXKyb35pycNBvs+DKj3c7/DFNd55c=;
+        b=LqN6qx0tP7Q3Nctb6+TBvO13L3wZVAM9XmjtKF12Wf/45iXNBkrQiN7CjyqVLRoAcl
+         lZobbdOe09uTE1C0JGgfOa2mdhyFwPTtYiyNhTi7lKCSDEtsLq5e9zRYJKtjoxxPIFhl
+         z5RXNio54dpcbWf3sbly3bsmeoY1aM1fYOQt6+UP2BxAhqN2JxbBhxjJyn/LTDWZ/B6z
+         RED/Nv86L9lrUV7sae4Fqbr4Y1YjfvzguFspHCOBpdZk15fni2EQWyvZMFR6FYLX/bmo
+         vlsUS1u0a8+IoU/xelRR9v9MlwEowZFfbyL+rAOdImIwgbUovuPKVxOHHWs5HnKB86Gg
+         27Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWozC2ukKo8LAHWWiJyAqRa1aNIADF2+v+TaQatgvFAHHi4x8QlGMOySLvfiSiIHYcbnjIxRszS+C9H26a8rrtmycfkUf+IsNqknjeL
+X-Gm-Message-State: AOJu0YwQrDdBE4Ht0af3RKLkVSBV9Hw1n3s1+oKIZXiKF5VuIKgBqCuE
+	Aa628eBMmeQ28FFHiQjoyF/Kyq4MZrs7KNz5I1M9l/A/rvpSIyfrgAudcGmQqqrHdkfyH86kKx4
+	FPaCJxefIiBhInQ095LuyvwjyI7u+tWHQspoF1XmIrxef1A3vRckoMso=
+X-Google-Smtp-Source: AGHT+IHQwz9fmWf7cDfoGsTZd/CDTYBFEUzupIao2tkLziUKHeoefbRaaUh1NIN0bIlWUL281mwi3Gsx3FbY5U8h6XtVRpo2rL1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Received: by 2002:a05:6e02:1a48:b0:373:8d04:28b2 with SMTP id
+ e9e14a558f8ab-375e00059bemr6072995ab.0.1718627044424; Mon, 17 Jun 2024
+ 05:24:04 -0700 (PDT)
+Date: Mon, 17 Jun 2024 05:24:04 -0700
+In-Reply-To: <20240617102946.1524-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007c0e06061b150a3b@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
+From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Gregor Herburger <gregor.herburger@tq-group.com>
+Hello,
 
-The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
-Add module parameter to allow configuring the IRQ number, similar to the
-handling of the GPIO IRQ.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Read in chrdev_open
 
-Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
+loop0: detected capacity change from 0 to 4096
+==================================================================
+BUG: KASAN: slab-use-after-free in __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
+Read of size 8 at addr ffff8880433aba48 by task syz-executor.0/5464
 
-v2: improve module parameter description (was patch 4/4)
+CPU: 1 PID: 5464 Comm: syz-executor.0 Not tainted 6.10.0-rc3-syzkaller-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
+ __list_add_valid include/linux/list.h:88 [inline]
+ __list_add include/linux/list.h:150 [inline]
+ list_add include/linux/list.h:169 [inline]
+ chrdev_open+0x2a9/0x630 fs/char_dev.c:396
+ do_dentry_open+0x98f/0x1750 fs/open.c:958
+ do_open fs/namei.c:3650 [inline]
+ path_openat+0x289f/0x3280 fs/namei.c:3807
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1408
+ do_sys_open fs/open.c:1423 [inline]
+ __do_sys_openat fs/open.c:1439 [inline]
+ __se_sys_openat fs/open.c:1434 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1434
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6f9567dea9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6f963b60c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f6f957abf80 RCX: 00007f6f9567dea9
+RDX: 0000000000000000 RSI: 0000000020002140 RDI: ffffffffffffff9c
+RBP: 00007f6f956ca4a4 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f6f957abf80 R15: 00007fffeeba0e38
+ </TASK>
 
- drivers/mfd/tqmx86.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+Allocated by task 5451:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3941 [inline]
+ slab_alloc_node mm/slub.c:4001 [inline]
+ kmem_cache_alloc_lru_noprof+0x139/0x2b0 mm/slub.c:4020
+ ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:563
+ alloc_inode fs/inode.c:261 [inline]
+ new_inode_pseudo+0x69/0x1e0 fs/inode.c:1007
+ new_inode+0x22/0x1d0 fs/inode.c:1033
+ ntfs_new_inode+0x45/0x100 fs/ntfs3/fsntfs.c:1688
+ ntfs_create_inode+0x5f1/0x3680 fs/ntfs3/inode.c:1347
+ ntfs_mknod+0x3c/0x50 fs/ntfs3/namei.c:122
+ vfs_mknod+0x36d/0x3b0 fs/namei.c:4009
+ do_mknodat+0x3ec/0x5b0
+ __do_sys_mknodat fs/namei.c:4087 [inline]
+ __se_sys_mknodat fs/namei.c:4084 [inline]
+ __x64_sys_mknodat+0xa9/0xc0 fs/namei.c:4084
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-index 7f9ccd83278dd..dcd5fa3e18c50 100644
---- a/drivers/mfd/tqmx86.c
-+++ b/drivers/mfd/tqmx86.c
-@@ -50,6 +50,7 @@
- #define TQMX86_REG_IO_EXT_INT_9			2
- #define TQMX86_REG_IO_EXT_INT_12		3
- #define TQMX86_REG_IO_EXT_INT_MASK		0x3
-+#define TQMX86_REG_IO_EXT_INT_I2C_SHIFT		0
- #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
- #define TQMX86_REG_SAUC		0x17
- 
-@@ -60,7 +61,12 @@ static uint gpio_irq;
- module_param(gpio_irq, uint, 0);
- MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, 9, 12)");
- 
--static const struct resource tqmx_i2c_soft_resources[] = {
-+static uint i2c_irq;
-+module_param(i2c_irq, uint, 0);
-+MODULE_PARM_DESC(i2c_irq, "I2C IRQ number (valid parameters: 7, 9, 12)");
-+
-+static struct resource tqmx_i2c_soft_resources[] = {
-+	DEFINE_RES_IRQ(0),
- 	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
- };
- 
-@@ -271,6 +277,18 @@ static int tqmx86_probe(struct platform_device *pdev)
- 	ocores_platform_data.clock_khz = tqmx86_board_id_to_clk_rate(dev, board_id);
- 
- 	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT) {
-+		if (i2c_irq) {
-+			err = tqmx86_setup_irq(dev, "I2C", i2c_irq, io_base,
-+					       TQMX86_REG_IO_EXT_INT_I2C_SHIFT);
-+			if (err)
-+				i2c_irq = 0;
-+		}
-+
-+		if (i2c_irq)
-+			tqmx_i2c_soft_resources[0].start = i2c_irq;
-+		else
-+			tqmx_i2c_soft_resources[0].flags = 0;
-+
- 		err = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
- 					   tqmx86_i2c_soft_dev,
- 					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+Freed by task 16:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2196 [inline]
+ slab_free mm/slub.c:4437 [inline]
+ kmem_cache_free+0x145/0x350 mm/slub.c:4512
+ rcu_do_batch kernel/rcu/tree.c:2535 [inline]
+ rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2809
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ run_ksoftirqd+0xca/0x130 kernel/softirq.c:928
+ smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
+ __call_rcu_common kernel/rcu/tree.c:3072 [inline]
+ call_rcu+0x167/0xa70 kernel/rcu/tree.c:3176
+ __dentry_kill+0x20d/0x630 fs/dcache.c:603
+ shrink_kill+0xa9/0x2c0 fs/dcache.c:1048
+ shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1075
+ shrink_dcache_parent+0xcb/0x3b0
+ do_one_tree+0x23/0xe0 fs/dcache.c:1538
+ shrink_dcache_for_umount+0x7d/0x130 fs/dcache.c:1555
+ generic_shutdown_super+0x6a/0x2d0 fs/super.c:620
+ kill_block_super+0x44/0x90 fs/super.c:1676
+ ntfs3_kill_sb+0x44/0x1b0 fs/ntfs3/super.c:1798
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1275
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff8880433ab3a0
+ which belongs to the cache ntfs_inode_cache of size 1760
+The buggy address is located 1704 bytes inside of
+ freed 1760-byte region [ffff8880433ab3a0, ffff8880433aba80)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x433a8
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff88802367d401
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000040 ffff88801a37bc80 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080110011 00000001ffffefff ffff88802367d401
+head: 00fff00000000040 ffff88801a37bc80 dead000000000122 0000000000000000
+head: 0000000000000000 0000000080110011 00000001ffffefff ffff88802367d401
+head: 00fff00000000003 ffffea00010cea01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 5451, tgid 5450 (syz-executor.0), ts 85231803751, free_ts 15194610819
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
+ prep_new_page mm/page_alloc.c:1476 [inline]
+ get_page_from_freelist+0x2e43/0x2f00 mm/page_alloc.c:3420
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4678
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2265
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2428
+ new_slab mm/slub.c:2481 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3667
+ __slab_alloc+0x58/0xa0 mm/slub.c:3757
+ __slab_alloc_node mm/slub.c:3810 [inline]
+ slab_alloc_node mm/slub.c:3989 [inline]
+ kmem_cache_alloc_lru_noprof+0x1c5/0x2b0 mm/slub.c:4020
+ ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:563
+ alloc_inode fs/inode.c:261 [inline]
+ iget5_locked+0xa4/0x280 fs/inode.c:1235
+ ntfs_iget5+0xd5/0x3b10 fs/ntfs3/inode.c:532
+ ntfs_security_init+0x110/0xcc0 fs/ntfs3/fsntfs.c:1882
+ ntfs_fill_super+0x4329/0x4a20 fs/ntfs3/super.c:1530
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1615
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1780
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3360
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1088 [inline]
+ free_unref_page+0xd19/0xea0 mm/page_alloc.c:2583
+ free_contig_range+0x9e/0x160 mm/page_alloc.c:6637
+ destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1038
+ debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1418
+ do_one_initcall+0x248/0x880 init/main.c:1267
+ do_initcall_level+0x157/0x210 init/main.c:1329
+ do_initcalls+0x3f/0x80 init/main.c:1345
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1578
+ kernel_init+0x1d/0x2b0 init/main.c:1467
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff8880433ab900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880433ab980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8880433aba00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                              ^
+ ffff8880433aba80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8880433abb00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+Tested on:
+
+commit:         83a7eefe Linux 6.10-rc3
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c92012980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c79815c08cc14227
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d34cc6474499a5ff516
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17df5446980000
 
 
