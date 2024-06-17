@@ -1,113 +1,122 @@
-Return-Path: <linux-kernel+bounces-217107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB1690AADC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:16:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E2C90AACA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9EF7B27992
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:08:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103991F23C82
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623BB1940A2;
-	Mon, 17 Jun 2024 10:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511431946BA;
+	Mon, 17 Jun 2024 10:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ma5Bo46F"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lIY7ZwDL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417CA1922C7;
-	Mon, 17 Jun 2024 10:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379E3194126
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718618918; cv=none; b=TaenAwDl86NDAX4s734cWK1gnPWthDwGY5I8OxEZeow11pNeE2gTaqX/J98l1DztTD2TeTH8Sl5wOPMiHpY6MXZ+k8YFDYSmLZgQflQNZr2YSbXzqCU2i1cYlmS891YVavEaWwt3+NTdxSNuA3RFfdbwYdSXU5sZazf0dMk68Jc=
+	t=1718618921; cv=none; b=YbOlUZgA3P5ASwcr7KDCNxWxq8AJah0gvcW5ine9I/fJin700I51KgJxdiUghaCRAJFvmHCIKVguu43/Rku1C7Nmi7RTs4XzVPEZSsqK4FDhdd029zzArlIbJsk6Q7VBCEQsKKsID78nGU3+kIpf7JFjcFT0Jj2NITy3ewIKlfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718618918; c=relaxed/simple;
-	bh=TaxsO8A8ub1Kl+G8RAHhURMfNaORdUuzVR35IOWc2Us=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qbFfMvydFkWsPqMdQu40yj71dWO62zSi4s9oEVw5p0KWoBFy+cyy6fqYZPC6BI3rTvE+SQQBv+HAdNsqxCKnvl6WpYp/2f4BfB6xSPBzi9Rx1rwc8D8c53ihKymZDjSv7GM2rzPuY0ECyQm63Yz9P70fsFcUnrrlYz90EuASOfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ma5Bo46F; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718618874; x=1719223674; i=markus.elfring@web.de;
-	bh=TaxsO8A8ub1Kl+G8RAHhURMfNaORdUuzVR35IOWc2Us=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ma5Bo46Fv0vhwksF3QxGchVDD11mEG78xEc9FyNlGsbKgZI1LlZRz7Bv72EFMlH9
-	 /0En/bGvmlaau/fjcko7qU04lUOj23ckOUMih5Z9FfU8XS8P3mNUs5sIn86HIHkm4
-	 BRJFUEW0vLm0UIQXQVmW8bR5pObYcbU2FTpRaRDI8+gm/xb36omiN8CEGRxJnM0Gl
-	 7lJztCZlKWTtPZ7FFAMyfsyzZEr3mccH4P+lsBFfrMPL7fc+6LQiVeSEn0oE/sX83
-	 uU4TQuz6Q6hf/XtTzhAOig3FUM+m+nx2Ah9MoJW1ypIXLSlb37m7iS4rtUg86nLWU
-	 1+Ka/XI1DG+SceKrtg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N8n08-1sPSPM1GJa-00ulRF; Mon, 17
- Jun 2024 12:07:54 +0200
-Message-ID: <6b284a02-15e2-4eba-9d5f-870a8baa08e8@web.de>
-Date: Mon, 17 Jun 2024 12:07:48 +0200
+	s=arc-20240116; t=1718618921; c=relaxed/simple;
+	bh=t7IUNj36tGkkfpwGytIoi8bcOp1YsJI/QwTyx7SgimI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qbBYJuz0KXUj82uwpH5Qwp1R07ThvqZhSmyV8Oywty0vqmngy/z1Vnd7O67iWoItiCsS/TSAEO1C4dC7tUOOUzGDBvphIWxI7c7kG5mp5lmxenMJPAFqVP5wiqNYWeA5R//9CfkMe6FxXIW8TAr6gnBOYB66TKnG7hzDqJziRl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lIY7ZwDL; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718618921; x=1750154921;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=t7IUNj36tGkkfpwGytIoi8bcOp1YsJI/QwTyx7SgimI=;
+  b=lIY7ZwDLxIwRV/uUVXOrAixUOxxlLFv5/9CKBVW4Mk3ZRCJMC0cFKNDo
+   25W0jGXcqj0xZ0WTNP3pyL9ge6YqbZbsMkTDRpCBAAmESX7RHso8m37/w
+   DvMLK3v2QmwLz6lYcjljYvnCJ5NyGW4yUWg6JRbK8LtOu97ChgIaE5/E3
+   Dgx4FI0KmO6jx0kDzgSSRq27WH85PgQ+BtuSXz9tc3fmmMYWKvEaNlg4K
+   J6iO1WpGfS+YFK6mHgHvg+hTyeLX1qQHVftCzmFLL2IkYIfRNcs9Jy4PJ
+   zdspyl4x5sWMtT8nylxmtWc7JUhY+qmKQ5OxDNaSYBAkuXLwPzjprQB6/
+   w==;
+X-CSE-ConnectionGUID: bBQWcNVkTuOKcMwKkmvAXw==
+X-CSE-MsgGUID: gMUD9vgWTfm0Hzg9zCPZeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="15275080"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="15275080"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 03:08:40 -0700
+X-CSE-ConnectionGUID: Ib3ENJZyT3md3XNQz4jpxg==
+X-CSE-MsgGUID: uYGWRYBNQRy5A5BuWfckOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="45596435"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 03:08:38 -0700
+Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 8B56411F7E1;
+	Mon, 17 Jun 2024 13:08:35 +0300 (EEST)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
+	(envelope-from <sakari.ailus@linux.intel.com>)
+	id 1sJ9Hv-00AX9o-1X;
+	Mon, 17 Jun 2024 13:08:35 +0300
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCH 1/1] container_of: Document container_of_const() is preferred
+Date: Mon, 17 Jun 2024 13:08:25 +0300
+Message-Id: <20240617100825.2510728-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v20 02/13] rtase: Implement the .ndo_open function
-To: Justin Lai <justinlai0215@realtek.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Hariprasad Kelam <hkelam@marvell.com>, Jiri Pirko <jiri@resnulli.us>,
- Larry Chiu <larry.chiu@realtek.com>, Ping-Ke Shih <pkshih@realtek.com>,
- Ratheesh Kannoth <rkannoth@marvell.com>
-References: <20240607084321.7254-3-justinlai0215@realtek.com>
- <1d01ece4-bf4e-4266-942c-289c032bf44d@web.de>
- <ef7c83dea1d849ad94acef81819f9430@realtek.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ef7c83dea1d849ad94acef81819f9430@realtek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0bUc5Xvq0TvjvOY8nCnUp3iYnU/l2VPXA976WEEsyigooLEZn/y
- CwZWd7INAFsvjsmbHp7G2BrI0EPi8ZHJXeh9IpFEb0V2k2IPT7IqWbNNM0wsUYVzffo+Td7
- hU73J1CkmQd+0th4o8yBp2cWTMJZUKwqW5YzONRX+Zq4p4TU39k2hJOBDcyy3YwLY2gM0RD
- /LflWIq8Yy+R3fVeUgc7w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6lHu8sL5HPI=;Isuzt4XBBOHDeLdcrnEb4Pcu35p
- eJQH2LVasE5qYiQyEwzS9ihp+KcuvLpi1DrWv1CGJzHiM5to6zagirZ+e8WbsLpYagaj35afN
- PFNh2lStEOus6ndFdUftr1WPFET4NNaSivg8qVZmZdwT4gRKVTtHBKBfOPjmDsM8FYmm9ZIxv
- RIC+yxkRM4NLRh9cQ6wOC93wW4sF1/SVBLIbhs+CTvZnArU5l6kQYFz7XJoPoHwyYhK2ZZ9Uv
- g9AF+yr1iVB69j5PFeU02l8NOpVfvz+MUeSKivT839lVCzCqG/NrZZYW45VFesdeEf3pj3rKB
- flsqqa8MJpt1Wf6Ocnf/I3oR7tQKkWqIshICByQqIReIz5PF2dp1dz5sxRwecTgQyg5shEig6
- bzyGAhso4sPSLQdkIiYUUZbrQIUtpBLa0L+cCo2n9pABQk/cnryxftls4hBj95bKE1vbAs1YZ
- ZlVZHXtiKVl9Mj+G4NyOz1j/JlzLdmWta8q/puR/P1nKbhAoxK67NXcAJNX6+CR8EqhdcR3+A
- tvCMpSOmk3g5Jd7kzFL/1rz+q4CTZuZgnJwaygNnExVzalsYt+B/F+KZf2wQbZWDM6bR97JkB
- VXGqnJckLjwA31qaknLKXjGhPCsJl/TeV/eYPf9TB466snQ4RogD54S8QTablh9Fz0We5HrWP
- kA297vcZSpF7HQH0QpycJt7assOuvFGwLvGOjPQG4NluYrBqV+QHLIeeg4+NOS/p098EniMF2
- wUV4iC6nxCLpDG01C3kmlkZdUPUPpHGF1MooNfgwPsErk7cm3AwAWTMsaWjcpw5VLqjd4Jcoe
- wthttMvysz22q+PD5iM+s8qxYw6Epiv90rRlEUcS5SQI4=
+Content-Transfer-Encoding: 8bit
 
->> How do you think about to increase the application of scope-based resou=
-rce management?
->> https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/cleanup=
-.h#L8
->
-> Due to our tx and rx each having multiple queues that need to
-> allocate descriptors, if any one of the queues fails to allocate,
-> rtase_alloc_desc() will return an error. Therefore, using 'goto'
-> here rather than directly returning seems to be reasonable.
+There is a warning in kerneldoc documentation of container_of() that
+constness of @ptr is lost. While this is a suggestion container_of_const()
+should be used instead, the vast majority of new code still uses
+container_of():
 
-Some goto chains can be replaced by further usage of advanced cleanup tech=
-niques,
-can't they?
+$ git diff v6.8 v6.9|grep container_of\(|wc -l
+788
+$ git diff v6.8 v6.9|grep container_of_const|wc -l
+11
 
-Regards,
-Markus
+Make an explicit recommendation to use container_of_const(), unless @ptr
+is const but its container isn't.
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ include/linux/container_of.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/container_of.h b/include/linux/container_of.h
+index 713890c867be..7563015ff165 100644
+--- a/include/linux/container_of.h
++++ b/include/linux/container_of.h
+@@ -13,7 +13,9 @@
+  * @type:	the type of the container struct this is embedded in.
+  * @member:	the name of the member within the struct.
+  *
+- * WARNING: any const qualifier of @ptr is lost.
++ * WARNING: any const qualifier of @ptr is lost. container_of() should only be
++ * used in cases where @ptr is const and its container is not and you know what
++ * you're doing. Otherwise always use container_of_const().
+  */
+ #define container_of(ptr, type, member) ({				\
+ 	void *__mptr = (void *)(ptr);					\
+-- 
+2.39.2
+
 
