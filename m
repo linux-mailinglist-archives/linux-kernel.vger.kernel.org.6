@@ -1,91 +1,141 @@
-Return-Path: <linux-kernel+bounces-216922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07A090A89F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:38:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A310890A8A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2EB51C20B8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567C51F21D24
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5590190496;
-	Mon, 17 Jun 2024 08:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1C2190662;
+	Mon, 17 Jun 2024 08:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oc9LBP4f"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VjYLWuY2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5AC17F5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC8319048B;
+	Mon, 17 Jun 2024 08:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718613490; cv=none; b=P4QafdVCUToHnQ/AaqZFQsS1/98+W+RTGTXiXwYRCNBI+N0IIhXfFXwKMBQqIGspApm/x3RkmA6gT/KZV/EzyGvHGe6HkJSEduuaXo590Zzy8o7VmykYVXTVOPeLGMa4t8jMLe/DxEtJ2tC634MOBzJvGEVIjXg2K/Tc4R1owak=
+	t=1718613569; cv=none; b=E1UIuB2szIslYZdCtLYY7itFZrnPX2Me3+uYxwq+LRVa3S/SsiWVH/xkWmHsFJZ7u3eKYQ0oNPimYtdfFl2vCXGs6BAbRXlY1nWSBHuECnwA5OBiEbTGe+a+iPjpV5ngY61hbod4TjxfsR2S3k2+NPmF5X+Rcfg1phyunbRqzbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718613490; c=relaxed/simple;
-	bh=Ad+DEAJ96q3Mb3dlvrA9VWDHz1PLJ9uuY9NHcvPv2lQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WpihvtDcEOKDDkfyS6GzLoekv7Bg+mgnKBLz3fLbws/KuMy64dv6vEq1KP6/v7aHCDTUvp7sseW6CDRQjSTF4LbNwPlIkzQObDln9q7jAC+tZItI3YGcHdO5YGMsRkG4ME5EVTe1fLXJi80cW4jX1Z42/5IpSA++FYjH+T016sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Oc9LBP4f; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52bc335e49aso4695688e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:38:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718613487; x=1719218287; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ad+DEAJ96q3Mb3dlvrA9VWDHz1PLJ9uuY9NHcvPv2lQ=;
-        b=Oc9LBP4f3MrrZ2v2Q4OBaiPp4mjevzAlyGTLP4X4mtfpSv509//To8fNPMPuULQEqu
-         3buGaLszW1BSx19Y8QKs/+k03hyaMZ89tlhkzBPhwr2MHRZF60XSw7g+REB7cVyNhDFh
-         adYLwwZTY7ag3p/TBzc0SZb6Gt0ci3Twv3JbQLyiHE2OkGhxkwm2Ui+Sn1kJho417gpf
-         Dg8NoWyiVUI+1XgqMdXofX3BjngiQ5AE4Qu2JvR29YKYnOzyUouBz69c/FdRSKdDFyAU
-         hIzw82w2h2TZwNnqss/E1AfKmlgMlIUtNmZhOKs4Ds6G/eUTjKFme4iRQNrxlKlBXEaM
-         fb5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718613487; x=1719218287;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ad+DEAJ96q3Mb3dlvrA9VWDHz1PLJ9uuY9NHcvPv2lQ=;
-        b=LM+vNdZPU45vyvTz6O1STgh77jVXE3jzXvAu4akpI9uI+ox9bojHH5n9241Q2HLQqR
-         uhZlvio06LAjz3QO7zi5JSghKmVifPpNF9o7XAS565vxMC/HUpn3ZrniTVATsZIgfxvU
-         rAh/KqxLVPYoV3Y890WUPr8JeGaXRJldAjg910aLcAxhuGVBJRhYa2fIZ7qQWvn91Pio
-         hnVqFx/258ms/UGcvT0r4Flw16WfZaG+c5vKU56WXriJbR4B2eXmTjDgLreBzXxAltmy
-         l8dWF4XvUkIxzZgdbH3+tHHClfeZbmNxCjHlrGqxPGHyx9iSyZxYe2hFCEworWUwJkdN
-         M5zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXauwW9KvWqaupv7gtRJ3ANFQojiWAUYOiCJ/Fo74b7cUNlI/kwf6L7qXpC2IIS/1eyAAh7QgrgcR1m/zNJCzplAcgwz8xJUtEgz6pY
-X-Gm-Message-State: AOJu0YwsqKbHUeiLE48q3oE7dzmQh3rbDIlpD+ANw8XqshE4zrT0yuQl
-	tF3Npp5XtcEVGqqRV0Gl4Imr8SYYvGh/CGcSFAT1P6kFzSmRsvhLo7gwkSNeSmEFZN3e6IzIxaw
-	x4fyLPVndp6jKgKb+ojwfx4jME4hCqu2afyis4bQ2mb4CUTyX
-X-Google-Smtp-Source: AGHT+IFutrW6UzBgAviJa/d7uO/iq8C5wSF7SgFGox1gHdBAGL1yUWbpxRacXxzbupfXHiyhG6WNRXED7ADEqQ0l7ZA=
-X-Received: by 2002:a19:c515:0:b0:52c:8479:21fb with SMTP id
- 2adb3069b0e04-52ca6e64c25mr6506284e87.27.1718613486857; Mon, 17 Jun 2024
- 01:38:06 -0700 (PDT)
+	s=arc-20240116; t=1718613569; c=relaxed/simple;
+	bh=NGzawbQFzzlStBHgqNSSGSxkI34bALkZ1eerHvEGUJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pUiuEemqu0nZCYXU3kQjCTxkN6wnkkEd+Sb8lsD/otJSTQ9fMOwW1YADcN/oqXx1hLK2pNJbsFBMVuSzGsQjE3IlUWoxiXdpVQC6yPW+3z9x5K850EsgWcfzNdHrgVk3jZHTnUWhMZEtQL02zUauXw3JoNO5HX30gAgR4WCfJDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VjYLWuY2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 17BE340E021A;
+	Mon, 17 Jun 2024 08:39:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 5RvHKJP8QKWj; Mon, 17 Jun 2024 08:39:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718613560; bh=NJ7nN9pQjl1VOGiirNtVZHlQR6bnwKbT1TCjSyF+yVs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VjYLWuY2RN88v7bp7298JlYGMgNHxGammOKKTTvsxXINjH1T5tmDSeiLW4SA6uYvx
+	 mY85sZYU4SR9U81c0IHAaD7T0tja+QKLqBZGjcQePEguTS4159vRc/RqEqzp3DmBpy
+	 8+/NwW7NB50fDjdH6fWGwgHVBTPt/C+7VSDCloPb28WpUTBMEUFqT9MdQuII0BmIRa
+	 NrnXX/R6dfH7lmTp0Fe4l7lpekeHOjsk+ELejQKvXlX4u3IU8SZwhJuJXLD4J457Wd
+	 W/fcTfobp0CWlFJN+BnJcaXPTNYB14IDanSRSMzDkUZ4d9uO2DthPksCoBWOhdmYfN
+	 8Wwdf/yUSLKH/A50jIkVXBpXESubgUTRm/wFLLswO5b2MgFo+uWCUGOw2ueQR17zhn
+	 9VQW6bGXyMI4Tw4dwDEfziGpyciNHqhCGUvHr2TkTd4VdC9SALZkRk0wdpxDBc7khy
+	 5SV0ufTNJRot10YkQRBF9PJRoQsqurqEMlpiuizFrpIMR6QHFIR3E02ntCr/SZI9U3
+	 0Rany5gZ4i237Gt915qBv1GFP4HesryAAhx3ZBT/eRbRXClRGg3ixy3ddkHni/QjSn
+	 96A5w2o6ile5YbGP0aHaiPR6aToIxJHcbiNsSZCDWA7U4HrUd84CmAinqoWowU4cmv
+	 qljfIG0RAk2wpTLNTHiLvu08=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1654140E01A5;
+	Mon, 17 Jun 2024 08:39:08 +0000 (UTC)
+Date: Mon, 17 Jun 2024 10:39:02 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Perry Yuan <perry.yuan@amd.com>
+Cc: rafael.j.wysocki@intel.com, Mario.Limonciello@amd.com,
+	viresh.kumar@linaro.org, Ray.Huang@amd.com, gautham.shenoy@amd.com,
+	Alexander.Deucher@amd.com, Xinmei.Huang@amd.com,
+	Xiaojian.Du@amd.com, Li.Meng@amd.com, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 08/11] x86/cpufeatures: Add feature bits for AMD
+ heterogeneous processor
+Message-ID: <20240617083902.GEZm_2JjnNvHaT0Knq@fat_crate.local>
+References: <cover.1718606975.git.perry.yuan@amd.com>
+ <4416ff72ea5a33173b69561803f1578073baccae.1718606975.git.perry.yuan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606125755.53778-1-i@eh5.me> <20240606125755.53778-2-i@eh5.me>
-In-Reply-To: <20240606125755.53778-2-i@eh5.me>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 17 Jun 2024 10:37:56 +0200
-Message-ID: <CACRpkdYv3DTqJD1dtgLO7rxn-34ZpyfXCygwvgeJpEFWhyKQrg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] pinctrl: rockchip: fix pinmux bits for RK3328
- GPIO2-B pins
-To: Huang-Huang Bao <i@eh5.me>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4416ff72ea5a33173b69561803f1578073baccae.1718606975.git.perry.yuan@amd.com>
 
-Hi Huang-Huang, Heiko,
+On Mon, Jun 17, 2024 at 02:59:10PM +0800, Perry Yuan wrote:
+> CPUID leaf 0x80000026 advertises core types with different efficiency rankings
+> 
+> Bit 30 indicates the heterogeneous core topology feature, if the bit
+> set, it means not all instances at the current hierarchical level have
+> the same core topology.
+> 
+> For better utilization of feature words and help to identify core type,
+> X86_FEATURE_HETERO_CORE_TOPOLOGY is added as a few scattered feature bits.
+> 
+> Reference:
+> See the page 119 of PPR for AMD Family 19h Model 61h B1, docID 56713
+> 
+> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+> ---
+>  arch/x86/include/asm/cpufeatures.h | 1 +
+>  arch/x86/kernel/cpu/scattered.c    | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index 6c128d463a14..eceaa0df0137 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -471,6 +471,7 @@
+>  #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* "" BHI_DIS_S HW control enabled */
+>  #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* "" Clear branch history at vmexit using SW loop */
+>  #define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* "" AMD Fast CPPC */
+> +#define X86_FEATURE_HETERO_CORE_TOPOLOGY       (21*32+ 6) /* "" Heterogeneous Core Topology */
+>  
+>  /*
+>   * BUG word(s)
+> diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+> index c84c30188fdf..6b3477503dd0 100644
+> --- a/arch/x86/kernel/cpu/scattered.c
+> +++ b/arch/x86/kernel/cpu/scattered.c
+> @@ -52,6 +52,7 @@ static const struct cpuid_bit cpuid_bits[] = {
+>  	{ X86_FEATURE_PERFMON_V2,	CPUID_EAX,  0, 0x80000022, 0 },
+>  	{ X86_FEATURE_AMD_LBR_V2,	CPUID_EAX,  1, 0x80000022, 0 },
+>  	{ X86_FEATURE_AMD_LBR_PMC_FREEZE,	CPUID_EAX,  2, 0x80000022, 0 },
+> +	{ X86_FEATURE_HETERO_CORE_TOPOLOGY,     CPUID_EAX,  30, 0x80000026, 0 },
+>  	{ 0, 0, 0, 0, 0 }
+>  };
+>  
+> -- 
 
-all four patches applied for fixes!
+Nacked-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-Yours,
-Linus Walleij
+Until all review comments have been addressed:
+
+https://lore.kernel.org/r/20240611105216.GAZmgsYC-J_yLfdupF@fat_crate.local
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
