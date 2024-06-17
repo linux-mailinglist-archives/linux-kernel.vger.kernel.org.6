@@ -1,165 +1,188 @@
-Return-Path: <linux-kernel+bounces-216614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA65990A245
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 04:01:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4526B90A249
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 04:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A24BD281B87
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 02:01:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C784E1F25A43
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 02:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B51C161310;
-	Mon, 17 Jun 2024 02:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="HLH4wQDU"
-Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0229C16F0DA;
+	Mon, 17 Jun 2024 02:02:10 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E29214292;
-	Mon, 17 Jun 2024 02:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D899379F3;
+	Mon, 17 Jun 2024 02:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718589654; cv=none; b=Qv6SgrLJH8NN44ke2bNYkgU/achstb49SZnSZqhGOULrFMlHAJVsxN5fO+1nLZAghtFdUdrK6JT/ufvmux4pAYP+3XYrGrtBWp9b2dy4nc7+Zm8Ldb/Ugci0qlzG6rw+1AZlxUa/C6YNYyKafoS+ulh7E2L9y2DrlNuWaqhKRgs=
+	t=1718589729; cv=none; b=LOQC7+oO/UFvY0E0Rb4sUfD8KeyZP7uWLoGOGToqhQASKC7mLHG7dgKU1DUQ5XzIuhMDH7VHpFOyittQOW3wmo75burCUUhPIkTuN+WRIZxSS4ERjD0uQXyRlvAOql852x7nd3Xr2h/ZhYtBv9cFs4o4++iQGjB6QLq1jrgFzTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718589654; c=relaxed/simple;
-	bh=xY6EdERcFdzyNAMKkFcyvUjxYXnOp6YVs3LCpTmmsFg=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=J70F/q7Gd8HgltDG0EAM8wqQ8mX77aeGBt1WS1RrAz514FNasG4gMfaf+RtGPinXd4Vee89H/YwrTHrVoZ0BeF7jiHCz6ehtaGh7Aw1bhlSKtvIVIAjXZEyti6l5DVG99qOckAW5BpF/4491jzuGs+4nQZz1eQUOwXk7VLr/WIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=HLH4wQDU; arc=none smtp.client-ip=203.205.221.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718589647; bh=dmN8w5lvDABL/jRmeeyfuJVRMrvYcjC38E/Re9ZnOA0=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=HLH4wQDUDrmaZV+RlUwByqgqN6frxhjCKmEgFfhT7NTHpgdwqXUngDnOgfcJPp00o
-	 FXQ3Z39aS+3WVAMNV7rMtvQiBgXxdi2mAr1jYVZM+2g6Oo5QKLUcwpqIBjDHzfZsRn
-	 LBrJAnU2+d6SnO//2QNqM9WMZCA8TN5CePcjCWdg=
-Received: from smtpclient.apple ([2409:8929:843:88d1:dc81:b668:28ec:a360])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 2B1D8F3; Mon, 17 Jun 2024 10:00:43 +0800
-X-QQ-mid: xmsmtpt1718589643tpc4joxcu
-Message-ID: <tencent_2ABAC5E885F8354EF1F9084A6B5B398EE00A@qq.com>
-X-QQ-XMAILINFO: N/WmRbclY25Gg9vSwwFthgrvTbwpz3NxSuSAGiSJ0OsHx1aEr6wSqGtvRecWDU
-	 96gAAjThu0UmEyWsk89edyCwqWJ/4OuSmvSDIQNZ7NXeJHSqelrTi4Cf0iPIB2EF1ic4mjqGdvyh
-	 Kj/i2ugDtcScxhgVY9+8WCpMsGOH83aqjXbtdw2nqIfJQqPR5ob+dzhk1ubQr9hmhadjSFFF05Wg
-	 q2mtwSiHxung2k4oYGP0iyZYOD5mv6J/qPNRMLXD298cig/c1H4LGWBTLgvBdWz2EmphmQOkMgnX
-	 bAzvR99/kz7ORtPKTZ4N8vyjRZdDDSHsci2s1UyuX7DgD4cNNV3PdYs+KqclMS7Aysm2ilz/ZO3n
-	 cGq7Nxq2s67YfBcs8I5vXYT2O4foKJZhMKF9NQ8+CPx3V5a+WWvyyWPlaP+0JkLnYbWvhhg0pZBQ
-	 iSP0b3QKkGAS06K14joB9xfuZc55O+izvCdzR9pVduxPfkHHlTHZK7Dxi0b1bkBK85RP0wSgnH2Q
-	 iJGlskwBfGs+wyoGLSqhtjjH8RXkwfOCwcxZ53R9wsNnbb0/yp16K834PiMt4D2a+tTJaU9Xg5jE
-	 bb7kRe8ePuyLPdMPwWipS5MA1lSmFkZ81iaHRgpFV5zz9GFMAXJ2UZSeGqkrS6Q24Y657Bt7jmAg
-	 N51Sa/KS1PMu1hfkO0TN3PM5dmdn8PPUjmdo9RoFTUVvnHi8jqw+liyO0wkoNum08SftpViIeO03
-	 +IqRjByS7S0q4kU9jnJ/4bbCrxYUeqYsMYF7p08zxCWIOrBC1hybPTGtlk4hv1SxzweMGZPvA7/4
-	 9yy61W5vVKcVi23wJ2p+txavTBl2GY2jJsmhdwbRF3mh4ISjwQDnBRrHyDhKpgWw4Vj1xq8MxjLf
-	 jhK77dAShBadVwola43ibQfafTW7fOYZ4KoCzZ7OdoEIVM1yfpbRfaOc70RXYkuZCitGXyMzEV96
-	 piNn5kbPN01ZwOAbOWG1crsUvCm8zqU4/WYr3AJ0AsHIN1/a/JiS+FmUSWFKOGYi9xQOv4Xa8Mms
-	 HQ3Q1/IqQ4XOYbmUTrdfxGwF4wPA0=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1718589729; c=relaxed/simple;
+	bh=dS5Hf5PF/BBHjek4zHm6BwGxbfrTvkffFV4G4hjToFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GGkZnFvdeuqBNSot47HlhpcWNsDQezHzBrzUw+UVh0R57UyrPnUCoiEwthX/sWnYKmm3uhgjMzjwz3ji9IMJiwuMKXq8DbC7LEyUdClol0xqURdzfcRw8lX8uczI0I6nhWtiBxROQjImAVvUDAjJrW8dZctsAv03DwgR5BnxBtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 90f4a2a42c4d11ef9305a59a3cc225df-20240617
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:411dbe07-2d62-4b21-9105-204ca0cfe776,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACT
+	ION:release,TS:23
+X-CID-INFO: VERSION:1.1.38,REQID:411dbe07-2d62-4b21-9105-204ca0cfe776,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACTIO
+	N:release,TS:23
+X-CID-META: VersionHash:82c5f88,CLOUDID:8b41239fdb8ca44841a2853ec9b96da0,BulkI
+	D:240614185458SXRYECY3,BulkQuantity:5,Recheck:0,SF:64|66|38|24|17|19|44|10
+	2,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40|20,QS:nil,BE
+	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_FCD
+X-UUID: 90f4a2a42c4d11ef9305a59a3cc225df-20240617
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <luoxuanqiang@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1255556198; Mon, 17 Jun 2024 10:01:52 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 44BB4B80758A;
+	Mon, 17 Jun 2024 10:01:52 +0800 (CST)
+X-ns-mid: postfix-666F9910-122784188
+Received: from [10.42.12.252] (unknown [10.42.12.252])
+	by node2.com.cn (NSMail) with ESMTPA id 58349B80758A;
+	Mon, 17 Jun 2024 02:01:49 +0000 (UTC)
+Message-ID: <b20c01d5-5a8f-03e6-6573-ea46e0df5ebb@kylinos.cn>
+Date: Mon, 17 Jun 2024 10:01:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH v1 0/9] riscv: add initial support for SpacemiT K1
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <20240616224811.GC3983622@ofsar>
-Date: Mon, 17 Jun 2024 10:00:32 +0800
-Cc: Yixun Lan <dlan@gentoo.org>,
- linux-riscv@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>,
- Anup Patel <anup.patel@wdc.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- devicetree@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Jesse Taube <jesse@rivosinc.com>
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH net v2] Fix race for duplicate reqsk on identical SYN
+Content-Language: en-US
+To: Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: davem@davemloft.net, dccp@vger.kernel.org, dsahern@kernel.org,
+ fw@strlen.de, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com
+References: <7075bb26-ede9-0dc7-fe93-e18703e5ddaa@kylinos.cn>
+ <20240614222433.19580-1-kuniyu@amazon.com>
+ <CANn89i+RP1K+mOd5V7LOKMFtMhy0rZrpFDCDQ-RbQ31GkYbc9g@mail.gmail.com>
+From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+In-Reply-To: <CANn89i+RP1K+mOd5V7LOKMFtMhy0rZrpFDCDQ-RbQ31GkYbc9g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <B3951194-7F51-4D44-A643-FB29533119E4@cyyself.name>
-References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
- <20240616-exorcism-computing-e11e26084a62@spud>
- <20240616224811.GC3983622@ofsar>
-To: Conor Dooley <conor@kernel.org>
-X-Mailer: Apple Mail (2.3774.600.62)
 
 
-> On Jun 17, 2024, at 06:48, Yixun Lan <dlan@gentoo.org> wrote:
->=20
-> Hi Conor
-> Thanks for bringing this up
->=20
-> On 19:35 Sun 16 Jun     , Conor Dooley wrote:
->> On Mon, Jun 17, 2024 at 01:18:52AM +0800, Yangyu Chen wrote:
->>=20
->> No MAINTAINERS update, so I figure that means you don't want to =
-maintain
->> it going forwards? If there's someone out that that does care about =
-the
->> spacemit k1 (Jesse maybe?), then I'd be more than happy to have them
->> look after it.
+=E5=9C=A8 2024/6/15 14:40, Eric Dumazet =E5=86=99=E9=81=93:
+> On Sat, Jun 15, 2024 at 12:24=E2=80=AFAM Kuniyuki Iwashima <kuniyu@amaz=
+on.com> wrote:
+>> From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+>> Date: Fri, 14 Jun 2024 20:42:07 +0800
+>>> =E5=9C=A8 2024/6/14 18:54, Florian Westphal =E5=86=99=E9=81=93:
+>>>> luoxuanqiang <luoxuanqiang@kylinos.cn> wrote:
+>>>>>    include/net/inet_connection_sock.h |  2 +-
+>>>>>    net/dccp/ipv4.c                    |  2 +-
+>>>>>    net/dccp/ipv6.c                    |  2 +-
+>>>>>    net/ipv4/inet_connection_sock.c    | 15 +++++++++++----
+>>>>>    net/ipv4/tcp_input.c               | 11 ++++++++++-
+>>>>>    5 files changed, 24 insertions(+), 8 deletions(-)
+>>>>>
+>>>>> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_=
+connection_sock.h
+>>>>> index 7d6b1254c92d..8773d161d184 100644
+>>>>> --- a/include/net/inet_connection_sock.h
+>>>>> +++ b/include/net/inet_connection_sock.h
+>>>>> @@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct so=
+ck *sk,
+>>>>>                                   struct request_sock *req,
+>>>>>                                   struct sock *child);
+>>>>>    void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct reque=
+st_sock *req,
+>>>>> -                             unsigned long timeout);
+>>>>> +                             unsigned long timeout, bool *found_du=
+p_sk);
+>>>> Nit:
+>>>>
+>>>> I think it would be preferrable to change retval to bool rather than
+>>>> bool *found_dup_sk extra arg, so one can do
+>> +1
+>>
+>>
+>>>> bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_s=
+ock *req,
+>>>>                                 unsigned long timeout)
+>>>> {
+>>>>      if (!reqsk_queue_hash_req(req, timeout))
+>>>>              return false;
+>>>>
+>>>> i.e. let retval indicate wheter reqsk was inserted or not.
+>>>>
+>>>> Patch looks good to me otherwise.
+>>> Thank you for your confirmation!
+>>>
+>>> Regarding your suggestion, I had considered it before,
+>>> but besides tcp_conn_request() calling inet_csk_reqsk_queue_hash_add(=
+),
+>>> dccp_v4(v6)_conn_request() also calls it. However, there is no
+>>> consideration for a failed insertion within that function, so it's
+>>> reasonable to let the caller decide whether to check for duplicate
+>>> reqsk.
+>> I guess you followed 01770a1661657 where found_dup_sk was introduced,
+>> but note that the commit is specific to TCP SYN Cookie and TCP Fast Op=
+en
+>> and DCCP is not related.
+>>
+>> Then, own_req is common to TCP and DCCP, so found_dup_sk was added as =
+an
+>> additional argument.
+>>
+>> However, another similar commit 5e0724d027f05 actually added own_req c=
+heck
+>> in DCCP path.
+>>
+>> I personally would'nt care if DCCP was not changed to handle such a
+>> failure because DCCP will be removed next year, but I still prefer
+>> Florian's suggestion.
+>>
+> Other things to consider :
+>
+> - I presume this patch targets net tree, and luoxuanqiang needs the
+> fix to reach stable trees.
+>
+> - This means a Fixes: tag is needed
+>
+> - This also means that we should favor a patch with no or trivial
+> conflicts for stable backports.
+>
+> Should the patch target the net-next tree, then the requirements can
+> be different.
 
-Actually, I don=E2=80=99t know how to be a maintainer. Should I have to
-provide a new git tree and all the new patches merged to my tree
-and then submit a git pull? Or reuse the RISC-V mailing list and
-just give a review, and the patches come to soc misc tree? I would
-like the latter one.
+Hello Eric and Kuniyuk,
 
-> Yangyu kind of has limited time, too many stuff for him..
->=20
+Thank you for the information!
 
-True. Maybe I can have a review and test the patch in one week.
-However, providing a review and test in 2-3 days is sometimes hard
-for me.
+I've tested the kernel versions 4.19 and 6.10, and they both have
+similar issues (I suspect this problem has been around for quite some
+time). My intention is to propose a fix to the more stable branches as
+soon as possible to cover a wider range. Like Eric mentioned, I hope to
+minimize conflicts, so I expect to keep the original DCCP logic intact
+and refer to the check for found_dup_sk in 01770a1661657. For DCCP, if
+insertion into ehash fails, we might also need to consider handling
+rsk_refcnt, as tcp_conn_request() requires rsk_refcnt to be 0 to release
+reqsk.
 
-> I'd volunteered to help on this if it can fill the gap
-> Also I'd be more than happy if anyone willing step forward to =
-co-maintain..
->=20
+Of course, if DCCP will be removed from net-next, I agree with
+Kuniyuki and Florian's suggestions and will envision a better commit
+content.
 
-Thanks. Really appreciate it.
-
-Should I provide a diff like this:
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6c90161c7bf..718d30996f12 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19306,6 +19306,7 @@ F:      arch/riscv/boot/dts/
- X:     arch/riscv/boot/dts/allwinner/
- X:     arch/riscv/boot/dts/renesas/
- X:     arch/riscv/boot/dts/sophgo/
-+X:     arch/riscv/boot/dts/spacemit/
-=20
- RISC-V PMU DRIVERS
- M:     Atish Patra <atishp@atishpatra.org>
-@@ -21004,6 +21005,13 @@ W:     https://linuxtv.org
- Q:     http://patchwork.linuxtv.org/project/linux-media/list/
- F:     drivers/media/dvb-frontends/sp2*
-=20
-+SPACEMIT DEVICETREES and DRIVERS
-+M:     Yangyu Chen <cyy@cyyself.name>
-+M:     Yixun Lan <dlan@gentoo.org>
-+S:     Maintained
-+F:     Documentation/devicetree/bindings/riscv/spacemit.yaml
-+F:     arch/riscv/boot/dts/spacemit/
-+
- SPANISH DOCUMENTATION
- M:     Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
- R:     Avadhut Naik <avadhut.naik@amd.com>
-
-Thanks,
-Yangyu Chen
-
-> --=20
-> Yixun Lan (dlan)
-> Gentoo Linux Developer
-> GPG Key ID AABEFD55
+BRs!
 
 
