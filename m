@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-218024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E60190B824
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:34:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1628D90B826
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DDE7B25ADD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:34:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B1ABB262EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4F7185E44;
-	Mon, 17 Jun 2024 17:33:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862351849FE;
-	Mon, 17 Jun 2024 17:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3685F1849FE;
+	Mon, 17 Jun 2024 17:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf46dFkN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3541741C1;
+	Mon, 17 Jun 2024 17:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718645631; cv=none; b=CnNqrcKx7cSjRHkoMTgF4ff/VDVR8T5NqwIRQPvQ8mhqAAp7+8CLC1b/0s43gjRR9KfOZ+NH+ghxbg/rOX9UxzPY+4ioHv1+bn7KdIQD1B0HL91StQw6BLbggukYC/OVIirJuHwgPVMQCR1gr4It/CpZdj50D8PUkj5HbgeaBoQ=
+	t=1718645652; cv=none; b=fIitcmdQ8vkH6dOkLQP6OyHzTU47d/uDy00o7ruzKzyN36+haHtOOLqxl7+ZHPzzvVbGixCn7lCtXrJe+0C9fkcr3OC8cThwoRCz7X7ytWib3GT9tIEUzQW1+mMBPgd+JtOwnYLB9om+KvMxxBvRsw8rvAEjuohKUNHxZ2dlCPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718645631; c=relaxed/simple;
-	bh=8HD1zQ5zKjAaAh1DTzhjXCg/KrwBgt3VPLU3rNNeg9s=;
+	s=arc-20240116; t=1718645652; c=relaxed/simple;
+	bh=NRv3U2R3LJxqX4F/jGBJXWK96Mq2JY0f+Kl4Ugjxk8o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZbOKj1Kx5H5iF2B/a2UHy9wVyZLDPR7ozVBbmbyiX9rHYCn/PSaY5N1q9w2Pet2NLmsdntNcgN/NE7OyFmfbEdFYNu2foDbnvAh0cs6U5QOPBBodH6DxY6+1ZH1uhjr9ki15HYndZe5NGeFq5JWAEhVS0vL+v8CS5r7WZQfPYrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8728ADA7;
-	Mon, 17 Jun 2024 10:34:13 -0700 (PDT)
-Received: from [10.1.31.45] (010265703453.arm.com [10.1.31.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D595B3F64C;
-	Mon, 17 Jun 2024 10:33:46 -0700 (PDT)
-Message-ID: <80fc63e5-0e79-47b3-91ae-90d7c7bc3f66@arm.com>
-Date: Mon, 17 Jun 2024 18:33:44 +0100
+	 In-Reply-To:Content-Type; b=T8ZhstaESuGJ3KlpsbaCScW/UwWURLEum3u+3xXW/clsJQf7wT78xeTEL/eDECF0c1s+0DSujBufxzxqk88+o1ljkz7zv9syPtTDI6idNNn3HqSV/q/zitXWR9rKtZNx5kPbO4bfiPlz6bcQ8AxZPzPrspodfRaRB3zxsgINq0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf46dFkN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF8FDC2BD10;
+	Mon, 17 Jun 2024 17:33:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718645651;
+	bh=NRv3U2R3LJxqX4F/jGBJXWK96Mq2JY0f+Kl4Ugjxk8o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Zf46dFkNX+pSGPdK7wzf3wkuUXYGLO4wUR9ToHFlk51Har187NKu2//uchJA2DZ4y
+	 hlZ97xlpk5griBxFrMUdP7XxcOugdCmg9XdDNwmBNUKo7t+0rRxu3wYzZ0PrY7fPV8
+	 fgwbiqoML/ZMghk+QvuOdO8yOUFHXSOTH03ewSkDncGSERVBBFsNLVtmEjpdciHDTo
+	 gE2NpkAWzDA9tqBZ73i81iW1nzMjFDS5+EKBeOlq8SSjZbqAezUFzpF8A60qdsGuRF
+	 RyDNtKtblYUvhp1lWKIjAKQRkYf1nhstYT0d/UBpQVueD7Y63zatDFdCxhmV9KTr3s
+	 ol47N7jKMdmfQ==
+Message-ID: <0ea8ae6e-d841-4a5c-8a23-603ed9b4fa61@kernel.org>
+Date: Mon, 17 Jun 2024 19:33:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,132 +49,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/arm-smmu: Pretty-print context fault related regs
-To: Rob Clark <robdclark@gmail.com>
-Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
- Stephen Boyd <swboyd@chromium.org>, Rob Clark <robdclark@chromium.org>,
- Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, Jerry Snitselaar <jsnitsel@redhat.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- Pranjal Shrivastava <praan@google.com>
-References: <20240604150136.493962-1-robdclark@gmail.com>
- <6f97a4b4-cdbe-466c-80d4-adc8da305f75@arm.com>
- <CAF6AEGv+Ge2SD4=j1QhXfG+KkOzvFM+LieCqKuM20YL8gp5PRQ@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <CAF6AEGv+Ge2SD4=j1QhXfG+KkOzvFM+LieCqKuM20YL8gp5PRQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 6/7] dt-bindings: mfd: syscon: Split and enforce
+ documenting MFD children
+To: Conor Dooley <conor@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>,
+ Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>,
+ Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>,
+ Khuong Dinh <khuong@os.amperecomputing.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lars Povlsen
+ <lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
+ Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com,
+ Nishanth Menon <nm@ti.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240616-dt-bindings-mfd-syscon-split-v2-0-571b5850174a@linaro.org>
+ <20240616-dt-bindings-mfd-syscon-split-v2-6-571b5850174a@linaro.org>
+ <20240617-zoology-silica-2c8c78363b32@spud>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240617-zoology-silica-2c8c78363b32@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-06-17 5:18 pm, Rob Clark wrote:
-> On Mon, Jun 17, 2024 at 6:07 AM Robin Murphy <robin.murphy@arm.com> wrote:
->>
->> On 04/06/2024 4:01 pm, Rob Clark wrote:
->>> From: Rob Clark <robdclark@chromium.org>
->>>
->>> Parse out the bitfields for easier-to-read fault messages.
->>>
->>> Signed-off-by: Rob Clark <robdclark@chromium.org>
->>> ---
->>> Stephen was wanting easier to read fault messages.. so I typed this up.
->>>
->>> Resend with the new iommu list address
->>>
->>>    drivers/iommu/arm/arm-smmu/arm-smmu.c | 53 +++++++++++++++++++++++++--
->>>    drivers/iommu/arm/arm-smmu/arm-smmu.h |  5 +++
->>>    2 files changed, 54 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>> index c572d877b0e1..06712d73519c 100644
->>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>> @@ -411,6 +411,8 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
->>>        unsigned long iova;
->>>        struct arm_smmu_domain *smmu_domain = dev;
->>>        struct arm_smmu_device *smmu = smmu_domain->smmu;
->>> +     static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
->>> +                                   DEFAULT_RATELIMIT_BURST);
->>>        int idx = smmu_domain->cfg.cbndx;
->>>        int ret;
->>>
->>> @@ -425,10 +427,53 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
->>>        ret = report_iommu_fault(&smmu_domain->domain, NULL, iova,
->>>                fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
->>>
->>> -     if (ret == -ENOSYS)
->>> -             dev_err_ratelimited(smmu->dev,
->>> -             "Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
->>> -                         fsr, iova, fsynr, cbfrsynra, idx);
->>> +     if (ret == -ENOSYS && __ratelimit(&rs)) {
->>> +             static const struct {
->>> +                     u32 mask; const char *name;
->>> +             } fsr_bits[] = {
->>> +                     { ARM_SMMU_FSR_MULTI,  "MULTI" },
->>> +                     { ARM_SMMU_FSR_SS,     "SS"    },
->>> +                     { ARM_SMMU_FSR_UUT,    "UUT"   },
->>> +                     { ARM_SMMU_FSR_ASF,    "ASF"   },
->>> +                     { ARM_SMMU_FSR_TLBLKF, "TLBLKF" },
->>> +                     { ARM_SMMU_FSR_TLBMCF, "TLBMCF" },
->>> +                     { ARM_SMMU_FSR_EF,     "EF"     },
->>> +                     { ARM_SMMU_FSR_PF,     "PF"     },
->>> +                     { ARM_SMMU_FSR_AFF,    "AFF"    },
->>> +                     { ARM_SMMU_FSR_TF,     "TF"     },
->>> +             }, fsynr0_bits[] = {
->>> +                     { ARM_SMMU_FSYNR0_WNR,    "WNR"    },
->>> +                     { ARM_SMMU_FSYNR0_PNU,    "PNU"    },
->>> +                     { ARM_SMMU_FSYNR0_IND,    "IND"    },
->>> +                     { ARM_SMMU_FSYNR0_NSATTR, "NSATTR" },
->>> +                     { ARM_SMMU_FSYNR0_PTWF,   "PTWF"   },
->>> +                     { ARM_SMMU_FSYNR0_AFR,    "AFR"    },
->>> +             };
->>> +
->>> +             pr_err("%s %s: Unhandled context fault: fsr=0x%x (",
->>> +                    dev_driver_string(smmu->dev), dev_name(smmu->dev), fsr);
->>> +
->>> +             for (int i = 0, n = 0; i < ARRAY_SIZE(fsr_bits); i++) {
->>> +                     if (fsr & fsr_bits[i].mask) {
->>> +                             pr_cont("%s%s", (n > 0) ? "|" : "", fsr_bits[i].name);
->>
->> Given that SMMU faults have a high likelihood of correlating with other
->> errors, e.g. the initiating device also reporting that it got an abort
->> back, this much pr_cont is a recipe for an unreadable mess. Furthermore,
->> just imagine how "helpful" this would be when faults in two contexts are
->> reported by two different CPUs at the same time ;)
+On 17/06/2024 18:44, Conor Dooley wrote:
+>> +$id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: System Controller Registers R/W Common Properties
+>> +
+>> +description: |
 > 
-> It looks like arm_smmu_context_fault() is only used with non-threaded
-> irq's.  And this fallback is only used if driver doesn't register it's
-> own fault handler.  So I don't think this will be a problem.
+> This | can go, right?
 
-You don't think two different IRQs can fire on two different CPUs at the 
-same time (or close to)? It's already bad enough when multiple CPUs 
-panic and one has to pick apart line-by-line interleaving of the 
-registers/stacktraces - imagine how much more utterly unusable that 
-would be with bits of different dumps randomly pr_cont'ed together onto 
-the same line(s)...
+Ack
 
-Even when unrelated stuff gets interleaved because other CPUs just 
-happen to be calling printk() at the same time for unrelated reasons 
-it's still annoying, and pr_cont makes a bigger mess than not.
->> I'd prefer to retain the original message as-is, so there is at least
->> still an unambiguous "atomic" view of a fault's entire state, then
->> follow it with a decode more in the style of arm64's ESR logging. TBH I
->> also wouldn't disapprove of hiding the additional decode behind a
->> command-line/runtime parameter, since a fault storm can cripple a system
->> enough as it is, without making the interrupt handler spend even longer
->> printing to a potentially slow console.
 > 
-> It _is_ ratelimited.  But we could perhaps use a higher loglevel (pr_debug?)
+>> +  System controller node represents a register region containing a set
+>> +  of miscellaneous registers. The registers are not cohesive enough to
+>> +  represent as any specific type of device. The typical use-case is
+>> +  for some other node's driver, or platform-specific code, to acquire
+>> +  a reference to the syscon node (e.g. by phandle, node path, or
+>> +  search using a specific compatible value), interrogate the node (or
+>> +  associated OS driver) to determine the location of the registers,
+>> +  and access the registers directly.
+>> +
+>> +maintainers:
+>> +  - Lee Jones <lee@kernel.org>
+>> +
+>> +select:
+>> +  properties:
+>> +    compatible:
+>> +      contains:
+>> +        enum:
+> 
+> And this can be const, given it's unlikely to grow?
 
-Yeah, I'd have no complaint with pr_debug/dev_dbg either, if that suits 
-your use case. True that the ratelimit may typically mitigate the 
-overall impact, but still in the worst case with a sufficiently slow 
-console and/or a sufficiently large amount to print per __ratelimit() 
-call, it can end up being slow enough to stay below the threshold. Don't 
-ask me how I know that :)
+ack
 
-Thanks,
-Robin.
+> 
+>> +          - syscon
+>> +
+>> +  required:
+>> +    - compatible
+>> +
+>> +properties:
+>> +  compatible:
+>> +    contains:
+>> +      const: syscon
+>> +    minItems: 2
+>> +    maxItems: 5  # Should be enough
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  reg-io-width:
+>> +    description: |
+> 
+> Same with this one.
+
+ack
+
+> 
+>> +      The size (in bytes) of the IO accesses that should be performed
+>> +      on the device.
+>> +    enum: [1, 2, 4, 8]
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: simple-mfd
+>> +    then:
+>> +      properties:
+>> +        compatible:
+>> +          minItems: 3
+>> +          maxItems: 5
+>> +
+>> +additionalProperties: true
+>> +
+>> +examples:
+>> +  - |
+>> +    syscon: syscon@1c00000 {
+>> +        compatible = "allwinner,sun8i-h3-system-controller", "syscon";
+>> +        reg = <0x01c00000 0x1000>;
+>> +    };
+>> +...
+>> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+>> index d6fa58c9e4de..d4e9533cf3fe 100644
+>> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
+>> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+>> @@ -4,7 +4,7 @@
+>>  $id: http://devicetree.org/schemas/mfd/syscon.yaml#
+>>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>  
+>> -title: System Controller Registers R/W
+>> +title: System Controller Devices
+>>  
+>>  description: |
+>>    System controller node represents a register region containing a set
+>> @@ -19,123 +19,196 @@ description: |
+>>  maintainers:
+>>    - Lee Jones <lee@kernel.org>
+>>  
+>> +# Need a select with all compatibles listed for compatibility with older
+>> +# dtschema (<2024.02), so this will not be selected for other schemas having
+>> +# syscon fallback.
+>>  select:
+>>    properties:
+>>      compatible:
+>>        contains:
+>>          enum:
+>> -          - syscon
+> 
+> Wow, this is noisy. Is it not possible to achieve something similar by
+> making the select check for not: compatible: contains: simple-mfd? Or
+> did I misunderstand the intention here?
+
+See comment from Rob for v1. This is needed for older schema, although
+2024.02 worked fine in my tests. The point is to select all schemas, not
+by compatible property, because then we match this schema to anything
+having syscon.
+
+Kind of similar how it is woth arm,primecell.
+
+
+
+Best regards,
+Krzysztof
+
 
