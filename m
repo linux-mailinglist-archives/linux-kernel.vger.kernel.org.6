@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-217000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD6D90A98C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:29:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9755B90A987
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECDD9B24EB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:27:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269DE282DB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CE21922F7;
-	Mon, 17 Jun 2024 09:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998D61922C9;
+	Mon, 17 Jun 2024 09:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KQeWwUel"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="lPSYoCQD"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF6919148E;
-	Mon, 17 Jun 2024 09:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143AA19148E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616463; cv=none; b=i3jEi8marcAffE5uLTsTPE7Ena9hEr88KpQIwAxp28O5qedDButdzfRYdtjkNjlwQFq8BGC3Y4SiCAf+QH5J1zLtd8zeUWGgd8+Htsof23VpNtdXRPSwdZFd63izEJFAnA9YQl5s1pJO5XcsI1//7Z5c6OjCBmCISc/wdk9COX4=
+	t=1718616440; cv=none; b=tOGtrafeKZlJc3fZvibOLhCO6MHQKfgXq31x/v0cLBGGkl9Tkw7KEt/KxFJ43sgWmg/zQu2Cpz77xtEatm8OMhOLcRjJBBDrDDuAjP2+eYX0BPQY81IR7fO2+6HB95gs+jxUoe1VUmGGDZMd4WI8CKk+f9am9ix16hQ6iUyc+DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616463; c=relaxed/simple;
-	bh=dnFgPeAyWOcc/aC0MiFnCnbaJLtLBh5cDDDyNhkDw1k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OtJyWdWFEWAEsNsrmRQeS59iroBrpKq4eYG+cDGWyqK7PTfypLdvQBb2MHcBiVIspwZEb1aiEVHfpxQYVf9EeHxHuXgjCVBGJhwtBuM7l5zcwbf/yGhzv/ZANkga+Hh30w1FTWkSspXEqMvWouWgCsUfajcFnKf/BoGdVga6XkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KQeWwUel; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718616463; x=1750152463;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=dnFgPeAyWOcc/aC0MiFnCnbaJLtLBh5cDDDyNhkDw1k=;
-  b=KQeWwUelYuhRFpUcUgf6hcPFF/0HPqpKI6p1nC+zeQPWqLGivB14962k
-   bQHREfxdYGEogSbgIhyOxqPwcMwh1wgAWy11WU0lIOHwaq7biIR8t2uGA
-   GGZJd9RL/Ogmzi7I7NPTciyZE4VCQJUCKy/ymBR3/A3CyTAHJ6z0aDods
-   ov+8e8C3vdWcK3KPyOGCYUe/yvG41SngHI938zthV1Lyi+9Gjv/hHgalC
-   bA9GVjKfjwGoZIbJerfXAhcEswcNQV7SSKAy9qoVmvkaCItfbW+7YCklw
-   VNGIt92jjqGO+Va8sd+xulLPQkiaB8H50HpsvZEtQn6nXpaVduCC8cWUP
-   w==;
-X-CSE-ConnectionGUID: TYbi6O7TTcGifbvYBaXkgQ==
-X-CSE-MsgGUID: vp1ga7BTRUK/ZJjsTG6MIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="26010571"
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="26010571"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 02:27:42 -0700
-X-CSE-ConnectionGUID: kfn5WqeBQmqSeExi4ReZgQ==
-X-CSE-MsgGUID: 7jS773L6SgCRP3hyk+Dcbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="64337246"
-Received: from varadarp-mobl.gar.corp.intel.com ([10.213.94.8])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 02:27:31 -0700
-Message-ID: <27018603c7ed574451520aeeae405f7b1fcd6c4e.camel@linux.intel.com>
-Subject: Re: [PATCH PATCH 2/9] cpufreq: intel_pstate: Use
- topology_cpu_type() to get cpu-type
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Thomas Gleixner
-	 <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	 <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Ricardo Neri
- <ricardo.neri-calderon@linux.intel.com>,  "Liang, Kan"
- <kan.liang@linux.intel.com>, Andrew Cooper <andrew.cooper3@citrix.com>
-Date: Mon, 17 Jun 2024 02:27:02 -0700
-In-Reply-To: <20240617-add-cpu-type-v1-2-b88998c01e76@linux.intel.com>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
-	 <20240617-add-cpu-type-v1-2-b88998c01e76@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.0-1 
+	s=arc-20240116; t=1718616440; c=relaxed/simple;
+	bh=RUuK+9xggdkd1n6yDTvofXB/CDyOTTP0PsAGkSPe2vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9K0liObLkNyPygBEDBY0+oRAFbtqaJZI2sNSjg2hV9catBnOtS4p2cs3J7cZkohOdHjZnSVVBx+x1bkscQP2qoePPfJNGatA2LG3i4Ngoia/nK9BrC248c7BEmgJ3io1gc2dsmJBokFMsy8qgYzoGhfanidYkoeMwn0NQp9MjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=lPSYoCQD; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 3C33C1C0082; Mon, 17 Jun 2024 11:27:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1718616429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q78lj1sUEBcoY/15sYRrAFgGfIDd8guUOyzA9hwkQF4=;
+	b=lPSYoCQDOtGjrGL02ITIfPC8gJwkHB01Ka6tUcjFlmSiHf8SokRFcy0RhbHQ2zOKi+ttui
+	PcKR9RHm/UHYda4Oe59RJn1ZLyJ2xzX9BeYn7F3x9OvxoDGL4gykBPnmtkGHGbCWeDvKtD
+	rh8ItSSMVDFhykGiFI5YIEDguoMKCD4=
+Date: Mon, 17 Jun 2024 11:27:08 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Airlie <airlied@gmail.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Rafael Wysocki <rafael@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	intel-gfx <intel-gfx@lists.freedesktop.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: Linux 6.10-rc1
+Message-ID: <ZnABbKrIzmmEoFEV@duo.ucw.cz>
+References: <CAHk-=wjQv_CSPzhjOMoOjGO3FmuHe5hzm6Ds69zZSFPa4PeuCA@mail.gmail.com>
+ <ZmrTZozoi0t/tuva@duo.ucw.cz>
+ <CAHk-=wjqHL7KjOWYBVKFewcKPWL7CJxddWfJnvL3AfOqfR8vMg@mail.gmail.com>
+ <ZmwHGviv/6J6FQLf@duo.ucw.cz>
+ <CAHk-=wigB-wVK+4=NuYJxoKLnoUXB52J5WU2hpKj2de6vGuY7g@mail.gmail.com>
+ <CAHk-=wjcdUUip96PnfC+iRjAwPHn3XKsgcohk1ad5VcckCFVKA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="H6pKU+jOd+U1bE+H"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjcdUUip96PnfC+iRjAwPHn3XKsgcohk1ad5VcckCFVKA@mail.gmail.com>
 
-On Mon, 2024-06-17 at 02:11 -0700, Pawan Gupta wrote:
-> Intel pstate driver uses hybrid_get_type() to get the cpu-type of a
-> given
-> CPU. It uses smp_call_function_single() which is sub-optimal and can
-> be
-> avoided as cpu-type is also available in the per-cpu topology
-> structure.
->=20
-> Use topology_cpu_type() to get the cpu-type.
->=20
-> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-> ---
-> =C2=A0drivers/cpufreq/intel_pstate.c | 14 +++-----------
-> =C2=A01 file changed, 3 insertions(+), 11 deletions(-)
->=20
-> diff --git a/drivers/cpufreq/intel_pstate.c
-> b/drivers/cpufreq/intel_pstate.c
-> index 65d3f79104bd..40f5e5b0b45e 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -1951,24 +1951,16 @@ static int knl_get_turbo_pstate(int cpu)
-> =C2=A0	return ret;
-> =C2=A0}
-> =C2=A0
-> -static void hybrid_get_type(void *data)
-> -{
-> -	u8 *cpu_type =3D data;
-> -
-> -	*cpu_type =3D get_this_hybrid_cpu_type();
-> -}
-> -
-> =C2=A0static int hwp_get_cpu_scaling(int cpu)
-> =C2=A0{
-> -	u8 cpu_type =3D 0;
-> +	u8 cpu_type =3D topology_cpu_type(cpu);
-> =C2=A0
-> -	smp_call_function_single(cpu, hybrid_get_type, &cpu_type,
-> 1);
-> =C2=A0	/* P-cores have a smaller perf level-to-freqency scaling
-> factor. */
-> -	if (cpu_type =3D=3D 0x40)
-> +	if (cpu_type =3D=3D X86_CPU_TYPE_INTEL_CORE)
-> =C2=A0		return hybrid_scaling_factor;
-> =C2=A0
-> =C2=A0	/* Use default core scaling for E-cores */
-> -	if (cpu_type =3D=3D 0x20)
-> +	if (cpu_type =3D=3D X86_CPU_TYPE_INTEL_ATOM)
-> =C2=A0		return core_get_scaling();
-> =C2=A0
-> =C2=A0	/*
->=20
+--H6pKU+jOd+U1bE+H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi!
+
+> > Let's bring in the actual gpu people.. Dave/Jani/others - does any of
+> > this sound familiar? Pavel says things have gotten much slower in
+> > 6.10: "something was very wrong with the performance, likely to do
+> > with graphics"
+>=20
+> Actually, maybe it's not graphics at all. Rafael just sent me a pull
+> request that fixes a "turbo is disabled at boot, but magically enabled
+> at runtime by firmware" issue.
+>=20
+> The 6.10-rc1 kernel would notice that turbo was disabled, and stopped
+> noticing that it magically got re-enabled.
+>=20
+> Pavel, that was with a very different laptop, but who knows... That
+> would match the "laptop is much slower" thing.
+>=20
+> So current -git might be worth checking.
+
+So... I went to (then) current -git and I don't want to replace my
+machine any more. So the problem should not exist in current mainline.
+
+(I did not have good objective data, so I'm not 100% sure problem was
+real in the first place. More like 90% sure.)
+
+Best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--H6pKU+jOd+U1bE+H
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZnABbAAKCRAw5/Bqldv6
+8m6EAJ9actiKleBb8+OFvKoQQ4jA7+2hiQCfWrGkGnyPYT4Nsoq7QcejUXecs3U=
+=xxmc
+-----END PGP SIGNATURE-----
+
+--H6pKU+jOd+U1bE+H--
 
