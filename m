@@ -1,336 +1,160 @@
-Return-Path: <linux-kernel+bounces-217925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F63B90B651
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:26:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4D190B653
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875B51C22A0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:26:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79A44281CF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5988152DE0;
-	Mon, 17 Jun 2024 16:26:34 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9673914EC7C;
+	Mon, 17 Jun 2024 16:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="V0nx8uWD"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BB214EC68
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEB0847A;
+	Mon, 17 Jun 2024 16:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718641594; cv=none; b=DSNbwUciO1Dm2ewVG/bs9eRq+O/Zxw+RcebHs8roVfdSHPU1JdAHyYWJntfWh7c/4Z6SvBQdRArsrqee+5RF7aLplsr7zMIIpVoG9EbA0NiahGe/2TDzL1asOqAhjmLf+AwB30TFfDIGzslA30u9uolbuY3QJUt5qDzXx1qJPQs=
+	t=1718641629; cv=none; b=nhvLdTi08nG7xl3KlhRG9FV1nDU8fjaNHm96L9WO47eNz4QObq/Kh5LZsFcV8dKiFjDBvLBq0dEubIeX22ek3Q4aCtEyg8A/sHHjQiM0b+bw5zX86oUzWy7AqB4Vw5x/iS68Ys3HSSQLGMT+rfYLz1ghoRUL3T4FSJTBqYl1i0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718641594; c=relaxed/simple;
-	bh=qLyEFuA14kR1AkSeqyKqPZnAuUc7zICR4J1TT5bQVpk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=sQQZFsjp4+5txZtDT4wYoXftpgAwO7SymritKqTM3FQEZnH2FMd2dg74LGhr9oqqgSBT0tv5Q8wKUOIZASFo80nso8TXrv6p1TbSXhP8qJkxISUaSifn+j93yQW6tdykaPrgarxKejedAzk1R+wX4eJ5PY2pws9hK1qNhXDldP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7eee4ffd19eso160178339f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:26:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718641591; x=1719246391;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S8Llh/+tG69M7DZzRHmCoTFxXiG1AfxNjgtwz5+HayM=;
-        b=s6KH4sYZYA1qZQuLsdy8WkpSGdbbG9qkKu41WXqV0Zm+Y5hO+xw1NgXtpMK/tHW0dm
-         hc0b2TKa/qtlY/bVfzP3I9X1lcJGrXbdBIQVjTDR1aUNrBQkbxYYZ/TwBmRKhUZ8JDKs
-         1Dac3i3kZA5fHuHlVkhAduFlfUnpjLvLnkIqCwb8SPP4/b2RJrVJNxD3j5E60o23KA4T
-         hM1Hy6zOrQgRJaa3HAAR86aFI0x+0E9xkt7JhPI0WchakaRdIAHrBhB03eCtkq31+1fM
-         BabHMfVZj/LcnSmsoO4hafRevtV2HMVn3Lt4b8E7L5ifH73fkZZ/lQJi9rVZqagP9ZfL
-         ztcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeYRXYpkkjRcTb8c+v4YDkiAknfjUPxk1QdjfEeMKhG3KbRjIi80S2B4cTs56GqiMj3TOFK+Kawsabkaxq4J1Jeq9RkVY7ChPaZ2Qb
-X-Gm-Message-State: AOJu0YwGr6O5ucllsytKTy46M9aBV2ZdkGvrzIYnmCLWJNo5B/zamfFR
-	nvLs6W+EbP0MP4j6LT7LBjcCYfRE53sYzD7ALS8gnc4ivPFWBBgrqo04OugMQ8LGswqFPY9u2Ud
-	3olGTA+hevz8OXQAf6F6S+xcv6nj988jhv4O4r/D4XOiLaSpU+Yn2Dqs=
-X-Google-Smtp-Source: AGHT+IGSGFXoPYBjpHQDgGvN5h3yWz3g3pgtSmkmzIrj9a8mdcN7s3DpohRzw/3ElYVBEcDhQeMM0CF1dFJm16vVO0/SFDPelwVX
+	s=arc-20240116; t=1718641629; c=relaxed/simple;
+	bh=0/6abZk5ZE85wavkIEAyzY4LlQExR0Y2+tLnbsqpdmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jAblHkeuJ4v/ARTf+ypPRc9LvK8E8ikLlidFGs4ifzWQBR6JslMRsb1lxt1dZ2tVFs+OQ8SkDsSxCAUjYyf8Cl2bV/xka3cmN5XJPOVWFt1zuKmkxmz5BGuw2NDQI4crdLCZlpDqsGxibu8n7HHTrnVfB6xnXaxk4qwS/SC6xFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=V0nx8uWD; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HFBmBI017348;
+	Mon, 17 Jun 2024 16:27:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:sender:content-transfer-encoding:mime-version; s=
+	pp1; bh=VTc09ubFYqY6mCTK5Mk8Kez39VZQ2PV5LBLtFCzOVY4=; b=V0nx8uWD
+	kFGPsDNj7Rw3yBs4lvqLPXS2I0cDA7HUT0NcLagwXA3o1HOyQbZu8UD/Xd/FYPyt
+	KNBgnf9wvB0HZUy2ccuW6F0EYV3IKlPYTOyq3qlpZWMq/cCn7BPx2L+Rhoy/HOA+
+	4p6cjV2n3VW15woFe8FPymf4yjuxLQ7ZosMhirY5eyUApxjb94sPFaaD2NxuM+k/
+	d7DvcvtLdCTAUb8b8jFypb08fU/NjJ+LIBoyKplawzh6IY24QYUUbXOZc6TpEw0q
+	qUc6N0lFLqrgkEU4BjcJn6uzuFlBG0sqtmQZFIONBgXY2aQLifBqDo9oZSgVgQVR
+	IkmBT0+RohwPFA==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ytqjsg6bn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 16:27:02 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45HF59hL006189;
+	Mon, 17 Jun 2024 16:27:01 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ysn9uc077-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 16:27:01 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45HGQvv329360852
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Jun 2024 16:26:59 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B24382004D;
+	Mon, 17 Jun 2024 16:26:57 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9DFB520043;
+	Mon, 17 Jun 2024 16:26:57 +0000 (GMT)
+Received: from p1gen4-pw042f0m (unknown [9.171.0.249])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 17 Jun 2024 16:26:57 +0000 (GMT)
+Received: from bblock by p1gen4-pw042f0m with local (Exim 4.97.1)
+	(envelope-from <bblock@linux.ibm.com>)
+	id 1sJFC5-00000003rsM-0mY0;
+	Mon, 17 Jun 2024 18:26:57 +0200
+Date: Mon, 17 Jun 2024 18:26:57 +0200
+From: Benjamin Block <bblock@linux.ibm.com>
+To: Li Feng <fengli@smartx.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:SCSI SUBSYSTEM" <linux-scsi@vger.kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH] scsi: sd: Keep the discard mode stable
+Message-ID: <20240617162657.GA843635@p1gen4-pw042f0m.fritz.box>
+References: <20240614160350.180490-1-fengli@smartx.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20240614160350.180490-1-fengli@smartx.com>
+Sender: Benjamin Block <bblock@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: irVYAC7UR5bD72So1S2kM96demW93PoF
+X-Proofpoint-ORIG-GUID: irVYAC7UR5bD72So1S2kM96demW93PoF
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8718:b0:4b7:c9b5:675c with SMTP id
- 8926c6da1cb9f-4b96413cde5mr530754173.6.1718641590823; Mon, 17 Jun 2024
- 09:26:30 -0700 (PDT)
-Date: Mon, 17 Jun 2024 09:26:30 -0700
-In-Reply-To: <ZnBjsQazkJK0MyNk@lore-desk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000847d65061b186d5f@google.com>
-Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_nl_listener_get_doit
-From: syzbot <syzbot+4207adf14e7c0981d28d@syzkaller.appspotmail.com>
-To: lorenzo@kernel.org
-Cc: chuck.lever@oracle.com, dai.ngo@oracle.com, jlayton@kernel.org, 
-	kolga@netapp.com, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	lorenzo@kernel.org, neilb@suse.de, syzkaller-bugs@googlegroups.com, 
-	tom@talpey.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406170127
 
->> Hello,
->> 
->> syzbot found the following issue on:
->> 
->> HEAD commit:    cea2a26553ac mailmap: Add my outdated addresses to the map..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=169fd8ee980000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
->> dashboard link: https://syzkaller.appspot.com/bug?extid=4207adf14e7c0981d28d
->> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->> 
->> Unfortunately, I don't have any reproducer for this issue yet.
->> 
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/1f7ce933512f/disk-cea2a265.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/0ce3b9940616/vmlinux-cea2a265.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/19e24094ea37/bzImage-cea2a265.xz
->> 
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+4207adf14e7c0981d28d@syzkaller.appspotmail.com
->> 
->> INFO: task syz-executor.1:17770 blocked for more than 143 seconds.
->>       Not tainted 6.10.0-rc3-syzkaller-00022-gcea2a26553ac #0
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:syz-executor.1  state:D stack:23800 pid:17770 tgid:17767 ppid:11381  flags:0x00000006
->> Call Trace:
->>  <TASK>
->>  context_switch kernel/sched/core.c:5408 [inline]
->>  __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
->>  __schedule_loop kernel/sched/core.c:6822 [inline]
->>  schedule+0x14b/0x320 kernel/sched/core.c:6837
->>  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
->>  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->>  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->>  nfsd_nl_listener_get_doit+0x115/0x5d0 fs/nfsd/nfsctl.c:2124
->>  genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
->>  genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
->>  genl_rcv_msg+0xb16/0xec0 net/netlink/genetlink.c:1210
->>  netlink_rcv_skb+0x1e5/0x430 net/netlink/af_netlink.c:2564
->>  genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
->>  netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
->>  netlink_unicast+0x7ec/0x980 net/netlink/af_netlink.c:1361
->>  netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1905
->>  sock_sendmsg_nosec net/socket.c:730 [inline]
->>  __sock_sendmsg+0x223/0x270 net/socket.c:745
->>  ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
->>  ___sys_sendmsg net/socket.c:2639 [inline]
->>  __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
->>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> RIP: 0033:0x7f24ed27cea9
->> RSP: 002b:00007f24ee0080c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
->> RAX: ffffffffffffffda RBX: 00007f24ed3b3f80 RCX: 00007f24ed27cea9
->> RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000005
->> RBP: 00007f24ed2ebff4 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> 
->> 
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->> 
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->> 
->> If the report is already addressed, let syzbot know by replying with:
->> #syz fix: exact-commit-title
->> 
->> If you want to overwrite report's subsystems, reply with:
->> #syz set subsystems: new-subsystem
->> (See the list of subsystem names on the web dashboard)
->> 
->> If the report is a duplicate of another one, reply with:
->> #syz dup: exact-subject-of-another-report
->> 
->> If you want to undo deduplication, reply with:
->> #syz undup
->> 
->
-> #syz test https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git 4ddfda417a50
+Hey,
 
-This crash does not have a reproducer. I cannot test it.
+On Sat, Jun 15, 2024 at 12:03:47AM +0800, Li Feng wrote:
+> There is a scenario where a large number of discard commands
+> are issued when the iscsi initiator connects to the target
+> and then performs a session rescan operation. 
 
->
-> From be9676fba16c0b8769c3b6094f35da39b1ba3953 Mon Sep 17 00:00:00 2001
-> Message-ID: <be9676fba16c0b8769c3b6094f35da39b1ba3953.1718640518.git.lorenzo@kernel.org>
-> From: Lorenzo Bianconi <lorenzo@kernel.org>
-> Date: Mon, 17 Jun 2024 16:26:26 +0200
-> Subject: [PATCH] NFSD: grab nfsd_mutex in nfsd_nl_rpc_status_get_dumpit()
->
-> Grab nfsd_mutex lock in nfsd_nl_rpc_status_get_dumpit routine and remove
-> nfsd_nl_rpc_status_get_start() and nfsd_nl_rpc_status_get_done(). This
-> patch fix the syzbot log reported below:
->
-> INFO: task syz-executor.1:17770 blocked for more than 143 seconds.
->       Not tainted 6.10.0-rc3-syzkaller-00022-gcea2a26553ac #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor.1  state:D stack:23800 pid:17770 tgid:17767 ppid:11381  flags:0x00000006
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5408 [inline]
->  __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
->  __schedule_loop kernel/sched/core.c:6822 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6837
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  nfsd_nl_listener_get_doit+0x115/0x5d0 fs/nfsd/nfsctl.c:2124
->  genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
->  genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
->  genl_rcv_msg+0xb16/0xec0 net/netlink/genetlink.c:1210
->  netlink_rcv_skb+0x1e5/0x430 net/netlink/af_netlink.c:2564
->  genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
->  netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
->  netlink_unicast+0x7ec/0x980 net/netlink/af_netlink.c:1361
->  netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1905
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg+0x223/0x270 net/socket.c:745
->  ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
->  ___sys_sendmsg net/socket.c:2639 [inline]
->  __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f24ed27cea9
-> RSP: 002b:00007f24ee0080c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00007f24ed3b3f80 RCX: 00007f24ed27cea9
-> RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000005
-> RBP: 00007f24ed2ebff4 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->
-> Fixes: 1bd773b4f0c9 ("nfsd: hold nfsd_mutex across entire netlink operation")
-> Fixes: bd9d6a3efa97 ("NFSD: add rpc_status netlink support")
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Is this with just one specific target implementation? This sounds like a
+broken/buggy target, or is there a reason why this happens in general?
+
+And broken target sounds like device quirk, rather than impacting every
+possible target.
+
+> There is a time
+> window, most of the commands are in UNMAP mode, and some
+> discard commands become WRITE SAME with UNMAP.
+> 
+> The discard mode has been negotiated during the SCSI probe. If
+> the mode is temporarily changed from UNMAP to WRITE SAME with
+> UNMAP, IO ERROR may occur because the target may not implement
+> WRITE SAME with UNMAP. Keep the discard mode stable to fix this
+> issue.
+> 
+> Signed-off-by: Li Feng <fengli@smartx.com>
 > ---
->  Documentation/netlink/specs/nfsd.yaml |  2 --
->  fs/nfsd/netlink.c                     |  2 --
->  fs/nfsd/netlink.h                     |  3 --
->  fs/nfsd/nfsctl.c                      | 48 ++++++---------------------
->  4 files changed, 11 insertions(+), 44 deletions(-)
->
-> diff --git a/Documentation/netlink/specs/nfsd.yaml b/Documentation/netlink/specs/nfsd.yaml
-> index 5a98e5a06c68..c87658114852 100644
-> --- a/Documentation/netlink/specs/nfsd.yaml
-> +++ b/Documentation/netlink/specs/nfsd.yaml
-> @@ -132,8 +132,6 @@ operations:
->        doc: dump pending nfsd rpc
->        attribute-set: rpc-status
->        dump:
-> -        pre: nfsd-nl-rpc-status-get-start
-> -        post: nfsd-nl-rpc-status-get-done
->          reply:
->            attributes:
->              - xid
-> diff --git a/fs/nfsd/netlink.c b/fs/nfsd/netlink.c
-> index 137701153c9e..ca54aa583530 100644
-> --- a/fs/nfsd/netlink.c
-> +++ b/fs/nfsd/netlink.c
-> @@ -49,9 +49,7 @@ static const struct nla_policy nfsd_pool_mode_set_nl_policy[NFSD_A_POOL_MODE_MOD
->  static const struct genl_split_ops nfsd_nl_ops[] = {
->  	{
->  		.cmd	= NFSD_CMD_RPC_STATUS_GET,
-> -		.start	= nfsd_nl_rpc_status_get_start,
->  		.dumpit	= nfsd_nl_rpc_status_get_dumpit,
-> -		.done	= nfsd_nl_rpc_status_get_done,
->  		.flags	= GENL_CMD_CAP_DUMP,
->  	},
->  	{
-> diff --git a/fs/nfsd/netlink.h b/fs/nfsd/netlink.h
-> index 9459547de04e..8eb903f24c41 100644
-> --- a/fs/nfsd/netlink.h
-> +++ b/fs/nfsd/netlink.h
-> @@ -15,9 +15,6 @@
->  extern const struct nla_policy nfsd_sock_nl_policy[NFSD_A_SOCK_TRANSPORT_NAME + 1];
->  extern const struct nla_policy nfsd_version_nl_policy[NFSD_A_VERSION_ENABLED + 1];
+>  drivers/scsi/sd.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index f6c822c9cbd2..0165dc70a99b 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -2598,7 +2598,12 @@ static int read_capacity_16(struct scsi_disk *sdkp, struct scsi_device *sdp,
+>  		if (buffer[14] & 0x40) /* LBPRZ */
+>  			sdkp->lbprz = 1;
 >  
-> -int nfsd_nl_rpc_status_get_start(struct netlink_callback *cb);
-> -int nfsd_nl_rpc_status_get_done(struct netlink_callback *cb);
-> -
->  int nfsd_nl_rpc_status_get_dumpit(struct sk_buff *skb,
->  				  struct netlink_callback *cb);
->  int nfsd_nl_threads_set_doit(struct sk_buff *skb, struct genl_info *info);
-> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-> index e5d2cc74ef77..78091a73b33b 100644
-> --- a/fs/nfsd/nfsctl.c
-> +++ b/fs/nfsd/nfsctl.c
-> @@ -1468,28 +1468,6 @@ static int create_proc_exports_entry(void)
+> -		sd_config_discard(sdkp, SD_LBP_WS16);
+> +		/*
+> +		 * When the discard mode has been set to UNMAP, it should not be set to
+> +		 * WRITE SAME with UNMAP.
+> +		 */
+> +		if (!sdkp->max_unmap_blocks)
+> +			sd_config_discard(sdkp, SD_LBP_WS16);
+>  	}
 >  
->  unsigned int nfsd_net_id;
->  
-> -/**
-> - * nfsd_nl_rpc_status_get_start - Prepare rpc_status_get dumpit
-> - * @cb: netlink metadata and command arguments
-> - *
-> - * Return values:
-> - *   %0: The rpc_status_get command may proceed
-> - *   %-ENODEV: There is no NFSD running in this namespace
-> - */
-> -int nfsd_nl_rpc_status_get_start(struct netlink_callback *cb)
-> -{
-> -	struct nfsd_net *nn = net_generic(sock_net(cb->skb->sk), nfsd_net_id);
-> -	int ret = -ENODEV;
-> -
-> -	mutex_lock(&nfsd_mutex);
-> -	if (nn->nfsd_serv)
-> -		ret = 0;
-> -	else
-> -		mutex_unlock(&nfsd_mutex);
-> -
-> -	return ret;
-> -}
-> -
->  static int nfsd_genl_rpc_status_compose_msg(struct sk_buff *skb,
->  					    struct netlink_callback *cb,
->  					    struct nfsd_genl_rqstp *rqstp)
-> @@ -1566,8 +1544,16 @@ static int nfsd_genl_rpc_status_compose_msg(struct sk_buff *skb,
->  int nfsd_nl_rpc_status_get_dumpit(struct sk_buff *skb,
->  				  struct netlink_callback *cb)
->  {
-> -	struct nfsd_net *nn = net_generic(sock_net(skb->sk), nfsd_net_id);
->  	int i, ret, rqstp_index = 0;
-> +	struct nfsd_net *nn;
-> +
-> +	mutex_lock(&nfsd_mutex);
-> +
-> +	nn = net_generic(sock_net(skb->sk), nfsd_net_id);
-> +	if (!nn->nfsd_serv) {
-> +		ret = -ENODEV;
-> +		goto out_unlock;
-> +	}
->  
->  	rcu_read_lock();
->  
-> @@ -1644,22 +1630,10 @@ int nfsd_nl_rpc_status_get_dumpit(struct sk_buff *skb,
->  	ret = skb->len;
->  out:
->  	rcu_read_unlock();
-> -
-> -	return ret;
-> -}
-> -
-> -/**
-> - * nfsd_nl_rpc_status_get_done - rpc_status_get dumpit post-processing
-> - * @cb: netlink metadata and command arguments
-> - *
-> - * Return values:
-> - *   %0: Success
-> - */
-> -int nfsd_nl_rpc_status_get_done(struct netlink_callback *cb)
-> -{
-> +out_unlock:
->  	mutex_unlock(&nfsd_mutex);
->  
-> -	return 0;
-> +	return ret;
->  }
->  
->  /**
-> -- 
-> 2.45.1
->
->
+>  	sdkp->capacity = lba + 1;
+
+-- 
+Best Regards, Benjamin Block        /        Linux on IBM Z Kernel Development
+IBM Deutschland Research & Development GmbH    /   https://www.ibm.com/privacy
+Vors. Aufs.-R.: Wolfgang Wendt         /        Gesch?ftsf?hrung: David Faller
+Sitz der Ges.: B?blingen     /    Registergericht: AmtsG Stuttgart, HRB 243294
 
