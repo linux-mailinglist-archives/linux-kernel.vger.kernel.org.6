@@ -1,128 +1,154 @@
-Return-Path: <linux-kernel+bounces-216957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEEB490A91C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:09:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DFD490A925
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 575CD28932A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 060D9288A6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAB0190698;
-	Mon, 17 Jun 2024 09:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF7B191478;
+	Mon, 17 Jun 2024 09:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/W5sT9X"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1c5oIuT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F6C1836FC;
-	Mon, 17 Jun 2024 09:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBE1190694;
+	Mon, 17 Jun 2024 09:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718615348; cv=none; b=vE+3koCsr6iOtI6dip6hJ4SsIY48CuQepI+M2DBgfWrSY99V2kkSmDB+R2dNgTiN+QLALKlZdN2KYmJUPFQScpp7bdPdU+ln2TkxEc31ZOkt8ZYrXu5qpz1zXZ+5AUr/QnHyj/YJ1KgezgcaqE0xlmepWfJSgpmxo9JYtFGnjm0=
+	t=1718615379; cv=none; b=CZG0vAjbL7gnHE80XagZxhWcrLtd0g/iqTA0OoH+y784cAg3vVPm1Twe6/ZECD0HGjaDQhd7NjH6WrTnt/PL6yoy1Cmr+aKMuIOOkQImFKSFCQLLwdCXE+pao8TSglTrHALngQZn1sT9z6gO1kWwtpNTNpVr2ETur5/IhZp1HR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718615348; c=relaxed/simple;
-	bh=cXXNE+/7w55i14XhydNETn2Xywxi8u/c5hsjE7hRYsI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kn2qg7OAWtf/xCHoo/uOC6M83454unp1Y9cpZM6/WKFasRaXgzEtt43z0v/dbb0wDL40AK+A1CfEYc5UXvtiJLz85QQkTIfSDTFpORRAJ3jKCvDQpe7mLvvfenvmeqBnLMMZ50ZHiLBZfZnrAVVDlVytiHKXOGDoPZpPl+RQrhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/W5sT9X; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bbdb15dd5so4729504e87.3;
-        Mon, 17 Jun 2024 02:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718615345; x=1719220145; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tHualuQcrcR9FOndaPpRpoW37XnDcV8gKD4pHsnrc4s=;
-        b=Z/W5sT9X7APzG+yGuNPY5Ek5W3hniignONtip2sjqOyVKntD7Uh7U7IZRFiv231gLe
-         fOESf4zbdxsjTz6+jxlBhslmjR87MMXMJSsT0eb2dMSznHkvQtMT7t0RgRyxFUDDLuak
-         bp5vAa+nNHcj7fHjJ+N+gG1C3NdAnI0/RcKU4DIKBTxe3bHnYeNNi3cR0620HWdOwfnP
-         27lH+5hBqeGh1fEXKzJOBt+C8rwK8ftzHLJZKIkDhdKYiUNquGv0KcvHT4l2oiE4G5+p
-         gJRP1KPYIY4Y+5SNuA8bTuh+3c+mmefVHpptyRt7O8ENk+ccIqpGpKX1DWiQGdkWC+a1
-         t+nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718615345; x=1719220145;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tHualuQcrcR9FOndaPpRpoW37XnDcV8gKD4pHsnrc4s=;
-        b=VFMDbttYP/2qHdvFQp3PlmXAbC+z2ArOCbudu1Az6v8q/BxQRzb6TlSSXDkSlp2Vjv
-         WirP8VT8j7FmaMYeOWLjyHyHtE1CmIsreiM/66bZG2CTpyaHTsS7SGxyskJGEYHffD3w
-         akxItWUO0nmBHtWnx5nvpVtyS7ExGehPXLWaw0FTVgJb8ifAfChYniEvFY7opzm1B6eG
-         P8hsUNkG6zcdjEYDdpWw+sJyhc+FJstBOu4f9mGl+DNZW2uZjIDsvLCPJJ9piET93CMA
-         eqTLv706fzD50QyPyfm6PSsnf4kbMtdMTU6jA7jGsIlgaPdEK2VZ/PTnrBCz/VTy4AFw
-         SQbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlNG9A9DWf0QgDn5WicOU+M2n4q8zuav8zdNg7V7GTMsZxNZzMcZ9pX4Tl7M3rMzaywHeXqc2zx/b77H9q9cGbVsaOacYE44aSaiGw49BkMgpMHzGxyMZdMW4LsDMXSwpyaAVun+qdLw==
-X-Gm-Message-State: AOJu0YyEy84Ru00ozWT3hA1bUD1ld7V2wRkHQXmWsZy+OByIfLOkA/dt
-	kfGWdLPZPIciHQZyw2mL3aPwB6ZS2b5WRVgO7cJSl/olag6OCd99
-X-Google-Smtp-Source: AGHT+IFHVBJp/VFqtV++c4t0//VCdL0P9LDVu7JUn+qUbTIRnLIdZCE653CJVQBQ1vaa46S79Eeekw==
-X-Received: by 2002:ac2:555e:0:b0:52c:9a1f:52e7 with SMTP id 2adb3069b0e04-52ca6e988a6mr5758312e87.58.1718615344901;
-        Mon, 17 Jun 2024 02:09:04 -0700 (PDT)
-Received: from ?IPV6:2001:8f8:183b:6864:7071:8881:6a51:3e82? ([2001:8f8:183b:6864:7071:8881:6a51:3e82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6127d6dsm154008765e9.26.2024.06.17.02.09.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 02:09:04 -0700 (PDT)
-Message-ID: <8ae179e6-3aee-415b-9dc4-298e162fbcad@gmail.com>
-Date: Mon, 17 Jun 2024 13:09:00 +0400
+	s=arc-20240116; t=1718615379; c=relaxed/simple;
+	bh=CFsb4JRR8B7+LNbbg/vD4+mfvHSBhr5GHHr0I+YW3Zc=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=IKzzaJm+catIrS1coFwXGlS2UYpOepUaksgD1AgweXfOUpPtPjcyHEZyaacDMv+3sFzl4L0uk9pp0KQ4stnk7svodTsM+q/Ke8xMeRPbLxkEHBKQqBoVXmCmG/irNwjCrh2Qk+I/4PZi2c6PvciHYvbDL4p0+SkKzgy66pxRFJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1c5oIuT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5C68C3277B;
+	Mon, 17 Jun 2024 09:09:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718615379;
+	bh=CFsb4JRR8B7+LNbbg/vD4+mfvHSBhr5GHHr0I+YW3Zc=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=G1c5oIuTePKfG2RzKc8tjI5+qJyx22PFYRthWIJb40HJGySFJR02dRUwTKxt8qCdV
+	 QvMWlvTPpO/998/8121SGDWwPusP7s+ExTE/Mk20ukPkEnUI+aoPe4tZHRTQGmerON
+	 WqyW5MrPNbTFAdSkUk+XoRj/xih/OjLlaE/Ve5bbghMw2lUdh6S9P2XvmRJ5QTNAoE
+	 CjoOzYnL4feeyss7uNmDJom8g7ut1HyCz6Dx7KdAH23aRkzj6r+9nvearD04vM9mjd
+	 nOVkiXu/A70y1Bsye0WO/tO+wrzx3cUmIHjPmDTTrL4ZL9hgwCUSg85SwE+tcqewxk
+	 5+y7QOzLvi2gg==
+From: Kalle Valo <kvalo@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,  "David S . Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  Jeff Johnson <jjohnson@kernel.org>,
+  linux-wireless@vger.kernel.org,  netdev@vger.kernel.org,
+  devicetree@vger.kernel.org,  ath11k@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  ath12k@lists.infradead.org,  Bartosz
+ Golaszewski <bartosz.golaszewski@linaro.org>,  Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v9 1/2] dt-bindings: net: wireless: qcom,ath11k:
+ describe the ath11k on QCA6390
+References: <20240605122106.23818-1-brgl@bgdev.pl>
+	<20240605122106.23818-2-brgl@bgdev.pl> <87h6e6qjuh.fsf@kernel.org>
+	<CAMRc=MdiKxtnN+g92RUTXdOydaPV5M2u5iUdKyE2SNvDkdXAjg@mail.gmail.com>
+	<871q5aqiei.fsf@kernel.org>
+	<CAMRc=McacZMP-51hjH+d8=PVe+Wgw4a8xWcv0sRPLJKL_gP=KQ@mail.gmail.com>
+	<87sexqoxm9.fsf@kernel.org>
+	<CAMRc=McYAbhL5M1geYtf8LbgJG5x_+ZUFKXRuo7Vff_8ssNoUA@mail.gmail.com>
+	<8db01c97-1cb2-4a86-abff-55176449e264@kernel.org>
+	<CAMRc=Mer2HpuBLGiabNtSgSRduzrrtT1AtGoDXeHgYqavWXdrA@mail.gmail.com>
+	<87ikyenx5c.fsf@kernel.org>
+	<CAMRc=MdPQu-r4aaeag9apYP1-FoQ2-_GAk_qnHqDz-jWibRDFQ@mail.gmail.com>
+	<CAMRc=Mfsqnfy-Q++QyZNmsYoV72hUoNFEDCW6KZ0H_MEHEe5Rw@mail.gmail.com>
+Date: Mon, 17 Jun 2024 12:09:33 +0300
+In-Reply-To: <CAMRc=Mfsqnfy-Q++QyZNmsYoV72hUoNFEDCW6KZ0H_MEHEe5Rw@mail.gmail.com>
+	(Bartosz Golaszewski's message of "Fri, 14 Jun 2024 09:18:14 +0200")
+Message-ID: <878qz4kkaa.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] arm64: dts: rockchip: Add cpufreq support to
- Khadas Edge2
-Content-Language: en-GB
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, Jacobe Zang <jacobe.zang@wesion.com>
-Cc: nick@khadas.com, efectn@protonmail.com, jagan@edgeble.ai,
- dsimic@manjaro.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240617071112.3133101-1-jacobe.zang@wesion.com>
- <20240617071112.3133101-6-jacobe.zang@wesion.com> <5475817.tWeucmBOSa@diego>
-From: Alexey Charkov <alchark@gmail.com>
-In-Reply-To: <5475817.tWeucmBOSa@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Bartosz Golaszewski <brgl@bgdev.pl> writes:
 
-On 17/06/2024 11:33, Heiko Stübner wrote:
-> Hi Jacobe Zang,
+> On Wed, Jun 12, 2024 at 2:52=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+>>
+>> On Wed, Jun 12, 2024 at 2:49=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wr=
+ote:
+>> >
+>> > Bartosz Golaszewski <brgl@bgdev.pl> writes:
+>> >
+>> > >> >> Sure, I don't need DT but that's not my point. My point is why r=
+equire
+>> > >> >> these supplies for _all_ devices having PCI id 17cb:1101 (ie. QC=
+A6390)
+>> > >> >> then clearly there are such devices which don't need it? To me t=
+hat's
+>> > >> >> bad design and, if I'm understanding correctly, prevents use of
+>> > >> >> qcom,ath11k-calibration-variant property. To me having the suppl=
+ies
+>> > >> >> optional in DT is more approriate.
+>> > >> >>
+>> > >> >
+>> > >> > We require them because *they are physically there*.
+>> > >>
+>> > >> I understand that for all known DT QCA6390 hardware, the supplies s=
+hould
+>> > >> be provided thus they should be required. If in the future we have
+>> > >> different design or we represent some pluggable PCI card, then:
+>> > >> 1. Probably that PCI card does not need power sequencing, thus no DT
+>> > >> description,
+>> > >> 2. If still needs power sequencing, you can always amend bindings a=
+nd
+>> > >> un-require the supplies.
+>> > >>
+>> > >>
+>> > >> Best regards,
+>> > >> Krzysztof
+>> > >>
+>> > >
+>> > > Kalle, does the above answer your questions? Are these bindings good=
+ to go?
+>> >
+>> > To me most important is that we are on the same page that in some cases
+>> > (eg. with M.2 boards) the supplies can be optional and we can update t=
+he
+>> > bindings doc once such need arises (but we don't make any changes right
+>> > now). Based on point 2 from Krzysztof I think we all agree, right?
+>> >
+>> > Just making sure: if we later change the supplies optional does that
+>> > create any problems with backwards compatibility? It's important that
+>> > updates go smoothly.
+>>
+>> No, you can always relax the requirements alright. It's only when you
+>> make them more strict that you'll run into backward compatibility
+>> issues.
+>>
+>> Bart
 >
-> Am Montag, 17. Juni 2024, 09:11:12 CEST schrieb Jacobe Zang:
->> This adjust CPU nodes on Khadas Edge2.
->>
->> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->> ---
->>   .../arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts | 12 ++++++++++--
->>   1 file changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
->> index 7d7cc3e76838c..5fb15d3dc23e9 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
->> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
->> @@ -160,34 +160,42 @@ vdd_3v3_sd: vdd-3v3-sd-regulator {
->>   
->>   &cpu_b0 {
->>   	cpu-supply = <&vdd_cpu_big0_s0>;
->> +	mem-supply = <&vdd_cpu_big0_mem_s0>;
-> as far as I remember there has not been any binding merged that declares
-> this supply. Thankfully following the double phandle below, the Edge2 is
-> designed to use the same regulator for the mem-supply, so special handling
-> isn't even needed.
+> Kalle,
+>
+> Is that ok with you? Can we get that queued to avoid the new
+> check_dtbs warnings in next when the DTS changes land?
 
-Indeed, currently there isn't any user in the mainline tree (neither 
-bindings nor drivers) for this separate regulator. Mainline cpufreq-dt 
-only expects a single regulator, and as Heiko pointed out Edge2 uses the 
-same physical regulator to power both the CPU core and its SRAM, so 
-adding a separate mem-supply here isn't helpful.
+Yes, this patchset is already on our pending branch and should be
+applied soon. I was on a long weekend hence the delay.
 
-Best regards, Alexey
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
