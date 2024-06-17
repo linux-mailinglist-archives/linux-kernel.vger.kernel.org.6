@@ -1,62 +1,91 @@
-Return-Path: <linux-kernel+bounces-218271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5BB90BBF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2C290BC03
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E56871C2165B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3D9282A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C364619B3E4;
-	Mon, 17 Jun 2024 20:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D68199220;
+	Mon, 17 Jun 2024 20:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Ij22bNSh"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATluY9by"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2278019AD99;
-	Mon, 17 Jun 2024 20:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD7C198823;
+	Mon, 17 Jun 2024 20:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718655480; cv=none; b=K/4kL1oZKVNrj5YBx3dLTQ3TEDJjMk04mJLaRJbln348cQPDwM8f5Zd5xon1H/iV6xZ8hJ+qfvcZZwwkJ0hP7ivvXA6+DzD9j4Ao1Ko0xH5w4ObvdzUEBP20Brk8J/2Rv4UxHS+zG3F7F8+/huramUbWcPa9LkPjt4M9jRmakjE=
+	t=1718655495; cv=none; b=aufdTaGCQdOq79a/MU7RLTnsgBfzjmIGdukk5KWkuJoXBKAX+5mYmaSclmlgXUU3t9cgrHu75Uf2ekHP3n5DyMrjqMNVe/28LusufPLnzRQglsOnBT/QGiMSCC8JpzZfrq7pOM9wzPALGnj6DQR6lfOj2XUX4Tk075m8ZN/OX/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718655480; c=relaxed/simple;
-	bh=We1ydyHnrk8Sp4RgNlISv2jNIeyh8hASpbRXppWAGec=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iTHHYpkmn9S2/o8M9C1PA/zXavi4aMzI4S7+OZ6gbeK9aUpYxC+xKAmLO5RMV9tfcYaiApH7y1XivqBbyaVHhNwwQFaikhUJiuPjQnJTG+TX1/idhWj781OlMG9OyBquAIIejCbH55q0GIEFE+m7k3W9hiXgGQxEN1IUxgcvh7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Ij22bNSh; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1718655474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6nJ2AJoxxGOzx8FlzxjSHQ63pZJ01vIWAcBtW0WpNeE=;
-	b=Ij22bNShaPPe/gdzZ0oHStjzEKfSKZ1tehWFhhbe9x/419UocSw+CG6QsGDr4qrLjKu8O8
-	FnFSHoDI9D18TseRQM/gTKU53h06vpEUQh5rAiaAHPL+FYaXP/geIPr4rEONABCM2qpuBe
-	k9uVHwUn2iiQ25Qd5Qo5ihOdtPnm/pOIpgauGkBma5vMG84/dFND/frm8mzUp6hdlAufFj
-	AGdDnzF2yQ64ZfCoyOPk0fSAZ8kBr+ODbVcrOd0g9gd32y0Gz6/Y/IcDrzs4xz6m65iYCW
-	wF/Z+iYgm9SmhTJ/X0AnhN98lgPFCnTTxruOp8OPqIqJqD6J2BTeU/jbsRKA3Q==
-To: dri-devel@lists.freedesktop.org
-Cc: boris.brezillon@collabora.com,
-	robh@kernel.org,
-	steven.price@arm.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	linux-kernel@vger.kernel.org,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Furkan Kardame <f.kardame@manjaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/panfrost: Mark simple_ondemand governor as softdep
-Date: Mon, 17 Jun 2024 22:17:48 +0200
-Message-Id: <4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1718655495; c=relaxed/simple;
+	bh=OtVJdGEulRR6iKBFNWOxb7iykvDXqHHzSJe5xWSLj/U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JfR/wEjeUJQ5CZL409nqNc3qqHo8wL7VyCt7KVOUDTozXl2X+xbATsRVbDGO/HKJKjyAsIYuEc1dmpZbsdfUnXtTt//SKFe5skennJHnAsEEimuSAoMc1VGvPAIUhloaKoPKgEqWRYOA8D5DpsVOk827pnBGilVvmQypT4qx5wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATluY9by; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so1017385a12.1;
+        Mon, 17 Jun 2024 13:18:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718655491; x=1719260291; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ihwEhBftKt1w8XQkg13RWLFkeL3798aqGLkbQ6rlJCc=;
+        b=ATluY9bykrMqBoRTzdWM9PliWnhU0PBoa0qt/RtPS9XZbBOWjGJ+LAmAm71nNVwUKx
+         9+kkb9ex4lErTvEe/4FLcx3vnLqlwT8BWPU3DNI2DifsnzC7r6UIr05fTdmQoFoxOIcu
+         Gf+P84Qb+KjX5SRgz4dHP1pKdGSO2RE8O+7TkgkCZgO32BKaMRb80goYWi/hRl7P9Jcu
+         Xi2/o5RuNlkS7noSoc4cP9yye1DH2O7LF2RGu+7kjHdoqJh1qH5qVTdl64/k690kayEL
+         79rhiES+vGjceQK43MxWXE61jEYCPIAflQ4qVVkFbiqxRDOPO2jn1UaCFVFAbsNA2J6l
+         tVRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718655491; x=1719260291;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ihwEhBftKt1w8XQkg13RWLFkeL3798aqGLkbQ6rlJCc=;
+        b=tj0qRRmVSKByUJtwioq2h5xdd3RdX4EXwq64mzafLJt0Bqov/NhyRPJ60v+FrfKrag
+         sI96lfmBAvXWvLM/c4SDMiLTGQj0LehRGOrWRFsCVnN8LK5sPoVZZs1zde6GM4PJBRqt
+         /FpKCKcM3ixULXpKU0CvuDppm+uttWFcCHEluS7XSImnN21h395AVQcHv42Ah+GwaMoD
+         zbRszDl30AWZjTlKqydvRAejy08xXI5uVNkTFmxXmHqrX2GwoU5Zi/D57Cq5MZaMeL71
+         DnQ+yFpJfDZXIZfxd9trjbcYRIC5YgY7+rN6xlg2t/umKmtIPu4feeWHY443+3/u1hXT
+         EZfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYnHkS9xeoLRmCWuZ0P8xAmx/kYVT75Efc6G7iBlUjL9fX6SywtPFz2GhJhWHOO+bwLr2IX0nnJm3+iPd82pk6K2K35BSR/Abujg==
+X-Gm-Message-State: AOJu0YxfHIc197SM/3mRPYbRVBVKjXd3Yc3VLHIcMsmwdKY1TIDgiAPT
+	ioNOeICBwA+kymPCz9X7FLsafC+TifQbqYvAZQPk/ohG+ii1LOGrqYh1cIHh
+X-Google-Smtp-Source: AGHT+IH0twaBCtMlcDcRVhYz45raKGKvcQXzLY/cPs1uD6bo90wAdszMT1pzUcI7XWBu/zJyb4SCcg==
+X-Received: by 2002:aa7:de8b:0:b0:57c:bc03:caa2 with SMTP id 4fb4d7f45d1cf-57cf7ad5216mr304971a12.20.1718655491211;
+        Mon, 17 Jun 2024 13:18:11 -0700 (PDT)
+Received: from andrea.fritz.box (host-79-26-69-235.retail.telecomitalia.it. [79.26.69.235])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cbc4f5870sm6087128a12.4.2024.06.17.13.18.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 13:18:10 -0700 (PDT)
+From: Andrea Parri <parri.andrea@gmail.com>
+To: stern@rowland.harvard.edu,
+	will@kernel.org,
+	peterz@infradead.org,
+	boqun.feng@gmail.com,
+	npiggin@gmail.com,
+	dhowells@redhat.com,
+	j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr,
+	paulmck@kernel.org,
+	akiyks@gmail.com,
+	dlustig@nvidia.com,
+	joel@joelfernandes.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	hernan.poncedeleon@huaweicloud.com,
+	jonas.oberhauser@huaweicloud.com,
+	Andrea Parri <parri.andrea@gmail.com>
+Subject: [PATCH v3] tools/memory-model: Document herd7 (abstract) representation
+Date: Mon, 17 Jun 2024 22:17:59 +0200
+Message-Id: <20240617201759.1670994-1-parri.andrea@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,59 +93,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Panfrost DRM driver uses devfreq to perform DVFS, while using simple_ondemand
-devfreq governor by default.  This causes driver initialization to fail on
-boot when simple_ondemand governor isn't built into the kernel statically,
-as a result of the missing module dependency and, consequently, the required
-governor module not being included in the initial ramdisk.  Thus, let's mark
-simple_ondemand governor as a softdep for Panfrost, to have its kernel module
-included in the initial ramdisk.
+tools/memory-model/ and herdtool7 are closely linked: the latter is
+responsible for (pre)processing each C-like macro of a litmus test,
+and for providing the LKMM with a set of events, or "representation",
+corresponding to the given macro.  Provide herd-representation.txt
+to document the representations of the concurrency macros, following
+their "classification" in Documentation/atomic_t.txt.
 
-This is a rather longstanding issue that has forced distributions to build
-devfreq governors statically into their kernels, [1][2] or has forced users
-to introduce some unnecessary workarounds. [3]
-
-For future reference, not having support for the simple_ondemand governor in
-the initial ramdisk produces errors in the kernel log similar to these below,
-which were taken from a Pine64 RockPro64:
-
-  panfrost ff9a0000.gpu: [drm:panfrost_devfreq_init [panfrost]] *ERROR* Couldn't initialize GPU devfreq
-  panfrost ff9a0000.gpu: Fatal error during GPU init
-  panfrost: probe of ff9a0000.gpu failed with error -22
-
-Having simple_ondemand marked as a softdep for Panfrost may not resolve this
-issue for all Linux distributions.  In particular, it will remain unresolved
-for the distributions whose utilities for the initial ramdisk generation do
-not handle the available softdep information [4] properly yet.  However, some
-Linux distributions already handle softdeps properly while generating their
-initial ramdisks, [5] and this is a prerequisite step in the right direction
-for the distributions that don't handle them properly yet.
-
-[1] https://gitlab.manjaro.org/manjaro-arm/packages/core/linux/-/blob/linux61/config?ref_type=heads#L8180
-[2] https://salsa.debian.org/kernel-team/linux/-/merge_requests/1066
-[3] https://forum.pine64.org/showthread.php?tid=15458
-[4] https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/commit/?id=49d8e0b59052999de577ab732b719cfbeb89504d
-[5] https://github.com/archlinux/mkinitcpio/commit/97ac4d37aae084a050be512f6d8f4489054668ad
-
-Cc: Diederik de Haas <didi.debian@cknow.org>
-Cc: Furkan Kardame <f.kardame@manjaro.org>
-Cc: stable@vger.kernel.org
-Fixes: f3ba91228e8e ("drm/panfrost: Add initial panfrost driver")
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+Suggested-by: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
 ---
- drivers/gpu/drm/panfrost/panfrost_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes since v2 [1]:
+  - drop lk-rmw links
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index ef9f6c0716d5..149737d7a07e 100644
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -828,3 +828,4 @@ module_platform_driver(panfrost_driver);
- MODULE_AUTHOR("Panfrost Project Developers");
- MODULE_DESCRIPTION("Panfrost DRM Driver");
- MODULE_LICENSE("GPL v2");
-+MODULE_SOFTDEP("pre: governor_simpleondemand");
+Changes since v1 [2]:
+  - add legenda/notations
+  - add some SRCU, locking macros
+  - update formatting of failure cases
+  - update README file
+
+[1] https://lore.kernel.org/lkml/20240605134918.365579-1-parri.andrea@gmail.com/
+[2] https://lore.kernel.org/lkml/20240524151356.236071-1-parri.andrea@gmail.com/
+
+ tools/memory-model/Documentation/README       |   7 +-
+ .../Documentation/herd-representation.txt     | 106 ++++++++++++++++++
+ 2 files changed, 112 insertions(+), 1 deletion(-)
+ create mode 100644 tools/memory-model/Documentation/herd-representation.txt
+
+diff --git a/tools/memory-model/Documentation/README b/tools/memory-model/Documentation/README
+index 304162743a5b8..44e7dae73b296 100644
+--- a/tools/memory-model/Documentation/README
++++ b/tools/memory-model/Documentation/README
+@@ -33,7 +33,8 @@ o	You are familiar with Linux-kernel concurrency and the use of
+ 
+ o	You are familiar with Linux-kernel concurrency and the use
+ 	of LKMM, and would like to learn about LKMM's requirements,
+-	rationale, and implementation:	explanation.txt
++	rationale, and implementation:	explanation.txt and
++	herd-representation.txt
+ 
+ o	You are interested in the publications related to LKMM, including
+ 	hardware manuals, academic literature, standards-committee
+@@ -61,6 +62,10 @@ control-dependencies.txt
+ explanation.txt
+ 	Detailed description of the memory model.
+ 
++herd-representation.txt
++	The (abstract) representation of the Linux-kernel concurrency
++	primitives in terms of events.
++
+ litmus-tests.txt
+ 	The format, features, capabilities, and limitations of the litmus
+ 	tests that LKMM can evaluate.
+diff --git a/tools/memory-model/Documentation/herd-representation.txt b/tools/memory-model/Documentation/herd-representation.txt
+new file mode 100644
+index 0000000000000..2fe270e902635
+--- /dev/null
++++ b/tools/memory-model/Documentation/herd-representation.txt
+@@ -0,0 +1,106 @@
++#
++# Legenda:
++#	R,	a Load event
++#	W,	a Store event
++#	F,	a Fence event
++#	LKR,	a Lock-Read event
++#	LKW,	a Lock-Write event
++#	UL,	an Unlock event
++#	LF,	a Lock-Fail event
++#	RL,	a Read-Locked event
++#	RU,	a Read-Unlocked event
++#	R*,	a Load event included in RMW
++#	W*,	a Store event included in RMW
++#	SRCU,	a Sleepable-Read-Copy-Update event
++#
++#	po,	a Program-Order link
++#	rmw,	a Read-Modify-Write link
++#
++# By convention, a blank entry/representation means "same as the preceding entry".
++#
++    ------------------------------------------------------------------------------
++    |                        C macro | Events                                    |
++    ------------------------------------------------------------------------------
++    |                    Non-RMW ops |                                           |
++    ------------------------------------------------------------------------------
++    |                      READ_ONCE | R[once]                                   |
++    |                    atomic_read |                                           |
++    |                     WRITE_ONCE | W[once]                                   |
++    |                     atomic_set |                                           |
++    |               smp_load_acquire | R[acquire]                                |
++    |            atomic_read_acquire |                                           |
++    |              smp_store_release | W[release]                                |
++    |             atomic_set_release |                                           |
++    |                   smp_store_mb | W[once] ->po F[mb]                        |
++    |                         smp_mb | F[mb]                                     |
++    |                        smp_rmb | F[rmb]                                    |
++    |                        smp_wmb | F[wmb]                                    |
++    |          smp_mb__before_atomic | F[before-atomic]                          |
++    |           smp_mb__after_atomic | F[after-atomic]                           |
++    |                    spin_unlock | UL                                        |
++    |                 spin_is_locked | On success: RL                            |
++    |                                | On failure: RU                            |
++    |         smp_mb__after_spinlock | F[after-spinlock]                         |
++    |      smp_mb__after_unlock_lock | F[after-unlock-lock]                      |
++    |                  rcu_read_lock | F[rcu-lock]                               |
++    |                rcu_read_unlock | F[rcu-unlock]                             |
++    |                synchronize_rcu | F[sync-rcu]                               |
++    |                rcu_dereference | R[once]                                   |
++    |             rcu_assign_pointer | W[release]                                |
++    |                 srcu_read_lock | R[srcu-lock]                              |
++    |                 srcu_down_read |                                           |
++    |               srcu_read_unlock | W[srcu-unlock]                            |
++    |                   srcu_up_read |                                           |
++    |               synchronize_srcu | SRCU[sync-srcu]                           |
++    | smp_mb__after_srcu_read_unlock | F[after-srcu-read-unlock]                 |
++    ------------------------------------------------------------------------------
++    |       RMW ops w/o return value |                                           |
++    ------------------------------------------------------------------------------
++    |                     atomic_add | R*[noreturn] ->rmw W*[once]               |
++    |                     atomic_and |                                           |
++    |                      spin_lock | LKR ->po LKW                              |
++    ------------------------------------------------------------------------------
++    |        RMW ops w/ return value |                                           |
++    ------------------------------------------------------------------------------
++    |              atomic_add_return | F[mb] ->po R*[once]                       |
++    |                                |     ->rmw W*[once] ->po F[mb]             |
++    |               atomic_fetch_add |                                           |
++    |               atomic_fetch_and |                                           |
++    |                    atomic_xchg |                                           |
++    |                           xchg |                                           |
++    |            atomic_add_negative |                                           |
++    |      atomic_add_return_relaxed | R*[once] ->rmw W*[once]                   |
++    |       atomic_fetch_add_relaxed |                                           |
++    |       atomic_fetch_and_relaxed |                                           |
++    |            atomic_xchg_relaxed |                                           |
++    |                   xchg_relaxed |                                           |
++    |    atomic_add_negative_relaxed |                                           |
++    |      atomic_add_return_acquire | R*[acquire] ->rmw W*[once]                |
++    |       atomic_fetch_add_acquire |                                           |
++    |       atomic_fetch_and_acquire |                                           |
++    |            atomic_xchg_acquire |                                           |
++    |                   xchg_acquire |                                           |
++    |    atomic_add_negative_acquire |                                           |
++    |      atomic_add_return_release | R*[once] ->rmw W*[release]                |
++    |       atomic_fetch_add_release |                                           |
++    |       atomic_fetch_and_release |                                           |
++    |            atomic_xchg_release |                                           |
++    |                   xchg_release |                                           |
++    |    atomic_add_negative_release |                                           |
++    ------------------------------------------------------------------------------
++    |            Conditional RMW ops |                                           |
++    ------------------------------------------------------------------------------
++    |                 atomic_cmpxchg | On success: F[mb] ->po R*[once]           |
++    |                                |                 ->rmw W*[once] ->po F[mb] |
++    |                                | On failure: R*[once]                      |
++    |                        cmpxchg |                                           |
++    |              atomic_add_unless |                                           |
++    |         atomic_cmpxchg_relaxed | On success: R*[once] ->rmw W*[once]       |
++    |                                | On failure: R*[once]                      |
++    |         atomic_cmpxchg_acquire | On success: R*[acquire] ->rmw W*[once]    |
++    |                                | On failure: R*[once]                      |
++    |         atomic_cmpxchg_release | On success: R*[once] ->rmw W*[release]    |
++    |                                | On failure: R*[once]                      |
++    |                   spin_trylock | On success: LKR ->po LKW                  |
++    |                                | On failure: LF                            |
++    ------------------------------------------------------------------------------
+-- 
+2.34.1
+
 
