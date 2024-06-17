@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-217050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 260E290AA13
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:44:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E55090AA12
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A21361F25771
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:44:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAACC1F25E6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3763B198A03;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE03196C9E;
 	Mon, 17 Jun 2024 09:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4T5n2Ib"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmIgOZ6D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AAD194AFB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0242194AFF;
 	Mon, 17 Jun 2024 09:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718617105; cv=none; b=d5DD7YBD2ccsiiioEl2DseIPXVUwh1qZOEtDOV9l4MEDYuJQKoNySOdr6oEdqjZQu9BEUBPthCLlX4QfpsPmF9Kd5j6NGlI5mdc70EE8ah9+iTBNwnOeHarGGt4xNBUNcw1AyIhWu63SBTJtfitPbSWQkY9rD1+khjq4t9mJSk0=
+	t=1718617106; cv=none; b=A6XD3bXLXOqQ+OznjRXfVN3XRXboVe/UOsyLp2ONcz+xNeoNTW5qfeRX0HlygQGti5OFkmMGYrUEWgOAXF5n1W5Dj6tu589zz9AprJFHX9/2DzXvdb1mB5bLlfr09yUsLTR8iTYfg1xaHXcihaeHA93Y3zu7neLtoLRPesU3W7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718617105; c=relaxed/simple;
-	bh=tpBb5gzOmG5ywIjVVdpHQ0mPmmXATJF1+bBKgyaj2zo=;
+	s=arc-20240116; t=1718617106; c=relaxed/simple;
+	bh=xnkrIHWz0C+Ukid8QKlf5IsbUMUDj0jNbjFGkqdX5YE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VyfmM0w8yXMvtVCisalI/O3NTiFYKWqJk+PJ9srwA8IUEKikn8k2kWF8z9BFQuF/Yw/RLQhbtYWI4tWhiRZuBU94MHPRTb9utPLNrooLPuQqSasILLJOTzilyke5SfElGpCVD5A+tb6PaDBzGrymFrXnLphCtXm+Id8jNJZtTOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4T5n2Ib; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 231C9C4E679;
+	 In-Reply-To:To:Cc; b=AbJt8YVJLGrU//53MUWO0fd1g/UzKLfvNIrF7bTwZfv3z0c2OjY0l0vQsMO+2aFDQQNF4pOVxAZ7k9eqKrDosU6289c/ewnZZfL/b4iYd6HsDSABNvEIesu0EEL2+CX4iMiSdLlqakgYoWwQkST0tPAROTsNwGYWDeiNjlEP/CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UmIgOZ6D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2DA93C4E676;
 	Mon, 17 Jun 2024 09:38:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1718617105;
-	bh=tpBb5gzOmG5ywIjVVdpHQ0mPmmXATJF1+bBKgyaj2zo=;
+	bh=xnkrIHWz0C+Ukid8QKlf5IsbUMUDj0jNbjFGkqdX5YE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=R4T5n2IbScRJtFZtOJnQgMkDr1yoqf0VRhTeZ0t6Mc6DCcMelOwrohzKrbshvir5I
-	 ZreWEcilJxK3LM/0lzJMZawRSoKAajruJEFCcXTDJlN2MN1lljuoT6OBKwVxpFFNql
-	 dVdfPKwJ+dRAqvWEmgxgdcxmqzF49BVPWfC5rmlaY8gDv61xN0NJ/hxo1sdKPxyyN1
-	 T6GgCxxwRgQWDfQl5I2iDgQXe2zw9VJwfALRoRT4mvZD+YYfZM8eWB9uyuKxDDhtDI
-	 aTUc0iOEkenj4o8kqzGqVc6kGnjJ8eNeHWAJKATTE1G70dk1egQV79kKtGw1dDegAI
-	 lB1ma7b1mTwpA==
+	b=UmIgOZ6DMijmu669TZeQdXhwbbcTd1tUjtTixErfIkBd6ZfaO0pV364Z1BlWkU70v
+	 cJT0vqEF+6DYq9C9tEJFV6gsOBPGFL6F/FJUxns8/wmoSB2d5g9DbXoogU/G4teIKV
+	 6/WFaHYOgXtitd+TEzX7A5G1iC+VGh48eUBANgl/jT1/aeENb1rq2vbURZ/iLWuFn9
+	 LOV0AmAptNuWn/csBxsbpCk3Prm9fVYhXOLum6bi4AmZzk46vEwe1HQbkL84SVwSmp
+	 oVUI02ppuqPKEuLAkkx1QtwWsRYv1eXZJPzbe5LfEifFoajBsir1AQuek8meRjoWdZ
+	 VS/TM1qVV6n2A==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B19C2BA18;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B92AC2BA1A;
 	Mon, 17 Jun 2024 09:38:25 +0000 (UTC)
 From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Mon, 17 Jun 2024 12:36:59 +0300
-Subject: [PATCH v10 25/38] gpio: ep93xx: add DT support for gpio-ep93xx
+Date: Mon, 17 Jun 2024 12:37:00 +0300
+Subject: [PATCH v10 26/38] ASoC: dt-bindings: ep93xx: Document DMA support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,20 +54,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240617-ep93xx-v10-25-662e640ed811@maquefel.me>
+Message-Id: <20240617-ep93xx-v10-26-662e640ed811@maquefel.me>
 References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
 In-Reply-To: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+To: Hartley Sweeten <hsweeten@visionengravers.com>, 
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Arnd Bergmann <arnd@arndb.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718617100; l=4650;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718617100; l=1224;
  i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=b6Hs2Wne/sgWTtBW5GkGY2qFIl/1bEenUx4OuZqg2Gs=;
- b=I5UYVii3wqo4YRwsfxRRailFZZVBfWU+x41YvmkP4/7fIGK8M/PWpUe8chOlh2hvq6xNdu3M2VBu
- mRrXSmk3CbYyjaX7G2hg9YJZjKnKkKGvJth/aWRNhgWIOkFFxo0Q
+ bh=IYgRqPiUpJda2whx2paj9O35GPXheF0lc1rCPFeTg9o=;
+ b=9q0iZ5LJ0KG4HhEwTMjG/Rcm8wW9MV4d51edKmjpR8IUp9ISWH4xa5lyQeLBmmPjhp3wzo6KAQ+A
+ oWYiUfBJClv9rzk1yQ3D8z8i8gYOK+f14SSRBs2glXhLkoiqSeiJ
 X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
  pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
 X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
@@ -77,140 +81,45 @@ Reply-To: nikita.shubin@maquefel.me
 
 From: Nikita Shubin <nikita.shubin@maquefel.me>
 
-Add OF ID match table.
+Document DMA support in binding document.
 
 Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpio/gpio-ep93xx.c | 38 +++++++++++++++++++++++---------------
- 1 file changed, 23 insertions(+), 15 deletions(-)
+ .../devicetree/bindings/sound/cirrus,ep9301-i2s.yaml         | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-index a55f635585f4..ab798c848215 100644
---- a/drivers/gpio/gpio-ep93xx.c
-+++ b/drivers/gpio/gpio-ep93xx.c
-@@ -12,13 +12,13 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/slab.h>
- #include <linux/gpio/driver.h>
- #include <linux/bitops.h>
- #include <linux/seq_file.h>
--#include <linux/interrupt.h>
+diff --git a/Documentation/devicetree/bindings/sound/cirrus,ep9301-i2s.yaml b/Documentation/devicetree/bindings/sound/cirrus,ep9301-i2s.yaml
+index 453d493c941f..36a320ddf534 100644
+--- a/Documentation/devicetree/bindings/sound/cirrus,ep9301-i2s.yaml
++++ b/Documentation/devicetree/bindings/sound/cirrus,ep9301-i2s.yaml
+@@ -40,6 +40,16 @@ properties:
+       - const: sclk
+       - const: lrclk
  
- struct ep93xx_gpio_irq_chip {
- 	void __iomem *base;
-@@ -138,7 +138,8 @@ static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
--	int port_mask = BIT(irqd_to_hwirq(d));
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+	int port_mask = BIT(hwirq);
- 
- 	if (irqd_get_trigger_type(d) == IRQ_TYPE_EDGE_BOTH)
- 		eic->int_type2 ^= port_mask; /* switch edge direction */
-@@ -147,26 +148,28 @@ static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
- 	ep93xx_gpio_update_int_params(eic);
- 
- 	writeb(port_mask, eic->base + EP93XX_INT_EOI_OFFSET);
--	gpiochip_disable_irq(gc, irqd_to_hwirq(d));
-+	gpiochip_disable_irq(gc, hwirq);
- }
- 
- static void ep93xx_gpio_irq_mask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 
--	eic->int_unmasked &= ~BIT(irqd_to_hwirq(d));
-+	eic->int_unmasked &= ~BIT(hwirq);
- 	ep93xx_gpio_update_int_params(eic);
--	gpiochip_disable_irq(gc, irqd_to_hwirq(d));
-+	gpiochip_disable_irq(gc, hwirq);
- }
- 
- static void ep93xx_gpio_irq_unmask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 
--	gpiochip_enable_irq(gc, irqd_to_hwirq(d));
--	eic->int_unmasked |= BIT(irqd_to_hwirq(d));
-+	gpiochip_enable_irq(gc, hwirq);
-+	eic->int_unmasked |= BIT(hwirq);
- 	ep93xx_gpio_update_int_params(eic);
- }
- 
-@@ -179,11 +182,11 @@ static int ep93xx_gpio_irq_type(struct irq_data *d, unsigned int type)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
--	irq_hw_number_t offset = irqd_to_hwirq(d);
--	int port_mask = BIT(offset);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+	int port_mask = BIT(hwirq);
- 	irq_flow_handler_t handler;
- 
--	gc->direction_input(gc, offset);
-+	gc->direction_input(gc, hwirq);
- 
- 	switch (type) {
- 	case IRQ_TYPE_EDGE_RISING:
-@@ -209,7 +212,7 @@ static int ep93xx_gpio_irq_type(struct irq_data *d, unsigned int type)
- 	case IRQ_TYPE_EDGE_BOTH:
- 		eic->int_type1 |= port_mask;
- 		/* set initial polarity based on current input level */
--		if (gc->get(gc, offset))
-+		if (gc->get(gc, hwirq))
- 			eic->int_type2 &= ~port_mask; /* falling */
- 		else
- 			eic->int_type2 |= port_mask; /* rising */
-@@ -285,9 +288,8 @@ static int ep93xx_setup_irqs(struct platform_device *pdev,
- 	if (girq->num_parents == 0)
- 		return -EINVAL;
- 
--	girq->parents = devm_kcalloc(dev, girq->num_parents,
--				   sizeof(*girq->parents),
--				   GFP_KERNEL);
-+	girq->parents = devm_kcalloc(dev, girq->num_parents, sizeof(*girq->parents),
-+				     GFP_KERNEL);
- 	if (!girq->parents)
- 		return -ENOMEM;
- 
-@@ -306,7 +308,7 @@ static int ep93xx_setup_irqs(struct platform_device *pdev,
- 		girq->parent_handler = ep93xx_gpio_f_irq_handler;
- 
- 		for (i = 0; i < girq->num_parents; i++) {
--			irq = platform_get_irq(pdev, i);
-+			irq = platform_get_irq_optional(pdev, i);
- 			if (irq < 0)
- 				continue;
- 
-@@ -359,9 +361,15 @@ static int ep93xx_gpio_probe(struct platform_device *pdev)
- 	return devm_gpiochip_add_data(&pdev->dev, gc, egc);
- }
- 
-+static const struct of_device_id ep93xx_gpio_match[] = {
-+	{ .compatible = "cirrus,ep9301-gpio" },
-+	{ /* sentinel */ }
-+};
++  dmas:
++    items:
++      - description: out DMA channel
++      - description: in DMA channel
 +
- static struct platform_driver ep93xx_gpio_driver = {
- 	.driver		= {
- 		.name	= "gpio-ep93xx",
-+		.of_match_table = ep93xx_gpio_match,
- 	},
- 	.probe		= ep93xx_gpio_probe,
- };
++  dma-names:
++    items:
++      - const: tx
++      - const: rx
++
+ required:
+   - compatible
+   - '#sound-dai-cells'
+@@ -61,6 +71,8 @@ examples:
+                  <&syscon 30>,
+                  <&syscon 31>;
+         clock-names = "mclk", "sclk", "lrclk";
++        dmas = <&dma0 0 1>, <&dma0 0 2>;
++        dma-names = "tx", "rx";
+     };
+ 
+ ...
 
 -- 
 2.43.2
