@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-217849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388D590B519
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:49:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCFC90B50D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6271F22652
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:49:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0614D1F24B87
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877D815B141;
-	Mon, 17 Jun 2024 15:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2361A15A863;
+	Mon, 17 Jun 2024 15:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="CB/FVxKo"
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+	dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="kepDV1/3"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8A115AD9E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 15:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55CC15A84C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 15:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718637755; cv=none; b=hlf32ZuRodBc2xpkiEc4yWULtXY71dJ502B5Ix7uJUjOL+W0zIMkN2MJfS37bybv7J7h1ZkuGkZPqkEJkvxUvDp6Ua7rMBrSVgB+xD6tPF/FrKk6Hd47WpBmRkS0Lp/1JIRCII/8+03OsdKKArZf/2rcpfZSqwkPBaA1fkmNQuA=
+	t=1718637752; cv=none; b=LWNjFJwfxv78x4WM3uPbG2crOEK2dMlcZmP7Yh/eYIS+XoB3RPEE90rN05s2hO9PckZV2Oy0/RSq6w672c2nlCsO3yXmCrG9Sqn7jMrspFFomgPClzmmjbPWsOGsVOqiSdr+N3pBk3NO8CZtwViQPEvyThraQI4ymZHL/6NAUmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718637755; c=relaxed/simple;
-	bh=gVkjhihYssjxx3HmUUIcdEn5ObHN127myBwzSS6vJW0=;
+	s=arc-20240116; t=1718637752; c=relaxed/simple;
+	bh=JdeJqrlg8CfqPk2aFFrPUXdjz8LMnLs/ckxgdkPntHg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gIel7PAtE6q0M3RozFZhlGfmb+qAT/Wll+0XU7r+L1KYNPmy3jpQFDYsjlNXIU9SXt6TH/fPzzTBZnDvk3BT3LWQJP3/BGvCiFMXV0NVJpjvdeDydHJczdTz8o/J7j1U9VYaPJP/Wg5yvBHXCuMXlrF/KbSzohMA2sLYQz0PPzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=CB/FVxKo; arc=none smtp.client-ip=185.136.65.225
+	 In-Reply-To:To:Cc; b=JQCrC7CtaiHbVm1eZXcdmBB6XlBguPURebnbPzjN0dCbjiR60jvTSBzaN0Je8tjQXN7QSARqYslkDUgj8smZIVV2CbvwfJBhQl/IgcZ7GOWjPZnua77bqxbQSk22kzY1QXR6JkjRvhmKJrKKdVhlIyrFyY0IzxiWyVSTGUDnEA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=kepDV1/3; arc=none smtp.client-ip=185.136.64.225
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20240617152224e27008392edebc4fb1
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20240617152226078d9898b2ad127055
         for <linux-kernel@vger.kernel.org>;
-        Mon, 17 Jun 2024 17:22:25 +0200
+        Mon, 17 Jun 2024 17:22:27 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=diogo.ivo@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=x4YRkE+XFm1D29pl4Ld17TEKG1sVow5yeZQG9PSUP5I=;
- b=CB/FVxKoMjqGYkzbJv1QQWSgwJSKYYp+NUVIIuZ7inV8aYM48zBQZJwFvHbvAibvMIRldV
- Si2JRv3IT+ILGEQkH4XgGbm3oxJtWEiXZuw60kecwmikaF5VdE4Qpv+kjL/KHq+4hvNG+4dM
- kMw3mtLQtxWUDqgi254VUbb0i0D2w=;
+ bh=Fxp6XouXtcm6HEHNTUrhXH4PgJrnOGuaFeg/ybdFDmQ=;
+ b=kepDV1/3ozToSVeN5YAbn800RaJw+ckTHES+KIyaAeDJ1GPVB0Y+Is7QiewUefDa+YnpMa
+ F+XlNg2me3TRcXCj5D7BfXU1t6VRy/zsMDyPuqIbObykaEBCYjlRQe0b99HzU8GxQ9SsZyvy
+ mEPjMhDUw1VbpVMqI6TW0cV+dhsW8=;
 From: Diogo Ivo <diogo.ivo@siemens.com>
-Date: Mon, 17 Jun 2024 16:21:40 +0100
-Subject: [PATCH net-next v4 1/5] net: ti: icssg-prueth: Enable PTP
- timestamping support for SR1.0 devices
+Date: Mon, 17 Jun 2024 16:21:41 +0100
+Subject: [PATCH net-next v4 2/5] net: ti: icss-iep: Remove spinlock-based
+ synchronization
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240617-iep-v4-1-fa20ff4141a3@siemens.com>
+Message-Id: <20240617-iep-v4-2-fa20ff4141a3@siemens.com>
 References: <20240617-iep-v4-0-fa20ff4141a3@siemens.com>
 In-Reply-To: <20240617-iep-v4-0-fa20ff4141a3@siemens.com>
 To: MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>, 
@@ -65,120 +65,115 @@ To: MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>,
  Jacob Keller <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Diogo Ivo <diogo.ivo@siemens.com>, 
- Wojciech Drewek <wojciech.drewek@intel.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718637740; l=3143;
+ Diogo Ivo <diogo.ivo@siemens.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718637740; l=3238;
  i=diogo.ivo@siemens.com; s=20240529; h=from:subject:message-id;
- bh=gVkjhihYssjxx3HmUUIcdEn5ObHN127myBwzSS6vJW0=;
- b=Ne4QQFK6QP2v+OQaF2Mwx32o+Eu/500f6KJ6QoKnoUYpnbEN6uIgN3kbTR1HVyy9gq1wudeuy
- PZeFyR9AFhID9sIi0AcbI9ElMgQOirT0djR07GcwdRh9A/tRbGYsiMf
+ bh=JdeJqrlg8CfqPk2aFFrPUXdjz8LMnLs/ckxgdkPntHg=;
+ b=2HxZqi6sESfK5Wqxb9jateLja5oygdPcYT309hPE+AzVRLLKPa2c+CXq8/M4uxMZjCVIaM0xN
+ p0qSrKiag1cCVcbfFAovNRky7+uioDC0sfNJrWOl+xPtBN84RxqP4Sq
 X-Developer-Key: i=diogo.ivo@siemens.com; a=ed25519;
  pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-1320519:519-21489:flowmailer
 
-Enable PTP support for AM65x SR1.0 devices by registering with the IEP
-infrastructure in order to expose a PTP clock to userspace.
+As all sources of concurrency in hardware register access occur in
+non-interrupt context eliminate spinlock-based synchronization and
+rely on the mutex-based synchronization that is already present.
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
 Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
 ---
- drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c | 51 +++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/ti/icssg/icss_iep.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
-index 7b3304bbd7fc..fa98bdb11ece 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
-@@ -1011,16 +1011,44 @@ static int prueth_probe(struct platform_device *pdev)
- 	dev_dbg(dev, "sram: pa %llx va %p size %zx\n", prueth->msmcram.pa,
- 		prueth->msmcram.va, prueth->msmcram.size);
- 
-+	prueth->iep0 = icss_iep_get_idx(np, 0);
-+	if (IS_ERR(prueth->iep0)) {
-+		ret = dev_err_probe(dev, PTR_ERR(prueth->iep0),
-+				    "iep0 get failed\n");
-+		goto free_pool;
-+	}
-+
-+	prueth->iep1 = icss_iep_get_idx(np, 1);
-+	if (IS_ERR(prueth->iep1)) {
-+		ret = dev_err_probe(dev, PTR_ERR(prueth->iep1),
-+				    "iep1 get failed\n");
-+		goto put_iep0;
-+	}
-+
-+	ret = icss_iep_init(prueth->iep0, NULL, NULL, 0);
-+	if (ret) {
-+		dev_err_probe(dev, ret, "failed to init iep0\n");
-+		goto put_iep;
-+	}
-+
-+	ret = icss_iep_init(prueth->iep1, NULL, NULL, 0);
-+	if (ret) {
-+		dev_err_probe(dev, ret, "failed to init iep1\n");
-+		goto exit_iep0;
-+	}
-+
- 	if (eth0_node) {
- 		ret = prueth_netdev_init(prueth, eth0_node);
- 		if (ret) {
- 			dev_err_probe(dev, ret, "netdev init %s failed\n",
- 				      eth0_node->name);
--			goto free_pool;
-+			goto exit_iep;
- 		}
- 
- 		if (of_find_property(eth0_node, "ti,half-duplex-capable", NULL))
- 			prueth->emac[PRUETH_MAC0]->half_duplex = 1;
-+
-+		prueth->emac[PRUETH_MAC0]->iep = prueth->iep0;
+diff --git a/drivers/net/ethernet/ti/icssg/icss_iep.c b/drivers/net/ethernet/ti/icssg/icss_iep.c
+index 3025e9c18970..d52e42fa64f2 100644
+--- a/drivers/net/ethernet/ti/icssg/icss_iep.c
++++ b/drivers/net/ethernet/ti/icssg/icss_iep.c
+@@ -110,7 +110,6 @@ struct icss_iep {
+ 	struct ptp_clock_info ptp_info;
+ 	struct ptp_clock *ptp_clock;
+ 	struct mutex ptp_clk_mutex;	/* PHC access serializer */
+-	spinlock_t irq_lock; /* CMP IRQ vs icss_iep_ptp_enable access */
+ 	u32 def_inc;
+ 	s16 slow_cmp_inc;
+ 	u32 slow_cmp_count;
+@@ -192,14 +191,11 @@ static void icss_iep_update_to_next_boundary(struct icss_iep *iep, u64 start_ns)
+  */
+ static void icss_iep_settime(struct icss_iep *iep, u64 ns)
+ {
+-	unsigned long flags;
+-
+ 	if (iep->ops && iep->ops->settime) {
+ 		iep->ops->settime(iep->clockops_data, ns);
+ 		return;
  	}
  
- 	if (eth1_node) {
-@@ -1033,6 +1061,8 @@ static int prueth_probe(struct platform_device *pdev)
+-	spin_lock_irqsave(&iep->irq_lock, flags);
+ 	if (iep->pps_enabled || iep->perout_enabled)
+ 		writel(0, iep->base + iep->plat_data->reg_offs[ICSS_IEP_SYNC_CTRL_REG]);
  
- 		if (of_find_property(eth1_node, "ti,half-duplex-capable", NULL))
- 			prueth->emac[PRUETH_MAC1]->half_duplex = 1;
-+
-+		prueth->emac[PRUETH_MAC1]->iep = prueth->iep1;
+@@ -210,7 +206,6 @@ static void icss_iep_settime(struct icss_iep *iep, u64 ns)
+ 		writel(IEP_SYNC_CTRL_SYNC_N_EN(0) | IEP_SYNC_CTRL_SYNC_EN,
+ 		       iep->base + iep->plat_data->reg_offs[ICSS_IEP_SYNC_CTRL_REG]);
  	}
+-	spin_unlock_irqrestore(&iep->irq_lock, flags);
+ }
  
- 	/* register the network devices */
-@@ -1091,6 +1121,19 @@ static int prueth_probe(struct platform_device *pdev)
- 		prueth_netdev_exit(prueth, eth_node);
- 	}
+ /**
+@@ -546,7 +541,6 @@ static int icss_iep_perout_enable_hw(struct icss_iep *iep,
+ static int icss_iep_perout_enable(struct icss_iep *iep,
+ 				  struct ptp_perout_request *req, int on)
+ {
+-	unsigned long flags;
+ 	int ret = 0;
  
-+exit_iep:
-+	icss_iep_exit(prueth->iep1);
-+exit_iep0:
-+	icss_iep_exit(prueth->iep0);
-+
-+put_iep:
-+	icss_iep_put(prueth->iep1);
-+
-+put_iep0:
-+	icss_iep_put(prueth->iep0);
-+	prueth->iep0 = NULL;
-+	prueth->iep1 = NULL;
-+
- free_pool:
- 	gen_pool_free(prueth->sram_pool,
- 		      (unsigned long)prueth->msmcram.va, msmc_ram_size);
-@@ -1138,6 +1181,12 @@ static void prueth_remove(struct platform_device *pdev)
- 		prueth_netdev_exit(prueth, eth_node);
- 	}
+ 	mutex_lock(&iep->ptp_clk_mutex);
+@@ -559,11 +553,9 @@ static int icss_iep_perout_enable(struct icss_iep *iep,
+ 	if (iep->perout_enabled == !!on)
+ 		goto exit;
  
-+	icss_iep_exit(prueth->iep1);
-+	icss_iep_exit(prueth->iep0);
-+
-+	icss_iep_put(prueth->iep1);
-+	icss_iep_put(prueth->iep0);
-+
- 	gen_pool_free(prueth->sram_pool,
- 		      (unsigned long)prueth->msmcram.va,
- 		      MSMC_RAM_SIZE_SR1);
+-	spin_lock_irqsave(&iep->irq_lock, flags);
+ 	ret = icss_iep_perout_enable_hw(iep, req, on);
+ 	if (!ret)
+ 		iep->perout_enabled = !!on;
+-	spin_unlock_irqrestore(&iep->irq_lock, flags);
+ 
+ exit:
+ 	mutex_unlock(&iep->ptp_clk_mutex);
+@@ -575,7 +567,6 @@ static int icss_iep_pps_enable(struct icss_iep *iep, int on)
+ {
+ 	struct ptp_clock_request rq;
+ 	struct timespec64 ts;
+-	unsigned long flags;
+ 	int ret = 0;
+ 	u64 ns;
+ 
+@@ -589,8 +580,6 @@ static int icss_iep_pps_enable(struct icss_iep *iep, int on)
+ 	if (iep->pps_enabled == !!on)
+ 		goto exit;
+ 
+-	spin_lock_irqsave(&iep->irq_lock, flags);
+-
+ 	rq.perout.index = 0;
+ 	if (on) {
+ 		ns = icss_iep_gettime(iep, NULL);
+@@ -607,8 +596,6 @@ static int icss_iep_pps_enable(struct icss_iep *iep, int on)
+ 	if (!ret)
+ 		iep->pps_enabled = !!on;
+ 
+-	spin_unlock_irqrestore(&iep->irq_lock, flags);
+-
+ exit:
+ 	mutex_unlock(&iep->ptp_clk_mutex);
+ 
+@@ -853,7 +840,6 @@ static int icss_iep_probe(struct platform_device *pdev)
+ 
+ 	iep->ptp_info = icss_iep_ptp_info;
+ 	mutex_init(&iep->ptp_clk_mutex);
+-	spin_lock_init(&iep->irq_lock);
+ 	dev_set_drvdata(dev, iep);
+ 	icss_iep_disable(iep);
+ 
 
 -- 
 2.45.2
