@@ -1,160 +1,136 @@
-Return-Path: <linux-kernel+bounces-216886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE04390A813
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:04:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9802F90A856
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F9B91F24238
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:04:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D88281328
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F1A18FC6E;
-	Mon, 17 Jun 2024 08:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CB8190474;
+	Mon, 17 Jun 2024 08:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="sVwN4ibG"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1mUa3Yl"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C898A48;
-	Mon, 17 Jun 2024 08:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFE919005C;
+	Mon, 17 Jun 2024 08:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718611462; cv=none; b=Nw02/3QrGr0cbUfdQd4qPV5YTsAKhgU5ypaStP8mnLKBVFIi6Wyij4mQV1+iJyRNnfmM74TxjVY28m6DWT94jIj6563wJ7/HKlJ7kVdkti7a6qZ4L35AD78XU9ZEBJelBOyWpkEae8Izb9a0w83EnumuMAMMOrUkZrH6hHQ4sm0=
+	t=1718612726; cv=none; b=nbw/Bc9+i3uNTG6D+I6xPsYiaDI5i4AJkmcbNUgihi+73/KmKQMsUB0Ygk7ZwfV/GsLoMGcIo3rQISJrvrIqwd4RQqtd3/gmBeNOmgCncNoKpUhcwzslwpxAs5a8zvQjVrvkqXPflyU9FIKBDR4XVZH5+W39BJqgKy3RiL02JVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718611462; c=relaxed/simple;
-	bh=46hqN2x9tCodtz4f+p9bKlz4DoolUlXsc2EoKqB+GqY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1NxztqtOKe6C9KTqMJf4k27DXt34IKcMkZu5SnShNBpowNqD/wqrw8qCfQtszUeEOf+6YZDqoyF8Z0CbCCMF25ghRoXaeCVPruP0EqOJrjk8CtYo0dn0boqGEQrU9n4t4OdT/2ahZQ1V6jCwtKwhrxWcF1znox3+yo5W0kC58s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=sVwN4ibG; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718611460; x=1750147460;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=46hqN2x9tCodtz4f+p9bKlz4DoolUlXsc2EoKqB+GqY=;
-  b=sVwN4ibG+F1u1t1Uacrcn7GZGnQgYvkBEvrrVHQQ/Iys7dTJUoVoN8o6
-   B1p4yoSOjpntuNFmRjzX+Qs1ktmmb138+wupRBhoFDbu7CAXe4BCwcD6d
-   j1iaXjk0C+oXM6hWWMV4aIz2kYgzeecAkM0rEi7gRzciUTJIKYxtw6+f8
-   1lwCy0XwzJ5McvkYWJrrbgpXj6oWtPem0Zg8+a0JAqVjfMyfnOdbQpBzq
-   4LL72EunivFZ/HOqn93G7xwHRFW9LJ8enUG7D+FuO50HxzdoNPvnLQ/xa
-   S16OtktpHPU0uyWhvqa5/harVN5GheRov/o+FoORaGAK8esjBRWWtgbNQ
-   Q==;
-X-CSE-ConnectionGUID: KTYX6uPmSP2Ap7j89zTe6w==
-X-CSE-MsgGUID: LwMaza2HTh6HKQMtkrNe5A==
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="asc'?scan'208";a="27844232"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Jun 2024 01:04:19 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 17 Jun 2024 01:04:00 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 17 Jun 2024 01:03:57 -0700
-Date: Mon, 17 Jun 2024 09:03:39 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Inochi Amaoto <inochiama@outlook.com>
-CC: Yixun Lan <dlan@gentoo.org>, Thomas Bonnefille
-	<thomas.bonnefille@bootlin.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Paul
- Walmsley <paul.walmsley@sifive.com>, Chen Wang <unicorn_wang@outlook.com>,
-	Chao Wei <chao.wei@sophgo.com>, Albert Ou <aou@eecs.berkeley.edu>, Palmer
- Dabbelt <palmer@dabbelt.com>, Samuel Holland <samuel.holland@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH 1/5] dt-bindings: interrupt-controller: Add SOPHGO SG2002
- plic
-Message-ID: <20240617-arrival-settling-3a98e5939808@wendy>
-References: <20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com>
- <20240527-sg2002-v1-1-1b6cb38ce8f4@bootlin.com>
- <20240617003627.GA4008871@ofsar>
- <IA1PR20MB4953B2253043C304760A2D12BBCD2@IA1PR20MB4953.namprd20.prod.outlook.com>
+	s=arc-20240116; t=1718612726; c=relaxed/simple;
+	bh=q+ykIq3JrthTza0nnbx3+H/W4+2t2m1QN/3JLPVTJbo=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=i8DSaTJnhwMwuG772U5P5/lMiGzPWafRCPVYs7xwwmZvl2mGVHVuBX5MuXzeB64dyOoT23XRTbcUPv/eq5pAtFHZuTx/tMFYH9+pcczV4rNp0ecWQGkjVtJP3AgzC4gGR1DJVevkR8KRcOQ2RSpkDzygsR5d8j24m4SUsNqA8tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1mUa3Yl; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-36084187525so1817646f8f.3;
+        Mon, 17 Jun 2024 01:25:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718612723; x=1719217523; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wTj9FCeMEMsqbwW0LLZPKSs2YM2K1G3AwyQg5n+snzc=;
+        b=L1mUa3YlbrtEUqDHoebMP37EEHgWDKpMJuBvdpy7fzqEP2yZct+j3E54d4lksnCKRl
+         ylKdxeGuPxD+cm8lwhEJdSWRcwDlHjeK5d3i1i/W7cdN3EsPeki0atf7Dl2d5ceT4cKI
+         f95JPRNk1sI4NKPya+GYPytjyD5QxUG+KOifAL+ZQq2pQvgw9p2MA0jSnUFZoiZDgd/v
+         qRQP/khM0HLfkKgc0lEMQxhI1SC0qsECMPJVVQbIZnzgi5DOxxaEstr8S7Oeyz7ILshT
+         uiqvJaiSmJtm+oWrXBj+tuit9s+eH6rxk+n8oooxU0Qj+Kmf+suoiJzsJTgZcivFbsLj
+         /tCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718612723; x=1719217523;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wTj9FCeMEMsqbwW0LLZPKSs2YM2K1G3AwyQg5n+snzc=;
+        b=MaJmCDu1065/V5JtZ60vCn1J5ceTe1PKHMEibI1iiCn7QUJ2s58FjFj+F99w0wC21+
+         9gLJQQ1Yi3mYguMIweIyljGnZeYmyqkJ66TqJpwJkCnpD7eZzh2qu1f3EBuxxqXHiOIK
+         UIttbhzUuULBp5aiN+38SKI8W/J8txDYuJgRwxnMiPWw1pOav+CE2Rv5dO3UgOu74Q+U
+         gM8+QzAnBpxZNxIypygMMoG//xir6FBKGy3wt1UtEnzpHzQ4XTqTW6h+SAFWHM3/aU60
+         Ig2fDzAGhx27sSl+8gAnW1htwm2vLeW9vspRWbseZdbu5N9/Zs3B4yTlthgm0mBifNLs
+         Odeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrgnFBA8ue3bNu2RVY7Vup+U1zGEVo+NZeytawKDFGlkgthA4NdpBS1hi/R7XSn4sC3sP5FuNijPxT2oKPJmg9mFS1mVlmkxKTrpUNNYhlY4s2kUfNTx/gjgsmBWuc0hYqyebv
+X-Gm-Message-State: AOJu0Yy73/+JpUpDSLt4Lxqo64DgwS6eLQH/7dmymfIlUeUlUq02CeEx
+	8bQ7R9/6ZjO0TWKAfCkQmUd9Q52/rIlt2NToTOls3IGMB3MN1160
+X-Google-Smtp-Source: AGHT+IFt4JX3Jbfuc0eYBurcj5EoAHcJCyOCK8+9XhLyCVo6x6fZnIYeDbKcVH2naa3emRECXqY0eA==
+X-Received: by 2002:a5d:61c3:0:b0:360:9533:c716 with SMTP id ffacd0b85a97d-3609533c932mr1652408f8f.2.1718612722567;
+        Mon, 17 Jun 2024 01:25:22 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:9594:d2ff:a13c:2a33])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075093499sm11532931f8f.8.2024.06.17.01.25.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 01:25:21 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  Oleksij Rempel <o.rempel@pengutronix.de>,  Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>,  linux-kernel@vger.kernel.org,
+  netdev@vger.kernel.org,  Dent Project <dentproject@linuxfoundation.org>,
+  kernel@pengutronix.de
+Subject: Re: [PATCH net-next v3 2/7] netlink: specs: Expand the PSE netlink
+ command with C33 new features
+In-Reply-To: <20240614-feature_poe_power_cap-v3-2-a26784e78311@bootlin.com>
+	(Kory Maincent's message of "Fri, 14 Jun 2024 16:33:18 +0200")
+Date: Mon, 17 Jun 2024 09:01:28 +0100
+Message-ID: <m2frtc9ew7.fsf@gmail.com>
+References: <20240614-feature_poe_power_cap-v3-0-a26784e78311@bootlin.com>
+	<20240614-feature_poe_power_cap-v3-2-a26784e78311@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zYXOfHOY/pRglM2C"
-Content-Disposition: inline
-In-Reply-To: <IA1PR20MB4953B2253043C304760A2D12BBCD2@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain
 
---zYXOfHOY/pRglM2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Kory Maincent <kory.maincent@bootlin.com> writes:
 
-On Mon, Jun 17, 2024 at 11:33:00AM +0800, Inochi Amaoto wrote:
-> On Mon, Jun 17, 2024 at 12:36:27AM GMT, Yixun Lan wrote:
-> > hi Thomas:
-> >=20
-> > On 12:28 Mon 27 May     , Thomas Bonnefille wrote:
-> > > Add compatible string for SOPHGO SG2002 Platform-Level Interruter
-> > > Controller.
-> > >=20
-> > > Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> > > ---
-> > >  .../devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml =
-     | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/interrupt-controller/s=
-ifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-control=
-ler/sifive,plic-1.0.0.yaml
-> > > index 709b2211276b..7e1451f9786a 100644
-> > > --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,p=
-lic-1.0.0.yaml
-> > > +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,p=
-lic-1.0.0.yaml
-> > > @@ -67,6 +67,7 @@ properties:
-> > >                - allwinner,sun20i-d1-plic
-> > >                - sophgo,cv1800b-plic
-> > >                - sophgo,cv1812h-plic
-> > > +              - sophgo,sg2002-plic
-> >=20
-> > it's not necessary to introduce a new compatible name, as sg2002 use sa=
-me plic IP as cv1800b
-> > I feel it's wrong to introduce sophgo,cv1812h-plic at first place, but =
-that we can't revert?
-> >=20
-> > same reason also apply to clint in patch 2/5 ..
-> >=20
->=20
-> You are right, it is historical reasons. For hardware, they have the same=
- risc-v cores
-> across the whole series.
->=20
-> It could be better to use something just like "cv1800-plic".
+> diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
+> index 00dc61358be8..0ff27319856c 100644
+> --- a/Documentation/netlink/specs/ethtool.yaml
+> +++ b/Documentation/netlink/specs/ethtool.yaml
+> @@ -20,6 +20,20 @@ definitions:
+>      name: header-flags
+>      type: flags
+>      entries: [ compact-bitsets, omit-reply, stats ]
+> +  -
+> +    name: c33-pse-ext-state
+> +    enum-name:
+> +    type: enum
+> +    entries: [ none,
+> +               ethtool_c33_pse_ext_state_class_num_events,
+> +               ethtool_c33_pse_ext_state_error_condition,
+> +               ethtool_c33_pse_ext_state_mr_pse_enable,
+> +               ethtool_c33_pse_ext_state_option_detect_ted,
+> +               ethtool_c33_pse_ext_state_option_vport_lim,
+> +               ethtool_c33_pse_ext_state_ovld_detected,
+> +               ethtool_c33_pse_ext_state_pd_dll_power_type,
+> +               ethtool_c33_pse_ext_state_power_not_available,
+> +               ethtool_c33_pse_ext_state_short_detected ]
 
-Different integrations of the same IP could result in bugs present in
-one device and not another. Unless these SoCs are the same die, but with
-bits fused off, I'd appreciate soc-specific compatibles.
+It looks like this should use name-prefix: ethtool-c33-pse-ext-state- so
+that all the entries can be shortened.
 
-Thanks,
-Conor.
+The entries should be in hyphen-case, not snake_case.
 
---zYXOfHOY/pRglM2C
-Content-Type: application/pgp-signature; name="signature.asc"
+The preferred format for a list that spills over many lines is to use
+the yaml list format:
 
------BEGIN PGP SIGNATURE-----
+    entries:
+      - none
+      - class-num-events
+      - error-condition
+      - mr-pse-enable
+      ...
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZm/t0AAKCRB4tDGHoIJi
-0rQZAP4sMNITKIgW0yhdH6QXLJeHlppfCx4teG80f1lrA0Oj4wEA096L9PT3PcMi
-4tAca6zqH76nsuJnituv/7lYSa32vg8=
-=K7NA
------END PGP SIGNATURE-----
-
---zYXOfHOY/pRglM2C--
+Thanks!
+--
+Donald Hunter.
 
