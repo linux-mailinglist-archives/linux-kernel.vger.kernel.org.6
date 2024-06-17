@@ -1,163 +1,112 @@
-Return-Path: <linux-kernel+bounces-216801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94ABB90A6ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:23:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E9E90A688
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C35D7B27415
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:14:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D6C01C208BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6776188CDB;
-	Mon, 17 Jun 2024 07:12:09 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860D8187338;
+	Mon, 17 Jun 2024 07:11:25 +0000 (UTC)
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4264469D31
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE41739FFB;
+	Mon, 17 Jun 2024 07:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718608329; cv=none; b=mYC9Px8+YKUkTEUeV618o6lUaTtUvZqVnCEiYTbc7wlA3hImaTyyjW+Lhyf/+jO+Rqgckkybg/9Gmtvo9zqQzBA8rhECnQPuKxm+ohFkKo2PGF2y6MJxcg8zRtfZZeuwoj7I8kSMipuRyV+CHGokMZH4V9/BrmnpYKfgHDfyzQc=
+	t=1718608285; cv=none; b=CpGlpHa5YTa1/kJBYHKkw0OgTyRECDrXmtqN+seZfI2q8x25Qx5mA9IszQV7lgo2Vr6J5Lqw3uhbg7Ii6tUC3SBg+FPhXYTthiDZrHZ0J7G4F2P+qVevTrxg+caDny5aYda6H+r9dDUj2vB/9bHFkhdTwo6a+1jySXKnA/SlyOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718608329; c=relaxed/simple;
-	bh=IxAjpXHCQfUqANmOrN/l8pHct/oBNLBV43/EMpCyoEw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ApX/YC5DV7NTDByx4UZ6i21DDEh4u0PVnF4nn8yui6vDbU/JPKSJxw6ZJlw/zRYRNB3ydnDr4jvtGEBSMzbnjbzcaZAGYrUmVZ6kzgfS1O32+x+n4bnn002nbHIBloeZTv4UShttpAp5O73WL56T9RsDnRDK0YVErsBl2gi5naI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 45H7BJWB088492;
-	Mon, 17 Jun 2024 15:11:19 +0800 (+08)
-	(envelope-from Xiuhong.Wang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4W2gt66fsrz2Rm6ZP;
-	Mon, 17 Jun 2024 15:06:54 +0800 (CST)
-Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Mon, 17 Jun 2024 15:11:17 +0800
-From: Xiuhong Wang <xiuhong.wang@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-CC: <niuzhiguo84@gmail.com>, <ke.wang@unisoc.com>, <xiuhong.wang.cn@gmail.com>,
-        <hao_hao.wang@unisoc.com>
-Subject: [PATCH] f2fs-tools: fix do_set_verity ioctl fail issue
-Date: Mon, 17 Jun 2024 15:11:14 +0800
-Message-ID: <20240617071114.150721-1-xiuhong.wang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718608285; c=relaxed/simple;
+	bh=XWQ+qDwz2PAtc3IT4zdlFtNhLeXIlAT/T/wXydCL2WA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=V/sUxcN1tE/yfZpwDZBOn3TgJKNqFID1Gditr+03obLK6de7CBRLuojnoRJVR8QEVqnXw8U0/ED/gN428AxAWGVydaWhHAkHgeq9NLw7RmJEWPG1LOML2UBdrmgh3UZcMpKIUKlpNJvxAosWxrn6wq3qfitAtmxW0nI6bP1NbGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b97b5822d8so1982943eaf.3;
+        Mon, 17 Jun 2024 00:11:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718608283; x=1719213083;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nPdollrdzmZvPOrkAD6RqNZZPh5XUrVz9dGfzPzpStA=;
+        b=GfxwF10C18gqZRlnT8oT/SXet5DRJ1/nFv3qIBCfpXgdneXVdFsrZRcd/OJOqFs+x8
+         GwIxze9RaS2uCe1R6yNqjPiCBTkCU7Pgc+4a36XhicVbpOZwajHHqe5qZ/QkrUP43Qa6
+         yzaBmp4hXUtid3yL/b8wG0jcTNa6DVYjVrz/MGPI/f3A3nrKlCdlDOVhN7DWRRq4sG5V
+         yrK52UjEO0+EflXTP7H7b1J8tMe6qBjOVRe+lOU7KbSXlXhkTs1SMy7ASiOvklq2hUii
+         2YpOov9wfzb/e+dYDuv/DR3BoKWCb7mDx9YTpe+gm0POCQE1bSgqicIBBA/2Fi+ILHuA
+         cbWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWt+tUzmYPo9oNnJCX4nX75HnZyvmj385KKxAhghkgjasMa/YplZLiOYyx6++Trf0V8Qd61DXzqK+cbKI/f+v6+Kph00JX+h1CFDC6lk0SHzFVOh4lCARhdK7gNHBEkUqxn4ytvFaqawWS
+X-Gm-Message-State: AOJu0YzS8ueO2ioJfzfU7zJ58iqIZ8nLQTe49rQxvM9FBBMC9ZbPrBBk
+	vjZ9Lb1hEeLuMFdakENjf0hbpiueEuC6trEjmjivz4g1Si9NT6XN
+X-Google-Smtp-Source: AGHT+IEFUow7QG4Rb5PNS66rqOoWQI3Y3sbno3Od44HERyxz1r3RxnDxeVT3wvm8ZtAXztua0ZngGQ==
+X-Received: by 2002:a05:6358:70cd:b0:19f:6bb4:e21b with SMTP id e5c5f4694b2df-19fb4ee8deamr1148327255d.16.1718608282664;
+        Mon, 17 Jun 2024 00:11:22 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fee3ba4241sm5208415a12.82.2024.06.17.00.11.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 00:11:22 -0700 (PDT)
+Date: Mon, 17 Jun 2024 07:11:17 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Wei Liu <wei.liu@kernel.org>,
+	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>, kys@microsoft.com,
+	haiyangz@microsoft.com, decui@microsoft.com
+Subject: [GIT PULL] Hyper-V fixes for v6.10-rc5
+Message-ID: <Zm_hlTTK0pZFMujj@liuwe-devbox-debian-v2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 45H7BJWB088492
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When using the f2fs_io tool to set_verity, it will fail as follows:
-unisc:/data # ./f2fs_io set_verity file
-FS_IOC_ENABLE_VERITY: Inappropriate ioctl for device
-this is because commit: 95ae251fe828 ("f2fs: add fs-verity support"),
-the passed parameters do not match the latest kernel version.
+Hi Linus,
 
-After patch:
-unisoc:/data # ./f2fs_io set_verity file
-Set fsverity bit to file
-unisoc:/data # ./f2fs_io getflags file
-get a flag on file ret=0, flags=verity
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-Fixes: 95ae251fe828 ("f2fs: add fs-verity support")
-Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
----
- include/android_config.h |  1 +
- tools/f2fs_io/f2fs_io.c  |  9 ++++++---
- tools/f2fs_io/f2fs_io.h  | 20 ++++++++++++++++++--
- 3 files changed, 25 insertions(+), 5 deletions(-)
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-diff --git a/include/android_config.h b/include/android_config.h
-index 05b686e..9c8b163 100644
---- a/include/android_config.h
-+++ b/include/android_config.h
-@@ -13,6 +13,7 @@
- #define HAVE_LINUX_XATTR_H 1
- #define HAVE_LINUX_FS_H 1
- #define HAVE_LINUX_FIEMAP_H 1
-+#define HAVE_LINUX_VERITY_H 1
- #define HAVE_MNTENT_H 1
- #define HAVE_STDLIB_H 1
- #define HAVE_STRING_H 1
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index a7b593a..2447490 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -182,16 +182,19 @@ static void do_fsync(int argc, char **argv, const struct cmd_desc *cmd)
- static void do_set_verity(int argc, char **argv, const struct cmd_desc *cmd)
- {
- 	int ret, fd;
-+	struct fsverity_enable_arg args = {.version = 1};
-+
-+	args.hash_algorithm = FS_VERITY_HASH_ALG_SHA256;
-+	args.block_size = 4096;
- 
- 	if (argc != 2) {
- 		fputs("Excess arguments\n\n", stderr);
- 		fputs(cmd->cmd_help, stderr);
- 		exit(1);
- 	}
-+	fd = open(argv[1], O_RDONLY);
- 
--	fd = open(argv[1], O_RDWR);
--
--	ret = ioctl(fd, FS_IOC_ENABLE_VERITY);
-+	ret = ioctl(fd, FS_IOC_ENABLE_VERITY, &args);
- 	if (ret < 0) {
- 		perror("FS_IOC_ENABLE_VERITY");
- 		exit(1);
-diff --git a/tools/f2fs_io/f2fs_io.h b/tools/f2fs_io/f2fs_io.h
-index b5c82f5..e55db5f 100644
---- a/tools/f2fs_io/f2fs_io.h
-+++ b/tools/f2fs_io/f2fs_io.h
-@@ -16,6 +16,9 @@
- #ifdef HAVE_LINUX_FS_H
- #include <linux/fs.h>
- #endif
-+#ifdef HAVE_LINUX_VERITY_H
-+#include <linux/fsverity.h>
-+#endif
- 
- #include <sys/types.h>
- 
-@@ -136,8 +139,21 @@ struct fscrypt_get_policy_ex_arg {
- #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
- #define F2FS_IOC_GET_ENCRYPTION_PWSALT	FS_IOC_GET_ENCRYPTION_PWSALT
- 
--#define FS_IOC_ENABLE_VERITY		_IO('f', 133)
--
-+#ifndef FS_IOC_ENABLE_VERITY
-+#define FS_IOC_ENABLE_VERITY    _IOW('f', 133, struct fsverity_enable_arg)
-+#define FS_VERITY_HASH_ALG_SHA256       1
-+struct fsverity_enable_arg {
-+	__u32 version;
-+	__u32 hash_algorithm;
-+	__u32 block_size;
-+	__u32 salt_size;
-+	__u64 salt_ptr;
-+	__u32 sig_size;
-+	__u32 __reserved1;
-+	__u64 sig_ptr;
-+	__u64 __reserved2[11];
-+};
-+#endif
- /*
-  * Inode flags
-  */
--- 
-2.25.1
+are available in the Git repository at:
 
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed-20240616
+
+for you to fetch changes up to 831bcbcead6668ebf20b64fdb27518f1362ace3a:
+
+  Drivers: hv: Cosmetic changes for hv.c and balloon.c (2024-06-06 06:03:29 +0000)
+
+----------------------------------------------------------------
+hyperv-fixes for v6.10-rc5
+ - Some cosmetic changes for hv.c and balloon.c (Aditya Nagesh)
+ - Two documentation updates (Michael Kelley)
+ - Suppress the invalid warning for packed member alignment (Saurabh Sengar)
+ - Two hv_balloon fixes (Michael Kelley)
+----------------------------------------------------------------
+Aditya Nagesh (1):
+      Drivers: hv: Cosmetic changes for hv.c and balloon.c
+
+Michael Kelley (4):
+      hv_balloon: Use kernel macros to simplify open coded sequences
+      hv_balloon: Enable hot-add for memblock sizes > 128 MiB
+      Documentation: hyperv: Update spelling and fix typo
+      Documentation: hyperv: Improve synic and interrupt handling description
+
+Saurabh Sengar (1):
+      tools: hv: suppress the invalid warning for packed member alignment
+
+ Documentation/virt/hyperv/clocks.rst   |  21 ++--
+ Documentation/virt/hyperv/overview.rst |  22 ++--
+ Documentation/virt/hyperv/vmbus.rst    | 143 ++++++++++++++-----------
+ drivers/hv/hv.c                        |  37 ++++---
+ drivers/hv/hv_balloon.c                | 190 ++++++++++++++-------------------
+ tools/hv/Makefile                      |   1 +
+ 6 files changed, 208 insertions(+), 206 deletions(-)
 
