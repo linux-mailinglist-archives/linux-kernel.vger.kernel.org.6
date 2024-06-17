@@ -1,170 +1,203 @@
-Return-Path: <linux-kernel+bounces-217973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3FFC90B712
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:53:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C14E90B716
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 684FA286738
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E13E61F21F50
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C2A1662FC;
-	Mon, 17 Jun 2024 16:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C2B166308;
+	Mon, 17 Jun 2024 16:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ju/Nio2e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Vw2FKnIo"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FCA168482;
-	Mon, 17 Jun 2024 16:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31849160884;
+	Mon, 17 Jun 2024 16:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718643174; cv=none; b=ZY1Mj+AhtEZzM4tPvTV9pz07YEDa/2ZbXl67WCt+9m0hhCSArkKL5ICGpxXun4VdWkszQ8juOAg3YUIq9H9WrwfQuU8Q4JW7KEw4EVdNa8EjAVfKrbmOD6X/+BwNem6IwrOC663DRZsgjYYvFHKucpzQ8G5/dHV09wb0GR7/X04=
+	t=1718643283; cv=none; b=s3r9qVL3H+13/YScEOI2cuVN/GjpzQu7slzOP6ht2gRZPZO0xHIMenb5ER1PiaHeQSVjl1VYAGHCDr1OfF3+28McyzAN4sgHLAWdPINg8RxjQgSOiPrIRdhn5hCuVsONrSMd2aW0HSiPdohPvgBQ9pzPIm4BFVLN8rsC+nWu8EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718643174; c=relaxed/simple;
-	bh=eSnhqAm2EceuPb7GR0p97myLZRdOU10MmclXVrykcQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZo9EVDHZITJ+RSAEuj5sKmdQ0OSE7Z//FZE3J1cZBxcX1pAfy8N6n7/WyvA3HRuDicyc0iAtRGeDpReW8+LE4r8RInEKcQotJY1R1LPUJBPFFYMAwKAp6oRcwB7NCzZkd7joSNQL2yJkuue27Cfla9Mt0Us7fWjTn/J+dtdHHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ju/Nio2e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 423E1C2BD10;
-	Mon, 17 Jun 2024 16:52:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718643174;
-	bh=eSnhqAm2EceuPb7GR0p97myLZRdOU10MmclXVrykcQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ju/Nio2ekUQo8b14RA4d5uLq/NEoJTbtrPRR3ycrp0W1iGLafnBwKjFA8qysevzDj
-	 x7qKSGBs7oZOc8NK6gLzhdGOzqjFfVQz3Y40KI0j1uBCDQaT3mQ0/9/xd8ICwa2pwQ
-	 LSofAHNWiaTakNfXTxUASBja6ZNvN7KkmhX6DC383eLoNUeYxbs4zITnUD+vUiO/72
-	 y3b0j9RHGovIx9OvW5LKQO1DsJNAmkmS9n9dcDrZHoQS71AmEDLI7gVeHZR8rNMsEq
-	 jMWLkftptNFsk8lWXU/2Xo7Tvp0wvcFXv3NKuJznlFkgIV5prc1Luup8xxx78FJ/i1
-	 Qra2f1kMDF83g==
-Date: Mon, 17 Jun 2024 09:52:51 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Andy Chiu <andy.chiu@sifive.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Zong Li <zong.li@sifive.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Evgenii Shatokhin <e.shatokhin@yadro.com>
-Subject: Re: [PATCH 4/8] riscv: ftrace: align patchable functions to 4 Byte
- boundary
-Message-ID: <20240617165251.GA550301@thelio-3990X>
-References: <20240613-dev-andyc-dyn-ftrace-v4-v1-0-1a538e12c01e@sifive.com>
- <20240613-dev-andyc-dyn-ftrace-v4-v1-4-1a538e12c01e@sifive.com>
- <20240613190920.GB1272931@thelio-3990X>
- <CABgGipV_6sFx8TJNrHszGLk=V9X1PJAXuOmRDxnTHPrigqJL0A@mail.gmail.com>
+	s=arc-20240116; t=1718643283; c=relaxed/simple;
+	bh=t+5KdUOnc00LdFQ1IUBq0zdE0lD1r3nd04eCrzMotWs=;
+	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
+	 References:To:MIME-Version; b=i0O13i6V8oqSEF06aM+j7SDtnu8nn12UQ/YYRS3CIBPKBv4hfXkgV+kujDoaDHqSH0eOUmobYjMoKjlxyKbhedqfBXndJN12VWJ4l4m5wGkLQTiDQA3saNSpW74NlBGrVPFAE8Lm4VaYtPkiuCgfBS0NDKnRvLhgngESQJA4v/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Vw2FKnIo; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HGZwYC005595;
+	Mon, 17 Jun 2024 16:54:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-type:subject:from:in-reply-to:date:cc:message-id
+	:references:to:content-transfer-encoding:mime-version; s=pp1;
+	 bh=5moioqHMw+p0O+/zSVi6gRBX+7JUnVJckQcSkqOJkQ4=; b=Vw2FKnIo7N6H
+	Z73n7R3umr2MDSH8yfXWsYN2f+7sDtjmk03def6imZGF63bJgqZ/5fTwYg35HuNm
+	FiSsgXObD07N/X23hIV/ZvzBthuUfP9Jqt0atwGMvYLhs8kTTM9BmYyaBvClV+sQ
+	4Vj7HUtpoJE23sWRQ/oTuMRb4gRKIcmMENmAEqRvZZhyp2Je3VY2E4d0pfoKlq7j
+	9y6bqT9nN4Pt/vWbeAUroo8sg2WEatV3WsRWyaenVTEZWSuipjOXcMzjcMIe3F4B
+	SUlSRuAfjooQojxzALHsbKjiGTBkkMLzvbu1kr3UveD4jXiVlXLMyox0fKO9dckD
+	IIg/ybtouw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ytqcqr9fu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 16:54:21 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45HGsLad003557;
+	Mon, 17 Jun 2024 16:54:21 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ytqcqr9fn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 16:54:21 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45HGPSdx009941;
+	Mon, 17 Jun 2024 16:54:20 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ysqgmbka2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 16:54:20 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45HGsEmJ34865760
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Jun 2024 16:54:16 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 79C3620040;
+	Mon, 17 Jun 2024 16:54:14 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EDD0A20043;
+	Mon, 17 Jun 2024 16:54:11 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.43.76.136])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 17 Jun 2024 16:54:11 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
+Subject: Re: [PATCH V2 2/3] tools/perf: Use is_perf_pid_map_name helper
+ function to check dso's of pattern /tmp/perf-%d.map
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <30cdabb5-4c36-40c6-a2c0-8059e4afb371@arm.com>
+Date: Mon, 17 Jun 2024 22:23:59 +0530
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Disha Goel <disgoel@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Ian Rogers <irogers@google.com>, namhyung@kernel.org
+Message-Id: <B752E4BA-8EB0-4617-9CB1-479027802533@linux.vnet.ibm.com>
+References: <20240617130332.13427-1-atrajeev@linux.vnet.ibm.com>
+ <20240617130332.13427-2-atrajeev@linux.vnet.ibm.com>
+ <30cdabb5-4c36-40c6-a2c0-8059e4afb371@arm.com>
+To: James Clark <james.clark@arm.com>,
+        Chaitanya S Prakash <chaitanyas.prakash@arm.com>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: fCo0TbqLTDsB5BYctdo7pwIXG9M906vJ
+X-Proofpoint-GUID: AEKvjbPGLMsU8J6BA7wFSLsjw1tkCehP
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABgGipV_6sFx8TJNrHszGLk=V9X1PJAXuOmRDxnTHPrigqJL0A@mail.gmail.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 priorityscore=1501 adultscore=0
+ clxscore=1011 lowpriorityscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406170131
 
-On Mon, Jun 17, 2024 at 10:38:55AM +0800, Andy Chiu wrote:
-> On Fri, Jun 14, 2024 at 3:09 AM Nathan Chancellor <nathan@kernel.org> wrote:
-> >
-> > Hi Andy,
-> >
-> > On Thu, Jun 13, 2024 at 03:11:09PM +0800, Andy Chiu wrote:
-> > > We are changing ftrace code patching in order to remove dependency from
-> > > stop_machine() and enable kernel preemption. This requires us to align
-> > > functions entry at a 4-B align address.
-> > >
-> > > However, -falign-functions on older versions of GCC alone was not strong
-> > > enoungh to align all functions. In fact, cold functions are not aligned
-> > > after turning on optimizations. We consider this is a bug in GCC and
-> > > turn off guess-branch-probility as a workaround to align all functions.
-> > >
-> > > GCC bug id: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=88345
-> > >
-> > > The option -fmin-function-alignment is able to align all functions
-> > > properly on newer versions of gcc. So, we add a cc-option to test if
-> > > the toolchain supports it.
-> > >
-> > > Suggested-by: Evgenii Shatokhin <e.shatokhin@yadro.com>
-> > > Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
-> > > ---
-> > >  arch/riscv/Kconfig  | 1 +
-> > >  arch/riscv/Makefile | 7 ++++++-
-> > >  2 files changed, 7 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > > index b94176e25be1..80b8d48e1e46 100644
-> > > --- a/arch/riscv/Kconfig
-> > > +++ b/arch/riscv/Kconfig
-> > > @@ -203,6 +203,7 @@ config CLANG_SUPPORTS_DYNAMIC_FTRACE
-> > >  config GCC_SUPPORTS_DYNAMIC_FTRACE
-> > >       def_bool CC_IS_GCC
-> > >       depends on $(cc-option,-fpatchable-function-entry=8)
-> > > +     depends on $(cc-option,-fmin-function-alignment=4) || !RISCV_ISA_C
-> >
-> > Please use CC_HAS_MIN_FUNCTION_ALIGNMENT (from arch/Kconfig), which
-> > already checks for support for this option.
-> 
-> Thanks for the suggestion!
-> 
-> >
-> > >  config HAVE_SHADOW_CALL_STACK
-> > >       def_bool $(cc-option,-fsanitize=shadow-call-stack)
-> > > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> > > index 06de9d365088..74628ad8dcf8 100644
-> > > --- a/arch/riscv/Makefile
-> > > +++ b/arch/riscv/Makefile
-> > > @@ -14,8 +14,13 @@ endif
-> > >  ifeq ($(CONFIG_DYNAMIC_FTRACE),y)
-> > >       LDFLAGS_vmlinux += --no-relax
-> > >       KBUILD_CPPFLAGS += -DCC_USING_PATCHABLE_FUNCTION_ENTRY
-> > > +ifeq ($(CONFIG_CC_IS_CLANG),y)
-> >
-> > Same here, please invert this and use
-> >
-> >   ifdef CONFIG_CC_HAS_MIN_FUNCTION_ALIGNMENT
-> >
-> > like the main Makefile does.
-> 
-> Hope this makes sense to you. I am going to add the following in riscv Kconig:
-> 
-> select FUNCTION_ALIGNMENT_4B if DYNAMIC_FTRACE && !RISCV_ISA_C
-> 
-> So we will not need any of these
 
-Yes, that definitely makes sense, I forgot that this has been abstracted
-away via the use of those alignment Kconfig symbols that can be selected
-when needed. Much better than my suggestions, thanks!
 
-> >
-> > > +     cflags_ftrace_align := -falign-functions=4
-> > > +else
-> > > +     cflags_ftrace_align := -fmin-function-alignment=4
-> > > +endif
-> > >  ifeq ($(CONFIG_RISCV_ISA_C),y)
-> > > -     CC_FLAGS_FTRACE := -fpatchable-function-entry=4
-> > > +     CC_FLAGS_FTRACE := -fpatchable-function-entry=4 $(cflags_ftrace_align)
-> > >  else
-> > >       CC_FLAGS_FTRACE := -fpatchable-function-entry=2
-> > >  endif
-> > >
-> > > --
-> > > 2.43.0
-> > >
-> > >
-> 
-> Thanks,
-> Andy
+> On 17 Jun 2024, at 7:29=E2=80=AFPM, James Clark <james.clark@arm.com> wro=
+te:
+>=20
+>=20
+>=20
+> On 17/06/2024 14:03, Athira Rajeev wrote:
+>> commit 80d496be89ed ("perf report: Add support for profiling JIT
+>> generated code") added support for profiling JIT generated code.
+>> This patch handles dso's of form "/tmp/perf-$PID.map".
+>>=20
+>> Some of the references doesn't check exactly for same pattern.
+>> some uses "if (!strncmp(dso_name, "/tmp/perf-", 10))". Fix
+>> this by using helper function is_perf_pid_map_name which looks
+>> for proper pattern of form: "/tmp/perf-$PID.map" for these checks.
+>>=20
+>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>> ---
+>> tools/perf/util/dsos.c    | 2 +-
+>> tools/perf/util/srcline.c | 2 +-
+>> 2 files changed, 2 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
+>> index ab3d0c01dd63..23cd02aa701d 100644
+>> --- a/tools/perf/util/dsos.c
+>> +++ b/tools/perf/util/dsos.c
+>> @@ -275,7 +275,7 @@ static void dso__set_basename(struct dso *dso)
+>> char *base, *lname;
+>> int tid;
+>>=20
+>> - if (sscanf(dso__long_name(dso), "/tmp/perf-%d.map", &tid) =3D=3D 1) {
+>> + if (is_perf_pid_map_name(dso__long_name(dso))) {
+>> if (asprintf(&base, "[JIT] tid %d", tid) < 0)
+>> return;
+>> } else {
+>> diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
+>> index 9d670d8c1c08..51eb78993fe2 100644
+>> --- a/tools/perf/util/srcline.c
+>> +++ b/tools/perf/util/srcline.c
+>> @@ -39,7 +39,7 @@ static const char *srcline_dso_name(struct dso *dso)
+>> if (dso_name[0] =3D=3D '[')
+>> return NULL;
+>>=20
+>> - if (!strncmp(dso_name, "/tmp/perf-", 10))
+>> + if (is_perf_pid_map_name(dso_name))
+>> return NULL;
+>>=20
+>> return dso_name;
+>=20
+> Duplicate of [1] but the latest version of the other one looks like it
+> might have a mistake in it.
+>=20
+> For this one I get this compilation error:
+>=20
+> util/dsos.c: In function =E2=80=98dso__set_basename=E2=80=99:
+> util/dsos.c:279:21: error: =E2=80=98tid=E2=80=99 may be used uninitialized
+> [-Werror=3Dmaybe-uninitialized]
+>  279 |                 if (asprintf(&base, "[JIT] tid %d", tid) < 0)
+>=20
+
+Hi James,
+
+Thanks for pointing this. I had my first version here: https://lore.kernel.=
+org/linux-perf-users/5d9a9842-9b8a-428c-898f-e1ff866a6e66@intel.com/T/#m5fb=
+fa712a411c0e09b8177d31fc1c2d12f437fa5 which used regex for matching the dso=
+ name in util/symbol.c
+
+Got suggestion from Adrian to use =E2=80=9Csscanf=E2=80=9D and have a helpe=
+r function since this /tmp/perf-%d.map check is done in other places as wel=
+l ( in util/dsos.c, util/srcline.c ). This V2 address those changes. I didn=
+=E2=80=99t hit the compile error, but that is a valid one which you reporte=
+d since =E2=80=9Ctid=E2=80=9D needs to be taken care of. I will check this =
+compile error
+
+Thanks
+Athira=20
+>=20
+>=20
+> [1]:
+> https://lore.kernel.org/linux-perf-users/20240601125946.1741414-10-Chaita=
+nyaS.Prakash@arm.com/
+
 
