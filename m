@@ -1,305 +1,268 @@
-Return-Path: <linux-kernel+bounces-218409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF99890BF57
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:54:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4E090BF59
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 765DC2810D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:54:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDAA2280F47
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9127199396;
-	Mon, 17 Jun 2024 22:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE04919A291;
+	Mon, 17 Jun 2024 22:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PI4DpMKR"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3Vk/POF"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC4C28FC;
-	Mon, 17 Jun 2024 22:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FD228FC;
+	Mon, 17 Jun 2024 22:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718664836; cv=none; b=Mn5bGZkfB1Nq7TsaUH+VptW8dcNTkPJpa/5Nu//1aTFUatQXD+mE1bECkhjZncxjU78rZq4GMXWH2cRsQN0qd/jQQIhDVuCi+mgD9nl2eBxRBY/PmixSb1Bf6u03lmD5Uqyc51mM+z3foB9XsVwUsrJyid8aet7GGAwPNDV8Yhk=
+	t=1718664844; cv=none; b=ETdnRfapUECaJJG6eAlAyiSs+3Etg+ZTyVRhyFFBPGRxt4suQBRE6vNwyC3E1Muo+iPxjy0S0FF6cRItVRpDZrO1zfnPtGWSmQ1fQPMAS/PKjCgXq4meJSY08TL4y9Ms2o3YjpWDAcO73D7wrR8A668Jr74mtzoHlgMDxRqSX+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718664836; c=relaxed/simple;
-	bh=TjHTdroRoR5PgBU+QKggAmEjD+Fm0zizybQ8OUedwA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqYt0ApkN/SIK5EMzHhsNBOGUErBxaBQp1G9O6mhY+Zn9ab3OgOptm2nUMrE4JblN0xf14eWc6gcH5cdoYsD8LPMnIz2p/dzLxabQh4PmY3mA4BTICna+1UA/GyPHBmF9Zh+1L19ySDb1lAFLuQVhx/hnM2i6C5vc4kdlYsccNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PI4DpMKR; arc=none smtp.client-ip=209.85.219.182
+	s=arc-20240116; t=1718664844; c=relaxed/simple;
+	bh=gKVq9NreA83zmWg4zI8Bf9GfsmIQOHyb/2gaXDn+jEY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tkNhToLXxPJkfESFqlsGEYZocYe96nuv9Q3J77MvM4HW4aZCNMg7P6UB29U+7DFNADjt960zuKb5JvadznjKPQQBX7AQWobPTDQS++0ClgdOTX22k1ofPNNU+wEZ7mLSWyjum4iWAY5NUgSfx4McpEysvt68e2OHzyei86/PPgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3Vk/POF; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-df481bf6680so5237848276.3;
-        Mon, 17 Jun 2024 15:53:54 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2bfdae7997aso3936906a91.2;
+        Mon, 17 Jun 2024 15:54:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718664834; x=1719269634; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718664843; x=1719269643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tFosb9YDdf4M17cTyH2qFik92uDQDBc6ij6WR+HWwM0=;
-        b=PI4DpMKRT5YLASZB/1M/ngpKgb8uv6iqrJ7nuYLNDtSZYmfYZ4IBa4ezjYfTR5sH2J
-         uCdUaLA1FpXyKk3uTX2jQoVZN8jtwdO/EAN6KZijhpx8X5YwyiqBSj6hm3afMu/6vaRy
-         HjwQMWTtpcLlnnMIUH7P4Q1ZKT6skbSWiawt3NYjr3BZiDJjRPIlQiU7GISCvTtN2c83
-         hILJANcLAWLZ1qYqA0dFW5r5MkxbRy5WmteL8l5qDWvDtkc26GpwafMjsUb0VF8elxO0
-         Nh3SwhfGmwpvUTtqvPEuitBqS09FFMmrXFJ+JmQrpDdKwiMVucv4rB7SS2JzozbhnTgK
-         9fjA==
+        bh=euP5QDKTB5EI7sJME0BwF0iiV4DR44cs6erLRRFFlyI=;
+        b=W3Vk/POF2CHC8gjQ+LWCMrOIRXnQ+tqXjhPKp1ZEgHyt0NtyjPdZL3ZWCUjphTtDGy
+         MOQoZfdZPjhmQudIHOTEFr1eAhp/oI7vCQk1fbo+NUDYkoESLAd0QSV6vo1lkDVrovWg
+         tMFOshG0WrLpdQLq67h6EIOR3tHETPTdqHCC5S6UtfdPK8xUpM8G9kKPf7mg0dj9E0Zx
+         BSSyDm/7o7NPe6XGBkH7jvZAF5KDfttgZOFUDiYF7JUFNzWSmzU0Mb8wDxPFHaR0A8t0
+         qo5UFJAtP7y8czuFIMjZb9LHwQc5rG24ThHFsnNKisp2xHknG5hhDackmPcBEF9zL09J
+         pB7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718664834; x=1719269634;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718664843; x=1719269643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tFosb9YDdf4M17cTyH2qFik92uDQDBc6ij6WR+HWwM0=;
-        b=YDBF2ZsOh8jRqdjtYkD9MHKqmU65PM5VtzXoEh2XWB4r3ACl6HFt3ewzMuDkhOxfi1
-         TWtWz9z/+1zoM8hiB9VjU3AgjcEpnhBOMxVuwlbdvC/4SjGQmHzTydVSz//0R55oXpyg
-         VjGSuNn3h0pB7XuxAMkxYkndI/PRXr8squPWzALyP4O4a7gZ6yydukuwlkJLTSpeaCpm
-         S14JoA2gHG2q/PK56ELYLxSh3b83qWwiwFw/RPlc3iIt7fdwAULqzjb0TXElPFYU0nnT
-         OMnA949SKNBWVrZZz3uzu3RgTZQQ54KeVp38AYfE4p2OthIFHNXd32yEZLyo7SgAdbRJ
-         vUBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYEeRH8m8wGhAxg/AHOX1K5DA4dfNRahEBmHhhG8DBhZTdgI6/kclDrogeF+CK4kKrolhwD19r27Xm+LqW4pz+1xCehNqYUIjVKV3FOIkxIIisiLUkTJlAxThq6/eoLbtij03l+NYi2Q==
-X-Gm-Message-State: AOJu0Yx1GLps3OpW5zrlV5EGCtmyIQkzvMLYrzD+ycGRW/pqv+AH9GVq
-	+kPGmt2iKDmGovUiOYcQbmJzt9ftreCGXT/ulNjm80docAyOseMMrGnHNw==
-X-Google-Smtp-Source: AGHT+IH8zjzIk9uswMw8/4TTRjt9IHjAfcp/BlO5kZjnOiKgTthmxZXFmoxXmfACzUs0nxgpzbORmA==
-X-Received: by 2002:a25:b110:0:b0:dfb:2084:1bc5 with SMTP id 3f1490d57ef6-dff15344ce2mr10676082276.6.1718664833790;
-        Mon, 17 Jun 2024 15:53:53 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c12836sm60377556d6.40.2024.06.17.15.53.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 15:53:52 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id CCE671200066;
-	Mon, 17 Jun 2024 18:53:51 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 17 Jun 2024 18:53:51 -0400
-X-ME-Sender: <xms:f75wZhEIgABQTLO8bNdwyHcnRoUgH2lSghudprwKBE09om2K-XVSpg>
-    <xme:f75wZmXRZLMBsWq3Lf9y61hfiWOSn6h_Z4jyn8BpjcnDfGtEHHqMwCK3dJTdPBySO
-    KSXBPleJCSi58MNUQ>
-X-ME-Received: <xmr:f75wZjI-iow0u7VxifHh1KtQJxkISQiOPlcd65TWRX5U7bz4wYewgpgqsoy1CA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedviedgudehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteehuddujedvkedtkeefgedv
-    vdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
-    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:f75wZnHTuAHWNGSopSD5W3CvSjxhurdOfSnH80gdp15ddnxTj6lthQ>
-    <xmx:f75wZnVRGfD3KVeLmqV_1o4eX8XnVahz_I79LmPvHlwi-bOC8AYD5w>
-    <xmx:f75wZiNpuQi2OScMUajC8MV-tibq6H58i_vfCM9umSblibh23KERvQ>
-    <xmx:f75wZm3HSAQOvpqhwqf0Xl2Gi6BRH4UYwdTGjmrVhiBd0n0QCscraQ>
-    <xmx:f75wZkWkVZ3jGbFOTF98yH-ZL9WqmZI7Xi8ptooIQtUgxcd84fpibKUH>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 17 Jun 2024 18:53:51 -0400 (EDT)
-Date: Mon, 17 Jun 2024 15:53:38 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: stern@rowland.harvard.edu, will@kernel.org, peterz@infradead.org,
-	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	hernan.poncedeleon@huaweicloud.com,
-	jonas.oberhauser@huaweicloud.com
-Subject: Re: [PATCH v3] tools/memory-model: Document herd7 (abstract)
- representation
-Message-ID: <ZnC-cqQOEU2fd9tO@boqun-archlinux>
-References: <20240617201759.1670994-1-parri.andrea@gmail.com>
+        bh=euP5QDKTB5EI7sJME0BwF0iiV4DR44cs6erLRRFFlyI=;
+        b=qYyxifpA+bWXoqdQCkIYsMufL94TRu5DwOweaJ5Lv2TkCLUO7c+vsPCpNL8dbfo1c3
+         zSwd4SMUS8D2rMyXi0R+ySg9+oycVyrn5Vn8ZlUovJ+UhQihJ5JqFKbhceNEETkDp9ZQ
+         QxVObv9zEuXhHLVVZoN2gHTnumDbUgAtp/iA1i+IPUC8BCZsVTuoJhHbdZMQEtfOZq7y
+         hWuf0HQm7cJVFXYIzUeFK8g9jlfzrxer8ufZEdR02hQXgfPnD7wYqvfEVpJUGif/ORqI
+         PcrQeTjPnrQIUuzSwuu3/S75DwQxOSJOZX+yOjOcuRpVfvpXvFfZ/ypGAjvATc3hzWWJ
+         7RwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLe5q6FSK5GfhKJ/pVLTDRb3ngWKezzt8sDzpmzTymhTlD7gnjaKIdqdtg3K+qVMufvgmM8yh+5MXdSAaav2ZNgBVDajO8r8X0Fs5s0bkl9+LJwT8HVnBBEd05U5EiGIcjhEyg0D3R1Ol7uExgdtsxNb1NYoamQFPll6hPaBWmYs0cbta0
+X-Gm-Message-State: AOJu0YzDG3R7xhfanMEDwXZIJrtj8vW75VvJOIpSCtPnng77QNvejlxN
+	/IOxL5KBWHfEGgEjhuscbaFFpd58Az6BYjWRSuKNvPS0BSzJfcK6jtT1aFHjtm0EOGKnGG3GJtZ
+	gsSZyYneioiN7k6IMC6OiHYAEwTk=
+X-Google-Smtp-Source: AGHT+IGPGwNguwIysJ7Ic3F6GSehGgYoAOs0VsCnmqllCklhAUSuV+oj4WPhV9FO4RkKaiubPmDvw0WZvaeA2Wf/chA=
+X-Received: by 2002:a17:90a:5ac6:b0:2c6:de10:6ac3 with SMTP id
+ 98e67ed59e1d1-2c6de106bbbmr836066a91.31.1718664842643; Mon, 17 Jun 2024
+ 15:54:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617201759.1670994-1-parri.andrea@gmail.com>
+References: <20240604200221.377848-1-jolsa@kernel.org> <20240604200221.377848-2-jolsa@kernel.org>
+ <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com>
+ <20240605175619.GH25006@redhat.com> <ZmDPQH2uiPYTA_df@krava>
+ <ZmHn43Af4Kwlxoyc@krava> <CAEf4BzaFcpqFc8w6dH5oOJNKsAXZjs-KCFAXLp8TMBtS5ooo4g@mail.gmail.com>
+ <ZmbePPIKqc6XuVjL@krava>
+In-Reply-To: <ZmbePPIKqc6XuVjL@krava>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 17 Jun 2024 15:53:50 -0700
+Message-ID: <CAEf4BzaqDSGBbaEuOpEW5NbosgN8jE4CUE8s+-dgs-0sV6_geA@mail.gmail.com>
+Subject: Re: [RFC bpf-next 01/10] uprobe: Add session callbacks to uprobe_consumer
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 10:17:59PM +0200, Andrea Parri wrote:
-> tools/memory-model/ and herdtool7 are closely linked: the latter is
-> responsible for (pre)processing each C-like macro of a litmus test,
-> and for providing the LKMM with a set of events, or "representation",
-> corresponding to the given macro.  Provide herd-representation.txt
-> to document the representations of the concurrency macros, following
-> their "classification" in Documentation/atomic_t.txt.
-> 
-> Suggested-by: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+On Mon, Jun 10, 2024 at 4:06=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
+>
+> On Thu, Jun 06, 2024 at 09:52:39AM -0700, Andrii Nakryiko wrote:
+> > On Thu, Jun 6, 2024 at 9:46=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> w=
+rote:
+> > >
+> > > On Wed, Jun 05, 2024 at 10:50:11PM +0200, Jiri Olsa wrote:
+> > > > On Wed, Jun 05, 2024 at 07:56:19PM +0200, Oleg Nesterov wrote:
+> > > > > On 06/05, Andrii Nakryiko wrote:
+> > > > > >
+> > > > > > so any such
+> > > > > > limitations will cause problems, issue reports, investigation, =
+etc.
+> > > > >
+> > > > > Agreed...
+> > > > >
+> > > > > > As one possible solution, what if we do
+> > > > > >
+> > > > > > struct return_instance {
+> > > > > >     ...
+> > > > > >     u64 session_cookies[];
+> > > > > > };
+> > > > > >
+> > > > > > and allocate sizeof(struct return_instance) + 8 *
+> > > > > > <num-of-session-consumers> and then at runtime pass
+> > > > > > &session_cookies[i] as data pointer to session-aware callbacks?
+> > > > >
+> > > > > I too thought about this, but I guess it is not that simple.
+> > > > >
+> > > > > Just for example. Suppose we have 2 session-consumers C1 and C2.
+> > > > > What if uprobe_unregister(C1) comes before the probed function
+> > > > > returns?
+> > > > >
+> > > > > We need something like map_cookie_to_consumer().
+> > > >
+> > > > I guess we could have hash table in return_instance that gets 'cons=
+umer -> cookie' ?
+> > >
+> > > ok, hash table is probably too big for this.. I guess some solution t=
+hat
+> > > would iterate consumers and cookies made sure it matches would be fin=
+e
+> > >
+> >
+> > Yes, I was hoping to avoid hash tables for this, and in the common
+> > case have no added overhead.
+>
+> hi,
+> here's first stab on that.. the change below:
+>   - extends current handlers with extra argument rather than adding new
+>     set of handlers
+>   - store session consumers objects within return_instance object and
+>   - iterate these objects ^^^ in handle_uretprobe_chain
+>
+> I guess it could be still polished, but I wonder if this could
+> be the right direction to do this.. thoughts? ;-)
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Yeah, I think this is the right direction. It's a bit sad that this
+makes getting rid of rw_sem on hot path even harder, but that's a
+separate problem.
 
-I have a question below...
-
+>
+> thanks,
+> jirka
+>
+>
 > ---
-> Changes since v2 [1]:
->   - drop lk-rmw links
-> 
-> Changes since v1 [2]:
->   - add legenda/notations
->   - add some SRCU, locking macros
->   - update formatting of failure cases
->   - update README file
-> 
-> [1] https://lore.kernel.org/lkml/20240605134918.365579-1-parri.andrea@gmail.com/
-> [2] https://lore.kernel.org/lkml/20240524151356.236071-1-parri.andrea@gmail.com/
-> 
->  tools/memory-model/Documentation/README       |   7 +-
->  .../Documentation/herd-representation.txt     | 106 ++++++++++++++++++
->  2 files changed, 112 insertions(+), 1 deletion(-)
->  create mode 100644 tools/memory-model/Documentation/herd-representation.txt
-> 
-> diff --git a/tools/memory-model/Documentation/README b/tools/memory-model/Documentation/README
-> index 304162743a5b8..44e7dae73b296 100644
-> --- a/tools/memory-model/Documentation/README
-> +++ b/tools/memory-model/Documentation/README
-> @@ -33,7 +33,8 @@ o	You are familiar with Linux-kernel concurrency and the use of
->  
->  o	You are familiar with Linux-kernel concurrency and the use
->  	of LKMM, and would like to learn about LKMM's requirements,
-> -	rationale, and implementation:	explanation.txt
-> +	rationale, and implementation:	explanation.txt and
-> +	herd-representation.txt
->  
->  o	You are interested in the publications related to LKMM, including
->  	hardware manuals, academic literature, standards-committee
-> @@ -61,6 +62,10 @@ control-dependencies.txt
->  explanation.txt
->  	Detailed description of the memory model.
->  
-> +herd-representation.txt
-> +	The (abstract) representation of the Linux-kernel concurrency
-> +	primitives in terms of events.
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index f46e0ca0169c..4e40e8352eac 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -34,15 +34,19 @@ enum uprobe_filter_ctx {
+>  };
+>
+>  struct uprobe_consumer {
+> -       int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs=
+);
+> +       int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs=
+,
+> +                       unsigned long *data);
+
+can we use __u64 here? This long vs __u64 might cause problems for BPF
+when the host is 32-bit architecture (BPF is always 64-bit).
+
+>         int (*ret_handler)(struct uprobe_consumer *self,
+>                                 unsigned long func,
+> -                               struct pt_regs *regs);
+> +                               struct pt_regs *regs,
+> +                               unsigned long *data);
+>         bool (*filter)(struct uprobe_consumer *self,
+>                                 enum uprobe_filter_ctx ctx,
+>                                 struct mm_struct *mm);
+>
+
+[...]
+
+>  static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
+>  {
+>         struct uprobe_task *n_utask;
+> @@ -1756,11 +1795,11 @@ static int dup_utask(struct task_struct *t, struc=
+t uprobe_task *o_utask)
+>
+>         p =3D &n_utask->return_instances;
+>         for (o =3D o_utask->return_instances; o; o =3D o->next) {
+> -               n =3D kmalloc(sizeof(struct return_instance), GFP_KERNEL)=
+;
+> +               n =3D alloc_return_instance(o->session_cnt);
+>                 if (!n)
+>                         return -ENOMEM;
+>
+> -               *n =3D *o;
+> +               memcpy(n, o, ri_size(o->session_cnt));
+>                 get_uprobe(n->uprobe);
+>                 n->next =3D NULL;
+>
+> @@ -1853,35 +1892,38 @@ static void cleanup_return_instances(struct uprob=
+e_task *utask, bool chained,
+>         utask->return_instances =3D ri;
+>  }
+>
+> -static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *reg=
+s)
+> +static struct return_instance *
+> +prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs,
+> +                 struct return_instance *ri, int session_cnt)
+
+you have struct uprobe, why do you need to pass session_cnt? Also,
+given return_instance is cached, it seems more natural to have
+
+struct return_instance **ri as in/out parameter, and keep the function
+itself as void
+
+>  {
+> -       struct return_instance *ri;
+>         struct uprobe_task *utask;
+>         unsigned long orig_ret_vaddr, trampoline_vaddr;
+>         bool chained;
+>
+
+[...]
+
+>         if (need_prep && !remove)
+> -               prepare_uretprobe(uprobe, regs); /* put bp at return */
+> +               ri =3D prepare_uretprobe(uprobe, regs, ri, uprobe->sessio=
+n_cnt); /* put bp at return */
+> +       kfree(ri);
+>
+>         if (remove && uprobe->consumers) {
+>                 WARN_ON(!uprobe_is_active(uprobe));
+>                 unapply_uprobe(uprobe, current->mm);
+>         }
+> + out:
+>         up_read(&uprobe->register_rwsem);
+>  }
+>
+> +static struct session_consumer *
+> +consumer_find(struct session_consumer *sc, struct uprobe_consumer *uc)
+
+why can't we keep track of remaining number of session_consumer items
+instead of using entire extra entry as a terminating element? Seems
+wasteful and unnecessary.
+
+> +{
+> +       for (; sc && sc->id; sc++) {
+> +               if (sc->id =3D=3D uc->id)
+> +                       return sc;
+> +       }
+> +       return NULL;
+> +}
 > +
->  litmus-tests.txt
->  	The format, features, capabilities, and limitations of the litmus
->  	tests that LKMM can evaluate.
-> diff --git a/tools/memory-model/Documentation/herd-representation.txt b/tools/memory-model/Documentation/herd-representation.txt
-> new file mode 100644
-> index 0000000000000..2fe270e902635
-> --- /dev/null
-> +++ b/tools/memory-model/Documentation/herd-representation.txt
-> @@ -0,0 +1,106 @@
-> +#
-> +# Legenda:
-> +#	R,	a Load event
-> +#	W,	a Store event
-> +#	F,	a Fence event
-> +#	LKR,	a Lock-Read event
-> +#	LKW,	a Lock-Write event
-> +#	UL,	an Unlock event
-> +#	LF,	a Lock-Fail event
-> +#	RL,	a Read-Locked event
-> +#	RU,	a Read-Unlocked event
-> +#	R*,	a Load event included in RMW
-> +#	W*,	a Store event included in RMW
-> +#	SRCU,	a Sleepable-Read-Copy-Update event
-> +#
-> +#	po,	a Program-Order link
-> +#	rmw,	a Read-Modify-Write link
-> +#
-> +# By convention, a blank entry/representation means "same as the preceding entry".
-> +#
-> +    ------------------------------------------------------------------------------
-> +    |                        C macro | Events                                    |
-> +    ------------------------------------------------------------------------------
-> +    |                    Non-RMW ops |                                           |
-> +    ------------------------------------------------------------------------------
-> +    |                      READ_ONCE | R[once]                                   |
-> +    |                    atomic_read |                                           |
-> +    |                     WRITE_ONCE | W[once]                                   |
-> +    |                     atomic_set |                                           |
-> +    |               smp_load_acquire | R[acquire]                                |
-> +    |            atomic_read_acquire |                                           |
-> +    |              smp_store_release | W[release]                                |
-> +    |             atomic_set_release |                                           |
-> +    |                   smp_store_mb | W[once] ->po F[mb]                        |
-> +    |                         smp_mb | F[mb]                                     |
-> +    |                        smp_rmb | F[rmb]                                    |
-> +    |                        smp_wmb | F[wmb]                                    |
-> +    |          smp_mb__before_atomic | F[before-atomic]                          |
-> +    |           smp_mb__after_atomic | F[after-atomic]                           |
-> +    |                    spin_unlock | UL                                        |
-> +    |                 spin_is_locked | On success: RL                            |
-> +    |                                | On failure: RU                            |
-> +    |         smp_mb__after_spinlock | F[after-spinlock]                         |
-> +    |      smp_mb__after_unlock_lock | F[after-unlock-lock]                      |
-> +    |                  rcu_read_lock | F[rcu-lock]                               |
-> +    |                rcu_read_unlock | F[rcu-unlock]                             |
-> +    |                synchronize_rcu | F[sync-rcu]                               |
-> +    |                rcu_dereference | R[once]                                   |
-> +    |             rcu_assign_pointer | W[release]                                |
-> +    |                 srcu_read_lock | R[srcu-lock]                              |
-> +    |                 srcu_down_read |                                           |
-> +    |               srcu_read_unlock | W[srcu-unlock]                            |
-> +    |                   srcu_up_read |                                           |
-> +    |               synchronize_srcu | SRCU[sync-srcu]                           |
-> +    | smp_mb__after_srcu_read_unlock | F[after-srcu-read-unlock]                 |
-> +    ------------------------------------------------------------------------------
-> +    |       RMW ops w/o return value |                                           |
-> +    ------------------------------------------------------------------------------
-> +    |                     atomic_add | R*[noreturn] ->rmw W*[once]               |
-> +    |                     atomic_and |                                           |
-> +    |                      spin_lock | LKR ->po LKW                              |
-> +    ------------------------------------------------------------------------------
-> +    |        RMW ops w/ return value |                                           |
-> +    ------------------------------------------------------------------------------
-> +    |              atomic_add_return | F[mb] ->po R*[once]                       |
-> +    |                                |     ->rmw W*[once] ->po F[mb]             |
 
-Just to double check, there is also a ->po relation between R*[once] and
-W*[once], right? It might not be important right now, but it's important
-when we move to what Jonas is proposing:
-
-	https://lore.kernel.org/lkml/20240604152922.495908-1-jonas.oberhauser@huaweicloud.com/
-	
-So just check with you ;-) Thanks!
-
-Regards,
-Boqun
-
-> +    |               atomic_fetch_add |                                           |
-> +    |               atomic_fetch_and |                                           |
-> +    |                    atomic_xchg |                                           |
-> +    |                           xchg |                                           |
-> +    |            atomic_add_negative |                                           |
-> +    |      atomic_add_return_relaxed | R*[once] ->rmw W*[once]                   |
-> +    |       atomic_fetch_add_relaxed |                                           |
-> +    |       atomic_fetch_and_relaxed |                                           |
-> +    |            atomic_xchg_relaxed |                                           |
-> +    |                   xchg_relaxed |                                           |
-> +    |    atomic_add_negative_relaxed |                                           |
-> +    |      atomic_add_return_acquire | R*[acquire] ->rmw W*[once]                |
-> +    |       atomic_fetch_add_acquire |                                           |
-> +    |       atomic_fetch_and_acquire |                                           |
-> +    |            atomic_xchg_acquire |                                           |
-> +    |                   xchg_acquire |                                           |
-> +    |    atomic_add_negative_acquire |                                           |
-> +    |      atomic_add_return_release | R*[once] ->rmw W*[release]                |
-> +    |       atomic_fetch_add_release |                                           |
-> +    |       atomic_fetch_and_release |                                           |
-> +    |            atomic_xchg_release |                                           |
-> +    |                   xchg_release |                                           |
-> +    |    atomic_add_negative_release |                                           |
-> +    ------------------------------------------------------------------------------
-> +    |            Conditional RMW ops |                                           |
-> +    ------------------------------------------------------------------------------
-> +    |                 atomic_cmpxchg | On success: F[mb] ->po R*[once]           |
-> +    |                                |                 ->rmw W*[once] ->po F[mb] |
-> +    |                                | On failure: R*[once]                      |
-> +    |                        cmpxchg |                                           |
-> +    |              atomic_add_unless |                                           |
-> +    |         atomic_cmpxchg_relaxed | On success: R*[once] ->rmw W*[once]       |
-> +    |                                | On failure: R*[once]                      |
-> +    |         atomic_cmpxchg_acquire | On success: R*[acquire] ->rmw W*[once]    |
-> +    |                                | On failure: R*[once]                      |
-> +    |         atomic_cmpxchg_release | On success: R*[once] ->rmw W*[release]    |
-> +    |                                | On failure: R*[once]                      |
-> +    |                   spin_trylock | On success: LKR ->po LKW                  |
-> +    |                                | On failure: LF                            |
-> +    ------------------------------------------------------------------------------
-> -- 
-> 2.34.1
-> 
+[...]
 
