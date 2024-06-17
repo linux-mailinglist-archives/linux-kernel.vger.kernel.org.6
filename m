@@ -1,112 +1,264 @@
-Return-Path: <linux-kernel+bounces-218077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FFF90B8FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:07:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA7990B903
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6F121F21B19
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E902890D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE51C195971;
-	Mon, 17 Jun 2024 18:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78EA19AD65;
+	Mon, 17 Jun 2024 18:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PNhO1YnT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Oc8S0ZQP"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF65019ADAD
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718647375; cv=none; b=AfaRtbBz5BKw+o0A3U9+Sb7u3ixC6udfAHKt7tVm8SNan98u38BaPURy4IOpI9z4K+QpR/DXxCar8xjzH8Ewtd8fNCO3PE8TGMo+0EJipKj4mu0CI8kjcSufkjNyB6TUevSsHIW93PRNafkpjOQ2XcDWRP5UEyuzDLIXKz5haRY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718647375; c=relaxed/simple;
-	bh=RZ14lsCYb4YxKJjabopa0avjAflKI1wcPKwGhod+Gzo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pNuNXymDEXSC7J0UJtufa/Ygb7LQxwyxepF7yx6fd3HhNkAZ5RUDfRh0J4OA+EKahO5ry0tAe91dwmzXHHvwB3xjhMKdy5xRRNbUHau0OpD680EjseXUub598guzcew8KLkjs6bvcmR/NPsWJhIsLAVATPJ/1nl3WGtTzy+/TOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PNhO1YnT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718647373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MT58cRhLJAAVBSqhZOpx+MX2NQrfS9vYxE2s7Gss0cM=;
-	b=PNhO1YnTOEnuK/Pu4r4DJYxpEzgPAa4G1jxSi18mSZD10sB+Pf9P4Sfbjf2v9BvUzL1eN2
-	U5Qvz+a1QC6IfaVDJZviZGOEW9YBFgzRwHGQ1zlRXzEayxeG+0oB67pgxcdoSYTAEwdD8d
-	WZMJTSHYCBLD0XQV6IeDNrLCxJEfm60=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-2-e9ZtlnUiNrKJbpPoqofFag-1; Mon,
- 17 Jun 2024 14:02:46 -0400
-X-MC-Unique: e9ZtlnUiNrKJbpPoqofFag-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1227F19560B1;
-	Mon, 17 Jun 2024 18:02:45 +0000 (UTC)
-Received: from RHTRH0061144.redhat.com (unknown [10.22.16.41])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2FDE719560AF;
-	Mon, 17 Jun 2024 18:02:41 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: netdev@vger.kernel.org
-Cc: dev@openvswitch.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Stefano Brivio <sbrivio@redhat.com>,
-	=?UTF-8?q?Adri=C3=A1n=20Moreno?= <amorenoz@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Subject: [PATCH net-next 7/7] selftests: net: add config for openvswitch
-Date: Mon, 17 Jun 2024 14:02:18 -0400
-Message-ID: <20240617180218.1154326-8-aconole@redhat.com>
-In-Reply-To: <20240617180218.1154326-1-aconole@redhat.com>
-References: <20240617180218.1154326-1-aconole@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C628319AD5A;
+	Mon, 17 Jun 2024 18:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718647382; cv=fail; b=qFB/C6vMyX6NtzY5U3YbeUU8SZIASD15eNSA01SSJyvoloH9PmIAa6o6RYhuFBIsXaMaOhVQ367xUr1nrk/5Og4H2j7G9Eg1KgSY8imjQvfGf9tSbYqP5Yvz+tfj1UZyDiygr+DyC0hsL2D+a42uq17aufvz5j/XaPVOaVMAleU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718647382; c=relaxed/simple;
+	bh=1sTDjxtBNCYgA010Dk3F/8eEkxfKsEvZRLCSRcz/n/o=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=uBhE4BrDFs29HjfSiyXbkxqA/yjaE7fyldOA3ZErgSYo8IH5MkyBhuAO8uwiYtD7aDHs2S/CXFkOlcVnGdF3/M9deQ5sDZ/lQ/Qxexf7EiQGUHMcXruzEvYrNp9c1IQRBuebA09KYYwkqrd+2t5iGI8l9osAoC6mHvFyM6Buh5A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Oc8S0ZQP; arc=fail smtp.client-ip=40.107.21.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fykxPq/U/nl8Fl2QzbHBjJwrBtYarNvll3ey+Ze9emc2MBIptu4mcPVFAM3akuVDKDVUxamWby7NwJFSW/15T3c7ti48TPkW5/5XOOBoIqdZyJLO3+HHPVOhKdmmvKOFGgd8niI57R7dF6t2tVlmNwArdVxe0gwFWi4Gwg7jGSczSjkXrLMMtNprnlSjcTVz+DXqHuuicHJF3JQLRW4gbWSYem5uZJgzoTSqys4FGbdR0/1IeSmOg+KgXJCl/z/WDmHqIJOQuHLCU5wKolQ2bONfad6YXzH1WaWKs91bvFfHbXiipgEBkNzoVh/Pw7EJXrxvvt70TcGtxHUiD5IfXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oZhflHKkhPx1x+CqBA76QfJJ4EN9TwtIEAuyXSjIkBI=;
+ b=oevF8XH/gfifZpwkn4i8aOL8BsY3arngEiQjRkBPzHOJOUW8lNdsxv58+mHiw/gJqaNB0glP8AzkPRePp3YmotB7wPB15HASm4FUP2IF2HEwcGycj3niciIjMzIzPxs2Ok0wILHdlY4xhEG2hI8iCjxa9YeNWUxifO03gudVfCArEyFdngj7UrdNFAU7alExjgFz5sinLVkkHxYvGA/s92av6qyM/t1y9DJnMgg+iPXIKUkyJ4gjmVA0RWWZcCuKR+K4JjhJTuebKHieIvGViKZUfJCeB338HVvzhFl6cppsafPhyJMSTPpWMcllnO+5F3aRR6YeBQfYQyq5ODfs+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oZhflHKkhPx1x+CqBA76QfJJ4EN9TwtIEAuyXSjIkBI=;
+ b=Oc8S0ZQPB9G5lG1al04zf260UMHMLbTrf/9GIPrPT9Snmerd23i3UYrvJHNl6aWSLTG4QJQvGRGd7p/RegmPIWQG4nq0KlDWNlqBFNMKN+vvEvUqMkWJZfpKGWMGsagzspyPNKfIw0QXieHZUKgAAK63g6mvjRPaJbf/GMIov/8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS5PR04MB9972.eurprd04.prod.outlook.com (2603:10a6:20b:682::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
+ 2024 18:02:57 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
+ 18:02:57 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: ata: ahci-fsl-qoriq: convert to yaml format
+Date: Mon, 17 Jun 2024 14:02:40 -0400
+Message-Id: <20240617180241.901377-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY5PR20CA0020.namprd20.prod.outlook.com
+ (2603:10b6:a03:1f4::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS5PR04MB9972:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9db0494a-91d3-4a64-9a62-08dc8ef7b7d9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|376011|1800799021|52116011|366013|38350700011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WTBgkwG2ZFTpeQMMZCAu4gi8SUN/VZywLl0B9gbRAfy6482+RTCFLuzwes8i?=
+ =?us-ascii?Q?QLUNztxfctuEikUNBT52rXPJ5xJMMyMiIH+5Xz+IJjwfBbj7l4jF8WYp8OxE?=
+ =?us-ascii?Q?u1YCiINHbfCjQNGrp1cqAwWqxGUUyQfQ0u0ivw8WKocdYfQMCPnFhVmX2Lxz?=
+ =?us-ascii?Q?yeJVdlQoP8csUWO6RXWjSas9mETJXDLk8230hehmIlwHzyswDbLBvsktOXJL?=
+ =?us-ascii?Q?Hzwy/O4Cvy+JO0VHKh8qWJMCdmcyhpWJHFTwB3u/gRhHOxINhPFshFA6P7Hk?=
+ =?us-ascii?Q?xTeBQ4Wm4oLaqA85hp5hPTrjStVyPYpv/ugrgm0FlSTC7Mf9yvOnPEDqR6yo?=
+ =?us-ascii?Q?o4FA1Z4afBSB/3kwArRtlMkOP3qSvYV2DDLht/8zbfmixTX0qsi7XssDjivz?=
+ =?us-ascii?Q?CH+YYJXxKJu4R6eY5JLMfzZwRpsBlyBgvoVD1kEPnRLpGXOOSclVHQeF0Q3q?=
+ =?us-ascii?Q?F91BCqK5nB3ZJTXmdhHtiCBGIR3xEN1r6pw9KEIKyR9WxgvYcgUGn3m/pz8P?=
+ =?us-ascii?Q?UmfxzN2ceOf+bRG2gAhMPIp6nsMHcJae2fIBoIp8wnmLmwVD6QjsPAcBKYj+?=
+ =?us-ascii?Q?7qkt1QO6nnbqM63GIB4D1K6ULtTuj7Za0rxjXMsbQ9jbkJYYeiYnhRM9RS8x?=
+ =?us-ascii?Q?H5SAehOdFrBb15B4/mDk8fu4jbPT81iMzQzBlqyKnlI/0BJzeM7aEy4nJlle?=
+ =?us-ascii?Q?8umdTMmNZN8r/DYwNv3EYYVLQe29QNlu5WbxnB9jhI5GFZW+BXEtWoOXeWfx?=
+ =?us-ascii?Q?mwZzrLRmGIMmkfeU7P0yCIZ/Fu41zhtBB9AEmGLPww/I6+1NhY86rilTsu4O?=
+ =?us-ascii?Q?ku1Esi+fNeaJwGNucEOPxiP5PNCXKENfsWUWdTW5rykewwvu1HnoJ9QHD0Qw?=
+ =?us-ascii?Q?ddAZIdlFjBLG2/t4ZiWEj/BIC32FKDYHip1FnZb5N2I6hvDZNje7HXE4YWu9?=
+ =?us-ascii?Q?v0kk9eOnzl31t02mpOuMv06scXtI3MJCn/CIJx21pyOfRsmkKjIJxX0q+s1j?=
+ =?us-ascii?Q?OopFsPanQZIpvJIKfFRYxs7ErVqZlWPkCsrK2J5PGGVFovC6156TMLo4z/z0?=
+ =?us-ascii?Q?SUnEkKFFo8WO+ujS6pmNbTyxtna+U6Ii1RyE4slvUFmXTSslqiH1E6x30GTB?=
+ =?us-ascii?Q?qFAiDmOhM/dKOotlPet8athR0XE9sr704BnWwLo/K+RVJD9wams/3GqWZrrX?=
+ =?us-ascii?Q?YAQdg89Vyyy1wmUaVv4Pw3zqwAJRmTcEuiWDiIf5XDNT9GR0PYG1kSQc7UwJ?=
+ =?us-ascii?Q?PgMUjd3snmCy3ohZ7kwvy78NDOv2Vb/+T/wgL2zjIoOMrAg1QagkblbHb6+A?=
+ =?us-ascii?Q?qJhG69iF3oog8UHgS70cB3fx?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(52116011)(366013)(38350700011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2QTO5YP0pzsMWDp3c7v8T5XbFRB/9Diw9sbEizwlsPZw7Px5QK9t3WIKMyry?=
+ =?us-ascii?Q?/ZhXwKY6/fl/P4bG6yK2JkHawRxaLI9p6+sa3AZu6ub9YCanlyIRn+tpiBBd?=
+ =?us-ascii?Q?fb42A+19s3LxzuA/O6qRrIFHqsAGRpDToeUOV9n4p05RaMcoiJovQJnz3KIi?=
+ =?us-ascii?Q?+N4BWaxXBX3UtBfE4uCCPf5vsWJ9FuDm0yu+nAD5B6mr8uBH2Qf+DtE1lWQU?=
+ =?us-ascii?Q?56Zx3tubnNKgXjXvWyEnBPxtCKdvCwtJexX2VT1etY+9k7Ku6CYXiboYD1cU?=
+ =?us-ascii?Q?Je+KzTEn6Xg39JiDS2sTJh4fUs5FgibGR1Hcw0mIQBg1EVKReBb/PHzjiRoq?=
+ =?us-ascii?Q?DeH+H8o3WCXi49mjQjtX05f5wG3YzPKAPP8ybovTs8qDAgR0By4gJ37ahksy?=
+ =?us-ascii?Q?VvWvtlF11KZ1URavIzn3qF2eOL255qEbJuSoZI/4EMEABsdzspJQWSNmNaP9?=
+ =?us-ascii?Q?3vL++lqAk+mrVie16OFrbPAiC4Ij9YC8rRhoiRrRdpjsjdA6oKLeKbT+UBx5?=
+ =?us-ascii?Q?zeBqaL4a9A5GQlXX6LKwgpLctcL2RJZKkyCrFNzKJGibfzkJRUErderHZHWw?=
+ =?us-ascii?Q?+vojTfdkPXntS+5r/GQz6Zmpt/yF8X2AVxqWN3jn59kIHXi1lKTh4Xa0C7Xe?=
+ =?us-ascii?Q?2lQomokIAF0xEpO+LP9S1Yi1gIxr5fAzHUdfQ8G4C4xhiZuxjuQmeaS8e7ep?=
+ =?us-ascii?Q?ZKDKvEWYUzdtSi+q/NIvSrfEK1agcQzRGuoX3osJzk6/vS+2cg7SXAJRJ0+o?=
+ =?us-ascii?Q?Q8BLGAmtSQPXqsuVmAvJfXD0B5Ju7s0dOYY8H/0Gb9aZbklcaYHh2Ky5oyfQ?=
+ =?us-ascii?Q?V6JVJy+eUDEC9cG4yEJzgf7r582rMMquhZhmc/0PHcB5ElGIxIVU0o/rOIBa?=
+ =?us-ascii?Q?9nAXBJTbrNpD1KrgTlbzWmGWhd9WyfYu5l7GRFg7aNtK2ujygUEV/+MyUmmK?=
+ =?us-ascii?Q?UAnKNRv3moY+JnSKhRf7QujkL0ooWZovtj0e1zYLVz1f0RHEX/kEL2nMLjA/?=
+ =?us-ascii?Q?ku3V//KxnDpowmCol8ydx2cU5nZz3RyvfOy2wdXTUxIdyLWRKx3rZvrE4jmY?=
+ =?us-ascii?Q?cdOi7Lweb1L6AQZmWs6Umnxm3PH2dTCgGUXcnQt59FzpNOqNQGCKlcNSJEqK?=
+ =?us-ascii?Q?TCv6rUBMY7bitX2TJKVIP79PDorcZdaved+itYJm766/791OhlBBrC7haZX9?=
+ =?us-ascii?Q?fQPY9CgwxTmO0eDiN5k8hyGZpONIcMTXpYTPVJLMMyZyJUwFu1mwh2JDQkP6?=
+ =?us-ascii?Q?fRrdhTMhT1Ekq0MTtWeXKrGjsbpByrUB30HPKpxFpAv66rbdaCMwSU3kYAND?=
+ =?us-ascii?Q?PKOOEqPBEjonuu2jW6nTVl81SXFpuWrPJmwAaQhLQKU48xqZalu2nNTKFN9p?=
+ =?us-ascii?Q?1FaPqGWrH13fpJF9G58VCS+ibIjLe2Bdih36oLERNJh4jljimp+Br+vc2c5w?=
+ =?us-ascii?Q?xMmR/kS2lQw5T+DiwwketkLUJGQUg2PnWwvXuRFrex9hSRaboLbVUN45qiyG?=
+ =?us-ascii?Q?DrjPaNZwHQ3AipEf1cIhGoT11t+uPObzrlX98cJSWT7E+eUgKHqU9Ur5cSR/?=
+ =?us-ascii?Q?Awy39qKaMdXq1jxNHCZ1dBUKVmKWA/xJIkUs5nmh?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9db0494a-91d3-4a64-9a62-08dc8ef7b7d9
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 18:02:57.4034
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kb2t2SVAC4rb4yiwkasrhJSBdceG9ftMJoIUa38IzIZ/CkaiTJQShQkhOAjrLMMTVrZRQBSKGktIhgM8FMmpIQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9972
 
-The pmtu testing will require that the OVS module is installed,
-so do that.
+Convert ahci-fsl-qoirq DT binding to yaml format.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-Tested-by: Simon Horman <horms@kernel.org>
-Signed-off-by: Aaron Conole <aconole@redhat.com>
+Additional changes:
+- Add reg-names list, ahci and sata-ecc
+- Add fsl,ls1028a-ahci and fsl,lx2060a-ahci
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- tools/testing/selftests/net/config | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../bindings/ata/ahci-fsl-qoriq.txt           | 21 -------
+ .../devicetree/bindings/ata/fsl,ahci.yaml     | 58 +++++++++++++++++++
+ 2 files changed, 58 insertions(+), 21 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
+ create mode 100644 Documentation/devicetree/bindings/ata/fsl,ahci.yaml
 
-diff --git a/tools/testing/selftests/net/config b/tools/testing/selftests/net/config
-index 04de7a6ba6f3..d85fb2d1f132 100644
---- a/tools/testing/selftests/net/config
-+++ b/tools/testing/selftests/net/config
-@@ -101,3 +101,8 @@ CONFIG_NETFILTER_XT_MATCH_POLICY=m
- CONFIG_CRYPTO_ARIA=y
- CONFIG_XFRM_INTERFACE=m
- CONFIG_XFRM_USER=m
-+CONFIG_OPENVSWITCH=m
-+CONFIG_OPENVSWITCH_GRE=m
-+CONFIG_OPENVSWITCH_VXLAN=m
-+CONFIG_OPENVSWITCH_GENEVE=m
-+CONFIG_NF_CONNTRACK_OVS=y
+diff --git a/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt b/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
+deleted file mode 100644
+index 7c3ca0e13de05..0000000000000
+--- a/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
++++ /dev/null
+@@ -1,21 +0,0 @@
+-Binding for Freescale QorIQ AHCI SATA Controller
+-
+-Required properties:
+-  - reg: Physical base address and size of the controller's register area.
+-  - compatible: Compatibility string. Must be 'fsl,<chip>-ahci', where
+-    chip could be ls1021a, ls1043a, ls1046a, ls1088a, ls2080a etc.
+-  - clocks: Input clock specifier. Refer to common clock bindings.
+-  - interrupts: Interrupt specifier. Refer to interrupt binding.
+-
+-Optional properties:
+-  - dma-coherent: Enable AHCI coherent DMA operation.
+-  - reg-names: register area names when there are more than 1 register area.
+-
+-Examples:
+-	sata@3200000 {
+-		compatible = "fsl,ls1021a-ahci";
+-		reg = <0x0 0x3200000 0x0 0x10000>;
+-		interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&platform_clk 1>;
+-		dma-coherent;
+-	};
+diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+new file mode 100644
+index 0000000000000..162b3bb5427ed
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/ata/fsl,ahci.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale QorIQ AHCI SATA Controller
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    enum:
++      - fsl,ls1021a-ahci
++      - fsl,ls1043a-ahci
++      - fsl,ls1028a-ahci
++      - fsl,ls1088a-ahci
++      - fsl,ls2080a-ahci
++      - fsl,lx2160a-ahci
++
++  reg:
++    minItems: 1
++    maxItems: 2
++
++  reg-names:
++    items:
++      - const: ahci
++      - const: sata-ecc
++    minItems: 1
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  dma-coherent: true
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    sata@3200000 {
++        compatible = "fsl,ls1021a-ahci";
++        reg = <0x3200000 0x10000>;
++        interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&platform_clk 1>;
++        dma-coherent;
++    };
 -- 
-2.45.1
+2.34.1
 
 
