@@ -1,392 +1,421 @@
-Return-Path: <linux-kernel+bounces-217937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742D690B680
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0CB90B690
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4620280126
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE33028158C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950F815F3E6;
-	Mon, 17 Jun 2024 16:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1E71662E6;
+	Mon, 17 Jun 2024 16:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ID5b0mPe"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFJd7FBL"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47CB15D5CA;
-	Mon, 17 Jun 2024 16:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B45015D5CA;
+	Mon, 17 Jun 2024 16:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718642064; cv=none; b=V7IPCV/iYFDyxjTQL8fK8m31mW8bUQz2hYLzdnwNu8FrN4XMfiWiSltqoB+Tm1sZe0nwonTr03SHHFYGFcpTQBuZrVhs2qddEJKXJ/YMX/mmX4wDHM8p1b7iQYbp5X8c+p+dR7uYvfI8hvFSrd1qzObiWze6OJAmCFiEqXbjuX8=
+	t=1718642188; cv=none; b=fLLApEuCTC3UiB3v2mCYw53LGdwqFFnEBDulR6y43dE99b8BUVGtxFPQj1La5Eq6LU2LyXFOMbYG7WpXWfcTKDcs5lP1YR/WbZTxX1rocp0cfaiOFNLDuGorJLIu/ebCMe5INUi8xDYJe2vQKAMENWt5yg+QpwswX2FtRRsPRoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718642064; c=relaxed/simple;
-	bh=Kc6npoJ2c6U5oWy4Wj721fvTk0TfMA38JQT4sIU1xD0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V3s2JwPZlpikdPdenBMolGd7vf44+iU4aRmiA/USOsC6M13XGdphUOpzBBA+2/fFRyX4Cqpw2JcaXw+yk0qOAq5YIqbeuwjprbvIxstVeRDr8UaSJKbG4KbRG591hpRLTkM+qHzHfKXycwbX/5LakEZE/uxLpVfrsCzKsMi+OLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ID5b0mPe; arc=none smtp.client-ip=209.85.208.180
+	s=arc-20240116; t=1718642188; c=relaxed/simple;
+	bh=xiRRxg/KZQBTdrB1E+lOHTQF1uDvnOoFY+wqe+bREkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OwNEYRG9a7XATzoOn/0+GP5WGhKVqqY3WTH9eqLhxFQ9cJmmXbAJrBBz0k87owkGtTHMh9ArIJ03z7UiXiGMJaaMiDe+rPRpVxszHcgKiWct9Bb1hPKjMAP928/CyMnXOQTFG3e4kY9QOBodMYLSHFrCOwYQEXRZbwNQUQDH524=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFJd7FBL; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ebe3bac675so41333911fa.1;
-        Mon, 17 Jun 2024 09:34:22 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso528564366b.0;
+        Mon, 17 Jun 2024 09:36:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718642061; x=1719246861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ogcq2cw4LW99KAx92DCfmRE6i+NEPsTdaF/G7XCqinM=;
-        b=ID5b0mPemZdpqct47rkFmsfqNFkpkfKXvAmOL8HTMpsqUwm3ebUMwTuQ5xTuoKhJ/w
-         4uuPOjGhMnfCxh/bhRc7iGMj5mbMvW5lvN/FuJzG6qzhoXBWwl8ksq+lPyxPgioYATH8
-         JOzSXar1zA6zLZ6ruMDRAUz1m0Srzq18uPlf/8AUcneeydLZH+juGIlus1m4ntazcgc1
-         lNvNfvP3ZDBXBuiMR/GWaEGLpGRTGy0WuyAYceEoRtEyrHA/7Gv2rBwqNomVGQrsE7Do
-         zbfCRcRKE3JA7X49Gk1acIpdQp+dfHB37e58Nr/5gozBryZkQRJJRLED4wh1/bbIOQI9
-         1umw==
+        d=gmail.com; s=20230601; t=1718642184; x=1719246984; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=53J7WI/sxMq7DMs+aYMSjnkpgSP1OKUPbBpcZiQTHx4=;
+        b=kFJd7FBLCGOapx4/PAhavNBKnY47QfuhgUAOd/DZ2nllXci/kN4WXd9vHmE87giPc5
+         nHsm1IjS2c8S9EDMQ5VaKl3CfRO1v52JP7pTtmRQPP/RNvpXJv4PWeKoqrZXqGMTPu2a
+         rfPHduhqHKtAJN36Nf/OpHUkUK6L8R4PzR4NmwLKqIm8I3N9LBwYhctcbdpBNVwExxzu
+         i4xxPc/PQ3hHw/lFYEZtM5+b7wKsM10tagF4to2cLbLEP3I8O/6HB3MSr12ecd4FxCL3
+         3EmzHNcMlhzaltWJwONT7YKWIJ4yV1m7ugAY9/glyc5KAThqg0gatakiOC3IhKROV1/g
+         UW8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718642061; x=1719246861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ogcq2cw4LW99KAx92DCfmRE6i+NEPsTdaF/G7XCqinM=;
-        b=Zwz82PyxoTVZEDqvw+PHTwEiVyN8trE1Cpdhj3VMixQCoekQXCr8lQGQqmTGJWDsE3
-         wuLGB58MC11m+9aehw68+gUDyh7uzDOH3DV134XUfI0Ynkt5cUJ/mOuhY/70Yii7AO3F
-         9NEwHBKZ3yLD8fdF2nIBkw6SS/64YDKQr2IsKpo7AM9oVyZNtcVRfkJq6uS6dVc0xw+E
-         WWgsundsbxz5fJSNXQKqSBZDMuE08XnTosFb03porVnNXFemBgS+ht6RAVoPlRzI0A84
-         2Dcpvvbedc+g2Ur1wdlnUQmCPleFyp6KI0Ko/05VSdG+lHBDb3vEwwp0K5dx5BFfTA17
-         WOEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsfODOxCTHI2Mudl315HKvcUlX1bekWklcaKdLYBirW/K+tu4SfwipThynTj0Hp5E+rzTHb8UYLuaZVbaztEqslGpkQfdn66Qux/KORnlK+w==
-X-Gm-Message-State: AOJu0YwPLXrAjNjC1q61TRL6WUsbESeuXKjnyBJsCkVvzJ9sZIBuL/Po
-	be806p9ejaCcFojxYE4vzbCToJ9h4vxdo0NRvqYPvo+gyUBw5itQLFg0FD9ztZRFxMCDf8Ailla
-	3Ov3srJ9X9T4twmo9Y0ehO95odw==
-X-Google-Smtp-Source: AGHT+IGivdcE+iPtGE5o0xUHNTlSBmox16QCHyEMdFMr0hg3nXWE6hx+5o4C1UsIaS3/+c5jjJQzaXwXeomAQqT76Rs=
-X-Received: by 2002:a2e:9f41:0:b0:2ec:13f9:930c with SMTP id
- 38308e7fff4ca-2ec346421f7mr504261fa.5.1718642060507; Mon, 17 Jun 2024
- 09:34:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718642184; x=1719246984;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=53J7WI/sxMq7DMs+aYMSjnkpgSP1OKUPbBpcZiQTHx4=;
+        b=m3777DKXhjqtdOQV3Jf3wnsejv7h1SGDK66ZkkasKy8GqDt6F8hgczQKo3JINOENh6
+         QTKyjRO2tT9CNfDCMQRnU/ov5iCVmdLvQD3reUryha6Dywly8BWmytULfem3mU7NZNyU
+         y5L/ophC2tL9KzbcL8AyRJ1alNmveJDUrAgMSuSMvjsIV7eIFKLep8eVSu69BO6MRPqn
+         LmTiZ2J+FSKJuW/TVcJx54YKdhi2xfYvt32abDO2Xum8moN/ec4xaD9kTligFPnQ5FDh
+         M+toCC4300lgM+Crc1CAQpkpgeTCmLAcFkMvgJxcz60eEzEoRk2MuTsEdd5AnEhKfmaJ
+         QzQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfJv/cL9SwEWuqwnSYPUGWEPxD/tk2UNC++7YHDWO9QOSqjcvEsVbS/ofV7mQ/YTJ6kRnyYhaU0zu8QqwTHBl4wAQr/gATWcvYtNWH4tVADlHCroAWGmoSvAtj2Mhng1V0xA8aBxAp5Y0W6mxBzlPWbdFqTCyv3DPxb6tl13gYU7Gvtvd9WnmE5dHkauVfikeG0uV+7xaQquj9oivWfuN43Eo48+FinGxY0qlS44pOZ1lho88fQhgmXFJaritO6mHE0zQDXaxIi89H8mlqaqkabExaNJFNeAwDehC4EM/qiGil+9GmRFfaTM3IWyghVhY3hJWDJJvu+pYOo4ndIAmRLoU9g1CrceU/ETURL1969dsDhWag3sQ0CtWBsJdWi1XLlnPcLAKSlxBqC2hIiEQ+3dVRDRLl4I0A0+6Rh2rgM+yRyfXOyC/aFKekBTqiaGHB5g7VUtibko9CfkyxFP1wbs1EOrvZhlo+MYRCt3WI79NNbj5RXmeRMoo5hwbGJklrPj8Uie6dIkwMeRTDMawwCZ8uQt48gbnfFwqASL8UKeSmOAhsDGw3
+X-Gm-Message-State: AOJu0Ywt8D2/V4AncS641NXxtWZvtfLMzkd2RZw5tgTq+5u0oHrlVE0G
+	pD73uDBL2CBYePp2CU5dSoOxE0mCmUfuavAULMcfaeyz336r6Eok
+X-Google-Smtp-Source: AGHT+IEgIhSMoPO6IwzcFhQmUpnLu6gYo3keWNhjJiuidTn6zLGnPgWojVWeQQr2lo9qk89rXkkVsg==
+X-Received: by 2002:a17:906:4341:b0:a6f:5c91:7be3 with SMTP id a640c23a62f3a-a6f60dc1fa8mr632023166b.56.1718642184123;
+        Mon, 17 Jun 2024 09:36:24 -0700 (PDT)
+Received: from [192.168.42.188] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f6a64a3efsm391222566b.173.2024.06.17.09.36.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 09:36:23 -0700 (PDT)
+Message-ID: <20a6a727-d9f2-495c-bf75-72c27740dd82@gmail.com>
+Date: Mon, 17 Jun 2024 17:36:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240616085743.1100704-1-xin@zytor.com> <20240616085743.1100704-3-xin@zytor.com>
-In-Reply-To: <20240616085743.1100704-3-xin@zytor.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Mon, 17 Jun 2024 12:34:09 -0400
-Message-ID: <CAMzpN2jQrgaPR2R_=sBRmjGvbpX1ZSCrr9zJ+TM9N1ymg5_OiA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] x86/cpufeatures: Generate a feature mask header
- based on build config
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, will@kernel.org, 
-	peterz@infradead.org, akpm@linux-foundation.org, acme@kernel.org, 
-	namhyung@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v12 10/13] tcp: RX path for devmem TCP
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+ Sergey Shtylyov <s.shtylyov@omp.ru>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Nikolay Aleksandrov <razor@blackwall.org>, David Wei <dw@davidwei.uk>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
+ Shailend Chand <shailend@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20240613013557.1169171-1-almasrymina@google.com>
+ <20240613013557.1169171-11-almasrymina@google.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240613013557.1169171-11-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jun 16, 2024 at 4:58=E2=80=AFAM Xin Li (Intel) <xin@zytor.com> wrot=
-e:
->
-> From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
->
-> Introduce an AWK script to auto-generate a header with required and
-> disabled feature masks based on <asm/cpufeatures.h> and current build
-> config. Thus for any CPU feature with a build config, e.g., X86_FRED,
-> simply add
->
-> config X86_DISABLED_FEATURE_FRED
->         def_bool y
->         depends on !X86_FRED
->
-> to arch/x86/Kconfig.cpufeatures, instead of adding a conditional CPU
-> feature disable flag, e.g., DISABLE_FRED.
->
-> Lastly the generated required and disabled feature masks will be added
-> to their corresponding feature masks for this particular compile-time
-> configuration.
->
-> [ Xin: build integration improvements ]
->
-> Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> ---
->
-> Change since v1:
-> * Remove code generating unused macros {REQUIRED,DISABLED}_FEATURE(x)
->   to tell if a CPU feature, e.g., X86_FEATURE_FRED, is a required or
->   disabled feature for this particular compile-time configuration.
-> ---
->  arch/x86/Makefile                  | 17 +++++-
->  arch/x86/boot/cpucheck.c           |  3 +-
->  arch/x86/boot/cpuflags.c           |  1 -
->  arch/x86/boot/mkcpustr.c           |  3 +-
->  arch/x86/include/asm/Kbuild        |  1 +
->  arch/x86/include/asm/cpufeature.h  |  1 +
->  arch/x86/include/asm/cpufeatures.h |  8 ---
->  arch/x86/kernel/verify_cpu.S       |  1 +
->  arch/x86/tools/featuremasks.awk    | 90 ++++++++++++++++++++++++++++++
->  9 files changed, 111 insertions(+), 14 deletions(-)
->  create mode 100755 arch/x86/tools/featuremasks.awk
->
-> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-> index 801fd85c3ef6..211c0820b150 100644
-> --- a/arch/x86/Makefile
-> +++ b/arch/x86/Makefile
-> @@ -261,9 +261,22 @@ archscripts: scripts_basic
->         $(Q)$(MAKE) $(build)=3Darch/x86/tools relocs
->
->  ###
-> -# Syscall table generation
-> +# Feature masks header and syscall table generation
->
-> -archheaders:
-> +out :=3D arch/x86/include/generated/asm
-> +featuremasks_hdr :=3D featuremasks.h
-> +featuremasks_awk :=3D $(srctree)/arch/x86/tools/featuremasks.awk
-> +cpufeatures_hdr :=3D $(srctree)/arch/x86/include/asm/cpufeatures.h
-> +quiet_cmd_gen_featuremasks =3D GEN     $@
-> +      cmd_gen_featuremasks =3D $(AWK) -f $(featuremasks_awk) $(cpufeatur=
-es_hdr) $(KCONFIG_CONFIG) > $@
+On 6/13/24 02:35, Mina Almasry wrote:
+> In tcp_recvmsg_locked(), detect if the skb being received by the user
+> is a devmem skb. In this case - if the user provided the MSG_SOCK_DEVMEM
+> flag - pass it to tcp_recvmsg_devmem() for custom handling.
+> 
+> tcp_recvmsg_devmem() copies any data in the skb header to the linear
+> buffer, and returns a cmsg to the user indicating the number of bytes
+> returned in the linear buffer.
+> 
+> tcp_recvmsg_devmem() then loops over the unaccessible devmem skb frags,
+> and returns to the user a cmsg_devmem indicating the location of the
+> data in the dmabuf device memory. cmsg_devmem contains this information:
+> 
+> 1. the offset into the dmabuf where the payload starts. 'frag_offset'.
+> 2. the size of the frag. 'frag_size'.
+> 3. an opaque token 'frag_token' to return to the kernel when the buffer
+> is to be released.
+> 
+> The pages awaiting freeing are stored in the newly added
+> sk->sk_user_frags, and each page passed to userspace is get_page()'d.
+> This reference is dropped once the userspace indicates that it is
+> done reading this page.  All pages are released when the socket is
+> destroyed.
+
+One small concern is that if the pool gets destroyed (i.e.
+page_pool_destroy) before sockets holding netiov, page pool will
+semi-busily poll until the sockets die or such and will spam with
+pr_warn(). E.g. when a user drops the nl but leaks data sockets
+and continues with its userspace business. You can probably do
+it in a loop and create dozens of such pending
+page_pool_release_retry().
+
+
+> Signed-off-by: Willem de Bruijn <willemb@google.com>
+> Signed-off-by: Kaiyuan Zhang <kaiyuanz@google.com>
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> 
+...
+> +static int tcp_xa_pool_refill(struct sock *sk, struct tcp_xa_pool *p,
+> +			      unsigned int max_frags)
+> +{
+> +	int err, k;
 > +
-> +$(out)/$(featuremasks_hdr): $(featuremasks_awk) $(cpufeatures_hdr) $(KCO=
-NFIG_CONFIG) FORCE
-> +       $(shell mkdir -p $(out))
-> +       $(call if_changed,gen_featuremasks)
+> +	if (p->idx < p->max)
+> +		return 0;
 > +
-> +targets +=3D $(out)/$(featuremasks_hdr)
+> +	xa_lock_bh(&sk->sk_user_frags);
 > +
-> +archheaders: $(out)/$(featuremasks_hdr)
->         $(Q)$(MAKE) $(build)=3Darch/x86/entry/syscalls all
->
->  ###
-> diff --git a/arch/x86/boot/cpucheck.c b/arch/x86/boot/cpucheck.c
-> index 0aae4d4ed615..8d03a741d1b2 100644
-> --- a/arch/x86/boot/cpucheck.c
-> +++ b/arch/x86/boot/cpucheck.c
-> @@ -22,10 +22,11 @@
->  # include "boot.h"
->  #endif
->  #include <linux/types.h>
-> +#include <asm/featuremasks.h>
->  #include <asm/intel-family.h>
->  #include <asm/processor-flags.h>
-> -#include <asm/required-features.h>
->  #include <asm/msr-index.h>
+> +	tcp_xa_pool_commit_locked(sk, p);
 > +
->  #include "string.h"
->  #include "msr.h"
->
-> diff --git a/arch/x86/boot/cpuflags.c b/arch/x86/boot/cpuflags.c
-> index d75237ba7ce9..0cabdacb2a2f 100644
-> --- a/arch/x86/boot/cpuflags.c
-> +++ b/arch/x86/boot/cpuflags.c
-> @@ -3,7 +3,6 @@
->  #include "bitops.h"
->
->  #include <asm/processor-flags.h>
-> -#include <asm/required-features.h>
->  #include <asm/msr-index.h>
->  #include "cpuflags.h"
->
-> diff --git a/arch/x86/boot/mkcpustr.c b/arch/x86/boot/mkcpustr.c
-> index da0ccc5de538..b90110109675 100644
-> --- a/arch/x86/boot/mkcpustr.c
-> +++ b/arch/x86/boot/mkcpustr.c
-> @@ -12,8 +12,6 @@
->
->  #include <stdio.h>
->
-> -#include "../include/asm/required-features.h"
-> -#include "../include/asm/disabled-features.h"
->  #include "../include/asm/cpufeatures.h"
->  #include "../include/asm/vmxfeatures.h"
->  #include "../kernel/cpu/capflags.c"
-> @@ -23,6 +21,7 @@ int main(void)
->         int i, j;
->         const char *str;
->
-> +       printf("#include <asm/featuremasks.h>\n\n");
->         printf("static const char x86_cap_strs[] =3D\n");
->
->         for (i =3D 0; i < NCAPINTS; i++) {
-> diff --git a/arch/x86/include/asm/Kbuild b/arch/x86/include/asm/Kbuild
-> index a192bdea69e2..29c3481f40fc 100644
-> --- a/arch/x86/include/asm/Kbuild
-> +++ b/arch/x86/include/asm/Kbuild
-> @@ -8,6 +8,7 @@ generated-y +=3D syscalls_x32.h
->  generated-y +=3D unistd_32_ia32.h
->  generated-y +=3D unistd_64_x32.h
->  generated-y +=3D xen-hypercalls.h
-> +generated-y +=3D featuremasks.h
->
->  generic-y +=3D early_ioremap.h
->  generic-y +=3D mcs_spinlock.h
-> diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpu=
-feature.h
-> index 0b9611da6c53..8332f596ba3c 100644
-> --- a/arch/x86/include/asm/cpufeature.h
-> +++ b/arch/x86/include/asm/cpufeature.h
-> @@ -9,6 +9,7 @@
->  #include <asm/asm.h>
->  #include <linux/bitops.h>
->  #include <asm/alternative.h>
-> +#include <asm/featuremasks.h>
->
->  enum cpuid_leafs
->  {
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cp=
-ufeatures.h
-> index 3c7434329661..05503448b94d 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -2,14 +2,6 @@
->  #ifndef _ASM_X86_CPUFEATURES_H
->  #define _ASM_X86_CPUFEATURES_H
->
-> -#ifndef _ASM_X86_REQUIRED_FEATURES_H
-> -#include <asm/required-features.h>
-> -#endif
-> -
-> -#ifndef _ASM_X86_DISABLED_FEATURES_H
-> -#include <asm/disabled-features.h>
-> -#endif
-> -
->  /*
->   * Defines x86 CPU feature bits
->   */
-> diff --git a/arch/x86/kernel/verify_cpu.S b/arch/x86/kernel/verify_cpu.S
-> index 1258a5872d12..3205cbb47b9c 100644
-> --- a/arch/x86/kernel/verify_cpu.S
-> +++ b/arch/x86/kernel/verify_cpu.S
-> @@ -29,6 +29,7 @@
->   */
->
->  #include <asm/cpufeatures.h>
-> +#include <asm/featuremasks.h>
->  #include <asm/msr-index.h>
->
->  SYM_FUNC_START_LOCAL(verify_cpu)
-> diff --git a/arch/x86/tools/featuremasks.awk b/arch/x86/tools/featuremask=
-s.awk
-> new file mode 100755
-> index 000000000000..c96e6cf43161
-> --- /dev/null
-> +++ b/arch/x86/tools/featuremasks.awk
-> @@ -0,0 +1,90 @@
-> +#!/usr/bin/awk
-> +#
-> +# Convert cpufeatures.h to a list of compile-time masks
-> +# Note: this blithly assumes that each word has at least one
-> +# feature defined in it; if not, something else is wrong!
-> +#
+> +	for (k = 0; k < max_frags; k++) {
+> +		err = __xa_alloc(&sk->sk_user_frags, &p->tokens[k],
+> +				 XA_ZERO_ENTRY, xa_limit_31b, GFP_KERNEL);
+> +		if (err)
+> +			break;
+> +	}
 > +
-> +BEGIN {
-> +       printf "#ifndef _ASM_X86_FEATUREMASKS_H\n";
-> +       printf "#define _ASM_X86_FEATUREMASKS_H\n\n";
+> +	xa_unlock_bh(&sk->sk_user_frags);
 > +
-> +       file =3D 0
+> +	p->max = k;
+> +	p->idx = 0;
+> +	return k ? 0 : err;
+> +}
+
+Personally, I'd prefer this optimisation to be in a separate patch,
+especially since there is some degree of hackiness to it.
+
+
+> +
+> +/* On error, returns the -errno. On success, returns number of bytes sent to the
+> + * user. May not consume all of @remaining_len.
+> + */
+> +static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
+> +			      unsigned int offset, struct msghdr *msg,
+> +			      int remaining_len)
+> +{
+> +	struct dmabuf_cmsg dmabuf_cmsg = { 0 };
+> +	struct tcp_xa_pool tcp_xa_pool;
+> +	unsigned int start;
+> +	int i, copy, n;
+> +	int sent = 0;
+> +	int err = 0;
+> +
+> +	tcp_xa_pool.max = 0;
+> +	tcp_xa_pool.idx = 0;
+> +	do {
+> +		start = skb_headlen(skb);
+> +
+> +		if (skb_frags_readable(skb)) {
+> +			err = -ENODEV;
+> +			goto out;
+> +		}
+> +
+> +		/* Copy header. */
+> +		copy = start - offset;
+> +		if (copy > 0) {
+> +			copy = min(copy, remaining_len);
+> +
+> +			n = copy_to_iter(skb->data + offset, copy,
+> +					 &msg->msg_iter);
+> +			if (n != copy) {
+> +				err = -EFAULT;
+> +				goto out;
+> +			}
+> +
+> +			offset += copy;
+> +			remaining_len -= copy;
+> +
+> +			/* First a dmabuf_cmsg for # bytes copied to user
+> +			 * buffer.
+> +			 */
+> +			memset(&dmabuf_cmsg, 0, sizeof(dmabuf_cmsg));
+> +			dmabuf_cmsg.frag_size = copy;
+> +			err = put_cmsg(msg, SOL_SOCKET, SO_DEVMEM_LINEAR,
+> +				       sizeof(dmabuf_cmsg), &dmabuf_cmsg);
+> +			if (err || msg->msg_flags & MSG_CTRUNC) {
+> +				msg->msg_flags &= ~MSG_CTRUNC;
+> +				if (!err)
+> +					err = -ETOOSMALL;
+> +				goto out;
+> +			}
+> +
+> +			sent += copy;
+> +
+> +			if (remaining_len == 0)
+> +				goto out;
+> +		}
+> +
+> +		/* after that, send information of dmabuf pages through a
+> +		 * sequence of cmsg
+> +		 */
+> +		for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
+> +			skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
+> +			struct net_iov *niov;
+> +			u64 frag_offset;
+> +			int end;
+> +
+> +			/* !skb_frags_readable() should indicate that ALL the
+> +			 * frags in this skb are dmabuf net_iovs. We're checking
+> +			 * for that flag above, but also check individual frags
+> +			 * here. If the tcp stack is not setting
+> +			 * skb_frags_readable() correctly, we still don't want
+> +			 * to crash here.
+> +			 */
+> +			if (!skb_frag_net_iov(frag)) {
+> +				net_err_ratelimited("Found non-dmabuf skb with net_iov");
+> +				err = -ENODEV;
+> +				goto out;
+> +			}
+> +
+> +			niov = skb_frag_net_iov(frag);
+> +			end = start + skb_frag_size(frag);
+> +			copy = end - offset;
+> +
+> +			if (copy > 0) {
+> +				copy = min(copy, remaining_len);
+> +
+> +				frag_offset = net_iov_virtual_addr(niov) +
+> +					      skb_frag_off(frag) + offset -
+> +					      start;
+> +				dmabuf_cmsg.frag_offset = frag_offset;
+> +				dmabuf_cmsg.frag_size = copy;
+> +				err = tcp_xa_pool_refill(sk, &tcp_xa_pool,
+> +							 skb_shinfo(skb)->nr_frags - i);
+> +				if (err)
+> +					goto out;
+> +
+> +				/* Will perform the exchange later */
+> +				dmabuf_cmsg.frag_token = tcp_xa_pool.tokens[tcp_xa_pool.idx];
+> +				dmabuf_cmsg.dmabuf_id = net_iov_binding_id(niov);
+> +
+> +				offset += copy;
+> +				remaining_len -= copy;
+> +
+> +				err = put_cmsg(msg, SOL_SOCKET,
+> +					       SO_DEVMEM_DMABUF,
+> +					       sizeof(dmabuf_cmsg),
+> +					       &dmabuf_cmsg);
+> +				if (err || msg->msg_flags & MSG_CTRUNC) {
+> +					msg->msg_flags &= ~MSG_CTRUNC;
+> +					if (!err)
+> +						err = -ETOOSMALL;
+> +					goto out;
+> +				}
+> +
+> +				atomic_long_inc(&niov->pp_ref_count);
+> +				tcp_xa_pool.netmems[tcp_xa_pool.idx++] = skb_frag_netmem(frag);
+> +
+> +				sent += copy;
+> +
+> +				if (remaining_len == 0)
+> +					goto out;
+> +			}
+> +			start = end;
+> +		}
+> +
+> +		tcp_xa_pool_commit(sk, &tcp_xa_pool);
+> +		if (!remaining_len)
+> +			goto out;
+> +
+> +		/* if remaining_len is not satisfied yet, we need to go to the
+> +		 * next frag in the frag_list to satisfy remaining_len.
+> +		 */
+> +		skb = skb_shinfo(skb)->frag_list ?: skb->next;
+> +
+> +		offset = offset - start;
+
+It's an offset into the current skb, isn't it? Wouldn't
+offset = 0; be less confusing?
+
+> +	} while (skb);
+> +
+> +	if (remaining_len) {
+> +		err = -EFAULT;
+> +		goto out;
+> +	}
+
+Having data left is not a fault, and to get here you
+need to get an skb with no data left, which shouldn't
+happen. Seems like everything you need is covered by
+the "!sent" check below.
+
+
+> +
+> +out:
+> +	tcp_xa_pool_commit(sk, &tcp_xa_pool);
+> +	if (!sent)
+> +		sent = err;
+> +
+> +	return sent;
 > +}
 > +
-> +BEGINFILE {
-> +       switch (++file) {
-> +       case 1:                 # cpufeatures.h
-> +               FPAT =3D "#[ \t]*[a-z]+|[A-Za-z0-9_]+|[^ \t]";
-> +               break;
-> +       case 2:                 # .config
-> +               FPAT =3D "CONFIG_[A-Z0-9_]+|is not set|[yn]";
-> +               break;
-> +       }
-> +}
-> +
-> +file =3D=3D 1 && $1 ~ /^#[ \t]*define$/ && $2 ~ /^X86_FEATURE_/ &&
-> +$3 =3D=3D "(" && $5 =3D=3D "*" && $7 =3D=3D "+" && $9 =3D=3D ")" {
-> +       nfeat =3D $4 * $6 + $8;
-> +       feat =3D $2;
-> +       sub(/^X86_FEATURE_/, "", feat);
-> +       feats[nfeat] =3D feat;
-> +}
-> +file =3D=3D 1 && $1 ~ /^#[ \t]*define$/ && $2 =3D=3D "NCAPINTS" {
-> +       ncapints =3D strtonum($3);
-> +}
-> +
-> +file =3D=3D 2 && $1 ~ /^CONFIG_X86_[A-Z]*_FEATURE_/ {
-> +       on =3D ($2 =3D=3D "y");
-> +       printf "/* %s =3D %s (%d) */\n", $1, $2, on;
+...
+> diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+> index de0c8f43448ab..57e48b75ac02a 100644
+> --- a/net/ipv4/tcp_ipv4.c
+> +++ b/net/ipv4/tcp_ipv4.c
+> @@ -79,6 +79,7 @@
+>   #include <linux/seq_file.h>
+>   #include <linux/inetdevice.h>
+>   #include <linux/btf_ids.h>
+> +#include <linux/skbuff_ref.h>
+>   
+>   #include <crypto/hash.h>
+>   #include <linux/scatterlist.h>
+> @@ -2503,6 +2504,15 @@ static void tcp_md5sig_info_free_rcu(struct rcu_head *head)
+>   void tcp_v4_destroy_sock(struct sock *sk)
+>   {
+>   	struct tcp_sock *tp = tcp_sk(sk);
+> +	__maybe_unused unsigned long index;
+> +	__maybe_unused void *netmem;
 
-This looks like extra debugging output that doesn't need to be in the
-final release.
+How about adding a function to get rid of __maybe_unused?.
 
-> +       if (split($1, fs, "CONFIG_X86_|_FEATURE_") =3D=3D 3) {
-> +               printf "/* %s %s =3D %d */\n", fs[2], fs[3], on;
+static void sock_release_devmem_frags() {
+#ifdef PP
+	unsigned index;
+	...
+#endif PP
+}
 
-Same.
+Also, even though you wire it up for TCP, since ->sk_user_frags
+is in struct sock I'd expect the release to be somewhere in the
+generic sock path like __sk_destruct(), and same for init.
+Perhpas, it's better to leave it for later.
 
-> +               featstat[fs[2], fs[3]] =3D on;
-> +       }
-> +}
 > +
-> +END {
-> +       sets[1] =3D "REQUIRED";
-> +       sets[2] =3D "DISABLED";
+> +#ifdef CONFIG_PAGE_POOL
+> +	xa_for_each(&sk->sk_user_frags, index, netmem)
+> +		WARN_ON_ONCE(!napi_pp_put_page((__force netmem_ref)netmem));
+> +#endif
 > +
-> +       for (ns in sets) {
-> +               s =3D sets[ns];
+> +	xa_destroy(&sk->sk_user_frags);
+>   
+>   	trace_tcp_destroy_sock(sk);
+>   
+> diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
+> index bc67f6b9efae4..5d563312efe14 100644
+> --- a/net/ipv4/tcp_minisocks.c
+> +++ b/net/ipv4/tcp_minisocks.c
+> @@ -624,6 +624,8 @@ struct sock *tcp_create_openreq_child(const struct sock *sk,
+>   
+>   	__TCP_INC_STATS(sock_net(sk), TCP_MIB_PASSIVEOPENS);
+>   
+> +	xa_init_flags(&newsk->sk_user_frags, XA_FLAGS_ALLOC1);
 > +
-> +               printf "/*\n";
-> +               printf " * %s features:\n", s;
-> +               printf " *\n";
-> +               fstr =3D "";
-> +               for (i =3D 0; i < ncapints; i++) {
-> +                       mask =3D 0;
-> +                       for (j =3D 0; j < 32; j++) {
-> +                               nfeat =3D i*32 + j;
-> +                               feat =3D feats[nfeat];
-> +                               if (feat) {
-> +                                       st =3D !!featstat[s, feat];
-> +                                       if (st) {
-> +                                               nfstr =3D fstr " " feat;
-> +                                               if (length(nfstr) > 72) {
-> +                                                       printf " *   %s\n=
-", fstr;
-> +                                                       nfstr =3D " " fea=
-t;
-> +                                               }
-> +                                               fstr =3D nfstr;
-> +                                       }
-> +                                       mask +=3D st * (2 ^ j);
-> +                               }
-> +                       }
-> +                       masks[i] =3D mask;
-> +               }
-> +               printf " *   %s\n */\n\n", fstr;
-> +
-> +               for (i =3D 0; i < ncapints; i++) {
-> +                       printf "#define %s_MASK%-3d 0x%08x\n", s, i, mask=
-s[i];
-> +               }
-> +
-> +               printf "#define %s_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS =
-!=3D %d)\n\n", s, ncapints;
-> +       }
-> +
-> +       printf "#define SSE_MASK\t\\\n";
-> +       printf "\t(REQUIRED_MASK0 & ((1<<(X86_FEATURE_XMM & 31)) | (1<<(X=
-86_FEATURE_XMM2 & 31))))\n\n";
+>   	return newsk;
+>   }
+>   EXPORT_SYMBOL(tcp_create_openreq_child);
 
-This could be moved to verify_cpu.S, since that is the only place it is use=
-d.
-
-> +       printf "#endif /* _ASM_X86_FEATUREMASKS_H */\n";
-> +}
-> --
-> 2.45.1
->
->
-
-You could also generate {REQUIRED|DISABLED}_MASK_BIT_SET() in this
-script, so that they are always in sync with NCAPINTS.
-
-Brian Gerst
+-- 
+Pavel Begunkov
 
