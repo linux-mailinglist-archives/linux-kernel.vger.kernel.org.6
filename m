@@ -1,140 +1,119 @@
-Return-Path: <linux-kernel+bounces-216901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8719B90A843
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:20:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309E290A849
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C20C1C2509B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:20:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9CB41F217CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1390F190464;
-	Mon, 17 Jun 2024 08:20:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42D1190495;
+	Mon, 17 Jun 2024 08:21:19 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9541E7492;
-	Mon, 17 Jun 2024 08:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AB218C35F;
+	Mon, 17 Jun 2024 08:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718612401; cv=none; b=Jx8KH6ie0OQ1pg+g3EnX+ijfXTwQUjlmbs07igwg1q35dOjNGHwtOkRWSorQJOehx95i0MScuDBwjKRBXqRztn8YYg/c7tdfIFEbkWJbrN+mebfxVquzpSIE7rD7ZtIE1btQojWia6OrX3WHfZoR+ZFkzd/6XeFfBwqzwZio0dI=
+	t=1718612479; cv=none; b=maJDviprCO2Yq/u9nTJVczmIg99v1iOcp/11z5dedqaHAaxb0dRylBHSq/s2vKHhQRTm2EShpvGzwGrcI8LGVciQiC9NbaHZPlOtQUQ+fo8wbFIhBjCYVjo+nA2uo66JxhK6018v2ygJQzRov/I6no9q2QO/MwtGEJaPMdTFnhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718612401; c=relaxed/simple;
-	bh=vIUSsvM/QflL2lNOUzh0g8ckoqLm+jCUhefDwOubcOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WooaOJKj7B3GgJD3qroFPHsU9AU+tN+3DZzuzLMG97JhQoVWMFF9ry8Z2/q2kwywKaYb+tH1sWjio2LNIwGtFtTEEcA6I1EbP6avG8s+yngd9NqzNv5s8lceMAPMZNZIc7la52lGlKBezCDEqlOwxTgD3zpIpUl6kLej8ffeNn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C677AC2BD10;
-	Mon, 17 Jun 2024 08:19:58 +0000 (UTC)
-Message-ID: <fc2738fd-5e24-4aea-82d0-e31e7b3b4e20@xs4all.nl>
-Date: Mon, 17 Jun 2024 10:19:57 +0200
+	s=arc-20240116; t=1718612479; c=relaxed/simple;
+	bh=2sYu5/az054jn74bZ9hpcoaFlKLE5+sf7eHl422Gkzw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kg2KMYznEBh5/ZV+MAWDy4XGA8zbtuvmf5lZIlPbsv2e2hKV+xsiXEaMIYcSDW3D+vr8URiH/Tpvwbhgg33tGKJZFTGb18hCGzcF5sUgySHlyZ99lk26Ez5FqhFYNjnqPKKsgkwVtqqzl7tC+odB9kVhoaJ9f2yeBlt5yYRu3Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 45H8L6DL02973069, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 45H8L6DL02973069
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Jun 2024 16:21:06 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 17 Jun 2024 16:21:06 +0800
+Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 17 Jun
+ 2024 16:21:05 +0800
+From: Hilda Wu <hildawu@realtek.com>
+To: <marcel@holtmann.org>
+CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alex_lu@realsil.com.cn>,
+        <max.chou@realtek.com>, <kidman@realtek.com>
+Subject: [PATCH] Bluetooth: btusb: Add RTL8852BE device 0489:e125 to device tables
+Date: Mon, 17 Jun 2024 16:21:01 +0800
+Message-ID: <20240617082101.3237350-1-hildawu@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] media: uvcvideo: stop stream during unregister
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Tomasz Figa <tfiga@chromium.org>, Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guenter Roeck <linux@roeck-us.net>, Max Staudt <mstaudt@chromium.org>,
- Alan Stern <stern@rowland.harvard.edu>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>
-References: <20240327-guenter-mini-v4-0-49955c198eae@chromium.org>
- <20240327-guenter-mini-v4-1-49955c198eae@chromium.org>
- <CAAFQd5BhJExCEA7_Ck2skWR52baSDH63-+oEZnpo4UiMc0C7=A@mail.gmail.com>
- <20240616235844.GO4782@pendragon.ideasonboard.com>
- <54cb2795-bcb3-40c8-841c-4570d857d366@xs4all.nl>
- <Zm_sN3Ta7MrjGrQL@kekkonen.localdomain>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <Zm_sN3Ta7MrjGrQL@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-On 17/06/2024 09:56, Sakari Ailus wrote:
-> Hi Hans,
-> 
-> On Mon, Jun 17, 2024 at 09:27:43AM +0200, Hans Verkuil wrote:
->> On 17/06/2024 01:58, Laurent Pinchart wrote:
->>> Hi Tomasz,
->>>
->>> On Thu, Jun 06, 2024 at 06:57:50PM +0900, Tomasz Figa wrote:
->>>> On Wed, Mar 27, 2024 at 5:24 PM Ricardo Ribalda wrote:
->>>>>
->>>>> uvc_unregister_video() can be called asynchronously from
->>>>> uvc_disconnect(). If the device is still streaming when that happens, a
->>>>> plethora of race conditions can happen.
->>>>>
->>>>> Make sure that the device has stopped streaming before exiting this
->>>>> function.
->>>>>
->>>>> If the user still holds handles to the driver's file descriptors, any
->>>>> ioctl will return -ENODEV from the v4l2 core.
->>>>>
->>>>> This change make uvc more consistent with the rest of the v4l2 drivers
->>>>> using the vb2_fop_* and vb2_ioctl_* helpers.
->>>>>
->>>>> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
->>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>>>> ---
->>>>>  drivers/media/usb/uvc/uvc_driver.c | 11 +++++++++++
->>>>>  1 file changed, 11 insertions(+)
->>>>
->>>> First of all, thanks for the patch. I have a question about the
->>>> problem being fixed here.
->>>>
->>>> Could you point out a specific race condition example that could
->>>> happen without this change?
->>>> From what I see in __video_do_ioctl((), no ioctls would be executed
->>>> anymore after the video node is unregistered.
->>>> Since the device is not present either, what asynchronous code paths
->>>> could be still triggered?
->>>
->>> I believe the issue is that some ioctls can be in progress while the
->>> device is unregistered. I'll let Ricardo confirm.
->>>
->>> I've tried to explain multiple times before that this should be handled
->>> in the V4L2 core, ideally with fixes in the cdev core too, as this issue
->>> affects all cdev drivers. I've pointed to related patches that have been
->>> posted for the cdev core. They need to be wrapped in V4L2 functions to
->>> make them easier to use for drivers. If we don't want to depend on those
->>> cdev changes, we can implement the "wrappers" with fixes limited to
->>> V4L2 until the cdev changes get merged (assuming someone would resurect
->>> them).
->>
->> But there is already a V4L2 wrapper for that: vb2_video_unregister_device().
->> It safely unregisters the video device, ensuring any in-flight ioctls finish
->> first, and it stops any video streaming.
->>
->> The only reason it can't be used in uvc for the video stream is that that
->> vb2_queue doesn't set the lock field (i.e. uses the core V4L2 serialization
->> mechanism). The metadata stream *does* set that field, so for that stream this
->> function can be used.
->>
->> While it would be nice to have this fixed in the cdev core part, that will
->> take very long, and we have a perfectly fine V4L2 helper for this already.
-> 
-> It might not take *that* long to get there but it won't happen unless
-> someone does it. Dan Williams posted a patch but his immediate problem was
-> solved differently so there it remains
-> <URL:https://lore.kernel.org/all/161117153248.2853729.2452425259045172318.stgit@dwillia2-desk3.amr.corp.intel.com/>.
-> 
-> In the meantime vb_video_unregister_device() would seem to be the best
-> choice.
+Add the support ID(0489:e125) to usb_device_id table for
+Realtek RTL8852B chip.
 
-Also note that even if these cdev improvements ever land, that doesn't remove
-the need for vb2_video_unregister_device, since that also explicitly stops
-any streaming that is in progress. Which is something you really want to do
-when the device is unbound.
+The device info from /sys/kernel/debug/usb/devices as below.
 
-Regards,
+T:  Bus=01 Lev=01 Prnt=01 Port=07 Cnt=03 Dev#=  5 Spd=12   MxCh= 0
+D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0489 ProdID=e125 Rev= 0.00
+S:  Manufacturer=Realtek
+S:  Product=Bluetooth Radio
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 
-	Hans
+Signed-off-by: Hilda Wu <hildawu@realtek.com>
+---
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 79aefdb3324d..2d7d47f9d007 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -555,6 +555,8 @@ static const struct usb_device_id quirks_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3572), .driver_info = BTUSB_REALTEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x0489, 0xe125), .driver_info = BTUSB_REALTEK |
++						     BTUSB_WIDEBAND_SPEECH },
+ 
+ 	/* Realtek 8852BT/8852BE-VT Bluetooth devices */
+ 	{ USB_DEVICE(0x0bda, 0x8520), .driver_info = BTUSB_REALTEK |
+-- 
+2.34.1
 
 
