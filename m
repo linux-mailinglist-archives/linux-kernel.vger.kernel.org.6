@@ -1,138 +1,161 @@
-Return-Path: <linux-kernel+bounces-217300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F11990ADF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:30:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF0490ADF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 536821F231D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CE682851F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A8219599A;
-	Mon, 17 Jun 2024 12:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7D5194A6A;
+	Mon, 17 Jun 2024 12:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DcWoFZSz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iu7xjcs7"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06712195818
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BF08836;
+	Mon, 17 Jun 2024 12:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718627379; cv=none; b=khLxpgFNVYaslTOdrcOrtEz4DnXYr4iLCN5gfLfQwZvnp5YMtkP4SK3shL8LqF9q0toK2gT+4Ub636qVJutLWP5yEAEBj9EuhqWdKt5TN/2VhQkrPghpcJ/DNJTPtXiJPbCWtYBpFpA7KLIGBCK8JlEFkzoHp1hrVoa3tZ8zxpw=
+	t=1718627501; cv=none; b=mauFb5h8NoNbct9amxbLU+e1430lfRJo45BPuYtbvoY0313pnQZCHoYUukGCIL4yixxf0ygf8XOVh96rSMmB6/wgJP7lM5MDoBV9Qe4HD1ak79DM1GqnZyYrq6vFG/FItaZSzuOcL4cTwgA9lScHHdm0KNgEPnBQrXssnUAzsc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718627379; c=relaxed/simple;
-	bh=oXXpiunHz1XPLIz1naFMTm6sFnP7b0TdXzOlcK0P/sM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n0pNITLcOuD0bh7UVJ/7HvaTMyg5DkmbgPZ3rTVPFYb763bsHvEyr+S8X0vBlQ/zHfKlVCkBN4yKdSsApAALhbojaMdyKpX1dFLOqrmMNff49d9oYA9BdotAzlsbzrayoZoHs7NKSckAe2F4HUJx4LZdsKf31VCr3wHkBhbvkEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DcWoFZSz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718627377;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I4ssGu5P5LE/MFN4qx06ygb2gBN8nmvpUBOwBXD3IEM=;
-	b=DcWoFZSzasaZNre7P6gjKmkVr/10b9YpU4oHLXk8llZzkuTYL7r8EQdssQVcksIlb1445o
-	zdAeL9bRFgclKcypaaZZMsU1fCL/gYQeBdxHEdfvghxPCMVL+6JMInyGcElp7Jv2Gd4XN5
-	TrO6kk5bDvFlzHUrnzKMtbfDJ3SAccw=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-46-7ZfJ5UmlNZG1sibBJdPAdQ-1; Mon, 17 Jun 2024 08:29:34 -0400
-X-MC-Unique: 7ZfJ5UmlNZG1sibBJdPAdQ-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2c2c3b9fd4fso1167524a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 05:29:34 -0700 (PDT)
+	s=arc-20240116; t=1718627501; c=relaxed/simple;
+	bh=6U6NvOSkC8C59/JMyqKN4L4RgtHGHT7QgPMlgHn0nzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GdHU5mPJ39BoLQOyR+GsHtEzBzudF+gJj7GaFzm+eT+mkyJbkpW2gQNHMzWVnj1Pad2MDS2mbHBWmf39INrDLEFiaEmQu1oV2IvsvwfcwjryEFAwkWUVsG9ewABOOj/5o98/LY8+RVnyFlwxf8uTU4iW/+n1guwADf4DdfL2d4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iu7xjcs7; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35f275c7286so3860441f8f.2;
+        Mon, 17 Jun 2024 05:31:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718627497; x=1719232297; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xUt11Ucr8oA7ZjPMc4FTL3rN5QlM3txPngNirdWjMlg=;
+        b=iu7xjcs74jcc1fKgv42n+MwNlaw9k/vQ0oaHwNudHVzDdCjUeWoMymG6CWl9rtJyXX
+         EtpnQdkYn6jTyv6JA2AYzr4nQ1OcYOBNDTTsTBrl3FV2KIpo6vuLaA6RxqCpoBQtd+lU
+         w5Gvw9rrRPY4+Cz7H1vnjUkiATc0uQ2aNmvugqVFjg2E5umOtFoY3LBmrFeh2oZUcIIs
+         FGNIdPM1/sDWsvH4u3FqLl5QBXgNtuMrB4at1vqLQSE35MJbAGU1jJTn4pq68QA7ImU/
+         mPID1CPgRhjYMVoNIe8zeMOoG/Z3Xz8QoLVuKRjFHs3N9Orsmw6WKJiNEBxoL9WxTXBG
+         vULw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718627373; x=1719232173;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I4ssGu5P5LE/MFN4qx06ygb2gBN8nmvpUBOwBXD3IEM=;
-        b=YGZhjtatHFlVkgVaKsA8C305dpdfnwKMpNW2DfqbSyWyAduIFK/ihuj2N18oB5SCHW
-         BgzRlsN2zd4Ok/QEODkyZZsHto7M6MeHDn++csohj/61T4mkCdGqK8vNdOvCzXOHIKmz
-         iaqpQBMPlx9e2g4NY95f6XQX1YA+h+EQ3/PIrLWyMzLQOPV/dQgAGhfqToyo/+7pX79b
-         QctMKW45h9kiKYYLIGdyCWNBmhg9L5yZzOt987SyfdRurlZnqA/iq3xQKgGQUceoxTEH
-         IFH2y08kIzsomZZMveUftmXAe99mQ8g1xHihRxp9Q/3+0tTB75E6qbwN/ZMTuwsTg5ch
-         xb3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Abr0t9zfC/JxwnrL6RyjgAr1ji1c3LFcYqItzpspfj9UJlQgEepaz0EAM42rS6WMaQ44fnn5mi3FgDMUVnIy8IQKSeUvIiwN5zuu
-X-Gm-Message-State: AOJu0Yz5oklZmxA14qDxi6yY+svknTXwBEnyeOpzqejd6ikZLkh25Fu3
-	sf3qwXGWcApHSjuGGVqcBD2N0MVLFrcZgTRzSGflm8r1ikxiXAlt5u01X0Sjas5Y61iGFjhjyYO
-	ybDMs4KJ4a3ZByFFQZmJRyA4tCVfCnNN2QmlDQEsHcSTkH60ygh5+AwhCVVJCvA==
-X-Received: by 2002:a05:6a20:5aa9:b0:1b0:1be7:3708 with SMTP id adf61e73a8af0-1bae7e3d928mr8545373637.1.1718627373527;
-        Mon, 17 Jun 2024 05:29:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOU5fYRtot9iBJXy2SS9IX2XSkrNEwI68apkvLYUeP2Vlv30jHjv3k+GFqCmYhxr4fz+B5Wg==
-X-Received: by 2002:a05:6a20:5aa9:b0:1b0:1be7:3708 with SMTP id adf61e73a8af0-1bae7e3d928mr8545338637.1.1718627372892;
-        Mon, 17 Jun 2024 05:29:32 -0700 (PDT)
-Received: from [10.72.112.55] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc967356sm7261218b3a.63.2024.06.17.05.29.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 05:29:32 -0700 (PDT)
-Message-ID: <9db95188-71c2-491a-a4c7-434e7cd3c407@redhat.com>
-Date: Mon, 17 Jun 2024 20:29:26 +0800
+        d=1e100.net; s=20230601; t=1718627497; x=1719232297;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xUt11Ucr8oA7ZjPMc4FTL3rN5QlM3txPngNirdWjMlg=;
+        b=keAOZVafczaOHiQbPxuPJ2z9uPUO3R+RqOltOvWrQkzLrZFGQ/GnjYVzhW3/mczrBQ
+         EQccHCMakMhdWpy2emPyXcHl3GY6EL6P39QaJZpu3WhSGcBDnresjHoT8Cbs3RlEP6wX
+         G1nTywxBEot2DvaWlhEtu9ilrjDnHDwJ3pMYeBIUC7vJ10I27sHyZfVO+Rq98l2VNK+o
+         PciscOeoCe0CAXpCei1+0v2jOObaCCAMiziWveDX0fnxllYhBB2pgsNeDnnvLEvkz6No
+         HO2WgnW+SuaVnkkKp6ANKl5QHqnkAxCTVtjUoKc/OJzf/5KSVWwHDA1HNG7xzwpGPB5r
+         RTKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMMTLhAM5Fu7NPzoJtB9YStToYE9fZ9wpLpTlThq44KVszjsH7fzjOcB6yqTjGbcWu6dTJRlW1thDO2qtuMpQWMWm/xp/Kkqd7b5XJ7d8evRtl/IRnBPOyXb6eAgJy569dEhqY5bVd/QHj
+X-Gm-Message-State: AOJu0YxmfgmW5u3MuTwtGZccA9nKTGOfSPCuAymNoJZvkHWPsPFhWi/D
+	lMjObYYsvpJalIf5jRqBS8TgseAA0PmlrTZZ19OnyW8AE/eSW9QY6jgLyQ==
+X-Google-Smtp-Source: AGHT+IG+Gyzd9jk0zBnxIbSHolF/P9F4z8vzRrnNDQaRBjpYSl+ZQ3C0xZVPvwGVSO4q+LGvLtF3Hg==
+X-Received: by 2002:adf:fc82:0:b0:360:79d4:b098 with SMTP id ffacd0b85a97d-3607a76609emr5759650f8f.29.1718627496944;
+        Mon, 17 Jun 2024 05:31:36 -0700 (PDT)
+Received: from hometw-NUC11PAHi5.locataire.student-village.local ([185.25.192.3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075093531sm11753879f8f.15.2024.06.17.05.31.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 05:31:36 -0700 (PDT)
+From: Chun-Hung Tseng <henrybear327@gmail.com>
+To: luc.vanoostenryck@gmail.com,
+	linux-sparse@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Chun-Hung Tseng <henrybear327@gmail.com>,
+	Jim Huang <jserv@ccns.ncku.edu.tw>
+Subject: [PATCH] compiler.h: Improve __branch_check__ by using __UNIQUE_ID()
+Date: Mon, 17 Jun 2024 14:29:35 +0200
+Message-Id: <20240617122934.2650453-1-henrybear327@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/2] KVM: arm64: Making BT Field in ID_AA64PFR1_EL1
- writable
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>, kvmarm@lists.linux.dev,
- Eric Auger <eauger@redhat.com>, Sebastian Ott <sebott@redhat.com>,
- Cornelia Huck <cohuck@redhat.com>, Catalin Marinas
- <catalin.marinas@arm.com>, James Morse <james.morse@arm.com>,
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>,
- Zenghui Yu <yuzenghui@huawei.com>
-References: <20240612023553.127813-1-shahuang@redhat.com>
- <Zmkyi39Pz6Wqll-7@linux.dev> <8634pilbja.wl-maz@kernel.org>
- <7f1ca739-42f5-4e3a-a0c9-b1eac4522a97@redhat.com>
- <86zfrpjkt6.wl-maz@kernel.org>
-Content-Language: en-US
-From: Shaoqin Huang <shahuang@redhat.com>
-In-Reply-To: <86zfrpjkt6.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Marc,
+This commit replaced two hard-to-distinguish variables ______r and
+______f to improve code readability and reduce variable name shadowing
+issue.
 
-On 6/13/24 16:42, Marc Zyngier wrote:
-> On Thu, 13 Jun 2024 09:31:45 +0100,
-> Shaoqin Huang <shahuang@redhat.com> wrote:
->>
->> If we don't care about the FEAT_CNTSC right now. Could I fix the
->> compile issue and respin this again without the background of enabling
->> migration between MtCollins and AmpereOne, and just keep the
->> information of the different BT field between different machine?
-> 
-> As I said, I think this patch is valuable. But maybe you should
-> consider tackling the full register, rather than only addressing a
-> single field.
+______r is renamed by leveraging __UNIQUE_ID(branch_check) in
+___branch_check__, and callers of the affected macros are adjusted.
 
-Yes, it would be better to tackling the full register. I will put more 
-time on other fields in the register and try to making more field to be 
-writable. But currently I just respin the series with deleting the 
-machine specific information and fixing the compilation issue.
+__UNIQUE_ID(branch_check) will generate unique variable names during
+compilation, which eliminates the need for ______r. This avoids the
+variable name shadowing issue, or at least makes those wishing to cause
+shadowing problems work much harder to do so.
 
-Thanks,
-Shaoqin
+______f in ftrace_likely_data struct is renamed using
+__UNIQUE_ID(branch_check_data), following the same rationale above.
 
-> 
-> Thanks,
-> 
-> 	M.
-> 
+The same idea is used for the commit 589a9785ee3a ("min/max: remove sparse
+warnings when they're nested"), and commit 24ba53017e18 ("rcu: Replace
+________p1 and _________p1 with __UNIQUE_ID(rcu)").
 
+Signed-off-by: Chun-Hung Tseng <henrybear327@gmail.com>
+Signed-off-by: Jim Huang <jserv@ccns.ncku.edu.tw>
+---
+ include/linux/compiler.h | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 8c252e073bd8..b95e0990d52f 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -19,20 +19,20 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ #define likely_notrace(x)	__builtin_expect(!!(x), 1)
+ #define unlikely_notrace(x)	__builtin_expect(!!(x), 0)
+ 
+-#define __branch_check__(x, expect, is_constant) ({			\
+-			long ______r;					\
++#define __branch_check__(x, local, local_data, expect, is_constant) ({	\
++			long local;					\
+ 			static struct ftrace_likely_data		\
+ 				__aligned(4)				\
+ 				__section("_ftrace_annotated_branch")	\
+-				______f = {				\
++				local_data = {				\
+ 				.data.func = __func__,			\
+ 				.data.file = __FILE__,			\
+ 				.data.line = __LINE__,			\
+ 			};						\
+-			______r = __builtin_expect(!!(x), expect);	\
+-			ftrace_likely_update(&______f, ______r,		\
++			local = __builtin_expect(!!(x), expect);	\
++			ftrace_likely_update(&local_data, local,	\
+ 					     expect, is_constant);	\
+-			______r;					\
++			local;						\
+ 		})
+ 
+ /*
+@@ -41,10 +41,14 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+  * written by Daniel Walker.
+  */
+ # ifndef likely
+-#  define likely(x)	(__branch_check__(x, 1, __builtin_constant_p(x)))
++#  define likely(x)	(__branch_check__(x, __UNIQUE_ID(branch_check), \
++			__UNIQUE_ID(branch_check_data), 1,		\
++			__builtin_constant_p(x)))
+ # endif
+ # ifndef unlikely
+-#  define unlikely(x)	(__branch_check__(x, 0, __builtin_constant_p(x)))
++#  define unlikely(x)	(__branch_check__(x, __UNIQUE_ID(branch_check), \
++			__UNIQUE_ID(branch_check_data), 0,		\
++			__builtin_constant_p(x)))
+ # endif
+ 
+ #ifdef CONFIG_PROFILE_ALL_BRANCHES
 -- 
-Shaoqin
+2.34.1
 
 
