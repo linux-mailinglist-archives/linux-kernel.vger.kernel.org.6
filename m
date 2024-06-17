@@ -1,137 +1,206 @@
-Return-Path: <linux-kernel+bounces-217412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B04290AF59
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:31:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABEE490AFAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F95F1C2166B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:31:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE8441C22483
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1DB1AB502;
-	Mon, 17 Jun 2024 13:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB411BA891;
+	Mon, 17 Jun 2024 13:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="URnxip1Q"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdM3cnuq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DA81A38C7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0E219ADB8;
+	Mon, 17 Jun 2024 13:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630488; cv=none; b=uNxYFcWpeZVi+XfIrFAQ2XXWnhinAQN/UigAUPFDfO5zL2nLBcZYNAfOMrTvhXw6AfiL1WB03XO4qba02/v4vq7gEnQ3mAvqUmW2kuYOFGZpJxobfZI3Mw54wEidB2laiyfxJqmzvYNlcxfuUDtki62lKHwgfmrB959cbXROlPM=
+	t=1718630594; cv=none; b=aJoTHChR30m61Clc6bjwJdV/dS8+m7d2TMLoj1qQmGH1gOm3AwW5ucr23BAN2XaVT2ibM8cy4IA7tOkUwFPYPJWAi9ShOFjhPKEHXDP/TqzMFvu3VlthyCkDOvKWaHcJpY3qE5zwDCv05hScI/XKoLqcne76xlEg+izihhZkgJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630488; c=relaxed/simple;
-	bh=2F3D4ViPK/1/0WFA+bQj22QbsbJhhW9+IG40Nypkr9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VwGmFFh1JpV9cpaf7tdiwQDRw9N2w/HUHa96k9tcDjHrgbDp7Hn1cam8JWe09KRKRLAuvF31SbGfbY95+Z6PtC9zqxmTKudKj0HIfGkNdD+ZDPiuDDmBCZ5Qi+QoB97mQ8P0fQHX3kUoNEvJW5JGJWGXYbmr/qlDBoJy8fv3XR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=URnxip1Q; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: syzbot+9f74cb4006b83e2a3df1@syzkaller.appspotmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718630484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CF8ncAOSZZUP14yQYZNhIjrPI6G3/InI6dmPBgZ8X6c=;
-	b=URnxip1QgMFKqwHKtkQvpXXnXd8shMqasi5zjrxVZWtU7tnYvFdrEK/fXtrQmzjdcOMJjl
-	e3ejlL+DBOyuYIjmMaNM94yRgjHxXC/KJxlt31gGxoCHsRR0nU+19wXuDYNK+h1KRB7SI2
-	G5Z1T3kRVVsq+mYL9JgkLm83AYQnmRs=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Mon, 17 Jun 2024 09:21:20 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+9f74cb4006b83e2a3df1@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in
- read_one_super (2)
-Message-ID: <dx5mkmikbckgxyeiq5aru6wvgkx4h63uvvkb72r37ipsczxrux@s56rz3r4yy4v>
-References: <0000000000003565fc061b122e02@google.com>
+	s=arc-20240116; t=1718630594; c=relaxed/simple;
+	bh=ooe+NfCkDLbyZzNacuckmn0L8ElUEGAsDuJ8Pl8gFyk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Q6ROuCrX22Hh4ouFpSYYoHUH1QieNtxlKogVkEWNXK59SLrCVTeJheeQhTlilkulXYdyLdU8sC3O3zwbtF09p2QVCoLicKgHRdfbDkKhrfMlsxqbIeZMKfBE6WtDxWhQMFEoLUC7gB8xwJxrAzI8EpBD68Y83M59L/LsKYyyBOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdM3cnuq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A87C4AF1D;
+	Mon, 17 Jun 2024 13:23:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718630594;
+	bh=ooe+NfCkDLbyZzNacuckmn0L8ElUEGAsDuJ8Pl8gFyk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IdM3cnuqm9eyXbWnKr/yS7DvHkGPA0e8y+N4/iW1ArVweqOoGK6qYDfFLdeR3LiUW
+	 +MoZBILeF9lPdiiXxYgGbAvW0HQbrcmHLTdWN800E5SKeqjb65AawM9BZdrNY1Us7k
+	 MjdWyu6POEON5qE2Eo4Sur/1SIdAny3vZiYyTZQGhdtI3yPjxQB3dZOXcUrg7MKu6x
+	 wyHXOe2q4vgWHa7kEO/FFuUIEUB759Q16cvsWa+l+sIkmx26BPFid+qTgbZ5+6B6L/
+	 ziggsfHgm3fSzS6X25Pjh2GichbB66GDnjToFb5TcIqg9nSNf7z4L/0W4QyREWDEnY
+	 TLUwpcb+sqgxw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Justin Stitt <justinstitt@google.com>,
+	linux-hardening@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	phil@philpotter.co.uk,
+	corbet@lwn.net,
+	James.Bottomley@HansenPartnership.com,
+	nathan@kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.6 02/35] scsi: sr: Fix unintentional arithmetic wraparound
+Date: Mon, 17 Jun 2024 09:22:00 -0400
+Message-ID: <20240617132309.2588101-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240617132309.2588101-1-sashal@kernel.org>
+References: <20240617132309.2588101-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000003565fc061b122e02@google.com>
-X-Migadu-Flow: FLOW_OUT
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.34
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 01:59:18AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15286f7a980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9f74cb4006b83e2a3df1
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/27e64d7472ce/disk-2ccbdf43.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/e1c494bb5c9c/vmlinux-2ccbdf43.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/752498985a5e/bzImage-2ccbdf43.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+9f74cb4006b83e2a3df1@syzkaller.appspotmail.com
-> 
-> loop2: detected capacity change from 0 to 32789
-> ------------[ cut here ]------------
-> UBSAN: shift-out-of-bounds in fs/bcachefs/super-io.c:653:3
-> shift exponent 106 is too large for 64-bit type 'unsigned long'
-> CPU: 0 PID: 9174 Comm: syz-executor.2 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
->  ubsan_epilogue lib/ubsan.c:231 [inline]
->  __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
->  read_one_super+0xfb5/0xfc0 fs/bcachefs/super-io.c:653
->  __bch2_read_super+0x65a/0x1460 fs/bcachefs/super-io.c:750
->  bch2_fs_open+0x246/0xdf0 fs/bcachefs/super.c:2074
->  bch2_mount+0x6b0/0x13a0 fs/bcachefs/fs.c:1919
->  legacy_get_tree+0xf0/0x190 fs/fs_context.c:662
->  vfs_get_tree+0x92/0x2a0 fs/super.c:1780
->  do_new_mount+0x2be/0xb40 fs/namespace.c:3352
->  do_mount fs/namespace.c:3692 [inline]
->  __do_sys_mount fs/namespace.c:3898 [inline]
->  __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f82b087e5aa
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f82b1586ef8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007f82b1586f80 RCX: 00007f82b087e5aa
-> RDX: 0000000020011a00 RSI: 0000000020000780 RDI: 00007f82b1586f40
-> RBP: 0000000020011a00 R08: 00007f82b1586f80 R09: 0000000001200014
-> R10: 0000000001200014 R11: 0000000000000206 R12: 0000000020000780
-> R13: 00007f82b1586f40 R14: 00000000000119fa R15: 00000000200007c0
->  </TASK>
-> ---[ end trace ]---
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-#syz fix: bcachefs: Fix shift overflow in read_one_super()
+From: Justin Stitt <justinstitt@google.com>
+
+[ Upstream commit 9fad9d560af5c654bb38e0b07ee54a4e9acdc5cd ]
+
+Running syzkaller with the newly reintroduced signed integer overflow
+sanitizer produces this report:
+
+[   65.194362] ------------[ cut here ]------------
+[   65.197752] UBSAN: signed-integer-overflow in ../drivers/scsi/sr_ioctl.c:436:9
+[   65.203607] -2147483648 * 177 cannot be represented in type 'int'
+[   65.207911] CPU: 2 PID: 10416 Comm: syz-executor.1 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
+[   65.213585] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   65.219923] Call Trace:
+[   65.221556]  <TASK>
+[   65.223029]  dump_stack_lvl+0x93/0xd0
+[   65.225573]  handle_overflow+0x171/0x1b0
+[   65.228219]  sr_select_speed+0xeb/0xf0
+[   65.230786]  ? __pm_runtime_resume+0xe6/0x130
+[   65.233606]  sr_block_ioctl+0x15d/0x1d0
+...
+
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang. It was re-enabled in the kernel
+with Commit 557f8c582a9b ("ubsan: Reintroduce signed overflow sanitizer").
+
+Firstly, let's change the type of "speed" to unsigned long as
+sr_select_speed()'s only caller passes in an unsigned long anyways.
+
+$ git grep '\.select_speed'
+|	drivers/scsi/sr.c:      .select_speed           = sr_select_speed,
+...
+|	static int cdrom_ioctl_select_speed(struct cdrom_device_info *cdi,
+|	                unsigned long arg)
+|	{
+|	        ...
+|	        return cdi->ops->select_speed(cdi, arg);
+|	}
+
+Next, let's add an extra check to make sure we don't exceed 0xffff/177
+(350) since 0xffff is the max speed. This has two benefits: 1) we deal
+with integer overflow before it happens and 2) we properly respect the
+max speed of 0xffff. There are some "magic" numbers here but I did not
+want to change more than what was necessary.
+
+Link: https://github.com/llvm/llvm-project/pull/82432 [1]
+Closes: https://github.com/KSPP/linux/issues/357
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+Link: https://lore.kernel.org/r/20240508-b4-b4-sio-sr_select_speed-v2-1-00b68f724290@google.com
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ Documentation/cdrom/cdrom-standard.rst | 4 ++--
+ drivers/scsi/sr.h                      | 2 +-
+ drivers/scsi/sr_ioctl.c                | 5 ++++-
+ include/linux/cdrom.h                  | 2 +-
+ 4 files changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/cdrom/cdrom-standard.rst b/Documentation/cdrom/cdrom-standard.rst
+index 7964fe134277b..6c1303cff159e 100644
+--- a/Documentation/cdrom/cdrom-standard.rst
++++ b/Documentation/cdrom/cdrom-standard.rst
+@@ -217,7 +217,7 @@ current *struct* is::
+ 		int (*media_changed)(struct cdrom_device_info *, int);
+ 		int (*tray_move)(struct cdrom_device_info *, int);
+ 		int (*lock_door)(struct cdrom_device_info *, int);
+-		int (*select_speed)(struct cdrom_device_info *, int);
++		int (*select_speed)(struct cdrom_device_info *, unsigned long);
+ 		int (*get_last_session) (struct cdrom_device_info *,
+ 					 struct cdrom_multisession *);
+ 		int (*get_mcn)(struct cdrom_device_info *, struct cdrom_mcn *);
+@@ -396,7 +396,7 @@ action need be taken, and the return value should be 0.
+ 
+ ::
+ 
+-	int select_speed(struct cdrom_device_info *cdi, int speed)
++	int select_speed(struct cdrom_device_info *cdi, unsigned long speed)
+ 
+ Some CD-ROM drives are capable of changing their head-speed. There
+ are several reasons for changing the speed of a CD-ROM drive. Badly
+diff --git a/drivers/scsi/sr.h b/drivers/scsi/sr.h
+index 1175f2e213b56..dc899277b3a44 100644
+--- a/drivers/scsi/sr.h
++++ b/drivers/scsi/sr.h
+@@ -65,7 +65,7 @@ int sr_disk_status(struct cdrom_device_info *);
+ int sr_get_last_session(struct cdrom_device_info *, struct cdrom_multisession *);
+ int sr_get_mcn(struct cdrom_device_info *, struct cdrom_mcn *);
+ int sr_reset(struct cdrom_device_info *);
+-int sr_select_speed(struct cdrom_device_info *cdi, int speed);
++int sr_select_speed(struct cdrom_device_info *cdi, unsigned long speed);
+ int sr_audio_ioctl(struct cdrom_device_info *, unsigned int, void *);
+ 
+ int sr_is_xa(Scsi_CD *);
+diff --git a/drivers/scsi/sr_ioctl.c b/drivers/scsi/sr_ioctl.c
+index 5b0b35e60e61f..a0d2556a27bba 100644
+--- a/drivers/scsi/sr_ioctl.c
++++ b/drivers/scsi/sr_ioctl.c
+@@ -425,11 +425,14 @@ int sr_reset(struct cdrom_device_info *cdi)
+ 	return 0;
+ }
+ 
+-int sr_select_speed(struct cdrom_device_info *cdi, int speed)
++int sr_select_speed(struct cdrom_device_info *cdi, unsigned long speed)
+ {
+ 	Scsi_CD *cd = cdi->handle;
+ 	struct packet_command cgc;
+ 
++	/* avoid exceeding the max speed or overflowing integer bounds */
++	speed = clamp(0, speed, 0xffff / 177);
++
+ 	if (speed == 0)
+ 		speed = 0xffff;	/* set to max */
+ 	else
+diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
+index 98c6fd0b39b63..fdfb61ccf55ae 100644
+--- a/include/linux/cdrom.h
++++ b/include/linux/cdrom.h
+@@ -77,7 +77,7 @@ struct cdrom_device_ops {
+ 				      unsigned int clearing, int slot);
+ 	int (*tray_move) (struct cdrom_device_info *, int);
+ 	int (*lock_door) (struct cdrom_device_info *, int);
+-	int (*select_speed) (struct cdrom_device_info *, int);
++	int (*select_speed) (struct cdrom_device_info *, unsigned long);
+ 	int (*get_last_session) (struct cdrom_device_info *,
+ 				 struct cdrom_multisession *);
+ 	int (*get_mcn) (struct cdrom_device_info *,
+-- 
+2.43.0
+
 
