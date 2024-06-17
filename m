@@ -1,103 +1,238 @@
-Return-Path: <linux-kernel+bounces-217913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20AA090B6C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:44:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0A990B61C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47812B2DC7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:16:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3011F238BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8861A17C68;
-	Mon, 17 Jun 2024 16:16:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD02579E5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D99F182A6;
+	Mon, 17 Jun 2024 16:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mn1bgqqC"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFD5134BD;
+	Mon, 17 Jun 2024 16:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718640987; cv=none; b=ros+6fOM20W0oXBw0VtBJ/xh+XvJcG7sEXgzhFzXMDqIkFzrKJhU+m3b9APklQy+h6U7pfGU6mhgy3/QdagS7u4+Bnn9evAShPMxUdF1C/TNW8ft6VurrGJbF4x9kAithg3GO0E/DFLo97pQE0LDCrnqFTJmmwlecPjOp4sC33Q=
+	t=1718641151; cv=none; b=i9PP+5xu2RhCsJRkwHuet2kZAbzLy83SRdCmmRgWHZj3chSBv8asW/HaGfswh6+LQcrdmMzt+q9yEFzYlFqDBdj83ZMIkEgwIi2PogJoBSq3rzxTAEqe5/CJr2Bo4oFZY8yStUVABEttS12cFjDlAluKg34P8nkXPX4g0w7yVIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718640987; c=relaxed/simple;
-	bh=JrtpPYVIbnFOKuBv+qAfdsjZN0xFqynHmVM9CHaos8I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lGip/S6uu4lUwAi+mpL/0bZkocCanaYiurwx//LgkNqPludNcU2vmGoZEX+Yqj6Zy7QFa1yZTgqe0Cx9UjY0gJbzQkHiq4Foda/NjbCIHBOhEpXFp72qcEYFufoqB9PY+DI8INTFQExIBiIhDPlSxB+r5vX4awKAY9LOmpXyRvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 456DFDA7;
-	Mon, 17 Jun 2024 09:16:47 -0700 (PDT)
-Received: from e127648.cambridge.arm.com (e127648.arm.com [10.1.33.10])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 48D813F64C;
-	Mon, 17 Jun 2024 09:16:21 -0700 (PDT)
-From: Christian Loehle <christian.loehle@arm.com>
-To: linux-kernel@vger.kernel.org,
-	anna-maria@linutronix.de
-Cc: frederic@kernel.org,
-	tglx@linutronix.de,
-	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH] tick: Remove unnused tick_nohz_get_idle_calls()
-Date: Mon, 17 Jun 2024 17:16:15 +0100
-Message-Id: <20240617161615.49309-1-christian.loehle@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718641151; c=relaxed/simple;
+	bh=FmhPQfQ5feq6Pdtc9ii1dfPikGHb7AG/Rda3yIBJEP0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gkc1l7F+wcLv/bvdWoOYcCYi9TQD6rJqsC3zE4qfTRhzWwfBjz43BHpe0yZTkUX+0Adfiv6nrd6IObjVm74dOEjoxUAqUYkaOhC56CFuaFZpRW3qV722COS2CxdcrtjQ0pRhG7irr8X1QfsZI2gte6IOgz/Ei+d0mr+h72YiKis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mn1bgqqC; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57cc1c00ba6so3708840a12.1;
+        Mon, 17 Jun 2024 09:19:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718641148; x=1719245948; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4f+Dl0F9St/jKePz11795biSESZ4u70V8qkqWg98PCo=;
+        b=Mn1bgqqCy4IQ473pJw4x65Me3rZr/FrAYi5RgmqB1Cw8JdgfOwHe4YyHBdM84tjMxB
+         hyB5oBd+j2mg112VQ74JjLELLasGvMKNPDD0IM/R315PkrSMniLo17ZKZxlBOZrlz3h8
+         +/87LbAGOhZHhQoh3kEoWYKn0f18tbZpO4M0AvCxpqvSoDxg89QDjSYfo3QDQrxE1ZNP
+         YWUDlP1TWnOQGQ3siZwWMLGS3VIw3fqrPg/fUGfp+XJUhjx/7MBrtpt9a+cjShwkMOGc
+         NwtDPxVkEAOXi0ZeRTU0lQ7y5Hoi0oGb4GiX1ZRl+71lSY+FBbh2IJSmzONl+J7C+Shu
+         MiMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718641148; x=1719245948;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4f+Dl0F9St/jKePz11795biSESZ4u70V8qkqWg98PCo=;
+        b=W0InM7pe/EAKqqvGGPFJl99Kx1nk/AdPIGys6CKsm74RHHzYOC7l7sUAH5hQT5ZHVk
+         X99bXZTxm8Yt2mvDsztC0N5I6LJsLMtKba/CPkcgVhmm4vV/1KxiGZzOYiDtIpxgI3JN
+         C5kQ3N1VNSdgjBYUd9hG/5iNToDm5gktiHHLz5wart2zDbTPjA1Ni4lnOLe+JSyoV7+7
+         hWcp0XD84ug2CfC8v3GIBFFYy/EqGhAudV2hb0RgSsas7Eg1a2b1p/kP+NUUjhefj8ub
+         xIcIXHXkQLSNHal0WVZMUbhXulZdt3pSOdxLNSuqPamVmXMw5LxiVh3Z/eXOfl5vBMn1
+         /X3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWzZXAMhzYDWz98cOhA/fSlnUfG8SRs/OiXgCBGHcLlsVH7tqQwLv//b9S+JvRm2+GiiD9TJSjcE97H5eQJEhZb1BkzPR8YFHwEEhsQW3E4CQFAOCa8KwWdVBNshYIHyOXaVwlHhJHO/2RaWw==
+X-Gm-Message-State: AOJu0Yz9pqwtz8XU6AY/DSXg7dFsS9ZXd4PqBuivZUizg1tyb29PkQRv
+	nVDfQxiKFDjouYsGt+mJywFMByEqD98kURpPOwl1ZX3wMX0xG08qXV9MqsaL9sLvHmUshhar4Eb
+	K9+5FH0rCWmAaVVFfyyw7IceMIQY=
+X-Google-Smtp-Source: AGHT+IHqZzEdtlyMkCNsseF68BDJPs2czZokbGtFxCUl3W3wkWnizzsiBI7L1361ucsGCA7fQDzl+O8HU+dijyHkEPk=
+X-Received: by 2002:a50:cd49:0:b0:57c:a701:2311 with SMTP id
+ 4fb4d7f45d1cf-57cbd6c6e20mr7027701a12.26.1718641147869; Mon, 17 Jun 2024
+ 09:19:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240604150136.493962-1-robdclark@gmail.com> <6f97a4b4-cdbe-466c-80d4-adc8da305f75@arm.com>
+In-Reply-To: <6f97a4b4-cdbe-466c-80d4-adc8da305f75@arm.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Mon, 17 Jun 2024 09:18:55 -0700
+Message-ID: <CAF6AEGv+Ge2SD4=j1QhXfG+KkOzvFM+LieCqKuM20YL8gp5PRQ@mail.gmail.com>
+Subject: Re: [PATCH] iommu/arm-smmu: Pretty-print context fault related regs
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	Stephen Boyd <swboyd@chromium.org>, Rob Clark <robdclark@chromium.org>, 
+	Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Jerry Snitselaar <jsnitsel@redhat.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, Pranjal Shrivastava <praan@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The function returns the idle calls counter for the current cpu and
-therefore usually isn't what the caller wants. It is unnused since
-commit 466a2b42d676 ("cpufreq: schedutil: Use idle_calls counter of the
-remote CPU")
-
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
- include/linux/tick.h     |  1 -
- kernel/time/tick-sched.c | 14 --------------
- 2 files changed, 15 deletions(-)
-
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index 4924a33700b7..72744638c5b0 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -139,7 +139,6 @@ extern void tick_nohz_irq_exit(void);
- extern bool tick_nohz_idle_got_tick(void);
- extern ktime_t tick_nohz_get_next_hrtimer(void);
- extern ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next);
--extern unsigned long tick_nohz_get_idle_calls(void);
- extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
- extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
- extern u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time);
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 71a792cd8936..43a6370a2ebc 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -1385,20 +1385,6 @@ unsigned long tick_nohz_get_idle_calls_cpu(int cpu)
- 	return ts->idle_calls;
- }
- 
--/**
-- * tick_nohz_get_idle_calls - return the current idle calls counter value
-- *
-- * Called from the schedutil frequency scaling governor in scheduler context.
-- *
-- * Return: the current idle calls counter value for the current CPU
-- */
--unsigned long tick_nohz_get_idle_calls(void)
--{
--	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+On Mon, Jun 17, 2024 at 6:07=E2=80=AFAM Robin Murphy <robin.murphy@arm.com>=
+ wrote:
+>
+> On 04/06/2024 4:01 pm, Rob Clark wrote:
+> > From: Rob Clark <robdclark@chromium.org>
+> >
+> > Parse out the bitfields for easier-to-read fault messages.
+> >
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > ---
+> > Stephen was wanting easier to read fault messages.. so I typed this up.
+> >
+> > Resend with the new iommu list address
+> >
+> >   drivers/iommu/arm/arm-smmu/arm-smmu.c | 53 +++++++++++++++++++++++++-=
 -
--	return ts->idle_calls;
--}
--
- static void tick_nohz_account_idle_time(struct tick_sched *ts,
- 					ktime_t now)
+> >   drivers/iommu/arm/arm-smmu/arm-smmu.h |  5 +++
+> >   2 files changed, 54 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/=
+arm-smmu/arm-smmu.c
+> > index c572d877b0e1..06712d73519c 100644
+> > --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> > @@ -411,6 +411,8 @@ static irqreturn_t arm_smmu_context_fault(int irq, =
+void *dev)
+> >       unsigned long iova;
+> >       struct arm_smmu_domain *smmu_domain =3D dev;
+> >       struct arm_smmu_device *smmu =3D smmu_domain->smmu;
+> > +     static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
+> > +                                   DEFAULT_RATELIMIT_BURST);
+> >       int idx =3D smmu_domain->cfg.cbndx;
+> >       int ret;
+> >
+> > @@ -425,10 +427,53 @@ static irqreturn_t arm_smmu_context_fault(int irq=
+, void *dev)
+> >       ret =3D report_iommu_fault(&smmu_domain->domain, NULL, iova,
+> >               fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_F=
+AULT_READ);
+> >
+> > -     if (ret =3D=3D -ENOSYS)
+> > -             dev_err_ratelimited(smmu->dev,
+> > -             "Unhandled context fault: fsr=3D0x%x, iova=3D0x%08lx, fsy=
+nr=3D0x%x, cbfrsynra=3D0x%x, cb=3D%d\n",
+> > -                         fsr, iova, fsynr, cbfrsynra, idx);
+> > +     if (ret =3D=3D -ENOSYS && __ratelimit(&rs)) {
+> > +             static const struct {
+> > +                     u32 mask; const char *name;
+> > +             } fsr_bits[] =3D {
+> > +                     { ARM_SMMU_FSR_MULTI,  "MULTI" },
+> > +                     { ARM_SMMU_FSR_SS,     "SS"    },
+> > +                     { ARM_SMMU_FSR_UUT,    "UUT"   },
+> > +                     { ARM_SMMU_FSR_ASF,    "ASF"   },
+> > +                     { ARM_SMMU_FSR_TLBLKF, "TLBLKF" },
+> > +                     { ARM_SMMU_FSR_TLBMCF, "TLBMCF" },
+> > +                     { ARM_SMMU_FSR_EF,     "EF"     },
+> > +                     { ARM_SMMU_FSR_PF,     "PF"     },
+> > +                     { ARM_SMMU_FSR_AFF,    "AFF"    },
+> > +                     { ARM_SMMU_FSR_TF,     "TF"     },
+> > +             }, fsynr0_bits[] =3D {
+> > +                     { ARM_SMMU_FSYNR0_WNR,    "WNR"    },
+> > +                     { ARM_SMMU_FSYNR0_PNU,    "PNU"    },
+> > +                     { ARM_SMMU_FSYNR0_IND,    "IND"    },
+> > +                     { ARM_SMMU_FSYNR0_NSATTR, "NSATTR" },
+> > +                     { ARM_SMMU_FSYNR0_PTWF,   "PTWF"   },
+> > +                     { ARM_SMMU_FSYNR0_AFR,    "AFR"    },
+> > +             };
+> > +
+> > +             pr_err("%s %s: Unhandled context fault: fsr=3D0x%x (",
+> > +                    dev_driver_string(smmu->dev), dev_name(smmu->dev),=
+ fsr);
+> > +
+> > +             for (int i =3D 0, n =3D 0; i < ARRAY_SIZE(fsr_bits); i++)=
  {
--- 
-2.34.1
+> > +                     if (fsr & fsr_bits[i].mask) {
+> > +                             pr_cont("%s%s", (n > 0) ? "|" : "", fsr_b=
+its[i].name);
+>
+> Given that SMMU faults have a high likelihood of correlating with other
+> errors, e.g. the initiating device also reporting that it got an abort
+> back, this much pr_cont is a recipe for an unreadable mess. Furthermore,
+> just imagine how "helpful" this would be when faults in two contexts are
+> reported by two different CPUs at the same time ;)
 
+It looks like arm_smmu_context_fault() is only used with non-threaded
+irq's.  And this fallback is only used if driver doesn't register it's
+own fault handler.  So I don't think this will be a problem.
+
+> I'd prefer to retain the original message as-is, so there is at least
+> still an unambiguous "atomic" view of a fault's entire state, then
+> follow it with a decode more in the style of arm64's ESR logging. TBH I
+> also wouldn't disapprove of hiding the additional decode behind a
+> command-line/runtime parameter, since a fault storm can cripple a system
+> enough as it is, without making the interrupt handler spend even longer
+> printing to a potentially slow console.
+
+It _is_ ratelimited.  But we could perhaps use a higher loglevel (pr_debug?=
+)
+
+BR,
+-R
+
+> > +                             n++;
+> > +                     }
+> > +             }
+> > +
+> > +             pr_cont("), iova=3D0x%08lx, fsynr=3D0x%x (S1CBNDX=3D%u", =
+iova, fsynr,
+> > +                     (fsynr >> 16) & 0xff);
+>
+> Please define all the bitfields properly (and I agree with Pranjal about
+> the naming).
+>
+> Thanks,
+> Robin.
+>
+> > +
+> > +             for (int i =3D 0; i < ARRAY_SIZE(fsynr0_bits); i++) {
+> > +                     if (fsynr & fsynr0_bits[i].mask) {
+> > +                             pr_cont("|%s", fsynr0_bits[i].name);
+> > +                     }
+> > +             }
+> > +
+> > +             pr_cont("|PLVL=3D%u), cbfrsynra=3D0x%x, cb=3D%d\n",
+> > +                     fsynr & 0x3,   /* FSYNR0.PLV */
+> > +                     cbfrsynra, idx);
+> > +
+> > +     }
+> >
+> >       arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
+> >       return IRQ_HANDLED;
+> > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/=
+arm-smmu/arm-smmu.h
+> > index 836ed6799a80..3b051273718b 100644
+> > --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> > @@ -223,6 +223,11 @@ enum arm_smmu_cbar_type {
+> >
+> >   #define ARM_SMMU_CB_FSYNR0          0x68
+> >   #define ARM_SMMU_FSYNR0_WNR         BIT(4)
+> > +#define ARM_SMMU_FSYNR0_PNU          BIT(5)
+> > +#define ARM_SMMU_FSYNR0_IND          BIT(6)
+> > +#define ARM_SMMU_FSYNR0_NSATTR               BIT(8)
+> > +#define ARM_SMMU_FSYNR0_PTWF         BIT(10)
+> > +#define ARM_SMMU_FSYNR0_AFR          BIT(11)
+> >
+> >   #define ARM_SMMU_CB_FSYNR1          0x6c
+> >
 
