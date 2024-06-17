@@ -1,204 +1,97 @@
-Return-Path: <linux-kernel+bounces-217583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D33C90B1C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:25:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D93290B1CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FEA71C20A75
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:25:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5D71F2A4C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34901AB8F8;
-	Mon, 17 Jun 2024 13:36:29 +0000 (UTC)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7301AB90A;
+	Mon, 17 Jun 2024 13:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="RSuya5hQ"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A31D1AB52F;
-	Mon, 17 Jun 2024 13:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2851A2FCF
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631389; cv=none; b=V2Iy/GxELzTrpnn1SL+YBnTSkmEgbMDk/DQUfNqoWHlw9kooiqTmeP69fGUOaCKgSm9Yy2s0WapAeLmcwatvEano0OEeDR5rbIbEk0xAIlpaHh5eEr841kWYXUiQQG2K9fWIbl2BnFcmhi4xPuPmq7jDDrGxpB1KVCaSSf0Nbts=
+	t=1718631389; cv=none; b=OreFJMQO1EIStxjEP3RbmHgG3a7e5Q6++REEFVqupysBs0S2LWXy3BFZWv7JOuzW8PHSulKeWl14dByxbA2KNw+N6bjJvVu5mEh2ZR9NWWOTsx6rJ3eNwRe23p0TCdFYCmfFt5O/YlBFq0HRzdT1B2WdBcRQl9HQd5gJaWtb0/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718631389; c=relaxed/simple;
-	bh=w2U5pZAt/84qA8S9DUJyXOujch5rtf8ctaEYUOJ+FZE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CfAF76ljm3IVrBROOfGVQi9g4noDulDN8pkFFLF+5pAX/e+APNY0iSRL0oeDO2OZ4HsMr3vJRqSXru8hG7OX4WG2aCg2ABaAvvhJLjASKYaSWpg3jUTH/10uj8kuuDARirPmOTZJkV0yoO0E0t1Ht0lC1UrGacDyMOXHcj+OgN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-627e3368394so44818407b3.2;
-        Mon, 17 Jun 2024 06:36:26 -0700 (PDT)
+	bh=fkadhAyonb7RymKr0Hwj9qGiWcoaWFoudlddldfbojY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HhiR/oIfFQf5owtDYySGlvGL4BN+0vp1g3mHIgcVf+GlMv0E6t2XIWXLpMuwB0DLA1yIXTMi3sxJqAbJdqwa7WGu33zVY7lsPJwy4cfyQkQ6qG47P7VxKD8SU3PEHZSiFFkNEPoe2gjGgCVeosJmQ1vHcIn662c3D/X1xaX4yxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=RSuya5hQ; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4210aa00c94so36322125e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:36:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1718631385; x=1719236185; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y+FTQb5W5/GJ/Nb4LvauMZmPKUHXtT9dcXAWj/SvSDY=;
+        b=RSuya5hQGrSTTwFtuBl6/rYKn0k7rEetc7C6wa05py67lGIzR/fbqmVDhimOcIRaBG
+         7RwakKGjGsMaKVOboJFC1+LESpkzRkTnjQwfH378O35qHiWOTFjjAOKkNUFyIFD51xuq
+         PvKe5njleoOP0wDETKSDt+r+pkI3CowbJKFegbDGnnyu16ZcPs4UUvMLcdQCj/x3u1S3
+         koGIWbpIAQd8CT0x2B7O470E4HLeXjA7XaQ97LZaW7rxx2WIEerzzYf8iSMqFO+c0mkJ
+         1wdWiaJTV1Yj/gG26UtsjDtglxY0mWaAw95ta7iRSb5y1xj9/dNB+61jVBGJmhgDlTP5
+         0P2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718631385; x=1719236185;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eL05cXLA28sNYHpBmwXcBiu29znRtT0jenJjusxIxa8=;
-        b=YkJ/3XtkrymD7AAgwQKzRsU+r/gYQDDCOAV/oihO3z78YrRsT1wUQKKIPQ+E3M12z5
-         J67hh67EKesEb9ViV5uCBvFOXCPwjW00j6Z01mBp7RSfjYncZyNy3iTowEm8r39tqFoc
-         Zmak49+yg6rZaAbyX2hDxAqn9SORDkG0Mzx+Be8xpHyHm+h5dz0LgncXO13Gj5iF6yQi
-         Kco8GiJ1HF64eZpzRNZm1vGdYRKK0uxgzzCdJqVWHc/loY9pnBjMzv/YddQg2qs1wh0n
-         isERVXTrEjiB6Jeq4jN+qJSAIoGzjm+/qet3gefWxU96wF8V33aUbydmc2Q6gFbxEtiq
-         qPLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCwLv7SA3u03S0pDHSOSHV4zliWIa0EmSpNOIIjx2fKSgdGb8EXCx38KH9lVIn02L1SV1CSvzyRlgwUJnr4iQHijPDdgecLi/uVhMY0/e/RIEvpihPDrkovXOY6cvnGDxc3zSB5pq0dd2ZhOMOC2mw/yDi8mvrqJ8aNC37V+aVdT6tMUK2DgG0cV4j
-X-Gm-Message-State: AOJu0YxUjNRCTxDaZvGP8yYJZNznWORUAv92PyamlGxUdLM3U2AAhgaD
-	mwXMfJ2j0gQaPzKsvf0gPMB30hmwzAb0ATA26V7ZTKo8t5R+oZOvqnBmpWGl
-X-Google-Smtp-Source: AGHT+IGMSQjnNkuWJmtMrGtNAkNAZFvqVgJJQ7j8gYXtGuw3GNFVUT6Sg4bNQ23KeUR+jYdMaa2GAg==
-X-Received: by 2002:a81:7cd5:0:b0:632:b827:a1ba with SMTP id 00721157ae682-6333082fb6bmr70717947b3.7.1718631384796;
-        Mon, 17 Jun 2024 06:36:24 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-631189a7d28sm14116197b3.40.2024.06.17.06.36.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 06:36:24 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso2987246276.0;
-        Mon, 17 Jun 2024 06:36:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVvGbtZ+94Ybijwe1JZNAMDUkTWCBvOYD8bOTsfHOtHmRg2grcZJWp1hNwdzXt1QVMEiKCG7WtC387G6G2Nov+AJLNxnp6PIFoQGS238S3x4sr1pxL88GIh8k08cUt5PCTNGf8h4Vpeoj+QVuSxTPcEqYFLosYo3zkHeWTEPrdrbWPqbRT402Lm8079
-X-Received: by 2002:a25:df01:0:b0:dfb:1b5:6e6a with SMTP id
- 3f1490d57ef6-dff1549049fmr8747190276.43.1718631384061; Mon, 17 Jun 2024
- 06:36:24 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y+FTQb5W5/GJ/Nb4LvauMZmPKUHXtT9dcXAWj/SvSDY=;
+        b=n7nG7ijQNts+4uwZFK5G0C9f8OzhBHhtxELiyi/JqdcCosvsgd9ExTpZr8fNo5xVkQ
+         ZCmMXkj63mBiCMlOmt7fIGGSB15U/DYqUpwd/l6QXcVrXGbovYDBsyMoY7z17RSyZ1MJ
+         cdkviFH2AP1zKLfAuf4jczsBSiLE/tcWn8wriHyeuTna4JMxWH0AEx+c1X87mYiNF/f9
+         BretmNdkC6eguzZR4cRG/65AZQZX3t4ZXEopWOTmJ1fMOW0NE0XMTAgPrf5jW7ezj3dG
+         RwXDm8mWOfkC8o8fEXf3grivikFG/4AzRIqAZi+WNCNuSANWkYn8VjkVTPafWqat5WaQ
+         /l+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVmUC0KRZqVDActxF3sAuLWVY3WTfxG+I8/G++WQ+mw/z+Vm3/WzMzLGHoiY84mBDiY0okjba6Mv9LTwU7MFCriLID+if/IrRLymOdA
+X-Gm-Message-State: AOJu0YxBOV7pwT+NyY5GsbJ64TCXkVyOY8HCBLut4bl61zZ5jWVb3rDE
+	xXvadvYxD0YdgFfM7GwMP+KDLde6sj57rJGeah59BqqzF6PiGjRsUxdilxS16zY=
+X-Google-Smtp-Source: AGHT+IHgsgd/TPVM+18WkZs2+AeqnSk2SRZRbmmdW0ObBeSJuDLzDBQ2FjqSWprz5A6LjcnamvKJ7w==
+X-Received: by 2002:a05:6000:bcc:b0:360:7a01:6afd with SMTP id ffacd0b85a97d-3607a74e760mr6960206f8f.10.1718631385486;
+        Mon, 17 Jun 2024 06:36:25 -0700 (PDT)
+Received: from localhost ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36074e0e5adsm12011860f8f.0.2024.06.17.06.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 06:36:25 -0700 (PDT)
+Date: Mon, 17 Jun 2024 15:36:20 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yangbo Lu <yangbo.lu@nxp.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v2 net] ptp: fix integer overflow in max_vclocks_store
+Message-ID: <ZnA71MTiaESQTUMp@nanopsycho.orion>
+References: <ee8110ed-6619-4bd7-9024-28c1f2ac24f4@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617131511.160877-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240617131511.160877-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Jun 2024 15:36:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUDDfOeQUwmuYKPvAXaXBJCB17ecH8sfpC4=7dTVKthhw@mail.gmail.com>
-Message-ID: <CAMuHMdUDDfOeQUwmuYKPvAXaXBJCB17ecH8sfpC4=7dTVKthhw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Use BIT_ULL for PIN_CFG_* macros
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee8110ed-6619-4bd7-9024-28c1f2ac24f4@moroto.mountain>
 
-Hi Prabhakar,
-
-On Mon, Jun 17, 2024 at 3:15=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Mon, Jun 17, 2024 at 11:34:32AM CEST, dan.carpenter@linaro.org wrote:
+>On 32bit systems, the "4 * max" multiply can overflow.  Use kcalloc()
+>to do the allocation to prevent this.
 >
-> Commit 13a8cae6e561 ("pinctrl: renesas: rzg2l: Drop struct
-> rzg2l_variable_pin_cfg") introduced a Smatch static checker warning:
->
->     drivers/pinctrl/renesas/pinctrl-rzg2l.c:374 rzg2l_pinctrl_get_variabl=
-e_pin_cfg()
->     warn: was expecting a 64 bit value instead of '~((((1))) << (16))'
->
-> The function `rzg2l_pinctrl_get_variable_pin_cfg` attempts to mask out
-> `PIN_CFG_VARIABLE` using `BIT(16)`. However, since `pincfg` is a `u64`,
-> this inadvertently masks the high 32 bits as well, which is unintended
-> (on non 64-bit platforms). To correct this, `PIN_CFG_VARIABLE` should
-> be defined using `BIT_ULL(16)`, ensuring proper 64-bit masking.
->
-> To avoid such issues, update `PIN_CFG_*` macros to use `BIT_ULL()`.
->
-> Fixes: 13a8cae6e561 ("pinctrl: renesas: rzg2l: Drop struct rzg2l_variable=
-_pin_cfg")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/5c1bf20b-7e94-4b06-95e5-da9f99750203@=
-moroto.mountain/
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>Fixes: 44c494c8e30e ("ptp: track available ptp vclocks information")
+>Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Thanks for your patch!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-I would like to brainstorm a bit about this, though. See below...
-
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -41,28 +41,28 @@
->  #define MUX_FUNC_MASK          GENMASK(31, 16)
->
->  /* PIN capabilities */
-> -#define PIN_CFG_IOLH_A                 BIT(0)
-> -#define PIN_CFG_IOLH_B                 BIT(1)
-> -#define PIN_CFG_SR                     BIT(2)
-> -#define PIN_CFG_IEN                    BIT(3)
-> -#define PIN_CFG_PUPD                   BIT(4)
-> -#define PIN_CFG_IO_VMC_SD0             BIT(5)
-> -#define PIN_CFG_IO_VMC_SD1             BIT(6)
-> -#define PIN_CFG_IO_VMC_QSPI            BIT(7)
-> -#define PIN_CFG_IO_VMC_ETH0            BIT(8)
-> -#define PIN_CFG_IO_VMC_ETH1            BIT(9)
-> -#define PIN_CFG_FILONOFF               BIT(10)
-> -#define PIN_CFG_FILNUM                 BIT(11)
-> -#define PIN_CFG_FILCLKSEL              BIT(12)
-> -#define PIN_CFG_IOLH_C                 BIT(13)
-> -#define PIN_CFG_SOFT_PS                        BIT(14)
-> -#define PIN_CFG_OEN                    BIT(15)
-> -#define PIN_CFG_VARIABLE               BIT(16)
-> -#define PIN_CFG_NOGPIO_INT             BIT(17)
-> -#define PIN_CFG_NOD                    BIT(18) /* N-ch Open Drain */
-> -#define PIN_CFG_SMT                    BIT(19) /* Schmitt-trigger input =
-control */
-> -#define PIN_CFG_ELC                    BIT(20)
-> -#define PIN_CFG_IOLH_RZV2H             BIT(21)
-> +#define PIN_CFG_IOLH_A                 BIT_ULL(0)
-> +#define PIN_CFG_IOLH_B                 BIT_ULL(1)
-> +#define PIN_CFG_SR                     BIT_ULL(2)
-> +#define PIN_CFG_IEN                    BIT_ULL(3)
-> +#define PIN_CFG_PUPD                   BIT_ULL(4)
-> +#define PIN_CFG_IO_VMC_SD0             BIT_ULL(5)
-> +#define PIN_CFG_IO_VMC_SD1             BIT_ULL(6)
-> +#define PIN_CFG_IO_VMC_QSPI            BIT_ULL(7)
-> +#define PIN_CFG_IO_VMC_ETH0            BIT_ULL(8)
-> +#define PIN_CFG_IO_VMC_ETH1            BIT_ULL(9)
-> +#define PIN_CFG_FILONOFF               BIT_ULL(10)
-> +#define PIN_CFG_FILNUM                 BIT_ULL(11)
-> +#define PIN_CFG_FILCLKSEL              BIT_ULL(12)
-> +#define PIN_CFG_IOLH_C                 BIT_ULL(13)
-> +#define PIN_CFG_SOFT_PS                        BIT_ULL(14)
-> +#define PIN_CFG_OEN                    BIT_ULL(15)
-> +#define PIN_CFG_VARIABLE               BIT_ULL(16)
-
-PIN_CFG_VARIABLE looks a bit misplaced here, in between all the flags
-indicating actual capabilities of a pin.
-
-What about relocating it to the "high" half, and moving it next to
-RZG2L_SINGLE_PIN? Perhaps even renaming it to RZG2L_CFG_VARIABLE?
-
-> +#define PIN_CFG_NOGPIO_INT             BIT_ULL(17)
-> +#define PIN_CFG_NOD                    BIT_ULL(18)     /* N-ch Open Drai=
-n */
-> +#define PIN_CFG_SMT                    BIT_ULL(19)     /* Schmitt-trigge=
-r input control */
-> +#define PIN_CFG_ELC                    BIT_ULL(20)
-> +#define PIN_CFG_IOLH_RZV2H             BIT_ULL(21)
->
->  #define RZG2L_MPXED_COMMON_PIN_FUNCS(group) \
->                                         (PIN_CFG_IOLH_##group | \
-
-Then the other PIN_CFG_* definitions can keep on using BIT().
-To make that safer, PIN_CFG_MASK should be restricted to 32-bit:
-
-    -#define PIN_CFG_MASK                    GENMASK_ULL(46, 0)
-    +#define PIN_CFG_MASK                    GENMASK_ULL(31, 0)
-
-and several u64 variables can be changed to u32 again.
-
-What do you think?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Reviewed-by: Jiri Pirko <jiri@nvidia.com>
 
