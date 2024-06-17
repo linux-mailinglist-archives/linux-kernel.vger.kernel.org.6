@@ -1,101 +1,75 @@
-Return-Path: <linux-kernel+bounces-217757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635DF90B3DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:20:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E877390B3E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE88B1F271AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:20:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA9F51C21D27
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7044515B553;
-	Mon, 17 Jun 2024 14:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592EF15CD68;
+	Mon, 17 Jun 2024 14:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="SwoQeyQD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RfrE+bpW"
-Received: from wfout8-smtp.messagingengine.com (wfout8-smtp.messagingengine.com [64.147.123.151])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bapg7JOv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AEE15B561
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E31D15B990
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718635175; cv=none; b=SSXemXpNNHkCOTZx6RjkBcjhMz3OX7IrDuPMEWu7e/oDGhpa0otoam6QAPMk2pmjzlbaEr51hbIlkIvN91K8w9SDBAe+9zhN2Mvws1GuE2UrP4lTmm1Z3ICrWF3p4RP8E1G2pjocmRTu7PmmpJJBGyjXJtA852rMDe2q2VHdQ2Y=
+	t=1718635280; cv=none; b=qf4OGxS+7qyTLt2TKb2YgYgNPdNPpCyWEA+UMUCAelUJEOD0YhUfBPV6nrYR3wteyes6LUgHZSiR3DktoLd0mZHJB9nkPkzWR9UqG69uBR5EUijtkrv0fP6ivAeOZK/PyY/iiOod3T/BGMuVahjXXW37WG6oDFyh4An4qjXbMQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718635175; c=relaxed/simple;
-	bh=KjGx90/Mk44guEnUP4Jppy6Thcm4cwsS4n/mldWQzAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lvc8TNZI+OFVVwMpW9xiBYeIlEjhL9l1Pzekq3VTyt5ZPeHoCY6Ov3ivcl8cYILbBNW1oZqpFmGh9yU++CSXRIYScEKvQSK4otgg5iLGZWa0vUz6HWiB++WbecEoCEf/jvA7fZsvJY65SYL4u/uH9aJKFlBdlcNeLmcdgjewtq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=SwoQeyQD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RfrE+bpW; arc=none smtp.client-ip=64.147.123.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sent.com
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfout.west.internal (Postfix) with ESMTP id B53E31C00067;
-	Mon, 17 Jun 2024 10:39:30 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Mon, 17 Jun 2024 10:39:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
-	:subject:to:to; s=fm1; t=1718635170; x=1718721570; bh=YTcVxGJJSi
-	tBHmI81csUD7sOdb3OERyqcoYJY7uvHYk=; b=SwoQeyQD79h0J0zshDT6H5OPdO
-	8i2aO3luQk1ijzRDHHZFe04KOiSxfomStah3hZZEv5lANnsX7BLBJrgyYKhzf0P9
-	dZCsa4IL6dFy3jZP7vd8pUFsPoI1cYS1tTbiXWpYoVXxXcee8Nbc/08rM290LFN7
-	F9dFwXSPOxWAF/7g1EpNwPjKbbmV9DUf+xexxN8sVhU3gb2XN1mKxSSTO0JzKjcg
-	/zIFOA4BU+cyytieWov0Rm5DleLitafnEH2+2ZSXTr9rM53cW8Gz8N7Z1UBwDAcR
-	sH5cxP8po9wJcWpAWoBFHUkR+8RxJM8b6X7TpOKSXQb7ot96PAERXU9R4E9Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm1; t=1718635170; x=1718721570; bh=YTcVxGJJSitBH
-	mI81csUD7sOdb3OERyqcoYJY7uvHYk=; b=RfrE+bpWFhIRKjaGeNT1S2KQjzRs+
-	xdifj1Z3+ekeqXh6br9x6VMq1A8zBijVlqf5CIbS3hhGahKURIDB36oDRpXWOmTn
-	sOKlgiEb+xY8MbT5MfhgSqHxx7hm2c+uwmupfJ+AxPnok25cCskaZKwHEhchM7hK
-	A/mnhNwfCYivmWlFOBcZWrNwRZZSNZEiXc7AcTqp5a+zOEkUmBQorGi7UkqMRHtO
-	CY/ErRaU0e7x1ey6aqAKe87JgMvfWurkYHEycFhSitjarP2DTtTE2azCPOxxbeuk
-	3TqgXE5tsu6iAB8kSUCQqDMAu3ATXvkVJt8YNR/tPP4geDrwpX0Yh4OLQ==
-X-ME-Sender: <xms:oUpwZlCHMA5BUvqXf0FDRWyuQ4tc0M-49VT0rmIh06K8rQWDhX85GQ>
-    <xme:oUpwZjiZ8Qku-kzQrp9k_EhqV-KFYOPNOCn3XbVz1y13N0lMYXvnw0HxJtGGoB92Q
-    iCcnjB1zdDN4SasmQ>
-X-ME-Received: <xmr:oUpwZgnlhhJh0KtIKBAmf-4-IaXre7cTg9u_lUEPaV9-ohmmOjYk0p7JkX-tO5Kjo_ntalgOeKXqrgxxU6OR2ULttvE5gwH_6g0IW5iTdH4ilVavY6_lk1tI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvhedgjeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofhrggfgsedtkeertdertddtnecuhfhrohhmpegkihcujggr
-    nhcuoeiiihdrhigrnhesshgvnhhtrdgtohhmqeenucggtffrrghtthgvrhhnpeeigeffgf
-    egkeetudelueejveefieeuieffheduteetudeuffejkeffhfettdeihfenucffohhmrghi
-    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepiihirdihrghnsehsvghnthdrtghomh
-X-ME-Proxy: <xmx:okpwZvwGZUyBLJIhwtFsOlIorZbV_bdkOKsupFRucH-g0W4Jn2j_eA>
-    <xmx:okpwZqQl3n-NjMYN4e5qWZllQNHMwjMefRQz37qxHWt-KAkTCmb5wA>
-    <xmx:okpwZib7fXMGOYdJT_iXa31wO4b-hRxRhSxgHUn3K-Re-KHETmq9bg>
-    <xmx:okpwZrSk7UkCMB8s2rzqxBZBXr1e45CFVBgNXTYe5-NF9QmtrWBunA>
-    <xmx:okpwZkBh6hBbaCR-5qs4n3l7dDymLS2GD3CdQb8dpMcCkZQgFmDwoGlJ>
-Feedback-ID: iccd040f4:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 17 Jun 2024 10:39:29 -0400 (EDT)
-From: Zi Yan <zi.yan@sent.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	linux-mm@kvack.org
-Cc: Zi Yan <ziy@nvidia.com>,
-	oe-lkp@lists.linux.dev,
-	lkp@intel.com,
-	kernel test robot <oliver.sang@intel.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Yang Shi <shy828301@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/migrate: fix BUG_ON in migrate_misplaced_folio() and compact_zone()
-Date: Mon, 17 Jun 2024 10:39:25 -0400
-Message-ID: <20240617143926.1511227-1-zi.yan@sent.com>
-X-Mailer: git-send-email 2.43.0
-Reply-To: Zi Yan <ziy@nvidia.com>
+	s=arc-20240116; t=1718635280; c=relaxed/simple;
+	bh=5jQTs2lxCHcFprbF6CKPg1CLdTOcay7Z0kuZBu+6vXU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l9lhY1dNAGS7Udl+Jd7ynX8Tsa344dV4KtvjFThskFcCiz0uqzC/EBFmqObbWS5LLjLCus1YciosTQvGRjLldF8F+XN9Si7/klQpwhAeP21ANCXqb8Dnc+On/TqIpZqakDpc550+/gnSeWob28uhdY+MBMyjDQMIENY/EFDj+X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bapg7JOv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718635278;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PvUM+GN/gB29YaibI3luJ34zEaRHwAEivDnpxaH0NNc=;
+	b=bapg7JOvB6p5MLk5p4bYzsKkhaENcS4pdUgrAA7S0R2xmav4NFRzlS4ut4Q8B0J7W/CF15
+	EnUHhGFSwPmbww3jXZ6x2ABdNiNjH9ynC1pfz4VflqEsLAMIA2MqPpwSLThtTOOGA9AHjS
+	S0xypwm5Up0DHnLpF/W//VGj30Nospg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-t7EwKp93N7CRrMaxXoaWmQ-1; Mon,
+ 17 Jun 2024 10:41:12 -0400
+X-MC-Unique: t7EwKp93N7CRrMaxXoaWmQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 11F07195609D;
+	Mon, 17 Jun 2024 14:41:07 +0000 (UTC)
+Received: from llong.com (unknown [10.22.32.57])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A1E591956048;
+	Mon, 17 Jun 2024 14:41:03 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Xavier <ghostxavier@sina.com>,
+	Peter Hunt <pehunt@redhat.com>,
+	Petr Malat <oss@malat.biz>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH-cgroup v2 0/5] cgroup/cpuset: Fix miscellaneous issues
+Date: Mon, 17 Jun 2024 10:39:40 -0400
+Message-Id: <20240617143945.454888-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,78 +77,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-From: Zi Yan <ziy@nvidia.com>
+ v2:
+  - Fix test_cpuset_prs.sh problems reported by test robot
+  - Relax restriction imposed between cpuset.cpus.exclusive and
+    cpuset.cpus of sibling cpusets.
+  - Make cpuset.cpus.exclusive independent of cpuset.cpus. 
+  - Update test_cpuset_prs.sh accordingly.
+  
+ [v1] https://lore.kernel.org/lkml/20240605171858.1323464-1-longman@redhat.com/
 
-Both Hugh Dickins and kernel test bot hit an issue that migrate_pages()
-reports success but still leaves unmigrated pages on from list. It
-triggers BUG_ON in migrate_misplaced_folio() and compact_zone().
+This patchset attempts to address the following cpuset issues.
+ 1) While reviewing the generate_sched_domains() function, I found a bug
+    in generating sched domains for remote non-isolating partitions.
+ 2) Test robot had reported a test_cpuset_prs.sh test failure.
+ 3) The current exclusivity test between cpuset.cpus.exclusive and
+    cpuset.cpus and the restriction that the set effective exclusive
+    CPUs has to be a subset of cpuset.cpus make it harder to preconfigure
+    the cgroup hierarchy to enable remote partition.
 
-Our convention is that if migrate_pages() reports complete success (0),
-then the migratepages list will be empty; but if it reports an error or
-some pages remaining, then its caller must putback_movable_pages().
+The test_cpuset_prs.sh script is updated to match changes made in this
+patchset and was run to verify that the new code did not cause any
+regression.
 
-There's a new case in which migrate_pages() has been reporting complete
-success, but returning with pages left on the migratepages list: when
-migrate_pages_batch() successfully split a folio on the deferred list,
-but then the "Failure isn't counted" call does not dispose of them all.
+Waiman Long (5):
+  cgroup/cpuset: Fix remote root partition creation problem
+  selftest/cgroup: Fix test_cpuset_prs.sh problems reported by test
+    robot
+  cgroup/cpuset: Delay setting of CS_CPU_EXCLUSIVE until valid partition
+  cgroup/cpuset: Make cpuset.cpus.exclusive independent of cpuset.cpus
+  selftest/cgroup: Update test_cpuset_prs.sh to match changes
 
-Since that block is expecting the large folio to have been counted as 1
-failure already, and since the return code is later adjusted to success
-whenever the returned list is found empty, the simple way to fix this
-safely is to count splitting the deferred folio as "a failure".
+ Documentation/admin-guide/cgroup-v2.rst       |  12 +-
+ kernel/cgroup/cpuset.c                        | 158 +++++++++++++-----
+ .../selftests/cgroup/test_cpuset_prs.sh       |  75 ++++++---
+ 3 files changed, 180 insertions(+), 65 deletions(-)
 
-This patch is based on Hugh's fix and suggestions from Huang, Ying.
-
-[Hugh's version]
-Link: https://lore.kernel.org/linux-mm/46c948b4-4dd8-6e03-4c7b-ce4e81cfa536@google.com/
-[Additional stats change suggested by Huang, Ying]
-Link: https://lore.kernel.org/linux-mm/87msnq7key.fsf@yhuang6-desk2.ccr.corp.intel.com/
-Suggested-by: "Huang, Ying" <ying.huang@intel.com>
-Fixes: 7262f208ca68 ("mm/migrate: split source folio if it is on deferred split list")
-Reported-by: Hugh Dickins <hughd@google.com>
-Closes: https://lore.kernel.org/linux-mm/46c948b4-4dd8-6e03-4c7b-ce4e81cfa536@google.com/
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202406171436.a30c129-oliver.sang@intel.com
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- mm/migrate.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/mm/migrate.c b/mm/migrate.c
-index dd04f578c19c..30f9a61598ea 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1654,7 +1654,16 @@ static int migrate_pages_batch(struct list_head *from,
- 
- 			/*
- 			 * The rare folio on the deferred split list should
--			 * be split now. It should not count as a failure.
-+			 * be split now. It should not count as a failure:
-+			 * but increment nr_failed, because, without
-+			 * doing so, migrate_pages() may report success with
-+			 * (split but unmigrated) pages still on its fromlist;
-+			 * whereas it always reports success when its fromlist
-+			 * is empty. stats->nr_thp_failed should be increased
-+			 * too, otherwise stats inconsistency will happen when
-+			 * migrate_pages_batch is called via migrate_pages()
-+			 * with MIGRATE_SYNC and MIGRATE_ASYNC.
-+			 *
- 			 * Only check it without removing it from the list.
- 			 * Since the folio can be on deferred_split_scan()
- 			 * local list and removing it can cause the local list
-@@ -1669,6 +1678,8 @@ static int migrate_pages_batch(struct list_head *from,
- 			if (nr_pages > 2 &&
- 			   !list_empty(&folio->_deferred_list)) {
- 				if (try_split_folio(folio, split_folios) == 0) {
-+					nr_failed++;
-+					stats->nr_thp_failed += is_thp;
- 					stats->nr_thp_split += is_thp;
- 					stats->nr_split++;
- 					continue;
-
-base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
 -- 
-2.43.0
+2.39.3
 
 
