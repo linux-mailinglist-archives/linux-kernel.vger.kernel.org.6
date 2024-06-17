@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-218388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7388F90BDAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E726590BDB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6A551F24247
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:32:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3696E1F2472B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E6D19AA5F;
-	Mon, 17 Jun 2024 22:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBBD19885F;
+	Mon, 17 Jun 2024 22:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="PNJKapMu"
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on2063.outbound.protection.outlook.com [40.107.8.63])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="22EMsdFS"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2043.outbound.protection.outlook.com [40.107.223.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFA8199EB0;
-	Mon, 17 Jun 2024 22:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.8.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DA31D953B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 22:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718663494; cv=fail; b=qtCfYIDDT1g9l8KldVgGE3VZbutblpw4vbImf9OzJNdRIpLGo5uytBEqa6SEAP8mNhc8dWKpH/c9dffLtkNwfIqzjk64QRHkqATe+mZ+hYXVBtStiiUs3IDxj8jLTQW/lG2LP2zaey3EqhxNeP/+nfTvTDCxM4sj/JHIQhfFnlM=
+	t=1718663807; cv=fail; b=ZUh6yYTEIUxFo/vXJ1ut0UXvQZ4SrdfcUZOeWIOLyUz6jc4ko7z8uolFisDA1jeWjmGceL8pOqGMIB9PbQVS6weIiTOd24Fj34TwNmBmDIhuLvwHOx8wdZSdmxPKQgB/H3KdscjhAkG3L5IRiSRKDZJ/zA784RA3ILVB4cAFbac=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718663494; c=relaxed/simple;
-	bh=aWDpo3yVmNeiLhMXiP+wURDxPwhWKdoeRk7hHuCD7cE=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=M8yU0z2otnKoLlpJvR1BkwLlZThzFj7sWvzCx9hKtpI0temUihWeJwvK5sIs/PoLzWrom1K2Pv27CzoqwHDvaK9VT4uApLD8D95MAe59IeMxSDZRY69tLBa+qcDIdwdLuXNwVsELuPPC4UbW65PsubBEMaJ1DhxA2X3TQx2D+WI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=PNJKapMu; arc=fail smtp.client-ip=40.107.8.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1718663807; c=relaxed/simple;
+	bh=M4sHE2qpASIvbf40+IlRhmkcuzWNq9L/HHxfzds5suc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ra+l/N7wShPNdkewlQVRc+d+243DD0jLcyl2PjQIKKoJ8oLjvMhU0dnvCxsyX+3+secgXcQN6bwE81aPDWyGQbf3g2UGpb8A+11SGQU+eZml02hQTdkPBL6AC6x9bpRqcpoJ6bc+kTB3s9jqtUhB1YlbTXKROWkXM9IHqVjSYsM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=22EMsdFS; arc=fail smtp.client-ip=40.107.223.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OnFls3Qq8yoYnyIbhoX0jnlQqoQ80MmlEMUvSDQbm1bIdIVEzkl8kiAibkmXoibNryp0UMgNP1nDnRbThbUk1AASikbUyso2Hrg14qtnuATp5d10fpU/Em0hGxP5v2E34q1r87CHhkdjjfh3zW8dn+gXiZiXqdYgl9sM7RP77bxZN1G2hWZvkKuoDnzq27xj7p7kBUW/touKmDqVspp8fwpNWNsxZhV2bT85zydMqPG1P9ko+REow8GgpOs4wtyr7kIfkgIodozbHa37Oi5BGZphq8CJekbGQMx8N7M3YQBUKOqpW9appRMR3n4+oxoAStI5huVaI/YYc1Kevcu5CQ==
+ b=lskvjxr+GnaChYYCVFk28XJR7VBt9QU76TJQLvhXhOyBFPtDZbX6PYU09Pe/dMQXrg5q0Cw2WR8eeUJoEYy5U68GZodQ8HmWnIPyVxZgMDnkXu3LYZEY8yL7M2o6BmowEpofG8MDVv+VQu5futaYH7gLRzqG2QlQ2pmJFP6kqa2CxWQrOVCnbnk10vrtrLpFhDQT/yYSe2xGXKwWAoao3FEF8PGP1Qrh+baZh8Xxqyd0LEiSCiYxgvSth8wr1W9eDkMS7RrgjLjPlZ3a8cn5zDdhTqV5smg6LtXJZZbIptexDLOhQLkZD+bB5PLLMqAHehlBBvByDKHDAlKHD1etjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jAs3SASkx3OsIDq9HO38EGEqAkQ3Iy8fKd4VxoMDeUg=;
- b=YsPJT62o5umNQuz5uO2m/KXF6aGQV0uCMX0iSn6uz9JfY9u07nGD5w7hQWgZ9Zg/kfCZPLXv+h2Yh4zj/HMyoR4jIouuz3kkM9GTsi5EWB0lEimT9LxKb/XaUMCus79Omg0jrVjvvPyMmfaVfGxg24BueM5/Gpp+zrGHNF10vfr6QIAyaoy/mpup5GBePtE2kYqhBO9hLIuv8HJMc1YHSzbV77+zFuQJyiIBFBpLcx+wHSiBGA48qZeIj26TuwIpjAnjalfuhifLhP1vDfbHlHkXgNmDeY9wwxVtAuMx3mXsU3MXfdgJ0C22hA97SvKi5/tdlvY1qNjbgx4I8kJ8hg==
+ bh=fQUXENKiJZO7Kl8z1968pYx6oB57NFee+2eTyKQH14Y=;
+ b=fS5grzENPoJMXoLWP1DvpKLn063tLNUi2R001ujmf//CDa/vvdbPli1qnWkVltlFIrBPchu/x5J6nkIXAH/b34dnqE1yripqXxPMK2fCNxERYmiE+lb7Or+I3ilsH9uNIjOWRgsWaKhVYqIIkZSHGtssjILvMc5JpNpYcRmNQyXkdcXJZW/Dgj2vZyTef2z0Exswnix9YAT9ljVqsVI8BhIqqM9Uys+fjagf5pHMkuneyFfi4fMAOFnxYuadXeTeCL/qaA/9+H5RQjLH+dkBDsW00lzK/DP7H9iY0BVev6GFT4oojY0K915Vnm+fOc8JeKfcx6QRKlmHr0aHhUu5rQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jAs3SASkx3OsIDq9HO38EGEqAkQ3Iy8fKd4VxoMDeUg=;
- b=PNJKapMuyKtPXd258xtLlAgvaavfWDJMmQvVB9qbFQRkcr/dJ8LMFlcevaRP1vpBGFgFtH3ju4rFFeUkt+mYr0vlqgN/n+wLv+juhJTsBR+LT5TP4l7OQzHQLg1PJVJzCLMweDWy/qG2Bvwyc68GOLIyWce1XK2ju4KHS/cOt+0=
+ bh=fQUXENKiJZO7Kl8z1968pYx6oB57NFee+2eTyKQH14Y=;
+ b=22EMsdFSM7tHgfskjmDB3ad+GzPNZUKxEHzhBIMQO69Qqh9CGA4EEiEK9Ihq+Wb8mTj006irtPhs4GVa2MtlCwxB2ISpN9x2ds52yvIrNhnFfzKg5TYlEUHn2+WdzZbm9jJddfWo6kqg28jF1FhsUF2NflHkKRgcVRUId6u7kXc=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS8PR04MB8150.eurprd04.prod.outlook.com (2603:10a6:20b:3f0::12) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by MW4PR12MB7440.namprd12.prod.outlook.com (2603:10b6:303:223::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Mon, 17 Jun
- 2024 22:31:32 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
- 22:31:32 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 4/4] arm64: dts: imx95-19x19-evk: add PCIe[0,1] support
-Date: Mon, 17 Jun 2024 18:31:00 -0400
-Message-Id: <20240617223100.1539796-4-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240617223100.1539796-1-Frank.Li@nxp.com>
-References: <20240617223100.1539796-1-Frank.Li@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR05CA0032.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::7) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+ 2024 22:36:41 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.7677.027; Mon, 17 Jun 2024
+ 22:36:41 +0000
+Message-ID: <67baa15a-76b6-5543-56fd-d2841d6f6b03@amd.com>
+Date: Mon, 17 Jun 2024 17:36:38 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v20 06/18] x86/resctrl: Introduce snc_nodes_per_l3_cache
+Content-Language: en-US
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+ Peter Newman <peternewman@google.com>, James Morse <james.morse@arm.com>,
+ Babu Moger <babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>,
+ Dave Martin <Dave.Martin@arm.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <20240610183528.349198-1-tony.luck@intel.com>
+ <20240610183528.349198-7-tony.luck@intel.com>
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <20240610183528.349198-7-tony.luck@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9P223CA0008.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:806:26::13) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,171 +85,304 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8150:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78324751-02eb-43de-634a-08dc8f1d3d01
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|MW4PR12MB7440:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87336498-3adb-4578-22f5-08dc8f1df57e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|7416011|52116011|366013|376011|38350700011|921017;
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|1800799021|7416011;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xQ2YkOJpEzhbg6UWVcuqsZn5jF21FPWZ0ZsLgF3Jp94S91UKKyOYzatIY5vR?=
- =?us-ascii?Q?zGIx4OSyHGey/0vCseAIl8JUdK3LHc6H5Rd9VhkjKd8WDEsi6f330DrO0Ong?=
- =?us-ascii?Q?/TbWoesLfyeCgSQQOYGU8OA9MmYkP2psYbNeO5FCUeJqXVALlzqv7LCG7qDl?=
- =?us-ascii?Q?WpfDro52xEQotLNIuVWqEALn8yMMv2rPOWE6YrBz8XIyZqePBWVRvcXnjIh3?=
- =?us-ascii?Q?V3GfE0jPw2af1XmZBBPY7RoEZ6hbWbUeiZ97IaLX4o/+ZLdYwPQDVUjlKRUW?=
- =?us-ascii?Q?m+3shtO6Xz7EPf7ikZXPx4NKDIbSL1cyt/32knaFk6j3q1u59rUGc1Q2rirj?=
- =?us-ascii?Q?XOn/Pf63TRUwGgo4/jMjvBdeROXLNfhsb84N3GexIzca1O97NXoqakO0VOiQ?=
- =?us-ascii?Q?klDYKwDM6V9zBXXX1h+Es18/QIWTtRRJQdhkc6amQoGpkjtHZj3BYcBubajq?=
- =?us-ascii?Q?xFTrBVYkBq1iwDWv8rEnwmzkmwF/JKMY0ohjS9h7AqOrNvgrN2FBSKxj7ZNU?=
- =?us-ascii?Q?ATX/B5c50wlHuS7N/ocE0TlqdljCi/XiMoMVp5kCCNz34N+lISL55zCh8+yw?=
- =?us-ascii?Q?2nCMBh4XBg/MDbcpSZ7jKy4xD8VXsmS+WWF6/u/xEupKQv2rBkyy+U97M/TD?=
- =?us-ascii?Q?Ce2uvixe/Xyv9v4UedBHgMlmY/RFizibCBA1Su/24jfGjvO8pgmnF7wQfCiK?=
- =?us-ascii?Q?y/qPK6teEd4F7bSDi+P+Q+7ACgXd7IRoaWJqHy2c2+0ba0L7e+jH4yv78s21?=
- =?us-ascii?Q?2NakIAkKb0IvZHxQ1PNtgzmsxDzocq/BOiEV0gataajSfOSJH3yuo5T/wg14?=
- =?us-ascii?Q?me8EjzDt/hsZy0nKN9TIVbFd7QsKxzo3L1GGA3Yc/rXZOogc2NkqtFzreKYU?=
- =?us-ascii?Q?Jo/Np0ySIwpuEa52jrWQIbBNiNwCUNbknR4MlAkambpOzHlBkxoipw2sgl/o?=
- =?us-ascii?Q?WAcLgKa7A25Y79Js5aiZe5Jwmhoot+bsa1t6JoiZjx5MKMm/qGFbXTaYgXZA?=
- =?us-ascii?Q?zAafJFNN7dRvPba4jkrwgeLHwpJFONwXGk7aV6HOBUeFmRvhQlJQ0C0LPXLQ?=
- =?us-ascii?Q?JP5LoH0hcah2qJ7KAbyh17uL0MQ+u6VtgTaNkIZLFjZ95TK4Tp6Fo4gn2/2n?=
- =?us-ascii?Q?33WY6lu3KMPyzpa+ZzMr07bq8NKDLgPR44jkV3I5fr/I6UQXPt0c9xEUx2Qv?=
- =?us-ascii?Q?lfq5B49liCYFQE2pF2Xy6HkAWL/90+AncpZpzvNhJI5x9IQE+V927dLe7YY4?=
- =?us-ascii?Q?3Tq5BzeoqZ31Ags1+vDkElW9KdBmnpl3WN015xIeLZ8aY0tdqkh9gvr3blcR?=
- =?us-ascii?Q?5lwxCsZylZz6Pz2yv5lM9PzyDs7z8ws2IAuoYSK71yIyxLPupwN5a9IVyAT+?=
- =?us-ascii?Q?ZRprEML9otPjazLNuvK4paNmBBuO?=
+	=?utf-8?B?bjdDNDc2YUZXZDhocnZaWUFqS0pKenNPRXRiZUlzOVo1MVdQeWhlWUdMVncr?=
+ =?utf-8?B?WDcxUTI3bmRTUzBadmRHcU56SDc0cFRLMTZzN2V3VUNNb21SR2oxbkZVTFpx?=
+ =?utf-8?B?bUx0RTVUU1llbjUwNVY0Wk9ybXVBVkQ2T3EwakRSSDFLMUd0Vm9ld2t6NUJC?=
+ =?utf-8?B?eDBrSmVMN2hydm9JVmZ5Z2dWS2c2NkVER1U0RUJieHE5OThWWTRJM3poQlNJ?=
+ =?utf-8?B?WjVsN0xIbTBEckJ2RmRaVUxrWHBQMnBXUVE0bzE4cm40L1Q5b3VrVFJvM2cy?=
+ =?utf-8?B?b2tnaXNUeVhnNGwwOEh2R0l4VnQzY3BJcDh1NnNMcGN6NWh6V2RNK0hUYVBZ?=
+ =?utf-8?B?QjlwbWxUZjdzTElWUXF6UG0rMlM0N3ZBMWpZbW5Rb0UvU0U4Q1kyVHZEdHA0?=
+ =?utf-8?B?WEpwdW83eGtnS1dVcTV5Z29JeFltYzE1RjRLM1JjVkcyTUlZV2ladFUwRnFW?=
+ =?utf-8?B?VjJ2eGVjOThIL283azZhODlVMXdnWUZkWVlNcTVhWURheVhFdDFmNDdvVUwr?=
+ =?utf-8?B?S2lhRW9sMXRNOURrU1hkSDNNUE9MU2UvaFFFQ1FLMnpSbGxiZk5nNm83VlRi?=
+ =?utf-8?B?WUlDY0VtRXBqYkkxZWg0RFhycnZ3TWhkWEVqS0lhbkRuOEFOclB2WVJERVZr?=
+ =?utf-8?B?N0t5MENNU3JGSGtsRXJkd0syazUxN1J2TE5EZUduSWdWeloxa0F4R2RnRkVD?=
+ =?utf-8?B?VWdqTzB0NmdneGFnbWtLNmZGWENYclNqeDJ0SGxtdEZzT3FFZi9iVnBHL1NL?=
+ =?utf-8?B?M0NKVEFvQllwb3RaZG1WR2grY3hKQURIeTM3aGk2QlFlc0pKTlI0WlcwaEZh?=
+ =?utf-8?B?Nk44WnFOUGhySHUvNldNb2tWSmpkcS90dnp4WElmQWxoaGZqZXY3UnNYQWRW?=
+ =?utf-8?B?YnFYU1VhMEkrRGJ5d3BaeW1rcmpHaGR3ZjJzZ2JqRkQxQnVKTGpGS1hqQUFh?=
+ =?utf-8?B?NmdOZ1pXVloyNVBmMTJHQ25Pb0ErVk1tMWFvRGhFOEExZE5HcnN4Sk1lNDBE?=
+ =?utf-8?B?Vkx5RVFLcXQxMzRacEVMN3Iyb3BaWThmK1U0MnZ0emtoOHJ3aU52UGtSTXdQ?=
+ =?utf-8?B?ckJVTUdhVTZsQXU3bzJLMGhtWXdGelhkOGdTbjJUYjVyUEpRTi8rRjQwNlAr?=
+ =?utf-8?B?YTNUT1l1a0FJeXB4VjV0bXRPYTMzRlFJV0JKSTA5N2VtdGlaa05tOVBlUjZQ?=
+ =?utf-8?B?dEd2YzhldFNqOThSaVBRZEJ1SWwrVmxtVGcwcno2OVlBbC9iU0RyYVU1WUsw?=
+ =?utf-8?B?RUFWYnNSbTFoZU00TUM1eXdyQS9QcEo0aUV3VGs4KzVXdWV1Y25SaEJEVGU0?=
+ =?utf-8?B?dEx3dUJTMkR2SXcyblV5emtLYmdjWUJvOVpwcG5pcmVHdUg5bjA3QTN3NnB5?=
+ =?utf-8?B?cFc0ams0M2lRaFM5cGRiT1BIcFVLaFV3R25Qck1VM2ttb3BHRVkwQmdQWEZy?=
+ =?utf-8?B?NGE3UnZHdTBZaGg5SDVhUU5MT0srYUoyb1AzT2w0VWVPT092a0NIT3JUMDd2?=
+ =?utf-8?B?d3NJY3o3MkIrM1FTVWZPWEx3c29OSDlSUXgyWjZRQTVIMUtXM2c4T3NlMFhp?=
+ =?utf-8?B?NTVqTUFGT3FTQjN1c0VjUTVvWVRWMlhxQjlrVEdocWpVYllWRERjSmRRV3Q3?=
+ =?utf-8?B?ZnRuSVJPVzhqN0FjeE85ZWhRdTdLdjV1eGd4azRyZ2JPZTUvVW8vQnJPNVBj?=
+ =?utf-8?B?S2FIeUd4T2VyU1k0WnRwOStWSnBkd2FDczlEK0g5KytkN1J6YVZUQWxyQW5J?=
+ =?utf-8?Q?oFSxi3O24U44gTbvBU34IBmZ8RGqynIWYJnAJon?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(7416011)(52116011)(366013)(376011)(38350700011)(921017);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(7416011);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?G33nHlHVQ+cU4IR+LPN4gi9zm/opddBYlsuF+Gea5g0KpTaxugTToGdf3fJB?=
- =?us-ascii?Q?+PhDkBwkUjg/eEogxKhNCsaak9R1xPm0FdKZTQaGOfTKOXtTKXoiWQRtK2/4?=
- =?us-ascii?Q?IcHC9jbPMuga4qrgcwSVtMceqPkSpVaLqks+OR4y77mBKkHEVwOBR+dIWIWM?=
- =?us-ascii?Q?Kj6kTeIr1qp+Ql3VYe5C8VreVE5rN/2q1XS2uj7uBpVYQ03whwZn1M4bCkcb?=
- =?us-ascii?Q?qev72lGuhcvIDE2eXrKIN8v07hN3J8lCwvKrORf/j+KqN7KNnzidCgFI5OQj?=
- =?us-ascii?Q?8ZCAEGqGOD8QLB/nTmHN8sdVrDGcAEVIQ6wkTjVjaXgn1NFvBepxXap/9NQ0?=
- =?us-ascii?Q?P0BEw09hsZgn5eYxr3jAB/cj3jg1yoMgMp/uUwKJ/L+CIO6NdGsBqGc2ftJw?=
- =?us-ascii?Q?NTm/k1jgX+w6h9QqNPF708w1lpjyY7G1wze9j5QU4uyu+rWqg+9PyxGuNRqk?=
- =?us-ascii?Q?BE5+NJ1nfMbG8P9OwHoFy3RzbApTSrwcDHhdWHsMNI31wGXg4SCDn9ac2Rfv?=
- =?us-ascii?Q?BuXBfa7P22ab2ICfQK09afESKxotLphohsFGP8FLSy+F2NCE4TiFrEdMEG/6?=
- =?us-ascii?Q?JNhHDF/S+g+CvCj4JA7QiAdn8Jz85VxRPhthgOYIRsRATSh4AXjSQzGz7yB5?=
- =?us-ascii?Q?Zl8zIM6KYJ58m29fcaiEBsxVuHl/2XC2eds0BJPmYMMNn2cYiGd2tGiCQE6m?=
- =?us-ascii?Q?+irQD0suWC9vNTgrD+wyOpgWCWwhAtca8MgQl52x1NHTn7P25qrGz8rjvmEp?=
- =?us-ascii?Q?ng8AoObKI8/dpoSZ1bqGEEtfOdUDYbp9rIgtXDjqNulNjGS4uQ9WnBZzoSHn?=
- =?us-ascii?Q?3ZjTZL2ZniPyPR7oY3u8fdGZGCI5FbZrwF7w8XFyDsdsnnJSf5UPUT9A077l?=
- =?us-ascii?Q?KVllIcOvxsgFQTGd6wxt0hHeL3jFGMsqIR+Hlz3AbUT50TbmL4Xg54HlUvXs?=
- =?us-ascii?Q?hukFgXFubKRO0TnnyJ0vhEZKYduZMBafxYoX0hsPcksALK/v7n5gKmP28Od+?=
- =?us-ascii?Q?pgXJI4nMnOVf0khWAGJvSwfK7Ag6Z1zHbhN4IWSG22a0epi5RTUKwUgKWu8A?=
- =?us-ascii?Q?izaBoLdQ8g6hLSoMcnkknyuYdXBI0RezMqHXSyxEsWuvd4DWh9sE3kMx8g4n?=
- =?us-ascii?Q?gWCH+oBBmeUWcHer2YlKRN8lpwVbo//lHHDQm9/bBbH2fBkTeJvxp5EIlUIV?=
- =?us-ascii?Q?BHeQw6mIHAdKEjYGC8qJjXzQYApGds5hYqWZbzCV+jaPHMvXoNhO5ayn7cxP?=
- =?us-ascii?Q?oLNlg9uiUtUBJLGume9ApMr6zVq7N8zyVeXdB8FAspChyj3rVwT4nLcfYkie?=
- =?us-ascii?Q?rijRjWoob5y1mpeGp6CEW1kZ8ObVtuYYJP1SSgIt3yqze/zfVwvj1tZkjGdq?=
- =?us-ascii?Q?ado89TbJjwNhORS2VoWweBwO0nxZcYfmyRsljO9rTfAyOICVZAp/EGRiHAlo?=
- =?us-ascii?Q?o8XjLBDE8WiMtuDszfXhWV0Qp980qgcdXUsHtBkxRiV+EMLcCkdyPFDBIf0d?=
- =?us-ascii?Q?A3zeCDI2mMuLKTqdkLEp8L8LXLC9rd3eiNwFffE0LkcgrgGCENrIodmrifM0?=
- =?us-ascii?Q?HM6+PQGw7bv38kDf13U=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78324751-02eb-43de-634a-08dc8f1d3d01
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+	=?utf-8?B?c1k2Wk5wYTdGaU8xUXQ4anJzRHF6UGFRbURWRUR6TjFUUXBNcGllS1hCOHlL?=
+ =?utf-8?B?YTRvYUViVE90MEF3U0tmTFM4ekhpRjVMdk9DMmp4V0NFOEJEU2lxUnloamxz?=
+ =?utf-8?B?VFFLOHVOdGVUaFg3R1E2WVRHY2ZVTHZoQW5rZy9BMlNRYnZnbXJLZWVqT3Vr?=
+ =?utf-8?B?VmNCSFFFOFRqK1hqMUJldnMwU2o3S045T25UMjRoN2REUGJHNnkwTGVkanVW?=
+ =?utf-8?B?WUJtd1RvY2k4RWxPaDBXNFMzMU9xdTBvbXczQ0lXTkxpL2VkRkRpaTFSbXBP?=
+ =?utf-8?B?ci9DVTg3UkRQWU9QTzB6Sm5uT1BwUytCcDdjODAxZzZoN2pwL09pS1VMMUV6?=
+ =?utf-8?B?dWZqRDJPN2VtY01sNWhUTlAybGlPK29xUmFvOVNoUERHRFQ2NXUvN2tEUGVz?=
+ =?utf-8?B?QlpEVG1mbXVZbXE3QTJOS1JaOFZpZXRRU2dKSm90VGttQ2h1c3JFWFFxY0x0?=
+ =?utf-8?B?cmE4akZ0WWE1TzR1bTNTZlVidU1Ob0dGZzZhOTduMVluaTZvK01rbUZIdjhM?=
+ =?utf-8?B?ZFMvSDFSTWhzdUxGQlNwQnJodUhaWTJCcW1DYjNPbHQ5eG1PN3RsbTZ5dU5j?=
+ =?utf-8?B?Z3NRT2F6a0E4TjFtbncwSkVxRGJ0dVlYZUVVU2swZUI0d0ViMnlhSGRpaE5V?=
+ =?utf-8?B?Y2ZEeGRhOXBDNGE3OC9XOTRSOG9UU0t3d1Z2MjdVemQvS1pJTy9ValRVYnBW?=
+ =?utf-8?B?allsR0gzQm1sWWFLemZScTJNR3lGRUVzYVliY0o2QnZFcVkvOU1zVVRCTXN4?=
+ =?utf-8?B?UlJiSVgrZnVnd09IbngxeFhOVEU4Zjk0a1daaXhUNzVoVjZjbWJVM0NnSTh5?=
+ =?utf-8?B?VWQ5RUxJeXdlaG5rMERVNUwxQ3YrT3ViZUMrYW8reFUwdTdLOVhYSXZXSUsw?=
+ =?utf-8?B?ck51K3ljSHZLcEFkMndLSW9wZ1Zid0tCWkw1cHZVRGNiUG0vK0F1OFFvUGF2?=
+ =?utf-8?B?enpBd2EzOWtKb0l5dUc2WnlKMTc3U0xRaHpod2JZZnZYbEoyelRzYTJDQmxV?=
+ =?utf-8?B?aUNNN01RY0U1dXNENkt0MjBldGxJMkVRWXZ2VHZReW4yT2tOS2dYZGY0OW5x?=
+ =?utf-8?B?ajVtOXRLYzlzUStWeVZrc2E4d25ud0Y4b05IM29sZVBNNUdsbkExSTExekRr?=
+ =?utf-8?B?d2EyQ3BqemttRm52VU1XR0lCM2o3WEQzbS9uMno1NmplSnFxdHUxQWJMQ2hy?=
+ =?utf-8?B?VWgwTVR1ekE5bnZOVzZCRjhKVWcwVGtMZEZ3SmFVWjJNRTFMUTdnZ09pZXV0?=
+ =?utf-8?B?dkl6WS81V0c0cUdNN04zWXBIdjZ1WEQvTGtzVlRWMFhDL2d2NTVSRlJ2Ull3?=
+ =?utf-8?B?UmdJRXIzZE1Ja1JES3d6VG1UZkRJWTNUaHEwcGV2WUdjWUo0ekVhRjA2TWZo?=
+ =?utf-8?B?WWhpRlA2S3dTaERxVmNyK25OSldRR2RzWmRFcjcva0EzZTVOMXlzdGxsK0do?=
+ =?utf-8?B?K2ZvZ3J3WVNiaFg3Unk1enlPazNTVWduT2hERWNXUEE3Z1J6TU1ud1daZXlv?=
+ =?utf-8?B?c1ZFYnloM0dCNmpCZ0dXa2k0QWtMYmNLSDV4VnpnVjVQdUs0ZFpEUEtGd3p3?=
+ =?utf-8?B?Yk5yZlVCTkF0UTV6QlAxZTMzMm81Tk5WcTdjQVNWUTJrUytTc2grY0g0YXl3?=
+ =?utf-8?B?Q3YyYkxJVURsUzNnWmdOdU85cHlKUnZoNHVHWW9Nc3c3MHd5TnNNM2pNRldX?=
+ =?utf-8?B?RlMzRHprWE1kb0xLL0Z2OTZENTdOTmJ6blYwWUFicFdlSVl5N3RSZzhEblBj?=
+ =?utf-8?B?ZndYV3l1KzYxaVUxR3JabmZPM3hHUFhsUURSaGMxZkVyRkE1R0U0ZWIvN3BX?=
+ =?utf-8?B?M1RweGxubXpES0hXbm0ydmRpbHFqSVpFZDN4cTEvWHRRbUphQU1yeGczTzFv?=
+ =?utf-8?B?WnpnSVpGWmdtUHNNaGhSQjJFNEZPL0hPUytpY2xUejdnaUtFUmdqUkdNZ1ph?=
+ =?utf-8?B?QXpybHBhenJqWm1oVjN1aDNIeHkrSXRjeFRFWndpYmwrMHg5UzJqS0hZSTdR?=
+ =?utf-8?B?Nmx4QzhRbEtHU2xSL29WQ0NnWmVBZ0JxWlE5aGVYeTI4bituV0YxMzVkVXpl?=
+ =?utf-8?B?djMwSkNtSmIrd05RYUg4OGlibXNCMzlYVDZqcUdMZ1VGb1pNNkJCUUp3K3Ba?=
+ =?utf-8?Q?MEJI=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87336498-3adb-4578-22f5-08dc8f1df57e
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 22:31:32.1459
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 22:36:41.7367
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZeZB3P7lqVMPpzEhoLJ6wHi9xSDdyKJHkjbQivR/vC3QudOcgqNoh+VN4mtwed/uths7VMXTx205r/92CWvFmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8150
+X-MS-Exchange-CrossTenant-UserPrincipalName: OxhLK4tCskkElo3UETwRzrZttuM+LHLcFnZrZba9+VmqqLZkrVdcDMMwUy3PJUur
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7440
 
-Add PCIe[0,1] and all dependent nodes.
+Hi Tony,
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- .../boot/dts/freescale/imx95-19x19-evk.dts    | 58 +++++++++++++++++++
- 1 file changed, 58 insertions(+)
+On 6/10/2024 1:35 PM, Tony Luck wrote:
+> Intel Sub-NUMA Cluster (SNC) is a feature that subdivides the CPU cores
+> and memory controllers on a socket into two or more groups. These are
+> presented to the operating system as NUMA nodes.
+> 
+> This may enable some workloads to have slightly lower latency to memory
+> as the memory controller(s) in an SNC node are electrically closer to the
+> CPU cores on that SNC node. This cost may be offset by lower bandwidth
+> since the memory accesses for each core can only be interleaved between
+> the memory controllers on the same SNC node.
+> 
+> Resctrl monitoring on an Intel system depends upon attaching RMIDs to tasks
+> to track L3 cache occupancy and memory bandwidth. There is an MSR that
+> controls how the RMIDs are shared between SNC nodes.
+> 
+> The default mode divides them numerically. E.g. when there are two SNC
+> nodes on a socket the lower number half of the RMIDs are given to the
+> first node, the remainder to the second node. This would be difficult
+> to use with the Linux resctrl interface as specific RMID values assigned
+> to resctrl groups are not visible to users.
+> 
+> RMID sharing mode divides the physical RMIDs evenly between SNC nodes
+> but uses a logical RMID in the IA32_PQR_ASSOC MSR. For example a system
+> with 200 physical RMIDs (as enumerated by CPUID leaf 0xF) that has two
+> SNC nodes per L3 cache instance would have 100 logical RMIDs available
+> for Linux to use. A task running on SNC node 0 with RMID 5 would
+> accumulate LLC occupancy and MBM bandwidth data in physical RMID 5.
+> Another task using RMID 5, but running on SNC node 1 would accumulate
+> data in physical RMID 105.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts b/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-index 636907c852e78..e6f748181aeec 100644
---- a/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-@@ -40,6 +40,36 @@ linux_cma: linux,cma {
- 		};
- 	};
- 
-+	reg_m2_pwr: regulator-m2-pwr {
-+		compatible = "regulator-fixed";
-+		regulator-name = "M.2-power";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&i2c7_pcal6524 20 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	reg_pcie0: regulator-pcie {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PCIE_WLAN_EN";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&reg_m2_pwr>;
-+		gpio = <&i2c7_pcal6524 6 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+	};
-+
-+	reg_slot_pwr: regulator-slot-pwr {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PCIe slot-power";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&i2c7_pcal6524 14 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+	};
-+
- 	reg_usdhc2_vmmc: regulator-usdhc2 {
- 		compatible = "regulator-fixed";
- 		pinctrl-names = "default";
-@@ -85,6 +115,22 @@ &mu7 {
- 	status = "okay";
- };
- 
-+&pcie0 {
-+	pinctrl-0 = <&pinctrl_pcie0>;
-+	pinctrl-names = "default";
-+	reset-gpio = <&i2c7_pcal6524 5 GPIO_ACTIVE_LOW>;
-+	vpcie-supply = <&reg_pcie0>;
-+	status = "okay";
-+};
-+
-+&pcie1 {
-+	pinctrl-0 = <&pinctrl_pcie1>;
-+	pinctrl-names = "default";
-+	reset-gpio = <&i2c7_pcal6524 16 GPIO_ACTIVE_LOW>;
-+	vpcie-supply = <&reg_slot_pwr>;
-+	status = "okay";
-+};
-+
- &usdhc1 {
- 	pinctrl-names = "default", "state_100mhz", "state_200mhz", "sleep";
- 	pinctrl-0 = <&pinctrl_usdhc1>;
-@@ -129,6 +175,18 @@ IMX95_PAD_GPIO_IO09__LPI2C7_SCL			0x40000b9e
- 		>;
- 	};
- 
-+	pinctrl_pcie0: pcie0grp {
-+		fsl,pins = <
-+			IMX95_PAD_GPIO_IO32__HSIOMIX_TOP_PCIE1_CLKREQ_B		0x4000031e
-+		>;
-+	};
-+
-+	pinctrl_pcie1: pcie1grp {
-+		fsl,pins = <
-+			IMX95_PAD_GPIO_IO35__HSIOMIX_TOP_PCIE2_CLKREQ_B		0x4000031e
-+		>;
-+	};
-+
- 	pinctrl_uart1: uart1grp {
- 		fsl,pins = <
- 			IMX95_PAD_UART1_RXD__AONMIX_TOP_LPUART1_RX      0x31e
+The differentiation of physical and logical RMIDs are confusing. For me, 
+they are all physical RMIDs. You are basically using the different 
+physical range based on the snc node. It will be helpful if you simplify 
+the description. Hop
+
+> 
+> Even with this renumbering SNC mode requires several changes in resctrl
+> behavior for correct operation.
+> 
+> Add a static global to arch/x86/kernel/cpu/resctrl/monitor.c to indicate
+
+File name is not helpful. Just mention the name of the global.
+
+> how many SNC domains share an L3 cache instance.  Initialize this to
+> "1". Runtime detection of SNC mode will adjust this value.
+> 
+> Update all places to take appropriate action when SNC mode is enabled:
+> 1) The number of logical RMIDs per L3 cache available for use is the
+>     number of physical RMIDs divided by the number of SNC nodes.
+> 2) Likewise the "mon_scale" value must be divided by the number of SNC
+>     nodes.
+> 3) Add a function to convert from logical RMID values (assigned to
+>     tasks and loaded into the IA32_PQR_ASSOC MSR on context switch)
+>     to physical RMID values to load into IA32_QM_EVTSEL MSR when
+>     reading counters on each SNC node.
+
+Please simplify the description. Calling logical and physical is confusing.
+
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>   arch/x86/kernel/cpu/resctrl/monitor.c | 56 ++++++++++++++++++++++++---
+>   1 file changed, 50 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+> index 89d7e6fcbaa1..f2fd35d294f2 100644
+> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
+> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+> @@ -97,6 +97,8 @@ unsigned int resctrl_rmid_realloc_limit;
+>   
+>   #define CF(cf)	((unsigned long)(1048576 * (cf) + 0.5))
+>   
+> +static int snc_nodes_per_l3_cache = 1;
+> +
+>   /*
+>    * The correction factor table is documented in Documentation/arch/x86/resctrl.rst.
+>    * If rmid > rmid threshold, MBM total and local values should be multiplied
+> @@ -185,7 +187,43 @@ static inline struct rmid_entry *__rmid_entry(u32 idx)
+>   	return entry;
+>   }
+>   
+> -static int __rmid_read(u32 rmid, enum resctrl_event_id eventid, u64 *val)
+> +/*
+> + * When Sub-NUMA Cluster (SNC) mode is not enabled (as indicated by
+> + * "snc_nodes_per_l3_cache  == 1") no translation of the RMID value is
+> + * needed. The physical RMID is the same as the logical RMID.
+> + *
+> + * On a platform with SNC mode enabled, Linux enables RMID sharing mode
+> + * via MSR 0xCA0 (see the "RMID Sharing Mode" section in the "Intel
+> + * Resource Director Technology Architecture Specification" for a full
+> + * description of RMID sharing mode).
+> + *
+> + * In RMID sharing mode there are fewer "logical RMID" values available
+> + * to accumulate data ("physical RMIDs" are divided evenly between SNC
+> + * nodes that share an L3 cache). Linux creates an rdt_mon_domain for
+> + * each SNC node.
+> + *
+> + * The value loaded into IA32_PQR_ASSOC is the "logical RMID".
+> + *
+> + * Data is collected independently on each SNC node and can be retrieved
+> + * using the "physical RMID" value computed by this function and loaded
+> + * into IA32_QM_EVTSEL. @cpu can be any CPU in the SNC node.
+> + *
+> + * The scope of the IA32_QM_EVTSEL and IA32_QM_CTR MSRs is at the L3
+> + * cache.  So a "physical RMID" may be read from any CPU that shares
+> + * the L3 cache with the desired SNC node, not just from a CPU in
+> + * the specific SNC node.
+> + */
+> +static int logical_rmid_to_physical_rmid(int cpu, int lrmid)
+
+How about ? (or something similar)
+
+static int get_snc_node_rmid(int cpu, int rmid)
+
+> +{
+> +	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
+> +
+> +	if (snc_nodes_per_l3_cache  == 1)
+> +		return lrmid;
+> +
+> +	return lrmid + (cpu_to_node(cpu) % snc_nodes_per_l3_cache) * r->num_rmid;
+> +}
+> +
+> +static int __rmid_read_phys(u32 prmid, enum resctrl_event_id eventid, u64 *val)
+
+You don't need to write new function.  Just update the rmid.
+
+
+>   {
+>   	u64 msr_val;
+>   
+> @@ -197,7 +235,7 @@ static int __rmid_read(u32 rmid, enum resctrl_event_id eventid, u64 *val)
+>   	 * IA32_QM_CTR.Error (bit 63) and IA32_QM_CTR.Unavailable (bit 62)
+>   	 * are error bits.
+>   	 */
+> -	wrmsr(MSR_IA32_QM_EVTSEL, eventid, rmid);
+> +	wrmsr(MSR_IA32_QM_EVTSEL, eventid, prmid);
+>   	rdmsrl(MSR_IA32_QM_CTR, msr_val);
+>   
+>   	if (msr_val & RMID_VAL_ERROR)
+> @@ -233,14 +271,17 @@ void resctrl_arch_reset_rmid(struct rdt_resource *r, struct rdt_mon_domain *d,
+>   			     enum resctrl_event_id eventid)
+>   {
+>   	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
+> +	int cpu = cpumask_any(&d->hdr.cpu_mask);
+>   	struct arch_mbm_state *am;
+> +	u32 prmid;
+
+snc_rmid?
+
+>   
+>   	am = get_arch_mbm_state(hw_dom, rmid, eventid);
+>   	if (am) {
+>   		memset(am, 0, sizeof(*am));
+>   
+> +		prmid = logical_rmid_to_physical_rmid(cpu, rmid);
+>   		/* Record any initial, non-zero count value. */
+> -		__rmid_read(rmid, eventid, &am->prev_msr);
+> +		__rmid_read_phys(prmid, eventid, &am->prev_msr);
+
+How about ? Feel free to simplify.
+
+           if (snc_nodes_per_l3_cache > 1) {
+                  snc_rmid = get_snc_node_rmid(cpu, rmid);
+                 __rmid_read(snc_rmid, eventid, &am->prev_msr);
+           } else {
+               __rmid_read(rmid, eventid, &am->prev_msr);
+           }
+
+>   	}
+>   }
+>   
+> @@ -275,8 +316,10 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
+>   {
+>   	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
+>   	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+> +	int cpu = cpumask_any(&d->hdr.cpu_mask);
+>   	struct arch_mbm_state *am;
+>   	u64 msr_val, chunks;
+> +	u32 prmid;
+>   	int ret;
+>   
+>   	resctrl_arch_rmid_read_context_check();
+> @@ -284,7 +327,8 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
+>   	if (!cpumask_test_cpu(smp_processor_id(), &d->hdr.cpu_mask))
+>   		return -EINVAL;
+>   
+> -	ret = __rmid_read(rmid, eventid, &msr_val);
+> +	prmid = logical_rmid_to_physical_rmid(cpu, rmid);
+> +	ret = __rmid_read_phys(prmid, eventid, &msr_val);
+
+Same as above.
+
+>   	if (ret)
+>   		return ret;
+>   
+> @@ -1022,8 +1066,8 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+>   	int ret;
+>   
+>   	resctrl_rmid_realloc_limit = boot_cpu_data.x86_cache_size * 1024;
+> -	hw_res->mon_scale = boot_cpu_data.x86_cache_occ_scale;
+> -	r->num_rmid = boot_cpu_data.x86_cache_max_rmid + 1;
+> +	hw_res->mon_scale = boot_cpu_data.x86_cache_occ_scale / snc_nodes_per_l3_cache;
+> +	r->num_rmid = (boot_cpu_data.x86_cache_max_rmid + 1) / snc_nodes_per_l3_cache;
+>   	hw_res->mbm_width = MBM_CNTR_WIDTH_BASE;
+>   
+>   	if (mbm_offset > 0 && mbm_offset <= MBM_CNTR_WIDTH_OFFSET_MAX)
+
 -- 
-2.34.1
-
+- Babu Moger
 
