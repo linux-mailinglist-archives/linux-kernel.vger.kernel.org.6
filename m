@@ -1,274 +1,148 @@
-Return-Path: <linux-kernel+bounces-217763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F9790B61D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:19:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F03B890B64B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96028B303B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:21:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8048B3687D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D643E15D5B2;
-	Mon, 17 Jun 2024 14:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4981515ECD2;
+	Mon, 17 Jun 2024 14:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V6X/7BKy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g/RJHWfF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433CA15DBAD
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767EA15E5DE;
+	Mon, 17 Jun 2024 14:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718635287; cv=none; b=USfsKmLU6FA7l+usyfnmzC0oIUB9nTeYnTN0rpHxSKfyqqCLdc+DYeBfW3rM4Qa7r4/1mDgylmZA8Hgd1CAvhYoIKNEKCWqT3hSNgiZqp5QKFMxKdaYzQUmq7K9JS60pmMy3jmv4aeHiC8aBWIQaJvp6mlwZlLHcESsIjL4hkXw=
+	t=1718635298; cv=none; b=JKmaPozO8jO3KrLViF3enCw8nKGk0H7R9bw97/NbbkboqE4c/BcFRpqj0T6uJP0A7YmqvEUirPcWxjhx9tllYDqYqS9sq2zFlC9va6HiVu72/0yHkRcvOSZ5YOzVttrAwxRm46Y7sMHRvBAFUIVBhA7bt1I6oY1Dac3eaxVlC94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718635287; c=relaxed/simple;
-	bh=vNly73rSHdWZmEWgFpf2pMfyR4D0mdIgOgrvXPbqoDA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I2PARRxGme1dyiE4FEsPiO3gx0PoI632dxVqEGDFq9Cog4rOhEbvx71gf4K37KfyVfNf5s+Z0kXv3iQASssWO3kxwRqWNiFaRGrG83FdWa6ypnazg+x13tq9wOgwn7C1ihC5PR2donYUKeKmPnrF1/pD3Hdm4Rew1n7l67cSHWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V6X/7BKy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718635285;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QgBytX8vPqY+MQ9SxR1KMRWOcnxTsKUOs+RTlxPpNYc=;
-	b=V6X/7BKyUbKF3WxzQCrfJVZQllCJ4OQX3udnxoDHXCednAV45lnt+spaKbj5afX2M2Vjua
-	aS/4SkFCVPnqfjgdb8USESmo2WB/RdhbtLr+t0xsCw11JpvrQvHCKigogw8bp5nSKHANas
-	3D9tQ8yxCriAJEmxN29OJv5tukfTSRc=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-605-ZDnb-_l-O9O4gdp7lcSOyg-1; Mon,
- 17 Jun 2024 10:41:20 -0400
-X-MC-Unique: ZDnb-_l-O9O4gdp7lcSOyg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 305E619560B2;
-	Mon, 17 Jun 2024 14:41:19 +0000 (UTC)
-Received: from llong.com (unknown [10.22.32.57])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8AE6E1956057;
-	Mon, 17 Jun 2024 14:41:16 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Xavier <ghostxavier@sina.com>,
-	Peter Hunt <pehunt@redhat.com>,
-	Petr Malat <oss@malat.biz>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH-cgroup v2 4/5] cgroup/cpuset: Make cpuset.cpus.exclusive independent of cpuset.cpus
-Date: Mon, 17 Jun 2024 10:39:44 -0400
-Message-Id: <20240617143945.454888-5-longman@redhat.com>
-In-Reply-To: <20240617143945.454888-1-longman@redhat.com>
-References: <20240617143945.454888-1-longman@redhat.com>
+	s=arc-20240116; t=1718635298; c=relaxed/simple;
+	bh=FyWrXdXjckoc0z50AFEwR9w92vG/cvPD3T0yDH7WBvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hV0efFoIGEcyYF9+eQlzthXEmaJeMtWXvfVq93b6OlUK8oibc+S3RLA185uUsqs0GOKiKfEX+7uhQrjZzpcys2mWhoSlTvOnG+CobiQHQCeTFxhwp1Epco4ZhELpOCSZUr6zL1RFIzJovXnt513Od5znAwlOaSSSSJsEEKK9pjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g/RJHWfF; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718635297; x=1750171297;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FyWrXdXjckoc0z50AFEwR9w92vG/cvPD3T0yDH7WBvQ=;
+  b=g/RJHWfFAfu/kyMrsGlrOy7zZGMmU4PzUTrGw9D3uBpoMm7awoxPJixm
+   dakdQWWXvkV7MBEPDCyIz+ZZhAA05dxOlunRdPeZfZwj2TsLN40pQp1O9
+   lDcyZOO3f/VrlNK1eUcqSO5rIUtRsEJ/B5u+9C3d68oFnDD/0vqESpyW1
+   QEIoL6ptLC+1FwTiwLeMWKdzAeRS8l1YZeT5qcJ6Nw6Ut6gvptbWl6F2A
+   VOK0MIpTIEU52BZUnQ6vygixh3P3/FC+5mAYAot34OXLsGFePIhxk9QO7
+   PI/IyKKG4VvBd93mTofP6RmO3vDiEmI1IaRS9TaqHZbRfpkG3Lksub9sR
+   g==;
+X-CSE-ConnectionGUID: 6tW5+gjxQKK02LBReq6R+g==
+X-CSE-MsgGUID: JIE+7mvtTI+KcxR3v0Eb4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15179865"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="15179865"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 07:41:36 -0700
+X-CSE-ConnectionGUID: XRIBTruCQAK1dCALWT0eWA==
+X-CSE-MsgGUID: jNSuDk0rR3u54hagyJvdiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="41915717"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa007.jf.intel.com with SMTP; 17 Jun 2024 07:41:33 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 17 Jun 2024 17:41:32 +0300
+Date: Mon, 17 Jun 2024 17:41:32 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: glink: fix child node release in probe
+ function
+Message-ID: <ZnBLHFA4PjxwYWr+@kuha.fi.intel.com>
+References: <20240613-ucsi-glink-release-node-v1-1-f7629a56f70a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613-ucsi-glink-release-node-v1-1-f7629a56f70a@gmail.com>
 
-The "cpuset.cpus.exclusive.effective" value is currently limited to a
-subset of its "cpuset.cpus". This makes the exclusive CPUs distribution
-hierarchy subsumed within the larger "cpuset.cpus" hierarchy. We have to
-decide on what CPUs are used locally and what CPUs can be passed down as
-exclusive CPUs down the hierarchy and combine them into "cpuset.cpus".
+On Thu, Jun 13, 2024 at 02:14:48PM +0200, Javier Carrasco wrote:
+> The device_for_each_child_node() macro requires explicit calls to
+> fwnode_handle_put() in all early exits of the loop if the child node is
+> not required outside. Otherwise, the child node's refcount is not
+> decremented and the resource is not released.
+> 
+> The current implementation of pmic_glink_ucsi_probe() makes use of the
+> device_for_each_child_node(), but does not release the child node on
+> early returns. Add the missing calls to fwnode_handle_put().
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: c6165ed2f425 ("usb: ucsi: glink: use the connector orientation GPIO to provide switch events")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-The advantage of the current scheme is to have only one hierarchy to
-worry about. However, it make it harder to use as all the "cpuset.cpus"
-values have to be properly set along the way down to the designated remote
-partition root. It also makes it more cumbersome to find out what CPUs
-can be used locally.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Make creation of remote partition simpler by breaking the
-dependency of "cpuset.cpus.exclusive" on "cpuset.cpus" and make
-them independent entities. Now we have two separate hierarchies -
-one for setting "cpuset.cpus.effective" and the other one for setting
-"cpuset.cpus.exclusive.effective". We may not need to set "cpuset.cpus"
-when we activate a partition root anymore.
+> ---
+> This case would be a great opportunity for the recently introduced
+> device_for_each_child_node_scoped(), but given that it has not been
+> released yet, the traditional approach has been used to account for
+> stable kernels (bug introduced with v6.7). A second patch to clean
+> this up with that macro is ready to be sent once this fix is applied,
+> so this kind of problem does not arise if more early returns are added.
+> 
+> This issue has been found while analyzing the code and not tested with
+> hardware, only compiled and checked with static analysis tools. Any
+> tests with real hardware are always welcome.
+> ---
+>  drivers/usb/typec/ucsi/ucsi_glink.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+> index f7546bb488c3..41375e0f9280 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_glink.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+> @@ -372,6 +372,7 @@ static int pmic_glink_ucsi_probe(struct auxiliary_device *adev,
+>  		ret = fwnode_property_read_u32(fwnode, "reg", &port);
+>  		if (ret < 0) {
+>  			dev_err(dev, "missing reg property of %pOFn\n", fwnode);
+> +			fwnode_handle_put(fwnode);
+>  			return ret;
+>  		}
+>  
+> @@ -386,9 +387,11 @@ static int pmic_glink_ucsi_probe(struct auxiliary_device *adev,
+>  		if (!desc)
+>  			continue;
+>  
+> -		if (IS_ERR(desc))
+> +		if (IS_ERR(desc)) {
+> +			fwnode_handle_put(fwnode);
+>  			return dev_err_probe(dev, PTR_ERR(desc),
+>  					     "unable to acquire orientation gpio\n");
+> +		}
+>  		ucsi->port_orientation[port] = desc;
+>  	}
+>  
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240613-ucsi-glink-release-node-9fc09d81e138
+> 
+> Best regards,
+> -- 
+> Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Also update Documentation/admin-guide/cgroup-v2.rst and cpuset.c comment
-to document this change.
-
-Suggested-by: Petr Malat <oss@malat.biz>
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- Documentation/admin-guide/cgroup-v2.rst |  4 +-
- kernel/cgroup/cpuset.c                  | 67 +++++++++++++++++--------
- 2 files changed, 49 insertions(+), 22 deletions(-)
-
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 722e4762c4e0..2e4e74bea6ef 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -2380,8 +2380,8 @@ Cpuset Interface Files
- 	cpuset-enabled cgroups.
- 
- 	This file shows the effective set of exclusive CPUs that
--	can be used to create a partition root.  The content of this
--	file will always be a subset of "cpuset.cpus" and its parent's
-+	can be used to create a partition root.  The content
-+	of this file will always be a subset of its parent's
- 	"cpuset.cpus.exclusive.effective" if its parent is not the root
- 	cgroup.  It will also be a subset of "cpuset.cpus.exclusive"
- 	if it is set.  If "cpuset.cpus.exclusive" is not set, it is
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 144bfc319809..fe76045aa528 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -87,7 +87,7 @@ static const char * const perr_strings[] = {
- 	[PERR_NOTEXCL]   = "Cpu list in cpuset.cpus not exclusive",
- 	[PERR_NOCPUS]    = "Parent unable to distribute cpu downstream",
- 	[PERR_HOTPLUG]   = "No cpu available due to hotplug",
--	[PERR_CPUSEMPTY] = "cpuset.cpus is empty",
-+	[PERR_CPUSEMPTY] = "cpuset.cpus and cpuset.cpus.exclusive are empty",
- 	[PERR_HKEEPING]  = "partition config conflicts with housekeeping setup",
- };
- 
-@@ -127,19 +127,28 @@ struct cpuset {
- 	/*
- 	 * Exclusive CPUs dedicated to current cgroup (default hierarchy only)
- 	 *
--	 * This exclusive CPUs must be a subset of cpus_allowed. A parent
--	 * cgroup can only grant exclusive CPUs to one of its children.
-+	 * The effective_cpus of a valid partition root comes solely from its
-+	 * effective_xcpus and some of the effective_xcpus may be distributed
-+	 * to sub-partitions below & hence excluded from its effective_cpus.
-+	 * For a valid partition root, its effective_cpus have no relationship
-+	 * with cpus_allowed unless its exclusive_cpus isn't set.
- 	 *
--	 * When the cgroup becomes a valid partition root, effective_xcpus
--	 * defaults to cpus_allowed if not set. The effective_cpus of a valid
--	 * partition root comes solely from its effective_xcpus and some of the
--	 * effective_xcpus may be distributed to sub-partitions below & hence
--	 * excluded from its effective_cpus.
-+	 * This value will only be set if either exclusive_cpus is set or
-+	 * when this cpuset becomes a local partition root.
- 	 */
- 	cpumask_var_t effective_xcpus;
- 
- 	/*
- 	 * Exclusive CPUs as requested by the user (default hierarchy only)
-+	 *
-+	 * Its value is independent of cpus_allowed and designates the set of
-+	 * CPUs that can be granted to the current cpuset or its children when
-+	 * it becomes a valid partition root. The effective set of exclusive
-+	 * CPUs granted (effective_xcpus) depends on whether those exclusive
-+	 * CPUs are passed down by its ancestors and not yet taken up by
-+	 * another sibling partition root along the way.
-+	 *
-+	 * If its value isn't set, it defaults to cpus_allowed.
- 	 */
- 	cpumask_var_t exclusive_cpus;
- 
-@@ -230,6 +239,17 @@ static struct list_head remote_children;
-  *   2 - partition root without load balancing (isolated)
-  *  -1 - invalid partition root
-  *  -2 - invalid isolated partition root
-+ *
-+ *  There are 2 types of partitions - local or remote. Local partitions are
-+ *  those whose parents are partition root themselves. Setting of
-+ *  cpuset.cpus.exclusive are optional in setting up local partitions.
-+ *  Remote partitions are those whose parents are not partition roots. Passing
-+ *  down exclusive CPUs by setting cpuset.cpus.exclusive along its ancestor
-+ *  nodes are mandatory in creating a remote partition.
-+ *
-+ *  For simplicity, a local partition can be created under a local or remote
-+ *  partition but a remote partition cannot have any partition root in its
-+ *  ancestor chain except the cgroup root.
-  */
- #define PRS_MEMBER		0
- #define PRS_ROOT		1
-@@ -709,6 +729,19 @@ static inline void free_cpuset(struct cpuset *cs)
- 	kfree(cs);
- }
- 
-+/* Return user specified exclusive CPUs */
-+static inline struct cpumask *user_xcpus(struct cpuset *cs)
-+{
-+	return cpumask_empty(cs->exclusive_cpus) ? cs->cpus_allowed
-+						 : cs->exclusive_cpus;
-+}
-+
-+static inline bool xcpus_empty(struct cpuset *cs)
-+{
-+	return cpumask_empty(cs->cpus_allowed) &&
-+	       cpumask_empty(cs->exclusive_cpus);
-+}
-+
- static inline struct cpumask *fetch_xcpus(struct cpuset *cs)
- {
- 	return !cpumask_empty(cs->exclusive_cpus) ? cs->exclusive_cpus :
-@@ -1593,7 +1626,7 @@ EXPORT_SYMBOL_GPL(cpuset_cpu_is_isolated);
-  * Return: true if xcpus is not empty, false otherwise.
-  *
-  * Starting with exclusive_cpus (cpus_allowed if exclusive_cpus is not set),
-- * it must be a subset of cpus_allowed and parent's effective_xcpus.
-+ * it must be a subset of parent's effective_xcpus.
-  */
- static bool compute_effective_exclusive_cpumask(struct cpuset *cs,
- 						struct cpumask *xcpus)
-@@ -1603,12 +1636,7 @@ static bool compute_effective_exclusive_cpumask(struct cpuset *cs,
- 	if (!xcpus)
- 		xcpus = cs->effective_xcpus;
- 
--	if (!cpumask_empty(cs->exclusive_cpus))
--		cpumask_and(xcpus, cs->exclusive_cpus, cs->cpus_allowed);
--	else
--		cpumask_copy(xcpus, cs->cpus_allowed);
--
--	return cpumask_and(xcpus, xcpus, parent->effective_xcpus);
-+	return cpumask_and(xcpus, user_xcpus(cs), parent->effective_xcpus);
- }
- 
- static inline bool is_remote_partition(struct cpuset *cs)
-@@ -1887,8 +1915,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 	 */
- 	adding = deleting = false;
- 	old_prs = new_prs = cs->partition_root_state;
--	xcpus = !cpumask_empty(cs->exclusive_cpus)
--		? cs->effective_xcpus : cs->cpus_allowed;
-+	xcpus = user_xcpus(cs);
- 
- 	if (cmd == partcmd_invalidate) {
- 		if (is_prs_invalid(old_prs))
-@@ -1916,7 +1943,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 		return is_partition_invalid(parent)
- 		       ? PERR_INVPARENT : PERR_NOTPART;
- 	}
--	if (!newmask && cpumask_empty(cs->cpus_allowed))
-+	if (!newmask && xcpus_empty(cs))
- 		return PERR_CPUSEMPTY;
- 
- 	nocpu = tasks_nocpu_error(parent, cs, xcpus);
-@@ -3130,9 +3157,9 @@ static int update_prstate(struct cpuset *cs, int new_prs)
- 				       ? partcmd_enable : partcmd_enablei;
- 
- 		/*
--		 * cpus_allowed cannot be empty.
-+		 * cpus_allowed and exclusive_cpus cannot be both empty.
- 		 */
--		if (cpumask_empty(cs->cpus_allowed)) {
-+		if (xcpus_empty(cs)) {
- 			err = PERR_CPUSEMPTY;
- 			goto out;
- 		}
 -- 
-2.39.3
-
+heikki
 
