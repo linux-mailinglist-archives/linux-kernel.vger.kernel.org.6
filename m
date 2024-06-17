@@ -1,171 +1,246 @@
-Return-Path: <linux-kernel+bounces-218399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B67DA90BF32
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:49:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC02990BF35
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7DC1C21C26
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F3271F2303D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB0D19938C;
-	Mon, 17 Jun 2024 22:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cMTWlvI6"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A8B199EAD;
+	Mon, 17 Jun 2024 22:49:22 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7BF8480
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 22:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E188188CD1
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 22:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718664545; cv=none; b=Z5cCjHEZa1XXMrMwjcUUvW1eUxXgt9frjLV0dojYi8+FVm0q80Jm3xR/qTmi/KvzSc1r5nsP9iJIKc0r7uWB1cfxRzwYosQRbFEptiVFmlIXU26V5Wa2ppo8psvmjXmJovUuznZIdcx8SD2GLZHaukvlXwBD0/iyndEELRMOcRo=
+	t=1718664561; cv=none; b=RyF9LsPMT9M67TzbBLHIu69lDwS4SyqYlZodv355r8RWwqxNHcAepHfDixlNNQM6HvutRRpj0PBajq23wm2smmHe/Agaz6fCZaAznnwcXB8Bf/ycCzyXJl02wXfnrGWo5NGRVsjOKd2v10Zz+tMM0TCM+2q1OtdSKq9sYHFF+0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718664545; c=relaxed/simple;
-	bh=ueYzZgbvAUNDZkrGEz6vOlDUxD8uOeTU0sliktE6zI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dsi+XtJc6IwsiNbz3qZeim50mDcWdlW6lPPM/r2JXHlkNLLM+sw0dnS6jP+ScYfCEyLaHH//094HP9GSvbhxNAiN4sY2esaGMoftAtCdHMr7UtIZU7Lv0kfXnSpZQNxa3guHa70khLMxP/p1DNAfaqXeCsxnlI8mJ66jCGbN1cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cMTWlvI6; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-797a8cfc4ecso301865785a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 15:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1718664543; x=1719269343; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=xM8jG/UsV813oqKhDlzQa/ArpF3gbsVPG1rs8S8vCkE=;
-        b=cMTWlvI6u87kbM5ZOQF4KOQ0c0G9VesFQjRBc1ECjOCAjdxVHJr3Ij1dN4N8KuyUPO
-         CLi9iZSVbP/ajKhf0ndWpxwT6RKEx65Ys6yrBNBOZj8lmzHbCv46pIXfthEgSTaItOph
-         m8vcmD2FssE2W+uy+TdOfBSIB+VKsYklW5mXc=
+	s=arc-20240116; t=1718664561; c=relaxed/simple;
+	bh=xx2LywGhTwgqH1CinzO8LOvYUUcCTfKK/iF7Srs6YLk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=maKbpeB285TOSAx9KbedWMlV/jip4CsUzNx1uLtobe2HETWM4VcJoR4pj1ltq4Vstz5MEhrudX+SsuoiWy+boYFE0ZmqSyXYxUH7tTLsCIzU7xuDVd/OXVTVuUXk9u64zeC5eJoLkROOMeunOQyKtEN5Xc6BaVPbhxt84YLwtaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eb80de5e7dso621353339f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 15:49:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718664543; x=1719269343;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xM8jG/UsV813oqKhDlzQa/ArpF3gbsVPG1rs8S8vCkE=;
-        b=QOpY+Ib+iJybt5rqGuljl1T5SEsErqGeii6VeZxDvt8g6J81QlSg+YSFAV1qkr1Mz/
-         suPIGXaRKXYwxL7pW1gt1F2xzPyhAXBmW1mtwF4y4JEXqmLSM0KD0lXAz5318C2xSFXX
-         p492P1u93OOgbuKC+QRmOZ9FRCBc8be27Qk5ydUyLigx4Tzsni9NQKWCVI7jmlRjXiFM
-         4CsNQXS4OkTdh+kHTtxTS/AXZrAt1Uqr/UaUEX1PWYUgwDSuoxzPXhjqbvTzDYxRlFKL
-         /tIBVaH4ASNN1gaq3nlRAEMj4NQxDXuKaY6LSF+qmAQcxl1SzqEGY4+AGQO/zzW/5D87
-         fxdw==
-X-Gm-Message-State: AOJu0Yy6+RAdR5xY51CwbmVA0EY6G+++7sCYk7vhf/gL54GAdU68ZQLY
-	J5uui/zbbpjZnct+FiDTyse3vwRnZr8+pCkTrZx2AGRKa+7+3YXg4rRN+gIJcw==
-X-Google-Smtp-Source: AGHT+IG1TVLwkGCX9fV8eplKGeOZTo6xGldUqIBRIebpDcT4omSEc99laqur9v3lhz3IaqOpqZt9Sw==
-X-Received: by 2002:a05:6214:2d0b:b0:6b4:35fa:cc17 with SMTP id 6a1803df08f44-6b435faccf0mr3968436d6.20.1718664543067;
-        Mon, 17 Jun 2024 15:49:03 -0700 (PDT)
-Received: from [10.66.192.68] ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5ee1327sm60264676d6.118.2024.06.17.15.48.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 15:49:02 -0700 (PDT)
-Message-ID: <25275668-0441-4015-9a94-aab305865fae@broadcom.com>
-Date: Mon, 17 Jun 2024 15:48:56 -0700
+        d=1e100.net; s=20230601; t=1718664559; x=1719269359;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UYcXVvNI6NR2zjCzSOS52zTHKAEGh6gq9RycfhrD/xo=;
+        b=FqhKoAWN5EyRTdua2xNILJfo2MNEcu3k8jJW9ehYK/jvJPg8z++YwfaRPmfcppgatV
+         GCnnukPS1nfF6IxuhXVFLE1TyIUgTwt1yG9UcT4ZHeowuCdhSi3TCTY+U2KMVYbbyEWA
+         qLb7wqbk1EEZ74J3P7YqZo4PuyZxoWRXKUufqOlV2TyKfn5scPy5d3y5IfzMvyCnuHdI
+         CU+pIAxc9BQ+RTnhr9IJW76vdTYKF4rYZm6x13rEn/m2uTk+wz1HBq/FvgawD0deQTCZ
+         hT2x4BMm2+Ss0A+kWFvdO8RRClR1xlSG5Q7arGQ1g36SdTbYy1xt5kcOsxNDc+SthFcX
+         Pbzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBGqTLIH0RI/hIAwAYGEi3adnpQMHt3pi1DV2LLuh6D/eTnL9NiceKrYzeyaTWmyJ2CMJVXNoSbn3bKwro3+4l9gGGI/Cud6e6J/s9
+X-Gm-Message-State: AOJu0YwRHNUSCP0UVjFDK/VjnnIiWtCcqNkQUqYHUGcD26oXZZcwIx/u
+	ouh0g72QGl4Mh7coqiCMEOntExMbJj16QCMOknKI+MyFQRCmV+/Wy1nd+qWRN2jVWwuVIZv/nJy
+	hXBvD9HVFF31+y/UzyF32N235hTdco7jwTTqpbC8CvQYfAcBP2HZT8cY=
+X-Google-Smtp-Source: AGHT+IErOIbdQ54HLWY6mbEYpga5ZSrldS5PZAVOl7vdP649oa59HGXxS5R6KA5L/SFxxz5YvCQ1C6zan907cmZYsarNpBX3C5TQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drm/vmwgfx: Fix missing HYPERVISOR_GUEST dependency
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- lkp@intel.com, zack.rusin@broadcom.com, dri-devel@lists.freedesktop.org,
- daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, linux-iio@vger.kernel.org,
- jic23@kernel.org, lars@metafoo.de, nuno.sa@analog.com,
- dragos.bogdan@analog.com, anshulusr@gmail.com, andrea.collamati@gmail.com,
- oe-kbuild-all@lists.linux.dev, x86@kernel.org
-References: <202406152104.FxakP1MB-lkp@intel.com>
- <20240616012511.198243-1-alexey.makhalov@broadcom.com>
- <20240617090709.GCZm_8vdnLzt048UH_@fat_crate.local>
- <0a29389e-8ba2-48c5-bb26-381de58a62fb@broadcom.com>
- <20240617211758.GKZnCoBvT2enGx5p5r@fat_crate.local>
-Content-Language: en-US
-From: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
- 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 EuY0
-In-Reply-To: <20240617211758.GKZnCoBvT2enGx5p5r@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:40aa:b0:4b9:165a:ffbe with SMTP id
+ 8926c6da1cb9f-4b963c9c2b8mr335973173.0.1718664559251; Mon, 17 Jun 2024
+ 15:49:19 -0700 (PDT)
+Date: Mon, 17 Jun 2024 15:49:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008ae1b4061b1dc635@google.com>
+Subject: [syzbot] [net?] [pm?] BUG: soft lockup in call_timer_fn
+From: syzbot <syzbot+7b5fc3357809198870e3@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, frederic@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f936b8980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2f7a2b43b9e58995
+dashboard link: https://syzkaller.appspot.com/bug?extid=7b5fc3357809198870e3
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/189d8c93c6e5/disk-dccb07f2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4981fc2493bb/vmlinux-dccb07f2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fa15dc2bbc61/bzImage-dccb07f2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7b5fc3357809198870e3@syzkaller.appspotmail.com
+
+watchdog: BUG: soft lockup - CPU#0 stuck for 246s! [kworker/u8:8:1096]
+Modules linked in:
+irq event stamp: 18717831
+hardirqs last  enabled at (18717830): [<ffffffff8ae04d12>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (18717830): [<ffffffff8ae04d12>] _raw_spin_unlock_irqrestore+0x52/0x80 kernel/locking/spinlock.c:194
+hardirqs last disabled at (18717831): [<ffffffff8adc9dee>] sysvec_apic_timer_interrupt+0xe/0xb0 arch/x86/kernel/apic/apic.c:1043
+softirqs last  enabled at (18717822): [<ffffffff815361de>] softirq_handle_end kernel/softirq.c:400 [inline]
+softirqs last  enabled at (18717822): [<ffffffff815361de>] handle_softirqs+0x5be/0x8f0 kernel/softirq.c:582
+softirqs last disabled at (18717825): [<ffffffff81536fab>] __do_softirq kernel/softirq.c:588 [inline]
+softirqs last disabled at (18717825): [<ffffffff81536fab>] invoke_softirq kernel/softirq.c:428 [inline]
+softirqs last disabled at (18717825): [<ffffffff81536fab>] __irq_exit_rcu kernel/softirq.c:637 [inline]
+softirqs last disabled at (18717825): [<ffffffff81536fab>] irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
+CPU: 0 PID: 1096 Comm: kworker/u8:8 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Workqueue: events_unbound toggle_allocation_gate
+RIP: 0010:trace_timer_expire_exit include/trace/events/timer.h:127 [inline]
+RIP: 0010:call_timer_fn+0x4b6/0x610 kernel/time/timer.c:1794
+Code: ee e8 ae 24 13 00 45 84 ed 0f 84 8b fc ff ff e8 20 2a 13 00 e8 bb b8 84 ff e9 88 fc ff ff e8 11 2a 13 00 e8 cc 9a f9 ff 31 ff <89> c5 89 c6 e8 81 24 13 00 40 84 ed 0f 85 3c fd ff ff e8 f3 29 13
+RSP: 0018:ffffc90000007c70 EFLAGS: 00000246
+RAX: 0000000000000001 RBX: ffffc90000007cb0 RCX: ffffffff817be08b
+RDX: 0000000000000000 RSI: ffffffff8b8f8360 RDI: 0000000000000000
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: ffffffff8b2f3800 R12: 1ffff92000000f90
+R13: 0000000000000001 R14: 0000000000000101 R15: 000000000003d7cc
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2e728000 CR3: 000000000d77a000 CR4: 0000000000350ef0
+Call Trace:
+ <IRQ>
+ expire_timers kernel/time/timer.c:1844 [inline]
+ __run_timers+0x74b/0xaf0 kernel/time/timer.c:2418
+ __run_timer_base kernel/time/timer.c:2429 [inline]
+ __run_timer_base kernel/time/timer.c:2422 [inline]
+ run_timer_base+0x111/0x190 kernel/time/timer.c:2438
+ run_timer_softirq+0x1a/0x40 kernel/time/timer.c:2448
+ handle_softirqs+0x219/0x8f0 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu kernel/softirq.c:637 [inline]
+ irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0x95/0xb0 arch/x86/kernel/apic/apic.c:1043
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:check_kcov_mode kernel/kcov.c:173 [inline]
+RIP: 0010:__sanitizer_cov_trace_pc+0x1c/0x60 kernel/kcov.c:207
+Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 65 48 8b 15 64 ca 74 7e 65 8b 05 65 ca 74 7e a9 00 01 ff 00 48 8b 34 24 <74> 0f f6 c4 01 74 35 8b 82 14 16 00 00 85 c0 74 2b 8b 82 f0 15 00
+RSP: 0018:ffffc90004407908 EFLAGS: 00000246
+RAX: 0000000000000001 RBX: ffff8880b9544740 RCX: ffffffff818305bb
+RDX: ffff888022045a00 RSI: ffffffff81830595 RDI: 0000000000000005
+RBP: 0000000000000003 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000006 R12: ffffed10172a88e9
+R13: 0000000000000001 R14: ffff8880b9544748 R15: ffff8880b943fc40
+ rep_nop arch/x86/include/asm/vdso/processor.h:13 [inline]
+ cpu_relax arch/x86/include/asm/vdso/processor.h:18 [inline]
+ csd_lock_wait kernel/smp.c:311 [inline]
+ smp_call_function_many_cond+0x4e5/0x1420 kernel/smp.c:855
+ on_each_cpu_cond_mask+0x40/0x90 kernel/smp.c:1023
+ on_each_cpu include/linux/smp.h:71 [inline]
+ text_poke_sync arch/x86/kernel/alternative.c:2086 [inline]
+ text_poke_bp_batch+0x22b/0x760 arch/x86/kernel/alternative.c:2296
+ text_poke_flush arch/x86/kernel/alternative.c:2487 [inline]
+ text_poke_flush arch/x86/kernel/alternative.c:2484 [inline]
+ text_poke_finish+0x30/0x40 arch/x86/kernel/alternative.c:2494
+ arch_jump_label_transform_apply+0x1c/0x30 arch/x86/kernel/jump_label.c:146
+ jump_label_update+0x1d7/0x400 kernel/jump_label.c:829
+ static_key_disable_cpuslocked+0x154/0x1c0 kernel/jump_label.c:235
+ static_key_disable+0x1a/0x20 kernel/jump_label.c:243
+ toggle_allocation_gate mm/kfence/core.c:831 [inline]
+ toggle_allocation_gate+0x143/0x250 mm/kfence/core.c:818
+ process_one_work+0x9ac/0x1ac0 kernel/workqueue.c:3267
+ process_scheduled_works kernel/workqueue.c:3348 [inline]
+ worker_thread+0x6c8/0xf70 kernel/workqueue.c:3429
+ kthread+0x2c4/0x3a0 kernel/kthread.c:388
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 17281 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+RIP: 0010:advance_sched+0x5ad/0xc60 net/sched/sch_taprio.c:976
+Code: 00 00 00 00 74 18 e8 92 86 9f f8 49 8d bf 00 01 00 00 48 c7 c6 c0 e5 ee 88 e8 ff 53 87 f8 e8 7a 86 9f f8 49 8d bd 50 01 00 00 <48> b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f
+RSP: 0018:ffffc90000a08d80 EFLAGS: 00000046
+RAX: 0000000080010002 RBX: 17cd302767294ecf RCX: ffffffff88ef84ff
+RDX: ffff888022fdda00 RSI: ffffffff88ef86d6 RDI: ffff88807a839150
+RBP: ffff88807a839010 R08: 0000000000000004 R09: 0000000000000002
+R10: 0000000000000002 R11: 0000000000000001 R12: 0000000000000002
+R13: ffff88807a839000 R14: ffff88802195f340 R15: ffff88807a83a400
+FS:  00007fd4376336c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f89c21ad988 CR3: 000000002b270000 CR4: 0000000000350ef0
+Call Trace:
+ <NMI>
+ </NMI>
+ <IRQ>
+ __run_hrtimer kernel/time/hrtimer.c:1692 [inline]
+ __hrtimer_run_queues+0x20f/0xcc0 kernel/time/hrtimer.c:1756
+ hrtimer_interrupt+0x31b/0x800 kernel/time/hrtimer.c:1818
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
+ __sysvec_apic_timer_interrupt+0x112/0x450 arch/x86/kernel/apic/apic.c:1049
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0x90/0xb0 arch/x86/kernel/apic/apic.c:1043
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0x31/0x80 kernel/locking/spinlock.c:194
+Code: f5 53 48 8b 74 24 10 48 89 fb 48 83 c7 18 e8 56 db 8c f6 48 89 df e8 ae 57 8d f6 f7 c5 00 02 00 00 75 23 9c 58 f6 c4 02 75 37 <bf> 01 00 00 00 e8 95 92 7e f6 65 8b 05 c6 8a 23 75 85 c0 74 16 5b
+RSP: 0018:ffffc9000e39fa28 EFLAGS: 00000246
+RAX: 0000000000000002 RBX: ffff88801c286088 RCX: 1ffffffff1f7fcd1
+RDX: 0000000000000000 RSI: ffffffff8b2cbf40 RDI: ffffffff8b8f83e0
+RBP: 0000000000000283 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff8fc02917 R11: ffffffff936de7e0 R12: dffffc0000000000
+R13: 19aa02f4ae83767b R14: 17cd2ca4ae83767b R15: ffff88801c286088
+ spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
+ timerfd_clock_was_set+0x164/0x310 fs/timerfd.c:113
+ clock_was_set+0x67c/0x850 kernel/time/hrtimer.c:983
+ timekeeping_inject_offset+0x4d1/0x640 kernel/time/timekeeping.c:1396
+ do_adjtimex+0x373/0xaa0 kernel/time/timekeeping.c:2445
+ do_clock_adjtime kernel/time/posix-timers.c:1159 [inline]
+ __do_sys_clock_adjtime+0x176/0x290 kernel/time/posix-timers.c:1171
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd43687dca9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fd4376330c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000131
+RAX: ffffffffffffffda RBX: 00007fd4369abf80 RCX: 00007fd43687dca9
+RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000000
+RBP: 00007fd4368c947e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fd4369abf80 R15: 00007ffc2cd9c1e8
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 6/17/24 2:17 PM, Borislav Petkov wrote:
-> On Mon, Jun 17, 2024 at 01:51:23PM -0700, Alexey Makhalov wrote:
->> Not really a gcc related, but the matter of a config file. It is
->> reproducible if CONFIG_HYPERVISOR_GUEST not set, but CONFIG_DRM_VMWGFX=y.
->> And this combination was allowed before the fix.
-> 
-> Using their config:
-> 
-> $ grep -E "(CONFIG_DRM_VMWGFX|CONFIG_HYPERVISOR_GUEST)" .config
-> # CONFIG_HYPERVISOR_GUEST is not set
-> CONFIG_DRM_VMWGFX=y
-> CONFIG_DRM_VMWGFX_MKSSTATS=y
-> 
-> $ make ...
-> 
->    OBJCOPY arch/x86/boot/setup.bin
->    BUILD   arch/x86/boot/bzImage
-> Kernel: arch/x86/boot/bzImage is ready  (#2)
-> $ gcc --version
-> gcc (Debian 13.2.0-25) 13.2.0
-> $
-> 
-> So no, I can't reproduce with my compiler.
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-That is interesting! Happy to debug it, but unfortunately I can not 
-reproduce your "good" compilation without the fix.
-I tried
-"gcc (Ubuntu 13.2.0-23ubuntu4) 13.2.0" in Ubuntu, and
-"gcc (GCC) 12.2.0" in Photon OS.
-All of them fail with an "undefined reference to `vmware_hypercall_slow'"
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
