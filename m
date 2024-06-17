@@ -1,104 +1,125 @@
-Return-Path: <linux-kernel+bounces-217266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0545290AD97
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:07:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9B2C90AD99
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C3311C22E6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:07:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4EB11C22F2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8CC194C6C;
-	Mon, 17 Jun 2024 12:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FFB194C80;
+	Mon, 17 Jun 2024 12:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUPASJIm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUVIWWat"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A6E17FAA2;
-	Mon, 17 Jun 2024 12:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDDA17FAA2;
+	Mon, 17 Jun 2024 12:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718626068; cv=none; b=BoUnPfn+LGl5/QGTEPw81h9i1xmVju8Ms2a02dYlmFaydAHDj38auRGQWPwE9galxbBuj3lQCT/26PB3iL7+s+DVkhRMprCC2rhOTWSSxRtDXcLmNT80wnn8ECzQ8UAfqpGRBG8lVlCkVTs752TgdASxgAWrDFXDeydSTGYojMk=
+	t=1718626090; cv=none; b=ALfbxuyLvzX+D8Xwd0u+XkYyKauhmUkIowxOhitKfXYgy13rEGCvzqcbQrHJga5nBHck2OUmNjXrqKAPcIoB0/3K8M5q/RySgL827uxlqw0e75cVL+JGqJMes8B42fEfINWSzezPbVCRPxf8zytsD+RagyHyL+w6LAlJwRVIxrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718626068; c=relaxed/simple;
-	bh=lLf4l6RsdqXzGuno7XkQH16nzoJvIKQHVIIM8S2lni0=;
+	s=arc-20240116; t=1718626090; c=relaxed/simple;
+	bh=fWhPxtJJaYXwHziDk1H8768QKpvJvEh6G+oLsd2gWVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+iNWeoeTUA/rEjJKzs1GWK7TMrqMDM+cFGBmiIXpa1H0oF1SeQ9JtLpHe2ibmh+yA8LWnyIBvoGKaSW8BcEJVK5N3tZxEmYX6dHmz9+r32u/wtCb5RNKeP2GCFpaW1PY2n3yKFQZQgpDDZiC8B67npzqb2UhlzYY2ktxcYqsz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUPASJIm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49683C2BD10;
-	Mon, 17 Jun 2024 12:07:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RVQHFD0Ge6ghqtaH7Ti4lN9F7FJGkuw9RFEzzp/SCAX6BqvL7a2ljZcYdV5IrFCekuhgCG3N5egk4yhQIniAKqgunf8gqHofStrbezeaOKyOH1Vt8qXtsbcD1MR64FBedlVxwM4qfJnS266PLw1qz9rw2x+11MgwgcBnmrOuVmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUVIWWat; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2569CC2BD10;
+	Mon, 17 Jun 2024 12:08:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718626067;
-	bh=lLf4l6RsdqXzGuno7XkQH16nzoJvIKQHVIIM8S2lni0=;
+	s=k20201202; t=1718626089;
+	bh=fWhPxtJJaYXwHziDk1H8768QKpvJvEh6G+oLsd2gWVs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oUPASJIm+bV/3LFwysjCkUOcpMLIYbDiZ1PD4hYFkmBiXBoBkA4pY9t79A8lWV39S
-	 2qzpeq0ChuXqAOb02aApgiGRL25ykRONP+EUNZIEbEf1JrBLPXpx2RitWtp0iFC+Cl
-	 ktyOmX93LLc/ser+JfArp97qVcvyPu3ZURfWBQ1v8HtjtruLjTtyLjizI+5o3XPVH/
-	 IvfnH3lWgeXcvPqsFWRfy1yXaAM7ra8Sl/7hqXzPTvQRj8A+pgZ245HKUyfJixFvyH
-	 uK7FhMFEhFb67bSQU3tDyPQk6k3Z6BKIdQ65yAJb98zLRs9K/wEJPSFoM91ldCrJe7
-	 AirYH7yy/G1BQ==
-Date: Mon, 17 Jun 2024 13:07:39 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH RFC 2/5] ASoC: hdmi-codec: pass data to get_dai_id too
-Message-ID: <723df0d7-fd52-4b14-bc59-254d94369721@sirena.org.uk>
-References: <20240615-drm-bridge-hdmi-connector-v1-0-d59fc7865ab2@linaro.org>
- <20240615-drm-bridge-hdmi-connector-v1-2-d59fc7865ab2@linaro.org>
+	b=VUVIWWatw7u2vRnYJ6xyj33UgNFqqP1poZ6O1wbS5mQdT4XEwTS8ROEB1riya3gA6
+	 ySTXmAdSasnmFpjqRoVLHDzIK1WAoYGHsnSERhZ1gMfav47Z4MY2r1QD3gBaxk38et
+	 F2RKm5+GaK3qDkZ3HjDxuqaiuRMNP+7sMzu1DsZ/NAY5jJsNmNNVbAJ69jKc/GL7N6
+	 ALkl/jDXhhoSr4cbbdK4CWNk4FdWpQaaflE630QPcYbSme57U7xp7K+F8O5KqMRSPH
+	 qW+LfV3f2nINw/xXAGou0QWwUNsjmnnVjMM8kNQti4aLQ0NSFLSv9GE5Kn6I0KeBmG
+	 hMUaMg6JaFmhA==
+Date: Mon, 17 Jun 2024 13:08:04 +0100
+From: Will Deacon <will@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Baochen Qiang <quic_bqiang@quicinc.com>,
+	miriam.rachel.korenblit@intel.com, kvalo@kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	linux-wireless <linux-wireless@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: iwlwifi: Regression after migrating to 6.6.32
+Message-ID: <20240617120804.GA861@willie-the-truck>
+References: <CAOMZO5CYDsh70u3To7HYXVki_MzzhFyCCHkigt_Es7o_+XG3oA@mail.gmail.com>
+ <7a8e220d77d7e30a0cfaf984404ef2f57eaa785f.camel@sipsolutions.net>
+ <CAOMZO5BktgtaSPzCf3WOOnkD2n+fj3FeQEfHeT7CYFL+tCHeaw@mail.gmail.com>
+ <fb60b7f5bcf5ba47be54398225075a5bfab7c141.camel@sipsolutions.net>
+ <CAOMZO5CMX_juW4-t6CSd2xdzXkFfBiamuSTjsTB80Ly_TUsxRA@mail.gmail.com>
+ <d49fcc32-bfa8-41d2-8666-af6256b7b4b4@quicinc.com>
+ <50101085cba7fc089339c96f531f797e27c632ff.camel@sipsolutions.net>
+ <35750452-e362-4dfa-803a-3360a4e16cd8@quicinc.com>
+ <6e556f7b6b769c4d70be3e248b98d8d09d51452b.camel@sipsolutions.net>
+ <CAOMZO5CN_kbPcEYsN9SqqfUyrJdq9yaDisfJKL+CnENVTPuq3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XtVbdI0Tw2PNjcEk"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240615-drm-bridge-hdmi-connector-v1-2-d59fc7865ab2@linaro.org>
-X-Cookie: Life is the urge to ecstasy.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOMZO5CN_kbPcEYsN9SqqfUyrJdq9yaDisfJKL+CnENVTPuq3g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
+Hi Fabio,
 
---XtVbdI0Tw2PNjcEk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, Jun 13, 2024 at 05:15:03PM -0300, Fabio Estevam wrote:
+> On Thu, Jun 13, 2024 at 7:37 AM Johannes Berg <johannes@sipsolutions.net> wrote:
+> 
+> > Oh. So I guess try to pick up commit 14cebf689a78 ("swiotlb: Reinstate
+> > page-alignment for mappings >= PAGE_SIZE").
+> 
+> Good catch, thanks!
+> 
+> After applying 14cebf689a78 ("swiotlb: Reinstate> page-alignment for
+> mappings >= PAGE_SIZE")
+> on top of 6.6.33 I no longer have the flood of alignment warnings and
+> iwlwifi can be used again:
+> 
+> # dmesg | grep iwlwifi
+> [    4.295064] iwlwifi 0000:01:00.0: enabling device (0000 -> 0002)
+> [    4.305459] iwlwifi 0000:01:00.0: Detected crf-id 0x3617, cnv-id
+> 0x100530 wfpm id 0x80000000
+> [    4.315440] iwlwifi 0000:01:00.0: PCI dev 2723/0084, rev=0x340, rfid=0x10a100
+> [    4.346029] iwlwifi 0000:01:00.0: api flags index 2 larger than
+> supported by driver
+> [    4.353816] iwlwifi 0000:01:00.0: TLV_FW_FSEQ_VERSION: FSEQ
+> Version: 89.3.35.37
+> [    4.363135] iwlwifi 0000:01:00.0: loaded firmware version
+> 77.ad46c98b.0 cc-a0-77.ucode op_mode iwlmvm
+> [    4.444427] iwlwifi 0000:01:00.0: Detected Intel(R) Wi-Fi 6 AX200
+> 160MHz, REV=0x340
+> [    4.604918] iwlwifi 0000:01:00.0: Detected RF HR B3, rfid=0x10a100
+> [    4.676138] iwlwifi 0000:01:00.0: base HW address: 3c:21:9c:4e:16:6x
+> [    5.339929] iwlwifi 0000:01:00.0 wlp1s0: renamed from wlan0
+> [    9.840136] iwlwifi 0000:01:00.0: Registered PHC clock:
+> iwlwifi-PTP, with index: 1
+> 
+> Will, is it OK for me to ask the stable folks to backport 14cebf689a78
+> ("swiotlb: Reinstate> page-alignment for mappings >= PAGE_SIZE")
+> to 6.6 stable?
 
-On Sat, Jun 15, 2024 at 08:53:31PM +0300, Dmitry Baryshkov wrote:
-> The upcoming DRM connector HDMI codec implementation is going to use
-> codec-specific data in the .get_dai_id to get drm_connector. Pass data
-> to the callback, as it is done with other hdmi_codec_ops callbacks.
+If you want to backport that change, then I think you should probably
+take the whole series:
 
-Acked-by: Mark Brown <broonie@kernel.org>
+https://lore.kernel.org/all/20240308152829.25754-1-will@kernel.org/
 
---XtVbdI0Tw2PNjcEk
-Content-Type: application/pgp-signature; name="signature.asc"
+(and there were some follow-ups from Michael iirc; you're best off
+checking the git history for kernel/dma/swiotlb.c).
 
------BEGIN PGP SIGNATURE-----
+FWIW: we have this series backported to 6.6 in the android15-6.6 tree.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwJwsACgkQJNaLcl1U
-h9Ddiwf7B9RIPxE1KgzuGsGiFXQOUSUjl3Yznz5/+WBr2xZJpAlBHYswQFGUEikT
-Gu6kk6LDHX6vF9wV+Z1Uq1U/LRSjYfPa+zl2+R+4A9vvyUxooQSTDpTu4KNcBDX7
-D3TpXv9axeb9RPmfH0fw6FX4ABxz3Tpwz2fQGFzLAh6PaVA9O9CNNWgkDKvE61Ke
-4EWvmr6GB1erLa97l68vEGCjTTejAs97ZXFxZYGPdmK/FqjeyR2dEPUYfgzQmgi3
-W1uA0uI3jqFGv74skoytSEOR3i1eToyvYzidUkhO6Gz7nIBLBlbw/i/j5tV0UeoB
-HW4EKT4EkpO2IGygQWnl0C0tH4PJpw==
-=gM/U
------END PGP SIGNATURE-----
-
---XtVbdI0Tw2PNjcEk--
+Will
 
