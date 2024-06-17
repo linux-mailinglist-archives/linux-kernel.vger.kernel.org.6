@@ -1,403 +1,163 @@
-Return-Path: <linux-kernel+bounces-216696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FE490A34C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:27:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E469290A357
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7CE52822F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 05:27:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D5F31F21E96
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 05:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7890A181BAA;
-	Mon, 17 Jun 2024 05:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2D5181CF9;
+	Mon, 17 Jun 2024 05:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y+C3ejOO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YnOwnzWU"
+Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A002AE6A;
-	Mon, 17 Jun 2024 05:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFB8181330;
+	Mon, 17 Jun 2024 05:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718602026; cv=none; b=i1VJk/FjzpZv1qZLsNImxMjJEu6mH1BR7U2/bUxDBVfIpghdqqw0P5PJQPqnfHxlAMiH8J1LBXQodUfY8dsxF1Pjt1IGKelsRQxJpijSzGJGIeQUrcfljeIEPyutApUrH6hu7bBoOIf8UW7wAyM293DbC2KKJIDGthLVAuqk1CY=
+	t=1718602186; cv=none; b=U4wNQKrzPEGXY8RRy5qqvGAVNcMFDxdpy03z3VTOZ1MIkwetAuydxVFdNFidljbfbBRJDe3xulknFiZ4wGR4jbjVZ15dHgG3uMmr1iI60jVGor0zOItpYlvAHj5vfKAWIBys6K1FvBxdPG2j34vxenp2css2xe/HIigT8Eeut7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718602026; c=relaxed/simple;
-	bh=9PUMDrkYWNIljtNYV2Hf0l2hllwKm1PbdkTuhidxuz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFhyKobD+QzuTWUaNqP9DrmA+CWLOPvl+oKOkdjyi+dGHVLUUrxasgyf9mtVgr4R4qdDpiYGohZrjX7lPOhgWnXdfquLOw+DvpviVHDEu505BGUBiAtJkjxxMQcHcNFBi5A8HbnBZD83O53sBBh65lzQ/MU2w6hk9fkH8W04918=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y+C3ejOO; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718602024; x=1750138024;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9PUMDrkYWNIljtNYV2Hf0l2hllwKm1PbdkTuhidxuz8=;
-  b=Y+C3ejOO8J66Nf8BWvdu0tVXhLzXp9zGY05fjzuT97utK1uTNYtSEK/6
-   U1WsYzNknmNSTzedhsi+ZB4x1UMoT1s2qAfmEDxsKryYcrJo9suMCw3KP
-   iKo2nXytDtIMfsaBe68Vj1OgExnIykYnX+IMX/RAfoGk9GjFJGkRhY3Ez
-   pthhr9+ZbD+B9ELyhePgU1PsOn6QRnCNn6zndn2UQZVGXmH/bU5jp6nET
-   5gj5zubTyf/NybcTL5CDUR9+L5i1GLZRV69XI5ZAOCygYhASh+P0gr2K8
-   JNaaQ6rVk0E31+26cRcBVMdn95K1rQRBu98/EodZAs2yrKYhDIqoI+7qC
-   A==;
-X-CSE-ConnectionGUID: VoUIS7F9TOyCi5EIgD2VoQ==
-X-CSE-MsgGUID: DW7PdVqwTAy4mENLt9/ZTg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="19200270"
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="19200270"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 22:27:04 -0700
-X-CSE-ConnectionGUID: YWFH4EBgQJe1K2tab+ffxg==
-X-CSE-MsgGUID: Z0RMN4meTAWIxXZ1dXv6RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="41185777"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 22:26:59 -0700
-Message-ID: <020779ae-f3f1-4ab0-b45c-4622b199131f@intel.com>
-Date: Mon, 17 Jun 2024 08:26:55 +0300
+	s=arc-20240116; t=1718602186; c=relaxed/simple;
+	bh=VZl9Dt00+pQFuwUZq2ZbWrXnzRU7zRHOGJ+iYooxmx0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=BIasybgKa8LYCjbjWPpkgBSlUAxA69fIxRU/5bd3p/snz4pEle4+2irU87pj63h7bBmUsZPisRXApePnG78XL5bklNO02UaH4bcFlThCa2k6PMlHd7oos1n9HJuRwPOKy1jIiyEQAuK0+I5EBpvhjIiZUG5WXtu5c5PZHJPAGM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YnOwnzWU; arc=none smtp.client-ip=209.85.216.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-2c4e2cd931aso521199a91.0;
+        Sun, 16 Jun 2024 22:29:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718602184; x=1719206984; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TUsI5R+Z0iy5fF8mDhU7qwVZOawS/mIqRte7Pe8J3zI=;
+        b=YnOwnzWUaZmO/D+ow7ns103fHsew4JkE0bhjlHn2ZOS6wVzASxBOqXnfbRT49c3adA
+         2+B4R6MfoL+o0+q4AcPoNes9DAlJMXJW9ri6tvm1fTYCi6Dbsg0nMG1iJX7R6kbZXP3L
+         pY3pBVkxgBvb0O+otaSy/kyEjOACnEHN9Sq4qL/49ipjbNR6ZtHBfMj2OJ8Ri2AE7eIm
+         BLXdlGZ2xB5H+6m3eq4eVO2HnuukuNP8445tPCnUmfzW+mK1uGNxwOAZOLUCklsAl3+2
+         dbIZUYCF+uVMhI8j2MW8X7FfEI77cMfKo8YEH1BH1HWTfchYTOIulZz97s/1A8tj4qEA
+         aa4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718602184; x=1719206984;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TUsI5R+Z0iy5fF8mDhU7qwVZOawS/mIqRte7Pe8J3zI=;
+        b=OnOUjEjHzsl3pvpHV5m2XNG9LYXP5qRv0pqoxYwYaqThLn+Yc0g/HKij9CR6x9D3Nf
+         SMsaXrcoX9NwXDT131K0Q9Apr7C/SZ8utvqZNpwgqbGQZMSIYRuKrNsXESHQwVNG7y2S
+         ts7nyqtuN9sBhMLUuRa5O8yOAEAOu23vO88IhCtPzGRfRzja9GHDejdVwYv88RWAJ97J
+         cYjRZicRBmUqM0PbrhE2GNPpuh0wCo1Hu8IRHecvsNrblVz3m8Vi0VsY7zDv/ZmK52GZ
+         jeeEPO5YGTg3cohzjshhMc3TWZ/UBknGpNLlxasQkR+cd3kR+ftkMQsvo7yeCJ6HThGc
+         br1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXk/StLLP9BKjv5xy2hRKJqisoQ+8rvvSGoP8JuPgTKJel7+oQch4RQiED3lUe/Q4TOvlXmEhpKUnCdNGgixJTJHhV6SBrbRm+SXeblTuWSTJet+rs6umgvbHwvN/c+wT8hwpNTKP2ZnLqkgcTS
+X-Gm-Message-State: AOJu0YwSXZG8fKXMzb7CNu9Y/6+Jfoopwt67jPW+rq9vqtq5BHjoVTKz
+	/jZngjuqt3IIDd4FVjMvo7e2WKeqas/m38sXihXPLj6qgWbz7cGw
+X-Google-Smtp-Source: AGHT+IH3QQcBtYgpWXy8Eibq53Mk2mB6I+M4MbSta2aASqh/Q1m8xZoJHiVBxZsXJ0RpaXUKk29i0w==
+X-Received: by 2002:a17:902:d4c7:b0:1f2:f9b9:8796 with SMTP id d9443c01a7336-1f8627eb9fcmr102562255ad.2.1718602184316;
+        Sun, 16 Jun 2024 22:29:44 -0700 (PDT)
+Received: from localhost.localdomain ([117.147.90.53])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f88daf2b8dsm11699355ad.193.2024.06.16.22.29.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Jun 2024 22:29:43 -0700 (PDT)
+From: aigourensheng <shechenglong001@gmail.com>
+To: akpm@linux-foundation.org
+Cc: shuah@kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	aigourensheng <shechenglong001@gmail.com>
+Subject: [PATCH] selftests/mm:fix test_prctl_fork_exec return failure
+Date: Mon, 17 Jun 2024 01:29:34 -0400
+Message-Id: <20240617052934.5834-1-shechenglong001@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] perf: support specify vdso path in cmdline
-To: Changbin Du <changbin.du@huawei.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20240615092015.1820362-1-changbin.du@huawei.com>
- <20240615092015.1820362-2-changbin.du@huawei.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240615092015.1820362-2-changbin.du@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 15/06/24 12:20, Changbin Du wrote:
-> The vdso dumped from process memory (in buildid-cache) lacks debugging
-> info. To annotate vdso symbols with source lines we need specify a
-> debugging version.
-> 
-> For x86, we can find them from your local build as
-> arch/x86/entry/vdso/vdso{32,64}.so.dbg. Or they may reside in
-> /lib/modules/<version>/vdso/vdso{32,64}.so on Ubuntu. But notice that
-> the buildid has to match.
-> 
-> $ sudo perf record -a
-> $ sudo perf report --objdump=llvm-objdump \
->   --vdso arch/x86/entry/vdso/vdso64.so.dbg,arch/x86/entry/vdso/vdso32.so.dbg
-> 
-> Samples: 17K of event 'cycles:P', 4000 Hz, Event count (approx.): 1760
-> __vdso_clock_gettime  /work/linux-host/arch/x86/entry/vdso/vdso64.so.d
-> Percent│       movq    -48(%rbp),%rsi
->        │       testq   %rax,%rax
->        │     ;               return vread_hvclock();
->        │       movq    %rax,%rdx
->        │     ;               if (unlikely(!vdso_cycles_ok(cycles)))
->        │     ↑ js      eb
->        │     ↑ jmp     74
->        │     ;               ts->tv_sec = vdso_ts->sec;
->   0.02 │147:   leaq    2(%rbx),%rax
->        │       shlq    $4, %rax
->        │       addq    %r10,%rax
->        │     ;               while ((seq = READ_ONCE(vd->seq)) & 1) {
->   9.38 │152:   movl    (%r10),%ecx
-> 
-> When doing cross platform analysis, we also need specify the vdso path if
-> we are interested in its symbols.
+after calling fork() in the test_prctl_fork_exec() function,
+the global variable ksm_full_scans_fd is initialized to 0
+in the child process upon entering the main function
+of ./ksm_functional_tests.
+In the function call chain test_child_ksm() ->
+__mmap_and_merge_range -> ksm_merge-> ksm_get_full_scans,
+start_scans = ksm_get_full_scans() will return an error.
+Therefore, the value of ksm_full_scans_fd needs to be
+initialized before calling test_child_ksm in the child process.
 
-If perf can now find the vdso debug info, then why is the parameter needed?
+Signed-off-by: aigourensheng <shechenglong001@gmail.com>
+---
+ .../selftests/mm/ksm_functional_tests.c       | 38 +++++++++++--------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
 
-> 
-> Signed-off-by: Changbin Du <changbin.du@huawei.com>
-> ---
->  tools/perf/builtin-annotate.c |  2 +
->  tools/perf/builtin-c2c.c      |  2 +
->  tools/perf/builtin-inject.c   |  2 +
->  tools/perf/builtin-report.c   |  2 +
->  tools/perf/builtin-script.c   |  2 +
->  tools/perf/builtin-top.c      |  2 +
->  tools/perf/util/disasm.c      |  5 ++-
->  tools/perf/util/symbol.c      | 82 ++++++++++++++++++++++++++++++++++-
->  tools/perf/util/symbol_conf.h |  5 +++
->  9 files changed, 100 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-> index 50d2fb222d48..ff466882065d 100644
-> --- a/tools/perf/builtin-annotate.c
-> +++ b/tools/perf/builtin-annotate.c
-> @@ -742,6 +742,8 @@ int cmd_annotate(int argc, const char **argv)
->  		   "file", "vmlinux pathname"),
->  	OPT_BOOLEAN('m', "modules", &symbol_conf.use_modules,
->  		    "load module symbols - WARNING: use only with -k and LIVE kernel"),
-> +	OPT_CALLBACK(0, "vdso", NULL, "vdso1[,vdso2]", "vdso pathnames",
-> +		     parse_vdso_pathnames),
->  	OPT_BOOLEAN('l', "print-line", &annotate_opts.print_lines,
->  		    "print matching source lines (may be slow)"),
->  	OPT_BOOLEAN('P', "full-paths", &annotate_opts.full_path,
-> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-> index c157bd31f2e5..4764f9139661 100644
-> --- a/tools/perf/builtin-c2c.c
-> +++ b/tools/perf/builtin-c2c.c
-> @@ -3018,6 +3018,8 @@ static int perf_c2c__report(int argc, const char **argv)
->  	const struct option options[] = {
->  	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
->  		   "file", "vmlinux pathname"),
-> +	OPT_CALLBACK(0, "vdso", NULL, "vdso1[,vdso2]", "vdso pathnames",
-> +		     parse_vdso_pathnames),
->  	OPT_STRING('i', "input", &input_name, "file",
->  		   "the input file to process"),
->  	OPT_INCR('N', "node-info", &c2c.node_info,
-> diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-> index a212678d47be..e774e83d0a0f 100644
-> --- a/tools/perf/builtin-inject.c
-> +++ b/tools/perf/builtin-inject.c
-> @@ -2247,6 +2247,8 @@ int cmd_inject(int argc, const char **argv)
->  			    "don't load vmlinux even if found"),
->  		OPT_STRING(0, "kallsyms", &symbol_conf.kallsyms_name, "file",
->  			   "kallsyms pathname"),
-> +		OPT_CALLBACK(0, "vdso", NULL, "vdso1[,vdso2]", "vdso pathnames",
-> +		     parse_vdso_pathnames),
->  		OPT_BOOLEAN('f', "force", &data.force, "don't complain, do it"),
->  		OPT_CALLBACK_OPTARG(0, "itrace", &inject.itrace_synth_opts,
->  				    NULL, "opts", "Instruction Tracing options\n"
-> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-> index 69618fb0110b..a64b48460dce 100644
-> --- a/tools/perf/builtin-report.c
-> +++ b/tools/perf/builtin-report.c
-> @@ -1324,6 +1324,8 @@ int cmd_report(int argc, const char **argv)
->                      "don't load vmlinux even if found"),
->  	OPT_STRING(0, "kallsyms", &symbol_conf.kallsyms_name,
->  		   "file", "kallsyms pathname"),
-> +	OPT_CALLBACK(0, "vdso", NULL, "vdso1[,vdso2]", "vdso pathnames",
-> +		     parse_vdso_pathnames),
->  	OPT_BOOLEAN('f', "force", &symbol_conf.force, "don't complain, do it"),
->  	OPT_BOOLEAN('m', "modules", &symbol_conf.use_modules,
->  		    "load module symbols - WARNING: use only with -k and LIVE kernel"),
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index c16224b1fef3..2e358922a8d1 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -3965,6 +3965,8 @@ int cmd_script(int argc, const char **argv)
->  		   "file", "vmlinux pathname"),
->  	OPT_STRING(0, "kallsyms", &symbol_conf.kallsyms_name,
->  		   "file", "kallsyms pathname"),
-> +	OPT_CALLBACK(0, "vdso", NULL, "vdso1[,vdso2]", "vdso pathnames",
-> +		     parse_vdso_pathnames),
->  	OPT_BOOLEAN('G', "hide-call-graph", &no_callchain,
->  		    "When printing symbols do not display call chain"),
->  	OPT_CALLBACK(0, "symfs", NULL, "directory",
-> diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-> index 1d6aef51c122..a3cce4e76eb9 100644
-> --- a/tools/perf/builtin-top.c
-> +++ b/tools/perf/builtin-top.c
-> @@ -1479,6 +1479,8 @@ int cmd_top(int argc, const char **argv)
->  		   "file", "kallsyms pathname"),
->  	OPT_BOOLEAN('K', "hide_kernel_symbols", &top.hide_kernel_symbols,
->  		    "hide kernel symbols"),
-> +	OPT_CALLBACK(0, "vdso", NULL, "vdso1[,vdso2]", "vdso pathnames",
-> +		     parse_vdso_pathnames),
->  	OPT_CALLBACK('m', "mmap-pages", &opts->mmap_pages, "pages",
->  		     "number of mmap data pages", evlist__parse_mmap_pages),
->  	OPT_INTEGER('r', "realtime", &top.realtime_prio,
-> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-> index 72aec8f61b94..442e9802a772 100644
-> --- a/tools/perf/util/disasm.c
-> +++ b/tools/perf/util/disasm.c
-> @@ -16,6 +16,7 @@
->  #include "debug.h"
->  #include "disasm.h"
->  #include "dso.h"
-> +#include "vdso.h"
->  #include "env.h"
->  #include "evsel.h"
->  #include "map.h"
-> @@ -1134,7 +1135,7 @@ static int dso__disassemble_filename(struct dso *dso, char *filename, size_t fil
->  		goto fallback;
->  
->  	linkname[len] = '\0';
-> -	if (strstr(linkname, DSO__NAME_KALLSYMS) ||
-> +	if (strstr(linkname, DSO__NAME_KALLSYMS) || strstr(linkname, DSO__NAME_VDSO) ||
->  		access(filename, R_OK)) {
->  fallback:
->  		/*
-> @@ -1142,7 +1143,7 @@ static int dso__disassemble_filename(struct dso *dso, char *filename, size_t fil
->  		 * cache, or is just a kallsyms file, well, lets hope that this
->  		 * DSO is the same as when 'perf record' ran.
->  		 */
-> -		if (dso__kernel(dso) && dso__long_name(dso)[0] == '/')
-> +		if ((dso__kernel(dso) || dso__is_vdso(dso)) && dso__long_name(dso)[0] == '/')
->  			snprintf(filename, filename_size, "%s", dso__long_name(dso));
->  		else
->  			__symbol__join_symfs(filename, filename_size, dso__long_name(dso));
-> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-> index 9e5940b5bc59..a90c647d37e1 100644
-> --- a/tools/perf/util/symbol.c
-> +++ b/tools/perf/util/symbol.c
-> @@ -19,6 +19,7 @@
->  #include "build-id.h"
->  #include "cap.h"
->  #include "dso.h"
-> +#include "vdso.h"
->  #include "util.h" // lsdir()
->  #include "debug.h"
->  #include "event.h"
-> @@ -44,6 +45,7 @@
->  
->  static int dso__load_kernel_sym(struct dso *dso, struct map *map);
->  static int dso__load_guest_kernel_sym(struct dso *dso, struct map *map);
-> +static int dso__load_vdso_sym(struct dso *dso, struct map *map);
->  static bool symbol__is_idle(const char *name);
->  
->  int vmlinux_path__nr_entries;
-> @@ -1833,6 +1835,12 @@ int dso__load(struct dso *dso, struct map *map)
->  		goto out;
->  	}
->  
-> +	if (dso__is_vdso(dso)) {
-> +		ret = dso__load_vdso_sym(dso, map);
-> +		if (ret > 0)
-> +			goto out;
-> +	}
-> +
->  	dso__set_adjust_symbols(dso, false);
->  
->  	if (perfmap) {
-> @@ -2017,12 +2025,14 @@ int dso__load_vmlinux(struct dso *dso, struct map *map,
->  		dso__set_binary_type(dso, DSO_BINARY_TYPE__VMLINUX);
->  
->  	err = dso__load_sym(dso, map, &ss, &ss, 0);
-> -	symsrc__destroy(&ss);
-> -
->  	if (err > 0) {
->  		dso__set_loaded(dso);
->  		pr_debug("Using %s for symbols\n", symfs_vmlinux);
-> +
-> +		if (symsrc__has_symtab(&ss) && !dso__symsrc_filename(dso))
-> +			dso__set_symsrc_filename(dso, strdup(symfs_vmlinux));
->  	}
-> +	symsrc__destroy(&ss);
->  
->  	return err;
->  }
-> @@ -2349,6 +2359,74 @@ static int vmlinux_path__init(struct perf_env *env)
->  	return -1;
->  }
->  
-> +int parse_vdso_pathnames(const struct option *opt __maybe_unused,
-> +			 const char *arg, int unset __maybe_unused)
-> +{
-> +	char *tmp, *tok, *str = strdup(arg);
-> +	unsigned int i = 0;
-> +
-> +	for (tok = strtok_r(str, ",", &tmp); tok && i < ARRAY_SIZE(symbol_conf.vdso_name);
-> +	     tok = strtok_r(NULL, ",", &tmp)) {
-> +		symbol_conf.vdso_name[i++] = strdup(tok);
-> +	}
-> +
-> +	free(str);
-> +	return 0;
-> +}
-> +
-> +static int dso__load_vdso(struct dso *dso, struct map *map,
-> +			  const char *vdso)
-> +{
-> +	int err = -1;
-> +	struct symsrc ss;
-> +	char symfs_vdso[PATH_MAX];
-> +
-> +	if (vdso[0] == '/')
-> +		snprintf(symfs_vdso, sizeof(symfs_vdso), "%s", vdso);
-> +	else
-> +		symbol__join_symfs(symfs_vdso, vdso);
-> +
-> +	if (symsrc__init(&ss, dso, symfs_vdso, DSO_BINARY_TYPE__SYSTEM_PATH_DSO))
-> +		return -1;
-> +
-> +	/*
-> +	 * dso__load_sym() may copy 'dso' which will result in the copies having
-> +	 * an incorrect long name unless we set it here first.
-> +	 */
-> +	dso__set_long_name(dso, vdso, false);
-> +	dso__set_binary_type(dso, DSO_BINARY_TYPE__SYSTEM_PATH_DSO);
-> +
-> +	err = dso__load_sym(dso, map, &ss, &ss, 0);
-> +	if (err > 0) {
-> +		dso__set_loaded(dso);
-> +		pr_debug("Using %s for %s symbols\n", symfs_vdso, dso__short_name(dso));
-> +
-> +		if (symsrc__has_symtab(&ss) && !dso__symsrc_filename(dso))
-> +			dso__set_symsrc_filename(dso, strdup(symfs_vdso));
-> +	}
-> +	symsrc__destroy(&ss);
-> +
-> +	return err;
-> +}
-> +
-> +static int dso__load_vdso_sym(struct dso *dso, struct map *map)
-> +{
-> +	int ret;
-> +
-> +	if (!dso__is_vdso(dso))
-> +		return -1;
-> +
-> +	for (unsigned int i = 0; i < ARRAY_SIZE(symbol_conf.vdso_name); i++) {
-> +		if (symbol_conf.vdso_name[i] != NULL) {
-> +			ret = dso__load_vdso(dso, map, symbol_conf.vdso_name[i]);
-> +			if (ret > 0)
-> +				return ret;
-> +		}
-> +	}
-> +
-> +	return -1;
-> +}
-> +
->  int setup_list(struct strlist **list, const char *list_str,
->  		      const char *list_name)
->  {
-> diff --git a/tools/perf/util/symbol_conf.h b/tools/perf/util/symbol_conf.h
-> index c114bbceef40..108356e3c981 100644
-> --- a/tools/perf/util/symbol_conf.h
-> +++ b/tools/perf/util/symbol_conf.h
-> @@ -3,6 +3,7 @@
->  #define __PERF_SYMBOL_CONF 1
->  
->  #include <stdbool.h>
-> +#include <subcmd/parse-options.h>
->  
->  struct strlist;
->  struct intlist;
-> @@ -55,6 +56,7 @@ struct symbol_conf {
->  	const char	*default_guest_vmlinux_name,
->  			*default_guest_kallsyms,
->  			*default_guest_modules;
-> +	const char	*vdso_name[2];
->  	const char	*guestmount;
->  	const char	*dso_list_str,
->  			*comm_list_str,
-> @@ -85,4 +87,7 @@ struct symbol_conf {
->  
->  extern struct symbol_conf symbol_conf;
->  
-> +int parse_vdso_pathnames(const struct option *opt __maybe_unused,
-> +			 const char *arg, int unset __maybe_unused);
-> +
->  #endif // __PERF_SYMBOL_CONF
+diff --git a/tools/testing/selftests/mm/ksm_functional_tests.c b/tools/testing/selftests/mm/ksm_functional_tests.c
+index 37de82da9be7..b61803e36d1c 100644
+--- a/tools/testing/selftests/mm/ksm_functional_tests.c
++++ b/tools/testing/selftests/mm/ksm_functional_tests.c
+@@ -656,12 +656,33 @@ static void test_prot_none(void)
+ 	munmap(map, size);
+ }
+ 
++static void init_global_file_handles(void)
++{
++	mem_fd = open("/proc/self/mem", O_RDWR);
++	if (mem_fd < 0)
++		ksft_exit_fail_msg("opening /proc/self/mem failed\n");
++	ksm_fd = open("/sys/kernel/mm/ksm/run", O_RDWR);
++	if (ksm_fd < 0)
++		ksft_exit_skip("open(\"/sys/kernel/mm/ksm/run\") failed\n");
++	ksm_full_scans_fd = open("/sys/kernel/mm/ksm/full_scans", O_RDONLY);
++	if (ksm_full_scans_fd < 0)
++		ksft_exit_skip("open(\"/sys/kernel/mm/ksm/full_scans\") failed\n");
++	pagemap_fd = open("/proc/self/pagemap", O_RDONLY);
++	if (pagemap_fd < 0)
++		ksft_exit_skip("open(\"/proc/self/pagemap\") failed\n");
++	proc_self_ksm_stat_fd = open("/proc/self/ksm_stat", O_RDONLY);
++	proc_self_ksm_merging_pages_fd = open("/proc/self/ksm_merging_pages",
++						O_RDONLY);
++	ksm_use_zero_pages_fd = open("/sys/kernel/mm/ksm/use_zero_pages", O_RDWR);
++}
++
+ int main(int argc, char **argv)
+ {
+ 	unsigned int tests = 8;
+ 	int err;
+ 
+ 	if (argc > 1 && !strcmp(argv[1], FORK_EXEC_CHILD_PRG_NAME)) {
++		init_global_file_handles();
+ 		exit(test_child_ksm());
+ 	}
+ 
+@@ -674,22 +695,7 @@ int main(int argc, char **argv)
+ 
+ 	pagesize = getpagesize();
+ 
+-	mem_fd = open("/proc/self/mem", O_RDWR);
+-	if (mem_fd < 0)
+-		ksft_exit_fail_msg("opening /proc/self/mem failed\n");
+-	ksm_fd = open("/sys/kernel/mm/ksm/run", O_RDWR);
+-	if (ksm_fd < 0)
+-		ksft_exit_skip("open(\"/sys/kernel/mm/ksm/run\") failed\n");
+-	ksm_full_scans_fd = open("/sys/kernel/mm/ksm/full_scans", O_RDONLY);
+-	if (ksm_full_scans_fd < 0)
+-		ksft_exit_skip("open(\"/sys/kernel/mm/ksm/full_scans\") failed\n");
+-	pagemap_fd = open("/proc/self/pagemap", O_RDONLY);
+-	if (pagemap_fd < 0)
+-		ksft_exit_skip("open(\"/proc/self/pagemap\") failed\n");
+-	proc_self_ksm_stat_fd = open("/proc/self/ksm_stat", O_RDONLY);
+-	proc_self_ksm_merging_pages_fd = open("/proc/self/ksm_merging_pages",
+-					      O_RDONLY);
+-	ksm_use_zero_pages_fd = open("/sys/kernel/mm/ksm/use_zero_pages", O_RDWR);
++	init_global_file_handles();
+ 
+ 	test_unmerge();
+ 	test_unmerge_zero_pages();
+-- 
+2.17.1
 
 
