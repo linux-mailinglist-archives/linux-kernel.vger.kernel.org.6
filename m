@@ -1,334 +1,151 @@
-Return-Path: <linux-kernel+bounces-217131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B9C90ABAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:43:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A092E90ABD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19E7282354
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 540AF1F27311
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D06C194ACD;
-	Mon, 17 Jun 2024 10:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88733194C66;
+	Mon, 17 Jun 2024 10:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="Tj03ky4x"
-Received: from SLXP216CU001.outbound.protection.outlook.com (mail-koreacentralazon11020003.outbound.protection.outlook.com [52.101.154.3])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GU+DrT2E"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F95194C95;
-	Mon, 17 Jun 2024 10:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.154.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718620937; cv=fail; b=VbnIQ9MKwcF7I+oGdCs4GEUQxh7oyzwXy06wh/Bf5XHqXFSgWL8Z8ZVuUX6jxqh+slyDx/TIkiy/rHzSK8Epj8kcbVyfC5kmBfHGmOkFdk2tE6bMAQZUGZb84C0Ok0K7pOfiKsqelIiL3Su23VtCgzmMDZ+6UtMfXV1X83bybRY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718620937; c=relaxed/simple;
-	bh=VMtPjfoOC0XTH+riNVMx8QR0jvlY6HzL+4rikDpX08E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ra024k2qaFPYsVN982gUvPNkgecQ3GRw8vgnKt2k55FbL7uB6E0M0Pa9kxnis9bNSiookf4Hq0uyHuZZH8kyeFkD5oV18fqQnj6QFGEQK964HdqDBetHZbfG1CSnHEpiobOuiYxVlPirCVPfspkCf8V+iNXiv/moP12Cc1sTjcs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=pass smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=Tj03ky4x; arc=fail smtp.client-ip=52.101.154.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chipsnmedia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F+Wx5oo9geXLYdfo5cmemMWARPk3dHE5lm4wgQs0mAOpPCT0ZFXfWBxIsgat9jpxCJAzYdN1gtT3ekbQm3Ep/Yeqin/TZCKH77xzThcnCkGbs6WHPjd/9niam9IBDiJWb/+obsmN4Q07khhZbsez5omPGmNCAXJPYdNV9EJEqbO6kwtcKsy2fJ5NSkx5j+k0eeczBd9xNYmKpauTeh4bHRuk4dCffuveE+T7uW67S/IAm43cdC1Jr4fEeyUcinoQ0I9ZEHJ+/8NvSPBPUKhztyjJOD0vFKsyjH3HmxKf7mMjsIaM7uZ3VVNUV7Z9wwwX2fxtN5VCHTlejDmgLMqsjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r0rAwfhgGXe8i8mWUYHlL3qQfx2HZL4rsIULoSdXt5Y=;
- b=hmZyle6/DlgMDtj7DTURU2Cpo9Flp8JPvboLvfZnvVMSchlXFCjki7FmbLUTENpvwWB+15dMB5hF8VQAX2TefoIDFQSB2U0EKIuBoSmC1TyZh8QHhLJ/41OmB+zGXRJ7I5YtKCSskMd1wxERmEYN+bLV+jzgOErfdVZIsFJ2fSXu3TptUZ0peSELfkzgXKzDW6P9vQNHm1ISznPG2zLx+PccIb9yX3xe4RPSahmH8AzXRTWRNamkt2o2L1VrTQFV51DG/vO859HsS/J0UdvQ+ALDWE51qanDFwvZAvQt0VNQE22krJ5E4S8IelyywQNf+fSJCh9fdJf2k4v4+JOzaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
- header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r0rAwfhgGXe8i8mWUYHlL3qQfx2HZL4rsIULoSdXt5Y=;
- b=Tj03ky4xoVyPv6+7O+SgV+Q6WS28O/yDsMZTqa8flm9RPy71BVzp5W7urhFwhOjTjWexrHXksOYLxKya56IUkEW9CymLrL+dy9G1EJDzgAhp/r363AC+gBcOlX9l98XEJ/ZcDXQITBKx5kUFXX2jRQG1co0qm/D+YUr7yU+80QI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
-Received: from SE1P216MB1303.KORP216.PROD.OUTLOOK.COM (2603:1096:101:15::5) by
- SL2P216MB3099.KORP216.PROD.OUTLOOK.COM (2603:1096:101:282::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.30; Mon, 17 Jun 2024 10:42:04 +0000
-Received: from SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
- ([fe80::b711:5ab1:b5a4:d01b]) by SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
- ([fe80::b711:5ab1:b5a4:d01b%4]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
- 10:42:04 +0000
-From: "Jackson.lee" <jackson.lee@chipsnmedia.com>
-To: mchehab@kernel.org,
-	nicolas@ndufresne.ca,
-	sebastian.fricke@collabora.com
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	hverkuil@xs4all.nl,
-	nas.chung@chipsnmedia.com,
-	lafley.kim@chipsnmedia.com,
-	b-brnich@ti.com,
-	jackson.lee@chipsnmedia.com,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Subject: [PATCH v6 4/4] media: chips-media: wave5: Support YUV422 raw pixel-formats on the encoder.
-Date: Mon, 17 Jun 2024 19:41:55 +0900
-Message-Id: <20240617104155.153-5-jackson.lee@chipsnmedia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240617104155.153-1-jackson.lee@chipsnmedia.com>
-References: <20240617104155.153-1-jackson.lee@chipsnmedia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SL2P216CA0185.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:1a::9) To SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:15::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8F91940B3;
+	Mon, 17 Jun 2024 10:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718620998; cv=none; b=kyoVgUuV9ppf/nDC3t+CIaHr8b6S7xGJRpVODfXoeg13RSaA7ZWPg5PrHW9nPXiIGHMSSKSvcBPqzckNLXCEB6ZAcQ67Ug7WUhLyWMlXYggne6QLcu6xkGyNPMXOEKY+51b+2vv1wxADLkBVXorCdDnbRMGm6HZUGz5CCjOiLQw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718620998; c=relaxed/simple;
+	bh=i3uW3NOlbKjP4qf5Axhnm99g5Mt2/WaSNm74QRBZhrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DYIB36JFbcfDYSzO4pC8Tjs7HszQLb7KezKbatwZ66WefUv6/dgSIt7FcKOc1HctK1QCB/defWSk23gOhKYVgvaU5cPd/ZgSexj/C1H7PuXScWXPbR5jN2J1kXx5/VPp1HH5olXWVCLEfBs7XyaM01C339KBuyQAWoQl0/3ILbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GU+DrT2E; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HAV4AN022722;
+	Mon, 17 Jun 2024 10:43:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Bdp0i5ngaQ4+E3qeMMivqEtEmbMZP+Ab6cxXPFCoqi4=; b=GU+DrT2EFZYzEdN9
+	PfiCUEpuzSe7po74u5oQyoo/MFz91HLLm2XDVZkg4+uNi/nhgjfFtCW7/W040n0e
+	BV1vwfwE0sXoXRVQ+elan9KRofQmQcBlxhbPUc2XdHoqqBedIgeBtmul1i2F5xjP
+	eM3V4LJxtCNk/Uy1eUZglE936MHUbxujFE7IIDkczqLCuh25uxjBipWH6CZ3yCnT
+	fhQSh9+W2LRgzsoZVKcW1cN2Drt6A0puwAR68wOcktuQsmfoVZtMPJApkiGJZcBO
+	1asxBWDvl/V2MAx89YJiu+fuqH7gbMYapuQEQuUMfkN4lDWTD0XMaQ+3QlftVRMV
+	KgzLKw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys44ju8e4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 10:43:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45HAgpTl004802
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 10:42:51 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
+ 2024 03:42:44 -0700
+Message-ID: <d997f42d-0616-4180-ae36-9d2ebd60d15f@quicinc.com>
+Date: Mon, 17 Jun 2024 18:42:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SE1P216MB1303:EE_|SL2P216MB3099:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85e7ccff-13c7-4fcb-465e-08dc8eba20f0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|52116011|376011|1800799021|366013|38350700011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dHMkfMTZPB1tHkAkBM/VHv9+CYTrmoJ66u/IeS4gLBO+OFQzMS9UZZJyNoIj?=
- =?us-ascii?Q?XH67YfVNVliBb3gd1ey9ipAgrAOmZAIGrfhfmAjmf97AnftFyWSXvm4khndm?=
- =?us-ascii?Q?REjazUmqeLxeReAn3WqaCbnCsjjm/QrvrfnS4C2CQIO+coWNBfN6UE+27Ozn?=
- =?us-ascii?Q?9gE67LfHCBxcrgiwPUJuliIHMUskgOI4f6tLA/T7coDqFyVIM4SiIdxhbY5i?=
- =?us-ascii?Q?0TCQERGqwvlDR1/DO0/G8VPYZvrd2iVWAbXFSp1XkKZ9HokQlKs/ntcvvIlG?=
- =?us-ascii?Q?DLiwGMwGXrs+Leb5nH3zbLccOOOhmQrrZAJdQtotMzbMSwK79zRvNNulcux8?=
- =?us-ascii?Q?XgAYQfoPjpd3Hhb0ZKq9DarBIkKRTqYl+Uu4fDzfL/1OyN5i13+GzqPleD+H?=
- =?us-ascii?Q?jDvftDrnmiOjBug0aQAcXhblMBtIYIZlgpjykDfGjajxdSCGqvhM9Grs41Ya?=
- =?us-ascii?Q?NPvmRpJcdTgLPhrupCIZLTUIJsdkm2oD0lBXqEmSDBCwblzonOK4QJJwps39?=
- =?us-ascii?Q?p+nBPFyovzqGLgI7KWHPPk8nEOGlbmu8jMNbTqJLr1AqYaRVdynHOrYLs3Ot?=
- =?us-ascii?Q?OwLwUB3ogX5NustPcT2V9kviTzXPTZLl/cRsi7GVMFdY3tCok8Vrm2CLsWJe?=
- =?us-ascii?Q?Kl5Bm48IMeg0yYQVqnTN8rIijnENdSAQTLaw5opAFDx5KlkGUduHgKV0STUn?=
- =?us-ascii?Q?I13WLnGbApN8Fez23ExwS2ffQgoiBriK5WaJMJ3+sIh0E1w/zWK1K7VM0lp9?=
- =?us-ascii?Q?9yfo2WLUUQ/P04dkKeJkSaoQfSIMiK0ipKLG0cAQ8xbFXcGARlqSmbC+IC2X?=
- =?us-ascii?Q?BXJ+JLV7/fY53SC+xrM+os6WivRuI6vlj4MgMx75STrIvbE2J47NAsDZUhQk?=
- =?us-ascii?Q?Np40YFlz58AttDO1o/Sza24PHFWn2YL9jNt+3jq8+mckOWVy+jyzN/UD7bjy?=
- =?us-ascii?Q?pTvgWisGfNHmOAoPyZTkfQ/SXmoDwm7XBPHxsdbaC374lQQOtKMy6dOgQpMj?=
- =?us-ascii?Q?KxNkGy/5AoynzaTFH8O38Y/IeJQ7LUMojrLYBoyWSN86jKQtMTW0E09X1BWC?=
- =?us-ascii?Q?34mBYGAu/8MMY/QVIVSyZgH8TXqcTpMSs+aXyuPzM7xDBkSue582cOm6j0v6?=
- =?us-ascii?Q?w2l42ujPj0pSVVlUFLa1zHqbLTrZmMAFom7JshQcxtDzhv4Ojy2Nl/oX35r/?=
- =?us-ascii?Q?h5t9yFehbzBAGX65MkQetu1X6r180hS3t+gm/sr1R+W8i3Oad/pnslg3Xk8W?=
- =?us-ascii?Q?PuuL1PLpDDo+cnQIoTu6XWX987asqY4vvHCuaM8YgHFggWTPLroYoStFvGkQ?=
- =?us-ascii?Q?lO25qDDuBHTPp6xDcO4DjyGl/C+euwHdD/jJU6ZRVpOAZ/VTdfQasUHzMdAb?=
- =?us-ascii?Q?tSG4R5k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SE1P216MB1303.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230037)(52116011)(376011)(1800799021)(366013)(38350700011);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hOx74GEzbKd5r2QNSOJBB4vtZdNd0pGO7EV+F3tJHhJ2qyl13gV4RnnpHJpO?=
- =?us-ascii?Q?mJkEO9Ja69Itz/j8yk0Svuj6lvawigucT+2fWxozJpE8TYdiuMq0T1Eqgoo2?=
- =?us-ascii?Q?dhGW1Liqm1PbzmE67x0ouu/4RlhvpSSmaqpC5t0soFvhsKMrB6+KgMGfIEG2?=
- =?us-ascii?Q?PZ7651S1I9tQ3vg3Hb0CXv0SbbYVGI08Fc1w2OvMB1mY4klDIdo55BeAv5Kb?=
- =?us-ascii?Q?1ko5yxFVEfuMigyRQAxpdfWiFCJSiV9LvVthJaBW7C8pHMZyFvHCp71YDFM1?=
- =?us-ascii?Q?CS2s518nNrPp5giM9wJzAx3MK0N1UwdfrxVRjQuAOIvL1xBFf7mEks6ZGZNn?=
- =?us-ascii?Q?vCbx8LrpsOLqKzBXMidmMG9ezpupmjvN8sU981Fh3oOKwnANbUR10TOic7Zq?=
- =?us-ascii?Q?UKfigI8sWhfWk7NEum0oVOtzEpFGRbxGx49MJ2a2cdJhfkLEeEqYmaKvJyvc?=
- =?us-ascii?Q?VLdfZXK4UwEuiYsOteIJpRk0/6jnkodIo4qP/THDfxu0NLfWL4mAtlmdsxJz?=
- =?us-ascii?Q?uQ1TKtzLzty8qLP+obmxeyZS4FAVOHsBLIz1m1xF+ExkYJwfuTfP8WKuMwPY?=
- =?us-ascii?Q?nUlSZHxQ1K5z5dPtUIDWRbCkwBo5BWbAfu5Avm3pFf67dQEGJSnCqPgDdxBX?=
- =?us-ascii?Q?kvl1I0CXUB70200S4/ww0SSAaLyGBCtCuqPX9mhhGB8sL0Dog7zK9fpCxAQ+?=
- =?us-ascii?Q?GuOnadyIdqrT2IptSepkjMPcsXVY+BRFDi0sYs18vshBgnuqRH2f2xcCzqaS?=
- =?us-ascii?Q?MXYMgQoetVcf+Bwz/3oTvoBKr8YGfSMv5skxjFvBN2iXt8nN4SbOInGeHt0J?=
- =?us-ascii?Q?eVrdOrnuyqf8RBfuFgSybYfwMHrBN4tCOwZJIDEo0xkm8yRTaG+zv5atFDWa?=
- =?us-ascii?Q?99HchaSW8lgiLrAw+6/GhoOhlag8pCnZiqEDGaA3ApG0NL1G/+ZT2NmpLReX?=
- =?us-ascii?Q?LqoRPOel7Ig9o2Q5UyqKY1V5cBP5cvNk1U2tQ1191H5Xu4JDHmfMGNPFbBpu?=
- =?us-ascii?Q?RYB5AkcNNLXnzii0WjKjlnpDCZigrzYKjmpjVadmiPoE01deXlS9pyAh/Tz5?=
- =?us-ascii?Q?pBro114KK0FynNL+Z0sMD+mV4a83qoF8CgfixDb2rURzUlhVcNgKwuR5kMc+?=
- =?us-ascii?Q?PSaGaF4sAlJTlagQA5HLAVKBpE1v7a5HEC8MFpTe8qBROHxTkvnj3NWbC9qV?=
- =?us-ascii?Q?/cNTGzFJouHW9H/eVMF3U9tz3Xl1MpF7Ni64MxMdaVjLqw2jMOQtX1IEU7J6?=
- =?us-ascii?Q?Ihu5PGQTrUKBNjVH9B0zROa/ubemlXR5WeN6Orq69TF6EC4AjipJXTamuRF0?=
- =?us-ascii?Q?tBvB6Wx4IoKbJHFetro4VGWKe+QcIILHQazKlhI7f/XE6Brq3z5KVwW5UNF/?=
- =?us-ascii?Q?j9VyPWngFGDmEmQ1kFfho+DZE8/cstWrnu66zZcF5938mi3nflbqMT6i+As0?=
- =?us-ascii?Q?BO69KqT4N8w2TsO91rCfLSc6LFcdgowT1RhLSVsw9MLe8IJaE4jd+NeKvQLs?=
- =?us-ascii?Q?sDtiZc8Uk8uNK/MdvK23YGFOvJyRmuiEEIrRleOTVfZpC2WrMVX8fueHcto5?=
- =?us-ascii?Q?Drn9fpcojBf2wuV10K8NLOoZSINXoXe0Ys6bXpdW+fnZlqXsyg//EkMWu0/s?=
- =?us-ascii?Q?uA=3D=3D?=
-X-OriginatorOrg: chipsnmedia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85e7ccff-13c7-4fcb-465e-08dc8eba20f0
-X-MS-Exchange-CrossTenant-AuthSource: SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 10:42:04.8461
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: leuwoIaEoegNJZi6iD44A3BQdNCZ+BI6rEuiZLQrQDtwgiS+n+qROp2QjeB7iVrFKgxlrd6Nt6f5ObengUenN80w/EXKJ2ybXGG2oTWaIfQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SL2P216MB3099
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/2] arm64: qcom: Add BWMON support for SA8775p
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <krzysztof.kozlowski@linaro.org>, <djakov@kernel.org>, <robh@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20240617092940.1724962-1-quic_tengfan@quicinc.com>
+ <yb3ni6o22zdm2lqodj7utdb2dlg3jkbwzutxhmljxle3syoe5y@op2prslmri4y>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <yb3ni6o22zdm2lqodj7utdb2dlg3jkbwzutxhmljxle3syoe5y@op2prslmri4y>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mEQjeyQ3u3zLNnSMTaiIYoE__gGc83dK
+X-Proofpoint-ORIG-GUID: mEQjeyQ3u3zLNnSMTaiIYoE__gGc83dK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_09,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 mlxlogscore=976 spamscore=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 mlxscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406170082
 
-From: "jackson.lee" <jackson.lee@chipsnmedia.com>
 
-Add support for the YUV422P, NV16, NV61, YUV422M, NV16M,
-NV61M raw pixel-formats to the Wave5 encoder.
 
-All these formats have a chroma subsampling ratio of 4:2:2 and
-therefore require a new image size calculation as the driver
-previously only handled a ratio of 4:2:0.
+On 6/17/2024 5:43 PM, Dmitry Baryshkov wrote:
+> On Mon, Jun 17, 2024 at 05:29:38PM GMT, Tengfei Fan wrote:
+>> Add CPU and LLCC BWMON nodes and their corresponding OPP tables for
+>> SA8775p SoC.
+> 
+> This series is marked as RFC, Request For Comments. What kind of
+> comments are expected for the series?
+> 
 
-Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
-Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
----
- .../chips-media/wave5/wave5-vpu-enc.c         | 89 +++++++++++++++----
- 1 file changed, 74 insertions(+), 15 deletions(-)
+I found that the BWMON patch for x1e80100[1] is currently under review. 
+There are upstream comments suggesting that we reference the same shared 
+OPP table from all the BWMONs that share the same OPP table. However, 
+there will be some DTBS CHECK warnings[2] if we do reference the same 
+shared OPP table.
 
-diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-index a470f24cbabe..fee24b427fd1 100644
---- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-+++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-@@ -66,6 +66,30 @@ static const struct vpu_format enc_fmt_list[FMT_TYPES][MAX_FMTS] = {
- 			.v4l2_pix_fmt = V4L2_PIX_FMT_NV21M,
- 			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
- 		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_YUV422P,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_NV16,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_NV61,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_YUV422M,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_NV16M,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_NV61M,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
- 	}
- };
- 
-@@ -109,13 +133,26 @@ static int start_encode(struct vpu_instance *inst, u32 *fail_res)
- 	struct vb2_v4l2_buffer *dst_buf;
- 	struct frame_buffer frame_buf;
- 	struct enc_param pic_param;
--	u32 stride = ALIGN(inst->dst_fmt.width, 32);
--	u32 luma_size = (stride * inst->dst_fmt.height);
--	u32 chroma_size = ((stride / 2) * (inst->dst_fmt.height / 2));
-+	const struct v4l2_format_info *info;
-+	u32 stride = inst->src_fmt.plane_fmt[0].bytesperline;
-+	u32 luma_size = 0;
-+	u32 chroma_size = 0;
- 
- 	memset(&pic_param, 0, sizeof(struct enc_param));
- 	memset(&frame_buf, 0, sizeof(struct frame_buffer));
- 
-+	info = v4l2_format_info(inst->src_fmt.pixelformat);
-+	if (!info)
-+		return -EINVAL;
-+
-+	if (info->mem_planes == 1) {
-+		luma_size = stride * inst->dst_fmt.height;
-+		chroma_size = luma_size / (info->hdiv * info->vdiv);
-+	} else {
-+		luma_size = inst->src_fmt.plane_fmt[0].sizeimage;
-+		chroma_size = inst->src_fmt.plane_fmt[1].sizeimage;
-+	}
-+
- 	dst_buf = v4l2_m2m_next_dst_buf(m2m_ctx);
- 	if (!dst_buf) {
- 		dev_dbg(inst->dev->dev, "%s: No destination buffer found\n", __func__);
-@@ -480,6 +517,7 @@ static int wave5_vpu_enc_s_fmt_out(struct file *file, void *fh, struct v4l2_form
- {
- 	struct vpu_instance *inst = wave5_to_vpu_inst(fh);
- 	const struct vpu_format *vpu_fmt;
-+	const struct v4l2_format_info *info;
- 	int i, ret;
- 
- 	dev_dbg(inst->dev->dev, "%s: fourcc: %u width: %u height: %u num_planes: %u field: %u\n",
-@@ -501,16 +539,20 @@ static int wave5_vpu_enc_s_fmt_out(struct file *file, void *fh, struct v4l2_form
- 		inst->src_fmt.plane_fmt[i].sizeimage = f->fmt.pix_mp.plane_fmt[i].sizeimage;
- 	}
- 
--	if (inst->src_fmt.pixelformat == V4L2_PIX_FMT_NV12 ||
--	    inst->src_fmt.pixelformat == V4L2_PIX_FMT_NV12M) {
--		inst->cbcr_interleave = true;
--		inst->nv21 = false;
--	} else if (inst->src_fmt.pixelformat == V4L2_PIX_FMT_NV21 ||
--		   inst->src_fmt.pixelformat == V4L2_PIX_FMT_NV21M) {
--		inst->cbcr_interleave = true;
-+	info = v4l2_format_info(inst->src_fmt.pixelformat);
-+	if (!info)
-+		return -EINVAL;
-+
-+	inst->cbcr_interleave = (info->comp_planes == 2) ? true : false;
-+
-+	switch (inst->src_fmt.pixelformat) {
-+	case V4L2_PIX_FMT_NV21:
-+	case V4L2_PIX_FMT_NV21M:
-+	case V4L2_PIX_FMT_NV61:
-+	case V4L2_PIX_FMT_NV61M:
- 		inst->nv21 = true;
--	} else {
--		inst->cbcr_interleave = false;
-+		break;
-+	default:
- 		inst->nv21 = false;
- 	}
- 
-@@ -1095,13 +1137,23 @@ static void wave5_vpu_enc_buf_queue(struct vb2_buffer *vb)
- 	v4l2_m2m_buf_queue(m2m_ctx, vbuf);
- }
- 
--static void wave5_set_enc_openparam(struct enc_open_param *open_param,
--				    struct vpu_instance *inst)
-+static int wave5_set_enc_openparam(struct enc_open_param *open_param,
-+				   struct vpu_instance *inst)
- {
- 	struct enc_wave_param input = inst->enc_param;
-+	const struct v4l2_format_info *info;
- 	u32 num_ctu_row = ALIGN(inst->dst_fmt.height, 64) / 64;
- 	u32 num_mb_row = ALIGN(inst->dst_fmt.height, 16) / 16;
- 
-+	info = v4l2_format_info(inst->src_fmt.pixelformat);
-+	if (!info)
-+		return -EINVAL;
-+
-+	if (info->hdiv == 2 && info->vdiv == 1)
-+		open_param->src_format = FORMAT_422;
-+	else
-+		open_param->src_format = FORMAT_420;
-+
- 	open_param->wave_param.gop_preset_idx = PRESET_IDX_IPP_SINGLE;
- 	open_param->wave_param.hvs_qp_scale = 2;
- 	open_param->wave_param.hvs_max_delta_qp = 10;
-@@ -1190,6 +1242,8 @@ static void wave5_set_enc_openparam(struct enc_open_param *open_param,
- 			open_param->wave_param.intra_refresh_arg = num_ctu_row;
- 	}
- 	open_param->wave_param.forced_idr_header_enable = input.forced_idr_header_enable;
-+
-+	return 0;
- }
- 
- static int initialize_sequence(struct vpu_instance *inst)
-@@ -1285,7 +1339,12 @@ static int wave5_vpu_enc_start_streaming(struct vb2_queue *q, unsigned int count
- 
- 		memset(&open_param, 0, sizeof(struct enc_open_param));
- 
--		wave5_set_enc_openparam(&open_param, inst);
-+		ret = wave5_set_enc_openparam(&open_param, inst);
-+		if (ret) {
-+			dev_dbg(inst->dev->dev, "%s: wave5_set_enc_openparam, fail: %d\n",
-+				__func__, ret);
-+			goto return_buffers;
-+		}
- 
- 		ret = wave5_vpu_enc_open(inst, &open_param);
- 		if (ret) {
+Therefore, I pushed this patch series to collect some comments on 
+whether we can have separate OPP tables for each BWMON, as the OPP table 
+of "pmu@90b5400" and "pmu@90b6400" in this patch series.
+
+[1] 
+https://lore.kernel.org/lkml/4ef1d9a9-6a0e-4324-b6d5-2ae225855b03@linaro.org/
+
+[2]
+arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: pmu@90b5400: 'opp-table' is a 
+required property from schema $id:
+http://devicetree.org/schemas/interconnect/qcom,msm8998-bwmon.yaml#
+
+>>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>>
+>> This patch series depends on patch series:
+>> "[PATCH 2/4] soc: qcom: icc-bwmon: Allow for interrupts to be shared across instances"
+>> https://lore.kernel.org/lkml/20240604011157.2358019-3-quic_sibis@quicinc.com/
+>>
+>> Tengfei Fan (2):
+>>    dt-bindings: interconnect: qcom-bwmon: Document SA8775p bwmon
+>>      compatibles
+>>    arm64: dts: qcom: sa8775p: Add CPU and LLCC BWMON
+>>
+>>   .../interconnect/qcom,msm8998-bwmon.yaml      |   2 +
+>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 115 ++++++++++++++++++
+>>   2 files changed, 117 insertions(+)
+>>
+>>
+>> base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+>> -- 
+>> 2.25.1
+>>
+> 
+
 -- 
-2.43.0
-
+Thx and BRs,
+Tengfei Fan
 
