@@ -1,276 +1,240 @@
-Return-Path: <linux-kernel+bounces-218160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA92D90BA24
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:53:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE1290B9F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70B54B24DAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:42:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD461C233AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4DD198E77;
-	Mon, 17 Jun 2024 18:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B65C19883C;
+	Mon, 17 Jun 2024 18:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwLOWmne"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qa9djcRu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17D415ECDB;
-	Mon, 17 Jun 2024 18:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D634178387;
+	Mon, 17 Jun 2024 18:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718649736; cv=none; b=ipdEG2MxfBH6ah1tHJPzW4+x174hnF6XZy+akdDZxFjy3duwQCT/lmV5KBdPVza/nFUfMggVhqCZqN5DN4KxofVnJlWzzBDmopsCLCRtAEm1cfyVtSNZ0yuTv+FMtaGnB9HjqXbczpFQt/S91Mvv40Q45O9C7w06C4REgs0Ugfw=
+	t=1718649796; cv=none; b=byYxv3bQPlXNH8XZBKWmaY7lTPeEoSaTIZDYFoKCRiVVV9JgzHByAF7upnqjO4dHf/9D3r8Z+XGg20Ub8THfT0NVQ8DF2VtmY5OS7SBSovnY+hV1Nc1yhgGIb2BOGp42t0Wxil92tRqrWiEHKuYpqxbI5tPErQZVfZq9xXhwYHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718649736; c=relaxed/simple;
-	bh=Flz2Pil2geTTJPxA2CBnOZsQd4N0qDIllekhZBSDWlc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C3HPX2fyS78d7CFkJbjv3pvVSbLkc9v0zy07nUrrIG5ZJdFVohZKmQg3ppmlSj2G2TtXzL97/T5ZvwKwKUb7DCYIEcvI1YSi/z70u5ihmqkLp4YQ1Z4UCgoXLkRTQiBjA3dHX4y2jq1kNPwpV7saWPUFmw5KGA1uagE4nOb51EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SwLOWmne; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc29c79fdso6411089e87.1;
-        Mon, 17 Jun 2024 11:42:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718649733; x=1719254533; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+jO2FlPNmcOLf+hC3upZKg3SDI4/5kwrnW8GkxW5YVg=;
-        b=SwLOWmnegBDu0JkvO8Nk44GF2tkUWJquyl78o3MaKsdamsvDPkuile/bqycsEgFeF7
-         8s33oHaK6l/o743r8T5vismpctgIlDtjjllhCfzevHkT+v+hfpf4ZwQNnlWOHYdOCaIk
-         xK+w8r94y3an1iV5Stw7kumo8GZ7uLcBfrLQTHxbRTtZ8hP8KcKCSc9bXUuwZykj86ME
-         x69lW4t7agK2tRS0aZhqHAlf0AcG5fWl7W6/xJDv0Yc3P7fILbomIs13vHnECCpCfWnM
-         jRa/hXtYC5cYMbixNz2uaJyEiiS49XVkqe9pC9L0qoZQcc4CnAZg2PzexSiYEsFER4Pz
-         Zbjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718649733; x=1719254533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+jO2FlPNmcOLf+hC3upZKg3SDI4/5kwrnW8GkxW5YVg=;
-        b=r3s+YBbYVCO1EXoT35oXlqzer01navZiyQ8ZKgXuh5Dvu2NaMzoGPcIbVkyhuMxY81
-         te72gjyDM0a3Y6SD21PH+tC5PBVK2z1scxiueUAPYnXKnK4xIW1nnHmqJM+Whgzeg/Qq
-         e1q1gMvzV8MYF3latzb+6758KqPKJ0Mcr2AodbqJUEYe1ZpjXlRuiGjASO1xb5wV8bsI
-         jWcKrDXIPaMYObErrIMb6t6A7isZ2hGBCOE7PqED7uj2sBZKmf3SI2WcJuT8SFArN5qU
-         4B1MSVtzK6SvXZV7WOrePmGOEu8OPACy1oZoReF6q9KCwjkNeATEzvGBrdywZW3qz1bN
-         5rNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBIoYHB9zvqJj4LsEW2GeviCD5HM88aqJbhuk47uLFXWV9FivIwO6Y5hRIr2Pimuh/QSQ55rvni9Np4X6kzm4wjbq+9SEl92AeLUb9bVIXW67DdTudWrJRre01EQ5Yx3IVwVtndrMEpc3uir/incEz9Qv0vhsVf73sxDC0IeRKnItKYpN76lzxTy8ZpxKGo6Ngkulb2IrgN5LBWEizXOgrp3xovPWWtF77qezmnjDxPFaws/stttvTlJQxoJXPmYvCitoTsL9SCH7LQbi7cImAeHuGTsiP9vJoxh++axXZWGZ9zygTOgTfG6uvnc3vG1CPGuzY1LhhVtQCMon4h2Fs+wtadwid4j3O//wbZhLTWURZ99MWaUPqAaRmOhZwRlByMN1dO/HArmpSudpMX/511257pJID0mUKXB7r/pdfGBBNhOQ/+rYHjOwisQ==
-X-Gm-Message-State: AOJu0YwVFGEmtLJjAKw5bzc7E2Lo58Cs6RtBmVGcfv1YkiQzcDnHEZkj
-	llZs4TMim1bpGZhR6H/p9hq/cumeC3MuulPqnANwthc9DKr4A425
-X-Google-Smtp-Source: AGHT+IG+He9esutTE4DcK6Uo+MkQ9CT1wI+N+kkdrm92KSfS1cK189MGjfkb18QFb85ZwtxeC6GLJw==
-X-Received: by 2002:a05:6512:549:b0:521:cc8a:46dd with SMTP id 2adb3069b0e04-52ca6e56e2dmr7855127e87.11.1718649732281;
-        Mon, 17 Jun 2024 11:42:12 -0700 (PDT)
-Received: from pc636 (host-185-121-47-193.sydskane.nu. [185.121.47.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db6182sm540019666b.51.2024.06.17.11.42.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 11:42:11 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 17 Jun 2024 20:42:09 +0200
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: paulmck@kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <ZnCDgdg1EH6V7w5d@pc636>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <Zmov7ZaL-54T9GiM@zx2c4.com>
- <Zmo9-YGraiCj5-MI@zx2c4.com>
- <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
- <Zmrkkel0Fo4_g75a@zx2c4.com>
- <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
- <3b6fe525-626c-41fb-8625-3925ca820d8e@paulmck-laptop>
- <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
+	s=arc-20240116; t=1718649796; c=relaxed/simple;
+	bh=V0ku5sxdL8qo384e1iG5kKYdsUFz8tB9PL/67myO7kA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rqt6Z7z9LjxZHOVcj9cuRedwC2Da87sTS1lGzFvPW//vogvh7q8yStW6eJdJS1pi4uX7Xuf2oLcKs5t25q0WtFdqh2vxed8YzE5zX+BIR/T9PGx51y7GrUil0OykJW8UewYbOB0qg9N8rn82TzpTpmfJPFTfHzvZx20nrrT/WYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qa9djcRu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F591C4AF1C;
+	Mon, 17 Jun 2024 18:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718649796;
+	bh=V0ku5sxdL8qo384e1iG5kKYdsUFz8tB9PL/67myO7kA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qa9djcRueWKcaNGYiIHiwMLF1J0ZV+pF29DnsG0cO16kCT/XPX5FN5kFbiPELQQTx
+	 R7N4dT/3XkLdM2LlSIgLRIKLM8HMDvZEwfdz+eJz8jJ9bSgyOM03mAk1Cq8NU5OE2T
+	 Ehslhc1mwinSx1YksCRukAuagnMX7Bq3OIQmfGTqtV7x8Il1uNfy8TMZ2qotVm4HZU
+	 /f0t/GgBvSAmhxrsZuYxjoMyjCilsEZRr4QMeTZ35WrEEDzSRy42T74iJJgtyFUunc
+	 l9FoRJbdy6BKmstdiCipKrAGTJho7i/j0I9yiQdlzV0SdfAg51E4t7hI6WJWPyhtvs
+	 vVuadv1fsY3QA==
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f98e321a8aso128406a34.3;
+        Mon, 17 Jun 2024 11:43:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVDFYP1l6pO7aU+SGGynnNYQvkQL/+k9tumIyB0qZR+nQlVXdVHyyL2gQXzPaQ+RIogsiUDxLg+csWkYVNRYqPzd7vli6/BGZW2ttQ6iU+c5LK8cWdmhIwKGpnCBgPdBSZAsjYHiF4UwQ==
+X-Gm-Message-State: AOJu0YwEu5a7wlzTipUY5Fhi92hzIiqVYzPtvAh7169C0jHeg7kTauJf
+	lJJwSu3dc8Piu+HWc6vav7T9tvhNFbNs+FSAhjaF2IazYbG+pXiLsHrd/CBm/ucL7eKn4bn4yau
+	b9mbcvMPGFqNdVcRkXw9Q5vAi19Y=
+X-Google-Smtp-Source: AGHT+IHFvMDDR3EP9d6d3cAPgTivz/ja/DXVGoxUkeRpGuN+toQyEFczK7wQaj+Ix05m2DqUkxzOVjcsAWXqTpTv7RE=
+X-Received: by 2002:a05:6820:287:b0:5ba:ca8a:6598 with SMTP id
+ 006d021491bc7-5bdad9f3131mr10530296eaf.0.1718649795206; Mon, 17 Jun 2024
+ 11:43:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
+References: <20240613-acpi-sysfs-groups-v1-0-665e0deb052a@weissschuh.net>
+ <20240613-acpi-sysfs-groups-v1-1-665e0deb052a@weissschuh.net> <CAJZ5v0iHB1X7WM6Lg_-vr3Kzwp65yqjvHG9CA_X8vqFBFV_F_A@mail.gmail.com>
+In-Reply-To: <CAJZ5v0iHB1X7WM6Lg_-vr3Kzwp65yqjvHG9CA_X8vqFBFV_F_A@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 17 Jun 2024 20:43:03 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gmHPBS3LE+Eo8yJkvpuavBvip-1AEEEf9nxAp2gi_adQ@mail.gmail.com>
+Message-ID: <CAJZ5v0gmHPBS3LE+Eo8yJkvpuavBvip-1AEEEf9nxAp2gi_adQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] ACPI: sysfs: convert utf-16 from _STR to utf-8 only once
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 07:23:36PM +0200, Vlastimil Babka wrote:
-> On 6/17/24 6:12 PM, Paul E. McKenney wrote:
-> > On Mon, Jun 17, 2024 at 05:10:50PM +0200, Vlastimil Babka wrote:
-> >> On 6/13/24 2:22 PM, Jason A. Donenfeld wrote:
-> >> > On Wed, Jun 12, 2024 at 08:38:02PM -0700, Paul E. McKenney wrote:
-> >> >> o	Make the current kmem_cache_destroy() asynchronously wait for
-> >> >> 	all memory to be returned, then complete the destruction.
-> >> >> 	(This gets rid of a valuable debugging technique because
-> >> >> 	in normal use, it is a bug to attempt to destroy a kmem_cache
-> >> >> 	that has objects still allocated.)
-> >> 
-> >> This seems like the best option to me. As Jason already said, the debugging
-> >> technique is not affected significantly, if the warning just occurs
-> >> asynchronously later. The module can be already unloaded at that point, as
-> >> the leak is never checked programatically anyway to control further
-> >> execution, it's just a splat in dmesg.
-> > 
-> > Works for me!
-> 
-> Great. So this is how a prototype could look like, hopefully? The kunit test
-> does generate the splat for me, which should be because the rcu_barrier() in
-> the implementation (marked to be replaced with the real thing) is really
-> insufficient. Note the test itself passes as this kind of error isn't wired
-> up properly.
-> 
-> Another thing to resolve is the marked comment about kasan_shutdown() with
-> potential kfree_rcu()'s in flight.
-> 
-> Also you need CONFIG_SLUB_DEBUG enabled otherwise node_nr_slabs() is a no-op
-> and it might fail to notice the pending slabs. This will need to change.
-> 
-> ----8<----
-> diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
-> index e6667a28c014..e3e4d0ca40b7 100644
-> --- a/lib/slub_kunit.c
-> +++ b/lib/slub_kunit.c
-> @@ -5,6 +5,7 @@
->  #include <linux/slab.h>
->  #include <linux/module.h>
->  #include <linux/kernel.h>
-> +#include <linux/rcupdate.h>
->  #include "../mm/slab.h"
->  
->  static struct kunit_resource resource;
-> @@ -157,6 +158,26 @@ static void test_kmalloc_redzone_access(struct kunit *test)
->  	kmem_cache_destroy(s);
->  }
->  
-> +struct test_kfree_rcu_struct {
-> +	struct rcu_head rcu;
-> +};
-> +
-> +static void test_kfree_rcu(struct kunit *test)
-> +{
-> +	struct kmem_cache *s = test_kmem_cache_create("TestSlub_kfree_rcu",
-> +				sizeof(struct test_kfree_rcu_struct),
-> +				SLAB_NO_MERGE);
-> +	struct test_kfree_rcu_struct *p = kmem_cache_alloc(s, GFP_KERNEL);
-> +
-> +	kasan_disable_current();
-> +
-> +	KUNIT_EXPECT_EQ(test, 0, slab_errors);
-> +
-> +	kasan_enable_current();
-> +	kfree_rcu(p, rcu);
-> +	kmem_cache_destroy(s);
-> +}
-> +
->  static int test_init(struct kunit *test)
->  {
->  	slab_errors = 0;
-> @@ -177,6 +198,7 @@ static struct kunit_case test_cases[] = {
->  
->  	KUNIT_CASE(test_clobber_redzone_free),
->  	KUNIT_CASE(test_kmalloc_redzone_access),
-> +	KUNIT_CASE(test_kfree_rcu),
->  	{}
->  };
->  
-> diff --git a/mm/slab.h b/mm/slab.h
-> index b16e63191578..a0295600af92 100644
-> --- a/mm/slab.h
-> +++ b/mm/slab.h
-> @@ -277,6 +277,8 @@ struct kmem_cache {
->  	unsigned int red_left_pad;	/* Left redzone padding size */
->  	const char *name;		/* Name (only for display!) */
->  	struct list_head list;		/* List of slab caches */
-> +	struct work_struct async_destroy_work;
-> +
->  #ifdef CONFIG_SYSFS
->  	struct kobject kobj;		/* For sysfs */
->  #endif
-> @@ -474,7 +476,7 @@ static inline bool is_kmalloc_cache(struct kmem_cache *s)
->  			      SLAB_NO_USER_FLAGS)
->  
->  bool __kmem_cache_empty(struct kmem_cache *);
-> -int __kmem_cache_shutdown(struct kmem_cache *);
-> +int __kmem_cache_shutdown(struct kmem_cache *, bool);
->  void __kmem_cache_release(struct kmem_cache *);
->  int __kmem_cache_shrink(struct kmem_cache *);
->  void slab_kmem_cache_release(struct kmem_cache *);
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 5b1f996bed06..c5c356d0235d 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -44,6 +44,8 @@ static LIST_HEAD(slab_caches_to_rcu_destroy);
->  static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work);
->  static DECLARE_WORK(slab_caches_to_rcu_destroy_work,
->  		    slab_caches_to_rcu_destroy_workfn);
-> +static void kmem_cache_kfree_rcu_destroy_workfn(struct work_struct *work);
-> +
->  
->  /*
->   * Set of flags that will prevent slab merging
-> @@ -234,6 +236,7 @@ static struct kmem_cache *create_cache(const char *name,
->  
->  	s->refcount = 1;
->  	list_add(&s->list, &slab_caches);
-> +	INIT_WORK(&s->async_destroy_work, kmem_cache_kfree_rcu_destroy_workfn);
->  	return s;
->  
->  out_free_cache:
-> @@ -449,12 +452,16 @@ static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work)
->  	}
->  }
->  
-> -static int shutdown_cache(struct kmem_cache *s)
-> +static int shutdown_cache(struct kmem_cache *s, bool warn_inuse)
->  {
->  	/* free asan quarantined objects */
-> +	/*
-> +	 * XXX: is it ok to call this multiple times? and what happens with a
-> +	 * kfree_rcu() in flight that finishes after or in parallel with this?
-> +	 */
->  	kasan_cache_shutdown(s);
->  
-> -	if (__kmem_cache_shutdown(s) != 0)
-> +	if (__kmem_cache_shutdown(s, warn_inuse) != 0)
->  		return -EBUSY;
->  
->  	list_del(&s->list);
-> @@ -477,6 +484,32 @@ void slab_kmem_cache_release(struct kmem_cache *s)
->  	kmem_cache_free(kmem_cache, s);
->  }
->  
-> +static void kmem_cache_kfree_rcu_destroy_workfn(struct work_struct *work)
-> +{
-> +	struct kmem_cache *s;
-> +	int err = -EBUSY;
-> +	bool rcu_set;
-> +
-> +	s = container_of(work, struct kmem_cache, async_destroy_work);
-> +
-> +	// XXX use the real kmem_cache_free_barrier() or similar thing here
-It implies that we need to introduce kfree_rcu_barrier(), a new API, which i
-wanted to avoid initially. Since you do it asynchronous can we just repeat
-and wait until it a cache is furry freed?
+On Mon, Jun 17, 2024 at 8:37=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Thu, Jun 13, 2024 at 10:15=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@wei=
+ssschuh.net> wrote:
+> >
+> > The ACPI _STR method returns an UTF-16 string that is converted to utf-=
+8
+> > before printing it in sysfs.
+> > Currently this conversion is performed every time the "description"
+> > sysfs attribute is read, which is not necessary.
+>
+> Why is it a problem, though?
+>
+> How many devices have _STR and how much of the time is it used?
+>
+> Hint: On the system I'm sitting in front of, the answer is 0 and never.
 
-I am asking because inventing a new kfree_rcu_barrier() might not be so
-straight forward.
+This was actually factually incorrect, sorry.
 
---
-Uladzislau Rezki
+The correct answer is 12 out of 247 and very rarely (if at all).
+Which doesn't really change the point IMO.
+
+> So Is it really worth adding an _STR string pointer to every struct acpi_=
+device?
+>
+> > Only perform the conversion once and cache the result.
+> >
+> > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> > ---
+> >  drivers/acpi/device_sysfs.c | 63 ++++++++++++++++++++++++++++---------=
+--------
+> >  include/acpi/acpi_bus.h     |  2 +-
+> >  2 files changed, 40 insertions(+), 25 deletions(-)
+>
+> And it's more lines of code even.
+>
+> >
+> > diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
+> > index 23373faa35ec..4bedbe8f57ed 100644
+> > --- a/drivers/acpi/device_sysfs.c
+> > +++ b/drivers/acpi/device_sysfs.c
+> > @@ -439,24 +439,11 @@ static ssize_t description_show(struct device *de=
+v,
+> >                                 char *buf)
+> >  {
+> >         struct acpi_device *acpi_dev =3D to_acpi_device(dev);
+> > -       int result;
+> >
+> > -       if (acpi_dev->pnp.str_obj =3D=3D NULL)
+> > +       if (acpi_dev->pnp.str =3D=3D NULL)
+> >                 return 0;
+> >
+> > -       /*
+> > -        * The _STR object contains a Unicode identifier for a device.
+> > -        * We need to convert to utf-8 so it can be displayed.
+> > -        */
+> > -       result =3D utf16s_to_utf8s(
+> > -               (wchar_t *)acpi_dev->pnp.str_obj->buffer.pointer,
+> > -               acpi_dev->pnp.str_obj->buffer.length,
+> > -               UTF16_LITTLE_ENDIAN, buf,
+> > -               PAGE_SIZE - 1);
+> > -
+> > -       buf[result++] =3D '\n';
+> > -
+> > -       return result;
+> > +       return sysfs_emit("%s\n", acpi_dev->pnp.str);
+> >  }
+> >  static DEVICE_ATTR_RO(description);
+> >
+> > @@ -507,14 +494,46 @@ static ssize_t status_show(struct device *dev, st=
+ruct device_attribute *attr,
+> >  }
+> >  static DEVICE_ATTR_RO(status);
+> >
+> > +static const char *acpi_device_str(struct acpi_device *dev)
+> > +{
+> > +       struct acpi_buffer buffer =3D {ACPI_ALLOCATE_BUFFER, NULL};
+> > +       union acpi_object *str_obj;
+> > +       acpi_status status;
+> > +       const char *ret;
+> > +       char buf[512];
+> > +       int result;
+> > +
+> > +       if (!acpi_has_method(dev->handle, "_STR"))
+> > +               return NULL;
+> > +
+> > +       status =3D acpi_evaluate_object(dev->handle, "_STR",
+> > +                                     NULL, &buffer);
+> > +       if (ACPI_FAILURE(status))
+> > +               return NULL;
+> > +
+> > +       str_obj =3D buffer.pointer;
+> > +       /*
+> > +        * The _STR object contains a Unicode identifier for a device.
+> > +        * We need to convert to utf-8 so it can be displayed.
+> > +        */
+> > +       result =3D utf16s_to_utf8s((wchar_t *)str_obj->buffer.pointer,
+> > +                                str_obj->buffer.length,
+> > +                                UTF16_LITTLE_ENDIAN,
+> > +                                buf, sizeof(buf) - 1);
+> > +       buf[result++] =3D '\0';
+> > +
+> > +       ret =3D kstrdup(buf, GFP_KERNEL);
+> > +       kfree(buffer.pointer);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> >  /**
+> >   * acpi_device_setup_files - Create sysfs attributes of an ACPI device=
+.
+> >   * @dev: ACPI device object.
+> >   */
+> >  int acpi_device_setup_files(struct acpi_device *dev)
+> >  {
+> > -       struct acpi_buffer buffer =3D {ACPI_ALLOCATE_BUFFER, NULL};
+> > -       acpi_status status;
+> >         int result =3D 0;
+> >
+> >         /*
+> > @@ -539,12 +558,8 @@ int acpi_device_setup_files(struct acpi_device *de=
+v)
+> >         /*
+> >          * If device has _STR, 'description' file is created
+> >          */
+> > -       if (acpi_has_method(dev->handle, "_STR")) {
+> > -               status =3D acpi_evaluate_object(dev->handle, "_STR",
+> > -                                       NULL, &buffer);
+> > -               if (ACPI_FAILURE(status))
+> > -                       buffer.pointer =3D NULL;
+> > -               dev->pnp.str_obj =3D buffer.pointer;
+> > +       dev->pnp.str =3D acpi_device_str(dev);
+> > +       if (dev->pnp.str) {
+> >                 result =3D device_create_file(&dev->dev, &dev_attr_desc=
+ription);
+> >                 if (result)
+> >                         goto end;
+> > @@ -618,7 +633,7 @@ void acpi_device_remove_files(struct acpi_device *d=
+ev)
+> >          * If device has _STR, remove 'description' file
+> >          */
+> >         if (acpi_has_method(dev->handle, "_STR")) {
+> > -               kfree(dev->pnp.str_obj);
+> > +               kfree(dev->pnp.str);
+> >                 device_remove_file(&dev->dev, &dev_attr_description);
+> >         }
+> >         /*
+> > diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> > index 1a4dfd7a1c4a..32e3105c9ece 100644
+> > --- a/include/acpi/acpi_bus.h
+> > +++ b/include/acpi/acpi_bus.h
+> > @@ -254,7 +254,7 @@ struct acpi_device_pnp {
+> >         struct list_head ids;           /* _HID and _CIDs */
+> >         acpi_device_name device_name;   /* Driver-determined */
+> >         acpi_device_class device_class; /*        "          */
+> > -       union acpi_object *str_obj;     /* unicode string for _STR meth=
+od */
+> > +       const char *str;                /* _STR */
+> >  };
+> >
+> >  #define acpi_device_bid(d)     ((d)->pnp.bus_id)
+> >
+> > --
+> > 2.45.2
+> >
+> >
 
