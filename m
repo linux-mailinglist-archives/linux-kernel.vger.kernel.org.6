@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-216923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A310890A8A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:39:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C94390A8A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567C51F21D24
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:39:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65B001C211EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1C2190662;
-	Mon, 17 Jun 2024 08:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VjYLWuY2"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC8319048B;
-	Mon, 17 Jun 2024 08:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82ED190496;
+	Mon, 17 Jun 2024 08:39:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1362319048B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718613569; cv=none; b=E1UIuB2szIslYZdCtLYY7itFZrnPX2Me3+uYxwq+LRVa3S/SsiWVH/xkWmHsFJZ7u3eKYQ0oNPimYtdfFl2vCXGs6BAbRXlY1nWSBHuECnwA5OBiEbTGe+a+iPjpV5ngY61hbod4TjxfsR2S3k2+NPmF5X+Rcfg1phyunbRqzbI=
+	t=1718613575; cv=none; b=ZHcBX8Oht5avyUF17z04y/rwoVJdHtrcBKYxk8CMbMWmGHlVTKAz0ONnOPhLSoo4Uur987JMVY25WBM3tKJ1pOiurXkxYnvm+ffYKwuQBmnXiFt5WdYE0PqRW/6ar4mgcBwwYw2qXuXk1i4QqPQ5DChzNjg4mLLuPmoJhyrpd/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718613569; c=relaxed/simple;
-	bh=NGzawbQFzzlStBHgqNSSGSxkI34bALkZ1eerHvEGUJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pUiuEemqu0nZCYXU3kQjCTxkN6wnkkEd+Sb8lsD/otJSTQ9fMOwW1YADcN/oqXx1hLK2pNJbsFBMVuSzGsQjE3IlUWoxiXdpVQC6yPW+3z9x5K850EsgWcfzNdHrgVk3jZHTnUWhMZEtQL02zUauXw3JoNO5HX30gAgR4WCfJDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VjYLWuY2; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 17BE340E021A;
-	Mon, 17 Jun 2024 08:39:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 5RvHKJP8QKWj; Mon, 17 Jun 2024 08:39:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718613560; bh=NJ7nN9pQjl1VOGiirNtVZHlQR6bnwKbT1TCjSyF+yVs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VjYLWuY2RN88v7bp7298JlYGMgNHxGammOKKTTvsxXINjH1T5tmDSeiLW4SA6uYvx
-	 mY85sZYU4SR9U81c0IHAaD7T0tja+QKLqBZGjcQePEguTS4159vRc/RqEqzp3DmBpy
-	 8+/NwW7NB50fDjdH6fWGwgHVBTPt/C+7VSDCloPb28WpUTBMEUFqT9MdQuII0BmIRa
-	 NrnXX/R6dfH7lmTp0Fe4l7lpekeHOjsk+ELejQKvXlX4u3IU8SZwhJuJXLD4J457Wd
-	 W/fcTfobp0CWlFJN+BnJcaXPTNYB14IDanSRSMzDkUZ4d9uO2DthPksCoBWOhdmYfN
-	 8Wwdf/yUSLKH/A50jIkVXBpXESubgUTRm/wFLLswO5b2MgFo+uWCUGOw2ueQR17zhn
-	 9VQW6bGXyMI4Tw4dwDEfziGpyciNHqhCGUvHr2TkTd4VdC9SALZkRk0wdpxDBc7khy
-	 5SV0ufTNJRot10YkQRBF9PJRoQsqurqEMlpiuizFrpIMR6QHFIR3E02ntCr/SZI9U3
-	 0Rany5gZ4i237Gt915qBv1GFP4HesryAAhx3ZBT/eRbRXClRGg3ixy3ddkHni/QjSn
-	 96A5w2o6ile5YbGP0aHaiPR6aToIxJHcbiNsSZCDWA7U4HrUd84CmAinqoWowU4cmv
-	 qljfIG0RAk2wpTLNTHiLvu08=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1654140E01A5;
-	Mon, 17 Jun 2024 08:39:08 +0000 (UTC)
-Date: Mon, 17 Jun 2024 10:39:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Perry Yuan <perry.yuan@amd.com>
-Cc: rafael.j.wysocki@intel.com, Mario.Limonciello@amd.com,
-	viresh.kumar@linaro.org, Ray.Huang@amd.com, gautham.shenoy@amd.com,
-	Alexander.Deucher@amd.com, Xinmei.Huang@amd.com,
-	Xiaojian.Du@amd.com, Li.Meng@amd.com, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/11] x86/cpufeatures: Add feature bits for AMD
- heterogeneous processor
-Message-ID: <20240617083902.GEZm_2JjnNvHaT0Knq@fat_crate.local>
-References: <cover.1718606975.git.perry.yuan@amd.com>
- <4416ff72ea5a33173b69561803f1578073baccae.1718606975.git.perry.yuan@amd.com>
+	s=arc-20240116; t=1718613575; c=relaxed/simple;
+	bh=68gVcPJPwkAvKmwvYBmrBCVBXLWxg+lDjFNwSP7LpZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TSRmBYNRLG9EAhTrn0FNKvY+j8qBdl+lRDPyYrFZR6p+O8+h7nAYsSFXPswpKGEqqivzWy5spbDZ2zQPcVy2+NS9C4fjcfriZ96w0T+9sOQFX21Bb4i3CFLD/C3NIksqnOZiWwwWw7fQfn3xDWq+/50+h8fFWc0C5sj+VLltAJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1087FDA7;
+	Mon, 17 Jun 2024 01:39:57 -0700 (PDT)
+Received: from [10.162.16.42] (a077893.blr.arm.com [10.162.16.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 675723F64C;
+	Mon, 17 Jun 2024 01:39:30 -0700 (PDT)
+Message-ID: <cea3ced2-b8b3-426b-8c40-a47881a5bff6@arm.com>
+Date: Mon, 17 Jun 2024 14:09:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4416ff72ea5a33173b69561803f1578073baccae.1718606975.git.perry.yuan@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/mm: Drop ESR_ELx_FSC_TYPE
+Content-Language: en-US
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+ ryan.roberts@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+References: <20240613094538.3263536-1-anshuman.khandual@arm.com>
+ <86y179jdbx.wl-maz@kernel.org> <ca66f7ac-97d5-474d-bec4-d0ff79c08eaa@arm.com>
+ <87cyoj3j44.wl-maz@kernel.org> <45ace175-9b59-4ba2-91b8-b96151c03c05@arm.com>
+ <86iky8j9ow.wl-maz@kernel.org>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <86iky8j9ow.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 17, 2024 at 02:59:10PM +0800, Perry Yuan wrote:
-> CPUID leaf 0x80000026 advertises core types with different efficiency rankings
+
+
+On 6/17/24 13:13, Marc Zyngier wrote:
+> On Mon, 17 Jun 2024 04:15:40 +0100,
+> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>>
+>> Does the following re-worked patch looks okay ? Earlier set_thread_esr() changes
+>> can be dropped from arch/arm64/mm/fault.c and also the original commit message
+>> still makes sense.
+>>
+>> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+>> index 7abf09df7033..6cd13ac61005 100644
+>> --- a/arch/arm64/include/asm/esr.h
+>> +++ b/arch/arm64/include/asm/esr.h
+>> @@ -121,6 +121,13 @@
+>>  #define ESR_ELx_FSC_SECC       (0x18)
+>>  #define ESR_ELx_FSC_SECC_TTW(n)        (0x1c + (n))
+>>  
+>> +/* Status codes for individual page table levels */
+>> +#define ESR_ELx_FSC_ACCESS_L(n)        (ESR_ELx_FSC_ACCESS + n)
+>> +#define ESR_ELx_FSC_FAULT_nL   (0x2C)
+>> +#define ESR_ELx_FSC_FAULT_L(n) (((n) < 0 ? ESR_ELx_FSC_FAULT_nL : \
+>> +                                           ESR_ELx_FSC_FAULT) + (n))
+>> +#define ESR_ELx_FSC_PERM_L(n)  (ESR_ELx_FSC_PERM + n)
+>> +
+>>  /* ISS field definitions for Data Aborts */
+>>  #define ESR_ELx_ISV_SHIFT      (24)
+>>  #define ESR_ELx_ISV            (UL(1) << ESR_ELx_ISV_SHIFT)
+>> @@ -388,20 +395,33 @@ static inline bool esr_is_data_abort(unsigned long esr)
+>>  
+>>  static inline bool esr_fsc_is_translation_fault(unsigned long esr)
+>>  {
+>> -       /* Translation fault, level -1 */
+>> -       if ((esr & ESR_ELx_FSC) == 0b101011)
+>> -               return true;
+>> -       return (esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_FAULT;
+>> +       esr = esr & ESR_ELx_FSC;
+>> +
+>> +       return (esr == ESR_ELx_FSC_FAULT_L(3)) ||
+>> +              (esr == ESR_ELx_FSC_FAULT_L(2)) ||
+>> +              (esr == ESR_ELx_FSC_FAULT_L(1)) ||
+>> +              (esr == ESR_ELx_FSC_FAULT_L(0)) ||
+>> +              (esr == ESR_ELx_FSC_FAULT_L(-1));
+>>  }
+>>  
+>>  static inline bool esr_fsc_is_permission_fault(unsigned long esr)
+>>  {
+>> -       return (esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_PERM;
+>> +       esr = esr & ESR_ELx_FSC;
+>> +
+>> +       return (esr == ESR_ELx_FSC_PERM_L(3)) ||
+>> +              (esr == ESR_ELx_FSC_PERM_L(2)) ||
+>> +              (esr == ESR_ELx_FSC_PERM_L(1)) ||
+>> +              (esr == ESR_ELx_FSC_PERM_L(0));
+>>  }
+>>  
+>>  static inline bool esr_fsc_is_access_flag_fault(unsigned long esr)
+>>  {
+>> -       return (esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_ACCESS;
+>> +       esr = esr & ESR_ELx_FSC;
+>> +
+>> +       return (esr == ESR_ELx_FSC_ACCESS_L(3)) ||
+>> +              (esr == ESR_ELx_FSC_ACCESS_L(2)) ||
+>> +              (esr == ESR_ELx_FSC_ACCESS_L(1)) ||
+>> +              (esr == ESR_ELx_FSC_ACCESS_L(0));
+>>  }
+>>  
+>>  /* Indicate whether ESR.EC==0x1A is for an ERETAx instruction */
 > 
-> Bit 30 indicates the heterogeneous core topology feature, if the bit
-> set, it means not all instances at the current hierarchical level have
-> the same core topology.
-> 
-> For better utilization of feature words and help to identify core type,
-> X86_FEATURE_HETERO_CORE_TOPOLOGY is added as a few scattered feature bits.
-> 
-> Reference:
-> See the page 119 of PPR for AMD Family 19h Model 61h B1, docID 56713
-> 
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> ---
->  arch/x86/include/asm/cpufeatures.h | 1 +
->  arch/x86/kernel/cpu/scattered.c    | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 6c128d463a14..eceaa0df0137 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -471,6 +471,7 @@
->  #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* "" BHI_DIS_S HW control enabled */
->  #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* "" Clear branch history at vmexit using SW loop */
->  #define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* "" AMD Fast CPPC */
-> +#define X86_FEATURE_HETERO_CORE_TOPOLOGY       (21*32+ 6) /* "" Heterogeneous Core Topology */
->  
->  /*
->   * BUG word(s)
-> diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
-> index c84c30188fdf..6b3477503dd0 100644
-> --- a/arch/x86/kernel/cpu/scattered.c
-> +++ b/arch/x86/kernel/cpu/scattered.c
-> @@ -52,6 +52,7 @@ static const struct cpuid_bit cpuid_bits[] = {
->  	{ X86_FEATURE_PERFMON_V2,	CPUID_EAX,  0, 0x80000022, 0 },
->  	{ X86_FEATURE_AMD_LBR_V2,	CPUID_EAX,  1, 0x80000022, 0 },
->  	{ X86_FEATURE_AMD_LBR_PMC_FREEZE,	CPUID_EAX,  2, 0x80000022, 0 },
-> +	{ X86_FEATURE_HETERO_CORE_TOPOLOGY,     CPUID_EAX,  30, 0x80000026, 0 },
->  	{ 0, 0, 0, 0, 0 }
->  };
->  
-> -- 
+> This looks better indeed.
 
-Nacked-by: Borislav Petkov (AMD) <bp@alien8.de>
+Thanks Marc.
 
-Until all review comments have been addressed:
+Hello Mark/Ryan,
 
-https://lore.kernel.org/r/20240611105216.GAZmgsYC-J_yLfdupF@fat_crate.local
+Could I still keep your tags for the patch, or it's better to just
+drop them as there are some new changes being folded in. Please do
+advise. Thank you.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+- Anshuman
 
