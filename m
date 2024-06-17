@@ -1,555 +1,233 @@
-Return-Path: <linux-kernel+bounces-217240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E258890AD3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:46:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C291790AD44
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CF731F20EE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:46:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 348B428527B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F9F194AD0;
-	Mon, 17 Jun 2024 11:46:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B7B194C6B;
+	Mon, 17 Jun 2024 11:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fX0Oq7yz"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2083.outbound.protection.outlook.com [40.107.94.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A277193065
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718624784; cv=none; b=uVo5pe1+6dn0W3ik+CtfeCfofHxkRFrdSPi953DpHVypraI/qkz3Mj+TPWNHUXrFvoA9R+XGoEsucGH8n7liN0WhtWfDngqbZE50DGErc9zGHau9++uV8q6/DFme2cCmsFgXfSlbCUc0fhu2uOvPIDt+TKwOisjipui4KTrnoOY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718624784; c=relaxed/simple;
-	bh=VlJ5J9pZQ0M7PDCWB+NdhhSZorAccfOa2nkTpZBiK7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ihuufFzNnCiUTMtf7cNR3O9HmI+9JbauiRN8oTrb3M63CMrPt/wZ09qV36X4WjR85nZ3Sq6HAVV4h/jy3i7ZA/z+X+PKTz5YC6VQeSj1qRjMoMPnA96BXSLZCKwzf2RcoqzhvqC1BuZ8AAVhpuPGP2O9HoSBJauR+W0Xc2LNoyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sJAoF-0008Oy-8i; Mon, 17 Jun 2024 13:46:03 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sJAoD-002y1i-OA; Mon, 17 Jun 2024 13:46:01 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sJAoD-00G8wQ-26;
-	Mon, 17 Jun 2024 13:46:01 +0200
-Date: Mon, 17 Jun 2024 13:46:01 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	kernel@pengutronix.de, Jan Luebbe <jlu@pengutronix.de>
-Subject: Re: [PATCH v6 3/3] tools: usb: p9_fwd: add usb gadget packet
- forwarder script
-Message-ID: <ZnAh-fIAnlFo_a7y@pengutronix.de>
-References: <20240116-ml-topic-u9p-v6-0-695977d76dff@pengutronix.de>
- <20240116-ml-topic-u9p-v6-3-695977d76dff@pengutronix.de>
- <e6a39148-332d-4bed-900f-f22d131e2b29@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B1D18755A;
+	Mon, 17 Jun 2024 11:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718624890; cv=fail; b=JGUsuPXgqXVbwfM3F4toa4/M6WR6N1vHtANTn+N9S24EqYKhWz4XKQxeE5tuSepnO5tCgrA0BzG2OKGpT3RRYnmqrlNoroqoprBcxRhpAWmRc/EWeoFZE+ImHVw8vFy3PYZ/FxvlNAnJwz/fsBHSsRKhUVVybH/FIHk+dF8Opsk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718624890; c=relaxed/simple;
+	bh=kZH9x1QcIVSULBx6b2ChKxxG/D7kmn8hLwNTaes1DMc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dKV1jzLqmz3yUSyhIC7HpRPD6bZ/BDkR0WN9Z9LEkyvl9ZyDUUiTgQOKLCNV9VmcYR5JRSXuaqekBZcP3UBkIsZnUuz/JuAdkHARY0Q3RPhNz78RgKh1uSa7vJGxMfZHgNaY5zHPNU3ACXBdYGYrF5h3wiLBUgjsqlN9Px5Qth4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fX0Oq7yz; arc=fail smtp.client-ip=40.107.94.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HkjnC88Gn7AU0kHfCNpDavy6GzKtnf05viMHxBPafII8VlEncKV2/VxEIVOTDgI4YfdL9ROwn5+A04nZfCx/jtBxK4uObov+hI8gluu887OubRdARTLhAYgoh5P4Na2W7EVNd8jTOq0N4tDnIc0F4VspNyluXQjrcNrXD7thtc9CM0kZJs6ZP0rJVa0h5mOnG+iDGdGhwoO6vvcGsJv9EnNi3n65RFvac8UBrPSxEu25qabyipq52GZrIixR5/ETz93VMOkBqkFtzQ82XOKcKowQZMuG/aYxAMYS5cNrXbt04wym4gD268h48Vzc99Ltepn15os8YZ9AK8WxmGZjFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kZH9x1QcIVSULBx6b2ChKxxG/D7kmn8hLwNTaes1DMc=;
+ b=IneG+euDCIj59Z+lvi4wto5dwp1psWaX+cJAbChZnJQEoJ3VVxQqcYTlDKSd9uIEB4mYTBxcTQ8AYXvPCCKHP3FWcCOfSlQIlJz2wroIvc4lQ4C/nsiIM2NdFOukYEo3IKU2gi7nENB3ZtAUZRQVPc5kuwYjWngknP82YQia//ud550dawBojY7YCi972a4J/rkNgBkiPE04xUHQMP8bIeKSB4/RNkOwaXlw28Sp7tu9D5hM2mWIg6YWj3r7FqOUm9TBx+8MfNhQssU3DvFR9/De6aqkRR5ws23S09oDy7yIP0I5soRpCStpkpEDIVUTUr1ZJxmZp2fBmdk88Kj3BQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kZH9x1QcIVSULBx6b2ChKxxG/D7kmn8hLwNTaes1DMc=;
+ b=fX0Oq7yzQsB1T3460U92PQFmigic2AMymTjFTk82gFe/x1ojJuRX9qR9jDb29r3A6FSShc7TVYKFvONbxb5Hb2XADQ4egrhkKXgHUk1kjy7cMmj5Z+giQiDylMUgl3/VAbhA8W/Zmm+G3NLw5Mho2xB6Twr7hcAQB52HWtv0pZYUXfVTdIwBu7cLKCsuC0joqrZLY7/DDkaxZGlxQGXXdqEAF/TS3XtyWuOQF+ybcTdnSWBsmQthqs58rd8smI9DVFQu9ZUY9Kip/U8GOvO0b/0m8OlAh868I06gjmvC+qjHQ5uAPxsN77JTTCJ8O+43uIRcNlvy59Rh1woR0ytX2w==
+Received: from PH0PR12MB5481.namprd12.prod.outlook.com (2603:10b6:510:d4::15)
+ by CH3PR12MB8482.namprd12.prod.outlook.com (2603:10b6:610:15b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Mon, 17 Jun
+ 2024 11:48:02 +0000
+Received: from PH0PR12MB5481.namprd12.prod.outlook.com
+ ([fe80::361d:c9dd:4cf:7ffd]) by PH0PR12MB5481.namprd12.prod.outlook.com
+ ([fe80::361d:c9dd:4cf:7ffd%3]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
+ 11:48:02 +0000
+From: Parav Pandit <parav@nvidia.com>
+To: Jiri Pirko <jiri@resnulli.us>
+CC: Jason Wang <jasowang@redhat.com>, Jakub Kicinski <kuba@kernel.org>, Cindy
+ Lu <lulu@redhat.com>, Dragos Tatulea <dtatulea@nvidia.com>, "mst@redhat.com"
+	<mst@redhat.com>, "virtualization@lists.linux-foundation.org"
+	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: RE: [PATCH 1/2] vdpa: support set mac address from vdpa tool
+Thread-Topic: [PATCH 1/2] vdpa: support set mac address from vdpa tool
+Thread-Index:
+ AQHau8E82Oi/Eu4kG0WR1z2wkwF2SbHDYHEAgABL6oCAB4z7gIAAEN/AgAByw4CAAABP0IAAIUaAgAAArTA=
+Date: Mon, 17 Jun 2024 11:48:02 +0000
+Message-ID:
+ <PH0PR12MB548116966222E720D831AA4CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
+References: <20240611053239.516996-1-lulu@redhat.com>
+ <20240611185810.14b63d7d@kernel.org> <ZmlAYcRHMqCgYBJD@nanopsycho.orion>
+ <CACGkMEtKFZwPpzjNBv2j6Y5L=jYTrW4B8FnSLRMWb_AtqqSSDQ@mail.gmail.com>
+ <PH0PR12MB5481BAABF5C43F9500D2852CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
+ <ZnAETXPWG2BvyqSc@nanopsycho.orion>
+ <PH0PR12MB5481F6F62D8E47FB6DFAD206DCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
+ <ZnAgefA1ge11bbFp@nanopsycho.orion>
+In-Reply-To: <ZnAgefA1ge11bbFp@nanopsycho.orion>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR12MB5481:EE_|CH3PR12MB8482:EE_
+x-ms-office365-filtering-correlation-id: 3cb0d668-f27c-4516-ff67-08dc8ec3582c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|366013|376011|1800799021|38070700015;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?UTVWWjlxN3MxUnVQU09zc244anVLMDhwZ3BaU09hanVuZEJsK2tvdzJJQlN6?=
+ =?utf-8?B?Q1lNN0RaSmV2MXhCdXJZb2p2YzlQblFBcFNuQkNvUkdOa3M3eDIrb04vaXh2?=
+ =?utf-8?B?WVgzWDl3c3NCZ2NRUmNUajdNZWhRZWE4b2hEcDRSNlZkdnNjNmlTbmxXMUlp?=
+ =?utf-8?B?Uk1wSEJybUlVQVh5eWFZdXgwTEZTN25ZZTA5UEZNK29wcTVFOGJSZGpsSkF1?=
+ =?utf-8?B?Z0tGWkFacVgxZ1lUN0JpNEV0ZFJDem5KYU9sdDdCTmJSSjdFZXdrRW9VZm0v?=
+ =?utf-8?B?YUVrSk5lc256Q3VJVzJERExMU0lqUk92QjliRE13VlpENkZOaThNK1ByNGNz?=
+ =?utf-8?B?dW9GcFR3MjNTOUpMdzVId0ExZzhwSnJ5NGxkNklVV2VGNE8rV3NmREZZOFZq?=
+ =?utf-8?B?ZUxjSVF4azM1S1NFNU5CR1NhTjZyQk1Xa0prR1JuWnBCVGZHbkdHK0k1Z1hQ?=
+ =?utf-8?B?a2hPVzdldU9xb1Y0cktaYWFzQ2gzMTFCSjN0MnJZS2c0Ry9nQkYxRzlDY1dB?=
+ =?utf-8?B?ZVA4OGF6T2E1aXRUWW1NdGVvNmo1UzJJazFWcFd1d0VZQ0h2Qmk3ZktFekZ6?=
+ =?utf-8?B?MWN2QzNPeHV0cm5XTytyYS9uSy85SXg0TzA4YSs5ek1waUtvWnU4SS9zYzZP?=
+ =?utf-8?B?MEU3Wk9WQUtId3dnT2dCYkZXbkI0Q2JsR2g0L2xRUFduLzdueW1adEkvZkpv?=
+ =?utf-8?B?YmRPNEdzanE3YU5BMWxadEV6OG5nVCtmU05LRGo0NGplV1lZZHFWRlBOTnNo?=
+ =?utf-8?B?QnMrU0YzSS9kRDhoV0xtdDdHaDdqUGVER1hISlFjOW1PVEJIT0g0SWJuK01V?=
+ =?utf-8?B?TWhmQ1pBc1pFSEY3R3FhS0tzK2FJNlFrM1RaRlBtNWxkS2V0NzFJblkxc3pq?=
+ =?utf-8?B?TWNZWm9FU2pBY0lhNW1MU0Y1LzFjZnpVbnU5Sm9vZ3ZDdlFpZDRTR080c2I2?=
+ =?utf-8?B?VUNpVkwvNHIxWUlwUlZPd2xHcDdVUzZKcGNOM1hSU2Z6cnpocndjd252TzVT?=
+ =?utf-8?B?MzEzaTBGOENUK0Fvdnc4VVF1aVJJT2cyWEhidCt0TXNBaUpqSVl4TFNyd2JZ?=
+ =?utf-8?B?OFFhYnd1d0hQMDMvcEd5Y25CWG1ES2VtYjFkYXlodkFKN0N4RnBnYSt6UEZ1?=
+ =?utf-8?B?UUM3dmRDZVdvcXVtUlBadlRtQW9BZ1R2bzdYK01Pd2YxL0JPd3JQdFRlby9O?=
+ =?utf-8?B?T0laTjR1a1VnekJ5RVg5cUtkaFFWMGMwcit2RkpzK3ZGVE1ray9iVEFHdDRH?=
+ =?utf-8?B?K0hHK3J1dXR0bWhtWmNEZVZCVExuRG5abll0dW1wZCtRYjNDRmdtSWpEUTFk?=
+ =?utf-8?B?RGpxRlp0MllQa0Q1NElaNFh5YWVVa1dnZzB2bzFrZFg0YSsxOVYrUFNFWnpR?=
+ =?utf-8?B?d3BkcHlqTlZNWG5ZSGYwMUlNNDlOYlN2bE5jOS9vRlJIclllUmtDa0U0bnZT?=
+ =?utf-8?B?anp2Q2lLSkxZNSsraWFXOE9uS0xCQ0V1U3NRa3dZK3F0UjY5czlOQXZ5ZUsr?=
+ =?utf-8?B?ekUySk9TY0k4NFhIZDRMRWNaR3NTSEhrL0tHQ24vVUFmOTNCZkJHS0ZIYnhu?=
+ =?utf-8?B?RXNaUVlVbFJmTDZkYmMxaFZvYy9oRkxJcEUzcWZOWmNqZlpScVBrall6UUFy?=
+ =?utf-8?B?Zy9kMUFmcTVUM0Y5RTRmY24yV2U4ZDJYS1Fzcy9iZGZ1MDlVUVpXd0NraDBZ?=
+ =?utf-8?B?eVNoY3kxRVFrM0d3V3NXOGJqQyt0eERGYzY2VTJBRjl4LzJMdGNaelk1azRr?=
+ =?utf-8?B?YjY0OWtrazNGanloWTdVTGEvVHBSd1Z0SWpjb2FuYVlGMm0velZkdllOWGQz?=
+ =?utf-8?Q?8+rZuBXRDTDRFgGoA3KWX8NkWrm3LJ4hghT+Y=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB5481.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?SmNTcUoyMWh3SGRjdXJrMEN3NUZNZzczcHdta3ZJVXlQRkNlZDJuYitoZk4w?=
+ =?utf-8?B?emUrM2Y1ZHN6M1dGTnRDbzlIdnVKb3ZxQVNOTTAxSU5yNFNnbGVGam5vQWp2?=
+ =?utf-8?B?bmNnTlhPaHNUenhUM3pzYWtQVG5BNXV3eHJsODdCM0x2dEZteWxac2o0a1h6?=
+ =?utf-8?B?YkVwbVBJbjU5WnhrbjRMYlVrWXZadFBpbGlTOHNOekx6TVE4VDJWMHBaUFhL?=
+ =?utf-8?B?NmRFRzJGU0tXYSsyc1VvYnpNclRDdmg3d2ttRDBPTXZnMXduVXNiemNkUFN6?=
+ =?utf-8?B?L0lMRzlFK1ZmV3kyUUtDdzZnU2NqNzFIbWxLQ29EQlF4Zm1PcVNhVWV4cGpl?=
+ =?utf-8?B?dks3alRQanNWMDQzTWZKdTJMMmJVNlI4YnQ3TTBLcWgrclZHb0lncVRQeGU1?=
+ =?utf-8?B?QVZidFp3WnBnbi9rTkpRc29tZ2crcnlEUlFqL2dEbGg1ZUVvZnlvR1ZIOW5H?=
+ =?utf-8?B?SzZJZkJWZjVHekt1cWZRUTdkb3RRTzgwL1k5USsrQUsyVkRHZDg2eWdCeEtw?=
+ =?utf-8?B?cVhxL3FVU1RTMWFaNGpNMUVYMGl3bFhjTzFDTlhlZjVVTUZsRkN1UnZxNnJT?=
+ =?utf-8?B?KzVsSHpsd0habk5qbiszenBQY01DN2hRKzdCY2Q4ZTJiamlxRkYvRjc0TEZQ?=
+ =?utf-8?B?bVBzNndkY1lQOWpuSTB4ekFLMmpIeVhISXNnL2JPTS9YYUhEK3MrYkg4QTEx?=
+ =?utf-8?B?VVBLQkpnbkR5TGZPa2kxUEVRYWJBNlJRUEt6QzR2amJNblZEditkNHd4cmVT?=
+ =?utf-8?B?YUJ1cTQ2WGVkLzMrUzEwNVpHQllCYXA1SVNHSmhNWVg4SUVxL2ZEUGVPTkls?=
+ =?utf-8?B?Vkl3OWd1TGUvaGRmcWZqS25iczU2ZktOZXo0NjNhUzM3VFg4TGlvdTJKZjcr?=
+ =?utf-8?B?WkwxYjdPcW13Qnh0M1pPaVJFY2J0ZUtETEJVNnhmSjgyc1BnSjdOUlhQOFdE?=
+ =?utf-8?B?VUZyS3hOMGZlOUlzY0hoQjNKYjl4ejA0NEJBdktVbDB6TkVJa0pBUDdIdktj?=
+ =?utf-8?B?RkxzU2M1aWZxUURPaGNBY2FHQkluenBMamRVcmRGQUI2amgvejJhZXFTbTQ2?=
+ =?utf-8?B?blhHUTZmNG9RSE5NMS9Ray84cHY4VXhLN25kYStLbGVLQmlyay9WZE1VQjFt?=
+ =?utf-8?B?WnlZb0JubUpQUUpJUjM1WHF0dWZ1Q2JTcXlZYng5NWlmK25LbHdjeG1RdHkx?=
+ =?utf-8?B?cCsrbC9KSEY2WHRkcGdJK3I1dWhWVHl6L2R5SFZ6bU5LOVR4dmtVTWVnOGdY?=
+ =?utf-8?B?aXNrcDdTQU4xNS9vNlduZEJVSk1QWUQwNWh2NllNSm5iTnAvSEd5TDZ5MmpV?=
+ =?utf-8?B?TUFlK1NRT2swYWtJV0RDRWw0Vy9rN1IvV0ZyLzdrSjVOWlhmNTVNaFFLaEYw?=
+ =?utf-8?B?dEQxdklBT0NFcW1CMnFwZmNoY1hZVzM5bGlvTlpvWU9vN2NGQnhLK1hEMHlT?=
+ =?utf-8?B?NmZiUkRTclNDMll5L0hxUno1azlaOGNNRUtad21FcktsOFpwdjlJQ1orVkZu?=
+ =?utf-8?B?d1pIbDhLUVdzTjNBMEhmRFJ3VU1rOG5KeXlGbVlUdGhOcVNURlRSMGwva0pV?=
+ =?utf-8?B?MnlUeHpFNldsRnhYUnBTalZ3UzVubDRFUTFGTE0yVk9naWJOTm9RODEvSlZX?=
+ =?utf-8?B?Ujlua2p0Z0MvSVZjd0N0bWZEU0xRa09NM2ZEK0hrZWlEaTNsTnhmV3plQzZH?=
+ =?utf-8?B?Uk5wLzE3ZFJnNWE3YjJJZlVqMnJCV2xHTWY4Zld6bVFzenhVLzQzVkFVZzQx?=
+ =?utf-8?B?MThHZTZQV3lKU3czWjJod20vRkJFL0RDeDVEb2JIM2hrd1ZmNGprUUpEdEpT?=
+ =?utf-8?B?L3dVdk1EWFFSTnMwaVVaRmFlejR4dmNReDNkZ25BNHZkak1UUzVmNkNxWDE3?=
+ =?utf-8?B?eHhZYVFwYmJHaDFMUXVJdnpVUnpPekJKSVJZRDdWRlVLTExROHEyak9iSEU2?=
+ =?utf-8?B?R3hDeFBCSm0zVW9nTzBpcWdTOXF5K0FoVFQxaGhiNE1yOE1DTG5wejA4TTdR?=
+ =?utf-8?B?aUxFUFZpNXd2SURvakdXRFZjSjBNOFFUdU81RU9ac2drR1pxOVYzSmVodzhX?=
+ =?utf-8?B?bTNqd3hVdHZ3SjJXdGdpS1hEeVVmS3dtNnZhK3hJT3FwVlg2TEgzVWFTTTJG?=
+ =?utf-8?Q?4r3s=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="n4Q/i+JIH56pJ4Mh"
-Content-Disposition: inline
-In-Reply-To: <e6a39148-332d-4bed-900f-f22d131e2b29@collabora.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB5481.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cb0d668-f27c-4516-ff67-08dc8ec3582c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2024 11:48:02.8455
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: L974MrVjXH4QUgNVtCG2NYar/ErFz4dUMSMiRyOd6Rl6STbV8mkX8W4iaHtlZbFCobVZq0NtdmCMYysrBdJBYA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8482
 
-
---n4Q/i+JIH56pJ4Mh
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jun 06, 2024 at 10:19:33AM +0200, Andrzej Pietrasiewicz wrote:
->Hi,
->
->W dniu 5.06.2024 o=A015:32, Michael Grzeschik pisze:
->>This patch is adding an small python tool to forward 9pfs requests
->>from the USB gadget to an existing 9pfs TCP server. Since currently all
->>9pfs servers lack support for the usb transport this tool is an useful
->>helper to get started.
->>
->>Refer the Documentation section "USBG Example" in
->>Documentation/filesystems/9p.rst on how to use it.
->>
->>Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
->>Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
->>
->
->This time --id alone worked for me (as well as --id combined with --path)
->but --path alone did not:
-
-This is currently right and expected. Why is using path alone of any
-more use? Since you could then grab any device with two bulk endpoints
-without even ensuring that it is supposed to behave as expected with
-this script.
-
-
->$ sudo python3 tools/usb/p9_fwd.py --id 0xabcd:0xef01 list
->Bus | Addr | Manufacturer     | Product          | ID        | Path
->--- | ---- | ---------------- | ---------------- | --------- | ----
->  3 |   39 | unknown          | unknown          | abcd:ef01 | 3-1.3.3.5.4
->
->$ sudo python3 tools/usb/p9_fwd.py --id 0xabcd:0xef01 connect -p 9999
->2024-06-06 10:14:45,368 INFO     found device: 3/39 located at 3-1.3.3.5.4
->2024-06-06 10:14:45,369 INFO     claiming interface:
->    INTERFACE 0: Vendor Specific =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->     bLength            :    0x9 (9 bytes)
->     bDescriptorType    :    0x4 Interface
->     bInterfaceNumber   :    0x0
->     bAlternateSetting  :    0x0
->     bNumEndpoints      :    0x2
->     bInterfaceClass    :   0xff Vendor Specific
->     bInterfaceSubClass :   0xff
->     bInterfaceProtocol :    0x9
->     iInterface         :    0x1 usb9pfs input to output
->      ENDPOINT 0x81: Bulk IN =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->       bLength          :    0x7 (7 bytes)
->       bDescriptorType  :    0x5 Endpoint
->       bEndpointAddress :   0x81 IN
->       bmAttributes     :    0x2 Bulk
->       wMaxPacketSize   :  0x200 (512 bytes)
->       bInterval        :    0x0
->      ENDPOINT 0x1: Bulk OUT =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->       bLength          :    0x7 (7 bytes)
->       bDescriptorType  :    0x5 Endpoint
->       bEndpointAddress :    0x1 OUT
->       bmAttributes     :    0x2 Bulk
->       wMaxPacketSize   :  0x200 (512 bytes)
->       bInterval        :    0x0
->2024-06-06 10:14:45,370 INFO     interface claimed
->2024-06-06 10:14:45,370 INFO     connected to server
->^C
->
->$ sudo python3 tools/usb/p9_fwd.py --path 3-1.3.3.5.4 connect -p 9999
->Traceback (most recent call last):
->  File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 243, in <m=
-odule>
->    main()
->  File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 239, in ma=
-in
->    args.func(args)
->  File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 190, in co=
-nnect
->    f =3D Forwarder(server=3D(args.server, args.port), vid=3Dvid, pid=3Dpi=
-d, path=3Dargs.path)
->  File "/home/ap/Collabora/kernel-rk/tools/usb/p9_fwd.py", line 60, in __i=
-nit__
->    raise ValueError("Device not found")
->ValueError: Device not found
->
->
->>---
->>v5 -> v6:
->>   - set path parameter to None when unused
->>v4 -> v5:
->>   - updated documentation for new subcommands list/connect
->>   - run ruff format
->>   - make vid and pid parameterized
->>   - add list as subcommand to scan for devices
->>   - move connect to extra subcommand
->>v3 -> v4: -
->>v2 -> v3: -
->>v1 -> v2:
->>   - added usbg 9pfs detailed instructions to 9p.rst doc
->>---
->>  Documentation/filesystems/9p.rst |  41 +++++++
->>  tools/usb/p9_fwd.py              | 243 ++++++++++++++++++++++++++++++++=
-+++++++
->>  2 files changed, 284 insertions(+)
->>
->>diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems=
-/9p.rst
->>index 10cf79dc287f8..2cc85f3e8659f 100644
->>--- a/Documentation/filesystems/9p.rst
->>+++ b/Documentation/filesystems/9p.rst
->>@@ -67,6 +67,47 @@ To mount a 9p FS on a USB Host accessible via the gadg=
-et as root filesystem::
->>  where <device> is the tag associated by the usb gadget transport.
->>  It is defined by the configfs instance name.
->>+USBG Example
->>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>+
->>+The USB host exports a filesystem, while the gadget on the USB device
->>+side makes it mountable.
->>+
->>+Diod (9pfs server) and the forwarder are on the development host, where
->>+the root filesystem is actually stored. The gadget is initialized during
->>+boot (or later) on the embedded board. Then the forwarder will find it
->>+on the USB bus and start forwarding requests.
->>+
->>+In this case the 9p requests come from the device and are handled by the
->>+host. The reason is that USB device ports are normally not available on
->>+PCs, so a connection in the other direction would not work.
->>+
->>+When using the usbg transport, for now there is no native usb host
->>+service capable to handle the requests from the gadget driver. For
->>+this we have to use the extra python tool p9_fwd.py from tools/usb.
->>+
->>+Just start the 9pfs capable network server like diod/nfs-ganesha e.g.:
->>+
->>+        $ diod -f -n -d 0 -S -l 0.0.0.0:9999 -e $PWD
->>+
->>+Optionaly scan your bus if there are more then one usbg gadgets to find =
-their path:
->>+
->>+        $ python $kernel_dir/tools/usb/p9_fwd.py list
->>+
->>+        Bus | Addr | Manufacturer     | Product          | ID        | P=
-ath
->>+        --- | ---- | ---------------- | ---------------- | --------- | -=
----
->>+          2 |   67 | unknown          | unknown          | 1d6b:0109 | 2=
--1.1.2
->>+          2 |   68 | unknown          | unknown          | 1d6b:0109 | 2=
--1.1.3
->>+
->>+Then start the python transport:
->>+
->>+        $ python $kernel_dir/tools/usb/p9_fwd.py --path 2-1.1.2 connect =
--p 9999
->>+
->>+After that the gadget driver can be used as described above.
->>+
->>+One use-case is to use it as an alternative to NFS root booting during
->>+the development of embedded Linux devices.
->>+
->>  Options
->>  =3D=3D=3D=3D=3D=3D=3D
->>diff --git a/tools/usb/p9_fwd.py b/tools/usb/p9_fwd.py
->>new file mode 100755
->>index 0000000000000..12c76cbb046b7
->>--- /dev/null
->>+++ b/tools/usb/p9_fwd.py
->>@@ -0,0 +1,243 @@
->>+#!/usr/bin/env python3
->>+# SPDX-License-Identifier: GPL-2.0
->>+
->>+import argparse
->>+import errno
->>+import logging
->>+import socket
->>+import struct
->>+import time
->>+
->>+import usb.core
->>+import usb.util
->>+
->>+
->>+def path_from_usb_dev(dev):
->>+    """Takes a pyUSB device as argument and returns a string.
->>+    The string is a Path representation of the position of the USB devic=
-e on the USB bus tree.
->>+
->>+    This path is used to find a USB device on the bus or all devices con=
-nected to a HUB.
->>+    The path is made up of the number of the USB controller followed be =
-the ports of the HUB tree."""
->>+    if dev.port_numbers:
->>+        dev_path =3D ".".join(str(i) for i in dev.port_numbers)
->>+        return f"{dev.bus}-{dev_path}"
->>+    return ""
->>+
->>+
->>+HEXDUMP_FILTER =3D "".join(chr(x).isprintable() and chr(x) or "." for x =
-in range(128)) + "." * 128
->>+
->>+
->>+class Forwarder:
->>+    @staticmethod
->>+    def _log_hexdump(data):
->>+        if not logging.root.isEnabledFor(logging.TRACE):
->>+            return
->>+        L =3D 16
->>+        for c in range(0, len(data), L):
->>+            chars =3D data[c : c + L]
->>+            dump =3D " ".join(f"{x:02x}" for x in chars)
->>+            printable =3D "".join(HEXDUMP_FILTER[x] for x in chars)
->>+            line =3D f"{c:08x}  {dump:{L*3}s} |{printable:{L}s}|"
->>+            logging.root.log(logging.TRACE, "%s", line)
->>+
->>+    def __init__(self, server, vid, pid, path):
->>+        self.stats =3D {
->>+            "c2s packets": 0,
->>+            "c2s bytes": 0,
->>+            "s2c packets": 0,
->>+            "s2c bytes": 0,
->>+        }
->>+        self.stats_logged =3D time.monotonic()
->>+
->>+        def find_filter(dev):
->>+            dev_path =3D path_from_usb_dev(dev)
->>+            if path is not None:
->>+                return dev_path =3D=3D path
->>+            return True
->>+
->>+        dev =3D usb.core.find(idVendor=3Dvid, idProduct=3Dpid, custom_ma=
-tch=3Dfind_filter)
->>+        if dev is None:
->>+            raise ValueError("Device not found")
->>+
->>+        logging.info(f"found device: {dev.bus}/{dev.address} located at =
-{path_from_usb_dev(dev)}")
->>+
->>+        # dev.set_configuration() is not necessary since g_multi has onl=
-y one
->>+        usb9pfs =3D None
->>+        # g_multi adds 9pfs as last interface
->>+        cfg =3D dev.get_active_configuration()
->>+        for intf in cfg:
->>+            # we have to detach the usb-storage driver from multi gadget=
- since
->>+            # stall option could be set, which will lead to spontaneous =
-port
->>+            # resets and our transfers will run dead
->>+            if intf.bInterfaceClass =3D=3D 0x08:
->>+                if dev.is_kernel_driver_active(intf.bInterfaceNumber):
->>+                    dev.detach_kernel_driver(intf.bInterfaceNumber)
->>+
->>+            if intf.bInterfaceClass =3D=3D 0xFF and intf.bInterfaceSubCl=
-ass =3D=3D 0xFF and intf.bInterfaceProtocol =3D=3D 0x09:
->>+                usb9pfs =3D intf
->>+        if usb9pfs is None:
->>+            raise ValueError("Interface not found")
->>+
->>+        logging.info(f"claiming interface:\n{usb9pfs}")
->>+        usb.util.claim_interface(dev, usb9pfs.bInterfaceNumber)
->>+        ep_out =3D usb.util.find_descriptor(
->>+            usb9pfs,
->>+            custom_match=3Dlambda e: usb.util.endpoint_direction(e.bEndp=
-ointAddress) =3D=3D usb.util.ENDPOINT_OUT,
->>+        )
->>+        assert ep_out is not None
->>+        ep_in =3D usb.util.find_descriptor(
->>+            usb9pfs,
->>+            custom_match=3Dlambda e: usb.util.endpoint_direction(e.bEndp=
-ointAddress) =3D=3D usb.util.ENDPOINT_IN,
->>+        )
->>+        assert ep_in is not None
->>+        logging.info("interface claimed")
->>+
->>+        self.ep_out =3D ep_out
->>+        self.ep_in =3D ep_in
->>+        self.dev =3D dev
->>+
->>+        # create and connect socket
->>+        self.s =3D socket.socket(socket.AF_INET, socket.SOCK_STREAM)
->>+        self.s.connect(server)
->>+
->>+        logging.info("connected to server")
->>+
->>+    def c2s(self):
->>+        """forward a request from the USB client to the TCP server"""
->>+        data =3D None
->>+        while data is None:
->>+            try:
->>+                logging.log(logging.TRACE, "c2s: reading")
->>+                data =3D self.ep_in.read(self.ep_in.wMaxPacketSize)
->>+            except usb.core.USBTimeoutError:
->>+                logging.log(logging.TRACE, "c2s: reading timed out")
->>+                continue
->>+            except usb.core.USBError as e:
->>+                if e.errno =3D=3D errno.EIO:
->>+                    logging.debug("c2s: reading failed with %s, retrying=
-", repr(e))
->>+                    time.sleep(0.5)
->>+                    continue
->>+                logging.error("c2s: reading failed with %s, aborting", r=
-epr(e))
->>+                raise
->>+        size =3D struct.unpack("<I", data[:4])[0]
->>+        while len(data) < size:
->>+            data +=3D self.ep_in.read(size - len(data))
->>+        logging.log(logging.TRACE, "c2s: writing")
->>+        self._log_hexdump(data)
->>+        self.s.send(data)
->>+        logging.debug("c2s: forwarded %i bytes", size)
->>+        self.stats["c2s packets"] +=3D 1
->>+        self.stats["c2s bytes"] +=3D size
->>+
->>+    def s2c(self):
->>+        """forward a response from the TCP server to the USB client"""
->>+        logging.log(logging.TRACE, "s2c: reading")
->>+        data =3D self.s.recv(4)
->>+        size =3D struct.unpack("<I", data[:4])[0]
->>+        while len(data) < size:
->>+            data +=3D self.s.recv(size - len(data))
->>+        logging.log(logging.TRACE, "s2c: writing")
->>+        self._log_hexdump(data)
->>+        while data:
->>+            written =3D self.ep_out.write(data)
->>+            assert written > 0
->>+            data =3D data[written:]
->>+        if size % self.ep_out.wMaxPacketSize =3D=3D 0:
->>+            logging.log(logging.TRACE, "sending zero length packet")
->>+            self.ep_out.write(b"")
->>+        logging.debug("s2c: forwarded %i bytes", size)
->>+        self.stats["s2c packets"] +=3D 1
->>+        self.stats["s2c bytes"] +=3D size
->>+
->>+    def log_stats(self):
->>+        logging.info("statistics:")
->>+        for k, v in self.stats.items():
->>+            logging.info(f"  {k+':':14s} {v}")
->>+
->>+    def log_stats_interval(self, interval=3D5):
->>+        if (time.monotonic() - self.stats_logged) < interval:
->>+            return
->>+
->>+        self.log_stats()
->>+        self.stats_logged =3D time.monotonic()
->>+
->>+
->>+def try_get_usb_str(dev, name):
->>+    try:
->>+        with open(f"/sys/bus/usb/devices/{dev.bus}-{dev.address}/{name}"=
-) as f:
->>+            return f.read().strip()
->>+    except FileNotFoundError:
->>+        return None
->>+
->>+
->>+def list_usb(args):
->>+    vid, pid =3D [int(x, 16) for x in args.id.split(":", 1)]
->>+
->>+    print("Bus | Addr | Manufacturer     | Product          | ID        =
-| Path")
->>+    print("--- | ---- | ---------------- | ---------------- | --------- =
-| ----")
->>+    for dev in usb.core.find(find_all=3DTrue, idVendor=3Dvid, idProduct=
-=3Dpid):
->>+        path =3D path_from_usb_dev(dev) or ""
->>+        manufacturer =3D try_get_usb_str(dev, "manufacturer") or "unknow=
-n"
->>+        product =3D try_get_usb_str(dev, "product") or "unknown"
->>+        print(
->>+            f"{dev.bus:3} | {dev.address:4} | {manufacturer:16} | {produ=
-ct:16} | {dev.idVendor:04x}:{dev.idProduct:04x} | {path:18}"
->>+        )
->>+
->>+
->>+def connect(args):
->>+    vid, pid =3D [int(x, 16) for x in args.id.split(":", 1)]
->>+
->>+    f =3D Forwarder(server=3D(args.server, args.port), vid=3Dvid, pid=3D=
-pid, path=3Dargs.path)
->>+
->>+    try:
->>+        while True:
->>+            f.c2s()
->>+            f.s2c()
->>+            f.log_stats_interval()
->>+    finally:
->>+        f.log_stats()
->>+
->>+
->>+def main():
->>+    parser =3D argparse.ArgumentParser(
->>+        description=3D"Forward 9PFS requests from USB to TCP",
->>+    )
->>+
->>+    parser.add_argument("--id", type=3Dstr, default=3D"1d6b:0109", help=
-=3D"vid:pid of target device")
->>+    parser.add_argument("--path", type=3Dstr, required=3DFalse, help=3D"=
-path of target device")
->>+    parser.add_argument("-v", "--verbose", action=3D"count", default=3D0)
->>+
->>+    subparsers =3D parser.add_subparsers()
->>+    subparsers.required =3D True
->>+    subparsers.dest =3D "command"
->>+
->>+    parser_list =3D subparsers.add_parser("list", help=3D"List all conne=
-cted 9p gadgets")
->>+    parser_list.set_defaults(func=3Dlist_usb)
->>+
->>+    parser_connect =3D subparsers.add_parser(
->>+        "connect", help=3D"Forward messages between the usb9pfs gadget a=
-nd the 9p server"
->>+    )
->>+    parser_connect.set_defaults(func=3Dconnect)
->>+    connect_group =3D parser_connect.add_argument_group()
->>+    connect_group.required =3D True
->>+    parser_connect.add_argument("-s", "--server", type=3Dstr, default=3D=
-"127.0.0.1", help=3D"server hostname")
->>+    parser_connect.add_argument("-p", "--port", type=3Dint, default=3D56=
-4, help=3D"server port")
->>+
->>+    args =3D parser.parse_args()
->>+
->>+    logging.TRACE =3D logging.DEBUG - 5
->>+    logging.addLevelName(logging.TRACE, "TRACE")
->>+
->>+    if args.verbose >=3D 2:
->>+        level =3D logging.TRACE
->>+    elif args.verbose:
->>+        level =3D logging.DEBUG
->>+    else:
->>+        level =3D logging.INFO
->>+    logging.basicConfig(level=3Dlevel, format=3D"%(asctime)-15s %(leveln=
-ame)-8s %(message)s")
->>+
->>+    args.func(args)
->>+
->>+
->>+if __name__ =3D=3D "__main__":
->>+    main()
->>
->
->
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---n4Q/i+JIH56pJ4Mh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmZwIfYACgkQC+njFXoe
-LGQv4Q/9HkKxy/HTtpPntvfDedlmOiCBTHESnixLOYf+Piz44DvzGI63uRJWIqOA
-mpnASg7oGu2CIfF+laz0GWHUe+O8tsrGYSjRzq1V/Z22CwcegZb6Fy8sUguxhnbG
-im44W46PkEXv9E64NwzmUbpN5YjmwJ9gh60E48iA2KHc5foL6CKsii7p06EzZcT6
-eC/Bt5B55Pxl5y7pt7I+AYTIR30w6QLqDhD1VV50d8uEHm6XjCePX+4Xpu4dV9Di
-1lNMSsFXQgnaefONHy2aLw/HatzApootu5E0UO1BcjoId6ntkg8I7GXCzaVGW2UN
-Z5jPYN0LaQW0sXIAD/IYt/kdFG0P+Sukbt5Hi7epwJQgnVOrEUPmmC1+R/KAdcnO
-oj5VubEAIJ0rNQA5nEFeft9pXQRn2+8osxwdpVPrSEK2QhErMImGtWFy0iVjAwc1
-YwXVgz1sI/pGTt1ZfjFlG8kmUReXSSsknc6AwirZu2PEVuQjvF6PTiF7aYyLS3zx
-WglkHYbrr91Ar+1A52t97mkeq2OfAq2gs6gmeZrJnnL3u4kMzUWFGKrFZ82sdKW5
-6ekaguqrWf5pI2jNbtNY3tcqx969nGJXyHUNo7ZYyr1G/7MBIbKFCsn0gKCOAgHH
-e9xFva5QmRND2Hq810oERGGcbMyfrThn/X6P1uPBxbbRT8VcOzw=
-=/gp9
------END PGP SIGNATURE-----
-
---n4Q/i+JIH56pJ4Mh--
+DQo+IEZyb206IEppcmkgUGlya28gPGppcmlAcmVzbnVsbGkudXM+DQo+IFNlbnQ6IE1vbmRheSwg
+SnVuZSAxNywgMjAyNCA1OjEwIFBNDQo+IA0KPiBNb24sIEp1biAxNywgMjAyNCBhdCAxMTo0NDo1
+M0FNIENFU1QsIHBhcmF2QG52aWRpYS5jb20gd3JvdGU6DQo+ID4NCj4gPj4gRnJvbTogSmlyaSBQ
+aXJrbyA8amlyaUByZXNudWxsaS51cz4NCj4gPj4gU2VudDogTW9uZGF5LCBKdW5lIDE3LCAyMDI0
+IDM6MDkgUE0NCj4gPj4NCj4gPj4gTW9uLCBKdW4gMTcsIDIwMjQgYXQgMDQ6NTc6MjNBTSBDRVNU
+LCBwYXJhdkBudmlkaWEuY29tIHdyb3RlOg0KPiA+PiA+DQo+ID4+ID4NCj4gPj4gPj4gRnJvbTog
+SmFzb24gV2FuZyA8amFzb3dhbmdAcmVkaGF0LmNvbT4NCj4gPj4gPj4gU2VudDogTW9uZGF5LCBK
+dW5lIDE3LCAyMDI0IDc6MTggQU0NCj4gPj4gPj4NCj4gPj4gPj4gT24gV2VkLCBKdW4gMTIsIDIw
+MjQgYXQgMjozMOKAr1BNIEppcmkgUGlya28gPGppcmlAcmVzbnVsbGkudXM+IHdyb3RlOg0KPiA+
+PiA+PiA+DQo+ID4+ID4+ID4gV2VkLCBKdW4gMTIsIDIwMjQgYXQgMDM6NTg6MTBBTSBDRVNULCBr
+dWJhQGtlcm5lbC5vcmcgd3JvdGU6DQo+ID4+ID4+ID4gPk9uIFR1ZSwgMTEgSnVuIDIwMjQgMTM6
+MzI6MzIgKzA4MDAgQ2luZHkgTHUgd3JvdGU6DQo+ID4+ID4+ID4gPj4gQWRkIG5ldyBVQVBJIHRv
+IHN1cHBvcnQgdGhlIG1hYyBhZGRyZXNzIGZyb20gdmRwYSB0b29sDQo+ID4+ID4+ID4gPj4gRnVu
+Y3Rpb24NCj4gPj4gPj4gPiA+PiB2ZHBhX25sX2NtZF9kZXZfY29uZmlnX3NldF9kb2l0KCkgd2ls
+bCBnZXQgdGhlIE1BQyBhZGRyZXNzDQo+ID4+ID4+ID4gPj4gZnJvbSB0aGUgdmRwYSB0b29sIGFu
+ZCB0aGVuIHNldCBpdCB0byB0aGUgZGV2aWNlLg0KPiA+PiA+PiA+ID4+DQo+ID4+ID4+ID4gPj4g
+VGhlIHVzYWdlIGlzOiB2ZHBhIGRldiBzZXQgbmFtZSB2ZHBhX25hbWUgbWFjDQo+ID4+ID4+ID4g
+Pj4gKio6Kio6Kio6Kio6Kio6KioNCj4gPj4gPj4gPiA+DQo+ID4+ID4+ID4gPldoeSBkb24ndCB5
+b3UgdXNlIGRldmxpbms/DQo+ID4+ID4+ID4NCj4gPj4gPj4gPiBGYWlyIHF1ZXN0aW9uLiBXaHkg
+ZG9lcyB2ZHBhLXNwZWNpZmljIHVhcGkgZXZlbiBleGlzdD8gVG8gaGF2ZQ0KPiA+PiA+PiA+IGRy
+aXZlci1zcGVjaWZpYyB1YXBpIERvZXMgbm90IG1ha2UgYW55IHNlbnNlIHRvIG1lIDovDQo+ID4+
+ID4+DQo+ID4+ID4+IEl0IGNhbWUgd2l0aCBkZXZsaW5rIGZpcnN0IGFjdHVhbGx5LCBidXQgc3dp
+dGNoZWQgdG8gYSBkZWRpY2F0ZWQgdUFQSS4NCj4gPj4gPj4NCj4gPj4gPj4gUGFyYXYoY2NlZCkg
+bWF5IGV4cGxhaW4gbW9yZSBoZXJlLg0KPiA+PiA+Pg0KPiA+PiA+RGV2bGluayBjb25maWd1cmVz
+IGZ1bmN0aW9uIGxldmVsIG1hYyB0aGF0IGFwcGxpZXMgdG8gYWxsIHByb3RvY29sDQo+ID4+ID5k
+ZXZpY2VzDQo+ID4+ICh2ZHBhLCByZG1hLCBuZXRkZXYpIGV0Yy4NCj4gPj4gPkFkZGl0aW9uYWxs
+eSwgdmRwYSBkZXZpY2UgbGV2ZWwgbWFjIGNhbiBiZSBkaWZmZXJlbnQgKGFuIGFkZGl0aW9uYWwN
+Cj4gPj4gPm9uZSkgdG8NCj4gPj4gYXBwbHkgdG8gb25seSB2ZHBhIHRyYWZmaWMuDQo+ID4+ID5I
+ZW5jZSBkZWRpY2F0ZWQgdUFQSSB3YXMgYWRkZWQuDQo+ID4+DQo+ID4+IFRoZXJlIGlzIDE6MSBy
+ZWxhdGlvbiBiZXR3ZWVuIHZkcGEgaW5zdGFuY2UgYW5kIGRldmxpbmsgcG9ydCwgaXNuJ3QgaXQ/
+DQo+ID4+IFRoZW4gd2UgaGF2ZToNCj4gPj4gICAgICAgIGRldmxpbmsgcG9ydCBmdW5jdGlvbiBz
+ZXQgREVWL1BPUlRfSU5ERVggaHdfYWRkciBBRERSDQo+ID4+DQo+ID5BYm92ZSBjb21tYW5kIGlz
+IHByaXZpbGVnZSBjb21tYW5kIGRvbmUgYnkgdGhlIGh5cGVydmlzb3Igb24gdGhlIHBvcnQNCj4g
+ZnVuY3Rpb24uDQo+ID5WcGRhIGxldmVsIHNldHRpbmcgdGhlIG1hYyBpcyBzaW1pbGFyIHRvIGEg
+ZnVuY3Rpb24gb3duZXIgZHJpdmVyIHNldHRpbmcgdGhlDQo+IG1hYyBvbiB0aGUgc2VsZiBuZXRk
+ZXYgKGV2ZW4gdGhvdWdoIGRldmxpbmsgc2lkZSBoYXMgY29uZmlndXJlZCBzb21lIG1hYyBmb3IN
+Cj4gaXQpLg0KPiA+Rm9yIGV4YW1wbGUsDQo+ID4kIGlwIGxpbmsgc2V0IGRldiB3bGFuMSBhZGRy
+ZXNzIDAwOjExOjIyOjMzOjQ0OjU1DQo+IA0KPiBIbW0sIHVuZGVyIHdoYXQgc2NlcmF0aW8gZXhh
+Y2x5IHRoaXMgaXMgbmVlZGVkPw0KVGhlIGFkbWluaXN0cmF0b3Igb24gdGhlIGhvc3QgY3JlYXRp
+bmcgYSB2ZHBhIGRldmljZSBmb3IgdGhlIFZNIHdhbnRzIHRvIGNvbmZpZ3VyZSB0aGUgbWFjIGFk
+ZHJlc3MgZm9yIHRoZSBWTS4NClRoaXMgYWRtaW5pc3RyYXRvciBtYXkgbm90IGhhdmUgdGhlIGFj
+Y2VzcyB0byB0aGUgZGV2bGluayBwb3J0IGZ1bmN0aW9uLg0KT3IgaGUgbWF5IGp1c3QgcHJlZmVy
+IGEgZGlmZmVyZW50IE1BQyAodGhlb3JldGljYWwgY2FzZSkuDQoNCj4gSSBtZWFuLCB0aGUgVk0g
+dGhhdCBoYXMgVkRQQSBkZXZpY2UgY2FuIGFjdHVhbGx5IGRvIHRoYXQgdG9vLiANClZNIGNhbm5v
+dCBkby4gVmlydGlvIHNwZWMgZG8gbm90IGFsbG93IG1vZGlmeWluZyB0aGUgbWFjIGFkZHJlc3Mu
+DQoNCj4gVGhhdCBpcyB0aGUgYWN0dWFsIGZ1bmN0aW9uIG93bmVyLg0KdmRwYSBpcyBub3QgbWFw
+cGluZyBhIHdob2xlIFZGIHRvIHRoZSBWTS4NCkl0IGlzIGdldHRpbmcgc29tZSBzeW50aGV0aWMg
+UENJIGRldmljZSBjb21wb3NlZCB1c2luZyBzZXZlcmFsIHNvZnR3YXJlIChrZXJuZWwpIGFuZCB1
+c2VyIHNwYWNlIGxheWVycy4NCnNvIFZNIGlzIG5vdCB0aGUgZnVuY3Rpb24gb3duZXIuDQo=
 
