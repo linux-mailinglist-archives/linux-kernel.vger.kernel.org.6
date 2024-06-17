@@ -1,150 +1,166 @@
-Return-Path: <linux-kernel+bounces-216916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BF190A881
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:33:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C093F90A884
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3359A1C23077
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C783E1C211D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0EF19049B;
-	Mon, 17 Jun 2024 08:33:38 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AFB19069D;
+	Mon, 17 Jun 2024 08:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aokhwUhP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1XMFY7XP";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aokhwUhP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1XMFY7XP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8463717F5;
-	Mon, 17 Jun 2024 08:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3B4190684
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718613218; cv=none; b=UGIhxLg/O9LIYQa9JHrvuprcx85uukv7F5rqMFo/koVjJy9UVr4iGnWdFFJv6SO//9KEb1KKjdQ4gCUmqKbuHYaIUP1oJ7aaeGOmB7181DGjDc3A32Aft59qB9x/V3CbG1Lt48HIUDpZrKdeCcKUToy3LyCOMcwDCbyP0m415PY=
+	t=1718613223; cv=none; b=Q40KuQAP7KPQBbt5JUcO9Psgoyc5ARDgisBk+XTB9OytSAU3Cz0GHsIVHl7XZ1o3+wVbiswdw/RM5ex6DGSf36hxPYz0BUtGtPACoN6ZXtLGC0ZMTfzcHIRB3RlBrc9ClQZCybonNtNYp7n4JAr1ATehYiTmUC95qiwQjyglKMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718613218; c=relaxed/simple;
-	bh=0/BABGy6hfYi/7BxxqO+erOXltp4K2v4Qmh0ZemLHEU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sInFxyoBbMtSFktRQmgAvwR6gJKZa3ZGoH9lALVys/O6rSmFR0HRNV5l0tSZphbx6WULTgxy0z+HzyMX8LlA1li0+kEmF38eq+euOVZmXWbFDoZOLgSooaC8P0qF0PEHnKI+nDfZLZ7Rvyqfh5f9sYo3jxSvGqJz/tM6vq08KFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e8616c2.versanet.de ([94.134.22.194] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sJ7nY-0007XR-Me; Mon, 17 Jun 2024 10:33:08 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- Jacobe Zang <jacobe.zang@wesion.com>
-Cc: nick@khadas.com, efectn@protonmail.com, jagan@edgeble.ai,
- dsimic@manjaro.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Jacobe Zang <jacobe.zang@wesion.com>
-Subject:
- Re: [PATCH v2 5/5] arm64: dts: rockchip: Add cpufreq support to Khadas Edge2
-Date: Mon, 17 Jun 2024 10:33:07 +0200
-Message-ID: <5475817.tWeucmBOSa@diego>
-In-Reply-To: <20240617071112.3133101-6-jacobe.zang@wesion.com>
-References:
- <20240617071112.3133101-1-jacobe.zang@wesion.com>
- <20240617071112.3133101-6-jacobe.zang@wesion.com>
+	s=arc-20240116; t=1718613223; c=relaxed/simple;
+	bh=VHymT8tDoJB513hoWIwppBxh8Pj30kNWx/qsc2Ifl4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gJz89063owuTUEDRX4Us5u/Kkp1y3SowB9LJK0Mk7zehFNeEdn8BQxwYolNk4uh7uXM/h3I0lKoAa3WWFAW7I+p8HjDooxno0Pj8DgHjADP0RpY+QH9+MHbX8THdqAvf48SnR5idHvkj+/ZKB4o2040ZXQnU+AD+ZjAip/OKOws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aokhwUhP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1XMFY7XP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aokhwUhP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1XMFY7XP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B63445FD1C;
+	Mon, 17 Jun 2024 08:33:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718613219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IfUHy7jvC6C04xNMpt9q7GAc0YI8QU0L6ePoL2dWjTI=;
+	b=aokhwUhPRMn/0hex1uFpquaVKQxdv+23yq3Shf2fml80DzSdgmTDYnOmz5ojhj6sKvVODD
+	l7KwWrpkC3aL323zbF42adrPb4M6J/KhJg0BdzETMiU2AWY0GKfzcgTlHlDeKvMd8/Nz+5
+	3o1h360my+RizUAsRTjozCJjU8OJnc0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718613219;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IfUHy7jvC6C04xNMpt9q7GAc0YI8QU0L6ePoL2dWjTI=;
+	b=1XMFY7XPvQByI7XhBa0t0Fm7yRelaTQBW9elotikT3qrLkhAV4dqlIJOJ2hck64N3vDgzy
+	wG1Ns0vWLs3h9EAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718613219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IfUHy7jvC6C04xNMpt9q7GAc0YI8QU0L6ePoL2dWjTI=;
+	b=aokhwUhPRMn/0hex1uFpquaVKQxdv+23yq3Shf2fml80DzSdgmTDYnOmz5ojhj6sKvVODD
+	l7KwWrpkC3aL323zbF42adrPb4M6J/KhJg0BdzETMiU2AWY0GKfzcgTlHlDeKvMd8/Nz+5
+	3o1h360my+RizUAsRTjozCJjU8OJnc0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718613219;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IfUHy7jvC6C04xNMpt9q7GAc0YI8QU0L6ePoL2dWjTI=;
+	b=1XMFY7XPvQByI7XhBa0t0Fm7yRelaTQBW9elotikT3qrLkhAV4dqlIJOJ2hck64N3vDgzy
+	wG1Ns0vWLs3h9EAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F81B139AB;
+	Mon, 17 Jun 2024 08:33:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gtdCHOL0b2abYwAAD6G6ig
+	(envelope-from <jdelvare@suse.de>); Mon, 17 Jun 2024 08:33:38 +0000
+Date: Mon, 17 Jun 2024 10:33:36 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH RESEND] drm/logicvc: Drop obsolete dependency on
+ COMPILE_TEST
+Message-ID: <20240617103336.7fddb08d@endymion.delvare>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -2.20
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.20 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	BAYES_HAM(-0.90)[86.06%];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_TLS_ALL(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[bootlin.com,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo,bootlin.com:email]
 
-Hi Jacobe Zang,
+Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
+is possible to test-build any driver which depends on OF on any
+architecture by explicitly selecting OF. Therefore depending on
+COMPILE_TEST as an alternative is no longer needed.
 
-Am Montag, 17. Juni 2024, 09:11:12 CEST schrieb Jacobe Zang:
-> This adjust CPU nodes on Khadas Edge2.
-> 
-> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
-> ---
->  .../arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-> index 7d7cc3e76838c..5fb15d3dc23e9 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-> @@ -160,34 +160,42 @@ vdd_3v3_sd: vdd-3v3-sd-regulator {
->  
->  &cpu_b0 {
->  	cpu-supply = <&vdd_cpu_big0_s0>;
-> +	mem-supply = <&vdd_cpu_big0_mem_s0>;
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+---
+Already sent on: 2022-11-21, 2023-01-27, 2023-12-02
 
-as far as I remember there has not been any binding merged that declares
-this supply. Thankfully following the double phandle below, the Edge2 is
-designed to use the same regulator for the mem-supply, so special handling
-isn't even needed.
+This is one of the only 3 remaining occurrences of this deprecated
+construct.
 
+Who can pick this patch and get it upstream?
 
-Heiko
+ drivers/gpu/drm/logicvc/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
->  };
->  
->  &cpu_b1 {
->  	cpu-supply = <&vdd_cpu_big0_s0>;
-> +	mem-supply = <&vdd_cpu_big0_mem_s0>;
->  };
->  
->  &cpu_b2 {
->  	cpu-supply = <&vdd_cpu_big1_s0>;
-> +	mem-supply = <&vdd_cpu_big1_mem_s0>;
->  };
->  
->  &cpu_b3 {
->  	cpu-supply = <&vdd_cpu_big1_s0>;
-> +	mem-supply = <&vdd_cpu_big1_mem_s0>;
->  };
->  
->  &cpu_l0 {
->  	cpu-supply = <&vdd_cpu_lit_s0>;
-> +	mem-supply = <&vdd_cpu_lit_mem_s0>;
->  };
->  
->  &cpu_l1 {
->  	cpu-supply = <&vdd_cpu_lit_s0>;
-> +	mem-supply = <&vdd_cpu_lit_mem_s0>;
->  };
->  
->  &cpu_l2 {
->  	cpu-supply = <&vdd_cpu_lit_s0>;
-> +	mem-supply = <&vdd_cpu_lit_mem_s0>;
->  };
->  
->  &cpu_l3 {
->  	cpu-supply = <&vdd_cpu_lit_s0>;
-> +	mem-supply = <&vdd_cpu_lit_mem_s0>;
->  };
->  
->  &combphy0_ps {
-> @@ -208,7 +216,7 @@ &i2c0 {
->  	pinctrl-0 = <&i2c0m2_xfer>;
->  	status = "okay";
->  
-> -	vdd_cpu_big0_s0: regulator@42 {
-> +	vdd_cpu_big0_s0: vdd_cpu_big0_mem_s0: regulator@42 {
->  		compatible = "rockchip,rk8602";
->  		reg = <0x42>;
->  		fcs,suspend-voltage-selector = <1>;
-> @@ -225,7 +233,7 @@ regulator-state-mem {
->  		};
->  	};
->  
-> -	vdd_cpu_big1_s0: regulator@43 {
-> +	vdd_cpu_big1_s0: vdd_cpu_big1_mem_s0: regulator@43 {
->  		compatible = "rockchip,rk8603", "rockchip,rk8602";
->  		reg = <0x43>;
->  		fcs,suspend-voltage-selector = <1>;
-> 
+--- linux-6.6.orig/drivers/gpu/drm/logicvc/Kconfig
++++ linux-6.6/drivers/gpu/drm/logicvc/Kconfig
+@@ -1,7 +1,7 @@
+ config DRM_LOGICVC
+ 	tristate "LogiCVC DRM"
+ 	depends on DRM
+-	depends on OF || COMPILE_TEST
++	depends on OF
+ 	select DRM_KMS_HELPER
+ 	select DRM_KMS_DMA_HELPER
+ 	select DRM_GEM_DMA_HELPER
 
 
-
-
+-- 
+Jean Delvare
+SUSE L3 Support
 
