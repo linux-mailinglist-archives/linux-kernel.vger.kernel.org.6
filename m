@@ -1,245 +1,230 @@
-Return-Path: <linux-kernel+bounces-217609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB75D90B218
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:32:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79CD90B21B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256B81F21FBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:32:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99FC51C22F3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5B71B5816;
-	Mon, 17 Jun 2024 13:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F961BA863;
+	Mon, 17 Jun 2024 13:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VuQmpaIV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="edG+un33"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93B4198A39;
-	Mon, 17 Jun 2024 13:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B303A19B5B1
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632162; cv=none; b=a+NBkb9Xa1C5v/Ga6AjiVDCwosyMzF+EYIep20hK5p+lnhjS7C5RnBYuV1iNGgobcO1ESslweHUPviHFjVovMtMxhbw506CUCvQcXqAL13dygl1ShU49/s7ESBIlXrC0Z7lkfP8CKzooVQFIHaE8nRKw3HI7NFh7GQCVOkObK+c=
+	t=1718632188; cv=none; b=o8Gs/cEvMqBwdibvRStXP7amCicVIklUtIF1CMp9TKidjh9lRa5bRY9YpqiFH8HMWQg+euxAOLeGgeBQlcR5YwyKAAhXZ0qMchYSXrIcU8vwHKlP9dRw/xaZqqSrbFut490oQnbhYqs4qwGtLIP7t9GQ980zn2RktSMyXfA3pfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632162; c=relaxed/simple;
-	bh=HqF4isRv+ArtpWG9OQ68NdMlDfuDGfF02uZsD8+0IVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BjNG7hQYrO22epMyG4d9sxqjT6au+t4M61DkoO+hg3q0JOBD+04J9cUl3EZdOqwthplFME5uQH2I172uaKu1GiXs9N+Rm12KYHIG/NKibjvUlwkTkyvz1jCwwv/vE1nwrhFHKqhfWYEpKdjbhitw1gQghAOjcVsK13RdMDeD4ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VuQmpaIV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91169C4AF49;
-	Mon, 17 Jun 2024 13:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718632161;
-	bh=HqF4isRv+ArtpWG9OQ68NdMlDfuDGfF02uZsD8+0IVE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VuQmpaIVwaTyg5OMoP0pXhm0Vy2VX5swQY3VSPwDmrB7xDsKCFLgvpDV/3Lw27RZ4
-	 e5SOTu6v1+a7qE5TE9HA1zXI2OzlcTbVyKM/dg9HwOo4+Q7zZQ9M05aGoherz45OUN
-	 9ef4Q0ITItGlOkZhA6Za3x52dkBHzC84fHWlwmq7Tp7kgc5xRZwx00P0bipnxd4bC9
-	 kv6rQu+ea2ZKi9I/J+MzKmYpHyUEJoTuLUbKfwgIVgyV4p2YqG5ANC0RgaE5Ld/MS9
-	 vQyh3ySFaQj00hpGiYTVbPFXSD4Es4C4RRm4k5dsX9ftdjSFmax8RKlmJsmuLZ2Fuy
-	 qLwWTOcjtFicg==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57c778b5742so5150007a12.2;
-        Mon, 17 Jun 2024 06:49:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6m4QTz6+Sx1ctIeTZ4xFRHF+IKfrAADcOs7YvjgSsbcGyclXcNFjmEJt16k6C5INya2s0T+cJmxZMkkhGttHtNboqz5bSPQ/DUg0biva68IPpvwyp9p1zQTVSFtPEuUVehCp/
-X-Gm-Message-State: AOJu0YxGVJ5Hz/Yy8Ggxa+xghSs1zJ4WKYVTFtT/ijPST4XvWIa6i/9F
-	l5bDrWm1N8gECBCDcYUrqjZtQC999jRsGWEqvfzH2+dg4Bj80AiIpJHrzXag7FMe9UrNI/hcmrt
-	bpYTaBL/xmImdYVUemKWSMqpiWlY=
-X-Google-Smtp-Source: AGHT+IF/bQhrXZWDIcE6nt9iGYTRSapLq5kG6SVBui7JWuoMT5hDRYJsYe2vSL3kzufUGoaIlUNzXzhM4BKP0uETtpE=
-X-Received: by 2002:a50:955c:0:b0:579:cf9d:d6a with SMTP id
- 4fb4d7f45d1cf-57cbd67dc3cmr5392873a12.20.1718632160011; Mon, 17 Jun 2024
- 06:49:20 -0700 (PDT)
+	s=arc-20240116; t=1718632188; c=relaxed/simple;
+	bh=+vMkV4nmlC5o3WoCL8T3Cf/sOOrCOwcnxXg4rxYbHm8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JFNjYRdleR7TPveJ4enXzpoJmtA/098bVwGigosziIyE/AJxvlxVRnw85qfIRhKQ6tr3+EpuyY/w2H0QJmPzvTUiFHXm8wJy1FPHFcUeay3QWfCV9mXN+70yIMSV4K8dxSvErOP3qcrU+VT3CriRygdZLJMD2+L/SbYDbbjf0Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=edG+un33; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7955841fddaso361853485a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718632185; x=1719236985; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zEZzvAHWKcqdW88FUmiOeBtiUSRBF94/JlX6CLy/U9k=;
+        b=edG+un33NDf/L/gU5FsDbS8KKdaTv0hErGY0U5f+mAWMD4KVQOgIL94GOtbGoPkRe8
+         o8K15BmlDN9GCziTgZ/qkiDT0Nn2AEx4Gq77X+7/90F4mJv9f/rSYvy+6MMEa62McGp0
+         m08oqunbSfAKMC9npHZfdSgq4F2Mhod5hHi1mnB6oLEUtrpdZosEjd4+saAqW0bzwKKW
+         cmnAzCBzme1tCqBaH+W9aB8ER63gerAGljhNkFSpcIya2XKGvvj8jpd5vgvigRWEmxPh
+         nmGLZkaycNLi0OdCzEK6SBM8eb+y/J07e0T+F30CUkt0qaPHtJC/i9CymMZJLO/xGMak
+         DIyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718632185; x=1719236985;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zEZzvAHWKcqdW88FUmiOeBtiUSRBF94/JlX6CLy/U9k=;
+        b=M8lmlXBgvIgQsC0edkgSe2pBMzSwU9s2lUSDxWkBdppHqSXAl3iyvQJOTbjUrkiCqV
+         2iq+lrkj8V2fnQ6tbkZlxStCOBsDltZkrnW4+/zw90qs3WZfx4+XKychp2eGvlt4eohH
+         xMCdufaUUKMQGlv9YDOEDJeyVvaXw/8GnNdFnW3IcwCyojLZ3HD8RESbABhfSUDql5xs
+         aZKzDxL8gSWl0E59GlafufgHVQRp8+CO2GCnMgo4+OyPNuvqM0WGULTc+l6hkfjVxzTv
+         Q6pTM89Q8uvdhQC5Dt9Dio1F+m/+qThCpA2MLmictv+uAVvXFg0n599Wjm4mhS3hhR0j
+         aLjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUURKZScnAhk/zEicDizOwvalHyLHr+K8CgQn6C0+dA+txt7jk7evTT9lobiCo+5VeFdyFJ8bxHvNYef051IgVUfM31e8m+H3nkYYpa
+X-Gm-Message-State: AOJu0YwFvpeqtxslxaNIbxLJQ20nPbuCE6FlQGqyWEjSG52V2soGYrri
+	pPZBJA4gBcji+sPppJ7GVwZTNsWibnWJwl04fElDrgLwvpChx2O3ZhecpqczBC8=
+X-Google-Smtp-Source: AGHT+IGl+FE2+2KgsFe4nDCWU6ldgP4GuYAR3dN1AUsj37hFWlNJf2lL8nOBoXUFKBqFYKKh6gBcWA==
+X-Received: by 2002:a05:620a:24c9:b0:795:233c:6980 with SMTP id af79cd13be357-79810103071mr2016071085a.20.1718632184654;
+        Mon, 17 Jun 2024 06:49:44 -0700 (PDT)
+Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaecc004sm432892285a.31.2024.06.17.06.49.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 06:49:44 -0700 (PDT)
+From: Trevor Gamblin <tgamblin@baylibre.com>
+Subject: [PATCH v3 00/41] iio: simplify with regmap_set_bits(),
+ regmap_clear_bits()
+Date: Mon, 17 Jun 2024 09:49:40 -0400
+Message-Id: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613-loongarch64-sleep-v1-0-a245232af5e4@flygoat.com>
- <20240613-loongarch64-sleep-v1-1-a245232af5e4@flygoat.com>
- <CAAhV-H7TqgJiR9z9jEOpv34kijONLVu5Bv2PChjUWxhMKU_Zvw@mail.gmail.com> <3e3d6ee8-a758-4d99-be77-89b26b0ab591@app.fastmail.com>
-In-Reply-To: <3e3d6ee8-a758-4d99-be77-89b26b0ab591@app.fastmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 17 Jun 2024 21:49:09 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H54ORMNCQpJahPiSdrrUita7V1-08jZsERF9K+q=B-fGg@mail.gmail.com>
-Message-ID: <CAAhV-H54ORMNCQpJahPiSdrrUita7V1-08jZsERF9K+q=B-fGg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] LoongArch: Initialise unused Direct Map Windows
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAPQ+cGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDM0MTXZCi1HJd81QzgxRDU8tUc9MUJaDigqLUtMwKsEHRsbW1AEPlT+1
+ YAAAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Dmitry Rokosov <ddrokosov@sberdevices.ru>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Cosmin Tanislav <cosmin.tanislav@analog.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Hans de Goede <hdegoede@redhat.com>, Ray Jui <rjui@broadcom.com>, 
+ Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Saravanan Sekar <sravanhome@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, 
+ Crt Mori <cmo@melexis.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Trevor Gamblin <tgamblin@baylibre.com>
+X-Mailer: b4 0.13.0
 
-On Fri, Jun 14, 2024 at 10:18=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygoat.c=
-om> wrote:
->
->
->
-> =E5=9C=A82024=E5=B9=B46=E6=9C=8814=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=
-=E5=8D=883:13=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> > Hi, Jiaxun,
-> >
-> > On Fri, Jun 14, 2024 at 12:41=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygo=
-at.com> wrote:
-> >>
-> >> DMW 2 & 3 are unused by kernel, however firmware may leave
-> >> garbage in them and interfere kernel's address mapping.
-> >>
-> >> Clear them as necessary.
-> > I think the current status is as expected, we don't want kernel access
-> > to non-8000 and non-9000 addresses. And low-end chips may have only
-> > two DMWs.
->
-> I see, I'll remove U-Boot's dependency to DMW 2 and 3 then.
-I was told that DMW2&3 are probably exist (but cannot used for
-instruction fetch), so I applied this patch and implement DMW-based
-ioremap_wc().
+Simplify the way regmap is accessed in iio drivers.
 
-https://github.com/chenhuacai/linux/commit/fa9f4109bf19a19736877d01e3e35297=
-56a96095
+Instead of using regmap_update_bits() and passing the mask twice, use
+regmap_set_bits().
 
+Instead of using regmap_update_bits() and passing val = 0, use
+regmap_clear_bits().
 
-Huacai
+The series is marked as v3, but the previous two revisions were single
+patches. There was also a resend of v1 due to not properly CCing the
+mailing lists on the first attempt. Trailers were pulled in from those
+where relevant.
 
->
-> Thanks
-> - Jiaxun
->
-> >
-> > Huacai
-> >
-> >
-> > Huacai
-> >
-> >>
-> >> Cc: stable@vger.kernel.org
-> >> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> >> ---
-> >>  arch/loongarch/include/asm/loongarch.h   |  4 ++++
-> >>  arch/loongarch/include/asm/stackframe.h  | 11 +++++++++++
-> >>  arch/loongarch/kernel/head.S             | 12 ++----------
-> >>  arch/loongarch/power/suspend_asm.S       |  6 +-----
-> >>  drivers/firmware/efi/libstub/loongarch.c |  2 ++
-> >>  5 files changed, 20 insertions(+), 15 deletions(-)
-> >>
-> >> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/i=
-nclude/asm/loongarch.h
-> >> index eb09adda54b7..3720096efcf9 100644
-> >> --- a/arch/loongarch/include/asm/loongarch.h
-> >> +++ b/arch/loongarch/include/asm/loongarch.h
-> >> @@ -889,6 +889,10 @@
-> >>  #define CSR_DMW1_BASE          (CSR_DMW1_VSEG << DMW_PABITS)
-> >>  #define CSR_DMW1_INIT          (CSR_DMW1_BASE | CSR_DMW1_MAT | CSR_DM=
-W1_PLV0)
-> >>
-> >> +/* Direct Map window 2/3 - unused */
-> >> +#define CSR_DMW2_INIT          0
-> >> +#define CSR_DMW3_INIT          0
-> >> +
-> >>  /* Performance Counter registers */
-> >>  #define LOONGARCH_CSR_PERFCTRL0                0x200   /* 32 perf eve=
-nt 0 config */
-> >>  #define LOONGARCH_CSR_PERFCNTR0                0x201   /* 64 perf eve=
-nt 0 count value */
-> >> diff --git a/arch/loongarch/include/asm/stackframe.h b/arch/loongarch/=
-include/asm/stackframe.h
-> >> index d9eafd3ee3d1..10c5dcf56bc7 100644
-> >> --- a/arch/loongarch/include/asm/stackframe.h
-> >> +++ b/arch/loongarch/include/asm/stackframe.h
-> >> @@ -38,6 +38,17 @@
-> >>         cfi_restore \reg \offset \docfi
-> >>         .endm
-> >>
-> >> +       .macro SETUP_DMWS temp1
-> >> +       li.d    \temp1, CSR_DMW0_INIT
-> >> +       csrwr   \temp1, LOONGARCH_CSR_DMWIN0
-> >> +       li.d    \temp1, CSR_DMW1_INIT
-> >> +       csrwr   \temp1, LOONGARCH_CSR_DMWIN1
-> >> +       li.d    \temp1, CSR_DMW2_INIT
-> >> +       csrwr   \temp1, LOONGARCH_CSR_DMWIN2
-> >> +       li.d    \temp1, CSR_DMW3_INIT
-> >> +       csrwr   \temp1, LOONGARCH_CSR_DMWIN3
-> >> +       .endm
-> >> +
-> >>  /* Jump to the runtime virtual address. */
-> >>         .macro JUMP_VIRT_ADDR temp1 temp2
-> >>         li.d    \temp1, CACHE_BASE
-> >> diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head=
-.S
-> >> index 4677ea8fa8e9..1a71fc09bfd6 100644
-> >> --- a/arch/loongarch/kernel/head.S
-> >> +++ b/arch/loongarch/kernel/head.S
-> >> @@ -44,11 +44,7 @@ SYM_DATA(kernel_fsize, .long _kernel_fsize);
-> >>  SYM_CODE_START(kernel_entry)                   # kernel entry point
-> >>
-> >>         /* Config direct window and set PG */
-> >> -       li.d            t0, CSR_DMW0_INIT       # UC, PLV0, 0x8000 xxx=
-x xxxx xxxx
-> >> -       csrwr           t0, LOONGARCH_CSR_DMWIN0
-> >> -       li.d            t0, CSR_DMW1_INIT       # CA, PLV0, 0x9000 xxx=
-x xxxx xxxx
-> >> -       csrwr           t0, LOONGARCH_CSR_DMWIN1
-> >> -
-> >> +       SETUP_DMWS      t0
-> >>         JUMP_VIRT_ADDR  t0, t1
-> >>
-> >>         /* Enable PG */
-> >> @@ -124,11 +120,7 @@ SYM_CODE_END(kernel_entry)
-> >>   * function after setting up the stack and tp registers.
-> >>   */
-> >>  SYM_CODE_START(smpboot_entry)
-> >> -       li.d            t0, CSR_DMW0_INIT       # UC, PLV0
-> >> -       csrwr           t0, LOONGARCH_CSR_DMWIN0
-> >> -       li.d            t0, CSR_DMW1_INIT       # CA, PLV0
-> >> -       csrwr           t0, LOONGARCH_CSR_DMWIN1
-> >> -
-> >> +       SETUP_DMWS      t0
-> >>         JUMP_VIRT_ADDR  t0, t1
-> >>
-> >>  #ifdef CONFIG_PAGE_SIZE_4KB
-> >> diff --git a/arch/loongarch/power/suspend_asm.S b/arch/loongarch/power=
-/suspend_asm.S
-> >> index e2fc3b4e31f0..6fdd74eb219b 100644
-> >> --- a/arch/loongarch/power/suspend_asm.S
-> >> +++ b/arch/loongarch/power/suspend_asm.S
-> >> @@ -73,11 +73,7 @@ SYM_FUNC_START(loongarch_suspend_enter)
-> >>          * Reload all of the registers and return.
-> >>          */
-> >>  SYM_INNER_LABEL(loongarch_wakeup_start, SYM_L_GLOBAL)
-> >> -       li.d            t0, CSR_DMW0_INIT       # UC, PLV0
-> >> -       csrwr           t0, LOONGARCH_CSR_DMWIN0
-> >> -       li.d            t0, CSR_DMW1_INIT       # CA, PLV0
-> >> -       csrwr           t0, LOONGARCH_CSR_DMWIN1
-> >> -
-> >> +       SETUP_DMWS      t0
-> >>         JUMP_VIRT_ADDR  t0, t1
-> >>
-> >>         /* Enable PG */
-> >> diff --git a/drivers/firmware/efi/libstub/loongarch.c b/drivers/firmwa=
-re/efi/libstub/loongarch.c
-> >> index d0ef93551c44..3782d0a187d1 100644
-> >> --- a/drivers/firmware/efi/libstub/loongarch.c
-> >> +++ b/drivers/firmware/efi/libstub/loongarch.c
-> >> @@ -74,6 +74,8 @@ efi_status_t efi_boot_kernel(void *handle, efi_loade=
-d_image_t *image,
-> >>         /* Config Direct Mapping */
-> >>         csr_write64(CSR_DMW0_INIT, LOONGARCH_CSR_DMWIN0);
-> >>         csr_write64(CSR_DMW1_INIT, LOONGARCH_CSR_DMWIN1);
-> >> +       csr_write64(CSR_DMW2_INIT, LOONGARCH_CSR_DMWIN2);
-> >> +       csr_write64(CSR_DMW3_INIT, LOONGARCH_CSR_DMWIN3);
-> >>
-> >>         real_kernel_entry =3D (void *)kernel_entry_address(kernel_addr=
-, image);
-> >>
-> >>
-> >> --
-> >> 2.43.0
-> >>
-> >>
->
-> --
-> - Jiaxun
->
+Link to v2: https://lore.kernel.org/linux-iio/20240613133927.3851344-1-tgamblin@baylibre.com/
+Link to v1: https://lore.kernel.org/linux-iio/20240611165214.4091591-1-tgamblin@baylibre.com/
+
+Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+---
+Trevor Gamblin (41):
+      iio: accel: fxls8962af-core: Make use of regmap_set_bits(), regmap_clear_bits()
+      iio: accel: kxsd9: Make use of regmap_clear_bits()
+      iio: accel: msa311: make use of regmap_clear_bits()
+      iio: adc: ad4130: make use of regmap_clear_bits()
+      iio: adc: axp20x_adc: make use of regmap_set_bits()
+      iio: adc: axp288_adc: make use of regmap_set_bits()
+      iio: adc: bcm_iproc_adc: make use of regmap_clear_bits()
+      iio: adc: berlin2-adc: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: adc: cpcap-adc: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: adc: fsl-imx25-gcq: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: adc: ina2xx-adc: make use of regmap_clear_bits()
+      iio: adc: intel_mrfld_adc: make use of regmap_clear_bits()
+      iio: adc: meson_saradc: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: adc: mp2629_adc: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: adc: qcom-spmi-rradc: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: adc: rn5t618-adc: make use of regmap_set_bits()
+      iio: adc: sc27xx_adc: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: adc: stm32-dfsdm-adc: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: dac: ltc2688: make use of regmap_set_bits()
+      iio: dac: stm32-dac-core: make use of regmap_set_bits()
+      iio: gyro: bmg160_core: make use of regmap_clear_bits()
+      iio: gyro: mpu3050-core: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: health: afe4403: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: health: afe4404: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: health: max30100: make use of regmap_set_bits()
+      iio: health: max30102: make use of regmap_set_bits()
+      iio: imu: inv_icm42600: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: light: adux1020: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: light: iqs621-als: make use of regmap_clear_bits()
+      iio: light: isl29018: make use of regmap_clear_bits()
+      iio: light: st_uvis25_core: make use of regmap_clear_bits()
+      iio: light: veml6030: make use of regmap_clear_bits()
+      iio: magnetometer: ak8974: make use of regmap_set_bits()
+      iio: magnetometer: mmc35240: make use of regmap_set_bits()
+      iio: pressure: bmp280-core: make use of regmap_clear_bits()
+      iio: proximity: sx9324: make use of regmap_set_bits()
+      iio: proximity: sx9360: make use of regmap_set_bits()
+      iio: proximity: sx9500: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: proximity: sx_common: make use of regmap_clear_bits(), regmap_set_bits()
+      iio: temperature: mlx90632: make use of regmap_clear_bits()
+      iio: trigger: stm32-timer-trigger: make use of regmap_clear_bits(), regmap_set_bits()
+
+ drivers/iio/accel/fxls8962af-core.c                |  18 ++--
+ drivers/iio/accel/kxsd9.c                          |   6 +-
+ drivers/iio/accel/msa311.c                         |   8 +-
+ drivers/iio/adc/ad4130.c                           |   4 +-
+ drivers/iio/adc/axp20x_adc.c                       |   5 +-
+ drivers/iio/adc/axp288_adc.c                       |   4 +-
+ drivers/iio/adc/bcm_iproc_adc.c                    |   8 +-
+ drivers/iio/adc/berlin2-adc.c                      |  24 +++--
+ drivers/iio/adc/cpcap-adc.c                        |  46 ++++------
+ drivers/iio/adc/fsl-imx25-gcq.c                    |  16 ++--
+ drivers/iio/adc/ina2xx-adc.c                       |   3 +-
+ drivers/iio/adc/intel_mrfld_adc.c                  |   4 +-
+ drivers/iio/adc/meson_saradc.c                     | 101 +++++++++------------
+ drivers/iio/adc/mp2629_adc.c                       |  19 ++--
+ drivers/iio/adc/qcom-spmi-rradc.c                  |  50 +++++-----
+ drivers/iio/adc/rn5t618-adc.c                      |   5 +-
+ drivers/iio/adc/sc27xx_adc.c                       |  41 ++++-----
+ drivers/iio/adc/stm32-dfsdm-adc.c                  |  29 +++---
+ drivers/iio/dac/ltc2688.c                          |   5 +-
+ drivers/iio/dac/stm32-dac-core.c                   |   5 +-
+ drivers/iio/gyro/bmg160_core.c                     |   4 +-
+ drivers/iio/gyro/mpu3050-core.c                    |  33 +++----
+ drivers/iio/health/afe4403.c                       |   9 +-
+ drivers/iio/health/afe4404.c                       |   9 +-
+ drivers/iio/health/max30100.c                      |   5 +-
+ drivers/iio/health/max30102.c                      |   5 +-
+ drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c |  14 ++-
+ drivers/iio/imu/inv_icm42600/inv_icm42600_core.c   |   9 +-
+ drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c    |   4 +-
+ drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c    |   4 +-
+ drivers/iio/light/adux1020.c                       |  13 ++-
+ drivers/iio/light/iqs621-als.c                     |   4 +-
+ drivers/iio/light/isl29018.c                       |   6 +-
+ drivers/iio/light/st_uvis25_core.c                 |   4 +-
+ drivers/iio/light/veml6030.c                       |   4 +-
+ drivers/iio/magnetometer/ak8974.c                  |  11 +--
+ drivers/iio/magnetometer/mmc35240.c                |   8 +-
+ drivers/iio/pressure/bmp280-core.c                 |   4 +-
+ drivers/iio/proximity/sx9324.c                     |   5 +-
+ drivers/iio/proximity/sx9360.c                     |   5 +-
+ drivers/iio/proximity/sx9500.c                     |  12 +--
+ drivers/iio/proximity/sx_common.c                  |   9 +-
+ drivers/iio/temperature/mlx90632.c                 |   4 +-
+ drivers/iio/trigger/stm32-timer-trigger.c          |  34 ++++---
+ 44 files changed, 273 insertions(+), 347 deletions(-)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240614-review-7e60d159e75d
+
+Best regards,
+-- 
+Trevor Gamblin <tgamblin@baylibre.com>
+
 
