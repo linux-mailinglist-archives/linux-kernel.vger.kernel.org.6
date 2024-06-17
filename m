@@ -1,186 +1,222 @@
-Return-Path: <linux-kernel+bounces-217361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E9090AEBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:07:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A96C090AEC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08811F28F1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:07:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E04D0B27752
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD85B198826;
-	Mon, 17 Jun 2024 13:07:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E091E197A82;
-	Mon, 17 Jun 2024 13:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CCD197A85;
+	Mon, 17 Jun 2024 13:07:45 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C93E19068C;
+	Mon, 17 Jun 2024 13:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718629635; cv=none; b=amn90i8TV0gEAmQwVip+F/l1K5slGCltkP6olX4Qg+nG1uzvZ4TEs010wiBwXnBXMcNw8Edn3mrq6TkyQZJSpibEwxDsCKzltkxZ8+PvGtTedkxv7vq4fQLyRR146sJzVfnfEo2+cmASUywqUmb3tZUYxRExCc2MdY12coUYV88=
+	t=1718629664; cv=none; b=jHdOZN9iRAPB78oG7vR8EK7kbl7HYy9f07DM31kj3WJYLhWb1+8SipVIBHFPRbbFyjk1dpof3HoGUIWu4YNbOedkV3PVlKOdL3D6cyxyFbNXi/QAqdfPmL6ZVGPhY77nFllskzA4kriY7JGKjS75l2HCGFcxSr7urKur3lQbU5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718629635; c=relaxed/simple;
-	bh=u169XjjViv3dzq1JVdC+hzcCnrsy3F0eFlgrC3nkdDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rEs/jXqgWAIlggl3ACwqFNg2W/TCyS+KnTqGdoV7sCmGVWsHMi4QkH+Ra8HrG0TvzlBJH+Y/IBMCnRro1EVfR71WC16LnZdF3PPWDNqxPXHbKWiU47zMnNZRxn8nOl+9SoyshScCRhSxpYAYHCIsn6eWHflsaEbfhA4vTJtmX5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8DA1DA7;
-	Mon, 17 Jun 2024 06:07:31 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2AC893F64C;
-	Mon, 17 Jun 2024 06:07:05 -0700 (PDT)
-Message-ID: <6f97a4b4-cdbe-466c-80d4-adc8da305f75@arm.com>
-Date: Mon, 17 Jun 2024 14:07:03 +0100
+	s=arc-20240116; t=1718629664; c=relaxed/simple;
+	bh=f2va808v3JGFDeWjtdT3S0qaFPXhvksnRviISCSHNag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qpNK0xgRVDZcJDN/h93WAgxa/WyF23scvIJzI9FivVCS6gASxDdSAM+jYTrxvRCNpBLDxMWiNortz1Mb6by3Bw4S+OKedialleSzQaSoB/4Y919okMrYxxtFXekav+e66x6SHFCajl6V24a8dwM9kaX0Q4ztdVZloxuUbpEv3RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B8A3C381FC;
+	Mon, 17 Jun 2024 13:07:39 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC66213AAA;
+	Mon, 17 Jun 2024 13:07:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cCYSKhs1cGZwPQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 17 Jun 2024 13:07:39 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4F1D2A0887; Mon, 17 Jun 2024 15:07:39 +0200 (CEST)
+Date: Mon, 17 Jun 2024 15:07:39 +0200
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	NeilBrown <neilb@suse.de>, James Clark <james.clark@arm.com>,
+	ltp@lists.linux.it, linux-nfs@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+Message-ID: <20240617130739.ki5tpsbgvhumdrla@quack3>
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+ <20240615-fahrrad-bauordnung-a349bacd8c82@brauner>
+ <20240617093745.nhnc7e7efdldnjzl@quack3>
+ <CAOQ4uxiN3JnH-oJTw63rTR_B8oPBfB7hWyun0Hsb3ZX3AORf2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/arm-smmu: Pretty-print context fault related regs
-To: Rob Clark <robdclark@gmail.com>, iommu@lists.linux.dev
-Cc: linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
- Rob Clark <robdclark@chromium.org>, Will Deacon <will@kernel.org>,
- Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Jerry Snitselaar <jsnitsel@redhat.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- Pranjal Shrivastava <praan@google.com>
-References: <20240604150136.493962-1-robdclark@gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240604150136.493962-1-robdclark@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiN3JnH-oJTw63rTR_B8oPBfB7hWyun0Hsb3ZX3AORf2g@mail.gmail.com>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Queue-Id: B8A3C381FC
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On 04/06/2024 4:01 pm, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
+On Mon 17-06-24 15:09:09, Amir Goldstein wrote:
+> On Mon, Jun 17, 2024 at 12:37 PM Jan Kara <jack@suse.cz> wrote:
+> > On Sat 15-06-24 07:35:42, Christian Brauner wrote:
+> > > On Wed, 12 Jun 2024 17:09:55 +1000, NeilBrown wrote:
+> > > > When a file is opened and created with open(..., O_CREAT) we get
+> > > > both the CREATE and OPEN fsnotify events and would expect them in that
+> > > > order.   For most filesystems we get them in that order because
+> > > > open_last_lookups() calls fsnofify_create() and then do_open() (from
+> > > > path_openat()) calls vfs_open()->do_dentry_open() which calls
+> > > > fsnotify_open().
+> > > >
+> > > > [...]
+> > >
+> > > Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> > > Patches in the vfs.fixes branch should appear in linux-next soon.
+> > >
+> > > Please report any outstanding bugs that were missed during review in a
+> > > new review to the original patch series allowing us to drop it.
+> > >
+> > > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > > patch has now been applied. If possible patch trailers will be updated.
+> > >
+> > > Note that commit hashes shown below are subject to change due to rebase,
+> > > trailer updates or similar. If in doubt, please check the listed branch.
+> > >
+> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > > branch: vfs.fixes
+> > >
+> > > [1/1] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open used.
+> > >       https://git.kernel.org/vfs/vfs/c/7536b2f06724
+> >
+> > I have reviewed the patch you've committed since I wasn't quite sure which
+> > changes you're going to apply after your discussion with Amir. And I have
+> > two comments:
+> >
+> > @@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
+> >   */
+> >  int vfs_open(const struct path *path, struct file *file)
+> >  {
+> > +       int ret;
+> > +
+> >         file->f_path = *path;
+> > -       return do_dentry_open(file, NULL);
+> > +       ret = do_dentry_open(file, NULL);
+> > +       if (!ret)
+> > +               /*
+> > +                * Once we return a file with FMODE_OPENED, __fput() will call
+> > +                * fsnotify_close(), so we need fsnotify_open() here for symmetry.
+> > +                */
+> > +               fsnotify_open(file);
 > 
-> Parse out the bitfields for easier-to-read fault messages.
+> Please add { } around multi line indented text.
 > 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
-> Stephen was wanting easier to read fault messages.. so I typed this up.
+> > +       return ret;
+> >  }
+> >
+> > AFAICT this will have a side-effect that now fsnotify_open() will be
+> > generated even for O_PATH open. It is true that fsnotify_close() is getting
+> > generated for them already and we should strive for symmetry. Conceptually
+> > it doesn't make sense to me to generate fsnotify events for O_PATH
+> > opens/closes but maybe I miss something. Amir, any opinion here?
 > 
-> Resend with the new iommu list address
+> Good catch!
 > 
->   drivers/iommu/arm/arm-smmu/arm-smmu.c | 53 +++++++++++++++++++++++++--
->   drivers/iommu/arm/arm-smmu/arm-smmu.h |  5 +++
->   2 files changed, 54 insertions(+), 4 deletions(-)
+> I agree that we do not need OPEN nor CLOSE events for O_PATH.
+> I suggest to solve it with:
 > 
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> index c572d877b0e1..06712d73519c 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> @@ -411,6 +411,8 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
->   	unsigned long iova;
->   	struct arm_smmu_domain *smmu_domain = dev;
->   	struct arm_smmu_device *smmu = smmu_domain->smmu;
-> +	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
-> +				      DEFAULT_RATELIMIT_BURST);
->   	int idx = smmu_domain->cfg.cbndx;
->   	int ret;
->   
-> @@ -425,10 +427,53 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
->   	ret = report_iommu_fault(&smmu_domain->domain, NULL, iova,
->   		fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
->   
-> -	if (ret == -ENOSYS)
-> -		dev_err_ratelimited(smmu->dev,
-> -		"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
-> -			    fsr, iova, fsynr, cbfrsynra, idx);
-> +	if (ret == -ENOSYS && __ratelimit(&rs)) {
-> +		static const struct {
-> +			u32 mask; const char *name;
-> +		} fsr_bits[] = {
-> +			{ ARM_SMMU_FSR_MULTI,  "MULTI" },
-> +			{ ARM_SMMU_FSR_SS,     "SS"    },
-> +			{ ARM_SMMU_FSR_UUT,    "UUT"   },
-> +			{ ARM_SMMU_FSR_ASF,    "ASF"   },
-> +			{ ARM_SMMU_FSR_TLBLKF, "TLBLKF" },
-> +			{ ARM_SMMU_FSR_TLBMCF, "TLBMCF" },
-> +			{ ARM_SMMU_FSR_EF,     "EF"     },
-> +			{ ARM_SMMU_FSR_PF,     "PF"     },
-> +			{ ARM_SMMU_FSR_AFF,    "AFF"    },
-> +			{ ARM_SMMU_FSR_TF,     "TF"     },
-> +		}, fsynr0_bits[] = {
-> +			{ ARM_SMMU_FSYNR0_WNR,    "WNR"    },
-> +			{ ARM_SMMU_FSYNR0_PNU,    "PNU"    },
-> +			{ ARM_SMMU_FSYNR0_IND,    "IND"    },
-> +			{ ARM_SMMU_FSYNR0_NSATTR, "NSATTR" },
-> +			{ ARM_SMMU_FSYNR0_PTWF,   "PTWF"   },
-> +			{ ARM_SMMU_FSYNR0_AFR,    "AFR"    },
-> +		};
-> +
-> +		pr_err("%s %s: Unhandled context fault: fsr=0x%x (",
-> +		       dev_driver_string(smmu->dev), dev_name(smmu->dev), fsr);
-> +
-> +		for (int i = 0, n = 0; i < ARRAY_SIZE(fsr_bits); i++) {
-> +			if (fsr & fsr_bits[i].mask) {
-> +				pr_cont("%s%s", (n > 0) ? "|" : "", fsr_bits[i].name);
+> @@ -915,7 +929,7 @@ static int do_dentry_open(struct file *f,
+>         f->f_sb_err = file_sample_sb_err(f);
+> 
+>         if (unlikely(f->f_flags & O_PATH)) {
+> -               f->f_mode = FMODE_PATH | FMODE_OPENED;
+> +               f->f_mode = FMODE_PATH | FMODE_OPENED | __FMODE_NONOTIFY;
+>                 f->f_op = &empty_fops;
+>                 return 0;
+>         }
 
-Given that SMMU faults have a high likelihood of correlating with other 
-errors, e.g. the initiating device also reporting that it got an abort 
-back, this much pr_cont is a recipe for an unreadable mess. Furthermore, 
-just imagine how "helpful" this would be when faults in two contexts are 
-reported by two different CPUs at the same time ;)
+First I was somewhat nervous about this as it results in returning O_PATH
+fd with __FMODE_NONOTIFY to userspace and I was afraid it may influence
+generation of events *somewhere*. But checking a bit, we use 'file' for
+generating only open, access, modify, and close events so yes, this should
+be safe. Alternatively we could add explicit checks for !O_PATH when
+generating open / close events.
 
-I'd prefer to retain the original message as-is, so there is at least 
-still an unambiguous "atomic" view of a fault's entire state, then 
-follow it with a decode more in the style of arm64's ESR logging. TBH I 
-also wouldn't disapprove of hiding the additional decode behind a 
-command-line/runtime parameter, since a fault storm can cripple a system 
-enough as it is, without making the interrupt handler spend even longer 
-printing to a potentially slow console.
+> > @@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
+> >         int acc_mode;
+> >         int error;
+> >
+> > +       if (file->f_mode & FMODE_OPENED)
+> > +               fsnotify_open(file);
+> > +
+> >         if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+> >                 error = complete_walk(nd);
+> >                 if (error)
+> >
+> > Frankly, this works but looks as an odd place to put this notification to.
+> > Why not just placing it just next to where fsnotify_create() is generated
+> > in open_last_lookups()? Like:
+> >
+> >         if (open_flag & O_CREAT)
+> >                 inode_lock(dir->d_inode);
+> >         else
+> >                 inode_lock_shared(dir->d_inode);
+> >         dentry = lookup_open(nd, file, op, got_write);
+> > -       if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
+> > -               fsnotify_create(dir->d_inode, dentry);
+> > +       if (!IS_ERR(dentry)) {
+> > +               if (file->f_mode & FMODE_CREATED)
+> > +                       fsnotify_create(dir->d_inode, dentry);
+> > +               if (file->f_mode & FMODE_OPENED)
+> > +                       fsnotify_open(file);
+> > +       }
+> >         if (open_flag & O_CREAT)
+> >                 inode_unlock(dir->d_inode);
+> >         else
+> >                 inode_unlock_shared(dir->d_inode);
+> >
+> > That looks like a place where it is much more obvious this is for
+> > atomic_open() handling? Now I admit I'm not really closely familiar with
+> > the atomic_open() paths so maybe I miss something and do_open() is better.
+> 
+> It looks nice, but I think it is missing the fast lookup case without O_CREAT
+> (i.e. goto finish_lookup).
 
-> +				n++;
-> +			}
-> +		}
-> +
-> +		pr_cont("), iova=0x%08lx, fsynr=0x%x (S1CBNDX=%u", iova, fsynr,
-> +			(fsynr >> 16) & 0xff);
+I don't think so. AFAICT that case will generate the event in vfs_open()
+anyway and not in open_last_lookups() / do_open(). Am I missing something?
 
-Please define all the bitfields properly (and I agree with Pranjal about 
-the naming).
-
-Thanks,
-Robin.
-
-> +
-> +		for (int i = 0; i < ARRAY_SIZE(fsynr0_bits); i++) {
-> +			if (fsynr & fsynr0_bits[i].mask) {
-> +				pr_cont("|%s", fsynr0_bits[i].name);
-> +			}
-> +		}
-> +
-> +		pr_cont("|PLVL=%u), cbfrsynra=0x%x, cb=%d\n",
-> +			fsynr & 0x3,   /* FSYNR0.PLV */
-> +			cbfrsynra, idx);
-> +
-> +	}
->   
->   	arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
->   	return IRQ_HANDLED;
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> index 836ed6799a80..3b051273718b 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> @@ -223,6 +223,11 @@ enum arm_smmu_cbar_type {
->   
->   #define ARM_SMMU_CB_FSYNR0		0x68
->   #define ARM_SMMU_FSYNR0_WNR		BIT(4)
-> +#define ARM_SMMU_FSYNR0_PNU		BIT(5)
-> +#define ARM_SMMU_FSYNR0_IND		BIT(6)
-> +#define ARM_SMMU_FSYNR0_NSATTR		BIT(8)
-> +#define ARM_SMMU_FSYNR0_PTWF		BIT(10)
-> +#define ARM_SMMU_FSYNR0_AFR		BIT(11)
->   
->   #define ARM_SMMU_CB_FSYNR1		0x6c
->   
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
