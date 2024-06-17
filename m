@@ -1,57 +1,85 @@
-Return-Path: <linux-kernel+bounces-218132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC46490B99F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:25:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D9E790B9A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 759C628B7D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:25:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69471F25766
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E67198A2C;
-	Mon, 17 Jun 2024 18:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F66195381;
+	Mon, 17 Jun 2024 18:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/gbUHQc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dd945dAE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806A6198856
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD24192B88;
+	Mon, 17 Jun 2024 18:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718648705; cv=none; b=D43Itc7D+RPybdJzWfXb9W/m7sKmeOpDMzS6CRyQETZojIR/gx+CGYx4XfmPL5XS1H2dGAIrnoMeeu3KVtX6pv7mR1S4SC4tKTD+MJCDZMqHJ6KVsI1tCYgtNdJS3wOAJ4YqosibQluLDVQ8K2aMSoVxBDNnaW5G99MgB6oUQX4=
+	t=1718648756; cv=none; b=UX5IswZapFGh3GeUXv5aQZoplTaPOsN0wgDAI8KXsZCBFsEfLxDDdxPuY3V4gr/VgYXZ7o5pL4/Wkt6bBSifWcJar+AAyQAzyQy3AIVBv/KZCz589loKGF5cFXL+owJc+ZPO8OD/JGbnt3j+ExWvHDPVoHr8Roz7yqaiO3V0GHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718648705; c=relaxed/simple;
-	bh=7/AQgtSakvxJsoFB1zXH5OrpQ4h9ofFWZ5Z7vKtezpY=;
+	s=arc-20240116; t=1718648756; c=relaxed/simple;
+	bh=NqerbviuZuOzLrbX+rKOzS146N4t7YDVoAkNbjWSVw8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yc9lmE99ITwhOMJm8+AUVy7unu7wuwSdP77frqYgsdMHax+fv7lx/dO8nwmAZdawoO7On52I6x6qSbTmR8OFbHYMwLrDgo//cL+wcfZ2k6h7eRfpV+fDcKqB5AUL6rCLNrF7ipMdi2iEo/KfeeyEM5KpyAmox+X2HTlh6sL0+3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/gbUHQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C743AC3277B;
-	Mon, 17 Jun 2024 18:25:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718648705;
-	bh=7/AQgtSakvxJsoFB1zXH5OrpQ4h9ofFWZ5Z7vKtezpY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m/gbUHQcHic4V4eBg/C8OOdCv+gi//8lkX59yhFAuQOJcBVHqpN8bAD9VPFwUoPPv
-	 qSjYd3owVdsiFb2rQPq06nm7W1tCwK9hEDuYfZVqKUjjPlL02QEPvUsSBVF6ergHCp
-	 QWrydLRf2S9/N5jdMyBS3BwJxtpe4Hd7xR3td1PBTK0wUha50273OUvWSscF5HJYEg
-	 02i1aaaI7V/oMfj0hkbNHEK0ap5uwqe7PAPDAYS5GcnQDvMAxsel7COHe1dbZt2v+C
-	 vPniVeNeQRL5nK81zyJbU073bS3NueRShAMMrh6vhgrvdsfTAx7B3nTkmYrAvbxwVl
-	 xUh7RxRcqNxeg==
-Date: Mon, 17 Jun 2024 12:25:02 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Kanchan Joshi <joshi.k@samsung.com>
-Cc: Boyang Yu <yuboyang@dapustor.com>, axboe@kernel.dk, hch@lst.de,
-	sagi@grimberg.me, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvme: fix NVME_NS_DEAC may incorrectly identifying the
- disk as EXT_LBA.
-Message-ID: <ZnB_fo-chyiCsvaL@kbusch-mbp.dhcp.thefacebook.com>
-References: <CGME20240617131354epcas5p189a78f2cedf7f3a3552df5e881e547c4@epcas5p1.samsung.com>
- <20240617131144.48955-1-yuboyang@dapustor.com>
- <90f3cedb-7553-9007-6ab1-38e1562c8f33@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GFHb4oowoApTiUHJ55pOefkArlPCFLHPyAzvnPvMsgyeLT6cHX2MEDwck6Dern3GeeHEJY5JWsdqrj3qMXqMHiUV/+ogPz8wbIM8Id4Xw45yk7EnHafGDT4P89VjWprwJgX8XoZjnO/1bYIMQDFi5x+RPj7gy5YnHyTCJ9nfKFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dd945dAE; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718648754; x=1750184754;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NqerbviuZuOzLrbX+rKOzS146N4t7YDVoAkNbjWSVw8=;
+  b=Dd945dAECaSaZE/qi+a/lXiKSMT/zqiNH1E1cIE7hzytLZvbGQYtlHp4
+   TPfbv0Bhj2koP01XSB6q3ve0Oz52wkKPQ8QrsvOtAffE2WNSTRvokFljo
+   i+C+MbwVkAZYAaZbiBQ8ZWvESgUKa6Insmb6EW5484fN3mozstVGyyJqk
+   iNEDN6DflaLw8pTDE/7Ew0Kuh/C86YuShqOGLYoQTJOApTYSHCe5+4g9N
+   v+/wy1TZ+iRLe3Vz2/OESDP23ghLH/D32VNOvc7wEogSoSyXSdvvW3qG6
+   lo1fn9S0gGlK8+OdmroIqgUbRPV2Q90l0w3B5LXwW4835mTumN3fLacMz
+   Q==;
+X-CSE-ConnectionGUID: BAPH3knTQ3e7H2RgYp4r6Q==
+X-CSE-MsgGUID: HwAgR0XERP2rNvizZpy0SA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15615865"
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="15615865"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:25:54 -0700
+X-CSE-ConnectionGUID: QbnXQa6/Qo+c5kyTH7gHvQ==
+X-CSE-MsgGUID: WzXxJHVDQ8StKJEeAJIxlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="46228721"
+Received: from mshehzad-mobl.amr.corp.intel.com (HELO desk) ([10.209.21.13])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:25:53 -0700
+Date: Mon, 17 Jun 2024 11:25:48 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH PATCH 3/9] perf/x86/intel: Use topology_cpu_type() to get
+ cpu-type
+Message-ID: <20240617182548.2uqh2yawjucxhsqh@desk>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <20240617-add-cpu-type-v1-3-b88998c01e76@linux.intel.com>
+ <7c4978b4-ac69-480e-b8cf-a473b64ed917@intel.com>
+ <20240617180905.7ao623w6eyu64hs2@desk>
+ <513abce9-48f5-4dab-9e8c-7023077ea589@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,23 +88,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <90f3cedb-7553-9007-6ab1-38e1562c8f33@samsung.com>
+In-Reply-To: <513abce9-48f5-4dab-9e8c-7023077ea589@intel.com>
 
-On Mon, Jun 17, 2024 at 08:00:00PM +0530, Kanchan Joshi wrote:
-> On 6/17/2024 6:41 PM, Boyang Yu wrote:
-> > The value of NVME_NS_DEAC is 3,
-> > which means NVME_NS_METADATA_SUPPORTED | NVME_NS_EXT_LBAS.
-> > 
-> > Signed-off-by: Boyang Yu<yuboyang@dapustor.com>
+On Mon, Jun 17, 2024 at 11:17:35AM -0700, Dave Hansen wrote:
+> On 6/17/24 11:09, Pawan Gupta wrote:
+> >> Is this trying to make the case that get_this_hybrid_cpu_type() and
+> >> topology_cpu_type() are equivalent or pointing out a difference?
+> > Pointing out a difference. get_this_hybrid_cpu_type() misses a case when
+> > cpu-type is enumerated regardless of X86_FEATURE_HYBRID_CPU. I don't think
+> > checking for the hybrid feature is necessary here, because there is an
+> > existing fixup for this case:
 > 
-> Maybe this requires fixes tag [*].
-> Looks good regardless.
-> 
-> Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
-> 
-> [*] 1b96f862eccc ("nvme: implement the DEAC bit for the Write Zeroes 
-> command")
+> OK, that makes sense.  Could you include that in the changelog, please?
 
-Yes, added the fixes tag to the change log to help stable-bot. Thanks,
-applied to nvme-6.10.
+Sure.
 
