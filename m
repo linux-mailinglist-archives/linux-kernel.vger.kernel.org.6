@@ -1,109 +1,172 @@
-Return-Path: <linux-kernel+bounces-217787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89BF90B6B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5619990B67E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09E46B38D21
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:28:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9F41B3E4E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B1F60B96;
-	Mon, 17 Jun 2024 14:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F7315B0F0;
+	Mon, 17 Jun 2024 14:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="qUciWrvK"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HbOYp3un"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C4A5B1E4;
-	Mon, 17 Jun 2024 14:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F7D15AD86;
+	Mon, 17 Jun 2024 14:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718636371; cv=none; b=kUmZIfVhN4SO/ihQa2fH39sC1ZM4ApGPLmTETw3QFS1onnylVbah25MqHYcCE6jTDVOn559sE93iSmpeyKmi1CS6LXrmyU6yd9/3YUSZZRnWbK7QURyuXWPSOnYzdzaY+yXLrHeWN/umcLutRSdPd2V3mBcEcNvBi1jX73OJsrI=
+	t=1718635158; cv=none; b=Bs88AWQjfiJOMotd0yHw8FkCCUeVW24R44bTy/e9uccSzUYT4ksXT29aPmqyeFXuqd1gTPGzHL4RdiIlZTIDhWtMRowPE5Xgbxd1pbU4G2RnqgO7o8EIOu39XNa043GRHnRbgml9MLCVQAvBzDEnjpT03ifFkN7iUbvtmLQr2gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718636371; c=relaxed/simple;
-	bh=b1PJGTlv1eUZIrgNlnXwXE+3iK9WQzktLmR8xz3nq0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oRWTdVBcjt0wHd4H4vhmRes+6AILJei8HjHY7qwkfgj4ZOKvGZpk9UL7zkipxwaVgw/ZlUJ/0n0cd6JJJlBGRFlxoQSnrU9DOh7zMagY1fzdH3PhfYebx6kWgIPpGTjhgFMmdKrLqVUIwpoCZelJR/eOcv+tJvpqMoTixIpWRkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=qUciWrvK; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H5Q2nA001972;
-	Mon, 17 Jun 2024 09:34:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=82NKCBlNAyD/uD7R+ED4UFGffGVBQme/etpeP85WnTs=; b=
-	qUciWrvKskySBFPVRT64266PzVojuoy4SapsHRj7AuvgrL8LAoAYo7Hthl1gcFqa
-	XHsIyf8tuQTEldrmj9cKaD1htmE0Y43LimlHqKb5Zgbly5wAeku/VL9gFPMtLGfo
-	WoUeFL6XNr27D2j1sB6gQy0o5wBHvKZRxCLptSGd+1uajrH9XBvwy+cTZYZ0V/i+
-	RR//hPyRdEfdMyi73AE3WDX0Ty3IECOSNhKxsZh90V6ObyOp2Wk399zW68xEqrO2
-	KhMcvT40jOwmmkou4sOi7H8TJgjDDdTXobsv62E636VXiZvpZzl26LoyxeaM0ZKD
-	zMybmYmeCqaiNnItPeQMXQ==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3ys7cjsx39-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 09:34:01 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
- 2024 15:33:59 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 17 Jun 2024 15:33:59 +0100
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 6B1B8820248;
-	Mon, 17 Jun 2024 14:33:59 +0000 (UTC)
-Message-ID: <3451fcf6-ff33-4f72-83d1-945b026b925b@opensource.cirrus.com>
-Date: Mon, 17 Jun 2024 15:33:59 +0100
+	s=arc-20240116; t=1718635158; c=relaxed/simple;
+	bh=fNEcNyx2J3ltaqVb/40esraFs0i+Fi+TRItBm4S/zws=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kHOmUXZXDyk3PXWDmisRKkjPBjEVZIB7PiWHrglwh2XcRPuZ5EK+e9HbWc6tRqLSnQVq7WIwVtA3j7uJkbjslt8rC3whu0mHrn6J5Vk1s6hjhe2jry5ckljn1meznnjZPq0OYSV/FNMDYfkwtD3QUT2M/Gvo4O+Ad94pyR8RhHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HbOYp3un; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id A3F811BF207;
+	Mon, 17 Jun 2024 14:39:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718635155;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HOc1KiNHDMlfberoe2a1L+3nunCrn9fY9dBs4yJhsG8=;
+	b=HbOYp3unUKRaylSWxNla3PiSkRMtTYD1q1hbyN68+jbn/E6uMM++OGwfZpUUXULIhb27GN
+	MGzbttMnu2qPZ5zzbtelaUCzjQwZcoBYvQqf00jIlphswiqnFQtn44XPLKJ2zci4PTX4bj
+	kBC0noqrYuAoXe0ZE2U0rMwIbx+0MYyJAArOLWJCnzbul40nWUjBa01fWFaeqFx1JgIDLz
+	WM+1BLUC7CpXOokj7Cu9C5GExk43XFQXg71VgAqO2OV88YXVbND24Fo2JzMxtMk58Uq927
+	IcBxceVrxkJ4Tk2B0VEW+TBmGOEGmlbDd6dmqA9O19lAmjUmYNYDQnushiLjaQ==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: Riku Voipio <riku.voipio@iki.fi>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH v2 2/4] leds: pca9532: Use PWM1 for hardware blinking
+Date: Mon, 17 Jun 2024 16:39:08 +0200
+Message-ID: <20240617143910.154546-3-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.45.0
+In-Reply-To: <20240617143910.154546-1-bastien.curutchet@bootlin.com>
+References: <20240617143910.154546-1-bastien.curutchet@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: cs35l56: Accept values greater than 0 as IRQ
- numbers
-To: Mark Brown <broonie@kernel.org>,
-        Simon Trimmer
-	<simont@opensource.cirrus.com>
-CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-References: <20240617135338.82006-1-simont@opensource.cirrus.com>
- <917507e5-dc6c-4e18-a7e1-554625de604e@sirena.org.uk>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <917507e5-dc6c-4e18-a7e1-554625de604e@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: q0Z9tes_w-BZ_luaxhXYn0kLD8UA4f76
-X-Proofpoint-ORIG-GUID: q0Z9tes_w-BZ_luaxhXYn0kLD8UA4f76
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On 17/06/2024 15:04, Mark Brown wrote:
-> On Mon, Jun 17, 2024 at 02:53:38PM +0100, Simon Trimmer wrote:
->> IRQ lookup functions such as those in ACPI can return error values when
->> an IRQ is not defined. The i2c core driver converts the error codes to a
->> value of 0 and the SPI bus driver passes them unaltered to client device
->> drivers.
->>
->> The cs35l56 driver should only accept positive non-zero values as IRQ
->> numbers.
-> 
-> Have all architectures removed 0 as a valid IRQ?
+PSC0/PWM0 are used by all LEDs for brightness and blinking. This causes
+conflicts when you set a brightness of a new LED while an other one is
+already using PWM0 for blinking.
 
- From discussion threads we can find 0 might still used on x86 for a
-legacy device.
-But the conversations we can find on this don't seem to exclude passing
-a negative error number, just that 0 can normally be assumed invalid.
+Use PSC1/PWM1 for blinking.
+Check that no other LED is already blinking with a different PSC1/PWM1
+configuration to avoid conflict.
 
-The kerneldoc for SPI says:
+Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+---
+ drivers/leds/leds-pca9532.c | 53 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 43 insertions(+), 10 deletions(-)
 
-  * @irq: Negative, or the number passed to request_irq() to receive
-  *	interrupts from this device.
+diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+index b6e5f48bffe7..244ae3ff79b5 100644
+--- a/drivers/leds/leds-pca9532.c
++++ b/drivers/leds/leds-pca9532.c
+@@ -29,6 +29,9 @@
+ #define LED_SHIFT(led)		(LED_NUM(led) * 2)
+ #define LED_MASK(led)		(0x3 << LED_SHIFT(led))
+ 
++#define PCA9532_PWM_PERIOD_DIV	152
++#define PCA9532_PWM_DUTY_DIV	256
++
+ #define ldev_to_led(c)       container_of(c, struct pca9532_led, ldev)
+ 
+ struct pca9532_chip_info {
+@@ -194,29 +197,59 @@ static int pca9532_set_brightness(struct led_classdev *led_cdev,
+ 	return err;
+ }
+ 
++static int pca9532_update_hw_blink(struct pca9532_led *led,
++				   unsigned long delay_on, unsigned long delay_off)
++{
++	struct pca9532_data *data = i2c_get_clientdata(led->client);
++	unsigned int psc;
++	int i;
++
++	/* Look for others LEDs that already use PWM1 */
++	for (i = 0; i < data->chip_info->num_leds; i++) {
++		struct pca9532_led *other = &data->leds[i];
++
++		if (other == led)
++			continue;
++
++		if (other->state == PCA9532_PWM1) {
++			if (other->ldev.blink_delay_on != delay_on ||
++			    other->ldev.blink_delay_off != delay_off) {
++				dev_err(&led->client->dev,
++					"HW can handle only one blink configuration at a time\n");
++				return -EINVAL;
++			}
++		}
++	}
++
++	psc = ((delay_on + delay_off) * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
++	if (psc > U8_MAX) {
++		dev_err(&led->client->dev, "Blink period too long to be handled by hardware\n");
++		return -EINVAL;
++	}
++
++	led->state = PCA9532_PWM1;
++	data->psc[PCA9532_PWM_ID_1] = psc;
++	data->pwm[PCA9532_PWM_ID_1] = (delay_on * PCA9532_PWM_DUTY_DIV) / (delay_on + delay_off);
++
++	return pca9532_setpwm(data->client, PCA9532_PWM_ID_1);
++}
++
+ static int pca9532_set_blink(struct led_classdev *led_cdev,
+ 	unsigned long *delay_on, unsigned long *delay_off)
+ {
+ 	struct pca9532_led *led = ldev_to_led(led_cdev);
+-	struct i2c_client *client = led->client;
+-	int psc;
+-	int err = 0;
++	int err;
+ 
+ 	if (*delay_on == 0 && *delay_off == 0) {
+ 		/* led subsystem ask us for a blink rate */
+ 		*delay_on = 1000;
+ 		*delay_off = 1000;
+ 	}
+-	if (*delay_on != *delay_off || *delay_on > 1690 || *delay_on < 6)
+-		return -EINVAL;
+ 
+-	/* Thecus specific: only use PSC/PWM 0 */
+-	psc = (*delay_on * 152-1)/1000;
+-	err = pca9532_calcpwm(client, PCA9532_PWM_ID_0, psc, led_cdev->brightness);
++	err = pca9532_update_hw_blink(led, *delay_on, *delay_off);
+ 	if (err)
+ 		return err;
+-	if (led->state == PCA9532_PWM0)
+-		pca9532_setpwm(led->client, PCA9532_PWM_ID_0);
++
+ 	pca9532_setled(led);
+ 
+ 	return 0;
+-- 
+2.45.0
 
 
