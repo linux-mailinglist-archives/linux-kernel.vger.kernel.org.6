@@ -1,166 +1,243 @@
-Return-Path: <linux-kernel+bounces-216918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C093F90A884
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:34:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF48A90A883
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C783E1C211D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:34:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6B6B1C23EC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AFB19069D;
-	Mon, 17 Jun 2024 08:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088F919067E;
+	Mon, 17 Jun 2024 08:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aokhwUhP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1XMFY7XP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aokhwUhP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1XMFY7XP"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iOJAs/jH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ga4gS9sf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iOJAs/jH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ga4gS9sf"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3B4190684
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4EA190496
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718613223; cv=none; b=Q40KuQAP7KPQBbt5JUcO9Psgoyc5ARDgisBk+XTB9OytSAU3Cz0GHsIVHl7XZ1o3+wVbiswdw/RM5ex6DGSf36hxPYz0BUtGtPACoN6ZXtLGC0ZMTfzcHIRB3RlBrc9ClQZCybonNtNYp7n4JAr1ATehYiTmUC95qiwQjyglKMw=
+	t=1718613220; cv=none; b=D7LGA72gvaYb+WEFLgjXu7hTigAzjXXgYdYZxpDtEsjdvM00uKXH+n7jpqDo+J4NdUuqcpTwu/5aiMm2plT7n2c8iRDINKPCGfvZ59kyussfaoxNSNSzCbRRRCObWi5YkF0iFwO1gugxLy2A2PIIkOgCw2aQp7VZmcVG/8++57M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718613223; c=relaxed/simple;
-	bh=VHymT8tDoJB513hoWIwppBxh8Pj30kNWx/qsc2Ifl4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gJz89063owuTUEDRX4Us5u/Kkp1y3SowB9LJK0Mk7zehFNeEdn8BQxwYolNk4uh7uXM/h3I0lKoAa3WWFAW7I+p8HjDooxno0Pj8DgHjADP0RpY+QH9+MHbX8THdqAvf48SnR5idHvkj+/ZKB4o2040ZXQnU+AD+ZjAip/OKOws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aokhwUhP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1XMFY7XP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aokhwUhP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1XMFY7XP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1718613220; c=relaxed/simple;
+	bh=mu82dM3yA8gxQT8+6pNwmQRP5wF7DvYIRtV5u2Mzo9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CQy1cm68/WS24T2fJeGcc/1dOGE4EAVhuHQJNt7PMHntPyE11A3S48G5QHTYOLhdoBrgr1tmQOwaA8h9CjouDviIyzG9lPEVeF+9kwfqMhA2ZotanDFSt708VSv2Ir227mM8ZUkHam2f6asWR0n7ERaxTh5C8Yq1gZ9zF4ug8MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iOJAs/jH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ga4gS9sf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iOJAs/jH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ga4gS9sf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B63445FD1C;
-	Mon, 17 Jun 2024 08:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718613219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6FBFA5FD1B;
+	Mon, 17 Jun 2024 08:33:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718613216; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IfUHy7jvC6C04xNMpt9q7GAc0YI8QU0L6ePoL2dWjTI=;
-	b=aokhwUhPRMn/0hex1uFpquaVKQxdv+23yq3Shf2fml80DzSdgmTDYnOmz5ojhj6sKvVODD
-	l7KwWrpkC3aL323zbF42adrPb4M6J/KhJg0BdzETMiU2AWY0GKfzcgTlHlDeKvMd8/Nz+5
-	3o1h360my+RizUAsRTjozCJjU8OJnc0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718613219;
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eD010l12qC0rhE0+9N+n78K8hdqaazXxO+kOgw2ibII=;
+	b=iOJAs/jHemGtnrNIBI6U3o1M+3VZpaN1ZpPzy1BiIU/VYvs3rtTYYj/Sit7gSuBJ7TDJcC
+	iC8D0Gm96YoskUPzKwKvmfJeVrLfbYCpTQytIGSOkXp+PH9O8CwOavGXjb7ocjEiUkRrJF
+	Y+njfuoogBCl9Lonu6byxJLUWS3860E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718613216;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IfUHy7jvC6C04xNMpt9q7GAc0YI8QU0L6ePoL2dWjTI=;
-	b=1XMFY7XPvQByI7XhBa0t0Fm7yRelaTQBW9elotikT3qrLkhAV4dqlIJOJ2hck64N3vDgzy
-	wG1Ns0vWLs3h9EAg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eD010l12qC0rhE0+9N+n78K8hdqaazXxO+kOgw2ibII=;
+	b=ga4gS9sfchmuqlh08dh83ER87+PRQCXsucJlrebOWUWG1wjQTHH5YzxIFXhUveyIlFQELu
+	x9y+S/ciHMyXzVAg==
 Authentication-Results: smtp-out2.suse.de;
 	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718613219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718613216; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IfUHy7jvC6C04xNMpt9q7GAc0YI8QU0L6ePoL2dWjTI=;
-	b=aokhwUhPRMn/0hex1uFpquaVKQxdv+23yq3Shf2fml80DzSdgmTDYnOmz5ojhj6sKvVODD
-	l7KwWrpkC3aL323zbF42adrPb4M6J/KhJg0BdzETMiU2AWY0GKfzcgTlHlDeKvMd8/Nz+5
-	3o1h360my+RizUAsRTjozCJjU8OJnc0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718613219;
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eD010l12qC0rhE0+9N+n78K8hdqaazXxO+kOgw2ibII=;
+	b=iOJAs/jHemGtnrNIBI6U3o1M+3VZpaN1ZpPzy1BiIU/VYvs3rtTYYj/Sit7gSuBJ7TDJcC
+	iC8D0Gm96YoskUPzKwKvmfJeVrLfbYCpTQytIGSOkXp+PH9O8CwOavGXjb7ocjEiUkRrJF
+	Y+njfuoogBCl9Lonu6byxJLUWS3860E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718613216;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IfUHy7jvC6C04xNMpt9q7GAc0YI8QU0L6ePoL2dWjTI=;
-	b=1XMFY7XPvQByI7XhBa0t0Fm7yRelaTQBW9elotikT3qrLkhAV4dqlIJOJ2hck64N3vDgzy
-	wG1Ns0vWLs3h9EAg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eD010l12qC0rhE0+9N+n78K8hdqaazXxO+kOgw2ibII=;
+	b=ga4gS9sfchmuqlh08dh83ER87+PRQCXsucJlrebOWUWG1wjQTHH5YzxIFXhUveyIlFQELu
+	x9y+S/ciHMyXzVAg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F81B139AB;
-	Mon, 17 Jun 2024 08:33:38 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B192139AB;
+	Mon, 17 Jun 2024 08:33:36 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gtdCHOL0b2abYwAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Mon, 17 Jun 2024 08:33:38 +0000
+	id YKzqFeD0b2aWYwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 17 Jun 2024 08:33:36 +0000
+Message-ID: <2a0ee369-12f9-401a-9179-82bd659ae201@suse.cz>
 Date: Mon, 17 Jun 2024 10:33:36 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>
-Cc: Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH RESEND] drm/logicvc: Drop obsolete dependency on
- COMPILE_TEST
-Message-ID: <20240617103336.7fddb08d@endymion.delvare>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] mm: handle profiling for fake memory allocations
+ during compaction
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, pasha.tatashin@soleen.com,
+ souravpanda@google.com, keescook@chromium.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240614230504.3849136-1-surenb@google.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240614230504.3849136-1-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.20
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.20 / 50.00];
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	BAYES_HAM(-0.90)[86.06%];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
 	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[bootlin.com,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch];
 	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo,bootlin.com:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.29
+X-Spam-Level: 
 
-Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
-is possible to test-build any driver which depends on OF on any
-architecture by explicitly selecting OF. Therefore depending on
-COMPILE_TEST as an alternative is no longer needed.
+On 6/15/24 1:05 AM, Suren Baghdasaryan wrote:
+> During compaction isolated free pages are marked allocated so that they
+> can be split and/or freed. For that, post_alloc_hook() is used inside
+> split_map_pages() and release_free_list(). split_map_pages() marks free
+> pages allocated, splits the pages and then lets alloc_contig_range_noprof()
+> free those pages. release_free_list() marks free pages and immediately
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
----
-Already sent on: 2022-11-21, 2023-01-27, 2023-12-02
+Well in case of split_map_pages() only some of them end up freed, but most
+should be used as migration targets. But we move the tags from the source
+page during migration and unaccount the ones from the target (i.e. from the
+instrumented post_alloc_hook() after this patch), right? So it should be ok,
+just the description here is incomplete.
 
-This is one of the only 3 remaining occurrences of this deprecated
-construct.
+> frees them. This usage of post_alloc_hook() affect memory allocation
+> profiling because these functions might not be called from an instrumented
+> allocator, therefore current->alloc_tag is NULL and when debugging is
+> enabled (CONFIG_MEM_ALLOC_PROFILING_DEBUG=y) that causes warnings.
+> To avoid that, wrap such post_alloc_hook() calls into an instrumented
+> function which acts as an allocator which will be charged for these
+> fake allocations. Note that these allocations are very short lived until
+> they are freed, therefore the associated counters should usually read 0.
+> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-Who can pick this patch and get it upstream?
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
- drivers/gpu/drm/logicvc/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+>  mm/compaction.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index e731d45befc7..739b1bf3d637 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -79,6 +79,13 @@ static inline bool is_via_compact_memory(int order) { return false; }
+>  #define COMPACTION_HPAGE_ORDER	(PMD_SHIFT - PAGE_SHIFT)
+>  #endif
+>  
+> +static struct page *mark_allocated_noprof(struct page *page, unsigned int order, gfp_t gfp_flags)
+> +{
+> +	post_alloc_hook(page, order, __GFP_MOVABLE);
+> +	return page;
+> +}
+> +#define mark_allocated(...)	alloc_hooks(mark_allocated_noprof(__VA_ARGS__))
+> +
+>  static void split_map_pages(struct list_head *freepages)
+>  {
+>  	unsigned int i, order;
+> @@ -93,7 +100,7 @@ static void split_map_pages(struct list_head *freepages)
+>  
+>  			nr_pages = 1 << order;
+>  
+> -			post_alloc_hook(page, order, __GFP_MOVABLE);
+> +			mark_allocated(page, order, __GFP_MOVABLE);
+>  			if (order)
+>  				split_page(page, order);
+>  
+> @@ -122,7 +129,7 @@ static unsigned long release_free_list(struct list_head *freepages)
+>  			 * Convert free pages into post allocation pages, so
+>  			 * that we can free them via __free_page.
+>  			 */
+> -			post_alloc_hook(page, order, __GFP_MOVABLE);
+> +			mark_allocated(page, order, __GFP_MOVABLE);
+>  			__free_pages(page, order);
+>  			if (pfn > high_pfn)
+>  				high_pfn = pfn;
+> 
+> base-commit: c286c21ff94252f778515b21b6bebe749454a852
 
---- linux-6.6.orig/drivers/gpu/drm/logicvc/Kconfig
-+++ linux-6.6/drivers/gpu/drm/logicvc/Kconfig
-@@ -1,7 +1,7 @@
- config DRM_LOGICVC
- 	tristate "LogiCVC DRM"
- 	depends on DRM
--	depends on OF || COMPILE_TEST
-+	depends on OF
- 	select DRM_KMS_HELPER
- 	select DRM_KMS_DMA_HELPER
- 	select DRM_GEM_DMA_HELPER
-
-
--- 
-Jean Delvare
-SUSE L3 Support
 
