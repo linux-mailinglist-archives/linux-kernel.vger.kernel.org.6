@@ -1,117 +1,128 @@
-Return-Path: <linux-kernel+bounces-217175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC24090AC7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:00:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A1090AC83
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0A321C20FFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:00:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D86D28BC14
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0183E1946A9;
-	Mon, 17 Jun 2024 10:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FF0194A65;
+	Mon, 17 Jun 2024 10:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oH8wpgTI"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiAkF+oS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A03F194120
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11824194A53;
+	Mon, 17 Jun 2024 10:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718621983; cv=none; b=fqwLxd4zs7rmZbIJAVxXKYRSOlFWmT69B6+Bq4Hknl2FZEze+HInbeCI6ks/z0FFIQ3x0sGAC62T/1qyQEZkcXJKN7xhm9lRruPkQPEaOlQ/cdCyZK9s7FTXAlNJwwj3kgsy6onLcZz6mgpwxM5Ql8htjmnTzWIwE+1Y0zqNyIg=
+	t=1718621997; cv=none; b=p73DG+lNWLQ9izgbVkaMi43Mb7lGpdhlNXI9/+yS53uL3ro05S2ZmmyPjItfJo/UCkDWz8k4KmNinM9mhfGfEIavJF7lsEzAtqCCQ+drLvdo/Fy4rvEUScEOfiktEmSJSVRmDi10ii7sNzJQJOAsjq6fwd3nM/FFnr50r6fHxBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718621983; c=relaxed/simple;
-	bh=hn0Bf1NWM1oc7LXNFaCahn5mq4WgzQD19N141kIkogk=;
+	s=arc-20240116; t=1718621997; c=relaxed/simple;
+	bh=IFaIJd8SbmZdoZU6IAF6zOy7FMHxFQgJEE4alDxsEYU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFqO9T10+ktf92MeqkiuD/WTtyWPcjn2NSmEm0h46zb6sjseRSuGOteC6eywfhZK3lmN+Ql+g87zBetRvHiI+Zk8ZVAn5kOaB+4Kiwnry2XnlN2uFMFnjWxwk19OLIeTvLT3ue7tYdghVuS18YCGme/c7kodZN5qgykmNhWJLHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oH8wpgTI; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cc14815c3so132227e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 03:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718621980; x=1719226780; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pMWWdj8v3UJOtnq85Kv3lA2ksrhKp9Sh6LU/DO5R3WY=;
-        b=oH8wpgTIm1A4ecQaBntZAx21mz/6NFG9rTaqgGyrWnq2Ge1YTw+bd5wyMGj1AqRw5u
-         p8qSY8W53SsQorx0ozorHZhIb1LF7CN+3+ZtYVGLgYgdOXZ3MUgduCnSilixCrwc1ZB2
-         LB2IumBeOuGk5bSCK3mhk/1bwXHTtH+owvEKpmzuRXUqi3F76FXQbR43L/lb9R3EOLqM
-         5pTM04icMNZxpYBhRGEKwck30XhtKn+6+JDb2SiTqowW54NYIMfr7g7tBGf2IC7MGeJX
-         u70JOereUxFKBWr3frK7jWomQFBIz5NoMVf/+AXTBp1y4aFG7tlE6L1AImerrrFReVeK
-         cFAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718621980; x=1719226780;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pMWWdj8v3UJOtnq85Kv3lA2ksrhKp9Sh6LU/DO5R3WY=;
-        b=QOT+b/wLxNI1Kf5D6JaAuzJjS2qKJJZxSRzNXyX9OPSGN0+SePK3GQDr8n/diKBwr+
-         W/L2nJP8vrAIX8nR6o8Aor96G/R6/7AF28psmW1fq0q2GE7b3p5KQXJ3tvkPsTDG5h9Z
-         +daWXpoeqiLb9j+MYs4TvbXTkE0WyWJhaVIq898aLKNbwjrQLorjkbsVZRiJgroFHSR/
-         nGJzGsgkNNo+xKo4WnbhGnV+KE5TCFBQfEhUB+4Cr7XO3KcuN+2D9eYA51jief8sdcVm
-         CvLqecbKz/on1x/ZQK5ia1iQasf8bEKkZRwxaube3nIEG8Ktd38AHmplvvzUmRNVZ1Nc
-         3tfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLZ4xHSxOm9FNXXn1SfVdCPP9H0WtrhLAc21zw19WVVmUCTdV7/j07XU+ds8VslRJDdcGmJ2ryx+jxPsEDUFaprXIydnhLyYLIsuzW
-X-Gm-Message-State: AOJu0Yxi/bJK20Qled84+0ShO8wI5/LERPzCxuHzllKx7odXbcpj/b+S
-	PRPvtwbf06HxDCTT80evP/mErQcHr8H9rWXhNT+iPtKhMUBYGOXo7LrUYRfxQ+w=
-X-Google-Smtp-Source: AGHT+IFqAzFY+0ttoTNIzHDFsWgde4oqakdrBhqn/iZoFRhF2FTpcHR1pQJNhRNN1sSyumZ2mhg2dA==
-X-Received: by 2002:a05:6512:2345:b0:52c:6ff5:aecf with SMTP id 2adb3069b0e04-52ca6e8fe40mr7811655e87.42.1718621979723;
-        Mon, 17 Jun 2024 03:59:39 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282f3e4sm1212268e87.93.2024.06.17.03.59.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 03:59:39 -0700 (PDT)
-Date: Mon, 17 Jun 2024 13:59:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Pavel Machek <pavel@ucw.cz>, 
-	=?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>, linux-leds@vger.kernel.org, phone-devel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, Bjorn Andersson <andersson@kernel.org>, 
-	Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Conor Dooley <conor+dt@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Lee Jones <lee@kernel.org>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [v4 2/3] leds: sy7802: Add support for Silergy SY7802 flash LED
- controller
-Message-ID: <nxrodsfowjfn64dn6idoi56hzrhdszxylmw6kdhgxbt53akamf@aavvblj64syf>
-References: <20240616-sy7802-v4-2-789994180e05@apitzsch.eu>
- <5701d3e7-f67b-4189-a5fd-8a992b9155fb@web.de>
- <ZnAHsRn3N4mwPL7q@duo.ucw.cz>
- <e9fd75aa-3bd8-4227-ac07-fc762e558ea6@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KoMYf0qHImw00py3EGyLp1mCmRF/ucSxU7odFmMU0jPfQvH4xxcNCri1cm3KDgAFPtj80puobiSxNNtIC5G0jsAeoh9aZan/Z5FRfOTiefccvrNpuSUB9IZdVyO2nYwbXPWkFOC9nmNsdDggC+plyX3nnoHWpw+S2Uzpoa1nDsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiAkF+oS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63167C2BD10;
+	Mon, 17 Jun 2024 10:59:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718621996;
+	bh=IFaIJd8SbmZdoZU6IAF6zOy7FMHxFQgJEE4alDxsEYU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uiAkF+oSD26HcSVafMv/J+QNgkahxDDMiOl51kEUo0TRb7XshM8eGjSgR1AKIO/aq
+	 DHrec+DfXSWl3z0cI2v8OpW8uRFDArIfNz69u6T7xHLuTc15vJ2eJKbHymt+xtnlPC
+	 NA6wU6tj+ikeYWKpiEk4kc86WLv+4esE+ZFRT7KLlkWP5naHVLkV7l38Ewgo0g/UUV
+	 zRHmmMPNVsjzgReEB1tHDpiKUAZFa9DRw3kRQtSo27XjX+VanhHwQbMSyO1oVJXh1W
+	 IcouB5EdBS5vM+5HCQaVhXYSfdpa5IyU8bbQsBDkaC2APa/Q/fsrLDc3F8PJxPnuQu
+	 eseex6Z2zSfGg==
+Date: Mon, 17 Jun 2024 12:59:52 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Dev Jain <dev.jain@arm.com>, linux-man@vger.kernel.org, 
+	mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com, 
+	suzuki.poulose@arm.com, Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com, 
+	aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] signal.7: Fix wrong mention of sigprocmask
+Message-ID: <ap6zlyayczxurkituv4r4hpyqrmne6rsu5hnll3vgrvh2dw6x3@mqt5dzkdrccn>
+References: <20240611090823.820724-1-dev.jain@arm.com>
+ <20240611090823.820724-3-dev.jain@arm.com>
+ <ZmhL18D4rGeV_vnJ@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eqwh37wv6cfzfaak"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e9fd75aa-3bd8-4227-ac07-fc762e558ea6@web.de>
+In-Reply-To: <ZmhL18D4rGeV_vnJ@finisterre.sirena.org.uk>
 
-On Mon, Jun 17, 2024 at 12:18:11PM GMT, Markus Elfring wrote:
-> >> Would you become interested to apply a statement like “guard(mutex)(&chip->mutex);”?
-> >> https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/mutex.h#L196
-> >
-> > This does not look like real improvement for code this trivial.
-> 
-> Various source code places can be updated also according to referenced
-> programming interfaces.
-> https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/cleanup.h#L8
-> 
-> Will corresponding collateral evolution become better supported?
 
-Plesae stop this. cleanup.h might be a nice thing, but it should not be
-used to make code less obvious or worse.
+--eqwh37wv6cfzfaak
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Dev Jain <dev.jain@arm.com>, linux-man@vger.kernel.org, 
+	mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com, 
+	suzuki.poulose@arm.com, Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com, 
+	aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] signal.7: Fix wrong mention of sigprocmask
+References: <20240611090823.820724-1-dev.jain@arm.com>
+ <20240611090823.820724-3-dev.jain@arm.com>
+ <ZmhL18D4rGeV_vnJ@finisterre.sirena.org.uk>
+MIME-Version: 1.0
+In-Reply-To: <ZmhL18D4rGeV_vnJ@finisterre.sirena.org.uk>
 
--- 
-With best wishes
-Dmitry
+Hi Dev, Mark,
+
+On Tue, Jun 11, 2024 at 02:06:31PM GMT, Mark Brown wrote:
+> On Tue, Jun 11, 2024 at 02:38:23PM +0530, Dev Jain wrote:
+> > The handler is registered with sigaction(), not sigprocmask(). Even if =
+the
+> > purpose of writing sigprocmask() here was to mention blocked signals, t=
+he
+> > statement currently concerns the "addition" of blocked signals; signals
+> > blocked through sigprocmask() would already be present in the thread
+> > context of blocked signals.
+>=20
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+
+Thanks for the patch and the review!  I've applied the patch.  It will
+be included in the man-pages-6.9.1 release later today.
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--eqwh37wv6cfzfaak
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZwFygACgkQnowa+77/
+2zJS+Q/8C45MtZU8DXy0dicCrqEwky6HyWmDTJhnSlwy/6oP2Vr+f+KTBJMdu6kv
+F3OH1sU8mhK9KpIFudIEPZiQ+5DzvYdlYhwiI7Yy7j+3xybxUAojPVMLI4M+xhtL
+9FmFTnYm44hi5/2e4KCvkCx8ZOf2G1dXw82RVE6n+tqk3XpUduo0uC/2BekMWSoq
+tlwyngquAGIRPg4tg9xFRhHIJfTRTSqEVZPdEjx19qXpOZBZRWCRSeekCWt4w7vb
+8hVvhnNNLLUTnc84MhZ0xlaqICLUwpQAd4w1UiYazEnbIsanpDoqiLH6gSP5EUcI
+oNHtCKRZqZ/j3h4knTGnEjxS0ATCrGTMTLZ5HP4pdZF4shvbVv6qyB+W8Xrc3g4j
+DsoOqnJEC3Cezz9mPHqCqbghQEKzLEMA8daEErVUqwjiZsTPSwY3BYMB6FG/r3QP
+v51msgFnJWkXHybAYVYmMvDytYOF/GZxifHP/TJDLjxW8v7G+w+Z7HQU2RcuTYHT
+1XolLcuvmzlTlhIT5hCTzPe/MjtRX1zuy+1jzmQ76JeSOpcOM+NlnsyzhWc/lGhe
+742VS6ObYC9qN6LYGmIyM4SUVn23I7W8dxnRGByk0Nd1Px4k72pxKw7vk+/WMqNk
+fHj50M6CMG3fE4XHm8tzy4cnMvwbIbDN7PXSv4gcKvC+PmvHQkQ=
+=4jYk
+-----END PGP SIGNATURE-----
+
+--eqwh37wv6cfzfaak--
 
