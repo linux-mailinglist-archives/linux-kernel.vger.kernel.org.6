@@ -1,117 +1,122 @@
-Return-Path: <linux-kernel+bounces-216908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E9790A858
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:25:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B389090A817
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 209D1281AA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B722E1C246E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E89190665;
-	Mon, 17 Jun 2024 08:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oy/L59JV"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B67D190043;
+	Mon, 17 Jun 2024 08:05:39 +0000 (UTC)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C684190065;
-	Mon, 17 Jun 2024 08:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD96A48;
+	Mon, 17 Jun 2024 08:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718612727; cv=none; b=drHK1V7olRLk/XpLcjOdOHu9Ni5ixXbQyV3YryxikOAkv80TTThJS43GKn5z2hNsDvN/jlBpb2W2R1bI+BjLpo6kAHWbQCmZowOFGQTELXfyZqA+enP05NHeOo4lsqgojzqEmReTKrBA8hIzHAJhL8ClFtI9Wr2CGz1SsZ7L4/A=
+	t=1718611539; cv=none; b=BPLHEAV4rMlt7xtOdaha6EIH5Ax+yGtJ2ecmNjW98CzA8D7aaKJMGfqX4E2ZL9LNgbpdOAQrXtXi0ZzXWMA/Al0FjgaqSUJs17TpkmVbnwgTW2DUrc7BtBQ30lXdD4wdwKr6Ndw5R7PrB4pq/XeSAho+AXnbvKYJgVOjDaFNlHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718612727; c=relaxed/simple;
-	bh=hmU824QnrpC0lK8tVDT8fdNpMyBHMWTrn1YpJc23BPE=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=MujeHoJHvsSC4sbWpQvWOaPZYNJn+aIwsPjqHD8nHWr6Kgrgn1u+eqH5XqrQ5HJKGcL6B+RCFaLUXq03m3L8N0QMK/aV8iM3T0pjz+nhby8cezHUgPhFaNb0E38Bm9OUhg3F5nGQGXl+ciTIq0FNBvK/6i3fevsIGe8Of5/0bbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oy/L59JV; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1718611539; c=relaxed/simple;
+	bh=OjsLavVhJ3gnb4N+l8jSUFK7ZC6Q3rgbMegsvQY3ang=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cBLAhX72lzB+T5nNNJMPMV1Y3aO6NiXktivSPWprwuJ6udI0zdYYs/0vNvrJ3E+JRuQ8Q8c73qUCwQiLCX9GnmTGssjgci61IBVHB8mtpFsLB0h+drCVE5BUPlrYgE8T/WltXQ3Un5YfCyU3QHDsgFCi9d0aOExHEwkrdV13fWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-36084187525so1817666f8f.3;
-        Mon, 17 Jun 2024 01:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718612724; x=1719217524; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q6hI9+1uTx3Adx5p6ccWgkTX1YKY9U2jSF8968/Euis=;
-        b=Oy/L59JVC15/xv6nwNIocrhyFxIuEGJVh5FlqrKDN5pZE2riUx1FxMBb+g9yvHtsb2
-         j44r/hiZXpmsRqA/pyp3XWDgmPIqdTjG56kdgtlY8jHaStE6PFKLXTyEq74wmpgAQdF1
-         xyiZdAo3h0FtlP9gqC6YIMCLCpG5/ZpwnQ/XFPdtIjlAgr8ta2BD/S63wca4PWwePYbw
-         cV2WgeUwNVmzuPGWtxYsMZExfko6Lw81942+I6jSLykxOhQ71ZvBMtkMoSN8zK5ejwGl
-         JeNSo0uiTmIa572+1IUyhCOmfo/tNE+fDJSnriyO8OixYTZDlUOrL5AIjM+WnL24vR4w
-         x4RQ==
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-632597a42b8so25786097b3.3;
+        Mon, 17 Jun 2024 01:05:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718612724; x=1719217524;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q6hI9+1uTx3Adx5p6ccWgkTX1YKY9U2jSF8968/Euis=;
-        b=R5gGaIfHJVaWNpvW+f5R2RzUjEsz1KiDdsX493A25gVvBT58ygbAl0KstGXmTMh814
-         yn3F6dXhxABa6CGhlEI5r1gVvQHRj+FINibNkjmF7Wj5pI35Gyo+7wKJkuWGTLcoZxyl
-         0toBwsuEHC1qw7OoWYykgDZOZb48k9jsvdD6REWE69c8zHVabVAT4o/Z3kQiPEPNqMdc
-         2nV16cjycJMjGJWzF9fg2U5mIrmswNKsMtedx247SdZ4dVuT5lhBxXpKUXTPYZ/7MXWP
-         oL9uHGNBrEUFl6G3rV4v8mFWyVGO2dggELRLPP34qW8KY340MgXnANnKiGWklr+zbgnm
-         flCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbOfzEOBWaZHOcODmQGu29K1e2wBNwJIf2M1c2jq9YuWBKSJ4FkugCLZlHT5fDdT/h+/rBv2JPfZN8AoRoDKTN4/UufHIJFLKvw9Z9aPHnmLQ9Kyah52YB/XdvcZ0b5rTYXuXX
-X-Gm-Message-State: AOJu0YwT9t6dFa9T9AFwR2ByiWNqteaZnGV5cYMEIpgsDsnAvW6uhscV
-	IMO46cdXuZ1NjzDd882ZJR87hTQl4BUbGhVYpkBiuS50mvr8kwWD
-X-Google-Smtp-Source: AGHT+IFY0ksGLwooQAFy/3i5wjbx3UniG7SqfJG9ahS+JaxSO5a3g646TRVNAKR/k1cp06ES7HP1CQ==
-X-Received: by 2002:adf:f247:0:b0:360:6dc8:46c0 with SMTP id ffacd0b85a97d-3607a764d88mr5927789f8f.25.1718612724308;
-        Mon, 17 Jun 2024 01:25:24 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:9594:d2ff:a13c:2a33])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750ad082sm11212712f8f.59.2024.06.17.01.25.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 01:25:23 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
- <pabeni@redhat.com>,  Oleksij Rempel <o.rempel@pengutronix.de>,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,  linux-kernel@vger.kernel.org,
-  netdev@vger.kernel.org,  Dent Project <dentproject@linuxfoundation.org>,
-  kernel@pengutronix.de
-Subject: Re: [PATCH net-next v3 6/7] netlink: specs: Expand the PSE netlink
- command with C33 pw-limit attributes
-In-Reply-To: <20240614-feature_poe_power_cap-v3-6-a26784e78311@bootlin.com>
-	(Kory Maincent's message of "Fri, 14 Jun 2024 16:33:22 +0200")
-Date: Mon, 17 Jun 2024 09:03:12 +0100
-Message-ID: <m2bk409etb.fsf@gmail.com>
-References: <20240614-feature_poe_power_cap-v3-0-a26784e78311@bootlin.com>
-	<20240614-feature_poe_power_cap-v3-6-a26784e78311@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        d=1e100.net; s=20230601; t=1718611536; x=1719216336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jUXvmmVuBcx3SnmccNhTKf6C2uYuISFtiAnpe9jq8rA=;
+        b=dcUguoWtJFnkuKBeHaE0vQgk8cRM0zOC0eJDZ5l42uSYLqJioL7w6DKZO/T9NFUDM+
+         cKgC4kb+Vx/GvNOyPMXKtl2+G1U2LrSFYF7SpP0147LcaWHisEFSWdJOFM4TYuDQSj3a
+         aKmK57wK5YP1euUhDVW48szCQjS12SV8dVnM4/n1gTuj42jeQr5m2yPKEGGaiE58r26h
+         6FI5I4MW9Jty8DQuWhrXCkszh4ozGasrTrKxPij8VntzRY6LHRu9CNByMB0Ie0gBv0H6
+         9S7IBmEdASHCqGRjl9z7Ar6ZodtHnlX6qJL9qxA5y7pACLveOW2lhNatSEUy7hqKGLYS
+         02KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwkqlPuF2w652j9vBkzSEATeKk6pLDphCKYcaL0qMkFJ1uVXZCa7/zcSIdCFbIxfUarOWuJjS/WCzHc+zIbnrVkmW18jZppAx1Cv2K1vRyp/462H0I6hTUGNHubpf7iZpeq9RHxxMdFDJTSlGX8Kd4WEHoiEHHFh9+br+7/TTUPD/QFqtjohCm7bmVblIttk9TyMTVHRNG+3bW7x4HxN//lfnh9qVr
+X-Gm-Message-State: AOJu0YxMa04DnUFMjUYTwIwU540sJFOSRIwR0HUH5tT+2y9TE+CeDes7
+	9x8XCTRtWcGgbVfC/+U5rvn7Wb64akvxjrrcBviWp5ZiuCByyCMhDofzGCdA
+X-Google-Smtp-Source: AGHT+IEV1SBGzmazgVCaR2E8ldAUYNAUrioR1l1bB1V6sD8xEIQSAUqKZ2W1oNGgFabPhYTsKvxn3A==
+X-Received: by 2002:a81:a0c1:0:b0:62c:e82c:398a with SMTP id 00721157ae682-63874659785mr6715797b3.2.1718611535675;
+        Mon, 17 Jun 2024 01:05:35 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-631183d7eeesm13410507b3.16.2024.06.17.01.05.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 01:05:35 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-632750bf73bso23885267b3.2;
+        Mon, 17 Jun 2024 01:05:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUr7JKzB8zzKH+fH9uqi60DG2q45eRTDQudu7G7EZfTiZZe+ukPeoUrTgFSZWln6vPMNJLllzIOUFKPw+96QqBD8eaWmW6Lq+cI8InMRGQg4AhnTujI0fBA7Fxh4bDO5zKgl4Xp91etMR13Mk7nyp+Af1Vv2PwtFXKyET+7xQVaLVIvip8OEexuSSswP3UROACaZllgJMy8Eo8zrS+788tGgxzwqQwC
+X-Received: by 2002:a81:5b56:0:b0:61b:bd7f:c9f5 with SMTP id
+ 00721157ae682-63222758bb7mr91352297b3.4.1718611534205; Mon, 17 Jun 2024
+ 01:05:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240610233221.242749-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240610233221.242749-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Jun 2024 10:05:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX9xahD_t6ZKpSJ2K_S1QMjW5Cd90DR8XpOhbs6E8KhoA@mail.gmail.com>
+Message-ID: <CAMuHMdX9xahD_t6ZKpSJ2K_S1QMjW5Cd90DR8XpOhbs6E8KhoA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/4] dt-bindings: clock: Add R9A09G057 core clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Kory Maincent <kory.maincent@bootlin.com> writes:
+On Tue, Jun 11, 2024 at 1:32=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator core clocks.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2
+> - Dropped the module clocks and just added the core clocks
+>
+> Note the core clocks are the once which are listed as part
 
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
->
-> Expand the c33 PSE attributes with power limit to be able to set and get
-> the PSE Power Interface power limit.
->
-> ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-get
->              --json '{"header":{"dev-name":"eth2"}}'
-> {'c33-pse-actual-pw': 1700,
->  'c33-pse-admin-state': 3,
->  'c33-pse-pw-class': 4,
->  'c33-pse-pw-d-status': 4,
->  'c33-pse-pw-limit': 90000,
->  'header': {'dev-index': 6, 'dev-name': 'eth2'}}
->
-> ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-set
->              --json '{"header":{"dev-name":"eth2"},
->                       "c33-pse-pw-limit":19000}'
-> None
->
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+s/the once/a subset of the ones/
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+> of section 4.4.2 which cannot be controlled by CLKON register.
+
+and we can add more when needed ("append only").
+
+> +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
+
+With the "renesas," prefix added:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
