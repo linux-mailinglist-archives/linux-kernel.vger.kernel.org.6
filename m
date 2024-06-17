@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-218369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B141C90BD73
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:23:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969BD90BD76
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3EF72822F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0229F28229C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84EA1991DF;
-	Mon, 17 Jun 2024 22:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8023D19924B;
+	Mon, 17 Jun 2024 22:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="LFTH57Tj"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ocDojUDg"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03D5225AE;
-	Mon, 17 Jun 2024 22:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E7B19146C;
+	Mon, 17 Jun 2024 22:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718663027; cv=none; b=p8lcFz6i+EqDcdqEnMJXv1KXBqhG3rd0yvs7wzfc3+95yEaR9/UJv/gZ9IUQjaGYwhsMrQZZ0apnekoUHPh2/Y5vz/+l/nDsnVoe+EXg+kX4eG0Rrb3Irt1Jog5EEJe/XQuOkWu+34oVISpIGjq2+ALXilQrnLmRgzwiPqG/AnI=
+	t=1718663062; cv=none; b=FldcUW/XIKPKlYk5duP+64q0qmkbCgPh+/HaPmyytGw3osgDApb1KZ7JruGzuYK2nXmQdFA/bnqmz3GVbZD+Fk3iEXtMyqDkuS0/+Wb6h3qQrxssybJckWSyK+DWhnIA+PPQCZjarwkEzOf6CVSbFU8X9bdZCWytMdyCtwpQVFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718663027; c=relaxed/simple;
-	bh=+m1FI4YZWYTG5dHJwdsfDDQP9/BhQmKih3ks71du5w4=;
+	s=arc-20240116; t=1718663062; c=relaxed/simple;
+	bh=6KaD+c/VP360n0v2uzvhS5vL9pb25MdxJFy7eHW8OBo=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Xu74FbkNmPdxJacuYEfF4x+IltXD2QuuLZ4ceMVcgXKX0cvbEiDVhBgeYlWYkdhI5TZjLb0Rl1cBhcOZb11YboTPAqBVR3xV0rBwqTV5a8wTA1NDbCOlUN9VXPxESSEAQXRrqqOmDeaPpVAJZ3r6YJY+9aMf6DmMll/Let3orKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=LFTH57Tj; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version:Content-Type; b=FLn+Khli8T5VpefDwitSThLaWQX9p3zbENxHacvWu/7iL/D8eVZIkbJgJskpGT9hMpCoBTPYRvqF5jfaNi49G22xGlMptjBqGy64D885Wk90HA/JoLguiObNMhHysiaedEY5ytEVoop/gerQg54sKDzoowHTI/p8x0Mpi7+M3Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ocDojUDg; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BB64645E08
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A9BF645E2A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1718663024; bh=6HZvwV8D7nXzfDf1P32daZRDFpvUQkxvphQYZ93xvVM=;
+	t=1718663060; bh=HPYLTSFUH5oZfQxR9MgPiJfzXvdf8Ci3riP4ABtTYJ4=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=LFTH57TjzW+PjfoGXJczqDrgZV5Z1pxzSXYaclWmTL3lNjz+TL1aUED6B6frxTLq7
-	 k/FZwneGrmrmD5RIJN0Fk2Pcntl/ReEMXXknGQ/p7BSD2dP3oI3ikx307NWhcnhJ9z
-	 PJRFve2fB6GvfAY1QNWAaerYHxve20y74dyjANLmiAX21zgJbXFsnrvX6YWaVOzEaX
-	 nPoiV2DDqcSbe92zZ99xFk1u+xq6oHbwTVHCGRE7p7yaIRTQ2pVSTqdgrdfJjLKVIK
-	 NvMg5mSyQncnqhdoR/8/GVPca2Gv1A04Rn5Z+56z74Xk1FqFxX0TRWdoLtI3gY31Sp
-	 Er3NJTVSq1cCg==
+	b=ocDojUDgNwiI+LMYiI1BdrILN2gQ5TFJkzqDJ8Vgel4+QQts6kWcQaSwiFfQYrHx+
+	 R8fWUid5TaVYBUgP+55YMtivrQtw22vMvWfjFEaU1LubGJaX+cn9QbFvr1EqhUgf6T
+	 Te3foxHxkrMxlEzbkvGmU524k/lZ93f3lDB5Cl5n1TzzLmkpNrDt2dEuvl9y9HAP1/
+	 CHHZv3H1I7D5BDg+I0NIBhRpo0Xq7QXJ6g1g8qVvofzCvDV8GRnkrJ2mjplFtLeSH5
+	 Dg4aFvR+2e3pLOWWEP46zo9f38Wwl7q7v2KSjrFpWb7v0JshUNYQm7SLGK7Fjz9kHM
+	 s5X/8lKlq8w1A==
 Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id BB64645E08;
-	Mon, 17 Jun 2024 22:23:44 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPSA id A9BF645E2A;
+	Mon, 17 Jun 2024 22:24:20 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
-To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] Documentation: Remove "mfgpt_irq=" from the
- kernel-parameters.txt file
-In-Reply-To: <20240614090306.561464-1-thuth@redhat.com>
-References: <20240614090306.561464-1-thuth@redhat.com>
-Date: Mon, 17 Jun 2024 16:23:43 -0600
-Message-ID: <8734pbi4y8.fsf@trenco.lwn.net>
+To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org,
+ netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: Remove the "rhash_entries=" from
+ kernel-parameters.txt
+In-Reply-To: <20240614092134.563082-1-thuth@redhat.com>
+References: <20240614092134.563082-1-thuth@redhat.com>
+Date: Mon, 17 Jun 2024 16:24:19 -0600
+Message-ID: <87y173gqcs.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,35 +68,27 @@ Content-Type: text/plain
 
 Thomas Huth <thuth@redhat.com> writes:
 
-> The kernel parameter mfgpt_irq has been removed in 2009 already in the
-> commit c95d1e53ed89 ("cs5535: drop the Geode-specific MFGPT/GPIO code").
-> Time to remove it from the documentation now, too.
+> "rhash_entries" belonged to the routing cache that has been removed in
+> commit 89aef8921bfb ("ipv4: Delete routing cache.").
 >
 > Signed-off-by: Thomas Huth <thuth@redhat.com>
 > ---
->  Documentation/admin-guide/kernel-parameters.txt | 4 ----
->  1 file changed, 4 deletions(-)
+>  Documentation/admin-guide/kernel-parameters.txt | 3 ---
+>  1 file changed, 3 deletions(-)
 >
 > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index a9b905bbc8ca..756ac1e22813 100644
+> index 756ac1e22813..87d5bee924fe 100644
 > --- a/Documentation/admin-guide/kernel-parameters.txt
 > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -3426,10 +3426,6 @@
->  			deep    - Suspend-To-RAM or equivalent (if supported)
->  			See Documentation/admin-guide/pm/sleep-states.rst.
+> @@ -5781,9 +5781,6 @@
+>  		2	The "airplane mode" button toggles between everything
+>  			blocked and everything unblocked.
 >  
-> -	mfgpt_irq=	[IA-32] Specify the IRQ to use for the
-> -			Multi-Function General Purpose Timers on AMD Geode
-> -			platforms.
+> -	rhash_entries=	[KNL,NET]
+> -			Set number of hash buckets for route cache
 > -
->  	mfgptfix	[X86-32] Fix MFGPT timers on AMD Geode platforms when
->  			the BIOS has incorrectly applied a workaround. TinyBIOS
->  			version 0.98 is known to be affected, 0.99 fixes the
 
-So I am unable to get this one to apply; which kernel version did you
-base it on?
-
-Thanks,
+Applied, thanks.
 
 jon
 
