@@ -1,160 +1,161 @@
-Return-Path: <linux-kernel+bounces-218374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4513290BD80
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:26:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C238990BD82
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C01631F21E2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:26:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4CC6B21CD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F55199388;
-	Mon, 17 Jun 2024 22:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F12199239;
+	Mon, 17 Jun 2024 22:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8GS1nrN"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sbZ3T7LP"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A76198E9E;
-	Mon, 17 Jun 2024 22:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE36187575
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 22:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718663168; cv=none; b=K+gMfpNmjL0P1m6cixRUvT7y/YDEH8fWxTBO2feSLbI8T0PUYtq5hKIlKWDpO26AQ+cA0GreqoRXK2Y+Oxexi91AjndXXsHrGcvOlFdOpNEZKXa3Vnr8sjWIQ+xGK5XyHm2IGFrEAAYjApuYe9x9N1woSYAB3n4VL8R89WRXdh0=
+	t=1718663186; cv=none; b=kC1fZ+VhZMSjdNBQ52cGwnXvI3+RvcOVIDYK/PpjCLONs48PRkbPw4kNXIUBZltLU7N8AULvF0mgDbtjEPPFnXve3nElIkttdEoIXv5rnJ7ah0e5L0uld0qVqYoSOr+yf3VXPpk0IO7D9ScOu0I5+3HImQyhswDbn99RDnr7l80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718663168; c=relaxed/simple;
-	bh=WnKdnf8toMJeFBnLdKSlbykGNXt8GLauAnpYj6hAGlc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UcfVD5Xvd/gzSwUllXsLxmC96+Qbuiv+jbhj9Q0l57mk7nk7kh9JlQ8xha42ytmAi7hlT5YnsvytGO6+WzB0QeYHC61W1CvG8QBVlVDQT8evEeCSpU2B60aKAQmw86SeNEby0AnQo7bG3unLB7mz/VjVOt14WV7O//H2G2FlKjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e8GS1nrN; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6e5fd488d9fso3616199a12.3;
-        Mon, 17 Jun 2024 15:26:06 -0700 (PDT)
+	s=arc-20240116; t=1718663186; c=relaxed/simple;
+	bh=cuZadAvedLLL/lhJZycTa+TPPhFfsJWLfBr7DtoXQXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OeadsGm3P7i3yqOXJBkYSOLAYHbkMhDKWC/A84rGJQ51yCLQxr/dXxTn73DFHiz0q8VjCnqP7zuOomgzCEw6gY48Yb+nE1QxcMmT0103ZSjCtDwWGyPkfq23RpW0oiMgfHkmmx9Yq10umATctpSUtiluxDZGPMzSig67zhv32gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sbZ3T7LP; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52c82101407so7968619e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 15:26:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718663166; x=1719267966; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CWZR9+o4MQmZdZglbiV2Ru8G5/u2Xf1KFlJWCQsbllM=;
-        b=e8GS1nrNcbKykP1pKwZJ8A0NcnQyMNfJfRjXxKVn/W0jT3K46diNpHFigdCnhAUbOU
-         C4cUQupYEmPSzDhijEs4/IxtbT86jClBpzGq7i9W1QXK5Ys4jTDnH7xEN6ETsm/xf30s
-         Upj5VThi78dKJZj+Kc2knwUOpHrP2qYKuutqEl5Islq8hjoTzCwbyCAyHod8uM4NL9fJ
-         ysRS1xF7kfTk7CvNOZvCfBKxMsNCJoHr6ISbwLPdt5XQApI+8vpmpEnGJWIcFASZlgy7
-         iVuZ7scq+pAYO44fAo7wWzpP53AQSUDLCFplvdUqaBVrQ4TscXDuuB7BHDefd4vjz66U
-         KnAg==
+        d=linaro.org; s=google; t=1718663182; x=1719267982; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I5gR82bl2Ug4kICksfq0yamduDdpDT78AwxrkSHnNJI=;
+        b=sbZ3T7LPCSRHM9JqHG+uuKZJ2X05VFRT+NR03n5c0wTj+vV4x//jNW4K/sxvFqPKrf
+         bduUaCTkXh5EnV/fKudvI9MPFpLwbnGUyrTrUqqyOz4LBbdfxJ7FXazqjtb2MKkj1xJQ
+         4ZcUOxSHWwVKaGHDqe9Pu/4REfeBXBQqDynUmWpfN0CbM9fqdb5AG9YlYAvVG+59697P
+         WQ88BhWChX0zh35KmHDE7g5njm5cUpTOqF1NiaZrio0zYAUz8sFajuE/qONAYQPhzRKa
+         xjQKiKyt62oc5zfTDiwCly+TV3EFxX/XoWJ7iZyfwmCis/Xa9ttOaktggS4D4vLq/GUP
+         Yvkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718663166; x=1719267966;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CWZR9+o4MQmZdZglbiV2Ru8G5/u2Xf1KFlJWCQsbllM=;
-        b=iJuHrAteBzYFcWdI9BiUMvU1iKhUzM2XwlsAHTjedeuKwXlsfrYRlDRwhxMkGy3hS0
-         CfP0tLKtsJZWgLnjpa4VWBO3d+Mts5ZGEPvD+R/tu4dTfT/4w3S1OIfvOoK9EUrEoHhE
-         pUxupSJCOxcPUKlsgqLZ1q47lg+EtjzRU0iUshmbAiybsvPNsOhb6bfQ9X2qS3Ue0wdQ
-         WNx/GsZ94bpvwLuQzffvS84CDJGszu816tiFDgZat7gsxRYZmg/eC3syMdnQ3djPT5C4
-         zstVEoCdrRBoT1GM9amKMe5e1Tr6mvf5ZAq3qR3JzIItpLyvDJ1ZCoezwwxM4cZlFWpZ
-         QD5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVnXz/Mtg/G7vkmPk38GBJ+H8JdG0iuQdmI95gMQNnp/2vG1/Fd1aS5JNp4yjDfx26A3KhHDb1zgdkDhvqjvsSF8Pz0xHr2CUnL7KZjvc1oHLVDEf4e6AEPESEC+NcRSvu/5q6YeE9V2+QEBfaJEpce8nyzv0Nz71e+gP54dew85peN
-X-Gm-Message-State: AOJu0YxgTjah58NIMGRQklaIdF84UFqxNPyHBEw0ntkm/DQY5RreHuSP
-	CaDT2c2IAUV7Pkd78hywD+fSBbiZO43evBlRYrjFy4dPbL/LNbMpNbbGT7iK7sEMcujembmAxWb
-	MD3Bd8ZZhIKzUpAaleTzc+LKKzu0=
-X-Google-Smtp-Source: AGHT+IEMTnYx4VeeS5H3uXM8OvL59xMSDb5iEb4PnFyF6+3PrFuMDUUfJAzp0SGo+Ah4wYrfPfTkzKbZocSI9aB7mqs=
-X-Received: by 2002:a17:90b:8d5:b0:2c2:cefc:abe2 with SMTP id
- 98e67ed59e1d1-2c4dbb41b40mr13043877a91.31.1718663165850; Mon, 17 Jun 2024
- 15:26:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718663182; x=1719267982;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I5gR82bl2Ug4kICksfq0yamduDdpDT78AwxrkSHnNJI=;
+        b=j0Eb6nB+J3hkFB/HYh/7JOoM6G3IK2WGHtzLXepULej6WGQ0NJd+Al4KVQLNviL5j5
+         grXh32FmfPALo8pxMby8Qjr+SPn/bOOUqcyBw/vKvaCTaPc6VGMBjhICxM+TzGpAh87I
+         CkC/vYKd1bgokZDeYW14abxPPqM7vuDb9yGlLC866K38LaJ9NmtkEUNtRIHg2YZMX4yy
+         ZmzTVFA3pQ9BQif3I1Wy1vnnZqfCOuVOIDw0squJyUSLMDzyQpEQI8YYUGaJsQ7RAjLX
+         0wo8jAstlwX3SNXwcOvISBKrYqpT04DlLgjvG/GxD65aiBW8f2zRIhyzU9p+IxFINkiS
+         DsMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUp+RIUh3SBMlr17R5uh8/hckq7TbQfOGecDGP82jSjw4o8kgQow9BAts5fkZC8gpVyyjh9MWXYX9oWuzXcI/eHsZZuzJ7p0ARz86BQ
+X-Gm-Message-State: AOJu0Yx8k+57zfMAeJi8E4Ac++ar4fkfq7tyRV2jjVa8VV9dSOdBr3mq
+	OyVVNqBD9KxIveP0o9XWIX1Lpz+WZDSRgybva1k1gvDIWvckHsryPvjw8LAQzcs=
+X-Google-Smtp-Source: AGHT+IE0S9TzJTmn/4Itff9qKnfgos31gAG8PMEgOkt3+SZrjM0TS4f1ZS5scMO4EJyrMtuajq9LDg==
+X-Received: by 2002:a05:6512:b9c:b0:52c:aea5:9e09 with SMTP id 2adb3069b0e04-52caea5a347mr9590015e87.20.1718663182234;
+        Mon, 17 Jun 2024 15:26:22 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282de86sm1357045e87.68.2024.06.17.15.26.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 15:26:21 -0700 (PDT)
+Date: Tue, 18 Jun 2024 01:26:19 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Douglas Anderson <dianders@chromium.org>, 
+	dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH RESEND] drm/display: Drop obsolete dependency on
+ COMPILE_TEST
+Message-ID: <jbqbn6zaqq7j5htxuqxb34tjrf5lnqabkh5ywtnklhd4owyc3h@ztvolr6hjrti>
+References: <20240617103018.515f0bf1@endymion.delvare>
+ <xd2yybtxvzte7gwqwg2vudzvhoekqao2dle6zsuduzjzi3rsay@xhahwof2prph>
+ <20240617132348.5f20bf89@endymion.delvare>
+ <vsrsvmrkqnmxs3ncqv5m2gevzefiq55tr2iolxlmoehsvgcfkn@hyx37vax6r5e>
+ <20240617201814.73a07702@endymion.delvare>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1717881178.git.dxu@dxuuu.xyz> <34708481d71ea72c23a78a5209e04a76b261a01d.1717881178.git.dxu@dxuuu.xyz>
- <Zmb52Qp__CBzbgDh@krava>
-In-Reply-To: <Zmb52Qp__CBzbgDh@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 17 Jun 2024 15:25:53 -0700
-Message-ID: <CAEf4BzaT7XNnGFUqAr=+pi106bT0o4=TJ7JLOPNjZEBHw4+M7Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 06/12] bpf: selftests: Fix bpf_session_cookie()
- kfunc prototype
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Daniel Xu <dxu@dxuuu.xyz>, shuah@kernel.org, ast@kernel.org, andrii@kernel.org, 
-	eddyz87@gmail.com, daniel@iogearbox.net, quentin@isovalent.com, 
-	alan.maguire@oracle.com, acme@kernel.org, mykolal@fb.com, 
-	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com, 
-	haoluo@google.com, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617201814.73a07702@endymion.delvare>
 
-On Mon, Jun 10, 2024 at 6:04=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Sat, Jun 08, 2024 at 03:16:02PM -0600, Daniel Xu wrote:
-> > The prototype defined in bpf_kfuncs.h was not in line with how the
-> > actual kfunc was defined. This causes compilation errors when kfunc
-> > prototypes are generated from BTF.
-> >
-> > Fix by aligning with actual kfunc definition.
-> >
-> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > ---
-> >  tools/testing/selftests/bpf/bpf_kfuncs.h                        | 2 +-
-> >  tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/s=
-elftests/bpf/bpf_kfuncs.h
-> > index be91a6919315..3b6675ab4086 100644
-> > --- a/tools/testing/selftests/bpf/bpf_kfuncs.h
-> > +++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
-> > @@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct bpf_dynp=
-tr *data_ptr,
-> >                                     struct bpf_key *trusted_keyring) __=
-ksym;
-> >
-> >  extern bool bpf_session_is_return(void) __ksym __weak;
-> > -extern long *bpf_session_cookie(void) __ksym __weak;
-> > +extern __u64 *bpf_session_cookie(void) __ksym __weak;
->
-> the original intent was to expose long instead of __u64 :-\
->
+On Mon, Jun 17, 2024 at 08:18:14PM GMT, Jean Delvare wrote:
+> On Mon, 17 Jun 2024 14:55:22 +0300, Dmitry Baryshkov wrote:
+> > On Mon, Jun 17, 2024 at 01:23:48PM GMT, Jean Delvare wrote:
+> > > Hi Dmitry,
+> > > 
+> > > Thanks for your feedback.
+> > > 
+> > > On Mon, 17 Jun 2024 12:57:19 +0300, Dmitry Baryshkov wrote:  
+> > > > On Mon, Jun 17, 2024 at 10:30:30AM GMT, Jean Delvare wrote:  
+> > > > > Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
+> > > > > is possible to test-build any driver which depends on OF on any
+> > > > > architecture by explicitly selecting OF. Therefore depending on
+> > > > > COMPILE_TEST as an alternative is no longer needed.    
+> > > > 
+> > > > The goal of this clause is to allow build-testing the driver with OF
+> > > > being disabled (meaning that some of OF functions are stubbed and some
+> > > > might disappear). I don't see how user-selectable OF provides the same
+> > > > result.  
+> > > 
+> > > Historically, the goal of this clause *was* to allow build-testing the
+> > > driver on architectures which did not support OF, and that did make
+> > > sense back then. As I understand it, building the driver without OF
+> > > support was never a goal per se (if it was, then the driver wouldn't be
+> > > set to depend on OF in the first place).
+> > > 
+> > > Some of my other submissions include the following explanation which
+> > > you might find useful (I ended up stripping it on resubmission after
+> > > being told I was being too verbose, but maybe it was needed after all):
+> > > 
+> > > It is actually better to always build such drivers with OF enabled,
+> > > so that the test builds are closer to how each driver will actually be
+> > > built on its intended target. Building them without OF may not test
+> > > much as the compiler will optimize out potentially large parts of the
+> > > code. In the worst case, this could even pop false positive warnings.
+> > > Dropping COMPILE_TEST here improves the quality of our testing and
+> > > avoids wasting time on non-existent issues.  
+> > 
+> > This doesn't seem to match the COMPILE_TEST usage that I observe in
+> > other places. For example, we frequently use 'depends on ARCH_QCOM ||
+> > COMPILE_TEST'. Which means that the driver itself doesn't make sense
+> > without ARCH_QCOM, but we want for it to be tested on non-ARCH_QCOM
+> > cases. I think the same logic applies to 'depends on OF ||
+> > COMPILE_TEST' clauses. The driver (DP AUX bus) depends on OF to be fully
+> > functional, but it should be compilable even without OF case.
+> 
+> The major difference is that one can't possibly enable ARCH_QCOM if
+> building on X86 for example. Therefore COMPILE_TEST is the only way to
+> let everyone (including randconfig/allmodconfig build farms) test-build
+> your code.
+> 
+> On the other hand, if you want to test-build drm_dp_aux_bus, you can
+> simply enable OF, because it is available on all architectures and
+> doesn't depend on anything. No need for COMPILE_TEST.
 
-Cookies internally are always u64 (8 byte values). Marking them
-internally in the kernel as long could lead to problems on 32-bit
-architectures, potentially (it still needs to be 64-bit value
-according to BPF contract, but we'll allocate only 4 bytes for them).
+I'd probably let Doug respond, what was his intention. 
 
-It seems better and safer to be explicit with __u64/u64 for cookies everywh=
-ere.
+> 
+> For clarity, I'm not advocating against the use of COMPILE_TEST,
+> actually if you check the history of my kernel contributions 10 years
+> back, you'll find commits from me adding COMPILE_TEST in addition to
+> arch-specific dependencies to many drivers. All I'm saying is that it
+> should only be used when it is the only way to enable the build.
 
-What am I missing?
 
-> could we rather change the bpf_session_cookie function to return long?
-> should be just return value type change
->
-> thanks,
-> jirka
->
->
-> >  #endif
-> > diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi_session_coo=
-kie.c b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
-> > index d49070803e22..0835b5edf685 100644
-> > --- a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
-> > +++ b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
-> > @@ -25,7 +25,7 @@ int BPF_PROG(trigger)
-> >
-> >  static int check_cookie(__u64 val, __u64 *result)
-> >  {
-> > -     long *cookie;
-> > +     __u64 *cookie;
-> >
-> >       if (bpf_get_current_pid_tgid() >> 32 !=3D pid)
-> >               return 1;
-> > --
-> > 2.44.0
-> >
+-- 
+With best wishes
+Dmitry
 
