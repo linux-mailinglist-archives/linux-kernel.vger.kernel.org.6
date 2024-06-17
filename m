@@ -1,89 +1,162 @@
-Return-Path: <linux-kernel+bounces-216578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB69F90A1AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:22:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176A490A1BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ABC4B21BD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:22:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3BFD1F217F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DC279F0;
-	Mon, 17 Jun 2024 01:22:43 +0000 (UTC)
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.58.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAADEC2
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.58.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6155134BD;
+	Mon, 17 Jun 2024 01:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="lUtLWQRN"
+Received: from mail-177132.yeah.net (mail-177132.yeah.net [123.58.177.132])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9553D51D;
+	Mon, 17 Jun 2024 01:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718587363; cv=none; b=kWDSJp1fKmUDajpdQhz8c3rfj0bjpmuihR8jA0Ucxu4Kr+Dx+3kb0f+uHYVb8+n1rLYnDTORVvbmPjjNst0h0tCBkBTRbxcJK3GgFJSYlVjaYAPmaVfWTQxfUNVRRgk+WzLdgGIkDG548GJTtszz4D9D9+U34Jpk8y0dDmcf5Gw=
+	t=1718587514; cv=none; b=YkcLJ4rAK/MLpSmN9mZLPu3rXePwdoWsgjrLJyKO02JbIdDXdLJtpGifPxF5r/AT5O4zaWSM3Xg0RQNVCwv3znkeW/sk9s4M9VHXCC9OZ1x9b47JtCPKm+4VQOUiEoMHIj2e5Oqg+dppKpJuBClaSPWXGzmg6TZsj4Ck/YLr5J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718587363; c=relaxed/simple;
-	bh=aPiIhR+m9iGDtxCHtCYVb7JeTUjsH3WI98/sUyxl4uA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PAlTJ/1NvbMdHJUBFywbF810hhkqPMdrBd5jGSkxQUN+qzfcpUIOxmfWAkeOQ0AI+D0kr/vpN/GJo9+9sNyqQzXQR8Q+BzE4v/zpFyuImIaI+Hb2CdEivHFv/LpOWdwO7WJgMEWbxSCQmHtlKP553P2Cd67vSzCCTKlRFOj+ZaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=114.132.58.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtp80t1718587302tmig7sre
-X-QQ-Originating-IP: Fp5reLOndoyKSyy9u/fuvdBB965w4qMgSGCwgvdhYLs=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 17 Jun 2024 09:21:40 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 13392284534448976911
-From: tuhaowen <tuhaowen@uniontech.com>
-To: sudipm.mukherjee@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	huangbibo@uniontech.com,
-	wangyuli@uniontech.com,
-	tuhaowen <tuhaowen@uniontech.com>
-Subject: [RESEND. PATCH] dev/parport: fix the array out-of-bounds risk
-Date: Mon, 17 Jun 2024 09:21:18 +0800
-Message-Id: <20240617012118.27341-1-tuhaowen@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1718587514; c=relaxed/simple;
+	bh=v2WyN5hsd/SDOOWKMgtEcNSlCk38BGFecwfqBqSHfyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RfWaUNAdvpsDMn74oSfiZl19aBXyfAA2hkRaHfU8Omm5Tchif1IfWTrmdEMzhRWs/AuhhTf6yBF8U7x/fIVHFoTAap4UDHZlU+T7ljdkgl4pJFb4YMiL/s5uELsfcVpVy7VtiYcGknUdlksiSYNDdkW7WcLWFDin5M1sTE4bj1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=lUtLWQRN; arc=none smtp.client-ip=123.58.177.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=xGIE5wxMU/VErauUWUxFIqCNjSnwPNhIWMkm5TpYWDc=;
+	b=lUtLWQRNvbsKf/kfKMHOPjDpS8FFyE+XPBcffc4fEvxeZg5URJYrIv0HisK2cc
+	IXBu2uqdfEW7OQa15QjrxrDNkYFbcv5w29iHGdIQEmO4oPbwdIKdaCSdghE5S7YG
+	oltIkvi3HqReuEZlkTIADT1kKJj6/uBVDMgvvo+HuaU/k=
+Received: from dragon (unknown [114.216.76.201])
+	by smtp2 (Coremail) with SMTP id C1UQrACH7hdikG9mH0nNCA--.3602S3;
+	Mon, 17 Jun 2024 09:24:52 +0800 (CST)
+Date: Mon, 17 Jun 2024 09:24:50 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] arm64: dts: imx8dxl-evk: add imx8dxl_cm4, lsio mu5,
+ related memory region
+Message-ID: <Zm+QYpb+FJCGGr2B@dragon>
+References: <20240605202703.1220203-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605202703.1220203-1-Frank.Li@nxp.com>
+X-CM-TRANSID:C1UQrACH7hdikG9mH0nNCA--.3602S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJr4ftw15XryUGF4xJw4fZrb_yoW8tr4fpr
+	90ka15WFZ2vF17G3sxJr4DKrn8Jan5CFykury7CrW0krWaqrnrKw13Gr4fGr4DJF4UJwsI
+	vFnFvFy2kwnIg3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j1KZXUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiDw0BZVnxc0xPZwACsb
 
-The array buffer size is 20 bytes.
-When executing code in a 64-bit CPU environment, up to 42 bytes of
-data will be written into this array
-(the size of "%lu\t%lu\n" is 20 +1 + 20 + 1).
+On Wed, Jun 05, 2024 at 04:27:03PM -0400, Frank Li wrote:
+> Add imx8dxl_cm4, lsio mu5 and related memory region.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8dxl-evk.dts | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8dxl-evk.dts b/arch/arm64/boot/dts/freescale/imx8dxl-evk.dts
+> index 4ac96a0586294..c5e601b98cf8f 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8dxl-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8dxl-evk.dts
+> @@ -24,6 +24,19 @@ chosen {
+>  		stdout-path = &lpuart0;
+>  	};
+>  
+> +	imx8dxl-cm4 {
+> +		compatible = "fsl,imx8qxp-cm4";
+> +		clocks = <&clk_dummy>;
+> +		mbox-names = "tx", "rx", "rxdb";
+> +		mboxes = <&lsio_mu5 0 1 &lsio_mu5 1 1 &lsio_mu5 3 1>;
+> +		memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
+> +				<&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
+> +		power-domains = <&pd IMX_SC_R_M4_0_PID0>, <&pd IMX_SC_R_M4_0_MU_1A>;
+> +		fsl,resource-id = <IMX_SC_R_M4_0_PID0>;
+> +		fsl,entry-address = <0x34fe0000>;
+> +	};
+> +
+> +
+>  	memory@80000000 {
+>  		device_type = "memory";
+>  		reg = <0x00000000 0x80000000 0 0x40000000>;
+> @@ -51,6 +64,37 @@ linux,cma {
+>  			alloc-ranges = <0 0x98000000 0 0x14000000>;
+>  			linux,cma-default;
+>  		};
+> +
+> +		vdev0vring0: memory0@90000000 {
+> +			reg = <0 0x90000000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev0vring1: memory@90008000 {
+> +			reg = <0 0x90008000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev1vring0: memory@90010000 {
+> +			reg = <0 0x90010000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev1vring1: memory@90018000 {
+> +			reg = <0 0x90018000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		rsc_table: memory-rsc-table@900ff000 {
+> +			reg = <0 0x900ff000 0 0x1000>;
+> +			no-map;
+> +		};
+> +
+> +		vdevbuffer: memory-vdevbuffer {
 
-In fact, this line of code for 32-bit CPUs also has the risk of
-crossing the boundary, but it can exceed 2 bytes at most. With good
-luck, it is local variables that are damaged, and there are no serious
-consequences.
+As kernel test robot reported, unit-address is missing here?
 
-Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
----
- drivers/parport/procfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Shawn
 
-diff --git a/drivers/parport/procfs.c b/drivers/parport/procfs.c
-index bd388560ed59..9f501d5fa1ec 100644
---- a/drivers/parport/procfs.c
-+++ b/drivers/parport/procfs.c
-@@ -117,7 +117,7 @@ static int do_hardware_base_addr(struct ctl_table *table, int write,
- 				 void *result, size_t *lenp, loff_t *ppos)
- {
- 	struct parport *port = (struct parport *)table->extra1;
--	char buffer[20];
-+	char buffer[64];
- 	int len = 0;
- 
- 	if (*ppos) {
--- 
-2.20.1
+> +			compatible = "shared-dma-pool";
+> +			reg = <0 0x90400000 0 0x100000>;
+> +			no-map;
+> +		};
+>  	};
+>  
+>  	m2_uart1_sel: regulator-m2uart1sel {
+> @@ -505,6 +549,10 @@ &lpuart1 {
+>  	status = "okay";
+>  };
+>  
+> +&lsio_mu5 {
+> +	status = "okay";
+> +};
+> +
+>  &flexcan2 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_flexcan2>;
+> -- 
+> 2.34.1
+> 
 
 
