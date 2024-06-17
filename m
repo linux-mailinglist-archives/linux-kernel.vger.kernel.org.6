@@ -1,160 +1,101 @@
-Return-Path: <linux-kernel+bounces-216860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B669290A794
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:44:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25BE90A79A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3504F1F24886
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E75011C24DB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9AD19046F;
-	Mon, 17 Jun 2024 07:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55143190497;
+	Mon, 17 Jun 2024 07:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="D5ENlHcB"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IR83votZ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ADB18FDD9;
-	Mon, 17 Jun 2024 07:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB4C18FDBC;
+	Mon, 17 Jun 2024 07:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718610233; cv=none; b=E7hDxiILFbDa/JfRMpA2/5rHG7uWKuwrz+6wDiD+ebBnP8VgaAmStlURZyanXlwLFBvvYi4WpuSju6q8uy3TkZsAvMf2yKJvdexuoKubhD5AVKxxW6ESy12Ay+vK6oKjdaLSOYXLd4JCwja7i4++wn0ltD56zU+9BWKXOsMbDbM=
+	t=1718610250; cv=none; b=IF41AFbxiKAvEHJuXNm4WT+o+Kjb0AxTyaTac9KcDF+U9WI2OgmNP6fOh3XwOhWp3eZHZ7jORPW7qIL02ZAvDDYXyq+Nwc428WoUfrr54XDie/4w4gZnGATCSL/cxgU8+NO8+C8m9yhgwkocBkCBvYl2B5I+wNmZPSWt+A2jZEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718610233; c=relaxed/simple;
-	bh=ARDINmLxBaG0p/LEOE00F9rVi6V0jZ7bV46cMz2B2rw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l8ludk1bKODy7JzY01Et12kuYBlT6PK/NUAmjGmbKmPWENYQEzQzWIR8RIyH8VHhGq+cxfwx1OOQS4t+SN5JBnS6LpHvmCQF4kPYvf0ckDJCneYKIgMXPcbpyIqVTmYTPKcec4cdeM4hI91tCIwfxssKKyl1NAN2y6+vNOxQBdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=D5ENlHcB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-144-210.elisa-laajakaista.fi [91.158.144.210])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1870539F;
-	Mon, 17 Jun 2024 09:43:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718610211;
-	bh=ARDINmLxBaG0p/LEOE00F9rVi6V0jZ7bV46cMz2B2rw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D5ENlHcBAMzQA7nZKn8f2+or1VsQ85Su/fmEk7/Qjhdm9qOP5rHtppeajLmsqeSTp
-	 +sPViwtol4HzttGkc3VwfXoZu/NWxP0dxKbMg4jVfJo5HIJqTg9sbyNyfWFCcCjRvA
-	 g0QhnbUjQWl0Iei14CrAqVu11cxCPo5ifJLQxmSA=
-Message-ID: <88cbb88a-34de-4f97-9035-b3ef630580ed@ideasonboard.com>
-Date: Mon, 17 Jun 2024 10:43:44 +0300
+	s=arc-20240116; t=1718610250; c=relaxed/simple;
+	bh=l+oou/CNKfItRttkxCF+wVH69kQkGTsxTvp6gBoNd5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=coIsfzuMjLmpO0oGF4jn2C/eVMgz4Fu4Cc+hq+BHjpj0Nzj6wRrxhAScvvY63kWEzF8P+limV1bmz3FHLiH42i16Ee5q6PleIuABg4XgQLd8oJ3peIS5EncDtab0SkaeREeJ0CtsxWiUUMsr3ukHMmue4ZyopdQ6AbkrSm9B3hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IR83votZ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C3F5940E0185;
+	Mon, 17 Jun 2024 07:44:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id gOwqiNFFBQhM; Mon, 17 Jun 2024 07:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718610240; bh=FZ6+fDmbEQkofYSo5wFximye1HQt1P1HrjYhkgcf4t0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IR83votZ39Yvsbs0pTZd+VZwbRnSqD7SqlIefEr8052MR+a5S3EOW4z7igaVsrBcg
+	 B61p7OPkNOfu3SD0x0ZFW/t5TZ57aLg7vNFcTlSGBC5f5KFMjE1BhzF64dBUQsfD43
+	 bIXVXttNIxE7A1TpEVM5SGcS+5069135lyiwdNXCo42ohl1dYrUo9Rj2PKfA/ivKU7
+	 HFUZROWgsrwSjrtaQmwfmKFMVDQHlF2H9w/MCtQ5bxGEqDskFW+Xshiw7dDFO44XjL
+	 ZGOC36OC27CpnHx6ubEshI1dosVYO54PUngwCtAaYe8B98g53srnuLW6b2pHgOfNSv
+	 MmCH4zjhmkrJW6QdxthY49/me4OCmaiaK8zng/jUhMWlp4Pr11bFs7JIz+d9URELtS
+	 tEZ9CjZSmvKzn93G/VrN5mbUvicd99qkM9eUdfA0h27lunBCAdgp+MZ6KLVnpDT4ay
+	 MUdcy6KTHvHZbkHe0pXisuEMsajXWod00ulvomt7z0phz5XCu3W6wSfKC4bTc9F0q6
+	 0wfuLw2RYgYd1J0s7XxN8N/AHh6nYW/McFLcx4KZp8XOl0iGNoCXC3dbLN6vt4W9Tf
+	 HHqPbjRGlcv0POUL1d1fSXW758qo95V5i8ORJNr3mlaFgyPIJTTfyCcp/L2f1eG5Bw
+	 FZT3/pz5itaKiNbb9q/qLtOQ=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3FD9840E01F9;
+	Mon, 17 Jun 2024 07:43:52 +0000 (UTC)
+Date: Mon, 17 Jun 2024 09:43:46 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] EDAC: layerscape: add missing MODULE_DESCRIPTION() macro
+Message-ID: <20240617074346.GAZm_pMvJ1FeQr-Vqa@fat_crate.local>
+References: <20240613-md-arm64-drivers-edac-v1-1-149a4f0f61bb@quicinc.com>
+ <20240616154347.GCZm8IMxshO8YYTTjB@fat_crate.local>
+ <28c653ab-af12-4857-8a32-9ea73740959a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: zynqmp_dpsub: Fix an error handling path in
- zynqmp_dpsub_probe()
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Sean Anderson <sean.anderson@linux.dev>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org
-References: <974d1b062d7c61ee6db00d16fa7c69aa1218ee02.1716198025.git.christophe.jaillet@wanadoo.fr>
- <5288867f-ee45-4930-bde0-14b24b878181@linux.dev>
- <120ffe3c-0240-4f93-a220-e0df565bcdbf@linux.dev>
- <20240616184326.GC7378@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <20240616184326.GC7378@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <28c653ab-af12-4857-8a32-9ea73740959a@quicinc.com>
 
-Hi,
+On Sun, Jun 16, 2024 at 06:43:58PM -0700, Jeff Johnson wrote:
+> My process has been, for the most part, to first fix the ones where I actually
+> observe the warning, unless there is just one or two others. For drivers/edac
+> there are more than a couple more that have a LICENSE but not a DESCRIPTION:
 
-On 16/06/2024 21:43, Laurent Pinchart wrote:
-> On Thu, Jun 13, 2024 at 11:05:01AM -0400, Sean Anderson wrote:
->> On 5/20/24 11:05, Sean Anderson wrote:
->>> On 5/20/24 05:40, Christophe JAILLET wrote:
->>>> If zynqmp_dpsub_drm_init() fails, we must undo the previous
->>>> drm_bridge_add() call.
->>>>
->>>> Fixes: be3f3042391d ("drm: zynqmp_dpsub: Always register bridge")
->>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>>> ---
->>>> Compile tested only
->>>> ---
->>>>   drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 1 +
->>>>   1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
->>>> index face8d6b2a6f..f5781939de9c 100644
->>>> --- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
->>>> +++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
->>>> @@ -269,6 +269,7 @@ static int zynqmp_dpsub_probe(struct platform_device *pdev)
->>>>   	return 0;
->>>>   
->>>>   err_disp:
->>>> +	drm_bridge_remove(dpsub->bridge);
->>>>   	zynqmp_disp_remove(dpsub);
->>>>   err_dp:
->>>>   	zynqmp_dp_remove(dpsub);
->>>
->>> Reviewed-by: Sean Anderson <sean.anderso@linux.dev>
->>
->> Will this be applied soon? The patch it fixes has made its way into
->> the stable tree already.
-> 
-> If someone can merge it in drm-misc that would be the fastest way.
-> Otherwise I'll send a pull request at some point, but I'm overworked at
-> the moment.
-> 
+And my process is not to do excessive work of collecting silly oneliners because
+some tool complains. Send me a whole patch which addresses *all* issues you've
+found in drivers/edac/ or keep sending them one by one but I'll merge them all
+into one. In any case, I won't do piecemeal silly oneliners.
 
-Thanks, I have pushed this to drm-misc-next.
+Thx.
 
-  Tomi
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
