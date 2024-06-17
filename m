@@ -1,340 +1,224 @@
-Return-Path: <linux-kernel+bounces-217138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B8890AC64
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:58:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8470690AC1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27FDEB2920E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:48:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE83FB284A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11689194AF1;
-	Mon, 17 Jun 2024 10:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE731940AB;
+	Mon, 17 Jun 2024 10:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3dsAr1x"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wfx43mjW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FD56D1C7;
-	Mon, 17 Jun 2024 10:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAE76D1C7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718621136; cv=none; b=JOboR2tg0PDH/sSpK4AiL5Q3on0lvAIVqEz79l+xvxBXVq+XJPibumQi5KqJEaf3Mx6x8TgSF4wI5TcQoX5s9P7d7YGEKLPoqFUlRER2GPye/cEgkepi6w2DuNd6IOGJPwvMM2Vw2klvlAt5VhOJbG7F56ZNBYLPo7eJ9kM/Y8o=
+	t=1718621128; cv=none; b=KWlH4Vtlxfhqb3P5SKfgKGJ1F6rmdw2cZIZuzHaIMIBhuzU6Czm33rM3tU2M2B5FZbkdm9clzTnlxxemivHz1RNXhVdCiL26zmQmG4oD0aKHUEqKvMtNJaLvXMWrogHCWhOnD8fyOc5cMvy73wpihj8uv8a2IAow6FsCEoUbU90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718621136; c=relaxed/simple;
-	bh=lLsSW4XbxLzv78IVmwQc671Fdwl5X2aJm6ywh4DqDik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZpYdg3bkAh6taubhiItzoIBjUa1AUG15gBwK3bYs6YyH43pB2rjekLUTSZ0yVb7uk9nA7BE7LVU0Y+uOOiIBIZdXz9eO3TKO6Z4FuYbZFgmyxKw+jaRsbbX3grznsBiQMqiSXmZoHD4GdKnZ5+xvdZwcdY6vUg11liWSyujEvCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L3dsAr1x; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5ba33b08550so1977140eaf.2;
-        Mon, 17 Jun 2024 03:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718621133; x=1719225933; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tDLauPxb+HVcWDog+LTpu5XRFYgNA1dPtktArEVT8/Y=;
-        b=L3dsAr1xRPUeZVxqh2mNzbQ2m54tcmsFFwRGPqEDqU+MYekqtrYrT+95yD2v3NcOVi
-         CfULsfT9lBoXFCmqY3mJZLf/VsryGbXO4KyLtPWGyAuSnttP/AopT58kc2mdHf6M0iCp
-         J8+1/TLRxXiANx/ev6ZesKZXhbdDLQq5iLNNzdPIuCQdsmFgWrtEog/WT0gN7+Qwb+2c
-         lGOJQvY1mLlG4BN0j4FpHMKuzH3CIBg2AKMDdS/qBS7/IDm2knAeCaRn/EKl00xCkZ/3
-         Rc7iCBDV9III4nO3ELT/+ZKwOG3NBYcjNAgz2QcCh5ZGENrZyGKD1Gw1hE8srV9b2idA
-         ckBA==
+	s=arc-20240116; t=1718621128; c=relaxed/simple;
+	bh=vuQcy+KVm29pLB+XSdlOguyYKB5bJJLBLEcIzo669oA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=IEMTNM1fMif5fnx2/p74mCd33rI3kWXlUTrcFnaXl5wx6ZH2g+pG/nkJX1gDu7EZTTptfYyXTicURHRKWGGJgzFxbq/cZBidNs/PhrDb/UgjNo0brGoVH/zGkFvmF3bywD3QBUKMVmNfAiXcZrwQUn0W1UJ50K5yqzc4lURo0Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wfx43mjW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718621126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NRJxfdPnVe61FMxCcvDTR6bA2bGURPuEq5h0b2zz8Mw=;
+	b=Wfx43mjWb6fj6tQphyWdeFkWio8JcM4Tutm8u35C5gJrL9Vb65q8VZUKWL+yTja83L+iRo
+	Bs5NhOd/jhnGMrX/L3ECiuI1Gb34mmqYtusHAsEtv6nvF+9yLQC7PvxSECv49QwlTdrHKm
+	AvoLDTkuFLOBs/3uIss4xUjM0MXTGSs=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-533-JNa-gw8LMSqiF9PjZX6r-g-1; Mon, 17 Jun 2024 06:45:24 -0400
+X-MC-Unique: JNa-gw8LMSqiF9PjZX6r-g-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-57cda58672eso749645a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 03:45:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718621133; x=1719225933;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tDLauPxb+HVcWDog+LTpu5XRFYgNA1dPtktArEVT8/Y=;
-        b=QdpHjBMTHDUw4H8cc7v5Gfx16dLko33AVbxAnt7MdDRTSzcAo+r982oVdAyPrq5LT4
-         hhiKBJv4L5GdxzNHZ9op3u9u08T4E/zbXvUbG2AdAAFsDVddD/GdwAdIsExcYMMOAKYS
-         N/5O9GWjERKpkNs+kdiRK9eS5h9b6FocDMuhmU7lyN4T75IeR0xvOT8wrgOpKsCNxYpW
-         m4tcAdYLttfrWlBqkgS94grqgB3pf6NVEhDpgZN5zlSVwDW5yphoCS2CY8VOel12OZzw
-         lqG3WEDMsKPnQ9qY25a6KgnWQVKMa7LzKib5mZZR3b23lxKqQm0TO+CFfoWGgOJM6SIv
-         mCtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEHCdzOVzKZV0noCR1t+LelquJPI6eHdKf0oDY6+ammM9YYAxzoCxOHepKl5+hc59a1Nnrzsb37XGs3CkRHBqGP/XXtCZx2X5UGLT/wMBtm541yV7A4V7Mt1YvbgLwVG8WACWE/8Vf
-X-Gm-Message-State: AOJu0Yw+Vn882tjfMDFc7l/3jCrCeYOjB+UlU6v2pawGV3nLkRZLNviX
-	k1C6ultRsdXcmbrdtlpItmZ7ixtXqbw6qrgVr7scT+09GMxc/m0HknDBCi7XbmVBFcT9f9+RPPW
-	Pp5yyb0Jq+dmS4R/JOKdHLDBd7QI=
-X-Google-Smtp-Source: AGHT+IHFLCL8ceoGv2471F/sqi3RE4qFLvaeK/VXa4l1ZtiS7s2l+x4o38Y4G4zK9ZSUQljJSrJR8LodyLNYGOEixRo=
-X-Received: by 2002:a05:6820:1c88:b0:5ba:e2cb:c853 with SMTP id
- 006d021491bc7-5bdadc30cc3mr9082503eaf.5.1718621133095; Mon, 17 Jun 2024
- 03:45:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718621123; x=1719225923;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NRJxfdPnVe61FMxCcvDTR6bA2bGURPuEq5h0b2zz8Mw=;
+        b=ElEBbPJlgnxi4n5tsmEKF9kWG66dmzn7SkKuKqKQQgjdJoDY6qPhIPoqTS1WL1go3z
+         80wkZkZqA02n5ldpTA3tGQ2cXororlFFKvPaNvoi3g2U2mGZKc1ciKptE0XJGehtvVNz
+         pIBGDJEq13nzrAnzDVm1trCuTG3/2yI7BfbUV5l4tBvYRu069DevvG8dWRan1dyUM1sD
+         fk8gC++IMOYK7iYOsOJXdia26RwT4j7hH2OdaG7TSXVL7KHb/+62+RHC8gGfp0kYEJOk
+         q4WnVi0e4XWad8ytkq9ZCeSLoWQek+TCVw80DRLKNwSZcgWDz8z0w7+SIb6ykfU4hKqW
+         qGew==
+X-Forwarded-Encrypted: i=1; AJvYcCWac8J7hgwPdQfpNA63Y5XZIYgKSZCCtR+hm8MkdXWK3EVKHTm3llhIO2iqnlPYsJ1UsUBcs5kxK1MreG46cXJ4lg9JbOtAwSheV1KH
+X-Gm-Message-State: AOJu0Ywui8erpzO2WLjRTSIiQ0Iakkt0KqL8fzYhqMS06E/j72N09kNC
+	I3Xder025ocPHoQRbgWeRTrwwpo/wJ2e+64XRz6RrvygxIK8sdjiEkFl9EXQql/fQMZ/ihFMfCp
+	W9bp0Ybiq8hMa6frwfNddjJko1XPyb7/SM0uMcoh2lsssawFkHZ2o6ncCozHaTA==
+X-Received: by 2002:a05:6402:17d9:b0:57c:c712:a3c7 with SMTP id 4fb4d7f45d1cf-57cc712a42emr4992934a12.36.1718621123497;
+        Mon, 17 Jun 2024 03:45:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEw1dOfO65idOI5S5hHYI2dR8VfPt3UB6du2RlcOyEDzhJXF4pRAG6lh6hyi8RsfiJwinPS0Q==
+X-Received: by 2002:a05:6402:17d9:b0:57c:c712:a3c7 with SMTP id 4fb4d7f45d1cf-57cc712a42emr4992914a12.36.1718621123073;
+        Mon, 17 Jun 2024 03:45:23 -0700 (PDT)
+Received: from rh (p200300c93f02d1004c157eb0f018dd01.dip0.t-ipconnect.de. [2003:c9:3f02:d100:4c15:7eb0:f018:dd01])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72e992dsm6225534a12.48.2024.06.17.03.45.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 03:45:22 -0700 (PDT)
+Date: Mon, 17 Jun 2024 12:45:21 +0200 (CEST)
+From: Sebastian Ott <sebott@redhat.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+    linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>, 
+    James Morse <james.morse@arm.com>, 
+    Suzuki K Poulose <suzuki.poulose@arm.com>, 
+    Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+    Shaoqin Huang <shahuang@redhat.com>, Eric Auger <eric.auger@redhat.com>
+Subject: Re: [PATCH v4 3/6] KVM: arm64: add emulation for CTR_EL0 register
+In-Reply-To: <ZmyMxRoKN5VhUW7J@linux.dev>
+Message-ID: <393a1898-504c-c6a6-3c94-4b67b3f4c573@redhat.com>
+References: <20240603130507.17597-1-sebott@redhat.com> <20240603130507.17597-4-sebott@redhat.com> <ZmtwjLbP283ra0Xq@linux.dev> <Zmty99X4hnYwtRS4@linux.dev> <0b148e21-1714-f4f7-bc77-2a12b990572d@redhat.com> <ZmyMxRoKN5VhUW7J@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240615035323.909650-1-dzm91@hust.edu.cn> <20240615035323.909650-2-dzm91@hust.edu.cn>
- <87v828gfic.fsf@intel.com>
-In-Reply-To: <87v828gfic.fsf@intel.com>
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-Date: Mon, 17 Jun 2024 18:45:06 +0800
-Message-ID: <CAD-N9QUBdMjfr3ULuFE_S4JgLeMSRW2OD7ftj+7ArrpF2iwSpQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] doc-guide: add help documentation checktransupdate.rst
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>, 
-	Yanteng Si <siyanteng@loongson.cn>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Mon, Jun 17, 2024 at 4:32=E2=80=AFPM Jani Nikula <jani.nikula@linux.inte=
-l.com> wrote:
+On Fri, 14 Jun 2024, Oliver Upton wrote:
+> On Fri, Jun 14, 2024 at 05:31:37PM +0200, Sebastian Ott wrote:
 >
-> On Sat, 15 Jun 2024, Dongliang Mu <dzm91@hust.edu.cn> wrote:
-> > This commit adds help documents - Documentation/doc-guide/checktransupd=
-ate.rst
-> > and Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
-> > for scripts/checktransupdate.py, including English and Chinese versions
-> >
-> > Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-> > ---
-> > v1->v2: fix some issues according to Randy
-> >  Documentation/doc-guide/checktransupdate.rst  | 63 +++++++++++++++++++
-> >  Documentation/doc-guide/index.rst             |  1 +
-> >  .../zh_CN/doc-guide/checktransupdate.rst      | 62 ++++++++++++++++++
-> >  .../translations/zh_CN/doc-guide/index.rst    |  1 +
-> >  4 files changed, 127 insertions(+)
-> >  create mode 100644 Documentation/doc-guide/checktransupdate.rst
-> >  create mode 100644 Documentation/translations/zh_CN/doc-guide/checktra=
-nsupdate.rst
-> >
-> > diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentati=
-on/doc-guide/checktransupdate.rst
-> > new file mode 100644
-> > index 000000000000..4ece330882d6
-> > --- /dev/null
-> > +++ b/Documentation/doc-guide/checktransupdate.rst
-> > @@ -0,0 +1,63 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +Check translation update
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> > +
-> > +This script helps track the translation status of the documentation in
-> > +different locales, i.e., whether the documentation is up-to-date with
-> > +the English counterpart.
-> > +
-> > +How it works
-> > +------------
-> > +
-> > +It uses ``git log`` command to track the latest English commit from th=
-e
-> > +translation commit (order by author date) and the latest English commi=
-ts
-> > +from HEAD. If any differences occur, the file is considered as out-of-=
-date,
-> > +then commits that need to be updated will be collected and reported.
-> > +
-> > +Features implemented
-> > +--------------------
-> > +
-> > +-  check all files in a certain locale
-> > +-  check a single file or a set of files
-> > +-  provide options to change output format
-> > +
-> > +Usage
-> > +-----
+> [...]
 >
-> Why not document the argument parser and tell people ot run
-> 'checktransupdate.py --help' here? Duplicating the usage here is just a
-> maintenance burden.
+>> Hm, but in that case we'd use reset_vm_ftr_id_reg() meaning we would have
+>> to make IDREG() work for this reg. Either by adding special handling to
+>> that macro or by increasing kvm->arch.id_regs[] a lot - both options don't
+>> sound very appealing.
+>
+> Hiding some of the ugly details behind IDREG() isn't the worst thing,
+> IMO. The feature ID registers are not laid out contiguously in the
+> architecture, so it'd make sense that the corresponding KVM code not be
+> brittle to this.
+>
+> The other benefit is we initialize kvm->arch.ctr_el0 exactly once, just
+> like the other ID registers. I believe there's a quirk with this patch
+> where an initialization that happens after a KVM_SET_ONE_REG on CTR_EL0
+> will clobber the userspace value.
+>
+> So, here's where I'm at locally, I'll work it a bit more and try to
+> densely pack CTR_EL0 into the id_regs array. I also have some (untested)
+> changes to get CTR_EL0 to show up in the debugfs interface we now have.
+>
+> Mind if I post what I have afterwards?
+
+Sure go ahead.
+
+Thanks,
+Sebastian
+
+
+>
+> commit 6bf81bd50dc16309a627863948d49cfeeb00897e
+> Author: Sebastian Ott <sebott@redhat.com>
+> Date:   Mon Jun 3 15:05:03 2024 +0200
+>
+>    KVM: arm64: Treat CTR_EL0 as a VM feature ID register
+>
+>    Signed-off-by: Sebastian Ott <sebott@redhat.com>
+>    Reviewed-by: Shaoqin Huang <shahuang@redhat.com>
+>    Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
+>
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 212ae77eefaf..e5b8cdd70914 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -327,10 +327,20 @@ struct kvm_arch {
+> 	 */
+> #define IDREG_IDX(id)		(((sys_reg_CRm(id) - 1) << 3) | sys_reg_Op2(id))
+> #define IDX_IDREG(idx)		sys_reg(3, 0, 0, ((idx) >> 3) + 1, (idx) & Op2_mask)
+> -#define IDREG(kvm, id)		((kvm)->arch.id_regs[IDREG_IDX(id)])
+> +#define IDREG(kvm, id)								\
+> +(*({										\
+> +	u64 *__reg;								\
+> +	if ((id) == SYS_CTR_EL0)						\
+> +		__reg = &(kvm)->arch.ctr_el0;					\
+> +	else									\
+> +		__reg = &((kvm)->arch.id_regs[IDREG_IDX(id)]);			\
+> +	__reg;									\
+> +}))
+> #define KVM_ARM_ID_REG_NUM	(IDREG_IDX(sys_reg(3, 0, 0, 7, 7)) + 1)
+> 	u64 id_regs[KVM_ARM_ID_REG_NUM];
+>
+> +	u64 ctr_el0;
+> +
+> 	/* Masks for VNCR-baked sysregs */
+> 	struct kvm_sysreg_masks	*sysreg_masks;
+>
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index dfabf7aec2c7..1ab2cbbc7a76 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -1583,6 +1583,9 @@ static bool is_feature_id_reg(u32 encoding)
+>  */
+> static inline bool is_vm_ftr_id_reg(u32 id)
+> {
+> +	if (id == SYS_CTR_EL0)
+> +		return true;
+> +
+> 	return (sys_reg_Op0(id) == 3 && sys_reg_Op1(id) == 0 &&
+> 		sys_reg_CRn(id) == 0 && sys_reg_CRm(id) >= 1 &&
+> 		sys_reg_CRm(id) < 8);
+> @@ -1886,7 +1889,7 @@ static bool access_ctr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+> 	if (p->is_write)
+> 		return write_to_read_only(vcpu, p, r);
+>
+> -	p->regval = read_sanitised_ftr_reg(SYS_CTR_EL0);
+> +	p->regval = IDREG(vcpu->kvm, SYS_CTR_EL0);
+> 	return true;
+> }
+>
+> @@ -2475,7 +2478,10 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+> 	{ SYS_DESC(SYS_CCSIDR2_EL1), undef_access },
+> 	{ SYS_DESC(SYS_SMIDR_EL1), undef_access },
+> 	{ SYS_DESC(SYS_CSSELR_EL1), access_csselr, reset_unknown, CSSELR_EL1 },
+> -	{ SYS_DESC(SYS_CTR_EL0), access_ctr },
+> +	ID_WRITABLE(CTR_EL0, CTR_EL0_DIC_MASK |
+> +			     CTR_EL0_IDC_MASK |
+> +			     CTR_EL0_DminLine_MASK |
+> +			     CTR_EL0_IminLine_MASK),
+> 	{ SYS_DESC(SYS_SVCR), undef_access },
+>
+> 	{ PMU_SYS_REG(PMCR_EL0), .access = access_pmcr, .reset = reset_pmcr,
+> @@ -3714,18 +3720,11 @@ FUNCTION_INVARIANT(midr_el1)
+> FUNCTION_INVARIANT(revidr_el1)
+> FUNCTION_INVARIANT(aidr_el1)
+>
+> -static u64 get_ctr_el0(struct kvm_vcpu *v, const struct sys_reg_desc *r)
+> -{
+> -	((struct sys_reg_desc *)r)->val = read_sanitised_ftr_reg(SYS_CTR_EL0);
+> -	return ((struct sys_reg_desc *)r)->val;
+> -}
+> -
+> /* ->val is filled in by kvm_sys_reg_table_init() */
+> static struct sys_reg_desc invariant_sys_regs[] __ro_after_init = {
+> 	{ SYS_DESC(SYS_MIDR_EL1), NULL, get_midr_el1 },
+> 	{ SYS_DESC(SYS_REVIDR_EL1), NULL, get_revidr_el1 },
+> 	{ SYS_DESC(SYS_AIDR_EL1), NULL, get_aidr_el1 },
+> -	{ SYS_DESC(SYS_CTR_EL0), NULL, get_ctr_el0 },
+> };
+>
+> static int get_invariant_sys_reg(u64 id, u64 __user *uaddr)
+>
+> -- 
+> Thanks,
+> Oliver
+>
 >
 
-Thanks, this is a good suggestion. I will modify it in the v3 patch.
-
-> BR,
-> Jani.
->
->
->
->
-> > +
-> > +::
-> > +
-> > +   checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-=
-commits] [--print-updated-files | --no-print-updated-files] [--debug | --no=
--debug] [files ...]
-> > +
-> > +Options
-> > +~~~~~~~
-> > +
-> > +-  ``-l``, ``--locale``: locale to check when file is not specified
-> > +-  ``--[no-]print-commits``: whether to print commits between origin a=
-nd
-> > +   translation
-> > +-  ``--[no-]print-updated-files``: whether to print files that do no
-> > +   need to be updated
-> > +-  ``files``: files to check, if this option is specified, the locale
-> > +   option will be ignored.
-> > +
-> > +Samples
-> > +~~~~~~~
-> > +
-> > +-  ``./scripts/checktransupdate.py -l zh_CN``
-> > +   This will print all the files that need to be updated in the zh_CN =
-locale.
-> > +-  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/pr=
-ocess/coding-style.rst``
-> > +   This will only print the status of the specified file.
-> > +
-> > +Then the output is something like:
-> > +
-> > +::
-> > +
-> > +    Documentation/translations/zh_CN/process/coding-style.rst       (2=
- commits)
-> > +    commit 6813216bbdba ("Documentation: coding-style: ask function-li=
-ke macros to evaluate parameters")
-> > +    commit 185ea7676ef3 ("Documentation: coding-style: Update syntax h=
-ighlighting for code-blocks")
-> > +
-> > +Features to be implemented
-> > +----------------------------
-> > +
-> > +- track the translation status of files that have no translation
-> > +- files can be a folder instead of only a file
-> > diff --git a/Documentation/doc-guide/index.rst b/Documentation/doc-guid=
-e/index.rst
-> > index 7c7d97784626..24d058faa75c 100644
-> > --- a/Documentation/doc-guide/index.rst
-> > +++ b/Documentation/doc-guide/index.rst
-> > @@ -12,6 +12,7 @@ How to write kernel documentation
-> >     parse-headers
-> >     contributing
-> >     maintainer-profile
-> > +   checktransupdate
-> >
-> >  .. only::  subproject and html
-> >
-> > diff --git a/Documentation/translations/zh_CN/doc-guide/checktransupdat=
-e.rst b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
-> > new file mode 100644
-> > index 000000000000..37c0bb518ab8
-> > --- /dev/null
-> > +++ b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
-> > @@ -0,0 +1,62 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +.. include:: ../disclaimer-zh_CN.rst
-> > +
-> > +:Original: Documentation/doc-guide/checktransupdate.rst
-> > +
-> > +:=E8=AF=91=E8=80=85: =E6=85=95=E5=86=AC=E4=BA=AE Dongliang Mu <dzm91@h=
-ust.edu.cn>
-> > +
-> > +=E6=A3=80=E6=9F=A5=E7=BF=BB=E8=AF=91=E6=9B=B4=E6=96=B0
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +=E8=BF=99=E4=B8=AA=E8=84=9A=E6=9C=AC=E5=B8=AE=E5=8A=A9=E8=B7=9F=E8=B8=
-=AA=E4=B8=8D=E5=90=8C=E8=AF=AD=E8=A8=80=E7=9A=84=E6=96=87=E6=A1=A3=E7=BF=BB=
-=E8=AF=91=E7=8A=B6=E6=80=81=EF=BC=8C=E5=8D=B3=E6=96=87=E6=A1=A3=E6=98=AF=E5=
-=90=A6=E4=B8=8E=E5=AF=B9=E5=BA=94=E7=9A=84=E8=8B=B1=E6=96=87=E7=89=88=E6=9C=
-=AC=E4=BF=9D=E6=8C=81=E6=9B=B4=E6=96=B0=E3=80=82
-> > +
-> > +=E5=B7=A5=E4=BD=9C=E5=8E=9F=E7=90=86
-> > +------------
-> > +
-> > +=E5=AE=83=E4=BD=BF=E7=94=A8 ``git log`` =E5=91=BD=E4=BB=A4=E6=9D=A5=E8=
-=B7=9F=E8=B8=AA=E7=BF=BB=E8=AF=91=E6=8F=90=E4=BA=A4=E7=9A=84=E6=9C=80=E6=96=
-=B0=E8=8B=B1=E6=96=87=E6=8F=90=E4=BA=A4=EF=BC=88=E6=8C=89=E4=BD=9C=E8=80=85=
-=E6=97=A5=E6=9C=9F=E6=8E=92=E5=BA=8F=EF=BC=89=E5=92=8C=E8=8B=B1=E6=96=87=E6=
-=96=87=E6=A1=A3=E7=9A=84
-> > +=E6=9C=80=E6=96=B0=E6=8F=90=E4=BA=A4=E3=80=82=E5=A6=82=E6=9E=9C=E6=9C=
-=89=E4=BB=BB=E4=BD=95=E5=B7=AE=E5=BC=82=EF=BC=8C=E5=88=99=E8=AF=A5=E6=96=87=
-=E4=BB=B6=E8=A2=AB=E8=AE=A4=E4=B8=BA=E6=98=AF=E8=BF=87=E6=9C=9F=E7=9A=84=EF=
-=BC=8C=E7=84=B6=E5=90=8E=E9=9C=80=E8=A6=81=E6=9B=B4=E6=96=B0=E7=9A=84=E6=8F=
-=90=E4=BA=A4=E5=B0=86=E8=A2=AB=E6=94=B6=E9=9B=86=E5=B9=B6=E6=8A=A5=E5=91=8A=
-=E3=80=82
-> > +
-> > +=E5=AE=9E=E7=8E=B0=E7=9A=84=E5=8A=9F=E8=83=BD
-> > +--------------------
-> > +
-> > +- =E6=A3=80=E6=9F=A5=E7=89=B9=E5=AE=9A=E8=AF=AD=E8=A8=80=E4=B8=AD=E7=
-=9A=84=E6=89=80=E6=9C=89=E6=96=87=E4=BB=B6
-> > +- =E6=A3=80=E6=9F=A5=E5=8D=95=E4=B8=AA=E6=96=87=E4=BB=B6=E6=88=96=E4=
-=B8=80=E7=BB=84=E6=96=87=E4=BB=B6
-> > +- =E6=8F=90=E4=BE=9B=E6=9B=B4=E6=94=B9=E8=BE=93=E5=87=BA=E6=A0=BC=E5=
-=BC=8F=E7=9A=84=E9=80=89=E9=A1=B9
-> > +
-> > +=E7=94=A8=E6=B3=95
-> > +-----
-> > +
-> > +::
-> > +
-> > +   checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-=
-commits] [--print-updated-files | --no-print-updated-files] [--debug | --no=
--debug] [files ...]
-> > +
-> > +=E9=80=89=E9=A1=B9
-> > +~~~~~~~
-> > +
-> > +-  ``-l``, ``--locale``: =E6=A3=80=E6=9F=A5=E6=8C=87=E5=AE=9A=E7=9A=84=
-=E6=96=87=E4=BB=B6=E8=AF=AD=E8=A8=80=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=9C=AA=E6=
-=8C=87=E5=AE=9A=E6=96=87=E4=BB=B6
-> > +-  ``--[no-]print-commits``: =E6=98=AF=E5=90=A6=E6=89=93=E5=8D=B0=E8=
-=8B=B1=E6=96=87=E5=8E=9F=E5=A7=8B=E7=89=88=E6=9C=AC=E5=92=8C=E7=BF=BB=E8=AF=
-=91=E7=89=88=E6=9C=AC=E4=B9=8B=E9=97=B4=E7=9A=84=E6=8F=90=E4=BA=A4
-> > +-  ``--[no-]print-updated-files``: =E6=98=AF=E5=90=A6=E6=89=93=E5=8D=
-=B0=E6=97=A0=E9=9C=80=E6=9B=B4=E6=96=B0=E7=9A=84=E6=96=87=E4=BB=B6
-> > +-  ``files``: =E8=A6=81=E6=A3=80=E6=9F=A5=E7=9A=84=E6=96=87=E4=BB=B6=
-=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=8C=87=E5=AE=9A=E4=BA=86=E6=AD=A4=E9=80=89=E9=
-=A1=B9=EF=BC=8C=E5=B0=86=E5=BF=BD=E7=95=A5=E8=AF=AD=E8=A8=80=E9=80=89=E9=A1=
-=B9
-> > +
-> > +=E7=A4=BA=E4=BE=8B
-> > +~~~~~~~
-> > +
-> > +-  ``./scripts/checktransupdate.py -l zh_CN``
-> > +   =E8=BF=99=E5=B0=86=E6=89=93=E5=8D=B0 zh_CN =E8=AF=AD=E8=A8=80=E4=B8=
-=AD=E9=9C=80=E8=A6=81=E6=9B=B4=E6=96=B0=E7=9A=84=E6=89=80=E6=9C=89=E6=96=87=
-=E4=BB=B6=E3=80=82
-> > +-  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/pr=
-ocess/coding-style.rst``
-> > +   =E8=BF=99=E5=B0=86=E5=8F=AA=E6=89=93=E5=8D=B0=E6=8C=87=E5=AE=9A=E6=
-=96=87=E4=BB=B6=E7=9A=84=E7=8A=B6=E6=80=81=E3=80=82
-> > +
-> > +=E7=84=B6=E5=90=8E=E8=BE=93=E5=87=BA=E7=B1=BB=E4=BC=BC=E5=A6=82=E4=B8=
-=8B=E7=9A=84=E5=86=85=E5=AE=B9=EF=BC=9A
-> > +
-> > +::
-> > +
-> > +    Documentation/translations/zh_CN/process/coding-style.rst       (2=
- commits)
-> > +    commit 6813216bbdba ("Documentation: coding-style: ask function-li=
-ke macros to evaluate parameters")
-> > +    commit 185ea7676ef3 ("Documentation: coding-style: Update syntax h=
-ighlighting for code-blocks")
-> > +
-> > +=E5=BE=85=E5=AE=9E=E7=8E=B0=E7=9A=84=E5=8A=9F=E8=83=BD
-> > +-------------
-> > +
-> > +- =E8=B7=9F=E8=B8=AA=E6=B2=A1=E6=9C=89=E7=BF=BB=E8=AF=91=E8=BF=87=E7=
-=9A=84=E6=96=87=E4=BB=B6=E7=9A=84=E7=BF=BB=E8=AF=91=E7=8A=B6=E6=80=81
-> > +- =E6=96=87=E4=BB=B6=E5=8F=82=E6=95=B0=E5=8F=AF=E4=BB=A5=E6=98=AF=E6=
-=96=87=E4=BB=B6=E5=A4=B9=E8=80=8C=E4=B8=8D=E4=BB=85=E4=BB=85=E6=98=AF=E5=8D=
-=95=E4=B8=AA=E6=96=87=E4=BB=B6
-> > diff --git a/Documentation/translations/zh_CN/doc-guide/index.rst b/Doc=
-umentation/translations/zh_CN/doc-guide/index.rst
-> > index 78c2e9a1697f..0ac1fc9315ea 100644
-> > --- a/Documentation/translations/zh_CN/doc-guide/index.rst
-> > +++ b/Documentation/translations/zh_CN/doc-guide/index.rst
-> > @@ -18,6 +18,7 @@
-> >     parse-headers
-> >     contributing
-> >     maintainer-profile
-> > +   checktransupdate
-> >
-> >  .. only::  subproject and html
->
-> --
-> Jani Nikula, Intel
->
 
