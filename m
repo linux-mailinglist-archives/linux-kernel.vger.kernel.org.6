@@ -1,79 +1,158 @@
-Return-Path: <linux-kernel+bounces-218329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC96290BCB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:15:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E9E90BCB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66CBD285607
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:15:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E8681F24A43
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591A5199251;
-	Mon, 17 Jun 2024 21:15:02 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5117199255;
+	Mon, 17 Jun 2024 21:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Q2BHM1va"
+Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F0B199238;
-	Mon, 17 Jun 2024 21:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728191991DD;
+	Mon, 17 Jun 2024 21:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718658901; cv=none; b=GJyXofpzcP5ySqssH1otAi/Ypm0SDDu9CrJtO+hYuC2oml52Kx/dN0HiwPqgz2r1n/Kh0FeUFva2KRDwh4UxM1ov5i/Z2zvGq2Vmy7Ue60MFY5xGItlHoIB7ZNd+nrQvcT8QXBUelJ15xwc4BJBa2Z8ZfYUIC1dT2TxzFPVwdQI=
+	t=1718658931; cv=none; b=iToLhQIrAAhwA6iq3L4U1I5tbEdlS0sAS8SmAeXrkl227IHvdtDqqZm3sGRxa6ObrwUHcOJ+D6cIFa+J/iYfScWPyR+tQRYbF8VM6Trl4t6G7mOSHtQoHl1DLmpkAdtOYJOMKsjfnRZJ1gvAsS8xh3hEayJF/g8sEl7Nf2nhVPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718658901; c=relaxed/simple;
-	bh=BXQX5/hcoRLxU8I4iXNU2xSfjke0sJkui4tjDutAd0E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=imyblA3rbH/QzWhALVh3SVPuwbdQZ65nVjys3NcsX1h/JqSIQoZdTjeQ6iRuSx0kt1QZ7EHSO6sYlAW3tWRPXnYwO7BIkK6dH8DEJyTgzxRIoa7qZZuAhTi2OfG/cvhNo/udbRJFSvT7k18KNG+gFk2R0t+MOQ7+On9T4u0LrCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e8616c2.versanet.de ([94.134.22.194] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sJJgj-0004LG-FU; Mon, 17 Jun 2024 23:14:53 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Hsin-Te Yuan <yuanhsinte@chromium.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: (subset) [PATCH v2 0/2] arm64: dts: Fix the value of `dlg,jack-det-rate` mismatch
-Date: Mon, 17 Jun 2024 23:14:51 +0200
-Message-Id: <171865888527.3904644.1008571862368310887.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240613-jack-rate-v2-0-ebc5f9f37931@chromium.org>
-References: <20240613-jack-rate-v2-0-ebc5f9f37931@chromium.org>
+	s=arc-20240116; t=1718658931; c=relaxed/simple;
+	bh=TPgwPxxcuXihDS6Fd5kqNYs3tbUpZkERktoUP7ijzLk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lm1p17j8LRta3ve6D/2XEyRlcEGaFTukg55AqVHGxdzY21Fqut0R+1g4bmlTW0z7mQkkxk1eXVK0g6rJA+D7DjiyugZfA9n5IzKSGZtSsz4DiQnogMXSTM47dU7UGY9azwnrriDHFOe0T1XMjG3NGlMpiF895yFklGPeOwTJA/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Q2BHM1va; arc=none smtp.client-ip=207.171.184.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1718658930; x=1750194930;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ywO+hwyTv+j8f6emuBiZ+9A/DunuRT51chwUSajyKgU=;
+  b=Q2BHM1vaDcksDdv0+OrF7KggixW+J/nlpqsoRcgz8HIKqzpdF/2EMHcS
+   oSadV20fwlr1VOwlK769uD9mwBLa/wmqYG/sZo7KdNXuysv8uxEIcW0/D
+   n64j8q3wcCq6lxSzi1gh5ediQdARc1br7pGuk6Jawo7EgsSIAIkg8sF0l
+   M=;
+X-IronPort-AV: E=Sophos;i="6.08,245,1712620800"; 
+   d="scan'208";a="426890372"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 21:15:24 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.38.20:33573]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.19.97:2525] with esmtp (Farcaster)
+ id 4bb6c7f5-0243-4830-be5b-a3a2332fbbc5; Mon, 17 Jun 2024 21:15:23 +0000 (UTC)
+X-Farcaster-Flow-ID: 4bb6c7f5-0243-4830-be5b-a3a2332fbbc5
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 17 Jun 2024 21:15:23 +0000
+Received: from 88665a182662.ant.amazon.com (10.187.171.38) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 17 Jun 2024 21:15:20 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <ignat@cloudflare.com>
+CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kernel-team@cloudflare.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <revest@chromium.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH net v3] net: do not leave a dangling sk pointer, when socket creation fails
+Date: Mon, 17 Jun 2024 14:15:04 -0700
+Message-ID: <20240617211504.91973-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240617210205.67311-1-ignat@cloudflare.com>
+References: <20240617210205.67311-1-ignat@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D045UWA004.ant.amazon.com (10.13.139.91) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Thu, 13 Jun 2024 11:58:53 +0000, Hsin-Te Yuan wrote:
-> According to Documentation/devicetree/bindings/sound/dialog,da7219.yaml,
-> the value of `dlg,jack-det-rate` property should be like "32_64" instead
-> of "32ms_64ms".
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Mon, 17 Jun 2024 22:02:05 +0100
+> It is possible to trigger a use-after-free by:
+>   * attaching an fentry probe to __sock_release() and the probe calling the
+>     bpf_get_socket_cookie() helper
+>   * running traceroute -I 1.1.1.1 on a freshly booted VM
 > 
+> A KASAN enabled kernel will log something like below (decoded and stripped):
+> ==================================================================
+> BUG: KASAN: slab-use-after-free in __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+> Read of size 8 at addr ffff888007110dd8 by task traceroute/299
 > 
+> CPU: 2 PID: 299 Comm: traceroute Tainted: G            E      6.10.0-rc2+ #2
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> Call Trace:
+>  <TASK>
+> dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1))
+> print_report (mm/kasan/report.c:378 mm/kasan/report.c:488)
+> ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+> kasan_report (mm/kasan/report.c:603)
+> ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+> kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
+> __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+> bpf_get_socket_ptr_cookie (./arch/x86/include/asm/preempt.h:94 ./include/linux/sock_diag.h:42 net/core/filter.c:5094 net/core/filter.c:5092)
+> bpf_prog_875642cf11f1d139___sock_release+0x6e/0x8e
+> bpf_trampoline_6442506592+0x47/0xaf
+> __sock_release (net/socket.c:652)
+> __sock_create (net/socket.c:1601)
+> ...
+> Allocated by task 299 on cpu 2 at 78.328492s:
+> kasan_save_stack (mm/kasan/common.c:48)
+> kasan_save_track (mm/kasan/common.c:68)
+> __kasan_slab_alloc (mm/kasan/common.c:312 mm/kasan/common.c:338)
+> kmem_cache_alloc_noprof (mm/slub.c:3941 mm/slub.c:4000 mm/slub.c:4007)
+> sk_prot_alloc (net/core/sock.c:2075)
+> sk_alloc (net/core/sock.c:2134)
+> inet_create (net/ipv4/af_inet.c:327 net/ipv4/af_inet.c:252)
+> __sock_create (net/socket.c:1572)
+> __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
+> __x64_sys_socket (net/socket.c:1718)
+> do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+> entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> 
+> Freed by task 299 on cpu 2 at 78.328502s:
+> kasan_save_stack (mm/kasan/common.c:48)
+> kasan_save_track (mm/kasan/common.c:68)
+> kasan_save_free_info (mm/kasan/generic.c:582)
+> poison_slab_object (mm/kasan/common.c:242)
+> __kasan_slab_free (mm/kasan/common.c:256)
+> kmem_cache_free (mm/slub.c:4437 mm/slub.c:4511)
+> __sk_destruct (net/core/sock.c:2117 net/core/sock.c:2208)
+> inet_create (net/ipv4/af_inet.c:397 net/ipv4/af_inet.c:252)
+> __sock_create (net/socket.c:1572)
+> __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
+> __x64_sys_socket (net/socket.c:1718)
+> do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+> entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> 
+> Fix this by clearing the struct socket reference in sk_common_release() to cover
+> all protocol families create functions, which may already attached the
+> reference to the sk object with sock_init_data().
+> 
+> Fixes: c5dbb89fc2ac ("bpf: Expose bpf_get_socket_cookie to tracing programs")
+> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
+> Cc: stable@vger.kernel.org
+> Link: https://lore.kernel.org/netdev/20240613194047.36478-1-kuniyu@amazon.com/T/
 
-Applied, thanks!
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
-[2/2] arm64: dts: rockchip: rk3399-gru: Fix the value of `dlg,jack-det-rate` mismatch
-      commit: a500c0b4b589ae6fb79140c9d96bd5cd31393d41
+Thanks!
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+
+P.S. next time, please make sure 24h pass before reposting for netdev.
+
+  See: Documentation/process/maintainer-netdev.rst
 
