@@ -1,197 +1,158 @@
-Return-Path: <linux-kernel+bounces-218006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E2090B7D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:22:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8284C90B7D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D231E285084
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:22:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A692C1C2342A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8E516DC07;
-	Mon, 17 Jun 2024 17:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AD416DC26;
+	Mon, 17 Jun 2024 17:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ewGtm58f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mno24mML"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD8516CD3F;
-	Mon, 17 Jun 2024 17:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FC716DC1D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718644941; cv=none; b=j/fJiSqPlUS3evWMYQc/4xxTYmKPgLgibf/q39ZBkgZ85HaJswyPkksaVAD5Htkx84bk1mOdocg9bVcZ1GjaGOVTRS0pP3Unx0iSzfo07jRjuPH5gHRBpAxl3OXa2KwFCucfxYuBhsD65nPKQS2+3xXqfoHrrXtvW8cjUo9NlhU=
+	t=1718644944; cv=none; b=GzcYaaja3wNwFF2oCBwNGFQ1N8RDqblPZSJzxZpj8uO6Kx/RWIQVkG2SW6utX0CSFsKOt4/Kl0/u7mJgpbINAYZbgST9T8yVCrIbQi3bOyGuoiq2C2immp8M3EuGM8UPX/E+aBPpFZ/6b0yGASTbA6oY275snxNtsVD6tmrk6Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718644941; c=relaxed/simple;
-	bh=zptzhIEUP8jnYvt0dNb3Qykrja0JIEF/vS5PqxZQQHo=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=nR0ipdRlPuwbnerFnB7CeCVhXd1NCoVHPMkUGDFEIyuK8l1+tTeYF0z9RvtRjV6V8nJ+N2lpu/bqqwY2QQ1r57cd7dmbJeGyfHJsZUVCb+tv6PwZb8ahPt/8ER5oxhBSmk+3ryGxD1yiL9sy8ysFgELxqJ8U1HaZzlA5/+ZZ+7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ewGtm58f; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718644939; x=1750180939;
-  h=message-id:date:mime-version:subject:references:from:to:
-   cc:in-reply-to:content-transfer-encoding;
-  bh=zptzhIEUP8jnYvt0dNb3Qykrja0JIEF/vS5PqxZQQHo=;
-  b=ewGtm58fd8ggF2MiUWvjTUQnZot1Pqc+seohP2/4KTt19vyp1crwuyd2
-   7X88ch3YcAO2pQoAU3+MjdB7S3nieMku8mPWUYoCI1n/s1ANKXtaZ1GD9
-   jO8xs60RtU6r6hHCvFTGQHgXXbnwJrqZQ75jxRiSlzNvJAjsGU1rOr2Ue
-   hl7B+F5sf/e+SoCXN2rjvCTEAjGJdP/8b6oHMocH7AsK9maXwmWezliOF
-   ZP3X502iFoUyvvC753wFHguVOzyLwL2Rd51qoxL9IFMu2Nt4wKnr9sqMB
-   7JHht1O/thhZihm1193rmoVGK4IfMbq84/SWmjQtoGjjPmizRkSw977eI
-   g==;
-X-CSE-ConnectionGUID: OqW5+oJEQieEl9SO8sZSpA==
-X-CSE-MsgGUID: 3dwz1wpZTw+U/CJUl+IaCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15608879"
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="15608879"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:22:19 -0700
-X-CSE-ConnectionGUID: fT/NIVfcRne7nSd02QR49Q==
-X-CSE-MsgGUID: Aehq75JrQN2Ks/LW7Ia31g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="41192247"
-Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.224.103]) ([10.124.224.103])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:22:16 -0700
-Message-ID: <c96d2f39-fa90-41da-985c-116cf4cc967a@intel.com>
-Date: Tue, 18 Jun 2024 01:22:13 +0800
+	s=arc-20240116; t=1718644944; c=relaxed/simple;
+	bh=xMBNjWoj2BogXC3Z1A0ni1Ag4wgonRSM6djm/zo9wSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dCtj4k90g2s4FeelXKBgY/XFyBO27h0Ezjbf4GLqFm1QsbYfq2gQWsB/SVqdKAAlxo5ccRDADbXCd93rrDfrOwzSgCwhHYWe2ZQSUKMQUimQWO72j55xdj9R4+NHwz60xjDVuxVlVBqjALnKL9AeURzfuV3cbT9ZNAaHB72Sytk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mno24mML; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3012BC4AF1C;
+	Mon, 17 Jun 2024 17:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718644944;
+	bh=xMBNjWoj2BogXC3Z1A0ni1Ag4wgonRSM6djm/zo9wSw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mno24mMLHy57nF77+4yEx2BvNa5aO59Mb86c5G6f3vG3QWRbfe+bhFEkk4zhQkl0Q
+	 cNQd47mj0eYbke4IS+FkyW79nuibOUOYGYHicsoZQoSGfcWaa6nzS8jTGX1jsZzZjQ
+	 HoHvp2IYk7QVfSjkRmTisV+jMPDABdZ6UF3zQwKl2HAtbVUrWJGEHUEKoUJRqSRJlI
+	 0vmfL+Ejp9270tPiR8sEF8gnsMtahSA0EwQXT5SPS0f/WQwf82jt+XHTXHwBEjknr+
+	 dxFz16Ov2WLWqQP7K8Lr1kU3e57p9kI6iEy7tnz4sL6uTJXCWOahL4lsis6qexFrkW
+	 xhsefP1pq+34w==
+Date: Mon, 17 Jun 2024 18:22:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>
+Subject: Re: Page select register restrictions in regmap core
+Message-ID: <adcd5997-84ee-4c72-aa37-2940afdc83bd@sirena.org.uk>
+References: <e3e11724-794d-423e-9326-ffe8eed5119c@roeck-us.net>
+ <4b22e04f-3142-4a5a-a8d1-366c4b8bbb73@sirena.org.uk>
+ <78c93d6b-af0e-4d96-b213-e1e402524361@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to
- put_unused_fd()
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240614163416.728752-4-yu.ma@intel.com>
- <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
- <e316cbe9-0e66-414f-8948-ba3b56187a98@intel.com>
- <suehfaqsibehz3vws6oourswenaz7bbbn75a7joi5cxi6komyk@3fxp7v3bg5qk>
-From: "Ma, Yu" <yu.ma@intel.com>
-Content-Language: en-US
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- tim.c.chen@linux.intel.com, tim.c.chen@intel.com, pan.deng@intel.com,
- tianyou.li@intel.com, yu.ma@intel.com
-In-Reply-To: <suehfaqsibehz3vws6oourswenaz7bbbn75a7joi5cxi6komyk@3fxp7v3bg5qk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="C/ZYoGpwsWinse6Z"
+Content-Disposition: inline
+In-Reply-To: <78c93d6b-af0e-4d96-b213-e1e402524361@roeck-us.net>
+X-Cookie: Life is the urge to ecstasy.
 
 
-On 6/17/2024 7:23 PM, Mateusz Guzik wrote:
-> On Sun, Jun 16, 2024 at 11:47:40AM +0800, Ma, Yu wrote:
->> On 6/15/2024 12:41 PM, Mateusz Guzik wrote:
->>> So you are moving this to another locked area, but one which does not
->>> execute in the benchmark?
->> The consideration here as mentioned is to reduce the performance impact (if
->> to reserve the sanity check, and have the same functionality) by moving it
->> from critical path to non-critical, as put_unused_fd() is mostly used for
->> error handling when fd is allocated successfully but struct file failed to
->> obtained in the next step.
->>
-> As mentioned by Christian in his mail this check can just be removed.
+--C/ZYoGpwsWinse6Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes, that's great, I'll update in v2
+On Mon, Jun 17, 2024 at 09:59:50AM -0700, Guenter Roeck wrote:
+> On Mon, Jun 17, 2024 at 04:08:08PM +0100, Mark Brown wrote:
 
->
->>          error = -EMFILE;
->>          if (fd < fdt->max_fds) {
-> I would likely() on it.
+> > You appear to be trying to define ranges that overlap with the windows
+> > that you're trying to expose.  I can't understand what that's trying to
+> > represent or how that would work.  The window is the physical registers
+> > that the host can actually see, the range is the virtual addresses which
+> > users of the region should use to access registers behind the window.
+> > This should be a range of register values which don't physically exist
+> > on the device.  I really can't understand what a sensible handling of an
 
-That's better :)
+> Can you point me to an example ? All examples I can find have overlapping
+> values for .range_min/.range_max and .window_start/.window_len, and pretty
+> much all of them start range_min with 0.
 
->
->>                  if (~fdt->open_fds[0]) {
->>                          fd = find_next_zero_bit(fdt->open_fds,
->> BITS_PER_LONG, fd);
->>                          goto fastreturn;
->>                  }
->>                  fd = find_next_fd(fdt, fd);
->>          }
->>
->>          if (unlikely(fd >= fdt->max_fds)) {
->>                  error = expand_files(files, fd);
->>                  if (error < 0)
->>                          goto out;
->>                  if (error)
->>                          goto repeat;
->>          }
->> fastreturn:
->>          if (unlikely(fd >= end))
->>                  goto out;
->>          if (start <= files->next_fd)
->>                  files->next_fd = fd + 1;
->>
->>         ....
->>
-> This is not a review, but it does read fine.
->
-> LTP (https://github.com/linux-test-project/ltp.git) has a bunch of fd
-> tests, I would make sure they still pass before posting a v2.
-Got it, thanks for the kind reminder.
->
-> I would definitely try moving out the lock to its own cacheline --
-> currently it resides with the bitmaps (and first 4 fds of the embedded
-> array).
->
-> I expect it to provide some win on top of the current patchset, but
-> whether it will be sufficient to justify it I have no idea.
->
-> Something of this sort:
-> diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-> index 2944d4aa413b..423cb599268a 100644
-> --- a/include/linux/fdtable.h
-> +++ b/include/linux/fdtable.h
-> @@ -50,11 +50,11 @@ struct files_struct {
->      * written part on a separate cache line in SMP
->      */
->          spinlock_t file_lock ____cacheline_aligned_in_smp;
-> -       unsigned int next_fd;
-> +       unsigned int next_fd ____cacheline_aligned_in_smp;
->          unsigned long close_on_exec_init[1];
->          unsigned long open_fds_init[1];
->          unsigned long full_fds_bits_init[1];
-> -       struct file __rcu * fd_array[NR_OPEN_DEFAULT];
-> +       struct file __rcu * fd_array[NR_OPEN_DEFAULT] ____cacheline_aligned_in_smp;
->   };
->
->   struct file_operations;
->
-> (feel free to just take)
+sound/soc/codecs/wm2200.c.  I do see a bunch of bad examples now I grep,
+bluntly I'm astonished any of them do anything useful and wonder if
+anyone has even run the code.
 
-Thanks Guzik for the thoughtful suggestions, seems we've ever tried to 
-separate file_lock and next_fd to different cachelines, but no obvious 
-improvement observed, we'll double check and verify these 2 tips to see 
-how it goes.
+> > overlap would be, any attempt to access the window should recursively
+> > trigger selection of the range so no actual register should work.  I
+> > can't tell what it's trying to model.
 
->
-> All that said, I have to note blogbench has numerous bugs. For example
-> it collects stats by merely bumping a global variable (not even with
-> atomics), so some updates are straight up lost.
->
-> To my understanding it was meant to test filesystems and I'm guessing
-> threading (instead of separate processes) was only used to make it
-> easier to share statistics. Given the current scales this
-> unintentionally transitioned into bottlenecking on the file_lock
-> instead.
->
-> There were scalability changes made about 9 years ago and according to
-> git log they were benchmarked by Eric Dumazet, while benchmark code was
-> not shared. I suggest CC'ing the guy with your v2 and asking if he can
-> bench.  Even if he is no longer in position to do it perhaps he can rope
-> someone in (or even better share his benchmark).
+> page 0: 0x00-0x7f	Volatile registers, page selector at 0x0b
+> 	0x80-0xff	page 0 of non-volatile memory
+> page 1:	0x0b		page selector register	<-- this is what trips the check
+> 	0x80-0xff	page 1 of non-volatile memory
+> ...
+> page 7:	0x0b		page selector register
+> 	0x80-0xff	page 7 of non-volatile memory
 
-Good advice, we also noticed the problem for blogbench, and current data 
-in commits is collected based on revision to make sure the variables for 
-score statistic/reporting are safe, will submit patch to blogbench for 
-update. We'll copy Eric for more information on his benchmark and check 
-details if it is available.
+So you've got two windows from 0-0x7f and 0x80-0xff which share a
+selector register because of course that makes sense, the selector is
+placed inside one of the ranges.  That's all perfectly fine, modulo the
+multi-use selector register the hardware seems fine.  What I don't
+understand is what the attempt to put the window on top of this is
+supposed to mean.
 
+> > This configuration would also be rejected by the next test which
+> > verifies that the window does not overlap with the range.
+
+> No, it isn't. The windows in the two ranges don't overlap, and neither
+> do the ranges. The only overlap is the selector register. The check you
+> refer to explicitly does not apply to a single range.
+
+Ugh, it should - like I say these configurations are just incoherent
+nonsense.
+
+> Pretty much all drivers I looked at start the range with 0, having
+> the selector register within the range is explicitly accepted by the
+> regmap code, and pretty much all drivers using regmap for page
+> selection do that. The difference here is that the page selector
+> register is in the first range and visible from all pages, but the
+> other volatile registers are only visible in page 0.
+
+Having the page selector register be inside the page is pretty common.
+
+> Yes, I would agree that this doesn't make much sense, but it is what
+> the spd5118 standard calls for, and at least the Renesas/IDT spd5188
+> chip implements it that way.
+
+The range is *entirely* defined within the driver, it is 100% a software
+construct, the hardware only influences our choice of range in that we
+can't place it on top of hardware registers.
+
+> Anyway, how should I model this ?
+
+To repeat:
+
+> > Like I say I can't tell what this is trying to describe or how it could
+> > possibly work.  The range should be completely distinct from the window.
+
+--C/ZYoGpwsWinse6Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwcMsACgkQJNaLcl1U
+h9DZ/wf+MJdee0EFIyJfF6E33bmUltBfkIoAWd2xM3J4OxFYIlL2/isN/Vof8zs5
+NUQiYxUINnUC+QTJx1D/qiN1IS8zd6Y6l/h1Z4I5QtDEV/J7bGCSYC6rbyWh5AnQ
+vy52wfTSbYb3FKnJnFLmlczoh46pKgxEr4W2WyDNoXPWLrNrDUTYaNEdMeK5F+ED
+Pv8OuFv+vx8MMCmypsiX6/uHHl07a39Se6OgEqSI4I9/tlS0aAUoS/0uH9U/bMaI
+KV987UOBMvVE+8BHFjv0Yoblv9sRZa26uoUaqBkWOb37CitButevxs2afPD4RSG2
+04G3erXF9Dd5f/vxQqCVuH5oV6vlxw==
+=+gKR
+-----END PGP SIGNATURE-----
+
+--C/ZYoGpwsWinse6Z--
 
