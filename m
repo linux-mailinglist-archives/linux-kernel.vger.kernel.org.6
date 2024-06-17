@@ -1,125 +1,325 @@
-Return-Path: <linux-kernel+bounces-216888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF8390A81B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:06:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4765790A81D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472D6280F59
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:06:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75B0AB2532F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AA619048B;
-	Mon, 17 Jun 2024 08:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527CE18FDCB;
+	Mon, 17 Jun 2024 08:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="M27ogRyL"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LKLc7JbQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792E818FC6E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021F318628D;
+	Mon, 17 Jun 2024 08:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718611543; cv=none; b=gI6K+h4WVj+kNRRysXagpasFPHEQMlHd6Gnz4MtrPlQj1DycwUGQBr8nRq4MBvzgCcq+1LLKjN+pCi+QDXqR9OYJdcvHX/1OnHdp92wS5Q5e6qG8BZ1UJ+60umz9nDddKmzFFT0nHkVFWCM5NECJAt8Y1ouxwUWxlqVLRhHNIiI=
+	t=1718611589; cv=none; b=fnAOpOWAjXQjAEt8V+LGUYrV9yB64xEWtqTJakRYrurYgP665X12WK2Y35VrBFagwCYjhdAyqGLlua094cfso5J8HK0BTDA675J6/nmW6kbTO6P++61vhvwnb9w6lZebTr1I5ycYVC3M87tvOFqPxNssfwvcFTvbqzKL8cO2M6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718611543; c=relaxed/simple;
-	bh=jJknf9JjCF3QX4BKrwowK8j7mwdmpuB67UlqCB88zt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HgttYDLZ0TMObQtfosdqVugpffUkJnFblubfy+TTiS8aUuaFotCRpmdAP+9mfzuA4MuyczmAjal2u6LuYrURxj1NB8/g2rcVOAEQM0sLIaM0OpymlafdmyJrilHGIdzPEMsajgf3ne2IoatElwVxcAAVq4+EGLlor+QQqfzDTQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=M27ogRyL; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-421798185f0so32068135e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718611540; x=1719216340; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RhK0l1wiP2QqjV41iED4AMmcoD6qMZOANZydgxIA9xw=;
-        b=M27ogRyLqqJDYSYax0gkBfghsm3QbB66bTsHMHrev59VUVxA0Yg0V8HUI5yIxrE+8Z
-         BtLTY4NRJCyCOZIvqgqWqoMzyq1sokyikQs9QIzqWXcHEp5kL9rQmBR+CC47qs7Wm/bN
-         uk3PMOLC8w8befLEkHMcSEwA/eQCrUBvTvPT5HggkPceonbChvQKizbmg2CVsyG8DVVT
-         BCNdeDS4ZB2412qUy08+9YLuhU5tuBGzdEqN2RBjSNbEdnc6X5QtsxiNe2x0rFT/s+B8
-         s4x8eTTPj7eKf75UxX+WcCj9p9E7dm8YngRfEJ1zzu/ufdMDxm2Xym3jZXSEMwMfxGbx
-         CwJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718611540; x=1719216340;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RhK0l1wiP2QqjV41iED4AMmcoD6qMZOANZydgxIA9xw=;
-        b=qcFUtKNs0iup2V43/5J+c2h3Jsf5AzbEkw8G1fVrgPqooAeBCYPgXvscMmtGapf9Kw
-         9O9Br5nCyFzuo5P05TZEKniS7zy2fJRC4p9ULoYedSSeXPYDq2B6I7YV2BRmLuBxrBqP
-         hN3DxwvNZZID8FzgUR3alsd0SpV/NKe+ZEBZvtk05isCDPtJ3tE+Hx0d5tOmmEX/gWiG
-         rI1hOP4jU0brVcR9YrfB4q3zHzFgXenMYgIqDCtah2H8DxOmznMGVudwVNL4FfiGN0Ej
-         /hRz027JP5qsu8Y/yGE0SZa4yXot5mqo1UURcWsJJFxsEDxtHmSaZaj+J7bnCutEy5U2
-         9ORw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlR9s0+bkg7Qm4B84e/Tcp2QLalLipavzC+xr5vcIFWJmDJqjhH54uC6DJaoU3V8KV7IBTtHKgsmeM6C1wi0kTysqMdb70ILQeJlEe
-X-Gm-Message-State: AOJu0YyEQG+Q/fu7DqKqVTGbLPAFSUx6SUCgYq5aFzDIs45BIXhLky0Q
-	xvQDb7ujS25o5BTVW3Vb3zIm66V5nmRgRHBdty0IFO0J6d8rwmVHulf3MubRkEg=
-X-Google-Smtp-Source: AGHT+IGAPWtrsBoKqiT6NA7h3nhAEtNjGh3ZlArWedHKrxD1LJKsjTkfQ0ARrSXU5FBmgRUnhtV3jg==
-X-Received: by 2002:a05:600c:468d:b0:421:2ddf:aec4 with SMTP id 5b1f17b1804b1-42304844f6dmr74278975e9.30.1718611539796;
-        Mon, 17 Jun 2024 01:05:39 -0700 (PDT)
-Received: from [192.168.1.172] ([93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe9263sm187819725e9.15.2024.06.17.01.05.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 01:05:39 -0700 (PDT)
-Message-ID: <85e9451d-2cd0-457f-a246-017433757fff@baylibre.com>
-Date: Mon, 17 Jun 2024 10:05:37 +0200
+	s=arc-20240116; t=1718611589; c=relaxed/simple;
+	bh=qV0f68IO2hFc1RMbpFCNfD+bhD/X0kb584yxIMUptks=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K6Z4yelJC0EwccfZcK0izo7oY9pN6UVZErXeUJARf8SKYhd1iiHFVk08wUnXgGv/Q9sLXwHYY3/O28XheIutcr5aEDeOHVdz3K7koF7F/Lte3rFOjjAH7r9cXJ69+WNH9sH58MrjVRykDOpW6hu/ntjptF6z7STNgWK2IBZSwwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LKLc7JbQ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718611587; x=1750147587;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=qV0f68IO2hFc1RMbpFCNfD+bhD/X0kb584yxIMUptks=;
+  b=LKLc7JbQb/1tg6+DY1i7iMLe5omkyyEHehJ8ZlX8ApYCymWqHJAr7m6I
+   jobhlpmtFbhQlOEDDGj7l6Mc14Y1Aol2zNzH6nt0R7CS96U8PkMjB6oUl
+   +reAjNTLuDX9kSBH6Y+MSfLimUvaNEgyYDOe4GWRL4KNwHZ7S1mTGk1Pu
+   +9rJjxCiyzC3lY+YD/vFTvar+CrTp6aFAcRxVj76UTwDkluCRZ53+7tK8
+   A6WTvowD99HEIC2OYy0bBk3EBpMjnmFgNj/q3o2WLVlNWlKTSxVpMIM42
+   YS0Rse3CdtWKdJttHTnb9fJbc/HkGVaUBG32FBZBaJGfaU7ywelmSiYhd
+   A==;
+X-CSE-ConnectionGUID: VJDzYodIRzaiJ7Ha/TFsng==
+X-CSE-MsgGUID: yN3Bctb4QBO+oBZ+NXcM/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="15549746"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="15549746"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 01:06:27 -0700
+X-CSE-ConnectionGUID: ntyVLAjBRIKz4a3KN+HdOQ==
+X-CSE-MsgGUID: UvY3X5dbQXW3H7RMiL1UGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="41221785"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.85])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 01:06:23 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>, Alex
+ Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, Dongliang Mu
+ <dzm91@hust.edu.cn>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] doc-guide: add help documentation
+ checktransupdate.rst
+In-Reply-To: <20240615035323.909650-2-dzm91@hust.edu.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240615035323.909650-1-dzm91@hust.edu.cn>
+ <20240615035323.909650-2-dzm91@hust.edu.cn>
+Date: Mon, 17 Jun 2024 11:06:19 +0300
+Message-ID: <87v828gfic.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v5 00/16] Add audio support for the MediaTek Genio
- 350-evk board
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Lee Jones <lee@kernel.org>, Flora Fu <flora.fu@mediatek.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Nicolas Belin <nbelin@baylibre.com>
-References: <20240226-audio-i350-v5-0-54827318b453@baylibre.com>
- <ZmwODkYov79VHznK@finisterre.sirena.org.uk>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <ZmwODkYov79VHznK@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, 15 Jun 2024, Dongliang Mu <dzm91@hust.edu.cn> wrote:
+> This commit adds help documents - Documentation/doc-guide/checktransupdat=
+e.rst
+> and Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+> for scripts/checktransupdate.py, including English and Chinese versions
+>
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> ---
+> v1->v2: fix some issues according to Randy
+>  Documentation/doc-guide/checktransupdate.rst  | 63 +++++++++++++++++++
+>  Documentation/doc-guide/index.rst             |  1 +
+>  .../zh_CN/doc-guide/checktransupdate.rst      | 62 ++++++++++++++++++
+>  .../translations/zh_CN/doc-guide/index.rst    |  1 +
+>  4 files changed, 127 insertions(+)
+>  create mode 100644 Documentation/doc-guide/checktransupdate.rst
+>  create mode 100644 Documentation/translations/zh_CN/doc-guide/checktrans=
+update.rst
+>
+> diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentation=
+/doc-guide/checktransupdate.rst
+> new file mode 100644
+> index 000000000000..4ece330882d6
+> --- /dev/null
+> +++ b/Documentation/doc-guide/checktransupdate.rst
+> @@ -0,0 +1,63 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +Check translation update
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> +
+> +This script helps track the translation status of the documentation in
+> +different locales, i.e.,=C2=A0whether the documentation is up-to-date wi=
+th
+> +the English counterpart.
+> +
+> +How it works
+> +------------
+> +
+> +It uses ``git log`` command to track the latest English commit from the
+> +translation commit (order by author date) and the latest English commits
+> +from HEAD. If any differences occur, the file is considered as out-of-da=
+te,
+> +then commits that need to be updated will be collected and reported.
+> +
+> +Features implemented
+> +--------------------
+> +
+> +-  check all files in a certain locale
+> +-  check a single file or a set of files
+> +-  provide options to change output format
+> +
+> +Usage
+> +-----
+
+Why not document the argument parser and tell people ot run
+'checktransupdate.py --help' here? Duplicating the usage here is just a
+maintenance burden.
+
+BR,
+Jani.
 
 
 
-On 14/06/2024 11:31, Mark Brown wrote:
-> On Fri, Jun 14, 2024 at 09:27:43AM +0200, Alexandre Mergnat wrote:
->> This serie aim to add the following audio support for the Genio 350-evk:
->> - Playback
->>    - 2ch Headset Jack (Earphone)
->>    - 1ch Line-out Jack (Speaker)
->>    - 8ch HDMI Tx
-> 
-> I seem to remember you had review comments that needed addressing from
-> AngeloGioacchino, why resend without addressing those?
 
-I don't see any comment:
-https://lore.kernel.org/lkml/20240226-audio-i350-v5-0-e7e2569df481@baylibre.com/
+> +
+> +::
+> +
+> +   checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-co=
+mmits] [--print-updated-files | --no-print-updated-files] [--debug | --no-d=
+ebug] [files ...]
+> +
+> +Options
+> +~~~~~~~
+> +
+> +-  ``-l``, ``--locale``: locale to check when file is not specified
+> +-  ``--[no-]print-commits``: whether to print commits between origin and
+> +   translation
+> +-  ``--[no-]print-updated-files``: whether to print files that do no
+> +   need to be updated
+> +-  ``files``: files to check, if this option is specified, the locale
+> +   option will be ignored.
+> +
+> +Samples
+> +~~~~~~~
+> +
+> +-  ``./scripts/checktransupdate.py -l zh_CN``
+> +   This will print all the files that need to be updated in the zh_CN lo=
+cale.
+> +-  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/proc=
+ess/coding-style.rst``
+> +   This will only print the status of the specified file.
+> +
+> +Then the output is something like:
+> +
+> +::
+> +
+> +    Documentation/translations/zh_CN/process/coding-style.rst       (2 c=
+ommits)
+> +    commit 6813216bbdba ("Documentation: coding-style: ask function-like=
+ macros to evaluate parameters")
+> +    commit 185ea7676ef3 ("Documentation: coding-style: Update syntax hig=
+hlighting for code-blocks")
+> +
+> +Features to be implemented
+> +----------------------------
+> +
+> +- track the translation status of files that have no translation
+> +- files can be a folder instead of only a file
+> diff --git a/Documentation/doc-guide/index.rst b/Documentation/doc-guide/=
+index.rst
+> index 7c7d97784626..24d058faa75c 100644
+> --- a/Documentation/doc-guide/index.rst
+> +++ b/Documentation/doc-guide/index.rst
+> @@ -12,6 +12,7 @@ How to write kernel documentation
+>     parse-headers
+>     contributing
+>     maintainer-profile
+> +   checktransupdate
+>=20=20
+>  .. only::  subproject and html
+>=20=20
+> diff --git a/Documentation/translations/zh_CN/doc-guide/checktransupdate.=
+rst b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+> new file mode 100644
+> index 000000000000..37c0bb518ab8
+> --- /dev/null
+> +++ b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+> @@ -0,0 +1,62 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +.. include:: ../disclaimer-zh_CN.rst
+> +
+> +:Original: Documentation/doc-guide/checktransupdate.rst
+> +
+> +:=E8=AF=91=E8=80=85: =E6=85=95=E5=86=AC=E4=BA=AE Dongliang Mu <dzm91@hus=
+t.edu.cn>
+> +
+> +=E6=A3=80=E6=9F=A5=E7=BF=BB=E8=AF=91=E6=9B=B4=E6=96=B0
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +=E8=BF=99=E4=B8=AA=E8=84=9A=E6=9C=AC=E5=B8=AE=E5=8A=A9=E8=B7=9F=E8=B8=AA=
+=E4=B8=8D=E5=90=8C=E8=AF=AD=E8=A8=80=E7=9A=84=E6=96=87=E6=A1=A3=E7=BF=BB=E8=
+=AF=91=E7=8A=B6=E6=80=81=EF=BC=8C=E5=8D=B3=E6=96=87=E6=A1=A3=E6=98=AF=E5=90=
+=A6=E4=B8=8E=E5=AF=B9=E5=BA=94=E7=9A=84=E8=8B=B1=E6=96=87=E7=89=88=E6=9C=AC=
+=E4=BF=9D=E6=8C=81=E6=9B=B4=E6=96=B0=E3=80=82
+> +
+> +=E5=B7=A5=E4=BD=9C=E5=8E=9F=E7=90=86
+> +------------
+> +
+> +=E5=AE=83=E4=BD=BF=E7=94=A8 ``git log`` =E5=91=BD=E4=BB=A4=E6=9D=A5=E8=
+=B7=9F=E8=B8=AA=E7=BF=BB=E8=AF=91=E6=8F=90=E4=BA=A4=E7=9A=84=E6=9C=80=E6=96=
+=B0=E8=8B=B1=E6=96=87=E6=8F=90=E4=BA=A4=EF=BC=88=E6=8C=89=E4=BD=9C=E8=80=85=
+=E6=97=A5=E6=9C=9F=E6=8E=92=E5=BA=8F=EF=BC=89=E5=92=8C=E8=8B=B1=E6=96=87=E6=
+=96=87=E6=A1=A3=E7=9A=84
+> +=E6=9C=80=E6=96=B0=E6=8F=90=E4=BA=A4=E3=80=82=E5=A6=82=E6=9E=9C=E6=9C=89=
+=E4=BB=BB=E4=BD=95=E5=B7=AE=E5=BC=82=EF=BC=8C=E5=88=99=E8=AF=A5=E6=96=87=E4=
+=BB=B6=E8=A2=AB=E8=AE=A4=E4=B8=BA=E6=98=AF=E8=BF=87=E6=9C=9F=E7=9A=84=EF=BC=
+=8C=E7=84=B6=E5=90=8E=E9=9C=80=E8=A6=81=E6=9B=B4=E6=96=B0=E7=9A=84=E6=8F=90=
+=E4=BA=A4=E5=B0=86=E8=A2=AB=E6=94=B6=E9=9B=86=E5=B9=B6=E6=8A=A5=E5=91=8A=E3=
+=80=82
+> +
+> +=E5=AE=9E=E7=8E=B0=E7=9A=84=E5=8A=9F=E8=83=BD
+> +--------------------
+> +
+> +- =E6=A3=80=E6=9F=A5=E7=89=B9=E5=AE=9A=E8=AF=AD=E8=A8=80=E4=B8=AD=E7=9A=
+=84=E6=89=80=E6=9C=89=E6=96=87=E4=BB=B6
+> +- =E6=A3=80=E6=9F=A5=E5=8D=95=E4=B8=AA=E6=96=87=E4=BB=B6=E6=88=96=E4=B8=
+=80=E7=BB=84=E6=96=87=E4=BB=B6
+> +- =E6=8F=90=E4=BE=9B=E6=9B=B4=E6=94=B9=E8=BE=93=E5=87=BA=E6=A0=BC=E5=BC=
+=8F=E7=9A=84=E9=80=89=E9=A1=B9
+> +
+> +=E7=94=A8=E6=B3=95
+> +-----
+> +
+> +::
+> +
+> +   checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-co=
+mmits] [--print-updated-files | --no-print-updated-files] [--debug | --no-d=
+ebug] [files ...]
+> +
+> +=E9=80=89=E9=A1=B9
+> +~~~~~~~
+> +
+> +-  ``-l``, ``--locale``: =E6=A3=80=E6=9F=A5=E6=8C=87=E5=AE=9A=E7=9A=84=
+=E6=96=87=E4=BB=B6=E8=AF=AD=E8=A8=80=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=9C=AA=E6=
+=8C=87=E5=AE=9A=E6=96=87=E4=BB=B6
+> +-  ``--[no-]print-commits``: =E6=98=AF=E5=90=A6=E6=89=93=E5=8D=B0=E8=8B=
+=B1=E6=96=87=E5=8E=9F=E5=A7=8B=E7=89=88=E6=9C=AC=E5=92=8C=E7=BF=BB=E8=AF=91=
+=E7=89=88=E6=9C=AC=E4=B9=8B=E9=97=B4=E7=9A=84=E6=8F=90=E4=BA=A4
+> +-  ``--[no-]print-updated-files``: =E6=98=AF=E5=90=A6=E6=89=93=E5=8D=B0=
+=E6=97=A0=E9=9C=80=E6=9B=B4=E6=96=B0=E7=9A=84=E6=96=87=E4=BB=B6
+> +-  ``files``: =E8=A6=81=E6=A3=80=E6=9F=A5=E7=9A=84=E6=96=87=E4=BB=B6=EF=
+=BC=8C=E5=A6=82=E6=9E=9C=E6=8C=87=E5=AE=9A=E4=BA=86=E6=AD=A4=E9=80=89=E9=A1=
+=B9=EF=BC=8C=E5=B0=86=E5=BF=BD=E7=95=A5=E8=AF=AD=E8=A8=80=E9=80=89=E9=A1=B9
+> +
+> +=E7=A4=BA=E4=BE=8B
+> +~~~~~~~
+> +
+> +-  ``./scripts/checktransupdate.py -l zh_CN``
+> +   =E8=BF=99=E5=B0=86=E6=89=93=E5=8D=B0 zh_CN =E8=AF=AD=E8=A8=80=E4=B8=
+=AD=E9=9C=80=E8=A6=81=E6=9B=B4=E6=96=B0=E7=9A=84=E6=89=80=E6=9C=89=E6=96=87=
+=E4=BB=B6=E3=80=82
+> +-  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/proc=
+ess/coding-style.rst``
+> +   =E8=BF=99=E5=B0=86=E5=8F=AA=E6=89=93=E5=8D=B0=E6=8C=87=E5=AE=9A=E6=96=
+=87=E4=BB=B6=E7=9A=84=E7=8A=B6=E6=80=81=E3=80=82
+> +
+> +=E7=84=B6=E5=90=8E=E8=BE=93=E5=87=BA=E7=B1=BB=E4=BC=BC=E5=A6=82=E4=B8=8B=
+=E7=9A=84=E5=86=85=E5=AE=B9=EF=BC=9A
+> +
+> +::
+> +
+> +    Documentation/translations/zh_CN/process/coding-style.rst       (2 c=
+ommits)
+> +    commit 6813216bbdba ("Documentation: coding-style: ask function-like=
+ macros to evaluate parameters")
+> +    commit 185ea7676ef3 ("Documentation: coding-style: Update syntax hig=
+hlighting for code-blocks")
+> +
+> +=E5=BE=85=E5=AE=9E=E7=8E=B0=E7=9A=84=E5=8A=9F=E8=83=BD
+> +-------------
+> +
+> +- =E8=B7=9F=E8=B8=AA=E6=B2=A1=E6=9C=89=E7=BF=BB=E8=AF=91=E8=BF=87=E7=9A=
+=84=E6=96=87=E4=BB=B6=E7=9A=84=E7=BF=BB=E8=AF=91=E7=8A=B6=E6=80=81
+> +- =E6=96=87=E4=BB=B6=E5=8F=82=E6=95=B0=E5=8F=AF=E4=BB=A5=E6=98=AF=E6=96=
+=87=E4=BB=B6=E5=A4=B9=E8=80=8C=E4=B8=8D=E4=BB=85=E4=BB=85=E6=98=AF=E5=8D=95=
+=E4=B8=AA=E6=96=87=E4=BB=B6
+> diff --git a/Documentation/translations/zh_CN/doc-guide/index.rst b/Docum=
+entation/translations/zh_CN/doc-guide/index.rst
+> index 78c2e9a1697f..0ac1fc9315ea 100644
+> --- a/Documentation/translations/zh_CN/doc-guide/index.rst
+> +++ b/Documentation/translations/zh_CN/doc-guide/index.rst
+> @@ -18,6 +18,7 @@
+>     parse-headers
+>     contributing
+>     maintainer-profile
+> +   checktransupdate
+>=20=20
+>  .. only::  subproject and html
 
--- 
-Regards,
-Alexandre
+--=20
+Jani Nikula, Intel
 
