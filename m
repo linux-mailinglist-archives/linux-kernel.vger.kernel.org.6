@@ -1,1046 +1,177 @@
-Return-Path: <linux-kernel+bounces-216897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D95690A834
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:13:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4165790A830
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89C0D1F24F1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:13:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1FF28648E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D517190673;
-	Mon, 17 Jun 2024 08:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B5A190076;
+	Mon, 17 Jun 2024 08:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="SwHioX1D";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="BmecN9zA"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiuxC+cZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C333190492;
-	Mon, 17 Jun 2024 08:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CAC18FDCB;
+	Mon, 17 Jun 2024 08:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718611967; cv=none; b=ikroWd5xMmOGHe+cJ2TKxpnVTwWiM7G+sVkz2tKgS09PZk56lb5gSMtLUC4au+8tPWFPECQOIbBVi3lKWsZgrxUjkrvQmm4oHMGfmiComHbo8Ljn1fO756RxJSUX5cpQXkRjaO6u/8DfEiCEgccDGNtM163/rc6N/9jANptK1kE=
+	t=1718611960; cv=none; b=bEYsLD5I+Ja3tyjHzWoB9nvu+4mmr+VcWOuZKyAU5fkOnuaaVweXYS4i7f6g4GLihfegLmIw8dwoA0QhbpSk9n2WzofMU055YrBO/h+O3os/I58eHp+n0xx/+SylNINEMHR1cMIR502PmRjU/hoLxR29X2LdOjzB4cmF7CYX1Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718611967; c=relaxed/simple;
-	bh=OY68Mem8ZjwfEMiI9lnxkM7yYLqhbepiE4lQvc1z6es=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uSnX1ZKRb8jeOYJhpAY2/gOxzBDUOskPMLY4eQD4HjLR5ATlwI9TBy98VEufkFQmoBc9Vz6sxaO+PiSF1gy4bMmeB3WBtrvWxr0uhONiTG9gGZGmx1X3JYQ8Qw6Und2xu71xQ0lT3STUGXA35z7rKRE7bRBgG2K5FoRo9fWjxBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=SwHioX1D; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=BmecN9zA reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1718611963; x=1750147963;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=1yiIDFgw9D8N0IOZQwy+kUQb35ok6ucUeb1DynXshcY=;
-  b=SwHioX1DtPTyfhggJVFj3k5R36rEwh+Uuh7LrBE0WV7odOgMTN5TnWeR
-   GXd9+qlwiM+rOS/HywBwJ+OExHpWvHxtJAVOZWytwQZMf5UioUCvkmvZp
-   WtScxCCpnoowW2CMKDQboJc+5DXsBi5yxBd3Ya2pMLlZ/I0AMylA+mMzq
-   E1t5/r840/JEVoZgFKaT3CxLR8PYRGM7KEF2jcp55NI11isvsrJRrtY8i
-   9XEBO+ELw6cSc2ojNBcaxaGAulEY1FHsbpS+8NTo9hUdZgSYmdRnxYvJS
-   MiuFil7YEQQttFpCwgWAtxBe6c78030a1p2QnwesXnwod1JUeHURYDBD/
-   g==;
-X-CSE-ConnectionGUID: kQLNkymbRWCBJKE4zC9wBg==
-X-CSE-MsgGUID: syB90GrXTH66+4G1z9r9Kw==
-X-IronPort-AV: E=Sophos;i="6.08,244,1712613600"; 
-   d="scan'208";a="37420112"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 17 Jun 2024 10:12:42 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 75E19163339;
-	Mon, 17 Jun 2024 10:12:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1718611958; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=1yiIDFgw9D8N0IOZQwy+kUQb35ok6ucUeb1DynXshcY=;
-	b=BmecN9zAWBSqmT9kzUxJCrW4BaLSgZYozLl9MtyC8aY2wG/sn+/bC5sNaNosMDahTcyS4j
-	8Gy2SBKe3rTUvGv46CA71CJkBrTiPxtAGE6WZHScP2hfB8Y0PxGSLLkW0qj5sp8zsGi9ds
-	I05N5Sgl0HK2Wr+tRur178PDzWkrGzQTHmjYxSvrhuFpG7xY+xVuLSpWyxKJBL+oUmCHw+
-	2RSqV3fYaCbQ3JsWyhLNQnA7iwXrwwEP6KgZK97WueQ607lY7HHkGi+FQe1EaU+4Q4tkRV
-	RtaJkKpzAC9I5Q5frtZ5/YCvgXvbZPlDE8wbY9ZS/bAU+tMOzNisWPW2o0I3Og==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Martin Schmiedel <Martin.Schmiedel@tq-group.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com
-Subject: [PATCH v3 2/2] arm64: dts: freescale: add TQMa8MPQL on MBa8MP-RAS314
-Date: Mon, 17 Jun 2024 10:12:29 +0200
-Message-Id: <20240617081229.195638-2-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240617081229.195638-1-alexander.stein@ew.tq-group.com>
-References: <20240617081229.195638-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1718611960; c=relaxed/simple;
+	bh=yhl2RzCdR+x+WW3ayanTXncY6o1XRzG9gKgwudGQbOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GFr3pBMaQTlIbqqBbo7SGEcjcHskYpyDTaAUXhjTIuhFaes0/DKfKDC8enSrm2ti7tohIU+Wh/ZMi6AlNazXnWcy3LobZDJ/3fhyHFWYAtAEvAtCJ+eZIzcM3pLT6Y5Lf97TRqeVI0Iop6HAu1Y5OzOMoI2fOWD5792LcwZEXJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiuxC+cZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46656C2BD10;
+	Mon, 17 Jun 2024 08:12:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718611959;
+	bh=yhl2RzCdR+x+WW3ayanTXncY6o1XRzG9gKgwudGQbOs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZiuxC+cZmE0/Bx4NyAjIvtDtVVyRzbz9g8HeBBpSQyP7BQ+mY9FCX+Hl/Lv44nbRf
+	 5AHg0aampFUBnNWXeGnzN+vvJIsKhT29R4xTfILvApL+tnvGlD1bfZvRxCtLzv8Rjr
+	 7tTvc4m3dfpzOBDPfs2DGVeLr85bDRBwI1xp3LEesAqgslCmZC7/PBnxMbfAE59NAC
+	 QhAbWkkWOGY4ERqfC/2QJLIZYBus3JyGx7y9JozuPuerzssUbhbK9hNM5e7GmUBg6f
+	 nb8UVlDVDcw9oQ18fNgHlrMzQ7825PbX/FrIT+jt7+YZ0rx9gMksGVOxYl+Ux2Qciw
+	 6sLfYsr+IXPAw==
+Date: Mon, 17 Jun 2024 10:12:33 +0200
+From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: Paolo Abeni <pabeni@redhat.com>, "andrew@lunn.ch" <andrew@lunn.ch>,
+ "hkallweit1@gmail.com" <hkallweit1@gmail.com>, "linux@armlinux.org.uk"
+ <linux@armlinux.org.uk>, "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+ <kuba@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "ericwouds@gmail.com" <ericwouds@gmail.com>
+Subject: Re: [PATCH next-next] net: phy: realtek: add support for rtl8224
+ 2.5Gbps PHY
+Message-ID: <20240617101233.103eb0a3@dellmb>
+In-Reply-To: <e9a2b30f-71a1-4e3d-9754-a5d505ca6705@alliedtelesis.co.nz>
+References: <20240611053415.2111723-1-chris.packham@alliedtelesis.co.nz>
+	<c3d699a1-2f24-41c5-b0a7-65db025eedbc@alliedtelesis.co.nz>
+	<20240612090707.7da3fc01@dellmb>
+	<fbf2be8d31579d1c9305fd961751fc6f0a4b4556.camel@redhat.com>
+	<20240614102558.32dcba79@dellmb>
+	<e9a2b30f-71a1-4e3d-9754-a5d505ca6705@alliedtelesis.co.nz>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Martin Schmiedel <Martin.Schmiedel@tq-group.com>
+On Sun, 16 Jun 2024 21:24:53 +0000
+Chris Packham <Chris.Packham@alliedtelesis.co.nz> wrote:
 
-This adds support for TQMa8MPQL module on MBa8MP-RAS314 board.
+> On 14/06/24 20:25, Marek Beh=C3=BAn wrote:
+> > On Fri, 14 Jun 2024 10:18:47 +0200
+> > Paolo Abeni <pabeni@redhat.com> wrote:
+> > =20
+> >> On Wed, 2024-06-12 at 09:07 +0200, Marek Beh=C3=BAn wrote: =20
+> >>> On Tue, 11 Jun 2024 20:42:43 +0000
+> >>> Chris Packham <Chris.Packham@alliedtelesis.co.nz> wrote:
+> >>>     =20
+> >>>> +cc Eric W and Marek.
+> >>>>
+> >>>> On 11/06/24 17:34, Chris Packham wrote: =20
+> >>>>> The Realtek RTL8224 PHY is a 2.5Gbps capable PHY. It only uses the
+> >>>>> clause 45 MDIO interface and can leverage the support that has alre=
+ady
+> >>>>> been added for the other 822x PHYs.
+> >>>>>
+> >>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> >>>>> ---
+> >>>>>
+> >>>>> Notes:
+> >>>>>       I'm currently testing this on an older kernel because the boa=
+rd I'm
+> >>>>>       using has a SOC/DSA switch that has a driver in openwrt for L=
+inux 5.15.
+> >>>>>       I have tried to selectively back port the bits I need from th=
+e other
+> >>>>>       rtl822x work so this should be all that is required for the r=
+tl8224.
+> >>>>>      =20
+> >>>>>       There's quite a lot that would need forward porting get a wor=
+king system
+> >>>>>       against a current kernel so hopefully this is small enough th=
+at it can
+> >>>>>       land while I'm trying to figure out how to untangle all the o=
+ther bits.
+> >>>>>      =20
+> >>>>>       One thing that may appear lacking is the lack of rate_matchin=
+g support.
+> >>>>>       According to the documentation I have know the interface used=
+ on the
+> >>>>>       RTL8224 is (q)uxsgmii so no rate matching is required. As I'm=
+ still
+> >>>>>       trying to get things completely working that may change if I =
+get new
+> >>>>>       information.
+> >>>>>
+> >>>>>    drivers/net/phy/realtek.c | 8 ++++++++
+> >>>>>    1 file changed, 8 insertions(+)
+> >>>>>
+> >>>>> diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+> >>>>> index 7ab41f95dae5..2174893c974f 100644
+> >>>>> --- a/drivers/net/phy/realtek.c
+> >>>>> +++ b/drivers/net/phy/realtek.c
+> >>>>> @@ -1317,6 +1317,14 @@ static struct phy_driver realtek_drvs[] =3D {
+> >>>>>    		.resume         =3D rtlgen_resume,
+> >>>>>    		.read_page      =3D rtl821x_read_page,
+> >>>>>    		.write_page     =3D rtl821x_write_page,
+> >>>>> +	}, {
+> >>>>> +		PHY_ID_MATCH_EXACT(0x001ccad0),
+> >>>>> +		.name		=3D "RTL8224 2.5Gbps PHY",
+> >>>>> +		.get_features   =3D rtl822x_c45_get_features,
+> >>>>> +		.config_aneg    =3D rtl822x_c45_config_aneg,
+> >>>>> +		.read_status    =3D rtl822x_c45_read_status,
+> >>>>> +		.suspend        =3D genphy_c45_pma_suspend,
+> >>>>> +		.resume         =3D rtlgen_c45_resume,
+> >>>>>    	}, {
+> >>>>>    		PHY_ID_MATCH_EXACT(0x001cc961),
+> >>>>>    		.name		=3D "RTL8366RB Gigabit Ethernet" =20
+> >>> Don't you need rtl822xb_config_init for serdes configuration? =20
+> >> Marek, I read the above as you would prefer to have such support
+> >> included from the beginning, as such I'm looking forward a new version
+> >> of this patch.
+> >>
+> >> Please raise a hand if I read too much in your reply. =20
+> > I am raising my hand :) I just wanted to point it out.
+> > If this code works for Chris' hardware, it is okay even without the
+> > .config_init. =20
+>=20
+> I did look into this. The SERDES configuration seems to be different=20
+> between the RTL8221 and RTL8224. I think that might be because the=20
+> RTL8221 can do a few different host interfaces whereas the RTL8224 is=20
+> really only USXGMII. There are some configurable parameters but they=20
+> appear to be done differently.
+>=20
+> Having said that I definitely don't have a system working end to end. I=20
+> know the line side stuff is working well (auto-negotiating speeds from=20
+> 10M to 2.5B) but I'm not getting anything on the host side. I'm not sure=
+=20
+> if that's a problem with the switch driver or with the PHY.
+>=20
+> I'd like this to go in as it shouldn't regress anything but I can=20
+> understand if the bar is "needs to be 100% working" I'll just have to=20
+> carry this locally until I can be sure.
 
-Signed-off-by: Martin Schmiedel <Martin.Schmiedel@tq-group.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Changes in v3:
-* Fix property order of ethernet PHY nodes
+If it doesn't work, it can confuse people that it is working if it is
+accepted...
 
-Changes in v2:
-* Changes model name for sound card, it's different to other starter kits
-* Removed routing for line-out signals
-* Add GPIO hog for PCIe device power enable
-* Add GPIO hog for PCIE_WAKE#
-* Rename GPIO line name to PCIE_WAKE#
-* Remove 'fsl,clkreq-unsupported'
-* Add PCIe reset signal
-* Fix UART2 (BT) padcontrol
+Try to contact Realtek via the contact I sent you in the private
+e-mail, maybe you'll be able to make this work.
 
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../imx8mp-tqma8mpql-mba8mp-ras314.dts        | 906 ++++++++++++++++++
- 2 files changed, 907 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
-
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 1b1e4db020716..f17a9a5892164 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -177,6 +177,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-hdmi.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-lt6.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-mi1010ait-1cp1.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw71xx-2x.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw72xx-2x.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw73xx-2x.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
-new file mode 100644
-index 0000000000000..d7fd9d36f8240
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
-@@ -0,0 +1,906 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright (c) 2023-2024 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * D-82229 Seefeld, Germany.
-+ * Author: Martin Schmiedel
-+ * Author: Alexander Stein
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/net/ti-dp83867.h>
-+#include <dt-bindings/phy/phy-imx8-pcie.h>
-+#include <dt-bindings/pwm/pwm.h>
-+#include "imx8mp-tqma8mpql.dtsi"
-+
-+/ {
-+	model = "TQ-Systems i.MX8MPlus TQMa8MPxL on MBa8MP-RAS314";
-+	compatible = "tq,imx8mp-tqma8mpql-mba8mp-ras314", "tq,imx8mp-tqma8mpql", "fsl,imx8mp";
-+	chassis-type = "embedded";
-+
-+	chosen {
-+		stdout-path = &uart4;
-+	};
-+
-+	aliases {
-+		mmc0 = &usdhc3;
-+		mmc1 = &usdhc2;
-+		mmc2 = &usdhc1;
-+		rtc0 = &pcf85063;
-+		rtc1 = &snvs_rtc;
-+	};
-+
-+	/* X8 */
-+	backlight_lvds: backlight {
-+		compatible = "pwm-backlight";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_backlight>;
-+		pwms = <&pwm2 0 5000000 0>;
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <7>;
-+		power-supply = <&reg_vcc_12v0>;
-+		enable-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
-+		status = "disabled";
-+	};
-+
-+	/* X7 + X8 */
-+	display: display {
-+		/*
-+		 * Display is not fixed, so compatible has to be added from
-+		 * DT overlay
-+		 */
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_lvdsdisplay>;
-+		power-supply = <&reg_vcc_3v3>;
-+		enable-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
-+		backlight = <&backlight_lvds>;
-+		status = "disabled";
-+	};
-+
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpioled>;
-+
-+		led-1 {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_STATUS;
-+			function-enumerator = <0>;
-+			gpios = <&gpio4 18 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		led-2 {
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_STATUS;
-+			function-enumerator = <1>;
-+			gpios = <&gpio4 19 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		label = "X9";
-+		type = "a";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_tx_out>;
-+			};
-+		};
-+	};
-+
-+	reg_usdhc2_vmmc: regulator-usdhc2 {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_usdhc2_vmmc>;
-+		regulator-name = "VSD_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		startup-delay-us = <100>;
-+		off-on-delay-us = <12000>;
-+	};
-+
-+	reg_vcc_3v3: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "V_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	reg_vcc_5v0: regulator-5v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "V_5V0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
-+
-+	reg_vcc_12v0: regulator-12v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "V_12V";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/* global autoconfigured region for contiguous allocations */
-+		linux,cma {
-+			compatible = "shared-dma-pool";
-+			reusable;
-+			size = <0 0x38000000>;
-+			alloc-ranges = <0 0x40000000 0 0xB0000000>;
-+			linux,cma-default;
-+		};
-+	};
-+
-+	rfkill {
-+		compatible = "rfkill-gpio";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_rfkill>;
-+		label = "rfkill-pcie-wlan";
-+		radio-type = "wlan";
-+		shutdown-gpios = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	sound {
-+		compatible = "fsl,imx-audio-tlv320aic32x4";
-+		model = "tq-mba8mp-ras314";
-+		audio-cpu = <&sai5>;
-+		audio-codec = <&tlv320aic3x04>;
-+		audio-routing =
-+			"IN3_L", "Mic Jack",
-+			"Mic Jack", "Mic Bias",
-+			"Headphone Jack", "HPL",
-+			"Headphone Jack", "HPR";
-+	};
-+};
-+
-+&ecspi3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi3>;
-+	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>, <&gpio1 6 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&eqos {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_eqos>;
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&ethphy3>;
-+	status = "okay";
-+
-+	mdio {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy3: ethernet-phy@3 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <3>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_eqos_phy>;
-+			reset-gpios = <&gpio4 2 GPIO_ACTIVE_LOW>;
-+			reset-assert-us = <500000>;
-+			reset-deassert-us = <50000>;
-+			enet-phy-lane-no-swap;
-+			interrupt-parent = <&gpio4>;
-+			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-+			ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_25_NS>;
-+			ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_25_NS>;
-+			ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-+			ti,dp83867-rxctrl-strap-quirk;
-+			ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
-+		};
-+	};
-+};
-+
-+&fec {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_fec>;
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&ethphy0>;
-+	fsl,magic-packet;
-+	status = "okay";
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy0: ethernet-phy@0 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_fec_phy>;
-+			reset-gpios = <&gpio4 0 GPIO_ACTIVE_LOW>;
-+			reset-assert-us = <500000>;
-+			reset-deassert-us = <50000>;
-+			enet-phy-lane-no-swap;
-+			interrupt-parent = <&gpio4>;
-+			interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-+			ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_25_NS>;
-+			ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_25_NS>;
-+			ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-+			ti,dp83867-rxctrl-strap-quirk;
-+			ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
-+		};
-+	};
-+};
-+
-+&gpio1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio1>;
-+
-+	gpio-line-names = "WIFI_PMIC_EN", "LVDS_RESET#", "", "",
-+			  "", "", "GPIO8", "",
-+			  "", "", "", "",
-+			  "", "", "GPIO12", "GPIO13",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "";
-+
-+	wifi-pmic-en-hog {
-+		gpio-hog;
-+		gpios = <0 0>;
-+		output-high;
-+		line-name = "WIFI_PMIC_EN";
-+	};
-+};
-+
-+&gpio2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio2>;
-+
-+	gpio-line-names = "GPIO22", "GPIO23", "GPIO24", "GPIO25",
-+			  "GPIO26", "GPIO27", "CAM_GPIO1", "CAM_GPIO2",
-+			  "", "", "GPIO1", "GPIO0",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "";
-+};
-+
-+&gpio3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio3>;
-+
-+	gpio-line-names = "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "TEMP_EVENT#", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "";
-+};
-+
-+&gpio4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio4>;
-+
-+	gpio-line-names = "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "HDMI_OC#", "GPIO14", "GPIO15", "GPIO16",
-+			  "GPIO17", "PCIE_WAKE#", "GPIO19", "GPIO20",
-+			  "PCIE_PERST#", "", "", "";
-+
-+	pewake-hog {
-+		gpio-hog;
-+		gpios = <25 0>;
-+		input;
-+		line-name = "PCIE_WAKE#";
-+	};
-+};
-+
-+&gpio5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio5>, <&pinctrl_gpt1_gpio>,
-+		    <&pinctrl_gpt2_gpio>, <&pinctrl_gpt3_gpio>;
-+
-+	gpio-line-names = "", "GPIO18", "", "GPIO3",
-+			  "GPIO2", "GPIO21", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "GPIO5", "GPIO6",
-+			  "", "", "GPIO11", "GPIO10",
-+			  "GPIO9", "GPIO7", "", "GPIO4",
-+			  "", "", "", "";
-+};
-+
-+&gpt1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpt1>;
-+	status = "disabled";
-+};
-+
-+&gpt2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpt2>;
-+	status = "disabled";
-+};
-+
-+&gpt3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpt3>;
-+	status = "disabled";
-+};
-+
-+&hdmi_pvi {
-+	status = "okay";
-+};
-+
-+&hdmi_tx {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hdmi>;
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			hdmi_tx_out: endpoint {
-+				remote-endpoint = <&hdmi_connector_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi_tx_phy {
-+	status = "okay";
-+};
-+
-+/* X5 + X6 Camera & Display interface */
-+&i2c2 {
-+	clock-frequency = <384000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&pinctrl_i2c2>;
-+	pinctrl-1 = <&pinctrl_i2c2_gpio>;
-+	scl-gpios = <&gpio5 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio5 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+};
-+
-+/* X1 ID_I2C */
-+&i2c3 {
-+	clock-frequency = <384000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&pinctrl_i2c3>;
-+	pinctrl-1 = <&pinctrl_i2c3_gpio>;
-+	scl-gpios = <&gpio2 10 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio2 11 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+};
-+
-+&i2c4 {
-+	clock-frequency = <384000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&pinctrl_i2c4>;
-+	pinctrl-1 = <&pinctrl_i2c4_gpio>;
-+	scl-gpios = <&gpio5 12 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio5 13 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+
-+	tlv320aic3x04: audio-codec@18 {
-+		compatible = "ti,tlv320aic32x4";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_tlv320aic3x04>;
-+		reg = <0x18>;
-+		clock-names = "mclk";
-+		clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI5_MCLK1>;
-+		reset-gpios = <&gpio5 11 GPIO_ACTIVE_LOW>;
-+		iov-supply = <&reg_vcc_3v3>;
-+		ldoin-supply = <&reg_vcc_3v3>;
-+	};
-+};
-+
-+/* X1 I2C */
-+&i2c5 {
-+	clock-frequency = <384000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&pinctrl_i2c5>;
-+	pinctrl-1 = <&pinctrl_i2c5_gpio>;
-+	scl-gpios = <&gpio5 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio5 4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+};
-+
-+/* X1 I2C on GPIO24/GPIO25 */
-+&i2c6 {
-+	clock-frequency = <384000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&pinctrl_i2c6>;
-+	pinctrl-1 = <&pinctrl_i2c6_gpio>;
-+	scl-gpios = <&gpio2 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio2 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "disabled";
-+};
-+
-+&lcdif3 {
-+	status = "okay";
-+};
-+
-+&pcf85063 {
-+	/* RTC_EVENT# is connected on MBa8MP-RAS314 */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pcf85063>;
-+	interrupt-parent = <&gpio3>;
-+	interrupts = <19 IRQ_TYPE_EDGE_FALLING>;
-+};
-+
-+&pcie_phy {
-+	clocks = <&hsio_blk_ctrl>;
-+	clock-names = "ref";
-+	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
-+	status = "okay";
-+};
-+
-+&pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pcie>;
-+	reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&pwm2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm2>;
-+	status = "disabled";
-+};
-+
-+&pwm3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm3>;
-+	status = "okay";
-+};
-+
-+&pwm4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm4>;
-+	status = "okay";
-+};
-+
-+&sai5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sai5>;
-+	assigned-clocks = <&clk IMX8MP_CLK_SAI5>;
-+	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
-+	assigned-clock-rates = <12288000>;
-+	fsl,sai-mclk-direction-output;
-+	status = "okay";
-+};
-+
-+&snvs_pwrkey {
-+	status = "okay";
-+};
-+
-+/* X1 UART1 */
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart1>;
-+	uart-has-rtscts;
-+	assigned-clocks = <&clk IMX8MP_CLK_UART1>;
-+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_80M>;
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart2>;
-+	uart-has-rtscts;
-+	assigned-clocks = <&clk IMX8MP_CLK_UART2>;
-+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_80M>;
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "nxp,88w8987-bt";
-+	};
-+};
-+
-+&uart3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart3>;
-+	assigned-clocks = <&clk IMX8MP_CLK_UART3>;
-+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_80M>;
-+	status = "okay";
-+};
-+
-+&uart4 {
-+	/* console */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart4>;
-+	status = "okay";
-+};
-+
-+&usb3_0 {
-+	fsl,disable-port-power-control;
-+	status = "okay";
-+};
-+
-+&usb3_1 {
-+	fsl,disable-port-power-control;
-+	fsl,permanently-attached;
-+	status = "okay";
-+};
-+
-+&usb3_phy0 {
-+	vbus-supply = <&reg_vcc_5v0>;
-+	status = "okay";
-+};
-+
-+&usb3_phy1 {
-+	vbus-supply = <&reg_vcc_5v0>;
-+	status = "okay";
-+};
-+
-+&usb_dwc3_0 {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&usb_dwc3_1 {
-+	dr_mode = "host";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usbhub>;
-+	status = "okay";
-+
-+	hub_2_0: hub@1 {
-+		compatible = "usb451,8142";
-+		reg = <1>;
-+		peer-hub = <&hub_3_0>;
-+		reset-gpios = <&gpio5 26 GPIO_ACTIVE_LOW>;
-+		vdd-supply = <&reg_vcc_3v3>;
-+	};
-+
-+	hub_3_0: hub@2 {
-+		compatible = "usb451,8140";
-+		reg = <2>;
-+		peer-hub = <&hub_2_0>;
-+		reset-gpios = <&gpio5 26 GPIO_ACTIVE_LOW>;
-+		vdd-supply = <&reg_vcc_3v3>;
-+	};
-+};
-+
-+/* X1 SD card on GPIO22-GPIO27 */
-+&usdhc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	disable-wp;
-+	bus-width = <4>;
-+	status = "disabled";
-+};
-+
-+&usdhc2 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
-+	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
-+	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
-+	cd-gpios = <&gpio2 12 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&reg_usdhc2_vmmc>;
-+	no-mmc;
-+	no-sdio;
-+	disable-wp;
-+	bus-width = <4>;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_backlight: backlightgrp {
-+		fsl,pins = <MX8MP_IOMUXC_GPIO1_IO03__GPIO1_IO03		0x14>;
-+	};
-+
-+	pinctrl_ecspi3: ecspi3grp {
-+		fsl,pins = <MX8MP_IOMUXC_UART1_RXD__ECSPI3_SCLK		0x140>,
-+			   <MX8MP_IOMUXC_UART1_TXD__ECSPI3_MOSI		0x140>,
-+			   <MX8MP_IOMUXC_UART2_RXD__ECSPI3_MISO		0x1c0>,
-+			   <MX8MP_IOMUXC_UART2_TXD__GPIO5_IO25		0x140>,
-+			   <MX8MP_IOMUXC_GPIO1_IO06__GPIO1_IO06		0x140>;
-+	};
-+
-+	pinctrl_ecspi3_gpio: ecspi3gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_UART1_RXD__GPIO5_IO22		0x80>,
-+			   <MX8MP_IOMUXC_UART1_TXD__GPIO5_IO23		0x80>,
-+			   <MX8MP_IOMUXC_UART2_RXD__GPIO5_IO24		0x80>,
-+			   <MX8MP_IOMUXC_UART2_TXD__GPIO5_IO25		0x80>,
-+			   <MX8MP_IOMUXC_GPIO1_IO06__GPIO1_IO06		0x80>;
-+	};
-+
-+	pinctrl_eqos: eqosgrp {
-+		fsl,pins = <MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC				0x40000044>,
-+			   <MX8MP_IOMUXC_ENET_MDIO__ENET_QOS_MDIO			0x40000044>,
-+			   <MX8MP_IOMUXC_ENET_RD0__ENET_QOS_RGMII_RD0			0x90>,
-+			   <MX8MP_IOMUXC_ENET_RD1__ENET_QOS_RGMII_RD1			0x90>,
-+			   <MX8MP_IOMUXC_ENET_RD2__ENET_QOS_RGMII_RD2			0x90>,
-+			   <MX8MP_IOMUXC_ENET_RD3__ENET_QOS_RGMII_RD3			0x90>,
-+			   <MX8MP_IOMUXC_ENET_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x90>,
-+			   <MX8MP_IOMUXC_ENET_RX_CTL__ENET_QOS_RGMII_RX_CTL		0x90>,
-+			   <MX8MP_IOMUXC_ENET_TD0__ENET_QOS_RGMII_TD0			0x12>,
-+			   <MX8MP_IOMUXC_ENET_TD1__ENET_QOS_RGMII_TD1			0x12>,
-+			   <MX8MP_IOMUXC_ENET_TD2__ENET_QOS_RGMII_TD2			0x12>,
-+			   <MX8MP_IOMUXC_ENET_TD3__ENET_QOS_RGMII_TD3			0x12>,
-+			   <MX8MP_IOMUXC_ENET_TX_CTL__ENET_QOS_RGMII_TX_CTL		0x12>,
-+			   <MX8MP_IOMUXC_ENET_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x14>;
-+	};
-+
-+	pinctrl_eqos_phy: eqosphygrp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI1_RXD0__GPIO4_IO02				0x100>,
-+			   <MX8MP_IOMUXC_SAI1_RXD1__GPIO4_IO03				0x1c0>;
-+	};
-+
-+	pinctrl_fec: fecgrp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI1_RXD2__ENET1_MDC		0x40000044>,
-+			   <MX8MP_IOMUXC_SAI1_RXD3__ENET1_MDIO		0x40000044>,
-+			   <MX8MP_IOMUXC_SAI1_RXD4__ENET1_RGMII_RD0	0x90>,
-+			   <MX8MP_IOMUXC_SAI1_RXD5__ENET1_RGMII_RD1	0x90>,
-+			   <MX8MP_IOMUXC_SAI1_RXD6__ENET1_RGMII_RD2	0x90>,
-+			   <MX8MP_IOMUXC_SAI1_RXD7__ENET1_RGMII_RD3	0x90>,
-+			   <MX8MP_IOMUXC_SAI1_TXC__ENET1_RGMII_RXC	0x90>,
-+			   <MX8MP_IOMUXC_SAI1_TXFS__ENET1_RGMII_RX_CTL	0x90>,
-+			   <MX8MP_IOMUXC_SAI1_TXD0__ENET1_RGMII_TD0	0x12>,
-+			   <MX8MP_IOMUXC_SAI1_TXD1__ENET1_RGMII_TD1	0x12>,
-+			   <MX8MP_IOMUXC_SAI1_TXD2__ENET1_RGMII_TD2	0x12>,
-+			   <MX8MP_IOMUXC_SAI1_TXD3__ENET1_RGMII_TD3	0x12>,
-+			   <MX8MP_IOMUXC_SAI1_TXD4__ENET1_RGMII_TX_CTL	0x12>,
-+			   <MX8MP_IOMUXC_SAI1_TXD5__ENET1_RGMII_TXC	0x14>;
-+	};
-+
-+	pinctrl_fec_phy: fecphygrp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI1_RXFS__GPIO4_IO00		0x100>,
-+			   <MX8MP_IOMUXC_SAI1_RXC__GPIO4_IO01		0x1c0>;
-+	};
-+
-+	pinctrl_gpioled: gpioledgrp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI1_TXD6__GPIO4_IO18		0x14>,
-+			   <MX8MP_IOMUXC_SAI1_TXD7__GPIO4_IO19		0x14>;
-+	};
-+
-+	pinctrl_gpio1: gpio1grp {
-+		fsl,pins = <MX8MP_IOMUXC_GPIO1_IO00__GPIO1_IO00		0x14>,
-+			   <MX8MP_IOMUXC_GPIO1_IO01__GPIO1_IO01		0x14>;
-+	};
-+
-+	pinctrl_gpio2: gpio2grp {
-+		fsl,pins = <MX8MP_IOMUXC_SD1_CLK__GPIO2_IO00		0x94>,
-+			   <MX8MP_IOMUXC_SD1_CMD__GPIO2_IO01		0x94>,
-+			   <MX8MP_IOMUXC_SD1_DATA0__GPIO2_IO02		0x94>,
-+			   <MX8MP_IOMUXC_SD1_DATA1__GPIO2_IO03		0x94>,
-+			   <MX8MP_IOMUXC_SD1_DATA2__GPIO2_IO04		0x94>,
-+			   <MX8MP_IOMUXC_SD1_DATA3__GPIO2_IO05		0x94>,
-+			   <MX8MP_IOMUXC_SD1_DATA4__GPIO2_IO06		0x94>,
-+			   <MX8MP_IOMUXC_SD1_DATA5__GPIO2_IO07		0x94>;
-+	};
-+
-+	pinctrl_gpio3: gpio3grp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI5_RXC__GPIO3_IO20		0x180>;
-+	};
-+
-+	pinctrl_gpio4: gpio4grp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI1_MCLK__GPIO4_IO20		0x80>,
-+			   /* PCIE_WAKE# */
-+			   <MX8MP_IOMUXC_SAI2_TXC__GPIO4_IO25		0x180>,
-+			   <MX8MP_IOMUXC_SAI2_TXD0__GPIO4_IO26		0x94>,
-+			   <MX8MP_IOMUXC_SAI2_MCLK__GPIO4_IO27		0x94>;
-+	};
-+
-+	pinctrl_gpio5: gpio5grp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI3_TXD__GPIO5_IO01		0x80>,
-+			   <MX8MP_IOMUXC_SPDIF_EXT_CLK__GPIO5_IO05	0x80>;
-+	};
-+
-+	pinctrl_hdmi: hdmigrp {
-+		fsl,pins = <MX8MP_IOMUXC_HDMI_DDC_SCL__HDMIMIX_HDMI_SCL	0x400001c2>,
-+			   <MX8MP_IOMUXC_HDMI_DDC_SDA__HDMIMIX_HDMI_SDA	0x400001c2>,
-+			   <MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD	0x40000010>,
-+			   <MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC	0x40000154>;
-+	};
-+
-+	pinctrl_gpt1: gpt1grp {
-+		fsl,pins = <MX8MP_IOMUXC_UART3_TXD__GPT1_CLK		0x14>;
-+	};
-+
-+	pinctrl_gpt1_gpio: gpt1gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_UART3_TXD__GPIO5_IO27		0x80>;
-+	};
-+
-+	pinctrl_gpt2: gpt2grp {
-+		fsl,pins = <MX8MP_IOMUXC_I2C3_SCL__GPT2_CLK		0x14>;
-+	};
-+
-+	pinctrl_gpt2_gpio: gpt2gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_I2C3_SCL__GPIO5_IO18		0x80>;
-+	};
-+
-+	pinctrl_gpt3: gpt3grp {
-+		fsl,pins = <MX8MP_IOMUXC_I2C3_SDA__GPT3_CLK		0x14>;
-+	};
-+
-+	pinctrl_gpt3_gpio: gpt3gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_I2C3_SDA__GPIO5_IO19		0x80>;
-+	};
-+
-+	pinctrl_i2c2: i2c2grp {
-+		fsl,pins = <MX8MP_IOMUXC_I2C2_SCL__I2C2_SCL		0x400001e2>,
-+			   <MX8MP_IOMUXC_I2C2_SDA__I2C2_SDA		0x400001e2>;
-+	};
-+
-+	pinctrl_i2c2_gpio: i2c2-gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_I2C2_SCL__GPIO5_IO16		0x400001e2>,
-+			   <MX8MP_IOMUXC_I2C2_SDA__GPIO5_IO17		0x400001e2>;
-+	};
-+
-+	pinctrl_i2c3: i2c3grp {
-+		fsl,pins = <MX8MP_IOMUXC_SD1_RESET_B__I2C3_SCL		0x400001e2>,
-+			   <MX8MP_IOMUXC_SD1_STROBE__I2C3_SDA		0x400001e2>;
-+	};
-+
-+	pinctrl_i2c3_gpio: i2c3-gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_SD1_RESET_B__GPIO2_IO10	0x400001e2>,
-+			   <MX8MP_IOMUXC_SD1_STROBE__GPIO2_IO11		0x400001e2>;
-+	};
-+
-+	pinctrl_i2c4: i2c4grp {
-+		fsl,pins = <MX8MP_IOMUXC_ECSPI2_MISO__I2C4_SCL		0x400001e2>,
-+			   <MX8MP_IOMUXC_ECSPI2_SS0__I2C4_SDA		0x400001e2>;
-+	};
-+
-+	pinctrl_i2c4_gpio: i2c4-gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_ECSPI2_MISO__GPIO5_IO12	0x400001e2>,
-+			   <MX8MP_IOMUXC_ECSPI2_SS0__GPIO5_IO13		0x400001e2>;
-+	};
-+
-+	pinctrl_i2c5: i2c5grp {
-+		fsl,pins = <MX8MP_IOMUXC_SPDIF_TX__I2C5_SCL		0x400001e2>,
-+			   <MX8MP_IOMUXC_SPDIF_RX__I2C5_SDA		0x400001e2>;
-+	};
-+
-+	pinctrl_i2c5_gpio: i2c5-gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_SPDIF_TX__GPIO5_IO03		0x400001e2>,
-+			   <MX8MP_IOMUXC_SPDIF_RX__GPIO5_IO04		0x400001e2>;
-+	};
-+
-+	pinctrl_i2c6: i2c6grp {
-+		fsl,pins = <MX8MP_IOMUXC_SD1_DATA0__I2C6_SCL		0x400001e2>,
-+			   <MX8MP_IOMUXC_SD1_DATA1__I2C6_SDA		0x400001e2>;
-+	};
-+
-+	pinctrl_i2c6_gpio: i2c6-gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_SD1_DATA0__GPIO2_IO02		0x400001e2>,
-+			   <MX8MP_IOMUXC_SD1_DATA1__GPIO2_IO03		0x400001e2>;
-+	};
-+
-+	pinctrl_pcf85063: pcf85063grp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI5_RXFS__GPIO3_IO19		0x80>;
-+	};
-+
-+	pinctrl_pcie: pciegrp {
-+		fsl,pins = <MX8MP_IOMUXC_I2C4_SCL__PCIE_CLKREQ_B	0x60>,
-+			   <MX8MP_IOMUXC_SAI3_RXFS__GPIO4_IO28		0x94>;
-+	};
-+
-+	pinctrl_lvdsdisplay: lvdsdisplaygrp {
-+		fsl,pins = <MX8MP_IOMUXC_GPIO1_IO07__GPIO1_IO07		0x10>;
-+	};
-+
-+	pinctrl_pwm2: pwm2grp {
-+		fsl,pins = <MX8MP_IOMUXC_GPIO1_IO09__PWM2_OUT		0x14>;
-+	};
-+
-+	pinctrl_pwm3: pwm3grp {
-+		fsl,pins = <MX8MP_IOMUXC_GPIO1_IO14__PWM3_OUT		0x14>;
-+	};
-+
-+	pinctrl_pwm3_gpio: pwm3grpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_GPIO1_IO14__GPIO1_IO14		0x80>;
-+	};
-+
-+	pinctrl_pwm4: pwm4grp {
-+		fsl,pins = <MX8MP_IOMUXC_GPIO1_IO15__PWM4_OUT		0x14>;
-+	};
-+
-+	pinctrl_pwm4_gpio: pwm4grpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_GPIO1_IO15__GPIO1_IO15		0x80>;
-+	};
-+
-+	pinctrl_rfkill: rfkillgrp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI3_MCLK__GPIO5_IO02		0x14>;
-+	};
-+
-+	pinctrl_sai5: sai5grp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI5_MCLK__AUDIOMIX_SAI5_MCLK		0x94>,
-+			   <MX8MP_IOMUXC_SAI5_RXD0__AUDIOMIX_SAI5_RX_DATA00	0x94>,
-+			   <MX8MP_IOMUXC_SAI5_RXD3__AUDIOMIX_SAI5_TX_DATA00	0x94>,
-+			   <MX8MP_IOMUXC_SAI5_RXD1__AUDIOMIX_SAI5_TX_SYNC	0x94>,
-+			   <MX8MP_IOMUXC_SAI5_RXD2__AUDIOMIX_SAI5_TX_BCLK	0x94>;
-+	};
-+
-+	pinctrl_tlv320aic3x04: tlv320aic3x04grp {
-+		fsl,pins = <MX8MP_IOMUXC_ECSPI2_MOSI__GPIO5_IO11		0x180>;
-+	};
-+
-+	pinctrl_uart1: uart1grp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI2_RXFS__UART1_DCE_TX	0x14>,
-+			   <MX8MP_IOMUXC_SAI2_RXC__UART1_DCE_RX		0x14>,
-+			   <MX8MP_IOMUXC_SAI2_RXD0__UART1_DTE_CTS	0x14>,
-+			   <MX8MP_IOMUXC_SAI2_TXFS__UART1_DTE_RTS	0x14>;
-+	};
-+
-+	pinctrl_uart1_gpio: uart1gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI2_RXFS__GPIO4_IO21		0x80>,
-+			   <MX8MP_IOMUXC_SAI2_RXC__GPIO4_IO22		0x80>,
-+			   <MX8MP_IOMUXC_SAI2_RXD0__GPIO4_IO23		0x80>,
-+			   <MX8MP_IOMUXC_SAI2_TXFS__GPIO4_IO24		0x80>;
-+	};
-+
-+	pinctrl_uart2: uart2grp {
-+		fsl,pins = <MX8MP_IOMUXC_SAI3_TXC__UART2_DCE_TX		0x14>,
-+			   <MX8MP_IOMUXC_SAI3_TXFS__UART2_DCE_RX	0x14>,
-+			   <MX8MP_IOMUXC_SAI3_RXD__UART2_DCE_RTS	0x14>,
-+			   <MX8MP_IOMUXC_SAI3_RXC__UART2_DCE_CTS	0x14>;
-+	};
-+
-+	pinctrl_uart3: uart3grp {
-+		fsl,pins = <MX8MP_IOMUXC_SD1_DATA6__UART3_DCE_TX	0x140>,
-+			   <MX8MP_IOMUXC_SD1_DATA7__UART3_DCE_RX	0x140>;
-+	};
-+
-+	pinctrl_uart4: uart4grp {
-+		fsl,pins = <MX8MP_IOMUXC_UART4_TXD__UART4_DCE_TX	0x140>,
-+			   <MX8MP_IOMUXC_UART4_RXD__UART4_DCE_RX	0x140>;
-+	};
-+
-+	pinctrl_usbhub: usbhubgrp {
-+		fsl,pins = <MX8MP_IOMUXC_UART3_RXD__GPIO5_IO26		0x10>;
-+	};
-+
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <MX8MP_IOMUXC_SD1_CLK__USDHC1_CLK		0x192>,
-+			   <MX8MP_IOMUXC_SD1_CMD__USDHC1_CMD		0x1d2>,
-+			   <MX8MP_IOMUXC_SD1_DATA0__USDHC1_DATA0	0x1d2>,
-+			   <MX8MP_IOMUXC_SD1_DATA1__USDHC1_DATA1	0x1d2>,
-+			   <MX8MP_IOMUXC_SD1_DATA2__USDHC1_DATA2	0x1d2>,
-+			   <MX8MP_IOMUXC_SD1_DATA3__USDHC1_DATA3	0x1d2>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK		0x192>,
-+			   <MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d2>,
-+			   <MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d2>,
-+			   <MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d2>,
-+			   <MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d2>,
-+			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d2>,
-+			   <MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc0>;
-+	};
-+
-+	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
-+		fsl,pins = <MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK		0x194>,
-+			   <MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d4>,
-+			   <MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d4>,
-+			   <MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d4>,
-+			   <MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d4>,
-+			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4>,
-+			   <MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc0>;
-+	};
-+
-+	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
-+		fsl,pins = <MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK		0x194>,
-+			   <MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d4>,
-+			   <MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d4>,
-+			   <MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d4>,
-+			   <MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d4>,
-+			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4>,
-+			   <MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc0>;
-+	};
-+
-+	pinctrl_usdhc2_gpio: usdhc2-gpiogrp {
-+		fsl,pins = <MX8MP_IOMUXC_SD2_CD_B__GPIO2_IO12		0x1c0>;
-+	};
-+};
--- 
-2.34.1
-
+Marek
 
