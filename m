@@ -1,141 +1,138 @@
-Return-Path: <linux-kernel+bounces-217709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B866F90B338
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:02:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5D190B33D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732A92811CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B471F22120
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7912F13C8E4;
-	Mon, 17 Jun 2024 14:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC25F13D62E;
+	Mon, 17 Jun 2024 14:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bBk91bAt"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V2URBSMe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFE713C81B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A74613D272;
+	Mon, 17 Jun 2024 14:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718633520; cv=none; b=N/n8HpAes8FRU2CdDzQNBDM2byd7j+vA60Z8kUKFKyqe62idpWO7FKLIRQYt7xQ0eADIJRmSHgdaVRgBjLWya07qaDEJd2GKwoblg4mcGHlFTOJGdHSYXZdnqQjW629aQ4k9ER5jeM7vm5HX3AWkjfqZVuhHOKjy8EEiDn2Fsgw=
+	t=1718633599; cv=none; b=IQfQsdWnGUNQLT8tKPiu/ouE0PsduzfCAHNCFZC3yagsFtALlU5ZmgiEjkSBY7IPJ1HMT4tHZVrI8S05feCetc1Xo2JbKt4ObU+nckAiWhBb6U8kPSFQD5OZRuK7G2wDVbCPDZ2j9sBVOJKAWR3Gi4OT+OKUT9wUT6Dp9dYNYM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718633520; c=relaxed/simple;
-	bh=C2SAVHOyNTSMDiQfOQc+olVCdTZJppGRHLEkFWkECgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EL9oNewomaNfZqDIhdPYS4t+HRceqS5S5TFCKcfX0rZhYxSQ/3yzSxsJuNNYFRCbKKXS/7Di48R9CAUlRXRSkJKoE4bFrgtTrEie1U+1P5pFqpw5c7PnnvmZen9F8KQjQ80y7aA3j3qNih7szvDh9C+40D6fMhahe3L9lwAKS3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bBk91bAt; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f04afcce1so562774566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718633517; x=1719238317; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C2SAVHOyNTSMDiQfOQc+olVCdTZJppGRHLEkFWkECgM=;
-        b=bBk91bAt/erP5mL3knKkxVdMhFwJru9aAsPt/Z0dcLFBdXbBvSGnVV8Fvc4sValzdw
-         iuMtSCdZZamxlBD4QbQpKg9U///sgFPgGwVA0tZa4aTqjqcayAiy+JKxZGNJpz5SVn/c
-         wtLkRPoJc7U/gBOfleKB8FCtGpRdSlvE/m3edIbYZhsP92j+5y1odQ00TRHse8hq+hsZ
-         Un7S2/+R2S5ceBAyXMbkcxX8mqe1ukgvNxmrB40omSG7g6EWk2T7gyNglH0CAQD5rzkN
-         IweGMOgkrfXp7rdzC9s42LAydeMZ+DGj0MSeD0ZrYKb2IKFuGd1tmJ6D6HopW/tCsz17
-         cj/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718633517; x=1719238317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C2SAVHOyNTSMDiQfOQc+olVCdTZJppGRHLEkFWkECgM=;
-        b=m8CdHuOfwl16TmwkxrLIFnoYuDjDRvAFuvT2S5TjxjfcvocjYaT6+Ld6pQ6JJNqtqX
-         JKEY+Jr9qleUTOoKcEwgkaDYv78S8Ujq7YhnR69h9sObh/k6kBPeZDu+uON3OgjzdVoQ
-         7ts//SoWyUlS30kLIc1sm6u7s1lt+1NYX3wxxxvqKK5CNgw1eCnTbWWm8TFTZfhmiNjL
-         rdR7+Ez5lh+kuK3n32THhduWjug9QmRKKebnQXeA+Q7OLvZgeeoKs7SOXgaF/tjlZ5WF
-         rtPaYXgXokkRJj4uCMgBaMCFLpNqyRYBSIR5gQnO7SDxbnLp6WoJRepP9oO/EIItxmCd
-         EV6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUYbdnmmFFrS4vvdP1tVZgMGbjKxAyn7VqRXRG+f1TkbCBlNmW+X4EUU0AkJMW7N6u1uN0Z4dUVQFaLvmjPKYLO8MGeJzcZpL6j9weC
-X-Gm-Message-State: AOJu0YyoVM6vSdTjl5NglxRpdXZndHKWVN/rOdPSe11WaACJ8xtPfByK
-	PSP9+gIcu0kD324Vtipa/sR9aewK84iz3jtUJNDtH7YLlnwq8XGcB+T07WkqVk8=
-X-Google-Smtp-Source: AGHT+IFlbSH1GvxfJkQSwG+UrC4v6gx0fdCPmYTDKY3WzRbLOQNkpCirO5vKZ2nfSibqMaANo06JTQ==
-X-Received: by 2002:a17:907:c283:b0:a6f:6661:dbbf with SMTP id a640c23a62f3a-a6f6661de22mr770138066b.71.1718633517028;
-        Mon, 17 Jun 2024 07:11:57 -0700 (PDT)
-Received: from localhost (p200300f65f283b00ca876ee5dd3d1e3b.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:ca87:6ee5:dd3d:1e3b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56dd2dcesm518217066b.93.2024.06.17.07.11.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 07:11:56 -0700 (PDT)
-Date: Mon, 17 Jun 2024 16:11:54 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Junyi Zhao <junyi.zhao@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
-	Kelvin Zhang via B4 Relay <devnull+kelvin.zhang.amlogic.com@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, kelvin.zhang@amlogic.com, linux-pwm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] pwm: meson: Add support for Amlogic S4 PWM
-Message-ID: <6bzysc3jwugo3epcxsef7uupk536prsc3phlf3m64n3jjwpxus@2uigg44uotuh>
-References: <20240613-s4-pwm-v8-0-b5bd0a768282@amlogic.com>
- <20240613-s4-pwm-v8-1-b5bd0a768282@amlogic.com>
- <1jfrtgj0so.fsf@starbuckisacylon.baylibre.com>
- <tnwdnwiruoty5yd42bmkupgg6hjxib5lblhqcyouoyx5y3zvnq@2d7cnrei24m4>
- <1jbk44htqr.fsf@starbuckisacylon.baylibre.com>
- <948ba34a-1e05-45c4-8ba7-66c72bdb6fa5@amlogic.com>
+	s=arc-20240116; t=1718633599; c=relaxed/simple;
+	bh=QRgG4WTuWok5ADhza6P3Gt/e72sg3po9JvzHqviNjtA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DFtq+Sb14ArWq2FvWYE14UKAwmkasgPBgTJikNCfOfqozfOFwEj9wDsRHK5PzfRTZ1u3ohX574yUlAiOF56kkuCjyZ9UE1cs2T1S93jeNmsoiAtrw+MkG5DeCURisckWUVfqLHweRQsS5J08CMQia8OzDJA0OSJu6TJYYg9n7fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V2URBSMe; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718633597; x=1750169597;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QRgG4WTuWok5ADhza6P3Gt/e72sg3po9JvzHqviNjtA=;
+  b=V2URBSMePZeqme8LOnBnTkuScbR6K+D7mcyzQcmO7czYz5FE0ddDp+xe
+   norFG9wA5dO83o9lHkxgo4IsMBfWEZwfvlgwqiIAJNZLZyNholuuzc7Yn
+   mTiOCCB2loF8fiicQkPPwTRXExPHQiEUNEDzrYd3FYStp9yqAjn9pZ02/
+   TjowT9uypkAe6hM/jhHGF+29iQTnk8qbWhf5Yc36yFykxseC1i+uS9Kwu
+   8ufDnMoaWCj/iTyRrDb/MrUcG13J2VKlcU2K/Ostmw3Uk5WFiNlYqf+3X
+   k2HhcIy3YapDNov7AD2JpDVWA8nRgHM6LdJcBups+mdVUtlFcightMjUf
+   w==;
+X-CSE-ConnectionGUID: ejyZ7tM2Skq8nSIKIpZa7g==
+X-CSE-MsgGUID: U/jNEdWGQCW48tK1qlsrvQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="26579888"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="26579888"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 07:13:17 -0700
+X-CSE-ConnectionGUID: CO+6SsobSfaJnN8fPqjqlw==
+X-CSE-MsgGUID: tebfmINuRWuIWa2OHo+BwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="45743562"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.111.154]) ([10.125.111.154])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 07:13:16 -0700
+Message-ID: <fb789f0a-0c80-49f3-ab7e-d22fc2793a49@intel.com>
+Date: Mon, 17 Jun 2024 07:13:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vjzyofe7xtcvocgd"
-Content-Disposition: inline
-In-Reply-To: <948ba34a-1e05-45c4-8ba7-66c72bdb6fa5@amlogic.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH PATCH 8/9] x86/bugs: Declutter vulnerable CPU list
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <20240617-add-cpu-type-v1-8-b88998c01e76@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240617-add-cpu-type-v1-8-b88998c01e76@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 6/17/24 02:12, Pawan Gupta wrote:
+> No functional change.
 
---vjzyofe7xtcvocgd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello,
-
-On Mon, Jun 17, 2024 at 04:44:13PM +0800, Junyi Zhao wrote:
-> > > So yes, please use dev_err_probe() also to handle
-> > > devm_add_action_or_reset().
-> >=20
-> > My point here is also that devm_add_action_or_reset() can only fail on
-> > memory allocation, like (devm_)kzalloc. Looking around the kernel, we
-> > tend to not add messages for that and just return the error code,
-> > presumably because those same 'out of memory' messages would proliferate
-> > everywhere.
->
-> Hi Uwe, I didnt get the clear point.
-> So, if we need "return ret" directly? or keep "dev_err_probe()" to print?
-
-Please keep the dev_err_probe(). There is a problem with that approach
-(as Jerome pointed out), but that is about to be addressed in driver
-core code.
-
-Best regards
-Uwe
-
---vjzyofe7xtcvocgd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZwRCcACgkQj4D7WH0S
-/k5C6ggAusUDCe62w1qb8jlNP1dXoK6OQvw09sDK1x3v6607Hh9+PZte3/EYmwn1
-AIT2qpIcaBkVb3oB8plPowm3oU62dqZ5Z5ab1QN97qlths09uZiOxkA/MSLTTUx6
-T6GbIn+8OmUDBSa2jyqbFBV5IapU3TgN/PGDUVu3/fp5psvI6tCfyLUpxR1pTXWZ
-M3XM5N2LvVkzyu1O77yBaKOsB+4TVcgRLGwi1MzbqbvbLQoyRscvB18qB4x8Ytsa
-kLCtuCLJfdujJfR6fTWC/1xeXGoK+YnnoELLOj7LaBVpnUzN8StlNOTM2q7Pm354
-ndgwDT55Ok9oedoR5qNzhmx6RPB9qw==
-=M9gi
------END PGP SIGNATURE-----
-
---vjzyofe7xtcvocgd--
+It would make me feel a *lot* better if you also dumped the before and
+after binaries and made sure they're identical.
 
