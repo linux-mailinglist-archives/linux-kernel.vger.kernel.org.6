@@ -1,65 +1,61 @@
-Return-Path: <linux-kernel+bounces-217457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2E290B186
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:20:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20CA90B1DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46900B372C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:46:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A313B2E7E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8D2198A24;
-	Mon, 17 Jun 2024 13:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF2A16848E;
+	Mon, 17 Jun 2024 13:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MP6MBzFv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVTDPFBa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A73E198A0A;
-	Mon, 17 Jun 2024 13:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCCD198827;
+	Mon, 17 Jun 2024 13:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630625; cv=none; b=Ia2ZZawCCjRjIbGswVRSgfQT7a2kqUECvfwbWsoxeMkYM0uJ4rSYBIvwNRdg7fdNHjut+BxzM2COLCq2X6WKWwTCw/aT4m6wmMvp0dH3BCuSTzQe1zK2ikW9G03bhXZu4U7kX7qUC2dtGc96jvbh+zG+QFBDodoi6P/Iil/3CKM=
+	t=1718630708; cv=none; b=prSEW3DnTAo0aIjLILMJcQBmDzcA7sx3Kfgi5P6QmjglFNbUmGde0yc6h/6a7nbT51hivv3Qk54MRLATcZYF4/8U0rbVngZ4zuJ8uHYb2zANWLRL9B1dVtO7/3cXnGa80j5zHDKqIFCuCJ2DVXxjgChQc3GnqfobIgPBGbwez+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630625; c=relaxed/simple;
-	bh=ibb4uObZWTwc/aDwEPI3oT3bbs+fT8c/jEDjooH+vYU=;
+	s=arc-20240116; t=1718630708; c=relaxed/simple;
+	bh=byH65kRaOvolxPCmYoBw5pOGPfUusJTXCS2NhP+CBds=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s1MLsVIUgSOpraQeWOs+FpSSqjawDdFPeKMmRfRCMKo1Tbz5hrdHOL8Xn88i6wvOfVH0a4fpzKEFpDwtJfXU0S+nsFI/BCt/pywDE2relOe9oNpkdsGuFkTkbqWpXQVOibbmRIEJ9yoYYhnVmHR44N7TMQj4FhZJF3i/zenBRmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MP6MBzFv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29C20C4AF1C;
-	Mon, 17 Jun 2024 13:23:44 +0000 (UTC)
+	 MIME-Version; b=Y097BxZ3Uv+9u5BxQ8tjeYNBTTLTKCtUu48w0ZYgfT+LupTrekuEX84snS2GPaxhD4q4Ff2uozi1us98Z2mHjv3nxRG39/R790VbIJQYVNbaTJHHMgWR/yCWqMz78ExD3H8Ltx94E0Q/1USmkCp51qNY8WdO6DnTXXEHKXxU7GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVTDPFBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75285C4AF1C;
+	Mon, 17 Jun 2024 13:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718630625;
-	bh=ibb4uObZWTwc/aDwEPI3oT3bbs+fT8c/jEDjooH+vYU=;
+	s=k20201202; t=1718630708;
+	bh=byH65kRaOvolxPCmYoBw5pOGPfUusJTXCS2NhP+CBds=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MP6MBzFv8TGeDMiRkM8Wo8w3QEVYcqVLRP85pgUR00s9GhYwOB6uZhPkPX+GR2Y7S
-	 QCKlji4u7bta9EBAI182ohuP3x7v2tJ5qH42IeCMzuOs1nXLhvCSDTaTyJzPsdebew
-	 6qAfWq6SHE5nyJz7b5/sqDb2/IMaakQT+RRL/sEACu0nr1P9EfC3gscDyhNq1JRx2b
-	 wRbIkT1AwhAgiXv5gCXu/sXQH/4XfkAFuqMewE0czdbK69oPUmlsZgKnQMJ96m4Oii
-	 JyEK44ln88f+Sq8yPYlTMMjYy4zlZEJJkhqXzPuKcmqQSDxYf6219fHcINf5zAKmH2
-	 4IRRbn5nsAggg==
+	b=fVTDPFBaR2Hxqol4mHwVq1ajPEEgxchR6Ybn41joR8MYBG1JlbYSlH3PNGsPTr6Rj
+	 Oq0WH4bri7PeXhCclfu1imACBoBlcOU24k7e83+kBv8fP8l4TbeuJaj5rL7CtcIxwS
+	 pYME8NSk5P8KFkht/grkMzFai7MO9xNercxkxLSMF7DQjvtZgF4+M/FJp88BFrjZ6j
+	 2ZoTlbziRuF/GhXRJ2ZlBvH3jhRwgJLaT7im4lA/M3216cDQs5GAZQrN2DBjqvyXIr
+	 ZsNBV/Ap3gRGevh2P+IXLMbpdvs71OQcKwTdj3cPi4XCLXmg5VBiUpyC7hji6taJ4Z
+	 i1D3ktqvoMmmQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Benjamin Berg <benjamin.berg@intel.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Ard Biesheuvel <ardb@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	kvalo@kernel.org,
-	gregory.greenman@intel.com,
-	emmanuel.grumbach@intel.com,
-	ilan.peer@intel.com,
-	shaul.triebitz@intel.com,
-	dan.carpenter@linaro.org,
-	linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 16/35] wifi: iwlwifi: mvm: remove stale STA link data during restart
-Date: Mon, 17 Jun 2024 09:22:14 -0400
-Message-ID: <20240617132309.2588101-16-sashal@kernel.org>
+	chenhuacai@kernel.org,
+	linux-efi@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.1 06/29] efi/libstub: zboot.lds: Discard .discard sections
+Date: Mon, 17 Jun 2024 09:24:10 -0400
+Message-ID: <20240617132456.2588952-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240617132309.2588101-1-sashal@kernel.org>
-References: <20240617132309.2588101-1-sashal@kernel.org>
+In-Reply-To: <20240617132456.2588952-1-sashal@kernel.org>
+References: <20240617132456.2588952-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,126 +64,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.34
+X-stable-base: Linux 6.1.94
 Content-Transfer-Encoding: 8bit
 
-From: Benjamin Berg <benjamin.berg@intel.com>
+From: Nathan Chancellor <nathan@kernel.org>
 
-[ Upstream commit cc3ba78f202de9752aceb16342ab62bdfbffac7e ]
+[ Upstream commit 5134acb15d9ef27aa2b90aad46d4e89fcef79fdc ]
 
-If pre-recovery mac80211 tried to disable a link but this disablement
-failed, then there might be a mismatch between mac80211 assuming the
-link has been disabled and the driver still having the data around.
-During recover itself, that is not a problem, but should the link be
-activated again at a later point, iwlwifi will refuse the activation as
-it detects the inconsistent state.
+When building ARCH=loongarch defconfig + CONFIG_UNWINDER_ORC=y using
+LLVM, there is a warning from ld.lld when linking the EFI zboot image
+due to the use of unreachable() in number() in vsprintf.c:
 
-Solve this corner-case by iterating the station in the restart cleanup
-handler.
+  ld.lld: warning: drivers/firmware/efi/libstub/lib.a(vsprintf.stub.o):(.discard.unreachable+0x0): has non-ABS relocation R_LARCH_32_PCREL against symbol ''
 
-Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
-Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Link: https://msgid.link/20240513132416.d2fd60338055.I840d4fdce5fd49fe69896d928b071067e3730259@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+If the compiler cannot eliminate the default case for any reason, the
+.discard.unreachable section will remain in the final binary but the
+entire point of any section prefixed with .discard is that it is only
+used at compile time, so it can be discarded via /DISCARD/ in a linker
+script. The asm-generic vmlinux.lds.h includes .discard and .discard.*
+in the COMMON_DISCARDS macro but that is not used for zboot.lds, as it
+is not a kernel image linker script.
+
+Add .discard and .discard.* to /DISCARD/ in zboot.lds, so that any
+sections meant to be discarded at link time are not included in the
+final zboot image. This issue is not specific to LoongArch, it is just
+the first architecture to select CONFIG_OBJTOOL, which defines
+annotate_unreachable() as an asm statement to add the
+.discard.unreachable section, and use the EFI stub.
+
+Closes: https://github.com/ClangBuiltLinux/linux/issues/2023
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Acked-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/wireless/intel/iwlwifi/mvm/mac80211.c | 37 +++++++++++++++++++
- .../net/wireless/intel/iwlwifi/mvm/mld-sta.c  | 10 ++---
- drivers/net/wireless/intel/iwlwifi/mvm/sta.h  |  5 +++
- 3 files changed, 47 insertions(+), 5 deletions(-)
+ drivers/firmware/efi/libstub/zboot.lds | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-index 375f401b14535..e281e07be73fc 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -1051,6 +1051,39 @@ static void iwl_mvm_cleanup_iterator(void *data, u8 *mac,
- 	RCU_INIT_POINTER(mvmvif->deflink.probe_resp_data, NULL);
+diff --git a/drivers/firmware/efi/libstub/zboot.lds b/drivers/firmware/efi/libstub/zboot.lds
+index 93d33f68333b2..a7fffbad6d46a 100644
+--- a/drivers/firmware/efi/libstub/zboot.lds
++++ b/drivers/firmware/efi/libstub/zboot.lds
+@@ -34,6 +34,7 @@ SECTIONS
+ 	}
+ 
+ 	/DISCARD/ : {
++		*(.discard .discard.*)
+ 		*(.modinfo .init.modinfo)
+ 	}
  }
- 
-+static void iwl_mvm_cleanup_sta_iterator(void *data, struct ieee80211_sta *sta)
-+{
-+	struct iwl_mvm *mvm = data;
-+	struct iwl_mvm_sta *mvm_sta;
-+	struct ieee80211_vif *vif;
-+	int link_id;
-+
-+	mvm_sta = iwl_mvm_sta_from_mac80211(sta);
-+	vif = mvm_sta->vif;
-+
-+	if (!sta->valid_links)
-+		return;
-+
-+	for (link_id = 0; link_id < ARRAY_SIZE((sta)->link); link_id++) {
-+		struct iwl_mvm_link_sta *mvm_link_sta;
-+
-+		mvm_link_sta =
-+			rcu_dereference_check(mvm_sta->link[link_id],
-+					      lockdep_is_held(&mvm->mutex));
-+		if (mvm_link_sta && !(vif->active_links & BIT(link_id))) {
-+			/*
-+			 * We have a link STA but the link is inactive in
-+			 * mac80211. This will happen if we failed to
-+			 * deactivate the link but mac80211 roll back the
-+			 * deactivation of the link.
-+			 * Delete the stale data to avoid issues later on.
-+			 */
-+			iwl_mvm_mld_free_sta_link(mvm, mvm_sta, mvm_link_sta,
-+						  link_id, false);
-+		}
-+	}
-+}
-+
- static void iwl_mvm_restart_cleanup(struct iwl_mvm *mvm)
- {
- 	iwl_mvm_stop_device(mvm);
-@@ -1073,6 +1106,10 @@ static void iwl_mvm_restart_cleanup(struct iwl_mvm *mvm)
- 	 */
- 	ieee80211_iterate_interfaces(mvm->hw, 0, iwl_mvm_cleanup_iterator, mvm);
- 
-+	/* cleanup stations as links may be gone after restart */
-+	ieee80211_iterate_stations_atomic(mvm->hw,
-+					  iwl_mvm_cleanup_sta_iterator, mvm);
-+
- 	mvm->p2p_device_vif = NULL;
- 
- 	iwl_mvm_reset_phy_ctxts(mvm);
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c b/drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c
-index 121da93e99c6a..2dcc13d4a4a79 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c
-@@ -515,11 +515,11 @@ static int iwl_mvm_mld_cfg_sta(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
- 	return iwl_mvm_mld_send_sta_cmd(mvm, &cmd);
- }
- 
--static void iwl_mvm_mld_free_sta_link(struct iwl_mvm *mvm,
--				      struct iwl_mvm_sta *mvm_sta,
--				      struct iwl_mvm_link_sta *mvm_sta_link,
--				      unsigned int link_id,
--				      bool is_in_fw)
-+void iwl_mvm_mld_free_sta_link(struct iwl_mvm *mvm,
-+			       struct iwl_mvm_sta *mvm_sta,
-+			       struct iwl_mvm_link_sta *mvm_sta_link,
-+			       unsigned int link_id,
-+			       bool is_in_fw)
- {
- 	RCU_INIT_POINTER(mvm->fw_id_to_mac_id[mvm_sta_link->sta_id],
- 			 is_in_fw ? ERR_PTR(-EINVAL) : NULL);
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/sta.h b/drivers/net/wireless/intel/iwlwifi/mvm/sta.h
-index 7364346a1209f..95ef60daa62f0 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.h
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.h
-@@ -642,6 +642,11 @@ int iwl_mvm_mld_update_sta(struct iwl_mvm *mvm, struct ieee80211_vif *vif,
- 			   struct ieee80211_sta *sta);
- int iwl_mvm_mld_rm_sta(struct iwl_mvm *mvm, struct ieee80211_vif *vif,
- 		       struct ieee80211_sta *sta);
-+void iwl_mvm_mld_free_sta_link(struct iwl_mvm *mvm,
-+			       struct iwl_mvm_sta *mvm_sta,
-+			       struct iwl_mvm_link_sta *mvm_sta_link,
-+			       unsigned int link_id,
-+			       bool is_in_fw);
- int iwl_mvm_mld_rm_sta_id(struct iwl_mvm *mvm, u8 sta_id);
- int iwl_mvm_mld_update_sta_links(struct iwl_mvm *mvm,
- 				 struct ieee80211_vif *vif,
 -- 
 2.43.0
 
