@@ -1,118 +1,113 @@
-Return-Path: <linux-kernel+bounces-217302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5032590ADFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:32:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F1E90AE03
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52FFE1C21746
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:32:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39A6CB24B48
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E88F19596C;
-	Mon, 17 Jun 2024 12:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C55195977;
+	Mon, 17 Jun 2024 12:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="C897/DBW"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W96L0WwC"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A7F8836;
-	Mon, 17 Jun 2024 12:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B471940BD;
+	Mon, 17 Jun 2024 12:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718627564; cv=none; b=TXDQ0QniKIh2WQtAHUSI/pMZA5IWYFnBgqeGrTJPCbU8mipPaURvgwFb5YLFVdXsMm9lZcihuorcHImG4sAsAcUlkJkfhkr4zyKjzltRsapcO3qH2nbYBSMqbw6fWsw59By7OjumquRlmlnS7hEZRUZpmyDoGOXbUTuUsS1F5QQ=
+	t=1718627575; cv=none; b=ISw4L1KVntVZbTUkqm6Gv7z5/AFqlQyZYsL4YVk0Q1iVgYXJGxmjyJQHeZjQLC/XlASY3mAODDwf0QKcVuCVD6SkRalOXUGSqCUb+sk113CaO5ij1CyF8grlgRgxz96MN1C4HKnl2UrG53NKn7ygCDX5fRpm3JUKOFoERlApqMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718627564; c=relaxed/simple;
-	bh=SZu+21b3EOadKSJGfSaiut50TflCHmgMEiyIEWkOcys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y+sUb1lHRuZAosv/ZU6PEN6eWAv7ApU+kc52+LgpAcKp6lqkFp2ghHRFFqE83XqcB2mF1OAmrCxsXHa/tDlsAvbiQOS9ogpIuMKGMx0sOmwH1Ev80CLWfBp5BJqyNcmv6lkvsjvdqXqw6/AFbTPv8ZJ1POMZMk20iLK45IoGKGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=C897/DBW; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718627543; x=1719232343; i=markus.elfring@web.de;
-	bh=SZu+21b3EOadKSJGfSaiut50TflCHmgMEiyIEWkOcys=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=C897/DBWZf1CbuvUCm5dAxJ9NPEVeHtsXU29NX/+eMumtMjGnJJ7Wp6HuVzQAq40
-	 Wiu81HXcYrjpcDpccoFpEGHJfR4KiuA4KVwsewC63ogy8KloBcVm6AlTUamov/EFr
-	 HvSdrAygEjibnlT0lfrw0jZrB2CmENTj60JUcgyMXygW7FtdDNf7x+4flTJ4RbXFs
-	 6xscsA4pT03Z67Nr4J6uwyH0IJg3UOlriA6LUJZUHgVhH9rxP64u13EmOBLcjyWKe
-	 SVGCe2MP9s6CkNwmfI+4EJGP2SX2vLQShjoWgW+8LKgjLExaJXvAeTX3pt3oJo8Ct
-	 oKPBPKH6i7yScmVjXA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZB07-1roiM21AYL-00OQmw; Mon, 17
- Jun 2024 14:32:23 +0200
-Message-ID: <919c9f61-f884-4aae-9dca-9e0d863c34a8@web.de>
-Date: Mon, 17 Jun 2024 14:32:21 +0200
+	s=arc-20240116; t=1718627575; c=relaxed/simple;
+	bh=JrgP3nuNPPlZxwTwNTbYb+dbgkGqzU8nc9dLNwncdHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzNr61BhrVf8DRgZoXRmAWUpLjXgp/MakELan+pbSW3rzNGb8hFG0owD86tZutOHuNpZKZgA0RrrRUwTg7l159upK5ZHIRIpEVdxuVrkbpmHMEjOds/QlkbU0+rdmvNfWbs32/xbcQx/N89Ownl9MxoaqQZjLriImvYgKcEPNys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W96L0WwC; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Q8GG92Q9B0EsVOVzS3VVMf3oPjlHCw7Vaw6WrjeC1Pw=; b=W96L0WwCEW7Lp/+PdB61gXqpg6
+	ZXi7JmFiZDoF/iVT8B3Rytk4p0JLEcKF+AzY580QR1h3gvepl7odgiNXhFCiwxX1SSrmmaBr/tXwH
+	xNJltFs3xvnkM3QOtqCVbLsts6aQRRwE/gKhv6p+kzAVuCehEv8nsUvJHcwPtslnkPG1qtiIitudd
+	PV9w488a62geVr73R2jrY1jjKwsLGG3/CEGD0I6Lt/2FctQWpc5JQc4Pn3mLKOjjMRoOOZgMYcatY
+	c3chijfe8YooXVkDy+SerDBpmaLVTYjCmp4N1hxfcE4ehu1LsyXDIPKQxwjDamfN5UlL4iM2OF6am
+	nFWQVgjQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJBXO-000000027Ft-3j5X;
+	Mon, 17 Jun 2024 12:32:43 +0000
+Date: Mon, 17 Jun 2024 13:32:42 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, mcgrof@kernel.org,
+	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
+	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
+	cl@os.amperecomputing.com, john.g.garry@oracle.com
+Subject: Re: [PATCH v7 04/11] readahead: allocate folios with
+ mapping_min_order in readahead
+Message-ID: <ZnAs6lyMuHyk2wxI@casper.infradead.org>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-5-kernel@pankajraghav.com>
+ <ZmnuCQriFLdHKHkK@casper.infradead.org>
+ <20240614092602.jc5qeoxy24xj6kl7@quentin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 3/7] ASoC: codecs: wcd937x: add wcd937x codec driver
-To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
- Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
- Banajit Goswami <bgoswami@quicinc.com>, Conor Dooley <conor+dt@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Takashi Iwai <tiwai@suse.com>, LKML <linux-kernel@vger.kernel.org>,
- Rohit kumar <quic_rohkumar@quicinc.com>
-References: <20240611074557.604250-4-quic_mohs@quicinc.com>
- <6e1dd5d1-8c5d-44f5-99e8-f42cfbdeee04@web.de>
- <a6d17f27-51f4-47a5-8798-37bcdf3b103d@sirena.org.uk>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <a6d17f27-51f4-47a5-8798-37bcdf3b103d@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:oDEJkjUPAIlsV7AVUDwOgL/buRmui/li+1rQnY3ZUutBcaSilQa
- 2PfoBEenwXHssLsnbrpNbLdar/Mh6Eyngc73oReWAS965iNWMFL8SBi3iVl0l87RkJz+kS6
- ctOUUlfrXcboE7cb8AVxQj4+PTqAN+UwCfe/7LIgsXEgWjBWtAnqpC2ostWXFjToXgEjSJM
- 5v4DO/wWq0aITpIRWIBcw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4GwFPzN+sU0=;S6bpsAzm4afugR5kRmJsyhi4MIJ
- n1RZ4mG0AsibYjNbATV4nsOoT25bKJS5170HqLLv0LLZBk10lDjvgU8LJJAFZdCeFtDUxyY7t
- wtM/XUhgAz4G8YX5A4doawtftrHLxkuB0gbw9mCP90sK/2IamTq/E48T0E/jkP4YZtv1qLrrA
- yEdDTCIkPEe0AEjm2l0grxbF8SqMKIquUD+8UevdHBk8HW/0cztWcYD0WK98UzddwivzXdrP3
- XCiUoxIHZU7FsLFIDG1a9aE1IdN+25v/pNO7HRPMU4hhq/F9OW5GIzKdGFknqYshV0wgoHROL
- 77G6uHZTMyexC5BoE1cL50Wd4ni7Ty/Ok6rWUbvgoA8LiKSQslhu7Za7evqNlpcfT35jgqORX
- olGEsb9DdFat/UNzy79AWCjtMWI9cxh6/8YMrnoFW5BpKPmhn57MVTOEIOi8d/fJp3jvVv27r
- TnBM8cS/XMrAKX9D3EGIPZNoa8s6vL3zBTrs4IppxxsesONmlO55aZiNGYzyuHK+Q1UJMValC
- 3jRpGJoNxmhf8ia54hZhs2/MkO+rK3Ebq4ZbRbmySIP8WDvTGVCQz5/uPRnZmimrbMydkT7rW
- AoUe2wRX5VF77w6Z6rYVpZ8KeARR6vUJBLA64HdakIaLOrZQOnwFRDPkO8IWSl3sVHGpTco5m
- y+JeUuyv1toUR/CWEH+XAakZ6mBkB2DIVbIgu+AxHtaT3kSJXo9xEtzAjxoOaQSxjMppzkXVn
- 46KSqGnSxiRBZflddVv9HIXTPgPtu6DEU2BNsAVfiQ9h1umsmJ3ApumRj3jX0Zv/ew4+ncYzB
- C0auqCReTkzFbFksOdhFdZBg0qyVOJlhXRwdFvWfuGFEU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614092602.jc5qeoxy24xj6kl7@quentin>
 
->>> This patch adds basic SoundWire codec driver to support for
->>> WCD9370/WCD9375 TX and RX devices.
->> =E2=80=A6
->>
->> Please improve such a change description with an imperative wording.
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.10-rc3#n94
->
-> Feel free to ignore Markus, he has a long history of sending
-> unhelpful review comments and continues to ignore repeated requests
-> to stop.
+On Fri, Jun 14, 2024 at 09:26:02AM +0000, Pankaj Raghav (Samsung) wrote:
+> > Hm, but we don't have a reference on this folio.  So this isn't safe.
+> 
+> That is why I added a check for mapping after read_pages(). You are
+> right, we can make it better.
 
-Does such feedback indicate that you find advice from the referenced infor=
-mation source
-also questionable anyhow?
+That's not enoughh.
 
-Regards,
-Markus
+> > > +			if (mapping != folio->mapping)
+> > > +				nr_pages = min_nrpages;
+> > > +
+> > > +			VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
+> > > +			ractl->_index += nr_pages;
+> > 
+> > Why not just:
+> > 			ractl->_index += min_nrpages;
+> 
+> Then we will only move min_nrpages even if the folio we found had a
+> bigger order. Hannes patches (first patch) made sure we move the
+> ractl->index by folio_nr_pages instead of 1 and making this change will
+> defeat the purpose because without mapping order set, min_nrpages will
+> be 1.
+
+Hannes' patch is wrong.  It's not safe to call folio_nr_pages() unless
+you have a reference to the folio.
+
+> @@ -266,10 +266,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+>                          * alignment constraint in the page cache.
+>                          *
+>                          */
+> -                       if (mapping != folio->mapping)
+> -                               nr_pages = min_nrpages;
+> +                       nr_pages = max(folio_nr_pages(folio), (long)min_nrpages);
+
+No.
+
+> Now we will still move respecting the min order constraint but if we had
+> a bigger folio and we do have a reference, then we move folio_nr_pages.
+
+You don't have a reference, so it's never safe.
 
