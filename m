@@ -1,150 +1,208 @@
-Return-Path: <linux-kernel+bounces-216855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A20E90A77F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:41:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8287A90A78D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEC1A283183
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:41:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32FFCB25E8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93C218FDB5;
-	Mon, 17 Jun 2024 07:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2558918FDAE;
+	Mon, 17 Jun 2024 07:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsv0LF/G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PsBZ/CSE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239E31862B0;
-	Mon, 17 Jun 2024 07:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718610070; cv=none; b=OC+GejGietqShjNzCa1VgJX5SRPj0WMr2W8eu1q8FbnB4LKi8YQMkPQ426hiw4FdGL4gEfLMTl+x7WP2ByhcALzbWz0X6ndoIjJHv11rT1J52VRLr1pyFaGuApN80nFCMYcRbvxIfOMfaSxbi4JtO/3jjifI96AC5e8xOCVoon8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718610070; c=relaxed/simple;
-	bh=6fjH5+2JhBPufwYdBrMxQDSsZf/nxe3KJGcBk5Ezhkc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aJYvIihCDIMu+x0ds61MRgKTWPRBxu899GFB09geug3cZt8sFT7C+mFSLha9ibsNZP7GQtRJjya6/kSn5byY0f7+2/JnglBUCAyaS1dJ4nwdnWSsUHew5X6UR8dMmaoy0jtDhsvcBMkY/eUc8qQFxBGF0jMRXCvcrZfV1AFsK4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nsv0LF/G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A7EC2BD10;
-	Mon, 17 Jun 2024 07:41:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718610069;
-	bh=6fjH5+2JhBPufwYdBrMxQDSsZf/nxe3KJGcBk5Ezhkc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nsv0LF/GFpgY/pRBcbkxLmyR1g1fwMIdIGJaLsL2g8c+CfHSj69vnY4zknfKNxe3l
-	 U14QXZsflSOVucEVMbM4yftigMouJHfSxgqjPplx9g2E28FvTn79fU3AEPRwmvExm+
-	 ArEzC08FlVwZcNkgEdO6YVkOzdLT1jbZE/Z/mW1lGL6CdjPnd/G4V0cqFpaXMAt+gt
-	 xCSGbV0Q0iwaaLuEjv/nxT4f2Wj6/az/JFG4vdbuj2+IvOCHRyO5Z8rIvKDcjsDMXr
-	 kK1CpArdycQRz1yDT8H47XiWhT0fPbhTzCopNinn1VBwfkaqMH8G0KBw5uW/XHG1ky
-	 NYQLWsVFROEhQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sJ6zD-004VaC-4P;
-	Mon, 17 Jun 2024 08:41:07 +0100
-Date: Mon, 17 Jun 2024 08:41:06 +0100
-Message-ID: <86jzioj9t9.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	mark.rutland@arm.com,
-	Mark Brown <broonie@kernel.org>,
-	James Clark <james.clark@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH V18 2/9] KVM: arm64: Explicitly handle BRBE traps as UNDEFINED
-In-Reply-To: <df348434-85af-4bae-a31a-4a4a93c3cf49@arm.com>
-References: <20240613061731.3109448-1-anshuman.khandual@arm.com>
-	<20240613061731.3109448-3-anshuman.khandual@arm.com>
-	<86sexfk8ke.wl-maz@kernel.org>
-	<86r0czk6wd.wl-maz@kernel.org>
-	<df348434-85af-4bae-a31a-4a4a93c3cf49@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DB3187559
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718610082; cv=fail; b=mKIPIR+wb+E7XUIfTbZHMhDrdZExtmV8uIrGZfj5W79xuQ/VwW2yZLYIbVwml2cnMJkP603Odm81ZYoMF8uMHoZyIhvjLnh37phi2n2ce7iz0FjVCqzqhfeIu89fdo5zk8mDlaLbtgJIKMlsvQC0MmRA4/G03GXYUxOnPXHCgkY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718610082; c=relaxed/simple;
+	bh=aT7BHTx41YeQh20b8UoDY/V5pjkk4cqlZcK6UwiZGd8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=V3wePLBZiM3+gQnwaJ+yQuq0xyEbRttrzKMkbVAIXQVoOMFbRLntPoPY3JHiQx1/5HV7Fs8JtkoeBRxB0maFhuJdhBiEdoVGJzl1yMhtUY2rgFyVDytYGCQYZGN01+Z/F3ShTBCLbruhHVDEtlF7ilAoWohBKkhdqjstQlIFCc8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PsBZ/CSE; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718610081; x=1750146081;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=aT7BHTx41YeQh20b8UoDY/V5pjkk4cqlZcK6UwiZGd8=;
+  b=PsBZ/CSEeN3y+tnYwkLbZZQYKosUoAe+KHxQcylD8WoA7d4nY+h+j14a
+   X5redTN7tpUD1BF7pzXc8Xxl1A+yg0FKyftEg9cwCK3cjeT6DU/sHa9WB
+   HNiMkYafG1wtw6oUA9/RkNDbAVlj3cCiMz3jrskdqEPvgzniKSoMCNWMC
+   2Y0IiG77m5TBWKoo4ivwVrpMTgECMCGdwTTLBCxmX2qA1C92fBaIMu9CB
+   c/6asyqhGChr7YsJxHogj7IHpoBIEUxD8g8nj+4Y+QtD04iKJUmH/18tl
+   XzXXo3asPpLYQzMb1QTmG7UuuDDvNAWwdMtYUW6ZWHiw/ZFB77k8Vfrsm
+   g==;
+X-CSE-ConnectionGUID: YI8jACNPSRiw0bMAeX/d2Q==
+X-CSE-MsgGUID: QuirF/59T0StU25PcBOslw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="15574080"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="15574080"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 00:41:20 -0700
+X-CSE-ConnectionGUID: LorJOFDLRgqxCMZpxtPWeQ==
+X-CSE-MsgGUID: y79ePnzSRyyRGOfMbI92DQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="40997870"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Jun 2024 00:41:19 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 17 Jun 2024 00:41:19 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 17 Jun 2024 00:41:19 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 17 Jun 2024 00:41:19 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 17 Jun 2024 00:41:18 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QB4L+WYbwF3sCAPe7s5+dLm9TIJWvbz+tt/1nTtK+05jSp6Gwo1ZD3TwB7iIGUfrtrAZfE0hH0Q906RyGIcJfXeyRQv5KWbzRo8B97r2Zg8TciyhIqkqozN/D7newZ/OemuE9PfiNLQm5GuQ1dtWsdePhf0bR+9JkelCdPTBY4O8d53QqwnUyef/okXdhsTu7JGgk7kRBan0X2/qUcH/tFuWEDB9Zatv75Xq0BKstXv7pKJ/FMdIm2//cicTI2ue3Ta+YxxNCPrXpCWUaQHZJfWV0zIipphSCEZdrC0XLT8l2+lVer4UPvpU3d9F7k8eGYn2TibCkMmQ8i+IRZPQYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aT7BHTx41YeQh20b8UoDY/V5pjkk4cqlZcK6UwiZGd8=;
+ b=WORb00D/m80JFcBDtoDfTsCru9bPtfL7+b1YBGf26YbPsw22elxKLhb4dyeF+tST9VNw9Pz8p4haC6vC/7/D2HVPeB9fizoTcxWn2IzkuUqm988wrRr0jRLlT7dA37AnZa7+hLmQNuB3fCbxc/VKC6vx8KVcTixi03uQg9X+zlWD5XF9G0/uEuWAhSrb93IdsNaXTqBiiVwjUSDkx08o9II9mZpjzSae5+u262snzoSUIQXovQwhmogrQtNag6tmam1NS8N0A08Vun6enKg7ByGypXUU014yoSwxYfTDK5nupQ0TUMzKSxogTTB5OhM+lQfAzpxwA2lYmIR75dPPtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by MN2PR11MB4662.namprd11.prod.outlook.com (2603:10b6:208:263::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Mon, 17 Jun
+ 2024 07:41:12 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
+ 07:41:11 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	"Joerg Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+	<robin.murphy@arm.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>, "Jacob
+ Pan" <jacob.jun.pan@linux.intel.com>, Joel Granados <j.granados@samsung.com>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"virtualization@lists.linux-foundation.org"
+	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v7 03/10] iommu: Add attach handle to struct iopf_group
+Thread-Topic: [PATCH v7 03/10] iommu: Add attach handle to struct iopf_group
+Thread-Index: AQHav7R34enyUzDkSUKnBH2YWednBrHLk+qg
+Date: Mon, 17 Jun 2024 07:41:11 +0000
+Message-ID: <BN9PR11MB5276C5ED6E9CEB0B22B0CC108CCD2@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240616061155.169343-1-baolu.lu@linux.intel.com>
+ <20240616061155.169343-4-baolu.lu@linux.intel.com>
+In-Reply-To: <20240616061155.169343-4-baolu.lu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|MN2PR11MB4662:EE_
+x-ms-office365-filtering-correlation-id: 93102741-bfbf-4445-c655-08dc8ea0dc23
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|7416011|376011|1800799021|366013|38070700015|921017;
+x-microsoft-antispam-message-info: =?us-ascii?Q?+nqwW3G3ZR/2cYNH1TQNPbyyhvED4U1VDGTdKO2IReS5LEAutM5ZPEcjp/hi?=
+ =?us-ascii?Q?DCAW9azsnvnCl6wqpWd631AqmOtLhn9zu3yvCmhfx8PlCm4coNhOs3/jorLG?=
+ =?us-ascii?Q?4neacSs+rTh//J7BtJo743NzBpzKc6hfPwr1vuOaSRjSyWAPawUsZIcEVWwS?=
+ =?us-ascii?Q?yELM6zOY+WhXp6FDS4rY9K4x5VRLPJB9MKSNp3+NmLKlbrioYtHgBZYC473B?=
+ =?us-ascii?Q?3hJdhx4VyTGmX2JPIcsn5Fb6I5ABFZRlblnKyNnr28iTrwdyRV/Oi2N1dQ4o?=
+ =?us-ascii?Q?pwrw0q9rBLHxhOCkclvs8nr9XFkr8ctx0IeQtLyCNnJcvcgQxq75P58nXGFK?=
+ =?us-ascii?Q?c7ezj4q4PnJYp8C9ZmfgFKxClWiSuu/+df8xXn9UME3L9nk0VeHU0TznoHjI?=
+ =?us-ascii?Q?KY3u1oQeRQyHJNI0/GzwsnM5rb9asLuaL1y+FCF2VfsLllt+YhNzPw4obxcs?=
+ =?us-ascii?Q?QwpRTaK1gSWSghrPkSIVRhqQZY7mY4cHHLCfRXM+V7RL8F6kD0/800eigCe2?=
+ =?us-ascii?Q?RCRXqGeRWdIOBpoMUEMl+XH9ZFkUqUNkopNy4u4ODhddiownSYj1p4epgl0k?=
+ =?us-ascii?Q?UAvRcGNgQqwXaA7uUejX5wiJutb12uMXiWW3ZnYsf7/mKxbSeICI+UvrhNoK?=
+ =?us-ascii?Q?VgDMvz7dJrz4a6eO/NysWNt2oF82bjc4kMZlqrBCNslw7Xm94dc3LUFPMRky?=
+ =?us-ascii?Q?0XptkTC0IrDPP+Fk0LDUxexaNpbVSuEy7xBkRBx30gzZURm7yos+3VJ0Fqvm?=
+ =?us-ascii?Q?ISSbNlvcfe+uTqrZevNfpAHfK/NWw50P7eBzyV18dpD8md110W6qlUAv/7Yx?=
+ =?us-ascii?Q?i5QetwsqHEqzZVMHG0JSAeVuUT3JUPLR3PT4rgJgjW0SqYrJ+DC5/xcLu73t?=
+ =?us-ascii?Q?lLWUaQ3onxPGNae84HDxLBPj5CIRL77R/P/2wOZrviEvkzIdFc2nW3Jr+Tr0?=
+ =?us-ascii?Q?EYGoeuZdIu3zGyrZKjju9VMFI/3nHVITAKJvnn7mz5GM8ce0vJp5vnZx6G3Y?=
+ =?us-ascii?Q?I1wTW0KhM/B1lmV96/vVMCI6mMizMNjzvCAPHst4Dm1Ssid34w+i1da0dxne?=
+ =?us-ascii?Q?tEZadXkEfNsM+cIupqHkE3iOHD4YrKwcKSmjPyo36/xWCtHpWzp9Xq4AhslP?=
+ =?us-ascii?Q?yZQRpG4mrIm1gE2mf/6DkSNc/DWU+XWs95m01Tx1bBzCbHoJWKvfeJhKHKo0?=
+ =?us-ascii?Q?pCxnNk4Ckeczvmb56R/LM0P8HlCqeZb2L8UmawsRX9HX1cTm/Do+bwqm9sqW?=
+ =?us-ascii?Q?k0xXz7CGx/1dJ7fcvCZTNesE+0amyzccSmL6OWxQMjEJOQWMa/FcukNbHGgz?=
+ =?us-ascii?Q?McRRyTDoD8U2EQlhGHsaQlJuR5PMCZPox+1bmR9M0iAFKS6I2bNVBYBPC9+p?=
+ =?us-ascii?Q?au7GCOqyvWfP/YaY+Wnu7wR0e++v?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(7416011)(376011)(1800799021)(366013)(38070700015)(921017);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?7Lbp8ZAZgu/LbIXt2YkxED7TPcxty3AYK9nC9DxYdhtkv5CyqIdYcCw/t2Hj?=
+ =?us-ascii?Q?goJ3dspFCcn8jRsJHlgyxZ/5ka5QglPgVJDp6BBVdUe3LZ+AgLpsrNUE1gHP?=
+ =?us-ascii?Q?mg5+9GRYwy6J8+zEFfYMFpeStB57hxOaFZfNqQHBPikLx3xsgjqXI2NjTGyC?=
+ =?us-ascii?Q?NO6RHRa5XnaUcXMyxJ4m5QJ4TYMaEiY8oMZTBbdr6uTajbAeflqcEFhIw/9F?=
+ =?us-ascii?Q?Sd5JnAffODCxbamiRBcAcWBpji1GS68WEbLbi8uLk/btQek0lLN9PIAZghgo?=
+ =?us-ascii?Q?i0p0FqFdF/QasJZxz3j36DyTwZjxxqj/R6gFlOZpKhGBkbK+38K9z7ir7iDE?=
+ =?us-ascii?Q?3rnQmlEZEWNqNa/moTH1sWoV+4qrYcHw8qE4DA+mLa7pU6cdXMB8FyX4SNGw?=
+ =?us-ascii?Q?7S1o7mh6SBdJA8wv6SsD8IAePtawMSOz43wJnqjMpQD52Weu8N8Jhu7H24m+?=
+ =?us-ascii?Q?N67pxO/wtpADOwYUQ8eQzO7g/uuGfS6PK292ni9sGu3DIymbwnQ+OHCoj5rZ?=
+ =?us-ascii?Q?M4wLNQi2SNAMqYSf3l30twVe6XIR73u+fQliqqwiySp8Mcikbq/uLZJmfrU7?=
+ =?us-ascii?Q?VQev6Yt+fEsTowZV1IjgTEq+pukS1WwxHiI5v4T0a4Zz73+0vO2KlTYxqiMY?=
+ =?us-ascii?Q?VlzxWI6hvMulR9u7UsHp5TAsdednQ7HstJSpn2bcPpKoNNV3gA3sIhVxpnOb?=
+ =?us-ascii?Q?pdcLtCMlZYVEedMpSOb/M5FukajgCzXXac2FFjZia7mkwfA6k2n3s+i0Y/hH?=
+ =?us-ascii?Q?3BWlvDSzRQ/f1AHGrsibpKZK5hqXDoJTc2QAhCv96FkpPTyOndgw7kN063S6?=
+ =?us-ascii?Q?Og3A839ngZ6oUO2Humr80AzYDya6VFK0OA73DhqHhvgzfHYzgl708V0R28Or?=
+ =?us-ascii?Q?hAX+OOoMT9QBrviCLIKa3gWQS0PAvMoeUoRhVqGaV3rIV4kh77U+KBtkxlnN?=
+ =?us-ascii?Q?+pNtXuMGUHChYw59ChJ4Et+Hl5hkFqzPjJXI30FBOIN0oqW7E+wjIDBFHoHq?=
+ =?us-ascii?Q?wd6d61EvkGC/sIKzsI0K/KxnGbHrubiYD7wuYQ6fuqhbaN6w0SiPWkQAm7D6?=
+ =?us-ascii?Q?o5OROtSxfwWcaXheNVrT1imNRyVB78fNQEuYaRToTG0IzVz8xlDfAomprmOT?=
+ =?us-ascii?Q?dK3cvEmPNj57B/w3mfhRPh2gyi0HvSPn9CsDP7Y1xLyuQp/VVewvT8HKfesY?=
+ =?us-ascii?Q?gzs+8AmiqJzXi/vpgeze/fDMwQiZfvYvFqBFV+f07CTBdPjFB7QLuu1bR7oL?=
+ =?us-ascii?Q?3SI5j3H0gX7FfAlm+VCESEJhEMgOVsOWPXqw2XGj1Up55G7fdDN41lFFOwFv?=
+ =?us-ascii?Q?5OyQvsLelpji5fCKM9MPOVXnjiTIc/2N+kS6OsSaL0iJ4xEVKFBgjh1KGMPa?=
+ =?us-ascii?Q?blemuPVnPj4yMG8jAO+sIZlVsXK2DL/26rEx23nlluLE1jiQdCTL2N3voM09?=
+ =?us-ascii?Q?AAnZyxp9+13ekA/tfwzPwjFm32iv77sre8/1Ams8L054fzgHEP3nQnV2uA0G?=
+ =?us-ascii?Q?VGZ1VVuY9hFGXx60fWTPDlf0c2ERFwbJwvJK6sqajtXFOKM/4BH62ZB4OaZx?=
+ =?us-ascii?Q?aWfnFMINp/EGn7yiyhEoQ818gzctplkijdaFALU6?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, broonie@kernel.org, james.clark@arm.com, robh@kernel.org, suzuki.poulose@arm.com, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, linux-perf-users@vger.kernel.org, oliver.upton@linux.dev, james.morse@arm.com, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93102741-bfbf-4445-c655-08dc8ea0dc23
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2024 07:41:11.8951
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JjgVfIGCBRs+XlWiGPE4ZYx/fZ5IYTfnmxXdhcckgoQii6NK8uCK+T1ktdpe+4pZdC8wg9CneJnt+vGUJbJJyQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4662
+X-OriginatorOrg: intel.com
 
-On Mon, 17 Jun 2024 07:27:13 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> On 6/14/24 18:39, Marc Zyngier wrote:
-> > On Fri, 14 Jun 2024 13:33:37 +0100,
-> >
-> > Actually, to disable the *instructions*, a similar hack must be
-> > applied to HFGITR_EL2. The resulting patch should be something like:
-> > 
-> > diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> > index ee33f5467ce5..49d86dae8d80 100644
-> > --- a/arch/arm64/kvm/sys_regs.c
-> > +++ b/arch/arm64/kvm/sys_regs.c
-> > @@ -4964,6 +4964,15 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
-> >  		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
-> >  						  HAFGRTR_EL2_RES1);
-> >  
-> > +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, BRBE, IMP)) {
-> > +		kvm->arch.fgu[HDFGRTR_GROUP] |= (HDFGRTR_nBRBDATA  |
-> > +						 HDFGRTR_nBRBCTL   |
-> > +						 HDFGRTR_nBRBIDR);
+> From: Lu Baolu <baolu.lu@linux.intel.com>
+> Sent: Sunday, June 16, 2024 2:12 PM
+>=20
+> Add a new IOMMU capability flag, IOMMU_CAP_USER_IOASID_TABLE, which
+> indicates if the IOMMU driver supports user-managed PASID tables. In the
+> iopf deliver path, if no attach handle found for the iopf PASID, roll
+> back to RID domain when the IOMMU driver supports this capability.
+>=20
 
-Obviously, this needs to be spelled HDFGRTR_EL2_nBRB* so that it
-actually compiles.
-
-> > +		kvm->arch.fgu[HFGITR_GROUP] |= (HFGITR_EL2_nBRBINJ |
-> > +						HFGITR_EL2_nBRBIALL);
-> > +	}
-> > +
-> > +
-> >  	set_bit(KVM_ARCH_FLAG_FGU_INITIALIZED, &kvm->arch.flags);
-> >  out:
-> >  	mutex_unlock(&kvm->arch.config_lock);
-> 
-> This makes sense, will remove all the changes to sys_reg table and
-> instead fold the above suggestion into the patch.
-> 
-> > 
-> > The implicit dependency here is that FGT is always present on a system
-> > that implements BRBE. The architecture supports this assertion:
-> > 
-> > - BRBE is not available before ARMv9.1
-> > - FGT is mandatory from ARMv8.6
-> > 
-> > Given that v9.1 is congruent to v8.6, we have the required overlap.
-> 
-> So this overlap need not be asserted in software again ?
-
-I don't think there's a need for that.
-
-We went through the same thing with SME (which has the exact same
-dependency), and concluded that there was no need to paper over broken
-implementations at the moment (only QEMU was affected, and that was
-quickly fixed). If we find an implementation in the wild that didn't
-get the memo, we can add a workaround at that time.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+above is stale.
 
