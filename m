@@ -1,134 +1,108 @@
-Return-Path: <linux-kernel+bounces-218279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED2D90BC10
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:22:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7F990BC12
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 248811F236A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:22:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B781F239C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7775C1990AA;
-	Mon, 17 Jun 2024 20:18:52 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8291990C0;
+	Mon, 17 Jun 2024 20:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuPCxu13"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795E9198848;
-	Mon, 17 Jun 2024 20:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F1618F2E8;
+	Mon, 17 Jun 2024 20:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718655532; cv=none; b=cEWTGXxsXqcOallRAQzuFep2nBWi+tCYpbj9KoY0BWq5q/nzp23kaNwYD5pj/QBkWpHRDA07Vm6/7iOy2CP0JoAl7Y2DoICrOrLWFpdpfZw0fBAI2xRlD0bBVGO9bNadK4L2dnIvpx3ecQZhqPJ9XRrwxv2o9omcia6uaTqiy98=
+	t=1718655578; cv=none; b=JuQenfFiesRsNNbl6N9fVIiHW/eCrJtQLAFPLV871mj51yU1dQSpI6fMAz1qphVrHNH8nrII2+nifXO+nmX5cOBYREVF2dPHVF1+vzhLej4Yx6r0wXuMzsDhG4VYwE6dYmq6CqlrxpQ75345zoZKp3LcC+tkpw7790uzXNyeDMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718655532; c=relaxed/simple;
-	bh=7nTZdXlj9pK8ilY2G1QjiWHZ7xNto8ux71yowmGhmRE=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Kys++1Zmh/T7JckdMmDu/5Sri80qp3YgD2u2YdHNFlgQqXhRvhJ396Pj5dJZWwgJ9UByXS0pN8AvPyrUeU8MKSu9UjI8Wq7exvbC5zDhVJ+SAGVMiFnMvCP+2W1zmo3xTVj67UURfDnis6PYo2g1vosp3RSQ6sPB9beRObChjCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.72.187) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 17 Jun
- 2024 23:18:34 +0300
-Subject: Re: [net-next PATCH 2/2] net: ravb: Fix R-Car RX frame size limit
-To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Lad Prabhakar
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Mitsuhiro Kimura
-	<mitsuhiro.kimura.kc@renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
- <20240615103038.973-3-paul.barker.ct@bp.renesas.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <a2669de0-f432-5f7b-a80e-b5d050e37b6e@omp.ru>
-Date: Mon, 17 Jun 2024 23:18:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1718655578; c=relaxed/simple;
+	bh=efJHnhSwA5pI1JDI9LxvZ9ihjh6ylrIdaXKFDqrK9vI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cxF7OiD0UGTFT8bQwKdIr5vaixksGj1iSluBR7J2Pc/m13o5FD/eYG9wOCvcmNQpa/tUOO8lyfandxrxl4O/3HLv7STYxWUsQoZzsPmxbZYtAeWpiiS2uS1xbrUreUYkmphD7MOhrXjNkhcNokHPvjTym6rQ4gnKtWij7mC0QUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuPCxu13; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BBDAC2BD10;
+	Mon, 17 Jun 2024 20:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718655577;
+	bh=efJHnhSwA5pI1JDI9LxvZ9ihjh6ylrIdaXKFDqrK9vI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IuPCxu13d25eoMaHHtf/LJQz3UaINGRzLwpot4JXEZ+CavewScW0D0XWXX3uJOg0I
+	 O2xdowNhsMyPmVCzb7nAsolFZgHkFMP9MlxBFwBGiMOR6CuDZv1VUyuqoTFgUzukcA
+	 mk9sL3Jbf14KrtJydrDAuWY8pR/reVrqOVioupOsfyZa2i6rbERhzQ15W+NXV9IfjQ
+	 Kb1/pv/Ty3A88z5x3IchsKI5cnqgFGKqXP1QacKa2p/TIBHc1MsRnCrFO3gPJLvqbs
+	 0A1CX+ZpCi3dWJEKFVh561kz9SCRN2gSOSCRRoIvlDQ00nkMBZSgysL5hAYBRJgHfF
+	 ayAXGJmOk8Hlg==
+Date: Mon, 17 Jun 2024 21:19:31 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pinctrl: pistachio: Use scope-based resource management
+ in pistachio_gpio_register()
+Message-ID: <20240617211931.70bd2d31@jic23-huawei>
+In-Reply-To: <CACRpkdanLmWrDD6AdzJJx3fJsQWTE64vh+MjOtDTkpzwqqPkuQ@mail.gmail.com>
+References: <3f6fc17e-2ab4-43f2-b166-2393a369a263@web.de>
+	<CACRpkdanLmWrDD6AdzJJx3fJsQWTE64vh+MjOtDTkpzwqqPkuQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240615103038.973-3-paul.barker.ct@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/17/2024 19:52:29
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185970 [Jun 17 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.72.187 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.72.187
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 06/17/2024 19:56:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 6/17/2024 4:39:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 6/15/24 1:30 PM, Paul Barker wrote:
+On Mon, 17 Jun 2024 10:32:03 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> The RX frame size limit should not be based on the current MTU setting.
-> Instead it should be based on the hardware capabilities.
-> 
-> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> On Wed, Jun 5, 2024 at 6:02=E2=80=AFPM Markus Elfring <Markus.Elfring@web=
+.de> wrote:
+>=20
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Wed, 5 Jun 2024 17:46:52 +0200
+> >
+> > Scope-based resource management became supported also for another
+> > programming interface by contributions of Jonathan Cameron on 2024-02-1=
+7.
+> > See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
+> > property: Add cleanup.h based fwnode_handle_put() scope based cleanup."=
+).
+> >
+> > * Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
+> >
+> > * Reduce the scope for the local variable =E2=80=9Cchild=E2=80=9D.
+> >
+> > * Omit explicit fwnode_handle_put() calls accordingly.
+> >
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net> =20
+>=20
+> Looks reasonable but I'd like Jonathan's and Andy's review tags on this.
+>=20
+> Yours,
+> Linus Walleij
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+I took a look and it makes me a little nervous. Markus' patch isn't
+changing behaviour (I think) but i is mixing scoped handling with non
+scoped handling which I'm not keen on. I'm also struggling to understand
+how the code was right prior to this patch.  In particular what cleans
+up the fwnode_handle after the point where Markus has used no_free_ptr()?
 
-   Sounds like this is also a fix for net.git tho?
+Whilst it's assigned to the gpio_chip that chip hasn't been added when
+girq->parents is allocated so even if there is some magic path to clearing
+it up I'm not immediately seeing how that can be working here.
 
-[...]
+So this feels like there are more gremlins hiding here and Markus' patch
+may not help flush them out.
 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 02cbf850bd85..481c854cb305 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -555,8 +555,10 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
->  
->  static void ravb_emac_init_rcar(struct net_device *ndev)
->  {
-> +	struct ravb_private *priv = netdev_priv(ndev);
-> +
->  	/* Receive frame limit set register */
-> -	ravb_write(ndev, ndev->mtu + ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN, RFLR);
-> +	ravb_write(ndev, priv->info->rx_max_frame_size + ETH_FCS_LEN, RFLR);
-
-   Aha, that's what we're doing in ravb_emac_init_gbeth()...
-
-[...]
-
-MBR, Sergey
+Jonathan
 
