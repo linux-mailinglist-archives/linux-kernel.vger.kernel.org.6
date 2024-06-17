@@ -1,194 +1,176 @@
-Return-Path: <linux-kernel+bounces-217910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D2290B600
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:14:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1B090B603
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEFA281D59
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3321F216AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E85F9F7;
-	Mon, 17 Jun 2024 16:14:02 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5F711CB8;
+	Mon, 17 Jun 2024 16:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AJZfp6QY"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF951D9527;
-	Mon, 17 Jun 2024 16:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C901D952C;
+	Mon, 17 Jun 2024 16:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718640842; cv=none; b=grDTeUDFQY1kcS3r0z6w8X6IFPWBgDfuFojYRjOHSEH17L8F2vWHQr+3zXI3R7Ehjv9JQaxECYuupvL4hXQncDDN8rLP+okIFU5zFZTYBpsgNCW1pY+JSi1DT8hKvT0ayBtoQoFibG557ytj3X0VAtXT9R7ff48OX3InbRb03m4=
+	t=1718640866; cv=none; b=Oa3Pbbqz5I5TIrClbY2cmGQsRUZc6KJgnGyrQiAYV9gywg/0I72Ugc2awaZZtp+fyWjKi77pXkTWqNsciGDJtHHllnKSL6ju/ggWQYGVrxfkEO83jksnfXpWJECBD6k8H2rd/9OUPf5Fca+P9V1AT7jNBL2+qxiDG1lCrZKvxUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718640842; c=relaxed/simple;
-	bh=As6Uz3CijqcReAOtTSoGO8djlSjq+nTFvynGygBme20=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hSQA0sFBrHxPrES9EUahcF+QAmrQQy0Y6RejIe6VTLvLk3Fq5JiYH0NJG4bS5wAoSwE/Tof3yGAq1xOc0KkmUZbDBICgs4c2Qg89SGyGnMmJossyoWoLtarymXT+73usZ2Kxy8DwB2ULIR3IydVjtE8jCJ2GNkeA1Jb+ArSzSGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W2vzZ4Ym4z67FbS;
-	Tue, 18 Jun 2024 00:12:26 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id A93C6140A90;
-	Tue, 18 Jun 2024 00:13:55 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 17 Jun
- 2024 17:13:54 +0100
-Date: Mon, 17 Jun 2024 17:13:53 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Trevor Gamblin <tgamblin@baylibre.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-	Dmitry Rokosov <ddrokosov@sberdevices.ru>, "Michael Hennerich"
-	<Michael.Hennerich@analog.com>, Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Ray Jui
-	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Neil
- Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
-	"Jerome Brunet" <jbrunet@baylibre.com>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Saravanan Sekar <sravanhome@gmail.com>,
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
-	<baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>, Nuno =?ISO-8859-1?Q?S=E1?=
-	<nuno.sa@analog.com>, Linus Walleij <linus.walleij@linaro.org>, Jean-Baptiste
- Maneyrol <jmaneyrol@invensense.com>, Crt Mori <cmo@melexis.com>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <imx@lists.linux.dev>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6n?=
- =?ISO-8859-1?Q?ig?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v3 22/41] iio: gyro: mpu3050-core: make use of
- regmap_clear_bits(), regmap_set_bits()
-Message-ID: <20240617171353.00006b1f@Huawei.com>
-In-Reply-To: <20240617-review-v3-22-88d1338c4cca@baylibre.com>
-References: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
-	<20240617-review-v3-22-88d1338c4cca@baylibre.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718640866; c=relaxed/simple;
+	bh=cT0AAvEJ5+7GRrwFlT2hy5GZUsUCnO3yJnOeRS4jWGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VePCHm7sIDAGdLpRb+bGkfZmu4L1UzmnXh3vtdcAU4KCC+eH+6gj6QMrF9wxriXXN+RxUgCSsgnYDXMQTvIbiglkP6bS8VX4yNvZPIDKnEM9yvWAEfNpsTlR7iga2rmqi3QpMFmgqmBGclVSN47Mm6c1AumFr2KGuXnJN4YXh3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AJZfp6QY; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2D44540005;
+	Mon, 17 Jun 2024 16:14:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718640856;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iz+UjwJJad9LiOiMA4eIoqFfH5EIpqwtGStSs8qGvyY=;
+	b=AJZfp6QYD0lCh15kuisT2712c3jXhgUrdKl5zGE/oY8soC1ya+siEAXWpefHTFQa115qLC
+	iLc9mZ1OJ0zb+UNP5w/Im108csFG4g3g1hmhn4zoDsB+hb20704Yd3b6wAE9z76arTq3ZE
+	Wkb+vwjQxNYNieeBiGD93hi5Uo3PHS/cLryDKcN3RHA2q1auucrIr4xgfKhJflHrTXzMGA
+	ShuUu2nswI6Uh9LJ50qehuccPOEbHeEeF3re/BGNiTH0qON6l6FsFXzOHDi4NCcyAu0V/O
+	854sKrAQ9RA8yl7W0kCRoiDpO1Cqtz1Ojc2Idj+tJ7rQ0elIIORyVc77ACFFCQ==
+Date: Mon, 17 Jun 2024 18:14:13 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Dent Project <dentproject@linuxfoundation.org>,
+ kernel@pengutronix.de
+Subject: Re: [PATCH net-next v3 5/7] net: ethtool: Add new power limit get
+ and set features
+Message-ID: <20240617181413.12178f95@kmaincent-XPS-13-7390>
+In-Reply-To: <Zm6BGJxu4bLVszFD@pengutronix.de>
+References: <20240614-feature_poe_power_cap-v3-0-a26784e78311@bootlin.com>
+ <20240614-feature_poe_power_cap-v3-5-a26784e78311@bootlin.com>
+ <Zm26aJaz7Z7LAXNT@pengutronix.de>
+ <Zm3dTuXuVEF9MhDS@pengutronix.de>
+ <Zm6BGJxu4bLVszFD@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Mon, 17 Jun 2024 09:50:02 -0400
-Trevor Gamblin <tgamblin@baylibre.com> wrote:
+On Sun, 16 Jun 2024 08:07:20 +0200
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-> Instead of using regmap_update_bits() and passing the mask twice, use
-> regmap_set_bits().
+> On Sat, Jun 15, 2024 at 08:28:30PM +0200, Oleksij Rempel wrote:
+>  [...] =20
 >=20
-> Instead of using regmap_update_bits() and passing val =3D 0, use
-> regmap_clear_bits().
+> Except of current value, we need an interface to return list of supported
+> ranges. For example a controller with flexible configuration will have
+> one entry=20
+
+Yes, good idea.
+=20
+> Proposed interface may look like this:
 >=20
-> Suggested-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-> ---
->  drivers/iio/gyro/mpu3050-core.c | 33 ++++++++++++---------------------
->  1 file changed, 12 insertions(+), 21 deletions(-)
+>   ``ETHTOOL_A_C33_PSE_AVAIL_PWR_VAL_LIMIT``  u32  Get PoE PSE currently
+> configured power value limit ``ETHTOOL_A_C33_PSE_PWR_LIMIT_RANGES``
+> nested  Supported power limit configuration ranges
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D  =3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
 >=20
-> diff --git a/drivers/iio/gyro/mpu3050-core.c b/drivers/iio/gyro/mpu3050-c=
-ore.c
-> index a791ba3a693a..ff1c81553045 100644
-> --- a/drivers/iio/gyro/mpu3050-core.c
-> +++ b/drivers/iio/gyro/mpu3050-core.c
-> @@ -197,8 +197,8 @@ static int mpu3050_start_sampling(struct mpu3050 *mpu=
-3050)
->  	int i;
-> =20
->  	/* Reset */
-> -	ret =3D regmap_update_bits(mpu3050->map, MPU3050_PWR_MGM,
-> -				 MPU3050_PWR_MGM_RESET, MPU3050_PWR_MGM_RESET);
-> +	ret =3D regmap_set_bits(mpu3050->map, MPU3050_PWR_MGM,
-> +			      MPU3050_PWR_MGM_RESET);
->  	if (ret)
->  		return ret;
-> =20
-> @@ -513,12 +513,8 @@ static irqreturn_t mpu3050_trigger_handler(int irq, =
-void *p)
->  				 "FIFO overflow! Emptying and resetting FIFO\n");
->  			fifo_overflow =3D true;
->  			/* Reset and enable the FIFO */
-> -			ret =3D regmap_update_bits(mpu3050->map,
-> -						 MPU3050_USR_CTRL,
-> -						 MPU3050_USR_CTRL_FIFO_EN |
-> -						 MPU3050_USR_CTRL_FIFO_RST,
-> -						 MPU3050_USR_CTRL_FIFO_EN |
-> -						 MPU3050_USR_CTRL_FIFO_RST);
-> +			ret =3D regmap_set_bits(mpu3050->map, MPU3050_USR_CTRL,
-> +					      MPU3050_USR_CTRL_FIFO_EN | MPU3050_USR_CTRL_FIFO_RST);
+>  +------------------------------------------+--------+-------------------=
+---------+
+>  | ``ETHTOOL_A_C33_PSE_PWR_VAL_LIMIT_RANGES``   | nested | array of power
+> limit ranges|
+> +-+----------------------------------------+--------+--------------------=
+--------+
+> | | ``ETHTOOL_A_C33_PSE_PWR_VAL_LIMIT_RANGE_ENTRY`` | nested | one power
+> limit range  |
+> +-+-+--------------------------------------+--------+--------------------=
+--------+
+> | | | ``ETHTOOL_A_C33_PSE_PWR_VAL_LIMIT_MIN``  | u32    | minimum power v=
+alue
+> (mW)   |
+> +-+-+--------------------------------------+--------+--------------------=
+--------+
+> | | | ``ETHTOOL_A_C33_PSE_PWR_VAL_LIMIT_MAX``  | u32    | maximum power v=
+alue
+> (mW)   |
+> +-+-+--------------------------------------+--------+--------------------=
+--------+
 
-I'll probably break this line up whilst applying.
+Not sure the ETHTOOL_A_C33_PSE_PWR_VAL_LIMIT_RANGE_ENTRY bring anything
+interesting.
 
->  			if (ret) {
->  				dev_info(mpu3050->dev, "error resetting FIFO\n");
->  				goto out_trigger_unlock;
-> @@ -799,10 +795,8 @@ static int mpu3050_hw_init(struct mpu3050 *mpu3050)
->  	u64 otp;
-> =20
->  	/* Reset */
-> -	ret =3D regmap_update_bits(mpu3050->map,
-> -				 MPU3050_PWR_MGM,
-> -				 MPU3050_PWR_MGM_RESET,
-> -				 MPU3050_PWR_MGM_RESET);
-> +	ret =3D regmap_set_bits(mpu3050->map, MPU3050_PWR_MGM,
-> +			      MPU3050_PWR_MGM_RESET);
->  	if (ret)
->  		return ret;
-> =20
-> @@ -872,8 +866,8 @@ static int mpu3050_power_up(struct mpu3050 *mpu3050)
->  	msleep(200);
-> =20
->  	/* Take device out of sleep mode */
-> -	ret =3D regmap_update_bits(mpu3050->map, MPU3050_PWR_MGM,
-> -				 MPU3050_PWR_MGM_SLEEP, 0);
-> +	ret =3D regmap_clear_bits(mpu3050->map, MPU3050_PWR_MGM,
-> +				MPU3050_PWR_MGM_SLEEP);
->  	if (ret) {
->  		regulator_bulk_disable(ARRAY_SIZE(mpu3050->regs), mpu3050->regs);
->  		dev_err(mpu3050->dev, "error setting power mode\n");
-> @@ -895,8 +889,8 @@ static int mpu3050_power_down(struct mpu3050 *mpu3050)
->  	 * then we would be wasting power unless we go to sleep mode
->  	 * first.
->  	 */
-> -	ret =3D regmap_update_bits(mpu3050->map, MPU3050_PWR_MGM,
-> -				 MPU3050_PWR_MGM_SLEEP, MPU3050_PWR_MGM_SLEEP);
-> +	ret =3D regmap_set_bits(mpu3050->map, MPU3050_PWR_MGM,
-> +			      MPU3050_PWR_MGM_SLEEP);
->  	if (ret)
->  		dev_err(mpu3050->dev, "error putting to sleep\n");
-> =20
-> @@ -997,11 +991,8 @@ static int mpu3050_drdy_trigger_set_state(struct iio=
-_trigger *trig,
->  			return ret;
-> =20
->  		/* Reset and enable the FIFO */
-> -		ret =3D regmap_update_bits(mpu3050->map, MPU3050_USR_CTRL,
-> -					 MPU3050_USR_CTRL_FIFO_EN |
-> -					 MPU3050_USR_CTRL_FIFO_RST,
-> -					 MPU3050_USR_CTRL_FIFO_EN |
-> -					 MPU3050_USR_CTRL_FIFO_RST);
-> +		ret =3D regmap_set_bits(mpu3050->map, MPU3050_USR_CTRL,
-> +				      MPU3050_USR_CTRL_FIFO_EN | MPU3050_USR_CTRL_FIFO_RST);
-and this one.
+ +--------------------------------------------+--------+-------------------=
+---------+
+ | ``ETHTOOL_A_C33_PSE_PWR_VAL_LIMIT_RANGES`` | nested | array of power lim=
+it ranges|
+ +-+------------------------------------------+--------+-------------------=
+---------+
+ | | ``ETHTOOL_A_C33_PSE_PWR_VAL_LIMIT_MIN``  | u32    | minimum power valu=
+e (mW)   |
+ +-+------------------------------------------+--------+-------------------=
+---------+
+ | | ``ETHTOOL_A_C33_PSE_PWR_VAL_LIMIT_MAX``  | u32    | maximum power valu=
+e (mW)   |
+ +-+------------------------------------------+--------+-------------------=
+---------+
 
-Assuming we don't need a v4 for some other reason,
-
-Jonathan
-
->  		if (ret)
->  			return ret;
-> =20
+> > Huh... i took some more time to investigate it. Looks like there is no
+> > simple answer. Some devices seems to write power class on the box. Other
+> > client devices write power consumption in watts. IEEE 802.3-2022
+> > provides LLDP specification with PowerValue for watts and PowerClass for
+> > classes. Different product user interfaces provide class and/or watts.
+> > So, let's go with watts then. Please update the name to something like
+> > pse_available_power_value or pse_available_power_value_limit and
+> > document how it is related to State diagrams in the IEEE spec. =20
 >=20
+> Here is proposal for documentation:
+>=20
+>   ``ETHTOOL_A_C33_PSE_AVAIL_PWR_VAL_LIMIT``  u32  Control PoE PSE availab=
+le
+> power value limit
+>=20
+> When set, the optional ``ETHTOOL_A_C33_PSE_AVAIL_PWR_VAL_LIMIT`` attribut=
+e is
+> used  to control the available power value limit for C33 PSE in milliwatt=
+s.
+> This attribute corresponds  to the `pse_available_power` variable describ=
+ed in
+> ``IEEE 802.3-2022`` 33.2.4.4 Variables  and `pse_avail_pwr` in 145.2.5.4
+> Variables, which are described in power classes.=20
+>=20
+> It was decided to use milliwatts for this interface to unify it with other
+> power monitoring interfaces, which also use milliwatts, and to align with
+> various existing products that document power consumption in watts rather=
+ than
+> classes. If power limit configuration based on classes is needed, the
+> conversion can be done in user space, for example by ethtool.
 
+Thanks for the rephrasing!
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
