@@ -1,183 +1,130 @@
-Return-Path: <linux-kernel+bounces-217572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3219490B1AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:23:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0232690B0E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F76284C02
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:23:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9399EB2EEA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D747F1A255D;
-	Mon, 17 Jun 2024 13:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A426F19D089;
+	Mon, 17 Jun 2024 13:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhTGVFmw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSHwkmXV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A76194A43;
-	Mon, 17 Jun 2024 13:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF81119D06B;
+	Mon, 17 Jun 2024 13:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631041; cv=none; b=bhHHcEQ+jJdygTH2Z1f+jvhDtzxznKM8WewYDbVLdxfxmc0xB1iwRt4oPv6e17Pj0XDieFAho36udRb/YxMz7Rka0iMC+jPqLsqHUY5Nka5LPHRgwfe/LZsJ0MorJ9HsQeZ3FkU212SMAVQfyWgOXJecMMZZPjlk1x5hVrfIp0Y=
+	t=1718630461; cv=none; b=j5YnWdnQpRV0G2Z9/guBx+SyJSxicxvp8yLkhG/5/ePLlXSPBOOOvVqCYxd3dJ0q8w2kaTa9VXhNESpSD+cet9CP8PY4rnlP1GgdJrX0kc+xLFWW7zytPBT0bhyKNaeU5eqIqFK6n6FkDTQB4Qpx66fBeCjVx0tRd1kn/hcMq0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631041; c=relaxed/simple;
-	bh=K1d1FkkEzlQ/UT9ihqbOKIjtW36wnnFLcT/ZvMOVYFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AfGxZMQspP33BvPE5w313y1e6g4HUDaD2qoDqOxwGttC4PGQZvDWWvV/xckiaqFY9ac4er+RORU/oclwGlQfNkQ28BSrG1UCpfiGi866ucXg44x8oM9zoKRjI5Y3R/Wo27ORlieOIqSZC60CsZfNH+4dfeE+4AcDMGaEtpTn+pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhTGVFmw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D209EC2BD10;
-	Mon, 17 Jun 2024 13:30:36 +0000 (UTC)
+	s=arc-20240116; t=1718630461; c=relaxed/simple;
+	bh=3qO/bu8qgfFKtr3pb9LarfRM3RiaqcXJaOV4kYQdtXw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ADHNuVW1F5o/fj+DGyx+i2I4tI6LvzM/hn/J3io8zOwvH6EoQOpJhyANH8yiRitI2kHScg4SZ4Jsw49aMsXDQklmaHygnQUwaGwPdybG7HJTpiNE0xY5llXSlrr4DDqCX7pGGX7w1CZuis6LGjZ7GhB+Myk/A7LtDZdJN4O5Tkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSHwkmXV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98AA8C4AF1C;
+	Mon, 17 Jun 2024 13:20:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718631040;
-	bh=K1d1FkkEzlQ/UT9ihqbOKIjtW36wnnFLcT/ZvMOVYFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hhTGVFmwyz+fliyEfsQwaIqR+ib5wkuWod8Xw3Xd/q/GBJP141ALpYUx3SINa51Sj
-	 fogpyLoW6Mi5ApaXiy6PxD5l4ilE7gQ46/LwMOO/4sxJnrAsOnBRcZF6xEYFNr5mVi
-	 DIVXZkX8BYLy8ikwhnkKsXFH8VteP+w/QZlyFN6XjzktWaT29cfOUoPewHiSfHgdlX
-	 w+N29UD7JhPaXjW8lmBpIRsYlzfyeQV85MizgwCneZIgUtURBMmUYPW5JUdBnBpDUi
-	 wnzapWZrPwOUszAFMV4zm8tL3FUcPJBCljoHV5+me/19eQw+vLWS7SjwREOgYujxaY
-	 sWoEv1U4NZp9A==
-Date: Mon, 17 Jun 2024 21:16:43 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: Yixun Lan <dlan@gentoo.org>, Inochi Amaoto <inochiama@outlook.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Chao Wei <chao.wei@sophgo.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/6] riscv: dts: sophgo: Put sdhci compatible in dt of
- specific SoC
-Message-ID: <ZnA3O14HOiV1SBPV@xhacker>
-References: <20240612-sg2002-v2-0-19a585af6846@bootlin.com>
- <20240612-sg2002-v2-1-19a585af6846@bootlin.com>
- <IA1PR20MB49534C9E29E86B478205E4B3BBC02@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240616235829.GA4000183@ofsar>
- <c75601a1-1389-400e-90b9-99c1e775a866@bootlin.com>
+	s=k20201202; t=1718630460;
+	bh=3qO/bu8qgfFKtr3pb9LarfRM3RiaqcXJaOV4kYQdtXw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hSHwkmXVvEoA83ZS3eSg3Iq6h5uFKt7K2mIV6gX4Cj+5wFcKDH+vuJ8QoxBcx/MIB
+	 xYTTBdg15YY6q80/s2lH6DAtbdB/b+HWXTzasTWq53SN4UH1seGNjzHIR9h0l98Os5
+	 oh1CXi0zX9A/yRN7Z8wYxjU78kNcEl9vTzpHAuXpY69IvNcAlDyl+6txGY5ZpYJ/it
+	 erjyuxDahduDuHGcP5tiZh4r0CmANoYA0FhAznJ0Gr8Zw7mMvWqUp3GiM88uy8pUom
+	 mIekHaU8vI3rEaMyau3SwTawZHtTmyYFrHTxRiAUqatRdkM01K7oCOK/D6NDj+iAs0
+	 vy017xnJA/2Pw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Kees Cook <keescook@chromium.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-hardening@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.9 07/44] efi: pstore: Return proper errors on UEFI failures
+Date: Mon, 17 Jun 2024 09:19:20 -0400
+Message-ID: <20240617132046.2587008-7-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240617132046.2587008-1-sashal@kernel.org>
+References: <20240617132046.2587008-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c75601a1-1389-400e-90b9-99c1e775a866@bootlin.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.9.5
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 11:16:32AM +0200, Thomas Bonnefille wrote:
-> 
-> 
-> On 6/17/24 1:58 AM, Yixun Lan wrote:
-> > Hi
-> > 
-> > On 18:47 Wed 12 Jun     , Inochi Amaoto wrote:
-> > > On Wed, Jun 12, 2024 at 10:02:31AM GMT, Thomas Bonnefille wrote:
-> > > > Remove SDHCI compatible for CV1800b from common dtsi file to put it in
-> > > > the specific dtsi file of the CV1800b.
-> > > > This commits aims at following the same guidelines as in the other nodes
-> > > > of the CV18XX family.
-> > is there any URL of guideline? or did I miss anything
-> > couldn't find any discussion about this in v1
-> > 
-> 
-> Not explicitly, the fact is that I had to use a specific compatible on
-> SG2002 for the sdhci (it is already defined mainline), I had to choose
-> between :
-> 
-> 1. cv18xx.dtsi : compatible cv1800b-dwcmshc
->    cv1800b.dtsi : no redefined compatible
->    sg2002.dtsi : overwrite the previous compatible to use sg2002-dwcmshc
-> 
-> 2. cv18xx.dtsi : no compatible
->    cv1800b.dtsi : compatible for cv1800b-dwcmshc
->    sg2002.dtsi : compatible for sg2002-dwcmshc
-> 
-> As in the plic and clint controllers, the second option was chosen I
-> consider this as a "guideline" and reformat the dtsis accordingly.
-> 
-> > > > 
-> > > > Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> > > > ---
-> > > >   arch/riscv/boot/dts/sophgo/cv1800b.dtsi | 4 ++++
-> > > >   arch/riscv/boot/dts/sophgo/cv18xx.dtsi  | 1 -
-> > > >   2 files changed, 4 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
-> > > > index ec9530972ae2..b9cd51457b4c 100644
-> > > > --- a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
-> > > > +++ b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
-> > > > @@ -25,3 +25,7 @@ &clint {
-> > > >   &clk {
-> > > >   	compatible = "sophgo,cv1800-clk";
-> > > >   };
-> > > > +
-> > > > +&sdhci0 {
-> > > > +	compatible = "sophgo,cv1800b-dwcmshc";
-> > > > +};
-> > > > diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> > > > index 891932ae470f..7247c7c3013c 100644
-> > > > --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> > > > +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> > > > @@ -288,7 +288,6 @@ uart4: serial@41c0000 {
-> > > >   		};
-> > > >   		sdhci0: mmc@4310000 {
-> > > > -			compatible = "sophgo,cv1800b-dwcmshc";
-> > > >   			reg = <0x4310000 0x1000>;
-> > > >   			interrupts = <36 IRQ_TYPE_LEVEL_HIGH>;
-> > > >   			clocks = <&clk CLK_AXI4_SD0>,
-> > > > 
-> > > > -- 
-> > > > 2.45.2
-> > > > 
-> > > 
-> > > Hi, Jisheng,
-> > > 
-> > > Is this change necessary? IIRC, the sdhci is the same across
-> > > the whole series.
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
 
-Hi,
+[ Upstream commit 7c23b186ab892088f76a3ad9dbff1685ffe2e832 ]
 
-sorry for being late, I was busy in the past 2.5 month. Per my
-understanding, the sdhci in cv1800b is the same as the one in
-sg200x. Maybe I'm wrong, but this was my impression when I cooked
-the sdhci driver patch for these SoCs.
+Right now efi-pstore either returns 0 (success) or -EIO; but we
+do have a function to convert UEFI errors in different standard
+error codes, helping to narrow down potential issues more accurately.
 
-> > I tend to agree with Inochi here, if it's same across all SoC, then no bother to
-> > split, it will cause more trouble to maintain..
-> > 
-> 
-> To be honest, I agree with this to, but as a specific compatible for the
-> SG2002 was created in commit 849e81817b9b, I thought that the best practice
-> was to use it.
+So, let's use this helper here.
 
-I'd like to take this chance to query DT maintainers: FWICT, in the past
-even if the PLIC is the same between SoCs, adding a new compatible for
-them seems a must. So when time goes on, the compatbile list would be
-longer and longer, is it really necessary? Can we just use the existing
-compatible string?
-DT maintainers may answered the query in the past, if so, sorry for
-querying again.
+Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/firmware/efi/efi-pstore.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> 
-> > > 
-> > > Regards,
-> > > Inochi
-> > 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-pstore.c
+index 833cbb995dd3f..194fdbd600ad1 100644
+--- a/drivers/firmware/efi/efi-pstore.c
++++ b/drivers/firmware/efi/efi-pstore.c
+@@ -136,7 +136,7 @@ static int efi_pstore_read_func(struct pstore_record *record,
+ 				     &size, record->buf);
+ 	if (status != EFI_SUCCESS) {
+ 		kfree(record->buf);
+-		return -EIO;
++		return efi_status_to_err(status);
+ 	}
+ 
+ 	/*
+@@ -181,7 +181,7 @@ static ssize_t efi_pstore_read(struct pstore_record *record)
+ 			return 0;
+ 
+ 		if (status != EFI_SUCCESS)
+-			return -EIO;
++			return efi_status_to_err(status);
+ 
+ 		/* skip variables that don't concern us */
+ 		if (efi_guidcmp(guid, LINUX_EFI_CRASH_GUID))
+@@ -219,7 +219,7 @@ static int efi_pstore_write(struct pstore_record *record)
+ 					    record->size, record->psi->buf,
+ 					    true);
+ 	efivar_unlock();
+-	return status == EFI_SUCCESS ? 0 : -EIO;
++	return efi_status_to_err(status);
+ };
+ 
+ static int efi_pstore_erase(struct pstore_record *record)
+@@ -230,7 +230,7 @@ static int efi_pstore_erase(struct pstore_record *record)
+ 				     PSTORE_EFI_ATTRIBUTES, 0, NULL);
+ 
+ 	if (status != EFI_SUCCESS && status != EFI_NOT_FOUND)
+-		return -EIO;
++		return efi_status_to_err(status);
+ 	return 0;
+ }
+ 
+-- 
+2.43.0
+
 
