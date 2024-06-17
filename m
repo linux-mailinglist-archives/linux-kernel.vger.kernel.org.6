@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-218203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1023B90BABE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:20:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4544B90BAC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D441C2321C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA4A51F2221A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1114F1991A4;
-	Mon, 17 Jun 2024 19:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F271990C6;
+	Mon, 17 Jun 2024 19:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tp9eY0fB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IjTY0vEo"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479F81990BB;
-	Mon, 17 Jun 2024 19:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E430D18A934
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718652029; cv=none; b=e2wFKwpXRfOTLhbqhtDeaDKhtiQp6uDkUUsAyvYKvEECcsRUC4MnSsztjUZpyxmRz4cxal2GCBXLivKLqECRo8w/c9BOtK94NV+iBsVgdM0OiH0chwPlC5rFZHKautluTjRWGSnaudzYko2dmcorrIl19tZBpqsVX793xmxLgSc=
+	t=1718652088; cv=none; b=Vk39LCqhjwfQaUFZZJvEsz6aAUi00dmpp/v+PlHSHEgpNIuR10HAb1W1LdoISfYL+em69+Wa+1feRr5BWY8QAgPGf7/P2yxqkfCTpoz4PWtPr5b67oq7JyZmaPMzTQejvShdwLLgXgT/LuMW4X4fFUmCng8nWfknjKGFGw/5tWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718652029; c=relaxed/simple;
-	bh=UwJilHooTAwCtU+8RqLCGxT+YJhIEjdBQnPptCGsoR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jsSpOQ2v40QlbysOPIZp/QFR0xi0/n5Tt9IzNFQz8mY33iWFShlAXT11hh1YyW4h+z6lAzYxvIMjMhRdMKzJ4pbzQ99nnjZNpNFFonKXUkFoz7HgPKmJoMs5MUiGhW3B5frKlPSp1Q4Ea0KaS9ytGpRAG0FVp8nIZ++EpxMJJ04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tp9eY0fB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2FD3C4AF1A;
-	Mon, 17 Jun 2024 19:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718652028;
-	bh=UwJilHooTAwCtU+8RqLCGxT+YJhIEjdBQnPptCGsoR4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Tp9eY0fB9SepeWw16Iti4JBWXcxiRfFhGQLIt73eC2PY2IinXxz13N9YV2cCCP5Kk
-	 K0EqSl9mvIolQVc9xZ025XmZscofYirEEnPXPNGz9iH3H4iLc5Qa/iUTVWOpq3yt4N
-	 /cc3DiazhkJ4ZaNsTpIVkdl/+1K8/RMgukOk7Sskery3GtNovOQvxuK+ASM5Z//qEK
-	 Fj5LMiYcOUhp1gYLnv1UXdUto7Ni4QlACCG3vLT5I2/M4rT9+VlmyrxY/7ZWIHp80M
-	 XipWmXEsUP8wlv/a/uz9XoQy79m24ss2iNIFR30nHQZqlgjHIBEPiNCCLceEmuGG6g
-	 /oXu1WoAAmopw==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5bb10cfe7daso353336eaf.2;
-        Mon, 17 Jun 2024 12:20:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUoRCLrRydwwQ3EIB+x8SLK3F5xfPBgvEb+erRTB9JG1DH4lQAOnkODh9jSCAR3EoenZEplUDHwG3Od/S7fMO32riKIYYDwn7UCkqzEZvcW35YM2wSjXQZtUsJppTlAJqRky8g/K8dOWQ==
-X-Gm-Message-State: AOJu0YwMFM9D453Oi5Q2ZWTqNDqPPSrnUZ8S6/8a4rbrOorlJJAp9tSb
-	WTwBDADRhm9P9M/bmBAiQ63Yn8rGDOipja0akToR/PoQKX1li3sx7/0mOSr6oinadXIX/DciO2h
-	LkaSA7hITUN7NYByCWNJioY9aHuo=
-X-Google-Smtp-Source: AGHT+IH2PQAmWZtFODds934xH9e6nUDn8Ctc7ggQgfjQk4t+2XxjLNgMOo6P4Vimpri98e0hjJt660/Tr4OiwxX4KUQ=
-X-Received: by 2002:a4a:c482:0:b0:5bd:ad72:15d3 with SMTP id
- 006d021491bc7-5bdadc0905fmr11187991eaf.1.1718652028237; Mon, 17 Jun 2024
- 12:20:28 -0700 (PDT)
+	s=arc-20240116; t=1718652088; c=relaxed/simple;
+	bh=aRUhmvylMTPbq3pdJ1I005LXAnQQi9aW4RrMkcI2JEo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JY7S1Wf9k2woBSPlWh1x/7SikFIJEI2AcRcVs/eyu5ZjqZArJ/y9hKnpLz4hNFpUt+omNu/ArmwcugQMUlQM6n9ucfR4ZXvNsELsAXgXBkHcSNpfiw6w3uL6X3EaMTVSeIvwq3ZnXyvtgoMCDu2i+bm4B4K5+RhDMiyWH424kaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IjTY0vEo; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7eb721a19c9so20533539f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:21:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1718652086; x=1719256886; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hnc9BmvHqZ1cO9VRkPww5l6SCS+m+GCA5Xpa62eIsmw=;
+        b=IjTY0vEoCC9+fkQn0V2ZT2a+rqLyYkfA75sPJ9in1Y5uViwokEBQF+sAXbDnHZ8h1S
+         +NMQYZTQ1xSTx+seoPViXCbfrwNKOzS4IwIF5BQGKGq+sAHebzL9nLkEF3yBpy5WEXYo
+         2oSoFoqo1MeSNhUL7ATZ9ZcQQYr6TWebjuOLg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718652086; x=1719256886;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hnc9BmvHqZ1cO9VRkPww5l6SCS+m+GCA5Xpa62eIsmw=;
+        b=gLwC3E52hFIK8083AnhCDvWNh8uBgfYrFKtxGL6mCqvwGjwsIckahfjYtAnTfNjML/
+         3Ew58+hODmCxZfYk2LQK01II4KdWqtYrB0SRDkhGUYxUF/+1qv34zUqinLukDqB8daVA
+         AFB4eE8n/AYfP7YLcxqBE5FQ5RB5Zb7Xy64QuL5QO5QZ0U6siDyPSsgSkN4Ec4nTiXr4
+         psFatLzIRwFfwFVZlqni/dwCCI2dRSvzw808ANzmgALWnecrRx8U9PzU9TxJre+Haycb
+         etg6ZfNr3EnlRkJFxmSFtJTLcBxnsf5CzQb9A2IC3yHPY2QkBEAbyeCV1oVwBsQdOuvx
+         qVnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWu8TLaosRuBmR68VRHoiY2EWS4OQdKwYlb6ScIRIo4EAg+/lPI1HhrKt942QaOel/JaTe6G+5vilRn/6mwmHfMXqx0KRPWifGNjVz6
+X-Gm-Message-State: AOJu0Yx9ruMNg8HKpB32eM4GJS0Y8xM4NHlYkmdkRm3gy/r17NiOXDi1
+	KtbOlQftw74UjX7H54PPLPTd7bCZ8JVkEFfeUZXyYhwyssLCqn/3OeiL+wWsKMA=
+X-Google-Smtp-Source: AGHT+IEJNYqO2H4hy+J+bElCMNOnzT6uvzuzSkCtBsp6G3WPl5E0ldk+xvk3pq7azhpQfHCk+09VOQ==
+X-Received: by 2002:a5d:83c3:0:b0:7eb:69ec:43f2 with SMTP id ca18e2360f4ac-7ebeb524819mr1040417839f.1.1718652086007;
+        Mon, 17 Jun 2024 12:21:26 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9569169bfsm2846018173.45.2024.06.17.12.21.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 12:21:25 -0700 (PDT)
+Message-ID: <46645216-dcb7-45d6-83c5-fdd9451362ff@linuxfoundation.org>
+Date: Mon, 17 Jun 2024 13:21:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613-acpi-sysfs-groups-v1-0-665e0deb052a@weissschuh.net>
- <20240613-acpi-sysfs-groups-v1-1-665e0deb052a@weissschuh.net>
- <CAJZ5v0iHB1X7WM6Lg_-vr3Kzwp65yqjvHG9CA_X8vqFBFV_F_A@mail.gmail.com>
- <CAJZ5v0gmHPBS3LE+Eo8yJkvpuavBvip-1AEEEf9nxAp2gi_adQ@mail.gmail.com> <7c0d3358-eb1f-4c71-8a09-52b5e7668e36@t-8ch.de>
-In-Reply-To: <7c0d3358-eb1f-4c71-8a09-52b5e7668e36@t-8ch.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 17 Jun 2024 21:20:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h2wuYi0JuKGKBy2x3h71FO_n8FNAAd+9XXekHGA9d=3w@mail.gmail.com>
-Message-ID: <CAJZ5v0h2wuYi0JuKGKBy2x3h71FO_n8FNAAd+9XXekHGA9d=3w@mail.gmail.com>
-Subject: Re: [PATCH 1/5] ACPI: sysfs: convert utf-16 from _STR to utf-8 only once
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: duplicate patch in the kunit-next tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Brendan Higgins <brendanhiggins@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Jeff Johnson <quic_jjohnson@quicinc.com>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240611152225.7264e9df@canb.auug.org.au>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240611152225.7264e9df@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 17, 2024 at 8:57=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
->
-> On 2024-06-17 20:43:03+0000, Rafael J. Wysocki wrote:
-> > On Mon, Jun 17, 2024 at 8:37=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
-l.org> wrote:
-> > >
-> > > On Thu, Jun 13, 2024 at 10:15=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux=
-@weissschuh.net> wrote:
-> > > >
-> > > > The ACPI _STR method returns an UTF-16 string that is converted to =
-utf-8
-> > > > before printing it in sysfs.
-> > > > Currently this conversion is performed every time the "description"
-> > > > sysfs attribute is read, which is not necessary.
-> > >
-> > > Why is it a problem, though?
->
-> It's not a real problem, mostly it made the following changes simpler.
->
-> > > How many devices have _STR and how much of the time is it used?
-> > >
-> > > Hint: On the system I'm sitting in front of, the answer is 0 and neve=
-r.
-> >
-> > This was actually factually incorrect, sorry.
-> >
-> > The correct answer is 12 out of 247 and very rarely (if at all).
-> > Which doesn't really change the point IMO.
-> >
-> > > So Is it really worth adding an _STR string pointer to every struct a=
-cpi_device?
->
-> The string pointer replaces a 'union acpi_object *str_obj', so no new
-> space is used.
-> Also in case the device _STR is present the new code uses less memory, as
-> it doesn't need the full union and stores utf-8 instead of utf-16.
-> (Plus a few more cycles for the preemptive conversion)
->
-> In case no _STR is present both CPU and memory costs are identical.
+Hi Andrew,
 
-OK
+On 6/10/24 23:22, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The following commit is also in the mm tree as a different commit (but
+> the same patch):
+> 
+>    425ae3ab5a1f ("list: test: add the missing MODULE_DESCRIPTION() macro")
+> > This is commit
+> 
+>    245e5db4adaf ("lib/list_test: add the missing MODULE_DESCRIPTION() macro")
+> 
+> in the mm-nonmm-unstable branch of the mm tree.
+> 
 
-> Anyways, I don't really care about this and can also try to drop this
-> patch if you prefer.
-> Or drop the 'union acpi_device *' from the struct completely at your
-> preference.
+Can you drop the patch from mm tree? It will help avoid merge conflicts
+in case there are other KUnit patches that depend on this end up in
+kunit-next.
 
-No, this is fine as is, thanks.
+thanks,
+-- Shuah
 
