@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-218204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4544B90BAC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:21:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5754690BAC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA4A51F2221A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:21:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071FF1F22400
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F271990C6;
-	Mon, 17 Jun 2024 19:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1161991A3;
+	Mon, 17 Jun 2024 19:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IjTY0vEo"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3a+VOwH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E430D18A934
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6250618A934;
+	Mon, 17 Jun 2024 19:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718652088; cv=none; b=Vk39LCqhjwfQaUFZZJvEsz6aAUi00dmpp/v+PlHSHEgpNIuR10HAb1W1LdoISfYL+em69+Wa+1feRr5BWY8QAgPGf7/P2yxqkfCTpoz4PWtPr5b67oq7JyZmaPMzTQejvShdwLLgXgT/LuMW4X4fFUmCng8nWfknjKGFGw/5tWE=
+	t=1718652174; cv=none; b=AgI+iG2vPsbovymPNcSgmbA8dB4FF1d+CfH3b2juHHy4u5AxvrFrtgI5dMLxoMH4C7blU1Yluqwdc/UqFUj+6XpOcMd0Qjrk6lvAROU9et6BroJb0tn4lpz4ni8zptCQi3+najCaajhnfA41roS3qGTLWHEj+Bq5L03BXLOS67U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718652088; c=relaxed/simple;
-	bh=aRUhmvylMTPbq3pdJ1I005LXAnQQi9aW4RrMkcI2JEo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JY7S1Wf9k2woBSPlWh1x/7SikFIJEI2AcRcVs/eyu5ZjqZArJ/y9hKnpLz4hNFpUt+omNu/ArmwcugQMUlQM6n9ucfR4ZXvNsELsAXgXBkHcSNpfiw6w3uL6X3EaMTVSeIvwq3ZnXyvtgoMCDu2i+bm4B4K5+RhDMiyWH424kaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IjTY0vEo; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7eb721a19c9so20533539f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:21:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1718652086; x=1719256886; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hnc9BmvHqZ1cO9VRkPww5l6SCS+m+GCA5Xpa62eIsmw=;
-        b=IjTY0vEoCC9+fkQn0V2ZT2a+rqLyYkfA75sPJ9in1Y5uViwokEBQF+sAXbDnHZ8h1S
-         +NMQYZTQ1xSTx+seoPViXCbfrwNKOzS4IwIF5BQGKGq+sAHebzL9nLkEF3yBpy5WEXYo
-         2oSoFoqo1MeSNhUL7ATZ9ZcQQYr6TWebjuOLg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718652086; x=1719256886;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hnc9BmvHqZ1cO9VRkPww5l6SCS+m+GCA5Xpa62eIsmw=;
-        b=gLwC3E52hFIK8083AnhCDvWNh8uBgfYrFKtxGL6mCqvwGjwsIckahfjYtAnTfNjML/
-         3Ew58+hODmCxZfYk2LQK01II4KdWqtYrB0SRDkhGUYxUF/+1qv34zUqinLukDqB8daVA
-         AFB4eE8n/AYfP7YLcxqBE5FQ5RB5Zb7Xy64QuL5QO5QZ0U6siDyPSsgSkN4Ec4nTiXr4
-         psFatLzIRwFfwFVZlqni/dwCCI2dRSvzw808ANzmgALWnecrRx8U9PzU9TxJre+Haycb
-         etg6ZfNr3EnlRkJFxmSFtJTLcBxnsf5CzQb9A2IC3yHPY2QkBEAbyeCV1oVwBsQdOuvx
-         qVnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWu8TLaosRuBmR68VRHoiY2EWS4OQdKwYlb6ScIRIo4EAg+/lPI1HhrKt942QaOel/JaTe6G+5vilRn/6mwmHfMXqx0KRPWifGNjVz6
-X-Gm-Message-State: AOJu0Yx9ruMNg8HKpB32eM4GJS0Y8xM4NHlYkmdkRm3gy/r17NiOXDi1
-	KtbOlQftw74UjX7H54PPLPTd7bCZ8JVkEFfeUZXyYhwyssLCqn/3OeiL+wWsKMA=
-X-Google-Smtp-Source: AGHT+IEJNYqO2H4hy+J+bElCMNOnzT6uvzuzSkCtBsp6G3WPl5E0ldk+xvk3pq7azhpQfHCk+09VOQ==
-X-Received: by 2002:a5d:83c3:0:b0:7eb:69ec:43f2 with SMTP id ca18e2360f4ac-7ebeb524819mr1040417839f.1.1718652086007;
-        Mon, 17 Jun 2024 12:21:26 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9569169bfsm2846018173.45.2024.06.17.12.21.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 12:21:25 -0700 (PDT)
-Message-ID: <46645216-dcb7-45d6-83c5-fdd9451362ff@linuxfoundation.org>
-Date: Mon, 17 Jun 2024 13:21:25 -0600
+	s=arc-20240116; t=1718652174; c=relaxed/simple;
+	bh=0xNaKn2xWF6bxabpRd4RKTDYic7VVfS6pZN9IV7cp3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X3TsGaN/zfZKXoVygveM5Vp7Si6MP/BpkrTB53koOG7xgVTCMM/etosKuiboj/XqgDr3IwzRvQyx5/pSaDnuSJX+QbH+1PH4LTqq/FNdDLNfb0I5Jxg2FJ+yrCMzLrxbYTWjWfMuIJVRRNlIjAKt/W3rkCSooZwCSEoqFIuqZEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R3a+VOwH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C96D6C2BD10;
+	Mon, 17 Jun 2024 19:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718652174;
+	bh=0xNaKn2xWF6bxabpRd4RKTDYic7VVfS6pZN9IV7cp3k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=R3a+VOwHGJVAok1i+lKdJsVSCtkWLT37AYTqHIhdRUeqWK25CA6CCmke1Np4kzbny
+	 M0T9AENH0lisJ0mBmRBGBthJXzuohnWV0eos2ZLpF6BwZc3N7XkGXpkda8O1DVBT2K
+	 /+vIA240fc0RZUCKscyiNKupacOI7BkZ9M8aTWFoiI+Lzql16+f0FxQfVTF9WhxWvr
+	 WjZMlcROA1tcW0XZqarED+JWL7ORd/cYlzudw1zE3fWS9oEwMV5XTwz65HoIhCINhR
+	 H9XPkP0RJJCdCXWAqgb8WPxNJgnSyi7/A96iWrEfGiODIUoYsj7SNOH4FRD0j8ee3h
+	 zQpZJ5Qyn9JGA==
+Date: Mon, 17 Jun 2024 20:22:48 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Yasin Lee <yasin.lee.x@outlook.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, oe-kbuild-all@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, Yasin Lee <yasin.lee.x@gmail.com>
+Subject: Re: [PATCH v5 3/3] iio:proximity:hx9023s: Add TYHX HX9023S sensor
+ driver
+Message-ID: <20240617202248.35994484@jic23-huawei>
+In-Reply-To: <202406171946.qe83Tde0-lkp@intel.com>
+References: <SN7PR12MB8101D4BC788B5954608D677DA4CC2@SN7PR12MB8101.namprd12.prod.outlook.com>
+	<202406171946.qe83Tde0-lkp@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: duplicate patch in the kunit-next tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Brendan Higgins <brendanhiggins@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Jeff Johnson <quic_jjohnson@quicinc.com>,
- "Dr. David Alan Gilbert" <linux@treblig.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240611152225.7264e9df@canb.auug.org.au>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240611152225.7264e9df@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi Andrew,
+On Mon, 17 Jun 2024 19:34:30 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-On 6/10/24 23:22, Stephen Rothwell wrote:
-> Hi all,
+> Hi Yasin,
 > 
-> The following commit is also in the mm tree as a different commit (but
-> the same patch):
+> kernel test robot noticed the following build warnings:
 > 
->    425ae3ab5a1f ("list: test: add the missing MODULE_DESCRIPTION() macro")
-> > This is commit
+> [auto build test WARNING on jic23-iio/togreg]
+> [also build test WARNING on robh/for-next linus/master v6.10-rc4 next-20240613]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > 
->    245e5db4adaf ("lib/list_test: add the missing MODULE_DESCRIPTION() macro")
+> url:    https://github.com/intel-lab-lkp/linux/commits/Yasin-Lee/dt-bindings-iio-proximity-Add-hx9023s-binding/20240616-154122
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+> patch link:    https://lore.kernel.org/r/SN7PR12MB8101D4BC788B5954608D677DA4CC2%40SN7PR12MB8101.namprd12.prod.outlook.com
+> patch subject: [PATCH v5 3/3] iio:proximity:hx9023s: Add TYHX HX9023S sensor driver
+> config: arm64-randconfig-r132-20240617 (https://download.01.org/0day-ci/archive/20240617/202406171946.qe83Tde0-lkp@intel.com/config)
+> compiler: aarch64-linux-gcc (GCC) 13.2.0
+> reproduce: (https://download.01.org/0day-ci/archive/20240617/202406171946.qe83Tde0-lkp@intel.com/reproduce)
 > 
-> in the mm-nonmm-unstable branch of the mm tree.
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406171946.qe83Tde0-lkp@intel.com/
+> 
+> sparse warnings: (new ones prefixed by >>)
+> >> drivers/iio/proximity/hx9023s.c:955:44: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 @@     got int diff @@  
+>    drivers/iio/proximity/hx9023s.c:955:44: sparse:     expected restricted __be16
+>    drivers/iio/proximity/hx9023s.c:955:44: sparse:     got int diff
+> 
+> vim +955 drivers/iio/proximity/hx9023s.c
+> 
+>    931	
+>    932	static irqreturn_t hx9023s_trigger_handler(int irq, void *private)
+>    933	{
+>    934		struct iio_poll_func *pf = private;
+>    935		struct iio_dev *indio_dev = pf->indio_dev;
+>    936		struct hx9023s_data *data = iio_priv(indio_dev);
+>    937		struct device *dev = regmap_get_device(data->regmap);
+>    938		int ret;
+>    939		unsigned int bit, i = 0;
+>    940	
+>    941		guard(mutex)(&data->mutex);
+>    942		ret = hx9023s_sample(data);
+>    943		if (ret) {
+>    944			dev_warn(dev, "sampling failed\n");
+>    945			goto out;
+>    946		}
+>    947	
+>    948		ret = hx9023s_get_prox_state(data);
+>    949		if (ret) {
+>    950			dev_warn(dev, "get prox failed\n");
+>    951			goto out;
+>    952		}
+>    953	
+>    954		for_each_set_bit(bit, indio_dev->active_scan_mask, indio_dev->masklength)
+>  > 955			data->buffer.channels[i++] = data->ch_data[indio_dev->channels[bit].channel].diff;  
+>    956	
+This looks very odd.  Diff is an int filled with get_unaligned_le16()
+which you then write to a __be16 here.
+
+It should remain little endian, if that is appropriate, throughout.
+
+Also, very long line. Use a local variable for
+indio_dev->channels[bit].channel.
+
+>    957		iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer, pf->timestamp);
+>    958	
+>    959	out:
+>    960		iio_trigger_notify_done(indio_dev->trig);
+>    961	
+>    962		return IRQ_HANDLED;
+>    963	}
+>    964	
 > 
 
-Can you drop the patch from mm tree? It will help avoid merge conflicts
-in case there are other KUnit patches that depend on this end up in
-kunit-next.
-
-thanks,
--- Shuah
 
