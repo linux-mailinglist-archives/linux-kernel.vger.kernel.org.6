@@ -1,121 +1,73 @@
-Return-Path: <linux-kernel+bounces-217073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B0E90AA3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:52:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1116C90AA42
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D511F23587
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:52:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F33F1C20860
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812BA1957E2;
-	Mon, 17 Jun 2024 09:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dkQbIRKV"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38EBC194140
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B27195B09;
+	Mon, 17 Jun 2024 09:44:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F9C19581A;
+	Mon, 17 Jun 2024 09:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718617439; cv=none; b=rg5LQm6pYmnJ7DS/RikPOqom5M2F8tgn20ScrMoqDZPqwScESAn7NMvQGiNl7Hpr5PnoAQy0nv5O/NnGmsovgZ90dhbktR/s6xF7IZlMHdsvmiTBiR8hEyV14fxRzPkGxTlM+zrGP3XV9jsp4gRZpzUc84keYDY4naLFBXV+zv8=
+	t=1718617491; cv=none; b=DDy/JUyc6uC1t+nSk+Xnj7hU+ejf3YRyPgYeOvQDHW4KsG3h/GL6L5eUmOHMe3bYZZaEXMLxFqFC0oqMdeDAsDW91STGiavFgNonGFIEiZAwbdLgShrwTGPp91igWPZq0gsePBvSGW2zt/RtcEhYFbacMQx8JPpmL1STOYnvU6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718617439; c=relaxed/simple;
-	bh=AVM91SFjOeJ4EGJwdJF//dJ0wQhrEY8K0R6MrRTgXNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NBdxTLXr23ypmLQmYkLmHLfrXsUC5XaMFTnXYYglpqK0epiFOwyyJBORlKmfRNazY6itzQosR/rQpeCKX+jVnFZdJX3JE9SlchUNxrhlccbLlpRrotgN74vfIyLDz+g+SjyR9OcTyM2a/oDkvyQNC+cqPQAOIfa4olPOHFoUBLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dkQbIRKV; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ebe3fb5d4dso37047091fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718617436; x=1719222236; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qyV5BhT+hOakoBNP7VkHyuuQ8+FmrIcBOKbyWvL0zk=;
-        b=dkQbIRKVtICmLyeBDhbRP8iA3bdg9Tgc03Tb1bKmyCDYPq2xAIAB9P2dEkSLKGN1zW
-         5SxI4GENtopPvhgTcRmrLt0lJISGWA5Hk5vvXTOA7OZu14a9YXmxTHTZ9BUj0p3pXFbP
-         EglPFCncl43MbFgBucnx+X0QwBpfUPpUMzMocKHWWGRc+cGNWIyiyNFkugTZP1B0nh/8
-         N2TazHZsb8DVpc1DBuhHEkpipWFzsB5/jRehPD1fjE0buX5OjES/OAT7LevYPCBEZESj
-         shYIbyZnApClONUM0busq3YygLQinAqT4PrvcwZqniubkHSCtWdf0KihRtAAyizl9pRP
-         P7YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718617436; x=1719222236;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0qyV5BhT+hOakoBNP7VkHyuuQ8+FmrIcBOKbyWvL0zk=;
-        b=Sgkwm0GrFXOc14wyCANo0JNz5DpccSHZYzDNQJyr41woivcGooos+WZWAOZKbE0cm+
-         FJJObIZqK2MzsQfDk71z/S2HzR46XkT4yjc/IiI40GskrWzra5h4CTuxYFVwaOxuHBT5
-         Q2DUO+eBjOHiCIwxAr0WKmdY3xxfRdgymTJYRwJ3hOEOA7lbMiweGLKYRT0nSq9pj/P2
-         X6Ho7HuqWYX2Vd9o4kFpDZEdN4BIQv0Q3WqlDCHG+Kxyf+24onChWB4DnWGEFNrWHYx7
-         Kd/e2PRhnjZFP6k7Vdg/iXn0dqU+H1hOy6tluKMXeU62uF1eInlINEHkLg70G81CTbma
-         tH+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWadi+YU/EfE+AF31yupDWNa9ZZuKx2Suus/tR3T7A+W+zHp47QWKKI5l+1rH78JzXf5NBV0oIe8cq8vxpjFkh3yeicn0QDafxxnXNs
-X-Gm-Message-State: AOJu0YwIck0LWa0qc+PcjvnsDx5yCAozZQDflB0GwYLBFdtAYz29fWkU
-	WjqwtAnJ9XPBLdak45tVWTg/eLQCdkKMiSuKKqom63l/1p/Rk2pVSxe+cbR8W/s=
-X-Google-Smtp-Source: AGHT+IEumQAyN+NZWW67TMH9LyQluGdcRlBDdjBbMCwrlGr6EisNhuKiAvNKwlD27RooS6SV7iqrbA==
-X-Received: by 2002:a2e:b794:0:b0:2ec:254d:4fdd with SMTP id 38308e7fff4ca-2ec254d5052mr13784491fa.15.1718617436480;
-        Mon, 17 Jun 2024 02:43:56 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c16f00sm12903251fa.61.2024.06.17.02.43.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 02:43:56 -0700 (PDT)
-Date: Mon, 17 Jun 2024 12:43:54 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tengfei Fan <quic_tengfan@quicinc.com>
-Cc: krzysztof.kozlowski@linaro.org, djakov@kernel.org, robh@kernel.org, 
-	conor+dt@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel@quicinc.com
-Subject: Re: [RFC PATCH 0/2] arm64: qcom: Add BWMON support for SA8775p
-Message-ID: <yb3ni6o22zdm2lqodj7utdb2dlg3jkbwzutxhmljxle3syoe5y@op2prslmri4y>
-References: <20240617092940.1724962-1-quic_tengfan@quicinc.com>
+	s=arc-20240116; t=1718617491; c=relaxed/simple;
+	bh=qzWcrmVR9SF9WNBEBQYTWODTARg9fts7Iwv8F/4rErs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EnABzFN37IeLBjPDnNNBZE8zycMuXI1NCDPBYvVAzszHtqC21sqvxBjtvzNa7fxi0xrYtXcHowqpWoNmZpQxgVnPLTlz5SwOpopsfqTx9UsEBTIPqd8FA4vpuyuqkIATAHo3QwCHQFFiHiwLpnqxV4uNxEHAASgo/jCveOy76MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C137DA7;
+	Mon, 17 Jun 2024 02:45:13 -0700 (PDT)
+Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 925763F64C;
+	Mon, 17 Jun 2024 02:44:47 -0700 (PDT)
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] bus: vexpress-config: add missing MODULE_DESCRIPTION() macro
+Date: Mon, 17 Jun 2024 10:44:38 +0100
+Message-ID: <171861739736.3837092.17769464285114999756.b4-ty@arm.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240613-md-arm64-drivers-bus-v1-1-e8162434e0ca@quicinc.com>
+References: <20240613-md-arm64-drivers-bus-v1-1-e8162434e0ca@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617092940.1724962-1-quic_tengfan@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 05:29:38PM GMT, Tengfei Fan wrote:
-> Add CPU and LLCC BWMON nodes and their corresponding OPP tables for
-> SA8775p SoC.
+On Thu, 13 Jun 2024 15:05:33 -0700, Jeff Johnson wrote:
+> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/bus/vexpress-config.o
+>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>
 
-This series is marked as RFC, Request For Comments. What kind of
-comments are expected for the series?
+Applied to sudeep.holla/linux (for-next/vexpress/updates), thanks!
 
-> 
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> ---
-> 
-> This patch series depends on patch series:
-> "[PATCH 2/4] soc: qcom: icc-bwmon: Allow for interrupts to be shared across instances"
-> https://lore.kernel.org/lkml/20240604011157.2358019-3-quic_sibis@quicinc.com/
-> 
-> Tengfei Fan (2):
->   dt-bindings: interconnect: qcom-bwmon: Document SA8775p bwmon
->     compatibles
->   arm64: dts: qcom: sa8775p: Add CPU and LLCC BWMON
-> 
->  .../interconnect/qcom,msm8998-bwmon.yaml      |   2 +
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 115 ++++++++++++++++++
->  2 files changed, 117 insertions(+)
-> 
-> 
-> base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
-> -- 
-> 2.25.1
-> 
+[1/1] bus: vexpress-config: add missing MODULE_DESCRIPTION() macro
+      https://git.kernel.org/sudeep.holla/c/c12bb561df45
+--
+Regards,
+Sudeep
 
--- 
-With best wishes
-Dmitry
 
