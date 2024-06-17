@@ -1,87 +1,137 @@
-Return-Path: <linux-kernel+bounces-217922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB38090B646
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:24:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB0F90B64A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EBB5281C71
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:24:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D124281B73
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B761414EC5C;
-	Mon, 17 Jun 2024 16:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A3914EC7C;
+	Mon, 17 Jun 2024 16:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="begfLGrf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G80aV3pI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F15847A;
-	Mon, 17 Jun 2024 16:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A29514A602;
+	Mon, 17 Jun 2024 16:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718641481; cv=none; b=VlMBe4Ac+jIjpCBWWt2NFPLzv/hcCbrTUjS5CCPNfXy6RtveSECL5UCM5zskEOoZ0MawiOMEnxvTRVQ8Z+/Y5YJcJUAfnd/RD7H5Mv8mKg6UBbDLJXcMCQTe5ygFzVNkskIUYHfHJ9aRaxj0xicEuPETN3NFlpRb/BnYhJ7xxWc=
+	t=1718641507; cv=none; b=pyUkDADM2u2kNiiRRXb1xba9FD5Mq+128gGXDL7ZA1vwM58i2Ct4nMpnv+0ktaQbCzQ7Fo2luUTFgc5HAEsqh8jb4px5EbIYdWJWvWkqrnnDrA/YZms2liQWNMK/9Fxfc7Ybk3GMvHrR+UC7k54k986TtfiVV/emoViC5fzL2Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718641481; c=relaxed/simple;
-	bh=91LV93NxbGXaObbWSRWn/awCE5cjNH9Ay/li5FynBT8=;
+	s=arc-20240116; t=1718641507; c=relaxed/simple;
+	bh=68avS0eUJDWQtrEQ997VxoS1VpdCGwWUQWfUSqA7RZo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DecOT51qP56eEHg10dAjVLJgRooZs08KNyeltGagM/ehOc/o4NYvozyUvhw2ENg5cNr6IWxgqSGkxIA55SXEZNZNPVs7dEkFvBMPuPOrniip2ORh2xVy2ek6TFRjAwnzjfQ9RwIlod3nYoggVLx2IBiP2Yfa1bxds2GLfbNK/74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=begfLGrf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0164C2BD10;
-	Mon, 17 Jun 2024 16:24:38 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="begfLGrf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1718641477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=91LV93NxbGXaObbWSRWn/awCE5cjNH9Ay/li5FynBT8=;
-	b=begfLGrfkwnWV142KKUjGxqZ3Zi7AJxslVOx8ShCJGRXAxyr3SAwysUeINd7Hyx0rdXrj+
-	Q7qK7bxNfabF/iLFHzE/YWPJV7syZPK7+ymS/rZ1WzjG7h0sYhn4+eTeJEToIiI4xqKDAz
-	D4cjcA58XiRC2v3cmOImkWi+t0ZWLvk=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 4ccbc541 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 17 Jun 2024 16:24:35 +0000 (UTC)
-Date: Mon, 17 Jun 2024 18:24:26 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	tglx@linutronix.de, linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org, x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Samuel Neves <sneves@dei.uc.pt>, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v17 5/5] x86: vdso: Wire up getrandom() vDSO
- implementation
-Message-ID: <ZnBjOjWOoANFwuAx@zx2c4.com>
-References: <20240614190646.2081057-1-Jason@zx2c4.com>
- <20240614190646.2081057-6-Jason@zx2c4.com>
- <13483c92-cac5-4a3a-891f-22eb006c533b@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tz5f1+07C66XCiX/vISMm7hkSsc5cAzu/b+1UuJhffaMyVG/DIaOPzhTohyLHlzZfdAhb+4LwQcakFo7ajAznfbWSJ4HNZhLBu3MipErZ0OhCH7kKYAHJy9xYydw6QDijU5emyHjV9g8MQ4+EDcqJu8kzab4JqzTCLZgTxhX1bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G80aV3pI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 573A9C2BD10;
+	Mon, 17 Jun 2024 16:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718641507;
+	bh=68avS0eUJDWQtrEQ997VxoS1VpdCGwWUQWfUSqA7RZo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G80aV3pIJpocMaVZJehpDvj+csDfQezq9mrHt6oPp7/nTwhw1OrfGXj9S7veUgOce
+	 1Gs87CPP1Ehmr5nA/f+tlFi6Ale3lxObAcVkyJ2irdvRdnKWLA2c7+g/RCGiKF0dv9
+	 7Nd2jZDfuUcnIaXkBfD64bUtMiQzEIv/wWiPM1ISr+NTg6PckG4Fc4wepjOYS/uUyX
+	 ZCMbTnk11CQQDCXcL19k9Zg/i9kx2YorGgBCXo8sxtfEoZRizpjpTNoONPyAZyaMlv
+	 uzq3ixUTB/Tbe+nQiEmg2JElkDQNg+Xpxryuv0eTgBRajDwXYhkoqGJgQJgaLQ3bgj
+	 eOt+JoY1WaQgw==
+Date: Mon, 17 Jun 2024 17:25:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 3/4] dt-bindings: ethernet-phy: add optional brr-mode
+ flag
+Message-ID: <20240617-sinner-scorpion-c140d223975e@spud>
+References: <20240617113841.3694934-1-kamilh@axis.com>
+ <20240617113841.3694934-4-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bmjGa3lhaG1D2Hr0"
 Content-Disposition: inline
-In-Reply-To: <13483c92-cac5-4a3a-891f-22eb006c533b@nvidia.com>
+In-Reply-To: <20240617113841.3694934-4-kamilh@axis.com>
 
-On Fri, Jun 14, 2024 at 06:53:09PM -0700, John Hubbard wrote:
-> I'm adding linux-kselftest to Cc for visibility, and I've also Cc'd you
-> on a related selftests/vDSO series I just now posted [1].
-> be part of TEST_GEN_PROGS. Fixing it requires other changes, though, as
-> I've done in [2].
 
-If you can get these into 6.10 soon, I'll rebase atop your fixes so I
-can make this how you like it here.
+--bmjGa3lhaG1D2Hr0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Jason
+On Mon, Jun 17, 2024 at 01:38:40PM +0200, Kamil Hor=E1k - 2N wrote:
+> There is a group of PHY chips supporting BroadR-Reach link modes in
+> a manner allowing for more or less identical register usage as standard
+> Clause 22 PHY.
+> These chips support standard Ethernet link modes as well, however, the
+> circuitry is mutually exclusive and cannot be auto-detected.
+> The link modes in question are 100Base-T1 as defined in IEEE802.3bw,
+> based on Broadcom's 1BR-100 link mode, and newly defined 10Base-T1BRR
+> (1BR-10 in Broadcom documents).
+>=20
+> Add optional brr-mode flag to switch the PHY to BroadR-Reach mode.
+>=20
+> Signed-off-by: Kamil Hor=E1k - 2N <kamilh@axis.com>
+
+I suspect that "- 2N" is not part of your name, and should be removed
+=66rom the signoff and commit author fields.
+The patch seems fine, to a phy-agnostic such as myself, so with that
+fixed up
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+Conor.
+
+> ---
+>  Documentation/devicetree/bindings/net/ethernet-phy.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Do=
+cumentation/devicetree/bindings/net/ethernet-phy.yaml
+> index 8fb2a6ee7e5b..0353ef98f2e1 100644
+> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> @@ -93,6 +93,13 @@ properties:
+>        the turn around line low at end of the control phase of the
+>        MDIO transaction.
+> =20
+> +  brr-mode:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Request the PHY to operate in BroadR-Reach mode. This means the
+> +      PHY will use the BroadR-Reach protocol to communicate with the oth=
+er
+> +      end of the link, including LDS auto-negotiation if applicable.
+> +
+>    clocks:
+>      maxItems: 1
+>      description:
+> --=20
+> 2.39.2
+>=20
+
+--bmjGa3lhaG1D2Hr0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBjXAAKCRB4tDGHoIJi
+0k0VAPiewtXS8KzbLRLXZfcbybTdFpNg516B70j7vJjYmIjxAP94WhSqdQZg4U7z
+sz/FhwHQ30tQQmFA5Y4Mzoh/zRH6AA==
+=+Kc7
+-----END PGP SIGNATURE-----
+
+--bmjGa3lhaG1D2Hr0--
 
