@@ -1,145 +1,74 @@
-Return-Path: <linux-kernel+bounces-217100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B2C90AA8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:01:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CC390AA51
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76A01F242C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:01:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAD6E1F21CCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BDD194096;
-	Mon, 17 Jun 2024 10:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EKQ33z5j"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5D71802A3;
-	Mon, 17 Jun 2024 10:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BD8196DBD;
+	Mon, 17 Jun 2024 09:49:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0014F196DA0
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718618437; cv=none; b=RKhW5I+Mc2ek8DfGCbt86QroWdIWtK9gaLlAvXuj3b2w6E2NNton8D6jFR78PDufZi10QOLMir3l3uvB3x21avcOV0B8/0D+i4JY9yA/iYigCSHyEmjthYQr/n/K4y2LHpl0cwHRTOHfVVyjypYvMvnyN4xjAOQlp7ddocVOKfk=
+	t=1718617761; cv=none; b=rWdrONDru+hOAv02YI8ylQOkwHS9uVOp/kephsO9/PnE2Btq9yTRE4rvpX5hq6IkaJRk4jWRfgq6cv5FAUbuXeb4+1F8m7v349rYQSmuKgDOCdKM8DA6yucxlF8D48Ee8u19Z+XcJZdRw7K4ZNCB5G54qZGymHFQxDIodjV0OR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718618437; c=relaxed/simple;
-	bh=CMVlDxSdOUy+95XNw5zblVX9VgDs93mSI+wzmAgDr1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JyB+pHx0sVHq+EW3YD0yAq8zUJXOgZ1tiGuqO/OjQ9ZJr5SD8rYAwJnKK4ogD+NZt7ZfPdeCTlpx+fniXes6zcK2FFluon/oxF87il1HlUlDy1vS5HyL4DE24Zm2vZ36skbGTD+WPOALO+FYmuRi4LKio4GSdKiwBZ3E6K2yyYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EKQ33z5j; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45H9lwgp046206;
-	Mon, 17 Jun 2024 04:47:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718617678;
-	bh=6EvuFkTe3ohvJlyxpb98f49oOrF2H7bMHIXzcQ0Hi9Q=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=EKQ33z5jEbGFdn+FjRBzGdqyn7iJvKoi1OJAht/68XRcqAB0ZqRJIgyovxs/Fem1F
-	 mP+UZb89pDFSlfeWfmuyf2DLVAFFAO73XQWOpXU6Q+2YZcDMsJsURXZg/BtZ99KyZa
-	 STwMz+5pIwvMeQJMu76+X75qkoEa/Wf+c6Qf37bM=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45H9lwdg030511
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 17 Jun 2024 04:47:58 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
- Jun 2024 04:47:58 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 17 Jun 2024 04:47:58 -0500
-Received: from [172.24.18.200] (lt5cd2489kgj.dhcp.ti.com [172.24.18.200])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45H9lsh9010450;
-	Mon, 17 Jun 2024 04:47:55 -0500
-Message-ID: <46e0461e-08e2-4fcd-80dc-f1213d57489b@ti.com>
-Date: Mon, 17 Jun 2024 15:17:54 +0530
+	s=arc-20240116; t=1718617761; c=relaxed/simple;
+	bh=u6i2aYM0agTppfJ1moGlnE7LPse7lHTTOBmXc+irqzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XB3K85Sw8225VMcPK9bVdj6qN5gyGvGXzt9xdAnI10usmZ4qndp/Io8803mW10wA8hFILSll2vJEPbzYoGn6+R71FKPr+xaUzxNjccqsqRsPmlB9aeZo2AYLEowFTNZdvKY7Sbv8NWQ4Q8AADwRLiDSopXY+rjXuSFP8UN7Tsr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0BAC4DA7;
+	Mon, 17 Jun 2024 02:49:44 -0700 (PDT)
+Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BC3273F6A8;
+	Mon, 17 Jun 2024 02:49:17 -0700 (PDT)
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] MAINTAINERS: Add mailing list for SCMI drivers
+Date: Mon, 17 Jun 2024 10:49:11 +0100
+Message-ID: <171861771384.3837937.10329416225548554445.b4-ty@arm.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <a9706e17-09ad-4304-828d-c0987befc8f7@moroto.mountain>
+References: <a9706e17-09ad-4304-828d-c0987befc8f7@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] serial: 8250_omap: Implementation of Errata i2310
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <vigneshr@ti.com>, <nm@ti.com>, <tony@atomide.com>, <jirislaby@kernel.org>,
-        <ronald.wahl@raritan.com>, <thomas.richard@bootlin.com>,
-        <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <ilpo.jarvinen@linux.intel.com>
-References: <20240617052253.2188140-1-u-kumar1@ti.com>
- <2024061704-vengeful-exemplify-261a@gregkh>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <2024061704-vengeful-exemplify-261a@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Greg
-
-On 6/17/2024 11:52 AM, Greg KH wrote:
-> On Mon, Jun 17, 2024 at 10:52:53AM +0530, Udit Kumar wrote:
->> As per Errata i2310[0], Erroneous timeout can be triggered,
->> if this Erroneous interrupt is not cleared then it may leads
->> to storm of interrupts, therefore apply Errata i2310 solution.
->>
->> [0] https://www.ti.com/lit/pdf/sprz536 page 23
->>
->> Fixes: b67e830d38fa ("serial: 8250: 8250_omap: Fix possible interrupt storm on K3 SoCs")
->> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
->> ---
->> Test logs
->> https://gist.github.com/uditkumarti/7a7ab6994581bbb09cf1a4271c592d8e
->>
->> Change logs
->> Changes in v2:
->> - Added Fixes Tag and typo correction in commit message
->> - Corrected bit position to UART_OMAP_EFR2_TIMEOUT_BEHAVE
->> Link to v1
->> https://lore.kernel.org/all/20240614061314.290840-1-u-kumar1@ti.com/
->>
->>   drivers/tty/serial/8250/8250_omap.c | 25 ++++++++++++++++++++-----
->>   1 file changed, 20 insertions(+), 5 deletions(-)
-> Hi,
+On Thu, 13 Jun 2024 17:57:18 +0300, Dan Carpenter wrote:
+> We have created a new mailing list specific to SCMI. Add it to the
+> MAINTAINERS file.
 >
-> This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-> a patch that has triggered this response.  He used to manually respond
-> to these common problems, but in order to save his sanity (he kept
-> writing the same thing over and over, yet to different people), I was
-> created.  Hopefully you will not take offence and will fix the problem
-> in your patch and resubmit it so that it can be accepted into the Linux
-> kernel tree.
->
-> You are receiving this message because of the following common error(s)
-> as indicated below:
->
-> - You have marked a patch with a "Fixes:" tag for a commit that is in an
->    older released kernel, yet you do not have a cc: stable line in the
->    signed-off-by area at all, which means that the patch will not be
->    applied to any older kernel releases.  To properly fix this, please
->    follow the documented rules in the
->    Documentation/process/stable-kernel-rules.rst file for how to resolve
->    this.
->
-> If you wish to discuss this problem further, or you have questions about
-> how to resolve this issue, please feel free to respond to this email and
-> Greg will reply once he has dug out from the pending patches received
-> from other developers.
 
+Applied to sudeep.holla/linux (for-next/scmi/updates), thanks!
 
-I realized the same due to other patches, this not getting applied 
-cleanly on stable (using git am).
+[1/1] MAINTAINERS: Add mailing list for SCMI drivers
+      https://git.kernel.org/sudeep.holla/c/08070351c878
+--
+Regards,
+Sudeep
 
-Let me know if you are ok,  I will port this to stable kernel, once this 
-is merged into Linux tree.
-
-
->
-> thanks,
->
-> greg k-h's patch email bot
 
