@@ -1,119 +1,186 @@
-Return-Path: <linux-kernel+bounces-218238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88D090BB9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:59:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF8990BB9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE610285CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F26C285D59
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A12D1990C0;
-	Mon, 17 Jun 2024 19:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DE318FC67;
+	Mon, 17 Jun 2024 19:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u/wAAKi8"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="MPUPtlA7"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E246618F2CC
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42217188CD9
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718654314; cv=none; b=apTW8Lc464XkYniUiuw7jiPcf41PP5d8VotiaRatv7l75MUBwevlePbdbKsV9pzfYTWmuUlAihodYpNjHqAGoMsdT3TNMzVg5UU2IerdsRMPuGJ/EMwTQhRt6KE/wdhQkv9d922Eg/57Pfsi34uf2mpqitzNLolVW5j2b9/6MgA=
+	t=1718654385; cv=none; b=GS561sTGdowozmrQH6woADfKQJUSmfTcO/sIsfqZaIMqD2jVDC/+fOsL9h2Cdcmov+RcbG53WMX6ICnd8UfSexoXYPOtq13RuYwoqd0umxWvuL7ayBvDrekezCtb/CL5WkxoyL694HFuq+45Ubi8uXwcYuVy270/36Oawr2xSmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718654314; c=relaxed/simple;
-	bh=bZpxC50zZBluEA/iujXmLqmlU7SsoVluLarJkO9NX2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EOpx+btFIRsbI/lxFm018q+zKnoywRsQYwpNb5MO6l49+TJvmy9xnbIhNiRQ0DHJYs59cY+hwx91NcKt+G3Bdv7EFMIh7sbRClb6ZAN8/ig5k2WAH9Rb7iY9MoAxMQ6EXtRsSPE8a0l4fwjLlBAVFba3BU7shJroVfgryZ4OjdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u/wAAKi8; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52bc3130ae6so5228781e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:58:32 -0700 (PDT)
+	s=arc-20240116; t=1718654385; c=relaxed/simple;
+	bh=08Im5tTtgDtaXbg/OAZrWCIVoI5T9qmWGX+gu7QrY6c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XGh4IKnEuPMVP6HZRpxYxZgse+1KVUJgymEImIk/UstKYOyBQKBhlbNIys6kwlYpWVbL8GqYCPfELg0vtR7Zqj91q/fInQUcdTqZQZ9LGLHU/AKLBkpp+JV/EKPHjvGtgXbvH2MB8MKGS1k0cIGwwOvGX8R42ZT6OZWNkkblIWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=MPUPtlA7; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec0f3b9bb8so31821391fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:59:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718654311; x=1719259111; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dt8gOXtAJsyKtG9aDgL57FXHSeZZBpHcJmuelSwD1xE=;
-        b=u/wAAKi8nAnCDLTGVmCri/G7HsBxrBNFdXRKRMq4Pi6x5i18Il4OY27HwgEIHu8IT8
-         cOyFvWsMqV3HPTrkPbWVbbsimbl5BLwfrb5U8lLV8+sm3DoULBF9c70Squsa8/YUFEUR
-         p3KovDYYtVY/gRwQI/3n8Thstd8JKMqM49hGtU0wY7ByNAhi/G1Zc8aFJvSBwIx4Vabl
-         RfwESzYT1MXtO2f7RsmQ69Q3CbBwMUDQmQS9Hfxq7lKWMIpIj1u3Hw8TnhYu1yvJEpab
-         qvUhuDFpV5MaeUQrPoYtu29TuuzM/oEJ/KhGZw7xmGtytJJA7JxkzgMQy1AXasGGd6IS
-         fEPw==
+        d=cloudflare.com; s=google09082023; t=1718654381; x=1719259181; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EyLxAVnNatw43iRM4OrcutPI3eZaU5xCt0a5Bh/nUZ8=;
+        b=MPUPtlA744BKBCUnEGeOw+Sok3XcRGyhgqo5gezsnIWarE8eYcNTWJPr5L7YvN8NXl
+         G4tqe0tuVAXBR2wW86XL0lm8bttsNc9WcxYoBXsAsvxS4uLcxy1edL7E3bawgrFFhrSn
+         43jSHpqnfOJApdcydmahI1Hm/Y6YY4jh72rb3CQsb5PkTQnBU9p49E03+IvtGlIT7Qcn
+         RPkaMQ4+df15eio/0CBKtnpw0JiB7VrMRGJkAtM5wYKXjyJsXQWf//A0FcubNT6iIVQP
+         gCJp7vzbze0Ro0iR6xaqC0Eka9S9/YuSCDLqwX/xOvQXszygwR+O/vYi+DUBZ1Hd6k9m
+         bQ3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718654311; x=1719259111;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dt8gOXtAJsyKtG9aDgL57FXHSeZZBpHcJmuelSwD1xE=;
-        b=IjR+NAFBBLXPXa4x2Z0KM9MFK7ltGvbL/ZimQBFonDQxQHXqt2PGVLxJ+zg5CjmFGg
-         DwZl6fS8BRif1j9WMmw/pLulxazRQMg7KpwNPeOHQrm9p+OIPdtQiXW40FOegm2spsNF
-         POZqXJd7IMYFnMMjsYE/9CirolWj5s3RYiZUS5UXbNOSFvJ1pt2y0jjoH2MpkqoQzi6o
-         oBEjwJ9xn3DaQsO2JpAuO7q/EWFs68sERUJSlumDfvwY+BESWy7CBbyYPNBBWPs8szPD
-         fbytWpnIDv0Qe1gW2mlUeH+1LudhsSFhxgyZwuaokyXiWOlSTTXZ/SGJR8ajBDz3SbVu
-         bhJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDou0A8FWvWxdBHO8YhsWr0kVia7Yv+vuKXDJd7mz2IVN4/XqXpabdQGSQugt+xXV80a1NYJJbErAkyWRLEjj2CJq19ZqjEHuk+9uK
-X-Gm-Message-State: AOJu0YwrcW76ltnKmObr9TPPIIS7AIrOUAh02ySuWlmVy4Kg0WYPHdZ9
-	ymAPBkC9ceg1KeR7deU22ENDtfgIVO2YtvCQX1xn28fx8fsTw2h4cUkGUgp1mHU=
-X-Google-Smtp-Source: AGHT+IGgD7APk54YXCS3zR67bSlvd9lT2U7OUsokuRECk7zCt1gIA8J1/z9B6AcqGUIbtP5nCBnDGQ==
-X-Received: by 2002:a05:6512:536:b0:52b:c2eb:2d with SMTP id 2adb3069b0e04-52cc628b041mr50934e87.39.1718654311052;
-        Mon, 17 Jun 2024 12:58:31 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:cb2:a9df:5ff5:5bcf:651f:66f5? ([2a00:f41:cb2:a9df:5ff5:5bcf:651f:66f5])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2872749sm1323169e87.164.2024.06.17.12.58.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 12:58:30 -0700 (PDT)
-Message-ID: <55685d92-8f5a-4b23-a7a0-7dcdea5baaea@linaro.org>
-Date: Mon, 17 Jun 2024 21:58:28 +0200
+        d=1e100.net; s=20230601; t=1718654381; x=1719259181;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EyLxAVnNatw43iRM4OrcutPI3eZaU5xCt0a5Bh/nUZ8=;
+        b=t02ZA63WesV+BtCeglLDdMpTpxqbn3Q97QWzYIs9E+g21jIFVSvH3LyXvYwylpz8d9
+         70Te38gMXekTK1wcha0rpXFq7wIzAB4ZZm0uMv5g1PI0wj/vk5qQG1/UAFDKZXnx9o3A
+         WwJlhDLAhfcNOJmbhUiAQz6ROoHLuZ3L3hdJka/GJi2ih8TA8nOy/tFmPyUZKHSeVIvd
+         qRL5MUkXfMqG4535A8PfAIx3IKN+5qMwpJOi6GPrqXrQC9ZC2tryfXNsXtwlW6J/7HxX
+         s22DEvUEAiLBLHjQEXgK9UoyyzrhX7ItlGR8qEeYSIVVwNriMnHluQoVjQr6CqNJ/uYm
+         tAzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcS/D4eZw4V1mv0JJCe8EXPrXJfWoDdXW0Vn49VfsZiXB7yZ4E333/zCkfP/qAJ8QSVZNYOLkaSWp+Am22m6y434CWMySG8AsMTInj
+X-Gm-Message-State: AOJu0Yyyn9osRtHNDEXrrVxirzJpSWYseTce7Im7gh47vAAevkv8nltz
+	atylLHoSoQwoLRNH8qRHvysjTc2q+hpWKm6AvP1CJTmzQSz707B2K0Scn6cf77U=
+X-Google-Smtp-Source: AGHT+IH4U5vzLeiz8hkqcYJKHqjJ00u0IYrLAWlmG3iRs3wJv+s+wvbGOotZo0aQPKNGhmClr2ICTA==
+X-Received: by 2002:a2e:300f:0:b0:2eb:d87f:7d71 with SMTP id 38308e7fff4ca-2ec0e5b5f69mr73029701fa.8.1718654381332;
+        Mon, 17 Jun 2024 12:59:41 -0700 (PDT)
+Received: from localhost.localdomain ([104.28.231.254])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e73e8sm205545885e9.43.2024.06.17.12.59.39
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 17 Jun 2024 12:59:40 -0700 (PDT)
+From: Ignat Korchagin <ignat@cloudflare.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Florent Revest <revest@chromium.org>,
+	kernel-team@cloudflare.com,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	stable@vger.kernel.org
+Subject: [PATCH net v2] net: do not leave a dangling sk pointer, when socket creation fails
+Date: Mon, 17 Jun 2024 20:59:34 +0100
+Message-Id: <20240617195934.64810-1-ignat@cloudflare.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: qcom: msm8926-motorola-peregrine: Add
- accelerometer, magnetometer, regulator
-To: git@apitzsch.eu, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org
-References: <20240616-peregrine-v1-1-85d14ae1a11a@apitzsch.eu>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240616-peregrine-v1-1-85d14ae1a11a@apitzsch.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+A KASAN enabled kernel will log something like below (decoded and stripped):
+[   78.328507][  T299] ==================================================================
+[ 78.329018][ T299] BUG: KASAN: slab-use-after-free in __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+[   78.329366][  T299] Read of size 8 at addr ffff888007110dd8 by task traceroute/299
+[   78.329366][  T299]
+[   78.329366][  T299] CPU: 2 PID: 299 Comm: traceroute Tainted: G            E      6.10.0-rc2+ #2
+[   78.329366][  T299] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[   78.329366][  T299] Call Trace:
+[   78.329366][  T299]  <TASK>
+[ 78.329366][ T299] dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1))
+[ 78.329366][ T299] print_report (mm/kasan/report.c:378 mm/kasan/report.c:488)
+[ 78.329366][ T299] ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+[ 78.329366][ T299] kasan_report (mm/kasan/report.c:603)
+[ 78.329366][ T299] ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+[ 78.329366][ T299] kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
+[ 78.329366][ T299] __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+[ 78.329366][ T299] bpf_get_socket_ptr_cookie (./arch/x86/include/asm/preempt.h:94 ./include/linux/sock_diag.h:42 net/core/filter.c:5094 net/core/filter.c:5092)
+[ 78.329366][ T299] bpf_prog_875642cf11f1d139___sock_release+0x6e/0x8e
+[ 78.329366][ T299] bpf_trampoline_6442506592+0x47/0xaf
+[ 78.329366][ T299] __sock_release (net/socket.c:652)
+[ 78.329366][ T299] __sock_create (net/socket.c:1601)
+...
+[   78.329366][  T299] Allocated by task 299 on cpu 2 at 78.328492s:
+[ 78.329366][ T299] kasan_save_stack (mm/kasan/common.c:48)
+[ 78.329366][ T299] kasan_save_track (mm/kasan/common.c:68)
+[ 78.329366][ T299] __kasan_slab_alloc (mm/kasan/common.c:312 mm/kasan/common.c:338)
+[ 78.329366][ T299] kmem_cache_alloc_noprof (mm/slub.c:3941 mm/slub.c:4000 mm/slub.c:4007)
+[ 78.329366][ T299] sk_prot_alloc (net/core/sock.c:2075)
+[ 78.329366][ T299] sk_alloc (net/core/sock.c:2134)
+[ 78.329366][ T299] inet_create (net/ipv4/af_inet.c:327 net/ipv4/af_inet.c:252)
+[ 78.329366][ T299] __sock_create (net/socket.c:1572)
+[ 78.329366][ T299] __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
+[ 78.329366][ T299] __x64_sys_socket (net/socket.c:1718)
+[ 78.329366][ T299] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+[ 78.329366][ T299] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+[   78.329366][  T299]
+[   78.329366][  T299] Freed by task 299 on cpu 2 at 78.328502s:
+[ 78.329366][ T299] kasan_save_stack (mm/kasan/common.c:48)
+[ 78.329366][ T299] kasan_save_track (mm/kasan/common.c:68)
+[ 78.329366][ T299] kasan_save_free_info (mm/kasan/generic.c:582)
+[ 78.329366][ T299] poison_slab_object (mm/kasan/common.c:242)
+[ 78.329366][ T299] __kasan_slab_free (mm/kasan/common.c:256)
+[ 78.329366][ T299] kmem_cache_free (mm/slub.c:4437 mm/slub.c:4511)
+[ 78.329366][ T299] __sk_destruct (net/core/sock.c:2117 net/core/sock.c:2208)
+[ 78.329366][ T299] inet_create (net/ipv4/af_inet.c:397 net/ipv4/af_inet.c:252)
+[ 78.329366][ T299] __sock_create (net/socket.c:1572)
+[ 78.329366][ T299] __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
+[ 78.329366][ T299] __x64_sys_socket (net/socket.c:1718)
+[ 78.329366][ T299] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+[ 78.329366][ T299] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
 
+Fix this by clearing the struct socket reference in sk_common_release() to cover
+all protocol families create functions.
 
-On 6/16/24 16:15, André Apitzsch via B4 Relay wrote:
-> From: André Apitzsch <git@apitzsch.eu>
-> 
-> Add the accelerometer, magnetometer and regulator that are present on
-> the Motorola Moto G 4G (2013) device.
-> 
-> While at it, update framebuffer supplies and temperature sensor.
+Fixes: c5dbb89fc2ac ("bpf: Expose bpf_get_socket_cookie to tracing programs")
+Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/netdev/20240613194047.36478-1-kuniyu@amazon.com/T/
+---
+Changes in v2:
+  * moved the NULL-ing of the socket reference to sk_common_release() (as
+    suggested by Kuniyuki Iwashima)
+  * trimmed down the KASAN report in the commit message to show only relevant
+    info
 
-That's a bit too much for a "while at it" ;) Please create separate commits
+ net/core/sock.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-[...]
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 8629f9aecf91..575af557c46b 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -3742,6 +3742,17 @@ void sk_common_release(struct sock *sk)
+ 
+ 	sk->sk_prot->unhash(sk);
+ 
++	/*
++	 * struct net_proto_family create functions like inet_create() or
++	 * inet6_create() have an error path, which call this function. This sk
++	 * may have already been associated with a struct socket, so ensure to
++	 * clear this reference not to leave a dangling pointer in the
++	 * struct socket instance.
++	 */
++
++	if (sk->sk_socket)
++		sk->sk_socket->sk = NULL;
++
+ 	/*
+ 	 * In this point socket cannot receive new packets, but it is possible
+ 	 * that some packets are in flight because some CPU runs receiver and
+-- 
+2.39.2
 
->   	sensor@48 {
->   		compatible = "ti,tmp108";
->   		reg = <0x48>;
-> +		interrupts-extended = <&tlmm 13 IRQ_TYPE_LEVEL_LOW>;
-> +		pinctrl-0 = <&temp_alert_default>;
-> +		pinctrl-names = "default";
-> +		#thermal-sensor-cells = <0>;
-
-FWIW the current driver doesn't seem to care about interrupts, perhaps
-you could extend it
-
-
-Konrad
 
