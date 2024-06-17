@@ -1,172 +1,109 @@
-Return-Path: <linux-kernel+bounces-216929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F4CF90A8B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:46:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC1390A8BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77E97B21771
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:46:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01992811F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2F719066E;
-	Mon, 17 Jun 2024 08:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD156190661;
+	Mon, 17 Jun 2024 08:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="q9F0VIjf"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M/3fepbZ"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCCC5336A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F099171B0
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718613974; cv=none; b=lg9ieczWnOmLbDMGuCpB6gH8CzXl0b3SP9D+dDob4YKqzJ1Tovr/o5rL9TvMEw3W8vjg9bcvc84+1InjKs4tJ+IpfE06lFm+dGoltn6/17WVQoqxGqxU/JbXL+vThCIrzN5iaOu8L0s39CATubOfQtrhb41e+B2iGPpzmsrCRSE=
+	t=1718614096; cv=none; b=cido+lOPBYbdL/W2OQTieh6KYSt5I6QvfhGjMaSH67yVwAusRMyNca8WZSRqlF36HbFzNe7B4S34jLdLEErtSzgZER9UiIrh6SlegcgQsvBfNL4bDL+b8YADZMNgt8Zm7hxT0NaZRBdJczgvzHjn9yd7wG6DSAbVYfkLgi8VmZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718613974; c=relaxed/simple;
-	bh=Bq7/0qa7R8/HJvVA9joTBDPoHjCRFLDPoUwUWy0pxB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NoP+znlh0c+/fk7FU2WMPbGDbF2t7wE7Q33wAA/x59XIlqpgaZCTMJhbAm+hbFf5Ax/9P6eJCsSl+MY6Wgnm8E3WCu6kuOPqdQANeELgi9sTabOOAVjzEqLWZ7AuKjufc8/wCa7u/7Tfb7nX+kVVV4/vH4dtNg6aGF5vQ9raYcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=q9F0VIjf; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45H8jGt41484406
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Mon, 17 Jun 2024 01:45:23 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45H8jGt41484406
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1718613923;
-	bh=qFqPyA+WpBJtrQjQTK7/FKSQCXP4sJIk7KZPCCFOrmI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q9F0VIjfaodugVbHzMYnwV5Phc+D5gNSrIvWNP6JPQMlI06InAr5ruZWm+6bmDSTY
-	 yunkv9fASMIKAU97OkAUWImt/VrBMpIQO6/j8jd/ZI+BJv+Q53tYKCTl/rk+kYulki
-	 J5VVt4nB0SzWsJlbdL6x9xAvyuP7LA4KKQ9/hC2zZwjykiV0rdiTQ3Cs+jyehZH15n
-	 epRb5e59JlpWyfWJ5VB21C1uAelS5bpufMg/t0hxyA5NSWi0a8XNeO+BYwUIrQuCGh
-	 VrUHlmUkISSIk3SNRmhb3EKjRnzp5ICro6snWjTB9Vc6epFCIfUE4lNv9z1hc4oQWb
-	 ckg33WmbG8HyA==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org
-Cc: luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        peterz@infradead.org, brgerst@gmail.com
-Subject: [PATCH v1 3/3] x86: Get rid of TOP_OF_KERNEL_STACK_PADDING on x86_64
-Date: Mon, 17 Jun 2024 01:45:15 -0700
-Message-ID: <20240617084516.1484390-4-xin@zytor.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240617084516.1484390-1-xin@zytor.com>
-References: <20240617084516.1484390-1-xin@zytor.com>
+	s=arc-20240116; t=1718614096; c=relaxed/simple;
+	bh=2kM/oHxrBScBuC7PXXmXDeLBNjTC/Qxpp/mhHadLs20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iWygLwDz4evQNTvu4Fe9bnCBzJpy+6OwUewqcGLR4nSvMkAv3vy4wM0776NR/1eQo9l3XwI3m/g7fbnEQ0bmdPM4CcAcujpmzEhiNqXiFFqNkuAv5JKy6YrnE6QAmA9tADBhMzCtE+16EOoISHb8nCZphXc7b8lzZ8EpIbUeyAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M/3fepbZ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c85a7f834so5326421e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718614093; x=1719218893; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BgNy9aSeOjtMvdyT2zIBjwfBSokXxGif772o4A37SX8=;
+        b=M/3fepbZr7BzTtn0VmT54aEdY/22PexeLFOZkIdqLJ4un6jVMjOHZGky5v5Rcgb5GY
+         LgbtTUIMLEbS6rCoRq2niWAxBj4NxCt4jkJyopnvLrFSHgQzcn1dy4QGWjQkqvXqxpdW
+         l9sxl8JSdaDbUCaL6O2kqnzVXEbk4K4QnVhTRG18FLqtcANTLRrwcZni7ubjVeXgaSsa
+         SCor4erZtwJrip1Qwuzs5/DdzWON62G/O3dpkll4tRWVRCDXAMFnxkvaY9NW9VmFKyKn
+         82iFvkFsLaZR9V/ZRYotAO3Y/WqS69hj/BlvUvhccXPZcW9v3tmZzPYhWXuKvTXySooV
+         txnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718614093; x=1719218893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BgNy9aSeOjtMvdyT2zIBjwfBSokXxGif772o4A37SX8=;
+        b=OhgsFFj+aF13jib6nKrePrW01ZOTdE17Epy68iCGdEiTfp4VK0l2RAApv6Sdcw7y6c
+         BX6YQfj8fCo3e6qjV2/UrRGtDhgW6YkYwd4zNQqmyOnXIp5wHLtI3/+s00Y8oMLOF7Md
+         hEEpTU9Hugbqq+cN94jgzrrFpvfpkIFdS1k5H49PQDP8Fd5+TLu0zNsVqfLJEXAN2M+B
+         +VdG8q0zced77zekZN40JRyUHV70D9o41g9AEBLsDlhZv5Az+Mdg6XwmdQvfxNFP47EP
+         NNS6mzhOPf4Sx4EsyzYH/HqKAvXzJG8nNxQMm0I5A2fiUR6+Z7VKztuWXBBwJZTmGdH2
+         SbpA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5SLZwMBGWawgBEdvFl7z2rh78iOMHNL82svsErTyoW5VbdLn7jbTSkrh2dpGHJ+luDngiVv6wo8aE/cnIqcq2EdkPE/lb1bnpRVHJ
+X-Gm-Message-State: AOJu0YyZTve+l3FgzJUTJQ7Xha/LFOKTcx6Q4z/CygOYXVjR80eh41W7
+	QBcRIN1wzIWsqOBT6LpEFJl8aWkPBBnuZE7wkNMsuEYS5vF/AKw1BERU5YNkhZbsUlnUa8TGHL3
+	fEeQuvV7juUnpKzyB3ti7j6pqNIMmXgW1xbgDWQ==
+X-Google-Smtp-Source: AGHT+IHbOKQhcmgxz7j/vSxObsm+6bA1uZav4s2Z4EB/68U7Rs3mQDLz30rV9Ja8l7chB7w8ej9DjSMq6TxD8gV+Sik=
+X-Received: by 2002:ac2:5e22:0:b0:52c:9725:b32b with SMTP id
+ 2adb3069b0e04-52ca6e6572amr5414563e87.17.1718614092791; Mon, 17 Jun 2024
+ 01:48:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240610223550.2449230-1-sean.anderson@linux.dev>
+In-Reply-To: <20240610223550.2449230-1-sean.anderson@linux.dev>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 17 Jun 2024 10:48:01 +0200
+Message-ID: <CACRpkdakB0vekDYaWYacfvo9DaGzJfXAqT97aG=x2g4eku2CbA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] pinctrl: zynqmp: Support muxing individual pins
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>, Krishna Potthuri <sai.krishna.potthuri@amd.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Because task_pt_regs() is now just an alias of thread_info.user_pt_regs,
-and no matter whether FRED is enabled or not a user level event frame on
-x86_64 is always pushed from top of current task kernel stack, i.e.,
-'(unsigned long)task_stack_page(task) + THREAD_SIZE', there is no meaning
-to keep TOP_OF_KERNEL_STACK_PADDING on x86_64, thus remove it.
+On Tue, Jun 11, 2024 at 12:37=E2=80=AFAM Sean Anderson <sean.anderson@linux=
+.dev> wrote:
 
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
----
- arch/x86/include/asm/processor.h   |  6 ++++--
- arch/x86/include/asm/switch_to.h   |  2 +-
- arch/x86/include/asm/thread_info.h | 10 ----------
- arch/x86/kernel/process.c          |  3 +--
- 4 files changed, 6 insertions(+), 15 deletions(-)
+> This series adds support for muxing individual pins, instead of
+> requiring groups to be muxed together. See [1] for additional
+> discussion.
+>
+> [1] https://lore.kernel.org/linux-arm-kernel/5bb0dc7e-4c89-4f3d-abc6-41ae=
+9ded5ae9@linux.dev/
+>
+> Changes in v3:
+> - Express groups/pins exclusivity using oneOf
+> - Fix zynqmp_pinmux_set_mux and zynqmp_pinconf_group_set not handling
+>   "pin" groups (thanks Sai Krishna).
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 91803844c4d7..9c5294f6d923 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -644,8 +644,6 @@ extern unsigned long __end_init_stack[];
-  */
- #define TOP_OF_INIT_STACK ((unsigned long)&__end_init_stack)
- 
--#define task_top_of_stack(task) ((unsigned long)(task_pt_regs(task) + 1))
--
- /*
-  * task_pt_regs() no longer converts a fixed offset from top of a task
-  * kernel stack to a pt_regs structure pointer, but rather returns
-@@ -660,6 +658,9 @@ extern unsigned long __end_init_stack[];
- #define task_pt_regs(task) ((task)->thread_info.user_pt_regs)
- 
- #ifdef CONFIG_X86_32
-+#define task_top_of_stack(task) ((unsigned long)task_stack_page(task) + THREAD_SIZE	\
-+				 - TOP_OF_KERNEL_STACK_PADDING)
-+
- #define INIT_THREAD  {							  \
- 	.sp0			= TOP_OF_INIT_STACK,			  \
- 	.sysenter_cs		= __KERNEL_CS,				  \
-@@ -669,6 +670,7 @@ extern unsigned long __end_init_stack[];
- 
- #else
- extern unsigned long __top_init_kernel_stack[];
-+#define task_top_of_stack(task) ((unsigned long)task_stack_page(task) + THREAD_SIZE)
- 
- #define INIT_THREAD {							\
- 	.sp	= (unsigned long)&__top_init_kernel_stack,		\
-diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
-index c3bd0c0758c9..902f1612ef3f 100644
---- a/arch/x86/include/asm/switch_to.h
-+++ b/arch/x86/include/asm/switch_to.h
-@@ -72,7 +72,7 @@ static inline void update_task_stack(struct task_struct *task)
- #else
- 	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
- 		/* WRMSRNS is a baseline feature for FRED. */
--		wrmsrns(MSR_IA32_FRED_RSP0, (unsigned long)task_stack_page(task) + THREAD_SIZE);
-+		wrmsrns(MSR_IA32_FRED_RSP0, task_top_of_stack(task));
- 	} else if (cpu_feature_enabled(X86_FEATURE_XENPV)) {
- 		/* Xen PV enters the kernel on the thread stack. */
- 		load_sp0(task_top_of_stack(task));
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 326268d440cf..331a6f32a0be 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -30,10 +30,6 @@
-  *
-  * In vm86 mode, the hardware frame is much longer still, so add 16
-  * bytes to make room for the real-mode segments.
-- *
-- * x86-64 has a fixed-length stack frame, but it depends on whether
-- * or not FRED is enabled. Future versions of FRED might make this
-- * dynamic, but for now it is always 2 words longer.
-  */
- #ifdef CONFIG_X86_32
- # ifdef CONFIG_VM86
-@@ -41,12 +37,6 @@
- # else
- #  define TOP_OF_KERNEL_STACK_PADDING 8
- # endif
--#else /* x86-64 */
--# ifdef CONFIG_X86_FRED
--#  define TOP_OF_KERNEL_STACK_PADDING (2 * 8)
--# else
--#  define TOP_OF_KERNEL_STACK_PADDING 0
--# endif
- #endif
- 
- /*
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 787a402e4ead..99f9887f710e 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -116,9 +116,8 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
-  */
- void arch_init_user_pt_regs(struct task_struct *tsk)
- {
--	unsigned long top_of_stack = (unsigned long)task_stack_page(tsk) + THREAD_SIZE;
-+	unsigned long top_of_stack = task_top_of_stack(tsk);
- 
--	top_of_stack -= TOP_OF_KERNEL_STACK_PADDING;
- 	tsk->thread_info.user_pt_regs = (struct pt_regs *)top_of_stack - 1;
- }
- 
--- 
-2.45.1
+OK Xilinx are happy, I'm OK with it.
 
+Patches applied!
+
+Yours,
+Linus Walleij
 
