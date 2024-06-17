@@ -1,259 +1,358 @@
-Return-Path: <linux-kernel+bounces-218350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7281D90BD0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:48:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3690790BD1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF7CC283411
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:48:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA1731F22EF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D641922F0;
-	Mon, 17 Jun 2024 21:48:28 +0000 (UTC)
-Received: from domac.alu.hr (domac.alu.hr [161.53.235.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D9C19AA46;
+	Mon, 17 Jun 2024 21:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EoeSEaXH"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF0E3E487
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 21:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.235.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7105B199E80;
+	Mon, 17 Jun 2024 21:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718660907; cv=none; b=LQy8lzjOMw5yGWmC/LLWRxZ5OkDPwKGjmVLlXj7nts2oewhC77MK5J4jHtbQPRdOypSQbfnKi3b6t0URsSjOutXRlzepokCr1aosMAtSot6BweRsr9naXEme+WyXwDT4Paap2fkxF7IOi2Ov3plETzaqRnx2QJgP9UuwzuOBPZY=
+	t=1718661392; cv=none; b=bforn0Qr3YC5kNr64qXYFMVyZJrXv6GIUkgVYnAWNFfWJcjTH3jSoEocP1QnJp+TFfvWmD2UvkvQhGRF/8Oi766ea43b/10n/nx4AEhpuhqv4QC8MwMf9e41an2AIn0ILK3MbqbX0MYOHNonwA+HwO+fkWueyCr52+0QMP9tSxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718660907; c=relaxed/simple;
-	bh=3AX8bQxI7nGY1VuSqg/tD2foMlN1Q9l9IjAVCU4XLCE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rCmkC359drbxw1CYfIJqws5d9tzWyruvD8lLCFJIVRjLFy57HNEmdKlZwoXXch4UEAba/uEqUsfKzDbLxxNqp6ndBxf8sbH3vArLFks4uSYImoBIsY4K4MTnAnXpIIjFnZOThGJSDQ4UqORGT8b3+XKz9iGuGbNeJe+XxPDexlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=161.53.235.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (localhost [127.0.0.1])
-	by domac.alu.hr (Postfix) with ESMTP id 9F8976018F;
-	Mon, 17 Jun 2024 23:48:21 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
-Received: from domac.alu.hr ([127.0.0.1])
-	by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id OW_G-Ho5VqqT; Mon, 17 Jun 2024 23:48:19 +0200 (CEST)
-Received: from [192.168.178.20] (dh207-41-66.xnet.hr [88.207.41.66])
-	by domac.alu.hr (Postfix) with ESMTPSA id 76D6260173;
-	Mon, 17 Jun 2024 23:48:18 +0200 (CEST)
-Message-ID: <838a42ea-b61d-4aee-96cb-bac544794349@gmail.com>
-Date: Mon, 17 Jun 2024 23:48:11 +0200
+	s=arc-20240116; t=1718661392; c=relaxed/simple;
+	bh=PJqnn1xMk/vyTcI7+A/mSlNl/s10hJkFyTUCDiHLlLQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Ftze+aIgtXZ8A9V3ZrewyMzU7muOd5Uzwicz6o3P+3358KkTShSTOeNOzb48AJQE+SKiCqjZ79gfFiklC6s6G16yIaJbU6mcXejplzRNrhIlBjnI7xeVtovUhCECJM0p/J82GK3HI4ri+vAz4MwyZJaMQVQeCg0WZCkaOuQR97o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EoeSEaXH; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718661388;
+	bh=PJqnn1xMk/vyTcI7+A/mSlNl/s10hJkFyTUCDiHLlLQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=EoeSEaXHD95nl/EmSAh75MlfIbNTFm82Mb1sQmIwwLYLI4KBbYwt1Lpd0GvJ3omZ+
+	 czgo+iO1EDSLl3wEYGVlkrvzwP4pHW4YPlgIvc3SBHVJ+7SMTvTsVO4bfS0kIfBrjy
+	 /eHVDWyHTB2/6wtHQUrH5CFedrSe8vog/CotNbGkg4UUH28nDenoh+n9gnw4wHjd7M
+	 3u/FP+++Iqs+WQfQICWyMYvjDRAoX7i0B8CcQ+oWOAua7QQ0NVCa2hQ5pbu9FG3FVt
+	 Ynbcm+t2lxP8EatqDlcT0sb9l+DoKOBYTyFBGQC1vm9efLFde+BqI6pt2r0B62iq2o
+	 KBBc7inHUqzLw==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5A56D378217B;
+	Mon, 17 Jun 2024 21:56:28 +0000 (UTC)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Tue, 18 Jun 2024 00:48:12 +0300
+Subject: [PATCH 4/4] phy: phy-rockchip-samsung-hdptx: Add clock provider
+ support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: Re: [BUG] 6.10-rc3 [drm:amdgpu_fill_buffer [amdgpu]] *ERROR* Trying
- to clear memory with ring turned off [DUPLICATE]
-To: linux-kernel@vger.kernel.org
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Lijo Lazar <lijo.lazar@amd.com>, Le Ma <le.ma@amd.com>,
- Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, Ma Jun
- <Jun.Ma2@amd.com>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- Hamza Mahfooz <hamza.mahfooz@amd.com>,
- Aurabindo Pillai <aurabindo.pillai@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-References: <4b7fd2f2-7ab2-412c-a65c-db172c819200@gmail.com>
-Content-Language: en-US
-In-Reply-To: <4b7fd2f2-7ab2-412c-a65c-db172c819200@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240618-rk3588-hdmiphy-clkprov-v1-4-80e4aa12177e@collabora.com>
+References: <20240618-rk3588-hdmiphy-clkprov-v1-0-80e4aa12177e@collabora.com>
+In-Reply-To: <20240618-rk3588-hdmiphy-clkprov-v1-0-80e4aa12177e@collabora.com>
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@collabora.com, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+X-Mailer: b4 0.14-dev-f7c49
 
-On 6/12/24 21:15, Mirsad Todorovac wrote:
-> Hi, all!
-> 
-> Running the vanilla torvalds tree kernel 6.10-rc3, there occurred an error in boot with
-> amdgpu.
-> 
-> Here is the complete output:
-> 
-> kernel: [    8.704024] WARNING: CPU: 24 PID: 689 at drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1379 amdgpu_bo_release_notify (drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1382 (discriminator 1)) amdgpu
-> kernel: [    8.704146] Modules linked in: binfmt_misc amd_atl intel_rapl_msr intel_rapl_common edac_mce_amd kvm_amd kvm snd_hda_codec_realtek snd_hda_codec_generic amdgpu(+) crct10dif_pclmul nls_iso8859_1 snd_hda_scodec_component polyval_clmulni snd_hda_codec_hdmi polyval_generic ghash_clmulni_intel snd_hda_intel sha256_ssse3 sha1_ssse3 snd_intel_dspcfg snd_intel_sdw_acpi aesni_intel snd_hda_codec crypto_simd cryptd snd_seq_midi amdxcp snd_seq_midi_event snd_hda_core drm_exec gpu_sched joydev snd_rawmidi snd_hwdep rapl drm_buddy input_leds drm_suballoc_helper snd_seq drm_ttm_helper wmi_bmof snd_pcm snd_seq_device ttm k10temp ccp snd_timer drm_display_helper snd drm_kms_helper i2c_algo_bit soundcore mac_hid tcp_bbr sch_fq msr parport_pc ppdev lp parport efi_pstore drm ip_tables x_tables autofs4 btrfs blake2b_generic xor raid6_pq libcrc32c hid_generic usbhid hid nvme crc32_pclmul ahci i2c_piix4 nvme_core r8169 xhci_pci libahci xhci_pci_renesas realtek video wmi gpio_amdpt
-> kernel: [    8.704200] CPU: 24 PID: 689 Comm: systemd-udevd Not tainted 6.10.0-rc1-next-20240528 #1
-> kernel: [    8.704202] Hardware name: ASRock X670E PG Lightning/X670E PG Lightning, BIOS 1.21 04/26/2023
-> kernel: [    8.704203] RIP: 0010:amdgpu_bo_release_notify (drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1382 (discriminator 1)) amdgpu
-> kernel: [ 8.704324] Code: 0b e9 a3 fe ff ff 48 ba ff ff ff ff ff ff ff 7f 31 f6 4c 89 ef e8 c2 c4 dc ee eb 99 e8 eb bc dc ee eb b2 0f 0b e9 3c fe ff ff <0f> 0b eb a7 be 03 00 00 00 e8 b4 4b a1 ee eb 9b e8 4d 5c 36 ef 66
-> All code
-> ========
->    0:	0b e9                	or     %ecx,%ebp
->    2:	a3 fe ff ff 48 ba ff 	movabs %eax,0xffffffba48fffffe
->    9:	ff ff 
->    b:	ff                   	(bad)  
->    c:	ff                   	(bad)  
->    d:	ff                   	(bad)  
->    e:	ff                   	(bad)  
->    f:	7f 31                	jg     0x42
->   11:	f6 4c 89 ef e8       	testb  $0xe8,-0x11(%rcx,%rcx,4)
->   16:	c2 c4 dc             	ret    $0xdcc4
->   19:	ee                   	out    %al,(%dx)
->   1a:	eb 99                	jmp    0xffffffffffffffb5
->   1c:	e8 eb bc dc ee       	call   0xffffffffeedcbd0c
->   21:	eb b2                	jmp    0xffffffffffffffd5
->   23:	0f 0b                	ud2    
->   25:	e9 3c fe ff ff       	jmp    0xfffffffffffffe66
->   2a:*	0f 0b                	ud2    		<-- trapping instruction
->   2c:	eb a7                	jmp    0xffffffffffffffd5
->   2e:	be 03 00 00 00       	mov    $0x3,%esi
->   33:	e8 b4 4b a1 ee       	call   0xffffffffeea14bec
->   38:	eb 9b                	jmp    0xffffffffffffffd5
->   3a:	e8 4d 5c 36 ef       	call   0xffffffffef365c8c
->   3f:	66                   	data16
-> 
-> Code starting with the faulting instruction
-> ===========================================
->    0:	0f 0b                	ud2    
->    2:	eb a7                	jmp    0xffffffffffffffab
->    4:	be 03 00 00 00       	mov    $0x3,%esi
->    9:	e8 b4 4b a1 ee       	call   0xffffffffeea14bc2
->    e:	eb 9b                	jmp    0xffffffffffffffab
->   10:	e8 4d 5c 36 ef       	call   0xffffffffef365c62
->   15:	66                   	data16
-> kernel: [    8.704325] RSP: 0018:ffffb74b014d3380 EFLAGS: 00010282
-> kernel: [    8.704327] RAX: 00000000ffffffea RBX: ffff940781ec5c48 RCX: 0000000000000000
-> kernel: [    8.704328] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> kernel: [    8.704329] RBP: ffffb74b014d33b8 R08: 0000000000000000 R09: 0000000000000000
-> kernel: [    8.704330] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9407dc80ef58
-> kernel: [    8.704330] R13: ffff940781ec5c00 R14: 0000000000000000 R15: 0000000000000000
-> kernel: [    8.704331] FS:  0000783805ca28c0(0000) GS:ffff941698600000(0000) knlGS:0000000000000000
-> kernel: [    8.704333] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> kernel: [    8.704334] CR2: 00007ec7be572000 CR3: 000000010f7e4000 CR4: 0000000000750ef0
-> kernel: [    8.704335] PKRU: 55555554
-> kernel: [    8.704335] Call Trace:
-> kernel: [    8.704337]  <TASK>
-> kernel: [    8.704339] ? show_regs+0x71/0x90 
-> kernel: [    8.704344] ? __warn+0x88/0x140 
-> kernel: [    8.704347] ? amdgpu_bo_release_notify (drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1382 (discriminator 1)) amdgpu
-> kernel: [    8.704464] ? report_bug+0x1ab/0x1c0 
-> kernel: [    8.704468] ? handle_bug+0x46/0x90 
-> kernel: [    8.704471] ? exc_invalid_op+0x19/0x80 
-> kernel: [    8.704473] ? asm_exc_invalid_op+0x1b/0x20 
-> kernel: [    8.704478] ? amdgpu_bo_release_notify (drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1382 (discriminator 1)) amdgpu
-> kernel: [    8.704595] ttm_bo_release (drivers/gpu/drm/ttm/ttm_bo.c:341) ttm
-> kernel: [    8.704601] ttm_bo_put (drivers/gpu/drm/ttm/ttm_bo.c:401) ttm
-> kernel: [    8.704604] amdgpu_bo_free_kernel (drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:875 drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:459) amdgpu
-> kernel: [    8.704721] dm_helpers_free_gpu_mem (./include/linux/list.h:218 ./include/linux/list.h:229 drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_helpers.c:1085) amdgpu
-> kernel: [    8.704915] dcn315_clk_mgr_construct (drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c:655) amdgpu
-> kernel: [    8.705113] dc_clk_mgr_create (drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/clk_mgr.c:267) amdgpu
-> kernel: [    8.705302] dc_create (drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:1068 drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:1427) amdgpu
-> kernel: [    8.705468] ? srso_alias_return_thunk+0x5/0xfbef5 
-> kernel: [    8.705470] ? dmi_matches+0xa0/0x230 
-> kernel: [    8.705474] amdgpu_dm_init+0x2b3/0x2c30 amdgpu
-> kernel: [    8.705643] ? prb_read_valid+0x1c/0x30 
-> kernel: [    8.705646] ? srso_alias_return_thunk+0x5/0xfbef5 
-> kernel: [    8.705647] ? console_unlock+0x77/0x120 
-> kernel: [    8.705649] ? srso_alias_return_thunk+0x5/0xfbef5 
-> kernel: [    8.705650] ? __wake_up_klogd.part.0+0x40/0x70 
-> kernel: [    8.705652] ? srso_alias_return_thunk+0x5/0xfbef5 
-> kernel: [    8.705653] ? dev_printk_emit+0x86/0xc0 
-> kernel: [    8.705656] ? srso_alias_return_thunk+0x5/0xfbef5 
-> kernel: [    8.705661] dm_hw_init (drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:2572) amdgpu
-> kernel: [    8.705806] amdgpu_device_init (drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:2653 drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:2870 drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:4303) amdgpu
-> kernel: [    8.705925] ? srso_alias_return_thunk+0x5/0xfbef5 
-> kernel: [    8.705927] ? pci_read_config_word+0x29/0x60 
-> kernel: [    8.705929] ? srso_alias_return_thunk+0x5/0xfbef5 
-> kernel: [    8.705930] ? do_pci_enable_device+0xe3/0x110 
-> kernel: [    8.705934] amdgpu_driver_load_kms (drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c:146) amdgpu
-> kernel: [    8.706050] amdgpu_pci_probe (drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:2291) amdgpu
-> kernel: [    8.706165] local_pci_probe+0x48/0xb0 
-> kernel: [    8.706167] pci_device_probe+0xc8/0x290 
-> kernel: [    8.706170] really_probe+0xf4/0x3b0 
-> kernel: [    8.706173] __driver_probe_device+0x8a/0x180 
-> kernel: [    8.706175] driver_probe_device+0x23/0xd0 
-> kernel: [    8.706177] __driver_attach+0x10f/0x220 
-> kernel: [    8.706178] ? __pfx___driver_attach+0x10/0x10 
-> kernel: [    8.706180] bus_for_each_dev+0x7a/0xe0 
-> kernel: [    8.706182] driver_attach+0x1e/0x30 
-> kernel: [    8.706184] bus_add_driver+0x11f/0x260 
-> kernel: [    8.706185] driver_register+0x64/0x140 
-> kernel: [    8.706188] ? __pfx_amdgpu_init (drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:2525) amdgpu
-> kernel: [    8.706301] __pci_register_driver+0x61/0x70 
-> kernel: [    8.706303] amdgpu_init (drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:2836) amdgpu
-> kernel: [    8.706416] do_one_initcall+0x46/0x330 
-> kernel: [    8.706419] ? kmalloc_trace_noprof+0x115/0x340 
-> kernel: [    8.706423] do_init_module+0x6a/0x270 
-> kernel: [    8.706426] load_module+0x21e9/0x22b0 
-> kernel: [    8.706431] init_module_from_file+0x9c/0xf0 
-> kernel: [    8.706433] ? srso_alias_return_thunk+0x5/0xfbef5 
-> kernel: [    8.706434] ? init_module_from_file+0x9c/0xf0 
-> kernel: [    8.706437] idempotent_init_module+0x184/0x240 
-> kernel: [    8.706440] __x64_sys_finit_module+0x64/0xd0 
-> kernel: [    8.706442] x64_sys_call+0x1903/0x26f0 
-> kernel: [    8.706444] do_syscall_64+0x70/0x130 
-> kernel: [    8.706446] ? srso_alias_return_thunk+0x5/0xfbef5 
-> kernel: [    8.706447] ? do_syscall_64+0x7c/0x130 
-> kernel: [    8.706449] entry_SYSCALL_64_after_hwframe+0x76/0x7e 
-> kernel: [    8.706451] RIP: 0033:0x783805b1e88d
-> kernel: [ 8.706452] Code: 5b 41 5c c3 66 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 73 b5 0f 00 f7 d8 64 89 01 48
-> All code
-> ========
->    0:	5b                   	pop    %rbx
->    1:	41 5c                	pop    %r12
->    3:	c3                   	ret    
->    4:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
->    b:	00 00 
->    d:	f3 0f 1e fa          	endbr64 
->   11:	48 89 f8             	mov    %rdi,%rax
->   14:	48 89 f7             	mov    %rsi,%rdi
->   17:	48 89 d6             	mov    %rdx,%rsi
->   1a:	48 89 ca             	mov    %rcx,%rdx
->   1d:	4d 89 c2             	mov    %r8,%r10
->   20:	4d 89 c8             	mov    %r9,%r8
->   23:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
->   28:	0f 05                	syscall 
->   2a:*	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax		<-- trapping instruction
->   30:	73 01                	jae    0x33
->   32:	c3                   	ret    
->   33:	48 8b 0d 73 b5 0f 00 	mov    0xfb573(%rip),%rcx        # 0xfb5ad
->   3a:	f7 d8                	neg    %eax
->   3c:	64 89 01             	mov    %eax,%fs:(%rcx)
->   3f:	48                   	rex.W
-> 
-> Code starting with the faulting instruction
-> ===========================================
->    0:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax
->    6:	73 01                	jae    0x9
->    8:	c3                   	ret    
->    9:	48 8b 0d 73 b5 0f 00 	mov    0xfb573(%rip),%rcx        # 0xfb583
->   10:	f7 d8                	neg    %eax
->   12:	64 89 01             	mov    %eax,%fs:(%rcx)
->   15:	48                   	rex.W
-> kernel: [    8.706453] RSP: 002b:00007ffc702d1148 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-> kernel: [    8.706455] RAX: ffffffffffffffda RBX: 0000594fe0ca0410 RCX: 0000783805b1e88d
-> kernel: [    8.706456] RDX: 0000000000000000 RSI: 0000594fe0e08280 RDI: 0000000000000018
-> kernel: [    8.706456] RBP: 0000000000020000 R08: 0000000000000000 R09: 0000000000000002
-> kernel: [    8.706457] R10: 0000000000000018 R11: 0000000000000246 R12: 0000594fe0e08280
-> kernel: [    8.706458] R13: 0000594fe0df04e0 R14: 0000000000000000 R15: 0000594fe0e005f0
-> kernel: [    8.706461]  </TASK>
-> kernel: [    8.706462] ---[ end trace 0000000000000000 ]---
-> 
-> Hope this helps.
-> 
-> Best regards,
-> Mirsad Todorovac
+The HDMI PHY PLL can be used as an alternative dclk source to RK3588 SoC
+CRU. It provides more accurate clock rates required by VOP2 to improve
+existing support for display modes handling, which is known to be
+problematic when dealing with non-integer refresh rates, among others.
 
-This is apparently a duplicate of <CABXGCsN6j9GMTx+f_pYShOpLKL5b6kmJ3w-FeYHHw9nUWYjyHg@mail.gmail.com>
-from 2024-05-17.
+It is worth noting this only works for HDMI 2.0 or below, e.g. cannot be
+used to support HDMI 2.1 4K@120Hz mode.
 
-However, 6.10-rc3 from Jun 09 was still affected.
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 189 +++++++++++++++++++---
+ 1 file changed, 167 insertions(+), 22 deletions(-)
 
-6.10-rc4 is clear of this msg.
+diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+index 72de287282eb..ad3fd4084377 100644
+--- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
++++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+@@ -8,6 +8,7 @@
+  */
+ #include <linux/bitfield.h>
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+@@ -191,6 +192,8 @@
+ #define LN3_TX_SER_RATE_SEL_HBR2	BIT(3)
+ #define LN3_TX_SER_RATE_SEL_HBR3	BIT(2)
+ 
++#define HDMI20_MAX_RATE			600000000
++
+ struct lcpll_config {
+ 	u32 bit_rate;
+ 	u8 lcvco_mode_en;
+@@ -273,6 +276,12 @@ struct rk_hdptx_phy {
+ 	struct clk_bulk_data *clks;
+ 	int nr_clks;
+ 	struct reset_control_bulk_data rsts[RST_MAX];
++
++	/* clk provider */
++	struct clk_hw hw;
++	unsigned long rate;
++
++	atomic_t usage_count;
+ };
+ 
+ static const struct ropll_config ropll_tmds_cfg[] = {
+@@ -760,6 +769,8 @@ static int rk_hdptx_ropll_tmds_cmn_config(struct rk_hdptx_phy *hdptx,
+ 	struct ropll_config rc = {0};
+ 	int i;
+ 
++	hdptx->rate = rate * 100;
++
+ 	for (i = 0; i < ARRAY_SIZE(ropll_tmds_cfg); i++)
+ 		if (rate == ropll_tmds_cfg[i].bit_rate) {
+ 			cfg = &ropll_tmds_cfg[i];
+@@ -823,19 +834,6 @@ static int rk_hdptx_ropll_tmds_cmn_config(struct rk_hdptx_phy *hdptx,
+ static int rk_hdptx_ropll_tmds_mode_config(struct rk_hdptx_phy *hdptx,
+ 					   unsigned int rate)
+ {
+-	u32 val;
+-	int ret;
+-
+-	ret = regmap_read(hdptx->grf, GRF_HDPTX_STATUS, &val);
+-	if (ret)
+-		return ret;
+-
+-	if (!(val & HDPTX_O_PLL_LOCK_DONE)) {
+-		ret = rk_hdptx_ropll_tmds_cmn_config(hdptx, rate);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	rk_hdptx_multi_reg_write(hdptx, rk_hdtpx_common_sb_init_seq);
+ 
+ 	regmap_write(hdptx->regmap, LNTOP_REG(0200), 0x06);
+@@ -857,10 +855,66 @@ static int rk_hdptx_ropll_tmds_mode_config(struct rk_hdptx_phy *hdptx,
+ 	return rk_hdptx_post_enable_lane(hdptx);
+ }
+ 
++static int rk_hdptx_phy_consumer_get(struct rk_hdptx_phy *hdptx,
++				     unsigned int rate)
++{
++	u32 status;
++	int ret;
++
++	if (atomic_inc_return(&hdptx->usage_count) > 1)
++		return 0;
++
++	ret = regmap_read(hdptx->grf, GRF_HDPTX_STATUS, &status);
++	if (ret)
++		goto dec_usage;
++
++	if (status & HDPTX_O_PLL_LOCK_DONE)
++		dev_warn(hdptx->dev, "PLL locked by unknown consumer!\n");
++
++	if (rate) {
++		ret = rk_hdptx_ropll_tmds_cmn_config(hdptx, rate);
++		if (ret)
++			goto dec_usage;
++	}
++
++	return 0;
++
++dec_usage:
++	atomic_dec(&hdptx->usage_count);
++	return ret;
++}
++
++static int rk_hdptx_phy_consumer_put(struct rk_hdptx_phy *hdptx)
++{
++	u32 status;
++	int ret;
++
++	ret = atomic_dec_return(&hdptx->usage_count);
++	if (ret > 0)
++		return 0;
++
++	if (ret < 0) {
++		dev_warn(hdptx->dev, "Usage count underflow!\n");
++		ret = -EINVAL;
++	} else {
++		ret = regmap_read(hdptx->grf, GRF_HDPTX_STATUS, &status);
++		if (!ret) {
++			if (status & HDPTX_O_PLL_LOCK_DONE)
++				rk_hdptx_phy_disable(hdptx);
++			return 0;
++		}
++	}
++
++	atomic_inc(&hdptx->usage_count);
++	return ret;
++}
++
+ static int rk_hdptx_phy_power_on(struct phy *phy)
+ {
+ 	struct rk_hdptx_phy *hdptx = phy_get_drvdata(phy);
+ 	int bus_width = phy_get_bus_width(hdptx->phy);
++	int ret;
++
+ 	/*
+ 	 * FIXME: Temporary workaround to pass pixel_clk_rate
+ 	 * from the HDMI bridge driver until phy_configure_opts_hdmi
+@@ -871,20 +925,18 @@ static int rk_hdptx_phy_power_on(struct phy *phy)
+ 	dev_dbg(hdptx->dev, "%s bus_width=%x rate=%u\n",
+ 		__func__, bus_width, rate);
+ 
+-	return rk_hdptx_ropll_tmds_mode_config(hdptx, rate);
++	ret = rk_hdptx_phy_consumer_get(hdptx, rate);
++	if (!ret)
++		ret = rk_hdptx_ropll_tmds_mode_config(hdptx, rate);
++
++	return ret;
+ }
+ 
+ static int rk_hdptx_phy_power_off(struct phy *phy)
+ {
+ 	struct rk_hdptx_phy *hdptx = phy_get_drvdata(phy);
+-	u32 val;
+-	int ret;
+-
+-	ret = regmap_read(hdptx->grf, GRF_HDPTX_STATUS, &val);
+-	if (ret == 0 && (val & HDPTX_O_PLL_LOCK_DONE))
+-		rk_hdptx_phy_disable(hdptx);
+ 
+-	return ret;
++	return rk_hdptx_phy_consumer_put(hdptx);
+ }
+ 
+ static const struct phy_ops rk_hdptx_phy_ops = {
+@@ -893,6 +945,99 @@ static const struct phy_ops rk_hdptx_phy_ops = {
+ 	.owner	   = THIS_MODULE,
+ };
+ 
++static struct rk_hdptx_phy *to_rk_hdptx_phy(struct clk_hw *hw)
++{
++	return container_of(hw, struct rk_hdptx_phy, hw);
++}
++
++static int rk_hdptx_phy_clk_prepare(struct clk_hw *hw)
++{
++	struct rk_hdptx_phy *hdptx = to_rk_hdptx_phy(hw);
++
++	return rk_hdptx_phy_consumer_get(hdptx, hdptx->rate / 100);
++}
++
++static void rk_hdptx_phy_clk_unprepare(struct clk_hw *hw)
++{
++	struct rk_hdptx_phy *hdptx = to_rk_hdptx_phy(hw);
++
++	rk_hdptx_phy_consumer_put(hdptx);
++}
++
++static unsigned long rk_hdptx_phy_clk_recalc_rate(struct clk_hw *hw,
++						  unsigned long parent_rate)
++{
++	struct rk_hdptx_phy *hdptx = to_rk_hdptx_phy(hw);
++
++	return hdptx->rate;
++}
++
++static long rk_hdptx_phy_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++					unsigned long *parent_rate)
++{
++	u32 bit_rate = rate / 100;
++	int i;
++
++	if (rate > HDMI20_MAX_RATE)
++		return rate;
++
++	for (i = 0; i < ARRAY_SIZE(ropll_tmds_cfg); i++)
++		if (bit_rate == ropll_tmds_cfg[i].bit_rate)
++			break;
++
++	if (i == ARRAY_SIZE(ropll_tmds_cfg) &&
++	    !rk_hdptx_phy_clk_pll_calc(bit_rate, NULL))
++		return -EINVAL;
++
++	return rate;
++}
++
++static int rk_hdptx_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++				     unsigned long parent_rate)
++{
++	struct rk_hdptx_phy *hdptx = to_rk_hdptx_phy(hw);
++
++	return rk_hdptx_ropll_tmds_cmn_config(hdptx, rate / 100);
++}
++
++static const struct clk_ops hdptx_phy_clk_ops = {
++	.prepare = rk_hdptx_phy_clk_prepare,
++	.unprepare = rk_hdptx_phy_clk_unprepare,
++	.recalc_rate = rk_hdptx_phy_clk_recalc_rate,
++	.round_rate = rk_hdptx_phy_clk_round_rate,
++	.set_rate = rk_hdptx_phy_clk_set_rate,
++};
++
++static int rk_hdptx_phy_clk_register(struct rk_hdptx_phy *hdptx)
++{
++	struct device *dev = hdptx->dev;
++	const char *name, *pname;
++	struct clk *refclk;
++	int ret, id;
++
++	refclk = devm_clk_get(dev, "ref");
++	if (IS_ERR(refclk))
++		return dev_err_probe(dev, PTR_ERR(refclk),
++				     "Failed to get ref clock\n");
++
++	id = of_alias_get_id(dev->of_node, "hdptxphy");
++	name = id > 0 ? "clk_hdmiphy_pixel1" : "clk_hdmiphy_pixel0";
++	pname = __clk_get_name(refclk);
++
++	hdptx->hw.init = CLK_HW_INIT(name, pname, &hdptx_phy_clk_ops,
++				     CLK_GET_RATE_NOCACHE);
++
++	ret = devm_clk_hw_register(dev, &hdptx->hw);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to register clock\n");
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &hdptx->hw);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Failed to register clk provider\n");
++	return 0;
++}
++
+ static int rk_hdptx_phy_runtime_suspend(struct device *dev)
+ {
+ 	struct rk_hdptx_phy *hdptx = dev_get_drvdata(dev);
+@@ -987,7 +1132,7 @@ static int rk_hdptx_phy_probe(struct platform_device *pdev)
+ 	reset_control_deassert(hdptx->rsts[RST_CMN].rstc);
+ 	reset_control_deassert(hdptx->rsts[RST_INIT].rstc);
+ 
+-	return 0;
++	return rk_hdptx_phy_clk_register(hdptx);
+ }
+ 
+ static const struct dev_pm_ops rk_hdptx_phy_pm_ops = {
 
-Hope this helps.
-
-Best regards,
-Mirsad Todorovac
-
-
-
-
+-- 
+2.45.2
 
 
