@@ -1,107 +1,153 @@
-Return-Path: <linux-kernel+bounces-218017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FCA90B807
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:27:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6FA90B809
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18C51F21FB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:27:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEE5286C22
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D02E176AB4;
-	Mon, 17 Jun 2024 17:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16D716EB5C;
+	Mon, 17 Jun 2024 17:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/lBgC7H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sq4HRtmo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849211741F1;
-	Mon, 17 Jun 2024 17:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACB816EB46;
+	Mon, 17 Jun 2024 17:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718645212; cv=none; b=bVeOyexdZI6U088y87CUWP7MM9ZWs5oX9gD4oJAMpb7aoVaLLm6w82ENsOPRNZnYBu6khwblZFJWCsUEFuL2B5bpgHifQ2L389KCi2nUbv5AwEKUfTBGCAeyvJFDDUney8x9WXj+Fdy8n/m68Ux171J/bjwsEm3nEjk1P8//OdA=
+	t=1718645301; cv=none; b=DBlvdGVlJhNx64lhud1jhxnbIveC9YXEemlHU2XVUe31k9Y0qtoESLFAWdLtS2k4HY4w+DZdLQ+2ERNSDwxE9sfGZJzQSnrY10Zyuhg8yuk95ttC5DJ4es02M4mhFBjoqQTCA0hxSmaNGbRSKTeBb8eJOIrjlHtmShraa1Oqozc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718645212; c=relaxed/simple;
-	bh=Galb2R72ZDFbuADAfagUUEATITsEl3obGN2wKJQfpbA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RAFxIR0GpihJ8zjjZ8eNdp+khJqBkAyr0ElYcQ/Vw0V608peVrKi29c0sknwB9HUVxt9TZZE1GoLO9ufA19xRaj7sHjKAVsH8+V6T7ER/bNYj9yTWZmyV9T46/73A3a1P1UCglxiYLdUIjzaV2JkRABr+TZfSKw5jbmLzIB1lYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/lBgC7H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 156BCC2BD10;
-	Mon, 17 Jun 2024 17:26:46 +0000 (UTC)
+	s=arc-20240116; t=1718645301; c=relaxed/simple;
+	bh=IKOgUg4zcXbjo67A/2GMnXl420R2v0GOkOcdt+ti4qM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X36TayuttHMZJmxb+08acPy1F8mjOj30GYIjxVNsRPKd18Er9JofvZU0UNidUuR3gl/I3Sxv7mwl85vTztcLx8k4agokjcUE0PvD030xgh5NM5F2FEYHu8le38b4bW+LTUTk4BPjGjphkoWoCBCW0ws7t3XiSJjk68xwtOcZbyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sq4HRtmo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BBF1C2BD10;
+	Mon, 17 Jun 2024 17:28:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718645212;
-	bh=Galb2R72ZDFbuADAfagUUEATITsEl3obGN2wKJQfpbA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=U/lBgC7HYfa3awbsv922WQIlVSDWV3Q3dloiCvdd3uo/pZ0H4OXjwohO/1mh2E813
-	 8rQ+v0SPPSgq2OTPU/oYCMFCEgsNfxhNQodh3UkfTW2mPRSCOlUe9FVEGP300ZTCZ3
-	 ApmRUOHkhWwpqBVCzRN9ZjZ+JbAjvZfAv3JW2EBm8BG7ga/UNGMoC8AqGtLh2z/0Ld
-	 2vNnxs7BWXWMMKjXUFbq+hkwyGqYnUwKn/3Sdqpe4Xwg8lHfe7ULtOlacAK0ydg3PE
-	 U5mayLHmuAIU5ptRTZ/zq0PnDHFi+GLm66rG21G7zDbZ6dSmg5CGBskdcCWDmYI/03
-	 lZ72PQevA5hVw==
-From: Mark Brown <broonie@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
- linux-sound@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20240616-md-arm-sound-soc-fsl-v2-1-228772e81a54@quicinc.com>
-References: <20240616-md-arm-sound-soc-fsl-v2-1-228772e81a54@quicinc.com>
-Subject: Re: [PATCH v2] ASoC: fsl: imx-pcm-fiq: add missing
- MODULE_DESCRIPTION() macro
-Message-Id: <171864520667.209755.6049429279245584956.b4-ty@kernel.org>
-Date: Mon, 17 Jun 2024 18:26:46 +0100
+	s=k20201202; t=1718645300;
+	bh=IKOgUg4zcXbjo67A/2GMnXl420R2v0GOkOcdt+ti4qM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sq4HRtmoGBMHKg/cKbDuz2yF6q/Of50DlqO7vDUFbUAmC5vw0cWehniCmMqfcgDCc
+	 QMc1ug1du8PzBgxDRsKPZ7klIIxhDQdzjPclopll1O7H0Rn7ODrXo/eI375SZsZPGq
+	 5wmvUt81CpOfZ65JP+lTjGp1BEXeeGS7QX/o8Z+Hd+8ZokK4BuhRKOfw8QVefttCSA
+	 /kH0sUuxHmGqdkIyBB6pH/kZ/aok5Kv/0FHl2aD9dwcRpXZDpGxYPd123NH/o5TeUi
+	 rWindJ+tuyTQSnyJh4XvCKJuGdJHohpOrEk2AYy68kDb7rTXwMOqU+40PuuaNPSP9t
+	 DW02Pvk7AE5ZQ==
+Date: Mon, 17 Jun 2024 10:28:20 -0700
+From: Kees Cook <kees@kernel.org>
+To: Martin Uecker <uecker@tugraz.at>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Erick Archer <erick.archer@outlook.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Matthew Wilcox <mawilcox@microsoft.com>, x86@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 0/3] Hardening perf subsystem
+Message-ID: <202406171019.9F0127F@keescook>
+References: <AS8PR02MB7237F5BFDAA793E15692B3998BFD2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+ <202406101010.E1C77AE9D@keescook>
+ <20240610200544.GY8774@noisy.programming.kicks-ass.net>
+ <202406101438.BC43514F@keescook>
+ <20240611075542.GD8774@noisy.programming.kicks-ass.net>
+ <202406121148.688240B@keescook>
+ <20240612220821.GA18881@noisy.programming.kicks-ass.net>
+ <202406121530.D9DB956C8@keescook>
+ <20240614101708.GO8774@noisy.programming.kicks-ass.net>
+ <c8234b8e2c9c1122eec73c97901e36586160f0cb.camel@tugraz.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c8234b8e2c9c1122eec73c97901e36586160f0cb.camel@tugraz.at>
 
-On Sun, 16 Jun 2024 20:52:26 -0700, Jeff Johnson wrote:
-> With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/fsl/imx-pcm-fiq.o
+On Sat, Jun 15, 2024 at 06:09:07PM +0200, Martin Uecker wrote:
+> Am Freitag, dem 14.06.2024 um 12:17 +0200 schrieb Peter Zijlstra:
+> > On Wed, Jun 12, 2024 at 04:23:31PM -0700, Kees Cook wrote:
+> > > On Thu, Jun 13, 2024 at 12:08:21AM +0200, Peter Zijlstra wrote:
+> > > > On Wed, Jun 12, 2024 at 12:01:19PM -0700, Kees Cook wrote:
+> > > > > I'm happy to take patches. And for this bikeshed, this would be better
+> > > > > named under the size_*() helpers which are trying to keep size_t
+> > > > > calculations from overflowing (by saturating). i.e.:
+> > > > > 
+> > > > > 	size_add_mult(sizeof(*p), sizeof(*p->member), num)
+> > > > 
+> > > > Fine I suppose, but what if we want something not size_t? Are we waiting
+> > > > for the type system extension?
+> > > 
+> > > Because of C's implicit promotion/truncation, we can't do anything
+> > > sanely with return values of arbitrary type size; we have to capture the
+> > > lvalue type somehow so the checking can happen without C doing silent
+> > > garbage.
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> 
+> What is the specific problem here?
 
-Applied to
+This particular complaint is about not being able to "discover" the
+lvalue type during an assignment, which means we can't create helper
+macros that Just Work. For example, in:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+	void foo(some_type arg);
 
-Thanks!
+	foo(add_mul(base, size, count));
 
-[1/1] ASoC: fsl: imx-pcm-fiq: add missing MODULE_DESCRIPTION() macro
-      commit: 39eab0148752055928c4c54db12d6cf89881e6cd
+There is no way to write "add_mul" so that it is checking for overflow
+of the "some_type" type. The behavior of such a macro changes if it's
+doing u8, int, size_t, etc.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+The existing solution to this is to use macros (and builtins) that
+cannot be composed:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+	add_mul(base, size, count, &result);
+	foo(result);
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Here, the macro can examine the type of "result" and perform the correct
+overflow handling for that type. But lots of developers (rightly)
+dislike this style of "assignment side-effect".
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Additionally, it can't be composed:
 
-Thanks,
-Mark
+	add(base, mul(size, count));
 
+But, using type attributes we have much more flexibility. Hence, the
+proposed "wraps" attribute:
+https://github.com/llvm/llvm-project/pull/86618
+
+> This is likely a stupid question, but making it signed 
+> wouldn't work?   Or is a signed size_t too small  
+> or some architectures? Or would this change break too much?
+
+The ssize_t gets used in some places already, but since size_t is used
+for address calculations too, I don't think we can universally switch
+it.
+
+-- 
+Kees Cook
 
