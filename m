@@ -1,133 +1,82 @@
-Return-Path: <linux-kernel+bounces-218111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6185E90B960
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:16:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A2EC90B90A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05FEC1F23501
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:16:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AABEB290D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254D919ADBE;
-	Mon, 17 Jun 2024 18:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C06EF9C9;
+	Mon, 17 Jun 2024 18:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="m/c7VQbS"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3c+VCaC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB88199255;
-	Mon, 17 Jun 2024 18:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B368818FC96;
+	Mon, 17 Jun 2024 18:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718648000; cv=none; b=QluGghzfV/JWdhZVvfQicgmbuAHIsuyzmsyd9hn6FTYYrkcBkZRNrYv8eFhrhhs6aq8XE44QGQSJMqy/b8rpZlfM/6MWEq++lQkbHcrQuVojrSpVG6jDRJbsWeRbcCJmrMLn4b/Nq5Mr9Gc8+mmgxIMKVA45AuK8/clP/M1ABhE=
+	t=1718647242; cv=none; b=aYwa/p2sUGOCjD0UBqDK9F2WYMVSYYizHcupr6ZZNmQXDKHGNrx5Mae5k1MMSnvXbopBN/vvI+yapnHpIvo2p11JL7aw7PQSQ1KT+dPRmcZIXxcfq5qTEJGX8mxCjfmd37dvLj3bFsQ+0hKxNnIenL/PtEH3kzpjQs0ZhCoVfHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718648000; c=relaxed/simple;
-	bh=1Ns3A/oFMcDFR+MHREDV9DRSTxw55uaCpacsS/xEzMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QEMbB7T9kwfUFBUCfqnHigyuzejQfvBjZlF9ZqzwJe+5J8HibCIsPUFN5lABGF/W4YnkacRHjotoJ+JDhXAfXSBtti72qq5aNV+59OSetTEc5Yyvx5kkfzKIEf+qjzp0lM6C/wpYj8Ec8G7wMJim6i86cvUynL4HdZ5Yf2FFv30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=m/c7VQbS reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 82daa9038d1cb02e; Mon, 17 Jun 2024 20:13:10 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id EFB0A16606FD;
-	Mon, 17 Jun 2024 20:13:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1718647990;
-	bh=1Ns3A/oFMcDFR+MHREDV9DRSTxw55uaCpacsS/xEzMg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=m/c7VQbS6N1LSnN0Pz5a94onEN7z8d573yrT8UygktNWbkvREF+zab0iySwUOXE7w
-	 YbYS3EyP0etUL9rZTehc9GBrlCBbS1sxiBzmgfRzw6kNGPYkyMSkkDUz2Bvkjswu9N
-	 c1H3aOwVcTGtFSZZY/2R18o06m4RfU2j2CSVuEC9TyTO9DpOYphALGr5t7nGZqkgSH
-	 r4I/MK9qamavkKypoZj3/IPThVOS7h2skl4Zj5KKE1rXGOw8EccRwSOC8mHForUxJM
-	 GhV7KwdlEralYc9gwJNGac7dRZY1DIEiE8iwDNVlY7Ioe+D2NQ61f9dvAZeBXh9gAd
-	 se3NoUUG8XUFA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject:
- [PATCH v1 07/14] thermal: hisi: Use thermal_zone_for_each_trip() in
- hisi_thermal_register_sensor()
-Date: Mon, 17 Jun 2024 19:58:41 +0200
-Message-ID: <1837335.TLkxdtWsSY@kreacher>
-In-Reply-To: <8409966.T7Z3S40VBb@kreacher>
-References: <8409966.T7Z3S40VBb@kreacher>
+	s=arc-20240116; t=1718647242; c=relaxed/simple;
+	bh=FRtiDaxxMejA06FwpNDi/tXRJBK8oG9fBmcgOXjXrjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUDHSFkeKC7jLTe+S4Z5mYLaUL90N/UzNGejrPQTF6LVyf+BPR8i/WFabYLrx25MNdBlkvD+Gjur4GvZJuHHRqKBuDyopxfcXjrrxGvMj4UdPYqTtRGB2Lyn7O9l1wTwvMEYuIGXVGCg8q+E5wQyKs1e8c8xLm1f00StZD9ufeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3c+VCaC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35357C3277B;
+	Mon, 17 Jun 2024 18:00:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718647242;
+	bh=FRtiDaxxMejA06FwpNDi/tXRJBK8oG9fBmcgOXjXrjA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I3c+VCaCm7uktH3MkDTSrduP3eVIEukZMS7z8TQoFan6sghTFm96bw01Ujg1bBKEP
+	 NQJUWPzgAiusAbwC73hQSjE3itqVICpRZq/+5wlza6mhvvJXlg7RPyuhhRr/5XZfou
+	 BNk5aYbRXgdG/ri5NewBZFsB0znlDtTFvXA6OdFTMDooynZcJc6x/eLMTUrwv3X760
+	 KOqO29pvWUsZEbfw9So3Em9hBC9qztS9CkqFXnhUT+DI+N+mzOu/ZbZInlCVcMq2xw
+	 4fNTPMOU3PrHURF8Lqb5Zor+nhlJQXQ6WtU+RRVRQYY8MJoLplrR01jasQ0F0tQQOY
+	 T/3i0wbmBNC0w==
+Date: Mon, 17 Jun 2024 11:00:41 -0700
+From: Kees Cook <kees@kernel.org>
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-doc@vger.kernel.org, kernel@collabora.com, gbiv@google.com,
+	ryanbeltran@google.com, inglorion@google.com, ajordanr@google.com,
+	jorgelo@chromium.org, Guenter Roeck <groeck@chromium.org>,
+	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Christian Brauner <brauner@kernel.org>, Jeff Xu <jeffxu@google.com>,
+	Mike Frysinger <vapier@chromium.org>
+Subject: Re: [PATCH v6 2/2] proc: restrict /proc/pid/mem
+Message-ID: <202406171100.B0A8095@keescook>
+References: <20240613133937.2352724-1-adrian.ratiu@collabora.com>
+ <20240613133937.2352724-2-adrian.ratiu@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfedvhedguddvfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgii
- tggrnhhosehlihhnrghrohdrohhrgh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613133937.2352724-2-adrian.ratiu@collabora.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Jun 13, 2024 at 04:39:37PM +0300, Adrian Ratiu wrote:
+> Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
+> after which it got allowed in commit 198214a7ee50 ("proc: enable
+> writing to /proc/pid/mem"). Famous last words from that patch:
+> "no longer a security hazard". :)
 
-Modify hisi_thermal_register_sensor() to use thermal_zone_for_each_trip()
-for walking trip points instead of iterating over trip indices and using
-thermal_zone_get_trip() to get from a trip index to struct thermal_trip.
+This version looks great! Thanks for all the changes. :)
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/hisi_thermal.c |   22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-Index: linux-pm/drivers/thermal/hisi_thermal.c
-===================================================================
---- linux-pm.orig/drivers/thermal/hisi_thermal.c
-+++ linux-pm/drivers/thermal/hisi_thermal.c
-@@ -470,6 +470,18 @@ static irqreturn_t hisi_thermal_alarm_ir
- 	return IRQ_HANDLED;
- }
- 
-+static int hisi_trip_walk_cb(struct thermal_trip *trip, void *arg)
-+{
-+	struct hisi_thermal_sensor *sensor = arg;
-+
-+	if (trip->type != THERMAL_TRIP_PASSIVE)
-+		return 0;
-+
-+	sensor->thres_temp = trip->temperature;
-+	/* Return nonzero to terminate the search. */
-+	return 1;
-+}
-+
- static int hisi_thermal_register_sensor(struct platform_device *pdev,
- 					struct hisi_thermal_sensor *sensor)
- {
-@@ -487,15 +499,7 @@ static int hisi_thermal_register_sensor(
- 		return ret;
- 	}
- 
--	for (i = 0; i < thermal_zone_get_num_trips(sensor->tzd); i++) {
--
--		thermal_zone_get_trip(sensor->tzd, i, &trip);
--
--		if (trip.type == THERMAL_TRIP_PASSIVE) {
--			sensor->thres_temp = trip.temperature;
--			break;
--		}
--	}
-+	thermal_zone_for_each_trip(sensor->tzd, hisi_trip_walk_cb, sensor);
- 
- 	return 0;
- }
-
-
-
+-- 
+Kees Cook
 
