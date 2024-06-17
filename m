@@ -1,314 +1,129 @@
-Return-Path: <linux-kernel+bounces-218411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E254C90BF5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:00:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0844690BF5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49433282EAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:00:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FCADB21C4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA7A1993AF;
-	Mon, 17 Jun 2024 23:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E06A199386;
+	Mon, 17 Jun 2024 23:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aP1aDvet"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="I49rtoJZ"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82AB176AB9;
-	Mon, 17 Jun 2024 23:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD6C176AB9
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 23:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718665242; cv=none; b=mOj1j/mwgo3EZLIHAPkR0nOXVXVZfgjv6sfwrq7vr/ZcRSlsK0M0K0/3ib+MvNxJbDWJugE9z9tE8fXnlcm2U3QaSBgz8wjOlcfsSvpJjbeuDf+2EO92Q9oA2D+fkIf3AOzYHjO8l8jZAk9E1JoYQxO6CZVjzq7Q8pEAhHHkET4=
+	t=1718665254; cv=none; b=RQGsVCGi2scm+NO/pvhMuC9mcHxlAR6TtShr63NuciqN7ZcFzjT9rdE6/ENPa7+AxcixiFRc4qmsvMCH+5ZuD32d9LvGUubUBGqbcSI5U41R34iRflaiYHADa5dSJwog1VnHX9L9ayaijfyXAwQdw337hHsYrBO7TuR2E/DtTwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718665242; c=relaxed/simple;
-	bh=52r+VNqOk9r6XHmWBmXIK85jU/dlGwP5kIbt3ewVgbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YsIk8MkagHvtIqc/YoGkyI/2PgmSgC7ovg3JH/E1xDdcWYoaBDut3wzRvGxDgsi0CYoimRM8FcQl2ArAll/Lw/Rw/OmYWe6uYkx52JrUwNGyjCR+C63CZxEmSOUsg1VQmoVwNgPayaDTOKeuxbXBv1mkvqyKAx+GE56HNlOcBkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aP1aDvet; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3cabac56b38so2877519b6e.3;
-        Mon, 17 Jun 2024 16:00:40 -0700 (PDT)
+	s=arc-20240116; t=1718665254; c=relaxed/simple;
+	bh=gTKVHkW1xZtVYY3eOX2P1pRamfg/sbP4BfSVBkumSOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jo5UVTsc2SON2BIN4HIkIB485pzdFnuZ9eh111iZLVqdUeIlx1J9IHclzkDKS7KPx5jWlsMsKNhCsj2+6WhCVe4uv+2ZeFKvnYmv94LUeZbMuy3J0JnLqUK6G6rH5bU/J3hrc1B/NbNmjw6KOCVVY2Mzu55Z6T77eP+n5MCp8pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=I49rtoJZ; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso5497601a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718665240; x=1719270040; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gateworks.com; s=google; t=1718665251; x=1719270051; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rIBZAAcfSWPqpyj4PFwTMWJwKxylSVJ2lDhErArdxhY=;
-        b=aP1aDveteU8CJt60scXcrpnGk5+ikAn80kwtCOz8TDkhKiGYIHJUjTO0nzNe3fMW7C
-         M1UcceFSF/hQPY3qH2F0Y5kAaVY6QI32Qo12u87JV3iz5uRidiNvbxice0dgbACjy2gY
-         dJBPqJiLtlBS2OJp0FjEo71BRZHSPH1W6PoWAkstvtyatR1vDzGMJnDiIh0WkN+8WDq4
-         QjNATX0bcflWxr/kDrOO+ziPL67OMTB4JnDZgMqIUzy2H3Mk0hmHfuT/RXZvZgIiKteM
-         2aLjRGkb30j8eKMzJbdYzGA9ze8METZ2WnJQsZ1ZxF1cnsImN/PAoel52aXT4oGtYNrw
-         n8Aw==
+        bh=cgqsUK44ZQpqmoRMnmn8FFdT1lwDfmmk05VzO+/mADE=;
+        b=I49rtoJZ833sx+f1S61bqgnMGtJnXvluKB26CH85LKQNfTQ+vOqlCZX5wE29kCV7Di
+         vUDrbS/GeWdG5QwAF747ERrtu0J5Qqmk8+I7YElFqZI7+FRsC8DZjqO8pRfmiBRnIJWX
+         GZXepyMkLHnOT8AGltZIe8ZN1YWlqR2UakKsDYP1g0TXEF2DjIy7bfedJ4K5r/ANw4jW
+         SNr8u1sjIazMag3/akHPAtV99RdHChBjC9Qqagms9wShB4L2nlbT+MyNqhNtcGV61qrJ
+         AmbVkURfXj/n05xBO5uS0rmyEolsBZwxF6HpTEfHeWwzpV0n5Bi6/wlf80vehI/uKY+b
+         AN6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718665240; x=1719270040;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718665251; x=1719270051;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rIBZAAcfSWPqpyj4PFwTMWJwKxylSVJ2lDhErArdxhY=;
-        b=A7+ZV6V0imbe/kSMSH6ulXwkPi9iGWc5BWcHccpi4TrSddW1DYHKKPLQ11t2X+Twgs
-         SJYgOyAcuY1M0j9M6YzMNPWghM/5P1dvz4AVxojmcjOIkjXtejMAlihdYo4Rf1NTiR66
-         dD55FgCMXQHENdVjkVNuviVwj5oV5NCx90xX8N/6jfr2iIghDyntWRN3vO20cP5Aq4iG
-         BTt7EE1FfstzeErufjOSNsdBWKksgEyF9c9/PalGhGFk7alvx9BiTljws2jz53lpClN0
-         19VZR4R8SvkB9KDjipGdBcomi1CELOTqGp63UpTBpqsDGWf0eXcyPe7IoN21nWmgSwtX
-         /lcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJyFVcB59FtnS7IjcS3ua9OG4KUs4wXvUH6aKy3vM3moAhVApmtz5PppvlTp3M8oFP5joAlzc/KxASH3ryekI2/tZBLubr3Bxpw54G4qaMetXTJSAnDflGneV9dmddHV9UDffeDKu1dxphEUc=
-X-Gm-Message-State: AOJu0YyiHq2o4vUTPLT5LJVr4Tf/BoCsWuLv8eJINlkNjNwMAE8wPw/H
-	PWSsWcmY1wQgIkejbEP8dQgnRw3lOSgE5M/YdoGTs8eoYE5Vu3sq
-X-Google-Smtp-Source: AGHT+IGUnvwFOHAhq49WQIixom92U9a3BTRySPv6Hko7y2YA97nL+Ra2Qk7gtctjI1kD7IqCjl/1DA==
-X-Received: by 2002:a05:6808:1302:b0:3d2:2a0b:cf1b with SMTP id 5614622812f47-3d24e997b62mr14842708b6e.37.1718665238053;
-        Mon, 17 Jun 2024 16:00:38 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abc02e72sm469100885a.96.2024.06.17.16.00.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 16:00:37 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 3E8EA1200043;
-	Mon, 17 Jun 2024 19:00:36 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 17 Jun 2024 19:00:36 -0400
-X-ME-Sender: <xms:FMBwZu3QC7GAjQdCC7jBJbSaUrgVqROogRHyMW9nS_rJthYz9o3h9A>
-    <xme:FMBwZhH_Lmj2yVDZfw_EOkLpBuS2H1NIUI7f30VlVsTzsOjrSPgzZ7RCaAzKuPuQM
-    fgV86_-BkOvd1V7IA>
-X-ME-Received: <xmr:FMBwZm44OG7oMttE7qx-M9Vxh7tjhb0apbjtnKtLX-HI5DrcU0mOAU2VlvU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedviedgudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeelffektdeifefgkeffueeugeefhfevgfdutdeigfehgeejteeukeethedv
-    keeuleenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgrshgprhgrfidruggrthgrne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
-    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
-    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
-    nhgrmhgv
-X-ME-Proxy: <xmx:FMBwZv1G7h7VI3lrzxuszCoVTyjk-QyZtsqiWVzc8Hs27WXExVSgrA>
-    <xmx:FMBwZhFMu1Iaqrok13nFNH2k673IRmHq4qd4U388c39NoaJgBjKkoA>
-    <xmx:FMBwZo9Fqd5_3FKLf8vSH6klzhyCByjshfFbiLppM_dmW965_YEMWw>
-    <xmx:FMBwZmmpAnfxtZkqynXoZ8nzcfVMTTpLpYqx1AiE1CvbEsU8pV9Y4w>
-    <xmx:FMBwZpFE01M1zNtrzLJVp4eKthOwgiMDP4tp28gcuKFV_doonScv4Lqy>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 17 Jun 2024 19:00:35 -0400 (EDT)
-Date: Mon, 17 Jun 2024 16:00:22 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, mcgrof@kernel.org,
-	russ.weight@linux.dev, ojeda@kernel.org, alex.gaynor@gmail.com,
-	wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] rust: add firmware abstractions
-Message-ID: <ZnDABsX7RmUvnKZf@boqun-archlinux>
-References: <20240617203010.101452-1-dakr@redhat.com>
- <20240617203010.101452-3-dakr@redhat.com>
- <ZnCzLIly3DRK2eab@boqun-archlinux>
- <ZnC9xajuhN6nSQb-@cassiopeiae>
+        bh=cgqsUK44ZQpqmoRMnmn8FFdT1lwDfmmk05VzO+/mADE=;
+        b=BJ3TZKwdq+4DFBCIZfiDJZXrwomI2Tcn0Rcz5XIqD7zIMg/Zg4xZFAdBoxDTmuUtHW
+         jgHsTfu7MB2sMlK/5laF/jOCLN/a4J8VW0oTK8DucSSwtZuU4ZYlOcgM6ZL37ZvaZMEa
+         b6MEgtFtJ7vRQQalBLnyiPw7iZHZkUoTDwT8Jn+0Pjdzy1izrH1zBguw1/PnBQ8gduS0
+         0enU8O06zsGxuggk2z66//t06ETj5gLlxA7vyJSn0Pjx6Q7frAdiBJcFYHK4p3chWBM3
+         4Ld6zk5gQFkjtUAn/IAt+5HPp439tDW2zab9nqHVHT9/EdiCfX2GUlSprzlKaQQIq3jN
+         afdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBdHuhM7hcf/sLn/yo8ZCHrY0b8GjFek+e3GyRyz3ok8C09/sch1ObkLjJzPxEgv6vd4fOnrmy8py82KDOSf/qbeRhaXYsaGbzTD1Y
+X-Gm-Message-State: AOJu0Yy+l7Mc+1ZCgXu6Z0ayNcq+f77J3M9lZBHY/VFCmJD/yUiD054L
+	LSiNTwA31ViWDMH1gBHYhcbEHiH1aPEVUmVMKTz4AC00VEHu6x7tWzRtRZYV5qjSiiOJ3giYeOF
+	ubv/5MbxtFZnXZMw84zEf2y+dcLvw+84lkpUX7w==
+X-Google-Smtp-Source: AGHT+IHR0xGGPPqIxEcMBglBzedI2u10zJP6TfAwAastiEFg8OFQ/2Qr4OdE8MHvNaKjebLavkS/eRoOocFkLCKgFno=
+X-Received: by 2002:a17:906:4816:b0:a6f:2001:aa53 with SMTP id
+ a640c23a62f3a-a6f60d460admr669589566b.42.1718665250629; Mon, 17 Jun 2024
+ 16:00:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnC9xajuhN6nSQb-@cassiopeiae>
+References: <20240513162200.2658571-1-tharvey@gateworks.com>
+In-Reply-To: <20240513162200.2658571-1-tharvey@gateworks.com>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Mon, 17 Jun 2024 16:00:38 -0700
+Message-ID: <CAJ+vNU0F4n4Hfu=ZL5Mu3Nsk3vh4Y3iuH5funvshrkhQZD+b0Q@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: btsdio: Do not bind to non-removable CYW4373
+To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Scott Ehlert <ehlert@battelle.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 12:50:45AM +0200, Danilo Krummrich wrote:
-[...]
-> >     /// A smart pointer owns the underlying data.
-> >     pub struct Owned<T: Ownable> {
-> >         ptr: NonNull<T>,
-> >     }
-> > 
-> >     impl<T: Ownable> Owned<T> {
-> >         /// # Safety
-> > 	/// `ptr` needs to be a valid pointer, and it should be the
-> > 	/// unique owner to the object, in other words, no one can touch
-> > 	/// or free the underlying data.
-> >         pub unsafe to_owned(ptr: *mut T) -> Self {
-> > 	    // SAFETY: Per function safety requirement.
-> > 	    Self { ptr: unsafe { NonNull::new_unchecked(ptr) } }
-> > 	}
-> > 
-> > 	/// other safe constructors are available if a initializer (impl
-> > 	/// Init) is provided
-> >     }
-> > 
-> >     /// A Ownable type is a type that can be put into `Owned<T>`, and
-> >     /// when `Owned<T>` drops, `ptr_drop` will be called.
-> >     pub unsafe trait Ownable {
-> >         /// # Safety
-> > 	/// This could only be called in the `Owned::drop` function.
-> >         unsafe fn ptr_drop(ptr: *mut Self);
-> >     }
-> > 
-> >     impl<T: Ownable> Drop for Owned<T> {
-> >         fn drop(&mut self) {
-> > 	    /// SAFETY: In Owned<T>::drop.
-> > 	    unsafe {
-> > 	        <T as Ownable>::ptr_drop(self.as_mut_ptr());
-> > 	    }
-> > 	}
-> >     }
-> > 
-> > we can implement Deref and DerefMut easily on `Owned<T>`. And then we
-> > could define Firmware as
-> > 
-> >     #[repr(transparent)]
-> >     pub struct Firmware(Opaque<bindings::firmware>);
-> > 
-> > and
-> > 
-> >     unsafe impl Ownable for Firmware {
-> >         unsafe fn ptr_drop(ptr: *mut Self) {
-> > 	    // SAFETY: Per function safety, this is called in
-> > 	    // Owned::drop(), so `ptr` is a unique pointer to object,
-> > 	    // it's safe to release the firmware.
-> >             unsafe { bindings::release_firmware(ptr.cast()); }
-> >         }
-> >     }
-> > 
-> > and the request_*() will return a `Result<Owned<Self>>`. 
-> > 
-> > Alice mentioned the need of this in page as well:
-> > 
-> > 	https://lore.kernel.org/rust-for-linux/CAH5fLgjrt0Ohj1qBv=GrqZumBTMQ1jbsKakChmxmG2JYDJEM8w@mail.gmail.com		
-> 
-> I think in the `Page` case this is useful to create `Page` references from
-> previously allocated memory.
-> 
-> In the case of `Firmware`, I agree it makes sense to use it once we have it,
-> but other than for consistency, is there any advantage?
-> 
+On Mon, May 13, 2024 at 9:22=E2=80=AFAM Tim Harvey <tharvey@gateworks.com> =
+wrote:
+>
+> From: Scott Ehlert <ehlert@battelle.org>
+>
+> CYW4373 devices soldered onto the PCB (non-removable),
+> use a UART connection for Bluetooth and the advertised btsdio
+> support as an SDIO function should be ignored.
+>
+> Signed-off-by: Scott Ehlert <ehlert@battelle.org>
+> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> ---
+>  drivers/bluetooth/btsdio.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/bluetooth/btsdio.c b/drivers/bluetooth/btsdio.c
+> index f19d31ee37ea..bc9631bddc40 100644
+> --- a/drivers/bluetooth/btsdio.c
+> +++ b/drivers/bluetooth/btsdio.c
+> @@ -298,6 +298,7 @@ static int btsdio_probe(struct sdio_func *func,
+>                 case SDIO_DEVICE_ID_BROADCOM_4345:
+>                 case SDIO_DEVICE_ID_BROADCOM_43455:
+>                 case SDIO_DEVICE_ID_BROADCOM_4356:
+> +               case SDIO_DEVICE_ID_BROADCOM_CYPRESS_4373:
+>                         return -ENODEV;
+>                 }
+>         }
+> --
+> 2.25.1
+>
 
-To help people build future abstraction easier (and make review easier
-as well). But I'm also waiting for a third use case, yes, I usually
-wait for 3 cases to begin thinking about generalization ;-)
+Greetings,
 
-> > 
-> > Just bring it up while we are (maybe not? ;-)) at it. Also I would like
-> > to hear whether this would work for Firmware in the longer-term ;-) But
-> > yes, I'm not that worried about merging it as it is if others are all
-> > OK.
-> 
-> I think there's not too much to add here in the future, once we got an allocator
-> API (I should get back to that soon), I want to add a method that copies the
-> data to a new buffer allocated with a given allocator. And maybe we want to
-> support a few other request_firmware_* functions in the future, but none of that
-> should require the above abstraction.
-> 
+It seems that this patch got archived due to failure of an automated
+test. The failure doesn't appear to me to have anything to do with the
+code change or perhaps I'm just not understanding the error:
+https://patchwork.kernel.org/project/bluetooth/patch/20240513162200.2658571=
+-1-tharvey@gateworks.com/
 
-Thank you!
+Is there something I need to do here?
 
-> > 
-> > > +impl Firmware {
-> > > +    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
-> > > +        let mut fw: *mut bindings::firmware = core::ptr::null_mut();
-> > > +        let pfw: *mut *mut bindings::firmware = &mut fw;
-> > > +
-> > > +        // SAFETY: `pfw` is a valid pointer to a NULL initialized `bindings::firmware` pointer.
-> > > +        // `name` and `dev` are valid as by their type invariants.
-> > > +        let ret = unsafe { func(pfw as _, name.as_char_ptr(), dev.as_raw()) };
-> > > +        if ret != 0 {
-> > > +            return Err(Error::from_errno(ret));
-> > > +        }
-> > > +
-> > > +        // SAFETY: `func` not bailing out with a non-zero error code, guarantees that `fw` is a
-> > > +        // valid pointer to `bindings::firmware`.
-> > > +        Ok(Firmware(unsafe { NonNull::new_unchecked(fw) }))
-> > > +    }
-> > > +
-> > > +    /// Send a firmware request and wait for it. See also `bindings::request_firmware`.
-> > > +    pub fn request(name: &CStr, dev: &Device) -> Result<Self> {
-> > > +        Self::request_internal(name, dev, bindings::request_firmware)
-> > > +    }
-> > > +
-> > > +    /// Send a request for an optional firmware module. See also
-> > > +    /// `bindings::firmware_request_nowarn`.
-> > > +    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Self> {
-> > > +        Self::request_internal(name, dev, bindings::firmware_request_nowarn)
-> > > +    }
-> > > +
-> > > +    fn as_raw(&self) -> *mut bindings::firmware {
-> > > +        self.0.as_ptr()
-> > > +    }
-> > > +
-> > > +    /// Returns the size of the requested firmware in bytes.
-> > > +    pub fn size(&self) -> usize {
-> > > +        // SAFETY: Safe by the type invariant.
-> > > +        unsafe { (*self.as_raw()).size }
-> > > +    }
-> > > +
-> > > +    /// Returns the requested firmware as `&[u8]`.
-> > > +    pub fn data(&self) -> &[u8] {
-> > > +        // SAFETY: Safe by the type invariant. Additionally, `bindings::firmware` guarantees, if
-> > 
-> > Does this "Safe by the type invariant" also covers the following safe
-> > requirement of `from_raw_parts`?
-> > 
-> > 	The memory referenced by the returned slice must not be mutated for the duration of lifetime 'a, except inside an UnsafeCell.
-> > 
-> > in that `&[u8]` has the same lifetime as `&self`, and as long as
-> > `&self` exists, no function can touch the inner `data`? If so, I
-> > probably want to call this out.
-> 
-> Yes, nothing should ever modify the firmware buffer after it has been requested
-> successfully. I can add this to the type invariant.
-> 
+Best Regards,
 
-Oh, you have an even easier (stronger) type invariant. Yes, please add
-it and use it here. Thanks!
-
-Regards,
-Boqun
-
-> > 
-> > Regards,
-> > Boqun
-> > 
-> > > +        // successfully requested, that `bindings::firmware::data` has a size of
-> > > +        // `bindings::firmware::size` bytes.
-> > > +        unsafe { core::slice::from_raw_parts((*self.as_raw()).data, self.size()) }
-> > > +    }
-> > > +}
-> > > +
-> > > +impl Drop for Firmware {
-> > > +    fn drop(&mut self) {
-> > > +        // SAFETY: Safe by the type invariant.
-> > > +        unsafe { bindings::release_firmware(self.as_raw()) };
-> > > +    }
-> > > +}
-> > > +
-> > > +// SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, which is safe to be used from
-> > > +// any thread.
-> > > +unsafe impl Send for Firmware {}
-> > > +
-> > > +// SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, references to which are safe to
-> > > +// be used from any thread.
-> > > +unsafe impl Sync for Firmware {}
-> > > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> > > index dd1207f1a873..7707cb013ce9 100644
-> > > --- a/rust/kernel/lib.rs
-> > > +++ b/rust/kernel/lib.rs
-> > > @@ -30,6 +30,8 @@
-> > >  mod build_assert;
-> > >  pub mod device;
-> > >  pub mod error;
-> > > +#[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
-> > > +pub mod firmware;
-> > >  pub mod init;
-> > >  pub mod ioctl;
-> > >  #[cfg(CONFIG_KUNIT)]
-> > > -- 
-> > > 2.45.1
-> > > 
-> > 
-> 
+Tim
 
