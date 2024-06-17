@@ -1,108 +1,155 @@
-Return-Path: <linux-kernel+bounces-216859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4CC90A7AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:50:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C093090A7AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1877DB26571
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:44:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB696B25910
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C3419004D;
-	Mon, 17 Jun 2024 07:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8FA15FA7A;
+	Mon, 17 Jun 2024 07:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nYBrPIxL"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1ViBl3A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFF318FDB5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D665B187544
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718610230; cv=none; b=c/wgOOlZK3V+wNEbP2afzU0GZGhL8rw0df/ibb2cWYy27GJNU2tEryoGln4vdHwm8LSb2yeLa2BZH4tYBZYIlIKvoYDxJNgx8YO08iqYrFYP6FcJdf9JaDau5dqCTM0/L+H8qA3dxAPmOka3DaU0e2HjIAJu1EuNwHeBXw/as74=
+	t=1718610226; cv=none; b=c+PuUAQF7bTxMCV6LDW740HAy0mMvUP8tPZKJ8F/7NZkaT7HJYzHI6iDwg92o5N9bJJmx1yx4wJ9p9QQMIaERg8cpdi07/InhvSulFOwFnoms3Pvfp/q5Nv7a08Nl0BaxLMBKuKUfXZzdCwHU24cMgBUCdRI1qWBwWnDWxp58MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718610230; c=relaxed/simple;
-	bh=miN9duLyeGmrf/X9FIwiruW49zhwlcBWt6ivrI61rFM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D1l3sFhh1lwpqzF1pPWkVz9KrbrqxLVZm0VqPcpcqB6uZTKbh8wLF/SPt9mGQotKkY/G4jFCA4A8zIcusoU6+0r5Eesb9Biumad3CwK3HpbaTvM5yQOnfwstsjcVQ7NfwlgEXywQkMqE61L4V8nMmmb6dJubGXBl4RJ52x5Zbdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nYBrPIxL; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c84a21b8cso3741894e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 00:43:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718610227; x=1719215027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=miN9duLyeGmrf/X9FIwiruW49zhwlcBWt6ivrI61rFM=;
-        b=nYBrPIxLKJs1vHFbb6QoG7qIuR7SzUJvKpQpFOwRjWSe3lbzpIfx+n4Rs7deKWJD7W
-         D6z5CkKvchosbwelv5UpCr6otyZ+a52HACr76+95OB2naeLQNHf3q8LZDZG3RpH/ZRFr
-         KToPQ0o2W3sp+5o4j2UYrYLOYVjLlxkIJL0X/1IvCer96Cwxh/xl0t4QKRrRQa080GhG
-         MWZ59Lk8fNmdTBauEHCyGHQaRl6ncJt+MAhDBMKXXipTmANuIUJnEv4p9BVVYh4Ti+3z
-         V6UgQ14uQx+Tv7IMQ8sABP0t3wsCI3Ulym6bWmniSNxZOx4cIoW4vPV91z6+AFN0uOCB
-         rCcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718610227; x=1719215027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=miN9duLyeGmrf/X9FIwiruW49zhwlcBWt6ivrI61rFM=;
-        b=CidNyveQIfdY1o0HvGin3tXod7OBTLylYi2ED1YqUcSvyJTkNhfrXOzfyybEGGj65q
-         qll/mUXSeloCM4Bb9IzRzG293efcNvEPaYHlzCjMq7OKlCbh+RxgVGT7YDr9P5IHrFQX
-         zcKiySTGQv58DMjsCPlQ6ICaNva5cfpEGR7CvbLOjqff+NeDRxIBrcK/yIAcNAfQoeH2
-         Fcw+7rS+tcASHRiq8zrH13x+yiCF/+Mj2bQGk191ZADXsgUpXBJ1UW0/LPPFkVHZ+pLK
-         TVt7zh0wItOTiNiCYXkXVibOYCNrMnH2AXykdrgFla+08Vl1x2IHKUFymWVjjvv4bFn4
-         dlJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Z2iuOfFp7vOuS7txSrATs/bwPpZPJ4F0Fp+veG6JUDhomxwJshHmmFNIIGM5NqJDLVCcHbxlaXP3PB3BTL8rxEhK4fYkHt/c9mp7
-X-Gm-Message-State: AOJu0Yz2hAzL4KjFLEk0R5sdWC1Nf2VMW3g2SdoxVmiParlJ5BlyyiZf
-	SvsnsXfd8adlBfob/CyzvD9wvKmGinngKWzE8V69JLkLs94PfRDkVDIno468qWzVFq8iS728MyB
-	MdpZZx4PfYMNOffW7pDa5RJ6k3oD2mZU0yEE3kg==
-X-Google-Smtp-Source: AGHT+IFOqCN6cicq/x2MVaTTuIMNVO7XJDw/a9DBtHPabTzeQl7zifz5eKAuPRI/EmkhUo7ET77mP7kzjJRUBXUh29A=
-X-Received: by 2002:a05:6512:3da5:b0:52b:c023:6e53 with SMTP id
- 2adb3069b0e04-52ca6cb3012mr3181598e87.11.1718610226692; Mon, 17 Jun 2024
- 00:43:46 -0700 (PDT)
+	s=arc-20240116; t=1718610226; c=relaxed/simple;
+	bh=8BJEdFGc/bKOzaqBjHJa7B+oGPgBlMGR+Mnc8XI09bA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZibbupyeZ3/CIexmg5MRuCYXyXe8t/XWv48Y26NlFuP4783bg/Y4QaehTjybVKb3wNVgG3fFvTCKeZiyo7C+swO6Ylf4MeW5R+yL3Wq9ZhZrD+PwkyU+m3Q2tVQM8L4VIx3aA6ro4A9I8rSkgUzADsCLlSD6mrVkkTe1fperpYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1ViBl3A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57437C2BD10;
+	Mon, 17 Jun 2024 07:43:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718610226;
+	bh=8BJEdFGc/bKOzaqBjHJa7B+oGPgBlMGR+Mnc8XI09bA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t1ViBl3AyI7NL+OfXKe9/iIGKb5x4X/cUA1sSxyDpu5OSqsJGofh3LRW3V5+RQg/a
+	 otb6z964S2DHNQugu1r77I2SXOGCq7pCCHSsll7sthmecCShUkn/szXKv0vaLsJ4rl
+	 +O0T6Sd/XnwWGsO1d2PhrxxC6rZ2gVtk9G+kI1oJ8Fa9EPQRGKSY4oI36kARYrEkfL
+	 ry9Vime9qf4dy1AXR7dXqihzaileyY1dDa3NxVhGa/EO0AoZtV3pgCxXpeh/vVVhtK
+	 B0icG3Bg4uAjRU4KH5R8JNUDKu3fDrl9u5XIPPaK7LOe0BxE8hnBTrKoa38Kuhl9dT
+	 JFKyrSxHt3pzg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sJ71k-004VcU-Fj;
+	Mon, 17 Jun 2024 08:43:44 +0100
+Date: Mon, 17 Jun 2024 08:43:43 +0100
+Message-ID: <86iky8j9ow.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	mark.rutland@arm.com,
+	ryan.roberts@arm.com,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/mm: Drop ESR_ELx_FSC_TYPE
+In-Reply-To: <45ace175-9b59-4ba2-91b8-b96151c03c05@arm.com>
+References: <20240613094538.3263536-1-anshuman.khandual@arm.com>
+	<86y179jdbx.wl-maz@kernel.org>
+	<ca66f7ac-97d5-474d-bec4-d0ff79c08eaa@arm.com>
+	<87cyoj3j44.wl-maz@kernel.org>
+	<45ace175-9b59-4ba2-91b8-b96151c03c05@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240603082110.2104977-1-thomas.richard@bootlin.com>
-In-Reply-To: <20240603082110.2104977-1-thomas.richard@bootlin.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 17 Jun 2024 09:43:35 +0200
-Message-ID: <CACRpkdaYw=j2iArpC+om_guJtUg79uWSHiU_j6x_GdCLmJmPqA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: tps6594: add missing support for LP8764 PMIC
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: m.nirmaladevi@ltts.com, bhargav.r@ltts.com, lee@kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, u-kumar1@ti.com, 
-	gregory.clement@bootlin.com, thomas.petazzoni@bootlin.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, ryan.roberts@arm.com, catalin.marinas@arm.com, will@kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Jun 3, 2024 at 10:21=E2=80=AFAM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
+On Mon, 17 Jun 2024 04:15:40 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+> Does the following re-worked patch looks okay ? Earlier set_thread_esr() changes
+> can be dropped from arch/arm64/mm/fault.c and also the original commit message
+> still makes sense.
+> 
+> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+> index 7abf09df7033..6cd13ac61005 100644
+> --- a/arch/arm64/include/asm/esr.h
+> +++ b/arch/arm64/include/asm/esr.h
+> @@ -121,6 +121,13 @@
+>  #define ESR_ELx_FSC_SECC       (0x18)
+>  #define ESR_ELx_FSC_SECC_TTW(n)        (0x1c + (n))
+>  
+> +/* Status codes for individual page table levels */
+> +#define ESR_ELx_FSC_ACCESS_L(n)        (ESR_ELx_FSC_ACCESS + n)
+> +#define ESR_ELx_FSC_FAULT_nL   (0x2C)
+> +#define ESR_ELx_FSC_FAULT_L(n) (((n) < 0 ? ESR_ELx_FSC_FAULT_nL : \
+> +                                           ESR_ELx_FSC_FAULT) + (n))
+> +#define ESR_ELx_FSC_PERM_L(n)  (ESR_ELx_FSC_PERM + n)
+> +
+>  /* ISS field definitions for Data Aborts */
+>  #define ESR_ELx_ISV_SHIFT      (24)
+>  #define ESR_ELx_ISV            (UL(1) << ESR_ELx_ISV_SHIFT)
+> @@ -388,20 +395,33 @@ static inline bool esr_is_data_abort(unsigned long esr)
+>  
+>  static inline bool esr_fsc_is_translation_fault(unsigned long esr)
+>  {
+> -       /* Translation fault, level -1 */
+> -       if ((esr & ESR_ELx_FSC) == 0b101011)
+> -               return true;
+> -       return (esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_FAULT;
+> +       esr = esr & ESR_ELx_FSC;
+> +
+> +       return (esr == ESR_ELx_FSC_FAULT_L(3)) ||
+> +              (esr == ESR_ELx_FSC_FAULT_L(2)) ||
+> +              (esr == ESR_ELx_FSC_FAULT_L(1)) ||
+> +              (esr == ESR_ELx_FSC_FAULT_L(0)) ||
+> +              (esr == ESR_ELx_FSC_FAULT_L(-1));
+>  }
+>  
+>  static inline bool esr_fsc_is_permission_fault(unsigned long esr)
+>  {
+> -       return (esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_PERM;
+> +       esr = esr & ESR_ELx_FSC;
+> +
+> +       return (esr == ESR_ELx_FSC_PERM_L(3)) ||
+> +              (esr == ESR_ELx_FSC_PERM_L(2)) ||
+> +              (esr == ESR_ELx_FSC_PERM_L(1)) ||
+> +              (esr == ESR_ELx_FSC_PERM_L(0));
+>  }
+>  
+>  static inline bool esr_fsc_is_access_flag_fault(unsigned long esr)
+>  {
+> -       return (esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_ACCESS;
+> +       esr = esr & ESR_ELx_FSC;
+> +
+> +       return (esr == ESR_ELx_FSC_ACCESS_L(3)) ||
+> +              (esr == ESR_ELx_FSC_ACCESS_L(2)) ||
+> +              (esr == ESR_ELx_FSC_ACCESS_L(1)) ||
+> +              (esr == ESR_ELx_FSC_ACCESS_L(0));
+>  }
+>  
+>  /* Indicate whether ESR.EC==0x1A is for an ERETAx instruction */
 
-> Add missing support for LP8764 PMIC in the probe().
->
-> Fixes: 208829715917 (pinctrl: pinctrl-tps6594: Add TPS65224 PMIC pinctrl =
-and GPIO)
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-> ---
->
-> Issue detected with v6.10-rc1 (and reproduced with 6.10-rc2) using a TI
-> J7200 EVM board.
->
-> tps6594-pinctrl tps6594-pinctrl.8.auto: error -EINVAL: Couldn't register =
-gpio_regmap driver
-> tps6594-pinctrl tps6594-pinctrl.8.auto: probe with driver tps6594-pinctrl=
- failed with error -22
+This looks better indeed.
 
-Patch applied for fixes, I moved this up into the commit message.
+Thanks,
 
-Yours,
-Linus Walleij
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
