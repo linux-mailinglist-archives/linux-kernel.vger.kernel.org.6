@@ -1,112 +1,129 @@
-Return-Path: <linux-kernel+bounces-217122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0694590AB16
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:30:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6CDB90AB2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97608281993
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE3A1F2228B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DF61946CC;
-	Mon, 17 Jun 2024 10:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F8F194A69;
+	Mon, 17 Jun 2024 10:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1WvYIdz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TyWdKukn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D991940B1;
-	Mon, 17 Jun 2024 10:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED24D1940B2
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718620223; cv=none; b=B1RxyuHAdVx3F86Nm/gI+twAp061FPN7m4RsxS6Je/1sQVN7POteLuB8Kb8EnX9Yx7WYHqBv3hXDqs8ggDqu44o6zr8Crz89ca13vn2ysgty1J/iY4QZRcHdLCX9izWnQ5QDVZMhATcV7G0tGep7MdjulOfXnFiJBeB3ts7CmZM=
+	t=1718620462; cv=none; b=iKsoKDL3z+RmIZA/3odhzOck+x1qN0V90IsLXi7ptBxFzlvLJwcw8RWw83rld414nd+C8j52JhuM/psvIBiZ+OYZTy1ey6SyyuL1oS5BsB43LIgwPkMyX9e5cFM/USFjN8XOJwhGaMFGiQbgKqyDwsKaEeR92BYrj6QssiAvTGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718620223; c=relaxed/simple;
-	bh=legsQcTjmGF/ESY3infoB6MxTfUlzmDtnEkbU9JhtHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qkuRPvNDqpadylIQKihIeCHcsR2/aJX3Syljz8MNAifhlOQNPM0+OPjbf43iy6E69KpUGTLZylOwqxq0WGfkTQHj23VG5ynYtCeQUegSgloX75mpLGsjga83BIM5OAuNuOlR5cyq6mYKWcO5oplpVahZW24A7wU7pO5kWcjqBdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1WvYIdz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6AFDC2BD10;
-	Mon, 17 Jun 2024 10:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718620222;
-	bh=legsQcTjmGF/ESY3infoB6MxTfUlzmDtnEkbU9JhtHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q1WvYIdzflRbJsCA4eyWA1W0k8ZjQtxt26fBxqoFgqg8+M0NI3d/OytudixcKoBX7
-	 l8zMN2cSJlIGP5Hmspyi/VswwFsMSYrVMTW8bVY9nArK0uVXSe0knEim+WnidIVNfi
-	 gOHAuegd6Fqcl3CiZs5oL6HrsE0HsxrgQ/OC6NnHaiydm7eHuTvHpB2WVSc505FMGr
-	 7WaqHIYhF7sg1Sn8F+SDqZI2dPvhvHwwNfMMG3toJEz0OWvVhfT7q9mCJ2HAGMkVQw
-	 D7Ap7Ifh6sQRpVAlGURNYpPmjuwIMJQC9Q52cOdXp7QpoEW8QcoigqemjsdLoJ44Os
-	 NyJ2xCxlMPH7Q==
-Date: Mon, 17 Jun 2024 11:30:17 +0100
-From: Simon Horman <horms@kernel.org>
-To: =?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com,
-	i.maximets@ovn.org, dev@openvswitch.org,
-	Yotam Gigi <yotam.gi@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+	s=arc-20240116; t=1718620462; c=relaxed/simple;
+	bh=edwklOwUpN3/khUTiztuvQHfcx/h8uxguvmkHBABe/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q2Qjg5X4O+k748Qtn0f5626BF0K8eUX8cZXZYE3iGkNAq1rI2yVFFk9oPlY5E60w7JcMdG7WOV9j+CAV420trayTusRm4ZD9zuFU4I26x4yqZLrkH7Xzv1QzrgTTEXDilwqoT2V1062WO3OQolMxox11vgdAuaSvGFFO3wSSaQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TyWdKukn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718620459;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NPi0Lc2x8pzbKbisJrHzDcJs/eDuRo98ZfsdasjbD/Q=;
+	b=TyWdKukn99r9HYo448kUItZBg36f3tgyYKm8k/XvksnDe6nCbmaDx0b5XH8eqOOCXsAXtN
+	bN6WDmqZ7a9Y3+IYm8yWkJwLGTfXQ+9oHLEMgDxpPAl8Jg7GAL8ndqeLHdxEIe0BLCeK34
+	zdJPZzHJz9ME8RUHW9cMd0YmiJfVFEU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-307-5D80IxndOgKTTJc2QlToGQ-1; Mon,
+ 17 Jun 2024 06:34:15 -0400
+X-MC-Unique: 5D80IxndOgKTTJc2QlToGQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8559D1956080;
+	Mon, 17 Jun 2024 10:34:13 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.164])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9356919560AE;
+	Mon, 17 Jun 2024 10:34:09 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 4/9] net: psample: allow using rate as
- probability
-Message-ID: <20240617103017.GP8447@kernel.org>
-References: <20240603185647.2310748-1-amorenoz@redhat.com>
- <20240603185647.2310748-5-amorenoz@redhat.com>
- <20240614161130.GP8447@kernel.org>
- <CAG=2xmOhMMg8JDVi4x5P5F39yfG2p72kyYxDud0fcjc9VzDeLA@mail.gmail.com>
+Cc: jtornosm@redhat.com,
+	stable@vger.kernel.org
+Subject: [PATCH] net: usb: ax88179_178a: improve link status logs
+Date: Mon, 17 Jun 2024 12:33:59 +0200
+Message-ID: <20240617103405.654567-1-jtornosm@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG=2xmOhMMg8JDVi4x5P5F39yfG2p72kyYxDud0fcjc9VzDeLA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Jun 17, 2024 at 06:32:14AM +0000, Adrián Moreno wrote:
-> On Fri, Jun 14, 2024 at 05:11:30PM GMT, Simon Horman wrote:
-> > On Mon, Jun 03, 2024 at 08:56:38PM +0200, Adrian Moreno wrote:
-> > > Although not explicitly documented in the psample module itself, the
-> > > definition of PSAMPLE_ATTR_SAMPLE_RATE seems inherited from act_sample.
-> > >
-> > > Quoting tc-sample(8):
-> > > "RATE of 100 will lead to an average of one sampled packet out of every
-> > > 100 observed."
-> > >
-> > > With this semantics, the rates that we can express with an unsigned
-> > > 32-bits number are very unevenly distributed and concentrated towards
-> > > "sampling few packets".
-> > > For example, we can express a probability of 2.32E-8% but we
-> > > cannot express anything between 100% and 50%.
-> > >
-> > > For sampling applications that are capable of sampling a decent
-> > > amount of packets, this sampling rate semantics is not very useful.
-> > >
-> > > Add a new flag to the uAPI that indicates that the sampling rate is
-> > > expressed in scaled probability, this is:
-> > > - 0 is 0% probability, no packets get sampled.
-> > > - U32_MAX is 100% probability, all packets get sampled.
-> > >
-> > > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> >
-> > Hi Adrian,
-> >
-> > Would it be possible to add appropriate documentation for
-> > rate - both the original ratio variant, and the new probability
-> > variant - somewhere?
-> >
-> 
-> Hi Simon, thanks for the suggestion. Would the uapi header be a good
-> place for such documentation?
+Avoid spurious link status logs that may ultimately be wrong; for example,
+if the link is set to down with the cable plugged, then the cable is
+unplugged and afer this the link is set to up, the last new log that is
+appearing is incorrectly telling that the link is up.
 
-Hi Adrian,
+In order to aovid errors, show link status logs after link_reset
+processing, and in order to avoid spurious as much as possible, only show
+the link loss when some link status change is detected.
 
-I didn't look closely, but that does sound like a good place to me.
+cc: stable@vger.kernel.org
+Fixes: e2ca90c276e1 ("ax88179_178a: ASIX AX88179_178A USB 3.0/2.0 to gigabit ethernet adapter driver")
+Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+---
+ drivers/net/usb/ax88179_178a.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
+index c2fb736f78b2..60357796be99 100644
+--- a/drivers/net/usb/ax88179_178a.c
++++ b/drivers/net/usb/ax88179_178a.c
+@@ -326,7 +326,8 @@ static void ax88179_status(struct usbnet *dev, struct urb *urb)
+ 
+ 	if (netif_carrier_ok(dev->net) != link) {
+ 		usbnet_link_change(dev, link, 1);
+-		netdev_info(dev->net, "ax88179 - Link status is: %d\n", link);
++		if (!link)
++			netdev_info(dev->net, "ax88179 - Link status is: %d\n", link);
+ 	}
+ }
+ 
+@@ -1542,6 +1543,7 @@ static int ax88179_link_reset(struct usbnet *dev)
+ 			 GMII_PHY_PHYSR, 2, &tmp16);
+ 
+ 	if (!(tmp16 & GMII_PHY_PHYSR_LINK)) {
++		netdev_info(dev->net, "ax88179 - Link status is: 0\n");
+ 		return 0;
+ 	} else if (GMII_PHY_PHYSR_GIGA == (tmp16 & GMII_PHY_PHYSR_SMASK)) {
+ 		mode |= AX_MEDIUM_GIGAMODE | AX_MEDIUM_EN_125MHZ;
+@@ -1579,6 +1581,8 @@ static int ax88179_link_reset(struct usbnet *dev)
+ 
+ 	netif_carrier_on(dev->net);
+ 
++	netdev_info(dev->net, "ax88179 - Link status is: 1\n");
++
+ 	return 0;
+ }
+ 
+-- 
+2.45.1
+
 
