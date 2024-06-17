@@ -1,151 +1,172 @@
-Return-Path: <linux-kernel+bounces-217133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A092E90ABD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:45:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFEC90ABE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 540AF1F27311
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:45:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820061C22A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88733194C66;
-	Mon, 17 Jun 2024 10:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE8B1953AF;
+	Mon, 17 Jun 2024 10:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GU+DrT2E"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4VFX6SS"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8F91940B3;
-	Mon, 17 Jun 2024 10:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D2F1946D5
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718620998; cv=none; b=kyoVgUuV9ppf/nDC3t+CIaHr8b6S7xGJRpVODfXoeg13RSaA7ZWPg5PrHW9nPXiIGHMSSKSvcBPqzckNLXCEB6ZAcQ67Ug7WUhLyWMlXYggne6QLcu6xkGyNPMXOEKY+51b+2vv1wxADLkBVXorCdDnbRMGm6HZUGz5CCjOiLQw=
+	t=1718621040; cv=none; b=NpdCkyNW3vBHhqVgW7vwhJ19sFD2GolNTN5ytMSCCoLCwPVmjdfjark/8rFFGQWgyT6Ozr1rXkUY954+0+EYWqWzbOEqvYzBgZY7/ferrzfEHMcEANXt9XlcOSegoOOY2FX5+/VHHh2+TeKw/hnyaDwNdJtxEubGGw55pjT/owo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718620998; c=relaxed/simple;
-	bh=i3uW3NOlbKjP4qf5Axhnm99g5Mt2/WaSNm74QRBZhrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DYIB36JFbcfDYSzO4pC8Tjs7HszQLb7KezKbatwZ66WefUv6/dgSIt7FcKOc1HctK1QCB/defWSk23gOhKYVgvaU5cPd/ZgSexj/C1H7PuXScWXPbR5jN2J1kXx5/VPp1HH5olXWVCLEfBs7XyaM01C339KBuyQAWoQl0/3ILbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GU+DrT2E; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HAV4AN022722;
-	Mon, 17 Jun 2024 10:43:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Bdp0i5ngaQ4+E3qeMMivqEtEmbMZP+Ab6cxXPFCoqi4=; b=GU+DrT2EFZYzEdN9
-	PfiCUEpuzSe7po74u5oQyoo/MFz91HLLm2XDVZkg4+uNi/nhgjfFtCW7/W040n0e
-	BV1vwfwE0sXoXRVQ+elan9KRofQmQcBlxhbPUc2XdHoqqBedIgeBtmul1i2F5xjP
-	eM3V4LJxtCNk/Uy1eUZglE936MHUbxujFE7IIDkczqLCuh25uxjBipWH6CZ3yCnT
-	fhQSh9+W2LRgzsoZVKcW1cN2Drt6A0puwAR68wOcktuQsmfoVZtMPJApkiGJZcBO
-	1asxBWDvl/V2MAx89YJiu+fuqH7gbMYapuQEQuUMfkN4lDWTD0XMaQ+3QlftVRMV
-	KgzLKw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys44ju8e4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 10:43:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45HAgpTl004802
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 10:42:51 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
- 2024 03:42:44 -0700
-Message-ID: <d997f42d-0616-4180-ae36-9d2ebd60d15f@quicinc.com>
-Date: Mon, 17 Jun 2024 18:42:42 +0800
+	s=arc-20240116; t=1718621040; c=relaxed/simple;
+	bh=lgIjOP5nWQRNHxugpzpf0zYbqXBsYfU94nJDit9pbzs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jcUhUWNQ9K3Fk1VNgqqm1pfjXfo2aoNDTl/wSLTTtfDR2d44qq49yYoGq3+LpFtXsqvTrlzW/drsco459PPQwp2qaIZ04TKY8Xb19RRcX2rNaSf2eCrge+sLVYn6LduS+BnsBUgbEPeNx/WxohD5SFzubAPZe1VgQAYZDuKxMY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d4VFX6SS; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-48baea0acfdso1327100137.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 03:43:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718621038; x=1719225838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v4nLkqlsqvsKsWqeWur6tKtmzT9Q8xCH7R5hLwg3FSc=;
+        b=d4VFX6SSiNlo3S3I9R38ZCtaJErcfp0NmcDVz95t2mdHhnISv50kxvKZYGob4Us7XR
+         NRRhQvz/WSlhlibvo//3ql7pUOy0S2KP/pbQQpxM/t3r7MG9gnh5ykLJBxFspH/7GESc
+         tGpwrhZn+YOLCW606ruJH5k1wxbYvS6HS5KodVf41jJpi9k7YlS4pyYBWTD2YISImuqD
+         1FKl9ddjDtfSJmGtje6/cIrr4xKwQ81clLfFXzlcKCUjY7naoQTEsAfLS/YuIWBtSuaq
+         GvkdeVPLNYKAVs+/9d6a3a+KHtmH3bZJ0PE1VbzmBEdaaCfJ8LDKUsetyves78MHLa+K
+         6Q/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718621038; x=1719225838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v4nLkqlsqvsKsWqeWur6tKtmzT9Q8xCH7R5hLwg3FSc=;
+        b=gfxA4TsCa/matZZRtUddUAO/FSHfURfbqryc8bY/CwZZuJPnuwUEKTFtXJxrm6uL8y
+         sT9OCETPiWoG10nlhTGF8F3xfhjkrCW4GaGHJnLrDZEnqitZYS+JlO3Ekzpuj2S7XAV1
+         aVy+Zs2/LbS+I7pXn1JBMHoBTAFpkEOj3JabrBMhU9EnDW395gDRQ3Y2rb58vKMPq4q/
+         lODN9wpHEZkv/jgAdcvBGHmMI/Xq9994nCoFFzPb2VEhLg/XTpt9Bo0UxniyLaQ4HCx6
+         Mhz79f/ATA0VNksRHHOeoSyFVl78Og7Z6QVKjSLnUhsf3553zg1CJmmEO1L7+ucr8SYe
+         TWPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfeqce3PLW05/7nd7kVW2ME5/2RnxKWfl3R8PhEPeI7C9nEKNpSYRhHkDI/qZksIHabL2zpzj5KfSnEIn3tQqQbUoBj8hNzblIuMkk
+X-Gm-Message-State: AOJu0Yx2ReoDTWs8UEK89QgTQjk+hl7zfQJIJcEKEEh7NIVAuO2Rcmqq
+	r+LhNBlvE62+6yb6fBG1XZmOY7CgkeZGDlrCDPr59k7epMLITypkocm9s9sTnqaD+HJMAYHzOxh
+	VjMjTupqpSJguyqCEdKPIsvYeu+q+CnSr708=
+X-Google-Smtp-Source: AGHT+IH94ZfxSyz3r9dp5aCDfWRtBxC24cxXWsg1H700/hxN/YUb4p1hkU4K61N59jhQte6xW3NcDlk3+KA9Xq3w0CY=
+X-Received: by 2002:a05:6102:3569:b0:48d:9fde:2b7 with SMTP id
+ ada2fe7eead31-48dae3b4095mr10148163137.27.1718621037914; Mon, 17 Jun 2024
+ 03:43:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/2] arm64: qcom: Add BWMON support for SA8775p
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <krzysztof.kozlowski@linaro.org>, <djakov@kernel.org>, <robh@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
-References: <20240617092940.1724962-1-quic_tengfan@quicinc.com>
- <yb3ni6o22zdm2lqodj7utdb2dlg3jkbwzutxhmljxle3syoe5y@op2prslmri4y>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <yb3ni6o22zdm2lqodj7utdb2dlg3jkbwzutxhmljxle3syoe5y@op2prslmri4y>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mEQjeyQ3u3zLNnSMTaiIYoE__gGc83dK
-X-Proofpoint-ORIG-GUID: mEQjeyQ3u3zLNnSMTaiIYoE__gGc83dK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_09,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 mlxlogscore=976 spamscore=0 lowpriorityscore=0
- adultscore=0 phishscore=0 mlxscore=0 clxscore=1015 bulkscore=0
- malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406170082
+References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
+ <c180d2a0-1e34-41f0-bae8-1205d04a5f6b@linux.alibaba.com> <82d31425-86d7-16fa-d09b-fcb203de0986@126.com>
+ <7087d0af-93d8-4d49-94f4-dc846a4e2b98@linux.alibaba.com>
+In-Reply-To: <7087d0af-93d8-4d49-94f4-dc846a4e2b98@linux.alibaba.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 17 Jun 2024 22:43:47 +1200
+Message-ID: <CAGsJ_4xgqDrTsQRYB_VKn+KC6rvYeJF6TQwhT5JnLi-b4nFTOQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
+ non-CMA THP-sized page
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: yangge1116 <yangge1116@126.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, liuzixing@hygon.cn, 
+	Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jun 6, 2024 at 3:07=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2024/6/4 20:36, yangge1116 wrote:
+> >
+> >
+> > =E5=9C=A8 2024/6/4 =E4=B8=8B=E5=8D=888:01, Baolin Wang =E5=86=99=E9=81=
+=93:
+> >> Cc Johannes, Zi and Vlastimil.
+> >>
+> >> On 2024/6/4 17:14, yangge1116@126.com wrote:
+> >>> From: yangge <yangge1116@126.com>
+> >>>
+> >>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+> >>> THP-sized allocations") no longer differentiates the migration type
+> >>> of pages in THP-sized PCP list, it's possible to get a CMA page from
+> >>> the list, in some cases, it's not acceptable, for example, allocating
+> >>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
+> >>>
+> >>> The patch forbids allocating non-CMA THP-sized page from THP-sized
+> >>> PCP list to avoid the issue above.
+> >>>
+> >>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+> >>> THP-sized allocations")
+> >>> Signed-off-by: yangge <yangge1116@126.com>
+> >>> ---
+> >>>   mm/page_alloc.c | 10 ++++++++++
+> >>>   1 file changed, 10 insertions(+)
+> >>>
+> >>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> >>> index 2e22ce5..0bdf471 100644
+> >>> --- a/mm/page_alloc.c
+> >>> +++ b/mm/page_alloc.c
+> >>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone
+> >>> *preferred_zone,
+> >>>       WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
+> >>>       if (likely(pcp_allowed_order(order))) {
+> >>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>> +        if (!IS_ENABLED(CONFIG_CMA) || alloc_flags & ALLOC_CMA ||
+> >>> +                        order !=3D HPAGE_PMD_ORDER) {
+> >>
+> >> Seems you will also miss the non-CMA THP from the PCP, so I wonder if
+> >> we can add a migratetype comparison in __rmqueue_pcplist(), and if
+> >> it's not suitable, then fallback to buddy?
+> >
+> > Yes, we may miss some non-CMA THPs in the PCP. But, if add a migratetyp=
+e
+> > comparison in __rmqueue_pcplist(), we may need to compare many times
+> > because of pcp batch.
+>
+> I mean we can only compare once, focusing on CMA pages.
+>
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 3734fe7e67c0..960a3b5744d8 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2973,6 +2973,11 @@ struct page *__rmqueue_pcplist(struct zone *zone,
+> unsigned int order,
+>                  }
+>
+>                  page =3D list_first_entry(list, struct page, pcp_list);
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +               if (order =3D=3D HPAGE_PMD_ORDER &&
+> !is_migrate_movable(migratetype) &&
+> +                   is_migrate_cma(get_pageblock_migratetype(page)))
+> +                       return NULL;
+> +#endif
 
+This doesn't seem ideal either. It's possible that the PCP still has many
+non-CMA folios, but due to bad luck, the first entry is "always" CMA.
+In this case,
+allocations with is_migrate_movable(migratetype) =3D=3D false will always l=
+ose the
+chance to use the PCP.   It also appears to incur a PCP spin lock/unlock.
 
-On 6/17/2024 5:43 PM, Dmitry Baryshkov wrote:
-> On Mon, Jun 17, 2024 at 05:29:38PM GMT, Tengfei Fan wrote:
->> Add CPU and LLCC BWMON nodes and their corresponding OPP tables for
->> SA8775p SoC.
-> 
-> This series is marked as RFC, Request For Comments. What kind of
-> comments are expected for the series?
-> 
+I don't see an ideal solution unless we bring back the CMA PCP :-)
 
-I found that the BWMON patch for x1e80100[1] is currently under review. 
-There are upstream comments suggesting that we reference the same shared 
-OPP table from all the BWMONs that share the same OPP table. However, 
-there will be some DTBS CHECK warnings[2] if we do reference the same 
-shared OPP table.
-
-Therefore, I pushed this patch series to collect some comments on 
-whether we can have separate OPP tables for each BWMON, as the OPP table 
-of "pmu@90b5400" and "pmu@90b6400" in this patch series.
-
-[1] 
-https://lore.kernel.org/lkml/4ef1d9a9-6a0e-4324-b6d5-2ae225855b03@linaro.org/
-
-[2]
-arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: pmu@90b5400: 'opp-table' is a 
-required property from schema $id:
-http://devicetree.org/schemas/interconnect/qcom,msm8998-bwmon.yaml#
-
->>
->> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->> ---
->>
->> This patch series depends on patch series:
->> "[PATCH 2/4] soc: qcom: icc-bwmon: Allow for interrupts to be shared across instances"
->> https://lore.kernel.org/lkml/20240604011157.2358019-3-quic_sibis@quicinc.com/
->>
->> Tengfei Fan (2):
->>    dt-bindings: interconnect: qcom-bwmon: Document SA8775p bwmon
->>      compatibles
->>    arm64: dts: qcom: sa8775p: Add CPU and LLCC BWMON
->>
->>   .../interconnect/qcom,msm8998-bwmon.yaml      |   2 +
->>   arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 115 ++++++++++++++++++
->>   2 files changed, 117 insertions(+)
->>
->>
->> base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
->> -- 
->> 2.25.1
->>
-> 
-
--- 
-Thx and BRs,
-Tengfei Fan
+>                  list_del(&page->pcp_list);
+>                  pcp->count -=3D 1 << order;
+>          } while (check_new_pages(page, order));
+>
 
