@@ -1,152 +1,311 @@
-Return-Path: <linux-kernel+bounces-217746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2102390B3AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:15:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDE990B3B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4C11F2851F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:15:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3DBE1C22C2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7432158A17;
-	Mon, 17 Jun 2024 14:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E425158D98;
+	Mon, 17 Jun 2024 14:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lei0cceb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="V6+L6VWw"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544F6158A05;
-	Mon, 17 Jun 2024 14:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78274158D8E;
+	Mon, 17 Jun 2024 14:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718634865; cv=none; b=rDi7wo4Q6/z4GYIhcPah82l7j5+YFjiV/M2KFNH6KW+xzp4E9bSItQPWX/nbiIno2RZ8gsPi07G6xmuyW4Mv4/EA1OiCekCQFhut0NSa/chc7X49U3TUlzPzVdi8wh8d6hiuFueTmmK7WcE46dW4mhsYOlQLRN9hk3VCTWb/rCM=
+	t=1718635013; cv=none; b=olBMdV60jWHqEKR1A5W9+9CUIDM1ZEJoHpzTXU+Bzjk5IvXg1jKIJFo1XqZjC9xufnxitiVyPH0RjKPbguO5fBpXCH04jZ0Hm572703/1JqaAy8SzQK1eZmMmX0to174ouu2oGdeQA8s8AcVkdGaMUEUQikt16kcSbj1KvotQ9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718634865; c=relaxed/simple;
-	bh=ZKJwrIUAmTGAy/3mB7JoVGjUX5G4W0v5y/X/v0PChhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jpA+VamP8UhhMt5j9vvpTgHHqfWd6INlMCFI1/cCZ1RSLw9a9mxBo9/dWy8PFzajiW3mibH5ZbtK7e1fR/8/+aJNaRWH89rha4wpyKm1simVqzXrNIGzVtm6EybgA61yU49KCQpafQN1ub0jUKWLOWpDcsAViFL8bf5mDMmwuRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lei0cceb; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718634865; x=1750170865;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ZKJwrIUAmTGAy/3mB7JoVGjUX5G4W0v5y/X/v0PChhU=;
-  b=Lei0ccebDtGN3on9kEr668xnJ8+wTfVVKmVIPoaMLFGMDjT2PQT7x94P
-   osDEYurt+iYWO5ip4edzfXQRQcOSlz3lTYKS4BgvEXtNDYBp0a6j2iNx1
-   RxSaTdx9xCVDatnCMFyX7Jalw9tAgEXx2pfJgJ4GyU/lSCsoT/hgNlNkF
-   /d/AJx3byGA71rMv4wqgstL5ssbLKFcf/oKpAqJb26JvRIUgVy2/JlLC+
-   PUx12W7JuzohebZUKyqjYSGpPm8XJ7SwUJeVqVlIjuFRuuf+O+Og+9tdh
-   Pw3beCRnFQcCNvEHQ5P9fAJjJvvrEF+LwfPagVaL5DN7mSimVBFn8dEdA
-   g==;
-X-CSE-ConnectionGUID: u8xsUioSQb65FG1maZkvpw==
-X-CSE-MsgGUID: f2+GpwkQT1+oUK0O1hvwKg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="37984591"
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="37984591"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 07:34:24 -0700
-X-CSE-ConnectionGUID: RpvlZVImTSStEq7PjpiMag==
-X-CSE-MsgGUID: 8bol3vIoScW2A36f63cf3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="46141848"
-Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.111.154]) ([10.125.111.154])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 07:34:24 -0700
-Message-ID: <805fa8d2-c920-415c-8db5-f073607f9e6a@intel.com>
-Date: Mon, 17 Jun 2024 07:34:22 -0700
+	s=arc-20240116; t=1718635013; c=relaxed/simple;
+	bh=vquMLNYCLeCI9Wf+nwxmTjMd8kuzQP4DWSnz7pv0oHQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lOJDqqxx7+1AMo0ZV39o95hR+kzwJeVe45lVekryPZukuckqB2yPEzK5ls2hZP2d4j/1I4l6yG0ofbEyLtU7UNMQt0iXXlrwZncjru1ANLiUcXzOlnEQwttQwR0MbEdWCEtvYySVEXFTTn91HPoG9jk1dwCtr42DvpTCXxI+TRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=V6+L6VWw; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718635009;
+	bh=vquMLNYCLeCI9Wf+nwxmTjMd8kuzQP4DWSnz7pv0oHQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=V6+L6VWwlyaaV3yVJgRGErcMn95lCGol873uwmjukiIo921DkvVlRVGRwAs2dHpgC
+	 IEeEfX5uR8ftWizbzLNRh4ht6eukICrQ3/zk5HFEdEtLhQ+uc6pjfkstGkGmcCzKiy
+	 weFgPQ52wRlfmWUdcmmVZrE3ryZRO3NUJcVvaC74bE6HHTonivpb+CcVyYbBApgcjF
+	 idGiTPPcTCi+cgFWLBuvba0uq5Wjh9a3cHwUQE0uEuip3uRejRkXe7zAH5vbtub0Hy
+	 +ZytyAEloyRVgBkH3RDuxd82EE8UspR3n5ql8oyoXkKw+VjYhQn+bFfsJ5TclnzAoU
+	 /edHXWh9eOG8Q==
+Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C81FD37812FD;
+	Mon, 17 Jun 2024 14:36:46 +0000 (UTC)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Dragan Simic <dsimic@manjaro.org>, Alexey Charkov <alchark@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Diederik de Haas <didi.debian@cknow.org>, Andy Yan <andy.yan@rock-chips.com>,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-staging@lists.linux.dev
+Subject:
+ Re: [PATCH 3/3] arm64: dts: rockchip: Add rkvdec2 Video Decoder on rk3588(s)
+Date: Mon, 17 Jun 2024 10:36:19 -0400
+Message-ID: <48773952.fMDQidcC6G@arisu>
+Organization: Collabora
+In-Reply-To: <f4c140a3-2b11-405c-bfd4-32e50180f6b7@kwiboo.se>
+References:
+ <20240615015734.1612108-1-detlev.casanova@collabora.com>
+ <3666279.iZASKD2KPV@arisu> <f4c140a3-2b11-405c-bfd4-32e50180f6b7@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH PATCH 9/9] x86/rfds: Exclude P-only parts from the RFDS
- affected list
-To: Andrew Cooper <andrew.cooper3@citrix.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org
-Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <20240617-add-cpu-type-v1-9-b88998c01e76@linux.intel.com>
- <d7c70d92-4d19-4c1e-81c9-d4c0cd34eda8@citrix.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <d7c70d92-4d19-4c1e-81c9-d4c0cd34eda8@citrix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart4519294.Icojqenx9y";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-On 6/17/24 02:43, Andrew Cooper wrote:
-> On 17/06/2024 10:12 am, Pawan Gupta wrote:
->> +	VULNBL_INTEL_CPU_TYPE (RAPTORLAKE,	X86_CPU_TYPE_INTEL_ATOM,	RFDS),
->> +	VULNBL_INTEL_CPU_TYPE (ALDERLAKE,	X86_CPU_TYPE_INTEL_ATOM,	RFDS),
-> 
-> How does this work?
-> 
-> Being __initconst, this is only evaluated on the BSP.
-> 
-> P-only and mixed P/E systems won't see X86_CPU_TYPE_INTEL_ATOM, even if
-> there are ATOM APs to bring up later.
+--nextPart4519294.Icojqenx9y
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+Date: Mon, 17 Jun 2024 10:36:19 -0400
+Message-ID: <48773952.fMDQidcC6G@arisu>
+Organization: Collabora
+In-Reply-To: <f4c140a3-2b11-405c-bfd4-32e50180f6b7@kwiboo.se>
+MIME-Version: 1.0
 
-The X86_CPU_TYPE_* is only used on the boot CPU on non-hybrids.  Hybrids
-(independent of the boot CPU type) should be considered vulnerable no
-matter what.
+On Sunday, June 16, 2024 5:17:31 A.M. EDT Jonas Karlman wrote:
+> Hi Detlev,
+> 
+> On 2024-06-15 21:55, Detlev Casanova wrote:
+> > On Saturday, June 15, 2024 4:25:27 A.M. EDT Jonas Karlman wrote:
+> >> Hi Detlev,
+> >> 
+> >> On 2024-06-15 03:56, Detlev Casanova wrote:
+> >>> Add the rkvdec2 Video Decoder to the RK3588s devicetree.
+> >>> 
+> >>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> >>> ---
+> >>> 
+> >>>  .../boot/dts/rockchip/rk3588-rock-5b.dts      |  4 ++++
+> >>>  .../boot/dts/rockchip/rk3588s-orangepi-5.dts  |  4 ++++
+> >>>  arch/arm64/boot/dts/rockchip/rk3588s.dtsi     | 19 +++++++++++++++++++
+> >>>  3 files changed, 27 insertions(+)
+> >>> 
+> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> >>> b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts index
+> >>> c551b676860c..965322c24a65 100644
+> >>> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> >>> @@ -503,6 +503,10 @@ &pwm1 {
+> >>> 
+> >>>  	status = "okay";
+> >>>  
+> >>>  };
+> >>> 
+> >>> +&rkvdec0 {
+> >>> +	status = "okay";
+> >>> +};
+> >> 
+> >> Enable of rkvdec0 should probably be split out from the patch that adds
+> >> the rkvdec0 node to soc dtsi.
+> > 
+> > Ack
+> > 
+> >> Also why is rkvdec0 only enabled on rock-5b and orangepi-5?
+> > 
+> > I only could test on those two but I can enable it on all rk3588 devices.
+> 
+> Because the decoder is an integrated part of the SoC the default should
+> probably be that the IP is enabled, i.e. no status prop required for the
+> vdec and related mmu nodes in rk3588s.dtsi.
+> 
+> >>> +
+> >>> 
+> >>>  &saradc {
+> >>>  
+> >>>  	vref-supply = <&avcc_1v8_s0>;
+> >>>  	status = "okay";
+> >>> 
+> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+> >>> b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts index
+> >>> feea6b20a6bf..2828fb4c182a 100644
+> >>> --- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+> >>> @@ -321,6 +321,10 @@ typec5v_pwren: typec5v-pwren {
+> >>> 
+> >>>  	};
+> >>>  
+> >>>  };
+> >>> 
+> >>> +&rkvdec0 {
+> >>> +	status = "okay";
+> >>> +};
+> >>> +
+> >>> 
+> >>>  &saradc {
+> >>>  
+> >>>  	vref-supply = <&avcc_1v8_s0>;
+> >>>  	status = "okay";
+> >>> 
+> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> >>> b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi index
+> >>> 0fecbf46e127..09672636dcea 100644
+> >>> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> >>> @@ -3034,6 +3034,9 @@ system_sram2: sram@ff001000 {
+> >>> 
+> >>>  		ranges = <0x0 0x0 0xff001000 0xef000>;
+> >>>  		#address-cells = <1>;
+> >>>  		#size-cells = <1>;
+> >> 
+> >> Blank line is missing.
+> >> 
+> >>> +		rkvdec0_sram: rkvdec-sram@0 {
+> >>> +			reg = <0x0 0x78000>;
+> >>> +		};
+> >>> 
+> >>>  	};
+> >>>  	
+> >>>  	pinctrl: pinctrl {
+> >>> 
+> >>> @@ -3103,6 +3106,22 @@ gpio4: gpio@fec50000 {
+> >>> 
+> >>>  			#interrupt-cells = <2>;
+> >>>  		
+> >>>  		};
+> >>>  	
+> >>>  	};
+> >>> 
+> >>> +
+> >>> +	rkvdec0: video-decoder@fdc38100 {
+> 
+> To match prior generations the symbol should probably be called vdec0.
+> 
+> >>> +		compatible = "rockchip,rk3588-vdec2";
+> >>> +		reg = <0x0 0xfdc38100 0x0 0x500>;
+> >>> +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+> >>> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>,
+> > 
+> > <&cru
+> > 
+> >>> CLK_RKVDEC0_CORE>, +			 <&cru
+> > 
+> > CLK_RKVDEC0_CA>, <&cru
+> > 
+> >>> CLK_RKVDEC0_HEVC_CA>;
+> >>> +		clock-names = "axi", "ahb", "core",
+> >>> +			      "cabac", "hevc_cabac";
+> >>> +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru
+> > 
+> > CLK_RKVDEC0_CORE>,
+> > 
+> >>> +				  <&cru CLK_RKVDEC0_CA>, <&cru
+> > 
+> > CLK_RKVDEC0_HEVC_CA>;
+> > 
+> >>> +		assigned-clock-rates = <800000000>, <600000000>,
+> >>> +				       <600000000>, <1000000000>;
+> >>> +		power-domains = <&power RK3588_PD_RKVDEC0>;
+> >> 
+> >> iommus and resets should probably be added.
+> >> 
+> >>> +		status = "disabled";
+> >>> +	};
+> >> 
+> >> The iommu node for rkvdec0_mmu seem to be missing, is it not required to
+> >> be able to use memory >4GiB as decoding buffers?
+> > 
+> > I need to check if the current rockchip iommu driver will work for this
+> > decoder. I remember that the iommu code for AV1 was a bit different, not
+> > sure about this rkvdec.
+> 
+> The device tree should describe the HW not what drivers are capable of.
+> 
+> If there are substantial differences in iommu IP a new compatible should
+> probably be added for that iommu.
+> 
+> >> I would also consider adding the rkvdec1 node(s), if I am understanding
+> >> correctly they can both be used in a cluster or completely independent.
+> > 
+> > They can be used independently, yes. I'll add rkvdec1 for rk3588 devices
+> > (rk3588s only has  1 core)
+> 
+> I do not think that is true, the rk3588s variant should also include two
+> decoder and two encoder cores.
+
+You are right, I had HDMI ports in mind. There are 2 decoders available on 
+rk3588s too.
+
+> However, the rk3582/rk3583 variants (rk3588s with one or more bad cores)
+> may have 0-2 cores working for the decoder and/or encoder.
+> 
+> E.g on my rk3582 boards I have following different ip-state in otp:
+> - 1 bad cpu core (ip-state: 10 00 00)
+> - 1 bad decoder core (ip-state: 00 80 00)
+> - 1 bad encoder core (ip-state: 00 00 04)
+> 
+> The general idea is that bootloader will disable or delete the offending
+> nodes in the device tree to correctly describe the HW for the OS.
+
+I see, so I will add both cores, enabled, in rk3588s.dtsi and let the 
+bootloader disable the ones that are bad.
+
+Should I also add compatibles for rk3582/rk3583 then ?
+
+> Regards,
+> Jonas
+> 
+> > Regards,
+> > Detlev.
+> > 
+> >> Also on RK3582/RK3583 one (or both) of the decoder cores may be marked
+> >> as bad, yet the remaining one can still be used independently. The idea
+> >> will be that bootloader fixup the DT and disabled/delete-node the bad
+> >> core(s).
+> >> 
+> >> Regards,
+> >> Jonas
+> >> 
+> >>>  };
+> >>>  
+> >>>  #include "rk3588s-pinctrl.dtsi"
+
+
+--nextPart4519294.Icojqenx9y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmZwSeQACgkQ5EFKUk4x
+7bZ8EggAsTziifxNj/1BKPe7QDXU3Ets7tahPfQ6vh0qIWmhwS+nUrIVjFRXa8na
+o7EeZGv16j9/t/Qndj9DY7QrxywaqCPA1ovey9Dy07q3ap9QLWDyI/VYHwmPQAhk
+hpxUtXK/ovHzDPAm6teUwB2dC2T+MpWXintbg6lRGjUuMOR9nmp9skHdERZglrWI
+NnH8ZG5D+WKFOMZpS/rP2KkHkFsW8Ma5ypuAIM+uZq88ZEDUMhctYnrEpDU5C6Ln
+U8PFrWFnTfRncd/JMWIwpCUD+01bZL1F7yebYOqRKdlhcEPZE5U1Z8VFwPjtIEGa
+v//skwj2Ds7leldrEbGCnc2tgQ+dBg==
+=vTzR
+-----END PGP SIGNATURE-----
+
+--nextPart4519294.Icojqenx9y--
+
 
 
 
