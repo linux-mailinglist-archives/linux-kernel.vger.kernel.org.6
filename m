@@ -1,69 +1,111 @@
-Return-Path: <linux-kernel+bounces-217854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43DF590B537
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:51:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2810E90B53A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84E2286DB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:51:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFB4A28737C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABC315CD68;
-	Mon, 17 Jun 2024 15:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB1817BA4;
+	Mon, 17 Jun 2024 15:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kp9v/qMe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="b6PfhvWe"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3F4FC18;
-	Mon, 17 Jun 2024 15:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D24134DE;
+	Mon, 17 Jun 2024 15:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718638048; cv=none; b=gT2JxYuLfJF2e/qK0aMtWSNNvEkbrDHPZgofZTNxP2FwY/wJpxm3nomXR3Upw9dQexBDJVnoXCOFd63L8AJg4Ta22hBZQjqQESe7ox3VmYiOuDkeIGCjsB2lv0KI73IGFldHmj7SxxVXzbvmvSr8p3jjoiI/kf77FRvLKFAlcyg=
+	t=1718638102; cv=none; b=WnPDjgpKAJRa9tZXAN7Jz+Jh0xB7979wMMjAnOugFjZbXO7EKE7G+YqugTRCgCs+0kw/Wzvwi904HjSzTR+33kpF2Hqmgnvy18Aa/FqGb3Jw0iwsrZEMie+GhBxWtDWpkVT488m23IkPPjjEQuZxC4QUjBTH29MXHpgmx2mD34w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718638048; c=relaxed/simple;
-	bh=JqQieqOI7uaMFyxd7GU6ZdU463tO4X0tPf2fLy0tgxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K98CmeMUw3zzHTT5xkYKiJmL5ypCYy8IpYfT2ngWQUdomfVGfsuziWVP0zBab+gMHXLvUQvAACdZsviOKSMsMS14ZfHUvINzkiq9ekOrk+3hSKSSFCinq+OXotZXl+u4ohdjHZ8hMEB/yUSiFYNPWFJgUy5BAc7HOou6T46teI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kp9v/qMe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E18A8C4AF1C;
-	Mon, 17 Jun 2024 15:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718638047;
-	bh=JqQieqOI7uaMFyxd7GU6ZdU463tO4X0tPf2fLy0tgxo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kp9v/qMeE///xRyWXaDyuuwUtJYSiliwMIDIoQTzGa1dKJ9eXZjFd2xZHl57uwt81
-	 G1KoA67VdxH7Oek6QhLYDnFrgF3ArqWjpIsFijgj+WgbBVnPjEaouzhzCJZdN0jd+1
-	 9uoEJrgsG7INGo92rGtK0aJlCKQzJKK5WL3puKfo=
-Date: Mon, 17 Jun 2024 17:27:24 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Shiva Kiran K <shiva_kr@riseup.net>
-Cc: Roshan Khatri <topofeverest8848@gmail.com>,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: fbtft: Remove unnecessary parentheses
-Message-ID: <2024061759-hemlock-humped-ac2f@gregkh>
-References: <20240617142746.51885-2-shiva_kr@riseup.net>
+	s=arc-20240116; t=1718638102; c=relaxed/simple;
+	bh=1dDye3xMz9kCshlVTroWnygLjhXc9vMSQN03NQdnELM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=URTc+fSo65ZjIWElw2kifNh6Db2eII44go/8rWVe3RQuQEar/jRilNCsHIV0n7Yy4aSl4LuprJ7YgOLXWLadnsJ1XoptQbIPG+dZ7Y3+3jQ+XccgpTpiPg2YzRTCF3EGckVL+IdaHtNXoTMtL3IpB51TKAWDTwB4wKK1hKB66jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=b6PfhvWe; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718638096; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=l+12FevlX3fdnfHXW0LMF9KRFfVUfjKWXSd2yQeA1ZQ=;
+	b=b6PfhvWejcbXIWb0eUa8M/7QGPtM8N+KrmHU5QCUWBZP7UzfV+3aagQ/4LygyR5pWIcB401HcNlDV+EYRgxr4TOWcDIdvjmmV5b0DoaDQi7qA02h2fRX4tAZRAyKrjiWjn6j2EM2GF75gtt+9Q45FVymrVdpHXzdD/2T0a6wmw4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=hengqi@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0W8gs1NW_1718638094;
+Received: from 30.15.205.40(mailfrom:hengqi@linux.alibaba.com fp:SMTPD_---0W8gs1NW_1718638094)
+          by smtp.aliyun-inc.com;
+          Mon, 17 Jun 2024 23:28:15 +0800
+Message-ID: <2f77825b-c6db-491a-867d-1d7d357ea2a3@linux.alibaba.com>
+Date: Mon, 17 Jun 2024 23:28:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617142746.51885-2-shiva_kr@riseup.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: mana: Use mana_cleanup_port_context() for
+ rxq cleanup
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Cc: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+ Erick Archer <erick.archer@outlook.com>,
+ Konstantin Taranov <kotaranov@microsoft.com>, Simon Horman
+ <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ "David S. Miller" <davem@davemloft.net>, Dexuan Cui <decui@microsoft.com>,
+ Wei Liu <wei.liu@kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Shradha Gupta <shradhagupta@microsoft.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+ linux-hyperv@vger.kernel.org
+References: <1718349548-28697-1-git-send-email-shradhagupta@linux.microsoft.com>
+From: Heng Qi <hengqi@linux.alibaba.com>
+In-Reply-To: <1718349548-28697-1-git-send-email-shradhagupta@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 07:57:47PM +0530, Shiva Kiran K wrote:
-> Remove unnecessary parentheses in `if` statements.
-> Reported by checkpatch.pl
 
-As per the many times this came up in the past (see the mailing list
-archives), checkpatch is wrong here.
+在 2024/6/14 下午3:19, Shradha Gupta 写道:
+> To cleanup rxqs in port context structures, instead of duplicating the
+> code, use existing function mana_cleanup_port_context() which does
+> the exact cleanup that's needed.
+>
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> ---
+>   drivers/net/ethernet/microsoft/mana/mana_en.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> index b89ad4afd66e..93e526e5dd16 100644
+> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
+> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> @@ -2529,8 +2529,7 @@ static int mana_init_port(struct net_device *ndev)
+>   	return 0;
+>   
+>   reset_apc:
+> -	kfree(apc->rxqs);
+> -	apc->rxqs = NULL;
+> +	mana_cleanup_port_context(apc);
+>   	return err;
+>   }
+>   
+> @@ -2787,8 +2786,7 @@ static int mana_probe_port(struct mana_context *ac, int port_idx,
+>   free_indir:
+>   	mana_cleanup_indir_table(apc);
+>   reset_apc:
+> -	kfree(apc->rxqs);
+> -	apc->rxqs = NULL;
+> +	mana_cleanup_port_context(apc);
+>   free_net:
+>   	*ndev_storage = NULL;
+>   	netdev_err(ndev, "Failed to probe vPort %d: %d\n", port_idx, err);
 
-sorry,
+Reviewed-by: Heng Qi <hengqi@linux.alibaba.com>
 
-greg k-h
+Thanks!
 
