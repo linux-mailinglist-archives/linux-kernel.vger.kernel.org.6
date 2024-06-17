@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-218338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DEAF90BCCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:19:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A4190BCCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F3D81C2206C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:19:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4501F25EC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B26F190660;
-	Mon, 17 Jun 2024 21:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UM8T/G+l"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2640199229;
+	Mon, 17 Jun 2024 21:18:19 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2559199250;
-	Mon, 17 Jun 2024 21:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53972190660;
+	Mon, 17 Jun 2024 21:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718659112; cv=none; b=DbnEJFhNDDmjEa6F0DtBacrQZ3nPcrpuqg+tyUvqUGnRFpJhs/d2JSuQSfbvZVEucbgoYlx+3IEW1Lxw0jRSDtt15JZGBlpWRxxFD5JFcPbumpa0At5LWGeqNLpNmJaOwE+L3I2AQS/izfp8hG7L1FLd21vG8A8ePCiEvpHLfcw=
+	t=1718659099; cv=none; b=XlCjkNDNyQ1oqUWN6trsqCjdhNUORuNM0y5mP5uTmxLIXpcGItkgVIyUNDamBpE7e4TMv8itB2bzIWsDCCgEToPoX+ea4ALhL+P1K/b3r9BYLS3H1qaGBdBXoauszPKBCfcDr99nt7JXQUJbwXUqVfHWnyub7TFpAIk28wRfd/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718659112; c=relaxed/simple;
-	bh=W5rBoTuXPRCST+ZPRx9kVTvjgC7klXt/2ifotpzvINY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hHuUMzPHUX7dJViRMehbjoVt2tNcVH9VPRkrIULkuO63jmYUBx+oc2diBLPcFIOWelFsT5jkeRfbMKfUTBBpIaeE1AElOgSUcH3+iyriO3L9Y7Igx8/lvKEYKEEwkJos8lM8UgAnUaIU/D6b6Roh285LcjRAC+LHtNuLWQrJLp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UM8T/G+l; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 73A3D40E01F9;
-	Mon, 17 Jun 2024 21:18:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id tde_eHHVuoG1; Mon, 17 Jun 2024 21:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718659105; bh=yK+oTJoi5DGuEHt6jESCPtqmrBbsMm4vga3QYTDWOxs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UM8T/G+lPTeB4SuRGoE9vf9I0FOvyUQYpL1yVCD9HjVhLj3m6C9Px/9ZAaCG3oD9r
-	 7GNAh0JUIAYea7bhql07cHV4dy7cg4qq1KsW+KGO3fkl41zA+tu3W+AyfTL8EkS865
-	 Geg/Tl0Uoy5Uru/g1xSLXiHlZ7wKhnjK5kXtfeE4Xt8xmDG3qn9uX96v0Zvc0jKdj8
-	 nQZ0omgR81Zf4qk9Jc/q4x9DOuPCoj+Y+OiLyCk95I8JTQ1g2b7zQ7uE0A7nTRFdAw
-	 xdHSIhxRABsU5W5jPbFXRk++KLT3cysJwxZj8Npn1S1kPtEnzrqMMsPD7ilEFMF6Pj
-	 uL212OxyfMOFSX8pnLYfuSWIB3NLrASeQBTTN5/+SUF0fMP/NZUsfWc6f7I3rOZ9hA
-	 dGwTvdoT4jHyq/hJ5HxV97DYtJI/hxvXvFTv8g3XhDl63gqx3Rbdz52juifyYrycjN
-	 V3Tr6oX9GkotHVirBjsLg8XZgA6nOWUOWovabnqKFpSWBJI1GOlgEkfeQuIaO0vwK2
-	 qAQUwBnGHKYEb9CZYXJfTi95JVErV6fUHDHj911kk9KF68/TdALRWEGR5XXGsV5FxI
-	 gOmnUB/5NcsdYd4qKHxKveeHHSSZNZUG1j8hAymip8/kS+5pXjo2KrJsh9No6ALasN
-	 2wfhgOcsSqKNmIrzdJN9Hz0w=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EAB3E40E0185;
-	Mon, 17 Jun 2024 21:18:04 +0000 (UTC)
-Date: Mon, 17 Jun 2024 23:17:58 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	lkp@intel.com, zack.rusin@broadcom.com,
-	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
-	tzimmermann@suse.de, mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com, linux-iio@vger.kernel.org,
-	jic23@kernel.org, lars@metafoo.de, nuno.sa@analog.com,
-	dragos.bogdan@analog.com, anshulusr@gmail.com,
-	andrea.collamati@gmail.com, oe-kbuild-all@lists.linux.dev,
-	x86@kernel.org
-Subject: Re: [PATCH 1/2] drm/vmwgfx: Fix missing HYPERVISOR_GUEST dependency
-Message-ID: <20240617211758.GKZnCoBvT2enGx5p5r@fat_crate.local>
-References: <202406152104.FxakP1MB-lkp@intel.com>
- <20240616012511.198243-1-alexey.makhalov@broadcom.com>
- <20240617090709.GCZm_8vdnLzt048UH_@fat_crate.local>
- <0a29389e-8ba2-48c5-bb26-381de58a62fb@broadcom.com>
+	s=arc-20240116; t=1718659099; c=relaxed/simple;
+	bh=SjPeVg5BPYAREzGhmavD6TtF0Z8TCmUWWX/bA2YYR1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tqMc/P4yDiMl7DNweCBOMQcKYm1VhSkiRNyZ8D5Nh83+hEluIUBcr2b+WO3JnEIZ7xbcRIiXt8ZvDzn5UQcifX49S+SGyHjW3t9UFhi9R/bZe0CoG4NyVMMTinzph3gM80OMDYHx99MezB2elg08gex0BipunWQUXOfGNVw0yUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79451C2BD10;
+	Mon, 17 Jun 2024 21:18:15 +0000 (UTC)
+Date: Mon, 17 Jun 2024 17:18:13 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alexander Graf <graf@amazon.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Vincent Donnefort
+ <vdonnefort@google.com>, "Joel Fernandes" <joel@joelfernandes.org>, Daniel
+ Bristot de Oliveira <bristot@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, <suleiman@google.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Vineeth Pillai <vineeth@bitbyteword.org>,
+ Youssef Esmat <youssefesmat@google.com>, Beau Belgrave
+ <beaub@linux.microsoft.com>, "Baoquan He" <bhe@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, "Paul E. McKenney" <paulmck@kernel.org>, David Howells
+ <dhowells@redhat.com>, Mike Rapoport <rppt@kernel.org>, Ard Biesheuvel
+ <ardb@kernel.org>
+Subject: Re: [PATCH v6 0/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Message-ID: <20240617171813.77bae9b2@rorschach.local.home>
+In-Reply-To: <049b2e0f-00b2-4704-8868-1569a006a134@amazon.com>
+References: <20240613155506.811013916@goodmis.org>
+	<b0ed328f-c4e5-4e9b-ae4e-5c60703ab376@amazon.com>
+	<20240613131212.7d1a7ffa@rorschach.local.home>
+	<7c90c574-5cfa-40cf-bd4c-1188136cd886@amazon.com>
+	<20240617164006.198b9ba3@rorschach.local.home>
+	<049b2e0f-00b2-4704-8868-1569a006a134@amazon.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0a29389e-8ba2-48c5-bb26-381de58a62fb@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 01:51:23PM -0700, Alexey Makhalov wrote:
-> Not really a gcc related, but the matter of a config file. It is
-> reproducible if CONFIG_HYPERVISOR_GUEST not set, but CONFIG_DRM_VMWGFX=y.
-> And this combination was allowed before the fix.
+On Mon, 17 Jun 2024 23:01:12 +0200
+Alexander Graf <graf@amazon.com> wrote:
+> > This could be an added feature, but it is very architecture specific,
+> > and would likely need architecture specific updates. =20
+>=20
+>=20
+> It definitely would be an added feature, yes. But one that allows you to=
+=20
+> ensure persistence a lot more safely :).
 
-Using their config:
+Sure.
 
-$ grep -E "(CONFIG_DRM_VMWGFX|CONFIG_HYPERVISOR_GUEST)" .config
-# CONFIG_HYPERVISOR_GUEST is not set
-CONFIG_DRM_VMWGFX=y
-CONFIG_DRM_VMWGFX_MKSSTATS=y
+>=20
+> Thinking about it again: What if you run the allocation super early (see=
+=20
+> arch/x86/boot/compressed/kaslr.c:handle_mem_options())? If you stick to=20
+> allocating only from top, you're effectively kernel version independent=20
+> for your allocations because none of the kernel code ran yet and=20
+> definitely KASLR independent because you're running deterministically=20
+> before KASLR even gets allocated.
+>=20
+> > As this code relies on memblock_phys_alloc() being consistent, if
+> > something gets allocated before it differently depending on where the
+> > kernel is, it can also move the location. A plugin to UEFI would mean
+> > that it would need to reserve the memory, and the code here will need
+> > to know where it is. We could always make the function reserve_mem()
+> > global and weak so that architectures can override it. =20
+>=20
+>=20
+> Yes, the in-kernel UEFI loader (efi-stub) could simply populate a new=20
+> type of memblock with the respective reservations and you later call=20
+> memblock_find_in_range_node() instead of memblock_phys_alloc() to pass=20
+> in flags that you want to allocate only from the new=20
+> MEMBLOCK_RESERVE_MEM type. The same model would work for BIOS boots=20
+> through the=C2=A0handle_mem_options() path above. In fact, if the BIOS wa=
+y=20
+> works fine, we don't even need UEFI variables: The same way allocations=20
+> will be identical during BIOS execution, they should stay identical=20
+> across UEFI launches.
+>=20
+> As cherry on top, kexec also works seamlessly with the special memblock=20
+> approach because kexec (at least on x86) hands memblocks as is to the=20
+> next kernel. So the new kernel will also automatically use the same=20
+> ranges for its allocations.
 
-$ make ...
+I'm all for expanding this. But I would just want to get this in for
+now as is. It theoretically works on all architectures. If someone
+wants to make in more robust and accurate on a specific architecture,
+I'm all for it. Like I said, we could make the reserver_mem() function
+global and weak, and then if an architecture has a better way to handle
+this, it could use that.
 
-  OBJCOPY arch/x86/boot/setup.bin
-  BUILD   arch/x86/boot/bzImage
-Kernel: arch/x86/boot/bzImage is ready  (#2)
-$ gcc --version
-gcc (Debian 13.2.0-25) 13.2.0
-$
+Hmm, x86 could do this with the e820 code like I did in my first
+versions. Like I said, it didn't fail at all with that.
 
-So no, I can't reproduce with my compiler.
+And we can have an UEFI version as well.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+-- Steve
 
