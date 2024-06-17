@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-217953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE8090B6D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:45:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF16090B6D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2518D1C2340A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C76311C235C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6324168485;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56803168480;
 	Mon, 17 Jun 2024 16:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7liTucm"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LzVAlRqT"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFC41D953D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7951160884
 	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718642716; cv=none; b=T+UcvLAmba4KPncHC5Bjp7RLEhyc4ekZl+Jf+1oduckcBD21jySTJ6ALhh9fncRP6WxTxNA49/RDKVVBEYxfukt31SrNXC/RV2B0BXkJmPazxgZO2CFlHTR4QrDR+D5grGQ99yNHHvx5xjmRTTAHL4DdJQ5fkZkHrbAmDXiTyPA=
+	t=1718642715; cv=none; b=OCetYQsKtr2bp+gSDAU0R8+7FvdG3DMu87Szvd8xMr4glGLvDllxKmKfpbNdtvM2dtImbcrmNTiHDLJsiRjDCtg82IP+vEuZW3bpIDagI4pxDjmQNa+/mbt1zUIv/DzzCe5m6iR4D9lHI6Our6+QMNpZWuDPgW940BlFyBjlG5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718642716; c=relaxed/simple;
-	bh=AXj5xyhwdOO4s77tUdNDGtt39AJJbxu8vLQQSjh3xY8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TU3XdvxUpcejnsmFZ5gMrGf/jMMN7P3SGsREvnjhnPkfsZ5ElI7u9q2zZfEVsp7Ng7iX+Ja9C4bH+VB4pspMRdbTyTLulT3SJLwPQVxKH2pDpUpgJQSPYYKVsqygQ8ofcuTbltp991w7KrNbssA21TsG58+94Skb9CyDrhlqHxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b7liTucm; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1718642715; c=relaxed/simple;
+	bh=h0islHa4RkW5pe719QjdceKNaJbSiTjAjQtyf2K3k1k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=U/jKwDoe+rQZL02V5bysOx6WD803dngr6xETEXzMVUicUqZFETmZG3liJb0LOR4yfUE+fQCvbh1puqmwgXWNc5QENhqfnOxe7Bf5n21HpVQ5IJcIWtaXH+lT0H1aFNt/K0C9K7pys5Hq8Y4PatWSXZtjSEauFhhcTjFSwK0xMek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LzVAlRqT; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6f7720e6e8so182846066b.3
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6f09eaf420so531080666b.3
         for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:45:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1718642711; x=1719247511; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=n98Gf1QoxzfH++bimpxXb9L5Kij/wsP5fmjbedlrR8w=;
-        b=b7liTucm8ajfXj979SAF0VzJ9fjgqxCKlwcA5K5XmN5RN465RZahKSOEiYQEiSxzIN
-         lHL8ouZScTLe3ENhI45qQkQIEouKNWA6apQVR6WrZ2Da1VJQTn4kr9HM1PLBeSSTv0dQ
-         JUrtRWvZge1GYNKE7yz26l3YfU3CXYbpM6Q3ZTTmJtYTNc/BMUAfoQ/jDSV76SfBMBK/
-         oYvpTBn0y6cgh4126e36aq6HZDc0lSyZluc0C6EDuAskDhSPiL1F6zIacUMkQfEC2YqW
-         ZWJLXD6029FBTtY4soO/2fle/s/0M2b+ERj38vycXXdDrgX3bi5jlSzlEr2le7poi0eB
-         b7dg==
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wYub/RSqb8Rt0WMbKUbwYUc1IlmByIMY38T9EwCcE9I=;
+        b=LzVAlRqTV9QRe7ggfH5az5w8hvnECKeyo4ujMqPWOnTw5/eYIbXvQ96cQ/bBRrl0Xa
+         66Nc0h4WvMpWr+GIAljh2IJI6TSct7yqlqGx5L027K9HKfDI/igWOzz2F3S78qT8pD7H
+         y7x5a4EVxdeb9R0uEphqU8Q3X/zNBzd/hTPtpo1X8lu+54L9LYGQmZbUI65b65Ag4a/K
+         DrHWDSuclKKMooxH3v2xty736Qd8eUA5CQl3nt8WNTH5icR1YlNcjegr9H/0uWtw6Aor
+         Bpc38jTyvCv5piSQG1Nxi/A6c/Tjcsev1tUwfbhTHuRbYEqBOUxKe+3D3j73jqdX7fgz
+         tGmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718642711; x=1719247511;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n98Gf1QoxzfH++bimpxXb9L5Kij/wsP5fmjbedlrR8w=;
-        b=kP53zQr5anRRTdmAIYs9qxxzDSeGQE/FO25jr0W6IBnsLBti1lfWjnhmc4EsNHv8Aq
-         DE1mSZsj8Kowe2yZnU14XnpPlx7beAgWrMeciKMx4xsmuNN9K/59Pib1tYumQh9gvg7l
-         6spYfAHzF8QlTvGPhouWVVMbB/pRWBdLKOvvZTcuoyVOYjyj++OQyiF/R/EO42H4rBuk
-         Myy6A/iJhtvTmIR+e6r92gfDUjJWqm/YhIQElt2gCYy63dW2dEqxzLns/knDhlrJWTg5
-         D4Q6bcutZpYVXPqpmiHSCqC/Ih8931Wf21njhCSEcB2i7Y+1kaQ1OsLrqra5sOtnb5PN
-         5q6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUzk2ycW15pFACyUipLZ6kBqSm2RMSjfupGn7ibKcNC9Sp5KS+5jNvMQxHQFQuv0pnq6Fzfr2s1VjW/WiS981S4b+Y+GDwWVYSnXB13
-X-Gm-Message-State: AOJu0YyoKgX4ZxMTBWXb5LXu2m4hbmkNiMejcvEMnOTtKQAeSKyBt33P
-	Sg5hgnZX1cBBqNTlOf/CFV2lFfPAQhw9pESHEiZyD6nJuxOj0VVkRSYhHPPEpYA=
-X-Google-Smtp-Source: AGHT+IFz9rgPfOCwN4argHOrGJaAixRDxqY1TJ1InY0YdhhmRezkVjZ5t/SkJJWmVGTuERMkcdfvLA==
-X-Received: by 2002:a17:906:7fc6:b0:a6e:fdc8:ae45 with SMTP id a640c23a62f3a-a6f60d170ccmr821932366b.1.1718642710471;
-        Mon, 17 Jun 2024 09:45:10 -0700 (PDT)
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wYub/RSqb8Rt0WMbKUbwYUc1IlmByIMY38T9EwCcE9I=;
+        b=v5I0zrAsEjOYAjbz8aRHDxDUJekDESmtSJPm0LIegHvbZtDLGVq7nO3knfrA5bpFi7
+         7mq0TZzxqmIehi98bq9y3qO2YsaTKE5XQr1R5U3SLUe+scKF6kM9QHh5FCy/gtYZsxv/
+         6H/414WkKqBt+pY5bwW50NB3AElXzTJ3SxUtCPK93XNUM+npZNP+q1iLp7bhIeH1De/G
+         zRjVFRV6a37aNNcWUNBynkMdnrU6Jsq2anALAjqZ6kbnDVaqjn3YHZ7pdjsY/B+9t3w6
+         Kvl3GeabcGDDavoYPAR/q4t4vvaFjbPVaf46j+3NroRqXQKSOQa/IF6a7nJkZTEt/XLP
+         WFXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUO5VXoMXsgd921Lf+7w6mt8N710vZ5Is/0mj9M0fmKrBQkhRaPNUWc8gnhrAh7fZl8B68FkBF6QhhoYKWwnilWBCQBrwGRP4YyyWsa
+X-Gm-Message-State: AOJu0YwU9jCBL6W4HOVa8xqmXRU6jwiJbmfsq1Bvxv3+GmRpzzB5XsKn
+	jB3bzfRefAjItDt6yOS4SsMO15rplI6WNF6rnVlIsaC1nCcQWMOQ3MzMl6cK4ajC3cIynMaNYzw
+	skPY=
+X-Google-Smtp-Source: AGHT+IHv0ukUOJDUc8BdVmzy7hmS+1oi69QOBMofoFgHRV33yO4xcJwLLTOoJRJaGOBhau06DyTjJg==
+X-Received: by 2002:a17:907:6d25:b0:a6e:a97c:fc9a with SMTP id a640c23a62f3a-a6f60cef313mr888080866b.8.1718642711038;
+        Mon, 17 Jun 2024 09:45:11 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f4170bsm527139966b.157.2024.06.17.09.45.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 17 Jun 2024 09:45:10 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH v3 0/6] USB31DRD phy support for Google Tensor gs101 (HS &
- SS)
-Date: Mon, 17 Jun 2024 17:44:41 +0100
-Message-Id: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org>
+Date: Mon, 17 Jun 2024 17:44:42 +0100
+Subject: [PATCH v3 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add gs101
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,10 +79,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAPlncGYC/3XMSwrCMBSF4a2UjI3kJtGiI/chDvK4bS9IUxINl
- pK9m3YiCg7Pge9fWMJImNi5WVjETInCWIfaNcwNZuyRk6+bSSG10FLxZ7J8GmbeJxDAje0UQis
- 9OM2qmSJ29Np611vdA6VHiPOWz7C+/0oZuOBovbPKOGi1v9xpNDHsQ+zZmsryww8V/HC5cn/qQ
- Buw/vjNSylvKJ6wwuoAAAA=
+Message-Id: <20240617-usb-phy-gs101-v3-1-b66de9ae7424@linaro.org>
+References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org>
+In-Reply-To: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
  Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -99,93 +100,162 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-This patch series adds support for the Exynos USB 3.1 DRD combo phy, as
-found in Exynos 9 SoCs like Google GS101. It supports USB SS, HS and
-DisplayPort, but DisplayPort is out of scope for this series.
+Add a dedicated google,gs101-usb31drd-phy compatible for Google Tensor
+gs101 SoC.
 
-In terms of UTMI+, this is very similar to the existing Exynos850
-support in this driver. The difference is that it supports both UTMI+
-(HS) and PIPE3 (SS). Firstly, there are some preparatory patches to convert
-this driver to using the clk_bulk and regulator_bulk APIs to simplify
-addition, while the bulk of the changes is around the SS part.
+It needs additional clocks enabled for register access, and additional
+memory regions (PCS & PMA) are required for successful configuration.
 
-Dependencies on other patches:
-While there is no compile or link time dependency, for USB to actually work
-this series also requires Peter's syscon changes from
-https://lore.kernel.org/all/20240614140421.3172674-1-peter.griffin@linaro.org/
+It also requires various power supplies (regulators) for the internal
+circuitry to work. The required voltages are:
+* pll-supply: 0.85V
+* dvdd-usb20-supply: 0.85V (+10%, -7%)
+* vddh-usb20-supply: 1.8V (+10%, -7%)
+* vdd33-usb20-supply: 3.3V (+10%, -7%)
+* vdda-usbdp-supply: 0.85V
+* vddh-usbdp-supply: 1.8V
 
-To: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: Alim Akhtar <alim.akhtar@samsung.com>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Will McVicker <willmcvicker@google.com>
-Cc: Roy Luo <royluo@google.com>
-Cc: kernel-team@android.com
-Cc: linux-phy@lists.infradead.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-Changes in v3:
-- drop patch 'phy: exynos5-usbdrd: use exynos_get_pmu_regmap_by_phandle()
-  for PMU regs'. This is not needed anymore with Peter's syscon series
-  mentioned above (Krzysztof).
-- drop those patches that have already been merged via
-  https://lore.kernel.org/all/20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org/
-- update device tree binding 'reg-names' (Krzysztof)
-- use clk_bulk and regulator_bulk APIs throughout to simplify addition of
-  gs101 support as preparatory patches
-- patch 1: add required but missing regulators
-- patch 4:
-    * make the register access clock name(s) platform specific and avoid
-      use of devm_clk_bulk_get_optional() as we want to be sure to have
-      retrieved all required clocks
-    * fix a whitespace issue
-    * slightly rephrase commit message
-- patch 6:
-    * set unused callback pointers to NULL in gs101_tunes[]
-    * implement missing regulator support and enable power to phy before any
-      register access
-    * add more phy tunes
-    * move PTS_UTMI_POSTINIT utmi phy tuning to before completion of POR
-      sequence, as per datasheet
-    * group gs101 related symbols closer to each other 
-- Link to v2: https://lore.kernel.org/r/20240501-usb-phy-gs101-v2-0-ed9f14a1bd6d@linaro.org
-
-Changes in v2:
-- avoid having nested else/if in the DT binding (Rob)
-- add missing bitfield.h include
-- Link to v1: https://lore.kernel.org/r/20240423-usb-phy-gs101-v1-0-ebdcb3ac174d@linaro.org
-
 ---
-André Draszik (6):
-      dt-bindings: phy: samsung,usb3-drd-phy: add gs101 compatible
-      phy: exynos5-usbdrd: support isolating HS and SS ports independently
-      phy: exynos5-usbdrd: convert core clocks to clk_bulk
-      phy: exynos5-usbdrd: convert (phy) register access clock to clk_bulk
-      phy: exynos5-usbdrd: convert Vbus supplies to regulator_bulk
-      phy: exynos5-usbdrd: support Exynos USBDRD 3.1 combo phy (HS & SS)
-
- .../bindings/phy/samsung,usb3-drd-phy.yaml         |  77 +-
- drivers/phy/samsung/phy-exynos5-usbdrd.c           | 958 +++++++++++++++++----
- include/linux/soc/samsung/exynos-regs-pmu.h        |   4 +
- 3 files changed, 893 insertions(+), 146 deletions(-)
+v3:
+* drop descriptions of reg items (Krzysztof)
+  Rather than coming up with another description for the reg items, I
+  opted to fully drop the descriptions from the reg items as reg-names
+  describes these already using the standard, well-known
+  abbreviations.
+* add required power supplies
+v2: avoid having nested else/if, and instead change the existing 'else'
+    to explicitly state the platforms using 'if'
 ---
-base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
-change-id: 20240423-usb-phy-gs101-abf3e172d1c4
+ .../bindings/phy/samsung,usb3-drd-phy.yaml         | 77 +++++++++++++++++++++-
+ 1 file changed, 75 insertions(+), 2 deletions(-)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+index 452e584d9812..16321cdd4919 100644
+--- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+@@ -25,6 +25,7 @@ description: |
+ properties:
+   compatible:
+     enum:
++      - google,gs101-usb31drd-phy
+       - samsung,exynos5250-usbdrd-phy
+       - samsung,exynos5420-usbdrd-phy
+       - samsung,exynos5433-usbdrd-phy
+@@ -57,7 +58,15 @@ properties:
+       the OF graph bindings specified.
+ 
+   reg:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 3
++
++  reg-names:
++    minItems: 1
++    items:
++      - const: phy
++      - const: pcs
++      - const: pma
+ 
+   samsung,pmu-syscon:
+     $ref: /schemas/types.yaml#/definitions/phandle
+@@ -72,6 +81,19 @@ properties:
+     description:
+       VBUS Boost 5V power source.
+ 
++  pll-supply:
++    description: Power supply for the USB PLL.
++  dvdd-usb20-supply:
++    description: DVDD power supply for the USB 2.0 phy.
++  vddh-usb20-supply:
++    description: VDDh power supply for the USB 2.0 phy.
++  vdd33-usb20-supply:
++    description: 3.3V power supply for the USB 2.0 phy.
++  vdda-usbdp-supply:
++    description: VDDa power supply for the USB DP phy.
++  vddh-usbdp-supply:
++    description: VDDh power supply for the USB DP phy.
++
+ required:
+   - compatible
+   - clocks
+@@ -81,6 +103,40 @@ required:
+   - samsung,pmu-syscon
+ 
+ allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: google,gs101-usb31drd-phy
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Gate of main PHY clock
++            - description: Gate of PHY reference clock
++            - description: Gate of control interface AXI clock
++            - description: Gate of control interface APB clock
++            - description: Gate of SCL APB clock
++        clock-names:
++          items:
++            - const: phy
++            - const: ref
++            - const: ctrl_aclk
++            - const: ctrl_pclk
++            - const: scl_pclk
++        reg:
++          minItems: 3
++        reg-names:
++          minItems: 3
++      required:
++        - reg-names
++        - pll-supply
++        - dvdd-usb20-supply
++        - vddh-usb20-supply
++        - vdd33-usb20-supply
++        - vdda-usbdp-supply
++        - vddh-usbdp-supply
++
+   - if:
+       properties:
+         compatible:
+@@ -100,7 +156,20 @@ allOf:
+             - const: phy_utmi
+             - const: phy_pipe
+             - const: itp
+-    else:
++        reg:
++          maxItems: 1
++        reg-names:
++          maxItems: 1
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - samsung,exynos5250-usbdrd-phy
++              - samsung,exynos5420-usbdrd-phy
++              - samsung,exynos850-usbdrd-phy
++    then:
+       properties:
+         clocks:
+           minItems: 2
+@@ -109,6 +178,10 @@ allOf:
+           items:
+             - const: phy
+             - const: ref
++        reg:
++          maxItems: 1
++        reg-names:
++          maxItems: 1
+ 
+ additionalProperties: false
+ 
+
 -- 
-André Draszik <andre.draszik@linaro.org>
+2.45.2.627.g7a2c4fd464-goog
 
 
