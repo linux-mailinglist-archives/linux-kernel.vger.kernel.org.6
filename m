@@ -1,234 +1,157 @@
-Return-Path: <linux-kernel+bounces-217594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E3A690B2A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:44:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF52990B1F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91F92B3438E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:28:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F364294A99
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6981AED3B;
-	Mon, 17 Jun 2024 13:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E681B012B;
+	Mon, 17 Jun 2024 13:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S3HkmBr6"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="XD3TGtUq"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17C91AED24;
-	Mon, 17 Jun 2024 13:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B6D19B3D0
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631817; cv=none; b=NyF3nKvBeuImKxDxQgdwbI9gCwfTRYxJKazqwxWUs5NasgN0VYlqLlPmRt7LYlVrf3raWcd/MYGQHTRj0xPUjB7fpvJ+MuoBQC/oP1YR/LGqot6DUqadlgBiq2TdOXmPnw81Kr19BRe1nWBJilOiN7mn0myE8bW1pP7vPpQj1h8=
+	t=1718631829; cv=none; b=MItR8lQRAdo9K528K61jbCxgYN4xe0MijPcd01ExPC//+6sr5ndTKRFqQH7MP8+raPVN8u5DQ1XVEL9Dq+I1uL4H3wO8yXMH5KhupgO9mriMTIUu8NyYqK1h7z3l2kBQbxQAZxeyBvyqEl4/BccMMH/ONmnN9hLeB7cuQpTEMzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631817; c=relaxed/simple;
-	bh=wPdlMn4BkQJ1i+WvuHCmNwqJAwmoMMcYl971v9DomFs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qx4zdbnv2Qg8BSc21KFZfBUvdnlFrBtfowTfiQN0y+m4JuWbkv74F9xTwXYB5/q14HFL6RK66EwJPSS5UgdK7VOiM0U2TioNGxcYc+m8N7YGkLWmVrTD6VTIZgbXZehSzpel+IjPPkHcdiU+YdCsACFoD+ykculXWQuS1HIh0o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S3HkmBr6; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718631814;
-	bh=wPdlMn4BkQJ1i+WvuHCmNwqJAwmoMMcYl971v9DomFs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=S3HkmBr6agUfW95p6IZ5XRCZ8SXGakexEfxerssqNteb6ERE+9IrPn+eIzXQ3pPwT
-	 QRQcBuxxe/IdVRooZRu4o6xbj88PsaPT0WRD7HzPGgSeFCnVoavP/DQJB7t8eKL9gP
-	 GEClxw+4Gn1LePmGb7jSe7RM4T09+hfsHST1NeqyQDdJOHvOdbpbP0LVG7K7j/DxS+
-	 gc2UJuy5w7VXuaOlPt+5WIvUXr4S97awQsFm5m1SjMBFPkxpnEP0rzHEhR5UPX99je
-	 f417DkkCcpc9mkI4RuDtBywU40yoThKahWTcPehbESaQIyfFwJhaHm4gPpQYvorx3E
-	 jb7T1pIkbGI/Q==
-Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6CB9E3782121;
-	Mon, 17 Jun 2024 13:43:32 +0000 (UTC)
-Message-ID: <ec8e632a80a8d4ded6f692d92dff9f699881773e.camel@collabora.com>
-Subject: Re: [PATCH v4 00/11] media: rkvdec: Add H.264 High 10 and 4:2:2
- profile support
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Diederik de Haas <didi.debian@cknow.org>, Ezequiel Garcia
- <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- linux-rockchip@lists.infradead.org, Jonas Karlman <jonas@kwiboo.se>,  Andy
- Yan <andyshrk@163.com>
-Cc: Alex Bee <knaerzche@gmail.com>, Benjamin Gaignard
-	 <benjamin.gaignard@collabora.com>, Sebastian Fricke
-	 <sebastian.fricke@collabora.com>, Christopher Obbard
-	 <chris.obbard@collabora.com>, linux-media@vger.kernel.org, 
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Mon, 17 Jun 2024 09:43:29 -0400
-In-Reply-To: <122755518.lCnTqr06ca@bagend>
-References: <20231105165521.3592037-1-jonas@kwiboo.se>
-	 <122755518.lCnTqr06ca@bagend>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1718631829; c=relaxed/simple;
+	bh=g2+vx2tkomM5KV01/sRMWBdQvKX1Pl22D91eUMwYl7g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gsiJhWR9ycWwsvbJ5YTjFy51uK9x2hAWu5qkroTOTL8AWkrjGGggvk23CGma5PpIl3XeJqxlVt1O0aZBd8f6NL1k5TOa0pQsMkU/o0gkAo6nG6VxTpO2JwvCUpSIi88154qftFccR7SwPys0qhfoKvrOn5tuC2J7e7lIhmWYPvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=XD3TGtUq; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7eb7bf1357cso175752739f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:43:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1718631827; x=1719236627; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aGKpj5AvHTsEbrLmF9bNmz/D9P/h+ZMX1niQukt3LXM=;
+        b=XD3TGtUq4sF/bt3MW82nKGXR0x7mehLAU0DORNW6nLY89FRzPmV64usRNHxMcLUwUK
+         uTov8Xn/w0yccWTDxr2mVeYtOEORcurYPDkxmmZyKdvPp0XFtwMYBCcOqw4FcrEzElzF
+         GYLP+4f1cGIhj+VoI+/jSJksOZqqlLbSjbO17Fm+Lb58nPZu4nnE1I3E2lhb0uBkQHVg
+         WI8uYnGwgOmwfqCFzhbnG8OmOS84eQPmp+r2VWhZPLgZzrcNy0TuaEml/7j6O3/ZHdlz
+         97dtwwu5aAVrcUyOraBnX4kLrgXxt8f60YI9tNIbO1oV+EwGFcSv5OpeKAzQSj6EtagI
+         Ycmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718631827; x=1719236627;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aGKpj5AvHTsEbrLmF9bNmz/D9P/h+ZMX1niQukt3LXM=;
+        b=m6/8HB3U17Yja22zH+CrnkjguYg9uRo4Bjw5s9PpVJVQVGquhS3SEox8YRkw2POMY9
+         kX0L3+gmXw3E42OLozM0iomIi7yqivOEtIyNQN7ete3qmxlQxdRqkOPSbNG+ZF2+8+Uo
+         G+vNouFZOJdN4IT1jZ8lkK10Zzu9vTC7SI3tUThQgm30kTpcNEogGbSj4V/CLnYBoHvl
+         8wNwxzxpHd8hVeWSS5cjaiOCET3YynvJP6DE81L1ASrKIH9YWvKmGpuXaptVIhNXQWr4
+         RQ6kPlVE7y+jYgTobJRZAWH379fHiAcG7+ltqCYQP40k5sTLN9NtyNgWqq96LlsxSaVn
+         UidA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHqyCgVletFh0BU+OC+7zfIar72ggJdaC3QIfTTwcHyUTYQz7f+BqcD89NArvQIo4iz941NyRtu8h2DASPWoVHzFZJJqNNWuLvQOBz
+X-Gm-Message-State: AOJu0Yyk5YFrZuFbgqwj9ZLCYvD+Nmx2eXPfeTSCiElcotmeCa89xPDL
+	Th4aI4D7LFC7OcUT2ZRK7y9msCFcU58MqyKGNRsPGhjoBAVQZqwucMq/oKpgBDDg2XSFajkf7iU
+	V1jSP7KjnTcdxaFFs/l4Uq5Y6txqa7eygX//0Tw==
+X-Google-Smtp-Source: AGHT+IG/B3WypjhzIUOJZbLMxyurBmwQdjlcHydZzcumzgrC9Dze6gAT7/km/QnYVaq8ae6CKJ08zdbpc3jZxjOCGIk=
+X-Received: by 2002:a05:6602:1503:b0:7eb:78b4:faee with SMTP id
+ ca18e2360f4ac-7ebeb4909cbmr1147213239f.3.1718631826563; Mon, 17 Jun 2024
+ 06:43:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240614142156.29420-1-zong.li@sifive.com> <20240614142156.29420-5-zong.li@sifive.com>
+ <a1a99374-dc40-4d57-9773-e660dc33beb2@linux.intel.com>
+In-Reply-To: <a1a99374-dc40-4d57-9773-e660dc33beb2@linux.intel.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Mon, 17 Jun 2024 21:43:35 +0800
+Message-ID: <CANXhq0pQuoriKfHF51fXUtrZLkJBNOCe6M8Z6JbDjoRvbe1nWg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/10] iommu/riscv: add iotlb_sync_map operation support
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, 
+	tjeznach@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, jgg@ziepe.ca, kevin.tian@intel.com, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sat, Jun 15, 2024 at 11:17=E2=80=AFAM Baolu Lu <baolu.lu@linux.intel.com=
+> wrote:
+>
+> On 6/14/24 10:21 PM, Zong Li wrote:
+> > Add iotlb_sync_map operation for flush IOTLB. Software must
+> > flush the IOTLB after each page table.
+> >
+> > Signed-off-by: Zong Li<zong.li@sifive.com>
+> > ---
+> >   drivers/iommu/riscv/Makefile |  1 +
+> >   drivers/iommu/riscv/iommu.c  | 11 +++++++++++
+> >   2 files changed, 12 insertions(+)
+> >
+> > diff --git a/drivers/iommu/riscv/Makefile b/drivers/iommu/riscv/Makefil=
+e
+> > index d36625a1fd08..f02ce6ebfbd0 100644
+> > --- a/drivers/iommu/riscv/Makefile
+> > +++ b/drivers/iommu/riscv/Makefile
+> > @@ -1,3 +1,4 @@
+> >   # SPDX-License-Identifier: GPL-2.0-only
+> >   obj-$(CONFIG_RISCV_IOMMU) +=3D iommu.o iommu-platform.o iommu-pmu.o
+> >   obj-$(CONFIG_RISCV_IOMMU_PCI) +=3D iommu-pci.o
+> > +obj-$(CONFIG_SIFIVE_IOMMU) +=3D iommu-sifive.o
+> > diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+> > index 9aeb4b20c145..df7aeb2571ae 100644
+> > --- a/drivers/iommu/riscv/iommu.c
+> > +++ b/drivers/iommu/riscv/iommu.c
+> > @@ -1115,6 +1115,16 @@ static void riscv_iommu_iotlb_sync(struct iommu_=
+domain *iommu_domain,
+> >       riscv_iommu_iotlb_inval(domain, gather->start, gather->end);
+> >   }
+> >
+> > +static int riscv_iommu_iotlb_sync_map(struct iommu_domain *iommu_domai=
+n,
+> > +                                   unsigned long iova, size_t size)
+> > +{
+> > +     struct riscv_iommu_domain *domain =3D iommu_domain_to_riscv(iommu=
+_domain);
+> > +
+> > +     riscv_iommu_iotlb_inval(domain, iova, iova + size - 1);
+>
+> Does the RISC-V IOMMU architecture always cache the non-present or
+> erroneous translation entries? If so, can you please provide more
+> context in the commit message?
+>
+> If not, why do you want to flush the cache when building a new
+> translation?
+>
 
-Le dimanche 16 juin 2024 =C3=A0 11:47 +0200, Diederik de Haas a =C3=A9crit=
-=C2=A0:
-> On Sunday, 5 November 2023 17:54:59 CEST Jonas Karlman wrote:
-> > This is a revival of a 3 year old series [1] now that NV15/NV20/NV30 su=
-pport
-> > for display driver have landed in mainline tree.
-> >=20
-> > This series adds H.264 High 10 and 4:2:2 profile support to the Rockchi=
-p
-> > Video Decoder driver.
-> >=20
-> > Patch 1 adds helpers for calculating plane bytesperline and sizeimage.
-> > Patch 2 adds two new pixelformats for semi-planer 10-bit 4:2:0/4:2:2 YU=
-V.
-> >=20
-> > Patch 3 change to use bytesperline and buffer height to configure strid=
-es.
-> > Patch 4 change to use values from SPS/PPS control to configure the HW.
-> > Patch 5 remove an unnecessary call to validate sps at streaming start.
-> >=20
-> > Patch 6-10 refactor code to support filtering of CAPUTRE formats based
-> > on the image format returned from a get_image_fmt ops.
-> >=20
-> > Patch 11 adds final bits to support H.264 High 10 and 4:2:2 profiles.
-> >=20
-> > Tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
-> >=20
-> >   v4l2-compliance 1.24.1, 64 bits, 64-bit time_t
-> >   ...
-> >   Total for rkvdec device /dev/video1: 46, Succeeded: 46, Failed: 0,
-> > Warnings: 0
-> >=20
-> >   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-V4L2-request
-> >   ...
-> >   Ran 65/69 tests successfully
-> >=20
-> >   Running test suite JVT-AVC_V1 with decoder FFmpeg-H.264-V4L2-request
-> >   ...
-> >   Ran 127/135 tests successfully
-> >=20
-> > Before this series:
-> >=20
-> >   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-V4L2-request
-> >   ...
-> >   Ran 44/69 tests successfully
-> >=20
-> > ...
-> >=20
-> > Following commits adds support for NV15/NV20/NV30 to VOP driver:
-> > 728c15b4b5f3 ("drm/fourcc: Add NV20 and NV30 YUV formats")
-> > d4b384228562 ("drm/rockchip: vop: Add NV15, NV20 and NV30 support")
-> >=20
-> > To fully runtime test this series you may need above drm commits and ff=
-mpeg
-> > patches from [2], this series and drm patches is also available at [3].
-> >=20
-> > [1]
-> > https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo=
-.se/
-> > [2] https://github.com/Kwiboo/FFmpeg/commits/v4l2-request-n6.1-dev/ [3]
-> > https://github.com/Kwiboo/linux-rockchip/commits/linuxtv-rkvdec-high-10=
--v4/
-> > [4] https://gist.github.com/Kwiboo/f4ac15576b2c72887ae2bc5d58b5c865 [5]
-> > https://gist.github.com/Kwiboo/459a1c8f1dcb56e45dc7a7a29cc28adf
->=20
-> Reviving this old thread now that rkvdec2 'stuff' emerged.
-> I have (actually) done quite some tests with this (and "media: rkvdec: Ad=
-d=20
-> HEVC backend" patch set) and they have been part of my kernel builds ever=
-=20
-> since.
-> I _think_, but don't know, that is relevant for Andy's question:
->=20
-> On zondag 16 juni 2024 08:58:20 CEST Andy Yan <andyshrk@163.com> wrote:
-> > How can I test these patches? Do they require any additional userspace
-> > patches?
->=20
-> I have the same question and I think you'd need this and the HEVC patch s=
-et=20
-> and then also patch FFmpeg and then it should enable HW acceleration.
-> So my question boils down to: with the rkvdec2 patch set, should V4L2-req=
-uests=20
-> now also work with rkvdec, so not just Hantro anymore?
+It seems to me that we can indeed remove this operation, because it
+may be too aggressive given the following situation.
 
-FFmpeg changes are still downstream, and different people (even within
-LibreELEC) seems to have slightly different version or alteration. It would=
- be
-really nice if this work could move upstream FFMpeg so that we can be more =
-sure
-what what "working with FFmpeg v4l2-requests" means.
+I added it for updating the MSI mapping when we change the irq
+affinity of a pass-through device to another vCPU. The RISC-V IOMMU
+spec allows MSI translation to go through the MSI flat table, MRIF, or
+the normal page table. In the case of the normal page table, the MSI
+mapping is created in the second-stage page table, mapping the GPA of
+the guest's supervisor interrupt file to the HPA of host's guest
+interrupt file. This MSI mapping needs to be updated when the HPA of
+host's guest interrupt file is changed.
 
-Meanwhile, support in upstream GStreamer is stable on Hantro G2 and Mediate=
-k
-VCODEC. In theory, it works fine with RKVDEC, and it will certainly work wi=
-th
-RKVDEC2 when we get to write the HEVC support.
+I think we can invalidate the cache after updating the MSI mapping,
+rather than adding the iotlb_sync_map() operation for every mapping
+created. Does it also make sense to you? If so, I will remove it in
+the next version. Thanks.
 
->=20
-> BTW: the libdrm commits have been merged upstream quite some time ago, so=
- if=20
-> you have a recent version of that, you don't need to patch that.
-> If you use FFmpeg 7.0, then Jonas has a branch for that too (haven't trie=
-d it=20
-> yet though).
->=20
-> FWIW: my test results were a bit mixed. I didn't post them before as I do=
-n't=20
-> fully/really understand this 'video stuff', and I didn't want you all to =
-suffer=20
-> from what was likely a PEBKAC issue.
->=20
-> On my PineTab2 (rk3566) I had some h.264 videos HW accelerated, but not a=
-ll.=20
-> My guess is that it's related to the resolution. 1920x1080 worked, while =
-it=20
-> didn't work with a 1280x640 video. The video still played, just not HW=
-=20
-> accelerated. IOW: improvements in some and otherwise it was just rendered=
- by=20
-> the CPU (I think), just like before.
-
-This is because all rk35XX have two hardware video decoders for H.264. This=
- is
-not to be be confused with rkvdec which is gone. It has a modified Hantro G=
-1
-core (limited to 1080p60) and rkvdec2 core (driver in progress). I don't th=
-ink
-Rockchip really expected the first one to be ever used, but upstream has be=
-en
-pushy and its now enabled upstream. That has a side effect, which is that
-userspace will have to work harder on these platform to pick the right HW f=
-or
-the task.
-
->=20
-> On my Rock64 I got a pink tint with all videos, like described here:
-> https://github.com/mpv-player/mpv/issues/12968
-> IIUC, that's actually a problem in the lima driver?
-
-Its not clear from the bug report. This visual artefact has been seen with
-wayland compositors lately (notably weston). Notably, this can happen if yo=
-u try
-and import NV12 with mesa (panfrost and lima included) but forcing a TEXTUR=
-E_2D
-target instead of external target. Normally this should be rejected by mesa=
-, but
-is accidentally not, and cause miss-render.
-
-Nicolas
-
->=20
-> Cheers,
->   Diederik
-
+> Best regards,
+> baolu
 
