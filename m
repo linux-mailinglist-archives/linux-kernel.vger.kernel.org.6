@@ -1,152 +1,113 @@
-Return-Path: <linux-kernel+bounces-218297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBDB90BC37
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:33:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B1B90BC3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335BB283C20
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:33:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DC191F235D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D784190468;
-	Mon, 17 Jun 2024 20:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A62C8E1;
+	Mon, 17 Jun 2024 20:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="vi3Yte+C";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eYSZp6yr"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="aRJys0Oi"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84F2C8E1;
-	Mon, 17 Jun 2024 20:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CD1188CB8;
+	Mon, 17 Jun 2024 20:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718656414; cv=none; b=YjuOqFY5x7XaHwMGbOrpboAd/6YUWb+TFA6vcVPcsSORTyR86uN86q94K/uCRILT3bE/c/ww4fBSVdN6YXZoJQaP6Gw/YvwPkw5fD0OHnOCX/mlMAxg/nv97NlumV5tcmYaeLGXw3PNpE1m9JefL07yUYPxl4mbUKEOei0HjH2A=
+	t=1718656505; cv=none; b=EmyjCO/p8Z1d9kpU3PzTRcx6Ukro282aZ+woRghIVRf5SnpKmcN+fZtVkipatq8al5/VYdR1Xsxxn1KFah3pYz9izAUF+2Ms2K6UkjykOwz42dl8/pDn0dVcJMjXlhPXqYFzMIfo8w4KjnnzKNho5Q2oBMot3kT+aJZ/IXGJAu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718656414; c=relaxed/simple;
-	bh=jaVlw/Bw2+IaY2P1kl0q/XJdhyk5gRvGocCy6MEcCw4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=m58qUYFwE05jOnYoUQcfrSWGhkOdWs4nWnPsJYDv6D0wY53G+iENwaL+A3gJlj1T8u7F8XosNkzNa6ulg7GPFhKluLz/mc7E1AK9WiueOJogirjlH7VmimAP0ww/nm488Fhjp5JMfFVBdP9FWIr5M5WUEDlhab5SOTnRebqglVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=vi3Yte+C; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eYSZp6yr; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id BF5E01140294;
-	Mon, 17 Jun 2024 16:33:29 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 17 Jun 2024 16:33:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718656409; x=1718742809; bh=ZOPzmcgBhQ
-	zo1keWksdhYbdPIRd3lKjznmVOskNt6RY=; b=vi3Yte+C00ngmRPurQDjKom+Mo
-	7I2cXSkKKNSB3XaghDFBbW/yX9/IPU+rRKCyWAzl47+aN0dJBwZytlg5eKZDKpm5
-	dOiXtBQU2BvderPOj3+4RvUFl8vYgwvsbZr3TlnTMBmZWtRjZc/TZZPY1xKS0pNm
-	iT1u2dIQ83IHy42PfsHGyuPMg9xXEfY6JbVGbLlnuT9ITi0YW1sUEKFPzZUxUzyU
-	hHDvY0sHFOMj5nBpXl1+gU5e9HP1nt2XufkwO9Zm0HlGMAjEbcrR8PaP7GQThCXi
-	o10cA793EMGQuhQbpeLx6h1+fEc070+pfF/iLmR9wXYi7yqbWdxxXIN6JTwg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718656409; x=1718742809; bh=ZOPzmcgBhQzo1keWksdhYbdPIRd3
-	lKjznmVOskNt6RY=; b=eYSZp6yr4uIcpX4K/DSJxA0dcLd9y5bZ93XJW91IS+C4
-	gjlAwhWHe/cuYtu2t9+rR1CaidAkP9kO5FnK4pWFz4Ta3t/i9hDoTxbVdm1uXwiB
-	gRy/ef0i36wnqwPqn8P56M2NiEr5yLX0OScuw6P5oot20Us5csX45S3F/sjwoW/K
-	jY+2IM7qYf1Ociil3fiITp5HY/Z623KIkN0U8yjx7x5RVhgeaEXChzSSyjZlEZr0
-	uP15pIaWS1R48nSrhZyHw7gG1RXV/65B3hv5y1lPdqLLnEx9V5PAik8nGf3RNlrT
-	sApmUyi6IVJcpU1ug8ooT0Lc7HadGojIEFTc9juqew==
-X-ME-Sender: <xms:mJ1wZlJSv-bIOceDxEPYcbRc7MEi36kkxS0h0ztbzdDFL1m7X_X5aQ>
-    <xme:mJ1wZhLV-WrMVzF2QVsFYrRlHraCxhVMp625Ohg5bOqu-N-c3VGKIvRTayuuAXgmm
-    d1s02toKF-LUXGI3GE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvhedgudehtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
-    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:mJ1wZts8xgHY9hrr66fNkOvtkPVWByYLruSPKGDiNjYZ5fwbpQAJCw>
-    <xmx:mJ1wZmYX3CRvz-zIy_A_kY7FVCjE2JLb1l9FDUhw44LCWjo7zQBpdA>
-    <xmx:mJ1wZsZeB7E86sMRNAP0sjDBwEfNKoOuH1K3VlS2sMybSFBUufdT2Q>
-    <xmx:mJ1wZqDat5LjPLNQI4zkBx2YzhSH3yjp5jBIBwyGIEhULpAH_pnbFQ>
-    <xmx:mZ1wZoKoS86N3mTV8tHw8qF-NH8CoB31Le40nQ6TOtL4j9BaC45Be_ER>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 876EDB60098; Mon, 17 Jun 2024 16:33:28 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718656505; c=relaxed/simple;
+	bh=U8kMqA+HvhuLjwCTeLGT69En/TRPgnNHEnKor65AfMc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q24lBAffVoBEKsXyZwW6fksmicYQcoFTxQPiNVfNGuOVEGfqmU0wTTCPMhagJ/xMyGsthjkS0gNS7JMYYwaNHGi7AjNS1AKijD5309E/tTk0zgT5lJ88ochtSNU+u3nkrv4IAdcG+ZyA6IbZRUSXt4ViIKJ0Cs53C/3zMWoklN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=aRJys0Oi; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 45HJcopL027367;
+	Mon, 17 Jun 2024 20:34:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc :
+ content-transfer-encoding : date : from : message-id : mime-version :
+ subject : to; s=pps0720; bh=4UqGo6+WrKJpq4MkZGs/bGPAF5s4ci65K+blGZyAd5k=;
+ b=aRJys0OiwUa2ICz/UpfwPOPGyjJdohREeEdYZWWGuO4d3FSF2w6/m0Hf7QKPZXZkZQFE
+ kw3QvRhqicCVZvfQsxl5KTb06NpuBBJvJLtRQKC1tFt0i5kFWtrCA8JRnoOslte26i+u
+ 9qcQLiKpimL+OjiWFWtilkTh7eseCW0/d3mLYR7xN6YYQt8W02jcN/C3WfpBZqKlzVqI
+ b8kNUmBHgMrWXmmyeUNL/1ZzYEvO/K/tmyLMXmTDxappurj84f7feloRlKEw6GiyxgjI
+ x1zVHP/gbgN7P+08zDKxp4MJoYlwC+QeKD9ooQ6T7HbIiB9yr8tA8i6dlwm+lFdRWaNv Fw== 
+Received: from p1lg14879.it.hpe.com ([16.230.97.200])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 3yths450xw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 20:34:53 +0000
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id 435F0147A2;
+	Mon, 17 Jun 2024 20:34:53 +0000 (UTC)
+Received: from cat.eag.rdlabs.hpecorp.net (unknown [16.231.227.36])
+	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTP id 5652180A815;
+	Mon, 17 Jun 2024 20:34:51 +0000 (UTC)
+Received: by cat.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
+	id 80345B497B; Mon, 17 Jun 2024 15:34:50 -0500 (CDT)
+From: Kyle Meyer <kyle.meyer@hpe.com>
+To: herbert@gondor.apana.org.au, davem@davemloft.net,
+        tom.zanussi@linux.intel.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: russ.anderson@hpe.com, Kyle Meyer <kyle.meyer@hpe.com>
+Subject: [PATCH] crypto: Add aliases to deflate
+Date: Mon, 17 Jun 2024 15:33:17 -0500
+Message-Id: <20240617203316.132697-1-kyle.meyer@hpe.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <d0959336-4430-4062-b909-54d553238468@app.fastmail.com>
-In-Reply-To: <202406171122.B5FDA6A@keescook>
-References: <20240617133721.377540-1-liuyuntao12@huawei.com>
- <ZnBbr2CAqBGDe2aN@J2N7QTR9R3> <202406171122.B5FDA6A@keescook>
-Date: Mon, 17 Jun 2024 22:33:08 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Kees Cook" <kees@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>
-Cc: "Yuntao Liu" <liuyuntao12@huawei.com>, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-hardening@vger.kernel.org,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- "Heiko Carstens" <hca@linux.ibm.com>, gor@linux.ibm.com,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "Leonardo Bras" <leobras@redhat.com>, "Mark Brown" <broonie@kernel.org>,
- imbrenda@linux.ibm.com, pawan.kumar.gupta@linux.intel.com
-Subject: Re: [PATCH] remove AND operation in choose_random_kstack_offset()
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: jSwhyTJ82NIcjJUJYCh2EMj7fG9cZZ5q
+X-Proofpoint-ORIG-GUID: jSwhyTJ82NIcjJUJYCh2EMj7fG9cZZ5q
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 spamscore=0 mlxlogscore=999 phishscore=0
+ priorityscore=1501 clxscore=1011 lowpriorityscore=0 adultscore=0
+ bulkscore=0 malwarescore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2406170158
 
-On Mon, Jun 17, 2024, at 20:22, Kees Cook wrote:
-> On Mon, Jun 17, 2024 at 04:52:15PM +0100, Mark Rutland wrote:
->> On Mon, Jun 17, 2024 at 01:37:21PM +0000, Yuntao Liu wrote:
->> > Since the offset would be bitwise ANDed with 0x3FF in
->> > add_random_kstack_offset(), so just remove AND operation here.
->> > 
->> > Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
->> 
->> The comments in arm64 and x86 say that they're deliberately capping the
->> offset at fewer bits than the result of KSTACK_OFFSET_MAX() masking the
->> value with 0x3FF.
->> 
->> Maybe it's ok to expand that, but if that's the case the commit message
->> needs to explain why it's safe add extra bits (2 on arm64, 3 on s39 and
->> x86), and those comments need to be updated accordingly.
->> 
->> As-is, I do not think this patch is ok.
->
-> Yeah, I agree: the truncation is intentional and tuned to the
-> architecture.
+iaa_crypto depends on the deflate compression algorithm that's provided
+by deflate.
 
-It may be intentional, but it's clearly nonsense: there is nothing
-inherent to the architecture that means we have can go only 256
-bytes instead of 512 bytes into the 16KB available stack space.
+If the algorithm is not available because CRYPTO_DEFLATE=m and deflate
+is not inserted, iaa_crypto will request "crypto-deflate-generic".
+Deflate will not be inserted because "crypto-deflate-generic" is not a
+valid alias.
 
-As far as I can tell, any code just gets bloated to the point
-where it fills up the available memory, regardless of how
-much you give it. I'm sure one can find code paths today that
-exceed the 16KB, so there is no point pretending that 15.75KB
-is somehow safe to use while 15.00KB is not.
+Add deflate-generic and crypto-deflate-generic aliases to deflate.
 
-I'm definitely in favor of making this less architecture
-specific, we just need to pick a good value, and we may well
-end up deciding to use less than the default 1KB. We can also
-go the opposite way and make the limit 4KB but then increase
-the default stack size to 20KB for kernels that enable
-randomization.
+Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+---
+ crypto/deflate.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-       Arnd
+diff --git a/crypto/deflate.c b/crypto/deflate.c
+index 6e31e0db0e86..98e8bcb81a6a 100644
+--- a/crypto/deflate.c
++++ b/crypto/deflate.c
+@@ -311,3 +311,4 @@ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Deflate Compression Algorithm for IPCOMP");
+ MODULE_AUTHOR("James Morris <jmorris@intercode.com.au>");
+ MODULE_ALIAS_CRYPTO("deflate");
++MODULE_ALIAS_CRYPTO("deflate-generic");
+-- 
+2.35.3
+
 
