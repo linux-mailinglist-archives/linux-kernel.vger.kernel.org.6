@@ -1,144 +1,203 @@
-Return-Path: <linux-kernel+bounces-218122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35B190B986
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:21:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D26990B994
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD6F11C24193
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:21:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5867B2F94D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9055E199EB7;
-	Mon, 17 Jun 2024 18:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4FF19A2B5;
+	Mon, 17 Jun 2024 18:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lciu3V+c"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nBORirBa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="89M5oUoc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nBORirBa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="89M5oUoc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2665519755F;
-	Mon, 17 Jun 2024 18:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C454D19755F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718648258; cv=none; b=nqUbLX6721UQtEFalePKnC+5aOvmVELim+/deSd4Nab3bQfUciPpOEyOcn/cpVWjx494h57xgFG9ddP3dyKQtfurSFhY0JiLzantdjTpritLu2XNBDP/jZyWdwZgxl0sTV0jMXHFjwEm87ng/MMiDHk7Ew+YZ3yHAEyAurKloPM=
+	t=1718648305; cv=none; b=Nb2aWQ+rJhj1BQNFV7y8LZRQ3jRyM39vUC52OC9dbARhxz+OZDNAvhLhpE2emzkIcB6YIOxzEOtLpHIOFtsbog0xm3z34ZKn2HIJdJPNHd7KpxNAnpV2vHw1vPGBSQsOeBa5FoBy1mmRyGjzK3Ze9wpBg1BUo9DnCIdqnbADnvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718648258; c=relaxed/simple;
-	bh=DQjO2/4VHsSmWhWXSoOM/SFF/7S410YiAqwEr+Entsg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZvlDD4uBD5llJR+bSl60dOhCfgDQLoVy+pRyDk7aAYcJeI/5z1CH930qCcBNVkkL4HKf4ASbyCsD3CTG6A2lOY+ETf5QkyXQEOmrviOT5Ai7JjmhNHdWmzfKA4jhyN4WfYpyJ8kHMoR+EZX/rBWJ1iCqrI1Im2kGXVq16xH5AcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lciu3V+c; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718648257; x=1750184257;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=DQjO2/4VHsSmWhWXSoOM/SFF/7S410YiAqwEr+Entsg=;
-  b=Lciu3V+cpGcxjwxG4g3FqXcbHVDO/zhTAE/GMAsqf+pGUDL7ZWUwuMfu
-   SzjurkJ4MzT6DRq3RvWKHOHqfro+iX48sJlJAuYpDnO9HEOfoqiC3UEgG
-   +wMd/DcFDmi5ky3O/O92Prd/qlG8x5IX4/Gx++QUQ2GZV4TJpQxQb4Vx1
-   K6XQ2tyP7sEfQs0V35vluv53RiGNi59d4500OETvkLdnX0Qwd72LnyALK
-   pxppZ0UZ5I8RJIgYXqS+je+tdktMnDx9Ky0ts2vQOIUDKoutZcF+XH5E/
-   Q/ZLWr12HY+ctz36F0PymBOSfLN8kilplOamveg3ZWTIB+h+5mW2mok0K
-   Q==;
-X-CSE-ConnectionGUID: qhAWbunxS6uhWEGQZb02xw==
-X-CSE-MsgGUID: dDjv8nU6SjO9KtHgSHXZ5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="33026178"
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="33026178"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:17:36 -0700
-X-CSE-ConnectionGUID: zGa3m6zeR3uK2Y5gRqVpNw==
-X-CSE-MsgGUID: Hgu8S1VmSoedJSSz5F7KdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="45812244"
-Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.111.154]) ([10.125.111.154])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:17:35 -0700
-Message-ID: <513abce9-48f5-4dab-9e8c-7023077ea589@intel.com>
-Date: Mon, 17 Jun 2024 11:17:35 -0700
+	s=arc-20240116; t=1718648305; c=relaxed/simple;
+	bh=+jomKzveyXY2tTRka5xwlhaDV7ne7uUxM+zGwO4hnGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UEW9LcTCg7q1rDdyTZFht7BaaixcjO9Ly4/FhY9WTUp3/T0lyoeWe5S0iJqYJG8dXYWiUA/5daPgpLGBO3pz2nYUmESroFdgrwUB+ZJnJHmhV3xZ4vzHYzDxYA2HA9kFTXay1mUlDZA9nPObVh9TUcceWvNqZM8wiYmXyDVNSDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nBORirBa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=89M5oUoc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nBORirBa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=89M5oUoc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6906C219B8;
+	Mon, 17 Jun 2024 18:18:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718648299; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9y+6syuY0d4lFZbPYpRMim+4VcbHKlTIw3/agQk/TDg=;
+	b=nBORirBa08jmfq2NO/U4y4YUboVTjTcpyYw7U19N5OFxFNgDRA9B19pyBpy9iMPNr2irxh
+	jCQtTehWQXRQoMwiGGhy4dR7TqtlPa2V1R+PDyFXoejny05bGlw0K/OZRfgGBEY+EqNfQl
+	IiCfdY9ntU6UzBUikafjKsEd+v/ji7M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718648299;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9y+6syuY0d4lFZbPYpRMim+4VcbHKlTIw3/agQk/TDg=;
+	b=89M5oUoctl5izBKekMyc9yJIvNlUKeirgB8u3OTsv8up647yqSbjsdu/SvD9yHPXh99Uvj
+	6rpX0LN28U+Qb+AA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718648299; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9y+6syuY0d4lFZbPYpRMim+4VcbHKlTIw3/agQk/TDg=;
+	b=nBORirBa08jmfq2NO/U4y4YUboVTjTcpyYw7U19N5OFxFNgDRA9B19pyBpy9iMPNr2irxh
+	jCQtTehWQXRQoMwiGGhy4dR7TqtlPa2V1R+PDyFXoejny05bGlw0K/OZRfgGBEY+EqNfQl
+	IiCfdY9ntU6UzBUikafjKsEd+v/ji7M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718648299;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9y+6syuY0d4lFZbPYpRMim+4VcbHKlTIw3/agQk/TDg=;
+	b=89M5oUoctl5izBKekMyc9yJIvNlUKeirgB8u3OTsv8up647yqSbjsdu/SvD9yHPXh99Uvj
+	6rpX0LN28U+Qb+AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 03EE0139AB;
+	Mon, 17 Jun 2024 18:18:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zlhvNel9cGa4HQAAD6G6ig
+	(envelope-from <jdelvare@suse.de>); Mon, 17 Jun 2024 18:18:17 +0000
+Date: Mon, 17 Jun 2024 20:18:14 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Douglas Anderson <dianders@chromium.org>,
+ dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [PATCH RESEND] drm/display: Drop obsolete dependency on
+ COMPILE_TEST
+Message-ID: <20240617201814.73a07702@endymion.delvare>
+In-Reply-To: <vsrsvmrkqnmxs3ncqv5m2gevzefiq55tr2iolxlmoehsvgcfkn@hyx37vax6r5e>
+References: <20240617103018.515f0bf1@endymion.delvare>
+	<xd2yybtxvzte7gwqwg2vudzvhoekqao2dle6zsuduzjzi3rsay@xhahwof2prph>
+	<20240617132348.5f20bf89@endymion.delvare>
+	<vsrsvmrkqnmxs3ncqv5m2gevzefiq55tr2iolxlmoehsvgcfkn@hyx37vax6r5e>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH PATCH 3/9] perf/x86/intel: Use topology_cpu_type() to get
- cpu-type
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, daniel.sneddon@linux.intel.com, tony.luck@intel.com,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <20240617-add-cpu-type-v1-3-b88998c01e76@linux.intel.com>
- <7c4978b4-ac69-480e-b8cf-a473b64ed917@intel.com>
- <20240617180905.7ao623w6eyu64hs2@desk>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240617180905.7ao623w6eyu64hs2@desk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	HAS_ORG_HEADER(0.00)[];
+	FREEMAIL_CC(0.00)[chromium.org,lists.freedesktop.org,vger.kernel.org,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch,linux-foundation.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
 
-On 6/17/24 11:09, Pawan Gupta wrote:
->> Is this trying to make the case that get_this_hybrid_cpu_type() and
->> topology_cpu_type() are equivalent or pointing out a difference?
-> Pointing out a difference. get_this_hybrid_cpu_type() misses a case when
-> cpu-type is enumerated regardless of X86_FEATURE_HYBRID_CPU. I don't think
-> checking for the hybrid feature is necessary here, because there is an
-> existing fixup for this case:
+On Mon, 17 Jun 2024 14:55:22 +0300, Dmitry Baryshkov wrote:
+> On Mon, Jun 17, 2024 at 01:23:48PM GMT, Jean Delvare wrote:
+> > Hi Dmitry,
+> > 
+> > Thanks for your feedback.
+> > 
+> > On Mon, 17 Jun 2024 12:57:19 +0300, Dmitry Baryshkov wrote:  
+> > > On Mon, Jun 17, 2024 at 10:30:30AM GMT, Jean Delvare wrote:  
+> > > > Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
+> > > > is possible to test-build any driver which depends on OF on any
+> > > > architecture by explicitly selecting OF. Therefore depending on
+> > > > COMPILE_TEST as an alternative is no longer needed.    
+> > > 
+> > > The goal of this clause is to allow build-testing the driver with OF
+> > > being disabled (meaning that some of OF functions are stubbed and some
+> > > might disappear). I don't see how user-selectable OF provides the same
+> > > result.  
+> > 
+> > Historically, the goal of this clause *was* to allow build-testing the
+> > driver on architectures which did not support OF, and that did make
+> > sense back then. As I understand it, building the driver without OF
+> > support was never a goal per se (if it was, then the driver wouldn't be
+> > set to depend on OF in the first place).
+> > 
+> > Some of my other submissions include the following explanation which
+> > you might find useful (I ended up stripping it on resubmission after
+> > being told I was being too verbose, but maybe it was needed after all):
+> > 
+> > It is actually better to always build such drivers with OF enabled,
+> > so that the test builds are closer to how each driver will actually be
+> > built on its intended target. Building them without OF may not test
+> > much as the compiler will optimize out potentially large parts of the
+> > code. In the worst case, this could even pop false positive warnings.
+> > Dropping COMPILE_TEST here improves the quality of our testing and
+> > avoids wasting time on non-existent issues.  
+> 
+> This doesn't seem to match the COMPILE_TEST usage that I observe in
+> other places. For example, we frequently use 'depends on ARCH_QCOM ||
+> COMPILE_TEST'. Which means that the driver itself doesn't make sense
+> without ARCH_QCOM, but we want for it to be tested on non-ARCH_QCOM
+> cases. I think the same logic applies to 'depends on OF ||
+> COMPILE_TEST' clauses. The driver (DP AUX bus) depends on OF to be fully
+> functional, but it should be compilable even without OF case.
 
-OK, that makes sense.  Could you include that in the changelog, please?
+The major difference is that one can't possibly enable ARCH_QCOM if
+building on X86 for example. Therefore COMPILE_TEST is the only way to
+let everyone (including randconfig/allmodconfig build farms) test-build
+your code.
+
+On the other hand, if you want to test-build drm_dp_aux_bus, you can
+simply enable OF, because it is available on all architectures and
+doesn't depend on anything. No need for COMPILE_TEST.
+
+For clarity, I'm not advocating against the use of COMPILE_TEST,
+actually if you check the history of my kernel contributions 10 years
+back, you'll find commits from me adding COMPILE_TEST in addition to
+arch-specific dependencies to many drivers. All I'm saying is that it
+should only be used when it is the only way to enable the build.
+
+-- 
+Jean Delvare
+SUSE L3 Support
 
