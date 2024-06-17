@@ -1,272 +1,133 @@
-Return-Path: <linux-kernel+bounces-216680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B3C90A2EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 05:50:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FCCE90A2F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 05:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10581B21267
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:50:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B3E31C2115F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902C917E44B;
-	Mon, 17 Jun 2024 03:50:07 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9B317F39C;
+	Mon, 17 Jun 2024 03:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hrPsjxyh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910FB9474;
-	Mon, 17 Jun 2024 03:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA9EA31;
+	Mon, 17 Jun 2024 03:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718596207; cv=none; b=dTKAErRH5IpqvVyTHfJ5LNw9D6+8iVYUYhEn991lWMv0eAjB4z6T77blm+i4sYFnKc7ecUh5ccwwsTs0Zr8sVcZsWRWA8WeDujS9xsZyKmLn/Kj9kkcjj6IMWrnpL9VOfMmQhmi4MDyE3HCnZVqXutK5o370y4lIyc6fq6D1lsA=
+	t=1718596385; cv=none; b=GgWzkgl+9jThjiBX6cMoYzgu2HBcL68WZx1cFGDeTCRKIn8Ww7cR3H9TGN/k/vQQ4pxJo04RrgQytZv0+zbzEtj+G9WdoVzRSDqgzv1NuFVH3NP4WweXoAZionkZ0XEkrqtNTcAVqJmh/XBgPnCNRp1MfKVxsIARgbpma4WDyt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718596207; c=relaxed/simple;
-	bh=/QLWBi+wAZR91DzwWnusNXqvdNQW97k9Owp3Blc8EAk=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=K8Lm+impr2M/4Wi7a+fvRVEK1RlNNXVxbhfeI4Iy52VZzqY3K8wUDWLO1i6GX85Y8XfJHyWoODpwOPUzicgT8HvQbKrqaV/FChyRtPu3DWTmdIqnrGlX+TNy9Um6oY1Un24/cp8m6Z3JcFdE6DUpVL/Qf+QcqWYebITXuLhPWdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W2bPK60BpznVgf;
-	Mon, 17 Jun 2024 11:45:09 +0800 (CST)
-Received: from canpemm500010.china.huawei.com (unknown [7.192.105.118])
-	by mail.maildlp.com (Postfix) with ESMTPS id D07E914011B;
-	Mon, 17 Jun 2024 11:50:00 +0800 (CST)
-Received: from [10.174.178.185] (10.174.178.185) by
- canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 17 Jun 2024 11:50:00 +0800
-Subject: Re: [PATCH] block: bio-integrity: fix potential null-ptr-deref in
- bio_integrity_free
-To: Ming Lei <ming.lei@redhat.com>
-References: <20240606062655.2185006-1-yebin@huaweicloud.com>
- <ZmJQwvBXfm3zw+Xs@fedora> <6662632D.7020000@huaweicloud.com>
- <ZmJj5C4gz+gT9C4m@fedora> <6667BAED.7060809@huawei.com>
- <ZmfEn4ieO9EK/0z5@fedora>
-CC: yebin <yebin@huaweicloud.com>, <axboe@kernel.dk>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yi Zhang
-	<yi.zhang@redhat.com>
-From: "yebin (H)" <yebin10@huawei.com>
-Message-ID: <666FB267.7080809@huawei.com>
-Date: Mon, 17 Jun 2024 11:49:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+	s=arc-20240116; t=1718596385; c=relaxed/simple;
+	bh=+DEENcXMKXyiWZXETIGEWVoFCDj5PxY9bRACXwxWcyM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=C6mN+hYDZDx5ZPTh3NM4XiCXTuOqAq/0YKvdnqy9k7irt9VuxIz2CPDmiqLKIlN11mxC0OM6b9/ughLm4mi0igBi3mj9Ef5SipF6ldlosOE5rClOtp+v6PGiDXNGJFrGoyGML5+5jqX5A5o+r97iCpopmh2+ZI2jbRuswjfmkeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hrPsjxyh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45GNjv9C027906;
+	Mon, 17 Jun 2024 03:52:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=HG6oEJg2/GeNLGbGBK0m7n
+	b1SCOW0UJLipys6dM2UyA=; b=hrPsjxyhiDCBvrhyEC4QxJW2LhyKwED6zAzhgI
+	4uh/NJOT5O4PBqOxPc1FMyguRyMV2YmGJXVZm0CCzDH9xZwqbTaDtW+nQRV8PRNn
+	Vc8jCY23r0y/SmNc5Szi6qFKRV2hCUepS3+5ihFo1vj+yumRVavfhMXRIjBEMv6t
+	y+5o7+k7y5+qKc9tIR3tp2mONwfmxqoGS9bEXMoRkEPe9JG8j9IfCtKvcpIdC52X
+	CnXNYdiQUX//aheimnBIqPWHQrqNfATr2WphW5aWx7wo7GtInXJaTn79kkneUfqc
+	AoC2HdOkgJoWd5WvElVfncE4o2lU+feEXiuWxLqoV0RPD9rQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys3b72mkv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 03:52:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H3qS17022208
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 03:52:28 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Jun
+ 2024 20:52:27 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 16 Jun 2024 20:52:26 -0700
+Subject: [PATCH v2] ASoC: fsl: imx-pcm-fiq: add missing
+ MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZmfEn4ieO9EK/0z5@fedora>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- canpemm500010.china.huawei.com (7.192.105.118)
+Message-ID: <20240616-md-arm-sound-soc-fsl-v2-1-228772e81a54@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAPmyb2YC/4WOSw6DIBRFt2IY9zUC9ddR99E4QHjUlyi0oMbGu
+ PeiG+jkJie5v41FDISR3bONBVwokncJxCVjulfuhUAmMRO5uOUlL2A0oMII0c/OJNVg4wC6aGr
+ byUJi2bAUfQe0tJ61zzZxpyJCF5TT/VE2kJtXGFWcMBz2nuLkw/c8sfAj9Gdv4cChRlNJroXNK
+ /n4zKTJ6av2I2v3ff8BxWTWQdkAAAA=
+To: Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Shawn Guo
+	<shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>
+CC: <alsa-devel@alsa-project.org>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-sound@vger.kernel.org>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7_hVxNreZFW5jF6KCta9oeKbC7ELmJx9
+X-Proofpoint-ORIG-GUID: 7_hVxNreZFW5jF6KCta9oeKbC7ELmJx9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_02,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ bulkscore=0 spamscore=0 mlxscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=999 adultscore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406170028
 
+With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/fsl/imx-pcm-fiq.o
 
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-On 2024/6/11 11:29, Ming Lei wrote:
-> On Tue, Jun 11, 2024 at 10:48:13AM +0800, yebin (H) wrote:
->>
->> On 2024/6/7 9:35, Ming Lei wrote:
->>> On Fri, Jun 07, 2024 at 09:32:29AM +0800, yebin wrote:
->>>> On 2024/6/7 8:13, Ming Lei wrote:
->>>>> On Thu, Jun 06, 2024 at 02:26:55PM +0800, Ye Bin wrote:
->>>>>> From: Ye Bin <yebin10@huawei.com>
->>>>>>
->>>>>> There's a issue as follows when do format NVME with IO:
->>>>>> BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
->>>>>> PGD 101727f067 P4D 1011fae067 PUD fbed78067 PMD 0
->>>>>> Oops: 0000 [#1] SMP NOPTI
->>>>>> RIP: 0010:kfree+0x4f/0x160
->>>>>> RSP: 0018:ff705a800912b910 EFLAGS: 00010247
->>>>>> RAX: 0000000000000000 RBX: 0d06d30000000000 RCX: ff4fb320260ad990
->>>>>> RDX: ff4fb30ee7acba40 RSI: 0000000000000000 RDI: 00b04cff80000000
->>>>>> RBP: ff4fb30ee7acba40 R08: 0000000000000200 R09: ff705a800912bb60
->>>>>> R10: 0000000000000000 R11: ff4fb3103b67c750 R12: ffffffff9a62d566
->>>>>> R13: ff4fb30aa0530000 R14: 0000000000000000 R15: 000000000000000a
->>>>>> FS:  00007f4399b6b700(0000) GS:ff4fb31040140000(0000) knlGS:0000000000000000
->>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>> CR2: 0000000000000008 CR3: 0000001014cd4002 CR4: 0000000000761ee0
->>>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>>> DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
->>>>>> PKRU: 55555554
->>>>>> Call Trace:
->>>>>>     bio_integrity_free+0xa6/0xb0
->>>>>>     __bio_integrity_endio+0x8c/0xa0
->>>>>>     bio_endio+0x2b/0x130
->>>>>>     blk_update_request+0x78/0x2b0
->>>>>>     blk_mq_end_request+0x1a/0x140
->>>>>>     blk_mq_try_issue_directly+0x5d/0xc0
->>>>>>     blk_mq_make_request+0x46b/0x540
->>>>>>     generic_make_request+0x121/0x300
->>>>>>     submit_bio+0x6c/0x140
->>>>>>     __blkdev_direct_IO_simple+0x1ca/0x3a0
->>>>>>     blkdev_direct_IO+0x3d9/0x460
->>>>>>     generic_file_read_iter+0xb4/0xc60
->>>>>>     new_sync_read+0x121/0x170
->>>>>>     vfs_read+0x89/0x130
->>>>>>     ksys_read+0x52/0xc0
->>>>>>     do_syscall_64+0x5d/0x1d0
->>>>>>     entry_SYSCALL_64_after_hwframe+0x65/0xca
->>>>>>
->>>>>> Assuming a 512 byte directIO is issued, the initial logical block size of
->>>>>> the state block device is 512 bytes, and then modified to 4096 bytes.
->>>>>> Above issue may happen as follows:
->>>>>>             Direct read                    format NVME
->>>>>> __blkdev_direct_IO_simple(iocb, iter, nr_pages);
->>>>>>      if ((pos | iov_iter_alignment(iter)) & (bdev_logical_block_size(bdev) - 1))
->>>>>> 	-->The logical block size is 512, and the IO issued is 512 bytes,
->>>>>> 	   which can be checked
->>>>>>        return -EINVAL;
->>>>>>      submit_bio(&bio);
->>>>>>                                          nvme_dev_ioctl
->>>>>>                                            case NVME_IOCTL_RESCAN:
->>>>>>                                              nvme_queue_scan(ctrl);
->>>>>>                                                 ...
->>>>>>                                                nvme_update_disk_info(disk, ns, id);
->>>>>>                                                  blk_queue_logical_block_size(disk->queue, bs);
->>>>>>                                                    --> 512->4096
->>>>>>         blk_queue_enter(q, flags)
->>>>>>         blk_mq_make_request(q, bio)
->>>>>>           bio_integrity_prep(bio)
->>>>>> 	 len = bio_integrity_bytes(bi, bio_sectors(bio));
->>>>>> 	   -->At this point, because the logical block size has increased to
->>>>>> 	      4096 bytes, the calculated 'len' here is 0
->>>>>>             buf = kmalloc(len, GFP_NOIO | q->bounce_gfp);
->>>>>> 	   -->Passed in len=0 and returned buf=16
->>>>>>             end = (((unsigned long) buf) + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
->>>>>>             start = ((unsigned long) buf) >> PAGE_SHIFT;
->>>>>>             nr_pages = end - start;  -->nr_pages == 1
->>>>>>             bip->bip_flags |= BIP_BLOCK_INTEGRITY;
->>>>>>             for (i = 0 ; i < nr_pages ; i++) {
->>>>>>               if (len <= 0)
->>>>>>                  -->Not initializing the bip_vec of bio_integrity, will result
->>>>>> 		 in null pointer access during subsequent releases. Even if
->>>>>> 		 initialized, it will still cause subsequent releases access
->>>>>> 		 null pointer because the buffer address is incorrect.
->>>>>>                 break;
->>>>>>
->>>>>> Firstly, it is unreasonable to format NVME in the presence of IO. It is also
->>>>>> possible to see IO smaller than the logical block size in the block layer for
->>>>>> this type of concurrency. It is expected that this type of IO device will
->>>>>> return an error, so exception handling should also be done for this type of
->>>>>> IO to prevent null pointer access from causing system crashes.
->>>>> Actually unaligned IO handling is one mess for nvme hardware. Yes, IO may fail,
->>>>> but it is observed that meta buffer is overwrite by DMA in read IO.
->>>>>
->>>>> Ye and Yi, can you test the following patch in your 'nvme format' & IO workload?
->>>>>
->>>>>
->>>>> diff --git a/block/blk-core.c b/block/blk-core.c
->>>>> index 82c3ae22d76d..a41ab4a3a398 100644
->>>>> --- a/block/blk-core.c
->>>>> +++ b/block/blk-core.c
->>>>> @@ -336,6 +336,19 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
->>>>>     	return 0;
->>>>>     }
->>>>> +static bool bio_unaligned(struct bio *bio)
->>>>> +{
->>>>> +	unsigned int bs = bdev_logical_block_size(bio->bi_bdev);
->>>>> +
->>>>> +	if (bio->bi_iter.bi_size & (bs - 1))
->>>>> +	        return true;
->>>>> +
->>>>> +	if ((bio->bi_iter.bi_sector << SECTOR_SHIFT) & (bs - 1))
->>>>> +	        return true;
->>>>> +
->>>>> +	return false;
->>>>> +}
->>>> I think this judgment is a bit incorrect. It should not be sufficient to
->>>> only determine whether
->>>> the length and starting sector are logically block aligned.
->>> Can you explain why the two are not enough? Other limits should be handled
->>> by bio split.
->> If logical block size is 512 bytes, BIO has 4 segments, each segment length
->> is 512 bytes,
->> bio->bi_iter.bi_sector == 0. If logical block size change to 4096 bytes,
->> bio_unaligned() will
->> return false.
-> Yes, this IO is still 4096 aligned in block size level.
->
-> It is just that each bvec buffer isn't page-aligned, for nvme, if virt_boundary
-> is set, this bio will be split. However, we don't add logical block size
-> check in submit_bio_noacct() yet, 512byte bio still can be sent to
-> device.
->
->> I'm not sure if the example I gave is appropriate?
-> Absolutely it is one good example.
->
-> BTW, Yi have tested both your patch and my patch which checks lbs in
-> blk_queue_enter(), looks slab corruption still can be triggered with
-> either one.
-Yes, my patch only solves the integrity process in a single point to 
-avoid affecting
-the normal IO process. I am not sure if other processes will have 
-similar issues.
->
-> Yi, can you test the following patch?
->
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index 82c3ae22d76d..c47e69795c86 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -336,6 +336,19 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
->   	return 0;
->   }
->   
-> +static inline bool bio_unaligned(struct bio *bio)
-> +{
-> +	unsigned int bs = bdev_logical_block_size(bio->bi_bdev);
-> +
-> +	if (bio->bi_iter.bi_size & (bs - 1))
-> +	        return true;
-> +
-> +	if ((bio->bi_iter.bi_sector << SECTOR_SHIFT) & (bs - 1))
-> +	        return true;
-> +
-> +	return false;
-> +}
-> +
->   int __bio_queue_enter(struct request_queue *q, struct bio *bio)
->   {
->   	while (!blk_try_enter_queue(q, false)) {
-> @@ -362,6 +375,15 @@ int __bio_queue_enter(struct request_queue *q, struct bio *bio)
->   			   test_bit(GD_DEAD, &disk->state));
->   		if (test_bit(GD_DEAD, &disk->state))
->   			goto dead;
-> +		/*
-> +		 * Not like other queue limits, logical block size is one
-> +		 * fundamental limit which can't be covered by bio split.
-> +		 *
-> +		 * Device reconfiguration may happen and logical block size
-> +		 * is changed, so fail the IO if that is true.
-> +		 */
-> +		if (bio_unaligned(bio))
-> +			goto dead;
->   	}
->   
->   	return 0;
-> @@ -765,6 +787,8 @@ void submit_bio_noacct(struct bio *bio)
->   
->   	if (should_fail_bio(bio))
->   		goto end_io;
-> +	if (bio->bi_iter.bi_size && bio_unaligned(bio))
-> +		goto end_io;
-I think this check should be added after the bio_queue_enter() call. 
-Early judgment should be unreliable.
->   	bio_check_ro(bio);
->   	if (!bio_flagged(bio, BIO_REMAPPED)) {
->   		if (unlikely(bio_check_eod(bio)))
->
->
-> Thanks,
-> Ming
->
->
-> .
->
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+Changes in v2:
+- Fixed spelling of Freescale
+- Link to v1: https://lore.kernel.org/r/20240615-md-arm-sound-soc-fsl-v1-1-8ed731c2f073@quicinc.com
+---
+ sound/soc/fsl/imx-pcm-fiq.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/fsl/imx-pcm-fiq.c b/sound/soc/fsl/imx-pcm-fiq.c
+index 0d124002678e..3391430e4253 100644
+--- a/sound/soc/fsl/imx-pcm-fiq.c
++++ b/sound/soc/fsl/imx-pcm-fiq.c
+@@ -319,4 +319,5 @@ void imx_pcm_fiq_exit(struct platform_device *pdev)
+ }
+ EXPORT_SYMBOL_GPL(imx_pcm_fiq_exit);
+ 
++MODULE_DESCRIPTION("Freescale i.MX PCM FIQ handler");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240615-md-arm-sound-soc-fsl-c598fb353e69
 
 
