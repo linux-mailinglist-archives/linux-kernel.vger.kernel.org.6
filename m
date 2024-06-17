@@ -1,168 +1,178 @@
-Return-Path: <linux-kernel+bounces-217617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F103C90B230
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:34:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C634C90B23E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ED541F21D2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:34:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB5F1F257FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A271BD006;
-	Mon, 17 Jun 2024 13:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD461BE230;
+	Mon, 17 Jun 2024 13:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bq+QdEWE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bnQbpyfv"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEF51BC096;
-	Mon, 17 Jun 2024 13:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE411BD502
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632203; cv=none; b=bZbezNCqh4RLCRB1IsiRj1jSF8Ij28XBr7z6nujJRAtxChoUH86ML3krIrvMfWZCYitWhd7opLBsZwQSrUpJfE9gAe05uyCAYenFrijYsKB8YjM4Vmu5QbHp8nyosSZSOxJW1xvtiEXd8g0Gwk2bWO2o8WrltgXesTYYBtnLkRw=
+	t=1718632210; cv=none; b=kXiWyGAH3imP6ezjhMU2yUyGbJ8Tn2/s7ilYqRNtphIibIMPOGnghkNeL5rfm43xAXJq556Ig+fLK8LkhQ0XehNeF3Gmzu0JOhX3Pg8W9rb5yqsEY1KsnvyddP55VukwXXjrdxfAmyw9isvucW/QCG0f76hG8vDvqQT8AQEUGs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632203; c=relaxed/simple;
-	bh=yrKK/FLgdeL4vTw1EPHbtUzwl+yDef64SSBgC5EFVdw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QqX9oQ8GhOClRTYukk0qUrXRe93NMymMfMAnGUaQa8fMlJBP7S+IWKb+PCtS4x1lAK+IHDf9KDNPNcJ14D9hk6teJ769DRtH64kc3GuJVQ5atgw2gpdGACOWcGEc88MMcRep/AeGFAEpiqTIbV4UFYwviAByP4vg5x+1xcjcYJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bq+QdEWE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACBF1C4AF51;
-	Mon, 17 Jun 2024 13:50:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718632202;
-	bh=yrKK/FLgdeL4vTw1EPHbtUzwl+yDef64SSBgC5EFVdw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bq+QdEWEZzkWlhGFnMRc16Abid5TDmHgFYYqE6xIk1R8Bk3pbIulBckc1uXM7hz1R
-	 5nmTLgWwo7C2QPeJPyGyMRS9P67Jbk5fcRPXymkmoOPk4SFGiZCIEyP2/o1w+2Uajd
-	 8agf+TalVvhWGl0hg9OYKWOPIsa5cqxaYHKyvvgwMvEx6S0LA6oPRyxfcvZNbSBJOo
-	 SsmF9YKnTZ1LriNPn47UR//SSzkmOfWPUaSRKKnppkOoRLYBnWLIbE+nLvyGCTqRk9
-	 DXlA+SnnF2vFYiwOg7qrQsgjKk/sN4G7vy3TPMQujehKWrve1B3PRti1qGZrxxrrGK
-	 no4E4mEfyquIA==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6ef8bf500dso485977466b.0;
-        Mon, 17 Jun 2024 06:50:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVdqT4Fbjj25xfwnzQg4BO8pA/a1qDaOZz6ASFf5QNAq/2lJxQjEdYPm1Jgo3nLrUnuDn8pQbQblBJacNhfu0NkpgcgAiJ1UN13GwanwbBPbZP2jQfcEmLbDU28ejWPf7PnrHTT
-X-Gm-Message-State: AOJu0YxeVol11nEpTyoO9novY3360Jh90ZdNzxlq17VbG9KUW+8UO+YF
-	6TJlAapbm/3IpqmadXCka+ZG7ai8wbhSAahojP+gOAf2hLduYbydFI2hN8TejB7aOWSxrg9birI
-	Qx/Z44hZGO3AaPNrocZC298fqIW0=
-X-Google-Smtp-Source: AGHT+IE/oHHeYe88noG8KjRtPsLqaTqOpO+t//9vr/Ts4ydA6Uentyu9J9fqUU6wRbgsZdYwMlN9Ey9cccSUsO6DQTY=
-X-Received: by 2002:a17:906:a447:b0:a6f:5a47:a59e with SMTP id
- a640c23a62f3a-a6f60dc55fcmr657469266b.59.1718632201209; Mon, 17 Jun 2024
- 06:50:01 -0700 (PDT)
+	s=arc-20240116; t=1718632210; c=relaxed/simple;
+	bh=zWMvkgbpb12CypNp6YHAF3/7MiDNI6jYeCI/ir0hmEs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=X5mv+k+DqQlKU9GRWgNTAAw+funydi9p2ar6YO+l06hehYXMbBlL5RbTU3G5+bAR1YMmS2ZhSF+iVZ4OfdHCFXaVuaqlcB2EaZvRdIzFM5bFvykchemQ/62wCLm8nzKbiglKUAszKwtVYiGJJMPxBg35db/+axwktlEkeeeKOx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bnQbpyfv; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-797b24b8944so418367285a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:50:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718632206; x=1719237006; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QUJvHuZZxgwBDIkIwz1c6/5nEPPRUcnNJo5C6L4NEfc=;
+        b=bnQbpyfvHpmXYcjI52caXkQLZZtDHPxuhyUKlqA1Fw67bZyFDnhExXfZnYsRxZ/9vd
+         YJyr8sA0dAMW+w2fTj/0u10G9XdhDz2Vz6x3vmhP3Y9Lk22gCpDpvpJcqK5qhNLJvo0U
+         s8zF80A3JxRmWrICMmpWgzJI/vibSmMA+9OUhjjzV97QheLfEwHjJ8xcsBbtzdfE2RoT
+         K8ULayVbCk4PrH3m3U2/DZlmKWev6i/kAE7TSJMVyTyKfhIBBnjLzvGilmefpKAr/4ui
+         4DYqSZcLMaQ02AqN4fqRPPr+Jrj6EI/Z6Jujl5R4TPDXkxh4tWr2QozInE8FICqFsQE3
+         YG5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718632206; x=1719237006;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QUJvHuZZxgwBDIkIwz1c6/5nEPPRUcnNJo5C6L4NEfc=;
+        b=xS2Ro+iIdPumarVC074HtuwPrusdeHSg4dMoenYB7/0FUP7Nzq0uN6tEQG18fi/dJh
+         LwrENSymQeR4ajD1mTTcm23pDcnpEzMRe9siZKAnUhdDUUaD6OPthf6MgIPzwtP+3PJn
+         gGW/rLOnoj13BsuKxBlWkqUgehtNg57041vfz+61nRqXnFj7nVb2/xgmW+lhIzxJD/2m
+         j5Cou1jT8sUT1+bCj7cmeoy8MtK1ly6JZpbNAKjdocdOq52dvOiWSDDyBvtOcDCwN6PQ
+         xZXwEuLmrVhfIrRBeBnaDSAmd9XusS/B+qhlAXGmWV2XePCNnnwgb+LLF52WgRhjl6bu
+         Jfxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWhd8F5W4uzGnqWknRmMulO/ox+4Wcwn1Y50v91SuLXcQRA7D7aSSMa81kLfRwpOmMx4ihFatxpwD+cPawa/DKImngbz9YNFOJ8/oV
+X-Gm-Message-State: AOJu0YzHkjiCRij09MhIiPxoiiFMF9XSMXScSIoIXZ5CY0HWmkwSGRI0
+	UAUj2kXV/X0SwnXNPCddorBEUa1wSVvjQPRf3JvVmBc/yApCDIcGUCwIuKcG9m4=
+X-Google-Smtp-Source: AGHT+IEuE3X+Ttrgd1pciF1gOmiGqm6CNudwXH5GABygzdDAc5BXX3iLlJx1my8INZ4E7qgPOczVYA==
+X-Received: by 2002:a05:620a:444f:b0:795:5815:2f9f with SMTP id af79cd13be357-798d241d00fmr1205475685a.25.1718632206164;
+        Mon, 17 Jun 2024 06:50:06 -0700 (PDT)
+Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaecc004sm432892285a.31.2024.06.17.06.50.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 06:50:05 -0700 (PDT)
+From: Trevor Gamblin <tgamblin@baylibre.com>
+Date: Mon, 17 Jun 2024 09:49:50 -0400
+Subject: [PATCH v3 10/41] iio: adc: fsl-imx25-gcq: make use of
+ regmap_clear_bits(), regmap_set_bits()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613-loongarch64-sleep-v1-0-a245232af5e4@flygoat.com>
- <20240613-loongarch64-sleep-v1-2-a245232af5e4@flygoat.com>
- <CAAhV-H7VKGMAH10S4sOZLkbgkUSMAYzpYt-dL83S0Vg286PsaQ@mail.gmail.com>
- <f9a0d11e-53c7-4a15-a7b3-209da8bcf52d@app.fastmail.com> <CAAhV-H5C0rn-bY11FxoGANX+hEFrrbpj095ZAEbjC0ksQGuWpA@mail.gmail.com>
- <b291e5fb-bf3a-4129-96a0-99182e11f506@app.fastmail.com>
-In-Reply-To: <b291e5fb-bf3a-4129-96a0-99182e11f506@app.fastmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 17 Jun 2024 21:49:50 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H48ZO6XH51g5kgB8jB59qpLPYJiuaC5_zNxPkB4QvhZvw@mail.gmail.com>
-Message-ID: <CAAhV-H48ZO6XH51g5kgB8jB59qpLPYJiuaC5_zNxPkB4QvhZvw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] LoongArch: Fix ACPI standard register based S3 support
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Jianmin Lv <lvjianmin@loongson.cn>, Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240617-review-v3-10-88d1338c4cca@baylibre.com>
+References: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
+In-Reply-To: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Dmitry Rokosov <ddrokosov@sberdevices.ru>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Cosmin Tanislav <cosmin.tanislav@analog.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Hans de Goede <hdegoede@redhat.com>, Ray Jui <rjui@broadcom.com>, 
+ Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Saravanan Sekar <sravanhome@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, 
+ Crt Mori <cmo@melexis.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Trevor Gamblin <tgamblin@baylibre.com>
+X-Mailer: b4 0.13.0
 
-On Fri, Jun 14, 2024 at 10:44=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygoat.c=
-om> wrote:
->
->
->
-> =E5=9C=A82024=E5=B9=B46=E6=9C=8814=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=
-=E5=8D=883:32=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> > On Fri, Jun 14, 2024 at 10:25=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygo=
-at.com> wrote:
-> >>
-> >>
-> >>
-> >> =E5=9C=A82024=E5=B9=B46=E6=9C=8814=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=
-=8A=E5=8D=883:11=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> >> > Hi, Jiaxun,
-> >> >
-> >> > On Fri, Jun 14, 2024 at 12:41=E2=80=AFAM Jiaxun Yang <jiaxun.yang@fl=
-ygoat.com> wrote:
-> >> >>
-> >> >> Most LoongArch 64 machines are using custom "SADR" ACPI extension
-> >> >> to perform ACPI S3 sleep. However the standard ACPI way to perform
-> >> >> sleep is to write a value to ACPI PM1/SLEEP_CTL register, and this
-> >> >> is never supported properly in kernel.
-> >> > Maybe our hardware is insane so we need "SADR", if so, this patch ma=
-y
-> >> > break real hardware. What's your opinion, Jianmin?
-> >>
-> >> I understand why your hardware need SADR. Most systems DDR self-refres=
-h
-> >> mode needs to be setup by firmware.
-> > _S3 is also a firmware method, why we can't use it to setup self-refres=
-h?
->
-> That's the problem from ACPI spec. As per ACPI spec _S3 method only tells
-> you what should you write into PM1 or SLEEP_CTL register, it will NOT per=
-form
-> actual task to enter sleeping. (See 16.1.3.1 [1])
->
-> On existing LoongArch hardware _S3 method is only used to mark presence o=
-f S3
-> state. This is violating ACPI spec, but I guess we must live with it.
->
-> Furthermore, on Loongson hardware you have to disable access to DDR memor=
-y
-> to access DDR controller's configuration registers. Which means self-refr=
-esh
-> code must run from BIOS ROM.
->
-> [1]: https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/16_Waking_and_Sleeping=
-/sleeping-states.html
-I think "if (!acpi_gbl_reduced_hardware)" should be before "if
-(!acpi_sleep_state_supported(ACPI_STATE_S3))", I applied this patch
-with adjustment.
+Instead of using regmap_update_bits() and passing the mask twice, use
+regmap_set_bits().
 
-https://github.com/chenhuacai/linux/commit/4bb9e051a4e9430c89ce83ca68a2f599=
-8926e6f6
+Instead of using regmap_update_bits() and passing val = 0, use
+regmap_clear_bits().
 
+Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+---
+ drivers/iio/adc/fsl-imx25-gcq.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-Huacai
+diff --git a/drivers/iio/adc/fsl-imx25-gcq.c b/drivers/iio/adc/fsl-imx25-gcq.c
+index b680690631db..b3f037510e35 100644
+--- a/drivers/iio/adc/fsl-imx25-gcq.c
++++ b/drivers/iio/adc/fsl-imx25-gcq.c
+@@ -87,13 +87,13 @@ static irqreturn_t mx25_gcq_irq(int irq, void *data)
+ 	regmap_read(priv->regs, MX25_ADCQ_SR, &stats);
+ 
+ 	if (stats & MX25_ADCQ_SR_EOQ) {
+-		regmap_update_bits(priv->regs, MX25_ADCQ_MR,
+-				   MX25_ADCQ_MR_EOQ_IRQ, MX25_ADCQ_MR_EOQ_IRQ);
++		regmap_set_bits(priv->regs, MX25_ADCQ_MR,
++				MX25_ADCQ_MR_EOQ_IRQ);
+ 		complete(&priv->completed);
+ 	}
+ 
+ 	/* Disable conversion queue run */
+-	regmap_update_bits(priv->regs, MX25_ADCQ_CR, MX25_ADCQ_CR_FQS, 0);
++	regmap_clear_bits(priv->regs, MX25_ADCQ_CR, MX25_ADCQ_CR_FQS);
+ 
+ 	/* Acknowledge all possible irqs */
+ 	regmap_write(priv->regs, MX25_ADCQ_SR, MX25_ADCQ_SR_FRR |
+@@ -115,11 +115,10 @@ static int mx25_gcq_get_raw_value(struct device *dev,
+ 	regmap_write(priv->regs, MX25_ADCQ_ITEM_7_0,
+ 		     MX25_ADCQ_ITEM(0, chan->channel));
+ 
+-	regmap_update_bits(priv->regs, MX25_ADCQ_MR, MX25_ADCQ_MR_EOQ_IRQ, 0);
++	regmap_clear_bits(priv->regs, MX25_ADCQ_MR, MX25_ADCQ_MR_EOQ_IRQ);
+ 
+ 	/* Trigger queue for one run */
+-	regmap_update_bits(priv->regs, MX25_ADCQ_CR, MX25_ADCQ_CR_FQS,
+-			   MX25_ADCQ_CR_FQS);
++	regmap_set_bits(priv->regs, MX25_ADCQ_CR, MX25_ADCQ_CR_FQS);
+ 
+ 	time_left = wait_for_completion_interruptible_timeout(
+ 		&priv->completed, MX25_GCQ_TIMEOUT);
+@@ -272,9 +271,8 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
+ 				   MX25_ADCQ_CFG_REFN_MASK,
+ 				   refp | refn);
+ 	}
+-	regmap_update_bits(priv->regs, MX25_ADCQ_CR,
+-			   MX25_ADCQ_CR_FRST | MX25_ADCQ_CR_QRST,
+-			   MX25_ADCQ_CR_FRST | MX25_ADCQ_CR_QRST);
++	regmap_set_bits(priv->regs, MX25_ADCQ_CR,
++			MX25_ADCQ_CR_FRST | MX25_ADCQ_CR_QRST);
+ 
+ 	regmap_write(priv->regs, MX25_ADCQ_CR,
+ 		     MX25_ADCQ_CR_PDMSK | MX25_ADCQ_CR_QSM_FQS);
 
->
-> Thanks
-> - Jiaxun
->
-> >
-> > Huacai
-> >
-> >>
-> >> There is no chance that it may break real hardware. When firmware supp=
-lied
-> >> SADR it will always use SADR. The fallback only happens when _S3 metho=
-d exist
-> >> but no SADR supplied, which won't happen on real hardware.
-> >>
-> >> For QEMU we don't have stub firmware but standard compliant SEEP_CTL i=
-s
-> >> sufficient for entering sleep mode, thus we need this fallback path.
-> >>
-> >> Thanks
-> >>
-> >> >
-> >> > Huacai
-> >> >
-> >> >>
-> >>
-> >> --
-> >> - Jiaxun
-> >>
->
-> --
-> - Jiaxun
+-- 
+2.45.2
+
 
