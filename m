@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-217778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA41F90B424
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:26:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 723AC90B426
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7FD71C223E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17B9528E112
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA9E1D9526;
-	Mon, 17 Jun 2024 14:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921FB1662E6;
+	Mon, 17 Jun 2024 14:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="K4cnZyR6"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYsAcGKV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6723F1D9504;
-	Mon, 17 Jun 2024 14:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA48B1D953C;
+	Mon, 17 Jun 2024 14:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718636055; cv=none; b=a44EMTrombUTD0bG6RA3RJNCwjx9jfSt/tvCIg0ROcxNnQpmbJr5Bb01O9WPgBo4Ty54pIt8KIT60rJAqGpr98UDbwabbXDP0M0qkOs+zjy3kjebQKUL+D0AetDDSiZosi5CWVgHoQSYTVizZVweSPNBiUeYKzP7rxqao7qwodY=
+	t=1718636071; cv=none; b=TZopY1VnAKwFmH1tlsLw/sWkiGwS9ygbJLUQ1Ou+m+Ndj3YNFmk7rC04WXfLOI+fP1wEfPUeBh2XEzV85Dpig4+0V5e4QscgNuME1mSkUOYWQEjWz22Rm20+CNlTT5I1KpsoLOvWrfFA7fg8XC4Au1yiElLdVd+qU+QzJq0MIFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718636055; c=relaxed/simple;
-	bh=8oz61KWwx6qENWt5I3pmMWNMNjv+GnIgq4rfWORK2Ks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TfSMZ6z44rdGtwCK3pOviG52W7PCb0FycYV5JMyTnALwOtfMEfj256sfPQYwLFlVm1Fecv3KMAv0dRZVwevbVyeQyF+sH9FEtjSr08ZIsudu4FLdvCyBsQRzmPjIiJrgzZc8bqxBs3m0BX2TpnGPxARXn+UP91XzBlCGLOBG53w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=K4cnZyR6; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H5aOP3023213;
-	Mon, 17 Jun 2024 09:54:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=U4Zcc5B6sZapyPApYGDjLIIl5Wrww3U183306p+JLwY=; b=
-	K4cnZyR69TYqf7B21jLk2FGNqTw+ymA07UWw0Ke2XrA23e7KoYq2AjkQEWLQYPS3
-	30kKZjbIsP7FzIbjTYNeuTwEG/YDgAWZHcg50iKIWdFwaGAkqoRhyRb4JhoI7ukF
-	k5QN7vqIn3lOrkgVD6CcEqNk67GL7QIXkFM5JSRWNZA6o2TyII9mYU2/DBLZQuu3
-	7FP74T7D4n6hURaOVvBm6Tdu0aqZ+Zw7Y8iS+PpsZ93pRw1dqboBAok6ZmKl9Xla
-	hf2O+nv/llcg5lPr+BeevW0z2zAjDNW5HLTHarfzMsyfxgswsewbbmKGUNB9h8n0
-	w6xa9hiIXpHEC1D2oELQvA==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3ys8by1tuw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 09:54:07 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
- 2024 15:54:04 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 17 Jun 2024 15:54:04 +0100
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id AD2FB820248;
-	Mon, 17 Jun 2024 14:54:04 +0000 (UTC)
-Message-ID: <f04958f0-b9e9-4f80-8a83-af9740fa83a0@opensource.cirrus.com>
-Date: Mon, 17 Jun 2024 15:54:04 +0100
+	s=arc-20240116; t=1718636071; c=relaxed/simple;
+	bh=4gU3Vhk04r3mpE2uHIQ2qrgsd7MKyC6zHoaY3ZF7uHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UdDage5KpEyLquggO7dRvpd+9Oh4eKqpWA1zdHt3RdNbalQBd1ICe7iVP461QVb/G1FgvfvTKJ4LJhw0VAPDgq5ZHPJQR5Bmm8Nl2CQHOfpfQdyKINlB9t5kg2bw0WumsJ+bAeKve7rKrmrhxs8do94FN32dC2sdJdHYhqDk3oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYsAcGKV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2086CC2BD10;
+	Mon, 17 Jun 2024 14:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718636070;
+	bh=4gU3Vhk04r3mpE2uHIQ2qrgsd7MKyC6zHoaY3ZF7uHI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gYsAcGKVVT/jxqyTS3QpfePE6RFceQ3280eGVPrQ79O7DudQFEp2wO/DT3RHI6Fvh
+	 KhkxtxmXvnqbI3nAQXjVIEfz6QY60v4gyqj9nGJi+45C+b2hla1zjpNueiba72WyZa
+	 /Qzqle10ShGN/qLflPwX02lyvNcguh8VQ4X9geVSL3BmeOrFGhA609PuEhNGatYz+q
+	 3T+hgqR++KX6AFHjPSH/HXk3CX22QitutNZK4zBlcArOOw5m+WFzC2ci4leOgzbN+8
+	 rU9/aHDN+9kyfLGbKhm9S3DPY3Fi2YKR/FKSeHaZvZT9NDtoLYX1pXdVTybgjgHIld
+	 i0bx6fSPS/HZQ==
+Message-ID: <71b58547-545e-4953-baa0-f3c6c8c3d2f9@kernel.org>
+Date: Mon, 17 Jun 2024 16:54:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,60 +49,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: cs35l56: Accept values greater than 0 as IRQ
- numbers
-To: Simon Trimmer <simont@opensource.cirrus.com>,
-        'Mark Brown'
-	<broonie@kernel.org>
-CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-References: <20240617135338.82006-1-simont@opensource.cirrus.com>
- <917507e5-dc6c-4e18-a7e1-554625de604e@sirena.org.uk>
- <3451fcf6-ff33-4f72-83d1-945b026b925b@opensource.cirrus.com>
- <007b01dac0c5$7807ac30$68170490$@opensource.cirrus.com>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <007b01dac0c5$7807ac30$68170490$@opensource.cirrus.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v3] dt-bindings: thermal: convert hisilicon-thermal.txt to
+ dt-schema
+To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240617-hisilicon-thermal-dt-bindings-conversion-v3-1-6d8d44f0fd74@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240617-hisilicon-thermal-dt-bindings-conversion-v3-1-6d8d44f0fd74@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: OnFXQ3XDq3MuxA7uOj9oWBSc-IXlVLcw
-X-Proofpoint-GUID: OnFXQ3XDq3MuxA7uOj9oWBSc-IXlVLcw
-X-Proofpoint-Spam-Reason: safe
 
-On 17/06/2024 15:48, Simon Trimmer wrote:
->> From: Richard Fitzgerald <rf@opensource.cirrus.com>
->> Sent: Monday, June 17, 2024 3:34 PM
->> On 17/06/2024 15:04, Mark Brown wrote:
->>> On Mon, Jun 17, 2024 at 02:53:38PM +0100, Simon Trimmer wrote:
->>>> IRQ lookup functions such as those in ACPI can return error values when
->>>> an IRQ is not defined. The i2c core driver converts the error codes to
-> a
->>>> value of 0 and the SPI bus driver passes them unaltered to client
-> device
->>>> drivers.
->>>>
->>>> The cs35l56 driver should only accept positive non-zero values as IRQ
->>>> numbers.
->>>
->>> Have all architectures removed 0 as a valid IRQ?
->>
->>   From discussion threads we can find 0 might still used on x86 for a
->> legacy device.
->> But the conversations we can find on this don't seem to exclude passing
->> a negative error number, just that 0 can normally be assumed invalid.
->>
->> The kerneldoc for SPI says:
->>
->>    * @irq: Negative, or the number passed to request_irq() to receive
->>    *	interrupts from this device.
+On 17/06/2024 16:17, Abdulrasaq Lawani wrote:
+> Convert the hisilicon SoCs tsensor txt bindings to dt-schema
 > 
-> Yes and the threads of these lore links in these commits are rather feisty
-> 
-> ce753ad1549c platform: finally disallow IRQ0 in platform_get_irq() and its
-> ilk
-> a85a6c86c25b driver core: platform: Clarify that IRQ 0 is invalid
-> 
-> 
-So 0 is invalid. Question is: is it also valid to pass -ve errors, or is
-0 the _only_ invalid value?
+> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+
+...
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - '#thermal-sensor-cells'
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/hi6220-clock.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +     temperature-sensor@f7030700 {
+> +        compatible = "hisilicon,tsensor";
+
+Still not correct indentation. See writing-schema document.
+
+Use 4 spaces for example indentation.
+
+Best regards,
+Krzysztof
+
 
