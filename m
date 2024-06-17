@@ -1,125 +1,127 @@
-Return-Path: <linux-kernel+bounces-217267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B2C90AD99
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:08:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5275B90AD9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4EB11C22F2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:08:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE181C22ED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FFB194C80;
-	Mon, 17 Jun 2024 12:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2830D19539D;
+	Mon, 17 Jun 2024 12:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUVIWWat"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="H8V4wQ7p"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDDA17FAA2;
-	Mon, 17 Jun 2024 12:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B4017FAA2;
+	Mon, 17 Jun 2024 12:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718626090; cv=none; b=ALfbxuyLvzX+D8Xwd0u+XkYyKauhmUkIowxOhitKfXYgy13rEGCvzqcbQrHJga5nBHck2OUmNjXrqKAPcIoB0/3K8M5q/RySgL827uxlqw0e75cVL+JGqJMes8B42fEfINWSzezPbVCRPxf8zytsD+RagyHyL+w6LAlJwRVIxrw=
+	t=1718626106; cv=none; b=KTudOzHTXcBh7HDKQ3UgBhSmPhhfFMBJVjcBcZ60lIfehZW7I6Z4NU4GUHjOKLR7MQfyIdNb8ewKT2s0uTzS74znbEqt8GJD/DhSswqzlastxXdfNng/fxQavsA71gxi3zN8vhyXQW10rLVLWoonaXAZi/jzqS37Iz+mZPxGG/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718626090; c=relaxed/simple;
-	bh=fWhPxtJJaYXwHziDk1H8768QKpvJvEh6G+oLsd2gWVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RVQHFD0Ge6ghqtaH7Ti4lN9F7FJGkuw9RFEzzp/SCAX6BqvL7a2ljZcYdV5IrFCekuhgCG3N5egk4yhQIniAKqgunf8gqHofStrbezeaOKyOH1Vt8qXtsbcD1MR64FBedlVxwM4qfJnS266PLw1qz9rw2x+11MgwgcBnmrOuVmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUVIWWat; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2569CC2BD10;
-	Mon, 17 Jun 2024 12:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718626089;
-	bh=fWhPxtJJaYXwHziDk1H8768QKpvJvEh6G+oLsd2gWVs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VUVIWWatw7u2vRnYJ6xyj33UgNFqqP1poZ6O1wbS5mQdT4XEwTS8ROEB1riya3gA6
-	 ySTXmAdSasnmFpjqRoVLHDzIK1WAoYGHsnSERhZ1gMfav47Z4MY2r1QD3gBaxk38et
-	 F2RKm5+GaK3qDkZ3HjDxuqaiuRMNP+7sMzu1DsZ/NAY5jJsNmNNVbAJ69jKc/GL7N6
-	 ALkl/jDXhhoSr4cbbdK4CWNk4FdWpQaaflE630QPcYbSme57U7xp7K+F8O5KqMRSPH
-	 qW+LfV3f2nINw/xXAGou0QWwUNsjmnnVjMM8kNQti4aLQ0NSFLSv9GE5Kn6I0KeBmG
-	 hMUaMg6JaFmhA==
-Date: Mon, 17 Jun 2024 13:08:04 +0100
-From: Will Deacon <will@kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	Baochen Qiang <quic_bqiang@quicinc.com>,
-	miriam.rachel.korenblit@intel.com, kvalo@kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	linux-wireless <linux-wireless@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: iwlwifi: Regression after migrating to 6.6.32
-Message-ID: <20240617120804.GA861@willie-the-truck>
-References: <CAOMZO5CYDsh70u3To7HYXVki_MzzhFyCCHkigt_Es7o_+XG3oA@mail.gmail.com>
- <7a8e220d77d7e30a0cfaf984404ef2f57eaa785f.camel@sipsolutions.net>
- <CAOMZO5BktgtaSPzCf3WOOnkD2n+fj3FeQEfHeT7CYFL+tCHeaw@mail.gmail.com>
- <fb60b7f5bcf5ba47be54398225075a5bfab7c141.camel@sipsolutions.net>
- <CAOMZO5CMX_juW4-t6CSd2xdzXkFfBiamuSTjsTB80Ly_TUsxRA@mail.gmail.com>
- <d49fcc32-bfa8-41d2-8666-af6256b7b4b4@quicinc.com>
- <50101085cba7fc089339c96f531f797e27c632ff.camel@sipsolutions.net>
- <35750452-e362-4dfa-803a-3360a4e16cd8@quicinc.com>
- <6e556f7b6b769c4d70be3e248b98d8d09d51452b.camel@sipsolutions.net>
- <CAOMZO5CN_kbPcEYsN9SqqfUyrJdq9yaDisfJKL+CnENVTPuq3g@mail.gmail.com>
+	s=arc-20240116; t=1718626106; c=relaxed/simple;
+	bh=PsqCvI9iYJBn0w58OPhyl9OmctKHOFcdmv3uZUmC09A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D7SU2ym3iFnWeE4xvutSc0bP1GQQxe2k0jesfugOBGHhULtIPixk0JCS9Nz3FQ4uPgz0Ot3dlfTk5Y8/xXjAywZSHSor6sqlTqp9fNbOEyCsy9Zp1CIS1hmtwbfAveyhC/U/PMnv55Zb0KgYNGFIqcJKmgDmWx1QW4BCjP07wpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=H8V4wQ7p; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 7C3904000E;
+	Mon, 17 Jun 2024 12:08:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718626101;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GuKdc1xKXRp/qhXALkelzw1dzBSmgkA1O3cnHePaipU=;
+	b=H8V4wQ7przmplXIacmPrH7kYoIPUsHhItcpsoiVJZrKxDNCVu4JQWHMh/Tli+FtaM218kV
+	+nBREQhpYDYU+oAlJFGgUGm0kWJv+n+vMuhXYvA8vfc/u/ssARV/WvUhLJzfyrd8NuDt6E
+	my+0iuoFvD4jL/T+xaxHsTjqJBszpu9HZ8F68fAg5flS6CTg8YsOTBou/CNbWg5m4Gqb5W
+	8CbGc6hov8ljgvvFknDxjtY/6URYCuFR3Jhn8KXv/6E0Od0QEJ8pylplCkDxDIMArooGVv
+	M+zpZmHBg5/21+41x4BEh76cIFFRk+CaDcJXhbyyXEj24YBK1T7KGUT7Hlaaqw==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: Peter Rosin <peda@axentia.se>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Korsgaard <peter.korsgaard@barco.com>,
+	Wolfram Sang <wsa@kernel.org>
+Cc: linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH v3 0/3] i2c: mux: gpio: Add 'settle-time-us' property
+Date: Mon, 17 Jun 2024 14:08:15 +0200
+Message-ID: <20240617120818.81237-1-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOMZO5CN_kbPcEYsN9SqqfUyrJdq9yaDisfJKL+CnENVTPuq3g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Hi Fabio,
+Hi all,
 
-On Thu, Jun 13, 2024 at 05:15:03PM -0300, Fabio Estevam wrote:
-> On Thu, Jun 13, 2024 at 7:37 AM Johannes Berg <johannes@sipsolutions.net> wrote:
-> 
-> > Oh. So I guess try to pick up commit 14cebf689a78 ("swiotlb: Reinstate
-> > page-alignment for mappings >= PAGE_SIZE").
-> 
-> Good catch, thanks!
-> 
-> After applying 14cebf689a78 ("swiotlb: Reinstate> page-alignment for
-> mappings >= PAGE_SIZE")
-> on top of 6.6.33 I no longer have the flood of alignment warnings and
-> iwlwifi can be used again:
-> 
-> # dmesg | grep iwlwifi
-> [    4.295064] iwlwifi 0000:01:00.0: enabling device (0000 -> 0002)
-> [    4.305459] iwlwifi 0000:01:00.0: Detected crf-id 0x3617, cnv-id
-> 0x100530 wfpm id 0x80000000
-> [    4.315440] iwlwifi 0000:01:00.0: PCI dev 2723/0084, rev=0x340, rfid=0x10a100
-> [    4.346029] iwlwifi 0000:01:00.0: api flags index 2 larger than
-> supported by driver
-> [    4.353816] iwlwifi 0000:01:00.0: TLV_FW_FSEQ_VERSION: FSEQ
-> Version: 89.3.35.37
-> [    4.363135] iwlwifi 0000:01:00.0: loaded firmware version
-> 77.ad46c98b.0 cc-a0-77.ucode op_mode iwlmvm
-> [    4.444427] iwlwifi 0000:01:00.0: Detected Intel(R) Wi-Fi 6 AX200
-> 160MHz, REV=0x340
-> [    4.604918] iwlwifi 0000:01:00.0: Detected RF HR B3, rfid=0x10a100
-> [    4.676138] iwlwifi 0000:01:00.0: base HW address: 3c:21:9c:4e:16:6x
-> [    5.339929] iwlwifi 0000:01:00.0 wlp1s0: renamed from wlan0
-> [    9.840136] iwlwifi 0000:01:00.0: Registered PHC clock:
-> iwlwifi-PTP, with index: 1
-> 
-> Will, is it OK for me to ask the stable folks to backport 14cebf689a78
-> ("swiotlb: Reinstate> page-alignment for mappings >= PAGE_SIZE")
-> to 6.6 stable?
+The i2c-gpio-mux can be used to describe a multiplexer built upon
+several i2c isolators having an enable pin (such as LTC4310):
 
-If you want to backport that change, then I think you should probably
-take the whole series:
+ +---------------+                     +------+  +------+
+ | +-----------+ |                     | dev  |  | dev  |
+ | | GPIO_EN_A |-|-----------|         +------+  +------+
+ | +-----------+ |     +-----+---+         |         |
+ |               |  |--| isol. A |---------+---------+
+ |     +-----+   |  |  +---------+
+ | SOC | I2C |---|--|
+ |     +-----+   |  |  +---------+
+ |               |  |--| isol. B |------+---------+---------+
+ | +-----------+ |     +-----+---+      |         |         |
+ | | GPIO_EN_B |-|-----------|      +------+  +------+  +------+
+ | +-----------+ |                  | dev  |  | dev  |  | dev  |
+ +---------------+                  +------+  +------+  +------+
 
-https://lore.kernel.org/all/20240308152829.25754-1-will@kernel.org/
+These isolators often need some time between their enable pin's
+assertion and the first i2c transfer. If the first i2c transfer
+happens before this enabling time is reached, transfer fails.
 
-(and there were some follow-ups from Michael iirc; you're best off
-checking the git history for kernel/dma/swiotlb.c).
+There is no available option to configure such a time in the
+i2c-gpio-mux driver.
 
-FWIW: we have this series backported to 6.6 in the android15-6.6 tree.
+Add a optional property in the bindings called 'transition-delay-us'.
+If present, driver waits for this delay every time a new bus is
+selected, i.e. before returning from the bus_select() callback.
 
-Will
+Changes in v2:
+ * Rewrite bindings' commit log
+ * Express the 'transition delay' in us instead of ms
+
+Changes in v3:
+ * Rename DT property to 'settle-time-us'
+ * Use fsleep instead of udelay
+
+[v1] : https://lore.kernel.org/all/20240527113908.127893-1-bastien.curutchet@bootlin.com/
+[v2] : https://lore.kernel.org/all/20240529091739.10808-1-bastien.curutchet@bootlin.com/
+
+Bastien Curutchet (3):
+  dt-bindings: i2c: gpio: Add 'settle-time-us' property
+  i2c: mux: gpio: Re-order #include to match alphabetic order
+  i2c: mux: gpio: Add support for the 'settle-time-us' property
+
+ .../devicetree/bindings/i2c/i2c-mux-gpio.yaml      |  3 +++
+ drivers/i2c/muxes/i2c-mux-gpio.c                   | 14 ++++++++++----
+ include/linux/platform_data/i2c-mux-gpio.h         |  2 ++
+ 3 files changed, 15 insertions(+), 4 deletions(-)
+
+-- 
+2.45.0
+
 
