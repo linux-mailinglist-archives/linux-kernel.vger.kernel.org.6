@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-218394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A548690BF25
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:43:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227E590BF27
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D031F22A2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B213B283AB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894D919938D;
-	Mon, 17 Jun 2024 22:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4069A199259;
+	Mon, 17 Jun 2024 22:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="KL1EFnaJ"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="cvjhYuw0"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA64D1990C9;
-	Mon, 17 Jun 2024 22:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFAD1990C9;
+	Mon, 17 Jun 2024 22:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718664201; cv=none; b=R/m+A2pPTSitpL13ZdczFeC/V2yuj/q0xcPTDdODla8DlkjF7S+h39BOdjyuNxWh4R94hHigc463erSicUF69vL9jxEo/9XM7744eQCdZBmqB0DPleqOK7kENbVrHf2jbgINdz2oAQEGomcvl/OyjaEzOw4spHRQJMqC0mnJuA0=
+	t=1718664291; cv=none; b=gR/DIdOL3780Z1EjkzrZsMC68mTnz2O13BsqQzRHGRSElATCCVpD2Z2VcyH7cHucxdo29xSzi63FWGU0uMCs9miJlcDCAmKHZLEkucLdZGxRks2r0sll7YHcjOZ1PsduoJKzYANQxzbOW5arosROUV9kXUWXIUYhueJdjqFiXjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718664201; c=relaxed/simple;
-	bh=QN2ec0eISa/KKAtm4Ip2LGUpwKvKWARV0EbAHEkC13U=;
+	s=arc-20240116; t=1718664291; c=relaxed/simple;
+	bh=YdnmXRGisXeOdFSCMsRUE46ZndWRdnKFOdAjRpKmB1o=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tpfvAD+zIUdwmTB7CLm9CgvaCPlmNRaYDsN/N+CbG0Ha5ia8ty+Qve3xM41XJHfk59zNpmMnoDFVx4YbBtZoUlg0DFfS/6//ebkq1k8z52VJyXxqsD8DMscAYnFGKSKfvZAYePSatdvhcHeS8WgoYWGkMki1E5U+epqO1kNIbY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=KL1EFnaJ; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version:Content-Type; b=hlrylBb1aLsBlfoDODZ6PtF/+Otd1L41b0op++oRd5Eyh6nHsPyNAUF9f0hYsFEshZoF5vxM7i2wj0/QborU7moCGTzwXNzSfQtEF4ROoGA7wFO1cxEBKtcnTOauj+fYqYEfozh7vzaNgkWqdkVsYvfXDoLPlKStxJxjjOAouiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=cvjhYuw0; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C732145E33
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 927BB45E08
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1718664200; bh=EOrcP9SkJEFlUVAanP1Niwyhp1eixFLL0/aFpQwMuWA=;
+	t=1718664289; bh=tgZ5hgb9Gf21KDYdEib2nJBRoH1w2xOfXPJe310ZmBc=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=KL1EFnaJ47XRYQMnpcM162rfyKl6TwB9/2+3ceCMuc03EqOW4wor5YZMH4oiH4UFH
-	 I+n+pOrAcvTFEebbpqffo6TqawCkHxkX4sLeiC4bDm4/EaTRWS/HAT7aphnoLRr7sw
-	 na5qYAmkSthYOFd2UT0E6gmSgiZx85Oiq8G+lYdtzGVz48HCWa3oPJ4X6fK6hgxlmv
-	 /Pxuc9WqgkC7F2aizGYOCgk5xULTR/yu1Go9G10s0CR3K1j4ozZVpmdbO0Tyalvq+l
-	 fvv6Kyo75AGhDV6LQwyrkMU+QZHwlGSStZbwP4qyXftUQqUOPHdiCdRM5PQ+lC3aJV
-	 IogTyp9zUsAZQ==
+	b=cvjhYuw077bLfEWVkm9B5y5MkRFtnN2/7arlWOO7bad+/c5EIZSmmsxUsPbBOEYjQ
+	 ufEy35QWt09ug5fQPilU7spMPSYU1isz3ea/kkmCxABk/Dr+6aeJW7szpbPsNAa4po
+	 tEWUN7mUfw1nB0rMxivttg0ZW0+SiU+wjuj7+aJ0vfMqUbHU6GjcKOWI6yW/5JtqJt
+	 rZCuSOHc9XvpOyZWgd22iPaKNr/S8gbJP4Ej666iYP0pCsR2IpxXy1t5DLFeW5CQqt
+	 euVA6wNmKKeDQpqt0mTD/FuDevW/lBoZgpFBa1kVyhH6JZ7tE+3uXxvmP5dvQL3zGJ
+	 RiqX95vwBmMOQ==
 Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id C732145E33;
-	Mon, 17 Jun 2024 22:43:19 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPSA id 927BB45E08;
+	Mon, 17 Jun 2024 22:44:49 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
-To: Li Zhijian <lizhijian@fujitsu.com>, linux-doc@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- linux-kernel@vger.kernel.org, Li Zhijian <lizhijian@fujitsu.com>
-Subject: Re: [PATCH] Documentation: exception-tables.rst: Fix the wrong
- steps referenced
-In-Reply-To: <20240614010028.48262-1-lizhijian@fujitsu.com>
-References: <20240614010028.48262-1-lizhijian@fujitsu.com>
-Date: Mon, 17 Jun 2024 16:43:19 -0600
-Message-ID: <874j9rgph4.fsf@trenco.lwn.net>
+To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org, Nathan Lynch
+ <nathanl@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Nicholas
+ Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, "Naveen N . Rao"
+ <naveen.n.rao@linux.ibm.com>
+Subject: Re: [PATCH] Documentation: Remove the unused "topology_updates"
+ from kernel-parameters.txt
+In-Reply-To: <20240617060848.38937-1-thuth@redhat.com>
+References: <20240617060848.38937-1-thuth@redhat.com>
+Date: Mon, 17 Jun 2024 16:44:48 -0600
+Message-ID: <87zfrjfau7.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,35 +67,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-Li Zhijian <lizhijian@fujitsu.com> writes:
+Thomas Huth <thuth@redhat.com> writes:
 
-> When it was in text format, it correctly hardcoded steps 8a to 8c.
-> However, after it was converted to RST, the sequence numbers were
-> auto-generated during rendering and became incorrect after some
-> steps were inserted.
+> The "topology_updates" switch has been removed four years ago in commit
+> c30f931e891e ("powerpc/numa: remove ability to enable topology updates"),
+> so let's remove this from the documentation, too.
 >
-> Change it to refer to steps a to c in a relative way.
->
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
 > ---
->  Documentation/arch/x86/exception-tables.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/admin-guide/kernel-parameters.txt | 6 ------
+>  1 file changed, 6 deletions(-)
 >
-> diff --git a/Documentation/arch/x86/exception-tables.rst b/Documentation/arch/x86/exception-tables.rst
-> index efde1fef4fbd..562d1bc6d448 100644
-> --- a/Documentation/arch/x86/exception-tables.rst
-> +++ b/Documentation/arch/x86/exception-tables.rst
-> @@ -297,7 +297,7 @@ vma occurs?
->     c) execution continues at local label 2 (address of the
->        instruction immediately after the faulting user access).
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index f58001338860..b75852f1a789 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6600,12 +6600,6 @@
+>  			e.g. base its process migration decisions on it.
+>  			Default is on.
 >  
-> -The steps 8a to 8c in a certain way emulate the faulting instruction.
-> +The steps a to c above in a certain way emulate the faulting instruction.
->  
+> -	topology_updates= [KNL, PPC, NUMA]
+> -			Format: {off}
+> -			Specify if the kernel should ignore (off)
+> -			topology updates sent by the hypervisor to this
+> -			LPAR.
+> -
+>  	torture.disable_onoff_at_boot= [KNL]
 
-Those steps render as 1, 2, and 3 ... where did "a to c" come from?
-
-Thanks,
+Applied, thanks.
 
 jon
 
