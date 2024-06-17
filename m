@@ -1,128 +1,108 @@
-Return-Path: <linux-kernel+bounces-217873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4236190B56F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:56:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0249990B576
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED92A1F22EA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:56:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5D121C20D6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9A413D8A5;
-	Mon, 17 Jun 2024 15:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EFA13FD72;
+	Mon, 17 Jun 2024 15:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQRMXNHX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E752B9A0;
-	Mon, 17 Jun 2024 15:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B0FD53E;
+	Mon, 17 Jun 2024 15:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718639016; cv=none; b=DJQlKEY/mnVJuB7FS6YqPBwz6xaHTI6FsLWJaWu2ZR11xchR/V7ms2p8ffBtRZ3vQwdNk8nDjVKoMcE2T3rtQBMMvHThi54Hx6aUDk11ycVbJC1HiqxoNfLDzvRji5HWGh7g0/6Fhl7pAlSmuV0t2YceDTPE3pXVHraf9pHH7nQ=
+	t=1718639112; cv=none; b=fJPulxGvR/2TSGWOkGGgaqnZ4xrm+we1gy01YBxCIIdEPR9fqiHGvEk645TCbIYTdLHg3e+sV7j4OrWe3KW1zZO/t9dtLFxvCZBZaigz3OhQ3oNVgU7UTPGojUJq6vYCE1bEOQqwFAFeUrBc0DSPU38xktuGWcpZRK8TE7/MW68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718639016; c=relaxed/simple;
-	bh=m0V8kQAJX78JymfCuimEezFCVSUbGSJ913r0go/UaNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kg+ucXJEcAWvk0lIycePTYm770GVY60HxdRVv6lqUGMJiKSg4lOU+Zmblv3VaVM7fg8ri4z74lW5rLTZLWANEWjkHi8apAGQCWUxUQubpQKlFf5ITwClp7mspY21szsQWsKs8U4R2TXJoVWAO7EX6hG1QX3ZnlroX1o9zJCok3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90818C2BD10;
-	Mon, 17 Jun 2024 15:43:32 +0000 (UTC)
-Date: Mon, 17 Jun 2024 16:43:30 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Michael Kelley <mhklinux@outlook.com>,
-	Steven Price <steven.price@arm.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v3 10/14] arm64: Force device mappings to be non-secure
- shared
-Message-ID: <ZnBZostHhjqn6uym@arm.com>
-References: <20240605093006.145492-1-steven.price@arm.com>
- <20240605093006.145492-11-steven.price@arm.com>
- <SN6PR02MB4157D26A6CE9B3B96032A1D1D4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
- <1dd92421-8eba-48db-99da-4390d9e19abd@arm.com>
+	s=arc-20240116; t=1718639112; c=relaxed/simple;
+	bh=zPno5OkucR9cTYw6c/LOvzB8+WqVlvwJsJ9jPDFqKbM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=U4SEnHZVfrMhukI5JGx9haxwSRg+xZR7X8+peukOYZ79/XATjBB4ka/8cR+ZcspvX7mVUPR0wx5QyqVVoKXFe3V1Se20OQUvyZuvMDrkdAi4DHVgNyCDBXTBWzdxFEFLHjGtKiwi/9DU57GsxobXsI6NADiGRTUbMer+/CxlTzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQRMXNHX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68EE7C4AF1C;
+	Mon, 17 Jun 2024 15:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718639111;
+	bh=zPno5OkucR9cTYw6c/LOvzB8+WqVlvwJsJ9jPDFqKbM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=oQRMXNHXy6qIvw/CA3RCIXXyyV5QB541KmxirHp0anWVZtCe1nRf5Fav4cQvxt+um
+	 T0J5VwIqzDtDrmIU1M31KrLozzk+bgZcI2K7StQdQNaKJLEKAbUns8xPTJUjRPmF5i
+	 NSF9tR9bDD47csdq3x25oKBOqF0Nm/Iu9/W8OAKeKHogqKIi2Syx7UafOTDPQd6w2S
+	 ZcO8VIE0iE1VUBth+T09HUlu9dxPkxrNlW9g+M6cKB8oYTSBCqru8g4hfgGboM7B40
+	 uMD6Iv4tCuydaBT1CE5Whi1gSa1roEoLoJuoaXO4OwCI+dA6/5Ellc1ugbn6hq+XCt
+	 +snFKOvsyplPA==
+Message-ID: <6180646a59df90da1b365605b6e0d5a55f47c4c6.camel@kernel.org>
+Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_nl_listener_get_doit
+From: Jeff Layton <jlayton@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: syzbot <syzbot+4207adf14e7c0981d28d@syzkaller.appspotmail.com>, 
+	Dai.Ngo@oracle.com, chuck.lever@oracle.com, kolga@netapp.com, 
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, neilb@suse.de, 
+	syzkaller-bugs@googlegroups.com, tom@talpey.com, "David S. Miller"
+	 <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+	 <pabeni@redhat.com>, Lorenzo Bianconi <lorenzo@kernel.org>
+Date: Mon, 17 Jun 2024 11:45:09 -0400
+In-Reply-To: <20240617075129.7cb9ad1d@kernel.org>
+References: <000000000000322bec061aeb58a3@google.com>
+	 <1e36e3c4e4ee1243716f0da5f451ea15993a7e82.camel@kernel.org>
+	 <20240617075129.7cb9ad1d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1dd92421-8eba-48db-99da-4390d9e19abd@arm.com>
 
-On Mon, Jun 17, 2024 at 03:55:22PM +0100, Suzuki K Poulose wrote:
-> On 17/06/2024 04:33, Michael Kelley wrote:
-> > From: Steven Price <steven.price@arm.com> Sent: Wednesday, June 5, 2024 2:30 AM
-> > > 
-> > > From: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > > 
-> > > Device mappings (currently) need to be emulated by the VMM so must be
-> > > mapped shared with the host.
-> > > 
-> > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > > Signed-off-by: Steven Price <steven.price@arm.com>
-> > > ---
-> > >   arch/arm64/include/asm/pgtable.h | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> > > index 11d614d83317..c986fde262c0 100644
-> > > --- a/arch/arm64/include/asm/pgtable.h
-> > > +++ b/arch/arm64/include/asm/pgtable.h
-> > > @@ -644,7 +644,7 @@ static inline void set_pud_at(struct mm_struct *mm, unsigned long addr,
-> > >   #define pgprot_writecombine(prot) \
-> > >   	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_NORMAL_NC) | PTE_PXN | PTE_UXN)
-> > >   #define pgprot_device(prot) \
-> > > -	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_DEVICE_nGnRE) | PTE_PXN | PTE_UXN)
-> > > +	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_DEVICE_nGnRE) | PTE_PXN | PTE_UXN | PROT_NS_SHARED)
-> > >   #define pgprot_tagged(prot) \
-> > >   	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_NORMAL_TAGGED))
-> > >   #define pgprot_mhp	pgprot_tagged
-> > 
-> > In v2 of the patches, Catalin raised a question about the need for
-> > pgprot_decrypted(). What was concluded? It still looks to me like
-> > pgprot_decrypted() and prot_encrypted() are needed, by
-> > dma_direct_mmap() and remap_oldmem_pfn_range(), respectively.
-> > Also, assuming Hyper-V supports CCA at some point, the Linux guest
-> > drivers for Hyper-V need pgprot_decrypted() in hv_ringbuffer_init().
-> 
-> Right, I think we could simply do :
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h
-> b/arch/arm64/include/asm/pgtable.h
-> index c986fde262c0..1ed45893d1e6 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -648,6 +648,10 @@ static inline void set_pud_at(struct mm_struct *mm,
-> unsigned long addr,
->  #define pgprot_tagged(prot) \
->         __pgprot_modify(prot, PTE_ATTRINDX_MASK,
-> PTE_ATTRINDX(MT_NORMAL_TAGGED))
->  #define pgprot_mhp     pgprot_tagged
-> +
-> +#define pgprot_decrypted(prot) __pgprot_modify(prot, PROT_NS_SHARED, PROT_NS_SHARED)
-> +#define pgprot_encrypted(prot)  __pgprot_modify(prot, PROT_NS_SHARED, 0)
+On Mon, 2024-06-17 at 07:51 -0700, Jakub Kicinski wrote:
+> On Mon, 17 Jun 2024 06:15:25 -0400 Jeff Layton wrote:
+> > We've had number of these reports recently. I think I understand
+> > what's
+> > happening but I'm not sure how to fix it. The problem manifests as
+> > a
+> > stuck nfsd_mutex:
+> >=20
+> > nfsd_nl_rpc_status_get_start takes the nfsd_mutex, and it's
+> > released in
+> > nfsd_nl_rpc_status_get_done. These are the ->start and ->done
+> > operations for the rpc_status_get dumpit routine.
+> >=20
+> > I think syzbot is triggering one of the two "goto errout_skb"
+> > conditions in netlink_dump (not sure which). In those cases we end
+> > up
+> > returning from that function without calling ->done, which would
+> > lead
+> > to the hung mutex like we see here.
+> >=20
+> > Is this a bug in the netlink code, or is the rpc_status_get dumpit
+> > routine not using ->start and ->done correctly?
+>=20
+> Dumps are spread over multiple recvmsg() calls, even if we error out
+> the next recvmsg() will dump again, until ->done() is called. And
+> we'll
+> call ->done() if socket is closed without reaching the end.
+>=20
+> But the multi-syscall nature puts us at the mercy of the user meaning
+> that holding locks ->start() to ->done() is a bit of a no-no.
+> Many of the dumps dump contents of an Xarray, so its easy to remember
+> an index and continue dumping from where we left off.
 
-And maybe rewrite pgprot_device() as:
-
-#define __pgprot_device(prot) \
-	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_DEVICE_nGnRE) | PTE_PXN | PTE_UXN)
-#define pgprot_device(prot)	__pgprot_device(pgprot_decrypted(prot))
-
--- 
-Catalin
+Understood, thanks. I wasn't keyed into the fact that ->start and -
+>done weren't always called in the context of the same syscall. In that
+case, I think we have no choice but to move the locking into the -
+>dumpit routine. I believe Lorenzo is drafting a patch along those
+lines.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
