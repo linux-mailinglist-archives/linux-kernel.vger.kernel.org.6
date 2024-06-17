@@ -1,96 +1,103 @@
-Return-Path: <linux-kernel+bounces-217862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984EC90B54A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:53:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F10190B550
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AB00283050
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:53:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27C401F26611
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B0713048C;
-	Mon, 17 Jun 2024 15:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35D8136E1D;
+	Mon, 17 Jun 2024 15:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Dg1qfJ4n"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aX78jsrw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A399A12F373
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 15:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8BF12F373;
+	Mon, 17 Jun 2024 15:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718638551; cv=none; b=f1vQe3tq5W2TeRwzrXFVLFGJVnG8IGL4T+EK/DX9aDMDdNhLE86GBtVH5csj32QYd55zAwMCj1woJxB+I6RZRGYthaTMwHme4rICoQjM56Ag+O3GFrLYaFII8LdAwO9sLZ0dzZkr6P44cOwq5DrEG/tdb9aUmLaAPHr3QnYcrBk=
+	t=1718638562; cv=none; b=bJf+TENF0ZvKLmsCxoCGScFuT4Xiae2naD1ZugzpmEKmeg+lMdkLv6T1uClWJnVnr6QJ0lbJ1yrfZG3/9G/8UXPNRUvDTvyprugYQkzYKu4njZFI70I6erVIDpgygsMxqZhQxjIlq2hQbkoHfa1DoIiLRrM2pE5JliEi0jSF5bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718638551; c=relaxed/simple;
-	bh=c7Ne3E0RAcjQQpufIt0xSyD5MfaGm6a4FInMzdzowj0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oCreTyA7+vrlkqTdoQlMqHWms05tn1uB29GWYqNhgn4yulSe9wAs2dQlaRiJPcNY0Nfj2/2bR2KxAFfNO/8aA5brNC4sDhysU6S9Erw8UOMSHriDS5YA9revVehjuC2GNDOlBnpGRR3Sh4ifs6R/5KPzHN9SpkrJNvuBh0Qv3cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Dg1qfJ4n; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1718638547;
-	bh=c7Ne3E0RAcjQQpufIt0xSyD5MfaGm6a4FInMzdzowj0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Dg1qfJ4nJNei4EcLrlqmvHQWJppfrXCN7kivxzBGhmIM2ab6rjlzWx+NICGMZ0ugP
-	 51Wy6tiAeSsI0PwkoCHx8oSKaQsqEWE1n779LcQyOJ29JgMW1yqyFiakej18s/nbQS
-	 np8+MGxOvGWHBGVVsF+YVpHKhJmhP9WmT1xnoWno=
-Received: from [IPv6:240e:358:11e5:c700:dc73:854d:832e:2] (unknown [IPv6:240e:358:11e5:c700:dc73:854d:832e:2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 7428967547;
-	Mon, 17 Jun 2024 11:35:41 -0400 (EDT)
-Message-ID: <e27a5acebe5c7d1e09edbc9dc49f52b672d72988.camel@xry111.site>
-Subject: Re: [PATCH 1/2] drm/amdgpu: make duplicated EOP packet for GFX7/8
- have real content
-From: Xi Ruoyao <xry111@xry111.site>
-To: Icenowy Zheng <uwu@icenowy.me>, Christian =?ISO-8859-1?Q?K=F6nig?=
- <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Pan
- Xinhui <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>,  Pierre-Eric Pelloux-Prayer
- <pierre-eric.pelloux-prayer@amd.com>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-Date: Mon, 17 Jun 2024 23:35:33 +0800
-In-Reply-To: <1e5f86991635b9045e91fab6397cda87555f85ff.camel@icenowy.me>
-References: <20240617105846.1516006-1-uwu@icenowy.me>
-	 <20240617105846.1516006-2-uwu@icenowy.me>
-	 <88337509-3ad7-47aa-b70f-5294f7f1e486@amd.com>
-	 <b4ebdbce2f44c06806a650e72b1b6eb9a16dffe6.camel@icenowy.me>
-	 <09fbcd1f-c7b1-47e3-9146-17f8189978a8@amd.com>
-	 <e88d4722fa3bbd7104b140debdd85cb212628944.camel@icenowy.me>
-	 <d44651a7-0c07-4b84-8828-f1d405359aeb@amd.com>
-	 <1e5f86991635b9045e91fab6397cda87555f85ff.camel@icenowy.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1718638562; c=relaxed/simple;
+	bh=oKkY8DUJHqJi7aq4RzMoPZQz16x9vtWfrZmff64niHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HgfpXfbdw7F4lRgr1rO4bUkGziyxaSAR+ugnztPbvujMa/7LxK4fSZ6f0ETpud2FvQ9Ui1kE7fjw9AZgT7FO+3qo7diSpeUhajNDMMd9jidqcfkOMnUb183GY27k3p8vWAhhnVmT+4yEUN968msPgzvy+jazbGhRgqz2q8ifgPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aX78jsrw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 922FEC4AF1D;
+	Mon, 17 Jun 2024 15:35:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718638561;
+	bh=oKkY8DUJHqJi7aq4RzMoPZQz16x9vtWfrZmff64niHc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aX78jsrwC+Iubhy0j5Twmwszbgt+IQ4rh0xY7VOQlt/7Q8167saErxNEwaYeanoBj
+	 GK3FzWq1cvzggYHLlRZHWO7tONlD9s1WwlTVW5kWVzNXQj0760Fd610oLn/ksssEYk
+	 Ikd48iBggZhQ7ZlzkGkh6mejRrpQaRZD17TKZAWdYHb5uNV4KTaHSP4JGcUxuurxVh
+	 rrrTmD9i8zKFFQ7s3ys9QI3IbGHXPc146KYS0VIeMlS4Ol1/uP7jgsau3FHYch/XRY
+	 88Mft3cJ0sF4vGVbaZpXFgG3k6gUpTE8Poljvfqi+3xElrForLMEhLQsn20wp8JZfC
+	 qpamPkyMLa5jA==
+Date: Mon, 17 Jun 2024 16:35:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Diogo Ivo <diogo.ivo@siemens.com>
+Cc: MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Simon Horman <horms@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH net-next v4 3/5] dt-bindings: net: Add IEP interrupt
+Message-ID: <20240617-buzz-balancing-c2168d853a6c@spud>
+References: <20240617-iep-v4-0-fa20ff4141a3@siemens.com>
+ <20240617-iep-v4-3-fa20ff4141a3@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3pdF+DqPTBZylhD/"
+Content-Disposition: inline
+In-Reply-To: <20240617-iep-v4-3-fa20ff4141a3@siemens.com>
 
-On Mon, 2024-06-17 at 22:30 +0800, Icenowy Zheng wrote:
-> > Two consecutive writes to the same bus address are perfectly legal
-> > from=20
-> > the PCIe specification and can happen all the time, even without this
-> > specific hw workaround.
+
+--3pdF+DqPTBZylhD/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jun 17, 2024 at 04:21:42PM +0100, Diogo Ivo wrote:
+> The IEP interrupt is used in order to support both capture events, where
+> an incoming external signal gets timestamped on arrival, and compare
+> events, where an interrupt is generated internally when the IEP counter
+> reaches a programmed value.
 >=20
-> Yes I know it, and I am not from Loongson, just some user trying to
-> mess around it.
+> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
 
-There are some purposed "workarounds" like reducing the link speed (from
-x16 to x8), tweaking the power management setting, etc.  Someone even
-claims improving the heat sink of the LS7A chip can help to work around
-this issue but I'm really skeptical...
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+--3pdF+DqPTBZylhD/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBX2gAKCRB4tDGHoIJi
+0sCPAP4mFlD9F3AigFkn1v2kp8M9jRDptuUlm1pj5CqYi+/BPgEArpsowjrWpJ8j
+9KuM1nqEckGmX8RSrxcfMPxJgEAhAwg=
+=kcYr
+-----END PGP SIGNATURE-----
+
+--3pdF+DqPTBZylhD/--
 
