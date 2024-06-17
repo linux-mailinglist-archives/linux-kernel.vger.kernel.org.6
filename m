@@ -1,244 +1,143 @@
-Return-Path: <linux-kernel+bounces-217664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9D290B3F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:22:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E363B90B2A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 610F7B3ADEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:47:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA8801C23BDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F9D1D2153;
-	Mon, 17 Jun 2024 13:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2856A1D052D;
+	Mon, 17 Jun 2024 13:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Gyya6KRr"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQKPf0Iq"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC64720011A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743F11CF3FD;
+	Mon, 17 Jun 2024 13:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632277; cv=none; b=hO4+8Aq/hILzqbnrWoAvgAMAMyWJ33LEOW4wMSjLFq/QMr5CqBPaB20hJsimXy2kZAIoKWrhQNIvSh2Umhyn5kYftwBnS0zWOS+MONio3XRt69hQaGIm52LZBSFjjbzUvNYaT+9Fb4i6g5y1VSud2O3L5DpqbfhbPW2t7N1VeiE=
+	t=1718632264; cv=none; b=bTirE9dSE3NmoVZu+hH+I8X8BvI5i9HPoMYyAc3zFEJCLBB2qLuoh6vONS0Cnhba/wYRQAM7HTnd7rRw+S5iEsJ5EfgfDSsRDU4buOcJdmB9uV0qOZYofpY+zPPg1jj8Yi5S6hbLxFAC0J0JkDvJ+xFLD497TOCNbaslEXzD/1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632277; c=relaxed/simple;
-	bh=IMPpMteq51LRPDW2gSf+ThyrqorBSKEQdFy+CzbJC88=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ofS9pddtJDWp0+h7eLclIGXmbXR3IjIHPOyJSGJHwZie6ezupRSbcmMrouBBIoxYW4PcU7ILU0LI+vokCveRtZ59DA05QKxxuoddHW7YrurDFQXFCAPJyKAAKQDmKEUDC7rkXXBq/JGp+2DoWlqSYVnpMa9t6vSrcB7JFFpOb/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Gyya6KRr; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4ee5662fde8so942853e0c.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:51:13 -0700 (PDT)
+	s=arc-20240116; t=1718632264; c=relaxed/simple;
+	bh=WxO8wJJZE1Xds5hTG7TDExzo+Qsu32A6Rbf++HOL+EU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GpvFiYgvD/axcnwSi4Jgr7aJ6itQPCQO8b4p/elxCZjQOoTgIddOX6Dhp9XkxoDp85qYzXMtFdDI6f0+ZRPguY2CDk97D7/Qq308weuh1K1oQazH1REZa2zTKlhjS/kAEQal6QRt/hP7zveLTbDw5JRSvWcc4ij4p0nDNATGbFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQKPf0Iq; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52c9034860dso5472308e87.2;
+        Mon, 17 Jun 2024 06:51:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718632273; x=1719237073; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AKnuVsDBtdHGm81QL99oZtdVbIW3JEVTOu6hlNZPjXg=;
-        b=Gyya6KRrEo4aqr8ywMCcfchhoVHUekY7hRS+pnAXJN4eI4HCPKnQVpWaoO8P1XFi2v
-         PvdtIHX5F6MGkoFo8L6Ut4hfBBh7cEejitHVeWDiWTZWR73DKLPz3CXWAaP9HcoBArBh
-         YRVjKtwezkRAUQamXRqdc029Kn0H8VDDjLzM45CIvRowPedBbmFLdDoC9tBKZ+5akHY9
-         Rcn2UZ9Dp0El5Zv1yFvC8NVPLhPMDhxkcyn/QzQ1xz8DVwA3C6rQF30dO22NatJw/6Z7
-         JpXJPlIvVb7XYR6Hzk9hBcnhPWcsxFChOTEnkosxhHOZ+06Zj/lb8Mc9COFj4GuOsNCN
-         04gA==
+        d=gmail.com; s=20230601; t=1718632261; x=1719237061; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7cjNgaPzx0K8Q2oE0VGfsHosS8QVWGPVVkZ0XS7HEDg=;
+        b=TQKPf0IqytFGGsqE2xDfJV+Yc75aA1GVgfltTY4XrrInwMIVCjx3BGZ2HlTDbMRnwJ
+         XRHsBKL6tbX9NklWtBn9G1kVOhmNQf4sMe56ykL4PUGZ+bBMRgt1fz+lzjHrFshmpNxt
+         3Ehb8nqYu4SNJbsYu2Bwvhy5GBpgF65YoUnh7r2JG0a43q7ag4ikgaBefGieszSUKUWC
+         +u/2IQY8h9V7c0/zz5Hxr4gjkM5QFZr/JR/tjbY6QKgCwcETuc+nXlJJ6diNXpu3XsHz
+         D8kOZYnSg7vFdFf8AIlVMJziVAtBXbYMqyg1pq73R2g3Q6wjMqZRH9KgQeucspWy6cKp
+         Dkug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718632273; x=1719237073;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AKnuVsDBtdHGm81QL99oZtdVbIW3JEVTOu6hlNZPjXg=;
-        b=Eac61Bi8D+qa/Z1YVtilR8UHqX5hU8PaVUAzFKMP5eBVnp0cbif9K2PxLTqGxDV3+D
-         71/63JPNpNR97hIpk+bpDvcr8r3E3PNwG+TyNX41LtsiwNEFT74pojnezrbgyAfS7kZi
-         0iUhk1WsZVk6ceDtN08accaj6K19UWRqqDYIVl+Inou4iwzrcI6UFCJU+xGJsytYJrkd
-         2cclmFag8eFJltRhvt41QHklqGEKOOxIVa+VgBpJS19iJ8lT69JVWEFlK+nEwcQHwAMw
-         QAQvK4ltrKEV+s2UMi4xOkZWJxWiILnr1yR7GdB1E+/2SdfPXla0Bkh8bK4HfdKOKGvw
-         EPXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2J3qqzKc6q12NrokwTC+MoT5dtdzkOEM7Ump3xLnuBvmq7mLqv/J8bmGZh/vO74FRW+5yFI17tWgOttgX+D5iAO2kQ+bNmC0IgWLs
-X-Gm-Message-State: AOJu0YwG+UwXNLnIqmpEgBLzMpImLqGPrLD2rQzLR735z8P92WXcIhYF
-	lZ3gNOwEcICaJGQqcI1wMcYNHs7lIH3jePu5uYZ3TYfwx0+MvFs31oabDo/inVQ=
-X-Google-Smtp-Source: AGHT+IHFy1tuFMwxa7P6sFsjYvAHUS1dIKxzAj2HLRYOAmnW2Gug4qjgVMG/WpGom5Qua5PdHz8vPQ==
-X-Received: by 2002:a05:6122:915:b0:4ec:efca:d2b with SMTP id 71dfb90a1353d-4ee3e59c40amr7925275e0c.8.1718632272678;
-        Mon, 17 Jun 2024 06:51:12 -0700 (PDT)
-Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaecc004sm432892285a.31.2024.06.17.06.51.10
+        d=1e100.net; s=20230601; t=1718632261; x=1719237061;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7cjNgaPzx0K8Q2oE0VGfsHosS8QVWGPVVkZ0XS7HEDg=;
+        b=S5d4QM/PuVCo0B+/u/BEqzUjwZ8ms1Lw1DBKm5kTN5i6tr3nlSagb4MBnIrTIWsJkg
+         Pz7MfNY025VUpsD0JIgCOOo2f989iq+vCYGHpAK5rYzwOvyvahVKnZUBkEEGPTzs0ojV
+         7eCXSFUwbNm0pYkPZi2TWrWueX6THHNq5uxskxggkRuRVlqhvKeTRw0n4+/uvcLVDfaN
+         XEoJ0SGtVT/3xSvVtGkHyRTi0vGthUKB+VLI7LkXgTGq9J0cnLB3GjynDlO13N76kTc9
+         gLKiczHppRV8IEEF4H81SgrEJzU3LsRF4z/Tfgj/FbUAFIDKm+nRt8xX1XbxuX0WAWU/
+         0/Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVry97e54w1jMONLsqTN3iQPG8Q/In8s2mmyp6yrh7swqNFmafo9ZrgACCJX413o79jJuAlozTDaI+xcffuD2a5oica049dt4qVMgnn+hu+Gj46IWYL8/upcCeT9Ph6+wWA9I7QGpkoDsP9X71dG/ly8osgu3lDA5aLHV7x7pYU3aAKY4bFjE91XHnVURxT9u06fOl7UhoVEIbupdMaczqYAuW50sNXHyAufRcxsimtk0hVPg/ceQqUXExfaK9u8445wj2+eF8eukwbHmcAObsoR6M/jSKqKlpV6qswmF0/JGIQRlk3Ttq4B4M3JY4XibBSRdmOAhFM4yG1momRIxQif0HajIWaLUvjmSCH1ZKw0P4cy2wRMTqHmayzjPiaExUbrndO7xOupsbjVLTMZEPOmoXJAR45vaR2SaEb5rVLzuHiIvlvuB0/GspkTg==
+X-Gm-Message-State: AOJu0Yx44HaNSMGdV8qLfWJ7IGbEjTpeF3P27BEN/w/6rJODn8eFFjCW
+	GMV8zZ9B7K28Z7pPIpftBQfPKUcN3OdYimvSvk9ZIElfLSUFCAPd
+X-Google-Smtp-Source: AGHT+IHJ0CsNfqdOT8NJ8/aEvcd12bZPn1WcmZOT2dLARsLKNTs8V+RbkzjWhHb4g1pZvloY+oCxkw==
+X-Received: by 2002:a19:5e15:0:b0:51d:9f10:71b7 with SMTP id 2adb3069b0e04-52ca6e6812fmr7404820e87.28.1718632260306;
+        Mon, 17 Jun 2024 06:51:00 -0700 (PDT)
+Received: from pc636 (host-90-233-216-238.mobileonline.telia.com. [90.233.216.238])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2887d56sm1239456e87.263.2024.06.17.06.50.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 06:51:12 -0700 (PDT)
-From: Trevor Gamblin <tgamblin@baylibre.com>
-Date: Mon, 17 Jun 2024 09:50:21 -0400
-Subject: [PATCH v3 41/41] iio: trigger: stm32-timer-trigger: make use of
- regmap_clear_bits(), regmap_set_bits()
+        Mon, 17 Jun 2024 06:50:59 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 17 Jun 2024 15:50:56 +0200
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Jakub Kicinski <kuba@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <ZnA_QFvuyABnD3ZA@pc636>
+References: <ZmrfA1p2zSVIaYam@zx2c4.com>
+ <80e03b02-7e24-4342-af0b-ba5117b19828@paulmck-laptop>
+ <Zmru7hhz8kPDPsyz@pc636>
+ <7efde25f-6af5-4a67-abea-b26732a8aca1@paulmck-laptop>
+ <Zmsuswo8OPIhY5KJ@pc636>
+ <cb51bc57-47b8-456a-9ac0-f8aa0931b144@paulmck-laptop>
+ <ZmszOd5idhf2Cb-v@pc636>
+ <b03b007f-3afa-4ad4-b76b-dea7b3aa2bc3@paulmck-laptop>
+ <Zmw5FTX752g0vtlD@pc638.lan>
+ <ZmybGZDbXkw7JTjc@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240617-review-v3-41-88d1338c4cca@baylibre.com>
-References: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
-In-Reply-To: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Dmitry Rokosov <ddrokosov@sberdevices.ru>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Cosmin Tanislav <cosmin.tanislav@analog.com>, Chen-Yu Tsai <wens@csie.org>, 
- Hans de Goede <hdegoede@redhat.com>, Ray Jui <rjui@broadcom.com>, 
- Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Saravanan Sekar <sravanhome@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, 
- Crt Mori <cmo@melexis.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
- linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
- Trevor Gamblin <tgamblin@baylibre.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmybGZDbXkw7JTjc@zx2c4.com>
 
-Instead of using regmap_update_bits() and passing the mask twice, use
-regmap_set_bits().
+On Fri, Jun 14, 2024 at 09:33:45PM +0200, Jason A. Donenfeld wrote:
+> On Fri, Jun 14, 2024 at 02:35:33PM +0200, Uladzislau Rezki wrote:
+> > +	/* Should a destroy process be deferred? */
+> > +	if (s->flags & SLAB_DEFER_DESTROY) {
+> > +		list_move_tail(&s->list, &slab_caches_defer_destroy);
+> > +		schedule_delayed_work(&slab_caches_defer_destroy_work, HZ);
+> > +		goto out_unlock;
+> > +	}
+> 
+> Wouldn't it be smoother to have the actual kmem_cache_free() function
+> check to see if it's been marked for destruction and the refcount is
+> zero, rather than polling every one second? I mentioned this approach
+> in: https://lore.kernel.org/all/Zmo9-YGraiCj5-MI@zx2c4.com/ -
+> 
+>     I wonder if the right fix to this would be adding a `should_destroy`
+>     boolean to kmem_cache, which kmem_cache_destroy() sets to true. And
+>     then right after it checks `if (number_of_allocations == 0)
+>     actually_destroy()`, and likewise on each kmem_cache_free(), it
+>     could check `if (should_destroy && number_of_allocations == 0)
+>     actually_destroy()`. 
+> 
+I do not find pooling as bad way we can go with. But your proposal
+sounds reasonable to me also. We can combine both "prototypes" to
+one and offer.
 
-Instead of using regmap_update_bits() and passing val = 0, use
-regmap_clear_bits().
+Can you post a prototype here?
 
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
----
- drivers/iio/trigger/stm32-timer-trigger.c | 34 +++++++++++++++----------------
- 1 file changed, 16 insertions(+), 18 deletions(-)
+Thanks!
 
-diff --git a/drivers/iio/trigger/stm32-timer-trigger.c b/drivers/iio/trigger/stm32-timer-trigger.c
-index d76444030a28..0684329956d9 100644
---- a/drivers/iio/trigger/stm32-timer-trigger.c
-+++ b/drivers/iio/trigger/stm32-timer-trigger.c
-@@ -158,7 +158,7 @@ static int stm32_timer_start(struct stm32_timer_trigger *priv,
- 
- 	regmap_write(priv->regmap, TIM_PSC, prescaler);
- 	regmap_write(priv->regmap, TIM_ARR, prd - 1);
--	regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_ARPE, TIM_CR1_ARPE);
-+	regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_ARPE);
- 
- 	/* Force master mode to update mode */
- 	if (stm32_timer_is_trgo2_name(trig->name))
-@@ -169,10 +169,10 @@ static int stm32_timer_start(struct stm32_timer_trigger *priv,
- 				   0x2 << TIM_CR2_MMS_SHIFT);
- 
- 	/* Make sure that registers are updated */
--	regmap_update_bits(priv->regmap, TIM_EGR, TIM_EGR_UG, TIM_EGR_UG);
-+	regmap_set_bits(priv->regmap, TIM_EGR, TIM_EGR_UG);
- 
- 	/* Enable controller */
--	regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN, TIM_CR1_CEN);
-+	regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
- 	mutex_unlock(&priv->lock);
- 
- 	return 0;
-@@ -189,19 +189,19 @@ static void stm32_timer_stop(struct stm32_timer_trigger *priv,
- 
- 	mutex_lock(&priv->lock);
- 	/* Stop timer */
--	regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_ARPE, 0);
--	regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN, 0);
-+	regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_ARPE);
-+	regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
- 	regmap_write(priv->regmap, TIM_PSC, 0);
- 	regmap_write(priv->regmap, TIM_ARR, 0);
- 
- 	/* Force disable master mode */
- 	if (stm32_timer_is_trgo2_name(trig->name))
--		regmap_update_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS2, 0);
-+		regmap_clear_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS2);
- 	else
--		regmap_update_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS, 0);
-+		regmap_clear_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS);
- 
- 	/* Make sure that registers are updated */
--	regmap_update_bits(priv->regmap, TIM_EGR, TIM_EGR_UG, TIM_EGR_UG);
-+	regmap_set_bits(priv->regmap, TIM_EGR, TIM_EGR_UG);
- 
- 	if (priv->enabled) {
- 		priv->enabled = false;
-@@ -498,11 +498,9 @@ static int stm32_counter_write_raw(struct iio_dev *indio_dev,
- 				priv->enabled = true;
- 				clk_enable(priv->clk);
- 			}
--			regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN,
--					   TIM_CR1_CEN);
-+			regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
- 		} else {
--			regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN,
--					   0);
-+			regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
- 			if (priv->enabled) {
- 				priv->enabled = false;
- 				clk_disable(priv->clk);
-@@ -555,7 +553,7 @@ static int stm32_set_trigger_mode(struct iio_dev *indio_dev,
- {
- 	struct stm32_timer_trigger *priv = iio_priv(indio_dev);
- 
--	regmap_update_bits(priv->regmap, TIM_SMCR, TIM_SMCR_SMS, TIM_SMCR_SMS);
-+	regmap_set_bits(priv->regmap, TIM_SMCR, TIM_SMCR_SMS);
- 
- 	return 0;
- }
-@@ -683,7 +681,7 @@ static ssize_t stm32_count_set_preset(struct iio_dev *indio_dev,
- 		return ret;
- 
- 	/* TIMx_ARR register shouldn't be buffered (ARPE=0) */
--	regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_ARPE, 0);
-+	regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_ARPE);
- 	regmap_write(priv->regmap, TIM_ARR, preset);
- 
- 	return len;
-@@ -757,9 +755,9 @@ static void stm32_timer_detect_trgo2(struct stm32_timer_trigger *priv)
- 	 * Master mode selection 2 bits can only be written and read back when
- 	 * timer supports it.
- 	 */
--	regmap_update_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS2, TIM_CR2_MMS2);
-+	regmap_set_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS2);
- 	regmap_read(priv->regmap, TIM_CR2, &val);
--	regmap_update_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS2, 0);
-+	regmap_clear_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS2);
- 	priv->has_trgo2 = !!val;
- }
- 
-@@ -820,7 +818,7 @@ static void stm32_timer_trigger_remove(struct platform_device *pdev)
- 	/* Check if nobody else use the timer, then disable it */
- 	regmap_read(priv->regmap, TIM_CCER, &val);
- 	if (!(val & TIM_CCER_CCXE))
--		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN, 0);
-+		regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
- 
- 	if (priv->enabled)
- 		clk_disable(priv->clk);
-@@ -841,7 +839,7 @@ static int stm32_timer_trigger_suspend(struct device *dev)
- 		regmap_read(priv->regmap, TIM_SMCR, &priv->bak.smcr);
- 
- 		/* Disable the timer */
--		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN, 0);
-+		regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
- 		clk_disable(priv->clk);
- 	}
- 
-
--- 
-2.45.2
-
+--
+Uladzislau Rezki
 
