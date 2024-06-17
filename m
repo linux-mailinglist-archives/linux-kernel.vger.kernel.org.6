@@ -1,68 +1,76 @@
-Return-Path: <linux-kernel+bounces-216986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 995BA90A983
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:27:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FCB90A960
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06C9DB2DE00
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:19:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F334C28B1C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EF3195F3D;
-	Mon, 17 Jun 2024 09:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD6A190074;
+	Mon, 17 Jun 2024 09:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="noE+/5BU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="z2u0DRU9"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C88C191487;
-	Mon, 17 Jun 2024 09:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F521862A4;
+	Mon, 17 Jun 2024 09:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718615680; cv=none; b=K4JHGr7IqZ4icrWM7rBzQyVWtZM7uS5RZDa0mG0zPEtvokgiXerk4bvMBXVUnqVHlXYQoF9myQx+82hvvZoAuHmtwzKfWsQwipLYnsvdy5rueqVViY2IYPqqmAEQyy39YRLIT2DgwMA02SDTcG5nWEbtFFwWBwvdxtgshjbHttE=
+	t=1718615742; cv=none; b=NSytmE5Ko+SyWTNNG8inl5cekMXayV6vFRCI56ThiFBtolwnuM/7HWIAVvqBi3G88CdmyEWc4lW8gbu78j3Jc2podth8rfVQ7oa5PTVpF3woN0En2OTVlzJUAOwwxJLL+IxgYR38eHvrK6NDAiU3n5yCZtUM00gdHab49IkN7ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718615680; c=relaxed/simple;
-	bh=Hz3/IRzoD+tUZSC6A8nnNE9OtA98gNbjbS8JpU8u6Wk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fYbPxPMtWZA0xMiuJBkLN2LXEgFcFG49VdQCsE8ea5ufJImgCHLVo/CcKrEu6z9b+7jg37ImpBBEU9DrfBMdfl+HyKTmkNMhMzHO1tM2iFzKgLPvaZ9RITS7hBCxttHaaBdQkDak0l7+VRtRNTEptpilA5hhbxxg/qsenldGdzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=noE+/5BU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 180C1C3277B;
-	Mon, 17 Jun 2024 09:14:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718615680;
-	bh=Hz3/IRzoD+tUZSC6A8nnNE9OtA98gNbjbS8JpU8u6Wk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=noE+/5BU8w+1Ve0XytfrO1yPQDVn9P1GCr6KACzlux6LvXAquLZEjcuveoAAD+n2S
-	 D4VxzxOyKx57sakW9ZWGwjc/JF5jPElkH4B03PTyyecPS4ojNpA7Xon7mNxbaNxaCm
-	 UcHqKFHjP/Ny9rPzXdXtJD6DGSph7De+pZsfryIh9A/RXFNUOmiZa5/wCQGA278oc1
-	 rc9yhhalnd2xKXUoNiYw4mEOzdFGCb68N1qEbCs1s6xU/NcwVBRqRv1PBEs9g+ALUD
-	 097c96yzbmy3yGKBX/VXXlDbceaQI765drMNuq52/yxHmDaOHBzz1Ygr16zI2VA+o8
-	 AaQdHlqjjpBGw==
-From: Michael Walle <mwalle@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Li Yang <leoyang.li@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Priit Laes <plaes@plaes.org>,
-	Michael Grzeschik <m.grzeschik@pengutronix.de>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH v3 13/13] ARM: dts: imx6qdl-kontron-samx6i: add actual device trees
-Date: Mon, 17 Jun 2024 11:13:41 +0200
-Message-Id: <20240617091341.2375325-14-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240617091341.2375325-1-mwalle@kernel.org>
-References: <20240617091341.2375325-1-mwalle@kernel.org>
+	s=arc-20240116; t=1718615742; c=relaxed/simple;
+	bh=EQWalUMofBd6SSv/OrjoR1SwfyoNsF0LUtApc0kjLR8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kQIhOq/5Si2h+LLAisCMPhfONBiWzqLibKDXGOBM2nRndyFc8EP6ZY38kpK8WRCF1H5+1kB0Tka+fqssCa9ZqVZxFnR6dBuIczCQ0XE8uWC2+xs2JZhxrJYdhwe1sa8Z4hFQpBRal1IvCC1Z9LPEoXe5MyrVdATdsVPvpEMrY5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=z2u0DRU9; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H89GsN019515;
+	Mon, 17 Jun 2024 11:15:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=JLZNH/a/eRZb9WCTFRGCBR
+	v/iJv/oPGQFOGXRp2/VCg=; b=z2u0DRU9HQmuiuWyqdfbGEB8Xnse3uxfsaYDNs
+	xtyMikRXZrngqMK1w4ugFCFLR71TUMhG4N+5u9DPgb0j/6YWbC5565HrD2vh4PAR
+	/HFuD0nDAaKUy3N9bOrPmv8HTZTK9ztkLAN3kOJScjTLaAGNR56jJZz8jThzmawW
+	enjm8Ax4GJO5ffOhBWkLlnfHCeg8E3Xls5T4YfWWe8iQ8IVpIKAkeRPLRKja/MDP
+	tGUCKGpssHy6CZZgK0lj8XpLD/7EgSKyvZrlSP+CYRVF3kguxDf3OmzGMjTxKR0o
+	OPdLmJQRg24r5+OQNQoH8MlM5oWPGsyDHGlsiowI4POA3Bug==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ysnwj3ksc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 11:15:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2792F40050;
+	Mon, 17 Jun 2024 11:14:55 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 36191211613;
+	Mon, 17 Jun 2024 11:14:21 +0200 (CEST)
+Received: from localhost (10.48.86.128) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 17 Jun
+ 2024 11:14:20 +0200
+From: Etienne Carriere <etienne.carriere@foss.st.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Etienne Carriere
+	<etienne.carriere@foss.st.com>
+Subject: [PATCH] ARM: dts: stm32: OP-TEE async notif interrupt for ST STM32MP15x boards
+Date: Mon, 17 Jun 2024 11:14:18 +0200
+Message-ID: <20240617091418.2956380-1-etienne.carriere@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,233 +78,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_08,2024-06-14_03,2024-05-17_01
 
-For now, there wasn't any in-tree users of the dtsi files for the
-Kontron SMARC-sAMX6i board. Let's add device trees, for this board on a
-Kontron SMARC Eval 2.0 Carrier.
+Define the GIC interrupt (PPI 15) to be used on ST STM32MP15x boards
+for OP-TEE async notif.
 
-Signed-off-by: Michael Walle <mwalle@kernel.org>
+Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
 ---
- arch/arm/boot/dts/nxp/imx/Makefile            |   2 +
- .../nxp/imx/imx6dl-kontron-samx6i-ads2.dts    |  12 ++
- .../dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts |  12 ++
- .../nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi  | 148 ++++++++++++++++++
- 4 files changed, 174 insertions(+)
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi
+ arch/arm/boot/dts/st/stm32mp157a-dk1-scmi.dts | 5 +++++
+ arch/arm/boot/dts/st/stm32mp157c-dk2-scmi.dts | 5 +++++
+ arch/arm/boot/dts/st/stm32mp157c-ed1-scmi.dts | 5 +++++
+ arch/arm/boot/dts/st/stm32mp157c-ev1-scmi.dts | 5 +++++
+ 4 files changed, 20 insertions(+)
 
-diff --git a/arch/arm/boot/dts/nxp/imx/Makefile b/arch/arm/boot/dts/nxp/imx/Makefile
-index 231c0d73a53e..92e291603ea1 100644
---- a/arch/arm/boot/dts/nxp/imx/Makefile
-+++ b/arch/arm/boot/dts/nxp/imx/Makefile
-@@ -99,6 +99,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6dl-icore.dtb \
- 	imx6dl-icore-mipi.dtb \
- 	imx6dl-icore-rqs.dtb \
-+	imx6dl-kontron-samx6i-ads2.dtb \
- 	imx6dl-lanmcu.dtb \
- 	imx6dl-mamoj.dtb \
- 	imx6dl-mba6a.dtb \
-@@ -207,6 +208,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6q-icore-ofcap10.dtb \
- 	imx6q-icore-ofcap12.dtb \
- 	imx6q-icore-rqs.dtb \
-+	imx6q-kontron-samx6i-ads2.dtb \
- 	imx6q-kp-tpc.dtb \
- 	imx6q-logicpd.dtb \
- 	imx6q-marsboard.dtb \
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts
-new file mode 100644
-index 000000000000..6a0c53f23a15
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
-+
-+/dts-v1/;
-+
-+#include "imx6dl.dtsi"
-+#include "imx6qdl-kontron-samx6i.dtsi"
-+#include "imx6qdl-kontron-samx6i-ads2.dtsi"
-+
-+/ {
-+	model = "Kontron SMARC-sAMX6i Dual-Lite/Solo on SMARC Eval 2.0 carrier";
-+	compatible = "kontron,imx6dl-samx6i-ads2", "kontron,imx6dl-samx6i", "fsl,imx6dl";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts b/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts
-new file mode 100644
-index 000000000000..94c395cc020e
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
-+
-+/dts-v1/;
-+
-+#include "imx6q.dtsi"
-+#include "imx6qdl-kontron-samx6i.dtsi"
-+#include "imx6qdl-kontron-samx6i-ads2.dtsi"
-+
-+/ {
-+	model = "Kontron SMARC-sAMX6i Quad/Dual on SMARC Eval 2.0 carrier";
-+	compatible = "kontron,imx6q-samx6i-ads2", "kontron,imx6q-samx6i", "fsl,imx6q";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi
-new file mode 100644
-index 000000000000..b4a79245b7b6
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi
-@@ -0,0 +1,148 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Device Tree include for the Kontron SMARC-sAMX6i board on a SMARC Eval
-+ * 2.0 carrier (ADS2).
-+ *
-+ */
-+
-+/ {
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	sound {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&dailink_master>;
-+		simple-audio-card,frame-master = <&dailink_master>;
-+		simple-audio-card,widgets =
-+			"Headphone", "Headphone Jack",
-+			"Line", "Line Out Jack",
-+			"Microphone", "Microphone Jack",
-+			"Line", "Line In Jack";
-+		simple-audio-card,routing =
-+			"Line Out Jack", "LINEOUTR",
-+			"Line Out Jack", "LINEOUTL",
-+			"Headphone Jack", "HPOUTR",
-+			"Headphone Jack", "HPOUTL",
-+			"IN1L", "Line In Jack",
-+			"IN1R", "Line In Jack",
-+			"Microphone Jack", "MICBIAS",
-+			"IN2L", "Microphone Jack",
-+			"IN2R", "Microphone Jack";
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&ssi1>;
-+		};
-+
-+		dailink_master: simple-audio-card,codec {
-+			sound-dai = <&wm8904>;
-+		};
-+	};
-+
-+	reg_codec_mic: regulator-codec-mic {
-+		compatible = "regulator-fixed";
-+		regulator-name = "V_3V3_MIC";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	reg_codec_1p8v: regulator-codec-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "V_1V8_S0_CODEC";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
+diff --git a/arch/arm/boot/dts/st/stm32mp157a-dk1-scmi.dts b/arch/arm/boot/dts/st/stm32mp157a-dk1-scmi.dts
+index 306e1bc2a514..847b360f02fc 100644
+--- a/arch/arm/boot/dts/st/stm32mp157a-dk1-scmi.dts
++++ b/arch/arm/boot/dts/st/stm32mp157a-dk1-scmi.dts
+@@ -62,6 +62,11 @@ &m4_rproc {
+ 	reset-names = "mcu_rst", "hold_boot";
+ };
+ 
++&optee {
++	interrupt-parent = <&intc>;
++	interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
 +};
 +
-+&audmux {
-+	status = "okay";
+ &rcc {
+ 	compatible = "st,stm32mp1-rcc-secure", "syscon";
+ 	clock-names = "hse", "hsi", "csi", "lse", "lsi";
+diff --git a/arch/arm/boot/dts/st/stm32mp157c-dk2-scmi.dts b/arch/arm/boot/dts/st/stm32mp157c-dk2-scmi.dts
+index 956da5f26c1c..43280289759d 100644
+--- a/arch/arm/boot/dts/st/stm32mp157c-dk2-scmi.dts
++++ b/arch/arm/boot/dts/st/stm32mp157c-dk2-scmi.dts
+@@ -68,6 +68,11 @@ &m4_rproc {
+ 	reset-names = "mcu_rst", "hold_boot";
+ };
+ 
++&optee {
++	interrupt-parent = <&intc>;
++	interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
 +};
 +
-+&can1 {
-+	status = "okay";
+ &rcc {
+ 	compatible = "st,stm32mp1-rcc-secure", "syscon";
+ 	clock-names = "hse", "hsi", "csi", "lse", "lsi";
+diff --git a/arch/arm/boot/dts/st/stm32mp157c-ed1-scmi.dts b/arch/arm/boot/dts/st/stm32mp157c-ed1-scmi.dts
+index 8e4b0db198c2..6f27d794d270 100644
+--- a/arch/arm/boot/dts/st/stm32mp157c-ed1-scmi.dts
++++ b/arch/arm/boot/dts/st/stm32mp157c-ed1-scmi.dts
+@@ -67,6 +67,11 @@ &m4_rproc {
+ 	reset-names = "mcu_rst", "hold_boot";
+ };
+ 
++&optee {
++	interrupt-parent = <&intc>;
++	interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
 +};
 +
-+&can2 {
-+	status = "okay";
+ &rcc {
+ 	compatible = "st,stm32mp1-rcc-secure", "syscon";
+ 	clock-names = "hse", "hsi", "csi", "lse", "lsi";
+diff --git a/arch/arm/boot/dts/st/stm32mp157c-ev1-scmi.dts b/arch/arm/boot/dts/st/stm32mp157c-ev1-scmi.dts
+index 72b9cab2d990..6ae391bffee5 100644
+--- a/arch/arm/boot/dts/st/stm32mp157c-ev1-scmi.dts
++++ b/arch/arm/boot/dts/st/stm32mp157c-ev1-scmi.dts
+@@ -72,6 +72,11 @@ &m4_rproc {
+ 	reset-names = "mcu_rst", "hold_boot";
+ };
+ 
++&optee {
++	interrupt-parent = <&intc>;
++	interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
 +};
 +
-+&ecspi4 {
-+	flash@1 {
-+		compatible = "jedec,spi-nor";
-+		reg = <1>;
-+		spi-max-frequency = <100000000>;
-+		m25p,fast-read;
-+	};
-+};
-+
-+&fec {
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	wm8904: audio-codec@1a {
-+		compatible = "wlf,wm8904";
-+		reg = <0x1a>;
-+		#sound-dai-cells = <0>;
-+		clocks = <&clks IMX6QDL_CLK_CKO2>;
-+		clock-names = "mclk";
-+		AVDD-supply = <&reg_codec_1p8v>;
-+		CPVDD-supply = <&reg_codec_1p8v>;
-+		DBVDD-supply = <&reg_codec_1p8v>;
-+		DCVDD-supply = <&reg_codec_1p8v>;
-+		MICVDD-supply = <&reg_codec_mic>;
-+	};
-+};
-+
-+&i2c3 {
-+	eeprom@57 {
-+		compatible = "atmel,24c64";
-+		reg = <0x57>;
-+		pagesize = <32>;
-+	};
-+};
-+
-+&pcie {
-+	status = "okay";
-+};
-+
-+&ssi1 {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&uart4 {
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	status = "okay";
-+};
-+
-+&usbh1 {
-+	status = "okay";
-+};
-+
-+&usbotg {
-+	status = "okay";
-+};
-+
-+&usdhc3 {
-+	status = "okay";
-+};
+ &rcc {
+ 	compatible = "st,stm32mp1-rcc-secure", "syscon";
+ 	clock-names = "hse", "hsi", "csi", "lse", "lsi";
 -- 
-2.39.2
+2.25.1
 
 
