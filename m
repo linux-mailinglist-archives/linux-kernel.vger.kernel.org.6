@@ -1,117 +1,142 @@
-Return-Path: <linux-kernel+bounces-217545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952F990B143
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:15:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F5990B11C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE9F1F223D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:15:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A1C1F2B5C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6E01AFD32;
-	Mon, 17 Jun 2024 13:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B441A532E;
+	Mon, 17 Jun 2024 13:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPUn4Ie5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U2iJQexs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QuHoSms2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF731AFD26;
-	Mon, 17 Jun 2024 13:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218DD1A92F4;
+	Mon, 17 Jun 2024 13:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630850; cv=none; b=j7PLgIjMOUXi/AeRfhYiDzy844lsv+VhROxy7VbkIVD8JDRyIbBrpoRQglh9dChq0tAASAwlJMkqZ7yBwIyEcoqhkKjs1lhFpd4O1m9mmZAkC075oahTKvCuvD7ItOA7DFqq2x8+6x/H3IXqVKrHya6upIgZ5Pdt6XiiVmRO8dE=
+	t=1718630823; cv=none; b=OcoBeSBa2q/N0iduiosjwzevC8IxHysPcVVSg/Ju6bfJvTHyo09LJ6nOIyzmi3kF4ECbg8r3wjPuNgbDabJUkerXa0Vt+CLSl+ltoj4FXcf42xh52/cAsY/39bwKq7yeQDy4IJLllILOmJ0nkkkXfqXQO2S2IVqId5vL8LFvIi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630850; c=relaxed/simple;
-	bh=Dd6pY7xPJEu5e/X4E+ynYc0y6ur0lmwjdRCXfrc2LsU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QtVPYrjc7CRrtDeQuV+oKjlj4uUmduuyr9Ny/6SC5mZ+67cM3vwCo0P9I3iI/c8GiPBj3KIPADmzgf4n2zCbpogJVy7Ujufgn3iDmgjHJ+EzMFvvIIXuoTOglREgPHZzSYw4+6UsqmgZWtzHXnII70BwAGhjods6oGmODj1Ldxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPUn4Ie5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2ACC4AF1C;
-	Mon, 17 Jun 2024 13:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718630849;
-	bh=Dd6pY7xPJEu5e/X4E+ynYc0y6ur0lmwjdRCXfrc2LsU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CPUn4Ie54lVKs1watNtzr9G+TAhwNOzbH5Y2LQkP1pPr/s4sf9IPOLAXI1qGNr0VE
-	 GYP5do8p/0zd+thU47R25aglt96US7HiDp2Z9PICDxdmSvrwFwJT/dsNdRsj1jUF8l
-	 0XdxEdA8s7DNuk6wGOoZZy6BpxijWkm0wMlpyYaOga2/uWyriYu5OyLl+uEyaNYUPH
-	 WXJ3Fl6JEPLqEKVyh0Q69ni5CD1T71Dlj+WyPqyh2oLjHChBgnCgngXIR4jJMitf3y
-	 Ue2RR/zUm79+me031W8FZh81GfKOH5JsNtPgaVNl9NDDe/7jcAAWGJq8ONaVzwN6Ug
-	 lVd4MNxrW1n5g==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Wei Li <liwei391@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>,
-	Will Deacon <will@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	catalin.marinas@arm.com,
-	mcgrof@kernel.org,
-	j.granados@samsung.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.10 10/13] arm64: armv8_deprecated: Fix warning in isndep cpuhp starting process
-Date: Mon, 17 Jun 2024 09:26:59 -0400
-Message-ID: <20240617132710.2590101-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240617132710.2590101-1-sashal@kernel.org>
-References: <20240617132710.2590101-1-sashal@kernel.org>
+	s=arc-20240116; t=1718630823; c=relaxed/simple;
+	bh=OJvAIGdXoAiQ5x0nnLDGDG/WlfUgXn8ZyWPe9ycRamE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=defWruamx95rFt2/nrtktio5lXJwFSJfMgYoC5wqBJQGgVQ0Os6YVsmDIut6W/vC4nhhhysOHijbjAHPj2oG08YecUa+O9nN6XNjiNi29LAY43rlNjGS2c0op4MaI+3TvYb5EfWYOgylqHoYNfZj243QDpfdzn7+ffzDQCTJJtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U2iJQexs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QuHoSms2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 17 Jun 2024 13:26:59 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718630820;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Eqnkrk9k9EBOMajRv3D+I10MRFZZTunhJ2pXW5r6rLs=;
+	b=U2iJQexsJ4jPAE4+hBwfp1SslY/fNXpZMjwzBpVcn65WT+Royy87ufxob0PD93OilROsiX
+	U+Bg1jDR8qFX6YwhL9Fe9lRZ4aY9ZhcAfISJgBT9GA2o+QEWfFaW61QlFseahFaySGrHsl
+	hM3pWZXpxF9O6Pc0Y8BkNgjtodlBRUo1Y2GSUs5FapWm9RtiohGgR68hN2nRyhfeh8Pu/B
+	kcaYbgqjz01/ZdQBU5mYiO5gnZWZyBo92ArdbavayHsisQ05kDFz4LlKxuEK7DZzchWOTC
+	SkocPqfdJa9Xwk5WdOrDUEg7a7mhcgbsoZ4ilvIXDOYbsJuhszkeoJifflJ+gg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718630820;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Eqnkrk9k9EBOMajRv3D+I10MRFZZTunhJ2pXW5r6rLs=;
+	b=QuHoSms2mUW0hYtyjVYFGBK86LmRNqum6+297Q1QX83fauWlXwACanXsEmGEvGwHyRXg2U
+	2aMlss0a6F6ylaCg==
+From: "tip-bot2 for Stanislav Spassov" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: smp/core] cpu/hotplug: Reverse order of iteration in
+ freeze_secondary_cpus()
+Cc: Stanislav Spassov <stanspas@amazon.de>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240524160449.48594-1-stanspas@amazon.de>
+References: <20240524160449.48594-1-stanspas@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.219
-Content-Transfer-Encoding: 8bit
+Message-ID: <171863081993.10875.11129262468770860324.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Wei Li <liwei391@huawei.com>
+The following commit has been merged into the smp/core branch of tip:
 
-[ Upstream commit 14951beaec93696b092a906baa0f29322cf34004 ]
+Commit-ID:     fde78e4673afcb0bad382af8b81543476dc77655
+Gitweb:        https://git.kernel.org/tip/fde78e4673afcb0bad382af8b81543476dc77655
+Author:        Stanislav Spassov <stanspas@amazon.de>
+AuthorDate:    Fri, 24 May 2024 16:04:49 
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 17 Jun 2024 15:17:44 +02:00
 
-The function run_all_insn_set_hw_mode() is registered as startup callback
-of 'CPUHP_AP_ARM64_ISNDEP_STARTING', it invokes set_hw_mode() methods of
-all emulated instructions.
+cpu/hotplug: Reverse order of iteration in freeze_secondary_cpus()
 
-As the STARTING callbacks are not expected to fail, if one of the
-set_hw_mode() fails, e.g. due to el0 mixed-endian is not supported for
-'setend', it will report a warning:
+Whenever CPU hotplug state callbacks are registered, the startup callback
+is invoked on CPUs that have already reached the provided state in order of
+ascending CPU IDs.
 
-```
-CPU[2] cannot support the emulation of setend
-CPU 2 UP state arm64/isndep:starting (136) failed (-22)
-CPU2: Booted secondary processor 0x0000000002 [0x414fd0c1]
-```
+In freeze_secondary_cpus() the teardown of CPUs happens in the same are
+invoked in the same order. This is known to make a difference is the
+current implementation of these callbacks in arch/x86/events/intel/uncore.c:
 
-To fix it, add a check for INSN_UNAVAILABLE status and skip the process.
+ - uncore_event_cpu_online() designates the first CPU it is invoked for
+   on each package as the uncore event collector for that package
 
-Signed-off-by: Wei Li <liwei391@huawei.com>
-Tested-by: Huisong Li <lihuisong@huawei.com>
-Link: https://lore.kernel.org/r/20240423093501.3460764-1-liwei391@huawei.com
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+ - uncore_event_cpu_offline() if the CPU being offlined is the event
+   collector for its package, transfers that responsibility over to
+   the next (by ascending CPU id) one in the same package
+
+With the current order of CPU teardowns in freeze_secondary_cpus(), the
+latter ends up doing the ownership transfer work on every single CPU.  That
+work involves a synchronize_rcu() call, ultimately unnecessarily degrading
+the performance of CPU offlining.
+
+To address this make freeze_secondary_cpus() iterate through the CPUs in
+reverse order, so that the teardown happens in order of descending CPU IDs.
+
+[ tglx: Massage change log ]
+
+Signed-off-by: Stanislav Spassov <stanspas@amazon.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/20240524160449.48594-1-stanspas@amazon.de
+
 ---
- arch/arm64/kernel/armv8_deprecated.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/cpu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/armv8_deprecated.c b/arch/arm64/kernel/armv8_deprecated.c
-index f0ba854f0045e..34370be75acd5 100644
---- a/arch/arm64/kernel/armv8_deprecated.c
-+++ b/arch/arm64/kernel/armv8_deprecated.c
-@@ -471,6 +471,9 @@ static int run_all_insn_set_hw_mode(unsigned int cpu)
- 	for (i = 0; i < ARRAY_SIZE(insn_emulations); i++) {
- 		struct insn_emulation *insn = insn_emulations[i];
- 		bool enable = READ_ONCE(insn->current_mode) == INSN_HW;
-+		if (insn->status == INSN_UNAVAILABLE)
-+			continue;
-+
- 		if (insn->set_hw_mode && insn->set_hw_mode(enable)) {
- 			pr_warn("CPU[%u] cannot support the emulation of %s",
- 				cpu, insn->name);
--- 
-2.43.0
-
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 563877d..1979a99 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1891,8 +1891,8 @@ int freeze_secondary_cpus(int primary)
+ 	cpumask_clear(frozen_cpus);
+ 
+ 	pr_info("Disabling non-boot CPUs ...\n");
+-	for_each_online_cpu(cpu) {
+-		if (cpu == primary)
++	for (cpu = nr_cpu_ids - 1; cpu >= 0; cpu--) {
++		if (!cpu_online(cpu) || cpu == primary)
+ 			continue;
+ 
+ 		if (pm_wakeup_pending()) {
 
