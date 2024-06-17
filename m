@@ -1,152 +1,189 @@
-Return-Path: <linux-kernel+bounces-217346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B6590AE8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:03:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 559A290AE9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12B1287236
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:03:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B64D1C24BB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04B819755E;
-	Mon, 17 Jun 2024 13:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BC7198E8F;
+	Mon, 17 Jun 2024 13:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gsElOoC5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="YBUx7G5t"
+Received: from sender3-op-o17.zoho.com (sender3-op-o17.zoho.com [136.143.184.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4CA17FAA4;
-	Mon, 17 Jun 2024 13:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718629391; cv=none; b=WC7QGRuJgRdLMYfxdqyhn2XqbOzsG0MCyAwTH85g2mFRMHeqGh2ioN0qBarjvjms41JbMhPuUqCEgghLknyHSj9r2XKtwO53telgTuzArfe4qbW/lth0rGhVXwoW2fiUrVZKQ8TDkJtnnJDXE9EqArRkhKACCojPT5iHnZSK60Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718629391; c=relaxed/simple;
-	bh=M7VLjVNrIB50tU6t1nZPg0R5+ccYl0nZK24JAKpUyGA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=agO92kYsVImS09udgJGdWeit8onnv4lRTz6G6oAIbKfBZah3/I3kzvsHApyDZfERRgI+RFr7hCzubJeoR7FuafzaauGPirKUDQrK25guz6WD2QiTiDfWjJXoOw616BW4TYH3J8Z9yguPwb/eMLTeF7NjNmNTiZVLym2VACQcSCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gsElOoC5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2AA1C2BD10;
-	Mon, 17 Jun 2024 13:03:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718629390;
-	bh=M7VLjVNrIB50tU6t1nZPg0R5+ccYl0nZK24JAKpUyGA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gsElOoC5Re9d+pr1YwYIbWAqs0jcEb8b9D3zbWSWoKQmulj0zAzNwtAXGk6qcZMXW
-	 LxUnKTFOvwT/jytTzKiu32J3hw5JzND/mubc1g98vHM0xh3ZtmWWD7x3QouH+KaO20
-	 GA0a6UGFP6mISSKKHn3yttKaKylK2r6GzUFI3uXUomBk3TpOsk1t43pOmtFcjGWmn9
-	 /ufVatJxmgzlU5/RcUjQQzuiVLkzmdyq98N3pp8goVtzEd31A+6nSIsjjHWuGuWCdj
-	 jlAkof1uOnGtfGxWUo3K4/trtjhcS2rZ85cIl/SqoXpDhV3rrvc1vnMUs9ftKnenHy
-	 eC19HNvl9PJCQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sJC0p-004b1B-Ra;
-	Mon, 17 Jun 2024 14:03:07 +0100
-Date: Mon, 17 Jun 2024 14:03:06 +0100
-Message-ID: <86h6drk9h1.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Shivamurthy Shastri
- <shivamurthy.shastri@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	anna-maria@linutronix.de,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	bhelgaas@google.com,
-	rdunlap@infradead.org,
-	vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com,
-	apatel@ventanamicro.com,
-	kevin.tian@intel.com,
-	nipun.gupta@amd.com,
-	den@valinux.co.jp,
-	andrew@lunn.ch,
-	gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	alex.williamson@redhat.com,
-	will@kernel.org,
-	lorenzo.pieralisi@arm.com,
-	jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org,
-	robin.murphy@arm.com,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	kristo@kernel.org,
-	vkoul@kernel.org,
-	okaya@kernel.org,
-	agross@kernel.org,
-	andersson@kernel.org,
-	mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com,
-	yuzenghui@huawei.com
-Subject: Re: [PATCH v3 14/24] genirq/gic-v3-mbi: Remove unused wired MSI mechanics
-In-Reply-To: <87plsfu3sz.ffs@tglx>
-References: <20240614102403.13610-1-shivamurthy.shastri@linutronix.de>
-	<20240614102403.13610-15-shivamurthy.shastri@linutronix.de>
-	<86le36jf0q.wl-maz@kernel.org>
-	<87plsfu3sz.ffs@tglx>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65986198A35
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718629424; cv=pass; b=hXGiOMzUz58oLz+tKzgb5/jroYHYHCGmhOSeyc53VYLLzQ1hnCyPPZDF+e0jlljxpgymiHYE7/EzQ65tqJJ+AZgtNbotQOuoAjMBXS6v5kA+yG7mQagG68jEUsIOi+QwPqTAf2Vj+0epKbzcNTn7f4cDHatKWeImkWtv9cLYPE8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718629424; c=relaxed/simple;
+	bh=CuGTFeJasRxMadI0ng6WyEm9q4/tGwznB34rAmPFSqk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=p2CLpT6d1WfoxtAkFVec3MjG6ao22LAqxMBMWuE+XGIIXyZFDkhEU2xVXF9AA0Ovt2r0euYO2CI+TG7pux4SgKRfygNoi2J5G6uyF60EvW1GuG5CdT5sc7EDlSPhJtrhh6KDcM+cAcR5gDc74dAJp70FcKc7yaFzMY5Blhw2gcs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=YBUx7G5t; arc=pass smtp.client-ip=136.143.184.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1718629401; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UUlz104YmEjcGZbvcbLNgBXntRRPSvjU9dEhZlj6DzPyiYo5tSmUdm3PqZEYtrotdWQdPBLvLwgvdn/HTw1L/x2TBkvOJ67dd+hlGvxHC9w+F88WD0hzZVNlR0a6K2ab/zL3aJgZvHqUJ9mj143F2z+tX/HpPcQbFhk3fPl6Kxg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1718629401; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CuGTFeJasRxMadI0ng6WyEm9q4/tGwznB34rAmPFSqk=; 
+	b=IlVCn1LkKh0gK++oCKswwiZfHMltZOE9izvdnNyw3xFeoOLjegxzVs0ljkElTbMvMPOFAUq5xxTIWMr8GmYbpDnosfnn67jDAM3/gN/ZyO4qumcJ4/7Pv2ghxmqkyAUl/v6APTAB8ptD8HCZEFwi73qejwKICoWmq9EczslcpxA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1718629401;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=CuGTFeJasRxMadI0ng6WyEm9q4/tGwznB34rAmPFSqk=;
+	b=YBUx7G5ten6qzSBNx26aB0iMeWj2A8wjBa5mvV5GQiB9u43TGPcRZ5XB3qpIHOjE
+	e6oZ38scjbTg+y57tR3uoRS9MES933jjNkilSDHEA62f/PmIoszKTn3JWgd5uPIlVOZ
+	d8sf++sY0025S3ERvLgBeUooMLfY9w6WM2mzlxSTV6wvMc9vcDeSBI671R/OttIDhRd
+	jbZTW9TYeujJDcAzv/n7/YLuCKfKJfNUePDdiC04sIJrdCEISLlFCn0bcdwZQmbOJwC
+	qeT/wBrnnby5uRUtSvKnCF8/g8/FTHoJVDSdYakyX/L8at5HEH8mOPR9xd1I9J5mxAm
+	x7vHvpy94g==
+Received: by mx.zohomail.com with SMTPS id 1718629398718172.63846711808583;
+	Mon, 17 Jun 2024 06:03:18 -0700 (PDT)
+Message-ID: <b4ebdbce2f44c06806a650e72b1b6eb9a16dffe6.camel@icenowy.me>
+Subject: Re: [PATCH 1/2] drm/amdgpu: make duplicated EOP packet for GFX7/8
+ have real content
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Alex
+ Deucher <alexander.deucher@amd.com>, Pan Xinhui <Xinhui.Pan@amd.com>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Pierre-Eric
+ Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+Date: Mon, 17 Jun 2024 21:03:13 +0800
+In-Reply-To: <88337509-3ad7-47aa-b70f-5294f7f1e486@amd.com>
+References: <20240617105846.1516006-1-uwu@icenowy.me>
+	 <20240617105846.1516006-2-uwu@icenowy.me>
+	 <88337509-3ad7-47aa-b70f-5294f7f1e486@amd.com>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tglx@linutronix.de, shivamurthy.shastri@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-ZohoMailClient: External
 
-On Mon, 17 Jun 2024 13:55:24 +0100,
-Thomas Gleixner <tglx@linutronix.de> wrote:
-> 
-> On Sat, Jun 15 2024 at 18:24, Marc Zyngier wrote:
-> > On Fri, 14 Jun 2024 11:23:53 +0100,
-> > Shivamurthy Shastri <shivamurthy.shastri@linutronix.de> wrote:
-> >>  static struct msi_domain_info mbi_pmsi_domain_info = {
-> >> -	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
-> >> -		   MSI_FLAG_LEVEL_CAPABLE),
-> >> +	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS),
-> >>  	.ops	= &mbi_pmsi_ops,
-> >>  	.chip	= &mbi_pmsi_irq_chip,
-> >>  };
-> >
-> > This patch doesn't do what it says. It simply kills any form of level
-> > MSI support for *endpoints*, and has nothing to do with any sort of
-> > "wire to MSI".
-> >
-> > What replaces it?
-> 
-> Patch 9/24 switches the wire to MSI with level support over. This just
-> removes the leftovers.
+5ZyoIDIwMjQtMDYtMTfmmJ/mnJ/kuIDnmoQgMTQ6MzUgKzAyMDDvvIxDaHJpc3RpYW4gS8O2bmln
+5YaZ6YGT77yaCj4gQW0gMTcuMDYuMjQgdW0gMTI6NTggc2NocmllYiBJY2Vub3d5IFpoZW5nOgo+
+ID4gVGhlIGR1cGxpY2F0aW9uIG9mIEVPUCBwYWNrZXRzIGZvciBHRlg3LzgsIHdpdGggdGhlIGZv
+cm1lciBvbmUgaGF2ZQo+ID4gc2VxLTEgd3JpdHRlbiBhbmQgdGhlIGxhdHRlciBvbmUgaGF2ZSBz
+ZXEgd3JpdHRlbiwgc2VlbXMgdG8gY29uZnVzZQo+ID4gc29tZQo+ID4gaGFyZHdhcmUgcGxhdGZv
+cm0gKGUuZy4gTG9vbmdzb24gN0Egc2VyaWVzIFBDSWUgY29udHJvbGxlcnMpLgo+ID4gCj4gPiBN
+YWtlIHRoZSBjb250ZW50IG9mIHRoZSBkdXBsaWNhdGVkIEVPUCBwYWNrZXQgdGhlIHNhbWUgd2l0
+aCB0aGUKPiA+IHJlYWwKPiA+IG9uZSwgb25seSBtYXNraW5nIGFueSBwb3NzaWJsZSBpbnRlcnJ1
+cHRzLgo+IAo+IFdlbGwgY29tcGxldGVseSBOQUsgdG8gdGhhdCwgZXhhY3RseSB0aGF0IGRpc2Fi
+bGVzIHRoZSB3b3JrYXJvdW5kLgo+IAo+IFRoZSBDUFUgbmVlZHMgdG8gc2VlIHR3byBkaWZmZXJl
+bnQgdmFsdWVzIHdyaXR0ZW4gaGVyZS4KCldoeSBkbyB0aGUgQ1BVIG5lZWQgdG8gc2VlIHR3byBk
+aWZmZXJlbnQgdmFsdWVzIGhlcmU/IE9ubHkgdGhlIHNlY29uZApwYWNrZXQgd2lsbCByYWlzZSBh
+biBpbnRlcnJ1cHQgYmVmb3JlIGFuZCBhZnRlciBhcHBseWluZyB0aGlzIHBhdGNoLAphbmQgdGhl
+IGZpcnN0IHBhY2tldCdzIHJlc3VsdCBzaG91bGQganVzdCBiZSBvdmVycmlkZW4gb24gb3JkaW5h
+cnkKcGxhdGZvcm1zLiBUaGUgQ1BVIHdvbid0IHNlZSB0aGUgZmlyc3Qgb25lLCB1bnRpbCBpdCdz
+IHBvbGxpbmcgZm9yIHRoZQphZGRyZXNzIGZvciBhIHZlcnkgc2hvcnQgaW50ZXJ2YWwsIHNvIHNo
+b3J0IHRoYXQgdGhlIEdQVSBDUCBjb3VsZG4ndApleGVjdXRlIDIgY29tbWFuZHMuCgpPciBkbyB5
+b3UgbWVhbiB0aGUgR1BVIG5lZWRzIHRvIHNlZSB0d28gZGlmZmVyZW50IHZhbHVlcyBiZWluZyB3
+cml0dGVuLApvciB0aGV5IHdpbGwgYmUgbWVyZ2VkIGludG8gb25seSBvbmUgd3JpdGUgcmVxdWVz
+dD8KClBsZWFzZSBnaXZlIG91dCBtb3JlIGluZm9ybWF0aW9uIGFib3V0IHRoaXMgd29ya2Fyb3Vu
+ZCwgb3RoZXJ3aXNlIHRoZQpHUFUgaGFuZyBwcm9ibGVtIG9uIExvb25nc29uIHBsYXRmb3JtcyB3
+aWxsIHBlcnNpc3QuCgo+IAo+IFJlZ2FyZHMsCj4gQ2hyaXN0aWFuLgo+IAo+ID4gCj4gPiBGaXhl
+czogYmYyNmRhOTI3YTFjICgiZHJtL2FtZGdwdTogYWRkIGNhY2hlIGZsdXNoIHdvcmthcm91bmQg
+dG8KPiA+IGdmeDggZW1pdF9mZW5jZSIpCj4gPiBGaXhlczogYTJlNzNmNTZmYTYyICgiZHJtL2Ft
+ZGdwdTogQWRkIHN1cHBvcnQgZm9yIENJSyBwYXJ0cyIpCj4gPiBTaWduZWQtb2ZmLWJ5OiBJY2Vu
+b3d5IFpoZW5nIDx1d3VAaWNlbm93eS5tZT4KPiA+IC0tLQo+ID4gwqAgZHJpdmVycy9ncHUvZHJt
+L2FtZC9hbWRncHUvZ2Z4X3Y3XzAuYyB8IDEyICsrKysrLS0tLS0tLQo+ID4gwqAgZHJpdmVycy9n
+cHUvZHJtL2FtZC9hbWRncHUvZ2Z4X3Y4XzAuYyB8IDEyICsrKystLS0tLS0tLQo+ID4gwqAgMiBm
+aWxlcyBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDE1IGRlbGV0aW9ucygtKQo+ID4gCj4gPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZ2Z4X3Y3XzAuYwo+ID4gYi9k
+cml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9nZnhfdjdfMC5jCj4gPiBpbmRleCA1NDFkYmQ3MGQ4
+Yzc1Li43NzhmMjdmMWEzNGZlIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9h
+bWRncHUvZ2Z4X3Y3XzAuYwo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZ2Z4
+X3Y3XzAuYwo+ID4gQEAgLTIxMTcsOSArMjExNyw4IEBAIHN0YXRpYyB2b2lkCj4gPiBnZnhfdjdf
+MF9yaW5nX2VtaXRfZmVuY2VfZ2Z4KHN0cnVjdCBhbWRncHVfcmluZyAqcmluZywgdTY0IGFkZHIs
+Cj4gPiDCoCB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgYm9vbCB3cml0ZTY0Yml0ID0gZmxhZ3MgJiBB
+TURHUFVfRkVOQ0VfRkxBR182NEJJVDsKPiA+IMKgwqDCoMKgwqDCoMKgwqBib29sIGludF9zZWwg
+PSBmbGFncyAmIEFNREdQVV9GRU5DRV9GTEFHX0lOVDsKPiA+IC3CoMKgwqDCoMKgwqDCoC8qIFdv
+cmthcm91bmQgZm9yIGNhY2hlIGZsdXNoIHByb2JsZW1zLiBGaXJzdCBzZW5kIGEgZHVtbXkKPiA+
+IEVPUAo+ID4gLcKgwqDCoMKgwqDCoMKgICogZXZlbnQgZG93biB0aGUgcGlwZSB3aXRoIHNlcSBv
+bmUgYmVsb3cuCj4gPiAtwqDCoMKgwqDCoMKgwqAgKi8KPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDC
+oC8qIFdvcmthcm91bmQgZm9yIGNhY2hlIGZsdXNoIHByb2JsZW1zLCBzZW5kIEVPUCB0d2ljZS4g
+Ki8KPiA+IMKgwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCBQQUNLRVQzKFBB
+Q0tFVDNfRVZFTlRfV1JJVEVfRU9QLAo+ID4gNCkpOwo+ID4gwqDCoMKgwqDCoMKgwqDCoGFtZGdw
+dV9yaW5nX3dyaXRlKHJpbmcsIChFT1BfVENMMV9BQ1RJT05fRU4gfAo+ID4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBFT1Bf
+VENfQUNUSU9OX0VOIHwKPiA+IEBAIC0yMTI3LDExICsyMTI2LDEwIEBAIHN0YXRpYyB2b2lkCj4g
+PiBnZnhfdjdfMF9yaW5nX2VtaXRfZmVuY2VfZ2Z4KHN0cnVjdCBhbWRncHVfcmluZyAqcmluZywg
+dTY0IGFkZHIsCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIEVWRU5UX0lOREVYKDUpKSk7Cj4gPiDCoMKgwqDCoMKgwqDC
+oMKgYW1kZ3B1X3Jpbmdfd3JpdGUocmluZywgYWRkciAmIDB4ZmZmZmZmZmMpOwo+ID4gwqDCoMKg
+wqDCoMKgwqDCoGFtZGdwdV9yaW5nX3dyaXRlKHJpbmcsICh1cHBlcl8zMl9iaXRzKGFkZHIpICYg
+MHhmZmZmKSB8Cj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBEQVRBX1NFTCgxKSB8IElOVF9TRUwoMCkpOwo+ID4gLcKgwqDC
+oMKgwqDCoMKgYW1kZ3B1X3Jpbmdfd3JpdGUocmluZywgbG93ZXJfMzJfYml0cyhzZXEgLSAxKSk7
+Cj4gPiAtwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCB1cHBlcl8zMl9iaXRz
+KHNlcSAtIDEpKTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoERBVEFfU0VMKHdyaXRlNjRiaXQgPyAyIDogMSkgfAo+ID4g
+SU5UX1NFTCgwKSk7Cj4gPiArwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCBs
+b3dlcl8zMl9iaXRzKHNlcSkpOwo+ID4gK8KgwqDCoMKgwqDCoMKgYW1kZ3B1X3Jpbmdfd3JpdGUo
+cmluZywgdXBwZXJfMzJfYml0cyhzZXEpKTsKPiA+IMKgIAo+ID4gLcKgwqDCoMKgwqDCoMKgLyog
+VGhlbiBzZW5kIHRoZSByZWFsIEVPUCBldmVudCBkb3duIHRoZSBwaXBlLiAqLwo+ID4gwqDCoMKg
+wqDCoMKgwqDCoGFtZGdwdV9yaW5nX3dyaXRlKHJpbmcsIFBBQ0tFVDMoUEFDS0VUM19FVkVOVF9X
+UklURV9FT1AsCj4gPiA0KSk7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgYW1kZ3B1X3Jpbmdfd3JpdGUo
+cmluZywgKEVPUF9UQ0wxX0FDVElPTl9FTiB8Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEVPUF9UQ19BQ1RJT05fRU4g
+fAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2dmeF92OF8wLmMK
+PiA+IGIvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvZ2Z4X3Y4XzAuYwo+ID4gaW5kZXggMmYw
+ZTcyY2FlZTFhZi4uMzlhN2Q2MGYxZmQ2OSAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9hbWQvYW1kZ3B1L2dmeF92OF8wLmMKPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1k
+Z3B1L2dmeF92OF8wLmMKPiA+IEBAIC02MTUzLDkgKzYxNTMsNyBAQCBzdGF0aWMgdm9pZAo+ID4g
+Z2Z4X3Y4XzBfcmluZ19lbWl0X2ZlbmNlX2dmeChzdHJ1Y3QgYW1kZ3B1X3JpbmcgKnJpbmcsIHU2
+NCBhZGRyLAo+ID4gwqDCoMKgwqDCoMKgwqDCoGJvb2wgd3JpdGU2NGJpdCA9IGZsYWdzICYgQU1E
+R1BVX0ZFTkNFX0ZMQUdfNjRCSVQ7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgYm9vbCBpbnRfc2VsID0g
+ZmxhZ3MgJiBBTURHUFVfRkVOQ0VfRkxBR19JTlQ7Cj4gPiDCoCAKPiA+IC3CoMKgwqDCoMKgwqDC
+oC8qIFdvcmthcm91bmQgZm9yIGNhY2hlIGZsdXNoIHByb2JsZW1zLiBGaXJzdCBzZW5kIGEgZHVt
+bXkKPiA+IEVPUAo+ID4gLcKgwqDCoMKgwqDCoMKgICogZXZlbnQgZG93biB0aGUgcGlwZSB3aXRo
+IHNlcSBvbmUgYmVsb3cuCj4gPiAtwqDCoMKgwqDCoMKgwqAgKi8KPiA+ICvCoMKgwqDCoMKgwqDC
+oC8qIFdvcmthcm91bmQgZm9yIGNhY2hlIGZsdXNoIHByb2JsZW1zLCBzZW5kIEVPUCB0d2ljZS4g
+Ki8KPiA+IMKgwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCBQQUNLRVQzKFBB
+Q0tFVDNfRVZFTlRfV1JJVEVfRU9QLAo+ID4gNCkpOwo+ID4gwqDCoMKgwqDCoMKgwqDCoGFtZGdw
+dV9yaW5nX3dyaXRlKHJpbmcsIChFT1BfVENMMV9BQ1RJT05fRU4gfAo+ID4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBFT1Bf
+VENfQUNUSU9OX0VOIHwKPiA+IEBAIC02MTY0LDEyICs2MTYyLDEwIEBAIHN0YXRpYyB2b2lkCj4g
+PiBnZnhfdjhfMF9yaW5nX2VtaXRfZmVuY2VfZ2Z4KHN0cnVjdCBhbWRncHVfcmluZyAqcmluZywg
+dTY0IGFkZHIsCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIEVWRU5UX0lOREVYKDUpKSk7Cj4gPiDCoMKgwqDCoMKgwqDC
+oMKgYW1kZ3B1X3Jpbmdfd3JpdGUocmluZywgYWRkciAmIDB4ZmZmZmZmZmMpOwo+ID4gwqDCoMKg
+wqDCoMKgwqDCoGFtZGdwdV9yaW5nX3dyaXRlKHJpbmcsICh1cHBlcl8zMl9iaXRzKGFkZHIpICYg
+MHhmZmZmKSB8Cj4gPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBEQVRBX1NFTCgxKSB8IElOVF9TRUwoMCkpOwo+ID4gLcKgwqDC
+oMKgwqDCoMKgYW1kZ3B1X3Jpbmdfd3JpdGUocmluZywgbG93ZXJfMzJfYml0cyhzZXEgLSAxKSk7
+Cj4gPiAtwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCB1cHBlcl8zMl9iaXRz
+KHNlcSAtIDEpKTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgREFUQV9TRUwod3JpdGU2NGJpdCA/IDIgOiAxKSB8Cj4gPiBJTlRfU0VMKDApKTsK
+PiA+ICvCoMKgwqDCoMKgwqDCoGFtZGdwdV9yaW5nX3dyaXRlKHJpbmcsIGxvd2VyXzMyX2JpdHMo
+c2VxKSk7Cj4gPiArwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCB1cHBlcl8z
+Ml9iaXRzKHNlcSkpOwo+ID4gwqAgCj4gPiAtwqDCoMKgwqDCoMKgwqAvKiBUaGVuIHNlbmQgdGhl
+IHJlYWwgRU9QIGV2ZW50IGRvd24gdGhlIHBpcGU6Cj4gPiAtwqDCoMKgwqDCoMKgwqAgKiBFVkVO
+VF9XUklURV9FT1AgLSBmbHVzaCBjYWNoZXMsIHNlbmQgaW50ICovCj4gPiDCoMKgwqDCoMKgwqDC
+oMKgYW1kZ3B1X3Jpbmdfd3JpdGUocmluZywgUEFDS0VUMyhQQUNLRVQzX0VWRU5UX1dSSVRFX0VP
+UCwKPiA+IDQpKTsKPiA+IMKgwqDCoMKgwqDCoMKgwqBhbWRncHVfcmluZ193cml0ZShyaW5nLCAo
+RU9QX1RDTDFfQUNUSU9OX0VOIHwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgRU9QX1RDX0FDVElPTl9FTiB8Cj4gCgo=
 
-That's not what I read.
-
-Patch 9/24 rewrites the mbigen driver. Which has nothing to do with
-what the gic-v3-mbi code does. They are different blocks, and the sole
-machine that has the mbigen IP doesn't have any gic-v3-mbi support.
-All they have in common are 3 random letters.
-
-What you are doing here is to kill any support for *devices* that need
-to signal level-triggered MSIs in that driver, and nothing to do with
-wire-MSI translation.
-
-So what replaces it?
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
