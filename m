@@ -1,116 +1,123 @@
-Return-Path: <linux-kernel+bounces-218222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943E090BB52
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:42:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CF590BB5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE0BAB24C78
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:42:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE68E2833AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664E518757C;
-	Mon, 17 Jun 2024 19:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mnZWjMMH";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="JxNXz4hM"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367A4188CAB;
+	Mon, 17 Jun 2024 19:46:06 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB8511CAB;
-	Mon, 17 Jun 2024 19:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA883D53E;
+	Mon, 17 Jun 2024 19:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718653357; cv=none; b=klx5RFcPAUtCwC7SWRH79s5W/SC0wjovpfXUDxHnv5s2AI6GVq5vKspYViwKocuhtKM6YqK5SBva6u4g+6t9jaJCHxNearSIhLle6TAHYdLaQp44H/uI5TU6C4b552rhZtQFsUfhIB72GS7d+CZ7e0DeP7GaMrqigxYoABfv1YY=
+	t=1718653565; cv=none; b=KUPXUhkKtDlMbUYmmOG8bcPy7d0dAqhVeVxa1xx5hpo/afePZR6E/RxRoQKnlLuLY9dLCu3rHAbx4FFWBc6Pnu25d0PIB+Jvm6KCYZnqzXs/87VIqKcwu1He+2S3oeXLIC6hgglTCHzw6HoOAZVIuQzO/h95O3r7chia6HjiyjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718653357; c=relaxed/simple;
-	bh=1vcmeQncdRyeP1TvaAAoOSNuO5Z2zRz6JdZWHlyc5wU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aTrTiUx5dqJHM0/8zQn5tyD166qJZnOTSbjKmWx8r62RpDhtjCtzu/YIC4T0gXlHzk789IloMlEqcBtk1ybBsAYlGLqMYuvZk5glmL8amZQnR/HEdK20zm7tQBa9VuOxLwyxLRPZVfyqLEE2fAVNbL2UVds78Tzb0j2KbJMYw+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=mnZWjMMH; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=JxNXz4hM; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1718653355;
-	bh=1vcmeQncdRyeP1TvaAAoOSNuO5Z2zRz6JdZWHlyc5wU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=mnZWjMMH2Pf/d/viFToDHlEEbQ8HapspA6ZtZT+kGzj2dfKsXkB+8bEXLYrITguK+
-	 NhnGQoYWNqSqgNEmKjM8VNJzH1iRqRhtR5gprRK1Wzl90YRWaic93Er+4w4p4KtU1W
-	 kqGa+OmkXJDMWZtsWDI83weBETvlGLVnmvHpVieo=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 23FA71287250;
-	Mon, 17 Jun 2024 15:42:35 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id 6AnscMlQ7NK4; Mon, 17 Jun 2024 15:42:35 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1718653354;
-	bh=1vcmeQncdRyeP1TvaAAoOSNuO5Z2zRz6JdZWHlyc5wU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=JxNXz4hMIJNuIaS2NAP/VmIBIqhBMsY90IEZCeCGJOh67Z+KbLhKYCyMbh5iyytP9
-	 fn7ydQPacHeEFBG6cB+WnQaQitcP3DESIbyxtYuw5Hz5w948hQI8qpy4KM8souBzmc
-	 NDgDGVPY1QydIfxAFzf/3sTMQuIUtrGMorgI1SWI=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 510EE12870A6;
-	Mon, 17 Jun 2024 15:42:34 -0400 (EDT)
-Message-ID: <dfc4feaef0d63d616bab8cdec5d409369f9dacf1.camel@HansenPartnership.com>
-Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
- session support
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, jarkko@kernel.org
-Cc: linux-kernel@vger.kernel.org, mpe@ellerman.id.au, 
-	naveen.n.rao@linux.ibm.com
-Date: Mon, 17 Jun 2024 15:42:32 -0400
-In-Reply-To: <20240617193408.1234365-1-stefanb@linux.ibm.com>
-References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1718653565; c=relaxed/simple;
+	bh=K5ORaED9ut2XUwtSsL7d9/RgxE6XVAqRyIwqKv/I8zg=;
+	h=Subject:From:To:CC:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=JIO1K8Hzn5qWkSt94wpsni+ay49qN/Iy7x4PL6i7yxsGxL2YQ9f4dK7337C/Ck1VyOhkj/V5I29j2Q8OKWU7ly7izWcREmQD+0ivZ4IosEDiwwmDd4DozG7QDUxnxadDlkwp5QzcJioxbpua6x4Zbn5cjSrZo+FPwtI3+5TnBUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.105] (178.176.72.187) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 17 Jun
+ 2024 22:45:52 +0300
+Subject: Re: [net-next PATCH 1/2] net: ravb: Fix maximum MTU for GbEth devices
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, Lad Prabhakar
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Mitsuhiro Kimura
+	<mitsuhiro.kimura.kc@renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
+ <20240615103038.973-2-paul.barker.ct@bp.renesas.com>
+ <e61ce8b4-fb9a-8b4f-23e1-7cfd6dd1040d@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <b2131a94-ab79-64ee-20d2-e977b082f83c@omp.ru>
+Date: Mon, 17 Jun 2024 22:45:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e61ce8b4-fb9a-8b4f-23e1-7cfd6dd1040d@omp.ru>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/17/2024 19:20:05
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 185970 [Jun 17 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
+ 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_arrow_text}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.72.187 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.72.187
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 06/17/2024 19:39:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 6/17/2024 4:39:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Mon, 2024-06-17 at 15:34 -0400, Stefan Berger wrote:
-> Fix the following type of error message caused by a missing call to
-> tpm2_sessions_init() in the IBM vTPM driver:
+On 6/17/24 10:38 PM, Sergey Shtylyov wrote:
+[...]
+
+>> The datasheets for all SoCs using the GbEth IP specify a maximum
+>> transmission frame size of 1.5 kByte. I've confirmed through internal
+>> discussions that support for 1522 byte frames has been validated, which
+>> allows us to support the default MTU of 1500 bytes after reserving space
+>> for the Ethernet header, frame checksums and an optional VLAN tag.
+>>
+>> Fixes: 2e95e08ac009 ("ravb: Add rx_max_buf_size to struct ravb_hw_info")
+>> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> [...]
 > 
-> [    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM error
-> 0x01C4
-> [    2.987140] ima: Error Communicating to TPM chip, result: -14
-> 
-> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->  drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c
-> b/drivers/char/tpm/tpm_ibmvtpm.c
-> index d3989b257f42..1e5b107d1f3b 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev
-> *vio_dev,
->                 rc = tpm2_get_cc_attrs_tbl(chip);
->                 if (rc)
->                         goto init_irq_cleanup;
-> +
-> +               rc = tpm2_sessions_init(chip);
-> +               if (rc)
-> +                       goto init_irq_cleanup;
+> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
-This looks wrong: the whole thing is designed to occur in the bootstrap
-phase from tpm_chip_register() (which tpm_ibmvtpm.c definitely calls),
-so why isn't it happening?
+   Sounds like this is a also fix for the net.git tho?
 
-James
+[...]
 
+MBR, Sergey
 
