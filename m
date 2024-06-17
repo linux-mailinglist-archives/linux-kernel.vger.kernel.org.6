@@ -1,146 +1,385 @@
-Return-Path: <linux-kernel+bounces-217737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E634C90B395
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:12:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6727790B41E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4DF01C214EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:12:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C1ABB3FE48
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD43615666E;
-	Mon, 17 Jun 2024 14:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F719156979;
+	Mon, 17 Jun 2024 14:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="p/8Jvy/c"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="jKuxdwLE"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE30813E04C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718634616; cv=none; b=g6VK1dr7tuegwKaGAE+tumQEFwfEqpl7Fi4vhT5w3TlioYn/5gnIewTiXQK8wKaXZw8xLXDex7TJBCOw5HwFfbSK7yTAzh/mnPoavX/Oea0FBH8WT0cQV+61HS+K+8/OXvRtUe7YrZUEIFMCF9EpW7hKEEw/UI14NYvfnqT7kg8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718634616; c=relaxed/simple;
-	bh=z4Ye7WoiFMsS/PnUfef9YutUBmFX1UcoQFbwVSXOYVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=bNAah2HI3ksUODso8dDEUiZ96hhYuLKLAHMD6rqyiUsIjehks7gOg5iajeWET2k3pKD5Gommo0EsIFOOOGsEFoNMPContDl5sgdJBmi6xH1Zq+R3BpI6hFjS9rXchspPmiA1nLqM6ZcdXf7Oc02Ui5nBV4NLgt6lVgJrE+EGCxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=p/8Jvy/c; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240617143004epoutp01e5343bc7ba8d2df8f95b703f63558c32~Z0RFHrN8H2244222442epoutp01k
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:30:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240617143004epoutp01e5343bc7ba8d2df8f95b703f63558c32~Z0RFHrN8H2244222442epoutp01k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718634605;
-	bh=iyz4lhwHzIQ2xM7JeB8g3lGuDxIxMLt9noIUFj6buu8=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=p/8Jvy/clqeRF7LU26bvXj60OGkxl16rOFZwCb38EqTLF0tj55hTzy4kDcraABIJN
-	 r259VUvKeaOB8m+n2OUnj2b+F+JxpzjX3T5fS6bkIBmLBQaf5Sce7qxXOrGNcpkVib
-	 qyCyafWKR9MGcaMrMKRCqzmACof3F1ir28/Mfuco=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240617143003epcas5p4bb7207b37df8b199a55d7496931926ec~Z0REGWHl61570915709epcas5p4j;
-	Mon, 17 Jun 2024 14:30:03 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4W2sjQ4RdWz4x9Pq; Mon, 17 Jun
-	2024 14:30:02 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	55.B9.19174.A6840766; Mon, 17 Jun 2024 23:30:02 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240617143002epcas5p452f4bfa436d4c58418fe7a073823f355~Z0RCikIXc0444604446epcas5p4U;
-	Mon, 17 Jun 2024 14:30:02 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240617143002epsmtrp19cb132c9b9b0b1f8f339c4c397a620fa~Z0RCcgLrR2965729657epsmtrp13;
-	Mon, 17 Jun 2024 14:30:02 +0000 (GMT)
-X-AuditID: b6c32a50-87fff70000004ae6-f8-6670486a2488
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D5.16.08336.A6840766; Mon, 17 Jun 2024 23:30:02 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240617143000epsmtip1d34a910d9e918b9434cddb96b1c5e409~Z0RBaa3fk3010430104epsmtip14;
-	Mon, 17 Jun 2024 14:30:00 +0000 (GMT)
-Message-ID: <90f3cedb-7553-9007-6ab1-38e1562c8f33@samsung.com>
-Date: Mon, 17 Jun 2024 20:00:00 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940A0156864
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718634647; cv=pass; b=FrqXA0lmA0LmxjlMOZEQ2WMtF47gzvGAmJ8JDbAoUnpAYvDS/KM3r2SHmOMjFUj8A15YgBKQ+G1yPFipSaqgnbrgKt/0EEqPu6oZfjS4kP7z5zCTyHaS8x3jbn4mtehA2tzvg753oNi9t6Lk34Vi3Gg3X2R9g7zGzKkz0b6c9tw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718634647; c=relaxed/simple;
+	bh=RIIuxwOZM1JOkDtHCblBwto+qU+23lJITMio09wfw1E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=M4aQDmp2ngDLCYL6EiN9+3UAs9xWnZDjpfnKeEaOfFieGy8KrxcPpBQuSjGcdfk3E1c1YSjSt08TtThk2YvukELbbbwnH70jDX3/OkpqrouLtWfX6LcY+xPJ+LtQ0ELsaOVQ4bmr9R1SEpTFIZzJl55Ju/ilCct4nS3By+muXxs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=jKuxdwLE; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1718634629; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZF6kJ1XXWxndY6M84daH+VQv5ataa7yK0UgYNpsLsXe6eC1qyAJ80DWNcHjLfZEVm5FdayZUfi7GB5y9TLi7C4B8qCcw5cs+Wcvlf787QNN5RFY8nVPCOoeJBloJ9wdFxOBzeBcX5ZSsNCKLJvNm3ErxvFHzmJ1u1Q5Jx73TuC4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1718634629; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=RIIuxwOZM1JOkDtHCblBwto+qU+23lJITMio09wfw1E=; 
+	b=ahQHBhqD7v5vBeadT41p6MvnxFwzVNFInVGiHI6UuOusaQzJ76zHhen+xs32q6GDm/MuruLl6Cioh6dF3hv/p3P9UPF7rpkZ2sO8LFndgG3Odp7imCQETiaLw21MF2RA3v+PF9+Iwh12pcoWj6q83DqOVTg7GGVvC+ICTJ+x9lw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1718634629;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=RIIuxwOZM1JOkDtHCblBwto+qU+23lJITMio09wfw1E=;
+	b=jKuxdwLESGrIOhyXWaQEiX+wpw6FxyNFbv0kBCH0i9wdPvawtXeEYa7MIr/qvYrF
+	gZBlvxLshaTFRxambt2vSUDszGNy1PyHeU951rfxuIe/cnuy2QA2I9qI7rtjoibxTyG
+	r5jcHLjA+pjc+7n/0LmWo2ybxr8r4QDsRELewn9D8Gq+1jmYcYAUwmAw8jNq0Xd3ghj
+	ogE+fRAEf+TwquRnDYabwW25RZNECvlNf92Yw/U+hO6KhOtH1WZaq31tlpJrFlVMyfb
+	ilyizwHdKkqsF4DL6tVnnYFny7toJP26SOrXzvEcblS1qqpQ1KXuTzqrM9BSrESTTWZ
+	IE1PWWrHPQ==
+Received: by mx.zohomail.com with SMTPS id 171863462680425.798650095372523;
+	Mon, 17 Jun 2024 07:30:26 -0700 (PDT)
+Message-ID: <1e5f86991635b9045e91fab6397cda87555f85ff.camel@icenowy.me>
+Subject: Re: [PATCH 1/2] drm/amdgpu: make duplicated EOP packet for GFX7/8
+ have real content
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Alex
+ Deucher <alexander.deucher@amd.com>, Pan Xinhui <Xinhui.Pan@amd.com>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Pierre-Eric
+ Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+Date: Mon, 17 Jun 2024 22:30:18 +0800
+In-Reply-To: <d44651a7-0c07-4b84-8828-f1d405359aeb@amd.com>
+References: <20240617105846.1516006-1-uwu@icenowy.me>
+	 <20240617105846.1516006-2-uwu@icenowy.me>
+	 <88337509-3ad7-47aa-b70f-5294f7f1e486@amd.com>
+	 <b4ebdbce2f44c06806a650e72b1b6eb9a16dffe6.camel@icenowy.me>
+	 <09fbcd1f-c7b1-47e3-9146-17f8189978a8@amd.com>
+	 <e88d4722fa3bbd7104b140debdd85cb212628944.camel@icenowy.me>
+	 <d44651a7-0c07-4b84-8828-f1d405359aeb@amd.com>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-	Gecko/20100101 Thunderbird/91.13.1
-Subject: Re: [PATCH] nvme: fix NVME_NS_DEAC may incorrectly identifying the
- disk as EXT_LBA.
-Content-Language: en-US
-To: Boyang Yu <yuboyang@dapustor.com>, kbusch@kernel.org, axboe@kernel.dk,
-	hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20240617131144.48955-1-yuboyang@dapustor.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmhm6WR0Gawa0OOYvVd/vZLFauPspk
-	MenQNUaLy7vmsFnMX/aU3WLd6/csFtPamRzYPT63/mD1OH9vI4vH5bOlHptWdbJ5bF5S77H7
-	ZgObx+dNcgHsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4B
-	um6ZOUDXKCmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0ihNzi0vz0vXyUkus
-	DA0MjEyBChOyM/4dOMJU0MVcsfPgF8YGxkNMXYwcHBICJhLdU3y6GLk4hAT2MEr8nX6HBcL5
-	xChx6+x6ZgjnG6PE1kPdQBlOsI7ri45AJfYySpx++ATKecsoMa3zKwvIXF4BO4nvL3lATBYB
-	VYkpr3JBenkFBCVOznwCNkdUIFniZ9cBNhBbWCBO4kbDSVYQm1lAXOLWk/lg14kIZEp83ygN
-	EXaQuHC1mw0kzCagKXFhcilImFPAWuLZuhtMECXyEtvfzgE7RkJgKofErOX7oE52kbj++TI7
-	hC0s8er4FihbSuJlfxuUnSxxaeY5Jgi7ROLxnoNQtr1E66l+ZpC9zEB71+/Sh9jFJ9H7+wk0
-	DHklOtqEIKoVJe5NesoKYYtLPJyxBMr2kNjZDDIRFE59jBLnn/9mnsCoMAspUGYheX4Wkndm
-	IWxewMiyilEqtaA4Nz012bTAUDcvtRwe28n5uZsYwSlVK2AH4+oNf/UOMTJxMB5ilOBgVhLh
-	dZqWlybEm5JYWZValB9fVJqTWnyI0RQYOxOZpUST84FJPa8k3tDE0sDEzMzMxNLYzFBJnPd1
-	69wUIYH0xJLU7NTUgtQimD4mDk6pBqa5584KvGzpjFy/WTykfFoKh4NRoJ9myVF96ckKosL+
-	z5g7DsxKPHY361ENm+lH67pYgRKlTdf+nGn/cnddtPbs9cIyeeZSv0Wc+Is1d55hebm33IFn
-	vc6qI0vZMgRzT0n+nMq+surcSXPfaOfD33/U+2uxmsm++tTiO2lK2UKJJefU9l19OWdTvAM/
-	i+qJzGsz3nhd2STklefh1sL/tXleS8Y7sbxtEeWzUzXspFxytnSZZFzo/NDz2GPNStFk36Sf
-	ItZHve0iFeelmLE+vXPwuFQoX9mWX+//Ge1bb1pSEn5mB0Od49KH80+X+nSLTDMLr9jY/YCp
-	sKFk+9PV4Z0hS7SnzBBsfOIfsKLIT4mlOCPRUIu5qDgRAAH8NPMyBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDLMWRmVeSWpSXmKPExsWy7bCSnG6WR0GawZRpzBar7/azWaxcfZTJ
-	YtKha4wWl3fNYbOYv+wpu8W61+9ZLKa1Mzmwe3xu/cHqcf7eRhaPy2dLPTat6mTz2Lyk3mP3
-	zQY2j8+b5ALYo7hsUlJzMstSi/TtErgy/h04wlTQxVyx8+AXxgbGQ0xdjJwcEgImEtcXHWHu
-	YuTiEBLYzSjxbl87M0RCXKL52g92CFtYYuW/5+wQRa8ZJZ79usjWxcjBwStgJ/H9JQ+IySKg
-	KjHlVS5IOa+AoMTJmU9YQGxRgWSJl38mgo0RFoiTuNFwkhXEZgYaf+vJfLAbRAQyJZY0HGeE
-	iDtIXLjazQaxqo9RYsrb04wg89kENCUuTC4FqeEUsJZ4tu4GE0S9mUTX1i6oXnmJ7W/nME9g
-	FJqF5IxZSNbNQtIyC0nLAkaWVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsYwRGkpbmD
-	cfuqD3qHGJk4GA8xSnAwK4nwOk3LSxPiTUmsrEotyo8vKs1JLT7EKM3BoiTOK/6iN0VIID2x
-	JDU7NbUgtQgmy8TBKdXAlLXuhY9lh9zLTzuKKr/sD35+fIr9PB9dQ9l5kv0WHVeXr9C/vH7P
-	Xc9Qz6TVJQJq27USO4NumG85dHmhyt1dXwoeejOt+XLlwtmJrjLHt6gEdG+1v8ux9t1pY1tW
-	1sLrfm9NXjuUT6y75vbOyezz7qZ4hc1hz8Xa9A5yifU3OP6MuFbIYuL314T7sY6XRZX9nMAL
-	SenKs3a9eDJTqz9XzdGiU7C9SkbY7tGPl5kywtaLCioXGt88ILTm5cYteqvVojOXXFE/1bKj
-	qln0SLeCvO7OSWqX14cv/aD0g72fV+2n/FHppbvfX6mzsbiiEd0bPfEwb8aHPA/u7ztWHeLa
-	aPbgUNndyIZvX97+0UroUmIpzkg01GIuKk4EAC9+8MgPAwAA
-X-CMS-MailID: 20240617143002epcas5p452f4bfa436d4c58418fe7a073823f355
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240617131354epcas5p189a78f2cedf7f3a3552df5e881e547c4
-References: <CGME20240617131354epcas5p189a78f2cedf7f3a3552df5e881e547c4@epcas5p1.samsung.com>
-	<20240617131144.48955-1-yuboyang@dapustor.com>
+X-ZohoMailClient: External
 
-On 6/17/2024 6:41 PM, Boyang Yu wrote:
-> The value of NVME_NS_DEAC is 3,
-> which means NVME_NS_METADATA_SUPPORTED | NVME_NS_EXT_LBAS.
-> 
-> Signed-off-by: Boyang Yu<yuboyang@dapustor.com>
+=E5=9C=A8 2024-06-17=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 15:59 +0200=EF=BC=
+=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
+> Am 17.06.24 um 15:43 schrieb Icenowy Zheng:
+> > =E5=9C=A8 2024-06-17=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 15:09 +0200=EF=
+=BC=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
+> > > Am 17.06.24 um 15:03 schrieb Icenowy Zheng:
+> > > > =E5=9C=A8 2024-06-17=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 14:35 +020=
+0=EF=BC=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
+> > > > > Am 17.06.24 um 12:58 schrieb Icenowy Zheng:
+> > > > > > The duplication of EOP packets for GFX7/8, with the former
+> > > > > > one
+> > > > > > have
+> > > > > > seq-1 written and the latter one have seq written, seems to
+> > > > > > confuse
+> > > > > > some
+> > > > > > hardware platform (e.g. Loongson 7A series PCIe
+> > > > > > controllers).
+> > > > > >=20
+> > > > > > Make the content of the duplicated EOP packet the same with
+> > > > > > the
+> > > > > > real
+> > > > > > one, only masking any possible interrupts.
+> > > > > Well completely NAK to that, exactly that disables the
+> > > > > workaround.
+> > > > >=20
+> > > > > The CPU needs to see two different values written here.
+> > > > Why do the CPU need to see two different values here? Only the
+> > > > second
+> > > > packet will raise an interrupt before and after applying this
+> > > > patch,
+> > > > and the first packet's result should just be overriden on
+> > > > ordinary
+> > > > platforms. The CPU won't see the first one, until it's polling
+> > > > for
+> > > > the
+> > > > address for a very short interval, so short that the GPU CP
+> > > > couldn't
+> > > > execute 2 commands.
+> > > Yes exactly that. We need to make two writes, one with the old
+> > > value
+> > > (seq - 1) and a second with the real value (seq).
+> > >=20
+> > > Otherwise it is possible that a polling CPU would see the
+> > > sequence
+> > > before the second EOP is issued with results in incoherent view
+> > > of
+> > > memory.
+> > In this case shouldn't we write seq-1 before any work, and then
+> > write
+> > seq after work, like what is done in Mesa?
+>=20
+> No. This hw workaround requires that two consecutive write operations
+> happen directly behind each other on the PCIe bus with two different
+> values.
 
-Maybe this requires fixes tag [*].
-Looks good regardless.
+Well to be honest the workaround code in Mesa seems to not be working
+in this way ...
 
-Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
+>=20
+> To make the software logic around that work without any changes we
+> use=20
+> the values seq - 1 and seq because those are guaranteed to be
+> different=20
+> and not trigger any unwanted software behavior.
+>=20
+> Only then we can guarantee that we have a coherent view of system
+> memory.
 
-[*] 1b96f862eccc ("nvme: implement the DEAC bit for the Write Zeroes 
-command")
+Any more details about it?
 
+BTW in this case, could I try to write it for 3 times instead of 2,
+with seq-1, seq and seq?
+
+>=20
+> > As what I see, Mesa uses another command buffer to emit a
+> > EVENT_WRITE_EOP writing 0, and commit this command buffer before
+> > the
+> > real command buffer.
+> >=20
+> > > > Or do you mean the GPU needs to see two different values being
+> > > > written,
+> > > > or they will be merged into only one write request?
+> > > >=20
+> > > > Please give out more information about this workaround,
+> > > > otherwise
+> > > > the
+> > > > GPU hang problem on Loongson platforms will persist.
+> > > Well if Loongson can't handle two consecutive write operations to
+> > > the
+> > > same address with different values then you have a massive
+> > > platform
+> > > bug.
+> > I think the issue is triggered when two consecutive write
+> > operations
+> > and one IRQ is present, which is exactly the case of this function.
+>=20
+> Well then you have a massive platform bug.
+>=20
+> Two consecutive writes to the same bus address are perfectly legal
+> from=20
+> the PCIe specification and can happen all the time, even without this
+> specific hw workaround.
+
+Yes I know it, and I am not from Loongson, just some user trying to
+mess around it.
+
+>=20
+> Regards,
+> Christian.
+>=20
+> >=20
+> > > That is something which can happen all the time throughout the
+> > > operation.
+> > >=20
+> > > Regards,
+> > > Christian.
+> > >=20
+> > > > > Regards,
+> > > > > Christian.
+> > > > >=20
+> > > > > > Fixes: bf26da927a1c ("drm/amdgpu: add cache flush
+> > > > > > workaround to
+> > > > > > gfx8 emit_fence")
+> > > > > > Fixes: a2e73f56fa62 ("drm/amdgpu: Add support for CIK
+> > > > > > parts")
+> > > > > > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> > > > > > ---
+> > > > > > =C2=A0=C2=A0=C2=A0 drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c | 12 +=
+++++-------
+> > > > > > =C2=A0=C2=A0=C2=A0 drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 12 +=
++++--------
+> > > > > > =C2=A0=C2=A0=C2=A0 2 files changed, 9 insertions(+), 15 deletio=
+ns(-)
+> > > > > >=20
+> > > > > > diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+> > > > > > b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+> > > > > > index 541dbd70d8c75..778f27f1a34fe 100644
+> > > > > > --- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+> > > > > > +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+> > > > > > @@ -2117,9 +2117,8 @@ static void
+> > > > > > gfx_v7_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64
+> > > > > > addr,
+> > > > > > =C2=A0=C2=A0=C2=A0 {
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0boo=
+l write64bit =3D flags &
+> > > > > > AMDGPU_FENCE_FLAG_64BIT;
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0boo=
+l int_sel =3D flags & AMDGPU_FENCE_FLAG_INT;
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Workaround for ca=
+che flush problems. First send
+> > > > > > a
+> > > > > > dummy
+> > > > > > EOP
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * event down the pi=
+pe with seq one below.
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > > > > > +
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Workaround for ca=
+che flush problems, send EOP
+> > > > > > twice.
+> > > > > > */
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring,
+> > > > > > PACKET3(PACKET3_EVENT_WRITE_EOP,
+> > > > > > 4));
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring, (EOP_TCL1_ACTION_EN |
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EOP_TC_A=
+CTION_EN |
+> > > > > > @@ -2127,11 +2126,10 @@ static void
+> > > > > > gfx_v7_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64
+> > > > > > addr,
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EVENT_IN=
+DEX(5)));
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring, addr & 0xfffffffc);
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring, (upper_32_bits(addr) &
+> > > > > > 0xffff)
+> > > > > > >=20
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0DATA_SEL(1) | INT_SEL(0)=
+);
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ri=
+ng, lower_32_bits(seq - 1));
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ri=
+ng, upper_32_bits(seq - 1));
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0DATA_SEL(write64bit ? 2 =
+:
+> > > > > > 1) |
+> > > > > > INT_SEL(0));
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ri=
+ng, lower_32_bits(seq));
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ri=
+ng, upper_32_bits(seq));
+> > > > > > =C2=A0=C2=A0=C2=A0=20
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Then send the rea=
+l EOP event down the pipe. */
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring,
+> > > > > > PACKET3(PACKET3_EVENT_WRITE_EOP,
+> > > > > > 4));
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring, (EOP_TCL1_ACTION_EN |
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EOP_TC_A=
+CTION_EN |
+> > > > > > diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> > > > > > b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> > > > > > index 2f0e72caee1af..39a7d60f1fd69 100644
+> > > > > > --- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> > > > > > +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> > > > > > @@ -6153,9 +6153,7 @@ static void
+> > > > > > gfx_v8_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64
+> > > > > > addr,
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0boo=
+l write64bit =3D flags &
+> > > > > > AMDGPU_FENCE_FLAG_64BIT;
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0boo=
+l int_sel =3D flags & AMDGPU_FENCE_FLAG_INT;
+> > > > > > =C2=A0=C2=A0=C2=A0=20
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Workaround for ca=
+che flush problems. First send
+> > > > > > a
+> > > > > > dummy
+> > > > > > EOP
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * event down the pi=
+pe with seq one below.
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Workaround for ca=
+che flush problems, send EOP
+> > > > > > twice.
+> > > > > > */
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring,
+> > > > > > PACKET3(PACKET3_EVENT_WRITE_EOP,
+> > > > > > 4));
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring, (EOP_TCL1_ACTION_EN |
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EOP_TC_A=
+CTION_EN |
+> > > > > > @@ -6164,12 +6162,10 @@ static void
+> > > > > > gfx_v8_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64
+> > > > > > addr,
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EVENT_IN=
+DEX(5)));
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring, addr & 0xfffffffc);
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring, (upper_32_bits(addr) &
+> > > > > > 0xffff)
+> > > > > > >=20
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0DATA_SEL(1) | INT_SEL(0)=
+);
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ri=
+ng, lower_32_bits(seq - 1));
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ri=
+ng, upper_32_bits(seq - 1));
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 DATA_SEL(write64bit ? 2 : 1) |
+> > > > > > INT_SEL(0));
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ri=
+ng, lower_32_bits(seq));
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ri=
+ng, upper_32_bits(seq));
+> > > > > > =C2=A0=C2=A0=C2=A0=20
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Then send the rea=
+l EOP event down the pipe:
+> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * EVENT_WRITE_EOP -=
+ flush caches, send int */
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring,
+> > > > > > PACKET3(PACKET3_EVENT_WRITE_EOP,
+> > > > > > 4));
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amd=
+gpu_ring_write(ring, (EOP_TCL1_ACTION_EN |
+> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EOP_TC_A=
+CTION_EN |
+>=20
 
 
