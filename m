@@ -1,144 +1,128 @@
-Return-Path: <linux-kernel+bounces-217279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED25990ADBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:14:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA07E90ADBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D54CE1C22F44
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:14:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C8BC1C23224
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6429F194C9B;
-	Mon, 17 Jun 2024 12:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39148195389;
+	Mon, 17 Jun 2024 12:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N4J23H1T"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwNnwxhe"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F28E194C6A;
-	Mon, 17 Jun 2024 12:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F93194C82;
+	Mon, 17 Jun 2024 12:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718626443; cv=none; b=BU1acoCyX3ZiHD6VebA7AGWI4IeQURHlFdwlrhQbcHfpy671tjcwVcGo2VfCH4HyeuKiJ8FFXF8ijVOsw5hco2eSlb3KH3/sI/TYbQoRunBPix4l2ySPvzTXftwwg3WEGvKA5RO4+YQZZl4aIkwev9aW25be50MblzIcXfqiZ1I=
+	t=1718626468; cv=none; b=avwdEWP1CM55SynNIv/znW3VkHSjaJOe0i56cBozVyhuqy7GJdAbSkrmApyVn6eDKs2gbZBnYboQdGEpG+blj4KjbezKgU1+OgVraxMaRTJX/7s8Ubu+vCjeWqIUGmDchbuRXs/SfhqsVEKTnQQaJC/5T+UwyN6UuIc0fZ71Xm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718626443; c=relaxed/simple;
-	bh=uy0/tSB3ASpoDH7l6Cr+SBFLv6PorMawuYN6R2WwBRM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WadbNHNwc8ro5QccBjLvJaupWeoa2AyHxJchYzmSQy8T0qh9Rn9xEpqryLETTFuJQN2DH2hMiNUxXwvPnOI7PZZxnfXqDcsmrC1brvsEWNi9psUReRda+c2v9QMcJFxLFZf2E7yJ4PJc7tiIIT1vr6pkttWld/zGMtP4l+O9Y6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N4J23H1T; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718626442; x=1750162442;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=uy0/tSB3ASpoDH7l6Cr+SBFLv6PorMawuYN6R2WwBRM=;
-  b=N4J23H1T26j7Ae3GdW+u8hJlivosyrIlfpugTHi5zXHy2nhE+eA+hTp/
-   Vrus0o+XXUmz5QbPs4rjo8ilrd6JAkgNEq30yh8R1UxNSVKE3rHNglPWs
-   MTI49LBziiOh8nyRhDHtvyqvJ5i1s9p9aJrIBizB7Z9gJgrzYUOCwPZ+T
-   96oHY8z5EvMZ9IgMjmd9bwjNX5Ks79R5rioI0O9uh0LYYsD2dvvYafc2Y
-   zAsJOuS6kUEcwg5ETjnZJMFYCPbAd0pw9LT2ZyM0P+069MBSzBZ++uqYQ
-   87uph5cyGOqwLiMGzZq4ZB5yDs+O/CT2AibmQ/MYMgNNZUEOuZJYxgyk4
-   w==;
-X-CSE-ConnectionGUID: jChq3eN9TaSJxy6fzCX07Q==
-X-CSE-MsgGUID: YkELu5i+SEuaWt21fK7dxA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="15164489"
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="15164489"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 05:14:01 -0700
-X-CSE-ConnectionGUID: 4c2JTCerSZarJ1Fw/zZvqQ==
-X-CSE-MsgGUID: vxxOwhtaS/WO1rzc7rTPcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
-   d="scan'208";a="72378560"
-Received: from bvivekan-mobl2.gar.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.149])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 05:13:59 -0700
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
-To: linux-sound@vger.kernel.org,
-	vkoul@kernel.org
-Cc: vinod.koul@linaro.org,
-	linux-kernel@vger.kernel.org,
-	pierre-louis.bossart@linux.intel.com,
-	bard.liao@intel.com
-Subject: [PATCH] soundwire: generic_bandwidth_allocation: change port_bo parameter to pointer
-Date: Mon, 17 Jun 2024 20:13:50 +0800
-Message-Id: <20240617121350.14074-1-yung-chuan.liao@linux.intel.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1718626468; c=relaxed/simple;
+	bh=4bAAmOpl6FKwhAImZc9MoVAil/T3Q4eKQpJqKDPSXz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X/FgHuj2ZmbhOcrIJGwd3rQPrh26qD4T0H2YXxq+ddgwfWvjSD33j4NV8zovuuQuE9c7ixgTOGxSUM1svFCwaekmoTyqzvezAHVpkPuu2MWUukvdR9MmWk4+GVKzAzDuvhk+KErJKEILZq4MAMHg9jeWyA4YCorLGRjSSY6CLHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwNnwxhe; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6f11a2d18aso563227266b.2;
+        Mon, 17 Jun 2024 05:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718626465; x=1719231265; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4bAAmOpl6FKwhAImZc9MoVAil/T3Q4eKQpJqKDPSXz0=;
+        b=TwNnwxheByrHm4rklP55w8tbFpebp8EemjIKuCp/iROJSnvlrguyzAUVxGL+1gq4XJ
+         IaPiusOEZVfZdSDU/Axi292M8HvUZW7oe5K+KxfewpSPMQwSYxFFGJiX8lS73ZdOBsR0
+         cq6HGv2KVIwuOmdWW1pshjELNcroPeCkSgDXFOm9eKc4/gaEt8LX4BZfASTSAP+ioj5P
+         0HSzdO1N3COJ6F86078riGDgwGjTWsMPSkcea02ieiN/6gyW+ULpXOkywBP/F08kXs4V
+         hGnCvFnc1V7h3hTGiwZgQ9uomTD2slkJnctb+3wSJooVIolBOyMjHpOxaQIkSBoU8ZS5
+         CpKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718626465; x=1719231265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4bAAmOpl6FKwhAImZc9MoVAil/T3Q4eKQpJqKDPSXz0=;
+        b=krJyBSAtwE1dltcpyaQUSfKxVnpVNb5WCAzPmoBF/GSUoC5bQqB1xuoexgjI9eSEfC
+         frxQ7l0X+6uYmVPrz3omCp5NEuLWailoL4UhcRuxMRozTwhPN/Y5fxq9gLriiEpzo9DP
+         sJ/SS4Kw/RFg6pwf/HCn9BR7w8YLClSrpNJ9xoql+WGyqPY7DVrUeH7RM+KRGtrcfyAA
+         o4qTPJ+QpAVzSM+JBB26GPaE3m+tDTa407vyu32Y+I1To7wZPpFWICnhgD0b9A7ClY2F
+         xOHJnm5p0f+Hf9SwSzrCc7xvg3teaV9BkXBbwqt2TWhgf5o0eC6/kZHwA9maVAo9LutV
+         K8QA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyJMS5lKYFzpo/gm9a/6+sqSJLcLUylQSAtJgeyyNlcPl+9Vp8CJrKOd+JKv6twfXP3XD8ePLZDgIllvJWKqhz0s+7HyAkfmMTUjswMbZoWMLc2SMj+NJ0qWxAkH8i8L0cqUKLbgr1pMEu/NVt/fa77pB31n+I8zvqOBQwMMl4kcFv2I0Q
+X-Gm-Message-State: AOJu0YzAa8Sn61emNBTB9+JCOLLza1J7fAbb5jUMLw6rcKQqlAvto7Ww
+	9iUIMR4jzsO0r1oZEKfq1gk7ZlCeKUIqYEQ3f9WF3sYI2Z7XRkAbvmbP5KkCn/RUH5J83zRZcN/
+	a+wrPExWk/8D0z3BmmTa70kYHMfo8OBVT
+X-Google-Smtp-Source: AGHT+IEXqa/5TA1IoPPweCwAqdFJZXWW4kSILJRkB4PFMtqcZm1jzzatXPtjR6JaXBAoXVqSKTfL4W1PPt9K/SXZZsE=
+X-Received: by 2002:a17:906:810:b0:a6f:55e8:b361 with SMTP id
+ a640c23a62f3a-a6f60d402c8mr586958666b.41.1718626464877; Mon, 17 Jun 2024
+ 05:14:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240614033812.51312-1-animeshagarwal28@gmail.com>
+ <b214c9db-fd82-4d5f-9cc2-96857da1bef5@kernel.org> <CAEnQRZBPv+OAmNBHe8fWziw8zJKFkH8vd-oe_G-e3OVSX_sTRQ@mail.gmail.com>
+ <316c0751-17dd-4fc8-b424-bc8e875aaf83@kernel.org>
+In-Reply-To: <316c0751-17dd-4fc8-b424-bc8e875aaf83@kernel.org>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Mon, 17 Jun 2024 15:14:13 +0300
+Message-ID: <CAEnQRZDu34eq2JQTjMGhWj1THOQ9XFOxRAVN__2ATHY5eq36QQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] ASoC: dt-bindings: Convert realtek CODEC bindings to
+ DT schema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, we do port_bo += bps * ch in both inside and outside
-sdw_compute_master_ports(). We can pass port_bo as a pointer and only
-calculate port_bo in sdw_compute_master_ports().
-Besides, different port could use different lanes and we can't just
-add port_bo based on total channels in a manager.
+On Mon, Jun 17, 2024 at 3:09=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 17/06/2024 13:18, Daniel Baluta wrote:
+> > On Fri, Jun 14, 2024 at 11:32=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
+el.org> wrote:
+> >>
+> >> On 14/06/2024 05:38, Animesh Agarwal wrote:
+> >>> Hey all,
+> >>> This patch series converts two of the thirteen realtek audio codec
+> >>> bindings which are still in txt format to DT schema. I have chosen
+> >>> these bindings as they have in tree DTS files.
+> >>
+> >> ... and the point of DTS is?
+> >>
+> >> To validate the DTS against bindings and see if they match.
+> >>
+> >> You received such feedback already.
+> >
+> > Hi Krzysztof,
+> >
+> > I'm afraid I don't understand your comment here.
+> >
+> > Animesh is saying that we are now looking only on bindings that are
+> > actually used in the dts files.
+>
+> Yes and then one should compare the DTS with the binding, because old
+> bindings are often incomplete.
 
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
----
- drivers/soundwire/generic_bandwidth_allocation.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/soundwire/generic_bandwidth_allocation.c b/drivers/soundwire/generic_bandwidth_allocation.c
-index c70a63d009ae..b9316207c3ab 100644
---- a/drivers/soundwire/generic_bandwidth_allocation.c
-+++ b/drivers/soundwire/generic_bandwidth_allocation.c
-@@ -83,7 +83,7 @@ EXPORT_SYMBOL(sdw_compute_slave_ports);
- 
- static void sdw_compute_master_ports(struct sdw_master_runtime *m_rt,
- 				     struct sdw_group_params *params,
--				     int port_bo, int hstop)
-+				     int *port_bo, int hstop)
- {
- 	struct sdw_transport_data t_data = {0};
- 	struct sdw_port_runtime *p_rt;
-@@ -108,7 +108,7 @@ static void sdw_compute_master_ports(struct sdw_master_runtime *m_rt,
- 
- 		sdw_fill_xport_params(&p_rt->transport_params, p_rt->num,
- 				      false, SDW_BLK_GRP_CNT_1, sample_int,
--				      port_bo, port_bo >> 8, hstart, hstop,
-+				      *port_bo, (*port_bo) >> 8, hstart, hstop,
- 				      SDW_BLK_PKG_PER_PORT, 0x0);
- 
- 		sdw_fill_port_params(&p_rt->port_params,
-@@ -120,15 +120,15 @@ static void sdw_compute_master_ports(struct sdw_master_runtime *m_rt,
- 		if (!(p_rt == list_first_entry(&m_rt->port_list,
- 					       struct sdw_port_runtime,
- 					       port_node))) {
--			port_bo += bps * ch;
-+			(*port_bo) += bps * ch;
- 			continue;
- 		}
- 
- 		t_data.hstart = hstart;
- 		t_data.hstop = hstop;
--		t_data.block_offset = port_bo;
-+		t_data.block_offset = *port_bo;
- 		t_data.sub_block_offset = 0;
--		port_bo += bps * ch;
-+		(*port_bo) += bps * ch;
- 	}
- 
- 	sdw_compute_slave_ports(m_rt, &t_data);
-@@ -146,9 +146,7 @@ static void _sdw_compute_port_params(struct sdw_bus *bus,
- 		port_bo = 1;
- 
- 		list_for_each_entry(m_rt, &bus->m_rt_list, bus_node) {
--			sdw_compute_master_ports(m_rt, &params[i], port_bo, hstop);
--
--			port_bo += m_rt->ch_count * m_rt->stream->params.bps;
-+			sdw_compute_master_ports(m_rt, &params[i], &port_bo, hstop);
- 		}
- 
- 		hstop = hstop - params[i].hwidth;
--- 
-2.40.1
+Got it. Means that if DTS has more properties or so we should document them
+in the yaml file.
 
+One thing is that the bindings/properties should have never been added
+in the dts
+without documenting them, but that's another story.
+
+OK, thanks for clarifications we will follow this advice.
 
