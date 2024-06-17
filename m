@@ -1,217 +1,199 @@
-Return-Path: <linux-kernel+bounces-216688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08AE90A316
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:36:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A8A90A317
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B0A52823B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 04:36:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06B5BB20FF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 04:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789B71802AC;
-	Mon, 17 Jun 2024 04:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uPHAVcMf"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2084.outbound.protection.outlook.com [40.107.100.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4058F819;
-	Mon, 17 Jun 2024 04:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718598962; cv=fail; b=Ud+xBWj3xn0noBq7iU2Ae3ZzBbq8mqlSrLPjEPN2slRFWSo4EgrR3Fq6XFFN/Bi8WfIg4lqrEfHs8sPIAyiQWlcCewTAneDzU38XcQM+jQ7UB7gddYnTZ4iJeq5Xz05yvEOsSnBWJRZi9x40qI2c5P/Yjxgu7xwdCpnJ8fSj/SQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718598962; c=relaxed/simple;
-	bh=yewums6JxpdyYrTZn+c0bFz2jxNG5+b3bUNergndDI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bu8dFFtctZKdeTF1UAH/sqW+pUIZbYlj4Ffd6Yg1tO9iCvbb6+hQkd50W58O8pFOF+efLub+yeph95J3rMTKuTr7teEnE4P5seDpBnJ5LCruET+0yzzUnnZwF/oFx9RnXspQNfA50vG1JK1hzQvaYcrTRPMr6GinuNtjjO+D2JQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uPHAVcMf; arc=fail smtp.client-ip=40.107.100.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cS6MBv1kpEUKbn752opehSE8vuVo40+QHM/CwSA36vDW9hvLn6kU+OH4YhuOoDvjAy3zIW0wdCSPiMvzSynGz3fa7vRg11PzLhihjMwTSAQ7F+7TLqjImnqhguMg91FxR6u9fPQ/tdtRjdPzgn9k2vBxeo5BIVDk1yVKIM3hNjrUfani50miJgb0T6m3WGVtW4TKcvZLRgJIh9YEKSCXGpAe8XC0pPdErBkqzTJ2gWDz4JZILuWRUfn1mq4rBDYgnT1cJrDm2SsE+jXAqRiR4UGsFANBGRLdgCaEhX0JfyGnROd2eTXxlFgzb7eyeEFJCm1HXGCsM/gyNLFgO/RbTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WGWQmqRyqMXs038b48yvR4MdWmcP7CQlSWGCb1h0oU0=;
- b=BBukvcezG+b1PkkgZbfctaSvOznCeLdMGUx94vbSaAnZuBrgi0hS+xDDSMIvIzsOEl66coOqqTte+TfdzKGixpoHW4cOT1Bv91Dm7FCys/aM8GvdyP6GpaUb06ISLpiv2D8Ic9Ejh2/lt9gPaISrhmPTr9X4WlZyk8Z4tcsqhlEUyIv0HXklKFHhbz5FRWboachWvbi6H7wdWZH0ZIOcl748qGAa6h1o/0UNXz2AHtfF+1IX873Qf1yRas0BGHEkUGi04VrzNdFkov0UlHOw4IFLl1xerTLmeAeF2AFConwfieTVjV38Lwuuunii2Wg1xg3YHKl1es5t+IcVhpaTxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=armlinux.org.uk smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WGWQmqRyqMXs038b48yvR4MdWmcP7CQlSWGCb1h0oU0=;
- b=uPHAVcMffkz/6M7XVxYV9akUNTj9LIsREr1MivnHsRsKAEpHDTZsKu97eNIuYRaHh9lJqWrQ0kLrlqw7LkebTL+u7JTRNRHCjBEU7//gRKHjBOIcS3bUDXJUD+7dN6ANTUfm8ahrL/JEv2x7r0jA+s8ikoETRdm+jO4t0Jjoorw=
-Received: from DM6PR03CA0072.namprd03.prod.outlook.com (2603:10b6:5:100::49)
- by DS7PR12MB8249.namprd12.prod.outlook.com (2603:10b6:8:ea::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
- 2024 04:35:54 +0000
-Received: from DS1PEPF0001709C.namprd05.prod.outlook.com
- (2603:10b6:5:100:cafe::23) by DM6PR03CA0072.outlook.office365.com
- (2603:10b6:5:100::49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30 via Frontend
- Transport; Mon, 17 Jun 2024 04:35:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS1PEPF0001709C.mail.protection.outlook.com (10.167.18.106) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Mon, 17 Jun 2024 04:35:54 +0000
-Received: from [10.136.33.236] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 16 Jun
- 2024 23:35:39 -0500
-Message-ID: <4f872eec-f302-5ac4-e914-bcc3ce65950c@amd.com>
-Date: Mon, 17 Jun 2024 10:05:36 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC40D17BB30;
+	Mon, 17 Jun 2024 04:38:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F824819;
+	Mon, 17 Jun 2024 04:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718599088; cv=none; b=pSmeBm9oteuy8swqzDocas019w6KSCCht8Ap35MfL5H3EPGFCrzw9mz/sqOAatR9XvpMvrAI39QSZMNyKxeq/06hphhM044AXgku9H7aiWFv0hr+ho+eHbxEYs0woJYMBtUikrv8myTWL1SIWd6WEbR/ZgtYMLI5w8/D4HSY/1I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718599088; c=relaxed/simple;
+	bh=eJIz2tyShgz40sZq8k/Py1zA+0bWXqJRV39NwDCcjHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=retyccuwxMD7vB7FhP8G/PeNuggdVB+eVlw9mPTG+9fkU/atMC7Zz1RvUnyRtq5qP+YqougdeztGIzrTNf9UQh5dCnFCJjOs1wKho2Ze716PY+GEhyYgp1UgKHMB8FgGl3hqUGZ2SX9hJu94zJ1iaCz/HUYai5qMbl/w+X9guuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98B96DA7;
+	Sun, 16 Jun 2024 21:38:28 -0700 (PDT)
+Received: from [10.162.16.42] (a077893.blr.arm.com [10.162.16.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DDAC3F64C;
+	Sun, 16 Jun 2024 21:37:59 -0700 (PDT)
+Message-ID: <e7307246-95e4-406c-802e-c1d190e39b36@arm.com>
+Date: Mon, 17 Jun 2024 10:07:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH v2 00/14] Introducing TIF_NOTIFY_IPI flag
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V18 3/9] drivers: perf: arm_pmu: Add infrastructure for
+ branch stack sampling
 Content-Language: en-US
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: <linux-kernel@vger.kernel.org>, "Gautham R. Shenoy"
-	<gautham.shenoy@amd.com>, Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
-	Guo Ren <guoren@kernel.org>, Michal Simek <monstr@monstr.eu>, Dinh Nguyen
-	<dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, Stefan Kristiansson
-	<stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller
-	<deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
-	<npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen
- N. Rao" <naveen.n.rao@linux.ibm.com>, Yoshinori Sato
-	<ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, "John Paul
- Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, "David S. Miller"
-	<davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin"
-	<hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Peter Zijlstra <peterz@infradead.org>, "Juri
- Lelli" <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, "Valentin
- Schneider" <vschneid@redhat.com>, Andrew Donnellan <ajd@linux.ibm.com>,
-	Benjamin Gray <bgray@linux.ibm.com>, Frederic Weisbecker
-	<frederic@kernel.org>, Xin Li <xin3.li@intel.com>, Kees Cook
-	<keescook@chromium.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, "Tony
- Battersby" <tonyb@cybernetics.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	"Brian Gerst" <brgerst@gmail.com>, Leonardo Bras <leobras@redhat.com>, Imran
- Khan <imran.f.khan@oracle.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Rik
- van Riel" <riel@surriel.com>, Tim Chen <tim.c.chen@linux.intel.com>, David
- Vernet <void@manifault.com>, Julia Lawall <julia.lawall@inria.fr>,
-	<linux-alpha@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-csky@vger.kernel.org>, <linux-openrisc@vger.kernel.org>,
-	<linux-parisc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-sh@vger.kernel.org>, <sparclinux@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <x86@kernel.org>
-References: <20240613181613.4329-1-kprateek.nayak@amd.com>
- <Zm2kouKx/NSSrr6x@shell.armlinux.org.uk>
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <Zm2kouKx/NSSrr6x@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ will@kernel.org, catalin.marinas@arm.com, Mark Brown <broonie@kernel.org>,
+ James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
+ Marc Zyngier <maz@kernel.org>, Suzuki Poulose <suzuki.poulose@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, linux-perf-users@vger.kernel.org
+References: <20240613061731.3109448-1-anshuman.khandual@arm.com>
+ <20240613061731.3109448-4-anshuman.khandual@arm.com>
+ <ZmxbYxE5PBl4CHzE@J2N7QTR9R3.cambridge.arm.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <ZmxbYxE5PBl4CHzE@J2N7QTR9R3.cambridge.arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001709C:EE_|DS7PR12MB8249:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62c378d6-3196-4602-553a-08dc8e86f99f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|7416011|376011|36860700010|1800799021|82310400023;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aHVjNUI3OGVUdW5VK2pqVlFNZTFlTE83MklqUS9TWW1FMDdQeUN1WDRmdXl1?=
- =?utf-8?B?Nkg0NldIc0tqcU82RnM3Z0Rxd3YwRC9tay9UOWV1YW1NTlVKaDgrOFptRE1F?=
- =?utf-8?B?M3VMSWNJUGlQY0VNbjBJSWlqMXFQMzVFSU0wVlR6REN6bXpLUXpITGJLVWZ1?=
- =?utf-8?B?QzVoVEhvaXRybE84c2lObnN5WXJ6ZjNhUU84My9ldmxqL1oyb1JMdWk2MDh0?=
- =?utf-8?B?aEJtcVY2T1dsL1Y2WlZXZStwWXdoZlVyR3JIeXh3eU5mY2ZyQU1kNHgxQk9w?=
- =?utf-8?B?L2NwK1pTRDQ4YXBQNFdwdmFPbGo5SjZnUjViVytTN1FwS2lTdW5UZUR4QmNP?=
- =?utf-8?B?Q29xUGUwaDlzeGxwdlhEeFVucGJ4c0pkdGpJMitmZXNKcmQvbXR0OUZYdVNk?=
- =?utf-8?B?Vm9lSDdUN053N0hsOXZzd3dJdWNxY2cvWktTMjg3bnZwbUtXQUcxNThaTUYr?=
- =?utf-8?B?cmk1U2pSbEVEVWRlN1BqT3NRWVlXYTRMaERiOUJ1S2FvNkhtT2R2WitKbHFk?=
- =?utf-8?B?YmtOZDZXVXpjNjRSODVuL01ETWVibkVBdGRJeWVUZHlhaVF2cDB1Ni9xdlBp?=
- =?utf-8?B?VHRValdGekFkVWp2elJHZFh3b0FSdk8xWUh4b3BSR0JRVHBZSnFZWHJBdE5z?=
- =?utf-8?B?NzlMTEZnUnBiUTBZbm43WEFpZE5heFBJWDNrbk5UMUtySksrSCs1Ynl5c2FO?=
- =?utf-8?B?UlVJWE1BM3hQYlBsMFJndGsvTHNoZDlRWXpaN2NmcVFIN1VyU0tRM1M1ZzM2?=
- =?utf-8?B?NGk5clV4NWVOU3pBMkhzY1ZkVVROUkNBa3lEQjZXNmtXcFlnY1ZEZWxhZUNE?=
- =?utf-8?B?aG1mTDM0QUh6MmxiZXR6cnd3b04rZUlFU0czT1A2TWlTcnFtT3RtZUJWU0Nt?=
- =?utf-8?B?ZFJmdVBlOGJIVGFkM2NSQmxGelN0WVI1WjhkeEc2cDd2elgwenBSNGhoRDJU?=
- =?utf-8?B?OStmQllRTHFmSmh5VDZHcEhKTG9aQ0dSUUJiOGtSRmoyckJSQnhnMWFieEpj?=
- =?utf-8?B?aU5SRmN0aXc5dTdvYzUrTSsrWkt0MnhyeVRrdCsxZkY3R1FydFRMNC9GOXJN?=
- =?utf-8?B?STROV3BLMWo2VXBSNDZTSVJVaHRHdjlqd0Z4NnFSOWJMMmdaeXMzSlVMNUsw?=
- =?utf-8?B?RVZZZFZYRjNqeTlNTXVldEsyMFFOd015alVRSUdvZWU0UEJESWp5U0dNSCtr?=
- =?utf-8?B?YVlOdUVHeU44L0FNVkQ1cnpsT2F1dy8wbmphaUFncjFuQ3JRRVQwMWZlUVB0?=
- =?utf-8?B?ODFJSUV4V2IxeUQ2TzlseVErWVRZOXo0OEJlR1ZQYXovS0grbjgzWDMxcUFt?=
- =?utf-8?B?c0JOM0VndXNyMlMwUXl4ekU5YksxSU9wNlUrSWhUdUtJVDZsTEJFODRQR1Zw?=
- =?utf-8?B?cWZzWi8zWFcxSWlpaVhLU054cll6cGZtN28xRUVLL3hrdlFIakVBcG5NU2Rm?=
- =?utf-8?B?YndMMkl1M0k2ZUIwbUJJbWF1cWZBVzVZY0ZML2lmSlA5dzRHenZOSWR2R1Vs?=
- =?utf-8?B?OEMrWlgwczJsNXR6QjNjeDkvYUI1Mk02bVRHVUpLUUlSbXNveWEzbE9lQkVn?=
- =?utf-8?B?b3pXK0NNeTNma2xJM1lRWHZBY3N0aWt1SFB3TDc2eThNUW52WFBHd2VoZGJ5?=
- =?utf-8?B?U1BZb3U3bEZTWWhvZWhXZVlwUyt0NUNndE1mS25mNzQ4Z1lDb0EraGpaNlFE?=
- =?utf-8?B?VGY2S1BEMlE3VDBXZDV3WlBDaXZWYmQ3c3pWblpJWnRmKytJOThMVFR4ZW9L?=
- =?utf-8?B?U0FTSmliam1POFM3TzE3ZnEyNTJSZWt1ZEFyTlkrQWI3ZTh6b29KekFxS2NH?=
- =?utf-8?B?RmFDa1JEVzJLMkg0VGNwdz09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(7416011)(376011)(36860700010)(1800799021)(82310400023);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 04:35:54.3404
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62c378d6-3196-4602-553a-08dc8e86f99f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF0001709C.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8249
 
-Hello Russell,
 
-On 6/15/2024 7:56 PM, Russell King (Oracle) wrote:
-> On Thu, Jun 13, 2024 at 06:15:59PM +0000, K Prateek Nayak wrote:
->> o Dropping the ARM results since I never got my hands on the ARM64
->>    system I used in my last testing. If I do manage to get my hands on it
->>    again, I'll rerun the experiments and share the results on the thread.
->>    To test the case where TIF_NOTIFY_IPI is not enabled for a particular
->>    architecture, I applied the series only until Patch 3 and tested the
->>    same on my x86 machine with a WARN_ON_ONCE() in do_idle() to check if
->>    tif_notify_ipi() ever return true and then repeated the same with
->>    Patch 4 applied.
+
+On 6/14/24 20:31, Mark Rutland wrote:
+> On Thu, Jun 13, 2024 at 11:47:25AM +0530, Anshuman Khandual wrote:
+>> @@ -289,6 +289,23 @@ static void armpmu_start(struct perf_event *event, int flags)
+>>  {
+>>  	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
+>>  	struct hw_perf_event *hwc = &event->hw;
+>> +	struct pmu_hw_events *cpuc = this_cpu_ptr(armpmu->hw_events);
+>> +	int idx;
+>> +
+>> +	/*
+>> +	 * Merge all branch filter requests from different perf
+>> +	 * events being added into this PMU. This includes both
+>> +	 * privilege and branch type filters.
+>> +	 */
+>> +	if (armpmu->has_branch_stack) {
+>> +		cpuc->branch_sample_type = 0;
+>> +		for (idx = 0; idx < ARMPMU_MAX_HWEVENTS; idx++) {
+>> +			struct perf_event *event_idx = cpuc->events[idx];
+>> +
+>> +			if (event_idx && has_branch_stack(event_idx))
+>> +				cpuc->branch_sample_type |= event_idx->attr.branch_sample_type;
+>> +		}
+>> +	}
 > 
-> Confused. ARM (32-bit) or ARM64? You patch 32-bit ARM, but you don't
-> touch 64-bit Arm. "ARM" on its own in the context above to me suggests
-> 32-bit, since you refer to ARM64 later.
+> When we spoke about this, I meant that we should do this under armpmu::start(),
+> or a callee or caller thereof once we know all the events are configured, just
+> before we actually enable the PMU.
 > 
+> For example, this could live in armv8pmu_branch_enable(), which'd allow
+> all the actual logic to be added in the BRBE enablement patch.
+> 
+> Doing this in armpmu_start() doesn't work as well because it won't handle
+> events being removed.
 
-In my first RFC posting, I had shared the results for ipistorm on an
-ARM64 server [1]. Vincent and Linus Walleij brought to my attention that
-ARM32 and ARM64 do not share the thread info flags and I probably saw a
-one-off behavior during my testing. Since then, it has been slightly
-challenging to get my hands on that machine again in a stable condition
-to see if there was any scenario that I might have missed but I tried a
-bunch of things on my x86 machine to confirm that an arch that does not
-define the TIF_NOTIFY_IPI would not hit these changes.
+Sure, will move this filter aggregation inside armv8pmu_branch_enable() instead
+which is being added via the BRBE driver.
 
-Rest assured, Patch 5 is for ARM32 machines that currently define
-TIF_POLLING_NRFLAG
+diff --git a/drivers/perf/arm_brbe.c b/drivers/perf/arm_brbe.c
+index d795e8fd646f..9cf824bdc8b7 100644
+--- a/drivers/perf/arm_brbe.c
++++ b/drivers/perf/arm_brbe.c
+@@ -856,6 +856,22 @@ void armv8pmu_branch_enable(struct arm_pmu *arm_pmu)
+ {
+        struct pmu_hw_events *cpuc = this_cpu_ptr(arm_pmu->hw_events);
+        u64 brbfcr, brbcr;
++       int idx;
++
++       /*
++        * Merge all branch filter requests from different perf
++        * events being added into this PMU. This includes both
++        * privilege and branch type filters.
++        */
++       if (arm_pmu->has_branch_stack) {
++               cpuc->branch_sample_type = 0;
++               for (idx = 0; idx < ARMPMU_MAX_HWEVENTS; idx++) {
++                       struct perf_event *event_idx = cpuc->events[idx];
++
++                       if (event_idx && has_branch_stack(event_idx))
++                               cpuc->branch_sample_type |= event_idx->attr.branch_sample_type;
++               }
++       }
+ 
+        if (!(cpuc->branch_sample_type && cpuc->branch_users))
+                return;
 
-[1] https://lore.kernel.org/lkml/20240220171457.703-6-kprateek.nayak@amd.com/
+> 
+> [...]
+> 
+>> diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+>> index b3b34f6670cf..9eda16dd684e 100644
+>> --- a/include/linux/perf/arm_pmu.h
+>> +++ b/include/linux/perf/arm_pmu.h
+>> @@ -46,6 +46,18 @@ static_assert((PERF_EVENT_FLAG_ARCH & ARMPMU_EVT_63BIT) == ARMPMU_EVT_63BIT);
+>>  	},								\
+>>  }
+>>  
+>> +/*
+>> + * Maximum branch record entries which could be processed
+>> + * for core perf branch stack sampling support, regardless
+>> + * of the hardware support available on a given ARM PMU.
+>> + */
+>> +#define MAX_BRANCH_RECORDS 64
+>> +
+>> +struct branch_records {
+>> +	struct perf_branch_stack	branch_stack;
+>> +	struct perf_branch_entry	branch_entries[MAX_BRANCH_RECORDS];
+>> +};
+>> +
+>>  /* The events for a given PMU register set. */
+>>  struct pmu_hw_events {
+>>  	/*
+>> @@ -66,6 +78,17 @@ struct pmu_hw_events {
+>>  	struct arm_pmu		*percpu_pmu;
+>>  
+>>  	int irq;
+>> +
+>> +	struct branch_records	*branches;
+>> +
+>> +	/* Active context for task events */
+>> +	void			*branch_context;
+> 
+> Using 'void *' here makes this harder to reason about and hides type
+> safety issues.
+> 
+> Give this a real type. IIUC it should be 'perf_event_context *'.
 
--- 
-Thanks and Regards,
-Prateek
+Sure, will change the type.
+
+> 
+>> +
+>> +	/* Active events requesting branch records */
+>> +	unsigned int		branch_users;
+>> +
+>> +	/* Active branch sample type filters */
+>> +	unsigned long		branch_sample_type;
+>>  };
+>>  
+>>  enum armpmu_attr_groups {
+>> @@ -96,8 +119,15 @@ struct arm_pmu {
+>>  	void		(*stop)(struct arm_pmu *);
+>>  	void		(*reset)(void *);
+>>  	int		(*map_event)(struct perf_event *event);
+>> +	void		(*sched_task)(struct perf_event_pmu_context *pmu_ctx, bool sched_in);
+>> +	bool		(*branch_stack_init)(struct perf_event *event);
+>> +	void		(*branch_stack_add)(struct perf_event *event, struct pmu_hw_events *cpuc);
+>> +	void		(*branch_stack_del)(struct perf_event *event, struct pmu_hw_events *cpuc);
+>> +	void		(*branch_stack_reset)(void);
+> 
+> The reset callback isn't used in this series; s
+> 
+> Subsequent patches call armv8pmu_branch_stack_reset() directly from
+> PMUv3 and the BRBE driver, and arm_pmu::branch_stack_reset() is never
+> used, so we can delete it.
+
+Sure, will drop branch_stack_reset() callback.
 
