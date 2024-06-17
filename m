@@ -1,105 +1,298 @@
-Return-Path: <linux-kernel+bounces-217900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D827A90B5AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:03:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB1290B5FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1921F2159F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:03:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C9E6B32BE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D00B136E18;
-	Mon, 17 Jun 2024 16:00:29 +0000 (UTC)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F501D339D;
+	Mon, 17 Jun 2024 13:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aV5E+N3t";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w/3CwZLM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8F6DDC5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282DF1D2152;
+	Mon, 17 Jun 2024 13:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718640028; cv=none; b=MnUFbBElbRXjUS0fQXDRbm8weJS+md0IPaxLseT8912qZ1+MO6ga6sEHgGittU40+cMLxAcBvDSJG/o+ZZIrPvz8OsgeJSMF2SVpmnN6Ap/1E/EEJWTDlMrC31kJ92RTRD5UPwytS4PYpYgPSasNGv4lYNHyZJ9P75GrNALl9Hs=
+	t=1718632277; cv=none; b=UX4uPvpmOlrbBWrTWvGDPLVZKuXnZsrvRUyYs3jxcFoaFp/77q4ADFuRc2qLdTD7x7UMatfieEMQTAdTOLTzcp56PKw3QEMkJa7iB7MHQcnRwCF3ahsjHq6ckTYtn5HIP46haKWsmYe2qbrWaTQR/Ms59OUFMBIiaH2oDaccJoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718640028; c=relaxed/simple;
-	bh=wclLHlqlNr7EwY24bnx4bSv1OtoPWn8hmuoiv7DVQqE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=X+WwARWoNzdN76iczCvWZ5K6B/4DdCaxfpTpcirNlGW8eBGhcsqbdonKzVRZhxlWU6bVtCWQ61Es5xJgPoDwxLyGIAeMwtIQoXOj54IyO5CzxRbFNmO3InlR6J9OEnQmh/EXKZ0fxx1VLM+IDZ5/VYfReHInHJzyORyILl1GTSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 9617961966A6;
-	Mon, 17 Jun 2024 18:00:24 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id djS-ZRq9K2u8; Mon, 17 Jun 2024 18:00:24 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 40D4B61966CF;
-	Mon, 17 Jun 2024 18:00:24 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id IgyOjvHuzgzt; Mon, 17 Jun 2024 18:00:24 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 1701261966A6;
-	Mon, 17 Jun 2024 18:00:24 +0200 (CEST)
-Date: Mon, 17 Jun 2024 18:00:23 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Gagan Sidhu <broly@mac.com>
-Cc: ZhaoLong Wang <wangzhaolong1@huawei.com>, 
-	Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, 
-	chengzhihao1 <chengzhihao1@huawei.com>, 
-	dpervushin <dpervushin@embeddedalley.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-mtd <linux-mtd@lists.infradead.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, 
-	yangerkun <yangerkun@huawei.com>, yi zhang <yi.zhang@huawei.com>
-Message-ID: <1641029267.251608.1718640023954.JavaMail.zimbra@nod.at>
-In-Reply-To: <14779870-BA54-4ABF-8ABF-FF1D23D172A7@mac.com>
-References: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com> <561660214.251562.1718638970757.JavaMail.zimbra@nod.at> <14779870-BA54-4ABF-8ABF-FF1D23D172A7@mac.com>
-Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
- ftl notifier
+	s=arc-20240116; t=1718632277; c=relaxed/simple;
+	bh=22MOoLTDD0SY/2ALD5cAZkkr31/3Q1Hs6gfaUARXlZ4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Hkiwp+aQE8t13xsaaotEJl3BZug56kpyHX/QSIO5Dz5I5MZEmlPZVe+bB7oVSadJCojbs5D6RvhpZ4PAYZdTsdHDrvGeHExKe9KJOWzPUTkMxzsJXJMl8xAKC3hDqPS3jgzWuXo2y7jsFXr4+Zv3ZORsNv2LaLMj1GngHygMYEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aV5E+N3t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w/3CwZLM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 17 Jun 2024 13:51:10 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718632270;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3S9ELFub5thPcDooeVLXIKd0nYwaEFK3GDN3sowVCQ0=;
+	b=aV5E+N3tICbPhON1WZsd5eB7KX+vb6Qj2WuczRyNa3tGDhDUU4AfRG3t45hR4PX+2Vofph
+	wobLA2dMim0etA+ez0yebt9wBJJg3LtU5ghe33Ehxv6NrRVIKMT41NdWKHAzqHxYH8A7cU
+	O4UPClOBtc1XIJfb/7F8YH+5M3fgfEJJ/7acU3XIfMDUqi/leuppdI/dZs1178gjYKaUwg
+	ORWSChOtCdFAWnBQYYCv1qM9XN/Gq4AtBRIiP65RoHaz+4WDAmFbOLW/k+9mJcSvNQzRGH
+	oaV3afC6GwpRlh3Cw/A/j+ic7Ibj/0VUs8julVgUYP2GfwZ7alDKtv7lsU4wdg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718632270;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3S9ELFub5thPcDooeVLXIKd0nYwaEFK3GDN3sowVCQ0=;
+	b=w/3CwZLM9Or88wnXjvxVQAX/tEvKauf6z0Hkzr7QVNVFpFtOrrBq744bZiQYFzTZazl0kY
+	WBsIJnW6XUZWWyBA==
+From: "tip-bot2 for Herve Codina" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] genirq/generic_chip: Introduce
+ irq_domain_{alloc,remove}_generic_chips()
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Herve Codina <herve.codina@bootlin.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240614173232.1184015-14-herve.codina@bootlin.com>
+References: <20240614173232.1184015-14-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: gluebi: Fix NULL pointer dereference caused by ftl notifier
-Thread-Index: GratdiGYJcZL29llyYc0ImwlBGth1Q==
+Message-ID: <171863227050.10875.6471791790295093098.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Gagan Sidhu" <broly@mac.com>
-> yes, i have a squashfs inside a ubi volume, and i create ubi block device=
- from
-> it.
->=20
-> i do use config_mtd_ubi_block because the filesystem is squashfs.
->=20
-> so i think it=E2=80=99s affirmative to both questions. gluebi for the blo=
-ck device from
-> the ubi.fs file, then config_mtd_ubi_block to mount this read-only filesy=
-stem
-> as a block device.
->=20
-> the end result of both options is a read-only block device that can handl=
-e bad
-> blocks on nand devices.
->=20
-> if i was using an M25P80, i wouldn=E2=80=99t even be using ubi.
->=20
-> so CONFIG_MTD_UBI_{GLUEBI,BLOCK} are handy for cases where you need an mt=
-d block
-> device with a read-only file system where the UBI takes care of the
-> idiosyncrasies that make NAND (imo, ofc) inferior to SPI
+The following commit has been merged into the irq/core branch of tip:
 
-Isn't MTD -> UBI -> GLUBI -> MTD -> MTDBLOCK performance wise a nightmare?
-We have UBIBlock for this use case.
+Commit-ID:     e25f553a92973eaf59ff3a00fe7f61ab01b2877f
+Gitweb:        https://git.kernel.org/tip/e25f553a92973eaf59ff3a00fe7f61ab01b2877f
+Author:        Herve Codina <herve.codina@bootlin.com>
+AuthorDate:    Fri, 14 Jun 2024 19:32:14 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 17 Jun 2024 15:48:14 +02:00
 
-Thanks,
-//richard
+genirq/generic_chip: Introduce irq_domain_{alloc,remove}_generic_chips()
+
+The existing __irq_alloc_domain_generic_chips() uses a bunch of parameters
+to describe the generic chips that need to be allocated.
+
+Adding more parameters and wrappers to hide new parameters in the existing
+code leads to more and more code without any relevant values and without
+any flexibility.
+
+Introduce irq_domain_alloc_generic_chips() where the generic chips
+description is done using the irq_domain_chip_generic_info structure
+instead of the bunch of parameters to allow flexibility and easy evolution.
+
+Also introduce irq_domain_remove_generic_chips() to revert the operations
+done by irq_domain_alloc_generic_chips().
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/20240614173232.1184015-14-herve.codina@bootlin.com
+
+---
+ include/linux/irq.h       | 25 ++++++++++-
+ kernel/irq/generic-chip.c | 91 ++++++++++++++++++++++++++++----------
+ 2 files changed, 93 insertions(+), 23 deletions(-)
+
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index a217e10..58264b2 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -1117,6 +1117,27 @@ struct irq_domain_chip_generic {
+ 	struct irq_chip_generic	*gc[];
+ };
+ 
++/**
++ * struct irq_domain_chip_generic_info - Generic chip information structure
++ * @name:		Name of the generic interrupt chip
++ * @handler:		Interrupt handler used by the generic interrupt chip
++ * @irqs_per_chip:	Number of interrupts each chip handles (max 32)
++ * @num_ct:		Number of irq_chip_type instances associated with each
++ *			chip
++ * @irq_flags_to_clear:	IRQ_* bits to clear in the mapping function
++ * @irq_flags_to_set:	IRQ_* bits to set in the mapping function
++ * @gc_flags:		Generic chip specific setup flags
++ */
++struct irq_domain_chip_generic_info {
++	const char		*name;
++	irq_flow_handler_t	handler;
++	unsigned int		irqs_per_chip;
++	unsigned int		num_ct;
++	unsigned int		irq_flags_to_clear;
++	unsigned int		irq_flags_to_set;
++	enum irq_gc_flags	gc_flags;
++};
++
+ /* Generic chip callback functions */
+ void irq_gc_noop(struct irq_data *d);
+ void irq_gc_mask_disable_reg(struct irq_data *d);
+@@ -1153,6 +1174,10 @@ int devm_irq_setup_generic_chip(struct device *dev, struct irq_chip_generic *gc,
+ 
+ struct irq_chip_generic *irq_get_domain_generic_chip(struct irq_domain *d, unsigned int hw_irq);
+ 
++int irq_domain_alloc_generic_chips(struct irq_domain *d,
++				   const struct irq_domain_chip_generic_info *info);
++void irq_domain_remove_generic_chips(struct irq_domain *d);
++
+ int __irq_alloc_domain_generic_chips(struct irq_domain *d, int irqs_per_chip,
+ 				     int num_ct, const char *name,
+ 				     irq_flow_handler_t handler,
+diff --git a/kernel/irq/generic-chip.c b/kernel/irq/generic-chip.c
+index d39a40b..d9696f5 100644
+--- a/kernel/irq/generic-chip.c
++++ b/kernel/irq/generic-chip.c
+@@ -276,21 +276,14 @@ irq_gc_init_mask_cache(struct irq_chip_generic *gc, enum irq_gc_flags flags)
+ }
+ 
+ /**
+- * __irq_alloc_domain_generic_chips - Allocate generic chips for an irq domain
+- * @d:			irq domain for which to allocate chips
+- * @irqs_per_chip:	Number of interrupts each chip handles (max 32)
+- * @num_ct:		Number of irq_chip_type instances associated with this
+- * @name:		Name of the irq chip
+- * @handler:		Default flow handler associated with these chips
+- * @clr:		IRQ_* bits to clear in the mapping function
+- * @set:		IRQ_* bits to set in the mapping function
+- * @gcflags:		Generic chip specific setup flags
++ * irq_domain_alloc_generic_chips - Allocate generic chips for an irq domain
++ * @d:		irq domain for which to allocate chips
++ * @info:	Generic chip information
++ *
++ * Return: 0 on success, negative error code on failure
+  */
+-int __irq_alloc_domain_generic_chips(struct irq_domain *d, int irqs_per_chip,
+-				     int num_ct, const char *name,
+-				     irq_flow_handler_t handler,
+-				     unsigned int clr, unsigned int set,
+-				     enum irq_gc_flags gcflags)
++int irq_domain_alloc_generic_chips(struct irq_domain *d,
++				   const struct irq_domain_chip_generic_info *info)
+ {
+ 	struct irq_domain_chip_generic *dgc;
+ 	struct irq_chip_generic *gc;
+@@ -304,23 +297,23 @@ int __irq_alloc_domain_generic_chips(struct irq_domain *d, int irqs_per_chip,
+ 	if (d->gc)
+ 		return -EBUSY;
+ 
+-	numchips = DIV_ROUND_UP(d->revmap_size, irqs_per_chip);
++	numchips = DIV_ROUND_UP(d->revmap_size, info->irqs_per_chip);
+ 	if (!numchips)
+ 		return -EINVAL;
+ 
+ 	/* Allocate a pointer, generic chip and chiptypes for each chip */
+-	gc_sz = struct_size(gc, chip_types, num_ct);
++	gc_sz = struct_size(gc, chip_types, info->num_ct);
+ 	dgc_sz = struct_size(dgc, gc, numchips);
+ 	sz = dgc_sz + numchips * gc_sz;
+ 
+ 	tmp = dgc = kzalloc(sz, GFP_KERNEL);
+ 	if (!dgc)
+ 		return -ENOMEM;
+-	dgc->irqs_per_chip = irqs_per_chip;
++	dgc->irqs_per_chip = info->irqs_per_chip;
+ 	dgc->num_chips = numchips;
+-	dgc->irq_flags_to_set = set;
+-	dgc->irq_flags_to_clear = clr;
+-	dgc->gc_flags = gcflags;
++	dgc->irq_flags_to_set = info->irq_flags_to_set;
++	dgc->irq_flags_to_clear = info->irq_flags_to_clear;
++	dgc->gc_flags = info->gc_flags;
+ 	d->gc = dgc;
+ 
+ 	/* Calc pointer to the first generic chip */
+@@ -328,11 +321,12 @@ int __irq_alloc_domain_generic_chips(struct irq_domain *d, int irqs_per_chip,
+ 	for (i = 0; i < numchips; i++) {
+ 		/* Store the pointer to the generic chip */
+ 		dgc->gc[i] = gc = tmp;
+-		irq_init_generic_chip(gc, name, num_ct, i * irqs_per_chip,
+-				      NULL, handler);
++		irq_init_generic_chip(gc, info->name, info->num_ct,
++				      i * dgc->irqs_per_chip, NULL,
++				      info->handler);
+ 
+ 		gc->domain = d;
+-		if (gcflags & IRQ_GC_BE_IO) {
++		if (dgc->gc_flags & IRQ_GC_BE_IO) {
+ 			gc->reg_readl = &irq_readl_be;
+ 			gc->reg_writel = &irq_writel_be;
+ 		}
+@@ -345,6 +339,57 @@ int __irq_alloc_domain_generic_chips(struct irq_domain *d, int irqs_per_chip,
+ 	}
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(irq_domain_alloc_generic_chips);
++
++/**
++ * irq_domain_remove_generic_chips - Remove generic chips from an irq domain
++ * @d: irq domain for which generic chips are to be removed
++ */
++void irq_domain_remove_generic_chips(struct irq_domain *d)
++{
++	struct irq_domain_chip_generic *dgc = d->gc;
++	unsigned int i;
++
++	if (!dgc)
++		return;
++
++	for (i = 0; i < dgc->num_chips; i++)
++		irq_remove_generic_chip(dgc->gc[i], ~0U, 0, 0);
++
++	d->gc = NULL;
++	kfree(dgc);
++}
++EXPORT_SYMBOL_GPL(irq_domain_remove_generic_chips);
++
++/**
++ * __irq_alloc_domain_generic_chips - Allocate generic chips for an irq domain
++ * @d:			irq domain for which to allocate chips
++ * @irqs_per_chip:	Number of interrupts each chip handles (max 32)
++ * @num_ct:		Number of irq_chip_type instances associated with this
++ * @name:		Name of the irq chip
++ * @handler:		Default flow handler associated with these chips
++ * @clr:		IRQ_* bits to clear in the mapping function
++ * @set:		IRQ_* bits to set in the mapping function
++ * @gcflags:		Generic chip specific setup flags
++ */
++int __irq_alloc_domain_generic_chips(struct irq_domain *d, int irqs_per_chip,
++				     int num_ct, const char *name,
++				     irq_flow_handler_t handler,
++				     unsigned int clr, unsigned int set,
++				     enum irq_gc_flags gcflags)
++{
++	struct irq_domain_chip_generic_info info = {
++		.irqs_per_chip		= irqs_per_chip,
++		.num_ct			= num_ct,
++		.name			= name,
++		.handler		= handler,
++		.irq_flags_to_clear	= clr,
++		.irq_flags_to_set	= set,
++		.gc_flags		= gcflags,
++	};
++
++	return irq_domain_alloc_generic_chips(d, &info);
++}
+ EXPORT_SYMBOL_GPL(__irq_alloc_domain_generic_chips);
+ 
+ static struct irq_chip_generic *
 
