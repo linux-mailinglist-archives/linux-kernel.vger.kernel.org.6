@@ -1,73 +1,94 @@
-Return-Path: <linux-kernel+bounces-217082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443F190AA54
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:56:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A18690AA55
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3A401F21F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:56:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A80A928B991
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723AE194A4F;
-	Mon, 17 Jun 2024 09:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB920194A74;
+	Mon, 17 Jun 2024 09:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m3bEcuMU"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1ESoFfPK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3vejC7C4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1ESoFfPK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3vejC7C4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A3E1946BF
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9481946D7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718617873; cv=none; b=W60VL2Zq3Ley8hmYitmXix8pEU2DIQqEt3tkjPdrWmi94Dm3zkSdqM6jlR5VI5ahywgwOsR4D63Ijb8dj92/OuuEr4pNMLMjpebnJ+P8wO146F6jH/B9uB/X1u7wVpTIWiOaK4fgHFUujaPRxXOuw41/Is8BJYK9POuVqx+lo1w=
+	t=1718617875; cv=none; b=bYLlsYX7DK/8b/PK72AcBroVqm5HpuZ09nOWsZtMnWnM1Gu+DGjuAL73zgfvPTZJQ4Vv6kqcV//8E4nBhfR3tJesY5rOtwvY4d6iSiOG+F7gUi9Z0fXXiyjq60ZGsZmYaUObjZzxgPEM6mlZoKV4hPUbsWr8CGD+HkxvJea8kfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718617873; c=relaxed/simple;
-	bh=1y73eQPVodwTMu2gDWLc1JeFO6mTtScZeSbIX23T2UU=;
+	s=arc-20240116; t=1718617875; c=relaxed/simple;
+	bh=KLD0BOjxfIH0b3ISU6h7rKs9ODmCtOYu+VeKfNhkx9I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BIKNP78xgIb6o489mrolWH8Y5RQWLBdkREkr6zNQNXKYgZEqdgG2UaDf97BDUnSVc7YvsxvX7g9gvwwGZnZDHFY07vVhksO+0NtX9BxwVBJXYR10vy6NzDEb0Xxqq5XEBJublgJSxZ0RH+W8ossCle0yrgnPzyFtX0KOXa5x0mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m3bEcuMU; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-354b722fe81so3748832f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:51:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718617870; x=1719222670; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mJ4Sf0Qpnpg0mNfJe0dZM5ooebC8zr2HkLzZYiJ9KxY=;
-        b=m3bEcuMU0t1ZUPPdLrWRWZMxlotDXFbQBtRCwViGnZKuwSbr+uL0ZfYubZp1GNfOxX
-         xbaLjzNOh5TYw4p7+PtQYy8CBPsjMs7e0arxigXFQtAmE5XDynMy/LoQoVWb9MVvr7Pt
-         qUyKbBALunTzuZg6pNhGS+adLzjkqM6hxnPSgyamvZ+sWi8PBJxry7iXR2N2ConeyudG
-         lrUHs2ioOFhtGRfk1+NBiTLuLMDVqOIFHWU6fNmaItTis2+Zij8AV3i3JoZ+eUsVJaDV
-         6zVb5lB6Pj9PzQJt0iRMNuclzsDpdvOMXqt4+nND3at4SpWoCLtQHVVA9NDXPEOmjVQb
-         DVwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718617870; x=1719222670;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mJ4Sf0Qpnpg0mNfJe0dZM5ooebC8zr2HkLzZYiJ9KxY=;
-        b=vsIW5f/RbbP0kB8YVrPR9S2FplWG/6AwDsJLetduMNBWaOhg4bwCjmwiJMTrk0Q58C
-         eKO/ijGYuF8oYSyX+BO8xYY/ZGk65VVVGW3DzO3mqj26+TxIH75JX1rXn+aWmdZ8oXSa
-         pnjPf0g1uo7Cv82ZYfH+vGlo+Pd8SwzdSH3QLBK4NmqJ/Yl4rQfT1MbSJ6fsqoNvAYgY
-         bl/rgzlBo1X8Mov/mjQGtIhL2SOyOkk5FQUarYJb8hY9stSi22uXV/nQC5iPlWRd1cO5
-         2Z/Z4l29dVIr+kVbFQWzBSd/fEf5pr+QMt0gVRx0GpQBaFoRgQkBEH54zDfuTss2DVKi
-         jl7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWMsh0twc/XBn/APNLCGiBWHypqfUu62hTuUjpB3tITd2+WY5PdkfE+3W26V2G7ADFSI8/6BAFLErVsFvw7K55me7sFvuNC7a89ne8P
-X-Gm-Message-State: AOJu0YwM0S8uDtL2IUJTlmoAP0R3iVJsbXmDB8nVvALIvnVsTs3xEYSd
-	dAZmguXjNW3B+BqUldIS64/BuVSho8kB7+60ioEdy4PLVCHCFFY35jDZ0jO8qvc=
-X-Google-Smtp-Source: AGHT+IG9PUbxCPf1bgdr95dC5Am+XNjIYf8nW+qqKLMvGs09SVCiTZEntEjWJwmp7GgG/3LuhbnIqw==
-X-Received: by 2002:a5d:64ea:0:b0:360:8589:37c0 with SMTP id ffacd0b85a97d-3608589385dmr7022782f8f.8.1718617870085;
-        Mon, 17 Jun 2024 02:51:10 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750ad20bsm11420396f8f.54.2024.06.17.02.51.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 02:51:09 -0700 (PDT)
-Message-ID: <01041302-120b-4f9d-87f2-bd841dcd227a@linaro.org>
-Date: Mon, 17 Jun 2024 10:51:08 +0100
+	 In-Reply-To:Content-Type; b=pwZ6HrhXhtVEEfU9wt3xpzwB+O2fEtGYblBAORhU0wxAdA6mjKaaJScAgSMz7fdo4vWAsgBs75nOWr+4B0ig1GLafNU7kH/KPTa+LJUIM+kKj58QclGiLWkSxaqI0s4qIJEwn07gvPWGgQLlcUuA3GLYEVa6BcJX3pFTK09YJtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1ESoFfPK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3vejC7C4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1ESoFfPK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3vejC7C4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 170B437FA8;
+	Mon, 17 Jun 2024 09:51:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718617872; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fuIeDQYjpzcVAvYyapi1f6nI5RxpTFpdwPDiKAdC4rg=;
+	b=1ESoFfPKDBQeHgZoK6C6BOQ5WTYbF9bcscwveSB3jOqz1FdUVLi6hZH+MZF5jFr+o1wpV4
+	VgU9Jm8nwEJ1uqU9Cbt4iBa8Ucvlg90mjRw8rlKG68v4iQ9EU8ZROsBPnKX+UOdO8729cb
+	xqzzgJlS3BzKHUEfPF4r0dT6cERE5uY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718617872;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fuIeDQYjpzcVAvYyapi1f6nI5RxpTFpdwPDiKAdC4rg=;
+	b=3vejC7C4zmUV0GQPnlOnZ+xQQW9mqcdWXWH1gDqbDFIjLs0yhAD5AhWBB6bdKNQwO4PaG6
+	qT5lx+gCXI8XILBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718617872; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fuIeDQYjpzcVAvYyapi1f6nI5RxpTFpdwPDiKAdC4rg=;
+	b=1ESoFfPKDBQeHgZoK6C6BOQ5WTYbF9bcscwveSB3jOqz1FdUVLi6hZH+MZF5jFr+o1wpV4
+	VgU9Jm8nwEJ1uqU9Cbt4iBa8Ucvlg90mjRw8rlKG68v4iQ9EU8ZROsBPnKX+UOdO8729cb
+	xqzzgJlS3BzKHUEfPF4r0dT6cERE5uY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718617872;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fuIeDQYjpzcVAvYyapi1f6nI5RxpTFpdwPDiKAdC4rg=;
+	b=3vejC7C4zmUV0GQPnlOnZ+xQQW9mqcdWXWH1gDqbDFIjLs0yhAD5AhWBB6bdKNQwO4PaG6
+	qT5lx+gCXI8XILBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ED68D139AB;
+	Mon, 17 Jun 2024 09:51:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4WyIOQ8HcGYzfAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 17 Jun 2024 09:51:11 +0000
+Message-ID: <7eaee8ce-ad5b-41ea-9eb5-83195f83fd24@suse.cz>
+Date: Mon, 17 Jun 2024 11:51:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,113 +96,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 RESEND 5/5] venus: pm_helpers: Use
- dev_pm_genpd_set_hwmode to switch GDSC mode on V6
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki"
- <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>,
- Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andy Gross <agross@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pm@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20240413152013.22307-1-quic_jkona@quicinc.com>
- <20240413152013.22307-6-quic_jkona@quicinc.com>
- <5c78ad52-524b-4ad7-b149-0e7252abc2ee@linaro.org>
- <b96ef82c-4033-43e0-9c1e-347ffb500751@quicinc.com>
- <a522f25f-bb38-4ae1-8f13-8e56934e5ef5@linaro.org>
- <dbd1b86c-7b5f-4b92-ab1f-fecfe1486cfc@quicinc.com>
- <621dbaaa-6b86-45b5-988e-a6d9c39b13d7@linaro.org>
- <d36c1163-a3f0-4034-a430-91986e5bbce8@linaro.org>
- <ef194e5c-f136-4dba-bfe0-2c6439892e34@linaro.org>
- <d2e55523-f8fd-4cbe-909c-57de241107e8@linaro.org>
- <1df48a42-3b4e-4eb4-971b-cd4be001ba27@quicinc.com>
- <93a67151-02fa-4c53-8d6e-0ed1600128bf@quicinc.com>
+Subject: Re: [PATCH v3 1/3] slab: make check_object() more consistent
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <93a67151-02fa-4c53-8d6e-0ed1600128bf@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Chengming Zhou <chengming.zhou@linux.dev>,
+ "Christoph Lameter (Ampere)" <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com, Kees Cook <keescook@chromium.org>
+References: <20240607-b4-slab-debug-v3-0-bb2a326c4ceb@linux.dev>
+ <20240607-b4-slab-debug-v3-1-bb2a326c4ceb@linux.dev>
+ <63da08b7-7aa3-3fad-55e6-9fc3928a49de@gentwo.org>
+ <8b844d71-01f1-472b-a63a-4c9cdb26e9ef@suse.cz>
+ <e93fc5a6-434f-376c-a819-353124da053d@linux.com>
+ <e655405f-92b2-46e4-830e-013586bd0022@linux.dev>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <e655405f-92b2-46e4-830e-013586bd0022@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Score: -2.79
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,intel.com,kvack.org,vger.kernel.org,bytedance.com,chromium.org];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
 
-On 17/06/2024 03:31, Jagadeesh Kona wrote:
+On 6/14/24 4:40 AM, Chengming Zhou wrote:
+> On 2024/6/12 06:52, Christoph Lameter (Ampere) wrote:
+>> On Mon, 10 Jun 2024, Vlastimil Babka wrote:
+>> 
+>>> Even if some security people enable parts of slub debugging for security
+>>> people it is my impression they would rather panic/reboot or have memory
+>>> leaked than trying to salvage the slab page? (CC Kees)
+>> 
+>> In the past these resilience features have been used to allow the continued operation of a broken kernel.
+>> 
+>> So first the Kernel crashed with some obscure oops in the allocator due to metadata corruption.
+>> 
+>> One can then put a slub_debug option on the kernel command line which will result in detailed error reports on what caused the corruption. It will also activate resilience measures that will often allow the continued operation until a fix becomes available.
 > 
+> This reminds me that we can't toggle slub_debug options for kmem_cache in runtime,
+> I'm wondering is it useful to be able to enable/disable debug options in runtime?
+> We can implement this feature by using per-slab debug options, so per-slab has
+> independent execution path, in which some slabs with debug options enabled go
+> the slow path, while others can still go fast path.
+
+Many of the debug options change the layout of objects in slabs (i.e. affect
+calculate_sizes()) so it would be very complicated to change things in
+runtime. Also the cache might be merged with other ones if it boots without
+debug... I don't think it would be feasible at all.
+
+> No sure if it's useful in some cases? Maybe KFENCE is enough? Just my random thoughts.
 > 
-> On 5/31/2024 5:26 PM, Jagadeesh Kona wrote:
->>
->>
->> On 5/10/2024 6:31 PM, Bryan O'Donoghue wrote:
->>> On 01/05/2024 10:14, Bryan O'Donoghue wrote:
->>>> On 30/04/2024 21:01, Konrad Dybcio wrote:
->>>>> On 24.04.2024 11:50 AM, Bryan O'Donoghue wrote:
->>>>>> On 24/04/2024 10:45, Jagadeesh Kona wrote:
->>>>>>>
->>>>>>> Thanks Bryan for testing this series. Can you please confirm if 
->>>>>>> this issue is observed in every run or only seen during the first 
->>>>>>> run? Also please let me know on which platform this issue is 
->>>>>>> observed?
->>>>>>>
->>>>>>> Thanks,
->>>>>>> Jagadeesh
->>>>>>
->>>>>> rb5/sm8250
->>>>>>
->>>>>> My observation was on a previous _boot_ the stuttering was worse. 
->>>>>> There is in the video capture three times that I count where the 
->>>>>> video halts briefly, I guess we need to vote or set an OPP so the 
->>>>>> firmware knows not to power-collapse quite so aggressively.
->>>>>
->>>>> We seem to be having some qualcomm-wide variance on perf/pwr usage 
->>>>> on some
->>>>> odd boots.. Any chance you could try like 5 times and see if it was 
->>>>> a fluke?
->>>>>
->>>>> Konrad
->>>>
->>>> Sure.
->>>>
->>>> The first time I tried it, it was much worse.
->>>>
->>>> The second time, captured in the video is only noticeable because I 
->>>> was *looking* for this specific error i.e. I don't think I would 
->>>> have noticed the error on the second run, had I not seen the first run.
->>>>
->>>> I'll find some time to do 5x with and 5x without.
->>>>
->>>> ---
->>>> bod
->>>
->>> ping bod please remember to do this thanks
->>>
->>
->> Hi Bryan, Could you please let me know if you got a chance to check 
->> the above? Thank you!
->>
-> 
-> Hi Bryan, Kindly can you please help confirm if this is a real issue or 
-> observed as a fluke? so we can go ahead and mainline these changes.
-> 
-> Thanks,
-> Jagadeesh
+> Thanks.
 
-So I'm happier with this patchset when I run gstreamer instead of ffmpeg.
-
-There doesn't appear to be a discernable difference between before/after 
-on framerate or subjective UX with/without this set.
-
-gst-launch-1.0 -vvv -e filesrc location=sample-5s.mp4 ! qtdemux ! 
-parsebin ! v4l2h264dec ! autovideosink
-
-Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
