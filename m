@@ -1,188 +1,120 @@
-Return-Path: <linux-kernel+bounces-218192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0440890BA7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:03:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A0790BA87
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4894D284FC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:02:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ECA51F21BF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2055198E84;
-	Mon, 17 Jun 2024 19:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8089198E84;
+	Mon, 17 Jun 2024 19:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/glavAc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WApkWx4t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A070198843;
-	Mon, 17 Jun 2024 19:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A60134A9;
+	Mon, 17 Jun 2024 19:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718650973; cv=none; b=mI/Ra1v0PpHIYwgewHUkXIy37bbI5u8DfSKjE5Pj1kM7LI4YBwqZ1O0ZLPm1MK1qe1BhOav+4gY0fp58nNGT4uLrc1DYl4UrfaiphegQX/2ETOzVi/YXUj9T/tWxXHICQooqUzmBrx1FB3bkBoi4nrZEBIss586p5Psgu2o1pVo=
+	t=1718651049; cv=none; b=XAlsCbkL36oKSpG4Rj5R6+MLTc5dJJfih20ukEcKxfxUqqm4RzM1PJKMJBCu2D4sNJssxmeWD01nqtLENZpF/uIDz+6dKRUBX5jD+lver9j7mMlGKwoMGN8w0UA4OLDmeHNnoxhbI43nriAlEqVUedZyT0aTHgr9TgjKnWAfG7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718650973; c=relaxed/simple;
-	bh=X/bpbal1IiAjmGUQRV20MmE4je4hGHSY31mwwAB1mu4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G2yWc0con9dg80P7HCg6WxpFTwtJgdvHfBH+puv7R1CeTb4AzdURy+vxe2MkePWOGUexEyS6cQ1fMgnDATWpytYq2iusnESn1EWw0a5DsOVCODS2+JdwBgk5nGEY2EXgSh/iiUI7U6wHMeH8FX5FeFzX7GIPmkdt1DQs7DFnkuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/glavAc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82132C4AF1C;
-	Mon, 17 Jun 2024 19:02:52 +0000 (UTC)
+	s=arc-20240116; t=1718651049; c=relaxed/simple;
+	bh=qfyso2qMLybGpX61RQ+fiugcmyG5+ZY0OPKYZo3IQ9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H5Kk/1qbVbl390/zjsFILtc06upFJ4V8lXJfYe2uXuyMU8M9OBvLgwHbPJHhMai1P/XE5RRjQhirkNCA2V1uGzo/OfnkDAR7UvL9Kh5c1k4ZrsLFxV0/U/44cxsbrPmK/zwDc++yog5nDgMEkUyP8BTK+ibbggAwlQooiznknv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WApkWx4t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 819EFC2BD10;
+	Mon, 17 Jun 2024 19:04:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718650972;
-	bh=X/bpbal1IiAjmGUQRV20MmE4je4hGHSY31mwwAB1mu4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P/glavAcDFDHNTlpwUN+yovbxF+BLqxiOKAKqPLZ971r8wrlZMr3O46FjHiy6pNCc
-	 EEremrAe4kxS6g/ovFmRfwYNMc0OPf+45/pWQUuNSg1yFUtdZYaz7fa6FIGW9PcD+3
-	 /nrM4Msf4Mx3po7XJWaxQEhUfZFHJwLoMPofgxe8U5q46kAt5M6Nsdgw9XKfMqxUis
-	 PKvl4hup9/azf1Xw8541L8qJ5O/b0Jl742wgN0WgRrut7RdRcHcqS+B/vu51GsHYl7
-	 w/UKbOeDNeL6wAAi6o9tTlb+T/WCXH6JnTtYWXKRa7WTEqqBKxoYR33cao96eW5R6n
-	 dpsPBUChpjJaw==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-254e7bdfac1so280417fac.0;
-        Mon, 17 Jun 2024 12:02:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX2p1Y3gVOA/tNTGn8BZ3AfRfJFL6/bWpeN/y6pi4mHrj37tm4LboSm95YFBMGHF+j9+8XqYaB0p51yVeEjADb0jMsUu2S8AR0+ss8AVxrmhDxHHA4z+uuXepzijOL3WJZ/MLsYsS0=
-X-Gm-Message-State: AOJu0Yw1ncTVpfBMuVCi1GUobbd+34PiaZoNcx40Wiwgs80FrlFsj+ID
-	H8XI1M0rurK/iRa0+zia3/rkIjCdzxE+giXJisWcoe4wIp4QbiqlXlieIHsdr/7jxj4CO0dL4Hd
-	49JMcY7ys1H+KyDYXkHTAN2jCfWY=
-X-Google-Smtp-Source: AGHT+IGTqpy7xoT2jl9YetggBH57vfPKPydEed9o7YOYzQbquHL8zhjh8zehk88q1tuIeLeVH+uExQB6LaM29L+UT1M=
-X-Received: by 2002:a4a:c482:0:b0:5bd:ad72:15d3 with SMTP id
- 006d021491bc7-5bdadc0905fmr11140135eaf.1.1718650971801; Mon, 17 Jun 2024
- 12:02:51 -0700 (PDT)
+	s=k20201202; t=1718651048;
+	bh=qfyso2qMLybGpX61RQ+fiugcmyG5+ZY0OPKYZo3IQ9o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WApkWx4txrab+zq2C/BuIEtSPTivz+0RK+P5RujtU3kVXXD3t6kFum+m+jy8HP9/w
+	 s3qMMurypPbijMf/uTOCuVVZAgi/z/741/W/vNt01AS7M1a+WLSfXAOIfgfXOX1wXh
+	 TGRB1x6E+Re7m2sI1p6AFczzloFBy7fEE7/lIHZGNCbxC2EeA7BKXIzJZwmW0bzPSg
+	 YKyPj+CPGcx66uyy2WdriIKLDuH6lK5mIhPmJ21T9bwXRAubD/qsE4e1Z+Lc1/VBij
+	 XAN42v0bX0RplsVUGoLQhBfNV0ZrHnR2ToDUmbj4Qwu1xdtDvQTj4sNUMo2u/h/aPm
+	 GxT2bN9f+/t0w==
+Date: Mon, 17 Jun 2024 20:04:03 +0100
+From: Simon Horman <horms@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Petr Oros <poros@redhat.com>, netdev@vger.kernel.org,
+	ivecera@redhat.com, przemyslaw.kitszel@intel.com,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Marcin Szycik <marcin.szycik@linux.intel.com>,
+	Konrad Knitter <konrad.knitter@intel.com>,
+	Marcin Domagala <marcinx.domagala@intel.com>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v2] ice: use proper macro for testing bit
+Message-ID: <20240617190403.GZ8447@kernel.org>
+References: <20240614094338.467052-1-poros@redhat.com>
+ <20240615151641.GG8447@kernel.org>
+ <da984106-43eb-42cc-a8c0-be859c6e84e9@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8409966.T7Z3S40VBb@kreacher> <3312460.oiGErgHkdL@kreacher>
- <20240617183949.GO382677@ragnatech.se> <CAJZ5v0ggoTXMHxwjVy9OZ4sQU5UHPwEo1OwYwRFVTzsUErje5w@mail.gmail.com>
-In-Reply-To: <CAJZ5v0ggoTXMHxwjVy9OZ4sQU5UHPwEo1OwYwRFVTzsUErje5w@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 17 Jun 2024 21:02:40 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hLALNVdBQ3_Sg=5XEBzymyS-8bOscdPzg-MpqntX_9Ww@mail.gmail.com>
-Message-ID: <CAJZ5v0hLALNVdBQ3_Sg=5XEBzymyS-8bOscdPzg-MpqntX_9Ww@mail.gmail.com>
-Subject: Re: [PATCH v1 13/14] thermal: trip: Replace thermal_zone_get_num_trips()
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da984106-43eb-42cc-a8c0-be859c6e84e9@intel.com>
 
-On Mon, Jun 17, 2024 at 8:55=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> Hi Niklas,
->
-> On Mon, Jun 17, 2024 at 8:39=E2=80=AFPM Niklas S=C3=B6derlund
-> <niklas.soderlund+renesas@ragnatech.se> wrote:
-> >
-> > Hi Rafael,
-> >
-> > Thanks for your patch.
-> >
-> > On 2024-06-17 20:11:30 +0200, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > The only existing caller of thermal_zone_get_num_trips(), which is
-> > > rcar_gen3_thermal_probe(), uses this function to check whether or
-> > > not the number of trips in the given thermal zone is nonzero.
-> > >
-> > > Because it really only needs to know whether or not the given
-> > > thermal zone is tripless, replace thermal_zone_get_num_trips() with
-> > > thermal_zone_is_tripless() that can tell rcar_gen3_thermal_probe()
-> > > exactly what it needs to know and make it call that function.
-> > >
-> > > No intentional functional impact.
-> > >
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >  drivers/thermal/renesas/rcar_gen3_thermal.c |    3 +--
-> > >  drivers/thermal/thermal_trip.c              |    6 +++---
-> > >  include/linux/thermal.h                     |    2 +-
-> > >  3 files changed, 5 insertions(+), 6 deletions(-)
-> > >
-> > > Index: linux-pm/drivers/thermal/renesas/rcar_gen3_thermal.c
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > --- linux-pm.orig/drivers/thermal/renesas/rcar_gen3_thermal.c
-> > > +++ linux-pm/drivers/thermal/renesas/rcar_gen3_thermal.c
-> > > @@ -563,8 +563,7 @@ static int rcar_gen3_thermal_probe(struc
-> > >               if (ret)
-> > >                       goto error_unregister;
-> > >
-> > > -             ret =3D thermal_zone_get_num_trips(tsc->zone);
-> > > -             if (ret < 0)
-> > > +             if (thermal_zone_is_tripless(tsc->zone))
-> >
-> > There are two issues with this change.
-> >
-> > 1. The original code only jumped to error_unregister if there where a
-> >    negative number of trip points, presumably to allow for an error to
-> >    be returned when reading the number of trip points.
-> >
-> >    If an negative error was found it was stored in ret, and this was
-> >    then returned from the probe function after jumping to
-> >    error_unregister. This change jumps to the error out path, but do no=
-t
-> >    fail probe.
-> >
-> >    However it is valid to complete probe without any trip points found.
-> >    So failing probe on thermal_zone_is_tripless() is not desired.
-> >
-> > 2. The value returned from thermal_zone_get_num_trips() and stored in
-> >    ret is used in a dev_info() below, logging how many trip points (if
-> >    any) where found.
-> >
-> >    With this change that is no longer true and it will always log 0 tri=
-p
-> >    points found.
->
-> You are right, I've overlooked the above.
->
-> > As there is no long (if there ever where) a reason to check for errors
-> > when reading the number of trip points, and no real use to log the
-> > number of trip points found maybe a modified patch can do what you want
-> > (not tested).
-> >
-> > - ret =3D thermal_zone_get_num_trips(tsc->zone);
-> > - if (ret < 0)
-> > -    goto error_unregister;
-> > -
-> > - dev_info(dev, "Sensor %u: Loaded %d trip points\n", i, ret);
-> > + dev_info(dev, "Sensor %u: Loaded %s trip points\n", i,
-> > +       thermal_zone_is_tripless(tsc->zone) ? "with" : "without");
-> >
-> > What do you think?
->
-> I would rather first update the driver to stop failing when the zone
-> is tripless, in a separate patch.
+On Mon, Jun 17, 2024 at 02:58:59PM +0200, Alexander Lobakin wrote:
+> From: Simon Horman <horms@kernel.org>
+> Date: Sat, 15 Jun 2024 16:16:41 +0100
+> 
+> > On Fri, Jun 14, 2024 at 11:43:38AM +0200, Petr Oros wrote:
+> >> Do not use _test_bit() macro for testing bit. The proper macro for this
+> >> is one without underline.
+> > 
+> > Hi Petr,
+> > 
+> > it might be nice to include a brief explanation as to
+> > why test_bit() is correct.
+> 
+> Let me explain this as the author of all those bitops wrappers :D
+> Petr is free to include either this or his own brief into v2.
+> 
+> _test_bit() is what test_bit() was prior to my const-optimization. It
+> directly calls arch_test_bit(), i.e. the arch-specific implementation
+> (or the generic one). It's strictly _internal_ and shouldn't be used
+> anywhere outside the actual test_bit() macro.
+> 
+> test_bit() is a wrapper which checks whether the bitmap and the bit
+> number are compile-time constants and if so, it calls the optimized
+> function which evaluates this call to a compile-time constant as well.
+> If either of them is not a compile-time constant, it just calls _test_bit().
+> test_bit() is the actual function to use anywhere in the kernel.
+> 
+> IOW, calling _test_bit() avoids potential compile-time optimizations.
+> 
+> >From what I see in the code, &sensors is not a compile-time constant,
+> thus most probably there are no object code changes before and after
+> the patch. But anyway, we shouldn't call internal wrappers instead of
+> the actual API, so this fix is correct.
 
-Well, it actually never fails when the zone is tripless because
-thermal_zone_get_num_trips() returns a non-negative value.
+Thanks for this very comprehensive description, now I know :)
 
-So something like the above patch, but using
-thermal_zone_get_num_trips() or maybe just
-
-- ret =3D thermal_zone_get_num_trips(tsc->zone);
-- if (ret < 0)
--    goto error_unregister;
--
-- dev_info(dev, "Sensor %u: Loaded %d trip points\n", i, ret);
-+ dev_info(dev, "Sensor %u: Loaded", i);
-
-because the number of trips (and whether or not there are any) can be
-checked via sysfs.
-
-> Fortunately, the $subject patch is not really needed in the series, so
-> please regard it as withdrawn for now and we can get back to this
-> later.
-
-But the above still holds.
-
-Thanks!
+> >> Fixes: 4da71a77fc3b ("ice: read internal temperature sensor")
+> >> Signed-off-by: Petr Oros <poros@redhat.com>
+> >> Acked-by: Ivan Vecera <ivecera@redhat.com>
+> 
+> To be added to v2:
+> 
+> Reviewed-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> 
+> Thanks,
+> Olek
+> 
 
