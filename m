@@ -1,151 +1,133 @@
-Return-Path: <linux-kernel+bounces-217106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C296790AABE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:06:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7868590AADD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD73A1C21285
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:06:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B420BB28E33
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDFE194086;
-	Mon, 17 Jun 2024 10:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC898194154;
+	Mon, 17 Jun 2024 09:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="idcH79tF"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2191922C7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DpvvFJYc"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7525D19047F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718618793; cv=none; b=JqLPlBPnhJG4/S8197tzo+SUl1Yb162eFErI5r2H+zLEbGml+5zTJ8MeOsuCTG3b/AsudH0spAGXn0AyyyJR+mWEAJV6YRuFc5q8qCyFdMN01yN9P18v3WBsBLsqeH5cp3JHPgZrHoxkTYGCrq9607mGkvAGpuG2wM+Y2STeebg=
+	t=1718618275; cv=none; b=EBheMShacVN3w++aNBZQ5WqRDmL9lupIxpwwYDpiM2023r5+sSecmSRbB53dI2kcXW5LLZPEoNniOMwELg2jVf/iGxQZc1QVAZ9DqRac2VbU2/kVwCFyWyrOULzeusXvzarQUr3GQtYdjgtSwrGk82E7vNfYRqahWppJRhf/OUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718618793; c=relaxed/simple;
-	bh=sWUNyWzeJ1P9kNaINyoEPpwx2VzRq791lEgIfVQ+e8k=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=WiFvGAUYN+Y2tqMOQYBc/xqIryVXwHYH6tQOOV4kLMyeVMr5KhJDRo4jy8dbwAfu+xQ2qMA6G7fs4aJOhlbf6M4CN7ZibCtF9gakbYYL3s5Hex8v3aqTsLEVG9TiJOMZKhlI0JAkqU7svkgGTm3/U7Q8ekkeH9UbJ1CIasrcj94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=idcH79tF; arc=none smtp.client-ip=220.197.31.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Subject:From:Message-ID:Date:MIME-Version:
-	Content-Type; bh=geQNIyMIatZwbN8alJljzy+7QcThplEvKiyRZfzgfS0=;
-	b=idcH79tFg4Yd4NdDuBe+XKrhDYCRF4QxirOzxova7ZD424BSv9u6i84d93bHb0
-	/gHImfziG5rGZnegI7knZML1AZ4efnfAbWU4x9QuaESBnDKRkm8Bi3to5zK/5MC/
-	TPzneaDT2UM+QyihPYGKOB+6+KTwHwu+nxyKm4ArWSsJo=
-Received: from [172.21.21.216] (unknown [118.242.3.34])
-	by gzga-smtp-mta-g0-2 (Coremail) with SMTP id _____wD331jkBnBm1R1bCw--.7695S2;
-	Mon, 17 Jun 2024 17:50:29 +0800 (CST)
-Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
-To: David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn
-References: <0d7a4405-9a2e-4bd1-ba89-a31486155233@redhat.com>
- <dc7a0b61-8d3f-7205-2f6d-c2b12500947a@126.com>
- <776de760-e817-43b2-bd00-8ce96f4e37a8@redhat.com>
- <7063920f-963a-4b3e-a3f3-c5cc227bc877@redhat.com>
- <48150a28-ed48-49ff-9432-9cd30cda4da4@linux.alibaba.com>
- <11ef3deb-d1e3-46d5-97ed-9ba3c1fbbba9@redhat.com>
- <697a9bc2-a655-4035-aa5e-7d3acb23e79d@redhat.com>
- <d6deb928-3466-45ea-939b-cb5aca9bc7b4@linux.alibaba.com>
- <3a368e38-a4cb-413e-a6d9-41c6b3dbd5ae@redhat.com>
- <48fb0e58-16d1-7956-cf35-74741826617a@126.com>
- <ZmR1dVUB5mE2If9t@casper.infradead.org>
- <617f9e36-9334-4630-a6b9-473f2dd570d4@redhat.com>
- <8351052a-5c21-c383-544b-3166e883587c@126.com>
- <a39c8602-3c9c-48fd-9bdb-2089ccccd6bc@redhat.com>
-From: yangge1116 <yangge1116@126.com>
-Message-ID: <7b69abe5-3782-965c-ec82-5baef84e2d06@126.com>
-Date: Mon, 17 Jun 2024 17:50:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+	s=arc-20240116; t=1718618275; c=relaxed/simple;
+	bh=PrV4VEI30qeYGma2/K3q4eVmI6pg3wGw1kNQ5ChwWJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=COclTI0WxK+U+K6MPaZcHmF6pjbS2zOGQrGj7rFNeY6l30kryx3Ylkj0vRHfw8dwTDKfvrVBY/DO8mCs3bcs85T5UjvMmjAuExxH1+CWIF5EYq9u8gaoMl0h5YZP/YGn6oXj3ptlHoY8AMbqCgpQsWPhKAx8XDusRIJUAaXcKxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DpvvFJYc; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ec2f4966a2so5894611fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:57:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718618271; x=1719223071; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gpoL09JxB35FJ5ImuHuqaZBN/f8BI3/8KeXWtW7kk7I=;
+        b=DpvvFJYc6JeFd5K9e8HseeHLJOTSxJ9FWRpSIb9iRH6QcP/9zfIr4vdxDc7c2WubO9
+         /0RK4N75s8DuKbSKxbNbqXJELE5S5WRpQAWRADvco6ajdCqhERCE986OBeMsUX7BOb0K
+         fOGWD0TMFIKm/2ZMBrCyNIRIFq4IY7lBULoPtUbTNF+N9Pc0evd1v09uJIW3K7S7wWIx
+         q3VISWXRnuTTMqdaUimZ8x+vnl+56vHj3Ukk9n8gsy7ghrpzODp0CKnpIz1TTLYaSrYN
+         8+IEujH2NOh+Zuh0tF55sL04fLm04R+B+slOEOi8SLWBcaDd3eEKZiUeoJo674Z1nYUO
+         9Mkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718618271; x=1719223071;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gpoL09JxB35FJ5ImuHuqaZBN/f8BI3/8KeXWtW7kk7I=;
+        b=bEj4vY9yhZwXknzqexNSnn8VgzoIAxYuDYaddV2HAwsUuBr+WEdCOVzZRayK81aDyt
+         mXbUXyeukUTrw/I5eo3hOgXS76Hjoc+sS0EyNzbTzy2gBfrxzDv7VROlTlc4XEnBqSo1
+         ZUb1UmxSIcTGyIbw8Ty3KkPx0S9AkQWdpRvqM2uz480/D+hKSOHymJ1BCVx+puz0Jge1
+         9heXmt1B0cn3nTnYB2IrJ2zmHfWhWmiTvzCq6onI4kqUIdFXtnfdRHG5sgXf7ZVCJIGg
+         aUwZ4V6T6sS8cBkJQk3KhxiCNXwiklNQV/grKQhDUXuIIVzB/5BvWT2znst2TP1SnYsA
+         Ocqg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7ea+sKvjE8t8lwcecFb/9tE8O7JMCrH9yFn76ic6lCqtIyiRCFoxlvTm4YL24OA7ITMOzOyeXVERjBjor/b8t0Cd+wAdDNaebTz7R
+X-Gm-Message-State: AOJu0YzLG2fZzsvpjAU5H8Z0tvdv0tb1Cq0espvql1oFfxSPsz1PlKxI
+	H9N+AmGaWR/rVS+T3taxCXM3HSCExbIiE4dilD+658hOxXjsl1XGah5Qd5DJZXE=
+X-Google-Smtp-Source: AGHT+IHzleOF863+St6gLFWi26LpebCOh4j1P2exxdVoLWaAvyxh87B5slPANvXBUl2QDK0yoYiihw==
+X-Received: by 2002:a2e:7a0d:0:b0:2ec:2c65:2dfa with SMTP id 38308e7fff4ca-2ec2c652f76mr22644241fa.6.1718618271445;
+        Mon, 17 Jun 2024 02:57:51 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c78400sm13171961fa.84.2024.06.17.02.57.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 02:57:51 -0700 (PDT)
+Date: Mon, 17 Jun 2024 12:57:49 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH RESEND] drm/logicvc: Drop obsolete dependency on
+ COMPILE_TEST
+Message-ID: <uegtnit6luloxwqbfbwirnt4wytgwfjg5nn52uen6fkhemqukk@4b26w7agpbqu>
+References: <20240617103336.7fddb08d@endymion.delvare>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a39c8602-3c9c-48fd-9bdb-2089ccccd6bc@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD331jkBnBm1R1bCw--.7695S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw17tFW8KF4xXFy3uryDKFg_yoW8trykpF
-	yUKF9rKF4qkryqkFnFqr17ArsYy3yrXFy5ZFWxJFy7CF4qqF15KrW8ta15uFy3Jr4Fgr1I
-	ka12q3WfWF1UAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07b8PEfUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiWRIBG2VLaxbqAAAAso
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617103336.7fddb08d@endymion.delvare>
 
-
-
-在 2024/6/12 下午3:32, David Hildenbrand 写道:
-> On 11.06.24 13:20, yangge1116 wrote:
->>
->>
->> 在 2024/6/9 上午12:03, David Hildenbrand 写道:
->>> On 08.06.24 17:15, Matthew Wilcox wrote:
->>>> On Sat, Jun 08, 2024 at 12:38:49PM +0800, yangge1116 wrote:
->>>>> Can we add a PG_lru_batch flag to determine whether a page is in lru
->>>>> batch?
->>>>> If we can, seems this problem will be easier.
->>>>
->>>> Page flags are in short supply.  You'd need a really good 
->>>> justification.
->>>>
->>>
->>> A flag would not be able to handle the "part of multiple LRU batches"
->>> that should currently possible (when to clear the flag?). Well, if we
->>> have to keep supporting that. If we only to be part in a single LRU
->>> batch, a new flag could work and we could still allow isolating a folio
->>> from LRU while in some LRU batch.
->>
->> Yes, before adding a folio to LRU batch, check whether the folio has
->> been added. Add the folio to LRU batch only if the folio has not been
->> added.
->>
->>>
->>> If we could handle it using the existing flags, that would of course be
->>> better (wondering if we could store more information in the existing
->>> flags by using a different encoding for the different states).
->>
->> If a folio contains more than one page, the folio will not be added to
->> LRU batch. Can we use folio_test_large(folio) to filter?
->>
->> if (!folio_test_large(folio) && drain_allow) {
->>     lru_add_drain_all();
->>     drain_allow = false;
->> }
+On Mon, Jun 17, 2024 at 10:33:36AM GMT, Jean Delvare wrote:
+> Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
+> is possible to test-build any driver which depends on OF on any
+> architecture by explicitly selecting OF. Therefore depending on
+> COMPILE_TEST as an alternative is no longer needed.
 > 
-> I think we should do better than this, and not do arbitrary 
-> lru_add_drain_all() calls.
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> ---
+> Already sent on: 2022-11-21, 2023-01-27, 2023-12-02
 > 
+> This is one of the only 3 remaining occurrences of this deprecated
+> construct.
 
-Thanks, I've got another idea.
+The same comment as the one for your drm/display patch.
 
-If we add GUP_PIN_COUNTING_BIAS to folio's ref count before adding to 
-LRU batch, we can use folio_maybe_dma_pinned(folio) to check whether the 
-folio is in LRU batch. I wonder if it's feasible?
+> 
+> Who can pick this patch and get it upstream?
+> 
+>  drivers/gpu/drm/logicvc/Kconfig |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- linux-6.6.orig/drivers/gpu/drm/logicvc/Kconfig
+> +++ linux-6.6/drivers/gpu/drm/logicvc/Kconfig
+> @@ -1,7 +1,7 @@
+>  config DRM_LOGICVC
+>  	tristate "LogiCVC DRM"
+>  	depends on DRM
+> -	depends on OF || COMPILE_TEST
+> +	depends on OF
+>  	select DRM_KMS_HELPER
+>  	select DRM_KMS_DMA_HELPER
+>  	select DRM_GEM_DMA_HELPER
+> 
+> 
+> -- 
+> Jean Delvare
+> SUSE L3 Support
 
-
-static void folio_batch_add_and_move(struct folio_batch *fbatch,
-     struct folio *folio, move_fn_t move_fn)
-{
-     if (!folio_test_large(folio)) {
-         folio_ref_add(folio, GUP_PIN_COUNTING_BIAS);
-
-         if (folio_batch_add(fbatch, folio) && !lru_cache_disabled())
-             return;
-     }
-
-     folio_batch_move_lru(fbatch, move_fn);
-}
-
-if (!folio_test_large(folio) && folio_maybe_dma_pinned(folio) &&
-     drain_allow) {
-     lru_add_drain_all();
-     drain_allow = false;
-}
-
-
+-- 
+With best wishes
+Dmitry
 
