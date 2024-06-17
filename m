@@ -1,189 +1,107 @@
-Return-Path: <linux-kernel+bounces-218318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7E690BC84
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:02:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DF790BC88
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16FB41C23AE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAC8E1F23EF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B4E1991B0;
-	Mon, 17 Jun 2024 21:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B8C79CE;
+	Mon, 17 Jun 2024 21:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="CXcw69Bt"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZhM2AqyE"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3536A18F2FD
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 21:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384CC18F2EB;
+	Mon, 17 Jun 2024 21:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718658134; cv=none; b=g9tvhW+/GtWr9D9p/zUsDJg2wAq5QC8OShDA4xtT6lNZSMQlM9JglCbq2uk8fcl2N+CFwUE0TkmM3Wsr9sPIcBjZydKmIo7xY0VON6Zi1bULKDi3m02eJH159pT1yVexyXFLqwux+LjptPzoiOVFO0pqLM71v9PHOaanROVPR5c=
+	t=1718658164; cv=none; b=WTZNhql47ALL3ElQWBXqw4lx5P3b7o3mbWU/7WoZGm03IkXUFIsyJ1okV6qvFo/gHQVIytn0adlXxxN5U5tCaaAIvJ/DGLsPIV1Sg7T8TIYxcrwnKY+6rZv5fYQ+nSvtXHW/H/GxAd3pvrBv/U/OTbzThjwkjD4oFdDPZS0FgX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718658134; c=relaxed/simple;
-	bh=B1gm5DdSgfQg0HYANDyrQqb7o+BBNjtrye8Q7TCAO24=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=roqLQ4fVZCj0H35nLJUwftB7oUsNnAJdpeNAVXhBVvSqBTnLaaM1/RQZZqbjz1nILXJqrRHDS/gQXbRTdN1pBzvrhR1sw5kHV1613OnNP37VW9kjn+xs7a5lHJS1p2s+smL/25r5XQRv3Rym3JTIr7jW5jogH3ftjAzgf/xX+YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=CXcw69Bt; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4218180a122so34015975e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1718658130; x=1719262930; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oPx3c/l3RFVX5AVFhiQ8z+HSbtAyDh/1YQdyx0NkN2c=;
-        b=CXcw69Bth/r9P4uVi64ZM1nz53o12g2Ezky2/5rbcrWQBsrViVwpWgscwEJ6S3k7/+
-         1pVGLiE2xTsx/J7cdsPKFGX83u75+MRzW1zLplRabd4IcdMd3k7M4k3JUmWUlIx3IItA
-         QohzS9xuJep1Bi46qLJxOO5Lllc/SjaPDTJRzS/bzsMMx3vim6i5Rqdx/R3tfSUl8qgL
-         iRQssf2C+fVQBZJwEunfalPMysK4r7LXFOP8Xx5GMrwnIGibXUevU2lYSxIfeulbdL7x
-         nWhGL5aL3eDWvT5wCJQuzO7R/UNG02R3cu0sSDBpmnqen2UFYXGugbX0H8Dit1STAzEp
-         lScA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718658130; x=1719262930;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oPx3c/l3RFVX5AVFhiQ8z+HSbtAyDh/1YQdyx0NkN2c=;
-        b=K2MKbMWIK98j3oxMD/n6gspcVj06mPp9UFRiH9n2QE47UOnJCihIwg557obxZ5/r9m
-         Ge2q6Fs22i6w57bKhtBmyDHii7uo2gROLXEbSa4bLkqmKwvgr4oyqIdt+3bj7fmqNMwO
-         9eLX1w4zQSvy8RVQ+7o3w/bYRhhBfh1obCRp27agvpMsx3A8JSSvW3OYomLtuw6t5dYI
-         uTYksosbrKJp0ImVDcFhiveXm4blbB17gCdIqUPEEB4yE0uKdZuTcFSqaQX8APn7fuj0
-         SU3zAWYGz8l4uAAklzD7VeM6Ak2zjesZEXVc/h6+ABg9ohZMQIPe0Ka7GvBtER6aAsJl
-         qnAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxqMxmDAyHPQ+2CbResCxI4Of04Q+kQiVyS2k/ZSWSwpB62BksjFcRpVVEadE1Kq1WXgNXTrmZ0MKEXHIaxS6X2npbvUe1xic/GZOI
-X-Gm-Message-State: AOJu0Ywwa+R6t/VCxNo0os1vRxH8CU/bOffbXwIdZVB8pIbYB1IYFSP1
-	8eZyWq4Sn4ZgRHhQAwZb9XlA68fJVzlFNi+8i92hiQ6nqOob1VlMms4WinOnoaw=
-X-Google-Smtp-Source: AGHT+IGcxuXyC2SdGVAFBszcVrgGgRvP+9b1oJO0U/ENeuHdki+g5WhfdCkuP0boUryoDWn93EsGNA==
-X-Received: by 2002:a05:600c:138b:b0:421:7c20:a263 with SMTP id 5b1f17b1804b1-42304824084mr97239765e9.11.1718658130377;
-        Mon, 17 Jun 2024 14:02:10 -0700 (PDT)
-Received: from localhost.localdomain ([104.28.231.254])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de618sm207988465e9.37.2024.06.17.14.02.09
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 17 Jun 2024 14:02:09 -0700 (PDT)
-From: Ignat Korchagin <ignat@cloudflare.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Florent Revest <revest@chromium.org>,
-	kernel-team@cloudflare.com,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	stable@vger.kernel.org
-Subject: [PATCH net v3] net: do not leave a dangling sk pointer, when socket creation fails
-Date: Mon, 17 Jun 2024 22:02:05 +0100
-Message-Id: <20240617210205.67311-1-ignat@cloudflare.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1718658164; c=relaxed/simple;
+	bh=VucRNFIxwzNewu+nyisVdX1Y/LQWRgeR1kLEOH4Y1l0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISHFdDZkFm/TIqmyhJbwlj5ocPtjiwzKFKsxJWWUY4hU4dggCPxyEqwkyzXypePsw2d6spgjMcL8edAV/bO0GmDwLrWpwYBJyHSOIGmV7IDyoIVeP14oNm4DNHlb4443ZvBOi7e28KdxncrU6LGOrk0UuHkWvZcb5gPY+GJQ1uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZhM2AqyE; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 64DE540E021A;
+	Mon, 17 Jun 2024 21:02:39 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id NQ3WlfuETGmc; Mon, 17 Jun 2024 21:02:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718658156; bh=9xpQOfZZA/mdg5w3/+ttfZjxJn4+6vAUkviGsraw77c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZhM2AqyErdDkMFRKVkIORNvSKlCtivkYQFjyDB9ZUwCfNMs6C6y+PgwIxLOGm76S7
+	 LawNB3jCh6kX2wqa8lDNIx6oM6jdKKC1tLUtmdKdAuyahTeysbO7eI+AaW2PT2dwUS
+	 dWpRbaXf3cPZba2QcNTDmREVegJRXw57zeLyLN/KF7dstLeNt4PGMu5vNvPatykl7F
+	 DaV1E6wnZx9yrEzOkMnMXBXvyb4M6f4M1YarnYGIvc/UE1Y03V1pwYDlRxc4Fakhv9
+	 bIr3bTDkzgxihiWrAxwXnSmv8j9xBnl6iaUZ5AXizwiNBy+Q1+FwbOPJLQXCsX69t1
+	 c2cLcpjnnQOBTDKBEdPGrvTWNvekcKKdxcdEUaUiDBgQWAUPeb4qlZFLLTfV5rBuzg
+	 RGx+YxRsGUpEqNhZr0Ow+pAFfaaeTGZPNi/shvduRiszO37dmRD5g+qrpLOa7U3/qp
+	 iOXX/D+CCfQo/pgRxX7ZLL87FMdePu2RjI8gEkIpOvpFJfaQOL4eiha2m4pvvQOrai
+	 X15nYtZHrgsrZrCkxdapoSMxBOFIEufFl96219+0KGXvca6Ry4Jy9fqinHT3/Mmhye
+	 8e+mR8Kiv7S888osVRVbqkR7WoU4IXscZ/TsTAgVgmunMxR0IK/C+HM1NyjMSWfRE1
+	 OHgqvol/Ffe9cSe4s6F5IbXk=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0372F40E0185;
+	Mon, 17 Jun 2024 21:02:15 +0000 (UTC)
+Date: Mon, 17 Jun 2024 23:02:08 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	lkp@intel.com, zack.rusin@broadcom.com,
+	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
+	tzimmermann@suse.de, mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com, linux-iio@vger.kernel.org,
+	jic23@kernel.org, lars@metafoo.de, nuno.sa@analog.com,
+	dragos.bogdan@analog.com, anshulusr@gmail.com,
+	andrea.collamati@gmail.com, oe-kbuild-all@lists.linux.dev,
+	x86@kernel.org
+Subject: Re: [PATCH 2/2] iio: dac: Fix dependencies of AD9739A
+Message-ID: <20240617210208.GJZnCkUIsiXmaQxxPE@fat_crate.local>
+References: <202406152104.FxakP1MB-lkp@intel.com>
+ <20240616012511.198243-1-alexey.makhalov@broadcom.com>
+ <20240616012511.198243-2-alexey.makhalov@broadcom.com>
+ <20240617090428.GBZm_8HMQ9XJe_VQga@fat_crate.local>
+ <19e8a6dd-b0d4-4e88-9ad2-e38787a5aee8@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <19e8a6dd-b0d4-4e88-9ad2-e38787a5aee8@broadcom.com>
 
-It is possible to trigger a use-after-free by:
-  * attaching an fentry probe to __sock_release() and the probe calling the
-    bpf_get_socket_cookie() helper
-  * running traceroute -I 1.1.1.1 on a freshly booted VM
+On Mon, Jun 17, 2024 at 01:48:38PM -0700, Alexey Makhalov wrote:
+> > Don't get discouraged, though, when fixing something that is not in our
+> > immediate area of interest!
+> > 
+> > :-)
+>
+> Lesson learned and noted for next time to address only related/new warnings
+> and errors. Thanks!
 
-A KASAN enabled kernel will log something like below (decoded and stripped):
-==================================================================
-BUG: KASAN: slab-use-after-free in __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-Read of size 8 at addr ffff888007110dd8 by task traceroute/299
+I actually meant the exact opposite. :-)
 
-CPU: 2 PID: 299 Comm: traceroute Tainted: G            E      6.10.0-rc2+ #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
-dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1))
-print_report (mm/kasan/report.c:378 mm/kasan/report.c:488)
-? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-kasan_report (mm/kasan/report.c:603)
-? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
-__sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-bpf_get_socket_ptr_cookie (./arch/x86/include/asm/preempt.h:94 ./include/linux/sock_diag.h:42 net/core/filter.c:5094 net/core/filter.c:5092)
-bpf_prog_875642cf11f1d139___sock_release+0x6e/0x8e
-bpf_trampoline_6442506592+0x47/0xaf
-__sock_release (net/socket.c:652)
-__sock_create (net/socket.c:1601)
-...
-Allocated by task 299 on cpu 2 at 78.328492s:
-kasan_save_stack (mm/kasan/common.c:48)
-kasan_save_track (mm/kasan/common.c:68)
-__kasan_slab_alloc (mm/kasan/common.c:312 mm/kasan/common.c:338)
-kmem_cache_alloc_noprof (mm/slub.c:3941 mm/slub.c:4000 mm/slub.c:4007)
-sk_prot_alloc (net/core/sock.c:2075)
-sk_alloc (net/core/sock.c:2134)
-inet_create (net/ipv4/af_inet.c:327 net/ipv4/af_inet.c:252)
-__sock_create (net/socket.c:1572)
-__sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
-__x64_sys_socket (net/socket.c:1718)
-do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
-entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-
-Freed by task 299 on cpu 2 at 78.328502s:
-kasan_save_stack (mm/kasan/common.c:48)
-kasan_save_track (mm/kasan/common.c:68)
-kasan_save_free_info (mm/kasan/generic.c:582)
-poison_slab_object (mm/kasan/common.c:242)
-__kasan_slab_free (mm/kasan/common.c:256)
-kmem_cache_free (mm/slub.c:4437 mm/slub.c:4511)
-__sk_destruct (net/core/sock.c:2117 net/core/sock.c:2208)
-inet_create (net/ipv4/af_inet.c:397 net/ipv4/af_inet.c:252)
-__sock_create (net/socket.c:1572)
-__sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
-__x64_sys_socket (net/socket.c:1718)
-do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
-entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-
-Fix this by clearing the struct socket reference in sk_common_release() to cover
-all protocol families create functions, which may already attached the
-reference to the sk object with sock_init_data().
-
-Fixes: c5dbb89fc2ac ("bpf: Expose bpf_get_socket_cookie to tracing programs")
-Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/netdev/20240613194047.36478-1-kuniyu@amazon.com/T/
----
-Changes in v3:
-  * re-added KASAN repro steps to the commit message (somehow stripped in v2)
-  * stripped timestamps and thread id from the KASAN splat
-  * removed comment from the code (commit message should be enough)
-
-Changes in v2:
-  * moved the NULL-ing of the socket reference to sk_common_release() (as
-    suggested by Kuniyuki Iwashima)
-  * trimmed down the KASAN report in the commit message to show only relevant
-    info
-
- net/core/sock.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 8629f9aecf91..100e975073ca 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -3742,6 +3742,9 @@ void sk_common_release(struct sock *sk)
- 
- 	sk->sk_prot->unhash(sk);
- 
-+	if (sk->sk_socket)
-+		sk->sk_socket->sk = NULL;
-+
- 	/*
- 	 * In this point socket cannot receive new packets, but it is possible
- 	 * that some packets are in flight because some CPU runs receiver and
 -- 
-2.39.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
