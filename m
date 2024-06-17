@@ -1,68 +1,122 @@
-Return-Path: <linux-kernel+bounces-218266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5574F90BBE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:18:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5BB90BBF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E77D1C23819
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:18:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E56871C2165B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2E9199EA7;
-	Mon, 17 Jun 2024 20:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C364619B3E4;
+	Mon, 17 Jun 2024 20:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JiBBN/Iv"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Ij22bNSh"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DD6198E85
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 20:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2278019AD99;
+	Mon, 17 Jun 2024 20:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718655458; cv=none; b=H7Oh0txGVTiLoKI00R1U0d6TkjkSYqmqHHCn+LwTf5a2o3FTIM0WcSZZao7hNUwWL2fqjEA6FUwLQZLZkQC6lfhbK8CBZntccTk9SR5WWSB6nq/yvoCGi824j7UTB0FRPjjcJryytinUSewdPxuVhz7RR5NshaFmjXZryS6jt5U=
+	t=1718655480; cv=none; b=K/4kL1oZKVNrj5YBx3dLTQ3TEDJjMk04mJLaRJbln348cQPDwM8f5Zd5xon1H/iV6xZ8hJ+qfvcZZwwkJ0hP7ivvXA6+DzD9j4Ao1Ko0xH5w4ObvdzUEBP20Brk8J/2Rv4UxHS+zG3F7F8+/huramUbWcPa9LkPjt4M9jRmakjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718655458; c=relaxed/simple;
-	bh=sMcHsxJVaoRTcqfJ+9L3LPW1CEuAARR8ZnOoFQiQI/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y5xPa5S7J3Uvax5kqncJUXCZq5FTp443smT6Jj2u7IiK8s6VTF9eIeVfyr9Pni6bncooekZ+d8JOAnzHVNoICT574LGPgJta9rZtp+bEM3GuaTLiDltCTJvxF4b6XpaQXyZpjh7neAQ4uNuQeaxf+cobdTudDgp2NeC7ja7ige0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JiBBN/Iv; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: syzbot+df3bf3f088dcaa728857@syzkaller.appspotmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718655453;
+	s=arc-20240116; t=1718655480; c=relaxed/simple;
+	bh=We1ydyHnrk8Sp4RgNlISv2jNIeyh8hASpbRXppWAGec=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iTHHYpkmn9S2/o8M9C1PA/zXavi4aMzI4S7+OZ6gbeK9aUpYxC+xKAmLO5RMV9tfcYaiApH7y1XivqBbyaVHhNwwQFaikhUJiuPjQnJTG+TX1/idhWj781OlMG9OyBquAIIejCbH55q0GIEFE+m7k3W9hiXgGQxEN1IUxgcvh7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Ij22bNSh; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1718655474;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sMcHsxJVaoRTcqfJ+9L3LPW1CEuAARR8ZnOoFQiQI/A=;
-	b=JiBBN/Iv/CmVvZsmywOgOIK9HJU/CNoe4Er6VJs2B5dQp9OriErR18wtOHbAY+8JvRARSJ
-	8OUr4yNu15nnyDpE/txQ6Ahc7M0rOVehVqlf0O4wyb/AVq51TcvFBu+sR1ChG+ybd2bQsq
-	OjxTLD9hFdSCiyj50/PYq/YXsXjfcwQ=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Mon, 17 Jun 2024 16:17:29 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+df3bf3f088dcaa728857@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_lru_change
-Message-ID: <lysbmilibifncvckcfz2jzhkytqp4yzpyi3iiiv2rgbsiqy5hx@hjypw2inze4i>
-References: <000000000000515313061a401ea1@google.com>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6nJ2AJoxxGOzx8FlzxjSHQ63pZJ01vIWAcBtW0WpNeE=;
+	b=Ij22bNShaPPe/gdzZ0oHStjzEKfSKZ1tehWFhhbe9x/419UocSw+CG6QsGDr4qrLjKu8O8
+	FnFSHoDI9D18TseRQM/gTKU53h06vpEUQh5rAiaAHPL+FYaXP/geIPr4rEONABCM2qpuBe
+	k9uVHwUn2iiQ25Qd5Qo5ihOdtPnm/pOIpgauGkBma5vMG84/dFND/frm8mzUp6hdlAufFj
+	AGdDnzF2yQ64ZfCoyOPk0fSAZ8kBr+ODbVcrOd0g9gd32y0Gz6/Y/IcDrzs4xz6m65iYCW
+	wF/Z+iYgm9SmhTJ/X0AnhN98lgPFCnTTxruOp8OPqIqJqD6J2BTeU/jbsRKA3Q==
+To: dri-devel@lists.freedesktop.org
+Cc: boris.brezillon@collabora.com,
+	robh@kernel.org,
+	steven.price@arm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	linux-kernel@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Furkan Kardame <f.kardame@manjaro.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/panfrost: Mark simple_ondemand governor as softdep
+Date: Mon, 17 Jun 2024 22:17:48 +0200
+Message-Id: <4e1e00422a14db4e2a80870afb704405da16fd1b.1718655077.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000515313061a401ea1@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-#syz fix: Guard against overflowing LRU_TIME_BITS
+Panfrost DRM driver uses devfreq to perform DVFS, while using simple_ondemand
+devfreq governor by default.  This causes driver initialization to fail on
+boot when simple_ondemand governor isn't built into the kernel statically,
+as a result of the missing module dependency and, consequently, the required
+governor module not being included in the initial ramdisk.  Thus, let's mark
+simple_ondemand governor as a softdep for Panfrost, to have its kernel module
+included in the initial ramdisk.
+
+This is a rather longstanding issue that has forced distributions to build
+devfreq governors statically into their kernels, [1][2] or has forced users
+to introduce some unnecessary workarounds. [3]
+
+For future reference, not having support for the simple_ondemand governor in
+the initial ramdisk produces errors in the kernel log similar to these below,
+which were taken from a Pine64 RockPro64:
+
+  panfrost ff9a0000.gpu: [drm:panfrost_devfreq_init [panfrost]] *ERROR* Couldn't initialize GPU devfreq
+  panfrost ff9a0000.gpu: Fatal error during GPU init
+  panfrost: probe of ff9a0000.gpu failed with error -22
+
+Having simple_ondemand marked as a softdep for Panfrost may not resolve this
+issue for all Linux distributions.  In particular, it will remain unresolved
+for the distributions whose utilities for the initial ramdisk generation do
+not handle the available softdep information [4] properly yet.  However, some
+Linux distributions already handle softdeps properly while generating their
+initial ramdisks, [5] and this is a prerequisite step in the right direction
+for the distributions that don't handle them properly yet.
+
+[1] https://gitlab.manjaro.org/manjaro-arm/packages/core/linux/-/blob/linux61/config?ref_type=heads#L8180
+[2] https://salsa.debian.org/kernel-team/linux/-/merge_requests/1066
+[3] https://forum.pine64.org/showthread.php?tid=15458
+[4] https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/commit/?id=49d8e0b59052999de577ab732b719cfbeb89504d
+[5] https://github.com/archlinux/mkinitcpio/commit/97ac4d37aae084a050be512f6d8f4489054668ad
+
+Cc: Diederik de Haas <didi.debian@cknow.org>
+Cc: Furkan Kardame <f.kardame@manjaro.org>
+Cc: stable@vger.kernel.org
+Fixes: f3ba91228e8e ("drm/panfrost: Add initial panfrost driver")
+Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+---
+ drivers/gpu/drm/panfrost/panfrost_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+index ef9f6c0716d5..149737d7a07e 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_drv.c
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+@@ -828,3 +828,4 @@ module_platform_driver(panfrost_driver);
+ MODULE_AUTHOR("Panfrost Project Developers");
+ MODULE_DESCRIPTION("Panfrost DRM Driver");
+ MODULE_LICENSE("GPL v2");
++MODULE_SOFTDEP("pre: governor_simpleondemand");
 
