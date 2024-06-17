@@ -1,392 +1,189 @@
-Return-Path: <linux-kernel+bounces-217833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E3C90B5D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:11:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D53990B709
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D85C5B357AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:44:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 332E1B3A88B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B60C7346B;
-	Mon, 17 Jun 2024 15:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D7613D272;
+	Mon, 17 Jun 2024 15:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adq+0pOk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UFMO3TjQ"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2046.outbound.protection.outlook.com [40.107.96.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AF428F3;
-	Mon, 17 Jun 2024 15:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718637312; cv=none; b=dJhv3p480IGADLhbjcRT0BCzFrw9K+kq8/pwW5hjShCiLcRLEPUEBsUkm2TgBM8POMG4+6TCbSiBoCV87scGhNiectxR6r1AkvKSNeHuw5AUkjybId9kuZd03Zv89uJXO+32WAT3n5MtiL7sh2z9O+Yv9BE7KosttnmtBZhP7Io=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718637312; c=relaxed/simple;
-	bh=sNqYN82aT6iqdyV+emqRd6GJICAQXA8CUkaLlNKeyVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ClyhtvoYw/TkyrjMwLrOjOsAVZ2dBdx6484/mWZRjwMBMFZNrH6FuSq7+FAkL+KfcEqXGI/lPye4o7/VHGT8aNBHa9cvdOapHRGVTDqQjcBenjXf+o+IlQfT5IB+G0VT9VrwaC23X6lG5O/1mgxO96+ENi2L5WSHH1LWjs/3jDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adq+0pOk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54CC7C2BD10;
-	Mon, 17 Jun 2024 15:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718637312;
-	bh=sNqYN82aT6iqdyV+emqRd6GJICAQXA8CUkaLlNKeyVw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=adq+0pOko/AdQZjHmRX1Lb3GiikyLUThDUBNunbVgvle/FCcV84VttwN+MHGNnWFp
-	 r3BxenlfNL5Arl1GNmFfwnfBBEnOzrlvdPXaJk7wmrkuELwRq1Pz9AXmERhOJZL9kO
-	 kZLx/2N5C/mjm5vpx7ngqQ3nLUBGY2mY7Fzd4ZzY9jzLplx2yxhB+SoyQxsDskpv8f
-	 pAzqxthHa5WDNYNNI0M69KzAoB28QR26CyryseQKJzm8SVTvSsgt4u1IjD3FuuZHLr
-	 y0zk6hSGU10jsLtiVZFyKjm6JNX/tEcillbWm/FuIWxDjuws7kgjwMywHHd1AA/J1K
-	 sncpe10VD7Wng==
-Date: Mon, 17 Jun 2024 23:01:09 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Haylen Chu <heylenay@outlook.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] thermal: cv180x: Add cv180x thermal driver support
-Message-ID: <ZnBPtUaAOksIW4d_@xhacker>
-References: <SG2PR01MB4218013241B3EED779D3BAE8D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
- <SG2PR01MB42187EC277384F84A3126F0DD7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539C813D255;
+	Mon, 17 Jun 2024 15:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718636902; cv=fail; b=bF9WaGGHX0/MA2AdimTU5cW2aBueZTT2d8t3OphFdQMm071qVXw3RecWeppTJUPy+1g3b6mjsYmIwETAqz3FjZ4oT/E8phCor7Xx2wHgJGmIYKqyx9sohzE1UgI7zda892jFvFNHIwiivm0sQyYkaq6W1Pwy4dqcgjA7GldSfAg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718636902; c=relaxed/simple;
+	bh=31tu6QW/csWgaBPf3pU+rLm4fxqdQnI6YJHErqHH2GU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=VO3pfNYZeFy87LF2r4kqlslvEVYli0l8xl55Q2vOODEfS7cIR1tXSaHGRfZJSO/xwhctlM5a5cRItnBOiGZmP9A7CW5bspzRd8mg0GRVHvlcIbFC5YX2cRqd+O6v4Xa3jCRdCgk9RoafMIOsnMD+GFgpsikVbaXNzb8Z5fD0ZIg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UFMO3TjQ; arc=fail smtp.client-ip=40.107.96.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=E92RI0X37FXBhoqB+taQFztbFa6tQe9zeJd1mci+Oy8lb9fHgge7LSKzvMRIRQ846N0EfnLe4VPbp6T5gt8HKvTzrYT1etaQhelHyizFO/ConqTFuNaFJCPQGgeYW+LfH0Kbdt33D28rGh1vIdJcqECh8b2jVQKEwtZM/2OAcUWKM/SB/2mamGH/CpPDLhxi74QXRX236xjh1p+1XcC+0WFExh/MxOj++Rw3iTJg+rTmC3JuyCIGMLHhjRby7eAiKDZP/153eKzhUggeNZ3sN6GCUjmvhDJGqB+wP6rxb/ydK5gvRlOubCLIk+TNOiA7BNLWuicUuv9Ow3OcigWpVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n2Cyrp7dTR1fq08H8JWrGW2H3ySaVka4YieTkKJ9mgA=;
+ b=mBkrxjwdbXyyHg5M1XrSlQlQlg3jXFaUqPUj+5gyaV2RP2USnLFUW6/xZPka+b9u1zGbdpGabuvGQ/syMMUYBdcWmFZ35TG8aOF1r4LFeuuR/qfT+GLik3zNgLBMMgar5wf/XBqg0xNN/Hm4ji2hUZUKZIR9bDwW+mRPY5XN0MPy3neqn9Q449rdcvOepgzeLZS+/67tOe2FcWIn2mTEi3IMMmdmD7VE2MwMnulAsqJud2D8ilbpfoDTy5G799ADowrm+f1LiJYLy0lboxN1hupmBxzab8EyrS7YjRYfXWH71kOdGCc3MXwY/pliKwgAGhEV3rMLgchBKzj8WycBaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n2Cyrp7dTR1fq08H8JWrGW2H3ySaVka4YieTkKJ9mgA=;
+ b=UFMO3TjQV8/tS5n7cyvQ3S54yapNn7NjGNQknaXy6ZX8dhlrkmwTJitFUgF8kgAOQQElMEufpVan18cpl0vQhS6U3XfHVW9nGBhdT8AT2aj4PIRKZ5P4Cd0f4RcsFdFOQrJgeXn+5jj5kQfDqYiAiQ2zM2GYQvnuyN/tx51QJ6dt6vBTOlB3Xrtbpt8Qg2JtftnWTWvI+p+5Cc7wX9ksvvALKyn/9dXaDgWYLvrKsIRI0PyQmWN27wKYHcQNwcS7VPLZ08Mp1YXjeN/xTATWeWQsOT+KQCY826LwIkIIVgS8BVEtEhmKRJIdnuFMgkwgsvinFWavLfc5RceJrqts8A==
+Received: from SN7PR04CA0075.namprd04.prod.outlook.com (2603:10b6:806:121::20)
+ by SN7PR12MB7788.namprd12.prod.outlook.com (2603:10b6:806:345::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
+ 2024 15:08:15 +0000
+Received: from SA2PEPF00003AE9.namprd02.prod.outlook.com
+ (2603:10b6:806:121:cafe::db) by SN7PR04CA0075.outlook.office365.com
+ (2603:10b6:806:121::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31 via Frontend
+ Transport; Mon, 17 Jun 2024 15:08:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SA2PEPF00003AE9.mail.protection.outlook.com (10.167.248.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Mon, 17 Jun 2024 15:08:12 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 17 Jun
+ 2024 08:08:00 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 17 Jun 2024 08:07:59 -0700
+Received: from dev-l-177.mtl.labs.mlnx (10.127.8.11) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 17 Jun 2024 08:07:56 -0700
+From: Dragos Tatulea <dtatulea@nvidia.com>
+Date: Mon, 17 Jun 2024 18:07:37 +0300
+Subject: [PATCH vhost 03/23] vdpa/mlx5: Drop redundant code
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SG2PR01MB42187EC277384F84A3126F0DD7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240617-stage-vdpa-vq-precreate-v1-3-8c0483f0ca2a@nvidia.com>
+References: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com>
+In-Reply-To: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?utf-8?q?Eugenio_P=C3=A9rez?=
+	<eperezma@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
+	<leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu
+	<si-wei.liu@oracle.com>
+CC: <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>, Dragos Tatulea
+	<dtatulea@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>
+X-Mailer: b4 0.13.0
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE9:EE_|SN7PR12MB7788:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d903e40-7f1f-4c77-7a2a-08dc8edf4eb0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|7416011|376011|1800799021|82310400023|36860700010;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WXZvdHRLTGN4d3RqS2JtRHRZZnNGU2ZjOFpXTy9STUNpdWJoVWo4enBhVGI4?=
+ =?utf-8?B?aEQ0UVk2S1pxbVdOYmhsbTNqTDAzd0hhRXJUZ21EOXpYTm5KR1U4NzRSUVEw?=
+ =?utf-8?B?WUxFUHowbTdWcGk4MzFVV2FxTmtwK2pVOUJnYmJuVG04S0N3aVREdGE5T0Zp?=
+ =?utf-8?B?ODdjbXRSa050TTFqbXZHdmJ3a1c2UHZQTVhjZHhkYkN5UXBLN3QySFEwUnFm?=
+ =?utf-8?B?YlAzc3QwNXBjS2V5RW94V2x5dDJYYXdWNWs4RDkzMEZLblhpSEJJM0dnRGJN?=
+ =?utf-8?B?UHl3THFNdDlQZHhBd3hQTW93NWRmOHdGOGhWRTJJRE82eXhaTkt0QktvT0xy?=
+ =?utf-8?B?MjJmc3VYVUlWbUhTSGcwM0xZVm1pRTJRZUZGZlJhc29VVFRJM1FBK0JvV21C?=
+ =?utf-8?B?QXVoWmlVZkpOczRVeElOUXllYWJtdnp4S2lHM1F0NDVtKzUyU013a0tya1Rw?=
+ =?utf-8?B?Nm9ac0JIclZ1UW1XRGZYR083WEFjUXFjajJFdldSWk92cEdnRUlxVS9sOEcy?=
+ =?utf-8?B?T1lxb1BncTAyNUhyVVJid2xidjhWVW4xVDBFaVY5R2Qxd2xPM0N3Z3Jyajkr?=
+ =?utf-8?B?Mkh1ZFVTOFN0b3pLb3F5UHAvdlhnc1VxamxKQzBxUStHeVlFR2gzQTdBS2N2?=
+ =?utf-8?B?bXYrQXRZWmQxdE1oUU5BOGFzZG9YNlNoV2ozN1hjVVF3Nk1DOHU1cGNaQjAw?=
+ =?utf-8?B?a2FYWm96eVF5cDZrRnI1RTBaeGk5UEFVYWRyWWlyQUhxVlNIbTlsRUhQYVFQ?=
+ =?utf-8?B?UFQ5MGpmc0ZxemV4UjU2S1dsVTA4eUhpa1NXUVI5bll5cnAzNldwZGo2eTZz?=
+ =?utf-8?B?ak41dTVIZ00vTWFzK2FobndDSThIelgvN1ZDNkJJSm5SVlNQdzMrREY2TWcx?=
+ =?utf-8?B?R1F6V2J6blB3YVEwUFQ2M05LSndKQTA2T3FITURMdExMS0FQUjNIWGFLU2I1?=
+ =?utf-8?B?MWhsNUwxdEduM1RzQmFPSkx1ZUZ1NmdjTEZiTnFqVjJrTXQ5ZkJUMVVGaC9x?=
+ =?utf-8?B?Z3dqOTEySUZCek1SbmNUOFNEWWZJVWVJWHArZHY4VS9ZNlFGUTdDQ3hFVkhV?=
+ =?utf-8?B?MWpEZFRleG43bWhCQWNHVDlhWU03NEhXQnY5TVE2Nm9seTBOeUVWdGEyeWxn?=
+ =?utf-8?B?dFFGQnRVcEpkZTVZODk2bUdXc0JCNm9aQ25oSmxwOW42TlhzMUJkTFZkZlpL?=
+ =?utf-8?B?UDhoVkpSblJwQ0l5dVpwVkVaQytNbmZtTG9FdlQrZEI0bzdvb0sweit2S2N1?=
+ =?utf-8?B?UTZwYXdId3BKanlPTnhjN2c0Smg0VTdKT2FDS2xMVUVVL3lQdlVSbVlMUFFS?=
+ =?utf-8?B?bmpBRzg5QjlxN2luZ3YrMisya2hPTjdLZ3BTWmoxMlVIUDVNKzgvNzhpL3lO?=
+ =?utf-8?B?NGwwcktRMTZUZDRqYWNMSXNhMVJvSlpXWDE3M0ZkbS85QUEzYWtnUlhmQzlY?=
+ =?utf-8?B?cVFKclBpai9md0E2REhSaXgrQmlsV2JMVFpERkVIYldNZUQ5MlZtaGJaNmJt?=
+ =?utf-8?B?aVRPTFNoZzRnbU9nTmhzVXpRcWhwWWV3Si9pakYybHViZmt5ajB5bXVUdWo0?=
+ =?utf-8?B?UFNFa3BudCttbUIzWUJhK081NnVXZ2kzZlJxeHZPTlA3cVJ5T2F2UVVveExG?=
+ =?utf-8?B?RTRPemJWb2NaanViSWdaY2JnQUJ2OHdGM1ZrS0Z6dFl1VXU2dkZmUmI4WEIy?=
+ =?utf-8?B?Tk5Ka0E1ZXBKa0RJVGgxaFVhNCtUSzNxTGpMUVlBWUg0T3QwenhQNEUxcCtZ?=
+ =?utf-8?B?Y3FmKzlaUVNvQWtNbkNXMnBZVURvZ1dYZExLcmw1U3Z4eG9PbS9rS01IUmph?=
+ =?utf-8?B?b2NnNHU1RXJ2S203QUdiS3o3V0xHRXRUSW4xMUN5Q0F4SEZNL2NUeHBOZmpx?=
+ =?utf-8?B?T3NGZ244ZnVYT3V6dThPelNsKzV2UnpMK1Y0SEFRL0hDa3c9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230037)(7416011)(376011)(1800799021)(82310400023)(36860700010);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 15:08:12.7713
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d903e40-7f1f-4c77-7a2a-08dc8edf4eb0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003AE9.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7788
 
-On Tue, Jun 04, 2024 at 12:54:21PM +0000, Haylen Chu wrote:
-> Add support for cv180x SoCs integrated thermal sensors.
-> 
-> Signed-off-by: Haylen Chu <heylenay@outlook.com>
-> ---
->  drivers/thermal/Kconfig          |   6 +
->  drivers/thermal/Makefile         |   1 +
->  drivers/thermal/cv180x_thermal.c | 262 +++++++++++++++++++++++++++++++
->  3 files changed, 269 insertions(+)
->  create mode 100644 drivers/thermal/cv180x_thermal.c
-> 
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index 204ed89a3ec9..f53c973a361d 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -514,4 +514,10 @@ config LOONGSON2_THERMAL
->  	  is higher than the high temperature threshold or lower than the low
->  	  temperature threshold, the interrupt will occur.
->  
-> +config CV180X_THERMAL
-> +	tristate "Temperature sensor driver for Sophgo CV180X"
-> +	help
-> +	  If you say yes here you get support for thermal sensor integrated in
-> +	  Sophgo CV180X SoCs.
-> +
->  endif
-> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> index 5cdf7d68687f..5b59bde8a579 100644
-> --- a/drivers/thermal/Makefile
-> +++ b/drivers/thermal/Makefile
-> @@ -65,3 +65,4 @@ obj-$(CONFIG_AMLOGIC_THERMAL)     += amlogic_thermal.o
->  obj-$(CONFIG_SPRD_THERMAL)	+= sprd_thermal.o
->  obj-$(CONFIG_KHADAS_MCU_FAN_THERMAL)	+= khadas_mcu_fan.o
->  obj-$(CONFIG_LOONGSON2_THERMAL)	+= loongson2_thermal.o
-> +obj-$(CONFIG_CV180X_THERMAL)	+= cv180x_thermal.o
-> diff --git a/drivers/thermal/cv180x_thermal.c b/drivers/thermal/cv180x_thermal.c
-> new file mode 100644
-> index 000000000000..89425e2b75a2
-> --- /dev/null
-> +++ b/drivers/thermal/cv180x_thermal.c
-> @@ -0,0 +1,262 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2021 Sophgo Inc.
-> + * Copyright (C) 2024 Haylen Chu <heylenay@outlook.com>
-> + */
-> +
-> +#include <linux/bits.h>
-> +#include <linux/clk.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/io.h>
-> +#include <linux/thermal.h>
+The second iteration in init_mvqs() is never called because the first
+one will iterate up to max_vqs.
 
-can we sort the headers?
+Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+---
+ drivers/vdpa/mlx5/net/mlx5_vnet.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-> +
-> +#define TEMPSEN_VERSION					0x0
-> +#define TEMPSEN_CTRL					0x4
-> +#define  TEMPSEN_CTRL_EN				BIT(0)
-> +#define  TEMPSEN_CTRL_SEL_MASK				GENMASK(7, 4)
-> +#define  TEMPSEN_CTRL_SEL_OFFSET			4
-> +#define TEMPSEN_STATUS					0x8
-> +#define TEMPSEN_SET					0xc
-> +#define  TEMPSEN_SET_CHOPSEL_MASK			GENMASK(5, 4)
-> +#define  TEMPSEN_SET_CHOPSEL_OFFSET			4
-> +#define  TEMPSEN_SET_CHOPSEL_128T			0
-> +#define  TEMPSEN_SET_CHOPSEL_256T			1
-> +#define  TEMPSEN_SET_CHOPSEL_512T			2
-> +#define  TEMPSEN_SET_CHOPSEL_1024T			3
-> +#define  TEMPSEN_SET_ACCSEL_MASK			GENMASK(7, 6)
-> +#define  TEMPSEN_SET_ACCSEL_OFFSET			6
-> +#define  TEMPSEN_SET_ACCSEL_512T			0
-> +#define  TEMPSEN_SET_ACCSEL_1024T			1
-> +#define  TEMPSEN_SET_ACCSEL_2048T			2
-> +#define  TEMPSEN_SET_ACCSEL_4096T			3
-> +#define  TEMPSEN_SET_CYC_CLKDIV_MASK			GENMASK(15, 8)
-> +#define  TEMPSEN_SET_CYC_CLKDIV_OFFSET			8
-> +#define TEMPSEN_INTR_EN					0x10
-> +#define TEMPSEN_INTR_CLR				0x14
-> +#define TEMPSEN_INTR_STA				0x18
-> +#define TEMPSEN_INTR_RAW				0x1c
-> +#define TEMPSEN_RESULT(n)				(0x20 + (n) * 4)
-> +#define  TEMPSEN_RESULT_RESULT_MASK			GENMASK(12, 0)
-> +#define  TEMPSEN_RESULT_MAX_RESULT_MASK			GENMASK(28, 16)
-> +#define  TEMPSEN_RESULT_CLR_MAX_RESULT			BIT(31)
-> +#define TEMPSEN_AUTO_PERIOD				0x64
-> +#define  TEMPSEN_AUTO_PERIOD_AUTO_CYCLE_MASK		GENMASK(23, 0)
-> +#define  TEMPSEN_AUTO_PERIOD_AUTO_CYCLE_OFFSET		0
-> +
-> +struct cv180x_thermal_zone {
-> +	struct device *dev;
-> +	void __iomem *base;
-> +	struct clk *clk_tempsen;
-> +	u32 chop_period;
-> +	u32 accum_period;
-> +	u32 sample_cycle;
-> +};
-> +
-> +static void cv180x_thermal_init(struct cv180x_thermal_zone *ctz)
-> +{
-> +	void __iomem *base = ctz->base;
-> +	u32 regval;
-> +
-> +	writel(readl(base + TEMPSEN_INTR_RAW), base + TEMPSEN_INTR_CLR);
-> +	writel(TEMPSEN_RESULT_CLR_MAX_RESULT, base + TEMPSEN_RESULT(0));
-> +
-> +	regval = readl(base + TEMPSEN_SET);
-> +	regval &= ~TEMPSEN_SET_CHOPSEL_MASK;
-> +	regval &= ~TEMPSEN_SET_ACCSEL_MASK;
-> +	regval &= ~TEMPSEN_SET_CYC_CLKDIV_MASK;
-> +	regval |= ctz->chop_period << TEMPSEN_SET_CHOPSEL_OFFSET;
-> +	regval |= ctz->accum_period << TEMPSEN_SET_ACCSEL_OFFSET;
-> +	regval |= 0x31 << TEMPSEN_SET_CYC_CLKDIV_OFFSET;
-> +	writel(regval, base + TEMPSEN_SET);
-> +
-> +	regval = readl(base + TEMPSEN_AUTO_PERIOD);
-> +	regval &= ~TEMPSEN_AUTO_PERIOD_AUTO_CYCLE_MASK;
-> +	regval |= ctz->sample_cycle << TEMPSEN_AUTO_PERIOD_AUTO_CYCLE_OFFSET;
-> +	writel(regval, base + TEMPSEN_AUTO_PERIOD);
-> +
-> +	regval = readl(base + TEMPSEN_CTRL);
-> +	regval &= ~TEMPSEN_CTRL_SEL_MASK;
-> +	regval |= 1 << TEMPSEN_CTRL_SEL_OFFSET;
-> +	regval |= TEMPSEN_CTRL_EN;
-> +	writel(regval, base + TEMPSEN_CTRL);
-> +}
-> +
-> +static void cv180x_thermal_deinit(struct cv180x_thermal_zone *ct)
-> +{
-> +	void __iomem *base = ct->base;
-> +	u32 regval;
-> +
-> +	regval = readl(base + TEMPSEN_CTRL);
-> +	regval &= ~(TEMPSEN_CTRL_SEL_MASK | TEMPSEN_CTRL_EN);
-> +	writel(regval, base + TEMPSEN_CTRL);
-> +
-> +	writel(readl(base + TEMPSEN_INTR_RAW), base + TEMPSEN_INTR_CLR);
-> +}
-> +
-> +/*
-> + *	Raw register value to temperature (mC) formula:
-> + *
-> + *		       read_val * 1000 * 716
-> + *	Temperature = ----------------------- - 273000
-> + *				divider
-> + *
-> + *	where divider should be ticks number of accumulation period,
-> + *	e.g. 2048 for TEMPSEN_CTRL_ACCSEL_2048T
-> + */
-> +static int cv180x_calc_temp(struct cv180x_thermal_zone *ctz, u32 result)
-> +{
-> +	u32 divider = (u32)(512 * int_pow(2, ctz->accum_period));
-> +
-> +	return (result * 1000) * 716 / divider - 273000;
-> +}
-> +
-> +static int cv180x_get_temp(struct thermal_zone_device *tdev, int *temperature)
-> +{
-> +	struct cv180x_thermal_zone *ctz = thermal_zone_device_priv(tdev);
-> +	void __iomem *base = ctz->base;
-> +	u32 result;
-> +
-> +	result = readl(base + TEMPSEN_RESULT(0)) & TEMPSEN_RESULT_RESULT_MASK;
-> +	*temperature = cv180x_calc_temp(ctz, result);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct thermal_zone_device_ops cv180x_thermal_ops = {
-> +	.get_temp = cv180x_get_temp,
-> +};
-> +
-> +static const struct of_device_id cv180x_thermal_of_match[] = {
-> +	{ .compatible = "sophgo,cv1800-thermal" },
-> +	{ .compatible = "sophgo,cv180x-thermal" },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, cv180x_thermal_of_match);
-> +
-> +static int
-> +cv180x_parse_dt(struct cv180x_thermal_zone *ctz)
-> +{
-> +	struct device_node *np = ctz->dev->of_node;
-> +
-> +	if (of_property_read_u32(np, "accumulation-period",
-> +				 &ctz->accum_period)) {
-> +		ctz->accum_period = TEMPSEN_SET_ACCSEL_2048T;
-> +	} else {
-> +		if (ctz->accum_period < TEMPSEN_SET_ACCSEL_512T ||
-> +		    ctz->accum_period > TEMPSEN_SET_ACCSEL_4096T) {
-> +			dev_err(ctz->dev, "invalid accumulation period %d\n",
-> +				ctz->accum_period);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	if (of_property_read_u32(np, "chop-period", &ctz->chop_period)) {
-> +		ctz->chop_period = TEMPSEN_SET_CHOPSEL_1024T;
-> +	} else {
-> +		if (ctz->chop_period < TEMPSEN_SET_CHOPSEL_128T ||
-> +		    ctz->chop_period > TEMPSEN_SET_CHOPSEL_1024T) {
-> +			dev_err(ctz->dev, "invalid chop period %d\n",
-> +				ctz->chop_period);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	if (of_property_read_u32(np, "sample-cycle-us", &ctz->sample_cycle))
-> +		ctz->sample_cycle = 1000000;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cv180x_thermal_probe(struct platform_device *pdev)
-> +{
-> +	struct cv180x_thermal_zone *ctz;
-> +	struct thermal_zone_device *tz;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	ctz = devm_kzalloc(&pdev->dev, sizeof(*ctz), GFP_KERNEL);
-> +	if (!ctz)
-> +		return -ENOMEM;
-> +
-> +	ctz->dev = &pdev->dev;
-> +
-> +	ret = cv180x_parse_dt(ctz);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "failed to parse dt\n");
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	ctz->base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(ctz->base))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(ctz->base),
-> +				     "failed to map tempsen registers\n");
-> +
-> +	ctz->clk_tempsen = devm_clk_get(&pdev->dev, "clk_tempsen");
+diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+index 1ad281cbc541..b4d9ef4f66c8 100644
+--- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
++++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+@@ -3519,12 +3519,6 @@ static void init_mvqs(struct mlx5_vdpa_net *ndev)
+ 		mvq->fwqp.fw = true;
+ 		mvq->fw_state = MLX5_VIRTIO_NET_Q_OBJECT_NONE;
+ 	}
+-	for (; i < ndev->mvdev.max_vqs; i++) {
+-		mvq = &ndev->vqs[i];
+-		memset(mvq, 0, offsetof(struct mlx5_vdpa_virtqueue, ri));
+-		mvq->index = i;
+-		mvq->ndev = ndev;
+-	}
+ }
+ 
+ struct mlx5_vdpa_mgmtdev {
 
-devm_clk_get_enabled maybe better for easy exit and error handling
-code path. see below
+-- 
+2.45.1
 
-And since the so called "clk_tempsen" is the only clk, it's better
-to remove the clk name.
-
-> +	if (IS_ERR(ctz->clk_tempsen))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(ctz->clk_tempsen),
-> +				     "failed to get clk_tempsen\n");
-> +
-> +	clk_prepare_enable(ctz->clk_tempsen);
-> +
-> +	cv180x_thermal_init(ctz);
-> +
-> +	tz = devm_thermal_of_zone_register(&pdev->dev, 0, ctz,
-> +					   &cv180x_thermal_ops);
-> +	if (IS_ERR(tz))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(tz),
-> +				     "failed to register thermal zone\n");
-
-Missing undo the clk_prepare_enable. 
-
-> +
-> +	platform_set_drvdata(pdev, ctz);
-> +
-> +	return 0;
-> +}
-> +
-> +static int cv180x_thermal_remove(struct platform_device *pdev)
-> +{
-> +	struct cv180x_thermal_zone *ctz = platform_get_drvdata(pdev);
-> +
-> +	cv180x_thermal_deinit(ctz);
-> +	clk_disable_unprepare(ctz->clk_tempsen);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused cv180x_thermal_suspend(struct device *dev)
-> +{
-> +	struct cv180x_thermal_zone *ctz = dev_get_drvdata(dev);
-> +
-> +	cv180x_thermal_deinit(ctz);
-> +	clk_disable_unprepare(ctz->clk_tempsen);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused cv180x_thermal_resume(struct device *dev)
-> +{
-> +	struct cv180x_thermal_zone *ctz = dev_get_drvdata(dev);
-> +
-> +	clk_prepare_enable(ctz->clk_tempsen);
-> +	cv180x_thermal_init(ctz);
-> +
-> +	return 0;
-> +}
-> +
-> +static SIMPLE_DEV_PM_OPS(cv180x_thermal_pm_ops,
-> +			 cv180x_thermal_suspend, cv180x_thermal_resume);
-> +
-> +static struct platform_driver cv180x_thermal_driver = {
-> +	.probe = cv180x_thermal_probe,
-> +	.remove = cv180x_thermal_remove,
-> +	.driver = {
-> +		.name = "cv180x-thermal",
-> +		.pm = &cv180x_thermal_pm_ops,
-> +		.of_match_table = cv180x_thermal_of_match,
-> +	},
-> +};
-> +
-> +module_platform_driver(cv180x_thermal_driver);
-> +
-> +MODULE_DESCRIPTION("Sophgo CV180x thermal driver");
-> +MODULE_AUTHOR("Haylen Chu <heylenay@outlook.com>");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.45.2
-> 
 
