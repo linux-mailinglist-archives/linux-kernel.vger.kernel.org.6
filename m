@@ -1,145 +1,268 @@
-Return-Path: <linux-kernel+bounces-217569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3096790B1A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:22:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135AE90B1A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5506F1C226D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:22:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C3E1F28D9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421BA19FA9C;
-	Mon, 17 Jun 2024 13:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE591A01CB;
+	Mon, 17 Jun 2024 13:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zf4Pgsm3"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="GdV04Sr6"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91AF199E92
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D821A08AC;
+	Mon, 17 Jun 2024 13:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630995; cv=none; b=uOZSDOSmoxflMz2c2SE2pEl0gNa8IQ3TdnP9o0EC1iqoEn+0cnn3XYTdeP19KU703hdXIvjYAMaLWxTDn7BELzzUt96EgaOaOSx0fLUmfZsxKeHvD6kzPCrFSRPPgC1DUCPfQq0CB/Zdp04DWB607XToAf6UX97dXqWr73AmG0A=
+	t=1718630997; cv=none; b=KFnBg2oC6TMBH+42/CHTqCTUq1EPe5dr10Zi8f3xAq5AM5SxuY7Kbh6uE0nSZ52ISuBqYiYy0hLxwLLAu2OXxbnJGSyCj8VdZphDQyG2JRbrwcxa/sWX7VfCTfArdoHNuCe8y0sJWiIjNNFy3jsSXCjYgalvuXK8T3rJd4eAIo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630995; c=relaxed/simple;
-	bh=mNYo8XxzwcBots3Eauz51GHKXnkqqdLvGz8WsU8GYA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RzbGqvWkX3Wyl6rfn9F7lmkqvEYffCGTFeF21Vfxn39f0okJ6YJVJPK3XHg1b60zhXRDRbR8TSmb3FwhAgMoBpWWGvLkgRvt+W2BIYfMPPRVxD0Wfc9nPwxESy24UVWLUft7uJ2S8jTNRZInhjVyh7yMROfcgMOY7hPvzWibO4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zf4Pgsm3; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: syzbot+e6332ce6aa831184a0eb@syzkaller.appspotmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718630991;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BDywsyDZsB83JPUteg6tKfFYJf2ez0t3lcHh4VBGFBU=;
-	b=Zf4Pgsm3CGh73rwBAd+akAyuVzXQY3uARUnbgG72T/6EeiGGP4d0ImBRQpz7qj/VJR9o3Y
-	Y2W6hAGq7gqwl2+sLdZ89nfXVHAa9nah4lLMYP3bSXx0Wyjjx0calHrZZIeanLuuCmq2nk
-	8+YtAOpzz/am1Q3Q/R9GRi46HQooBw4=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Mon, 17 Jun 2024 09:29:48 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+e6332ce6aa831184a0eb@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in
- bch2_btree_node_read_done
-Message-ID: <5yjeaaweds7ap7s4hrxlhg53mftdyzwe4uvl7opqna43rnr2tl@chbf2ehpimng>
-References: <0000000000000de83f06191f79ad@google.com>
+	s=arc-20240116; t=1718630997; c=relaxed/simple;
+	bh=l3OmBQukA9+kocptHf0PjvUuCXPXmfkS7WviCH+KeSQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lSDpkX/uQcPdyHwuFMsINF1NcsclgKjgWfjqV/H0wunDBpxjs4rabEFY7LsiC+RdHj82BjOfHsOaJ0hZkV18++g4Y0U1DZBzAK5a2fpSlSgqbrQzbXA2lGhoq/O3H91Je05qC0OsHGhcthILNDRW1N+OenNPkNjR866Xp14adk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=GdV04Sr6; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=hc184BCXrlpc/vygEOSxeuzMmZEAgpPYurZkVg9mrro=;
+	t=1718630995; x=1719062995; b=GdV04Sr6MPf/EqHY7MX97/52mnoMoLt9mURH29W6N6+18RH
+	RDk+a5RiQMHw/WCTbIVIxMxQkVfI8R+k4ny9Xwrghj58ahYZ1DaLm8ulw42D0H7NeUIVYTtESM9mM
+	T7zXOzwz5ZP+b4LkUMdHOCNaiA13gOiKA60fkhBYFpr5aX2NPkgYIOMqJOpLA7MDEDg+y01IRJ671
+	1eYKHtUZpsam0RgJWTUwl0+N7ykMTQ/36172KsR7M1B3goEZbqKk8NdVGYZk+aVPrM15gdh2ICIBn
+	36prxYjtodWHFyDlH3skSCs0fpwhdgzlW1LeO04L9dxbMX6ZJDY2gzgk2mw98skQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sJCQg-0003Ea-KH; Mon, 17 Jun 2024 15:29:50 +0200
+Message-ID: <701edf2c-2c70-4031-9d6f-cd31cd082df7@leemhuis.info>
+Date: Mon, 17 Jun 2024 15:29:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000000de83f06191f79ad@google.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] drm/bridge: adv7511: Fix Intermittent EDID failures
+To: Adam Ford <aford173@gmail.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: dmitry.baryshkov@linaro.org, victor.liu@nxp.com, sui.jingfeng@linux.dev,
+ aford@beaconembedded.com, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20240601132459.81123-1-aford173@gmail.com>
+ <7015c544-14c3-40af-aa10-e3088eea5633@leemhuis.info>
+ <CAHCN7xJfqcN=yqWAURuy-oF8EiwoB5i840Gct65xgqgxNSL_Ug@mail.gmail.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <CAHCN7xJfqcN=yqWAURuy-oF8EiwoB5i840Gct65xgqgxNSL_Ug@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718630995;f673f289;
+X-HE-SMSGID: 1sJCQg-0003Ea-KH
 
-On Thu, May 23, 2024 at 07:00:25AM -0700, syzbot wrote:
-> Hello,
+On 17.06.24 15:14, Adam Ford wrote:
+> On Mon, Jun 17, 2024 at 8:00 AM Linux regression tracking (Thorsten
+> Leemhuis) <regressions@leemhuis.info> wrote:
+>>
+>> [CCing the regression list, as it should be in the loop for regressions:
+>> https://docs.kernel.org/admin-guide/reporting-regressions.html]
+>>
+>> Hi! Top-posting for once, to make this easily accessible to everyone.
+>>
+>> Hmm, seem nobody took a look at below fix for a regression that seems to
+>> be caused by f3d9683346d6b1 ("drm/bridge: adv7511: Allow IRQ to share
+>> GPIO pins") [which went into v6.10-rc1].
+>>
+>> Adam and Dimitry, what are your stances on this patch from Adam? I'm
+>> asking, as you authored respectively committed the culprit?
 > 
-> syzbot found the following issue on:
+> I learned of the regression from Liu Ying [...]
+
+Ohh, I'm very sorry, stupid me somehow missed that the Adam that was
+posting the fix was the same Adam that authored the culprit. :-( Seems I
+definitely need more coffee (or green tea in my case) or reduce the
+number or regressions on the stack. Please accept my apologies.
+
+Thx for the update anyway.
+
+> Dimitry had given me some suggestions, and from that,  I posted a V1.
+> Dmitry had some more followup suggestions [2] which resulted in the
+> V2.
+>> As far as I know, Liu was satisfied that this addressed the regression
+> he reported.
+
+So in that case the main question afaics is why this fix did not make
+any progress for more than two weeks now (at least afaics -- or did I
+miss something in that area, too?).
+
+Ciao, Thorsten
+
+>> On 01.06.24 15:24, Adam Ford wrote:
+>>> In the process of adding support for shared IRQ pins, a scenario
+>>> was accidentally created where adv7511_irq_process returned
+>>> prematurely causing the EDID to fail randomly.
+>>>
+>>> Since the interrupt handler is broken up into two main helper functions,
+>>> update both of them to treat the helper functions as IRQ handlers. These
+>>> IRQ routines process their respective tasks as before, but if they
+>>> determine that actual work was done, mark the respective IRQ status
+>>> accordingly, and delay the check until everything has been processed.
+>>>
+>>> This should guarantee the helper functions don't return prematurely
+>>> while still returning proper values of either IRQ_HANDLED or IRQ_NONE.
+>>>
+>>> Reported-by: Liu Ying <victor.liu@nxp.com>
+>>> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+>>> Signed-off-by: Adam Ford <aford173@gmail.com>
+>>> Tested-by: Liu Ying <victor.liu@nxp.com> # i.MX8MP EVK ADV7535 EDID retrieval w/o IRQ
+>>> ---
+>>> V2:  Fix uninitialized cec_status
+>>>      Cut back a little on error handling to return either IRQ_NONE or
+>>>      IRQ_HANDLED.
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+>>> index ea271f62b214..ec0b7f3d889c 100644
+>>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
+>>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+>>> @@ -401,7 +401,7 @@ struct adv7511 {
+>>>
+>>>  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+>>>  int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511);
+>>> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
+>>> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
+>>>  #else
+>>>  static inline int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511)
+>>>  {
+>>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+>>> index 44451a9658a3..651fb1dde780 100644
+>>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+>>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+>>> @@ -119,7 +119,7 @@ static void adv7511_cec_rx(struct adv7511 *adv7511, int rx_buf)
+>>>       cec_received_msg(adv7511->cec_adap, &msg);
+>>>  }
+>>>
+>>> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>>> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>>>  {
+>>>       unsigned int offset = adv7511->info->reg_cec_offset;
+>>>       const u32 irq_tx_mask = ADV7511_INT1_CEC_TX_READY |
+>>> @@ -130,17 +130,21 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>>>                               ADV7511_INT1_CEC_RX_READY3;
+>>>       unsigned int rx_status;
+>>>       int rx_order[3] = { -1, -1, -1 };
+>>> -     int i;
+>>> +     int i, ret = 0;
+>>> +     int irq_status = IRQ_NONE;
+>>>
+>>> -     if (irq1 & irq_tx_mask)
+>>> +     if (irq1 & irq_tx_mask) {
+>>>               adv_cec_tx_raw_status(adv7511, irq1);
+>>> +             irq_status = IRQ_HANDLED;
+>>> +     }
+>>>
+>>>       if (!(irq1 & irq_rx_mask))
+>>> -             return;
+>>> +             return irq_status;
+>>>
+>>> -     if (regmap_read(adv7511->regmap_cec,
+>>> -                     ADV7511_REG_CEC_RX_STATUS + offset, &rx_status))
+>>> -             return;
+>>> +     ret = regmap_read(adv7511->regmap_cec,
+>>> +                     ADV7511_REG_CEC_RX_STATUS + offset, &rx_status);
+>>> +     if (ret < 0)
+>>> +             return irq_status;
+>>>
+>>>       /*
+>>>        * ADV7511_REG_CEC_RX_STATUS[5:0] contains the reception order of RX
+>>> @@ -172,6 +176,8 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>>>
+>>>               adv7511_cec_rx(adv7511, rx_buf);
+>>>       }
+>>> +
+>>> +     return IRQ_HANDLED;
+>>>  }
+>>>
+>>>  static int adv7511_cec_adap_enable(struct cec_adapter *adap, bool enable)
+>>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>>> index 66ccb61e2a66..c8d2c4a157b2 100644
+>>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>>> @@ -469,6 +469,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+>>>  {
+>>>       unsigned int irq0, irq1;
+>>>       int ret;
+>>> +     int cec_status = IRQ_NONE;
+>>> +     int irq_status = IRQ_NONE;
+>>>
+>>>       ret = regmap_read(adv7511->regmap, ADV7511_REG_INT(0), &irq0);
+>>>       if (ret < 0)
+>>> @@ -478,29 +480,31 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+>>>       if (ret < 0)
+>>>               return ret;
+>>>
+>>> -     /* If there is no IRQ to handle, exit indicating no IRQ data */
+>>> -     if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+>>> -         !(irq1 & ADV7511_INT1_DDC_ERROR))
+>>> -             return -ENODATA;
+>>> -
+>>>       regmap_write(adv7511->regmap, ADV7511_REG_INT(0), irq0);
+>>>       regmap_write(adv7511->regmap, ADV7511_REG_INT(1), irq1);
+>>>
+>>> -     if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder)
+>>> +     if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder) {
+>>>               schedule_work(&adv7511->hpd_work);
+>>> +             irq_status = IRQ_HANDLED;
+>>> +     }
+>>>
+>>>       if (irq0 & ADV7511_INT0_EDID_READY || irq1 & ADV7511_INT1_DDC_ERROR) {
+>>>               adv7511->edid_read = true;
+>>>
+>>>               if (adv7511->i2c_main->irq)
+>>>                       wake_up_all(&adv7511->wq);
+>>> +             irq_status = IRQ_HANDLED;
+>>>       }
+>>>
+>>>  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+>>> -     adv7511_cec_irq_process(adv7511, irq1);
+>>> +     cec_status = adv7511_cec_irq_process(adv7511, irq1);
+>>>  #endif
+>>>
+>>> -     return 0;
+>>> +     /* If there is no IRQ to handle, exit indicating no IRQ data */
+>>> +     if (irq_status == IRQ_HANDLED || cec_status == IRQ_HANDLED)
+>>> +             return IRQ_HANDLED;
+>>> +
+>>> +     return IRQ_NONE;
+>>>  }
+>>>
+>>>  static irqreturn_t adv7511_irq_handler(int irq, void *devid)
+>>> @@ -509,7 +513,7 @@ static irqreturn_t adv7511_irq_handler(int irq, void *devid)
+>>>       int ret;
+>>>
+>>>       ret = adv7511_irq_process(adv7511, true);
+>>> -     return ret < 0 ? IRQ_NONE : IRQ_HANDLED;
+>>> +     return ret < 0 ? IRQ_NONE : ret;
+>>>  }
+>>>
+>>>  /* -----------------------------------------------------------------------------
 > 
-> HEAD commit:    b6394d6f7159 Merge tag 'pull-misc' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17cd3df4980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=713476114e57eef3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e6332ce6aa831184a0eb
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/e8e1377d4772/disk-b6394d6f.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/19fbbb3b6dd5/vmlinux-b6394d6f.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4dcce16af95d/bzImage-b6394d6f.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+e6332ce6aa831184a0eb@syzkaller.appspotmail.com
-> 
-> bcachefs (loop2): mounting version 1.7: mi_btree_bitmap opts=metadata_checksum=none,data_checksum=none,nojournal_transaction_names
-> bcachefs (loop2): recovering from clean shutdown, journal seq 8
-> ------------[ cut here ]------------
-> UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:770:13
-> shift exponent 128 is too large for 32-bit type 'unsigned int'
-> CPU: 1 PID: 18326 Comm: syz-executor.2 Not tainted 6.9.0-syzkaller-10729-gb6394d6f7159 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
->  ubsan_epilogue lib/ubsan.c:231 [inline]
->  __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
->  btree_node_type_is_extents fs/bcachefs/btree_types.h:770 [inline]
->  bch2_btree_node_read_done+0x35bf/0x6770 fs/bcachefs/btree_io.c:1088
->  btree_node_read_work+0x68b/0x1260 fs/bcachefs/btree_io.c:1340
->  bch2_btree_node_read+0x2467/0x2a40
->  __bch2_btree_root_read fs/bcachefs/btree_io.c:1764 [inline]
->  bch2_btree_root_read+0x61e/0x970 fs/bcachefs/btree_io.c:1788
->  read_btree_roots+0x22d/0x7b0 fs/bcachefs/recovery.c:472
->  bch2_fs_recovery+0x2346/0x3700 fs/bcachefs/recovery.c:800
->  bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1031
->  bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2123
->  bch2_mount+0x71d/0x1320 fs/bcachefs/fs.c:1917
->  legacy_get_tree+0xee/0x190 fs/fs_context.c:662
->  vfs_get_tree+0x90/0x2a0 fs/super.c:1780
->  do_new_mount+0x2be/0xb40 fs/namespace.c:3352
->  do_mount fs/namespace.c:3692 [inline]
->  __do_sys_mount fs/namespace.c:3898 [inline]
->  __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f76c307e5ea
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f76c2bbcef8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007f76c2bbcf80 RCX: 00007f76c307e5ea
-> RDX: 0000000020000040 RSI: 00000000200001c0 RDI: 00007f76c2bbcf40
-> RBP: 0000000020000040 R08: 00007f76c2bbcf80 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000202 R12: 00000000200001c0
-> R13: 00007f76c2bbcf40 R14: 0000000000005b22 R15: 0000000020000240
->  </TASK>
-> ---[ end trace ]---
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-#syz fix: bcachefs: Check for invalid btree IDs
 
