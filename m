@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-217708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91AF090B336
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:01:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88AA290B44A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A10A31C22C63
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:01:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BFF7B392C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447BD13C695;
-	Mon, 17 Jun 2024 14:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4A7154424;
+	Mon, 17 Jun 2024 14:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeUml2zM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDV6/8UU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773D513C3F2;
-	Mon, 17 Jun 2024 14:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF47153BD7;
+	Mon, 17 Jun 2024 14:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718633431; cv=none; b=BZgaa3e/0KbzYDcuy7meQeoRolyvY1yxp9wa/kjNcl9rHFJ9pGaDEluxlsEJq95GkfUQ4KBrTPM06ScXT7NHdSvId3PCVGDf2yRWJFo0yonbrgzJ8AtWYdL/Ap/eocZTfpqJXDkUHqPR0WseBNepcOBYhXBM+EIAThP7Wh3HkiY=
+	t=1718634315; cv=none; b=P9Md0z4O/YGaFel1a5Xb6b5zTJGNYmB6Rv12IhFhVJtGl2MjDDUJ1nSs2z+dJXeTQTMWCatIGgTXnO6z8U7BnyHeyc7To+TWPk2CkC6CSacI+xcoczTl952AE/qNmfg4uWcrH7X151DBFCSH/iKhDlrjL2SURW2jwWQYn1nouoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718633431; c=relaxed/simple;
-	bh=ZY0frUm/l/ELazp3keFtHSZU2+jYmNK9nHk3XE/5PDM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MLgMl43w/KHY0NmMchjyXIBpKy8BaCt8krxr1AnxpFF4pSDkoq9KyWzOcv/M3Fm7uK/4qgWul0FCmTo+2aUhyrDNkVtBq510H/C34AhVPy4r2jasx38JECuUv6Nk1YrVKXNtONnwM5dlNlVwlxIcYj3CNL1OYPsVGEeddJKKUkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eeUml2zM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1AD6EC4DDF3;
-	Mon, 17 Jun 2024 14:10:31 +0000 (UTC)
+	s=arc-20240116; t=1718634315; c=relaxed/simple;
+	bh=ME8qz19GOaLNX/5j98PmYI8BvZeCSpM159rOsXAygRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5ul6Y+yggyC+EqrB1oKyNllLrI6EmTya/mxdSgrN96tq/8/fI7CDSJBNVKFozDM+nH+EkbsBiUMngOnHWeLLWSZ5yy94eMcJlS7C9/EuN7UMEl4+ybVrwoiwNu8cBQyEHTgo2uNangpK63qm7roNrpSCDq7QcebYQIU23xu1cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDV6/8UU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3358BC2BD10;
+	Mon, 17 Jun 2024 14:25:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718633431;
-	bh=ZY0frUm/l/ELazp3keFtHSZU2+jYmNK9nHk3XE/5PDM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=eeUml2zMnU9Tr5usyo/xu22P0H0SOSWbGapAD48Ecn7eOpCgavdMidKMLs0eJS9DY
-	 mL9Uart+1OAdxwAb6t5nIgWaaIGP0z8KEJDhtsm58N6FJiN3tYjHnRREycPY1u1ZE2
-	 qZOleREEQumGu+73JOertCtKUPMelURDh5/yciWo54NHp7yBMPUxKGYWVRD3a6Pc+x
-	 Chd041nW/rl82cKPyZ6gEu82jrx+EjXVvWml44LO8c1sxdVEgmBoUJyc2p1wzJAzwF
-	 ZSt0ODjkQ8Xr7aQhr5M6AT16PCK3VuClD8wQy3TYnxiDsLGnTqk+hDYTJYlL7VS3N3
-	 oCJn4IgFdTHbw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EF192C4361B;
-	Mon, 17 Jun 2024 14:10:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1718634315;
+	bh=ME8qz19GOaLNX/5j98PmYI8BvZeCSpM159rOsXAygRM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YDV6/8UUivqNYbFD7pVzIrm2TCaXgojnoyOPLZ8dKvelVoqjnZIY3CypZ+pLoZhjQ
+	 /yOIDPBxqKbscqTvLkk1id8weDXk0S4K4w8/a1W4JcE/pXVXr9S0oQgU06wW5djO6s
+	 mPT83UkIWWMJd23Lzc1GvihVyvDyg3gtKgzVn24EhFp0vFLGQihj49qhSeLibl7NPW
+	 WCy484OVZl9zXf2aksjjt5Qs+nvOtHxOCj78TE8W9J3CpcHeiaGHWj39MOvXOIqkXK
+	 FdYpr6ZvDRzkCvsjrKEtEW+G2Fz7TIRFw3zO5nHQF/LE2zQ7p9bigBJysx0AuRDhTQ
+	 TCw3dTJisTd2A==
+Date: Mon, 17 Jun 2024 22:11:17 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Conor Dooley <conor@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
+	linux-riscv@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jesse Taube <jesse@rivosinc.com>
+Subject: Re: [PATCH v1 0/9] riscv: add initial support for SpacemiT K1
+Message-ID: <ZnBEBQjTQtFs-fXt@xhacker>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+ <20240616-exorcism-computing-e11e26084a62@spud>
+ <20240616224811.GC3983622@ofsar>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] Bluetooth: Ignore too large handle values in BIG
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <171863343097.8850.935824555783496146.git-patchwork-notify@kernel.org>
-Date: Mon, 17 Jun 2024 14:10:30 +0000
-References: <tencent_E43E1B2F25E4BA5EBBEC33229E5E1BEB4B08@qq.com>
-In-Reply-To: <tencent_E43E1B2F25E4BA5EBBEC33229E5E1BEB4B08@qq.com>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: pmenzel@molgen.mpg.de, davem@davemloft.net, edumazet@google.com,
- johan.hedberg@gmail.com, kuba@kernel.org, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, luiz.von.dentz@intel.com,
- marcel@holtmann.org, netdev@vger.kernel.org, pabeni@redhat.com,
- syzkaller-bugs@googlegroups.com, william.xuanziyang@huawei.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240616224811.GC3983622@ofsar>
 
-Hello:
-
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Mon, 17 Jun 2024 19:09:37 +0800 you wrote:
-> hci_le_big_sync_established_evt is necessary to filter out cases where the
-> handle value is belonging to ida id range, otherwise ida will be erroneously
-> released in hci_conn_cleanup.
+On Sun, Jun 16, 2024 at 10:48:11PM +0000, Yixun Lan wrote:
+> Hi Conor
+>  Thanks for bringing this up
 > 
-> Fixes: 181a42edddf5 ("Bluetooth: Make handle of hci_conn be unique")
-> Reported-by: syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=b2545b087a01a7319474
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> On 19:35 Sun 16 Jun     , Conor Dooley wrote:
+> > On Mon, Jun 17, 2024 at 01:18:52AM +0800, Yangyu Chen wrote:
+> > 
+> > No MAINTAINERS update, so I figure that means you don't want to maintain
+> > it going forwards? If there's someone out that that does care about the
+> > spacemit k1 (Jesse maybe?), then I'd be more than happy to have them
+> > look after it.
+> Yangyu kind of has limited time, too many stuff for him..
 > 
-> [...]
+> I'd volunteered to help on this if it can fill the gap
+> Also I'd be more than happy if anyone willing step forward to co-maintain..
 
-Here is the summary with links:
-  - [v2] Bluetooth: Ignore too large handle values in BIG
-    https://git.kernel.org/bluetooth/bluetooth-next/c/401ad9b792e1
+Does maintainership work like this? Is willing to do enough?
+FWICT, maintainership involves active patch contributing, reviewing and
+maintaining the whole SoC. It is better to take over the maintainership
+after showing enough patch contributions and understanding of the SoC.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> 
+> -- 
+> Yixun Lan (dlan)
+> Gentoo Linux Developer
+> GPG Key ID AABEFD55
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
