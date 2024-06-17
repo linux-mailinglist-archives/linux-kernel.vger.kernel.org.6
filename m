@@ -1,117 +1,134 @@
-Return-Path: <linux-kernel+bounces-217970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6F990B70C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD27290B710
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB121F22A3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:51:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C551F23EAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44BA1662FC;
-	Mon, 17 Jun 2024 16:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D8B166312;
+	Mon, 17 Jun 2024 16:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="js6dk8wq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zxH3gaZu"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038EA1D9526;
-	Mon, 17 Jun 2024 16:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0086160884
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718643108; cv=none; b=evNesHPpfan7Bpu+o0tzbE/afKRSjBocjhwSXtTMLM1zRC0e589/Wq2Rvcos2x1mxJwHSLaRjyINQmK2VfFjIjc+MITnZLuWdYYDMPk0YToWM3f0o2LkoRxWgQLihZq8kGifXykvcFIkwIeyFRd3mtsDI14GN4JUe8cC8DMAVEY=
+	t=1718643149; cv=none; b=fcxYv7VAQWO/okqVRxaSaTkWr/Il8DzPkKeqoAP5TMmEAUmH06aoOP+ssGu2lyemXpI83WYDCkTgZjGCVLObzt9tpKc7T4nbqbokXmiHZPOGsQEyBIRM0XmzIt9eVn6eYXxbgfaW03SoAQt6x8x+DvFCEBP8j2G8UIVZtHKvDfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718643108; c=relaxed/simple;
-	bh=JQ9/ew7gNBZkCvIaaYqgstiKB/4Vesu8cj+i8F8ugsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ktpti6ki88geR1F2bk9hiunwaTQh3xzMILMT7PIMZLWA7H8NSkwr7kKoI93kGQTLwgRpUcp277XVmxZUiZFD9qW9NOdIBn6wGgcSdnDgFjzbDWsoMsUUfENOUfY9SpYjIdxJaGITbKFA5BqGLq9/8BmnXKicYMiuO2m1JA1bKAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=js6dk8wq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35318C2BD10;
-	Mon, 17 Jun 2024 16:51:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718643107;
-	bh=JQ9/ew7gNBZkCvIaaYqgstiKB/4Vesu8cj+i8F8ugsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=js6dk8wqM2vGwMzBeUoVi9zTNzBclB3440OFZMVql27MEzKvs9qPHQ+iFbYjg4RPl
-	 e6LfgSYfhvTz/ZAASx9i/y+n5osVCeyw3wyX+2V1Bybmxn/iiL2uTEy5IWrMUCin4o
-	 NFHkjg/Dq2HSuud6miltzRHaXxmuMoQGnzsv6/wj2ODGlySkqlZuR8+GL9qw8oofio
-	 xc0xNZpCkErpd/26ZwF9hyqUBISr53j5kzktT6RQYO8O6D86cHHXwqCupZMCVRwbgH
-	 FzsB4/rTrfpP48RKMUaUsOOTHBeB6bUehepbWadDtqo2CErEnNq5ARbmlXF/+auxme
-	 eFHf/oNq/37Cg==
-Date: Mon, 17 Jun 2024 17:51:42 +0100
-From: Simon Horman <horms@kernel.org>
-To: Furong Xu <0x1207@gmail.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Eric Dumazet <edumazet@google.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>,
-	Corinna Vinschen <vinschen@redhat.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xfr@outlook.com, rock.xu@nio.com
-Subject: Re: [PATCH net-next v4] net: stmmac: Enable TSO on VLANs
-Message-ID: <20240617165142.GX8447@kernel.org>
-References: <20240615095611.517323-1-0x1207@gmail.com>
+	s=arc-20240116; t=1718643149; c=relaxed/simple;
+	bh=QlFWWrphdJLUKrnqdX/WA0FmGEy2H4QxLEAk/Rlk/Ts=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r0Gzbd3sNlCvM5XSlEKgxuUyadz+oCOTZkPlgMvBRqgPUmnI4lktnPe6QdUGWXt304n0HqwaZ1x3DO2SG3sTc2sFefZd9jf5769YEaNZwDHuHb90hzTlWojOo8wbYBOX7FnXDUX4ZeU5WNytpYU3iMJRWnkWx7mHd/dI9cI9JJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zxH3gaZu; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6ef64b092cso558884966b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:52:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718643146; x=1719247946; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2SXqfMqzsmgi60tzvZSO8Ci7JwFaQflPhy4e9Xx/RRA=;
+        b=zxH3gaZuO2hl7boyhtUD01r5UkeNqAlviSKD/SKNqWbel76bBSOTBaH8wplVVpZW+b
+         7Bn+YUddHxLaLUDxjizruL0P5QgHnccxsUpFM/0HHqefzQiQUHlZlZrXbrHk4lpstx/t
+         4oa1hfuAfREVfetR3YO3j44xsYs5UfQT5EVw6kXIqW1AVybYfUmCnSGeemqf1OVz4U/2
+         2spEXHv9KoC++qpzHRGQrEgqRSPwCoSpZC+0byI6hD/oGNxhNZ4fGom30APHmNFFhr+J
+         h82wFFNEC1dlsy37OUA/JdMsYEeuQq0y/FjgIKOydUdiw89aHJVXw3wQ8wubPx0ATGUH
+         KunQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718643146; x=1719247946;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2SXqfMqzsmgi60tzvZSO8Ci7JwFaQflPhy4e9Xx/RRA=;
+        b=rt8uA3QiSybvkO/+UEUhQT6+fd9QLRh9it94fLTro4+CIipYQQpzxRwaC76YrFZ4jP
+         8cOMejXMHLrhS0bl+LKAGRX3uXrd2yZrv+R07m7z+NTefZuErVEZO72PoA+4jTMb+PFE
+         +g8F4mymnk8lZ8Lh/NGcVHxhejQn3AWdTHtjNCFgtRMUZk+h+MjX1RxXTZcddtnG554G
+         /gAlcdDjqvVFrR8Z1x4UKL9fICBtKdokJDZTKlLuiZXi+tebqJquG+4XK8tVwTEel2nr
+         FRJTHmOJlacttxwwCEPSwB5I5vPez7V03by0Ahr9VwB/fD5AMUL52feVAlXkLangk8TR
+         r8kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzA2Aqijn8fnA62AGgF1xyRl1xyjZeo0TGjKdiSq5ZpB6Dzt1LaS7JwcZJbUvvMFWj2IViiCQ2MvCgrlYqvLNYGARh4HvW9h9U4rEf
+X-Gm-Message-State: AOJu0YxPnr0eUVM5tiT7/LsL5z+kdwWmx+eePzvfXwBrFYHguTRMG3mV
+	5A+OO9RQRRS0YHecgv+qe66KTzmGRrvuhH2fWequIE5rlb3nJxuyNToEih5zkz8=
+X-Google-Smtp-Source: AGHT+IGdOXSsdt9wpeM+S7PJouIKDjRGTea/R3paOf2QC08kw74Op/Ef1S4OlA1jnZ9Lbhjly1OS5g==
+X-Received: by 2002:a17:906:3c05:b0:a6f:1cf9:9b56 with SMTP id a640c23a62f3a-a6f60cef3bdmr659622966b.9.1718643146286;
+        Mon, 17 Jun 2024 09:52:26 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f8176eea5sm190176766b.88.2024.06.17.09.52.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 09:52:25 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Mon, 17 Jun 2024 17:52:18 +0100
+Subject: [PATCH] arm64: dts: exynos: gs101-oriole: add regulators for USB
+ phy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240615095611.517323-1-0x1207@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240617-gs101-usb-regulators-in-dt-v1-1-e2242542c518@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAMFpcGYC/x3MSwqEMAwA0KtI1hNoix/0KjKL1sYakCqJDgPi3
+ S0u3+ZdoCRMCkN1gdCPlbdcYD8VTIvPiZBjMTjjatPaDpNaY/HUgELpXP2xiSJnjAeGGMJE3jU
+ z9VCCXWjm/5uP3/t+ABWWvJ9sAAAA
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
+ kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Sat, Jun 15, 2024 at 05:56:11PM +0800, Furong Xu wrote:
-> The TSO engine works well when the frames are not VLAN Tagged.
-> But it will produce broken segments when frames are VLAN Tagged.
-> 
-> The first segment is all good, while the second segment to the
-> last segment are broken, they lack of required VLAN tag.
-> 
-> An example here:
-> ========
-> // 1st segment of a VLAN Tagged TSO frame, nothing wrong.
-> MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1518: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [.], seq 1:1449
-> 
-> // 2nd to last segments of a VLAN Tagged TSO frame, VLAN tag is missing.
-> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 1449:2897
-> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 2897:4345
-> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 4345:5793
-> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [P.], seq 5793:7241
-> 
-> // normal VLAN Tagged non-TSO frame, nothing wrong.
-> MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1022: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [P.], seq 7241:8193
-> MacSrc > MacDst, ethertype 802.1Q (0x8100), length 70: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [F.], seq 8193
-> ========
-> 
-> When transmitting VLAN Tagged TSO frames, never insert VLAN tag by HW,
-> always insert VLAN tag to SKB payload, then TSO works well on VLANs for
-> all MAC cores.
-> 
-> Tested on DWMAC CORE 5.10a, DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
-> 
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> ---
->   Changes in v4:
->     - Re-arrange variables to keep reverse x-mas tree order.
-> 
->   Changes in v3:
->     - Drop packet and increase stats counter when vlan tag insert fails.
-> 
->   Changes in v2:
->     - Use __vlan_hwaccel_push_inside() to insert vlan tag to the payload.
+The USB phy requires various power supplies to work.
 
-Thanks this both seems correct to me and
-I believe it addresses the review of earlier revisions.
+While we don't have a PMIC driver yet, they should still be added to
+the DT. Do so.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Note that this patch depends on the updated DT binding from
+https://lore.kernel.org/r/20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org
+---
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+index 5e8ffe065081..1a79d9ab3be0 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
++++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+@@ -145,6 +145,13 @@ &usbdrd31_dwc3 {
+ };
+ 
+ &usbdrd31_phy {
++	/* TODO: Update these once PMIC is implemented */
++	pll-supply = <0>;
++	dvdd-usb20-supply = <0>;
++	vddh-usb20-supply = <0>;
++	vdd33-usb20-supply = <0>;
++	vdda-usbdp-supply = <0>;
++	vddh-usbdp-supply = <0>;
+ 	status = "okay";
+ };
+ 
+
+---
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240617-gs101-usb-regulators-in-dt-bdbbcea25fe9
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
 
