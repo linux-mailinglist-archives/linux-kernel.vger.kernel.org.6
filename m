@@ -1,73 +1,50 @@
-Return-Path: <linux-kernel+bounces-217078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2553E90AA4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A2190AA47
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8AA1285350
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3938D282198
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C75196427;
-	Mon, 17 Jun 2024 09:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45254195FF5;
+	Mon, 17 Jun 2024 09:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRQK8qMG"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="HVEE4c63"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6168195FE2;
-	Mon, 17 Jun 2024 09:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74631195F09;
+	Mon, 17 Jun 2024 09:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718617502; cv=none; b=nU3/DKSktaeN+P609HhTsV5Wc73YboDLNYk7p1ECelnIxug4Z88z0TZoMB2IWZKwpLtWM2B34kTgkrmsV2edgnTtgSnRV0xGr8LstlPL5Xrh9tPfvFUogxOw2gRA8jA18mQkaOAr32zn9mubAjoTmB31ykacrZ+qj3bQy7Im3gE=
+	t=1718617500; cv=none; b=cm0A5URTCWFH5UBcwtkQSYnTHVKh8215TXBzkHIQfk0kULHvqpgJ0Uj+4iDtAsxcyHXG/2HVTy5De8rVLWry3xFrG7nv4DmJRRzHzwS+yqyIhflZnasQaBTX7+ovuOeGcZhhloFD/tNwT5kWim5cgmRiOM7xPyWVV3MbkIVMIuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718617502; c=relaxed/simple;
-	bh=ulYGpQplI6j1LKMsfjUp+t3ELw7gic7cyJ0yseY/H9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b9AJjCA7dGP9cQuXJ+7As6L38p2wVTxjnqBV6NKn2p5L5AQS7gw4uWS5kSlukmfY4Q8R2EAsKCVNqMBjPJ1d6KtUb4krh4BYPRNi6MhJ8zrD3cb+RGlMgAGlIDRcq5FLmLeKd87hvtJxvGGpVd+6nN3OTH0fhC5m15avq1NGuzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YRQK8qMG; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so4862858a12.0;
-        Mon, 17 Jun 2024 02:45:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718617499; x=1719222299; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X97SzOogYwfV1kCh1JrbnYsGiZ69at2aW20xoDHZcwM=;
-        b=YRQK8qMG10Tu118PKZMGKDW9RjYukT6APWdm9ILfAJy9KTum4UdmI6kiQbbavH7B3M
-         aTDa2R244OMWgzCnAM5KbdLTxMboiYDRfCqOePETZcbE225fzXhKFZN7o4YfUjHeMKdT
-         cl2N8L3xDC2E9ZOBKHgF7fvxQ/EvY1+snOh8hcoTHs4M1RMY8eUEe/arZQAtMUxkdvvm
-         OdY/K+grdVN9Tw5KZuh9QkYNM6r7Ckj8Ubeejfcld0syOJFieIJ0DG0JfD9hu43hQsfp
-         avu6nKySL599b5BkUNllIgkao9T0ITmmOuWYGAPk7Na1GgB5qyLSrGAXM6HkBwMwCYfq
-         SEkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718617499; x=1719222299;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X97SzOogYwfV1kCh1JrbnYsGiZ69at2aW20xoDHZcwM=;
-        b=dwTdagVhdRIuwgJ1UuNb75h9mqn38B5pE68+CR0WrnySfn9dPAxsZDkrFWEZUE/VSA
-         FV0FeoFaNbY40pmmeDEOFAcEFqD0wLk6bNum1e/wEQ0ycoXXYtW8I8AXSBhQaEd/D5AV
-         16n5JezK3rsg5vdsCZedJPM947aCWRtwIoTavNSa+LYoY1PhRfNykl38GOnFQoXAJwN0
-         va4iPd6EASMtFz90faOnX/6SRW9qGnJnCLuoH7Pr3icBs25+C9OYC9xQcvptCmmr1UGc
-         LNWT/hFX5OKWbqJlIGSTCgq5GJ4WB2ZpNqtzPiE5c02aCzbaYgpsJHPXXT7+SdzIAM/7
-         dsbg==
-X-Forwarded-Encrypted: i=1; AJvYcCU428HcEjyAzo5OJgjKx0djqzAhI41PIhmsZpu49Wh4QqHLzV07W0PaF0lFtHEl6TymZHFqQEYpnqGT7MdbRdC5WtKXhKGLwgFhW57Fx05CQnlcoeGQlm0Xnh/4FUSs0EwDXrlFpjfwJQ==
-X-Gm-Message-State: AOJu0Yz6I9gJ3GRwP4mWznN9SwIwG++gbumguQ56vLAyjklwq4ZNKxhV
-	x5GtK8iqcPGU+kTDj6Em3E5N2SZ9c4DnyDh4oE6GW+5AKVEKA8ln
-X-Google-Smtp-Source: AGHT+IFS75We8HO8dxXBT7VUWU1ReVIHpzlJDr8M/osvVnkMD+fe6bx8ReOw1WyqfmavqcTI87RW1Q==
-X-Received: by 2002:a50:cdd5:0:b0:57a:2a46:701 with SMTP id 4fb4d7f45d1cf-57cbd68e23emr5766447a12.19.1718617498862;
-        Mon, 17 Jun 2024 02:44:58 -0700 (PDT)
-Received: from ?IPV6:2001:8f8:183b:6864:7071:8881:6a51:3e82? ([2001:8f8:183b:6864:7071:8881:6a51:3e82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb743ada1sm6149470a12.96.2024.06.17.02.44.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 02:44:58 -0700 (PDT)
-Message-ID: <feeb8dcd-661f-415e-be08-afe175d0102e@gmail.com>
-Date: Mon, 17 Jun 2024 13:44:54 +0400
+	s=arc-20240116; t=1718617500; c=relaxed/simple;
+	bh=Zl0H127CyeqOXk7mpS1eDFYTetGfKPwapBTVMhQmSlo=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=Dh8wo/AegKSQQMo+Tvk42PYJpERHZ35ks4mJ29MUWFw/FIClfrDMzmTvr+/J/cSmFHCTIMAjHcz+PqY19KLNr91PcbfWw5WIp/GkquA2SENTa9GYxXv9/HuQbgY9Yc9u2DLQNyE4/PaBnAnAAYX4jblFxO5f7uwGv5gCdIvnluE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=HVEE4c63; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Subject
+	:Reply-To:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
+	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=y5NFcSqhUTL6fruZ1xgcLxOYcmeMsMeCG+Q/p9D+Di4=; t=1718617498;
+	x=1719049498; b=HVEE4c63RYE7DoCjiOu7ODPQkqgcoMnXqCC/QIcV/iVPX1buMchXKwrAVGDa5
+	Ua7G6mG/5FzNEMikmsnR2Fv8/svixUhgxXchZy1qcRFju5jkCoB1fxlP0r7EUNnQjAEn/YT/2KNty
+	6+AVp9Actax9Cqo9MGztGf2Tp5VtcHfHZnyKyJkpkaCkz864kvKtveEn9bRIlTBPcZtekJKPmcseP
+	uXbZrgcR68bjjszNEODeX5apNUVaUGKSepdkUZ6xQ+IT2GIrM1uI7QGbYFqMC2iDeV2p9JRO+FVAS
+	ggIncKhRXwcqf2pUGI7ztr0XmVoagXI00KpAU09fzxWCBEz2GQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sJ8v1-0005bs-TO; Mon, 17 Jun 2024 11:44:56 +0200
+Message-ID: <f16d49f6-01a4-45c7-aabf-ab6a1b8bfe6e@leemhuis.info>
+Date: Mon, 17 Jun 2024 11:44:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,64 +52,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] arm64: dts: rockchip: Add AP6275P wireless support
- to Khadas Edge 2
-Content-Language: en-GB
-To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de
-Cc: nick@khadas.com, efectn@protonmail.com, jagan@edgeble.ai,
- dsimic@manjaro.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240617071112.3133101-1-jacobe.zang@wesion.com>
- <20240617071112.3133101-5-jacobe.zang@wesion.com>
-From: Alexey Charkov <alchark@gmail.com>
-In-Reply-To: <20240617071112.3133101-5-jacobe.zang@wesion.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ Kalle Valo <kvalo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: [regression] iwlwifi 0000:02:00.0: Microcode SW error detected.
+ Restarting 0x82000000.
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718617498;0748ce8c;
+X-HE-SMSGID: 1sJ8v1-0005bs-TO
 
+Hi, Thorsten here, the Linux kernel's regression tracker.
 
-On 17/06/2024 10:11, Jacobe Zang wrote:
-> Khadas Edge2 uses the PCI-e Ampak AP6275P 2T2R Wi-Fi 6 module.
->
-> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
-> ---
->   .../boot/dts/rockchip/rk3588s-khadas-edge2.dts  | 17 +++++++++++++++++
->   1 file changed, 17 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-> index 233bab17bffd2..7d7cc3e76838c 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-> @@ -365,6 +365,23 @@ &pcie2x1l2 {
->   	reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
->   	vpcie3v3-supply = <&vcc3v3_pcie_wl>;
->   	status = "okay";
-> +
-> +	pcie@0,0 {
-> +		reg = <0x400000 0 0 0 0>;
-> +		#address-cells = <3>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +		device_type = "pci";
-> +		bus-range = <0x40 0x4f>;
-> +
-> +		wifi: wifi@0,0 {
-> +			compatible = "pci14e4,449d";
+Miri, I noticed a report about a regression in bugzilla.kernel.org for
+some code you maintain. As many (most?) kernel developers don't keep an
+eye on the bug tracker, I decided to write this mail. To quote from
+https://bugzilla.kernel.org/show_bug.cgi?id=218946 :
 
-This doesn't seem to be listed in the bindings, nor is there a mainline 
-driver that would match either this compatible or PCI ID 14e4:449d. 
-Maybe submit either or both of those first, to make sure they are 
-reviewed and acceptable for mainline inclusion, before this change lands 
-in DTS and becomes part of the ABI?
+> The linux Kernel 6.10.0-rc3
+> [   17.124384] iwlwifi 0000:02:00.0: Microcode SW error detected.  Restarting 0x82000000.
+> [   17.124405] iwlwifi 0000:02:00.0: Loaded firmware version: 18.168.6.1 6000g2b-6.ucode
+> [   17.124588] iwlwifi 0000:02:00.0: Start IWL Error Log Dump:
+> [   17.124590] iwlwifi 0000:02:00.0: Status: 0x000002CC, count: 6
+> [   17.124592] iwlwifi 0000:02:00.0: 0x0000198A | ADVANCED_SYSASSERT          
+> [   17.124594] iwlwifi 0000:02:00.0: 0x00015920 | uPc
+> [   17.124596] iwlwifi 0000:02:00.0: 0x00015910 | branchlink1
+> [   17.124597] iwlwifi 0000:02:00.0: 0x00015910 | branchlink2
+> [   17.124599] iwlwifi 0000:02:00.0: 0x0000DBEA | interruptlink1
+> [   17.124600] iwlwifi 0000:02:00.0: 0x00000000 | interruptlink2
+> [   17.124602] iwlwifi 0000:02:00.0: 0x0000005C | data1
+> [   17.124603] iwlwifi 0000:02:00.0: 0x00000008 | data2
+> [   17.124605] iwlwifi 0000:02:00.0: 0x000001DC | line
+> [   17.124606] iwlwifi 0000:02:00.0: 0x11C0C9B1 | beacon time
+> [   17.124608] iwlwifi 0000:02:00.0: 0x006FB64F | tsf low
+> [...]
 
-I'm also wondering why would adding a DT node for a PCI device be needed 
-in the first place, given that PCI supports device discovery? Does it 
-require some sort of boot-time fixup by the bootloader? If so, it might 
-be helpful to state that in comments.
+The reporter later confirmed that 6.9 is working fine.
 
-Best regards,
+See the ticket for more details. Note, you have to use bugzilla to reach
+the reporter, as I sadly[1] can not CCed them in mails like this.
 
-Alexey
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
+[1] because bugzilla.kernel.org tells users upon registration their
+"email address will never be displayed to logged out users"
+
+P.S.: let me use this mail to also add the report to the list of tracked
+regressions to ensure it's doesn't fall through the cracks:
+
+#regzbot introduced: v6.9..v6.10-rc3
+#regzbot title: wifi: iwlwifi: Microcode SW error detected
+#regzbot from: doru iorgulescu
+#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=218946
+#regzbot ignore-activity
 
