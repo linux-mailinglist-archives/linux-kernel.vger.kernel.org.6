@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-217630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E9290B260
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:38:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C7290B265
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041C728AE0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:38:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884171F21CFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F76E1C233F;
-	Mon, 17 Jun 2024 13:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47A51C8FDA;
+	Mon, 17 Jun 2024 13:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tY1MVWmf"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WsddIHuG"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CE61C68B1
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907EC1C8FAB
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632226; cv=none; b=eIUcmvkL6tM3KH3103GDM4Sl6aoTHBNK4WjwezDzBQqczD5ZqHY0oNs0S0PvEKl7iHhCobFR4Sn38vyqeoGAckLCYH1vfiaRoJ8wxXlDbJihrXU10oA3LwUE8YLgHRERpJsVzavVmdeYcA/5fVFYeAFFeWv4TUTErWHTjE8Bsqg=
+	t=1718632228; cv=none; b=kOh+u5pVBOOkpi/jeTzg8GUM5X9VgoqPNuaLyff5wOyWa6+080E0jLI3i8eL3yFYJbG9p+ma3HN9XHGYH22+P9sN3QiMRNPhw13M6sht9BBTGHAXTYc1hckqNNAQFPbFF2sbQ3eWD7HvRL2c6+QKy/Nft7/d6IvyCQB8t5CC268=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632226; c=relaxed/simple;
-	bh=6WpzNw/7O6Bgfvz8lndloRTTgJyhcPEVJA0wYoY3R1g=;
+	s=arc-20240116; t=1718632228; c=relaxed/simple;
+	bh=vF9eCSFK9zsl5BTxl6iZi/Jw5sWK8MiJQHD/bb1xgts=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r4KPmOh/v+0gTfdLogdgN6mHq7+c4kDrWk4JYnM1Lfd73lNfP8wf0ncGuISkkrtGbJi3DixICkVlHC6mWvDafVAav8yWqedPJvDW1P8zd1aPCAGuwH5nC0LCtC0UTP6p8EF03dAt+z6Oyl2oXo1einHB9gwhold2/LTWNMOd4O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tY1MVWmf; arc=none smtp.client-ip=209.85.222.173
+	 In-Reply-To:To:Cc; b=RrA11vzFzbn+BgneFykefOJ/EV4omM7tYao23HZWyeLwSAQp88XI6j4LOqQHudocRHjCOjn79efuddMHc7ZaCVH7JMWs5uHD/HF8mpNZkF2FNh9vWfexnV3Krl7wV2owVUu7ngZo9eYndU8HHpBACSpHHAwHe8fLKfq6wsZxqVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WsddIHuG; arc=none smtp.client-ip=209.85.160.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-795569eede0so223562185a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:50:24 -0700 (PDT)
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-250ca14422aso2411820fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718632224; x=1719237024; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718632225; x=1719237025; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=l19FGmHt7cx9Y1e6lJcD6lg62Kq+f+HHsekNkW7FIwQ=;
-        b=tY1MVWmfOfGf7PmZII49newNsVPDJfl04IOHBXbO8NQB5UvxBI1Eaze950bOUrMJ9M
-         FmZouByZAiaJEjlJl+wTIwJW/0DYYILFzFIuweSvA8nUkIzbeY/t31uhZogsBmzxbSik
-         AR7NHLp8Phqry8ClLSMEb066bx1L73VHXqxD1uKvTj+CyOO4TcjvVehwgGwXpq/fAoOw
-         g8ugJ58ji0cdHJdIBEojVAektbknoxhvN3N+WMGLXEgt4HmtWInxh9R3FUCWcxYEhWLp
-         3cnLar0p7DU8e81dqprutAhL8YUr6I0SXypz4eeIMSHoXG9vddyOMk5JyMGL0HWCvxGF
-         xnTg==
+        bh=TsjL1PDi95mMX5sXzypBRu5MAqP+mGu/27hW1rxKMDQ=;
+        b=WsddIHuGoPLbiwQ9fZO9e6Q01j04Kr1Eyajx/IEPmW6HybYvwYjvstz051uiqnG202
+         by1Up2/AD2yYRghZ7vH4BdjHZ4KkesLB2rpTb/SZHefdT3RaSG5QqnF9PQK9k64Yk+Bs
+         rRaPPGZdS+LAPqq69VHBba5FJ5VOtsBOc1JFNpVX+zRrJ95xIbHnZoAGUJwnb1PBzdny
+         W15ASpND+A79ir44wIfJGiZIKwMF9TaNCB1DlJONWu364IC6i7bccOxaAxFRaA0iM2uW
+         RMHVWqyxB/nFSZrtbEUfdDek0a+RaoK2mC5tWJ1PXf5yA0QUGT7OeH6MktirMsBhVhOk
+         75TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718632224; x=1719237024;
+        d=1e100.net; s=20230601; t=1718632225; x=1719237025;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=l19FGmHt7cx9Y1e6lJcD6lg62Kq+f+HHsekNkW7FIwQ=;
-        b=YPyo5WxTlkWNPJ2OsO/7HyQoFlFgkP/dmBhzfWJNwTrP+0JC02qFm2j8XZjh07bDG4
-         QoRH5I9+J/LFXj2qX0V0CbTVqFuZf8LrsQ72zZ09qZ1LwQnUnZHO9DDI2RcbDIbiHS4q
-         yqSZ5alT40V15L0SVkTTW0rmVgcPPokLprozrTiQLc/0C0fGlIfL+qzsliFjal8GxXYm
-         vTtBneAGZPTL3kbdi0mTdO7zdL+z0f4/tYcYTM4w3X7SXvetMxWCjFoADyBbnYT1B66F
-         xD54Hn2J9nX3To1Xo4EFSlBXz6bREjBY0AIxri4JsmN/qw60mugwvKm+T2k0dBqYtaDu
-         pdaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsSAAv+BbMAHAN6e1iCZCY0O/IxsJrHlTZ0CGYo1aFHNrkldn03PktEssWK9QQ8HCYzIGvdACHJqpHerULqv4yNfG6JsoM7/Wow/AE
-X-Gm-Message-State: AOJu0YzXoPs+xTaXX64F0m0QfoLVojf4NWMmvMtBk3/ujqumAEtQWQhn
-	Ma6RRaXPlyPSOO+rp4+ehlY/jhXaozEEuFqC94QMsmGDL7BoOeekGt80a33GXJo=
-X-Google-Smtp-Source: AGHT+IEh7KDprGK33BeeaVNTDiPQqvpWOrx7hEFjzf44w52REiEzqTJNM1IGPx8qlAanIRK9VBBUsQ==
-X-Received: by 2002:a05:620a:4101:b0:795:dca5:e9b7 with SMTP id af79cd13be357-798d26b4948mr1182835585a.69.1718632223483;
-        Mon, 17 Jun 2024 06:50:23 -0700 (PDT)
+        bh=TsjL1PDi95mMX5sXzypBRu5MAqP+mGu/27hW1rxKMDQ=;
+        b=Jb+yTa8gFP7no4jbhCxb/TSgrjG4d4k5HRehc+kNwabzyrig35eMz+NAtOuB0cmC2u
+         R08Sgny9vMp5czlMtHFYR/L8TFIgcHIQSkV1UsRKDtfSJySMdUvwbNvZPghlv6GN/9Kt
+         gafCHAUg1sYq+q0TBL1KVlgndN1QRj5AyhHSzxPaWUSOrvq652842DqiNLgoKMSmqhWu
+         RA1t5v50ZPdou0kFzhQk2YnRTOUylTRhY7LLQO6sdxt79ybxxbtSz0J+ILxalFfYAyNn
+         0j7M/dPRDx3ycyAKeM0Ttdk1gctiGO0hNvgyt1i+jnHxeWbVSM5U9Kmj5e92braJe0Cl
+         mh9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWUn2ejDuZY79VTsCt+hdxq7ivprG8W9aQywYe1r5HuRMvqq4RSjEcjfleKMWZl4Vhp9+peDeFao7QX3AtC9W5GAtM7NRxlh+aGpL/J
+X-Gm-Message-State: AOJu0YxSRVVslaaLC2OK/d/6EKo2Xwe5vAkSo79jQ04pb57Q37K/fsbr
+	GV3OXdCKTN3q69N6PJq5EqWxDcBHUlAZYIMAchh2l+UvDIrObGgL5xaCdKr9scw=
+X-Google-Smtp-Source: AGHT+IFvblxIubOLu7csKqd2DaYsYhFE9mHOS6tHSYRNjsfIzum/J8kKl7oiGVOQ0fHTuqtXTzPk8w==
+X-Received: by 2002:a05:6870:d383:b0:254:ac99:1152 with SMTP id 586e51a60fabf-25842baade0mr8855321fac.58.1718632225631;
+        Mon, 17 Jun 2024 06:50:25 -0700 (PDT)
 Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaecc004sm432892285a.31.2024.06.17.06.50.21
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaecc004sm432892285a.31.2024.06.17.06.50.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 06:50:23 -0700 (PDT)
+        Mon, 17 Jun 2024 06:50:25 -0700 (PDT)
 From: Trevor Gamblin <tgamblin@baylibre.com>
-Date: Mon, 17 Jun 2024 09:49:58 -0400
-Subject: [PATCH v3 18/41] iio: adc: stm32-dfsdm-adc: make use of
- regmap_clear_bits(), regmap_set_bits()
+Date: Mon, 17 Jun 2024 09:49:59 -0400
+Subject: [PATCH v3 19/41] iio: dac: ltc2688: make use of regmap_set_bits()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240617-review-v3-18-88d1338c4cca@baylibre.com>
+Message-Id: <20240617-review-v3-19-88d1338c4cca@baylibre.com>
 References: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
 In-Reply-To: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
 To: Jonathan Cameron <jic23@kernel.org>, 
@@ -115,85 +114,28 @@ X-Mailer: b4 0.13.0
 Instead of using regmap_update_bits() and passing the mask twice, use
 regmap_set_bits().
 
-Instead of using regmap_update_bits() and passing val = 0, use
-regmap_clear_bits().
-
 Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
 ---
- drivers/iio/adc/stm32-dfsdm-adc.c | 29 ++++++++++++-----------------
- 1 file changed, 12 insertions(+), 17 deletions(-)
+ drivers/iio/dac/ltc2688.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
-index 9a47d2c87f05..fabd654245f5 100644
---- a/drivers/iio/adc/stm32-dfsdm-adc.c
-+++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-@@ -759,8 +759,7 @@ static int stm32_dfsdm_start_conv(struct iio_dev *indio_dev,
- 	return 0;
- 
- filter_unconfigure:
--	regmap_update_bits(regmap, DFSDM_CR1(adc->fl_id),
--			   DFSDM_CR1_CFG_MASK, 0);
-+	regmap_clear_bits(regmap, DFSDM_CR1(adc->fl_id), DFSDM_CR1_CFG_MASK);
- stop_channels:
- 	stm32_dfsdm_stop_channel(indio_dev);
- 
-@@ -774,8 +773,7 @@ static void stm32_dfsdm_stop_conv(struct iio_dev *indio_dev)
- 
- 	stm32_dfsdm_stop_filter(adc->dfsdm, adc->fl_id);
- 
--	regmap_update_bits(regmap, DFSDM_CR1(adc->fl_id),
--			   DFSDM_CR1_CFG_MASK, 0);
-+	regmap_clear_bits(regmap, DFSDM_CR1(adc->fl_id), DFSDM_CR1_CFG_MASK);
- 
- 	stm32_dfsdm_stop_channel(indio_dev);
- }
-@@ -951,16 +949,14 @@ static int stm32_dfsdm_adc_dma_start(struct iio_dev *indio_dev)
- 
- 	if (adc->nconv == 1 && !indio_dev->trig) {
- 		/* Enable regular DMA transfer*/
--		ret = regmap_update_bits(adc->dfsdm->regmap,
--					 DFSDM_CR1(adc->fl_id),
--					 DFSDM_CR1_RDMAEN_MASK,
--					 DFSDM_CR1_RDMAEN_MASK);
-+		ret = regmap_set_bits(adc->dfsdm->regmap,
-+				      DFSDM_CR1(adc->fl_id),
-+				      DFSDM_CR1_RDMAEN_MASK);
+diff --git a/drivers/iio/dac/ltc2688.c b/drivers/iio/dac/ltc2688.c
+index c4b1ba30f935..af50d2a95898 100644
+--- a/drivers/iio/dac/ltc2688.c
++++ b/drivers/iio/dac/ltc2688.c
+@@ -860,9 +860,8 @@ static int ltc2688_setup(struct ltc2688_state *st, struct regulator *vref)
+ 		/* bring device out of reset */
+ 		gpiod_set_value_cansleep(gpio, 0);
  	} else {
- 		/* Enable injected DMA transfer*/
--		ret = regmap_update_bits(adc->dfsdm->regmap,
--					 DFSDM_CR1(adc->fl_id),
--					 DFSDM_CR1_JDMAEN_MASK,
--					 DFSDM_CR1_JDMAEN_MASK);
-+		ret = regmap_set_bits(adc->dfsdm->regmap,
-+				      DFSDM_CR1(adc->fl_id),
-+				      DFSDM_CR1_JDMAEN_MASK);
+-		ret = regmap_update_bits(st->regmap, LTC2688_CMD_CONFIG,
+-					 LTC2688_CONFIG_RST,
+-					 LTC2688_CONFIG_RST);
++		ret = regmap_set_bits(st->regmap, LTC2688_CMD_CONFIG,
++				      LTC2688_CONFIG_RST);
+ 		if (ret)
+ 			return ret;
  	}
- 
- 	if (ret < 0)
-@@ -981,8 +977,8 @@ static void stm32_dfsdm_adc_dma_stop(struct iio_dev *indio_dev)
- 	if (!adc->dma_chan)
- 		return;
- 
--	regmap_update_bits(adc->dfsdm->regmap, DFSDM_CR1(adc->fl_id),
--			   DFSDM_CR1_RDMAEN_MASK | DFSDM_CR1_JDMAEN_MASK, 0);
-+	regmap_clear_bits(adc->dfsdm->regmap, DFSDM_CR1(adc->fl_id),
-+			  DFSDM_CR1_RDMAEN_MASK | DFSDM_CR1_JDMAEN_MASK);
- 	dmaengine_terminate_all(adc->dma_chan);
- }
- 
-@@ -1305,9 +1301,8 @@ static irqreturn_t stm32_dfsdm_irq(int irq, void *arg)
- 	if (status & DFSDM_ISR_ROVRF_MASK) {
- 		if (int_en & DFSDM_CR2_ROVRIE_MASK)
- 			dev_warn(&indio_dev->dev, "Overrun detected\n");
--		regmap_update_bits(regmap, DFSDM_ICR(adc->fl_id),
--				   DFSDM_ICR_CLRROVRF_MASK,
--				   DFSDM_ICR_CLRROVRF_MASK);
-+		regmap_set_bits(regmap, DFSDM_ICR(adc->fl_id),
-+				DFSDM_ICR_CLRROVRF_MASK);
- 	}
- 
- 	return IRQ_HANDLED;
 
 -- 
 2.45.2
