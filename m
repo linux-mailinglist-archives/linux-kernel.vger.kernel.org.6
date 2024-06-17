@@ -1,311 +1,129 @@
-Return-Path: <linux-kernel+bounces-217747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDE990B3B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:16:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93F390B3BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3DBE1C22C2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4391F281BF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E425158D98;
-	Mon, 17 Jun 2024 14:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72013158DD5;
+	Mon, 17 Jun 2024 14:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="V6+L6VWw"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="Mcz+JNxH"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78274158D8E;
-	Mon, 17 Jun 2024 14:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29927158D8E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718635013; cv=none; b=olBMdV60jWHqEKR1A5W9+9CUIDM1ZEJoHpzTXU+Bzjk5IvXg1jKIJFo1XqZjC9xufnxitiVyPH0RjKPbguO5fBpXCH04jZ0Hm572703/1JqaAy8SzQK1eZmMmX0to174ouu2oGdeQA8s8AcVkdGaMUEUQikt16kcSbj1KvotQ9c=
+	t=1718635026; cv=none; b=OdChwZ3A1B0jBPUvy9axQqqk8B0KGhbaZy+dYCG4/Uvr3hY6nuS9yMHIAJQvkTUShaGkMXlwXahz9ymeFGtfAkCtL88e23SjAjTJhCm+O+ltnCEDop59qePB2rF/qtwxktW7ghb8UKdjjkrXZ45ifMd7UlHBtZ58+RK0mj1JUno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718635013; c=relaxed/simple;
-	bh=vquMLNYCLeCI9Wf+nwxmTjMd8kuzQP4DWSnz7pv0oHQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lOJDqqxx7+1AMo0ZV39o95hR+kzwJeVe45lVekryPZukuckqB2yPEzK5ls2hZP2d4j/1I4l6yG0ofbEyLtU7UNMQt0iXXlrwZncjru1ANLiUcXzOlnEQwttQwR0MbEdWCEtvYySVEXFTTn91HPoG9jk1dwCtr42DvpTCXxI+TRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=V6+L6VWw; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718635009;
-	bh=vquMLNYCLeCI9Wf+nwxmTjMd8kuzQP4DWSnz7pv0oHQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V6+L6VWwlyaaV3yVJgRGErcMn95lCGol873uwmjukiIo921DkvVlRVGRwAs2dHpgC
-	 IEeEfX5uR8ftWizbzLNRh4ht6eukICrQ3/zk5HFEdEtLhQ+uc6pjfkstGkGmcCzKiy
-	 weFgPQ52wRlfmWUdcmmVZrE3ryZRO3NUJcVvaC74bE6HHTonivpb+CcVyYbBApgcjF
-	 idGiTPPcTCi+cgFWLBuvba0uq5Wjh9a3cHwUQE0uEuip3uRejRkXe7zAH5vbtub0Hy
-	 +ZytyAEloyRVgBkH3RDuxd82EE8UspR3n5ql8oyoXkKw+VjYhQn+bFfsJ5TclnzAoU
-	 /edHXWh9eOG8Q==
-Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C81FD37812FD;
-	Mon, 17 Jun 2024 14:36:46 +0000 (UTC)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Dragan Simic <dsimic@manjaro.org>, Alexey Charkov <alchark@gmail.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Diederik de Haas <didi.debian@cknow.org>, Andy Yan <andy.yan@rock-chips.com>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-staging@lists.linux.dev
-Subject:
- Re: [PATCH 3/3] arm64: dts: rockchip: Add rkvdec2 Video Decoder on rk3588(s)
-Date: Mon, 17 Jun 2024 10:36:19 -0400
-Message-ID: <48773952.fMDQidcC6G@arisu>
-Organization: Collabora
-In-Reply-To: <f4c140a3-2b11-405c-bfd4-32e50180f6b7@kwiboo.se>
-References:
- <20240615015734.1612108-1-detlev.casanova@collabora.com>
- <3666279.iZASKD2KPV@arisu> <f4c140a3-2b11-405c-bfd4-32e50180f6b7@kwiboo.se>
+	s=arc-20240116; t=1718635026; c=relaxed/simple;
+	bh=+w5NacGNDXvynWarUJ/vhvC9Umk3yFIycpoAOn87z8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvo1kpAF+s6rUoaNi0ubSYTVqL/db+W0y+ps+qfHOJunBjQBTTas9/uXjrrqKDPTeOVQ1m+EUM3aemkII+pzLN5SkMZTWwQFWa4BTH+dmx9HSOrMdt0dP7AwEE/Kfo+lhLNlyT24VwtVCK0z0WNQvchvESpdn17vjvkQKJOXuhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=Mcz+JNxH; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-797a7f9b552so309207985a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:37:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1718635024; x=1719239824; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XvP4+t8l416VgzjO1ZXGZmV/a/Zd7bc8WzT6PYRtni8=;
+        b=Mcz+JNxHfNRRWMEooKVXz/xyG4KyqZaX4TSIHd+yx8XMH8zyZ2u2mby8VRFN6vMQuQ
+         sp4UAEN5BZ+dvXpIyMVUp5QIiiPpHJFoIPenIR4Aqv0dLYc70kEVNaImtbX++NJEWk5D
+         86wi81jX5fIi5ukDGmLsrkuQ3qaVd3GTmLPmU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718635024; x=1719239824;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XvP4+t8l416VgzjO1ZXGZmV/a/Zd7bc8WzT6PYRtni8=;
+        b=mnL1paHWgWu/66/CnsYrD+MCJEElpYuO9e8TujXTMsCUn2PwPLi8jYkf3UICcmvPlZ
+         xzNLrpwK+XYyiaet/GECjNOxREM6v2NPcuPfktN9YkhvrgseUI1ZAqzgfg0SqIxkiDov
+         xYK2o1IxxVRdfMcEhuKOlFU6JJxrS64Xoi8Q0sPULKHzAadJXy2+2FZmc3tQwxD4klGZ
+         lh4Ml/a6uE21nZZxLQXEgg2pCXRvdW4gtnrkIhiHWe4BEOPQRg/dhFELh06451TJi5b4
+         FsoWvjXBxCLL6bWiy4vd77nFVipN+Rk3FxpvRCtt8s1+K9vTvaQABpN84eb4tw/aLpfM
+         O9MA==
+X-Forwarded-Encrypted: i=1; AJvYcCURQoMVRM0oRtDEaEt0tYn0udGbk48KMQJHiVQ9ph+BmRhFAi9vo3NCPtm6dmR6B6MHPICBIm34hlU7DGOvul3m9yEWM4y4St/vdjor
+X-Gm-Message-State: AOJu0YyqGyfkJEp0df3iJRVNG9ngE3RiOEqeSKJ7/4aMHlfi1MpvxqyM
+	9AHcUhS5IQD+L6Uwy0yKPj0Tvvr3eHgdrhE5WrvTIH/nLl3NnJjo7aZ6pmRDyvw=
+X-Google-Smtp-Source: AGHT+IHQDMfoJ/LOZJYFoBhJ4TbHf9tXcpQcYRrBKsc6jJQgkvkhyZr/hctT8019B9VlxZwrZ62Uqw==
+X-Received: by 2002:a05:620a:4507:b0:795:4e89:53b2 with SMTP id af79cd13be357-798d26a8ce3mr1215726185a.70.1718635023959;
+        Mon, 17 Jun 2024 07:37:03 -0700 (PDT)
+Received: from localhost ([213.195.124.163])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abc02e72sm433891885a.96.2024.06.17.07.37.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 07:37:03 -0700 (PDT)
+Date: Mon, 17 Jun 2024 16:37:01 +0200
+From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To: Jan Beulich <jbeulich@suse.com>
+Cc: Frediano Ziglio <frediano.ziglio@cloud.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/xen/time: Reduce Xen timer tick
+Message-ID: <ZnBKDRWi_2cO6WbA@macbook>
+References: <20240617141303.53857-1-frediano.ziglio@cloud.com>
+ <2fe6ef97-84f2-4bf4-870b-b0bb580fa38f@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4519294.Icojqenx9y";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2fe6ef97-84f2-4bf4-870b-b0bb580fa38f@suse.com>
 
---nextPart4519294.Icojqenx9y
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>
-Date: Mon, 17 Jun 2024 10:36:19 -0400
-Message-ID: <48773952.fMDQidcC6G@arisu>
-Organization: Collabora
-In-Reply-To: <f4c140a3-2b11-405c-bfd4-32e50180f6b7@kwiboo.se>
-MIME-Version: 1.0
-
-On Sunday, June 16, 2024 5:17:31 A.M. EDT Jonas Karlman wrote:
-> Hi Detlev,
+On Mon, Jun 17, 2024 at 04:22:21PM +0200, Jan Beulich wrote:
+> On 17.06.2024 16:13, Frediano Ziglio wrote:
+> > Current timer tick is causing some deadline to fail.
+> > The current high value constant was probably due to an old
+> > bug in the Xen timer implementation causing errors if the
+> > deadline was in the future.
+> > This was fixed in Xen commit:
+> > 19c6cbd90965 xen/vcpu: ignore VCPU_SSHOTTMR_future
 > 
-> On 2024-06-15 21:55, Detlev Casanova wrote:
-> > On Saturday, June 15, 2024 4:25:27 A.M. EDT Jonas Karlman wrote:
-> >> Hi Detlev,
-> >> 
-> >> On 2024-06-15 03:56, Detlev Casanova wrote:
-> >>> Add the rkvdec2 Video Decoder to the RK3588s devicetree.
-> >>> 
-> >>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> >>> ---
-> >>> 
-> >>>  .../boot/dts/rockchip/rk3588-rock-5b.dts      |  4 ++++
-> >>>  .../boot/dts/rockchip/rk3588s-orangepi-5.dts  |  4 ++++
-> >>>  arch/arm64/boot/dts/rockchip/rk3588s.dtsi     | 19 +++++++++++++++++++
-> >>>  3 files changed, 27 insertions(+)
-> >>> 
-> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> >>> b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts index
-> >>> c551b676860c..965322c24a65 100644
-> >>> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> >>> @@ -503,6 +503,10 @@ &pwm1 {
-> >>> 
-> >>>  	status = "okay";
-> >>>  
-> >>>  };
-> >>> 
-> >>> +&rkvdec0 {
-> >>> +	status = "okay";
-> >>> +};
-> >> 
-> >> Enable of rkvdec0 should probably be split out from the patch that adds
-> >> the rkvdec0 node to soc dtsi.
-> > 
-> > Ack
-> > 
-> >> Also why is rkvdec0 only enabled on rock-5b and orangepi-5?
-> > 
-> > I only could test on those two but I can enable it on all rk3588 devices.
+> And then newer kernels are no longer reliably usable on Xen older than
+> this?
+
+I think this should reference the Linux commit that removed the usage
+of VCPU_SSHOTTMR_future on Linux itself, not the change that makes Xen
+ignore the flag.
+
+> > --- a/arch/x86/xen/time.c
+> > +++ b/arch/x86/xen/time.c
+> > @@ -30,7 +30,7 @@
+> >  #include "xen-ops.h"
+> >  
+> >  /* Minimum amount of time until next clock event fires */
+> > -#define TIMER_SLOP	100000
+> > +#define TIMER_SLOP	1000
 > 
-> Because the decoder is an integrated part of the SoC the default should
-> probably be that the IP is enabled, i.e. no status prop required for the
-> vdec and related mmu nodes in rk3588s.dtsi.
-> 
-> >>> +
-> >>> 
-> >>>  &saradc {
-> >>>  
-> >>>  	vref-supply = <&avcc_1v8_s0>;
-> >>>  	status = "okay";
-> >>> 
-> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-> >>> b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts index
-> >>> feea6b20a6bf..2828fb4c182a 100644
-> >>> --- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-> >>> @@ -321,6 +321,10 @@ typec5v_pwren: typec5v-pwren {
-> >>> 
-> >>>  	};
-> >>>  
-> >>>  };
-> >>> 
-> >>> +&rkvdec0 {
-> >>> +	status = "okay";
-> >>> +};
-> >>> +
-> >>> 
-> >>>  &saradc {
-> >>>  
-> >>>  	vref-supply = <&avcc_1v8_s0>;
-> >>>  	status = "okay";
-> >>> 
-> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> >>> b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi index
-> >>> 0fecbf46e127..09672636dcea 100644
-> >>> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> >>> @@ -3034,6 +3034,9 @@ system_sram2: sram@ff001000 {
-> >>> 
-> >>>  		ranges = <0x0 0x0 0xff001000 0xef000>;
-> >>>  		#address-cells = <1>;
-> >>>  		#size-cells = <1>;
-> >> 
-> >> Blank line is missing.
-> >> 
-> >>> +		rkvdec0_sram: rkvdec-sram@0 {
-> >>> +			reg = <0x0 0x78000>;
-> >>> +		};
-> >>> 
-> >>>  	};
-> >>>  	
-> >>>  	pinctrl: pinctrl {
-> >>> 
-> >>> @@ -3103,6 +3106,22 @@ gpio4: gpio@fec50000 {
-> >>> 
-> >>>  			#interrupt-cells = <2>;
-> >>>  		
-> >>>  		};
-> >>>  	
-> >>>  	};
-> >>> 
-> >>> +
-> >>> +	rkvdec0: video-decoder@fdc38100 {
-> 
-> To match prior generations the symbol should probably be called vdec0.
-> 
-> >>> +		compatible = "rockchip,rk3588-vdec2";
-> >>> +		reg = <0x0 0xfdc38100 0x0 0x500>;
-> >>> +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
-> >>> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>,
-> > 
-> > <&cru
-> > 
-> >>> CLK_RKVDEC0_CORE>, +			 <&cru
-> > 
-> > CLK_RKVDEC0_CA>, <&cru
-> > 
-> >>> CLK_RKVDEC0_HEVC_CA>;
-> >>> +		clock-names = "axi", "ahb", "core",
-> >>> +			      "cabac", "hevc_cabac";
-> >>> +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru
-> > 
-> > CLK_RKVDEC0_CORE>,
-> > 
-> >>> +				  <&cru CLK_RKVDEC0_CA>, <&cru
-> > 
-> > CLK_RKVDEC0_HEVC_CA>;
-> > 
-> >>> +		assigned-clock-rates = <800000000>, <600000000>,
-> >>> +				       <600000000>, <1000000000>;
-> >>> +		power-domains = <&power RK3588_PD_RKVDEC0>;
-> >> 
-> >> iommus and resets should probably be added.
-> >> 
-> >>> +		status = "disabled";
-> >>> +	};
-> >> 
-> >> The iommu node for rkvdec0_mmu seem to be missing, is it not required to
-> >> be able to use memory >4GiB as decoding buffers?
-> > 
-> > I need to check if the current rockchip iommu driver will work for this
-> > decoder. I remember that the iommu code for AV1 was a bit different, not
-> > sure about this rkvdec.
-> 
-> The device tree should describe the HW not what drivers are capable of.
-> 
-> If there are substantial differences in iommu IP a new compatible should
-> probably be added for that iommu.
-> 
-> >> I would also consider adding the rkvdec1 node(s), if I am understanding
-> >> correctly they can both be used in a cluster or completely independent.
-> > 
-> > They can be used independently, yes. I'll add rkvdec1 for rk3588 devices
-> > (rk3588s only has  1 core)
-> 
-> I do not think that is true, the rk3588s variant should also include two
-> decoder and two encoder cores.
+> It may be just the lack of knowledge of mine towards noadays's Linux'es
+> time handling, but the change of a value with this name and thus
+> commented doesn't directly relate to "timer tick" rate. Could you maybe
+> help me see the connection?
 
-You are right, I had HDMI ports in mind. There are 2 decoders available on 
-rk3588s too.
+The TIMER_SLOP define is used in min_delta_{ns,ticks} field, and I
+think this is wrong.
 
-> However, the rk3582/rk3583 variants (rk3588s with one or more bad cores)
-> may have 0-2 cores working for the decoder and/or encoder.
-> 
-> E.g on my rk3582 boards I have following different ip-state in otp:
-> - 1 bad cpu core (ip-state: 10 00 00)
-> - 1 bad decoder core (ip-state: 00 80 00)
-> - 1 bad encoder core (ip-state: 00 00 04)
-> 
-> The general idea is that bootloader will disable or delete the offending
-> nodes in the device tree to correctly describe the HW for the OS.
+The min_delta_ns for the Xen timer is 1ns.  If Linux needs some
+greater min delta than what the timer interface supports it should be
+handled in the generic timer code, not open coded at the definition of
+possibly each timer implementation.
 
-I see, so I will add both cores, enabled, in rk3588s.dtsi and let the 
-bootloader disable the ones that are bad.
-
-Should I also add compatibles for rk3582/rk3583 then ?
-
-> Regards,
-> Jonas
-> 
-> > Regards,
-> > Detlev.
-> > 
-> >> Also on RK3582/RK3583 one (or both) of the decoder cores may be marked
-> >> as bad, yet the remaining one can still be used independently. The idea
-> >> will be that bootloader fixup the DT and disabled/delete-node the bad
-> >> core(s).
-> >> 
-> >> Regards,
-> >> Jonas
-> >> 
-> >>>  };
-> >>>  
-> >>>  #include "rk3588s-pinctrl.dtsi"
-
-
---nextPart4519294.Icojqenx9y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmZwSeQACgkQ5EFKUk4x
-7bZ8EggAsTziifxNj/1BKPe7QDXU3Ets7tahPfQ6vh0qIWmhwS+nUrIVjFRXa8na
-o7EeZGv16j9/t/Qndj9DY7QrxywaqCPA1ovey9Dy07q3ap9QLWDyI/VYHwmPQAhk
-hpxUtXK/ovHzDPAm6teUwB2dC2T+MpWXintbg6lRGjUuMOR9nmp9skHdERZglrWI
-NnH8ZG5D+WKFOMZpS/rP2KkHkFsW8Ma5ypuAIM+uZq88ZEDUMhctYnrEpDU5C6Ln
-U8PFrWFnTfRncd/JMWIwpCUD+01bZL1F7yebYOqRKdlhcEPZE5U1Z8VFwPjtIEGa
-v//skwj2Ds7leldrEbGCnc2tgQ+dBg==
-=vTzR
------END PGP SIGNATURE-----
-
---nextPart4519294.Icojqenx9y--
-
-
-
+Thanks, Roger.
 
