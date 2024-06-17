@@ -1,109 +1,184 @@
-Return-Path: <linux-kernel+bounces-216932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC1390A8BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:48:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C34AC90A8C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01992811F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:48:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CE32B27955
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD156190661;
-	Mon, 17 Jun 2024 08:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD40019069B;
+	Mon, 17 Jun 2024 08:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M/3fepbZ"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L00F5III"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F099171B0
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B31171B0;
+	Mon, 17 Jun 2024 08:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718614096; cv=none; b=cido+lOPBYbdL/W2OQTieh6KYSt5I6QvfhGjMaSH67yVwAusRMyNca8WZSRqlF36HbFzNe7B4S34jLdLEErtSzgZER9UiIrh6SlegcgQsvBfNL4bDL+b8YADZMNgt8Zm7hxT0NaZRBdJczgvzHjn9yd7wG6DSAbVYfkLgi8VmZc=
+	t=1718614103; cv=none; b=i82A1PEczVzbUT6kYg05Qk0sN0x0hiuyAGo7nJvOshVGS8c7OV0RlqKlZjynXWxdGA5uoS/ZYoCLhsQ8WOYcOKF1FpX1HG86ZU9cRAAPsuok83GtUpFL2mtq999iv3TsB+GoC7WHv1xN155tll+J1XMQndgmAGdWW3WJx+ZZib8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718614096; c=relaxed/simple;
-	bh=2kM/oHxrBScBuC7PXXmXDeLBNjTC/Qxpp/mhHadLs20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iWygLwDz4evQNTvu4Fe9bnCBzJpy+6OwUewqcGLR4nSvMkAv3vy4wM0776NR/1eQo9l3XwI3m/g7fbnEQ0bmdPM4CcAcujpmzEhiNqXiFFqNkuAv5JKy6YrnE6QAmA9tADBhMzCtE+16EOoISHb8nCZphXc7b8lzZ8EpIbUeyAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M/3fepbZ; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c85a7f834so5326421e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:48:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718614093; x=1719218893; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BgNy9aSeOjtMvdyT2zIBjwfBSokXxGif772o4A37SX8=;
-        b=M/3fepbZr7BzTtn0VmT54aEdY/22PexeLFOZkIdqLJ4un6jVMjOHZGky5v5Rcgb5GY
-         LgbtTUIMLEbS6rCoRq2niWAxBj4NxCt4jkJyopnvLrFSHgQzcn1dy4QGWjQkqvXqxpdW
-         l9sxl8JSdaDbUCaL6O2kqnzVXEbk4K4QnVhTRG18FLqtcANTLRrwcZni7ubjVeXgaSsa
-         SCor4erZtwJrip1Qwuzs5/DdzWON62G/O3dpkll4tRWVRCDXAMFnxkvaY9NW9VmFKyKn
-         82iFvkFsLaZR9V/ZRYotAO3Y/WqS69hj/BlvUvhccXPZcW9v3tmZzPYhWXuKvTXySooV
-         txnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718614093; x=1719218893;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BgNy9aSeOjtMvdyT2zIBjwfBSokXxGif772o4A37SX8=;
-        b=OhgsFFj+aF13jib6nKrePrW01ZOTdE17Epy68iCGdEiTfp4VK0l2RAApv6Sdcw7y6c
-         BX6YQfj8fCo3e6qjV2/UrRGtDhgW6YkYwd4zNQqmyOnXIp5wHLtI3/+s00Y8oMLOF7Md
-         hEEpTU9Hugbqq+cN94jgzrrFpvfpkIFdS1k5H49PQDP8Fd5+TLu0zNsVqfLJEXAN2M+B
-         +VdG8q0zced77zekZN40JRyUHV70D9o41g9AEBLsDlhZv5Az+Mdg6XwmdQvfxNFP47EP
-         NNS6mzhOPf4Sx4EsyzYH/HqKAvXzJG8nNxQMm0I5A2fiUR6+Z7VKztuWXBBwJZTmGdH2
-         SbpA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5SLZwMBGWawgBEdvFl7z2rh78iOMHNL82svsErTyoW5VbdLn7jbTSkrh2dpGHJ+luDngiVv6wo8aE/cnIqcq2EdkPE/lb1bnpRVHJ
-X-Gm-Message-State: AOJu0YyZTve+l3FgzJUTJQ7Xha/LFOKTcx6Q4z/CygOYXVjR80eh41W7
-	QBcRIN1wzIWsqOBT6LpEFJl8aWkPBBnuZE7wkNMsuEYS5vF/AKw1BERU5YNkhZbsUlnUa8TGHL3
-	fEeQuvV7juUnpKzyB3ti7j6pqNIMmXgW1xbgDWQ==
-X-Google-Smtp-Source: AGHT+IHbOKQhcmgxz7j/vSxObsm+6bA1uZav4s2Z4EB/68U7Rs3mQDLz30rV9Ja8l7chB7w8ej9DjSMq6TxD8gV+Sik=
-X-Received: by 2002:ac2:5e22:0:b0:52c:9725:b32b with SMTP id
- 2adb3069b0e04-52ca6e6572amr5414563e87.17.1718614092791; Mon, 17 Jun 2024
- 01:48:12 -0700 (PDT)
+	s=arc-20240116; t=1718614103; c=relaxed/simple;
+	bh=ahwV9Ju+1SVJkhYWRx0d6aXsj0gx6TEzit8ir2IL5ek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z/yUdiPAaF5900D74dtLa9tTeTnj/oUrtPusgq+7JQsPpuxY6sX/iqyLSDvllj4n4l88t5ZLw2sXJa5orXrN5ow1uKlq3cJWVPW2z47Ochdr/keKOP0G496PWrkAJ/GBlWQmjon2tWsA+BTml47vbQTMM72gmHtQSlFFTdeLy0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L00F5III; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89ABFC3277B;
+	Mon, 17 Jun 2024 08:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718614102;
+	bh=ahwV9Ju+1SVJkhYWRx0d6aXsj0gx6TEzit8ir2IL5ek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L00F5IIIJU/Fb9oPuacRQh6JHjKe9JMFXskYnMjttHXSAgJ8ou7NmS/FIeYizdwmc
+	 NHwqNJFdtXYG4l18e+GzQPvHj074YOzawnPrd0wMw/YrhT4AUarBDd37pcSzQljmyx
+	 /RPuuCXHchprbHKk80lNIYkfA0YqRLX9c1MWLkwFkZAaEn3W9nJGU474yqI/vLzo2Q
+	 La5U7uKtpsAMJ9tlwVXejVZRkUC0zz9fOX/iFpMvvBh1RIxE8Mu9tAvdM9tANRVwMz
+	 7lo8ttXGiZ3Nd2qoiRXa8lt3CeOMGfHiRuSwsnPccpvWn4ZGXU8theqd3tPS/9R428
+	 H8ipiRkNtR0kQ==
+Date: Mon, 17 Jun 2024 10:48:15 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, inglorion@google.com, 
+	ajordanr@google.com, jorgelo@chromium.org, Jann Horn <jannh@google.com>, 
+	Kees Cook <keescook@chromium.org>, Jeff Xu <jeffxu@google.com>, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v6 1/2] proc: pass file instead of inode to proc_mem_open
+Message-ID: <20240617-emanzipation-ansiedeln-6fd2ae7659c8@brauner>
+References: <20240613133937.2352724-1-adrian.ratiu@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610223550.2449230-1-sean.anderson@linux.dev>
-In-Reply-To: <20240610223550.2449230-1-sean.anderson@linux.dev>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 17 Jun 2024 10:48:01 +0200
-Message-ID: <CACRpkdakB0vekDYaWYacfvo9DaGzJfXAqT97aG=x2g4eku2CbA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] pinctrl: zynqmp: Support muxing individual pins
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, Krishna Potthuri <sai.krishna.potthuri@amd.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240613133937.2352724-1-adrian.ratiu@collabora.com>
 
-On Tue, Jun 11, 2024 at 12:37=E2=80=AFAM Sean Anderson <sean.anderson@linux=
-.dev> wrote:
+On Thu, Jun 13, 2024 at 04:39:36PM GMT, Adrian Ratiu wrote:
+> The file struct is required in proc_mem_open() so its
+> f_mode can be checked when deciding whether to allow or
+> deny /proc/*/mem open requests via the new read/write
+> and foll_force restriction mechanism.
+> 
+> Thus instead of directly passing the inode to the fun,
+> we pass the file and get the inode inside it.
+> 
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jeff Xu <jeffxu@google.com>
+> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> ---
 
-> This series adds support for muxing individual pins, instead of
-> requiring groups to be muxed together. See [1] for additional
-> discussion.
->
-> [1] https://lore.kernel.org/linux-arm-kernel/5bb0dc7e-4c89-4f3d-abc6-41ae=
-9ded5ae9@linux.dev/
->
-> Changes in v3:
-> - Express groups/pins exclusivity using oneOf
-> - Fix zynqmp_pinmux_set_mux and zynqmp_pinconf_group_set not handling
->   "pin" groups (thanks Sai Krishna).
+I've tentatively applies this patch to #vfs.procfs.
+One comment, one question:
 
-OK Xilinx are happy, I'm OK with it.
+> No changes in v6
+> ---
+>  fs/proc/base.c       | 6 +++---
+>  fs/proc/internal.h   | 2 +-
+>  fs/proc/task_mmu.c   | 6 +++---
+>  fs/proc/task_nommu.c | 2 +-
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 72a1acd03675..4c607089f66e 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -794,9 +794,9 @@ static const struct file_operations proc_single_file_operations = {
+>  };
+>  
+>  
+> -struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+> +struct mm_struct *proc_mem_open(struct file  *file, unsigned int mode)
+>  {
+> -	struct task_struct *task = get_proc_task(inode);
+> +	struct task_struct *task = get_proc_task(file->f_inode);
 
-Patches applied!
+Comment: This should use file_inode(file) but I've just fixed that when I
+applied.
 
-Yours,
-Linus Walleij
+Question: Is this an equivalent transformation. So is the inode that was
+passed to proc_mem_open() always the same inode as file_inode(file)?
+
+>  	struct mm_struct *mm = ERR_PTR(-ESRCH);
+>  
+>  	if (task) {
+> @@ -816,7 +816,7 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+>  
+>  static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+>  {
+> -	struct mm_struct *mm = proc_mem_open(inode, mode);
+> +	struct mm_struct *mm = proc_mem_open(file, mode);
+>  
+>  	if (IS_ERR(mm))
+>  		return PTR_ERR(mm);
+> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+> index a71ac5379584..d38b2eea40d1 100644
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -295,7 +295,7 @@ struct proc_maps_private {
+>  #endif
+>  } __randomize_layout;
+>  
+> -struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode);
+> +struct mm_struct *proc_mem_open(struct file *file, unsigned int mode);
+>  
+>  extern const struct file_operations proc_pid_maps_operations;
+>  extern const struct file_operations proc_pid_numa_maps_operations;
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index f8d35f993fe5..fe3b2182b0aa 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -210,7 +210,7 @@ static int proc_maps_open(struct inode *inode, struct file *file,
+>  		return -ENOMEM;
+>  
+>  	priv->inode = inode;
+> -	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
+> +	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
+>  	if (IS_ERR(priv->mm)) {
+>  		int err = PTR_ERR(priv->mm);
+>  
+> @@ -1030,7 +1030,7 @@ static int smaps_rollup_open(struct inode *inode, struct file *file)
+>  		goto out_free;
+>  
+>  	priv->inode = inode;
+> -	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
+> +	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
+>  	if (IS_ERR(priv->mm)) {
+>  		ret = PTR_ERR(priv->mm);
+>  
+> @@ -1754,7 +1754,7 @@ static int pagemap_open(struct inode *inode, struct file *file)
+>  {
+>  	struct mm_struct *mm;
+>  
+> -	mm = proc_mem_open(inode, PTRACE_MODE_READ);
+> +	mm = proc_mem_open(file, PTRACE_MODE_READ);
+>  	if (IS_ERR(mm))
+>  		return PTR_ERR(mm);
+>  	file->private_data = mm;
+> diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+> index bce674533000..a8ab182a4ed1 100644
+> --- a/fs/proc/task_nommu.c
+> +++ b/fs/proc/task_nommu.c
+> @@ -259,7 +259,7 @@ static int maps_open(struct inode *inode, struct file *file,
+>  		return -ENOMEM;
+>  
+>  	priv->inode = inode;
+> -	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
+> +	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
+>  	if (IS_ERR(priv->mm)) {
+>  		int err = PTR_ERR(priv->mm);
+>  
+> -- 
+> 2.44.2
+> 
 
