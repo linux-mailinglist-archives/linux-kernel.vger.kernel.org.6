@@ -1,262 +1,112 @@
-Return-Path: <linux-kernel+bounces-218022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD51190B81C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C2190B820
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A60D5B22A6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:33:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8052DB25528
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975B1185E45;
-	Mon, 17 Jun 2024 17:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C702185E50;
+	Mon, 17 Jun 2024 17:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mac.com header.i=@mac.com header.b="OMWb3e3u"
-Received: from qs51p00im-qukt01072702.me.com (qs51p00im-qukt01072702.me.com [17.57.155.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eemRY1f9"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2871D1849D0
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E69185E43
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718645596; cv=none; b=INYxFVt4KIRE0h10bJyr/S9ZAa4nsaVgoS1RO7BO34B+eXQucOXOUXl3ahhm37I4MHAi+mcyuFT49PKYQYWJKiuIa4D1hsBL9SHo8sA4Ux0zVzQ1/X2YYztQDxe8YRD3bSZm7otRmY9fhOy79JTVQRHdJDojhdVPr2d61Y7e4lY=
+	t=1718645608; cv=none; b=gyla8YE6co93bLWssmtE7WExuqHm7Px67Ue/YbPx/Kp+lJNDpyXbAeOMMJvCNtUxze0jNVkTNpj8XJHWuXixRsQ2OPL8wNxDuh37ttUTaEyhtYb7xRy9wNCs2XTWyzj1J8SPW+HUhZeU11idofyCgBoUCewV8otF/3wqDxqW1tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718645596; c=relaxed/simple;
-	bh=PmpjONtlbzLyyOQanzae0e1K+I7aKXVTh8Mp+IkjU00=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Jyf/5K2AAmeMz8jn6hxwuW1fM1t7iEGbSyxLrXTs9iRkOFwVN8ltVxD5aAWwaIggLefIQ2wxcpkVnry6fMJ9IigWPPs7KqIFVK9AJRDRqIs340F1p+3jPPXiCOYBUDX2mgub5/vYqNrWHQHn1GISx5hAzEWRCTvvvXxk/syNBQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mac.com; spf=pass smtp.mailfrom=mac.com; dkim=pass (2048-bit key) header.d=mac.com header.i=@mac.com header.b=OMWb3e3u; arc=none smtp.client-ip=17.57.155.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mac.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mac.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mac.com; s=1a1hai;
-	t=1718645594; bh=kAhlKs22DucNY8wBeTQ7dCOHCJtRuBlBH8vcjeat2uQ=;
-	h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
-	b=OMWb3e3umBC2Vvd2KOyIT0CrCexzbxJb9CeOqbgUy7pZ2kubiJEbF27gsjqbpyk3/
-	 Qhg0zCRS+Ny4Cz7Udx8wE4FesYUoW71fNt0GtPIjtEuG5qGOqwt29nGfYj8i92ptos
-	 30DSybbufYh7jPto9+wPiN9+rEfrx2jnPOWJrooh1xNC2MotuAVzl9P5i2Gd4qsnSV
-	 zgRbaYLRj4L5Iymmkg/emqEEkKOqw40w1Nh6hblJS0eJLY7XZYuASN16nvBjRgDwN7
-	 aRu3W7vKdCGFTlwLyPKqhQz5WutbFLWC4uZR2YpZkSEQMI1M4lNZRYMlYi/bAOnG62
-	 vjWg3JnnfEmzQ==
-Received: from [172.20.144.3] (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
-	by qs51p00im-qukt01072702.me.com (Postfix) with ESMTPSA id D8EFB168033A;
-	Mon, 17 Jun 2024 17:33:08 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1718645608; c=relaxed/simple;
+	bh=PG3BCj9R30OdLhZZyfrDaoTTRFm41wylvyZJx2O0h7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UvtTCl0IzXZ+Spu6LXmHWMdjDUSaeCKPtwZsT9h4eEUMAYCd/NiEctIVBgrlovsl5a2v2yuwd1BltKI76aSEu0Kcy2MXo4U1CIy0KjAr5tT/NMZz0WbSl82F+BDL8yrb/5r2vMMLS8zuz1P1MuJbYU8dei3LCKg3YT/f8fNV2W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eemRY1f9; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52bbdc237f0so5159903e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:33:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718645605; x=1719250405; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QFQCWRaqmBJq8+m4mF5hIPHwI1FBZDEXFQrG/Y1yGWA=;
+        b=eemRY1f91RGS4plsryR4G48mZYcM/u3ovmFRhDeqyKlDEZ9eRJ1eePQgRqck8D5XK7
+         O3alz5IWKZJ2dSECt2gC4BuTCIpldwv9sv2IJlgCHHj5Y3x3DomKE/0vOq9XpOKmby1/
+         OcqBhff9ysPeG0kz+93LThbz6FnjSpsTw0BySAflJ14pvYArOzBP19X7/nTKAWgboOBr
+         Ja7vUY4xWmP8rQYWshuD2r7gCJRnnoGwnJBZb1x++JIvZV0tFaqnh+ki4w1VUBbYEBmf
+         8lop1fy27a/x66K2rRbp9WAGkQUuoJbrVmnboY3U7QhYTIuGt5qfFZvmB+sl6JoiFNiq
+         j5bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718645605; x=1719250405;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QFQCWRaqmBJq8+m4mF5hIPHwI1FBZDEXFQrG/Y1yGWA=;
+        b=f3PdaKFW/xNC6NsQdGz4yQOQ9MMg2z8X7CTLsIR6PtsM8q/kHSsjV61ofomNFWHmD5
+         Xl2mrSScpp7oAwT5YBuCcjz1jnjy6orcqfe7ZA0D5uUfc1ZF2OJnxO5npibbgXS9pUhE
+         lywpYjvGGJEqIyIjt+9GSxrbu4W8ZJ/b1TO9cssbYUdpQuXZSo7IUSNOUdkW/2Pn6S2L
+         un5Udp431D7HzFqGkJwbVYBsVTiwdGnas/RvUprHweYQmlsY0ZGQ4iyLPgGP7S1BtYPL
+         GQBqY43TqAhIzxxt4a8NPY+KR5jzDaWs3hDSkV6jzKYD/8q3c70eW2wuw55aGlbKlOsR
+         4BCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkmTyyfncUNUVbL2nxLZXtzqY/2dSnKRrDqS6OmO6T2w77MW4wJ7/pSzXUvg74kjr7M0lkJWfTeRsge79xzceZL7+MxSU1OogPa1jl
+X-Gm-Message-State: AOJu0Yw6bOuVCfxXSFuY5LiSduE92UFKehN9akCKexstWRaDX8a8TDV7
+	PuszYqH5DLc3WQNBwDZr7/YqC1E3TEIs7v/lI8zO91Zx/FkF+ktp1y44CF1arfc=
+X-Google-Smtp-Source: AGHT+IGZ0XGwW8+FJ9oSqx6R/jJKEbazLowEP92ZnnjcgIC15UcSwHMBJpzMR4oEGE/iPCzK3fqrvA==
+X-Received: by 2002:a19:f60d:0:b0:52c:82bd:bc6f with SMTP id 2adb3069b0e04-52ca6e563ebmr6789043e87.11.1718645605467;
+        Mon, 17 Jun 2024 10:33:25 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:cb2:a9df:20fa:cfbe:9ea6:1fe8? ([2a00:f41:cb2:a9df:20fa:cfbe:9ea6:1fe8])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2825863sm1283308e87.55.2024.06.17.10.33.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 10:33:25 -0700 (PDT)
+Message-ID: <a31a2f94-d125-48fa-8e57-7aedee98063e@linaro.org>
+Date: Mon, 17 Jun 2024 19:33:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.21\))
-Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
- ftl notifier
-From: Gagan Sidhu <broly@mac.com>
-In-Reply-To: <E3E2C13C-1E52-46F2-BE2D-D2592C3369DB@mac.com>
-Date: Mon, 17 Jun 2024 11:33:04 -0600
-Cc: ZhaoLong Wang <wangzhaolong1@huawei.com>,
- chengzhihao1 <chengzhihao1@huawei.com>,
- dpervushin <dpervushin@embeddedalley.com>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-mtd <linux-mtd@lists.infradead.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Vignesh Raghavendra <vigneshr@ti.com>,
- yangerkun <yangerkun@huawei.com>,
- yi zhang <yi.zhang@huawei.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F2DCFCE7-68FA-4C09-AE5B-09F2233575F1@mac.com>
-References: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com>
- <561660214.251562.1718638970757.JavaMail.zimbra@nod.at>
- <14779870-BA54-4ABF-8ABF-FF1D23D172A7@mac.com>
- <1641029267.251608.1718640023954.JavaMail.zimbra@nod.at>
- <65E62DA3-EF16-44BD-8E51-E751BD2C496F@mac.com>
- <1802911356.251780.1718643160760.JavaMail.zimbra@nod.at>
- <E3E2C13C-1E52-46F2-BE2D-D2592C3369DB@mac.com>
-To: Richard Weinberger <richard@nod.at>
-X-Mailer: Apple Mail (2.3445.104.21)
-X-Proofpoint-ORIG-GUID: pccJ1GDI5QWC8wsAA9A320VsJ7eTS535
-X-Proofpoint-GUID: pccJ1GDI5QWC8wsAA9A320VsJ7eTS535
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_12,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1015 bulkscore=0
- suspectscore=0 adultscore=0 mlxscore=0 spamscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2406170111
-
-just to highlight this, let=E2=80=99s look at the failed boot with the =
-changes discussed in this patch
-
-[    5.462504] auto-attach mtd7
-[    5.462525] ubi0: default fastmap pool size: 15
-[    5.477309] ubi0: default fastmap WL pool size: 7
-[    5.486683] ubi0: attaching mtd7
-[    5.811240] UBI: EOF marker found, PEBs from 273 will be erased
-[    5.811299] ubi0: scanning is finished
-[    5.874546] gluebi (pid 1): gluebi_resized: got update notification =
-for unknown UBI device 0 volume 1
-[    5.892927] ubi0: volume 1 ("rootfs_data") re-sized from 9 to 28 LEBs
-[    5.906683] ubi0: attached mtd7 (name "ubi", size 40 MiB)
-[    5.917446] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 126976 =
-bytes
-[    5.931132] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page size =
-2048
-[    5.944654] ubi0: VID header offset: 2048 (aligned 2048), data =
-offset: 4096
-[    5.958513] ubi0: good PEBs: 320, bad PEBs: 0, corrupted PEBs: 0
-[    5.970472] ubi0: user volume: 2, internal volumes: 1, max. volumes =
-count: 128
-[    5.984859] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, =
-image sequence number: 1613475955
-[    6.003045] ubi0: available PEBs: 0, total reserved PEBs: 320, PEBs =
-reserved for bad PEB handling: 15
-[    6.021426] rootfs: parsing partitions cmdlinepart
-[    6.021444] ubi0: background thread "ubi_bgt0d" started, PID 97
-[    6.043694] rootfs: got parser (null)
-[    6.051426] mtd: device 12 (rootfs) set to be root filesystem
-[    6.062891] rootfs_data: parsing partitions cmdlinepart
-[    6.073669] rootfs_data: got parser (null)
-[    6.211240] block ubiblock0_0: created from ubi0:0(rootfs)
-[    6.259545] rtc-pcf8563 0-0051: hctosys: unable to read the hardware =
-clock
-[    6.282125] VFS: Cannot open root device "(null)" or =
-unknown-block(31,12): error -6
-[    6.297406] Please append a correct "root=3D" boot option; here are =
-the available partitions:
-[    6.314054] 1f00             512 mtdblock0
-[    6.314060]  (driver?)
-[    6.327077] 1f01             256 mtdblock1
-[    6.327081]  (driver?)
-[    6.340101] 1f02             256 mtdblock2
-[    6.340105]  (driver?)
-[    6.353124] 1f03             256 mtdblock3
-[    6.353129]  (driver?)
-[    6.366153] 1f04           45056 mtdblock4
-[    6.366158]  (driver?)
-[    6.379175] 1f05           40572 mtdblock5
-[    6.379179]  (driver?)
-[    6.392217] 1f06            4096 mtdblock6
-[    6.392222]  (driver?)
-[    6.405240] 1f07           40960 mtdblock7
-[    6.405244]  (driver?)
-[    6.418272] 1f08           32768 mtdblock8
-[    6.418277]  (driver?)
-[    6.431296] 1f09           40960 mtdblock9
-[    6.431300]  (driver?)
-[    6.444324] 1f0a            6144 mtdblock10
-[    6.444328]  (driver?)
-[    6.457518] 1f0b            4608 mtdblock11
-[    6.457523]  (driver?)
-[    6.470720] fe00           33604 ubiblock0_0
-[    6.470724]  (driver?)
-[    6.484090] Kernel panic - not syncing: VFS: Unable to mount root fs =
-on unknown-block(31,12)
-[    6.500892] Rebooting in 1 seconds..
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] arm64: dts: qcom: sdx75: add missing qlink_logging
+ reserved memory for mpss
+To: Naina Mehta <quic_nainmeht@quicinc.com>, andersson@kernel.org,
+ mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, manivannan.sadhasivam@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240617093428.3616194-1-quic_nainmeht@quicinc.com>
+ <20240617093428.3616194-4-quic_nainmeht@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240617093428.3616194-4-quic_nainmeht@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-here, i assume ubiblock0_0 is the device created from =
-CONFIG_MTD_UBI_BLOCK, correct?
+On 6/17/24 11:34, Naina Mehta wrote:
+> The qlink_logging memory region is also used by the modem firmware,
+> add it to reserved memory regions.
+> Also split MPSS DSM region into 2 separate regions.
+> 
+> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+> ---
 
-then, i don=E2=80=99t think it=E2=80=99s GLUEBI that is the reason my =
-boot works. i think gluebi is useless now that you mention it, and =
-isn=E2=80=99t the reason everything works.
+The commit message is very misleading.. You're not adding
+qlink_logging, you're renaming qdss@8800000 to qlink_logging.
 
-as you can see, UBI_BLOCK is the reasno ubiblock0_0 is created.
+Then, you add qdss_mem @ 88500000 and split the dsmharq_mem into two
+and shrink mpssadsp_mem.
 
-this patch prevents this device from being registered/announced. so when =
-ubi tries to set it (correctly) as the root partition (#12), it fails.
+Please rewrite the commit message.
 
-so doesn=E2=80=99t this change affect more than just GLUEBI? it seems to =
-affect UBI_BLOCK as well.
-
-Thanks,
-Gagan
-
-> On Jun 17, 2024, at 11:23 AM, Gagan Sidhu <broly@mac.com> wrote:
->=20
->=20
->> On Jun 17, 2024, at 10:52 AM, Richard Weinberger <richard@nod.at> =
-wrote:
->>=20
->> ----- Urspr=C3=BCngliche Mail -----
->>> Von: "Gagan Sidhu" <broly@mac.com>
->>> i don=E2=80=99t think my articulation is correct if you interpreted =
-it as that.
->>>=20
->>> as i understand it, gluebi simply makes it handy when you have a =
-filesystem
->>> packed within a ubi file, and it will take that file and mount itas =
-a block
->>> device.
->>=20
->> There is no such thing as an UBI file. UBI hosts volumes.
->> You can install into these volumes whatever you want.
->> Also a file system such as UBIFS, but this seems not to be the case =
-here.
-> that=E2=80=99s correct. the UBI sits underneath so it=E2=80=99s not =
-ubifs.=20
->=20
->>=20
->>> so i would say it=E2=80=99s not MTD->UBI->GLUEBI->MTD->MTDBLOCK
->>>=20
->>> it=E2=80=99d say it=E2=80=99s more MTD->GLUEBI->MTDBLOCK
->>=20
->> No. GLUBI emulates a MTD on top of an UBI volume.
->> So every read/write operation of the filesystem will first to =
-through:
->>=20
->> 1. block layer
->> 2. MTDBLOCK (and mtd)
->> 3. GLUBI
->> 4. UBI
->> 5. MTD (this time the real one)
->>=20
->> Is this really a setup OpenWRT is using?
->> I'm not saying it's impossible, but far from ideal.
->> We have UBIBlock for reasons.
->>=20
-> i don=E2=80=99t understand what you mean. i didn=E2=80=99t think this =
-was unusual haha.
->=20
-> all ubiblock does is give me the right to use a read-only filesystem. =
-it doesn=E2=80=99t map the UBI to a block device.
->=20
-> are you saying there is an easy automated solution that allows me to =
-remove gluebi, and maintain functionality? it doesn=E2=80=99t seem so =
-easy.
->=20
-> for example, here is an openwrt setup: =
-https://forum.openwrt.org/t/ubifs-mount-twice-at-booting/126198
->=20
-> so instead of using gluebi, they use an UBIFS. or they use an overlay. =
-but up until that point, it=E2=80=99s similar.
->=20
-> i didn=E2=80=99t think gluebi was the reason this check was =
-problematic.
-> 	- are you saying MTD_UBIVOLUME is only a property of GLUEBI?
->=20
-> these lines seemed more general than that.
->=20
-> my position is this:
->=20
-> 1. ubi seems to take care of everything as long as i name the =
-partition accordingly (here, i pack the ubi file with two volumes, one =
-for the kernel, the other with the rootfs).
-> 2. the change being discussed broke that.=20
-> 3. i don=E2=80=99t see how gluebi is the root of the problem though, =
-because i have MTD_UBI_BLOCK enabled as well, so shouldn=E2=80=99t in =
-spite of the change? it does not.
->=20
->=20
->> Anyway, since the kernel has to be user space friendly and
->> users seems to use such "odd" stackings I consider reverting this =
-patch.
->> ZhaoLong Wang, what do you think?
->>=20
->> Thanks,
->> //richard
->=20
-
+Konrad
 
