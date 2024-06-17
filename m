@@ -1,202 +1,189 @@
-Return-Path: <linux-kernel+bounces-218317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8956C90BC81
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:01:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7E690BC84
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D370928553B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:01:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16FB41C23AE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACFE198E7E;
-	Mon, 17 Jun 2024 21:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B4E1991B0;
+	Mon, 17 Jun 2024 21:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="KsKpGGo4"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="CXcw69Bt"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630DA79CE;
-	Mon, 17 Jun 2024 21:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3536A18F2FD
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 21:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718658089; cv=none; b=BSluX+hlvQQM3tVGNYw/ne5uSJYGvX7kdT83pULgbNtbp/+YPxPQzHsIkMUsLWSoYJ6mBxkGy4XT7/+r+1fk16aIzxDY4An5PfOJ0qX9FSqffSNNMF1Pnlzz5L9ahEvKe1qBN8l0bm0NBO+yKoiTbEVbgv6WENqqTh73iV4hA00=
+	t=1718658134; cv=none; b=g9tvhW+/GtWr9D9p/zUsDJg2wAq5QC8OShDA4xtT6lNZSMQlM9JglCbq2uk8fcl2N+CFwUE0TkmM3Wsr9sPIcBjZydKmIo7xY0VON6Zi1bULKDi3m02eJH159pT1yVexyXFLqwux+LjptPzoiOVFO0pqLM71v9PHOaanROVPR5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718658089; c=relaxed/simple;
-	bh=+jerAU329B9P5FuyjVTDEtLOsYym20sBbmu5puVsEQ0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=SZMQgC2coH0SSIPgbJcpIfbdJWJdiGLt6WVWYXnd3U3CvFSUlEu0wU+T94biM9XiwxCRmwYpAEpLTCsKLluqxsgx3qkgWw01vW1obZoouN1F1TDdX0sNIkCXzr3n6clc4i32IsQMXDV3majpe3KiRNIP/9NZUJAFZSmjsymazG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=KsKpGGo4; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1718658134; c=relaxed/simple;
+	bh=B1gm5DdSgfQg0HYANDyrQqb7o+BBNjtrye8Q7TCAO24=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=roqLQ4fVZCj0H35nLJUwftB7oUsNnAJdpeNAVXhBVvSqBTnLaaM1/RQZZqbjz1nILXJqrRHDS/gQXbRTdN1pBzvrhR1sw5kHV1613OnNP37VW9kjn+xs7a5lHJS1p2s+smL/25r5XQRv3Rym3JTIr7jW5jogH3ftjAzgf/xX+YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=CXcw69Bt; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4218180a122so34015975e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:02:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1718658087; x=1750194087;
-  h=message-id:date:mime-version:from:subject:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=+jerAU329B9P5FuyjVTDEtLOsYym20sBbmu5puVsEQ0=;
-  b=KsKpGGo4r33gSv83owBFKayDwz3Zj/lYQBJaGG0d30yUNqNRvGGQ2m8w
-   TpvfddbBQa6QW6ygOsEz4zp6zrDUPrX1HUl+7D2b7MRUct5O0efEKsc72
-   4/IwIgnhp36f16f99Xw2r5WngHZVuZj9ORJbFF9wUD9p/h4PASPOZePcl
-   I=;
-X-IronPort-AV: E=Sophos;i="6.08,245,1712620800"; 
-   d="scan'208";a="733504241"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 21:01:21 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:28934]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.44.125:2525] with esmtp (Farcaster)
- id 9f6fef16-53b4-4764-8560-b3586651ba6d; Mon, 17 Jun 2024 21:01:20 +0000 (UTC)
-X-Farcaster-Flow-ID: 9f6fef16-53b4-4764-8560-b3586651ba6d
-Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 17 Jun 2024 21:01:19 +0000
-Received: from [0.0.0.0] (10.253.83.51) by EX19D020UWC004.ant.amazon.com
- (10.13.138.149) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 17 Jun
- 2024 21:01:14 +0000
-Message-ID: <049b2e0f-00b2-4704-8868-1569a006a134@amazon.com>
-Date: Mon, 17 Jun 2024 23:01:12 +0200
+        d=cloudflare.com; s=google09082023; t=1718658130; x=1719262930; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oPx3c/l3RFVX5AVFhiQ8z+HSbtAyDh/1YQdyx0NkN2c=;
+        b=CXcw69Bth/r9P4uVi64ZM1nz53o12g2Ezky2/5rbcrWQBsrViVwpWgscwEJ6S3k7/+
+         1pVGLiE2xTsx/J7cdsPKFGX83u75+MRzW1zLplRabd4IcdMd3k7M4k3JUmWUlIx3IItA
+         QohzS9xuJep1Bi46qLJxOO5Lllc/SjaPDTJRzS/bzsMMx3vim6i5Rqdx/R3tfSUl8qgL
+         iRQssf2C+fVQBZJwEunfalPMysK4r7LXFOP8Xx5GMrwnIGibXUevU2lYSxIfeulbdL7x
+         nWhGL5aL3eDWvT5wCJQuzO7R/UNG02R3cu0sSDBpmnqen2UFYXGugbX0H8Dit1STAzEp
+         lScA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718658130; x=1719262930;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oPx3c/l3RFVX5AVFhiQ8z+HSbtAyDh/1YQdyx0NkN2c=;
+        b=K2MKbMWIK98j3oxMD/n6gspcVj06mPp9UFRiH9n2QE47UOnJCihIwg557obxZ5/r9m
+         Ge2q6Fs22i6w57bKhtBmyDHii7uo2gROLXEbSa4bLkqmKwvgr4oyqIdt+3bj7fmqNMwO
+         9eLX1w4zQSvy8RVQ+7o3w/bYRhhBfh1obCRp27agvpMsx3A8JSSvW3OYomLtuw6t5dYI
+         uTYksosbrKJp0ImVDcFhiveXm4blbB17gCdIqUPEEB4yE0uKdZuTcFSqaQX8APn7fuj0
+         SU3zAWYGz8l4uAAklzD7VeM6Ak2zjesZEXVc/h6+ABg9ohZMQIPe0Ka7GvBtER6aAsJl
+         qnAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxqMxmDAyHPQ+2CbResCxI4Of04Q+kQiVyS2k/ZSWSwpB62BksjFcRpVVEadE1Kq1WXgNXTrmZ0MKEXHIaxS6X2npbvUe1xic/GZOI
+X-Gm-Message-State: AOJu0Ywwa+R6t/VCxNo0os1vRxH8CU/bOffbXwIdZVB8pIbYB1IYFSP1
+	8eZyWq4Sn4ZgRHhQAwZb9XlA68fJVzlFNi+8i92hiQ6nqOob1VlMms4WinOnoaw=
+X-Google-Smtp-Source: AGHT+IGcxuXyC2SdGVAFBszcVrgGgRvP+9b1oJO0U/ENeuHdki+g5WhfdCkuP0boUryoDWn93EsGNA==
+X-Received: by 2002:a05:600c:138b:b0:421:7c20:a263 with SMTP id 5b1f17b1804b1-42304824084mr97239765e9.11.1718658130377;
+        Mon, 17 Jun 2024 14:02:10 -0700 (PDT)
+Received: from localhost.localdomain ([104.28.231.254])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de618sm207988465e9.37.2024.06.17.14.02.09
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 17 Jun 2024 14:02:09 -0700 (PDT)
+From: Ignat Korchagin <ignat@cloudflare.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Florent Revest <revest@chromium.org>,
+	kernel-team@cloudflare.com,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	stable@vger.kernel.org
+Subject: [PATCH net v3] net: do not leave a dangling sk pointer, when socket creation fails
+Date: Mon, 17 Jun 2024 22:02:05 +0100
+Message-Id: <20240617210205.67311-1-ignat@cloudflare.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Alexander Graf <graf@amazon.com>
-Subject: Re: [PATCH v6 0/2] mm/memblock: Add "reserve_mem" to reserved named
- memory at boot up
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Vincent Donnefort <vdonnefort@google.com>, "Joel
- Fernandes" <joel@joelfernandes.org>, Daniel Bristot de Oliveira
-	<bristot@redhat.com>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra
-	<peterz@infradead.org>, <suleiman@google.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Vineeth Pillai <vineeth@bitbyteword.org>, Youssef Esmat
-	<youssefesmat@google.com>, Beau Belgrave <beaub@linux.microsoft.com>,
-	"Baoquan He" <bhe@redhat.com>, Borislav Petkov <bp@alien8.de>, "Paul E.
- McKenney" <paulmck@kernel.org>, David Howells <dhowells@redhat.com>, Mike
- Rapoport <rppt@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
-References: <20240613155506.811013916@goodmis.org>
- <b0ed328f-c4e5-4e9b-ae4e-5c60703ab376@amazon.com>
- <20240613131212.7d1a7ffa@rorschach.local.home>
- <7c90c574-5cfa-40cf-bd4c-1188136cd886@amazon.com>
- <20240617164006.198b9ba3@rorschach.local.home>
-Content-Language: en-US
-In-Reply-To: <20240617164006.198b9ba3@rorschach.local.home>
-X-ClientProxiedBy: EX19D033UWA002.ant.amazon.com (10.13.139.10) To
- EX19D020UWC004.ant.amazon.com (10.13.138.149)
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 
-W3Jlc2VuZCBiZWNhdXNlIFRodW5kZXJiaXJkIGRlY2lkZWQgdG8gc2VuZCB0aGUgcHJldmlvdXMg
-dmVyc2lvbiBhcyBIVE1MIDooXQoKCk9uIDE3LjA2LjI0IDIyOjQwLCBTdGV2ZW4gUm9zdGVkdCB3
-cm90ZToKPiBPbiBNb24sIDE3IEp1biAyMDI0IDA5OjA3OjI5ICswMjAwCj4gQWxleGFuZGVyIEdy
-YWY8Z3JhZkBhbWF6b24uY29tPiAgd3JvdGU6Cj4KPj4gSGV5IFN0ZXZlLAo+Pgo+Pgo+PiBJIGJl
-bGlldmUgd2UncmUgdGFsa2luZyBhYm91dCAyIGRpZmZlcmVudCB0aGluZ3MgOikuIExldCBtZSBy
-ZXBocmFzZSBhCj4+IGJpdCBhbmQgbWFrZSBhIGNvbmNyZXRlIGV4YW1wbGUuCj4+Cj4+IEltYWdp
-bmUgeW91IGhhdmUgcGFzc2VkIHRoZSAicmVzZXJ2ZV9tZW09MTJNOjQwOTY6dHJhY2UiIGtlcm5l
-bCBjb21tYW5kCj4+IGxpbmUgb3B0aW9uLiBUaGUga2VybmVsIG5vdyBjb21lcyB1cCBhbmQgYWxs
-b2NhdGVzIGEgcmFuZG9tIGNodW5rIG9mCj4+IG1lbW9yeSB0aGF0IC0gYnkgKGFkbWl0dGVkbHkg
-Z29vZCkgY2hhbmNlIC0gbWF5IGJlIGF0IHRoZSBzYW1lIHBoeXNpY2FsCj4+IGxvY2F0aW9uIGFz
-IGJlZm9yZS4gTGV0J3MgYXNzdW1lIGl0IGRlZW1lZCAweDEwMDAwMDAgYXMgYSBnb29kIG9mZnNl
-dC4KPiBOb3RlLCBpdCdzIG5vdCByYW5kb20uIEl0IHBpY2tzIGZyb20gdGhlIHRvcCBvZiBhdmFp
-bGFibGUgbWVtb3J5IGV2ZXJ5Cj4gdGltZS4gQnV0IHRoaW5ncyBjYW4gbWVzcyB3aXRoIGl0IChz
-ZWUgYmVsb3cpLgo+Cj4+IExldCdzIG5vdyBhc3N1bWUgeW91J3JlIHJ1bm5pbmcgb24gYSBVRUZJ
-IHN5c3RlbS4gVGhlcmUsIHlvdSBhbHdheXMgaGF2ZQo+PiBub24tdm9sYXRpbGUgc3RvcmFnZSBh
-dmFpbGFibGUgdG8geW91IGV2ZW4gaW4gdGhlIHByZS1ib290IHBoYXNlLiBUaGF0Cj4+IG1lYW5z
-IHRoZSBrZXJuZWwgY291bGQgY3JlYXRlIGEgVUVGSSB2YXJpYWJsZSB0aGF0IHNheXMgIjEyTTo0
-MDk2OnRyYWNlCj4+IC0+IDB4MTAwMDAwMCIuIFRoZSBwcmUtYm9vdCBwaGFzZSB0YWtlcyBhbGwg
-dGhlc2UgVUVGSSB2YXJpYWJsZXMgYW5kCj4+IG1hcmtzIHRoZW0gYXMgcmVzZXJ2ZWQuIFdoZW4g
-eW91IGZpbmFsbHkgcmVhY2ggeW91ciBjb21tYW5kIGxpbmUgcGFyc2luZwo+PiBsb2dpYyBmb3Ig
-cmVzZXJ2ZV9tZW09LCB5b3UgY2FuIGZsaXAgYWxsIHJlc2VydmF0aW9ucyB0aGF0IHdlcmUgbm90
-IG9uCj4+IHRoZSBjb21tYW5kIGxpbmUgYmFjayB0byBub3JtYWwgbWVtb3J5Lgo+Pgo+PiBUaGF0
-IHdheSB5b3UgaGF2ZSBwcmV0dHkgbXVjaCBndWFyYW50ZWVkIHBlcnNpc3RlbnQgbWVtb3J5IHJl
-Z2lvbnMsIGV2ZW4KPj4gd2l0aCBLQVNMUiBjaGFuZ2luZyB5b3VyIG1lbW9yeSBsYXlvdXQgYWNy
-b3NzIGJvb3RzLgo+Pgo+PiBUaGUgbmljZSB0aGluZyBpcyB0aGF0IHRoZSBhYm92ZSBpcyBhbiBl
-eHRlbnNpb24gb2Ygd2hhdCB5b3UndmUgYWxyZWFkeQo+PiBidWlsdDogU3lzdGVtcyB3aXRoIFVF
-Rkkgc2ltcGx5IGdldCBiZXR0ZXIgZ3VhcmFudGVlcyB0aGF0IHRoZWlyIHJlZ2lvbnMKPj4gcGVy
-c2lzdC4KPiBUaGlzIGNvdWxkIGJlIGFuIGFkZGVkIGZlYXR1cmUsIGJ1dCBpdCBpcyB2ZXJ5IGFy
-Y2hpdGVjdHVyZSBzcGVjaWZpYywKPiBhbmQgd291bGQgbGlrZWx5IG5lZWQgYXJjaGl0ZWN0dXJl
-IHNwZWNpZmljIHVwZGF0ZXMuCgoKSXQgZGVmaW5pdGVseSB3b3VsZCBiZSBhbiBhZGRlZCBmZWF0
-dXJlLCB5ZXMuIEJ1dCBvbmUgdGhhdCBhbGxvd3MgeW91IHRvIAplbnN1cmUgcGVyc2lzdGVuY2Ug
-YSBsb3QgbW9yZSBzYWZlbHkgOikuCgoKPj4+Pj4gUmVxdWlyZW1lbnQ6Cj4+Pj4+Cj4+Pj4+IE5l
-ZWQgYSB3YXkgdG8gcmVzZXJ2ZSBtZW1vcnkgdGhhdCB3aWxsIGJlIGF0IGEgY29uc2lzdGVudCBs
-b2NhdGlvbiBmb3IKPj4+Pj4gZXZlcnkgYm9vdCwgaWYgdGhlIGtlcm5lbCBhbmQgc3lzdGVtIGFy
-ZSB0aGUgc2FtZS4gRG9lcyBub3QgbmVlZCB0byB3b3JrCj4+Pj4+IGlmIHJlYm9vdGluZyB0byBh
-IGRpZmZlcmVudCBrZXJuZWwsIG9yIGlmIHRoZSBzeXN0ZW0gY2FuIGNoYW5nZSB0aGUKPj4+Pj4g
-bWVtb3J5IGxheW91dCBiZXR3ZWVuIGJvb3RzLgo+Pj4+Pgo+Pj4+PiBUaGUgcmVzZXJ2ZWQgbWVt
-b3J5IGNhbiBub3QgYmUgYW4gaGFyZCBjb2RlZCBhZGRyZXNzLCBhcyB0aGUgc2FtZSBrZXJuZWwg
-Lwo+Pj4+PiBjb21tYW5kIGxpbmUgbmVlZHMgdG8gcnVuIG9uIHNldmVyYWwgZGlmZmVyZW50IG1h
-Y2hpbmVzLiBUaGUgcGlja2VkIG1lbW9yeQo+Pj4+PiByZXNlcnZhdGlvbiBqdXN0IG5lZWRzIHRv
-IGJlIHRoZSBzYW1lIGZvciBhIGdpdmVuIG1hY2hpbmUsIGJ1dCBtYXkgYmUKPj4+PiBXaXRoIEtB
-U0xSIGlzIGVuYWJsZWQsIGRvZXNuJ3QgdGhpcyBhcHByb2FjaCBicmVhayB0b28gb2Z0ZW4gdG8g
-YmUKPj4+PiByZWxpYWJsZSBlbm91Z2ggZm9yIHRoZSBkYXRhIHlvdSB3YW50IHRvIGV4dHJhY3Q/
-Cj4+Pj4KPj4+PiBQaWNraW5nIHVwIHRoZSBpZGVhIGFib3ZlLCB3aXRoIGEgcGVyc2lzdGVudCB2
-YXJpYWJsZSB3ZSBjb3VsZCBldmVuIG1ha2UKPj4+PiBLQVNMUiBhdm9pZCB0aGF0IHJlc2VydmVk
-IHBzdG9yZSByZWdpb24gaW4gaXRzIHNlYXJjaCBmb3IgYSB2aWFibGUgS0FTTFIKPj4+PiBvZmZz
-ZXQuCj4+PiBJIHRoaW5rIEkgd2FzIGhpdCBieSBpdCBvbmNlIGluIGFsbCBteSB0ZXN0aW5nLiBG
-b3Igb3VyIHVzZSBjYXNlLCB0aGUKPj4+IGZldyB0aW1lcyBpdCBmYWlscyB0byBtYXAgaXMgbm90
-IGdvaW5nIHRvIGFmZmVjdCB3aGF0IHdlIG5lZWQgdGhpcyBmb3IKPj4+IGF0IGFsbC4KPj4gT25j
-ZSBpcyBwcmV0dHkgZ29vZC4gRG8geW91IGtub3cgd2h5PyBBbHNvIG9uY2Ugb3V0IG9mIGhvdyBt
-YW55IHJ1bnM/IElzCj4+IHRoZSByYW5kb21uZXNzIHNvdXJjZSBub3QgYXMgcmFuZG9tIGFzIGl0
-IHNob3VsZCBiZSBvciBhcmUgdGhlIG51bWJlciBvZgo+PiBiaXRzIGZvciBLQVNMUiBtYXliZSBz
-byBmZXcgb24geW91ciB0YXJnZXQgYXJjaGl0ZWN0dXJlIHRoYXQgdGhlIG9kZHMgb2YKPj4gaGl0
-dGluZyBhbnl0aGluZyBiZWNvbWUgbG93PyBEbyB0aGVzZSBzYW1lIGNvbnN0cmFpbnRzIGhvbGQg
-dHJ1ZSBvdXRzaWRlCj4+IG9mIHlvdXIgdGVzdGluZyBlbnZpcm9ubWVudD8KPiBTbyBJIGp1c3Qg
-cmFuIGl0IGEgaHVuZHJlZCB0aW1lcyBpbiBhIGxvb3AuIEkgYWRkZWQgYSBwYXRjaCB0byBwcmlu
-dAo+IHRoZSBsb2NhdGlvbiBvZiAiX3RleHQiLiBUaGUgbG9vcCB3YXMgdGhpczoKPgo+ICAgIGZv
-ciBpIGluIGBzZXEgMTAwYDsgZG8KPiAgICAgICAgICBzc2ggcm9vdEBkZWJpYW50ZXN0aW5nLXg4
-Ni02NCAiZG1lc2cgfCBncmVwIC1lICd0ZXh0IHN0YXJ0cycgLWUgJ21hcHBlZCBib290JyAgPj4g
-dGV4dDsgZ3J1Yi1yZWJvb3QgJzE+MCc7IHNsZWVwIDAuNTsgcmVib290Igo+ICAgICAgICAgIHNs
-ZWVwIDI1Cj4gICAgZG9uZQo+Cj4gSXQgc2VhcmNoZXMgZG1lc2cgZm9yIG15IGFkZGVkIHByaW50
-ayBhcyB3ZWxsIGFzIHRoZSBwcmludCBvZiB3ZXJlIHRoZQo+IHJpbmcgYnVmZmVyIHdhcyBsb2Fk
-ZWQgaW4gcGh5c2ljYWwgbWVtb3J5Lgo+Cj4gSXQgdGFrZXMgYWJvdXQgMTUgc2Vjb25kcyB0byBy
-ZWJvb3QsIHNvIEkgd2FpdGVkIDI1LiBUaGUgcmVzdWx0cyBhcmUKPiBhdHRhY2hlZC4gSSBmb3Vu
-ZCB0aGF0IGl0IHdhcyBjb25zaXN0ZW50IDc2IHRpbWVzLCB3aGljaCBtZWFucyAxIG91dCBvZgo+
-IDQgaXQncyBub3QuIEZ1bm55IGVub3VnaCwgaXQgYnJva2Ugd2hlbmV2ZXIgaXQgbG9hZGVkIHRo
-ZSBrZXJuZWwgYmVsb3cKPiAweDEwMDAwMDAwMC4gQW5kIHRoZW4gaXQgd291bGQgYmUgb2ZmIGJ5
-IGEgbGl0dGxlLgo+Cj4gSXQgd2FzIGNvbnNpc3RlbnRseSBhdDoKPgo+ICAgIDB4MjdkMDAwMDAw
-Cj4KPiBBbmQgd2hlbiBpdCBmYWlsZWQsIGl0IHdhcyBhdCAweDI3Y2UwMDAwMC4KPgo+IE5vdGUs
-IHdoZW4gSSB1c2VkIHRoZSBlODIwIHRhYmxlcyB0byBkbyB0aGlzLCBJIG5ldmVyIHNhdyBhIGZh
-aWx1cmUuIE15Cj4gYXNzdW1wdGlvbiBpcyB0aGF0IHdoZW4gaXQgaXMgYmVsb3cgMHgxMDAwMDAw
-MDAsIHNvbWV0aGluZyBlbHNlIGdldHMKPiBhbGxvY2F0ZWQgY2F1c2luZyB0aGlzIHRvIGdldCBw
-dXNoZWQgZG93bi4KCgpUaGlua2luZyBhYm91dCBpdCBhZ2FpbjogV2hhdCBpZiB5b3UgcnVuIHRo
-ZSBhbGxvY2F0aW9uIHN1cGVyIGVhcmx5IChzZWUgCmFyY2gveDg2L2Jvb3QvY29tcHJlc3NlZC9r
-YXNsci5jOmhhbmRsZV9tZW1fb3B0aW9ucygpKT8gSWYgeW91IHN0aWNrIHRvIAphbGxvY2F0aW5n
-IG9ubHkgZnJvbSB0b3AsIHlvdSdyZSBlZmZlY3RpdmVseSBrZXJuZWwgdmVyc2lvbiBpbmRlcGVu
-ZGVudCAKZm9yIHlvdXIgYWxsb2NhdGlvbnMgYmVjYXVzZSBub25lIG9mIHRoZSBrZXJuZWwgY29k
-ZSByYW4geWV0IGFuZCAKZGVmaW5pdGVseSBLQVNMUiBpbmRlcGVuZGVudCBiZWNhdXNlIHlvdSdy
-ZSBydW5uaW5nIGRldGVybWluaXN0aWNhbGx5IApiZWZvcmUgS0FTTFIgZXZlbiBnZXRzIGFsbG9j
-YXRlZC4KCj4gQXMgdGhpcyBjb2RlIHJlbGllcyBvbiBtZW1ibG9ja19waHlzX2FsbG9jKCkgYmVp
-bmcgY29uc2lzdGVudCwgaWYKPiBzb21ldGhpbmcgZ2V0cyBhbGxvY2F0ZWQgYmVmb3JlIGl0IGRp
-ZmZlcmVudGx5IGRlcGVuZGluZyBvbiB3aGVyZSB0aGUKPiBrZXJuZWwgaXMsIGl0IGNhbiBhbHNv
-IG1vdmUgdGhlIGxvY2F0aW9uLiBBIHBsdWdpbiB0byBVRUZJIHdvdWxkIG1lYW4KPiB0aGF0IGl0
-IHdvdWxkIG5lZWQgdG8gcmVzZXJ2ZSB0aGUgbWVtb3J5LCBhbmQgdGhlIGNvZGUgaGVyZSB3aWxs
-IG5lZWQKPiB0byBrbm93IHdoZXJlIGl0IGlzLiBXZSBjb3VsZCBhbHdheXMgbWFrZSB0aGUgZnVu
-Y3Rpb24gcmVzZXJ2ZV9tZW0oKQo+IGdsb2JhbCBhbmQgd2VhayBzbyB0aGF0IGFyY2hpdGVjdHVy
-ZXMgY2FuIG92ZXJyaWRlIGl0LgoKClllcywgdGhlIGluLWtlcm5lbCBVRUZJIGxvYWRlciAoZWZp
-LXN0dWIpIGNvdWxkIHNpbXBseSBwb3B1bGF0ZSBhIG5ldyAKdHlwZSBvZiBtZW1ibG9jayB3aXRo
-IHRoZSByZXNwZWN0aXZlIHJlc2VydmF0aW9ucyBhbmQgeW91IGxhdGVyIGNhbGwgCm1lbWJsb2Nr
-X2ZpbmRfaW5fcmFuZ2Vfbm9kZSgpIGluc3RlYWQgb2YgbWVtYmxvY2tfcGh5c19hbGxvYygpIHRv
-IHBhc3MgCmluIGZsYWdzIHRoYXQgeW91IHdhbnQgdG8gYWxsb2NhdGUgb25seSBmcm9tIHRoZSBu
-ZXcgCk1FTUJMT0NLX1JFU0VSVkVfTUVNIHR5cGUuIFRoZSBzYW1lIG1vZGVsIHdvdWxkIHdvcmsg
-Zm9yIEJJT1MgYm9vdHMgCnRocm91Z2ggdGhlwqBoYW5kbGVfbWVtX29wdGlvbnMoKSBwYXRoIGFi
-b3ZlLiBJbiBmYWN0LCBpZiB0aGUgQklPUyB3YXkgCndvcmtzIGZpbmUsIHdlIGRvbid0IGV2ZW4g
-bmVlZCBVRUZJIHZhcmlhYmxlczogVGhlIHNhbWUgd2F5IGFsbG9jYXRpb25zIAp3aWxsIGJlIGlk
-ZW50aWNhbCBkdXJpbmcgQklPUyBleGVjdXRpb24sIHRoZXkgc2hvdWxkIHN0YXkgaWRlbnRpY2Fs
-IAphY3Jvc3MgVUVGSSBsYXVuY2hlcy4KCkFzIGNoZXJyeSBvbiB0b3AsIGtleGVjIGFsc28gd29y
-a3Mgc2VhbWxlc3NseSB3aXRoIHRoZSBzcGVjaWFsIG1lbWJsb2NrIAphcHByb2FjaCBiZWNhdXNl
-IGtleGVjIChhdCBsZWFzdCBvbiB4ODYpIGhhbmRzIG1lbWJsb2NrcyBhcyBpcyB0byB0aGUgCm5l
-eHQga2VybmVsLiBTbyB0aGUgbmV3IGtlcm5lbCB3aWxsIGFsc28gYXV0b21hdGljYWxseSB1c2Ug
-dGhlIHNhbWUgCnJhbmdlcyBmb3IgaXRzIGFsbG9jYXRpb25zLgoKCkFsZXgKCgoKCkFtYXpvbiBX
-ZWIgU2VydmljZXMgRGV2ZWxvcG1lbnQgQ2VudGVyIEdlcm1hbnkgR21iSApLcmF1c2Vuc3RyLiAz
-OAoxMDExNyBCZXJsaW4KR2VzY2hhZWZ0c2Z1ZWhydW5nOiBDaHJpc3RpYW4gU2NobGFlZ2VyLCBK
-b25hdGhhbiBXZWlzcwpFaW5nZXRyYWdlbiBhbSBBbXRzZ2VyaWNodCBDaGFybG90dGVuYnVyZyB1
-bnRlciBIUkIgMjU3NzY0IEIKU2l0ejogQmVybGluClVzdC1JRDogREUgMzY1IDUzOCA1OTcK
+It is possible to trigger a use-after-free by:
+  * attaching an fentry probe to __sock_release() and the probe calling the
+    bpf_get_socket_cookie() helper
+  * running traceroute -I 1.1.1.1 on a freshly booted VM
+
+A KASAN enabled kernel will log something like below (decoded and stripped):
+==================================================================
+BUG: KASAN: slab-use-after-free in __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+Read of size 8 at addr ffff888007110dd8 by task traceroute/299
+
+CPU: 2 PID: 299 Comm: traceroute Tainted: G            E      6.10.0-rc2+ #2
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1))
+print_report (mm/kasan/report.c:378 mm/kasan/report.c:488)
+? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+kasan_report (mm/kasan/report.c:603)
+? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
+__sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+bpf_get_socket_ptr_cookie (./arch/x86/include/asm/preempt.h:94 ./include/linux/sock_diag.h:42 net/core/filter.c:5094 net/core/filter.c:5092)
+bpf_prog_875642cf11f1d139___sock_release+0x6e/0x8e
+bpf_trampoline_6442506592+0x47/0xaf
+__sock_release (net/socket.c:652)
+__sock_create (net/socket.c:1601)
+...
+Allocated by task 299 on cpu 2 at 78.328492s:
+kasan_save_stack (mm/kasan/common.c:48)
+kasan_save_track (mm/kasan/common.c:68)
+__kasan_slab_alloc (mm/kasan/common.c:312 mm/kasan/common.c:338)
+kmem_cache_alloc_noprof (mm/slub.c:3941 mm/slub.c:4000 mm/slub.c:4007)
+sk_prot_alloc (net/core/sock.c:2075)
+sk_alloc (net/core/sock.c:2134)
+inet_create (net/ipv4/af_inet.c:327 net/ipv4/af_inet.c:252)
+__sock_create (net/socket.c:1572)
+__sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
+__x64_sys_socket (net/socket.c:1718)
+do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+
+Freed by task 299 on cpu 2 at 78.328502s:
+kasan_save_stack (mm/kasan/common.c:48)
+kasan_save_track (mm/kasan/common.c:68)
+kasan_save_free_info (mm/kasan/generic.c:582)
+poison_slab_object (mm/kasan/common.c:242)
+__kasan_slab_free (mm/kasan/common.c:256)
+kmem_cache_free (mm/slub.c:4437 mm/slub.c:4511)
+__sk_destruct (net/core/sock.c:2117 net/core/sock.c:2208)
+inet_create (net/ipv4/af_inet.c:397 net/ipv4/af_inet.c:252)
+__sock_create (net/socket.c:1572)
+__sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
+__x64_sys_socket (net/socket.c:1718)
+do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+
+Fix this by clearing the struct socket reference in sk_common_release() to cover
+all protocol families create functions, which may already attached the
+reference to the sk object with sock_init_data().
+
+Fixes: c5dbb89fc2ac ("bpf: Expose bpf_get_socket_cookie to tracing programs")
+Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/netdev/20240613194047.36478-1-kuniyu@amazon.com/T/
+---
+Changes in v3:
+  * re-added KASAN repro steps to the commit message (somehow stripped in v2)
+  * stripped timestamps and thread id from the KASAN splat
+  * removed comment from the code (commit message should be enough)
+
+Changes in v2:
+  * moved the NULL-ing of the socket reference to sk_common_release() (as
+    suggested by Kuniyuki Iwashima)
+  * trimmed down the KASAN report in the commit message to show only relevant
+    info
+
+ net/core/sock.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 8629f9aecf91..100e975073ca 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -3742,6 +3742,9 @@ void sk_common_release(struct sock *sk)
+ 
+ 	sk->sk_prot->unhash(sk);
+ 
++	if (sk->sk_socket)
++		sk->sk_socket->sk = NULL;
++
+ 	/*
+ 	 * In this point socket cannot receive new packets, but it is possible
+ 	 * that some packets are in flight because some CPU runs receiver and
+-- 
+2.39.2
 
 
