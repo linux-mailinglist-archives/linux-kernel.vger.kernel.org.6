@@ -1,61 +1,57 @@
-Return-Path: <linux-kernel+bounces-217500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506AB90B238
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:35:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 351BF90B12D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BC98B2F2F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:00:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D33DEB39833
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1D31849E8;
-	Mon, 17 Jun 2024 13:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F951891A3;
+	Mon, 17 Jun 2024 13:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhSkeLgt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0rbeIdh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453B61849CD;
-	Mon, 17 Jun 2024 13:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8383C185E7A;
+	Mon, 17 Jun 2024 13:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630737; cv=none; b=R6/Mp8IHXVa9D+fvuF8C2zpmjIgHpXuLevb1MFj9hOqbgJvNTk91Nmcr4VyhxU9cG1a75ThbJyYq07cYY0ykF9CXV5QCKIvS8G5GCHGj27lAVnHglNTqGu5dwLM0pCZSkF+ukx5Dd7dWAk0/e8RcfOiKptedWRJZUygQ7gN3cyM=
+	t=1718630744; cv=none; b=LLq/RhYz5zhHtoNGH5gTS6AGpV9wmj7bEBdVkZ1qE0gINRGJcy82gjxy+f6itG0OJz4TFyl3GUHZnbQ/K/WlpuMm7HGQj3I0dCawwtqdyag+QunsYRMnD614oNLUFw5Xi+wN2yHj+M1IfHdGAg9Ya3VMUoGGB6+fDF5wix3qxKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630737; c=relaxed/simple;
-	bh=Eo3V4jSPlpaQPRt1kZP3S1ORy65YI2GBpz+FaCrKQGY=;
+	s=arc-20240116; t=1718630744; c=relaxed/simple;
+	bh=gSg7e7ssiabuaXE0c2Hnfh+p9orUESGxXNpTL+xWLAw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jgeENcHUo1hkxqlOPuFLOSeSl82u0A5J68TthsmgCiSYku6FltHECWZQkp2xDiYbo9G+khLSKBZPhctn66/mdb3HXPVgG2zWMfC38/6Gyx32aptQseaHryVig8i0z8oOYj91v6mWejMFdSTIEa+E7bnfFFp6ntwbBmMvhLRNsg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhSkeLgt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8FBDC4AF1D;
-	Mon, 17 Jun 2024 13:25:35 +0000 (UTC)
+	 MIME-Version; b=XFYszwolWwrIi74AquENi5iasLjus6wsNnnu1tBkiRVB3rsktdNnuu6Rvwq5opBRos6LEB5Q2ABWqkFi0xGw6t6Q2MJf4jRbkgr57Pw29Y75sXLFsi1yElSo052dTRD2inkS9scTZeGsz8qK7cIlLNFN3BiRR2fXsAqHzr0nFMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0rbeIdh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A9C3C4AF4D;
+	Mon, 17 Jun 2024 13:25:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718630737;
-	bh=Eo3V4jSPlpaQPRt1kZP3S1ORy65YI2GBpz+FaCrKQGY=;
+	s=k20201202; t=1718630744;
+	bh=gSg7e7ssiabuaXE0c2Hnfh+p9orUESGxXNpTL+xWLAw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BhSkeLgt/550Yj5s+94DGRY7BRSHWUYg6AFPR029lslYLs0uGUijGL7buKX380wFJ
-	 SsUzIjGCI7GUjFAYvItA8zEs5yscgvMZsPtv+HjyUJbtJ0Rh6lTj8T7dccdjqcAZ9h
-	 yiWEM0lYJMWjqZao1LbaLv666SYXSI9XDxRdH2mMjBjnI8agVgmcRRGCzpwkzldHx/
-	 UzW2thJttjk6nLUpYllLBJKFjXALuNhr3kfSWujBfL2QTV7BAaRXY3gWLhSRkVSJd/
-	 DTcltWHTYRzwb9Bw62gQeQCTfyJqfDzwhSN1zCu0v3ocJS6RZJjA19W/Z7z0BUYaKI
-	 Vsr+UvL7lunvQ==
+	b=g0rbeIdhm66ErgHl0zHv9EgIKzOjdl8uIZd3GbYNcDeX4yuNjq3/otaRoqXP7tLR4
+	 DEoS4ZFtok/DK+52SYs4Ku8ZRyhX8IAs9jZOgOauNyB4iQbfOW+aRwjaC0Kju3WaEF
+	 JKwat2otiGSX6zLQR5f6lj6QaQCJxliz5LZV1jGp73Zf5jjuvnNeJa/rBE46iMmRH+
+	 DcCpEPimgNQ9Bi4iRPj7mEyf0wB3q6zBaPZ6tkUfI8yKLMYlFv/kgVIa3rwnI8J81b
+	 /fK7nyLfXefoc7OhJetSGY3ja3OV8CNG+VosArkrnym6l9n8L2rPwSbpNg/UCcw2Nb
+	 40Q3voobt/g9Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Dmitry Antipov <dmantipov@yandex.ru>,
-	Johannes Berg <johannes.berg@intel.com>,
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Anup Patel <apatel@ventanamicro.com>,
 	Sasha Levin <sashal@kernel.org>,
-	johannes@sipsolutions.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 19/29] wifi: mac80211: fix UBSAN noise in ieee80211_prep_hw_scan()
-Date: Mon, 17 Jun 2024 09:24:23 -0400
-Message-ID: <20240617132456.2588952-19-sashal@kernel.org>
+	saravanak@google.com,
+	devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 22/29] of/irq: Factor out parsing of interrupt-map parent phandle+args from of_irq_parse_raw()
+Date: Mon, 17 Jun 2024 09:24:26 -0400
+Message-ID: <20240617132456.2588952-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240617132456.2588952-1-sashal@kernel.org>
 References: <20240617132456.2588952-1-sashal@kernel.org>
@@ -70,78 +66,238 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.94
 Content-Transfer-Encoding: 8bit
 
-From: Dmitry Antipov <dmantipov@yandex.ru>
+From: "Rob Herring (Arm)" <robh@kernel.org>
 
-[ Upstream commit 92ecbb3ac6f3fe8ae9edf3226c76aa17b6800699 ]
+[ Upstream commit 935df1bd40d43c4ee91838c42a20e9af751885cc ]
 
-When testing the previous patch with CONFIG_UBSAN_BOUNDS, I've
-noticed the following:
+Factor out the parsing of interrupt-map interrupt parent phandle and its
+arg cells to a separate function, of_irq_parse_imap_parent(), so that it
+can be used in other parsing scenarios (e.g. fw_devlink).
 
-UBSAN: array-index-out-of-bounds in net/mac80211/scan.c:372:4
-index 0 is out of range for type 'struct ieee80211_channel *[]'
-CPU: 0 PID: 1435 Comm: wpa_supplicant Not tainted 6.9.0+ #1
-Hardware name: LENOVO 20UN005QRT/20UN005QRT <...BIOS details...>
-Call Trace:
- <TASK>
- dump_stack_lvl+0x2d/0x90
- __ubsan_handle_out_of_bounds+0xe7/0x140
- ? timerqueue_add+0x98/0xb0
- ieee80211_prep_hw_scan+0x2db/0x480 [mac80211]
- ? __kmalloc+0xe1/0x470
- __ieee80211_start_scan+0x541/0x760 [mac80211]
- rdev_scan+0x1f/0xe0 [cfg80211]
- nl80211_trigger_scan+0x9b6/0xae0 [cfg80211]
- ...<the rest is not too useful...>
+There was a refcount leak on non-matching entries when iterating thru
+"interrupt-map" which is fixed.
 
-Since '__ieee80211_start_scan()' leaves 'hw_scan_req->req.n_channels'
-uninitialized, actual boundaries of 'hw_scan_req->req.channels' can't
-be checked in 'ieee80211_prep_hw_scan()'. Although an initialization
-of 'hw_scan_req->req.n_channels' introduces some confusion around
-allocated vs. used VLA members, this shouldn't be a problem since
-everything is correctly adjusted soon in 'ieee80211_prep_hw_scan()'.
-
-Cleanup 'kmalloc()' math in '__ieee80211_start_scan()' by using the
-convenient 'struct_size()' as well.
-
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
-Link: https://msgid.link/20240517153332.18271-2-dmantipov@yandex.ru
-[improve (imho) indentation a bit]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Tested-by: Marc Zyngier <maz@kernel.org>
+Tested-by: Anup Patel <apatel@ventanamicro.com>
+Link: https://lore.kernel.org/r/20240529-dt-interrupt-map-fix-v2-1-ef86dc5bcd2a@kernel.org
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/scan.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/of/irq.c        | 125 ++++++++++++++++++++++++----------------
+ drivers/of/of_private.h |   3 +
+ 2 files changed, 77 insertions(+), 51 deletions(-)
 
-diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
-index 933d02d7c1284..62c22ff329ad4 100644
---- a/net/mac80211/scan.c
-+++ b/net/mac80211/scan.c
-@@ -733,15 +733,21 @@ static int __ieee80211_start_scan(struct ieee80211_sub_if_data *sdata,
- 			local->hw_scan_ies_bufsize *= n_bands;
- 		}
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index 2bac44f09554b..38ceb29b15f5e 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -25,6 +25,8 @@
+ #include <linux/string.h>
+ #include <linux/slab.h>
  
--		local->hw_scan_req = kmalloc(
--				sizeof(*local->hw_scan_req) +
--				req->n_channels * sizeof(req->channels[0]) +
--				local->hw_scan_ies_bufsize, GFP_KERNEL);
-+		local->hw_scan_req = kmalloc(struct_size(local->hw_scan_req,
-+							 req.channels,
-+							 req->n_channels) +
-+					     local->hw_scan_ies_bufsize,
-+					     GFP_KERNEL);
- 		if (!local->hw_scan_req)
- 			return -ENOMEM;
- 
- 		local->hw_scan_req->req.ssids = req->ssids;
- 		local->hw_scan_req->req.n_ssids = req->n_ssids;
-+		/* None of the channels are actually set
-+		 * up but let UBSAN know the boundaries.
-+		 */
-+		local->hw_scan_req->req.n_channels = req->n_channels;
++#include "of_private.h"
 +
- 		ies = (u8 *)local->hw_scan_req +
- 			sizeof(*local->hw_scan_req) +
- 			req->n_channels * sizeof(req->channels[0]);
+ /**
+  * irq_of_parse_and_map - Parse and map an interrupt into linux virq space
+  * @dev: Device node of the device whose interrupt is to be mapped
+@@ -96,6 +98,57 @@ static const char * const of_irq_imap_abusers[] = {
+ 	NULL,
+ };
+ 
++const __be32 *of_irq_parse_imap_parent(const __be32 *imap, int len, struct of_phandle_args *out_irq)
++{
++	u32 intsize, addrsize;
++	struct device_node *np;
++
++	/* Get the interrupt parent */
++	if (of_irq_workarounds & OF_IMAP_NO_PHANDLE)
++		np = of_node_get(of_irq_dflt_pic);
++	else
++		np = of_find_node_by_phandle(be32_to_cpup(imap));
++	imap++;
++
++	/* Check if not found */
++	if (!np) {
++		pr_debug(" -> imap parent not found !\n");
++		return NULL;
++	}
++
++	/* Get #interrupt-cells and #address-cells of new parent */
++	if (of_property_read_u32(np, "#interrupt-cells",
++					&intsize)) {
++		pr_debug(" -> parent lacks #interrupt-cells!\n");
++		of_node_put(np);
++		return NULL;
++	}
++	if (of_property_read_u32(np, "#address-cells",
++					&addrsize))
++		addrsize = 0;
++
++	pr_debug(" -> intsize=%d, addrsize=%d\n",
++		intsize, addrsize);
++
++	/* Check for malformed properties */
++	if (WARN_ON(addrsize + intsize > MAX_PHANDLE_ARGS)
++		|| (len < (addrsize + intsize))) {
++		of_node_put(np);
++		return NULL;
++	}
++
++	pr_debug(" -> imaplen=%d\n", len);
++
++	imap += addrsize + intsize;
++
++	out_irq->np = np;
++	for (int i = 0; i < intsize; i++)
++		out_irq->args[i] = be32_to_cpup(imap - intsize + i);
++	out_irq->args_count = intsize;
++
++	return imap;
++}
++
+ /**
+  * of_irq_parse_raw - Low level interrupt tree parsing
+  * @addr:	address specifier (start of "reg" property of the device) in be32 format
+@@ -112,12 +165,12 @@ static const char * const of_irq_imap_abusers[] = {
+  */
+ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
+ {
+-	struct device_node *ipar, *tnode, *old = NULL, *newpar = NULL;
++	struct device_node *ipar, *tnode, *old = NULL;
+ 	__be32 initial_match_array[MAX_PHANDLE_ARGS];
+ 	const __be32 *match_array = initial_match_array;
+-	const __be32 *tmp, *imap, *imask, dummy_imask[] = { [0 ... MAX_PHANDLE_ARGS] = cpu_to_be32(~0) };
+-	u32 intsize = 1, addrsize, newintsize = 0, newaddrsize = 0;
+-	int imaplen, match, i, rc = -EINVAL;
++	const __be32 *tmp, dummy_imask[] = { [0 ... MAX_PHANDLE_ARGS] = cpu_to_be32(~0) };
++	u32 intsize = 1, addrsize;
++	int i, rc = -EINVAL;
+ 
+ #ifdef DEBUG
+ 	of_print_phandle_args("of_irq_parse_raw: ", out_irq);
+@@ -176,6 +229,9 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
+ 
+ 	/* Now start the actual "proper" walk of the interrupt tree */
+ 	while (ipar != NULL) {
++		int imaplen, match;
++		const __be32 *imap, *oldimap, *imask;
++		struct device_node *newpar;
+ 		/*
+ 		 * Now check if cursor is an interrupt-controller and
+ 		 * if it is then we are done, unless there is an
+@@ -216,7 +272,7 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
+ 
+ 		/* Parse interrupt-map */
+ 		match = 0;
+-		while (imaplen > (addrsize + intsize + 1) && !match) {
++		while (imaplen > (addrsize + intsize + 1)) {
+ 			/* Compare specifiers */
+ 			match = 1;
+ 			for (i = 0; i < (addrsize + intsize); i++, imaplen--)
+@@ -224,48 +280,17 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
+ 
+ 			pr_debug(" -> match=%d (imaplen=%d)\n", match, imaplen);
+ 
+-			/* Get the interrupt parent */
+-			if (of_irq_workarounds & OF_IMAP_NO_PHANDLE)
+-				newpar = of_node_get(of_irq_dflt_pic);
+-			else
+-				newpar = of_find_node_by_phandle(be32_to_cpup(imap));
+-			imap++;
+-			--imaplen;
+-
+-			/* Check if not found */
+-			if (newpar == NULL) {
+-				pr_debug(" -> imap parent not found !\n");
+-				goto fail;
+-			}
+-
+-			if (!of_device_is_available(newpar))
+-				match = 0;
+-
+-			/* Get #interrupt-cells and #address-cells of new
+-			 * parent
+-			 */
+-			if (of_property_read_u32(newpar, "#interrupt-cells",
+-						 &newintsize)) {
+-				pr_debug(" -> parent lacks #interrupt-cells!\n");
+-				goto fail;
+-			}
+-			if (of_property_read_u32(newpar, "#address-cells",
+-						 &newaddrsize))
+-				newaddrsize = 0;
+-
+-			pr_debug(" -> newintsize=%d, newaddrsize=%d\n",
+-			    newintsize, newaddrsize);
+-
+-			/* Check for malformed properties */
+-			if (WARN_ON(newaddrsize + newintsize > MAX_PHANDLE_ARGS)
+-			    || (imaplen < (newaddrsize + newintsize))) {
+-				rc = -EFAULT;
++			oldimap = imap;
++			imap = of_irq_parse_imap_parent(oldimap, imaplen, out_irq);
++			if (!imap)
+ 				goto fail;
+-			}
+ 
+-			imap += newaddrsize + newintsize;
+-			imaplen -= newaddrsize + newintsize;
++			match &= of_device_is_available(out_irq->np);
++			if (match)
++				break;
+ 
++			of_node_put(out_irq->np);
++			imaplen -= imap - oldimap;
+ 			pr_debug(" -> imaplen=%d\n", imaplen);
+ 		}
+ 		if (!match) {
+@@ -287,11 +312,11 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
+ 		 * Successfully parsed an interrupt-map translation; copy new
+ 		 * interrupt specifier into the out_irq structure
+ 		 */
+-		match_array = imap - newaddrsize - newintsize;
+-		for (i = 0; i < newintsize; i++)
+-			out_irq->args[i] = be32_to_cpup(imap - newintsize + i);
+-		out_irq->args_count = intsize = newintsize;
+-		addrsize = newaddrsize;
++		match_array = oldimap + 1;
++
++		newpar = out_irq->np;
++		intsize = out_irq->args_count;
++		addrsize = (imap - match_array) - intsize;
+ 
+ 		if (ipar == newpar) {
+ 			pr_debug("%pOF interrupt-map entry to self\n", ipar);
+@@ -300,7 +325,6 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
+ 
+ 	skiplevel:
+ 		/* Iterate again with new parent */
+-		out_irq->np = newpar;
+ 		pr_debug(" -> new parent: %pOF\n", newpar);
+ 		of_node_put(ipar);
+ 		ipar = newpar;
+@@ -310,7 +334,6 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
+ 
+  fail:
+ 	of_node_put(ipar);
+-	of_node_put(newpar);
+ 
+ 	return rc;
+ }
+diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+index fb6792d381a6b..ee09d7141bcf8 100644
+--- a/drivers/of/of_private.h
++++ b/drivers/of/of_private.h
+@@ -151,6 +151,9 @@ extern void __of_sysfs_remove_bin_file(struct device_node *np,
+ extern int of_bus_n_addr_cells(struct device_node *np);
+ extern int of_bus_n_size_cells(struct device_node *np);
+ 
++const __be32 *of_irq_parse_imap_parent(const __be32 *imap, int len,
++				       struct of_phandle_args *out_irq);
++
+ struct bus_dma_region;
+ #if defined(CONFIG_OF_ADDRESS) && defined(CONFIG_HAS_DMA)
+ int of_dma_get_range(struct device_node *np,
 -- 
 2.43.0
 
