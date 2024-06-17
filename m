@@ -1,178 +1,122 @@
-Return-Path: <linux-kernel+bounces-216891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908BF90A822
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:08:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CBF90A826
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E501F24B43
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5741C256CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF22190053;
-	Mon, 17 Jun 2024 08:08:02 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592D718FDD9;
+	Mon, 17 Jun 2024 08:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ezIjDh/h"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF2A18628D;
-	Mon, 17 Jun 2024 08:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE1918628D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718611682; cv=none; b=MivNoeqoV66d0HFG4yhGjjybQfNWIz/YPdIxpnr/UpXgfWNxKN+/5Q4HwSh5O/p+lXSuCoPR+33EQNu1shNJa2vV5dclLmBOK76Vvym7kksKuDiVxKAVZN2Qxq9glkah+JC1BGmca3SuoTZvOAND4DB+N0m8rLaVCfbuj6VPWhI=
+	t=1718611763; cv=none; b=i5kR8MUJtbrXLtLNpKyOnUf9T+K3VQWEfcTmwopfrdqkOVbaNwpFYQahZYMi+1xJyjN9SPktvJByxMU6fQq69GxaC1J7dGlFS/HioxdpN+166wOKMZ1w28/59ZqgVsobNXhaxSLFD7Ryoo+I1DY2ByqQ/jVI0/eE7kIA+14GDqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718611682; c=relaxed/simple;
-	bh=7u1il9aHHFXxYlJZ1uZuvLEv/db5bI8nohdzBZYDeuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SL7qghakPgK5GZXZ31sGh+CDqXsfpsLaPS/dXciEZZYiak9nLG6DITLsmkM8j77wr0BHzhyLrhAOZU2MMJrKKjk0/zJpnjyHq5aLbyK5JYqnskzbKRe2Tcltf5JMuG0Oeo7waubpicBjiXFpUJ7wssWjE/swUfE2YYeFVEXVHfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b1406d942c8011ef9305a59a3cc225df-20240617
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:7730c8e0-bc28-498e-a478-9a61b35a5c8b,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACT
-	ION:release,TS:23
-X-CID-INFO: VERSION:1.1.38,REQID:7730c8e0-bc28-498e-a478-9a61b35a5c8b,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACTIO
-	N:release,TS:23
-X-CID-META: VersionHash:82c5f88,CLOUDID:504ddc7c59fe1f0bab54ca3c0e6ab65d,BulkI
-	D:240614185458SXRYECY3,BulkQuantity:7,Recheck:0,SF:17|19|44|64|66|38|24|10
-	2,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40|20,QS:nil,BE
-	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
-	TF_CID_SPAM_FCD
-X-UUID: b1406d942c8011ef9305a59a3cc225df-20240617
-Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
-	(envelope-from <luoxuanqiang@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1967790496; Mon, 17 Jun 2024 16:07:51 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id E8965B80758A;
-	Mon, 17 Jun 2024 16:07:50 +0800 (CST)
-X-ns-mid: postfix-666FEED6-75382868
-Received: from [10.42.12.252] (unknown [10.42.12.252])
-	by node2.com.cn (NSMail) with ESMTPA id 1FB71B80758A;
-	Mon, 17 Jun 2024 08:07:50 +0000 (UTC)
-Message-ID: <22779d46-8e8b-4ea5-07d6-bebb17a04051@kylinos.cn>
-Date: Mon, 17 Jun 2024 16:07:49 +0800
+	s=arc-20240116; t=1718611763; c=relaxed/simple;
+	bh=sG41EEukMMiVBhltFV4RWYyPfzd2ubrtw4ODUNjoZd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tu9jkk/ophLRhfcTLmig5tYqoaSq0wwbhnT6QSMPCcY9A+6i9ajB6KRyxUbcuU40VcTMkOVZN0di+9jnoEV1Hz5vGg0I5vB2kNw6wMnjIPuuKrXOoZa/Jfstm+yR13M5oqrmmNO/ndIL1YWX/Hfv2mD4wGfSGdylZgMoTlEXBuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ezIjDh/h; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52cc129c78fso35887e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:09:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718611760; x=1719216560; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X2zL/OVwfsmsGKut76UeqNrv4709+NhZVNP+gY0GxxQ=;
+        b=ezIjDh/hsK2glRucu3j9u5J2tGDofoq/rR0yhpww8L72HCbV1pcBWiTilb40Fvz0Hl
+         /PASAlo1iHGbbaQMUPtaoZLqDSgX3B7jqVA7WP0eN4ymNTHZbfdPdgfJyFnnVoYRDC4t
+         Z+0nrzaXbEq7TuPS+Jhk/W1MaKzJxB7vteAxSHLFS0+ndmkVvrKTNFNed0k/bi/p5Utt
+         gjv9I+Ju22Ye1m82d8QD1H1KIxjhKR9m5LNi7tFvifeD0xLcmg1sgjcmhUAmWCCZrAfF
+         Cc9JyYBumRWxcNaB9+TD7ybFv8qzT9mIO6WZLoT9MAXwEMImZlEMyQ5cR2jX1ZtGUBqS
+         F42w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718611760; x=1719216560;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X2zL/OVwfsmsGKut76UeqNrv4709+NhZVNP+gY0GxxQ=;
+        b=BymxngivEAGeCNsKGvOU7qFhYdvzVoWFgjStqE/SKlE8cXNyku0xe9tWCCrvohyhfJ
+         gR7ati+vMNBagWn5VdO+qc8h2HMwTDvWEi/jOJgD/Qet7gMw4z2nMKQkT94NJ+3NPZHZ
+         I/m4vJEKMtOYcgrM7pOEdSdzKeH9f06CWN6IDlh+ImeSjWcsP8y+IvgGuIACJTBfu0Qu
+         S6Im9EnBxmFJ3ECkeW6i4iVeyG+ZZygv1BTgYLyZtB4O/KNwaq25n1CA6U8kBnVUvovc
+         exJl4zcnsSSUeN00lwVlwGKtcnT1G656btyP3fkr8UNzCrqZInMCeWJYFJNql6ByKqnI
+         8VXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmHvXYnSKTbqtK7vezw4cVS30JWjV95BrSgLX8tGfmJiFvOTr3yeKh/IvLvhpBoaN9wJ1LgnjEA44TmdDPoeerpjR1lEUjI8ycYNn2
+X-Gm-Message-State: AOJu0YwwTBE25vY5H5CYWMyVuwxx0fpH/EJRvOE1qSCEOiwmRXupAZPU
+	dO7OU+q2kOuy1v5v2rV8A8KuNixhZAamKTU4PgflLr0+FQcS88DZt0qrZYqZEjw=
+X-Google-Smtp-Source: AGHT+IGIN1VZ1dypo5WcnYr1mOVKMSlIuBzxulj3P3h7dJapVZkX5DtowVEXUEm0YvuSq5466IStVA==
+X-Received: by 2002:a05:6512:3481:b0:52c:8ddd:7bde with SMTP id 2adb3069b0e04-52ca6e9f522mr5211431e87.69.1718611759946;
+        Mon, 17 Jun 2024 01:09:19 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca287228bsm1165097e87.163.2024.06.17.01.09.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 01:09:19 -0700 (PDT)
+Date: Mon, 17 Jun 2024 11:09:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Aradhya Bhatia <a-bhatia1@ti.com>, Jan Kiszka <jan.kiszka@siemens.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] drm/bridge: tc358767: Add format negotiation
+ hooks for DPI/DSI to (e)DP
+Message-ID: <x3modgardta7sj4hxw6akufgpavhvanxyily4mvejmyvsuvesx@fjmlc6oerspi>
+References: <20231108-tc358767-v2-0-25c5f70a2159@ideasonboard.com>
+ <20231108-tc358767-v2-1-25c5f70a2159@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH net v2] Fix race for duplicate reqsk on identical SYN
-Content-Language: en-US
-To: Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: davem@davemloft.net, dccp@vger.kernel.org, dsahern@kernel.org,
- fw@strlen.de, kuba@kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com
-References: <7075bb26-ede9-0dc7-fe93-e18703e5ddaa@kylinos.cn>
- <20240614222433.19580-1-kuniyu@amazon.com>
- <CANn89i+RP1K+mOd5V7LOKMFtMhy0rZrpFDCDQ-RbQ31GkYbc9g@mail.gmail.com>
-From: luoxuanqiang <luoxuanqiang@kylinos.cn>
-In-Reply-To: <CANn89i+RP1K+mOd5V7LOKMFtMhy0rZrpFDCDQ-RbQ31GkYbc9g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231108-tc358767-v2-1-25c5f70a2159@ideasonboard.com>
 
+On Wed, Nov 08, 2023 at 01:27:22PM GMT, Tomi Valkeinen wrote:
+> From: Aradhya Bhatia <a-bhatia1@ti.com>
+> 
+> With new connector model, tc358767 will not create the connector, when
+> DRM_BRIDGE_ATTACH_NO_CONNECTOR is set and display-controller driver will
+> rely on format negotiation to setup the encoder format.
+> 
+> Add the missing bus format negotiation hooks in the
+> drm_bridge_funcs to complete DRM_BRIDGE_ATTACH_NO_CONNECTOR support.
+> 
+> Output format, for DPI/DSI to DP, is selected to
+> MEDIA_BUS_FMT_RGB888_1X24 as default, keeping in mind what the older
+> model used to support.
+> 
+> Reported-by: Jan Kiszka <jan.kiszka@siemens.com>
+> Closes: https://lore.kernel.org/all/24282420-b4dd-45b3-bb1c-fc37fe4a8205@siemens.com/
+> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/bridge/tc358767.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
 
-=E5=9C=A8 2024/6/15 14:40, Eric Dumazet =E5=86=99=E9=81=93:
-> On Sat, Jun 15, 2024 at 12:24=E2=80=AFAM Kuniyuki Iwashima <kuniyu@amaz=
-on.com> wrote:
-> =E4=BD=A0=E5=A5=BD Eric=E5=92=8CKuniyuk,
->> From: luoxuanqiang <luoxuanqiang@kylinos.cn>
->> Date: Fri, 14 Jun 2024 20:42:07 +0800
->>> =E5=9C=A8 2024/6/14 18:54, Florian Westphal =E5=86=99=E9=81=93:
->>>> luoxuanqiang <luoxuanqiang@kylinos.cn> wrote:
->>>>>    include/net/inet_connection_sock.h |  2 +-
->>>>>    net/dccp/ipv4.c                    |  2 +-
->>>>>    net/dccp/ipv6.c                    |  2 +-
->>>>>    net/ipv4/inet_connection_sock.c    | 15 +++++++++++----
->>>>>    net/ipv4/tcp_input.c               | 11 ++++++++++-
->>>>>    5 files changed, 24 insertions(+), 8 deletions(-)
->>>>>
->>>>> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_=
-connection_sock.h
->>>>> index 7d6b1254c92d..8773d161d184 100644
->>>>> --- a/include/net/inet_connection_sock.h
->>>>> +++ b/include/net/inet_connection_sock.h
->>>>> @@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct so=
-ck *sk,
->>>>>                                   struct request_sock *req,
->>>>>                                   struct sock *child);
->>>>>    void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct reque=
-st_sock *req,
->>>>> -                             unsigned long timeout);
->>>>> +                             unsigned long timeout, bool *found_du=
-p_sk);
->>>> Nit:
->>>>
->>>> I think it would be preferrable to change retval to bool rather than
->>>> bool *found_dup_sk extra arg, so one can do
->> +1
->>
->>
->>>> bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_s=
-ock *req,
->>>>                                 unsigned long timeout)
->>>> {
->>>>      if (!reqsk_queue_hash_req(req, timeout))
->>>>              return false;
->>>>
->>>> i.e. let retval indicate wheter reqsk was inserted or not.
->>>>
->>>> Patch looks good to me otherwise.
->>> Thank you for your confirmation!
->>>
->>> Regarding your suggestion, I had considered it before,
->>> but besides tcp_conn_request() calling inet_csk_reqsk_queue_hash_add(=
-),
->>> dccp_v4(v6)_conn_request() also calls it. However, there is no
->>> consideration for a failed insertion within that function, so it's
->>> reasonable to let the caller decide whether to check for duplicate
->>> reqsk.
->> I guess you followed 01770a1661657 where found_dup_sk was introduced,
->> but note that the commit is specific to TCP SYN Cookie and TCP Fast Op=
-en
->> and DCCP is not related.
->>
->> Then, own_req is common to TCP and DCCP, so found_dup_sk was added as =
-an
->> additional argument.
->>
->> However, another similar commit 5e0724d027f05 actually added own_req c=
-heck
->> in DCCP path.
->>
->> I personally would'nt care if DCCP was not changed to handle such a
->> failure because DCCP will be removed next year, but I still prefer
->> Florian's suggestion.
->>
-> Other things to consider :
->
-> - I presume this patch targets net tree, and luoxuanqiang needs the
-> fix to reach stable trees.
->
-> - This means a Fixes: tag is needed
->
-> - This also means that we should favor a patch with no or trivial
-> conflicts for stable backports.
->
-> Should the patch target the net-next tree, then the requirements can
-> be different.
+If this is a fix, where is the Fixes tag?
 
-Hi Kuniyuk and Florian,
-
-I've created version 3 based on your suggestions, but I've kept the use
-of 'found_dup_sk' since we need to pass NULL in DCCP to maintain its
-logic unchanged. Could you please review this update and let me know if
-it's okay? Thank you!
-
-BRs!
-
+-- 
+With best wishes
+Dmitry
 
