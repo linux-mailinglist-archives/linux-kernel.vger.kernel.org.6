@@ -1,77 +1,51 @@
-Return-Path: <linux-kernel+bounces-216755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940A690A619
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:51:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0EDC90A61C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A3128603C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F21631C25D16
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDAF186E55;
-	Mon, 17 Jun 2024 06:51:05 +0000 (UTC)
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC101187350;
+	Mon, 17 Jun 2024 06:51:11 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828A9186E28;
-	Mon, 17 Jun 2024 06:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6647E18628B;
+	Mon, 17 Jun 2024 06:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718607064; cv=none; b=Q2vh4U7T1nD3letZfC+ULIU5cXgv/dGXIjzNgYAyOnO08XNnevasCtdkizG4eMdaeiYfLLM8nnvXQ2bp2EX+KLSQ/KHXlBpGhnGDJRafCmdmM2u8XDfEvABjGWD/EkDAx9pPrt3m9jUi7SvtJGQP14LRM9HbKINJUmD+lQINwS8=
+	t=1718607071; cv=none; b=F5DSccw7YPzSiqr8gAqBZ+izE1dvR2POUtUIRbdNH1Zc6Uj5ar9hlIELXwnSPxMT5EPp0W2lYsQdJnFdldmdDNR0D7UDrJDtJ0gK0oc68thjW6PvUTxfHsyp5lFYDt9ZmJWHx6Vw9dzOHhuKJaYLJrOJu+P4p3lI16qFBVL93Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718607064; c=relaxed/simple;
-	bh=IpZp/mW7DMENtlLsoUg2ZdNM2pVMUs566c4uDXHoagY=;
+	s=arc-20240116; t=1718607071; c=relaxed/simple;
+	bh=FMRBqddaOq7uQyN1fG8UkeseTiVxjGQallMuh56qp1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TxHYLx+Q9gXrcc4fKpjXQyi2LBnsOMTGQseWvjjbk8vyAfr5ElibGdXdfHmVZgb3gPtft0nXJ+QhHIOpdM719suw/4ZRiV3XICkHRyZ4VyICHWvKPta+5Qj39cEmBAzhorb8ueeYfZzFTzlhgbKqeoMO1CEcS14KsmlxV+/bgDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-254d001d03dso1946218fac.3;
-        Sun, 16 Jun 2024 23:51:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718607062; x=1719211862;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Sn9t5PlhzvSPMNNXtLlu/LCQ1ItTnvGxpqPZVw4pGg=;
-        b=lww0h+WpBDAHLq8no7qVaDNjjUxhzdcg7ylqm9RuflS7qg2L9YuZdeRx5GzchgaYIw
-         El5ExnLOkiL6lkYfHFN5Ih+UkaT8siXvfhx/HvDrIMMkO30lAjLIV3rvlyhOZrcQoKvo
-         /5qlbtNags+nyUsIALsgXvCIpdXHpJi6caTRZJnLe+8u15aMBP2DqAfcN0b3OOJsZLWn
-         b1XUfU5QrSU3nU317zqvFmU3Hc5QuNu11qDTpZgwiu9PDP+14O4O9YW3SIDDJ6SFRijw
-         bZLyDJEvzUIsJOmPDnvNPhUeIKakQ34dgGkvp4cGyAv13Rgzk+ciFL8QB8JF8kvMfILA
-         7Cpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXj4MPQoicd+42knkHVHMXFDByjSsQPe4nhL4kVbmPvZrfBCeJXUkJsAuUsdPKG3QzeRVwJF9E59Xx/jnmJ2ZJfrd8QfCW9NHMeim0FDYhCL3RjrElUqa/7u1MrWaKf2EOf5SUo
-X-Gm-Message-State: AOJu0YzB4lOe7v0z5orkrKQPYp9s0fNf60dN1XQG/XZlVLF27PJEyAE+
-	cqxV2UmwAxvgUZguTlEZcTxinaRVbmdhWcMOlLx19NKGN0sPXph/
-X-Google-Smtp-Source: AGHT+IHfWy5HY4azx7+8jbNehkTLCPbqguVaeJkk7pvS0tEAPCcTnja5wC36XqD9w+T1+d3jfmuBNA==
-X-Received: by 2002:a05:6870:e243:b0:254:bb5d:468c with SMTP id 586e51a60fabf-258428c33fbmr10403311fac.21.1718607062413;
-        Sun, 16 Jun 2024 23:51:02 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc925fe7sm7047427b3a.19.2024.06.16.23.51.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 23:51:01 -0700 (PDT)
-Date: Mon, 17 Jun 2024 06:50:56 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: Re: [PATCH net-next] net: mana: Use mana_cleanup_port_context() for
- rxq cleanup
-Message-ID: <Zm_c0ElvAMMelKMz@liuwe-devbox-debian-v2>
-References: <1718349548-28697-1-git-send-email-shradhagupta@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kq56pCbt+/Yg/v3S2LNYRlyHdVT1PJRnK1/b8dMvo4VF9QiraR9MSagz0wUwwiNn8hAOHxZO8sgk+7hutVYYy5Ma4QdwAqC0nXz938r5GusPo+Ssg9iQ1foQIuBbv4VPkXi+AFht8CdP6YA+3TyODAAdBUyA2gQgybdjOfaaVkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 91B8668B05; Mon, 17 Jun 2024 08:51:04 +0200 (CEST)
+Date: Mon, 17 Jun 2024 08:51:04 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	djwong@kernel.org, chandan.babu@oracle.com, brauner@kernel.org,
+	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
+	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
+	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+	linux-fsdevel@vger.kernel.org, gost.dev@samsung.com,
+	cl@os.amperecomputing.com, john.g.garry@oracle.com
+Subject: Re: [PATCH v7 11/11] xfs: enable block size larger than page size
+ support
+Message-ID: <20240617065104.GA18547@lst.de>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com> <20240607145902.1137853-12-kernel@pankajraghav.com> <20240613084725.GC23371@lst.de> <Zm+RhjG6DUoat7lO@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,15 +54,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1718349548-28697-1-git-send-email-shradhagupta@linux.microsoft.com>
+In-Reply-To: <Zm+RhjG6DUoat7lO@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, Jun 14, 2024 at 12:19:08AM -0700, Shradha Gupta wrote:
+On Mon, Jun 17, 2024 at 11:29:42AM +1000, Dave Chinner wrote:
+> > > +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
+> > > +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
+> > > +	else
+> > > +		igeo->min_folio_order = 0;
+> > >  }
+> > 
+> > The minimum folio order isn't really part of the inode (allocation)
+> > geometry, is it?
 > 
-> To cleanup rxqs in port context structures, instead of duplicating the
-> code, use existing function mana_cleanup_port_context() which does
-> the exact cleanup that's needed.
-> 
-> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> I suggested it last time around instead of calculating the same
+> constant on every inode allocation. We're already storing in-memory
+> strunct xfs_inode allocation init values in this structure. e.g. in
+> xfs_inode_alloc() we see things like this:
 
-Reviewed-by: Wei Liu <wei.liu@kernel.org>
+While new_diflags2 isn't exactly inode geometry, it at least is part
+of the inode allocation.  Folio min order for file data has nothing
+to do with this at all.
+
+> The only other place we might store it is the struct xfs_mount, but
+> given all the inode allocation constants are already in the embedded
+> mp->m_ino_geo structure, it just seems like a much better idea to
+> put it will all the other inode allocation constants than dump it
+> randomly into the struct xfs_mount....
+
+Well, it is very closely elated to say the m_blockmask field in
+struct xfs_mount.  The again modern CPUs tend to get a you simple
+subtraction for free in most pipelines doing other things, so I'm
+not really sure it's worth caching for use in inode allocation to
+start with, but I don't care strongly about that.
 
