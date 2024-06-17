@@ -1,93 +1,61 @@
-Return-Path: <linux-kernel+bounces-218430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F402B90BFBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:18:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F01890BFBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7851E1F22058
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:18:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43D211C2171B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CA2199E9C;
-	Mon, 17 Jun 2024 23:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9DA199E8E;
+	Mon, 17 Jun 2024 23:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="HUmW2Ahe"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmHCl3qr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF04A1993A9
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 23:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80D6163A97;
+	Mon, 17 Jun 2024 23:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718666294; cv=none; b=nWFhHnoBDOmIywcRwUNvYTIBYivfks7+sYtUXHFeSqm8QteeceOctpEhzbsXjTASB4EVaKK0ZzAnUH5PONI9m0B4GG024K5J3sjiecWOIOJgl5ZLH1y769SCleZ8NxUVqquatvpYkAIi/2uvb9lrRQ05f1k9Fl6bgKYoaDS6Wgc=
+	t=1718666323; cv=none; b=MiCVo+lKY4yEz/DMRlUqHlCwu1sg/uUJkZvNpsFf8AI7AVjxyhyhJKjgbkhISMGnCFoF2dl6yE1OjckIATo/tmMElwaVl5lwQSaUiMmFx2548tfzImcpWp+qUdatSynaanqPUXorxuFTiO9GBQeGn9tAggoUjhT4mRUZ+g5Fjlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718666294; c=relaxed/simple;
-	bh=pcP3BpdjhmmxqdiTKi9niOwSo5grD2DrIFHASx9xk2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lw9c10v8rR+FFoibBdHOuWD9PsV3JDTQ/J1c4XB8RHiU3UnjL9WgPehpRAs7FCI/em5n6iuY1l+6NwAe+1JIjwDJ8Vd0OOw2lgw4VHUkw5QVD6fxg/Q86IB+Hqq7WurYaAb5XNUImhs+lYjAqSywoIuLxsolkXC6k2AH55mv7h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=HUmW2Ahe; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6c53a315c6eso3380132a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:18:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1718666292; x=1719271092; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gaehIoCCMbdtbvnUIS3Bk9WXrmvq/8zVNdJb/nDEkms=;
-        b=HUmW2Ahe5S9AqqF9UkjtWiUxOZ5XU6dJrGR9QYkgI5zbvU8Nh/5E233mJrmm+y8rdJ
-         c8WSrYtvZglsPa1LijMe2LebKJHB8LI9uJuDn9hq9DfpzUnMRyRSYHvZsDN+yX+Psr1a
-         j/W0XNtuVTILAotGboEMI1uTFEPPGsNXzj3JG3mnZawFJSUiFwgdUaPHvVFxwQXVg8o1
-         vPx/m6STqHf479xeKEM5Gwu3br7XdeFRW9uoqhyPz/t0c5dZJheM1GgV9ScsLRTfAIxc
-         IyH/Dzx4PprmMciSZJ4CiCA7oQxmYo5+L06wv2SBFG+750l+h28XOIPeJoSI54xgY90B
-         DpCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718666292; x=1719271092;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gaehIoCCMbdtbvnUIS3Bk9WXrmvq/8zVNdJb/nDEkms=;
-        b=UB9kU1FHC2FIrMcpUaUdW0BhnrRWJitrCC/TNDfckbuctzn/nFb1D4PpC+Y5hlJyas
-         75H8he8ZblcrKS7jRuh15a6LOkQI2+uzpRObDjCvD/j3yX03uBiA+OSnVLj5tUVWc+0U
-         FbqXOlZUt1alQzMB2f5y57yGKwiCt7Or1Ds5HhRuig2fFbHSR6/SNZ5SMRNSnJ3Kvxzi
-         pn1jX7mZuWSNEiy0gYpeqmOmInA2tVV7B3F+oTQC9kkBge/T7CZtt10RcPHE0cvJ0l6/
-         n1wyBF+6bwEEyYE6roCLVcLp+PFKMdSTpZQv4ZOb+UycsLzxWChiLVwKs74m4EqBI7Dk
-         Fyfw==
-X-Forwarded-Encrypted: i=1; AJvYcCXse6GZhF7O1nQmwCYJbtty6icRrr+W1LQ4PR4UhELU0F65SCzOMYaG/aV2TyMypvFOya18BiL3jTWA65xtFZEZO3yvx2nBYKxQ7y6b
-X-Gm-Message-State: AOJu0YyEZBuw95L24jNd6IknJGXo3ie+7kLJzlyYtv3sovbmtX0VS/u1
-	Yv3LM+EjlAgLswKGEF9hSfRSOyxJCdpXrfB1xctC9qQo5543L+BTgns6j2DD/D0=
-X-Google-Smtp-Source: AGHT+IFZ5VaDbnJgrc4upZ8ziIxaNBi9yUsEpjQiocgmkB3SKh6FhcEhl90ontDwiZTKwkEGHbQzuw==
-X-Received: by 2002:a05:6a20:321b:b0:1b8:5967:45bc with SMTP id adf61e73a8af0-1bae83a39fdmr9164501637.61.1718666291634;
-        Mon, 17 Jun 2024 16:18:11 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fee2d3673dsm7103023a12.69.2024.06.17.16.18.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 16:18:11 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sJLc0-0025gT-1w;
-	Tue, 18 Jun 2024 09:18:08 +1000
-Date: Tue, 18 Jun 2024 09:18:08 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, djwong@kernel.org,
-	chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 11/11] xfs: enable block size larger than page size
- support
-Message-ID: <ZnDEME/qMAzqli8l@dread.disaster.area>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-12-kernel@pankajraghav.com>
- <20240613084725.GC23371@lst.de>
- <Zm+RhjG6DUoat7lO@dread.disaster.area>
- <20240617065104.GA18547@lst.de>
+	s=arc-20240116; t=1718666323; c=relaxed/simple;
+	bh=OP+bYZ7lqGXeuYHiHDI8bcK2qAwONZp4ir5STUjqMVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tKLe2153Pn1xmCTp46VVB6wTsER2L2/FIeLRa31RDKED9nIFBS9nB4ZaHcUD/X7vJgJqL9+brXQgf/gj9yke4ZLKHRrRLT97jBni4SOroKvg1V3IeOYDn51lw1yBg85rKzOrb6fNYmh8f2O/1mV1PTPiHksakbjNzuLMwiV7Bo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmHCl3qr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 106E3C2BD10;
+	Mon, 17 Jun 2024 23:18:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718666323;
+	bh=OP+bYZ7lqGXeuYHiHDI8bcK2qAwONZp4ir5STUjqMVk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=nmHCl3qrAZcW2t9eK7zvS6mq4UTdtfPninSLKL+XNI6oeLLyWd2jn0oWN6EVSAj6c
+	 O7+vHwlBpmsv3dwTsnjd7LtFq9Jfu07yw6SohgJAT6dUKrrvlwmkT4qNTOVCcOpBAt
+	 SCN+l/kFcGPCSH/mREW3UisnAInjzwTZGywtVa3Sc5h+evdbM5iWm2D/BOy6WHd7x+
+	 XcKCdtySJoAROV61pZVinYe23Tmg8WH0Bzx/HmtgugKmVabRkEZu8yETek10OtfF7g
+	 sF8FwkUKUQU1CTd134yyQDqsWFGjTZCdruW0RegxWQuh9h0vEK/PHQxjD9waWhCoq2
+	 jZUCKDJUn+6BQ==
+Date: Mon, 17 Jun 2024 18:18:41 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+	Bowman Terry <terry.bowman@amd.com>,
+	Hagan Billy <billy.hagan@amd.com>,
+	Simon Guinot <simon.guinot@seagate.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [PATCH v2] PCI: pciehp: Clear LBMS on hot-remove to prevent link
+ speed reduction
+Message-ID: <20240617231841.GA1232294@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,79 +64,184 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240617065104.GA18547@lst.de>
+In-Reply-To: <4241291f-7e83-c878-6bff-59649d630410@amd.com>
 
-On Mon, Jun 17, 2024 at 08:51:04AM +0200, Christoph Hellwig wrote:
-> On Mon, Jun 17, 2024 at 11:29:42AM +1000, Dave Chinner wrote:
-> > > > +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-> > > > +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-> > > > +	else
-> > > > +		igeo->min_folio_order = 0;
-> > > >  }
+On Mon, Jun 17, 2024 at 03:51:57PM -0700, Smita Koralahalli wrote:
+> Hi Bjorn,
+> 
+> On 6/17/2024 1:09 PM, Bjorn Helgaas wrote:
+> > On Thu, May 16, 2024 at 08:47:48PM +0000, Smita Koralahalli wrote:
+> > > Clear Link Bandwidth Management Status (LBMS) if set, on a hot-remove
+> > > event.
 > > > 
-> > > The minimum folio order isn't really part of the inode (allocation)
-> > > geometry, is it?
+> > > The hot-remove event could result in target link speed reduction if LBMS
+> > > is set, due to a delay in Presence Detect State Change (PDSC) happening
+> > > after a Data Link Layer State Change event (DLLSC).
+> > > 
+> > > In reality, PDSC and DLLSC events rarely come in simultaneously. Delay in
+> > > PDSC can sometimes be too late and the slot could have already been
+> > > powered down just by a DLLSC event. And the delayed PDSC could falsely be
+> > > interpreted as an interrupt raised to turn the slot on. This false process
+> > > of powering the slot on, without a link forces the kernel to retrain the
+> > > link if LBMS is set, to a lower speed to restablish the link thereby
+> > > bringing down the link speeds [2].
 > > 
-> > I suggested it last time around instead of calculating the same
-> > constant on every inode allocation. We're already storing in-memory
-> > strunct xfs_inode allocation init values in this structure. e.g. in
-> > xfs_inode_alloc() we see things like this:
+> > Not sure we need PDSC and DLLSC details to justify clearing LBMS if it
+> > has no meaning for an empty slot?
 > 
-> While new_diflags2 isn't exactly inode geometry, it at least is part
-> of the inode allocation.  Folio min order for file data has nothing
-> to do with this at all.
-
-Yet ip->i_diflags2 is *not* initialised in xfs_init_new_inode()
-when we physically allocate and initialise a new inode. It is set
-for all inodes when they are allocated in memory, regardless of
-their use.
-
-Whether that is the right thing to do or not is a separate issue -
-xfs_inode_from_disk() will overwrite it in every inode read case
-that isn't a create.
-
-Indeed, We could do the folio order initialisation in
-xfs_setup_inode() where we set up the mapping gfp mask, but that
-doesn't change the fact we set it up for every inode that is
-instantiated in memory or that we want it pre-calculated...
-
-> > The only other place we might store it is the struct xfs_mount, but
-> > given all the inode allocation constants are already in the embedded
-> > mp->m_ino_geo structure, it just seems like a much better idea to
-> > put it will all the other inode allocation constants than dump it
-> > randomly into the struct xfs_mount....
+> I'm trying to also answer your below question here..
 > 
-> Well, it is very closely elated to say the m_blockmask field in
-> struct xfs_mount.
+> >I guess the slot is empty, so retraining
+> > is meaningless and will always fail.  Maybe avoiding it avoids a
+> > delay?  Is the benefit that we get rid of the message and a delay?"
+> 
+> The benefit of this patch is to "avoid link speed drops" on a hot remove
+> event if LBMS is set and DLLLA is clear. But I'm not trying to solve delay
+> issues here..
+> 
+> I included the PDSC and DLLSC details as they are the cause for link speed
+> drops on a remove event. On an empty slot, DLLLA is cleared and LBMS may or
+> may not be set. And, we see cases of link speed drops here, if PDSC happens
+> on an empty slot.
+> 
+> We know for the fact that slot becomes empty if either of the events PDSC or
+> DLLSC occur. Also, either of them do not wait for the other to bring down
+> the device and mark the slot as "empty". That is the reason I was also
+> thinking of waiting on both events PDSC and DLLSC to bring down the device
+> as I mentioned in my comments in V1. We could eliminate link speed drops by
+> taking this approach as well. But then we had to address cases where PDSC is
+> hardwired to zero.
+> 
+> On our AMD systems, we expect to see both events on an hot-remove event.
+> But, mostly we see DLLSC happening first, which does the job of marking the
+> slot empty. Now, if the PDSC event is delayed way too much and if it occurs
+> after the slot becomes empty, kernel misinterprets PDSC as the signal to
+> re-initialize the slot and this is the sequence of steps the kernel takes:
+> 
+> pciehp_handle_presence_or_link_change()
+>   pciehp_enable_slot()
+>     __pciehp_enable_slot()
+>         board_added
+>           pciehp_check_link_status()
+>             pcie_wait_for_link()
+>               pcie_wait_for_link_delay()
+>                 pcie_failed_link_retrain()
+> 
+> while doing so, it hits the case of DLLLA clear and LBMS set and brings down
+> the speeds.
 
-Not really. The block mask is a property of the and used primarily
-for manipulating lengths in units of FSB to/from byte counts and
-vice versa. It is used all over the place, and the only guaranteed
-common structure that all those callers have access to is the
-xfs_mount.
+So I guess LBMS currently remains set after a device has been removed,
+so the slot is empty, and later when a device is hot-added, *that*
+device sees a lower-than expected link speed?
 
-OTOH, the folio order is only used for regular files to tell the
-page cache how to behave. The scope of the folio order setup is the
-same as mapping_set_gfp_mask() - is it only used in one place and
-used for inode configuration. I may have called the structure "inode
-geometry" because that described what it contained when I first
-implemented it, but that doesn't mean that is all that is can
-contain. It contains static, precalculated inode configuration
-values, and that what we are adding here...
-
-> The again modern CPUs tend to get a you simple
-> subtraction for free in most pipelines doing other things, so I'm
-> not really sure it's worth caching for use in inode allocation to
-> start with, but I don't care strongly about that.
-
-It's not the cost of a subtraction that is the problem -
-precalculation is about avoiding a potential branch misprediction in
-a hot path that would stall the CPU. If there were no branches, it
-wouldn't be an issue, but this value cannot be calculated without at
-least one branch in the logic.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> The issue of PDSC and DLLSC never occurring simultaneously was a known thing
+> from before and it wasn't breaking anything functionally as the kernel would
+> just exit with the message: "No link" at pciehp_check_link_status().
+> 
+> However, Commit a89c82249c37 ("PCI: Work around PCIe link training
+> failures") introduced link speed downgrades to re-establish links if LBMS is
+> set, and DLLLA is clear. This caused the devices to operate at 2.5GT/s after
+> they were plugged-in which were previously operating at higher speeds before
+> hot-remove.
+> 
+> > > According to PCIe r6.2 sec 7.5.3.8 [1], it is derived that, LBMS cannot
+> > > be set for an unconnected link and if set, it serves the purpose of
+> > > indicating that there is actually a device down an inactive link.
+> > 
+> > I see that r6.2 added an implementation note about DLLSC, but I'm not
+> > a hardware person and can't follow the implication about a device
+> > present down an inactive link.
+> > 
+> > I guess it must be related to the fact that LBMS indicates either
+> > completion of link retraining or a change in link speed or width
+> > (which would imply presence of a downstream device).  But in both
+> > cases I assume the link would be active.
+> > 
+> > But IIUC LBMS is set by hardware but never cleared by hardware, so if
+> > we remove a device and power off the slot, it doesn't seem like LBMS
+> > could be telling us anything useful (what could we do in response to
+> > LBMS when the slot is empty?), so it makes sense to me to clear it.
+> > 
+> > It seems like pciehp_unconfigure_device() does sort of PCI core and
+> > driver-related things and possibly could be something shared by all
+> > hotplug drivers, while remove_board() does things more specific to the
+> > hotplug model (pciehp, shpchp, etc).
+> > 
+> >  From that perspective, clearing LBMS might fit better in
+> > remove_board().  In that case, I wonder whether it should be done
+> > after turning off slot power?  This patch clears is *before* turning
+> > off the power, so I wonder if hardware could possibly set it again
+> > before the poweroff?
+> 
+> Yeah by talking to HW people I realized that HW could interfere possibly
+> anytime to set LBMS when the slot power is on. Will change it to include in
+> remove_board().
+> 
+> > > However, hardware could have already set LBMS when the device was
+> > > connected to the port i.e when the state was DL_Up or DL_Active. Some
+> > > hardwares would have even attempted retrain going into recovery mode,
+> > > just before transitioning to DL_Down.
+> > > 
+> > > Thus the set LBMS is never cleared and might force software to cause link
+> > > speed drops when there is no link [2].
+> > > 
+> > > Dmesg before:
+> > > 	pcieport 0000:20:01.1: pciehp: Slot(59): Link Down
+> > > 	pcieport 0000:20:01.1: pciehp: Slot(59): Card present
+> > > 	pcieport 0000:20:01.1: broken device, retraining non-functional downstream link at 2.5GT/s
+> > > 	pcieport 0000:20:01.1: retraining failed
+> > > 	pcieport 0000:20:01.1: pciehp: Slot(59): No link
+> > > 
+> > > Dmesg after:
+> > > 	pcieport 0000:20:01.1: pciehp: Slot(59): Link Down
+> > > 	pcieport 0000:20:01.1: pciehp: Slot(59): Card present
+> > > 	pcieport 0000:20:01.1: pciehp: Slot(59): No link
+> > 
+> > I'm a little confused about the problem being solved here.  Obviously
+> > the message is extraneous.  I guess the slot is empty, so retraining
+> > is meaningless and will always fail.  Maybe avoiding it avoids a
+> > delay?  Is the benefit that we get rid of the message and a delay?
+> > 
+> > > [1] PCI Express Base Specification Revision 6.2, Jan 25 2024.
+> > >      https://members.pcisig.com/wg/PCI-SIG/document/20590
+> > > [2] Commit a89c82249c37 ("PCI: Work around PCIe link training failures")
+> > > 
+> > > Fixes: a89c82249c37 ("PCI: Work around PCIe link training failures")
+> > 
+> > Lukas asked about this; did you confirm that it is related?  Asking
+> > because the Fixes tag may cause this to be backported along with
+> > a89c82249c37.
+> 
+> Yeah, without this patch we won't see link speed drops.
+> 
+> Thanks,
+> Smita
+> 
+> > 
+> > > Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+> > > ---
+> > > Link to v1:
+> > > https://lore.kernel.org/all/20240424033339.250385-1-Smita.KoralahalliChannabasappa@amd.com/
+> > > 
+> > > v2:
+> > > 	Cleared LBMS unconditionally. (Ilpo)
+> > > 	Added Fixes Tag. (Lukas)
+> > > ---
+> > >   drivers/pci/hotplug/pciehp_pci.c | 3 +++
+> > >   1 file changed, 3 insertions(+)
+> > > 
+> > > diff --git a/drivers/pci/hotplug/pciehp_pci.c b/drivers/pci/hotplug/pciehp_pci.c
+> > > index ad12515a4a12..dae73a8932ef 100644
+> > > --- a/drivers/pci/hotplug/pciehp_pci.c
+> > > +++ b/drivers/pci/hotplug/pciehp_pci.c
+> > > @@ -134,4 +134,7 @@ void pciehp_unconfigure_device(struct controller *ctrl, bool presence)
+> > >   	}
+> > >   	pci_unlock_rescan_remove();
+> > > +
+> > > +	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_LNKSTA,
+> > > +				   PCI_EXP_LNKSTA_LBMS);
+> > >   }
+> > > -- 
+> > > 2.17.1
+> > > 
 
