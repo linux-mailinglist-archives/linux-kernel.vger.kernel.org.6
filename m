@@ -1,147 +1,86 @@
-Return-Path: <linux-kernel+bounces-217958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CFE190B6EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:47:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0D690B6ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E6A81F22097
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2520D1F21E0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF5816B3B8;
-	Mon, 17 Jun 2024 16:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A369D168480;
+	Mon, 17 Jun 2024 16:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="efi+96RD"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUYl9lUh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DF716B39F
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC0F1662F7;
+	Mon, 17 Jun 2024 16:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718642729; cv=none; b=nnjZM9KSyLS5tgBpO2YXX2eIKpyS8JMk2XL76Pfm350G5MpsjvPvyXkeFwX5wmZiyAE2z/UzByWA3uNrCJUyC0AdWeH7ydzMR6rbqHd5997jipHP78bv/d4QYhLjAiPBt/aS6p3aVtlXwE9TwJPfGCsEi/OwGyu0j8Mr1/ybKt4=
+	t=1718642767; cv=none; b=UQFF9/afnvP8hLoOoOLfpndqXbgD59S311R5XlTNmLSJXZJHEWWW3mZvQnkNgHBh9I4E49VszBITXjU8R8QB66EwBiDGs6UTSTXapXYNIgkWVLDBpK05lluku5dvCNQz4FeS09Krmz0dwLcHik6WBeoyMfF2f3gufHwqaKxaHJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718642729; c=relaxed/simple;
-	bh=JF0DRVdvDrP/X63k/t+c0ChsmTu8fE208dmE5UAaqJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GUztZVgQFGI3FPVzGyzov1c/M7scg/RtWaDt8kL64pJUfU6+qJlcH1UVKb+KT18krPwnKP+/IA5IZVGgNW5/+J5YEv6qjfUz7mgy53YXFEJH2drV2USpcjqmIpFGDGwF1A883mCOD27nzNmR95MX5UgbDuAB9Y1hDIQwHO1+N14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=efi+96RD; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=BbrA
-	mQRWzGJDhWszxc7y+nTSszXSsCm9K0tXqx6rv4o=; b=efi+96RDtVB4BJnrqr7O
-	6Rqi120Ip6IDqJBQ93KM75t40Oamx2nEsr1emGQtybSMOEJI7T2PtnJUIc+SRizY
-	PESjNJ/kzJFGhqGjFNDXxR78Y2SSS1aJBWS1czF3JH8HArq7v3TogW/6ncq37hw/
-	jjOuTWFym5GQEcDC4DHKcMmWXsZ8gvgGF+2qiVSTxQ8D+TfqYrvjoTgGn/Zy/QTA
-	HLG5xh1TTMxVhJ3TLa8rxTZ0JQCsmXkqhv03KW9aOkotz07PgKGbwd/F/A7/w+fD
-	ku5houZctoWcksRXlp3zCK9VYeJKnD69LV43IUxV/GgipRbytXzWMc+sgR0dRm09
-	wA==
-Received: (qmail 2400428 invoked from network); 17 Jun 2024 18:45:17 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Jun 2024 18:45:17 +0200
-X-UD-Smtp-Session: l3s3148p1@hYmmsBgbwqNehh9j
-Date: Mon, 17 Jun 2024 18:45:16 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, 
-	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] docs: i2c: summary: document 'local' and 'remote'
- targets
-Message-ID: <ir47gr6evieqekm5ws6stmaqqc5td6o35s6orus4nqhgw27o2n@ex6bqs3yuejm>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org, 
-	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240614081239.7128-8-wsa+renesas@sang-engineering.com>
- <20240614081239.7128-13-wsa+renesas@sang-engineering.com>
- <4zxr4rlqnjqbqh3oxmd2ufqi6uk4pxa3tniuya5pgjtqi6tswc@utq4r2zt6z6b>
- <ed75fyc2xcsnwubq42eposf6ayt5aj2jmqz6mthugk6vm2zpi4@qqwlmuwayoo5>
- <y34k2k25xdr5z4v7oejp4da237s4o5qym5npihyydwlbsdh75c@vhmfl7sw3pbm>
+	s=arc-20240116; t=1718642767; c=relaxed/simple;
+	bh=xO8XChDFPCNzZpffI0GKMk7UAMqF5tKfD7aEDZU04+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=DfvVD9njF7UDR0dy3CVVs//Eret6QWsx62E/3BuC0QjAgNsamHHB3nFksF9QRwQcOFV+iqPU1V/If6OPfXYOTItoq8Xknn/oRnLFm9DM4qBNHPLSw67k1F+OkAS+q8hBOeTsJ89riBYYv5czURopq4L0IZ3mYD9vIrlqiiXuDKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUYl9lUh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E4AC3277B;
+	Mon, 17 Jun 2024 16:46:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718642766;
+	bh=xO8XChDFPCNzZpffI0GKMk7UAMqF5tKfD7aEDZU04+0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=YUYl9lUhjz94BZhQz9/gYarQ4pOP/8GbvmV5pbrZTc53wcOzF6VDfcg6f3DVoi1XT
+	 x8/z6mIHV4rBgEd8BjjcFZfKc1JEf01iWfbWijJ6YAJOwcodXaA4WVU6CoKAHAGYhr
+	 m7NDyCRTKNMrAPVNySrfPeVCYQf7ENQK19yJNOYXsgBfGE+AVK5PXLb7+eZA30szCJ
+	 OhIyGseEwn/ZWqEn2QTNpNkBX005hHX5oZkzXqtuPW8eNr33jGRaY05q6SlX2gCR+E
+	 zLi65gBwLERJiF0ogsYdBKnRdtTOlvGk00YuX0weMynueY98RQthvNC40kBra3JjiO
+	 VldAMGaR8udNw==
+Date: Mon, 17 Jun 2024 11:46:04 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v9 10/13] PCI: Give pci_intx() its own devres callback
+Message-ID: <20240617164604.GA1217529@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="grmagpcc5ztiysln"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <y34k2k25xdr5z4v7oejp4da237s4o5qym5npihyydwlbsdh75c@vhmfl7sw3pbm>
+In-Reply-To: <bdfd5c582e7b858d3f32428000d2268228beef5f.camel@redhat.com>
 
+On Mon, Jun 17, 2024 at 10:21:10AM +0200, Philipp Stanner wrote:
+> On Fri, 2024-06-14 at 11:14 -0500, Bjorn Helgaas wrote:
+> > On Fri, Jun 14, 2024 at 10:09:46AM +0200, Philipp Stanner wrote:
+> ...
 
---grmagpcc5ztiysln
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > > Apparently INTx is "old IRQ management" and should be done through
+> > > pci_alloc_irq_vectors() nowadays.
+> > 
+> > Do we have pcim_ support for pci_alloc_irq_vectors()?
+> 
+> Nope.
 
-Hi Andi
+Should we?  Or is IRQ support not amenable to devm?
 
-> > Have you read the paragraph "Synonyms" from patch 6? I don't think we
-> > can obsolete client because:
-> >=20
-> > $ git grep 'struct i2c_client \*client' | wc -l
-> > 6100
->=20
-> yes, I know, but I would be happy if we start changing i2c_client
-> with i2c_target and at least saying that "target" is the
-> preferred name for what was called "client" until now.
-
-This is largely what patch 6 does? Let me quote:
-
-+As mentioned above, the Linux I2C implementation historically uses the ter=
-ms                                                                         =
-                                            =E2=94=82
-+"adapter" for controller and "client" for target. A number of data structu=
-res                                                                        =
-                                            =E2=94=82
-+have these synonyms in their name. So, to discuss implementation details, =
-it                                                                         =
-                                            =E2=94=82
-+might be easier to use these terms. If speaking about I2C in general, the =
-                                                                           =
-                                            =E2=94=82
-+official terminology is preferred.                                        =
-                                                                           =
-                                            =E2=94=82
-
-> I think we should start somewhere from using the new naming
-> provided by the documentation.
-
-I think I can justify replacing "master/slave" and create quite some
-churn because that terminology is unwanted language.
-
-I think I cannot justify replacing "adapter/client" just because it
-doesn't match the spec. Plus, the churn would be a lot bigger.
-
-If everyone (especially affected subsystem maintainers) is like "Yeah,
-do it!" I can do it. But I have my doubts...
-
-Happy hacking,
-
-   Wolfram
-
-
---grmagpcc5ztiysln
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZwaBgACgkQFA3kzBSg
-KbZXNxAAhjbiM9/e2Nkpvmf/06Db4tpb/+ObSgtj6WOEGfzeTKlaDjimYF9p34x+
-U4jjzfhK9X9FSaDqlYHrxsEAFVhn2bRWewgPXcm+/uge3kIkyhgbjTAmQESV9MeQ
-qZH0c0VKQaySF65tv2YnIFvQIDgjkkLx+tUgqiOixWZ/31Vr4++DS3xr6Q2TxfXq
-ibjgYNqD5v6znN5v0z5Hv1R2ZYf13S1AB3PxxSkQwirV4abRd3Gv0VOB4jO8gwN3
-jVudv/I22XHGNpl485GDS55UmN2V4KUGyF9SK5IrwFxTAjCHiuGAS2TdVwIXmbKf
-h8qnWyOj6FlcnmId7UinSegKKFEF5pvSxAPRd5efYpJM9vdQuvepZyLbOdHXZaBG
-t8XSVIV+lQSkbwEaqFvjXk5HT1+lo9oPso9CgtnNrECfqHIIHZD3sD3RFbxCpTPL
-I6n9pn4RgY0Igq7o+eWuJ1P/s7m5vy3uVFRTY2rhzxQR99vaIb/zEctFkeHzjpwu
-ZHrIiYnKix1/l7p7IWrNSm/tUbnHpk/sM9nOhf5ckyxr8yQW0R4P5uxPDkDDkOzn
-nsCUaTiMJVxvV92Xfl/FK70JVsMrurgYUrumBqhsIDa0xNKwOljHLF878padc23c
-cfh/G5w/OivNSG/PO6rJ9twGlmaRnYVPA8MiYt20FMb2koyrB4U=
-=SDUa
------END PGP SIGNATURE-----
-
---grmagpcc5ztiysln--
+Happened to see this new driver:
+https://lore.kernel.org/all/20240617100359.2550541-3-Basavaraj.Natikar@amd.com/
+that uses devm and the only PCI-related part of .remove() is cleaning
+up the IRQs.
 
