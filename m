@@ -1,224 +1,119 @@
-Return-Path: <linux-kernel+bounces-216879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7F890A7ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:58:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE6F90A7F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5BAF1C24CC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:58:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BD3BB2771C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3336918FDC4;
-	Mon, 17 Jun 2024 07:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C148E190042;
+	Mon, 17 Jun 2024 07:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TjEzn50J"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+9QruY0"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E90190468
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C021C38396;
+	Mon, 17 Jun 2024 07:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718611089; cv=none; b=sa/RaIGZLPiFtgYrQK7vLBsdAuGv9Oj5q91W7WZVBLxi10K7b5oSAx+XGfKNH2aBGomxkUdyAjvTFHL8R+3jiC9QZcxSE5rJAAuD4FLIK2FilP1NP94+zEUjZIOTdyh3G1tQHbkvmJDJFU2Wie9WoO/GVsXTkxN9CKuh468Hp+4=
+	t=1718611160; cv=none; b=l+tfwedoTmk8jEkMeWrnEaEBLWHDBEce4Nod/G04aCN4EYjXHdtc0vYEb3bJ20TGYPYrURvHnByDha02XFop9hbdSNktuuxxYcpakZ7Ppy3rx8/MbeoC3dkfVvrwm3DS3+AXJVQXkjW+qKKswYAVF0LvlbLuPjXUZi7/ZbOGetE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718611089; c=relaxed/simple;
-	bh=xp6ogpjWSbJLZpxG/11o9qWsWuRkYsIuOYj0shAFTvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKAu4YwRnBEG0PlIevOFKzYpNrXvcALlGEnu8bGccMZZXPjq8BeXnMkrl91Z4Pz3JwZN7zM1dw71UDIPs8yzyfGhxiDwZG+jKtQxksiuvFQKfgxLkcLbgMb54igHtU24PjWRjdZknUnEzYp/B6BwV90xqOaHYAVIFfTrGwoBy4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TjEzn50J; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52bbdb15dd5so4662449e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 00:58:06 -0700 (PDT)
+	s=arc-20240116; t=1718611160; c=relaxed/simple;
+	bh=ePuFg9h9bZymxTUFhveaPKc/NVgI1P7jDl0DoRBNujE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ukhVFqKdRZFFmShXsY3cunQd/EYhwGwHjTOItwffmyCIai/gdUa4n2sNFotW8lsY1DsUzRT2QTXNnTQSr241lt7fri/JI2Mw4NmVecPw80+Q6RPReyaII+ivPmIGX8IYNo/zzEQPOnOOvpI9DlPjCYitGXe77ou1OlSdNNwZpj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+9QruY0; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4434fd275aaso7804271cf.0;
+        Mon, 17 Jun 2024 00:59:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718611085; x=1719215885; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ODVZ2a7uqD44xyTm8f9ujOrdUFNw6sun9vxSfj31nAk=;
-        b=TjEzn50JiXHrfqc8fv5s9AwZjNhMnD+8z53TEmtH73mVV9c6l91OfY/bOeYEMtGNjr
-         CqsD6rwITLGe8LZxahBHjiKjofRBuZY9rCsBFMwVDgfAz9M28FAvldexV1ib3J86LZKC
-         og+Xvj3I2MKIsYYKWiJf2nBvTN+9Xho9V/+gWuI9VQmAfg/LK4upszLrp5sRMdazgksU
-         FUD5zgbB/eiEiyMC9TVm6XG5ChO79EAvJOmbOBgTeg56/OYanaphsogUrDKGDuMo6myf
-         y3s17s+QJskP9V/HP1MzKhZ1WGaUnpbJBqp+6uPVOB7pXkP4SaP4rfFOUoIWLT092Wr6
-         TP9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718611085; x=1719215885;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718611157; x=1719215957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ODVZ2a7uqD44xyTm8f9ujOrdUFNw6sun9vxSfj31nAk=;
-        b=JwrrYSuUJwqur71c4YcTsScxbEHHhMh8jIJhKqcEeqHtBQk8ZRV2AYCISEwVyLXplE
-         ZripZCFW5N5IrOaSIdcoQZdGqwFWEODjlUC8cznoOkQ6jolsrIYr75hpGd4DtY+RAO4J
-         q+hbcIBmKxtbaG/5LF7MA/hElT1koS/p7SRI0zuZ9e35PDv5husFfHPo+rBzgKgO64da
-         F2tF+D/r2iYIdh/PBEEbdBY8k/qeIKytUscrydjiR61zxKeMoxIwyl70hxm1SInKb+oV
-         DEPqbFaHaJcKsJwqbGlV4ep0NOHH7G84DGZ2kXrXYAJ6dF6t7ju0xemLjTuMn1mzfNy+
-         i9og==
-X-Forwarded-Encrypted: i=1; AJvYcCWmT9TkH98uJxlUR/0EDIvrdYHu589dW7hXJ+QT6N4o03aYT5Xcg97M9sl0DknEIeFWAySHL6enTftV6Z4Zifdau8pw9H3HHhUYzNEa
-X-Gm-Message-State: AOJu0YwJUm54odbeN2+HG4b+gc/7chUy5NHjrDiLeoaAe0yw5UCnmzt8
-	VhRuEqsQD0NcRm2buN+TwRdiQl/i2QmH9Xj7iVyBRqUwjTwKAh1wi/LxHBJ7A0g=
-X-Google-Smtp-Source: AGHT+IHcLYn3QHIusC8lvXLKR6f7eP7LQSUjuA3yhHCd5aMLxRnMmKLH7SziPyP0nZbjXCNtjw/UpQ==
-X-Received: by 2002:a2e:350e:0:b0:2ec:2b25:3c8e with SMTP id 38308e7fff4ca-2ec2b253d64mr18240001fa.39.1718611084818;
-        Mon, 17 Jun 2024 00:58:04 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05bf4538sm12984411fa.4.2024.06.17.00.58.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 00:58:04 -0700 (PDT)
-Date: Mon, 17 Jun 2024 10:58:02 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	andersson@kernel.org, ebiggers@google.com, neil.armstrong@linaro.org, 
-	srinivas.kandagatla@linaro.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	robh+dt@kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	kernel@quicinc.com, linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
-	quic_omprsing@quicinc.com, quic_nguyenb@quicinc.com, bartosz.golaszewski@linaro.org, 
-	konrad.dybcio@linaro.org, ulf.hansson@linaro.org, jejb@linux.ibm.com, 
-	martin.petersen@oracle.com, mani@kernel.org, davem@davemloft.net, 
-	herbert@gondor.apana.org.au, psodagud@quicinc.com, quic_apurupa@quicinc.com, 
-	sonalg@quicinc.com
-Subject: Re: [PATCH v5 05/15] soc: qcom: ice: support for hardware wrapped
- keys
-Message-ID: <nvs6pb3nvrtwljbvc5erwhxr6vj6o2p34emggglr3iuitijihq@uf37shcw57bm>
-References: <20240617005825.1443206-1-quic_gaurkash@quicinc.com>
- <20240617005825.1443206-6-quic_gaurkash@quicinc.com>
+        bh=E9WM42kRH7boOC/BsRoJFNTr0tGwQRrRjkE0CGPsXt0=;
+        b=P+9QruY0v+NiB2tZDqhxzB+njJ/Q5ZHv6idUkI25LwVvaCcqaH0xbogxv711TPi18n
+         uZUY2oiKhAvVrYepwZtFzWLnaGSeulbCj0BvaW5Tdp7+KYk6FBa9mijS1QQL2xVwKzn1
+         q5XNEBOqDdDYKVY5mMXQ9OFExEMt55rMFtq8krEUhFXP6onb96ZTPorntLEVDKKHggvV
+         P6/nK+5Pvn9MyQEHdTSJMADbkv1ytbD/y7HftCHTDWcNCkZgS/cyZzeoM5ejAty8CJzj
+         gPR439lTeSBRMF/9k5CET4hTCvxCNhSDNHAyeE+GxjIU9V1wVf3wVvCMFv8FnBEUguJQ
+         iZ7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718611157; x=1719215957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E9WM42kRH7boOC/BsRoJFNTr0tGwQRrRjkE0CGPsXt0=;
+        b=G5AzeJytuGn1vy6Q4ixFUli4WXnuxeSTlvCinsIgq+Rkwd0hmbWEJdg/MbhFFIz/9R
+         UmJ3wY8tWf17r3HpqW6+76mFxmOEHAH8pJNihVe8yo+/oW1kZAhIm1iuCJwWwJ3ytGT9
+         pxB+3kHmVwRUcuFaW0oIM7Q8XCMrWvWzzePL3Vv7mFhzHUoaMMtEbj60Z6/R17LDyDh6
+         glN096P/soqzCh0pocGgoLilj5DR2QFIQRjJBaVdHMcJjvtdmkTyjgPndWkT2vmO/ntP
+         2JPuM5f0UTNFnbmkiShIUi5HamYS1V5sXr+QtmM87uM6zYdtY3R5r5aXx6eshAjKDa/S
+         zeLg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6QSyYpyms+F0d4qnHi3m0TPKBaP6HpSINCpar8jyPPcHJIKFOsV/KBz6Wypn98LGIDNhej/QUEuh3VfliAE/zPNMJkqm+RtHzdMcHarTrTl5p+x/gHgUbrb0gwJuCOBkZ/1XYKb3Ci2A=
+X-Gm-Message-State: AOJu0YzxJx9wZqybJkr/SL4H1lJzH0jiA0rybZ9HioXibCsKjxJr6d6S
+	JtLTz/2b76bSkzGbZiYa3RsgStZupc9PwqBkXajwr5P9BrqMWV5TMlu7lco7VVTp/TeKu0MA3s7
+	B1he0dI1Ip16i7B7G4qkvIiglHmk=
+X-Google-Smtp-Source: AGHT+IEiLCdkMCZ8v+5/BSe3/X9QsrmZW/DBq+l7/Gtt3SCsZBwO6dokolQ9DgJFajxbn1fqUaY3KnP3VRK4ql0HfZA=
+X-Received: by 2002:a05:622a:1999:b0:441:5428:6dea with SMTP id
+ d75a77b69052e-4421687d21emr138891591cf.18.1718611157588; Mon, 17 Jun 2024
+ 00:59:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617005825.1443206-6-quic_gaurkash@quicinc.com>
+References: <20240614074936.113659-1-dongliang.cui@unisoc.com> <7d0f68b8-ecdb-45fb-ae10-954eac5ed32c@acm.org>
+In-Reply-To: <7d0f68b8-ecdb-45fb-ae10-954eac5ed32c@acm.org>
+From: dongliang cui <cuidongliang390@gmail.com>
+Date: Mon, 17 Jun 2024 15:59:06 +0800
+Message-ID: <CAPqOJe1=+dqcapg-_Y+Fq9W61wDMMzDLzP+CQqcTW69WdKQqRw@mail.gmail.com>
+Subject: Re: [PATCH v5] block: Add ioprio to block_rq tracepoint
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Dongliang Cui <dongliang.cui@unisoc.com>, axboe@kernel.dk, rostedt@goodmis.org, 
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, ebiggers@kernel.org, 
+	ke.wang@unisoc.com, hongyu.jin.cn@gmail.com, niuzhiguo84@gmail.com, 
+	hao_hao.wang@unisoc.com, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, akailash@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 16, 2024 at 05:51:00PM GMT, Gaurav Kashyap wrote:
-> Now that HWKM support is added to ICE, extend the ICE
-> driver to support hardware wrapped keys programming coming
-> in from the storage controllers (ufs and emmc). This is
-> similar to standard keys where the call is forwarded to
-
-standard keys = ?
-
-> Trustzone, however certain wrapped key and HWKM specific
-> actions has to be performed around the SCM calls.
-
-which actions? Be specific here.
-
-
-> 
-> Derive software secret support is also added by forwarding the
-> call to the corresponding scm api.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Reviewed-by: Om Prakash Singh <quic_omprsing@quicinc.com>
-> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> ---
->  drivers/soc/qcom/ice.c | 119 +++++++++++++++++++++++++++++++++++++----
->  include/soc/qcom/ice.h |   4 ++
->  2 files changed, 112 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
-> index d5e74cf2946b..f0e9e0885732 100644
-> --- a/drivers/soc/qcom/ice.c
-> +++ b/drivers/soc/qcom/ice.c
-> @@ -27,6 +27,8 @@
->  #define QCOM_ICE_REG_BIST_STATUS		0x0070
->  #define QCOM_ICE_REG_ADVANCED_CONTROL		0x1000
->  #define QCOM_ICE_REG_CONTROL			0x0
-> +#define QCOM_ICE_LUT_KEYS_CRYPTOCFG_R16		0x4040
-> +
->  /* QCOM ICE HWKM registers */
->  #define QCOM_ICE_REG_HWKM_TZ_KM_CTL			0x1000
->  #define QCOM_ICE_REG_HWKM_TZ_KM_STATUS			0x1004
-> @@ -68,6 +70,8 @@
->  #define QCOM_ICE_FORCE_HW_KEY0_SETTING_MASK	0x2
->  #define QCOM_ICE_FORCE_HW_KEY1_SETTING_MASK	0x4
->  
-> +#define QCOM_ICE_LUT_KEYS_CRYPTOCFG_OFFSET	0x80
-> +
->  #define QCOM_ICE_HWKM_REG_OFFSET	0x8000
->  #define HWKM_OFFSET(reg)		((reg) + QCOM_ICE_HWKM_REG_OFFSET)
->  
-> @@ -88,6 +92,16 @@ struct qcom_ice {
->  	bool hwkm_init_complete;
->  };
->  
-> +union crypto_cfg {
-> +	__le32 regval;
-> +	struct {
-> +		u8 dusize;
-> +		u8 capidx;
-> +		u8 reserved;
-> +		u8 cfge;
-> +	};
-> +};
-> +
->  static bool qcom_ice_check_supported(struct qcom_ice *ice)
->  {
->  	u32 regval = qcom_ice_readl(ice, QCOM_ICE_REG_VERSION);
-> @@ -298,6 +312,51 @@ int qcom_ice_suspend(struct qcom_ice *ice)
->  }
->  EXPORT_SYMBOL_GPL(qcom_ice_suspend);
->  
-> +/*
-> + * HW dictates the internal mapping between the ICE and HWKM slots,
-> + * which are different for different versions, make the translation
-> + * here. For v1 however, the translation is done in trustzone.
-
-THis doesn't really help.
-
-> + */
-> +static int translate_hwkm_slot(struct qcom_ice *ice, int slot)
-> +{
-> +	return (ice->hwkm_version == 1) ? slot : (slot * 2);
-> +}
-> +
-> +static int qcom_ice_program_wrapped_key(struct qcom_ice *ice,
-> +					const struct blk_crypto_key *key,
-> +					u8 data_unit_size, int slot)
-> +{
-> +	union crypto_cfg cfg;
-> +	int hwkm_slot;
-> +	int err;
-> +
-> +	hwkm_slot = translate_hwkm_slot(ice, slot);
-> +
-> +	memset(&cfg, 0, sizeof(cfg));
-> +	cfg.dusize = data_unit_size;
-> +	cfg.capidx = QCOM_SCM_ICE_CIPHER_AES_256_XTS;
-> +	cfg.cfge = 0x80;
-> +
-> +	/* Clear CFGE */
-> +	qcom_ice_writel(ice, 0x0, QCOM_ICE_LUT_KEYS_CRYPTOCFG_R16 +
-> +				  QCOM_ICE_LUT_KEYS_CRYPTOCFG_OFFSET * slot);
-
-#define register address instead.
-
-> +
-> +	/* Call trustzone to program the wrapped key using hwkm */
-> +	err = qcom_scm_ice_set_key(hwkm_slot, key->raw, key->size,
-> +				   QCOM_SCM_ICE_CIPHER_AES_256_XTS, data_unit_size);
-> +	if (err) {
-> +		pr_err("%s:SCM call Error: 0x%x slot %d\n", __func__, err,
-> +		       slot);
-> +		return err;
-> +	}
-> +
-> +	/* Enable CFGE after programming key */
-> +	qcom_ice_writel(ice, cfg.regval, QCOM_ICE_LUT_KEYS_CRYPTOCFG_R16 +
-> +					 QCOM_ICE_LUT_KEYS_CRYPTOCFG_OFFSET * slot);
-> +
-> +	return err;
-> +}
-> +
->  int qcom_ice_program_key(struct qcom_ice *ice,
->  			 u8 algorithm_id, u8 key_size,
->  			 const struct blk_crypto_key *bkey,
-
-
--- 
-With best wishes
-Dmitry
+On Sat, Jun 15, 2024 at 12:41=E2=80=AFAM Bart Van Assche <bvanassche@acm.or=
+g> wrote:
+>
+> On 6/14/24 12:49 AM, Dongliang Cui wrote:
+> > -     TP_printk("%d,%d %s (%s) %llu + %u [%d]",
+> > +     TP_printk("%d,%d %s (%s) %llu + %u %s,%u,%u [%d]",
+> >                 MAJOR(__entry->dev), MINOR(__entry->dev),
+> >                 __entry->rwbs, __get_str(cmd),
+> > -               (unsigned long long)__entry->sector,
+> > -               __entry->nr_sector, 0)
+> > +               (unsigned long long)__entry->sector, __entry->nr_sector=
+,
+> > +               __print_symbolic(IOPRIO_PRIO_CLASS(__entry->ioprio),
+> > +                                IOPRIO_CLASS_STRINGS),
+> > +               IOPRIO_PRIO_HINT(__entry->ioprio),
+> > +               IOPRIO_PRIO_LEVEL(__entry->ioprio),  0)
+> >   );
+>
+> Do we really want to include the constant "[0]" in the tracing output?
+This is how it is printed in the source code.
+From the code flow point of view, there is no need to print this value
+in trace_block_rq_requeue.
+Do we need to consider the issue of uniform printing format? If not, I
+think we can delete it.
+>
+> Otherwise this patch looks good to me.
+>
+> Thanks,
+>
+> Bart.
+>
 
