@@ -1,552 +1,302 @@
-Return-Path: <linux-kernel+bounces-217732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EE690B385
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:10:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D38B90B386
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 862541C232FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8781F26478
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A224154446;
-	Mon, 17 Jun 2024 14:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A91154C0A;
+	Mon, 17 Jun 2024 14:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mac.com header.i=@mac.com header.b="E/wq96S1"
-Received: from qs51p00im-qukt01080501.me.com (qs51p00im-qukt01080501.me.com [17.57.155.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KfoXNwfZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+BlZhxvX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KfoXNwfZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+BlZhxvX"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A0F154438
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649E8154BF0
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718634325; cv=none; b=tr50LfK98krMecmo2dBKYO1vjXlPqJEgBHDWX6u7LW3ry2QEGlg6MU0m4hP+dbM2a27zMh58SMWeZ+BJrkh7gQDY5q5tZHoUZi7y5Lb1aLX8g53Qk+lN1y7gVZTRQfKk/Xk9QQ6j3NTlPqfNqwdHTyCula4I8BzPPqFQ6q0xVcA=
+	t=1718634366; cv=none; b=UgsDPxhtLtxNlgO66aBNiPJLIA3wjMTQm4uhkks/RsREYaIzyFdZueNOCG85M5M+TZrw46rP7Bf9R4R7m+ctYq5RyTlhLdFDAgmaChdpbNvJV/vxH1qnBkzuvLYhv03bXjvq9GS+nHuOReKF4XkUWmlkbNfEf60CDzqCEGR92Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718634325; c=relaxed/simple;
-	bh=iXoFfPyif5nMj9eZAKG/2P5aU/xPUE3YUXLqw6pbyuo=;
-	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=oP6xj432CWk+ewhGTCNzJYMC/kEh14Mcw4Xh6uhfazv1czfU3433S1pZowJIyiWIX7FVe/o4iKppjZdbEfzcjoS4k8YynVj7mdoRCvuUwb8Zms43DrXTIMZW29nuNqH1przIHHC2uiHUqvz99kdbbMhOQKeA5Qg+ljBDHpKk6no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mac.com; spf=pass smtp.mailfrom=mac.com; dkim=pass (2048-bit key) header.d=mac.com header.i=@mac.com header.b=E/wq96S1; arc=none smtp.client-ip=17.57.155.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mac.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mac.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mac.com; s=1a1hai;
-	t=1718634322; bh=2BDMFYPhrewNCLn08q22BawlETC+WGUKJ2zdYaFN9oE=;
-	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:To;
-	b=E/wq96S1N31loD0zoSJW6YqPTX9kSGHHTLbdoeU/phPegLhzuBlsd4a7dWJFHcMKY
-	 CdL2GfdfOkWp7dm+72+QyFaSf0J+UcbtEnZb+kO82hB3jFw/jspXMGaqLmMDbk+hwe
-	 Q5RsuwUxcGdzEoHrGo6koDU71vxKIxeHDKDS8YMscDYNTaDs2+MJH4803h7GsStvyW
-	 6XcyigTt/Bw+fd0rIwRWfaSk2BAqvX2HjA6tpw96PibjN8ssGp9IX+4Qnt8yjdCTw4
-	 d3wBEadsZOkJLTB4lzt8R+4Otlc0sSWjkyivkrkJOyDZIofKr82TXZd+OA3jkP4CQx
-	 3chSiSEsDkctQ==
-Received: from [172.20.144.3] (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
-	by qs51p00im-qukt01080501.me.com (Postfix) with ESMTPSA id DFD4A1980203;
-	Mon, 17 Jun 2024 14:25:15 +0000 (UTC)
-From: Gagan Sidhu <broly@mac.com>
-Content-Type: text/plain;
-	charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1718634366; c=relaxed/simple;
+	bh=oHEenjvBqGJxObiTcqvl9zqPlQOd6HLNwE1RcalqgmY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=D4t9LxFTJiejGrKa/9+ZihOATOP/oqJqhhAXbGl+Bs/0tuTzMgTPnJidOYk7NxQrvb1kbCYBxi41vDMteWS9afbgtN3QpY/9KY8jscfMb8ZNYj+4+cPzY2F7KXT3SpnkPy0W1wGSeMWlz74JdvE6GJNd3AxvHpUcylOoPvx6Hfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KfoXNwfZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+BlZhxvX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KfoXNwfZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+BlZhxvX; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6D882382E4;
+	Mon, 17 Jun 2024 14:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718634362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aXvJ1ME6kf2UaQDkiII1/rcRoZbggmd58Lc3L1liH+0=;
+	b=KfoXNwfZCgUQ84vD8eEBIY3n++UYVunAZ7nuzlGBzLT2txdzoU83HJzrfiZ5w7Au2I47cB
+	U+dYBg7Nd5u/0SoXQ6AeHqGXLn5O0ADfTIT4RZ5JvMgbXTM0P3SCisNaYKu0K1s+YtC7hD
+	v2Zz8UlMorbQo0RHREGDiAiBWuctQnA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718634362;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aXvJ1ME6kf2UaQDkiII1/rcRoZbggmd58Lc3L1liH+0=;
+	b=+BlZhxvXqOi3VuO/n/R1Q6oTmg9ynk/Z9MzxyCOumBOqzI3puaBYRV1UEWNBYKM1S9vbDI
+	Yo9EjmftVrlXvxBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718634362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aXvJ1ME6kf2UaQDkiII1/rcRoZbggmd58Lc3L1liH+0=;
+	b=KfoXNwfZCgUQ84vD8eEBIY3n++UYVunAZ7nuzlGBzLT2txdzoU83HJzrfiZ5w7Au2I47cB
+	U+dYBg7Nd5u/0SoXQ6AeHqGXLn5O0ADfTIT4RZ5JvMgbXTM0P3SCisNaYKu0K1s+YtC7hD
+	v2Zz8UlMorbQo0RHREGDiAiBWuctQnA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718634362;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aXvJ1ME6kf2UaQDkiII1/rcRoZbggmd58Lc3L1liH+0=;
+	b=+BlZhxvXqOi3VuO/n/R1Q6oTmg9ynk/Z9MzxyCOumBOqzI3puaBYRV1UEWNBYKM1S9vbDI
+	Yo9EjmftVrlXvxBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E92A139AB;
+	Mon, 17 Jun 2024 14:26:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id C1X3CXpHcGa4VwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 17 Jun 2024 14:26:02 +0000
+Message-ID: <d33863f3-5d3d-4a47-83c3-11e55d3f32de@suse.de>
+Date: Mon, 17 Jun 2024 16:26:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.21\))
-Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
- ftl notifier
-Message-Id: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com>
-Date: Mon, 17 Jun 2024 08:25:12 -0600
-Cc: Artem.Bityutskiy@nokia.com,
- chengzhihao1@huawei.com,
- dpervushin@embeddedalley.com,
- linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org,
- miquel.raynal@bootlin.com,
- richard@nod.at,
- vigneshr@ti.com,
- yangerkun@huawei.com,
- yi.zhang@huawei.com
-To: wangzhaolong1@huawei.com
-X-Mailer: Apple Mail (2.3445.104.21)
-X-Proofpoint-GUID: Aqszb2HpPTB-wgh-vcKv2VIU86Oo14dd
-X-Proofpoint-ORIG-GUID: Aqszb2HpPTB-wgh-vcKv2VIU86Oo14dd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_12,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
- malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0 mlxlogscore=999
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2406170112
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/fbdev-dma: fix getting smem_start
+To: Javier Martinez Canillas <javierm@redhat.com>,
+ "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Peng Fan <peng.fan@nxp.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240604080328.4024838-1-peng.fan@oss.nxp.com>
+ <8f4a6d80-dd3e-422f-88af-d26f50c973ff@suse.de>
+ <e307fdc0-553d-4946-9017-ed3a28e9cae2@suse.de>
+ <87cyomsiqt.fsf@minerva.mail-host-address-is-not-set>
+ <14a7c534-af3f-43b8-a24c-501a9af97936@suse.de>
+ <Zmm4HSkia-x_oRWR@phenom.ffwll.local>
+ <e1aa9785-6833-4bbb-bed7-2e01ee9634c6@suse.de>
+ <209a99c3-6d44-4abc-a486-8e6d0a0c7370@suse.de>
+ <ZnBCVg_tblwJhOIH@phenom.ffwll.local>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <ZnBCVg_tblwJhOIH@phenom.ffwll.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	FREEMAIL_TO(0.00)[redhat.com,oss.nxp.com,linux.intel.com,kernel.org,gmail.com,nxp.com,lists.freedesktop.org,vger.kernel.org];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.29
+X-Spam-Level: 
 
-hi,
+Hi
 
-this patch isn=E2=80=99t a good one.
+Am 17.06.24 um 16:04 schrieb Daniel Vetter:
+> On Thu, Jun 13, 2024 at 12:18:55PM +0200, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 13.06.24 um 12:14 schrieb Thomas Zimmermann:
+>>> Hi
+>>>
+>>> Am 12.06.24 um 17:00 schrieb Daniel Vetter:
+>>>> On Wed, Jun 12, 2024 at 10:37:14AM +0200, Thomas Zimmermann wrote:
+>>>>> Hi Javier
+>>>>>
+>>>>> Am 12.06.24 um 09:49 schrieb Javier Martinez Canillas:
+>>>>>> Thomas Zimmermann <tzimmermann@suse.de> writes:
+>>>>>>
+>>>>>> Hello Thomas,
+>>>>>>
+>>>>>>> Hi
+>>>>>>>
+>>>>>>> Am 10.06.24 um 10:47 schrieb Thomas Zimmermann:
+>>>>>>>> Hi
+>>>>>>>>
+>>>>>>>> Am 04.06.24 um 10:03 schrieb Peng Fan (OSS):
+>>>>>>>>> From: Peng Fan <peng.fan@nxp.com>
+>>>>>>>>>
+>>>>>>>>> If 'info->screen_buffer' locates in vmalloc
+>>>>>>>>> address space, virt_to_page
+>>>>>>>>> will not be able to get correct results. With CONFIG_DEBUG_VM and
+>>>>>>>>> CONFIG_DEBUG_VIRTUAL enabled on ARM64, there is dump below:
+>>>>>>>> Which graphics driver triggers this bug?
+>>>>>>>>
+>>>>>>>>> [    3.536043] ------------[ cut here ]------------
+>>>>>>>>> [    3.540716] virt_to_phys used for non-linear address:
+>>>>>>>>> 000000007fc4f540 (0xffff800086001000)
+>>>>>>>>> [    3.552628] WARNING: CPU: 4 PID: 61 at
+>>>>>>>>> arch/arm64/mm/physaddr.c:12
+>>>>>>>>> __virt_to_phys+0x68/0x98
+>>>>>>>>> [    3.565455] Modules linked in:
+>>>>>>>>> [    3.568525] CPU: 4 PID: 61 Comm: kworker/u12:5 Not tainted
+>>>>>>>>> 6.6.23-06226-g4986cc3e1b75-dirty #250
+>>>>>>>>> [    3.577310] Hardware name: NXP i.MX95 19X19 board (DT)
+>>>>>>>>> [    3.582452] Workqueue: events_unbound deferred_probe_work_func
+>>>>>>>>> [    3.588291] pstate: 60400009 (nZCv daif +PAN
+>>>>>>>>> -UAO -TCO -DIT -SSBS
+>>>>>>>>> BTYPE=--)
+>>>>>>>>> [    3.595233] pc : __virt_to_phys+0x68/0x98
+>>>>>>>>> [    3.599246] lr : __virt_to_phys+0x68/0x98
+>>>>>>>>> [    3.603276] sp : ffff800083603990
+>>>>>>>>> [    3.677939] Call trace:
+>>>>>>>>> [    3.680393]  __virt_to_phys+0x68/0x98
+>>>>>>>>> [    3.684067] drm_fbdev_dma_helper_fb_probe+0x138/0x238
+>>>>>>>>> [    3.689214]
+>>>>>>>>> __drm_fb_helper_initial_config_and_unlock+0x2b0/0x4c0
+>>>>>>>>> [    3.695385]  drm_fb_helper_initial_config+0x4c/0x68
+>>>>>>>>> [    3.700264]  drm_fbdev_dma_client_hotplug+0x8c/0xe0
+>>>>>>>>> [    3.705161]  drm_client_register+0x60/0xb0
+>>>>>>>>> [    3.709269]  drm_fbdev_dma_setup+0x94/0x148
+>>>>>>>>>
+>>>>>>>>> So add a check 'is_vmalloc_addr'.
+>>>>>>>>>
+>>>>>>>>> Fixes: b79fe9abd58b ("drm/fbdev-dma: Implement fbdev emulation for
+>>>>>>>>> GEM DMA helpers")
+>>>>>>>>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>>>>>>>> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>>>>>> I'm taking back my r-b. The memory is expected to by be physically
+>>>>>>> contiguous and vmalloc() won't guarantee that.
+>>>>>>>
+>>>>>> Agreed.
+>>>>> These smem_ fields are clearly designed for PCI BARs of
+>>>>> traditional graphics
+>>>>> cards. So can we even assume contiguous memory for DMA? That was my
+>>>>> assumption, but with IOMMUs it might not be the case. Fbdev-dma
+>>>>> only sets
+>>>>> smem_start to support a single old userspace driver. Maybe we
+>>>>> should further
+>>>>> restrict usage of this field by making it opt-in for each driver. Best
+>>>>> regards Thomas
+>>>> We could make it all conditional on CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM, and
+>>>> remove the FBINFO_HIDE_SMEM_START flag. The reason I've done the flag is
+>>>> that with the old fb_mmap code we had to always fill out smem_start to
+>>>> make mmap work. But now that the various drm fbdev helpers have all
+>>>> their
+>>>> own mmap implementation, we could make this a lot cleaner.
+>>> Enabling CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM would still crash the NXP
+>>> driver. I think I'll add a flag to drm_fbdev_dma_setup() to set
+>>> smem_start from within lima, which is the only driver that requires
+>>> it.I'd like to remove CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM and all that, but
+>>> I fear that it would break someone's setup. Best regards Thomas
+> Yeah we'd always need to make this conditional on the memory not being in
+> the vmalloc range, or things will blow up.
+>
+>> I've been looking at
+>>
+>> https://lore.kernel.org/dri-devel/20240318-dark-mongoose-of-camouflage-7ac6ed@houat/
+>>
+>> and I'm now confused to find that lima doesn't even set up fbdev support.
+> The mali driver here was the out-of-tree proprietary mali driver as the
+> consumer of such buffers.
+>
+> The "exporters" was just any random fbdev driver, and with the DRM option
+> to set the smem, also drm drivers could play in this role. It at least
+> seems to have helped a few people to move away from out-of-tree fbdev
+> drivers to upstream drm drivers (but still with the out-of-tree mali gpu
+> driver). Which means we've needed this for any display driver that
+> happens to have shipped together with one of these older mali gpus.
+>
+> It's a bit a mess, and it might indeed have outlived it's usefulness.
 
-it must be reverted.
+Thanks a lot for explaining. Sounds like the kind of workaround that is 
+almost impossible to remove.
 
-the problem with mr wang's changes is that it breaks expected mounting =
-behaviour of a filesystem within an UBI, as is the case for openwrt.
-
-i am surprised no one has raised the issue about this. i see mr raynal =
-did raise an issue with one of mr zhihao=E2=80=99s fundamental errors:
-
-https://lore.kernel.org/lkml/20231027194026.1bc32dfe@xps-13/
-
-> Therefore, this problem can be avoided by preventing gluebi
-> from creating mtdblock devices.
-
-this is absolutely wrong.
-
-typically what happens is we will wrap a squashfs filesystem inside a =
-UBI layer. openwrt people call this =E2=80=9Cubinising=E2=80=9D the root =
-filesystem.
-
-then, after we label the appropriate nand partitions as =E2=80=98uimage,fw=
-=E2=80=99 to call the right mtdsplit, the mtd_ubi subsystem works its =
-magic automatically, as long as the root partition is named =
-=E2=80=9Crootfs=E2=80=9D.
-
-at that point, the rootfs will be *AUTOMATICALLY* mounted AND booted =
-from BY THE KERNEL. that is, no cmdline hacks are required.
-
-this patch breaks that behaviour since mr wang=E2=80=99s additional =
-conditions result in the failure of the partition to get added to the =
-mtd list, and thus fails mount.
-
-i have attached a log of this behaviour. and by removing mr wang=E2=80=99s=
- =E2=80=9Cfixes=E2=80=9D, it mounts as we would expect.
-
-this change must be reverted. extremely surprised the openwrt team has =
-not raised issues over this by now.
-
-```
-
-
-3: System Boot system code via Flash.
-## Booting image at bc180000 ...
-  Image Name:   DD-WRT v24 Linux Kernel Imag
-  Image Type:   MIPS Linux Kernel Image (lzma compressed)
-  Data Size:    3875031 Bytes =3D  3.7 MB
-  Load Address: 80001000
-  Entry Point:  807d9e20
-............................................................   Verifying =
-Checksum ... OK
-  Uncompressing Kernel Image ... OK
-No initrd
-## Transferring control to Linux (at address 807d9e20) ...
-## Giving linux memsize in MB, 256
-
-Starting kernel ...
-
-[    0.000000] Linux version 4.14.348-openela-rt159 (
-Gagan@GagansMacPro.local
-) (gcc version 14.1.0 (GCC)) #5426 SMP Sat Jun 15 07:23:17 MDT 2024
-[    0.000000] SoC Type: MediaTek MT7621 ver:1 eco:3
-[    0.000000] bootconsole [early0] enabled
-[    0.000000] CPU0 revision is: 0001992f (MIPS 1004Kc)
-[    0.000000] MIPS: machine is D-Link DIR-2640 rev. A1
-[    0.000000] Determined physical RAM map:
-[    0.000000]  memory: 10000000 @ 00000000 (usable)
-[    0.000000] VPE topology {2,2} total 4
-[    0.000000] Primary instruction cache 32kB, VIPT, 4-way, linesize 32 =
-bytes.
-[    0.000000] Primary data cache 32kB, 4-way, PIPT, no aliases, =
-linesize 32 bytes
-[    0.000000] MIPS secondary cache 256kB, 8-way, linesize 32 bytes.
-[    0.000000] Zone ranges:
-[    0.000000]   DMA      [mem 0x0000000000000000-0x0000000000ffffff]
-[    0.000000]   Normal   [mem 0x0000000001000000-0x000000000fffffff]
-[    0.000000]   HighMem  empty
-[    0.000000] Movable zone start for each node
-[    0.000000] Early memory node ranges
-[    0.000000]   node   0: [mem 0x0000000000000000-0x000000000fffffff]
-[    0.000000] Initmem setup node 0 [mem =
-0x0000000000000000-0x000000000fffffff]
-[    0.000000] percpu: Embedded 15 pages/cpu s30672 r8192 d22576 u61440
-[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: =
-65024
-[    0.000000] Kernel command line: console=3DttyS0,57600n8
-[    0.000000] log_buf_len individual max cpu contribution: 4096 bytes
-[    0.000000] log_buf_len total cpu_extra contributions: 12288 bytes
-[    0.000000] log_buf_len min size: 16384 bytes
-[    0.000000] log_buf_len: 32768 bytes
-[    0.000000] early log buf free: 14216(86%)
-[    0.000000] PID hash table entries: 1024 (order: 0, 4096 bytes)
-[    0.000000] Dentry cache hash table entries: 32768 (order: 5, 131072 =
-bytes)
-[    0.000000] Inode-cache hash table entries: 16384 (order: 4, 65536 =
-bytes)
-[    0.000000] Writing ErrCtl register=3D000412fa
-[    0.000000] Readback ErrCtl register=3D000412fa
-[    0.000000] Memory: 247980K/262144K available (8061K kernel code, =
-892K rwdata, 1568K rodata, 280K init, 733K bss, 14164K reserved, 0K =
-cma-reserved, 0K highmem)
-[    0.000000] SLUB: HWalign=3D32, Order=3D0-3, MinObjects=3D0, CPUs=3D4, =
-Nodes=3D1
-[    0.000000] Hierarchical RCU implementation.
-[    0.000000] NR_IRQS: 256
-[    0.000000] CPU Clock: 880MHz
-[    0.000000] clocksource: GIC: mask: 0xffffffffffffffff max_cycles: =
-0xcaf478abb4, max_idle_ns: 440795247997 ns
-[    0.000000] clocksource: MIPS: mask: 0xffffffff max_cycles: =
-0xffffffff, max_idle_ns: 4343773742 ns
-[    0.000009] sched_clock: 32 bits at 440MHz, resolution 2ns, wraps =
-every 4880645118ns
-[    0.015565] Calibrating delay loop... 583.68 BogoMIPS (lpj=3D1167360)
-[    0.055919] pid_max: default: 4096 minimum: 301
-[    0.065064] Mount-cache hash table entries: 1024 (order: 0, 4096 =
-bytes)
-[    0.078089] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 =
-bytes)
-[    0.093805] Hierarchical SRCU implementation.
-[    0.103082] smp: Bringing up secondary CPUs ...
-[    0.113986] Primary instruction cache 32kB, VIPT, 4-way, linesize 32 =
-bytes.
-[    0.113994] Primary data cache 32kB, 4-way, PIPT, no aliases, =
-linesize 32 bytes
-[    0.114004] MIPS secondary cache 256kB, 8-way, linesize 32 bytes.
-[    0.114122] CPU1 revision is: 0001992f (MIPS 1004Kc)
-[    0.140246] Synchronize counters for CPU 1: done.
-[    0.205804] Primary instruction cache 32kB, VIPT, 4-way, linesize 32 =
-bytes.
-[    0.205812] Primary data cache 32kB, 4-way, PIPT, no aliases, =
-linesize 32 bytes
-[    0.205818] MIPS secondary cache 256kB, 8-way, linesize 32 bytes.
-[    0.205878] CPU2 revision is: 0001992f (MIPS 1004Kc)
-[    0.239402] Synchronize counters for CPU 2: done.
-[    0.300999] Primary instruction cache 32kB, VIPT, 4-way, linesize 32 =
-bytes.
-[    0.301006] Primary data cache 32kB, 4-way, PIPT, no aliases, =
-linesize 32 bytes
-[    0.301013] MIPS secondary cache 256kB, 8-way, linesize 32 bytes.
-[    0.301082] CPU3 revision is: 0001992f (MIPS 1004Kc)
-[    0.327024] Synchronize counters for CPU 3: done.
-[    0.386624] smp: Brought up 1 node, 4 CPUs
-[    0.395319] devtmpfs: initialized
-[    0.405072] clocksource: jiffies: mask: 0xffffffff max_cycles: =
-0xffffffff, max_idle_ns: 7645041785100000 ns
-[    0.424361] futex hash table entries: 16 (order: -3, 512 bytes)
-[    0.436154] pinctrl core: initialized pinctrl subsystem
-[    0.447323] NET: Registered protocol family 16
-[    0.456700] cpuidle: using governor menu
-[    0.484220] pull PCIe RST: RALINK_RSTCTRL =3D 4000000
-[    0.794105] release PCIe RST: RALINK_RSTCTRL =3D 7000000
-[    0.804176] ***** Xtal 40MHz *****
-[    0.810918] release PCIe RST: RALINK_RSTCTRL =3D 7000000
-[    0.821113] Port 0 N_FTS =3D 1b105000
-[    0.828025] Port 1 N_FTS =3D 1b105000
-[    0.834937] Port 2 N_FTS =3D 1b102800
-[    1.992951] PCIE2 no card, disable it(RST&CLK)
-[    2.001641]  -> 21007f2
-[    2.006479] PCIE0 enabled
-[    2.011663] PCIE1 enabled
-[    2.016858] PCI host bridge /pcie@1e140000 ranges:
-[    2.026367]  MEM 0x0000000060000000..0x000000006fffffff
-[    2.036726]   IO 0x000000001e160000..0x000000001e16ffff
-[    2.047093] PCI coherence region base: 0x60000000, mask/settings: =
-0xf0000002
-[    2.066762] mt7621_gpio 1e000600.gpio: registering 32 gpios
-[    2.078058] mt7621_gpio 1e000600.gpio: registering 32 gpios
-[    2.089214] mt7621_gpio 1e000600.gpio: registering 32 gpios
-[    2.100683] vgaarb: loaded
-[    2.106249] SCSI subsystem initialized
-[    2.113766] usbcore: registered new interface driver usbfs
-[    2.124606] usbcore: registered new interface driver hub
-[    2.135129] usbcore: registered new device driver usb
-[    2.145477] i2c-mt7621 1e000900.i2c: clock 100KHz, re-start not =
-support
-[    2.158813] PCI host bridge to bus 0000:00
-[    2.166839] pci_bus 0000:00: root bus resource [mem =
-0x60000000-0x6fffffff]
-[    2.180477] pci_bus 0000:00: root bus resource [io  =
-0x1e160000-0x1e16ffff]
-[    2.194129] pci_bus 0000:00: root bus resource [??? 0x00000000 flags =
-0x0]
-[    2.207606] pci_bus 0000:00: No busn resource found for root bus, =
-will use [bus 00-ff]
-[    2.224155] pci 0000:01:00.0: 2.000 Gb/s available PCIe bandwidth, =
-limited by 2.5 GT/s x1 link at 0000:00:00.0 (capable of 4.000 Gb/s with =
-5 GT/s x1 link)
-[    2.251939] pci 0000:02:00.0: 2.000 Gb/s available PCIe bandwidth, =
-limited by 2.5 GT/s x1 link at 0000:00:01.0 (capable of 4.000 Gb/s with =
-5 GT/s x1 link)
-[    2.279470] pci 0000:00:00.0: BAR 0: no space for [mem size =
-0x80000000]
-[    2.292494] pci 0000:00:00.0: BAR 0: failed to assign [mem size =
-0x80000000]
-[    2.306313] pci 0000:00:01.0: BAR 0: no space for [mem size =
-0x80000000]
-[    2.319449] pci 0000:00:01.0: BAR 0: failed to assign [mem size =
-0x80000000]
-[    2.333277] pci 0000:00:00.0: BAR 8: assigned [mem =
-0x60000000-0x600fffff]
-[    2.346755] pci 0000:00:01.0: BAR 8: assigned [mem =
-0x60100000-0x601fffff]
-[    2.360233] pci 0000:00:00.0: BAR 1: assigned [mem =
-0x60200000-0x6020ffff]
-[    2.373709] pci 0000:00:01.0: BAR 1: assigned [mem =
-0x60210000-0x6021ffff]
-[    2.387208] pci 0000:01:00.0: BAR 0: assigned [mem =
-0x60000000-0x600fffff 64bit]
-[    2.401712] pci 0000:00:00.0: PCI bridge to [bus 01]
-[    2.411548] pci 0000:00:00.0:   bridge window [mem =
-0x60000000-0x600fffff]
-[    2.425039] pci 0000:02:00.0: BAR 0: assigned [mem =
-0x60100000-0x601fffff 64bit]
-[    2.439555] pci 0000:00:01.0: PCI bridge to [bus 02]
-[    2.449396] pci 0000:00:01.0:   bridge window [mem =
-0x60100000-0x601fffff]
-[    2.463554] clocksource: Switched to clocksource GIC
-[    2.474753] NET: Registered protocol family 2
-[    2.483561] IP idents hash table entries: 4096 (order: 3, 32768 =
-bytes)
-[    2.497245] TCP established hash table entries: 2048 (order: 1, 8192 =
-bytes)
-[    2.511002] TCP bind hash table entries: 2048 (order: 2, 16384 bytes)
-[    2.523798] TCP: Hash tables configured (established 2048 bind 2048)
-[    2.536493] UDP hash table entries: 128 (order: 0, 4096 bytes)
-[    2.547983] UDP-Lite hash table entries: 128 (order: 0, 4096 bytes)
-[    2.560657] NET: Registered protocol family 1
-[    2.659518] 4 CPUs re-calibrate udelay(lpj =3D 1163264)
-[    2.670337] workingset: timestamp_bits=3D30 max_order=3D16 =
-bucket_order=3D0
-[    2.689246] squashfs: version 4.0 (2009/01/31) Phillip Lougher
-[    2.709543] io scheduler noop registered
-[    2.717554] io scheduler cfq registered (default)
-[    2.726769] io scheduler mq-deadline registered
-[    2.735774] io scheduler kyber registered
-[    2.744477] mtk_hsdma 1e007000.hsdma: Using 3 as missing dma-requests =
-property
-[    2.758985] mtk_hsdma 1e007000.hsdma: MediaTek HSDMA driver =
-registered
-[    2.823896] serial8250_init
-[    2.829315] Serial: 8250/16550 driver, 2 ports, IRQ sharing disabled
-[    2.843297] console [ttyS0] disabled
-[    2.850333] 1e000c00.uartlite: ttyS0 at MMIO 0x1e000c00 (irq =3D 19, =
-base_baud =3D 3125000) is a 16550A
-[    2.868297] console [ttyS0] enabled
-[    2.868297] console [ttyS0] enabled
-[    2.882070] bootconsole [early0] disabled
-[    2.882070] bootconsole [early0] disabled
-[    2.898446] Ralink gpio driver initialized:power_gpio[8]
-[    2.910106] MediaTek Nand driver init, version v2.1 Fix AHB virt2phys =
-error
-[    2.924094] Enable NFI Clock
-[    2.929829] # MTK NAND # : Use HW ECC
-[    2.937139] Device not found, ID: c8d1
-[    2.944610] Not Support this Device!
-[    2.952075] chip_mode=3D00000001
-[    2.958157] Support this Device in MTK table! c8d1
-[    2.968055] [NAND]select ecc bit:4, sparesize :64 spare_per_sector=3D16=
-
-[    2.980930] nand: device found, Manufacturer ID: 0xc8, Chip ID: 0xd1
-[    2.993590] nand: ESMT NAND 128MiB 3,3V 8-bit
-[    3.002281] nand: 128 MiB, SLC, erase size: 128 KiB, page size: 2048, =
-OOB size: 64
-[    3.017376] Scanning device for bad blocks
-[    3.169277] MT7621-NAND: parsing partitions cmdlinepart
-[    3.180264] MT7621-NAND: got parser (null)
-[    3.188484] 9 fixed-partitions partitions found on MTD device =
-MT7621-NAND
-[    3.202005] Creating 9 MTD partitions on "MT7621-NAND":
-[    3.212430] 0x000000000000-0x000000080000 : "Bootloader"
-[    3.224024] 0x0000000c0000-0x000000100000 : "Config"
-[    3.234684] 0x000000100000-0x000000140000 : "Factory"
-[    3.245518] 0x000000140000-0x000000180000 : "Config2"
-[    3.256379] 0x000000180000-0x000002d80000 : "sysv"
-[    3.895176] 1 squashfs-split partitions found on MTD device sysv
-[    3.907164] 0x0000005c1000-0x000002d60000 : "ddwrt"
-[    3.920925] 2 uimage-fw partitions found on MTD device sysv
-[    3.932031] Creating 2 MTD partitions on "sysv":
-[    3.941232] 0x000000000000-0x000000400000 : "kernel"
-[    3.951995] 0x000000400000-0x000002c00000 : "ubi"
-[    3.962325] 0x000002d80000-0x000004d80000 : "private"
-[    3.973322] 0x000004d80000-0x000007580000 : "firmware2"
-[    3.984759] 0x000007580000-0x000007b80000 : "mydlink"
-[    3.995699] 0x000007b80000-0x000008000000 : "reserved"
-[    4.006687] [mtk_nand] probe successfully!
-[    4.015584] Signature matched and data read!
-[    4.024090] load_fact_bbt success 1023
-[    4.031931] tun: Universal TUN/TAP device driver, 1.6
-[    4.042377] CHIP_ID =3D MT7621
-[    4.048133] WAN at P4
-[    4.052659] GMAC1 support rgmii
-[    4.058911] GE1_RGMII_FORCE_1000
-[    4.065348] GMAC2 support rgmii
-[    4.071606] RGMII_AN (Internal GigaPhy)
-[    4.079973] STD_v0.1  1024 rx/2048 tx descriptors allocated, mtu =3D =
-1500!
-[    4.094358] set CLK_CFG_0 =3D 0x40a00020!!!!!!!!!!!!!!!!!!1
-[    4.105108] trgmii_set_7621 Completed!!
-[    4.324297] MT7530 Reset Completed!!
-[    4.340754] trgmii_set_7530 Completed!!
-[    4.348739] change HW-TRAP to 0x17c8f
-[    4.360357] set LAN/WAN LLLLW
-[    4.374100] eth3: =3D=3D=3D> virtualif_open
-[    4.381646] =3D=3D MT7530 MCM =3D=3D
-[    4.387482] PPP generic driver version 2.4.2
-[    4.396233] PPP BSD Compression module registered
-[    4.405603] PPP Deflate Compression module registered
-[    4.415687] PPP MPPE Compression module registered
-[    4.425229] NET: Registered protocol family 24
-[    4.434106] register mt_drv
-[    4.439738] bus=3D0x1, slot =3D 0x0, irq=3D0x0
-[    4.472239]
-[    4.472239] =3D=3D pAd =3D c0181000, size =3D 6632704, Status=3D0 =3D=3D=
-
-[    4.486132] pAd->PciHif.CSRBaseAddress =3D0xc0080000, =
-csr_addr=3D0xc0080000!
-[    4.499531] RTMPInitPCIeDevice():device_id=3D0x7615
-[    4.508911] mt_pci_chip_cfg(): HWVer=3D0x8a10, FWVer=3D0x8a10, =
-pAd->ChipID=3D0x7615
-[    4.523136] mt_pci_chip_cfg(): HIF_SYS_REV=3D0x76150001
-[    4.533196] AP Driver version-5.1.0.0
-[    4.540493] RtmpChipOpsHook(223): Not support for HIF_MT yet! =
-MACVersion=3D0x0
-[    4.554527] mt7615_init()-->
-[    4.560266] Use 1st ePAeLNA default bin.
-[    4.568078] Use 0st /etc/wlan/mt7615e.eeprom.bin default bin.
-[    4.579550] <--mt7615_init()
-[    4.589234] <-- RTMPAllocTxRxRingMemory, Status=3D0
-[    4.599438] bus=3D0x2, slot =3D 0x1, irq=3D0x0
-[    4.631995]
-[    4.631995] =3D=3D pAd =3D c0901000, size =3D 6632704, Status=3D0 =3D=3D=
-
-[    4.645884] pAd->PciHif.CSRBaseAddress =3D0xc0800000, =
-csr_addr=3D0xc0800000!
-[    4.659234] RTMPInitPCIeDevice():device_id=3D0x7615
-[    4.668612] mt_pci_chip_cfg(): HWVer=3D0x8a10, FWVer=3D0x8a10, =
-pAd->ChipID=3D0x7615
-[    4.682820] mt_pci_chip_cfg(): HIF_SYS_REV=3D0x76150001
-[    4.692879] AP Driver version-5.1.0.0
-[    4.700175] RtmpChipOpsHook(223): Not support for HIF_MT yet! =
-MACVersion=3D0x0
-[    4.714208] mt7615_init()-->
-[    4.719946] Use 2nd ePAeLNA default bin.
-[    4.727767] Use 1st /etc/wlan/mt7615e.eeprom.bin default bin.
-[    4.739224] <--mt7615_init()
-[    4.748896] <-- RTMPAllocTxRxRingMemory, Status=3D0
-[    4.759057] rdm_major =3D 255
-[    4.765124] xhci-mtk 1e1c0000.xhci: xHCI Host Controller
-[    4.775743] xhci-mtk 1e1c0000.xhci: new USB bus registered, assigned =
-bus number 1
-[    4.799681] xhci-mtk 1e1c0000.xhci: hcc params 0x01401198 hci version =
-0x96 quirks 0x0000000000290010
-[    4.817950] xhci-mtk 1e1c0000.xhci: irq 22, io mem 0x1e1c0000
-[    4.830260] hub 1-0:1.0: USB hub found
-[    4.837822] hub 1-0:1.0: 2 ports detected
-[    4.846283] xhci-mtk 1e1c0000.xhci: xHCI Host Controller
-[    4.856910] xhci-mtk 1e1c0000.xhci: new USB bus registered, assigned =
-bus number 2
-[    4.871846] xhci-mtk 1e1c0000.xhci: Host supports USB 3.0  SuperSpeed
-[    4.884885] usb usb2: We don't know the algorithms for LPM for this =
-host, disabling LPM.
-[    4.901675] hub 2-0:1.0: USB hub found
-[    4.909226] hub 2-0:1.0: 1 port detected
-[    4.917608] usbcore: registered new interface driver usblp
-[    4.928659] usbcore: registered new interface driver usb-storage
-[    4.940727] usbcore: registered new interface driver usbserial
-[    5.007737] rtc-pcf8563 0-0051: registered as rtc0
-[    5.031606] i2c /dev entries driver
-[    5.038842] Ralink APSoC Hardware Watchdog Timer
-[    5.049311] usbcore: registered new interface driver usbhid
-[    5.060419] usbhid: USB HID core driver
-[    5.068615] u32 classifier
-[    5.074005]     Performance counters on
-[    5.081638]     Actions configured
-[    5.088434] Netfilter messages via NETLINK v0.30.
-[    5.098071] nf_conntrack version 0.5.0 (4096 buckets, 16384 max)
-[    5.110321] ctnetlink v0.93: registering with nfnetlink.
-[    5.121402] ipip: IPv4 and MPLS over IPv4 tunneling driver
-[    5.132985] ip_tables: (C) 2000-2006 Netfilter Core Team
-[    5.144546] NET: Registered protocol family 10
-[    5.155889] Segment Routing with IPv6
-[    5.163303] NET: Registered protocol family 17
-[    5.172292] Bridge firewalling registered
-[    5.180281] 8021q: 802.1Q VLAN Support v1.8
-[    5.189452] registered taskstats version 1
-[    5.198914] searching for nvram
-[    5.279016] found nvram at 0, name:Config, contributed bytes:262144
-[    5.328401] nvram empty
-[    5.407013] found nvram at 1, name:Config2, contributed bytes:262144
-[    5.456567] nvram empty
-[    5.462504] auto-attach mtd7
-[    5.462525] ubi0: default fastmap pool size: 15
-[    5.477309] ubi0: default fastmap WL pool size: 7
-[    5.486683] ubi0: attaching mtd7
-[    5.811240] UBI: EOF marker found, PEBs from 273 will be erased
-[    5.811299] ubi0: scanning is finished
-[    5.874546] gluebi (pid 1): gluebi_resized: got update notification =
-for unknown UBI device 0 volume 1
-[    5.892927] ubi0: volume 1 ("rootfs_data") re-sized from 9 to 28 LEBs
-[    5.906683] ubi0: attached mtd7 (name "ubi", size 40 MiB)
-[    5.917446] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 126976 =
-bytes
-[    5.931132] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page size =
-2048
-[    5.944654] ubi0: VID header offset: 2048 (aligned 2048), data =
-offset: 4096
-[    5.958513] ubi0: good PEBs: 320, bad PEBs: 0, corrupted PEBs: 0
-[    5.970472] ubi0: user volume: 2, internal volumes: 1, max. volumes =
-count: 128
-[    5.984859] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, =
-image sequence number: 1613475955
-[    6.003045] ubi0: available PEBs: 0, total reserved PEBs: 320, PEBs =
-reserved for bad PEB handling: 15
-[    6.021426] rootfs: parsing partitions cmdlinepart
-[    6.021444] ubi0: background thread "ubi_bgt0d" started, PID 97
-[    6.043694] rootfs: got parser (null)
-[    6.051426] mtd: device 12 (rootfs) set to be root filesystem
-[    6.062891] rootfs_data: parsing partitions cmdlinepart
-[    6.073669] rootfs_data: got parser (null)
-[    6.211240] block ubiblock0_0: created from ubi0:0(rootfs)
-[    6.259545] rtc-pcf8563 0-0051: hctosys: unable to read the hardware =
-clock
-[    6.282125] VFS: Cannot open root device "(null)" or =
-unknown-block(31,12): error -6
-[    6.297406] Please append a correct "root=3D" boot option; here are =
-the available partitions:
-[    6.314054] 1f00             512 mtdblock0
-[    6.314060]  (driver?)
-[    6.327077] 1f01             256 mtdblock1
-[    6.327081]  (driver?)
-[    6.340101] 1f02             256 mtdblock2
-[    6.340105]  (driver?)
-[    6.353124] 1f03             256 mtdblock3
-[    6.353129]  (driver?)
-[    6.366153] 1f04           45056 mtdblock4
-[    6.366158]  (driver?)
-[    6.379175] 1f05           40572 mtdblock5
-[    6.379179]  (driver?)
-[    6.392217] 1f06            4096 mtdblock6
-[    6.392222]  (driver?)
-[    6.405240] 1f07           40960 mtdblock7
-[    6.405244]  (driver?)
-[    6.418272] 1f08           32768 mtdblock8
-[    6.418277]  (driver?)
-[    6.431296] 1f09           40960 mtdblock9
-[    6.431300]  (driver?)
-[    6.444324] 1f0a            6144 mtdblock10
-[    6.444328]  (driver?)
-[    6.457518] 1f0b            4608 mtdblock11
-[    6.457523]  (driver?)
-[    6.470720] fe00           33604 ubiblock0_0
-[    6.470724]  (driver?)
-[    6.484090] Kernel panic - not syncing: VFS: Unable to mount root fs =
-on unknown-block(31,12)
-[    6.500892] Rebooting in 1 seconds..
-
-```
-
-bless,
-g
+Let me send out a patch that connects the setting in fbdev-dma to the 
+drm_leak_fbdev_smem parameter. At least fbdev-dma won't try to set 
+smem_start unnecessarily.
 
 
+Best regards
+Thomas
 
-Thanks,
-Gagan
+>
+> Cheers, Sima
 
-
-Thanks,
-Gagan
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
