@@ -1,58 +1,65 @@
-Return-Path: <linux-kernel+bounces-218015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF01A90B800
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:27:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D1990B811
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 610C7283276
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:27:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 163B0B25C09
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4478516F0DD;
-	Mon, 17 Jun 2024 17:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A861741E8;
+	Mon, 17 Jun 2024 17:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8VsfgaB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/SZP+YM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F72171E71;
-	Mon, 17 Jun 2024 17:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06DB16E88D;
+	Mon, 17 Jun 2024 17:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718645201; cv=none; b=f2u9/AQs9iGHuotxTirciI4s323OFSCDAV5thpuG+3OOkAE0+oALZa8uDZF/ehB5p4RmbMBknosde5XJoVtOxY3S+ReOuklS9h8tDtOlKrUV254zca4dxv0YKMMDhk7YTUVXRPieXVMXi5FKfrqVaHvCr+iLuTV78EosJeJTE+w=
+	t=1718645206; cv=none; b=FsFquHWuzpIRujeQs9Sx6JOTRFwnrU4I1R7bf7C/G6aEyu4MtwESFv8vB+CGnt26l+3grO98OL9XIpUz7WHS8gUj3/NgB68UYXMkh4CdH0a3XjI6NPxfMtcdpK3kI5Bc0um3D4psbDi2fB+5BN025kDfvmZexYnHRkX4e4zZ8+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718645201; c=relaxed/simple;
-	bh=71HffJ+XEI3ngVEa42GGtWC/vp+0n+DShaElYCkRY/k=;
+	s=arc-20240116; t=1718645206; c=relaxed/simple;
+	bh=FBswpofNDhR2w+Ns2wjNtFSb1eY3Syl7BNKymUDMFHE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=N7zeL4ObczNP451VmitBGQB1n97GRCYjFtclN/PFnb4ox+hrWNfPpnZSIIH1fV2+pjdN0uaGhZlmbdCyWtGiwKnH2kSsfSf2hj/hMl6n5YaGtLEG0YBecqYRndAXvMmBvAZWPrM5ZDAGE2gzXZo+B4+UVlC1jzE6ONnhPmv55Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8VsfgaB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 979BDC4AF4D;
-	Mon, 17 Jun 2024 17:26:38 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hklfWp4jqkNMKxOcPry4xOYyAOcwFiFuFreQd43lMnlp+pNOCd1pTER/vzanEjJZXI7FWU97ZyxUZEcWJrXddaItCWr2Ym64N6ZFdTCnk3qIbi5s2YpdZ0RFQ7QQgfKuOsH8WGnayT/LSHJ/wfXFks9G2qjinfwrX6MYsM5mXdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/SZP+YM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B61D5C4AF49;
+	Mon, 17 Jun 2024 17:26:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718645201;
-	bh=71HffJ+XEI3ngVEa42GGtWC/vp+0n+DShaElYCkRY/k=;
+	s=k20201202; t=1718645206;
+	bh=FBswpofNDhR2w+Ns2wjNtFSb1eY3Syl7BNKymUDMFHE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=H8VsfgaB2WEFCGtJBEAV4TMvnIXtCZPDMf5LGnmf2ZfcYLgdLZ/m3hOhDd0qtExM+
-	 hlM+QhC5/eCWoTYWREuNrhHwIfszfMvcSNnyBllsvcN4pfw5vngUXkCdOI2fAnTFeJ
-	 AssS+fLY3x8M0AS3L++wspOvfdM1Ee8xzrgcfXB14qNhv2YsJTPbdoihg10AtZfDky
-	 cb83OM95ELpw9AICQSAX4C95b/F/SSGxiA7Y2M9QGx31c4s2VnALlQPUBwkixdieAZ
-	 vguQOaJodrB4CPNoIGZXcqT7WI5KO3fg1PXr1aj6RoycH3kteAeFp7bvxjydWtjKcF
-	 SVCJ/wMzAGCrQ==
+	b=Z/SZP+YMKge+5VVdaq/KuGfnZutODrS+5+77su4siOcVqSbCJPowjJ4c2+kNfEbx9
+	 5/yV9rVw8Ru6v0fr/xs9yETL0wJRc+4HR98/9BFv+rkDDqtrgn7/M8FuUUJnHRqiJb
+	 GVkcPMgYhqRypbB4DCW+sx+V7vxUTNtbSzKOEFnxDLjsvebka0WEFsAsNl12Ri/YLO
+	 4iTUfXWOmti6UHSUCU7OlEeSTfMHiWC6dsX54YuVcjcBpItSdWokzEy4p2L1TR2MYa
+	 ohY40KJOphkP9qYwBpTzMX3UNffB0kBOezA5Dmd/2fGt6LWjW+mbIgqfjVyECjgsrB
+	 6u7sRg6hF9JUA==
 From: Mark Brown <broonie@kernel.org>
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240616095223.260786-1-animeshagarwal28@gmail.com>
-References: <20240616095223.260786-1-animeshagarwal28@gmail.com>
-Subject: Re: [PATCH v2 1/2] ASoC: dt-bindings: realtek,rt5514: Convert to
- dtschema
-Message-Id: <171864519820.209755.15379676298751564791.b4-ty@kernel.org>
-Date: Mon, 17 Jun 2024 18:26:38 +0100
+To: Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, 
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org
+In-Reply-To: <a45d6b2b5ec040ea0fc78fca662c2dca3f13a49f.1718312321.git.christophe.jaillet@wanadoo.fr>
+References: <a45d6b2b5ec040ea0fc78fca662c2dca3f13a49f.1718312321.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: SOF: mediatek: Constify struct mtk_adsp_ipc_ops
+Message-Id: <171864520134.209755.7325176074699665944.b4-ty@kernel.org>
+Date: Mon, 17 Jun 2024 18:26:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,11 +70,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Sun, 16 Jun 2024 15:22:19 +0530, Animesh Agarwal wrote:
-> Convert the RT5514 audio CODEC bindings to DT Schema. Make bindings
-> complete by adding 'spi-max-frequency', 'wakeup-source' properties.
+On Thu, 13 Jun 2024 22:59:09 +0200, Christophe JAILLET wrote:
+> 'struct mtk_adsp_ipc_ops' is not modified in these drivers.
 > 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
 > 
+> In order to do it, "struct mtk_adsp_ipc" also needs to be adjusted to this
+> new const qualifier.
+> 
+> [...]
 
 Applied to
 
@@ -75,8 +87,8 @@ Applied to
 
 Thanks!
 
-[1/2] ASoC: dt-bindings: realtek,rt5514: Convert to dtschema
-      commit: 2618b2ec8d140951588e4b4c8dd745676427d2cb
+[1/1] ASoC: SOF: mediatek: Constify struct mtk_adsp_ipc_ops
+      commit: 1c75adb22d49ca9389333ca5e6939052a7203111
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
