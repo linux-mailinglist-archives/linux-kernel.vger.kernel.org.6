@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-217172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E9F90AC8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:02:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A3690AC75
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1273AB26EA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26A7B28B9A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE861946CC;
-	Mon, 17 Jun 2024 10:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FB9194A52;
+	Mon, 17 Jun 2024 10:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="CpqG31sy"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="A1lFzybB"
+Received: from sender3-op-o17.zoho.com (sender3-op-o17.zoho.com [136.143.184.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DAA194092
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF6F19408B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.17
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718621962; cv=pass; b=ETAJ8v1Imog4Mdx/DF1MrRoBkGRDZ4NRsmwt5C26ON0zFiRp74DVnr/NXyV7xqDWESS0pY2ryO0bA1JBQ6Ae0p6JYrKFE7QUqDmujXkpRXZm/W1sgQ1CdyGOyhDnpWf4K19VHWWgouPzi4b/XdsImEMGQ6mLKVMM/3OyBPNPrIs=
+	t=1718621963; cv=pass; b=Ygg4O8HFujqFsJuFBpaEuDRpC7Nwe2QEvOlIEa+yDLtBPw5nfI8Is8vyUkkX2WdRt+f5a63YMYcnB4e/XWqrmbbNKHVUh2lQ3iOx89/J31Sx+67l+t9YyFi2GbnGvo19jIUFj5wHyJEZJYbh+kv4aJ8k4NGKlapb1dguCDQ3uJU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718621962; c=relaxed/simple;
-	bh=XairXL6336cO2ADQJcpKT06x0AoJbC+Ijt3sC/Ms+QI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qSyC4lkZE3tOcbNxZyp858fRacp7LEHzJqLM32ibz4Uo37MSIs/JhjIS/YWNhyZKB8Lx+AwZ6x3RTOB7T/Az2FpZbgsVw+qzfEAikLesHd+KdMjVoKOadd7GQbwSc9QakoR6+QZhxkA8M7po92jiFBPFMkutQd7+2iAwt9shEGE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=CpqG31sy; arc=pass smtp.client-ip=136.143.188.15
+	s=arc-20240116; t=1718621963; c=relaxed/simple;
+	bh=2FF8en3kxW7XGjWfgnmPl2BT58CWqJAVe6+zuuRngN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=U81v1Xo9n4UcwD6O3crf+xVkExaj/Dk1j6+7jOBFO/wctx6XIm9fXg2LUxuTkol1Rh7LbMicmnNRi+n6BYek4ElwIA4qJ1PrtVMbKZAMLoZt1cWb3Nlrrm6+egBRnUdggoVZWo/ftw2N1D9600n0hoJbP7LAHI20GEm8v8y18jc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=A1lFzybB; arc=pass smtp.client-ip=136.143.184.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
 Delivered-To: uwu@icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1718621943; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1718621947; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=oHaER6uPIKsyeIAcWHi1RHRYgbHQRsphk+c4CK1G6GBPK8kfPHC8QUyeNQXw7DsYV2EmmeGj8vmEsPCei9i1IR3L8vmtWeb+CHC7bvOHspHI/T/lB6ao9LefvAvE5D94QRefC1qSXrp3d5B3WV4z6ItnVJGGWmN9CETSIXcz358=
+	b=DKO0aj3EPYUTcOPxFrsAL9cMTc5yUNWwZee8gyN4ILvsCWnjg3xEtqYefnRS7FQHvtUKOuB68UC0BkZWvGB/UAEKXRQFqAOemoY1HQZ0s1AuI4glKqVKpZbjd9+GRBukkCwS7IZwn4xm5/5MGUAVNcLG+QpmXZf9aYC0V8i2ZmI=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1718621943; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=u+O1n/OB/Q+PPfTIjJ9hQgiheZf7bi7XElMSkoNsqp8=; 
-	b=HOK9MPLV0sv9c78gp5wUOoZSzelXcFeIxJtko4T7bTdmpUBs4/JWgIPshMMFGO8khOtLC3jiyYvfnOvV92DyA7luRanjfO6FA2mlon2xNaF7A3pO3UZsQOy3MZm16bEl/WkUN+S6YTSzwwwy973Hyc0su6Y8CtX80p7aYYsNLv8=
+	t=1718621947; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Qk5Pm/6kG6W39CDEfIuvU92qq7NTedFoL4HtX5NeHPc=; 
+	b=UodZPC8bNTyHyo0+3Ia0oVPQ2Sx39bh59SS46ra7ej7/pimIasVASkf/6EeL3FeHRdE4DLWI9lxaJkyspKGF0xl5cc7N3eza8v0pfC0gTrr0/ixP7R9oiFmJ0IeM9xAn4T589kkalj9rcink0ti3QC/25fFfDCE1Ljzle05uujc=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=icenowy.me;
 	spf=pass  smtp.mailfrom=uwu@icenowy.me;
 	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1718621943;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1718621947;
 	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=u+O1n/OB/Q+PPfTIjJ9hQgiheZf7bi7XElMSkoNsqp8=;
-	b=CpqG31sy0BhHhRCSPviAS5RKgs35pjOqDiVH7RXl29eMLj6O9QRcKbjoWm1e/c0w
-	uxyw12IhvFPu0qBetTrtQOuZ1H7MoKQ2Q/k/socq2dI4QgpRwSYVHKBH+jdIjrkqWvq
-	lEpExaHI78AWlJrFMpMLwtnNfu19jdc5F/9zd1+YrpEJV2fKWGPSFZFRCq/Nql87njY
-	Lu4z4oFiq9hRdsIJ6LEwg1Vaue7ryjar21/eOp5vC4l88JGFLqPAhLfNwY0ag3SOonc
-	wuA2nxuLWN9crJsHVD6s19ZSFVgnFhEDea7CUdyBiWKhKqS1thQWHyV7lGt3lxl+svl
-	LrfheKPjNw==
-Received: by mx.zohomail.com with SMTPS id 1718621940916892.2587924932478;
-	Mon, 17 Jun 2024 03:59:00 -0700 (PDT)
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Qk5Pm/6kG6W39CDEfIuvU92qq7NTedFoL4HtX5NeHPc=;
+	b=A1lFzybBX7ueDnYbXAjbrSum520AJGOjKAPUeJsvS3zOP4/r+Ym3gdvwOhbhQx77
+	xEyrunklvl1xN7xSsRn6H8DbR3jiujnAZOsK62yXajF8LFENldYx7StfdmGNfYB9xr0
+	mvYBGtTC6bfCT4uHFduKVxiFXgEJsLFDT2BERPN/234iEze9HFp1xEXEZaCa3QFCcMJ
+	O6aNcO7TMbK4S0t3GTN8AsRfDDj63wav3TGvadsJ4RuMNF+WD4TeCATUv1AB1UkgihC
+	/YYQQFxEve5g66VaQomxsjJaV2CBM5tBJkOrMg8+cZiHo8BSKEZJw7YeJ8TGSTbOp0W
+	7RuMT1xevQ==
+Received: by mx.zohomail.com with SMTPS id 1718621945962884.5678500265545;
+	Mon, 17 Jun 2024 03:59:05 -0700 (PDT)
 From: Icenowy Zheng <uwu@icenowy.me>
 To: Alex Deucher <alexander.deucher@amd.com>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
@@ -67,10 +68,12 @@ Cc: amd-gfx@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	loongarch@lists.linux.dev,
 	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH 0/2] Fixes of AMD GFX7/8 hang on Loongson platforms
-Date: Mon, 17 Jun 2024 18:58:44 +0800
-Message-ID: <20240617105846.1516006-1-uwu@icenowy.me>
+Subject: [PATCH 1/2] drm/amdgpu: make duplicated EOP packet for GFX7/8 have real content
+Date: Mon, 17 Jun 2024 18:58:45 +0800
+Message-ID: <20240617105846.1516006-2-uwu@icenowy.me>
 X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240617105846.1516006-1-uwu@icenowy.me>
+References: <20240617105846.1516006-1-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,18 +83,83 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-This patchset tries to fix some workaround code in amdgpu/radeon driver,
-that makes Loongson 3A+7A platform suffering from GPU crashes.
+The duplication of EOP packets for GFX7/8, with the former one have
+seq-1 written and the latter one have seq written, seems to confuse some
+hardware platform (e.g. Loongson 7A series PCIe controllers).
 
-Icenowy Zheng (2):
-  drm/amdgpu: make duplicated EOP packet for GFX7/8 have real content
-  drm/radeon: repeat the same EOP packet for EOP workaround on CIK
+Make the content of the duplicated EOP packet the same with the real
+one, only masking any possible interrupts.
 
+Fixes: bf26da927a1c ("drm/amdgpu: add cache flush workaround to gfx8 emit_fence")
+Fixes: a2e73f56fa62 ("drm/amdgpu: Add support for CIK parts")
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+---
  drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c | 12 +++++-------
  drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 12 ++++--------
- drivers/gpu/drm/radeon/cik.c          |  7 ++-----
- 3 files changed, 11 insertions(+), 20 deletions(-)
+ 2 files changed, 9 insertions(+), 15 deletions(-)
 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+index 541dbd70d8c75..778f27f1a34fe 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+@@ -2117,9 +2117,8 @@ static void gfx_v7_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64 addr,
+ {
+ 	bool write64bit = flags & AMDGPU_FENCE_FLAG_64BIT;
+ 	bool int_sel = flags & AMDGPU_FENCE_FLAG_INT;
+-	/* Workaround for cache flush problems. First send a dummy EOP
+-	 * event down the pipe with seq one below.
+-	 */
++
++	/* Workaround for cache flush problems, send EOP twice. */
+ 	amdgpu_ring_write(ring, PACKET3(PACKET3_EVENT_WRITE_EOP, 4));
+ 	amdgpu_ring_write(ring, (EOP_TCL1_ACTION_EN |
+ 				 EOP_TC_ACTION_EN |
+@@ -2127,11 +2126,10 @@ static void gfx_v7_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64 addr,
+ 				 EVENT_INDEX(5)));
+ 	amdgpu_ring_write(ring, addr & 0xfffffffc);
+ 	amdgpu_ring_write(ring, (upper_32_bits(addr) & 0xffff) |
+-				DATA_SEL(1) | INT_SEL(0));
+-	amdgpu_ring_write(ring, lower_32_bits(seq - 1));
+-	amdgpu_ring_write(ring, upper_32_bits(seq - 1));
++				DATA_SEL(write64bit ? 2 : 1) | INT_SEL(0));
++	amdgpu_ring_write(ring, lower_32_bits(seq));
++	amdgpu_ring_write(ring, upper_32_bits(seq));
+ 
+-	/* Then send the real EOP event down the pipe. */
+ 	amdgpu_ring_write(ring, PACKET3(PACKET3_EVENT_WRITE_EOP, 4));
+ 	amdgpu_ring_write(ring, (EOP_TCL1_ACTION_EN |
+ 				 EOP_TC_ACTION_EN |
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+index 2f0e72caee1af..39a7d60f1fd69 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -6153,9 +6153,7 @@ static void gfx_v8_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64 addr,
+ 	bool write64bit = flags & AMDGPU_FENCE_FLAG_64BIT;
+ 	bool int_sel = flags & AMDGPU_FENCE_FLAG_INT;
+ 
+-	/* Workaround for cache flush problems. First send a dummy EOP
+-	 * event down the pipe with seq one below.
+-	 */
++	/* Workaround for cache flush problems, send EOP twice. */
+ 	amdgpu_ring_write(ring, PACKET3(PACKET3_EVENT_WRITE_EOP, 4));
+ 	amdgpu_ring_write(ring, (EOP_TCL1_ACTION_EN |
+ 				 EOP_TC_ACTION_EN |
+@@ -6164,12 +6162,10 @@ static void gfx_v8_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64 addr,
+ 				 EVENT_INDEX(5)));
+ 	amdgpu_ring_write(ring, addr & 0xfffffffc);
+ 	amdgpu_ring_write(ring, (upper_32_bits(addr) & 0xffff) |
+-				DATA_SEL(1) | INT_SEL(0));
+-	amdgpu_ring_write(ring, lower_32_bits(seq - 1));
+-	amdgpu_ring_write(ring, upper_32_bits(seq - 1));
++			  DATA_SEL(write64bit ? 2 : 1) | INT_SEL(0));
++	amdgpu_ring_write(ring, lower_32_bits(seq));
++	amdgpu_ring_write(ring, upper_32_bits(seq));
+ 
+-	/* Then send the real EOP event down the pipe:
+-	 * EVENT_WRITE_EOP - flush caches, send int */
+ 	amdgpu_ring_write(ring, PACKET3(PACKET3_EVENT_WRITE_EOP, 4));
+ 	amdgpu_ring_write(ring, (EOP_TCL1_ACTION_EN |
+ 				 EOP_TC_ACTION_EN |
 -- 
 2.45.1
 
