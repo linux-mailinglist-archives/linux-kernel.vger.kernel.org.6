@@ -1,78 +1,163 @@
-Return-Path: <linux-kernel+bounces-216654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305D390A2AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 05:01:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A1190A2AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 05:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFE111F2197B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:01:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE952815AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB28C179665;
-	Mon, 17 Jun 2024 03:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB80176AC8;
+	Mon, 17 Jun 2024 03:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="OG3+Oopv"
-Received: from mail-177131.yeah.net (mail-177131.yeah.net [123.58.177.131])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C8E10A24;
-	Mon, 17 Jun 2024 03:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.131
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VAQrmNdg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B2B10A24
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 03:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718593285; cv=none; b=f7hxSN6HphoMgfSi4WX3TYt4eAuGGxoExPYMWc47pX/s+kTGFD/R0oviaxXhxs49LEjytC63gHmbUL70kSEWuVMUbiGD/f62n7kf6vw6scIT1VeoZHItY6aOhiO562DlVULd4Zt3BcASlGcoqllYyJm4HfDdMzM/3mguSAsfBFc=
+	t=1718593367; cv=none; b=k5cgApHpIJwCy2ctlKZnHcQaAJoBVPw35DQgSsZeOa4FIbi96uHmXTjsWipnfn4O6Atzt/gKqxsDAc8RpIri/Qk26WSyKG6H8fUV3IcP/oI5+hvWrCo6yy7Kdy7iabz8UkhNbHAUK/zAdD562LBdzJ5OZiT6rqqeOAtt0VTqEgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718593285; c=relaxed/simple;
-	bh=FfB7LZT6eKL1+i0+GK4vbUTf3Gkh+hb+wMYH8QTNqdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uu9D98HzPQcRcasX/zbhimytVDyJz1ubsBBnWLPRpszdrEjzRHP6FKcjN4bJ8sBXUb+GPaXj8t9DLFFDpsD6i+0KIDd4rzorH5wmw/34ja9kYZEWEBETyB0PEDXevTfpIoKb4okZUxDDpiyM2jKHzTYLnZKDIW98etmwA05VCzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=OG3+Oopv; arc=none smtp.client-ip=123.58.177.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=eby4XkKKxODZ1wXdg8ChTQaLUDD8vGH6k5TlGqO4Pik=;
-	b=OG3+OopvKtZx65RjRpg1jb3EJcBaYa5K9SbeL2b/ohIevoQIpP8prCNLtDEPfn
-	ECLmXraPFxulKJyWuFR96dIeYg9/8kAGJU9llyrwJy9LI92i/zXbW1awRlAoyA3Z
-	3jb0HaRQ4LkO/fGYOEEdagHD+xN/ccyMdT4wu9STTfVSI=
-Received: from dragon (unknown [114.216.76.201])
-	by smtp1 (Coremail) with SMTP id ClUQrADnDyDdpm9mQLgMCA--.59953S3;
-	Mon, 17 Jun 2024 11:00:47 +0800 (CST)
-Date: Mon, 17 Jun 2024 11:00:45 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 0/3] arm64: dts: add i.MX95 and EVK board
-Message-ID: <Zm+m3fO5L4pVnXG/@dragon>
-References: <20240617-imx95-dts-v3-v7-0-488b52e10862@nxp.com>
+	s=arc-20240116; t=1718593367; c=relaxed/simple;
+	bh=JHm0iH1Rb3LqS2iI0OkGlo4WQOAGVuUe4DDjBAFzAs8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZuTYYosqc2EFEEkXc12CHLV7VRRUkDq1Ludbqh4jMTNtmrjk/Jh2gs6TnOPyedm/GxjFFq8V9HDwJ8hcavYRDaW+t7b31XCHmcTevE0U135+IMM9TyGdpODTfUf5KGPUob3MFgudnvgCFsj75WUMpaxnIYMJ12oYi7XQN5Beh8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VAQrmNdg; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718593365; x=1750129365;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=JHm0iH1Rb3LqS2iI0OkGlo4WQOAGVuUe4DDjBAFzAs8=;
+  b=VAQrmNdg8B7L1Db29Hsl0tf32tOojDGg4X3Em21pHgLDBXo8B+ieLP9q
+   OkldPHtxjFgrcePSlrcFS0tWb2/NseGycXSjvwvH9rNlsX82GMrCpdfeA
+   bwsYRePIuBLrlPHDr28/kfaf6qhgMdY25JxAgTmFwpbEWlBHw3xfNjOD3
+   H4z0/XgxcXIeZzjDTU7nm6n8IDqfBLFOKx4N+/CaHzAqxy6vIVoesQeZy
+   4+mjf26Gz72RiVP8oXXeq9f8XrztJ3WUvfAXQ9+fvqIgUfCbp3nZnN1nD
+   BNzDmlrezcZ7xstC1yDXrR4jYbeKXA7wpUTwFcVemtxqlDUa9eHbwLgXI
+   g==;
+X-CSE-ConnectionGUID: f8oUYaZYRRqhz6UFKj9Mcg==
+X-CSE-MsgGUID: iugYQ19vSp63/9gxB2tZag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="15543459"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="15543459"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 20:02:44 -0700
+X-CSE-ConnectionGUID: 8drbOxcXRJOZxX7pLAGixQ==
+X-CSE-MsgGUID: VoZAwEpqSROUevimrQ0sFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="41776956"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 20:02:43 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+  chrisl@kernel.org
+Cc: baohua@kernel.org,  kaleshsingh@google.com,  kasong@tencent.com,
+  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  ryan.roberts@arm.com
+Subject: Re: [PATCH v2 0/2] mm: swap: mTHP swap allocator base on swap
+ cluster order
+In-Reply-To: <20240615084714.37499-1-21cnbao@gmail.com> (Barry Song's message
+	of "Sat, 15 Jun 2024 20:47:14 +1200")
+References: <20240614195921.a20f1766a78b27339a2a3128@linux-foundation.org>
+	<20240615084714.37499-1-21cnbao@gmail.com>
+Date: Mon, 17 Jun 2024 11:00:51 +0800
+Message-ID: <87r0cw5l3w.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617-imx95-dts-v3-v7-0-488b52e10862@nxp.com>
-X-CM-TRANSID:ClUQrADnDyDdpm9mQLgMCA--.59953S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUV8u4UUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiDR8BZVszXmPkSQAAsO
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 10:56:34AM +0800, Peng Fan (OSS) wrote:
-> Peng Fan (3):
->       dt-bindings: arm: fsl: add i.MX95 19x19 EVK board
->       arm64: dts: freescale: add i.MX95 basic dtsi
->       arm64: dts: freescale: add i.MX95 19x19 EVK minimal board dts
 
-Applied all, thanks!
+Barry Song <21cnbao@gmail.com> writes:
+
+> On Sat, Jun 15, 2024 at 2:59=E2=80=AFPM Andrew Morton <akpm@linux-foundat=
+ion.org> wrote:
+>>
+>> On Fri, 14 Jun 2024 19:51:11 -0700 Chris Li <chrisl@kernel.org> wrote:
+>>
+>> > > I'm having trouble understanding the overall impact of this on users.
+>> > > We fail the mTHP swap allocation and fall back, but things continue =
+to
+>> > > operate OK?
+>> >
+>> > Continue to operate OK in the sense that the mTHP will have to split
+>> > into 4K pages before the swap out, aka the fall back. The swap out and
+>> > swap in can continue to work as 4K pages, not as the mTHP. Due to the
+>> > fallback, the mTHP based zsmalloc compression with 64K buffer will not
+>> > happen. That is the effect of the fallback. But mTHP swap out and swap
+>> > in is relatively new, it is not really a regression.
+>>
+>> Sure, but it's pretty bad to merge a new feature only to have it
+>> ineffective after a few hours use.
+>>
+>> > >
+>> > > > There is some test number in the V1 thread of this series:
+>> > > > https://lore.kernel.org/r/20240524-swap-allocator-v1-0-47861b423b2=
+6@kernel.org
+>> > >
+>> > > Well, please let's get the latest numbers into the latest patchset.
+>> > > Along with a higher-level (and quantitative) description of the user=
+ impact.
+>> >
+>> > I will need Barray's help to collect the number. I don't have the
+>> > setup to reproduce his test result.
+>> > Maybe a follow up commit message amendment for the test number when I =
+get it?
+>
+> Although the issue may seem complex at a systemic level, even a small pro=
+gram can
+> demonstrate the problem and highlight how Chris's patch has improved the
+> situation.
+>
+> To demonstrate this, I designed a basic test program that maximally alloc=
+ates
+> two memory blocks:
+>
+>  *   A memory block of up to 60MB, recommended for HUGEPAGE usage
+>  *   A memory block of up to 1MB, recommended for NOHUGEPAGE usage
+>
+> In the system configuration, I enabled 64KB mTHP and 64MB zRAM, providing=
+ more than
+> enough space for both the 60MB and 1MB allocations in the worst case. Thi=
+s setup
+> allows us to assess two effects:
+>
+> 1.  When we don't enable mem2 (small folios), we consistently allocate an=
+d free
+>     swap slots aligned with 64KB.  whether there is a risk of failure to =
+obtain
+>     swap slots even though the zRAM has sufficient free space?
+> 2.  When we enable mem2 (small folios), the presence of small folios may =
+lead
+>     to fragmentation of clusters, potentially impacting the swapout proce=
+ss for
+>     large folios negatively.
+>
+
+IIUC, the test results are based on not-yet-merged patchset [1] (mm:
+support large folios swap-in)?
+
+[1] https://lore.kernel.org/linux-mm/20240304081348.197341-1-21cnbao@gmail.=
+com/
+
+If so, do we have any visible effect without that?  If not, should we
+wait for patchset [1] (or something similar) to be merged firstly?
+
+--
+Best Regards,
+Huang, Ying
 
 
