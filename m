@@ -1,64 +1,70 @@
-Return-Path: <linux-kernel+bounces-217972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C9390B711
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FFC90B712
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55F4A1C231DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 684FA286738
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29B8166305;
-	Mon, 17 Jun 2024 16:52:46 +0000 (UTC)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C2A1662FC;
+	Mon, 17 Jun 2024 16:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ju/Nio2e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2051369A8
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FCA168482;
+	Mon, 17 Jun 2024 16:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718643166; cv=none; b=mXxSKTpHUwyrWaXQuIdlLbs0Yasu32F32IKicezy2B9YgnOpOneBJ5MppOeZji4yda9TgeVy5V++56OeGvY13rJdUaPehbJ6S3jiJoG0fMc8FBm0XKKgGie9i0qIJyliPhG1/IZWJy/XDZgNn2cOisFrlDnXseGH/ZTipNIvQ0s=
+	t=1718643174; cv=none; b=ZY1Mj+AhtEZzM4tPvTV9pz07YEDa/2ZbXl67WCt+9m0hhCSArkKL5ICGpxXun4VdWkszQ8juOAg3YUIq9H9WrwfQuU8Q4JW7KEw4EVdNa8EjAVfKrbmOD6X/+BwNem6IwrOC663DRZsgjYYvFHKucpzQ8G5/dHV09wb0GR7/X04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718643166; c=relaxed/simple;
-	bh=CcAJqzNSlaf+l+Rz+hZwCU+gUQtZqN2sKhsZylP4k2c=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=WiBXhiE54jO65OtUUHPtojU5X0yp+jCjHohqAURBdfTpmlrUkTbOzVdp1e/17MeHYS5/Ucjplj9JXw2UCfRnamh/a2aTtuNM0e/DAYR/uTedIGF9Ehez+JTgANijg9Elpc4Xbrav5wpo/7mr1BXTT1aVL61tJP2tm7EyolslzI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 619E26195FC1;
-	Mon, 17 Jun 2024 18:52:41 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id rVZusyb9lOqr; Mon, 17 Jun 2024 18:52:41 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 0EE376195FC6;
-	Mon, 17 Jun 2024 18:52:41 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Srg5VmlXEUGF; Mon, 17 Jun 2024 18:52:40 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id DF1846195FC1;
-	Mon, 17 Jun 2024 18:52:40 +0200 (CEST)
-Date: Mon, 17 Jun 2024 18:52:40 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Gagan Sidhu <broly@mac.com>
-Cc: ZhaoLong Wang <wangzhaolong1@huawei.com>, 
-	chengzhihao1 <chengzhihao1@huawei.com>, 
-	dpervushin <dpervushin@embeddedalley.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-mtd <linux-mtd@lists.infradead.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, 
-	yangerkun <yangerkun@huawei.com>, yi zhang <yi.zhang@huawei.com>
-Message-ID: <1802911356.251780.1718643160760.JavaMail.zimbra@nod.at>
-In-Reply-To: <65E62DA3-EF16-44BD-8E51-E751BD2C496F@mac.com>
-References: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com> <561660214.251562.1718638970757.JavaMail.zimbra@nod.at> <14779870-BA54-4ABF-8ABF-FF1D23D172A7@mac.com> <1641029267.251608.1718640023954.JavaMail.zimbra@nod.at> <65E62DA3-EF16-44BD-8E51-E751BD2C496F@mac.com>
-Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
- ftl notifier
+	s=arc-20240116; t=1718643174; c=relaxed/simple;
+	bh=eSnhqAm2EceuPb7GR0p97myLZRdOU10MmclXVrykcQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WZo9EVDHZITJ+RSAEuj5sKmdQ0OSE7Z//FZE3J1cZBxcX1pAfy8N6n7/WyvA3HRuDicyc0iAtRGeDpReW8+LE4r8RInEKcQotJY1R1LPUJBPFFYMAwKAp6oRcwB7NCzZkd7joSNQL2yJkuue27Cfla9Mt0Us7fWjTn/J+dtdHHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ju/Nio2e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 423E1C2BD10;
+	Mon, 17 Jun 2024 16:52:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718643174;
+	bh=eSnhqAm2EceuPb7GR0p97myLZRdOU10MmclXVrykcQE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ju/Nio2ekUQo8b14RA4d5uLq/NEoJTbtrPRR3ycrp0W1iGLafnBwKjFA8qysevzDj
+	 x7qKSGBs7oZOc8NK6gLzhdGOzqjFfVQz3Y40KI0j1uBCDQaT3mQ0/9/xd8ICwa2pwQ
+	 LSofAHNWiaTakNfXTxUASBja6ZNvN7KkmhX6DC383eLoNUeYxbs4zITnUD+vUiO/72
+	 y3b0j9RHGovIx9OvW5LKQO1DsJNAmkmS9n9dcDrZHoQS71AmEDLI7gVeHZR8rNMsEq
+	 jMWLkftptNFsk8lWXU/2Xo7Tvp0wvcFXv3NKuJznlFkgIV5prc1Luup8xxx78FJ/i1
+	 Qra2f1kMDF83g==
+Date: Mon, 17 Jun 2024 09:52:51 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Andy Chiu <andy.chiu@sifive.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Zong Li <zong.li@sifive.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Evgenii Shatokhin <e.shatokhin@yadro.com>
+Subject: Re: [PATCH 4/8] riscv: ftrace: align patchable functions to 4 Byte
+ boundary
+Message-ID: <20240617165251.GA550301@thelio-3990X>
+References: <20240613-dev-andyc-dyn-ftrace-v4-v1-0-1a538e12c01e@sifive.com>
+ <20240613-dev-andyc-dyn-ftrace-v4-v1-4-1a538e12c01e@sifive.com>
+ <20240613190920.GB1272931@thelio-3990X>
+ <CABgGipV_6sFx8TJNrHszGLk=V9X1PJAXuOmRDxnTHPrigqJL0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,47 +72,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: gluebi: Fix NULL pointer dereference caused by ftl notifier
-Thread-Index: CeaQ9NY8GO3IkkuxNvz0If8vASUkgg==
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABgGipV_6sFx8TJNrHszGLk=V9X1PJAXuOmRDxnTHPrigqJL0A@mail.gmail.com>
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Gagan Sidhu" <broly@mac.com>
-> i don=E2=80=99t think my articulation is correct if you interpreted it as=
- that.
->=20
-> as i understand it, gluebi simply makes it handy when you have a filesyst=
-em
-> packed within a ubi file, and it will take that file and mount itas a blo=
-ck
-> device.
+On Mon, Jun 17, 2024 at 10:38:55AM +0800, Andy Chiu wrote:
+> On Fri, Jun 14, 2024 at 3:09 AM Nathan Chancellor <nathan@kernel.org> wrote:
+> >
+> > Hi Andy,
+> >
+> > On Thu, Jun 13, 2024 at 03:11:09PM +0800, Andy Chiu wrote:
+> > > We are changing ftrace code patching in order to remove dependency from
+> > > stop_machine() and enable kernel preemption. This requires us to align
+> > > functions entry at a 4-B align address.
+> > >
+> > > However, -falign-functions on older versions of GCC alone was not strong
+> > > enoungh to align all functions. In fact, cold functions are not aligned
+> > > after turning on optimizations. We consider this is a bug in GCC and
+> > > turn off guess-branch-probility as a workaround to align all functions.
+> > >
+> > > GCC bug id: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=88345
+> > >
+> > > The option -fmin-function-alignment is able to align all functions
+> > > properly on newer versions of gcc. So, we add a cc-option to test if
+> > > the toolchain supports it.
+> > >
+> > > Suggested-by: Evgenii Shatokhin <e.shatokhin@yadro.com>
+> > > Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
+> > > ---
+> > >  arch/riscv/Kconfig  | 1 +
+> > >  arch/riscv/Makefile | 7 ++++++-
+> > >  2 files changed, 7 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > > index b94176e25be1..80b8d48e1e46 100644
+> > > --- a/arch/riscv/Kconfig
+> > > +++ b/arch/riscv/Kconfig
+> > > @@ -203,6 +203,7 @@ config CLANG_SUPPORTS_DYNAMIC_FTRACE
+> > >  config GCC_SUPPORTS_DYNAMIC_FTRACE
+> > >       def_bool CC_IS_GCC
+> > >       depends on $(cc-option,-fpatchable-function-entry=8)
+> > > +     depends on $(cc-option,-fmin-function-alignment=4) || !RISCV_ISA_C
+> >
+> > Please use CC_HAS_MIN_FUNCTION_ALIGNMENT (from arch/Kconfig), which
+> > already checks for support for this option.
+> 
+> Thanks for the suggestion!
+> 
+> >
+> > >  config HAVE_SHADOW_CALL_STACK
+> > >       def_bool $(cc-option,-fsanitize=shadow-call-stack)
+> > > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> > > index 06de9d365088..74628ad8dcf8 100644
+> > > --- a/arch/riscv/Makefile
+> > > +++ b/arch/riscv/Makefile
+> > > @@ -14,8 +14,13 @@ endif
+> > >  ifeq ($(CONFIG_DYNAMIC_FTRACE),y)
+> > >       LDFLAGS_vmlinux += --no-relax
+> > >       KBUILD_CPPFLAGS += -DCC_USING_PATCHABLE_FUNCTION_ENTRY
+> > > +ifeq ($(CONFIG_CC_IS_CLANG),y)
+> >
+> > Same here, please invert this and use
+> >
+> >   ifdef CONFIG_CC_HAS_MIN_FUNCTION_ALIGNMENT
+> >
+> > like the main Makefile does.
+> 
+> Hope this makes sense to you. I am going to add the following in riscv Kconig:
+> 
+> select FUNCTION_ALIGNMENT_4B if DYNAMIC_FTRACE && !RISCV_ISA_C
+> 
+> So we will not need any of these
 
-There is no such thing as an UBI file. UBI hosts volumes.
-You can install into these volumes whatever you want.
-Also a file system such as UBIFS, but this seems not to be the case here.
+Yes, that definitely makes sense, I forgot that this has been abstracted
+away via the use of those alignment Kconfig symbols that can be selected
+when needed. Much better than my suggestions, thanks!
 
-> so i would say it=E2=80=99s not MTD->UBI->GLUEBI->MTD->MTDBLOCK
->=20
-> it=E2=80=99d say it=E2=80=99s more MTD->GLUEBI->MTDBLOCK
-
-No. GLUBI emulates a MTD on top of an UBI volume.
-So every read/write operation of the filesystem will first to through:
-
-1. block layer
-2. MTDBLOCK (and mtd)
-3. GLUBI
-4. UBI
-5. MTD (this time the real one)
-
-Is this really a setup OpenWRT is using?
-I'm not saying it's impossible, but far from ideal.
-We have UBIBlock for reasons.
-
-Anyway, since the kernel has to be user space friendly and
-users seems to use such "odd" stackings I consider reverting this patch.
-ZhaoLong Wang, what do you think?
-
-Thanks,
-//richard
+> >
+> > > +     cflags_ftrace_align := -falign-functions=4
+> > > +else
+> > > +     cflags_ftrace_align := -fmin-function-alignment=4
+> > > +endif
+> > >  ifeq ($(CONFIG_RISCV_ISA_C),y)
+> > > -     CC_FLAGS_FTRACE := -fpatchable-function-entry=4
+> > > +     CC_FLAGS_FTRACE := -fpatchable-function-entry=4 $(cflags_ftrace_align)
+> > >  else
+> > >       CC_FLAGS_FTRACE := -fpatchable-function-entry=2
+> > >  endif
+> > >
+> > > --
+> > > 2.43.0
+> > >
+> > >
+> 
+> Thanks,
+> Andy
 
