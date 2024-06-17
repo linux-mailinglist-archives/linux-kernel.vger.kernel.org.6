@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-216727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21B990A531
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:18:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7916D90A545
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 617FAB25CA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E535F28ECB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678CB19004F;
-	Mon, 17 Jun 2024 06:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8543C18C337;
+	Mon, 17 Jun 2024 06:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ncza7NtE"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L42Wd3C3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBC3187358;
-	Mon, 17 Jun 2024 06:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE6D185089;
+	Mon, 17 Jun 2024 06:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718604838; cv=none; b=tuVx1YRsJP6kxs3dS7piVQlrlbglg5FT188URK0AG+yM+PeD/d+kl0saON10J5Lri9a9ZJ/jkSJPPKOJhnL8q/fFjP/lwwwuYUSaHXpEB21AndWCY7BBUodtL+7kLuVhecXtoQ81f3ZtRFV91+EYnEKcw7dYgHUAIGkSUqSaRpM=
+	t=1718604987; cv=none; b=BqXjcDxwKNoiVHlGTtJa7w3+6rhkf/Ut2qRBoWhrmO43VM01eN3UHtTpLEFNmuZzaTxdVcs0IdH4tJni828nakMWSht4ES3Zo1BJ+UPNmGRKn0sGd8HGUGbHwRppOlMMW8x7VzixdUaPXUSxAgQ0F/2hMUBkAPjAmEam2kFTfJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718604838; c=relaxed/simple;
-	bh=pWljAqkTfkrt+3zYt1Ce5GoIspvAKUkLfQj2oQVNffA=;
+	s=arc-20240116; t=1718604987; c=relaxed/simple;
+	bh=xnKpAidf5yJRHsGR7e7UNXSdcW+rnTfw1pW+zBytFmw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VFSW4kdYvtFjKDaVFhE0hkjX0QLZXUDp+XZqqpYrIMUgQw93oV/hTT+Ie3sTnNNOHO8NaFc9OUBJ21HUi1mWRGMxABJ7SFVoZq1mJqmklEc1PMC/vHMKXrYSFG8Y+aUdw0/srtsJ+odDt9s+yR0RnzXXeJ9amn4tE3OrY6ownuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ncza7NtE; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so44299921fa.2;
-        Sun, 16 Jun 2024 23:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718604835; x=1719209635; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TZntQxnrQUChH66lPydEN459mEVnoXqBtAC5FdClnOM=;
-        b=ncza7NtE9VClZPNXzksPBmWHYmsQZYswjzq+Jye9VAkEytQFQxL6lzO4qRQezINHrK
-         9NYvrKBMIOXISNjrGdGSzkxlgXQYDUWkSRVYuqKLasAafHK64H5YGmgICtiyOpM5EQYY
-         ZzMxRjKRa1ztulIw+QVy6Dy9S9i4S1JFqpZLzU/AoC5zTnMgQ3TPTicXNa/S4NGatgPC
-         gW/4qTNvvckNk7Bzzml5vzMeMxzqu14KHmAwHzIpr6QJIYNHQF+OyEa+z/q2GH25L5vM
-         FL4QCQ9Cur21Pwx3iAZuL9RyOrPvARrAAtAiqEcHVK0WmbeJE6RMr4xXAtis2LSqmShx
-         C/CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718604835; x=1719209635;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TZntQxnrQUChH66lPydEN459mEVnoXqBtAC5FdClnOM=;
-        b=i3ZGJUiJr2C7wGbhRB/bBMpeEMJ8fjX7fY+CPCfFwTgiUTKlXARJFbdiaq+W+1JsDS
-         uGW1QaNmMa4roeUB92T9yk3rasxXsX2hBIBE9/mhCTGGrgzfVkkBJBj5Jf7bE+C8tNTx
-         drrrWXsyw9kMv+WiJ9D5iftKOZWBeeTuOriuhAgYpY2mjjZ4RtHwlsrHhFTwOlv6pmOP
-         6ii9MoTlgGl3Ex6f8xRHJat5ubx+SzMAqLR0WS+C0ITZ9e1nGoxIDU1JWtzFR4GYTUVj
-         KnUYLzCmCa6NEStlg/rT4LkhsheXtRwxSMMQ+aNO0soCVs5EGSmUycLJMvl5fQ8uaMOG
-         XKvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjghY8tFy23dOX9inhiCS27S8pNbyYdzDmaw51Jjbw6I3smf0IOt4g+z1zoQ4uNmyQse9wUc6+l8U0WpTuySJC6eJO9zHdCxzwS4YIt9WWW6Wv6nb8PjPohDOriTvZ68OFuOxMY27wJZwAZhsk086YLW3bg7rPpVKCDXxSvcGG
-X-Gm-Message-State: AOJu0YxWJ+mG2wymDaIbbocj5jRjSE32HF0BeW7Z2KkbHPVY3pabXm/0
-	hWYy4Zwb0UQ4OGfsJLymbuXtOlmYZjpSYpEKtjhrLQ1njx5qmUlX
-X-Google-Smtp-Source: AGHT+IHk5DcOwhCSZUVJBsZjTN1uHmzBc7hffy1mCYO/f7qQ+ieH3Tq4m1d1riCwGa/LPv5a9YSrdw==
-X-Received: by 2002:a05:651c:1425:b0:2ec:17e6:f9e0 with SMTP id 38308e7fff4ca-2ec17e6fa7dmr61467741fa.8.1718604834996;
-        Sun, 16 Jun 2024 23:13:54 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec07b7cb80sm12250991fa.1.2024.06.16.23.13.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Jun 2024 23:13:54 -0700 (PDT)
-Message-ID: <4cb8af25-078c-45be-a544-653e2e2c6947@gmail.com>
-Date: Mon, 17 Jun 2024 09:13:53 +0300
+	 In-Reply-To:Content-Type; b=skEIl/L80DI1bZQO2ai53fFfh9V/AFfn35SGbwrYWlD4z/oc/xu/Q/vIpS/tgRNp/zeXkZHNegO5avRDl2QV7G/AOmMo/ZQ3jbw2TeM35cXZ/7FOO5AN7kXIF4mK+qEJ5hVwQxUn8MYpxtHeV1WXLb+cfHQ0PqwII41+OpllnTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L42Wd3C3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8D38C2BD10;
+	Mon, 17 Jun 2024 06:16:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718604987;
+	bh=xnKpAidf5yJRHsGR7e7UNXSdcW+rnTfw1pW+zBytFmw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=L42Wd3C3jiMaIC0TCNmUeMB9D152DFsdrcJtxM3Br1YhkTQZIu97blHZqNIHNIyQ4
+	 EF9oT8p7PXlYLbLPWnqSmyVU3bOpst9tbqNihHJrCrl7tZeZ/qu3b8n5hLWcRMu2Ym
+	 uQvtVCk3mJn3sSMSH9Lpx5N/maP+8Izs5x1aAjuiZkdFtJqJU4GTBT74wT7I98MVX7
+	 ehKdr0UwbZNAZzpZW25fBT3WjCpCPL6lNq17nJZ/W/ONMFv8fB8jNH4RMIGjWfRuRf
+	 b8xezawcaRfhAPkdiOdgr3DRI4LnfD7ftVPnk4xQXeNFBAtiSrZs4riN0IYuWea+bm
+	 sMOSXdpuw6fpw==
+Message-ID: <312d0bf2-3a17-44df-8a42-0168b2e3640a@kernel.org>
+Date: Mon, 17 Jun 2024 08:16:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,61 +49,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: trigger: Fix condition for own trigger
-To: =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?=
- <jpaulo.silvagoncalves@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240614143658.3531097-1-jpaulo.silvagoncalves@gmail.com>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240614143658.3531097-1-jpaulo.silvagoncalves@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] dt-bindings: hwmon: ti,tmp108: document V+ supply, add
+ short description
+To: Stanislav Jakubek <stano.jakubek@gmail.com>,
+ Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <Zm8/qxGc8fvi/tuE@standask-GA-A55M-S2HP>
+ <f75635d8-4199-4bbe-9fba-a1d2ed206966@roeck-us.net>
+ <Zm/FF2xX/rhwmLZ6@standask-GA-A55M-S2HP>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Zm/FF2xX/rhwmLZ6@standask-GA-A55M-S2HP>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 6/14/24 17:36, João Paulo Gonçalves wrote:
-> From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+On 17/06/2024 07:09, Stanislav Jakubek wrote:
+> On Sun, Jun 16, 2024 at 01:43:08PM -0700, Guenter Roeck wrote:
+>> On 6/16/24 12:40, Stanislav Jakubek wrote:
+>>> TMP108 is powered by its V+ supply, document it.
+>>> While at it, add a short description with a link to its datasheets.
+>>>
+>>> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+>>> ---
+>>> Not entirely sure of the "v+-supply" name, but the datasheet only ever
+>>> refers to it as "V+" or simply as the "supply voltage".
+>>> Only other name I've seen is in the schematic for the msm8226-based
+>>> motorola-falcon smartphone, where it's called "V_POS".
+>>>
+>>
+>> Guess one has to praise the ability of datasheet writers to come up
+>> with different names.
+>>
+>> The datasheet for tmp117 also uses the V+ term, yet the supply name
+>> is "vcc-supply". I would personally very much prefer to stick with that,
+>> but that is just my personal opinion.
+>>
+>> Guenter
+>>
 > 
-> The condition for checking if triggers belong to the same IIO device to
-> set attached_own_device is currently inverted, causing
-> iio_trigger_using_own() to return an incorrect value. Fix it by testing
-> for the correct return value of iio_validate_own_trigger().
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 517985ebc531 ("iio: trigger: Add simple trigger_validation helper")
-> Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> I'm okay with that. I'll keep this for a few days to see if anyone else
+> has anything to say, then I'll send a V2 with it changed to vcc.
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+vcc. Anyway + is not an expected character.
 
-Thanks for fixing this!
-
-> ---
->   drivers/iio/industrialio-trigger.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
-> index 16de57846bd9..2e84776f4fbd 100644
-> --- a/drivers/iio/industrialio-trigger.c
-> +++ b/drivers/iio/industrialio-trigger.c
-> @@ -315,7 +315,7 @@ int iio_trigger_attach_poll_func(struct iio_trigger *trig,
->   	 * this is the case if the IIO device and the trigger device share the
->   	 * same parent device.
->   	 */
-> -	if (iio_validate_own_trigger(pf->indio_dev, trig))
-> +	if (!iio_validate_own_trigger(pf->indio_dev, trig))
->   		trig->attached_own_device = true;
-> 
->   	return ret;
-> --
-> 2.34.1
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+Best regards,
+Krzysztof
 
 
