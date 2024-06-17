@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-216619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBBE090A250
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 04:10:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654F490A252
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 04:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF5281C21227
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 02:10:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F6821C21536
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 02:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197A616C6AF;
-	Mon, 17 Jun 2024 02:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5E5167DB9;
+	Mon, 17 Jun 2024 02:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="VmjSGG5Q"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fP4MeZ97"
+Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7A279F3
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16BB1581E3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718590223; cv=none; b=Y3mzsJ0U0kglRu9trFy4Vyt97V7L7rC0K/5hf38fISQRomvU4Mhu09LQWnWAQNcv8m6Rftg2248dJFBn7BUvN1J2qCUJUHUMZG3F5ZB4RgdgUOe/ZPWrCJYUWj9WJs02K8bM7DELX0cSoDW0QGJ8/oJgWIBCyv30enEuydCqM8Y=
+	t=1718590257; cv=none; b=AkBQ+FenEcnyA3QCJAuG21Oi2zVNCsSq+fmCEL88L5GV0p8m80Aoamh6iuLKxkVwwcBr5oHJEkwrvtrxhJpLUlrrV7t2TgjqZLMt15sf/kJ0E0mo/YVSlEkkuNXSNKdVeobmlu8iN9QNt/76Gr0Vrf0DZM+GMq+PjTvj8ywCBJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718590223; c=relaxed/simple;
-	bh=5cDTheXxPIdIssxnQWjv/qLVCXYIkgJSlf1PwQPKjZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kplGhDjTQu+sXV4kGmtXlbXDexNnADiIoQAD7k1rtaqGK8VdojkVAA9Opt04Ca5l5HNDHyRHRrtrmusRo7Yt3LcCc76wTDaLtkYph6On/6ZzmseIfoODzoMwLl++ghD9gI0kPPUKysueJYpiVqrmTsBct3EeKfM2uYEdXVSFInU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=VmjSGG5Q; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dfab4779d95so3855322276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 19:10:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1718590221; x=1719195021; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xqCXTr60lfURDiU6o/ziPYUoB/pkh4/Y0UTODd/6hiA=;
-        b=VmjSGG5QQuHHAieYtNzm8JYK0MbU/t6m4n/g6jT2in/GAto75KeMPMKk8XdCWOkzFZ
-         LwsV0WAXPOnUb7aLPxybGSFA/+NMl++TXndfYHbOB79aPYMKu0bxTkaWlXNy5RRvkfDh
-         HRhINwDdPr87TAGC6gf7w9QJgMCNgihSO/OC+pQGpKpPGkQ30jeXDNEUpgiN+ATCWwJ7
-         qLhZ57iGHeSvi7w+NJTsTFDka3+TTElJGLsWiRtndGZuGzrvzMDLCFjHJvTi9WckILMg
-         gCoSJtioj0JLpB4HyWmaLyTv8K8L3M/BggOQw3/TxM/0jJP5MdEtieaRcdLJNDcMYVEk
-         Qeog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718590221; x=1719195021;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xqCXTr60lfURDiU6o/ziPYUoB/pkh4/Y0UTODd/6hiA=;
-        b=WHnyOj6nuqJOYcWcVa8NAvcUzdapjc9Lsx3m0jTBXVEy9wIhG+/TtOOMnetd/SkLxC
-         zUeIkyeeRWVMzf6ULviRDyjCLmqddadF0J2uXqve1TKMaSniqWxh85irfD2aAmFxVABB
-         LFw/oTXK1SqM9XEg2xUjE3GvONE++cgyv+dHyziPW3lzX4RHlfM4cr+QzATI3UqEGLpS
-         VHIXy5cnJHingYDzgRQHlU4U+WIUaCX3IAMtNoU9j16c6c9VJJKFf1KsLLfpmEUigFSY
-         admY5e0VsEWtRH4ycndVhgZgv7cXNvyl6vpjypDkac4EhvoM6EQ0MYWI22kZ196e4khW
-         s1nw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+kgGbkzzqF5PLYrFowiFlletPsQ8UWNIZseQmYvt8igzZvtsBJy1uOZVr0SUt/mld+omptFg8dw4pI3SlfHSfb/yGpJyPL42SXTT+
-X-Gm-Message-State: AOJu0YzRKXmXmJRDNIxluyUn08xxjRKsHtc/O2q8Q3lgVAhww6nU1vpc
-	D9rodRYg77hsrnq4+nyE7/uMQG/0aY3GB0QZr5pzBVU3PoZ8Qmv1FwFvdPBhtz10k8rkHTTazW9
-	Ry9SI5CLgPSS7mef+D2369wax89/DoOYmLHMWFw==
-X-Google-Smtp-Source: AGHT+IHVdf4CeK9m5TY7u8n2i5EYX8aCm7rXG/PvOUZXj0qTxh3niUzEWChMP06D9pYzethEgSj8BqmnKZHhXWATYww=
-X-Received: by 2002:a25:6612:0:b0:dff:3b6a:6322 with SMTP id
- 3f1490d57ef6-dff3b6a64a9mr2668500276.34.1718590220902; Sun, 16 Jun 2024
- 19:10:20 -0700 (PDT)
+	s=arc-20240116; t=1718590257; c=relaxed/simple;
+	bh=O1zewZMS+fE+DYGdhq4qlwEF14ZN3nbANyuajyvJhHg=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=PJ0u5k0Ubh2C49XD0hezam/YZktc/doQEJdaBlMdjc0tqJgttuiEshaMrAPazrs3lOIlcKlX7LAhrixAUXfX6khToWVGC3Kn4mOoRgqnkei5VUatQWCAbvrQsyDuUedUr7FytjGMzEgsMe46R0ShoZvD3i1zvEDl91l04t17TvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fP4MeZ97; arc=none smtp.client-ip=203.205.221.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718590247; bh=n/b25ufWw2FEN1PbS/h2Gmizcmt1dbuO+3UPvLJwndc=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=fP4MeZ97kB27xyqAj6GziWZOg6hlM/kgo+kbaaMEXYqBnrPJz/D3cp9gifzm6fpLl
+	 OIGJIoLtCqlT5NoyaNzAjG3Hva9tv17xb26TGwN6WbH2nGQBYh0XpU+A/pA6ySNwrh
+	 1PApu9/t0+s30SoxIefub+ZVYMRErmg1/lsmmG6M=
+Received: from smtpclient.apple ([2409:8929:843:88d1:dc81:b668:28ec:a360])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id 2AB86CF4; Mon, 17 Jun 2024 10:10:43 +0800
+X-QQ-mid: xmsmtpt1718590243t4q3vx31k
+Message-ID: <tencent_6863DCC298D59097467C3E0641106D0D4707@qq.com>
+X-QQ-XMAILINFO: NJ/+omVLhVgaGQOj3C9BAUFbWT0vbHZiwKhfTH3iTJpJF2/X0N+UqfrcazIqWQ
+	 rpkqCcxpvCdCT7+w3b/f43Jch3pKUm5k7IE4fT/0gSkBj6jAYhWMrNEaydu0YiFKYZ8bEHXNTAkv
+	 /iTyNOok9umfGcHP+8MLyVchbxR+jWfaS+pd3wcCuLgsS0joBrnWviJyMxP32H3vUVzFw4GX23+c
+	 dyR/BQ2/UrlBsihDcqSZjFRoB+cBikG39chYBL3+8vIRX7pU5B6bD5qnsuN9UlZo7HHzoQcq3dRl
+	 FBZ1j3zYotVTdc6t66MPzw01U8/pjMbwv1eQGS0vdE2WWKka9M7OGOKBhL3e1D9H2fisaBE81BAK
+	 gHmfmQ77eoQvb73FOwKvFhs9NwwdTbMIHjaKh7HEdmUTJ6PzXcQuf1erhT8lIuxnOyxhPkZSHq/r
+	 +/grkH90VGA/AumbnTndz55xDZyAjWpNtpH+aGJ3OTRXsP+z6N5am5Jz72ndPGGQGwpBT0sOfHJa
+	 9REY2W1eqxufLtlCllioejHoDyRAy+VrkFQ+cZw6judnHO56Zmc52EaFBoMXEY+l55nxxJixqN37
+	 3OIN6IBfySNrTn92rAUTgcQnUce5hSN/k628mPeyMHoAmcfSdV+TEjP/GzWtQ2un6wMdVZUknlGD
+	 gEvROFOVhK7QkvS9hNh9HoWHIAmSOdui9ntn+OeJgRsBBBSnpndJSLsIKjRfYb5E46ZZ9WavEUCR
+	 tEFO6Iw3oQ0nTup4W5sCGUiTCOWwR3tQaVCt2stVPVdlp/W3rtc4tBZ5ULCVNX6wOyM25Gi4Dyi5
+	 wRHH48MLb0+SUlwOf4ZWnavP3liYQ5GwaOm12JJTKstJogAvqgFMHGQWkMeTtslVzmh2/PAdE/Ik
+	 Y4O0Xgxw8NMuyPaBKdlzYDans9spx8jqVSMN4Ib8t8utqQIEX/PMcgxhyc6Tn5Bjl69VgxwW9ViJ
+	 uZpVk638x0bTHR5T2vYucE8UA768wAgPQs7iPdPGI=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240613-dev-andyc-dyn-ftrace-v4-v1-0-1a538e12c01e@sifive.com>
- <20240613-dev-andyc-dyn-ftrace-v4-v1-2-1a538e12c01e@sifive.com> <20240613093233.0b349ed0@rorschach.local.home>
-In-Reply-To: <20240613093233.0b349ed0@rorschach.local.home>
-From: Andy Chiu <andy.chiu@sifive.com>
-Date: Mon, 17 Jun 2024 10:10:09 +0800
-Message-ID: <CABgGipXB8uQ7XZbBFMZa8b7mymKAW7qOkKKaA8qVZ0hGXziSYA@mail.gmail.com>
-Subject: Re: [PATCH 2/8] tracing: do not trace kernel_text_address()
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Zong Li <zong.li@sifive.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Puranjay Mohan <puranjay@kernel.org>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH v1 7/9] riscv: dts: add initial SpacemiT K1 SoC device
+ tree
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <20240616225314.GA3988639@ofsar>
+Date: Mon, 17 Jun 2024 10:10:33 +0800
+Cc: linux-riscv@lists.infradead.org,
+ Conor Dooley <conor+dt@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Anup Patel <anup.patel@wdc.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ devicetree@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+X-OQ-MSGID: <F59EA1B1-9DC3-40D5-AA9F-0AD72D31CC03@cyyself.name>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+ <tencent_701082E2DAE48E2FB857316321778D737C08@qq.com>
+ <20240616225314.GA3988639@ofsar>
+To: Yixun Lan <dlan@gentoo.org>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On Thu, Jun 13, 2024 at 9:32=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Thu, 13 Jun 2024 15:11:07 +0800
-> Andy Chiu <andy.chiu@sifive.com> wrote:
->
-> > kernel_text_address() and __kernel_text_address() are called in
-> > arch_stack_walk() of riscv. This results in excess amount of un-related
-> > traces when the kernel is compiled with CONFIG_TRACE_IRQFLAGS. The
-> > situation worsens when function_graph is active, as it calls
-> > local_irq_save/restore in each function's entry/exit. This patch adds
-> > both functions to notrace, so they won't show up on the trace records.
->
-> I rather not add notrace just because something is noisy.
->
-> You can always just add:
->
->  echo '*kernel_text_address' > /sys/kernel/tracing/set_ftrace_notrace
->
-> and achieve the same result.
 
-Sounds good, I am going to drop this patch for the next revision
 
->
-> -- Steve
+> On Jun 17, 2024, at 06:53, Yixun Lan <dlan@gentoo.org> wrote:
+> 
+> On 01:20 Mon 17 Jun     , Yangyu Chen wrote:
+>> Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
+>> 
+> .. snip
+>> + uart0: serial@d4017000 {
+>> + compatible = "intel,xscale-uart";
+> are you sure the uart IP is fully compatible with xscale?
+> otherwise I'd suggest to introduce a vendor specific one..
+> 
 
-Thanks,
-Andy
+Sounds like a good idea. I will add it soon.
+
+>> + reg = <0x0 0xd4017000 0x0 0x100>;
+>> + interrupts = <42>;
+>> + clock-frequency = <14000000>;
+>> + reg-shift = <2>;
+>> + reg-io-width = <4>;
+>> + status = "disabled";
+>> + };
+>> + };
+>> +};
+> it's better to also add other uart nodes, I feel it's more complete
+> 
+
+I should test it before adding them. However, if I remember correctly,
+there is only one UART on BPI-F3.
+
+> -- 
+> Yixun Lan (dlan)
+> Gentoo Linux Developer
+> GPG Key ID AABEFD55
+
 
