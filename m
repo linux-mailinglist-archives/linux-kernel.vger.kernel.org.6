@@ -1,234 +1,122 @@
-Return-Path: <linux-kernel+bounces-217006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119CD90A9AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:34:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C536C90A98E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A7B1B283A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:31:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A447289596
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62728193080;
-	Mon, 17 Jun 2024 09:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CF9192B6A;
+	Mon, 17 Jun 2024 09:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ATOquYO5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/mPGHpM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A11D192B89;
-	Mon, 17 Jun 2024 09:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E54288BD;
+	Mon, 17 Jun 2024 09:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616630; cv=none; b=I+flLY5sty3R0yG13UpUVRwWQnvfqfs6e9Ucen1EV/8Q36+kGfYbucX7XMT6sIKm8UjAZWH6RZhRvqDa8jTEpQlYAVsV3PLiI4J4CW1j6j84ffSRsLceOmGQ5MUWFVzpJi20dBVDJVRg8VJTfcr6WEhNM1nFn+/9tW77Eo1I1Cs=
+	t=1718616589; cv=none; b=PooSObC+4rR/ebvgtjay64wdfEfB8d4xVK/QEYgm3TqiMW9ufN12XbOrBnDtTEHet72fKLxBt8GTuR5ns0Rs+Q6F94CANgAIOGV72iGLSi8Tj44xdVnA4BarAL12OPnUrbcilOzq7oW4Z35g6ApQTjulEldX/Cdgtr7jy7y5Z2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616630; c=relaxed/simple;
-	bh=iUCBdlDmmb+nqxTj4dotDfey/IiKx/n1xfkM7M9qntU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qmnVtSvVgYCnPAeB9f/5+DHHt/2hnc+i4eAo1HxchCGgVLSanMwWf5DJWtOCpjAcQ/JVgag+jMpTwS+nYBkh6MrBnYVvtqsxBxGMD9IRMR9W4jdMRDDIaht4vCJjEx+i/M8L5cfHWcbrJiRdRjlPmxBF8nJZk2riSxA5lfpE6PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ATOquYO5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45GNdmIq010949;
-	Mon, 17 Jun 2024 09:30:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KKp2Tcgz4byEiMIaGTwhjSTwZLE9rDd6TB5GY0oAGiQ=; b=ATOquYO59oVFxAz/
-	gn2BYRTpdMc2zQUhc/8seESvatrJfg+A5Z7vJ5AoDvHlA5hFR8wRQUiDbDQqf8/L
-	wVzWKHo6kYDeNuBHxnqbsBGo88fsifzTZV7/OMtZbBn9YPq9e57wPU5DRAEzvMna
-	drq7j+qc7jceo+G50JZ4x21R/Z+VYWHUXC8DghC9mqV1JbnR0DCFCEhxsm+/BYT+
-	IMeHeA4mf/lOd0uKPIxUA0zb2Rj/ZvSzJ73gSPKSuOYIznNHjzvTbFpGy2ITMIaM
-	v2vhaa48uzrWm/KXZnOVydEMEbK5r6qGdAMJT+lHb1Pyr/LQFoltl13qYCkISntQ
-	ocddfQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys1wr38hk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 09:30:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H9U8rJ013883
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 09:30:08 GMT
-Received: from tengfan-gv.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 17 Jun 2024 02:30:02 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-To: <krzysztof.kozlowski@linaro.org>, <djakov@kernel.org>, <robh@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Tengfei Fan <quic_tengfan@quicinc.com>
-Subject: [RFC PATCH 2/2] arm64: dts: qcom: sa8775p: Add CPU and LLCC BWMON
-Date: Mon, 17 Jun 2024 17:29:40 +0800
-Message-ID: <20240617092940.1724962-3-quic_tengfan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240617092940.1724962-1-quic_tengfan@quicinc.com>
-References: <20240617092940.1724962-1-quic_tengfan@quicinc.com>
+	s=arc-20240116; t=1718616589; c=relaxed/simple;
+	bh=at9csQjhwS6i1s/d4XG/8Zpj8DRi4xJ/ag+5eIwgDXc=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=GSJFgkvGeupIyIzEJXIbnsmB8IXKlNlJMaoG9zkUfvA1d9nQRIe5fYDvpxVUxzGcDt9LgTgRA6oZPBk9zOWCO/PMKOR9/AJLxwJW1a/jYUZxpydEFCnn48vSqptRGigrQmkHFIgYjNAFYncGlSzvI6F/CPCfX26vBN7QdoiJY3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/mPGHpM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7837C2BD10;
+	Mon, 17 Jun 2024 09:29:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718616588;
+	bh=at9csQjhwS6i1s/d4XG/8Zpj8DRi4xJ/ag+5eIwgDXc=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=E/mPGHpMeIKgElg+Cpbw7Fc4U13Fmjr/ou+tMopM8OI/rDuDdPcOl4diV6dshwHhQ
+	 3sNv1Ke/lo5tm3ytKne5KNNO2Yd/NG5GnuCLOuBIioWeNHZSFi6d0iSOde+dXx/B6j
+	 3whdRSvwmZH1N2Ue9vGwp3EaecJaqm5pKb/q6LtrvJI6tJpV93fkKvzL9+vkwzp6vx
+	 8L8/gSlYRXdmAFPtQ01t2G0VPY93VsyiGdmB1XI/MsoVst8nV+XnNF86IcCpni81i9
+	 xHSp07ojBZM0bm9x6EbEbQmOcqic7F7aUAtsulWym9myGefvcAHF9vMNFWTPJf/CQK
+	 v1oZos6Ur+BYg==
+From: Kalle Valo <kvalo@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: linux-wireless@vger.kernel.org,  Felix Fietkau <nbd@nbd.name>,  Lorenzo
+ Bianconi <lorenzo@kernel.org>,  Ryder Lee <ryder.lee@mediatek.com>,
+  Shayne Chen <shayne.chen@mediatek.com>,  Sean Wang
+ <sean.wang@mediatek.com>,  Matthias Brugger <matthias.bgg@gmail.com>,
+  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+  netdev@vger.kernel.org,  horms@kernel.org,  kees@kernel.org,
+  kuba@kernel.org,  Bo Jiao <Bo.Jiao@mediatek.com>,  Daniel Golle
+ <daniel@makrotopia.org>,  Alexander Couzens <lynxis@fe80.eu>,  Deren Wu
+ <deren.wu@mediatek.com>,  Ming Yen Hsieh <mingyen.hsieh@mediatek.com>,
+  Leon Yen <leon.yen@mediatek.com>,  Quan Zhou <quan.zhou@mediatek.com>,
+  Ingo Rohloff <lundril@gmx.de>,  Sujuan Chen <sujuan.chen@mediatek.com>,
+  StanleyYP Wang <StanleyYP.Wang@mediatek.com>,  Benjamin Lin
+ <benjamin-jw.lin@mediatek.com>,  Peter Chiu <chui-hao.chiu@mediatek.com>,
+  "open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
+  "moderated list:ARM/Mediatek SoC support"
+ <linux-arm-kernel@lists.infradead.org>,  "moderated list:ARM/Mediatek SoC
+ support" <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH] wifi: mt76: un-embedd netdev from mt76_dev
+References: <20240614115317.657700-1-leitao@debian.org>
+	<87cyogkkju.fsf@kernel.org> <ZnAAT/a3DKnTgUoz@gmail.com>
+Date: Mon, 17 Jun 2024 12:29:42 +0300
+In-Reply-To: <ZnAAT/a3DKnTgUoz@gmail.com> (Breno Leitao's message of "Mon, 17
+	Jun 2024 02:22:23 -0700")
+Message-ID: <874j9rlxx5.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ekKIriM3Su_5dhI88FyXeQJzAWSoxnSV
-X-Proofpoint-ORIG-GUID: ekKIriM3Su_5dhI88FyXeQJzAWSoxnSV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_08,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 mlxlogscore=810 adultscore=0 spamscore=0 suspectscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 phishscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406170073
 
-Add CPU and LLCC BWMON nodes and their corresponding opp tables for
-SA8775p SoC.
-SA8775p has two cpu clusters, with each cluster having a set of
-CPU-to-LLCC BWMON registers. Consequently, there are two sets of
-CPU-to-LLCC registers.
+Breno Leitao <leitao@debian.org> writes:
 
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 115 ++++++++++++++++++++++++++
- 1 file changed, 115 insertions(+)
+> Hello Kalle,
+>
+> On Mon, Jun 17, 2024 at 12:03:49PM +0300, Kalle Valo wrote:
+>> Breno Leitao <leitao@debian.org> writes:
+>> 
+>> > Embedding net_device into structures prohibits the usage of flexible
+>> > arrays in the net_device structure. For more details, see the discussion
+>> > at [1].
+>> >
+>> > Un-embed the net_devices from struct mt76_dev by converting them
+>> > into pointers, and allocating them dynamically. Use the leverage
+>> > alloc_netdev_dummy() to allocate the net_device object at
+>> > mt76_dma_init().
+>> >
+>> > The free of the device occurs at mt76_dma_cleanup().
+>> >
+>> > Link: https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/ [1]
+>> > Signed-off-by: Breno Leitao <leitao@debian.org>
+>> > ---
+>> >
+>> > PS: Due to the lack of hardware, this patch was not tested on a real
+>> > hardware, unfortunately.
+>> >
+>> > PS2: this is the last driver that is still using embedded netdevices.
+>> 
+>> Is this patch a dependency to other patches? I'm asking because it will
+>> be _slow_ to get this patch to net-next via wireless trees. If there's
+>> urgency then it's much better to take it directly to net-next (of course
+>> with acks from Felix and Lorenzo).
+>
+> Since this is the last patch for the whole flexible netdev work, I would
+> prefer to have it through net-next then, so, we finish the whole work
+> sooner rather than later.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 3808fafd6bec..32dd9fc7c532 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -2885,6 +2885,121 @@ serdes1: phy@8902000 {
- 			status = "disabled";
- 		};
- 
-+		pmu@9091000 {
-+			compatible = "qcom,sa8775p-llcc-bwmon", "qcom,sc7280-llcc-bwmon";
-+			reg = <0x0 0x9091000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 620 IRQ_TYPE_LEVEL_HIGH>;
-+			interconnects = <&mc_virt MASTER_LLCC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>;
-+
-+			operating-points-v2 = <&llcc_bwmon_opp_table>;
-+
-+			llcc_bwmon_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-0 {
-+					opp-peak-kBps = <762000>;
-+				};
-+
-+				opp-1 {
-+					opp-peak-kBps = <1720000>;
-+				};
-+
-+				opp-2 {
-+					opp-peak-kBps = <2086000>;
-+				};
-+
-+				opp-3 {
-+					opp-peak-kBps = <2601000>;
-+				};
-+
-+				opp-4 {
-+					opp-peak-kBps = <2929000>;
-+				};
-+
-+				opp-5 {
-+					opp-peak-kBps = <5931000>;
-+				};
-+
-+				opp-6 {
-+					opp-peak-kBps = <6515000>;
-+				};
-+
-+				opp-7 {
-+					opp-peak-kBps = <7984000>;
-+				};
-+
-+				opp-8 {
-+					opp-peak-kBps = <10437000>;
-+				};
-+
-+				opp-9 {
-+					opp-peak-kBps = <12195000>;
-+				};
-+			};
-+		};
-+
-+		pmu@90b5400 {
-+			compatible = "qcom,sa8775p-cpu-bwmon", "qcom,sdm845-bwmon";
-+			reg = <0x0 0x90b5400 0x0 0x600>;
-+			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &gem_noc SLAVE_LLCC QCOM_ICC_TAG_ACTIVE_ONLY>;
-+
-+			operating-points-v2 = <&cpu_cluster0_bwmon_opp_table>;
-+
-+			cpu_cluster0_bwmon_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-0 {
-+					opp-peak-kBps = <9155000>;
-+				};
-+
-+				opp-1 {
-+					opp-peak-kBps = <12298000>;
-+				};
-+
-+				opp-2 {
-+					opp-peak-kBps = <14236000>;
-+				};
-+
-+				opp-3 {
-+					opp-peak-kBps = <16265000>;
-+				};
-+			};
-+
-+		};
-+
-+		pmu@90b6400 {
-+			compatible = "qcom,sa8775p-cpu-bwmon", "qcom,sdm845-bwmon";
-+			reg = <0x0 0x90b6400 0x0 0x600>;
-+			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &gem_noc SLAVE_LLCC QCOM_ICC_TAG_ACTIVE_ONLY>;
-+
-+			operating-points-v2 = <&cpu_cluster1_bwmon_opp_table>;
-+
-+			cpu_cluster1_bwmon_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-0 {
-+					opp-peak-kBps = <9155000>;
-+				};
-+
-+				opp-1 {
-+					opp-peak-kBps = <12298000>;
-+				};
-+
-+				opp-2 {
-+					opp-peak-kBps = <14236000>;
-+				};
-+
-+				opp-3 {
-+					opp-peak-kBps = <16265000>;
-+				};
-+			};
-+		};
-+
- 		llcc: system-cache-controller@9200000 {
- 			compatible = "qcom,sa8775p-llcc";
- 			reg = <0x0 0x09200000 0x0 0x80000>,
+Ok, even though I hate dealing with conflicts between trees I still
+think it's better to get this directly to net-next. I hate "hurry up!"
+emails even more ;)
+
 -- 
-2.25.1
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
