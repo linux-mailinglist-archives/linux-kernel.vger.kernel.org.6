@@ -1,105 +1,122 @@
-Return-Path: <linux-kernel+bounces-217140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEADB90AC11
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:49:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B872A90AC35
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A10FB1C235D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:49:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B80D1B2E98F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFD4194C94;
-	Mon, 17 Jun 2024 10:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eI+5kHSn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE411953A9;
+	Mon, 17 Jun 2024 10:47:14 +0000 (UTC)
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F151946C6;
-	Mon, 17 Jun 2024 10:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4A1194120;
+	Mon, 17 Jun 2024 10:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718621194; cv=none; b=bSTYiYl9tSf88QjPzTSeOA77aiFI+BRbbPtTfqbIet/VZ6TMmuBBz4El1njBaenKrSukzrtvwMcM9mL1FceDnnDtsHejshjGq7VocwCbSu+0P8PKm/tjTtQ9TeYiT2eLVLOhI9/orOcTKs5hQPtOwZWK3oi4CY1lD+7a2TDoZ14=
+	t=1718621234; cv=none; b=CoAMvsl6deZXvun8rt/g5cdeW3t9cWvUHaBMxoFoQgxjNij6ek4cLBQOaJ/bkTSmj7YZvQHb1a7fWkb6CEQQ0rnl+usbn23NSnR3WqX+0r5XPAP+qZKDM2Jo16W/ixLft/cysIW7MBP7bXQ/wePU3Jfblwcfd2BysjYcVBCa9kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718621194; c=relaxed/simple;
-	bh=icYPkKYUZHeKZk/PG3ca0DQXitXP9H3IxzD0krrXso0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sCjoURxU0IJKeMDcOOMCY3kekHcEfTi9NWsHhUu4EKoVjkN46xoCyTBdgKCoKfu6zTcY5xIDpwdHWFACBlpCy0Z5p4G0f/lsPsdfS02L03p4S16BW1fGSju1h7O30MkChBRps4UFnvZ2JddQ2sVlkYMC64SmpCbO9yhVUyuRmVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eI+5kHSn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45975C4AF1D;
-	Mon, 17 Jun 2024 10:46:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718621194;
-	bh=icYPkKYUZHeKZk/PG3ca0DQXitXP9H3IxzD0krrXso0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eI+5kHSnAnzGZKiOHrz47zZG/aWvbMpcrjkRmE5y65y3uskLwIeIYRF9JCXqMo1To
-	 xDpi4PYHK3H0JCS+5bHPOQFVd4uZp281v6A90MNSapmmcNS4Hjs1eLGgBjyvMo+zCQ
-	 e0wb5DVlmdR5feRoIz3I5p7yrQcRdpAGzOiNfz17xsuiYelZDdDKws5a/FiWKAdwhH
-	 hnHkoIbLrVr3XJxryJOYdq9ZKRuI+1t/v2FOj+CBXjEsbAwicrPAOp1Q3swiclwgEy
-	 XgjkMhmsLBs07pQX3umGRnebuvoGZjL3b7KB3nRo973YQw5sHjFRSv1LbEkDBR6H4d
-	 1qU17voSYCu1g==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5bb33237b60so123564eaf.0;
-        Mon, 17 Jun 2024 03:46:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXb4YXzk5Au7nKGlJOHSyYNbGm9sO8lwCrmQNrr7F/Fjk7Ub7b1hrfMAM7+O14erpraSvbh8OkL1EyN44sB2TjsVlO065YgtjkZe4lq/otZbKp0xINO5/sYsGbHZ2DE1WHZYkxXD4w=
-X-Gm-Message-State: AOJu0YzPSphNkv8kFGrtQtT6A9vVqVrOfOCqKs/xwXJc1k9XipZltKih
-	Is0glb1Wzg9w8OtGWV0+82dvtJCLY+AuBgGIP+YpWCgpoRmIJCgflqBVctznVUn7ZYs8cxpp2PS
-	X9Kfo0rhq5+/vFUCbR9Z2sReZUVE=
-X-Google-Smtp-Source: AGHT+IE199w8GS/G+P9yhQtVrA6avwRmdTpatWJx9CJOBGxbASnMHtj1gHRGL4yH+g9Tbpo6yQnKw6LQnpEpoMfJ8Yw=
-X-Received: by 2002:a4a:315d:0:b0:5be:9981:bb69 with SMTP id
- 006d021491bc7-5be999105c4mr4575058eaf.1.1718621193563; Mon, 17 Jun 2024
- 03:46:33 -0700 (PDT)
+	s=arc-20240116; t=1718621234; c=relaxed/simple;
+	bh=tVhqmn9G7oaDbVcSKRh0Jw2Ci0zemD9jxwyqFrG/2AE=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=D4kZ0VDu/SUNvc1G+iwmxD2D5Y12r1KTcbFGMrNHaEKhignP+gzS0vUE7EMjcnMnlWpzISVNWSksSFcgMD0iRG2K95Aixgg3bEmlFVmgvLfDy60J/GIWCoruu2uc4kEJYjeaUa98Hu9zlViZ3NYp2REVMB7ksrXBDsBO36WPD2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id 1B17A3780A0B;
+	Mon, 17 Jun 2024 10:47:04 +0000 (UTC)
+From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
+In-Reply-To: <20240617-emanzipation-ansiedeln-6fd2ae7659c8@brauner>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240613133937.2352724-1-adrian.ratiu@collabora.com> <20240617-emanzipation-ansiedeln-6fd2ae7659c8@brauner>
+Date: Mon, 17 Jun 2024 11:47:03 +0100
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org, "Jann Horn" <jannh@google.com>, "Kees Cook" <keescook@chromium.org>, "Jeff Xu" <jeffxu@google.com>, "Kees Cook" <kees@kernel.org>
+To: "Christian Brauner" <brauner@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
- <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
- <312649b1-eea9-4346-af93-76a821e88eb7@yahoo.de> <CAJZ5v0jfvRWK0M3Xf=36e74cVQ9rN5T1WdZZVnuk1XmZ=xu==g@mail.gmail.com>
- <78549853-1763-40cf-9974-3fc737fad093@yahoo.de> <CAJZ5v0h5pQDaA-bEOmcz_TpE87kFqWLFLJC+=OLjg5ZtF3hxpQ@mail.gmail.com>
- <91d94429-fc7e-4828-914d-1a251ee1ba99@yahoo.de> <CAJZ5v0gPZHDfuK1FRdTAG8Eqjf0NWUQdf-_GCWsWf6dCBE=1dg@mail.gmail.com>
- <543787c3-db5b-4f63-b5e0-df508300db73@yahoo.de> <CAJZ5v0h7jDw3yX689nZdB+YeJbCk0vFoUgVb4Yi0cqDxjL5chQ@mail.gmail.com>
- <40ec1e53-2bc8-48aa-9909-fac9072adb57@yahoo.de> <CAJZ5v0jtjXfvr4GXukjyO9XsEO6K2Nfux3otpFPP4vWS_9_qEQ@mail.gmail.com>
- <CAJZ5v0hcX0JAMBA+EVZURDH1BTQ2zL-W_4BjSx0a=1oRaR90ug@mail.gmail.com>
- <CAJZ5v0jGGV=i8Swu=c8f9bwo--AckUfqZrt0zeqDWKBijG+Z3A@mail.gmail.com>
- <bcac5925-fe2b-4570-83b6-182f4a301721@yahoo.de> <CAJZ5v0h7WnfQxhobA6B7S3Tvo-AnKTR9kP+5aexa6rixqpyHJg@mail.gmail.com>
- <3f5d01fa-f725-429d-b6a3-7b9617b8b561@yahoo.de>
-In-Reply-To: <3f5d01fa-f725-429d-b6a3-7b9617b8b561@yahoo.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 17 Jun 2024 12:46:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0if=8LV+-ZN4Hv++Hg5xiT1Fj4DtQ1p3hL6g4RMi-oWPg@mail.gmail.com>
-Message-ID: <CAJZ5v0if=8LV+-ZN4Hv++Hg5xiT1Fj4DtQ1p3hL6g4RMi-oWPg@mail.gmail.com>
-Subject: Re: Regression, thermal: core: battery reading wrong after wake from
- S3 [Was: Bug Report according to thermal_core.c]
-To: "fhortner@yahoo.de" <fhortner@yahoo.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <3304e0-66701400-f47-33d83680@2902777>
+Subject: =?utf-8?q?Re=3A?= [PATCH v6 1/2] =?utf-8?q?proc=3A?= pass file instead of 
+ inode to =?utf-8?q?proc=5Fmem=5Fopen?=
+User-Agent: SOGoMail 5.10.0
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 16, 2024 at 9:50=E2=80=AFAM fhortner@yahoo.de <fhortner@yahoo.d=
-e> wrote:
->
-> Currently I am running kernel 6.8.12 with reverted commit.
-> But yesterday I had a strange behavior.
-> After resuming from S3 the laptop registered a low battery, immediately
-> after resume (notification in KDE Plasme). But as far as I could check,
-> the battery level and stats where fine. Nevertheless, after 1 minute it
-> shut off. I guess the low battery reading directly after after resume
-> triggered it.
->
-> It is not directly related with the commit, because I have reverted it,
-> but nevertheless, maybe it is helpful to understand the underlying
-> firmware issue.
+On Monday, June 17, 2024 11:48 EEST, Christian Brauner <brauner@kernel.=
+org> wrote:
 
-We can do that, but please create a new non-regression BZ entry for it
-against ACPI/battery and let me know its number.
+> On Thu, Jun 13, 2024 at 04:39:36PM GMT, Adrian Ratiu wrote:
+> > The file struct is required in proc=5Fmem=5Fopen() so its
+> > f=5Fmode can be checked when deciding whether to allow or
+> > deny /proc/*/mem open requests via the new read/write
+> > and foll=5Fforce restriction mechanism.
+> >=20
+> > Thus instead of directly passing the inode to the fun,
+> > we pass the file and get the inode inside it.
+> >=20
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Jeff Xu <jeffxu@google.com>
+> > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> > Reviewed-by: Kees Cook <kees@kernel.org>
+> > ---
+>=20
+> I've tentatively applies this patch to #vfs.procfs.
+> One comment, one question:
+>=20
+> > No changes in v6
+> > ---
+> >  fs/proc/base.c       | 6 +++---
+> >  fs/proc/internal.h   | 2 +-
+> >  fs/proc/task=5Fmmu.c   | 6 +++---
+> >  fs/proc/task=5Fnommu.c | 2 +-
+> >  4 files changed, 8 insertions(+), 8 deletions(-)
+> >=20
+> > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > index 72a1acd03675..4c607089f66e 100644
+> > --- a/fs/proc/base.c
+> > +++ b/fs/proc/base.c
+> > @@ -794,9 +794,9 @@ static const struct file=5Foperations proc=5Fsi=
+ngle=5Ffile=5Foperations =3D {
+> >  };
+> > =20
+> > =20
+> > -struct mm=5Fstruct *proc=5Fmem=5Fopen(struct inode *inode, unsigne=
+d int mode)
+> > +struct mm=5Fstruct *proc=5Fmem=5Fopen(struct file  *file, unsigned=
+ int mode)
+> >  {
+> > -	struct task=5Fstruct *task =3D get=5Fproc=5Ftask(inode);
+> > +	struct task=5Fstruct *task =3D get=5Fproc=5Ftask(file->f=5Finode)=
+;
+>=20
+> Comment: This should use file=5Finode(file) but I've just fixed that =
+when I
+> applied.
+>=20
+> Question: Is this an equivalent transformation. So is the inode that =
+was
+> passed to proc=5Fmem=5Fopen() always the same inode as file=5Finode(f=
+ile)?
 
-> I' going to test your last patch and let you know.
+Thank you!
 
-OK
+Yes, the inode associated with the file struct should be always the sam=
+e
+while the file is opened, so the link set during the top-level mem=5Fop=
+en()
+callback should still hold while it itself calls into its sub-functions=
+ like
+proc=5Fmem=5Fopen().
+
 
