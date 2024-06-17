@@ -1,128 +1,165 @@
-Return-Path: <linux-kernel+bounces-217340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8112790AE80
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC4D90AE87
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06E5928A764
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:00:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA02F1C2402B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38094197A64;
-	Mon, 17 Jun 2024 13:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F142B198A2A;
+	Mon, 17 Jun 2024 13:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T6JZGuZL"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="RuHcGjA8"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E096418FC6F;
-	Mon, 17 Jun 2024 12:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BED9197A7E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718629201; cv=none; b=hGPYtDkxJ2rGtPYVdlR2flRCdbgFXYJnkqHQYwIjZEi7ISIXdwwfJd/2NQIfSRqADrMqYVVQBKnP6IiKX7ZlGwqfi1gX54ikFCYqx/t1xxbIqxhKtx/HKUtj5/syP8zFPTwN1s7iX3rh+ctJH2vDZSHaVZcFQRiOYVfaYirDbPU=
+	t=1718629212; cv=none; b=aBfuRRGpUe/ImHWuD86NGUkTuCDr+ej/DlEffVj4pyBNdGdPg9Aw8nbjkbK4gqJguRePR4I560pJ1VQdheqJLhbeMaKn5BmLrsKkBg+W/vDXHv5eZmLNanotBFh1UdNb5wnNl0b5EmaLPNdzVjzCfMgkYoqzLU0os+nBxmfNP28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718629201; c=relaxed/simple;
-	bh=8G39HiKoa8xfyKHJf8Y1JNqnXPKRNwnOjDzcCynE99Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUeNNlnkjQrtH5yh4eX2hORWVZ0ddww8ksz7H6ij9bbpvu03BkDcRYkTEtCpZmEcax/eCXvceM5qXGx62TJUnoM4KyQWtBj+/h47HwsKyyMULRcJwSWSVvdWRSQNHJJAdHw5jhc7mY/TTBfdKR0UpYWQfOvk1DflPsfEemXU6Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T6JZGuZL; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52c32d934c2so4789413e87.2;
-        Mon, 17 Jun 2024 05:59:59 -0700 (PDT)
+	s=arc-20240116; t=1718629212; c=relaxed/simple;
+	bh=h+3wKgmRX4zJZb2H8gWBKRoeMkJ/WRPwq29c2VXU9Xk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fr8+YaJWJY7gow3N4Fyygqt1rdzzF8vyKhV2yw2Ex+AnkM109/76VDMy7Odw7BEuyHD/aTDpqIPmux4g7ssfINrkFhBDTPsQpsaXLUnuY3O3+Na9lwJbsISZfikJPRl0rMgl9q31xebXW4Fv8UwEaHvQwJS5CA2mWr0iSmJalqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=RuHcGjA8; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-6f8d0a1e500so3233440a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718629198; x=1719233998; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O6qxWw9hbNV8Y2lcwTy4Qgqg8Y0QqnwMXXkDD5Y6lno=;
-        b=T6JZGuZLrkwsnI89MrIlDx2nywMCN4eeBYsqICd4sqprwocs7m5mv5IiVINp2iajCh
-         j7dxQsdzBtpuWKEhBG4IHLQW3dAomG/B38ulkv/l0r/sqiP0UIseXKU0cGM2cqQ48d4J
-         2Y4wae/ga5ns8zU0j0AUfYjx0OXpvEUlj8fhbvL3HcIu532dmNFKideAQ5+11b0rYCRs
-         kQD9UHKVzcwnj9WtcL+MPYBMtsUasqMlhuo4B6AzXtKRzExOwh5HsUPwdkrCnxSBtEX7
-         rvKcWCJpaBmkq3v2/EeRR/1wE7XB9lzr/HK0l0PlD5Uu8Uc7n8K7Ni6irWzxscXWL2ou
-         IdWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718629198; x=1719233998;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bytedance.com; s=google; t=1718629208; x=1719234008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O6qxWw9hbNV8Y2lcwTy4Qgqg8Y0QqnwMXXkDD5Y6lno=;
-        b=sweCL8sC4xoWEccISrcyziBRpzjnxei+beuSJkAeB62vEoPrl8xpwQHFlrPjZYiZeb
-         GRV3WC1PWX4LyjhRueSbDk8YNyMGKJNbGhuAwqbhRZUQWlF6YLwYrhWqe99XrE7BaSF/
-         r9UlQXAFxf7GmKAz2AFJ1NYic27xe8ZHpxzP4BZ2BAUN1m4e488qkI15BeS5vyBv1Of/
-         SPleLlZ/akAP8rIf3+5um1q5jKlWCQO6Btc3o9eGv0hnPJAXlCjYuzlBBbsqXGWOjU2a
-         HS7K5fR9q+rd7ow6zJj1ePjqOLaSNhF/5IYVq1rHZkeVn3uNXQBmHPjRw31RJSWYQFeB
-         yAeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWCDq6CZ6wEzhbOXrLefVGTNInnSBozO5Z6+1RKbPh/Ponm8SNh64YgqBQkJ8Uzn4/vEhYQ21zgqS4iljRLzIYugc/j0IV036R4WcrwOvGgfGhk+eyxw3+8DHcbqjss1cN+A/ZGc5hl1OHSuIjRWiMnH0YCB6LAtzT6o3TuxHoDqTS
-X-Gm-Message-State: AOJu0Yx2QacB8Hr+CL9oqI6jTP7TYy0gPKKuTvAZjt5nvhPaYjpb03vO
-	/JEbVDuGKg4Vhcp3cm61GPMpCU36NnEtW69L0RlBzWz6nq4+knWWYpwFNw==
-X-Google-Smtp-Source: AGHT+IEKJUepyEo0Qr4VnqJMJm4O3lMQ8RESf1ddP7d2P9ZeNTdN+t4VyV9gLe2htpTYYLBjpsX1Rw==
-X-Received: by 2002:a19:6904:0:b0:52c:7fe8:6489 with SMTP id 2adb3069b0e04-52ca6e98eb2mr5625129e87.63.1718629197730;
-        Mon, 17 Jun 2024 05:59:57 -0700 (PDT)
-Received: from debian ([93.184.186.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870e9145sm195678665e9.22.2024.06.17.05.59.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 05:59:57 -0700 (PDT)
-Date: Mon, 17 Jun 2024 14:59:55 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: power: supply: add support for
- MAX17201/MAX17205 fuel gauge
-Message-ID: <20240617125955.GA292946@debian>
-References: <20240615203352.164234-1-dima.fedrau@gmail.com>
- <20240615203352.164234-2-dima.fedrau@gmail.com>
- <ee0cd414-206c-48c9-aee2-06e24e0b981c@kernel.org>
+        bh=46zSmqD3K+3c/eVUF/duMfr7ptrzqcpK4Q9s/Mtw+rI=;
+        b=RuHcGjA8TFzzdjDEkzLIMO7XssqnRmxLoXYasC4qLH7UzwwI9rsZuVlQEsp9BsUps9
+         OEyp1MeWHzcmCT9p6m/rIWB8/eIjYRBx88zN5f41HFXoAj+o7YxdcjwQfKMximvYYZE0
+         k7ezwQuDuFQXuBy6ar5gZWh4iEJglyfqURJLuWlXvmxlwWzkgli4c5kJhY4UGfuPtHix
+         nAgUV7niBCnpJKtS5WGnPgHMMymIDv11wiRkkTwPwpVSpcZ+MrGCItecoCKzKS8TLFov
+         F3CcgNS2C57ruhhsJp+I7uEuK4Yd3Sc2Y8Ktdz9pxVVnds9xB00jPv/G716aaP6r2fTX
+         4nwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718629208; x=1719234008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=46zSmqD3K+3c/eVUF/duMfr7ptrzqcpK4Q9s/Mtw+rI=;
+        b=MENa1sluDYP5OVB3L62sGGUD8g3ZN/R6vQwfb+Jg0+UJ4sjjQo5bBoErGYUu0zO88+
+         o49x7PTa7NhGFOnMKUl8h4aZuHeQM+g31E0r8ltECJooJ4Arebm+dZaLBcKjL0ytPgUE
+         6KRHwDbKXL86TXJxPFVCz5D1qXXBaoTZ3iA8diq3QTtEtMOx0Z8wamXj+7svSJ1rFlhK
+         U9L8tzteq2RT9A8qcPBUEMfRR7aWqi/TF0gH/CXWqUIbFXnDflqMydz44O0hHgyY1g+R
+         3D5EvDdasB57rOWCbuaePoxpgHL7C6UCHGIeR4M18hP3RK1jVmnSP0JOL8477FELxPPm
+         KyWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZZ+POyMBeDiHlXj/lChLBJdm3on7v0yZXRNchSosUUJShGhqY3dGXS2ieMjuXu/DmLi4xSP7NRuCOAvorBHfkgAI0RGnTibizDUdP
+X-Gm-Message-State: AOJu0Yxqpw4wQ28tjCSHaLlIYAFkOQQo1xqLmdrNlNpttkS7hYXF6vgI
+	T9zn4+ORrJD9Yb1QrdecxMVUWfqB7L7HIq2rr2rb6yzNTjQCbnjSr4sJbyRLLQPT0foEFG5+B2n
+	z6cIAUYzPOHAAUTMh0l50AXNmp12EvpJNw+X+rg==
+X-Google-Smtp-Source: AGHT+IHsNyUY/qarXvooq9ynIKp95jpjsz6YkpPDRb/NSBM/IJmvJSy6eAGghbyK8AYhLF+R8aQIRjyQLfKHpRcsUbs=
+X-Received: by 2002:a05:6870:718a:b0:24f:dad3:97c with SMTP id
+ 586e51a60fabf-25842b1e8e7mr10850521fac.46.1718629208466; Mon, 17 Jun 2024
+ 06:00:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee0cd414-206c-48c9-aee2-06e24e0b981c@kernel.org>
+References: <20240523111322.19243-1-cuiyunhui@bytedance.com>
+ <20240523111322.19243-3-cuiyunhui@bytedance.com> <CAEEQ3wnE+8FXXf76zapqNnC5vruoR9C-y0qjjFw47cHYP57MmQ@mail.gmail.com>
+ <CAEEQ3w==wueTSDvEtJe+t7jamH2ERxta4uPLUFVwX2ueRLJ3Bw@mail.gmail.com> <ZmLohXMgGrIvL7s7@sunil-laptop>
+In-Reply-To: <ZmLohXMgGrIvL7s7@sunil-laptop>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Mon, 17 Jun 2024 20:59:57 +0800
+Message-ID: <CAEEQ3wkCkvNMd5QKcZkvxygoJ2HK+g=cQqag0re+HkE9R2Y4sA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH RESEND v5 3/3] RISC-V: Select ACPI PPTT drivers
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org, bhelgaas@google.com, 
+	james.morse@arm.com, jeremy.linton@arm.com, Jonathan.Cameron@huawei.com, 
+	pierre.gondois@arm.com, sudeep.holla@arm.com, tiantao6@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Sun, Jun 16, 2024 at 09:27:21AM +0200 schrieb Krzysztof Kozlowski:
-> On 15/06/2024 22:33, Dimitri Fedrau wrote:
-> > Adding documentation for MAXIMs MAX17201/MAX17205 fuel gauge.
-> > 
-> 
-> Three patchsets within 30 minutes. No changelog et all.
+Hi Sunil,
+
+On Fri, Jun 7, 2024 at 7:01=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com>=
+ wrote:
 >
-Sorry, had to fix my mail address in the commit message. Changelog was
-in the cover letter. Anyway, could have fixed that in a later version.
+> Hi Yunhui,
+>
+> On Fri, Jun 07, 2024 at 04:44:36PM +0800, yunhui cui wrote:
+> > Hi Sunilvl,
+> >
+> >
+> > On Mon, May 27, 2024 at 8:51=E2=80=AFPM yunhui cui <cuiyunhui@bytedance=
+.com> wrote:
+> > >
+> > > Hi Palmer,
+> > >
+> > > Gentle ping ...
+> > >
+> > > On Thu, May 23, 2024 at 7:13=E2=80=AFPM Yunhui Cui <cuiyunhui@bytedan=
+ce.com> wrote:
+> > > >
+> > > > After adding ACPI support to populate_cache_leaves(), RISC-V can bu=
+ild
+> > > > cacheinfo through the ACPI PPTT table, thus enabling the ACPI_PPTT
+> > > > configuration.
+> > > >
+> > > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > > > Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
+> > > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > > ---
+> > > >  arch/riscv/Kconfig | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > >
+> > > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > > > index f961449ca077..a9ebecd72052 100644
+> > > > --- a/arch/riscv/Kconfig
+> > > > +++ b/arch/riscv/Kconfig
+> > > > @@ -14,6 +14,7 @@ config RISCV
+> > > >         def_bool y
+> > > >         select ACPI_GENERIC_GSI if ACPI
+> > > >         select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+> > > > +       select ACPI_PPTT if ACPI
+> NIT: I would add this prior to ACPI_REDUCED_HARDWARE_ONLY.
 
-> Slow down (one posting per 24h) to give people chances to review. Then
-> provide changelog under --- and describe what happened.
-> 
-[...]
-> > +maintainers:
-> > +  - Dimitri Fedrau <dima.fedrau@gmail.com>
-> > +
-> > +properties:
-> > +      - description: ModelGauge m5 registers
-> > +      - description: Nonvolatile registers
-> > +
-> > +  reg-names:
-> > +    items:
-> > +      - const: m5
-> > +      - const: nvmem
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> 
-> This is incomplete. Missing battery and probably more... Look how other
-> bindings are written.
-> 
-Some fuel gauges used monitored-battery and/or power-supplies others none
-of them(mitsumi,mm8013.yaml). I'm not sure when to use them.
+Okay, I will update it on v6.
 
-Best regards,
-Dimitri Fedrau
+>
+> > > >         select ARCH_DMA_DEFAULT_COHERENT
+> > > >         select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MI=
+GRATION
+> > > >         select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
+> > > > --
+> > > > 2.20.1
+> > > >
+> > >
+> > > Thanks,
+> > > Yunhui
+> >
+> > Could you please review or ack this patchset again? Palmer did not resp=
+ond.
+> >
+> > Link:
+> > https://lore.kernel.org/linux-riscv/20240523111322.19243-3-cuiyunhui@by=
+tedance.com/T/
+> >
+> My bad, I was under the impression that I had Acked already. The series
+> looks good to me except the nit above.
+>
+> Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
+>
+> Thanks,
+> Sunil
+
+Thanks,
+Yunhui
 
