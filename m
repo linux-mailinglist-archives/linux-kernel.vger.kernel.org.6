@@ -1,131 +1,203 @@
-Return-Path: <linux-kernel+bounces-218103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8044A90B946
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:15:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB98F90B93C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABAB2283C0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:15:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C131F1C23DC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D36B19924B;
-	Mon, 17 Jun 2024 18:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CF1198E6C;
+	Mon, 17 Jun 2024 18:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="LOjM8/m9"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mudRwMLg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568AB198E9A;
-	Mon, 17 Jun 2024 18:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F46194154;
+	Mon, 17 Jun 2024 18:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718647996; cv=none; b=cmFhF0eXe7Udjtwv53udsudz5AhaFuHjXe8ihpcKJgErml/cnkVxDd3jGszad9PeWfgPMFbvqzI7bD68sFOFxTeu4Mkhdb5/SVpn6ni5fAMliqI3+Pnd5XySZ+g3+fUWbLhTk7NlnzO7yySXPbr+9QIQZca3BxPlv9L/nJ9DH/0=
+	t=1718647983; cv=none; b=IJoa3wfIatorHYaY3A3OJi7rXd7UE9UPc9wVEN+AelOobdM3/916cXvXpGtAnqrmzih5dmtWUBTu39hOqKPt60NPRO4KhCFAfTusqP2s09/34QlFLNyHi1OnLIQWkkMbEG37lN0V8GykaAOjondPRBFx7fbJEf0fIpshfHgFuTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718647996; c=relaxed/simple;
-	bh=t3L9pZlb1ef35gxwiB6BgoFgkgtd/qn6lkvONqjIbpo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MKvt649rVT7QZfAfALfUcPUyX2p/RvaT9Drfl62e5MBeK/lXPJFsuY/8H5E4PNAzmS0lrae+J9SYt4JvHmNHQnltjL8alcR5g0AGHRsnlVqFqCZgCQ55gk54rLN9Y4WyIAkJNAoGc3U9pehMiNOwigfWxHJJwkR8GU5Ylelbsw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=LOjM8/m9; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 5d05b64116b05cc2; Mon, 17 Jun 2024 20:13:05 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 77D3516606FD;
-	Mon, 17 Jun 2024 20:13:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1718647985;
-	bh=t3L9pZlb1ef35gxwiB6BgoFgkgtd/qn6lkvONqjIbpo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=LOjM8/m9DD9PABgboSa26GQeQXU5Bj1Bgg10zdBAQQ47FictLxjfZ3Ity6e8ihs8B
-	 pgIUEe06gd0HlAQopzMxMljNKTJo/Pv8Z7pT7zpjnUVs3J3Nnp65l2TE5EU/mYdHMv
-	 zLoXZbMJCDC3Du4jwisaqj0VxYtxjus7cxAWWWzLEc9ezdU3iYdeB9qx2IBq9tUPXh
-	 hquQnZR6r+Q/dynpAHdlTE72NAPpJqihnp7viPgo3TtKPrv95uHGNaaNu2sOjOjc+t
-	 nNoBEh/94NVVN387CTS/Iqu1FhxXWIJwNZDwWZTK5/DBGIOAmM9EqDWHDUokxdeca6
-	 pZoVntxKyDPvQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH v1 14/14] thermal: trip: Drop thermal_zone_get_trip()
-Date: Mon, 17 Jun 2024 20:12:50 +0200
-Message-ID: <6713673.4vTCxPXJkl@kreacher>
-In-Reply-To: <8409966.T7Z3S40VBb@kreacher>
-References: <8409966.T7Z3S40VBb@kreacher>
+	s=arc-20240116; t=1718647983; c=relaxed/simple;
+	bh=qGzzFCM9GBI/T5/mvB26jY5aMzmD2fljhmO2aKHr978=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QtlTn5tIdGSuIl7CCvqrdzYug6PH+zPqMYxkHPSNPR073u83+ySWH/2Mwuoe47lS3LWaSMfNQnB8pYfHvljbOcfml2jNCCwKA7M2/MxIkqYcS8oSxL+SLBsPVvyeTXHhg503m4fodkb6j2xGhpPcDtJyJOOL26uRQIxEZogq9zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mudRwMLg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B107FC2BD10;
+	Mon, 17 Jun 2024 18:13:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718647982;
+	bh=qGzzFCM9GBI/T5/mvB26jY5aMzmD2fljhmO2aKHr978=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mudRwMLg9qfFInpL3OaquJb0OLV867NqKJ7FIOlTLSIg3MXJf08QfF0W02zceTv0Z
+	 vroXLjFcJzhORlpDOlZFhuUsoeGWoh+hK1qSydVa2GGpXMW/rBpsITex5jzrwCI9fk
+	 ejfmFFb/k0+KouYDkWdQlJQHGoERj4FfRdD0qY6aQ/ZNG2qtvb4RHu4d+MIGvGg2LT
+	 tVLEF+E8LLBD2jdTedKfmNJgXjF5O8m6A6G1nAVkApFS25eYdU5O4S/fbVhcPVm1ci
+	 TrK5Fyyvrff0APAl5QMeGpFHccISK4VIusDeKOXc6g3gvjM7LTOZUHH9v/FAITXu9n
+	 tjQ60CpOzwJdg==
+From: Kees Cook <kees@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Update entries for Kees Cook
+Date: Mon, 17 Jun 2024 11:13:01 -0700
+Message-Id: <20240617181257.work.206-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfedvhedguddvvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgii
- tggrnhhosehlihhnrghrohdrohhrgh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4783; i=kees@kernel.org; h=from:subject:message-id; bh=qGzzFCM9GBI/T5/mvB26jY5aMzmD2fljhmO2aKHr978=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmcHyti7HlRWjD2TwtqEZMQJpIYrgqrBrX1VXDE 31Ix3Z3EDyJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZnB8rQAKCRCJcvTf3G3A JqGpD/94AcYEO9+psNEvzDJmExL2YCWdBdwzEPFddhPlIfXW9IdpJm/2cJimt8+SAKklUwEdEaA HYEbTfq6WRJ8P2c2N5X17ShpMMk3/gdlBCeXXI5W34lMrJI535QvIMP8OahiaAeK4bIxHKGzCKr L/NF7Cm6ZTD0gcBxpAQMN+dXOjj6FIRUhucNPTUOHKV28cyMavtZo3uO/HLRK66uwJpYxFFS0iE Hs66/flhe/6Z6xiePl/iB2rCcuAOkBZ3BPAkxp40OAlBQvX4GMI3JrmiQpQc5r6g5P6nkkC+U/a cNzaHtazOKowgU1lnqpugAi58NXfr+nc8ez7MoGf7o+l8UAqN0/A7ZOE+djY1B9D54q6oKFENQQ jVQgHSRXjl9XyZxMvzok2L9WK5T7jvXkNR7Et/JJCXXdrTLrSmRp5+HT2MNadIUBGu8dnnOU+ss 3RhWvAx+I47CDhhlYgz2JYQbVWse6KDwekfvnfc72/n/kM3N2Aq9M6m4FTQMC+Aw+mLUkVSbjs8 FZ8im3MOTu1s1H9rrQTdBSy7r74avWPaLe9aJCRQ0YM+HdzXzxkdYmEK7bTL3sGoTYMy6I1U+lr imgoePphv11rit4YbwNL5KgTe0MGuVqJuJIUo5hvQSrLJtpR+5CLgoFIKbz1Jvrept4lugjpvm5 C/AHYs7xfVsFj
+ lA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Update current email address for Kees Cook in the MAINTAINER file to
+match the change from commit 4e173c825b19 ("mailmap: update entry for
+Kees Cook").
 
-There are no more callers of thermal_zone_get_trip() in the tree, so
-drop it.
-
-No functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
 ---
- drivers/thermal/thermal_trip.c |   14 --------------
- include/linux/thermal.h        |    2 --
- 2 files changed, 16 deletions(-)
+ MAINTAINERS | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-Index: linux-pm/drivers/thermal/thermal_trip.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_trip.c
-+++ linux-pm/drivers/thermal/thermal_trip.c
-@@ -114,20 +114,6 @@ void thermal_zone_set_trips(struct therm
- 		dev_err(&tz->device, "Failed to set trips: %d\n", ret);
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8754ac2c259d..f601a2fd1ebf 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5296,7 +5296,7 @@ F:	drivers/infiniband/hw/usnic/
  
--int thermal_zone_get_trip(struct thermal_zone_device *tz, int trip_id,
--			  struct thermal_trip *trip)
--{
--	if (!tz || !trip || trip_id < 0 || trip_id >= tz->num_trips)
--		return -EINVAL;
--
--	mutex_lock(&tz->lock);
--	*trip = tz->trips[trip_id].trip;
--	mutex_unlock(&tz->lock);
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(thermal_zone_get_trip);
--
- int thermal_zone_trip_id(const struct thermal_zone_device *tz,
- 			 const struct thermal_trip *trip)
- {
-Index: linux-pm/include/linux/thermal.h
-===================================================================
---- linux-pm.orig/include/linux/thermal.h
-+++ linux-pm/include/linux/thermal.h
-@@ -202,8 +202,6 @@ static inline void devm_thermal_of_zone_
- }
- #endif
+ CLANG CONTROL FLOW INTEGRITY SUPPORT
+ M:	Sami Tolvanen <samitolvanen@google.com>
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ R:	Nathan Chancellor <nathan@kernel.org>
+ L:	llvm@lists.linux.dev
+ S:	Supported
+@@ -8212,7 +8212,7 @@ F:	rust/kernel/net/phy.rs
  
--int thermal_zone_get_trip(struct thermal_zone_device *tz, int trip_id,
--			  struct thermal_trip *trip);
- int for_each_thermal_trip(struct thermal_zone_device *tz,
- 			  int (*cb)(struct thermal_trip *, void *),
- 			  void *data);
-
-
+ EXEC & BINFMT API, ELF
+ R:	Eric Biederman <ebiederm@xmission.com>
+-R:	Kees Cook <keescook@chromium.org>
++R:	Kees Cook <kees@kernel.org>
+ L:	linux-mm@kvack.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
+@@ -8613,7 +8613,7 @@ S:	Maintained
+ F:	drivers/net/ethernet/nvidia/*
+ 
+ FORTIFY_SOURCE
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ L:	linux-hardening@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
+@@ -9103,7 +9103,7 @@ F:	include/linux/mfd/gsc.h
+ F:	include/linux/platform_data/gsc_hwmon.h
+ 
+ GCC PLUGINS
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ L:	linux-hardening@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
+@@ -9237,7 +9237,7 @@ S:	Maintained
+ F:	drivers/input/touchscreen/resistive-adc-touch.c
+ 
+ GENERIC STRING LIBRARY
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ R:	Andy Shevchenko <andy@kernel.org>
+ L:	linux-hardening@vger.kernel.org
+ S:	Supported
+@@ -11951,7 +11951,7 @@ F:	scripts/package/
+ F:	usr/
+ 
+ KERNEL HARDENING (not covered by other areas)
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ R:	Gustavo A. R. Silva <gustavoars@kernel.org>
+ L:	linux-hardening@vger.kernel.org
+ S:	Supported
+@@ -12479,7 +12479,7 @@ F:	drivers/scsi/53c700*
+ 
+ LEAKING_ADDRESSES
+ M:	Tycho Andersen <tycho@tycho.pizza>
+-R:	Kees Cook <keescook@chromium.org>
++R:	Kees Cook <kees@kernel.org>
+ L:	linux-hardening@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
+@@ -12775,7 +12775,7 @@ F:	arch/powerpc/platforms/8xx/
+ F:	arch/powerpc/platforms/83xx/
+ 
+ LINUX KERNEL DUMP TEST MODULE (LKDTM)
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ S:	Maintained
+ F:	drivers/misc/lkdtm/*
+ F:	tools/testing/selftests/lkdtm/*
+@@ -12905,7 +12905,7 @@ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+ F:	drivers/media/usb/dvb-usb-v2/lmedm04*
+ 
+ LOADPIN SECURITY MODULE
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
+ F:	Documentation/admin-guide/LSM/LoadPin.rst
+@@ -17998,7 +17998,7 @@ F:	tools/testing/selftests/proc/
+ 
+ PROC SYSCTL
+ M:	Luis Chamberlain <mcgrof@kernel.org>
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ M:	Joel Granados <j.granados@samsung.com>
+ L:	linux-kernel@vger.kernel.org
+ L:	linux-fsdevel@vger.kernel.org
+@@ -18054,7 +18054,7 @@ F:	Documentation/devicetree/bindings/net/pse-pd/
+ F:	drivers/net/pse-pd/
+ 
+ PSTORE FILESYSTEM
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ R:	Tony Luck <tony.luck@intel.com>
+ R:	Guilherme G. Piccoli <gpiccoli@igalia.com>
+ L:	linux-hardening@vger.kernel.org
+@@ -20060,7 +20060,7 @@ F:	drivers/media/cec/platform/seco/seco-cec.c
+ F:	drivers/media/cec/platform/seco/seco-cec.h
+ 
+ SECURE COMPUTING
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ R:	Andy Lutomirski <luto@amacapital.net>
+ R:	Will Drewry <wad@chromium.org>
+ S:	Supported
+@@ -22974,7 +22974,7 @@ F:	drivers/block/ublk_drv.c
+ F:	include/uapi/linux/ublk_cmd.h
+ 
+ UBSAN
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ R:	Marco Elver <elver@google.com>
+ R:	Andrey Konovalov <andreyknvl@gmail.com>
+ R:	Andrey Ryabinin <ryabinin.a.a@gmail.com>
+@@ -24812,7 +24812,7 @@ F:	drivers/net/hamradio/yam*
+ F:	include/linux/yam.h
+ 
+ YAMA SECURITY MODULE
+-M:	Kees Cook <keescook@chromium.org>
++M:	Kees Cook <kees@kernel.org>
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
+ F:	Documentation/admin-guide/LSM/Yama.rst
+-- 
+2.34.1
 
 
