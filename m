@@ -1,138 +1,218 @@
-Return-Path: <linux-kernel+bounces-216581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A6B90A1CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:29:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8FB790A1CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24BF6B21B51
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:29:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B05F1F21B7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DF58C1A;
-	Mon, 17 Jun 2024 01:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="pHFdfnjb"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CD06AB8;
+	Mon, 17 Jun 2024 01:36:26 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3C779CE
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8403228FA;
+	Mon, 17 Jun 2024 01:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718587787; cv=none; b=lcdC4QEMny/3HaPOSfZsa6Fn0QC/UHmemk2t1c3QcPHGtkyC16v8J8bvWxmhKk8v7DMcGOOO6JojWDAFYqQoZDE7gMIupi7KzCfjKYdkoGfsk/vTMT/vM70GOTRVBdIxbSVSHBXnPKuURjxtoj0xs7/12AKowMyuzZ46Z6pqTEY=
+	t=1718588186; cv=none; b=bJeGzo9f6fg86Ptor96sjN0e9M7WYVZpvdq6gqc2NPisUWsoKti0/+3KaGKc67deQhxnwOmJmHplBHHXNJQFpTHZri3Z44ohRm6LvP+s6kZSIxlJldrsJVMf5JLMGtQTV9hTEcqqiEJ1EOTy6sm3cwPb07bRndgvDt0mVleg8+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718587787; c=relaxed/simple;
-	bh=X5aRt+LPUsZLXEL4wr7fcShbnt/xSZ8e2tYNBbMPTdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V7fFS9M6JrRBYmByE6Af9rLO5yyonEgMYu8+I8KZJBy5qKv+RR7sm8h3CyPeaiqbOpenwcLZFMYIz0l1wKEIS/nO08g+PMma4leJYB0jM2CSG/62UiejvT2eF9BSQca7RZJuL77iH31PqsYgEorSUK0CS8Yo6sJ6RcL9VrdPkeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=pHFdfnjb; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f8507aac31so33441695ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 18:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1718587786; x=1719192586; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bqgWAO4mCWwupa+lR9NOrzfPSBggKHunYbwtSEV5JoQ=;
-        b=pHFdfnjbc+3sN+PiTupOJiNyZtsOSJcwLnvUHU7H9GJ2EornD4YRHGpju5jH2MGAg/
-         c4ZXQYisAo0tj6/L5aiQzDK8EwrJGd5PwNqlmiy3SHELphMmZ4iwTRkJcdqW/qN/2++P
-         RPvjZ3h1wfMf7D4OFufbFOft2BKWCQZpwQpJYfUjbg/jJPSM74hpS0ULIFStNW8dpIle
-         rRQtHJjS0bhI4Qw+8HqP/yPMI0mE56IRcfaxHl+Nep5C1XUSBEaLSfUxxVb6kMvT32pt
-         Sn1EbCQq0VpyBO5F+T3S3d6mqqMEbgYTN5fycNJwEhQ8UiAQmvgV/rCcZa9UJulLF9tR
-         g8fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718587786; x=1719192586;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bqgWAO4mCWwupa+lR9NOrzfPSBggKHunYbwtSEV5JoQ=;
-        b=c55Wtc1CIHnyi9JVQZG/q4QO9umy4rEzkPjyludtE/Jga0y/kaRPRaF0wG/sMdSAHx
-         qgKm6tFv5xBN94/RWRDnXlH5+jDS2xnzL8qaFjekjTE8y+x9bXbdfDlQkLL/Ee7HHq4T
-         EKba40SPnVYGPlLvhJs+I+pzrPA1BeVU+QMyIkqglmynCLDqaOkTWXUum4IhubWKELtL
-         FXwOd121XPbU7RftKwEacRjsIqPLahFHgC7ED7IpQyU1YD0I5KUao8/KpPyzBeBza9Df
-         6XT4E7Q8kalcXgh5NfSXUJxJpxC0pMe5N4kxHmgYnCGeh4Dwx56h9jUhEEWYIMLfNGiB
-         G4ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVbo6RKeewU5akMBGZArYIIRUUYFWP+o2jgK4vJap6V7R7aC9WtOP22lFlXuimpCEpnPSgN6phT2oUdHleEiGppjl+hp9T6Y+JPgYh7
-X-Gm-Message-State: AOJu0YxYxfRjFnBxti/BM4CZEJ06gCn6XCWXVX83zCqPWaEdLkyQKSs4
-	0Rotha/dmfzjOYiYUzY+BSuyBP9KD/ncHVfwT8+3PGT4mD/VQIaVIUqhYKO8Hv4=
-X-Google-Smtp-Source: AGHT+IH2yamUY2L+mg2sDf6W0MYe+fr1/6bICbKfZYn/cmrt+tr3TvVUeXggb8kPWxWwSK9lWhE1Zw==
-X-Received: by 2002:a17:902:e88a:b0:1f6:d368:7dd7 with SMTP id d9443c01a7336-1f862b155e2mr101843335ad.45.1718587785415;
-        Sun, 16 Jun 2024 18:29:45 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855ee80fesm69659525ad.124.2024.06.16.18.29.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 18:29:44 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sJ1Bm-00124e-1P;
-	Mon, 17 Jun 2024 11:29:42 +1000
-Date: Mon, 17 Jun 2024 11:29:42 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, djwong@kernel.org,
-	chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 11/11] xfs: enable block size larger than page size
- support
-Message-ID: <Zm+RhjG6DUoat7lO@dread.disaster.area>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-12-kernel@pankajraghav.com>
- <20240613084725.GC23371@lst.de>
+	s=arc-20240116; t=1718588186; c=relaxed/simple;
+	bh=9H1/J8OKKqVwu2xDiBQTLiXvt6EywQ1255mf6P8udi8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KGPgEKyrYpz8LXyUbtxUTEF83zFYEPs+s0ZDztDZCZ1PpXZG11DC7ehk031R/HFbu+fLDY7LeCNT365MUbZ6GfavBxJZUoIYv881KLfM8Xt0XNZ8nZTBKKzSzChenb+LuE5yuCM6ZBaO/aKaI1aEgSllFtx24N+N4W7ksTW0rOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W2XVs1DvKzdbN5;
+	Mon, 17 Jun 2024 09:34:45 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id AAB32140258;
+	Mon, 17 Jun 2024 09:36:14 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 17 Jun 2024 09:36:13 +0800
+Message-ID: <c5b6aca7-4673-f529-45ec-edbacca7a2ac@huawei.com>
+Date: Mon, 17 Jun 2024 09:36:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613084725.GC23371@lst.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2] riscv: stacktrace: Add USER_STACKTRACE support
+Content-Language: en-US
+To: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<dev.mbstr@gmail.com>, <samuel.holland@sifive.com>,
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>
+References: <20240604034729.841930-1-ruanjinjie@huawei.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240604034729.841930-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-On Thu, Jun 13, 2024 at 10:47:25AM +0200, Christoph Hellwig wrote:
-> On Fri, Jun 07, 2024 at 02:59:02PM +0000, Pankaj Raghav (Samsung) wrote:
-> > --- a/fs/xfs/libxfs/xfs_ialloc.c
-> > +++ b/fs/xfs/libxfs/xfs_ialloc.c
-> > @@ -3019,6 +3019,11 @@ xfs_ialloc_setup_geometry(
-> >  		igeo->ialloc_align = mp->m_dalign;
-> >  	else
-> >  		igeo->ialloc_align = 0;
-> > +
-> > +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-> > +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-> > +	else
-> > +		igeo->min_folio_order = 0;
-> >  }
+ Gentle ping.
+
+On 2024/6/4 11:47, Jinjie Ruan wrote:
+> Currently, userstacktrace is unsupported for riscv. So use the
+> perf_callchain_user() code as blueprint to implement the
+> arch_stack_walk_user() which add userstacktrace support on riscv.
+> Meanwhile, we can use arch_stack_walk_user() to simplify the implementation
+> of perf_callchain_user().
 > 
-> The minimum folio order isn't really part of the inode (allocation)
-> geometry, is it?
-
-I suggested it last time around instead of calculating the same
-constant on every inode allocation. We're already storing in-memory
-strunct xfs_inode allocation init values in this structure. e.g. in
-xfs_inode_alloc() we see things like this:
-
-	ip->i_diflags2 = mp->m_ino_geo.new_diflags2;
-
-So that we only calculate the default values for the filesystem once
-instead of on every inode allocation. This isn't unreasonable
-because xfs_inode_alloc() is a fairly hot path.
-
-The only other place we might store it is the struct xfs_mount, but
-given all the inode allocation constants are already in the embedded
-mp->m_ino_geo structure, it just seems like a much better idea to
-put it will all the other inode allocation constants than dump it
-randomly into the struct xfs_mount....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406012109.PDAjXm2i-lkp@intel.com/
+> ---
+> v2:
+> - Fix the cocci warning, !A || A && B is equivalent to !A || B.
+> ---
+>  arch/riscv/Kconfig                 |  1 +
+>  arch/riscv/kernel/perf_callchain.c | 46 ++----------------------------
+>  arch/riscv/kernel/stacktrace.c     | 43 ++++++++++++++++++++++++++++
+>  3 files changed, 47 insertions(+), 43 deletions(-)
+> 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 0525ee2d63c7..6ed96d935b8f 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -193,6 +193,7 @@ config RISCV
+>  	select THREAD_INFO_IN_TASK
+>  	select TRACE_IRQFLAGS_SUPPORT
+>  	select UACCESS_MEMCPY if !MMU
+> +	select USER_STACKTRACE_SUPPORT
+>  	select ZONE_DMA32 if 64BIT
+>  
+>  config CLANG_SUPPORTS_DYNAMIC_FTRACE
+> diff --git a/arch/riscv/kernel/perf_callchain.c b/arch/riscv/kernel/perf_callchain.c
+> index 3348a61de7d9..c7468af77c66 100644
+> --- a/arch/riscv/kernel/perf_callchain.c
+> +++ b/arch/riscv/kernel/perf_callchain.c
+> @@ -6,37 +6,9 @@
+>  
+>  #include <asm/stacktrace.h>
+>  
+> -/*
+> - * Get the return address for a single stackframe and return a pointer to the
+> - * next frame tail.
+> - */
+> -static unsigned long user_backtrace(struct perf_callchain_entry_ctx *entry,
+> -				    unsigned long fp, unsigned long reg_ra)
+> +static bool fill_callchain(void *entry, unsigned long pc)
+>  {
+> -	struct stackframe buftail;
+> -	unsigned long ra = 0;
+> -	unsigned long __user *user_frame_tail =
+> -		(unsigned long __user *)(fp - sizeof(struct stackframe));
+> -
+> -	/* Check accessibility of one struct frame_tail beyond */
+> -	if (!access_ok(user_frame_tail, sizeof(buftail)))
+> -		return 0;
+> -	if (__copy_from_user_inatomic(&buftail, user_frame_tail,
+> -				      sizeof(buftail)))
+> -		return 0;
+> -
+> -	if (reg_ra != 0)
+> -		ra = reg_ra;
+> -	else
+> -		ra = buftail.ra;
+> -
+> -	fp = buftail.fp;
+> -	if (ra != 0)
+> -		perf_callchain_store(entry, ra);
+> -	else
+> -		return 0;
+> -
+> -	return fp;
+> +	return perf_callchain_store(entry, pc) == 0;
+>  }
+>  
+>  /*
+> @@ -56,19 +28,7 @@ static unsigned long user_backtrace(struct perf_callchain_entry_ctx *entry,
+>  void perf_callchain_user(struct perf_callchain_entry_ctx *entry,
+>  			 struct pt_regs *regs)
+>  {
+> -	unsigned long fp = 0;
+> -
+> -	fp = regs->s0;
+> -	perf_callchain_store(entry, regs->epc);
+> -
+> -	fp = user_backtrace(entry, fp, regs->ra);
+> -	while (fp && !(fp & 0x3) && entry->nr < entry->max_stack)
+> -		fp = user_backtrace(entry, fp, 0);
+> -}
+> -
+> -static bool fill_callchain(void *entry, unsigned long pc)
+> -{
+> -	return perf_callchain_store(entry, pc) == 0;
+> +	arch_stack_walk_user(fill_callchain, entry, regs);
+>  }
+>  
+>  void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+> diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
+> index 528ec7cc9a62..9685a2baa5d9 100644
+> --- a/arch/riscv/kernel/stacktrace.c
+> +++ b/arch/riscv/kernel/stacktrace.c
+> @@ -161,3 +161,46 @@ noinline void arch_stack_walk(stack_trace_consume_fn consume_entry, void *cookie
+>  {
+>  	walk_stackframe(task, regs, consume_entry, cookie);
+>  }
+> +
+> +/*
+> + * Get the return address for a single stackframe and return a pointer to the
+> + * next frame tail.
+> + */
+> +static unsigned long unwind_user_frame(stack_trace_consume_fn consume_entry,
+> +				       void *cookie, unsigned long fp,
+> +				       unsigned long reg_ra)
+> +{
+> +	struct stackframe buftail;
+> +	unsigned long ra = 0;
+> +	unsigned long __user *user_frame_tail =
+> +		(unsigned long __user *)(fp - sizeof(struct stackframe));
+> +
+> +	/* Check accessibility of one struct frame_tail beyond */
+> +	if (!access_ok(user_frame_tail, sizeof(buftail)))
+> +		return 0;
+> +	if (__copy_from_user_inatomic(&buftail, user_frame_tail,
+> +				      sizeof(buftail)))
+> +		return 0;
+> +
+> +	ra = reg_ra ? : buftail.ra;
+> +
+> +	fp = buftail.fp;
+> +	if (!ra || !consume_entry(cookie, ra))
+> +		return 0;
+> +
+> +	return fp;
+> +}
+> +
+> +void arch_stack_walk_user(stack_trace_consume_fn consume_entry, void *cookie,
+> +			  const struct pt_regs *regs)
+> +{
+> +	unsigned long fp = 0;
+> +
+> +	fp = regs->s0;
+> +	if (!consume_entry(cookie, regs->epc))
+> +		return;
+> +
+> +	fp = unwind_user_frame(consume_entry, cookie, fp, regs->ra);
+> +	while (fp && !(fp & 0x3))
+> +		fp = unwind_user_frame(consume_entry, cookie, fp, 0);
+> +}
 
