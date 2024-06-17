@@ -1,281 +1,389 @@
-Return-Path: <linux-kernel+bounces-216790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F2F90A67E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1175990A680
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD4E2868B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC79287E58
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559E2186E37;
-	Mon, 17 Jun 2024 07:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C19318C321;
+	Mon, 17 Jun 2024 07:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JINPzISh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y9G2XRtd"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9107B79D3
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A1679D3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718608113; cv=none; b=MImnhkermI5DuGgXMY8kcnGoYTuNm/mQoUhZsZ4bLhI2oKMvvVgNrXOtY5HUY+9bX70D7BVyP3yP3iydLnXeI5/CQ4DWco0aeqxVBd643XUt01Va00COWVrw/4JoyQhLs9d/nZG2FE0LPjpmtBuTtiemLRyiMGapjCXk0NWBP6Y=
+	t=1718608122; cv=none; b=It3xO+6bXwI9LaGHIY4I3ngTH+sW/M9gLJgY9O9hztlC0GzQrZlo6HVpQBqGJdqKpYDhv2CGGjvv/IVCh8iMYCSTKVfaU1at4lg1iJlc5fIrVXie08MKRdmokS6aXLfVpnrIcnwkFAWNPb7+yZ7JEz6clG00df2fEK9eLOyEROs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718608113; c=relaxed/simple;
-	bh=USrfOZY7YjcJr3YXnlPp2uzKRs8/h1OqgvruayPDXP4=;
-	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ak5W2W4DeK3b7eIhGdEIXKRfMsyEF5TGkwoNVw4Ej0EKazQTuK86JU3FAd2w3+Wt0QIKUdx4Vs9lCmXo+8p4rB32BjQb8l6n+UVrPV4N0Mr+5UYyTcHRPgVYpyw7gKSZg48YvSnepwK/UDsiRRZcICchAH3a9v24riFfJojwCwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JINPzISh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718608109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VFnZWNFJWyA94C2L1f2HcpW9Z4CdvGnFQUz/35+GLvM=;
-	b=JINPzIShqMojpuPMtU+mK4jzRnP1cWUUsHnue8l2p5vECQ9VxGzYbQyQ0JNGErEog6P/p1
-	otsrsNWdGYx3arYVeIFZ050fX5OCRD/0QvO5Mr5VzAoVNdFehHLCFxYMJBKtF/B/WBxono
-	sd3CtFeJ9LpOUpgmkTVIg9deMZGeJ10=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-160-t8AuUOctPYSefQ3VkpRAuw-1; Mon, 17 Jun 2024 03:08:26 -0400
-X-MC-Unique: t8AuUOctPYSefQ3VkpRAuw-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6ad8a2dbd97so51993326d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 00:08:25 -0700 (PDT)
+	s=arc-20240116; t=1718608122; c=relaxed/simple;
+	bh=UxifHNXdF0WIrVcC/oY+IkV/M1T/Ksju/KCKMba4XDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rKdcrnDOQBVupsRbjtdcBtEv4+EFV6rhhSxDbWYGstw3/dEHW+VuQBoNZKXcOZEhMJOmYoDm+KQ21Ss5TuapmIkbwcFUEpL2gduGWtoUISRpAXCj6l1XiMSpt3r+FvhEVwuDqMERryj+xgkl0z/c8nifhvWRWPtQfaUa39hGaAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y9G2XRtd; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-48c5133a2adso1292686137.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 00:08:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718608119; x=1719212919; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YTSUxbZ58gO2uuyvGy7K8h6s7XmT/ufVF/lSatLTiZQ=;
+        b=Y9G2XRtdJOwrX4XIINvefpCivwU6oPQI1QKL5TFxI1rgIG+BSE46RDrmVfeMkVW+OO
+         AXk+cnFHRgp3Ac8j3hYC3EnDZ0OdExSWssqNsdfoM/eK7adZWoXL08w9PFiRM6l6DYp2
+         IFvrPemR3A9gdbxvgacvgbV1/z+RnJexXsgGntZeMPJ3WHQvC1b9h/BsCBSOxiO0OmU6
+         /GnyEZ8fbQ6oSzy9mTj9sR/lsCX7PlA/mvF89u4II7KvFiDeu1Z7/uWBJa6aJW7u5BBt
+         cvUWR43ioDi3Kl6v42L9dFnwBPedGR+dHFqoOakM5VNeLH/bpssLnRuG4L/J9hdJwXdI
+         IC0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718608105; x=1719212905;
-        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VFnZWNFJWyA94C2L1f2HcpW9Z4CdvGnFQUz/35+GLvM=;
-        b=KJpagmY+jgMkeOv7Dl2Pr0+U3Y92XfE/cCxv2RmyoNr0fED5jL/JSzjOGLQiGIuL2S
-         l6DuSorrNgpBlAgKTkU4o0IIbaWY+KTYW032VLOICBVVgfDaVUlL75DcIr/CIb6w5aev
-         bWR2k7uln1fVlPsOEDxCniQSc8ByTEdmAaYPq9nyhLTTzvko92YtWbsJHdRgY5ZCOQP2
-         4nizsxSnL0d2qt0gSP66gTjPftQd70DjXVIe3FfoLN8LN4tFSr7ICNNiTIwiV//2ts9W
-         EklZD5Vb9oGSwjVsUvOxbA7xNqTPwk6+UoDVbCbOCknrwmzn17W2W+Rpj0UV/NCDv88b
-         orZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVx2rD/uh2rqReqq/U4pKDp6vI/LHZSyqAM6yIljeDlP0WY5auK+bsRUCRgstVA/si25B4532S9AsR84mHWXyeB++ZfWihpPJJRcte1
-X-Gm-Message-State: AOJu0Ywdqt7krDAPEhtw/MItEH0kzZ5SQPv+KYWExqNBmThRTFJl1Z3J
-	WKnwznl1ycJVq7eWqz8PrwrK5/oLuDgGqCJOS2E8SUI9ojELTNaSsYTS1BBVXfJ4pPcZKzSZym+
-	hies0Z8G92Y852Vth8FcYtToc8Xt8ykqJ84j9+x/Mido5AxeV7ikpmVpESw+BgpT0Zh/TMj82v2
-	ggD9VtBIG+Qt24exeVgX2J0OBclxC/11txY00U
-X-Received: by 2002:a0c:e78d:0:b0:6b0:6400:3b6f with SMTP id 6a1803df08f44-6b2afc78e7emr89614646d6.8.1718608105380;
-        Mon, 17 Jun 2024 00:08:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHngmpoF0G1Kpc6044Rkne2yjimTQKfws9kfGdgowCpRPFvfoKKY3G5g8yuJotyXboNdv+HW7uPscrnjkgdiZM=
-X-Received: by 2002:a0c:e78d:0:b0:6b0:6400:3b6f with SMTP id
- 6a1803df08f44-6b2afc78e7emr89614506d6.8.1718608105010; Mon, 17 Jun 2024
- 00:08:25 -0700 (PDT)
-Received: from 311643009450 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 17 Jun 2024 07:08:24 +0000
-From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
-References: <20240603185647.2310748-1-amorenoz@redhat.com> <20240603185647.2310748-7-amorenoz@redhat.com>
- <f7t4j9vo44g.fsf@redhat.com>
+        d=1e100.net; s=20230601; t=1718608119; x=1719212919;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YTSUxbZ58gO2uuyvGy7K8h6s7XmT/ufVF/lSatLTiZQ=;
+        b=btUuzz6HE1+oh9aNKKz7GY/iHhH/0hgFxpis1eDrbek+W2NwZ/dGSOCUDwa/ybIU2C
+         kKOxi9IWPuVECPZ6bd8WpfLCroVH8ejpYqpXZEZpLnk+Xujn6fDOczH4SaAxFdjTAO0i
+         eJuZ/pJUpy32z7r3mjU8xcnN3i65Q+HJBSLLS5zPXm8IL7Z0wAZvvmQ0JxU8dtHzp9zq
+         dxflnqonsiNzoptYioqCGtINNlbCeYZfCnTPTdz4ehV/BS3Urt8l7yB2uljJA7anQflL
+         gpAcFIom8g6acC+nRhDVnoe4TAAQTmZnXeipqIfJT2ZdkSvf4KsuN6r5KGfn9FFqxoLd
+         ru1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWUkNSlSzkzlbSn2bvopifMRxgDwX2Y8nJ7rWpdDqqK8otELxui3ocbVwCwPKOKRlbJq0+htNf0ElhBdGFcW0nAgyYD01Qel7qe8Q83
+X-Gm-Message-State: AOJu0YxoY+2L2qRBw8t7CQQiJ9enDJe0pVvIeOsybPQvvkF1Cru/vN2I
+	YQJvWXONnztT/He0y77DiQEulkf+nJdQBcU+HJ1jMK75agoGtERas/IPILtcLN9JS9I2xQvtQFx
+	4qgIJvJxcKa1duEfeO01/f1X6BFM=
+X-Google-Smtp-Source: AGHT+IGyXYkkwcBZ9+XOW52yrHvXrTX56lCWtABQ3YIC/2n4rgpCVy/f5/LrDDazRcCjCeSG4YVkTm+EkfxDrfTfuQ0=
+X-Received: by 2002:a05:6102:9c7:b0:48d:96fa:f0a7 with SMTP id
+ ada2fe7eead31-48dae32b935mr8051525137.2.1718608119323; Mon, 17 Jun 2024
+ 00:08:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <f7t4j9vo44g.fsf@redhat.com>
-Date: Mon, 17 Jun 2024 07:08:24 +0000
-Message-ID: <CAG=2xmPW=1HzojWhHaE3z_x5u_Dv1zPVmMn4cSmV6DF4fzq5KA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 6/9] net: openvswitch: store sampling
- probability in cb.
-To: Aaron Conole <aconole@redhat.com>
-Cc: netdev@vger.kernel.org, echaudro@redhat.com, horms@kernel.org, 
-	i.maximets@ovn.org, dev@openvswitch.org, Pravin B Shelar <pshelar@ovn.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
+References: <20240614195921.a20f1766a78b27339a2a3128@linux-foundation.org>
+ <20240615084714.37499-1-21cnbao@gmail.com> <87bk405akl.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87bk405akl.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 17 Jun 2024 19:08:27 +1200
+Message-ID: <CAGsJ_4yO+zZLyxnJCiOKVY+jkogo7vAyo8SY0PcsiM6JqYfduA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] mm: swap: mTHP swap allocator base on swap cluster order
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, chrisl@kernel.org, kaleshsingh@google.com, 
+	kasong@tencent.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	ryan.roberts@arm.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 12:55:59PM GMT, Aaron Conole wrote:
-> Adrian Moreno <amorenoz@redhat.com> writes:
+On Mon, Jun 17, 2024 at 6:50=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
+wrote:
 >
-> > The behavior of actions might not be the exact same if they are being
-> > executed inside a nested sample action. Store the probability of the
-> > parent sample action in the skb's cb area.
+> Hi, Barry,
 >
-> What does that mean?
+> Barry Song <21cnbao@gmail.com> writes:
 >
-
-Emit action, for instance, needs the probability so that psample
-consumers know what was the sampling rate applied. Also, the way we
-should inform about packet drops (via kfree_skb_reason) changes (see
-patch 7/9).
-
-> > Use the probability in emit_sample to pass it down to psample.
+> > On Sat, Jun 15, 2024 at 2:59=E2=80=AFPM Andrew Morton <akpm@linux-found=
+ation.org> wrote:
+> >>
+> >> On Fri, 14 Jun 2024 19:51:11 -0700 Chris Li <chrisl@kernel.org> wrote:
+> >>
+> >> > > I'm having trouble understanding the overall impact of this on use=
+rs.
+> >> > > We fail the mTHP swap allocation and fall back, but things continu=
+e to
+> >> > > operate OK?
+> >> >
+> >> > Continue to operate OK in the sense that the mTHP will have to split
+> >> > into 4K pages before the swap out, aka the fall back. The swap out a=
+nd
+> >> > swap in can continue to work as 4K pages, not as the mTHP. Due to th=
+e
+> >> > fallback, the mTHP based zsmalloc compression with 64K buffer will n=
+ot
+> >> > happen. That is the effect of the fallback. But mTHP swap out and sw=
+ap
+> >> > in is relatively new, it is not really a regression.
+> >>
+> >> Sure, but it's pretty bad to merge a new feature only to have it
+> >> ineffective after a few hours use.
+> >>
+> >> > >
+> >> > > > There is some test number in the V1 thread of this series:
+> >> > > > https://lore.kernel.org/r/20240524-swap-allocator-v1-0-47861b423=
+b26@kernel.org
+> >> > >
+> >> > > Well, please let's get the latest numbers into the latest patchset=
+.
+> >> > > Along with a higher-level (and quantitative) description of the us=
+er impact.
+> >> >
+> >> > I will need Barray's help to collect the number. I don't have the
+> >> > setup to reproduce his test result.
+> >> > Maybe a follow up commit message amendment for the test number when =
+I get it?
 > >
-> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> > ---
-> >  include/uapi/linux/openvswitch.h |  3 ++-
-> >  net/openvswitch/actions.c        | 25 ++++++++++++++++++++++---
-> >  net/openvswitch/datapath.h       |  3 +++
-> >  net/openvswitch/vport.c          |  1 +
-> >  4 files changed, 28 insertions(+), 4 deletions(-)
+> > Although the issue may seem complex at a systemic level, even a small p=
+rogram can
+> > demonstrate the problem and highlight how Chris's patch has improved th=
+e
+> > situation.
 > >
-> > diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
-> > index a0e9dde0584a..9d675725fa2b 100644
-> > --- a/include/uapi/linux/openvswitch.h
-> > +++ b/include/uapi/linux/openvswitch.h
-> > @@ -649,7 +649,8 @@ enum ovs_flow_attr {
-> >   * Actions are passed as nested attributes.
-> >   *
-> >   * Executes the specified actions with the given probability on a per-packet
-> > - * basis.
-> > + * basis. Nested actions will be able to access the probability value of the
-> > + * parent @OVS_ACTION_ATTR_SAMPLE.
-> >   */
-> >  enum ovs_sample_attr {
-> >  	OVS_SAMPLE_ATTR_UNSPEC,
-> > diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-> > index 3b4dba0ded59..33f6d93ba5e4 100644
-> > --- a/net/openvswitch/actions.c
-> > +++ b/net/openvswitch/actions.c
-> > @@ -1048,12 +1048,15 @@ static int sample(struct datapath *dp, struct sk_buff *skb,
-> >  	struct nlattr *sample_arg;
-> >  	int rem = nla_len(attr);
-> >  	const struct sample_arg *arg;
-> > +	u32 init_probability;
-> >  	bool clone_flow_key;
-> > +	int err;
+> > To demonstrate this, I designed a basic test program that maximally all=
+ocates
+> > two memory blocks:
 > >
-> >  	/* The first action is always 'OVS_SAMPLE_ATTR_ARG'. */
-> >  	sample_arg = nla_data(attr);
-> >  	arg = nla_data(sample_arg);
-> >  	actions = nla_next(sample_arg, &rem);
-> > +	init_probability = OVS_CB(skb)->probability;
+> >  *   A memory block of up to 60MB, recommended for HUGEPAGE usage
+> >  *   A memory block of up to 1MB, recommended for NOHUGEPAGE usage
 > >
-> >  	if ((arg->probability != U32_MAX) &&
-> >  	    (!arg->probability || get_random_u32() > arg->probability)) {
-> > @@ -1062,9 +1065,21 @@ static int sample(struct datapath *dp, struct sk_buff *skb,
-> >  		return 0;
-> >  	}
+> > In the system configuration, I enabled 64KB mTHP and 64MB zRAM, providi=
+ng more than
+> > enough space for both the 60MB and 1MB allocations in the worst case. T=
+his setup
+> > allows us to assess two effects:
 > >
-> > +	if (init_probability) {
-> > +		OVS_CB(skb)->probability = ((u64)OVS_CB(skb)->probability *
-> > +					    arg->probability / U32_MAX);
-> > +	} else {
-> > +		OVS_CB(skb)->probability = arg->probability;
-> > +	}
-> > +
+> > 1.  When we don't enable mem2 (small folios), we consistently allocate =
+and free
+> >     swap slots aligned with 64KB.  whether there is a risk of failure t=
+o obtain
+> >     swap slots even though the zRAM has sufficient free space?
+> > 2.  When we enable mem2 (small folios), the presence of small folios ma=
+y lead
+> >     to fragmentation of clusters, potentially impacting the swapout pro=
+cess for
+> >     large folios negatively.
+> >
+> > (2) can be enabled by "-s", without -s, small folios are disabled.
+> >
+> > The script to configure zRAM and mTHP:
+> >
+> > echo lzo > /sys/block/zram0/comp_algorithm
+> > echo 64M > /sys/block/zram0/disksize
+> > echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabl=
+ed
+> > echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enable=
+d
+> > mkswap /dev/zram0
+> > swapon /dev/zram0
+> >
+> > The test program I made today after receiving Chris' patchset v2
+> >
+> > (Andrew, Please let me know if you want this small test program to
+> > be committed into kernel/tools/ folder. If yes, please let me know,
+> > and I will cleanup and prepare a patch):
+> >
+> > #define _GNU_SOURCE
+> > #include <stdio.h>
+> > #include <stdlib.h>
+> > #include <unistd.h>
+> > #include <string.h>
+> > #include <sys/mman.h>
+> > #include <errno.h>
+> > #include <time.h>
+> >
+> > #define MEMSIZE_MTHP (60 * 1024 * 1024)
+> > #define MEMSIZE_SMALLFOLIO (1 * 1024 * 1024)
+> > #define ALIGNMENT_MTHP (64 * 1024)
+> > #define ALIGNMENT_SMALLFOLIO (4 * 1024)
+> > #define TOTAL_DONTNEED_MTHP (16 * 1024 * 1024)
+> > #define TOTAL_DONTNEED_SMALLFOLIO (256 * 1024)
+> > #define MTHP_FOLIO_SIZE (64 * 1024)
+> >
+> > #define SWPOUT_PATH \
+> >     "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout"
+> > #define SWPOUT_FALLBACK_PATH \
+> >     "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_fa=
+llback"
+> >
+> > static void *aligned_alloc_mem(size_t size, size_t alignment)
+> > {
+> >     void *mem =3D NULL;
+> >     if (posix_memalign(&mem, alignment, size) !=3D 0) {
+> >         perror("posix_memalign");
+> >         return NULL;
+> >     }
+> >     return mem;
+> > }
+> >
+> > static void random_madvise_dontneed(void *mem, size_t mem_size,
+> >                                      size_t align_size, size_t total_do=
+ntneed_size)
+> > {
+> >     size_t num_pages =3D total_dontneed_size / align_size;
+> >     size_t i;
+> >     size_t offset;
+> >     void *addr;
+> >
+> >     for (i =3D 0; i < num_pages; ++i) {
+> >         offset =3D (rand() % (mem_size / align_size)) * align_size;
+> >         addr =3D (char *)mem + offset;
+> >         if (madvise(addr, align_size, MADV_DONTNEED) !=3D 0) {
+> >             perror("madvise dontneed");
+> >         }
+> >         memset(addr, 0x11, align_size);
+> >     }
+> > }
+> >
+> > static unsigned long read_stat(const char *path)
+> > {
+> >     FILE *file;
+> >     unsigned long value;
+> >
+> >     file =3D fopen(path, "r");
+> >     if (!file) {
+> >         perror("fopen");
+> >         return 0;
+> >     }
+> >
+> >     if (fscanf(file, "%lu", &value) !=3D 1) {
+> >         perror("fscanf");
+> >         fclose(file);
+> >         return 0;
+> >     }
+> >
+> >     fclose(file);
+> >     return value;
+> > }
+> >
+> > int main(int argc, char *argv[])
+> > {
+> >     int use_small_folio =3D 0;
+> >     int i;
+> >     void *mem1 =3D aligned_alloc_mem(MEMSIZE_MTHP, ALIGNMENT_MTHP);
+> >     if (mem1 =3D=3D NULL) {
+> >         fprintf(stderr, "Failed to allocate 60MB memory\n");
+> >         return EXIT_FAILURE;
+> >     }
+> >
+> >     if (madvise(mem1, MEMSIZE_MTHP, MADV_HUGEPAGE) !=3D 0) {
+> >         perror("madvise hugepage for mem1");
+> >         free(mem1);
+> >         return EXIT_FAILURE;
+> >     }
+> >
+> >     for (i =3D 1; i < argc; ++i) {
+> >         if (strcmp(argv[i], "-s") =3D=3D 0) {
+> >             use_small_folio =3D 1;
+> >         }
+> >     }
+> >
+> >     void *mem2 =3D NULL;
+> >     if (use_small_folio) {
+> >         mem2 =3D aligned_alloc_mem(MEMSIZE_SMALLFOLIO, ALIGNMENT_MTHP);
+> >         if (mem2 =3D=3D NULL) {
+> >             fprintf(stderr, "Failed to allocate 1MB memory\n");
+> >             free(mem1);
+> >             return EXIT_FAILURE;
+> >         }
+> >
+> >         if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_NOHUGEPAGE) !=3D 0) =
+{
+> >             perror("madvise nohugepage for mem2");
+> >             free(mem1);
+> >             free(mem2);
+> >             return EXIT_FAILURE;
+> >         }
+> >     }
+> >
+> >     for (i =3D 0; i < 100; ++i) {
+> >         unsigned long initial_swpout;
+> >         unsigned long initial_swpout_fallback;
+> >         unsigned long final_swpout;
+> >         unsigned long final_swpout_fallback;
+> >         unsigned long swpout_inc;
+> >         unsigned long swpout_fallback_inc;
+> >         double fallback_percentage;
+> >
+> >         initial_swpout =3D read_stat(SWPOUT_PATH);
+> >         initial_swpout_fallback =3D read_stat(SWPOUT_FALLBACK_PATH);
+> >
+> >         random_madvise_dontneed(mem1, MEMSIZE_MTHP, ALIGNMENT_MTHP,
+> >                                  TOTAL_DONTNEED_MTHP);
+> >
+> >         if (use_small_folio) {
+> >             random_madvise_dontneed(mem2, MEMSIZE_SMALLFOLIO,
+> >                                      ALIGNMENT_SMALLFOLIO,
+> >                                      TOTAL_DONTNEED_SMALLFOLIO);
+> >         }
+> >
+> >         if (madvise(mem1, MEMSIZE_MTHP, MADV_PAGEOUT) !=3D 0) {
+> >             perror("madvise pageout for mem1");
+> >             free(mem1);
+> >             if (mem2 !=3D NULL) {
+> >                 free(mem2);
+> >             }
+> >             return EXIT_FAILURE;
+> >         }
+> >
+> >         if (use_small_folio) {
+> >             if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_PAGEOUT) !=3D 0)=
+ {
+> >                 perror("madvise pageout for mem2");
+> >                 free(mem1);
+> >                 free(mem2);
+> >                 return EXIT_FAILURE;
+> >             }
+> >         }
+> >
+> >         final_swpout =3D read_stat(SWPOUT_PATH);
+> >         final_swpout_fallback =3D read_stat(SWPOUT_FALLBACK_PATH);
+> >
+> >         swpout_inc =3D final_swpout - initial_swpout;
+> >         swpout_fallback_inc =3D final_swpout_fallback - initial_swpout_=
+fallback;
+> >
+> >         fallback_percentage =3D (double)swpout_fallback_inc /
+> >                               (swpout_fallback_inc + swpout_inc) * 100;
+> >
+> >         printf("Iteration %d: swpout inc: %lu, swpout fallback inc: %lu=
+, Fallback percentage: %.2f%%\n",
+> >                i + 1, swpout_inc, swpout_fallback_inc, fallback_percent=
+age);
+> >     }
+> >
+> >     free(mem1);
+> >     if (mem2 !=3D NULL) {
+> >         free(mem2);
+> >     }
+> >
+> >     return EXIT_SUCCESS;
+> > }
 >
-> I'm confused by this.  Eventually, integer arithmetic will practically
-> guarantee that nested sample() calls will go to 0.  So eventually, the
-> test above will be impossible to meet mathematically.
+> Thank you very for your effort to write this test program.
 >
-> OTOH, you could argue that a 1% of 50% is low anyway, but it still would
-> have a positive probability count, and still be possible for
-> get_random_u32() call to match.
+> TBH, personally, I thought that this test program isn't practical
+> enough.  Can we show performance difference with some normal workloads?
+
+Right.
+
+The whole purpose of this small program is to demonstrate the problem
+in the current code - even swap slots are always allocated and released
+aligned with mTHP, the current mainline will soon get 100% fallback ratio
+though swap space is enough, and swap slots are not fragmented at all.
+as long as we lose empty clusters, we lose the chance to do mthp
+swapout.
+
+We are still running tests using real Android phones with real workloads, a=
+nd
+will update you with the result hopefully this week. I am a little worried =
+that
+the  triggered WARN_ONCE will lead to the failure of the test.
+
 >
-
-Using OVS's probability semantics, we can express probabilities as low
-as (100/U32_MAX)% which is pretty low indeed. However, just because the
-probability of executing the action is low I don't think we should not
-report it.
-
-Rethinking the integer arithmetics, it's true that we should avoid
-hitting zero on the division, eg: nesting 6x 1% sampling rates will make
-the result be zero which will make probability restoration fail on the
-way back. Threrefore, the new probability should be at least 1.
-
-
-> I'm not sure about this particular change.  Why do we need it?
+> [snip]
 >
+> --
+> Best Regards,
+> Huang, Ying
 
-Why do we need to propagate the probability down to nested "sample"
-actions? or why do we need to store the probability in the cb area in
-the first place?
-
-The former: Just for correctness as only storing the last one would be
-incorrect. Although I don't know of any use for nested "sample" actions.
-The latter: To pass it down to psample so that sample receivers know how
-the sampling rate applied (and, e.g: do throughput estimations like OVS
-does with IPFIX).
-
-
-> >  	clone_flow_key = !arg->exec;
-> > -	return clone_execute(dp, skb, key, 0, actions, rem, last,
-> > -			     clone_flow_key);
-> > +	err = clone_execute(dp, skb, key, 0, actions, rem, last,
-> > +			    clone_flow_key);
-> > +
-> > +	if (!last)
->
-> Is this right?  Don't we only want to set the probability on the last
-> action?  Should the test be 'if (last)'?
->
-
-This is restoring the parent's probability after the actions in the
-current sample action have been executed.
-
-If it was the last action there is no need to restore the probability
-back to the parent's (or zero if it's there's only one level) since no
-further action will require it. And more importantly, if it's the last
-action, the packet gets free'ed inside that "branch" so we must not
-access its memory.
-
-
-> > +		OVS_CB(skb)->probability = init_probability;
-> > +
-> > +	return err;
-> >  }
-> >
-> >  /* When 'last' is true, clone() should always consume the 'skb'.
-> > @@ -1313,6 +1328,7 @@ static int execute_emit_sample(struct datapath *dp, struct sk_buff *skb,
-> >  	struct psample_metadata md = {};
-> >  	struct vport *input_vport;
-> >  	const struct nlattr *a;
-> > +	u32 rate;
-> >  	int rem;
-> >
-> >  	for (a = nla_data(attr), rem = nla_len(attr); rem > 0;
-> > @@ -1337,8 +1353,11 @@ static int execute_emit_sample(struct datapath *dp, struct sk_buff *skb,
-> >
-> >  	md.in_ifindex = input_vport->dev->ifindex;
-> >  	md.trunc_size = skb->len - OVS_CB(skb)->cutlen;
-> > +	md.rate_as_probability = 1;
-> > +
-> > +	rate = OVS_CB(skb)->probability ? OVS_CB(skb)->probability : U32_MAX;
-> >
-> > -	psample_sample_packet(&psample_group, skb, 0, &md);
-> > +	psample_sample_packet(&psample_group, skb, rate, &md);
-> >  #endif
-> >
-> >  	return 0;
-> > diff --git a/net/openvswitch/datapath.h b/net/openvswitch/datapath.h
-> > index 0cd29971a907..9ca6231ea647 100644
-> > --- a/net/openvswitch/datapath.h
-> > +++ b/net/openvswitch/datapath.h
-> > @@ -115,12 +115,15 @@ struct datapath {
-> >   * fragmented.
-> >   * @acts_origlen: The netlink size of the flow actions applied to this skb.
-> >   * @cutlen: The number of bytes from the packet end to be removed.
-> > + * @probability: The sampling probability that was applied to this skb; 0 means
-> > + * no sampling has occurred; U32_MAX means 100% probability.
-> >   */
-> >  struct ovs_skb_cb {
-> >  	struct vport		*input_vport;
-> >  	u16			mru;
-> >  	u16			acts_origlen;
-> >  	u32			cutlen;
-> > +	u32			probability;
-> >  };
-> >  #define OVS_CB(skb) ((struct ovs_skb_cb *)(skb)->cb)
-> >
-> > diff --git a/net/openvswitch/vport.c b/net/openvswitch/vport.c
-> > index 972ae01a70f7..8732f6e51ae5 100644
-> > --- a/net/openvswitch/vport.c
-> > +++ b/net/openvswitch/vport.c
-> > @@ -500,6 +500,7 @@ int ovs_vport_receive(struct vport *vport, struct sk_buff *skb,
-> >  	OVS_CB(skb)->input_vport = vport;
-> >  	OVS_CB(skb)->mru = 0;
-> >  	OVS_CB(skb)->cutlen = 0;
-> > +	OVS_CB(skb)->probability = 0;
-> >  	if (unlikely(dev_net(skb->dev) != ovs_dp_get_net(vport->dp))) {
-> >  		u32 mark;
->
-
+Thanks
+Barry
 
