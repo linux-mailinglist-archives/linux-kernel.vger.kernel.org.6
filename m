@@ -1,95 +1,86 @@
-Return-Path: <linux-kernel+bounces-218180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA67C90BA3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:56:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A16090BA49
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612B31F22C64
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:56:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ED96B26E4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48281990C6;
-	Mon, 17 Jun 2024 18:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA64198E93;
+	Mon, 17 Jun 2024 18:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2++ArIa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIfpDLmh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E958E155C8D;
-	Mon, 17 Jun 2024 18:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C7E1D952E;
+	Mon, 17 Jun 2024 18:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718650566; cv=none; b=AonyyqClKaKWbmTpiWBXoZnp3FmeVa5ctFaDUQb66WOgiFr+Sozib5aDlVE2ZPZaOI5hgUPQg8Su3l6HFsrh+NvWFIeTdVL8iyYj1P+ZizJDt6PSYHQ13XL2tLJH99pt7R5kFRUBt2BbNU50ojoKXuYWY/L9JcrkByl5MlPhuXY=
+	t=1718650589; cv=none; b=Wzgyoiiw4JLWvDXcmqdS3s+uy5NJBt9Q92YRVE9rNXXAhLxvXXX4HLcyaafut38v0oOkwDaTNqihsU5xHKtWXDhX24J+UemuMGVz/IjpFp1ywKkekwrb3CTNeYvA5Xr0I/1yp4KEDlhPe2Ql2a+MA1iEwDUsi/qvMkJF/dKCseU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718650566; c=relaxed/simple;
-	bh=g7rkmBq2pe99Z9GXbL+NVIJ/TMOoi7Iw0Lv6xVkToJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oEZcBXYbnz/FMDS3ZeaTiPWFAM9mPfVnyXQ3gzbuZi6JZfsXTg0r6gbvz15RJesPY1ZIhcHKwmuc7HcI81ttit/rKABZsYYUKeDj24bSKZWS2lEk+1Y6poo/dllsR5RDjHqFAMyuRCMDuTBwB54b8v7lo2CcetUz3fKAZzzSK+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2++ArIa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5D93C2BD10;
-	Mon, 17 Jun 2024 18:56:03 +0000 (UTC)
+	s=arc-20240116; t=1718650589; c=relaxed/simple;
+	bh=bKNppUxxKGEIy1ouTAh9i0V63PIWka7DyWL7++tE5yQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bqwhIkZPT4YBdn2ibzsmapqmo+gYHWrPmiApeP281ESSq7Z6QJGZ2xUPLAHXjgZ1B6IDWBGhfhF9N23qni9n8WG97mnFPQkz9msKcYurh6vZBoOLaMmHWPjtgHEkgL8b8yabgWXgYzA99mLthZMqE9+p2tG4Cvc/wCpz6gJq444=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIfpDLmh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F55FC2BD10;
+	Mon, 17 Jun 2024 18:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718650565;
-	bh=g7rkmBq2pe99Z9GXbL+NVIJ/TMOoi7Iw0Lv6xVkToJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q2++ArIah/012FcoT7zryRSne2YU6H2RPdG7iBKuyfQrmxZbyv8Lx4xKP1XbxfRi4
-	 P9yShjbbBNPd5Z+pIYeIP1Db5YS3Pve2dMGtJ9MQbacqJtlAi1nHOUDKGST7luNl4S
-	 VT18yi6V9xiXWwuA1BAw5GJ4ydADTYRJMgezFx/borqv2g1Db4c7nv8jdEQcKkhy3o
-	 woEvNwsvdZ7EbXMnP814TsTEFIfxu95enQlEl1cSSv74R1Y4gUneBRc9DPkS12+urf
-	 6Erloj4I/sy3l2ecNNL80cFuj7jcXnVSsypQZ5zSuGonuDfO67EpStjz+LnqYx4GrU
-	 aGcp51DpIckgg==
-Date: Mon, 17 Jun 2024 12:56:01 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
-	djwong@kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
-	snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev,
-	hare@suse.de, Himanshu Madhani <himanshu.madhani@oracle.com>
-Subject: Re: [PATCH v8 05/10] block: Add core atomic write support
-Message-ID: <ZnCGwYomCC9kKIBY@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240610104329.3555488-1-john.g.garry@oracle.com>
- <20240610104329.3555488-6-john.g.garry@oracle.com>
+	s=k20201202; t=1718650589;
+	bh=bKNppUxxKGEIy1ouTAh9i0V63PIWka7DyWL7++tE5yQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HIfpDLmhMMDsPqxUk0E6Akv7LnRXXCnAt16io00Xj7L69X/I1e3cwfFJjlZe2KnUI
+	 J2JtFjDJNdnudsw1Wx9YYomu8fUB0xtBwv1y7snG1rBvuUMB0Qtg00/EF+btCbT044
+	 tita4PlBjYXSeX4V9Gj+YdxgvLZFVyFPgiMyk/voxk/l+4rxjX/aTDUddi1VnAUaxQ
+	 VXjgTNOPDvBtT39C0y8gw2qquwsV/mBwiobtYDnc3bhWHWzKEkH6a6zRQ2kg8/cYfD
+	 VBXTqZpA9FI1yh+4Zghe+czNofV1lbCtGUAyOIy+zOg9Gui1Rvgc4F9Y6+4p0PEFv0
+	 HZLCmm0hWR2VA==
+From: Kees Cook <kees@kernel.org>
+To: Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Guo Ren <guoren@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Kees Cook <kees@kernel.org>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-csky@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pstore: platform: add missing MODULE_DESCRIPTION() macro
+Date: Mon, 17 Jun 2024 11:56:26 -0700
+Message-Id: <171865058448.3345201.17964840514906140887.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240613-md-csky-fs-pstore-v1-1-c525f636b1cb@quicinc.com>
+References: <20240613-md-csky-fs-pstore-v1-1-c525f636b1cb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610104329.3555488-6-john.g.garry@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024 at 10:43:24AM +0000, John Garry wrote:
-> +static void blk_validate_atomic_write_limits(struct queue_limits *lim)
-> +{
-> +	unsigned int boundary_sectors_hw;
-> +
-> +	if (!lim->atomic_write_hw_max)
-> +		goto unsupported;
-> +
-> +	boundary_sectors_hw = lim->atomic_write_hw_boundary >> SECTOR_SHIFT;
-> +
-> +	if (boundary_sectors_hw) {
-> +		/* It doesn't make sense to allow different non-zero values */
-> +		if (lim->chunk_sectors &&
-> +		    lim->chunk_sectors != boundary_sectors_hw)
-> +			goto unsupported;
+On Thu, 13 Jun 2024 21:39:42 -0700, Jeff Johnson wrote:
+> With ARCH=csky, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/pstore/pstore.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> 
 
-I'm not sure I follow why these two need to be the same. I can see
-checking for 'chunk_sectors % boundary_sectors_hw == 0', but am I
-missing something else?
+Applied to for-next/pstore, thanks!
 
-The reason I ask, zone block devices redefine the "chunk_sectors" to
-mean the zone size, and I'm pretty sure the typical zone size is much
-larger than the any common atomic write size.
+[1/1] pstore: platform: add missing MODULE_DESCRIPTION() macro
+      https://git.kernel.org/kees/c/9b3c13c9ea4e
+
+Take care,
+
+-- 
+Kees Cook
+
 
