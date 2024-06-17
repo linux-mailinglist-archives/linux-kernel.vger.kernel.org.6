@@ -1,145 +1,108 @@
-Return-Path: <linux-kernel+bounces-218230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBDA90BB7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:56:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203CE90BB94
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C512284D0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA201282A07
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B10188CDF;
-	Mon, 17 Jun 2024 19:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C131993A9;
+	Mon, 17 Jun 2024 19:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ibXnG1Ve"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="h4FM0aEF"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD24D53E;
-	Mon, 17 Jun 2024 19:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D089518FC8B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718654203; cv=none; b=Ex8tTQ6Oenw8Lun/Otrr+M/zmNE++pWvb/09TwMF8aNzMkQCvJJpo2Fu13WqtvksPtPlxl1jbOp7aKFjeYwLWvCT+BAuzMGrBu8PGGeYaPANQGmmhq4zyeWYscxdWj8iz5MILtuo06hwFvfHWPAcUKfqEeoxschOrL30b1RcDNI=
+	t=1718654241; cv=none; b=SLBS01XOeyqlBk6Ueitz4BSmfvGRLBCNHGpv6JmltMJPXcm7vhfcGMVsExWRgoDpP89a8to3lQM9kcrL/BJ3pxiOXj7GfyamwNviBrUM82xUeup0WjqjKZwn0FnVV78y17wY9t5Z7LYfiP9JOGlsBVdeT4Tg/vDTMI05CefTHao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718654203; c=relaxed/simple;
-	bh=qNJkXv/wkxkDKTwXrq81qhL2hb2PzEuHXPrhbfByun0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CwRaznECjfqV4yxrVJdrrBEqgZLMTeM6+zUKaTPYteE1qIId85PJ7dISCrB5s47VpZrmwB0c1APPbg4HwLaJdPVxOVJdKi59GKhj07YkJ+PxW3JHBf+7D+w25gmDPtIoIBSNJtifLjBvgMAvYSgmXL2b2+ItyyR/qurqaHf1MaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ibXnG1Ve; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HJ01b2024582;
-	Mon, 17 Jun 2024 19:56:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=5
-	gTrKfTGK7nkUx0z1WmZsTK++4OVmR4Dpoli52j9yRw=; b=ibXnG1VeyRbwgtzb9
-	AJPdHgM6gn9rgUXKRMT1AcTKcVbyjtkRQOFOWk46J7gG7pwykeY/5ExqNv/uqiZ3
-	lgVA81hBm2F6JDU0IY2jAEHGy0odTUTT4QqwEil0jPtVpZoftwSqQhaYRFCM6inV
-	AUv7T175gsvVfCu77w3Elsx3us3w/SFwFMrP8f7/QMy3U3GVcZoqCnUasRKU/eMU
-	iPcxfWhWowiK2mz+/z/AGfe3ngkaE3SHJhNtJ5+jN8dwKdXdHqIe0pCMEz0cmeY3
-	mqFlgbKa4FHM2GlcKNwk6tLWLOZiVNlKzOo8hqgxqW8Z+mYOOHr3xGwSUQBPhyK9
-	tOd4Q==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yttwc840t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 19:56:29 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45HIK70b011442;
-	Mon, 17 Jun 2024 19:56:29 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yspsmvtp3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 19:56:29 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45HJuQWT38469990
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Jun 2024 19:56:28 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 87BDA58069;
-	Mon, 17 Jun 2024 19:56:26 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 08CAB5805D;
-	Mon, 17 Jun 2024 19:56:26 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 17 Jun 2024 19:56:25 +0000 (GMT)
-Message-ID: <5bd68636-ece6-4ba5-a4c0-c0535afc33c8@linux.ibm.com>
-Date: Mon, 17 Jun 2024 15:56:25 -0400
+	s=arc-20240116; t=1718654241; c=relaxed/simple;
+	bh=BPGfBSXIDGz7yjzlZ4GzjDeNK36NgkAUkgVC//2x3N0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ryp+Xi17y/UTEqC8SqYENvcMaZmM41cx3AtUhPpcf7iMVN7+NooO9VYhH/5Lfx9mOUvua0JsiBD6Osxlxsn0gALOYHuSMDs+fzntL8fOx6GoqhWD/y+6tGpITodFczPQ/Oo26GriArb6bZuG0O1vluAW0/nvzbbHRjsyF/C3uEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=h4FM0aEF; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec2f4966a2so12690021fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718654238; x=1719259038; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BPGfBSXIDGz7yjzlZ4GzjDeNK36NgkAUkgVC//2x3N0=;
+        b=h4FM0aEFGHuZ0mu5fvJrmnRpR3162gXoaJGMrkX81jmsyAci13rhwTkbeFsWavsE02
+         8yRakAgqttTM3w+YPaGNNj+UcPEvhXAP97o7d5Vzja6D2KdhG7n10PkEhGjHXZC5nrY0
+         99xUYF/bi3g7EYeyRgp6CySYNoXoNSSTaPypyLgxz38XnVC2mrniq8SgmZAGUBjtwzGB
+         0FZkTLDWL6fkLtPrN7ivm3MEMoRNd04Vgctw3ugRCTpMnAuN+vRVLzoQFvf8+0mpephf
+         do8uDIyOtOhhwrg0nLgGD8DosjgKWjeT/2viBvXaX6MwRisdviQv/Y+M/XLulNcipKNf
+         CaCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718654238; x=1719259038;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BPGfBSXIDGz7yjzlZ4GzjDeNK36NgkAUkgVC//2x3N0=;
+        b=Zit9Y9vlLRMiKt4fHiTqfgXfuTy22jIMKtpOl2RZh3EZzB3xD7QX8mL09L4mm5lAvb
+         I7CSMsQ5CMdcK247Zl87vtRm7I38I8x5Fwr5Pt/F1RJ19NicYSwg4rU6kSnRm7aFtJcx
+         v+h9bGTnL+vGweTTBo+UP5fyNyCxh+WVJXO364V2poOBDKohj8HDPhFbjeSvRtQ2iT1a
+         PdfWHXmeuBEPaFFXiQGLvqxOKciuizzZSIUaDHf7z/OjuAXQLrznoZecCEnaFp/wb+7R
+         CFDCqyTfG+OfH+7yUHRVXP4u9yWrzNXP3hto35hH/IADyuut5xe07NZ1e6P1TmNlg7eY
+         k4pw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKdV+B0wcrAeVs3FG/Qr0aH0iQoN/Lg8iIKLoL6us6r7ImN5ILI7Gj7APaJRBLu5vJSdHH12Pkb77bvI2IL4hoWMGGX7O1tDAjbQcN
+X-Gm-Message-State: AOJu0YxBvAyy1iJPLZn5mFw8hCtD6MOFqoaJ3m3Dw+werIBgSBVb3Lgo
+	ek/K4MZSttSoVNiX2s2B+l6m6KbcOsrx4c5EzmWKAQa/28b1RH6JZ7lzhv78OypsoACodoobvZj
+	nBEPW0vwhMd+FcVoA8uB0/nYEe2+cOLAt1U9Q6A==
+X-Google-Smtp-Source: AGHT+IHTU7Jh6DU7VGE9POXczJ3FUWDY9c7qjW478IAmZHY0i+2WVDCPuGCN/ls9eDDXzEL66B9bz2LR8Y6OPn0iPqc=
+X-Received: by 2002:a2e:87da:0:b0:2ec:1dd1:b3ae with SMTP id
+ 38308e7fff4ca-2ec1dd1b5e3mr59198141fa.32.1718654237778; Mon, 17 Jun 2024
+ 12:57:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
- session support
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        jarkko@kernel.org
-Cc: linux-kernel@vger.kernel.org, mpe@ellerman.id.au,
-        naveen.n.rao@linux.ibm.com
-References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
- <dfc4feaef0d63d616bab8cdec5d409369f9dacf1.camel@HansenPartnership.com>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <dfc4feaef0d63d616bab8cdec5d409369f9dacf1.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: R6DyKD6fRPgMFtsS9Tn2awO1IbQ2YzPy
-X-Proofpoint-GUID: R6DyKD6fRPgMFtsS9Tn2awO1IbQ2YzPy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
- phishscore=0 clxscore=1011 bulkscore=0 adultscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406170153
+References: <20240527-shm-bridge-v10-0-ce7afaa58d3a@linaro.org>
+In-Reply-To: <20240527-shm-bridge-v10-0-ce7afaa58d3a@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 17 Jun 2024 21:57:06 +0200
+Message-ID: <CAMRc=McQDBywMqu43vG=UXyEH6V6w1REyYAtEPQuogH7C=Sj-Q@mail.gmail.com>
+Subject: Re: [PATCH v10 00/15] firmware: qcom: implement support for and
+ enable SHM bridge
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Maximilian Luz <luzmaximilian@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srini Kandagatla <srinivas.kandagatla@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Elliot Berman <quic_eberman@quicinc.com>, Alex Elder <elder@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kernel@quicinc.com, Andrew Halaney <ahalaney@redhat.com>, 
+	Deepti Jaggi <quic_djaggi@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, May 27, 2024 at 2:56=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> SCM calls that take memory buffers as arguments require that they be
+> page-aligned, physically continuous and non-cachable. The same
+> requirements apply to the buffer used to pass additional arguments to SCM
+> calls that take more than 4.
+>
 
+[...]
 
-On 6/17/24 15:42, James Bottomley wrote:
-> On Mon, 2024-06-17 at 15:34 -0400, Stefan Berger wrote:
->> Fix the following type of error message caused by a missing call to
->> tpm2_sessions_init() in the IBM vTPM driver:
->>
->> [    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM error
->> 0x01C4
->> [    2.987140] ima: Error Communicating to TPM chip, result: -14
->>
->> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
->> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->> ---
->>   drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c
->> b/drivers/char/tpm/tpm_ibmvtpm.c
->> index d3989b257f42..1e5b107d1f3b 100644
->> --- a/drivers/char/tpm/tpm_ibmvtpm.c
->> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
->> @@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev
->> *vio_dev,
->>                  rc = tpm2_get_cc_attrs_tbl(chip);
->>                  if (rc)
->>                          goto init_irq_cleanup;
->> +
->> +               rc = tpm2_sessions_init(chip);
->> +               if (rc)
->> +                       goto init_irq_cleanup;
-> 
-> This looks wrong: the whole thing is designed to occur in the bootstrap
-> phase from tpm_chip_register() (which tpm_ibmvtpm.c definitely calls),
-> so why isn't it happening?
+It's been three weeks. Ping?
 
-Because flags = TPM_OPS_AUTO_STARTUP has not been set for this driver.
-> 
-> James
-> 
+Bart
 
