@@ -1,132 +1,156 @@
-Return-Path: <linux-kernel+bounces-216995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BEA90A974
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:23:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E1790A97A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ABD91C235F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:23:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986A72844D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51D8192B6A;
-	Mon, 17 Jun 2024 09:22:34 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D007F1922DB;
+	Mon, 17 Jun 2024 09:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hb2sg47Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FCB190055;
-	Mon, 17 Jun 2024 09:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD9B41C93;
+	Mon, 17 Jun 2024 09:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616154; cv=none; b=qaxt042oLQGFeo0jSldqquNaUjfKNzF8X76OKKWhweOF5mMblhy7s8/VnpzUOgNyhyYch/Tw2RTL6L94OGXyOQKrSuL0bBEcWxdP3/TSMqwOMpegEDRgifJFOPTRfiX3g0x9Khr2qVNK0tqmsm90avbbR1p28vhEPfDMXv44dic=
+	t=1718616267; cv=none; b=E+Z36UiXSNKhvVvm10peZXDKDUFmhESTc/P1LYf1xp66L6t4kNGJMDe7pGi5a8GG3kSfSzIF+6Krx+OniHHBruMSmsWA2AGdQaXk1TdRanzJsT0ECDzDh2WG+LGaUdOt8qZgV2kFJXiGBHR2LxXBQ8iGWbSSe6KUIcYENKcfyGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616154; c=relaxed/simple;
-	bh=IhgTRvnm+8oWn/6L7YuXPMreikmbVcVNk+2beHEEtkA=;
+	s=arc-20240116; t=1718616267; c=relaxed/simple;
+	bh=9TH45R9i/G9Oz07Ivh80UmsdcTZLOinzkILdKhSrrD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rm+AvPGL89FWbMZbmFj/GO9UFoN19OlKQJ30J+xDqli2DuxZFS2cXOypvhOjyoH1CxTzJhHjPKun2NMOaSOwv3yKHY8xph9t1vMEzuOuqzv8YUKqOGl3yXfb3TLIfdMUAMROYQ8++DEwmmzc4kQlX98kXACT8rGMvgxXLdhir3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57c76497cefso4825482a12.1;
-        Mon, 17 Jun 2024 02:22:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718616150; x=1719220950;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eEUIpHnQGVoJgFUUtr6K5uLL6KfCGzBVgBBz+mc8EC8=;
-        b=Ye+FpuyN2yXD2CD29De1o7qKGFo2yvWPUwML5zMCVaNzHx2WFMx8xiJytZz7EJChK7
-         F2CttLk2H/JN0IV4DTPGr0JhOiT3zxTKVLtOULAM+Qwh3oMEbn8roieOpxFPxu2DRO77
-         o0xl+PMmdF/qwS50ff2mRF8OAak6iZyE6Vlqpe/te2ZaYxVQ9gIr6JATtaxT8DjF1AKF
-         aUyYFyP0Y6HkkjPo69Fb/Pz0bwxsHyfTziMekhj6EO1fri8y8FmSkTuImgPKnFYtd8o0
-         Rqcp8yPAMS6SrukFr+VGB6ZMOq7Obs9l6YzFFMpwx8Z7e2NsePGTbh50Zv9+6GoU/p/P
-         1hTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXs9ndNFYYCrL7XynZDJUv7FYgmDFh8MqTpHU6AvxEzKinxf+EfhLqQSv9YgJIqnUJ1LNNiwBgfN+R3nH0fUO5cCJPmgkZMEM6HXQ+BBIbwoorwRInJ0EGtyD029lP8nqmjLwBZ
-X-Gm-Message-State: AOJu0Yx/uBWY7dhLXNb8dSRiGJibG32X9yljsxc0Kck0rRh1V5O0G3+0
-	RnCaHbKFT4fnHYdXHoz9MDHKt7n9FiOgD8adFnkFDw8+P7SAAkJT
-X-Google-Smtp-Source: AGHT+IFOEUVidGPJxpO+GgKTTkPjj7sUIp7yTZvciRnrHQQDmvCrLJJ+SpiU6a/ssk+qbAl8zn9V3Q==
-X-Received: by 2002:a50:a693:0:b0:57c:6773:d9c1 with SMTP id 4fb4d7f45d1cf-57cbd6a5a0emr5821631a12.39.1718616149646;
-        Mon, 17 Jun 2024 02:22:29 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57ccc173673sm3466975a12.44.2024.06.17.02.22.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 02:22:29 -0700 (PDT)
-Date: Mon, 17 Jun 2024 02:22:23 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, horms@kernel.org, kees@kernel.org,
-	kuba@kernel.org, Bo Jiao <Bo.Jiao@mediatek.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Alexander Couzens <lynxis@fe80.eu>,
-	Deren Wu <deren.wu@mediatek.com>,
-	Ming Yen Hsieh <mingyen.hsieh@mediatek.com>,
-	Leon Yen <leon.yen@mediatek.com>,
-	Quan Zhou <quan.zhou@mediatek.com>, Ingo Rohloff <lundril@gmx.de>,
-	Sujuan Chen <sujuan.chen@mediatek.com>,
-	StanleyYP Wang <StanleyYP.Wang@mediatek.com>,
-	Benjamin Lin <benjamin-jw.lin@mediatek.com>,
-	Peter Chiu <chui-hao.chiu@mediatek.com>,
-	"open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH] wifi: mt76: un-embedd netdev from mt76_dev
-Message-ID: <ZnAAT/a3DKnTgUoz@gmail.com>
-References: <20240614115317.657700-1-leitao@debian.org>
- <87cyogkkju.fsf@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7Bf1tovnqhLrMYpOKo/kMp1Ocyrl9hCTSVBNM53n4jNvleU2WZClw+iHABTTjOeg7F9E6XMeIT07yN4X0ah2+KnJgYqv7RAqVUDbwQt+/2Dy1gx8VfDVW3k4h2ofMj+8uDHhrxOsWzwJh+q3sAhii8CF41ueBYQrJ8ITZD1dk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hb2sg47Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B780C2BD10;
+	Mon, 17 Jun 2024 09:24:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718616265;
+	bh=9TH45R9i/G9Oz07Ivh80UmsdcTZLOinzkILdKhSrrD0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hb2sg47ZBmlA3GwQ6X8LBpbsGgk+RhS3I0PBVVDdLfCezpCgUjz7pHQTwlpnW5Pp0
+	 r+F0BANkYlpcKIm3fQpIvUY99kTz32U1QQtnEaMnQ8rkplSuGiIIyDojN6nswSLGJ7
+	 5t87RDzt5TxCus+Z4YzJSjZAE56w1020qFqrvEWS+ZrMjD9Ad+/eB7BG39W38Z8X2r
+	 UWBLewN89keamUHMpknZxCOBMMsKH4x9Q8G0tWSyYnKymPuKKdW1l/FebiLkiwCGtu
+	 4n51DOWjZ/rWinMcJCBxykhBFM824jcTgWkv7KOM+4g+t8FWUMNY4U+kM2tD1AeAiN
+	 XcfjhwOaTccUA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sJ8b8-0000000053S-1JXM;
+	Mon, 17 Jun 2024 11:24:22 +0200
+Date: Mon, 17 Jun 2024 11:24:22 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rajendra Nayak <quic_rjendra@quicinc.com>
+Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: Enable tsens and thermal
+ zone nodes
+Message-ID: <ZnAAxlH6yhlJf6fV@hovoldconsulting.com>
+References: <20240614-x1e80100-dts-thermal-v2-1-4d4f9effacc6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87cyogkkju.fsf@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240614-x1e80100-dts-thermal-v2-1-4d4f9effacc6@linaro.org>
 
-Hello Kalle,
-
-On Mon, Jun 17, 2024 at 12:03:49PM +0300, Kalle Valo wrote:
-> Breno Leitao <leitao@debian.org> writes:
+On Fri, Jun 14, 2024 at 01:50:07PM +0300, Abel Vesa wrote:
+> From: Rajendra Nayak <quic_rjendra@quicinc.com>
 > 
-> > Embedding net_device into structures prohibits the usage of flexible
-> > arrays in the net_device structure. For more details, see the discussion
-> > at [1].
-> >
-> > Un-embed the net_devices from struct mt76_dev by converting them
-> > into pointers, and allocating them dynamically. Use the leverage
-> > alloc_netdev_dummy() to allocate the net_device object at
-> > mt76_dma_init().
-> >
-> > The free of the device occurs at mt76_dma_cleanup().
-> >
-> > Link: https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/ [1]
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > ---
-> >
-> > PS: Due to the lack of hardware, this patch was not tested on a real
-> > hardware, unfortunately.
-> >
-> > PS2: this is the last driver that is still using embedded netdevices.
+> Add tsens and thermal zones nodes for x1e80100 SoC.
 > 
-> Is this patch a dependency to other patches? I'm asking because it will
-> be _slow_ to get this patch to net-next via wireless trees. If there's
-> urgency then it's much better to take it directly to net-next (of course
-> with acks from Felix and Lorenzo).
+> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+> Changes in v2:
+> - Dropped the thermal engine nodes.
+> - Dropped comments from tsens nodes.
+> - Droppd the polling-delay entirely and polling-delay-passive where not
+>   necessary.
+> - Added top/bottom location to all sensors (where applicable).
+> - Fixed trip points with duplicate values for same temp.
+> - Marked as critical the 125°C throughout all trip points.
+> - Link to v1: https://lore.kernel.org/r/20240527-x1e80100-dts-thermal-v1-1-ea13b8fa6ffc@linaro.org
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1176 ++++++++++++++++++++++++++++++++
+>  1 file changed, 1176 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 9944c654851e..df13df7967db 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
 
-Since this is the last patch for the whole flexible netdev work, I would
-prefer to have it through net-next then, so, we finish the whole work
-sooner rather than later.
+> +		cpu0-0-bottom-thermal {
+> +			thermal-sensors = <&tsens0 2>;
+> +
+> +			trips {
+> +				trip-point0 {
+> +					temperature = <90000>;
+> +					hysteresis = <2000>;
+> +					type = "passive";
+> +				};
+> +
+> +				trip-point1 {
+> +					temperature = <95000>;
+> +					hysteresis = <2000>;
+> +					type = "passive";
+> +				};
+> +
+> +				cpu-critical {
+> +					temperature = <110000>;
+> +					hysteresis = <1000>;
+> +					type = "critical";
+> +				};
+> +			};
+> +		};
 
-I will prepare a v2 with Simon's suggestion, and I can target net-next.
-I am just waiting a bit more to hear from Felix and Lorenzo.
+The CPU bottom thermal zones fail to register with v2:
 
-Thanks!
+[    0.146219] thermal_sys: Thermal zone name (cpu0-0-bottom-thermal) too long, should be under 20 chars
+[    0.146241] thermal_sys: Failed to register thermal zone cpu0-0-bottom-thermal: -22
+[    0.146474] thermal_sys: Thermal zone name (cpu0-1-bottom-thermal) too long, should be under 20 chars
+[    0.146495] thermal_sys: Failed to register thermal zone cpu0-1-bottom-thermal: -22
+[    0.146753] thermal_sys: Thermal zone name (cpu0-2-bottom-thermal) too long, should be under 20 chars
+[    0.146774] thermal_sys: Failed to register thermal zone cpu0-2-bottom-thermal: -22
+[    0.147024] thermal_sys: Thermal zone name (cpu0-3-bottom-thermal) too long, should be under 20 chars
+[    0.147045] thermal_sys: Failed to register thermal zone cpu0-3-bottom-thermal: -22
+[    0.147297] thermal_sys: Thermal zone name (cpuss0-bottom-thermal) too long, should be under 20 chars
+[    0.147319] thermal_sys: Failed to register thermal zone cpuss0-bottom-thermal: -22
+[    0.149401] thermal_sys: Thermal zone name (cpu1-0-bottom-thermal) too long, should be under 20 chars
+[    0.149423] thermal_sys: Failed to register thermal zone cpu1-0-bottom-thermal: -22
+[    0.149765] thermal_sys: Thermal zone name (cpu1-1-bottom-thermal) too long, should be under 20 chars
+[    0.149787] thermal_sys: Failed to register thermal zone cpu1-1-bottom-thermal: -22
+[    0.150098] thermal_sys: Thermal zone name (cpu1-2-bottom-thermal) too long, should be under 20 chars
+[    0.150119] thermal_sys: Failed to register thermal zone cpu1-2-bottom-thermal: -22
+[    0.150437] thermal_sys: Thermal zone name (cpu1-3-bottom-thermal) too long, should be under 20 chars
+[    0.150458] thermal_sys: Failed to register thermal zone cpu1-3-bottom-thermal: -22
+[    0.150775] thermal_sys: Thermal zone name (cpuss1-bottom-thermal) too long, should be under 20 chars
+[    0.150796] thermal_sys: Failed to register thermal zone cpuss1-bottom-thermal: -22
+[    0.152838] thermal_sys: Thermal zone name (cpu2-0-bottom-thermal) too long, should be under 20 chars
+[    0.152859] thermal_sys: Failed to register thermal zone cpu2-0-bottom-thermal: -22
+[    0.153211] thermal_sys: Thermal zone name (cpu2-1-bottom-thermal) too long, should be under 20 chars
+[    0.153232] thermal_sys: Failed to register thermal zone cpu2-1-bottom-thermal: -22
+[    0.153603] thermal_sys: Thermal zone name (cpu2-2-bottom-thermal) too long, should be under 20 chars
+[    0.153624] thermal_sys: Failed to register thermal zone cpu2-2-bottom-thermal: -22
+[    0.153994] thermal_sys: Thermal zone name (cpu2-3-bottom-thermal) too long, should be under 20 chars
+[    0.154015] thermal_sys: Failed to register thermal zone cpu2-3-bottom-thermal: -22
+[    0.154386] thermal_sys: Thermal zone name (cpuss2-bottom-thermal) too long, should be under 20 chars
+[    0.154407] thermal_sys: Failed to register thermal zone cpuss2-bottom-thermal: -22
+
+Johan
 
