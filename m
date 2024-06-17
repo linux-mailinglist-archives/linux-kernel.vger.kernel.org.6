@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-217752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D8390B3D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:18:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E4B90B3D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C49D1F29D02
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:18:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44A292884F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEE215B0E1;
-	Mon, 17 Jun 2024 14:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B5215B119;
+	Mon, 17 Jun 2024 14:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AhlP4hBp"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NCqCDfEZ"
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7214615AD93;
-	Mon, 17 Jun 2024 14:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90D415ADA3;
+	Mon, 17 Jun 2024 14:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718635158; cv=none; b=UKzeFaXVSof9qFXVuIfW50Z0+rei3ThiwCnq7VqS1/PiWZWSKRKAdxc9m97M+5XOYY0MNbDmSAqtsr99YbcsnWLk6fRdKkUqvjDo96aQiMgnZsCU5LyUMNWSa7XeMGPHVijh3dY/UBKXuP1TWKM+0wKVsd4iZAGudPEWMPfSp+w=
+	t=1718635159; cv=none; b=KW0XsXYKvi47xcEn2jTdUJOCh+oyONGQ6atVSvDR973qjulb+tVYjbMmGLuR15JoIY+eUBpHuoSowyKT45fecd9lGoCO5cMdstQOptMHP2NxE2sBhLpP1ITbmXdf/Pw1XQqDfIeH8SrYPqn02zZVhrskE3W/fWD621WM096PJm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718635158; c=relaxed/simple;
-	bh=YMbrlYAacq8VnF6uzSYjpNqyLR/Zwj3QjxxEfxNoWV0=;
+	s=arc-20240116; t=1718635159; c=relaxed/simple;
+	bh=6nrj6/a24QJFSZToJHuf9ql/CkxfXffm9v3w8u7tOAw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e+DS6zw6CexUvmfGoDtUVyOm6AwLT7XEU1pqA+bMr0B1aE04ZBw5YMCLNkkpXLJoghlwNilr3Rkyb3XWxL+S+ruD680QzYMFtyIr/rXcPZ8Xz3XFrIsudL5OQYZVSltlxlcEmzIRa3slDodHBTFTVDz/gACt1VQpwBB9TNuymnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AhlP4hBp; arc=none smtp.client-ip=217.70.183.201
+	 MIME-Version; b=joZxtbjBXMT4cuahG9aTCfaiAt/639hONaOakmu5D9sQDxkk9/3RW20vGV6f/xc3x5tUJ9xOLi9kMfcWY3EV/ghuhY3nCIKS17HKLVAkaCHI9A40nslcOt3YP3zVZo3qp+QqjzAd1CZ4sQdsqhhEE4f8CMFdRqp7/0h4xsHMWpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NCqCDfEZ; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 76B271BF20B;
-	Mon, 17 Jun 2024 14:39:13 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id AF23D1BF209;
+	Mon, 17 Jun 2024 14:39:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718635153;
+	t=1718635156;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Qt7UmrwvNzoZ4+Yje8MDhIVAuMdtzcc+/RmUSruDHcw=;
-	b=AhlP4hBpI7Cym6yX78bmVgHaxNtsDe0spDn3f0AKUlFLZFu9xO5NxHHrmKg/XqlRpczeNG
-	eQFt4LWGNTkeUPAQVFiDh8sNcYp4PPQsok/b0PkgFyr/SHawLLpmQniPic2ap90vn4VkrF
-	FeVBk+hPbUX8cAi/ctoS37C16iultayklSCWa79+Cjcd/J4WuCr/Z9lOEptPtAJrewS6AN
-	OH+rC0h6qhr61ndPnyQJuEnxf1G2w7ORIQWnF+XsXyrA8WcdBcAKAUqmIJJP0n7NnH9vqk
-	eery3xnPnk3vtio510vqBDVsjc5ooJOGQWlZB8g0vkbrm6qVN45uJY4x8wuL6g==
+	bh=ycSwcZwlwGJEHJqy8a8Ha4d7p1eYd2BTEw/EOqHej6c=;
+	b=NCqCDfEZyIIlsmA4TsHp2maSO5CD9xfVZZn/fBywNXGwncfmy5yUAtjKj5PA/YXJ7sjbJx
+	/aaXx64kY0Mi7k7hbiJHz6OOCEDC9AWPHTIpE/7D6WDpAKKHdJu2EerIYpebDr+ySTB6eP
+	XXxw9lIn8OkZK/fcePfl3AHFQnsdPlI4JmwHbFfS3anfX7DnaUW+LDoYDo+cb2vDeaAxN9
+	9al9RUgWEDTguUqBRNklt/KkgLlM2opsuLrR75SwOUA6960dgbHAJJbBgYmubmPAF7mXIx
+	pRD8O40AM3fo6olm2MOkDcpkOqK/4jhom3Db1ZaKqf/P0uUppvdtREvrEbF5Kg==
 From: Bastien Curutchet <bastien.curutchet@bootlin.com>
 To: Riku Voipio <riku.voipio@iki.fi>,
 	Pavel Machek <pavel@ucw.cz>,
@@ -54,9 +54,9 @@ Cc: linux-leds@vger.kernel.org,
 	Herve Codina <herve.codina@bootlin.com>,
 	Christopher Cordahi <christophercordahi@nanometrics.ca>,
 	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH v2 1/4] leds: pca9532: Use defines to select PWM instance
-Date: Mon, 17 Jun 2024 16:39:07 +0200
-Message-ID: <20240617143910.154546-2-bastien.curutchet@bootlin.com>
+Subject: [PATCH v2 3/4] leds: pca9532: Explicitly disable hardware blink when PWM1 is unavailable
+Date: Mon, 17 Jun 2024 16:39:09 +0200
+Message-ID: <20240617143910.154546-4-bastien.curutchet@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240617143910.154546-1-bastien.curutchet@bootlin.com>
 References: <20240617143910.154546-1-bastien.curutchet@bootlin.com>
@@ -69,94 +69,60 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Two tables are used to configure the PWM and PSC registers of the two
-PWM available in the pca9532. Magic numbers are used to access this table
-instead of defines.
+When a LED is used to drive a beeper, it uses PWM1. This can cause
+conflicts if an other LED want to use PWM1 for blinking.
 
-Add defines PCA9532_PWM_ID_0 and PCA9532_PWM_ID_1 and use them in place of
-these magic numbers.
+Disable use of hardware for blinking when one or more LEDs are used to
+drive beepers.
 
 Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
 ---
- drivers/leds/leds-pca9532.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ drivers/leds/leds-pca9532.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index bf8bb8fc007c..b6e5f48bffe7 100644
+index 244ae3ff79b5..c7a4f677ed4d 100644
 --- a/drivers/leds/leds-pca9532.c
 +++ b/drivers/leds/leds-pca9532.c
-@@ -45,6 +45,9 @@ struct pca9532_data {
- 	struct gpio_chip gpio;
- #endif
- 	const struct pca9532_chip_info *chip_info;
-+
-+#define PCA9532_PWM_ID_0	0
-+#define PCA9532_PWM_ID_1	1
+@@ -53,6 +53,7 @@ struct pca9532_data {
+ #define PCA9532_PWM_ID_1	1
  	u8 pwm[2];
  	u8 psc[2];
++	bool hw_blink;
  };
-@@ -181,12 +184,12 @@ static int pca9532_set_brightness(struct led_classdev *led_cdev,
- 		led->state = PCA9532_ON;
- 	else {
- 		led->state = PCA9532_PWM0; /* Thecus: hardcode one pwm */
--		err = pca9532_calcpwm(led->client, 0, 0, value);
-+		err = pca9532_calcpwm(led->client, PCA9532_PWM_ID_0, 0, value);
- 		if (err)
- 			return err;
+ 
+ static int pca9532_probe(struct i2c_client *client);
+@@ -238,8 +239,13 @@ static int pca9532_set_blink(struct led_classdev *led_cdev,
+ 	unsigned long *delay_on, unsigned long *delay_off)
+ {
+ 	struct pca9532_led *led = ldev_to_led(led_cdev);
++	struct i2c_client *client = led->client;
++	struct pca9532_data *data = i2c_get_clientdata(client);
+ 	int err;
+ 
++	if (!data->hw_blink)
++		return -EINVAL;
++
+ 	if (*delay_on == 0 && *delay_off == 0) {
+ 		/* led subsystem ask us for a blink rate */
+ 		*delay_on = 1000;
+@@ -395,6 +401,7 @@ static int pca9532_configure(struct i2c_client *client,
+ 			data->psc[i]);
  	}
- 	if (led->state == PCA9532_PWM0)
--		pca9532_setpwm(led->client, 0);
-+		pca9532_setpwm(led->client, PCA9532_PWM_ID_0);
- 	pca9532_setled(led);
- 	return err;
- }
-@@ -209,11 +212,11 @@ static int pca9532_set_blink(struct led_classdev *led_cdev,
  
- 	/* Thecus specific: only use PSC/PWM 0 */
- 	psc = (*delay_on * 152-1)/1000;
--	err = pca9532_calcpwm(client, 0, psc, led_cdev->brightness);
-+	err = pca9532_calcpwm(client, PCA9532_PWM_ID_0, psc, led_cdev->brightness);
- 	if (err)
- 		return err;
- 	if (led->state == PCA9532_PWM0)
--		pca9532_setpwm(led->client, 0);
-+		pca9532_setpwm(led->client, PCA9532_PWM_ID_0);
- 	pca9532_setled(led);
- 
- 	return 0;
-@@ -229,9 +232,9 @@ static int pca9532_event(struct input_dev *dev, unsigned int type,
- 
- 	/* XXX: allow different kind of beeps with psc/pwm modifications */
- 	if (value > 1 && value < 32767)
--		data->pwm[1] = 127;
-+		data->pwm[PCA9532_PWM_ID_1] = 127;
- 	else
--		data->pwm[1] = 0;
-+		data->pwm[PCA9532_PWM_ID_1] = 0;
- 
- 	schedule_work(&data->work);
- 
-@@ -246,7 +249,7 @@ static void pca9532_input_work(struct work_struct *work)
- 
- 	mutex_lock(&data->update_lock);
- 	i2c_smbus_write_byte_data(data->client, PCA9532_REG_PWM(maxleds, 1),
--		data->pwm[1]);
-+		data->pwm[PCA9532_PWM_ID_1]);
- 	mutex_unlock(&data->update_lock);
- }
- 
-@@ -475,9 +478,9 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
- 
- 	pdata->gpio_base = -1;
- 
--	of_property_read_u8_array(np, "nxp,pwm", &pdata->pwm[0],
-+	of_property_read_u8_array(np, "nxp,pwm", &pdata->pwm[PCA9532_PWM_ID_0],
- 				  ARRAY_SIZE(pdata->pwm));
--	of_property_read_u8_array(np, "nxp,psc", &pdata->psc[0],
-+	of_property_read_u8_array(np, "nxp,psc", &pdata->psc[PCA9532_PWM_ID_0],
- 				  ARRAY_SIZE(pdata->psc));
- 
- 	for_each_available_child_of_node(np, child) {
++	data->hw_blink = true;
+ 	for (i = 0; i < data->chip_info->num_leds; i++) {
+ 		struct pca9532_led *led = &data->leds[i];
+ 		struct pca9532_led *pled = &pdata->leds[i];
+@@ -429,6 +436,8 @@ static int pca9532_configure(struct i2c_client *client,
+ 			pca9532_setled(led);
+ 			break;
+ 		case PCA9532_TYPE_N2100_BEEP:
++			/* PWM1 is reserved for beeper so blink will not use hardware */
++			data->hw_blink = false;
+ 			BUG_ON(data->idev);
+ 			led->state = PCA9532_PWM1;
+ 			pca9532_setled(led);
 -- 
 2.45.0
 
