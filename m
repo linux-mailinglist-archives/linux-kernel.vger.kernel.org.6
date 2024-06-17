@@ -1,74 +1,40 @@
-Return-Path: <linux-kernel+bounces-217727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C9490B372
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:08:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE8A90B377
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C70281ADD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:08:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC59D1F25AEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8100D14F9E6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0A515217A;
+	Mon, 17 Jun 2024 14:22:33 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13556150999;
 	Mon, 17 Jun 2024 14:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PVgAqCC8"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7369C14F9D8
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718634148; cv=none; b=IU4CgOFbDM6/KqRT7VpEf7n950O1NVaMEwy8yBUmqsCVmyzudtKeIa3cLBV2YjBvia0aSq/GFGIrC5rTTrrgQe6saV9OPc5sk/xiR1y4nCpdGHiRUxLQsviX55cBuIvmeNojApoVC+aOs26Lo3fylxLyjjRw+V3O11HZuEnc3yk=
+	t=1718634152; cv=none; b=jF188jNLUx84vZ2nEJ4FKLbyx9rC+ms8VfOUZ2I3IHlGOs2l89wJuFHx0/Jj090g3ymFwcNFWrlMt088uu3q0PoD/uVpCUCV4m/F44eooJC/Tg3asPm1YLdmbWwJozccwHM7dC4gFJfh7Jxk243bDNS4s9mXf0zcl3qnYnbmo5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718634148; c=relaxed/simple;
-	bh=b/oQTmu4HJ+1FTo118VzRg4xrW4tbnarl3In2JZbc6Y=;
+	s=arc-20240116; t=1718634152; c=relaxed/simple;
+	bh=6OxWMUg3yA5WcTolc8+8/GvGqWIxjQzsKph93I8gX/A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HCyiIdvL4N3lD3ok4XPSNQZU2JbaYO9xBYCSTf7ybWx/8iZeq+vaNH+r7/bks1O4KWP74j0OVQnc17rz1275U5EEnLDiWn6p9ynhFfIfbnTNg0wPJGpcPkWHrR6ljfLcHdjtCmJedScArN3gNJxap8+9NsBofaUhIFKKdXuATaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PVgAqCC8; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so475680a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1718634145; x=1719238945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=RDYlK32PcEbzjDkBUw1Lslht69kdYDtkHTsgamegvR4=;
-        b=PVgAqCC857zxRlL+2LOZQKG+WpUimQ51jAB6gb9beovivWarDXbjr4hHWA8CX9oPf0
-         0zQATX1ecTIbG4T4E7n6sBzrYauUZKCmwrPPb409jWh5jqTSJBAI5b73Sgekl991n9gn
-         fs7D5YI8h8VLrBhg8s0mBIuDIKFhJoXiYQZi0atKWmeXGfYNLYTWhVD0ebQxiylFhsaO
-         XpIKzCIpQmfrbJFpJw+kIsz9mzm9xkuUvl9EOJgOIK846JL9U/FCuu2bN6pMXEwW37/p
-         AvYhEodHst3qwyRDhQKyfuxE2Reaa/BNXLWOwEAbI5WXq5nSQaYbmkV6j7fO7o1/JS21
-         RRNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718634145; x=1719238945;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RDYlK32PcEbzjDkBUw1Lslht69kdYDtkHTsgamegvR4=;
-        b=FPaONlUBZmEP5ewfor3iAfeWV4YFLL0Ajhu7eokhPpZDLnLHc6eg5Tqo5wnccWna18
-         kk/EJ4hGUcQKIVef6BBwqWrfZpJ7hZAdI/YJLUiba3Aye9FknNpIpm+PAw1/ruFAA6Tk
-         cJ+vuopyFn7W50QAcehet7CHClPt2H6eDeKQwIGP2G/UQyMvbbQtXsTz783jjPKCnOEK
-         h54hgjLj3AZDf998YOr4P97TOoiCAVnQ/GwtR98rwDBf/KiagiSi5uNGsd169pLpp21k
-         o+v4KuwrH8/+W9b+5hc1mKYL8V+yS5VErytjdbNI2L+wRxS+fz4ST22FOxO0Krj1Y5ii
-         gYOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUE8Q/pETJ5dn98gB/whrwWyY3t0mZ6tZ+eJnwrnVkB9yrvvAXdmSLN1kxhVoVIeNWJzysRvIew18cRYgk1m4De0LjpmMx9SR4xr6mZ
-X-Gm-Message-State: AOJu0YwGhBhViGw/Syp9dpAjMiX5MplsKGRCdj2J9dWHZTYpvk+qGLme
-	bzq5QPbENTWL96fveY8ad7i6vdxFtbWBP+v6eYfkIhGsy953e+WtjfPGpC7dHw==
-X-Google-Smtp-Source: AGHT+IGTdnNmx/lrvgSy2nQrknFrK5oVSLM37bT6s12vjnAcrOUwqPbxH/dj19ONIPn97Cv2O4Ww2A==
-X-Received: by 2002:aa7:cb87:0:b0:57c:a796:ed6e with SMTP id 4fb4d7f45d1cf-57cb4bb0d49mr9430677a12.6.1718634144499;
-        Mon, 17 Jun 2024 07:22:24 -0700 (PDT)
-Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cf709b49dsm76051a12.49.2024.06.17.07.22.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 07:22:24 -0700 (PDT)
-Message-ID: <2fe6ef97-84f2-4bf4-870b-b0bb580fa38f@suse.com>
-Date: Mon, 17 Jun 2024 16:22:21 +0200
+	 In-Reply-To:Content-Type; b=PLjtuuvaTqCqc895D5yzTPIeFe3hjah4NvwPlcyAgr2RXl3N58GdtWb1Xz7h8RVQD4bY9CmNS1tgfxQKgM+EpzS5/juqzqnbA5gNDFY02AINV/ntWVefPNnvvKZHu1WTWEii9amPjQaXEi3shjLui6tbhHXbvbOAl8b2lA88vxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.08,244,1712588400"; 
+   d="asc'?scan'208";a="208262901"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 17 Jun 2024 23:22:28 +0900
+Received: from [10.226.92.92] (unknown [10.226.92.92])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 405BB439D056;
+	Mon, 17 Jun 2024 23:22:24 +0900 (JST)
+Message-ID: <fa470a75-84e8-4924-9e1c-365cb397a391@bp.renesas.com>
+Date: Mon, 17 Jun 2024 15:22:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,68 +42,220 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/xen/time: Reduce Xen timer tick
-To: Frediano Ziglio <frediano.ziglio@cloud.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross
- <jgross@suse.com>, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org
-References: <20240617141303.53857-1-frediano.ziglio@cloud.com>
-Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-Autocrypt: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
- e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
- hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
- IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
- FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
- t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
- AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
- HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
- mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
- m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
- EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
- wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
- nAuWpQkjM1ASeQwSHEeAWPgskBQL
-In-Reply-To: <20240617141303.53857-1-frediano.ziglio@cloud.com>
+Subject: Re: [PATCH v2 1/9] pinctrl: renesas: rzg2l: Clarify OEN read/write
+ support
+Content-Language: en-GB
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240611113204.3004-1-paul.barker.ct@bp.renesas.com>
+ <20240611113204.3004-2-paul.barker.ct@bp.renesas.com>
+ <CAMuHMdW-BrHBt9eDw_GaW7JwJ+TP6Q+68EN1Tpp2Z5H00Dq+3g@mail.gmail.com>
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+Organization: Renesas Electronics Corporation
+In-Reply-To: <CAMuHMdW-BrHBt9eDw_GaW7JwJ+TP6Q+68EN1Tpp2Z5H00Dq+3g@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------C6QDSlgQSws9A1j2aMg0KGw0"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------C6QDSlgQSws9A1j2aMg0KGw0
+Content-Type: multipart/mixed; boundary="------------RbiozDZ0z6VG00rUxljqUKph";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <fa470a75-84e8-4924-9e1c-365cb397a391@bp.renesas.com>
+Subject: Re: [PATCH v2 1/9] pinctrl: renesas: rzg2l: Clarify OEN read/write
+ support
+References: <20240611113204.3004-1-paul.barker.ct@bp.renesas.com>
+ <20240611113204.3004-2-paul.barker.ct@bp.renesas.com>
+ <CAMuHMdW-BrHBt9eDw_GaW7JwJ+TP6Q+68EN1Tpp2Z5H00Dq+3g@mail.gmail.com>
+In-Reply-To: <CAMuHMdW-BrHBt9eDw_GaW7JwJ+TP6Q+68EN1Tpp2Z5H00Dq+3g@mail.gmail.com>
+
+--------------RbiozDZ0z6VG00rUxljqUKph
+Content-Type: multipart/mixed; boundary="------------fv908Zin3VFkRAE20i5xZIp2"
+
+--------------fv908Zin3VFkRAE20i5xZIp2
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 17.06.2024 16:13, Frediano Ziglio wrote:
-> Current timer tick is causing some deadline to fail.
-> The current high value constant was probably due to an old
-> bug in the Xen timer implementation causing errors if the
-> deadline was in the future.
-> This was fixed in Xen commit:
-> 19c6cbd90965 xen/vcpu: ignore VCPU_SSHOTTMR_future
+On 17/06/2024 12:52, Geert Uytterhoeven wrote:
+> Hi Paul,
+>=20
+> On Tue, Jun 11, 2024 at 1:32=E2=80=AFPM Paul Barker
+> <paul.barker.ct@bp.renesas.com> wrote:
+>> We currently support OEN read/write for the RZ/G3S SoC but not the
+>> RZ/G2L SoC family (consisting of RZ/G2L, RZ/G2LC, RZ/G2UL, RZ/V2L &
+>> RZ/Five). The appropriate functions are renamed to clarify this.
+>>
+>> We should also only set the oen_read and oen_write function pointers f=
+or
+>> the devices which support these operations. This requires us to check
+>> that these function pointers are valid before calling them.
+>>
+>> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+>> ---
+>> Changes v1->v2:
+>>   * New patch to clarify function names.
+>=20
+> Thanks for your patch!
+>=20
+>> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>=20
+>> @@ -1016,31 +1016,31 @@ static u8 rzg2l_pin_to_oen_bit(u32 offset, u8 =
+pin, u8 max_port)
+>>         return pin;
+>>  }
+>>
+>> -static u32 rzg2l_read_oen(struct rzg2l_pinctrl *pctrl, u32 caps, u32 =
+offset, u8 pin)
+>> +static u32 rzg3s_read_oen(struct rzg2l_pinctrl *pctrl, u32 caps, u32 =
+offset, u8 pin)
+>=20
+>> -static int rzg2l_write_oen(struct rzg2l_pinctrl *pctrl, u32 caps, u32=
+ offset, u8 pin, u8 oen)
+>> +static int rzg3s_write_oen(struct rzg2l_pinctrl *pctrl, u32 caps, u32=
+ offset, u8 pin, u8 oen)
+>=20
+> As commit 7d566a4d270c52ff ("pinctrl: renesas: rzg2l: Add function
+> pointers for OEN register access") did not rename
+> rzg2l_{read,write}_oen() to rzg2l_oen_{read,write}(), to match the
+> .oen_{read,write}() callback names, this is a good opportunity to fix
+> that oversight.
 
-And then newer kernels are no longer reliably usable on Xen older than
-this?
+Ack.
 
-> --- a/arch/x86/xen/time.c
-> +++ b/arch/x86/xen/time.c
-> @@ -30,7 +30,7 @@
->  #include "xen-ops.h"
->  
->  /* Minimum amount of time until next clock event fires */
-> -#define TIMER_SLOP	100000
-> +#define TIMER_SLOP	1000
+>=20
+> The v2h variants already match the callback names.
+>=20
+>> @@ -1215,6 +1215,8 @@ static int rzg2l_pinctrl_pinconf_get(struct pinc=
+trl_dev *pctldev,
+>>                 break;
+>>
+>>         case PIN_CONFIG_OUTPUT_ENABLE:
+>> +               if (!pctrl->data->oen_read)
+>> +                       return -EOPNOTSUPP;
+>=20
+> Perhaps the check for PIN_CFG_OEN in each of the .oen_read()
+> callbacks should be moved here?
 
-It may be just the lack of knowledge of mine towards noadays's Linux'es
-time handling, but the change of a value with this name and thus
-commented doesn't directly relate to "timer tick" rate. Could you maybe
-help me see the connection?
+Ack.
 
-Jan
+>=20
+>>                 arg =3D pctrl->data->oen_read(pctrl, cfg, _pin, bit);
+>>                 if (!arg)
+>>                         return -EINVAL;
+>> @@ -1354,6 +1356,8 @@ static int rzg2l_pinctrl_pinconf_set(struct pinc=
+trl_dev *pctldev,
+>>
+>>                 case PIN_CONFIG_OUTPUT_ENABLE:
+>>                         arg =3D pinconf_to_config_argument(_configs[i]=
+);
+>> +                       if (!pctrl->data->oen_write)
+>> +                               return -EOPNOTSUPP;
+>=20
+> Likewise.
+
+Ack.
+
+I'll fix these in v3.
+
+Thanks,
+
+--=20
+Paul Barker
+
+--------------fv908Zin3VFkRAE20i5xZIp2
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------fv908Zin3VFkRAE20i5xZIp2--
+
+--------------RbiozDZ0z6VG00rUxljqUKph--
+
+--------------C6QDSlgQSws9A1j2aMg0KGw0
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZnBGoAUDAAAAAAAKCRDbaV4Vf/JGvWna
+AP9p5/HCOBqF1h5FzmOYXHErfMIof0KDoob4zUjs8p/KCAD9Hf5RswcQh+KbvcqZyOQOn3S/gh/S
+sTeHdqwyzdUaHgk=
+=wkPW
+-----END PGP SIGNATURE-----
+
+--------------C6QDSlgQSws9A1j2aMg0KGw0--
 
