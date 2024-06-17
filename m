@@ -1,227 +1,153 @@
-Return-Path: <linux-kernel+bounces-217115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F3290AB00
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:27:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E029B90AB02
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AEEB1F23025
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:27:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3BD41C217B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E61194152;
-	Mon, 17 Jun 2024 10:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB55A1946A0;
+	Mon, 17 Jun 2024 10:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tFOyCp1M"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p1xkmjrl"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96E17FAA2
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415DA194132
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718620039; cv=none; b=TKCieytd/DltZfAs+8xY6bDsMh743z+xQjD4e9GD7JAheN3IlnYPvgr6QKV77XiULkNbs34pDXw5msPGJMMNFz3Rsqgmk9fDXueTkV8htiKmoh5gtnoQtt4kJB33nytrc/BJ902v5MEsJVw+z21rpZJ6MdQLDF92mORp5X66au0=
+	t=1718620066; cv=none; b=GhdTa717f8P/z9Fvn5jKjpKnTGFuwlaXfXM0hlLAz62Rq6H15xcNZ07Z1hsjxbWltE7QTvPYbk/0i0M2kOiASxCvN6wcpwFDB4Zj9wgQpbufxZo4XQzBgl8DD7bZVaUqMFkeoIi2endGENvnLF3u/D3U4sECi4VV2MkzJnbMkU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718620039; c=relaxed/simple;
-	bh=SvwAskc/fCFbqGp3xdpej0VX4LFAyKSwyjET0MIsa04=;
+	s=arc-20240116; t=1718620066; c=relaxed/simple;
+	bh=t7JP/HGFJDwk2M/R92BFPhUlm/Hwfwtb8ue0IF8mlwI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ig+egyZD3aBE8pb6KthOD1FLs65dP35e1UddhXVFMlsiHJZ3ECb5eETUCGeYlDYKIY3m/I5evto6/mz2jfKCcP09U9aOolsEvdCUEBh0vSoqzmjyWxjMDsXm7J0Hkx4fzoqHE25vE+6uXeu5ACyh9h76l/atpK6YWcMqTLqm6XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tFOyCp1M; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57c8bd6b655so15466a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 03:27:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=NgdXa0Brvc2s2CfVG9I+9fNCrgD0Q57WvyXzLdCgmt7rPpmUtDiebrxf1TK7CLsuDEZnDCurbhdea7N8FAOL46UyUpHKyeEGKt2fvKN7Vp6eeiMcw9CdVyu2TLGVSMXtzqTsIvBLFtlVEWAf/hQq4lO0xl5zFhWmtMoYIZhyTOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p1xkmjrl; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57c60b13a56so4939689a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 03:27:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718620036; x=1719224836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=97HNlrom0vmgCUPq2mVyJqaT77fVYxrQT7MRjlCumz4=;
-        b=tFOyCp1MF1mZKDW/Xpt0FJIA6NXvnHjmsD8sXAnX+7YVF047NY4UzNRoOAtweCOsrX
-         zEwBEaVf5CVBAIQed7b7HX4bsDrbFrj3WYQIARvQl/lFF/R0YkDykUb5hS/H+mf5pHPe
-         8Xc8ktJkH2ZodXE9yH3OmF35hKRJ/PnfWAC1cU9l4gutAgYSGLnkX9GNK0v0bV/T1LMD
-         ZrC87vwLN9ukkRZo9eDXOmPry1sQqQzKTKTA3hqZefgy2EqPrA9r71YwHer7/6We8efU
-         3P7hs5FModnQhRAn1VWxFwFvp9UoGe9DGxYNzE/e/pY/jhB+mr14h1pG1YkVgM2vzJG2
-         RtDQ==
+        d=linaro.org; s=google; t=1718620062; x=1719224862; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uXp/Yz17OzdkV2gV0XI8xrmGqd5+ox1Pqhqcmx8WT9w=;
+        b=p1xkmjrldXPj1sZ1DY3G1u3Z+cIdEKGJTnvgTG8q4xTXH0ACKqaFX6ZaDPBSp2O3Ui
+         IR97IRhtggjQeh6ODa0ejZLefZPfSLCNL1tkjaWb60r5m+ylgwQwJxXllRAFbydasFAM
+         vswpKC4OZwK3vs3w9rkRF5Nt7RZrC3WEhqpeHkFXw7/SvIlUz3h2F2m/kadnkYlIktZC
+         cQ9J7Qn4bXPzHEzTPCRXv7wq2cqw6gzaW5pIgnus87AeEKKzfttRfLaZDrshOn7gGKkw
+         XPMoLnvEJmXSjFXw2cfR+1vPIIpMlLWSDk6thahGJuQ+aIrg3cONDLowT6V7v/3k46O6
+         Ui5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718620036; x=1719224836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=97HNlrom0vmgCUPq2mVyJqaT77fVYxrQT7MRjlCumz4=;
-        b=HDK8np4G1BFJfbHqAC2Sf8Xm/DKnezaTYKAmcXWk9dbY+kZPxdaA2xFm7PNgCmUXKd
-         aODPKc1Bkgg7UDlCPBVrqkkHf8tWMZCgnx8BspNsqSiLZ20LY40Jomeaog2jRwDEaZy/
-         VHfQ9fA2KRpqGchOpRi0YiCnDwwzVcWjdmx5l3sTFPqzSl69bgXwB3A6Z4ahicSFn+tS
-         v7sF1ecfnrXLJOEBBA4eygOC4fD9KupdZtXYBVXih6iCHl6mGWNu2qVtC9YjolSU96G7
-         iKaJlwHqIEru+FcePQ5Dj5MQqwiHJr9xnBlfX9aA7sNKbQMioc4dOKU4tayB/qRutJzW
-         OOQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbq5g4oUCNspTUcy9wBoInkT1R+GOegXnD+YCfrdakW+/J2nL+RgfeHfDQ80oqYwqo+JVy03QbFuKThoODs/KHVGWFB8OWl85SfvHL
-X-Gm-Message-State: AOJu0Yw6CdRgWB/YoL/pBY19v9ni3r3FlyGXBqF6tB/Y5GBCV7CCDuqY
-	s71jkgbWetohTlpqPM0JaQ0WjTstb6zGZSMaaV8qkLoTL13Lp/qCF6gNN5YGwFEywtO9DZlnaZr
-	hVgelc7y0Q9F+ktpETUqIlbrY4fARAKUQSYY1
-X-Google-Smtp-Source: AGHT+IE6YBCU6PK9TX7WgOKq154u5fmiFEOZ+kbbMuOv/cOg6c5dK4O+QtvjUVBauAMglII7sNP483BUPy+TaGxyVb8=
-X-Received: by 2002:a05:6402:50d2:b0:57c:cfa9:837b with SMTP id
- 4fb4d7f45d1cf-57ccfa98704mr158097a12.0.1718620035876; Mon, 17 Jun 2024
- 03:27:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718620062; x=1719224862;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uXp/Yz17OzdkV2gV0XI8xrmGqd5+ox1Pqhqcmx8WT9w=;
+        b=UErmsKz/JhRN/xDxoJimBgOhGfWI1y7KreTB22tT0vi4692um3e1xdr2yC6jA51ixu
+         GUXLaDG3n9O8Z1tyKqMV7Q2nwL2SbcanFGBGFmnCe421YFhfeifwOcoA+IiTeu7VmFK1
+         BqPvgv/ncTtyatE7CAUfGRAYjm9/BCG1uqxgWu4RWCVdnv7GxUGcag0qa2kggC2As7pg
+         8oxJ0UdGg91jUl7MERrQn1pYPSnR9coe+Nh8bEpj2UirPcJNgQqUytcJqezof/87EQYW
+         QaM3j38PvAzS84OxFJvDM0qI16R195lSuXLF1Us3GpRfLTD9Xlt5i4nmsUddSX9+2jfH
+         NA+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVSrv3GN4S9fqH0L6E5p1NsmtCo8F3nPuf8K/R3NNnCCFweeQSOA3Gyua2b/T2mbPdSb9G8EJlGv4GLymYXzBUMX/Zbz98jbhIESM/l
+X-Gm-Message-State: AOJu0Yyp68ZOxmXP1+YVpTUoIYdiJc7NwWzmlaW9kLCNa44ShtmGnPew
+	pSdZ2VGz9GCfxrfLit+be2FWFdmoVyLTslEhzZTa1aqZHKRYYDBcIy3N3rTz49m2Nk81d5551xa
+	EIfgBI+oWzwWJkv1mIJc0OfFbYMGC67KAVRCaIA==
+X-Google-Smtp-Source: AGHT+IHa1KyYv1IKw590sCplWvhogQlO8OvOBxMlNOdOwgi5TbD9kl95KoZfAoxfCiWfEz/NonSQTv/NuyiSNK1pPCg=
+X-Received: by 2002:a50:a458:0:b0:57a:322c:b1a5 with SMTP id
+ 4fb4d7f45d1cf-57cbd6a6d1dmr5332493a12.38.1718620062388; Mon, 17 Jun 2024
+ 03:27:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604150136.493962-1-robdclark@gmail.com>
-In-Reply-To: <20240604150136.493962-1-robdclark@gmail.com>
-From: Pranjal Shrivastava <praan@google.com>
-Date: Mon, 17 Jun 2024 15:57:04 +0530
-Message-ID: <CAN6iL-Qz5--_bE=s8DKMtZFLJuNZca13ageGn48n4W7EKLUEUg@mail.gmail.com>
-Subject: Re: [PATCH] iommu/arm-smmu: Pretty-print context fault related regs
-To: Rob Clark <robdclark@gmail.com>
-Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	Stephen Boyd <swboyd@chromium.org>, Rob Clark <robdclark@chromium.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jerry Snitselaar <jsnitsel@redhat.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20240605093006.145492-1-steven.price@arm.com> <20240605093006.145492-3-steven.price@arm.com>
+ <20240612104023.GB4602@myrica> <3301ddd8-f088-48e3-bfac-460891698eac@arm.com> <20240613105107.GC417776@myrica>
+In-Reply-To: <20240613105107.GC417776@myrica>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Mon, 17 Jun 2024 11:27:31 +0100
+Message-ID: <CAFEAcA99bPtEr2OpE45wCgfSArZdtz4tu9rggLNb+=Rujh0ZvQ@mail.gmail.com>
+Subject: Re: [PATCH v3 02/14] arm64: Detect if in a realm and set RIPAS RAM
+To: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Steven Price <steven.price@arm.com>, kvm@vger.kernel.org, 
+	kvmarm@lists.linux.dev, Catalin Marinas <catalin.marinas@arm.com>, 
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei <alexandru.elisei@arm.com>, 
+	Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev, 
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
-On Tue, Jun 4, 2024 at 8:32=E2=80=AFPM Rob Clark <robdclark@gmail.com> wrot=
-e:
+On Thu, 13 Jun 2024 at 11:50, Jean-Philippe Brucker
+<jean-philippe@linaro.org> wrote:
 >
-> From: Rob Clark <robdclark@chromium.org>
+> On Wed, Jun 12, 2024 at 11:59:22AM +0100, Suzuki K Poulose wrote:
+> > On 12/06/2024 11:40, Jean-Philippe Brucker wrote:
+> > > On Wed, Jun 05, 2024 at 10:29:54AM +0100, Steven Price wrote:
+> > > > From: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > > >
+> > > > Detect that the VM is a realm guest by the presence of the RSI
+> > > > interface.
+> > > >
+> > > > If in a realm then all memory needs to be marked as RIPAS RAM initially,
+> > > > the loader may or may not have done this for us. To be sure iterate over
+> > > > all RAM and mark it as such. Any failure is fatal as that implies the
+> > > > RAM regions passed to Linux are incorrect - which would mean failing
+> > > > later when attempting to access non-existent RAM.
+> > > >
+> > > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > > > Co-developed-by: Steven Price <steven.price@arm.com>
+> > > > Signed-off-by: Steven Price <steven.price@arm.com>
+> > >
+> > > > +static bool rsi_version_matches(void)
+> > > > +{
+> > > > + unsigned long ver_lower, ver_higher;
+> > > > + unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
+> > > > +                                         &ver_lower,
+> > > > +                                         &ver_higher);
+> > >
+> > > There is a regression on QEMU TCG (in emulation mode, not running under KVM):
+> > >
+> > >    qemu-system-aarch64 -M virt -cpu max -kernel Image -nographic
+> > >
+> > > This doesn't implement EL3 or EL2, so SMC is UNDEFINED (DDI0487J.a R_HMXQS),
+> > > and we end up with an undef instruction exception. So this patch would
+> > > also break hardware that only implements EL1 (I don't know if it exists).
+> >
+> > Thanks for the report,  Could we not check ID_AA64PFR0_EL1.EL3 >= 0 ? I
+> > think we do this for kvm-unit-tests, we need the same here.
 >
-> Parse out the bitfields for easier-to-read fault messages.
+> Good point, it also fixes this case and is simpler. It assumes RMM doesn't
+> hide this field, but I can't think of a reason it would.
 >
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
-> Stephen was wanting easier to read fault messages.. so I typed this up.
+> This command won't work anymore:
 >
-> Resend with the new iommu list address
+>   qemu-system-aarch64 -M virt,secure=on -cpu max -kernel Image -nographic
 >
->  drivers/iommu/arm/arm-smmu/arm-smmu.c | 53 +++++++++++++++++++++++++--
->  drivers/iommu/arm/arm-smmu/arm-smmu.h |  5 +++
->  2 files changed, 54 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/ar=
-m-smmu/arm-smmu.c
-> index c572d877b0e1..06712d73519c 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> @@ -411,6 +411,8 @@ static irqreturn_t arm_smmu_context_fault(int irq, vo=
-id *dev)
->         unsigned long iova;
->         struct arm_smmu_domain *smmu_domain =3D dev;
->         struct arm_smmu_device *smmu =3D smmu_domain->smmu;
-> +       static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
-> +                                     DEFAULT_RATELIMIT_BURST);
->         int idx =3D smmu_domain->cfg.cbndx;
->         int ret;
->
-> @@ -425,10 +427,53 @@ static irqreturn_t arm_smmu_context_fault(int irq, =
-void *dev)
->         ret =3D report_iommu_fault(&smmu_domain->domain, NULL, iova,
->                 fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_F=
-AULT_READ);
->
-> -       if (ret =3D=3D -ENOSYS)
-> -               dev_err_ratelimited(smmu->dev,
-> -               "Unhandled context fault: fsr=3D0x%x, iova=3D0x%08lx, fsy=
-nr=3D0x%x, cbfrsynra=3D0x%x, cb=3D%d\n",
-> -                           fsr, iova, fsynr, cbfrsynra, idx);
-> +       if (ret =3D=3D -ENOSYS && __ratelimit(&rs)) {
-> +               static const struct {
-> +                       u32 mask; const char *name;
-> +               } fsr_bits[] =3D {
-> +                       { ARM_SMMU_FSR_MULTI,  "MULTI" },
-> +                       { ARM_SMMU_FSR_SS,     "SS"    },
-> +                       { ARM_SMMU_FSR_UUT,    "UUT"   },
-> +                       { ARM_SMMU_FSR_ASF,    "ASF"   },
-> +                       { ARM_SMMU_FSR_TLBLKF, "TLBLKF" },
-> +                       { ARM_SMMU_FSR_TLBMCF, "TLBMCF" },
-> +                       { ARM_SMMU_FSR_EF,     "EF"     },
-> +                       { ARM_SMMU_FSR_PF,     "PF"     },
-> +                       { ARM_SMMU_FSR_AFF,    "AFF"    },
-> +                       { ARM_SMMU_FSR_TF,     "TF"     },
+> implements EL3 and SMC still treated as undef. QEMU has a special case for
+> starting at EL2 in this case, but I couldn't find what this is for.
 
-I think we are missing to log the translation scheme i.e. `Format
-bits[10:9]` field of this register as per the SMMUv2 spec. Maybe add
-that too?
+That's a bit of an odd config, because it says "emulate EL3 but
+never use it". QEMU's boot loader starts the kernel at EL2 because
+the kernel boot protocol requires that (this is more relevant on
+boards other than virt where EL3 is not command-line disableable).
+I have a feeling we've occasionally found that somebody's had some
+corner case reason to use it, though. (eg
+https://gitlab.com/qemu-project/qemu/-/issues/1899
+is from somebody who says they use this when booting Windows 11 because
+it asserts at boot time that EL3 is present and won't boot otherwise.)
 
-> +               }, fsynr0_bits[] =3D {
-> +                       { ARM_SMMU_FSYNR0_WNR,    "WNR"    },
-> +                       { ARM_SMMU_FSYNR0_PNU,    "PNU"    },
-> +                       { ARM_SMMU_FSYNR0_IND,    "IND"    },
-> +                       { ARM_SMMU_FSYNR0_NSATTR, "NSATTR" },
-> +                       { ARM_SMMU_FSYNR0_PTWF,   "PTWF"   },
-> +                       { ARM_SMMU_FSYNR0_AFR,    "AFR"    },
-> +               };
-> +
-> +               pr_err("%s %s: Unhandled context fault: fsr=3D0x%x (",
-> +                      dev_driver_string(smmu->dev), dev_name(smmu->dev),=
- fsr);
-> +
-> +               for (int i =3D 0, n =3D 0; i < ARRAY_SIZE(fsr_bits); i++)=
- {
-> +                       if (fsr & fsr_bits[i].mask) {
-> +                               pr_cont("%s%s", (n > 0) ? "|" : "", fsr_b=
-its[i].name);
-> +                               n++;
-> +                       }
-> +               }
+Your underlying problem here seems to be that you don't have
+a way for the firmware to say "hey, SMC works, you can use it" ?
 
-Nit: Maybe add a line-wrap here after logging the iova?
-Not trying to sound like a terminal geek, but a full log with pr_cont
-could get very long (> 80 characters).
-So, let's log fsr & iova in one line, fsynr and others in the next.
-
-> +
-> +               pr_cont("), iova=3D0x%08lx, fsynr=3D0x%x (S1CBNDX=3D%u", =
-iova, fsynr,
-> +                       (fsynr >> 16) & 0xff);
-> +
-> +               for (int i =3D 0; i < ARRAY_SIZE(fsynr0_bits); i++) {
-> +                       if (fsynr & fsynr0_bits[i].mask) {
-> +                               pr_cont("|%s", fsynr0_bits[i].name);
-> +                       }
-> +               }
-> +
-> +               pr_cont("|PLVL=3D%u), cbfrsynra=3D0x%x, cb=3D%d\n",
-> +                       fsynr & 0x3,   /* FSYNR0.PLV */
-> +                       cbfrsynra, idx);
-> +
-> +       }
->
->         arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
->         return IRQ_HANDLED;
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/ar=
-m-smmu/arm-smmu.h
-> index 836ed6799a80..3b051273718b 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> @@ -223,6 +223,11 @@ enum arm_smmu_cbar_type {
->
->  #define ARM_SMMU_CB_FSYNR0             0x68
->  #define ARM_SMMU_FSYNR0_WNR            BIT(4)
-> +#define ARM_SMMU_FSYNR0_PNU            BIT(5)
-> +#define ARM_SMMU_FSYNR0_IND            BIT(6)
-> +#define ARM_SMMU_FSYNR0_NSATTR         BIT(8)
-> +#define ARM_SMMU_FSYNR0_PTWF           BIT(10)
-> +#define ARM_SMMU_FSYNR0_AFR            BIT(11)
->
-
-Nit: Worth prefixing these with "CB_" i.e. "ARM_SMMU_CB_FSYNR0_* " to
-avoid confusion with "GFSYNR0".
-
->  #define ARM_SMMU_CB_FSYNR1             0x6c
->
-> --
-> 2.45.1
->
->
-Thanks,
-Pranjal
+-- PMM
 
