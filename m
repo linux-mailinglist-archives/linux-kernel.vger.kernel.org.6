@@ -1,269 +1,179 @@
-Return-Path: <linux-kernel+bounces-217574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B8E90B1B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:23:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF70E90B2FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09538289049
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:23:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3444CB2926C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673D519A291;
-	Mon, 17 Jun 2024 13:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FD316EB55;
+	Mon, 17 Jun 2024 13:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="Q7r8/ReF"
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S8cEi+yM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8D519A289;
-	Mon, 17 Jun 2024 13:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E8816DC0C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631234; cv=none; b=FeYeXWGXoYjMunwpZEJfoyKN6DTNBwwoI9PybiEnUUXWeGzWh/S/2SXisrljF5fW0bC2hGUb4WEHYbwXa3HuGlFpNLriHuEZsFIWI7Sc+jV/Wcmjj8eDV86/1m0sjjhB5sItFL3jJKUb1rwijJmxmeX74WyWi8EdbRpGfCjzmSg=
+	t=1718630720; cv=none; b=PDWnpLO+T5EPalSaImzM0kR0dTXGsMHXnNX3nYBVyCfzvSwxH/TVlaJj/dUfIYrJ7LV29PmWDp0JWlZ1pIis0e1/W91mqvyOg3s2N5maIb2dFOgCxNGcOabgyFl3yjiR3GU2eZ0e6Slt5AKRRPxEngmWliYM5L1Nfi3Ej9RLb68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631234; c=relaxed/simple;
-	bh=EPUP2P2rkyMTmnSsXy3vgtNnCWIN0xxM5+rBzw/2SoI=;
-	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
-	 In-Reply-To; b=FEmF8B3JUsolUDYiYWKIBi5aC2yUFEQRTPE9Zxb8I7Y4Tt1CizG6ipEarjy1JqWAtvEAzGhVBg0+dI4C1KOlLHFdcvIjFER3WTNyFay1cFaaahhz41uaKe6OjagmUeqMY9N71C7ck5Bml2pin2WGF+EkJlreyYQhZG5/HE+1HHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=Q7r8/ReF; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [213.135.10.150])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 96978230;
-	Mon, 17 Jun 2024 15:24:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1718630690;
+	s=arc-20240116; t=1718630720; c=relaxed/simple;
+	bh=e0Ai7S6YQSXLPsDKMzDQYJxDo/I6cDjDA6YZygp1mvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eIfVrXy3d1juuTSgiGLgIqvDk3vZ5yMfHMc+glq7dOQwF02V6E0ood9gAoZuf3S2hxXodhoUbewvsGQv39a4CGy1oGHVlAXlKwFCHkOuk8t7g29FPN7FuzIIl6nXhK/9sAILZuqBVLfc9fvw3NyMtwM3Lo9kqh66xulZIuU/uCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S8cEi+yM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718630718;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
-	 references:references; bh=XGdpwMen/VgLH0fpEvgI0LtL3f1BjG5LVb+4IVUtO6g=;
-	b=Q7r8/ReFl6eYZ20WbkLEG4pnme+d5/YemdIP1r/VSRiuZSaXALnMwSvEQtfBQmGIeuKwli
-	7IgsDxezpqkFORBSDX/00zj6LMUQdhJ1w10ODWF1zincbDxWWJ3bVWuMJEnm3AfA99e0Ko
-	qk6C6Uz3D4jyGQHsxN4V7+zfscZia/PyhnxM5gAdkvqwrH8iGaG27oNv13rR14i6Dh717S
-	FDS+sXX/et9Mh92whUvH31TlnkcsyDREwLFoRXtKYwBWubvVpUXqlrAh9UUST/HEVkOwyZ
-	8UD4+YUy77ZcBJFWpYlTWmnXl2ERnMkHGXqoivpF0lvyD8hP+5Aw8VlG5ckeTQ==
-Content-Type: multipart/signed;
- boundary=cd73275ec8ec08f02789c22d654dfdbdccd7e263beb5db59c37f41efc36e;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 17 Jun 2024 15:24:39 +0200
-Message-Id: <D22BQAOFJWVJ.2Y9FKAAR57BHK@walle.cc>
-From: "Michael Walle" <michael@walle.cc>
-To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- <chunkuang.hu@kernel.org>
-Subject: Re: [PATCH v7 3/3] drm/mediatek: Implement OF graphs support for
- display paths
-Cc: <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
- <conor+dt@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
- <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
- <mripard@kernel.org>, <tzimmermann@suse.de>, <matthias.bgg@gmail.com>,
- <shawn.sung@mediatek.com>, <yu-chang.lee@mediatek.com>,
- <ck.hu@mediatek.com>, <jitao.shi@mediatek.com>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>, <wenst@chromium.org>,
- <kernel@collabora.com>, <sui.jinfeng@linux.dev>, "Alexandre Mergnat"
- <amergnat@baylibre.com>
-X-Mailer: aerc 0.16.0
-References: <20240612065634.26569-1-angelogioacchino.delregno@collabora.com>
- <20240612065634.26569-4-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240612065634.26569-4-angelogioacchino.delregno@collabora.com>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/S3QsnopAU1g3EZ48Lr3+KF/tnwo0ee82bp6T2xhvDs=;
+	b=S8cEi+yM5tXwym7NqL5eTO/Jv+nHAgZlp2YvsMeg9hzOp8MIleVnq8ktsbPVPJA18ZeDGF
+	Ufad7CE2IqJi63khIvGjbuiMGuMtVUK6jr8qb/8BPRSuBOwGjp+OlAw07wgml5djVLxO/n
+	cIUzd1DYZAmUlCjjiKG0BZDiCyJ8zMw=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-363-BlJk37XOOUOIThFzWWXb7g-1; Mon, 17 Jun 2024 09:25:16 -0400
+X-MC-Unique: BlJk37XOOUOIThFzWWXb7g-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3608fb58acaso1135762f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:25:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718630715; x=1719235515;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/S3QsnopAU1g3EZ48Lr3+KF/tnwo0ee82bp6T2xhvDs=;
+        b=b5M7XvR/6BCn/l4OoxqtWQsPZg24HYxQVfcF634Jb8g/f15Hoa49+/xB07J72qNUpq
+         /vYWxmSwGnfOaouuItS+S8suN3Ag9anZ2ltmjQ/yT08fUvtaogUxkKS5/1K5jelnqvBq
+         mV2yLFiOoyhm39bAbt+un0w9OeRbMRBoBFra87J9WzjhiDNypyyTFLr0bxvzXFFUfd+4
+         i8KO84i1mjyLndCIvfc9k80YzNcuBk+RIZQComt+tAvpOQo/0Rj5nSdiUvSQVJyCoe8i
+         nMIUDfy+sqIguXgWlws/hLEEn0K2ImbJvfbFwaKx90JR0BeWWBpf9AMKU56jF38GMOr5
+         xGHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWryMoNILbURfIjw5tZ/x1qyQeVvDOBLHyFfQDkOWC/RV+r4H5XE/0HM3LFHtV7tqxW+HRoDsheLrJdZ0YllgjoCH9aq4SkIK2fAs+G
+X-Gm-Message-State: AOJu0YzctaM7lNpYZh3DbahfG1S+fHpr08BYP0bkwoGke2h3OjTV0dIk
+	JDnRdLsRdAMuT2pRNLoNXLUSXNTSbcPveNDaqoFSayQkHXLtL7FvW5hHe07sM4Xepby2sU4iMB2
+	wuqNge93cq2cP+vC+ebwii8qO0GYIexawr2VuQSYbYAg3RGYLgh68uUI2dEIIpg==
+X-Received: by 2002:adf:e850:0:b0:35f:204c:889f with SMTP id ffacd0b85a97d-3607a7833b0mr8786835f8f.56.1718630715268;
+        Mon, 17 Jun 2024 06:25:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5RKQQn0KRZhLjfi6KZQa3K/TTM2W1cxHcRKnOc2A/u+LNZscYxGxayZdx96GzT+RJtL3BLQ==
+X-Received: by 2002:adf:e850:0:b0:35f:204c:889f with SMTP id ffacd0b85a97d-3607a7833b0mr8786801f8f.56.1718630714671;
+        Mon, 17 Jun 2024 06:25:14 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:7439:b500:58cc:2220:93ce:7c4a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509353csm11912155f8f.22.2024.06.17.06.25.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 06:25:13 -0700 (PDT)
+Date: Mon, 17 Jun 2024 09:25:10 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: jasowang@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
+Subject: Re: [PATCH] virtio_net: Eliminate OOO packets during switching
+Message-ID: <20240617091919-mutt-send-email-mst@kernel.org>
+References: <20240614220422.42733-1-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614220422.42733-1-jain.abhinav177@gmail.com>
 
---cd73275ec8ec08f02789c22d654dfdbdccd7e263beb5db59c37f41efc36e
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Fri, Jun 14, 2024 at 10:04:22PM +0000, Abhinav Jain wrote:
+> Disable the network device & turn off carrier before modifying the
+> number of queue pairs.
+> Process all the in-flight packets and then turn on carrier, followed
+> by waking up all the queues on the network device.
 
-Hi Angelo,
+Did you test that there's a workload with OOO and
+this patch actually prevents that?
 
-> +/**
-> + * mtk_drm_of_ddp_path_build_one - Build a Display HW Pipeline for a CRT=
-C Path
-> + * @dev:          The mediatek-drm device
-> + * @cpath:        CRTC Path relative to a VDO or MMSYS
-> + * @out_path:     Pointer to an array that will contain the new pipeline
-> + * @out_path_len: Number of entries in the pipeline array
-> + *
-> + * MediaTek SoCs can use different DDP hardware pipelines (or paths) dep=
-ending
-> + * on the board-specific desired display configuration; this function wa=
-lks
-> + * through all of the output endpoints starting from a VDO or MMSYS hard=
-ware
-> + * instance and builds the right pipeline as specified in device trees.
-> + *
-> + * Return:
-> + * * %0       - Display HW Pipeline successfully built and validated
-> + * * %-ENOENT - Display pipeline was not specified in device tree
-> + * * %-EINVAL - Display pipeline built but validation failed
-> + * * %-ENOMEM - Failure to allocate pipeline array to pass to the caller
-> + */
-> +static int mtk_drm_of_ddp_path_build_one(struct device *dev, enum mtk_cr=
-tc_path cpath,
-> +					 const unsigned int **out_path,
-> +					 unsigned int *out_path_len)
-> +{
-> +	struct device_node *next, *prev, *vdo =3D dev->parent->of_node;
-> +	unsigned int temp_path[DDP_COMPONENT_DRM_ID_MAX] =3D { 0 };
-> +	unsigned int *final_ddp_path;
-> +	unsigned short int idx =3D 0;
-> +	bool ovl_adaptor_comp_added =3D false;
-> +	int ret;
-> +
-> +	/* Get the first entry for the temp_path array */
-> +	ret =3D mtk_drm_of_get_ddp_ep_cid(vdo, 0, cpath, &next, &temp_path[idx]=
-);
-> +	if (ret) {
-> +		if (next && temp_path[idx] =3D=3D DDP_COMPONENT_DRM_OVL_ADAPTOR) {
-> +			dev_err(dev, "Adding OVL Adaptor for %pOF\n", next);
-> +			ovl_adaptor_comp_added =3D true;
-> +		} else {
-> +			if (next)
-> +				dev_err(dev, "Invalid component %pOF\n", next);
-> +			else
-> +				dev_err(dev, "Cannot find first endpoint for path %d\n", cpath);
-> +
-> +			return ret;
-> +		}
-> +	}
-> +	idx++;
-> +
-> +	/*
-> +	 * Walk through port outputs until we reach the last valid mediatek-drm=
- component.
-> +	 * To be valid, this must end with an "invalid" component that is a dis=
-play node.
+> 
+> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+
+
+> ---
+>  drivers/net/virtio_net.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 61a57d134544..d0a655a3b4c6 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -3447,7 +3447,6 @@ static void virtnet_get_drvinfo(struct net_device *dev,
+>  
+>  }
+>  
+> -/* TODO: Eliminate OOO packets during switching */
+>  static int virtnet_set_channels(struct net_device *dev,
+>  				struct ethtool_channels *channels)
+>  {
+> @@ -3471,6 +3470,15 @@ static int virtnet_set_channels(struct net_device *dev,
+>  	if (vi->rq[0].xdp_prog)
+>  		return -EINVAL;
+>  
+> +	/* Disable network device to prevent packet processing during
+> +	 * the switch.
 > +	 */
-> +	do {
-> +		prev =3D next;
-> +		ret =3D mtk_drm_of_get_ddp_ep_cid(next, 1, cpath, &next, &temp_path[id=
-x]);
-> +		of_node_put(prev);
-> +		if (ret) {
-> +			of_node_put(next);
-> +			break;
-> +		}
-> +
-> +		/*
-> +		 * If this is an OVL adaptor exclusive component and one of those
-> +		 * was already added, don't add another instance of the generic
-> +		 * DDP_COMPONENT_OVL_ADAPTOR, as this is used only to decide whether
-> +		 * to probe that component master driver of which only one instance
-> +		 * is needed and possible.
-> +		 */
-> +		if (temp_path[idx] =3D=3D DDP_COMPONENT_DRM_OVL_ADAPTOR) {
-> +			if (!ovl_adaptor_comp_added)
-> +				ovl_adaptor_comp_added =3D true;
-> +			else
-> +				idx--;
-> +		}
-> +	} while (++idx < DDP_COMPONENT_DRM_ID_MAX);
-> +
-> +	/*
-> +	 * The device component might not be disabled: in that case, don't
+> +	netif_tx_disable(dev);
+> +	netif_carrier_off(dev);
 
-Sorry there was a typo in my proposal, This should either be
-"not be enabled" or "be disabled".
+Won't turning off carrier cause a lot of damage such as
+changing IP and so on?
 
-> +	 * check the last entry and just report that the device is missing.
-> +	 */
-> +	if (ret =3D=3D -ENODEV)
-> +		return ret;
+> +
+> +	/* Make certain that all in-flight packets are processed. */
+> +	synchronize_net();
 > +
 
-..
+The comment seems to say what the code does not do.
 
-> +static int mtk_drm_of_ddp_path_build(struct device *dev, struct device_n=
-ode *node,
-> +				     struct mtk_mmsys_driver_data *data)
-> +{
-> +	struct device_node *ep_node;
-> +	struct of_endpoint of_ep;
-> +	bool output_present[MAX_CRTC] =3D { false };
-> +	bool valid_output_found =3D false;
-> +	int ret;
-> +
-> +	for_each_endpoint_of_node(node, ep_node) {
-> +		ret =3D of_graph_parse_endpoint(ep_node, &of_ep);
-> +		if (ret) {
-> +			dev_err_probe(dev, ret, "Cannot parse endpoint\n");
-> +			break;
-> +		}
-> +
-> +		if (of_ep.id >=3D MAX_CRTC) {
-> +			ret =3D dev_err_probe(dev, -EINVAL,
-> +					    "Invalid endpoint%u number\n", of_ep.port);
-> +			break;
-> +		}
-> +
-> +		output_present[of_ep.id] =3D true;
-> +	}
-> +
-> +	if (ret) {
-> +		of_node_put(ep_node);
-> +		return ret;
-> +	}
-> +
-> +	if (output_present[CRTC_MAIN]) {
-> +		ret =3D mtk_drm_of_ddp_path_build_one(dev, CRTC_MAIN,
-> +						    &data->main_path, &data->main_len);
-> +		if (ret =3D=3D 0)
-> +			valid_output_found =3D true;
-> +		else if (ret !=3D -ENODEV)
-> +			return ret;
-> +	}
-> +
-> +	if (output_present[CRTC_EXT]) {
-> +		ret =3D mtk_drm_of_ddp_path_build_one(dev, CRTC_EXT,
-> +						    &data->ext_path, &data->ext_len);
-> +		if (ret =3D=3D 0)
-> +			valid_output_found =3D true;
-> +		else if (ret !=3D -ENODEV)
-> +			return ret;
-> +	}
-> +
-> +	if (output_present[CRTC_THIRD]) {
-> +		ret =3D mtk_drm_of_ddp_path_build_one(dev, CRTC_THIRD,
-> +						    &data->third_path, &data->third_len);
-> +		if (ret =3D=3D 0)
-> +			valid_output_found =3D true;
-> +		else if (ret !=3D -ENODEV)
-> +			return ret;
-> +	}
-> +
-> +	if (!valid_output_found)
-> +		return -ENODEV;
 
-This doesn't work. My proposal just ignored the ENODEV error. Now
-you'll return ENODEV if there is no output for a given mmsys. In my
-case, that is true for the first mmsys. Subsequent mmsys's doesn't
-get probed in that case, it seems.
+Also, doing this under rtnl is a heavy weight operation.
 
-Anyway, you shouldn't return ENODEV here because disabled just
-means not available, i.e. it should be treated the same as
-"output_present[] =3D=3D false".
 
--michael
 
---cd73275ec8ec08f02789c22d654dfdbdccd7e263beb5db59c37f41efc36e
-Content-Type: application/pgp-signature; name="signature.asc"
+>  	cpus_read_lock();
+>  	err = virtnet_set_queues(vi, queue_pairs);
+>  	if (err) {
+> @@ -3482,7 +3490,12 @@ static int virtnet_set_channels(struct net_device *dev,
+>  
+>  	netif_set_real_num_tx_queues(dev, queue_pairs);
+>  	netif_set_real_num_rx_queues(dev, queue_pairs);
+> - err:
+> +
+> +	/* Restart the network device */
+> +	netif_carrier_on(dev);
+> +	netif_tx_wake_all_queues(dev);
+> +
+> +err:
+>  	return err;
+>  }
+>  
 
------BEGIN PGP SIGNATURE-----
 
-iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZnA5GREcbWljaGFlbEB3
-YWxsZS5jYwAKCRASJzzuPgIf+ASJAYC5JN+RTspgt+HYGXjHGvvwdfLZI0lFGsC8
-Wfx4Gsm/0IQYKRPLKUPUGvw/uRVNvC8BgM5HLmpkNhLtPn53MJEf34RxT+WAajRa
-cRfle3/fAZq7yCb+dvJXI3q8ygyun07X5Q==
-=1Wb1
------END PGP SIGNATURE-----
 
---cd73275ec8ec08f02789c22d654dfdbdccd7e263beb5db59c37f41efc36e--
+Given the result is, presumably, improved performance with less
+packet loss due to OOO, I'd like to see some actual testing results,
+hopefully also measuring the effect on CPU load.
+
+
+
+
+> -- 
+> 2.34.1
+
 
