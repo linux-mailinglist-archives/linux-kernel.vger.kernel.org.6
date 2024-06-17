@@ -1,135 +1,105 @@
-Return-Path: <linux-kernel+bounces-217103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B4590AA9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E2C90AA90
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A1131C2115C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:03:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1141C1C217D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A51F1946AB;
-	Mon, 17 Jun 2024 10:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F8518FDAE;
+	Mon, 17 Jun 2024 10:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TXfbg8gC"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nOdXaef5"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CA8194092;
-	Mon, 17 Jun 2024 10:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC4D18C326
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718618556; cv=none; b=s/UJ3ZNfMP9GqUj7TMFE/GtfaB3R67XZ1A0NPwoVCb2DYILAOGNBy3EdcDofOgYvicgv3ZmaenJ1d/0e02ioO8ACvu55aNchYP1FzZGpOOmZlohnlPk7qA60EJ5RHNxzvTJOik5zt7T6VDd204ENG6m4Cqf2KndZBwTnPimMsXk=
+	t=1718618537; cv=none; b=fpnSj6SokKZi0MpI2WRce1avKtw/CD6bQHJ7z/xPeyoyUXoYHS3ho+XPaESUhmrjkKvlYpnCetOaDMs6u3nphp2ZWsuq/O4JFkqCivEbIAqbmmLz+EWZkRtlvHGGtcyXfaAQYGJeTm8WFBE3u6zt4d2U9tdUbYoEoiu1OV0dq5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718618556; c=relaxed/simple;
-	bh=5ucFmytPGWUITdYIUNvYuJbY8zzIT+lAWia57YkFvQ0=;
+	s=arc-20240116; t=1718618537; c=relaxed/simple;
+	bh=qtA4vdLpStckZ4K+HJdtG+Yn+DDVup8OpUIHT1OfTTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ajq7kUaxZWEaQ2FpFfNYU9FdPATHRSB/u/RZcXrTTXkCHByrE80MBkmRRWpBe5YWi+1WrkSCPzCTK8gxNEWlczdRY9lbqSciBD94lcD/W3DnSPPsvAyl1X3jJePbQpO5v6LCvo43bbZ/rb1yY8AskxrSPiTwBTgWGi/A/eRvWs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TXfbg8gC; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ABDC240E021A;
-	Mon, 17 Jun 2024 10:02:26 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id p-SwtidTbXwT; Mon, 17 Jun 2024 10:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718618542; bh=hk8qAv1xkelStwfpGcnWoiVIdVGUKqufug9abuox7ko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TXfbg8gChJROKcS7Y/Q95/XP3hPTOGtUQG9RULQxSAPp/U31ELpExyR7R2eP6JvPv
-	 GBo/JMTUPKJkzBmwfvqv3Aa/OHmtphGUF5ObrfG0KD6KN/uxUNCGaFKX/toaaPmocK
-	 dUruAb5F/VIBChTG3m2nmJRfiI+pJLYYTnNAVP86hIqUJQbLnIjXor7z6r8JsOWymw
-	 +zP7yAp+bxNprgPOZYlLabLJOC+mA1IKIsZ15Ws2UtxL0uWgf/dYDonpJ+c9zA3MnI
-	 KtB0BfSYZgSXDdgBumPTd69RR6BEC07BGeujoaoetOGsO6aXSDtqfUqgJ8IZdx3VXK
-	 bE/EAEhvtfRiy1hhkwI5VkZhHfhA88mlCAjWL3OWlao+ZQceZvRnrDiOpvPskzytIl
-	 dR/2Ttih6SHsZR7ZY6qU2rBTgc2cFyl1BJTz53XnjswrTPrIMv6d7MnlWZ/IWHN5rZ
-	 JfviQAn9l4hwngIfPd6YcRZVzp6Y93p0TAmsxRtBobXqiWP0emeMZV6i1St+lKRzsO
-	 FCl39wI/2EuMIbvWDVPxd49vkTXwgTLK5WYfUjDQPQN5bxDD5rYjIRdG0iFTXst0Y/
-	 3/3ywFM9g6Vor4KD6CyKgeLMCuqNBLfro21rP6XXFx+k7Z4itqZLgT5WJ7Xm3KbrWM
-	 jGWNxY3vqsz4yn0YbfBQH0I4=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 156CB40E01F9;
-	Mon, 17 Jun 2024 10:01:56 +0000 (UTC)
-Date: Mon, 17 Jun 2024 12:01:50 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Zack Rusin <zack.rusin@broadcom.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	lkp@intel.com, zack.rusin@broadcom.com,
-	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
-	tzimmermann@suse.de, mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com, linux-iio@vger.kernel.org,
-	jic23@kernel.org, lars@metafoo.de, nuno.sa@analog.com,
-	dragos.bogdan@analog.com, anshulusr@gmail.com,
-	andrea.collamati@gmail.com, oe-kbuild-all@lists.linux.dev,
-	x86@kernel.org
-Subject: Re: [PATCH 1/2] drm/vmwgfx: Fix missing HYPERVISOR_GUEST dependency
-Message-ID: <20240617100150.GDZnAJjoH5wZKu2OAV@fat_crate.local>
-References: <202406152104.FxakP1MB-lkp@intel.com>
- <20240616012511.198243-1-alexey.makhalov@broadcom.com>
- <20240617090709.GCZm_8vdnLzt048UH_@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JdOIjP2lDHABRSTu4aGNbdoJNZVBLCogWdA1sxgHfwIGm9+V8bInFiMx4hPgx/8pkzgsINhQ6p97lpO913BeacMujXbGKUnyYi7lOn8vsSORZ/JkfwQybq0eVhKVayiYYtxJbGz6goFhLz+4nqTCplARmwCKyJbRAJxAOuYu+c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nOdXaef5; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so49827881fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 03:02:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718618533; x=1719223333; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ej4HKaTXNbtrLZvPteJwUzGUeQdd3JpTOE58bTuRP4g=;
+        b=nOdXaef53XeEmVn3q8HDoZ9MFOhX4JF9mJ3/7uU/HWs/gkNi1Ron/Fvz/1kJd3PhTA
+         4ZC93SVl93LuXk5eW3978yTgo5UBLAk7+J6453tR5CkiSqkIOWSeeKEp3TA4Do6+9nvf
+         ZPLdzsto2icMJ0/IazAB+R8n9zLnQVHjTAgKyCvJSBjeXqU9RZDHLG45qTUhSjxcZ2/f
+         RXfj7IAPZobrnFR1F9Xo/KEiM742SUofrv3BEh7Vm6GdQHMHQ8z/apWD/puasXPncybJ
+         TXYxb24V8SxnKbfu2mVMcWKRC4a+8Q/jNHJWIZSFCuvMd+KY+olsrs3pUBl2f/mHIs9u
+         A1sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718618533; x=1719223333;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ej4HKaTXNbtrLZvPteJwUzGUeQdd3JpTOE58bTuRP4g=;
+        b=P+MgLmsIMkXf9yfxY4lHeJMv8SmJg5KWkD+bOZ5LLkA94/uKXN068GCngUkJAgFbfH
+         2sl8GjCfgH6UQEqsTxthvRy92ZUAl93a4K8MgmybryVIHxEP/6rC1COID9hi3szUE+j1
+         o96fK1ZIrLz5DWGKwdM98PdaBSUra/vdYeYkQ5YOf1ryb6f3L+ri97OKcQIA8nNy6zY0
+         Ng5M/d8Nu1MjLnl0GEdkqQAp4NzdWI3M8x8aZ+SrwLsyjOnzrySF4n3kbxKlxgRktLf6
+         ef47eYVteqcjSYQaH49VyG1KJLvnRi5Q+jjGdvB/Lsdj85CRnQiXnbVOdRf+U/YXfPUM
+         GZGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHw3VdmcpQzjwSYH4tpUBp7uP4r5GdjC4hjKvXlQupJIjuoirw70KpwmK+ogdn4sDhG6qRJL6PzK14AfhQPqXAeoBg+i8UDM1+Z4yz
+X-Gm-Message-State: AOJu0YwpyijPzG699oDnJMb3cV1hOd2UqzPNS6P7EGcgYg0wJGHX+V8k
+	Y/laR+Kdaq/7clNPtUtSW6xiYwg+6iz3Zmul5Ax7QkmxMLa1gMfdr9Sk7UevCbc=
+X-Google-Smtp-Source: AGHT+IH7zs1ElNWSLauUoxe6oUcxbMknt8N4yLuI0xWzD1LWnvcGVtunFezu9q6l/fZs7aoYPEqeug==
+X-Received: by 2002:a2e:2e0f:0:b0:2eb:e840:4a1b with SMTP id 38308e7fff4ca-2ec0e5b5e75mr59433771fa.7.1718618533565;
+        Mon, 17 Jun 2024 03:02:13 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c16c91sm13197401fa.63.2024.06.17.03.02.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 03:02:13 -0700 (PDT)
+Date: Mon, 17 Jun 2024 13:02:11 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Naina Mehta <quic_nainmeht@quicinc.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@linaro.org, 
+	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] arm64: dts: qcom: sdx75: Add remoteproc node
+Message-ID: <mkthvgckbcttjh5d6ikv2tgmxyix6au4vcqobrcy7ukf3rtyn2@yyg2tvfkoawo>
+References: <20240617093428.3616194-1-quic_nainmeht@quicinc.com>
+ <20240617093428.3616194-5-quic_nainmeht@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240617090709.GCZm_8vdnLzt048UH_@fat_crate.local>
+In-Reply-To: <20240617093428.3616194-5-quic_nainmeht@quicinc.com>
 
-On Mon, Jun 17, 2024 at 11:07:09AM +0200, Borislav Petkov wrote:
-> On Sat, Jun 15, 2024 at 06:25:10PM -0700, Alexey Makhalov wrote:
-> > VMWARE_HYPERCALL alternative will not work as intended without
-> > VMware guest code initialization.
-> > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202406152104.FxakP1MB-lkp@intel.com/
-> > Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
-> > ---
-> >  drivers/gpu/drm/vmwgfx/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/vmwgfx/Kconfig b/drivers/gpu/drm/vmwgfx/Kconfig
-> > index faddae3d6ac2..6f1ac940cbae 100644
-> > --- a/drivers/gpu/drm/vmwgfx/Kconfig
-> > +++ b/drivers/gpu/drm/vmwgfx/Kconfig
-> > @@ -2,7 +2,7 @@
-> >  config DRM_VMWGFX
-> >  	tristate "DRM driver for VMware Virtual GPU"
-> >  	depends on DRM && PCI && MMU
-> > -	depends on X86 || ARM64
-> > +	depends on (X86 && HYPERVISOR_GUEST) || ARM64
-> >  	select DRM_TTM
-> >  	select DRM_TTM_HELPER
-> >  	select MAPPING_DIRTY_HELPERS
-> > -- 
+On Mon, Jun 17, 2024 at 03:04:27PM GMT, Naina Mehta wrote:
+> Add MPSS remoteproc node for SDX75 SoC.
 > 
-> Right, I'll queue this soon but it doesn't reproduce here with gcc-11 or gcc-13.
-> This must be something gcc-9 specific or so...
+> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sdx75.dtsi | 47 +++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+> 
 
-Actually, that's a DRM patch.
 
-Folks in To: ok to carry this though the tip tree?
-
-Thx.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+With best wishes
+Dmitry
 
