@@ -1,175 +1,158 @@
-Return-Path: <linux-kernel+bounces-218250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E6490BBB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:06:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD9090BBBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF5F61F22EE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:06:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D77B41C23734
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6102C198E7E;
-	Mon, 17 Jun 2024 20:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFA218F2E9;
+	Mon, 17 Jun 2024 20:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="UqRpU7in";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="aj3xVHnM"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BiLsDW7i"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8007E542;
-	Mon, 17 Jun 2024 20:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BD418F2E5
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 20:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718654738; cv=none; b=pek5coeaXMgd3NIZxpe0yfULdPRukvYQDl67i+x3PfnksBihsiZ/glTl39fTbQSxlb1ocYAAWWJpCGPSQjjUcWZAO5RbcjR+FjwFfuWtGC/UOGgDvrdPayrKT8V+AV2SWqpHp4N2Qh0DMTE+A7uQgguqptL4jYhWPLyT7LH8iNE=
+	t=1718654836; cv=none; b=XwwXikGk3w8Fxj/SFEFWEZedtMc1sxUVVAOn8hV3PFIj2REbtMXr+0wJLjpjFfNymp62i03ZtR01IJzppeRb1WteUJLfmMLnaZCCc1GvnuiomY+8JZT8SHtUqwWpRJuuKnuMK1fPndA6ZA447eA8SgeWhHKy8nbyrVyHkpbN3k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718654738; c=relaxed/simple;
-	bh=nwFq+sPhvFKh+jCEwBDyH0vZaK9puv1f3y/cW68qSo8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pICCX2FLVbrhtvW2hUtPbILSS5dSWHdo9xW7uK4RF+Ghlx3sgTa2QfF3lcjZhR5D8feA4t8TG9F3kx6AjXtPfJoFrjnKws4rrfLpIp6o8NfZuJj5OBha7vr3TMkFovVIhbglJ44WZgvQTkP164OoSz/0ETNHeWMB5RvxOOBFIow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=UqRpU7in; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=aj3xVHnM; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1718654736;
-	bh=nwFq+sPhvFKh+jCEwBDyH0vZaK9puv1f3y/cW68qSo8=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=UqRpU7inD90FGwbcg1MZsp2/6N5JJtnmm8fMmrXJSvZldG2tKHJzXHBUylpdIUM/i
-	 cYvlHZusBJb0eyv5n8DjPjPHMcOZGccCZN4oUkLuHZJfBF1Sh3gez0V4Zsb4tHc1iT
-	 m46POmxnYxnW0d0S7BjT+5fEWBUY+sZ0F3XDIvhk=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2E74C128730B;
-	Mon, 17 Jun 2024 16:05:36 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id IdLBw6pe5wtl; Mon, 17 Jun 2024 16:05:36 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1718654735;
-	bh=nwFq+sPhvFKh+jCEwBDyH0vZaK9puv1f3y/cW68qSo8=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=aj3xVHnMuQNGzVaL8QYNnvq3VYfGdMq1CUHd4NmXRrzEGzvsC5MFlEdpVAaLtZYiC
-	 KCiG6TYq5rTV7QRflQVljULMdy1TghZ9vrihhIxFHAiuQRGQ6saxj5WFdeHk3Z4Y0T
-	 Kb45SyJBHXpTmgZmH8+PJq9QmNUg5MoT/QrZ+6Qk=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4FAB412872CF;
-	Mon, 17 Jun 2024 16:05:35 -0400 (EDT)
-Message-ID: <1302b413a2d7bf3b275133e7fdb04b44bfe2d5e3.camel@HansenPartnership.com>
-Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
- session support
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, jarkko@kernel.org
-Cc: linux-kernel@vger.kernel.org, mpe@ellerman.id.au, 
-	naveen.n.rao@linux.ibm.com
-Date: Mon, 17 Jun 2024 16:05:33 -0400
-In-Reply-To: <5bd68636-ece6-4ba5-a4c0-c0535afc33c8@linux.ibm.com>
-References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
-	 <dfc4feaef0d63d616bab8cdec5d409369f9dacf1.camel@HansenPartnership.com>
-	 <5bd68636-ece6-4ba5-a4c0-c0535afc33c8@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1718654836; c=relaxed/simple;
+	bh=s2zJM/g9vyXju9U4Z9UniGkbGrLtR1iS2fCCS17YBeQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gVHdMLFOCev60dQguOD0ikVWHoMA3yN8XQzYBEomsMhSt9q7GtjfeAIf8Hev4Cl5SO3WnfOu8A/s8DRwdNYQgV3FpvMSM7GX9vAJ236VU23DZezeTxgiadjWYQgpJGynmm0rF94updNj0zu3zUTyxqOsCe01vVGGfIuXb3MlBEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BiLsDW7i; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b06b78e716so29964756d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:07:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718654833; x=1719259633; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SpQL0yvq1dDs98zST/M1XEikwLlL17e1VjSWuuysSL4=;
+        b=BiLsDW7isLfsp2DXo2v2XngWtsBAFpCCUvpS+xBgwq0mxk8dMyPhAMc391RYq1AJL+
+         B4OVcddLTV8Rqay8o4BJi9uVdLwiHKYH28L8BgQ05pQ2f+lBMJl7rv5z2cf2J15S/OSO
+         h+r0hVU91hZrwv3HZOx5eEHewJjkYEUofZhVc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718654833; x=1719259633;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SpQL0yvq1dDs98zST/M1XEikwLlL17e1VjSWuuysSL4=;
+        b=CpB+1s7qJ+J3whYx9ODXSUWc5TpNq4eJwJuS0k40gKoM+RxW8MZfyuaTiOuaAzfdbD
+         JT5+fNTYWvVXqvgVTYifQy+irP5avYN0l8rQIF2fkwJd2p6ETjc+RPPcsQZ9StrnbSkv
+         RKhlmE7czI7a6Vv67fZPcNuS1PfQy61X8VNL7YlOHy14t8sEgY5gj4vWilBe3HeZ8kW/
+         i9JB91DD94mmRTUYazl+I7vpM+5147zfKtoRuMnYhK8z60yh3CPn16IrjkZic9zSUKQi
+         SA7lstfZTIRNbbpvix6bmZ7wdgjkd1IABCtSXXRSYAvmvTEpYXeu+FPicoNwHyOtn2VD
+         IYJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEm5sw4jXsjHdFMnw2C5klpSZcTrnhM7F8D2/p0F2b0xkwQ5HswU16iPvRRdz+GDnnR6S+hEVZ786CLnWEMRj7X2FDwemxWiVU839h
+X-Gm-Message-State: AOJu0Yw0yNwJr6+Q1LXxtPk56rydgRYpLRqqhgNT6AazaGbww19DoetZ
+	zeOfAEVqeIls1L0Ga8ckjxdG8+jRIW+CS9i3pOUD/6T9Tk3/mqwbCmhx7N/tct6biAejdUqe20k
+	=
+X-Google-Smtp-Source: AGHT+IFsovIVHfxR8SXuPqz/ppqNtItRosg4eLme94596nq293zvs3G0GodFl07f5Y2NLudUPxKQ/g==
+X-Received: by 2002:a05:6214:a69:b0:6b0:7716:e9a4 with SMTP id 6a1803df08f44-6b2afc7747emr95246556d6.12.1718654833425;
+        Mon, 17 Jun 2024 13:07:13 -0700 (PDT)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com. [209.85.160.182])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5edbda8sm58524646d6.108.2024.06.17.13.07.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 13:07:12 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4405dffca81so171cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:07:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUh9m1t7ltK0YycVxScMcR6E6WOynSXZEu2nJU8sw6m9yB1tCk4wZb9U3Bp6A8tHqWuwBITBPUyY4l8U58PyPR0YDgGX34psVqdjH3X
+X-Received: by 2002:a05:622a:1a17:b0:442:1b20:2a9a with SMTP id
+ d75a77b69052e-4449daa1b48mr5921cf.23.1718654832085; Mon, 17 Jun 2024 13:07:12
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240615093758.65431-1-tejasvipin76@gmail.com>
+In-Reply-To: <20240615093758.65431-1-tejasvipin76@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 17 Jun 2024 13:06:48 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XRZKL_ppjUKDK61fQkWhHiQCJLfmVBS7wSo4sUux2g8Q@mail.gmail.com>
+Message-ID: <CAD=FV=XRZKL_ppjUKDK61fQkWhHiQCJLfmVBS7wSo4sUux2g8Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: raydium-rm692e5: transition to mipi_dsi
+ wrapped functions
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-06-17 at 15:56 -0400, Stefan Berger wrote:
-> 
-> 
-> On 6/17/24 15:42, James Bottomley wrote:
-> > On Mon, 2024-06-17 at 15:34 -0400, Stefan Berger wrote:
-> > > Fix the following type of error message caused by a missing call
-> > > to
-> > > tpm2_sessions_init() in the IBM vTPM driver:
-> > > 
-> > > [    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM
-> > > error
-> > > 0x01C4
-> > > [    2.987140] ima: Error Communicating to TPM chip, result: -14
-> > > 
-> > > Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
-> > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > ---
-> > >   drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
-> > >   1 file changed, 4 insertions(+)
-> > > 
-> > > diff --git a/drivers/char/tpm/tpm_ibmvtpm.c
-> > > b/drivers/char/tpm/tpm_ibmvtpm.c
-> > > index d3989b257f42..1e5b107d1f3b 100644
-> > > --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> > > +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> > > @@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev
-> > > *vio_dev,
-> > >                  rc = tpm2_get_cc_attrs_tbl(chip);
-> > >                  if (rc)
-> > >                          goto init_irq_cleanup;
-> > > +
-> > > +               rc = tpm2_sessions_init(chip);
-> > > +               if (rc)
-> > > +                       goto init_irq_cleanup;
-> > 
-> > This looks wrong: the whole thing is designed to occur in the
-> > bootstrap
-> > phase from tpm_chip_register() (which tpm_ibmvtpm.c definitely
-> > calls),
-> > so why isn't it happening?
-> 
-> Because flags = TPM_OPS_AUTO_STARTUP has not been set for this
-> driver.
-> 
+Hi,
 
-In that case, wouldn't the fix be to move tpm_sessions_init() to
-somewhere in tpm_chip_register() that would then be called by this
-driver?  Having to special case it for every driver that doesn't set
-this flag is going to be a huge pain.
+On Sat, Jun 15, 2024 at 2:40=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com=
+> wrote:
+>
+> @@ -168,48 +147,38 @@ static int rm692e5_prepare(struct drm_panel *panel)
+>         struct rm692e5_panel *ctx =3D to_rm692e5_panel(panel);
+>         struct drm_dsc_picture_parameter_set pps;
+>         struct device *dev =3D &ctx->dsi->dev;
+> -       int ret;
+> +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D ctx->dsi };
+>
+> -       ret =3D regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->sup=
+plies);
+> -       if (ret < 0) {
+> -               dev_err(dev, "Failed to enable regulators: %d\n", ret);
+> -               return ret;
+> +       dsi_ctx.accum_err =3D regulator_bulk_enable(ARRAY_SIZE(ctx->suppl=
+ies), ctx->supplies);
+> +       if (dsi_ctx.accum_err) {
+> +               dev_err(dev, "Failed to enable regulators: %d\n", dsi_ctx=
+.accum_err);
+> +               return dsi_ctx.accum_err;
+>         }
 
-I think the only reason it's down that far is that it should only be
-called for TPM2 code so it was avoiding doing the check twice, so
-something like this?
+It would be my preference to get rid of the error print here since
+regulator_bulk_enable() already prints an error message.
 
-James
 
----
+>         rm692e5_reset(ctx);
+>
+> -       ret =3D rm692e5_on(ctx);
+> -       if (ret < 0) {
+> -               dev_err(dev, "Failed to initialize panel: %d\n", ret);
+> +       dsi_ctx.accum_err =3D rm692e5_on(ctx);
+> +       if (dsi_ctx.accum_err) {
+> +               dev_err(dev, "Failed to initialize panel: %d\n", dsi_ctx.=
+accum_err);
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 5da134f12c9a..4280cbb0f0b1 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -347,6 +347,12 @@ int tpm_auto_startup(struct tpm_chip *chip)
- {
- 	int rc;
- 
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+		rc = tpm2_sessions_init(chip);
-+		if (rc)
-+			return rc;
-+	}
-+
- 	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
- 		return 0;
- 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 1e856259219e..b4f85c8cdbb6 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -773,11 +773,6 @@ int tpm2_auto_startup(struct tpm_chip *chip)
- 		rc = 0;
- 	}
- 
--	if (rc)
--		goto out;
--
--	rc = tpm2_sessions_init(chip);
--
- out:
- 	/*
- 	 * Infineon TPM in field upgrade mode will return no data for the number
+I'd probably change rm692e5_on() to take the "dsi_ctx" as a parameter
+and then you don't need to declare a new one there.
 
+...also, you don't need to add an error message since rm692e5_on()
+will have already printed one (since the "multi" style functions
+always print error messages for you).
+
+
+
+>                 gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+>                 regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->su=
+pplies);
+> -               return ret;
+> +               return dsi_ctx.accum_err;
+
+Not new for your patch, but it seems odd that we don't do this error
+handling (re-assert reset and disable the regulator) for errors later
+in the function. Shouldn't it do that? It feels like the error
+handling should be in an "err" label and we should end up doing that
+any time we return an error code... What do you think?
+
+
+-Doug
 
