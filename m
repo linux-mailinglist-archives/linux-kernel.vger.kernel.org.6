@@ -1,151 +1,392 @@
-Return-Path: <linux-kernel+bounces-217865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504DF90B555
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:54:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D47890B557
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4558B1C20F89
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:54:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 958601C226C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C4F13A868;
-	Mon, 17 Jun 2024 15:39:26 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5429013AD05;
+	Mon, 17 Jun 2024 15:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="opUbMMoC"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E3113A3E9
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 15:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBEB13A407
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 15:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718638765; cv=none; b=cla3hexsPkM1HiKFomc+fK0lNn3OjTaStpo49iKBqe5nJRfxtZd5q6hU78jXcOZ1VdsqYxGr+XIX3/C988CJYIrUgGFTRzC+Nfb1qPFb1nmlktjArwohMNU6zW0wldhBfXGAj7oKV0AOOXgDvYZ0RJNlfqeEV0rmE6X8XRyBdWE=
+	t=1718638808; cv=none; b=l722OBHS8JhamXTGlWYUf9Y+6ipF7iePqPWO8juRjIxtDyAexp92xc5YQP1SJFJLHjCaXKa3g0eojVW9HJCQWjSR6+mkMMq050Ia5fy3u8sf4UC73tP9j9AOxcd46IRYnkA7W8fCJyABJAuxifZ7nRoRRjeTajFMpAFdLAzdfr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718638765; c=relaxed/simple;
-	bh=xvySwpVukXXPe5qw9oHSmepJLKb2O/omBh83xtb+c3U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XYP1wSmIs+VK8TG+bCtxCSHMteBf59goErv1guuaOSS+ZTEf3yp3Ax5hW2N/wX2FR0OmF5oTCpLqgwpBJP8gVJ54BjHdiU/FTo6268AHCpiKLxyOelggqty7r3/JThZeL0GL8/zdKTBtPzMOPYtHNcZuAr1X6medLGdr2SHEAxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3747f77bafcso50490715ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:39:24 -0700 (PDT)
+	s=arc-20240116; t=1718638808; c=relaxed/simple;
+	bh=m7cUzpIi9M97uNvrDzRQgxt39wm0z0qzSHmgTJW10XY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JVmODLM68/jUIcOIknxHEkW0T2G3fqbavRWWU2aWVwpfRH57RYPc6E5mPsQE19050mdNc9dTNWOXnwg/1W3ota4gLsEKRymFgogVms5RXkpYrZamsvcQr0ewNEwGXK0710lVHKAdVga3/tIaCfXZQZb6L0QWjmXqCG0orNknga0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=opUbMMoC; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6c4926bf9baso3727554a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718638806; x=1719243606; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CG2XcrIrY7KqOlgnl2jYvw300XLNqZhfJIzufAX1Rec=;
+        b=opUbMMoCx+kmuVyAdls9bxjK8bCh7hG5lw8EDKJ+gKv8FpRVoz9UYpjlXEEiszN7Mu
+         EfN216yOOv1xiORqjS/deLIInythg3bG5JwtAZWmiH3/m/KoHywSRbP+iWJmCE0f0BrD
+         Wmr/xaYdnSLkoYojebasE0tztguJ1/X5z1OEYaIAi5f5H+n3omb4zzv4vVs6s8bEJzB9
+         rJmH6fF1n7HBmGL6ZIZ8D9apjF6fuBvjMPr0DbavahAr7I9u9QZTs9ew39lBXAsJ95M1
+         BjeZpGXU6CqRM5IVKTSzOuEvJRPYL3PEdBTauQbxRP7AmAZmI3xiz74GJ36m9yX0PmM/
+         1AUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718638763; x=1719243563;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N4JRjHCKYiu2+aW22GPWDWuq8gS1/iCWahwq61vCEfw=;
-        b=PM6TVa9+5RMl26tAEKJ7KzNHlbe1UwQApD4/THtZSNZ92eEnqaDRVPeOnKGObZ7/qh
-         eBUK06f59jCADCtqInGbzSe77gu7YhHEYV33otTFTGJvZfOPhouVNiomH+tQiy52kFKU
-         OQDbPpE89pvqkKJkNTnXeNIClBD+eByJYZ8NMn5s03MPnmKHdg6TaGi5gboBx8V9rSk2
-         mAcV8pPyLnBCT4UwL4VtAZZJZHj/hsJQZClo0UjD3mNrg1mQEH5AOmvpbTOtr/eFAyKm
-         BeNJzPTxUtActlM+8w9mcDit0YfqxinzioZ90LeMPS/WSj0RHPdsR23k0npvLnsM56yH
-         +xiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtSpd24ML6mfQb4ZTujPd+fyNT2OEQt7ob/5cXHbhVCkvwiTYXVBsG3nNF0TyxiyNDHTLFvl9Ln0n4feoEcq7DiNKc05sC3W0v+NbR
-X-Gm-Message-State: AOJu0Yzg/cuDEGMbGaQgPatmMv06R2XgNpwCMP6SbEhjajeKQ6u8g0tC
-	Zy9MM1J7nlXQhyQm7wySmy6oi27Syzb8ltNm+maf++Yqljcytio/kmDLW/yeuRj3Ke7XJ7mUzzH
-	4waHLyZbj+ViFKmezqnHywJJo7aOkLG1AM4hbBUaeWacLY/I2tA0zixc=
-X-Google-Smtp-Source: AGHT+IE7fNarLzhhMZoBxa8Ven0IveZbNXtHRCwFmmok1gouwKv+kZnz6ElGEIxA40FIgdY5w5ChvMwk5nk/t2KlNtA4WF0NO4Hl
+        d=1e100.net; s=20230601; t=1718638806; x=1719243606;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CG2XcrIrY7KqOlgnl2jYvw300XLNqZhfJIzufAX1Rec=;
+        b=JamgW00hTkzWSyse23FYk6rJMbKTTVIXteo4lE+LFjFBlOTqGtfQDpyApD8w+08ceI
+         0hX+vdES+eyZSmruLnjpodaBp3fNvQ296UOClt9uB00CbC5EaLGMDlj8HaqbX0eRxJm4
+         So9gY9REd3dV0pWDsst8b+eCB+30W9b+g/e0BI2Ezv8IODKmTWV/uD5CG36SDFZefg70
+         6g09BcyTA+1I0RNXQvMq8WAHZctbISU9XY2fFPVPb4xBHM/Chy1N/z3MxVR32cX6Itpe
+         cCHinMzSiTvSTJ8oJNpzfwDaAL5Lk98Fs1xUAAn66B4d9O4P3TVgDm2+lAp/Ky3VIWxy
+         OzyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6rUpJWMU2/Rvx5h/MmHm+rIxaMOYwsezD4a9Uhesk+kjAwK1GTotptFEZRkqP2EXIuKOgkjiRs9jpN4V1AWsJehMj0/EGOcR0CHXu
+X-Gm-Message-State: AOJu0YzxOKh/Z16wJ22tnU16rASCDdw/cYwjafZmA4fh0O7Eao1CH8ld
+	/Ih2f3hQinlaP41PutbW4aYFMm9uOXsGav81QN7mytmFN1PKgWMJQylRbwKEkQizjDUrdFOlFS/
+	E
+X-Google-Smtp-Source: AGHT+IESypDNnG+ehbgVCWALH4dQknx7W4p6GMb8S/HtwRNHGV6hUdfelxqVpujgQqsLPSJDwNvMFg==
+X-Received: by 2002:a17:90a:d305:b0:2bf:f248:3506 with SMTP id 98e67ed59e1d1-2c4db241f78mr9139578a91.12.1718638805604;
+        Mon, 17 Jun 2024 08:40:05 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:e681:7328:24ae:62a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a76aa3dcsm11389900a91.51.2024.06.17.08.40.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 08:40:05 -0700 (PDT)
+Date: Mon, 17 Jun 2024 09:40:01 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] remoteproc: xlnx: add attach detach support
+Message-ID: <ZnBY0UtG9fyfxdTh@p14s>
+References: <20240610154227.3104790-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d02:b0:375:e04f:55af with SMTP id
- e9e14a558f8ab-375e0e27eefmr5712615ab.1.1718638763389; Mon, 17 Jun 2024
- 08:39:23 -0700 (PDT)
-Date: Mon, 17 Jun 2024 08:39:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fd4bde061b17c4a0@google.com>
-Subject: [syzbot] [kvm?] WARNING in kvm_put_kvm
-From: syzbot <syzbot+d8775ae2dbebe5ab16fd@syzkaller.appspotmail.com>
-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610154227.3104790-1-tanmay.shah@amd.com>
 
-Hello,
+Good day,
 
-syzbot found the following issue on:
+On Mon, Jun 10, 2024 at 08:42:27AM -0700, Tanmay Shah wrote:
+> It is possible that remote processor is already running before
+> linux boot or remoteproc platform driver probe. Implement required
+> remoteproc framework ops to provide resource table address and
+> connect or disconnect with remote processor in such case.
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+> 
+> Changes in v5:
+>   - Fix comment on assigning DETACHED state to remoteproc instance
+>     during driver probe.
+>   - Fix patch subject and remove "drivers"
+> 
+> Changes in v4:
+>   - Move change log out of commit text
+> 
+> Changes in v3:
+>   - Drop SRAM patch from the series
+>   - Change type from "struct resource_table *" to void __iomem *
+>   - Change comment format from /** to /*
+>   - Remove unmap of resource table va address during detach, allowing
+>     attach-detach-reattach use case.
+>   - Unmap rsc_data_va after retrieving resource table data structure.
+>   - Unmap resource table va during driver remove op
+> 
+> Changes in v2:
+>   - Fix typecast warnings reported using sparse tool.
+>   - Fix following sparse warnings:
+> 
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 173 +++++++++++++++++++++++-
+>  1 file changed, 169 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index 84243d1dff9f..6ddce5650f95 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -25,6 +25,10 @@
+>  /* RX mailbox client buffer max length */
+>  #define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
+>  				 sizeof(struct zynqmp_ipi_message))
+> +
+> +#define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
+> +				 (uint32_t)'m' << 8 | (uint32_t)'p')
+> +
+>  /*
+>   * settings for RPU cluster mode which
+>   * reflects possible values of xlnx,cluster-mode dt-property
+> @@ -73,6 +77,26 @@ struct mbox_info {
+>  	struct mbox_chan *rx_chan;
+>  };
+>  
+> +/**
+> + * struct rsc_tbl_data
+> + *
+> + * Platform specific data structure used to sync resource table address.
+> + * It's important to maintain order and size of each field on remote side.
+> + *
+> + * @version: version of data structure
+> + * @magic_num: 32-bit magic number.
+> + * @comp_magic_num: complement of above magic number
+> + * @rsc_tbl_size: resource table size
+> + * @rsc_tbl: resource table address
+> + */
+> +struct rsc_tbl_data {
+> +	const int version;
+> +	const u32 magic_num;
+> +	const u32 comp_magic_num;
+> +	const u32 rsc_tbl_size;
+> +	const uintptr_t rsc_tbl;
+> +} __packed;
+> +
+>  /*
+>   * Hardcoded TCM bank values. This will stay in driver to maintain backward
+>   * compatibility with device-tree that does not have TCM information.
+> @@ -95,20 +119,24 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+>  /**
+>   * struct zynqmp_r5_core
+>   *
+> + * @rsc_tbl_va: resource table virtual address
+>   * @dev: device of RPU instance
+>   * @np: device node of RPU instance
+>   * @tcm_bank_count: number TCM banks accessible to this RPU
+>   * @tcm_banks: array of each TCM bank data
+>   * @rproc: rproc handle
+> + * @rsc_tbl_size: resource table size retrieved from remote
+>   * @pm_domain_id: RPU CPU power domain id
+>   * @ipi: pointer to mailbox information
+>   */
+>  struct zynqmp_r5_core {
+> +	void __iomem *rsc_tbl_va;
+>  	struct device *dev;
+>  	struct device_node *np;
+>  	int tcm_bank_count;
+>  	struct mem_bank_data **tcm_banks;
+>  	struct rproc *rproc;
+> +	u32 rsc_tbl_size;
+>  	u32 pm_domain_id;
+>  	struct mbox_info *ipi;
+>  };
+> @@ -621,10 +649,19 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
+>  {
+>  	int ret;
+>  
+> -	ret = add_tcm_banks(rproc);
+> -	if (ret) {
+> -		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
+> -		return ret;
+> +	/*
+> +	 * For attach/detach use case, Firmware is already loaded so
+> +	 * TCM isn't really needed at all. Also, for security TCM can be
+> +	 * locked in such case and linux may not have access at all.
+> +	 * So avoid adding TCM banks. TCM power-domains requested during attach
+> +	 * callback.
+> +	 */
+> +	if (rproc->state != RPROC_DETACHED) {
+> +		ret = add_tcm_banks(rproc);
+> +		if (ret) {
+> +			dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
+> +			return ret;
+> +		}
 
-HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1695b7ee980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
-dashboard link: https://syzkaller.appspot.com/bug?extid=d8775ae2dbebe5ab16fd
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+In the normal case function add_tcm_banks() will call zynqmp_pm_request_node()
+but in the attach case, that gets done in zynqmp_r5_attach().  Either way,
+zynqmp_pm_release_node() is called in zynqmp_r5_rproc_unprepare().  This is
+highly confusing.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I suggest adding a check to see if the remote processor is being attached to in
+add_tcm_banks() and skip the rest of the TCM initialization if it is the case.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a4edf8b28d7f/disk-2ccbdf43.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5f9b0fd6168d/vmlinux-2ccbdf43.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a2c5f918ca4f/bzImage-2ccbdf43.xz
+>  	}
+>  
+>  	ret = add_mem_regions_carveout(rproc);
+> @@ -662,6 +699,120 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> +static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc,
+> +							     size_t *size)
+> +{
+> +	struct zynqmp_r5_core *r5_core;
+> +
+> +	r5_core = rproc->priv;
+> +
+> +	*size = r5_core->rsc_tbl_size;
+> +
+> +	return (struct resource_table *)r5_core->rsc_tbl_va;
+> +}
+> +
+> +static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+> +{
+> +	struct resource_table *rsc_tbl_addr;
+> +	struct device *dev = r5_core->dev;
+> +	struct rsc_tbl_data *rsc_data_va;
+> +	struct resource res_mem;
+> +	struct device_node *np;
+> +	int ret;
+> +
+> +	/*
+> +	 * It is expected from remote processor firmware to provide resource
+> +	 * table address via struct rsc_tbl_data data structure.
+> +	 * Start address of first entry under "memory-region" property list
+> +	 * contains that data structure which holds resource table address, size
+> +	 * and some magic number to validate correct resource table entry.
+> +	 */
+> +	np = of_parse_phandle(r5_core->np, "memory-region", 0);
+> +	if (!np) {
+> +		dev_err(dev, "failed to get memory region dev node\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = of_address_to_resource(np, 0, &res_mem);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d8775ae2dbebe5ab16fd@syzkaller.appspotmail.com
+Shouldn't an of_put_node() be added right here?
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 17017 at kernel/rcu/srcutree.c:653 cleanup_srcu_struct+0x37c/0x520 kernel/rcu/srcutree.c:653
-Modules linked in:
-CPU: 0 PID: 17017 Comm: syz-executor.4 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:cleanup_srcu_struct+0x37c/0x520 kernel/rcu/srcutree.c:653
-Code: 83 c4 20 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 0f 0b 90 48 83 c4 20 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 <0f> 0b 90 e9 35 ff ff ff 90 0f 0b 90 48 b8 00 00 00 00 00 fc ff df
-RSP: 0018:ffffc90003567d20 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: ffffc90002d6e000 RCX: 0000000000000002
-RDX: fffff91ffffab294 RSI: 0000000000000008 RDI: ffffe8ffffd59498
-RBP: ffff88805b6c0000 R08: 0000000000000000 R09: fffff91ffffab293
-R10: ffffe8ffffd5949f R11: 0000000000000000 R12: ffffc90002d778a8
-R13: ffffc90002d77880 R14: ffffc90002d77868 R15: 0000000000000004
-FS:  00007fa719dec6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020078000 CR3: 000000006176a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:1351 [inline]
- kvm_put_kvm+0x8df/0xb80 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1380
- kvm_vm_release+0x42/0x60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1403
- __fput+0x408/0xbb0 fs/file_table.c:422
- task_work_run+0x14e/0x250 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa71907cea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa719dec0c8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 00007fa7191b3f80 RCX: 00007fa71907cea9
-RDX: 0000000000000000 RSI: ffffffffffffffff RDI: 0000000000000003
-RBP: 00007fa7190ebff4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fa7191b3f80 R15: 00007ffdd8b78f38
- </TASK>
+> +	if (ret) {
+> +		dev_err(dev, "failed to get memory-region resource addr\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	rsc_data_va = (struct rsc_tbl_data *)ioremap_wc(res_mem.start,
+> +							sizeof(struct rsc_tbl_data));
+> +	if (!rsc_data_va) {
+> +		dev_err(dev, "failed to map resource table data address\n");
+> +		return -EIO;
+> +	}
+> +
+> +	/*
+> +	 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
+> +	 * do not consider resource table address valid and don't attach
+> +	 */
+> +	if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
+> +	    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
+> +		dev_dbg(dev, "invalid magic number, won't attach\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	r5_core->rsc_tbl_va = ioremap_wc(rsc_data_va->rsc_tbl,
+> +					 rsc_data_va->rsc_tbl_size);
+> +	if (!r5_core->rsc_tbl_va) {
+> +		dev_err(dev, "failed to get resource table va\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	rsc_tbl_addr = (struct resource_table *)r5_core->rsc_tbl_va;
+> +
+> +	/*
+> +	 * As of now resource table version 1 is expected. Don't fail to attach
+> +	 * but warn users about it.
+> +	 */
+> +	if (rsc_tbl_addr->ver != 1)
+> +		dev_warn(dev, "unexpected resource table version %d\n",
+> +			 rsc_tbl_addr->ver);
+> +
+> +	iounmap((void __iomem *)rsc_data_va);
+> +	r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
+> +
 
+Can you spot the problem here?
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks,
+Mathieu
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> +	return 0;
+> +}
+> +
+> +static int zynqmp_r5_attach(struct rproc *rproc)
+> +{
+> +	struct zynqmp_r5_core *r5_core = rproc->priv;
+> +	int i, pm_domain_id, ret;
+> +
+> +	/*
+> +	 * Firmware is loaded in TCM. Request TCM power domains to notify
+> +	 * platform management controller that TCM is in use. This will be
+> +	 * released during unprepare callback.
+> +	 */
+> +	for (i = 0; i < r5_core->tcm_bank_count; i++) {
+> +		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+> +		ret = zynqmp_pm_request_node(pm_domain_id,
+> +					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+> +					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +		if (ret < 0)
+> +			pr_warn("TCM %d can't be requested\n", i);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int zynqmp_r5_detach(struct rproc *rproc)
+> +{
+> +	/*
+> +	 * Generate last notification to remote after clearing virtio flag.
+> +	 * Remote can avoid polling on virtio reset flag if kick is generated
+> +	 * during detach by host and check virtio reset flag on kick interrupt.
+> +	 */
+> +	zynqmp_r5_rproc_kick(rproc, 0);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct rproc_ops zynqmp_r5_rproc_ops = {
+>  	.prepare	= zynqmp_r5_rproc_prepare,
+>  	.unprepare	= zynqmp_r5_rproc_unprepare,
+> @@ -673,6 +824,9 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+>  	.sanity_check	= rproc_elf_sanity_check,
+>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+>  	.kick		= zynqmp_r5_rproc_kick,
+> +	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
+> +	.attach		= zynqmp_r5_attach,
+> +	.detach		= zynqmp_r5_detach,
+>  };
+>  
+>  /**
+> @@ -723,6 +877,16 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>  		goto free_rproc;
+>  	}
+>  
+> +	/*
+> +	 * If firmware is already available in the memory then move rproc state
+> +	 * to DETACHED. Firmware can be preloaded via debugger or by any other
+> +	 * agent (processors) in the system.
+> +	 * If firmware isn't available in the memory and resource table isn't
+> +	 * found, then rproc state remains OFFLINE.
+> +	 */
+> +	if (!zynqmp_r5_get_rsc_table_va(r5_core))
+> +		r5_rproc->state = RPROC_DETACHED;
+> +
+>  	r5_core->rproc = r5_rproc;
+>  	return r5_core;
+>  
+> @@ -1134,6 +1298,7 @@ static void zynqmp_r5_cluster_exit(void *data)
+>  	for (i = 0; i < cluster->core_count; i++) {
+>  		r5_core = cluster->r5_cores[i];
+>  		zynqmp_r5_free_mbox(r5_core->ipi);
+> +		iounmap(r5_core->rsc_tbl_va);
+>  		of_reserved_mem_device_release(r5_core->dev);
+>  		put_device(r5_core->dev);
+>  		rproc_del(r5_core->rproc);
+> 
+> base-commit: d7faf9a16886a748c9dd4063ea897f1e68b412f2
+> -- 
+> 2.37.6
+> 
 
