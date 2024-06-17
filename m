@@ -1,105 +1,115 @@
-Return-Path: <linux-kernel+bounces-218152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6728790B9CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:37:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A47690BA11
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 033E22826B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:37:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5546DB22439
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AED197A62;
-	Mon, 17 Jun 2024 18:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B9C1974FE;
+	Mon, 17 Jun 2024 18:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WEJMdMmv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yg+ggz3a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36620DDD7;
-	Mon, 17 Jun 2024 18:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346A5194AD5;
+	Mon, 17 Jun 2024 18:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718649423; cv=none; b=EUwpA1uVx2nVY4zCRHg5maojkIlcAFAZ1FgJINTkhVx8GtFLPMihTSMPaYbEPNQqjUMZ+gRhWpEYaYSCVb10hsbAzcmx9l7VDAzJkw9gMvFS2u7CUL1Pws8APiMuWTojxO1PCg208WfWQNLngIuRN60vk+MUejt2maaebYlycTc=
+	t=1718649443; cv=none; b=nB8EmtIIZV0N1qarad+D9D9E0fjI/TEKDserbow3Ir9fyktnH+zk5XNADbOpGzNFXXHu5V1romLfGhTAGEd71jz0JKJ2Yg8PnQddBJogA/1c3h3t3fVry5zbwjYKviybg3jL2//cG7g7aCrjqMlwx3BikDzQV0YFPgOJ7OwfG/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718649423; c=relaxed/simple;
-	bh=u2eStRmHIkadI2AZ4JryxOSu2DAIp7P1OsKonpwYmF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kusOX8v9j3EOBHmG9or/t9pLsHNyil+puQuR9HosS3BS8JtwVbJwe6YxCsuKzzbz7DX4bj5JVgeePwVWvCVTisle9pquOsaX6bc29SXtVTa+CixOK0KyljgEoN9KR9MiOYCxl28f96Ky41s9mwzg6PcCAeateWHCXDVFo3Fxuh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WEJMdMmv; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718649422; x=1750185422;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=u2eStRmHIkadI2AZ4JryxOSu2DAIp7P1OsKonpwYmF4=;
-  b=WEJMdMmvTHm+QAXWRuc/qyTupwd56i8hUkcMAcm/jX9eT2LhYhNKiLF1
-   Go+aKwa/HpxxwxoypINMEtGuDrjwjb+I0ulGyaAEbdlhmWIgn+PtQSpMn
-   6/fM2I2pE0FOmlq95CTTAwThFhAAIH6Qupia7eCcQH8mc407Dz6hLKcUz
-   pxyKAavovZTM+x7Hwa0Uiks6Id6t/MptxlsclKdRnxSNnjPeCWCMn9c0k
-   AsB46Yr0SVUMVBa21aI27iUDpcRdgcf006jkZMDFC49q30uB/TQFgHx5C
-   Wwbf11izNTUPyeLUX2LHylv1G7zaeApZ0ROcPKqbUXC8xS3/Kd8htmNaw
-   A==;
-X-CSE-ConnectionGUID: GaTwUuebRa2ptdOIY7ARoQ==
-X-CSE-MsgGUID: RFBXFq3HTuCjfWhulcWUUw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15459839"
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="15459839"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:37:01 -0700
-X-CSE-ConnectionGUID: vY969m1ASByHYkiebJiaXQ==
-X-CSE-MsgGUID: gBmVhymxRYOgdsHG5I7FXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="41969188"
-Received: from mshehzad-mobl.amr.corp.intel.com (HELO desk) ([10.209.21.13])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:37:01 -0700
-Date: Mon, 17 Jun 2024 11:36:54 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH PATCH 2/9] cpufreq: intel_pstate: Use topology_cpu_type()
- to get cpu-type
-Message-ID: <20240617183654.3rf6igiqp55pujrj@desk>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <20240617-add-cpu-type-v1-2-b88998c01e76@linux.intel.com>
- <27018603c7ed574451520aeeae405f7b1fcd6c4e.camel@linux.intel.com>
+	s=arc-20240116; t=1718649443; c=relaxed/simple;
+	bh=rDUtIIK2UsaWuKIM2+e8+3bWeJgkVkmgOstme6s8ouo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ulDYhqV2TCMVlUdDDQkWSzHS4QFs/RMw4la2EfcOmD9PVJdcB2bs76NIPWSQVgOnA9ul21wMixm7J2RgUTy3Hz9gB+OgkhXaldTXfQDGhSORZrMZvajYvYEIZ9FIXvTWdsgfN1gukRTvKasy+vOvecUD9vho0mn4+s9b7JY3lwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yg+ggz3a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C37C2BD10;
+	Mon, 17 Jun 2024 18:37:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718649442;
+	bh=rDUtIIK2UsaWuKIM2+e8+3bWeJgkVkmgOstme6s8ouo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Yg+ggz3aYPkzCyvd7ZTedjWFkjS3f7v4Srpu4zFEgeJhEfJkQI4r/p5uHxyAl7CiN
+	 FPaP/EZsYfzdnPq8Mp8WSh/J84I4Rn2Tie0HEWS2pim+RUs+5hV6VUaBX4OTyQLmBd
+	 EQAITmT+Ook9IrTSGO3644WM4SsCwWzic09ttQqzfA2/CqYA22GQ5ktbuz8j3pmi/W
+	 isV2ywdADo4SLzf88Fk18FiMpF2nFeVgpF9nsNCkDGIcN7/6Cj/joFjuOH5IYSn9jm
+	 TeSvxz2fBcMUT0u+FR/0v2zdL76CG6fA/R6SOpEiyvqGckDiSSz8orK1x60P8HprLH
+	 fkvyZ4UDWpQFA==
+Date: Mon, 17 Jun 2024 19:37:17 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: linux-next: manual merge of the amdgpu tree with the origin tree
+Message-ID: <ZnCCXS8BhYFjY15h@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uPjCyrta/bxZbYJp"
+Content-Disposition: inline
+
+
+--uPjCyrta/bxZbYJp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <27018603c7ed574451520aeeae405f7b1fcd6c4e.camel@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 02:27:02AM -0700, srinivas pandruvada wrote:
-> On Mon, 2024-06-17 at 02:11 -0700, Pawan Gupta wrote:
-> > Intel pstate driver uses hybrid_get_type() to get the cpu-type of a
-> > given
-> > CPU. It uses smp_call_function_single() which is sub-optimal and can
-> > be
-> > avoided as cpu-type is also available in the per-cpu topology
-> > structure.
-> > 
-> > Use topology_cpu_type() to get the cpu-type.
-> > 
-> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Hi all,
 
-Thanks.
+Today's linux-next merge of the amdgpu tree got a conflict in:
+
+  drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
+
+between commit:
+
+  2c92ca849fcc6 ("tracing/treewide: Remove second parameter of __assign_str=
+()")
+
+=66rom the origin tree and commit:
+
+  030631e97b209 ("drm/amdgpu: revert "take runtime pm reference when we att=
+ach a buffer" v2")
+
+=66rom the amdgpu tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
+index 7aafeb763e5dd,2fd1bfb35916f..0000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
+
+--uPjCyrta/bxZbYJp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwgl0ACgkQJNaLcl1U
+h9AK1wf9FxpzFjkKEE4klkmJRe3bEcsEKj64ImUi9RVrFm1jmZ73s22AqF2fWsax
++n2aK2sUxToGeDvHXNGL+F/7Fc9XVwPdqkRXPnP7VOfy+re76+bSeZ5mQ3ckcz8w
+Q0Phq/5jUN4km0mK4YsvDEhtUlfzdrs/z65wz4i21cfqCNROtyckqJqIxf8ANkcR
+VyY/4MDiYTlESm4cY80mGlQAOeYQY8ySbe0/ifJMCNKSmsQhn5rlhwgasDFhHWgb
+ORJ8TOqxBGqbQPGkJxD8WFJcCjEldXrTI34LBS4+MaoXC3z0ikOln89B+xKVn9Sp
+CYY2tejIgthZN3VaZGbixngVHAWRCw==
+=dKFe
+-----END PGP SIGNATURE-----
+
+--uPjCyrta/bxZbYJp--
 
