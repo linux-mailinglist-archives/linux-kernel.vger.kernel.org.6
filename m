@@ -1,148 +1,175 @@
-Return-Path: <linux-kernel+bounces-217469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FA590B029
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:50:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2604390B059
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A5771C22BBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F921F211E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE4D1D47D0;
-	Mon, 17 Jun 2024 13:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B864D2101B9;
+	Mon, 17 Jun 2024 13:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jP7sUEdM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Frztf95e"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZGB//S9z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FD81D3639
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40452101AA;
+	Mon, 17 Jun 2024 13:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718630657; cv=none; b=kH69V7cOvoSqzx1chojlvFH/vM+njhRriVLVabUVovnA6Akh8BYT/7tj9D7+IQKmEpFuZRoFDuH1kgCD7LzFTM83n8h9dNkUmTPTLIIq95KvMLip9xEHmRw/1lNCELbOzhR9bNvXIVREwxfL4DNnHrrpD+IARWyJHzmfcpOqN+Q=
+	t=1718630699; cv=none; b=NbA1STzTwI9iKiEYU8UGaGMkx8XDem1XAJUcGgxG3SqazICg7XFOXG3GWGYBWfu7rYXUKdw08dJ+reur8RK7the7aZsxwqhKdFInC4aLfVS+oVIEv5oQqVxRLA1Ykv8HEA20ydIojGUBJRMfGbJecNyd2zAmZo0kOSNrxV4g7xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718630657; c=relaxed/simple;
-	bh=Y8TUhCIZhvH0mPpll/+gqifT091gwUxLq/RLLYO7rbM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=J82CMAeCxA1LYaHsdN3DvU5LL55PI9j+FOqpaqlvvJIgaAs77RI/cMuEpacpXh+eSXZUKi7Z44mCjEHsDNjraAfme3wRPuAKMHoLSCXoZRRsMCA60DrBsu5Edix0oFJhH1R2WDJVRV2nKiT1RJJwScORFYsbeZLejAd6ZttOgU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jP7sUEdM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Frztf95e; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id D394713802A6;
-	Mon, 17 Jun 2024 09:24:13 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 17 Jun 2024 09:24:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718630653; x=1718717053; bh=RG0OOoOhRs
-	DRXzn/o81MA/WQyCDR8o4YEPnE9nJjDms=; b=jP7sUEdMOQdalssTMMW5Sjxdad
-	HQgG147nSiZjEMlPqZbYOB6kvTZoj6zE9onTWYa+h7KW0z236TG0JbeTZGtJjw/0
-	2mAoBmNBQ7jAn0WwJmzfaDc8Y7bJahEbT9SPDXCkHHht8o+mnn/CcDS/Exv5pkdu
-	3gu+xfiI84wsUyvt9QSXXI68FDHKi0P9Rm0OU24NCUIeSJf8oYtwITUuXJ8CfLEL
-	Z537/5496p/zLLDXRRnRy6TVnmSrtFCzq/ZJl9DHHKg8YB6BxTIVX1EX8EqKWVlb
-	c4Hlnt+tZAFAYtdgp5NQTdW1OWS4dCvz8pNycCOleIK0Q0nZxiQpEtE5SI4A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718630653; x=1718717053; bh=RG0OOoOhRsDRXzn/o81MA/WQyCDR
-	8o4YEPnE9nJjDms=; b=Frztf95eICG6TIscoqw1+WkLTmIcnHx2+lcit6hsXgXk
-	DbbhqwImm1xF7axJ9gejfWuLh1Jiuq4J2xZfEIrbQlc0ttKRUgndoB+jT4w+vV69
-	TdvbsuDmLCG5hGIRgaGatt/BN+g1hpQdQv2nnf92ycHhw+23E7tCeXEY7HNvcZ48
-	Qqdf4dfoLSufsIK+e3kDb61gJdiJzQkLqKe0IA+05qwgMI0HSdktyC35IsWFoY58
-	a0jwvWhSPGOwziGwrxYJLjfUi2boMcCZs8AHqoXGzSrFkEmXf+E/JMdxIyRSbhlM
-	nbZLc96RnWcINd1+JbgNK6qRyBQ48TYnxSZRU/pjDQ==
-X-ME-Sender: <xms:_ThwZprPkOGM_pCHV4_ZZBDr4vCTC3ZUSgBIapWwIV8s1tDmzhX7lg>
-    <xme:_ThwZrrcGlvBAMP1-KR0mW7DR5drNOQ5vLntz-QGH1p4sz_wFY07aZzlzoGg0oJQt
-    bPhH6fjU4UILkdX2JY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvhedgieehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:_ThwZmNvl6ukNcA0_diTqypDIbqfwRATBdoHbFxYoQzPBGKdA7si3Q>
-    <xmx:_ThwZk7LtOtkOxnJtHwIZV8Obrv4b01KxOQFSediyvdrgjhiTKanMA>
-    <xmx:_ThwZo5ozhatE88RsuDo7DOXB5WgY8WQYaOYiL2KYq9A3hl3sc3ceQ>
-    <xmx:_ThwZsi0oC-ilm3L60bDLM5l-MLGx09QmESgA6BzmXlMegEwNv1jQA>
-    <xmx:_ThwZj0xJ8B9j7LI12tfIKHOYF3bLbiBTqzXwLXTof22AraviiTcC6PQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 65367B6008F; Mon, 17 Jun 2024 09:24:13 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
+	s=arc-20240116; t=1718630699; c=relaxed/simple;
+	bh=MUpmA9MZ4i76S7YO4RwWYwYhCpJTtuZDBDgbMrW0AAk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jz7JM7GfV8KdfW0mfQQLW7D0RAj515KJ9TkjE0QalCIDG5OGKC6TnMrnTXx4G3fPXmdDWrg81twORsb0ozFi/Q/xI6ZXfGIfy0IzAcDoVFq5NnZfAneNBVOYizPLZ9kCnKbbb/wcLjGfWRmfnCyTSSi9Yyhh4gA2BSJjDyO+FTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZGB//S9z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A9D5C2BD10;
+	Mon, 17 Jun 2024 13:24:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718630698;
+	bh=MUpmA9MZ4i76S7YO4RwWYwYhCpJTtuZDBDgbMrW0AAk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZGB//S9zyWi09ZdDRHbF8dZuXjO1hki7E1DZZvrG7rdWCGvZXeYsz3xsT5y1Uq9Fq
+	 eG8VhGALbPAxiBJZoXiVgBeN6/BGYwEx865dD3VS0hmnqgUdopUdusqELVmJiVHwkA
+	 0Y6cw1xWbsMro9mLXUrTMWffAKJmtis9y/4V81QSjaHKFHh1M/kCls3zEfCDtq0grl
+	 Pxc4bXb2tXBZJ1mXb2EOaAz4v7HgjVPQa61SjoZk8JgeaDdMJsVzj5eY91wgoK0EXK
+	 N1/UNY+4e2ivjDCYUgfSGkXx0nQ+cL1rzvLzC4eEfaaJgx52wDupz+QtALSfBmfhRE
+	 g6qvsxWsB9mng==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Martin Wilck <martin.wilck@suse.com>,
+	Rajashekhar M A <rajs@netapp.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Mike Christie <michael.christie@oracle.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	James.Bottomley@HansenPartnership.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 01/29] scsi: core: alua: I/O errors for ALUA state transitions
+Date: Mon, 17 Jun 2024 09:24:05 -0400
+Message-ID: <20240617132456.2588952-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <0f39c75d-11f3-45ef-b0b5-d11c9f1720ac@app.fastmail.com>
-In-Reply-To: 
- <MW4PR18MB5244E888BB8195D94A6E2EC2A6CD2@MW4PR18MB5244.namprd18.prod.outlook.com>
-References: <2024042950-refurbish-duckbill-77b4@gregkh>
- <20240520110630.2568767-1-vattunuru@marvell.com>
- <2024060412-amulet-unflawed-f37a@gregkh>
- <SJ0PR18MB52462AA2A9F15103D5198CC5A6F82@SJ0PR18MB5246.namprd18.prod.outlook.com>
- <MW4PR18MB524422223AC92181942C75E2A6FA2@MW4PR18MB5244.namprd18.prod.outlook.com>
- <4a4b1675-3244-4032-ae64-82ca8872288f@app.fastmail.com>
- <MW4PR18MB5244E888BB8195D94A6E2EC2A6CD2@MW4PR18MB5244.namprd18.prod.outlook.com>
-Date: Mon, 17 Jun 2024 15:23:53 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Vamsi Attunuru" <vattunuru@marvell.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: "Jerin Jacob" <jerinj@marvell.com>,
- "Srujana Challa" <schalla@marvell.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXTERNAL] Re: [PATCH v7 1/1] misc: mrvl-cn10k-dpi: add Octeon CN10K DPI
- administrative driver
-Content-Type: text/plain
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.94
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024, at 14:55, Vamsi Krishna Attunuru wrote:
->> On Thu, Jun 6, 2024, at 18:42, Vamsi Krishna Attunuru wrote:
->> >> -----Original Message-----
->> >> > -----Original Message-----
->> 
->> >> > The ifdef is cute, but not correct, sorry.  Please use bit shifts
->> >> > to handle this properly without any #ifdef needed at all.
->> >> >
->> >> Ack, will fix it next version. Thanks for the suggestion.
->> >>
->> >
->> > Hi Greg, the ARM64 cores on the Octeon CN10K hardware platform always
->> > run in LE mode and this CN10K DPI PF driver is only supported on
->> > Octeon CN10K platforms as the DPI PF device is an onboard PCIe device.
->> > Can I remove the BE format and only define the LE format for the
->> > dpi_mbox_message structure?, other HW device drivers of Octeon CN10K
->> > platform also only support LE format.
->> 
->> Isn't this a regular Neoverse-N2 core? That means the hardware does
->> support big-endian in principle, though it's usually only used in VM guests,
->> not on bare bare metal and the driver is fairly safe.
->> 
->> In general, I would always suggest writing portable code, as you never know
->> who is going to copy from your driver into something else. Writing this
->> portably is not that hard or less readable than using bit fields.
->> 
->  Yes Arnd, understood your point. I am thing le64_get_bits() would 
-> solve the problem here. Can you please confirm.?, I will avoid bit 
-> fields and use mask scheme to extract the fields.
+From: Martin Wilck <martin.wilck@suse.com>
 
-I think FIELD_GET() is more appropriate here. Note that readq()
-already swaps the data from little-endian into CPU native word
-order, so you have a 64-bit number with the bits in a particular
-place starting from the low bit, so you don't have to worry about
-how the fields inside that word line up with byte boundaries.
+[ Upstream commit 10157b1fc1a762293381e9145041253420dfc6ad ]
 
-You can also just use an open-coded bit shift and mask value.
+When a host is configured with a few LUNs and I/O is running, injecting FC
+faults repeatedly leads to path recovery problems.  The LUNs have 4 paths
+each and 3 of them come back active after say an FC fault which makes 2 of
+the paths go down, instead of all 4. This happens after several iterations
+of continuous FC faults.
 
-     Arnd
+Reason here is that we're returning an I/O error whenever we're
+encountering sense code 06/04/0a (LOGICAL UNIT NOT ACCESSIBLE, ASYMMETRIC
+ACCESS STATE TRANSITION) instead of retrying.
+
+[mwilck: The original patch was developed by Rajashekhar M A and Hannes
+Reinecke. I moved the code to alua_check_sense() as suggested by Mike
+Christie [1]. Evan Milne had raised the question whether pg->state should
+be set to transitioning in the UA case [2]. I believe that doing this is
+correct. SCSI_ACCESS_STATE_TRANSITIONING by itself doesn't cause I/O
+errors. Our handler schedules an RTPG, which will only result in an I/O
+error condition if the transitioning timeout expires.]
+
+[1] https://lore.kernel.org/all/0bc96e82-fdda-4187-148d-5b34f81d4942@oracle.com/
+[2] https://lore.kernel.org/all/CAGtn9r=kicnTDE2o7Gt5Y=yoidHYD7tG8XdMHEBJTBraVEoOCw@mail.gmail.com/
+
+Co-developed-by: Rajashekhar M A <rajs@netapp.com>
+Co-developed-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Martin Wilck <martin.wilck@suse.com>
+Link: https://lore.kernel.org/r/20240514140344.19538-1-mwilck@suse.com
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Mike Christie <michael.christie@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/device_handler/scsi_dh_alua.c | 31 +++++++++++++++-------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index 0781f991e7845..f5fc8631883d5 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -406,28 +406,40 @@ static char print_alua_state(unsigned char state)
+ 	}
+ }
+ 
+-static enum scsi_disposition alua_check_sense(struct scsi_device *sdev,
+-					      struct scsi_sense_hdr *sense_hdr)
++static void alua_handle_state_transition(struct scsi_device *sdev)
+ {
+ 	struct alua_dh_data *h = sdev->handler_data;
+ 	struct alua_port_group *pg;
+ 
++	rcu_read_lock();
++	pg = rcu_dereference(h->pg);
++	if (pg)
++		pg->state = SCSI_ACCESS_STATE_TRANSITIONING;
++	rcu_read_unlock();
++	alua_check(sdev, false);
++}
++
++static enum scsi_disposition alua_check_sense(struct scsi_device *sdev,
++					      struct scsi_sense_hdr *sense_hdr)
++{
+ 	switch (sense_hdr->sense_key) {
+ 	case NOT_READY:
+ 		if (sense_hdr->asc == 0x04 && sense_hdr->ascq == 0x0a) {
+ 			/*
+ 			 * LUN Not Accessible - ALUA state transition
+ 			 */
+-			rcu_read_lock();
+-			pg = rcu_dereference(h->pg);
+-			if (pg)
+-				pg->state = SCSI_ACCESS_STATE_TRANSITIONING;
+-			rcu_read_unlock();
+-			alua_check(sdev, false);
++			alua_handle_state_transition(sdev);
+ 			return NEEDS_RETRY;
+ 		}
+ 		break;
+ 	case UNIT_ATTENTION:
++		if (sense_hdr->asc == 0x04 && sense_hdr->ascq == 0x0a) {
++			/*
++			 * LUN Not Accessible - ALUA state transition
++			 */
++			alua_handle_state_transition(sdev);
++			return NEEDS_RETRY;
++		}
+ 		if (sense_hdr->asc == 0x29 && sense_hdr->ascq == 0x00) {
+ 			/*
+ 			 * Power On, Reset, or Bus Device Reset.
+@@ -494,7 +506,8 @@ static int alua_tur(struct scsi_device *sdev)
+ 
+ 	retval = scsi_test_unit_ready(sdev, ALUA_FAILOVER_TIMEOUT * HZ,
+ 				      ALUA_FAILOVER_RETRIES, &sense_hdr);
+-	if (sense_hdr.sense_key == NOT_READY &&
++	if ((sense_hdr.sense_key == NOT_READY ||
++	     sense_hdr.sense_key == UNIT_ATTENTION) &&
+ 	    sense_hdr.asc == 0x04 && sense_hdr.ascq == 0x0a)
+ 		return SCSI_DH_RETRY;
+ 	else if (retval)
+-- 
+2.43.0
+
 
