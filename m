@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-217876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E7C90B575
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:57:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6A490B571
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9B11F21953
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:57:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D3B41F23067
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9835B13EFEF;
-	Mon, 17 Jun 2024 15:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACBD13DDD6;
+	Mon, 17 Jun 2024 15:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="TQIMaKyM"
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Ol/dQQqF"
 Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5CC13EFE0;
-	Mon, 17 Jun 2024 15:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A5B13CABA;
+	Mon, 17 Jun 2024 15:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718639025; cv=none; b=uA/LY9qojACrqf8DKEEzVJ1Mj1WR+Y4Oe4ZzKciwY7y59xOqWojtZ8bhA5hcJWQjOCWBc8ybvuwcaRRu2dHHoplW5x89hUm0kTqaaolqVKDdd01YdwG06Nn9MbfXbe2uMv5GwqRehtObgcba5QlZsFt5EETgpiC3fms4FANu+Us=
+	t=1718639017; cv=none; b=Yaj9lDFXBsRwpkS6XhuhuhuUvg0GiOzFHXWXh4O2CrGEM2Fe50hc/k/NytZg3etgATwzgvDgvW2o7qbd+uly1qx4q6lPK19ZWGgnk862ZUZoqpHV64PPQ9+ZrEoHocJou0/MdCGVEa9uOLGqNtYkosMF5KSAiJWgH6Uuhs8Swj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718639025; c=relaxed/simple;
-	bh=fGqt6OxZOYyl4Ua8PLa1UC6bzMeKC14iWmMBFbm9Eok=;
+	s=arc-20240116; t=1718639017; c=relaxed/simple;
+	bh=dBdSO9xyTf1e173RJESuxB4z7eLKS8teMbtaS+nQG6M=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=phRpfiGAUEBri1e8ioZUjzp6oiWb4BfppfCk6yl0wccqulR971wMs28crKhiUQkBrhp3XWNtKnCL8aToUgvZl8EKp4h4+UhuVWCHw6KqfwHdmNo3bTz5Io2CTJkIzRygYY/kWcJpYI6i/XJEPdhjWsrO40ZPnOxT/OHOEesXasg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=TQIMaKyM; arc=none smtp.client-ip=67.231.149.25
+	 MIME-Version:Content-Type; b=Ba7BggMsSfkDQITnRs/Eoz+OTGFI9z2CEQCxEUn8sbowwT2y5F8b4pDyrtiWPP8WKFmIN1vf6Q7DIqIa+HlIGBrcYd3ibdE+A5t9uovwxvN9rjBl3nKeVAYhNuBRG4ev1ZjLwbLSno9CV4iIu8qXuNcsmKDaH9V3gmQ7Wh9NTWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Ol/dQQqF; arc=none smtp.client-ip=67.231.149.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HFYStm018866;
-	Mon, 17 Jun 2024 10:42:58 -0500
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HFYStn018866;
+	Mon, 17 Jun 2024 10:42:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=H3ze/ArgdNLIpHgEe094VxdfISKlnMNOmq7097Wy0sY=; b=
-	TQIMaKyM/sIF6b/rL2jX2bv9EpDA9uqbuGGDTZaTMsF6iFTWi4bmqa+Hlge9KVuV
-	6xxJyzhKWZdnuGwh6Ivax6a2+HuDLJ5IFjHY6rC+Xb8QJZKUX5aeAGXGZ43n/2nL
-	/ch9nzxBuPFL2bHyBR2YzLmSEfoI5P9KWE3lc4akx0qRhYA0M65o+n4dHnvoBu31
-	oJkDpD5j4G16Goo7SitMm0c8oSNMbYFZdRE3dPhNxvwVERQY7v3O8dOipa74l3kj
-	P5H7lkRXdliTJ2+5Z/lqA7KwXzFw7NPMg9dTiJcwW0U5aIHUEnD8jExC6wcZIECB
-	FtHF9FUBzgd/wwGbz7TKBQ==
+	PODMain02222019; bh=8uEr/B2Rm0pRE+fErYLr0mGNRxGp8UGgcNa0liYDmsU=; b=
+	Ol/dQQqFJle96FAxFQ2FxBRBItjFaCmFuHzPayA6QN4r8E/oUUsv3kjmDjScPVgv
+	JmkWnm2fP3yE8Rc3/SzSyqg9vs173qOFfPZhQWcDzjsFmr8GJD0Y5FupFWEbl1z1
+	gS+psky5r7oRux1c/LYtCYbH3wWegRlBZSv1jTds3ljt58muGLbnuY6MUybAgM9b
+	4QQOFnF2OCdQfVuXQrOPUOTnRHBmTp70pRzgvFlYVYiZCtNdxz7UspDUooaLfrvl
+	9MkteLk1vdbK3DXL46djEGf2OhJ/s6E9A2XlFLS50HYuNyknL07qVjSJKC/64ueT
+	FI/L/695QFtlybsvCXahhw==
 Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3ys8by1vv8-1
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3ys8by1vv8-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 10:42:57 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+	Mon, 17 Jun 2024 10:42:59 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
  (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
- 2024 16:42:55 +0100
+ 2024 16:42:56 +0100
 Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 17 Jun 2024 16:42:55 +0100
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 17 Jun 2024 16:42:56 +0100
 Received: from EDIN6ZZ2FY3.ad.cirrus.com (EDIN6ZZ2FY3.ad.cirrus.com [198.61.65.31])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 46C2D82024D;
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id A3CA0820248;
 	Mon, 17 Jun 2024 15:42:55 +0000 (UTC)
 From: Simon Trimmer <simont@opensource.cirrus.com>
 To: <tiwai@suse.com>
@@ -63,9 +63,9 @@ CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
         <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
         <soyer@irl.hu>, <shenghao-ding@ti.com>, <kevin-lu@ti.com>,
         <baojun.xu@ti.com>, Simon Trimmer <simont@opensource.cirrus.com>
-Subject: [PATCH 1/4] ALSA: hda: hda_component: Introduce component parent structure
-Date: Mon, 17 Jun 2024 16:41:02 +0100
-Message-ID: <20240617154105.108635-2-simont@opensource.cirrus.com>
+Subject: [PATCH 2/4] ALSA: hda: hda_component: Change codecs to use component parent structure
+Date: Mon, 17 Jun 2024 16:41:03 +0100
+Message-ID: <20240617154105.108635-3-simont@opensource.cirrus.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240617154105.108635-1-simont@opensource.cirrus.com>
 References: <20240617154105.108635-1-simont@opensource.cirrus.com>
@@ -77,316 +77,267 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: A8U-KeXY5F0y7NkpFMyqKe8BDkXbY3lK
-X-Proofpoint-GUID: A8U-KeXY5F0y7NkpFMyqKe8BDkXbY3lK
+X-Proofpoint-ORIG-GUID: lo0TOHdgbaCTocS_TtrrD5VV8b5svz1_
+X-Proofpoint-GUID: lo0TOHdgbaCTocS_TtrrD5VV8b5svz1_
 X-Proofpoint-Spam-Reason: safe
 
-In preparation for moving duplicated members from the hda_component
-structure introduce a parent structure that wraps the array of
-components. This also allows us to confine the knowledge of the maximum
-number of entries to the hda_component files and eliminate passing that
-redundant information around and making direct accesses to the array.
+Change the hda_component binding APIs to pass the hds_component_parent
+as the parameter so the array of components can be abstracted.
 
 Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
 ---
- sound/pci/hda/hda_component.c | 65 +++++++++++++++++++----------------
- sound/pci/hda/hda_component.h | 42 ++++++++++++++--------
- sound/pci/hda/patch_realtek.c | 17 +++++----
- 3 files changed, 71 insertions(+), 53 deletions(-)
+ sound/pci/hda/cs35l41_hda.c     | 42 +++++++++++++++++++--------------
+ sound/pci/hda/cs35l56_hda.c     | 25 +++++++++++---------
+ sound/pci/hda/hda_component.c   |  2 +-
+ sound/pci/hda/hda_component.h   |  2 +-
+ sound/pci/hda/tas2781_hda_i2c.c | 33 +++++++++++++-------------
+ 5 files changed, 57 insertions(+), 47 deletions(-)
 
+diff --git a/sound/pci/hda/cs35l41_hda.c b/sound/pci/hda/cs35l41_hda.c
+index d54d4d60b03e..32c9d95150ba 100644
+--- a/sound/pci/hda/cs35l41_hda.c
++++ b/sound/pci/hda/cs35l41_hda.c
+@@ -1419,27 +1419,28 @@ static void cs35l41_acpi_device_notify(acpi_handle handle, u32 event, struct dev
+ static int cs35l41_hda_bind(struct device *dev, struct device *master, void *master_data)
+ {
+ 	struct cs35l41_hda *cs35l41 = dev_get_drvdata(dev);
+-	struct hda_component *comps = master_data;
++	struct hda_component_parent *parent = master_data;
++	struct hda_component *comp;
+ 	unsigned int sleep_flags;
+ 	int ret = 0;
+ 
+-	if (!comps || cs35l41->index < 0 || cs35l41->index >= HDA_MAX_COMPONENTS)
++	comp = hda_component_from_index(parent, cs35l41->index);
++	if (!comp)
+ 		return -EINVAL;
+ 
+-	comps = &comps[cs35l41->index];
+-	if (comps->dev)
++	if (comp->dev)
+ 		return -EBUSY;
+ 
+ 	pm_runtime_get_sync(dev);
+ 
+ 	mutex_lock(&cs35l41->fw_mutex);
+ 
+-	comps->dev = dev;
++	comp->dev = dev;
+ 	if (!cs35l41->acpi_subsystem_id)
+ 		cs35l41->acpi_subsystem_id = kasprintf(GFP_KERNEL, "%.8x",
+-						       comps->codec->core.subsystem_id);
+-	cs35l41->codec = comps->codec;
+-	strscpy(comps->name, dev_name(dev), sizeof(comps->name));
++						       comp->codec->core.subsystem_id);
++	cs35l41->codec = comp->codec;
++	strscpy(comp->name, dev_name(dev), sizeof(comp->name));
+ 
+ 	cs35l41->firmware_type = HDA_CS_DSP_FW_SPK_PROT;
+ 
+@@ -1454,13 +1455,13 @@ static int cs35l41_hda_bind(struct device *dev, struct device *master, void *mas
+ 
+ 	ret = cs35l41_create_controls(cs35l41);
+ 
+-	comps->playback_hook = cs35l41_hda_playback_hook;
+-	comps->pre_playback_hook = cs35l41_hda_pre_playback_hook;
+-	comps->post_playback_hook = cs35l41_hda_post_playback_hook;
+-	comps->acpi_notify = cs35l41_acpi_device_notify;
+-	comps->adev = cs35l41->dacpi;
++	comp->playback_hook = cs35l41_hda_playback_hook;
++	comp->pre_playback_hook = cs35l41_hda_pre_playback_hook;
++	comp->post_playback_hook = cs35l41_hda_post_playback_hook;
++	comp->acpi_notify = cs35l41_acpi_device_notify;
++	comp->adev = cs35l41->dacpi;
+ 
+-	comps->acpi_notifications_supported = cs35l41_dsm_supported(acpi_device_handle(comps->adev),
++	comp->acpi_notifications_supported = cs35l41_dsm_supported(acpi_device_handle(comp->adev),
+ 		CS35L41_DSM_GET_MUTE);
+ 
+ 	cs35l41->mute_override = cs35l41_get_acpi_mute_state(cs35l41,
+@@ -1469,7 +1470,7 @@ static int cs35l41_hda_bind(struct device *dev, struct device *master, void *mas
+ 	mutex_unlock(&cs35l41->fw_mutex);
+ 
+ 	sleep_flags = lock_system_sleep();
+-	if (!device_link_add(&comps->codec->core.dev, cs35l41->dev, DL_FLAG_STATELESS))
++	if (!device_link_add(&comp->codec->core.dev, cs35l41->dev, DL_FLAG_STATELESS))
+ 		dev_warn(dev, "Unable to create device link\n");
+ 	unlock_system_sleep(sleep_flags);
+ 
+@@ -1489,14 +1490,19 @@ static int cs35l41_hda_bind(struct device *dev, struct device *master, void *mas
+ static void cs35l41_hda_unbind(struct device *dev, struct device *master, void *master_data)
+ {
+ 	struct cs35l41_hda *cs35l41 = dev_get_drvdata(dev);
+-	struct hda_component *comps = master_data;
++	struct hda_component_parent *parent = master_data;
++	struct hda_component *comp;
+ 	unsigned int sleep_flags;
+ 
+-	if (comps[cs35l41->index].dev == dev) {
+-		memset(&comps[cs35l41->index], 0, sizeof(*comps));
++	comp = hda_component_from_index(parent, cs35l41->index);
++	if (!comp)
++		return;
++
++	if (comp->dev == dev) {
+ 		sleep_flags = lock_system_sleep();
+ 		device_link_remove(&cs35l41->codec->core.dev, cs35l41->dev);
+ 		unlock_system_sleep(sleep_flags);
++		memset(comp, 0, sizeof(*comp));
+ 	}
+ }
+ 
+diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
+index 0923e2589f5f..abe415795d90 100644
+--- a/sound/pci/hda/cs35l56_hda.c
++++ b/sound/pci/hda/cs35l56_hda.c
+@@ -685,20 +685,21 @@ static int cs35l56_hda_fw_load(struct cs35l56_hda *cs35l56)
+ static int cs35l56_hda_bind(struct device *dev, struct device *master, void *master_data)
+ {
+ 	struct cs35l56_hda *cs35l56 = dev_get_drvdata(dev);
+-	struct hda_component *comps = master_data;
++	struct hda_component_parent *parent = master_data;
++	struct hda_component *comp;
+ 	int ret;
+ 
+-	if (!comps || cs35l56->index < 0 || cs35l56->index >= HDA_MAX_COMPONENTS)
++	comp = hda_component_from_index(parent, cs35l56->index);
++	if (!comp)
+ 		return -EINVAL;
+ 
+-	comps = &comps[cs35l56->index];
+-	if (comps->dev)
++	if (comp->dev)
+ 		return -EBUSY;
+ 
+-	comps->dev = dev;
+-	cs35l56->codec = comps->codec;
+-	strscpy(comps->name, dev_name(dev), sizeof(comps->name));
+-	comps->playback_hook = cs35l56_hda_playback_hook;
++	comp->dev = dev;
++	cs35l56->codec = comp->codec;
++	strscpy(comp->name, dev_name(dev), sizeof(comp->name));
++	comp->playback_hook = cs35l56_hda_playback_hook;
+ 
+ 	ret = cs35l56_hda_fw_load(cs35l56);
+ 	if (ret)
+@@ -720,7 +721,8 @@ static int cs35l56_hda_bind(struct device *dev, struct device *master, void *mas
+ static void cs35l56_hda_unbind(struct device *dev, struct device *master, void *master_data)
+ {
+ 	struct cs35l56_hda *cs35l56 = dev_get_drvdata(dev);
+-	struct hda_component *comps = master_data;
++	struct hda_component_parent *parent = master_data;
++	struct hda_component *comp;
+ 
+ 	cs35l56_hda_remove_controls(cs35l56);
+ 
+@@ -732,8 +734,9 @@ static void cs35l56_hda_unbind(struct device *dev, struct device *master, void *
+ 	if (cs35l56->base.fw_patched)
+ 		cs_dsp_power_down(&cs35l56->cs_dsp);
+ 
+-	if (comps[cs35l56->index].dev == dev)
+-		memset(&comps[cs35l56->index], 0, sizeof(*comps));
++	comp = hda_component_from_index(parent, cs35l56->index);
++	if (comp && (comp->dev == dev))
++		memset(comp, 0, sizeof(*comp));
+ 
+ 	cs35l56->codec = NULL;
+ 
 diff --git a/sound/pci/hda/hda_component.c b/sound/pci/hda/hda_component.c
-index d02589014a3f..b05a0b87d32a 100644
+index b05a0b87d32a..8c11c8b37799 100644
 --- a/sound/pci/hda/hda_component.c
 +++ b/sound/pci/hda/hda_component.c
-@@ -15,35 +15,39 @@
- #include "hda_local.h"
+@@ -141,7 +141,7 @@ int hda_component_manager_bind(struct hda_codec *cdc,
+ 	for (i = 0; i < ARRAY_SIZE(parent->comps); i++)
+ 		parent->comps[i].codec = cdc;
  
- #ifdef CONFIG_ACPI
--void hda_component_acpi_device_notify(struct hda_component *comps, int num_comps,
-+void hda_component_acpi_device_notify(struct hda_component_parent *parent,
- 				      acpi_handle handle, u32 event, void *data)
- {
-+	struct hda_component *comp;
- 	int i;
- 
--	for (i = 0; i < num_comps; i++) {
--		if (comps[i].dev && comps[i].acpi_notify)
--			comps[i].acpi_notify(acpi_device_handle(comps[i].adev), event,
--					     comps[i].dev);
-+	for (i = 0; i < ARRAY_SIZE(parent->comps); i++) {
-+		comp = hda_component_from_index(parent, i);
-+		if (comp->dev && comp->acpi_notify)
-+			comp->acpi_notify(acpi_device_handle(comp->adev), event, comp->dev);
- 	}
- }
- EXPORT_SYMBOL_NS_GPL(hda_component_acpi_device_notify, SND_HDA_SCODEC_COMPONENT);
- 
- int hda_component_manager_bind_acpi_notifications(struct hda_codec *cdc,
--						  struct hda_component *comps, int num_comps,
-+						  struct hda_component_parent *parent,
- 						  acpi_notify_handler handler, void *data)
- {
- 	bool support_notifications = false;
- 	struct acpi_device *adev;
-+	struct hda_component *comp;
- 	int ret;
- 	int i;
- 
--	adev = comps[0].adev;
-+	adev = parent->comps[0].adev;
- 	if (!acpi_device_handle(adev))
- 		return 0;
- 
--	for (i = 0; i < num_comps; i++)
-+	for (i = 0; i < ARRAY_SIZE(parent->comps); i++) {
-+		comp = hda_component_from_index(parent, i);
- 		support_notifications = support_notifications ||
--			comps[i].acpi_notifications_supported;
-+			comp->acpi_notifications_supported;
-+	}
- 
- 	if (support_notifications) {
- 		ret = acpi_install_notify_handler(adev->handle, ACPI_DEVICE_NOTIFY,
-@@ -61,13 +65,13 @@ int hda_component_manager_bind_acpi_notifications(struct hda_codec *cdc,
- EXPORT_SYMBOL_NS_GPL(hda_component_manager_bind_acpi_notifications, SND_HDA_SCODEC_COMPONENT);
- 
- void hda_component_manager_unbind_acpi_notifications(struct hda_codec *cdc,
--						     struct hda_component *comps,
-+						     struct hda_component_parent *parent,
- 						     acpi_notify_handler handler)
- {
- 	struct acpi_device *adev;
- 	int ret;
- 
--	adev = comps[0].adev;
-+	adev = parent->comps[0].adev;
- 	if (!acpi_device_handle(adev))
- 		return;
- 
-@@ -78,21 +82,25 @@ void hda_component_manager_unbind_acpi_notifications(struct hda_codec *cdc,
- EXPORT_SYMBOL_NS_GPL(hda_component_manager_unbind_acpi_notifications, SND_HDA_SCODEC_COMPONENT);
- #endif /* ifdef CONFIG_ACPI */
- 
--void hda_component_manager_playback_hook(struct hda_component *comps, int num_comps, int action)
-+void hda_component_manager_playback_hook(struct hda_component_parent *parent, int action)
- {
-+	struct hda_component *comp;
- 	int i;
- 
--	for (i = 0; i < num_comps; i++) {
--		if (comps[i].dev && comps[i].pre_playback_hook)
--			comps[i].pre_playback_hook(comps[i].dev, action);
-+	for (i = 0; i < ARRAY_SIZE(parent->comps); i++) {
-+		comp = hda_component_from_index(parent, i);
-+		if (comp->dev && comp->pre_playback_hook)
-+			comp->pre_playback_hook(comp->dev, action);
- 	}
--	for (i = 0; i < num_comps; i++) {
--		if (comps[i].dev && comps[i].playback_hook)
--			comps[i].playback_hook(comps[i].dev, action);
-+	for (i = 0; i < ARRAY_SIZE(parent->comps); i++) {
-+		comp = hda_component_from_index(parent, i);
-+		if (comp->dev && comp->playback_hook)
-+			comp->playback_hook(comp->dev, action);
- 	}
--	for (i = 0; i < num_comps; i++) {
--		if (comps[i].dev && comps[i].post_playback_hook)
--			comps[i].post_playback_hook(comps[i].dev, action);
-+	for (i = 0; i < ARRAY_SIZE(parent->comps); i++) {
-+		comp = hda_component_from_index(parent, i);
-+		if (comp->dev && comp->post_playback_hook)
-+			comp->post_playback_hook(comp->dev, action);
- 	}
- }
- EXPORT_SYMBOL_NS_GPL(hda_component_manager_playback_hook, SND_HDA_SCODEC_COMPONENT);
-@@ -124,22 +132,21 @@ static int hda_comp_match_dev_name(struct device *dev, void *data)
- }
- 
- int hda_component_manager_bind(struct hda_codec *cdc,
--			       struct hda_component *comps, int count)
-+			       struct hda_component_parent *parent)
- {
- 	int i;
- 
--	/* Init shared data */
--	for (i = 0; i < count; ++i) {
--		memset(&comps[i], 0, sizeof(comps[i]));
--		comps[i].codec = cdc;
--	}
-+	/* Init shared and component specific data */
-+	memset(parent, 0, sizeof(*parent));
-+	for (i = 0; i < ARRAY_SIZE(parent->comps); i++)
-+		parent->comps[i].codec = cdc;
- 
--	return component_bind_all(hda_codec_dev(cdc), comps);
-+	return component_bind_all(hda_codec_dev(cdc), &parent->comps);
+-	return component_bind_all(hda_codec_dev(cdc), &parent->comps);
++	return component_bind_all(hda_codec_dev(cdc), parent);
  }
  EXPORT_SYMBOL_NS_GPL(hda_component_manager_bind, SND_HDA_SCODEC_COMPONENT);
  
- int hda_component_manager_init(struct hda_codec *cdc,
--			       struct hda_component *comps, int count,
-+			       struct hda_component_parent *parent, int count,
- 			       const char *bus, const char *hid,
- 			       const char *match_str,
- 			       const struct component_master_ops *ops)
 diff --git a/sound/pci/hda/hda_component.h b/sound/pci/hda/hda_component.h
-index c70b3de68ab2..a016f1b942a2 100644
+index a016f1b942a2..e547e1f1e674 100644
 --- a/sound/pci/hda/hda_component.h
 +++ b/sound/pci/hda/hda_component.h
-@@ -28,18 +28,21 @@ struct hda_component {
- 	void (*post_playback_hook)(struct device *dev, int action);
- };
- 
-+struct hda_component_parent {
-+	struct hda_component comps[HDA_MAX_COMPONENTS];
-+};
-+
- #ifdef CONFIG_ACPI
--void hda_component_acpi_device_notify(struct hda_component *comps, int num_comps,
-+void hda_component_acpi_device_notify(struct hda_component_parent *parent,
- 				      acpi_handle handle, u32 event, void *data);
- int hda_component_manager_bind_acpi_notifications(struct hda_codec *cdc,
--						  struct hda_component *comps, int num_comps,
-+						  struct hda_component_parent *parent,
- 						  acpi_notify_handler handler, void *data);
- void hda_component_manager_unbind_acpi_notifications(struct hda_codec *cdc,
--						     struct hda_component *comps,
-+						     struct hda_component_parent *parent,
- 						     acpi_notify_handler handler);
- #else
--static inline void hda_component_acpi_device_notify(struct hda_component *comps,
--						    int num_comps,
-+static inline void hda_component_acpi_device_notify(struct hda_component_parent *parent,
- 						    acpi_handle handle,
- 						    u32 event,
- 						    void *data)
-@@ -47,8 +50,7 @@ static inline void hda_component_acpi_device_notify(struct hda_component *comps,
- }
- 
- static inline int hda_component_manager_bind_acpi_notifications(struct hda_codec *cdc,
--								struct hda_component *comps,
--								int num_comps,
-+								struct hda_component_parent *parent,
- 								acpi_notify_handler handler,
- 								void *data)
- 
-@@ -57,17 +59,16 @@ static inline int hda_component_manager_bind_acpi_notifications(struct hda_codec
- }
- 
- static inline void hda_component_manager_unbind_acpi_notifications(struct hda_codec *cdc,
--								   struct hda_component *comps,
-+								   struct hda_component_parent *parent,
- 								   acpi_notify_handler handler)
- {
- }
- #endif /* ifdef CONFIG_ACPI */
- 
--void hda_component_manager_playback_hook(struct hda_component *comps, int num_comps,
--					 int action);
-+void hda_component_manager_playback_hook(struct hda_component_parent *parent, int action);
- 
- int hda_component_manager_init(struct hda_codec *cdc,
--			       struct hda_component *comps, int count,
-+			       struct hda_component_parent *parent, int count,
- 			       const char *bus, const char *hid,
- 			       const char *match_str,
- 			       const struct component_master_ops *ops);
-@@ -75,13 +76,24 @@ int hda_component_manager_init(struct hda_codec *cdc,
- void hda_component_manager_free(struct hda_codec *cdc,
- 				const struct component_master_ops *ops);
- 
--int hda_component_manager_bind(struct hda_codec *cdc,
--			       struct hda_component *comps, int count);
-+int hda_component_manager_bind(struct hda_codec *cdc, struct hda_component_parent *parent);
-+
-+static inline struct hda_component *hda_component_from_index(struct hda_component_parent *parent,
-+							     int index)
-+{
-+	if (!parent)
-+		return NULL;
-+
-+	if (index < 0 || index >= ARRAY_SIZE(parent->comps))
-+		return NULL;
-+
-+	return &parent->comps[index];
-+}
- 
+@@ -93,7 +93,7 @@ static inline struct hda_component *hda_component_from_index(struct hda_componen
  static inline void hda_component_manager_unbind(struct hda_codec *cdc,
--					       struct hda_component *comps)
-+						struct hda_component_parent *parent)
+ 						struct hda_component_parent *parent)
  {
--	component_unbind_all(hda_codec_dev(cdc), comps);
-+	component_unbind_all(hda_codec_dev(cdc), &parent->comps);
+-	component_unbind_all(hda_codec_dev(cdc), &parent->comps);
++	component_unbind_all(hda_codec_dev(cdc), parent);
  }
  
  #endif /* ifndef __HDA_COMPONENT_H__ */
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 79736c8782a3..9cf94b9fac17 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -131,7 +131,7 @@ struct alc_spec {
- 	u8 alc_mute_keycode_map[1];
- 
- 	/* component binding */
--	struct hda_component comps[HDA_MAX_COMPONENTS];
-+	struct hda_component_parent comps;
- };
- 
- /*
-@@ -6789,8 +6789,7 @@ static void comp_acpi_device_notify(acpi_handle handle, u32 event, void *data)
- 
- 	codec_info(cdc, "ACPI Notification %d\n", event);
- 
--	hda_component_acpi_device_notify(spec->comps, ARRAY_SIZE(spec->comps),
--					 handle, event, data);
-+	hda_component_acpi_device_notify(&spec->comps, handle, event, data);
- }
- 
- static int comp_bind(struct device *dev)
-@@ -6799,12 +6798,12 @@ static int comp_bind(struct device *dev)
- 	struct alc_spec *spec = cdc->spec;
+diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
+index 75f7674c66ee..2794acd4c9ab 100644
+--- a/sound/pci/hda/tas2781_hda_i2c.c
++++ b/sound/pci/hda/tas2781_hda_i2c.c
+@@ -706,20 +706,20 @@ static int tas2781_hda_bind(struct device *dev, struct device *master,
+ 	void *master_data)
+ {
+ 	struct tas2781_hda *tas_hda = dev_get_drvdata(dev);
+-	struct hda_component *comps = master_data;
++	struct hda_component_parent *parent = master_data;
++	struct hda_component *comp;
+ 	struct hda_codec *codec;
+ 	unsigned int subid;
  	int ret;
  
--	ret = hda_component_manager_bind(cdc, spec->comps, ARRAY_SIZE(spec->comps));
-+	ret = hda_component_manager_bind(cdc, &spec->comps);
- 	if (ret)
- 		return ret;
+-	if (!comps || tas_hda->priv->index < 0 ||
+-		tas_hda->priv->index >= HDA_MAX_COMPONENTS)
++	comp = hda_component_from_index(parent, tas_hda->priv->index);
++	if (!comp)
+ 		return -EINVAL;
  
- 	return hda_component_manager_bind_acpi_notifications(cdc,
--							     spec->comps, ARRAY_SIZE(spec->comps),
-+							     &spec->comps,
- 							     comp_acpi_device_notify, cdc);
- }
+-	comps = &comps[tas_hda->priv->index];
+-	if (comps->dev)
++	if (comp->dev)
+ 		return -EBUSY;
  
-@@ -6813,8 +6812,8 @@ static void comp_unbind(struct device *dev)
- 	struct hda_codec *cdc = dev_to_hda_codec(dev);
- 	struct alc_spec *spec = cdc->spec;
+-	codec = comps->codec;
++	codec = comp->codec;
+ 	subid = codec->core.subsystem_id >> 16;
  
--	hda_component_manager_unbind_acpi_notifications(cdc, spec->comps, comp_acpi_device_notify);
--	hda_component_manager_unbind(cdc, spec->comps);
-+	hda_component_manager_unbind_acpi_notifications(cdc, &spec->comps, comp_acpi_device_notify);
-+	hda_component_manager_unbind(cdc, &spec->comps);
- }
+ 	switch (subid) {
+@@ -733,13 +733,13 @@ static int tas2781_hda_bind(struct device *dev, struct device *master,
  
- static const struct component_master_ops comp_master_ops = {
-@@ -6827,7 +6826,7 @@ static void comp_generic_playback_hook(struct hda_pcm_stream *hinfo, struct hda_
+ 	pm_runtime_get_sync(dev);
+ 
+-	comps->dev = dev;
++	comp->dev = dev;
+ 
+-	strscpy(comps->name, dev_name(dev), sizeof(comps->name));
++	strscpy(comp->name, dev_name(dev), sizeof(comp->name));
+ 
+ 	ret = tascodec_init(tas_hda->priv, codec, THIS_MODULE, tasdev_fw_ready);
+ 	if (!ret)
+-		comps->playback_hook = tas2781_hda_playback_hook;
++		comp->playback_hook = tas2781_hda_playback_hook;
+ 
+ 	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
+@@ -751,13 +751,14 @@ static void tas2781_hda_unbind(struct device *dev,
+ 	struct device *master, void *master_data)
  {
- 	struct alc_spec *spec = cdc->spec;
+ 	struct tas2781_hda *tas_hda = dev_get_drvdata(dev);
+-	struct hda_component *comps = master_data;
+-	comps = &comps[tas_hda->priv->index];
+-
+-	if (comps->dev == dev) {
+-		comps->dev = NULL;
+-		memset(comps->name, 0, sizeof(comps->name));
+-		comps->playback_hook = NULL;
++	struct hda_component_parent *parent = master_data;
++	struct hda_component *comp;
++
++	comp = hda_component_from_index(parent, tas_hda->priv->index);
++	if (comp && (comp->dev == dev)) {
++		comp->dev = NULL;
++		memset(comp->name, 0, sizeof(comp->name));
++		comp->playback_hook = NULL;
+ 	}
  
--	hda_component_manager_playback_hook(spec->comps, ARRAY_SIZE(spec->comps), action);
-+	hda_component_manager_playback_hook(&spec->comps, action);
- }
- 
- static void comp_generic_fixup(struct hda_codec *cdc, int action, const char *bus,
-@@ -6838,7 +6837,7 @@ static void comp_generic_fixup(struct hda_codec *cdc, int action, const char *bu
- 
- 	switch (action) {
- 	case HDA_FIXUP_ACT_PRE_PROBE:
--		ret = hda_component_manager_init(cdc, spec->comps, count, bus, hid,
-+		ret = hda_component_manager_init(cdc, &spec->comps, count, bus, hid,
- 						 match_str, &comp_master_ops);
- 		if (ret)
- 			return;
+ 	tas2781_hda_remove_controls(tas_hda);
 -- 
 2.34.1
 
