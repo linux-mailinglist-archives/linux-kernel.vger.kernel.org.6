@@ -1,158 +1,136 @@
-Return-Path: <linux-kernel+bounces-218007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8284C90B7D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:22:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1377790B7D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A692C1C2342A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:22:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CB15B234DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AD416DC26;
-	Mon, 17 Jun 2024 17:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8798016DC08;
+	Mon, 17 Jun 2024 17:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mno24mML"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikqqk0Ap"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FC716DC1D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0EA16CD29;
+	Mon, 17 Jun 2024 17:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718644944; cv=none; b=GzcYaaja3wNwFF2oCBwNGFQ1N8RDqblPZSJzxZpj8uO6Kx/RWIQVkG2SW6utX0CSFsKOt4/Kl0/u7mJgpbINAYZbgST9T8yVCrIbQi3bOyGuoiq2C2immp8M3EuGM8UPX/E+aBPpFZ/6b0yGASTbA6oY275snxNtsVD6tmrk6Xg=
+	t=1718644963; cv=none; b=U5Z/NtIBMnl9BNs/tQgbnVM3Nhm3K75f/TJ6aviODPFwsSpB2mI0zMgQqKKgF1iobqbwsk9Slx+QDjmo64tYapg731ic/y776yRDC7LceO13CrvNCjx5kjOdcjNCjQTb6W2Xi/cbrmVz9iUrh98JH9fduAZckrDauDYN1L9WZ/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718644944; c=relaxed/simple;
-	bh=xMBNjWoj2BogXC3Z1A0ni1Ag4wgonRSM6djm/zo9wSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dCtj4k90g2s4FeelXKBgY/XFyBO27h0Ezjbf4GLqFm1QsbYfq2gQWsB/SVqdKAAlxo5ccRDADbXCd93rrDfrOwzSgCwhHYWe2ZQSUKMQUimQWO72j55xdj9R4+NHwz60xjDVuxVlVBqjALnKL9AeURzfuV3cbT9ZNAaHB72Sytk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mno24mML; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3012BC4AF1C;
-	Mon, 17 Jun 2024 17:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718644944;
-	bh=xMBNjWoj2BogXC3Z1A0ni1Ag4wgonRSM6djm/zo9wSw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mno24mMLHy57nF77+4yEx2BvNa5aO59Mb86c5G6f3vG3QWRbfe+bhFEkk4zhQkl0Q
-	 cNQd47mj0eYbke4IS+FkyW79nuibOUOYGYHicsoZQoSGfcWaa6nzS8jTGX1jsZzZjQ
-	 HoHvp2IYk7QVfSjkRmTisV+jMPDABdZ6UF3zQwKl2HAtbVUrWJGEHUEKoUJRqSRJlI
-	 0vmfL+Ejp9270tPiR8sEF8gnsMtahSA0EwQXT5SPS0f/WQwf82jt+XHTXHwBEjknr+
-	 dxFz16Ov2WLWqQP7K8Lr1kU3e57p9kI6iEy7tnz4sL6uTJXCWOahL4lsis6qexFrkW
-	 xhsefP1pq+34w==
-Date: Mon, 17 Jun 2024 18:22:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>
-Subject: Re: Page select register restrictions in regmap core
-Message-ID: <adcd5997-84ee-4c72-aa37-2940afdc83bd@sirena.org.uk>
-References: <e3e11724-794d-423e-9326-ffe8eed5119c@roeck-us.net>
- <4b22e04f-3142-4a5a-a8d1-366c4b8bbb73@sirena.org.uk>
- <78c93d6b-af0e-4d96-b213-e1e402524361@roeck-us.net>
+	s=arc-20240116; t=1718644963; c=relaxed/simple;
+	bh=RhcWC8Rp8qIRElpRJW6lfTPluwKHaTBVKBkoTRLSNBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OEfN7dN9bst4o9yoepAY+0icrOSh8tQOnSkV9u8VAbeEyXw9G4XWu37kLEPjz9d3K2X5Ty7yT0sJzBlKFInFZGknCqKlkwCW/dlT0xzKj2jyux9YDV2ioqXhmT1WXkSYEl2KjLBe83o8sGqZKpl4rRLxMxFtKUfG1Z6CZRydMxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ikqqk0Ap; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso629382666b.3;
+        Mon, 17 Jun 2024 10:22:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718644960; x=1719249760; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hb+O+cmwbTR68wWYVOzyym9228SgymLFKXuelmNx6q0=;
+        b=ikqqk0ApnccGCgcR8mcQ7u3ZUzNhy/nqO8Xi0BIGu7FJZKuCZanySAVjoRXwv0kSIf
+         eqKt13KqB2iOWorCx5yvMK+s1hVuzfl1tUln0o1VNvTj5D9blc+ioh55v+11L1dkNaNz
+         0UezB0615k+Firjg1vAKrK4ImVSJUoXDRkv4kHgikYLU6vg0wcBAjWYYiOyOZWUpm2ao
+         o6VTRxnpzeVIUFyNfkVad6zFOlbeObkMHEVeL5J8vVCVD8GqiDrgBQA2RjAp0iApA/L3
+         +PEyDZ+u+xZcd27OYLnV38hE5Md0rwO5ZlnRkZmZaaxHytjiZIXuwaFKtL/Qu1e9vyco
+         LSEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718644960; x=1719249760;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hb+O+cmwbTR68wWYVOzyym9228SgymLFKXuelmNx6q0=;
+        b=uroBsMPenKo+T6VHSxtp4l+fgBEv9YLxYOfXjuXZ39b8uhAFDHacnVviZpKKVYCGhy
+         sGTlYHuLVaY3D0s8YOzf2O366GwCQKeMEGUI6FmP54b7KMGIE2XS6bf3VwbdO/xPFGZ6
+         rK/pShaSDKBLdq9qsqttqLAkvjjn4WBztQVRiob9X7AzWLgnFXfcmiu2XeH9tMlSpRlN
+         JRwUZMbpQU6NHvdGgCbvGLgthX7yXDUFL/a+aYI+459wDgO2xP+i38lfsrSF/nFaho7i
+         rRwCtOYbo/A5bin4Yechr0TpXX5hNzdVfIz6zGFWH4befu6bdf69cxSTbYL7J8aLPkem
+         osqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXVmUXfWK/0gnTS6JIwQOhXUCAq/cRXAZEi1ujpPRbO8ZMTT80tfTsJizDyQbYYpR9GLCIQvon4bADEuDECAQBXfSgtrinD9TLL3epYBaqswL3+zOCazUSitZG1l3jRkOm2bSDtMG6vudU+6ui7nuE6ujFX6Yq2pA7kqN0jcue
+X-Gm-Message-State: AOJu0YyfLic3+VuPjootXzoOSmta94RDZ3GQYL60E0W1g0URi+i3Ijw/
+	RpZiFwi9HzvdtTPIQJvPrzwH9QiDB85EzspMhl6xLWC1WPkA9uMWP2Kokh8HN5sm+e/201TI0+l
+	I5yqwqK7z1k+sgmdP/1majC3Arn/LONyn
+X-Google-Smtp-Source: AGHT+IGnUeHwYXqk7NzEsZfA4FseFP2/mMs3rIBad0z44NEgcX1zYFY156NjbYIoC/3fW1+aZn7fmyhRi0w47SRuCDc=
+X-Received: by 2002:a17:907:969e:b0:a6f:5723:fb12 with SMTP id
+ a640c23a62f3a-a6f60cefc7amr714824566b.1.1718644960188; Mon, 17 Jun 2024
+ 10:22:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="C/ZYoGpwsWinse6Z"
-Content-Disposition: inline
-In-Reply-To: <78c93d6b-af0e-4d96-b213-e1e402524361@roeck-us.net>
-X-Cookie: Life is the urge to ecstasy.
+References: <20240520153932.116731-1-grygorii.tertychnyi@leica-geosystems.com>
+In-Reply-To: <20240520153932.116731-1-grygorii.tertychnyi@leica-geosystems.com>
+From: grygorii tertychnyi <grembeter@gmail.com>
+Date: Mon, 17 Jun 2024 19:22:44 +0200
+Message-ID: <CAGFuAux+x17M4XK6jCHknYecvq97GxKTHz6ZLh8iTmL6Wmz-Jw@mail.gmail.com>
+Subject: Re: [PATCH v2] i2c: ocores: set IACK bit after core is enabled
+To: Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>
+Cc: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>, 
+	bsp-development.geo@leica-geosystems.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
---C/ZYoGpwsWinse6Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+just another gentle ping...  Not sure if I need to rebase it on the
+latest master?
 
-On Mon, Jun 17, 2024 at 09:59:50AM -0700, Guenter Roeck wrote:
-> On Mon, Jun 17, 2024 at 04:08:08PM +0100, Mark Brown wrote:
+regards
 
-> > You appear to be trying to define ranges that overlap with the windows
-> > that you're trying to expose.  I can't understand what that's trying to
-> > represent or how that would work.  The window is the physical registers
-> > that the host can actually see, the range is the virtual addresses which
-> > users of the region should use to access registers behind the window.
-> > This should be a range of register values which don't physically exist
-> > on the device.  I really can't understand what a sensible handling of an
-
-> Can you point me to an example ? All examples I can find have overlapping
-> values for .range_min/.range_max and .window_start/.window_len, and pretty
-> much all of them start range_min with 0.
-
-sound/soc/codecs/wm2200.c.  I do see a bunch of bad examples now I grep,
-bluntly I'm astonished any of them do anything useful and wonder if
-anyone has even run the code.
-
-> > overlap would be, any attempt to access the window should recursively
-> > trigger selection of the range so no actual register should work.  I
-> > can't tell what it's trying to model.
-
-> page 0: 0x00-0x7f	Volatile registers, page selector at 0x0b
-> 	0x80-0xff	page 0 of non-volatile memory
-> page 1:	0x0b		page selector register	<-- this is what trips the check
-> 	0x80-0xff	page 1 of non-volatile memory
-> ...
-> page 7:	0x0b		page selector register
-> 	0x80-0xff	page 7 of non-volatile memory
-
-So you've got two windows from 0-0x7f and 0x80-0xff which share a
-selector register because of course that makes sense, the selector is
-placed inside one of the ranges.  That's all perfectly fine, modulo the
-multi-use selector register the hardware seems fine.  What I don't
-understand is what the attempt to put the window on top of this is
-supposed to mean.
-
-> > This configuration would also be rejected by the next test which
-> > verifies that the window does not overlap with the range.
-
-> No, it isn't. The windows in the two ranges don't overlap, and neither
-> do the ranges. The only overlap is the selector register. The check you
-> refer to explicitly does not apply to a single range.
-
-Ugh, it should - like I say these configurations are just incoherent
-nonsense.
-
-> Pretty much all drivers I looked at start the range with 0, having
-> the selector register within the range is explicitly accepted by the
-> regmap code, and pretty much all drivers using regmap for page
-> selection do that. The difference here is that the page selector
-> register is in the first range and visible from all pages, but the
-> other volatile registers are only visible in page 0.
-
-Having the page selector register be inside the page is pretty common.
-
-> Yes, I would agree that this doesn't make much sense, but it is what
-> the spd5118 standard calls for, and at least the Renesas/IDT spd5188
-> chip implements it that way.
-
-The range is *entirely* defined within the driver, it is 100% a software
-construct, the hardware only influences our choice of range in that we
-can't place it on top of hardware registers.
-
-> Anyway, how should I model this ?
-
-To repeat:
-
-> > Like I say I can't tell what this is trying to describe or how it could
-> > possibly work.  The range should be completely distinct from the window.
-
---C/ZYoGpwsWinse6Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwcMsACgkQJNaLcl1U
-h9DZ/wf+MJdee0EFIyJfF6E33bmUltBfkIoAWd2xM3J4OxFYIlL2/isN/Vof8zs5
-NUQiYxUINnUC+QTJx1D/qiN1IS8zd6Y6l/h1Z4I5QtDEV/J7bGCSYC6rbyWh5AnQ
-vy52wfTSbYb3FKnJnFLmlczoh46pKgxEr4W2WyDNoXPWLrNrDUTYaNEdMeK5F+ED
-Pv8OuFv+vx8MMCmypsiX6/uHHl07a39Se6OgEqSI4I9/tlS0aAUoS/0uH9U/bMaI
-KV987UOBMvVE+8BHFjv0Yoblv9sRZa26uoUaqBkWOb37CitButevxs2afPD4RSG2
-04G3erXF9Dd5f/vxQqCVuH5oV6vlxw==
-=+gKR
------END PGP SIGNATURE-----
-
---C/ZYoGpwsWinse6Z--
+On Mon, May 20, 2024 at 5:40=E2=80=AFPM Grygorii Tertychnyi <grembeter@gmai=
+l.com> wrote:
+>
+> Setting IACK bit when core is disabled does not clear the "Interrupt Flag=
+"
+> bit in the status register, and the interrupt remains pending.
+>
+> Sometimes it causes failure for the very first message transfer, that is
+> usually a device probe.
+>
+> Hence, set IACK bit after core is enabled to clear pending interrupt.
+>
+> Fixes: 18f98b1e3147 ("[PATCH] i2c: New bus driver for the OpenCores I2C c=
+ontroller")
+> Signed-off-by: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.=
+com>
+> Acked-by: Peter Korsgaard <peter@korsgaard.com>
+> Cc: stable@vger.kernel.org
+> ---
+> V1 -> V2: Added "Acked-by:", "Fixes:" and "Cc:" tags
+>
+>  drivers/i2c/busses/i2c-ocores.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-oco=
+res.c
+> index e106af83cef4..350ccfbe8634 100644
+> --- a/drivers/i2c/busses/i2c-ocores.c
+> +++ b/drivers/i2c/busses/i2c-ocores.c
+> @@ -442,8 +442,8 @@ static int ocores_init(struct device *dev, struct oco=
+res_i2c *i2c)
+>         oc_setreg(i2c, OCI2C_PREHIGH, prescale >> 8);
+>
+>         /* Init the device */
+> -       oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
+>         oc_setreg(i2c, OCI2C_CONTROL, ctrl | OCI2C_CTRL_EN);
+> +       oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
+>
+>         return 0;
+>  }
+> --
+> 2.43.0
+>
 
