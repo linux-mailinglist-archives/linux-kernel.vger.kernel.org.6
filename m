@@ -1,106 +1,88 @@
-Return-Path: <linux-kernel+bounces-218314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2116B90BC7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D869590BC7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33E731C21456
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:57:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFD471C22CA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC74198E96;
-	Mon, 17 Jun 2024 20:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D621990A1;
+	Mon, 17 Jun 2024 20:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="gDQRIre0"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="T+yOyCJn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8327492;
-	Mon, 17 Jun 2024 20:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18DD7492;
+	Mon, 17 Jun 2024 20:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718657823; cv=none; b=Hy9MT8tEaJbDilB9wnmcbzBkhlK73d7C47VaNn8teddYCjn2kWV6+fzvUCdvE6j9XdihBNz0cd1x8OvMLWK8crmXgGz1ugSfHlwzbtYNRNLtWg9/bytEY+GDyCUu5EkGHqLiHBx+c9QhBuaiWODfGc2/fnfl+fa0v2/r4R1tXHE=
+	t=1718657948; cv=none; b=JfsJyAfaR59lNze7TTgvjn4A1czN3f7gRPOKAjxmd/0qRA5vlB5fO6WL9xOH7bPCvunPCZSlWDNUeZxRdzwWVxAT3tsYU5z5z5GsQURuKvSS0geZbAzs+wHhKB5ceei4b/Sp0XFvE5hKfzS72s4KTTQep/5Dqxcm6JFNGT05MKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718657823; c=relaxed/simple;
-	bh=gxYwdYwNEIXTMjbnwc0x3JYFfswwDi3PbV6UxOnva0I=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=H8PYzEq7l9TdxdziiSbnTPwpPhp2/cYnnnRpUriP0N4d+R3/m7u2SJh07WiKikVm537en6xQ8f+kA9lNc6tNebg6+Wvn7OLeByV192aSjsmFmfQEY56KVnKjCw4tSXkKFDlEe2IlaoWOdOTsk5xyFl6kHu5Ze4bjzxi/OBmGyOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=gDQRIre0; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1718657948; c=relaxed/simple;
+	bh=r/evhBHUMNraidh5cABHZlCVwZYX8ZukKZmz3qLDGk4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rfhvTk0ipyo1SwFYdg2cWzquySjO3FxR/ORAwNP1yjSuOeUkVaFBlxpsZiTPDV/VgNHteRPL0KE9ljC/+TEhB2xSXzS10OGg6AsjcdrwaQCpNiWNGR7w3p6uwdy5pzUjQIbvtyzeuPzK1DyBsa+x2gkiRkr8u6vrLMzVe6DBfdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=T+yOyCJn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FA61C2BD10;
+	Mon, 17 Jun 2024 20:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1718657947;
+	bh=r/evhBHUMNraidh5cABHZlCVwZYX8ZukKZmz3qLDGk4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=T+yOyCJnosetdXpxxwzSmzvK0TVXxCqa3olEllMPjwQsHcOLPDa6Kw41leAiWkKE+
+	 aBfyED0EHEo4ylmEb0j+AL51piBRWkaTIxWgvWlLOzcgAqBifqbp4YyJPmtYdarF2n
+	 0+TnY6TwYDGdEvIcwOKBe37cU/vmlMgslyNHtpQw=
+Date: Mon, 17 Jun 2024 13:59:06 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc: linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
+ "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, Omar Sandoval
+ <osandov@osandov.com>, David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Hao Ge <gehao@kylinos.cn>,
+ linux-debuggers@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] mm: convert page type macros to enum
+Message-Id: <20240617135906.4bd6faecf5ab5775408bd629@linux-foundation.org>
+In-Reply-To: <87bk3z1f76.fsf@oracle.com>
+References: <20240607202954.1198180-1-stephen.s.brennan@oracle.com>
+	<20240607212738.bf55318aebd7172fadaa11c5@linux-foundation.org>
+	<87ikygo1yb.fsf@oracle.com>
+	<87bk3z1f76.fsf@oracle.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1718657818;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B0b1pWrdGahjc5mnO1xKSRT8jsHp5loCfKfaw5bWIjA=;
-	b=gDQRIre07RFJ9Xp9kBuZUFFbeI0LYbWhqlDGqneNFGAMGrNN4LGcvP+moA3SbkdvSl3HUX
-	/MRz/oSChHsfy2VaLmaHZznZUN5ferXomuvLZDHJH7oZmisflT++kGT0MC64wGLrvHbKay
-	TFOV8EKkjRjFBy0ULt3zQKAZN9IEEfjUaadRyqOaaiBTGOx8e61E5dg+fvc7k5VmLBD+1d
-	CeR5cqgdnW69NqJlFoEbdO+ymYc5yUWjcy66G8GNzFU2nygQtWb73o2sbSbyVqKPcz6qzO
-	nejY76uk20AGlEpI7pJndPsTpFf4MsMyJjQgeAJ9n+N5f3MlDQphjmIDuIRg0w==
-Date: Mon, 17 Jun 2024 22:56:57 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- dri-devel@lists.freedesktop.org, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yakir Yang
- <kuankuan.y@gmail.com>, Jeffy Chen <jeffy.chen@rock-chips.com>,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/13] clk: rockchip: Set parent rate for DCLK_VOP clock
- on RK3228
-In-Reply-To: <6a2293ec-1506-4fe7-a3cf-fcfc594c19cc@kwiboo.se>
-References: <20240615170417.3134517-1-jonas@kwiboo.se>
- <20240615170417.3134517-3-jonas@kwiboo.se> <19757196.sIn9rWBj0N@diego>
- <6a2293ec-1506-4fe7-a3cf-fcfc594c19cc@kwiboo.se>
-Message-ID: <32481efc439b66da6d109e1484255aaf@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2024-06-17 22:50, Jonas Karlman wrote:
-> On 2024-06-17 22:30, Heiko Stübner wrote:
->> Am Samstag, 15. Juni 2024, 19:03:53 CEST schrieb Jonas Karlman:
->>> Similar to DCLK_LCDC on RK3328, the DCLK_VOP on RK3228 is typically
->>> parented by the hdmiphy clk and it is expected that the DCLK_VOP and
->>> hdmiphy clk rate are kept in sync.
->>> 
->>> Use CLK_SET_RATE_PARENT and CLK_SET_RATE_NO_REPARENT flags, same as 
->>> used
->>> on RK3328, to make full use of all possible supported display modes.
->>> 
->>> Fixes: 0a9d4ac08ebc ("clk: rockchip: set the clock ids for RK3228 
->>> VOP")
->>> Fixes: 307a2e9ac524 ("clk: rockchip: add clock controller for 
->>> rk3228")
->>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->> 
->> did your mailer have a hickup? Somehow I got patch2 (only this one)
->> 2 times
-> 
-> Strange, not something I know about, each patch 1-13 are listed as 250
-> Accepted (heiko@sntech.de) and patches arrived to the ML and patchwork:
-> 
-> https://lore.kernel.org/all/20240615170417.3134517-1-jonas@kwiboo.se/
-> https://patchwork.freedesktop.org/series/134926/
-> https://patchwork.kernel.org/cover/13699322/
+On Mon, 17 Jun 2024 13:34:21 -0700 Stephen Brennan <stephen.s.brennan@oracle.com> wrote:
 
-It might be that something is wrong with the MX host for sntech.de, I 
-got
-one email rejected today with "invalid certificate" (or something like 
-that)
-as the error message.
+> >>> Fixes: 46df8e73a4a3 ("mm: free up PG_slab")
+> >>
+> >> Should we backport this into 6.9.x?
+> >
+> > Hi Andrew,
+> >
+> > Looks like commit 46df8e73a4a3 ("mm: free up PG_slab") is introduced in
+> > the v6.10-rc's, and not backported to 6.9. So PG_slab is still part of
+> 
+> Hi Andrew,
+> 
+> I saw that you've merged this into mm-unstable, thank you!
+> 
+> Since 46df8e73a4a3 ("mm: free up PG_slab") is part of the current 6.10
+> RC, it would be great if this patch could be part of the 6.10 release so
+> we don't release a kernel missing the PG_slab info.
+> 
+> Can you confirm if mm-unstable will get merged in this release cycle? Or
+> else, would it be possible to include it in a branch that will?
+
+OK, thanks, I moved it into mm-hotfixes-unstable for a 6.10-rcX merge.
 
