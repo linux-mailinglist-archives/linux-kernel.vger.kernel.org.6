@@ -1,209 +1,159 @@
-Return-Path: <linux-kernel+bounces-217989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C3090B76A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:06:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3634690B770
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0431C20D86
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:06:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9301C20912
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC6B16A92C;
-	Mon, 17 Jun 2024 17:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC41516A924;
+	Mon, 17 Jun 2024 17:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpOcFt1R"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V+8nfATM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CA2168490;
-	Mon, 17 Jun 2024 17:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354A813AD1E;
+	Mon, 17 Jun 2024 17:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718643952; cv=none; b=LwGOssjvtvxYuYVJ/8GXviDv55bjEyCJjIOr8eX6febpJY+uEWE/TuTIO8jdbC+sRT3MRCsZ6arFBhra/rXTFseeXj1qMaI7c/evPMbDMrVHbbX2S85di6mpEcARncE+qf/kPLH0X3kpRBbroh+vhgLyMAbcz8A67PK1KqjQ5Gs=
+	t=1718643999; cv=none; b=OppIYRhNxrSUcI1EbK1pbaKfHktQvnsSuwbHHnNapFg3qzneEkQsEEVUQ42SmdFWPEYcIwR/rGGjvyqvu0gnrMfQaT5LbQMo3FRhe1xHs3pcBp0IWZJVNnuwHBqO7VyY1+uwqf2f9ady7/LXSnsjyGCS4umUX5SrhzaRU5Y+QgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718643952; c=relaxed/simple;
-	bh=6aYNHlBapcGADaFqbEC84oIMDYUs5euQLPaIqBToM70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gj1aYHDB8AeBl9GGjEBsuo+TrXS0vSwzj6NrLas/GfAfa4Dyvnz3DNCpuUBRugwJXqjaT2Tf4irNn9wdLKqhbjkE60VsqjjkZqB8BQRWcb7G2ydhEC0CCRhKu3yp94oYclFMKFSi4HKxCyt9sjSGQbgtTYZfclC+LVCZhCA8eBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZpOcFt1R; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-24c9f630e51so2293975fac.1;
-        Mon, 17 Jun 2024 10:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718643949; x=1719248749; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0iADTCnpy+t+rN6jI67ep/KeHBjtwxRejqJ1fEPq5f8=;
-        b=ZpOcFt1RWb34mvw7owevmL8Z5hKfV0jQF6CKRLy7K1Ly9piz7lvTOHW8p8CA6mGRpL
-         KOCoCzVUgS/deqyCQ95KTKvmroRttFEcaok+/YEMay9MOelMctSufxBWogZBK9KtWWpr
-         9rixPxxYrwOGDfu80If5Csj0XkqSvRigYFGBnhrSqZ29Q9owcdfP/JM7J2ktpejLgolw
-         OL3TbDs0rem3ngF5bQNoQ8zAv4dGxfqsr5uhsC0i6WCfht8xnFqmMdA4L6Kvq22SNQfR
-         k1lpPwsc+l8Ii0mE62tnxHXtROmcPbu6tf7ku2N47KrDwtx++kHm7qMvZIai+nWNT57M
-         wCWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718643949; x=1719248749;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0iADTCnpy+t+rN6jI67ep/KeHBjtwxRejqJ1fEPq5f8=;
-        b=Eq0gpD+nrlGXdRMAKoh8QV6Qm0OiP2KLB/qUN10ReFi+Tlcc0gZom9muujL2s4NjUK
-         8pzJzIbKNy6bph7zHm8XkmY/V0mEsdtM9sBGoUXRqwKZjocWnUD8cp/zmx39UIL4udxs
-         UdL4iPJiSiQ+2ji+62daBkJY4h41Yhj/Vuf0hyGCerL3FtrFNxdMiXejdDg1eyDeDpU3
-         s2X/chNmGKNl4HFqYjsfGhSAlKWx+Hsn0sKv30Li6IK91LWvpLnlTdfehbPxFy9SShwt
-         KaEdM6JEQCF1l+53U8h2U7HncTQUGI18woaEyOtft2DoZefbdukE9jgm2hn4zZBA1ZWm
-         3AmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjdLeE46Vku+I3bO99UKIJH1acaVX6YhYnHi83eWZIo1ZcA6/78b2L+hAQsW5+sUywfJ5bWGLvCGC+ZZKhvtNSg5k/2epBCdUJ0EW/LYhiET1daPRJHQz3nJSI+tEg4QTuij1b3DPjdyAyqZ5vqt4uajPCSY5I//sQPRH/2RKB3GBshPmY2nRpdVsp
-X-Gm-Message-State: AOJu0YzQa4rkWnbzCLMaawIerf12PF+4EiRv/hYHeKBmUybZsBmK7LWo
-	lbypS7E/T1B5gFQ/fdjCYm67S4SuucBnFZIHN8iBjsZFZ2AYv6gvndJqodznn+pouPFFd2aMQI+
-	ExeJNtC9X3HGrhQWycCkBgBUsMmI=
-X-Google-Smtp-Source: AGHT+IElr75fQXr9hLEZJMbzELPf7t8W6367P0lDP6bs/33bYj1T/2Q4J2nwH+bQ7Jz1mzQzSYTE2PI4NZ27/iltqdY=
-X-Received: by 2002:a05:6870:d183:b0:254:e89e:fc1d with SMTP id
- 586e51a60fabf-25842b836bbmr11807148fac.51.1718643949492; Mon, 17 Jun 2024
- 10:05:49 -0700 (PDT)
+	s=arc-20240116; t=1718643999; c=relaxed/simple;
+	bh=zFn2MRuAseKvMtT6I6TQPYdfMV0TCKVZ0GaoNKiDdL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ilHBKBhEb/EXi+3cB75bu7Ufh/M07S/zn80ze/V3P7vlLQr3YWuk8yR6Hh4VzTVYJjUc+XuS5CM6vxvJW69YTQmnn60zA745e3Vp8qfqKKJ2Eyje1CbtQZQMhvjKzngZVf6vTuNC9zBw2zd2eVsMTJm23wDrKH88PaxklubAiDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V+8nfATM; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718643997; x=1750179997;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zFn2MRuAseKvMtT6I6TQPYdfMV0TCKVZ0GaoNKiDdL8=;
+  b=V+8nfATM3QcnNLdOuOLoMYjP+VxKBBBdyKL/BeeXBJ9seum06jhpXntx
+   BuS0hyhLTxJLv9BFR/Iy0S9xbhofXzP9S9Hlvehh2hRQTzM4NjQM3k8nL
+   c1VCtrlHwVKqzNiYc3BjAXj3sqyUac3EQK7OOTZ4dwcYFIRk3MyOWlWEQ
+   OAv58Wcav6F3lkqjhSy21q5bkERJ7Q5XS2CzfRnisg23343fN1Ww5j6oV
+   gvgQTqRcz4vIe0WARAYTR3BTj5TLJEUm6HLeu+h9D5X2qClJ5BFNk3k0J
+   MAqC9OkgFakp5eq7733DuUdl8Sp5VdK2X2SyQp4HY9W9yjf7t/Wgwjyvh
+   g==;
+X-CSE-ConnectionGUID: wUl6cfr9RKmt8P+ggrDlCg==
+X-CSE-MsgGUID: C3t1+wPqRr2Fo/phQKi1qA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="12113847"
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="12113847"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:06:37 -0700
+X-CSE-ConnectionGUID: h7hsdadQTMqN+vYe/6eZSA==
+X-CSE-MsgGUID: MWYCxnXNRrOP95KkVufqJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="41127541"
+Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.111.175]) ([10.125.111.175])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:06:35 -0700
+Message-ID: <b1652fc6-b3d7-46e6-8dc4-15e2841c68d8@intel.com>
+Date: Mon, 17 Jun 2024 10:06:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617131511.160877-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUDDfOeQUwmuYKPvAXaXBJCB17ecH8sfpC4=7dTVKthhw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUDDfOeQUwmuYKPvAXaXBJCB17ecH8sfpC4=7dTVKthhw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 17 Jun 2024 18:05:22 +0100
-Message-ID: <CA+V-a8s8HO4HNjNjs181RR-ffgz68m_+qesP+nk-uJLyif_uDg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Use BIT_ULL for PIN_CFG_* macros
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -V2] cxl/region: Support to calculate memory tier abstract
+ distance
+To: "Huang, Ying" <ying.huang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Bharata B Rao <bharata@amd.com>, Alistair Popple <apopple@nvidia.com>,
+ "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+References: <20240611055423.470574-1-ying.huang@intel.com>
+ <ZmjBfcaosIlOODFR@aschofie-mobl2>
+ <87v8285ngi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <87v8285ngi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Geert,
 
-Thank you for the review.
 
-On Mon, Jun 17, 2024 at 2:36=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, Jun 17, 2024 at 3:15=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Commit 13a8cae6e561 ("pinctrl: renesas: rzg2l: Drop struct
-> > rzg2l_variable_pin_cfg") introduced a Smatch static checker warning:
-> >
-> >     drivers/pinctrl/renesas/pinctrl-rzg2l.c:374 rzg2l_pinctrl_get_varia=
-ble_pin_cfg()
-> >     warn: was expecting a 64 bit value instead of '~((((1))) << (16))'
-> >
-> > The function `rzg2l_pinctrl_get_variable_pin_cfg` attempts to mask out
-> > `PIN_CFG_VARIABLE` using `BIT(16)`. However, since `pincfg` is a `u64`,
-> > this inadvertently masks the high 32 bits as well, which is unintended
-> > (on non 64-bit platforms). To correct this, `PIN_CFG_VARIABLE` should
-> > be defined using `BIT_ULL(16)`, ensuring proper 64-bit masking.
-> >
-> > To avoid such issues, update `PIN_CFG_*` macros to use `BIT_ULL()`.
-> >
-> > Fixes: 13a8cae6e561 ("pinctrl: renesas: rzg2l: Drop struct rzg2l_variab=
-le_pin_cfg")
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes: https://lore.kernel.org/all/5c1bf20b-7e94-4b06-95e5-da9f9975020=
-3@moroto.mountain/
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> I would like to brainstorm a bit about this, though. See below...
->
-> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > @@ -41,28 +41,28 @@
-> >  #define MUX_FUNC_MASK          GENMASK(31, 16)
-> >
-> >  /* PIN capabilities */
-> > -#define PIN_CFG_IOLH_A                 BIT(0)
-> > -#define PIN_CFG_IOLH_B                 BIT(1)
-> > -#define PIN_CFG_SR                     BIT(2)
-> > -#define PIN_CFG_IEN                    BIT(3)
-> > -#define PIN_CFG_PUPD                   BIT(4)
-> > -#define PIN_CFG_IO_VMC_SD0             BIT(5)
-> > -#define PIN_CFG_IO_VMC_SD1             BIT(6)
-> > -#define PIN_CFG_IO_VMC_QSPI            BIT(7)
-> > -#define PIN_CFG_IO_VMC_ETH0            BIT(8)
-> > -#define PIN_CFG_IO_VMC_ETH1            BIT(9)
-> > -#define PIN_CFG_FILONOFF               BIT(10)
-> > -#define PIN_CFG_FILNUM                 BIT(11)
-> > -#define PIN_CFG_FILCLKSEL              BIT(12)
-> > -#define PIN_CFG_IOLH_C                 BIT(13)
-> > -#define PIN_CFG_SOFT_PS                        BIT(14)
-> > -#define PIN_CFG_OEN                    BIT(15)
-> > -#define PIN_CFG_VARIABLE               BIT(16)
-> > -#define PIN_CFG_NOGPIO_INT             BIT(17)
-> > -#define PIN_CFG_NOD                    BIT(18) /* N-ch Open Drain */
-> > -#define PIN_CFG_SMT                    BIT(19) /* Schmitt-trigger inpu=
-t control */
-> > -#define PIN_CFG_ELC                    BIT(20)
-> > -#define PIN_CFG_IOLH_RZV2H             BIT(21)
-> > +#define PIN_CFG_IOLH_A                 BIT_ULL(0)
-> > +#define PIN_CFG_IOLH_B                 BIT_ULL(1)
-> > +#define PIN_CFG_SR                     BIT_ULL(2)
-> > +#define PIN_CFG_IEN                    BIT_ULL(3)
-> > +#define PIN_CFG_PUPD                   BIT_ULL(4)
-> > +#define PIN_CFG_IO_VMC_SD0             BIT_ULL(5)
-> > +#define PIN_CFG_IO_VMC_SD1             BIT_ULL(6)
-> > +#define PIN_CFG_IO_VMC_QSPI            BIT_ULL(7)
-> > +#define PIN_CFG_IO_VMC_ETH0            BIT_ULL(8)
-> > +#define PIN_CFG_IO_VMC_ETH1            BIT_ULL(9)
-> > +#define PIN_CFG_FILONOFF               BIT_ULL(10)
-> > +#define PIN_CFG_FILNUM                 BIT_ULL(11)
-> > +#define PIN_CFG_FILCLKSEL              BIT_ULL(12)
-> > +#define PIN_CFG_IOLH_C                 BIT_ULL(13)
-> > +#define PIN_CFG_SOFT_PS                        BIT_ULL(14)
-> > +#define PIN_CFG_OEN                    BIT_ULL(15)
-> > +#define PIN_CFG_VARIABLE               BIT_ULL(16)
->
-> PIN_CFG_VARIABLE looks a bit misplaced here, in between all the flags
-> indicating actual capabilities of a pin.
->
-> What about relocating it to the "high" half, and moving it next to
-> RZG2L_SINGLE_PIN? Perhaps even renaming it to RZG2L_CFG_VARIABLE?
->
-OK, I will rename it to RZG2L_CFG_VARIABLE and make it BIT(62) instead.
+On 6/16/24 7:10 PM, Huang, Ying wrote:
+> Alison Schofield <alison.schofield@intel.com> writes:
+> 
+>> On Tue, Jun 11, 2024 at 01:54:23PM +0800, Ying Huang wrote:
+> 
+> [snip]
+> 
+>>> ---
+>>>  drivers/cxl/core/region.c | 40 +++++++++++++++++++++++++++++++++++----
+>>>  drivers/cxl/cxl.h         |  2 ++
+>>>  2 files changed, 38 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>>> index 3c2b6144be23..81d0910c0a02 100644
+>>> --- a/drivers/cxl/core/region.c
+>>> +++ b/drivers/cxl/core/region.c
+>>> @@ -9,6 +9,7 @@
+>>>  #include <linux/uuid.h>
+>>>  #include <linux/sort.h>
+>>>  #include <linux/idr.h>
+>>> +#include <linux/memory-tiers.h>
+>>>  #include <cxlmem.h>
+>>>  #include <cxl.h>
+>>>  #include "core.h"
+>>> @@ -2304,14 +2305,20 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
+>>>  	return true;
+>>>  }
+>>>  
+>>> +static int cxl_region_nid(struct cxl_region *cxlr)
+>>> +{
+>>> +	struct cxl_region_params *p = &cxlr->params;
+>>> +	struct cxl_endpoint_decoder *cxled = p->targets[0];
+>>> +	struct cxl_decoder *cxld = &cxled->cxld;
+>>> +
+>>> +	return phys_to_target_node(cxld->hpa_range.start);
+>>> +}
+>>> +
+>>
+>> I believe it's OK to send a resource_size_t to phys_to_target_node()
+>> like this:
+>>
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -2308,10 +2308,8 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
+>>  static int cxl_region_nid(struct cxl_region *cxlr)
+>>  {
+>>         struct cxl_region_params *p = &cxlr->params;
+>> -       struct cxl_endpoint_decoder *cxled = p->targets[0];
+>> -       struct cxl_decoder *cxld = &cxled->cxld;
+>>
+>> -       return phys_to_target_node(cxld->hpa_range.start);
+>> +       return phys_to_target_node(p->res->start);
+>>  }
+>>
+> 
+> Read the related code again, it appears that there's a theoretical race
+> condition here.  The register_memory_notifier() is called in
+> devm_cxl_add_region(), where p->targets[] and p->res haven't been
+> setupped yet.  And, IIUC, p->targets[] or p->res may be gone during the
+> life cycle of regions too.  If so, we need to use
+> guard(rwsem_read)(&cxl_region_rwsem) to protect p->targets[] and p->res
+> references.  Because the memory notifier may be called for other nodes
+> online/offline.
 
-> > +#define PIN_CFG_NOGPIO_INT             BIT_ULL(17)
-> > +#define PIN_CFG_NOD                    BIT_ULL(18)     /* N-ch Open Dr=
-ain */
-> > +#define PIN_CFG_SMT                    BIT_ULL(19)     /* Schmitt-trig=
-ger input control */
-> > +#define PIN_CFG_ELC                    BIT_ULL(20)
-> > +#define PIN_CFG_IOLH_RZV2H             BIT_ULL(21)
-> >
-> >  #define RZG2L_MPXED_COMMON_PIN_FUNCS(group) \
-> >                                         (PIN_CFG_IOLH_##group | \
->
-> Then the other PIN_CFG_* definitions can keep on using BIT().
-> To make that safer, PIN_CFG_MASK should be restricted to 32-bit:
->
->     -#define PIN_CFG_MASK                    GENMASK_ULL(46, 0)
->     +#define PIN_CFG_MASK                    GENMASK_ULL(31, 0)
->
-> and several u64 variables can be changed to u32 again.
->
-> What do you think?
->
-Agreed.
+You mind sending a patch? :)
 
-Cheers,
-Prabhakar
+> 
+> --
+> Best Regards,
+> Huang, Ying
 
