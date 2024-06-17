@@ -1,163 +1,94 @@
-Return-Path: <linux-kernel+bounces-218390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF80D90BDB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:40:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9562E90BDB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89B141F21E3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:40:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F27282BB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6334199259;
-	Mon, 17 Jun 2024 22:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB0419924B;
+	Mon, 17 Jun 2024 22:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/mB/Trl"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qkrFsuIB"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885231D953B;
-	Mon, 17 Jun 2024 22:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DD41D953B;
+	Mon, 17 Jun 2024 22:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718664001; cv=none; b=BDXEvspzkdHWIAIY0oBW80vjzh4mgvkttchs4di6uD0Jgsi02g67zsngAdQThfYPTNmPoB6NjnNvXVUSx8sWxCu+On0j3p70TdMuB4IA6AbiGNVN/eULAXXDpMJNuBpjKLM9pzLlGQApISxVh+GR/MhNwpC/gLdRrKHUVCAOoKE=
+	t=1718664043; cv=none; b=gwnH3d1IyRyIKBJ+T3OC6SW5KKLh+OcmdmP2FavxevePezaI7xcKfk1cUCMhNkNiXjJzfXX32F8SUtpqbpbkAW27ZwFOj1fdX6qVcWhil7bu/0V5U0ED6jfHXlbdwauBjr+tJU4CMBgfjDEnovUpkJamldgawG5KkUMFqzvDxsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718664001; c=relaxed/simple;
-	bh=bi6Y8zmXiTKInnkXG7JwRP6/fjYzKkL1vZpdveEyuRw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AZGanWhRoWplmv9bo07oL+gtd3401XROpxpnV/lTOqe5mJu6mKw11cuwVk94ICiPWNIC5NDQW6pzc3qkVCtvoPZsFPlEd5V9GKooCMcXnssaJDInbw9vb5VQMtk5wZjfJNcFBLXDX087xxx9eWyiDvqf6KnYznJ+6KQILxAri+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/mB/Trl; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7ebde93bf79so217462539f.1;
-        Mon, 17 Jun 2024 15:39:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718663997; x=1719268797; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pilmjE7Fd1aeWcRQgiLhuPvlXnr77T8c/+92X/hR46s=;
-        b=B/mB/Trl9s636vLy07rGsRHK3sd8xOrQn/Ma/mA1ghr7Z4eKlxwj1eZTKLmbaCToMX
-         o6qFkeZqv5pwDGJEtiY7c4CF7ANdLglkly3DvY0GH53eknlsosi53pf42k92+PB0Zi4U
-         X2PjG52+v79CNP62548EIwNSgREnqYoPHBKfpAaoRpn2qfpnyy7UMI0oSUDk8A1PZaH9
-         2ZQ+V1w3espxfIap1OnK43J7vu5GCg+/gfQo8CLR/4VK5+4aXi3jqWmj70op+TbBit+a
-         mWDQLemRlSG2VDCWavZywBGtSF2XZVWmRLEfp49b6GKxDQdoP9To0uMlWz+wKMiaskg5
-         wuNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718663997; x=1719268797;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pilmjE7Fd1aeWcRQgiLhuPvlXnr77T8c/+92X/hR46s=;
-        b=B5NrWTsAl6c1zTQWenQlwOeIxjYkvOPO0VtXzynMGeQSJylVWJTj7shuj5n02RewEv
-         FYwY78wWyo8+DDNQ6l7pR91lyuiDig29Np+I/xWLrJ0Jy2DimNXGmznEmLAIXTZLJEV2
-         F/OC1agSRagSGJqUqB2tLPKzrjquhGu7r7E6xdW8eQ1KHGbfP7kPK6VxSfhwvc2mj/qH
-         I7HeqzY52VlaUz44+y+iG0/eQGSmj7piOfyu5RljMEmCTNbx4KX4f9V/PSEMTk4DLduM
-         sX5tKCkDaEOZPwskXo7MRkV/RTs012lSFPmlVX5MAC+Ki42JfWWkfwSF7eX7/sOnovg4
-         A3+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXHyhwNCYuUwS9pnRP356a6WfVzZqE/1Y2XV/TjdxBXktoaHFrT5r6FQXghlXfw/MaMNkuquAUhhvBNUBUuta+PX96B3mDBeqYh2mGcA+BUXh+aKhrQWkK2xTHjUzAWq4K1hKCdKXoPNw==
-X-Gm-Message-State: AOJu0YyrZFVoQ6R93hgPf6m6a6wdLJbbQXnhbJj9qlTi1Jgjh+QfTdR0
-	z4kITQwCtKfc6fVD4aoNmHKKP8NYzMKu97tTmYLiDYdjHBuwlCrspmVcHucL
-X-Google-Smtp-Source: AGHT+IFthX3l4bIPWr8JOAwFidH7wht/c8nO5p55fH77H04hecSOh9g8mWsGGcbpKHaJyVlEct9MiA==
-X-Received: by 2002:a05:6602:6d02:b0:7eb:89ba:44fe with SMTP id ca18e2360f4ac-7ebeb647388mr1076974739f.17.1718663997401;
-        Mon, 17 Jun 2024 15:39:57 -0700 (PDT)
-Received: from aford-System-Version.lan ([2601:447:d002:5be:3ccd:905d:95c6:7d96])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7ebdb74cd1asm251549639f.0.2024.06.17.15.39.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 15:39:56 -0700 (PDT)
-From: Adam Ford <aford173@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: aford@beaconembedded.com,
-	marex@denx.de,
-	Adam Ford <aford173@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: imx8mp: Fix pgc_mlmix location
-Date: Mon, 17 Jun 2024 17:39:51 -0500
-Message-ID: <20240617223952.1899201-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718664043; c=relaxed/simple;
+	bh=Fsm9OuRh6Gn1a1tvsJrwCrl645RcmYLD128vIyx+Zj4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BzvJ0aYhxjfy7wtUvNFfldgY7id21PvNVTGAaWzqhRfuRacqQ37mhBJ6DIXydqx6GNoxP2bph7/55if5wGnWq2Ff85vdzrJRt0tYBaRXiiN7X9GOOt6+qXlGBAZepFKgb2ZJrA42NwvRnx4aKR/L+uri6/OgA8kjcsu4PsUkduU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qkrFsuIB; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B1AC445E08
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1718664040; bh=Fsm9OuRh6Gn1a1tvsJrwCrl645RcmYLD128vIyx+Zj4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qkrFsuIB1uN12ulbDXHckHNFe2BrsLYkd7Q+hWBcu4eQYb0/E8OEPtotB0jcOUjRB
+	 iykuX1gAiEbLklMRHmM97zx/jmqTGP6/mLito6eoavOs5YHqeOOz7nLYaVQOeagasC
+	 a3Cmj+KkEOCzmeTVS0lNA+KDjBJ34Kx31GUa9mOpEhSOh5pwrfVPZZ0xXHz4mk+Sur
+	 UMpDYzumNAB0B8Ns53RZ228Arag9apH/BnxoU0Qjt6KblgGCtkW1lnZAZ3pbqL9nqS
+	 TLQA31jzMW+AHk66IkllR9hrYoaISFezEDpynKioLAIr+JcZVicM/F82k8DwCjWqwS
+	 V5wlPClFf9jyw==
+Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id B1AC445E08;
+	Mon, 17 Jun 2024 22:40:40 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, Yanteng
+ Si <siyanteng@loongson.cn>, Dongliang Mu <dzm91@hust.edu.cn>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs/zh_CN: Update the translation of
+ dev-tools/gdb-kernel-debugging
+In-Reply-To: <20240612145048.57829-1-dzm91@hust.edu.cn>
+References: <20240612145048.57829-1-dzm91@hust.edu.cn>
+Date: Mon, 17 Jun 2024 16:40:39 -0600
+Message-ID: <878qz3gplk.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 
-The pgc_mlmix shows a power-domain@24, but the reg value is
-IMX8MP_POWER_DOMAIN_MLMIX which is set to 4.
-
-The stuff after the @ symbol should match the stuff referenced
-by 'reg' so reorder the pgc_mlmix so it to appear as power-domain@4.
-
-Fixes: 834464c8504c ("arm64: dts: imx8mp: add mlmix power domain")
-Fixes: 4bedc468b725 ("arm64: dts: imx8mp: Add NPU Node")
-
-Signed-off-by: Adam Ford <aford173@gmail.com>
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index b92abb5a5c53..3576d2b89b43 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -789,6 +789,23 @@ pgc_usb2_phy: power-domain@3 {
- 						reg = <IMX8MP_POWER_DOMAIN_USB2_PHY>;
- 					};
- 
-+					pgc_mlmix: power-domain@4 {
-+						#power-domain-cells = <0>;
-+						reg = <IMX8MP_POWER_DOMAIN_MLMIX>;
-+						clocks = <&clk IMX8MP_CLK_ML_AXI>,
-+							 <&clk IMX8MP_CLK_ML_AHB>,
-+							 <&clk IMX8MP_CLK_NPU_ROOT>;
-+						assigned-clocks = <&clk IMX8MP_CLK_ML_CORE>,
-+								  <&clk IMX8MP_CLK_ML_AXI>,
-+								  <&clk IMX8MP_CLK_ML_AHB>;
-+						assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
-+									 <&clk IMX8MP_SYS_PLL1_800M>,
-+									 <&clk IMX8MP_SYS_PLL1_800M>;
-+						assigned-clock-rates = <800000000>,
-+								       <800000000>,
-+								       <300000000>;
-+					};
-+
- 					pgc_audio: power-domain@5 {
- 						#power-domain-cells = <0>;
- 						reg = <IMX8MP_POWER_DOMAIN_AUDIOMIX>;
-@@ -900,23 +917,6 @@ pgc_vpu_vc8000e: power-domain@22 {
- 						reg = <IMX8MP_POWER_DOMAIN_VPU_VC8000E>;
- 						clocks = <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>;
- 					};
--
--					pgc_mlmix: power-domain@24 {
--						#power-domain-cells = <0>;
--						reg = <IMX8MP_POWER_DOMAIN_MLMIX>;
--						clocks = <&clk IMX8MP_CLK_ML_AXI>,
--							 <&clk IMX8MP_CLK_ML_AHB>,
--							 <&clk IMX8MP_CLK_NPU_ROOT>;
--						assigned-clocks = <&clk IMX8MP_CLK_ML_CORE>,
--								  <&clk IMX8MP_CLK_ML_AXI>,
--								  <&clk IMX8MP_CLK_ML_AHB>;
--						assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
--									 <&clk IMX8MP_SYS_PLL1_800M>,
--									 <&clk IMX8MP_SYS_PLL1_800M>;
--						assigned-clock-rates = <800000000>,
--								       <800000000>,
--								       <300000000>;
--					};
- 				};
- 			};
- 		};
--- 
-2.43.0
-
+RG9uZ2xpYW5nIE11IDxkem05MUBodXN0LmVkdS5jbj4gd3JpdGVzOg0KDQo+IFVwZGF0ZSB0byBj
+b21taXQgNmIyMTk0MzEwMzdiICgiZG9jcy9zY3JpcHRzL2dkYjogYWRkIG5lY2Vzc2FyeQ0KPiBt
+YWtlIHNjcmlwdHNfZ2RiIHN0ZXAiKQ0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBEb25nbGlhbmcgTXUg
+PGR6bTkxQGh1c3QuZWR1LmNuPg0KPiAtLS0NCj4gIC4uLi90cmFuc2xhdGlvbnMvemhfQ04vZGV2
+LXRvb2xzL2dkYi1rZXJuZWwtZGVidWdnaW5nLnJzdCAgICAgfCA0ICsrKysNCj4gIDEgZmlsZSBj
+aGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCj4NCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24v
+dHJhbnNsYXRpb25zL3poX0NOL2Rldi10b29scy9nZGIta2VybmVsLWRlYnVnZ2luZy5yc3QgYi9E
+b2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9kZXYtdG9vbHMvZ2RiLWtlcm5lbC1kZWJ1
+Z2dpbmcucnN0DQo+IGluZGV4IDE3YjVjZTg1YTkwYy4uOTRjMTVjMjU4NzI2IDEwMDY0NA0KPiAt
+LS0gYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9kZXYtdG9vbHMvZ2RiLWtlcm5l
+bC1kZWJ1Z2dpbmcucnN0DQo+ICsrKyBiL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NO
+L2Rldi10b29scy9nZGIta2VybmVsLWRlYnVnZ2luZy5yc3QNCj4gQEAgLTM0LDYgKzM0LDEwIEBA
+IEtnZGLlhoXmoLjosIPor5XlmajjgIFRRU1V562J6Jma5ouf5py6566h55CG56iL5bqP5oiW5Z+6
+5LqOSlRBR+eahOehrOS7tuaOpeWPow0KPiAgICDkvYbov5npgJrluLjku4XlnKjkuI3kvp3otZbl
+hoXmoLjmqKHlnZfml7bmiY3mnInmlYjjgILmnInlhbPmraTmqKHlvI/nmoTmm7TlpJror6bnu4bk
+v6Hmga/vvIzor7flj4LpmIVRRU1V5paH5qGj44CCDQo+ICAgIOWcqOi/meenjeaDheWGteS4i++8
+jOWmguaenOaetuaehOaUr+aMgUtBU0xS77yM5bqU6K+l5Zyo56aB55SoQ09ORklHX1JBTkRPTUla
+RV9CQVNF55qE5oOF5Ya15LiL5p6E5bu65YaF5qC444CCDQo+ICANCj4gKy0g5p6E5bu6Z2Ri6ISa
+5pys77yI6YCC55So5LqO5YaF5qC4djUuMeeJiOacrOWPiuS7peS4iu+8iQ0KPiArDQo+ICsgICAg
+bWFrZSBzY3JpcHRzX2dkYiANCj4gKw0KDQpUaGlzIG9uZSBnYXZlIG1lIHRoZSBmb2xsb3dpbmcg
+ZXJyb3I6DQoNCkFwcGx5aW5nOiBkb2NzL3poX0NOOiBVcGRhdGUgdGhlIHRyYW5zbGF0aW9uIG9m
+IGRldi10b29scy9nZGIta2VybmVsLWRlYnVnZ2luZw0KLmdpdC9yZWJhc2UtYXBwbHkvcGF0Y2g6
+MTU6IHRyYWlsaW5nIHdoaXRlc3BhY2UuDQogICAgbWFrZSBzY3JpcHRzX2dkYiANCndhcm5pbmc6
+IDEgbGluZSBhZGRzIHdoaXRlc3BhY2UgZXJyb3JzLg0KDQpJIGZpeGVkIGl0IHRoaXMgdGltZSwg
+YnV0IHBsZWFzZSB0cnkgdG8gYXZvaWQgYWRkaW5nIHRoaXMga2luZCBvZg0Kd2FybmluZyBpbiB0
+aGUgZnV0dXJlLg0KDQpUaGFua3MsDQoNCmpvbg0K
 
