@@ -1,253 +1,278 @@
-Return-Path: <linux-kernel+bounces-217627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B5E90B250
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:37:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C382390B242
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7258F1F2017A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:37:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC9171C225D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57461C232D;
-	Mon, 17 Jun 2024 13:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7E21BD519;
+	Mon, 17 Jun 2024 13:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bEAZPSDn"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nxhy3icL"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F301C0DFD
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077AA1BD512;
+	Mon, 17 Jun 2024 13:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632219; cv=none; b=suCbQU/qKPB0au70BpIWOpS/M3Vijd3aTNq4sRRPcsPaEvSZpAWMAXkjUGqC44wh8IWZUzasgcsSupJeSFJAkMzBq+W8KtXabn7nPNgbDVZcMBeJzQPRC4Q6AsA/mBH/F2auPTc7iEyBJY0tognDhBTAvZVlPS1Pched3xm9zuQ=
+	t=1718632210; cv=none; b=CBItUyCUpZBjorcoD9oFTrMMgA40i3Ej3ddYZHgdF6MbJfue3I5fZhwPJfVmpxA4W3SRjhcHtsSXZc3UjClHlmMJ7GON4LnNXM4l62SbCECw1y2s3//etrzBxmFHeJgQ3rixCL/QKm+ioBTJxboPtt3uf1L/kZDy371Q1NgD67o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632219; c=relaxed/simple;
-	bh=MPFBeRiBqEWL2ZmKqHZsE/yYze6ZRHtpV3TD+LCyks4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PszmBhoF5Mww5Mz+ZIeMR5ndfStepuLTUm0bbqXiaFrUOJgPmLct06ud9FhJsTJawyrEAro0fpl6/DqmfR9zt3nQayAaHlOECgU4NZhBS8cGsztuv1ATCRSYMjWx8dklFvIUPNBUxkTK7i377QYo0aucXBaoF9y/ZUl8FWoPUCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bEAZPSDn; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7953f1dcb01so389048385a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:50:17 -0700 (PDT)
+	s=arc-20240116; t=1718632210; c=relaxed/simple;
+	bh=YMzX6ooz3JsUkie/XsaWHUpwkokp4Qo3s799ez1M10k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B9hLFVVx21HcnpKksvV4oHkc8mB+41tgTZ3j7sTFGCMvmtQ1Oqdv8vwHeedxqpS0Qac36b764ICFAs8/IxSkMDfx56ZAic8XqOKRtTI2JD8hWskR+PM4kM1ZgD2xS9ZxlHqi7+vdpTNHnop+m3PEY2wxPPXQ80wJZ2f6F6Bud00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nxhy3icL; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-797f222c9f9so258853385a.3;
+        Mon, 17 Jun 2024 06:50:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718632217; x=1719237017; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FJ898fDCKj42D5/vtQAto1s5SAQxhzxV4OLmCarOpnQ=;
-        b=bEAZPSDnjFTXq7axyppRkNjq9rnh9UY2tflooNd1skPj/QepFdnGhnqUWyhhMTTcMV
-         0OQk2Dcap5xKi3Ri3y+DP5Y1FrBVUih9ss3fiavHl8MjHu3aax4zci4fufxOWt6BK3Ka
-         Rnd53Ec5t1kRcnXCapPeQCjzlITXBue0H6+pnOv7IqQzTAHUrIXw4Bom4j+551GwJtGx
-         MCq50sELaOCV7E813Pv4LndyUmUtZ1w6Jo/79/HmNrJaZmhLUuRGE4CmkvAK/QEk26cQ
-         JlAkobXzZ7SI0tw8otTS/nKZjqVVSOD9srk4WSh/ObL4yN74BXmDNpUGa7QejgpzOJ2V
-         Gdbw==
+        d=gmail.com; s=20230601; t=1718632208; x=1719237008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uafBfjF9BGnnEyoetBs+q1J93YDTYA8APT02I3KvMtE=;
+        b=Nxhy3icLkBssqMVHYTgQ8Ui8UvA7suNaUBJnqH4k21CYQCcrl33wqfkNV3+5LaGzew
+         euLby8ixiYfcefNKUnvJ0TaN56DQnFDcMPhx/5N8+lphG62KI85glh29d7g9YX205hsk
+         BwXJOBK8OtL+Ryeoqc4LbIoTKqy+WcyMh0HcE4SdEmUVgTe+22zIxTBiGoCyF8290CG7
+         8IlMvCzu45p9J/kZFtM96ld2zo+RE9qfWrOmyrVEzag+QHQvLDlnWg3N/xUygEGpRRv1
+         M4jyclhZEprsOTzKGe4CEZidT6vXqgVTFGMzAssxbzZwAjnyCKdAZ/Jh0hY2kgtQ+3g3
+         o+sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718632217; x=1719237017;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718632208; x=1719237008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FJ898fDCKj42D5/vtQAto1s5SAQxhzxV4OLmCarOpnQ=;
-        b=S5Nna2UfxhcayV7udJa1rI9LctWgfARqniLwEVJnCoBZ3ZyTNndEP8hWuQPXiRMaJv
-         MGP0KNwYj9nwVjbk2OdksbAzi8zKqx4yhLcIJKQiM2GishLdT3CdpvpiVb9vQj1Y5sGV
-         zjHpiDpC5cm/bg9/MjC01CDHpzGXqLx4Iqw+a5nTl0wznsSGKCq4QR7NDGW1ySHBBh1q
-         N7wV+F5CvmLj5QUf3gHEbxAEMUhWK4KrL/jrbUNYun3i0++8uDEdvRY4Tkswx2PUN3/V
-         wCnyePcOqNkCXG8PJAbzo+jDXxKfP+BYa5dHEbLOVrldGzaWhdwi6ZFoEUR0KszFdSFx
-         LGCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXc3PNBQqwWKn2QncpnhBwCwB/GUrStFh7GLztwtgZedFcLdGaRUw0rsOqdFD4nxcdLOSuX+mNnlEJXrLL7H85ECUve4t6VaggyGEki
-X-Gm-Message-State: AOJu0Yy/B+HWJ9oJ6VjI3McNK2A5Q16G1+iZO4k/DYDE6cKRYA1rvc4Y
-	T4YtrjN+bPaMh//j8DJnlS+s9oBIIsD8FfrvmHEabIt0+BUyoh/hqZn63okh3Yc=
-X-Google-Smtp-Source: AGHT+IG7O2bJi0GCfnphwmiN8zuYwAKTZAA7K/LgtdsfOhK/hCe8sAhzrzmLoDYS8PhLsNItnynlLA==
-X-Received: by 2002:a05:620a:404a:b0:795:2307:97ec with SMTP id af79cd13be357-798d2588f12mr1074628285a.56.1718632217032;
-        Mon, 17 Jun 2024 06:50:17 -0700 (PDT)
-Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaecc004sm432892285a.31.2024.06.17.06.50.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 06:50:16 -0700 (PDT)
-From: Trevor Gamblin <tgamblin@baylibre.com>
-Date: Mon, 17 Jun 2024 09:49:55 -0400
-Subject: [PATCH v3 15/41] iio: adc: qcom-spmi-rradc: make use of
- regmap_clear_bits(), regmap_set_bits()
+        bh=uafBfjF9BGnnEyoetBs+q1J93YDTYA8APT02I3KvMtE=;
+        b=vJ4YBG769tHuAJUOQwjk2VTpUsssOKGWYjfAhqMG0PVTmR053d/vVbtl2UWva+aP8p
+         ZBjhNc6YKvoqwhOM6rbZrrC8ke8tlCP44v6ddDCjXvbxdYgz/Xpg61PvyWQhcQ0uTMO+
+         VF4oVDyNjQRLzMnnsyX4ADDkAGcyxQi5zMdzfDr+Qt9vEhrWfVhgmMoVm1lKnh+cQ7YY
+         TjRvtg4tNJMya05Nn4Gh183WhAYw42X2rGoJHNwahLLldkwr61UDVjWBsJKUiYYUHS0Z
+         EI1V7e8vP2gANIdEmjPMTvzqvjVwWxBvGYYyNhz1cn7UejQNFzKWoJlx/rN7Nklrrqww
+         /ASg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWOjFeVJhe9xKxk8RwF5MzJazlAeaf2XNwifts5zihYQjcR5xcO1V8VtJ6qjYLseFthlXof3fcNKC5eYkCIZXNzXV28TeG+2LGXkXE3AUNn2O0QoPzmj1O/WIxuf8h2eyuRoWgg9/Fpe8z0/hlh8Fl8J8lm/2hTAAaG/nFDumYVyI9ndO41w==
+X-Gm-Message-State: AOJu0YwN1YcOTLLxLq7ILxCPpBMqaomdbYBZ0wL4/2X4L898qTwoXSrC
+	MTNlx8wp2BV80oXSNGDgilTldTgXUgYf3pRSTcEvvUnBAm80IE2s+yCN7HEDiFNhRpDsT8JzKM1
+	4H08TR4qOwQXFXZXNdQN2KZxHsQg=
+X-Google-Smtp-Source: AGHT+IFCVTLsrP0x9BXCG8zvXI+ugi8pb1IfH41pX+8htWWGkprkwbA7/blxrVWGjWHUC+ygmzazhT+4NLZm8CQ6DtM=
+X-Received: by 2002:a05:620a:318b:b0:795:4cc8:6dba with SMTP id
+ af79cd13be357-798d269406emr1165225485a.58.1718632207841; Mon, 17 Jun 2024
+ 06:50:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240617-review-v3-15-88d1338c4cca@baylibre.com>
-References: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
-In-Reply-To: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Dmitry Rokosov <ddrokosov@sberdevices.ru>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Cosmin Tanislav <cosmin.tanislav@analog.com>, Chen-Yu Tsai <wens@csie.org>, 
- Hans de Goede <hdegoede@redhat.com>, Ray Jui <rjui@broadcom.com>, 
- Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Saravanan Sekar <sravanhome@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, 
- Crt Mori <cmo@melexis.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
- linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
- Trevor Gamblin <tgamblin@baylibre.com>
-X-Mailer: b4 0.13.0
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+ <20240615-fahrrad-bauordnung-a349bacd8c82@brauner> <20240617093745.nhnc7e7efdldnjzl@quack3>
+ <CAOQ4uxiN3JnH-oJTw63rTR_B8oPBfB7hWyun0Hsb3ZX3AORf2g@mail.gmail.com> <20240617130739.ki5tpsbgvhumdrla@quack3>
+In-Reply-To: <20240617130739.ki5tpsbgvhumdrla@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 17 Jun 2024 16:49:55 +0300
+Message-ID: <CAOQ4uxhGD563ye9F=+m_gcaDuYJPbD1mbwmtm0y476Oxe5fH6Q@mail.gmail.com>
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neilb@suse.de>, James Clark <james.clark@arm.com>, 
+	ltp@lists.linux.it, linux-nfs@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Instead of using regmap_update_bits() and passing the mask twice, use
-regmap_set_bits().
+On Mon, Jun 17, 2024 at 4:07=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 17-06-24 15:09:09, Amir Goldstein wrote:
+> > On Mon, Jun 17, 2024 at 12:37=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > > On Sat 15-06-24 07:35:42, Christian Brauner wrote:
+> > > > On Wed, 12 Jun 2024 17:09:55 +1000, NeilBrown wrote:
+> > > > > When a file is opened and created with open(..., O_CREAT) we get
+> > > > > both the CREATE and OPEN fsnotify events and would expect them in=
+ that
+> > > > > order.   For most filesystems we get them in that order because
+> > > > > open_last_lookups() calls fsnofify_create() and then do_open() (f=
+rom
+> > > > > path_openat()) calls vfs_open()->do_dentry_open() which calls
+> > > > > fsnotify_open().
+> > > > >
+> > > > > [...]
+> > > >
+> > > > Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> > > > Patches in the vfs.fixes branch should appear in linux-next soon.
+> > > >
+> > > > Please report any outstanding bugs that were missed during review i=
+n a
+> > > > new review to the original patch series allowing us to drop it.
+> > > >
+> > > > It's encouraged to provide Acked-bys and Reviewed-bys even though t=
+he
+> > > > patch has now been applied. If possible patch trailers will be upda=
+ted.
+> > > >
+> > > > Note that commit hashes shown below are subject to change due to re=
+base,
+> > > > trailer updates or similar. If in doubt, please check the listed br=
+anch.
+> > > >
+> > > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > > > branch: vfs.fixes
+> > > >
+> > > > [1/1] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open use=
+d.
+> > > >       https://git.kernel.org/vfs/vfs/c/7536b2f06724
+> > >
+> > > I have reviewed the patch you've committed since I wasn't quite sure =
+which
+> > > changes you're going to apply after your discussion with Amir. And I =
+have
+> > > two comments:
+> > >
+> > > @@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
+> > >   */
+> > >  int vfs_open(const struct path *path, struct file *file)
+> > >  {
+> > > +       int ret;
+> > > +
+> > >         file->f_path =3D *path;
+> > > -       return do_dentry_open(file, NULL);
+> > > +       ret =3D do_dentry_open(file, NULL);
+> > > +       if (!ret)
+> > > +               /*
+> > > +                * Once we return a file with FMODE_OPENED, __fput() =
+will call
+> > > +                * fsnotify_close(), so we need fsnotify_open() here =
+for symmetry.
+> > > +                */
+> > > +               fsnotify_open(file);
+> >
+> > Please add { } around multi line indented text.
+> >
+> > > +       return ret;
+> > >  }
+> > >
+> > > AFAICT this will have a side-effect that now fsnotify_open() will be
+> > > generated even for O_PATH open. It is true that fsnotify_close() is g=
+etting
+> > > generated for them already and we should strive for symmetry. Concept=
+ually
+> > > it doesn't make sense to me to generate fsnotify events for O_PATH
+> > > opens/closes but maybe I miss something. Amir, any opinion here?
+> >
+> > Good catch!
+> >
+> > I agree that we do not need OPEN nor CLOSE events for O_PATH.
+> > I suggest to solve it with:
+> >
+> > @@ -915,7 +929,7 @@ static int do_dentry_open(struct file *f,
+> >         f->f_sb_err =3D file_sample_sb_err(f);
+> >
+> >         if (unlikely(f->f_flags & O_PATH)) {
+> > -               f->f_mode =3D FMODE_PATH | FMODE_OPENED;
+> > +               f->f_mode =3D FMODE_PATH | FMODE_OPENED | __FMODE_NONOT=
+IFY;
+> >                 f->f_op =3D &empty_fops;
+> >                 return 0;
+> >         }
+>
+> First I was somewhat nervous about this as it results in returning O_PATH
+> fd with __FMODE_NONOTIFY to userspace and I was afraid it may influence
+> generation of events *somewhere*.
 
-Instead of using regmap_update_bits() and passing val = 0, use
-regmap_clear_bits().
+It influences my POC code of future lookup permission event:
+https://github.com/amir73il/linux/commits/fan_lookup_perm/
+which is supposed to generate events on lookup with O_PATH fd.
 
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
----
- drivers/iio/adc/qcom-spmi-rradc.c | 50 +++++++++++++++++++--------------------
- 1 file changed, 24 insertions(+), 26 deletions(-)
+> But checking a bit, we use 'file' for
+> generating only open, access, modify, and close events so yes, this shoul=
+d
+> be safe. Alternatively we could add explicit checks for !O_PATH when
+> generating open / close events.
+>
 
-diff --git a/drivers/iio/adc/qcom-spmi-rradc.c b/drivers/iio/adc/qcom-spmi-rradc.c
-index 56a713766954..1402df68dd52 100644
---- a/drivers/iio/adc/qcom-spmi-rradc.c
-+++ b/drivers/iio/adc/qcom-spmi-rradc.c
-@@ -358,15 +358,15 @@ static int rradc_enable_continuous_mode(struct rradc_chip *chip)
- 	int ret;
- 
- 	/* Clear channel log */
--	ret = regmap_update_bits(chip->regmap, chip->base + RR_ADC_LOG,
--				 RR_ADC_LOG_CLR_CTRL, RR_ADC_LOG_CLR_CTRL);
-+	ret = regmap_set_bits(chip->regmap, chip->base + RR_ADC_LOG,
-+			      RR_ADC_LOG_CLR_CTRL);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "log ctrl update to clear failed:%d\n", ret);
- 		return ret;
- 	}
- 
--	ret = regmap_update_bits(chip->regmap, chip->base + RR_ADC_LOG,
--				 RR_ADC_LOG_CLR_CTRL, 0);
-+	ret = regmap_clear_bits(chip->regmap, chip->base + RR_ADC_LOG,
-+				RR_ADC_LOG_CLR_CTRL);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "log ctrl update to not clear failed:%d\n",
- 			ret);
-@@ -374,9 +374,8 @@ static int rradc_enable_continuous_mode(struct rradc_chip *chip)
- 	}
- 
- 	/* Switch to continuous mode */
--	ret = regmap_update_bits(chip->regmap, chip->base + RR_ADC_CTL,
--				 RR_ADC_CTL_CONTINUOUS_SEL,
--				 RR_ADC_CTL_CONTINUOUS_SEL);
-+	ret = regmap_set_bits(chip->regmap, chip->base + RR_ADC_CTL,
-+			      RR_ADC_CTL_CONTINUOUS_SEL);
- 	if (ret < 0)
- 		dev_err(chip->dev, "Update to continuous mode failed:%d\n",
- 			ret);
-@@ -389,8 +388,8 @@ static int rradc_disable_continuous_mode(struct rradc_chip *chip)
- 	int ret;
- 
- 	/* Switch to non continuous mode */
--	ret = regmap_update_bits(chip->regmap, chip->base + RR_ADC_CTL,
--				 RR_ADC_CTL_CONTINUOUS_SEL, 0);
-+	ret = regmap_clear_bits(chip->regmap, chip->base + RR_ADC_CTL,
-+				RR_ADC_CTL_CONTINUOUS_SEL);
- 	if (ret < 0)
- 		dev_err(chip->dev, "Update to non-continuous mode failed:%d\n",
- 			ret);
-@@ -434,8 +433,8 @@ static int rradc_read_status_in_cont_mode(struct rradc_chip *chip,
- 		return -EINVAL;
- 	}
- 
--	ret = regmap_update_bits(chip->regmap, chip->base + chan->trigger_addr,
--				 chan->trigger_mask, chan->trigger_mask);
-+	ret = regmap_set_bits(chip->regmap, chip->base + chan->trigger_addr,
-+			      chan->trigger_mask);
- 	if (ret < 0) {
- 		dev_err(chip->dev,
- 			"Failed to apply trigger for channel '%s' ret=%d\n",
-@@ -469,8 +468,8 @@ static int rradc_read_status_in_cont_mode(struct rradc_chip *chip,
- 	rradc_disable_continuous_mode(chip);
- 
- disable_trigger:
--	regmap_update_bits(chip->regmap, chip->base + chan->trigger_addr,
--			   chan->trigger_mask, 0);
-+	regmap_clear_bits(chip->regmap, chip->base + chan->trigger_addr,
-+			  chan->trigger_mask);
- 
- 	return ret;
- }
-@@ -481,17 +480,16 @@ static int rradc_prepare_batt_id_conversion(struct rradc_chip *chip,
+So yeh, this would be better:
+
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -112,7 +112,7 @@ static inline int fsnotify_file(struct file *file,
+__u32 mask)
  {
- 	int ret;
- 
--	ret = regmap_update_bits(chip->regmap, chip->base + RR_ADC_BATT_ID_CTRL,
--				 RR_ADC_BATT_ID_CTRL_CHANNEL_CONV,
--				 RR_ADC_BATT_ID_CTRL_CHANNEL_CONV);
-+	ret = regmap_set_bits(chip->regmap, chip->base + RR_ADC_BATT_ID_CTRL,
-+			      RR_ADC_BATT_ID_CTRL_CHANNEL_CONV);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "Enabling BATT ID channel failed:%d\n", ret);
- 		return ret;
- 	}
- 
--	ret = regmap_update_bits(chip->regmap,
--				 chip->base + RR_ADC_BATT_ID_TRIGGER,
--				 RR_ADC_TRIGGER_CTL, RR_ADC_TRIGGER_CTL);
-+	ret = regmap_set_bits(chip->regmap,
-+			      chip->base + RR_ADC_BATT_ID_TRIGGER,
-+			      RR_ADC_TRIGGER_CTL);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "BATT_ID trigger set failed:%d\n", ret);
- 		goto out_disable_batt_id;
-@@ -500,12 +498,12 @@ static int rradc_prepare_batt_id_conversion(struct rradc_chip *chip,
- 	ret = rradc_read_status_in_cont_mode(chip, chan_address);
- 
- 	/* Reset registers back to default values */
--	regmap_update_bits(chip->regmap, chip->base + RR_ADC_BATT_ID_TRIGGER,
--			   RR_ADC_TRIGGER_CTL, 0);
-+	regmap_clear_bits(chip->regmap, chip->base + RR_ADC_BATT_ID_TRIGGER,
-+			  RR_ADC_TRIGGER_CTL);
- 
- out_disable_batt_id:
--	regmap_update_bits(chip->regmap, chip->base + RR_ADC_BATT_ID_CTRL,
--			   RR_ADC_BATT_ID_CTRL_CHANNEL_CONV, 0);
-+	regmap_clear_bits(chip->regmap, chip->base + RR_ADC_BATT_ID_CTRL,
-+			  RR_ADC_BATT_ID_CTRL_CHANNEL_CONV);
- 
- 	return ret;
- }
-@@ -965,9 +963,9 @@ static int rradc_probe(struct platform_device *pdev)
- 
- 	if (batt_id_delay >= 0) {
- 		batt_id_delay = FIELD_PREP(BATT_ID_SETTLE_MASK, batt_id_delay);
--		ret = regmap_update_bits(chip->regmap,
--					 chip->base + RR_ADC_BATT_ID_CFG,
--					 batt_id_delay, batt_id_delay);
-+		ret = regmap_set_bits(chip->regmap,
-+				      chip->base + RR_ADC_BATT_ID_CFG,
-+				      batt_id_delay);
- 		if (ret < 0) {
- 			dev_err(chip->dev,
- 				"BATT_ID settling time config failed:%d\n",
+        const struct path *path;
 
--- 
-2.45.2
+-       if (file->f_mode & FMODE_NONOTIFY)
++       if (file->f_mode & (FMODE_NONOTIFY | FMODE_PATH))
+                return 0;
 
+        path =3D &file->f_path;
+--
+
+It is a dilemma, if this patch should be separate.
+On the one hand it fixes unbalanced CLOSE events on O_PATH fd,
+so it is an independent fix.
+OTOH, it is a requirement for moving fsnotify_open() out of
+do_dentry_open(), so not so healthy to separate them, when it is less clear
+that they need to be backported together.
+
+> > > @@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
+> > >         int acc_mode;
+> > >         int error;
+> > >
+> > > +       if (file->f_mode & FMODE_OPENED)
+> > > +               fsnotify_open(file);
+> > > +
+> > >         if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+> > >                 error =3D complete_walk(nd);
+> > >                 if (error)
+> > >
+> > > Frankly, this works but looks as an odd place to put this notificatio=
+n to.
+> > > Why not just placing it just next to where fsnotify_create() is gener=
+ated
+> > > in open_last_lookups()? Like:
+> > >
+> > >         if (open_flag & O_CREAT)
+> > >                 inode_lock(dir->d_inode);
+> > >         else
+> > >                 inode_lock_shared(dir->d_inode);
+> > >         dentry =3D lookup_open(nd, file, op, got_write);
+> > > -       if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
+> > > -               fsnotify_create(dir->d_inode, dentry);
+> > > +       if (!IS_ERR(dentry)) {
+> > > +               if (file->f_mode & FMODE_CREATED)
+> > > +                       fsnotify_create(dir->d_inode, dentry);
+> > > +               if (file->f_mode & FMODE_OPENED)
+> > > +                       fsnotify_open(file);
+> > > +       }
+> > >         if (open_flag & O_CREAT)
+> > >                 inode_unlock(dir->d_inode);
+> > >         else
+> > >                 inode_unlock_shared(dir->d_inode);
+> > >
+> > > That looks like a place where it is much more obvious this is for
+> > > atomic_open() handling? Now I admit I'm not really closely familiar w=
+ith
+> > > the atomic_open() paths so maybe I miss something and do_open() is be=
+tter.
+> >
+> > It looks nice, but I think it is missing the fast lookup case without O=
+_CREAT
+> > (i.e. goto finish_lookup).
+>
+> I don't think so. AFAICT that case will generate the event in vfs_open()
+> anyway and not in open_last_lookups() / do_open(). Am I missing something=
+?
+
+No. I am. This code is hard to follow.
+I am fine with your variant, but maybe after so many in-tree changes
+including the extra change of O_PATH, perhaps it would be better
+to move this patch to your fsnotify tree?
+
+Thanks,
+Amir.
 
