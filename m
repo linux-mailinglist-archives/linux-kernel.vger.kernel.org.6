@@ -1,73 +1,92 @@
-Return-Path: <linux-kernel+bounces-218331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E9E90BCB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A148590BCB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E8681F24A43
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:15:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561931F24812
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5117199255;
-	Mon, 17 Jun 2024 21:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5681991D2;
+	Mon, 17 Jun 2024 21:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Q2BHM1va"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2gj9Jr+M"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2074.outbound.protection.outlook.com [40.107.220.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728191991DD;
-	Mon, 17 Jun 2024 21:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718658931; cv=none; b=iToLhQIrAAhwA6iq3L4U1I5tbEdlS0sAS8SmAeXrkl227IHvdtDqqZm3sGRxa6ObrwUHcOJ+D6cIFa+J/iYfScWPyR+tQRYbF8VM6Trl4t6G7mOSHtQoHl1DLmpkAdtOYJOMKsjfnRZJ1gvAsS8xh3hEayJF/g8sEl7Nf2nhVPY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718658931; c=relaxed/simple;
-	bh=TPgwPxxcuXihDS6Fd5kqNYs3tbUpZkERktoUP7ijzLk=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9236814F128
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 21:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718658929; cv=fail; b=OX9W0Hn8QX3wlzk1v08Rj1P41OdCVZdXSbH0DFEnI7vFLQgrcWFu62sFwSNZXnDcAeUtgtAYMQx5HYYTQK5jnXSYI58owsXWLdxzfBmEatqMg7Vky/ACfrv8znXtLdIQD7ynoUEqYLQJa/BoEnKtky4VxBm3Pu/ctW+8DXmmk5Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718658929; c=relaxed/simple;
+	bh=RGHLWsdL/pI1aMSbj8eqtNdjm7Z2+JiPYzS8rFJwQIM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lm1p17j8LRta3ve6D/2XEyRlcEGaFTukg55AqVHGxdzY21Fqut0R+1g4bmlTW0z7mQkkxk1eXVK0g6rJA+D7DjiyugZfA9n5IzKSGZtSsz4DiQnogMXSTM47dU7UGY9azwnrriDHFOe0T1XMjG3NGlMpiF895yFklGPeOwTJA/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Q2BHM1va; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1718658930; x=1750194930;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ywO+hwyTv+j8f6emuBiZ+9A/DunuRT51chwUSajyKgU=;
-  b=Q2BHM1vaDcksDdv0+OrF7KggixW+J/nlpqsoRcgz8HIKqzpdF/2EMHcS
-   oSadV20fwlr1VOwlK769uD9mwBLa/wmqYG/sZo7KdNXuysv8uxEIcW0/D
-   n64j8q3wcCq6lxSzi1gh5ediQdARc1br7pGuk6Jawo7EgsSIAIkg8sF0l
-   M=;
-X-IronPort-AV: E=Sophos;i="6.08,245,1712620800"; 
-   d="scan'208";a="426890372"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 21:15:24 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.38.20:33573]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.19.97:2525] with esmtp (Farcaster)
- id 4bb6c7f5-0243-4830-be5b-a3a2332fbbc5; Mon, 17 Jun 2024 21:15:23 +0000 (UTC)
-X-Farcaster-Flow-ID: 4bb6c7f5-0243-4830-be5b-a3a2332fbbc5
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 17 Jun 2024 21:15:23 +0000
-Received: from 88665a182662.ant.amazon.com (10.187.171.38) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 17 Jun 2024 21:15:20 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <ignat@cloudflare.com>
-CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kernel-team@cloudflare.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <revest@chromium.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH net v3] net: do not leave a dangling sk pointer, when socket creation fails
-Date: Mon, 17 Jun 2024 14:15:04 -0700
-Message-ID: <20240617211504.91973-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240617210205.67311-1-ignat@cloudflare.com>
-References: <20240617210205.67311-1-ignat@cloudflare.com>
+	 MIME-Version:Content-Type; b=fDuA5uJm6AR95G/nZTG2fVEWbaBV3zWKCokhP1nrV/ZXxCUEc5Q6mlOTRb4gzr0JQG+egiqtNMy2OG7Cv/yImZ+N96Sbcc0mPYrapv6mp6axgxbnOdQ1cXwzEVHchW/FDqES38QlnbhFzdW2Y4+CNCr/Nl3dP63YzX2myuDJUPo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2gj9Jr+M; arc=fail smtp.client-ip=40.107.220.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NLT6STICI+rnt3DaRuMdCr7fcD5AT4RzltVsnY1YSh7nY6t4tUoRaQi9DeD0lTbMMRFt5k28OSIXoZ97P6AGI/GijaKg4mn8p+mx8sgFG7PDeWpvnhzFwdZjN/NIiVITPj8KtBzNcj3VoXdioBeYCYbqkBbeQXaej9LZT11I8mo/ATGQugdFEAmkBEZ6xBsIRsG3FiVbuipxDWWfiplEg2m/h0uQwhrcj9Ke3Rdq3QV480Vga8K8DzVt8e3gxabZExnDDqJ4yTk3gl4pVq+Gw5qgEHB04RM1+ogx2j4ej7bAgWnwCyxasIthaiF1ZV82TlxCAozQe8rfB4g3PrfnLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3TOD5PJM1KWCuFhklVu5SHyGA2XnTuTn7akrw+m54Ug=;
+ b=DKrVBC1JUUwT9HhfxlI7ZbxeYadOxNmEfq43/yVMPmdwCNPPv1O4NK/Q2+d54KcB7VHWlxQ2Dk3PU4WEC/LepXfaGittPDEvRk78g3vIlFsOFOskNBnFRlKxg8o8CRjOgX9ff/nHaZMEqmchzm2ir0xChoWkwZUfSna8ODsavYR4AhHPmXQykP5v7h/NspPHnYb8eBIoLrUr2jCoQoIhKz+mK8HM7/0m9ynEk5pBTFKQ6Ida0dQHK+NVS0o6IusFqpYOHGO0NkU/n0Fbjz/uolsTwXswOLcPWHEYpVlX3i2Ko8rYsripz61HAr8IDyp0rOTHvi6+EkETeMW2k96lsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3TOD5PJM1KWCuFhklVu5SHyGA2XnTuTn7akrw+m54Ug=;
+ b=2gj9Jr+MSwF7bhlJACqkzGTNEEe/E5pGt/BTadEqhOLsXw28jMowc9Xhvh+b2hmt97lNrRmKFUPzvjuLNhtqKZStzoO0ngtkCT3lALwX/bpHWCIqnDrC13qxzzHig3sRXw4lAVQniPBCtGss5aavI58/GKi0npDtPXY3eT42kek=
+Received: from CH2PR14CA0023.namprd14.prod.outlook.com (2603:10b6:610:60::33)
+ by PH7PR12MB7889.namprd12.prod.outlook.com (2603:10b6:510:27f::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
+ 2024 21:15:24 +0000
+Received: from CH1PEPF0000AD7C.namprd04.prod.outlook.com
+ (2603:10b6:610:60:cafe::d3) by CH2PR14CA0023.outlook.office365.com
+ (2603:10b6:610:60::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31 via Frontend
+ Transport; Mon, 17 Jun 2024 21:15:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000AD7C.mail.protection.outlook.com (10.167.244.84) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7452.22 via Frontend Transport; Mon, 17 Jun 2024 21:15:24 +0000
+Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Jun
+ 2024 16:15:22 -0500
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>
+CC: <rafael@kernel.org>, <hpa@zytor.com>, <peterz@infradead.org>,
+	<adrian.hunter@intel.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<jun.nakajima@intel.com>, <rick.p.edgecombe@intel.com>,
+	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <seanjc@google.com>,
+	<kai.huang@intel.com>, <bhe@redhat.com>, <kirill.shutemov@linux.intel.com>,
+	<bdas@redhat.com>, <vkuznets@redhat.com>, <dionnaglaze@google.com>,
+	<anisinha@redhat.com>, <jroedel@suse.de>, <ardb@kernel.org>,
+	<dyoung@redhat.com>, <kexec@lists.infradead.org>,
+	<linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v8 1/2] x86/boot/compressed: Skip Video Memory access in Decompressor for SEV-ES/SNP.
+Date: Mon, 17 Jun 2024 21:15:12 +0000
+Message-ID: <ff99398317efde228d3632b3876832676d11cd01.1718657194.git.ashish.kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1718657194.git.ashish.kalra@amd.com>
+References: <20240614095904.1345461-1-kirill.shutemov@linux.intel.com> <cover.1718657194.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,83 +95,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EX19D045UWA004.ant.amazon.com (10.13.139.91) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7C:EE_|PH7PR12MB7889:EE_
+X-MS-Office365-Filtering-Correlation-Id: a8658470-7495-4e85-1f5a-08dc8f129a84
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|36860700010|376011|7416011|82310400023|1800799021;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?G/aZxPNXRPQqhj9D9DmQv91tjAnaPnW693mwZyMaIx2/f7Kpj4sVLO+zpuoO?=
+ =?us-ascii?Q?BEf6EmLBsUxHOxVxF6arPwAgaz5R+N7xqJQIROALqywvAQwQymCrtlMcKgw9?=
+ =?us-ascii?Q?R7QEkbcGOYo2afJr02iVs6ODNnItLwmxinrqFsYfANw005CsPVEOgGiP7tSo?=
+ =?us-ascii?Q?V+iX0uz8BgpIojtwMaflIuiF049T3loXttAkoUMBN+pX3q8cL/PNUjGgF8iG?=
+ =?us-ascii?Q?1xqlsllCynmD7QtPK8LG/73+9e5Xfy6GVu954Ogn0Jgd9VjficNBUUvGyxl4?=
+ =?us-ascii?Q?o8tfZYEpdNdXg0vl52jeZ6z7kiyuU8Ce3ZL65C9dAL/7wtubLMtvrRnadWRq?=
+ =?us-ascii?Q?b+PGDb4Vp3qH4pyX6SkpCK3gDfsW/o1Bdm40j0ld4CrsViZlKn262KA9ujwB?=
+ =?us-ascii?Q?2RKWkiReJ0qEAvH3Y/kzDO5XfWYgF7iHGu6WWdqct3Xvrb5wth/WWw+0LS+6?=
+ =?us-ascii?Q?AoK2LaXXDFFOXSPJBKh2lVGCsbRYy1Q/Q/mjqxuUlv+GUPcJ16RxnKC/yKA0?=
+ =?us-ascii?Q?t6mGsaWOFYzalNfeAIgdyVfijGzphe8IndI4X5sI28mLY/5vhOtltslOUqKH?=
+ =?us-ascii?Q?dzyLyWPTGiXH/X1yiHqg6j7efENEWyG0nD9GXi4F88ZVA1GRfygRz9Rvl9Oy?=
+ =?us-ascii?Q?ZguwttDvLpQR4RId3QmWbBDWaBWftHiLZeI3U4AyIlCUMaQKvT9Lxa7PE27L?=
+ =?us-ascii?Q?DGMp/AAYOijfmDsWl5KXbyoaT6MYzEvhNjmEeX7dyXslHDbBqcobteucnsri?=
+ =?us-ascii?Q?uFnJRJJVFClMK6gRkzB7iKwKO3CoEOAYaXDzdx85Wp3P8OKZX85iaxFZgcWQ?=
+ =?us-ascii?Q?5d4/wV2X+PKTE5N+C7Wo2q5YC2+kA8GyJ8co+PBL2gAica7f8IVi2B4hrN5W?=
+ =?us-ascii?Q?Ro6cOOHBIXBXgpFp1vgD8DNf5VTtBnR4gmOidYFluSRu4hfbz1kEOs4OcWSU?=
+ =?us-ascii?Q?G0k+U0dQknfzZM5Jve6MojCvGpkrYOt/IovuzsPWF1fIEK0aGYt2Zsohl/nI?=
+ =?us-ascii?Q?Gq3NOprw5OqFjtJzL1NzHZZoRxBeyvzc+0g7jaLt1m+DiE+nhdaCUyqAZNHh?=
+ =?us-ascii?Q?k1/+MED2Uf9fkuZBg2mgSbCOBq/k7LId0jgZYEeUhlRkM3Y4WRI959+MEDs6?=
+ =?us-ascii?Q?kBCZ/asH7cBzEr3lJlMeCaQSPNdGIjSUKws4SSHgqksCmwQD+C9b/Yky0dej?=
+ =?us-ascii?Q?ZuG5RitNkiOz+Tpi+cZU+BakEaD60upx6oFWSVbCJJoefEy6KAXNmmZYz8U4?=
+ =?us-ascii?Q?qPqC3qdxmKJJ/DdiS6k7wYJ79vit3Uo7IuNatjtzpf8LUVtF4hhrsL7mKzQK?=
+ =?us-ascii?Q?6YudSEhvreQGj/e+6spAl4eqmM6HkvA+0Ts7UCn7TT+a395hrqkWFb+xnADi?=
+ =?us-ascii?Q?Ch4ewu5jYh3AufTwgdeMXl0Fmz2yrxK1A35y/QaixR3A6nGs4g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(36860700010)(376011)(7416011)(82310400023)(1800799021);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 21:15:24.3519
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8658470-7495-4e85-1f5a-08dc8f129a84
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7C.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7889
 
-From: Ignat Korchagin <ignat@cloudflare.com>
-Date: Mon, 17 Jun 2024 22:02:05 +0100
-> It is possible to trigger a use-after-free by:
->   * attaching an fentry probe to __sock_release() and the probe calling the
->     bpf_get_socket_cookie() helper
->   * running traceroute -I 1.1.1.1 on a freshly booted VM
-> 
-> A KASAN enabled kernel will log something like below (decoded and stripped):
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-> Read of size 8 at addr ffff888007110dd8 by task traceroute/299
-> 
-> CPU: 2 PID: 299 Comm: traceroute Tainted: G            E      6.10.0-rc2+ #2
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> Call Trace:
->  <TASK>
-> dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1))
-> print_report (mm/kasan/report.c:378 mm/kasan/report.c:488)
-> ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-> kasan_report (mm/kasan/report.c:603)
-> ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-> kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
-> __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-> bpf_get_socket_ptr_cookie (./arch/x86/include/asm/preempt.h:94 ./include/linux/sock_diag.h:42 net/core/filter.c:5094 net/core/filter.c:5092)
-> bpf_prog_875642cf11f1d139___sock_release+0x6e/0x8e
-> bpf_trampoline_6442506592+0x47/0xaf
-> __sock_release (net/socket.c:652)
-> __sock_create (net/socket.c:1601)
-> ...
-> Allocated by task 299 on cpu 2 at 78.328492s:
-> kasan_save_stack (mm/kasan/common.c:48)
-> kasan_save_track (mm/kasan/common.c:68)
-> __kasan_slab_alloc (mm/kasan/common.c:312 mm/kasan/common.c:338)
-> kmem_cache_alloc_noprof (mm/slub.c:3941 mm/slub.c:4000 mm/slub.c:4007)
-> sk_prot_alloc (net/core/sock.c:2075)
-> sk_alloc (net/core/sock.c:2134)
-> inet_create (net/ipv4/af_inet.c:327 net/ipv4/af_inet.c:252)
-> __sock_create (net/socket.c:1572)
-> __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
-> __x64_sys_socket (net/socket.c:1718)
-> do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
-> entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-> 
-> Freed by task 299 on cpu 2 at 78.328502s:
-> kasan_save_stack (mm/kasan/common.c:48)
-> kasan_save_track (mm/kasan/common.c:68)
-> kasan_save_free_info (mm/kasan/generic.c:582)
-> poison_slab_object (mm/kasan/common.c:242)
-> __kasan_slab_free (mm/kasan/common.c:256)
-> kmem_cache_free (mm/slub.c:4437 mm/slub.c:4511)
-> __sk_destruct (net/core/sock.c:2117 net/core/sock.c:2208)
-> inet_create (net/ipv4/af_inet.c:397 net/ipv4/af_inet.c:252)
-> __sock_create (net/socket.c:1572)
-> __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
-> __x64_sys_socket (net/socket.c:1718)
-> do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
-> entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-> 
-> Fix this by clearing the struct socket reference in sk_common_release() to cover
-> all protocol families create functions, which may already attached the
-> reference to the sk object with sock_init_data().
-> 
-> Fixes: c5dbb89fc2ac ("bpf: Expose bpf_get_socket_cookie to tracing programs")
-> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
-> Cc: stable@vger.kernel.org
-> Link: https://lore.kernel.org/netdev/20240613194047.36478-1-kuniyu@amazon.com/T/
+From: Ashish Kalra <ashish.kalra@amd.com>
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Accessing guest video memory/RAM during kernel decompressor
+causes guest termination as boot stage2 #VC handler for
+SEV-ES/SNP systems does not support MMIO handling.
 
-Thanks!
+This issue is observed with SEV-ES/SNP guest kexec as
+kexec -c adds screen_info to the boot parameters
+passed to the kexec kernel, which causes console output to
+be dumped to both video and serial.
 
+As the decompressor output gets cleared really fast, it is
+preferable to get the console output only on serial, hence,
+skip accessing video RAM during decompressor stage to
+prevent guest termination.
 
-P.S. next time, please make sure 24h pass before reposting for netdev.
+Add early_sev_detect() to detect SEV-ES/SNP guest and skip
+accessing video RAM during decompressor stage.
 
-  See: Documentation/process/maintainer-netdev.rst
+Serial console output during decompressor stage works as
+boot stage2 #VC handler already supports handling port I/O.
+
+Suggested-by: Borislav Petkov <Borislav.Petkov@amd.com>
+Suggested-by: Thomas Lendacy <thomas.lendacky@amd.com>
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+ arch/x86/boot/compressed/misc.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index b70e4a21c15f..bad924f20a3a 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -385,6 +385,27 @@ static void parse_mem_encrypt(struct setup_header *hdr)
+ 		hdr->xloadflags |= XLF_MEM_ENCRYPTION;
+ }
+ 
++static void early_sev_detect(void)
++{
++	/*
++	 * Accessing guest video memory/RAM during kernel decompressor
++	 * causes guest termination as boot stage2 #VC handler for
++	 * SEV-ES/SNP systems does not support MMIO handling.
++	 *
++	 * This issue is observed with SEV-ES/SNP guest kexec as
++	 * kexec -c adds screen_info to the boot parameters
++	 * passed to the kexec kernel, which causes console output to
++	 * be dumped to both video and serial.
++	 *
++	 * As the decompressor output gets cleared really fast, it is
++	 * preferable to get the console output only on serial, hence,
++	 * skip accessing video RAM during decompressor stage to
++	 * prevent guest termination.
++	 */
++	if (sev_status & MSR_AMD64_SEV_ES_ENABLED)
++		lines = cols = 0;
++}
++
+ /*
+  * The compressed kernel image (ZO), has been moved so that its position
+  * is against the end of the buffer used to hold the uncompressed kernel
+@@ -440,6 +461,8 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
+ 	 */
+ 	early_tdx_detect();
+ 
++	early_sev_detect();
++
+ 	console_init();
+ 
+ 	/*
+-- 
+2.34.1
+
 
