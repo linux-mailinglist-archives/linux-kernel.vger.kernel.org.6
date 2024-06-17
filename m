@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-217098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD1690AA83
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:00:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B4590AA9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9AD328E7AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:00:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A1131C2115C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E621946CC;
-	Mon, 17 Jun 2024 09:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A51F1946AB;
+	Mon, 17 Jun 2024 10:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OYrawKlU"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TXfbg8gC"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA1D193065
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CA8194092;
+	Mon, 17 Jun 2024 10:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718618399; cv=none; b=isDF/YZIFm8MFzcWdGWYsHIkHcm9vvnt8ISb76UHIRg0y4c/5iHtwwPgCUeKnUdsVKUjF5pxC2nDw3UmhmPCr8sh5zfbXCrMtfgVgpmMbvqDQtSYbRhC8JRZWBQ18E76XT7In++7ER8/In7RYPHCLKqll2+n5IiGqjC5ecrnjWk=
+	t=1718618556; cv=none; b=s/UJ3ZNfMP9GqUj7TMFE/GtfaB3R67XZ1A0NPwoVCb2DYILAOGNBy3EdcDofOgYvicgv3ZmaenJ1d/0e02ioO8ACvu55aNchYP1FzZGpOOmZlohnlPk7qA60EJ5RHNxzvTJOik5zt7T6VDd204ENG6m4Cqf2KndZBwTnPimMsXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718618399; c=relaxed/simple;
-	bh=2N4at/r/PEeA+K1d6l6Y6JqSO1Kgzxy+VfdvEaQIRN0=;
+	s=arc-20240116; t=1718618556; c=relaxed/simple;
+	bh=5ucFmytPGWUITdYIUNvYuJbY8zzIT+lAWia57YkFvQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uBVR5PlBtGcxJDDomjR+JiNQ6IMp+vEXZBtIdF79jzcCgyjDxnz2757mNS5d340f4usrImZ2TSFhbEoyKzR6fZnPdQliKskDyxUE3GqifXTEG5sm9uvRY+FTYG+XSvLWMxr3tV1JgmNeS3TsQ2CdJnFaqH/kuZAdzkBVltmLtEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OYrawKlU; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52cc1528c83so57120e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:59:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718618396; x=1719223196; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w6mDZyXxGUWK4+/DvvGnt5R2A+ndNSGgPh+p/M4hqI0=;
-        b=OYrawKlUUeIkxHfWAMa0OyHGIhriWXJjhX9CSL8uk1AmPkcN2slksl/LgcGUtoRSL+
-         lYveUF9mKN72NV4sVEUW7zodFcDcpTv3t7YreDu7nDLsnui/NcQnI/WE/JLb4PfP/TjD
-         A0mausyjY6A3vuRBES7TtTi3qI4+WaThAeeUKZdu+tCF6d8L1NxXJu1V49282EaZQ7/d
-         jPwonRyi8zghDTlyg3So0ZWLJmhjjB/gNu7n3w+IuDzPXlMPhZ9dmX8oHHCqhBIdukVF
-         S/w3IPwSZLwE+WVZlXaSX8qA4Ey1Vn+tNzFg6+nHnnDboUeqEzHrVuK4M/p0NBirxImT
-         fBxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718618396; x=1719223196;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w6mDZyXxGUWK4+/DvvGnt5R2A+ndNSGgPh+p/M4hqI0=;
-        b=tQ/ah/tg+/latpqFjfqIvtyCnZ7n0fz/Lc2va/UPlP3XrnScwx6B5Yl4QOR20gIvth
-         Fskp9YHraFdyMjfnkEHH2qCteAR2mCWuzNpf+Z8tsX6Bjj5RFq140Cpo0MYWPBu8+VMu
-         HP4DFhB0LhZg1wF88qUZSYwVN8dA/Y69mJp6kjlz/6at60rcvAD6UcToFjq8F3f+vfBK
-         AW3gwDcL38YdPtOvIbqeOzFCQudDd/MSEaLfs4NzKpNzCQZwiLLCmq5KkOP6MYDm+Jmr
-         qMeLBjYJRIYwvcDVYYdQZr09V4jZqLVfHmE8ca4j70JbBtN7cb8gXEDcoMTAie6s/Qat
-         sQKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgfEUYurUJfpxtsSm91d7WjjeO8pKdeUW8KOLCk3aC7rZ6ZYv/NXl2E0INxhiS8k3iG2+KwAjw+J/N7aFsFUCeyDr/qzIifmGhQaiS
-X-Gm-Message-State: AOJu0YysMYNQZYXr2QZxYFd4rAs8n/r9Qj3EK7tK7kqEMfsgQooHVqqm
-	XpSnzI/020rPo1G2K6WpV1FhGvopgPG90VaePFgjK25VjVdxZqKQGiSVnAotVNU=
-X-Google-Smtp-Source: AGHT+IEtJa+bfhMzAScFHBa5OpVDCnoBy0AhQnI6ujSC8tI2aUwTMvw0ISSpUeCJzbVA8VjiiQE0NQ==
-X-Received: by 2002:a05:6512:280d:b0:52b:82d5:8fd2 with SMTP id 2adb3069b0e04-52ca6e90a19mr8035281e87.47.1718618395848;
-        Mon, 17 Jun 2024 02:59:55 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282f457sm1195097e87.91.2024.06.17.02.59.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 02:59:55 -0700 (PDT)
-Date: Mon, 17 Jun 2024 12:59:54 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v9 3/4] arm64: dts: qcom: sm8650-hdk: add the Wifi node
-Message-ID: <6ev52bswy75qpti5dlgogdzvarsl2aph4qmgc526wfvngyhopo@yesllrhnn6kw>
-References: <20240605122729.24283-1-brgl@bgdev.pl>
- <20240605122729.24283-4-brgl@bgdev.pl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ajq7kUaxZWEaQ2FpFfNYU9FdPATHRSB/u/RZcXrTTXkCHByrE80MBkmRRWpBe5YWi+1WrkSCPzCTK8gxNEWlczdRY9lbqSciBD94lcD/W3DnSPPsvAyl1X3jJePbQpO5v6LCvo43bbZ/rb1yY8AskxrSPiTwBTgWGi/A/eRvWs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TXfbg8gC; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ABDC240E021A;
+	Mon, 17 Jun 2024 10:02:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id p-SwtidTbXwT; Mon, 17 Jun 2024 10:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718618542; bh=hk8qAv1xkelStwfpGcnWoiVIdVGUKqufug9abuox7ko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TXfbg8gChJROKcS7Y/Q95/XP3hPTOGtUQG9RULQxSAPp/U31ELpExyR7R2eP6JvPv
+	 GBo/JMTUPKJkzBmwfvqv3Aa/OHmtphGUF5ObrfG0KD6KN/uxUNCGaFKX/toaaPmocK
+	 dUruAb5F/VIBChTG3m2nmJRfiI+pJLYYTnNAVP86hIqUJQbLnIjXor7z6r8JsOWymw
+	 +zP7yAp+bxNprgPOZYlLabLJOC+mA1IKIsZ15Ws2UtxL0uWgf/dYDonpJ+c9zA3MnI
+	 KtB0BfSYZgSXDdgBumPTd69RR6BEC07BGeujoaoetOGsO6aXSDtqfUqgJ8IZdx3VXK
+	 bE/EAEhvtfRiy1hhkwI5VkZhHfhA88mlCAjWL3OWlao+ZQceZvRnrDiOpvPskzytIl
+	 dR/2Ttih6SHsZR7ZY6qU2rBTgc2cFyl1BJTz53XnjswrTPrIMv6d7MnlWZ/IWHN5rZ
+	 JfviQAn9l4hwngIfPd6YcRZVzp6Y93p0TAmsxRtBobXqiWP0emeMZV6i1St+lKRzsO
+	 FCl39wI/2EuMIbvWDVPxd49vkTXwgTLK5WYfUjDQPQN5bxDD5rYjIRdG0iFTXst0Y/
+	 3/3ywFM9g6Vor4KD6CyKgeLMCuqNBLfro21rP6XXFx+k7Z4itqZLgT5WJ7Xm3KbrWM
+	 jGWNxY3vqsz4yn0YbfBQH0I4=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 156CB40E01F9;
+	Mon, 17 Jun 2024 10:01:56 +0000 (UTC)
+Date: Mon, 17 Jun 2024 12:01:50 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Zack Rusin <zack.rusin@broadcom.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Alexey Makhalov <alexey.makhalov@broadcom.com>,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	lkp@intel.com, zack.rusin@broadcom.com,
+	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
+	tzimmermann@suse.de, mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com, linux-iio@vger.kernel.org,
+	jic23@kernel.org, lars@metafoo.de, nuno.sa@analog.com,
+	dragos.bogdan@analog.com, anshulusr@gmail.com,
+	andrea.collamati@gmail.com, oe-kbuild-all@lists.linux.dev,
+	x86@kernel.org
+Subject: Re: [PATCH 1/2] drm/vmwgfx: Fix missing HYPERVISOR_GUEST dependency
+Message-ID: <20240617100150.GDZnAJjoH5wZKu2OAV@fat_crate.local>
+References: <202406152104.FxakP1MB-lkp@intel.com>
+ <20240616012511.198243-1-alexey.makhalov@broadcom.com>
+ <20240617090709.GCZm_8vdnLzt048UH_@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240605122729.24283-4-brgl@bgdev.pl>
+In-Reply-To: <20240617090709.GCZm_8vdnLzt048UH_@fat_crate.local>
 
-On Wed, Jun 05, 2024 at 02:27:28PM GMT, Bartosz Golaszewski wrote:
-> From: Neil Armstrong <neil.armstrong@linaro.org>
+On Mon, Jun 17, 2024 at 11:07:09AM +0200, Borislav Petkov wrote:
+> On Sat, Jun 15, 2024 at 06:25:10PM -0700, Alexey Makhalov wrote:
+> > VMWARE_HYPERCALL alternative will not work as intended without
+> > VMware guest code initialization.
+> > 
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202406152104.FxakP1MB-lkp@intel.com/
+> > Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
+> > ---
+> >  drivers/gpu/drm/vmwgfx/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/vmwgfx/Kconfig b/drivers/gpu/drm/vmwgfx/Kconfig
+> > index faddae3d6ac2..6f1ac940cbae 100644
+> > --- a/drivers/gpu/drm/vmwgfx/Kconfig
+> > +++ b/drivers/gpu/drm/vmwgfx/Kconfig
+> > @@ -2,7 +2,7 @@
+> >  config DRM_VMWGFX
+> >  	tristate "DRM driver for VMware Virtual GPU"
+> >  	depends on DRM && PCI && MMU
+> > -	depends on X86 || ARM64
+> > +	depends on (X86 && HYPERVISOR_GUEST) || ARM64
+> >  	select DRM_TTM
+> >  	select DRM_TTM_HELPER
+> >  	select MAPPING_DIRTY_HELPERS
+> > -- 
 > 
-> Describe the ath12k WLAN on-board the WCN7850 module present on the
-> board.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sm8650-hdk.dts | 89 +++++++++++++++++++++++++
->  1 file changed, 89 insertions(+)
-> 
+> Right, I'll queue this soon but it doesn't reproduce here with gcc-11 or gcc-13.
+> This must be something gcc-9 specific or so...
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Actually, that's a DRM patch.
 
+Folks in To: ok to carry this though the tip tree?
+
+Thx.
 
 -- 
-With best wishes
-Dmitry
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
