@@ -1,132 +1,136 @@
-Return-Path: <linux-kernel+bounces-217680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F41290B2E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:52:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5972690B2E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390371F29963
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62FE28530A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE481D952F;
-	Mon, 17 Jun 2024 13:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF20197A9B;
+	Mon, 17 Jun 2024 13:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="alxVZG1o"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORi7kl31"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF57D1D953A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06651D953A;
+	Mon, 17 Jun 2024 13:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632348; cv=none; b=rYN+LdjPjVnoEXDpHzmOYCiDJ4w15trNTNrIptlM6Ew/TsaXbE6pBFAPE3NSHf1cVC+4M2q2xnmsq57Ni6OEC/r3hPXSTtuCk5btJcFQa6tC6geAl8LNToop2MLGxyJe/8clhWuWzU2K6P3bndPRKESIUUjknuRTSbQs7pXkeoA=
+	t=1718632417; cv=none; b=H6m9TESLytwOSQSenTnq0LkI/unDdOUiZxLUkCGQvq+TPTZ8NJuqXt9QNxoCDaRgdWgonboQL/LEjNBfQQRdi3yRGTPsPP9SVDH62XDBJXTm67VWrQ8NSJwpur4oC5yec+OwAvC15NimItG3ZCg3V2OpZUBRoHPawSqdyGt7NyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632348; c=relaxed/simple;
-	bh=D5NFlVKvsla0CFXHFhlYZw7O0GmQQMdgyUVVhv0MRmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XnztQpbZJUrNxOZEmwJIjqZoLeX47ksJsXStLCQCa5XJA5XGqy7cA7EYxgZQocsCHRfQkILgOQJRJRc+0Uvar8n3kohRBa4vA+AEQDCNeFw7RJjqEVrDyNa5FYvhiqvX3sGlOuQe7Ldu+XH+/OD5by8c6i++NpKPlyAg9lZM55c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=alxVZG1o; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718632344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3k/usp52ePqKVYe9MgAAGG7ZoIU/7jmDZL73Z+Os58E=;
-	b=alxVZG1oxUVWK8F6CnSUKoSqrtMQ25rd1nOvYVJDAZXdxXbJerIRgvTT3JTd4RQFXiWAaV
-	szi+uP8pfo6rFTvH9UtHGopiwPmm3d/ObJM/rMeYcFnRd1zcbXyG1J1hOYiImby53AS1Bo
-	e23J/UK84fldiQTIBnk4SB3iSVdGBx8=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Mon, 17 Jun 2024 09:52:22 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_fs_read_write_early
-Message-ID: <ffslrsipnjz2ta2i2lm3wnnrnxtjryvjqce6mlxntnqy7ieg2n@nhbpnfxzwar2>
-References: <00000000000053e574061ad89521@google.com>
+	s=arc-20240116; t=1718632417; c=relaxed/simple;
+	bh=d8J0BnSUrqs2/z/I5CpCqWjmj9DR+K/K4waYXR+Gu20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tUdsBU3ygX/So9DVwVzhbT13YguF7ZujFOWDXeC2H11ioumpD/rHePB5irm8Fsg9eS3tVuQFPdApTf9Afh8M4KKqjD9c7GppOakoMGQxjqzg9A9f49oT/YwwCz+LHILFsF1pPYuaUp5MC3y1Csp7SlfeDjiIWSmxL1uIox9wqzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ORi7kl31; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A794C4AF50;
+	Mon, 17 Jun 2024 13:53:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718632416;
+	bh=d8J0BnSUrqs2/z/I5CpCqWjmj9DR+K/K4waYXR+Gu20=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ORi7kl31MXL+SUdQgt97Ww8UWLftfBFOv+eOxFrAqzwQREuch5fOG/fyzAPolYlwu
+	 HZfGPO6V/NofZEto7JRv/dPIDkzStaxBLqhPtpoEagwWmpstLydM70gJFoga17nESE
+	 /lyD/6jO5YVzYxbyzUlfgvv8wUmD1alKzq/1G6wpSawyIIUTEBGFOhQN0cKA0BB0bB
+	 hlb1SOBDvw/WnlxPJE7V5Cja/t1Ah7IK0b/uBVEtYZEixFQcCNr/inLLqoG2gAXmLA
+	 Ac/Pt0a4lnfHzpMNYq9BPdcf2xpJKRKFT4iBgn/2m5waksVIEwNMYfMehoCMK3l0GG
+	 CYJJVDIp5muyQ==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso7648319a12.3;
+        Mon, 17 Jun 2024 06:53:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXEJGsiw+zMDyyoM26PJ+ob3CNJZMy4+y9r06OD2RNJZ4HjRa7xt1q0kuu3sTXnOaDtZXfWBl4AX4hKal6e8qUswED9/+78Olj38RV9Lz40veN27ugnhHRIPQWH1Rk55gESzYkZ+dxQsQ==
+X-Gm-Message-State: AOJu0YwBOWOyzrEEXrBwkmFqaS/PplLwt9T7x5gfRE9nTGyRSm2Z7VwZ
+	h0OhTs2+AcMDY91hKJT7VciSt5yr2t05HohAmVxVjgl6Tf7yYWsBKySxMUmlt0QFD+Gs3YV8grJ
+	se9DkHDkQNM1UYOUHppUfhae3YbI=
+X-Google-Smtp-Source: AGHT+IE74abFQ3fwm6GbmmB4GzzZArDYRVlIxiLGvFqKC0RlI/d5t4xtIcHy4urMVzI/C63DZ6+XJcywUPp733q+v5A=
+X-Received: by 2002:a50:a454:0:b0:57c:5bdd:1c64 with SMTP id
+ 4fb4d7f45d1cf-57cbd6a5a6amr5459568a12.41.1718632414895; Mon, 17 Jun 2024
+ 06:53:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000053e574061ad89521@google.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com> <20240616-b4-mips-ipi-improvements-v1-4-e332687f1692@flygoat.com>
+In-Reply-To: <20240616-b4-mips-ipi-improvements-v1-4-e332687f1692@flygoat.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 17 Jun 2024 21:53:23 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4LsuLYBefKZb5aHx_+fYyWjvO+Bm8h5=NFtSvk6E0Szw@mail.gmail.com>
+Message-ID: <CAAhV-H4LsuLYBefKZb5aHx_+fYyWjvO+Bm8h5=NFtSvk6E0Szw@mail.gmail.com>
+Subject: Re: [PATCH 04/10] MIPS: Move mips_smp_ipi_init call after prepare_cpus
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Serge Semin <fancer.lancer@gmail.com>, 
+	Paul Burton <paulburton@kernel.org>, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 05:16:20AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1689a256980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4366624c0b5aac4906cf
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110cda0e980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164f91fe980000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/c40c1cd990d2/vmlinux-2ccbdf43.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/a2a94050804e/bzImage-2ccbdf43.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/a79f654b4644/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 10 at fs/bcachefs/super.c:525 bch2_fs_read_write_early+0x8a/0xa0 fs/bcachefs/super.c:525
-> Modules linked in:
-> CPU: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> Workqueue: bcachefs_write_ref bch2_delete_dead_snapshots_work
-> RIP: 0010:bch2_fs_read_write_early+0x8a/0xa0 fs/bcachefs/super.c:525
-> Code: ac b8 76 fd 48 8d bb 78 02 00 00 be ff ff ff ff e8 0b cd d0 06 31 ff 89 c5 89 c6 e8 90 b3 76 fd 85 ed 75 c7 e8 87 b8 76 fd 90 <0f> 0b 90 eb bc 48 c7 c7 58 a2 e4 8f e8 c5 8b d2 fd eb 9b 0f 1f 00
-> RSP: 0018:ffffc900000d7910 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff888041080000 RCX: ffffffff84172cc0
-> RDX: ffff888017e90000 RSI: ffffffff84172cc9 RDI: 0000000000000005
-> RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
-> R10: 0000000000000000 R11: 1ffffffff272c7ee R12: ffff8880410801a8
-> R13: ffff888041080ae0 R14: 0000000000000001 R15: ffff88801f971800
-> FS:  0000000000000000(0000) GS:ffff88806b000000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000555581085788 CR3: 0000000025a9e000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  bch2_delete_dead_snapshots+0xfdc/0x4e50 fs/bcachefs/snapshot.c:1569
->  bch2_delete_dead_snapshots_work+0x20/0x160 fs/bcachefs/snapshot.c:1690
->  process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
->  process_scheduled_works kernel/workqueue.c:3312 [inline]
->  worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
->  kthread+0x2c1/0x3a0 kernel/kthread.c:389
->  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-> 
-> 
+Hi, Jiaxun
+
+On Mon, Jun 17, 2024 at 5:03=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygoat.co=
+m> wrote:
+>
+> This will give platform code a genuine chance to setup
+> IPI IRQ in prepare_cpus.
+>
+> This is the best place for platforms to setup IPI as smp_setup
+> is too early for IRQ subsystem.
+mips_smp_ipi_init() is an early_initcall() function, why do you say it
+is in smp_setup()?
+
+
+Huacai
+>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-#syz fix: bcachefs: delete_dead_snapshots() doesn't need to go RW
+>  arch/mips/kernel/smp.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
+> index fe053fe52147..ddf96c28e2f0 100644
+> --- a/arch/mips/kernel/smp.c
+> +++ b/arch/mips/kernel/smp.c
+> @@ -375,7 +375,6 @@ static int __init mips_smp_ipi_init(void)
+>
+>         return 0;
+>  }
+> -early_initcall(mips_smp_ipi_init);
+>  #endif
+>
+>  /*
+> @@ -460,12 +459,22 @@ void __init smp_cpus_done(unsigned int max_cpus)
+>  /* called from main before smp_init() */
+>  void __init smp_prepare_cpus(unsigned int max_cpus)
+>  {
+> +       int rc;
+> +
+>         init_new_context(current, &init_mm);
+>         current_thread_info()->cpu =3D 0;
+>         mp_ops->prepare_cpus(max_cpus);
+>         set_cpu_sibling_map(0);
+>         set_cpu_core_map(0);
+>         calculate_cpu_foreign_map();
+> +#ifdef CONFIG_GENERIC_IRQ_IPI
+> +       rc =3D mips_smp_ipi_init();
+> +       if (rc) {
+> +               pr_err("Failed to initialize IPI - disabling SMP");
+> +               init_cpu_present(cpumask_of(0));
+> +               return;
+> +       }
+> +#endif
+>  #ifndef CONFIG_HOTPLUG_CPU
+>         init_cpu_present(cpu_possible_mask);
+>  #endif
+>
+> --
+> 2.43.0
+>
 
