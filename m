@@ -1,133 +1,183 @@
-Return-Path: <linux-kernel+bounces-217344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116AB90AE89
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:02:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCFD90AE8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110B01C2031B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:02:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 505541C22D04
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB62196D98;
-	Mon, 17 Jun 2024 13:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1766197A72;
+	Mon, 17 Jun 2024 13:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="LMj1Cu6y"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="temkr+ko"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE4519BC6;
-	Mon, 17 Jun 2024 13:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1A018FC6F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718629337; cv=none; b=t+4cPm+NdpVGSAVTtMe0UEcKzFKAPQswGAwIbYX91BgbqBlk2hIqRUtXoFm6zbQZFrpfGcLNrZCmtLzyofQNFW91Mgkxtz7p9J78HMaVs0mof5RKDQHL8MU54tVDtI0r0t3aSdwdQo6muOk+n7Q1C0Ut/OVhBmFXiUEROH4g93U=
+	t=1718629371; cv=none; b=N2x6+RVCXZaPir0mqhTF/xa7Kp1Y4VE8DMquuaxBESgE+XLZniLVP7dUtxTVufqWHUjgz2WVzKnw/6UYWyzO/IceKacwsODoC48ghVfkQASV5awufQ/Ux7CgYsqX/uwoq+Sy8m/JDHUt3Zhc6xLYvx1YMcNSvsejwNHZTjeLBa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718629337; c=relaxed/simple;
-	bh=Ed/BCsHrDz5+WndRGDHv9HtTk1vun74wilp9/pFH9KY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=QJvqJB4vjEhHCYosvLYfWN85FTkW1FwczbP+qySQRA0AhmjtiDiQE9Bs3RBhr2Jk8uCqFtDiuR609rs8YZQ9Fhu0x/4bVVmyHfyhlmygEscUXWGXvr7sI5IJ5dF9HCWspbHhcWlReoDl7KoFjGmmFZrYGJ4oltJzHW/kKFnedcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=LMj1Cu6y; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718629327; bh=ANRIr3s3kc4DpGfYvUCYv8Lu7oilgq7gw5/sKgrkr7I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=LMj1Cu6ypczeGh7SIq1WPxnQ9drh5TMKHru1mu8Ya9dD/b4HZ5ToSWtSZ2fL76ko/
-	 2yuKpFJly77zhDKSeoIl5JAKS5qa3CnVo8n0SRL7BwyVj3hnBnWK2BnMgA/kjVpZRd
-	 40lndCPKoNeTgBxaJOz8n1VkS0KnrKjJzISTLpFQ=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 84A360B; Mon, 17 Jun 2024 21:02:04 +0800
-X-QQ-mid: xmsmtpt1718629324tqm16qhiu
-Message-ID: <tencent_98E8BEEC66CC4879526C742CA16C80956C0A@qq.com>
-X-QQ-XMAILINFO: M0PjjqbLT90wtS5jLRiqO6J/f+DARIN0qQ6d4bLvoglJpP6s2t8QlyOyOZxUWl
-	 ce4lie/579ulsUeXGIOYh1Pb8esf8MgGaY+FzB1PcpJFWnOBnx2Ojv5+G7Qm0HV5xcCeUfjJ+wZD
-	 fpyQZwu77KXWC1LDPgISJZuFdUq8vKv/kNntqbp/5TkZ25LJEarGQrhZLtcVd9EWuSfFQcfkwQ8O
-	 7LWtGi0m7q15yq0n0HBWhmeCp4IwZrnHfEbe3cmGPTUdJaLVc+bpEKqpfs9nMzQj1/H9xwovRJ++
-	 0mlVIg3X5ooDaJAb9sDz5BfphiCaq5mESjVdIMIClID5oQrafDqunmSLcIyqISMfi9Q1ZMAfVAzb
-	 N8zn0Jv+yy8uUVogsfa/IdR/CF8v96nCupI2P403IlLgONmItd15duabk3Q3ddAkdSyjJwKtOEVM
-	 9DUzasdF7vYOk6L8X9Ha5ChTfcTINye2QuANh3ZP9KtMQ6aGeprCeyapylR/KOls6JbCb/GMtsAF
-	 N3CFp5V+kYvMJ0n28ogCVmU2c1QOkUH8vyMOij4JdwGhKrCCUlg7UHsop/UBZQR0rlBfvob/QX4v
-	 +nmFQDxHUXe8KpRCD3lo3uNAWegTkDlIJ3XTnCZ2iCClMkezlALbYmmN0ec7jkAV2+aHwPQ2iwO0
-	 IBonmQ+GkSlgjqT8O7jBaGe6WNYZkuEI+iBozfbByz0yARH4KUWOT9SDnxwuZifOSzUGYXh8Nm6z
-	 tltc7chxR2CA0cPW8yW92LzA5HYg6z30LQ4ncVuKQXRXDH9SIpF+CXEodMQTUqJTatQYaAd8Sskq
-	 OusjtQzYSUcb09z4zFe6/ijPB92W+vRXEi2KO1l4/1j6yZJivgs2xh181+7qKOWTZ1LjLvuXBGhF
-	 g7VtPM3icze3PbycneR2UWxVGTLfK+7cbOqS7dMP8AVi4yi6htJmDpqfTAuIYa4hp1cER7NNWN8T
-	 yjmMjwkWw=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+6d3e28b33490b3085412@syzkaller.appspotmail.com
-Cc: bfoster@redhat.com,
-	kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] bcachefs: Check and reset ro_ref in bch2_fsck_thread_exit
-Date: Mon, 17 Jun 2024 21:02:05 +0800
-X-OQ-MSGID: <20240617130204.773068-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000009a83e9061aeac50d@google.com>
-References: <0000000000009a83e9061aeac50d@google.com>
+	s=arc-20240116; t=1718629371; c=relaxed/simple;
+	bh=TRpITMfhSedBWCyK8bo5vy9+rNDpUJBCcfGkU+oVsl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GryOnANOy+goFyeCNka29jUXyR2VRRpllvh27jNOSxKkuDfithv88cred8h2i91IsgxymMMpAtzh9Zb+hqzWfiAji94D4fELCZvAWmySXTNDL2g81Usb919elu32QYnF1ERWbeEh9p1nuOSgjQas07upy11VZiHgGt0f6942I1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=temkr+ko; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso7515290a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:02:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1718629368; x=1719234168; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IPWu6UjDZMnQVTRsZX0tk4x7xzpqv9lDVHERGvbzAHw=;
+        b=temkr+koJoVWlHdG/HBKUxDCmvwXgmgR+Q24OF4DQwwS2ZntPNQs2VBl4HL7X8MrZn
+         r2Z2F1vSe+3TsqS9lPf9X+ZR9nCzLS9mRGCP7pyjwPXpB6szM8lykMP7YBwxK02bu40P
+         fjMDHwymsZMMvEyp/h+kZ26FF9ik4zHq7oDmasPb1YR08RyDG8m5PdAlona0gSuPVF2/
+         g3q0agwQcIrkF4mqr0v/YPdM/ICE7cxDgpZKDiXIKFBROV6PMYr4xsSqXEHT6JwB6ERW
+         hLI4HIWawOQ7a0U9uqelJoGlAzAayACKbFA19WesD3sdu4lJGp0oP+KDkZELWARPzn25
+         WMTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718629368; x=1719234168;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IPWu6UjDZMnQVTRsZX0tk4x7xzpqv9lDVHERGvbzAHw=;
+        b=W4rKzsmUIrAKv6HGD2CwGjDZ4pp5Et/htYgUEI0JTUiJsHvmuiOy1/hZac9kCZYCQ0
+         s67I9MNPNj281l7R86S0Qu6RnXCS1bqn6l3sCD/OjarP+7dMJvkt1tp/yzU/hvWd8bo2
+         Woez3y3tZr1jtoKTSIJFHEULLRoSVQNzcO9ldcad4OlunLe7mG60oCGvuOhUkmm0GSO0
+         sWnmk7yosp+5dxHS7npmoCIbAF2d65t6O4DfTAUgD52K2BhghwO88WXBJOB9p1WnJ/kT
+         2E0OCVel/dcP5/Q6851DOvCloUOd4KJDBW+Vy4k5DkYancNfoHG0EDOpWuufS6G3Wcfp
+         Vt9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXoAQnxJzYosqc6oBqffW3oWK8StLsFdc2+nIPD5RucNTM65lsnoApls6A4svW7JWhkx9xcXjPtzwxKx4SShhsM2MbBcWiAX9IUr935
+X-Gm-Message-State: AOJu0YwLggDG6cKMEHmvyJMUcF7eQPU0gHN/4QWLCYYdpSJjQyIR35pZ
+	5Pgd3MC/xIUbhEoKJZkzUwm9U5Uylic7J6lwzpBbAUS/ag0DKGoYyYa06VbyIlA=
+X-Google-Smtp-Source: AGHT+IGcudZokFT78RyZ7cYSlZbHBwzJ8nGrQcqcTLF+Nm30y+RQMLNd7Az1DxCGUnWXSUhfn6Te8w==
+X-Received: by 2002:a17:906:c0cc:b0:a6f:16c7:9130 with SMTP id a640c23a62f3a-a6f60d2976bmr640523766b.28.1718629367294;
+        Mon, 17 Jun 2024 06:02:47 -0700 (PDT)
+Received: from localhost ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cddba1b0esm2137421a12.84.2024.06.17.06.02.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 06:02:46 -0700 (PDT)
+Date: Mon, 17 Jun 2024 15:02:43 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Parav Pandit <parav@nvidia.com>
+Cc: Jason Wang <jasowang@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Cindy Lu <lulu@redhat.com>, Dragos Tatulea <dtatulea@nvidia.com>,
+	"mst@redhat.com" <mst@redhat.com>,
+	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH 1/2] vdpa: support set mac address from vdpa tool
+Message-ID: <ZnAz8xchRroVOyCY@nanopsycho.orion>
+References: <20240611053239.516996-1-lulu@redhat.com>
+ <20240611185810.14b63d7d@kernel.org>
+ <ZmlAYcRHMqCgYBJD@nanopsycho.orion>
+ <CACGkMEtKFZwPpzjNBv2j6Y5L=jYTrW4B8FnSLRMWb_AtqqSSDQ@mail.gmail.com>
+ <PH0PR12MB5481BAABF5C43F9500D2852CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
+ <ZnAETXPWG2BvyqSc@nanopsycho.orion>
+ <PH0PR12MB5481F6F62D8E47FB6DFAD206DCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
+ <ZnAgefA1ge11bbFp@nanopsycho.orion>
+ <PH0PR12MB548116966222E720D831AA4CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <PH0PR12MB548116966222E720D831AA4CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
 
-The following is the normal execution situation:
+Mon, Jun 17, 2024 at 01:48:02PM CEST, parav@nvidia.com wrote:
+>
+>> From: Jiri Pirko <jiri@resnulli.us>
+>> Sent: Monday, June 17, 2024 5:10 PM
+>> 
+>> Mon, Jun 17, 2024 at 11:44:53AM CEST, parav@nvidia.com wrote:
+>> >
+>> >> From: Jiri Pirko <jiri@resnulli.us>
+>> >> Sent: Monday, June 17, 2024 3:09 PM
+>> >>
+>> >> Mon, Jun 17, 2024 at 04:57:23AM CEST, parav@nvidia.com wrote:
+>> >> >
+>> >> >
+>> >> >> From: Jason Wang <jasowang@redhat.com>
+>> >> >> Sent: Monday, June 17, 2024 7:18 AM
+>> >> >>
+>> >> >> On Wed, Jun 12, 2024 at 2:30 PM Jiri Pirko <jiri@resnulli.us> wrote:
+>> >> >> >
+>> >> >> > Wed, Jun 12, 2024 at 03:58:10AM CEST, kuba@kernel.org wrote:
+>> >> >> > >On Tue, 11 Jun 2024 13:32:32 +0800 Cindy Lu wrote:
+>> >> >> > >> Add new UAPI to support the mac address from vdpa tool
+>> >> >> > >> Function
+>> >> >> > >> vdpa_nl_cmd_dev_config_set_doit() will get the MAC address
+>> >> >> > >> from the vdpa tool and then set it to the device.
+>> >> >> > >>
+>> >> >> > >> The usage is: vdpa dev set name vdpa_name mac
+>> >> >> > >> **:**:**:**:**:**
+>> >> >> > >
+>> >> >> > >Why don't you use devlink?
+>> >> >> >
+>> >> >> > Fair question. Why does vdpa-specific uapi even exist? To have
+>> >> >> > driver-specific uapi Does not make any sense to me :/
+>> >> >>
+>> >> >> It came with devlink first actually, but switched to a dedicated uAPI.
+>> >> >>
+>> >> >> Parav(cced) may explain more here.
+>> >> >>
+>> >> >Devlink configures function level mac that applies to all protocol
+>> >> >devices
+>> >> (vdpa, rdma, netdev) etc.
+>> >> >Additionally, vdpa device level mac can be different (an additional
+>> >> >one) to
+>> >> apply to only vdpa traffic.
+>> >> >Hence dedicated uAPI was added.
+>> >>
+>> >> There is 1:1 relation between vdpa instance and devlink port, isn't it?
+>> >> Then we have:
+>> >>        devlink port function set DEV/PORT_INDEX hw_addr ADDR
+>> >>
+>> >Above command is privilege command done by the hypervisor on the port
+>> function.
+>> >Vpda level setting the mac is similar to a function owner driver setting the
+>> mac on the self netdev (even though devlink side has configured some mac for
+>> it).
+>> >For example,
+>> >$ ip link set dev wlan1 address 00:11:22:33:44:55
+>> 
+>> Hmm, under what sceratio exacly this is needed?
+>The administrator on the host creating a vdpa device for the VM wants to configure the mac address for the VM.
+>This administrator may not have the access to the devlink port function.
+>Or he may just prefer a different MAC (theoretical case).
 
-CPU1                     CPU2                       CPU3
-======================   =========================  =====
-                         bch2_run_thread_with_file
-                         bch2_ioctl_fsck_online
-			                            bch2_fsck_online_thread_fn
+Right, but that is not reason for new uapi but rather reason to alter
+existing devlink model to have the "host side". We discussed this many
+times.
 
-                         bch2_fsck_thread_exit
-cleanup_mnt
-deactivate_super
-deactivate_locked_super
-bch2_kill_sb
-generic_shutdown_super
-bch2_put_super
-__bch2_fs_stop
 
-If the execution of bch2_fsck_online_thread_fn is later than that of
-bch2_fsck_thread_exit, it will result in the ro_ref value being greater
-than 1, when executing __bch2_fs_stop, the wait_event wait timeout will
-occur due to the fact that the ro_ref value can never be 0.
+>
+>> I mean, the VM that has VDPA device can actually do that too. 
+>VM cannot do. Virtio spec do not allow modifying the mac address.
 
-The solution is to check the ro_ref value when exiting the fsck thread,
-and if it is greater than 1, set it to 1 to avoid timeouts in __bch2_fs
-_stop due to the ro_ref value never being able to be 0.
+I see. Any good reason to not allow that?
 
-Fixes: 267b801fda10 ("bcachefs: BCH_IOCTL_FSCK_ONLINE")
-Reported-by: syzbot+6d3e28b33490b3085412@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=6d3e28b33490b3085412
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/bcachefs/chardev.c | 5 ++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/fs/bcachefs/chardev.c b/fs/bcachefs/chardev.c
-index 9e54323f0f5f..487a01db2b72 100644
---- a/fs/bcachefs/chardev.c
-+++ b/fs/bcachefs/chardev.c
-@@ -135,6 +135,11 @@ struct fsck_thread {
- static void bch2_fsck_thread_exit(struct thread_with_stdio *_thr)
- {
- 	struct fsck_thread *thr = container_of(_thr, struct fsck_thread, thr);
-+	struct bch_fs *c = thr->c;
-+
-+	if (refcount_read(&c->ro_ref) > 1)
-+		refcount_set(&c->ro_ref, 1);
-+
- 	kfree(thr);
- }
- 
--- 
-2.43.0
+>
+>> That is the actual function owner.
+>vdpa is not mapping a whole VF to the VM.
+>It is getting some synthetic PCI device composed using several software (kernel) and user space layers.
+>so VM is not the function owner.
 
+Sure, but owner of the netdev side, to what the mac is related. That is
+my point.
 
