@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-217156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08B190AC41
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:54:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 953DF90AC4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A38201C22E9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:54:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C76D1F2733B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABD4194A64;
-	Mon, 17 Jun 2024 10:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F53719599E;
+	Mon, 17 Jun 2024 10:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Lk2I81kP"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="O3nXBhtJ"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2F2288BD
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5681957E5
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718621629; cv=none; b=Fa0tGjGJP7YKbMhlaw5KZ9Jz423skM+nNznYTALR/aV3KLrukumr0QLO5cJCXsj9BxWxWfqnp0P57etkV8A8X2ZUobzrc/4nTUUhAHPkb5Rt9sEBA3fiHMSiuhc2qXpRJG7n0DTDwK4JIA+avkteDHbXLZA+BdJmxC2GzOfg4no=
+	t=1718621637; cv=none; b=GzQM7rLBNJqDjFCTu3r7pONJZ+4v+b4XxBLlIjK/oZJbpgq8D/583VDCytvtEUHUQFsn9toQmAMc8HP1RFefvMAVAWHsQp5XZqQ3mntnHSoVLYObBmRDsutoq3QMBFv1ejwOqiikTI58K4TbpxiHXb1r7XWZ28dEWuc98fBIMdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718621629; c=relaxed/simple;
-	bh=CbO6XmQZzbFQ2J8qCmc7e+88XS2vb7+xpkH/ear6mHM=;
+	s=arc-20240116; t=1718621637; c=relaxed/simple;
+	bh=+1etStwj2LnG8btWl7MUHbuboqM2MbJUjcUPCUuD99U=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vsn2NhPfTkq/rAvS5H0L3ymdK62v5Z3xIVjxi25AHZo8TliBFlFgN7/jdmB8efrOKmhdwyBecebMHqEdE5SFG/fnt791o5V+6lF8gqjnHeg8hr8PAfDxToVLZmb4rgEUV+2oJ4nJAuBUFR+1qvzy8A2edra9IeOgZe7R6GhSxJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Lk2I81kP; arc=none smtp.client-ip=198.47.19.141
+	 MIME-Version:Content-Type; b=LTbKjQstd7dyNuKoLpXPRFD2cYI0Nta44BCKTYnCQnZhBEU63IRmUz7Gzh1TQ1rx7JkK8iWzXmhYWMGy248ZR2dUobSSEIE1P5Tgm4jD1dvFuvAsrRL37WIOxgWhz+Ah8p1aIjW0l0KdsUUQuSKmABtbloxcyFYj5Ef3AcvperA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=O3nXBhtJ; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45HArMCQ061400;
-	Mon, 17 Jun 2024 05:53:22 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45HArNLi082690;
+	Mon, 17 Jun 2024 05:53:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718621602;
-	bh=1KYYm54tymbTNJp06YFH1DJi8RZj+jpPyPwKIKxm3dU=;
+	s=ti-com-17Q1; t=1718621603;
+	bh=dc7TxmFPCYZ79Oy7PYGSPwywwhuj2Co/uOrhToLtDo4=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Lk2I81kPobYFyCf0wGEMk1b0ccYIqdUbHMZCKp0uHpWQ1M3wp4w0PRbrDItAzvAXw
-	 tgtmfPMG9v1+Fb+DRmIjsT1ulM0C/xg66wgN2xiTXtTr5n0dlw45YD7k+zPycNxr32
-	 JQaFbP2MY1MUOr6GRFFa1UCGI87uk43PPUvYZLkY=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45HArM8O055905
+	b=O3nXBhtJ/Az41LRq1iGoNQqKUfkWQV/8DSgxhc/2XM7yXL+EN45XbZs/CpeHxTH91
+	 krrbkD82t7cEENIeVYUrqyxxMyjB+ZgKWaSqjwF7EXn99umIKdphPg24CKAVIr3DNj
+	 eoppglxIacs7KCa4UP+0sufB852CJ5o7nSR2Bt6U=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45HArN0S065314
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 17 Jun 2024 05:53:22 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+	Mon, 17 Jun 2024 05:53:23 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
- Jun 2024 05:53:21 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2024 05:53:23 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 17 Jun 2024 05:53:21 -0500
+ Frontend Transport; Mon, 17 Jun 2024 05:53:23 -0500
 Received: from localhost (uda0496377.dhcp.ti.com [172.24.227.31])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45HArLXH106126;
-	Mon, 17 Jun 2024 05:53:21 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45HArMAL106160;
+	Mon, 17 Jun 2024 05:53:23 -0500
 From: Aradhya Bhatia <a-bhatia1@ti.com>
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Tomi Valkeinen
@@ -91,9 +91,9 @@ CC: DRI Development List <dri-devel@lists.freedesktop.org>,
         Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra
 	<j-luthra@ti.com>,
         Aradhya Bhatia <a-bhatia1@ti.com>
-Subject: [PATCH v3 06/10] drm/bridge: cdns-dsi: Reset the DCS write FIFO
-Date: Mon, 17 Jun 2024 16:23:07 +0530
-Message-ID: <20240617105311.1587489-7-a-bhatia1@ti.com>
+Subject: [PATCH v3 07/10] drm/mipi-dsi: Add helper to find input format
+Date: Mon, 17 Jun 2024 16:23:08 +0530
+Message-ID: <20240617105311.1587489-8-a-bhatia1@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240617105311.1587489-1-a-bhatia1@ti.com>
 References: <20240617105311.1587489-1-a-bhatia1@ti.com>
@@ -107,32 +107,82 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Allow the DCS Write FIFO in the cdns-dsi controller to reset before any
-DCS packet is transmitted to the DSI sink device.
-
-The DCS FIFO reset is optional. Not all panels require it. But at
-least one of the DSI based panel that uses Ilitek ILI9881C (DSI to DPI
-bridge) doesn't work with without this reset.
+Add a helper API that can be used by the DSI hosts to find the required
+input bus format for the given output dsi pixel format.
 
 Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
 ---
- drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/drm_mipi_dsi.c | 37 ++++++++++++++++++++++++++++++++++
+ include/drm/drm_mipi_dsi.h     |  1 +
+ 2 files changed, 38 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index 05d2f4cc50da..87fdd07ca0bc 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -1037,6 +1037,9 @@ static ssize_t cdns_dsi_transfer(struct mipi_dsi_host *host,
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index 795001bb7ff1..70ca6678fec2 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -36,6 +36,8 @@
+ #include <drm/drm_mipi_dsi.h>
+ #include <drm/drm_print.h>
  
- 	cdns_dsi_init_link(dsi);
- 
-+	/* Reset the DCS Write FIFO */
-+	writel(0x00, dsi->regs + DIRECT_CMD_FIFO_RST);
++#include <linux/media-bus-format.h>
 +
- 	ret = mipi_dsi_create_packet(&packet, msg);
- 	if (ret)
- 		goto out;
+ #include <video/mipi_display.h>
+ 
+ /**
+@@ -810,6 +812,41 @@ ssize_t mipi_dsi_generic_read(struct mipi_dsi_device *dsi, const void *params,
+ }
+ EXPORT_SYMBOL(mipi_dsi_generic_read);
+ 
++/**
++ * drm_mipi_dsi_get_input_bus_fmt() - Get the required MEDIA_BUS_FMT_* based
++ *				      input pixel format for a given DSI output
++ *				      pixel format
++ * @dsi_format: pixel format that a DSI host needs to output
++ *
++ * Various DSI hosts can use this function during their
++ * &drm_bridge_funcs.atomic_get_input_bus_fmts operation to ascertain
++ * the MEDIA_BUS_FMT_* pixel format required as input.
++ *
++ * RETURNS:
++ * a 32-bit MEDIA_BUS_FMT_* value on success or 0 in case of failure.
++ */
++u32 drm_mipi_dsi_get_input_bus_fmt(enum mipi_dsi_pixel_format dsi_format)
++{
++	switch (dsi_format) {
++	case MIPI_DSI_FMT_RGB888:
++		return MEDIA_BUS_FMT_RGB888_1X24;
++
++	case MIPI_DSI_FMT_RGB666:
++		return MEDIA_BUS_FMT_RGB666_1X24_CPADHI;
++
++	case MIPI_DSI_FMT_RGB666_PACKED:
++		return MEDIA_BUS_FMT_RGB666_1X18;
++
++	case MIPI_DSI_FMT_RGB565:
++		return MEDIA_BUS_FMT_RGB565_1X16;
++
++	default:
++		/* Unsupported DSI Format */
++		return 0;
++	}
++}
++EXPORT_SYMBOL(drm_mipi_dsi_get_input_bus_fmt);
++
+ /**
+  * mipi_dsi_dcs_write_buffer() - transmit a DCS command with payload
+  * @dsi: DSI peripheral device
+diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+index 82b1cc434ea3..12ed7f51fe69 100644
+--- a/include/drm/drm_mipi_dsi.h
++++ b/include/drm/drm_mipi_dsi.h
+@@ -258,6 +258,7 @@ ssize_t mipi_dsi_generic_write(struct mipi_dsi_device *dsi, const void *payload,
+ 			       size_t size);
+ ssize_t mipi_dsi_generic_read(struct mipi_dsi_device *dsi, const void *params,
+ 			      size_t num_params, void *data, size_t size);
++u32 drm_mipi_dsi_get_input_bus_fmt(enum mipi_dsi_pixel_format dsi_format);
+ 
+ /**
+  * enum mipi_dsi_dcs_tear_mode - Tearing Effect Output Line mode
 -- 
 2.34.1
 
