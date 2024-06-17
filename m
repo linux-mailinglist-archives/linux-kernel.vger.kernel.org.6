@@ -1,69 +1,124 @@
-Return-Path: <linux-kernel+bounces-217689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC10E90B2FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:56:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7D390B305
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB0B284ADB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:56:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59C081C22007
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA2D17BBA;
-	Mon, 17 Jun 2024 14:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3614321A0B;
+	Mon, 17 Jun 2024 14:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sTpJJ5Aq"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="31aNCmxy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O1Uv28M2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4181175AA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84EC12E6A;
+	Mon, 17 Jun 2024 14:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632891; cv=none; b=Y8I+bR8wdCpLb2i16bqqXuUZnPp7NPRyRhvBgliw2G4hvpyeZ6LS4/8cMDgPAT6GUpjIsvCjsB26z1CJSPF/1XUtdUagHVIFheApZSTCd5r2GBQ+aswD3gQwAL80gFATil9wPRVfaIjNgZFrWAXXd7+aySoBI3qBJnWGV1MhkKI=
+	t=1718632949; cv=none; b=ISR6ZQYcq+khowo6uOEvI4mIVrdhcXTYSa+XLiXVyT/BRuQTfEhfxnY7hLFapGR5WeUoeDxPvGL8/TCYzOSNdBaUqjXYtMz7epuwmJbzPyaMeFAnjmwwDzALw27uTmBHnrk+AQbVYbsAgvcUEtYncKQJubOBchkrIRVg5NNWBsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632891; c=relaxed/simple;
-	bh=Q1Zurbia1cZXhHJODYajoy72UmkmzSWkLzvC519uJwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KahPF4XmTpbUR7dLHnL5r14BYnpAXPl08pk07067dQ2GyMDza8AtOwpv/I5mqQjVGASHS5a0hPWv2vuVkCZqKijSVvL5+PyZHQB6ZVmJzB0mZ2S0HTW27Ej5LuKuovscDE8TOlggOmOGcdV/3dm6TKlTtCWu0k0xX2zWDszrXEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sTpJJ5Aq; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: syzbot+a7c01586b9012e998c07@syzkaller.appspotmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718632887;
+	s=arc-20240116; t=1718632949; c=relaxed/simple;
+	bh=vg+RfbQuP7Ba2mCXmuv4YQNEagG2f55+JVDZpc66crI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CYnTG6PjiEiqjKSIe3Hs5/V0oqJ9KvW4s+kOOWrtmYR5HBdW1oPdjshxIuWgDa0AyzURWWvq8Q1hh5C7uCRU2ecBgqgjGx34gcXbaUPs2iyLAmQY9Y4F51omxYw1gagV5pucy2+XXDlDAQt5Y/9VEthnTdfgbx1CGRFVuEtl2KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=31aNCmxy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O1Uv28M2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718632944;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Q1Zurbia1cZXhHJODYajoy72UmkmzSWkLzvC519uJwU=;
-	b=sTpJJ5Aqfx2HHH8pk2CkuWs037s6CVNvkWeWmX8mjnlbaRUQfYbW38qK14LEkoeZYxv8FP
-	pjQtjrBeLnBerS5W1AOqWL6ORJQm9LSSdTEeDUggoaF1749yKYUAw/tJyRhEfAwcSoMxy0
-	0tC5YNPD2AhfYGF3bDNWcW3rT+cPjDU=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Mon, 17 Jun 2024 10:01:24 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+a7c01586b9012e998c07@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] general protection fault in
- bch2_fs_btree_key_cache_exit
-Message-ID: <k5jsfjtel7iscnmt7zuto7tzlysfnreqvp6fmjz6tkipywmkqp@4wvhasubevv4>
-References: <0000000000001c53f4061ac0a03c@google.com>
+	bh=JEgP6nrjaN40xXEwrTWVtd3w2ZCVG6Zro3ipay84baA=;
+	b=31aNCmxyI/jOsyTTXBeM6zLOjjQJmBDkyUdhsoWDBTLxXzOlVyN0tY4+kT8ZuV6vJBoFuW
+	afESyFWstnehE+WAucaWFJ3+jTNdVWtn9IjTJdIMoLveJNeq7npCDjw9fKDSX0yTUwgk6T
+	5jcix4c5z2Dw7S5s6wQ1bvQUniKK77gU+L8bkoebow9BKZ0UJmj3tWh43KZdxxzjqew12/
+	4Y4By4mGrPqzg9nkCTWq/wdSwrEiktuefqkEcuRcjITjqP/bMC0b7DrDfnE6nspWq7l7rs
+	OVN8Lk89Z87Y0CdS7WKghBvIxHCw9IcKCGmk8FRvPvqTNbMJZf+a9xYMCcw0zA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718632944;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JEgP6nrjaN40xXEwrTWVtd3w2ZCVG6Zro3ipay84baA=;
+	b=O1Uv28M2yo4rAmZ4lCRhT1xRU04yv0o/VdQz1V1zAT3CwbTAbIaDWD/Jizs55LvqBgsVTp
+	HfpoRuEmjxZhj7Aw==
+To: Marc Zyngier <maz@kernel.org>
+Cc: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
+ rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com,
+ apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com,
+ den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com,
+ sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
+ rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
+ lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org,
+ robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
+ vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
+ andersson@kernel.org, mark.rutland@arm.com,
+ shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
+Subject: Re: [PATCH v3 14/24] genirq/gic-v3-mbi: Remove unused wired MSI
+ mechanics
+In-Reply-To: <86h6drk9h1.wl-maz@kernel.org>
+References: <20240614102403.13610-1-shivamurthy.shastri@linutronix.de>
+ <20240614102403.13610-15-shivamurthy.shastri@linutronix.de>
+ <86le36jf0q.wl-maz@kernel.org> <87plsfu3sz.ffs@tglx>
+ <86h6drk9h1.wl-maz@kernel.org>
+Date: Mon, 17 Jun 2024 16:02:24 +0200
+Message-ID: <87h6dru0pb.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000001c53f4061ac0a03c@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-#syz fix: bcachefs: Fix early error path in bch2_fs_btree_key_cache_exit()
+On Mon, Jun 17 2024 at 14:03, Marc Zyngier wrote:
+> On Mon, 17 Jun 2024 13:55:24 +0100,
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+>> 
+>> On Sat, Jun 15 2024 at 18:24, Marc Zyngier wrote:
+>> > On Fri, 14 Jun 2024 11:23:53 +0100,
+>> > Shivamurthy Shastri <shivamurthy.shastri@linutronix.de> wrote:
+>> >>  static struct msi_domain_info mbi_pmsi_domain_info = {
+>> >> -	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+>> >> -		   MSI_FLAG_LEVEL_CAPABLE),
+>> >> +	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS),
+>> >>  	.ops	= &mbi_pmsi_ops,
+>> >>  	.chip	= &mbi_pmsi_irq_chip,
+>> >>  };
+>> >
+>> > This patch doesn't do what it says. It simply kills any form of level
+>> > MSI support for *endpoints*, and has nothing to do with any sort of
+>> > "wire to MSI".
+>> >
+>> > What replaces it?
+>> 
+>> Patch 9/24 switches the wire to MSI with level support over. This just
+>> removes the leftovers.
+>
+> That's not what I read.
+>
+> Patch 9/24 rewrites the mbigen driver. Which has nothing to do with
+> what the gic-v3-mbi code does. They are different blocks, and the sole
+> machine that has the mbigen IP doesn't have any gic-v3-mbi support.
+> All they have in common are 3 random letters.
+>
+> What you are doing here is to kill any support for *devices* that need
+> to signal level-triggered MSIs in that driver, and nothing to do with
+> wire-MSI translation.
+>
+> So what replaces it?
+
+Hrm. I must have misread this mess. Let me stare some more.
 
