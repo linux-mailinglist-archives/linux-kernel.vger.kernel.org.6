@@ -1,125 +1,77 @@
-Return-Path: <linux-kernel+bounces-217785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E8A90B442
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:28:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C17C90B444
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14BBC284A20
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:28:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B4031C22A81
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F1A210FB;
-	Mon, 17 Jun 2024 14:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5F34D11D;
+	Mon, 17 Jun 2024 14:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SNhrEXRj"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tICN7TiS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51C61E52A;
-	Mon, 17 Jun 2024 14:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EFC481DB;
+	Mon, 17 Jun 2024 14:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718636306; cv=none; b=XfeEYZl1GiW4eVjE3otygH8/4eNM26XFvT5k/sFHCWuWS39uv7ryK9hJ8Xu2kNXMFr+1vyGg0O2SkRn3LsgPxIHTwax6LHAkPdgUpm4NETvK7HQC3N00rcMKhZx0dmN0aTEFgd/TusefvtXjEqwcOdmcm2P34AVB5eiPHBlkbfA=
+	t=1718636336; cv=none; b=lHwJXIEbZW1NspLZIIXw44RbzlF4nHwlNaN/S4gbLedUFZhEsURnYD9mDJH3nFtKimskzUj9bfGOlGVTMRlv26tSrcy8vB4i7gl87626fAsTjbNtbyh0wEadaJr51+1TOksi+7+7xCApaKPAjZWuICisGsP9uda/ykbGQIQ72as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718636306; c=relaxed/simple;
-	bh=0NknL9LnSVCalS3Fn4EcfTLwKDeYzCw2PnnM3Ze4rkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCkkFCSCioXoEAxvDSwNStg4/qyBw1y1Zl+V43bWfC3igBLTroJ7FsUOQJTem4kFKC5RauBZSgaSqDHHNZFMPspKcdCiuzr5nowvEgNkcVbK3vzn4xYNON9kQjR09T2JuCb2D/b/jqIDqAxCllFil9sqPrCqIcdBuciiKMftSGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SNhrEXRj; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70413de08c7so3172542b3a.0;
-        Mon, 17 Jun 2024 07:58:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718636304; x=1719241104; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hWJgXFUyRh246Z7TzUCiKOM3xG0BIQKAjl/1uq2WWqk=;
-        b=SNhrEXRjgZoqIILwd/PauDZ7qOZSYOj0z9C7zIugAP5e2yrbe3UTiQLWDHC+r6F98b
-         YO4d7/Z2NVc4AWNGz0eEwIvtN3VCWvG6RFPw3q4/sl9mlh4blMAxcDc2lRNnreIcLQj3
-         khcijXv/4b4DA13BXGJtKQFKJxKgtrwKJo6ZXxyEXpeeZwOXdOKRN/dd6sbI7wMy4Eae
-         GvxBNoLQwKfQsOAK1LKu3b+koGmoNS8Rf0VVGgX6Bmb55dspZSQMpJU5oBceUvjNEaT2
-         soiyHbuUdpTeGbvSmX+cg8nrvcrVhHO6dx7q82c4CKL0pVKI2KQUW91PLdj0KKyZbED+
-         8K1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718636304; x=1719241104;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hWJgXFUyRh246Z7TzUCiKOM3xG0BIQKAjl/1uq2WWqk=;
-        b=qHEU2OsnIFD9kiTIa5PkxIUliSdetVHVBM59o6dAD9Io2uZhFFYOlPGAVsP/4EnsL4
-         mwI0fXm7gPdZNLvVS1Yl5JCLyD4D9VH/PFQ0uvr4mJnkX1/JL2YiKJN8XnsrpN9z2Da9
-         wcPEaULfZGoMQcc7qGacupYsfboz2nZCaxeRWOy2FYHFGfkRF+NCX51raDldzeAAKTux
-         T1ULNZ+anY1DTs36//bEKCg/3TGf1RjnbE/dVf5BgZU3m2RuDTKdl2qkRIbKIwdkC97j
-         M6h8ovWEDpyNsAmMMMvRxNtfX/DIjA5LLSFffDf5bMk4orUaa7ftSuGvMFNJIcJkflAA
-         JQQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLbhM1hVr0ZXQbgG29j3kvbemL+T+gQCfi+NrngBj4HUk6rjjbVDKvnPnBfEMVSGJKYAO8MTmWqdxjD19zlkUK/q9xdUWEQAdOMz4G3dQgGOK9NjC2rJBHfh5RPceZ/38VVWePDNNf9VybZ4h9Mxvq6l5T45o8b+mY+3ZeqT6Jf29XIg==
-X-Gm-Message-State: AOJu0YxEQXWLpVN+JGgBGYmccnToCdpAIcfuV2gha9LqYDYLNGhsDjL8
-	LQXK8W3FmUVxo2v+32po5b/IqoM6KLgMkv/6sK76ctcxK4QGK76L
-X-Google-Smtp-Source: AGHT+IFHkSLCIBhImDWV7Pb8641rGAtIQ7noDvkKP1bDy97GQQN7sQBDM4krNl7f4fRPzmgUWszMYg==
-X-Received: by 2002:a05:6a20:d488:b0:1b5:d10a:1b65 with SMTP id adf61e73a8af0-1bae8224fa0mr10696463637.49.1718636303874;
-        Mon, 17 Jun 2024 07:58:23 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f2e281sm80115165ad.254.2024.06.17.07.58.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 07:58:22 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 17 Jun 2024 07:58:21 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?iso-8859-1?Q?Ren=E9?= Rebe <rene@exactcode.de>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Stephen Horvath <s.horvath@outlook.com.au>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Sasha Kozachuk <skozachuk@google.com>,
-	John Hamrick <johnham@google.com>
-Subject: Re: [RFT PATCH] hwmon: (spd5118) Add support for Renesas/ITD SPD5118
- hub controllers
-Message-ID: <90f20e62-9200-4169-9415-3b74da92d640@roeck-us.net>
-References: <20240614185924.604672-1-linux@roeck-us.net>
- <2046d2c3-bbf6-4842-bc51-b2f567f33c0a@gmx.de>
- <d2ba6ed1-3a6a-4481-9f43-265eee78c0c1@roeck-us.net>
- <da7c9855-ff4b-4e80-99b8-b2fe24a9a9d9@gmx.de>
+	s=arc-20240116; t=1718636336; c=relaxed/simple;
+	bh=ZYgKTewbWFFfcvsQ1ekl5wQ9ScldGcNbBX9Tznn6ya4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=amZTSX6Dz/XT7x0VLHVb+iIMRyQwB0hATJE8kgfTdQy0D0skKAHqooNa69DmR7lzRMbFkzz4sP9S+qroOpkHZT3oqLH1AoGgY2mXbC9g5L4LZfDjFEq2Cwu34U5ZlaWN5SRAeMPGn6f3zeEhSYVP7FDi3tcJBD989vzhCMF0Hxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tICN7TiS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2737CC2BD10;
+	Mon, 17 Jun 2024 14:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718636335;
+	bh=ZYgKTewbWFFfcvsQ1ekl5wQ9ScldGcNbBX9Tznn6ya4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tICN7TiSxitxX2V6zbRUy739dgKwfqFNgNeI/8+s+oPFM1mLNHQ9tus6f/x7n1mvb
+	 6RaDQ9J7laaviwbzrCphuXO66XSBJo8LWCx4anlsV8RBh8i/rSl/tsnlIefoDgxXdr
+	 CiHWBPIHnoXpVKtl9pRxfEuv2+jcLVCxNv8533wBBxYqgu2ZPcwXhoLVRfw0ZctJzF
+	 6p1BED1Ijk6lIfR7BQa6MA+YbeBthMnWMUuiRyqp8ZIf50oh+1Ad4AMAjA5ux2vqYI
+	 JD1SzHksUa0KRLHGmsWituAuDtJ4n6JAJ4i2pzn6Zuxu1A5pk7Nko89jviO0/3f46t
+	 k3vdkADue+Puw==
+Date: Mon, 17 Jun 2024 07:58:54 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Elad Yifee <eladwf@gmail.com>
+Cc: patchwork-bot+netdevbpf@kernel.org, daniel@makrotopia.org, nbd@nbd.name,
+ sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com, lorenzo@kernel.org,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ linux@armlinux.org.uk, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net-next v6] net: ethernet: mtk_eth_soc: ppe: add
+ support for multiple PPEs
+Message-ID: <20240617075854.29892c69@kernel.org>
+In-Reply-To: <CA+SN3sogd29XG7Sgz1EOqBqtxxcVzFkB_mFq10TW+eYGKtdDTQ@mail.gmail.com>
+References: <20240607082155.20021-1-eladwf@gmail.com>
+	<171824043128.29237.10490597706474690291.git-patchwork-notify@kernel.org>
+	<CA+SN3sogd29XG7Sgz1EOqBqtxxcVzFkB_mFq10TW+eYGKtdDTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da7c9855-ff4b-4e80-99b8-b2fe24a9a9d9@gmx.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 17, 2024 at 12:50:41AM +0200, Armin Wolf wrote:
-[ ... ]
-> > 
-> > This results in
-> > 
-> > spd5118 0-0050: Range 0: selector for 1 in window
-> > spd5118 0-0050: error -EINVAL: regmap init failed
-> > 
-> > If you have an idea how to configure the ranges differently,
-> > please let me know.
-> > 
-> > Thanks,
-> > Guenter
-> > 
-> Oh, i did not think of this. In this case we indeed cannot use regmap here. I will test the patch tomorrow.
-> 
+On Sun, 16 Jun 2024 20:34:44 +0300 Elad Yifee wrote:
+> It appears that the current sanity check is insufficient. Should WED
+> be utilized, it will be necessary to find the appropriate PPE index
+> through an alternative method. Kindly revert the recent commit
+> temporarily until I come up with a solution
 
-That would be great. As for using regmap for paging, it actually
-works if I remove the selector restrictions. I'll try to get the
-restrictions removed or relaxed, but that will take some time. I'd
-like to keep this patch separate from that effort. If it succeeds,
-I'll send a follow-up patch to introduce regmap based paging.
-
-Thanks,
-Guenter
+Please send the revert as a patch, with the explanation in the commit
+message. That's our usual process.
 
