@@ -1,241 +1,228 @@
-Return-Path: <linux-kernel+bounces-218154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C83390B9D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:37:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E201690B9D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87CCE1F23DDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:37:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BBD5284AE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D154198838;
-	Mon, 17 Jun 2024 18:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEDB197A65;
+	Mon, 17 Jun 2024 18:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fcWV5tXU"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5nSwNa0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E9C194AD5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAB2DDD7;
+	Mon, 17 Jun 2024 18:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718649457; cv=none; b=AJkManR+r29OR1J8j0ejHgPQNvEg/2AEAfU1NldgBZPWpMp+PZpfGJcjGwC56wLCIDrQqwOutlViwFxVMG00tTSz7cIWYH7VYoZFm+6BLhid0gLkdDI3Yt6rDaX+ZTwRDEkfLUWlEqGv/PI3yiML8rqMEXJMt9WrQ0RB4g8cwQg=
+	t=1718649472; cv=none; b=SfpN2rxUQMYvpNrnJhXgjXSOyEK6jUkzCidTLWEyzVkkQUsuIlED7MbFIPSDDWCz5icaApDi+Rv3Gn4lWxhCxDmBRRwBQQ12ybVBUL91eZa4pXtC5cZPZTmNl3nJH6QS8q9ZkP7JGbaS5maW2akRmVM9v6KAYgfhiamyrXXxwkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718649457; c=relaxed/simple;
-	bh=fyrpp2yF4aIYKTN8cDgvs3STrDN8prieilqUnx09/SI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sL6BjLqwPJZ4mDH660V4EWD/F+ioDEOhQOQJtDOH32N8PQQpg8TDR1cgLvgnrgCWQAGE1LZycuMPkLK0Qll+d5UdJaF0tcO6rZklnFOaKkYghG6aBxGVT54/YpXfSixNjgxUKHbNmFY2IbruFvwOM+ngjpASi6OpzfUJsPDcEHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fcWV5tXU; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c2d4ea53c7so4506236a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:37:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718649455; x=1719254255; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VVb9bJW/yXgkQj+PV0cMLcdHxyPeYBELQ67LgqP0P74=;
-        b=fcWV5tXUiqEpCzFRoxZr+WucJQG5JRNMWYy+mP0FN5rW+jApKOlh6e1fEckgnXrRP4
-         q1zN/SJFJEtROdXdxseB9eJDlOZ1Adsry2kg9XJvpXlEbJWekudlATEWDdLsCjEeGawF
-         pBkNR4jwy1TqYBy5fepgkJlCeLBcp2YNzI/UN7A9OkTNBQvMzen0Hko/JlgO7642Nbct
-         Ff8sCteaptJYKoys5nuvBwzhr6mkMd+isTozXWyqc2Y5NMLS1XylCXlUPVYFedVGEIFG
-         GkwuqcroRFmjbTnY7ZZ1u4Mp6EEiB+VaOj5FGCxHcDu9zimudPTA7tSCqJhObWXv6mgG
-         b5CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718649455; x=1719254255;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VVb9bJW/yXgkQj+PV0cMLcdHxyPeYBELQ67LgqP0P74=;
-        b=LPzMxfclM8jK3QvhQmARJ8LAvBdhgTxPzZBziH1bD2PwZ1/z3J/BpcST80MIphTjLG
-         +C17wu8mJWr0HeQ1+38Sx3hxOzK/hj22zh7tZ4sK2X0tmuYPpb7VmNNIgAva/lbYF/j9
-         vwdhe5yDKxjm4vI9RMrEX8z+joGRxfo1ciPW5DDK0E99MVJFPM9dk780jIncKflgOTQG
-         osp1ea5iH+b7tlI4biuSmAnIzEkRro3Kqobv1oFA3LDZKU1VKH/5h4voJdEWsTAJ4KHM
-         pQoGnwGLSx7h/aL8VlrNNGx8fvU+g3zabz1WKiMo88W7jXGz2i7x4eIwXg0R5Ltv2cPo
-         jeNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNKOAWsHNuhXA+1p11FujYd1WFuoG+XQxh5eB7uVUPIOMXaTHKyQZz2kS3l6kLxme1iv8DLK9z5i5/SjhXvqPIBju8+q1QwmCCqg+O
-X-Gm-Message-State: AOJu0Yw5cR0cZxmROJH3jl4t5pRPIVNyvK1qWAl5eI0U9CzcBi3Ql/g3
-	qBoDOYnje9ivmwahOhCh61goxeSVPPfY+KI+e/AlQ7EtE2jvIIRcWyCxOC2CWmGUF4JpKFoQoos
-	dIg==
-X-Google-Smtp-Source: AGHT+IF3ovJSiOKecScB3AmrwPx3A35/rUgMT/905FvA0ZGLjFKkhGdKFyVMw2sGINH1wDrN4Gap7jytJ8g=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:9cb:b0:2c4:e074:de83 with SMTP id
- 98e67ed59e1d1-2c6c9221593mr1951a91.2.1718649455060; Mon, 17 Jun 2024 11:37:35
- -0700 (PDT)
-Date: Mon, 17 Jun 2024 11:37:27 -0700
-In-Reply-To: <CADrL8HW3rZ5xgbyGa+FXk50QQzF4B1=sYL8zhBepj6tg0EiHYA@mail.gmail.com>
+	s=arc-20240116; t=1718649472; c=relaxed/simple;
+	bh=C/2KHZtEZmz+3QjoKtzyIX0VvSO9irLLt76KmyjTSq8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M7u2UUVjo2rEL4HBMrdFScSBr/RHm55ucZUfp4WUtW9/dIb1UuH+GtnA1LlMaDKlrFMwFzpvAAY0rXJ9ELAx3+vSTiX9utGuJbJ1CqAkxppqiB9OEK6iBtIrF1dnmWNopblVqAxBZKQK6zjjO6LAwY/zdjrVzpCfVkvx2jbryAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5nSwNa0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B48F1C4AF48;
+	Mon, 17 Jun 2024 18:37:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718649471;
+	bh=C/2KHZtEZmz+3QjoKtzyIX0VvSO9irLLt76KmyjTSq8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=G5nSwNa0zFLtmhvU1hihth5QK4jKexlaU5l9UKdrNuEAbYv9Ed18QJ8x5O3nwg/02
+	 kNHY/zapnZ5mogMiV0kkePWacKuukHOVMYifC+0XZ3O6CfzsQeU1ozWnxgaWGl7h7O
+	 ePOoBz/7DkHKScIG4zrVfLtlqAEDlhlk8Pdw2J2BN+n7/MFjhEJ+oI5QajNGHoGFjT
+	 H1tuC0oS3OhPZABsHPi8nWuYOOohxI0+6+LDvoFWJE27zyT13qchR3QJu16SeU1xKc
+	 Dyfnj1H91CKWYaWv5TjqL2RjTmA/WL7B2YeLCkzN3cX3TpqqW73PM/7Ps5OpywnuUS
+	 +dCQ0DxMMBCdQ==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5bad112b623so126683eaf.3;
+        Mon, 17 Jun 2024 11:37:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+L/MZwmfbEc3o1XzYrRzzTw02DK6xRmMUn3UOdNM3MxwavNqIqbdB8eBjMLT6urzH5f9QPPFv0B04DQZOiWnFEBWYFlapEPiqgvaIqJYq05YJlk1hi7vDSM2QkJ8/9DkWSqIpRQvGbA==
+X-Gm-Message-State: AOJu0YzMuM7qh3l4RYwvm3W5eRXjxt9/DhHRPz9X+QpUyPWQ1Lg4PIOO
+	HV7vpNVRrybifItF+7DvqWFUzJIaLb5aAtJy/mCscFInKY29m8hL0V/EsRAxWh4BexUUMGkycMm
+	BoXgVwcko7lE+KBSlN2qeWi14E38=
+X-Google-Smtp-Source: AGHT+IHanRmRsVJGp3XkEoFCPGSrkSlTy0kWAMt6c5ldTqMfF38xdLHNudMu7yymW1y/ppCm5VMo1/d+N0kGvpMp2Pg=
+X-Received: by 2002:a4a:e1da:0:b0:5ba:ead2:c742 with SMTP id
+ 006d021491bc7-5bdad9f0343mr11205636eaf.0.1718649470885; Mon, 17 Jun 2024
+ 11:37:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAOUHufYGqbd45shZkGCpqeTV9wcBDUoo3iw1SKiDeFLmrP0+=w@mail.gmail.com>
- <CADrL8HVHcKSW3hiHzKTit07gzo36jtCZCnM9ZpueyifgNdGggw@mail.gmail.com>
- <ZmioedgEBptNoz91@google.com> <CADrL8HU_FKHTz_6d=xhVLZFDQ_zQo-zdB2rqdpa2CKusa1uo+A@mail.gmail.com>
- <ZmjtEBH42u7NUWRc@google.com> <CADrL8HUW2q79F0FsEjhGW0ujij6+FfCqas5UpQp27Epfjc94Nw@mail.gmail.com>
- <ZmxsCwu4uP1lGsWz@google.com> <CADrL8HVDZ+m_-jUCaXf_DWJ92N30oqS=_9wNZwRvoSp5fo7asg@mail.gmail.com>
- <ZmzPoW7K5GIitQ8B@google.com> <CADrL8HW3rZ5xgbyGa+FXk50QQzF4B1=sYL8zhBepj6tg0EiHYA@mail.gmail.com>
-Message-ID: <ZnCCZ5gQnA3zMQtv@google.com>
-Subject: Re: [PATCH v5 4/9] mm: Add test_clear_young_fast_only MMU notifier
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240613-acpi-sysfs-groups-v1-0-665e0deb052a@weissschuh.net> <20240613-acpi-sysfs-groups-v1-1-665e0deb052a@weissschuh.net>
+In-Reply-To: <20240613-acpi-sysfs-groups-v1-1-665e0deb052a@weissschuh.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 17 Jun 2024 20:37:40 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iHB1X7WM6Lg_-vr3Kzwp65yqjvHG9CA_X8vqFBFV_F_A@mail.gmail.com>
+Message-ID: <CAJZ5v0iHB1X7WM6Lg_-vr3Kzwp65yqjvHG9CA_X8vqFBFV_F_A@mail.gmail.com>
+Subject: Re: [PATCH 1/5] ACPI: sysfs: convert utf-16 from _STR to utf-8 only once
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024, James Houghton wrote:
-> On Fri, Jun 14, 2024 at 4:17=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Fri, Jun 14, 2024, James Houghton wrote:
-> > > On Fri, Jun 14, 2024 at 9:13=E2=80=AFAM Sean Christopherson <seanjc@g=
-oogle.com> wrote:
-> > > >
-> > > > On Thu, Jun 13, 2024, James Houghton wrote:
-> > > > > I wonder if this still makes sense if whether or not an MMU is "f=
-ast"
-> > > > > is determined by how contended some lock(s) are at the time.
-> > > >
-> > > > No.  Just because a lock wasn't contended on the initial aging does=
-n't mean it
-> > > > won't be contended on the next round.  E.g. when using KVM x86's sh=
-adow MMU, which
-> > > > takes mmu_lock for write for all operations, an aging operation cou=
-ld get lucky
-> > > > and sneak in while mmu_lock happened to be free, but then get stuck=
- behind a large
-> > > > queue of operations.
-> > > >
-> > > > The fast-ness needs to be predictable and all but guaranteed, i.e. =
-lockless or in
-> > > > an MMU that takes mmu_lock for read in all but the most rare paths.
-> > >
-> > > Aging and look-around themselves only use the fast-only notifiers, so
-> > > they won't ever wait on a lock (well... provided KVM is written like
-> > > that, which I think is a given).
-> >
-> > Regarding aging, is that actually the behavior that we want?  I thought=
- the plan
-> > is to have the initial test look at all MMUs, i.e. be potentially slow,=
- but only
-> > do the lookaround if it can be fast.  IIUC, that was Yu's intent (and p=
-eeking back
-> > at v2, that is indeed the case, unless I'm misreading the code).
->=20
-> I believe what I said is correct. There are three separate things going o=
-n here:
->=20
-> 1. Aging (when we hit the low watermark, scan PTEs to find young pages)
-> 2. Eviction (pick a page to evict; if it is definitely not young, evict i=
-t)
-> 3. Look-around (upon finding a page is young upon attempted eviction,
-> check adjacent pages if they are young too)
+On Thu, Jun 13, 2024 at 10:15=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weiss=
+schuh.net> wrote:
+>
+> The ACPI _STR method returns an UTF-16 string that is converted to utf-8
+> before printing it in sysfs.
+> Currently this conversion is performed every time the "description"
+> sysfs attribute is read, which is not necessary.
 
-Ah, I now see the difference between #1 and #2, and your responses make a l=
-ot more
-sense.  Thanks!
+Why is it a problem, though?
 
-> > If KVM _never_ consults shadow (nested TDP) MMUs, then a VM running an =
-L2 will
-> > end up with hot pages (used by L2) swapped out.
->=20
-> The shadow MMU is consulted at eviction time -- only at eviction time.
-> So pages used by L2 won't be swapped out unless they're still cold at
-> eviction time.
->=20
-> In my (and Yu's) head, not being able to do aging for nested TDP is ok
-> because running nested VMs is much more rare than running non-nested
-> VMs. And in the non-nested case, being able to do aging is a strict
-> improvement over what we have now.
+How many devices have _STR and how much of the time is it used?
 
-Yes and no.  Running nested VMs is indeed rare when viewing them as a perce=
-ntage
-of all VMs in the fleet, but for many use cases, the primary workload of a =
-VM is
-to run nested VMs.  E.g. say x% of VMs in the fleet run nested VMs, where '=
-x' is
-likely very small, but for those x% VMs, they run nested VMs 99% of the tim=
-e
-(completely made up number).
+Hint: On the system I'm sitting in front of, the answer is 0 and never.
 
-So yes, I completely agree that aging for non-nested VMs is a strict improv=
-ement,
-but I also think don't think we should completely dismiss nested VMs as a p=
-roblem
-not worth solving.
+So Is it really worth adding an _STR string pointer to every struct acpi_de=
+vice?
 
-> We could look into being able to do aging with the shadow MMU, but I
-> don't think that should necessarily block this series.
+> Only perform the conversion once and cache the result.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+>  drivers/acpi/device_sysfs.c | 63 ++++++++++++++++++++++++++++-----------=
+------
+>  include/acpi/acpi_bus.h     |  2 +-
+>  2 files changed, 40 insertions(+), 25 deletions(-)
 
-...
+And it's more lines of code even.
 
-> > Ooh!  Actually, after fiddling a bit to see how feasible fast-aging in =
-the shadow
-> > MMU would be, I'm pretty sure we can do straight there for nested TDP. =
- Or rather,
-> > I suspect/hope we can get close enough for an initial merge, which woul=
-d allow
-> > aging_is_fast to be a property of the mmu_notifier, i.e. would simplify=
- things
-> > because KVM wouldn't need to communicate MMU_NOTIFY_WAS_FAST for each n=
-otification.
-> >
-> > Walking KVM's rmaps requires mmu_lock because adding/removing rmap entr=
-ies is done
-> > in such a way that a lockless walk would be painfully complex.  But if =
-there is
-> > exactly _one_ rmap entry for a gfn, then slot->arch.rmap[...] points di=
-rectly at
-> > that one SPTE.  And with nested TDP, unless L1 is doing something uncom=
-mon, e.g.
-> > mapping the same page into multiple L2s, that overwhelming vast majorit=
-y of rmaps
-> > have only one entry.  That's not the case for legacy shadow paging beca=
-use kernels
-> > almost always map a pfn using multiple virtual addresses, e.g. Linux's =
-direct map
-> > along with any userspace mappings.
-=20
-...
-
-> Hmm, interesting. I need to spend a little bit more time digesting this.
->=20
-> Would you like to see this included in v6? (It'd be nice to avoid the
-> WAS_FAST stuff....) Should we leave it for a later series? I haven't
-> formed my own opinion yet.
-
-I would say it depends on the viability and complexity of my idea.  E.g. if=
- it
-pans out more or less like my rough sketch, then it's probably worth taking=
- on
-the extra code+complexity in KVM to avoid the whole WAS_FAST goo.
-
-Note, if we do go this route, the implementation would need to be tweaked t=
-o
-handle the difference in behavior between aging and last-minute checks for =
-eviction,
-which I obviously didn't understand when I threw together that hack-a-patch=
-.
-
-I need to think more about how best to handle that though, e.g. skipping GF=
-Ns with
-multiple mappings is probably the worst possible behavior, as we'd risk evi=
-cting
-hot pages.  But falling back to taking mmu_lock for write isn't all that de=
-sirable
-either.
+>
+> diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
+> index 23373faa35ec..4bedbe8f57ed 100644
+> --- a/drivers/acpi/device_sysfs.c
+> +++ b/drivers/acpi/device_sysfs.c
+> @@ -439,24 +439,11 @@ static ssize_t description_show(struct device *dev,
+>                                 char *buf)
+>  {
+>         struct acpi_device *acpi_dev =3D to_acpi_device(dev);
+> -       int result;
+>
+> -       if (acpi_dev->pnp.str_obj =3D=3D NULL)
+> +       if (acpi_dev->pnp.str =3D=3D NULL)
+>                 return 0;
+>
+> -       /*
+> -        * The _STR object contains a Unicode identifier for a device.
+> -        * We need to convert to utf-8 so it can be displayed.
+> -        */
+> -       result =3D utf16s_to_utf8s(
+> -               (wchar_t *)acpi_dev->pnp.str_obj->buffer.pointer,
+> -               acpi_dev->pnp.str_obj->buffer.length,
+> -               UTF16_LITTLE_ENDIAN, buf,
+> -               PAGE_SIZE - 1);
+> -
+> -       buf[result++] =3D '\n';
+> -
+> -       return result;
+> +       return sysfs_emit("%s\n", acpi_dev->pnp.str);
+>  }
+>  static DEVICE_ATTR_RO(description);
+>
+> @@ -507,14 +494,46 @@ static ssize_t status_show(struct device *dev, stru=
+ct device_attribute *attr,
+>  }
+>  static DEVICE_ATTR_RO(status);
+>
+> +static const char *acpi_device_str(struct acpi_device *dev)
+> +{
+> +       struct acpi_buffer buffer =3D {ACPI_ALLOCATE_BUFFER, NULL};
+> +       union acpi_object *str_obj;
+> +       acpi_status status;
+> +       const char *ret;
+> +       char buf[512];
+> +       int result;
+> +
+> +       if (!acpi_has_method(dev->handle, "_STR"))
+> +               return NULL;
+> +
+> +       status =3D acpi_evaluate_object(dev->handle, "_STR",
+> +                                     NULL, &buffer);
+> +       if (ACPI_FAILURE(status))
+> +               return NULL;
+> +
+> +       str_obj =3D buffer.pointer;
+> +       /*
+> +        * The _STR object contains a Unicode identifier for a device.
+> +        * We need to convert to utf-8 so it can be displayed.
+> +        */
+> +       result =3D utf16s_to_utf8s((wchar_t *)str_obj->buffer.pointer,
+> +                                str_obj->buffer.length,
+> +                                UTF16_LITTLE_ENDIAN,
+> +                                buf, sizeof(buf) - 1);
+> +       buf[result++] =3D '\0';
+> +
+> +       ret =3D kstrdup(buf, GFP_KERNEL);
+> +       kfree(buffer.pointer);
+> +
+> +       return ret;
+> +}
+> +
+>  /**
+>   * acpi_device_setup_files - Create sysfs attributes of an ACPI device.
+>   * @dev: ACPI device object.
+>   */
+>  int acpi_device_setup_files(struct acpi_device *dev)
+>  {
+> -       struct acpi_buffer buffer =3D {ACPI_ALLOCATE_BUFFER, NULL};
+> -       acpi_status status;
+>         int result =3D 0;
+>
+>         /*
+> @@ -539,12 +558,8 @@ int acpi_device_setup_files(struct acpi_device *dev)
+>         /*
+>          * If device has _STR, 'description' file is created
+>          */
+> -       if (acpi_has_method(dev->handle, "_STR")) {
+> -               status =3D acpi_evaluate_object(dev->handle, "_STR",
+> -                                       NULL, &buffer);
+> -               if (ACPI_FAILURE(status))
+> -                       buffer.pointer =3D NULL;
+> -               dev->pnp.str_obj =3D buffer.pointer;
+> +       dev->pnp.str =3D acpi_device_str(dev);
+> +       if (dev->pnp.str) {
+>                 result =3D device_create_file(&dev->dev, &dev_attr_descri=
+ption);
+>                 if (result)
+>                         goto end;
+> @@ -618,7 +633,7 @@ void acpi_device_remove_files(struct acpi_device *dev=
+)
+>          * If device has _STR, remove 'description' file
+>          */
+>         if (acpi_has_method(dev->handle, "_STR")) {
+> -               kfree(dev->pnp.str_obj);
+> +               kfree(dev->pnp.str);
+>                 device_remove_file(&dev->dev, &dev_attr_description);
+>         }
+>         /*
+> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> index 1a4dfd7a1c4a..32e3105c9ece 100644
+> --- a/include/acpi/acpi_bus.h
+> +++ b/include/acpi/acpi_bus.h
+> @@ -254,7 +254,7 @@ struct acpi_device_pnp {
+>         struct list_head ids;           /* _HID and _CIDs */
+>         acpi_device_name device_name;   /* Driver-determined */
+>         acpi_device_class device_class; /*        "          */
+> -       union acpi_object *str_obj;     /* unicode string for _STR method=
+ */
+> +       const char *str;                /* _STR */
+>  };
+>
+>  #define acpi_device_bid(d)     ((d)->pnp.bus_id)
+>
+> --
+> 2.45.2
+>
+>
 
