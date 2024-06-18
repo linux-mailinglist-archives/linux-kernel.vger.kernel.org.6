@@ -1,321 +1,140 @@
-Return-Path: <linux-kernel+bounces-218624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F200490C2B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:10:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481AF90C2E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E67F1F212DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:10:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F038B1F22CEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3357A19B3C9;
-	Tue, 18 Jun 2024 04:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E7A19CCF3;
+	Tue, 18 Jun 2024 04:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3fdXkHK"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTi7MVJl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A035613A265
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92DA1C01;
+	Tue, 18 Jun 2024 04:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718683823; cv=none; b=JGVigCFCDGz8R6GgeWRhTl9GxbijNZw3/WRyys480UHHQQ5V6fQlXT31sNQMDyfLQ64uxQmQO3KISq+fmyZl9IaA3r+JcVz+/QFhu42Hq+a1OD2tfTsg19ZdWNs6aQ8Mvm7AV8wPq69PMVgeTkKWbdZ7DFGOVwx2Kns1aipAEYk=
+	t=1718685255; cv=none; b=aOsn4/54SLnuuwBx0J/ov/QDNBtvCT7Byh4QAcp2zzbEMY6VJvZbJOz6xI89Q2kA1zV800X46mI8JDz6gDERWZdqHi3z6oto2z40S+ip7jAzM8uptlgARdzYJSNCJH4R0ySg6GmccuUOe/XvFfgehkz7pg58/ZX7cdUFPjNFMdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718683823; c=relaxed/simple;
-	bh=r2cwQAjNoRc6C1R7nXh2MsWCqBNNYAC9Ih3/FIh75mw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JY3lbDYRqO4Cf3CSNJyEURTq979Mc9DEDimPaN3lhdwzfmWQyscou3yyN36+0k6o5ocCp5Ff1kRBkNUr8c1UEvl4/70qV9z3R5PXwJJ80Rg1HwaYTnRNjcL4sgS5qNDAJT4Cg17unqskVL/ILjVZ+y3pHOTOpyPyQyO9ZCXjHJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3fdXkHK; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4ecf43e29a0so1418578e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 21:10:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718683820; x=1719288620; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WVAmMf5zjhgua5uAQi4PwTrkecjeDqn4nRI+mC+wfvM=;
-        b=H3fdXkHKpO+HBeD77Iko6RBkgyEpZIeL07AOgutZ+Vh/G7Bf9YZxnoQ0Yfa72DDBvs
-         q3EHC8WQBZNRkpijaql8fomAi74kWGtYy9sm5D4a8OUXPyaZ61JYg8EJusxNBAJ1FJH0
-         A5d64Z5nNUl+ZGXern498oktjEiUdcmBrrRQWl5iB+jyIOkrDQT+AYhEMKJ7K25MyIIw
-         krA0tSZYFL2Ph4vPxKm9MP7wjEb6rZuP2ilz1UfEe/ySpsBuKLlXxkXASdvhDqPYba4C
-         ZCxPKzm3mKH0balsBuSXHBnHXRAzTnmJEifB4doBNNZItBVbPGr5Cd7tojOMxOwFUbJs
-         wzvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718683820; x=1719288620;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WVAmMf5zjhgua5uAQi4PwTrkecjeDqn4nRI+mC+wfvM=;
-        b=HRYAiz8vkywmNAMVSPUaN3EWhnFV3GBT1T2k8uppeqg4Fa8JbMS6pkhXzUDaegmyD7
-         m2D1lG6W2LTTKp2Av7OnA5lKsigkKKzsQtZeJ1Kuh1LTPCA0somdjTrtMH0GcSfugGyy
-         iMwh+kk8NK3+IafwdjSHdAoY9SGAYigACkjFU7pPgrd39lVgGmeOcDc3IJQ6u+UuSavD
-         jupgX6gIvQuuoA3vtN2R8M8yzsjj/EVRY5Qvp+Ahq74zemYgojCTpnTViN8sTPRnFQrY
-         6scUfH1guzR9Zm1FC6LcIpmzB3fDy6EUoTqApJROlRDvgcbb+5DfCEu3pFL+P6lpFsUq
-         TNJg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4YqP8vqTNMK3V3xyI/xC4ohl2z9BeY7RTXcqYb/AsTIQjBSEOmoPCO9X8QyUI+UFC5XLpmfXpveajpSZqJ0M5aQ5D4jKAhnKx3HR2
-X-Gm-Message-State: AOJu0Yx5/payW5GWPeTjt6a2z44/XwSDdsGamAOm+WKsRa0IElPFeTaN
-	02Wbh+EXijBJY/9Bn5xH8uTM2URgmUs4nCNMsDnDDtLERGU9KVC+dkMhq/nk65MkJYnzuzIZGBI
-	bD+NbKPZLSWWGQ0J7qk6YFgmTaDg=
-X-Google-Smtp-Source: AGHT+IFiKYv1VKDbLmV8FvDZX65MbakeTTQCheseXZDe6XThVx6hz/dTOzqDsu4d33b7RdHXMLGmkpI2ehfZxePy+dI=
-X-Received: by 2002:a05:6122:9a0:b0:4ec:f7c4:fe25 with SMTP id
- 71dfb90a1353d-4ee41218591mr10862133e0c.15.1718683820275; Mon, 17 Jun 2024
- 21:10:20 -0700 (PDT)
+	s=arc-20240116; t=1718685255; c=relaxed/simple;
+	bh=cVWaqdmlVB3MhB8ZS2KfEGlzyVZFQobqyrEiIiYPoSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TI8YZGGnW7dD6DlGFuSSUzQcdZu77t2JwfsQxUsz7DnxeFVIoDqTvfYHJPAqjnhjBZ3LMooPfiEbI3jqILTUpPO+1hh7RgCFc4aVyP2cGOuNvsBI+JIF4OuYzXiEWOAn/g5keTBP6GAbIWdryGygRuGQGGeqA9ktpf+XfcTTzrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTi7MVJl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812B6C3277B;
+	Tue, 18 Jun 2024 04:34:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718685255;
+	bh=cVWaqdmlVB3MhB8ZS2KfEGlzyVZFQobqyrEiIiYPoSA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gTi7MVJlvd3DqJpnKOKwG1xNN9+M3Gsd6MebltbzdgYOGnNyiv6Qeq+xhqfRbROut
+	 SMeCl95OGHDBKyeXsKqzjZiu8nRdzT8VF3nwmPVGyANifUQ4IVXBEyLiZbRBuA+r0p
+	 kkJXl0ojinTkXRpSpsx3wYcxcPeHcuHbPZKbHXToNiDVwXn/Rz1XfUQPLNhFqQRota
+	 Ji/Wh9lpLMGRuNhNmj0DSutuZbOngGorasQOGUjC3tgjSPUjrrJ+nW6aPnlpo7rFMl
+	 BobHJwR5iAtT1Vvtyk20SeGII31d7mB1TqYIv6xVcD0QEwS+Lp2lQuDtie5Zzz8Zc+
+	 WZdChbx6OiHBA==
+Date: Tue, 18 Jun 2024 12:20:13 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Yixun Lan <dlan@gentoo.org>, Inochi Amaoto <inochiama@outlook.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Chao Wei <chao.wei@sophgo.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>
+Subject: Re: [PATCH v2 1/6] riscv: dts: sophgo: Put sdhci compatible in dt of
+ specific SoC
+Message-ID: <ZnEK_cg1xLbKOUAD@xhacker>
+References: <20240612-sg2002-v2-0-19a585af6846@bootlin.com>
+ <20240612-sg2002-v2-1-19a585af6846@bootlin.com>
+ <IA1PR20MB49534C9E29E86B478205E4B3BBC02@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <20240616235829.GA4000183@ofsar>
+ <c75601a1-1389-400e-90b9-99c1e775a866@bootlin.com>
+ <ZnA3O14HOiV1SBPV@xhacker>
+ <20240617-exuberant-protegee-f7d414f0976d@spud>
+ <6a993b58-3d9e-4f92-bf47-7692c9639314@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
- <CAGsJ_4zvG7gwukioZnqN+GpWHbpK1rkC0Jeqo5VFVL_RLACkaw@mail.gmail.com>
- <2e3a3a3f-737c-ed01-f820-87efee0adc93@126.com> <9b227c9d-f59b-a8b0-b353-7876a56c0bde@126.com>
- <CAGsJ_4ynfvjXsr6QFBA_7Gzk3PaO1pk+6ErKZaNCt4H+nuwiJw@mail.gmail.com> <4482bf69-eb07-0ec9-f777-28ce40f96589@126.com>
-In-Reply-To: <4482bf69-eb07-0ec9-f777-28ce40f96589@126.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 18 Jun 2024 16:10:08 +1200
-Message-ID: <CAGsJ_4ytYTpvRVgR1EoazsH=QxZCDE2e8H0BeXrY-6zWFD0kCg@mail.gmail.com>
-Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
- non-CMA THP-sized page
-To: yangge1116 <yangge1116@126.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com, 
-	liuzixing@hygon.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6a993b58-3d9e-4f92-bf47-7692c9639314@sifive.com>
 
-On Tue, Jun 18, 2024 at 3:32=E2=80=AFPM yangge1116 <yangge1116@126.com> wro=
-te:
->
->
->
-> =E5=9C=A8 2024/6/18 =E4=B8=8A=E5=8D=889:55, Barry Song =E5=86=99=E9=81=93=
-:
-> > On Tue, Jun 18, 2024 at 9:36=E2=80=AFAM yangge1116 <yangge1116@126.com>=
- wrote:
+On Mon, Jun 17, 2024 at 10:57:54AM -0500, Samuel Holland wrote:
+> Hi Jisheng, Thomas,
+> 
+> On 2024-06-17 10:40 AM, Conor Dooley wrote:
+> > On Mon, Jun 17, 2024 at 09:16:43PM +0800, Jisheng Zhang wrote:
+> >> On Mon, Jun 17, 2024 at 11:16:32AM +0200, Thomas Bonnefille wrote:
+> >>> On 6/17/24 1:58 AM, Yixun Lan wrote:
+> >>>> On 18:47 Wed 12 Jun     , Inochi Amaoto wrote:
+> > 
+> >>>>> Is this change necessary? IIRC, the sdhci is the same across
+> >>>>> the whole series.
+> > 
+> >> sorry for being late, I was busy in the past 2.5 month. Per my
+> >> understanding, the sdhci in cv1800b is the same as the one in
+> >> sg200x. Maybe I'm wrong, but this was my impression when I cooked
+> >> the sdhci driver patch for these SoCs.
 > >>
-> >>
-> >>
-> >> =E5=9C=A8 2024/6/17 =E4=B8=8B=E5=8D=888:47, yangge1116 =E5=86=99=E9=81=
-=93:
-> >>>
-> >>>
-> >>> =E5=9C=A8 2024/6/17 =E4=B8=8B=E5=8D=886:26, Barry Song =E5=86=99=E9=
-=81=93:
-> >>>> On Tue, Jun 4, 2024 at 9:15=E2=80=AFPM <yangge1116@126.com> wrote:
-> >>>>>
-> >>>>> From: yangge <yangge1116@126.com>
-> >>>>>
-> >>>>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list fo=
-r
-> >>>>> THP-sized allocations") no longer differentiates the migration type
-> >>>>> of pages in THP-sized PCP list, it's possible to get a CMA page fro=
-m
-> >>>>> the list, in some cases, it's not acceptable, for example, allocati=
-ng
-> >>>>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
-> >>>>>
-> >>>>> The patch forbids allocating non-CMA THP-sized page from THP-sized
-> >>>>> PCP list to avoid the issue above.
+> >>>> I tend to agree with Inochi here, if it's same across all SoC, then no bother to
+> >>>> split, it will cause more trouble to maintain..
 > >>>>
-> >>>> Could you please describe the impact on users in the commit log?
 > >>>
-> >>> If a large number of CMA memory are configured in the system (for
-> >>> example, the CMA memory accounts for 50% of the system memory), start=
-ing
-> >>> virtual machine with device passthrough will get stuck.
-> >>>
-> >>> During starting virtual machine, it will call pin_user_pages_remote(.=
-..,
-> >>> FOLL_LONGTERM, ...) to pin memory. If a page is in CMA area,
-> >>> pin_user_pages_remote() will migrate the page from CMA area to non-CM=
-A
-> >>> area because of FOLL_LONGTERM flag. If non-movable allocation request=
-s
-> >>> return CMA memory, pin_user_pages_remote() will enter endless loops.
-> >>>
-> >>> backtrace:
-> >>> pin_user_pages_remote
-> >>> ----__gup_longterm_locked //cause endless loops in this function
-> >>> --------__get_user_pages_locked
-> >>> --------check_and_migrate_movable_pages //always check fail and conti=
-nue
-> >>> to migrate
-> >>> ------------migrate_longterm_unpinnable_pages
-> >>> ----------------alloc_migration_target // non-movable allocation
-> >>>
-> >>>> Is it possible that some CMA memory might be used by non-movable
-> >>>> allocation requests?
-> >>>
-> >>> Yes.
-> >>>
-> >>>
-> >>>> If so, will CMA somehow become unable to migrate, causing cma_alloc(=
-)
-> >>>> to fail?
-> >>>
-> >>>
-> >>> No, it will cause endless loops in __gup_longterm_locked(). If
-> >>> non-movable allocation requests return CMA memory,
-> >>> migrate_longterm_unpinnable_pages() will migrate a CMA page to anothe=
-r
-> >>> CMA page, which is useless and cause endless loops in
-> >>> __gup_longterm_locked().
-> >
-> > This is only one perspective. We also need to consider the impact on
-> > CMA itself. For example,
-> > when CMA is borrowed by THP, and we need to reclaim it through
-> > cma_alloc() or dma_alloc_coherent(),
-> > we must move those pages out to ensure CMA's users can retrieve that
-> > contiguous memory.
-> >
-> > Currently, CMA's memory is occupied by non-movable pages, meaning we
-> > can't relocate them.
-> > As a result, cma_alloc() is more likely to fail.
-> >
-> >>>
-> >>> backtrace:
-> >>> pin_user_pages_remote
-> >>> ----__gup_longterm_locked //cause endless loops in this function
-> >>> --------__get_user_pages_locked
-> >>> --------check_and_migrate_movable_pages //always check fail and conti=
-nue
-> >>> to migrate
-> >>> ------------migrate_longterm_unpinnable_pages
-> >>>
-> >>>
-> >>>
-> >>>
-> >>>
-> >>>>>
-> >>>>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for
-> >>>>> THP-sized allocations")
-> >>>>> Signed-off-by: yangge <yangge1116@126.com>
-> >>>>> ---
-> >>>>>    mm/page_alloc.c | 10 ++++++++++
-> >>>>>    1 file changed, 10 insertions(+)
-> >>>>>
-> >>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> >>>>> index 2e22ce5..0bdf471 100644
-> >>>>> --- a/mm/page_alloc.c
-> >>>>> +++ b/mm/page_alloc.c
-> >>>>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone
-> >>>>> *preferred_zone,
-> >>>>>           WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
-> >>>>>
-> >>>>>           if (likely(pcp_allowed_order(order))) {
-> >>>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >>>>> +               if (!IS_ENABLED(CONFIG_CMA) || alloc_flags &
-> >>>>> ALLOC_CMA ||
-> >>>>> +                                               order !=3D
-> >>>>> HPAGE_PMD_ORDER) {
-> >>>>> +                       page =3D rmqueue_pcplist(preferred_zone, zo=
-ne,
-> >>>>> order,
-> >>>>> +                                               migratetype,
-> >>>>> alloc_flags);
-> >>>>> +                       if (likely(page))
-> >>>>> +                               goto out;
-> >>>>> +               }
-> >>>>
-> >>>> This seems not ideal, because non-CMA THP gets no chance to use PCP.
-> >>>> But it
-> >>>> still seems better than causing the failure of CMA allocation.
-> >>>>
-> >>>> Is there a possible approach to avoiding adding CMA THP into pcp fro=
-m
-> >>>> the first
-> >>>> beginning? Otherwise, we might need a separate PCP for CMA.
-> >>>>
+> >>> To be honest, I agree with this to, but as a specific compatible for the
+> >>> SG2002 was created in commit 849e81817b9b, I thought that the best practice
+> >>> was to use it.
 > >>
-> >> The vast majority of THP-sized allocations are GFP_MOVABLE, avoiding
-> >> adding CMA THP into pcp may incur a slight performance penalty.
-> >>
-> >
-> > But the majority of movable pages aren't CMA, right?
->
-> > Do we have an estimate for
-> > adding back a CMA THP PCP? Will per_cpu_pages introduce a new cacheline=
-, which
-> > the original intention for THP was to avoid by having only one PCP[1]?
-> >
-> > [1] https://patchwork.kernel.org/project/linux-mm/patch/20220624125423.=
-6126-3-mgorman@techsingularity.net/
-> >
->
-> The size of struct per_cpu_pages is 256 bytes in current code containing
-> commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized
-> allocations").
-> crash> struct per_cpu_pages
-> struct per_cpu_pages {
->      spinlock_t lock;
->      int count;
->      int high;
->      int high_min;
->      int high_max;
->      int batch;
->      u8 flags;
->      u8 alloc_factor;
->      u8 expire;
->      short free_count;
->      struct list_head lists[13];
-> }
-> SIZE: 256
->
-> After revert commit 5d0a661d808f ("mm/page_alloc: use only one PCP list
-> for THP-sized allocations"), the size of struct per_cpu_pages is 272 byte=
-s.
-> crash> struct per_cpu_pages
-> struct per_cpu_pages {
->      spinlock_t lock;
->      int count;
->      int high;
->      int high_min;
->      int high_max;
->      int batch;
->      u8 flags;
->      u8 alloc_factor;
->      u8 expire;
->      short free_count;
->      struct list_head lists[15];
-> }
-> SIZE: 272
->
-> Seems commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
-> THP-sized allocations") decrease one cacheline.
+> >> I'd like to take this chance to query DT maintainers: FWICT, in the past
+> >> even if the PLIC is the same between SoCs, adding a new compatible for
+> >> them seems a must. So when time goes on, the compatbile list would be
+> >> longer and longer, is it really necessary? Can we just use the existing
+> >> compatible string?
+> >> DT maintainers may answered the query in the past, if so, sorry for
+> >> querying again.
+> > 
+> > For new integrations of an IP, yes, new specific compatibles please. New
+> > integrations may have different bugs etc, even if the IP itself is the
+> > same. If there's different SoCs that are the same die, but with elements
+> > fused off, then sure, use the same compatible.
+> > 
+> > I expect the list of compatibles in the binding to grow rather large, but
+> > that is fine. No one SoC is going to do anything other than something like
+> > compatible = "renesas,$soc-plic", "andestech,corecomplex-plic", "riscv,plic";
+> > which I think is perfectly fine.
+> 
+> And you can do the same thing here for the SDHCI controller: if you think sg200x
+> has the same controller (and integration! e.g. number of clocks/resets) as
+> cv1800b, then you should keep sophgo,cv1800b-dwcmshc as a fallback compatible
+> string. Then the driver doesn't need any changes until/unless you eventually
+> find some reason they are not compatible.
+> 
+> It's better to have a SoC-specific compatible string in the DT and not need it,
+> than find out later you need one and not have it. :)
 
-the proposal is not reverting the patch but adding one CMA pcp.
-so it is "struct list_head lists[14]"; in this case, the size is still
-256?
+Good idea, this solution looks better! Thanks for the suggestion
 
-
->
-> >
-> >> Commit 1d91df85f399 takes a similar approach to filter, and I mainly
-> >> refer to it.
-> >>
-> >>
-> >>>>> +#else
-> >>>>>                   page =3D rmqueue_pcplist(preferred_zone, zone, or=
-der,
-> >>>>>                                          migratetype, alloc_flags);
-> >>>>>                   if (likely(page))
-> >>>>>                           goto out;
-> >>>>> +#endif
-> >>>>>           }
-> >>>>>
-> >>>>>           page =3D rmqueue_buddy(preferred_zone, zone, order, alloc=
-_flags,
-> >>>>> --
-> >>>>> 2.7.4
-> >>>>
-> >>>> Thanks
-> >>>> Barry
-> >>>>
-> >>
-> >>
->
+> 
+> Regards,
+> Samuel
+> 
 
