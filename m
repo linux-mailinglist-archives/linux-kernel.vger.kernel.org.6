@@ -1,164 +1,159 @@
-Return-Path: <linux-kernel+bounces-220208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01DCB90DE16
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:20:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FC490DE73
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70945284A64
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:20:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4886C1F24BA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C35017837F;
-	Tue, 18 Jun 2024 21:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LwkttVTI"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4A9178378;
+	Tue, 18 Jun 2024 21:32:37 +0000 (UTC)
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70541741F0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 21:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C0313AA44;
+	Tue, 18 Jun 2024 21:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718745596; cv=none; b=Btyt4HBRAKtRcaJwxe7Ycw/VZQsPJMUvII2TMWiWAlZUpEfRcF6Lf9DD5rZqDvm9+gohE0PwIta6j6eYnw+KT9HggrHRSJvLOFE/40RsalFemO41sgrTBBh995BTRjPnGhBHNfgG5G/Ch23crqIm0s24UJPwXkPoqo2JNWaBchA=
+	t=1718746357; cv=none; b=vFzYlrgrOk4mFy2q/2tLVE/bwMsil/3ahPyTYmskB+4TDEw57al9iZTfFMgfsQoL6wAAlV/mXSXA0Pe6t34SyuHSC7tK3EIEpSvNUK5J4I3Yr3r8kmQmvOV2luZWfsVALxhcC/8F0i18PKYSuy7H2znvGwpzFRNaaBOZu1hyFzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718745596; c=relaxed/simple;
-	bh=Gp65oFcJHk79zm6jGkHE3iKZLC9l4N5bay4Ton5RAkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ok6hB2r/eY5YKCG5CqpOQx5JCHGT0//z0KJf19uQEdQSePtpATu37tDkVzw2IXf+k93AeJkQ8RiajxoESBISGRJouqdn2Odc++3uYIMbK8fdhIQj3HDVp633JqbtUsJkLXvcg3CPFOn/+oKL9sa1c0UNrHATfme2IMZ8ey57pkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LwkttVTI; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6c53a315c6eso4169312a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:19:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718745594; x=1719350394; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=50YSa4Ao9uogaf7E1ijDuiJSBHVaTQT8KJlzelZTT/A=;
-        b=LwkttVTImLPCW3/wpbhz4VhC49V0EPWg1VVLkHbwFlEXSLvhmpdgW5Kat5d73rED+n
-         IhJqnelZbgXX1rD23hm2VwROQDn8gMIHH7Ai5uXF8rTRcjT78wnKOtQU6l5SVTNC7O1u
-         5uTMC30CrmtVs+ZkCsV5cqiTn/RMTFgaDrA/AAhqGOk7xebnTiRJc33DmZyf5+nW++Fx
-         opUGNb230qLaP7KfDYb/cx353a+KSBCOfMTK1lM+hpZ0S3mZBCEpKS4VrtYgx9E4J4A6
-         JhsKKBJ3yuj/mLiaD9fh2qEI1R4iHJ6KC075qH1F7VFT9ctp3dA0IKFFJXbaF8GB+fTQ
-         cZGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718745594; x=1719350394;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=50YSa4Ao9uogaf7E1ijDuiJSBHVaTQT8KJlzelZTT/A=;
-        b=tDhuXXXvX3GsoRK8xtXMjZWjLV54MKxSxt84Wc/2LFHBPSSfwoLkaehKG61Y6f/8y7
-         UDCaZyf+kFVRQ/WicDX8AR9dtkV5YGOkV8kqpA3V3S51AyPXd0VgPzdxCBXmRdkqXw0g
-         O0xHqj28MEmoowCIaVJddtqzN0frZF16C90pwyfoHQZml6NUNGHc3td6VYzdqlGE1AAF
-         DDzr0X4DcaHjTgL2qWnA3oarjn/smsb/qUshwHg170fZPjQCVAwiVPameRNqriFx5IzV
-         sDUkhJs29+nB/4nTM+owlb8UvAEFkW4Lf5tFxgoSJUkjendjLHLexhGJzLyA0eZR2rEK
-         9ewQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmCtXPyoPFT+p4uMpNC2zDwn39oyU8kJQjHE7atjWN4ROdAVxd+iMre3AiZGajDCaPJODORKtdCt4RrDHK2HatUlJR5O415mGHV+C+
-X-Gm-Message-State: AOJu0YxZnVk6SLjsWwXznO6cwNGcbfAxludlw6KHl4E4f6wtYgOyuEgW
-	PyPj3FVKv1w3bWn27M6Rc3NA/nMCssHlhtoU075m/vsl7Fos4B6D4mecY+vbGQ==
-X-Google-Smtp-Source: AGHT+IFC6LosG5J95Q/vdHU1XCPYWAnw91UYD1rLAPhQ60B8axl3RfeB1tNNTT7aB4UYI73ab2iYuQ==
-X-Received: by 2002:a17:902:eb44:b0:1f7:5a6c:ae3e with SMTP id d9443c01a7336-1f9aa3ec4a1mr7767585ad.33.1718745593732;
-        Tue, 18 Jun 2024 14:19:53 -0700 (PDT)
-Received: from google.com ([2620:0:1000:2510:5dfa:e7d1:8470:826c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f48951sm101769505ad.280.2024.06.18.14.19.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 14:19:53 -0700 (PDT)
-Date: Tue, 18 Jun 2024 14:19:47 -0700
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kris Van Hees <kris.van.hees@oracle.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
-Message-ID: <20240618211947.GD1611012@google.com>
-References: <20240617175818.58219-17-samitolvanen@google.com>
- <ZnHjO7x9nszs9pUC@bombadil.infradead.org>
+	s=arc-20240116; t=1718746357; c=relaxed/simple;
+	bh=y7l156obeOBJmxFExjFmh0A+yh+ya4ydluLwK8XF1EE=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=j2dZa3xunQqFXwHVGHdWQExu8q639G+zyeS+FL3acg6fzuqfxsFb13sKYlM0KmhUGq+/2UvXWhOq7GRqRXQr49KTmME+PNu/eOoPGwUlSE2NtCWw6LHBLg6J5Plm9Zixt3hqanx+cirSQvLw1dWMvAEnebPW8672wEz4ih5P4LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:47062)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sJgRE-005R6Y-Kl; Tue, 18 Jun 2024 15:32:24 -0600
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:34896 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sJgRD-0023Sy-FS; Tue, 18 Jun 2024 15:32:24 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+  akpm@linux-foundation.org,  apais@linux.microsoft.com,  ardb@kernel.org,
+  brauner@kernel.org,  jack@suse.cz,  keescook@chromium.org,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-mm@kvack.org,  nagvijay@microsoft.com,  oleg@redhat.com,
+  tandersen@netflix.com,  vincent.whitchurch@axis.com,
+  viro@zeniv.linux.org.uk,  apais@microsoft.com,  ssengar@microsoft.com,
+  sunilmut@microsoft.com,  vdso@hexbites.dev
+References: <20240617234133.1167523-1-romank@linux.microsoft.com>
+	<20240617234133.1167523-2-romank@linux.microsoft.com>
+	<20240618061849.Vh9N3ds2@linutronix.de>
+	<c4644f2c-fad3-4d98-8301-acdc0ff2f3a6@linux.microsoft.com>
+Date: Tue, 18 Jun 2024 16:21:09 -0500
+In-Reply-To: <c4644f2c-fad3-4d98-8301-acdc0ff2f3a6@linux.microsoft.com> (Roman
+	Kisel's message of "Tue, 18 Jun 2024 09:30:22 -0700")
+Message-ID: <87sexakkvu.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnHjO7x9nszs9pUC@bombadil.infradead.org>
+Content-Type: text/plain
+X-XM-SPF: eid=1sJgRD-0023Sy-FS;;;mid=<87sexakkvu.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/gB2O6TobRXQAk0tnw1xCtXBe434z0Hw0=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: **
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Roman Kisel <romank@linux.microsoft.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 441 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 4.1 (0.9%), b_tie_ro: 2.8 (0.6%), parse: 1.11
+	(0.3%), extract_message_metadata: 4.8 (1.1%), get_uri_detail_list: 2.6
+	(0.6%), tests_pri_-2000: 3.2 (0.7%), tests_pri_-1000: 2.4 (0.5%),
+	tests_pri_-950: 1.14 (0.3%), tests_pri_-900: 0.81 (0.2%),
+	tests_pri_-90: 74 (16.7%), check_bayes: 72 (16.4%), b_tokenize: 7
+	(1.5%), b_tok_get_all: 10 (2.3%), b_comp_prob: 2.2 (0.5%),
+	b_tok_touch_all: 51 (11.5%), b_finish: 0.73 (0.2%), tests_pri_0: 333
+	(75.6%), check_dkim_signature: 0.39 (0.1%), check_dkim_adsp: 2.5
+	(0.6%), poll_dns_idle: 1.13 (0.3%), tests_pri_10: 2.4 (0.5%),
+	tests_pri_500: 8 (1.7%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/1] binfmt_elf, coredump: Log the reason of the failed
+ core dumps
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 
-Hi Luis,
+Roman Kisel <romank@linux.microsoft.com> writes:
 
-On Tue, Jun 18, 2024 at 12:42:51PM -0700, Luis Chamberlain wrote:
-> On Mon, Jun 17, 2024 at 05:58:19PM +0000, Sami Tolvanen wrote:
-> > The first 12 patches of this series add a small tool for computing
-> > symbol versions from DWARF, called gendwarfksyms. When passed a list
-> > of exported symbols, the tool generates an expanded type string
-> > for each symbol, and computes symbol CRCs similarly to genksyms.
-> 
-> So this is too word centric Rust, let's think about this generically.
-> We still ahve a symbol limitation even in the C world then, and this
-> solution can solve that problem also for other reasons for *whatever*
-> reason we devise to-come-up-with-in-the-future for augmenting symbols.
-> Today Rust, tomorrow, who knows.
+> On 6/17/2024 11:18 PM, Sebastian Andrzej Siewior wrote:
+>> On 2024-06-17 16:41:30 [-0700], Roman Kisel wrote:
+>>> Missing, failed, or corrupted core dumps might impede crash
+>>> investigations. To improve reliability of that process and consequently
+>>> the programs themselves, one needs to trace the path from producing
+>>> a core dumpfile to analyzing it. That path starts from the core dump file
+>>> written to the disk by the kernel or to the standard input of a user
+>>> mode helper program to which the kernel streams the coredump contents.
+>>> There are cases where the kernel will interrupt writing the core out or
+>>> produce a truncated/not-well-formed core dump.
+>> How much of this happened and how much of this is just "let me handle
+>> everything that could go wrong".
+> Some of that must be happening as there are truncated dump files. Haven't run
+> the logging code at large scale yet with the systems being stressed a lot by the
+> customer workloads to hit all edge cases. Sent the changes to the kernel mail
+> list out of abundance of caution first, and being ecstatic about that: on the
+> other thread Kees noticed I didn't use the ratelimited logging. That has
+> absolutely made me day and whole week, just glowing :) Might've been a close
+> call due to something in a crash loop.
 
-If you're referring to the symbol hashing in the __versions table,
-that's not specific to Rust. Rust just happens to be the only source of
-long symbol names right now.
+Another reason you could have truncated coredumps is the coredumping
+process being killed.
 
-> > gendwarfksyms is written in C and uses libdw to process DWARF, mainly
-> > because of the existing support for C host tools that use elfutils
-> > (e.g., objtool).
-> 
-> I agree with Masahiro, that testing this with vmlinux would be eye
-> opening to what challenges we really have ahead. So, to help with this
-> let's try to re-think about this  from another perspective.
+I suspect if you want reasons why the coredump is truncated you are
+going to want to instrument dump_interrupted, dump_skip and dump_emit
+rather than their callers.  As they don't actually report why the
+failed.
+
+Are you using systemd-coredump?  Or another pipe based coredump
+collector?  It might be the dump collector is truncating things.
+
+Do you know if your application uses io_uring?  There were some weird
+issues with io_uring and coredumps that were causing things to get
+truncation at one point.  As I recall a hack was put in the coredump
+code so that it worked but maybe there is another odd case that still
+needs to be handled.
 >
-> Yes, old userspace should not break, but you can add yet another option
-> to let you opt-in to a new world order of how these crc are mapped to
-> hashed repersentations of the symbols. This would allow us to:
+> I think it'd be fair to say that I am asking to please "let me handle (log)
+> everything that could go wrong", ratelimited, as these error cases are present
+> in the code, and logging can give a clue why the core dump collection didn't
+> succeed and what one would need to explore to increase reliability of the
+> system.
 
-We did run into an issue with depmod in our testing, where it needs to
-be taught about hashed names to avoid 'unknown symbol' warnings. I'm not
-sure if this is acceptable, so I would like to hear feedback about the
-viability of the hashing scheme in general.
+If you are looking for reasons you definitely want to instrument
+fs/coredump.c much more than fs/binfmt_elf.c.  As fs/coredump.c is the
+code that actually performs the writes.
 
-If old userspace can't have any regressions because of long symbol
-names, I suspect we'll have to go back to omitting long symbols from
-struct modversion_info and adding a v2 of the __versions table with no
-symbol name length limitations. Happy to hear your thoughts.
+One of these days if someone is ambitious we should probably merge the
+coredump code from fs/binfmt_elf.c and fs/binfmt_elf_fdpic.c and just
+hardcode the coredump code to always produce an elf format coredump.
+Just for the simplicity of it all.
 
-> a) Ensure correctness for all users / tools, so that proper plumbing is
->    really done. By considering all symbols you increase your scope of
->    awareness of anything that could really break.
-> 
-> b) Remove the "Rust" nature about this
-> 
-> c) Rust modules just becomes a *user* of this approach
-
-I believe the only Rust nature here is the last patch that enables
-gendwarfksyms only for Rust. Otherwise, there shouldn't be anything
-strictly Rust specific.
-
-> It gets me wondering, given Kris is also working on allowing traces to
-> map symbols to module names, how does this fit into that world [0]?
-
-AFAIK long symbol names are only a problem for struct modversion_info,
-which uses a relatively short name buffer, so I'm hoping other efforts
-won't be affected.
-
-> As for a) the reason I'm thinking about having the ability to test a
-> full real kernel and moules with this is, without that, how are you sure
-> you have the full scope of the changes needed?
-
-Sure, I can look into hooking this up for the entire kernel and seeing
-what breaks, in addition the issues Masahiro pointed out, of course.
-
-Sami
+Eric
 
