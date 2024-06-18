@@ -1,162 +1,247 @@
-Return-Path: <linux-kernel+bounces-218953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF3790C821
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:00:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F6690C824
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DFBB281742
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:00:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68E041C20D76
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA941D47DB;
-	Tue, 18 Jun 2024 09:36:25 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B641581F8;
+	Tue, 18 Jun 2024 09:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ynnvl1W/"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D882A155385
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0955515747E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718703385; cv=none; b=Jg9ccaRkGrXctaJ6BUxuz5fA38xo9egigcJEoq44rXF8t1cMu9WKLylHG8EH8UQC1g6roYrB3nPLElpfz7+/6JkDEf6il8PFFnIq1iBpuwtTCgtqf+aZK7QAqEnsD2SIigCvvnfjKNUkd/c/J5XgtabZzHCtM/I4Yd7I0nPbftw=
+	t=1718703426; cv=none; b=lF9yKlXuL4H+yEn9dQmHvVwCUawRajpa82s4MjDwfflKLKOap0c8aHBoVPhRwQrQVHYpRsC/HiUvNWjAXeHVabAQi8Ejvv9VdEQI98+T9Foi5DFGIqgXNDpqaf2P5/RFKM9ioq9z7NgY5GlPN1UtLsBvAE9vHMhQ0bxDtxOz6MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718703385; c=relaxed/simple;
-	bh=YRKT9K0asnRkYt5r/3EdqIBUPtFmM7vDzFRxrQhMFxo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TyXiau6/cvEOOxwMAgBixyQ1XZDKvKnxjLdJJW7Z7LcGlQH5SxoWiEww3hq5iTs4DgvjbVZk2T62BR51J6VIyYQF2+fQz7OroQ4tQXXJWAuenHKaSNYjs0vTrzxS4dveNhbq7TJpQ5u618KkbLMyfUCzgwmlrt0C63WCPgiOE3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eb9bf4d07aso672405839f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:36:23 -0700 (PDT)
+	s=arc-20240116; t=1718703426; c=relaxed/simple;
+	bh=mpeSJ8fJ7wtK033GVI5zWN+gAxDW49LWmwr1VOj3LjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZZQKeAqLZZwxRXhYD3W/lTCeZDV6NOsdIHQqsOSzp0vlPAU4YgsoS5GdM2nmTnkediw2cZR1hZftq4ebr0wx4R0ZeCL1yNWsD7UFcM07FTqsKszX6Y9FyiW6Ou4bjAZq1xXEEjuABTOIhDpHEUdiXuKGhTsuJ2Kdffd7QuFSDsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ynnvl1W/; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-24c0dbd2866so2732767fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718703423; x=1719308223; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yO5Ag6TkgQi37C9WOmZH4DbdT66+5TaN0dgl3GOdIjM=;
+        b=Ynnvl1W/CxPRXFlUjD8Fvq5KI/1Z1IW9Y6oPaSoV7QS2Wnz9VIpHz487UbcrUBD3gr
+         4M5QbpsNmd8hxmh84TTxrnOWZss0f7UWCbr/Y0C7pIW2eOeTlu793Tdum3fnl/UhA8xH
+         GTro3Ml34vISoWNUpKwW8p4NWpZ84HBCCnqrU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718703383; x=1719308183;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sq8R+hXp0mefQc+SvrsLY3X8c0UoF9IaNpUbknhGGOs=;
-        b=lKrvaTxbFUWbYrf3dNjiMHLvBO5Ea+iPBR4zuJTVjT4K4fteicLbBN1BBJ6OGPjQbt
-         Sa487rVoNYV1xkqis99VFGlmfltIgLkaxJe6qPz7NGJCNcWRkF1UO/FgBJOrUZ9Gbmww
-         7uSxIS3KdPB2SejNNRwOvO6PrXITjUxdcBC3UqxKyCudgvyNyvtJbfa6IsUom2Wq9OHB
-         itV6PRZf4SsJD1y6qCwumDoyJy0iemiSkgUNOetK9tWKnucugZe0AEljiQ77i5zaRKr6
-         y9rpZ5vROivHj6lieF1nrSqAmXvklkpIq28orGNqbFc9hCgzOZT8FhK2QEa+iF/IJ7y0
-         LGzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxK37wMmeOS9Jf8LCMUvMSdGM3akoo08MXbliyd47gDaiOnOIxaL0Iy/9iGGSrLNFnkNCL50DB445869SLFrEqEG55p0dnqckT1RPa
-X-Gm-Message-State: AOJu0Yya7gr8LhWstxUE+eQ6jb5XySfQha4KC0gh/uoiXSTlnqZIi3zb
-	S7MDRUVZIorswKuhDZm7T/OTwHhJ+auGrpBPXHrhA6Irj/Wt+iJHax+Z1xPvGHSzIydqfCQD3i/
-	RvNdehSKYulif4UaWkCvRV5iN9dlMI1rI1ZnxExTIBquxjGkGHM8ZGF4=
-X-Google-Smtp-Source: AGHT+IElxyf0p6s5USujm+0+aWtyJDbnvk2dxf2XMn5BBlp3Dh8I3UEHK/uLTzel+Ou+MZ2ByUfhBKiBvrvqdMu919DiiiyyTnJ7
+        d=1e100.net; s=20230601; t=1718703423; x=1719308223;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yO5Ag6TkgQi37C9WOmZH4DbdT66+5TaN0dgl3GOdIjM=;
+        b=IDAC5WVJKdYOOZ5AD1aoTkA8cHXEKjd+g+HUwnXcHo1YH1eywzWY2o51N7zHbnR5Ut
+         wwqwLHOwMckFbjM5E7+ilkAkLf50Z/NB2PeC0KHOKj+ypva5laskrTzkGOKbbuVK0Miy
+         tiSDUl4ovQ6ZOllMGCl/Q4WYASCzg1bFS/y1yFbIJb466SXUEHHeb0XHo57bErqcu3oa
+         AyxrsemJOWWmGg4+WIHvfF01aHrooki+G/OFM8RhFyGDauyaSUZnjMejEreZegAUH4el
+         qSqBOhEWtIvvavMRK3J9tpsWknv064rmCH5/PXXKv5kcEyhGDxaSHyeP191izDw3Mg4W
+         kMUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXo3ME4kDeNMiBFfyWeV2OoeW/iGfhLoF2mSj/C6tSD+gq6tm6XXSH9ZoE06l4wPWN3GHxJej9N7dQ8xkllQtHje1T9fANAxDI2GMJ2
+X-Gm-Message-State: AOJu0Yz6PTj0ufwicUBdYLAdn0AV3cpzb7TkoMlWQScNG5FXYXhr67CU
+	jzvLALAk+v0fg525pey9yY4Cuk9x23avjC0cVwD3DNqDnobB+Xh4e5PGix34
+X-Google-Smtp-Source: AGHT+IFjGk/o+lwl7K/bIc/tHdxoPP+pTmgqlmCZ6lEWgXKCgTfp4wm0qZkGTYoC1vTxxK5H8+Ha1w==
+X-Received: by 2002:a05:6870:c1d4:b0:24f:dd11:4486 with SMTP id 586e51a60fabf-25842ba209bmr14156507fac.36.1718703423087;
+        Tue, 18 Jun 2024 02:37:03 -0700 (PDT)
+Received: from localhost (148.175.199.104.bc.googleusercontent.com. [104.199.175.148])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-705d8fc3dbdsm6995546b3a.1.2024.06.18.02.36.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 02:37:02 -0700 (PDT)
+From: Takaya Saeki <takayas@chromium.org>
+To: Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Junichi Uekawa <uekawa@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Takaya Saeki <takayas@chromium.org>
+Subject: [PATCH] filemap: add trace events for get_pages, map_pages, and fault
+Date: Tue, 18 Jun 2024 09:36:56 +0000
+Message-ID: <20240618093656.1944210-1-takayas@chromium.org>
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:22c4:b0:4b9:2092:c7c9 with SMTP id
- 8926c6da1cb9f-4b96414f9aamr414729173.5.1718703382967; Tue, 18 Jun 2024
- 02:36:22 -0700 (PDT)
-Date: Tue, 18 Jun 2024 02:36:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009dc8a5061b26d066@google.com>
-Subject: [syzbot] [kernfs?] linux-next test error: BUG: key ADDR has not been registered!
-From: syzbot <syzbot+b2c37bfe1276a38db24f@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-next@vger.kernel.org, sfr@canb.auug.org.au, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+To allow precise tracking of page caches accessed, add new tracepoints
+that trigger when a process actually accesses them.
 
-syzbot found the following issue on:
+The ureadahead program used by ChromeOS traces the disk access of
+programs as they start up at boot up. It uses mincore(2) or the
+'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
+this information in a "pack" file and on subsequent boots, it will read
+the pack file and call readahead(2) on the information so that disk
+storage can be loaded into RAM before the applications actually need it.
 
-HEAD commit:    76db4c64526c Add linux-next specific files for 20240617
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15e7ed0e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=40a62461e8f6102
-dashboard link: https://syzkaller.appspot.com/bug?extid=b2c37bfe1276a38db24f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+A problem we see is that due to the kernel's readahead algorithm that
+can aggressively pull in more data than needed (to try and accomplish
+the same goal) and this data is also recorded. The end result is that
+the pack file contains a lot of pages on disk that are never actually
+used. Calling readahead(2) on these unused pages can slow down the
+system boot up times.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c821f6b56371/disk-76db4c64.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/efb2d2cbe799/vmlinux-76db4c64.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7be14777af71/bzImage-76db4c64.xz
+To solve this, add 3 new trace events, get_pages, map_pages, and fault.
+These will be used to trace the pages are not only pulled in from disk,
+but are actually used by the application. Only those pages will be
+stored in the pack file, and this helps out the performance of boot up.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b2c37bfe1276a38db24f@syzkaller.appspotmail.com
+With the combination of these 3 new trace events and
+mm_filemap_add_to_page_cache, we observed a reduction in the pack file
+by 7.3% - 20% on ChromeOS varying by device.
 
-cgroup: Unknown subsys name 'net'
-BUG: key ffff88801b2e00d8 has not been registered!
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 5091 at kernel/locking/lockdep.c:4945 lockdep_init_map_type+0x4e3/0x910 kernel/locking/lockdep.c:4945
-Modules linked in:
-CPU: 0 PID: 5091 Comm: syz-executor Not tainted 6.10.0-rc4-next-20240617-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:lockdep_init_map_type+0x4e3/0x910 kernel/locking/lockdep.c:4945
-Code: 00 00 83 3d 0e ee 3f 0e 00 75 23 90 48 c7 c7 c0 bf ca 8b 48 c7 c6 60 c2 ca 8b e8 98 12 e6 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 e9 0d ff ff ff 48 c7 c7 00 c2 ca 8b 4c 89 fe e8 d4
-RSP: 0018:ffffc9000392f560 EFLAGS: 00010246
-RAX: fd5a9d02d6690300 RBX: ffff88802b44f2fa RCX: ffff888027300000
-RDX: dffffc0000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc9000392f630 R08: ffffffff81552402 R09: fffffbfff1c39afc
-R10: dffffc0000000000 R11: fffffbfff1c39afc R12: ffff88802b44f2d8
-R13: 1ffff92000725eb0 R14: 0000000000000000 R15: ffff88801b2e00d8
-FS:  000055557db2c480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f3fa310918 CR3: 000000001f034000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lockdep_init_map_waits include/linux/lockdep.h:135 [inline]
- lockdep_init_map_wait include/linux/lockdep.h:142 [inline]
- lockdep_init_map include/linux/lockdep.h:148 [inline]
- __kernfs_create_file+0x112/0x2e0 fs/kernfs/file.c:1046
- cgroup_add_file kernel/cgroup/cgroup.c:4216 [inline]
- cgroup_addrm_files+0xab8/0xe50 kernel/cgroup/cgroup.c:4270
- css_populate_dir+0x120/0x3b0 kernel/cgroup/cgroup.c:1761
- cgroup_apply_control_enable+0x621/0xaf0 kernel/cgroup/cgroup.c:3240
- cgroup_apply_control+0x97/0x800 kernel/cgroup/cgroup.c:3314
- rebind_subsystems+0x10a0/0x1500 kernel/cgroup/cgroup.c:1882
- cgroup_setup_root+0x3d3/0xb30 kernel/cgroup/cgroup.c:2132
- cgroup1_root_to_use kernel/cgroup/cgroup-v1.c:1224 [inline]
- cgroup1_get_tree+0x582/0x8c0 kernel/cgroup/cgroup-v1.c:1244
- vfs_get_tree+0x90/0x2a0 fs/super.c:1789
- do_new_mount+0x2be/0xb40 fs/namespace.c:3379
- do_mount fs/namespace.c:3719 [inline]
- __do_sys_mount fs/namespace.c:3925 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3902
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7e4547e62a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcd9331ab8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffcd9331c70 RCX: 00007f7e4547e62a
-RDX: 00007f7e454e51a6 RSI: 00007f7e454daa7e RDI: 00007f7e454d99b9
-RBP: 00007f7e454daa7e R08: 00007f7e454dac2a R09: 006f6972705f7465
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7e454d99b9
-R13: 00007f7e454e51a6 R14: 00007ffcd9331c88 R15: 00007ffcd9331ac0
- </TASK>
-
-
+Signed-off-by: Takaya Saeki <takayas@chromium.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ include/trace/events/filemap.h | 84 ++++++++++++++++++++++++++++++++++
+ mm/filemap.c                   |  4 ++
+ 2 files changed, 88 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/include/trace/events/filemap.h b/include/trace/events/filemap.h
+index 46c89c1e460c..68c705572c4f 100644
+--- a/include/trace/events/filemap.h
++++ b/include/trace/events/filemap.h
+@@ -56,6 +56,90 @@ DEFINE_EVENT(mm_filemap_op_page_cache, mm_filemap_add_to_page_cache,
+ 	TP_ARGS(folio)
+ 	);
+ 
++DECLARE_EVENT_CLASS(mm_filemap_op_page_cache_range,
++
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++
++	TP_ARGS(mapping, index, last_index),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, i_ino)
++		__field(dev_t, s_dev)
++		__field(unsigned long, index)
++		__field(unsigned long, last_index)
++	),
++
++	TP_fast_assign(
++		__entry->i_ino = mapping->host->i_ino;
++		if (mapping->host->i_sb)
++			__entry->s_dev =
++				mapping->host->i_sb->s_dev;
++		else
++			__entry->s_dev = mapping->host->i_rdev;
++		__entry->index = index;
++		__entry->last_index = last_index;
++	),
++
++	TP_printk(
++		"dev %d:%d ino %lx ofs=%lu max_ofs=%lu",
++		MAJOR(__entry->s_dev),
++		MINOR(__entry->s_dev), __entry->i_ino,
++		__entry->index << PAGE_SHIFT,
++		__entry->last_index << PAGE_SHIFT
++	)
++);
++
++DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_get_pages,
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++	TP_ARGS(mapping, index, last_index)
++);
++
++DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_map_pages,
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++	TP_ARGS(mapping, index, last_index)
++);
++
++TRACE_EVENT(mm_filemap_fault,
++	TP_PROTO(struct address_space *mapping, pgoff_t index),
++
++	TP_ARGS(mapping, index),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, i_ino)
++		__field(dev_t, s_dev)
++		__field(unsigned long, index)
++	),
++
++	TP_fast_assign(
++		__entry->i_ino = mapping->host->i_ino;
++		if (mapping->host->i_sb)
++			__entry->s_dev =
++				mapping->host->i_sb->s_dev;
++		else
++			__entry->s_dev = mapping->host->i_rdev;
++		__entry->index = index;
++	),
++
++	TP_printk(
++		"dev %d:%d ino %lx ofs=%lu",
++		MAJOR(__entry->s_dev),
++		MINOR(__entry->s_dev), __entry->i_ino,
++		__entry->index << PAGE_SHIFT
++	)
++);
++
+ TRACE_EVENT(filemap_set_wb_err,
+ 		TP_PROTO(struct address_space *mapping, errseq_t eseq),
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 876cc64aadd7..39f9d7fb3d2c 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2556,6 +2556,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 			goto err;
+ 	}
+ 
++	trace_mm_filemap_get_pages(mapping, index, last_index);
+ 	return 0;
+ err:
+ 	if (err < 0)
+@@ -3286,6 +3287,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	if (unlikely(index >= max_idx))
+ 		return VM_FAULT_SIGBUS;
+ 
++	trace_mm_filemap_fault(mapping, index);
++
+ 	/*
+ 	 * Do we have something in the page cache already?
+ 	 */
+@@ -3652,6 +3655,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
+ 	add_mm_counter(vma->vm_mm, folio_type, rss);
+ 	pte_unmap_unlock(vmf->pte, vmf->ptl);
++	trace_mm_filemap_map_pages(mapping, start_pgoff, end_pgoff);
+ out:
+ 	rcu_read_unlock();
+ 
+-- 
+2.45.2.627.g7a2c4fd464-goog
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
