@@ -1,66 +1,77 @@
-Return-Path: <linux-kernel+bounces-219698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F57590D6B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:11:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9D590D6DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE9E1F2270F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 237A428497A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03323DB89;
-	Tue, 18 Jun 2024 15:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9057B13D53F;
+	Tue, 18 Jun 2024 15:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hpk4Ikfd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oDLh2KyT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0ED482C6
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485521D69E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718723438; cv=none; b=u0jYVsPJDUli0rVHb95Fi8WctPNck150/lv7UvndOJbrs/HUwNYtPn+2VjkOk6suOxqhkkTfuOolB38AelZ2b5+s8CHR27lPoneIbCHu41M6lQr1WzxZ3DoD4sNacFERwIVP8W+esLZvHIg7qSVdsj9f8A+xua1MLMobPu4V+bU=
+	t=1718723536; cv=none; b=XIYV4XYaOoES/GLfDhiev5ZroBLDORsv+Dcpppr/AAWzdYGGaUG6a6ftjYWGtMRH2gUvjHIFnPGfBMwEqtbv10Qynp53ks701U5B3y0z89q+GdyIQPM5NtSytdp31iAJ9NFDVKArq8rPJTXbrRMOESJEFQio3Iew/lBLw2LxWN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718723438; c=relaxed/simple;
-	bh=AxiGyfC55u2RtY0Ev8YK8wIoUOAdy0LeEA5TKxtRv5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AXaw76JaUoJ5n+/B+AotjiS8XVP7j7okpC5P5qSJqlFK0k09PAoXexTrOOiizNidA+kNTpXhs0rUcBKao3oWZ/+Esfq4zjGZgiNdDVKpXfTl/PJUbKfLA5CMfhhjxozGMQd0yN/PdwX0IGdee2U8kktE55UftcGWMzbCd9BtVE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hpk4Ikfd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718723435;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1es3ECOkdNs+2hzIuvv3Jx9YKFXHOd3EXF7iaYcF0ds=;
-	b=Hpk4Ikfd/5feiK9crtxKDEo0hsrZxHPuF5EkontHSzGFsNNes3DmY8ishsDJrehX6tcQBh
-	VVFLJyvrHUzr9LLru1BK7uX6qtJXC5GeqK2xsKcsPkaxUtZdzVb8GKp50WRU8hM+7k+K1P
-	jov5yVDhWA5ZFf1tyWJiHW91yhavQiM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-1udAHGKsNN68fESFhGYFag-1; Tue,
- 18 Jun 2024 11:10:31 -0400
-X-MC-Unique: 1udAHGKsNN68fESFhGYFag-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8B95C19560B1;
-	Tue, 18 Jun 2024 15:10:30 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.39.192.208])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 67D8D1956057;
-	Tue, 18 Jun 2024 15:10:28 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Yosry Ahmed <yosryahmed@google.com>
-Subject: [PATCH v1] mm/rmap: cleanup partially-mapped handling in __folio_remove_rmap()
-Date: Tue, 18 Jun 2024 17:10:26 +0200
-Message-ID: <20240618151026.521019-1-david@redhat.com>
+	s=arc-20240116; t=1718723536; c=relaxed/simple;
+	bh=kiewTNom2O47OTfFgOcrJGUfRo6DrcAKHxtaAdWUzTQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GdhZInH7VUmwqces6Zt4hm8ZrsEXIsZg6RIGNu/eQX1cwjvAXfFxEkj20kYRZaeFn1W8KpKv5VgPX1/cKBz6LHffpgPI09K4qK1ewI9ibRI/EL6LhRr9LyI7Nff95YMDA51te37VUh5X2GBlnDF6XflfE5umUMEHgsxzBa7UD5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oDLh2KyT; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718723535; x=1750259535;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=kiewTNom2O47OTfFgOcrJGUfRo6DrcAKHxtaAdWUzTQ=;
+  b=oDLh2KyTUJtj/Chyl839AYqxnm+F0LDr7CE7fRjmAZVOvqf5HngAp/76
+   j6WhZKcBsPcfmRvUaHvHuXyc98GVczkIJJUkPrXMMPJX8uPDTNnY4IJ7v
+   IWuzjaNoMPs/hJNoA+4mwb05vSuoSvNoPu0me6AKL9t4Q7a4JxlD9MLHb
+   CzyJjeRKxoFVRLUDmcBbRlx/WCJyrJMrL1HQHLJD/4aqmbTG1bS2tX4Xr
+   hNLt+k6SqMGBgaPzHvOT7TQkP+gzmZkzMVs0r1JUiLPhhLhWqTAK1lnbA
+   bc/bIYugIvmm2RM8drKHI4mx67BEWj3MIzc5QP4tY5CujYzYK1f2OOiBo
+   A==;
+X-CSE-ConnectionGUID: LLJhLg2FS2eO0eWIHBQ3gg==
+X-CSE-MsgGUID: lcMDCmNkS/qjRRI8v32H8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15374175"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="15374175"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 08:12:14 -0700
+X-CSE-ConnectionGUID: vKnAiQhbTd6SK7nWUg7ALg==
+X-CSE-MsgGUID: JlX7slZ7SxC+JxQpickPIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="41426916"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa006.fm.intel.com with ESMTP; 18 Jun 2024 08:12:14 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@kernel.org,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Cc: ak@linux.intel.com,
+	eranian@google.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [RESEND PATCH 00/12] Support Lunar Lake and Arrow Lake core PMU
+Date: Tue, 18 Jun 2024 08:10:32 -0700
+Message-Id: <20240618151044.1318612-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,58 +79,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Let's simplify and reduce code indentation. In the RMAP_LEVEL_PTE case, we
-already check for nr when computing partially_mapped.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-For RMAP_LEVEL_PMD, it's a bit more confusing. Likely, we don't need the
-"nr" check, but we could have "nr < nr_pmdmapped" also if we stumbled
-into the "/* Raced ahead of another remove and an add? */" case. So
-let's simply move the nr check in there.
+From the core PMU' perspective, the Lunar Lake and Arrow Lake are the
+same, which are similar to the previous generation Meteor Lake. Both are
+hybrid platforms, with e-core and p-core.
 
-Note that partially_mapped is always false for small folios.
+The key differences include:
+- The e-core supports 3 new fixed counters
+- The p-core supports an updated PEBS Data Source format
+- More GP counters (Updated event constraint table)
+- New Architectural performance monitoring V6
+  (New Perfmon MSRs aliasing, umask2, eq).
+- New PEBS format V6 (Counters Snapshotting group)
+- New RDPMC metrics clear mode
 
-No functional change intended.
+The details for the above new features can be found in the Intel
+Architecture Instruction Set Extensions and Future Features (052).
+https://cdrdv2.intel.com/v1/dl/getContent/671368
 
-Cc: Yosry Ahmed <yosryahmed@google.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/rmap.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+The counters may not be continuous anymore. Patch 1-2 converts the max
+number of counters to a mask of counters. The change is a generic change
+which impacts all X86 platforms.
 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index afec4b6800caf..aa900e46cdf82 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1551,11 +1551,12 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
- 			}
- 		}
- 
--		partially_mapped = nr < nr_pmdmapped;
-+		partially_mapped = nr && nr < nr_pmdmapped;
- 		break;
- 	}
- 
--	if (nr) {
-+	if (partially_mapped && folio_test_anon(folio) &&
-+	    list_empty(&folio->_deferred_list))
- 		/*
- 		 * Queue anon large folio for deferred split if at least one
- 		 * page of the folio is unmapped and at least one page
-@@ -1563,10 +1564,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
- 		 *
- 		 * Check partially_mapped first to ensure it is a large folio.
- 		 */
--		if (folio_test_anon(folio) && partially_mapped &&
--		    list_empty(&folio->_deferred_list))
--			deferred_split_folio(folio);
--	}
-+		deferred_split_folio(folio);
- 	__folio_mod_stat(folio, -nr, -nr_pmdmapped);
- 
- 	/*
+Patch 3-4 supports all the legacy features on LNL and ARL.
+
+Patch 5-7 supports the new Architectural performance monitoring V6.
+
+Patch 8-11 supports the new PEBS format V6.
+
+Patch 12 supports the new RDPMC metrics clear mode.
+
+Kan Liang (12):
+  perf/x86/intel: Support the PEBS event mask
+  perf/x86: Support counter mask
+  perf/x86: Add Lunar Lake and Arrow Lake support
+  perf/x86/intel: Support new data source for Lunar Lake
+  perf/x86: Add config_mask to represent EVENTSEL bitmask
+  perf/x86/intel: Support PERFEVTSEL extension
+  perf/x86/intel: Support Perfmon MSRs aliasing
+  perf/x86: Extend event update interface
+  perf: Extend perf_output_read
+  perf/x86/intel: Move PEBS event update after the sample output
+  perf/x86/intel: Support PEBS counters snapshotting
+  perf/x86/intel: Support RDPMC metrics clear mode
+
+ arch/x86/events/amd/core.c           |  26 +-
+ arch/x86/events/core.c               | 123 +++----
+ arch/x86/events/intel/core.c         | 466 ++++++++++++++++++++-------
+ arch/x86/events/intel/ds.c           | 267 +++++++++++++--
+ arch/x86/events/intel/knc.c          |   2 +-
+ arch/x86/events/intel/p4.c           |  12 +-
+ arch/x86/events/intel/p6.c           |   2 +-
+ arch/x86/events/perf_event.h         |  81 ++++-
+ arch/x86/events/perf_event_flags.h   |   2 +-
+ arch/x86/events/zhaoxin/core.c       |  14 +-
+ arch/x86/include/asm/intel_ds.h      |   6 +
+ arch/x86/include/asm/msr-index.h     |   6 +
+ arch/x86/include/asm/perf_event.h    |  27 ++
+ include/uapi/linux/perf_event.h      |   6 +-
+ kernel/events/core.c                 |  15 +-
+ tools/perf/Documentation/topdown.txt |   9 +-
+ 16 files changed, 810 insertions(+), 254 deletions(-)
+
 -- 
-2.45.2
+2.35.1
 
 
