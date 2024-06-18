@@ -1,344 +1,233 @@
-Return-Path: <linux-kernel+bounces-220185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B989390DDDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:53:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44B290DDDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4947D1F21368
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:53:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE2F1C23313
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38655178365;
-	Tue, 18 Jun 2024 20:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5700E176AB0;
+	Tue, 18 Jun 2024 20:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lyreBND0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OB6XPpzd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AA515EFAF;
-	Tue, 18 Jun 2024 20:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D398C36AEF
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718743962; cv=none; b=ZIspCrxhSiRB618spTR7uBObnO85BLRKPKL9ewIETc6PelIVuVtEgIH/4yopqWU6UaI54PjsXaDbaAP6jniDAY2V3I/34Q9Ymp38pdQYObKOocxY88lS+NsXgjaYqs51j1A2qCBnwF7br9MwCybvJtPGFldmftt/s0bjhIOFKDA=
+	t=1718744054; cv=none; b=ZoynhPGKLTQEiikh2BW924NwURxjZeqi21WV7mE96xLHhzYarCh8sGyV1M7YEWS13ubcowOoSqeyB9SiUFcEbJsBi3NEhG1GjRFgkWYJMuNsAKEZ2VrOvTzdWiiWsGjPCvWcCIuDLM/i3pt9u+XezousjbcObUy5BxDKtiHTIEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718743962; c=relaxed/simple;
-	bh=Hi06hPfdn3udo4YD/TXcS150lCLSlF8kHt7+6Esd+M8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QkOdFNeUhWvReNFKc4WGmoLN0ChFGtfPSke0OS7SMoth/avLnCV2/5b1jU1A9iLpDYVHXMUNOIaKgiwILcyYxPmKuejU3B2cNfLeecuJPbAp74NV++tqjUD33EUCf89gyq6euyN/3xR4uGyErUHEsSoSsKQPUbOQrDZZ8aOcsCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lyreBND0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IBi8V2005389;
-	Tue, 18 Jun 2024 20:52:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/pGKFLivsmybOVo2YC+Rib89/pjxJijeCpoCj7hnxew=; b=lyreBND0smqY0Lgz
-	mWqMtiFwJzazXeuI/RSZ+g0+0WBPMyN5l0zrYFFpTLRTyos+ASlUn7PE8eK0Ok+K
-	XvjqqmwHYBiadYINBrZMR5FuDfRFVQtxOFCCr40bTLS0zLcq9TA6Ue75Kl28moC6
-	KXt3TU+C1gFsiLwOoki4tL9wMTisKLXE/lwsOXWwQ5l7qbu2FnY3PR1VOA8P4SX+
-	SOkoKoaALQeEMrdyyVYZpzn08N5pcWddWmNW5jsPXqWs0VsZV2jRe+NYzFTSxQD+
-	PdT1qCB4IKLjGdzvNprCmiU0SKgrXbGnGpWnUvaHm/qK0mnHDZ4vvLU+1cl3LC67
-	xlEmrQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu9m6sajc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 20:52:06 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IKq5up010378
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 20:52:05 GMT
-Received: from [10.110.93.116] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 13:52:03 -0700
-Message-ID: <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
-Date: Tue, 18 Jun 2024 13:52:03 -0700
+	s=arc-20240116; t=1718744054; c=relaxed/simple;
+	bh=OCrX4q63PJGIMkk1OE7cn8W3PWwaJkynKJIRmjgsbeI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iiL7GlE72Gnl2Q3hSGN4Ntih5XJWMEiOvOkp53BPGR4lcLOd/xvZw+Tyyi1YujZUO88NnUHQvgKjvIw8kD8NHhtiFIHCdVj1lLtsru35YdR4IqH2/aQpy2MwbHs5qagu3LsvjLdfD5DFZVQ8FcrJs+9m10S4ukFMxltJJtkR/r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OB6XPpzd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718744051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=T4M1vg2KI3INTfsrYTcRbvvCZ9fFmnVg64uCWrgyPMY=;
+	b=OB6XPpzdQreQTTud8ju1z91iIkFaXR7mXksUTIq+3rvubtUQmZK/I7cWYZGM03NnJ8faKV
+	7GeRPfaPjlbvArOCydwAqpZRRagTPac7RGAK/fknWVGwfAPpXioDJw4MiGDkxsv0mslBOJ
+	h9YCs84gyEHtP53ZwwVlCIZNnn612kc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-526-f6uhfZFrOkmKbFqR5GiibA-1; Tue, 18 Jun 2024 16:54:10 -0400
+X-MC-Unique: f6uhfZFrOkmKbFqR5GiibA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42108822a8eso968165e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:54:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718744049; x=1719348849;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=T4M1vg2KI3INTfsrYTcRbvvCZ9fFmnVg64uCWrgyPMY=;
+        b=SjC+uB/OJ5fIONat0+66UZjreBu2CD1tf27xd8uvLqvGFI2MB7IQWheIaZL6pzPgTO
+         sHXCydnzfAov3+N0vdJj98xtvu4A22G32vljVfrh3Mt8haL0IMBFMPKg3wiLUpBj89tv
+         JPdnKXhJemjmrapPc2/zEgDtPVL5oUXfFXaX2E0o1qR7repgyo9zdORwIeYRNgoDW3dT
+         CmJvcQqgh1o6bhuMnb0mTJX1TAvtvRVDtSZ32kSSO+pmJBoPAlFQOH9Gn2/Y7UmXov/a
+         rsRu75agvh09Iuj8oiLIQpuYXIikkbuSzIna7WSmgLZeqDuCqsc50MLTIGA3PYNWFbrO
+         MZbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQh/KfCiwHsj12cmQCxNpv51fJH4qUqC3wXI1nKgr8NGlsLpK16f8DAJOmRwvlbrdqngRsahWlOzYlD85ldB96jKVM/QSkfo8vtwwm
+X-Gm-Message-State: AOJu0Yx1TyX9FvinEwgK3nW9LqbIoXm6exuPvk5U1WCJbfb3hhniWVeF
+	ZUiPkBTC9Idvy9CJyJYEoW6MWOZfv6RfazjieAcmCpMOPhdk15YNHaXByS5NdOY5ih1hyq7XyPk
+	Spa0Bk3cNpTiWFwo+HE2AkvKriy+BqyJBwYKkKA/t133yyWvLtmaQyU7ixPPYTw==
+X-Received: by 2002:adf:f10d:0:b0:35f:1bb0:ed8e with SMTP id ffacd0b85a97d-3609ea6c78amr3512064f8f.21.1718744049263;
+        Tue, 18 Jun 2024 13:54:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF2dQnC66MnPCev8ct4GNUIewCHJAEIIYdimrD2HDVajRPI3kf7fS3o3xuuC3od8NCHsWLEJQ==
+X-Received: by 2002:adf:f10d:0:b0:35f:1bb0:ed8e with SMTP id ffacd0b85a97d-3609ea6c78amr3512046f8f.21.1718744048694;
+        Tue, 18 Jun 2024 13:54:08 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff23361.dip0.t-ipconnect.de. [79.242.51.97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f612800csm199946905e9.28.2024.06.18.13.54.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 13:54:08 -0700 (PDT)
+Message-ID: <916f5ba4-02c4-4a33-97e1-5343bde5ae54@redhat.com>
+Date: Tue, 18 Jun 2024 22:54:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] selftests/mm: mseal, self_elf: fix missing
+ __NR_mseal
+To: John Hubbard <jhubbard@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>,
+ Axel Rasmussen <axelrasmussen@google.com>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240618022422.804305-1-jhubbard@nvidia.com>
+ <20240618022422.804305-2-jhubbard@nvidia.com>
+ <0b152bea-ccb6-403e-9c57-08ed5e828135@redhat.com>
+ <9d08f768-b9da-4a44-9d75-a16d6cde6b66@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-To: =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?=
-	<amadeuszx.slawinski@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <robh@kernel.org>, <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
- <20240610235808.22173-33-quic_wcheng@quicinc.com>
- <5be51e1f-70c9-4bbc-96fa-1e50e441bd35@linux.intel.com>
- <408d9e8e-0f40-7e66-54be-2f8d2c0783a3@quicinc.com>
- <ca1e1063-e1bd-4e03-a7cd-91985e9954e9@linux.intel.com>
- <096d59a0-5e18-092c-c9ae-d98130226f06@quicinc.com>
- <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <9d08f768-b9da-4a44-9d75-a16d6cde6b66@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DeJ37znB1cfWADYf-25KNa9cNl2mA-Qo
-X-Proofpoint-ORIG-GUID: DeJ37znB1cfWADYf-25KNa9cNl2mA-Qo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_04,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- spamscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0 adultscore=0
- bulkscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180154
 
-Hi Amadeusz,
-
-On 6/18/2024 4:42 AM, Amadeusz Sławiński wrote:
-> On 6/17/2024 7:02 PM, Wesley Cheng wrote:
->> Hi Amadeusz,
+On 18.06.24 22:14, John Hubbard wrote:
+> On 6/17/24 11:56 PM, David Hildenbrand wrote:
+>> On 18.06.24 04:24, John Hubbard wrote:
+> ...
+>>> diff --git a/tools/testing/selftests/mm/seal_elf.c b/tools/testing/selftests/mm/seal_elf.c
+>>> index f2babec79bb6..27bf2f84231d 100644
+>>> --- a/tools/testing/selftests/mm/seal_elf.c
+>>> +++ b/tools/testing/selftests/mm/seal_elf.c
+>>> @@ -2,7 +2,7 @@
+>>>    #define _GNU_SOURCE
+>>>    #include <sys/mman.h>
+>>>    #include <stdint.h>
+>>> -#include <unistd.h>
+>>> +#include <asm-generic/unistd.h>
+>>>    #include <string.h>
+>>>    #include <sys/time.h>
+>>>    #include <sys/resource.h>
 >>
->> On 6/13/2024 12:46 AM, Amadeusz Sławiński wrote:
->>> On 6/12/2024 9:28 PM, Wesley Cheng wrote:
->>>> Hi Amadeusz,
->>>>
->>>> On 6/12/2024 7:47 AM, Amadeusz Sławiński wrote:
->>>>> On 6/11/2024 1:58 AM, Wesley Cheng wrote:
->>>>>
->>>>> (...)
->>>>>
->>>>>> +In the case where the USB offload driver is unbounded, while USB 
->>>>>> SND is
->>>>>
->>>>> unbounded -> unbound
->>>>>
->>>>> (...)
->>>>>
->>>>>> +SOC USB and USB Sound Kcontrols
->>>>>> +===============================
->>>>>> +Details
->>>>>> +-------
->>>>>> +SOC USB and USB sound expose a set of SND kcontrols for 
->>>>>> applications to select
->>>>>> +and fetch the current offloading status for the ASoC platform 
->>>>>> sound card. Kcontrols
->>>>>> +are split between two layers:
->>>>>> +
->>>>>> +    - USB sound - Notifies the sound card number for the ASoC 
->>>>>> platform sound
->>>>>> +      card that it is registered to for supporting audio offload.
->>>>>> +
->>>>>> +    - SOC USB - Maintains the current status of the offload path, 
->>>>>> and device
->>>>>> +      (USB sound card and PCM device) information.  This would be 
->>>>>> the main
->>>>>> +      card that applications can read to determine offloading 
->>>>>> capabilities.
->>>>>> +
->>>>>> +Implementation
->>>>>> +--------------
->>>>>> +
->>>>>> +**Example:**
->>>>>> +
->>>>>> +  **Sound Cards**:
->>>>>> +
->>>>>> +    ::
->>>>>> +
->>>>>> +      0 [SM8250MTPWCD938]: sm8250 - SM8250-MTP-WCD9380-WSA8810-VA-D
->>>>>> +                     SM8250-MTP-WCD9380-WSA8810-VA-DMIC
->>>>>> +      1 [C320M          ]: USB-Audio - Plantronics C320-M
->>>>>> +                     Plantronics Plantronics C320-M at 
->>>>>> usb-xhci-hcd.1.auto-1, full speed
->>>>>> +
->>>>>> +
->>>>>> +  **Platform Sound Card** - card#0:
->>>>>> +
->>>>>> +    ::
->>>>>> +
->>>>>> +      USB Offload Playback Route Card Select  1 (range -1->32)
->>>>>> +      USB Offload Playback Route PCM Select   0 (range -1->255)
->>>>>> +      USB Offload Playback Route Card Status  -1 (range -1->32)
->>>>>> +      USB Offload Playback Route PCM Status   -1 (range -1->255)
->>>>>> +
->>>>>> +
->>>>>> +  **USB Sound Card** - card#1:
->>>>>> +
->>>>>> +    ::
->>>>>> +
->>>>>> +      USB Offload Playback Capable Card         0 (range -1->32)
->>>>>> +
->>>>>> +
->>>>>> +The platform sound card(card#0) kcontrols are created as part of 
->>>>>> adding the SOC
->>>>>> +USB device using **snd_soc_usb_add_port()**.  The following 
->>>>>> kcontrols are defined
->>>>>> +as:
->>>>>> +
->>>>>> +  - ``USB Offload Playback Route Card Status`` **(R)**: USB sound 
->>>>>> card device index
->>>>>> +    that defines which USB SND resources are currently offloaded. 
->>>>>> If -1 is seen, it
->>>>>> +    signifies that offload is not active.
->>>>>> +  - ``USB Offload Playback Route PCM Status`` **(R)**: USB PCM 
->>>>>> device index
->>>>>> +    that defines which USB SND resources are currently offloaded. 
->>>>>> If -1 is seen, it
->>>>>> +    signifies that offload is not active.
->>>>>> +  - ``USB Offload Playback Route Card Select`` **(R/W)**: USB 
->>>>>> sound card index which
->>>>>> +    selects the USB device to initiate offloading on.  If no 
->>>>>> value is written to the
->>>>>> +    kcontrol, then the last USB device discovered card index will 
->>>>>> be chosen.
->>>>>
->>>>> I see only one kcontrol, what if hardware is capable of offloading 
->>>>> on more cards, is it possible to do offloading on more than one 
->>>>> device?
->>>>>
->>>>>> +  - ``USB Offload Playback Route PCM Select`` **(R/W)**: USB PCM 
->>>>>> index which selects
->>>>>> +    the USB device to initiate offloading on.  If no value is 
->>>>>> written to the
->>>>>> +    kcontrol, then the last USB device discovered PCM zero index 
->>>>>> will be chosen.
->>>>>> +
->>>>>> +The USB sound card(card#1) kcontrols are created as USB audio 
->>>>>> devices are plugged
->>>>>> +into the physical USB port and enumerated.  The kcontrols are 
->>>>>> defined as:
->>>>>> +
->>>>>> +  - ``USB Offload Playback Capable Card`` **(R)**: Provides the 
->>>>>> sound card
->>>>>> +    number/index that supports USB offloading.  Further/follow up 
->>>>>> queries about
->>>>>> +    the current offload state can be handled by reading the 
->>>>>> offload status
->>>>>> +    kcontrol exposed by the platform card.
->>>>>> +
->>>>>
->>>>>
->>>>> Why do we need to some magic between cards? I feel like whole 
->>>>> kcontrol thing is overengineered a bit - I'm not sure I understand 
->>>>> the need to do linking between cards. It would feel a lot simpler 
->>>>> if USB card exposed one "USB Offload" kcontrol on USB card if USB 
->>>>> controller supports offloading and allowed to set it to true/false 
->>>>> to allow user to choose if they want to do offloading on device.
->>>>>
->>>>> (...)
->>>>
->>>> Based on feedback from Pierre, what I understood is that for some 
->>>> applications, there won't be an order on which sound card is 
->>>> queried/opened first.
->>>>
->>>
->>> Yes if you have multiple cards, they are probed in random order.
->>>
->>>> So the end use case example given was if an application opened the 
->>>> USB sound card first, it can see if there is an offload path 
->>>> available. If there is then it can enable the offload path on the 
->>>> corresponding card if desired.
->>>>
->>>
->>> This still doesn't explain why you need to link cards using controls. 
->>> What would not work with simple "Enable Offload" with true/false 
->>> values on USB card that works while you do have above routing controls?
->>>
+>> Still confused. Let's take a look at "microblaze".
 >>
->> Sorry for the late response.
+>> arch/microblaze/include/asm/unistd.h
+>>    -> #include <uapi/asm/unistd.h>
 >>
->> I think either way, even with the "Enable Offload" kcontrol in USB 
->> SND, we'd need a way to link these cards, because if you have multiple 
->> USB audio devices connected, and say... your offload mechanism only 
->> supports one stream.  Then I assume we'd still need to way to 
->> determine if that stream can be enabled for that USB SND device or not.
+>> arch/microblaze/include/uapi/asm/unistd.h
+>>    -> #include <asm/unistd_32.h>
+>>     -> Generated during "make headers"
 >>
->> Since the USB SND isn't really the entity maintaining the offload 
->> path, I went with the decision to add that route selection to the ASoC 
->> platform card. It would have access to all the parameters supported by 
->> the audio DSP.
+>> usr/include/asm/unistd_32.h is generated via
+>> arch/microblaze/kernel/syscalls/Makefile with the syshdr command.
+>>
+>> So we never end up including asm-generic/unistd.h directly on microblaze, but rather converts it (IIUC) to something else.
 >>
 > 
-> Problem with card selection is that it will most likely work in pretty 
-> random way during reboots and similar scenarios.
+> Yes.
+>    
+>> That will work as expected here?
+>>
 > 
-> Taking from your example:
->      USB Offload Playback Route Card Select  1 (range -1->32)
->      USB Offload Playback Route PCM Select   0 (range -1->255)
->      USB Offload Playback Route Card Status  -1 (range -1->32)
->      USB Offload Playback Route PCM Status   -1 (range -1->255)
+> No. :)
 > 
-> This tells that hw:1,0 will be offloaded USB card. What happens if after 
-> reboot the USB card and offload card change places, the control will be 
-> pointing at its owner... Another scenario to consider is that user 
-> attaches two USB cards and only first one does offload. Now what happens 
-> when they enumerate in different order after reboot (swapping places)? 
-> Taking into the account that most systems restore previous values of 
-> controls in some way - this will point at wrong card.
-
-That sounds like a problem that would exist with current USB SND 
-implementation too?  Removing the offloading perspective, how does the 
-system ensure that the previous setting stays persistent?  For example, 
-as you mentioned, depending on which USB device enumerates first, the 
-sound card may be different so cards will be switched.
-
-I think I mentioned this previously in another discussion, but I think 
-the idea was that with the
-USB Offload Playback Capable Card
-
-kcontrol, would allow the system to at least know there is an offload 
-capable path pointing to the ASoC platform card, and fetch more detailed 
-information about which device is selected for offloading, etc...
-
+> The problem, and the source of confusion here, is that for most user
+> space programs, the header file inclusion behaves as you've mentioned
+> above. However, those programs are installed on a single computer that
+> has a single set of asm and kernel headers installed.
 > 
-> In my opinion Offload capability should be the capability of the 
-> endpoint - in this case USB card (even if in the background it needs to 
-> talk to some other device) and it should be exposed as such. Currently 
-> you are mixing capabilities of your audio card with capabilities of USB 
-> card.
+> We are quite special here, because we are building a set of user space
+> programs that:
 > 
-> And adding more controls will not make it easy to use from end user 
-> perspective. Most users will most likely want for the devices to perform 
-> offload automatically if possible to save power and just have control to 
-> disable it in case they want to test if it works better without it in 
-> case of some problems.
-
-I agree with you that we need to keep the controls at a minimum, but I 
-think what I have in place is fairly reasonable.  If we switch to having 
-the USB SND controlling things, we'd save maybe one control?  I think 
-keeping the offload status controls are still fairly valuable in both 
-scenarios, as userspace may need to verify which USB SND card is being 
-offloaded.
-
+>       a) Mostly avoids using the installed (distro) system header files.
 > 
-> Additional question what happens if you want to offload two usb cards, 
-> currently the above set of controls allows you to only point at one 
-> card, will you be adding additional set of above controls dynamically 
-> for each USB card attached?
+>       b) Must build (and run) on all supported CPU architectures
 > 
+>       c) Must occasionally use symbols that have so new that they have not
+>          yet been included in the distro's header files.
+> 
+> Doing (a) creates a new problem: how to get a set of cross-platform
+> headers that works in all cases.
+> 
+> Fortunately, asm-generic headers solve that one. Which is why we need to
+> use them here.
+> 
+> The reason this hasn't really come up yet, is that until now, the
+> kselftests requirement (which I'm trying to remove) was that "make
+> headers" must first be run. That allowed the selftests to get a snapshot
+> of sufficiently new header files that looked just like (and conflict
+> with) the installed system headers.
+> 
+> I can update the commit description with some of the above, if it helps.
 
-It would depend on the number of offload streams that folks may be 
-supporting on their platform.  In our case we only have one available 
-stream, so applications would need to switch between the two devices 
-using the card/pcm selector.
+I think it will. The main concern I had was that we could be ending up 
+including headers with *wrong* data. As long as (a) it compiles where 
+it's supposed to compile (b) it runs where it's supposed to run, we're 
+good :)
 
-In this case, there will be only one set of controls to select the 
-card/pcm device.  As of now (I think I'll change to to add another 
-separate set of controls per stream) if you did support multiple 
-streams, then the current card/PCM device selector would take in 
-multiple arugments. (ie for two streams the kcontrol can take in two values)
+-- 
+Cheers,
 
-Thanks
-Wesley Cheng
+David / dhildenb
+
 
