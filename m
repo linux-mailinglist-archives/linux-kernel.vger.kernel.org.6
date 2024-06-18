@@ -1,42 +1,62 @@
-Return-Path: <linux-kernel+bounces-220310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BCF90DF86
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:00:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8B390DF8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572061C213EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:00:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5E8F1C2126E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFEA176AC9;
-	Tue, 18 Jun 2024 23:00:10 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B03717E46A;
+	Tue, 18 Jun 2024 23:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h1atyNwS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EE71741DD;
-	Tue, 18 Jun 2024 23:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8752014D44D;
+	Tue, 18 Jun 2024 23:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718751609; cv=none; b=nkL4IcrobZvA+lcMTRsMJOyeG5Ekr7oHQRcP6+6GB1N4fNsejz4XvRtGZXUhC2LRf6Vw/GiWgXmvjSObgaDQ2uW0WnVfIXoyYOQZufWJErQ7wUc3A1qhcUc5Qy8ELGm7K/HcEQcPf5N8au/opDpnBeQZWf8t48TAz1j7mz1Bgdo=
+	t=1718751772; cv=none; b=tJ13dqc1RlZIore4Jix3Gm27zKbsrYsyaW1ho3bsPBzkBVm475faP6ti+RJgbKKowg/EBDcHIQsjoRzhfzjaiZniaVetotWzwxEsxL3ClexImd01dO/afcDm76HrFhVTEjBbBpHg5oh0Tx9zWLeLE82VKKugbWWFAuhkXHs9h4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718751609; c=relaxed/simple;
-	bh=YfbZGdG3lv3ijPhzTpNCazG1p+AY0AlIC5ann74cl9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ADEx8UcF2gpiJoW2SV2SF9g+VIT9+jWqh+NbnL2xx6opastBWrnI/v+3162i73dQs1u35XOJkOjBcKkZQpjnIz4aqsIrO4g13i4m+YPFMqlfzUjKSyXntHMmKEkFthb+9v6QyzUkgr9gdGyWAu2Sz8IRQ66yceFvLkUCR8iB+iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af4b2.dynamic.kabel-deutschland.de [95.90.244.178])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id E6A9D61E5FE01;
-	Wed, 19 Jun 2024 00:59:16 +0200 (CEST)
-Message-ID: <f38dd1e6-8eb0-42ef-a539-d1bce195a554@molgen.mpg.de>
-Date: Wed, 19 Jun 2024 00:59:15 +0200
+	s=arc-20240116; t=1718751772; c=relaxed/simple;
+	bh=wGlyPICsPKE9PE4FG2HJPoYWAfqOKwZosTXlPTYNRlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RLvYJjccj976dRiO6qMyVpaRqOzvoF4aKshIUUeuK3YiY1XgEmbsohvlmRhVkNcq6nZHycztJBNsM0mmlEMN2p3ldzSN8/B5vr74pBuQpE1fPEoOUU7tT+n4oI2oK7e61uCO3q070zTo56/0AXRMVBp2mEWB0F5VXAKy2gGF+MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h1atyNwS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ILaOPn010843;
+	Tue, 18 Jun 2024 23:02:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OqqHrua9arZuM1QP7wr//VxcSAWtoOVDR656DBaoAaQ=; b=h1atyNwSkHrGlz5f
+	igQ+V1qHfnqwLvfc1dGc3B7AH6Fj124AJapVuYwLBHFenWH/MqzMpuCtKLiIW4GN
+	/OqUX8NK73H26xPLpmryu0FDCMC3n7s8UtTOKUEgP5HjQiKRu3WTbct7MVSV6HUu
+	odX2npgFvM3f8wpEUvNspJ8abf8hQdyKlgtiF267JpPysWbh6KfDUfT1fT5+RThg
+	PWclutsHJjuWlqpBhMBBaqfxfIuQjwx74rRWfxLcizp8TCZGkf/wrMUr9yYY88Qa
+	fgvAi7ZL4aIQPbnYi4r1ZhCBIsdDpAAkUiZAiiGULy8Ug6TxMsIwRvdXhDyDFVlk
+	5q5OoA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja2g4e7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 23:02:44 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IN2g9j012376
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 23:02:42 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 16:02:42 -0700
+Message-ID: <fb66bdcc-2bc7-4558-9c96-b41619c44021@quicinc.com>
+Date: Tue, 18 Jun 2024 16:02:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,90 +64,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT PATCH v2 2/3] hwmon: (spd5118) Use spd5118 specific
- read/write operations
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Armin Wolf <W_Armin@gmx.de>, Stephen Horvath <s.horvath@outlook.com.au>,
- Sasha Kozachuk <skozachuk@google.com>, John Hamrick <johnham@google.com>,
- Chris Sarra <chrissarra@google.com>, linux-hwmon@vger.kernel.org,
- Jean Delvare <jdelvare@suse.com>, Heiner Kallweit <hkallweit1@gmail.com>
-References: <20240618195348.1670547-1-linux@roeck-us.net>
- <20240618195348.1670547-3-linux@roeck-us.net>
- <a7f208df-4c9e-4fa2-9d17-80895db51182@molgen.mpg.de>
- <661def21-b0a9-49c1-937e-8526008f529c@roeck-us.net>
- <9440d6f5-3164-40c9-95a1-00403b7f753e@molgen.mpg.de>
- <d6999770-c308-4ff1-b667-6095c83c55dc@roeck-us.net>
+Subject: Re: [PATCH v2 05/14] drm/msm/hdmi: drop clock frequency assignment
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <d6999770-c308-4ff1-b667-6095c83c55dc@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
+ <20240522-fd-hdmi-hpd-v2-5-c30bdb7c5c7e@linaro.org>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240522-fd-hdmi-hpd-v2-5-c30bdb7c5c7e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ari14C3QHLXDbu57MSHaI0wRRzXCBkan
+X-Proofpoint-ORIG-GUID: ari14C3QHLXDbu57MSHaI0wRRzXCBkan
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_06,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=999
+ malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180169
 
 
-[Cc: +Heiner Kallweit]
 
-
-Dear Guenter,
-
-
-Thank you for your support and trying all these things without having 
-such a system at hand.
-
-Am 19.06.24 um 00:37 schrieb Guenter Roeck:
-
-> On 6/18/24 14:45, Paul Menzel wrote:
-
->> Am 18.06.24 um 23:08 schrieb Guenter Roeck:
->>
->>> On 6/18/24 13:37, Paul Menzel wrote:
->>> [ ... ]
->>>> Unfortunately, it still fails:
->>>>
->>>>      $ git log --no-decorate --oneline -4
->>>>      7ddcff2d44ae3 hwmon: (spd5118) Add support for Renesas/ITD SPD5118 hub controllers
->>>>      e89136743324f hwmon: (spd5118) Use spd5118 specific read/write operations
->>>>      0fcc7279f0cc4 hwmon: (spd5118) Use regmap to implement paging
->>>>      801b6aad6fa7a hwmon: (spd5118) Add configuration option for auto-detection
->>>>
->>>>      $ uname -r
->>>>      6.10.0-rc4.mx64.461-00050-g7ddcff2d44ae
->>>>      $ sudo bash -c 'echo 56000 > /sys/class/hwmon/hwmon3/temp1_max'
->>>>      bash: line 1: echo: write error: No such device or address
->>>
->>> Now I am really baffled. I don't think we could do anything simpler
->>> than that.
->>>
->>> Please try
->>>      sudo i2cset -y -f 0 0x50 0x21 0x06
->>>
->>> That should update the critical temperature from 85 degrees C
->>> to 86 degrees C. If that doesn't work, we'll be really out of luck
->>> with that controller (or at least I don't have an idea what else to 
->>> try).
->>
->> Bad news:
->>
->>      $ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cset -y -f 0 0x50 0x21 0x06
->>      Error: Write failed
+On 5/22/2024 3:50 AM, Dmitry Baryshkov wrote:
+> The only clock which has frequency being set through hpd_freqs is the
+> "core" aka MDSS_HDMI_CLK clock. It always has the specified frequency,
+> so we can drop corresponding clk_set_rate() call together with the
+> hpd_freq infrastructure.
 > 
-> I wonder if there is some write protect active in your system.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Not that I know of.
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 
-> I don't see anything in the spd5118 specification, though, or in the
-> i801 datasheet. I really don't know what else we could try, sorry.
-> Unfortunately I don't have a system with Intel CPU, much less one
-> with DDR5, so I won't be able to play with this myself and/or 
-> determine if there is something special with your system, or if this
-> is a generic problem with i801 controllers.
+> ---
+>   drivers/gpu/drm/msm/hdmi/hdmi.c     | 2 --
+>   drivers/gpu/drm/msm/hdmi/hdmi.h     | 1 -
+>   drivers/gpu/drm/msm/hdmi/hdmi_hpd.c | 9 ---------
+>   3 files changed, 12 deletions(-)
 > 
-> Let's hope that we get some feedback from others.
-
-Thank you and kind regards,
-
-Paul
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+> index 681265e29aa0..c14e009f38b1 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi.c
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+> @@ -236,12 +236,10 @@ static const struct hdmi_platform_config hdmi_tx_8960_config = {
+>   
+>   static const char *pwr_reg_names_8x74[] = {"core-vdda", "core-vcc"};
+>   static const char *hpd_clk_names_8x74[] = {"iface", "core", "mdp_core", "alt_iface"};
+> -static unsigned long hpd_clk_freq_8x74[] = {0, 19200000, 0, 0};
+>   
+>   static const struct hdmi_platform_config hdmi_tx_8974_config = {
+>   		HDMI_CFG(pwr_reg, 8x74),
+>   		HDMI_CFG(hpd_clk, 8x74),
+> -		.hpd_freq      = hpd_clk_freq_8x74,
+>   };
+>   
+>   /*
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.h b/drivers/gpu/drm/msm/hdmi/hdmi.h
+> index abdbe4779cf9..c0d60ed23b75 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi.h
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.h
+> @@ -96,7 +96,6 @@ struct hdmi_platform_config {
+>   
+>   	/* clks that need to be on for hpd: */
+>   	const char **hpd_clk_names;
+> -	const long unsigned *hpd_freq;
+>   	int hpd_clk_cnt;
+>   };
+>   
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c b/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c
+> index 9ce0ffa35417..7ae69b14e953 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c
+> @@ -68,15 +68,6 @@ static void enable_hpd_clocks(struct hdmi *hdmi, bool enable)
+>   
+>   	if (enable) {
+>   		for (i = 0; i < config->hpd_clk_cnt; i++) {
+> -			if (config->hpd_freq && config->hpd_freq[i]) {
+> -				ret = clk_set_rate(hdmi->hpd_clks[i],
+> -						   config->hpd_freq[i]);
+> -				if (ret)
+> -					dev_warn(dev,
+> -						 "failed to set clk %s (%d)\n",
+> -						 config->hpd_clk_names[i], ret);
+> -			}
+> -
+>   			ret = clk_prepare_enable(hdmi->hpd_clks[i]);
+>   			if (ret) {
+>   				DRM_DEV_ERROR(dev,
+> 
+> -- 
+> 2.39.2
+> 
 
