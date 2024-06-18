@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-219851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF3090D8E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:17:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1848990D8E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0550D281DC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B64371F269E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F35152DEB;
-	Tue, 18 Jun 2024 16:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F631153800;
+	Tue, 18 Jun 2024 16:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="lc9PVF+p";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="LS/OLGrv"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gx5MAdQL"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FF513A89B;
-	Tue, 18 Jun 2024 16:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FFF77101;
+	Tue, 18 Jun 2024 16:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718727166; cv=none; b=q9jPsWB2jZdeHUEc6Ns26O26em19b8mQ1pwlZ35ym+zdjpfj9XTNTy8xGslJgifvFqkScKRUBwla8AwtOze33nvCYatqU2YaTFMZA/Za4LytsKqJ2oEbElDpKqJFg2xgfGwyOZFahSmgiksSqalzEjU8jeFEJkIZ/c9+aenghs0=
+	t=1718727241; cv=none; b=u5CqycKbxqmqp6eUts/E4cD0sM1BtqgV6RTVdhxfmtR8DdW0fV67/WNCgYNvJU6lGnsTcy9XT+dST0zgfNNgbV03E5McSuhwN43/Kzj25oq2eKG99gOliKyNdTBBPJ+dki6La8jMt5RN4p+gm9KFl0kKH7o2yzYs1DyPRrOjtAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718727166; c=relaxed/simple;
-	bh=qNULmo001mC5yL2uC9neAijsJRYb5joYOHW/sq9OTls=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=cSlRQ90jpS7cD6EtM0TXBTMxhqgnTQZM07O6dOZSqmblb5OiS4N6zBKcsWq9SpkIk7ggIxCfslug498hfe8QAHCFZFo1toYqQsfEGzDnGCdezd4ygktcCeaN+yWxgFtNbcF4EMdbveHlSxiNqmf86wsPi1XcmI/+lNl3SlV8dPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=lc9PVF+p; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=LS/OLGrv reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1718727241; c=relaxed/simple;
+	bh=eXst0iPbk4Bb/LthjJ/eB/W1T9uteyF/EYvmEJ3Pnto=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c/YrAU8TmsToY6T7CLISslUZFCfo5eKQTV+tc87B1srVBk8PFne35RxkWN7fMv9Gl0gQAdNgf832Bpq3ryOtIWxnJyWyhNXbqkwV1+Dhlhp2jJ2GOEQqhZNL23QZd+iK2mBFxSaNKuVtmK2lmttx0Wzoiajs0fKFNy7718LpYi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gx5MAdQL; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so684079666b.2;
+        Tue, 18 Jun 2024 09:13:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1718727163; x=1750263163;
-  h=message-id:subject:from:to:cc:date:
-   content-transfer-encoding:mime-version;
-  bh=qNULmo001mC5yL2uC9neAijsJRYb5joYOHW/sq9OTls=;
-  b=lc9PVF+p//dq3Jl8gPUS0lGu9UN83ZYr6lB7KOqemgeSXB+WzW8XWmOi
-   4jGqGqO2+dHZQHedOScRo5OKAeqoQwOEG4RsSOmrXoaW2Hpl3Sfpt7XkO
-   BHZf5R+eMv1texL/VpjI+1/0jzLdQRzd1S8no4bq9Ihb41Op1CbF/XJax
-   49hqxcLwGZ1P6S1PeJremc2Cu42C1Mu358L1Ez3q6aYGV9z+fZ522aHWU
-   A2sAo6lY9DLwhnZq9OUxd8r7XaKWEcKYhTUK4d/BZ8ENsEaYCeM59+R4Q
-   oPOJ2sk7bHTfM6zJvjcrrn8oRRt8P1yrh1Ejgb4agCaYP3+E8cZyUf//e
-   Q==;
-X-CSE-ConnectionGUID: UFIXNrYPRUOnvkwpxts+4w==
-X-CSE-MsgGUID: orx72WeMR0idy2RCELZc2Q==
-X-IronPort-AV: E=Sophos;i="6.08,247,1712613600"; 
-   d="scan'208";a="37457616"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 18 Jun 2024 18:12:35 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3B5051664C9;
-	Tue, 18 Jun 2024 18:12:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1718727150;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=qNULmo001mC5yL2uC9neAijsJRYb5joYOHW/sq9OTls=;
-	b=LS/OLGrv/yld6GBB/DMqXy8/DiycpIH+FNzKfCT7A2THBG0TLcjyMVprzeFtT/JA8GS/5A
-	7KwK2puAK0sVidAs3x6YI47wboRSfT3jPJhZZeNSKziSkfHl6iR2Wh1rIayE50KgvOuadq
-	8Pd0CcW7N0DZOLiK1eVZAIQutJ74AyAVm7aiycrcyNL5esZ7IuEoLGm5WnpNmJOOkQHcA7
-	ASjTte6NPB6sqiwfgALZS3ZIFWVQr+lj7p0RmvtNm9VLtKwVvRJUAQki0VQIYSpyWoXapv
-	KaWGdHyFCdALxvIbx46/q/6l8k7dV0GmdTnVR6MQMA01ZCrN7BWKhxQXGqGzpA==
-Message-ID: <e72771c75988a2460fa8b557b0e2d32e6894f75d.camel@ew.tq-group.com>
-Subject: Kernel hang caused by commit "can: m_can: Start/Cancel polling
- timer together with interrupts"
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Marc Kleine-Budde
- <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>, Tony Lindgren
- <tony@atomide.com>, Judith Mendez <jm@ti.com>,  linux-can@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,  linux@ew.tq-group.com
-Date: Tue, 18 Jun 2024 18:12:27 +0200
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        d=gmail.com; s=20230601; t=1718727238; x=1719332038; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WWTx77d5eJnGnctm36s2wsX3pxrVWFjQDRGqkPWp/lw=;
+        b=gx5MAdQLeeCmHvUj5R5LdL+pkt22WNMZVMP+Zr+HhlwnvYCkfL7hRfRkPEfKqHEmk9
+         mDEmbbGC8f2iT7s7KyATQmQWtN+hrMiKra8GaOYAqLMm7XRy28p8QzmsYnXuuLDW6j9E
+         OmeftvxjzMgPyfl1vaKLtJC07u9p9EFS+GguO+Fng1AvrHHmllbGJRHYuffu13A8fgkp
+         GmQ8zpumNEG8Y91D66I90KfLwAeUjghYS2to7q+re3RYvTRsIKabnCLItMTgTpqkbNUh
+         sp26K9FFc81wfarIXjYyMH7Vs507LXz+mpXLLZ5vxOMnw6n1cJthU3t3nfOHggfjTxF3
+         8gUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718727238; x=1719332038;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WWTx77d5eJnGnctm36s2wsX3pxrVWFjQDRGqkPWp/lw=;
+        b=jmah7AsIJ3uPg5IW7SZiaucYa55MQGMXCqaJkXTaWI9SGMejbgOp7BXvylWfSlpdsy
+         Pm4pwVMpTDheJKEays4tX2ZOOpoAZ0tAzEo3Jrd0uFEXRlW5ZDwpBMSlmVNX+w/zym5s
+         L33bRYsQ4tcCanRFpRj8YJD5sRpZsBOPUzIBjgx8083b2lGC5/5IBQmYKODPOEDxY5Un
+         cFksAiXqTR5ZDpdY668xDMoALUnUqHoqjoxLshiULpcf8Rqms7w5OTUW7a53FBKa2D6d
+         EbKyLkPw3dvwkMxyVHP+WvilapNJh4TsCGNfBPb8NfaDWFTPn1MrGYMC2/7x79ETWSaS
+         yMJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUenZTo0EeeTJamzGohlM0Tjrz/qOqt3WD1kUDy2NAVw2LjyWYevFgoaOOALN1/b64K0LCOpX+u7xzPEWDmnKGlpRIPn6nP2xfO5txARYkH5vns6y1EaewNCkXPhVZMYa2CLRHvxqzV/RH2gevRvkB6XKu+VqM4CgcPG3QfIeNX3w==
+X-Gm-Message-State: AOJu0YxMLTOhiUd+RJzc7nn/peCEz/VGuRB57uHl2QuyENEizEdc8doA
+	m2AnHS75/fD9mRXXFSSMCUwzAaUWm9j7J8ZVJ/VLttR/9Nq0DlHF
+X-Google-Smtp-Source: AGHT+IFrJd2P1zNowiuFxfXKuLeFkY8i8OFcYY9grJ9wDu0sz0akTQp39THa3fEyzQyVz6uSY4TVxw==
+X-Received: by 2002:a17:907:a645:b0:a6f:8f20:a0b with SMTP id a640c23a62f3a-a6f8f200abcmr324363766b.30.1718727238121;
+        Tue, 18 Jun 2024 09:13:58 -0700 (PDT)
+Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56dd3109sm633560966b.95.2024.06.18.09.13.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 09:13:57 -0700 (PDT)
+Message-ID: <12f50bef-ba6e-4d96-8ced-08682c931da9@gmail.com>
+Date: Tue, 18 Jun 2024 18:13:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+From: Johan Jonker <jbx6244@gmail.com>
+Subject: [PATCH v1 1/3] ARM: dts: rockchip: rk3xxx: fix emac node
+To: heiko@sntech.de
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <0b889b87-5442-4fd4-b26f-8d5d67695c77@gmail.com>
+Content-Language: en-US
+In-Reply-To: <0b889b87-5442-4fd4-b26f-8d5d67695c77@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Markus,
+In the combined DT of rk3066a/rk3188 the emac node uses as place holder
+the compatible string "snps,arc-emac". The last real user nSIM_700
+of the "snps,arc-emac" compatible string in a driver was removed in 2019.
+Rockchip emac nodes don't make use of this common fall back string.
+In order to removed unused driver code replace this string with
+"rockchip,rk3066-emac".
+As we are there remove the blank lines and sort.
 
-we've found that recent kernels hang on the TI AM62x SoC (where no m_can in=
-terrupt is available and
-thus the polling timer is used), always a few seconds after the CAN interfa=
-ces are set up.
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
 
-I have bisected the issue to commit a163c5761019b ("can: m_can: Start/Cance=
-l polling timer together
-with interrupts"). Both master and 6.6 stable (which received a backport of=
- the commit) are
-affected. On 6.6 the commit is easy to revert, but on master a lot has happ=
-ened on top of that
-change.
+[PATCH 8/8] ARC: nSIM_700: remove unused network options
+https://lore.kernel.org/all/20191023124417.5770-9-Eugeniy.Paltsev@synopsys.com/
+---
+ arch/arm/boot/dts/rockchip/rk3066a.dtsi | 4 ----
+ arch/arm/boot/dts/rockchip/rk3xxx.dtsi  | 7 ++-----
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-As far as I can tell, the reason is that hrtimer_cancel() tries to cancel t=
-he timer synchronously,
-which will deadlock when called from the hrtimer callback itself (hrtimer_c=
-allback -> m_can_isr ->
-m_can_disable_all_interrupts -> hrtimer_cancel).
+diff --git a/arch/arm/boot/dts/rockchip/rk3066a.dtsi b/arch/arm/boot/dts/rockchip/rk3066a.dtsi
+index 5e0750547ab5..3f6d49459734 100644
+--- a/arch/arm/boot/dts/rockchip/rk3066a.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3066a.dtsi
+@@ -896,7 +896,3 @@ &vpu {
+ &wdt {
+ 	compatible = "rockchip,rk3066-wdt", "snps,dw-wdt";
+ };
+-
+-&emac {
+-	compatible = "rockchip,rk3066-emac";
+-};
+diff --git a/arch/arm/boot/dts/rockchip/rk3xxx.dtsi b/arch/arm/boot/dts/rockchip/rk3xxx.dtsi
+index f37137f298d5..e6a78bcf9163 100644
+--- a/arch/arm/boot/dts/rockchip/rk3xxx.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3xxx.dtsi
+@@ -194,17 +194,14 @@ usb_host: usb@101c0000 {
+ 	};
 
-I can try to come up with a fix, but I think you are much more familiar wit=
-h the driver code. Please
-let me know if you need any more information.
+ 	emac: ethernet@10204000 {
+-		compatible = "snps,arc-emac";
++		compatible = "rockchip,rk3066-emac";
+ 		reg = <0x10204000 0x3c>;
+ 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+-
+-		rockchip,grf = <&grf>;
+-
+ 		clocks = <&cru HCLK_EMAC>, <&cru SCLK_MAC>;
+ 		clock-names = "hclk", "macref";
+ 		max-speed = <100>;
+ 		phy-mode = "rmii";
+-
++		rockchip,grf = <&grf>;
+ 		status = "disabled";
+ 	};
 
-Best regards,
-Matthias
+--
+2.39.2
 
-
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
 
