@@ -1,91 +1,106 @@
-Return-Path: <linux-kernel+bounces-218695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7265290C3EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:47:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A708C90C3EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280031F24C1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:47:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A663C1C2334E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D22F61FC9;
-	Tue, 18 Jun 2024 06:47:33 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C66E6D1C1;
+	Tue, 18 Jun 2024 06:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FR3GCyJe"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C4C18645
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E75B4D8DC;
+	Tue, 18 Jun 2024 06:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718693252; cv=none; b=tWVQbye2ObZb2PS/E9Jex5QFu9rQI7H7FtyiTcPFlnmp7Tpt70V/7+uXh+EwQDCurF35w7myWm4oYB/VE2OrwLWNPy/hHVr4/IglXEH4U6xQ4FWqPbFH5+Pl6XccCOrdsupqdMqiRozDADVomBY5Q14rgmx3NtWpR6hp4iEOJh0=
+	t=1718693272; cv=none; b=TCAhn/o4GEWAMada/5cjxp244Z1VbVVz6VTyaftcucCoTNvhLRycgXSV5JQ63rSJEKGOgZpl1oZrpnYpCpsPJ+jb8dxBJGV5dGQ7KLx44sgbEm/tbbiqmrYkEBCWS6ADg/xUtsHRU0EzlZLDnXtdWadWbCdnPzQu3B7qXKqgLss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718693252; c=relaxed/simple;
-	bh=0DiElqRHtRTle+TzF4XGUmGWzDFIM9fJLtK7EwKVvjs=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=peDXdc75U3pPCHRlH5IwsrAEtqDS+lyEpExvWROP2+QJVJXZSYfvvyxbhVlstSBr5PPP89gKeP8G6azg+w7Ksaxw9pKHLZven9HiCiqUi7BXcZvDU3cC+OXY58pDL4uz7SgcdzoYxXWRnBriW+35ykOKAOfbKKeZrFTXJ7cyM7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W3HJD6LfmzwT9K;
-	Tue, 18 Jun 2024 14:43:08 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6A2AD140123;
-	Tue, 18 Jun 2024 14:47:22 +0800 (CST)
-Received: from [10.174.178.247] (10.174.178.247) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 18 Jun 2024 14:47:22 +0800
-Subject: Re: [PATCH v1] ACPI /amba: Fix meaningless code for
- amba_register_dummy_clk()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Youwan Wang
-	<youwan@nfschina.com>, <lpieralisi@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<lenb@kernel.org>
-References: <20240616100054.241482-1-youwan@nfschina.com>
- <1a6fda13-3a06-420d-a62a-896a7f4866d9@wanadoo.fr>
-From: Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <56ecbfda-50b6-ee7f-aa62-28295d7121c0@huawei.com>
-Date: Tue, 18 Jun 2024 14:47:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+	s=arc-20240116; t=1718693272; c=relaxed/simple;
+	bh=PM+mWy06h9/Uw7jEvdyJMsz+j9sC9p1M6A4RbMMCuGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pJIOC4qJ1OCtZMy9wM3scSY+ff1gLxOSeZEzV+giSIrf4/RZz0MDYDT3G58HniaOkS0WK1HnxsZDDaxGd32y59YYN+j0agfg7q1a6Je/l8i10aSZYaIMycT9yTqsOkH95+ZQw6apAKDvjlxTJd4x0Gtc0oTuKbofMSMggjGrysA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FR3GCyJe; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-627efad69b4so48867297b3.3;
+        Mon, 17 Jun 2024 23:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718693270; x=1719298070; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PM+mWy06h9/Uw7jEvdyJMsz+j9sC9p1M6A4RbMMCuGY=;
+        b=FR3GCyJe5Yn4eIWOpRr1t/O8d9oOgje2jW14YRm1vFHgjVJqNqTEgcVMVCYBdOsup9
+         CzAy65pLdz9UYb8fpELHW5eZawojKjweHXSbZ4EEPBKQh0Bkaf+QV4SJ6MVnpyfvj89G
+         iCSzBlndVGtpynBcPJGgrwQfCSC1uG9HiScGYBSZrym8Oa9CRQhJvtYSeISNYdYi/aiw
+         NnDmlndDQ3m7mvbZgeMAVd4E4Gy7KA4HkBogBzK6uGrgkw1+2+boafhhE+z1aaq9UxG4
+         /OZk+qJcpIp26S3Iuh2s1kujbP7pOJcak77ZdbpXDzhXGMTfeg2sF9huFDiT7LFhtpoI
+         WIdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718693270; x=1719298070;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PM+mWy06h9/Uw7jEvdyJMsz+j9sC9p1M6A4RbMMCuGY=;
+        b=PcRVkrHDG4gTR1o1tG5Tsj6p7HFgeCZAXM733byWKQXp4PGibtRA/uGxXvLulA8wB+
+         wDyp+xPhN1hdhl0G0RZhyB4YXcqTV24tJgVAtO5dSkIAVXinUVtR85hiQLmcj25b6ml6
+         4X5StGraCviLL7Qso89qHmG+5M2mdifeqgMAHjw4hzOoCzMoMK9h/V/N5OxBNHNlb62R
+         qLfIF+Bh/Uf8w/sCfdAlbzkQ65RfxMKc/zhHUi0wYED3eeiJGgqDPiZRASdMHvcEvZEZ
+         dUGRGqonTYHRfCBpEPI1MefGM7F0crcmlRg11vsgGiyoivfH6SuRPHP795JWvbpkzedm
+         OoFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtysknfIlHUJ1V6IqXe6j83tvS31MZLjTYd9oG2KMssuYi/7YAmKocI+qOx2DlXz541ygmYy0yD5laMlRsAJrpfM1spsyukGIA9spAwS/Xbo04pNfwL2g3ooAEr2htsVlPkc9V
+X-Gm-Message-State: AOJu0YwKQqyd7mEstl2cTG5HBRsXpom2bd16eIR7Z6SXMArJhojmBFDn
+	kbPtjJCPe6fDpJLifihaaDCfxdPoLEZ/yOZKUWFXuxw6FOigTDhlzt4ssdxrAsyJ3h/Al9KTXhB
+	PT99VE9QgIkDoEJy1W9/imDoKDtJvyhUZJuU=
+X-Google-Smtp-Source: AGHT+IGL30rIET/M5LzgDltzRx6XXB6YgqW9oZuMa6bA/c6W37Gi2k9nXkoUak9FdwwM4W4azUvhMGBjs2MXgz8++ks=
+X-Received: by 2002:a81:7cd5:0:b0:632:b827:a1ba with SMTP id
+ 00721157ae682-6333082fb6bmr91760287b3.7.1718693270316; Mon, 17 Jun 2024
+ 23:47:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1a6fda13-3a06-420d-a62a-896a7f4866d9@wanadoo.fr>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+References: <20240613073441.781919-1-dqfext@gmail.com> <20240613170522.0961c781@kernel.org>
+In-Reply-To: <20240613170522.0961c781@kernel.org>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Tue, 18 Jun 2024 14:47:31 +0800
+Message-ID: <CALW65jay2+n_FhREhikVWoUEMQ2mytbrmQ9UzhjtCEv1gmtvQA@mail.gmail.com>
+Subject: Re: [PATCH net-next] etherdevice: Optimize is_broadcast_ether_addr
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Joe Perches <joe@perches.com>, Qingfang Deng <qingfang.deng@siflower.com.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/6/16 21:05, Christophe JAILLET wrote:
-> Le 16/06/2024 à 12:00, Youwan Wang a écrit :
->> Defining `amba_dummy_clk` as static is meaningless.
->>
->> The conditional check `if (amba_dummy_clk)` is intended to
->> determine whether the clock has already been registered.
->> However,in this function, the variable `amba_dummy_clk`
->> will always be NULL.
-> 
-> Hi,
-> 
->   can you elaborate on this "will always be NULL"?
-> 
-> I think that it is NULL on the first call of amba_register_dummy_clk(), 
-> but if it is called again, it will have the value of 
-> clk_register_fixed_rate() just a few lines after, doing exactly what the 
-> comment says.
+Hi Jakub,
 
-I think Youwan is arguing that amba_register_dummy_clk() will
-never be called more than once, so the static define and check is
-redundant.
+On Fri, Jun 14, 2024 at 8:05=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+> Can you provide more context on why it's beneficial. I mean, there's a
+> lot of code in the kernel one could micro-optimize...
+>
+> Show us the assembly, cycle counts, where it's used on fast paths...
 
-Thanks
-Hanjun
+is_broadcast_ether_addr is used in bridge forwarding fast paths
+(br_dev_xmit, br_multicast_flood, br_handle_frame_finish), and often
+in combination with is_multicast_ether_addr.
+Since commit d54385ce68cd ("etherdev: Process is_multicast_ether_addr
+at same size as other operations"), is_multicast_ether_addr already
+does a 32-bit load. We can avoid duplicate loads by applying the same
+approach to is_broadcast_ether_addr and save a few instructions.
+Tested with x86_64, aarch64 and RISC-V compilers.
+
+> --
+> pw-bot: cr
 
