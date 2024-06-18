@@ -1,202 +1,114 @@
-Return-Path: <linux-kernel+bounces-219004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465B890C8AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:12:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227C790C8B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37CE1F21F2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:12:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36E1A1C227AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7779420B353;
-	Tue, 18 Jun 2024 09:56:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0DD20B335;
-	Tue, 18 Jun 2024 09:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C041591FC;
+	Tue, 18 Jun 2024 09:57:21 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F6E20BA8D;
+	Tue, 18 Jun 2024 09:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718704584; cv=none; b=nNt14gPsD1bZMdpU1BczIsRuJ+sxj6HrD6RynGQ+gUi/TAHRAAqylHZAfcYe0I3uZlUyRZmZHHJYRo3MxzuAxWL8Jf+uqAra0SNGF8v55J3pESOyzUZGm+re3sjSLHUWXM8V/GHSP9Z9CLuq74j8uXWLQFNcKvxcuooOLTSuMbA=
+	t=1718704641; cv=none; b=d32yNYBW5VmTcEiUDftYshZIyilTCuyYc44CXtNUVP0rAS7eesJb3udp3KOz3wM3lqCDibOh+ma+N7IqdCQoIkyhGzodH+iRAnbLb/S0e9lyg98HWOsvTWTympL352e+comZp8pL2gpAWujBMryde0fy4qMaZZP/YPT3L1gt4Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718704584; c=relaxed/simple;
-	bh=p4eu6ZcMWmIUI/+gU4HHJ/vfCsmXfLgKSV4vK6dSLQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kLpJmOJwp/zLjEPWZy7QaFYVLd6ADPHmNCvGj4+Ov3LsB4mdzE1CWGoIRKJwonlh12/xVmJC5KKpynYO2iPxIMeOG082aDojSUL2LwWv+ZMFYBELjUdDRyfAj3gNXoO2ZH9X0EODYGXZ7/mZpfdbeDmcX+4MBn7Lb2vUrUouiOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 735FFDA7;
-	Tue, 18 Jun 2024 02:56:46 -0700 (PDT)
-Received: from [10.57.72.20] (unknown [10.57.72.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A28453F6A8;
-	Tue, 18 Jun 2024 02:56:17 -0700 (PDT)
-Message-ID: <67e6d553-80fe-41c0-9e7a-f809d11ae9bd@arm.com>
-Date: Tue, 18 Jun 2024 10:56:16 +0100
+	s=arc-20240116; t=1718704641; c=relaxed/simple;
+	bh=kQT2vNmbzC611SxXjaKEACv+4h8nw9vPYq7MFYi4xfk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HRuP/Spx0ElqWH//BhtRFz/nquIN1HBa6pgolXZwNpkttIKi9Rn96Uy7QZrJdgzJQ4kGzGjQ4T7YTNS75wWCdF7Vwr6ukTIqw0j+jMndus9fAKJjha5mS4y76m8jjTj0AH7hW+XFd/weJ6OboFymahl5IBadvl/StCA94IYYZMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 45I9ufP23332592, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 45I9ufP23332592
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Jun 2024 17:56:41 +0800
+Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 18 Jun 2024 17:56:41 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 18 Jun 2024 17:56:41 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Tue, 18 Jun 2024 17:56:41 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Jakub Kicinski <kuba@kernel.org>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "horms@kernel.org" <horms@kernel.org>,
+        "rkannoth@marvell.com"
+	<rkannoth@marvell.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Chiu
+	<larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next v20 10/13] rtase: Implement ethtool function
+Thread-Topic: [PATCH net-next v20 10/13] rtase: Implement ethtool function
+Thread-Index: AQHauLe4t8TnjFOscEGW3MirT25lzrHEW4aAgAC1QoCABncfgIAByXtA
+Date: Tue, 18 Jun 2024 09:56:40 +0000
+Message-ID: <1f0376e1dbc846a799d62a56bc6c9ff2@realtek.com>
+References: <20240607084321.7254-1-justinlai0215@realtek.com>
+ <20240607084321.7254-11-justinlai0215@realtek.com>
+ <20240612173505.095c4117@kernel.org>
+ <82ea81963af9482aa45d0463a21956b5@realtek.com>
+ <94c758fc-cfcf-4a11-95b6-ca57cc85ed3e@lunn.ch>
+In-Reply-To: <94c758fc-cfcf-4a11-95b6-ca57cc85ed3e@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: arm: Add binding document for
- Coresight Slave Register device.
-Content-Language: en-GB
-To: Jie Gan <quic_jiegan@quicinc.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Konrad Dybcio <konradybcio@gmail.com>, Mike Leach <mike.leach@linaro.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: Jinlong Mao <quic_jinlmao@quicinc.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Tao Zhang <quic_taozha@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>,
- Song Chai <quic_songchai@quicinc.com>, linux-arm-msm@vger.kernel.org,
- andersson@kernel.org, quic_yijiyang@quicinc.com, quic_yuanjiey@quicinc.com,
- quic_liuxin@quicinc.com, quic_yanzl@quicinc.com, quic_xinlon@quicinc.com,
- quic_xueqnie@quicinc.com, quic_sijiwu@quicinc.com
-References: <20240618072726.3767974-1-quic_jiegan@quicinc.com>
- <20240618072726.3767974-2-quic_jiegan@quicinc.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20240618072726.3767974-2-quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 18/06/2024 08:27, Jie Gan wrote:
-> Add binding document for Coresight Slave Register device.
-
-Is this a made up name of the driver ? CoreSight Slave Register
-device sounds nowhere near to what it does. If you have a proper
-name for the "IP" please use that.
-
-> 
-> Add a new property to TMC, qcom,csr-atid-offset, to indicate which
-> ATID registers will be used by the TMC ETR. Each TMC ETR device is
-> associated with four ATID registers that are continuous in address.
-> 
-> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
-> ---
->   .../bindings/arm/arm,coresight-tmc.yaml       |  8 ++
->   .../bindings/arm/qcom,coresight-csr.yaml      | 76 +++++++++++++++++++
->   2 files changed, 84 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-csr.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-tmc.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-tmc.yaml
-> index cb8dceaca70e..295641a96c21 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,coresight-tmc.yaml
-> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-tmc.yaml
-> @@ -82,6 +82,14 @@ properties:
->       $ref: /schemas/types.yaml#/definitions/uint32
->       maximum: 15
->   
-> +  qcom,csr-atid-offset:
-> +    description:
-> +      Offset to the coresight slave register component's ATID register
-> +      that is used by specific TMC ETR. The ATID register can be programed according
-> +      to the trace id to filter out specific trace data which gets through the ETR
-> +      to the downstream components.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-
-Why do we need this ? Could this not be inferred from the "input port" 
-to which this ETR is connected on the CSR ?
-
-e.g., input-0 : Offset 0
-       input-1 : Offset for Bank1
-
-
-
-
-> +
->     in-ports:
->       $ref: /schemas/graph.yaml#/properties/ports
->       additionalProperties: false
-> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-csr.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-csr.yaml
-> new file mode 100644
-> index 000000000000..16f97cbe3d4b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-csr.yaml
-> @@ -0,0 +1,76 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/qcom,coresight-csr.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: CoreSight Slave Register
-> +
-> +maintainers:
-> +  - Yuanfang Zhang <quic_yuanfang@quicinc.com>
-> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
-> +  - Jie Gan <quic_jiegan@quicinc.com>
-> +
-> +description:
-> +  The Coresight Slave Register controls various Coresight behaviors.
-> +  Used to enable/disable ETR’s data filter function based on trace ID.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,coresight-csr
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    maxItems: 1
-> +    items:
-> +      - const: apb_pclk
-> +
-> +  reg-names:
-> +    items:
-> +      - const: csr-base
-> +
-> +  in-ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    patternProperties:
-> +      '^port(@[0-7])?$':
-> +        description: Input connections from CoreSight Trace bus
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - in-ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    syscon@10001000 {
-> +        compatible = "qcom,coresight-csr";
-> +        reg = <0x0 0x10001000 0x0 0x1000>;
-> +        reg-names = "csr-base";
-> +
-> +        in-ports {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            port@0 {
-> +                reg = <0>;
-> +                csr_in_port0: endpoint {
-> +                    remote-endpoint = <&etr0_out_port>;
-> +                };
-> +            };
-> +
-> +            port@1 {
-> +                reg = <1>;
-> +                csr_in_port1: endpoint {
-> +                    remote-endpoint = <&etr1_out_port>;
-> +                };
-> +            };
-> +        };
-> +    };
-
+>=20
+> > > > +     strscpy(drvinfo->bus_info, pci_name(tp->pdev), 32);
+> > >
+> > > Can you double check that overwriting these fields is actually needed=
+?
+> > > I think core will fill this in for you in ethtool_get_drvinfo()
+> >
+> > I have removed this line of code for testing. Before removing the
+> > code, I could obtain bus info by entering "ethtool -i". However, after
+> > removing the code, entering "ethtool -i" no longer retrieves the bus in=
+fo.
+>=20
+> https://elixir.bootlin.com/linux/latest/source/net/ethtool/ioctl.c#L710
+>=20
+>         if (ops->get_drvinfo) {
+>                 ops->get_drvinfo(dev, &rsp->info);
+>                 if (!rsp->info.bus_info[0] && parent)
+>                         strscpy(rsp->info.bus_info, dev_name(parent),
+>                                 sizeof(rsp->info.bus_info));
+>=20
+> This suggests you have not set the parent device.
+>=20
+>         Andrew
+Hi Andrew,
+I understand your explanation. However, when we input ethtool -i,
+shouldn't we aim to get the bus info of the actual device rather than
+the parent device? That's why I think we need to add this line.
 
