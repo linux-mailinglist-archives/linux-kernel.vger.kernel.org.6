@@ -1,235 +1,377 @@
-Return-Path: <linux-kernel+bounces-219429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8FBF90D146
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4250590D14D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DFEE287DF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:41:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB1801F25311
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501431586F2;
-	Tue, 18 Jun 2024 13:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F03gMMaq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C3519F48D;
+	Tue, 18 Jun 2024 13:08:18 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68B213C673
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC5315886D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718716090; cv=none; b=dXkABScnYM/C9Zz04rx2hE0uGvZV5r5DDVTRr1aaDanYJRT9pSU5xk40gFLspknV128OGx3pY50aq5E8E3++B+GGOBeGm6Js2NYGJTviOmh4lL+q8+qKjjM4Vm4FSj2+fsl2V1Uulc4v+FVeT+sa7I2lmqxkBH+e88EDXiexaZI=
+	t=1718716098; cv=none; b=BFMhSorsFLWRlsSqvLTjx3V/mLcdXGUVAw43l4Um75hu8Lz+gsEivcljQA662zvfRV604Jaxz68Cxi8WNnNqlsT9p1jgtiTXR4Ski2i3TIR7/PrEwnXXmEsI7rEu/AVqBrqyFYfvrpZY9g5Je29xCaMxGAdVvuJEkIMBRevWo44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718716090; c=relaxed/simple;
-	bh=bLpId0JKQOK4hGoXt+SwJlU9WDXtxHak7ccDkw+FL8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hNNyFa1/l3qNHvCSwAosi102ofibu3QW5UNHyIMMk8smIPAClhcQpdWruSx3caONGnX0+BjvMaxaEaL4R7RjKUfgci+z7fWVOxHzka/v5jrSXWJr8FagTbc9qXy2arQLM+Qo6eYNwM63weJ72ITMVcRqWXYqYhKBZFsOnpEnfaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F03gMMaq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718716087;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rDI13r/zgmF3YUpsVokDN5xtfAJiHrQPJKKAxYZjMOg=;
-	b=F03gMMaqKv6XbyObH4M6GUnV4TwXonoMqXhS3CW9O7xoZzVe/Eb2Hm85hiqUOlDNxiF0C2
-	a5cOVKjgMQxuBSCSIfe6w5pL3WIDXxMdQL7Ct9ebZpERX9SGPqyNw6+kQ3asDN7JHb3xef
-	yI+HvI9ObhLcSQFd0lSg7KsJUMiyU9s=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-240-Ft2a85NUNSmoe_akWGQPLg-1; Tue, 18 Jun 2024 09:08:06 -0400
-X-MC-Unique: Ft2a85NUNSmoe_akWGQPLg-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-421292df2adso34429295e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:08:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718716085; x=1719320885;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rDI13r/zgmF3YUpsVokDN5xtfAJiHrQPJKKAxYZjMOg=;
-        b=pemFjtMbSPrfGayCfxSEVHm6Pp9GRPz13h54kK1YEZDtcVSLJQz6hmJxWwNdJRvB4C
-         bPSlNBjcqXGSb87qK6wwxgL4heDsuofbcIzr2z1ABkJnS9Qh6k+IZyd1FEEHiE/k6qM2
-         AngrupONUyqz6Y5vxUm3k3lLSdRhNAhG3L9XrSqOa3YrlMDn1B1k8sIBiIYMJ8iWlkCr
-         WlLFvXuxpWstJ2jdUqhQgY55Kc79zxq3GthAhJieOWBMJvc//5juepHCh+eIfcgVsktI
-         RaF53HPSnmZ5VgBT8ZIGed8y+ymhDk/ddEuANomqTWETm/EWu/DgVdKVk9f6twBBVcfO
-         6tDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRKlvO8taWONt8M38l8Ps0RrNsFCPT38/24xX4tuHNcaGjPxVYR3fdoEJKNr27aSwhRq5/uZlgI1iPKzYfliMpkskkaS5py86Hrs8c
-X-Gm-Message-State: AOJu0Yzh4y+DfliCY15ZZUUFPXz6k2n0zNBXnMAgLYv/awjuSM610A3D
-	PJUpC39/tGN8JOVK88qhj1s2NQc3G42Prg0PWbQQ1nmHI9Z4eMojQKOIDyt+b+XxSQ6HoLxZBkc
-	IxdmLYPreCd7iQQDkagnA1WApFENcM2TFsGCP+bpGTPzEZV+bb/1vQ6pxyUkpQA==
-X-Received: by 2002:a05:600c:4b23:b0:422:47a:15c8 with SMTP id 5b1f17b1804b1-42304820d71mr102574665e9.12.1718716084864;
-        Tue, 18 Jun 2024 06:08:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHpxm3J8D7YuKoMV98S3k8xb4FTtVTg1NRGuuoPKxbPPSCYa3N7rtb4jV+3HF2FtwfXiGly0g==
-X-Received: by 2002:a05:600c:4b23:b0:422:47a:15c8 with SMTP id 5b1f17b1804b1-42304820d71mr102574505e9.12.1718716084393;
-        Tue, 18 Jun 2024 06:08:04 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:1400:78ba:c2d2:22a1:8858? (p200300cbc705140078bac2d222a18858.dip0.t-ipconnect.de. [2003:cb:c705:1400:78ba:c2d2:22a1:8858])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320c21sm192894355e9.34.2024.06.18.06.08.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 06:08:03 -0700 (PDT)
-Message-ID: <ce9cb3c5-be63-45f0-91ad-4f7ab335d3b2@redhat.com>
-Date: Tue, 18 Jun 2024 15:08:02 +0200
+	s=arc-20240116; t=1718716098; c=relaxed/simple;
+	bh=mn5FtPRbZyXMPbcviqTthDkzoaS/7AUzAtrMRoqletw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RXk/cUUMpRyRrOvSqUshOVqPWQIj1BDgMgIBz0TUWmp8mz5NNZhkCy2FJs0IamUkxTBbiJ9X8AwIzN4YKhZXczot1QVaHZbPwFuRByrdxBzqKvn9Zn0aQuyGMBhvfJwrFeSVRRr3XmXQWRR7SiRVTYNyoUdJNB1aKx4A2xgmVpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4W3Rlx72W2z2Ck8m;
+	Tue, 18 Jun 2024 21:04:13 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 022921A016C;
+	Tue, 18 Jun 2024 21:08:07 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 18 Jun 2024 21:08:06 +0800
+Message-ID: <4ee074b9-72c4-f2b8-42e1-57a895d57462@huawei.com>
+Date: Tue, 18 Jun 2024 21:08:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] mm: swap: mTHP swap allocator base on swap cluster
- order
-To: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>,
- "Huang, Ying" <ying.huang@intel.com>, Kalesh Singh <kaleshsingh@google.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Barry Song <baohua@kernel.org>
-References: <20240614-swap-allocator-v2-0-2a513b4a7f2f@kernel.org>
-From: David Hildenbrand <david@redhat.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v3 -next 3/3] mm/hugetlb_cgroup: switch to the new cftypes
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240614-swap-allocator-v2-0-2a513b4a7f2f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Marek Szyprowski <m.szyprowski@samsung.com>, <akpm@linux-foundation.org>,
+	<muchun.song@linux.dev>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <osalvador@suse.de>
+References: <20240612092409.2027592-1-xiujianfeng@huawei.com>
+ <20240612092409.2027592-4-xiujianfeng@huawei.com>
+ <CGME20240618125536eucas1p1c62068f858a59d23fca29bf98efb9323@eucas1p1.samsung.com>
+ <602186b3-5ce3-41b3-90a3-134792cc2a48@samsung.com>
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <602186b3-5ce3-41b3-90a3-134792cc2a48@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-On 15.06.24 01:48, Chris Li wrote:
-> This is the short term solutiolns "swap cluster order" listed
-> in my "Swap Abstraction" discussion slice 8 in the recent
-> LSF/MM conference.
+Hi,
+
+On 2024/6/18 20:55, Marek Szyprowski wrote:
+> Dear All,
 > 
-> When commit 845982eb264bc "mm: swap: allow storage of all mTHP
-> orders" is introduced, it only allocates the mTHP swap entries
-> from new empty cluster list.  It has a fragmentation issue
-> reported by Barry.
+> On 12.06.2024 11:24, Xiu Jianfeng wrote:
+>> The previous patch has already reconstructed the cftype attributes
+>> based on the templates and saved them in dfl_cftypes and legacy_cftypes.
+>> then remove the old procedure and switch to the new cftypes.
+>>
+>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 > 
-> https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp+Ah+NSgNQ@mail.gmail.com/
+> This patch landed in yesterday's linux-next (next-20240617) as commit 
+> 11308a02a56cc ("mm/hugetlb_cgroup: switch to the new cftypes"). In my 
+> daily tests I found that it triggers the following lock dependency 
+> checker warning on most of my ARM64 test machines:
 > 
-> The mTHP allocation failure rate raises to almost 100% after a few
-> hours in Barry's test run.
+> BUG: key ffff000005c080d8 has not been registered!
+> ------------[ cut here ]------------
+> DEBUG_LOCKS_WARN_ON(1)
+> WARNING: CPU: 1 PID: 1080 at kernel/locking/lockdep.c:4895 
+> lockdep_init_map_type+0x1cc/0x284
+> Modules linked in: ipv6
+> CPU: 1 PID: 1080 Comm: cgmanager Not tainted 6.10.0-rc3+ #1011
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : lockdep_init_map_type+0x1cc/0x284
+> lr : lockdep_init_map_type+0x1cc/0x284
+> ...
+> Call trace:
+>   lockdep_init_map_type+0x1cc/0x284
+>   __kernfs_create_file+0x7c/0x138
+>   cgroup_addrm_files+0x170/0x360
+>   css_populate_dir+0x70/0x174
+>   cgroup_apply_control_enable+0x128/0x378
+>   rebind_subsystems+0x384/0x504
+>   cgroup_setup_root+0x224/0x420
+>   cgroup1_get_tree+0x248/0x36c
+>   vfs_get_tree+0x28/0xe8
+>   path_mount+0x3e8/0xb78
+>   __arm64_sys_mount+0x1f0/0x2dc
+>   invoke_syscall+0x48/0x118
+>   el0_svc_common.constprop.0+0x40/0xe8
+>   do_el0_svc_compat+0x20/0x3c
+>   el0_svc_compat+0x44/0xe0
+>   el0t_32_sync_handler+0x98/0x148
+>   el0t_32_sync+0x194/0x198
+> irq event stamp: 8225
+> hardirqs last  enabled at (8225): [<ffff800080136134>] 
+> console_unlock+0x164/0x190
+> hardirqs last disabled at (8224): [<ffff800080136120>] 
+> console_unlock+0x150/0x190
+> softirqs last  enabled at (8214): [<ffff8000800ae1f4>] 
+> handle_softirqs+0x4dc/0x4f4
+> softirqs last disabled at (8207): [<ffff8000800105d4>] 
+> __do_softirq+0x14/0x20
+> ---[ end trace 0000000000000000 ]---
 > 
-> The reason is that all the empty cluster has been exhausted while
-> there are planty of free swap entries to in the cluster that is
-> not 100% free.
+> It looks that something is not properly intialized. Reverting $subject 
+> on top of linux-next fixes this issue.
+
+Yes, the root cause is that the cft->lockdep_key has not been registered
+proactively when the CONFIG_DEBUG_LOCK_ALLOC is enabled.
+
+Would you please try the following patch?
+
+https://lore.kernel.org/all/20240618071922.2127289-1-xiujianfeng@huawei.com/
+
 > 
-> Remember the swap allocation order in the cluster.
-> Keep track of the per order non full cluster list for later allocation.
+> I've used defconfig with some debug options enabled and some drivers 
+> compiled-in (if this matters):
 > 
-> This greatly improve the sucess rate of the mTHP swap allocation.
+> make ARCH=arm64 defconfig
 > 
-> There is some test number in the V1 thread of this series:
-> https://lore.kernel.org/r/20240524-swap-allocator-v1-0-47861b423b26@kernel.org
+> ./scripts/config -e BLK_DEV_RAM --set-val BLK_DEV_RAM_COUNT 4 --set-val 
+> BLK_DEV_RAM_SIZE 81920 --set-val CMA_SIZE_MBYTES 96 -e PROVE_LOCKING -e 
+> DEBUG_ATOMIC_SLEEP -e STAGING -e I2C_GPIO -e PM_DEBUG -e 
+> PM_ADVANCED_DEBUG -e USB_GADGET -e USB_ETH -e CONFIG_DEVFREQ_THERMAL -e 
+> CONFIG_BRCMFMAC_PCIE -e CONFIG_NFC -d ARCH_SUNXI -d ARCH_ALPINE -d 
+> DRM_NOUVEAU -d ARCH_BCM_IPROC -d ARCH_BERLIN -d ARCH_BRCMSTB -d 
+> ARCH_LAYERSCAPE -d ARCH_LG1K -d ARCH_HISI -d ARCH_MEDIATEK -d ARCH_MVEBU 
+> -d ARCH_SEATTLE -d ARCH_SYNQUACER -d ARCH_RENESAS -d ARCH_STRATIX10 -d 
+> ARCH_TEGRA -d ARCH_SPRD -d ARCH_THUNDER -d ARCH_THUNDER2 -d 
+> ARCH_UNIPHIER -d ARCH_XGENE -d ARCH_ZX -d ARCH_ZYNQMP -d HIBERNATION -d 
+> CLK_SUNXI -d CONFIG_EFI -d CONFIG_TEE -e FW_CFG_SYSFS
 > 
-> Reported-by: Barry Song <21cnbao@gmail.com>
-> Signed-off-by: Chris Li <chrisl@kernel.org>
-> ---
-
-Running the cow.c selftest with a bunch of debug config
-settings enabled, I get on mm-unstable:
-
-[   25.236555] list_add corruption. prev->next should be next (ffff888105b5ad08), but was ffff888105b5ae78. (prev=ffff88812580b048).
-[   25.237432] ------------[ cut here ]------------
-[   25.237702] kernel BUG at lib/list_debug.c:32!
-[   25.237962] Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-[   25.238288] CPU: 23 PID: 1264 Comm: cow Tainted: G        W          6.10.0-rc4+ #301
-[   25.238720] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[   25.239335] RIP: 0010:__list_add_valid_or_report+0x78/0xa0
-[   25.239646] Code: 6b ff 0f 0b 48 89 c1 48 c7 c7 c0 30 0e 83 e8 7f e5 6b ff 0f 0b 48 89 d1 48 89 c6 4c 89 c2 48 c7 c7 18 31 0e 83 e8 68 e5 6b ff <0f> 0b 48 89 f2 48 89 c1 48 89 fe 48 c7 c7 70 31 0e 83 e8 51 e5b
-[   25.240670] RSP: 0000:ffffc90002c87bd0 EFLAGS: 00010246
-[   25.240964] RAX: 0000000000000075 RBX: ffff888105b5ac00 RCX: 0000000000000000
-[   25.241362] RDX: 0000000000000000 RSI: ffff88885f9a1a00 RDI: ffff88885f9a1a00
-[   25.241762] RBP: ffff88810624de20 R08: 0000000000000000 R09: 0000000000000003
-[   25.242158] R10: ffffc90002c87a78 R11: ffffffff83b5b808 R12: 0000000000044000
-[   25.242556] R13: 0000000000044000 R14: ffff88810624e000 R15: ffff88812580bb00
-[   25.242960] FS:  00007f4fb364b740(0000) GS:ffff88885f980000(0000) knlGS:0000000000000000
-[   25.243413] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   25.243737] CR2: 00007f4fb343c000 CR3: 000000010a5dc000 CR4: 0000000000750ef0
-[   25.244145] PKRU: 55555554
-[   25.244303] Call Trace:
-[   25.244445]  <TASK>
-[   25.244572]  ? die+0x36/0x90
-[   25.244742]  ? do_trap+0xdd/0x100
-[   25.244935]  ? __list_add_valid_or_report+0x78/0xa0
-[   25.245211]  ? __list_add_valid_or_report+0x78/0xa0
-[   25.245488]  ? do_error_trap+0x81/0x110
-[   25.245710]  ? __list_add_valid_or_report+0x78/0xa0
-[   25.245988]  ? exc_invalid_op+0x50/0x70
-[   25.246211]  ? __list_add_valid_or_report+0x78/0xa0
-[   25.246488]  ? asm_exc_invalid_op+0x1a/0x20
-[   25.246737]  ? __list_add_valid_or_report+0x78/0xa0
-[   25.247016]  swapcache_free_entries+0x1ec/0x240
-[   25.247286]  free_swap_slot+0xcc/0xe0
-[   25.247498]  put_swap_folio+0xf3/0x3b0
-[   25.247720]  delete_from_swap_cache+0x68/0x90
-[   25.247972]  folio_free_swap+0xd0/0x200
-[   25.248201]  do_swap_page+0xd95/0x12d0
-[   25.248418]  ? __entry_text_end+0x101e45/0x101e49
-[   25.248695]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   25.248969]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   25.249246]  ? __pte_offset_map+0x18e/0x270
-[   25.249490]  __handle_mm_fault+0x915/0xf80
-[   25.249731]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   25.250010]  handle_mm_fault+0x1d1/0x400
-[   25.250242]  do_user_addr_fault+0x16f/0x790
-[   25.250485]  exc_page_fault+0x83/0x260
-[   25.250706]  asm_exc_page_fault+0x26/0x30
-
-
-
-Maybe what Hugh reported already. I'll try reverting your patches
-to see if that fixes these issues.
-
--- 
-Cheers,
-
-David / dhildenb
-
+> 
+>> ---
+>>   include/linux/hugetlb.h |   5 --
+>>   mm/hugetlb_cgroup.c     | 163 +++++-----------------------------------
+>>   2 files changed, 17 insertions(+), 151 deletions(-)
+>>
+>> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+>> index 279aca379b95..a951c0d06061 100644
+>> --- a/include/linux/hugetlb.h
+>> +++ b/include/linux/hugetlb.h
+>> @@ -686,11 +686,6 @@ struct hstate {
+>>   	unsigned int nr_huge_pages_node[MAX_NUMNODES];
+>>   	unsigned int free_huge_pages_node[MAX_NUMNODES];
+>>   	unsigned int surplus_huge_pages_node[MAX_NUMNODES];
+>> -#ifdef CONFIG_CGROUP_HUGETLB
+>> -	/* cgroup control files */
+>> -	struct cftype cgroup_files_dfl[8];
+>> -	struct cftype cgroup_files_legacy[10];
+>> -#endif
+>>   	char name[HSTATE_NAME_LEN];
+>>   };
+>>   
+>> diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
+>> index 43aae8f88d5f..2b899c4ae968 100644
+>> --- a/mm/hugetlb_cgroup.c
+>> +++ b/mm/hugetlb_cgroup.c
+>> @@ -839,164 +839,26 @@ hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
+>>   	}
+>>   }
+>>   
+>> -static void __init __hugetlb_cgroup_file_dfl_init(int idx)
+>> +static void __init __hugetlb_cgroup_file_dfl_init(struct hstate *h)
+>>   {
+>> -	char buf[32];
+>> -	struct cftype *cft;
+>> -	struct hstate *h = &hstates[idx];
+>> +	int idx = hstate_index(h);
+>>   
+>>   	hugetlb_cgroup_cfttypes_init(h, dfl_files + idx * DFL_TMPL_SIZE,
+>>   				     hugetlb_dfl_tmpl, DFL_TMPL_SIZE);
+>> -
+>> -	/* format the size */
+>> -	mem_fmt(buf, sizeof(buf), huge_page_size(h));
+>> -
+>> -	/* Add the limit file */
+>> -	cft = &h->cgroup_files_dfl[0];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.max", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_LIMIT);
+>> -	cft->seq_show = hugetlb_cgroup_read_u64_max;
+>> -	cft->write = hugetlb_cgroup_write_dfl;
+>> -	cft->flags = CFTYPE_NOT_ON_ROOT;
+>> -
+>> -	/* Add the reservation limit file */
+>> -	cft = &h->cgroup_files_dfl[1];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.max", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_LIMIT);
+>> -	cft->seq_show = hugetlb_cgroup_read_u64_max;
+>> -	cft->write = hugetlb_cgroup_write_dfl;
+>> -	cft->flags = CFTYPE_NOT_ON_ROOT;
+>> -
+>> -	/* Add the current usage file */
+>> -	cft = &h->cgroup_files_dfl[2];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.current", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_USAGE);
+>> -	cft->seq_show = hugetlb_cgroup_read_u64_max;
+>> -	cft->flags = CFTYPE_NOT_ON_ROOT;
+>> -
+>> -	/* Add the current reservation usage file */
+>> -	cft = &h->cgroup_files_dfl[3];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.current", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_USAGE);
+>> -	cft->seq_show = hugetlb_cgroup_read_u64_max;
+>> -	cft->flags = CFTYPE_NOT_ON_ROOT;
+>> -
+>> -	/* Add the events file */
+>> -	cft = &h->cgroup_files_dfl[4];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.events", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, 0);
+>> -	cft->seq_show = hugetlb_events_show;
+>> -	cft->file_offset = offsetof(struct hugetlb_cgroup, events_file[idx]);
+>> -	cft->flags = CFTYPE_NOT_ON_ROOT;
+>> -
+>> -	/* Add the events.local file */
+>> -	cft = &h->cgroup_files_dfl[5];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.events.local", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, 0);
+>> -	cft->seq_show = hugetlb_events_local_show;
+>> -	cft->file_offset = offsetof(struct hugetlb_cgroup,
+>> -				    events_local_file[idx]);
+>> -	cft->flags = CFTYPE_NOT_ON_ROOT;
+>> -
+>> -	/* Add the numa stat file */
+>> -	cft = &h->cgroup_files_dfl[6];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.numa_stat", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, 0);
+>> -	cft->seq_show = hugetlb_cgroup_read_numa_stat;
+>> -	cft->flags = CFTYPE_NOT_ON_ROOT;
+>> -
+>> -	/* NULL terminate the last cft */
+>> -	cft = &h->cgroup_files_dfl[7];
+>> -	memset(cft, 0, sizeof(*cft));
+>> -
+>> -	WARN_ON(cgroup_add_dfl_cftypes(&hugetlb_cgrp_subsys,
+>> -				       h->cgroup_files_dfl));
+>>   }
+>>   
+>> -static void __init __hugetlb_cgroup_file_legacy_init(int idx)
+>> +static void __init __hugetlb_cgroup_file_legacy_init(struct hstate *h)
+>>   {
+>> -	char buf[32];
+>> -	struct cftype *cft;
+>> -	struct hstate *h = &hstates[idx];
+>> +	int idx = hstate_index(h);
+>>   
+>>   	hugetlb_cgroup_cfttypes_init(h, legacy_files + idx * LEGACY_TMPL_SIZE,
+>>   				     hugetlb_legacy_tmpl, LEGACY_TMPL_SIZE);
+>> -
+>> -	/* format the size */
+>> -	mem_fmt(buf, sizeof(buf), huge_page_size(h));
+>> -
+>> -	/* Add the limit file */
+>> -	cft = &h->cgroup_files_legacy[0];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.limit_in_bytes", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_LIMIT);
+>> -	cft->read_u64 = hugetlb_cgroup_read_u64;
+>> -	cft->write = hugetlb_cgroup_write_legacy;
+>> -
+>> -	/* Add the reservation limit file */
+>> -	cft = &h->cgroup_files_legacy[1];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.limit_in_bytes", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_LIMIT);
+>> -	cft->read_u64 = hugetlb_cgroup_read_u64;
+>> -	cft->write = hugetlb_cgroup_write_legacy;
+>> -
+>> -	/* Add the usage file */
+>> -	cft = &h->cgroup_files_legacy[2];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.usage_in_bytes", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_USAGE);
+>> -	cft->read_u64 = hugetlb_cgroup_read_u64;
+>> -
+>> -	/* Add the reservation usage file */
+>> -	cft = &h->cgroup_files_legacy[3];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.usage_in_bytes", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_USAGE);
+>> -	cft->read_u64 = hugetlb_cgroup_read_u64;
+>> -
+>> -	/* Add the MAX usage file */
+>> -	cft = &h->cgroup_files_legacy[4];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.max_usage_in_bytes", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_MAX_USAGE);
+>> -	cft->write = hugetlb_cgroup_reset;
+>> -	cft->read_u64 = hugetlb_cgroup_read_u64;
+>> -
+>> -	/* Add the MAX reservation usage file */
+>> -	cft = &h->cgroup_files_legacy[5];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.max_usage_in_bytes", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_MAX_USAGE);
+>> -	cft->write = hugetlb_cgroup_reset;
+>> -	cft->read_u64 = hugetlb_cgroup_read_u64;
+>> -
+>> -	/* Add the failcntfile */
+>> -	cft = &h->cgroup_files_legacy[6];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.failcnt", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_FAILCNT);
+>> -	cft->write = hugetlb_cgroup_reset;
+>> -	cft->read_u64 = hugetlb_cgroup_read_u64;
+>> -
+>> -	/* Add the reservation failcntfile */
+>> -	cft = &h->cgroup_files_legacy[7];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.rsvd.failcnt", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, RES_RSVD_FAILCNT);
+>> -	cft->write = hugetlb_cgroup_reset;
+>> -	cft->read_u64 = hugetlb_cgroup_read_u64;
+>> -
+>> -	/* Add the numa stat file */
+>> -	cft = &h->cgroup_files_legacy[8];
+>> -	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.numa_stat", buf);
+>> -	cft->private = MEMFILE_PRIVATE(idx, 0);
+>> -	cft->seq_show = hugetlb_cgroup_read_numa_stat;
+>> -
+>> -	/* NULL terminate the last cft */
+>> -	cft = &h->cgroup_files_legacy[9];
+>> -	memset(cft, 0, sizeof(*cft));
+>> -
+>> -	WARN_ON(cgroup_add_legacy_cftypes(&hugetlb_cgrp_subsys,
+>> -					  h->cgroup_files_legacy));
+>>   }
+>>   
+>> -static void __init __hugetlb_cgroup_file_init(int idx)
+>> +static void __init __hugetlb_cgroup_file_init(struct hstate *h)
+>>   {
+>> -	__hugetlb_cgroup_file_dfl_init(idx);
+>> -	__hugetlb_cgroup_file_legacy_init(idx);
+>> +	__hugetlb_cgroup_file_dfl_init(h);
+>> +	__hugetlb_cgroup_file_legacy_init(h);
+>>   }
+>>   
+>>   static void __init __hugetlb_cgroup_file_pre_init(void)
+>> @@ -1011,13 +873,22 @@ static void __init __hugetlb_cgroup_file_pre_init(void)
+>>   	BUG_ON(!legacy_files);
+>>   }
+>>   
+>> +static void __init __hugetlb_cgroup_file_post_init(void)
+>> +{
+>> +	WARN_ON(cgroup_add_dfl_cftypes(&hugetlb_cgrp_subsys,
+>> +				       dfl_files));
+>> +	WARN_ON(cgroup_add_legacy_cftypes(&hugetlb_cgrp_subsys,
+>> +					  legacy_files));
+>> +}
+>> +
+>>   void __init hugetlb_cgroup_file_init(void)
+>>   {
+>>   	struct hstate *h;
+>>   
+>>   	__hugetlb_cgroup_file_pre_init();
+>>   	for_each_hstate(h)
+>> -		__hugetlb_cgroup_file_init(hstate_index(h));
+>> +		__hugetlb_cgroup_file_init(h);
+>> +	__hugetlb_cgroup_file_post_init();
+>>   }
+>>   
+>>   /*
+> 
+> Best regards
 
