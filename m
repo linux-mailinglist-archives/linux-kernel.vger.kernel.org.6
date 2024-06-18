@@ -1,104 +1,237 @@
-Return-Path: <linux-kernel+bounces-218525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1445790C18C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:43:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD3690C190
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29801F21CF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:43:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D018B22F71
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450B617565;
-	Tue, 18 Jun 2024 01:42:57 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E1310A16
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E2917C95;
+	Tue, 18 Jun 2024 01:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sns5uOLC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0237910A16;
+	Tue, 18 Jun 2024 01:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718674976; cv=none; b=kbp50yDXJn18Yo8M6nPV/mjSUWx/spPp5HBh4HtRSL9iChMrmGbXiG2xhK1iP7lDZLdDKNcTkwAHFYvgoQHLUvx9TuudT/myjW0eTYet26SGG0Hq73RKqIP6IVXNuw+1/bMJ7YPCX1X/9AGyQDE7YUVW598+8j6inOyfhySJSlY=
+	t=1718675014; cv=none; b=hMlCc9sS29JFqchVOgqwFZtI2NA+xeQU5SxlkuDgJtLvRd+1eGY7FrKTg1Zh4Rbypw+Q5MjJ6ZlNnH3QKuBtBMPEncaT8RhzoKZMeZqt+MqiIeZc48d8ITvCarnSTVfxHgZxVj2S40D4ZzFSVITv1rRtbO3Et83lQuzmOeAnQd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718674976; c=relaxed/simple;
-	bh=173Gr/hLGVCXy+QuV8QJFgFRfyAVlEZrwGfrZLVwD7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B2ZFzS4p99diRHPTaE59D2KYAVqAGCfR2HOYpc161ayuCMobVpq6HgnPguG/VWG35hrBtclP3QEDnD5e96GOqdptRHp4g8WGeg55y7kFZMYeY1wG7taelw45+a4tZm/ksWfF3JyRzOx3Mrce7HXifwYlVGZ2oXa752VjacQzhwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [112.20.110.225])
-	by gateway (Coremail) with SMTP id _____8CxcPAV5nBmXMcHAA--.31329S3;
-	Tue, 18 Jun 2024 09:42:45 +0800 (CST)
-Received: from [192.168.100.8] (unknown [112.20.110.225])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxBMUU5nBmi6kmAA--.17672S3;
-	Tue, 18 Jun 2024 09:42:44 +0800 (CST)
-Message-ID: <6769145a-f4dc-40a0-8215-23e9925b9711@loongson.cn>
-Date: Tue, 18 Jun 2024 09:42:44 +0800
+	s=arc-20240116; t=1718675014; c=relaxed/simple;
+	bh=lKZVylMEDQkBXztZ/GoU0xvg0FZppHHM24DQfAEF2UA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k2RAoiZIBqh+crXJeUXSTu+pK7nkqLpNpJddZ1vGmRzmEjEuSRYhKJhnIN5EQYy64vRaKvHpHec+B4PkJ0aJDyEtfIH3Pf2SxcaR0mK4iq64C243v1asbSihJxNYpor+uQpzitbAuiphLxpzlpIG0KtHFPTJWuYFsmAKfwVmvb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sns5uOLC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94245C2BD10;
+	Tue, 18 Jun 2024 01:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718675013;
+	bh=lKZVylMEDQkBXztZ/GoU0xvg0FZppHHM24DQfAEF2UA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sns5uOLCBDXtFflQPRb8aI6UDSIcGHeKA44luZnmiuFjkvlwAVPuZ7xRpWqukrkO0
+	 hKdJfPQ6LPut2DVolR0sGSnhgCH9eYyQuHrKALPegSHOs0RBPuLsEynd7vig1h7qhC
+	 DCB08+wD/EEzIBk0Ut2LXxwCT71i9LHI8NFbEocoGAeezgBdRvR/bq7pOMTnKunJfY
+	 TTWv2nwYrmlAzEMe1tibmNSqDt770O+7NhT8koT35ZXfF59ZFL3dYVRNm25QGxKiVA
+	 dSSH2EALwv7RLRc4vE/o37kmYB10W3Ks3BsQr2eMFaWrNnCLY2yeXzRCgI5eNcDWBV
+	 /lwKRxqrbeofw==
+Date: Mon, 17 Jun 2024 18:43:31 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
+ Cochran <richardcochran@gmail.com>, Radu Pirea
+ <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
+ Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>
+Subject: Re: [PATCH net-next v15 13/14] net: ethtool: tsinfo: Add support
+ for hwtstamp provider and get/set hwtstamp config
+Message-ID: <20240617184331.0ddfd08e@kernel.org>
+In-Reply-To: <20240612-feature_ptp_netnext-v15-13-b2a086257b63@bootlin.com>
+References: <20240612-feature_ptp_netnext-v15-0-b2a086257b63@bootlin.com>
+	<20240612-feature_ptp_netnext-v15-13-b2a086257b63@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] zh_CN/admin-guide: Add zh_CN/admin-guide/numastat.rst
- translation document
-To: wodemia@foxmail.com, alexs@kernel.org, corbet@lwn.net
-Cc: linux-doc@vger.kernel.or, linux-kernel@vger.kernel.org,
- Tao Zou <wodemia@linux.alibaba.com>
-References: <tencent_F6283AC33634D608765A49147F203961E308@qq.com>
-Content-Language: en-US
-From: Yanteng Si <siyanteng@loongson.cn>
-In-Reply-To: <tencent_F6283AC33634D608765A49147F203961E308@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8AxBMUU5nBmi6kmAA--.17672S3
-X-CM-SenderInfo: pvl1t0pwhqwqxorr0wxvrqhubq/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7JrW7CF4xWr48Jry7Kr15GFX_yoW3Wrc_Cw
-	s7XFZayr48J3WIkFy7Ca1YyryxGw45K3909asYqw4DX3y7Gws8J34qg3Z5X345Wrs0krW3
-	Wws5Wr1xurnrWosvyTuYvTs0mTUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbV8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
-	JVW8Jr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42
-	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1l
-	x2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14
-	v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IY
-	x2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87
-	Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZF
-	pf9x07j5xhLUUUUU=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Tao,
+On Wed, 12 Jun 2024 17:04:13 +0200 Kory Maincent wrote:
+> Enhance 'get' command to retrieve tsinfo of hwtstamp providers within a
+> network topology and read current hwtstamp configuration.
+> 
+> Introduce support for ETHTOOL_MSG_TSINFO_SET ethtool netlink socket to
+> configure hwtstamp of a PHC provider. Note that simultaneous hwtstamp
+> isn't supported; configuring a new one disables the previous setting.
+> 
+> Also, add support for a specific dump command to retrieve all hwtstamp
+> providers within the network topology, with added functionality for
+> filtered dump to target a single interface.
 
+Could you split this up, a little bit? It's rather large for a core
+change.
 
-Good job!
+>  Desired behavior is passed into the kernel and to a specific device by
+> -calling ioctl(SIOCSHWTSTAMP) with a pointer to a struct ifreq whose
+> -ifr_data points to a struct hwtstamp_config. The tx_type and
+> -rx_filter are hints to the driver what it is expected to do. If
+> -the requested fine-grained filtering for incoming packets is not
+> +calling the tsinfo netlink socket ETHTOOL_MSG_TSINFO_SET.
+> +The ETHTOOL_A_TSINFO_TX_TYPES, ETHTOOL_A_TSINFO_RX_FILTERS and
+> +ETHTOOL_A_TSINFO_HWTSTAMP_FLAGS netlink attributes are then used to set the
+> +struct hwtstamp_config accordingly.
 
-在 2024/6/17 17:03, wodemia@foxmail.com 写道:
-> From: Tao Zou <wodemia@linux.alibaba.com>
->
-> Add translation zh_CN/admin-guide/numastat.rst and link it to
-> zh_CN/admin-guide/index.rst while clean its todo entry.
->
-> Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
-> ---
->   .../translations/zh_CN/admin-guide/index.rst  |  2 +-
->   .../zh_CN/admin-guide/numastat.rst            | 50 +++++++++++++++++++
->   2 files changed, 51 insertions(+), 1 deletion(-)
->   create mode 100644 Documentation/translations/zh_CN/admin-guide/numastat.rst
+nit: EHTOOL_A* defines in `` `` quotes?
 
-Unfortunately, I don't see your email in linux-doc list, so I can't 
-comment on it for now.
+> +		if (hwtstamp && ptp_clock_phydev(hwtstamp->ptp) == phydev) {
+> +			rcu_assign_pointer(dev->hwtstamp, NULL);
+> +			synchronize_rcu();
+>  			kfree(hwtstamp);
 
+Could you add an rcu_head to this struct and use kfree_rcu()
+similarly later use an rcu call to do the dismantle?
+synchronize_rcu() can be slow.
 
-You can try resending it as plain text and using git send-email.
+> +enum {
+> +	ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER_UNSPEC,
+> +	ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER_INDEX,		/* u32 */
+> +	ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER_QUALIFIER,		/* u32 */
+> +
+> +	__ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER_CNT,
+> +	ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER_MAX = (__ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER_CNT - 1)
+> +};
+> +
+>  
 
+nit: double new line
 
-Thanks,
+> +const struct nla_policy ethnl_tsinfo_get_policy[ETHTOOL_A_TSINFO_MAX + 1] = {
+>  	[ETHTOOL_A_TSINFO_HEADER]		=
+>  		NLA_POLICY_NESTED(ethnl_header_policy_stats),
+> +	[ETHTOOL_A_TSINFO_GHWTSTAMP] =
+> +		NLA_POLICY_MAX(NLA_U8, 1),
 
-Yanteng
+I think this can be an NLA_FLAG, but TBH I'm also confused about 
+the semantics. Can you explain what it does from user perspective?
 
+> +	[ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER] =
+> +		NLA_POLICY_NESTED(ethnl_tsinfo_hwtstamp_provider_policy),
+>  };
+>  
+> +static int tsinfo_parse_hwtstamp_provider(const struct nlattr *nest,
+> +					  struct hwtst_provider *hwtst,
+> +					  struct netlink_ext_ack *extack,
+> +					  bool *mod)
+> +{
+> +	struct nlattr *tb[ARRAY_SIZE(ethnl_tsinfo_hwtstamp_provider_policy)];
+
+Could you find a more sensible name for this policy?
+
+> +	int ret;
+> +
+> +	ret = nla_parse_nested(tb,
+> +			       ARRAY_SIZE(ethnl_tsinfo_hwtstamp_provider_policy) - 1,
+> +			       nest,
+> +			       ethnl_tsinfo_hwtstamp_provider_policy, extack);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (NL_REQ_ATTR_CHECK(extack, nest, tb, ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER_INDEX) ||
+> +	    NL_REQ_ATTR_CHECK(extack, nest, tb, ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER_QUALIFIER))
+
+nit: wrap at 80 chars, if you can, please
+
+> +		return -EINVAL;
+> +
+> +	ethnl_update_u32(&hwtst->index,
+> +			 tb[ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER_INDEX],
+> +			 mod);
+> +	ethnl_update_u32(&hwtst->qualifier,
+> +			 tb[ETHTOOL_A_TSINFO_HWTSTAMP_PROVIDER_QUALIFIER],
+> +			 mod);
+> +
+> +	return 0;
+> +}
+
+>  static int tsinfo_prepare_data(const struct ethnl_req_info *req_base,
+>  			       struct ethnl_reply_data *reply_base,
+>  			       const struct genl_info *info)
+>  {
+>  	struct tsinfo_reply_data *data = TSINFO_REPDATA(reply_base);
+> +	struct tsinfo_req_info *req = TSINFO_REQINFO(req_base);
+>  	struct net_device *dev = reply_base->dev;
+>  	int ret;
+>  
+>  	ret = ethnl_ops_begin(dev);
+>  	if (ret < 0)
+>  		return ret;
+> +
+> +	if (req->get_hwtstamp) {
+> +		struct kernel_hwtstamp_config cfg = {};
+> +
+> +		if (!dev->netdev_ops->ndo_hwtstamp_get) {
+> +			ret = -EOPNOTSUPP;
+> +			goto out;
+> +		}
+> +
+> +		ret = dev_get_hwtstamp_phylib(dev, &cfg);
+> +		data->hwtst_config.tx_type = BIT(cfg.tx_type);
+> +		data->hwtst_config.rx_filter = BIT(cfg.rx_filter);
+> +		data->hwtst_config.flags = BIT(cfg.flags);
+> +		goto out;
+
+This is wrong AFAICT, everything up to this point was a nit pick ;)
+Please take a look at 89e281ebff72e6, I think you're reintroducing a
+form of the same bug. If ETHTOOL_FLAG_STATS was set, you gotta run stats
+init.
+
+Perhaps you can move the stats getting up, and turn this code into if
+/ else if / else, without the goto.
+
+> +int ethnl_tsinfo_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
+> +{
+> +	struct ethnl_tsinfo_dump_ctx *ctx = (void *)cb->ctx;
+> +	struct net *net = sock_net(skb->sk);
+> +	struct net_device *dev;
+> +	int ret = 0;
+> +
+> +	rtnl_lock();
+> +	if (ctx->req_info->base.dev) {
+> +		ret = ethnl_tsinfo_dump_one_dev(skb,
+> +						ctx->req_info->base.dev,
+> +						cb);
+> +	} else {
+> +		for_each_netdev_dump(net, dev, ctx->pos_ifindex) {
+> +			ret = ethnl_tsinfo_dump_one_dev(skb, dev, cb);
+> +			if (ret < 0 && ret != -EOPNOTSUPP)
+> +				break;
+> +			ctx->pos_phcindex = 0;
+> +		}
+> +	}
+> +	rtnl_unlock();
+> +
+> +	if (ret == -EMSGSIZE && skb->len)
+> +		return skb->len;
+> +	return ret;
+
+You can just return ret without the if converting to skb->len
+af_netlink will handle the EMSGSIZE errors in the same way.
 
