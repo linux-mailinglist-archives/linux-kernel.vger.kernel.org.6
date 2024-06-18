@@ -1,106 +1,106 @@
-Return-Path: <linux-kernel+bounces-219127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7614290CA2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:47:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EFC90CA31
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3891F22169
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5631D28FEAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785DA185E4A;
-	Tue, 18 Jun 2024 11:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742AE1A01AE;
+	Tue, 18 Jun 2024 11:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4bIjzSV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GjMv9Zff"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3E615A844;
-	Tue, 18 Jun 2024 11:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5110185E41;
+	Tue, 18 Jun 2024 11:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718709310; cv=none; b=P9fhfvjMlUadZmAt8Z/ZuAqTB2NOxm1hcFB5v/ICXQWl6wIajvxnGGU09+ewSg5mQYDpZV/CLloaL4jhchUDlMBwwtBK36t5fKwY3asvpIcsYmMCMHzJ81Zsth/qLiUL9FhhPrLDQUnZMIVa6XHTj6M4mUDdj6Ajrq/wo+Fwnfg=
+	t=1718709354; cv=none; b=VlCxsobUcZQnnCd1PGbwPw2AI25d0VjmUe9jHpIECCTxfrl4aBfmBn/4ueGXJA5Md7RYtUqbR0HcBmM/cv7qDixTtbqI6/lzNmfraEZ0JdJUg9CRjCA8hPwnPRCyydCVymDRnIjarBbTPzJpgh3Y7hHjKGuJLeUbq3pGK8EKKwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718709310; c=relaxed/simple;
-	bh=FhuwRLQO68CQIh1e4REGDMaFZVAy4zws0a+cKVmWB6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uLJ+MLUHQYx//sX7rIyeOVhU0qgwAjmwAUu+5/GJxrrhTiHAGvKvB2JOni1DYk9F3UlZDRPMB5c9M/On3wrdA9xZv6Je+H81P2pDNHGE3+9WDkVlmkmSdDXbEyHQ3swbnk09eaDwQ5Z8L9zGgC2NyVPhMTksgdPD6A5wnzSL3CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4bIjzSV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27420C32786;
-	Tue, 18 Jun 2024 11:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718709310;
-	bh=FhuwRLQO68CQIh1e4REGDMaFZVAy4zws0a+cKVmWB6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h4bIjzSVPAu4fkvyJyB7moPqIUratKHa2oT88TgrlOFzik2cza/FWitwjT4vRm0kB
-	 CPUUKIDPQtGeT3fKthaJpQJAjPxRIC3qKjXUYAOm+vtUfYRQhXP1ya+N4mJh2cdcux
-	 o9ABxKD7i7hGruhZRyP2HFaQRn3EyPfn0Mog5Gm5XSX1HpSbmf1BuWqNnMnOsZ8tbG
-	 Vrf4oTcy1fbLlCfpTDl0uKeHjkePbLtIgRtjY6iFJzdTMIa5enrbAlZeVHshc8YQqb
-	 tvrClkZdjbX6k3bhnULszCBliCxN00ni5+Xzxngnb2oql6zxKgX6OkKmYs9VP6M3by
-	 xUZlSn8n2eupQ==
-Date: Tue, 18 Jun 2024 12:15:05 +0100
-From: Simon Horman <horms@kernel.org>
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] net: usb: ax88179_178a: improve link status logs
-Message-ID: <20240618111505.GA650324@kernel.org>
-References: <20240617103405.654567-1-jtornosm@redhat.com>
+	s=arc-20240116; t=1718709354; c=relaxed/simple;
+	bh=F4NhbZMhSvsAaBCFiLDNXUS9NF6/dJGgw3SGBItPegk=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MzAGUwucGo7HCnzAxPxVmzaoGp539nsXZhm2scbi3DY+KPPAa4FfqTv50BhA/Yb1th/C3a2RG23aChaqueUu1DFiU/0uO2+3QgwNo1+vbptR5NS8YxLVghT3d4IhJZRqZzwNY+oI2xl+Rxrcoe9y75+qAv1Z2QmH6j6AoNsIZ+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GjMv9Zff; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45IBFcuS068163;
+	Tue, 18 Jun 2024 06:15:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718709338;
+	bh=6oEPijPeMPuJpSxdn941nytivFxKbLXY2sXGxYO7DlM=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date;
+	b=GjMv9ZffGdmi1I+Ik5liPCb/gS48xXHDfzZHCA3cYuzbSUA1sYu9aN+8bM676GtVQ
+	 IDCJxx3vYKXA0dnF354L0Yfy9ZgaThjig5X+Fgr+A2Afj+pvnGjyEUrw0o+A2wdKC3
+	 j1O0I4hey4Ddqbw/vHfKP6vjJwOMQNdEtJOBI/kA=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45IBFcXo101484
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 18 Jun 2024 06:15:38 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
+ Jun 2024 06:15:38 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 18 Jun 2024 06:15:38 -0500
+Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45IBFbcC030601;
+	Tue, 18 Jun 2024 06:15:37 -0500
+From: Kamlesh Gurudasani <kamlesh@ti.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jayesh Choudhary <j-choudhary@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62a-main: Enable crypto accelerator
+In-Reply-To: <d7eb6b3b-13b5-4587-a2f1-83fe3b30dc21@kernel.org>
+References: <20240617-crytpo-am62a-v1-1-ddb719aed71b@ti.com>
+ <d7eb6b3b-13b5-4587-a2f1-83fe3b30dc21@kernel.org>
+Date: Tue, 18 Jun 2024 16:45:36 +0530
+Message-ID: <87jzim4i3r.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617103405.654567-1-jtornosm@redhat.com>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, Jun 17, 2024 at 12:33:59PM +0200, Jose Ignacio Tornos Martinez wrote:
-> Avoid spurious link status logs that may ultimately be wrong; for example,
-> if the link is set to down with the cable plugged, then the cable is
-> unplugged and afer this the link is set to up, the last new log that is
-> appearing is incorrectly telling that the link is up.
-> 
-> In order to aovid errors, show link status logs after link_reset
-> processing, and in order to avoid spurious as much as possible, only show
-> the link loss when some link status change is detected.
-> 
-> cc: stable@vger.kernel.org
-> Fixes: e2ca90c276e1 ("ax88179_178a: ASIX AX88179_178A USB 3.0/2.0 to gigabit ethernet adapter driver")
-> Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-> ---
->  drivers/net/usb/ax88179_178a.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
-> index c2fb736f78b2..60357796be99 100644
-> --- a/drivers/net/usb/ax88179_178a.c
-> +++ b/drivers/net/usb/ax88179_178a.c
-> @@ -326,7 +326,8 @@ static void ax88179_status(struct usbnet *dev, struct urb *urb)
->  
->  	if (netif_carrier_ok(dev->net) != link) {
->  		usbnet_link_change(dev, link, 1);
-> -		netdev_info(dev->net, "ax88179 - Link status is: %d\n", link);
-> +		if (!link)
-> +			netdev_info(dev->net, "ax88179 - Link status is: %d\n", link);
-
-Sorry Jose,
-
-one more nit I noticed after sending my previous email.
-
-The line above looks like it could be wrapped to <= 80 columns wide,
-which is still preferred for Networking code.
-
-Flagged by checkpatch.pl --max-line-length=80
-
->  	}
->  }
->  
+Krzysztof Kozlowski <krzk@kernel.org> writes:
 
 ...
+>> +	crypto: crypto@40900000 {
+>> +		compatible = "ti,am62-sa3ul";
+>> +		reg = <0x00 0x40900000 0x00 0x1200>;
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges = <0x00 0x40900000 0x00 0x40900000 0x00 0x30000>;
+>
+> Why do you need ranges? No children here.
+Thanks for correcting, Krzysztof.
+
+This got carried from a device with child node.
+Sending a v2.
+
+Kamlesh
+>
+> Anyway, keep the order as in DTS coding style.
+>
+>
+> Best regards,
+> Krzysztof
 
