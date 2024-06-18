@@ -1,146 +1,155 @@
-Return-Path: <linux-kernel+bounces-218694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75A790C3EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:46:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA6190C3E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBBC21C232D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:46:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E014CB212B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EF973441;
-	Tue, 18 Jun 2024 06:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2585D6A8CF;
+	Tue, 18 Jun 2024 06:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="K3HCS00e";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uUUVeTmR"
-Received: from wfout2-smtp.messagingengine.com (wfout2-smtp.messagingengine.com [64.147.123.145])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NosOtCnj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5C9210F8;
-	Tue, 18 Jun 2024 06:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C8318645;
+	Tue, 18 Jun 2024 06:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718693204; cv=none; b=JR5EeP4i8Q4BqSjtc9MHlnC+tN8TrOnSEJB5EPNQIWI9tXP2/pX812MsOztlI8Gk5f0YBbVfeXEu0kdPmpahfkUwPx0RWuX+sSL6I+R02nqWtFDANznNYlarbg5fVmgaW25JZ9xHgIDf7xfGM0OTCmzAL4HyCy5ClBGnlEmw6LM=
+	t=1718693197; cv=none; b=nkDWVk1LbQSD638ampvYZWIw+8OcZoJ8OruRAVzisFV2Y9wuGeAtl2CAkjdgeygSjwajrRDXQJ/S3qpqMduZmEwEE/1+MDhZ9YAHg+Z9n47RpcCr3acvc/Nl8HxgeTmVA8dB+qzhju2dqK9c6ILU85ymYV4LBD1aq8k0sTS2gCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718693204; c=relaxed/simple;
-	bh=j06F/kFwr+kpQRTEON4VfXRMzVQHBeDN1gyaBYXRmlI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=kazKJBTgvVhTqqenzLa7cPd3LOAjww7LWvLGt7hwiyOMjJFFnZqCfQnlAHc+aVirxOZ3h72Nd34IZE0uYUamWR2Yi2FmUaxWjT5Hl8TS/IHtC0kKgkUXwiaI8PfcMfO7/80OH+IQMPkTjp4fTEvFQ3LiHDkqHgc35i2dN03s9mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=K3HCS00e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uUUVeTmR; arc=none smtp.client-ip=64.147.123.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id DEEC41C0009A;
-	Tue, 18 Jun 2024 02:46:39 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 18 Jun 2024 02:46:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718693199; x=1718779599; bh=lxINc0kCB3
-	nKZUg8Pjgeb8a0G1bTVhsiHfqgN5vLdOo=; b=K3HCS00evMayfUwfFBnHSUAwsU
-	TG/znK14ZMvP5DL4hsl0iQyD4QETJhSufI4c2rzvJLpqtB53BaTYETkEnLNT2tKp
-	l0Z5j7DajyKcZ3K+CLyifHOoNpCF9vF2PZUGauLt3yVmgVIOjZyG14RARnDf2846
-	GeCzl+52I+xfZEh/0X7KvAFy+M0bBsFKpDNBO2YfAFUEYYVmqNj9VJt+xVeu0WMG
-	XjVZthJ9FxHv5+9ae/7rREnXWyNdYUjvgtYIF0ZVA3mnCmYtwxRjGjWOupTuoJnd
-	26kQnLo0HCxp3KMdv7OtSGoqZuOzrUiI3Bbr/QrYLV6a0EXwbQFLZSCu7mqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1718693199; x=1718779599; bh=lxINc0kCB3nKZUg8Pjgeb8a0G1bT
-	VhsiHfqgN5vLdOo=; b=uUUVeTmRuXVF7AHPEr5LPKz+ARzDCYCBQU2tMpyj/YZ8
-	BJD23ffueXoiF60lNkXjs5gPOhuz3V3ebWOUzK9H93d0nET+kFixODe+BVoVvmPU
-	NvTm0TfPKpF+DE30Vgrg9Otr5kJM5n62A23QrQAVOrChwzfk2eX8M9Z56nXbNYCD
-	JgPYNwtVQezh0N5gzmW+2xw3KOloTe4GR/6VQppgLx9EywObZFP8HOYf9zZfi4Mz
-	WaVfir8Xfr+jTK1xskURUKl895M3NqbmNlfgH/2y3zs4Tbs7gNx6U8OpA7TMscsC
-	QphwyElmc36kG6IEfuTG8VBek9eMsPHGDmlmsCHOjQ==
-X-ME-Sender: <xms:Ti1xZkIBK-IrM9dRu8fquS6-axCA4T7fvvCfQV70PtT-cxPRKZQ0QA>
-    <xme:Ti1xZkLxPpxlJqS7ukGGuRVIJyM3jmo5z9qWtSBL4xTljdTPxTMWoU5qZN0YvOVsw
-    1btQII6fZNreJoF2D4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedviedguddufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
-    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:Ti1xZktdxq8yTuOTsFHwMNUzIeaaTUK_n2C7V_mA7WiZ0XsdY5cDxQ>
-    <xmx:Ti1xZhaHTl_DKzBEPTT4dgt2Yl3OU1Vx_F4bYoSxIL8GDgrl2uYizg>
-    <xmx:Ti1xZrYMWfpTLXTs-ijlOmXxF4F_ynT3fUYiXYWFIGrb8JWHi8k8aQ>
-    <xmx:Ti1xZtCJBKbz-WJBjuvmDkU5IO4YJDUOBZBMoyaAOO5HeJag-_nSyg>
-    <xmx:Ty1xZvLAlOYTJf9ksrH8NMJd0Ic1xh6O66Vn0yZWULGwUSd60Ensc2F4>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 7DE7EB60093; Tue, 18 Jun 2024 02:46:38 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718693197; c=relaxed/simple;
+	bh=WaVvQIfpnQHOh2a83bIB5A38kXgEyK4o0uPqp0KMh74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Cl1lsu61PixqQtfmixuVDRb4k3tOzb9n9QxKu6H7+1Pfone4nTMuBfZGAIUmOV6IjhnwqpIXrajj6jHoZLzvIPyUsuP1wW7QoHN1j2aDuzEXU6jj4mLHXAiZRHXPTRk7BO+df44jJ4Ar1nmLoyO/zLUCxgebLQPmF1eU6XdbgBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NosOtCnj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA5B6C3277B;
+	Tue, 18 Jun 2024 06:46:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718693196;
+	bh=WaVvQIfpnQHOh2a83bIB5A38kXgEyK4o0uPqp0KMh74=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=NosOtCnjRfEao6qRFIC5RN4w4Cq6g57EFZwPi+fCDx2B0lccBWw0qiWoHnhO2k4zq
+	 LSWFrm6YAlg1SlLokkA1V0DV6G4P9MOFS3DofEleR/KsEm0DW3WluoLD9ijBbXrMr1
+	 ve3j8hLHJS+rb6aogFmlfvc593Kl6WNkjBK7HHP+5044yyX6z7On0wCAhlZ+d9X5J5
+	 icwm7EYixJ/I1UK268dX7p0VF8yedhQH9vBEruONYs3zlE1YkPoX/wrPjZ7DY/K5vS
+	 rlCRwkoZQpStrRCJ0wSrYOz9gfjlxGMANiXuK5wFQRL45azGUNaOExtXothKCD51Al
+	 c7tjg5i+PH68g==
+Message-ID: <7f7bcb95-61fe-4804-8dda-1ab8ebc95b7f@kernel.org>
+Date: Tue, 18 Jun 2024 08:46:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <a3965437-bd7d-41cc-abb6-0311e5d933bf@app.fastmail.com>
-In-Reply-To: <202406171618.A92D064@keescook>
-References: <20240617133721.377540-1-liuyuntao12@huawei.com>
- <ZnBbr2CAqBGDe2aN@J2N7QTR9R3> <202406171122.B5FDA6A@keescook>
- <d0959336-4430-4062-b909-54d553238468@app.fastmail.com>
- <202406171618.A92D064@keescook>
-Date: Tue, 18 Jun 2024 08:46:18 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Kees Cook" <kees@kernel.org>
-Cc: "Mark Rutland" <mark.rutland@arm.com>,
- "Yuntao Liu" <liuyuntao12@huawei.com>, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-hardening@vger.kernel.org,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- "Heiko Carstens" <hca@linux.ibm.com>, gor@linux.ibm.com,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "Leonardo Bras" <leobras@redhat.com>, "Mark Brown" <broonie@kernel.org>,
- imbrenda@linux.ibm.com, pawan.kumar.gupta@linux.intel.com
-Subject: Re: [PATCH] remove AND operation in choose_random_kstack_offset()
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: leds: Add LED1202 LED Controller
+To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
+ pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <ZnCnnQfwuRueCIQ0@admins-Air>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <ZnCnnQfwuRueCIQ0@admins-Air>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 18, 2024, at 01:31, Kees Cook wrote:
-> On Mon, Jun 17, 2024 at 10:33:08PM +0200, Arnd Bergmann wrote:
->> On Mon, Jun 17, 2024, at 20:22, Kees Cook wrote:
->
-> I'm all for more entropy, but arch maintainers had wanted specific
-> control over this value, and given the years of bikeshedding over the
-> feature, I'm not inclined dive back into that debate, but okay.
->
-> FWIW, the here's the actual entropy (due to stack alignment enforced by
-> the compiler for the given arch ABI).
->
-> standard cap is 0x3FF (10 bits).
->
-> arm64: capped at 0x1FF (9 bits), 5 bits effective
-> powerpc: uncapped (10 bits), 6 or 7 bits effective
-> riscv: uncapped (10 bits), 6 bits effective
-> x86: capped at 0xFF (8 bits), 5 (x86_64) or 6 (ia32) bits effective
-> s390: capped at 0xFF (8 bits), undocumented effective entropy
+On 17/06/2024 23:16, Vicentiu Galanopulo wrote:
+> +patternProperties:
+> +  "^led@[0-9a-f]+$":
+> +    type: object
+> +    $ref: common.yaml#
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        minimum: 0
+> +        maximum: 11
+> +
+> +    required:
+> +      - reg
+> +
+> +additionalProperties: true
 
-Thanks for the summary. 
+This must be false. You can use other bindings as reference: none of
+final device schemas have here true.
 
-Right now of course we need to fix the bug from 9c573cd31343
-("randomize_kstack: Improve entropy diffusion") that has led to
-using full 10 bits after diffusion but put fewer bits in than
-possible on some architectures. Unless you want to revert that
-patch, we should ensure that any truncation is only done in
-KSTACK_OFFSET_MAX() rather than passed into
-choose_random_kstack_offset().
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/leds/common.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        led-controller@58 {
+> +            compatible = "st,led1202";
+> +            reg = <0x58>;
+> +            address-cells = <1>;
+> +            size-cells = <0>;
+> +
+> +            led@0 {
+> +                reg = <0>;
+> +                label = "led1_r";
 
-     Arnd
+No, use color and function instead.
+
+> +                active = <1>;
+
+What's that?
+
+Best regards,
+Krzysztof
+
 
