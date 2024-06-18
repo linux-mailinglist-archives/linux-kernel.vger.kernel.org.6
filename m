@@ -1,146 +1,154 @@
-Return-Path: <linux-kernel+bounces-219013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FF790C8CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:15:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CC490C8CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E1B5B270F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:15:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D54D6B27143
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A417D2093C7;
-	Tue, 18 Jun 2024 10:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDAB2093EB;
+	Tue, 18 Jun 2024 10:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nLtqI5IL"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QcprsH+C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF0B158DC2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256F42093E5
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718704890; cv=none; b=Lc3A4g6osH/02nToLrTH5CherEBOy9gq8y8rEdDPy0Jnj/Z2dJZcZG6qYok9TH+lo1Pito2SeKt/18CejvSvHLcwxEZFDft+2ucaLEDk3iu987GhkNVIMC+TpkEWXI1m5BhapeYs0wzQ2a7fYSFw1/CgT/9sA7rq0x/OsKY8SMg=
+	t=1718704894; cv=none; b=CGmJE94u1KAec8zUEIRqRG/4ufS/MEXRqakjwLPkvzjNYpgtpB9r6kagZG+94DCCSv4V/y329YurDTGzUs/fJOnM7MZzXDFqXJ2KBCJiIO+wa+4/aYIczpy6mgihV8OBB/M1dix3TiSiTcMPMs1pzlXPO64OzJWHTUSTfWQF1pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718704890; c=relaxed/simple;
-	bh=3/wN22BKmov5evkB2wqvPitu8to7Y1Hlar435aIf7jM=;
+	s=arc-20240116; t=1718704894; c=relaxed/simple;
+	bh=yOh+LtPxm/3KyFCjguRGZbLlWrXkgeTsue3aEKRtSsc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=udF6O5e+LipjgcpsJRqKkZQRIAJjZrLpZhxVSdIfxYgMHQ+Fw/OnQLkP5vRna+Viavv1vTh9GvqgK6/nMKclY9twVEImRyeRHfmgtOWHJNJGSB8ruZXF/lCzLCQlCwqpjUlXX0cSp+Vz1yLTmbUhBkrDCQ94mPJ4Gbhfjit8KYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nLtqI5IL; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c85a7f834so6734729e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:01:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718704886; x=1719309686; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cB7HwRCR8aHc6eQnVBtyt+21nLJFLrMKD+lR4P5dPFo=;
-        b=nLtqI5ILV/v1KflPP1LRrjruxv/mSmQUsHVFJ7nUrvx9NO4C3Msg7yeytzXS6MI9YD
-         Wnq8I2iGKoD5nTTE2m1RveCkdoumEcxe+0O6CFl1KLLi8GdwzGkFX1EQvSSp6vJVHXe0
-         zp9EjPyadcGHtkTwsopcJdQYFvNY6kt9wJrtqisqW/w7pHfUp0FOk3mB2/lJyhbPtMeS
-         3zmO0IEy2nqZrfAybhUQhv9PtJuw+HgDw77m+dDjobSkFJyv8gmjk3sxiadbbjpGkUX5
-         h3jTo7E+9pcatEppvo51VisjhtYiPDj8rEcKNf9f/uM0nEAhJreKu4w+D6Tq48ZP00J9
-         qEBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718704886; x=1719309686;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cB7HwRCR8aHc6eQnVBtyt+21nLJFLrMKD+lR4P5dPFo=;
-        b=MZv57jBcCd41wqHn3DMtw0JSEexzj1+qi73D/+b6RSA6Ph26S9tNlIWSwCdZfYUdmn
-         arfL1guE7MC+JppOLAaVKQdoBDl7U/To4aJNcDD8FERHS8V9cBTjzneHdkWDeqO2eI2U
-         EgJMwceoWVXDgl+LMr6QYGf4/ysCYW3v9Gdj/LXdhsxgG6flKrkhRR+4uwB0SJqHeJPw
-         AJGBgK7w80GjuJ1yVBlRRa2x7CxxkegqyNF+gMl5uKM3x/2fOlk+EOfhJBWOEY/44COY
-         yasCaGTZC68a8SY2dVFXf5bfkvkHSvMb0dfk7BaS2AjMw7ZW3m7Eiwdua95psTVs4Usv
-         9gNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUim44lzX4LQiLfVhNsyDM7tiQLMSn83H0TpCYV9qSsP2DwCovLv8PdXNHiDgA8umE9I66mkQas+/I0snt5A6OFV1wYyaTz3fWteRbL
-X-Gm-Message-State: AOJu0Yx4Jb3pPWDuguf27jzUF52660EkpXLEFOq3Iwke8duLgzYROHry
-	o7v9luVmoU0M8U4pPDM8sykRuDQGVGVSnAur4tikDSc0ItzSwcgK8w2W2MITB1o=
-X-Google-Smtp-Source: AGHT+IFnTClOiXd6i/bQkfHvkxe1DmwjvM4u33wMBOsYhKkaVTbDV1ibbbyOvD9s+MswWwvrc2Au5Q==
-X-Received: by 2002:a19:ca49:0:b0:52c:85a8:669 with SMTP id 2adb3069b0e04-52ca6e6599emr6328228e87.20.1718704886411;
-        Tue, 18 Jun 2024 03:01:26 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca287233dsm1471005e87.159.2024.06.18.03.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 03:01:26 -0700 (PDT)
-Date: Tue, 18 Jun 2024 13:01:24 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Sebastian Reichel <sre@kernel.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Hans de Goede <hdegoede@redhat.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] Immutable branch between pdx86 lenovo c630 branch,
- power/supply and USB
-Message-ID: <nlsnjvwt45kytwxs7xhxl2ixzvkdyoeoodn4vwwzuxh3trxj3e@kjbjamd36coe>
-References: <e999261e-cba8-740e-430b-4a4e702fd609@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EAj18l3wy55dslqav1M+jI8reYJZ6PG+Wrrwt3+PyVeRrvv1R0uA3i9tA164UAm3cmaA//p/WO3zQaarXOWkcYJLtsxLCBQOjdd1LA2yIbQwIso9JBPBlwofh1B0Ma+DyxBDEOvCpTW3G388U5791GXktEU3Yv8/U0JBW1xyjWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QcprsH+C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54687C4AF1D;
+	Tue, 18 Jun 2024 10:01:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718704893;
+	bh=yOh+LtPxm/3KyFCjguRGZbLlWrXkgeTsue3aEKRtSsc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QcprsH+C0mcjEs5C4VXD7gnhp4ql7gpjc3RxCdaAO1h/oX/tmkv+O44xv0xIufhTM
+	 3S5ZMyMB5hfXioOQGsEVraoqgG5EtoXvHMR+X982L542i8di3NC8NOwZSneVGFdg/M
+	 UJHk1BtlOrUGPhFNW6cF9G2xkIsSnZq6zQkv0wo0=
+Date: Tue, 18 Jun 2024 12:01:30 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH 1/1] container_of: Document container_of_const() is
+ preferred
+Message-ID: <2024061827-revival-handwrite-5eb0@gregkh>
+References: <20240617100825.2510728-1-sakari.ailus@linux.intel.com>
+ <2024061702-vexingly-hypocrisy-d93d@gregkh>
+ <ZnFOrziVMDwtu1NA@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e999261e-cba8-740e-430b-4a4e702fd609@linux.intel.com>
+In-Reply-To: <ZnFOrziVMDwtu1NA@kekkonen.localdomain>
 
-On Tue, Jun 18, 2024 at 11:35:40AM GMT, Ilpo Järvinen wrote:
-> Hi,
+On Tue, Jun 18, 2024 at 09:09:03AM +0000, Sakari Ailus wrote:
+> Hi Greg,
 > 
-> Here is the IB containing the platform patches (1-2) the other patches in 
-> the Lenovo C630 series depend on (Dmitry was going to do a minor update on 
-> the remaining patches before they are ready to be merged).
+> On Mon, Jun 17, 2024 at 12:44:55PM +0200, Greg Kroah-Hartman wrote:
+> > On Mon, Jun 17, 2024 at 01:08:25PM +0300, Sakari Ailus wrote:
+> > > There is a warning in kerneldoc documentation of container_of() that
+> > > constness of @ptr is lost. While this is a suggestion container_of_const()
+> > > should be used instead, the vast majority of new code still uses
+> > > container_of():
+> > > 
+> > > $ git diff v6.8 v6.9|grep container_of\(|wc -l
+> > > 788
+> > > $ git diff v6.8 v6.9|grep container_of_const|wc -l
+> > > 11
+> > 
+> > That is because container_of_const is new, and you don't normally go
+> > back and change things unless you have to.  Which is what I am starting
+> > to do for some cases now in the driver core interactions, but generally
+> > it's rare to need this.
 > 
-> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+> container_of_const() does provide a useful a useful sanity check and I
+> think we should encourage people to use it. I'm happy to see many macros
+> under include/ use container_of_const() already, but there seem to be more
+> than 1000 cases where the constness qualifier of a pointer is just
+> discarded just in the scope that got compiled with my current .config (not
+> allyesconfig). While the vast majority are probably benign, I wouldn't be
+> certain there aren't cases where the container of a const pointer ends up
+> being modified.
 > 
->   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+> > 
+> > Also note that container_of_const does not work in an inline function,
+> > which is another reason people might not want to use it.
 > 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-ib-lenovo-c630-v6.11
-> 
-> for you to fetch changes up to 5e5f2f92cccc29f356422d3cbc104f7f42430f22:
-> 
->   platform: arm64: add Lenovo Yoga C630 WOS EC driver (2024-06-14 12:51:30 +0300)
-> 
-> ----------------------------------------------------------------
-> Immutable branch between pdx86 lenovo c630 branch, power/supply and USB
-> subsystems due for the v6.11 merge window.
-> 
-> platform-drivers-x86-ib-lenovo-c630-v6.11:
->   v6.10-rc1 + platform-drivers-x86-lenovo-c630
-> for merging into the power/supply and USB subsystems for v6.11.
-> 
-> ----------------------------------------------------------------
+> Does not work or is less useful (compared to a macro)? _Generic() would
+> need to be used if you'd like to have const and non-const variants of an
+> inline function but I guess in most cases macros are just fine.
 
-Thank you!
+I could not figure out a way to make this an inline function at all.
+Try it yourself and see, maybe I was wrong.
 
-> Bjorn Andersson (1):
->       dt-bindings: platform: Add Lenovo Yoga C630 EC
+> > > Make an explicit recommendation to use container_of_const(), unless @ptr
+> > > is const but its container isn't.
+> > > 
+> > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > ---
+> > >  include/linux/container_of.h | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/include/linux/container_of.h b/include/linux/container_of.h
+> > > index 713890c867be..7563015ff165 100644
+> > > --- a/include/linux/container_of.h
+> > > +++ b/include/linux/container_of.h
+> > > @@ -13,7 +13,9 @@
+> > >   * @type:	the type of the container struct this is embedded in.
+> > >   * @member:	the name of the member within the struct.
+> > >   *
+> > > - * WARNING: any const qualifier of @ptr is lost.
+> > > + * WARNING: any const qualifier of @ptr is lost. container_of() should only be
+> > > + * used in cases where @ptr is const and its container is not and you know what
+> > > + * you're doing. Otherwise always use container_of_const().
+> > 
+> > I know of no cases where a @ptr would be const yet the container would
+> > not be, do you?  So why say that here?  That implies that it is a valid
+> > thing to actually do.
+> > 
+> > I don't understand the goal here, do you want to just not have new
+> > usages use container_of() at all?  Or are you trying to warn people of a
+> > common problem that they make?  Having a const @ptr is not normal in the
+> > kernel, so this should be ok.  If not, send patches to fix up those
+> > users please.
 > 
-> Dmitry Baryshkov (1):
->       platform: arm64: add Lenovo Yoga C630 WOS EC driver
-> 
->  .../bindings/platform/lenovo,yoga-c630-ec.yaml     |  83 ++++++
->  drivers/platform/arm64/Kconfig                     |  14 +
->  drivers/platform/arm64/Makefile                    |   1 +
->  drivers/platform/arm64/lenovo-yoga-c630.c          | 291 +++++++++++++++++++++
->  include/linux/platform_data/lenovo-yoga-c630.h     |  44 ++++
->  5 files changed, 433 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/platform/lenovo,yoga-c630-ec.yaml
->  create mode 100644 drivers/platform/arm64/lenovo-yoga-c630.c
->  create mode 100644 include/linux/platform_data/lenovo-yoga-c630.h
+> My immediate goal is to encourage people to use container_of_const() for
+> the added sanity check and stop adding technical debt (code that ignores
+> const qualifier). Currently people also do think they should be using
+> container_of() instead of container_of_const() because the pointer they
+> have is not const (at the time of writing the code at least).
 
--- 
-With best wishes
-Dmitry
+That's fine, so for new things, use container_of_const(), but generally
+the need for a const is quite rare, outside of the driver core
+interactions.
+
+> Eventually (or hopefully?) adding that sanity check for container_of() may
+> be possible so we'd again have just one macro for the job.
+
+That would be nice, try doing that and see what blows up.
+
+thanks,
+
+greg k-h
 
