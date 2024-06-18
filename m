@@ -1,136 +1,147 @@
-Return-Path: <linux-kernel+bounces-219124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F3690CA25
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:47:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9523590CA2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1E751F22028
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A67328F2F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23E8158DD0;
-	Tue, 18 Jun 2024 11:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C77158A17;
+	Tue, 18 Jun 2024 11:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iff/+Dct"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLE+3EmF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F5E158DCE
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2072E64C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718709196; cv=none; b=rRPJBYDmb1XocZhUNmVLoGDzfvEyJWv7YdlDSBHYrCLbRvGTRZW914At0RV5fVK7zykeoZom6k7+9WbTJmQ6GtT+2CbQ1k93VjahnCqLP/wEZS9GbjbQorC8W35XsGfPVV18xsNorCn+DnXjahdPjBYBRon9iEo7zxtrc3Ti2r4=
+	t=1718709249; cv=none; b=YGT2+w5BV26qX2Pla4KDaZFy7+sMRZ8Mi/FNga46Pq7PfdqjaxMaUwPVhc8EaXzB+nVNcm0vXacMa7TnNHZsf7b9dmOgxaff1sTEml42AJXq42Jtp9A/fn4UBh0ks/SUZt8OzNcnUqZH68VYR4Z9jRWLPPbV0YnZIel7VlgBNOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718709196; c=relaxed/simple;
-	bh=ygTqAmSf0IfPNGq1Shs18IB+YIEVcTNMo1JV/OBncAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z9AJqlxZUc/JZ2BpJCZvroIzdsgHnb15EDBZbjvQyAb7nr74gEvqrJF8kYFw5VsaX3WESpz1FgDygBGeuIa+oiAxZlPq0l6PPdJ5neh37xvuSeUYn/3UQNlb4NXbA+zTtoniPcgJzBI1Zz64MCiX/n8AlB3spmMsNFTeidYdqz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Iff/+Dct; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cc1528c83so1062881e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718709193; x=1719313993; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JZUe7gF67J9gDxOaoNUrJWpHp/2/v3KlOF4371wquz0=;
-        b=Iff/+DctX2C8u060DPaW5Ae9G0SgfAFh/WdUObvWJAw1LTIMIQSTXD72gSDy07veK6
-         mFTU50XZwD6bkKvQlanhExsmAS+3Ir/MBN3t0azcnLOl1SYfCKIGlqcOp5czLjFUOGsK
-         khpOUITl6zJxzNXBH9wmINluZwfTHOx29/U6AGuMjM9M3TOBgTFFuMbgg4GXBf2ibMhW
-         umzBOej+RK3ePC0Vas70Q6RfQkWnjqG0k8p5fLHZFGFwEBHO4g94UCKrqgew0OyfWU+H
-         5xzmWDyP/cijUHsYUfzf+thQHgFsWFls2yFP0MqTa4mDs8lzbDr+Yuh1Sx8yYM/ZjIDV
-         kUxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718709193; x=1719313993;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JZUe7gF67J9gDxOaoNUrJWpHp/2/v3KlOF4371wquz0=;
-        b=T9jkiU96BSLALt7mdhAQpmh6avMbftT6YkfVr+STQH3RfhKsg0fnZuEH5j8PaxiLfm
-         4BVpWgk1fDRTJE1wi7e1JQ5Z2heuiwpfFNIlM0YjMfs2dKWvwDSqk3X5XEh4FpT0oH9S
-         LlZyvfc2m+b8jWH87biu7iMdvp9EVlq9vZ+lNcH2Vmd2jdUTDPZ9/qDQ36xzTt9IJfSI
-         3HJZUqj2AP6FKMFBuHwrC3r/7PIW+mtwsCshNRL4zLwzcO3oNDGjrnbcHNt6ffxDj3ha
-         f3eWFJ0I3Bl5HTZLVKowgiN/sKucVBhfreIesN32OSJTnt+ude4Y9i4sI9Nsk04ggAh2
-         41gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNUJlc66ijJuLlCPRm3HPAUqDDLvRFh+J8MMJZGacFW2a4zgpQCnE9VAbnBE0g+kSQ4sEN3F4+ta6v9ihmrUjBcixQO5ZL9jRnZka7
-X-Gm-Message-State: AOJu0Yz5F5j1bd5LdP2mo1eTVgNAOkwh5H/mPSmGuo29oE0ruXyDe2t8
-	MEGqcvK5McZyNzqAbi2BYqT6zQxb6JC1shOtEI1IlLXmz+5LmrL9kziis0gH9wk=
-X-Google-Smtp-Source: AGHT+IFvHh/ds3YGzEZJqogwunAMiM1SJOHwoExwr3tTrv56ocyHxKE2bN01RmdOChtzhx+k1jIP3g==
-X-Received: by 2002:a05:6512:15a:b0:52c:958a:4afa with SMTP id 2adb3069b0e04-52ca6e65889mr6824542e87.23.1718709192614;
-        Tue, 18 Jun 2024 04:13:12 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cbb24b860sm652495e87.191.2024.06.18.04.13.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 04:13:12 -0700 (PDT)
-Message-ID: <c3ab8619-2842-4e90-883a-04e45fb18394@linaro.org>
-Date: Tue, 18 Jun 2024 13:13:10 +0200
+	s=arc-20240116; t=1718709249; c=relaxed/simple;
+	bh=gsoN9bsY0Ylo+lc1Cq9XA37iwfd1xzM6Aee7rnvKp+o=;
+	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
+	 In-Reply-To; b=jmPFNt/5lA+W6IHZjyxWcBxML7sVZj3ksNhEuQlb7SRyv1ivQ3BizrchIowdH7GMSq7YpiJhHLiALaoscUfLhh/iBjbN6vwcvUKpA+qnBQp30hj/xB3VhQAGqbZ7O/OSpqy9apz50rvKKWiSTW0w7SAg7rrm4BaN09gAr22ZsHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SLE+3EmF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 718F8C3277B;
+	Tue, 18 Jun 2024 11:14:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718709248;
+	bh=gsoN9bsY0Ylo+lc1Cq9XA37iwfd1xzM6Aee7rnvKp+o=;
+	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
+	b=SLE+3EmFyZIadEXuElCV2DEid0uH63iaCN1BJp6a7K+KfFvX93YdSUyQRGRh0zx4V
+	 7TMQYGW2BQqf0qyeEnh+GFmPuoPM1FU62obH73qTMia1l586tTT/yl0oKGchmESrN2
+	 7FmMRngDDMzDxp66Qd9/r5hqCGFlgBuCNeWSXGxXVryko3pFOLY4sjbEPOXGqIXvNo
+	 +umleYT+raE9mRu6RRTxcICvTOSOlDTXRJLM2Eey1sNbAM/u5iV3rwg31A+a5vqzTF
+	 saohvY1NvMiP/onUxUJagWJNbFS/xC4GWOIGoAKKit1Jb+JiBOa6Y8B5BCQ2uenFFa
+	 a/ZI8A5pN4D7g==
+Content-Type: multipart/signed;
+ boundary=15a9403428c9151ae6f526bf0d43cad5e1d85be656b58492aa9773431918;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Tue, 18 Jun 2024 13:14:03 +0200
+Message-Id: <D233KUGR81P5.1BJ8JSACE7C6A@kernel.org>
+To: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Pratyush Yadav"
+ <pratyush@kernel.org>, "Miquel Raynal" <miquel.raynal@bootlin.com>,
+ "Richard Weinberger" <richard@nod.at>, "Vignesh Raghavendra"
+ <vigneshr@ti.com>, "Linus Walleij" <linus.walleij@linaro.org>
+Subject: Re: [PATCH] mtd: spi-nor: winbond: fix w25q128 regression
+Cc: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ "e9hack" <e9hack@gmail.com>
+From: "Michael Walle" <mwalle@kernel.org>
+X-Mailer: aerc 0.16.0
+References: <20240610074809.2180535-1-mwalle@kernel.org>
+ <76f8be4e-3050-4ae6-93b4-9524a0689022@linaro.org>
+In-Reply-To: <76f8be4e-3050-4ae6-93b4-9524a0689022@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] drm/msm/adreno: Move hwcg table into a6xx specific
- info
-To: Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240617225127.23476-1-robdclark@gmail.com>
- <20240617225127.23476-5-robdclark@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240617225127.23476-5-robdclark@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+
+--15a9403428c9151ae6f526bf0d43cad5e1d85be656b58492aa9773431918
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+
+Hi Tudor,
+
+On Tue Jun 18, 2024 at 12:33 PM CEST, Tudor Ambarus wrote:
+> On 6/10/24 8:48 AM, Michael Walle wrote:
+> > Commit 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+>
+> That commit did:
+> -       { "w25q128", INFO(0xef4018, 0, 64 * 1024, 256)
+> -               NO_SFDP_FLAGS(SECT_4K) },
+> +       { "w25q128", INFO(0xef4018, 0, 0, 0)
+> +               PARSE_SFDP
+> +               FLAGS(SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB) },
+>
+> > removed the flags for non-SFDP devices. It was assumed that it wasn't i=
+n
+> > use anymore. This turned out to be wrong. Add the no_sfdp_flags as
+> > well as the size again.
+> >=20
+> > Reported-by: e9hack <e9hack@gmail.com>
+> > Fixes: 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+> > Signed-off-by: Michael Walle <mwalle@kernel.org>
+> > ---
+> > Hartmut, Linus, could you please test it on your boards? Also, do
+> > you have a real name we should put in the Reported-by tag?
+> >=20
+> > This will also need a manual backport to the stable kernels due to
+> > the new syntax. But that should be straight forward.
+> > ---
+> >  drivers/mtd/spi-nor/winbond.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >=20
+> > diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbon=
+d.c
+> > index ca67bf2c46c3..6b6dec6f8faf 100644
+> > --- a/drivers/mtd/spi-nor/winbond.c
+> > +++ b/drivers/mtd/spi-nor/winbond.c
+> > @@ -105,7 +105,9 @@ static const struct flash_info winbond_nor_parts[] =
+=3D {
+> >  	}, {
+> >  		.id =3D SNOR_ID(0xef, 0x40, 0x18),
+> >  		.name =3D "w25q128",
+> > +		.size =3D SZ_16M,
+> >  		.flags =3D SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+> > +		.no_sfdp_flags =3D SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+>
+> and here you add dual and quad to trigger SFDP parsing I guess. All fine
+> if the old flash supports dual and quad read. But please update the
+> commit message describing the intention. With that ACK. Would be good to
+> have this merged soon.
+
+Right. It's not because it will trigger the SFDP parsing, but
+because that what was tested by Esben. We're lucky that this will
+trigger the SFDP parsing ;) I'll explain that in more detail and add
+a Link: to the bug report mail.
+
+-michael
+
+>
+> >  	}, {
+> >  		.id =3D SNOR_ID(0xef, 0x40, 0x19),
+> >  		.name =3D "w25q256",
 
 
+--15a9403428c9151ae6f526bf0d43cad5e1d85be656b58492aa9773431918
+Content-Type: application/pgp-signature; name="signature.asc"
 
-On 6/18/24 00:51, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Introduce a6xx_info where we can stash gen specific stuff without
-> polluting the toplevel adreno_info struct.
-> 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->   drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 65 +++++++++++++++++------
->   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     |  6 +--
->   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  9 ++++
->   drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  6 ++-
->   4 files changed, 67 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> index bcc2f4d8cfc6..96d93251fdd6 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> @@ -7,6 +7,7 @@
->    */
->   
->   #include "adreno_gpu.h"
-> +#include "a6xx_gpu.h"
->   #include "a6xx.xml.h"
->   #include "a6xx_gmu.xml.h"
->   
-> @@ -465,7 +466,9 @@ static const struct adreno_info a6xx_gpus[] = {
->   		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
->   		.init = a6xx_gpu_init,
->   		.zapfw = "a610_zap.mdt",
-> -		.hwcg = a612_hwcg,
-> +		.a6xx = &(struct a6xx_info) {
+-----BEGIN PGP SIGNATURE-----
 
-const
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZnFr/BIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/hiLAGAg+Khd4RBojemy8adXmvaISa79v2rcf5r
++KI0MNrT8r1TlCYHMwpebvKmTBFAZxS4AX9qoV2l2Cy7D882vKVYJTT58IsH8QtG
+jujq6cZWjdcC8gSPaEhSiDBLrl08GY/KRI4=
+=UUef
+-----END PGP SIGNATURE-----
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Konrad
+--15a9403428c9151ae6f526bf0d43cad5e1d85be656b58492aa9773431918--
 
