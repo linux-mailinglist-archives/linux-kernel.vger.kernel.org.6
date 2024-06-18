@@ -1,91 +1,65 @@
-Return-Path: <linux-kernel+bounces-219879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB5A90D962
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F59B90D965
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52EF1F2358C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAA11F243D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20B77764E;
-	Tue, 18 Jun 2024 16:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B823E78C92;
+	Tue, 18 Jun 2024 16:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="gCCEbTr3"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="BEiB/iT/"
+Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E2013C821
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F102139DD;
+	Tue, 18 Jun 2024 16:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718728453; cv=none; b=sRZQbtY+IC8OmfuZfqTO7wg41ybym32Na0rAnlq7ikia8Af07UckwVZc3kFm2ObCQhuptTMR5gQpc9AKQsiwxKiAi7dy81oNAHDZeCeTyrgGb3mug97uveEI4ZDtW4QySNLC7kdUf8tySjUGwUjo/peeol3d56tQXuWK09FmQL0=
+	t=1718728636; cv=none; b=Pd0M6HwD4Ip+WH/1vY0FXIqmDXBBNp6b39rrNOiOnzsQGkj5A7CqzP1RtsUkL7dGAN5j8bpbKxCus6xkhZtoAWgIqG8Niy9E7s7bkG9sZCPRLmjFQxtVAVmuO92Q/Yv+Pw6jUnvzmmLusAhpE7/AicOX14XANRJ8mdT+ikeOxMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718728453; c=relaxed/simple;
-	bh=JwSJvOkZ9FK72lyrJf2XHFu9wWCzAyRi9vx/g3UaMRM=;
+	s=arc-20240116; t=1718728636; c=relaxed/simple;
+	bh=+zr+cYq8LEpuJSRUOZhobDOGEptwOrvW51PfDDnNXZ8=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=r79QGcIcFtAGjHOE/XggUJoRey55hl19NVDAmni9/f4JMvTHh8wxRXXx5fJ9pzjDf09UIqNS7JKqxT0mNtmcjijrXAbBVba/gtKgyFjMFByKI8Bt+4aC51dVMY7nuNX1cujLogmXJ4nuZsPUj2SilPEzBxw4ggmgdJofc6DLGfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=gCCEbTr3; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b06bb80d7dso28870266d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1718728450; x=1719333250; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UyATPdua0xIvG9IEZTu2KPUCxjrD23ixmP+LULFeCqg=;
-        b=gCCEbTr3uHSVavBggfirSoulSDm89IEDZTNmLhU3RVoZeBqnAlI/qGBUAR329w46Ns
-         UOn+7ZaTgv2P2e20AgB6S/CkqGJLuYNh/EL+eGbckBNR1NG6jn09p40rRUGUPMPYZFwy
-         5RrZM61CPPZXvaWDMvaWQxsOCKyW+xCD2K/DZ9LYXTTAJOomeEat0nuAc5eaCPtkXq1e
-         /UvYb5Gpnkv6XBO4Sl67KLXmvVo3sxsZOzyoO38gepmPlMoOMTwzHSqKkt+OcL9sXQST
-         2m8Cg52bjPywD/64H9fAyJ7zqvXuB36qXThHootCje1QO57bkXAAPV7rXHwNexK6G226
-         e05A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718728450; x=1719333250;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UyATPdua0xIvG9IEZTu2KPUCxjrD23ixmP+LULFeCqg=;
-        b=kWTCeq9eGFLX+GE/DLwkuBwtWi9EWNuCqFKfKj2dHXMsPMg0oFhKiXG5sO9ycLmSTm
-         0Gs3f8e67W9qmb5sKcERRceQeLbhUpJIayej4ipK95B4/LitV7V9/Dlya0xVUAPFKo7y
-         e2rkIp7MTjBCj/xwRcm824DYe18KzRvU+Rh4eyUeatV+PnXtluMrYj1gOIjEAdtn7o0x
-         kJnllmjyPdvXUPy3pJOLUSxrVVi4MvfFCjbqQGqedd/3zdhYfglQml0husTgEnLbT2nk
-         B/L/FVZ/d1fQgs/OpgrCMXRrzlvQ5Fov3iZTVjUC7mF/kWfwZS0IQhX6h6gaw4bl3kKk
-         8u9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVwGgKUYt77PzE87L53qJ96B+d6IJhQ/DOhJ4wYqENJFFoPV/SnowCAQXNerPwEWAz1PsQJy8pNribvmjhmUYEePxSlaKLpiZzKAWIR
-X-Gm-Message-State: AOJu0YwVdjkTO9Qoxb++yY+FBbYoojTShedif7yaDSc9k1lRJKu66vdZ
-	ujydbXfQHpkvH1koee3GNR1UHWtskAai/QE8H3BPJtJsO6Dq1sb+/z5SUr4pU1w=
-X-Google-Smtp-Source: AGHT+IHobfGlJhLnHEFotyk1CGxdoLtB4S8IrrxZ0v/h08LqEqBMy+9LORb68TjsMWCIXoDBM5yDLA==
-X-Received: by 2002:a05:6214:80c:b0:6b0:724a:6ed9 with SMTP id 6a1803df08f44-6b501e1e3acmr2439486d6.17.1718728450578;
-        Tue, 18 Jun 2024 09:34:10 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:17:5fb9::7a9])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5bf1f96sm68175396d6.12.2024.06.18.09.34.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 09:34:10 -0700 (PDT)
-Message-ID: <0e8561108c4fc99291ad7cdc0c6af2dbb8e58f02.camel@ndufresne.ca>
-Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Detlev Casanova <detlev.casanova@collabora.com>, Jianfeng Liu
-	 <liujianfeng1994@gmail.com>
-Cc: alchark@gmail.com, andy.yan@rock-chips.com, conor+dt@kernel.org, 
-	cristian.ciocaltea@collabora.com, devicetree@vger.kernel.org, 
-	didi.debian@cknow.org, dsimic@manjaro.org, gregkh@linuxfoundation.org, 
-	heiko@sntech.de, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev, 
-	mchehab@kernel.org, robh@kernel.org, sebastian.reichel@collabora.com
-Date: Tue, 18 Jun 2024 12:34:07 -0400
-In-Reply-To: <4302165.yKVeVyVuyW@arisu>
-References: <4116468.VLH7GnMWUR@arisu>
-	 <20240618121329.79936-1-liujianfeng1994@gmail.com>
-	 <4302165.yKVeVyVuyW@arisu>
+	 Content-Type:MIME-Version; b=a/qYaT2NPdoxpmZf/ShFQ8EH/2JWtzFhgKqfpkN4KRC8JOSLnUW1t5hIJV+2tmo+BPY4u2a9xdUCEEfgnNy+D2OZiGGVMKS79kKIY2LCpx8ZjZhBPhY5DHgZ6BzVN06KrmX2M71XQokBLep+xI5l4nqnXl0HVKHIo7E23PTC02A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=BEiB/iT/; arc=none smtp.client-ip=178.154.239.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+Received: from mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net [IPv6:2a02:6b8:c10:2222:0:640:c513:0])
+	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 0642B61214;
+	Tue, 18 Jun 2024 19:37:09 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 6bLJYoJvL4Y0-sUUzT6n3;
+	Tue, 18 Jun 2024 19:37:08 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1718728628; bh=+zr+cYq8LEpuJSRUOZhobDOGEptwOrvW51PfDDnNXZ8=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=BEiB/iT/VawyOXlhMh13SBTf0/ajegrj+8iup7MWIKIPlOS0CpqvgMNvzVaFQh78+
+	 WdpYN1NbrueRB6Kc8fVWKz8OLtbCBktVlhPN7eIFcydJ9LIw0QrSUSkPXDDHy5OTc7
+	 AVTnBwcKrgiXq8pr3JMG973plZQHsP5uFftCLTxY=
+Authentication-Results: mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <e84daaf35b825d6f36795533e0ecec8245786ea7.camel@maquefel.me>
+Subject: Re: [PATCH v10 17/38] net: cirrus: add DT support for Cirrus EP93xx
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Simon Horman <horms@kernel.org>
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Andrew Lunn
+ <andrew@lunn.ch>
+Date: Tue, 18 Jun 2024 19:37:06 +0300
+In-Reply-To: <20240618124610.GN8447@kernel.org>
+References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
+	 <20240617-ep93xx-v10-17-662e640ed811@maquefel.me>
+	 <20240618124610.GN8447@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,70 +67,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-Hi,
-
-Le mardi 18 juin 2024 =C3=A0 08:39 -0400, Detlev Casanova a =C3=A9crit=C2=
-=A0:
-> On Tuesday, June 18, 2024 8:13:29 A.M. EDT Jianfeng Liu wrote:
-> > Hi Detlev,
-> >=20
-> > On Fri, 14 Jun 2024 21:56:27 -0400, Detlev Casanova wrote:
-> > > +		.frmsize =3D {
-> > > +			.min_width =3D 16,
-> > > +			.max_width =3D  65520,
-> > > +			.step_width =3D 16,
-> > > +			.min_height =3D 16,
-> > > +			.max_height =3D  65520,
-> > > +			.step_height =3D 16,
-> > > +		},
-> >=20
-> > I think the min/max width/height are incorrect. From rockchip's TRM V1.=
-0
-> > Part1 page 374, supported image size is 64x64 to 65472x65472.
-> i,
-> Page 374 shows the sizes for h265. h264 is the next table, where 16x16 an=
-d=20
-> 65520x65520 is documented.
-
-Just a theory, but 64x64 looks like Mali GPU requirement to me. Can you giv=
-e
-more details how it fails exactly ?
-
-Meanwhile, if fluster suite does not exercise it already, we can craft a st=
-ream
-to verify the its decodes fine. We also have issues in rkvdec were the driv=
-er
-reports CAPTURE queue constraints for OUTPUT formats.
-
-Nicolas
-
->=20
-> > And my
-> > chromium can't use rkvdec2 because min width/height are set to 16, whic=
-h
-> >=20
-> > will cause error at here in rkvdec2_h264_validate_sps:
-> > > +	if (width > ctx->coded_fmt.fmt.pix_mp.width ||
-> > > +	    height > ctx->coded_fmt.fmt.pix_mp.height)
-> > > +		return -EINVAL;
-> >=20
-> > width is 16, height is 32 while ctx->coded_fmt.fmt.pix_mp.width and
-> > ctx->coded_fmt.fmt.pix_mp.height are both 16.
->=20
-> Maybe
->=20
-> if (!(sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY))
-> 	height *=3D 2;
->=20
-> is causing issues in this case, I can check.
->=20
-> > After changing them to 64 my chromium can use rkvdec2 to decode h264
-> > videos now.
-> >=20
-> > Anyway many thanks to your amazing work!
-> >=20
-> > Best regards,
-> > Jianfeng
->=20
+SGkgU2ltb24hCgpPbiBUdWUsIDIwMjQtMDYtMTggYXQgMTM6NDYgKzAxMDAsIFNpbW9uIEhvcm1h
+biB3cm90ZToKPiBPbiBNb24sIEp1biAxNywgMjAyNCBhdCAxMjozNjo1MVBNICswMzAwLCBOaWtp
+dGEgU2h1YmluIHZpYSBCNCBSZWxheQo+IHdyb3RlOgo+ID4gRnJvbTogTmlraXRhIFNodWJpbiA8
+bmlraXRhLnNodWJpbkBtYXF1ZWZlbC5tZT4KPiA+IAo+ID4gLSBhZGQgT0YgSUQgbWF0Y2ggdGFi
+bGUKPiA+IC0gZ2V0IHBoeV9pZCBmcm9tIHRoZSBkZXZpY2UgdHJlZSwgYXMgcGFydCBvZiBtZGlv
+Cj4gPiAtIGNvcHlfYWRkciBpcyBub3cgYWx3YXlzIHVzZWQsIGFzIHRoZXJlIGlzIG5vIFNvQy9i
+b2FyZCB0aGF0Cj4gPiBhcmVuJ3QKPiA+IC0gZHJvcHBlZCBwbGF0Zm9ybSBoZWFkZXIKPiA+IAo+
+ID4gU2lnbmVkLW9mZi1ieTogTmlraXRhIFNodWJpbiA8bmlraXRhLnNodWJpbkBtYXF1ZWZlbC5t
+ZT4KPiA+IFRlc3RlZC1ieTogQWxleGFuZGVyIFN2ZXJkbGluIDxhbGV4YW5kZXIuc3ZlcmRsaW5A
+Z21haWwuY29tPgo+ID4gUmV2aWV3ZWQtYnk6IEFuZHJldyBMdW5uIDxhbmRyZXdAbHVubi5jaD4K
+PiA+IFJldmlld2VkLWJ5OiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+
+Cj4gCj4gSGkgTmlraXRhLAo+IAo+IFNvbWUgbWlub3IgZmVlZGJhY2sgZnJvbSBteSBzaWRlLgoK
+VGhhbmtzIGZvciBjYXRjaGVzIQoKSSBob3BlIGNhbiBhZGRyZXNzIHRoZW0gbmV4dCBzcGluIG9y
+IGFmdGVyIHNlcmllcyB3aWxsIGFwcGx5IChkZXNpcmFibHkKdGhlIGxhc3Qgb25lKS4KCj4gCj4g
+Li4uCj4gCj4gPiBAQCAtNzg2LDI3ICs3NjYsNDcgQEAgc3RhdGljIHZvaWQgZXA5M3h4X2V0aF9y
+ZW1vdmUoc3RydWN0Cj4gPiBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gPiDCoAo+ID4gwqBzdGF0
+aWMgaW50IGVwOTN4eF9ldGhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiA+
+IMKgewo+ID4gLcKgwqDCoMKgwqDCoMKgc3RydWN0IGVwOTN4eF9ldGhfZGF0YSAqZGF0YTsKPiA+
+IMKgwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgbmV0X2RldmljZSAqZGV2Owo+ID4gwqDCoMKgwqDCoMKg
+wqDCoHN0cnVjdCBlcDkzeHhfcHJpdiAqZXA7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IHJl
+c291cmNlICptZW07Cj4gPiArwqDCoMKgwqDCoMKgwqB2b2lkIF9faW9tZW0gKmJhc2VfYWRkcjsK
+PiA+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnA7Cj4gPiArwqDCoMKgwqDC
+oMKgwqB1MzIgcGh5X2lkOwo+ID4gwqDCoMKgwqDCoMKgwqDCoGludCBpcnE7Cj4gPiDCoMKgwqDC
+oMKgwqDCoMKgaW50IGVycjsKPiAKPiBuaXQ6IFBsZWFzZSBjb25zaWRlciBtYWludGFpbmluZyBy
+ZXZlcnNlIHhtYXMgdHJlZSBvcmRlciAtIGxvbmdlc3QKPiBsaW5lCj4gwqDCoMKgwqAgdG8gc2hv
+cnRlc3QgLSBmb3IgbG9jYWwgdmFyaWFibGUgZGVjbGFyYXRpb25zLiBBcyBwcmVmZXJyZWQgaW4K
+PiDCoMKgwqDCoCBOZXR3b3JraW5nIGNvZGUuCj4gCj4gwqDCoMKgwqAgRWR3YXJkIENyZWUncyB0
+b29sIGNhbiBiZSBvZiBhc3Npc3RhbmNlIGhlcmUuCj4gwqDCoMKgwqAgaHR0cHM6Ly9naXRodWIu
+Y29tL2VjcmVlLXNvbGFyZmxhcmUveG1hc3RyZWUKPiAKPiA+IMKgCj4gPiDCoMKgwqDCoMKgwqDC
+oMKgaWYgKHBkZXYgPT0gTlVMTCkKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+cmV0dXJuIC1FTk9ERVY7Cj4gPiAtwqDCoMKgwqDCoMKgwqBkYXRhID0gZGV2X2dldF9wbGF0ZGF0
+YSgmcGRldi0+ZGV2KTsKPiA+IMKgCj4gPiDCoMKgwqDCoMKgwqDCoMKgbWVtID0gcGxhdGZvcm1f
+Z2V0X3Jlc291cmNlKHBkZXYsIElPUkVTT1VSQ0VfTUVNLCAwKTsKPiA+IMKgwqDCoMKgwqDCoMKg
+wqBpcnEgPSBwbGF0Zm9ybV9nZXRfaXJxKHBkZXYsIDApOwo+ID4gwqDCoMKgwqDCoMKgwqDCoGlm
+ICghbWVtIHx8IGlycSA8IDApCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJl
+dHVybiAtRU5YSU87Cj4gPiDCoAo+ID4gLcKgwqDCoMKgwqDCoMKgZGV2ID0gZXA5M3h4X2Rldl9h
+bGxvYyhkYXRhKTsKPiA+ICvCoMKgwqDCoMKgwqDCoGJhc2VfYWRkciA9IGlvcmVtYXAobWVtLT5z
+dGFydCwgcmVzb3VyY2Vfc2l6ZShtZW0pKTsKPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghYmFzZV9h
+ZGRyKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiBkZXZfZXJyX3By
+b2JlKCZwZGV2LT5kZXYsIC1FSU8sICJGYWlsZWQgdG8KPiA+IGlvcmVtYXAgZXRoZXJuZXQgcmVn
+aXN0ZXJzXG4iKTsKPiAKPiBuaXQ6IFBsZWFzZSBjb25zaWRlciBsaW5lLXdyYXBwaW5nIHRvIGxp
+bWl0aW5nIGxpbmVzIHRvIDgwIGNvbHVtbnMKPiB3aWRlCj4gwqDCoMKgwqAgd2hlcmUgaXQgY2Fu
+IGJlIHRyaXZpYWxseSBhY2hpZXZlZCwgd2hpY2ggc2VlbXMgdG8gYmUgdGhlIGNhc2UKPiBoZXJl
+Lgo+IMKgwqDCoMKgIDgwIGNvbHVtbnMgaXMgc3RpbGwgcHJlZmVycmVkIGZvciBOZXR3b3JraW5n
+IGNvZGUuCj4gCj4gwqDCoMKgwqAgRmxhZ2dlZCBieSBjaGVja3BhdGNoLnBsIC0tbWF4LWxpbmUt
+bGVuZ3RoPTgwCj4gCj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqBucCA9IG9mX3BhcnNlX3BoYW5k
+bGUocGRldi0+ZGV2Lm9mX25vZGUsICJwaHktaGFuZGxlIiwgMCk7Cj4gPiArwqDCoMKgwqDCoMKg
+wqBpZiAoIW5wKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiBkZXZf
+ZXJyX3Byb2JlKCZwZGV2LT5kZXYsIC1FTk9ERVYsICJQbGVhc2UKPiA+IHByb3ZpZGUgXCJwaHkt
+aGFuZGxlXCJcbiIpOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgZXJyID0gb2ZfcHJvcGVydHlf
+cmVhZF91MzIobnAsICJyZWciLCAmcGh5X2lkKTsKPiA+ICvCoMKgwqDCoMKgwqDCoG9mX25vZGVf
+cHV0KG5wKTsKPiA+ICvCoMKgwqDCoMKgwqDCoGlmIChlcnIpCj4gPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgcmV0dXJuIGRldl9lcnJfcHJvYmUoJnBkZXYtPmRldiwgLUVOT0VOVCwg
+IkZhaWxlZAo+ID4gdG8gbG9jYXRlIFwicGh5X2lkXCJcbiIpOwo+ID4gKwo+ID4gK8KgwqDCoMKg
+wqDCoMKgZGV2ID0gYWxsb2NfZXRoZXJkZXYoc2l6ZW9mKHN0cnVjdCBlcDkzeHhfcHJpdikpOwo+
+ID4gwqDCoMKgwqDCoMKgwqDCoGlmIChkZXYgPT0gTlVMTCkgewo+ID4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqBlcnIgPSAtRU5PTUVNOwo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqBnb3RvIGVycl9vdXQ7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgfQo+ID4gKwo+ID4g
+K8KgwqDCoMKgwqDCoMKgZXRoX2h3X2FkZHJfc2V0KGRldiwgYmFzZV9hZGRyICsgMHg1MCk7Cj4g
+Cj4gYmFzZV9hZGRyIGlzIGFuIF9faW9tZW0gYWRkcmVzcy4gQXMgc3VjaCBJIGRvbid0IHRoaW5r
+IGl0IGlzIGNvcnJlY3QKPiB0byBwYXNzIGl0ICgrIG9mZnNldCkgdG8gZXRoX2h3X2FkZHJfc2V0
+LiBSYXRoZXIsIEkgd291bGQgZXhwZWN0Cj4gYmFzZV9hZGRyCj4gdG8gYmUgcmVhZCB1c2luZyBh
+IHN1aXRhYmxlIGlvbWVtIGFjY2Vzc29yLCBmLmUuIHJlYWRsLiBBbmQgb25lCj4gcG9zc2libGUK
+PiBzb2x1dGlvbiB3b3VsZCBiZSB0byB1c2UgcmVhZGwgdG8gcmVhZCB0aGUgbWFjIGFkZHJlc3Mg
+aW50byBhIGJ1ZmZlcgo+IHdoaWNoIGlzIHBhc3NlZCB0byBldGhfaHdfYWRkcl9zZXQuCj4gCj4g
+RmxhZ2dlZCBieSBTcGFyc2UuCj4gCj4gPiArwqDCoMKgwqDCoMKgwqBkZXYtPmV0aHRvb2xfb3Bz
+ID0gJmVwOTN4eF9ldGh0b29sX29wczsKPiA+ICvCoMKgwqDCoMKgwqDCoGRldi0+bmV0ZGV2X29w
+cyA9ICZlcDkzeHhfbmV0ZGV2X29wczsKPiA+ICvCoMKgwqDCoMKgwqDCoGRldi0+ZmVhdHVyZXMg
+fD0gTkVUSUZfRl9TRyB8IE5FVElGX0ZfSFdfQ1NVTTsKPiA+ICsKPiA+IMKgwqDCoMKgwqDCoMKg
+wqBlcCA9IG5ldGRldl9wcml2KGRldik7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgZXAtPmRldiA9IGRl
+djsKPiA+IMKgwqDCoMKgwqDCoMKgwqBTRVRfTkVUREVWX0RFVihkZXYsICZwZGV2LT5kZXYpOwo+
+IAo+IC4uLgoK
 
 
