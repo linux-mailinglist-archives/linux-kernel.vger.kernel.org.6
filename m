@@ -1,135 +1,148 @@
-Return-Path: <linux-kernel+bounces-220033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7137C90DBB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:39:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA28C90DB86
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 641AD1C2262F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 977661F232F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA061607B3;
-	Tue, 18 Jun 2024 18:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2715115ECD2;
+	Tue, 18 Jun 2024 18:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MEMVXWoW"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bXnk0DbK"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2088715F3FE;
-	Tue, 18 Jun 2024 18:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE0D15E5CF;
+	Tue, 18 Jun 2024 18:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718735904; cv=none; b=ZJQxm3Waz1skCc2gfCCO7tDyVPSuiHvx6YfW4zLJ/lzdkbeNnvL/0ANSIQiZ5jnPFaYtitJGCSSNM1R7POK1Jb2R4VJ2M12LBBaD6v/esgHkq5KvihVR4Y+g1Hazdg3mfq2TOmbVMdjzFYxFifXRdlIUr/j+nmscG3Xzp/Xc3Y0=
+	t=1718734777; cv=none; b=k5T08lIsFj3GUbRK7qgmDFvNviRjcQwB6VIkUOwtAfU1SX2PfE5ru3+WlLckBNuw42Xf7Sg0sa5F+HcVKLnJENIEOM/d3BDubTtRFq4o7VmqA8wwd15x436RL+vhISoTRnXWkr/4qkJPoZkyghEN0GnRJAQCY5QlYkWvzS6cA2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718735904; c=relaxed/simple;
-	bh=cqxhYAbbW9RM1md+oyI3TV89a9uLQWQLY+gbU0lSp64=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pnICvZxclaVZrJWMOtpQ5BMAupsFkwj9dT9lrZdLXzLBJHSoSzxea4+cq2pC660OaaUeCguD8atGpwGMOyjih/fy7lBXKP9KG0gzJ0esV3DmZL/kaFvbU4DigJ8D4KOpUBAERZFxErvS01InnsnhPMnNLHz0bapojYXuhi38r+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MEMVXWoW; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718735898;
-	bh=cqxhYAbbW9RM1md+oyI3TV89a9uLQWQLY+gbU0lSp64=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MEMVXWoWX6DVACd5wKvk58SUSRT7VswErtSexVBwD5U7bU8R5/5mEtQpUijEqEjQb
-	 K1+8fYvfGdATRoHH+bABTPrSg8Gk9aVng8EfFfriRS1JHwidxYRyqX3KDKHsBsir0z
-	 9j6kW282YGCvoN5e+9ad+1pHhu0aTpWAbG3gSruX71qvZPqNNi26KxNTzNmqPInIFp
-	 QR6RABLEMcNchMblHSBKuse2WXCKjbsnQuyK+TaRZ+JY29N9JKLbnk4Gmz3tD5T802
-	 Lc+ak/tk+S5TDSq1WL+R4TXRsxAakZwTFk+R7u6in3CwvMG7Ao4UyZmX6IqqerahcL
-	 B9LyEVoGoWH4Q==
-Received: from jupiter.universe (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 11236378219F;
-	Tue, 18 Jun 2024 18:38:18 +0000 (UTC)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 35ED54800D1; Tue, 18 Jun 2024 20:38:17 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jianfeng Liu <liujianfeng1994@gmail.com>,
-	Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1718734777; c=relaxed/simple;
+	bh=CLRncUBTVR45wvAAsnnxKrLdiCWAIAAdhMnHTW424Ww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISUFgDySGaXmWCNl3RHoaEe4q0vgeNjTPwOCHpIa67ULxLBssd8Podcvd40/pngmDqAVDp39824xEjj3JJTV2TTS79xFni3aNa0wlGZy/TCCfxgKomKxmgpHeL/wLW+9+c03XYZr/6/vwsoHEaHbsPoCPIEo+oSzUbEPrltTYCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bXnk0DbK; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=6rF013NYkWJ7vC3dig6F3esypwWGqLP9D25G+i9avEQ=; b=bXnk0DbK9InWp0ysw0ZGDBc6yC
+	6QCcBK5AvURctxeWVAS/qAiQzwQRUh1a3iYpJ5+6wRi/mO0hUrIKygoT6F5m5CXlH1f7+PctwVwPS
+	JebNBhHZyVcami3ElkOslYTSNM3KSCGByLSPGKbGp52izFyC1CSh4FCVTAau4PZ0bk+g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sJdQE-000PKk-Jc; Tue, 18 Jun 2024 20:19:10 +0200
+Date: Tue, 18 Jun 2024 20:19:10 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Michal Simek <michal.simek@amd.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
 	linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	Hugh Cole-Baker <sigmaris@gmail.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH v7 6/6] arm64: dts: rockchip: Add VPU121 support for RK3588
-Date: Tue, 18 Jun 2024 20:18:37 +0200
-Message-ID: <20240618183816.77597-7-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240618183816.77597-1-sebastian.reichel@collabora.com>
-References: <20240618183816.77597-1-sebastian.reichel@collabora.com>
+	"David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH net-next 3/3] net: xilinx: axienet: Add statistics support
+Message-ID: <a4bea058-c5cd-4d8f-ab0f-cd637ccb3969@lunn.ch>
+References: <20240610231022.2460953-1-sean.anderson@linux.dev>
+ <20240610231022.2460953-4-sean.anderson@linux.dev>
+ <40cff9a6-bad3-4f85-8cbc-6d4bc72f9b9f@lunn.ch>
+ <4d3871c1-afa1-4402-ad62-2fdb9d58dc3c@linux.dev>
+ <6f4916a0-f949-4289-9839-d89af574600d@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f4916a0-f949-4289-9839-d89af574600d@linux.dev>
 
-From: Jianfeng Liu <liujianfeng1994@gmail.com>
+On Tue, Jun 18, 2024 at 01:03:47PM -0400, Sean Anderson wrote:
+> Hi Andrew,
+> 
+> On 6/11/24 11:36, Sean Anderson wrote:
+> > On 6/10/24 20:26, Andrew Lunn wrote:
+> >>> +static u64 axienet_stat(struct axienet_local *lp, enum temac_stat stat)
+> >>> +{
+> >>> +	return u64_stats_read(&lp->hw_stats[stat]);
+> >>> +}
+> >>> @@ -1695,6 +1760,35 @@ axienet_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *stats)
+> >>>  		stats->tx_packets = u64_stats_read(&lp->tx_packets);
+> >>>  		stats->tx_bytes = u64_stats_read(&lp->tx_bytes);
+> >>>  	} while (u64_stats_fetch_retry(&lp->tx_stat_sync, start));
+> >>> +
+> >>> +	if (!(lp->features & XAE_FEATURE_STATS))
+> >>> +		return;
+> >>> +
+> >>> +	do {
+> >>> +		start = u64_stats_fetch_begin(&lp->hw_stat_sync);
+> >>> +		stats->rx_length_errors =
+> >>> +			axienet_stat(lp, STAT_RX_LENGTH_ERRORS);
+> >> 
+> >> I'm i reading this correctly. You are returning the counters from the
+> >> last refresh period. What is that? 2.5Gbps would wrapper around a 32
+> >> byte counter in 13 seconds. I hope these statistics are not 13 seconds
+> >> out of date?
+> > 
+> > By default we use a 1 Hz refresh period. You can of course configure this
+> > up to 13 seconds, but we refuse to raise it further since we risk missing
+> > a wrap-around. It's configurable by userspace so they can determine how
+> > out-of-date they like their stats (vs how often they want to wake up the
+> > CPU).
+> > 
+> >> Since axienet_stats_update() also uses the lp->hw_stat_sync, i don't
+> >> see why you cannot read the hardware counter value and update to the
+> >> latest value.
+> > 
+> > We would need to synchronize against updates to hw_last_counter. Imagine
+> > a scenario like
+> > 
+> > CPU 1					CPU 2
+> > __axienet_device_reset()
+> > 	axienet_stats_update()
+> > 					axienet_stat()
+> > 						u64_stats_read()
+> > 						axienet_ior()
+> > 	/* device reset */
+> > 	hw_last_counter = 0
+> > 						stats->foo = ... - hw_last_counter[...]
+> > 
+> > and now we have a glitch in the counter values, since we effectively are
+> > double-counting the current counter value. Alternatively, we could read
+> > the counter after reset but before hw_last_counter was updated and get a
+> > glitch due to underflow.
+> 
+> Does this make sense to you? If it does, I'll send v2 with just the mutex
+> change and the variable rename pointed out by Simon.
 
-Enable Hantro G1 video decoder in RK3588's devicetree.
+What you have is O.K. I just think you can do better.
 
-Tested with FFmpeg v4l2_request code taken from [1]
-with MPEG2, H.264 and VP8 samples.
+As you point out, there is a potential race. There are a few
+synchronisation mechanisms for that.
 
-[1] https://github.com/LibreELEC/LibreELEC.tv/blob/master/packages/multimedia/ffmpeg/patches/v4l2-request/ffmpeg-001-v4l2-request.patch
+Often you arrange to have exclusive access to a data structure, so you
+know it cannot change while you use it. But as you pointed out, you
+are not in a context which can block on a mutex.
 
-Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
-Tested-by: Hugh Cole-Baker <sigmaris@gmail.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Another mechanism is to know if the data structure has changed while
+you where using it. If it has, throw away what you have, and start
+again. That is what lp->hw_stat_sync etc is all about. You loop while
+its value changes, indicating something made changes. You should be
+able to use this when returning statistics to user space, to return
+the real current statistics, not old cached values.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-index dd85d4e55922..c0466982646f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-@@ -1159,6 +1159,27 @@ power-domain@RK3588_PD_SDMMC {
- 		};
- 	};
- 
-+	vpu121: video-codec@fdb50000 {
-+		compatible = "rockchip,rk3588-vpu121", "rockchip,rk3568-vpu";
-+		reg = <0x0 0xfdb50000 0x0 0x800>;
-+		interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH 0>;
-+		interrupt-names = "vdpu";
-+		clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
-+		clock-names = "aclk", "hclk";
-+		iommus = <&vpu121_mmu>;
-+		power-domains = <&power RK3588_PD_VDPU>;
-+	};
-+
-+	vpu121_mmu: iommu@fdb50800 {
-+		compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-+		reg = <0x0 0xfdb50800 0x0 0x40>;
-+		interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clock-names = "aclk", "iface";
-+		clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
-+		power-domains = <&power RK3588_PD_VDPU>;
-+		#iommu-cells = <0>;
-+	};
-+
- 	vepu121_0: video-codec@fdba0000 {
- 		compatible = "rockchip,rk3588-vepu121";
- 		reg = <0x0 0xfdba0000 0x0 0x800>;
--- 
-2.43.0
+    Andrew
 
 
