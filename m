@@ -1,107 +1,107 @@
-Return-Path: <linux-kernel+bounces-219170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364EE90CB4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:10:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB5D90CB77
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDD7EB286E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:01:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F97BB2BFA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA1E13C3C5;
-	Tue, 18 Jun 2024 11:51:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6997813AD14;
-	Tue, 18 Jun 2024 11:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D672E13B5A0;
+	Tue, 18 Jun 2024 11:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBZwbDD6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2DE13A877;
+	Tue, 18 Jun 2024 11:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718711474; cv=none; b=hjPfoVek5ex6/drqO/cxLg/gUSdCM9Hp7RS0x2FrNcxYuI1+IaN4xYmWYkfykRX/H5sOEiQL3RkVqmx6TYkECOZ6A0Ovxb3hrE3ZtZEYbUCPS3Bz0naz9IuiEjvR0jtmdJe0hNzvPKKpimHv4oMHgTWDpT+WFB/LFYdnoDGF83E=
+	t=1718711473; cv=none; b=hQhrXdi+U6/nSdpdXCdSyeKhB8GLRqjxPEwb5EgULsZ5csvFJDG0WG0FlsSae5/ycZPrtV0KuvBVaSreeB7Ki9gqynw0IcTQsMGumlnZs1qBgg446m5QraU6fxFllElx5VlMdn80GQ8Hnp6BxKsabWF/fiYePRZAlQj1o1kKjZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718711474; c=relaxed/simple;
-	bh=XdG4V5fdx5obbim8cTvt4v8dje7MhW5oQe6IE41WLWU=;
+	s=arc-20240116; t=1718711473; c=relaxed/simple;
+	bh=itnLaYU73scIBSDS2g3n+5LVak3YlcHt72uWNFY4DjI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JxbABPETsAjZ9LP3qmziCtcOdm97epw0uDOMo1HNJRJ7yADOge+xHqIG6GO0VXOXOBC1KEIveZau3O+NSdR9ox4aEf9OMmJpqNoGAsmCQBMS9u1MDQ6iIKWgS9DMRSJZ7wdgmbwGer/7RQVlb7CGn0uuMKE9Kp/58mEWgaahNjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3ADECDA7;
-	Tue, 18 Jun 2024 04:51:36 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D0223F64C;
-	Tue, 18 Jun 2024 04:51:07 -0700 (PDT)
-Date: Tue, 18 Jun 2024 12:51:05 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kees Cook <kees@kernel.org>, Yuntao Liu <liuyuntao12@huawei.com>,
-	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-	gor@linux.ibm.com, Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Leonardo Bras <leobras@redhat.com>, Mark Brown <broonie@kernel.org>,
-	imbrenda@linux.ibm.com, pawan.kumar.gupta@linux.intel.com
-Subject: Re: [PATCH] remove AND operation in choose_random_kstack_offset()
-Message-ID: <ZnF0qY-WoAGVuXXh@J2N7QTR9R3>
-References: <20240617133721.377540-1-liuyuntao12@huawei.com>
- <ZnBbr2CAqBGDe2aN@J2N7QTR9R3>
- <202406171122.B5FDA6A@keescook>
- <d0959336-4430-4062-b909-54d553238468@app.fastmail.com>
- <ZnFlQgVSTtf0t2cU@J2N7QTR9R3>
- <dbca95d9-4818-4624-b3c2-4b51284fe83b@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EgLptlAelP05sdRY0hJ+aQrn3bToV0TCXiTLG8qfnNhwxFwmH0wVlMe/rcPb65hUCv/D907PZD1JFydkNer5pp5Qk4eqqWXtE3jtN2GaIDMVD8X56MzBGy36BARwPHrwgwe0ra/JwZYHZi9lR2i4haPjJh8P1q8DKu3YFm7pzmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBZwbDD6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAFB9C4AF50;
+	Tue, 18 Jun 2024 11:51:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718711473;
+	bh=itnLaYU73scIBSDS2g3n+5LVak3YlcHt72uWNFY4DjI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KBZwbDD6sYQU7aQZTWb9SY0CLy/8qhIuWGTnwgEqitFRPMyEv/kECh3uYZPuJ/f1Q
+	 H5Dmm26e6Wtbnl8cLBAxJP9FjaU3/FcD4XxQdFtCSb8YE8q7aczJ7oXzyR7WFaDFbn
+	 QPHi/0X5zRE4k0YJHieQZYraFeUd7TMKiWjwppzpOvcDRHte+2ZRfznSuxONQDvxK8
+	 D00URor2c7FfEkEFTcNEeqCUJYIhGFYCR4oFIB2KxS5/x/DifjqfJSEsb+H99Gd/Jm
+	 wDu/yo7UVTYQeX4AtXyic/yLff/ZbITnm6CBiTHS1yxE1WchY8C4MPoroegtbXG/S9
+	 giyG5s01suKBg==
+Date: Tue, 18 Jun 2024 12:51:07 +0100
+From: Mark Brown <broonie@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Julien Panis <jpanis@baylibre.com>,
+	Nicolas Pitre <npitre@baylibre.com>
+Subject: Re: linux-next: build failure after merge of the mediatek tree
+Message-ID: <b376b01d-45e0-40dd-be10-81ac154ead7c@sirena.org.uk>
+References: <ZnBn-vSj-ssrJFr2@sirena.org.uk>
+ <01f2ee94-f8b0-449c-aa19-3ee38a2e36a1@baylibre.com>
+ <d87b7376-5ba2-4810-90cb-76648d4a8080@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qVqD02ii6DMmnPdV"
+Content-Disposition: inline
+In-Reply-To: <d87b7376-5ba2-4810-90cb-76648d4a8080@kernel.org>
+X-Cookie: If you can read this, you're too close.
+
+
+--qVqD02ii6DMmnPdV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dbca95d9-4818-4624-b3c2-4b51284fe83b@app.fastmail.com>
 
-On Tue, Jun 18, 2024 at 01:14:58PM +0200, Arnd Bergmann wrote:
-> On Tue, Jun 18, 2024, at 12:45, Mark Rutland wrote:
-> > On Mon, Jun 17, 2024 at 10:33:08PM +0200, Arnd Bergmann wrote:
-> >> On Mon, Jun 17, 2024, at 20:22, Kees Cook wrote:
-> >> > On Mon, Jun 17, 2024 at 04:52:15PM +0100, Mark Rutland wrote:
-> 
-> > Sorry, to be clear, I'm happy for this to change, so long as:
-> >
-> > * The commit message explains why that's safe.
-> >
-> >   IIUC this goes from 511 to 1023 bytes on arm64, which is ~3% of the
-> >   stack, so maybe that is ok. It'd be nice to see any rationale/analysis
-> >   beyond "the offset would be bitwise ANDed with 0x3FF".
-> 
-> Absolutely agreed, and the commit message should also clarify that
-> the increase has already happened as an unintended side-effect
-> of commit 9c573cd31343 ("randomize_kstack: Improve entropy
-> diffusion").
+On Tue, Jun 18, 2024 at 12:03:44PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 18/06/24 09:49, Julien Panis ha scritto:
 
-FWIW, I think that alone is a reasonable justification.
+> > For some reason, the 2 first commits of the series were not applied
+> > with the dts. These commits are needed because they contain some
+> > definitions used by the dts.
 
-> > * The comments in architecture code referring to the masking get
-> >   removed/updated along with the masking.
-> 
-> Right.
-> 
-> FWIW, I also wouldn't mind to having a compile-time option
-> that configures the number of random bits on the stack offset,
-> but my preference here is to have a reasonable default and
-> not need a config option.
+> I'm not sure how should I proceed here.
 
-I agree; I think we should avoid a config option unless we actually see
-a need for it in testing.
+> Only the mediatek tree is broken, linux-next is ok... should I pick the
+> commits from next or should I remove the dts commits from the mediatek trees?
 
-Mark.
+> First time happening.... :-)
+
+linux-next is only OK because I am merging an old version of the
+mediatek tree rather than your current one.  The mediatek tree should be
+fixed somehow so that it builds, either mechanism should be fine.
+
+--qVqD02ii6DMmnPdV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZxdKoACgkQJNaLcl1U
+h9D3fAf/eh2z/5WZx5xJ+uk5O84ROaOiosRiUwVl+JhlIZ8Ihgv00i32eoTM3De9
+rsllAKch1KgVdqT5s//fnKFOilTixOznoej1Brfwcd8kiZsGrxfaleqSvhSPxBkz
+fc9YfKPQs0wEK2dmohJRFf3we7gy7BOEHr15DYZNtovF0xrOq9jOtZka0hHXODA+
+qqHRMvWyBVSk5/xts5lAaomSbN1rYrQ+sxsRlYcDdKQE9fxZ2/HQHkPOYYO+RM17
+nSPD82K1sf+f2LmBdKv8e/YDYiO4FpM5YsahNm2FrJV9ycxYdGcZHnNdeGw+cRcf
+VD8gOBBa8ei6wkMYKPmLOXAcWfIKbA==
+=rTMi
+-----END PGP SIGNATURE-----
+
+--qVqD02ii6DMmnPdV--
 
