@@ -1,245 +1,126 @@
-Return-Path: <linux-kernel+bounces-220328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1060090DFD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:23:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201BD90DFD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A451F2383B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:23:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E7F1F2423C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592791849D8;
-	Tue, 18 Jun 2024 23:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y2ttpABh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD1F13A418;
-	Tue, 18 Jun 2024 23:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7D51849C0;
+	Tue, 18 Jun 2024 23:27:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AEC18C3D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718753014; cv=none; b=Ekku4hjgCVr8ak+GLkKXfsD/xAUjhcf5gJcKnDep+iPf9rVKgSw2h1Ei54JdCC7rBZEc4tZ9bKdTQQriRCwiGx/+ieUhkmq38j+yCJAF++0Qo+csZVuMa99ESNCsRW6zjwd3YKw/VW2oVfbX9+KIs2YATO6K+viGBH+U6Eg2O9E=
+	t=1718753221; cv=none; b=KLP/5X6YG3Kv3jLqE3ZHQRc3lz/DetZcXb/5DaUO/xl2EcRCkL/0i4cCf04nTXB6T2Ilo5O/g3k6XQB0pFahAmCliP859cy9MdBOXiTVFdVHE+MKKUMYj4QlOhIl2qGYu29kynoFmtiBkbMkwM0alGw7XuKrUa1zDXpJt7ntsbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718753014; c=relaxed/simple;
-	bh=jHQUZMPXVjm7+oSnWnvLpU05YCeuuF3yqvNfQucmilw=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=naWuEO7CrEOvf9QwKU/zDPG3mVjGSkNfZ3Rqdi1clAh6N4TvBzhPc0sED0rK4aCmP0Eu0yxgBsGOcXLwWQqOVm3eLJrge2NOS3su21kr+P3OBePO0bTVYwriGwa7zmS76rcMgoLZjnC81B82P4hpVfld7dyLz8anb1OuqSTBHUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y2ttpABh; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718753013; x=1750289013;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=jHQUZMPXVjm7+oSnWnvLpU05YCeuuF3yqvNfQucmilw=;
-  b=Y2ttpABhxAjZgNLgThEeFMCiID/OQa6G963yL4C8aR+lxWBPt5ZzbpTl
-   jrRF7xnJ1kh/8whhvoBgqrr00xf/mk0nYy+xLwRkRjLw/hOtGJlHVTfXT
-   8Nb8KMedPj7IqYmFMzfTVktFXLcqdkZTtB/dxcvWhAeE97lqXwQXXmo5Y
-   iBOqhUmwm+vbhh9jl77NKZhBVE8fx6fQnGGZhoO8WVlz2zznE6eshVHFC
-   YJuKu0qsUVvnlHu7dSxFOXu/b/vnDgr3GUxofrnCvQPYDXfwiX7XZiLau
-   FTUrhe9WIlcFwWtUxg+OpIQwj8fD0vfZL4QSIb3qFfyFIIC9gU8oaCqwQ
-   g==;
-X-CSE-ConnectionGUID: f1e84w4jQ822+EVm5ru3Zw==
-X-CSE-MsgGUID: F6jJ0gKZQZms/rRRXhq83w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15900704"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15900704"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 16:23:32 -0700
-X-CSE-ConnectionGUID: Szliyg0pRNebA2S2m6Ey3Q==
-X-CSE-MsgGUID: Pbh5mG+qQ8iPexG/RmAHGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="64959134"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.246.119.97])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/AES256-SHA; 18 Jun 2024 16:23:30 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: "chenridong@huawei.com" <chenridong@huawei.com>,
- "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
- "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>, "mkoutny@suse.com"
- <mkoutny@suse.com>, "dave.hansen@linux.intel.com"
- <dave.hansen@linux.intel.com>, "tim.c.chen@linux.intel.com"
- <tim.c.chen@linux.intel.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "tj@kernel.org" <tj@kernel.org>,
- "jarkko@kernel.org" <jarkko@kernel.org>, "Mehta, Sohil"
- <sohil.mehta@intel.com>, "hpa@zytor.com" <hpa@zytor.com>, "bp@alien8.de"
- <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, "Huang, Kai"
- <kai.huang@intel.com>
-Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
- "seanjc@google.com" <seanjc@google.com>, "anakrish@microsoft.com"
- <anakrish@microsoft.com>, "Zhang, Bo" <zhanb@microsoft.com>,
- "kristen@linux.intel.com" <kristen@linux.intel.com>, "yangjie@microsoft.com"
- <yangjie@microsoft.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
- "chrisyan@microsoft.com" <chrisyan@microsoft.com>
-Subject: Re: [PATCH v15 05/14] x86/sgx: Implement basic EPC misc cgroup
- functionality
-References: <20240617125321.36658-1-haitao.huang@linux.intel.com>
- <20240617125321.36658-6-haitao.huang@linux.intel.com>
- <aa686e57fad34041fb941f87c10fb017f048d29f.camel@intel.com>
- <op.2pkbj8lbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <b2ee67d2d1540c1eca1545a4121a4f9b34036e06.camel@intel.com>
-Date: Tue, 18 Jun 2024 18:23:28 -0500
+	s=arc-20240116; t=1718753221; c=relaxed/simple;
+	bh=8DQliphwcscfD33pKx7u0hUGZpt7n20dgBpD/RkfUOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kqK9Hzv/8CZpBA2LgUt9tFWc+f0kagAL47Fue3id1oQ9Kj4t+4hd81t+4lF6yVXBhfws6UAyW+Q1ulhENQxsTkcRcosL5O27cbBSY3Z1+wMpLBSAzbQE+s/7N4lSmRy5Dr1qPalGM63S1Gmqyss5ys2ShWqEksaS8qYIxL0mNHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E219DA7;
+	Tue, 18 Jun 2024 16:27:22 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE8CA3F64C;
+	Tue, 18 Jun 2024 16:26:55 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Chris Li <chrisl@kernel.org>,
+	Kairui Song <kasong@tencent.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Barry Song <baohua@kernel.org>,
+	Hugh Dickins <hughd@google.com>,
+	David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH v1 0/5] Alternative mTHP swap allocator improvements
+Date: Wed, 19 Jun 2024 00:26:40 +0100
+Message-ID: <20240618232648.4090299-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2pk4letowjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <b2ee67d2d1540c1eca1545a4121a4f9b34036e06.camel@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Transfer-Encoding: 8bit
 
-On Tue, 18 Jun 2024 18:15:37 -0500, Huang, Kai <kai.huang@intel.com> wrote:
+Hi All,
 
-> On Tue, 2024-06-18 at 07:56 -0500, Haitao Huang wrote:
->> On Tue, 18 Jun 2024 06:31:09 -0500, Huang, Kai <kai.huang@intel.com>  
->> wrote:
->>
->> >
->> > > @@ -921,7 +956,8 @@ static int __init sgx_init(void)
->> > >  	if (!sgx_page_cache_init())
->> > >  		return -ENOMEM;
->> > >
->> > > -	if (!sgx_page_reclaimer_init()) {
->> > > +	if (!sgx_page_reclaimer_init() || !sgx_cgroup_init()) {
->> > > +		misc_cg_set_capacity(MISC_CG_RES_SGX_EPC, 0);
->> > >  		ret = -ENOMEM;
->> > >  		goto err_page_cache;
->> > >  	}
->> >
->> > This code change is wrong due to two reasons:
->> >
->> > 1) If sgx_page_reclaimer_init() was successful, but sgx_cgroup_init()
->> > failed, you actually need to 'goto err_kthread' because the ksgxd()
->> > kernel
->> > thread is already created and is running.
->> >
->> > 2) There are other cases after here that can also result in  
->> sgx_init() to
->> > fail completely, e.g., registering sgx_dev_provision mics device.  We
->> > need
->> > to reset the capacity to 0 for those cases as well.
->> >
->> > AFAICT, you need something like:
->> >
->> > diff --git a/arch/x86/kernel/cpu/sgx/main.c
->> > b/arch/x86/kernel/cpu/sgx/main.c
->> > index 27892e57c4ef..46f9c26992a7 100644
->> > --- a/arch/x86/kernel/cpu/sgx/main.c
->> > +++ b/arch/x86/kernel/cpu/sgx/main.c
->> > @@ -930,6 +930,10 @@ static int __init sgx_init(void)
->> >         if (ret)
->> >                 goto err_kthread;
->> > +       ret = sgx_cgroup_init();
->> > +       if (ret)
->> > +               goto err_provision;
->> > +
->> >         /*
->> >          * Always try to initialize the native *and* KVM drivers.
->> >          * The KVM driver is less picky than the native one and
->> > @@ -941,10 +945,12 @@ static int __init sgx_init(void)
->> >         ret = sgx_drv_init();
->> >        if (sgx_vepc_init() && ret)
->> > -               goto err_provision;
->> > +               goto err_cgroup;
->> >        return 0;
->> > +err_cgroup:
->> > +       /* SGX EPC cgroup cleanup */
->> >  err_provision:
->> >         misc_deregister(&sgx_dev_provision);
->> > @@ -952,6 +958,8 @@ static int __init sgx_init(void)
->> >         kthread_stop(ksgxd_tsk);
->> > err_page_cache:
->> > +       misc_misc_cg_set_capacity(MISC_CG_RES_SGX_EPC, 0);
->> > +
->> >         for (i = 0; i < sgx_nr_epc_sections; i++) {
->> >                 vfree(sgx_epc_sections[i].pages);
->> >                 memunmap(sgx_epc_sections[i].virt_addr);
->> >
->> >
->> > I put the sgx_cgroup_init() before sgx_drv_init() and sgx_vepc_init(),
->> > otherwise you will need sgx_drv_cleanup() and sgx_vepc_cleanup()
->> > respectively when sgx_cgroup_init() fails.
->> >
->>
->> Yes, good catch.
->>
->> > This looks a little bit weird too, though:
->> >
->> > Calling misc_misc_cg_set_capacity() to reset capacity to 0 is done at  
->> end
->> > of sgx_init() error path, because the "set capacity" part is done in
->> > sgx_epc_cache_init().
->> > But logically, both "set capacity" and "reset capacity to 0" should be
->> > SGX
->> > EPC cgroup operation, so it's more reasonable to do "set capacity" in
->> > sgx_cgroup_init() and do "reset to 0" in the
->> >
->> > 	/* SGX EPC cgroup cleanup */
->> >
->> > as shown above.
->> >
->> > Eventually, you will need to do EPC cgroup cleanup anyway, e.g., to  
->> free
->> > the workqueue, so it's odd to have two places to handle EPC cgroup
->> > cleanup.
->> >
->> > I understand the reason "set capacity" part is done in
->> > sgx_page_cache_init() now is because in that function you can easily  
->> get
->> > the capacity.  But the fact is @sgx_numa_nodes also tracks EPC size  
->> for
->> > each node, so you can also get the total EPC size from @sgx_numa_node  
->> in
->> > sgx_cgroup_init() and set capacity there.
->> >
->> > In this case, you can put "reset capacity to 0" and "free workqueue"
->> > together as the "SGX EPC cgroup cleanup", which is way more clear  
->> IMHO.
->> >
->> Okay, will  expose @sgx_numa_nodes to epc_cgroup.c and do the  
->> calculations
->> in sgx_cgroup_init().
->>
->
-> Looks you will also need to expose @sgx_numa_mask, which looks overkill.
->
-> Other options:
->
-> 1) Expose a function to return total EPC pages/size in "sgx.h".
->
-> 2) Move out the new 'capacity' variable in this patch as a global  
-> variable
-> and expose it in "sgx.h" (perhaps rename to 'sgx_total_epc_pages/size').
->
-> 3) Make sgx_cgroup_init() to take an argument of total EPC pages/size,  
-> and
-> pass it in sgx_init().  
-> For 3) there are also options to get total EPC pages/size:
->
-> a) Move out the new 'capacity' variable in this patch as a static.
->
-> b) Add a function to calculate total EPC pages/size from sgx_numa_nodes.
->
-> Hmm.. I think we can just use option 2)?
->
->
-I was  about doing this in sgx_cgroup_init():
-         for (i = 0; i < num_possible_nodes(); i++)
-                 capacity += sgx_numa_nodes[i].size;
+Chris has been doing great work at [1] to clean up my mess in the mTHP swap
+entry allocator. But Barry posted a test program and results at [2] showing that
+even with Chris's changes, there are still some fallbacks (around 5% - 25% in
+some cases). I was interested in why that might be and ended up putting this PoC
+patch set together to try to get a better understanding. This series ends up
+achieving 0% fallback, even with small folios ("-s") enabled. I haven't done
+much testing beyond that (yet) but thought it was worth posting on the strength
+of that result alone.
 
-any concern using num_possible_nodes()?
+At a high level this works in a similar way to Chris's series; it marks a
+cluster as being for a particular order and if a new cluster cannot be allocated
+then it scans through the existing non-full clusters. But it does it by scanning
+through the clusters rather than assembling them into a list. Cluster flags are
+used to mark clusters that have been scanned and are known not to have enough
+contiguous space, so the efficiency should be similar in practice.
 
-I think case handled in sgx_page_cache_init() for a node with no epc (or  
-mask). Only requirement is sgx_cgroup_init() called after  
-sgx_page_cache_init().
-Haitao
+Because its not based around a linked list, there is less churn and I'm
+wondering if this is perhaps easier to review and potentially even get into
+v6.10-rcX to fix up what's already there, rather than having to wait until v6.11
+for Chris's series? I know Chris has a larger roadmap of improvements, so at
+best I see this as a tactical fix that will ultimately be superseeded by Chris's
+work.
+
+There are a few differences to note vs Chris's series:
+
+- order-0 fallback scanning is still allowed in any cluster; the argument in the
+  past was that swap should always use all the swap space, so I've left this
+  mechanism in. It is only a fallback though; first the the new per-order
+  scanner is invoked, even for order-0, so if there are free slots in clusters
+  already assigned for order-0, then the allocation will go there.
+
+- CPUs can steal slots from other CPU's current clusters; those clusters remain
+  scannable while they are current for a CPU and are only made unscannable when
+  no more CPUs are scanning that particular cluster.
+
+- I'm preferring to allocate a free cluster ahead of per-order scanning, since,
+  as I understand it, the original intent of a per-cpu current cluster was to
+  get pages for an application adjacent in the swap to speed up IO.
+
+I'd be keen to hear if you think we could get something like this into v6.10 to
+fix the mess - I'm willing to work quickly to address comments and do more
+testing. If not, then this is probably just a distraction and we should
+concentrate on Chris's series.
+
+This applies on top of v6.10-rc4.
+
+[1] https://lore.kernel.org/linux-mm/20240614-swap-allocator-v2-0-2a513b4a7f2f@kernel.org/
+[2] https://lore.kernel.org/linux-mm/20240615084714.37499-1-21cnbao@gmail.com/
+
+Thanks,
+Ryan
+
+Ryan Roberts (5):
+  mm: swap: Simplify end-of-cluster calculation
+  mm: swap: Change SWAP_NEXT_INVALID to highest value
+  mm: swap: Track allocation order for clusters
+  mm: swap: Scan for free swap entries in allocated clusters
+  mm: swap: Optimize per-order cluster scanning
+
+ include/linux/swap.h |  18 +++--
+ mm/swapfile.c        | 164 ++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 157 insertions(+), 25 deletions(-)
+
+--
+2.43.0
+
 
