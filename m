@@ -1,150 +1,286 @@
-Return-Path: <linux-kernel+bounces-219947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A1A90DA9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC17790DAA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B7D2B23B40
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:27:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505B21F230B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956CC13FD72;
-	Tue, 18 Jun 2024 17:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9D113EFEE;
+	Tue, 18 Jun 2024 17:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lcfdcyXg"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StCHpqHr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B08A13E8BE
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 17:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7358D13BC35;
+	Tue, 18 Jun 2024 17:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718731620; cv=none; b=UrXEOfujXa9bziwbNyeWmmuYcIzMJZeVHtaR1SudM1DV8s3R+u0gJYagxbAgxxV4uAJr71tU8oosfts8cv9lI/+31fPMATd8BhPlbKSKH1GFOtYotgbEopkS1iRelyUNHvXOJDalq7AAWK3+S7s3tOcxyoePTAqYprhXJnygURA=
+	t=1718731651; cv=none; b=egGgGxJ1CiZDYbjiHYNqtgLDY/A7aD0Oi5z7BdUHi8yvozyAwqNKE62VIhSdJ3fQs1Fubsp9QVmPW04ZqpuLYtMHmiKyn7trERAf6NlFcg0k2HBPNmBaviAXhxOSkoKnaR8uVwHgFQjk2ly+nXbnmE8lGkZYqoZ8uzXw/two5dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718731620; c=relaxed/simple;
-	bh=C67RHACpPp61qeVE9UwoRllkODOsgpgxer+BTPBPlFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CekM2SNQmleNY7V7bNHmGXhR+A18GVGXXnWQDBp9tVYejaEJtTzMcmPz00yehZkMc6q/p7nWAya5tAz+G+V6pOFa9KiB+wD5WRCJ90MotJ0f85+s9VPXfzn6yu340jj+tp/ZH3QMxcpV3BVAGIi2eBsZMuOWGkmy7DRxylsw4Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lcfdcyXg; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ead2c6b50bso62504351fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:26:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718731617; x=1719336417; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=W2XgDBRe+uXR1JhTiAW0H+F2QdLuA6dIQSH0HmfL2qI=;
-        b=lcfdcyXgfyZHLkNHrRTYeZKmJ/3WJFNo9sC+NJ+BvPznNCPBIP4gLVDYnRIOx+epGe
-         8ECwMlXQJjGxFTHC5zS/ClgfobDd9ngG9hQ1FLXriEn/MdEnJgAnAtVDvpp6fufhkYiG
-         d+Nl3AWF+AYeYq2UXimeB7AETjTWeMqOIrE0ejKQBHMmhi40/Yg5pwN1qU56GbDrIFx8
-         ny2K9mYtqD0/4m9ZfrfhSgOTMYEnIymKi4piNL733KmpJ87APmN406owgDadBpdh5Ef7
-         F0XOjLzid2ou43ez7hf2oL4CeImcV2PWn25S9vP6JrkTHh9oBiQKIIP66QBZAsSTc9iA
-         qmUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718731617; x=1719336417;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W2XgDBRe+uXR1JhTiAW0H+F2QdLuA6dIQSH0HmfL2qI=;
-        b=HU38BmLxWcH6pLmcIDESy3FtZ2bcjpl4dd+SQeo7aH+tNqvaakrVvAQDhhbeW17hJb
-         BoUfDdvlEzHdHyhKGNlQ/BdnOQvdhfbjIltPCUE3+BOsXLL1ir9CYu+fwkarD4jIOrS/
-         lKd7wBuFoeSfyFoHvcUXwwx466UmQ9TJVIAq/E7OeXRLmIXp7XstJr89o349ATfHZsmg
-         K61dZUs+QEDoSGQLSUNB6QQ8qK775T8NWpuuH0UjKpLdNoOxwcfvlvpX/wZp3MjUKxUP
-         ImaTi5VC3Ov//36lH9pySC0xkWmv2SL9BegkQIqYoVUFXl/QM2WpuXqPfuDPRcCg+/xZ
-         s08Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWgFhz5JWAUmkOrj712hK0+8plGzh2tBqxgfxl5C6U666wwm3am+RXGdw1wY1395G18dVmLWdYDW/zp0789yvGeHQJ9aH1IJNppuKMr
-X-Gm-Message-State: AOJu0Yw+zbQE71cjF/cvKnJBL0os4zCjVt6zC2oV6ITuvMMOpmsN4ZVe
-	Ry7cjRyZwlJPdBpgPoPn9xqXGl2a39rDBF01l0PIV1DHiewgEsODZs9IdNttLlE=
-X-Google-Smtp-Source: AGHT+IHnlPq6SIHBVQIVyvhtZzEM4VjHJZd+R56nsfAoWok8bl5Nz8Rpo3Ive6lWbA3CpuueiYxIMA==
-X-Received: by 2002:a05:6512:49a:b0:52b:c1d4:7df3 with SMTP id 2adb3069b0e04-52ccaa36980mr190988e87.35.1718731617392;
-        Tue, 18 Jun 2024 10:26:57 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2889052sm1555203e87.299.2024.06.18.10.26.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 10:26:57 -0700 (PDT)
-Date: Tue, 18 Jun 2024 20:26:55 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/5] drm/msm/adreno: Move hwcg table into a6xx
- specific info
-Message-ID: <x64uencmmiqlozqhjnp2jclizjzhhhekkhvxqmm6dlilr7huyd@wmaikimb63jx>
-References: <20240617225127.23476-1-robdclark@gmail.com>
- <20240617225127.23476-5-robdclark@gmail.com>
- <wnnjjljjyl5s3fkwiapux3f76243ngp2ppk2cm7kkhdp5dc4sz@v4wypnga3izv>
- <CAF6AEGvjeGxP+A2umyQHo49G1rAdZkY0bHuemvFP4jgNkspu3Q@mail.gmail.com>
+	s=arc-20240116; t=1718731651; c=relaxed/simple;
+	bh=PvggezZOx8I51XpTY2I6XHhoeCKDN4i12/4cdMboB88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bSW1rQKA+F/ZJjvyJcPKjmFmRhTwGfWaID+F9lwXv/i1f9BwbxjAmEO2AqivJm9uaGc/c6BF9z43Bg3sB90MGmus2pAgtoTrw9ioDbQn69maVwni4CRUHAq+LPcDzIv7efGuvVwzue2MjY9W+OousiHZ0OgV3mhNqknzASh412Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StCHpqHr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB16C4AF1A;
+	Tue, 18 Jun 2024 17:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718731651;
+	bh=PvggezZOx8I51XpTY2I6XHhoeCKDN4i12/4cdMboB88=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=StCHpqHrbsQeGkKqhu7koH1e+0bMPjBULzVsTayfSoeeEUu2A9Lr1KFDGfngMN9HS
+	 Bj7Hf7Y4eHm0o55YI4WzwqTeCvlOVypF9hoZ7SqCbZwhFPT7fhhC5sTZA+w5HhN0Lr
+	 rg3IVewVpYDM2b2YpxRWBP7B24qlZ/rfTVzGYwgtFnBCJLlvQ/wAgIOnIB9Vz6jx4K
+	 03ai5Q1fSXuZNtwTABe7GwDNScuOnxx/+lLMVX0sUm289P8XF7nksBp5mSbC7Qs/Ve
+	 MmLEmGLY3UfLk6TG0xGHXskIlYDvyzZJpN4sq7/9G0TkGjyyg7Ng7lp+8F9KSlGeNA
+	 0+Z50Fin1x1vQ==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-250495bcd4fso346624fac.1;
+        Tue, 18 Jun 2024 10:27:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcOFhu+uAd2H5SSWhU5nG9O8jBY3Ov7JbevcqrKaQKF+EEr+sEPviEEpJFVx4apkXOx+OazcoRRVG8vSn18mn/jyguCkyhPi7xCvh9QxyGKNT1KnRR6j0ItKfIRHr6RE5mJVDxV9w=
+X-Gm-Message-State: AOJu0YwPisa8MM233iI+kvRMR/5ongFACEFxq8fxg7Q7UPiAZ1zX61Bb
+	pwNT3iehC+dodu/9Hu0MolTmeh2oJwRth/yp4PM48wYLbNlWF2Zkt034qyTWXxQvR2niPeYwAP4
+	idGAMQ8x8tg+GDTL6aPN2pPv06PU=
+X-Google-Smtp-Source: AGHT+IGMDorx3YEJm/c+8y/HsAeafHKDCKId4YqOv7yTMYPvkZemm1RudKf3mbjqyuWAPpK4cU5bYBEppyGxi0/v81c=
+X-Received: by 2002:a05:6870:82ac:b0:259:4012:6c94 with SMTP id
+ 586e51a60fabf-25c949cd773mr518804fac.2.1718731650067; Tue, 18 Jun 2024
+ 10:27:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF6AEGvjeGxP+A2umyQHo49G1rAdZkY0bHuemvFP4jgNkspu3Q@mail.gmail.com>
+References: <20240618121327.2177-1-kaiyen.chang@intel.com> <20240618121327.2177-2-kaiyen.chang@intel.com>
+In-Reply-To: <20240618121327.2177-2-kaiyen.chang@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 18 Jun 2024 19:27:18 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gK=v0P7Fapn=5-YdZ9_NTGL0PfA__ogmP_3Hx0=5qAEg@mail.gmail.com>
+Message-ID: <CAJZ5v0gK=v0P7Fapn=5-YdZ9_NTGL0PfA__ogmP_3Hx0=5qAEg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] PM: Start asynchronous suspend threads upfront
+To: Kaiyen Chang <kaiyen.chang@intel.com>
+Cc: rafael@kernel.org, pavel@ucw.cz, len.brown@intel.com, 
+	gregkh@linuxfoundation.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 09:33:48AM GMT, Rob Clark wrote:
-> On Tue, Jun 18, 2024 at 1:30 AM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> >
-> > On Mon, Jun 17, 2024 at 03:51:14PM GMT, Rob Clark wrote:
-> > > From: Rob Clark <robdclark@chromium.org>
-> > >
-> > > Introduce a6xx_info where we can stash gen specific stuff without
-> > > polluting the toplevel adreno_info struct.
-> > >
-> > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 65 +++++++++++++++++------
-> > >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     |  6 +--
-> > >  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  9 ++++
-> > >  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  6 ++-
-> > >  4 files changed, 67 insertions(+), 19 deletions(-)
-> > >
-> >
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >
-> >
-> > > @@ -98,7 +100,9 @@ struct adreno_info {
-> > >       struct msm_gpu *(*init)(struct drm_device *dev);
-> > >       const char *zapfw;
-> > >       u32 inactive_period;
-> > > -     const struct adreno_reglist *hwcg;
-> > > +     union {
-> > > +             const struct a6xx_info *a6xx;
-> > > +     };
-> > >       u64 address_space_size;
-> > >       /**
-> > >        * @speedbins: Optional table of fuse to speedbin mappings
-> >
-> > My preference would be towards wrapping the adreno_gpu, but that would
-> > require more significant rework of the driver. Let's see if we can get
-> > to that later.
-> >
-> 
-> yeah, it was going to be more re-work, and I'm neck deep in
-> gpuvm/vm_bind.. I just wanted to land this since it is a pita (and
-> error prone) to rebase as more gpu's get added ;-)
+On Tue, Jun 18, 2024 at 2:13=E2=80=AFPM Kaiyen Chang <kaiyen.chang@intel.co=
+m> wrote:
+>
+> Currently, when performing a suspend operation, all devices on the
+> dpm_list must wait for the "synchronous" devices that are listed
+> after them to complete before the main suspend thread can start
+> their suspend routines, even if they are "asynchronous". If the
+> suspend routine of a synchronous device must enter a waiting state
+> for some reason, it will cause the main suspend thread to go to
+> sleep, thereby delaying the processing of all subsequent devices,
+> including asynchronous ones, ultimately extending the overall
+> suspend time.
+>
+> By starting the asynchronous suspend threads upfront, we can allow
+> the system to handle the suspend routines of these asynchronous
+> devices in parallel, without waiting for the suspend routines of
+> the synchronous devices listed after them to complete, and without
+> breaking their order with respect to their parents and children.
+> This way, even if the main suspend thread is blocked, these
+> asynchronous suspend threads can continue to run without being
+> affected.
+>
+> Signed-off-by: Kaiyen Chang <kaiyen.chang@intel.com>
 
-Yes, I'm fine with that. My note was more like a 'later todo' item.
+How exactly has this been tested?
 
-> 
-> It isn't entirely unlike how we handle gpu gen specific options in
-> mesa, where we have a somewhat bigger set of options, so I wouldn't
-> say that this approach was worse than extending adreno_info.. just
-> different..
+In the past, changes going in this direction caused system suspend to
+hang on at least some platforms (including the ones in my office).
 
-
--- 
-With best wishes
-Dmitry
+> ---
+> Change from v1: Fix some unclear parts in the commit messages.
+> ---
+>  drivers/base/power/main.c | 90 +++++++++++++++++++++++++--------------
+>  1 file changed, 57 insertions(+), 33 deletions(-)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 4a67e83300e1..6ddd6ef36625 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -1283,6 +1283,7 @@ static void async_suspend_noirq(void *data, async_c=
+ookie_t cookie)
+>
+>  static int dpm_noirq_suspend_devices(pm_message_t state)
+>  {
+> +       struct device *dev;
+>         ktime_t starttime =3D ktime_get();
+>         int error =3D 0;
+>
+> @@ -1293,26 +1294,33 @@ static int dpm_noirq_suspend_devices(pm_message_t=
+ state)
+>
+>         mutex_lock(&dpm_list_mtx);
+>
+> +       /*
+> +        * Trigger the suspend of "async" devices upfront so they don't h=
+ave to
+> +        * wait for the "non-async" ones that don't depend on them.
+> +        */
+> +
+> +       list_for_each_entry_reverse(dev, &dpm_late_early_list, power.entr=
+y)
+> +               dpm_async_fn(dev, async_suspend_noirq);
+> +
+>         while (!list_empty(&dpm_late_early_list)) {
+> -               struct device *dev =3D to_device(dpm_late_early_list.prev=
+);
+> +               dev =3D to_device(dpm_late_early_list.prev);
+>
+>                 list_move(&dev->power.entry, &dpm_noirq_list);
+>
+> -               if (dpm_async_fn(dev, async_suspend_noirq))
+> -                       continue;
+> -
+> -               get_device(dev);
+> +               if (!dev->power.async_in_progress) {
+> +                       get_device(dev);
+>
+> -               mutex_unlock(&dpm_list_mtx);
+> +                       mutex_unlock(&dpm_list_mtx);
+>
+> -               error =3D device_suspend_noirq(dev, state, false);
+> +                       error =3D device_suspend_noirq(dev, state, false)=
+;
+>
+> -               put_device(dev);
+> +                       put_device(dev);
+>
+> -               mutex_lock(&dpm_list_mtx);
+> +                       mutex_lock(&dpm_list_mtx);
+>
+> -               if (error || async_error)
+> -                       break;
+> +                       if (error || async_error)
+> +                               break;
+> +               }
+>         }
+>
+>         mutex_unlock(&dpm_list_mtx);
+> @@ -1454,6 +1462,7 @@ static void async_suspend_late(void *data, async_co=
+okie_t cookie)
+>   */
+>  int dpm_suspend_late(pm_message_t state)
+>  {
+> +       struct device *dev;
+>         ktime_t starttime =3D ktime_get();
+>         int error =3D 0;
+>
+> @@ -1466,26 +1475,33 @@ int dpm_suspend_late(pm_message_t state)
+>
+>         mutex_lock(&dpm_list_mtx);
+>
+> +       /*
+> +        * Trigger the suspend of "async" devices upfront so they don't h=
+ave to
+> +        * wait for the "non-async" ones that don't depend on them.
+> +        */
+> +
+> +       list_for_each_entry_reverse(dev, &dpm_suspended_list, power.entry=
+)
+> +               dpm_async_fn(dev, async_suspend_late);
+> +
+>         while (!list_empty(&dpm_suspended_list)) {
+> -               struct device *dev =3D to_device(dpm_suspended_list.prev)=
+;
+> +               dev =3D to_device(dpm_suspended_list.prev);
+>
+>                 list_move(&dev->power.entry, &dpm_late_early_list);
+>
+> -               if (dpm_async_fn(dev, async_suspend_late))
+> -                       continue;
+> -
+> -               get_device(dev);
+> +               if (!dev->power.async_in_progress) {
+> +                       get_device(dev);
+>
+> -               mutex_unlock(&dpm_list_mtx);
+> +                       mutex_unlock(&dpm_list_mtx);
+>
+> -               error =3D device_suspend_late(dev, state, false);
+> +                       error =3D device_suspend_late(dev, state, false);
+>
+> -               put_device(dev);
+> +                       put_device(dev);
+>
+> -               mutex_lock(&dpm_list_mtx);
+> +                       mutex_lock(&dpm_list_mtx);
+>
+> -               if (error || async_error)
+> -                       break;
+> +                       if (error || async_error)
+> +                               break;
+> +               }
+>         }
+>
+>         mutex_unlock(&dpm_list_mtx);
+> @@ -1719,6 +1735,7 @@ static void async_suspend(void *data, async_cookie_=
+t cookie)
+>   */
+>  int dpm_suspend(pm_message_t state)
+>  {
+> +       struct device *dev;
+>         ktime_t starttime =3D ktime_get();
+>         int error =3D 0;
+>
+> @@ -1733,26 +1750,33 @@ int dpm_suspend(pm_message_t state)
+>
+>         mutex_lock(&dpm_list_mtx);
+>
+> +       /*
+> +        * Trigger the suspend of "async" devices upfront so they don't h=
+ave to
+> +        * wait for the "non-async" ones that don't depend on them.
+> +        */
+> +
+> +       list_for_each_entry_reverse(dev, &dpm_prepared_list, power.entry)
+> +               dpm_async_fn(dev, async_suspend);
+> +
+>         while (!list_empty(&dpm_prepared_list)) {
+> -               struct device *dev =3D to_device(dpm_prepared_list.prev);
+> +               dev =3D to_device(dpm_prepared_list.prev);
+>
+>                 list_move(&dev->power.entry, &dpm_suspended_list);
+>
+> -               if (dpm_async_fn(dev, async_suspend))
+> -                       continue;
+> -
+> -               get_device(dev);
+> +               if (!dev->power.async_in_progress) {
+> +                       get_device(dev);
+>
+> -               mutex_unlock(&dpm_list_mtx);
+> +                       mutex_unlock(&dpm_list_mtx);
+>
+> -               error =3D device_suspend(dev, state, false);
+> +                       error =3D device_suspend(dev, state, false);
+>
+> -               put_device(dev);
+> +                       put_device(dev);
+>
+> -               mutex_lock(&dpm_list_mtx);
+> +                       mutex_lock(&dpm_list_mtx);
+>
+> -               if (error || async_error)
+> -                       break;
+> +                       if (error || async_error)
+> +                               break;
+> +               }
+>         }
+>
+>         mutex_unlock(&dpm_list_mtx);
+> --
+> 2.34.1
+>
 
