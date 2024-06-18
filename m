@@ -1,180 +1,159 @@
-Return-Path: <linux-kernel+bounces-218547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3FA90C1BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:12:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4CC490C1C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B051C21A99
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:12:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C02BD1C21ABB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12A21C2A8;
-	Tue, 18 Jun 2024 02:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816FC1B94F;
+	Tue, 18 Jun 2024 02:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BDndtwMO"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiMK7IcX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9278D199B0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CBF4689;
+	Tue, 18 Jun 2024 02:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718676747; cv=none; b=muNzxWwz64S2XgDW54iasyAdelHjcLKC9xstKMechWhNjsGkhQtqs15h9mPj4wAvadVVUw6kfyvJ2XjWF2OLbDKyvF7FqOnYZrCjxwzyx/WHlvpxY53IhLdHNqvO7DjvmHl0sphePWn+BXFip0BXF2TwTTsDI5HBUShJOFtwJOU=
+	t=1718677220; cv=none; b=KngOUXCwKE/wHPzEdBtSQvFHdVAlx3ob7SHYqc/kxY4zhm+kXspZgixoiHeR46PHLvqRAyJ9q+9T4QW8pUDr/vqroj5nAKEjS0U+kZi2D2vvkIk13nhwLEz9fV9hz5VeIo1VEjT6mMn8stDd+rI5s7Jp4kI+V84xiBDP8BoNyyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718676747; c=relaxed/simple;
-	bh=XfsgfTxIbf80Vaj2+gGtTRv2D1VtoN9sVBiv1EbMpe0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nGCy6KvsQTF+V0EzPPzPNT5Xy4Nl/rSAWUUexwWjfgBTMqj8Ve+hcZJvD8ZlT+oiZY8HznwBYiE5BKpOYtmbbt5t91Zlxt9dbIRqA0K4AzxGWfwHg1MbKNebUXdy3+izl6lleqcvBuYP+3IFtHjo+d2lo7TxuoWeRiPUqfu5axs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BDndtwMO; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-43fdb797ee2so24772441cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718676743; x=1719281543; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XfsgfTxIbf80Vaj2+gGtTRv2D1VtoN9sVBiv1EbMpe0=;
-        b=BDndtwMOPRhaG5ald4kpU+EJ5naZa2bswKenuJHeb/tBzo4R2C7fgYaW7WVLJycyUw
-         uimDCvVuxJfKTnq+Yb0CjGcj86KTWOk6TraFYfaSPElYYISe0wQY9vGVJPZS1/KP2AKn
-         DhDIsdM1nA/ETNLE4E4LNGGUKCzpb0zYmhVz0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718676743; x=1719281543;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XfsgfTxIbf80Vaj2+gGtTRv2D1VtoN9sVBiv1EbMpe0=;
-        b=uPL9m9G3yjLZ1YYnWXzK4A7hFLDK326TESp1Qr7n1fVmOO8JHcjnrUA/6SO56wUGdV
-         iN/BUBzNtG22KFg5AbbS5EXdoR527PoU3YRfaUK/h1J0iYj/cYqTITlt3fIB3c1T7VJN
-         HfkLBDDrYNtKFrVVrQYLKaIB/mjiDwz9DUDESKVj3WfzWHmJQfk4QS5jL3oMH4hqmHXH
-         pf7e0eTuC/sL8LXbutOl+EuWGR3raJYvAkTnZxuQ1IMBKTe04na6AFMNDeMqRTQIGMt+
-         HBV4jiUc+F6sthqzovWgkQlxwW5YMO1LMelnVCUytTo1Udnfzkoo8O7n/9R16SduCwAU
-         gcRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXl+cujVWiBdE6Gcd4t2wbUrnF/tyyBmNx+kzbcHXfP6TyqxhmKx71P9QUtcNl7O0TO4YLkbgaCum/DCCaf4/qqcjyF61LVnwFO+7bp
-X-Gm-Message-State: AOJu0Ywm0h6AxJoL9d5vCSXFVvLx5KwMR8E0DzULrw4a8EQg/Gf/Tjdl
-	cOmbgMYrBXOG9OCxoh3u+5AUufm0kjWAaHquSmNdJYsZox0e2sLRvOUuDgpn8yU26Zbg21n5EwU
-	=
-X-Google-Smtp-Source: AGHT+IFjbGzv2GfWTRgOzow9N5IEdhMRMWhzfMmOh5tF1lzY5vCaJe1OdVI2S5Rw3gVych2RsbY3yg==
-X-Received: by 2002:ac8:7f08:0:b0:441:54cd:2752 with SMTP id d75a77b69052e-442169f6b44mr136030831cf.39.1718676743152;
-        Mon, 17 Jun 2024 19:12:23 -0700 (PDT)
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com. [209.85.160.173])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f2fcc2a2sm52256811cf.72.2024.06.17.19.12.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 19:12:22 -0700 (PDT)
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4405dffca81so64481cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:12:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXy40VKn1VwClB5snme4i3An4ujyuT7sUHYLZ03uWwdqFOxHXZl0pObpJIGnEza3ZQOSjN/XwBBJpFJ6ird93TQDziB7g09d7NiyaQg
-X-Received: by 2002:ac8:598b:0:b0:441:62e9:98b with SMTP id
- d75a77b69052e-4449cc66d3cmr1351231cf.10.1718676741668; Mon, 17 Jun 2024
- 19:12:21 -0700 (PDT)
+	s=arc-20240116; t=1718677220; c=relaxed/simple;
+	bh=AU8m4BLn7PksqMB0wIhU2UZKqSE8doPVgQ0p/Vh0wwE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oHhw8vaesE/hoPhLKubwuU9zJltTG08knKwSwqjvmm/F2S2dnsu6fdZkma5VgFzXJq0E4sBhBT80XsS2uwxPVNand6W7ABi6axzmJudtMJl6+GgXT/aYtQsZ7MobQ7tLE76EB+ltdwiXCNcVv6S3sORsFrHHCH8TjHlJ4xRrSC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiMK7IcX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61B34C2BD10;
+	Tue, 18 Jun 2024 02:20:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718677220;
+	bh=AU8m4BLn7PksqMB0wIhU2UZKqSE8doPVgQ0p/Vh0wwE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AiMK7IcXe2a3Q+8e5/HZ+P72yEZjBpSGiIfNAKMRuACWSA9P1vMY+35NETRVC5aL7
+	 rcg4T7YLgUpFIeMVsgzxTrbUD7Ul9+DudW1o64PV+BIrpI60Nweuiiy6kEbaXOVMAL
+	 d8QG5P8vsxng1VhNnKxhFBCyFTv3PTSHLAqBCioa35uxLumIMeqvENu0YqQvn5dpLi
+	 cIAJ2/hQaiQVCOzG8mK/eb9ImJwOP/uCb8E7maVtMYppUx/i0oVNI0BX+B1ybodnq+
+	 aL8yAzxlTSthiJBqubsPadWw5YMFz/BZ6kt3LdR/ACkDypcU6hNql4/ORQjhzlI/NZ
+	 oyw/wYDiCEvRw==
+Message-ID: <46037b02-5dad-4249-a63f-80ac93977aa9@kernel.org>
+Date: Tue, 18 Jun 2024 11:20:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617103018.515f0bf1@endymion.delvare> <xd2yybtxvzte7gwqwg2vudzvhoekqao2dle6zsuduzjzi3rsay@xhahwof2prph>
- <20240617132348.5f20bf89@endymion.delvare> <vsrsvmrkqnmxs3ncqv5m2gevzefiq55tr2iolxlmoehsvgcfkn@hyx37vax6r5e>
- <20240617201814.73a07702@endymion.delvare> <jbqbn6zaqq7j5htxuqxb34tjrf5lnqabkh5ywtnklhd4owyc3h@ztvolr6hjrti>
-In-Reply-To: <jbqbn6zaqq7j5htxuqxb34tjrf5lnqabkh5ywtnklhd4owyc3h@ztvolr6hjrti>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 17 Jun 2024 19:12:05 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X4qVDTOdMFQeEiJi2DD=tuEj66vP35XQKrSj5-r_YADQ@mail.gmail.com>
-Message-ID: <CAD=FV=X4qVDTOdMFQeEiJi2DD=tuEj66vP35XQKrSj5-r_YADQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND] drm/display: Drop obsolete dependency on COMPILE_TEST
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jean Delvare <jdelvare@suse.de>, dri-devel@lists.freedesktop.org, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Andrew Morton <akpm@linux-foundation.org>, YueHaibing <yuehaibing@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] ata: libata-scsi: Report valid sense data for ATA
+ PT if present
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Niklas Cassel <cassel@kernel.org>, Tejun Heo <tj@kernel.org>,
+ Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240614191835.3056153-1-ipylypiv@google.com>
+ <20240614191835.3056153-4-ipylypiv@google.com>
+ <dfb741e5-2fe6-4b36-b1ab-55c3c33032d0@kernel.org>
+ <ZnDOfqq9Jo-38LBl@google.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <ZnDOfqq9Jo-38LBl@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 6/18/24 09:02, Igor Pylypiv wrote:
+> On Mon, Jun 17, 2024 at 08:25:54AM +0900, Damien Le Moal wrote:
+>> On 6/15/24 04:18, Igor Pylypiv wrote:
+>>> Do not generate sense data from ATA status/error registers
+>>> if valid sense data is already present.
+>>
+>> This kind of contradicts what you said in patch 2... So I am really confused now.
+> 
+> Sorry about the confustion. I think the problem is that I was using "sense data"
+> to describe two different things:
+> #1. SK/ASC/ASCQ
+> #2. ATA Status Return sense data descriptor
+> 
+> Both #1 and #2 need to be populated into sense buffer. The problem with
+> the current code is that we can only have either valid #1 or valid #2 but
+> not both at the same time.
+> 
+>> Though this patch actually looks good to me, modulo the comment below.
+>> But shouldn't this be squashed with patch 2 ?
+> 
+> Yes, that's a good point. Let me factor out the sense data descriptor
+> population code into a separate function and then squash this patch with
+> the patch 2.
+> 
+>>
+>>>
+>>> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+>>> ---
+>>>  drivers/ata/libata-scsi.c | 17 +++++++++++------
+>>>  1 file changed, 11 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+>>> index 79e8103ef3a9..4bfe47e7d266 100644
+>>> --- a/drivers/ata/libata-scsi.c
+>>> +++ b/drivers/ata/libata-scsi.c
+>>> @@ -858,12 +858,17 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
+>>>  	unsigned char *desc = sb + 8;
+>>>  	u8 sense_key, asc, ascq;
+>>>  
+>>> -	/*
+>>> -	 * Use ata_to_sense_error() to map status register bits
+>>> -	 * onto sense key, asc & ascq.
+>>> -	 */
+>>> -	if (qc->err_mask ||
+>>> -	    tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
+>>> +	if (qc->flags & ATA_QCFLAG_SENSE_VALID) {
+>>> +		/*
+>>> +		 * Do not generate sense data from ATA status/error
+>>> +		 * registers if valid sense data is already present.
+>>> +		 */
+>>
+>> The empty "if" here is really horrible. Please revert the condition and add it
+>> as a "&&" in the below if.
+>>
+> Adding the condition to the below if will change the code flow and we'll end
+> up executing scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D) when
+> ATA_QCFLAG_SENSE_VALID is set, which is not what we want.
 
-On Mon, Jun 17, 2024 at 3:26=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Mon, Jun 17, 2024 at 08:18:14PM GMT, Jean Delvare wrote:
-> > On Mon, 17 Jun 2024 14:55:22 +0300, Dmitry Baryshkov wrote:
-> > > On Mon, Jun 17, 2024 at 01:23:48PM GMT, Jean Delvare wrote:
-> > > > Hi Dmitry,
-> > > >
-> > > > Thanks for your feedback.
-> > > >
-> > > > On Mon, 17 Jun 2024 12:57:19 +0300, Dmitry Baryshkov wrote:
-> > > > > On Mon, Jun 17, 2024 at 10:30:30AM GMT, Jean Delvare wrote:
-> > > > > > Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"=
-), it
-> > > > > > is possible to test-build any driver which depends on OF on any
-> > > > > > architecture by explicitly selecting OF. Therefore depending on
-> > > > > > COMPILE_TEST as an alternative is no longer needed.
-> > > > >
-> > > > > The goal of this clause is to allow build-testing the driver with=
- OF
-> > > > > being disabled (meaning that some of OF functions are stubbed and=
- some
-> > > > > might disappear). I don't see how user-selectable OF provides the=
- same
-> > > > > result.
-> > > >
-> > > > Historically, the goal of this clause *was* to allow build-testing =
-the
-> > > > driver on architectures which did not support OF, and that did make
-> > > > sense back then. As I understand it, building the driver without OF
-> > > > support was never a goal per se (if it was, then the driver wouldn'=
-t be
-> > > > set to depend on OF in the first place).
-> > > >
-> > > > Some of my other submissions include the following explanation whic=
-h
-> > > > you might find useful (I ended up stripping it on resubmission afte=
-r
-> > > > being told I was being too verbose, but maybe it was needed after a=
-ll):
-> > > >
-> > > > It is actually better to always build such drivers with OF enabled,
-> > > > so that the test builds are closer to how each driver will actually=
- be
-> > > > built on its intended target. Building them without OF may not test
-> > > > much as the compiler will optimize out potentially large parts of t=
-he
-> > > > code. In the worst case, this could even pop false positive warning=
-s.
-> > > > Dropping COMPILE_TEST here improves the quality of our testing and
-> > > > avoids wasting time on non-existent issues.
-> > >
-> > > This doesn't seem to match the COMPILE_TEST usage that I observe in
-> > > other places. For example, we frequently use 'depends on ARCH_QCOM ||
-> > > COMPILE_TEST'. Which means that the driver itself doesn't make sense
-> > > without ARCH_QCOM, but we want for it to be tested on non-ARCH_QCOM
-> > > cases. I think the same logic applies to 'depends on OF ||
-> > > COMPILE_TEST' clauses. The driver (DP AUX bus) depends on OF to be fu=
-lly
-> > > functional, but it should be compilable even without OF case.
-> >
-> > The major difference is that one can't possibly enable ARCH_QCOM if
-> > building on X86 for example. Therefore COMPILE_TEST is the only way to
-> > let everyone (including randconfig/allmodconfig build farms) test-build
-> > your code.
-> >
-> > On the other hand, if you want to test-build drm_dp_aux_bus, you can
-> > simply enable OF, because it is available on all architectures and
-> > doesn't depend on anything. No need for COMPILE_TEST.
->
-> I'd probably let Doug respond, what was his intention.
+I did say "reverse the condition" :)
+So that if would be done only if ATA_QCFLAG_SENSE_VALID is *not* set.
 
-Is this me? This looks like a straight revert of commit 876271118aa4
-("drm/display: Fix build error without CONFIG_OF")
+> 
+> I agree about horrible :)
+> 
+> Perhaps I should have factored out the descriptor population code into
+> a separate function to make the code correct and not so horrible. Let me
+> do that in v2.
+> 
+>>> +	} else if (qc->err_mask ||
+>>> +		   tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
+>>> +		/*
+>>> +		 * Use ata_to_sense_error() to map status register bits
+>>> +		 * onto sense key, asc & ascq.
+>>> +		 */
+>>>  		ata_to_sense_error(qc->ap->print_id, tf->status, tf->error,
+>>>  				   &sense_key, &asc, &ascq);
+>>>  		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
+>>
+>> -- 
+>> Damien Le Moal
+>> Western Digital Research
+>>
+> Thank you,
+> Igor 
+> 
 
-I don't personally have anything against removing COMPILE_TEST for
-this given that I wasn't the one who added it, but make sure it's not
-going to cause randconfig issues.
+-- 
+Damien Le Moal
+Western Digital Research
 
--Doug
 
