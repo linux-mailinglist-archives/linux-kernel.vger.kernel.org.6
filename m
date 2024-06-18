@@ -1,190 +1,103 @@
-Return-Path: <linux-kernel+bounces-218587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D279D90C259
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:19:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C742590C264
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E129C1C219B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:19:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719CE1F24831
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6C319D060;
-	Tue, 18 Jun 2024 03:18:50 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892C519B3C0;
+	Tue, 18 Jun 2024 03:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qoS97ltU"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FF41CD35;
-	Tue, 18 Jun 2024 03:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523EC4D8BF
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718680729; cv=none; b=r5sjqLHPygH0dLJvWsOt8mV2tHHnXlud6m3J8SwakWEopTQ5DAA9NTBVdGieQknxWqg08Ha0CgZlpknzp+r0/1a+sqZxpVxuIY0wKW0EQ7IJGRaSI1vEdyXuQr6Mj5PU93ebKTM0XkLsX7K3On7fQLRq39hJZzwEbCyaCi6agnU=
+	t=1718680760; cv=none; b=KR63eibYu6+odXx7sEvQ8K+1TA2ltF9FQsj+e9hOkiPXbxl6CchaxawG27Agly369jcRuOEq41R3vGBWnq6SrU7pZym0OpKB99bAr4aNg9oqQiOT1NJUMTFJwpPeYNWa/Jx0hXU+1BRR6Kv5EmH51U0WgBpUcFspuqNrv/Y/NgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718680729; c=relaxed/simple;
-	bh=1w2uBjaaCYiqkDeJ8zIZEjj4QVSb+MXZMKyM2t9/Q68=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mWEBsU6ycY1uKqIwT47F8/mjlH++CJV5dW3iqlN8hefsw4aGFoC1qKWFMrIywRlTHb3kH4Kzn01Aru4ff9bRrcvDL08J4eCqyqp0u3fU9E0ljLUhVo7Dtt/zLpcNmrf/bUJ8fUGBFATPgVsA+kTpenNtmyDWMH/9/5lWhjNOPSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W3Bm76yzWz4f3kvv;
-	Tue, 18 Jun 2024 11:18:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B2ED01A0FC7;
-	Tue, 18 Jun 2024 11:18:43 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCXAQ+N_HBmFJj8AA--.12964S11;
-	Tue, 18 Jun 2024 11:18:43 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	tj@kernel.org,
-	gregkh@linuxfoundation.org,
-	bvanassche@acm.org,
-	hch@infradead.org,
-	josef@toxicpanda.com,
-	lizefan.x@bytedance.com,
-	hannes@cmpxchg.org
-Cc: linux-block@vger.kernel.org,
+	s=arc-20240116; t=1718680760; c=relaxed/simple;
+	bh=Z+oc5uRTAFhZnj7jIbg6J9oTIX0EeG2GVQTPEDuvlBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FN9/kTyEOxzrD3Sa6TD+fVOrCIZ6aFWSYpRJnvxWLU3emsr6i4xtHBii3EcTmXn+kmPFZSck+Ttej87aWPOTKWMu2wOO6pUmZFaPDmX+jQLzx69yt4Eq5eQtYWPH0RN4Cfx+ynY5tasig6wFQYQyWoOYhiWG4R1j4smRjB9P1po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qoS97ltU; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3oANa1rrA/Me3UE+Z60RNjRWRplG3I0MnseFbw0ZTR4=; b=qoS97ltUkD4IyV7n7Bfnd1C8Ls
+	NvkhkgXzguxGckgW2jFucHXzxp9tUeKc/bF+vrXTRyzbmDYaD179cERs89bk/LQtQXw953FCv8Z6R
+	FYS47n2XKr5L2lsEYKpEMRG9R+oht/mWAZW1T6loMwke2wxQhjq/mQumCCBKY6yh/d4TAExid/JBe
+	V4g6KZJO4FCWcEWWBqBo7j5qcUWslEykQQCsiwSdvwy6QezQhFUH+oPuDIzUwtUlwuCvx1iPwZcpT
+	xybCaJXethpdZHWh9KPSWzSzi3tivb81SWB4Fbu/+X1ePCAlOvb7J3U6+EsuvKkjMUrCDJdjqfLYf
+	hxBZpUZQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJPNB-00000002j50-2tce;
+	Tue, 18 Jun 2024 03:19:05 +0000
+Date: Tue, 18 Jun 2024 04:19:05 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH RFC v2 7/7] blk-iocost: support to build iocost as kernel module
-Date: Tue, 18 Jun 2024 11:17:51 +0800
-Message-Id: <20240618031751.3470464-8-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240618031751.3470464-1-yukuai1@huaweicloud.com>
-References: <20240618031751.3470464-1-yukuai1@huaweicloud.com>
+	Zhaoyang Huang <huangzhaoyang@gmail.com>, steve.kang@unisoc.com
+Subject: Re: [PATCH] mm: fix hard lockup in __split_huge_page
+Message-ID: <ZnD8qYvpyhYtWeHd@casper.infradead.org>
+References: <20240618020926.1911903-1-zhaoyang.huang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXAQ+N_HBmFJj8AA--.12964S11
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr1xCr43AF4xCr1xAFy7Wrg_yoW5CF48pF
-	s8Ww1Yyay7KFsIgayfGwn7Xr1fJa92gFWrWa43W3sYv3yayw1xZ3WkJryrXFy8ZF43Zr43
-	XFW0qrWakFyUArDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
-	SdkUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618020926.1911903-1-zhaoyang.huang@unisoc.com>
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Tue, Jun 18, 2024 at 10:09:26AM +0800, zhaoyang.huang wrote:
+> Hard lockup[2] is reported which should be caused by recursive
+> lock contention of lruvec->lru_lock[1] within __split_huge_page.
+> 
+> [1]
+> static void __split_huge_page(struct page *page, struct list_head *list,
+>                 pgoff_t end, unsigned int new_order)
+> {
+>         /* lock lru list/PageCompound, ref frozen by page_ref_freeze */
+> //1st lock here
+>         lruvec = folio_lruvec_lock(folio);
+> 
+>         for (i = nr - new_nr; i >= new_nr; i -= new_nr) {
+>                 __split_huge_page_tail(folio, i, lruvec, list, new_order);
+>                 /* Some pages can be beyond EOF: drop them from page cache */
+>                 if (head[i].index >= end) {
+>                         folio_put(tail);
+>                             __page_cache_release
+> //2nd lock here
+>                                folio_lruvec_relock_irqsave
 
-The motivation is that iocost is not used widely in our production, and
-some customers don't want to increase kernel size to enable iocost that
-they will never use, and it'll be painful to maintain a new downstream
-kernel version. Hence it'll be beneficially to build iocost as kernel
-module:
+Why doesn't lockdep catch this?
 
-- Kernel Size and Resource Usage, modules are loaded only when their
-specific functionality is required.
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 9859aa4f7553..ea504df46d3b 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2925,7 +2925,9 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+>  				folio_account_cleaned(tail,
+>  					inode_to_wb(folio->mapping->host));
+>  			__filemap_remove_folio(tail, NULL);
+> +			unlock_page_lruvec(lruvec);
+>  			folio_put(tail);
+> +			folio_lruvec_lock(folio);
 
-- Flexibility and Maintainability, allows for dynamic loading and unloading
-of modules at runtime without the need to recompile and restart the kernel,
-for example we can just replace blk-iocost.ko to fix iocost CVE in our
-production environment.
-
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/Kconfig             |  2 +-
- block/blk-iocost.c        | 14 +++++++++++++-
- include/linux/blk_types.h |  2 +-
- 3 files changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/block/Kconfig b/block/Kconfig
-index dc12af58dbae..b94b93158e57 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -156,7 +156,7 @@ config BLK_CGROUP_FC_APPID
- 	  application specific identification into the FC frame.
- 
- config BLK_CGROUP_IOCOST
--	bool "Enable support for cost model based cgroup IO controller"
-+	tristate "Enable support for cost model based cgroup IO controller"
- 	depends on BLK_CGROUP
- 	select BLK_RQ_ALLOC_TIME
- 	help
-diff --git a/block/blk-iocost.c b/block/blk-iocost.c
-index 9765c988113f..33ab6e436af2 100644
---- a/block/blk-iocost.c
-+++ b/block/blk-iocost.c
-@@ -2850,6 +2850,7 @@ static void ioc_rqos_queue_depth_changed(struct rq_qos *rqos)
- 
- static void __ioc_exit(struct ioc *ioc)
- {
-+	module_put(THIS_MODULE);
- 	blkcg_deactivate_policy(ioc->rqos.disk, &blkcg_policy_iocost);
- 
- 	spin_lock_irq(&ioc->lock);
-@@ -2882,13 +2883,19 @@ static int blk_iocost_init(struct gendisk *disk)
- 	struct ioc *ioc;
- 	int i, cpu, ret;
- 
-+	if (!try_module_get(THIS_MODULE))
-+		return -ENODEV;
-+
- 	ioc = kzalloc(sizeof(*ioc), GFP_KERNEL);
--	if (!ioc)
-+	if (!ioc) {
-+		module_put(THIS_MODULE);
- 		return -ENOMEM;
-+	}
- 
- 	ioc->pcpu_stat = alloc_percpu(struct ioc_pcpu_stat);
- 	if (!ioc->pcpu_stat) {
- 		kfree(ioc);
-+		module_put(THIS_MODULE);
- 		return -ENOMEM;
- 	}
- 
-@@ -2938,6 +2945,7 @@ static int blk_iocost_init(struct gendisk *disk)
- 	rq_qos_del(&ioc->rqos);
- err_free_ioc:
- 	free_percpu(ioc->pcpu_stat);
-+	module_put(THIS_MODULE);
- 	kfree(ioc);
- 	return ret;
- }
-@@ -3616,3 +3624,7 @@ static void __exit ioc_exit(void)
- 
- module_init(ioc_init);
- module_exit(ioc_exit);
-+
-+MODULE_AUTHOR("Tejun Heo");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Cost model based cgroup IO controller");
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 781c4500491b..8da12ebc7777 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -234,7 +234,7 @@ struct bio {
- 	 */
- 	struct blkcg_gq		*bi_blkg;
- 	struct bio_issue	bi_issue;
--#ifdef CONFIG_BLK_CGROUP_IOCOST
-+#if IS_ENABLED(CONFIG_BLK_CGROUP_IOCOST)
- 	u64			bi_iocost_cost;
- #endif
- #endif
--- 
-2.39.2
+Why is it safe to drop & reacquire this lock?  Is there nothing we need
+to revalidate?
 
 
