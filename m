@@ -1,150 +1,94 @@
-Return-Path: <linux-kernel+bounces-220115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F1C90DCD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2582E90DCB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75B11285912
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C700F283426
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA71185E6D;
-	Tue, 18 Jun 2024 19:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CB116D9A7;
+	Tue, 18 Jun 2024 19:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="MLiSRG/u"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="VrwNhgu4"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C1D185E5F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B11210EC;
+	Tue, 18 Jun 2024 19:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718740079; cv=none; b=U0JMsW2EzE1Wf6ta7SDyqosC1X7uat/B0zOzqP/X1nQMgkFIMB8SH/2wK4zgUSAz/rnJs7PIm6BT0AHZdyQNp6ngyzKjF2F4pZjs8GH2bE8jJ1G7MFjugV0GFX1XETqh31pQ15bOV7p4PD3cbSyXE8O4nhyW1YiDW+tugUtROiw=
+	t=1718739999; cv=none; b=WUnpj6giwABKVMkfTjDFR5cGTHZJqEdOxUIKAEWzxjNcP5gJ/rltU+Tpo6RqR6L+xTk3FO/JZUSXdsaBZvu+3HU79LBIYB4RCeAsWVLhb9alMWqDuJgBjl/t41vdCRbFPsQJGCm0w0Rb78kYK7V9X9PADqQSeP41GFgZ1aiBapQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718740079; c=relaxed/simple;
-	bh=snynFABNM1Gck5Um7mIRJ4IKlsAaJh7ae0xK4flsN6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G6mUIwBE1OAG7bdieORDx3/2iB5ONo7XI4I6TYApPv0BoNvjdAu3sYcZNOYPLNgRuNxCL3mUU27SzKv2u7EEX/i6duThw2cjxUaNwQoIS3PQdD5Yltu1jW9MJB694xQdAKW4SOwMb4aRHSRKblc3zXkeBcNL5H7ywmN1czArucQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=MLiSRG/u; arc=none smtp.client-ip=167.172.40.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1718740039; bh=cTokzGuyZHy1zj6EjyxdTVicVJYVVw875XcQ0l6Fy9M=;
- b=MLiSRG/un15q/I2VlOgT5rHLpuZ1qEyz0/R5KGo08Lmhh4DWKIosf/LoqWIuys+JpIf5um8F9
- EZ8Ggh3yHHJniBJnXbSX4oJoiWutOHTZmef8CzmM9S7CMDXUROdCgVDstUY7Kv5yY6rXArbRaqB
- CIaK86qnLkBvpFE2B0YP49m1YhiQtrzY/VmjFdu4jgghZPYikS82plWNGHxChGFbD82e9sU5QIh
- fX1pGtCTDYkiWl91DlqIKK+Fv+DApSDA8t6/lrs1uaVEqjpfMJ8r8zKi8wXxsCtPRoOJGwJgKGS
- 4gvrcfcNCRvPFHuPoIvrXCygu4J7COC7ls/vpJn1yWQA==
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: Alex Bee <knaerzche@gmail.com>, Nicolas Dufresne
- <nicolas.dufresne@collabora.com>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Sebastian Fricke
- <sebastian.fricke@collabora.com>, Christopher Obbard
- <chris.obbard@collabora.com>, Detlev Casanova
- <detlev.casanova@collabora.com>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH v5 05/10] media: rkvdec: Extract rkvdec_fill_decoded_pixfmt into helper
-Date: Tue, 18 Jun 2024 19:46:29 +0000
-Message-ID: <20240618194647.742037-6-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240618194647.742037-1-jonas@kwiboo.se>
-References: <20240618194647.742037-1-jonas@kwiboo.se>
+	s=arc-20240116; t=1718739999; c=relaxed/simple;
+	bh=1oiiqnJsXRdv/WF0pn4lymayB9HOHKdn76NUUDDegz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EQXfOlOkhpbgS8Gi6+yeXJ031IuyinEBmBxzA8lh3guAJMsQqzJVwGWjUDlhsXAZf12CXUl5sjAD9ZxEnNCRDDKYUN5eHWQ8kpgg3mkily0VWn+KihhSOiV10DRatGfxGODW28Xnz8znzd7RzjaMo2U8yhBX6gs0kl+A/lG1LeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=VrwNhgu4; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2757AC0002;
+	Tue, 18 Jun 2024 19:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+	t=1718739994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rG4sRsDd/6xRCJRJQvFE0uunSAdGcquD+BOsXJyzENw=;
+	b=VrwNhgu4xIFNCUD1woGi5FZoLAKdyDQMgjD9/8z/sKyQiL7FWRYAEO++yzN7nKhuA7ZeWn
+	xz0geDfMNarScDQfAjQYQPz6z+1mywCeBV4Tb2DcnBh9ctGIQGCrNtaSlm3CeHfY8xf1pV
+	57SKkizX812tx05B0P2lyIhFz0DBbK/XwxY3JalhVur9kPDDJw1GZZKXmPDV3/X0X4qBRE
+	YBdsMCpV8yrcdiW5vhuZBmx2b2bGxCTWlOkTfKyfBETJfxvjxGU3D8SgpbGjO41kRzKqMD
+	KigVoKD8vzxKfZX/j84pZ6vgKFG3Y6HYmO0Ax+Vo9sLKykbMy0ag/bt7InjxCw==
+Message-ID: <5266ed1d-ebfb-41fb-9036-b9afcd7ce843@arinc9.com>
+Date: Tue, 18 Jun 2024 22:46:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 2/2] net: dsa: mt7530: add support for bridge
+ port isolation
+To: Matthias Schiffer <mschiffer@universe-factory.net>,
+ Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
+ Sean Wang <sean.wang@mediatek.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <15c28e5ed5fa02ca7904c71540e254617d571eb8.1718694181.git.mschiffer@universe-factory.net>
+ <499be699382f8b674d19516b6a365b2265de2151.1718694181.git.mschiffer@universe-factory.net>
+Content-Language: en-US
+From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <499be699382f8b674d19516b6a365b2265de2151.1718694181.git.mschiffer@universe-factory.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 167.172.40.54
-X-ForwardEmail-ID: 6671e44464ade33c90059fcb
+X-GND-Sasl: arinc.unal@arinc9.com
 
-Extract call to v4l2_fill_pixfmt_mp() and ajusting of sizeimage into a
-helper. Replace current code with a call to the new helper.
+On 18/06/2024 10.17, Matthias Schiffer wrote:
+> Remove a pair of ports from the port matrix when both ports have the
+> isolated flag set.
+> 
+> Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+> ---
+> 
+> v2: removed unintended formatting change
+> v3: no changes
 
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Tested-by: Christopher Obbard <chris.obbard@collabora.com>
----
-v5:
-- Collect r-b and t-b tags
+Works as expected on MT7530 and MT7531. Thank you for doing this!
 
-v4:
-- Do not reset pix_mp->field in rkvdec_fill_decoded_pixfmt()
+Reviewed-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
 
-v3:
-- No changes
-
- drivers/staging/media/rkvdec/rkvdec.c | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/staging/media/rkvdec/rkvdec.c b/drivers/staging/media/rkvdec/rkvdec.c
-index ac398b5a9736..d1087519d218 100644
---- a/drivers/staging/media/rkvdec/rkvdec.c
-+++ b/drivers/staging/media/rkvdec/rkvdec.c
-@@ -27,6 +27,16 @@
- #include "rkvdec.h"
- #include "rkvdec-regs.h"
- 
-+static void rkvdec_fill_decoded_pixfmt(struct rkvdec_ctx *ctx,
-+				       struct v4l2_pix_format_mplane *pix_mp)
-+{
-+	v4l2_fill_pixfmt_mp(pix_mp, pix_mp->pixelformat,
-+			    pix_mp->width, pix_mp->height);
-+	pix_mp->plane_fmt[0].sizeimage += 128 *
-+		DIV_ROUND_UP(pix_mp->width, 16) *
-+		DIV_ROUND_UP(pix_mp->height, 16);
-+}
-+
- static int rkvdec_try_ctrl(struct v4l2_ctrl *ctrl)
- {
- 	struct rkvdec_ctx *ctx = container_of(ctrl->handler, struct rkvdec_ctx, ctrl_hdl);
-@@ -192,13 +202,9 @@ static void rkvdec_reset_decoded_fmt(struct rkvdec_ctx *ctx)
- 
- 	rkvdec_reset_fmt(ctx, f, ctx->coded_fmt_desc->decoded_fmts[0]);
- 	f->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
--	v4l2_fill_pixfmt_mp(&f->fmt.pix_mp,
--			    ctx->coded_fmt_desc->decoded_fmts[0],
--			    ctx->coded_fmt.fmt.pix_mp.width,
--			    ctx->coded_fmt.fmt.pix_mp.height);
--	f->fmt.pix_mp.plane_fmt[0].sizeimage += 128 *
--		DIV_ROUND_UP(f->fmt.pix_mp.width, 16) *
--		DIV_ROUND_UP(f->fmt.pix_mp.height, 16);
-+	f->fmt.pix_mp.width = ctx->coded_fmt.fmt.pix_mp.width;
-+	f->fmt.pix_mp.height = ctx->coded_fmt.fmt.pix_mp.height;
-+	rkvdec_fill_decoded_pixfmt(ctx, &f->fmt.pix_mp);
- }
- 
- static int rkvdec_enum_framesizes(struct file *file, void *priv,
-@@ -264,12 +270,7 @@ static int rkvdec_try_capture_fmt(struct file *file, void *priv,
- 				       &pix_mp->height,
- 				       &coded_desc->frmsize);
- 
--	v4l2_fill_pixfmt_mp(pix_mp, pix_mp->pixelformat,
--			    pix_mp->width, pix_mp->height);
--	pix_mp->plane_fmt[0].sizeimage +=
--		128 *
--		DIV_ROUND_UP(pix_mp->width, 16) *
--		DIV_ROUND_UP(pix_mp->height, 16);
-+	rkvdec_fill_decoded_pixfmt(ctx, pix_mp);
- 	pix_mp->field = V4L2_FIELD_NONE;
- 
- 	return 0;
--- 
-2.45.2
-
+Arınç
 
