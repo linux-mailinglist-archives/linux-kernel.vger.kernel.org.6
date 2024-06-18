@@ -1,171 +1,118 @@
-Return-Path: <linux-kernel+bounces-218462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0B390C036
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:13:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC1D90C032
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77171F221BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:13:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED28B282320
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747805C89;
-	Tue, 18 Jun 2024 00:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA6C23BE;
+	Tue, 18 Jun 2024 00:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MRyY4Yn9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="oAxr+WEO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7D14A32;
-	Tue, 18 Jun 2024 00:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4376B28F7;
+	Tue, 18 Jun 2024 00:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718669572; cv=none; b=cIsngI/L8lj9Pk9+UX39L5VCXtBhXeiQZLNEWI+Y0JEQZ4x68eyC+/ZK00A7sdeeysOXhHJkRhUpUBifRF0cnDmLsnq77US018Sgp7Uf+qkJgPa1rJczbav5PF7nQX306zAbmB1XL5OhG7rbsjm/bTBW9xQWouV1adt4dwLC+Jc=
+	t=1718669568; cv=none; b=gu+JWFx6sXuRCTHiLn3nla/ZWBZpq8NBnLYgXneeAF5c9+sKSeiyKwophsk2j1YZqO5DCKBWZQaEKS48mI87e3Ivb9uILYOCfTa/YcgH6D6dEiX4mgIaoBpR9zgMN7dHg8nW6rYoZQuP06svnoCiMTGdRwCrWOH2nOns9jPTEDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718669572; c=relaxed/simple;
-	bh=ZssrfLhGo7qeCAZkP0oTbUOoz0gnwOHAEKILuErktGk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tw5Ru6v4ka6nGjjq3FGACeJYVI868uI0RUozQn5428ByY+mBZAmYRhHYv35eWhMSxK2N8h+wePE/MFvkm0+/CFqczUxA8mHGwLeJTgpvhkrfoKabQUBHhMYYoUXfHde2pNw9b6dPJWGEC0XKDAG9EIl+VU2bbTz572JEO5p+T8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MRyY4Yn9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HHwNA3014973;
-	Tue, 18 Jun 2024 00:12:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	D/eU246qe6pmI10E2leuVzYg6Wzmy58R9WJLAW2mwJc=; b=MRyY4Yn9mruKyAIg
-	FV/sJKk3SeQTrOEjtC45UXFrwFX4sj9e5xXim3VqiDL+HXcVlssXMmK0jn3AL3V6
-	5eFZHILFc2KplLewAUs9lHSmHF6N0ixcQi+0ilNfaM8YPas+N6alMdH7iLMUf+v5
-	Tkeq/SqwpNxTX1fZ3I+73MqfPVNB4Dsmmkocoy0u1aeZhCszWCe9lQZaTEPEvNTx
-	NZp8gIu6OY2LS8PMYzcYc3QAwiCcHILsPTaMSJBS0vAl+RcZMPDoDkNhwRymd9Ji
-	A/9YM7XxZ5cn246mpYPNtylQkTFuU2+A3lwUFZj8w1nXbic2RxisXwA0gZrIVFVV
-	vOMrdQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytt0trq0q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 00:12:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I0Cbtg001808
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 00:12:37 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
- 2024 17:12:31 -0700
-Message-ID: <6f0d6ef8-fc15-43f5-8106-8b96d5045243@quicinc.com>
-Date: Tue, 18 Jun 2024 08:12:29 +0800
+	s=arc-20240116; t=1718669568; c=relaxed/simple;
+	bh=FcbNVrUMnZi/mZuzhqR2r0VaWfJxlre1Mz0Wg1Whmkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ddS/Z/8YpB5OBe7U1ywYSZh8dtbgD5nm9BDdPLZNh24FmXVH87mXsiurhIaudbJSOI0iEm6XwSfzLuxTZn5DbFXyDcxw6L622lhkxXzlp6vOGxhcyI9joCU8z0sTSU7donEB+cl735zQCcWOLmtOVeHA87JFFIMsgfHIzP2YbjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=oAxr+WEO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AEBC2BD10;
+	Tue, 18 Jun 2024 00:12:46 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="oAxr+WEO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1718669564;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cwp0ubc/ArO8COke8OVC8H2CveQBcjJ5ljKpKuNxpG8=;
+	b=oAxr+WEO11MY0ENqHNEph1lfCn63lgckX0D+iOsl1phmagv8HePcj7kgCnmRCTAugTMfSa
+	9QC1VU0vcTEe1O7mlA877cvdRwEIBD88SdQ35teBSeTVsnAPwdm6Hr2zpOlPPql2+VVHh1
+	MSy7csgDILU3JaCBpR8rdJxTvUmcH5Q=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 72c2e0f6 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 18 Jun 2024 00:12:43 +0000 (UTC)
+Date: Tue, 18 Jun 2024 02:12:40 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>
+Subject: Re: [PATCH v17 4/5] random: introduce generic vDSO getrandom()
+ implementation
+Message-ID: <ZnDQ-HQH8NlmCcIr@zx2c4.com>
+References: <20240614190646.2081057-1-Jason@zx2c4.com>
+ <20240614190646.2081057-5-Jason@zx2c4.com>
+ <CALCETrVQtQO87U3SEgQyHfkNKsrcS8PjeZrsy2MPAU7gQY70XA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/2] arm64: qcom: Add BWMON support for SA8775p
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <krzysztof.kozlowski@linaro.org>, <djakov@kernel.org>, <robh@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
-References: <20240617092940.1724962-1-quic_tengfan@quicinc.com>
- <yb3ni6o22zdm2lqodj7utdb2dlg3jkbwzutxhmljxle3syoe5y@op2prslmri4y>
- <d997f42d-0616-4180-ae36-9d2ebd60d15f@quicinc.com>
- <3yrji5rrzrfj3j4bekvhos36mgafbdcufsslk5daqfn7y5k2qz@k3nrrlbnlsmb>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <3yrji5rrzrfj3j4bekvhos36mgafbdcufsslk5daqfn7y5k2qz@k3nrrlbnlsmb>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: EFXOKuuUp6XqD6QDz4FmZd3LcKPXj2Ch
-X-Proofpoint-GUID: EFXOKuuUp6XqD6QDz4FmZd3LcKPXj2Ch
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 clxscore=1015 mlxlogscore=999 lowpriorityscore=0
- phishscore=0 priorityscore=1501 spamscore=0 mlxscore=0 suspectscore=0
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180000
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrVQtQO87U3SEgQyHfkNKsrcS8PjeZrsy2MPAU7gQY70XA@mail.gmail.com>
 
+Hi Andy,
 
-
-On 6/17/2024 7:00 PM, Dmitry Baryshkov wrote:
-> On Mon, Jun 17, 2024 at 06:42:42PM GMT, Tengfei Fan wrote:
->>
->>
->> On 6/17/2024 5:43 PM, Dmitry Baryshkov wrote:
->>> On Mon, Jun 17, 2024 at 05:29:38PM GMT, Tengfei Fan wrote:
->>>> Add CPU and LLCC BWMON nodes and their corresponding OPP tables for
->>>> SA8775p SoC.
->>>
->>> This series is marked as RFC, Request For Comments. What kind of
->>> comments are expected for the series?
->>>
->>
->> I found that the BWMON patch for x1e80100[1] is currently under review.
->> There are upstream comments suggesting that we reference the same shared OPP
->> table from all the BWMONs that share the same OPP table. However, there will
->> be some DTBS CHECK warnings[2] if we do reference the same shared OPP table.
->>
->> Therefore, I pushed this patch series to collect some comments on whether we
->> can have separate OPP tables for each BWMON, as the OPP table of
->> "pmu@90b5400" and "pmu@90b6400" in this patch series.
+On Mon, Jun 17, 2024 at 05:06:22PM -0700, Andy Lutomirski wrote:
+> On Fri, Jun 14, 2024 at 12:08 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> >
+> > Provide a generic C vDSO getrandom() implementation, which operates on
+> > an opaque state returned by vgetrandom_alloc() and produces random bytes
+> > the same way as getrandom(). This has a the API signature:
+> >
+> >   ssize_t vgetrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state);
 > 
-> Thank you for the explanation. Now why wasn't this a part of the cover
-> letter?
+> Last time around, I mentioned some potential issues with this function
+> signature, and I didn't see any answer.  My specific objection was to
+> the fact that the caller passes in a pointer but not a length, and
+> this potentially makes reasoning about memory safety awkward,
+> especially if anything like CRIU is involved.
 
-I think I previously had some misunderstandings about the cover letter. 
-I mistakenly thought that certain information should not be included in 
-the cover letter. In the future, I will make an effort to include 
-complete information in cover letter.
+Oh, I understood this backwards last time - I thought you were
+criticizing the size_t len argument, which didn't make any sense.
 
-> 
->>
->> [1]
->> https://lore.kernel.org/lkml/4ef1d9a9-6a0e-4324-b6d5-2ae225855b03@linaro.org/
->>
->> [2]
->> arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: pmu@90b5400: 'opp-table' is a
->> required property from schema $id:
->> http://devicetree.org/schemas/interconnect/qcom,msm8998-bwmon.yaml#
->>
->>>>
->>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->>>> ---
->>>>
->>>> This patch series depends on patch series:
->>>> "[PATCH 2/4] soc: qcom: icc-bwmon: Allow for interrupts to be shared across instances"
->>>> https://lore.kernel.org/lkml/20240604011157.2358019-3-quic_sibis@quicinc.com/
->>>>
->>>> Tengfei Fan (2):
->>>>     dt-bindings: interconnect: qcom-bwmon: Document SA8775p bwmon
->>>>       compatibles
->>>>     arm64: dts: qcom: sa8775p: Add CPU and LLCC BWMON
->>>>
->>>>    .../interconnect/qcom,msm8998-bwmon.yaml      |   2 +
->>>>    arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 115 ++++++++++++++++++
->>>>    2 files changed, 117 insertions(+)
->>>>
->>>>
->>>> base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
->>>> -- 
->>>> 2.25.1
->>>>
->>>
->>
->> -- 
->> Thx and BRs,
->> Tengfei Fan
-> 
+Re-reading now, what you're suggesting is that I add an additional
+argument called `size_t opaque_len`, and then the implementation does
+something like:
 
--- 
-Thx and BRs,
-Tengfei Fan
+    if (opaque_len != sizeof(struct vgetrandom_state))
+    	goto fallback_syscall;
+
+With the reasoning that falling back to syscall is better than returning
+-EINVAL, because that could happen in a natural way due to CRIU. In
+contrast, your objection to opaque_state not being aligned falling back
+to the syscall was that it should never happen ever, so -EFAULT is more
+fitting.
+
+Is that correct?
+
+If I've gotten you right this time, I'll add that argument as described.
+Seems straight forward to do. It's a bit annoying from a libc
+perspective, as the length has to be stored, but that's not impossible.
+
+Jason
 
