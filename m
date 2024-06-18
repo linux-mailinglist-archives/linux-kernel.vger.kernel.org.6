@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-219287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA2690CC67
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:49:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD81D90CCAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAAF21C235A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:49:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D68DEB24D67
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3658516A953;
-	Tue, 18 Jun 2024 12:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD9313AD0F;
+	Tue, 18 Jun 2024 12:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOggm2eC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1/SIaqL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C12B16A92C;
-	Tue, 18 Jun 2024 12:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5592316A958;
+	Tue, 18 Jun 2024 12:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714321; cv=none; b=XiTVvHEhyW3kCoBR2XOvd/+5NmrAvn8ZQe3BSuwwpVON6KVDuxtM7gxJ7gVMsixG0kT25Vj+cxGTlQnCiPKKQR+eEgX+JQwvdGAQ2iQZdqaWZfL23vCiVKHAx86nKdGkjxh2giEGlZSazxT2u+Pyl8ayQN6Jij+oQoN7FoAuWME=
+	t=1718714324; cv=none; b=kdp/85KXRgeWggHcNzJf2GNz5lNjCzALmcljQJp65O4RLd9PYkYku2nOrNSDrxBUPlRuwu/PRpqH4e6NTXbpqy/X8bADmtXjsJ4MRe+ysGhhA6iFbiGr0LA6CCIR/ZoSd6wIziFduZ320/Zxgyxkig8JbzELXyQKrYK9zg+4feY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714321; c=relaxed/simple;
-	bh=cj2fRDf267Unkt5w5tLnfQIY6SThGBJtzaP3RNc8lpg=;
+	s=arc-20240116; t=1718714324; c=relaxed/simple;
+	bh=kaqaszhQnjB6MNLzi7ZVRYXuc9INOeh8YqNngcloKc4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X5rdl4J7YmXww+TB9K7ued/m0P/wBnYCp7r3FmFRTUES3pULijnh8x8hBNvrr0ZHJoo2GWDMlR2yzjKlA9U369AZI/fozAlrBdNNq1b9oNSGT6oNba2kKUGUmhCzf7KluxIrqUQYoaPZju0uhLaUxSCbel2NOnbnKzWYFpPeJs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOggm2eC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F5FCC4AF49;
-	Tue, 18 Jun 2024 12:38:40 +0000 (UTC)
+	 MIME-Version; b=WNKpo8CI0x2dX7i1hbS5q3Rw3jTQmwjUtm1R0ZrUT1mfAcwMd60EXtFIuhNcRZy7pYbF6frcwsRU4T/y1sBGWMJB2oaofmxFzwokr5qajkH/TdnHcOwR9rXtt14K9uovKnKc3t61I69XJFzFxXfg2UL6bMAjihN7VWTDwLhRZds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1/SIaqL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37405C3277B;
+	Tue, 18 Jun 2024 12:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718714321;
-	bh=cj2fRDf267Unkt5w5tLnfQIY6SThGBJtzaP3RNc8lpg=;
+	s=k20201202; t=1718714324;
+	bh=kaqaszhQnjB6MNLzi7ZVRYXuc9INOeh8YqNngcloKc4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cOggm2eCVqfAxv/Rk030Xxwx3d0mEKsABa8xh8D+cuq8ToxrrN59dkBSxtPx8PWCG
-	 rFuVJuD/iZ6t9rh94wjDrkKH7uAZWwx+0FC3KAGD+sM2MNiLKUo+9KzsWTV4JD0Xh2
-	 p07O2PdtESEHo9VR6mdhNG270tBWADHwRGXNtHFvuJODcnfVM9+gXRoC62gX+wsOmb
-	 B39Ikqx7xt5AdsSpVjfnTojtBzQVZaEmUavMYUKKy/LJMKJI5BSp48cZTw9FoS1TdA
-	 wNB2Wi2u8bRC0Jwrah0cwroAW5/hSKuAKwdABDj5aIwZrqnpsLfsK9oY//wuqw/jmb
-	 VVqP+vpr0vLoA==
+	b=P1/SIaqLtR8OSX0vrYNj2TEsTlJNPUHSfFxIxqI4GNdZoIyA5XgSqjLJoz8YSR4Tb
+	 v5sNOFvhQhcwqkdeYz57bbsa2HcRkmT5csDk85IvupupW3tNtjC6/r9wDv3eRoRPQN
+	 7wk+BOMQrO9oDQw1faKYsa/6IsMT9Lxuqxb1vMRboka4vgjpSgp2V2GJWrFEBH17Pm
+	 3p1Gkz/c5hB7FW8qVtrrxohZ8vYv+VOqBm4vRhin1OeKiXBwvkXkNl/KYFCqipTKAX
+	 o4OwR72QgCggN+VsDRSP8POVFO3aV8/FKxBrZIJyt7FsQZiXsx+5CSMDbs9F9LiNUL
+	 6IkNAMSfn9sDA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Saurav Kashyap <skashyap@marvell.com>,
-	Nilesh Javali <njavali@marvell.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Ard Biesheuvel <ardb@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	jhasan@marvell.com,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	James.Bottomley@HansenPartnership.com,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 05/35] scsi: qedf: Set qed_slowpath_params to zero before use
-Date: Tue, 18 Jun 2024 08:37:25 -0400
-Message-ID: <20240618123831.3302346-5-sashal@kernel.org>
+	chenhuacai@kernel.org,
+	linux-efi@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.6 06/35] efi/libstub: zboot.lds: Discard .discard sections
+Date: Tue, 18 Jun 2024 08:37:26 -0400
+Message-ID: <20240618123831.3302346-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240618123831.3302346-1-sashal@kernel.org>
 References: <20240618123831.3302346-1-sashal@kernel.org>
@@ -68,33 +67,52 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.34
 Content-Transfer-Encoding: 8bit
 
-From: Saurav Kashyap <skashyap@marvell.com>
+From: Nathan Chancellor <nathan@kernel.org>
 
-[ Upstream commit 6c3bb589debd763dc4b94803ddf3c13b4fcca776 ]
+[ Upstream commit 5134acb15d9ef27aa2b90aad46d4e89fcef79fdc ]
 
-Zero qed_slowpath_params before use.
+When building ARCH=loongarch defconfig + CONFIG_UNWINDER_ORC=y using
+LLVM, there is a warning from ld.lld when linking the EFI zboot image
+due to the use of unreachable() in number() in vsprintf.c:
 
-Signed-off-by: Saurav Kashyap <skashyap@marvell.com>
-Signed-off-by: Nilesh Javali <njavali@marvell.com>
-Link: https://lore.kernel.org/r/20240515091101.18754-4-skashyap@marvell.com
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+  ld.lld: warning: drivers/firmware/efi/libstub/lib.a(vsprintf.stub.o):(.discard.unreachable+0x0): has non-ABS relocation R_LARCH_32_PCREL against symbol ''
+
+If the compiler cannot eliminate the default case for any reason, the
+.discard.unreachable section will remain in the final binary but the
+entire point of any section prefixed with .discard is that it is only
+used at compile time, so it can be discarded via /DISCARD/ in a linker
+script. The asm-generic vmlinux.lds.h includes .discard and .discard.*
+in the COMMON_DISCARDS macro but that is not used for zboot.lds, as it
+is not a kernel image linker script.
+
+Add .discard and .discard.* to /DISCARD/ in zboot.lds, so that any
+sections meant to be discarded at link time are not included in the
+final zboot image. This issue is not specific to LoongArch, it is just
+the first architecture to select CONFIG_OBJTOOL, which defines
+annotate_unreachable() as an asm statement to add the
+.discard.unreachable section, and use the EFI stub.
+
+Closes: https://github.com/ClangBuiltLinux/linux/issues/2023
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Acked-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qedf/qedf_main.c | 1 +
+ drivers/firmware/efi/libstub/zboot.lds | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
-index c97e129194f78..14625e6bc8824 100644
---- a/drivers/scsi/qedf/qedf_main.c
-+++ b/drivers/scsi/qedf/qedf_main.c
-@@ -3472,6 +3472,7 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+diff --git a/drivers/firmware/efi/libstub/zboot.lds b/drivers/firmware/efi/libstub/zboot.lds
+index ac8c0ef851581..af2c82f7bd902 100644
+--- a/drivers/firmware/efi/libstub/zboot.lds
++++ b/drivers/firmware/efi/libstub/zboot.lds
+@@ -41,6 +41,7 @@ SECTIONS
  	}
  
- 	/* Start the Slowpath-process */
-+	memset(&slowpath_params, 0, sizeof(struct qed_slowpath_params));
- 	slowpath_params.int_mode = QED_INT_MODE_MSIX;
- 	slowpath_params.drv_major = QEDF_DRIVER_MAJOR_VER;
- 	slowpath_params.drv_minor = QEDF_DRIVER_MINOR_VER;
+ 	/DISCARD/ : {
++		*(.discard .discard.*)
+ 		*(.modinfo .init.modinfo)
+ 	}
+ }
 -- 
 2.43.0
 
