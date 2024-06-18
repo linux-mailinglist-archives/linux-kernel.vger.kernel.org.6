@@ -1,357 +1,164 @@
-Return-Path: <linux-kernel+bounces-220279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB03D90DEEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:03:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F3690DEEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239E22856A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:02:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D35AB28569B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFE01779A9;
-	Tue, 18 Jun 2024 22:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96F1179650;
+	Tue, 18 Jun 2024 22:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2fUyRph"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hljIireA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22561C2BD
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 22:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCF71C2BD;
+	Tue, 18 Jun 2024 22:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718748172; cv=none; b=gaIqQ9OYVqldny6M3rYLuOWu42ypopVfNDl1kAQaUy7Z5EWQSJXzL6rZYu9dI+6tZxfyxVoYAIL7yYkdj2kUiV0MYvpqLtw5T7nOQerMebFWxYkIHCVGOFeEq2cEX15Bveyg1kG2fxuUEv7Ss3SjHGyr8qvlmMAs5Pv2/dhC1MU=
+	t=1718748213; cv=none; b=GWn55vqHZUf7sYqDgoiuZkZSi9BVAyxTZdeFWsHRo1BiTETyWvHsWjJV4dquRqMzL/8WS6cOzMft6rhEE3v65CYdwqaMyS0DSuunWHnddPY+RR4dVUyMYDv3T2YYEQJLRDk9UCkOIM8ve1ew8tjQZydsNLcE1SuhkwYnJz/CS+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718748172; c=relaxed/simple;
-	bh=7DGpMJLYIXVTHgZcIOd3gbKWNpQEgUtd1gQsJXGnhjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r0vPvcl82tpbJ24CExkooEX5JUVPEA4zaDleHOe7m1tIQ2Q7xX6R5EH2Ojv+C2LxAeGaSS2HV66n2AhSBp2NT7lVIOYPtDHQsMYyk9yh+RCwptolBvPV9hWpYX64rMmOzKnpy3zPnsbt+fhT/8AMyqkjusES1tHM+ZlMMPRTd2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2fUyRph; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4218314a6c7so50701095e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:02:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718748169; x=1719352969; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r9Ti1rPFPqDuS7hspRTYTnkYQU12khMqwxR3h0O2YqI=;
-        b=m2fUyRphg4tnBnXOwxfLQmtHaExcBGpGnrEWKwHZs3phCgid7J6uTgG/MkJtmZ65dN
-         f0esSaReDykAy9q4+HhR3tn0vWCBf+VmKwZht0WdrTOuIA1ymt5hhjvQRbiU1AM//EvT
-         OvSoBalVqThrQJNfm++Grs9/ZWFZqbCnGU+GAu08v/ZHxo/eP+XkRRJUyDnmkbIGT9r8
-         2VLDgBRpTbkd500dJBTRBgojXb2Zzr2fBF/AYl4lG437MX1Jz1cE6eIdatsbT+akZuIH
-         2uQ4qyjKIEQpTkR3gr0sTUWzPM7cENBpuoYMok7YKoIqxQ6zQ9SKYiSseKnNg6eDNrQ8
-         K1NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718748169; x=1719352969;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r9Ti1rPFPqDuS7hspRTYTnkYQU12khMqwxR3h0O2YqI=;
-        b=KnMD4kK30A16Xcv0UTVc9zw0EJboTvXv4j3He0hMWMIvaE7+QKwDnQFBDxGvtS8m9x
-         mZSaXIJWMV0uqqzciEYsLBYDV9CMXncRDun2waByCFPvKaB6GeXgZHq/5DA5Krc7oIcc
-         uVaLn6y7asaNoaqfuD8Ll2KLXlx1/QzOoxx+g+vLNDfgvL6Y8EX3TINwnunKvcYEF/wx
-         4c38HqbL4zDML5p4A+vEWguJddGj+dyEUgJ+EeaCI48Zxy36eYpRDTq0bwjfZHaZlo1/
-         bCgU4k0ynOB6jTlyWa8mMBsfHJbDSOGji1GwouKAw/eN90lZ+HAIyZb1Wk2Ni3bXvOt5
-         PYPQ==
-X-Gm-Message-State: AOJu0YzKDQdVUT8ZJW0zU98zk7t1MuZaZ9jSvkJDoEx6HI+b4RKOBk2l
-	m6Bop/8EGMDs8HhtTWxjlx1euXYOW1HPz0o3DhSxHhr4LXFkaseL
-X-Google-Smtp-Source: AGHT+IGs4sivzCYGF5hQZhcuVMFkAx2W5ppBKKYUCRRt9rMhXrmgq0TNsdH/+xDrZCZtoSxpTeljxw==
-X-Received: by 2002:a05:600c:4a22:b0:423:b740:fa1 with SMTP id 5b1f17b1804b1-424751755f9mr4324775e9.15.1718748168927;
-        Tue, 18 Jun 2024 15:02:48 -0700 (PDT)
-Received: from f (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f602f620sm202348495e9.19.2024.06.18.15.02.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 15:02:48 -0700 (PDT)
-Date: Wed, 19 Jun 2024 00:02:32 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Fenghua Yu <fenghua.yu@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 206/208] x86/fpu: Add CONFIG_X86_DEBUG_FPU=y FPU
- debugging code
-Message-ID: <2opxpt7mglwwb4fcetaeautgrxkzrgyhs4vke2hygm7qxc4hu3@cncmkleunmli>
-References: <1430848712-28064-1-git-send-email-mingo@kernel.org>
- <1430848712-28064-46-git-send-email-mingo@kernel.org>
+	s=arc-20240116; t=1718748213; c=relaxed/simple;
+	bh=GteTNKzehBwLLVoIA8lW5G0D40vaeVY+cFH0tsyPv4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ksd7JzGi+BfC5GpvkJ+z9GPMHEYyLB1f7Wt2hfodGuo+HJhgrneS4lswogOV8gRHe+0Eek27cMjV8helzhu5C+qzXKi6dVEu/EII+ASQmWgoASkaoPohXKrLoElt2c18tjHRrT6LVmmXXEHJ0gooPhUbhG6DsaghFUVLe+3PsEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hljIireA; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718748212; x=1750284212;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GteTNKzehBwLLVoIA8lW5G0D40vaeVY+cFH0tsyPv4M=;
+  b=hljIireAQWh6ht/JI4LAIS+48pZCyDyXbUCzwZlrsVY+GSyvVsfy1TkI
+   lo8W1rxEckA/CrxVRUokg5tp8rVNLbR4WGSKd2VbKDD5DInf+6TSaUIAr
+   N55a7jK3+DoV/DZLxSm7l8iTTx186wA1Me7wGjDGL5jmVmfASjeSA2kzE
+   F4K6cT5lI9NABkAvdoVk6GvUk4bukTawsP229rsS8vhlRZJOpmgyIsYi7
+   0dyuPn8yzh3XBGlcnLtiQxdC53dMk+e9XTjcRk1FvTozB9V3Rnh+DDyd4
+   2mq/KMS8W/rQM3+ao07eXWlPAo4a1RUtN3pfyQla/RpWDJ2by1N2aeOVS
+   w==;
+X-CSE-ConnectionGUID: +NkCzu1qS6y415cM5RUVNQ==
+X-CSE-MsgGUID: SjmwZeIfT3G1hYK8cUzAkA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15422546"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="15422546"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 15:03:31 -0700
+X-CSE-ConnectionGUID: GLWwbtdsRzSMD2rUMhrsNw==
+X-CSE-MsgGUID: U8qtaCuYTPus+TcTsYDfQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="46826413"
+Received: from mgoodin-mobl2.amr.corp.intel.com (HELO [10.124.220.122]) ([10.124.220.122])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 15:03:30 -0700
+Message-ID: <e5d64bde-b464-4014-b75a-e892fc330b3c@intel.com>
+Date: Tue, 18 Jun 2024 15:03:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1430848712-28064-46-git-send-email-mingo@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH PATCH 1/9] x86/cpu/topology: Add x86_cpu_type to struct
+ cpuinfo_topology
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>, Perry Yuan <Perry.Yuan@amd.com>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <20240617-add-cpu-type-v1-1-b88998c01e76@linux.intel.com>
+ <9ad335f7-bfda-42f2-8ba2-830684c01c0d@amd.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <9ad335f7-bfda-42f2-8ba2-830684c01c0d@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 05, 2015 at 07:58:30PM +0200, Ingo Molnar wrote:
-> There are various internal FPU state debugging checks that never
-> trigger in practice, but which are useful for FPU code development.
-> 
-> Separate these out into CONFIG_X86_DEBUG_FPU=y, and also add a
-> couple of new ones.
-> 
-> The size difference is about 0.5K of code on defconfig:
-> 
->    text        data     bss          filename
->    15028906    2578816  1638400      vmlinux
->    15029430    2578816  1638400      vmlinux
-> 
-> ( Keep this enabled by default until the new FPU code is debugged. )
-> 
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Fenghua Yu <fenghua.yu@intel.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  arch/x86/Kconfig.debug              | 12 ++++++++++++
->  arch/x86/include/asm/fpu/internal.h | 17 ++++++++++++++++-
->  arch/x86/kernel/fpu/core.c          | 18 +++++++++---------
->  arch/x86/kernel/fpu/init.c          | 12 +++++++++++-
->  arch/x86/kernel/fpu/xstate.c        | 11 ++++++++++-
->  5 files changed, 58 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-> index 72484a645f05..2fd3ebbb4e33 100644
-> --- a/arch/x86/Kconfig.debug
-> +++ b/arch/x86/Kconfig.debug
-> @@ -332,4 +332,16 @@ config X86_DEBUG_STATIC_CPU_HAS
->  
->  	  If unsure, say N.
->  
-> +config X86_DEBUG_FPU
-> +	bool "Debug the x86 FPU code"
-> +	depends on DEBUG_KERNEL
-> +	default y
-> +	---help---
-> +	  If this option is enabled then there will be extra sanity
-> +	  checks and (boot time) debug printouts added to the kernel.
-> +	  This debugging adds some small amount of runtime overhead
-> +	  to the kernel.
-> +
-> +	  If unsure, say N.
-> +
+On 6/18/24 14:33, Mario Limonciello wrote:
+>> +enum x86_topo_cpu_type {
+>> +    X86_CPU_TYPE_UNKNOWN        = 0,
+>> +    X86_CPU_TYPE_INTEL_ATOM        = 0x20,
+>> +    X86_CPU_TYPE_INTEL_CORE        = 0x40,
+>> +};
+>> +
+...
+> What do you think about having a common enum rather with words that are
+> marketing strings? 
 
-This still defaults to yes today and what's more distros like Debian and
-Ubuntu have it enabled.
+They're not really marketing strings.  They really are architectural and
+have specific functional meaning just like ->x86_model and ->x86_family.
 
-If this is not considered relevant for production kernels anymore would
-you mind flipping it to off by default? Will probably give me easier
-time convcing these distros to change their configs.
+For instance, we are effectively doing this today:
 
-I'm too lazy to check the specific impact of this opt, but I do see it
-on perf top when looking at syscalls on a CPU which is not shafted by
-meltdown et al.
+	if (c->cpu_x86_vfm == INTEL_ALDER_LAKE &&
+	    c->cpu_type == X86_CPU_TYPE_INTEL_ATOM)
+		setup_force_cpu_bug(FOO);
 
->  endmenu
-> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-> index a4c1b7dbf70e..d2a281bd5f45 100644
-> --- a/arch/x86/include/asm/fpu/internal.h
-> +++ b/arch/x86/include/asm/fpu/internal.h
-> @@ -59,6 +59,15 @@ extern void fpu__clear(struct fpu *fpu);
->  extern void fpu__init_check_bugs(void);
->  extern void fpu__resume_cpu(void);
->  
-> +/*
-> + * Debugging facility:
-> + */
-> +#ifdef CONFIG_X86_DEBUG_FPU
-> +# define WARN_ON_FPU(x) WARN_ON_ONCE(x)
-> +#else
-> +# define WARN_ON_FPU(x) ({ 0; })
-> +#endif
-> +
->  DECLARE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
->  
->  /*
-> @@ -296,6 +305,8 @@ static inline void __fpregs_deactivate_hw(void)
->  /* Must be paired with an 'stts' (fpregs_deactivate_hw()) after! */
->  static inline void __fpregs_deactivate(struct fpu *fpu)
->  {
-> +	WARN_ON_FPU(!fpu->fpregs_active);
-> +
->  	fpu->fpregs_active = 0;
->  	this_cpu_write(fpu_fpregs_owner_ctx, NULL);
->  }
-> @@ -303,6 +314,8 @@ static inline void __fpregs_deactivate(struct fpu *fpu)
->  /* Must be paired with a 'clts' (fpregs_activate_hw()) before! */
->  static inline void __fpregs_activate(struct fpu *fpu)
->  {
-> +	WARN_ON_FPU(fpu->fpregs_active);
-> +
->  	fpu->fpregs_active = 1;
->  	this_cpu_write(fpu_fpregs_owner_ctx, fpu);
->  }
-> @@ -433,8 +446,10 @@ switch_fpu_prepare(struct fpu *old_fpu, struct fpu *new_fpu, int cpu)
->  static inline void switch_fpu_finish(struct fpu *new_fpu, fpu_switch_t fpu_switch)
->  {
->  	if (fpu_switch.preload) {
-> -		if (unlikely(copy_fpstate_to_fpregs(new_fpu)))
-> +		if (unlikely(copy_fpstate_to_fpregs(new_fpu))) {
-> +			WARN_ON_FPU(1);
->  			fpu__clear(new_fpu);
-> +		}
->  	}
->  }
->  
-> diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-> index 421a98103820..9df2a09f1bbe 100644
-> --- a/arch/x86/kernel/fpu/core.c
-> +++ b/arch/x86/kernel/fpu/core.c
-> @@ -38,13 +38,13 @@ DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
->  
->  static void kernel_fpu_disable(void)
->  {
-> -	WARN_ON(this_cpu_read(in_kernel_fpu));
-> +	WARN_ON_FPU(this_cpu_read(in_kernel_fpu));
->  	this_cpu_write(in_kernel_fpu, true);
->  }
->  
->  static void kernel_fpu_enable(void)
->  {
-> -	WARN_ON_ONCE(!this_cpu_read(in_kernel_fpu));
-> +	WARN_ON_FPU(!this_cpu_read(in_kernel_fpu));
->  	this_cpu_write(in_kernel_fpu, false);
->  }
->  
-> @@ -109,7 +109,7 @@ void __kernel_fpu_begin(void)
->  {
->  	struct fpu *fpu = &current->thread.fpu;
->  
-> -	WARN_ON_ONCE(!irq_fpu_usable());
-> +	WARN_ON_FPU(!irq_fpu_usable());
->  
->  	kernel_fpu_disable();
->  
-> @@ -127,7 +127,7 @@ void __kernel_fpu_end(void)
->  	struct fpu *fpu = &current->thread.fpu;
->  
->  	if (fpu->fpregs_active) {
-> -		if (WARN_ON(copy_fpstate_to_fpregs(fpu)))
-> +		if (WARN_ON_FPU(copy_fpstate_to_fpregs(fpu)))
->  			fpu__clear(fpu);
->  	} else {
->  		__fpregs_deactivate_hw();
-> @@ -187,7 +187,7 @@ EXPORT_SYMBOL_GPL(irq_ts_restore);
->   */
->  void fpu__save(struct fpu *fpu)
->  {
-> -	WARN_ON(fpu != &current->thread.fpu);
-> +	WARN_ON_FPU(fpu != &current->thread.fpu);
->  
->  	preempt_disable();
->  	if (fpu->fpregs_active) {
-> @@ -233,7 +233,7 @@ EXPORT_SYMBOL_GPL(fpstate_init);
->   */
->  static void fpu_copy(struct fpu *dst_fpu, struct fpu *src_fpu)
->  {
-> -	WARN_ON(src_fpu != &current->thread.fpu);
-> +	WARN_ON_FPU(src_fpu != &current->thread.fpu);
->  
->  	/*
->  	 * Don't let 'init optimized' areas of the XSAVE area
-> @@ -284,7 +284,7 @@ int fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu)
->   */
->  void fpu__activate_curr(struct fpu *fpu)
->  {
-> -	WARN_ON_ONCE(fpu != &current->thread.fpu);
-> +	WARN_ON_FPU(fpu != &current->thread.fpu);
->  
->  	if (!fpu->fpstate_active) {
->  		fpstate_init(&fpu->state);
-> @@ -321,7 +321,7 @@ EXPORT_SYMBOL_GPL(fpu__activate_curr);
->   */
->  void fpu__activate_stopped(struct fpu *child_fpu)
->  {
-> -	WARN_ON_ONCE(child_fpu == &current->thread.fpu);
-> +	WARN_ON_FPU(child_fpu == &current->thread.fpu);
->  
->  	if (child_fpu->fpstate_active) {
->  		child_fpu->last_cpu = -1;
-> @@ -407,7 +407,7 @@ static inline void copy_init_fpstate_to_fpregs(void)
->   */
->  void fpu__clear(struct fpu *fpu)
->  {
-> -	WARN_ON_ONCE(fpu != &current->thread.fpu); /* Almost certainly an anomaly */
-> +	WARN_ON_FPU(fpu != &current->thread.fpu); /* Almost certainly an anomaly */
->  
->  	if (!use_eager_fpu()) {
->  		/* FPU state will be reallocated lazily at the first use. */
-> diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-> index a9e506a99a83..e9f1d6e62146 100644
-> --- a/arch/x86/kernel/fpu/init.c
-> +++ b/arch/x86/kernel/fpu/init.c
-> @@ -143,6 +143,11 @@ EXPORT_SYMBOL_GPL(xstate_size);
->   */
->  static void __init fpu__init_system_xstate_size_legacy(void)
->  {
-> +	static int on_boot_cpu = 1;
-> +
-> +	WARN_ON_FPU(!on_boot_cpu);
-> +	on_boot_cpu = 0;
-> +
->  	/*
->  	 * Note that xstate_size might be overwriten later during
->  	 * fpu__init_system_xstate().
-> @@ -214,7 +219,12 @@ __setup("eagerfpu=", eager_fpu_setup);
->   */
->  static void __init fpu__init_system_ctx_switch(void)
->  {
-> -	WARN_ON(current->thread.fpu.fpstate_active);
-> +	static bool on_boot_cpu = 1;
-> +
-> +	WARN_ON_FPU(!on_boot_cpu);
-> +	on_boot_cpu = 0;
-> +
-> +	WARN_ON_FPU(current->thread.fpu.fpstate_active);
->  	current_thread_info()->status = 0;
->  
->  	/* Auto enable eagerfpu for xsaveopt */
-> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-> index 201f08feb259..5724098adf1b 100644
-> --- a/arch/x86/kernel/fpu/xstate.c
-> +++ b/arch/x86/kernel/fpu/xstate.c
-> @@ -262,6 +262,11 @@ static void __init setup_xstate_comp(void)
->   */
->  static void __init setup_init_fpu_buf(void)
->  {
-> +	static int on_boot_cpu = 1;
-> +
-> +	WARN_ON_FPU(!on_boot_cpu);
-> +	on_boot_cpu = 0;
-> +
->  	if (!cpu_has_xsave)
->  		return;
->  
-> @@ -317,6 +322,10 @@ static void __init init_xstate_size(void)
->  void __init fpu__init_system_xstate(void)
->  {
->  	unsigned int eax, ebx, ecx, edx;
-> +	static int on_boot_cpu = 1;
-> +
-> +	WARN_ON_FPU(!on_boot_cpu);
-> +	on_boot_cpu = 0;
->  
->  	if (!cpu_has_xsave) {
->  		pr_info("x86/fpu: Legacy x87 FPU detected.\n");
-> @@ -324,7 +333,7 @@ void __init fpu__init_system_xstate(void)
->  	}
->  
->  	if (boot_cpu_data.cpuid_level < XSTATE_CPUID) {
-> -		WARN(1, "x86/fpu: XSTATE_CPUID missing!\n");
-> +		WARN_ON_FPU(1);
->  		return;
->  	}
->  
-> -- 
-> 2.1.0
-> 
+That check is truly specific to the core being an "ATOM" and not being
+an efficient core.  There might be a future non-Atom efficient CPU or a
+future non-Core performance CPU.
+
+We very well might have a use in the future to tag a processor as
+"efficient" or "performance" in a vendor-neutral manner.  That mechanism
+could very well be derived from ->cpu_type.  But I think that's actually
+independent from Pawan's series.
 
