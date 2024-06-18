@@ -1,121 +1,189 @@
-Return-Path: <linux-kernel+bounces-218834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E76D90C6D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:27:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EFA90C6DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455511F22AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:27:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B81BFB231C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9BB143865;
-	Tue, 18 Jun 2024 08:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD69A14A09B;
+	Tue, 18 Jun 2024 08:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jQ/TnENh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XU3hsbcs"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADB213DDAC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7BF1487ED
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718698249; cv=none; b=ojTAElTd4Pq5SEDG+0benWc+eH2TV7kpq6MgSKrl5fTpBGVW3qiKjzCYVHtqcr7oMvoZfzGsnJcOtHl/TgyrMb0STJa2njXHVwhoNPeD6X6hyYJwrHH8hqtzTLT4gqYtJ9KtBSWk67ny/UH3XsuA2JJbVKtoaSyI7nstRy9wKiw=
+	t=1718698297; cv=none; b=J+cbMKf7sm1kVb64MlW/4v3Me7ki1LNNW7oHF879da11nR9I4UrG2k3aVyjj+okBwftbop+VURc5+V4MVUH45wMOXg+J8mDnZNjc31TD22Bt+hA0WFJnK71HBaArYl2zVrFgK7E3LR83EgRJwQLauFOXYJ3KL5Kf+5LfXsd4YHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718698249; c=relaxed/simple;
-	bh=QCWRJZJr4Tdjl6AVZ/clpTWi5kNIaNs6ny/W36aLeWA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mGfRH9aRrfHutYERSRr5UzuZHED7ZL/Bt3DoYudBXzBW7sWapFQkLOCv1zZr2d+8AnPlgkkwASRviJVKdNBIcJec2IHiGfcN2mpuqmJpvlMIIIXUEOt5JhI4+ZT9YogyI9NaDUWp2mUvLh73fjt/F52t1KuwDGcwP+T+RnzzVjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jQ/TnENh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718698246;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Um1eLXbNm7/kO9kxYoAyA7cpz6u+PzGiTgv0zhQ+dT4=;
-	b=jQ/TnENhisysgy4z1bFrCgGo6Q7PbG27Bfd1leKjoC93GeCZpOu3zEJ9PJ3SMWpPXqwVPk
-	PDz/pCYC8HjRyZI1hLPsohQ5RxQvosak6L7qR+bxjPFWQIeWL1n3LDpvk1Z5K44c4U7EmZ
-	rqk1bJscMUQYpvSL7HhbghNq9fWSwKI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-510-NrtV-halPKi1F_lLhoUnpg-1; Tue, 18 Jun 2024 04:10:42 -0400
-X-MC-Unique: NrtV-halPKi1F_lLhoUnpg-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4227e29cd39so29454755e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:10:42 -0700 (PDT)
+	s=arc-20240116; t=1718698297; c=relaxed/simple;
+	bh=2KNMmat5vMET2BDI7NUXUz9iV8jjghd0Qaf7pSQvWdY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p4FO94dfqMfYy1/6svK2d/JoZVgUS0vr3m7LjBb6vbs/1wSpdCvqD8QnegQ0DW8bguQjvGils2la9rrAoAihyjqPelwXjifd76lp1RerKCruw+omveTS2w4S2sOLHedMYWd+SOwNlKmfbRuxIp4c6Ttu4hiKhhx8cLst+1g7zek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XU3hsbcs; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4217d451f69so42429165e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:11:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1718698293; x=1719303093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5Db/Ttkm8Wt1DAojtG+l5i3VYAIO56vuiF9BvfZCWUE=;
+        b=XU3hsbcs6oN4mExeSoAh7KhcLS6krsD89eVRRiZDBOHpP98+i0yBPiudWLfNIexlJC
+         ouihp8C99os4Xses4INfKTAib8W/j4WOEWCw/Rv0Bo/32czrzhul0WlocnN2BWqNuCsA
+         kvD5gii341WdbDhOgVDoodAuBe7vv1H5QzSgoNLL17py8xgORxnN7hjrT6LIxuVmsGwb
+         BMTW00qy31qvRmR6Df/t7pwxiuUkniVtRL0px3It0GacLgjKCKiDppN3PHJ5S8wP0C6h
+         d5d74zrnSm9jcksmwBVmPgrhbK1RtqIKOfBvpgo0SV4Mo5HwU7ZuLLBCKVRvCI1QGpRP
+         BVcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718698241; x=1719303041;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Um1eLXbNm7/kO9kxYoAyA7cpz6u+PzGiTgv0zhQ+dT4=;
-        b=bUiVYT7Z9WcA7NVQ+UUseVZR0GUfPPbhA4P2/YbAxDyK5Inhi7yVzt7/ofpYBi6S+A
-         +/KT4JZuSUF2qLTylFakMkV0/8eod7EYfr+i7US4wFVqETizkYy2Uu79witx83eUrEXi
-         5pvCXv4hYaOKJmH3QMH2+okOEgSGh8TJsjpR43aINzITd6ROJcOqWfuwCBPGd2OhJbfB
-         0Wzdu/C6sRD9+9bVss4+SAqJUPH/s9YH1I5n7GGPk3Duri8CHZ+0pOB0JfQQqndLdoTY
-         Fn6tHvnQ4Og3DkzKSR35pYR9z+2k+xPj1s60G8ubwdXxOnw4uULhWbf5Jtjl1NZ8bL6P
-         VD3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXszWSy7ViwbHu5n3zdu0QtHa1HdsMLErQ7SIhwR8dkZHa+T6PJd18pVNXsxwPYkntzeQZil9mssz4/odmWJR9G0inMpw3MhB38lArO
-X-Gm-Message-State: AOJu0Yz61yWhUCZzQuKUtOpREP3MhauML2mwo8a5u7cMzSkHTVIk8FbP
-	1Lc81ZqHO3a+zH3SPEwzAoWs1QHt/bW3hDKd1nSWJISbZkR3hr7CmdAJrAg7DLBYfK7GI7kugmN
-	NJ2HcXsGTmTLCu08rM3pIIZwb1pPVot/IYJo93Y/HBLDx4Y9u6N6Cz+U5I7lAww==
-X-Received: by 2002:a05:600c:63c7:b0:421:7e88:805 with SMTP id 5b1f17b1804b1-42304854f53mr106111425e9.35.1718698241431;
-        Tue, 18 Jun 2024 01:10:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGujlRvR3wLYaDhL+bjHS0YMSIKJQPeHPyGKXuWssS+5GLM1BTKQbjeA6ZgLAn4CXaK4hTlzg==
-X-Received: by 2002:a05:600c:63c7:b0:421:7e88:805 with SMTP id 5b1f17b1804b1-42304854f53mr106111215e9.35.1718698240907;
-        Tue, 18 Jun 2024 01:10:40 -0700 (PDT)
-Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509c8b7sm13517206f8f.26.2024.06.18.01.10.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 01:10:40 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Aradhya Bhatia <a-bhatia1@ti.com>, linux-kernel@vger.kernel.org
-Cc: Jocelyn Falempe <jfalempe@redhat.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie
- <airlied@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/tidss: Add drm_panic support
-In-Reply-To: <1d914332-9300-4dee-8d33-0a806cb22aa4@ti.com>
-References: <20240615085326.1726262-1-javierm@redhat.com>
- <1d914332-9300-4dee-8d33-0a806cb22aa4@ti.com>
-Date: Tue, 18 Jun 2024 10:10:39 +0200
-Message-ID: <878qz27jsw.fsf@minerva.mail-host-address-is-not-set>
+        d=1e100.net; s=20230601; t=1718698293; x=1719303093;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Db/Ttkm8Wt1DAojtG+l5i3VYAIO56vuiF9BvfZCWUE=;
+        b=Hq9x/OpjoO4aUdejYJw+XFTb8cvb5R5DDz5Eqz0GFVwDaRuhZorK1aCA3oFe2n3VgK
+         SpfK3XFNHXln3aaac5GMUrHtroiqHAOmzbXWqPKClHr5YPPG1s93KPCnjDpJ2CAjCUv2
+         A/wGQkQ4K/EiElb6nNgQNAjoIMrNFBJ+5MIXstV/vk3ZMjwoN4VVt4N7SlPYozHeFjsX
+         QXbSfdTUPmWvThy8gUh8GWaf4K912rWMCtgl+LrV5wz6YLYq1pxlSFrA98WCHqIDPWGp
+         YGh93MF9Oo9cUO5oDLqbcWF/2oaU4y+eHsW84w9c7WSKd7/+diKl5NQYsf/tT9QMaA8C
+         K4XA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhlHRhbt5Ku2LGQlhUocsvmNh9vrToZUmFUzqOCM9bJURyzA+ZlqVTiWYRw/ZTFOS8dHdhCzUyf7+TEbu0UFlkIaO4JuJFt9iDB4Cj
+X-Gm-Message-State: AOJu0Yy5LJ+ruz2bZdLVnrI2CfElpbtb+ns1mpFWCQ214LnbzKtx25iZ
+	6vPrLXrudcRIz5oR8ObOyMoH70EshnjWrN5pJkgMQY0vdC+bhFMyKq19hVZESus=
+X-Google-Smtp-Source: AGHT+IEZ4zfien/Ap0pCf2tDyhM1mJ0USifoiBZp4jjoL6ZEetj9nRXUeKMXuBuNxOiTYrJSsTYSkA==
+X-Received: by 2002:a05:600c:4fcc:b0:423:4c2:7a80 with SMTP id 5b1f17b1804b1-42304c27cabmr78141565e9.5.1718698292647;
+        Tue, 18 Jun 2024 01:11:32 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.189])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f2f30925sm183177995e9.0.2024.06.18.01.11.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 01:11:32 -0700 (PDT)
+Message-ID: <ee58a84c-d0a9-4caf-9b97-40a4eaebae3f@tuxon.dev>
+Date: Tue, 18 Jun 2024 11:11:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/12] dt-bindings: clock: renesas,rzg3s-vbattb-clk:
+ Document the VBATTB clock driver
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Conor Dooley <conor@kernel.org>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ lee@kernel.org, alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-3-claudiu.beznea.uj@bp.renesas.com>
+ <20240615-angler-occupier-6188a3187655@spud>
+ <3d9ed0ec-ca9a-45b4-a633-8f7051d13cff@tuxon.dev>
+ <20240617-subsoil-creed-04bf5f13d081@spud>
+ <0a4ba0e5-3fb1-4ffc-b2d8-a4eb418707eb@tuxon.dev>
+ <CAMuHMdXOiuORjLo2nRAFxtXmn5rRm7U-CEHqfX2DoXHmQyfdRQ@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdXOiuORjLo2nRAFxtXmn5rRm7U-CEHqfX2DoXHmQyfdRQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Aradhya Bhatia <a-bhatia1@ti.com> writes:
+Hi, Geert,
 
-> Hi Javier,
->
-> I tested the patch, and it was good to see the panic screen on SK-AM62.
-> Thanks for adding this feature in tidss. =)
->
-> On 15/06/24 14:23, Javier Martinez Canillas wrote:
->> Add support for the drm_panic module, which displays a pretty user
->> friendly message on the screen when a Linux kernel panic occurs.
->> 
->> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
->
-> Reviewed-by: Aradhya Bhatia <a-bhatia1@ti.com>
->
+On 18.06.2024 10:56, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Tue, Jun 18, 2024 at 9:34 AM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+>> On 17.06.2024 18:19, Conor Dooley wrote:
+>>> On Mon, Jun 17, 2024 at 10:02:47AM +0300, claudiu beznea wrote:
+>>>> On 15.06.2024 15:17, Conor Dooley wrote:
+>>>>> On Fri, Jun 14, 2024 at 10:19:22AM +0300, Claudiu wrote:
+>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>
+>>>>>> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock that feeds
+>>>>>> the RTC and the tamper detector. Add documentation for the VBATTB clock
+>>>>>> driver.
+>>>>>>
+>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>> ---
+>>>>>>  .../clock/renesas,rzg3s-vbattb-clk.yaml       | 90 +++++++++++++++++++
+>>>>>>  1 file changed, 90 insertions(+)
+>>>>>>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..ef52a0c0f874
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml
+>>>>>> +  renesas,vbattb-osc-bypass:
+>>>>>> +    description: set when external clock is connected to RTXOUT pin
+> 
+> FTR, this contradicts the explanation below, which states the external
+> clock oscillator is connected to RTXIN.
 
-Thanks Jocelyn and Aradhya for the review and test! I've pushed this
-patch to drm-misc (drm-misc-next).
+I agree.
 
--- 
-Best regards,
+> 
+>>>>>> +    type: boolean
+>>>>>
+>>>>> When you say "external clock", is that an input or an output?
+>>>>
+>>>> I took that statement from the HW manual. As of the HW manual [1], table
+>>>> 42.2, that would be an input.
+>>>
+>>> Forgive me for not wanting to open the zip etc and find the information
+>>> in the document, but why do you need an extra property? Is it not
+>>> something you can determine from the clocks/clock-names properties?
+>>
+>> It can't be determined from clocks/clock-names as of my understanding. It
+>> depends on the type of the input clock (crystal oscillator or external
+>> hardware device generating the clock).
+>>
+>>> It sounds like an additional clock from your description, is it actually
+>>> different way to provide the second clock you mention above?
+>>
+>> This is the block diagram (see [1], only picture this time) of the module
+>> controlling the clock. Please open it, it helps in understanding what I'll
+>> explain above.
+>>
+>> The VBATTB blocks controlling the VBATTBCLK are:
+>> - 32KHz-clock oscillator
+>> - the mux controlled by BKSCCR.SOSEL
+>> - the gate who's input is the mux output and XOSCCR.OUTEN
+>>
+>> To the 32 KHz-clock oscillator block could be connected:
+>> 1/ either a crystal oscillator in which case it will be connected to both
+>> RTXIN and RTXOUT pins (the direction of RTXOUT is wrong in this picture for
+>> this case)
+>> 2/ or a device (like [2]) generating a clock which has a single output and,
+>> from my understanding and experience with devices like this, only RTXIN is
+>> needed, RTXOUT is connected to the ground; for this case the 32KHz-clock
+>> oscillator block from [1] need to be bypassed in which case the newly
+>> introduced property will be used; this will select the XBYP on the mux.
+> 
+> Sounds similar to the RAA215300 PMIC, which includes an ISL1208-derived
+> RTC, where this was handled using two different clock names:
+> https://elixir.bootlin.com/linux/v6.10-rc1/source/Documentation/devicetree/bindings/regulator/renesas,raa215300.yaml#L49
+> https://elixir.bootlin.com/linux/v6.10-rc1/source/drivers/rtc/rtc-isl1208.c#L869
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+Yes, seem similar. I wasn't aware of this approach. I'll switch to it.
 
+Thank  you,
+Claudiu Beznea
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
