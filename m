@@ -1,90 +1,139 @@
-Return-Path: <linux-kernel+bounces-219932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A73E90DA50
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:06:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E9C90DA5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD6D1C223DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:06:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1ED7B25D47
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1628D13D8AE;
-	Tue, 18 Jun 2024 17:06:41 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B2913B79B;
+	Tue, 18 Jun 2024 17:07:33 +0000 (UTC)
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376E747A74;
-	Tue, 18 Jun 2024 17:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CDE1386D1
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 17:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718730400; cv=none; b=ZpneulcMR5V8R5oHMO/XVWY9Wvmsw+c67KnW1rlTMLf0z+ygvzck0CkX2DPXhIU2sXZgBUoNCFwZphG6vx2358NwsdD1HiLj3S6jjFDmczMNQfsnMkBDJqP/nvXrfz/4R29mTm9o1Fkr1me+F5cU/b19IfRz7R3XyDVbIVYtM4s=
+	t=1718730453; cv=none; b=YKA3pL9rmDmxLW4RhcvGK54zWM/W3pI7nlUrd6NGvnm3I+z41kCuk0lBNn6dIMYB5MuPPzgwrWFQAfl+ObIOqnW9Q1olvMJbsAwWTHTQhAf+sZjr/s6PBMNnoIgeBQCE/TinUkd9J2Ui/YKgqPbac3Pt5a/OJUvyNJuA0SsJtdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718730400; c=relaxed/simple;
-	bh=/cGqt0hi46gWUxkv2mtXgQydqEiLLDCK98sOAwQLRTM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V7fnj68Rt2fVBorR/LD5q17Tu3Nbef4k4zkVL93qb0puiYGItCiuiOezAa4oE0Es0xFHYmtmiQDLGIjDsRkpT60aFInBlLEyTIH4WJ85sNhLfdunxN0941kd3kut4CSvv1iNgN6+UKifvJWyGcvLQ5thAoVu/90cqJP2Zl6Jrs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W3Y766kYTz6K6BB;
-	Wed, 19 Jun 2024 01:06:10 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6625D1406AC;
-	Wed, 19 Jun 2024 01:06:28 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 18 Jun
- 2024 18:06:27 +0100
-Date: Tue, 18 Jun 2024 18:06:27 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Frank
- Li <Frank.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Yicong Yang <yangyicong@hisilicon.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <imx@lists.linux.dev>,
-	<kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] perf: add missing MODULE_DESCRIPTION() macros
-Message-ID: <20240618180627.00007668@Huawei.com>
-In-Reply-To: <20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com>
-References: <20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718730453; c=relaxed/simple;
+	bh=TKNQ8t8Th5bx+OdQANjpXoFO//f8B53gmdB3PVMUVf4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BpUUYDJnDVi3Q/r468j/1rfMkDzOQDOHb2zt8atTAzNqvCO/1QQ+Eh588xEk/VQPdfHlNYsZnxcVjNoF1Hb/Tm3HmY9iSKwRbwpmNXfLz035jsiYYthkk7RMTf/65a7vN+RwbLNDaYvUlMgjJAEzQzcBOrq3RtS+x9yx4MnzmE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-704313fa830so4451786b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:07:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718730450; x=1719335250;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TKNQ8t8Th5bx+OdQANjpXoFO//f8B53gmdB3PVMUVf4=;
+        b=clxvznXkf6d4DKWwPZkG+2ss4UxKJxq0olRwB6WF7lxZi8V3hPSeSDTRm5DPNozuuJ
+         Y4Db619yQhZNW66VPYj58FzGDJjjP1MoINmbObUgQCaCJ6O5S4tKGUkQf5/pw4EglcWK
+         2rJ72grdYRa4I+P2PBkOiNY1WRdHteiqQNhrDrzkiCUiJDqXnLTSuMHOqurfdm0puim9
+         f7P/yl2fbDqFXPpzs6h/mdAUABL5jMKkAhqf3RzMALJR8elFGpPfvNUoV7KN16qqKAIz
+         oqinyj/HqBu1Lg60EakGshWsh6H3LDaj/UQnDCgk8ppEZYLT2HNVvhuXv4bBhzBO6PhV
+         kpsA==
+X-Gm-Message-State: AOJu0YwFDHVDMm1VKRXWsGvPb4QGBeSxGVs1n6CJAWxuESgd3dxeuKoT
+	A/iAD1GPqi2DQUr4c8gOdLu1U8mJicWlC7i31nuvDnorBMOMUg1pLqWNBcWAOKNAATWjm1wxK1G
+	6
+X-Google-Smtp-Source: AGHT+IGvLCeVcnRFysSRDpAPuP+5+YgRu7qxdI0CNTvxRQj687g3cRH32U5+Tihug8EFyoKJyHk9sA==
+X-Received: by 2002:a05:6a21:19a:b0:1b2:b197:dcaf with SMTP id adf61e73a8af0-1bcbb71e786mr101516637.57.1718730449953;
+        Tue, 18 Jun 2024 10:07:29 -0700 (PDT)
+Received: from localhost (97-126-77-189.tukw.qwest.net. [97.126.77.189])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc964acfsm9176834b3a.45.2024.06.18.10.07.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 10:07:29 -0700 (PDT)
+From: Kevin Hilman <khilman@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>, Mark
+ Brown <broonie@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Julien Panis
+ <jpanis@baylibre.com>, Nicolas Pitre <npitre@baylibre.com>
+Subject: Re: linux-next: build failure after merge of the mediatek tree
+In-Reply-To: <be5a8b12-b042-48cc-9508-759a2a285a8b@kernel.org>
+References: <ZnBn-vSj-ssrJFr2@sirena.org.uk>
+ <01f2ee94-f8b0-449c-aa19-3ee38a2e36a1@baylibre.com>
+ <d87b7376-5ba2-4810-90cb-76648d4a8080@kernel.org>
+ <be5a8b12-b042-48cc-9508-759a2a285a8b@kernel.org>
+Date: Tue, 18 Jun 2024 10:07:28 -0700
+Message-ID: <7hcyoekwmn.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Jun 2024 11:31:06 -0700
-Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>
+writes:
 
-> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/marvell_cn10k_ddr_pmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/arm_cspmu_module.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/nvidia_cspmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/ampere_cspmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
-> 
-> This includes drivers/perf/hisilicon/hisi_uncore_pmu.c which, although
-> it did not produce a warning with the x86 allmodconfig configuration,
-> may cause this warning with arm64 configurations.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> # for CXL PMU
+> Il 18/06/24 12:03, AngeloGioacchino Del Regno ha scritto:
+>> Il 18/06/24 09:49, Julien Panis ha scritto:
+>>> On 6/17/24 18:44, Mark Brown wrote:
+>>>> Hi all,
+>>>>
+>>>> After merging the mediatek tree, today's linux-next build (arm64
+>>>> defconfig) failed like this:
+>>>>
+>>>> /tmp/next/build/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-dis=
+play.dtsi:113.6-121.3: Warning (graph_port): /fragment@4/__overlay__: graph=
+ port node name should be 'port'
+>>>> Error: /tmp/next/build/arch/arm64/boot/dts/mediatek/mt8186.dtsi:2399.2=
+9-30=20
+>>>> syntax error
+>>>> FATAL ERROR: Unable to parse input tree
+>>>> make[4]: *** [/tmp/next/build/scripts/Makefile.lib:431:=20
+>>>> arch/arm64/boot/dts/mediatek/mt8186-corsola-magneton-sku393216.dtb] Er=
+ror 1
+>>>>
+>>>> Caused by commit
+>>>>
+>>>> =C2=A0=C2=A0 d7c1bde38bf37a5 ("arm64: dts: mediatek: mt8186: add defau=
+lt thermal zones")
+>>>>
+>>>> I have used the last version of the mediatek tree from 20240613 instea=
+d.
+>>>
+>>> Hello Mark,
+>>>
+>>> Here is the explanation:
+>>> https://lore.kernel.org/all/71d53ff6-fdae-440d-b60d-3ae6f0c881d9@baylib=
+re.com/
+>>> https://lore.kernel.org/all/6d9e0f19-9851-4f23-a8b8-6acc82ae7a3d@baylib=
+re.com/
+>>>
+>>> For some reason, the 2 first commits of the series were not applied
+>>> with the dts. These commits are needed because they contain some
+>>> definitions used by the dts.
+>>>
+>>> Julien
+>>=20
+>> I'm not sure how should I proceed here.
+>>=20
+>
+> Reiterating, I'm sure how should I proceed.
 
+You applied the dts patches but not the bindings, resulting in something
+that doesn't build because of changes to #defines in the bindings.
+
+Both of the bindings patches have already been acked by a DT maintainer
+(Connor), so you should just apply the bindings along with the DT patches.
+
+> I'm removing those patches from mediatek for-next until further notice.
+
+Rather than remove the DT patches, you should just apply the bindings
+patches.
+
+Kevin
 
