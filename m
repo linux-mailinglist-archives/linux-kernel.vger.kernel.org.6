@@ -1,147 +1,139 @@
-Return-Path: <linux-kernel+bounces-218930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58EC90C7D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:54:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88BD990C7D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CB3D28158D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:54:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482BC286069
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659791CB311;
-	Tue, 18 Jun 2024 09:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B241C9EBB;
+	Tue, 18 Jun 2024 09:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3eSqpzq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNXm7Dzk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C471CB306;
-	Tue, 18 Jun 2024 09:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3CB1C9EA9;
+	Tue, 18 Jun 2024 09:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718702432; cv=none; b=n+FFfJYHeNeeYjABN4q1h47NKHVE7lvIAPxNCh/xc6QBXmzwkafQZkyBVddBtzNHcc8X8B3YEyOCVSjlG7rIHGgZvcrpTXnB15OYiSdtOs5GOaSdJQbeiqpySQMXktTXcun18s3yRzftQ2u/gpA/4Kq5nF4kmpBbga6mcaUZMUU=
+	t=1718702429; cv=none; b=jiy0a1IYKfprc7itY14JIfvcUwghr5h2KZC0q3ioaR0itKwaHgmg0bZP2PIy+NfzZ49iT6Lv40+ZMilNHl/J+7F3DH+yRMN0+RJRY5+xtVFZY6Ut6si1cS6zxZN+CalKWzqP8ojtGkemc2YwzWrIBbtNOIIXLXcj6NnyjRJpU3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718702432; c=relaxed/simple;
-	bh=vIFhwnIZEubFvJ3kvhDrto/wuAS+Z3gu3O4MQYZKIQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R3CtiMvUzlW7YgdnhDrBFre9ZBpVNGmssvYRARXULb2cI1M7gfk/50hF8TmSPweI4vOZYRguab759S8B54rBS9m0Z6S4Qm4FchyctxUx2oAYq8Mkf5/3NPXTgLWDSv/JtA4BDqQj4gDKVrluejyDt7aBI/mVq+cPfSdM2cnzlq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3eSqpzq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F0C1C4AF1D;
-	Tue, 18 Jun 2024 09:20:22 +0000 (UTC)
+	s=arc-20240116; t=1718702429; c=relaxed/simple;
+	bh=FiBK8BhydwXweraMDU8D+UrNScrsx6uojqAGwGP0Cbk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=chC2f4pmlR5CZYKhOOr1aGcFr7GWImn6QiIpgQIoSnU6+/QGS2X/GB8jhzJoGVTj7FIc7pxp1/GbTdBdXgq4Q5iZ57uM4gQAvJxGrEOdW7OR4Odm9wDopxptHJ40HkwYLCk+j85aUcNukWYdA7LY8re+KR77rvbQETplrGLmbCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNXm7Dzk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58541C4AF51;
+	Tue, 18 Jun 2024 09:20:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718702431;
-	bh=vIFhwnIZEubFvJ3kvhDrto/wuAS+Z3gu3O4MQYZKIQc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N3eSqpzqiFFqPbcjoYUG3B9g+XOosfCcKg2etM8aYGmdwNYom5sivOfdGIGD+/+jd
-	 dnaoovGGr08ikrUY/ZFwlftN7N/fdtX1XjPeP4Qx5KUe3Qxnc3qcTVehcLz9VXdAZN
-	 BqgYJ1Ad/zj2zsJSxO8pet3mGgPDjo9mDjjtyylSzsmKZM7/bDzFt3SZHSoTjdbniJ
-	 u+cQ4nMhgj6KKkv6xBQ62unhTE/9z42/9scgIrLJpKdwPlRVArRpfLYeqElU7ZU6Vz
-	 r2GtxN8WZjGoJGjh+3yk7kT4EyBuy30F3d3uHGLCWVbankGL9yZTi8twwssvWWikWr
-	 lbKTu1hT3UzwA==
-Message-ID: <7abe0097-8a19-47a5-85d2-b7cedcb31b75@kernel.org>
-Date: Tue, 18 Jun 2024 11:20:20 +0200
+	s=k20201202; t=1718702429;
+	bh=FiBK8BhydwXweraMDU8D+UrNScrsx6uojqAGwGP0Cbk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=qNXm7Dzkp7NIib+F9pt9XUU8zd/Sj106lKhKuBSIVPm8tO/jT5WuIvhZ3eFMSRYZt
+	 bpUAUPKCDbjrdu+Eaa0YE3cT33Y65st2ciItrVkEs9fT4osQ1Z9ljR+mZik7w9Nu4L
+	 WFyV6Ymee2fdQHwhLnHBUHOufgzFn+tXkaSTxhk3honh13JIUAptID0smJ8ZKw8g5S
+	 2c1mKdpo0SZNseHqYx6xgLDwktmVMcE7zF0hAXAap3+lMMLFPi/yMyazYRiYhCs9ak
+	 ySIFOQ8mnkK8JBI+OW12aep4jSmk+AjBadMwh+aVd3kAa4N29P+cm5IlSTcSCpVU97
+	 2GcKP8tb9q3Rg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 43925C32768;
+	Tue, 18 Jun 2024 09:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] drm/panel: st7701: Add support for SPI for
- configuration
-To: Hironori KIKUCHI <kikuchan98@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Jagan Teki <jagan@amarulasolutions.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org
-References: <20240618081515.1215552-1-kikuchan98@gmail.com>
- <20240618081515.1215552-3-kikuchan98@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240618081515.1215552-3-kikuchan98@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] netns: Make get_net_ns() handle zero refcount net
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171870242926.21013.3743600964363163093.git-patchwork-notify@kernel.org>
+Date: Tue, 18 Jun 2024 09:20:29 +0000
+References: <20240614131302.2698509-1-yuehaibing@huawei.com>
+In-Reply-To: <20240614131302.2698509-1-yuehaibing@huawei.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, tkhai@ya.ru, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On 18/06/2024 10:15, Hironori KIKUCHI wrote:
-> The ST7701 supports not only MIPI DSI, but also SPI as an interface
-> for configuration. To support a panel connected via RGB parallel
-> interface, add support for SPI using MIPI DBI helpers.
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Fri, 14 Jun 2024 21:13:02 +0800 you wrote:
+> Syzkaller hit a warning:
+> refcount_t: addition on 0; use-after-free.
+> WARNING: CPU: 3 PID: 7890 at lib/refcount.c:25 refcount_warn_saturate+0xdf/0x1d0
+> Modules linked in:
+> CPU: 3 PID: 7890 Comm: tun Not tainted 6.10.0-rc3-00100-gcaa4f9578aba-dirty #310
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> RIP: 0010:refcount_warn_saturate+0xdf/0x1d0
+> Code: 41 49 04 31 ff 89 de e8 9f 1e cd fe 84 db 75 9c e8 76 26 cd fe c6 05 b6 41 49 04 01 90 48 c7 c7 b8 8e 25 86 e8 d2 05 b5 fe 90 <0f> 0b 90 90 e9 79 ff ff ff e8 53 26 cd fe 0f b6 1
+> RSP: 0018:ffff8881067b7da0 EFLAGS: 00010286
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff811c72ac
+> RDX: ffff8881026a2140 RSI: ffffffff811c72b5 RDI: 0000000000000001
+> RBP: ffff8881067b7db0 R08: 0000000000000000 R09: 205b5d3730353139
+> R10: 0000000000000000 R11: 205d303938375420 R12: ffff8881086500c4
+> R13: ffff8881086500c4 R14: ffff8881086500b0 R15: ffff888108650040
+> FS:  00007f5b2961a4c0(0000) GS:ffff88823bd00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055d7ed36fd18 CR3: 00000001482f6000 CR4: 00000000000006f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  ? show_regs+0xa3/0xc0
+>  ? __warn+0xa5/0x1c0
+>  ? refcount_warn_saturate+0xdf/0x1d0
+>  ? report_bug+0x1fc/0x2d0
+>  ? refcount_warn_saturate+0xdf/0x1d0
+>  ? handle_bug+0xa1/0x110
+>  ? exc_invalid_op+0x3c/0xb0
+>  ? asm_exc_invalid_op+0x1f/0x30
+>  ? __warn_printk+0xcc/0x140
+>  ? __warn_printk+0xd5/0x140
+>  ? refcount_warn_saturate+0xdf/0x1d0
+>  get_net_ns+0xa4/0xc0
+>  ? __pfx_get_net_ns+0x10/0x10
+>  open_related_ns+0x5a/0x130
+>  __tun_chr_ioctl+0x1616/0x2370
+>  ? __sanitizer_cov_trace_switch+0x58/0xa0
+>  ? __sanitizer_cov_trace_const_cmp2+0x1c/0x30
+>  ? __pfx_tun_chr_ioctl+0x10/0x10
+>  tun_chr_ioctl+0x2f/0x40
+>  __x64_sys_ioctl+0x11b/0x160
+>  x64_sys_call+0x1211/0x20d0
+>  do_syscall_64+0x9e/0x1d0
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f5b28f165d7
+> Code: b3 66 90 48 8b 05 b1 48 2d 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 81 48 2d 00 8
+> RSP: 002b:00007ffc2b59c5e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5b28f165d7
+> RDX: 0000000000000000 RSI: 00000000000054e3 RDI: 0000000000000003
+> RBP: 00007ffc2b59c650 R08: 00007f5b291ed8c0 R09: 00007f5b2961a4c0
+> R10: 0000000029690010 R11: 0000000000000246 R12: 0000000000400730
+> R13: 00007ffc2b59cf40 R14: 0000000000000000 R15: 0000000000000000
+>  </TASK>
+> Kernel panic - not syncing: kernel: panic_on_warn set ...
 > 
-> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
+> [...]
 
+Here is the summary with links:
+  - netns: Make get_net_ns() handle zero refcount net
+    https://git.kernel.org/netdev/net/c/ff960f9d3edb
 
-...
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> +
-> +static int st7701_spi_probe(struct spi_device *spi)
-> +{
-> +	struct st7701 *st7701;
-> +	struct gpio_desc *dc;
-> +	int err;
-> +
-> +	err = st7701_probe(&spi->dev, DRM_MODE_CONNECTOR_DPI);
-> +	if (err)
-> +		return err;
-> +
-> +	st7701 = dev_get_drvdata(&spi->dev);
-> +	st7701->write_command = st7701_dbi_write;
-> +
-> +	dc = devm_gpiod_get_optional(&spi->dev, "dc", GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
-
-Nope, you cannot use GPIOD_FLAGS_BIT_NONEXCLUSIVE outside of regulators.
-I don't see any code for ensuring proper simultaneus access.
-
-Best regards,
-Krzysztof
 
 
