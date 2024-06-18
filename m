@@ -1,181 +1,267 @@
-Return-Path: <linux-kernel+bounces-218767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1D490C48A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:42:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2407A90C52E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A0B3B21B9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F891F221D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E952E13B7A3;
-	Tue, 18 Jun 2024 07:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CC915622E;
+	Tue, 18 Jun 2024 07:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EScJdUd7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sxOvRUzo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xtlI0XC+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9841E863;
-	Tue, 18 Jun 2024 07:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E523213A41B;
+	Tue, 18 Jun 2024 07:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718695697; cv=none; b=i/5hMeqYEiE/FZBr/VoCCuv4zjUpMCTkeuKMX46RjRNtP+rp0g5Ru5QCqKd2a20N20BsWCbipqr3A40fqdtO7Z3SRAp/oSafiHi3N6t6fz0DPZirxc9DsjqD30buq3Pl/72xUQBY16at4kv4kTgV/O2H6QQd+Y0dSlkYXPdZD6g=
+	t=1718695536; cv=none; b=GAbuP5r0byoIQpYAWNGs2kPg15Z8ZzCUjM0mvVLnM5O+IFXIneVLxJrIvw5jQOS/du2a+a2aTn3DG72gRhZAYnV0YtC5jiADF7ZvK8vsdwxgaBMW2Hpp8O/qawvJEP6PD10BYa+Lt1ED5LP9q1A578TJ4JzxHKeQkUQKDnYKi44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718695697; c=relaxed/simple;
-	bh=Pm+g1zuO3lpBcnw4Y+4LbimsaZWAveg3kEfjlLAa/k0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l1lu/PhVnWwbIlOgKIbKB4E2v7vpAnf4Wzupwk7eST11H0ANlEpqSFoNnNE8iuQUagvXXX/I+v9kolRPLIUmf4pYqcxDlapfe2vjj54+PelaDgxXUHSqVZ4BJdkkCx4cOVl2CHfX6N27WC/XZBLciWtol6L9vAlehkNrdzDzfIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EScJdUd7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HLfSXN025439;
-	Tue, 18 Jun 2024 07:27:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=WVaPTYXZ+AMwgmFA5PnrJu
-	PY3/z3kl0dMUW5njXHbq8=; b=EScJdUd7aEBQG/nPJUQEgIwpm1FS+ffW/EDANy
-	O9GVebWqzgFzHXRzB2jWirUvsZKHPsyEM3mXox+OL72B2A5J3/dCcDw6QZywiNJL
-	cc2/mm5Bf9U515U6KA6SVDd5ZOX02+YB/kmTmtbXt+/BGN2FeNeMjkKn0c68cLnA
-	86GG1JV/UBoKmoHdeMg66uUSAQGumQ0kUHuiVNFET3W0oPEoM9ck7JZdzAPeQqRG
-	YPXrAdzNGge0tK4WmAKG9W2kWKFxcMfC0DpXU8B8JBvjlVqb3IYbQHOCyP04wdO8
-	sMX+YEumNnk78i8lgc0IZ15yEl6+qiE31PPRi2q5XwAQvcMg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys3qf5ta9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 07:27:58 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I7Rv2N024337
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 07:27:57 GMT
-Received: from jiegan-gv.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 18 Jun 2024 00:27:45 -0700
-From: Jie Gan <quic_jiegan@quicinc.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose
-	<suzuki.poulose@arm.com>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Konrad Dybcio <konradybcio@gmail.com>,
-        Mike Leach <mike.leach@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC: Jinlong Mao <quic_jinlmao@quicinc.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Tao Zhang
-	<quic_taozha@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Song Chai
-	<quic_songchai@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <andersson@kernel.org>,
-        <quic_yijiyang@quicinc.com>, <quic_yuanjiey@quicinc.com>,
-        <quic_liuxin@quicinc.com>, <quic_yanzl@quicinc.com>,
-        <quic_xinlon@quicinc.com>, <quic_xueqnie@quicinc.com>,
-        <quic_sijiwu@quicinc.com>
-Subject: [PATCH v1 0/3] Add coresight slave register driver to support data filter function
-Date: Tue, 18 Jun 2024 15:27:23 +0800
-Message-ID: <20240618072726.3767974-1-quic_jiegan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718695536; c=relaxed/simple;
+	bh=jSt8CNbUvA9rTwhUnR498pGdHxYMZjQy5OeMI7zpRU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j+YK8bjsJoK5YBYdyk8QYFG0D5KLczDk2dZNclIrZ4KwE3ew1w4WARsmZpT0AUj8Lc2RloBdfx/XRZp6XOE1dyyfxsuPUjEWI77tOBON2jhQt7Nc5OlBN97GAcakLC1Q9KbmATePV5+kANYi6rDerMx4pmcCE1yI2jHHEezlBzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sxOvRUzo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xtlI0XC+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718695530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2BR8yrm8K6byCgOiM6f0MGKoccxZnzrPlbU82xFoyM0=;
+	b=sxOvRUzosmLm4uxSjsk4rbOBEzP3sGaNGqo3Sh4fjLvvdh/e124QMJRIinnO5cnEGN22PU
+	28X7UmhBv1ZDa4oKtTvFwHZBblf6DQI+tmnKYEWjaYbkRurjQBoqk1tENfh7nXrKst8iGj
+	sfSRAxcZ0biAqQ8c5/rhgZh307DT/C6Vdgxz54O8oFHE1SIppbURPkoVCaQq/i30PIolDq
+	aem+7aXb2RcJmBSXaPwfAe+lm7aykk4oxsY6oAVEIYD/G9KmY2xfB0DZ07bMkoKE2Tn8b5
+	DOIZeaUL3lrBNsZxtScxwz6WUfL/Wy3Pi5zazxYu7AFe80HQhFlHWhueWA3bjg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718695530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2BR8yrm8K6byCgOiM6f0MGKoccxZnzrPlbU82xFoyM0=;
+	b=xtlI0XC+1xS3maQgZ9cyTZo2w08Few7EQRkveU60FuqR2NyjGtGXQhQdFhkBV/aEimR68c
+	KjIJEp72dGssxhBQ==
+To: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v7 net-next 00/15] locking: Introduce nested-BH locking.
+Date: Tue, 18 Jun 2024 09:13:16 +0200
+Message-ID: <20240618072526.379909-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jv1hjDa81jJN9reNr2ZGwldPlZi59B5j
-X-Proofpoint-ORIG-GUID: jv1hjDa81jJN9reNr2ZGwldPlZi59B5j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0 phishscore=0
- lowpriorityscore=0 mlxscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180054
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The Coresight Slave Register(CSR) device hosts miscellaneous configuration
-registers to control various features related to TMC ETR device.
+Disabling bottoms halves acts as per-CPU BKL. On PREEMPT_RT code within
+local_bh_disable() section remains preemtible. As a result high prior
+tasks (or threaded interrupts) will be blocked by lower-prio task (or
+threaded interrupts) which are long running which includes softirq
+sections.
 
-The CSR device works as a helper device physically connected to the TMC ETR device.
----------------------------------------------------------
-             |ETR0|             |ETR1|
-              . \                 / .
-              .  \               /  .
-              .   \             /   .
-              .    \           /    .
----------------------------------------------------     
-ETR0ATID0-ETR0ATID3     CSR     ETR1ATID0-ETR1ATID3
----------------------------------------------------
-Each ETR has four ATID registers with 128 bits long in total.
-e.g. ETR0ATID0-ETR0ATID3 registers are used by ETR0 device.
+The proposed way out is to introduce explicit per-CPU locks for
+resources which are protected by local_bh_disable() and use those only
+on PREEMPT_RT so there is no additional overhead for !PREEMPT_RT builds.
 
-Based on the trace id which is programed in CSR ATID register of
-specific ETR, trace data with that trace id can get into ETR's buffer
-while other trace data gets ignored. CSR may contain several ATID registers. 
-Each ATID register is associated with an ETR device.
+The series introduces the infrastructure and converts large parts of
+networking which is largest stake holder here. Once this done the
+per-CPU lock from local_bh_disable() on PREEMPT_RT can be lifted.
 
-To achieve this function, the trace id is obtained and stored in the related
-ETR device's driver data just before enabling the CSR. Then, the CSR
-device can easily obtain the trace ID from the ETR's driver data because the
-ETR's driver data is passed to the CSR's enable/disable functions.
+Performance testing. Baseline is net-next as of commit 93bda33046e7a
+("Merge branch'net-constify-ctl_table-arguments-of-utility-functions'")
+plus v6.10-rc1. A 10GiG link is used between two hosts. The command
+   xdp-bench redirect-cpu --cpu 3 --remote-action drop eth1 -e
 
-Ensure that every source device has already allocated a trace ID in its probe
-session because the sink device should always be the first device to
-enable when operating coresight_enable_path function. As a helper device of the
-ETR, the CSR device will program the ATID register of a specific ETR according to
-the trace id to enable data filter function at a very early stage. Without the
-correct trace ID, the enablement session will not work.
+was invoked on the receiving side with a ixgbe. The sending side uses
+pktgen_sample03_burst_single_flow.sh on i40e.
 
-Each CSR's enable session will set one bit in the ATID register.
-Every CSR's disbale seesion will reset all bits of the ATID register.
+Baseline:
+| eth1->?                 9,018,604 rx/s                  0 err,drop/s
+|   receive total         9,018,604 pkt/s                 0 drop/s         =
+       0 error/s
+|     cpu:7               9,018,604 pkt/s                 0 drop/s         =
+       0 error/s
+|   enqueue to cpu 3      9,018,602 pkt/s                 0 drop/s         =
+    7.00 bulk-avg
+|     cpu:7->3            9,018,602 pkt/s                 0 drop/s         =
+    7.00 bulk-avg
+|   kthread total         9,018,606 pkt/s                 0 drop/s         =
+ 214,698 sched
+|     cpu:3               9,018,606 pkt/s                 0 drop/s         =
+ 214,698 sched
+|     xdp_stats                   0 pass/s        9,018,606 drop/s         =
+       0 redir/s
+|       cpu:3                     0 pass/s        9,018,606 drop/s         =
+       0 redir/s
+|   redirect_err                  0 error/s
+|   xdp_exception                 0 hit/s
 
-This patch only supports sysfs mode. I will send the perf mode part patch
-once it is ready.
+perf top --sort cpu,symbol --no-children:
+|   18.14%  007  [k] bpf_prog_4f0ffbb35139c187_cpumap_l4_hash
+|   13.29%  007  [k] ixgbe_poll
+|   12.66%  003  [k] cpu_map_kthread_run
+|    7.23%  003  [k] page_frag_free
+|    6.76%  007  [k] xdp_do_redirect
+|    3.76%  007  [k] cpu_map_redirect
+|    3.13%  007  [k] bq_flush_to_queue
+|    2.51%  003  [k] xdp_return_frame
+|    1.93%  007  [k] try_to_wake_up
+|    1.78%  007  [k] _raw_spin_lock
+|    1.74%  007  [k] cpu_map_enqueue
+|    1.56%  003  [k] bpf_prog_57cd311f2e27366b_cpumap_drop
 
-Looking forward to receiving comments as this is a new driver.
+With this series applied:
+| eth1->?                10,329,340 rx/s                  0 err,drop/s
+|   receive total        10,329,340 pkt/s                 0 drop/s         =
+       0 error/s
+|     cpu:6              10,329,340 pkt/s                 0 drop/s         =
+       0 error/s
+|   enqueue to cpu 3     10,329,338 pkt/s                 0 drop/s         =
+    8.00 bulk-avg
+|     cpu:6->3           10,329,338 pkt/s                 0 drop/s         =
+    8.00 bulk-avg
+|   kthread total        10,329,321 pkt/s                 0 drop/s         =
+  96,297 sched
+|     cpu:3              10,329,321 pkt/s                 0 drop/s         =
+  96,297 sched
+|     xdp_stats                   0 pass/s       10,329,321 drop/s         =
+       0 redir/s
+|       cpu:3                     0 pass/s       10,329,321 drop/s         =
+       0 redir/s
+|   redirect_err                  0 error/s
+|   xdp_exception                 0 hit/s
 
-Thanks!
+perf top --sort cpu,symbol --no-children:
+|   20.90%  006  [k] bpf_prog_4f0ffbb35139c187_cpumap_l4_hash
+|   12.62%  006  [k] ixgbe_poll
+|    9.82%  003  [k] page_frag_free
+|    8.73%  003  [k] cpu_map_bpf_prog_run_xdp
+|    6.63%  006  [k] xdp_do_redirect
+|    4.94%  003  [k] cpu_map_kthread_run
+|    4.28%  006  [k] cpu_map_redirect
+|    4.03%  006  [k] bq_flush_to_queue
+|    3.01%  003  [k] xdp_return_frame
+|    1.95%  006  [k] _raw_spin_lock
+|    1.94%  003  [k] bpf_prog_57cd311f2e27366b_cpumap_drop
 
-Jie Gan (3):
-  dt-bindings: arm: Add binding document for Coresight Slave Register
-    device.
-  coresight: Add coresight slave register driver to support data filter
-    function in sysfs mode
-  arm64: dts: qcom: Add CSR and ETR nodes for SA8775p
+This diff appears to be noise.
 
- .../bindings/arm/arm,coresight-tmc.yaml       |   8 +
- .../bindings/arm/qcom,coresight-csr.yaml      |  49 +++
- arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 167 ++++++++++
- drivers/hwtracing/coresight/Kconfig           |   6 +
- drivers/hwtracing/coresight/Makefile          |   1 +
- drivers/hwtracing/coresight/coresight-core.c  |   6 +-
- drivers/hwtracing/coresight/coresight-csr.c   | 315 ++++++++++++++++++
- drivers/hwtracing/coresight/coresight-csr.h   |  24 ++
- .../coresight/coresight-etm4x-core.c          |   1 +
- drivers/hwtracing/coresight/coresight-stm.c   |  50 ---
- drivers/hwtracing/coresight/coresight-sysfs.c |  45 ++-
- .../hwtracing/coresight/coresight-tmc-core.c  |   1 +
- drivers/hwtracing/coresight/coresight-tmc.h   |   2 +
- include/linux/coresight-stm.h                 |  44 +++
- 14 files changed, 665 insertions(+), 54 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-csr.yaml
- create mode 100644 drivers/hwtracing/coresight/coresight-csr.c
- create mode 100644 drivers/hwtracing/coresight/coresight-csr.h
+v6=E2=80=A6v7 https://lore.kernel.org/all/20240612170303.3896084-1-bigeasy@=
+linutronix.de/:
+- The softnet_data::xmit (08/15) is moved completely for RT and not
+  limited to one member. During the review it has been noticed that the
+  `more' member requires same protection.
+  After some cleanup this might also be considered conditionally for !RT.
 
--- 
-2.34.1
+v5=E2=80=A6v6 https://lore.kernel.org/all/20240607070427.1379327-1-bigeasy@=
+linutronix.de/:
+- bpf_redirect_info and the lists (cpu, dev, xsk map_flush_list) is now
+  initialized on first usage instead during setup time
+  (bpf_net_ctx_set()). bpf_redirect_info::kern_flags is used as
+  status to note which member require an init.
+  The bpf_redirect_info::kern_flags is moved to the end of the struct
+  (after nh) in order to be excluded from the memset() which clears
+  everything upto the the nh member.
+  This whole lazy init performed to save cycles and not to waste them to
+  memset bpf_redirect_info and init the three lists on each
+  net_rx_action()/ NAPI invocation even if BPF/redirect is not used.
+  Suggested by Jesper Dangaard Brouer.
+
+- Collect Acked-by/Review-by from PeterZ/ tglx
+
+v4=E2=80=A6v5 https://lore.kernel.org/all/20240604154425.878636-1-bigeasy@l=
+inutronix.de/:
+- Remove the guard() notation as well as __free() within the patches.
+  Patch #1 and #2 add the guard definition for local_lock_nested_bh()
+  but it remains unused with the series.
+  The __free() notation for bpf_net_ctx_clear has been removed entirely.
+
+- Collect Toke's Reviewed-by.
+
+v3=E2=80=A6v4 https://lore.kernel.org/all/20240529162927.403425-1-bigeasy@l=
+inutronix.de/:
+- Removed bpf_clear_redirect_map(), moved the comment to the caller.
+  Suggested by Toke.
+
+- The bpf_redirect_info structure is memset() each time it is assigned.
+  Suggested by Toke.
+
+- The bpf_net_ctx_set() in __napi_busy_loop() has been moved from the
+  top of the function to begin/ end of the BH-disabled section. This has
+  been done to remain in sync with other call sites.
+  After adding the memset() I've been looking at the perf-numbers in my
+  test-case and I haven't noticed an impact, the numbers are in the same
+  range with and without the change. Therefore I kept the numbers from
+  previous posting.
+
+- Collected Alexei's Acked-by.
+
+v2=E2=80=A6v3 https://lore.kernel.org/all/20240503182957.1042122-1-bigeasy@=
+linutronix.de/:
+- WARN checks checks for bpf_net_ctx_get() have been dropped and all
+  NULL checks around it. This means bpf_net_ctx_get_ri() assumes the
+  context has been set and will segfault if it is not the case.
+  Suggested by Alexei and Jesper. This should always work or always
+  segfault.
+
+- It has been suggested by Toke to embed struct bpf_net_context into
+  task_struct instead just a pointer to it. This would increase the size
+  of task_struct by 112 bytes instead just eight and Alexei didn't like
+  it due to the size impact with 1m threads. It is a pointer again.
+
+v1=E2=80=A6v2 https://lore.kernel.org/all/20231215171020.687342-1-bigeasy@l=
+inutronix.de/:
+- Jakub complained about touching networking drivers to make the
+  additional locking work. Alexei complained about the additional
+  locking within the XDP/eBFP case.
+  This led to a change in how the per-CPU variables are accessed for the
+  XDP/eBPF case. On PREEMPT_RT the variables are now stored on stack and
+  the task pointer to the structure is saved in the task_struct while
+  keeping every for !RT unchanged. This was proposed as a RFC in
+  	v1: https://lore.kernel.org/all/20240213145923.2552753-1-bigeasy@linutro=
+nix.de/
+
+  and then updated
+
+        v2: https://lore.kernel.org/all/20240229183109.646865-1-bigeasy@lin=
+utronix.de/
+	  - Renamed the container struct from xdp_storage to bpf_net_context.
+            Suggested by Toke H=C3=B8iland-J=C3=B8rgensen.
+	  - Use the container struct also on !PREEMPT_RT builds. Store the
+	    pointer to the on-stack struct in a per-CPU variable. Suggested by
+            Toke H=C3=B8iland-J=C3=B8rgensen.
+
+  This reduces the initial queue from 24 to 15 patches.
+
+- There were complains about the scoped_guard() which shifts the whole
+  block and makes it harder to review because the whole gets removed and
+  added again. The usage has been replaced with local_lock_nested_bh()+
+  its unlock counterpart.
+
+Sebastian
 
 
