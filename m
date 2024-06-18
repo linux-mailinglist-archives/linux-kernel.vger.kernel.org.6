@@ -1,160 +1,170 @@
-Return-Path: <linux-kernel+bounces-219514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B03C90D3C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:13:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA50B90D39F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CC86B314C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776FF1F25F60
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D7F19E7F7;
-	Tue, 18 Jun 2024 13:52:03 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE8119DFB0;
+	Tue, 18 Jun 2024 13:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XlTTkXR5"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515B319E7DD;
-	Tue, 18 Jun 2024 13:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E60715A865
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718718722; cv=none; b=qQjrqAuXHHXu5Wu7EjhoTgbESzl56uAnyzDZHBEsC7NnO/7yCV6mYbHaRvQtHhfFb768e1V5GHPuwhRTW7hpvnX0Ib0DnLMIHyUAhWYpfNjRSYxZcAweg5tJOlVf+t9Sy2D4G8FfdJtUWZwZ+pAGu4hf0hw6uDOhHGCZWKSBbj0=
+	t=1718718711; cv=none; b=M9LxeK37K/g0XOW6N0G1kALBv+yCkWFJYdEVFPP0E9ZOLzniy5U5S9ULiESHIgBzVqZrB410cZACIVKOVdjbouyqSYEhObHcExII7wbItnhD39vlEJ9RVcPa16sM+A+f/TW2M3/RpDx+TSn8+A6GgYAGnFjcexe942589w912l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718718722; c=relaxed/simple;
-	bh=VwKsrjIE10lvqke1zUsJ4ealB7C0M4kdJQQlSucPQmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DtwD6zO1ZuhOJWEDQ66hZvEugzcbULAph58tsc5t5XOavdTmehz2NveUU+l+kM0JP5e6blO+3B7IJtzBbmGVEv6m+5ACKGXFTgaQ//gyULXQvA8AlCI82ZGjgPhpB4eydebYet/J5X2AOyc1qF8N5mt4MvFoo7m/O7X08GnbP9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 0328561E5FE01;
-	Tue, 18 Jun 2024 15:51:16 +0200 (CEST)
-Message-ID: <8719fc64-2b51-4b79-ba52-0a3b9216f2db@molgen.mpg.de>
-Date: Tue, 18 Jun 2024 15:51:15 +0200
+	s=arc-20240116; t=1718718711; c=relaxed/simple;
+	bh=+mnX+ZFjTZIEGJUHNnZ8ynjbHqtkfGgDSQpPSjh0EZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sroT+0i+t5fWAchmhWL74ZEKJK26IrLGitrQ1LnWLeOXwpv4EVYHMB20TRPigdsdIHjq9HX1z+c49eyaPe5K8OdTWHH3eWZ5efkutitpJYEUA8/UUE2N6q+F5L04ae1eyqz1PYJG0TeXroYk0gN1fOtv8Wo2XypweC4+K7aDJCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XlTTkXR5; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6f04afcce1so702881266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718718707; x=1719323507; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T24pOsqzjYl83UdbK651IK++6IZv8feRM6P25K+droU=;
+        b=XlTTkXR5DWSRskwMs5X5PxxVg/Lhhfl3BF3zTwgtOMsOg4IeOMyC9hncNPIlhyWCz3
+         t8wprt1yHj2n4Kqxep4Sr94fXZ2tUlArAGNs0V/qPe/TFXCwFV6KG4ozXypn5m4jD4g/
+         4wzTxLr22b1ntGh5d3EbEB8jPKv4piA3Fhv8gG4YUBqNgy19usgVC6bePGy8hhxVJ3bA
+         EhRH17uquK3hTL+fj4b7NqABPkfvWXiYEjgLsbp9XYDItiEELqUXulZOWjR64WUNhGe+
+         ZAd7S1aJaY3R4dGfVMzsgSkHty6QTEe68ECI19AH+Zlr8c6QZeKbIz8p3uW1UQVBN1vT
+         /71w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718718707; x=1719323507;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T24pOsqzjYl83UdbK651IK++6IZv8feRM6P25K+droU=;
+        b=Cp/xR0bWkduNgTeOlO4wsQeLhOlqOqIWw+pPh8YFSHfAIQLBED9RnObiaiQX4oZEZ1
+         kxv30Pf2Yr8xGcSRNs7vkQDJ8DHraMWDtWlAKye6MfXen5kujWsjiea9k99LP6L3mVWB
+         zYGSe5KR0Ov1vkYbBGG/Vbn2uZ4U6JvO6uK5WREgRefC4cGkyVZ/asY47xq7nnAB0dLk
+         KMs/NrmYS7ytMsOwzXJjt3mXr/yDGFO34mh9cGy5yvwbBHNhmpUP+4IRWR1731xkmpYI
+         S2hwcOY4Em/8pYRcJWt7JN7ca4VJFpp37xyd6FX8aKkEg6mzbYRXoZnWA1ExgJk+Xs3V
+         OQ7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWdXVBlROIPLstpKxb1s7MERFi78eBGMCd/1wbZBXRYSgZEQqXhhTFQhbuTVkt1kBMXy/BbCPm3J16GyKN5aEocXRKoljzDrhVGl5ee
+X-Gm-Message-State: AOJu0YyBDSlucgnWoYBS++8tCFLSlYoHFutgG9QVHqn+6N2qklYTGw09
+	IhXb/GT24NFySaFYOZVz/5w7V2RHD18HuKzIYWz3y+D2Qq4S124bdjlA8YPCeOw=
+X-Google-Smtp-Source: AGHT+IH1qH5JRw+foJLL7XOXWrcR22UFT6v7p5/00stwPoOBn9rD8IaPolls6u2mh/ef7fgIDoZYhw==
+X-Received: by 2002:a17:906:680e:b0:a6f:7cb:6e76 with SMTP id a640c23a62f3a-a6f60dc4fa3mr951575666b.51.1718718706771;
+        Tue, 18 Jun 2024 06:51:46 -0700 (PDT)
+Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ecd666sm620723066b.135.2024.06.18.06.51.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 06:51:46 -0700 (PDT)
+Date: Tue, 18 Jun 2024 15:51:44 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Tony Lindgren <tony.lindgren@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] serial: core: Rename preferred console handling
+ for match and update
+Message-ID: <ZnGQ8JAu2OQf0GX8@pathway.suse.cz>
+References: <20240618045458.14731-1-tony.lindgren@linux.intel.com>
+ <20240618045458.14731-4-tony.lindgren@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Armin Wolf <W_Armin@gmx.de>, Stephen Horvath <s.horvath@outlook.com.au>
-References: <20240604040237.1064024-1-linux@roeck-us.net>
- <20240604040237.1064024-6-linux@roeck-us.net>
- <a5aa120d-8497-4ca8-9752-7d800240b999@molgen.mpg.de>
- <efb77b37-30e5-48a8-b4af-eb9995a2882b@roeck-us.net>
- <33f369c1-1098-458e-9398-30037bd8c5aa@molgen.mpg.de>
- <4e09b843-3d2d-46d7-a8e1-2eabc4382dc7@roeck-us.net>
- <f20ea816-5165-401e-948f-6e77682a2d1b@molgen.mpg.de>
- <975af7e5-b1b0-400e-a1c3-6d9140421f25@roeck-us.net>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <975af7e5-b1b0-400e-a1c3-6d9140421f25@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618045458.14731-4-tony.lindgren@linux.intel.com>
 
-Dear Guenter,
-
-
-Am 18.06.24 um 15:32 schrieb Guenter Roeck:
-
-> On 6/18/24 03:25, Paul Menzel wrote:
-> [ ... ]
->>
->>      $ ls -l /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
->>      -r--r--r-- 1 root root 1024 Jun 18 12:17 /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
->>      $ cp /sys/bus/i2c/drivers/spd5118/0-0050/eeprom /tmp
->>      cp: error reading '/sys/bus/i2c/drivers/spd5118/0-0050/eeprom': No such device or address
+On Tue 2024-06-18 07:54:50, Tony Lindgren wrote:
+> We are now matching and updating the preferred console, not adding it.
+> Let's update the naming accordingly to avoid confusion.
 > 
-> That suggests that the i801 driver got an error when trying some chip 
-> operation.
-> Unfortunately I have no idea what that error or the failed operation 
-> might be.
-> 
->>      $ od -t x1 /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
->>      od: /sys/bus/i2c/drivers/spd5118/0-0050/eeprom: read error: No such device or address
->>      0000000
->>
->>> sudo i2cdump -y -f 0 0x50
->>
->>      $ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
->>      No size specified (using byte-data access)
->>      Error: Could not open file `/dev/i2c-0' or `/dev/i2c/0': No such file or directory
->>
-> This should work after you load the "i2c-dev" module.
+> --- a/drivers/tty/serial/serial_base_bus.c
+> +++ b/drivers/tty/serial/serial_base_bus.c
+> @@ -304,7 +305,7 @@ int serial_base_add_preferred_console(struct uart_driver *drv,
 
-Silly me. Thank you.
+I was curious whether this patch renamed everything. And it seems
+that it did not rename serial_base_add_preferred_console().
 
-> If you get it to work, please provide the output. Maybe it helps 
-> tracking down the problem.
+>  	const char *port_match __free(kfree) = NULL;
+>  	int ret;
+>  
+> -	ret = serial_base_add_prefcon(drv->dev_name, port->line);
+> +	ret = serial_base_match_and_update_prefcon(drv->dev_name, port->line);
+>  	if (ret)
+>  		return ret;
+>  
 
-```
-$ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
-No size specified (using byte-data access)
-      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-00: 51 18 0a 86 32 03 32 00 00 00 00 00 ff 01 00 00    Q???2?2......?..
-10: 00 00 00 00 00 00 00 00 00 00 00 00 70 03 00 00    ............p?..
-20: 50 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00    P?..............
-30: 00 58 01 00 00 00 00 00 00 00 00 00 00 00 00 00    .X?.............
-40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-80: 30 10 12 02 04 00 20 62 00 00 00 00 90 02 00 00    0????. b....??..
-90: 00 00 00 00 a0 01 f2 03 7a 0d 00 00 00 00 80 3e    ....????z?....?>
-a0: 80 3e 80 3e 00 7d 80 bb 30 75 27 01 a0 00 82 00    ?>?>.}??0u'??.?.
-b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-c0: 00 00 00 00 00 00 88 13 08 88 13 08 20 4e 20 10    ......?????? N ?
-d0: 27 10 15 34 20 10 27 10 c4 09 04 4c 1d 0c 00 00    '??4 ?'????L??..
-e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-```
+Honestly, I do not understand what are all these layers for.
+Especially, serial_base_match_and_update_prefcon() looks suspicious:
 
-So (00,b) = 0x00 opposed to 0x07 in your example output.
+static int serial_base_match_and_update_prefcon(const char *name, int idx)
+{
+	const char *char_match __free(kfree) = NULL;
+	const char *nmbr_match __free(kfree) = NULL;
+	int ret;
 
-     $ sensors
-     […]
+	/* Handle ttyS specific options */
+	if (strstarts(name, "ttyS")) {
+		/* No name, just a number */
+		nmbr_match = kasprintf(GFP_KERNEL, "%i", idx);
+		if (!nmbr_match)
+			return -ENODEV;
 
-Then there is no change:
+		ret = serial_base_match_and_update_one_prefcon(nmbr_match, name, idx);
+		if (ret)
+			return ret;
 
-```
-$ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
-No size specified (using byte-data access)
-      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-00: 51 18 0a 86 32 03 32 00 00 00 00 00 ff 01 00 00    Q???2?2......?..
-10: 00 00 00 00 00 00 00 00 00 00 00 00 70 03 00 00    ............p?..
-20: 50 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00    P?..............
-30: 00 58 01 00 00 00 00 00 00 00 00 00 00 00 00 00    .X?.............
-40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-80: 30 10 12 02 04 00 20 62 00 00 00 00 90 02 00 00    0????. b....??..
-90: 00 00 00 00 a0 01 f2 03 7a 0d 00 00 00 00 80 3e    ....????z?....?>
-a0: 80 3e 80 3e 00 7d 80 bb 30 75 27 01 a0 00 82 00    ?>?>.}??0u'??.?.
-b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-c0: 00 00 00 00 00 00 88 13 08 88 13 08 20 4e 20 10    ......?????? N ?
-d0: 27 10 15 34 20 10 27 10 c4 09 04 4c 1d 0c 00 00    '??4 ?'????L??..
-e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-```
+		/* Sparc ttya and ttyb */
+		ret = serial_base_add_sparc_console(name, idx);
+		if (ret)
+			return ret;
+	}
+
+	/* Handle the traditional character device name style console=ttyS0 */
+	char_match = kasprintf(GFP_KERNEL, "%s%i", name, idx);
+	if (!char_match)
+		return -ENOMEM;
+
+	return serial_base_match_and_update_one_prefcon(char_match, name, idx);
+}
+
+It seems to try whether c->devname matches a number "X", or "ttySX".
+It even tries the sparc-specific transformations in
+serial_base_add_sparc_console()
+
+But this is the original format which does _not_ include ":".
+It never will be stored in c->devname and will never match.
+
+I think that it has been the case even before this patchset.
+
+I think that we should remove these layers and check just
+the "DEVNAME:X.Y" format, aka "%s:%d.%d" [*].
 
 
-Kind regards,
+[*] It would be nice to use the same printf format "%s:%d.%d"
+    in both serial_base_device_init() and also in the functions
+    matching the devname to make it clear that these are
+    the same names. Heh, I just guess that these are the same
+    names.
 
-Paul
+Best Regards,
+Petr
 
