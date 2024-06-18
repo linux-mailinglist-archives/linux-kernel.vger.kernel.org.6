@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-220343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AACA190E007
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:41:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8ED90E00A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 323901F23431
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:41:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A954C28149D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D761891B9;
-	Tue, 18 Jun 2024 23:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D1C18A952;
+	Tue, 18 Jun 2024 23:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="frOy5sHd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UasgZXeA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222091849C0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A781891D4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718754055; cv=none; b=RgWe8B9Yn0dWm56TB0/ouLExHqq94JNgmRs9D2Xv4SesCfDFht67RfD4OS1nzS8cGSYqqpBBPn9LBhFGlXRLx/vAjcIV1n8vZolwsOxR5onZELON3F8aNs/52g2Js36bVTCi6xXo2u41C5j+xXVd3KyOW1HwBVU/oVDvoZO9jCE=
+	t=1718754059; cv=none; b=dfgQOfnFXQoAumDj62ankWs/zXICAsdGn0Ac/CYRquX6UwkkFvB8sgiT4qV7aXzUdHQ+OyqREaASYjKI/1WSFspT9E6YxrlK9OaZqLhFPBOEX9ohBmkLAh5bHY40iHu893/CBjU6QSRypIASDUcZ5KpEQsTfxrZA3XurxwJtdTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718754055; c=relaxed/simple;
-	bh=NJ06HFiNnwp5HwQ1Yv82r8BnXq42M6HbbJtDiVlYhkw=;
+	s=arc-20240116; t=1718754059; c=relaxed/simple;
+	bh=+7YZ7zoHeaWY2jj+Hmsqe+5GAkc7KbDsloUj0Ihy+bM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d6COD/5rq6kzO7ZASneOgkfmA6YOSGVFc4VXuRs6U4mbkGjingfMFmdWHk8bRDPJ4Ql5FTX7MpOPS0k9Pu3MiR3gJkkNJbXFkwn5croEDeHK8DfoFVeyzRujTobPwfLNc0/m2/m7XhoiLEbzqyKUs9v4U4RAxK4tcisBCvcgQdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=frOy5sHd; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=HhicJNMDXCf7T5XmjBnyHiapzRu7+IDQzLPHt6LbjRfkw02Fli2xRDEaaLqNa6tUUXLaPJZZ0b7IHHMhtFVfxow74M07DJWNnWcFbn4n1CFOYLCg+JSgL/RneLGTFUdFbRINfNLopKjCh7f7v9bp7Ov785QTsulFxZVOk5DgUQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UasgZXeA; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718754053;
+	s=mimecast20190719; t=1718754057;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FLt8R9mG7+Q5vVfP6l0HGRxBa2WWQOQ3AyEB5PRg0/8=;
-	b=frOy5sHdkz4PjJPuxX+L/cbj4ZRYDRoFdpKpcUUaBsIIMYbM0BMx4b4GB2TUk/9wTDwjCP
-	QCvrxeuW0Q54pe/XM+GT8ijwXMA/39YVx4JC2u+3WZqp758jtCFaIj0NVTK4rLzilDZCDe
-	Z1BWf99KlrpNmCR9Em1ViUngCAA2XHk=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=zBDr9a0UbEqIFlf/LskXVOaMDv/jbs0Q1ckYvSRHn7Y=;
+	b=UasgZXeASfmYdUUyHSZRsRdFuZl9n2h7uMCzTGfhDb6twUKCDEDfiIoP7l3V7VIA057ZZH
+	QwLQwoV7XKQlu+R4ykXkraV7XuHfBqV7ONhHcP6kT03GgvJ+5YO1r6Ybay0pnVRFu7M1AD
+	LEKPIAN0NV5Fg7X6IQjKxYiO8lKkAVc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-510-ZpXiEOe8PpO9WjahEQMO8g-1; Tue, 18 Jun 2024 19:40:51 -0400
-X-MC-Unique: ZpXiEOe8PpO9WjahEQMO8g-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-36083bd1b12so3634798f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:40:51 -0700 (PDT)
+ us-mta-453-rgTKh5UDPpqyOWFgxi8fDQ-1; Tue, 18 Jun 2024 19:40:55 -0400
+X-MC-Unique: rgTKh5UDPpqyOWFgxi8fDQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4246ed3f877so11568425e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:40:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718754050; x=1719358850;
+        d=1e100.net; s=20230601; t=1718754054; x=1719358854;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FLt8R9mG7+Q5vVfP6l0HGRxBa2WWQOQ3AyEB5PRg0/8=;
-        b=Mnzt6Mj+iwpRlVcttDbmd2CHaE6s0MknVegou9BL6PlVBSTHxNuh5TnOIBKhDwYK1T
-         Bq2/68zhAobPeHlTU7+xVZWYPGrR64aUyGHEN90twZ4mw6KBmH9kj9f0VQiScTO4nAgL
-         f6TULEMJCsExx4JV5oeCyMVneA+j4JPfmK51+Kw15fGxeBi1KMmwr7HHn2B5WzW3/tLU
-         gTLQG9f2FjqBw4c6uw3wynffHtXBOrSI7tMY3O+guZN84oB91OwEV51tGfLTM0/FH8+0
-         d9VPX6NZDevssKKN4lZezdejuC7FsBuReou+AXyV3LjQUxo9f9eArXtlTRPEQosYGNCE
-         wrmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKZ9On6O2o7D/vEmkL5oghIbWGPZoUqv8bMcRCw9tacmx5fTWov9b/5CSrOh0o2HX41WkWTUoHJxeGPXDsbXrjuOwJTOu69l2/sHHy
-X-Gm-Message-State: AOJu0Yw0UlPjKf2qcSAxhrAOqeGfowilPjIC10Ag1vuptabzfRQGcDIy
-	ZrFVXsQraxoVo0Ipr34Y9Oxk8HcCYEyYxgvxMkYUfVjytZ9lh3wCt3SnoUYtwVmBu4uh0WJlivC
-	x+dKliOJDcz0jHvl+HThB4G6E93q1rpm7xkH5KlMXiEMix1Fxh9/oxPx0LoueIw==
-X-Received: by 2002:a5d:4535:0:b0:354:f218:9661 with SMTP id ffacd0b85a97d-363170ed3femr858522f8f.14.1718754050262;
-        Tue, 18 Jun 2024 16:40:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGU+U6Wm0EGp4IMDnnc/QucR5wKEoc9VgmpJhXeJunCegvyHy5rlDYh7FvIr5roHHV/75nmtw==
-X-Received: by 2002:a5d:4535:0:b0:354:f218:9661 with SMTP id ffacd0b85a97d-363170ed3femr858498f8f.14.1718754049849;
-        Tue, 18 Jun 2024 16:40:49 -0700 (PDT)
+        bh=zBDr9a0UbEqIFlf/LskXVOaMDv/jbs0Q1ckYvSRHn7Y=;
+        b=rnPbaRM1X7hp7EHb2Hs59aO9UArRBfc7DXfwU9kMBpvqmotqp2+I3GbnwLdsC8y33s
+         1Y7CQ9sV37F0Yt8Zp9L0EEXMEZDgZh56XrUKq458vwWhv9glaQa8vARzB431TyU8Pt0w
+         wCjL5uJeX+Bc3hKIR9TncZYXbfAyT8JuH9mv9I8A7z/noQ9Ov/0KuUOc6YlkvucxDkHF
+         +p1DNe8yLjG4WJL4mEG2eQyHI+XcVGYKfXfLfc3X5jjGX0SUwJ/C1CxpZJ0aTDdBSqrM
+         Mo9zGHKm7fGx0VizMt3nCGK7Q774WsNsNTfZ4Hog4WQZO5OD0UK66vEOpu3kh4oj+9JT
+         00NA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPtj8DeHflY+4EHBvV4N/9zc+rFsQfl0kkcLQuZ3jMWzmAH32WGiPegNAn6UA4gE1cyWK99VupijMAISuZdWCblifomwbPYC35ajsc
+X-Gm-Message-State: AOJu0YwD+PQM7pNsABt5PKes/keZ65jUfmjYKlHb66cSIGjI+5H1wT+K
+	TJ8MN3QWjR0CYobTLWck9IzZRpPzyEa05BdyfRkFo0EvEedJMUEanasekcgX9jlE8jylYIcDS6k
+	Cl3fBoXy5SGVaa8T9KRO6QIB6GF6FDJEs6lkWsqkE+91Mu3hxf5m15hnHVd6BCg==
+X-Received: by 2002:a05:600c:4999:b0:422:615f:6499 with SMTP id 5b1f17b1804b1-42475296a36mr5599225e9.31.1718754054190;
+        Tue, 18 Jun 2024 16:40:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEufWj1Ckx6qQqVdF2phLsYFyC0caxpANSWAXdqR9eux02qPS2yQharLpwxEtuSMotu8Vow8w==
+X-Received: by 2002:a05:600c:4999:b0:422:615f:6499 with SMTP id 5b1f17b1804b1-42475296a36mr5599025e9.31.1718754053787;
+        Tue, 18 Jun 2024 16:40:53 -0700 (PDT)
 Received: from cassiopeiae.. ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360917c264bsm8131346f8f.56.2024.06.18.16.40.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-362e3e1abd5sm1407662f8f.47.2024.06.18.16.40.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 16:40:49 -0700 (PDT)
+        Tue, 18 Jun 2024 16:40:53 -0700 (PDT)
 From: Danilo Krummrich <dakr@redhat.com>
 To: gregkh@linuxfoundation.org,
 	rafael@kernel.org,
@@ -97,9 +97,9 @@ Cc: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-pci@vger.kernel.org,
 	Danilo Krummrich <dakr@redhat.com>
-Subject: [PATCH v2 02/10] rust: implement generic driver registration
-Date: Wed, 19 Jun 2024 01:39:48 +0200
-Message-ID: <20240618234025.15036-3-dakr@redhat.com>
+Subject: [PATCH v2 03/10] rust: implement `IdArray`, `IdTable` and `RawDeviceId`
+Date: Wed, 19 Jun 2024 01:39:49 +0200
+Message-ID: <20240618234025.15036-4-dakr@redhat.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240618234025.15036-1-dakr@redhat.com>
 References: <20240618234025.15036-1-dakr@redhat.com>
@@ -111,180 +111,390 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement the generic `Registration` type and the `DriverOps` trait.
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
 
-The `Registration` structure is the common type that represents a driver
-registration and is typically bound to the lifetime of a module. However,
-it doesn't implement actual calls to the kernel's driver core to register
-drivers itself.
+Most subsystems use some kind of ID to match devices and drivers. Hence,
+we have to provide Rust drivers an abstraction to register an ID table
+for the driver to match.
 
-Instead the `DriverOps` trait is provided to subsystems, which have to
-implement `DriverOps::register` and `DrvierOps::unregister`. Subsystems
-have to provide an implementation for both of those methods where the
-subsystem specific variants to register / unregister a driver have to
-implemented.
+Generally, those IDs are subsystem specific and hence need to be
+implemented by the corresponding subsystem. However, the `IdArray`,
+`IdTable` and `RawDeviceId` types provide a generalized implementation
+that makes the life of subsystems easier to do so.
 
-For instance, the PCI subsystem would call __pci_register_driver() from
-`DriverOps::register` and pci_unregister_driver() from
-`DrvierOps::unregister`.
-
-This patch is based on previous work from Wedson Almeida Filho.
-
-Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+Co-developed-by: Asahi Lina <lina@asahilina.net>
+Signed-off-by: Asahi Lina <lina@asahilina.net>
 Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+Co-developed-by: Danilo Krummrich <dakr@redhat.com>
 Signed-off-by: Danilo Krummrich <dakr@redhat.com>
 ---
- rust/kernel/driver.rs | 128 ++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs    |   1 +
- 2 files changed, 129 insertions(+)
- create mode 100644 rust/kernel/driver.rs
+ rust/kernel/device_id.rs | 336 +++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs       |   2 +
+ 2 files changed, 338 insertions(+)
+ create mode 100644 rust/kernel/device_id.rs
 
-diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
 new file mode 100644
-index 000000000000..e04406b93b56
+index 000000000000..c490300f29bb
 --- /dev/null
-+++ b/rust/kernel/driver.rs
-@@ -0,0 +1,128 @@
++++ b/rust/kernel/device_id.rs
+@@ -0,0 +1,336 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+//! Generic support for drivers of different buses (e.g., PCI, Platform, Amba, etc.).
++//! Generic implementation of device IDs.
 +//!
-+//! Each bus / subsystem is expected to implement [`DriverOps`], which allows drivers to register
-+//! using the [`Registration`] class.
++//! Each bus / subsystem that matches device and driver through a bus / subsystem specific ID is
++//! expected to implement [`RawDeviceId`].
 +
-+use crate::error::{Error, Result};
-+use crate::{init::PinInit, str::CStr, try_pin_init, types::Opaque, ThisModule};
-+use core::pin::Pin;
-+use macros::{pin_data, pinned_drop};
++use core::marker::PhantomData;
 +
-+/// The [`DriverOps`] trait serves as generic interface for subsystems (e.g., PCI, Platform, Amba,
-+/// etc.) to privide the corresponding subsystem specific implementation to register / unregister a
-+/// driver of the particular type (`RegType`).
++/// Conversion from a device id to a raw device id.
 +///
-+/// For instance, the PCI subsystem would set `RegType` to `bindings::pci_driver` and call
-+/// `bindings::__pci_register_driver` from `DriverOps::register` and
-+/// `bindings::pci_unregister_driver` from `DriverOps::unregister`.
-+pub trait DriverOps {
-+    /// The type that holds information about the registration. This is typically a struct defined
-+    /// by the C portion of the kernel.
-+    type RegType: Default;
-+
-+    /// Registers a driver.
-+    ///
-+    /// # Safety
-+    ///
-+    /// `reg` must point to valid, initialised, and writable memory. It may be modified by this
-+    /// function to hold registration state.
-+    ///
-+    /// On success, `reg` must remain pinned and valid until the matching call to
-+    /// [`DriverOps::unregister`].
-+    fn register(
-+        reg: &mut Self::RegType,
-+        name: &'static CStr,
-+        module: &'static ThisModule,
-+    ) -> Result;
-+
-+    /// Unregisters a driver previously registered with [`DriverOps::register`].
-+    ///
-+    /// # Safety
-+    ///
-+    /// `reg` must point to valid writable memory, initialised by a previous successful call to
-+    /// [`DriverOps::register`].
-+    fn unregister(reg: &mut Self::RegType);
-+}
-+
-+/// A [`Registration`] is a generic type that represents the registration of some driver type (e.g.
-+/// `bindings::pci_driver`). Therefore a [`Registration`] is initialized with some type that
-+/// implements the [`DriverOps`] trait, such that the generic `T::register` and `T::unregister`
-+/// calls result in the subsystem specific registration calls.
++/// This is meant to be implemented by buses/subsystems so that they can use [`IdTable`] to
++/// guarantee (at compile-time) zero-termination of device id tables provided by drivers.
 +///
-+///Once the `Registration` structure is dropped, the driver is unregistered.
-+#[pin_data(PinnedDrop)]
-+pub struct Registration<T: DriverOps> {
-+    #[pin]
-+    reg: Opaque<T::RegType>,
-+}
-+
-+// SAFETY: `Registration` has no fields or methods accessible via `&Registration`, so it is safe to
-+// share references to it with multiple threads as nothing can be done.
-+unsafe impl<T: DriverOps> Sync for Registration<T> {}
-+
-+// SAFETY: Both registration and unregistration are implemented in C and safe to be performed from
-+// any thread, so `Registration` is `Send`.
-+unsafe impl<T: DriverOps> Send for Registration<T> {}
-+
-+impl<T: DriverOps> Registration<T> {
-+    /// Creates a new instance of the registration object.
-+    pub fn new(name: &'static CStr, module: &'static ThisModule) -> impl PinInit<Self, Error> {
-+        try_pin_init!(Self {
-+            reg <- Opaque::try_ffi_init(|ptr: *mut T::RegType| {
-+                // SAFETY: `try_ffi_init` guarantees that `ptr` is valid for write.
-+                unsafe { ptr.write(T::RegType::default()) };
-+
-+                // SAFETY: `try_ffi_init` guarantees that `ptr` is valid for write, and it has
-+                // just been initialised above, so it's also valid for read.
-+                let drv = unsafe { &mut *ptr };
-+
-+                T::register(drv, name, module)
-+            }),
-+        })
-+    }
-+}
-+
-+#[pinned_drop]
-+impl<T: DriverOps> PinnedDrop for Registration<T> {
-+    fn drop(self: Pin<&mut Self>) {
-+        let drv = unsafe { &mut *self.reg.get() };
-+
-+        T::unregister(drv);
-+    }
-+}
-+
-+/// A kernel module that only registers the given driver on init.
++/// Originally, RawDeviceId was implemented as a const trait. However, this unstable feature is
++/// broken/gone in 1.73. To work around this, turn IdArray::new() into a macro such that it can use
++/// concrete types (which can still have const associated functions) instead of a trait.
 +///
-+/// This is a helper struct to make it easier to define single-functionality modules, in this case,
-+/// modules that offer a single driver.
-+#[pin_data]
-+pub struct Module<T: DriverOps> {
-+    #[pin]
-+    _driver: Registration<T>,
-+}
-+
-+impl<T: DriverOps + Sync + Send> crate::InPlaceModule for Module<T> {
-+    fn init(name: &'static CStr, module: &'static ThisModule) -> impl PinInit<Self, Error> {
-+        try_pin_init!(Self {
-+            _driver <- Registration::<T>::new(name, module),
-+        })
-+    }
-+}
-+
-+/// Declares a kernel module that exposes a single driver.
++/// # Safety
 +///
-+/// It is meant to be used as a helper by other subsystems so they can more easily expose their own
-+/// macros.
-+#[macro_export]
-+macro_rules! module_driver {
-+    (<$gen_type:ident>, $driver_ops:ty, { type: $type:ty, $($f:tt)* }) => {
-+        type Ops<$gen_type> = $driver_ops;
-+        type ModuleType = $crate::driver::Module<Ops<$type>>;
-+        $crate::prelude::module! {
-+            type: ModuleType,
-+            $($f)*
++/// Implementers must ensure that:
++///   - [`RawDeviceId::ZERO`] is actually a zeroed-out version of the raw device id.
++///   - `to_rawid` is implemented and stores `offset` in the context/data field of the raw device
++///     id so that buses can recover the pointer to the data. (This should actually be a trait
++///     function, however, this requires `const_trait_impl`, and hence has to changed once the
++///     feature is stabilized.)
++pub unsafe trait RawDeviceId {
++    /// The raw type that holds the device id.
++    ///
++    /// Id tables created from [`Self`] are going to hold this type in its zero-terminated array.
++    type RawType: Copy;
++
++    /// A zeroed-out representation of the raw device id.
++    ///
++    /// Id tables created from [`Self`] use [`Self::ZERO`] as the sentinel to indicate the end of
++    /// the table.
++    const ZERO: Self::RawType;
++}
++
++/// A zero-terminated device id array, followed by context data.
++#[repr(C)]
++pub struct IdArray<T: RawDeviceId, U, const N: usize> {
++    ids: [T::RawType; N],
++    sentinel: T::RawType,
++    id_infos: [Option<U>; N],
++}
++
++impl<T: RawDeviceId, U, const N: usize> IdArray<T, U, N> {
++    const U_NONE: Option<U> = None;
++
++    /// Returns an `IdTable` backed by `self`.
++    ///
++    /// This is used to essentially erase the array size.
++    pub const fn as_table(&self) -> IdTable<'_, T, U> {
++        IdTable {
++            first: &self.ids[0],
++            _p: PhantomData,
 +        }
 +    }
++
++    /// Creates a new instance of the array.
++    ///
++    /// The contents are derived from the given identifiers and context information.
++    #[doc(hidden)]
++    pub const unsafe fn new(raw_ids: [T::RawType; N], infos: [Option<U>; N]) -> Self
++    where
++        T: RawDeviceId + Copy,
++        T::RawType: Copy + Clone,
++    {
++        Self {
++            ids: raw_ids,
++            sentinel: T::ZERO,
++            id_infos: infos,
++        }
++    }
++
++    #[doc(hidden)]
++    pub const fn get_offset(idx: usize) -> isize
++    where
++        T: RawDeviceId + Copy,
++        T::RawType: Copy + Clone,
++    {
++        // SAFETY: We are only using this dummy value to get offsets.
++        let array = unsafe { Self::new([T::ZERO; N], [Self::U_NONE; N]) };
++        // SAFETY: Both pointers are within `array` (or one byte beyond), consequently they are
++        // derived from the same allocated object. We are using a `u8` pointer, whose size 1,
++        // so the pointers are necessarily 1-byte aligned.
++        let ret = unsafe {
++            (&array.id_infos[idx] as *const _ as *const u8)
++                .offset_from(&array.ids[idx] as *const _ as _)
++        };
++        core::mem::forget(array);
++        ret
++    }
++}
++
++// Creates a new ID array. This is a macro so it can take the concrete ID type as a parameter in
++// order to call to_rawid() on it, and still remain const. This is necessary until a new
++// const_trait_impl implementation lands, since the existing implementation was removed in Rust
++// 1.73.
++#[macro_export]
++#[doc(hidden)]
++macro_rules! _new_id_array {
++    (($($args:tt)*), $id_type:ty) => {{
++        /// Creates a new instance of the array.
++        ///
++        /// The contents are derived from the given identifiers and context information.
++        const fn new< U, const N: usize>(ids: [$id_type; N], infos: [Option<U>; N])
++            -> $crate::device_id::IdArray<$id_type, U, N>
++        where
++            $id_type: $crate::device_id::RawDeviceId + Copy,
++            <$id_type as $crate::device_id::RawDeviceId>::RawType: Copy + Clone,
++        {
++            let mut raw_ids =
++                [<$id_type as $crate::device_id::RawDeviceId>::ZERO; N];
++            let mut i = 0usize;
++            while i < N {
++                let offset: isize = $crate::device_id::IdArray::<$id_type, U, N>::get_offset(i);
++                raw_ids[i] = ids[i].to_rawid(offset);
++                i += 1;
++            }
++
++            // SAFETY: We are passing valid arguments computed with the correct offsets.
++            unsafe {
++                $crate::device_id::IdArray::<$id_type, U, N>::new(raw_ids, infos)
++            }
++       }
++
++        new($($args)*)
++    }}
++}
++
++/// A device id table.
++///
++/// The table is guaranteed to be zero-terminated and to be followed by an array of context data of
++/// type `Option<U>`.
++pub struct IdTable<'a, T: RawDeviceId, U> {
++    first: &'a T::RawType,
++    _p: PhantomData<&'a U>,
++}
++
++impl<T: RawDeviceId, U> AsRef<T::RawType> for IdTable<'_, T, U> {
++    fn as_ref(&self) -> &T::RawType {
++        self.first
++    }
++}
++
++/// Counts the number of parenthesis-delimited, comma-separated items.
++///
++/// # Examples
++///
++/// ```
++/// # use kernel::count_paren_items;
++///
++/// assert_eq!(0, count_paren_items!());
++/// assert_eq!(1, count_paren_items!((A)));
++/// assert_eq!(1, count_paren_items!((A),));
++/// assert_eq!(2, count_paren_items!((A), (B)));
++/// assert_eq!(2, count_paren_items!((A), (B),));
++/// assert_eq!(3, count_paren_items!((A), (B), (C)));
++/// assert_eq!(3, count_paren_items!((A), (B), (C),));
++/// ```
++#[macro_export]
++macro_rules! count_paren_items {
++    (($($item:tt)*), $($remaining:tt)*) => { 1 + $crate::count_paren_items!($($remaining)*) };
++    (($($item:tt)*)) => { 1 };
++    () => { 0 };
++}
++
++/// Converts a comma-separated list of pairs into an array with the first element. That is, it
++/// discards the second element of the pair.
++///
++/// Additionally, it automatically introduces a type if the first element is warpped in curly
++/// braces, for example, if it's `{v: 10}`, it becomes `X { v: 10 }`; this is to avoid repeating
++/// the type.
++///
++/// # Examples
++///
++/// ```
++/// # use kernel::first_item;
++///
++/// #[derive(PartialEq, Debug)]
++/// struct X {
++///     v: u32,
++/// }
++///
++/// assert_eq!([] as [X; 0], first_item!(X, ));
++/// assert_eq!([X { v: 10 }], first_item!(X, ({ v: 10 }, Y)));
++/// assert_eq!([X { v: 10 }], first_item!(X, ({ v: 10 }, Y),));
++/// assert_eq!([X { v: 10 }], first_item!(X, (X { v: 10 }, Y)));
++/// assert_eq!([X { v: 10 }], first_item!(X, (X { v: 10 }, Y),));
++/// assert_eq!([X { v: 10 }, X { v: 20 }], first_item!(X, ({ v: 10 }, Y), ({ v: 20 }, Y)));
++/// assert_eq!([X { v: 10 }, X { v: 20 }], first_item!(X, ({ v: 10 }, Y), ({ v: 20 }, Y),));
++/// assert_eq!([X { v: 10 }, X { v: 20 }], first_item!(X, (X { v: 10 }, Y), (X { v: 20 }, Y)));
++/// assert_eq!([X { v: 10 }, X { v: 20 }], first_item!(X, (X { v: 10 }, Y), (X { v: 20 }, Y),));
++/// assert_eq!([X { v: 10 }, X { v: 20 }, X { v: 30 }],
++///            first_item!(X, ({ v: 10 }, Y), ({ v: 20 }, Y), ({v: 30}, Y)));
++/// assert_eq!([X { v: 10 }, X { v: 20 }, X { v: 30 }],
++///            first_item!(X, ({ v: 10 }, Y), ({ v: 20 }, Y), ({v: 30}, Y),));
++/// assert_eq!([X { v: 10 }, X { v: 20 }, X { v: 30 }],
++///            first_item!(X, (X { v: 10 }, Y), (X { v: 20 }, Y), (X {v: 30}, Y)));
++/// assert_eq!([X { v: 10 }, X { v: 20 }, X { v: 30 }],
++///            first_item!(X, (X { v: 10 }, Y), (X { v: 20 }, Y), (X {v: 30}, Y),));
++/// ```
++#[macro_export]
++macro_rules! first_item {
++    ($id_type:ty, $(({$($first:tt)*}, $second:expr)),* $(,)?) => {
++        {
++            type IdType = $id_type;
++            [$(IdType{$($first)*},)*]
++        }
++    };
++    ($id_type:ty, $(($first:expr, $second:expr)),* $(,)?) => { [$($first,)*] };
++}
++
++/// Converts a comma-separated list of pairs into an array with the second element. That is, it
++/// discards the first element of the pair.
++///
++/// # Examples
++///
++/// ```
++/// # use kernel::second_item;
++///
++/// assert_eq!([] as [u32; 0], second_item!());
++/// assert_eq!([10u32], second_item!((X, 10u32)));
++/// assert_eq!([10u32], second_item!((X, 10u32),));
++/// assert_eq!([10u32], second_item!(({ X }, 10u32)));
++/// assert_eq!([10u32], second_item!(({ X }, 10u32),));
++/// assert_eq!([10u32, 20], second_item!((X, 10u32), (X, 20)));
++/// assert_eq!([10u32, 20], second_item!((X, 10u32), (X, 20),));
++/// assert_eq!([10u32, 20], second_item!(({ X }, 10u32), ({ X }, 20)));
++/// assert_eq!([10u32, 20], second_item!(({ X }, 10u32), ({ X }, 20),));
++/// assert_eq!([10u32, 20, 30], second_item!((X, 10u32), (X, 20), (X, 30)));
++/// assert_eq!([10u32, 20, 30], second_item!((X, 10u32), (X, 20), (X, 30),));
++/// assert_eq!([10u32, 20, 30], second_item!(({ X }, 10u32), ({ X }, 20), ({ X }, 30)));
++/// assert_eq!([10u32, 20, 30], second_item!(({ X }, 10u32), ({ X }, 20), ({ X }, 30),));
++/// ```
++#[macro_export]
++macro_rules! second_item {
++    ($(({$($first:tt)*}, $second:expr)),* $(,)?) => { [$($second,)*] };
++    ($(($first:expr, $second:expr)),* $(,)?) => { [$($second,)*] };
++}
++
++/// Defines a new constant [`IdArray`] with a concise syntax.
++///
++/// It is meant to be used by buses and subsystems to create a similar macro with their device id
++/// type already specified, i.e., with fewer parameters to the end user.
++///
++/// # Examples
++///
++/// ```
++/// # use kernel::{define_id_array, device_id::RawDeviceId};
++///
++/// #[derive(Copy, Clone)]
++/// struct Id(u32);
++///
++/// // SAFETY: `ZERO` is all zeroes and `to_rawid` stores `offset` as the second element of the raw
++/// // device id pair.
++/// unsafe impl RawDeviceId for Id {
++///     type RawType = (u64, isize);
++///     const ZERO: Self::RawType = (0, 0);
++/// }
++///
++/// impl Id {
++///     #[allow(clippy::wrong_self_convention)]
++///     const fn to_rawid(&self, offset: isize) -> <Id as RawDeviceId>::RawType {
++///         (self.0 as u64 + 1, offset)
++///     }
++/// }
++///
++/// define_id_array!(A1, Id, (), []);
++/// define_id_array!(A2, Id, &'static [u8], [(Id(10), None)]);
++/// define_id_array!(A3, Id, &'static [u8], [(Id(10), Some(b"id1")), ]);
++/// define_id_array!(A4, Id, &'static [u8], [(Id(10), Some(b"id1")), (Id(20), Some(b"id2"))]);
++/// define_id_array!(A5, Id, &'static [u8], [(Id(10), Some(b"id1")), (Id(20), Some(b"id2")), ]);
++/// define_id_array!(A6, Id, &'static [u8], [(Id(10), None), (Id(20), Some(b"id2")), ]);
++/// define_id_array!(A7, Id, &'static [u8], [(Id(10), Some(b"id1")), (Id(20), None), ]);
++/// define_id_array!(A8, Id, &'static [u8], [(Id(10), None), (Id(20), None), ]);
++/// ```
++#[macro_export]
++macro_rules! define_id_array {
++    ($table_name:ident, $id_type:ty, $data_type:ty, [ $($t:tt)* ]) => {
++        const $table_name: $crate::device_id::IdArray<$id_type,
++                                                      $data_type, {
++                                                          $crate::count_paren_items!($($t)*)
++                                                      }> = $crate::_new_id_array!(
++                                                          ($crate::first_item!($id_type, $($t)*),
++                                                           $crate::second_item!($($t)*)),
++                                                          $id_type);
++    };
++}
++
++/// Defines a new constant [`IdTable`] with a concise syntax.
++///
++/// It is meant to be used by buses and subsystems to create a similar macro with their device id
++/// type already specified, i.e., with fewer parameters to the end user.
++///
++/// # Examples
++///
++/// ```
++/// # use kernel::{define_id_table, device_id::RawDeviceId};
++///
++/// #[derive(Copy, Clone)]
++/// struct Id(u32);
++///
++/// // SAFETY: `ZERO` is all zeroes and `to_rawid` stores `offset` as the second element of the raw
++/// // device id pair.
++/// unsafe impl RawDeviceId for Id {
++///     type RawType = (u64, isize);
++///     const ZERO: Self::RawType = (0, 0);
++/// }
++///
++/// impl Id {
++///     #[allow(clippy::wrong_self_convention)]
++///     const fn to_rawid(&self, offset: isize) -> <Id as RawDeviceId>::RawType {
++///         (self.0 as u64 + 1, offset)
++///     }
++/// }
++///
++/// define_id_table!(T1, Id, &'static [u8], [(Id(10), None)]);
++/// define_id_table!(T2, Id, &'static [u8], [(Id(10), Some(b"id1")), ]);
++/// define_id_table!(T3, Id, &'static [u8], [(Id(10), Some(b"id1")), (Id(20), Some(b"id2"))]);
++/// define_id_table!(T4, Id, &'static [u8], [(Id(10), Some(b"id1")), (Id(20), Some(b"id2")), ]);
++/// define_id_table!(T5, Id, &'static [u8], [(Id(10), None), (Id(20), Some(b"id2")), ]);
++/// define_id_table!(T6, Id, &'static [u8], [(Id(10), Some(b"id1")), (Id(20), None), ]);
++/// define_id_table!(T7, Id, &'static [u8], [(Id(10), None), (Id(20), None), ]);
++/// ```
++#[macro_export]
++macro_rules! define_id_table {
++    ($table_name:ident, $id_type:ty, $data_type:ty, [ $($t:tt)* ]) => {
++        const $table_name: Option<$crate::device_id::IdTable<'static, $id_type, $data_type>> = {
++            $crate::define_id_array!(ARRAY, $id_type, $data_type, [ $($t)* ]);
++            Some(ARRAY.as_table())
++        };
++    };
 +}
 diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 5af00e072a58..5382402cd3db 100644
+index 5382402cd3db..98e1a1425d17 100644
 --- a/rust/kernel/lib.rs
 +++ b/rust/kernel/lib.rs
-@@ -29,6 +29,7 @@
+@@ -13,6 +13,7 @@
+ 
+ #![no_std]
+ #![feature(coerce_unsized)]
++#![feature(const_refs_to_cell)]
+ #![feature(dispatch_from_dyn)]
+ #![feature(new_uninit)]
+ #![feature(receiver_trait)]
+@@ -29,6 +30,7 @@
  pub mod alloc;
  mod build_assert;
  pub mod device;
-+pub mod driver;
++pub mod device_id;
+ pub mod driver;
  pub mod error;
  #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
- pub mod firmware;
 -- 
 2.45.1
 
