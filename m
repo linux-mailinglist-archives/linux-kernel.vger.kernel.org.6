@@ -1,98 +1,145 @@
-Return-Path: <linux-kernel+bounces-219330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93B690CCEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:00:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E228F90CCE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 949391F26384
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:00:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A5C280D8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52011A08A6;
-	Tue, 18 Jun 2024 12:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D068019F48C;
+	Tue, 18 Jun 2024 12:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcLycoM3"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBYFTB6N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD51A1A071F;
-	Tue, 18 Jun 2024 12:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162F815533D;
+	Tue, 18 Jun 2024 12:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714438; cv=none; b=VqUt5ZbnAl5ccsjMLYIrRb1CL091O3uRaQfU2F7UXXXqT3/uPTrOW1TOmZ9YiOMaNSXWsfyQdw+7ZvPL7ejPsBfsCSiZskjFZ2QtWZUWa+ur2I6d8ZXJPzbFvtWntzKRfBAdnM4ykVt1EaMiE/J+aEGpxX4dEAt4uESRNmFvot4=
+	t=1718714427; cv=none; b=Fyr7tLH8bNbAM6LhgUZaGbOqYeM8Aqou4/5dEqmxKa7Ah5Uzq9M3dCrVgOxes3OxC11ns6a+WlirR/jL6bxZvugfTyAvsNoRSjHvXofDToLcmrd75gForCuYUwLaPx4/IXy6Xz9NUpPrrUR7qggZ0BMGU2+lBTRx60Mfr0bJV6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714438; c=relaxed/simple;
-	bh=5a6B7OS5y/6qcp1oPN+ywcFiRxZ6JJXCwOzY6VEkxZg=;
+	s=arc-20240116; t=1718714427; c=relaxed/simple;
+	bh=PLYFcs7ICDH3FpoaefktwgaRhPxIEU6ZQGa1ScCB6cA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZiP5AXpQIbToBkqX9VnD1gu4c+lss0AZIvGhLuJHrEwNa6GqhgVK9w7tNchxB++EwzbYOc9fXPMYWwnlVT7wD6lcp3HGMuAez+S2X8+4nz5Wg7amHgf5MceqA+dVVvJxj9b9ywXqskhurt7nZSyRz5pH+l9so5/X9jv8Gn19s9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcLycoM3; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c2c6b27428so4189370a91.3;
-        Tue, 18 Jun 2024 05:40:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718714436; x=1719319236; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5a6B7OS5y/6qcp1oPN+ywcFiRxZ6JJXCwOzY6VEkxZg=;
-        b=NcLycoM3Ef8Wq+qSHN2erLNDeH3L84ywxcqX0ujbvW4XPcctS0OnMHvD7HjBOh0sTy
-         zDjLlU/SEtoToQ1fs56GUHNKm3OL6nwsppajIVOG9ArbrOWqWpNo41Fpi2dMFf/q4gZQ
-         PiAErmr/VhFqBgjfuRdDUtD7/jNcVdwaXd0BjG3SQImU5C/4iiBU9SEv0o0mHOgQxHWS
-         ydR0kumarazo6vOtzFjzDen0bp/VdbW2vupHmvNcAeP+dinxK4xr4bU5VskXYIbeltBz
-         oIXafWN83Ao+5HE9iR7rDcAob3o3LNhEVP+jS2RG+7jKtJ0c2ilJ77zMg7yp/YDttFcy
-         2CIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718714436; x=1719319236;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5a6B7OS5y/6qcp1oPN+ywcFiRxZ6JJXCwOzY6VEkxZg=;
-        b=J43uxWacW31BRHRg9onmlbZFPwZFKSEeO31MXOlB4s8cxVllIokrQn1CYJRXA7oAvZ
-         3guNVgy8qkBpsZpgA24VvE/lXskkSbG6noHyE9XEp/ipcZMeg7CJxfEzO+P3v6NiTAnm
-         8UiWyvfIaB5UwVrARKBq+yqLGL6jAnZudyo9mIwhaxaoayHhGGEA2bdUsZ9oywoX2Wtx
-         EdbgeZEop2Bya6w3+7eR12Y22NK7WbI2MMySgufbsdpUg6zh6T37NYzJPy7rAKl7xCAR
-         sFckdhFghwjyVtw6m6qGvQpj9d+Za+IhaY+mFjV7qRfaMWD3hirdO+vkQ7148vLS/QvQ
-         wLdw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Wz1xAmdK4X/0RZMukuF9eO7PrMNEW9H1R6tY2+/56L4NZ2vn2sRfi6hSy2v3HD9cT9sIxlRVybI4400LktosRcTLaYi9NzXyDg4q6CARW+6U5iuqdXSSrfduzbuX0t9Q4Qp7RMM+4Co=
-X-Gm-Message-State: AOJu0YxS863x3Hgh6ySz2EW0MGow9QOt4aSw9LkSXC/mTooqL+rjwSsG
-	bzCo5r3MH/ytKBWVqgSMNTbN6oca22ErTtCPVS5eMNB5e8L1+TZJorkkKTdvx3gfEKS92RhbpKF
-	H8/lkCj3dANyyqMSFrxXLGtG0thM=
-X-Google-Smtp-Source: AGHT+IHzJ+FQXBDprzDLivYXPnBaHoSRGyFKlPdv4yqmqIcli49NimXBrXz6EdcJ6mVtfetMmC1KIax8TCU52XOcrsY=
-X-Received: by 2002:a17:90b:253:b0:2c7:6305:9905 with SMTP id
- 98e67ed59e1d1-2c76305b4aemr956131a91.10.1718714435549; Tue, 18 Jun 2024
- 05:40:35 -0700 (PDT)
+	 To:Cc:Content-Type; b=TXroUZMkN6ucSXe3HQes9HLDES/8WNWvnj4LEpJtmyEqmTEJDktWrwdWafQizz6qAZpfOQpbTxrmF1PbOvVd8tfdYgOC6ogrIzaOL57ZMJCvnVCfTPFT0fepGKvxeageA0NK657t/1D3LQlI2ICgDsOg13aAd/5iAy50XxCDsXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBYFTB6N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B5FC4AF49;
+	Tue, 18 Jun 2024 12:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718714426;
+	bh=PLYFcs7ICDH3FpoaefktwgaRhPxIEU6ZQGa1ScCB6cA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LBYFTB6Nmi/C+IIR/nuTMRIBuWLPz2ldfQEmQ/ZnM6HxS5xPxPdW2kIvfy7KY8ZwD
+	 28ZeQ8oXU12vEuk6qIj9szZ5eqTCATUM2PBUZtj0uiWIQtXXVYgnZQRuYBSVvUYRLU
+	 jBzfBro7TzHKgPD2CxmOzHhyb7Rl+tukcpn9zqk2iwhyPGB7gKmG9AlSS7CohtNrxS
+	 pN0B0W5ixysc4z4kUIdOAZWovfHEkQJJp4vcbQP5pfDl0ImCmGjeFCqcbWh0KXFaQq
+	 qkA6vJV5Rk8OfwUL7+DKkuE6TRWvnqXiqm5BsHRX2KY1EwqPbJnXHMLBpDu3i7BHRa
+	 XOPBm0XB5+vhw==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec3c0dada3so2594751fa.0;
+        Tue, 18 Jun 2024 05:40:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXC7nczjlSmVIgK8HFPHfz4jeRlWyG4b2LEQq7mdCLXEG23hxV8bvJRYjy/TAzgXtQQFl49lxMGUpDxqEiCOSw2HJi6y5c2ixyeX97SEBrFXdUbkcZ6D5//O1jcGN3Wvtdum6dAS71EltRnyH8MijbpUsMfdxI2ULz/Jfqfu5R/kqgZ
+X-Gm-Message-State: AOJu0YzyF2S9Sec3Nh//rOkgItDWwAltupWE3t/7fNCg4Zuho79ZPwQG
+	yaWyy7Cs1laD7lwOMJdZgkRj4YUZ37yUlWQHPtN0fQ5Ypz269iW9gETJZt9OcaBDeOoJoR8DDY3
+	MgxIk1vXv0+pz8EVFrwUmUp4HSYM=
+X-Google-Smtp-Source: AGHT+IES1HZ7KpNyPW3dWatBp5F9F7os952srDi0rQG4n/sgJkgHaQma8pvcT9JBsdMuwoondxheXbX6SpdohqLG+Zo=
+X-Received: by 2002:a2e:878f:0:b0:2ec:3565:9a6a with SMTP id
+ 38308e7fff4ca-2ec35659ab0mr16207111fa.33.1718714424915; Tue, 18 Jun 2024
+ 05:40:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240615125457.167844-1-rauty@altlinux.org> <2c9ba341bc95d4b9010bf5f8794c0d14b1c57dc9.camel@irl.hu>
-In-Reply-To: <2c9ba341bc95d4b9010bf5f8794c0d14b1c57dc9.camel@irl.hu>
-From: Rauty <rautyrauty@gmail.com>
-Date: Tue, 18 Jun 2024 15:39:58 +0300
-Message-ID: <CAGpJQTHoBAixmxta2WuZfjHjiK9GXF=hkfPyV7PBD5rt9Z_0WA@mail.gmail.com>
-Subject: Re: [PATCH v2] ALSA: hda/realtek: Enable headset mic on IdeaPad
- 330-17IKB 81DM
-To: Gergo Koteles <soyer@irl.hu>, alsa-devel@alsa-project.org, tiwai@suse.com
-Cc: perex@perex.cz, kailang@realtek.com, sbinding@opensource.cirrus.com, 
-	luke@ljones.dev, shenghao-ding@ti.com, simont@opensource.cirrus.com, 
-	foss@athaariq.my.id, rf@opensource.cirrus.com, wzhd@ustc.edu, 
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240618123611.3301370-1-sashal@kernel.org> <20240618123611.3301370-7-sashal@kernel.org>
+In-Reply-To: <20240618123611.3301370-7-sashal@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 18 Jun 2024 14:40:13 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGzMCT4KQcrnD80p6ZA=-j+aAPuPbKRuYQiRjof-+dTUg@mail.gmail.com>
+Message-ID: <CAMj1kXGzMCT4KQcrnD80p6ZA=-j+aAPuPbKRuYQiRjof-+dTUg@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 6.9 07/44] efi: pstore: Return proper errors on
+ UEFI failures
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Kees Cook <keescook@chromium.org>, 
+	linux-hardening@vger.kernel.org, linux-efi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 16 Jun 2024 at 10:38, Takashi Iwai <tiwai@suse.de> wrote:
-> Your From address and Signed-off-by address are different.
-> Could you try to align them?
+I already NAKed this yesterday.
 
-Ok.
+Please stop proposing the same patches.
 
-On Sun, 16 Jun 2024 at 21:08, Gergo Koteles <soyer@irl.hu> wrote:
-> There are some similar collisions with Lenovo laptops.
-> Please see commit 0ac32a396e4f41e88df76ce2282423188a2d2ed0 for an
-> example how to handle one.
+And in the future, please omit *any* patch from AUTOSEL that has been
+signed off by me, not only authored by me.
 
-Yes, you're right. I'll do the same and send v3.
+
+
+On Tue, 18 Jun 2024 at 14:36, Sasha Levin <sashal@kernel.org> wrote:
+>
+> From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+>
+> [ Upstream commit 7c23b186ab892088f76a3ad9dbff1685ffe2e832 ]
+>
+> Right now efi-pstore either returns 0 (success) or -EIO; but we
+> do have a function to convert UEFI errors in different standard
+> error codes, helping to narrow down potential issues more accurately.
+>
+> So, let's use this helper here.
+>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/firmware/efi/efi-pstore.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-pstore.c
+> index 833cbb995dd3f..194fdbd600ad1 100644
+> --- a/drivers/firmware/efi/efi-pstore.c
+> +++ b/drivers/firmware/efi/efi-pstore.c
+> @@ -136,7 +136,7 @@ static int efi_pstore_read_func(struct pstore_record *record,
+>                                      &size, record->buf);
+>         if (status != EFI_SUCCESS) {
+>                 kfree(record->buf);
+> -               return -EIO;
+> +               return efi_status_to_err(status);
+>         }
+>
+>         /*
+> @@ -181,7 +181,7 @@ static ssize_t efi_pstore_read(struct pstore_record *record)
+>                         return 0;
+>
+>                 if (status != EFI_SUCCESS)
+> -                       return -EIO;
+> +                       return efi_status_to_err(status);
+>
+>                 /* skip variables that don't concern us */
+>                 if (efi_guidcmp(guid, LINUX_EFI_CRASH_GUID))
+> @@ -219,7 +219,7 @@ static int efi_pstore_write(struct pstore_record *record)
+>                                             record->size, record->psi->buf,
+>                                             true);
+>         efivar_unlock();
+> -       return status == EFI_SUCCESS ? 0 : -EIO;
+> +       return efi_status_to_err(status);
+>  };
+>
+>  static int efi_pstore_erase(struct pstore_record *record)
+> @@ -230,7 +230,7 @@ static int efi_pstore_erase(struct pstore_record *record)
+>                                      PSTORE_EFI_ATTRIBUTES, 0, NULL);
+>
+>         if (status != EFI_SUCCESS && status != EFI_NOT_FOUND)
+> -               return -EIO;
+> +               return efi_status_to_err(status);
+>         return 0;
+>  }
+>
+> --
+> 2.43.0
+>
 
