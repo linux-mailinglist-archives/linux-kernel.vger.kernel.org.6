@@ -1,177 +1,82 @@
-Return-Path: <linux-kernel+bounces-219452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D67790D2B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:52:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE6B790D2FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836E72815FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736A21F226BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD1713A868;
-	Tue, 18 Jun 2024 13:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6W2YwvB"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A9E13A895;
-	Tue, 18 Jun 2024 13:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD54B15EFBE;
+	Tue, 18 Jun 2024 13:31:19 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4375815442A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718717260; cv=none; b=T8KuuGDrt5A3U8zk3rjwQzhR6ej0mwOOtSn+6o25PyWLGBhtz+z6zsLHJnmK6IKE1rAOJvfYcjaVwMJQJK8kfVsAAwnLq+I/7YmkSDqFoeVE5UhfahWV/jJPoa3Do6BBWYB3kSGxXhBJw1Nxm7iNx6oFywF2ISbAbJfBbpdmygQ=
+	t=1718717479; cv=none; b=g9BfwxQiKDz4mEXV6vNALV9PdIW5SNBr15b+mzR8jwd2fAOmwzmH8/Kmo1xvriVNDD1lyh7zRTJolS75Oe3osXbldbLWgpB6BUcyrovLDAg1Zv8P+FrZcUmOxhVSnKJzmQYA7SQt6LhO0Q0aDOlCimqpT2LwRMtXfHVy7ZUmmrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718717260; c=relaxed/simple;
-	bh=P8C3kZNC9TFvn43XN5wi5WNHC+Y2XUWCEIMIFb8aiTg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bkYncDkU1+QUTAPz1ya9zbkwxWGEhGzbDeLMViAwttYi0qgkxpPZYi/ureuKXo9Qu+xMEKAUH/AkyvLEuK2fMbUa4els35qdvmJvP9GxZD2RPaulgsmLWYEuSmC+yxgehZ0DiVOa+vtaa9DL7Y3KOx1pr3WMBRmn6hBkxk3h5yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6W2YwvB; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b9a35a0901so1800902eaf.0;
-        Tue, 18 Jun 2024 06:27:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718717257; x=1719322057; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CdNdOEwtXS2JQSR1qzVkD9A7XBal8hZRGM6LmJ/+p9Y=;
-        b=l6W2YwvBkoLr8tQZq0rCVwtx/jSimHjpNEGu27akNzU+ZsAc/tzTCarRyscE5ekeQA
-         52JR/6G3SQ5x0Qmyc4TjvdNny6pixF3kCfNT9LwSvRCHxBih0fL3fXuZkdAro4/neIr4
-         9BJGADqJSUi8+jLtGhBfeHbyLC8ePLPfeDj7n5dpeKSWRxWwgQgDFBYmjluaxOIru7d2
-         +pLtJrHYftzVtsa2BnRP+Sw876D/XqnOtCUVQ++HebADVLP4EEQ4R7AkLMHeuqCx3sI/
-         mMN4tOK+RRE9arX08WXNHZDmIrbspZqvnNO8JvFsJfJi2RVyxcqwNOj+ifNjYsXmc7dI
-         Tr9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718717257; x=1719322057;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CdNdOEwtXS2JQSR1qzVkD9A7XBal8hZRGM6LmJ/+p9Y=;
-        b=vMEWKQKrHLd0Zs+fBMHJQhXK8SGOcA24xmIjQF2p/qeZl/8xH5GFA+3w2eWxpVE+B7
-         +8PdW9kM2MFSUrdEcxaJrsU/WDVns2Pw4r4asUY3Xq3BdPz0sQf9kBH5LbzQXZwAopYK
-         zlz1VRhWMU102bjo9bDscO5+n5kEGCAlpwl62aZLc4ffJ6c1UT7cJjxwhOq7KWgugrXS
-         6ptjRIAZuaaC9LxTFcLgC2402lIX6avCCPkahss9WVRy4UPYwm2ut67gn77cybzD/V2Y
-         R/edkKtVh7B4x18/xfSkf//OHnKF9GU9VIi1iFKPH+Y3aZ+zCiFoheEmqtscAadFfCY9
-         9A6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUa15yeitvNdQ7DtglNTc7QQD09MqL+pqXItqig2/n3AVdSxsy81I7u/VQCOpOLkknf6PaxjQKZk6meUgbD4uw8DFA+sq3xHhH4hSVxP5DwBAKewnbvbYgoyK4Lhs5GxGf8x2g4MU+9TFe1
-X-Gm-Message-State: AOJu0YxfuIeCLg+pNPexwyufOZSlk+nE8V5l2JP2z74CTTmarC1KsbAl
-	un0cO8L59Q4nanEoMF1xRyGU34W2Tzjk7Ltb0M8jhbQ4tJrLHstenNtLPMpHAo5/BtK289yZe6m
-	IPDGtAvX2a6L1b+R3+9JWW3Pawms=
-X-Google-Smtp-Source: AGHT+IHxlwSqQtRjMjtn/Lc54p7Vzqf7fp+SfJ6DO+Ng4Vn2vJjW4WCtOPDDggwmIApml74xjVqttMcF/cYgNat9V3k=
-X-Received: by 2002:a05:6820:554:b0:5ba:ea6f:acb8 with SMTP id
- 006d021491bc7-5bdadbdecefmr12975302eaf.3.1718717257431; Tue, 18 Jun 2024
- 06:27:37 -0700 (PDT)
+	s=arc-20240116; t=1718717479; c=relaxed/simple;
+	bh=OwbKEY0HdKKs75LYG4AXAaC/Y00jobw3osQpqfj35GQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=POxZYw4wji4JPYYQk5Stt98mwEi5CIaCqdGbPpIb4gJo7qSR3wjKGPFZKktdoCXCFg8SUf4ZpSEerqTXC2YmVF7P5XxM5yvomvh/eXvm2BxRjmpQgSPsZfOQXwvzHoooVvvuB3jXjg+iSudQVXhWTU3ODt3P+0TnKT+XCDFWtB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 45IDRsNt014239;
+	Tue, 18 Jun 2024 08:27:54 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 45IDRqpp014238;
+	Tue, 18 Jun 2024 08:27:52 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Tue, 18 Jun 2024 08:27:52 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Jinglin Wen <jinglin.wen@shingroup.cn>, npiggin@gmail.com,
+        masahiroy@kernel.org, linux-kernel@vger.kernel.org,
+        christophe.leroy@csgroup.eu, naveen.n.rao@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc: Fixed duplicate copying in the early boot.
+Message-ID: <20240618132752.GT19790@gate.crashing.org>
+References: <20240617023509.5674-1-jinglin.wen@shingroup.cn> <20240617161336.GM19790@gate.crashing.org> <87cyoe1mbd.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20220919210025.2376254-1-Jason@zx2c4.com> <32f8797a-4b65-69df-ee8e-7891a6b4f1af@arm.com>
- <Y9juvficPxFUfgHD@Red>
-In-Reply-To: <Y9juvficPxFUfgHD@Red>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 18 Jun 2024 18:57:21 +0530
-Message-ID: <CANAwSgTTzZOwBaR9zjJ5VMpxm5BydtW6rB2S7jg+dnoX8hAoWg@mail.gmail.com>
-Subject: Re: [PATCH] hw_random: rockchip: import driver from vendor tree
-To: Corentin LABBE <clabbe@baylibre.com>
-Cc: troy.lin@rock-chips.com, shawn.lin@rock-chips.com, hl@rock-chips.com, 
-	ty@wevs.org, mike.rudenko@gmail.com, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Heiko Stuebner <heiko@sntech.de>, 
-	linux-rockchip@lists.infradead.org, robin.murphy@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87cyoe1mbd.fsf@mail.lhotse>
+User-Agent: Mutt/1.4.2.3i
 
-Hi Corentin / Jason,
-
-On Tue, 31 Jan 2023 at 16:10, Corentin LABBE <clabbe@baylibre.com> wrote:
->
-> Le Tue, Sep 20, 2022 at 10:35:44AM +0100, Robin Murphy a =C3=A9crit :
-> > On 2022-09-19 22:00, Jason A. Donenfeld wrote:
-> > > The Rockchip driver has long existed out of tree, but not upstream.
-> > > There is support for it upstream in u-boot, but not in Linux proper.
-> > > This commit imports the GPLv2 driver written by Lin Jinhan, together
-> > > with the DTS and config blobs from Wevsty.
+On Tue, Jun 18, 2024 at 10:12:54PM +1000, Michael Ellerman wrote:
+> Segher Boessenkool <segher@kernel.crashing.org> writes:
+> > On Mon, Jun 17, 2024 at 10:35:09AM +0800, Jinglin Wen wrote:
+> >> +	cmplwi	cr0,r4,0	/* runtime base addr is zero */
 > >
-> > Note that Corentin has a series enabling the full crypto driver for
-> > RK3328 and RK3399[1], so it would seem more sensible to add TRNG suppor=
-t
-> > to that. Having confliciting compatibles for the same hardware that
-> > force the user to change their DT to choose one functionality or the
-> > other isn't good (plus there's also no binding for this one).
+> > Just write
+> >    cmpwi r4,0
 > >
-> > Robin.
+> > cr0 is the default, also implicit in many other instructions, please
+> > don't clutter the source code.  All the extra stuff makes you miss the
+> > things that do matter!
 > >
->
-> Hello
->
-> I am very interested on how this serie was tested and which tools was use=
-d to ensure output was random.
-> And how did you get that CRYPTO_V1_TRNG_SAMPLE_PERIOD(100); was the best =
-choice.
->
-Is there any update on this driver
+> > The "l" is unnecessary, you only care about equality here after all.
+> 
+> In my mind it's an unsigned comparison, so I'd use cmpld, even though as
+> you say all we actually care about is equality.
 
-I just tested this patch on my RK3399 board.
+We want to know if it is zero or not, so in my mind "unsigned comparison"
+does not apply at all, that is only for range checks.  Heh.
 
- 8<-------------------------------------------------------------->8
-# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
-1+0 records in
-1+0 records out
-100000 bytes (100 kB, 98 KiB) copied, 0.829212 s, 121 kB/s
-
-#  cat /dev/hwrng | rngtest -c 1000
-...
-rngtest: starting FIPS tests...
-rngtest: bits received from input: 20000032
-rngtest: FIPS 140-2 successes: 0
-rngtest: FIPS 140-2 failures: 1000      <--  failures
-rngtest: FIPS 140-2(2001-10-10) Monobit: 21
-rngtest: FIPS 140-2(2001-10-10) Poker: 1000
-rngtest: FIPS 140-2(2001-10-10) Runs: 1000
-rngtest: FIPS 140-2(2001-10-10) Long run: 0
-rngtest: FIPS 140-2(2001-10-10) Continuous run: 4
-rngtest: input channel speed: (min=3D18.079; avg=3D955.991; max=3D9765625.0=
-00)Kibits/s
-rngtest: FIPS tests speed: (min=3D18.062; avg=3D31.619; max=3D50.459)Mibits=
-/s
-rngtest: Program run time: 22125055 microseconds
-
-Whereas for /dev/random
-
-# cat /dev/random | rngtest -c 1000
-...
-rngtest: starting FIPS tests...
-rngtest: bits received from input: 20000032
-rngtest: FIPS 140-2 successes: 998
-rngtest: FIPS 140-2 failures: 2
-rngtest: FIPS 140-2(2001-10-10) Monobit: 0
-rngtest: FIPS 140-2(2001-10-10) Poker: 1
-rngtest: FIPS 140-2(2001-10-10) Runs: 0
-rngtest: FIPS 140-2(2001-10-10) Long run: 1
-rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
-rngtest: input channel speed: (min=3D381.470; avg=3D5551.073; max=3D19073.4=
-86)Mibits/s
-rngtest: FIPS tests speed: (min=3D24.933; avg=3D70.400; max=3D79.805)Mibits=
-/s
-rngtest: Program run time: 276870 microseconds
-
-Thanks
-
--Anand
+But it doesn't matter at all: if you think cmpld looks more natural / is
+what you expect to see, then you should use cmpld, that is my point :-)
 
 
-
-
-> Thanks
-> Regards
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+Segher
 
