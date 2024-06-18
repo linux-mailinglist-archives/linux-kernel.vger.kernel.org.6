@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-218629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481AF90C2E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:34:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DA090C2C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F038B1F22CEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:34:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72967282BEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E7A19CCF3;
-	Tue, 18 Jun 2024 04:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086C4137903;
+	Tue, 18 Jun 2024 04:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTi7MVJl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M/uDZrMw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92DA1C01;
-	Tue, 18 Jun 2024 04:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F87717740;
+	Tue, 18 Jun 2024 04:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718685255; cv=none; b=aOsn4/54SLnuuwBx0J/ov/QDNBtvCT7Byh4QAcp2zzbEMY6VJvZbJOz6xI89Q2kA1zV800X46mI8JDz6gDERWZdqHi3z6oto2z40S+ip7jAzM8uptlgARdzYJSNCJH4R0ySg6GmccuUOe/XvFfgehkz7pg58/ZX7cdUFPjNFMdQ=
+	t=1718684578; cv=none; b=OGB/pOuok7uJOpWFFEzn1/R72Wf4+IOxfQY+Xi3K5AYlgEDOf6ty09IAsd/DaVq64oAR8+cMC83pVFq7Yt7sockjMJ5Kbi3oSyfhiqSS/s0OC9JTxExI7G/ZHgkQBZFoxtPr3NJZbUwOzRH/hxJ0qQiofOtj7rRYz1U5OFcFyck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718685255; c=relaxed/simple;
-	bh=cVWaqdmlVB3MhB8ZS2KfEGlzyVZFQobqyrEiIiYPoSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TI8YZGGnW7dD6DlGFuSSUzQcdZu77t2JwfsQxUsz7DnxeFVIoDqTvfYHJPAqjnhjBZ3LMooPfiEbI3jqILTUpPO+1hh7RgCFc4aVyP2cGOuNvsBI+JIF4OuYzXiEWOAn/g5keTBP6GAbIWdryGygRuGQGGeqA9ktpf+XfcTTzrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTi7MVJl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812B6C3277B;
-	Tue, 18 Jun 2024 04:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718685255;
-	bh=cVWaqdmlVB3MhB8ZS2KfEGlzyVZFQobqyrEiIiYPoSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gTi7MVJlvd3DqJpnKOKwG1xNN9+M3Gsd6MebltbzdgYOGnNyiv6Qeq+xhqfRbROut
-	 SMeCl95OGHDBKyeXsKqzjZiu8nRdzT8VF3nwmPVGyANifUQ4IVXBEyLiZbRBuA+r0p
-	 kkJXl0ojinTkXRpSpsx3wYcxcPeHcuHbPZKbHXToNiDVwXn/Rz1XfUQPLNhFqQRota
-	 Ji/Wh9lpLMGRuNhNmj0DSutuZbOngGorasQOGUjC3tgjSPUjrrJ+nW6aPnlpo7rFMl
-	 BobHJwR5iAtT1Vvtyk20SeGII31d7mB1TqYIv6xVcD0QEwS+Lp2lQuDtie5Zzz8Zc+
-	 WZdChbx6OiHBA==
-Date: Tue, 18 Jun 2024 12:20:13 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Yixun Lan <dlan@gentoo.org>, Inochi Amaoto <inochiama@outlook.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Chao Wei <chao.wei@sophgo.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>
-Subject: Re: [PATCH v2 1/6] riscv: dts: sophgo: Put sdhci compatible in dt of
- specific SoC
-Message-ID: <ZnEK_cg1xLbKOUAD@xhacker>
-References: <20240612-sg2002-v2-0-19a585af6846@bootlin.com>
- <20240612-sg2002-v2-1-19a585af6846@bootlin.com>
- <IA1PR20MB49534C9E29E86B478205E4B3BBC02@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240616235829.GA4000183@ofsar>
- <c75601a1-1389-400e-90b9-99c1e775a866@bootlin.com>
- <ZnA3O14HOiV1SBPV@xhacker>
- <20240617-exuberant-protegee-f7d414f0976d@spud>
- <6a993b58-3d9e-4f92-bf47-7692c9639314@sifive.com>
+	s=arc-20240116; t=1718684578; c=relaxed/simple;
+	bh=erkvCeFOfQN4JsBvaoJDZj+vB0ZmSysocnhcbzs6PDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=C/Bf6o2bzWWO5Gssq66QO50Po+GjiqzeUR1ORdfFXzr5F5RysWKWTIXhsCl/aeGTuYrocoHhCyKJj4Db9JOilIJib1Nr3aHdP1E1OoHlVDtzMo9HZGoqmBXGTNu3aCZFa4KahDdWgFuwe8ctXOrmJZIg9oiNAPzs/AGU3SPOXL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M/uDZrMw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HLgm5t029690;
+	Tue, 18 Jun 2024 04:22:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sRkwMV1QcwS5Z1PoZVpiKVG2+6ZPODYeSvMXuepKnhs=; b=M/uDZrMw5G+1Xv68
+	AhAiQkD9tIgOFmPcdrBslSD3KQU7IvtWCENmTzqODBtgQOkDnt5HHb3VXi0+2hFV
+	9QK6HGXsQqtKN/1GYDz4y5SvaxayygMwoZOWxmJCC7W8/Sk9A0gDLfjYN5bjNbdV
+	jgWrOgijJZw2zrqD2uPHhwJkAd/xZv9SUbhe6b5SQWkjZScJ2njrbrSXkHPqTX+S
+	QyOWU1oTKVCxHV5rQz/W5qJJKpXu9Mv9zxbyMCxeWXmTM8ybM9IYmyA4+Vd8uPWv
+	fEjms1Fgmw+83mDgpjhlW4N17Lhaby3TuMOcmoKa8l5zh0OyzK80r7NlpGtKi6oV
+	N6RHXg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytwa2gjbg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 04:22:50 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I4MnOM027474
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 04:22:49 GMT
+Received: from [10.204.67.150] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
+ 2024 21:22:46 -0700
+Message-ID: <d7fc5318-bd01-46de-b691-8e40387f6b53@quicinc.com>
+Date: Tue, 18 Jun 2024 09:52:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6a993b58-3d9e-4f92-bf47-7692c9639314@sifive.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] misc: fastrpc: Increase user PD initmem size
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <quic_chennak@quicinc.com>, stable <stable@kernel.org>
+References: <20240617085051.28534-1-quic_ekangupt@quicinc.com>
+ <2024061755-snare-french-de38@gregkh>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <2024061755-snare-french-de38@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EcvuNWwjBhdqQyMmpoPRZTe9UH_oU2Il
+X-Proofpoint-ORIG-GUID: EcvuNWwjBhdqQyMmpoPRZTe9UH_oU2Il
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 phishscore=0 mlxlogscore=906 bulkscore=0 adultscore=0
+ impostorscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180030
 
-On Mon, Jun 17, 2024 at 10:57:54AM -0500, Samuel Holland wrote:
-> Hi Jisheng, Thomas,
-> 
-> On 2024-06-17 10:40 AM, Conor Dooley wrote:
-> > On Mon, Jun 17, 2024 at 09:16:43PM +0800, Jisheng Zhang wrote:
-> >> On Mon, Jun 17, 2024 at 11:16:32AM +0200, Thomas Bonnefille wrote:
-> >>> On 6/17/24 1:58 AM, Yixun Lan wrote:
-> >>>> On 18:47 Wed 12 Jun     , Inochi Amaoto wrote:
-> > 
-> >>>>> Is this change necessary? IIRC, the sdhci is the same across
-> >>>>> the whole series.
-> > 
-> >> sorry for being late, I was busy in the past 2.5 month. Per my
-> >> understanding, the sdhci in cv1800b is the same as the one in
-> >> sg200x. Maybe I'm wrong, but this was my impression when I cooked
-> >> the sdhci driver patch for these SoCs.
-> >>
-> >>>> I tend to agree with Inochi here, if it's same across all SoC, then no bother to
-> >>>> split, it will cause more trouble to maintain..
-> >>>>
-> >>>
-> >>> To be honest, I agree with this to, but as a specific compatible for the
-> >>> SG2002 was created in commit 849e81817b9b, I thought that the best practice
-> >>> was to use it.
-> >>
-> >> I'd like to take this chance to query DT maintainers: FWICT, in the past
-> >> even if the PLIC is the same between SoCs, adding a new compatible for
-> >> them seems a must. So when time goes on, the compatbile list would be
-> >> longer and longer, is it really necessary? Can we just use the existing
-> >> compatible string?
-> >> DT maintainers may answered the query in the past, if so, sorry for
-> >> querying again.
-> > 
-> > For new integrations of an IP, yes, new specific compatibles please. New
-> > integrations may have different bugs etc, even if the IP itself is the
-> > same. If there's different SoCs that are the same die, but with elements
-> > fused off, then sure, use the same compatible.
-> > 
-> > I expect the list of compatibles in the binding to grow rather large, but
-> > that is fine. No one SoC is going to do anything other than something like
-> > compatible = "renesas,$soc-plic", "andestech,corecomplex-plic", "riscv,plic";
-> > which I think is perfectly fine.
-> 
-> And you can do the same thing here for the SDHCI controller: if you think sg200x
-> has the same controller (and integration! e.g. number of clocks/resets) as
-> cv1800b, then you should keep sophgo,cv1800b-dwcmshc as a fallback compatible
-> string. Then the driver doesn't need any changes until/unless you eventually
-> find some reason they are not compatible.
-> 
-> It's better to have a SoC-specific compatible string in the DT and not need it,
-> than find out later you need one and not have it. :)
 
-Good idea, this solution looks better! Thanks for the suggestion
 
-> 
-> Regards,
-> Samuel
-> 
+On 6/17/2024 2:44 PM, Greg KH wrote:
+> On Mon, Jun 17, 2024 at 02:20:50PM +0530, Ekansh Gupta wrote:
+>> For user PD initialization, initmem is allocated and sent to DSP for
+>> initial memory requirements like shell loading. For unsigned PD
+>> offloading, current memory size is not sufficient which would
+>> result in PD initialization failures. Increase initial memory size
+>> to 5MB.
+>>
+>> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
+>> Cc: stable <stable@kernel.org>
+>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>> ---
+>>  drivers/misc/fastrpc.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>> index 5204fda51da3..11a230af0b10 100644
+>> --- a/drivers/misc/fastrpc.c
+>> +++ b/drivers/misc/fastrpc.c
+>> @@ -38,7 +38,7 @@
+>>  #define FASTRPC_INIT_HANDLE	1
+>>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
+>>  #define FASTRPC_CTXID_MASK (0xFF0)
+>> -#define INIT_FILELEN_MAX (2 * 1024 * 1024)
+>> +#define INIT_FILELEN_MAX (5 * 1024 * 1024)
+> That is still an arbritrary number, why not make it dynamic and properly
+> sized to what the hardware needs?  Otherwise you will need to change
+> this again in the future, AND you are wasting memory that doesn't need
+> this, right?
+Thanks for reviewing the change, Greg.
+
+The size is actually passed by user based on requirement which is then checked against this
+INIT_FILELEN_MAX. Till now this was hasn't caused any problems but after introducing
+unsigned PD, the size requirement got increased which is resulting in failures.
+
+As for memory wastage, any additional memory passed during DSP PD init is used as the
+PD heap in DSP, so the memory is not wasted. I'll add this information to the commit message.
+
+--Ekansh
+> thanks,
+>
+> greg k-h
+
 
