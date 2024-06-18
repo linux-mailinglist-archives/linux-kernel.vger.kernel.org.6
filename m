@@ -1,71 +1,80 @@
-Return-Path: <linux-kernel+bounces-220140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083AB90DD22
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D6C890DD24
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A111B21DA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:18:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CF2CB2235E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7254816CD01;
-	Tue, 18 Jun 2024 20:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF1A171E7C;
+	Tue, 18 Jun 2024 20:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E+ZnJbf5"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ujafPQ6l"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2070.outbound.protection.outlook.com [40.107.243.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2DB39AEC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718741872; cv=none; b=pPs+x5OF1UZnZaEgQy4f0f9skYHUFW0/xDhYX8uYM8pfOI0b2mFicpxIYEZr8eqsCukA9mJnF4GI7pcTyvGfBgQBQXociokVoDZWdZe3+4bL7R4+SLmix1nmkCZuyuuEjXH0220Q7+Wo/nd497sCobKw/g89zpk591AZ3Knq3+Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718741872; c=relaxed/simple;
-	bh=yyrfiLjqPi0uO1ISvzwWt3Wh6ZRh8LSDYclWV6U83tc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=OSm4FLxH1nsCWFMFeEqsmWrZ8au6za2FAuIEVqT2zJvwCC+eW22wk5xEPUHXsi/dwnOwwrrr9djBcV9nqhmiW3oIrf40aPo7JU5IAK+SAkAwDN20I1clpA71iN8BoT6rNoc8Jf73ITCeTTIRfEBk/JRnZk3bDa2lrcJ4VfUS7PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=E+ZnJbf5; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240618201745euoutp016e523b2df511b3490c6a3cb895087735~aMp7DFLNH0106201062euoutp01b
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:17:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240618201745euoutp016e523b2df511b3490c6a3cb895087735~aMp7DFLNH0106201062euoutp01b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718741865;
-	bh=dB0AWSkQTUOU9QyCV/W0Hl3ec8vt1AE5YCai3dZxvxE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=E+ZnJbf56qX8YDIZQAfxnrF5IKiXc2wLCJcGlqRtS5nNlpRD9L7N4nS4rAwevEmVU
-	 YGf14SwPeLV7F3et75LHiHaH62umUjmZsqTC+mGTM4J5gT24z+UqpMkZLDPG5EYLQ5
-	 KkKX/MsQ6Fbu3D1yE/aQZNTR0tqXGGLY4ygSt/9Q=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240618201745eucas1p2325c1b00dbb107b983278aff464c5ddf~aMp69O3iV2058020580eucas1p2W;
-	Tue, 18 Jun 2024 20:17:45 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 12.EE.09620.96BE1766; Tue, 18
-	Jun 2024 21:17:45 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240618201744eucas1p1d5ea63c6b776e2e1770a6d0ba9c86ae4~aMp6tkffr0594905949eucas1p1L;
-	Tue, 18 Jun 2024 20:17:44 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240618201744eusmtrp2ee4b83c956fdf522fec86d97c74046b4~aMp6tHBih0178501785eusmtrp25;
-	Tue, 18 Jun 2024 20:17:44 +0000 (GMT)
-X-AuditID: cbfec7f5-d31ff70000002594-ae-6671eb6994d3
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id A5.B2.08810.86BE1766; Tue, 18
-	Jun 2024 21:17:44 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240618201744eusmtip153bb8ff0d0e262733b53e0f3787050f0~aMp6SvKOr0174501745eusmtip1c;
-	Tue, 18 Jun 2024 20:17:44 +0000 (GMT)
-Message-ID: <7afd05e8-21bb-42c0-8c11-ff2108a74880@samsung.com>
-Date: Tue, 18 Jun 2024 22:17:44 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB10439AEC;
+	Tue, 18 Jun 2024 20:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718741897; cv=fail; b=suUqY5muNIMOAv8GSzOgj20WVL/tEEQoULi7aFK8VEhMkcApSqwMAtJAm4Cukh7BWZ5inzXUOJ3f6zw+xKbfzvjd1VNfdJjjjdI4dkdzYD+sTVDo3n981t8JgZpcxc+mxX5CSgQAuaL3p+Rj6j5AZ3rhTCl7PxkapByfxyyOc/Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718741897; c=relaxed/simple;
+	bh=QMACK3j7zvKFZENZ050wFltHghVR5bhMIf4vdCFVqNg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UuUgm7YEFo1e3ysh34hN3MXvjGawN9N2Ia85+tzdG8VYLaQ5GmD+/iAdsTu6I9GRrHkefe9zqWuUgK5SOY6b41hBG8tjPqpwoh0kZQjGHJnMpRYDHhFkJIEq81xLhVTmigjQ1hz6jOov3HNvO6tSMB6aeepsGlWiU9JYzjIEfns=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ujafPQ6l; arc=fail smtp.client-ip=40.107.243.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ol9OMKezxjhWGgcy+o1xZLeH3dbf6a9P5FV3DT2NJ6ESHrXR0tBDkW+0j3Q9rRrlkefctf03qw3XsSvlsU7uUqstn6fUTuYkQPx/A20ue/fH74t89Hk8rOAWH1/dy+t9wXb46YnAUU1bopAcaOcRPii6v/n293jt2qI6eMTVDYzohjv+NNFUyg1nIQvlTtycyv4mUjMkPXoIrswgxt9YMKr4v8p3Jn+XxJRAkkvGnGEJUXUyMYptC5FXnxj+29iUBKhvSgMwnUfW0ipkDUxXb90BFkzp0zzynPSGhj6m5ktHEv7mIpzS+mwRMfA6XxMV0ELj9ejsN8zXudcz0idmaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wVDHdYuFP+kqsUn27U7YfO/tGnwP1lh1X+8L4cX0UW0=;
+ b=blhMt8dT/OOyKDkAbKMHxqjJw2Ty+tpitkzoCWCUjjGD35m74+57BozYYj/ur1winx1YrBdP371no2iUiZcTsU+s+x0Mu3zk+vPue5477YcfMYzCDbVXToIr80lLbN1ZRc1jUDd3Wsr97btgZZk3PTUNmoIFr5/Dsl8x/9DN9JrWPcSTms1l4bSd0WU5K+NTkR+KrLYJjwmsEZkDdgK9az9Z1igA7rJuL/b47kjbYHjH/oEaaT01z6jMFOyjnSho+EI89EfAcfOZz8jrYuNBov9JAinWnRD4SX/JWRxRg9bQen/shV+opikRIrFKP6GCXy7vCOkdZF3bbvkA5TwUxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linux-foundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wVDHdYuFP+kqsUn27U7YfO/tGnwP1lh1X+8L4cX0UW0=;
+ b=ujafPQ6ltkp1opyZ1GQr1CFJl+AZ4LaZHPezRT1YW2OqJSg1eSgWAze8maSw68rjynIRoUZE9UMEO1rcafYpl6uUCjiiDNUiqgWclFOlNDUMzvDTH56sQBpVOFeojtKhlJR8iF65rhNu4TVpIUBi03CnWaBOhGnoxRBjE9WzLVVapFjL2yh7v7A89WBUg1wDTqlUpdjgZ+pnk/92nJRJJYf426R6GPfMAz5JFTGUgW5DEeNGT4dSIiDJ1VxQhAKFi1A8F2qDtqsc2Q55uceMEL+IhYS6X4mGIy/yLa7ghiTFVBNG8YsefBuAxISZhCLXewXnaB7Kv8CrkcHjCHzwwg==
+Received: from DS0PR17CA0020.namprd17.prod.outlook.com (2603:10b6:8:191::27)
+ by DM4PR12MB6012.namprd12.prod.outlook.com (2603:10b6:8:6c::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.31; Tue, 18 Jun 2024 20:18:10 +0000
+Received: from CY4PEPF0000E9D7.namprd05.prod.outlook.com
+ (2603:10b6:8:191:cafe::2) by DS0PR17CA0020.outlook.office365.com
+ (2603:10b6:8:191::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.32 via Frontend
+ Transport; Tue, 18 Jun 2024 20:18:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000E9D7.mail.protection.outlook.com (10.167.241.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Tue, 18 Jun 2024 20:18:08 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Jun
+ 2024 13:17:46 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Jun
+ 2024 13:17:45 -0700
+Message-ID: <01685978-f6b1-4c24-8397-22cd3c24b91a@nvidia.com>
+Date: Tue, 18 Jun 2024 13:17:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,151 +82,283 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next] mm/hugetlb_cgroup: register lockdep key for
- cftype
-To: Xiu Jianfeng <xiujianfeng@huawei.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] selftests/mm: mseal, self_elf: factor out test
+ macros and other duplicated items
+To: Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+	Shuah Khan <shuah@kernel.org>
+CC: Andrei Vagin <avagin@google.com>, Axel Rasmussen
+	<axelrasmussen@google.com>, Christian Brauner <brauner@kernel.org>, "David
+ Hildenbrand" <david@redhat.com>, Kees Cook <kees@kernel.org>, Kent Overstreet
+	<kent.overstreet@linux.dev>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, Peter Xu
+	<peterx@redhat.com>, Rich Felker <dalias@libc.org>, <linux-mm@kvack.org>,
+	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20240618022422.804305-1-jhubbard@nvidia.com>
+ <20240618022422.804305-3-jhubbard@nvidia.com>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20240618071922.2127289-1-xiujianfeng@huawei.com>
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20240618022422.804305-3-jhubbard@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZduzned3M14VpBnP+slrMWb+GzeLyrjls
-	FvfW/Ge12D5rB6MDi0fLkbesHps+TWL3ODHjN4vH501yASxRXDYpqTmZZalF+nYJXBlndq9m
-	LtigUDF72USmBsafUl2MnBwSAiYSd1/fZepi5OIQEljBKLFo7XpGCOcLo8ThbY1Qmc+MEuvn
-	fGWGafm06w8bRGI5o8TeuUfYIZyPjBKX309l7WLk4OAVsJP4/jYFpIFFQFVi17LzbCA2r4Cg
-	xMmZT1hAbFEBeYn7t2awg9jCAkESh08sYwWxRQRcJNqOzwSrYQZadr/1ISuELS5x68l8JhCb
-	TcBQouttF9hMTqBVu2Y2sUPUyEtsfzuHGeQeCYE9HBK71u1kgbjaRWJZ82I2CFtY4tXxLewQ
-	tozE/53zmSAa2hklFvy+D+VMYJRoeH6LEaLKWuLOuV9sIJ8xC2hKrN+lDxF2lGj/fRXsYQkB
-	PokbbwUhjuCTmLRtOjNEmFeio00IolpNYtbxdXBrD164xDyBUWkWUrDMQvLmLCTvzELYu4CR
-	ZRWjeGppcW56arFxXmq5XnFibnFpXrpecn7uJkZgcjn97/jXHYwrXn3UO8TIxMF4iFGCg1lJ
-	hNdpWl6aEG9KYmVValF+fFFpTmrxIUZpDhYlcV7VFPlUIYH0xJLU7NTUgtQimCwTB6dUA1Nt
-	f9DKyZMaAv/daE5unmZ/oUT7S4/E7n0pYn8nP7zYXizL6Z9801vIgu/NZOWpfPcnljarnw54
-	UnkncXoJ/5aDDNEHt83PnGjftTN4zcI7QvulZr2s7ru6/N3LDre2K6UX+N5YxrztupK2qmzD
-	5Sd2ttUz3+SLlipG823iuvG8XTvKaI3+SQ91H77rS9w5N5n9lIqvf1IhMdvsk9gyw+Ue6a0c
-	Nn4GQZ8Xd1zJ0hfRDVO4z/rk51LRZI2qnoVG7wzSAtgmTYt7UrE6eJYve/PPCa4/Dj3aZLt1
-	1qIeZeNXzdOMo7j6Bf5t2f3qbm7aPrtZrzo2Tmt+bFPUn3RMvWW92qGb71Yw+SueOlH9UVOJ
-	pTgj0VCLuag4EQD6WVh+nQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsVy+t/xu7oZrwvTDO7dM7CYs34Nm8XlXXPY
-	LO6t+c9qsX3WDkYHFo+WI29ZPTZ9msTucWLGbxaPz5vkAlii9GyK8ktLUhUy8otLbJWiDS2M
-	9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DLO7F7NXLBBoWL2solMDYw/pboYOTkk
-	BEwkPu36w9bFyMUhJLCUUaJh1l42iISMxMlpDawQtrDEn2tdYHEhgfeMEkt6yrsYOTh4Bewk
-	vr9NAQmzCKhK7Fp2HqyEV0BQ4uTMJywgtqiAvMT9WzPYQWxhgSCJwyeWgY0UEXCRaDs+E6yG
-	GeiG+60PWSHG20o0tu9mhoiLS9x6Mp8JxGYTMJToegtxAifQ2l0zm9ghaswkurZ2MULY8hLb
-	385hnsAoNAvJGbOQjJqFpGUWkpYFjCyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAiNp27Gf
-	m3cwznv1Ue8QIxMH4yFGCQ5mJRFep2l5aUK8KYmVValF+fFFpTmpxYcYTYFhMZFZSjQ5HxjL
-	eSXxhmYGpoYmZpYGppZmxkrivJ4FHYlCAumJJanZqakFqUUwfUwcnFINTEVd0bxz9A7Zm8Sv
-	CPldUCuTnZm3iHfKx0DeXcFtR86zf2jN8TreJbduj5uMYfit6St2/DPpSVk1/Y1Gau3F+b3H
-	FjTL/BbQsOadK3pcx+Rzylqlaw3OOhzhtzJFfkZYds+eO8+gfELwkU+J6TVc2Tp5MoYCR5Ss
-	z3ButWD6yirq5xSUe9Bz3y/e/zz3/gQYuswXtuWVmdrjy/fi/Z2bkktnp7CYzm9TjM1bdmKx
-	Er8L/zUb9l0WRv9X/FcwiPb4/+uY9U+JXz9OVGYd0axq28q/J3/H7yM56dtNt3H+WaYo5zJp
-	qUjp8n0nuRj5GZ5ql8QyGs3pe/JwycKmd4+1VHgq/2lY6137/tbNoMBZiaU4I9FQi7moOBEA
-	3WT5by0DAAA=
-X-CMS-MailID: 20240618201744eucas1p1d5ea63c6b776e2e1770a6d0ba9c86ae4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240618201744eucas1p1d5ea63c6b776e2e1770a6d0ba9c86ae4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240618201744eucas1p1d5ea63c6b776e2e1770a6d0ba9c86ae4
-References: <20240618071922.2127289-1-xiujianfeng@huawei.com>
-	<CGME20240618201744eucas1p1d5ea63c6b776e2e1770a6d0ba9c86ae4@eucas1p1.samsung.com>
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D7:EE_|DM4PR12MB6012:EE_
+X-MS-Office365-Filtering-Correlation-Id: c627987e-0283-4c9b-d14b-08dc8fd3c4c7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|7416011|376011|36860700010|1800799021|82310400023;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VUNvMVg5Zy9UZ2k3enJGV2FwV0VpM3lDTHdSN3g2QUlZVlV6OWo0QWJ0VDhM?=
+ =?utf-8?B?cmdFNGQyeDRYejNWNEV6NG5uOVIya1ROUVBUSzFEUUdBZnp6alM3a3k0SEly?=
+ =?utf-8?B?SEtGckVncXRBTlhDRmFDSVhFZWZzMy8rQVVHd3p4UEVKUkNiS3RobElRUnlq?=
+ =?utf-8?B?cDdTeWtWWVU1MXg3T0NWSEEwQUZnMzJIUVZzMG5Tb0h2VjRPMG1ZaEV5bWJQ?=
+ =?utf-8?B?L05oTGIzcXdqYnVTS29HaFN4c1ExYjZGb3cwN01KS01ubmpuVC8vWldaU2pO?=
+ =?utf-8?B?aWN2RXpJZjhySGpNMG5lYytZQzNGNjlqZGpta2RPU28xczNBWXBUTHZEZjIv?=
+ =?utf-8?B?c00vMC82MlR2YVVaeFo3YjdLaEk3S3RIcW1uTHY4d3IybHU1amtPMnN0VEpz?=
+ =?utf-8?B?NHpCZlhZSzkxNU1rcy9SRjZzN1NSK3pkZDdNdVJBVUx2YnRReHcvd3g2dmdL?=
+ =?utf-8?B?dTdOMnBKczEwdFFBV0JYNTBBZldOSWV5a3hUTnZFYzhtVlhyL3F0eDdzMXVJ?=
+ =?utf-8?B?MmJjUnZkNEFpMzI3cG44L2VEMkdKNy9ZZVdBQk4zMkhGZUxhZmFDSnh6SUxT?=
+ =?utf-8?B?YnFSeUZwcXpjUTUva0hxSXN0L0tsUGF6VnlKTkJhTTJLRDBCMnpIUCs0dEV6?=
+ =?utf-8?B?YndPTWFvOSttdDIrM2JEQVN1TDRkWUxLRjVVcmtHVysyYzNXWXFGVHU2R2Nz?=
+ =?utf-8?B?c1RjaU91WWI2TjBCa0RiQURvN1F6ZE5xSlg3aXhpNVd3b0FTTmhQS0hmVXNr?=
+ =?utf-8?B?NWlYTXJ3M09VOGRkQUYxSFRnNytSdFdyRUVldnlwSnZDNTlEV0VwcVVzSHg5?=
+ =?utf-8?B?TmkwRFdHd3duOUNLYktBNzB3VXRjMHlzOWk1MEdBZVM1SVRhRzFlTWg0Qkkz?=
+ =?utf-8?B?QTU3OWczREZHdk1DVEFLSFJMVGx5enFodTFWT1luWkx1ZXRzT3RvZE85dC9y?=
+ =?utf-8?B?TzVHbXJ0MDRDMmcvUzNhc0xnL0NNWkg3QnFGY0krN3k1ejlGMk4rMGVucUVJ?=
+ =?utf-8?B?aWtENmlDQk1aVFcwL2Q5cWtyUEZtMEZSZ2Q4LzhxWlc5aEJ4RkQvazZkYnhB?=
+ =?utf-8?B?MVdPbzlGdnpTQXpOa1d0bnNyaDl0VHNsRENIVmJqQjB1YUtZTkdXZEg4ZVV0?=
+ =?utf-8?B?R1Z6RDZoY1lCSFFzVGsxUUtjOGZNMU5CUUdpaGQyM3dEVFUvaWVPK0lXR0dF?=
+ =?utf-8?B?SUYvU0pXaUFiNHI4WHZsTS9kWStCckt4Wm9TeDIxWUFXbVVRVzB2cE52Lzlt?=
+ =?utf-8?B?d0hDeHIvNFhXemU0TkRvc0pmOXBJVnZia0VuSnZLbEhlN1hLVkNCcytKRWd3?=
+ =?utf-8?B?UU80cmlsN0xMTzhlZ2VZTm5qNnlEV3p1WW80SHpRSjQzSVVFK0ZhVU9QZ09J?=
+ =?utf-8?B?YmY1UzVKSGc1WXRYTDY1dUZiekpocnF6N2dQN3FqdFc5b2NPbFhpbk5XK3JC?=
+ =?utf-8?B?ZFdTQXJwcHQyTEF0ZmJwS0dSZUl3VmRtZ0hBeDFaU2tXSkFqQWV1c2ZxMXJX?=
+ =?utf-8?B?MytYYVlUVldqRlhqOHpBdE1rT3dzSXpQclJRM3hORGl6aGZuTHpiaVo4K3po?=
+ =?utf-8?B?U2ZPZy93Nm9ZOVAvMFU2ZDgvMTBpcDFSQnVQbE1TOWlOZkw4ZUFRY0ZJOHR6?=
+ =?utf-8?B?bGFFZ2RxNTE2THNCcm5SWWRHdURHek9xY0hyVEdJcGhhMmhFRUZ4djU1NWJ0?=
+ =?utf-8?B?N3pUYW55WHhLaDUxQ2tLOFhVdFhSeEhFZnd4MmxtU0Q3UWlIZ3E1RG9rdEdI?=
+ =?utf-8?B?WTJqdEE3SGFoUkVDOWZTejg1WCtVOG1wYjU3UUZzR1dxMUxzWVJic0VNcXpD?=
+ =?utf-8?B?Tmw0ZzBDNFE5ZVk5TkdmYW0xb3hnNHBaQWJvQ1VwbnJsSkI4ODB4YW1jTlJS?=
+ =?utf-8?B?L1h5Y2RGOFBua2swNmVLZGFNa1dZc3ZEQmVyajRhT0xZSlE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230037)(7416011)(376011)(36860700010)(1800799021)(82310400023);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 20:18:08.0193
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c627987e-0283-4c9b-d14b-08dc8fd3c4c7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D7.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6012
 
-On 18.06.2024 09:19, Xiu Jianfeng wrote:
-> When CONFIG_DEBUG_LOCK_ALLOC is enabled, the following commands can
-> trigger a bug,
->
-> mount -t cgroup2 none /sys/fs/cgroup
-> cd /sys/fs/cgroup
-> echo "+hugetlb" > cgroup.subtree_control
->
-> The log is as below:
->
-> BUG: key ffff8880046d88d8 has not been registered!
-> ------------[ cut here ]------------
-> DEBUG_LOCKS_WARN_ON(1)
-> WARNING: CPU: 3 PID: 226 at kernel/locking/lockdep.c:4945 lockdep_init_map_type+0x185/0x220
-> Modules linked in:
-> CPU: 3 PID: 226 Comm: bash Not tainted 6.10.0-rc4-next-20240617-g76db4c64526c #544
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> RIP: 0010:lockdep_init_map_type+0x185/0x220
-> Code: 00 85 c0 0f 84 6c ff ff ff 8b 3d 6a d1 85 01 85 ff 0f 85 5e ff ff ff 48 c7 c6 21 99 4a 82 48 c7 c7 60 29 49 82 e8 3b 2e f5
-> RSP: 0018:ffffc9000083fc30 EFLAGS: 00000282
-> RAX: 0000000000000000 RBX: ffffffff828dd820 RCX: 0000000000000027
-> RDX: ffff88803cd9cac8 RSI: 0000000000000001 RDI: ffff88803cd9cac0
-> RBP: ffff88800674fbb0 R08: ffffffff828ce248 R09: 00000000ffffefff
-> R10: ffffffff8285e260 R11: ffffffff828b8eb8 R12: ffff8880046d88d8
-> R13: 0000000000000000 R14: 0000000000000000 R15: ffff8880067281c0
-> FS:  00007f68601ea740(0000) GS:ffff88803cd80000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00005614f3ebc740 CR3: 000000000773a000 CR4: 00000000000006f0
-> Call Trace:
->   <TASK>
->   ? __warn+0x77/0xd0
->   ? lockdep_init_map_type+0x185/0x220
->   ? report_bug+0x189/0x1a0
->   ? handle_bug+0x3c/0x70
->   ? exc_invalid_op+0x18/0x70
->   ? asm_exc_invalid_op+0x1a/0x20
->   ? lockdep_init_map_type+0x185/0x220
->   __kernfs_create_file+0x79/0x100
->   cgroup_addrm_files+0x163/0x380
->   ? find_held_lock+0x2b/0x80
->   ? find_held_lock+0x2b/0x80
->   ? find_held_lock+0x2b/0x80
->   css_populate_dir+0x73/0x180
->   cgroup_apply_control_enable+0x12f/0x3a0
->   cgroup_subtree_control_write+0x30b/0x440
->   kernfs_fop_write_iter+0x13a/0x1f0
->   vfs_write+0x341/0x450
->   ksys_write+0x64/0xe0
->   do_syscall_64+0x4b/0x110
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> RIP: 0033:0x7f68602d9833
-> Code: 8b 15 61 26 0e 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 01 00 00 00 08
-> RSP: 002b:00007fff9bbdf8e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f68602d9833
-> RDX: 0000000000000009 RSI: 00005614f3ebc740 RDI: 0000000000000001
-> RBP: 00005614f3ebc740 R08: 000000000000000a R09: 0000000000000008
-> R10: 00005614f3db6ba0 R11: 0000000000000246 R12: 0000000000000009
-> R13: 00007f68603bd6a0 R14: 0000000000000009 R15: 00007f68603b8880
->
-> For lockdep, there is a sanity check in lockdep_init_map_type(), the
-> lock-class key must either have been allocated statically or must
-> have been registered as a dynamic key. However the commit e18df2889ff9
-> ("mm/hugetlb_cgroup: prepare cftypes based on template") has changed
-> the cftypes from static allocated objects to dynamic allocated objects,
-> so the cft->lockdep_key must be registered proactively.
->
-> Fixes: e18df2889ff9 ("mm/hugetlb_cgroup: prepare cftypes based on template")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202406181046.8d8b2492-oliver.sang@intel.com
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+On 6/17/24 7:24 PM, John Hubbard wrote:
+> Clean up and move some copy-pasted items into a new mseal_helpers.h.
+> 
+> 1. The test macros can be made safer and simpler, by observing that they
+> are invariably called when about to return. This means that the macros
+> do not need an intrusive label to goto; they can simply return.
+> 
+> 2. PKEY* items. We cannot, unfortunately use pkey-helpers.h. The best we
+> can do is to factor out these few items into mseal_helpers.h.
+> 
+> 3. These tests still need their own definition of u64, so also move that
+> to the header file.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+And I just noticed that I left out this one:
 
-> ---
-> v2: add bug log to commit message
-> ---
->   mm/hugetlb_cgroup.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
-> index 2b899c4ae968..4ff238ba1250 100644
-> --- a/mm/hugetlb_cgroup.c
-> +++ b/mm/hugetlb_cgroup.c
-> @@ -836,6 +836,8 @@ hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
->   			cft->file_offset = MEMFILE_OFFSET0(offset) +
->   					   MEMFILE_FIELD_SIZE(offset) * idx;
->   		}
-> +
-> +		lockdep_register_key(&cft->lockdep_key);
->   	}
->   }
->   
+4. Be sure to include the new mseal_helpers.h in the Makefile dependencies.
 
-Best regards
+In other words, this hunk is also needed:
+
+diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+index 3b49bc3d0a3b..23daa097d5b7 100644
+--- a/tools/testing/selftests/mm/Makefile
++++ b/tools/testing/selftests/mm/Makefile
+@@ -2,6 +2,7 @@
+  # Makefile for mm selftests
+  
+  LOCAL_HDRS += $(selfdir)/mm/local_config.h $(top_srcdir)/mm/gup_test.h
++LOCAL_HDRS += $(selfdir)/mm/mseal_helpers.h
+  
+  include local_config.mk
+
+
+I'll send out a v4 with that, once we resolve the discussion around patch 1/6.
+
+
+thanks,
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+John Hubbard
+NVIDIA
+
+> 
+> Cc: Jeff Xu <jeffxu@chromium.org>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>   tools/testing/selftests/mm/mseal_helpers.h | 41 ++++++++++++++++++
+>   tools/testing/selftests/mm/mseal_test.c    | 49 +---------------------
+>   tools/testing/selftests/mm/seal_elf.c      | 33 +--------------
+>   3 files changed, 43 insertions(+), 80 deletions(-)
+>   create mode 100644 tools/testing/selftests/mm/mseal_helpers.h
+> 
+> diff --git a/tools/testing/selftests/mm/mseal_helpers.h b/tools/testing/selftests/mm/mseal_helpers.h
+> new file mode 100644
+> index 000000000000..108d3fd0becb
+> --- /dev/null
+> +++ b/tools/testing/selftests/mm/mseal_helpers.h
+> @@ -0,0 +1,41 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#define FAIL_TEST_IF_FALSE(test_passed)					\
+> +	do {								\
+> +		if (!(test_passed)) {					\
+> +			ksft_test_result_fail("%s: line:%d\n",		\
+> +						__func__, __LINE__);	\
+> +			return;						\
+> +		}							\
+> +	} while (0)
+> +
+> +#define SKIP_TEST_IF_FALSE(test_passed)					\
+> +	do {								\
+> +		if (!(test_passed)) {					\
+> +			ksft_test_result_skip("%s: line:%d\n",		\
+> +						__func__, __LINE__);	\
+> +			return;						\
+> +		}							\
+> +	} while (0)
+> +
+> +#define TEST_END_CHECK() ksft_test_result_pass("%s\n", __func__)
+> +
+> +#ifndef PKEY_DISABLE_ACCESS
+> +#define PKEY_DISABLE_ACCESS	0x1
+> +#endif
+> +
+> +#ifndef PKEY_DISABLE_WRITE
+> +#define PKEY_DISABLE_WRITE	0x2
+> +#endif
+> +
+> +#ifndef PKEY_BITS_PER_PKEY
+> +#define PKEY_BITS_PER_PKEY	2
+> +#endif
+> +
+> +#ifndef PKEY_MASK
+> +#define PKEY_MASK	(PKEY_DISABLE_ACCESS | PKEY_DISABLE_WRITE)
+> +#endif
+> +
+> +#ifndef u64
+> +#define u64 unsigned long long
+> +#endif
+> diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
+> index 58c888529f42..d4d6ae42f502 100644
+> --- a/tools/testing/selftests/mm/mseal_test.c
+> +++ b/tools/testing/selftests/mm/mseal_test.c
+> @@ -17,54 +17,7 @@
+>   #include <sys/ioctl.h>
+>   #include <sys/vfs.h>
+>   #include <sys/stat.h>
+> -
+> -/*
+> - * need those definition for manually build using gcc.
+> - * gcc -I ../../../../usr/include   -DDEBUG -O3  -DDEBUG -O3 mseal_test.c -o mseal_test
+> - */
+> -#ifndef PKEY_DISABLE_ACCESS
+> -# define PKEY_DISABLE_ACCESS    0x1
+> -#endif
+> -
+> -#ifndef PKEY_DISABLE_WRITE
+> -# define PKEY_DISABLE_WRITE     0x2
+> -#endif
+> -
+> -#ifndef PKEY_BITS_PER_PKEY
+> -#define PKEY_BITS_PER_PKEY      2
+> -#endif
+> -
+> -#ifndef PKEY_MASK
+> -#define PKEY_MASK       (PKEY_DISABLE_ACCESS | PKEY_DISABLE_WRITE)
+> -#endif
+> -
+> -#define FAIL_TEST_IF_FALSE(c) do {\
+> -		if (!(c)) {\
+> -			ksft_test_result_fail("%s, line:%d\n", __func__, __LINE__);\
+> -			goto test_end;\
+> -		} \
+> -	} \
+> -	while (0)
+> -
+> -#define SKIP_TEST_IF_FALSE(c) do {\
+> -		if (!(c)) {\
+> -			ksft_test_result_skip("%s, line:%d\n", __func__, __LINE__);\
+> -			goto test_end;\
+> -		} \
+> -	} \
+> -	while (0)
+> -
+> -
+> -#define TEST_END_CHECK() {\
+> -		ksft_test_result_pass("%s\n", __func__);\
+> -		return;\
+> -test_end:\
+> -		return;\
+> -}
+> -
+> -#ifndef u64
+> -#define u64 unsigned long long
+> -#endif
+> +#include "mseal_helpers.h"
+>   
+>   static unsigned long get_vma_size(void *addr, int *prot)
+>   {
+> diff --git a/tools/testing/selftests/mm/seal_elf.c b/tools/testing/selftests/mm/seal_elf.c
+> index 27bf2f84231d..45c73213775b 100644
+> --- a/tools/testing/selftests/mm/seal_elf.c
+> +++ b/tools/testing/selftests/mm/seal_elf.c
+> @@ -16,38 +16,7 @@
+>   #include <sys/ioctl.h>
+>   #include <sys/vfs.h>
+>   #include <sys/stat.h>
+> -
+> -/*
+> - * need those definition for manually build using gcc.
+> - * gcc -I ../../../../usr/include   -DDEBUG -O3  -DDEBUG -O3 seal_elf.c -o seal_elf
+> - */
+> -#define FAIL_TEST_IF_FALSE(c) do {\
+> -		if (!(c)) {\
+> -			ksft_test_result_fail("%s, line:%d\n", __func__, __LINE__);\
+> -			goto test_end;\
+> -		} \
+> -	} \
+> -	while (0)
+> -
+> -#define SKIP_TEST_IF_FALSE(c) do {\
+> -		if (!(c)) {\
+> -			ksft_test_result_skip("%s, line:%d\n", __func__, __LINE__);\
+> -			goto test_end;\
+> -		} \
+> -	} \
+> -	while (0)
+> -
+> -
+> -#define TEST_END_CHECK() {\
+> -		ksft_test_result_pass("%s\n", __func__);\
+> -		return;\
+> -test_end:\
+> -		return;\
+> -}
+> -
+> -#ifndef u64
+> -#define u64 unsigned long long
+> -#endif
+> +#include "mseal_helpers.h"
+>   
+>   /*
+>    * define sys_xyx to call syscall directly.
+
 
 
