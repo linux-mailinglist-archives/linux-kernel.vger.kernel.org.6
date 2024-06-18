@@ -1,248 +1,373 @@
-Return-Path: <linux-kernel+bounces-219778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36AFA90D7A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F61D90D7A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 287861C22210
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:46:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F21E21C21107
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F6845BFD;
-	Tue, 18 Jun 2024 15:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kZPbOTzt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCA54D8A4;
+	Tue, 18 Jun 2024 15:44:13 +0000 (UTC)
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB2E36AFE
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718725488; cv=fail; b=hc/8yFif846bGP9iWxukZe2PUFko80oL/yZ570UXpdyFgMRlQD6xA0q4ajgY1/U4jW4kFpsVjRIO0nrNm6j5sekULANg3OQ4L8sGZBaztK7d/h+2BIYjSzSQ08/jUOCmfXgksJ3SPfhLUd9dMgCnSzULrlMGdTS0YdEGx7RbKhA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718725488; c=relaxed/simple;
-	bh=K0LLaauTJDCOi4sf6iIyThok3+RgsyJiXy4U6Pjmmig=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FinL4xlFbdWlZXyR4K166zYS5JqS8fLpiNpN7+DzZ6Xdtf6zgxLl+VL9/nvaJJ34R0ihR3eQXFdBbhJtHXTt7soxvctsS0yiV15Pk5iPVe7EN9Moahq6bLo7om2jNiWOLiTMy5/ofw90ayAjj9A6aK+fTXoPP1Jo8kNS2lmGb+g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kZPbOTzt; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718725487; x=1750261487;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=K0LLaauTJDCOi4sf6iIyThok3+RgsyJiXy4U6Pjmmig=;
-  b=kZPbOTztufcq3536WdhRq+kd+8wJXZyOEh0/M7ylB/X/8ojVx4oeZ3xq
-   re+EnzQnrbWlTqmsArNR3LCoI1gWeYJzdtOKDmB+YZJQpLq24ne2ZoWsl
-   7n5bU5bjuVAVrTjcCC5bTs67/Armi+8AfiRWzQTt7tfRo6CqNUIQnKr/t
-   Cd4h1Zcb1NAXqNsy8OA9p3bg2K4HRp+0WhC2xKqPW0iq+xr+Jy0lQUvxD
-   MZA6fudpJ89T0yb4VHLu6GJvq3YLpp+3hTP7aHFrrua+7dyBR4YQI/am6
-   gO+sUU2gO8ZsX8CnEu4WXYrzcBBnxWeTlrls3oZo8E+LU0pu34tsA61bE
-   g==;
-X-CSE-ConnectionGUID: pRdX0+BpS0q+mpKjV8nMxw==
-X-CSE-MsgGUID: /b/ak302SjSNEJTKqTeP0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15746313"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15746313"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 08:43:58 -0700
-X-CSE-ConnectionGUID: mVUK81AaS3a6WTdFG+VnrA==
-X-CSE-MsgGUID: dPyJEVcGTo22pan7k8iE1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="42300758"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Jun 2024 08:43:57 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 18 Jun 2024 08:43:56 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 18 Jun 2024 08:43:56 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 18 Jun 2024 08:43:56 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 18 Jun 2024 08:43:55 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aOunO1m4muXNBJHNktGC1d3/E7iY8wCR970KuhHEr1Om+YvWz5vYoy0I9HjJI55L2Fk9ghveSq0wR/qbeBhBv5L9LNIVyNZ790iXLc4CgmvAz59DpZ9Dh76vhYGtMrnxrl4+ZUlEVwZPdMSgDw76JV2u2E/zpJqTaaRCcjra6TcCu5UlSqa3AJet4DWgjvXhBBTM94HrdeeWrQyOfctgK5csWcX4+JN5WIkcbqGv+i7xhAmtB26HJ+Y5ryGovqojMWMFV18D3OVCib3q8RelQbNtbk6ZbfPmfmWHpb05QfRwE6kRQ2L83cUrpHLY3+W1kQ1pzTpOeT52R2U243tQEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zoxRJVLQDQ5s1ssP65RSE9QO+uPjQzHyNi+JzkktUdU=;
- b=MmSUldIVgOiUEBM34bta9ggMo9bcNUEjHYi6aR8jShYLx5RXtViT37/YtqR0RGWuH9ZiPLY27fFl9JuUMwMevy+fyrU+UeU0r6rSJmCbO59iIhZZ4yPRtScJHZbTOdohQlkUz7eiXAOmjpe5fDyDA88DRjsZtA28KNSAcQIcUmlUygc5iJbHTeklMpQ3CsLHyadSrc6FzIerEAGl/L1156pOso7wrdeEvrDTfzmz6jYh1EYEsXfonN16M/qsEaeumckRtaM6r1h/Zsv3poO21ADZ87FHNPz4SdST5uB8ipOpA816wWxP66/yH4fygQknY62QWDDFmwOgLU39+MNgEw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by PH0PR11MB5094.namprd11.prod.outlook.com (2603:10b6:510:3f::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
- 2024 15:43:54 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 15:43:54 +0000
-Message-ID: <d476585b-3cfb-494d-b25c-4aeb6244e21d@intel.com>
-Date: Tue, 18 Jun 2024 08:43:51 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/resctrl: Don't try to free nonexistent RMIDs
-To: Dave Martin <Dave.Martin@arm.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, James Morse
-	<james.morse@arm.com>, Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, H Peter Anvin <hpa@zytor.com>, Babu Moger
-	<Babu.Moger@amd.com>, <shameerali.kolothum.thodi@huawei.com>, "D Scott
- Phillips OS" <scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>, "Shaopeng Tan
- (Fujitsu)" <tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie
- Iles <quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>, Peter Newman
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>
-References: <20240614160843.11006-1-Dave.Martin@arm.com>
- <1e3bba2e-5cf6-4a77-b92d-5c7ab1661d17@intel.com>
- <ZnAkOhFWzDqhlSyt@e133380.arm.com>
- <a37917d2-8ad9-4192-a3f8-9789193d53d6@intel.com>
- <ZnFTnzm/jctgN2wf@e133344.arm.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <ZnFTnzm/jctgN2wf@e133344.arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW3PR06CA0003.namprd06.prod.outlook.com
- (2603:10b6:303:2a::8) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7058B44C76;
+	Tue, 18 Jun 2024 15:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718725452; cv=none; b=a6JaYSEejxUD/BibkLvsrhDo64/GaemEeic0wewrWOh5C2JsML7U6OniG9AeRq3xrNtAdX9vGedHwY5DJNLSyJIOV0/tIC/mKZw2fIMbnMPla5oX5+LrfhhLFlmK+bPfQnqdN8FcCV9o1lJfWELFc56jv//BFL9r/pruJQmH7sw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718725452; c=relaxed/simple;
+	bh=/MBlto6Qqj2+ZTKzN6vAqeL+XR/qdgysFQsP413TV0M=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=E7aa9nVg18pmRYkmT7K0wKfZF6G27PchXRp8bb4XiHt5UCniWp0GCgXF3MarAjc71lCUoQ2waiVxgPJcG5/y3q9VMX3JbXBgJ2/Im7A9Fd7S2w8kkmzF3UDYDlmXiuC3lm8Esgau0jafd7/ss2jPRhWP0XCAP6ras7xb+YSZVwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0C965E0006;
+	Tue, 18 Jun 2024 15:44:05 +0000 (UTC)
+Message-ID: <5c369615-1774-4dc5-87fc-d96ce3421ff8@ovn.org>
+Date: Tue, 18 Jun 2024 17:44:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH0PR11MB5094:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef4575dc-b0a7-423e-d187-08dc8fad755a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|7416011|376011|1800799021|366013;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bHl0Rml3UUZuUWlKWThKVGRFbDRVdHFudklEVTJXdnpoVXcyU0tXUmtrMjli?=
- =?utf-8?B?bUdyNG01aEV6dHNDM1JQSW9pVFZHcWtSRzMvUFVlT2RQZ0Vmdjg1c2c2QllF?=
- =?utf-8?B?UlF4MlJGdVhKOE1XL0R3RFFmVTgzSTF5QUJaS05mS2VsaVdSUk9lNmRSZHVy?=
- =?utf-8?B?MnlpVHBuaThvZlZ1SEE3YzNJUFNpbjdLOWdoUWN5SzhVRGlDSEJ2WHZJekN2?=
- =?utf-8?B?WlRoYVJnWllKV2tYQ1Q2R3JiUFhOTFBTMTFnaktPZ3J5Q1hINVk3OVY2Q0E2?=
- =?utf-8?B?TWliMkhaNXJ0anR2c2hNbjYzamhhZ05idU1jRVJKNG1jZk82Q0t1aFFNVDB3?=
- =?utf-8?B?bDZUVGcxckRkTi9JT0hUZEtBakhHUjRqWWNHQ04vVklUZ3hVSmNOa3oySHRX?=
- =?utf-8?B?LzNDL0RoVHlwM2dXQmtaMXpCd1U1UVBPcWpwNjgreWlPVnplME9NNHRqRXli?=
- =?utf-8?B?SHNTM2drV1lJRWZaVGdQMnhFTlRydXBMdGhrR25QNXJIZU56WkZWSVNPamV3?=
- =?utf-8?B?RU9Ta0p5TmVSRldWcWFNdHdiWTdGS2pYVTlwbklGUlhiQm1rcUladC9pWVRi?=
- =?utf-8?B?ZE1nOGpJNXBGMmdJRW5iM2ZySkk3TWF5Y083K1VmeVFiUUxYMERFVXZlWC9G?=
- =?utf-8?B?VW14YVg2b2s0VnByMW9mTXYwQkhKRnJ3WW5xOXF2cjlmdVJTaHduN1hZSzRr?=
- =?utf-8?B?VnBqVzVXZmNGRnFyaENUN3FQNzBLU2p3MHN6RjBmNFVoaWVkTGRrMEhjRjB4?=
- =?utf-8?B?YTBISWJOZE1lSlkvQUUrdU5sTXh6cHdWZHZ2UzFKNFI1bzFnVEVBODFqT1V6?=
- =?utf-8?B?VVN0Q3E4bmpPYzduVlM3bVZEQnF5RFpReTY3WGNXVHoyZ24xM3pFTXZ2Qmlr?=
- =?utf-8?B?RU1aV2w5L1VudXkwSDdkdWlCRUtKUm5WMysxNVFTWDAvVEJsaVZyT0UxNnI0?=
- =?utf-8?B?bERGRDVkR0JJbW9ZTTE2ekpBVVgwYkFaU2U4L0ZvQi91TkJldHpnc0pSUmxJ?=
- =?utf-8?B?bGRFNTFUK010Z1l0L2cyVmUxUUVaNGRhaG9hMWltVTN1N0h2RkhIOTR1a1du?=
- =?utf-8?B?WFFYRXlWRVgzWTVDSC84Q09WNkFOdXhRVzJYMXFldWMwVGFYbi9XdzRLZnh4?=
- =?utf-8?B?MisyMU1mOGhlbkw3aXhvdy8xa3lQUlBidTcxVHcza2EvSi8zTTNXN2sxUGQ5?=
- =?utf-8?B?bktPZFRFYjVSVG8vR1hqODVNQTl6WGcveEozNitLYjlrYnN3dGxuUG5kZWpq?=
- =?utf-8?B?VGNQT01jSExHU05adVhyS0kvTkZjcFZXbjArR2x1QWp2dE03ZU1ibjM4Q3Er?=
- =?utf-8?B?TVVEV2Rxb09ReTVsazdEVCtuM3RZbGVBMTdNTmxPbVA5UFpaODlVanBOc01k?=
- =?utf-8?B?WEdCdElFVHRIYnhKNWozZGY2SUlWKzEvZHpMV2x3aGRQUDZRVkQ3bWtCM2dz?=
- =?utf-8?B?N3dSMiszUUFBSS9OSlN3cUJLOVpEWnV1N1llQTNzL1dLZFJaaVBEemtucFpD?=
- =?utf-8?B?YVljb1NQdklLMWpyMHdTeEZ6Q2hQdTVvbUlCaUVoVkVkdHZFb1BIaHM0aGFl?=
- =?utf-8?B?Z3NVZjZxc2NUSnFpUlJLVzlkL2NydFhwUlpab1NqNHlsNWJKbDVEK0hpR0Vj?=
- =?utf-8?B?a2lTQWNNUTdZSnA2S1ZKMVV1bDV0dTZKZkMycmhtNHVRVFFUTnJLQytzT3Rr?=
- =?utf-8?Q?Bswj6/9UrxlI8xtuEuA0?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(7416011)(376011)(1800799021)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NnhEdVVOSElWcWpHa2pNcmkzNDUrald5aWlCb0pIVzJ2MEVBS0dMVnZmYVBv?=
- =?utf-8?B?T1NlZ1JzWVUrNmdwbTJXMlRhdy83WTFXT2ZGVittemdVdksyeERQNFhlK2lp?=
- =?utf-8?B?ZE1TK1RSZWt4L1F5ZTZLZDRuMlJuRFRBeW90M3ozTFVReEl3TkNKSXRTclo4?=
- =?utf-8?B?VXBLYjZRcGYzRFBGYk0yOTNQSEFVY0xOWnBkd21STTJMa0pGc0lJbTJwc3Rh?=
- =?utf-8?B?c0lrT1BsampnTnYyeS91OU91OHFobVA3TE51eHN2YXprd3paMkVRNzhOZHlj?=
- =?utf-8?B?amZ4Y2xvNnNWblNVWWFLRVB2Wk9IWkhNVXljRzAzdWlvdFRVaGJlSzdTSmtR?=
- =?utf-8?B?WjlBZVd0K2EwN0lYdTlUcExBdWpaWGt5WU1DclFIUkxlZkZsSFVOZVhRQ1hU?=
- =?utf-8?B?UzVONDY5YU9CWEhuSUM5dWYwTXZuOElPaXhhWkg4NW5OK0RzQWFxUzRJTFVS?=
- =?utf-8?B?K1E1NXRIQ3AwcGF0dXRaaDdiRnpRMkNXbUlxcUU3ZGJSZWNSanFjS3VZZGFp?=
- =?utf-8?B?dnpXSjF6Y01tM3VRTkUxS1dpR3dRNGc0YXk4LzFCVXZGdHg1a0Z3cnRjZjRT?=
- =?utf-8?B?Ym9sZmxTR0ZabEl5b0t4bk9SRGlsaFg2ZkVzQk80S0VHYmU1RndhS1lvVmNT?=
- =?utf-8?B?bi9LcC9ENFZVZCtWQmZXWnNjYXVZamtud1NWa2k0RGtlTzFxUXRtdnlEWVhQ?=
- =?utf-8?B?V21VcHlSMVJpa3dMT0pLM3VQL1RDdUhTTUx5S29jdGIzTUxpVWdXNFlya0NY?=
- =?utf-8?B?dXhTeEdXenZueE1QVkpLaWwyUWFHZzNzeEpPQ1NQZ2F3dHBwTy9QNzhSWmhz?=
- =?utf-8?B?MnFXRVZBMFd3bERCY3R0UmZoNThFRzErUDlHZmo4b3NLTUFScURBN2hPaHhr?=
- =?utf-8?B?eGUrVnNqSkFlV2VnYmEvaFBPdGc0dmRzWGwyc2w5ekRGeUZkT0hHcGsvNDl2?=
- =?utf-8?B?WnRxWVJoQ2hla1RyS2V1anhSRVFQWURhWGZJazFhS0FkNHJRMkdRcUhIdGdO?=
- =?utf-8?B?OWNsQUd0YUUxRWp1OTg5djdhWHg3c0Y3TkE3em91NVR3WUNEc1FFbHZvVUdz?=
- =?utf-8?B?bWtyRHBVMHlOU2M4aGxIQnl1YUsvSlVWUGo3Zi9LTHkzTG15U1RJREpxdTRw?=
- =?utf-8?B?N2pjZlcvaXdBbnVFNEg1bUdVeVBlZFJUb1p0TGNuWTkrNGdYaUwrMXd4bUNT?=
- =?utf-8?B?Mko1VWY3SXd5M3NKME9VU0wrNThKeTRQZzZBZ1QxaXc3YWd1T2p3V25hZGRZ?=
- =?utf-8?B?dHZQUzlrb1pJZUZzRWxuWXhMZkVtdFNUMUhlMDBhcFVRSWhyclN6SjI0VnRi?=
- =?utf-8?B?R2xxdU1DOXFEWUpiRlgyR1Zqd04vTHRNM2VGRE1ZcUlCb0FwdGMwRkpGYU5r?=
- =?utf-8?B?Rk0rbk9FY3RIcHIxbVhSMnNpY01pcUJQTDdmNTMycHdVeUFiSGJNS2UvRWRQ?=
- =?utf-8?B?RzUvN1ZqbUphbXpmZzhaT0dlblhPSWFIZlVLUG9jUTNjd1FlWW0vRmlwVmc0?=
- =?utf-8?B?TTVLQUkrdEtkZW9CV1ZjQXBMVFNGa2VsaXd2SHB4UktKVnVLYWpwVEhHY0s1?=
- =?utf-8?B?Qjl1UnQvM0dFTGlqV1ZUZ1BQVC9XMDlYUjBnVGJuUllFNnIzTkJBZmdDVEJL?=
- =?utf-8?B?Zkg4VWRIcXJQZTN3S2dmV1JLbWVoYzFHRFNNQm5CRDVvM2x4b0NwU01tTTVX?=
- =?utf-8?B?Y0FvejM1SVJLK1pkZW45WTEwM0xmc3crM3pQdFhrb1JmTzVTVUxnUGg4Nnk0?=
- =?utf-8?B?ejFJY2FLRGE1cGYzTDM4UEhzTGJrWGRrekJmcjZaQ2tzdmhhcS9HbjNqc2NO?=
- =?utf-8?B?SFlCSjBOVCt1UDNmbmowc0ZZMEFqWkovSzYvTXJaTEpUMHhWVVpoTFRSTk9L?=
- =?utf-8?B?VERESXcwSGxvd0o5bnU3VlJzUXNqTG9xa1B4QUJ4WlM4dWdRRGYvSXZtWGJJ?=
- =?utf-8?B?dmFsSSs3bFNBT1ZVek5YTlB1YlVONm1aZXE3Zkpacnh1VUE2U1JmME82WkMr?=
- =?utf-8?B?czZEOEg1cm5JTHhMNGF2Q3RZcm4rVW1SVFgxVGZhbDhtSzFpUHpBeVhTeEFy?=
- =?utf-8?B?NVFxaVF4UlFJKzlyL0lvdnR4bG9mNzRNSFNuSHNoSmhSWG1uWnc2YWZwN0V3?=
- =?utf-8?B?cDF1OUh3akFHZjU5QUVyTU54OWtXbDJ3V0ZlcjF2WlB0cU90VEVNZ2tQMURx?=
- =?utf-8?B?UFE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef4575dc-b0a7-423e-d187-08dc8fad755a
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 15:43:54.1690
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dYv1FQXtdnHmdU/+TmTJIxyHewyAfZmvVmoJSe8UN3HLc2jXR9cbxFCVjWoH6g5tK6wrn/s8kXDWgHfYZozcag573RdDuUEz7EBM/Em1+us=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5094
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Cc: i.maximets@ovn.org, netdev@vger.kernel.org, aconole@redhat.com,
+ echaudro@redhat.com, horms@kernel.org, dev@openvswitch.org,
+ Pravin B Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 7/9] net: openvswitch: do not notify drops
+ inside sample
+To: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240603185647.2310748-1-amorenoz@redhat.com>
+ <20240603185647.2310748-8-amorenoz@redhat.com>
+ <8624ccf8-e9e2-4a95-a25c-7d3166bb3256@ovn.org>
+ <f8050877-1728-4723-acb8-8a8ab7674470@ovn.org>
+ <CAG=2xmPAwvCR4ky0cu7Yai29v3H592-ATXtNkhsNJ-vTwR4BVw@mail.gmail.com>
+ <5f293bac-4117-4f93-8d3f-636d6ce236a4@ovn.org>
+ <CAG=2xmPbpvYGy1rAkcLsK6PFxCx3bmZyXKX5RTag8XZBTxMZdg@mail.gmail.com>
+Content-Language: en-US
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ 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
+In-Reply-To: <CAG=2xmPbpvYGy1rAkcLsK6PFxCx3bmZyXKX5RTag8XZBTxMZdg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: i.maximets@ovn.org
 
-Hi Dave,
-
-On 6/18/24 2:30 AM, Dave Martin wrote:
-> On Mon, Jun 17, 2024 at 08:53:38AM -0700, Reinette Chatre wrote:
->> On 6/17/24 4:55 AM, Dave Martin wrote:
-
->>> As it happens I tested with rdt=cmt,mbmtotal,mbmlocal,l3cat,l3cdp
->>> (though I made no effort to exercise these features other than running
->>> the selftests).  I can note this in the commit if you prefer.
+On 6/18/24 12:50, Adrián Moreno wrote:
+> On Tue, Jun 18, 2024 at 12:22:23PM GMT, Ilya Maximets wrote:
+>> On 6/18/24 09:00, Adrián Moreno wrote:
+>>> On Mon, Jun 17, 2024 at 02:10:37PM GMT, Ilya Maximets wrote:
+>>>> On 6/17/24 13:55, Ilya Maximets wrote:
+>>>>> On 6/3/24 20:56, Adrian Moreno wrote:
+>>>>>> The OVS_ACTION_ATTR_SAMPLE action is, in essence,
+>>>>>> observability-oriented.
+>>>>>>
+>>>>>> Apart from some corner case in which it's used a replacement of clone()
+>>>>>> for old kernels, it's really only used for sFlow, IPFIX and now,
+>>>>>> local emit_sample.
+>>>>>>
+>>>>>> With this in mind, it doesn't make much sense to report
+>>>>>> OVS_DROP_LAST_ACTION inside sample actions.
+>>>>>>
+>>>>>> For instance, if the flow:
+>>>>>>
+>>>>>>   actions:sample(..,emit_sample(..)),2
+>>>>>>
+>>>>>> triggers a OVS_DROP_LAST_ACTION skb drop event, it would be extremely
+>>>>>> confusing for users since the packet did reach its destination.
+>>>>>>
+>>>>>> This patch makes internal action execution silently consume the skb
+>>>>>> instead of notifying a drop for this case.
+>>>>>>
+>>>>>> Unfortunately, this patch does not remove all potential sources of
+>>>>>> confusion since, if the sample action itself is the last action, e.g:
+>>>>>>
+>>>>>>     actions:sample(..,emit_sample(..))
+>>>>>>
+>>>>>> we actually _should_ generate a OVS_DROP_LAST_ACTION event, but we aren't.
+>>>>>>
+>>>>>> Sadly, this case is difficult to solve without breaking the
+>>>>>> optimization by which the skb is not cloned on last sample actions.
+>>>>>> But, given explicit drop actions are now supported, OVS can just add one
+>>>>>> after the last sample() and rewrite the flow as:
+>>>>>>
+>>>>>>     actions:sample(..,emit_sample(..)),drop
+>>>>>>
+>>>>>> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+>>>>>> ---
+>>>>>>  net/openvswitch/actions.c | 13 +++++++++++--
+>>>>>>  1 file changed, 11 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
+>>>>>> index 33f6d93ba5e4..54fc1abcff95 100644
+>>>>>> --- a/net/openvswitch/actions.c
+>>>>>> +++ b/net/openvswitch/actions.c
+>>>>>> @@ -82,6 +82,15 @@ static struct action_fifo __percpu *action_fifos;
+>>>>>>  static struct action_flow_keys __percpu *flow_keys;
+>>>>>>  static DEFINE_PER_CPU(int, exec_actions_level);
+>>>>>>
+>>>>>> +static inline void ovs_drop_skb_last_action(struct sk_buff *skb)
+>>>>>> +{
+>>>>>> +	/* Do not emit packet drops inside sample(). */
+>>>>>> +	if (OVS_CB(skb)->probability)
+>>>>>> +		consume_skb(skb);
+>>>>>> +	else
+>>>>>> +		ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
+>>>>>> +}
+>>>>>> +
+>>>>>>  /* Make a clone of the 'key', using the pre-allocated percpu 'flow_keys'
+>>>>>>   * space. Return NULL if out of key spaces.
+>>>>>>   */
+>>>>>> @@ -1061,7 +1070,7 @@ static int sample(struct datapath *dp, struct sk_buff *skb,
+>>>>>>  	if ((arg->probability != U32_MAX) &&
+>>>>>>  	    (!arg->probability || get_random_u32() > arg->probability)) {
+>>>>>>  		if (last)
+>>>>>> -			ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
+>>>>>> +			ovs_drop_skb_last_action(skb);
+>>>>
+>>>> Always consuming the skb at this point makes sense, since having smaple()
+>>>> as a last action is a reasonable thing to have.  But this looks more like
+>>>> a fix for the original drop reason patch set.
+>>>>
+>>>
+>>> I don't think consuming the skb at this point makes sense. It was very
+>>> intentionally changed to a drop since a very common use-case for
+>>> sampling is drop-sampling, i.e: replacing an empty action list (that
+>>> triggers OVS_DROP_LAST_ACTION) with a sample(emit_sample()). Ideally,
+>>> that replacement should not have any effect on the number of
+>>> OVS_DROP_LAST_ACTION being reported as the packets are being treated in
+>>> the same way (only observed in one case).
+>>>
+>>>
+>>>>>>  		return 0;
+>>>>>>  	}
+>>>>>>
+>>>>>> @@ -1579,7 +1588,7 @@ static int do_execute_actions(struct datapath *dp, struct sk_buff *skb,
+>>>>>>  		}
+>>>>>>  	}
+>>>>>>
+>>>>>> -	ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
+>>>>>> +	ovs_drop_skb_last_action(skb);
+>>>>>
+>>>>> I don't think I agree with this one.  If we have a sample() action with
+>>>>> a lot of different actions inside and we reached the end while the last
+>>>>> action didn't consume the skb, then we should report that.  E.g.
+>>>>> "sample(emit_sample(),push_vlan(),set(eth())),2"  should report that the
+>>>>> cloned skb was dropped.  "sample(push_vlan(),emit_sample())" should not.
+>>>>>
+>>>
+>>> What is the use case for such action list? Having an action branch
+>>> executed randomly doesn't make sense to me if it's not some
+>>> observability thing (which IMHO should not trigger drops).
 >>
->> hmmm ... those parameters should not be necessary unless the system
->> has those features forced off by default because of errata. Doing
->> functional testing on these systems via such enabling is fine
->> though.
+>> It is exactly my point.  A list of actions that doesn't end is some sort
+>> of a terminal action (output, drop, etc) does not make a lot of sense and
+>> hence should be signaled as an unexpected drop, so users can re-check the
+>> pipeline in case they missed the terminal action somehow.
 >>
->> Reinette
+>>>
+>>>>> The only actions that are actually consuming the skb are "output",
+>>>>> "userspace", "recirc" and now "emit_sample".  "output" and "recirc" are
+>>>>> consuming the skb "naturally" by stealing it when it is the last action.
+>>>>> "userspace" has an explicit check to consume the skb if it is the last
+>>>>> action.  "emit_sample" should have the similar check.  It should likely
+>>>>> be added at the point of action introduction instead of having a separate
+>>>>> patch.
+>>>>>
+>>>
+>>> Unlinke "output", "recirc", "userspace", etc. with emit_sample the
+>>> packet does not continue it's way through the datapath.
+>>
+>> After "output" the packet leaves the datapath too, i.e. does not continue
+>> it's way through OVS datapath.
+>>
 > 
-> I got these kernel args from James.  Apparently some of these features
-> are defaulted to off by the firmware on the box I'm using, but we're not
-> sure why.  I haven't dug into it.
+> I meant a broader concept of "datapath". The packet continues. For the
+> userspace action this is true only for the CONTROLLER ofp action but
+> since the datapath does not know which action it's implementing, we
+> cannot do better.
 
-resctrl does not provide capability to override features that the hardware
-does not advertise as supporting. resctrl does sometimes force hardware
-advertised features off because of errata (for example, see [1]) and the
-kernel "rdt=" parameter can be used to override that. This same option also
-enables administrators to ignore some features on their platforms.
+It's not only controller() action.  Packets can be brought to userspace
+for various reason including just an explicit ask to execute some actions
+in userspace.  In any case the packet sent to userspace kind of reached its
+destination and it's not the "datapath drops the packet" situation.
 
-Reinette
+> 
+>>>
+>>> It would be very confusing if OVS starts monitoring drops and adds a bunch
+>>> of flows such as "actions:emit_sample()" and suddently it stops reporting such
+>>> drops via standard kfree_skb_reason. Packets _are_ being dropped here,
+>>> we are just observing them.
+>>
+>> This might make sense from the higher logic in user space application, but
+>> it doesn't from the datapath perspective.  And also, if the user adds the
+>> 'emit_sample' action for drop monitring, they already know where to find
+>> packet samples, they don't need to use tools like dropwatch anymore.
+>> This packet is not dropped from the datapath perspective, it is sampled.
+>>
+>>>
+>>> And if we change emit_sample to trigger a drop if it's the last action,
+>>> then "sample(50%, emit_sample()),2" will trigger a drop half of the times
+>>> which is also terribly confusing.
+>>
+>> If emit_sample is the last action, then skb should be consumed silently.
+>> The same as for "output" and "userspace".
+>>
+>>>
+>>> I think we should try to be clear and informative with what we
+>>> _actually_ drop and not require the user that is just running
+>>> "dropwatch" to understand the internals of the OVS module.
+>>
+>> If someone is already using sampling to watch their packet drops, why would
+>> they use dropwatch?
+>>
+>>>
+>>> So if you don't want to accept the "observational" nature of sample(),
+>>> the only other solution that does not bring even more confusion to OVS
+>>> drops would be to have userspace add explicit drop actions. WDYT?
+>>>
+>>
+>> These are not drops from the datapath perspective.  Users can add explicit
+>> drop actions if they want to, but I'm really not sure why they would do that
+>> if they are already capturing all these packets in psample, sFlow or IPFIX.
+> 
+> Because there is not a single "user". Tools and systems can be built on
+> top of tracepoints and samples and they might not be coordinated between
+> them. Some observability application can be always enabled and doing
+> constant network monitoring or statistics while other lower level tools
+> can be run at certain moments to troubleshoot issues.
+> 
+> In order to run dropwatch in a node you don't need to have rights to
+> access the OpenFlow controller and ask it to change the OpenFlow rules
+> or else dropwatch simply will not show actual packet drops.
 
-[1] https://lore.kernel.org/all/3aea0a3bae219062c812668bd9b7b8f1a25003ba.1503512900.git.tony.luck@intel.com/
+The point is that these are not drops in this scenario.  The packet was
+delivered to its destination and hence should not be reported as dropped.
+In the observability use-case that you're describing even OpenFlow layer
+in OVS doesn't know if these supposed to be treated as packet drops for
+the user or if these are just samples with the sampling being the only
+intended destination.  For OpenFlow and OVS userspace components these
+two scenarios are indistinguishable.  Only the OpenFlow controller knows
+that these rules were put in place because it was an ACL created by some
+user or tool.  And since OVS in user space can't make such a distinction,
+kernel can't make it either, and so shouldn't guess what the user two
+levels of abstraction higher up meant.
+
+> 
+> To me it seems obvious that drop sampling (via emit_sample) "includes"
+> drop reporting via emit_sample. In both cases you get the packet
+> headers, but in one case you also get OFP controller metadata. Now even
+> if there is a system that uses both, does it make sense to push to them
+> the responsibility of dealing with them being mutually exclusive?
+> 
+> I think this makes debugging OVS datapath unnecessarily obscure when we
+> know the packet is actually being dropped intentionally by OVS.
+
+I don't think we know that we're in a drop sampling scenario.  We don't
+have enough information even in OVS userspace to tell.
+
+And having different behavior between "userspace" and "emit_sample" in
+the kernel may cause even more confusion, because now two ways of sampling
+packets will result in packets showing up in dropwatch in one case, but
+not in the other.
+
+> 
+> What's the problem with having OVS write the following?
+>     "sample(50%, emit_sample()),drop(0)"
+
+It's a valid sequence of actions, but we shouldn't guess what the end
+user meant by putting those actions into the kernel.  If we see such a
+sequence in the kernel, then we should report an explicit drop.  If
+there was only the "sample(50%, emit_sample())" then we should simply
+consume the skb as it reached its destination in the psample.
+
+For the question if OVS in user space should put explicit drop action
+while preparing to emit sample, this doesn't sound reasonable for the
+same reason - OVS in user space doesn't know what the intention was of
+the user or tool that put the sampling action into OpenFlow pipeline.
+
+
+I actually became more confused about what are we arguing about.
+To recap:
+
+                                     This patch     My proposal
+
+1. emit_sample() is the last            consume        consume  
+    inside the sample()
+
+2. the end of the action list           consume        drop
+    inside the sample()
+
+3. emit_sample() is the last            drop           consume
+    outside the sample()
+
+4. the end of the action list           drop           drop
+    outside the sample()
+
+5. sample() is the last action          consume        consume
+    and probability failed
+
+
+I don't think cases 1 and 3 should differ, i.e. the behavior should
+be the same regardless of emit_sample() being inside or outside of
+the sample().  As a side point, OVS in user space will omit the 100%
+rate sample() action and will just list inner actions instead.  This
+means that 100% probability sampling will generate drops and 99% will
+not.  Doesn't sound right.
+
+Case 2 should likely never happen, but I'd like to see a drop reported
+if that ever happens, because it is not a meaningful list of actions.
+
+Best regards, Ilya Maximets.
 
