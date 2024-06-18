@@ -1,130 +1,124 @@
-Return-Path: <linux-kernel+bounces-218919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413F990C7B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:51:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8486890C7B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45B8D1C21FE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0ED285941
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F5D156653;
-	Tue, 18 Jun 2024 09:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IqAOasgD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF9D1C0DD2;
+	Tue, 18 Jun 2024 09:13:36 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33AE13DB99;
-	Tue, 18 Jun 2024 09:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1B213DB99;
+	Tue, 18 Jun 2024 09:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718702009; cv=none; b=iX8ZsYfkkTC9Og4nnkXRtkofTUtEm9vgQIxCJtKtiaxhhbmTcGpKkLlx/pHZnYcphU4x+wjQ7K2yVVJD9CJ4Mlzev2khlpnHCttVPPyUOAQvEAQxKSozx8f+sjVS7bOsLz1gOYK6VAn56hcitjcxThD7HoMXjiq2Riv8v+R/Xxc=
+	t=1718702015; cv=none; b=K3V8y/wLQLZ5jcdv001eYVnQjAX0bivwD1zv8z2/NCJYNBY4fCXg0pY1QpRyFLXk4x6B2hJ5CeO8gZW8kPWlHgURbi00zvzpLJfkHEbRvsWqGcwg/d4B9KCEElNb7pQPKWyG+12DVRlO5sg5oD4ce1oafFS/pWShrHSOOIcEM8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718702009; c=relaxed/simple;
-	bh=b3HK2kOnus2xn44LD4/7n1YbYkes4t+zstxuJ2EcEtM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DxWRIlG7EnoGAQIpABnvzaresHZ+I/2OUMLXj2P0fnjN9E0+MbvX3z1+M7ytTrZQha74pFKhVvDX+XvPa9D9pqsdTvQA92spZ9wr5+8qoZUQFmbeOOzn+bxiVY4L1kQO2rAIs2a7eDii3ujMLEClQh25ji0BsV6ulSas7dHT8dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IqAOasgD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F25A6C4AF1D;
-	Tue, 18 Jun 2024 09:13:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718702009;
-	bh=b3HK2kOnus2xn44LD4/7n1YbYkes4t+zstxuJ2EcEtM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IqAOasgDKg0i8YKqY+6jfNvoc+FomZys6U4FtzsyyOQVf641TkJyp7gaY/BC+2JyT
-	 LRtVUJo8Ck5AoECAgx+mPjvwtQdzZMEhCamBtjo25a0yju+yorMgNePo0ngFYxc4aw
-	 J70W0SrSHlNOLgGaW2w12SoZvw9VJb7UEM6JNlgQgoRlU8FvjANC5mWRmRxhzMrVT5
-	 FaaZrC0L0nCDperZloobwzIDYJFTnDf6QSt7rM6BvLylb6aThK5Vnbm1+D9/YtEvUi
-	 3gdxuOdYlrUyo9sdZde9D9BNoqqFL6KfKO7llmEfz8/0lBzdDtLD2Fy0/LkGLqpq8W
-	 3KbnudCA8KRgQ==
-Message-ID: <655bbb57-3806-44fe-81a9-5c6e8d1e048c@kernel.org>
-Date: Tue, 18 Jun 2024 11:13:25 +0200
+	s=arc-20240116; t=1718702015; c=relaxed/simple;
+	bh=HKKch01OgVkv0iOuEkhxsewbm4Q3UcCmBILsNIJvEM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h98ehYi6it8ijK+4U+qvSmybNCaWah1cFgZ9cUtoTBIzlla1QsEqGeYqpD+YkdFdCREGze9g2PdYRG3pg/RCm7Y3W0XVF9y3d4E9tqsNvwXD9x2If8YDAyuLQi+E3xhUVujtRotpYpgyEqDW892+N3qLNuC/4ScxV9v5SGGcGYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 9BFAC1C0082; Tue, 18 Jun 2024 11:13:31 +0200 (CEST)
+Date: Tue, 18 Jun 2024 11:13:30 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Charlene Liu <charlene.liu@amd.com>, Alex Hung <alex.hung@amd.com>,
+	Daniel Wheeler <daniel.wheeler@amd.com>, harry.wentland@amd.com,
+	sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com,
+	christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+	daniel@ffwll.ch, martin.leung@amd.com, wayne.lin@amd.com,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH AUTOSEL 5.10 1/7] drm/amd/display: Exit idle
+ optimizations before HDCP execution
+Message-ID: <ZnFPuimUl2QYzdzR@duo.ucw.cz>
+References: <20240527155845.3866271-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xdp: remove WARN() from __xdp_reg_mem_model()
-To: Daniil Dulov <d.dulov@aladdin.ru>, Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-References: <20240617162708.492159-1-d.dulov@aladdin.ru>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20240617162708.492159-1-d.dulov@aladdin.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YGoPnplstVZpGpv1"
+Content-Disposition: inline
+In-Reply-To: <20240527155845.3866271-1-sashal@kernel.org>
 
 
+--YGoPnplstVZpGpv1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 17/06/2024 18.27, Daniil Dulov wrote:
-> Syzkaller reports a warning in __xdp_reg_mem_model().
-> 
-> The warning occurs only if __mem_id_init_hash_table() returns
-> an error. It returns the error in two cases:
-> 
->      1. memory allocation fails;
->      2. rhashtable_init() fails when some fields of rhashtable_params
->         struct are not initialized properly.
-> 
-> The second case cannot happen since there is a static const
-> rhashtable_params struct with valid fields. So, warning is only triggered
-> when there is a problem with memory allocation.
-> 
-> Thus, there is no sense in using WARN() to handle this error and it can be
-> safely removed.
-> 
-> WARNING: CPU: 0 PID: 5065 at net/core/xdp.c:299 __xdp_reg_mem_model+0x2d9/0x650 net/core/xdp.c:299
-> 
-> CPU: 0 PID: 5065 Comm: syz-executor883 Not tainted 6.8.0-syzkaller-05271-gf99c5f563c17 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-> RIP: 0010:__xdp_reg_mem_model+0x2d9/0x650 net/core/xdp.c:299
-> 
-> Call Trace:
->   xdp_reg_mem_model+0x22/0x40 net/core/xdp.c:344
->   xdp_test_run_setup net/bpf/test_run.c:188 [inline]
->   bpf_test_run_xdp_live+0x365/0x1e90 net/bpf/test_run.c:377
->   bpf_prog_test_run_xdp+0x813/0x11b0 net/bpf/test_run.c:1267
->   bpf_prog_test_run+0x33a/0x3b0 kernel/bpf/syscall.c:4240
->   __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5649
->   __do_sys_bpf kernel/bpf/syscall.c:5738 [inline]
->   __se_sys_bpf kernel/bpf/syscall.c:5736 [inline]
->   __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5736
->   do_syscall_64+0xfb/0x240
->   entry_SYSCALL_64_after_hwframe+0x6d/0x75
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-> 
-> Fixes: 8d5d88527587 ("xdp: rhashtable with allocator ID to pointer mapping")
-> Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
-> ---
->   net/core/xdp.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
+Hi!
 
-Sure, looks like we can remove this WARN_ON()
+> [WHY]
+> PSP can access DCN registers during command submission and we need
+> to ensure that DCN is not in PG before doing so.
+>=20
+> [HOW]
+> Add a callback to DM to lock and notify DC for idle optimization exit.
+> It can't be DC directly because of a potential race condition with the
+> link protection thread and the rest of DM operation.
 
-Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
+Why is this picked for 5.10-stable?
 
-> diff --git a/net/core/xdp.c b/net/core/xdp.c
-> index 41693154e426..fb2f00e3f701 100644
-> --- a/net/core/xdp.c
-> +++ b/net/core/xdp.c
-> @@ -296,7 +296,6 @@ static struct xdp_mem_allocator *__xdp_reg_mem_model(struct xdp_mem_info *mem,
->   		ret = __mem_id_init_hash_table();
->   		mutex_unlock(&mem_id_lock);
->   		if (ret < 0) {
-> -			WARN_ON(1);
->   			return ERR_PTR(ret);
->   		}
->   	}
+It adds an callback, but noone is going to use it in 5.10.
+
+Best regards,
+								Pavel
+
+> +++ b/drivers/gpu/drm/amd/display/modules/inc/mod_hdcp.h
+> @@ -143,6 +143,13 @@ struct mod_hdcp_ddc {
+>  	} funcs;
+>  };
+> =20
+> +struct mod_hdcp_dm {
+> +	void *handle;
+> +	struct {
+> +		void (*exit_idle_optimizations)(void *handle);
+> +	} funcs;
+> +};
+> +
+>  struct mod_hdcp_psp {
+>  	void *handle;
+>  	void *funcs;
+> @@ -252,6 +259,7 @@ struct mod_hdcp_display_query {
+>  struct mod_hdcp_config {
+>  	struct mod_hdcp_psp psp;
+>  	struct mod_hdcp_ddc ddc;
+> +	struct mod_hdcp_dm dm;
+>  	uint8_t index;
+>  };
+> =20
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--YGoPnplstVZpGpv1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZnFPugAKCRAw5/Bqldv6
+8n/jAJ4vdLX0NDgd9EnqTJMgp289HWx28ACdG5FSE6Odu7KzIHv1ij/9v0enmII=
+=5AhM
+-----END PGP SIGNATURE-----
+
+--YGoPnplstVZpGpv1--
 
