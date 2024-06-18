@@ -1,161 +1,312 @@
-Return-Path: <linux-kernel+bounces-218814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638BB90C675
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:21:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFAE90C67E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154891F21E67
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:21:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A581C2030A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CAE1891B5;
-	Tue, 18 Jun 2024 07:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7201418E74C;
+	Tue, 18 Jun 2024 07:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="XWnnQRwe"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C38E13A245
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="ShwIHxcd"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3157818A94A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718697120; cv=none; b=a5HT/WKtRhDyrrZhA4xBiC3G7Ho+wmzTROrKhlIDLuzZ8mCaJpoGz+zRYbkVH1UW79oBphTNmf5KKsh5BtZBqHpy7fc2IRD9tNxgXT3Tl7f4pmEvh+MaglwKs4XbrwFdQlTph+iJXTjtoO/8zm8AHf/oILnqHLobYdVFYJp0gzI=
+	t=1718697153; cv=none; b=lcdUitl85uCkfNCfaYvAg4em+V/rdvrwKHGrIDdnaQFQ1cllBOTJxI5oZcb8S/i7NwUtM38ty/LMdfZPE7YcS8FUKaUupfk6nzlb6GnN2Xcv7i0iwb+JD5ayQDolqJwtI0I7JIde9+xf0IxgUZ8DWAaY7fJ0412Plev+4Cwm+ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718697120; c=relaxed/simple;
-	bh=Vwgt4pg+p9BNy7bSJ48m938RkAuQ2WGdPBjL3XpYsmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MbqLota7gf6dm6XWXxdwgusnRd0j34HAxtQPAUumJCdKSRK5I7jbpvkR7JSKFTRBAsa0m81NW3NOL6uv9lPbadY33vYr+7IajgnqkHdeMshkQtMZMexcQNr0hkKqKTIqLzuYAEVzPyHQwGWz9MN/G90FRy/CTpd8Xv61/ovZEhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=XWnnQRwe; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-64ecc2f111dso435162a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1718697117; x=1719301917; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=76HALR93jYK/Zg0pajod2zJyiG6SBoSONeMtyfEqbMs=;
-        b=XWnnQRweA3fmMIwik4bm7bwVSIarFBa9QZBbMctFFhskHdpsXqvct94IBzIi/06noB
-         KHWnwvxyd3QDRAJqrEGlC7kAELD3n7bewFioHwXVagrMDGRX81eLoiql/w0Twud7pWYB
-         wKH1YTzKpFmjb2UEw4YBvIIkzrapK1eWAnHwCovN+1Lx4VITUtH2mdJU91aUT6qPmkzd
-         eiWXHcc9VO9ygI4W9kjb/rAkdv9tEeg/II+GKWoGw3nXZG4OyJnad8oopXF1V8d59fKu
-         /76d2YvgaUgDiZSimazFmopJQDL8wV5N6r2w7XPTnzoJiIv6wtmnYRQnjF5p7dVID5M2
-         X+Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718697117; x=1719301917;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=76HALR93jYK/Zg0pajod2zJyiG6SBoSONeMtyfEqbMs=;
-        b=pd6CT0c1qcvrVlb5/iRjWysmj+Gk9xZ2JuyycCilFnXPbqKvRJRFXuh+jzF26Q3WC+
-         5y5qxiqXne1x4mSgnIbD/BzsJcZKny2gv9+tObS6RboyrtSHo3rZynO0QdrFqRos+BAd
-         cpg7pQFnhXlBcPk2JCMKR14v896evlO+u+dn74K+f1oRISDRXsxuZs5X83qLDY7c09NL
-         pIC0lSalRgEg+xJaHiM8dpB25vCjW5C+q65FJIH3Y50btf0fQs1PBcd0gBoNyoELBTar
-         j6dk+afxx5IdrUa+9LbTAMupW9LQHhAhwNhaIGFe1/yDDTvytJZYmLncK5Oh9068lkmQ
-         /fVA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8wKJp6IZ6CFFCn+1vJz5ZQ7WlCtVRu2dtVfYwmJmnnr9bvRyD2FeElm5e7+GixRKaxUmfZv3gG8ptvtf/7VOfK4QRgJvXbT/QXv2h
-X-Gm-Message-State: AOJu0YwD8wE9Qyx8R5xf+g3XMLaJ/0kOa9b7BAivyDjYVWvXs+aOHhii
-	AoiMWcPSp/RJDwhTwvj2cJXai+ROpfqChRfbwAbQ8egKKOaMgmw+JFhC/BAvJdx2Gop7vNJ0czT
-	X
-X-Google-Smtp-Source: AGHT+IEoKrICETtXKPz5g2VWzCsFEiGGFStEZKqestgQsuAKki+NR8fDw0zQ/kujUUyCVexn0Tunqw==
-X-Received: by 2002:a05:6a21:6da3:b0:1af:d9a3:f3a3 with SMTP id adf61e73a8af0-1bae8253a95mr12479218637.4.1718697117205;
-        Tue, 18 Jun 2024 00:51:57 -0700 (PDT)
-Received: from [10.84.144.49] ([203.208.167.148])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb8d9a1sm8434984b3a.186.2024.06.18.00.51.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 00:51:56 -0700 (PDT)
-Message-ID: <025ea89a-bb94-4f60-b6ad-d8b88d3cfc60@bytedance.com>
-Date: Tue, 18 Jun 2024 15:51:50 +0800
+	s=arc-20240116; t=1718697153; c=relaxed/simple;
+	bh=TtoQW6PPQgsTTnUD9Q4Rr7kDKwSk7NGDEDpHncb6MOw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=GMVdrRx18EQchwnKd+coC0EJxAhzPQ51pUa3oerxNWKYBvKr9qTKcYEzKy9eGDBJU1xOxpF05hMNw/VGF3VCsNnEHMKvzk9NQPggzN3pRA8QnO/I122zvHb87IYRAPfzpagEA5LOedcAjXi6uvY9ZHNTfe3rYx1zDb+lUXo8cAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=ShwIHxcd; arc=none smtp.client-ip=117.135.210.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Subject:From:Message-ID:Date:MIME-Version:
+	Content-Type; bh=RWXufJ1uEWQAARMD8UpBOg+tOlJQDOXXr/9plc+hEAk=;
+	b=ShwIHxcdHtMB347S2l6W1fQsptz6L1G7xGH+z5Y+tQQQ9bYlIM25yX94nQgw/8
+	Efn+GFXMsyndDmCKbYuR3KJouE65Z3ui6jfFL09MwUrneoJsx2hQqBdNZgbdo23A
+	OJ94Svuwzvl921Pw0fwYZCTL9oxyCro5WGCRcNAJMd2h0=
+Received: from [172.21.21.216] (unknown [118.242.3.34])
+	by gzga-smtp-mta-g1-4 (Coremail) with SMTP id _____wD3vwyfPHFmL2DUAw--.20756S2;
+	Tue, 18 Jun 2024 15:52:01 +0800 (CST)
+Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
+ non-CMA THP-sized page
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com,
+ liuzixing@hygon.cn
+References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
+ <CAGsJ_4zvG7gwukioZnqN+GpWHbpK1rkC0Jeqo5VFVL_RLACkaw@mail.gmail.com>
+ <2e3a3a3f-737c-ed01-f820-87efee0adc93@126.com>
+ <9b227c9d-f59b-a8b0-b353-7876a56c0bde@126.com>
+ <CAGsJ_4ynfvjXsr6QFBA_7Gzk3PaO1pk+6ErKZaNCt4H+nuwiJw@mail.gmail.com>
+ <4482bf69-eb07-0ec9-f777-28ce40f96589@126.com>
+ <CAGsJ_4ytYTpvRVgR1EoazsH=QxZCDE2e8H0BeXrY-6zWFD0kCg@mail.gmail.com>
+ <69414410-4e2d-c04c-6fc3-9779f9377cf2@126.com>
+ <CAGsJ_4xHpHVKwqcSFqRQ_DxsehNh0Wp=P-MTGA2b_iy=KUW1Bw@mail.gmail.com>
+From: yangge1116 <yangge1116@126.com>
+Message-ID: <d082f7e0-cbb9-f21a-e08d-47b5abd9e91d@126.com>
+Date: Tue, 18 Jun 2024 15:51:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] asynchronously scan and free empty user PTE pages
+In-Reply-To: <CAGsJ_4xHpHVKwqcSFqRQ_DxsehNh0Wp=P-MTGA2b_iy=KUW1Bw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1718267194.git.zhengqi.arch@bytedance.com>
- <02f8cbd0-8b2b-4c2d-ad96-f854d25bf3c2@redhat.com>
- <efac94f6-2fb3-4682-a894-7c8ffac18d20@bytedance.com>
- <2cda0af6-8fde-4093-b615-7979744d6898@redhat.com>
- <aadae460-3797-4d10-a380-5d4fe8189e20@bytedance.com>
- <aaf9a7d7-647f-41bf-91b4-e362ff5df6b0@redhat.com>
- <f2fbf466-f722-4fd3-9883-189145e599f4@bytedance.com>
- <86b29391-ad2a-4c4b-b9a8-974d1876632c@redhat.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <86b29391-ad2a-4c4b-b9a8-974d1876632c@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3vwyfPHFmL2DUAw--.20756S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3JFWfWrW5Kw45Cw43CrW8Xrb_yoW3tF4xpr
+	WxJ3W7tr4UJr15Aw12qwn0kr1jyw17Gr1UXr15Jry8ZrnFyF17Ar4Utr1UuFy8AryUJF1j
+	qr1UtFy3Zr1UAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bjiSLUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiWRICG2VLayva8gAAsU
 
-Hi David,
 
-On 2024/6/18 01:49, David Hildenbrand wrote:
-> 
+
+在 2024/6/18 下午2:58, Barry Song 写道:
+> On Tue, Jun 18, 2024 at 6:56 PM yangge1116 <yangge1116@126.com> wrote:
+>>
+>>
+>>
+>> 在 2024/6/18 下午12:10, Barry Song 写道:
+>>> On Tue, Jun 18, 2024 at 3:32 PM yangge1116 <yangge1116@126.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> 在 2024/6/18 上午9:55, Barry Song 写道:
+>>>>> On Tue, Jun 18, 2024 at 9:36 AM yangge1116 <yangge1116@126.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> 在 2024/6/17 下午8:47, yangge1116 写道:
+>>>>>>>
+>>>>>>>
+>>>>>>> 在 2024/6/17 下午6:26, Barry Song 写道:
+>>>>>>>> On Tue, Jun 4, 2024 at 9:15 PM <yangge1116@126.com> wrote:
+>>>>>>>>>
+>>>>>>>>> From: yangge <yangge1116@126.com>
+>>>>>>>>>
+>>>>>>>>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+>>>>>>>>> THP-sized allocations") no longer differentiates the migration type
+>>>>>>>>> of pages in THP-sized PCP list, it's possible to get a CMA page from
+>>>>>>>>> the list, in some cases, it's not acceptable, for example, allocating
+>>>>>>>>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
+>>>>>>>>>
+>>>>>>>>> The patch forbids allocating non-CMA THP-sized page from THP-sized
+>>>>>>>>> PCP list to avoid the issue above.
+>>>>>>>>
+>>>>>>>> Could you please describe the impact on users in the commit log?
+>>>>>>>
+>>>>>>> If a large number of CMA memory are configured in the system (for
+>>>>>>> example, the CMA memory accounts for 50% of the system memory), starting
+>>>>>>> virtual machine with device passthrough will get stuck.
+>>>>>>>
+>>>>>>> During starting virtual machine, it will call pin_user_pages_remote(...,
+>>>>>>> FOLL_LONGTERM, ...) to pin memory. If a page is in CMA area,
+>>>>>>> pin_user_pages_remote() will migrate the page from CMA area to non-CMA
+>>>>>>> area because of FOLL_LONGTERM flag. If non-movable allocation requests
+>>>>>>> return CMA memory, pin_user_pages_remote() will enter endless loops.
+>>>>>>>
+>>>>>>> backtrace:
+>>>>>>> pin_user_pages_remote
+>>>>>>> ----__gup_longterm_locked //cause endless loops in this function
+>>>>>>> --------__get_user_pages_locked
+>>>>>>> --------check_and_migrate_movable_pages //always check fail and continue
+>>>>>>> to migrate
+>>>>>>> ------------migrate_longterm_unpinnable_pages
+>>>>>>> ----------------alloc_migration_target // non-movable allocation
+>>>>>>>
+>>>>>>>> Is it possible that some CMA memory might be used by non-movable
+>>>>>>>> allocation requests?
+>>>>>>>
+>>>>>>> Yes.
+>>>>>>>
+>>>>>>>
+>>>>>>>> If so, will CMA somehow become unable to migrate, causing cma_alloc()
+>>>>>>>> to fail?
+>>>>>>>
+>>>>>>>
+>>>>>>> No, it will cause endless loops in __gup_longterm_locked(). If
+>>>>>>> non-movable allocation requests return CMA memory,
+>>>>>>> migrate_longterm_unpinnable_pages() will migrate a CMA page to another
+>>>>>>> CMA page, which is useless and cause endless loops in
+>>>>>>> __gup_longterm_locked().
+>>>>>
+>>>>> This is only one perspective. We also need to consider the impact on
+>>>>> CMA itself. For example,
+>>>>> when CMA is borrowed by THP, and we need to reclaim it through
+>>>>> cma_alloc() or dma_alloc_coherent(),
+>>>>> we must move those pages out to ensure CMA's users can retrieve that
+>>>>> contiguous memory.
+>>>>>
+>>>>> Currently, CMA's memory is occupied by non-movable pages, meaning we
+>>>>> can't relocate them.
+>>>>> As a result, cma_alloc() is more likely to fail.
+>>>>>
+>>>>>>>
+>>>>>>> backtrace:
+>>>>>>> pin_user_pages_remote
+>>>>>>> ----__gup_longterm_locked //cause endless loops in this function
+>>>>>>> --------__get_user_pages_locked
+>>>>>>> --------check_and_migrate_movable_pages //always check fail and continue
+>>>>>>> to migrate
+>>>>>>> ------------migrate_longterm_unpinnable_pages
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+>>>>>>>>> THP-sized allocations")
+>>>>>>>>> Signed-off-by: yangge <yangge1116@126.com>
+>>>>>>>>> ---
+>>>>>>>>>      mm/page_alloc.c | 10 ++++++++++
+>>>>>>>>>      1 file changed, 10 insertions(+)
+>>>>>>>>>
+>>>>>>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>>>>>>> index 2e22ce5..0bdf471 100644
+>>>>>>>>> --- a/mm/page_alloc.c
+>>>>>>>>> +++ b/mm/page_alloc.c
+>>>>>>>>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone
+>>>>>>>>> *preferred_zone,
+>>>>>>>>>             WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
+>>>>>>>>>
+>>>>>>>>>             if (likely(pcp_allowed_order(order))) {
+>>>>>>>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>>>>>>> +               if (!IS_ENABLED(CONFIG_CMA) || alloc_flags &
+>>>>>>>>> ALLOC_CMA ||
+>>>>>>>>> +                                               order !=
+>>>>>>>>> HPAGE_PMD_ORDER) {
+>>>>>>>>> +                       page = rmqueue_pcplist(preferred_zone, zone,
+>>>>>>>>> order,
+>>>>>>>>> +                                               migratetype,
+>>>>>>>>> alloc_flags);
+>>>>>>>>> +                       if (likely(page))
+>>>>>>>>> +                               goto out;
+>>>>>>>>> +               }
+>>>>>>>>
+>>>>>>>> This seems not ideal, because non-CMA THP gets no chance to use PCP.
+>>>>>>>> But it
+>>>>>>>> still seems better than causing the failure of CMA allocation.
+>>>>>>>>
+>>>>>>>> Is there a possible approach to avoiding adding CMA THP into pcp from
+>>>>>>>> the first
+>>>>>>>> beginning? Otherwise, we might need a separate PCP for CMA.
+>>>>>>>>
+>>>>>>
+>>>>>> The vast majority of THP-sized allocations are GFP_MOVABLE, avoiding
+>>>>>> adding CMA THP into pcp may incur a slight performance penalty.
+>>>>>>
+>>>>>
+>>>>> But the majority of movable pages aren't CMA, right?
+>>>>
+>>>>> Do we have an estimate for
+>>>>> adding back a CMA THP PCP? Will per_cpu_pages introduce a new cacheline, which
+>>>>> the original intention for THP was to avoid by having only one PCP[1]?
+>>>>>
+>>>>> [1] https://patchwork.kernel.org/project/linux-mm/patch/20220624125423.6126-3-mgorman@techsingularity.net/
+>>>>>
+>>>>
+>>>> The size of struct per_cpu_pages is 256 bytes in current code containing
+>>>> commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized
+>>>> allocations").
+>>>> crash> struct per_cpu_pages
+>>>> struct per_cpu_pages {
+>>>>        spinlock_t lock;
+>>>>        int count;
+>>>>        int high;
+>>>>        int high_min;
+>>>>        int high_max;
+>>>>        int batch;
+>>>>        u8 flags;
+>>>>        u8 alloc_factor;
+>>>>        u8 expire;
+>>>>        short free_count;
+>>>>        struct list_head lists[13];
+>>>> }
+>>>> SIZE: 256
+>>>>
+>>>> After revert commit 5d0a661d808f ("mm/page_alloc: use only one PCP list
+>>>> for THP-sized allocations"), the size of struct per_cpu_pages is 272 bytes.
+>>>> crash> struct per_cpu_pages
+>>>> struct per_cpu_pages {
+>>>>        spinlock_t lock;
+>>>>        int count;
+>>>>        int high;
+>>>>        int high_min;
+>>>>        int high_max;
+>>>>        int batch;
+>>>>        u8 flags;
+>>>>        u8 alloc_factor;
+>>>>        u8 expire;
+>>>>        short free_count;
+>>>>        struct list_head lists[15];
+>>>> }
+>>>> SIZE: 272
+>>>>
+>>>> Seems commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+>>>> THP-sized allocations") decrease one cacheline.
 >>>
->>> No strong opinion, something synchronous sounds to me like the
->>> low-hanging fruit, that could add the infrastructure to be used by
->>> something more advanced/synchronously :)
+>>> the proposal is not reverting the patch but adding one CMA pcp.
+>>> so it is "struct list_head lists[14]"; in this case, the size is still
+>>> 256?
+>>>
 >>
->> Got it, I will try to do the following in the next version.
->>
->> a. for MADV_DONTNEED case, try synchronous reclaim as you said
->>
+>> Yes, the size is still 256. If add one PCP list, we will have 2 PCP
+>> lists for THP. One PCP list is used by MIGRATE_UNMOVABLE, and the other
+>> PCP list is used by MIGRATE_MOVABLE and MIGRATE_RECLAIMABLE. Is that right?
 > 
-> I think that really is the low hanging fruit that would cover quite some 
-> cases already: (1) reclaim when MADV_DONTNEED spans the complete page 
-> table.
+> i am not quite sure about MIGRATE_RECLAIMABLE as we want to
+> CMA is only used by movable.
+> So it might be:
+> MOVABLE and NON-MOVABLE.
 
-I will check and free the PTE page in the zap_pte_range() if the
-(end - addr >= PMD_SIZE) condition is met.
-
-> 
-> Then, there is (2) reclaim when MADV_DONTNEED spans only part of the 
-> page table (e.g., single PTE), but my best guess is that it's better to 
-> scan for that asynchronously than making possibly each MADV_DONTNEED 
-> sycall invocation slower.
-
-Maybe just mark the vma, and then scan it in the system reclaim path.
-
-I also plan to do this in the MADV_FREE case, instead of adding an
-asynchronous madvise option first.
+One PCP list is used by UNMOVABLE pages, and the other PCP list is used 
+by MOVABLE pages, seems it is feasible. UNMOVABLE PCP list contains 
+MIGRATE_UNMOVABLE pages and MIGRATE_RECLAIMABLE pages, and MOVABLE PCP 
+list contains MIGRATE_MOVABLE pages.
 
 > 
-> (1) would already help a lot and showcase how the locking/machinery 
-> would work.
-> 
-> 
->> b. for MADV_FREE case:
 >>
->>     - add a madvise option for synchronous reclaim
+>>>
+>>>>
+>>>>>
+>>>>>> Commit 1d91df85f399 takes a similar approach to filter, and I mainly
+>>>>>> refer to it.
+>>>>>>
+>>>>>>
+>>>>>>>>> +#else
+>>>>>>>>>                     page = rmqueue_pcplist(preferred_zone, zone, order,
+>>>>>>>>>                                            migratetype, alloc_flags);
+>>>>>>>>>                     if (likely(page))
+>>>>>>>>>                             goto out;
+>>>>>>>>> +#endif
+>>>>>>>>>             }
+>>>>>>>>>
+>>>>>>>>>             page = rmqueue_buddy(preferred_zone, zone, order, alloc_flags,
+>>>>>>>>> --
+>>>>>>>>> 2.7.4
+>>>>>>>>
+>>>>>>>> Thanks
+>>>>>>>> Barry
+>>>>>>>>
+>>>>>>
+>>>>>>
+>>>>
 >>
->>     - add another madvise option to mark the vma, then add its
->>             corresponding mm to a global list, and then traverse
->>             the list and reclaim it when the memory is tight and
->>             enters the system reclaim path.
->>             (maybe there is an option to unmark)
->>
->> c. for s390 case you mentioned, create a CONFIG_FREE_PT first, and
->>      then s390 will not select this config until the problem is solved.
->>
->> d. for lockless scan, try using disabling IRQ or (mmap read lock +
->> pte_offset_map_nolock).
-> 
-> Although d) really only is desired when scanning asynchronously I think. 
-> During (1) above, we know that the table will be very likely empty 
-> (unless weird race).
 
-Agree.
-
-Thanks,
-Qi
-
-> 
 
