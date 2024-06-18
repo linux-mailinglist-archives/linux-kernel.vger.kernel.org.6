@@ -1,94 +1,126 @@
-Return-Path: <linux-kernel+bounces-218854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A32C90C70E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:33:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBD990C71A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B49B41F2481F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:33:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0270B22534
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78AB1AAE0B;
-	Tue, 18 Jun 2024 08:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240711AB37A;
+	Tue, 18 Jun 2024 08:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="CDYIvS5Z"
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TD8kRNf5"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14BA1AAE07
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F37139D0C;
+	Tue, 18 Jun 2024 08:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718698928; cv=none; b=a89uM+8PXOjLvdS3aUVowr6MuyW9DT1t4BZqGXg04seKZU6m/O+U8LFeX+dC0AjTQSd9BLTElB3l/jc+meuLQbphINkptp39kHofHRaGWQ//AAzMtRXaKvxBuQ8gviwmvfeNN5gOtV5Y5xM+niibsri/K/EtDyGkNr1MFqnELAE=
+	t=1718699211; cv=none; b=DrUa59X7t8YP6OknZSGlu8xGLMDbPnY53S35JgAnSWpgkcc3qCgHPCqxHFZYYz8XA69iHO8pbykOFe8RsLHKUXvck7iB0DfGVpuX4zb6UASzeSShhiFlG5BlJUr5RHpeMfEWZ1C9S36VFZLIUHeeq+7Bt9XAMrk81CN++NzjZmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718698928; c=relaxed/simple;
-	bh=m5Q9Ccwh0sDs/QkQ9CGmXJGRyQhdTtsLcjO7xUlW1lo=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=RJQHexmppZ/qvx9La00kuDlaskABPyKM5zokiKdBCywHgffUtrCDNFboiywWzouZyu4Rt4KlgQIVqGfi75pPlS+UU4H6nhNRb4a9Rf7NeG5dGrC0dGVPnLVMC7ZY3esVPo+HyJ2kgzJfy2Mh7z88ZZSjDcxk6Mq+IPIJQUdzM68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=CDYIvS5Z; arc=none smtp.client-ip=203.205.221.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718698917; bh=EMkwW3BuRrcyRf+r4YOMWvOLhiIjfGv1mcpyT1IpxOU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=CDYIvS5ZWn4dj2pqNjLw6PNW4G/NrfwhaGuDSQz9qfHJCg5xk6S5hMfDcqPYBk2AN
-	 46DhQklgFEZnRpzlBoMBKsoYuFpeREiGJnG484t2Z8pDR9Py1aAqH2lAEWbZMri+Hm
-	 Sdo8OXdynPQFhlfxJnhy/XYI1u0m2ShQ6pf2MOOs=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 577864FD; Tue, 18 Jun 2024 16:21:55 +0800
-X-QQ-mid: xmsmtpt1718698915tn1svsqbe
-Message-ID: <tencent_000DE025D70D8E120A5DA8DDBD19064FAD07@qq.com>
-X-QQ-XMAILINFO: M0PjjqbLT90wHYXFAfj21zA8f0XlGBw0WT+Eh54qoJgjKDVVg59tOatxfgi9Sr
-	 BJjYR4b7emyVdWboBK6oigixH/50gggZoxkTCCDK3GqeWQ48Dx7PnvxUgg68mvQcsvT+FVM7jvc0
-	 dian1wUvFgZ97ZdWALRq+r7fqHXGKRTb4t5ubexJ0bvkD6Aw5rShK7ivk6Jryx8QlxszB00fI8Oh
-	 pISue2FqyBBWOHLIImJ0gZMaen5tUrp7UbDloie8CeiTF4Kq/DeKFYToliRhVN9CkXs5dySGLH7J
-	 rbmF24JYDH6j7QQ41fgbkzE27BJAT8Qh3InhZ8oeriiIBZFgnPrF2wHCx4nX5Idu43QkE5GITVlp
-	 QpMewl+FoFI+DV/GQ+y1RJSM07WVK8akYNwPFUKjW71+So5BFXyVLTo4W8ty9egUJL8i5IBSVWDK
-	 CHRkRMG7OjZuW+QOLpmPhA2wz5Jlb6DfSdPTaRC4kYJer1Zlj1TZRNXiICDBYfjtfKeehceg2IyT
-	 WV2oOIRx2WnsBSLEQ/YwoIDWE4VJ9Y3Pf+bwquzfbZoBHVGYFils2u3Qr4AhI1MmF2VlDolG1H4k
-	 dtJLei7rH+b6g/7AbPYppAPoekauZCuev8f8+A4/ZtMXgh7eI3YkbJBGrqmY+Jvsy769+2EpGJ1i
-	 V4lE0suX9EO93UeC2zoPasJYv0znu6InLUV0lhC02UR1U2n+bPRDedkLEBLClm/PWbKzhMDVbvxt
-	 tXoh0R1A8teS7xdkJkEKJJmZvURunGV7Jo78BASzWuUSPcK2kWFzBaB2dnsoCKIOcjKFOez+KT2Y
-	 cyR2jUShGG329f1rzZBws/KehWP9a3xJPpXu0c//bjO9zqU+/JbDxsdtJKzOIxUNDMEvV/ezfaHG
-	 /ANav+IABds2D+OQE/8J9kpM6485xemmPbcIo7RpT33WDZAaEv078=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+7e51ea277ea81fe6935d@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [wireless?] BUG: soft lockup in mac80211_hwsim_beacon (2)
-Date: Tue, 18 Jun 2024 16:21:56 +0800
-X-OQ-MSGID: <20240618082155.1269194-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000d388cf061af92595@google.com>
-References: <000000000000d388cf061af92595@google.com>
+	s=arc-20240116; t=1718699211; c=relaxed/simple;
+	bh=yz2C5fvBJTGqQpnuSLNkBiIZocKFHu/gpBvI/hES3l4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gWQsXf8wT23nuhA1kdsNj0cD65a+hhGVjIcOFmV2MFiT1ZnnILxD0w7NOTArXxJH7vHO6VBm8MTrkmsYPCqM/QNKKRVYBg86Xl9cmn6iaf6pwSHhydt1W301FJvjn3XrIpO0nKP1OPfUjLsJx+Kc6+Otf2wi7Be7dgDYEz+FeA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TD8kRNf5; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=y/V05mUJk5DDD/0Y/A3n8rzv2x+59hyyMuOW2I/yfmo=; b=TD8kRNf5i7wpP4NwVa51buHFqy
+	4luHLDjx1w/Xbig1Fi4uuSpTm6uTRaww56SpHtlvj70vUb6uoywFJ3Y8wj8CvSxdBH88Xi41DdKJ4
+	gZLXsidw0hcwi7I7jolrjupEz89w8k+t2h1OczpMw/7WaBKMhOgAsfrR0bjhMK4YfolJJblo6Vkvh
+	de2lHllu6t4vDXrrGnzzN5SiOJlDCb6XtVoHyD+SsxOhm6wfR4VAlmExV4T/H8wSRGcp8TJuWo4tA
+	1JqxPn8us9pTWW95CTZW4UrVLPGrv/jyzEXUEJVXO/FhOr3YsimhVMFnypbCh/6m23y8zQn05qEm+
+	Bnivz25Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJU78-0000000707D-3Mbp;
+	Tue, 18 Jun 2024 08:24:57 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C57D1300886; Tue, 18 Jun 2024 10:22:42 +0200 (CEST)
+Date: Tue, 18 Jun 2024 10:22:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Martin Uecker <uecker@tugraz.at>,
+	Erick Archer <erick.archer@outlook.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Matthew Wilcox <mawilcox@microsoft.com>, x86@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 0/3] Hardening perf subsystem
+Message-ID: <20240618082242.GC31592@noisy.programming.kicks-ass.net>
+References: <202406101010.E1C77AE9D@keescook>
+ <20240610200544.GY8774@noisy.programming.kicks-ass.net>
+ <202406101438.BC43514F@keescook>
+ <20240611075542.GD8774@noisy.programming.kicks-ass.net>
+ <202406121148.688240B@keescook>
+ <20240612220821.GA18881@noisy.programming.kicks-ass.net>
+ <202406121530.D9DB956C8@keescook>
+ <20240614101708.GO8774@noisy.programming.kicks-ass.net>
+ <c8234b8e2c9c1122eec73c97901e36586160f0cb.camel@tugraz.at>
+ <202406171019.9F0127F@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202406171019.9F0127F@keescook>
 
-please test sl
+On Mon, Jun 17, 2024 at 10:28:20AM -0700, Kees Cook wrote:
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 2ccbdf43d5e7
+> But, using type attributes we have much more flexibility. Hence, the
+> proposed "wraps" attribute:
+> https://github.com/llvm/llvm-project/pull/86618
 
-diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
-index 6830be4419e2..a6e761638078 100644
---- a/drivers/usb/class/cdc-wdm.c
-+++ b/drivers/usb/class/cdc-wdm.c
-@@ -273,7 +273,7 @@ static void wdm_int_callback(struct urb *urb)
- 	}
- 
- 	if (urb->actual_length < sizeof(struct usb_cdc_notification)) {
--		dev_err(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
-+		dev_dbg(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
- 			urb->actual_length);
- 		goto exit;
- 	}
+So I still think that's going about things backwards.
 
+unsigned explicitly wraps. signed is UB.
+
+When using -fwrapv signed is well defined as 2s complement, which takes
+away the UB and makes it implicitly wrap.
+
+When extending the language, it is important to not break existing code,
+so the default must remain wrap. This in turn means you need to add a
+'nowrap' thingy.
+
+Also, I would very much not make this an attribute, but a full type
+qualifier. Furthermore, add type promotion rules to ensure nowrap takes
+precedence and is preserved throughout expressions. Such that:
+
+  'long' + 'nowrap int' -> 'nowrap long'
+
+Then, once you have this, you can go do things like:
+
+typedef nowrap unsigned long size_t;
+#define sizeof(x) ((size_t)sizeof(x))
+
+and things will just work. Hmm?
 
