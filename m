@@ -1,169 +1,93 @@
-Return-Path: <linux-kernel+bounces-218664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C6D90C36D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:19:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 732F690C372
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0F50B22FD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:19:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 621CC1C2136D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16DA6F06F;
-	Tue, 18 Jun 2024 06:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953963BB2E;
+	Tue, 18 Jun 2024 06:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RTD0AG+O";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FawJl5ap"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfNRQvN/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F1E1C2A8;
-	Tue, 18 Jun 2024 06:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D051BF38;
+	Tue, 18 Jun 2024 06:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718691534; cv=none; b=N1GEP1KQ/l4RhYeKWGrk4iOssEnvpcqUG6oPbfjHX4fpFrbuYLRJocxARgpf1OmiaHoc2fd08WudAyg+i1VpPAgzFcFXZvDJMRTzJX8HkQj6dgqcSg10TTpuYZeEv/uUwekbBTndobtXVmz3pj9kYqThUTe5JGNPXUF1pCJ1wMk=
+	t=1718691579; cv=none; b=MCbX3He2LEcd/O8o+tHkLuRffmBywT8R0cPH2Gh6MeFSKlxYW5Y76PB/ZbNsotCjlbRwjR4ye5ibIlGY2QLjuUpDthvaCsZmYsnXMTg3TjuwVtbZmEZ0QK38TVgoqSbaxaqsu0jqUt4Ul6GZV7FVRGyKScVEu4pbcsu5qoBGMyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718691534; c=relaxed/simple;
-	bh=ETyn2nN6XmZALTD5W7mdr78evwePHMPeyvT7PAa66D0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tOR7h1mC8LE2kOxqnbbK6IMawz6pswLOX8JwtVF7Y1P7wAv78vzPL4oD5Vvw1vkqdBAibhaqH31aOThxSIO9OYOOTLflw7/DCBZDlaGhLVTjQcbGTUJIPgfbMgbkI0i9OwBdNbmhWD6/YbpTAL6RY1XJybKjuGzDZXZz6a6viQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RTD0AG+O; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FawJl5ap; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 18 Jun 2024 08:18:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718691530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8uZd8acKm7Z+ZaAEXOc65fAMwyRFqDxRZ/2KGwKmnsM=;
-	b=RTD0AG+Ok5Eb2viXr8w7bx9N2gwxeBKLNaQOGxLA6CbKWH9GD6UnZtFMHj0BhAcDj67S36
-	EEt5extIBWG2b4bKOWlqVT3JS2VkSXuFQIpnuk9fR1/TxegW3gDTQQRF8FSxHuQNcu8U2q
-	1A5xUwKBXi2iCsBfY/YQnfLRKRsyetNk4ECcC1dNqEUtQa1lOVZQaZICkOx86oI9qpUAw3
-	SElw9AmzxH6qFCEua+A1b9c6UuoOypC4EWKfiEzkrT/QgdDx7FH7725bp8qvtGmj+Gm5kT
-	1Yti8fJmpG1tCeS0xOSo38xHqy52F5JnT0eqj5jJrsXu7xrhQlV8DTeAZk+IXg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718691530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8uZd8acKm7Z+ZaAEXOc65fAMwyRFqDxRZ/2KGwKmnsM=;
-	b=FawJl5apYzTR6B6HQARpqQ+uMcxg+ICgyHev2sHnDEIoJ0A5MR3kIr3nIXwUqt+RPTsdoE
-	zXoXPLFWrMEDzKDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: akpm@linux-foundation.org, apais@linux.microsoft.com, ardb@kernel.org,
-	brauner@kernel.org, ebiederm@xmission.com, jack@suse.cz,
-	keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	nagvijay@microsoft.com, oleg@redhat.com, tandersen@netflix.com,
-	vincent.whitchurch@axis.com, viro@zeniv.linux.org.uk,
-	apais@microsoft.com, ssengar@microsoft.com, sunilmut@microsoft.com,
-	vdso@hexbites.dev
-Subject: Re: [PATCH 1/1] binfmt_elf, coredump: Log the reason of the failed
- core dumps
-Message-ID: <20240618061849.Vh9N3ds2@linutronix.de>
-References: <20240617234133.1167523-1-romank@linux.microsoft.com>
- <20240617234133.1167523-2-romank@linux.microsoft.com>
+	s=arc-20240116; t=1718691579; c=relaxed/simple;
+	bh=TaxCc2kuVzHcn7jCGFXbdu1A/KPAE4+1fk25XYQ5b/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hJgxo5QVO6iIZ4BkRBTaPpGEqjNe8cP0Ive9+wu4ayL9jEDCoGNTCUC1I7Et0IGJlCrkWD+Rv0SXpxlRXMDAtEwehFNUewKqQ0KDJX+SXJ/qOSAB2cZOmPDFQTrERdNvPp1ZG8w0SYoAAlJBYu+1dVPNa8/On+tIoA4UFB24U9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfNRQvN/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0349C3277B;
+	Tue, 18 Jun 2024 06:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718691579;
+	bh=TaxCc2kuVzHcn7jCGFXbdu1A/KPAE4+1fk25XYQ5b/I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UfNRQvN/Q3g2KNCM4rT4wkOnS6uXnhBLpctYUxKhnzdg5kh8Jx70GJLHiBQVUHDeb
+	 uCtT9A/M42m0DkOI4XrmugkOTl9ibRJnl2PZ/ntA1Ylic0+6m+CQBzhi52V9lali7E
+	 L5qKVIqxc+bZqahgYzwkPxULLGLawlT4V9Z6zzTxh3NI9evP4vWz/m5NLH1iRdKwG0
+	 g7v7O7c4gd/h9vilcmNvbE8a/yB+cCGb+/0sAckzIjtJT4dAr5KVz6k+4OH3ID5F5Z
+	 +SyallfVSG5njXCSzLPxxNfKgIWB2mdkwELqcp+q/vqUUC0Xt5Gw3lkyp0sYyOZ1lk
+	 POD5W5odaqHFg==
+Message-ID: <bc52b5f1-362d-463e-bbd4-5acaa5fa5d5a@kernel.org>
+Date: Tue, 18 Jun 2024 08:19:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240617234133.1167523-2-romank@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 4/7] net: raw: use sk_skb_reason_drop to free
+ rx packets
+To: Yan Zhai <yan@cloudflare.com>, netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ David Ahern <dsahern@kernel.org>,
+ Abhishek Chauhan <quic_abchauha@quicinc.com>,
+ Mina Almasry <almasrymina@google.com>, Florian Westphal <fw@strlen.de>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ David Howells <dhowells@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org,
+ kernel-team@cloudflare.com, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Neil Horman <nhorman@tuxdriver.com>, linux-trace-kernel@vger.kernel.org,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <cover.1718642328.git.yan@cloudflare.com>
+ <ecc59c738bbe913aa031c7b37cd78d9fb06096fa.1718642328.git.yan@cloudflare.com>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <ecc59c738bbe913aa031c7b37cd78d9fb06096fa.1718642328.git.yan@cloudflare.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024-06-17 16:41:30 [-0700], Roman Kisel wrote:
-> Missing, failed, or corrupted core dumps might impede crash
-> investigations. To improve reliability of that process and consequently
-> the programs themselves, one needs to trace the path from producing
-> a core dumpfile to analyzing it. That path starts from the core dump file
-> written to the disk by the kernel or to the standard input of a user
-> mode helper program to which the kernel streams the coredump contents.
-> There are cases where the kernel will interrupt writing the core out or
-> produce a truncated/not-well-formed core dump.
 
-How much of this happened and how much of this is just "let me handle
-everything that could go wrong".
-The cases where it was interrupted without a hint probably deserve a
-note rather then leaving a half of coredump back.
+On 17/06/2024 20.09, Yan Zhai wrote:
+> Replace kfree_skb_reason with sk_skb_reason_drop and pass the receiving
+> socket to the tracepoint.
+> 
+> Signed-off-by: Yan Zhai<yan@cloudflare.com>
+> ---
+>   net/ipv4/raw.c | 4 ++--
+>   net/ipv6/raw.c | 8 ++++----
+>   2 files changed, 6 insertions(+), 6 deletions(-)
 
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index a57a06b80f57..a7200c9024c6 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -777,9 +807,18 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->  		}
->  		file_end_write(cprm.file);
->  		free_vma_snapshot(&cprm);
-> +	} else {
-> +		pr_err("Core dump to |%s has been interrupted\n", cn.corename);
-> +		retval = -EAGAIN;
-> +		goto fail;
->  	}
-> +	pr_info("Core dump to |%s: vma_count %d, vma_data_size %lu, written %lld bytes, pos %lld\n",
-> +		cn.corename, cprm.vma_count, cprm.vma_data_size, cprm.written, cprm.pos);
 
-Probably too noisy in the default case. The offsets probably don't
-matter unless you debug.
-
->  	if (ispipe && core_pipe_limit)
->  		wait_for_dump_helpers(cprm.file);
-> +
-> +	retval = 0;
-> +
->  close_fail:
->  	if (cprm.file)
->  		filp_close(cprm.file, NULL);
-> diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-> index 0904ba010341..8b29be758a87 100644
-> --- a/include/linux/coredump.h
-> +++ b/include/linux/coredump.h
-> @@ -42,9 +42,9 @@ extern int dump_emit(struct coredump_params *cprm, const void *addr, int nr);
->  extern int dump_align(struct coredump_params *cprm, int align);
->  int dump_user_range(struct coredump_params *cprm, unsigned long start,
->  		    unsigned long len);
-> -extern void do_coredump(const kernel_siginfo_t *siginfo);
-> +extern int do_coredump(const kernel_siginfo_t *siginfo);
->  #else
-> -static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
-> +static inline int do_coredump(const kernel_siginfo_t *siginfo) {}
-
-This probably does not compile.
-
->  #endif
->  
->  #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 1f9dd41c04be..f2ecf29a994d 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -2675,6 +2675,7 @@ bool get_signal(struct ksignal *ksig)
->  	struct sighand_struct *sighand = current->sighand;
->  	struct signal_struct *signal = current->signal;
->  	int signr;
-> +	int ret;
->  
->  	clear_notify_signal();
->  	if (unlikely(task_work_pending(current)))
-> @@ -2891,7 +2892,9 @@ bool get_signal(struct ksignal *ksig)
->  			 * first and our do_group_exit call below will use
->  			 * that value and ignore the one we pass it.
->  			 */
-> -			do_coredump(&ksig->info);
-> +			ret = do_coredump(&ksig->info);
-> +			if (ret)
-> +				pr_err("coredump has not been created, error %d\n", ret);
-
-So you preserve the error code just for one additional note.
-
->  		}
->  
->  		/*
-
-Sebastian
+Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
 
