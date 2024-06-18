@@ -1,260 +1,216 @@
-Return-Path: <linux-kernel+bounces-220364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF0290E040
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:55:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 080DB90E045
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFB1D281820
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:55:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9249E2823ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EC01849F5;
-	Tue, 18 Jun 2024 23:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D109F1849F3;
+	Tue, 18 Jun 2024 23:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KWIYb6ex";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="VaoLbBWx"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bpZc6O3I"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B5B15EFA3;
-	Tue, 18 Jun 2024 23:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.154.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718754942; cv=fail; b=FmpcvsXd7hdL9Zo+Qb4O0Q07k9KxgWp0B5Cml81tIh0aU8BnnyIg8hJA4OoRYYyeNHd/YdG+3R8NDNkvfGCdf4eVK3eMhBKr5zCiFatgE+mhgDvJ3tO/eNYtbDORwjeZDOGLvKG9uXpO5Sl5jC0cjKhGK2LjNRTs/2bQ9lNkztE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718754942; c=relaxed/simple;
-	bh=pGYfZJHUoiwWqYvcnRUvnOiujR2osZ9RjEvbNW6v8EA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nD+mVUYW5i1Z6t6YaxXfhgp2XMIdH2gsAPxs2qFq/Aw2nnTJ2UR8Nlc7HBvPEJN0EmUfrB3DBTud4wQCGE50rC+eSQ19iAYwOkTCBijDDPrAVfkYQsNAjUlr/bqRWgANIMuRjh40QAa6bBMxgywrULlM3KTqctKMvOcJ/LDSQSo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KWIYb6ex; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=VaoLbBWx; arc=fail smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718754940; x=1750290940;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=pGYfZJHUoiwWqYvcnRUvnOiujR2osZ9RjEvbNW6v8EA=;
-  b=KWIYb6exyBGph5d9zdGZV2K3q85X4oQD/mvrpUovR9admsjaQJdmYGRk
-   iI3+l5Ev858xMT6Na6+77Yauyf/sJvymGlgE9l8u9RgIm3YqNVY43ND+G
-   SWWF5OMW5WsTMpAKVIQEmlhM8Qdyl0htEc3FfkZqdxmXdycn6drNmBEgu
-   aa87qhroI5HyuCIvPPVTvgnIeN90w5f1pPoGwZQ8Dom4UYofv6vUUqx4a
-   sXVBrMN0r4z5NFlJxA+vHn3AOIJjFJExRlFBYboBn9vWH/Naw5ZqowLJR
-   K9Z8w6b5y8qoJfBRmAAZjIO/6WSNtvag+N2C3TJBKYfVbAZoNxhxT4pF/
-   w==;
-X-CSE-ConnectionGUID: IX432m1yQNSXN47ufoghqg==
-X-CSE-MsgGUID: yVnsPM1nT+mL8rxlZYJkOw==
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="28772336"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Jun 2024 16:55:39 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 18 Jun 2024 16:55:23 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 18 Jun 2024 16:55:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lU8JDE6S5ZRv56sNU3Zv1TKm+/KeInoDf9z5jfUmQzkVFSjBDlIgtvy9QvfyuiLWiA+7tgw/N36rWIetEsqtRISgyuirJGJxMCBpf6JYpPMDeztimveRk959FGqnOrqRxFZy3oQssfa7hLT2OB0xSzptr+mOgiswkknthEH6St4lyEXFWBGTAlsa61P+u+Ulj7FYSStonJXHUWiV4VVyj14oXdwtN/gNDjZFDMfFm5hUVRFXruHhuIKfIWCi+wL73ntDvX5df8XmF4bQqYislqtiuzufLB0toJSU+U16fZVMa0eWmGXF7zvwdne2enyApPUmdRNA2JHncmzClzzcYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XwZ0oRxHTFJEa4nLlMpeM7FJ0S0QlN+QCUXtlrq5vsQ=;
- b=l6zmPEGN93q0ZfsVcl3QCm82qIS3LIuKF1nSaKtD+DCAT6BG9Y558XHqyZ3k2m7/cfDjlg9RtQkVHnlvyq/mpiGlV0Bszt4+Ni00zlxmhOa5Cu73pOc3cXSs/ABvRStVBUw/3EJ192/9cFPjFdWcGTZEG5/33VzDeFHW9Eqwyslkq/fbn7eDCyMuxxHuwbn4r6E/GL0JmNhkvLMqCPFyC9w6VRAKZW9Tz7hFgEaWvlfBiQpeZEKfLvsXiw99NqrR3UVuyd8uB+CzzwT6KyduNA1+NsM3ehjP1Ccs17wvwsY+zzA8MiTmJ5Yy7/7e1g5Ab/wZQGhGZlVmgNFIOCD0Yw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XwZ0oRxHTFJEa4nLlMpeM7FJ0S0QlN+QCUXtlrq5vsQ=;
- b=VaoLbBWxaxGC7SytBBVXjj+is5UcSK9qzdQ5c/97Zs4vAZ0X/Q8SVW+BX2aaror4VbSBIy1Y4zPkpSEWXObaXwpBDyoZTuW+pDTM9XlmwrzTvJAs3SyNIvUqe0o/ZRPKEbDQYwFjb6J8sDLNSeDwNUKGd4lQ5YVojBXLkuWuqIbYp38lvRxiy+EmZ5EJAJJ+Ai3zEJUmYNPIQorv39g0lGn0X9jNLgaDLMuddyHbcapaom5heUdsmrBpKLNEvzCV7CTpJth55j3A5Ttoz50cbCI3/nHadzYJViTidXgXZpmkIl2ffW7uMEBUQGmRnqVMhtwJJ1cTIA+Wma5RSTGanQ==
-Received: from BYAPR11MB3558.namprd11.prod.outlook.com (2603:10b6:a03:b3::11)
- by CYYPR11MB8388.namprd11.prod.outlook.com (2603:10b6:930:c2::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
- 2024 23:55:22 +0000
-Received: from BYAPR11MB3558.namprd11.prod.outlook.com
- ([fe80::c03a:b12:f801:d3f6]) by BYAPR11MB3558.namprd11.prod.outlook.com
- ([fe80::c03a:b12:f801:d3f6%6]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 23:55:22 +0000
-From: <Tristram.Ha@microchip.com>
-To: <olteanv@gmail.com>
-CC: <Arun.Ramadoss@microchip.com>, <Woojung.Huh@microchip.com>,
-	<andrew@lunn.ch>, <vivien.didelot@gmail.com>, <f.fainelli@gmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v1 net] net: dsa: microchip: fix wrong register write when
- masking interrupt
-Thread-Topic: [PATCH v1 net] net: dsa: microchip: fix wrong register write
- when masking interrupt
-Thread-Index: AQHasvrvlIgeBsJ0IkaYfcqo1aqlFLG0iKgAgBnDIpA=
-Date: Tue, 18 Jun 2024 23:55:22 +0000
-Message-ID: <BYAPR11MB3558B815C8FE0A9E28365EC4ECCE2@BYAPR11MB3558.namprd11.prod.outlook.com>
-References: <1717119553-3441-1-git-send-email-Tristram.Ha@microchip.com>
- <20240602141524.iap3b6w2dxilwzjg@skbuf>
-In-Reply-To: <20240602141524.iap3b6w2dxilwzjg@skbuf>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BYAPR11MB3558:EE_|CYYPR11MB8388:EE_
-x-ms-office365-filtering-correlation-id: f64a2e18-6747-4774-1a15-08dc8ff21d9e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|376011|7416011|1800799021|366013|38070700015;
-x-microsoft-antispam-message-info: =?us-ascii?Q?YyeapKQpe/X1iHXtZHj/BOjEFU5YEPyH+p0bCP2UJJUZsRs/+KMvXTDzGIwt?=
- =?us-ascii?Q?qQCjx2Xv3l9P05VZ804XwWZ2u9aNV9Zo5zZQYLeRgq1/3mxaTf10fOimL6aG?=
- =?us-ascii?Q?p824A8j3FyI+y9aKsmRgHWHta3HqF6mGow88krYJ/DyDvV6BHrv8UeJfmQNP?=
- =?us-ascii?Q?a1ZhMCPI1rdQDGm7ppmk/5DZUaViA3DVD4RJwwUKgZ5nOs6JI6oNiZ46TrjD?=
- =?us-ascii?Q?bXow8gXVFvXQJD4wGuQB0aMlbyxxzLcPJr8fcdGohtbg2eTgqUj6qqRGFgyI?=
- =?us-ascii?Q?Xxxxh14Ze8sObkGczNeVxy6TyTeBFz3Wp8sVNbmYurxznF9GT2+whic09xp8?=
- =?us-ascii?Q?NiS6LcxuNNuKs4hwUxFGoJVv09oIzvkuGaBs6LjREw7HHe4FlotKu5On1MSI?=
- =?us-ascii?Q?ZTDmvJ/EYQmKN9q9WIaku5MO7leMut2X8U2zyf0P+xSVo6VDg13Veb6NQx3D?=
- =?us-ascii?Q?O+ZUttpYJF7hq7GT4oDvhIe7jo89TvUwq5BLfYyDv1LjK7WRJ4ZntPzWO3Cz?=
- =?us-ascii?Q?5FQTuZluRZXQxB2MtZg21SXZaFPAEAnzfauKxZwOnQ7mx5J/RQBjZKLEE6BA?=
- =?us-ascii?Q?G91HAMDktfgM53hWxzgDV+mM6KQQgnGldQ78Z2Eib7cj4VhDv3W9tD+nNd8C?=
- =?us-ascii?Q?9lYiYSArxojwvdtVKYEkAMr1v4AyebjenDrbdZiL2R1mWzBvEii/8rRn9AwQ?=
- =?us-ascii?Q?yifltJOlwrptiyCl1XoYYxK8IMQ41yVZJDQNUrfp5TSRunDNG9uvt2fyZtiF?=
- =?us-ascii?Q?DligdvhX9QX94FdyETu2AXQfmtaZiBoTUpHpGcLjMAv5Lxb1kDsQaFwlaebY?=
- =?us-ascii?Q?DoO49E83tgUkP78QW9AGAwbPWc3bF1LJdUd6YjgoZ5nPDgD+zcjg5eaB7vyl?=
- =?us-ascii?Q?nPRXFZeHOcBVY3fm5ZK0kkCW61fxFFmeby0Vbg9/yxaRgWvL9AGIPVhaRz0H?=
- =?us-ascii?Q?wiytytH/LjROkap8hLy7Tfy7LyYe+5ZlbV2jyLTzU/vasfCGIVr+dNF99e+Y?=
- =?us-ascii?Q?rk+n/ttqSXX/YMA/02pW9dCR8E05OOjLyQ8Wnkr5vwB0VJCUHd67dxmaRzWb?=
- =?us-ascii?Q?Ii1Pz/XnbLg9yHdRKmbSj2yedzLHKSdcbKMlycSu5oo/rC9TPbF9v71Hq1RY?=
- =?us-ascii?Q?E6YBzcv0se4oKJc/p4GvTFhY51ax50DqVwbaCASLLr3cZ7KsrDZGUh4boNfi?=
- =?us-ascii?Q?LM8MRK0qdfMjkqJiJHYAiPIxed2Xezeb+ZRSJhusr+9QYpm+jU5r+q8qrgs3?=
- =?us-ascii?Q?uLJdthJqfa1GfJLVy4NglypRDNMDHQaXNJHTAzdn4eAzQRTnFrunI7DHzD9/?=
- =?us-ascii?Q?L158H87Uh8BZxbmBCsWC97rTyg9DCNkK/1RH/WJCWKnaI9MglDeKi+0IZ+tw?=
- =?us-ascii?Q?EBpxsko=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3558.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(7416011)(1800799021)(366013)(38070700015);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?reRCxRAXpGdRRm8UW2vEidb4/029TDCNqHpvjeDP5ny1rLOf/QUErqWEYKoh?=
- =?us-ascii?Q?Q0izTCbrDjmL1oDoqjxjAoPUXi8GY7gGkvbSMIhODdfXtOYdFshKA1+Dv+ZQ?=
- =?us-ascii?Q?Vqpp+ej8emuyG93d11e+4I2nyVwi182Di3orvliogivpaq6qZypeMCFtWOpM?=
- =?us-ascii?Q?hvgQ1KAzdXo5zDCilQ3fECmyuZ3x/YEEg7ArDXUBFHzoSGHgKsRl9Ku4v3rO?=
- =?us-ascii?Q?JDIefMOpRslxAaX0yk9canaHafm5Ohd2QbON/3UVwlqlMvn3UUAXt4X+s6r6?=
- =?us-ascii?Q?5jDttxI0bqPqOTrxtfPup2iT7WaWGHJIouKL7bulEdXYLJ0u7R5guE8FgS31?=
- =?us-ascii?Q?/RuXg+kkDqdcb2L1ku7sMaOI2nqAnaFoDMEyXh3/H26X+Cnwc1FbWZOxSVOY?=
- =?us-ascii?Q?eI+furRZBzulLWM2i4mgdYZPwMvcJNBPDe7QWCf7izdzqRAm3ETxm8cxApSQ?=
- =?us-ascii?Q?3kWTFXUrD6s1V1J3ZJ4j6CC8MBugCjGFnExd9CISVcgjqT8L+Zj7CPfCDb27?=
- =?us-ascii?Q?L9fvwqPwI2tIoXqg5+ACfAm16+WsHlhNQFRh7koC6YZfXyqpaAexVbgyk7Na?=
- =?us-ascii?Q?WjRaj++aRd4jEbb68iLBkWjKRfKymyby7D9HgdtGM2gKJyUpQPaQWlJwBAoN?=
- =?us-ascii?Q?l3creIBxhC8sw7G6/cIGOVXZ/ZavnBMkpe0I9AFhZ02GsZJEYyS6rFCeABuJ?=
- =?us-ascii?Q?HQ6T3UICfyLBWWZqV358P95KXEFssKF3Y2FKKt1zmvwJcJhBqv5o6uriOZa0?=
- =?us-ascii?Q?15+6y7WxttbYJZlBgJ+8M1/pMUnD6j5HqvSyiDfP/Mt4zGKp9TRT71svbhVw?=
- =?us-ascii?Q?W7p9SLquaeiXEKPh+JicfNm6tN7mApjKv5Fch2Q1CEopr/nmCr5km5pWQLvK?=
- =?us-ascii?Q?0Tlz9xS1DYwd7WI9hcRnsmFJRAgUxux/9sg2HLA+z5Z17D54dEooQVto9Hdk?=
- =?us-ascii?Q?PDCyEMlTuQ5r2Pm0lQji2MPklyZiRZgh/cnFRxrmTmfgXhu1yPLdqutiqhzZ?=
- =?us-ascii?Q?QnTyoL0Q8DgHPfRub7jSocrDl5obe/xexRYuigK54lkIvCB49f6GdjLJXx8c?=
- =?us-ascii?Q?gu8VI1XjEUKXmDtXj7+AIfh7hbpCtuQwvKnz5Z/joiZSnlQqVygQtqx3itGs?=
- =?us-ascii?Q?sNmSFrBnxflyJutySqwcQ+YKM9TKXKvwQy2kiuNBY7r3/60g2/YvEnKPL2td?=
- =?us-ascii?Q?nkxBsexx2TWLUXzBHGqCKNgXQHrMHgbPj+QMvJpsVMQn3oBGGgBBIto0HSPd?=
- =?us-ascii?Q?LZqG81WfqO8hWpcIATJk531SUgWnbhvP+IMWBE8ibrf/dFF2pjHxhDikkeLq?=
- =?us-ascii?Q?zC8daN3/layWzeXv/HgBrt78OeLFHwNwcygaRgjZoffc6li1Y5aMoQfdn2+z?=
- =?us-ascii?Q?0nFhnRh0Ar/ZhcPDHdY6fP5Sl5IpyXylR+cDMFNBqsVPeoVUddyKHGQOyoE0?=
- =?us-ascii?Q?nTO0YFdQVUy4ufG/VBqUk98MyrLwwCOXdlREr0PKgov4rY+lSKFJYkewckop?=
- =?us-ascii?Q?OOmeRpzQISPHpXN8BYXj73iZrREDH1FJIRZkZAvO0HhSbVjhdvR7ptgWs8RF?=
- =?us-ascii?Q?rCP4zxDQqA43njERJ81OC3Wlq0Afy1AE5Q5S5ID0?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6865313A24F;
+	Tue, 18 Jun 2024 23:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718755042; cv=none; b=HZPaNvv1q3bHq2Ur2B1HBd/5px1MrUGEElqsFmqQ98KNQ5sNzemWbjZWxMkBItWwfUTevTNvn+J1geHqEa94tntrjt/dDIC2iHFbFk8G5hI/KGAU2mVfHs4+UqEldrPBYrkKpCmpAhEvHEISqu/o7rLgTYJxrLK5UAMRJXH3IIg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718755042; c=relaxed/simple;
+	bh=/pmCh5yLIAf/vwfTYhPMuxD/Hb6HWKunmzmcBCasqlg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kW8+rtdEEZgt56kt7TFsmuWmWXulHyibU0CsIPsPuqS6sGeQcE1Qfy5DYWUMNAYlehV2xpHFBDq/92wWnvtDGZg1ShW69OSGYWT+Spc7Tf6IcQVZOCaZkpDRXvB7mjKWzkhwR7dnth9QcHtgKLgpj9Ds++fU+9CiunpO4tUG49s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bpZc6O3I; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ILag0H010904;
+	Tue, 18 Jun 2024 23:57:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IG8pAosJ7qiq4++NVfvRsXywC9BXttLJ6yJ0IqalFrQ=; b=bpZc6O3IVfOJw4vP
+	BzwZSmt2YWlcILN0dyzD2nMdBafeZ3ZAcVxoK7wO33dW1c33boRozd/KU12q58Yv
+	8U5pNrbA3icARpSQiC+oXczQXurjjd90rsszTxpQ1VHitBkoM1yVCMUkw9/1do5w
+	h84ZGcBa9HD2QONJWzcZNubSZHddppJCheqZCVKKXvdZm9Qz8qFwemSQRzaAeCp1
+	ShOVca7RDenfto2a1Fq5WXsjtfCjTB09dFrFdP/4TZ7SDeZnx+ztzcauSKFpIHOc
+	zOhetp1+NPOmN75Fwr5RU3uJDwztoJjmhqMkEGpBHFvvwJrCve7Bd/FzZY6Xgtu2
+	d2vMXQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja2g73f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 23:57:16 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45INvFm1029915
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 23:57:15 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 18 Jun 2024 16:57:15 -0700
+Date: Tue, 18 Jun 2024 16:57:14 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Deepak Kumar Singh <quic_deesin@quicinc.com>
+CC: Caleb Connolly <caleb.connolly@linaro.org>, <andersson@kernel.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <quic_sarannya@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+Subject: Re: [PATCH V1] rpmsg: glink: Make glink smem interrupt wakeup capable
+Message-ID: <ZnIe2hjPgWipDfgG@hu-bjorande-lv.qualcomm.com>
+References: <20240603073648.3475123-1-quic_deesin@quicinc.com>
+ <8d10fbbb-471e-4960-a52a-1658df9fbc0c@linaro.org>
+ <275417c5-223a-436b-8405-ba3571e19ced@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3558.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f64a2e18-6747-4774-1a15-08dc8ff21d9e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2024 23:55:22.0928
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8vPesC8Sy5o/BXj0zdc8N+pIVQaJmej0l+LWLkvxCw9LVPVMGjOR9Kfe15ZqkbemcflLBCWYyzoTUQJC81aUIw6JAUte861L9+DM1Y5xZT0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR11MB8388
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <275417c5-223a-436b-8405-ba3571e19ced@quicinc.com>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: td6KUawCW9F-GzR6B-ldhM5WDud6YD4r
+X-Proofpoint-ORIG-GUID: td6KUawCW9F-GzR6B-ldhM5WDud6YD4r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_06,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=966
+ malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180175
 
-> Subject: Re: [PATCH v1 net] net: dsa: microchip: fix wrong register write=
- when
-> masking interrupt
->=20
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e content
-> is safe
->=20
-> On Thu, May 30, 2024 at 06:39:13PM -0700, Tristram.Ha@microchip.com wrote=
-:
-> > From: Tristram Ha <tristram.ha@microchip.com>
-> >
-> > Initially the macro REG_SW_PORT_INT_MASK__4 is defined as 0x001C in
-> > ksz9477_reg.h and REG_PORT_INT_MASK is defined as 0x#01F.  Because the
-> > global and port interrupt handling is about the same the new
-> > REG_SW_PORT_INT_MASK__1 is defined as 0x1F in ksz_common.h.  This works
-> > as only the least significant bits have effect.  As a result the 32-bit
-> > write needs to be changed to 8-bit.
-> >
-> > Fixes: e1add7dd6183 ("net: dsa: microchip: use common irq routines for =
-girq and
-> pirq")
-> > Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
-> > ---
-> > v1
-> >  - clarify the reason to change the code
->=20
-> After v1 comes v2.
+On Thu, Jun 13, 2024 at 04:05:17PM +0530, Deepak Kumar Singh wrote:
+> 
+> 
+> On 6/3/2024 3:07 PM, Caleb Connolly wrote:
+> > Hi Deepak,
+> > 
+> > On 03/06/2024 09:36, Deepak Kumar Singh wrote:
+> > > There are certain usecases which require glink interrupt to be
+> > > wakeup capable. For example if handset is in sleep state and
+> > > usb charger is plugged in, dsp wakes up and sends glink interrupt
+> > > to host for glink pmic channel communication. Glink is suppose to
+> > > wakeup host processor completely for further glink data handling.
+> > > IRQF_NO_SUSPEND does not gurantee complete wakeup, system may again
+> > > enter sleep after interrupt handling and glink data may not be
+> > > handled by pmic client driver.
+> > > 
+> > > To ensure data handling by client configure glink smem device as
+> > > wakeup source and attach glink interrupt as wakeup irq. Remove
+> > > IRQF_NO_SUSPEND flag as it is no longer required.
+> > 
+> > I'm not sure I agree with this approach, glink is used for lots of
+> > things -- like QRTR, where the sensor DSP and modem may also need to
+> > wake the system up (e.g. for "wake on pickup" on mobile, or for incoming
+> > calls/sms).
+> > 
+> > Configuring this to always wake up the system fully will result in a lot
+> > of spurious wakeups for arbitrary modem notifications (e.g. signal
+> > strength changes) if userspace hasn't properly configured these
+> > (something ModemManager currently lacks support for).
+> 
+> In internal testing at least we don't see such issues, may be downstream
+> modem manager is configuring things properly.
 
-I thought the initial version starts at index 0?
+As we discussed during the introduction of 1a561c521ba9 ("soc: qcom:
+smp2p: Add wakeup capability to SMP2P IRQ"), we don't want a laptop-like
+device to wake up in someones backpack and overheat.
 
-> >
-> >  drivers/net/dsa/microchip/ksz_common.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/dsa/microchip/ksz_common.c
-> b/drivers/net/dsa/microchip/ksz_common.c
-> > index 1e0085cd9a9a..3ad0879b00cd 100644
-> > --- a/drivers/net/dsa/microchip/ksz_common.c
-> > +++ b/drivers/net/dsa/microchip/ksz_common.c
-> > @@ -2185,7 +2185,7 @@ static void ksz_irq_bus_sync_unlock(struct irq_da=
-ta *d)
-> >       struct ksz_device *dev =3D kirq->dev;
-> >       int ret;
-> >
-> > -     ret =3D ksz_write32(dev, kirq->reg_mask, kirq->masked);
-> > +     ret =3D ksz_write8(dev, kirq->reg_mask, kirq->masked);
-> >       if (ret)
-> >               dev_err(dev->dev, "failed to change IRQ mask\n");
-> >
-> > --
-> > 2.34.1
-> >
->=20
-> What is the user-visible functional impact of the 32-bit access? Justify
-> why this is a bug worth sending to stable kernels please.
->=20
-> FWIW, struct ksz_irq operates on 16-bit registers.
+If there are gaps in upstream ModemManager it would be desirable to see
+those closed, but it seems likely that we have other services doing
+similar things?
 
-As explained before the initial code uses register 0x1C but now it is
-changed to 0x1F.
+> Also with devices having
+> proper auto suspend feature this change may not be affecting power numbers
+> significantly.
 
-See the real operating code if not modified:
+There are many types of products where you don't have auto suspend.
 
-ret =3D ksz_write32(dev, 0x1F, 0x0000007F);
+> 
+> Additionally my understanding is by definition glink interrupt should be
+> wakeup capable. May be Bjorn can comment more on this.
+> 
 
-The original code looks like this:
+That sounds correct, but it was made under the assumption that the apps
+software does auto suspend.
 
-ret =3D ksz_write32(dev, 0x1C, 0x0000007F);
+Regards,
+Bjorn
 
-BTW, all other KSZ switches except KSZ9897/KSZ9893 and LAN937X families
-use only 8-bit access.
-
+> Thanks,
+> Deepak
+> > 
+> > IRQF_NO_SUSPEND is presumably necessary to keep the DSPs happy? iirc
+> > downstream Qualcomm kernels have historically taken this approach to
+> > avoid spurious wakeups.
+> > 
+> > I proposed an alternative approach some time back that would allow the
+> > wakeup to be configured on a per-channel basis.
+> > 
+> > https://lore.kernel.org/linux-arm-msm/20230117142414.983946-1-caleb.connolly@linaro.org/
+> > 
+> > Back then Bjorn proposed using some socket specific mechanism to handle
+> > this for QRTR, but given this is now a common issue for multiple glink
+> > channels, maybe it's something we could revisit.
+> > 
+> > Requiring the wakeup be enabled by userspace clearly doesn't make sense
+> > for your proposed usecase, perhaps there's a way to configure this on a
+> > per-channel basis in-kernel (maybe as the rpmsg API?).
+> > 
+> > Thanks and regards,
+> > > 
+> > > Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+> > > ---
+> > >   drivers/rpmsg/qcom_glink_smem.c | 8 ++++++--
+> > >   1 file changed, 6 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/rpmsg/qcom_glink_smem.c
+> > > b/drivers/rpmsg/qcom_glink_smem.c
+> > > index 7a982c60a8dd..f1b553efab13 100644
+> > > --- a/drivers/rpmsg/qcom_glink_smem.c
+> > > +++ b/drivers/rpmsg/qcom_glink_smem.c
+> > > @@ -22,6 +22,7 @@
+> > >   #include <linux/regmap.h>
+> > >   #include <linux/workqueue.h>
+> > >   #include <linux/list.h>
+> > > +#include <linux/pm_wakeirq.h>
+> > >   #include <linux/rpmsg/qcom_glink.h>
+> > > @@ -306,8 +307,7 @@ struct qcom_glink_smem
+> > > *qcom_glink_smem_register(struct device *parent,
+> > >       smem->irq = of_irq_get(smem->dev.of_node, 0);
+> > >       ret = devm_request_irq(&smem->dev, smem->irq, qcom_glink_smem_intr,
+> > > -                   IRQF_NO_SUSPEND | IRQF_NO_AUTOEN,
+> > > -                   "glink-smem", smem);
+> > > +                   IRQF_NO_AUTOEN, "glink-smem", smem);
+> > >       if (ret) {
+> > >           dev_err(&smem->dev, "failed to request IRQ\n");
+> > >           goto err_put_dev;
+> > > @@ -346,6 +346,8 @@ struct qcom_glink_smem
+> > > *qcom_glink_smem_register(struct device *parent,
+> > >       smem->glink = glink;
+> > > +    device_init_wakeup(dev, true);
+> > > +    dev_pm_set_wake_irq(dev, smem->irq);
+> > >       enable_irq(smem->irq);
+> > >       return smem;
+> > > @@ -365,6 +367,8 @@ void qcom_glink_smem_unregister(struct
+> > > qcom_glink_smem *smem)
+> > >       struct qcom_glink *glink = smem->glink;
+> > >       disable_irq(smem->irq);
+> > > +    dev_pm_clear_wake_irq(&smem->dev);
+> > > +    device_init_wakeup(&smem->dev, false);
+> > >       qcom_glink_native_remove(glink);
+> > 
 
