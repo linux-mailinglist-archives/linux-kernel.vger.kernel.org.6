@@ -1,135 +1,159 @@
-Return-Path: <linux-kernel+bounces-219104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB8F90C9ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:42:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83FA90CAA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DD951C231C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:42:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0C8E286E34
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A80E1586C0;
-	Tue, 18 Jun 2024 11:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5206115B576;
+	Tue, 18 Jun 2024 11:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkbND8/E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nvVW7Y7d"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4242157A61
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DB8156249
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718708676; cv=none; b=O9lu6mO2HCg0XksYzjBNE/+HvBepVI0xco6SrGss9R33umVB7BRqpsEmVICmnKRR78zsQhuD3uQXwlfqLQB3IOUSc5Am4KJbK6L/fpZ+vNSOHs7fqS7xPDjS9yZCFOp0gZ0NGLlOw600tOL4vn1YgoyuTqdZSfSENIsMH4fge8U=
+	t=1718711009; cv=none; b=rRryGH8ZjjotWSJh7hS/LdmPTz1jStiwLrOde/SiNmnEl5H9vjWJiur4++rctAXd+1QUc+9svzK3S0ehNiXtk/w4A8jNgT1KXmWiZzxGxt8u5tFZ+jKB0IcjMvXL7f+jObPHgc+0Y6W77Iynv7PbN30NVbvQyP6F4VuWWS5HTZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718708676; c=relaxed/simple;
-	bh=NY46nA/XWYixeSE6/TIdJ0Mru4j2agru9bQrVnYDEZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gljh4UKjLIwvDvYF75h7AsyoEobAeA+deINTZ0K0wQNh+b39eO7LZMQJeAd7JMJR7EqO70cEuxsEhNW4Yra8zxaPQaAhb7BZt0YvxDTYdSrg+aZ3yhS7F18W5flvVdBzyWnncG/1cB0CZkCiSePEkaBU8gaEnaQbICdurI5HKXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkbND8/E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D9E1C4AF1D;
-	Tue, 18 Jun 2024 11:04:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718708676;
-	bh=NY46nA/XWYixeSE6/TIdJ0Mru4j2agru9bQrVnYDEZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MkbND8/ENHkB+4ngD5QwaTxyG1rFJw4MP4C5E+HOS97H/Ct/x9rh+g2yudcs7Ptf2
-	 IGiZ6yQgB4URmFoTOkOD0jSg+pRXh5kv4kg8nGoJ6b5KDVxeEtizWihsyEoOnG6bHn
-	 9NEnrBD1GZBABcyvrf+BuTlg3nrP88hBYt/zc86SKnCRqN6K+ypY44bNgqo09E14zo
-	 RGghIT+rO8S7xZ8JnQIs1AZJM6+dn99w5jxr0L0jIyEBLESuNAy3uLzfHD3559/K6M
-	 tcRxfMT7DqtjxkKRIS9YifzD+twtbjRG8Tw4i9MepHz7qNL8VXgan9tKvwFQwbSVXT
-	 PY1ABvFXT/Fgw==
-Date: Tue, 18 Jun 2024 14:02:20 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: James Gowans <jgowans@amazon.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Alex Graf <graf@amazon.de>
-Subject: Re: [PATCH] memblocks: Move late alloc warning down to phys alloc
-Message-ID: <ZnFpPCSTAUj90FJF@kernel.org>
-References: <20240614133016.134150-1-jgowans@amazon.com>
+	s=arc-20240116; t=1718711009; c=relaxed/simple;
+	bh=yIp5k6dWBE6QqIKw3SNMpzHRVkFwU4jMCqmCY8sJOM0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=u/3RUFqsJDYFH8tpqzYry+Vh0vobRgizHv4TKvFKkVSmxkLGNIJNRSUPwavVyysRjnhTIF/KDHmq99sOHQFyS7g6/KOkizY+b1TvhOu9AVhiGaNhCYJwbLDS5IAKIlAFEq0yrz6uCfyzBNciX/KhE2Cn79MlRYWd+avO19UkKSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nvVW7Y7d; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240618114324epoutp015f2d1789424acbd5ca40efbf44a35bab~aFo1iBO_n0897708977epoutp01C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:43:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240618114324epoutp015f2d1789424acbd5ca40efbf44a35bab~aFo1iBO_n0897708977epoutp01C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1718711004;
+	bh=ifbVlCy7fbVWcpw+/7ihJRCvMhJsvGOf9jXUZO+534Y=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=nvVW7Y7dSiaYgh6yGJA0dJlQmXdJgayrMBhAuoQRcu9otxPPTqtK7bzRblu3LGAcE
+	 6X2InFApB4LsV5pG/QkTPiafg1pHqgUBvYqnSRjr3wTKLDUUqFKyRVdRy2lGaWbxYy
+	 kg9TEkRJQTUw1c+WwEAKE8I9VjXMTYNNzt6r2Xps=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240618114323epcas5p3fe581e4dbc9b36cea9a0d4f3921cba5d~aFo035Wm80158901589epcas5p3T;
+	Tue, 18 Jun 2024 11:43:23 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4W3Pyd3Fmdz4x9Pq; Tue, 18 Jun
+	2024 11:43:21 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CE.00.06857.9D271766; Tue, 18 Jun 2024 20:43:21 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240618110747epcas5p2cda870f60796f0357df40ea85df8e0b7~aFJvMpnh41417614176epcas5p2T;
+	Tue, 18 Jun 2024 11:07:47 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240618110747epsmtrp1c9d37e432e7eef6245051fa385d242e5~aFJvLvgQo2341323413epsmtrp16;
+	Tue, 18 Jun 2024 11:07:47 +0000 (GMT)
+X-AuditID: b6c32a4b-88bff70000021ac9-50-667172d916bc
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	09.28.07412.38A61766; Tue, 18 Jun 2024 20:07:47 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240618110745epsmtip2afa44a985fcd04c1a9a9c785b4fe04ae~aFJtpH3Gd0787907879epsmtip2A;
+	Tue, 18 Jun 2024 11:07:45 +0000 (GMT)
+From: Jai Arora <jai.arora@samsung.com>
+To: bp@alien8.de, tony.luck@intel.com, james.morse@arm.com,
+	mchehab@kernel.org, rric@kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: gost.dev@samsung.com, aswani.reddy@samsung.com,
+	pankaj.dubey@samsung.com, Jai Arora <jai.arora@samsung.com>
+Subject: [Patch v1] EDAC/dmc520: Use devm_platform_ioremap_resource()
+Date: Tue, 18 Jun 2024 16:32:26 +0530
+Message-Id: <20240618110226.97395-1-jai.arora@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsWy7bCmpu7NosI0g1XHhS0Obd7KbvF5wz82
+	i5sHdjJZXFn6hMni/r7lTBYXTjUwWVzeNYfNYtmmP0wWi7Z+Ybc4uGojk8WbC/dYHLg9vrf2
+	sXismbeG0WPxnpdMHptWdbJ59G1ZxejxeZNcAFtUtk1GamJKapFCal5yfkpmXrqtkndwvHO8
+	qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0H1KCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul
+	1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMrr9z2Qv+cFTs/viUvYFxD3sXIyeHhICJ
+	xJoZy1i7GLk4hAR2M0ocOr+eCcL5xCjxeNotFgjnG6NE88srQC0cYC0HG+wg4nsZJf5+/ADV
+	3soksW4yiMPJwSagLvFn32SwhIjAXEaJAw+OM4MkmAUKJS7Nf8kCYgsLuEp0b9gNFmcRUJVo
+	WPEbrJlXwEpiybVjLBAHykus3nCAGWSQhMA1dom3O34yQyRcJFo33YQqEpZ4dXwL1EdSEi/7
+	26BsH4lnP/dD1WdIzDv8jAnCtpc4cGUOC8g7zAKaEut36UOEZSWmnlrHBHEnn0Tv7ydQ5bwS
+	O+aB2CDfK0tc+csKEZaUuPDoBiOE7SEx8VsXWLmQQKzE1ftbWScwys5CWLCAkXEVo2RqQXFu
+	emqxaYFxXmo5PKKS83M3MYKTnZb3DsZHDz7oHWJk4mA8xCjBwawkwus0LS9NiDclsbIqtSg/
+	vqg0J7X4EKMpMMgmMkuJJucD021eSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWp
+	RTB9TBycUg1MM40FmWJPPsqebeEREydSoHfFVqrhiPIMn/TgpO3v9u1qOStvcj5HKcx8lnVZ
+	O7fBpc/+7TVdSRq7G/QyzsWnBtrc3TNN93nKI+ePd3XefgwsNdla0aabejDjyoPX2U4iv5XN
+	bmuvnRDnl5zy8sBvnWXbFZ+Lzwzb1LP2+32ZV/cYC7VPth2YVuH15WtR9fsahkcrp2pH7+nQ
+	W7RG97wB10Kpbq+vZUEPzqh49Unrd6kZvFEoiw5cIaN+beucS1mvz1wy/Jm0dN62xmSJE/9P
+	Vke7e+1P0jl0Sevd5rpF35ee29Ox/9Gio6yZt5b8U1P50+P/LS9qwbJjEhtMFFrTq8T92rIE
+	rixwudj58J2kEktxRqKhFnNRcSIAZ3mzjv8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsWy7bCSvG5zVmGawd0rLBaHNm9lt/i84R+b
+	xc0DO5ksrix9wmRxf99yJosLpxqYLC7vmsNmsWzTHyaLRVu/sFscXLWRyeLNhXssDtwe31v7
+	WDzWzFvD6LF4z0smj02rOtk8+rasYvT4vEkugC2KyyYlNSezLLVI3y6BK6Pr71z2gj8cFbs/
+	PmVvYNzD3sXIwSEhYCJxsMGui5GLQ0hgN6NE7+53rF2MnEBxSYkrs26zQdjCEiv/PWeHKGpm
+	kvi2cgczSIJNQF3iz77JrCAJEYGljBKv731hB0kwC5RKNOyYDzZJWMBVonvDbrAGFgFViYYV
+	v8HivAJWEkuuHWOB2CAvsXrDAeYJjDwLGBlWMUqmFhTnpucmGxYY5qWW6xUn5haX5qXrJefn
+	bmIEB56Wxg7Ge/P/6R1iZOJgPMQowcGsJMLrNC0vTYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv
+	4YzZKUIC6YklqdmpqQWpRTBZJg5OqQam+K7s0ivH1PbusLHYYK/9KS/pzSLn+FuHkz9xHrCx
+	T36y1+dDQF7cjvyA/ay9VnH1k1tXHj61PytjkmSF0Bd7maZpdSytDza7ua7iljwjZDKzrK/1
+	E8PEzfpzVEKe/JMv9bJnXODw4FjJFdN/v7kipy6ZN3+pgMMbpx89t/K3RpexHZL1XKj53NM+
+	s3Bn2Yrrlf5NtrZNEQq5UlHcTPr72M58+7mr6pUuF8uVbW9ZWfnDt90L/bOAZW3NtNgD3v1M
+	81z3he7V1Zzic7ZM5+MjsYx2w0mzPH9ETyrzyTNazrqBfQLLtTBJE6VXsqpemQfNgs7UbTHU
+	mr5x273uoswLhTtXdbX84Xu74pD5QxYlluKMREMt5qLiRAA5UpnHqwIAAA==
+X-CMS-MailID: 20240618110747epcas5p2cda870f60796f0357df40ea85df8e0b7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240618110747epcas5p2cda870f60796f0357df40ea85df8e0b7
+References: <CGME20240618110747epcas5p2cda870f60796f0357df40ea85df8e0b7@epcas5p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614133016.134150-1-jgowans@amazon.com>
 
-On Fri, Jun 14, 2024 at 03:30:16PM +0200, James Gowans wrote:
-> Subject: [PATCH] memblocks: Move late alloc warning down to phys alloc
+platform_get_resource() and devm_ioremap_resource() are wrapped up in the
+devm_platform_ioremap_resource() helper. Use the helper and get rid of the
+local variable for struct resource *. We now have a function call less.
 
-Nit: memblock
+Signed-off-by: Jai Arora <jai.arora@samsung.com>
+---
+ drivers/edac/dmc520_edac.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> If a driver/subsystem tries to do an allocation after memblocks have
-> been freed and the memory handed to the buddy allocator, it will not
-> actually be legal to use that allocation - the buddy allocator owns the
-> memory. This is handled by the memblocks function which does allocations
-> and returns virtual addresses by printing a warning and doing a kmalloc
-> instead. However, the physical allocation function does not to do this
-> check - callers of the physical alloc function are unprotected against
-> mis-use.
-
-Did you see such misuse or this is a theoretical issue?
+diff --git a/drivers/edac/dmc520_edac.c b/drivers/edac/dmc520_edac.c
+index 4e30b989a1a4..5e52d31db3b8 100644
+--- a/drivers/edac/dmc520_edac.c
++++ b/drivers/edac/dmc520_edac.c
+@@ -480,7 +480,6 @@ static int dmc520_edac_probe(struct platform_device *pdev)
+ 	struct mem_ctl_info *mci;
+ 	void __iomem *reg_base;
+ 	u32 irq_mask_all = 0;
+-	struct resource *res;
+ 	struct device *dev;
+ 	int ret, idx, irq;
+ 	u32 reg_val;
+@@ -505,8 +504,7 @@ static int dmc520_edac_probe(struct platform_device *pdev)
+ 	}
  
-> Improve the error catching here by moving the check into the physical
-> allocation function which is used by the virtual addr allocation
-> function.
-> 
-> Signed-off-by: James Gowans <jgowans@amazon.com>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Alex Graf <graf@amazon.de>
-> ---
->  mm/memblock.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index d09136e040d3..dd4f237dc1fc 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -1457,6 +1457,17 @@ phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
->  		align = SMP_CACHE_BYTES;
->  	}
->  
-> +	/*
-> +	 * Detect any accidental use of these APIs after slab is ready, as at
-> +	 * this moment memblock may be deinitialized already and its
-> +	 * internal data may be destroyed (after execution of memblock_free_all)
-> +	 */
-> +	if (WARN_ON_ONCE(slab_is_available())) {
-> +		void *vaddr = kzalloc_node(size, GFP_NOWAIT, nid);
-> +
-> +		return vaddr ? virt_to_phys(vaddr) : 0;
-> +	}
-
-I'd move this before alignment check.
-
-> +
->  again:
->  	found = memblock_find_in_range_node(size, align, start, end, nid,
->  					    flags);
-> @@ -1576,13 +1587,6 @@ static void * __init memblock_alloc_internal(
->  {
->  	phys_addr_t alloc;
->  
-> -	/*
-> -	 * Detect any accidental use of these APIs after slab is ready, as at
-> -	 * this moment memblock may be deinitialized already and its
-> -	 * internal data may be destroyed (after execution of memblock_free_all)
-> -	 */
-> -	if (WARN_ON_ONCE(slab_is_available()))
-> -		return kzalloc_node(size, GFP_NOWAIT, nid);
->  
->  	if (max_addr > memblock.current_limit)
->  		max_addr = memblock.current_limit;
-> -- 
-> 2.34.1
-> 
-
+ 	/* Initialize dmc520 edac */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg_base = devm_ioremap_resource(dev, res);
++	reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg_base))
+ 		return PTR_ERR(reg_base);
+ 
 -- 
-Sincerely yours,
-Mike.
+2.17.1
+
 
