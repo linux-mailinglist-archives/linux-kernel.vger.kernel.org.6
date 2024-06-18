@@ -1,210 +1,150 @@
-Return-Path: <linux-kernel+bounces-218950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F153A90C81B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:59:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC7E90C816
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFDEE1C22335
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:59:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 343911F24E5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8061D362F;
-	Tue, 18 Jun 2024 09:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B0715821D;
+	Tue, 18 Jun 2024 09:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MNJEuFqX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kF+aDvLh"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C98113B587;
-	Tue, 18 Jun 2024 09:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4B313B587
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718703297; cv=none; b=kHV4JTW7jv/5g2eyCn2fOXVzJTubXxxTCG+ShVU+65hxlLxjWNAfE0PAqyFZ/Tr6xCD7818xCIHcIPPDrjAtbVa4F/LMOEX7pTeJhtfwB2lqrNG06ayxZj8h2gkSnmvR/DeMxgyz46qXoz4LIchTYksctcLjJ1FnYCtU376E1pM=
+	t=1718703279; cv=none; b=bp0EzpyZ/Qdm1yzv+Z4NFcIgvzZuoJE9ckcwN1bIdd0UZF7LhowQYEEjJT4alj1+jdbQUzn2AScqLouwKCPUkNUeAvU5lhZLpHuf4lv+pHLF5vRJlh8vSGOqct1JRJZo2Hf5aXFp3K0Hy2Q9Cbl/pFNpe8qp0ZfCoH/mHVs9kxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718703297; c=relaxed/simple;
-	bh=OkAo6EIj92wKJXQtVAueFl/of18+ooI9LN/LRMNUFT8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NJ3TmB2XfmJvHucysTTgkQiKFrj9qZkRZact6nU1gElA6mLAWU+5MvTlE0a86arBOOP+tMDYzpgwqcI2s5oOtBWFmosBF2SDsbm0QJbV3okzThMOFEb+P63jfdjxBnshE+7taoYfq021KTbEzSC/NrfwmG5JPPUtuGGFzVygCLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MNJEuFqX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I37ooU018347;
-	Tue, 18 Jun 2024 09:34:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4RP1l8jk2w2WRZlbBbGJ4pmrEVkuCZtj4kNaPexCg7c=; b=MNJEuFqXexvu8Qcn
-	AcU/C02rVrb2YHj9yf0YRNXb+ylxfqfLBWrbjnSEUds1vrlQiLZyumCuxNjkTL4r
-	Fhw8osCqP+0uTEGipo+oY6n8mjCgu/nDyVyfgn1kNhWvLlYWWR9eDM0oJkld7eBC
-	wppvTWcWRznHOGRczUUvZQpflLIet9DoMEuKf/zxxnetb4b2t6LaKUDmma9/nUUJ
-	I8FNNwyEpSQc6ORxkS+hKuQU3KJUKXs0mp0o6veNtZpXxFzI1Hwpm7EPUeJ1Qys7
-	vA3c/usOTp1VWJy2CZrIjw4QuDQNF7Vfja1D2X0rYPYp+e0U/Bt6IKY4wVL8l481
-	rJ68XQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu22grrrh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 09:34:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I9YjTI019073
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 09:34:45 GMT
-Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 02:34:36 -0700
-Message-ID: <caedb219-f412-4511-8c92-90e87ca9a0f4@quicinc.com>
-Date: Tue, 18 Jun 2024 15:04:26 +0530
+	s=arc-20240116; t=1718703279; c=relaxed/simple;
+	bh=OwBXLxTgIxhAvEWHZw59Np1NM6d7ZgJiEzitI93blL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sv9MRhiBnCGjRyAT2CQ3WCXB0jouxgMNjlWt9T4Q5iLtc4M+RVYPHbDRnC3WdM2hhR3JWunQrbv3A9AOmSBFEU98EQh3J7CgRlbx26NEsmLU2sxPp4ngVR0+15FWz0IAlXEkgJGiUinDyLlhSWCxVYP4bZfYGoAIpyj55VwiGr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kF+aDvLh; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ebdfe26217so49211031fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:34:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718703276; x=1719308076; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3OtPQx/Pu4izNrX/Re5hWMRulfkvuWWXAK3KKNMzu7g=;
+        b=kF+aDvLhde4JkYi3rCKkxUD4K8OiLz/i6+/l8oD0Z7ZQJQI1MqN0ohZYJyL7VP4YSy
+         EeNbjb3Cr3RYPiLV4EZ+pir/WeF3vdWFtD/6DbDmBQwXJ+z544pgmDU5gKp3pGAuPkFu
+         R9uVoohSAv938mkWrpQodb4jLifYmmuE5F9icAg+Lig9Z1w9jRNoVGAMUHQtWrQSCW08
+         gTvI8TGdv2ug/uQMUPWfjeOwFOiwIBhPkMhJA25loyOi8vnUh4Y7ApJ/+a0Pw3/hpsHf
+         i+nYj37B0OZkRo6Wx6QQ7amjWAPyM5eJX7TkqMDgK0aHzCOIu5URjYmzmYcjM8aJypvD
+         uMNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718703276; x=1719308076;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3OtPQx/Pu4izNrX/Re5hWMRulfkvuWWXAK3KKNMzu7g=;
+        b=pKyXiNLqNg2Ee/X0c+mzk4AAniqw3v6nznToix8JfDpZOP8vhlkf9thv53qWalOzFR
+         45FyE5yDneIjTqdFK8OYssmjtLUUlSWXAeovVdgot5VHM6dz2Lz3j2AzIIZb+Yj4TsfA
+         RB13T128ai+xRdPxTFhDgtdpmGF0QDYipvCqPOZZCri5ou74ifxtpV+QevRpGFS24x2T
+         mD5RiGYyBhhD96GYu3LcpVxIl/tg0U2HkX37DRmBHisRkq5kTkuiUPxQNvi0psadnerE
+         9IGtS6jPIGE9aDDGjRQoogo+JgsopoWecbn/XDBbtSuVAOgG226e3CODAvWSTJJs1hNT
+         JEgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ0bAoBOEn8c03ef74DOyUJYHAuGEIVYnE24MGQXysXtMAd9KUEzND7UlUw5CTzLvtOOygoeyUgmz9E16x82OaI8Fb4vpD8GLVN9lX
+X-Gm-Message-State: AOJu0YwP8cwM8wlkLGK9zbQ0rw5bO7S2JjFmCJj10F4AKcTAL1CW/5i8
+	rlo2r6ceprVZvqFanUL90USJ23tCxD0dbUf8DG9tJuS+WdiNUQiJCcIMaE+BNjo=
+X-Google-Smtp-Source: AGHT+IGV3fdRHGz8W6Ml8JMRCptiBjlFKzjIcCxhI6Uj5qvvYAKo3j/iWUDBncEItZIdRBsrs9DQOg==
+X-Received: by 2002:a2e:8609:0:b0:2eb:fb9c:5a85 with SMTP id 38308e7fff4ca-2ec0e47b5c6mr68554821fa.23.1718703275629;
+        Tue, 18 Jun 2024 02:34:35 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c78422sm16495521fa.95.2024.06.18.02.34.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 02:34:35 -0700 (PDT)
+Date: Tue, 18 Jun 2024 12:34:33 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH RFC 5/5] drm/bridge: lt9611: switch to using the DRM HDMI
+ codec framework
+Message-ID: <fal5jtesucasboygxde2uiamq6fhycwuhor6g4uqi54jx3sis7@gw5im7xxss6n>
+References: <20240615-drm-bridge-hdmi-connector-v1-0-d59fc7865ab2@linaro.org>
+ <20240615-drm-bridge-hdmi-connector-v1-5-d59fc7865ab2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 RESEND 5/5] venus: pm_helpers: Use
- dev_pm_genpd_set_hwmode to switch GDSC mode on V6
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Michael
- Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Ulf
- Hansson" <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown
-	<len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Andy
- Gross" <agross@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya
- Kakitapalli" <quic_skakitap@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20240413152013.22307-1-quic_jkona@quicinc.com>
- <20240413152013.22307-6-quic_jkona@quicinc.com>
- <5c78ad52-524b-4ad7-b149-0e7252abc2ee@linaro.org>
- <b96ef82c-4033-43e0-9c1e-347ffb500751@quicinc.com>
- <a522f25f-bb38-4ae1-8f13-8e56934e5ef5@linaro.org>
- <dbd1b86c-7b5f-4b92-ab1f-fecfe1486cfc@quicinc.com>
- <621dbaaa-6b86-45b5-988e-a6d9c39b13d7@linaro.org>
- <d36c1163-a3f0-4034-a430-91986e5bbce8@linaro.org>
- <ef194e5c-f136-4dba-bfe0-2c6439892e34@linaro.org>
- <d2e55523-f8fd-4cbe-909c-57de241107e8@linaro.org>
- <1df48a42-3b4e-4eb4-971b-cd4be001ba27@quicinc.com>
- <93a67151-02fa-4c53-8d6e-0ed1600128bf@quicinc.com>
- <01041302-120b-4f9d-87f2-bd841dcd227a@linaro.org>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <01041302-120b-4f9d-87f2-bd841dcd227a@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: gt_jisChldo_9sVlyTERCw_uv13ANvua
-X-Proofpoint-GUID: gt_jisChldo_9sVlyTERCw_uv13ANvua
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- clxscore=1015 malwarescore=0 priorityscore=1501 spamscore=0 suspectscore=0
- adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406180070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240615-drm-bridge-hdmi-connector-v1-5-d59fc7865ab2@linaro.org>
 
-
-
-On 6/17/2024 3:21 PM, Bryan O'Donoghue wrote:
-> On 17/06/2024 03:31, Jagadeesh Kona wrote:
->>
->>
->> On 5/31/2024 5:26 PM, Jagadeesh Kona wrote:
->>>
->>>
->>> On 5/10/2024 6:31 PM, Bryan O'Donoghue wrote:
->>>> On 01/05/2024 10:14, Bryan O'Donoghue wrote:
->>>>> On 30/04/2024 21:01, Konrad Dybcio wrote:
->>>>>> On 24.04.2024 11:50 AM, Bryan O'Donoghue wrote:
->>>>>>> On 24/04/2024 10:45, Jagadeesh Kona wrote:
->>>>>>>>
->>>>>>>> Thanks Bryan for testing this series. Can you please confirm if 
->>>>>>>> this issue is observed in every run or only seen during the 
->>>>>>>> first run? Also please let me know on which platform this issue 
->>>>>>>> is observed?
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>> Jagadeesh
->>>>>>>
->>>>>>> rb5/sm8250
->>>>>>>
->>>>>>> My observation was on a previous _boot_ the stuttering was worse. 
->>>>>>> There is in the video capture three times that I count where the 
->>>>>>> video halts briefly, I guess we need to vote or set an OPP so the 
->>>>>>> firmware knows not to power-collapse quite so aggressively.
->>>>>>
->>>>>> We seem to be having some qualcomm-wide variance on perf/pwr usage 
->>>>>> on some
->>>>>> odd boots.. Any chance you could try like 5 times and see if it 
->>>>>> was a fluke?
->>>>>>
->>>>>> Konrad
->>>>>
->>>>> Sure.
->>>>>
->>>>> The first time I tried it, it was much worse.
->>>>>
->>>>> The second time, captured in the video is only noticeable because I 
->>>>> was *looking* for this specific error i.e. I don't think I would 
->>>>> have noticed the error on the second run, had I not seen the first 
->>>>> run.
->>>>>
->>>>> I'll find some time to do 5x with and 5x without.
->>>>>
->>>>> ---
->>>>> bod
->>>>
->>>> ping bod please remember to do this thanks
->>>>
->>>
->>> Hi Bryan, Could you please let me know if you got a chance to check 
->>> the above? Thank you!
->>>
->>
->> Hi Bryan, Kindly can you please help confirm if this is a real issue 
->> or observed as a fluke? so we can go ahead and mainline these changes.
->>
->> Thanks,
->> Jagadeesh
+On Sat, Jun 15, 2024 at 08:53:34PM GMT, Dmitry Baryshkov wrote:
+> Make the Lontium LT9611 DSI-to-HDMI bridge driver use the DRM HDMI Codec
+> framework. This enables programming of Audio InfoFrames using the HDMI
+> Connector interface and also enables support for the missing features,
+> including the ELD retrieval and better hotplug support.
 > 
-> So I'm happier with this patchset when I run gstreamer instead of ffmpeg.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/bridge/lontium-lt9611.c | 207 ++++++++++++++++----------------
+>  1 file changed, 104 insertions(+), 103 deletions(-)
 > 
-> There doesn't appear to be a discernable difference between before/after 
-> on framerate or subjective UX with/without this set.
-> 
-> gst-launch-1.0 -vvv -e filesrc location=sample-5s.mp4 ! qtdemux ! 
-> parsebin ! v4l2h264dec ! autovideosink
-> 
-> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> diff --git a/drivers/gpu/drm/bridge/lontium-lt9611.c b/drivers/gpu/drm/bridge/lontium-lt9611.c
+> index 4fa0dfc5539a..02953468cb76 100644
+> --- a/drivers/gpu/drm/bridge/lontium-lt9611.c
+> +++ b/drivers/gpu/drm/bridge/lontium-lt9611.c
+> @@ -45,7 +45,6 @@ struct lt9611 {
+>  	struct device_node *dsi1_node;
+>  	struct mipi_dsi_device *dsi0;
+>  	struct mipi_dsi_device *dsi1;
+> -	struct platform_device *audio_pdev;
+>  
+>  	bool ac_mode;
+>  
+> @@ -688,15 +687,22 @@ lt9611_bridge_atomic_enable(struct drm_bridge *bridge,
+>  
+>  	/* Enable HDMI output */
+>  	regmap_write(lt9611->regmap, 0x8130, 0xea);
+> +
+> +	drm_connector_hdmi_codec_plugged_notify(connector, true);
+>  }
+>  
+>  static void
+>  lt9611_bridge_atomic_disable(struct drm_bridge *bridge,
+>  			     struct drm_bridge_state *old_bridge_state)
+>  {
+> +	struct drm_atomic_state *state = old_bridge_state->base.state;
+> +	struct drm_connector *connector;
+>  	struct lt9611 *lt9611 = bridge_to_lt9611(bridge);
+>  	int ret;
+>  
+> +	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
 
-Thanks a lot Bryan for helping with the testing.
+Of course this should have been
+drm_atomic_get_old_connector_for_encoder(), otherwise it crashes because
+connector is NULL.
 
-Thanks,
-Jagadeesh
+> +	drm_connector_hdmi_codec_plugged_notify(connector, false);
+> +
+>  	/* Disable HDMI output */
+>  	ret = regmap_write(lt9611->regmap, 0x8130, 0x6a);
+>  	if (ret) {
+
+-- 
+With best wishes
+Dmitry
 
