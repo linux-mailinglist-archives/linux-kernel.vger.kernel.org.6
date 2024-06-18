@@ -1,55 +1,83 @@
-Return-Path: <linux-kernel+bounces-220045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166A490DBEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:55:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6DD390DBF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 951D7B21118
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:55:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49F51C22FFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F9C15ECDE;
-	Tue, 18 Jun 2024 18:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B903115EFAC;
+	Tue, 18 Jun 2024 18:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wGOkpV3f"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HXqAQtuz"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0E64654E;
-	Tue, 18 Jun 2024 18:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D3C15ECCD
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 18:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718736902; cv=none; b=K8Pb3pGcHJNkiI/CKfNrIqPyWlM8XoDtvrojCWK98uI8/Lz6R0oDuy9hdlmBFdL02cZWdiHwD+GKQtGRAH0F3tkjbc87MWXTCDd5myaehXbHM61Cd0UDJkPF+6nvNZjqc2MW4108VZOpfOo0UTJTkANZmKbzXkxuav/1E14H/iM=
+	t=1718736913; cv=none; b=WqCfj8Go69MlmSuZEz2qK2ti6ImSg2XTNZh7SPDPtsqwZL1qTBMPlPTGhGiNsVeNEFPUSgfQlzYdBFdn8IPTaItd5pcJmdCwNSLgoIaxS0PqhhBEvySG/QJZdD2gkHDF2UapdaDTODOXUGddLzUDMpxpudyJEDCJ6Pac6teQq4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718736902; c=relaxed/simple;
-	bh=t4EqGHW5fyaATtO+CwxVtRvurq2G9JFw2lTHdVP0YSE=;
+	s=arc-20240116; t=1718736913; c=relaxed/simple;
+	bh=UNFVAPuelWNv7Oeq53TScOsxnOnzZlhh3VXd9HNUGyg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=etR8zH+IP5WWX32HgZ+rkYDAIuwkC7/A3ZN742Qoycsll4VUCavHTYD/rjLO5PCSgT2+iZGTIGRV4kTPOxLhHCv4+GSm9c94t9BbtbreyU2HMpcqW1cE2N3Sse23GFI8r6z8GiqM028cKUCtr+LVGt1Nb27/LhAObPqwCh7QVEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wGOkpV3f; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kk5EHzQ8aWV3rqKBi34gZ1PvbS8WzVa5AK1EvoPjDCw=; b=wGOkpV3f7fi1BsRYSWISoyDLWZ
-	JXRCed7MCNaXPAl9NG93lR+etAIOM9ABlUwLA2hsp/bkoPhZxW+o9IV9kk7THxFtCBevfqKapk5ti
-	4qyOelg67H6FqQHWR9xYJK5VZL4Wy2vtOftfGr/W9KAvWqnenJzQEwZoHyHWREFvXe0PeMLezvSpm
-	vXDxfouAMDbhA1wVD9NOXU323swCPfQI4aDSwpVhKWTG6dxlzk6k8iNs5kuIJf7HhNn8nW0Rn0w7M
-	BT6/pVeC4FNiNV0TQkHQPl/L2yzqmyyGF/GFuXt3nOcu98vqwb+JLtg3XgDjSST8ogb5b3pQ6LY67
-	r9iSwY/w==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJdyt-0000000GGqb-2lbW;
-	Tue, 18 Jun 2024 18:54:59 +0000
-Date: Tue, 18 Jun 2024 11:54:59 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Yusong Gao <a869920004@gmail.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] module: Add log information for loading module failures
-Message-ID: <ZnHYA9dmtUEPLgYP@bombadil.infradead.org>
-References: <20240614092519.1611533-1-a869920004@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1dYouwrnkMr4RlI7Kt1D8Ef4PiAB0sLy2fBmNGv9wyUtlNMB2RfppYFZtwa3Wuom/iWrL2PN344Cxm64gcbVOUG6ihv2zwjvT+tt3TUHeTKWTk8oucbccGwplxVJfwxv8dLq+r84RmhF8XM4tvenfhpoN1nJh4Al/Prz3qNVsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HXqAQtuz; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b7ffd9f6eso5734655e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718736909; x=1719341709; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=27ULhBa6NF2Bs7Hi7tIhonbGGD8DbNJDz+k7oeA0y6Q=;
+        b=HXqAQtuzqclHE1Tfkp579HcGaaZZgFwRzxX+H9pRdanvcbtAIVifU2Z88Rq+hwsvjV
+         +GibgBYgwYPW1fvdh9GjD4GWidl4cRK7Xf4wf8TVPUcvTAUZNMNBkEshb0uwMPnZc1Tt
+         g9m9xEfSYyqKv4GseAvLWWCiSPcsi75nl8zXWzolwuxVJc+q0GO7z6VNC31hz8GAmO4t
+         GomLe0Pf8GKPRLmPLKfmEWX7a2uWcKL9UgoQuFyoH2DWDD2e9XgawG163+urz7T4s2Jk
+         qcfuQNmSjyqyyUXvuW1aPYe5hDdGCwsy03JN4keGE7liR/FfmE6DwidjlRuUgs8pM6jr
+         ABpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718736909; x=1719341709;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=27ULhBa6NF2Bs7Hi7tIhonbGGD8DbNJDz+k7oeA0y6Q=;
+        b=qPsWPqho3F36gbSwCZtMyh2AnPrLhA2TtHpTn/+geKlcDGydB120Z9koC/utjcKV6Q
+         X/A6wnHANV0AA6IrQ4K5BVt8TWa2cOURO8lUO8r7/DVhoBMFeNDht6f4MPKVQUL5NbEC
+         fIVFUrYMcETvP/VOJIuBt01+THpuweyfpeYQz1LsjQc386N8lW8duZ//A1xoGjJxuCRf
+         aX6ZnXusB5Q/O9wKfQZx7GhmPyeXxr7SRPH4vXPL+1DhGk3cslfIVVFek+UGODHkQJ5M
+         dYVg5ad5SGhSwF3cpIYs0rk/sJHpjEj1OYh0y4ijsuVqDxUr1We2OOFuZoXn8mt/9TtF
+         MPjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnCMQuehqbZ9aCeFLUlN9dEfFojj+duNpAQkDdZOGeqWuP1sFeRdzT9eRrOYOWFnkWpCFVyAUrxk1w9zupPnZ57dFONQwNriPDepRP
+X-Gm-Message-State: AOJu0YxZEeDQkUcbr5e6M+YMz9Q3DbOml9ByoZGwwMxrNPqvSq1eQKAA
+	G6NpSmOYxg30bKDNIi8tjVCFRZPROor/f11ONTid3Nh83BmHbKQa3PJkJLXeLvI=
+X-Google-Smtp-Source: AGHT+IF2Xuc+j5GQniwyckTVq0FVa/bh12Lgiw0qNMq3HIEExse2nNOx3fGWmOmKvYSecoALF0y/9Q==
+X-Received: by 2002:ac2:5974:0:b0:52c:8009:e0cb with SMTP id 2adb3069b0e04-52ccaa62705mr256788e87.41.1718736908660;
+        Tue, 18 Jun 2024 11:55:08 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282f1dbsm1578550e87.110.2024.06.18.11.55.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 11:55:08 -0700 (PDT)
+Date: Tue, 18 Jun 2024 21:55:06 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, djakov@kernel.org, 
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	srinivas.kandagatla@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, quic_rgottimu@quicinc.com, 
+	quic_kshivnan@quicinc.com, conor+dt@kernel.org, abel.vesa@linaro.org
+Subject: Re: [PATCH V2 2/3] soc: qcom: icc-bwmon: Allow for interrupts to be
+ shared across instances
+Message-ID: <d4f3rlk3jgqegxvto2b6vyemspommtsbs3ixqgan2rmknet3je@ohonicqa2iqy>
+References: <20240618154306.279637-1-quic_sibis@quicinc.com>
+ <20240618154306.279637-3-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,46 +86,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240614092519.1611533-1-a869920004@gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <20240618154306.279637-3-quic_sibis@quicinc.com>
 
-On Fri, Jun 14, 2024 at 09:25:19AM +0000, Yusong Gao wrote:
-> Add log information in kernel-space when loading module failures.
-> Try to load the unsigned module and the module with bad signature
-> when set 1 to /sys/module/module/parameters/sig_enforce.
+On Tue, Jun 18, 2024 at 09:13:05PM GMT, Sibi Sankar wrote:
+> The multiple BWMONv4 instances available on the X1E80100 SoC use the
+> same interrupt number. Mark them are shared to allow for re-use across
+> instances. Handle the ensuing race introduced by relying on bwmon_disable
+> to disable the interrupt and coupled with explicit request/free irqs.
 > 
-> Unsigned module case:
-> (linux) insmod unsigned.ko
-> [   18.714661] Loading of unsigned module is rejected
-> insmod: can't insert 'unsigned.ko': Key was rejected by service
-> (linux)
-> 
-> Bad signature module case:
-> (linux) insmod bad_signature.ko
-> insmod: can't insert 'bad_signature.ko': Key was rejected by service
-> (linux)
-> 
-> There have different logging behavior the bad signature case only log
-> in user-space, add log info for fatal errors in module_sig_check().
-> 
-> Signed-off-by: Yusong Gao <a869920004@gmail.com>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 > ---
->  kernel/module/signing.c | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-> index a2ff4242e623..6a6493c8f7e4 100644
-> --- a/kernel/module/signing.c
-> +++ b/kernel/module/signing.c
-> @@ -113,6 +113,7 @@ int module_sig_check(struct load_info *info, int flags)
->  		 * unparseable signatures, and signature check failures --
->  		 * even if signatures aren't required.
->  		 */
-> +		pr_notice("Loading module failed (errno=%d)\n", -err);
->  		return err;
+> v2:
+> * Use explicit request/free irq and add comments regarding the race
+>   introduced when adding the IRQF_SHARED flag. [Krzysztof/Dmitry]
+> 
+>  drivers/soc/qcom/icc-bwmon.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
+> index fb323b3364db..4a4e28b41509 100644
+> --- a/drivers/soc/qcom/icc-bwmon.c
+> +++ b/drivers/soc/qcom/icc-bwmon.c
+> @@ -781,9 +781,10 @@ static int bwmon_probe(struct platform_device *pdev)
+>  	bwmon->dev = dev;
+>  
+>  	bwmon_disable(bwmon);
+> -	ret = devm_request_threaded_irq(dev, bwmon->irq, bwmon_intr,
+> -					bwmon_intr_thread,
+> -					IRQF_ONESHOT, dev_name(dev), bwmon);
+> +
+> +	/* SoCs with multiple cpu-bwmon instances can end up using a shared interrupt line */
 
-I welcome pr_debug() messages but if we were to add a regular print for every
-single type of failure we'd clutter the code, we don't want that.
+... using devm_ here might result in the IRQ handler being executed
+after bwmon_disable in bwmon_remove()
 
-  Luis
+> +	ret = request_threaded_irq(bwmon->irq, bwmon_intr, bwmon_intr_thread,
+> +				   IRQF_ONESHOT | IRQF_SHARED, dev_name(dev), bwmon);
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "failed to request IRQ\n");
+>  
+> @@ -798,6 +799,13 @@ static void bwmon_remove(struct platform_device *pdev)
+>  	struct icc_bwmon *bwmon = platform_get_drvdata(pdev);
+>  
+>  	bwmon_disable(bwmon);
+> +
+> +	/*
+> +	 * Handle the race introduced, when dealing with multiple bwmon instances
+> +	 * using a shared interrupt line, by relying on bwmon_disable to disable
+> +	 * the interrupt and followed by an explicit free.
+> +	 */
+
+This sounds more like a part of the commit message. The comment before
+request_threaded_irq() should be enough.
+
+> +	free_irq(bwmon->irq, bwmon);
+>  }
+>  
+>  static const struct icc_bwmon_data msm8998_bwmon_data = {
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
