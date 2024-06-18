@@ -1,284 +1,292 @@
-Return-Path: <linux-kernel+bounces-218712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DD490C440
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:23:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA69A90C43C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DD66281FB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:23:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E7D282C5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F73C13B58F;
-	Tue, 18 Jun 2024 06:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FD913AD1C;
+	Tue, 18 Jun 2024 06:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iJ9HE3v1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B80C13AD2B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="iRgaq55s"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B157D13AD04
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718693778; cv=none; b=OuMdp/J8p6fCSgFBEc9PGgs7GMrOyfC/9mXk2VRbMrvEcn4tLccGNNdJCtC0Z4hg8CpNit0gI+xm7MIZ+Sr25q3YK5yteQ+d6CKUsDuzBe1MvVUOrwRRgQtJaPF8mlVO4bdvUzbKMBpJjvGaeT+zJjnJuKTudGpEB8i8aaFP12c=
+	t=1718693774; cv=none; b=psSZx/IsNhW1zxwHy7TrLx4odaNjsuPytdfcC+ehyUbDZEyXTBk0378SRGA6UYn/rVyLG5tsLFxwI2C2CVeC95CyEE/YSwGSx0qyFrS1hPm+KDPOb4hHqNqIwqoD/FVgl4ISNZw6WC3gJ92YCP8SCcSOs2Qyg3wvYthrYb5iDUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718693778; c=relaxed/simple;
-	bh=6+24cIDcAKw2fApyhL9V0ZTUfUa7T5xYrUP8O7pxpiQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dxZzYf9PwoM4rLDoROENAjbAd1IOpkf6j1m0T9JZKAqVZ5gfKfeh/PHIwA/mV6BU6sYh96gBkhpoaUg0uFYNYUVguiM9i1hLHMKAmxV3B/0NoDL0cpq8lfIyoQmX924d64E0ltbIJjb/LL9x5jbiMwKkkDL3oWcmILrqL3Yhe4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iJ9HE3v1; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718693776; x=1750229776;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=6+24cIDcAKw2fApyhL9V0ZTUfUa7T5xYrUP8O7pxpiQ=;
-  b=iJ9HE3v1S+39b998qF52LqPzIIKUemDLaGCfuvqyrd+qpQdKhSGT8dyA
-   nyq4ceMFMfa5jOgWmGmnYicwGwoK9Cow+TM0DO1TnfDRJzSkLXYXHwSDN
-   uNv6kXfR8rjVl4euhSpx2t31zg8GzRj2IPAmD6UdTQFbPRxE0Uvyahdmj
-   gwq8BKjTVwgrNcmx6FDLuItUSJnZKauVQZrZwq0rqK3U5ZJZBRpK8y859
-   vnQPRMdqksG6MuQc3vnGSLn0g/v5U00lV5gK4S+6EBdK2QI66IxOxpIB6
-   DRkLoNOKBUmfVu/TurdccnDAzQHga48j0L1FMytFHN27bKDvI6w/vHAaN
-   g==;
-X-CSE-ConnectionGUID: +7KriF6eT5ebIyeEW1jrZw==
-X-CSE-MsgGUID: vZn8NxhVQ6y53bq8DhR47Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="19409937"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="19409937"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 23:56:15 -0700
-X-CSE-ConnectionGUID: hGDCuofCS4uSLLycWRJOJA==
-X-CSE-MsgGUID: enW7CI8URjyHRA5amHz/MQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="72655182"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 23:56:14 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Kairui Song
- <kasong@tencent.com>,  Ryan Roberts <ryan.roberts@arm.com>,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
- <baohua@kernel.org>
-Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster
- order
-In-Reply-To: <CAF8kJuMi198++-OHqE5pG1y3BnvRBPepG59zpq-wqjbgrrLdHw@mail.gmail.com>
-	(Chris Li's message of "Mon, 17 Jun 2024 21:35:32 -0700")
-References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
-	<CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com>
-	<87cyp5575y.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CAF8kJuN8HWLpv7=abVM2=M247KGZ92HLDxfgxWZD6JS47iZwZA@mail.gmail.com>
-	<875xuw1062.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CAF8kJuMc3sXKarq3hMPYGFfeqyo81Q63HrE0XtztK9uQkcZacA@mail.gmail.com>
-	<87o78mzp24.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CAF8kJuPLhmJqMi-unDOm820c8_kRnQVA_dnSfgRzMXaHKnDHAQ@mail.gmail.com>
-	<875xum96nn.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CANeU7Q=iYzyjDwgMRLtSZwKv414JqtZK8w=XWDd6bWZ7Ah-8jA@mail.gmail.com>
-	<87wmmw6w9e.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CANeU7Q=Epa438LXEX4WEccxLt6WOziLg2sp_=RA3C4PxtHD5uw@mail.gmail.com>
-	<87a5jp6xuo.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CAF8kJuMi198++-OHqE5pG1y3BnvRBPepG59zpq-wqjbgrrLdHw@mail.gmail.com>
-Date: Tue, 18 Jun 2024 14:54:22 +0800
-Message-ID: <8734pa68rl.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718693774; c=relaxed/simple;
+	bh=fsFfNrBkePsMnxiJSSW88AoIOsQv3yU4kVdxLJKyeGk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=dOuIxA4c5D/1Mv1nqQBjjXXwHSqyySWc3pJWUhpngG4DQVj+WJVFKo6NtrE0S4EUAlnyyYoBFysOVGdSa8LlRWPE9YO3GrztGrtwF0DSay/UfhtnhpN4o2vKPGVQ8BAyvtbT2erL7oQ+QCpwjsZ/JLqwud60/+5aeLrdVaDrCug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=iRgaq55s; arc=none smtp.client-ip=220.197.31.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Subject:From:Message-ID:Date:MIME-Version:
+	Content-Type; bh=vvxOdGUqhDUSauHPn9IS8ZFXOKSW+Rv9renG2SFu+0w=;
+	b=iRgaq55sYvXvtznNn8qmwsls2qIoCGr0uOgCxQD8pP8kdTUFaMqf6ZEib9hYtc
+	X6zkt8F+p9lpmzW0cR9wodqY/b1ml1EqIx9+Sjmnudjz+jOiw6UXx1KMzbJmv8V6
+	hfS+yXPSHL0tVqz/XBpgE727jc4pavv33OI27lS9J5Wls=
+Received: from [172.21.21.216] (unknown [118.242.3.34])
+	by gzga-smtp-mta-g0-4 (Coremail) with SMTP id _____wD3_xR0L3FmNui5Bg--.13587S2;
+	Tue, 18 Jun 2024 14:55:50 +0800 (CST)
+Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
+ non-CMA THP-sized page
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com,
+ liuzixing@hygon.cn
+References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
+ <CAGsJ_4zvG7gwukioZnqN+GpWHbpK1rkC0Jeqo5VFVL_RLACkaw@mail.gmail.com>
+ <2e3a3a3f-737c-ed01-f820-87efee0adc93@126.com>
+ <9b227c9d-f59b-a8b0-b353-7876a56c0bde@126.com>
+ <CAGsJ_4ynfvjXsr6QFBA_7Gzk3PaO1pk+6ErKZaNCt4H+nuwiJw@mail.gmail.com>
+ <4482bf69-eb07-0ec9-f777-28ce40f96589@126.com>
+ <CAGsJ_4ytYTpvRVgR1EoazsH=QxZCDE2e8H0BeXrY-6zWFD0kCg@mail.gmail.com>
+From: yangge1116 <yangge1116@126.com>
+Message-ID: <69414410-4e2d-c04c-6fc3-9779f9377cf2@126.com>
+Date: Tue, 18 Jun 2024 14:55:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAGsJ_4ytYTpvRVgR1EoazsH=QxZCDE2e8H0BeXrY-6zWFD0kCg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3_xR0L3FmNui5Bg--.13587S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3JFykXFy3XryfKw15GFykZrb_yoW3Jr15pF
+	WfJ3W7Kr4UXryUAw17twn0kr1jkw13Kr18Xr15Jry8urnFyr1IyF4xJr1UuFyrAryUJF40
+	qryUtF9xZF4UA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jW_MfUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOhwCG2VEw2ZqDAAAsd
 
-Chris Li <chrisl@kernel.org> writes:
 
-> On Thu, Jun 13, 2024 at 1:40=E2=80=AFAM Huang, Ying <ying.huang@intel.com=
-> wrote:
+
+在 2024/6/18 下午12:10, Barry Song 写道:
+> On Tue, Jun 18, 2024 at 3:32 PM yangge1116 <yangge1116@126.com> wrote:
 >>
->> Chris Li <chrisl@kernel.org> writes:
 >>
->> > On Mon, Jun 10, 2024 at 7:38=E2=80=AFPM Huang, Ying <ying.huang@intel.=
-com> wrote:
->> >>
->> >> Chris Li <chrisl@kernel.org> writes:
->> >>
->> >> > On Wed, Jun 5, 2024 at 7:02=E2=80=AFPM Huang, Ying <ying.huang@inte=
-l.com> wrote:
->> >> >>
->> >> >> Chris Li <chrisl@kernel.org> writes:
->> >> >>
->> >> >
->> >> >> > In the page allocation side, we have the hugetlbfs which reserve=
- some
->> >> >> > memory for high order pages.
->> >> >> > We should have similar things to allow reserve some high order s=
-wap
->> >> >> > entries without getting polluted by low order one.
->> >> >>
->> >> >> TBH, I don't like the idea of high order swap entries reservation.
->> >> > May I know more if you don't like the idea? I understand this can be
->> >> > controversial, because previously we like to take the THP as the be=
-st
->> >> > effort approach. If there is some reason we can't make THP, we use =
-the
->> >> > order 0 as fall back.
->> >> >
->> >> > For discussion purpose, I want break it down to smaller steps:
->> >> >
->> >> > First, can we agree that the following usage case is reasonable:
->> >> > The usage case is that, as Barry has shown, zsmalloc compresses big=
-ger
->> >> > size than 4K and can have both better compress ratio and CPU
->> >> > performance gain.
->> >> > https://lore.kernel.org/linux-mm/20240327214816.31191-1-21cnbao@gma=
-il.com/
->> >> >
->> >> > So the goal is to make THP/mTHP have some reasonable success rate
->> >> > running in the mix size swap allocation, after either low order or
->> >> > high order swap requests can overflow the swap file size. The alloc=
-ate
->> >> > can still recover from that, after some swap entries got free.
->> >> >
->> >> > Please let me know if you think the above usage case and goal are n=
-ot
->> >> > reasonable for the kernel.
->> >>
->> >> I think that it's reasonable to improve the success rate of high-order
->> >
->> > Glad to hear that.
->> >
->> >> swap entries allocation.  I just think that it's hard to use the
->> >> reservation based method.  For example, how much should be reserved?
->> >
->> > Understand, it is harder to use than a fully transparent method, but
->> > still better than no solution at all. The alternative right now is we
->> > can't do it.
->> >
->> > Regarding how much we should reserve. Similarly, how much should you
->> > choose your swap file size? If you choose N, why not N*120% or N*80%?
->> > That did not stop us from having a swapfile, right?
->> >
->> >> Why system OOM when there's still swap space available?  And so forth.
->> >
->> > Keep in mind that the reservation is an option. If you prefer the old
->> > behavior, you don't have to use the reservation. That shouldn't be a
->> > reason to stop others who want to use it. We don't have an alternative
->> > solution for the long run mix size allocation yet. If there is, I like
->> > to hear it.
 >>
->> It's not enough to make it optional.  When you run into issue, you need
->> to debug it.  And you may debug an issue on a system that is configured
->> by someone else.
->
-> That is in general true with all kernel development regardless of
-> using options or not. If there is a bug in my patch, I will need to
-> debug and fix it or the patch might be reverted.
->
-> I don't see that as a reason to take the option path or not. The
-> option just means the user taking this option will need to understand
-> the trade off and accept the defined behavior of that option.
-
-User configuration knobs are not forbidden for Linux kernel.  But we are
-more careful about them because they will introduce ABI which we need to
-maintain forever.  And they are hard to be used for users.  Optimizing
-automatically is generally the better solution.  So, I suggest you to
-think more about the automatically solution before diving into a new
-option.
-
+>> 在 2024/6/18 上午9:55, Barry Song 写道:
+>>> On Tue, Jun 18, 2024 at 9:36 AM yangge1116 <yangge1116@126.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> 在 2024/6/17 下午8:47, yangge1116 写道:
+>>>>>
+>>>>>
+>>>>> 在 2024/6/17 下午6:26, Barry Song 写道:
+>>>>>> On Tue, Jun 4, 2024 at 9:15 PM <yangge1116@126.com> wrote:
+>>>>>>>
+>>>>>>> From: yangge <yangge1116@126.com>
+>>>>>>>
+>>>>>>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+>>>>>>> THP-sized allocations") no longer differentiates the migration type
+>>>>>>> of pages in THP-sized PCP list, it's possible to get a CMA page from
+>>>>>>> the list, in some cases, it's not acceptable, for example, allocating
+>>>>>>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
+>>>>>>>
+>>>>>>> The patch forbids allocating non-CMA THP-sized page from THP-sized
+>>>>>>> PCP list to avoid the issue above.
+>>>>>>
+>>>>>> Could you please describe the impact on users in the commit log?
+>>>>>
+>>>>> If a large number of CMA memory are configured in the system (for
+>>>>> example, the CMA memory accounts for 50% of the system memory), starting
+>>>>> virtual machine with device passthrough will get stuck.
+>>>>>
+>>>>> During starting virtual machine, it will call pin_user_pages_remote(...,
+>>>>> FOLL_LONGTERM, ...) to pin memory. If a page is in CMA area,
+>>>>> pin_user_pages_remote() will migrate the page from CMA area to non-CMA
+>>>>> area because of FOLL_LONGTERM flag. If non-movable allocation requests
+>>>>> return CMA memory, pin_user_pages_remote() will enter endless loops.
+>>>>>
+>>>>> backtrace:
+>>>>> pin_user_pages_remote
+>>>>> ----__gup_longterm_locked //cause endless loops in this function
+>>>>> --------__get_user_pages_locked
+>>>>> --------check_and_migrate_movable_pages //always check fail and continue
+>>>>> to migrate
+>>>>> ------------migrate_longterm_unpinnable_pages
+>>>>> ----------------alloc_migration_target // non-movable allocation
+>>>>>
+>>>>>> Is it possible that some CMA memory might be used by non-movable
+>>>>>> allocation requests?
+>>>>>
+>>>>> Yes.
+>>>>>
+>>>>>
+>>>>>> If so, will CMA somehow become unable to migrate, causing cma_alloc()
+>>>>>> to fail?
+>>>>>
+>>>>>
+>>>>> No, it will cause endless loops in __gup_longterm_locked(). If
+>>>>> non-movable allocation requests return CMA memory,
+>>>>> migrate_longterm_unpinnable_pages() will migrate a CMA page to another
+>>>>> CMA page, which is useless and cause endless loops in
+>>>>> __gup_longterm_locked().
+>>>
+>>> This is only one perspective. We also need to consider the impact on
+>>> CMA itself. For example,
+>>> when CMA is borrowed by THP, and we need to reclaim it through
+>>> cma_alloc() or dma_alloc_coherent(),
+>>> we must move those pages out to ensure CMA's users can retrieve that
+>>> contiguous memory.
+>>>
+>>> Currently, CMA's memory is occupied by non-movable pages, meaning we
+>>> can't relocate them.
+>>> As a result, cma_alloc() is more likely to fail.
+>>>
+>>>>>
+>>>>> backtrace:
+>>>>> pin_user_pages_remote
+>>>>> ----__gup_longterm_locked //cause endless loops in this function
+>>>>> --------__get_user_pages_locked
+>>>>> --------check_and_migrate_movable_pages //always check fail and continue
+>>>>> to migrate
+>>>>> ------------migrate_longterm_unpinnable_pages
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>>>
+>>>>>>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+>>>>>>> THP-sized allocations")
+>>>>>>> Signed-off-by: yangge <yangge1116@126.com>
+>>>>>>> ---
+>>>>>>>     mm/page_alloc.c | 10 ++++++++++
+>>>>>>>     1 file changed, 10 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>>>>> index 2e22ce5..0bdf471 100644
+>>>>>>> --- a/mm/page_alloc.c
+>>>>>>> +++ b/mm/page_alloc.c
+>>>>>>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone
+>>>>>>> *preferred_zone,
+>>>>>>>            WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
+>>>>>>>
+>>>>>>>            if (likely(pcp_allowed_order(order))) {
+>>>>>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>>>>> +               if (!IS_ENABLED(CONFIG_CMA) || alloc_flags &
+>>>>>>> ALLOC_CMA ||
+>>>>>>> +                                               order !=
+>>>>>>> HPAGE_PMD_ORDER) {
+>>>>>>> +                       page = rmqueue_pcplist(preferred_zone, zone,
+>>>>>>> order,
+>>>>>>> +                                               migratetype,
+>>>>>>> alloc_flags);
+>>>>>>> +                       if (likely(page))
+>>>>>>> +                               goto out;
+>>>>>>> +               }
+>>>>>>
+>>>>>> This seems not ideal, because non-CMA THP gets no chance to use PCP.
+>>>>>> But it
+>>>>>> still seems better than causing the failure of CMA allocation.
+>>>>>>
+>>>>>> Is there a possible approach to avoiding adding CMA THP into pcp from
+>>>>>> the first
+>>>>>> beginning? Otherwise, we might need a separate PCP for CMA.
+>>>>>>
+>>>>
+>>>> The vast majority of THP-sized allocations are GFP_MOVABLE, avoiding
+>>>> adding CMA THP into pcp may incur a slight performance penalty.
+>>>>
+>>>
+>>> But the majority of movable pages aren't CMA, right?
 >>
->> >> So, I prefer the transparent methods.  Just like THP vs. hugetlbfs.
->> >
->> > Me too. I prefer transparent over reservation if it can achieve the
->> > same goal. Do we have a fully transparent method spec out? How to
->> > achieve fully transparent and also avoid fragmentation caused by mix
->> > order allocation/free?
->> >
->> > Keep in mind that we are still in the early stage of the mTHP swap
->> > development, I can have the reservation patch relatively easily. If
->> > you come up with a better transparent method patch which can achieve
->> > the same goal later, we can use it instead.
+>>> Do we have an estimate for
+>>> adding back a CMA THP PCP? Will per_cpu_pages introduce a new cacheline, which
+>>> the original intention for THP was to avoid by having only one PCP[1]?
+>>>
+>>> [1] https://patchwork.kernel.org/project/linux-mm/patch/20220624125423.6126-3-mgorman@techsingularity.net/
+>>>
 >>
->> Because we are still in the early stage, I think that we should try to
->> improve transparent solution firstly.  Personally, what I don't like is
->> that we don't work on the transparent solution because we have the
->> reservation solution.
->
-> Do you have a road map or the design for the transparent solution you can=
- share?
-> I am interested to know what is the short term step(e.g. a month)  in
-> this transparent solution you have in mind, so we can compare the
-> different approaches. I can't reason much just by the name
-> "transparent solution" itself. Need more technical details.
->
-> Right now we have a clear usage case we want to support, the swap
-> in/out mTHP with bigger zsmalloc buffers. We can start with the
-> limited usage case first then move to more general ones.
-
-TBH, This is what I don't like.  It appears that you refuse to think
-about the transparent (or automatic) solution.
-
-I haven't thought about them thoroughly, but at least we may think about
-
-- promoting low order non-full cluster when we find a free high order
-  swap entries.
-
-- stealing a low order non-full cluster with low usage count for
-  high-order allocation.
-
-- freeing more swap entries when swap devices become fragmented.
-
->> >> >> that's really important for you, I think that it's better to design
->> >> >> something like hugetlbfs vs core mm, that is, be separated from the
->> >> >> normal swap subsystem as much as possible.
->> >> >
->> >> > I am giving hugetlbfs just to make the point using reservation, or
->> >> > isolation of the resource to prevent mixing fragmentation existing =
-in
->> >> > core mm.
->> >> > I am not suggesting copying the hugetlbfs implementation to the swap
->> >> > system. Unlike hugetlbfs, the swap allocation is typically done from
->> >> > the kernel, it is transparent from the application. I don't think
->> >> > separate from the swap subsystem is a good way to go.
->> >> >
->> >> > This comes down to why you don't like the reservation. e.g. if we u=
-se
->> >> > two swapfile, one swapfile is purely allocate for high order, would
->> >> > that be better?
->> >>
->> >> Sorry, my words weren't accurate.  Personally, I just think that it's
->> >> better to make reservation related code not too intrusive.
->> >
->> > Yes. I will try to make it not too intrusive.
->> >
->> >> And, before reservation, we need to consider something else firstly.
->> >> Whether is it generally good to swap-in with swap-out order?  Should =
-we
->> >
->> > When we have the reservation patch (or other means to sustain mix size
->> > swap allocation/free), we can test it out to get more data to reason
->> > about it.
->> > I consider the swap in size policy an orthogonal issue.
+>> The size of struct per_cpu_pages is 256 bytes in current code containing
+>> commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized
+>> allocations").
+>> crash> struct per_cpu_pages
+>> struct per_cpu_pages {
+>>       spinlock_t lock;
+>>       int count;
+>>       int high;
+>>       int high_min;
+>>       int high_max;
+>>       int batch;
+>>       u8 flags;
+>>       u8 alloc_factor;
+>>       u8 expire;
+>>       short free_count;
+>>       struct list_head lists[13];
+>> }
+>> SIZE: 256
 >>
->> No.  I don't think so.  If you swap-out in higher order, but swap-in in
->> lower order, you make the swap clusters fragmented.
->
-> Sounds like that is the reason to apply swap-in the same order of the swa=
-p out.
-> In any case, my original point still stands. We need to have the
-> ability to allocate high order swap entries with reasonable success
-> rate *before* we have the option to choose which size to swap in. If
-> allocating a high order swap always fails, we will be forced to use
-> the low order one, there is no option to choose from. We can't evalute
-> "is it generally good to swap-in with swap-out order?" by actual runs.
+>> After revert commit 5d0a661d808f ("mm/page_alloc: use only one PCP list
+>> for THP-sized allocations"), the size of struct per_cpu_pages is 272 bytes.
+>> crash> struct per_cpu_pages
+>> struct per_cpu_pages {
+>>       spinlock_t lock;
+>>       int count;
+>>       int high;
+>>       int high_min;
+>>       int high_max;
+>>       int batch;
+>>       u8 flags;
+>>       u8 alloc_factor;
+>>       u8 expire;
+>>       short free_count;
+>>       struct list_head lists[15];
+>> }
+>> SIZE: 272
+>>
+>> Seems commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+>> THP-sized allocations") decrease one cacheline.
+> 
+> the proposal is not reverting the patch but adding one CMA pcp.
+> so it is "struct list_head lists[14]"; in this case, the size is still
+> 256?
+> 
 
-I think we don't need to fight for that.  Just prove the value of your
-patchset with reasonable use cases and normal workloads.  Data will
-persuade people.
+Yes, the size is still 256. If add one PCP list, we will have 2 PCP 
+lists for THP. One PCP list is used by MIGRATE_UNMOVABLE, and the other 
+PCP list is used by MIGRATE_MOVABLE and MIGRATE_RECLAIMABLE. Is that right?
 
---
-Best Regards,
-Huang, Ying
+> 
+>>
+>>>
+>>>> Commit 1d91df85f399 takes a similar approach to filter, and I mainly
+>>>> refer to it.
+>>>>
+>>>>
+>>>>>>> +#else
+>>>>>>>                    page = rmqueue_pcplist(preferred_zone, zone, order,
+>>>>>>>                                           migratetype, alloc_flags);
+>>>>>>>                    if (likely(page))
+>>>>>>>                            goto out;
+>>>>>>> +#endif
+>>>>>>>            }
+>>>>>>>
+>>>>>>>            page = rmqueue_buddy(preferred_zone, zone, order, alloc_flags,
+>>>>>>> --
+>>>>>>> 2.7.4
+>>>>>>
+>>>>>> Thanks
+>>>>>> Barry
+>>>>>>
+>>>>
+>>>>
+>>
+
 
