@@ -1,138 +1,130 @@
-Return-Path: <linux-kernel+bounces-218921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF96490C7BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:52:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 413F990C7B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8BAC1C221F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:52:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45B8D1C21FE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD471C0DF0;
-	Tue, 18 Jun 2024 09:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F5D156653;
+	Tue, 18 Jun 2024 09:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="cskm53nT"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01olkn2042.outbound.protection.outlook.com [40.92.52.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IqAOasgD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C171C0DCA;
-	Tue, 18 Jun 2024 09:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.52.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718702016; cv=fail; b=DUfOD5Xls2dZeh+7/SHtDshoRcHLn7ID1PHlqKrj52rS8fk4a1wDzx1Yndgz6iu1dIS6r0xHx8XgEs+0XPdnq+SkmQa1IBhNckS7IQriUYjsyHbrpxzfnfwNOk3TVUdn++hQY0fEtSB6D5+zTeEvm3r8SXstwG/djCaIBUKDNe4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718702016; c=relaxed/simple;
-	bh=TWLNgfZUZURetCZ2suMVo0RyVd+BZx4upR+vPimkY18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=K74BLOX+cZwjsrMu3WEjU+WrXWvELdGn5NuPqsrdKo8A5midKFflY+Uybqfi0RVzHdinqvRWGszWFrf/Wn42YTHm3EYz2zmclH6H8xLfOfHnD2elpu8qkhAG7Y6rX9WOfylXZBqIGfsSwsOsHkdMVRtn1fvx0Ryl4oQWJ1Nvlhs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=cskm53nT; arc=fail smtp.client-ip=40.92.52.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OIVa0Z2tNplPVqIgJWCCol0npMeSkhquBHRlWCmIKG+Xyvx9UUSwldELvw+WJvUGuSGc3SBMT0XDO3jBFkAGSfEsz2ld1N0SVb4L771MWGivH1kDHjXQZIRAJKyjjBKVNwi9zXuDiYzZaGjS8I3rpZiN0fyYgf0OgTvTM8ybWXOId7OQ0+iYOqesF+2HRHkiQLdM9ZsUqndIpP0uruY+616liuzxc7D2MwJIMPGGJ/CKAAHgT8f3IXntz+EI/waIr+nDS5i88s4W2j85vXB1m16g7E5Rikft+maeJKUEqEU6fzwK/uhnIohtLEEVPUqksEoAjhpRgbr/ajnSWoWozQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Q3q/xC8quHmijQsE2iVF3t0ohwpu0uSfV91YVOmdtM4=;
- b=NYlf7MdH+agcJkaKYq+oQcQOeJ4hoxQ227sPoBN4qzMU4KpuSESoJchlsxAzsOs8MVi02/a5PNAfQCneFPhhMAYonSVy7RzOKVodSenxCKgoBV1NUfZ5fmozM61jIhrWaC/0PXMi9mA/fa40daB1PPuiLgOOrg90joTWi2eWfgOX861svt7To8IkW7wgfWqSRz/lCNcRvbv/z1RyKHu9mScJeTfhhaf2NfJ1UWkyJcXr4ZR0J5YcOz46IM8H6RFHVXoXf2u7Z7tx4kR9zG5itR0i8w2TGOBRkYE/21y/GxlD79YkOCCI4mi6pRBpT63u56CNBhQKMAhszw+36QFWMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q3q/xC8quHmijQsE2iVF3t0ohwpu0uSfV91YVOmdtM4=;
- b=cskm53nT0oF8jICL6KKZDNzttmba/hIHaWVzlHzPjpyj6lCYfD4Bgnu4r3bKVn0EM6rXZq5cUZqxs+O0YqJK+ZxqhD90+yuyC7AOv7OeGolksOmQUgFI9oLNWWvCMKXlsJee0Jw9JaTy/mb2RC6agkcJiUsVa9B3ddpABiT9U7ReJJPCvlHNxgHAgNUERVKjkon2jCvdLNdEjbo4StYZiSXyDvz32KOkMt8G88dzOjnvB5SD2fxfu0zEZdqZ+eqBbo9RKQjzp9Ggr0/QX4dWZjKThfE0jO0fBEyILCoUPqtSn2HWtkE7oqJROPEn/jHrrmtiTOuPOuvjUEyWMEPgMg==
-Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- (2603:1096:101:56::12) by SEYPR01MB4976.apcprd01.prod.exchangelabs.com
- (2603:1096:101:b3::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
- 2024 09:13:31 +0000
-Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- ([fe80::b674:8f70:6e29:3756]) by SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- ([fe80::b674:8f70:6e29:3756%4]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 09:13:31 +0000
-Date: Tue, 18 Jun 2024 09:13:17 +0000
-From: Haylen Chu <heylenay@outlook.com>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: sdhci-of-dwcmshc: Use inverted-wp quirk for CV18xx
- and SG200x SoCs
-Message-ID:
- <TYZPR01MB4211B26AEA487D9FB4D0731ED7CE2@TYZPR01MB4211.apcprd01.prod.exchangelabs.com>
-References: <SEYPR01MB42219753E4388009470D958DD7FC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <Zmrt-dcPR_ZXlYH-@xhacker>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zmrt-dcPR_ZXlYH-@xhacker>
-X-TMN: [eevGCR/Bd4NaFashmkaLanuDecTAj2Ee]
-X-ClientProxiedBy: SI2PR02CA0027.apcprd02.prod.outlook.com
- (2603:1096:4:195::14) To TYZPR01MB4211.apcprd01.prod.exchangelabs.com
- (2603:1096:400:1c4::13)
-X-Microsoft-Original-Message-ID: <ZnFPrWJ-K7T5UCMC@ketchup>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33AE13DB99;
+	Tue, 18 Jun 2024 09:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718702009; cv=none; b=iX8ZsYfkkTC9Og4nnkXRtkofTUtEm9vgQIxCJtKtiaxhhbmTcGpKkLlx/pHZnYcphU4x+wjQ7K2yVVJD9CJ4Mlzev2khlpnHCttVPPyUOAQvEAQxKSozx8f+sjVS7bOsLz1gOYK6VAn56hcitjcxThD7HoMXjiq2Riv8v+R/Xxc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718702009; c=relaxed/simple;
+	bh=b3HK2kOnus2xn44LD4/7n1YbYkes4t+zstxuJ2EcEtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DxWRIlG7EnoGAQIpABnvzaresHZ+I/2OUMLXj2P0fnjN9E0+MbvX3z1+M7ytTrZQha74pFKhVvDX+XvPa9D9pqsdTvQA92spZ9wr5+8qoZUQFmbeOOzn+bxiVY4L1kQO2rAIs2a7eDii3ujMLEClQh25ji0BsV6ulSas7dHT8dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IqAOasgD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F25A6C4AF1D;
+	Tue, 18 Jun 2024 09:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718702009;
+	bh=b3HK2kOnus2xn44LD4/7n1YbYkes4t+zstxuJ2EcEtM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IqAOasgDKg0i8YKqY+6jfNvoc+FomZys6U4FtzsyyOQVf641TkJyp7gaY/BC+2JyT
+	 LRtVUJo8Ck5AoECAgx+mPjvwtQdzZMEhCamBtjo25a0yju+yorMgNePo0ngFYxc4aw
+	 J70W0SrSHlNOLgGaW2w12SoZvw9VJb7UEM6JNlgQgoRlU8FvjANC5mWRmRxhzMrVT5
+	 FaaZrC0L0nCDperZloobwzIDYJFTnDf6QSt7rM6BvLylb6aThK5Vnbm1+D9/YtEvUi
+	 3gdxuOdYlrUyo9sdZde9D9BNoqqFL6KfKO7llmEfz8/0lBzdDtLD2Fy0/LkGLqpq8W
+	 3KbnudCA8KRgQ==
+Message-ID: <655bbb57-3806-44fe-81a9-5c6e8d1e048c@kernel.org>
+Date: Tue, 18 Jun 2024 11:13:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR01MB4221:EE_|SEYPR01MB4976:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc2a687f-b064-4c39-3671-08dc8f76ea82
-X-Microsoft-Antispam: BCL:0;ARA:14566002|461199025|3412199022|440099025;
-X-Microsoft-Antispam-Message-Info:
-	XQrAp1hoZPt/ozPkB0w5/em+TZ4LZaT3ev4jDhwK/AL3n1NZq1MHWneJDgfDwPEHsk86vAT9pRolE0rCKF3JxD7sQFYmMHTVMxHJ5PzZxMpAWVyEShwrivio0uloiq4xqzuCL6qg2/B78N9/v1tS2+rNv9hSSx7tRAT3Fh/WOWb+8v629dZDKfsaFr5gaUEX+OUeYV4zmaaxDjdgjMKN5FrcVuA8TUvvazYyjSVOA5c26cu3LBXQLAaDrz4YLxNvThskUR9XtgQehKZmwwlBTlsfkbqzq3Tee46/m8K263IEvcb9VQgFux9tiuLp/BLfrSH+sq5r8j4SEnNAannvr63KuQIQC7CydPU7QxyCd8vqOCWRbEkoa8Y2XMBUGOLqqj44f+MSFlOp43Tmr9BA9SsEq8VzPIqS+rUohCoLHrqV0J+uylaN+L9qiSSJMwjkla4jGhkov/9ZPqLgSxYzO3JxVOvbZ6Q4RwRHirVZGbrvvhS1nB8T0R5D2AKHgT0mabsI41nFyTOlLojjkycjEQ9JzMM4VbER6n5xwHtH4ilf/AfUYIMR0Lddd2+g8svZ
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?81x+KtTHBWVONZNmcpdamWiQ5iSJxG4JXGwrBeZpRvlekmBNx6sUTaNF9YmZ?=
- =?us-ascii?Q?RUtXQ/1TBu43UbkKxRo47MlpFEUk+nJhaKd6wi31sHDAgD6KxSfLyDtDqS/h?=
- =?us-ascii?Q?jUu16pZthgepg1NyCOniN95w5ObZhgfZX8CWC0GOMDC7b/+hLNfigSoTJuz2?=
- =?us-ascii?Q?9xyZmRWb/dxgfPI06ap10rI24VcKExTDrIf3t1/A3pEJsMucLXQ3KzUBzX4q?=
- =?us-ascii?Q?gm0XwOMIS9nmlbh5oSyXNk4An3s0Fs+mWnEHqF8au40CtZbwGGS4Hkk3wmfQ?=
- =?us-ascii?Q?K7F+E7THLmDUk9ml24QTD2djRAP/WCp1U1J/9zjimo7QBNynfH2DPdW63PQk?=
- =?us-ascii?Q?hQmaPBwWOxkjy0fNaobZa1ABnhN/0i/dW2DcyHElYcyJbCF56qM/U7t+HERx?=
- =?us-ascii?Q?PjlKjiFKFoO9u7hET8c2DZi9jxhlT1LbU0RDaCIOpTbwsU7i1Za5l+qP1D9q?=
- =?us-ascii?Q?tZhYgfUm/9B6kCJaUJReszHTWMQCHTkVktwPQprmsoWy9sMnmYneityGiH8O?=
- =?us-ascii?Q?8drbNhCE6BLj8Iry6scGwoVWEZdiNgH76BrzZ+kvuU1Mv8w7OO1QmgIwX3Q7?=
- =?us-ascii?Q?F0t4nv2iSTG4zqda9MoiVtiMScR1l3EdxdW4Q4ytWPGY0dwwfUmpdmmeCIyV?=
- =?us-ascii?Q?9Tu8avlTDXWD/ANX2IVXgehKQ44Opeg6V6S6ySpVsrC8gVsDZeUkMoT7XwnS?=
- =?us-ascii?Q?1bRoPs3KKYWD19RSIuXJDcRZqay8TDb63p4bVfk7ArleHF4Loo8nDtS/5GBf?=
- =?us-ascii?Q?T/uqOSUCODTBs0rQcXon2M6lR4WzpYpr8uT261TzHGPNEpSUIG1ZRXK7VaRP?=
- =?us-ascii?Q?VL0dB3IBbvGQQEfY2uOW5PxDdDB8Oi1qkbO8Pu9sDWafdPnGJtGX6A1Klg0O?=
- =?us-ascii?Q?3TFaSiIQuFUcS/yt0+l7LR4Vur/OFILicnlsL/L7eXEjszmsFlPDSCOGYf7c?=
- =?us-ascii?Q?uXzGVr4KZVvKsQDYUS1q2RpPz66fkep8y3wcCYtb4ZIKmUAZx0tyYLXIiKdP?=
- =?us-ascii?Q?eBIKgBn9nB2facxR8F/LjeipqkjrKdfFEyKT6CFTL3mDzKYNeH11PXbSfDhU?=
- =?us-ascii?Q?VrlwkWhQt7F2vty8PHSsAD866F0hVrdj9fIqHa/DB0lmZzMW5OBw+D512pMT?=
- =?us-ascii?Q?j8GGoy64BF7LB6tOrgUcoxvqXEDc7HVujsxLO4panGroi2As9vE6an8Lhl01?=
- =?us-ascii?Q?+3VpReAbdZZytxPhrYH6cU9tkmbxOEBX8HCtXRsuwbjG11Rj89Z2OYGIj10?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc2a687f-b064-4c39-3671-08dc8f76ea82
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR01MB4211.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 09:13:31.2600
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR01MB4976
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xdp: remove WARN() from __xdp_reg_mem_model()
+To: Daniil Dulov <d.dulov@aladdin.ru>, Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+References: <20240617162708.492159-1-d.dulov@aladdin.ru>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20240617162708.492159-1-d.dulov@aladdin.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 09:03:20PM +0800, Jisheng Zhang wrote:
-> On Fri, May 31, 2024 at 02:13:47PM +0000, Haylen Chu wrote:
-> > MMC controller integrated in Sophgo CV18xx and SG200x SoCs has an
-> > inverted write-protect flag, causing SDCards misdetected as read-only.
-> > So set SDHCI_QURIK_INVERTED_WRITE_PROTECT to make write protection work
-> > correctly.
+
+
+On 17/06/2024 18.27, Daniil Dulov wrote:
+> Syzkaller reports a warning in __xdp_reg_mem_model().
 > 
-> No, I would rather set cd-inverted property in dts.
+> The warning occurs only if __mem_id_init_hash_table() returns
+> an error. It returns the error in two cases:
+> 
+>      1. memory allocation fails;
+>      2. rhashtable_init() fails when some fields of rhashtable_params
+>         struct are not initialized properly.
+> 
+> The second case cannot happen since there is a static const
+> rhashtable_params struct with valid fields. So, warning is only triggered
+> when there is a problem with memory allocation.
+> 
+> Thus, there is no sense in using WARN() to handle this error and it can be
+> safely removed.
+> 
+> WARNING: CPU: 0 PID: 5065 at net/core/xdp.c:299 __xdp_reg_mem_model+0x2d9/0x650 net/core/xdp.c:299
+> 
+> CPU: 0 PID: 5065 Comm: syz-executor883 Not tainted 6.8.0-syzkaller-05271-gf99c5f563c17 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+> RIP: 0010:__xdp_reg_mem_model+0x2d9/0x650 net/core/xdp.c:299
+> 
+> Call Trace:
+>   xdp_reg_mem_model+0x22/0x40 net/core/xdp.c:344
+>   xdp_test_run_setup net/bpf/test_run.c:188 [inline]
+>   bpf_test_run_xdp_live+0x365/0x1e90 net/bpf/test_run.c:377
+>   bpf_prog_test_run_xdp+0x813/0x11b0 net/bpf/test_run.c:1267
+>   bpf_prog_test_run+0x33a/0x3b0 kernel/bpf/syscall.c:4240
+>   __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5649
+>   __do_sys_bpf kernel/bpf/syscall.c:5738 [inline]
+>   __se_sys_bpf kernel/bpf/syscall.c:5736 [inline]
+>   __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5736
+>   do_syscall_64+0xfb/0x240
+>   entry_SYSCALL_64_after_hwframe+0x6d/0x75
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> 
+> Fixes: 8d5d88527587 ("xdp: rhashtable with allocator ID to pointer mapping")
+> Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
+> ---
+>   net/core/xdp.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
 
-Okay, I will fix it it in dts instead.
+Sure, looks like we can remove this WARN_ON()
 
-Thanks,
-Haylen Chu
+Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
+
+> diff --git a/net/core/xdp.c b/net/core/xdp.c
+> index 41693154e426..fb2f00e3f701 100644
+> --- a/net/core/xdp.c
+> +++ b/net/core/xdp.c
+> @@ -296,7 +296,6 @@ static struct xdp_mem_allocator *__xdp_reg_mem_model(struct xdp_mem_info *mem,
+>   		ret = __mem_id_init_hash_table();
+>   		mutex_unlock(&mem_id_lock);
+>   		if (ret < 0) {
+> -			WARN_ON(1);
+>   			return ERR_PTR(ret);
+>   		}
+>   	}
 
