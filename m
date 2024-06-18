@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-219043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A0C90C927
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:24:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A7390C92E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A818C1C22DDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:24:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B84A28685E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D266F15B96A;
-	Tue, 18 Jun 2024 10:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3811313CFAC;
+	Tue, 18 Jun 2024 10:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PG7bIPik"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a+Bh1b9h"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628EE15B54B;
-	Tue, 18 Jun 2024 10:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E6C13BC3F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718705888; cv=none; b=nm7W2EY9NNiezYBqrYvoQO5gnRUTh4YYpXx7zXr5xvNs6bizReTQwuAMZw6iCYWGGqdNJbaUBEE+HVJ0vLuJKkCRAFymbRpimRtVlQZDiRt+e9s70IR93jL/xam72Mi9Z8pXdP6w7GJcWfrpcU7EEiJbWwJDK+MimG187xL8ZVM=
+	t=1718705976; cv=none; b=YHHp2r3t2wL6XkdZ4ooq9cKs8CNKnbPy4mV0lW1NHN4dZ/rxVoOsar9nvEb+Bd25mtcIrHbFZgwTNb29mz9Wm3yMWatQrRK4HZZcZpMj+M4V93JmtI6V4vsrPeMWzzNb5d6VKS6QSp2pMD59P18LTDWUxluxxu3glI4Ik6Od2AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718705888; c=relaxed/simple;
-	bh=gDy9EynZRoK5biH+tw1UOCYBkKB1G7CJM81nlDWD3DU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KI0xirhnco+jb50KuyX9Io/LISlQ4GG8jgjPLcmqkgQCorW2GCXVwZ25UCk/96DCjF4RZNSpYYQAYbbSeClW+CRG4ku4pocIZ42VwC6YEEJVteG03VoEPYW5HYLvfOrlijS+GmSBY1tM8MKGImdydkh8Xh2V3H5IFQ6M38LgzLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PG7bIPik; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9B7E640E019D;
-	Tue, 18 Jun 2024 10:17:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id FQq64omPlDhG; Tue, 18 Jun 2024 10:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718705873; bh=wHWM0Qr9z5op45g9n4gyfPeLzMRg+8q7xecWmnDkKPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PG7bIPikLKC74dlci09OuNm1N/Fw6OUSjXrzooLzdsYOIamEhXCJrbc0bQtep6pFm
-	 XPqdZxgY9/77MZZMjy/8muhbte/KoukPpxe2FtCZ1VFAwv7pzI1PjVoyxv/V4Ekmdy
-	 FFLIwPsn5gEW4XTPuTBoe3tVAUSFtD0t6guupVi4oAjTmhwC4oQcz0gWboqPtENOZX
-	 YnGPnOkcKc1u7Kel2DjIoJd/zS0HbeICrxnvqlTbewixCwgywbyPLiJxHaWO2NdsrG
-	 OHKJ3LTfEo7UsbR3bBZh7aMxoBG793PWAfp4S7gejrkLxvODT2Do/WqVmKUhBtMPqh
-	 Cun5A/nolVm6WcMKveq5Hx4AhRMkgOIzsbfoilMzgLEm2YfhW0JllbevmjSfp8pVpc
-	 5vL5eEqzvDx3uP/aELrRfOFYJ4ufMyvJhdKKF4NonPX0Mjfud6pTMadvUeZxQ9xDan
-	 PpfGKj+njjZBTrTpYRS3nCZqQIGlxV6Fx+3qIDVCgQ/Sj0AU5zVoa/iS2j7kXr9xQf
-	 7zQ/T2XOxGD7vDtC7EfU9nAoX2AT7Xy+tkYK26gAnfsasbM9eIv7DLuHQaHx9PLrlC
-	 0pxSwnaoH/79lC8Dirvdj8Izyf5w5THCCePKjpPdyPx3srJ2dvi9yGAG4Uvtp2C7EI
-	 EleRbIPxEDFT5hq1c0nL5Olw=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 784B940E01A5;
-	Tue, 18 Jun 2024 10:17:49 +0000 (UTC)
-Date: Tue, 18 Jun 2024 12:17:43 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] KVM: SVM: Force sev_es_host_save_area() to be
- inlined (for noinstr usage)
-Message-ID: <20240618101743.GCZnFexxIaHkDsv_kG@fat_crate.local>
-References: <20240617210432.1642542-1-seanjc@google.com>
- <20240617210432.1642542-2-seanjc@google.com>
+	s=arc-20240116; t=1718705976; c=relaxed/simple;
+	bh=FL2m4h63/JYdTiaKJrp9jJf3fm87LLFXYnkOZJlTIJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HeukVoAiVTNIpw+1D8aYto1shat1nCB3nRSiPnn0lIaYBc7IM7nFHIuP/gRcjYAlKJYOgtyFvreRlTKQU4pzUR3Qt6aQa4YwoN4kcyStTPtVl4TgH0Fd+3W73Lpgm+iLAyD9CcchILO4XhNdp6Zv384Sv3BhjmzdGZu21bDYT8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a+Bh1b9h; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec1ac1aed2so40156971fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718705973; x=1719310773; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dIyeFs4XULhFDZJgfL03OcH28UMXmwHIpiQH/OD/zBg=;
+        b=a+Bh1b9hpy5b1kmyC+FI+MyXek99RWTV4cWqOJvzsLBKalCAmVnFLLAUiVQD2549tU
+         3mEcUDsPfLZoUgzONuQ9t5uH06nWy04FIHp+YUKZtV8ds+SUHcXAK2TrFye8QIfxUYfX
+         NTxr3jE+Nn/07LzDVMbEknkauJJk9Pd5sBAZag6BtrWXWkLBITOfFuGtWSNJAnWSDDLA
+         w01WyZ40FGQoHk0IL0bdxjyRuO8dRukNnT4Q5TtkyU5f5TNm0eoovqXh+Oms1MDFgAQa
+         JZTtfr1/82F147ErRcGZ+Xhn3ovmC2h7/3aySz1224G5ueDyMa0p56+17WJHKP4gwPla
+         BJVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718705973; x=1719310773;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dIyeFs4XULhFDZJgfL03OcH28UMXmwHIpiQH/OD/zBg=;
+        b=N30MuHe3y6aFTXyXXrpAxJFyzQ/wqWZy0hnMzGP0WsCYKVa6LN/N+1kaAY6soM3oq5
+         gbINVwfjfmkuy2Ef8+QWg6xhcVIXUuxtjHZ57obJeQj0NsF3W/YdoUIzFENtLyYFMMvd
+         LKfUgsiWIrHMNGkvP6HIuwJ453dD0fDuqciREj6RMg1neax1f76PAwT/tVJbAz4N97wW
+         BR+QbCg08SxpA55oYMRDPyMpsJ8ZuvjbKjwK42oCOHelGRBcpcYQkeQcY6UQEbjVrfX3
+         o8U35ouob3Laem4UQQwy9GSb/PmtKflNCxQVIVYA/i/bvR6V9b/yv20aV1qCSv75JvMb
+         gpSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPMYH3HXvNoX2ApGmZIndLWVqdHy7sr5tGIwgjK8lt2zg4Z+VqWdxazOE8JfR81XfmlJ5RvxIBGvo1LEi0Kgcq6jei7JvvDb7g/f2c
+X-Gm-Message-State: AOJu0Yya0Gp+69kaAsAdGT97BWpVbOjpbKs/bC7YgKUslxE9ndiARiJ8
+	2C4sKONs09A4q51Am8YMiaNWhAd6NObNeHCHT9h+FsuY1pU+gXSMMyIQJBqjVZI=
+X-Google-Smtp-Source: AGHT+IEiSEe2+WeGXoJd3Xd2iIJeTICulV8Itc/CtPMx/C82PUg6rNZxzqUkmlCMCr0waHh4qMZ6Gg==
+X-Received: by 2002:a05:651c:1057:b0:2eb:de2b:940 with SMTP id 38308e7fff4ca-2ec0e6002d6mr73923941fa.41.1718705972634;
+        Tue, 18 Jun 2024 03:19:32 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec07d17709sm16507351fa.123.2024.06.18.03.19.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 03:19:32 -0700 (PDT)
+Message-ID: <b384e6d1-0cd5-45ca-b488-1ae2743c10cc@linaro.org>
+Date: Tue, 18 Jun 2024 12:19:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240617210432.1642542-2-seanjc@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/8] serial: qcom-geni: Overhaul TX handling to fix
+ crashes/hangs
+To: Douglas Anderson <dianders@chromium.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Yicong Yang <yangyicong@hisilicon.com>, Tony Lindgren <tony@atomide.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Johan Hovold <johan+linaro@kernel.org>,
+ John Ogness <john.ogness@linutronix.de>, linux-arm-msm@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
+References: <20240610222515.3023730-1-dianders@chromium.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240610222515.3023730-1-dianders@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 17, 2024 at 02:04:30PM -0700, Sean Christopherson wrote:
-> Force sev_es_host_save_area() to be always inlined, as it's used in the
-> low level VM-Enter/VM-Exit path, which is non-instrumentable.
+
+
+On 6/11/24 00:24, Douglas Anderson wrote:
 > 
->   vmlinux.o: warning: objtool: svm_vcpu_enter_exit+0xb0: call to
->     sev_es_host_save_area() leaves .noinstr.text section
->   vmlinux.o: warning: objtool: svm_vcpu_enter_exit+0xbf: call to
->     sev_es_host_save_area.isra.0() leaves .noinstr.text section
+> While trying to reproduce -EBUSY errors that our lab was getting in
+> suspend/resume testing, I ended up finding a whole pile of problems
+> with the Qualcomm GENI serial driver. I've posted a fix for the -EBUSY
+> issue separately [1]. This series is fixing all of the Qualcomm GENI
+> problems that I found.
 > 
-> Fixes: c92be2fd8edf ("KVM: SVM: Save/restore non-volatile GPRs in SEV-ES VMRUN via host save area")
-> Reported-by: Borislav Petkov <bp@alien8.de>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/svm/svm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> As far as I can tell most of the problems have been in the Qualcomm
+> GENI serial driver since inception, but it can be noted that the
+> behavior got worse with the new kfifo changes. Previously when the OS
+> took data out of the circular queue we'd just spit stale data onto the
+> serial port. Now we'll hard lockup. :-P
 > 
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 9ac6fca50cf3..0a36c82b316f 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -1504,7 +1504,7 @@ static void svm_vcpu_free(struct kvm_vcpu *vcpu)
->  	__free_pages(virt_to_page(svm->msrpm), get_order(MSRPM_SIZE));
->  }
->  
-> -static struct sev_es_save_area *sev_es_host_save_area(struct svm_cpu_data *sd)
-> +static __always_inline struct sev_es_save_area *sev_es_host_save_area(struct svm_cpu_data *sd)
->  {
->  	return page_address(sd->save_area) + 0x400;
->  }
-> -- 
+> I've tried to break this series up as much as possible to make it
+> easier to understand but the final patch is still a lot of change at
+> once. Hopefully it's OK.
 
-Tested-by: Borislav Petkov (AMD) <bp@alien8.de>
+Tested-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Konrad
 
