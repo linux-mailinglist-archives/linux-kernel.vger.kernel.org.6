@@ -1,127 +1,168 @@
-Return-Path: <linux-kernel+bounces-218465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E664A90C03D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F2B90C040
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904A61C22F12
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E351E2823BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A67D6FC6;
-	Tue, 18 Jun 2024 00:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1342595;
+	Tue, 18 Jun 2024 00:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MYxg0hj/"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Ck2B2DE4"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2029.outbound.protection.outlook.com [40.92.103.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44900A3F;
-	Tue, 18 Jun 2024 00:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718669613; cv=none; b=VImko6q+A8ptceRdW9HbJPDklZZzeUb4Qe8qBaLHAM7Q0b66SH2qI4ktiLqPaQPu1OoxuGo8XM64Lw8s36oHOWn1m6wyQ1EiN71SnF+SP4puCV1ME1Wac+POk/iageIOiJ3Z6OdZtTrQWBoA1wXeEaWaQhIosk/48lSHPOK9XIc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718669613; c=relaxed/simple;
-	bh=5aDeHQ6ntKhePhG4Ww9qIOWCKi/Au3oReh9It8GCLrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZHQGkSRTnS/zIKO+Y5DrrFokzzr5ru/2SvUX2caX4lJZ3ztNz7R0uv8ciw7gM927znL299h0o158NbgU5cQIRXn4Eu2DJj6QW3qabs0nM+Dv/+3/e39ioGGDXGnPI7Xtwlwz/up1UHcRsmqIryYx64WkJ4L7h1UFzwkeLtELBQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MYxg0hj/; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718669610;
-	bh=5aDeHQ6ntKhePhG4Ww9qIOWCKi/Au3oReh9It8GCLrY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MYxg0hj/1Z+b76/CI3qOU7QKV0sqPoWRAr2OPJv1hKmjA/e62dWWuwWcBdeckeg0d
-	 VZQHbf9hX3kwonQFh9J5/KNhT9BS+JViHxtpvJ/clwfrTIOa17npcEKmP7Mlj0Bj+G
-	 CBtGcC5i22IdtlBEQhDzrZLJI9C5BjDBEEBnC4mWm9/YvZDOdYStB0ndQXUhmoE9Vl
-	 iKZVtw+eSlCScLQSnBBaoPUEE9jO+2NBh562HFs7rua23I7yA1DBlPe6b+F4M6van+
-	 XUp2tcIXpeKPf2/SZpoP5fW4lD+7B7+DGAHLhPVo8aax3caZF58PTMTiOoA3ESiePb
-	 6qXxLdrkgd/0w==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 39FAE378216B;
-	Tue, 18 Jun 2024 00:13:30 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id B34271060734; Tue, 18 Jun 2024 02:13:29 +0200 (CEST)
-Date: Tue, 18 Jun 2024 02:13:29 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Jacobe Zang <jacobe.zang@wesion.com>
-Cc: Alexey Charkov <alchark@gmail.com>, 
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>, 
-	"efectn@protonmail.com" <efectn@protonmail.com>, "jagan@edgeble.ai" <jagan@edgeble.ai>, 
-	"dsimic@manjaro.org" <dsimic@manjaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] arm64: dts: rockchip: Add bluetooth rfkill to
- Khadas Edge2
-Message-ID: <hk7rrm3ljqmrgvdgf23ymhpzwcnq6otwezratoj5k5zt3d6pc2@vjmeh74xjkck>
-References: <20240617071112.3133101-1-jacobe.zang@wesion.com>
- <20240617071112.3133101-3-jacobe.zang@wesion.com>
- <f147be11-fc35-44c2-88e8-7421fee47ace@letovo.ru>
- <TYZPR03MB70017A6280F060A6F4A1DD9880CD2@TYZPR03MB7001.apcprd03.prod.outlook.com>
- <a25472f5-3e88-408c-a033-5e338dce6340@gmail.com>
- <TYZPR03MB7001732D8E2F0921BA82B7BC80CD2@TYZPR03MB7001.apcprd03.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9234A18;
+	Tue, 18 Jun 2024 00:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718669639; cv=fail; b=cZXTL3d1YasG/UWPpxH3h6eJYkrdo7dT5QZXhZEXoKtSHoIB8pg+6z57lT06LX2O8K8QkJ8mXJ9koQs+tYfMs7rk18WpObp/mwLScsfLEIL19WfSi/gfsjiZF4U1kDnXxgfLVPVH2IJXXld5aRwa2LVECcxXKlXYVL+1o+rh7Js=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718669639; c=relaxed/simple;
+	bh=JXY0EiiByqqNQW+6jzWa14wKBtovxXGGC81pCbYyQHc=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Bj6Bf70MsUDvtk5a9c3pj1sZ5j1zOEUasyPUzWGQrSyFelTpk6cP/4utjxyLrHfNfqe2Ri/U+esae5V7O1VScz2V4Cldd22KJkVGuaYikSzVp27FqnuSb9e/uN3p730CEi216CVCoNUqURdYgvl2Rv7DKjzqTlbUrgSAQoObtBY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Ck2B2DE4; arc=fail smtp.client-ip=40.92.103.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BMRb+GuzWnupIE55kzX6dmbqv3kFRhfBzkQV5H/qEqcWaOwwdth5tmMqv7LtI4hieO6dCjGF0aGw/B1H5xczY1FyL7ZbdZXO3aLBnQC79azSamtaCg/rDc+dgxRm0ls3QU+T7PWbIA19c7yWAxmeIfgmnWr8/guIODozbnhoPFMCY7Vj9XYULH1GLTDahm+nCjjSEa8Ty7tgh5X26zCVvdH4rWq5PcKKhLGp5IHUb5UyTF9DDpU+oUI2+7q9XE25BhLZy5yg6vAoh5Kzlx5v28OjnY7ThRdu8TDPrR4DskuHCLUOwm6CbEOcTTvzLY3E0PQ/2oIk58i2qDTLH7vj4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JXY0EiiByqqNQW+6jzWa14wKBtovxXGGC81pCbYyQHc=;
+ b=ii142efa/z7uLLcwuKF/0uTMNk0BS+ct+sKyTeTZa/ElaQ8MMydoe74NP08AEvooWeex+yDQ+0+9I6bEgwXBKGfx0NXlwVxoreIGHwE79g5n3/r4DowlDps/rrgVCQK4+XJtSeZ6eFGuGzRBzfN+kuomvNBTCpkktjlcLZZNWogomwys9JYIqYTvnkNCMo7O1kDnbCtseMifnva5LpUaXsEUHznBZTj6fgA+uU8kETsMDoAhFbZCLjXL5OE+SwbzANgbC7uLjOjvijR92e/2sWXTYbl2Xq2X1vvOS7aEzSCg4O4YtuFOz6qkFPClowcNIgFNKAlkOwy9YPKeCRTXXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JXY0EiiByqqNQW+6jzWa14wKBtovxXGGC81pCbYyQHc=;
+ b=Ck2B2DE4NXjn7hzqLnVkBgGpdbnisqEP4JVaNANuQv7OYscMvQ+Tj4e4hIjwhiOWQ/6JVdq/+rQztLMsJQ4USULByxNEeiGsSH898RXpatOIK1FvxFENgBeDOULlLrhQtFEM/5woTZtqRYlUulHOyoAp3rbpwnAIg0Bsrg3wTRQ+MLnRahFDn1J7Ixa6xFYDn+jNSmuZT9G4+VFk7/oCFbkpHOFKxAvElMmuYb/H2qi0xGjjWTd/wTwJmz5MzxzQh19NE/Qn3aDpOMf75iqeGipILQwLbyl3hGDtwjo0lxFASCjfZprwMj/21r6KSlPVqF2SgXzzqNVn2sqPU2FRPQ==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN0P287MB0152.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:e4::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Tue, 18 Jun
+ 2024 00:13:49 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 00:13:49 +0000
+Message-ID:
+ <MA0P287MB28222A1F4865530F5F2E56C4FECE2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Tue, 18 Jun 2024 08:13:44 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] mmc: sdhci-of-dwcmshc: adjust positions of helper
+ routines
+To: Adrian Hunter <adrian.hunter@intel.com>, Chen Wang <unicornxw@gmail.com>,
+ aou@eecs.berkeley.edu, conor+dt@kernel.org, guoren@kernel.org,
+ inochiama@outlook.com, jszhang@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
+ paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
+ tingzhu.wang@sophgo.com
+References: <cover.1718241495.git.unicorn_wang@outlook.com>
+ <dec4798dc2728428e7468515cbf0bc87c6eff4a9.1718241495.git.unicorn_wang@outlook.com>
+ <6122ec89-1984-4dd7-8af6-50e2861f04d8@intel.com>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <6122ec89-1984-4dd7-8af6-50e2861f04d8@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [yUpnkcvhMew22Bx4jWr6+aPpD7D2Ouy6]
+X-ClientProxiedBy: SI2PR02CA0030.apcprd02.prod.outlook.com
+ (2603:1096:4:195::17) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <7b8ba102-86b7-4e87-b81c-7037ad6305f8@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cuonu76bp3mxpast"
-Content-Disposition: inline
-In-Reply-To: <TYZPR03MB7001732D8E2F0921BA82B7BC80CD2@TYZPR03MB7001.apcprd03.prod.outlook.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB0152:EE_
+X-MS-Office365-Filtering-Correlation-Id: ded33381-c323-4eb0-1771-08dc8f2b86f6
+X-Microsoft-Antispam: BCL:0;ARA:14566002|461199025|440099025|3412199022;
+X-Microsoft-Antispam-Message-Info:
+	C5aVusCsDE7OsW7WcLxZiuK0hk45sFFVb3NHukviK48whKqoS9quHRs6kuYX251w8pIIw+AK4t0Y6oRzfvsv8PWAkPbJm07myWsk2kY4JVhzyRQ2D7pc0CLYCVT/NnsXs8RQaGYp3bSsD8XNfcvedVwl9OxhXyzxC9zwiMJXg7cGHRzFiN7sy1oRRvfSDoaccmLeYIjLGkPWlJpvyM/tV46g+AiJ57e8ExDgYhW85Ao/cVSoF54krvIvr+vHqns1FaMLwDYGPfIp2UmDrTF2OvCK2JpM3CGSvReaBUzC4B2c6PZiSfUqCove7GLigpu0nc5WiK8LjwwfzS8uHjfEmpMKG2Cq3Hd8oPs9cyS0D0vIX3mGAvNNCAoM8ijCYLlirYzWUCGnTMWZFnzMdZFhYPP9om3ZRoG2i2zXFsdf4USl+mZ3Zsmh2GgNRkAmdVjUPqGJF7bjpzG8CuvD/TdDxXl8VRFly0GjyK6I7xtw4F2IzjkOBaUjIgnydqe+HaTY9jO3MN5+78B2KFWUPqvLxSTrg3Z34UWypr9AFFAzUv3c2VNkYUl7uMDgsQf+nXDe
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NE0vTkhGWG1qWEthSE1zVGhwRkZSekdYN1lIU1FaSjAwY21xbTZoaDlqMDlh?=
+ =?utf-8?B?a1NzVnRYWGNvc0p4Mk5PbU1MSys4czg0MzQ5Y3FGbHhXbUZyR3V4N1lwd0Va?=
+ =?utf-8?B?cDNKcFlWdldHY24zZzJuVnRNcWpIeWE5T1RJNlJScTR6Tld2S3FJNHFEWGM1?=
+ =?utf-8?B?cnpHK1kyc3g1RCt2SDE4bXZzSWtwTUpSNVpscVUySlU5OHRUc0FhRFZTZUo5?=
+ =?utf-8?B?UzliRERBMmFUWk5HWG02Z0lZUldvdkEwcjRGZmFVMEZONDRKY0NnUHByK1R6?=
+ =?utf-8?B?aVphdlBoUXRYdnZaRHBkeUh2d0pLNUxFelQ2QmQyN1JPb3BxejlpVTAxYWU5?=
+ =?utf-8?B?VGNKVFVDSVVmdWJ3Yy9ZaHdDVXFmQk9qdnNzZVp5bEJYbnU4M1JRYkdEQW9m?=
+ =?utf-8?B?UjUrYmo3NTNOakdPQUNtUUxKSDAxeUllM1NXVGpwa29ydENIN21pbW5XMjVm?=
+ =?utf-8?B?Mk5LcHNFd2xvM3ZLVE85ekc0SHpGS2wyNWwvTXd1UmZ1ODJJZk93TkJKbTlC?=
+ =?utf-8?B?WnkwR1FGVjNQRjJNTkVoTXlVSmZnbm45b3AwVGlBQ2VBQkxZcHZPSjQwZTVr?=
+ =?utf-8?B?NnpXUEFVMCtkSlFQZy9GVHFKMHN3bW5ua1pzU1BKbk9lRHh0SjRsbEpLUzl5?=
+ =?utf-8?B?b0VNWllKL2pmYTBIRVZDN1JHOTNwWWNnNExRY3N6R2Z6dmlOaDdtdUR1MGZQ?=
+ =?utf-8?B?SmtzTE02TzhpMTRiYjVwOFdiejkvTlJ2azdjdTNpdjBsdDk3RStKc0c3Vm90?=
+ =?utf-8?B?V3l4VTdxV2c1cDJnL2FXZUR4b2VhRm9rU2d0bHphaVJ3L3ZxTUZSbXBrUHov?=
+ =?utf-8?B?RVJUTlZVTjRuVWlCczQzaE1OWVQ3ZFRab1pueWY5d1dSUGk2ZFc2eTBtMERQ?=
+ =?utf-8?B?VVdscWE0WVZXQWd0djE3dE9Ybjk5SWtTV0lIMUx5eCtTK1g5SHMxaTNXT1VT?=
+ =?utf-8?B?WnBWNy9SdWdvRVRCZmVNdDRleGNIRVE5ZFN1M2JSUzBmUE9qTk9obStlZlRU?=
+ =?utf-8?B?V1dFQVdIamVidEszcExGVHhlWFlUZ2FzODZFM3ErWk4rSmViaUZpQzlURGZq?=
+ =?utf-8?B?YjZ2TzNWYjJ1L0Q4MUlUamtKQ2M4ckt0Y1RXTUxkemJtZXpmdlQ4OGowQ2xz?=
+ =?utf-8?B?cUNWaEp4NHI3VUtldlR3V3cvL1RFT0J2YTFsekxvQXpoVzhPNmFGdG1jcFNh?=
+ =?utf-8?B?WUJ5bFlpYk1VT2tleFIxL0U5ZnVGNnBoR09HMlBCR1REY0ZDTTY2NlJGZnJX?=
+ =?utf-8?B?cjNWT1hsVGNtamJ3OFpZNjlIYmFRY1lvK1ZNYytiYWtxVHV5aUk2a2drS2lK?=
+ =?utf-8?B?S0M2c0o0TFNrekN0WjN3UFh4VDNPTDF2VnorTk1pSFgrelJGS3dabmR2ZVpy?=
+ =?utf-8?B?dmUyTk1xYi9vSVpYSHY0azRVajMxbHE5aTkrUFJHakNIeEJFY05WUGpCRDdn?=
+ =?utf-8?B?NUxpQ2pOVlM0RVNDMkNrdFl5ajg4dUZSM2p4L0VNeFhpR0xjZ2dpd09la2Ux?=
+ =?utf-8?B?UVo2NGhuZ3lNRnFLMDRJQzl2QlMwbW9xSUdxaU5Rdm1iQzVOR2ZrelRPWVpl?=
+ =?utf-8?B?aEtyUTFQcThpV1pneitZMkdKSHRBMFJ3cldmQmxwdENaVlJYTG5JOGhtYWtJ?=
+ =?utf-8?B?VXkwOUV3QnlLcGhuTk9mVnNNYUtMeE4wbXk4Mlp1RDJMY0pVY2N1SEFuenI3?=
+ =?utf-8?Q?d1Zv9ZflfAxWgERYo45M?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ded33381-c323-4eb0-1771-08dc8f2b86f6
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 00:13:49.2279
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB0152
 
 
---cuonu76bp3mxpast
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2024/6/14 18:16, Adrian Hunter wrote:
+> On 13/06/24 04:42, Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
+>>
+>> This patch does not change the logic of the code, but only adjusts
+>> the positions of some helper functions in the file according to
+>> categories to facilitate future function search and maintenance.
+>>
+>> Category: helper functions (except for driver callback functions
+>> such as probe/remove/suspend/resume) are divided into two categories:
+>>
+>> - dwcmshc level helpers
+>> - soc level helpers
+>>
+>> After the adjustment, these functions will be put together according
+>> to category.
+> Please do not move any functions unless it is needed to avoid forward
+> declaration.
+>
+> Unnecessarily churning the code makes backports more difficult and
+> complicates the code history, so it should be avoided in general.
 
-Hi,
+Accepted.
 
-On Mon, Jun 17, 2024 at 11:22:57AM GMT, Jacobe Zang wrote:
-> > If you already control this GPIO from elsewhere (such as from the
-> > bluetooth driver), then perhaps you don't need to define a separate
-> > rfkill device at all.
->=20
-> Yes, I missed the error log before. The rfkill driver didn't probe
-> successfully. I will remove this rfkill node and reserve bluetooth
-> node next time.
+[......]
 
-Does it work with the RTC clock disabled? Otherwise this also needs
-the pwrseq work I mentioned in the WLAN patch.
 
-Greetings,
-
--- Sebastian
-
---cuonu76bp3mxpast
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZw0SkACgkQ2O7X88g7
-+pr7tRAAnvJzZGEyZhPOc6+tjZHrt5Y/HO4Sifx9FsBeynxBXodpcPQevKqnzMBf
-24l1XnbasuC9vvwWAlSDr3iomv5TZjw8zdQZKYrzeyeEEnmhmLr1B3Zde2XT73JN
-ElZUojtZIqILKpQJLETSkWknYfemsTmO7VY4l7OR5rW/aingKFtb5DwBG8kx+MGd
-A0bmUEFBTxT7tR2Q7lBK9cuKXomz84bIwx7ip/4c7iP9YjHEICO7m8IGdFT3XznX
-g2Ehjpwm97Qsm4C10fqVnMSXW/C4h1z+K0wln8f1cHdd9EjVZN7Y/Ce3G+dvL5XT
-6YGukt8ybsGdVVSWk9DW3Pkwxf3CNOGkVBO6xua5EdUW78so72Kmj2Z4yevF0nZC
-tTobcxuNrMCHtVqSFP22p/PFEuNJxvO6Ss7XR3LkAVvgQsXg6yRu1bJRjMahl9tt
-JBmQluBmbiD2Ag4QiPhUVglfAC3c28o1RtFiI7rd9ZCReSDcqu/f77BUg9NTWEHS
-23Al34wMMynMiemktx+zXgqMHmHEDPrcqsJhPwgWkauzLO97CGqqFTe+18K+8gvX
-cqAa0dySwtZ9WkvznBODfI2XxgsVxGsX/4WyQgP6JKto+SxAyuy3sgw/ljo/9B6x
-FCVl6+84Mw/3ilWZTfE1vCuku84oJYmyKCOJ/P4d8NaehDl6Ih4=
-=YcBW
------END PGP SIGNATURE-----
-
---cuonu76bp3mxpast--
 
