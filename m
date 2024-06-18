@@ -1,196 +1,143 @@
-Return-Path: <linux-kernel+bounces-219764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7058890D77E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:38:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAB990D782
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 788551C2213B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:38:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01C91F23551
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31934595D;
-	Tue, 18 Jun 2024 15:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F007C44C76;
+	Tue, 18 Jun 2024 15:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TpPt3H2a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="Dz+9UNt/"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306C0200B7;
-	Tue, 18 Jun 2024 15:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D90340851
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718725124; cv=none; b=L/u9jGqvabHBLoH098BTKTSRWlJ+Op+zfL443uPn3ZNj9P8Jw25xwtsKvY/nCP7/sv4rdOv0K6aIKpToVNx2VTx+FsA3aCdMK+81WlccaUXPnN0u2ooBdVZ9hhj7JnNF5D3pIblJ/MKCIPhE0fv7LwkUOsFpEw0A6AIknsksQjE=
+	t=1718725176; cv=none; b=Z7C67zhLkwIW8XqRWSwfBWmhivm+2ftK4j7w4RzhAt+2R7MiQClwcwvZyukbOFwxntucNNH4wT+KUooXxzjLAQfVpk4DLKH2eH+a+nu6a8mZYFQiDldPePKyv6tIy2gmuNzlH7kGfzbCVcU7qbDAyOeFuOZcU/T3y+8cCghzE5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718725124; c=relaxed/simple;
-	bh=fmH+xD1cgLl3hrIzxElufLFVaOm4PxZmFn0NGOamYw0=;
+	s=arc-20240116; t=1718725176; c=relaxed/simple;
+	bh=As+7Z/GWKpgmc4eYA7JV3Zck6P9jkFY7zg0cSCAzvCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EFfLzma6zbed6pOZahbdtw+5W0hT256s924Vh1+0B8pMZpmwhqJFvotH7rIW403bXFB+34fFZRFmwLziKDlaMfpraOSnPYQH8ytB1Y47QPr8OMwARru+EDRjll+82gfolmNGJdpdrxPCcsjCa/A0Rpb3/tGRlSHwspPhoaQKlgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TpPt3H2a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31447C3277B;
-	Tue, 18 Jun 2024 15:38:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718725123;
-	bh=fmH+xD1cgLl3hrIzxElufLFVaOm4PxZmFn0NGOamYw0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TpPt3H2alws9aXnqoBjGD9bXQ8D0wnMHu58Y4s+cOY2BLeCJkBlUAI7I7dUV0s0Eu
-	 B7qqDvY5FgMRA3b8k1pglul1Y7jWt6sFxiLmAzPTwc0KxCIDJvE1gPMaD5HnIbLt1V
-	 I3CKtJO1GucynggtOCcxVQEg0q1XQS7rCqzeofrQsMsRj5hji9Hf2qVwlLub7loG6a
-	 XKvTmAIlIOggS6/XV26S1MUKWUqa8Lmixw8wn8e2BQFlm4udWIyWGJiOhR/ZLQlwV5
-	 Q+78Qs4gveJYyxVlH8ZMsiGglD6KeOYr8NAzmPhDcTA2Olix3idZj+sTUrnXADAyOY
-	 KHRCrTNPHIBHQ==
-Date: Tue, 18 Jun 2024 16:38:38 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yuntao Dai <d1581209858@live.com>
-Cc: jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, unicorn_wang@outlook.com,
-	inochiama@outlook.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: mailbox: add Sophgo cv18x SoCs mailbox
-Message-ID: <20240618-monastery-manger-1a7d9a272f11@spud>
-References: <SYBP282MB2238DE0DA19C6EF411B2356CC4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
- <SYBP282MB22389FD1E07BBDC6FE1D90A0C4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBdbz76VWh3iL4yZC8n2Ou/3LEBH3SCbwAfMyIxR+ecU3I/GtYKlNfbQCtWmFImXPhDWxPPvNSTt+GXUs1Gp3cZKrmYDR2hB3BfCu8GdYAf1w0ICAfpVReLookBhgDlmHM/w2UopH3ADHrYeeU7FJ2MxR7DKzKdNwUNEf5sP814=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=Dz+9UNt/; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4217926991fso49887305e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:39:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1718725173; x=1719329973; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BxHZdMNBySJ1LsjBNozOYRVdFIMjiE62FkJA1FGqOSw=;
+        b=Dz+9UNt/+qi+YsWClIA+ORsVpIvEm26cSFfy8uXfuqwp4jZigR3U6Grl+jNK8t5Vg5
+         yh9u+Cylr+Pd2Px7mjNd+3IupjtFMM9MZejNh8qPAEFn300VQ1tqqlQbGTrqYfRxTER4
+         YD9Lr7R5uv8cbTyDP0VQZYX9IOyFqG5sUWB3YKJ85w8vxBuajJostU6tTFSqNxlMIgfx
+         l6fqlnMQYck6l8fKHKiifoEuhOUZBSXVMxQ8YVOmy7G5m11bXLlkYyNL36IfP7IVpD4O
+         O6UaXMdaEzUv7ovctvwf2bUnn+2lLF6pDF1XkBHWntvK5N8xx5t99zvWZCnWQVmktZbZ
+         P6Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718725173; x=1719329973;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BxHZdMNBySJ1LsjBNozOYRVdFIMjiE62FkJA1FGqOSw=;
+        b=sEX8NZeD5lPD9UMmT0w9PE/TQh2JiCKNn/Ec8edZOuuQEdXKtG5bTYXG7Yov4hSEbQ
+         j5q/HMBmEmDSPqJ+mKKfUf3fuYvjToXO183A5BeM7rtux+qNJqW57IlEOnQSd0vQ5RQU
+         sCS1KYHz3YInI4vXL9SElGS1BKVa1F6gwK/BUUA/nhukpfS4veRHR2n9zovzske8s0N2
+         mms8CWrbG7BWJOTn+q8eLoPWByMezJ+Qp3BV/koos4qth0Y7h7cnxsgyKdDhmCeYJydZ
+         62TTxGIUFlY820WfS140jAEnRP7LvW9YKW6w8CWvrta0gYTDAlcnKTyJPc4DcI6WH6hM
+         sjNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjPC78mGpWLgI6xufdYsfQwVUgZ3MlIW7qOllEiupTqmT5f94EwFwERekPh/v4QvbdlHAoP/IU1xYcRb0yFiLaTYbRT/XMCRhSzVac
+X-Gm-Message-State: AOJu0YxRur8f41SryvN541UbyEoxkPNd3vC2xTjUhqakmWGtlDuwzM+f
+	dQHU5mNh4hXuksUWl+rGryLSKGZmKkZ0fau9snxdXOc5LT9APHoo65KZF1zm5rM=
+X-Google-Smtp-Source: AGHT+IHjg4cFTLRxDB2fSjUPCcXKkv6H47mLIdnq+p34kMbFVbOQNv0NTDgn8XKQ+t7kw/FfO/r8hw==
+X-Received: by 2002:a05:600c:1c85:b0:421:8007:a640 with SMTP id 5b1f17b1804b1-4230484cf9cmr106805565e9.28.1718725172682;
+        Tue, 18 Jun 2024 08:39:32 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e74c7sm228207895e9.47.2024.06.18.08.39.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 08:39:32 -0700 (PDT)
+Date: Tue, 18 Jun 2024 16:39:31 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Xuewen Yan <xuewen.yan94@gmail.com>, Xuewen Yan <xuewen.yan@unisoc.com>,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	vincent.donnefort@arm.com, ke.wang@unisoc.com,
+	linux-kernel@vger.kernel.org, christian.loehle@arm.com
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding
+ actual_cpu_capacity
+Message-ID: <20240618153931.ub5ezml3imd5mwu7@airbuntu>
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com>
+ <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
+ <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
+ <20240616222003.agcz5osb2nkli75h@airbuntu>
+ <CAKfTPtBikWsyPon6HweEZg5qjSP+QX=WZDQu4NHs7PUcSCqDDA@mail.gmail.com>
+ <20240617105348.ebtony3ciwxhvj2w@airbuntu>
+ <CAKfTPtDPCPYvCi1c_Nh+Cn01ZVS7E=tAHQeNX-mArBt3BXdjYw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nvbiF6U45eoEZ/qe"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <SYBP282MB22389FD1E07BBDC6FE1D90A0C4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
+In-Reply-To: <CAKfTPtDPCPYvCi1c_Nh+Cn01ZVS7E=tAHQeNX-mArBt3BXdjYw@mail.gmail.com>
 
+On 06/18/24 17:23, Vincent Guittot wrote:
+> On Mon, 17 Jun 2024 at 12:53, Qais Yousef <qyousef@layalina.io> wrote:
+> >
+> > On 06/17/24 11:07, Vincent Guittot wrote:
+> >
+> > > > And should effective_cpu_util() return a value higher than
+> > > > get_actual_cpu_capacity()?
+> > >
+> > > I don't think we should because we want to return the effective
+> > > utilization not the actual compute capacity.
+> > > Having an utilization of the cpu or group of cpus above the actual
+> > > capacity or the original capacity mainly means that we will have to
+> > > run longer
+> > >
+> > > By capping the utilization we filter this information.
+> > >
+> > > capacity orig = 800
+> > > util_avg = 700
+> > >
+> > > if we cap the capacity to 400 the cpu is expected to run twice longer
+> > > for the same amount of work to be done
+> >
+> > Okay makes sense. Wouldn't the util be 'wrong' (to what degree will depend on
+> > min/max freq ratio) though?
+> >
+> > We cap with arch_scale_capacity() still, I guess we know at this stage it is
+> > 100% wrong if we allow returning higher values?
+> 
+> I think that capping utilization to max capacity generates some energy
+> estimation error because it filters the fact that we run longer in
+> some cases.
 
---nvbiF6U45eoEZ/qe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, I think so too and that was my first statement. But I think this is
+a bigger change to do separately.
 
-On Tue, Jun 18, 2024 at 11:12:33PM +0800, Yuntao Dai wrote:
-> Add devicetree bindings documentation for Sophgo cv18x SoCs mailbox
->=20
-> Signed-off-by: Yuntao Dai <d1581209858@live.com>
-> ---
->  .../mailbox/sophgo,cv1800b-mailbox.yaml       | 75 +++++++++++++++++++
->  1 file changed, 75 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/sophgo,cv18=
-00b-mailbox.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mai=
-lbox.yaml b/Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mailbo=
-x.yaml
-> new file mode 100644
-> index 000000000..e1868aaf2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mailbox.ya=
-ml
-> @@ -0,0 +1,75 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/sophgo,cv1800b-mailbox.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sophgo cv1800b mailbox controller
-> +
-> +maintainers:
-> +  - Yuntao Dai <d1581209858@live.com>
-> +
-> +description:
-> +  The Sophgo cv18x SoCs mailbox has 8 channels and 8 bytes per channel f=
-or
-> +  different processors. Any processer can write data in a channel, and
-> +  set co-responding register to raise interrupt to notice another proces=
-sor,
-> +  and it is allowed to send data to itself.
-> +  Sophgo cv18x SoCs has 3 processors and numbered as
-> +  <1> C906L
-> +  <2> C906B
-> +  <3> 8051
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - sophgo,cv1800b-mailbox
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-names:
-> +    const: mailbox
-> +
-> +  recvid:
-> +    maxItems: 1
-> +    description:
-> +      This cell indicates the mailbox controller is running on which pro=
-cessor
+I *think* we have another source of error, we take util/cpu_cap as a percentage
+of time the CPU is busy. We assume an implicit multiplication with a time
+period, T. I am not sure if this implicit assumption is accurate and things are
+aligned properly. Especially with how utilization loses the temporal info due
+to invariance. util can be low but actual runtime will be much longer. I'm not
+sure if this implicit multiplication is handling this properly. Beside due
+performance domains having shared CPUs, I am not sure this period is aligned
+across all CPUs for this implicit multiplication to work as intended.
 
-You can just look up your hartid at runtime, wouldn't that be
-sufficient?
-
-> +
-> +  sendto:
-> +    maxItems: 1
-> +    description:
-> +      This cell indicates the message sends to which processor
-
-Can't this go into an mbox cell? Having this property would limit the
-mailbox to only communicating with 1 of the 2 available processors.
-
-Cheers,
-Conor.
-
-> +
-> +
-> +  "#mbox-cells":
-> +    const: 1
-> +    description:
-> +      This cell indicates which channel is used
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - recvid
-> +  - sendto
-> +  - "#mbox-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    mailbox: mailbox@1900000 {
-> +        compatible =3D "sophgo,cv1800b-mailbox";
-> +        reg =3D <0x01900000 0x1000>;
-> +        interrupts =3D <101 IRQ_TYPE_LEVEL_HIGH>;
-> +        interrupt-names =3D "mailbox";
-> +        interrupt-parent =3D <&plic>;
-> +        recvid =3D <1>;
-> +        sendto =3D <2>;
-> +        #mbox-cells =3D <1>;
-> +    };
-> --=20
-> 2.17.1
->=20
-
---nvbiF6U45eoEZ/qe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnGp/gAKCRB4tDGHoIJi
-0lZhAQCIpzmZgPmLcK0DlQG035X/2WhR0AckY3tilztfWdynmwD/ehaUlanIwAhu
-5bCcdtphU/WsBn0uG7+dwqn9H9B+IQY=
-=FmkD
------END PGP SIGNATURE-----
-
---nvbiF6U45eoEZ/qe--
+I yet to study this properly. But I thought I'll mention it as I think this
+(energy estimation) is increasingly becoming an important area to improve on.
 
