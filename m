@@ -1,147 +1,118 @@
-Return-Path: <linux-kernel+bounces-218764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F235690C5D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:06:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EE290C5D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57A80B21828
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:06:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92574281023
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD67813BC04;
-	Tue, 18 Jun 2024 07:27:10 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2067715B120;
+	Tue, 18 Jun 2024 07:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Grti8WhL"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ABC15B0F0;
-	Tue, 18 Jun 2024 07:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB1415B0FA;
+	Tue, 18 Jun 2024 07:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718695630; cv=none; b=BS/Od/u12tDVspxyZCsqYfmAcb1EZ2H0ULbgks4L4US1A37R4w2Asr4ulqpCeiuSgbqrurP8SsiOPxAWSXffKcAOlNwoiLLa2oiNmEtDFKxpL7M2+x4mQRfsRDK7rEQi2DUXSCF6Rts4DOF9TuUjQxnCnmlXHThUwdD3nhGmB00=
+	t=1718695632; cv=none; b=rqvN3Fz3xutEjH8AKIoKNhys3VJ5wfAKOF93gmuNw35UEHB+syOoNM5s7TzjgY/NnI0Yk8hCtJRL/220cFbxDHYzEgt8h6MbtgtsvRIrKeRXHOOypKtziIo+ibtYJkfaa7CEp+CSVkQOKf0hwK3NlVUakqDhYfUmzBxjPjNi1aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718695630; c=relaxed/simple;
-	bh=v+8kEJ1OUngwE8rxso5D9lb/3tGgmgmX7ZUQc61K5XI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nUC5rSUQqljSusl1t/tSehy9J3+8ZDyiQlbs+xL/ho3m3INua5cxUaJzEERjBL/cz3CDcxHwfU6LxDRNS2QgOhDtw4EG06OnxyLxq5GTFBFHw+Ys8f8JJ5iequkrWOP3oaB/sj4SdWKg8Oq23jVN56pHRoEGOs3Idd27xkixVZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 67bed1d82d4311ef9305a59a3cc225df-20240618
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:57452060-6d28-4dc8-8c16-2a184e905e64,IP:25,
-	URL:0,TC:0,Content:9,EDM:0,RT:0,SF:1,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:35
-X-CID-INFO: VERSION:1.1.38,REQID:57452060-6d28-4dc8-8c16-2a184e905e64,IP:25,UR
-	L:0,TC:0,Content:9,EDM:0,RT:0,SF:1,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:35
-X-CID-META: VersionHash:82c5f88,CLOUDID:9d76cedba94e646680ad55363fc6a752,BulkI
-	D:2406171554551IQWSKXU,BulkQuantity:1,Recheck:0,SF:24|72|19|42|74|57|66|81
-	7|102,TC:nil,Content:4|-5,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:ni
-	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
-	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
-	HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED
-	SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR, SN_UNTRUSTED
-	SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
-	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
-	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-UUID: 67bed1d82d4311ef9305a59a3cc225df-20240618
-X-User: lihongfu@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.255)] by mailgw.kylinos.cn
-	(envelope-from <lihongfu@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 2042290132; Tue, 18 Jun 2024 15:21:39 +0800
-From: Hongfu Li <lihongfu@kylinos.cn>
-To: yanjun.zhu@linux.dev
-Cc: allison.henderson@oracle.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	lihongfu@kylinos.cn,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	rds-devel@oss.oracle.com
-Subject: [PATCH] rds:Simplify the allocation of slab caches
-Date: Tue, 18 Jun 2024 15:21:21 +0800
-Message-Id: <20240618072121.67838-1-lihongfu@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <5a2cbc3e-bb37-4753-9c47-b196399ecf0a@linux.dev>
-References: <5a2cbc3e-bb37-4753-9c47-b196399ecf0a@linux.dev>
+	s=arc-20240116; t=1718695632; c=relaxed/simple;
+	bh=iRjmF4W3MCyCCZaBe1RgE+WC2LYE8fIZlNIkr57SHTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QjNHTZBmDL29jqItH3E4cHpnwpmPVZPPxCQZ+67G40pSO95yUs4I4qG88tpTS/cV9Kd1B8Tlm6+UFNdgnOCg0jABAkLp01BvqzvMFUMjyuBxpTsVm5Iq/4MCyYsaufhCTXsPbdCKtLMQz8/gOx/q3T/8iTvMz/CJXX0qZqaIGpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Grti8WhL; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f64ecb1766so36856805ad.1;
+        Tue, 18 Jun 2024 00:27:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718695629; x=1719300429; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KnomKee444IxvA5fIMw/4SC/20gaSTbQakqZLbgW7qY=;
+        b=Grti8WhLh9mGs5fbf9uT++nd4EEA5W5RfZEMMdoR3NHh144u0Uy245vTQBDdDXdJB+
+         Srk/YQqyW0tH1NQImOzRLGq8RxlYAQ3M7yCbSCKYEQkf+r0p+Iw9NBVrQtxJ5d2UoYz/
+         ngOkmNQj12V5PCeJCWL0WE/9XOVTjnAf6BNNYokG2Bcui6zXqKMtta1j/h0S7MuVQk4S
+         q3aL6rMW8MOjozECehmlw/TVQ99amurrRs8m6BMLWuexBEdIkZ0/9po1UlIC+OaYt6CM
+         IXS1t5ndwcWNkbO0oQLcLcKQNzAme8Kl+RXgWhLuya1b2SM231EReTuf6MABcGJPlbQB
+         1+Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718695629; x=1719300429;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KnomKee444IxvA5fIMw/4SC/20gaSTbQakqZLbgW7qY=;
+        b=RAxIrhqvgFsBd9RJ1ceMIHbIbVIzpxhgKrh9/4KGj631kk11lM7zf0sszQoN3vJyvh
+         OrdyEJ5c8Y1VCeDF9aMCUdq6CphtoHL/6rIU5ia0sKlYJGnIEFZvFiv7h49wDv3p7/ct
+         3sastjHXXvdAFGdshQV1rM9wVukU75ZPInrQO9sKFzuoTwyBYrscRlOjPZAvhIkssxjk
+         UaFldhYwH7ak5K1t4i1ob4J5EVl8bdr+rcoQBuV3ImysO3LU1FxIgedFjWdh73AqYMe8
+         iVXEoNHVXqvaP3xp+SEHqgBMizEnKILEg/upuIvoz6FQjkaRH7QqrjZK+3MHh6jHndVZ
+         gNpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF4PgOSrIQ8dHgy6rJi8XaNl4nZXum3pXWgj9hUc25JodGsFHyStmrxtYRv21JvBbx4rATakeFcqzBoK/L6+jvM0P6fs6ldBhu1cg9Wl9J7KXaT8B9pqHWEhEo3qbmy/JG0VsWV/O2S2W/8GUiKYzzr1jT0fBA/VQQIXhL3YmZk+7LZVzz
+X-Gm-Message-State: AOJu0Yy4wYaD+fAYuqgnPc85blWMDKkZPVh7TRnWg3G8D5LMh1VgG5fQ
+	4Jt5Mxcy8ruPuhjywwAU+y2Yx8J6suVh9WBA5HS95Q/ZX8Ge1oBy
+X-Google-Smtp-Source: AGHT+IFOHdsawk3a1oH1WO+9GISGpmZg1DJsrjPf8odb5ltVd36eKzsjZVlRHORq5DhXsvzycXO/IA==
+X-Received: by 2002:a17:902:ce87:b0:1f7:3d0d:4cd with SMTP id d9443c01a7336-1f8625cf213mr127466945ad.24.1718695629167;
+        Tue, 18 Jun 2024 00:27:09 -0700 (PDT)
+Received: from ux-UP-WHL01 (mailgw01.gttektw.com. [45.117.96.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f98f901bebsm8562825ad.270.2024.06.18.00.27.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 00:27:08 -0700 (PDT)
+Date: Tue, 18 Jun 2024 15:27:02 +0800
+From: Charles Wang <charles.goodix@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: dmitry.torokhov@gmail.com, dan.carpenter@linaro.org,
+	dianders@chromium.org, robh@kernel.org, krzk+dt@kernel.org,
+	jikos@kernel.org, bentiss@kernel.org, hbarnor@chromium.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+Message-ID: <ZnE2xjDk5uZM-NON@ux-UP-WHL01>
+References: <20240614121538.236727-1-charles.goodix@gmail.com>
+ <20240614121538.236727-3-charles.goodix@gmail.com>
+ <20240614-blah-sworn-1e13ec9c0e94@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614-blah-sworn-1e13ec9c0e94@spud>
 
->> Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
->> to simplify the creation of SLAB caches.
->> 
->> Signed-off-by: Hongfu Li <lihongfu@kylinos.cn>
->> ---
->>   net/rds/tcp.c      | 4 +---
->>   net/rds/tcp_recv.c | 4 +---
->>   2 files changed, 2 insertions(+), 6 deletions(-)
->> 
->> diff --git a/net/rds/tcp.c b/net/rds/tcp.c
->> index d8111ac83bb6..3dc6956f66f8 100644
->> --- a/net/rds/tcp.c
->> +++ b/net/rds/tcp.c
->> @@ -719,9 +719,7 @@ static int __init rds_tcp_init(void)
->>   {
->>   	int ret;
->>   
->> -	rds_tcp_conn_slab = kmem_cache_create("rds_tcp_connection",
->> -					      sizeof(struct rds_tcp_connection),
->> -					      0, 0, NULL);
->> +	rds_tcp_conn_slab = KMEM_CACHE(rds_tcp_connection, 0);
+On Fri, Jun 14, 2024 at 04:27:52PM +0100, Conor Dooley wrote:
+> On Fri, Jun 14, 2024 at 08:15:38PM +0800, Charles Wang wrote:
+> > The Goodix GT7986U touch controller report touch data according to the
+> > HID protocol through the SPI bus. However, it is incompatible with
+> > Microsoft's HID-over-SPI protocol.
+> 
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - goodix,gt7986u
+> 
+> > +  goodix,hid-report-addr:
+> > +    description: the register address for retrieving HID report data.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> You're also missing an explanation anywhere in the patch for why this
+> address varies between gt7986u devices.
 
->KMEM_CACHE is declared as below:
->
->/*
->  * Please use this macro to create slab caches. Simply specify the
->  * name of the structure and maybe some flags that are listed above.
->  *
->  * The alignment of the struct determines object alignment. If you
->  * f.e. add ____cacheline_aligned_in_smp to the struct declaration
->  * then the objects will be properly aligned in SMP configurations.
->  */
->#define KMEM_CACHE(__struct, __flags)                                   \
->                 kmem_cache_create(#__struct, sizeof(struct __struct),   \
->                         __alignof__(struct __struct), (__flags), NULL)
+Ack, I will add an explanation in the next commit.
 
-Sorry, I'll check it carefully next time.
+The address variation between GT7986U devices is related to their firmware
+versions. While we strive to maintain consistency, significant firmware
+upgrades might necessitate changes to this address.
 
-Thanks, 
+Charles
 
-Hongfu Li
-
->>   	if (!rds_tcp_conn_slab) {
->>   		ret = -ENOMEM;
->>   		goto out;
->> diff --git a/net/rds/tcp_recv.c b/net/rds/tcp_recv.c
->> index c00f04a1a534..7997a19d1da3 100644
->> --- a/net/rds/tcp_recv.c
->> +++ b/net/rds/tcp_recv.c
->> @@ -337,9 +337,7 @@ void rds_tcp_data_ready(struct sock *sk)
->>   
->>   int rds_tcp_recv_init(void)
->>   {
->> -	rds_tcp_incoming_slab = kmem_cache_create("rds_tcp_incoming",
->> -					sizeof(struct rds_tcp_incoming),
->> -					0, 0, NULL);
->> +	rds_tcp_incoming_slab = KMEM_CACHE(rds_tcp_incoming, 0);
->>   	if (!rds_tcp_incoming_slab)
->>   		return -ENOMEM;
->>   	return 0;
+Thanks
 
