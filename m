@@ -1,146 +1,178 @@
-Return-Path: <linux-kernel+bounces-219001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CCE90C89D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:11:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDBE190C840
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FB42864E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:11:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F48B1F21D5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742761ACE9C;
-	Tue, 18 Jun 2024 09:55:49 +0000 (UTC)
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82391158876;
+	Tue, 18 Jun 2024 09:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZTdiwBh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7411ACE7F;
-	Tue, 18 Jun 2024 09:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B599B158216;
+	Tue, 18 Jun 2024 09:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718704549; cv=none; b=dMj+s5m2RRfjz4GURDs1tSpnCanxrDaYWXHAU02MnNPGJzl9eDwuzlhopS1kQl+TNozSX+NlPq17Te8Be4SRgxLrDRyiVr9Ykp/L6swPJ3zkoul3OYX5jJo+jH5ZosJvu9PaaGd3V//LwD+tGAbgG9F1XMH2PQK6TNAlS+ILEoU=
+	t=1718703871; cv=none; b=RSSlxhVrCXMDy8BQ1JbygOA2qCFUNasTN07dGndqxEdUjZEW37/9LEiMOr1OKz+8d2uiN799QMcCuDvYuvD7teYXjb6rsr+toxhFxQO5x4XYBZSlDyvc1bx1zNezy2mY+Df5O/bwmMB83dYL/hQB/+cOn5Vs8OKlLQ8YivW9HZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718704549; c=relaxed/simple;
-	bh=qd8tDe9P9tKzVK4z5CfJoRXC5U0gCQnlacAQ4A6bGf4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OJDaOiFVfL/ZsnEvP0VlEYhZgfGoekOv9PRe4hUEFpZStMpuJCUaooWGBr2xnJmoq4UvhNAYhVYGd9wcoQ/aKDTwsX6dbh0Rq6Jg0Dt+hZEa70BBYZ/buWZPeMlwNLPkEIl3uX/cqsigRjVLccIt1IRBVhXZLHR7jyNqjoWWT+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.178.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
-Received: from relay4-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::224])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id 97703C7245;
-	Tue, 18 Jun 2024 09:43:03 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3E6DAE0005;
-	Tue, 18 Jun 2024 09:42:53 +0000 (UTC)
-Message-ID: <3d6130f7-8d3a-41fd-ad4d-9a0c79496739@ovn.org>
-Date: Tue, 18 Jun 2024 11:42:52 +0200
+	s=arc-20240116; t=1718703871; c=relaxed/simple;
+	bh=3oAxYZunFcgJip6AK4A73PGRCJ7aIiU6dscSL48J7rY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jSmagKrvY3w5YG5PQVxYWFd5O/q9pWgR4WN3ArVwYtY6JW2cvBb05SQNTpaekypdYwC3uY+k43pG4IzM813CjoNptH1lbGjzgVfrOZTzjnzpYHjZjyvR0TGUE9KBlVwz0Sfvh107IzKFy/WIn2IhiXvydqw3OmqT9n+jyd/ZGdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZTdiwBh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F6AC3277B;
+	Tue, 18 Jun 2024 09:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718703871;
+	bh=3oAxYZunFcgJip6AK4A73PGRCJ7aIiU6dscSL48J7rY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lZTdiwBhX+9KSjDhSjnNqL+CrDUhMwCPPBpLP36PtsBK7q2iOrR5ViF+3jku6yg/t
+	 uXc46+MI3Z/s7cd2VtKfwtQU7w/ZcTa2gLR44n8btdWUVD1EW0Qc6cbLBgHIgJv4Mr
+	 8Bf9OxOL9kH6X3E+i96C/xs23kox4bl62v2a46hC2EqWGYXxxnEvff3gJzJiO/3rIA
+	 FDwQpE7jNnt+aJIof4HrtmVDIOkEWO1eT6uYtQwpfSh0uw3FcIx6YpiazJXNtmE8BJ
+	 HGMd4EXJ79ktmuBgko1M4nh8G77tpLnEM1oeCcXsgoGAj9XVTbqEmwUqXbDlbYrB1n
+	 mMf1oT9CpfMSA==
+Date: Tue, 18 Jun 2024 11:44:25 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" <linux-ide@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: ata: ahci-fsl-qoriq: convert to yaml
+ format
+Message-ID: <ZnFW-d1ktgWTZutZ@ryzen.lan>
+References: <20240617180241.901377-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: i.maximets@ovn.org, netdev@vger.kernel.org, aconole@redhat.com,
- echaudro@redhat.com, horms@kernel.org, dev@openvswitch.org,
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/9] net: sched: act_sample: add action cookie
- to sample
-To: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
-References: <20240603185647.2310748-1-amorenoz@redhat.com>
- <20240603185647.2310748-3-amorenoz@redhat.com>
- <282d4b46-70c1-454b-810a-ef3353f1b0f2@ovn.org>
- <CAG=2xmMqfBLeFjqzzHG3uHLx9d8sDsdbguxZm8cxbR5nEVDZ7Q@mail.gmail.com>
-Content-Language: en-US
-From: Ilya Maximets <i.maximets@ovn.org>
-Autocrypt: addr=i.maximets@ovn.org; keydata=
- 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
-In-Reply-To: <CAG=2xmMqfBLeFjqzzHG3uHLx9d8sDsdbguxZm8cxbR5nEVDZ7Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: i.maximets@ovn.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617180241.901377-1-Frank.Li@nxp.com>
 
-On 6/18/24 09:38, Adrián Moreno wrote:
-> On Mon, Jun 17, 2024 at 12:00:04PM GMT, Ilya Maximets wrote:
->> On 6/3/24 20:56, Adrian Moreno wrote:
->>> If the action has a user_cookie, pass it along to the sample so it can
->>> be easily identified.
->>>
->>> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
->>> ---
->>>  net/sched/act_sample.c | 12 ++++++++++++
->>>  1 file changed, 12 insertions(+)
->>>
->>> diff --git a/net/sched/act_sample.c b/net/sched/act_sample.c
->>> index a69b53d54039..5c3f86ec964a 100644
->>> --- a/net/sched/act_sample.c
->>> +++ b/net/sched/act_sample.c
->>> @@ -165,9 +165,11 @@ TC_INDIRECT_SCOPE int tcf_sample_act(struct sk_buff *skb,
->>>  				     const struct tc_action *a,
->>>  				     struct tcf_result *res)
->>>  {
->>> +	u8 cookie_data[TC_COOKIE_MAX_SIZE] = {};
->>
->> Is it necessary to initialize these 16 bytes on every call?
->> Might be expensive.  We're passing the data length around,
->> so the uninitialized parts should not be accessed.
->>
+On Mon, Jun 17, 2024 at 02:02:40PM -0400, Frank Li wrote:
+> Convert ahci-fsl-qoirq DT binding to yaml format.
 > 
-> They "should" not, indeed. I was just trying to be extra careful.
-> Are you worried TC_COOKIE_MAX_SIZE could grow or the cycles needed to
-> clear the current 16 bytes?
+> Additional changes:
+> - Add reg-names list, ahci and sata-ecc
+> - Add fsl,ls1028a-ahci and fsl,lx2060a-ahci
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../bindings/ata/ahci-fsl-qoriq.txt           | 21 -------
+>  .../devicetree/bindings/ata/fsl,ahci.yaml     | 58 +++++++++++++++++++
+>  2 files changed, 58 insertions(+), 21 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
+>  create mode 100644 Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt b/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
+> deleted file mode 100644
+> index 7c3ca0e13de05..0000000000000
+> --- a/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
+> +++ /dev/null
+> @@ -1,21 +0,0 @@
+> -Binding for Freescale QorIQ AHCI SATA Controller
+> -
+> -Required properties:
+> -  - reg: Physical base address and size of the controller's register area.
+> -  - compatible: Compatibility string. Must be 'fsl,<chip>-ahci', where
+> -    chip could be ls1021a, ls1043a, ls1046a, ls1088a, ls2080a etc.
+> -  - clocks: Input clock specifier. Refer to common clock bindings.
+> -  - interrupts: Interrupt specifier. Refer to interrupt binding.
+> -
+> -Optional properties:
+> -  - dma-coherent: Enable AHCI coherent DMA operation.
+> -  - reg-names: register area names when there are more than 1 register area.
+> -
+> -Examples:
+> -	sata@3200000 {
+> -		compatible = "fsl,ls1021a-ahci";
+> -		reg = <0x0 0x3200000 0x0 0x10000>;
+> -		interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
+> -		clocks = <&platform_clk 1>;
+> -		dma-coherent;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> new file mode 100644
+> index 0000000000000..162b3bb5427ed
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> @@ -0,0 +1,58 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/ata/fsl,ahci.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale QorIQ AHCI SATA Controller
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,ls1021a-ahci
+> +      - fsl,ls1043a-ahci
+> +      - fsl,ls1028a-ahci
+> +      - fsl,ls1088a-ahci
+> +      - fsl,ls2080a-ahci
+> +      - fsl,lx2160a-ahci
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: ahci
+> +      - const: sata-ecc
+> +    minItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  dma-coherent: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    sata@3200000 {
+> +        compatible = "fsl,ls1021a-ahci";
+> +        reg = <0x3200000 0x10000>;
+> +        interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&platform_clk 1>;
+> +        dma-coherent;
+> +    };
+> -- 
+> 2.34.1
+> 
 
-I'm assuming that any extra cycles spent per packet are undesirable,
-so should be avoided, if possible.  Even if we save 1-2 cycles per
-packet, it's a lot when we talk about millions of packets per second.
-
-In this particular case, it seems, we do not sacrifice anything, so
-it's just a couple of cycles back for free.
-
-Best regards, Ilya Maximets.
+Applied:
+https://git.kernel.org/pub/scm/linux/kernel/git/libata/linux.git/log/?h=for-6.11
 
