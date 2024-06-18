@@ -1,100 +1,107 @@
-Return-Path: <linux-kernel+bounces-219898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988D390D9AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4A990D9BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500581F236D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:45:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA6991F2507C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A322132492;
-	Tue, 18 Jun 2024 16:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A5D36AEF;
+	Tue, 18 Jun 2024 16:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Foh/x0jN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="TZMgdO29"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EF541C89;
-	Tue, 18 Jun 2024 16:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C696D14C5A3;
+	Tue, 18 Jun 2024 16:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718729059; cv=none; b=qm5FPhspkzwJfR++q9+PiE7tnE4nUmyZz7UgZOj8g3Q1mUk1mXuZcKKJUB1hGnNsE/c7uXm/ZpYk+FcgZmtv8Fkr6ZP0GgXmMVyu5swRfmlpu7dUkIfzK+q2yszOLAgj//QgSJ3WAoF+f3XTRMosz3ODgD0CZwrLBKLunrqaYKw=
+	t=1718729109; cv=none; b=gf3md/1g2YhxM7Am7/N/QLtgQhMKt1qT0BeBcIDgOASlMe+cfqiNCsivKQyh/WnA619ECYedJDcPLC7UhHPU6EsC6ilhko3eUcFuE165L4WkzT59rSlPco3+ZYqaesCiEjn5ml7aCCzMa68JpIdx/0C/N/FMvi56D1/yKpJgaPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718729059; c=relaxed/simple;
-	bh=fid3/V6FxJE496iO1WIJCZ9hVp1vymcmEx0GLQO/KuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qz77glILOX/JAgM4XmEs7Ds9ZmvnkgIY6fsBBheMu2x5nB71iUNZOQywwyyaa1UMOZje7qOJZBhXlGszlkz6fSURtNi5RaWWkW5mXi8OquwEq03yIh5Ay1IXYiB5tSCMl1xxm4r231uoU0dYPN7eUbBxx1vJz1tKbdwUDDczE4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Foh/x0jN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA6F3C4AF1C;
-	Tue, 18 Jun 2024 16:44:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718729059;
-	bh=fid3/V6FxJE496iO1WIJCZ9hVp1vymcmEx0GLQO/KuM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Foh/x0jNaZe3g5CpjJY/Rn3EeE6n/sW1zLVRAcOi6OMrNMWLCm7+sDJUxbnRs8oZ6
-	 WjXX7K7LuYPPBFITocb/Yy3aOBosY4J7E//StccxWsL8iTHJWUzbBfoHUUUJXirjJe
-	 kDEJJPZYZRDHq2eiTaT/L8xs+4c9rnZv5Oi++pc8=
-Date: Tue, 18 Jun 2024 18:44:16 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
-Message-ID: <2024061842-hatless-viewpoint-5024@gregkh>
-References: <20240617175818.58219-17-samitolvanen@google.com>
+	s=arc-20240116; t=1718729109; c=relaxed/simple;
+	bh=0Kx0EQ3cQ47Egstu5KMjBtikDuLK960QIiwAMaXxIXQ=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CUIgoSeN/RbfNlt1zQ130WSYY7apMyFde8Bc893uwyKwaGmJN7bZDlQX4i9kWsmE9R7pXBmy+qiPNW9Uoj70aPjkjnLFhndxeWVvj/RFO5mW0biJSFwiFn7tozu+Oc8tRM6LsmbvTUbDorlWgxnhb19Zwp13S1WTce9w7bBg/Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=TZMgdO29; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I5c7kM027173;
+	Tue, 18 Jun 2024 11:44:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=0Kx0EQ3cQ47Egstu5KMjBtikDuLK960QIiwAMaXxIXQ=; b=
+	TZMgdO29TlKp72WLpzK1L9V0dNnjpOomy/WdkG3AykhEaTy2wxXpmQxP/NPldyxy
+	svvJkVag9Ln4NIub00L7VL0TTaHsMYtTCQOduD+A8cnMMc6B2FHcNIXx7u5+vYmy
+	jS198qB4BdE7qae7eBqjfQSsWJDS/bWXA7cGS/SqiWD9Lu9gEzJumqZz9EJTsVMV
+	YMAPi4MmjI1SlfuLG7/msH0xO9dCEELboxd1SRqW1RcoEf7j1Y4Kr8M0R734IQnq
+	TbX7lA0otQp7zo6nvEEljwrrFHio7pVwCfWSbASo8bN0eglSXDTbYYcN9d2AzJUH
+	i8PpI+7Ogv0+0MIgerIr6g==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3ys7cjufb1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 11:44:52 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 17:44:51 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Tue, 18 Jun 2024 17:44:51 +0100
+Received: from EDIN6ZZ2FY3 (EDIN6ZZ2FY3.ad.cirrus.com [198.61.65.31])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id CB91D820248;
+	Tue, 18 Jun 2024 16:44:50 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: 'Mark Brown' <broonie@kernel.org>,
+        'Charles Keepax'
+	<ckeepax@opensource.cirrus.com>
+CC: <lgirdwood@gmail.com>, <linux-sound@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+References: <20240611132556.1557075-1-ckeepax@opensource.cirrus.com> <20240611132556.1557075-2-ckeepax@opensource.cirrus.com> <3bcb0b44-8885-40f9-938d-07b44116f3bf@sirena.org.uk>
+In-Reply-To: <3bcb0b44-8885-40f9-938d-07b44116f3bf@sirena.org.uk>
+Subject: RE: [PATCH 2/3] spi: cs42l43: Add speaker id support to the bridge configuration
+Date: Tue, 18 Jun 2024 17:44:50 +0100
+Message-ID: <00dd01dac19e$d6a6cc60$83f46520$@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617175818.58219-17-samitolvanen@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-gb
+Thread-Index: AQEWl5wsLc1/leMvWEC0YoAstNYIZAJvriGDAZjXGrSzNcj8AA==
+X-Proofpoint-GUID: Cbt0IDAhyB9d-n5AMCIfrtIFbjnd2vSa
+X-Proofpoint-ORIG-GUID: Cbt0IDAhyB9d-n5AMCIfrtIFbjnd2vSa
+X-Proofpoint-Spam-Reason: safe
 
-On Mon, Jun 17, 2024 at 05:58:19PM +0000, Sami Tolvanen wrote:
-> Hi folks,
-> 
-> This series implements CONFIG_MODVERSIONS for Rust, an important
-> feature for distributions like Android that want to ship Rust
-> kernel modules, and depend on modversions to help ensure module ABI
-> compatibility.
-> 
-> There have been earlier proposals [1][2] that would allow Rust
-> modules to coexist with modversions, but none that actually implement
-> symbol versioning. Unlike C, Rust source code doesn't have sufficient
-> information about the final ABI, as the compiler has considerable
-> freedom in adjusting structure layout for improved performance [3],
-> for example, which makes using a source code parser like genksyms
-> a non-starter. Based on Matt's suggestion and previous feedback
-> from maintainers, this series uses DWARF debugging information for
-> computing versions. DWARF is an established and relatively stable
-> format, which includes all the necessary ABI details, and adding a
-> CONFIG_DEBUG_INFO dependency for Rust symbol versioning seems like a
-> reasonable trade-off.
-> 
-> The first 12 patches of this series add a small tool for computing
-> symbol versions from DWARF, called gendwarfksyms. When passed a list
-> of exported symbols, the tool generates an expanded type string
-> for each symbol, and computes symbol CRCs similarly to genksyms.
-> gendwarfksyms is written in C and uses libdw to process DWARF, mainly
-> because of the existing support for C host tools that use elfutils
-> (e.g., objtool).
+On Tue, Jun 18, 2024 at 5:06=E2=80=AFPM Mark Brown wrote:
+> On Tue, Jun 11, 2024 at 02:25:55PM +0100, Charles Keepax wrote:
+> > From: Simon Trimmer <simont@opensource.cirrus.com>
+> >
+> > OEMs can connect a number of types of speakers to the sidecar =
+cs35l56
+> > amplifiers and a different speaker requires a different firmware
+> > configuration.
+>=20
+> This doesn't apply against current code, please check and resend.
 
-That's cool, can the C code be switched to also use this?  That way we
-only have one path/code for all of this?
+I'll catchup with Charles about this tomorrow (hopefully) - the snag =
+seems to be that an ancestor has been taken for integration via the =
+linux-spi tree
 
-thanks,
+https://lore.kernel.org/all/171778072618.80456.1164637774989487170.b4-ty@=
+kernel.org/
 
-greg k-h
+-Simon
+
 
