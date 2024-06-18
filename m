@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-219587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C6690D502
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:31:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E1A090D511
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCFB81C24B3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EF01C250F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F6F13C80B;
-	Tue, 18 Jun 2024 14:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0248B16A924;
+	Tue, 18 Jun 2024 14:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yuFHRFhu"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mTDie1rZ"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8C817966F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9C6158A37
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718719588; cv=none; b=ESOl44xy5Vo79/Y5Xq6mJ9nz1a5I9QLrp+MVqp0rFYiQ2ZkBjMzwRUAdJAUnKURxcbuqrNOInBjJlAf6fOKAIB4GVH+cYrNxUFbQ3YzMq2elqP2wu9rAsMOgsdxnqS+dvpAGPScObCiBd3tqR6qWNVSC1+Zk+QDQ4GGvKEXRcYE=
+	t=1718719625; cv=none; b=oPBOHrNSt271fwuU39VlGj0QBUMtaCchNyAA2hlfg2WKVRFSsysgsKS6uaN4mWhbh7OxN3gxigqP77E1l9ZdleZFDO+2Xx8AYiYGFutTkqGoxTyOvj5HfmX5ZOz8CqNcIES5wxUYXCxVeLVRoyitI92yXKIc288QomhM6TIGdwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718719588; c=relaxed/simple;
-	bh=IW28aZm+iZqULt5fWzI98gNVHRNFF3UQPxz10FVpx44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDaY+OLqlF3nqfzk6H7r1G+94XlCAbJRYFOSZ/C3Wd/ySERley7LhcWNM+ScCK9Ch6ALpXqWq65US7csBIZVYQqYUF3+yROD9FvXG2M4U2vLKWDjF2RQ1iFFyEalk5KRJ8lV3GsK8Iu1ovTfoIZDtZWvv4q9C6VaPHp7sAqaz2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yuFHRFhu; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1718719625; c=relaxed/simple;
+	bh=Hbmv3XFMpSTJICmgDgzCN1gkqr2Z8G4rUOXR0h+8tB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BR+o7YPYCSb/dIsH2rmbqUTjphAapKahlJt729/jTFYw5p2SPQwXq+Nqtu7aINK/n44uPN0/Z17pAzG+rf8+FqMDPBA6Z8kKwLCVjaWnN2oOIgEXhbBizjek0ZDDDz9vbcUO4FiUsAQ5Sgkx+VUbShGYfW84Bs4vtwiljqXbWOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mTDie1rZ; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4217d451f69so44670005e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:06:25 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso91915621fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:07:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718719584; x=1719324384; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uHCIp0mqAd4INL+D+JDPsyc4u2o37mgVjl2wvM2bkNQ=;
-        b=yuFHRFhuqLvBilpwZ5/nWfRtx9Q+fconHSDZXb6dALVIaPz4o3a+NzkBTJn81e08je
-         ZE9gKR18iImaFNZx5XviPJofMWYeN15tJ9I7UbFzmgkX8rABjMcPZ5myH6UnfP71J+Su
-         QmFpTGXr95GuOwIE09x+1WZjYYCqQWgI9dlioTeogry/LOs68p5mlXHM52TVTD8FqFbP
-         hKSWbF1gNlzY0a6H3ugq2tpXTGw3MKK3DZVmKqNzp81ZmiFccYLtfZH7T25ZYlbPfY+O
-         bAPQowwTY8qfBUanwYb6lLWq6pJ2BA30qFfpBf8OpoNTOyq8eCNlQQzHJHn3FZCqzEPo
-         S8hA==
+        d=linaro.org; s=google; t=1718719620; x=1719324420; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3si6hS7kdezOYwXxr/YuIhrD0I+xKbIgHBoEok6r9As=;
+        b=mTDie1rZDbPcRXKv2x+uaYRkLxIb1KXZXxguJF89CGrEoo5kduNje4eMTEqOrODAEF
+         zgdR5eJaWRtBWo4yKF2cLvZbO6xHDY+HagLXPYtLSM1874pKcYRXdodqsInp2Q5zzScg
+         xvlq0kBwM98kIDlTDbnSFlQDVkYXdrnIQr2L/MtuZRT8qMXc+d4tNsfxOXPNtC/DzInS
+         WrxoCmaKPhJfZ6R8LDyhlCXP/GUuM/tU/huFgDUzUJSXB/082T9CBQN9Ns/4cL6O8zka
+         ZOTvqnfR9+mFE9b5MmPksS/VqZEIiKhjDiWFO6nz3blInChKtGv/oj+2Dem24qYwA5dl
+         jQvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718719584; x=1719324384;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uHCIp0mqAd4INL+D+JDPsyc4u2o37mgVjl2wvM2bkNQ=;
-        b=viOBm2GFgxHtFwup6AhlKzsWxuF25c8AsPmTRXI57+I91YOGZDFernduL27JsXOKEa
-         VArNBDdTkboSTbppRtN79rxl/FqYI7aF9CD4XQ8QUsRgn+wDi/MeH4867fVemdvzjSMC
-         eldzE4Dk7zQR0a6OYCwoP25gl/5H5ScXt/2IsMgCN9pSshMf6LEdoWQaF/3cwalOdHy7
-         Nrl5mTXhJWJY7K4XfoYGkilD86gl1qg1pEbodAPjG0lPGKX2GehoyclqdmrtYea5mEMg
-         PZRb08aoCGlFGBD0vvlReEV9kn13I0ACahmw0VyIscWjWqZcE1f/rcWa5ni7jhpdRkBg
-         hHuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7BZ0ic0pSOnyt2vHkYd7VkqURhau6Ra53Slox8DdrNp1SoOCMHylLtoZtXzlfpwFcUa8+1yyHL0mT1S2eIsrSoq77hmyxhN70lOqv
-X-Gm-Message-State: AOJu0YwtUycNOQIeuxA6ynkopzr69GzaEiBIyrZQcbI8TbvO7TYF1FSR
-	el4MTPZ6mGb4lKhxFmxI1k94FHTaPjDbmULCWeOH8cD2tJhhBOclchx4GQXY9Bw=
-X-Google-Smtp-Source: AGHT+IFKjvqZ/QgQLGa1tSbzPra7Zl+qeL2qLD06C0X+aa3rqVch9Z/Yi7ZIfeugjgmnZnNJG3ex6w==
-X-Received: by 2002:a05:600c:1818:b0:421:4786:eb0c with SMTP id 5b1f17b1804b1-4230485a6acmr107353135e9.33.1718719584403;
-        Tue, 18 Jun 2024 07:06:24 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f641a5b4sm189275015e9.41.2024.06.18.07.06.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 07:06:24 -0700 (PDT)
-Date: Tue, 18 Jun 2024 17:06:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Lukasz Majewski <lukma@denx.de>, Vladimir Oltean <olteanv@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Oleksij Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	Casper Andersson <casper.casan@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH v1 net-next] net: dsa: Allow only up to two HSR HW
- offloaded ports for KSZ9477
-Message-ID: <1e2529b4-41f2-4483-9b17-50c6410d8eab@moroto.mountain>
-References: <20240618130433.1111485-1-lukma@denx.de>
- <339031f6-e732-43b4-9e83-0e2098df65ef@moroto.mountain>
- <24b69bf0-03c9-414a-ac5d-ef82c2eed8f6@lunn.ch>
+        d=1e100.net; s=20230601; t=1718719620; x=1719324420;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3si6hS7kdezOYwXxr/YuIhrD0I+xKbIgHBoEok6r9As=;
+        b=FWfgW2aiAWh/ZsK83/rpYxQICY2ZxAiOQ4B3tusxGN+suH2+ANfe8T8R48Ge0t7jTs
+         MKoBQG50XlyNwim0OdKnM193tYnSHPpV0T+oaNV3tmn8UJPB5yj+yGUn/aPlVO8ErI6Q
+         JPIJQtazpWV+zlXX3S0cqtlu4BEf2kj96Okt3A8hKzReO6/hUUS6g6HNd8UoTNzRmgax
+         spGXXAuhpO1GxvDDW9G2Hp1MFQvNqayWvqKSGXw/n1vTNx0mMJogB8ufYU9WKRDESDwT
+         tU9elhKovfEh6tNYysbFR9IT84a8QHd2Jfpu0c7q+aY7wa2QuIDWuTAroDOc5fUX7iTX
+         IASw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhF/kb5IJn6H5NHsI3sB8r4fHMnOY/T5tWiQec1FeGIz60exX9/NB6jPkbiUo498FO+iVc6U3r0wtLuiK51DI0NLxj/x94k1efkxcd
+X-Gm-Message-State: AOJu0Yw/2SA9YAGJGixdzRFuD2NC573v0AJnDGAokT3uatz8pBbqNxzm
+	EaO1MGupDgXO0lun62+19r0wiAJFD4hnxabYV6unvOEhVc9+u4bcmEpppYa69oE=
+X-Google-Smtp-Source: AGHT+IFJLofjUC4t74eowxJ2/hsKLGcRlwVabKgkrjURD4QDMFbmjNw63Vi/v4qqaIE7wwB4ATA/8w==
+X-Received: by 2002:ac2:5de8:0:b0:52c:8289:e891 with SMTP id 2adb3069b0e04-52ca6e56efamr9347270e87.6.1718719620233;
+        Tue, 18 Jun 2024 07:07:00 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca28723dcsm1517734e87.151.2024.06.18.07.06.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 07:06:59 -0700 (PDT)
+Message-ID: <51ee3d59-cca9-45d0-8a0b-31bc707b22cd@linaro.org>
+Date: Tue, 18 Jun 2024 16:06:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <24b69bf0-03c9-414a-ac5d-ef82c2eed8f6@lunn.ch>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 21/23] arm64: dts: qcom: starqltechn: remove
+ framebuffer
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+ Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ phone-devel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-21-e3f6662017ac@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240618-starqltechn_integration_upstream-v3-21-e3f6662017ac@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 18, 2024 at 03:52:23PM +0200, Andrew Lunn wrote:
-> > diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-> > index 2818e24e2a51..181e81af3a78 100644
-> > --- a/drivers/net/dsa/microchip/ksz_common.c
-> > +++ b/drivers/net/dsa/microchip/ksz_common.c
-> > @@ -3906,6 +3906,11 @@ static int ksz_hsr_join(struct dsa_switch *ds, int port, struct net_device *hsr,
-> >  		return -EOPNOTSUPP;
-> >  	}
-> >  
-> > +	if (hweight8(dev->hsr_ports) > 1) {
-> > +		NL_SET_ERR_MSG_MOD(extack, "Cannot offload more than two ports (in use=0x%x)", dev->hsr_ports);
-> > +		return -EOPNOTSUPP;
-> > +	}
+
+
+On 6/18/24 15:59, Dzmitry Sankouski wrote:
+> Remove framebuffer because a panel driver introduced.
 > 
-> Hi Dan
-> 
-> I don't know HSR to well, but this is offloading to hardware, to
-> accelerate what Linux is already doing in software. It should be, if
-> the hardware says it cannot do it, software will continue to do the
-> job. So the extack message should never be seen.
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
 
-Ah.  Okay.  However the rest of the function prints similar messages
-and so probably we could remove those error messages as well.  To be
-honest, I just wanted something which functioned as a comment and
-mentioned "two ports".  Perhaps the condition would be more clear as
->= 2 instead of > 1?
+Not sure if you want it gone, this still provides framebuffer output
+for the first 1 second or so
 
-regards,
-dan carpenter
-
+Konrad
 
