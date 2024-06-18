@@ -1,251 +1,207 @@
-Return-Path: <linux-kernel+bounces-218740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3595890C4DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:22:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A7590C517
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 272B81C20D24
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:22:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 931552830ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2FD1514C5;
-	Tue, 18 Jun 2024 07:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E81215533E;
+	Tue, 18 Jun 2024 07:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TMxkDlbH"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E032c5qG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0078D14F11C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F91113A877
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718695356; cv=none; b=M1zsj+D0k1FI6uLsCNeQceO8trh5eO4JNuaRuth3gpp+nAaqUNKYXDwYKSoA9UxZCVEH8dP2e7yKX548I/2nERPCWzf+Gr8x7cIcS+1T4+IkPhtKBf979iMAmz1mEdHL0UVS0IZ/GsUKmQ6AJBWGLSJ88NxJeJU4km0m0Tn7u7E=
+	t=1718695434; cv=none; b=MXdySEe8ILeabZd8EVX1kouUoae7FXsmdbKB79dZbiJtnk/qC0ixo9CQIP1gA3URUuqGDLUddawUFbiuyyMNW849Bi3yTPJkRg1zfViH0huszNYVDEe6LFV7SpoxRnikDJhFg291tUReX9QeU2+xfJAqHg7H8KTr3KgXG588/Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718695356; c=relaxed/simple;
-	bh=L4wf4x2dBZQvEnpkKvLPORNBkAK3TS9LwI2recHxqhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TWyOlF1UyOy8+h9ZdNQ+6L1gpFC10YOD2bnXTIAzUEIjm8rLAiYTY3ME1QNhQDYB398NMyQGvLHi1BRcuAeB5/hNd7qQ1IYnvLCUNkbexOS8INuszcUCd/dqVi79Rg7c50qJEGZooAoqat3xpXpN//XmrcUouxFpf+uUR+IKUA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TMxkDlbH; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-705fff50de2so1244883b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:22:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718695354; x=1719300154; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Q8tUv88VFJag+gHbNp32GqIa0FEWnLAl/tXMaE0LKQE=;
-        b=TMxkDlbH4c5urzf0yhxuPNvFMuRp81/pyouYNyen7BPTYwfZSVqdE80zl8j05lDmh3
-         +3YIL86M/MRLRIEvc1y0HqVU3dUAnjeHqTi/EMmjmJadxGvd3CeoevXPhgJiBHyapk11
-         Gxh2O7HTWisu+SDKYgXCOl1OIRrPQwjL3pzBiyRwRXS66MLu1tnocWBND6w+6A3TZiq+
-         u+AZbMBdBiS86RuJpKPULrM4qbmeW4AUGPM3kUHy4Wvs/6bse2Q+ihRCGyxS8T5A4cmW
-         SvVeZ7vq+TdF2B6mn9jsZb8WJn70Ym8dK0ZUm43O1zhRoNrqrqs+i9L9Tdurumk0bEeq
-         NVMg==
+	s=arc-20240116; t=1718695434; c=relaxed/simple;
+	bh=jtutfQ/YnGXYiZoliavf4txQTcAFOGOJa0KhiybXy94=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DU9797knw2Ro+ZI2WZOkUHxqDw0BXD+LHk6YG45nZrGRkjO0H/Vv4MYYYWjZCba1YMQ+/QfPX54qhDvcyTIhoSz4bvIkY7RdqUP+TUG3OVFlrcejc+vfMpYFAYAZR0u1Mb5Tm5JzEuIWefyN9fu2jFgI94kcHAhS00BwoUFDuAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E032c5qG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718695432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ektUs2o9ZwmGp4QGKP67xVqU+KCA2sw3x/s+8mFOJyU=;
+	b=E032c5qG2LFD1yEBJwiOUNtLfKM3IjgLZZWWAAZxO4gAIGiOPMHJT46I1Qmj1LfNnRZdvX
+	kvg3S9BxlN8HbzuOjsPmFfwRobCSFqmwkVuQpBLI+TxN1RrtawHQwUiv+PxeWwVzB4P2Av
+	WOT8OvrTQC6pXwb35AlV6Ex40tmj/rw=
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
+ [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-284-mk2WrX_DOhqloq_nzkGYmw-1; Tue, 18 Jun 2024 03:23:50 -0400
+X-MC-Unique: mk2WrX_DOhqloq_nzkGYmw-1
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-2502a80477bso109268fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:23:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718695354; x=1719300154;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1718695429; x=1719300229;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q8tUv88VFJag+gHbNp32GqIa0FEWnLAl/tXMaE0LKQE=;
-        b=VxSSse/1Ilki2uw0NjHkRmjppm1NpMbzFsKPTd9cKsFb+AEAZqBBmH7WJJqyul9B3Y
-         ZD0wYcng8HRPFCjodOcgIzY2uFfkvNH0BvLL6Pedc+SixFW8a2DZvX1xBQNEkPz4A4wq
-         QRHLuxM+kLp4JmtTKJvI6Ur5QwZEZA8wAYYVgTe6bb8CWKo2xl4e3hogjxY+3c2OyGXF
-         QbnNZ+TirHtfZ88hbIu5qCp+xDf3cil8JhMKeSYS0Xsa6E+4wN3H/kEzZTVvRFjoESC3
-         ylLV+qSDO7yn2tvqCHP3VZFhEKwRM7vA8Ctnz9NfEmLAgo/PdgGmRPhsfgITWcjz8kBZ
-         OzCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIfGo52R2+LwHLVu3GjwimR03RM5nwT/o6UOLU8vociL95lPS9RkQOx+NzHDoXbup/u1r/ksVe5AviCh8aC6/i1T9hGiUyHF6t1Plg
-X-Gm-Message-State: AOJu0YyO7dkvObH4uSpHJmEhGXteKrnUHfw/1LC+eSVCJKY92aper5BT
-	rlAXrF85g1qswCnJMUshsu0ne1Iz2g4lOsCQDU8n4KX0M3zmwKOPPCKEq7LmeQ==
-X-Google-Smtp-Source: AGHT+IHZA/cvn9bGNm1TUpflHmsdUDHSxPPQlxV8VE5MQB+zfjE1Wi5tnhZ8CkLkeliOfy7yjei59g==
-X-Received: by 2002:a05:6a00:2d95:b0:704:229e:54bd with SMTP id d2e1a72fcca58-7061aba4f70mr3085370b3a.8.1718695354052;
-        Tue, 18 Jun 2024 00:22:34 -0700 (PDT)
-Received: from thinkpad ([120.60.129.117])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3bf7esm8386242b3a.114.2024.06.18.00.22.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 00:22:33 -0700 (PDT)
-Date: Tue, 18 Jun 2024 12:52:22 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, johan+linaro@kernel.org,
-	bmasney@redhat.com, djakov@kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	vireshk@kernel.org, quic_vbadigan@quicinc.com,
-	quic_skananth@quicinc.com, quic_nitegupt@quicinc.com,
-	quic_parass@quicinc.com, krzysztof.kozlowski@linaro.org,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v14 1/4] PCI: qcom: Add ICC bandwidth vote for CPU to
- PCIe path
-Message-ID: <20240618072222.GC5485@thinkpad>
-References: <20240609-opp_support-v14-0-801cff862b5a@quicinc.com>
- <20240609-opp_support-v14-1-801cff862b5a@quicinc.com>
- <1b5f11a6-52e3-55ca-8c80-dca8f7e0c7c7@linux.intel.com>
+        bh=ektUs2o9ZwmGp4QGKP67xVqU+KCA2sw3x/s+8mFOJyU=;
+        b=TlqIiMHBCEiQWrvbAFG5m7y1iDv1rytdFSJ7GwpJwr1NUGT74Dp5s8vpVCJEYGUIlV
+         Q1fy+EpoiXO0cDUprz3Mojkro39FBIO3M0++jBNphmslE1FWiinqVvunwQYGxI5e9No3
+         UGEL4koh8UL8w4atiCSZPpQoVwfM+yNiwY4ejItlmbcB6YibQkyHs1XBIbjsTJbNcZ7+
+         yJJW42GWbV/VftL9ZxKGB+7DuntSjDSo385awfT46eiEmKF8iZs84s0/cBIPNeKiW6dN
+         X71TM+BOUzYqfjNSeKnm9BDZE7ne6qxmIfFeoaKjAJ/AehUOwStD0eQ/OrT+EBj0yP4G
+         iKUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUarE5wizmVzao5p4nukBe7p+qGeJKAzLGFLC4BabL7JiGaV78jDkt6PV8gZCfIlaklQWNSbhP2xZDxFuX8oIAmj6vCeY/LGILSYDwm
+X-Gm-Message-State: AOJu0YzfRW3+tuyJDC6QIv0H4s+oAEMleZricqlrzaxrbOMM5hzkj+SD
+	0UY7aH6Z5+VIAqXB89gazaWFjWlPD0oUndPdwoC/ledVoJeWM/AwNvgtzg8bQQrN+cttKJr+m7J
+	dRKEgY7stHxNPWRiM6Ypf28o4NdN/0+OZjDeXRezxVdFLSk33PWSOQsayrv5LVg==
+X-Received: by 2002:a05:6870:9a25:b0:254:a7df:721b with SMTP id 586e51a60fabf-25842cfc466mr12492783fac.5.1718695428987;
+        Tue, 18 Jun 2024 00:23:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHGzh9F+irOsR5lWcnREhTCTKn/pzQg2Hw7QKb2g0z70Pr0m1XAmIppde3Pf/VUtv48DRUNuQ==
+X-Received: by 2002:a05:6870:9a25:b0:254:a7df:721b with SMTP id 586e51a60fabf-25842cfc466mr12492771fac.5.1718695428566;
+        Tue, 18 Jun 2024 00:23:48 -0700 (PDT)
+Received: from [10.66.61.39] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3cda1sm8387767b3a.117.2024.06.18.00.23.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 00:23:48 -0700 (PDT)
+Message-ID: <25df0c92-8c02-4804-b4a0-7ec7a6790a89@redhat.com>
+Date: Tue, 18 Jun 2024 15:23:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/3] KVM: selftests: aarch64: Add invalid filter test
+ in pmu_event_filter_test
+To: Raghavendra Rao Ananta <rananta@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>,
+ kvmarm@lists.linux.dev, Eric Auger <eric.auger@redhat.com>,
+ James Morse <james.morse@arm.com>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240613082345.132336-1-shahuang@redhat.com>
+ <20240613082345.132336-4-shahuang@redhat.com>
+ <CAJHc60xpGAA1pmz0ad_Fq3a5M-pQMiyxQ4hdNhc6vQrgpSjGww@mail.gmail.com>
+Content-Language: en-US
+From: Shaoqin Huang <shahuang@redhat.com>
+In-Reply-To: <CAJHc60xpGAA1pmz0ad_Fq3a5M-pQMiyxQ4hdNhc6vQrgpSjGww@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1b5f11a6-52e3-55ca-8c80-dca8f7e0c7c7@linux.intel.com>
 
-On Fri, Jun 14, 2024 at 03:14:10PM +0300, Ilpo Järvinen wrote:
-> On Sun, 9 Jun 2024, Krishna chaitanya chundru wrote:
+
+
+On 6/18/24 08:01, Raghavendra Rao Ananta wrote:
+> Hi Shaoqin,
 > 
-> > To access the host controller registers of the host controller and the
-> > endpoint BAR/config space, the CPU-PCIe ICC (interconnect) path should
-> > be voted otherwise it may lead to NoC (Network on chip) timeout.
-> > We are surviving because of other driver voting for this path.
-> > 
-> > As there is less access on this path compared to PCIe to mem path
-> > add minimum vote i.e 1KBps bandwidth always which is sufficient enough
-> > to keep the path active and is recommended by HW team.
-> > 
-> > During S2RAM (Suspend-to-RAM), the DBI access can happen very late (while
-> > disabling the boot CPU). So do not disable the CPU-PCIe interconnect path
-> > during S2RAM as that may lead to NoC error.
-> > 
-> > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-qcom.c | 45 +++++++++++++++++++++++++++++++---
-> >  1 file changed, 41 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > index 5f9f0ff19baa..ff1d891c8b9a 100644
-> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > @@ -253,6 +253,7 @@ struct qcom_pcie {
-> >  	struct phy *phy;
-> >  	struct gpio_desc *reset;
-> >  	struct icc_path *icc_mem;
-> > +	struct icc_path *icc_cpu;
-> >  	const struct qcom_pcie_cfg *cfg;
-> >  	struct dentry *debugfs;
-> >  	bool suspended;
-> > @@ -1369,6 +1370,9 @@ static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
-> >  	if (IS_ERR(pcie->icc_mem))
-> >  		return PTR_ERR(pcie->icc_mem);
-> >  
-> > +	pcie->icc_cpu = devm_of_icc_get(pci->dev, "cpu-pcie");
-> > +	if (IS_ERR(pcie->icc_cpu))
-> > +		return PTR_ERR(pcie->icc_cpu);
-> >  	/*
-> >  	 * Some Qualcomm platforms require interconnect bandwidth constraints
-> >  	 * to be set before enabling interconnect clocks.
-> > @@ -1378,11 +1382,25 @@ static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
-> >  	 */
-> >  	ret = icc_set_bw(pcie->icc_mem, 0, QCOM_PCIE_LINK_SPEED_TO_BW(1));
-> >  	if (ret) {
-> > -		dev_err(pci->dev, "failed to set interconnect bandwidth: %d\n",
-> > +		dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
-> >  			ret);
+> On Thu, Jun 13, 2024 at 1:27 AM Shaoqin Huang <shahuang@redhat.com> wrote:
+>>
+>> Add the invalid filter test which sets the filter beyond the event
+>> space and sets the invalid action to double check if the
+>> KVM_ARM_VCPU_PMU_V3_FILTER will return the expected error.
+>>
+>> Reviewed-by: Eric Auger <eric.auger@redhat.com>
+>> Signed-off-by: Shaoqin Huang <shahuang@redhat.com>
+>> ---
+>>   .../kvm/aarch64/pmu_event_filter_test.c       | 37 +++++++++++++++++++
+>>   1 file changed, 37 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c b/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
+>> index fb0fde1ed436..13b2f354c39b 100644
+>> --- a/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
+>> +++ b/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
+>> @@ -8,6 +8,7 @@
+>>    * This test checks if the guest only see the limited pmu event that userspace
+>>    * sets, if the guest can use those events which user allow, and if the guest
+>>    * can't use those events which user deny.
+>> + * It also checks that setting invalid filter ranges return the expected error.
+>>    * This test runs only when KVM_CAP_ARM_PMU_V3, KVM_ARM_VCPU_PMU_V3_FILTER
+>>    * is supported on the host.
+>>    */
+>> @@ -178,6 +179,40 @@ static void destroy_vpmu_vm(void)
+>>          kvm_vm_free(vpmu_vm.vm);
+>>   }
+>>
+>> +static void test_invalid_filter(void)
+>> +{
+>> +       struct kvm_pmu_event_filter invalid;
+>> +       int ret;
+>> +
+>> +       pr_info("Test: test_invalid_filter\n");
+>> +
+>> +       memset(&vpmu_vm, 0, sizeof(vpmu_vm));
+>> +
+>> +       vpmu_vm.vm = vm_create(1);
+>> +       vpmu_vm.vcpu = vm_vcpu_add_with_vpmu(vpmu_vm.vm, 0, guest_code);
+>> +       vpmu_vm.gic_fd = vgic_v3_setup(vpmu_vm.vm, 1, 64);
+>> +       __TEST_REQUIRE(vpmu_vm.gic_fd >= 0,
+>> +                      "Failed to create vgic-v3, skipping");
+>> +
+>> +       /* The max event number is (1 << 16), set a range largeer than it. */
+> nit: s/largeer/larger
 > 
-> I think it would be better to separate these message clarifications into a 
-> separate patch. It would make both patches more into the point.
+> Also, perhaps not in this series, but we can also check for -EBUSY
+> situations such as setting a (valid) filter after
+> KVM_ARM_VCPU_PMU_V3_INIT and after the vCPUs have started.
 > 
 
-No, it doesn't make sense. This patch introduces ICC vote for CPU-PCIe path, so
-it _should_ also update the error message.
+That's also a great test, we can add it in the future.
 
-- Mani
+> Besides that, Reviewed-by: Raghavendra Rao Ananta <rananta@google.com>
 
-> Other than that, the change looked okay to me.
+Thanks a lot for your reviewing.
+
 > 
-> -- 
->  i.
+> - Raghavendra
 > 
-> >  		return ret;
-> >  	}
-> >  
-> > +	/*
-> > +	 * Since the CPU-PCIe path is only used for activities like register
-> > +	 * access of the host controller and endpoint Config/BAR space access,
-> > +	 * HW team has recommended to use a minimal bandwidth of 1KBps just to
-> > +	 * keep the path active.
-> > +	 */
-> > +	ret = icc_set_bw(pcie->icc_cpu, 0, kBps_to_icc(1));
-> > +	if (ret) {
-> > +		dev_err(pci->dev, "Failed to set bandwidth for CPU-PCIe interconnect path: %d\n",
-> > +			ret);
-> > +		icc_set_bw(pcie->icc_mem, 0, 0);
-> > +		return ret;
-> > +	}
-> > +
-> >  	return 0;
-> >  }
-> >  
-> > @@ -1408,7 +1426,7 @@ static void qcom_pcie_icc_update(struct qcom_pcie *pcie)
-> >  
-> >  	ret = icc_set_bw(pcie->icc_mem, 0, width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
-> >  	if (ret) {
-> > -		dev_err(pci->dev, "failed to set interconnect bandwidth: %d\n",
-> > +		dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
-> >  			ret);
-> >  	}
-> >  }
-> > @@ -1570,7 +1588,7 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
-> >  	 */
-> >  	ret = icc_set_bw(pcie->icc_mem, 0, kBps_to_icc(1));
-> >  	if (ret) {
-> > -		dev_err(dev, "Failed to set interconnect bandwidth: %d\n", ret);
-> > +		dev_err(dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n", ret);
-> >  		return ret;
-> >  	}
-> >  
-> > @@ -1594,7 +1612,18 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
-> >  		pcie->suspended = true;
-> >  	}
-> >  
-> > -	return 0;
-> > +	/*
-> > +	 * Only disable CPU-PCIe interconnect path if the suspend is non-S2RAM.
-> > +	 * Because on some platforms, DBI access can happen very late during the
-> > +	 * S2RAM and a non-active CPU-PCIe interconnect path may lead to NoC
-> > +	 * error.
-> > +	 */
-> > +	if (pm_suspend_target_state != PM_SUSPEND_MEM) {
-> > +		ret = icc_disable(pcie->icc_cpu);
-> > +		if (ret)
-> > +			dev_err(dev, "Failed to disable CPU-PCIe interconnect path: %d\n", ret);
-> > +	}
-> > +	return ret;
-> >  }
-> >  
-> >  static int qcom_pcie_resume_noirq(struct device *dev)
-> > @@ -1602,6 +1631,14 @@ static int qcom_pcie_resume_noirq(struct device *dev)
-> >  	struct qcom_pcie *pcie = dev_get_drvdata(dev);
-> >  	int ret;
-> >  
-> > +	if (pm_suspend_target_state != PM_SUSPEND_MEM) {
-> > +		ret = icc_enable(pcie->icc_cpu);
-> > +		if (ret) {
-> > +			dev_err(dev, "Failed to enable CPU-PCIe interconnect path: %d\n", ret);
-> > +			return ret;
-> > +		}
-> > +	}
-> > +
-> >  	if (pcie->suspended) {
-> >  		ret = qcom_pcie_host_init(&pcie->pci->pp);
-> >  		if (ret)
-> > 
-> > 
+> 
+> 
+>> +       invalid = __DEFINE_FILTER(BIT(15), BIT(15) + 1, 0);
+>> +       ret = __kvm_device_attr_set(vpmu_vm.vcpu->fd, KVM_ARM_VCPU_PMU_V3_CTRL,
+>> +                                   KVM_ARM_VCPU_PMU_V3_FILTER, &invalid);
+>> +       TEST_ASSERT(ret && errno == EINVAL, "Set Invalid filter range "
+>> +                   "ret = %d, errno = %d (expected ret = -1, errno = EINVAL)",
+>> +                   ret, errno);
+>> +
+>> +       /* Set the Invalid action. */
+>> +       invalid = __DEFINE_FILTER(0, 1, 3);
+>> +       ret = __kvm_device_attr_set(vpmu_vm.vcpu->fd, KVM_ARM_VCPU_PMU_V3_CTRL,
+>> +                                   KVM_ARM_VCPU_PMU_V3_FILTER, &invalid);
+>> +       TEST_ASSERT(ret && errno == EINVAL, "Set Invalid filter action "
+>> +                   "ret = %d, errno = %d (expected ret = -1, errno = EINVAL)",
+>> +                   ret, errno);
+>> +
+>> +       destroy_vpmu_vm();
+>> +}
+>> +
+>>   static void run_test(struct test_desc *t)
+>>   {
+>>          pr_info("Test: %s\n", t->name);
+>> @@ -300,4 +335,6 @@ int main(void)
+>>          TEST_REQUIRE(kvm_pmu_support_events());
+>>
+>>          run_tests();
+>> +
+>> +       test_invalid_filter();
+>>   }
+>> --
+>> 2.40.1
+>>
+>>
+> 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Shaoqin
+
 
