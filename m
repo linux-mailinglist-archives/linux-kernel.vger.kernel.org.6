@@ -1,148 +1,164 @@
-Return-Path: <linux-kernel+bounces-218903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A3290C78D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:47:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC8D90C78E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82ABCB25C8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D01F1C21C2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99461ABCA9;
-	Tue, 18 Jun 2024 09:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9EB153BF8;
+	Tue, 18 Jun 2024 09:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l8CvjjAJ"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o2TdXiWr"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1541527BA
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF12613E409
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718701298; cv=none; b=SqKKKTZU155dheLA00fSNBRQZGBdYOtYom8eZXTZzrXCTzUh7bqmXCIanJ23bEnrA4MRpUavJlRQ9GXRDQygh3le4J3b+XsPrzCsJzZsU7Kj8nC9kYtYguFnDtujBYdG9aGc8qYvdph581MdxKB7f6CdDA06KHMGlBf0dpSYTwg=
+	t=1718701400; cv=none; b=RcduOqmBjY1iQ/9m9aFmrYrSRWO57RnV2PtYBKXEBc1he0mD2zth+tyYEBgEINiBGYP+9ruXnG7pIFAoTYe1t9rwDlhIphpt7JluIYqt/TAbulIU7UcUjodgWKnMdzriJ8V962aNtdkzcPx7i2MIjBj/N6M2xnNQ4o1eABUNt8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718701298; c=relaxed/simple;
-	bh=1ERlM9xbe+p9Wi478V8mqPsP/ZS3bIAAbT6Tpz8s6+A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BQWsljuWZROFP4d9QLwy/LVkQ9QRx4uPA2U3zttoTaPgN4z/KlAi9uAf2iKlDuDq/LXYGNviFnp0OY3HhyUogqd8LgsoeEhRkaJhAsVp6gOJSiM7Em9v8Pb5hbF+Cump4rLmevRJw1aKvWLuOoG9Lx8mC8X4KeyroqLrXZAU3xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l8CvjjAJ; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1718701400; c=relaxed/simple;
+	bh=LQAnBnNceR1Odvb/waMeiElielfNWvoliCJGMlSUvsQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gajld3EQ5Jx9VqOniH8nmRf7h2EuSk66L/hfzxcYduwh+Drkq+ll0+dXtiQot7JC3mV4N8babNWks+rdnKCKhDnAh6mwt3qja7HFkw4BaaCCjhPN6alRCsYy1Na0Rh9hPwTNla82gg4XMkx/Qs9el+j4mh8fEEKKJAU6iIQRB0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o2TdXiWr; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57cd26347d3so2792951a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:01:36 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so54927551fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:03:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718701295; x=1719306095; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TY5XZJXNokRJfFdx27EQvsooJR1M7d0Z/bZec752EIc=;
-        b=l8CvjjAJYGg4o1HIuP6sM6Qj0j0DGc9P2C/OR+nqgUq9+9VoHfPDtUHDrpvB4a4Ri3
-         4/OEO6GuDYrKKX9VPEFD/DC2IkbHphuXvTkPEc1WB7w3PKKgr0kzfXE5dKIU8doQoyKK
-         4N95N2oubUy3DbpMd+X5MWMce+ZwljQJKmoDYKIUqXikqo/vVEdC2NP5Nf/h6kdRM2xN
-         Utnu+NNrUBFAse0KDBXpk50pdsz4b0xcTCYqHRUyshOOMgUpiBSuYS+hg0eTNVhXQYrU
-         YxAcUzcI1L39cA4GOk72fJx8Wxvcz+QSel7TmSNgbxmE6w0JQkO20PMr055ZzIEkWe6R
-         Wl4g==
+        d=linaro.org; s=google; t=1718701397; x=1719306197; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Ffhid/tBrPdxJ9K4GUEBHG+XV/ic/YFob6ya2KAGl4=;
+        b=o2TdXiWrdbPGWzla7Mv/Rr1oTzsvKvCBEF/XGGCb6cgMe1VGyVQurwQZ1+NAI9j3rb
+         Kt7Ed6zvPXWMae5HeBQvkTNrZboG2+Hg1YvZQGtJt9QomZdn16vZr0KxM+fEwZ0kqXJ+
+         znqYEMvnc0mpFEEuH8KVGj6cdIfDX6Yz/WmSti0VCkNmlwDXl7XjevHfkotET9ieoVA6
+         LWuoZ/ecp/pZ14KgxznXz4MgzoZJMWpbwxIdj0YwSfD0vsF7r4jW07RripYhklJWDqTm
+         HxF6cYz/MzwWdbt3iflsx9l+PBcUSAjpZqXr71zHELODBDkLWl9v1dD5mxtqkT8xGRxd
+         thKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718701295; x=1719306095;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TY5XZJXNokRJfFdx27EQvsooJR1M7d0Z/bZec752EIc=;
-        b=dnAL9ZF0DxAd542RlWEg3hOZ1Za00T2XIIxGnrjOObsxViuOBjT726n056RaM6jucm
-         0URH8cCUbc+m8aCickCJH2KJbTZjKpM+hcvScwhq+Csh/NVDhzzKBqCLLR9Xh6RXqPPt
-         VqnKD+iYx+bNszn5lg9q52gXFoWIFiaKtjGYIZVrrG+NagnYaineLbx7tLeyWYaE5q6T
-         ZWBECv/eDUHWzx295NlinpgLiNlOxaymZCze2/X5MfW3PwUN2DbAcgRxlxPZByt0X00y
-         Rli/wOhobgLPyao/BeUH/ury70uuGDU3ixrG6SVSHnPE2moHJUeHsUwnTrSRzYOKa6r8
-         2M/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXcHlfC0sR5BMrW+wRvRYxsy43EHIT337TkQdJ87GSSnzDFiMdj1uiKgRbVjTrQZw6/FBmLWQdaejr1rNDUQRK9sZlpfuDlxc/lHw12
-X-Gm-Message-State: AOJu0YwOIJzsc0Lt34pZ3ABrgAeFKWi3H6kCPmh5ZYThpSwIqaw4VNz9
-	1zvvPdymLAYcuGAjVq74pWXmkau03scmXprkoPw73+iHg5u7TFxYn6uyQ2mWfDA=
-X-Google-Smtp-Source: AGHT+IEMfNh1NAwANZa+CTASxafBgLpH8LEwjMP1KkmOFsQGGuf85H4JncEgCzIOFHv4XwbkvI/p4Q==
-X-Received: by 2002:a17:906:4a4f:b0:a6f:38:6968 with SMTP id a640c23a62f3a-a6f60d2bd3dmr727559366b.32.1718701294701;
-        Tue, 18 Jun 2024 02:01:34 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f8cc20663sm146355966b.190.2024.06.18.02.01.34
+        d=1e100.net; s=20230601; t=1718701397; x=1719306197;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Ffhid/tBrPdxJ9K4GUEBHG+XV/ic/YFob6ya2KAGl4=;
+        b=R87uD3LH8cqifE3tIwWNeu8jtrtJt2Q3bp0BGEBPE5jGYHxTH5q1dTAKWkcFS9aTsN
+         eBHCgEc0Rf6wHgxXAmvg999wkGcjDiva9dg9aeRlMYUFlhAio8sKr9c03BIJ/VcV/kbP
+         LCq7xXpH2/X4IRPEVqoMiU/tXsGt7P+dsuqvFQ78rYinijGPuQguPQsFngCxw/tq1gKg
+         OSgqUv0/opb/kz7RX1WxTs4aNxdw5ysNrxMhhXnZWB9OSWnxBtmOvpPBmwlQ+yBsCl5r
+         gsfotbqaXaFy+mnbr8odu7wHSIDtXhNsAn4EH94wKmLps2zXMEQJoj0ZsSHFDEGWCwmR
+         57JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHwudfxBWPui23Cf0RyqqJOugdkyi/GOjZajITojzRwd1MkZnoCdXmsPwTaWIaoJiSnlgYRdc//MinjzmaIef6xiVLV6829dXcsRy6
+X-Gm-Message-State: AOJu0YymUCymub2k7jaq4Fblcl/sZGeIaNOM7adOck1XGrrpMnQZ9+3j
+	4OdTvcoHHhgBNQArw3wM0jURTYoETTnKn0YOpgZSNpeiXs4frHi5BlQl+gmLhig=
+X-Google-Smtp-Source: AGHT+IEhCUvJr+a6y/HVPFNPVtdpiW5Ti409wW012CK56IkXpp4YYWVu+RHIYQY0ldZdVNtWnsp98g==
+X-Received: by 2002:a2e:b0d4:0:b0:2eb:fdc3:c2ea with SMTP id 38308e7fff4ca-2ec0e5d1421mr70585891fa.30.1718701396947;
+        Tue, 18 Jun 2024 02:03:16 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec079379casm15908771fa.124.2024.06.18.02.03.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 02:01:34 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 18 Jun 2024 10:01:33 +0100
-Subject: [PATCH v3] arm64: dts: exynos: gs101-oriole: add placeholder
- regulators for USB phy
+        Tue, 18 Jun 2024 02:03:16 -0700 (PDT)
+Date: Tue, 18 Jun 2024 12:03:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jayesh Choudhary <j-choudhary@ti.com>
+Cc: dianders@chromium.org, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
+	mripard@kernel.org, linux-kernel@vger.kernel.org, jonas@kwiboo.se, 
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, daniel@ffwll.ch, spanda@codeaurora.org, a-bhatia1@ti.com, 
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 2/2] drm/bridge: ti-sn65dsi86: Fix
+ ti_sn_bridge_set_dsi_rate function
+Message-ID: <k4t7zcvweap6e3fqrcixu7szqtvykn3nnqryyd3hdybhhufcgk@snimim34rrwh>
+References: <20240618081418.250953-1-j-choudhary@ti.com>
+ <20240618081418.250953-3-j-choudhary@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240618-gs101-usb-regulators-in-dt-v3-1-6a749207052e@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAOxMcWYC/43NQQ6CMBCF4auQrh3TDhTRlfcwLloYShPSmhYaD
- eHuFla6MS7/l8k3C4sULEV2KRYWKNlovctRHgrWDsoZAtvlZsix4rU4gYmCC5ijhkBmHtXkQwT
- roJtAd1q3pFD2dGYZeATq7XPHb/fcg435+rX/SmJb/2KTAAGEWKGssJWiuY7WqeCPPhi2uQk/r
- eanhdlqZF0ir8/Ihf6y1nV9A9jfodoRAQAA
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
- kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618081418.250953-3-j-choudhary@ti.com>
 
-The USB phy requires various power supplies to work.
+On Tue, Jun 18, 2024 at 01:44:18PM GMT, Jayesh Choudhary wrote:
+> During code inspection, it was found that due to integer calculations,
+> the rounding off can cause errors in the final value propagated in the
+> registers.
+> Considering the example of 1080p (very common resolution), the mode->clock
+> is 148500, dsi->lanes = 4, and bpp = 24, with the previous logic, the DSI
+> clock frequency would come as 444 when we are expecting the value 445.5
+> which would reflect in SN_DSIA_CLK_FREQ_REG.
+> So move the division to be the last operation where rounding off will not
+> impact the register value.
 
-While we don't have a PMIC driver yet, the supplies should still be
-added to the DT.
+Should this division use DIV_ROUND_UP instead? DIV_ROUND_CLOSEST?
 
-Add some placeholders, which will be replaced with the real ones once
-we implement PMIC.
+> 
+> Fixes: a095f15c00e2 ("drm/bridge: add support for sn65dsi86 bridge driver")
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
-Note that this patch depends on the updated DT binding from
-https://lore.kernel.org/r/20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org
----
-Changes in v3:
-- fix typo in commit message
-- Link to v2: https://lore.kernel.org/r/20240618-gs101-usb-regulators-in-dt-v2-1-85632069201b@linaro.org
+Fixes should go before feature patches. Please change the order of you
+patches for the next submission.
 
-Changes in v2:
-- update commit message to clarify that the regulators added here are
-  temporary placeholders only (Krzysztof)
-- use fixed placeholder regulators, not <0> (Krzysztof)
-- Link to v1: https://lore.kernel.org/r/20240617-gs101-usb-regulators-in-dt-v1-1-e2242542c518@linaro.org
----
- arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+> ---
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> index d13b42d7c512..5bf12af6b657 100644
+> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> @@ -111,8 +111,6 @@
+>  #define  AUX_IRQ_STATUS_AUX_SHORT		BIT(5)
+>  #define  AUX_IRQ_STATUS_NAT_I2C_FAIL		BIT(6)
+>  
+> -#define MIN_DSI_CLK_FREQ_MHZ	40
+> -
+>  /*
+>   * NOTE: DSI clock frequency range: [40MHz,755MHz)
+>   * DSI clock frequency range is in 5-MHz increments
+> @@ -1219,19 +1217,21 @@ static int ti_sn_bridge_atomic_check(struct drm_bridge *bridge,
+>  {
+>  	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
+>  	struct drm_display_mode *mode = &crtc_state->mode;
+> -	unsigned int bit_rate_mhz, clk_freq_mhz;
+> +	unsigned int bit_rate_khz;
+>  
+>  	/* Pixel clock check */
+>  	if (mode->clock > SN65DSI86_MAX_PIXEL_CLOCK_KHZ)
+>  		return -EINVAL;
+>  
+> -	bit_rate_mhz = (mode->clock / 1000) *
+> +	bit_rate_khz = mode->clock *
+>  			mipi_dsi_pixel_format_to_bpp(pdata->dsi->format);
+> -	clk_freq_mhz = bit_rate_mhz / (pdata->dsi->lanes * 2);
+>  
+> -	/* for each increment in dsi_clk_range, frequency increases by 5MHz */
+> -	pdata->dsi_clk_range = (MIN_DSI_CLK_FREQ_MHZ / 5) +
+> -		(((clk_freq_mhz - MIN_DSI_CLK_FREQ_MHZ) / 5) & 0xFF);
+> +	/*
+> +	 * For each increment in dsi_clk_range, frequency increases by 5MHz
+> +	 * and the factor of 1000 comes from kHz to MHz conversion
+> +	 */
+> +	pdata->dsi_clk_range = (bit_rate_khz /
+> +				(pdata->dsi->lanes * 2 * 1000 * 5)) & 0xFF;
+>  
+>  	/* SN_DSIA_CLK_FREQ_REG check */
+>  	if (pdata->dsi_clk_range > MAX_DSI_CLK_RANGE ||
+> -- 
+> 2.25.1
+> 
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-index 5e8ffe065081..dec2c6d9619b 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-@@ -145,6 +145,13 @@ &usbdrd31_dwc3 {
- };
- 
- &usbdrd31_phy {
-+	/* TODO: Update these once PMIC is implemented */
-+	pll-supply = <&reg_placeholder>;
-+	dvdd-usb20-supply = <&reg_placeholder>;
-+	vddh-usb20-supply = <&reg_placeholder>;
-+	vdd33-usb20-supply = <&reg_placeholder>;
-+	vdda-usbdp-supply = <&reg_placeholder>;
-+	vddh-usbdp-supply = <&reg_placeholder>;
- 	status = "okay";
- };
- 
-
----
-base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
-change-id: 20240617-gs101-usb-regulators-in-dt-bdbbcea25fe9
-
-Best regards,
 -- 
-André Draszik <andre.draszik@linaro.org>
-
+With best wishes
+Dmitry
 
