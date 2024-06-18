@@ -1,187 +1,95 @@
-Return-Path: <linux-kernel+bounces-219817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B23B90D81C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:05:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 586FB90D81F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAC7286E4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:05:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6FD1C242D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4404D8B1;
-	Tue, 18 Jun 2024 16:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hTtQeW2Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDF84778B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3E64CB4B;
+	Tue, 18 Jun 2024 16:05:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FD95024E;
+	Tue, 18 Jun 2024 16:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718726693; cv=none; b=ZxNQtFPe1Tzj41yq7FexSBzTV/VxuZwA/xZNATiX1zCpj0j0wYIm2+hDe/36hCIFjkgu1G9HpaSVoRSz9Gl8CHpGY3Kx1U9PhKjODTSAkz2SjOx7gnBJ3oh1DaGr7JCuNaKbexa9WpmrWcRudPRfgNQUlfN8tooGtwpYyLidYKQ=
+	t=1718726701; cv=none; b=bjjrOl+/QWuyq27DEEF0K48h5wJv/dsb5NdcRqthN1GQ8H2s+sEtZEAA729KHOc7Ho8FrWQBgHmyx2nCYZQchGymINNuQB6MhkeO1bGA+PocWQ0l7TYlIVbEc6ZZDhKlt2CvLF+SWaSNg1ZMClXjQpFOSB2X8p/zB0/oJj/qm5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718726693; c=relaxed/simple;
-	bh=GP0uR3tvQbzcrtWs6IScgA94dZLZ1PgMYu17zBOgD/E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GbrLPYltg74+E+7zcG240hVC+qPjzwpMg1UHCHbIIqgv8e6fERw0Mvh8VphvXaSWKOMDY17GMDzC6i17XwnNCgt3fR8fW8dwP7vfKY3lUecfM2gVMf1fD4Cnhar+xGwQNZA2pzUAdr68u6RML9k/U1GdN9Nzaz5fxkhUxs+pvaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hTtQeW2Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718726690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EkKajcuHyi0uetV3u4rjxeb0Qgka5tO9IJGy0qxthnw=;
-	b=hTtQeW2Y+Y6D4GaJ85881o0i1wKWukBXoSqS1B47RN/CvKT4cdDBTs8V8TJvd0oRaSUDNT
-	xQgiS8JGbNd6NP6H3Nau8MZ9pybkcOZrU6SLuBFUuwFVz0G/37izo9t7IE+ZA5CK7MVeoO
-	C9t1wHcr/Ah2hieMeYElAdZJwRQKZUo=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-31-gL5KrjedPw-grVOatKz9IQ-1; Tue,
- 18 Jun 2024 12:04:42 -0400
-X-MC-Unique: gL5KrjedPw-grVOatKz9IQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 701BF19560BF;
-	Tue, 18 Jun 2024 16:04:40 +0000 (UTC)
-Received: from RHTRH0061144 (dhcp-17-72.bos.redhat.com [10.18.17.72])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 877C13000218;
-	Tue, 18 Jun 2024 16:04:38 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: netdev@vger.kernel.org
-Cc: dev@openvswitch.org,  Simon Horman <horms@kernel.org>,
-  linux-kernel@vger.kernel.org,  Stefano Brivio <sbrivio@redhat.com>,  Eric
- Dumazet <edumazet@google.com>,  linux-kselftest@vger.kernel.org,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Shuah Khan
- <shuah@kernel.org>,  "David S. Miller" <davem@davemloft.net>
-Subject: Re: [ovs-dev] [PATCH net-next 5/7] selftests: openvswitch: Support
- implicit ipv6 arguments.
-In-Reply-To: <20240617180218.1154326-6-aconole@redhat.com> (Aaron Conole's
-	message of "Mon, 17 Jun 2024 14:02:16 -0400")
-References: <20240617180218.1154326-1-aconole@redhat.com>
-	<20240617180218.1154326-6-aconole@redhat.com>
-Date: Tue, 18 Jun 2024 12:04:36 -0400
-Message-ID: <f7tr0cujkyz.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718726701; c=relaxed/simple;
+	bh=1s7vqofYqI9LHjoQBC3wRUH/YTaQ8aq9oY96lCWv8jQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rQ2t5+S8VFy9o4ZgD6djWWaOQ3rsB/SrqkWnvOJPkuoGxXINN/m67F4pvECrNPyaarm0Up2m34KkVmM+ScUiNXgWo0770h2uj8Uw8elp8xaiJYNsnP/QG1GVdsvqrDm5M6e+2rsQVyf2KH5tJnF1iBYmBZPcwH99E1XICJfeNCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3245BDA7;
+	Tue, 18 Jun 2024 09:05:20 -0700 (PDT)
+Received: from donnerap.arm.com (donnerap.manchester.arm.com [10.32.101.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45AD13F6A8;
+	Tue, 18 Jun 2024 09:04:54 -0700 (PDT)
+From: Andre Przywara <andre.przywara@arm.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	devicetree@vger.kernel.org,
+	Jun Wu <jun.wu@arm.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: arm: cpus: Add new Cortex and Neoverse names
+Date: Tue, 18 Jun 2024 17:04:50 +0100
+Message-Id: <20240618160450.3168005-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
 
-Aaron Conole <aconole@redhat.com> writes:
+Add compatible strings for the Arm Cortex-A725 and Cortex-A925 CPUs, as
+well as new Neoverse cores: Arm Neoverse N3, Neoverse V2, Neoverse V3,
+and Neoverse V3AE.
 
-> The current iteration of IPv6 support requires explicit fields to be set
-> in addition to not properly support the actual IPv6 addresses properly.
-> With this change, make it so that the ipv6() bare option is usable to
-> create wildcarded flows to match broad swaths of ipv6 traffic.
->
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Tested-by: Simon Horman <horms@kernel.org>
-> Signed-off-by: Aaron Conole <aconole@redhat.com>
-> ---
->  .../selftests/net/openvswitch/ovs-dpctl.py    | 42 ++++++++++++-------
->  1 file changed, 27 insertions(+), 15 deletions(-)
->
-> diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> index 2f16df2fb16b..2062e7e6e99e 100644
-> --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> @@ -200,6 +200,18 @@ def convert_ipv4(data):
->  
->      return int(ipaddress.IPv4Address(ip)), int(ipaddress.IPv4Address(mask))
->  
-> +def convert_ipv6(data):
-> +    ip, _, mask = data.partition('/')
-> +
-> +    if not ip:
-> +        ip = mask = 0
-> +    elif not mask:
-> +        mask = 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'
-> +    elif mask.isdigit():
-> +        mask = ipaddress.IPv6Network("::/" + mask).hostmask
-> +
-> +    return ipaddress.IPv6Address(ip).packed, ipaddress.IPv6Address(mask).packed
-> +
->  def convert_int(size):
->      def convert_int_sized(data):
->          value, _, mask = data.partition('/')
-> @@ -941,21 +953,21 @@ class ovskey(nla):
->                  "src",
->                  "src",
->                  lambda x: str(ipaddress.IPv6Address(x)),
-> -                lambda x: int.from_bytes(x, "big"),
-> -                lambda x: ipaddress.IPv6Address(x),
-> +                lambda x: ipaddress.IPv6Address(x).packed if x else 0,
-> +                convert_ipv6,
->              ),
->              (
->                  "dst",
->                  "dst",
->                  lambda x: str(ipaddress.IPv6Address(x)),
-> -                lambda x: int.from_bytes(x, "big"),
-> -                lambda x: ipaddress.IPv6Address(x),
-> +                lambda x: ipaddress.IPv6Address(x).packed if x else 0,
-> +                convert_ipv6,
->              ),
-> -            ("label", "label", "%d", int),
-> -            ("proto", "proto", "%d", int),
-> -            ("tclass", "tclass", "%d", int),
-> -            ("hlimit", "hlimit", "%d", int),
-> -            ("frag", "frag", "%d", int),
-> +            ("label", "label", "%d", lambda x: int(x) if x else 0),
-> +            ("proto", "proto", "%d", lambda x: int(x) if x else 0),
-> +            ("tclass", "tclass", "%d", lambda x: int(x) if x else 0),
-> +            ("hlimit", "hlimit", "%d", lambda x: int(x) if x else 0),
-> +            ("frag", "frag", "%d", lambda x: int(x) if x else 0),
->          )
->  
->          def __init__(
-> @@ -1152,8 +1164,8 @@ class ovskey(nla):
->              (
->                  "target",
->                  "target",
-> -                lambda x: str(ipaddress.IPv6Address(x)),
-> -                lambda x: int.from_bytes(x, "big"),
-> +                lambda x: ipaddress.IPv6Address(x).packed,
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+ Documentation/devicetree/bindings/arm/cpus.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-This (and the following str() calls) shouldn't have been changed.  I'll
-send a v2.  Sorry about the noise.  It isn't visible in this test, but
-when doing some additional ipv6 test development for a future series, I
-caught it.
-
-> +                convert_ipv6,
->              ),
->              ("sll", "sll", macstr, lambda x: int.from_bytes(x, "big")),
->              ("tll", "tll", macstr, lambda x: int.from_bytes(x, "big")),
-> @@ -1237,14 +1249,14 @@ class ovskey(nla):
->              (
->                  "src",
->                  "src",
-> -                lambda x: str(ipaddress.IPv6Address(x)),
-> -                lambda x: int.from_bytes(x, "big", convertmac),
-> +                lambda x: ipaddress.IPv6Address(x).packed,
-> +                convert_ipv6,
->              ),
->              (
->                  "dst",
->                  "dst",
-> -                lambda x: str(ipaddress.IPv6Address(x)),
-> -                lambda x: int.from_bytes(x, "big"),
-> +                lambda x: ipaddress.IPv6Address(x).packed,
-> +                convert_ipv6,
->              ),
->              ("tp_src", "tp_src", "%d", int),
->              ("tp_dst", "tp_dst", "%d", int),
+diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
+index cc5a21b47e26a..f308ff6c3532e 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.yaml
++++ b/Documentation/devicetree/bindings/arm/cpus.yaml
+@@ -147,6 +147,7 @@ properties:
+       - arm,cortex-a710
+       - arm,cortex-a715
+       - arm,cortex-a720
++      - arm,cortex-a725
+       - arm,cortex-m0
+       - arm,cortex-m0+
+       - arm,cortex-m1
+@@ -161,10 +162,15 @@ properties:
+       - arm,cortex-x2
+       - arm,cortex-x3
+       - arm,cortex-x4
++      - arm,cortex-x925
+       - arm,neoverse-e1
+       - arm,neoverse-n1
+       - arm,neoverse-n2
++      - arm,neoverse-n3
+       - arm,neoverse-v1
++      - arm,neoverse-v2
++      - arm,neoverse-v3
++      - arm,neoverse-v3ae
+       - brcm,brahma-b15
+       - brcm,brahma-b53
+       - brcm,vulcan
+-- 
+2.25.1
 
 
