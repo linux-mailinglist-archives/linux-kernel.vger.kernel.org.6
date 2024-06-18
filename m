@@ -1,110 +1,90 @@
-Return-Path: <linux-kernel+bounces-219931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190D890DA4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:06:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A73E90DA50
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8761F23AC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:06:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD6D1C223DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A3C1448C8;
-	Tue, 18 Jun 2024 17:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0RpD+rv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1628D13D8AE;
+	Tue, 18 Jun 2024 17:06:41 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4514E143876;
-	Tue, 18 Jun 2024 17:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376E747A74;
+	Tue, 18 Jun 2024 17:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718730325; cv=none; b=GsGgbI2UwHDqHb9ZPqpAsVCkhzVw6UeEQbrxrltAAzAONiCEocokl94wnRp57U3lWYfvpwRtqwFK2OTpPGjSR7Ny6dY3/N/r++iZXmHCcbxI9sqKkizCoT0KI4UNjEhxYvOauJrL5WGiu8q00ud0gFxHTBf+4XII7ephdBE4yp0=
+	t=1718730400; cv=none; b=ZpneulcMR5V8R5oHMO/XVWY9Wvmsw+c67KnW1rlTMLf0z+ygvzck0CkX2DPXhIU2sXZgBUoNCFwZphG6vx2358NwsdD1HiLj3S6jjFDmczMNQfsnMkBDJqP/nvXrfz/4R29mTm9o1Fkr1me+F5cU/b19IfRz7R3XyDVbIVYtM4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718730325; c=relaxed/simple;
-	bh=JquywNTKPX5QUQzK0Z8qnVuMwB5TBtbhostjnazELj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mouhbm2w8v0ZemYRuwZ3WdbRPPAuwtJPv1BqDy5GYpEe2QxdWBP37L0rLa40wyRZDVyCYXyNkacLWITwNnxZla2nS9Kbozw6WyB9VVa52KMGZEFC4ybHw4S022r4UnhyQqjgfOg88FD0mFNKWjnG35aK3qyFDSJOkMumYwjG9fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0RpD+rv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78B60C4AF1C;
-	Tue, 18 Jun 2024 17:05:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718730323;
-	bh=JquywNTKPX5QUQzK0Z8qnVuMwB5TBtbhostjnazELj4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s0RpD+rv57DLs/GLyn6oBA+H3K7Syjjxgh5bWWh3Y7ieVyQgAsw6MoH/8kqCPSRn9
-	 vidbB7/rnRh2oMi7Rs5ayBKHFF3+z5Z9CM5uSWqaA2CYmcM9IrllqyQosJFd+1gH2M
-	 ubyHmgkqijVZXanlgyja8ClmnuXrs+QeRM/271sgIK5IWLVLz0DOxaz6/cnGHtkxVr
-	 u4SNfdzuJqE0rrhg1epUbLMmkUxwu4GS93HVPWRkFFd0sZZflqBWtyUk9/JiZAoZFA
-	 ClbnoDk4Pg8OmvyzLPXdxrs0ULypOkZEYfHi2UquBJjVTIIJaGgugcqF7lV+A0Uy68
-	 B0I5j8+0WuOKg==
-Date: Tue, 18 Jun 2024 18:05:19 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yangyu Chen <cyy@cyyself.name>
-Cc: linux-riscv@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 4/9] dt-bindings: timer: Add SpacemiT K1 CLINT
-Message-ID: <20240618-retriever-outlying-e7209ff51ad3@spud>
-References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
- <tencent_2A51312A21F88DDB7C7D82A2DA8E8EE7B808@qq.com>
- <20240618-backlands-flaring-f8b8b603868c@spud>
- <tencent_895CC418D210ECC617BE44C17EED3BC72E07@qq.com>
+	s=arc-20240116; t=1718730400; c=relaxed/simple;
+	bh=/cGqt0hi46gWUxkv2mtXgQydqEiLLDCK98sOAwQLRTM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V7fnj68Rt2fVBorR/LD5q17Tu3Nbef4k4zkVL93qb0puiYGItCiuiOezAa4oE0Es0xFHYmtmiQDLGIjDsRkpT60aFInBlLEyTIH4WJ85sNhLfdunxN0941kd3kut4CSvv1iNgN6+UKifvJWyGcvLQ5thAoVu/90cqJP2Zl6Jrs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W3Y766kYTz6K6BB;
+	Wed, 19 Jun 2024 01:06:10 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6625D1406AC;
+	Wed, 19 Jun 2024 01:06:28 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 18 Jun
+ 2024 18:06:27 +0100
+Date: Tue, 18 Jun 2024 18:06:27 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Frank
+ Li <Frank.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Yicong Yang <yangyicong@hisilicon.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <imx@lists.linux.dev>,
+	<kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] perf: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240618180627.00007668@Huawei.com>
+In-Reply-To: <20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com>
+References: <20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="o/ilq4bEQ8dG8Vw0"
-Content-Disposition: inline
-In-Reply-To: <tencent_895CC418D210ECC617BE44C17EED3BC72E07@qq.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
+On Tue, 11 Jun 2024 11:31:06 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
---o/ilq4bEQ8dG8Vw0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/marvell_cn10k_ddr_pmu.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/arm_cspmu_module.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/nvidia_cspmu.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/ampere_cspmu.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
+> 
+> This includes drivers/perf/hisilicon/hisi_uncore_pmu.c which, although
+> it did not produce a warning with the x86 allmodconfig configuration,
+> may cause this warning with arm64 configurations.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> # for CXL PMU
 
-On Tue, Jun 18, 2024 at 11:48:26PM +0800, Yangyu Chen wrote:
->=20
-> > On Jun 18, 2024, at 23:40, Conor Dooley <conor@kernel.org> wrote:
-> >=20
-> > On Mon, Jun 17, 2024 at 01:20:49AM +0800, Yangyu Chen wrote:
-> >> Add compatible string for SpacemiT K1 CLINT.
-> >>=20
-> >> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
-> >=20
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
->=20
-> Actually, I'm not confident about this after carefully reviewing
-> the file. The "riscv,clint0" is marked deprecated, and the description
-> is For the QEMU virtual machine only.
-
-Right, I forgot about that portion of it. Probably, if this is sifive
-plic compatible, then fall back to the sifive clint. Same, I suppose,
-goes for the plic etc. The alternative is not have a fallback, modify
-the driver, and future spacemit things will fall back to the k1's
-compatible. I don't mind which you go for.
-
---o/ilq4bEQ8dG8Vw0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnG+TwAKCRB4tDGHoIJi
-0i8xAP9kPV1VZMwXtA842OYL9xVaeu9LyrHcQOF0jq6UsoggfQD/V2NZrL39HZ34
-hC/POL8gHioOOkhwLfguC2ZYwPVaZQ4=
-=2APS
------END PGP SIGNATURE-----
-
---o/ilq4bEQ8dG8Vw0--
 
