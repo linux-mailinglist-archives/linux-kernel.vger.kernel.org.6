@@ -1,158 +1,153 @@
-Return-Path: <linux-kernel+bounces-218459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07FD90C024
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:10:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7676690C02F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834641C20C5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F356D2823A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD7A17E9;
-	Tue, 18 Jun 2024 00:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986381C01;
+	Tue, 18 Jun 2024 00:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cd3Jq+Ao"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mjj2Di6J"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2093.outbound.protection.outlook.com [40.92.103.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00C6A3D;
-	Tue, 18 Jun 2024 00:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718669408; cv=none; b=lLWvs8aJqDKCFouzEiC6EDryCw5UahLJXVcaSKv3dqAOu2Gy8k0gkhJm9zEISD3EYujFHFEPiHx/Vi6d0+a9PlSrrxG24qrEVGJom+q68j7AlFPZALCY4rP0dmC2dLPtDbpGAHxbH7ufNEyGmCMlhupcNmW3vmrCBGviMRwpj2I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718669408; c=relaxed/simple;
-	bh=JV+ze2DhYby8M3srxTuMb/mFtvtSNrjhrOipVD4W4m4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DQk89EW+F9AP321k4enzHlO6ZvvIGiv4SlxRxSzy3C6u2BPtDs9t9AmmPcIylBDrZbjZzhmv7RWJ0eIHc4ypMg6rJhDzgQ3x7eqMo3avy9+OuCa9g89dOuxZtEouUWPKKQh3GizauEUsS6oyFuz1gjJV5VWMyL+y1HfyhcyA+h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cd3Jq+Ao; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718669404;
-	bh=JV+ze2DhYby8M3srxTuMb/mFtvtSNrjhrOipVD4W4m4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cd3Jq+AoMBgSWRqEb2AmeQXtUgz5YyUy/7qn7j/VJ+G7dhFvy3VPd9kJsBwqxgcHv
-	 RqmrloEor8MoTbkome2eEaOq9bLSctOjyrZmzfjBNDV1KclgYyO6sMzgYX3OontAHm
-	 4h4ZE55u9xO3nXcqdU1GEXWfmd6gCb3rWFmqQGJ8nvX3LDuO5FU52wGHdu/vhJRSGR
-	 7RkPhS0wN8e3bN6YebosXYQDsO8ecJdoRoJNa9d4P0S7HcHshuk79ZxNEYmeM5S2r1
-	 5z0CiFDsuUhZQJ9ws1HiAzATTdzDkYxfIA+jSnRqcmjqWo/T4jcZmvJEWTCepqX9iq
-	 +37t6MNWbsbeg==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9462C378042B;
-	Tue, 18 Jun 2024 00:10:04 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 23BA71060734; Tue, 18 Jun 2024 02:10:04 +0200 (CEST)
-Date: Tue, 18 Jun 2024 02:10:04 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Alexey Charkov <alchark@gmail.com>
-Cc: Jacobe Zang <jacobe.zang@wesion.com>, 
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>, 
-	"efectn@protonmail.com" <efectn@protonmail.com>, "jagan@edgeble.ai" <jagan@edgeble.ai>, 
-	"dsimic@manjaro.org" <dsimic@manjaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/5] arm64: dts: rockchip: Add AP6275P wireless
- support to Khadas Edge 2
-Message-ID: <o5iyg5ha7k3goy65damt3apnyeyfxedbm7mzmu4v2zur32jsyj@x3ge4n52lkfs>
-References: <20240617071112.3133101-1-jacobe.zang@wesion.com>
- <20240617071112.3133101-5-jacobe.zang@wesion.com>
- <feeb8dcd-661f-415e-be08-afe175d0102e@gmail.com>
- <TYZPR03MB70012C66B789B09195FCD92580CD2@TYZPR03MB7001.apcprd03.prod.outlook.com>
- <CABjd4YyHUzm4EBPPzia5VRXGvJiXDObDHQYNCjpCMJDs=BqALg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFFB368;
+	Tue, 18 Jun 2024 00:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718669538; cv=fail; b=PkCrDiPbmhpzLkQlcJCnki/iEXQMaBoaMRYqg+wLabAmemNfSaRYl8nkhtBQiS8muAx/sP4pPYJ+rNPQeQ6wOVjpBC6adSc1eYG+Y3TaSWr7KuN8TkymNmuKnYkgr9EebSBJOIjZc5GwyUvY7/2G9xv1Bp5r54Orlaw8EFZEnj0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718669538; c=relaxed/simple;
+	bh=14F6T41//hBiSYJsPmKaV6VjTvC7OH3e7MQA276xD+Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MjaKtZkIB8p55pDzhF55Zk6Wj6q9cCgQTM+ASpt5/xwGleAW2F+2oz//2TEY0H/wXh+qQQjt5ZeiHCoHOLwwWeacBp0omC580xczaU0SGteWqguPW73op/13TKmNpqzioWhRmOOPJECPE9IuzXKUNgAznhMh4ZiW+n0gpwljNf4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=mjj2Di6J; arc=fail smtp.client-ip=40.92.103.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ChGebS2KqzvZaUJ3P4kVuL5FT/BGR+0OArVSoONRhwQjpQBygHbv2lSOX7vAKq94LiniKs38sZKMqMy6d8cXfYIBHLNl+7ucr02LWbM/jAMz4fQksqtNFqOeV6RRY+DFhg1M4surAZO4RKaWHLEA6zAFxyzBkWzJ1SY9e/JY29Jy1ndMukRi1JWz3AaTrfRfIpq9NxTouf8bDcP01F79y8BpqgSP7HOl2PDM9mh2Na2brxvp8QkYAEIBdWJsA3MHsbeoDK/Y/Jx5ka9CXN2wmwxbFAwOB+mu5ro9m6CEJN7v3FXxQO+4axyNSq6Bky0LXVMjQzUDu79kH3/LsSh1ZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KfYPs1kwS5b3AXJOYq2Pm0Zsuxt9JTxBidFj7djxErA=;
+ b=OAr+4tVtUaE4qHqmo8KGGt8BEAwtMGLGDeyioDOGV2TeSEpEolB7axEtsjEzJUrarOBf+c4OaZZQkrOd5lEBY1Zm2Ugo9CY29KZ8ZP0SffhCnM9uDA35INjZQL6250LyX2eVzbeI1F360oUPEdsFLFkUxyH+uP5JH7FQxOZZGBG9JyjYvfn9W7eAC8Un7NKUiZbWqmxe1v61lOxL7a/tjF8TH/iI+RLI5UEA6wn3HhFm6aWIagduN8+ctUlMHWK6+XvZR1kvMayMFSTdrWlihb6UqiasnS+lpACcTc3dwS9A+7NSau9likYwJ4azJQzDrxS93sNUaQS1v3nlnPSbmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KfYPs1kwS5b3AXJOYq2Pm0Zsuxt9JTxBidFj7djxErA=;
+ b=mjj2Di6JJFGgCdFgUOZMeWXSVCJHxVx0mS9chBJa3WzgjWzPz3eMlW6H+nTVESe/06uiyWECKv5jStIGbbGT9H8eVSlx//0qTONr8XpPdfyiwt6QLmGgGI+Tuexe7KlTC8G16Io7O2yF45cnCVDJwnffXIDekyh8/Mh4vGLAQioGvvR3JZhCf0H2qRmbC6Qs5zVToISDair/9KPL7LibWg4eIauIDz10U26U3fMR1Yv6PBwcBwhGSJ6g/lzFqfFJdC0K6z+OqNsHQmMi/rVeBb+3KoeveJJA7Glyzngn8xAByG1i+H2bsj4YXMPeAl0v8ROZETELIDskAA3LaJt/LA==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by MA0P287MB1497.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:f3::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
+ 2024 00:12:08 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 00:12:08 +0000
+Message-ID:
+ <MA0P287MB2822DCBF6E0AFC2146E05621FECE2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Tue, 18 Jun 2024 08:12:03 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] mmc: sdhci-of-dwcmshc: enhance framework
+To: Drew Fustini <dfustini@tenstorrent.com>, Chen Wang <unicornxw@gmail.com>
+Cc: adrian.hunter@intel.com, aou@eecs.berkeley.edu, conor+dt@kernel.org,
+ guoren@kernel.org, inochiama@outlook.com, jszhang@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
+ paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
+ tingzhu.wang@sophgo.com
+References: <cover.1718241495.git.unicorn_wang@outlook.com>
+ <Zm5OYfzMSv6hnCdL@x1>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <Zm5OYfzMSv6hnCdL@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [acJsLYoxQqlPLR0DycVh2uIVt6Fc2fMR]
+X-ClientProxiedBy: SG2PR01CA0151.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::31) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <faf58cd2-06b0-41c5-ab9b-2c8022315e67@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uhnckguykm42725v"
-Content-Disposition: inline
-In-Reply-To: <CABjd4YyHUzm4EBPPzia5VRXGvJiXDObDHQYNCjpCMJDs=BqALg@mail.gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|MA0P287MB1497:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b3626f9-3c46-4900-d48c-08dc8f2b4ad6
+X-Microsoft-Antispam: BCL:0;ARA:14566002|461199025|3412199022|440099025;
+X-Microsoft-Antispam-Message-Info:
+	SdTyY6sWbkHlyTcT3sUtX1lrPXQX2qSAiGnfK3xZClp/GX0wH/Rs7SwXfEniQMURQazyoj3kmxCSXEU/JzoObwGeqozMeDBjMin1mfzCLo5GE9yzqGxrWPm5lglI1WhiaeV3ikKkTmd5kIfnQJktrIi04BJnzXfcMovhwRijISTVgm6u8Q4I3Qpc19r9CyhiKD0Pb9ZjrUzTFNYSD5F8xAQ0L9PGIev+I2m5KUzjVD130XsTCKa4JssYbFKWrrJqvi37Ve8p+pDHr20X/TGGuK+wkL5tgO8Bp2GSzfeJ3jGa3SBV6QsvZAlJbTaKXPcJ6mjxr7djkjUYPv+0+uy0jmsA49BN8LYsLs6dPUcIbof/5yQFYuJJ55T9dZw0JqcGAvutd7Z0DcuGaO5TS+3KMietkqWbowJlNOmSAUr85l0f09rr/7TvXgXLT0My3IleqfdFQM2+eIRqGUYzRZ2kw/Bs6EtU6EfTvtBpaKXTvXtKw7pI8sVECcbBV15oxErt+AtoAdQZt1xf/6ThbMJNX0hYav11qJeD6/+5pbi28SFwH+qQLZCSkDA6s94qRFe6
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?T3hoU0gvRkVyVGorL2FrV2QzdFI0YzJkNUVkNmRZZ09DKzlQUzZaYkdsQnND?=
+ =?utf-8?B?VDlITm8wbUphU0ZsZmVDT2hOQ0U2Z1k3MXVONDhua0pJaEdoVlN6MjQvZjR5?=
+ =?utf-8?B?WVNFVTBubGw4cDFoOVRpTVRQbmx1cHQzaTl0SktjNG8zMFF5dXV1YVJqcEhx?=
+ =?utf-8?B?anJWcHlmMG55aWlPS1RIbWMzdlQ0UnJBMU12aWJLbjNZSVd1UXBoMHhxWlNz?=
+ =?utf-8?B?aFQrdldHdWh1K09nNlRMMXVHZ1MzbU82ZmZOcjNWU0NEdW4yUEhvYlRCeTZX?=
+ =?utf-8?B?eENnL2l4enpMWlFJOTVHUHhrWUQ2azhBVGdDWXgwTVpZMkhZQzN3QzBUakpM?=
+ =?utf-8?B?dlpSWUlkZGYyd1BXN1htV21wSk0yNjFZVnY1Mmd0cGxqb0d5bkswaEdGa2Ew?=
+ =?utf-8?B?elpxWHI4VkY1UGZyUkhjYUlDSlpKZExVR2RmenUxdDRDemQ2T2tCQW4vaDg3?=
+ =?utf-8?B?aE5UcThZZlgweWJLUG9pb2daRHlWUlhWMWZjYjhZdXkxMURtR0QzckMzbEI4?=
+ =?utf-8?B?amRsT3VDLy81cVBHVXgyM04weVk0ZFI5SGd5SUwvcmtiRmJic2xaZjVEc0Fo?=
+ =?utf-8?B?WUE3ODdEZ1ROdHJpT2o3RmtGd0pMNndlR2EyQmZBaFI3M0lKRS8zV0w1MmEw?=
+ =?utf-8?B?eTY0OFRsd1Y0dzkzY3R1alpOeVFvd3NBUjZqUjBYdW9EL2hOWXg4WnF1Y29E?=
+ =?utf-8?B?WldVaTArS2hWaDJEamFFd0lXY0dHUnVUOVg5TjNhaE1ya2lMMkx6Y216d3R1?=
+ =?utf-8?B?ZWZoaVp2QVlWakVNZS9FV2VZUnB5Rk8wcFJUUzQrRXNZTGpncWprUFhMa1dL?=
+ =?utf-8?B?MENWem8yQzcxQ0FndEJLSjFWWHVtZSs3cU5xL1FFYW9MVnlTTllCRXdRYzMr?=
+ =?utf-8?B?QlJlS3p0emNkT0ZicnczeEZLK2FBc1hjdkxTMlpHd241eGJhdWFzN0N5bmFq?=
+ =?utf-8?B?RDFjbnNlb0MrUGhzRmlvR3loL1czUk12ZDRTM3JySUFVNzlLblEyODNyczdU?=
+ =?utf-8?B?MWRlalZnbnBIcHBONXNIalpEVDJudlkrbzJwNXJSS2tQUU1aTEROVEE3cHJG?=
+ =?utf-8?B?eElmdkhWK3p1T3AzWDZhVlRwOXdRZVV6YWpiWmRwc2YxYnFGYVBlZXJwWmdz?=
+ =?utf-8?B?ejFWOTRUaHV2R2hIdExDMnNVaXRjcGlZK3o2QURpeS9tNTM0NU51SW9CYTd3?=
+ =?utf-8?B?a1BqaW9oVERFRkNhdDBGY1A2R20wZkIxdUJJUWtVbEFCczkvQ0toZjJJT3Zn?=
+ =?utf-8?B?YTVicjVpdTU5cjlrU1V3ODNseW13aWcwZXNOTUJEaTFLZm1jTUpCcmRXb3Uy?=
+ =?utf-8?B?N2ZDYnIxNHliazlVRzJFdi82Vll2KzI4a2tkaWkzREZ0a2xoMEswa1BQRlpI?=
+ =?utf-8?B?VlMwNnpsZituaWxwMUZVVWZkaVBKU0gzZ3NNYTdIdWpRT0grY29LZ0VPM2Rj?=
+ =?utf-8?B?YXhnWlBmeXNCbmdCNDlPZnpNUFFqRGRPMmNjeDg2TEZ0clZqVmNqNmZlTzBZ?=
+ =?utf-8?B?QkgxSjhFY2M4THVLUDUrSGRWQ0VqRlFoOTVGMGdQSW9SV2lKa3gxemIrUXpa?=
+ =?utf-8?B?b3JudDMwRG1pMkM5enBLM2tZeXpPWXVrald4Mkhnd0h1SE1kbFVHZ0JTZXNK?=
+ =?utf-8?B?ZDJsT2swWklpNFQyck9rekdvbHhZNzlSOFpGVWJ3QzlqVTgyamhyVHVNS2pK?=
+ =?utf-8?Q?U5N6Nl7RIGdO61K8Fjuk?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b3626f9-3c46-4900-d48c-08dc8f2b4ad6
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 00:12:08.3023
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1497
 
 
---uhnckguykm42725v
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2024/6/16 10:30, Drew Fustini wrote:
+> On Thu, Jun 13, 2024 at 09:42:03AM +0800, Chen Wang wrote:
+[......]
+> I have tested successfully on top of 6.10-rc3 with the Lichee Pi 4a:
+>
+> Tested-by: Drew Fustini <dfustini@tenstorrent.com> # TH1520
 
-Hi,
+Thank you for your testing effort. I will continue to revise it 
+according to other reviewers' suggestions.
 
-On Mon, Jun 17, 2024 at 03:17:50PM GMT, Alexey Charkov wrote:
-> On Mon, Jun 17, 2024 at 2:58=E2=80=AFPM Jacobe Zang <jacobe.zang@wesion.c=
-om> wrote:
-> >
-> > >I'm also wondering why would adding a DT node for a PCI device be need=
-ed
-> > >in the first place, given that PCI supports device discovery?
-> >
-> > In fact, I learn that PCIe bus devices do not need compatible to probe =
-just now... Before sending this patch, I committed the code that added "pci=
-14e4,449d" to vendor-prefix.yaml and net/wireless/brcm,brcm4329-fmac.yaml. =
-Now I know the reason why my addition was rejected. By the way, except for =
-the compatible binding, is there any other binding that I should remove??
->=20
-> If your PCI bridge is functioning properly and if your WiFi adapter is
-> connected and physically enabled (in terms of power and RFKILL) I
-> believe it should be automatically discovered and you should see it in
-> lspci. No additional DT nodes needed - but check if you need any
-> additional DT property somewhere to keep the HYM8563 clock enabled.
-> I'm not sure your pcie@0,0 node is needed either.
->=20
-> Then it's up to the driver to recognize your adapter by its PCI ID and
-> attach. I guess you'd need to extend the hardware IDs table in the
-> brcmfmac driver for it to attach - similar to [1]
->=20
-> [1] https://github.com/armbian/build/blob/main/patch/kernel/archive/rockc=
-hip-rk3588-6.10/0801-wireless-add-bcm43752.patch
+Regards,
 
-RK3588 EVB1 has the same WLAN/BT module and I started looking
-into adding support at a low priority. I think this is very
-similar to the Qualcomm chip Bartosz Golaszewski worked on and
-thus should get a pwrseq driver, which handles the enable GPIOs,
-regulators and clocks. If any of them are missing the PCIe device
-is not discovered. Note, that this will actually require describing
-the PCIe device in DT to reference the pwrseq device.
+Chen
 
-Additionally the brcmfmac need to be extended to actually have
-working wlan.
-
-I put some links and notes about this here:
-
-https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/issu=
-es/1
-
-Greetings,
-
--- Sebastian
-
---uhnckguykm42725v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZw0FUACgkQ2O7X88g7
-+prrpw//UYYL9Rg1H9dHWyJgdcc/4LeH3dB3tQX3tEs0eUL5NthX28Uunb+LpqC/
-9CsIQqGCYjptZP1dzJ4HUeFIPYOnGw63Y7WZaeWqqd/Wob1PsADOPlNFtXQ5th5U
-9Z87Uji/Wfm7h0oG/+1YVGK4TKuUqkkzSoSuvmb0VqtZjVdV4MS90nwtHGxD/jhI
-UTSwuAXa+E7nJg/p0USVW5vIegrJQyFOaTTXpmagiOiOFm2TR59LWURsw3n8+Xmb
-wYR88jc64on4zLqqtVkiqY624Q2f3lLHVAgswx7juZG+obFUputTZshah0bHTRE5
-jiiG8KcAHCNflRZGtS6pDHZmJ+/shcPvE8aoYbiMfMO1+5HDLhjKkM61HeLH1XJc
-JR1u0bH9azquf8LurJd4qEpVcg40drVq7FDvHbSyM5BTvhCIBNGRVNKxIb5klGEb
-WMbEtJKfS/XDtm6zSR4pxcFcvHH9ukRGxogYgKuHuS33QMQ7f0Wa80aIskcPZovT
-m8Nbn4EcleD6c0PVXXyX2s0vy094TohtoDBwHyMI9GWLqdU2LiNsc0bpjkaxdChN
-8mu9ajXgt3+fSpCvvQ8HJ5EAEyba59rhsdE7/cUJXQT8B4rD7KzoU94Rc1YJ6v+j
-0/Y+vb5mk/TkL+zaXT5wvopW0gPhXEpxfdhPMM8PiMqu3Y+gz1k=
-=6zaE
------END PGP SIGNATURE-----
-
---uhnckguykm42725v--
 
