@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-218758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CB190C570
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:39:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D7A90C575
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336181C20361
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:39:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07082823C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BAD15886A;
-	Tue, 18 Jun 2024 07:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F760158A2E;
+	Tue, 18 Jun 2024 07:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cDNIU5iU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CAtJhWfY"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FLm5lPFU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tf387lz9"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA247156C7A;
-	Tue, 18 Jun 2024 07:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669AC156F42;
+	Tue, 18 Jun 2024 07:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718695540; cv=none; b=VVmiwBW+TmY5Sq+ARjaVLBRmVHWItTGFOKD7HD+zAj1jOnAPr9K8s8c4nphec3z7kITKNnqvbDnqz96oFCZOs4d0kxu46AU8maMXEk6tUVRTSvpaCdBuXoKei8HIBQDRhL7xB52fmIBt5QVRNn0kN+kWALxTQLc+xZ1fTKrzvFw=
+	t=1718695541; cv=none; b=G8FDMw8lzFjn4TTnOx3Y1B3sOEyYHUsH1paHP5IxPScOKnTXG35+RjnXM9BrhE/ElNZldxIPjCkkrWoOiCX4G9jC6eXF5YIQcWoDa9+NQ1GCvOwFjZIszgqsVJlO/1o5HRzrrVo+CP36+VJlCIMKIJviZ1e5y6IssvnnLIh53ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718695540; c=relaxed/simple;
-	bh=pSf/Z0JsPY9xuccDTq3qRsA+msduJP12GujlmQ1ybu4=;
+	s=arc-20240116; t=1718695541; c=relaxed/simple;
+	bh=X7R5a5q84PVJIRPwRnjIqVBMxLGbsKuD9OquSDsOxKI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VIVgYhzNwwghyNMBfeot0PMVzezr+TIXSw09DnXKzu5Lww2TlXeTMWm/GdDPiEU+rP5DAXFDhnY6s1x1yCfInkB8arSC0NpRfoefUzjeRBHgv8ForEm8Hw64CInnFCPWZm6w2ZF3P+Jqati9ix1nXokgNLHxQVqDPATJwY8h58o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cDNIU5iU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CAtJhWfY; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=CiMKb6gzHabEezoEIeyZKzcI9HeQ29l3beETe/uN7Z8CvT7FlzfnBoD+aCDT1DalP2gnwnYdQttgZwR1a+JJohJ3Ee77WMiasd6lTyfBnBAaAohsApXQWHP6dfuigrkkM6LDn616oWZ+IKKdIveHSodWqegTUeVEv5reB86Aprk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FLm5lPFU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tf387lz9; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718695534;
+	s=2020; t=1718695535;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=I13A++imoQhao8gFnSZ3Ll5CYpEUTnm71Pum08/yKbQ=;
-	b=cDNIU5iUj8Ec+svPwhAatD2zaQ/xAykMcTWhsjChxXvn4gOdBvA0w+QjaAuSOaE2DXEbo7
-	d0P6SIOK+i+RJR/lnqP9jSFtwKI7WiPUmq1llgAf7g25PerMLjmJKnEt23Q0FuxR++kPg2
-	7AiafSSdhOhUqYXLTG79cAeSeHjQKtqWtFXNCPXXmELyZHhKLvsrmu6A99ME4hGm7+hWxP
-	AI0JFz1znAXt/5d4FfNNfITa4LihFjY+fmPwMoSF9E8Z8/rtIT1b4MDsdQWO+QyifUcNWS
-	cJ6scTlZkJX8IrUqu+RWw5MWfOMz3O2h/uemARVQOcDdsQcMaPW9IdpVWoVwuQ==
+	bh=Y4+m+Kh4U5SEuxn55rR3Br3eloKf+1N6uKkudtS94Sc=;
+	b=FLm5lPFU3rFNpHkkyVotHGe7jKhlMf30Fi8J1JX4TDDI/eHVrnIhQ9gv7b7dYw2ySlDM0L
+	zYuLArV13A6oRBtBpuSDPh/fZOoco+TFO7MBC7SyQTmbmQYBfYGBl478xERSPqY8d4YImp
+	NwHhd4dYfqXTPhbwxFGVxf2EDti0CrHuIVUPCja8cg4v5MnFmb8aZdfkSxEn+NPWmqAmFv
+	YebdUCfw0SR0u0pP7Y/Q6SVHDd7B7l+N3LtazcPa4kXDDGLMzacfEvB0YHkYW94760i+B8
+	o6A5BZEGe8PBsvg+75c63L3LfP9wmmsrD1JXqYeUauaQMXLZ+1CCqAOfnqcA4g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718695534;
+	s=2020e; t=1718695535;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=I13A++imoQhao8gFnSZ3Ll5CYpEUTnm71Pum08/yKbQ=;
-	b=CAtJhWfYjBI5xTKrzzuGSQgSjKPtxcQmA7ujnxjhGuU5daRQKDOOayJf9vajfMu67PDUpx
-	fVVx44vZiKnroKDg==
+	bh=Y4+m+Kh4U5SEuxn55rR3Br3eloKf+1N6uKkudtS94Sc=;
+	b=tf387lz9ZTJTpKWgz/ePSVgzNn6Gw8g8zl+zlgrTHyr604eYngzXFHhM6Rg903AV2DVWEe
+	yommig7mxgWfE0Bg==
 To: linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org
 Cc: "David S. Miller" <davem@davemloft.net>,
@@ -69,9 +69,9 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Waiman Long <longman@redhat.com>,
 	Will Deacon <will@kernel.org>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v7 net-next 09/15] dev: Remove PREEMPT_RT ifdefs from backlog_lock.*().
-Date: Tue, 18 Jun 2024 09:13:25 +0200
-Message-ID: <20240618072526.379909-10-bigeasy@linutronix.de>
+Subject: [PATCH v7 net-next 10/15] dev: Use nested-BH locking for softnet_data.process_queue.
+Date: Tue, 18 Jun 2024 09:13:26 +0200
+Message-ID: <20240618072526.379909-11-bigeasy@linutronix.de>
 In-Reply-To: <20240618072526.379909-1-bigeasy@linutronix.de>
 References: <20240618072526.379909-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -82,67 +82,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-The backlog_napi locking (previously RPS) relies on explicit locking if
-either RPS or backlog NAPI is enabled. If both are disabled then locking
-was achieved by disabling interrupts except on PREEMPT_RT. PREEMPT_RT
-was excluded because the needed synchronisation was already provided
-local_bh_disable().
+softnet_data::process_queue is a per-CPU variable and relies on disabled
+BH for its locking. Without per-CPU locking in local_bh_disable() on
+PREEMPT_RT this data structure requires explicit locking.
 
-Since the introduction of backlog NAPI and making it mandatory for
-PREEMPT_RT the ifdef within backlog_lock.*() is obsolete and can be
-removed.
+softnet_data::input_queue_head can be updated lockless. This is fine
+because this value is only update CPU local by the local backlog_napi
+thread.
 
-Remove the ifdefs in backlog_lock.*().
+Add a local_lock_t to softnet_data and use local_lock_nested_bh() for locki=
+ng
+of process_queue. This change adds only lockdep coverage and does not
+alter the functional behaviour for !PREEMPT_RT.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- net/core/dev.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/linux/netdevice.h |  1 +
+ net/core/dev.c            | 12 +++++++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 96b233a0bc2b3..f725129c9f6f4 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -3202,6 +3202,7 @@ static inline bool dev_has_header(const struct net_de=
+vice *dev)
+ struct softnet_data {
+ 	struct list_head	poll_list;
+ 	struct sk_buff_head	process_queue;
++	local_lock_t		process_queue_bh_lock;
+=20
+ 	/* stats */
+ 	unsigned int		processed;
 diff --git a/net/core/dev.c b/net/core/dev.c
-index c15b0215a66b7..2745001d09eb4 100644
+index 2745001d09eb4..42ac76524e84e 100644
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -229,7 +229,7 @@ static inline void backlog_lock_irq_save(struct softnet=
-_data *sd,
- {
- 	if (IS_ENABLED(CONFIG_RPS) || use_backlog_threads())
- 		spin_lock_irqsave(&sd->input_pkt_queue.lock, *flags);
--	else if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+	else
- 		local_irq_save(*flags);
+@@ -449,7 +449,9 @@ static RAW_NOTIFIER_HEAD(netdev_chain);
+  *	queue in the local softnet handler.
+  */
+=20
+-DEFINE_PER_CPU_ALIGNED(struct softnet_data, softnet_data);
++DEFINE_PER_CPU_ALIGNED(struct softnet_data, softnet_data) =3D {
++	.process_queue_bh_lock =3D INIT_LOCAL_LOCK(process_queue_bh_lock),
++};
+ EXPORT_PER_CPU_SYMBOL(softnet_data);
+=20
+ /* Page_pool has a lockless array/stack to alloc/recycle pages.
+@@ -5949,6 +5951,7 @@ static void flush_backlog(struct work_struct *work)
+ 	}
+ 	backlog_unlock_irq_enable(sd);
+=20
++	local_lock_nested_bh(&softnet_data.process_queue_bh_lock);
+ 	skb_queue_walk_safe(&sd->process_queue, skb, tmp) {
+ 		if (skb->dev->reg_state =3D=3D NETREG_UNREGISTERING) {
+ 			__skb_unlink(skb, &sd->process_queue);
+@@ -5956,6 +5959,7 @@ static void flush_backlog(struct work_struct *work)
+ 			rps_input_queue_head_incr(sd);
+ 		}
+ 	}
++	local_unlock_nested_bh(&softnet_data.process_queue_bh_lock);
+ 	local_bh_enable();
  }
 =20
-@@ -237,7 +237,7 @@ static inline void backlog_lock_irq_disable(struct soft=
-net_data *sd)
- {
- 	if (IS_ENABLED(CONFIG_RPS) || use_backlog_threads())
- 		spin_lock_irq(&sd->input_pkt_queue.lock);
--	else if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+	else
- 		local_irq_disable();
- }
+@@ -6077,7 +6081,9 @@ static int process_backlog(struct napi_struct *napi, =
+int quota)
+ 	while (again) {
+ 		struct sk_buff *skb;
 =20
-@@ -246,7 +246,7 @@ static inline void backlog_unlock_irq_restore(struct so=
-ftnet_data *sd,
- {
- 	if (IS_ENABLED(CONFIG_RPS) || use_backlog_threads())
- 		spin_unlock_irqrestore(&sd->input_pkt_queue.lock, *flags);
--	else if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+	else
- 		local_irq_restore(*flags);
- }
++		local_lock_nested_bh(&softnet_data.process_queue_bh_lock);
+ 		while ((skb =3D __skb_dequeue(&sd->process_queue))) {
++			local_unlock_nested_bh(&softnet_data.process_queue_bh_lock);
+ 			rcu_read_lock();
+ 			__netif_receive_skb(skb);
+ 			rcu_read_unlock();
+@@ -6086,7 +6092,9 @@ static int process_backlog(struct napi_struct *napi, =
+int quota)
+ 				return work;
+ 			}
 =20
-@@ -254,7 +254,7 @@ static inline void backlog_unlock_irq_enable(struct sof=
-tnet_data *sd)
- {
- 	if (IS_ENABLED(CONFIG_RPS) || use_backlog_threads())
- 		spin_unlock_irq(&sd->input_pkt_queue.lock);
--	else if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+	else
- 		local_irq_enable();
- }
++			local_lock_nested_bh(&softnet_data.process_queue_bh_lock);
+ 		}
++		local_unlock_nested_bh(&softnet_data.process_queue_bh_lock);
 =20
+ 		backlog_lock_irq_disable(sd);
+ 		if (skb_queue_empty(&sd->input_pkt_queue)) {
+@@ -6101,8 +6109,10 @@ static int process_backlog(struct napi_struct *napi,=
+ int quota)
+ 			napi->state &=3D NAPIF_STATE_THREADED;
+ 			again =3D false;
+ 		} else {
++			local_lock_nested_bh(&softnet_data.process_queue_bh_lock);
+ 			skb_queue_splice_tail_init(&sd->input_pkt_queue,
+ 						   &sd->process_queue);
++			local_unlock_nested_bh(&softnet_data.process_queue_bh_lock);
+ 		}
+ 		backlog_unlock_irq_enable(sd);
+ 	}
 --=20
 2.45.2
 
