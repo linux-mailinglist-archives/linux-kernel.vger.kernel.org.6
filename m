@@ -1,144 +1,193 @@
-Return-Path: <linux-kernel+bounces-220060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9412E90DC31
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:07:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78BF90DC35
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 293E8284CB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:06:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 702811F22C53
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F90B15EFAD;
-	Tue, 18 Jun 2024 19:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1FA15EFB1;
+	Tue, 18 Jun 2024 19:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="una3UUGB"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KT6Tg5AV"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA371BF50
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4891BF50;
+	Tue, 18 Jun 2024 19:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718737612; cv=none; b=HgmhmxDlzBrnlcrIIgynzIk6o0KhFdhWUDlwmEgWO2psmgekVcQ3FmdwYY54AIg0FZam+j/ry01vIkbut5db1hwVeHiUOtOzgWvqkI4+DA9h9Itep/M1qat6CodPqW7l4eIcHOat/8ki3Q8aZh7emZWEXSdN6GTv1p1lU2fOB0s=
+	t=1718737684; cv=none; b=CtrCaspBK4vF/UgA2u/uIWF0QCDtcnnNbc4Uw5tQOjlEd2ER78ebdrExEesZR0FGqsebTK/I287iHpNKJ1rY6OTOfcmXzlVAWn+bkU82rLnS2R58mABLtogK9HLnBSs7f6mJ0SWJAikic1AyYeQREd7HVEy3Ypn5eJUsQVWc1Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718737612; c=relaxed/simple;
-	bh=I6gh+ZhnpjHmqUx7wmh/gP5SC5PJ76jO4e5mhALPP8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hBwy/wwO6bR/IbeWGw0Em8rSOUD21669DgYhV4982Xg0F4btOUzftKyI55xN6C3/2J2HXBfZKWkDpAWnFptzT8eP4GfDIxf8W5+vH2jkBSxLo4IfSt+YAdtcqp9AWjRy0zAqmKFuJ0hNVZL/0d3plyCksVQmyDc0LeShDwdZBYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=una3UUGB; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-421798185f0so45629345e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:06:49 -0700 (PDT)
+	s=arc-20240116; t=1718737684; c=relaxed/simple;
+	bh=vpmHfL9r9TyAE2DjCbaAMxhUUBeiCaKP/urqhM0ztMs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PspBFExPyJL2sMzDXiLddZbQIip48JvRDvMdY3J0IZrqIa011zCuTPN2f5/7fXjKCW63v8IjESWlFj+kzuweLRRaF2AiMhUa81vNdortBEWCY84niB0Rzw84NxtclNnHzPTogC14FTBte6oq6v2Kc2VwUwjQb+vZLKuAobwAdTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KT6Tg5AV; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35f1691b18fso4744468f8f.2;
+        Tue, 18 Jun 2024 12:08:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718737608; x=1719342408; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oxz2pZ47pxNTQppBLFBoMYJoJeu/eLVWfqVJPijciDg=;
-        b=una3UUGBhDlHyHxaU61K+vu3dBVjvTR4XQIRpQ3do+pFyKPo4jZxtNO+veY0FP+Us2
-         mBspvZq8pFiq5CSK1rCAGLrPwDo/MbxQyRsMb07Tu3LTlUgbcwq6IoCBrIJxwTqZEBWf
-         IOHz0GV2qiYkC21LTMhW9kPUyb+YhSobnYyFo7ZXqoxE17pLD/V/dZ96/FEFLwMJT4pz
-         NU0eWh0rbv/ySc5K5UnqNC/ieNfnhykDPTXPzvV0vL1mG7IYepzuVCO6cjJf6pq6zjyB
-         MXN6JIruC3+6B1zPUAsTXOpBk4mlhB+C9gHhcPjzuYFC1qB+6DQduuLEI6i7SJ7YClfy
-         kBLQ==
+        d=gmail.com; s=20230601; t=1718737681; x=1719342481; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0I0d/NKdwXHuOccz/djhmZkYE9cQJgTceoyjyWcQAP0=;
+        b=KT6Tg5AVFPpSusV/+CCwrmN+18gPs3hSLGSSISah3bI8DbXxpntHTL2QUWhnBHAmKo
+         scXlXfbUHI9NwJbpsLOEtOinFWQ9qRb/LUD9dYtZT9neOHQblHD96i6QsxkeXcm3+083
+         DPdAO3WR3GNSkwGCqu+ee5ZKz+1skhaIY9GjIA9SbNBrrOyJXUMXUFuLHDQKt0HP6Sp+
+         1vLca7i1yR8dzSEbsB1qyQsnWIEEy7vU+ZzqfpZ/NM0EsXrBPcNkP9WBGo4Ai4tPdcsP
+         7CdrVbc0+6nTI2KrJ2yR7YhqIGMqRjHnmEwxTJtOYw6f5glg/43F8f+NSgPzJxikmO2N
+         VGRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718737608; x=1719342408;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1718737681; x=1719342481;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oxz2pZ47pxNTQppBLFBoMYJoJeu/eLVWfqVJPijciDg=;
-        b=nl7BGm31IvMA/CqCtUIp0u3bxv9zPcc03DXSI4p19ckaDB0nBKcZ0zInsUJJXhVmQF
-         /u8w8Ea/gDyokQj1y8ZKLOS+pgMtsT4fG9Uc01/XOFSMDGkCTpxy6fWxprE1jaX2F7Hw
-         6jQvyaTiG66/yJLpDpijcPCZXlarXsgvtWhIdKWdRHkk2eShrNG17r6LRHtg+6SxlECp
-         A9NYFtLtGmoSfsaD5brV1gVb4OQtY+4Kf2B0yfcbMGY2+ug65c1f7DwcctgoEqNeWwRG
-         BdZtE9GKu/Bccuzx3P9CYAduOKGtdeMyBl7gyGqOr83BrRBU9U83P5cng18GOIoGJtIU
-         kIHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtTaCBEhYzDkOkBSq+xN/RvQuqw5FXcs/7bPYCqNUyZdavUcYnO2FTSSQQLAbgo8aCY8zK2PO5wgzUZu3tSzDwahq61TuOdVjwOZSb
-X-Gm-Message-State: AOJu0YwULPpD8kp6WxGhOsJbDklr20oigij3XXn0Dtw8oaBN9d7Ri1dd
-	TPCxJnLgkWbh+1eAhsiI7/PH/aiqfCjvmcYHr2SUo/wsPJM3nhzNekyn0g7LSJ8=
-X-Google-Smtp-Source: AGHT+IHFzaKHtn6W0HDhJQws89CbNYw8HlOIfF5xX5dlB73nO09Ykn1ZM8Isd95B0DrXJaETeAPsOg==
-X-Received: by 2002:a05:600c:4f16:b0:418:c2af:ab83 with SMTP id 5b1f17b1804b1-4247529a9b6mr2845505e9.36.1718737607855;
-        Tue, 18 Jun 2024 12:06:47 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:5d11:7fa7:8997:f811? ([2a00:f41:9028:9df3:5d11:7fa7:8997:f811])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36094fa7ea8sm6298482f8f.80.2024.06.18.12.06.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 12:06:47 -0700 (PDT)
-Message-ID: <7eb1c459-90d2-4b49-a226-0ced8216cee6@linaro.org>
-Date: Tue, 18 Jun 2024 21:06:43 +0200
+        bh=0I0d/NKdwXHuOccz/djhmZkYE9cQJgTceoyjyWcQAP0=;
+        b=SBmm18ZBNo9l0VB4MtJdbwWYPVXtnIc7veJM2c8XZPRI1pzNBwZnczV9zuusoRZDmf
+         795o9IgRSKTS/6nOIQ7IwKDUVlOkbe/9o22jxzrUk+ITcBTBX6lA1UPEwOAGQuF/STQ0
+         DO8YLjXNPSbapJnYlxcKjh1C8Pt5pVmuOpYaahvLA1J+f2thD/+8LFsUnRf//oiR2Ijn
+         ysLmqZMWRzXoTSJMatzYvSeVnlA/0CiVArjs4N0getxrcRZdWFdAG1zgXqCrqGCrInxM
+         MePytJBSpGMidSoWDTvingaDADgqfxROwxhSNf/lWP4DT0fv8LrcgTr/ePLwhoSdy4NY
+         JXZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkjwMESaAQXmekY5No7Jd8z0Z4Z6/AKKopsEDtYWuGCRtd9m99Oa8JL/wSGALKxyde9sK16OMnvdZ3eA4b//+ri+taSAVXdjSpYotTxBhhw9jYUz8rR8dihgZtKaeoxrhE9CC76xoXLlU9Ra5+odDO9+YloYUpfPLnX2VxfXeN9nHL
+X-Gm-Message-State: AOJu0YyTedA8UwmEWOCTgag/d6yDrd+ayqDrPstrOj8+yRnlzJA0mpYj
+	Lnm/WPAJQKUOs9RsofFGFbkOth5xKFSq/pTE6YN82iMZGWOAezAc
+X-Google-Smtp-Source: AGHT+IFRdLy3kSCQHiBaMb3kuFLG6/e8w+S8xgh9afjw30/pEnRE2G+RFO2vDbjC9cYfD1I+tprCyw==
+X-Received: by 2002:adf:e590:0:b0:360:6f9e:8a85 with SMTP id ffacd0b85a97d-363195b2334mr331834f8f.43.1718737681093;
+        Tue, 18 Jun 2024 12:08:01 -0700 (PDT)
+Received: from krava (85-193-35-215.rib.o2.cz. [85.193.35.215])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3608accd8b3sm9391893f8f.71.2024.06.18.12.07.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 12:08:00 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 18 Jun 2024 21:07:58 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Daniel Xu <dxu@dxuuu.xyz>,
+	shuah@kernel.org, ast@kernel.org, andrii@kernel.org,
+	eddyz87@gmail.com, daniel@iogearbox.net, quentin@isovalent.com,
+	alan.maguire@oracle.com, acme@kernel.org, mykolal@fb.com,
+	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+	haoluo@google.com, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH bpf-next v4 06/12] bpf: selftests: Fix
+ bpf_session_cookie() kfunc prototype
+Message-ID: <ZnHbDgAnwgZqw6Lk@krava>
+References: <cover.1717881178.git.dxu@dxuuu.xyz>
+ <34708481d71ea72c23a78a5209e04a76b261a01d.1717881178.git.dxu@dxuuu.xyz>
+ <Zmb52Qp__CBzbgDh@krava>
+ <CAEf4BzaT7XNnGFUqAr=+pi106bT0o4=TJ7JLOPNjZEBHw4+M7Q@mail.gmail.com>
+ <ZnGBANDTF80gNDHR@krava>
+ <CAEf4BzZVfppin_mfEJF9eVcZUu9hds5PKuLysWOXeSJ7gdV3dg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 3/4] arm64: dts: qcom: add base AIM300 dtsi
-To: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- dmitry.baryshkov@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com,
- Fenglin Wu <quic_fenglinw@quicinc.com>
-References: <20240618072202.2516025-1-quic_tengfan@quicinc.com>
- <20240618072202.2516025-4-quic_tengfan@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240618072202.2516025-4-quic_tengfan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZVfppin_mfEJF9eVcZUu9hds5PKuLysWOXeSJ7gdV3dg@mail.gmail.com>
 
-
-
-On 6/18/24 09:22, Tengfei Fan wrote:
-> AIM300 Series is a highly optimized family of modules designed to
-> support AIoT applications. It integrates QCS8550 SoC, UFS and PMIC
-> chip etc.
-> Here is a diagram of AIM300 SoM:
->            +----------------------------------------+
->            |AIM300 SoM                              |
->            |                                        |
->            |                           +-----+      |
->            |                      |--->| UFS |      |
->            |                      |    +-----+      |
->            |                      |                 |
->            |                      |                 |
->       3.7v |  +-----------------+ |    +---------+  |
->    ---------->|       PMIC      |----->| QCS8550 |  |
->            |  +-----------------+      +---------+  |
->            |                      |                 |
->            |                      |                 |
->            |                      |    +-----+      |
->            |                      |--->| ... |      |
->            |                           +-----+      |
->            |                                        |
->            +----------------------------------------+
+On Tue, Jun 18, 2024 at 09:58:23AM -0700, Andrii Nakryiko wrote:
+> On Tue, Jun 18, 2024 at 5:43 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Mon, Jun 17, 2024 at 03:25:53PM -0700, Andrii Nakryiko wrote:
+> > > On Mon, Jun 10, 2024 at 6:04 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> > > >
+> > > > On Sat, Jun 08, 2024 at 03:16:02PM -0600, Daniel Xu wrote:
+> > > > > The prototype defined in bpf_kfuncs.h was not in line with how the
+> > > > > actual kfunc was defined. This causes compilation errors when kfunc
+> > > > > prototypes are generated from BTF.
+> > > > >
+> > > > > Fix by aligning with actual kfunc definition.
+> > > > >
+> > > > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > > > > ---
+> > > > >  tools/testing/selftests/bpf/bpf_kfuncs.h                        | 2 +-
+> > > > >  tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c | 2 +-
+> > > > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
+> > > > > index be91a6919315..3b6675ab4086 100644
+> > > > > --- a/tools/testing/selftests/bpf/bpf_kfuncs.h
+> > > > > +++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
+> > > > > @@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
+> > > > >                                     struct bpf_key *trusted_keyring) __ksym;
+> > > > >
+> > > > >  extern bool bpf_session_is_return(void) __ksym __weak;
+> > > > > -extern long *bpf_session_cookie(void) __ksym __weak;
+> > > > > +extern __u64 *bpf_session_cookie(void) __ksym __weak;
+> > > >
+> > > > the original intent was to expose long instead of __u64 :-\
+> > > >
+> > >
+> > > Cookies internally are always u64 (8 byte values). Marking them
+> > > internally in the kernel as long could lead to problems on 32-bit
+> > > architectures, potentially (it still needs to be 64-bit value
+> > > according to BPF contract, but we'll allocate only 4 bytes for them).
+> > >
+> > > It seems better and safer to be explicit with __u64/u64 for cookies everywhere.
+> >
+> > hum, I based that on what we did for kprobe session,
+> > but I guess it makes sense just for bpf side:
 > 
-> Co-developed-by: Fenglin Wu <quic_fenglinw@quicinc.com>
-> Signed-off-by: Fenglin Wu <quic_fenglinw@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> ---
+> yep, exactly, long is 64-bit only for BPF "architecture", but
+> internally it will be 4 bytes for 32-bit architectures, which will
+> potentially lead to problems. With recent kfunc vmlinux.h generation,
+> it's probably better to stick to explicitly sized types.
 
-[...]
+hm, it already got in 2b8dd87332cd, revert needs more changes in selftests
+I'll send formal patch with fix below
 
-> +&ufs_mem_hc {
-> +	reset-gpios = <&tlmm 210 GPIO_ACTIVE_LOW>;
-> +	vcc-supply = <&vreg_l17b_2p5>;
-> +	vcc-max-microamp = <1300000>;
-> +	vccq-supply = <&vreg_l1g_1p2>;
-> +	vccq-max-microamp = <1200000>;
-> +	vdd-hba-supply = <&vreg_l3g_1p2>;
+jirka
 
-These regulators should generally have:
-
-regulator-allow-set-load;
-regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-                            RPMH_REGULATOR_MODE_HPM>;
-
-although the current setup you have never lets them exit HPM
-
-Konrad
+---
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 4b3fda456299..cd098846e251 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -3530,7 +3530,7 @@ __bpf_kfunc bool bpf_session_is_return(void)
+ 	return session_ctx->is_return;
+ }
+ 
+-__bpf_kfunc long *bpf_session_cookie(void)
++__bpf_kfunc __u64 *bpf_session_cookie(void)
+ {
+ 	struct bpf_session_run_ctx *session_ctx;
+ 
+diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
+index be91a6919315..3b6675ab4086 100644
+--- a/tools/testing/selftests/bpf/bpf_kfuncs.h
++++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
+@@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
+ 				      struct bpf_key *trusted_keyring) __ksym;
+ 
+ extern bool bpf_session_is_return(void) __ksym __weak;
+-extern long *bpf_session_cookie(void) __ksym __weak;
++extern __u64 *bpf_session_cookie(void) __ksym __weak;
+ #endif
+diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
+index d49070803e22..0835b5edf685 100644
+--- a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
++++ b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
+@@ -25,7 +25,7 @@ int BPF_PROG(trigger)
+ 
+ static int check_cookie(__u64 val, __u64 *result)
+ {
+-	long *cookie;
++	__u64 *cookie;
+ 
+ 	if (bpf_get_current_pid_tgid() >> 32 != pid)
+ 		return 1;
 
