@@ -1,331 +1,114 @@
-Return-Path: <linux-kernel+bounces-219814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78FE90D80F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:03:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89E690D8C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFEBD283771
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:03:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F89DB33201
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A414D8AC;
-	Tue, 18 Jun 2024 16:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F85913E05F;
+	Tue, 18 Jun 2024 15:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZdRFnhR7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XTSKyQpx"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C371D4778B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD49722F1C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718726592; cv=none; b=Lsucm9qj8WaSUg3Q0TULn9jpkI42rPjeZLgOmi6BhXo7ZTnayBUaLh4mBOM4cqGwEgsnQYG+d6ADyHmfEsIZz9Ax4bGapSuTiYsLTaxSaOXeI1oI2uMlogFem9vGFZwSdk3bDpYCGA711iy79EKZZB7U1JCt9yMj3KNFB3SI+uw=
+	t=1718723538; cv=none; b=isg7maQIQzxpqB5UXOhoE5D13yyIrV72auvuFHdjKZY1pnGIFIcumv4zq7rTvt9/mp7o8vc/bJJ0sZsllKpkoctC0EPpIuv4cWO5K/3tDpc4Gf7Nw2EvEJuA4mmY3KSwmF+OYBGhZjNtZ9At5poMoV12SdRmrf5vrc64wws365g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718726592; c=relaxed/simple;
-	bh=FjBcsfdHGZXvF4/KpxssT5Lc9S9KZdX9F4QOnQy0kjM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XUCi1IY52GSuoSKnLtliAr9f5JCBhy6XTkv+RFe7Vj09Se3qwWQlIZjPTS6nejiABVRD1ThwNLjwHZE8OKLsKYz0IrgrpYpL2eE0LPrDfMZts6CnUOaiXAtYwGDq50RtIYwP+e0dcL1ymSehoavw6JOo7hmWGQouA4m4wHOW+0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZdRFnhR7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718726589;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XitgP1kzStul1y7vs+mWWL5nkNE4bgRz6s5pl8bogs0=;
-	b=ZdRFnhR7NFvARICiEN4aO9s+gN2vZkNAt++kngA2T0qOiUnQRnSh0N0sTG6a9QLYlJl+EI
-	KRIyyxeZArnMBR48QeCFAumiNCBd0aXlaf5D5ta1G9xZnQOOqkXB+uplPdd2aTsoc7z9vc
-	zhKE4WgNNhR8uM3N4eUliaOXBAj8R7U=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-35-N1OfJr65Pui9voTXnXCwkA-1; Tue,
- 18 Jun 2024 12:03:06 -0400
-X-MC-Unique: N1OfJr65Pui9voTXnXCwkA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4E37119560BE;
-	Tue, 18 Jun 2024 16:03:03 +0000 (UTC)
-Received: from RHTRH0061144 (dhcp-17-72.bos.redhat.com [10.18.17.72])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3C84919560AE;
-	Tue, 18 Jun 2024 16:03:00 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: netdev@vger.kernel.org
-Cc: dev@openvswitch.org,  Simon Horman <horms@kernel.org>,
-  linux-kernel@vger.kernel.org,  Stefano Brivio <sbrivio@redhat.com>,  Eric
- Dumazet <edumazet@google.com>,  linux-kselftest@vger.kernel.org,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Shuah Khan
- <shuah@kernel.org>,  "David S. Miller" <davem@davemloft.net>
-Subject: Re: [ovs-dev] [PATCH net-next 6/7] selftests: net: Use the provided
- dpctl rather than the vswitchd for tests.
-In-Reply-To: <20240617180218.1154326-7-aconole@redhat.com> (Aaron Conole's
-	message of "Mon, 17 Jun 2024 14:02:17 -0400")
-References: <20240617180218.1154326-1-aconole@redhat.com>
-	<20240617180218.1154326-7-aconole@redhat.com>
-Date: Tue, 18 Jun 2024 12:02:59 -0400
-Message-ID: <f7tv826jl1o.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718723538; c=relaxed/simple;
+	bh=k6l3TQ4MXgrNxiL1bUyoqnmaoZN0afZoN1L/ohLrSX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RKI0gRdEAEWZqASAA1vnJl4TEVMxi2werBRQW6sBoC3LQQx4s8vJ3Jf1ktaS8dttQsq1Rv6aDoU3AmGjDU04D0TTOAJns6b7mrD4fMd4fxKe6ZdwXkmn2p/iULdG4MP3iuyhtEBUIstw/4MDEY1yY0oMsSnCkblQJQnhlLZGSZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XTSKyQpx; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42172ed3487so40488385e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718723535; x=1719328335; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zktM13vzE16WFMh5/Cr5Qz12DI4f5rptllhEcUwb5wU=;
+        b=XTSKyQpxUBEjWnc/9jcslQnzYjjWMbTYomTFYO+LYcq588cadf6wSFdeS2dA0lCa6d
+         VivL3oguQzlS94oYmfS0g9IbpAvXWB7H6lNJRP3zqRyjTplxfWmXI2fM6uQbDmt79w1N
+         jffL5L6rC8yO8asJfNktEc+uxv+No38P4EvBzyeN30SSDKtw4jfhOeDoYQ/wW4XCSZbu
+         iWAaQtjiihf3wPlaTk/L0A2xHO21c+YAOLnyJA/LHa3kuvlNDFvXIzTwuFFifROrzTOx
+         EGq7b6JOVUNsjN8cd+cuHVqDKXd2EcWaSNL0QnC7pX20u+rObjlrEJ6Hp/95Ik2FcI3s
+         HyVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718723535; x=1719328335;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zktM13vzE16WFMh5/Cr5Qz12DI4f5rptllhEcUwb5wU=;
+        b=wep5u07nC7kIU7VX9uhjooE9l/GFYS2OD61qBXbrsRucD6pXnShw+lzy9cWMF3nD10
+         22zSl/HlzL4KH9es7jJgx86SKaxessqR7HjfAGBuK+bj+NgDndjokM5f/njA3GXVDtN0
+         mgaJBYboWkLZxmo1JQ2gb2XNfeX/I3CeAoucdVpCRqZVffRXMof+eKy/gJ/ix+vL1uEo
+         lS+OAIzRRQhsglMJywEmd3W/dEHxycndIiFOjicukKhVKjxtL9bWeEVapWS+ye3bMKu5
+         4bvuGchM/x3nok0GYX4ds25lOW8FWlPu+GBioFBIY8LZ8wVI/VNeXWYkg41bl0d6kbho
+         mn3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXuTpGdi0Nr45gT55JnIPVclV4ZwE15pTKrk6+grw6li6pjrzhPql9iUQhjbCJPUQgvJ8vw7rn0XraVJdPpWaZ5dk5Nkgsatxw16pFh
+X-Gm-Message-State: AOJu0Yw+ZoyDi3I56O1YDyCGiXonYT52IbTMSVyanAQhfTZwCIlKlCkD
+	nidZi/x0IlUHoRcMp18/QdjKCnmbaJVjoN+ft0jL3ZCZl5vKfbcihRP98yAr8KpSppSwCmzQQTX
+	C
+X-Google-Smtp-Source: AGHT+IG96jprIRpe2giPfPgMSPu759yfEY2E+LThuHU3LLVf+jK2d0vhVUkcHLs7aRCIT6x8Cb1v2g==
+X-Received: by 2002:a05:600c:4586:b0:421:2711:cde9 with SMTP id 5b1f17b1804b1-42304824f0dmr111067575e9.22.1718723535254;
+        Tue, 18 Jun 2024 08:12:15 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4229c60f758sm212680845e9.20.2024.06.18.08.12.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 08:12:15 -0700 (PDT)
+Message-ID: <8524dec4-be7a-4423-8d02-92cc1bb4bf3c@suse.com>
+Date: Tue, 18 Jun 2024 18:12:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 9/9] x86/virt/tdx: Don't initialize module that doesn't
+ support NO_RBP_MOD feature
+To: Kai Huang <kai.huang@intel.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, dave.hansen@intel.com, dan.j.williams@intel.com,
+ kirill.shutemov@linux.intel.com, rick.p.edgecombe@intel.com,
+ peterz@infradead.org, tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
+ hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+ isaku.yamahata@intel.com, binbin.wu@linux.intel.com
+References: <cover.1718538552.git.kai.huang@intel.com>
+ <909d809d0a37e51babfe28f88c7fd1fdefa53e88.1718538552.git.kai.huang@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <909d809d0a37e51babfe28f88c7fd1fdefa53e88.1718538552.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Aaron Conole <aconole@redhat.com> writes:
 
-> The current pmtu test infrastucture requires an installed copy of the
-> ovs-vswitchd userspace.  This means that any automated or constrained
-> environments may not have the requisite tools to run the tests.  However,
-> the pmtu tests don't require any special classifier processing.  Indeed
-> they are only using the vswitchd in the most basic mode - as a NORMAL
-> switch.
->
-> However, the ovs-dpctl kernel utility can now program all the needed basic
-> flows to allow traffic to traverse the tunnels and provide support for at
-> least testing some basic pmtu scenarios.  More complicated flow pipelines
-> can be added to the internal ovs test infrastructure, but that is work for
-> the future.  For now, enable the most common cases - wide mega flows with
-> no other prerequisites.
->
-> Enhance the pmtu testing to try testing using the internal utility, first.
-> As a fallback, if the internal utility isn't running, then try with the
-> ovs-vswitchd userspace tools.
->
-> Signed-off-by: Aaron Conole <aconole@redhat.com>
-> ---
->  tools/testing/selftests/net/pmtu.sh | 145 +++++++++++++++++++++++-----
->  1 file changed, 123 insertions(+), 22 deletions(-)
->
-> diff --git a/tools/testing/selftests/net/pmtu.sh b/tools/testing/selftests/net/pmtu.sh
-> index cfc84958025a..51ccb9bed069 100755
-> --- a/tools/testing/selftests/net/pmtu.sh
-> +++ b/tools/testing/selftests/net/pmtu.sh
-> @@ -842,25 +842,97 @@ setup_bridge() {
->  	run_cmd ${ns_a} ip link set veth_A-C master br0
->  }
->  
-> +setup_ovs_via_internal_utility() {
-> +	type="${1}"
-> +	a_addr="${2}"
-> +	b_addr="${3}"
-> +	dport="${4}"
-> +
-> +	run_cmd python3 ./openvswitch/ovs-dpctl.py add-if ovs_br0 ${type}_a -t ${type} || return 1
-> +
-> +	ports=$(python3 ./openvswitch/ovs-dpctl.py show)
-> +	br0_port=$(echo "$ports" | grep -E "\sovs_br0" | sed -e 's@port @@' | cut -d: -f1 | xargs)
-> +	type_a_port=$(echo "$ports" | grep ${type}_a | sed -e 's@port @@' | cut -d: -f1 | xargs)
-> +	veth_a_port=$(echo "$ports" | grep veth_A | sed -e 's@port @@' | cut -d: -f1 | xargs)
-> +
-> +	v4_a_tun="${prefix4}.${a_r1}.1"
-> +	v4_b_tun="${prefix4}.${b_r1}.1"
-> +
-> +	v6_a_tun="${prefix6}:${a_r1}::1"
-> +	v6_b_tun="${prefix6}:${b_r1}::1"
-> +
-> +	if [ "${v4_a_tun}" = "${a_addr}" ]; then
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x0800),ipv4()" \
-> +		    "set(tunnel(tun_id=1,dst=${v4_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x86dd),ipv6()" \
-> +		    "set(tunnel(tun_id=1,dst=${v4_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),tunnel(tun_id=1,src=${v4_b_tun},dst=${v4_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x0800),ipv4()" \
-> +		    "${veth_a_port}"
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),tunnel(tun_id=1,src=${v4_b_tun},dst=${v4_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x86dd),ipv6()" \
-> +		    "${veth_a_port}"
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),tunnel(tun_id=1,src=${v4_b_tun},dst=${v4_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x0806),arp()" \
-> +		    "${veth_a_port}"
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x0806),arp(sip=${veth4_c_addr},tip=${tunnel4_b_addr})" \
-> +		    "set(tunnel(tun_id=1,dst=${v4_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
-> +	else
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x0800),ipv4()" \
-> +		    "set(tunnel(tun_id=1,ipv6_dst=${v6_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x86dd),ipv6()" \
-> +		    "set(tunnel(tun_id=1,ipv6_dst=${v6_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),tunnel(tun_id=1,ipv6_src=${v6_b_tun},ipv6_dst=${v6_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x0800),ipv4()" \
-> +		    "${veth_a_port}"
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),tunnel(tun_id=1,ipv6_src=${v6_b_tun},ipv6_dst=${v6_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x86dd),ipv6()" \
-> +		    "${veth_a_port}"
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),tunnel(tun_id=1,ipv6_src=${v6_b_tun},ipv6_dst=${v6_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x0806),arp()" \
-> +		    "${veth_a_port}"
-> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
-> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x0806),arp(sip=${veth4_c_addr},tip=${tunnel4_b_addr})" \
-> +		    "set(tunnel(tun_id=1,ipv6_dst=${v6_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
-> +	fi
-> +}
-> +
-> +setup_ovs_via_vswitchd() {
-> +	type="${1}"
-> +	b_addr="${2}"
-> +
-> +	run_cmd ovs-vsctl add-port ovs_br0 ${type}_a -- \
-> +		set interface ${type}_a type=${type} \
-> +		options:remote_ip=${b_addr} options:key=1 options:csum=true || return 1
-> +}
-> +
->  setup_ovs_vxlan_or_geneve() {
->  	type="${1}"
->  	a_addr="${2}"
->  	b_addr="${3}"
-> +	dport="6081"
->  
->  	if [ "${type}" = "vxlan" ]; then
-> +		dport="4789"
->  		opts="${opts} ttl 64 dstport 4789"
->  		opts_b="local ${b_addr}"
->  	fi
->  
-> -	run_cmd ovs-vsctl add-port ovs_br0 ${type}_a -- \
-> -		set interface ${type}_a type=${type} \
-> -		options:remote_ip=${b_addr} options:key=1 options:csum=true || return 1
-> +	setup_ovs_via_internal_utility "${type}" "${a_addr}" "${b_addr}" \
-> +				       "${dport}" || \
-> +	    setup_ovs_via_vswitchd "${type}" "${b_addr}" || return 1
->  
->  	run_cmd ${ns_b} ip link add ${type}_b type ${type} id 1 ${opts_b} remote ${a_addr} ${opts} || return 1
->  
->  	run_cmd ${ns_b} ip addr add ${tunnel4_b_addr}/${tunnel4_mask} dev ${type}_b
->  	run_cmd ${ns_b} ip addr add ${tunnel6_b_addr}/${tunnel6_mask} dev ${type}_b
->  
-> +	run_cmd ip link set ${type}_a up
->  	run_cmd ${ns_b} ip link set ${type}_b up
->  }
->  
-> @@ -880,8 +952,24 @@ setup_ovs_vxlan6() {
->  	setup_ovs_vxlan_or_geneve vxlan  ${prefix6}:${a_r1}::1 ${prefix6}:${b_r1}::1
->  }
->  
-> +setup_ovs_br_internal() {
-> +	run_cmd python3 ./openvswitch/ovs-dpctl.py add-dp ovs_br0 || \
-> +		return 1
-> +}
-> +
-> +setup_ovs_br_vswitchd() {
-> +	run_cmd ovs-vsctl add-br ovs_br0 || return 1
-> +}
-> +
-> +setup_ovs_add_if() {
-> +	ifname="${1}"
-> +	run_cmd python3 ./openvswitch/ovs-dpctl.py add-if ovs_br0 \
-> +		"${ifname}" || \
-> +		run_cmd ovs-vsctl add-port ovs_br0 "${ifname}"
-> +}
-> +
->  setup_ovs_bridge() {
-> -	run_cmd ovs-vsctl add-br ovs_br0 || return $ksft_skip
-> +	setup_ovs_br_internal || setup_ovs_br_vswitchd || return $ksft_skip
->  	run_cmd ip link set ovs_br0 up
->  
->  	run_cmd ${ns_c} ip link add veth_C-A type veth peer name veth_A-C
-> @@ -891,7 +979,7 @@ setup_ovs_bridge() {
->  	run_cmd ${ns_c} ip link set veth_C-A up
->  	run_cmd ${ns_c} ip addr add ${veth4_c_addr}/${veth4_mask} dev veth_C-A
->  	run_cmd ${ns_c} ip addr add ${veth6_c_addr}/${veth6_mask} dev veth_C-A
-> -	run_cmd ovs-vsctl add-port ovs_br0 veth_A-C
-> +        setup_ovs_add_if veth_A-C
 
-NIT: This should have been tab instead of space.  I will correct with v2.
+On 16.06.24 г. 15:01 ч., Kai Huang wrote:
+> Old TDX modules can clobber RBP in the TDH.VP.ENTER SEAMCALL.  However
+> RBP is used as frame pointer in the x86_64 calling convention, and
+> clobbering RBP could result in bad things like being unable to unwind
+> the stack if any non-maskable exceptions (NMI, #MC etc) happens in that
+> gap.
+> 
+> A new "NO_RBP_MOD" feature was introduced to more recent TDX modules to
+> not clobber RBP.  This feature is reported in the TDX_FEATURES0 global
+> metadata field via bit 18.
+> 
+> Don't initialize the TDX module if this feature is not supported [1].
+> 
+> Link: https://lore.kernel.org/all/c0067319-2653-4cbd-8fee-1ccf21b1e646@suse.com/T/#mef98469c51e2382ead2c537ea189752360bd2bef [1]
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
 
->  	# Move veth_A-R1 to init
->  	run_cmd ${ns_a} ip link set veth_A-R1 netns 1
-> @@ -922,6 +1010,18 @@ trace() {
->  	sleep 1
->  }
->  
-> +cleanup_del_ovs_internal() {
-> +	# squelch the output of the del-if commands since it can be wordy
-> +	python3 ./openvswitch/ovs-dpctl.py del-if ovs_br0 -d true vxlan_a	>/dev/null	2>&1
-> +	python3 ./openvswitch/ovs-dpctl.py del-if ovs_br0 -d true geneve_a	>/dev/null	2>&1
-> +	python3 ./openvswitch/ovs-dpctl.py del-dp ovs_br0			>/dev/null	2>&1
-> +}
-> +
-> +cleanup_del_ovs_vswitchd() {
-> +	ovs-vsctl --if-exists del-port vxlan_a	2>/dev/null
-> +	ovs-vsctl --if-exists del-br ovs_br0	2>/dev/null
-> +}
-> +
->  cleanup() {
->  	for pid in ${tcpdump_pids}; do
->  		kill ${pid}
-> @@ -940,10 +1040,10 @@ cleanup() {
->  
->  	cleanup_all_ns
->  
-> -	ip link del veth_A-C			2>/dev/null
-> -	ip link del veth_A-R1			2>/dev/null
-> -	ovs-vsctl --if-exists del-port vxlan_a	2>/dev/null
-> -	ovs-vsctl --if-exists del-br ovs_br0	2>/dev/null
-> +	ip link del veth_A-C		2>/dev/null
-> +	ip link del veth_A-R1		2>/dev/null
-> +	cleanup_del_ovs_internal
-> +	cleanup_del_ovs_vswitchd
->  	rm -f "$tmpoutfile"
->  }
->  
-> @@ -1397,6 +1497,12 @@ test_pmtu_ipvX_over_ovs_vxlanY_or_geneveY_exception() {
->  	outer_family=${3}
->  	ll_mtu=4000
->  
-> +	if [ "${type}" = "vxlan" ]; then
-> +		tun_a="vxlan_sys_4789"
-> +	elif [ "${type}" = "geneve" ]; then
-> +		tun_a="genev_sys_6081"
-> +	fi
-> +
->  	if [ ${outer_family} -eq 4 ]; then
->  		setup namespaces routing ovs_bridge ovs_${type}4 || return $ksft_skip
->  		#                      IPv4 header   UDP header   VXLAN/GENEVE header   Ethernet header
-> @@ -1407,17 +1513,11 @@ test_pmtu_ipvX_over_ovs_vxlanY_or_geneveY_exception() {
->  		exp_mtu=$((${ll_mtu} - 40          - 8          - 8                   - 14))
->  	fi
->  
-> -	if [ "${type}" = "vxlan" ]; then
-> -		tun_a="vxlan_sys_4789"
-> -	elif [ "${type}" = "geneve" ]; then
-> -		tun_a="genev_sys_6081"
-> -	fi
-> -
-> -	trace ""        "${tun_a}"  "${ns_b}"  ${type}_b \
-> -	      ""        veth_A-R1   "${ns_r1}" veth_R1-A \
-> -	      "${ns_b}" veth_B-R1   "${ns_r1}" veth_R1-B \
-> -	      ""        ovs_br0     ""         veth-A-C  \
-> -	      "${ns_c}" veth_C-A
-> +	trace ""        ${type}_a    "${ns_b}"  ${type}_b \
-> +	      ""        veth_A-R1    "${ns_r1}" veth_R1-A \
-> +	      "${ns_b}" veth_B-R1    "${ns_r1}" veth_R1-B \
-> +	      ""        ovs_br0      ""         veth-A_C  \
-> +	      "${ns_c}" veth_C-A     ""         "${tun_a}"
->  
->  	if [ ${family} -eq 4 ]; then
->  		ping=ping
-> @@ -1436,8 +1536,9 @@ test_pmtu_ipvX_over_ovs_vxlanY_or_geneveY_exception() {
->  	mtu "${ns_b}"  veth_B-R1 ${ll_mtu}
->  	mtu "${ns_r1}" veth_R1-B ${ll_mtu}
->  
-> -	mtu ""        ${tun_a}  $((${ll_mtu} + 1000))
-> -	mtu "${ns_b}" ${type}_b $((${ll_mtu} + 1000))
-> +	mtu ""        ${tun_a}  $((${ll_mtu} + 1000)) 2>/dev/null || \
-> +		mtu ""        ${type}_a  $((${ll_mtu} + 1000)) 2>/dev/null
-> +	mtu "${ns_b}" ${type}_b  $((${ll_mtu} + 1000))
->  
->  	run_cmd ${ns_c} ${ping} -q -M want -i 0.1 -c 20 -s $((${ll_mtu} + 500)) ${dst} || return 1
-
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
