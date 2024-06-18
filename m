@@ -1,210 +1,153 @@
-Return-Path: <linux-kernel+bounces-219793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2104F90D914
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:23:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009CE90D95E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9419B359DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:51:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F595B296D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F51A47A76;
-	Tue, 18 Jun 2024 15:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F684778B;
+	Tue, 18 Jun 2024 15:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Z3j0Pcik"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2020.outbound.protection.outlook.com [40.92.22.20])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GH1xLuWs"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9603D2557F;
-	Tue, 18 Jun 2024 15:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718725830; cv=fail; b=gsJUTBktSr9RFuEvMTsNi8pSvr14zepnD8bHQv8Vh9bUOLwuxikkjVtaTVXzBy0/gcVrfb4srVX2MLCrRVbfp9LkVyemWB1bQ3f8D1AZjVKqHzq4Oq5Ys9Tu5FJCI1dTd2kXYoxoBOdj+Idp8EOZCZYa6r70IUn2l8u+bYxr5TU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718725830; c=relaxed/simple;
-	bh=d/OBKCkYmue+NiW0RwkSn8Llp2pH1nzaEhPkAZhMeo4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LDmvBJRHjVEd5x0TCDYHyZTIlSv6Z0llNyicwHVPk94wI1wSCZwRUp6NxHE5XB2J+dm9D5QlmCitsE3GQiH7Ah5rj97G4A9DdOn3GGQJRIp3wv1BwwWQBTsVOpFweDL5WuaWlM65ZBc/cTJ+NBXCtoElqp4dN2a/oNRAC93kMis=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Z3j0Pcik; arc=fail smtp.client-ip=40.92.22.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dYH52eQ24jpOIjI0lRewQXvUJQOioj+UZBrsurvfwjVqlEg5JC7awwReKVA9BsnzzOSS1zbtOoY0jDjfUbMxh+P6SjDnEweO461N65p2YlvNbpuzjoZQonYu8FKuIOVt8LmmsCbMCw14LMvntFeu5VoMoVUEwkWpvcN5Yflodf5Zh8iCTEKb9QhllsoAOUQlHL7v/b7yGobeksIL9Tp5T1hS/lbb/QRbyznZokA3kJ5FpP636VhzJ+IfeF3XXzviaAHHS1p6TI/X7zltNDZF1BcpJJmoyZGNNUfUJbT66sS68wJ1bYyWmzhk4mQJBvXOIGg2BUxktCM4Ntju5j6knA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U9YREF1DaJ6EDQ2bX1Q61UB+9n21lhd+/qCCoNRwxGI=;
- b=UOAsHVRa2EwltF74r2oJSUN/ix7M04S9Ye18lHexeIzzAWbTTU4KnbTMVl2SI608ZO5ed5spEST5OXO/NaCJxGDDifNPocxpX+PlPp+OEseJQpJN5UaHR7Gm1XWdTr7/Ll9c36O5e4LGIFpvi+O/XoBYwSbmgr6nnP8ZrcwEw87u33y1BDpY8JUEIScipWIDXT3fRlZi/QdH7XhyWbmDD4U59dq4j303LfNi0R6pH9rSk+RY0AnoOlYX6C5e8H1FcFTVWFJRvV34m6sxzNwBQYhkkSsXvOt5L50NKZFqMGsA7tnRs1HeB/p0thcXpvgaztNY6JCmg0XlrYdEqWRY1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U9YREF1DaJ6EDQ2bX1Q61UB+9n21lhd+/qCCoNRwxGI=;
- b=Z3j0PcikvANf7zoa4t4/8TXU+ZEm70l6GeHhuNNzdtAmVuoutQFVvEXFPvH33gEkUBf5DtJ0ApPNc9uopqUsnXh3/Y8Lee+l65W0mwG/aQ73zBqV0Uf+NIgOqUOiyMeojryQ8uQVmQe9PnOF4TJzlYketpEQg33WhW4X1y9NFFaAH5FjNMX1dsLCbEvazzIQ6+54toIxFNaAtkhzoM7QB8mrhYI2K60yE2zwhSckPpdsHEExlgyrBEAzJMXulM4+SB3hNRCRSTFkliyCeiuqPvujBy9Yy+2KQmVionO5irOhK6VgJ7YEZG2Qd1oUDxO9AIrUGZPoEzsGzqWPQV8PIw==
-Received: from SN7PR12MB8101.namprd12.prod.outlook.com (2603:10b6:806:321::7)
- by DS0PR12MB6655.namprd12.prod.outlook.com (2603:10b6:8:d0::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Tue, 18 Jun
- 2024 15:50:25 +0000
-Received: from SN7PR12MB8101.namprd12.prod.outlook.com
- ([fe80::fdb:e120:f99c:c899]) by SN7PR12MB8101.namprd12.prod.outlook.com
- ([fe80::fdb:e120:f99c:c899%5]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 15:50:25 +0000
-Message-ID:
- <SN7PR12MB8101B6D0AB1246797C67E25BA4CE2@SN7PR12MB8101.namprd12.prod.outlook.com>
-Date: Tue, 18 Jun 2024 23:50:16 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] dt-bindings:iio:proximity:new vendor prefix: tyhx
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, Yasin Lee <yasin.lee.x@gmail.com>
-References: <20240616-add-tyhx-hx9023s-sensor-driver-v5-0-ebaf280bbf0e@outlook.com>
- <SN7PR12MB81017D645B48DABB297A62DDA4CC2@SN7PR12MB8101.namprd12.prod.outlook.com>
- <13e586c7-26f6-4190-8219-404a2637905d@kernel.org>
-Content-Language: en-US
-From: Yasin Lee <yasin.lee.x@outlook.com>
-In-Reply-To: <13e586c7-26f6-4190-8219-404a2637905d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [0r4QrtHqX+iQpocbsCEz362K++3DHB+KbF0yoI26Sw9K+yZx8/3z6wlLZdKREdk6]
-X-ClientProxiedBy: SG2PR04CA0212.apcprd04.prod.outlook.com
- (2603:1096:4:187::8) To SN7PR12MB8101.namprd12.prod.outlook.com
- (2603:10b6:806:321::7)
-X-Microsoft-Original-Message-ID:
- <e19db0f5-0110-4879-864f-6c551bfdf7b3@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08645D299;
+	Tue, 18 Jun 2024 15:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718726148; cv=none; b=FJKeQibxLPNyZs/aphdNVHzB58FCGviQhlXjAipYvBqImlZtYrYI9QPzy/5Vl6ntYbMBJTNojMzvg1wuUTnarXJEadVODJ3t4VoLCw/NPLGkykNn8D8P+M5qeqM+7595IVQ9u1NSXjliuzEs0KJeaIshFNpxlsj+5HZABWc8bXM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718726148; c=relaxed/simple;
+	bh=lhjj25VP5M4sTOzHNNjscKcLGzs0m0KUFagNmmsLVCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ndhp3YFugIpjo7o4053ZIYxfPCjVRPDwuVKXFAylRmw6lG9VknPeQQH8ByZrIXJiAjapzgyhkGcipa8qqfRT2zRqhbNxn8XkKbhu6zgvZgAgEWxWXPr8DGSSkfH07SjkqI734JcNyZoRFrL8ecrGE9wfk3DF4aoOuuYjXFann7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GH1xLuWs; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 833B11BF204;
+	Tue, 18 Jun 2024 15:55:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718726137;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V2KE/O5mxQyzYGqNyk0NZy+aO7Wf1mUhJbeharOTLWU=;
+	b=GH1xLuWsQxAhseqDqFHZLD/PAHYZJjFDGtEsCC1ScJeUUlB6N1r9kc7jpvEKmvzMil1ZLw
+	N7wVAJzKpSnPXXL/hbSWtz0+ILKsU1RIIZRu/IrIfG75FCcKItUgfR+M54pq6bbI7L4dtr
+	IX0N3HpabnDfVqLo0OzGu7jQVD00B2p5g9HSkO5PrG0kZdPRe1U3u/NepoJIeZqKetZj43
+	L5QZaneld0T0Npc8RpVNG6z6+EdYPoreOCeTyULCfvm6IJEp3OOJTx8tqRAoZVp5vYufPZ
+	JeobUn7bnS1yOLi9zePgor/7ilQKJspTnQn9BfPegr1Wx3fffcDxqFTbXCIZIQ==
+Date: Tue, 18 Jun 2024 17:55:33 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Simon Horman" <horms@kernel.org>, "Sai Krishna Gajula"
+ <saikrishnag@marvell.com>, "Thomas Gleixner" <tglx@linutronix.de>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "David S . Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Lee Jones"
+ <lee@kernel.org>, "Horatiu Vultur" <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, "Andrew Lunn" <andrew@lunn.ch>, "Heiner
+ Kallweit" <hkallweit1@gmail.com>, "Russell King" <linux@armlinux.org.uk>,
+ "Saravana Kannan" <saravanak@google.com>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Lars
+ Povlsen" <lars.povlsen@microchip.com>, "Steen Hegelund"
+ <Steen.Hegelund@microchip.com>, "Daniel Machon"
+ <daniel.machon@microchip.com>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "Allan
+ Nielsen" <allan.nielsen@microchip.com>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Clement Leger" <clement.leger@bootlin.com>
+Subject: Re: [PATCH v2 01/19] mfd: syscon: Add reference counting and device
+ managed support
+Message-ID: <20240618175533.3e1534ca@bootlin.com>
+In-Reply-To: <b685d5e5-09d3-4916-ad0b-d329c166e149@app.fastmail.com>
+References: <20240527161450.326615-1-herve.codina@bootlin.com>
+	<20240527161450.326615-2-herve.codina@bootlin.com>
+	<b685d5e5-09d3-4916-ad0b-d329c166e149@app.fastmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8101:EE_|DS0PR12MB6655:EE_
-X-MS-Office365-Filtering-Correlation-Id: a35b8b79-2473-4215-0555-08dc8fae5e88
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199025|1602099009|440099025|3412199022|4302099010;
-X-Microsoft-Antispam-Message-Info:
-	15vuJ32Vi0nDb33UGHjEmffo7pMhIp42MHB62ByUFMcEqVmxzzTHs2eDLqdeOWTeUi9HBGkFeepvtORwAr1rCZvRG1VgSJB7tjzl0taWqu+Hcq5aba2/hCjCcOfLdBCe14Nva2qbjEKTwNRfejkUy/szSfZsvzqiEw2J3RRG+xFzRSNYO6fgNq8Xm6DErPB5Fh4WPmovyMQwerYJefN1JsQD3twUSXXfPhq3HPcAp29ZzBdz8BT/FiOZFHjwXMgO7F0SFz9V17AvKCGBKGxOv6eXIMbD7zw5n/v/gckuScitt5bvuSBup64ANVsoMsl5jmAC/fynYNs1dmPu/rPY+V42HTTxYGBLQ32jYzyq7Adk7/0nnl+jg7lr6nD+vkjsQHT1abaNWL63EV+zG4AJI5+0Y5gApFuEuIgkjiAZvCBfKZ9/vK8LySt5oIu7U0PN4OhI7p4MLXM5JD/AxE4qwVRxoX/2UAbXnrMlGx1f3QV3iZ90/2aa4BMa+/g1PS2SXYzHtbJTtd6UsL717mwJRH2pAhsSgloLQkw3ToTrg7SpaGYGTm+qt8DPDdNR5pkvBy2xhA5pDEwanSuOcFbK8ty9tddh5xga69UMbQAnSznpp15HOIdE6mzwnYNXbHNHjCnwdXB9pHqrLkno3Omw+3RetXoQM+42zX5kDiR3QNI0LX14Ta+4CVFDnVv0zn/Xq7ltWwJkk+YNMSxpGzwmJg==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TUhtcU1xbzFaRzBNN0F2UUxZY3JJZUN6a0tQYitvQXBhRHd4dlNCMkJZeURk?=
- =?utf-8?B?N3Z5Tlh0UUg4OWJNaTM5dGxwa29ZSXNlUmNNMHphYXRVVW9BZ3Q4ZURWZitB?=
- =?utf-8?B?VGRkTitJckM3N0NUM2l4TElXaEU3eDlmVzY4eVQvNWFUQ1FjQ3QzTTZ2Tlhi?=
- =?utf-8?B?Vlp4R0tsNGhEb25MRytNWkJhb2ZzbjBJRUFiUFFwL05PNmZ4cFJoM2t2SzhW?=
- =?utf-8?B?eDlzQUcrYTVlUE1yWlRJZW0vdlROeU9KdHRVM01rRUpQUDRpYXNZbU9EZWtq?=
- =?utf-8?B?WU5FcUVvNHV0M2dpc1BJWC8zVnFmUCtzL3pIcitXQ0Rzc0JwSGFDZFBVSVM0?=
- =?utf-8?B?dk4wK1RybnhSUVpjektWcmtYblA1L1hRaEUrbDIyeTRzVE01K1EzeFgybWxp?=
- =?utf-8?B?YjhiQzA5eWVLUjlVR2QzNDVJaWNyRXI2cGFUeWI1TE14dlR4TTlQWmNDZ1c5?=
- =?utf-8?B?OWpEcUE4aE12eE5iRXlmSUxOK3IyWkJ6TzVDVklXb2U1eTJDd1dUa2ZnNnNr?=
- =?utf-8?B?U3M3MG9hdnVVRUhycU5ibmFPOWFjQXBWWE5idjJVdDRwcG5BcHI3TmU2djVG?=
- =?utf-8?B?dVJ1TjMyM0c2bkhLS3ZoZ0hvWVBHbmpQTmNRbC8wS1NNeUVxZ1VFVGdKS0xY?=
- =?utf-8?B?azlDeDJpbVpvNjRLWFZMUGdmQmN6bEQwektqV040Z29NMUxCM2dzUjJET1NC?=
- =?utf-8?B?K0laeUlONjBrd2hTcUp5czAzNnhOUHpUNEtGZFFwblhuNUZ3b0dOMUJiNWZq?=
- =?utf-8?B?cDNqMkZWMUs4UTdBNktEbE8wU1duRzM5TnVVaVVsaDJMVlR4OEdTSTdEMzg5?=
- =?utf-8?B?dHJyV08wd082VERSUnp5NjRqek9lYStHb1dWbzJOd3h1WTVPN2FBc3JJNnV3?=
- =?utf-8?B?cHo5RURjMUdqM2R4YllZN3h5Rzc1aXNmbTVjMGJEVU82OGRNL2VMa1lPSHFj?=
- =?utf-8?B?b1krT2R2VmIrM1BOZW5nTGtldkQ4eElUNkQ1OUo5N0d0MXlBTERORkUrc2xz?=
- =?utf-8?B?NmNZU1B1TElhK1hab2NRQVhqRFNuZkYwUHVTaTZJTEo5NzkveHExUXp4WUFQ?=
- =?utf-8?B?Tjg4NnB6ZXl4Ymp5L1pZLzZWNVJEeGttcXI1RDVBNHp2WXZxbTc1TUI1Q05R?=
- =?utf-8?B?SXRoNFQrNm9meVNMTE9vbmhpZ1JxaVFhQ21wZ0cwcnE0MHZoN3BNSklRdnVi?=
- =?utf-8?B?NVN3Ym9qRFJ3RXdIOU1tZjhBM1pNbGM0UmZYLzZWeW1UbWs3NkpvZWp5bERY?=
- =?utf-8?B?NWQvOXRaa0Z6aDlrcGc2OVU1UDNOY3FTL2dzbm54WER0d0JsZEc3c3Fvd29z?=
- =?utf-8?B?RWZyU3RRUHh3dkJPeFBQWHJydEdxTEJtUDJZSFVSSVhKZ05WSFo3ZHNFRWdu?=
- =?utf-8?B?Nk1QYk5Bb2J1K1hYa0hwRFFvWjBvQ1IvY2JDNjZnZGx4cFNCRnN4UEt3RFNF?=
- =?utf-8?B?M2JKNlVtTEZwczlIb090UWpXcXdIb0NxZnhlYm5UREJocm5lNjhoenV1emRj?=
- =?utf-8?B?bEJJZS9qK0kweHJpQ1JaM2ltNFY5MUdiTFpQUHZkYWZQZU8xTDJnekd4MDg0?=
- =?utf-8?B?MXIrckVsVk9IYm0wb2wwMXRUSkhRdjFldmdSOTAvK09BVmp4d1krTk92Wm5V?=
- =?utf-8?B?UUxRQkZkMnd3Uk8zSlJwNEVXdVJnYWp0SW9UTllwaTdnem04eThSbFlrSXRt?=
- =?utf-8?B?a2lMYjRZVHJmcExEUDhvVE1ndTY4akhydzZ0dk9Kb1lwSTBFQktPSnFtWUF2?=
- =?utf-8?Q?DmPVkUEa1aHnIBoAk5Tt5E9X1otZyOofoqXdBgW?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a35b8b79-2473-4215-0555-08dc8fae5e88
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 15:50:25.6471
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6655
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
+Hi Arnd,
 
-在 2024/6/16 15:43, Krzysztof Kozlowski 写道:
-> On 16/06/2024 09:36, Yasin Lee wrote:
->> From: Yasin Lee <yasin.lee.x@gmail.com>
->>
->> Add NanjingTianyihexin Electronics Ltd.
-> Please use subject prefixes matching the subsystem. You can get them for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching. For bindings, the preferred subjects are
-> explained here:
-> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
->
-> Best regards,
-> Krzysztof
->
-Hi Krzysztof,
+On Tue, 18 Jun 2024 16:53:30 +0200
+"Arnd Bergmann" <arnd@arndb.de> wrote:
 
-Thank you for your guidance. I have modified the subject lines according 
-to your instructions. Please review and confirm if they are correct:
+> On Mon, May 27, 2024, at 18:14, Herve Codina wrote:
+> > From: Clément Léger <clement.leger@bootlin.com>
+> >
+> > Syscon releasing is not supported.
+> > Without release function, unbinding a driver that uses syscon whether
+> > explicitly or due to a module removal left the used syscon in a in-use
+> > state.
+> >
+> > For instance a syscon_node_to_regmap() call from a consumer retrieve a
+> > syscon regmap instance. Internally, syscon_node_to_regmap() can create
+> > syscon instance and add it to the existing syscon list. No API is
+> > available to release this syscon instance, remove it from the list and
+> > free it when it is not used anymore.
+> >
+> > Introduce reference counting in syscon in order to keep track of syscon
+> > usage using syscon_{get,put}() and add a device managed version of
+> > syscon_regmap_lookup_by_phandle(), to automatically release the syscon
+> > instance on the consumer removal.
+> >
+> > Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>  
+> 
+> This all looks correct from an implementation perspective,
+> but it does add a lot of complexity if now every syscon user
+> feels compelled to actually free up their resources again,
+> while nothing else should actually depend on this.
+> 
+> The only reference I found in your series here is the
+> reset controller, and it only does a single update to
+> the regmap in the probe function.
+> 
+> Would it be possible to just make the syscon support in
+> the reset driver optional and instead poke the register
+> in the mfd driver itself when this is used as a pci device?
+> Or do you expect to see the syscon get used in other
+> places in the future for the PCI case?
+> 
 
-commit 18f572f2b3c2c7827c168d9d44a471d4610ecc6d
-Author: Yasin Lee <yasin.lee.x@gmail.com>
-Date:   Sun Jun 16 10:35:32 2024 +0800
+IMHO, I don't think that poking the register in the mfd driver and so
+avoiding syscon usage is the right solution.
 
-     iio: proximity: Add driver support for TYHX's HX9023S capacitive 
-proximity sensor
+Indeed, additional devices can be added in the DT overlay and an other
+syscon user can be present.
 
-     A SAR sensor from NanjingTianyihexin Electronics Ltd.
+Also, overlays can be used on other PCI devices in the future and these PCI
+devices can use drivers that are syscon users. In that case, the same kind
+of workaround will be needed and maybe a quite more complex one depending on
+syscon users.
 
-     The device has the following entry points:
+The root issue is that syscon does not support removal.
+I prefer fixing this root issue instead of finding a kind of workaround.
 
-     Usual frequency:
-     - sampling_frequency
-
-     Instant reading of current values for different sensors:
-     - in_proximity0_raw
-     - in_proximity1_raw
-     - in_proximity2_raw
-     - in_proximity3_raw
-     - in_proximity4_raw
-     and associated events in events/
-
-     Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
-
-commit 4aeda539237a0eeb02458aff617e6ac2db539e3f
-Author: Yasin Lee <yasin.lee.x@gmail.com>
-Date:   Sun Jun 16 10:34:43 2024 +0800
-
-     dt-bindings: iio: proximity: Add TYHX HX9023S
-
-     A capacitive proximity sensor
-
-     Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
-
-commit 98da4516aa8169465ddcda67ed9d7c526fdebeb7
-Author: Yasin Lee <yasin.lee.x@gmail.com>
-Date:   Sun Jun 16 10:31:06 2024 +0800
-
-     dt-bindings: vendor-prefixes: add tyhx
-
-     Add vendor prefix for NanjingTianyihexin Electronics Ltd. 
-(http://www.tianyihexin.com)
-
-     Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
-
+Even if all syscon users are not fixed right now (and probably don't need to
+be fixed), a solution with the new devm_syscon_regmap_lookup_by_phandle() is
+available and drivers that need to release their resources because of a
+device removal can easily move to devm_syscon_regmap_lookup_by_phandle().
 
 Best regards,
-
-Yasin Lee
-
-
+Hervé
 
