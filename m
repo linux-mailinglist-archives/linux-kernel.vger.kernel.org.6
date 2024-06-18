@@ -1,144 +1,189 @@
-Return-Path: <linux-kernel+bounces-218869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD2790C734
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:38:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C42790C737
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3B1BB246B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482972849C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCC11527A8;
-	Tue, 18 Jun 2024 08:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9EA1AD9FE;
+	Tue, 18 Jun 2024 08:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b="fNfv5I9Q"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWAUSi5T"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86DA14EC64
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E8D1AD9E8;
+	Tue, 18 Jun 2024 08:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718699853; cv=none; b=T1hCxvzTS5SS8DKpTiV4HOey+OGk6Olu9tZrpvOtNKQPgw6QaPThoU5eZdo/so64Cdb4WC6exK/jUHzxE1H/GAax3loUvjUKYVnNjk3ox9gTwdQNOSd6TC57YVmWvvLBisb5JqHNTzzAXdVWB6tovIav88SqZNnhBVvI1TWSzC0=
+	t=1718699857; cv=none; b=rpwp3t3834NrJy25zcjo4eOqI41dy8GCeicd6h+gyDTtJZnfYRBeH/4LO60PMQyrFzGciQTBM2Lx17l3zzXHUogQaVCzjIO4yLSet+slBirFtm0vFTITr3LqEfGGhzfZyPeh52GRZePVa11Ligqs8RpXd9KYMjV4koo9t0JRbag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718699853; c=relaxed/simple;
-	bh=EZrrEdTGR3wfSwj9GagNuZDUkq9I2ZUD5+n1beC7TYY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JNkfzrYdjkZO8yp8EbZ+CpCJ68UKaaNZ0ivhvTP3jheAZ3ou4OAHaDnh+wXrtkIWUGaij7HrLfrIlmJhBTMD2oyxZ6YClkivJNUTLckyMHlVBbNvSiFCCBY6Zs/nPL14PVxFjUPi7SUfj4xvR/H1nTEmYAO/rLs9+7cCKTLZ5Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b=fNfv5I9Q; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f95be3d4c4so2003854a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:37:31 -0700 (PDT)
+	s=arc-20240116; t=1718699857; c=relaxed/simple;
+	bh=ofhnaPVNg2qs87WnUKL3NVwbpwdHWn2ssq1pcOARm/Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Oegu+14pJRJUHqQwrHGqay11zcozZW3AwGOdEjcYQIrIFND2PimYv6Hr82I3t0ttGvt+rpcOnb1gPYqorOjx4Ut9IjajjWCoRYSE1WDvmXq+yzujajjwKG9h4P4X/3IkNZDuNFZTT0D0MS0e/eZLxzvf+QshcO8JVa+whhZveHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WWAUSi5T; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-254871388d3so2675903fac.1;
+        Tue, 18 Jun 2024 01:37:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloud.com; s=cloud; t=1718699851; x=1719304651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eb0RXj6kXsdM0uSSP81X1dIWEztXTh0vf9AdUTcavuo=;
-        b=fNfv5I9Q8Gk8KkYVKrxJ6XfFj1mODMUy0nCZooHr8SL08g/Ae5Wo0gC7Zco4UwP0vs
-         zwk6MmMm4KGGVkmRH3ZQZxjvypP0NpZt7DeCjjtD5kIufHf08OvNORCc1nui7W9E9be8
-         /RUtbT4TziAKL1G0Z+EApb7Tza64CB3KZfLE4=
+        d=gmail.com; s=20230601; t=1718699855; x=1719304655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JFsReauRW7BnbGOq0QDl+qJ280PvXf5SBObURVpdknI=;
+        b=WWAUSi5TuJ6EzUwt37PfkTqG4MhbrwpqMkxw/xt+B3iV2V7Nu0IIPzk844PdYStLuc
+         0otkoraoCOz0e2Wd1K6LiQhzEVpXxRRPlInjfOKO5egrXf3OG/WZ6y4ZSH89FvxYiAh6
+         YY5KV2jZr9SHX/LN0gl+aJpKsy4dKTyv1mbzBqz+w0TL15avupUndF02TXphPhTb8G1P
+         6N5f8piVf59abf6sh0r7pDSzVnE878cRNdp9ntD6/Wze0TmkO7rCVCW3L9/DqVjlxCUa
+         YIbZ+hMpE2cVHHISc2JNrtL4GaKBgAbmVAEqRPbWQWyUnPdEwzC3ptvBWQICCt7uohfD
+         5uiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718699851; x=1719304651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eb0RXj6kXsdM0uSSP81X1dIWEztXTh0vf9AdUTcavuo=;
-        b=Rkjf06f5ZiJV9H7Wuw0Wa4WhaskLANOYSMefPTmbeUv/Ry12CSjcXIzUi/Ke3ddceW
-         Zau2pRWQ4cZTX68ChvnDmf8tqteBguPtH8py/iwPZs2kjCHgAd5kA96WJ3pczplZWao2
-         jDtogjMR8MdtbPDDXIr5uw0w7pMCPCPKPM3yZYQ7wO9ThxKUQ8pC0ifDZcPw+ZDPnEih
-         gTARMHopQDV1oe6+vdSwQBaLql1oYDSJcI0oZ0xWO47vhRmAZMQ8IYC7VrJ7N8jiVqXJ
-         aX3mbQab3eeXj0c+6xpWgc1UBXSzVMm7bu/fp6MpTu+MSIhu8SiPa/amPNSiBs/jlxbS
-         QHXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjG+Km/FaCNPAIpdeMh1SnBJw5QrjoK+mKjSvY+Ns9zM4ooLBcbsLJlOtuvF0Gq0DDTL+kJ3q28G0quGn7869Q+FEwTrXS3lQZ1XFV
-X-Gm-Message-State: AOJu0YwjEmyNkU3HLSUIu5Ud6TQQLCPDhK1ojavsNdAOR9+nITOZ/U03
-	rMpWll66KXudemCFNC7OvV1XaiKqP++NS0q70jIS34jm+t8PvZr8FAuHsRfDDWGSUBBQMqVZqnM
-	nIJ3EsjC46jBwl/3g3A/JLAaE5NWHDxDKF8L5sRiO1d7HZXuoe9ZrdUOI
-X-Google-Smtp-Source: AGHT+IEWkf5j2W5kw2iqzjVXFFr/KNj2UxQ6QnKHSgfx22Hyq9qpLr4BXiXOgbfkFgo2DeJ1XRr/iFXuaj+25RD/LPA=
-X-Received: by 2002:a05:6870:b011:b0:254:a89e:acca with SMTP id
- 586e51a60fabf-2584258a3d9mr12682841fac.0.1718699850938; Tue, 18 Jun 2024
- 01:37:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718699855; x=1719304655;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JFsReauRW7BnbGOq0QDl+qJ280PvXf5SBObURVpdknI=;
+        b=vFxjnFxt3yrsSoci+J0PnXu7VK4ME5EbzDWG9wSELcdml4KfxX1zmQi8L/fMSGRqdG
+         7MOux4Oe4eFo5pbiOU330Erxa+XAlEBn+9uKXbq9NCS8AR67upf2XgvYiuK2EkeJGe8G
+         z4G23tv036hm6gRfXB1Y9LfRsVsLyzwZAZr29oLEifBRtt+73gRnu+6UAXDyiZhhLSbp
+         nr4azSKTk0HjLMkm9htM88sIF2wktR8WnrvdC3SvZQuAhGKqHVn7BLKZWgaF1AUsqjss
+         vhfyolj6/O8Cttfvo3nySUE4U7Yx1bpnhiLLYLPZIlNFJh+O8UsSvgA9lgBNO0rdOMSu
+         u+fA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnb59smSYiNFgjp6VnGm0aklBGwqwPDP3RGRgr5VpDkCF/XrKRTEBpsWXX6BEYzV34VR9JIHx2DCNG9Y2xWRFkebvBmHlB4i3I5M75p7+A8t2OWoiBQvxQRUKN0FbI4KPjjkuxCxXMzhUoWQZuwZU7K2yPeDt5H+Xc4eqCM80xVfUY0A==
+X-Gm-Message-State: AOJu0YwnfUR3rPdsFEOC94wfreZEFc4U7r8O8SJ5hGczP9cxr1TFW7Lu
+	XQg5eazUgsnRe2fOcFcEFyWOTDSg3i+F85KnpXqYwvNQ7z4XJ4PN
+X-Google-Smtp-Source: AGHT+IGnRWRr2o+oA3EM/VynZOBdxxp9ijkn0OKBKLyHSsXT40cOAd4QJXajBgNbKMlE+nu9v5KLMw==
+X-Received: by 2002:a05:6870:c095:b0:254:7cd4:9092 with SMTP id 586e51a60fabf-258428eb176mr11682004fac.20.1718699854751;
+        Tue, 18 Jun 2024 01:37:34 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-256993a0d23sm3052169fac.58.2024.06.18.01.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 01:37:24 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: adrian.hunter@intel.com,
+	aou@eecs.berkeley.edu,
+	conor+dt@kernel.org,
+	guoren@kernel.org,
+	inochiama@outlook.com,
+	jszhang@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	robh@kernel.org,
+	ulf.hansson@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com,
+	haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	tingzhu.wang@sophgo.com
+Cc: Chen Wang <unicorn_wang@outlook.com>
+Subject: [PATCH v4 0/4] mmc: sdhci-of-dwcmshc: Add Sophgo SG2042 support
+Date: Tue, 18 Jun 2024 16:37:08 +0800
+Message-Id: <cover.1718697954.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617141303.53857-1-frediano.ziglio@cloud.com>
- <2fe6ef97-84f2-4bf4-870b-b0bb580fa38f@suse.com> <ZnBKDRWi_2cO6WbA@macbook>
-In-Reply-To: <ZnBKDRWi_2cO6WbA@macbook>
-From: Frediano Ziglio <frediano.ziglio@cloud.com>
-Date: Tue, 18 Jun 2024 09:37:08 +0100
-Message-ID: <CACHz=Zg4Zoyr4KNeig4yDDNUxvV325beJEyT-L-K0a+FHp7oDg@mail.gmail.com>
-Subject: Re: [PATCH] x86/xen/time: Reduce Xen timer tick
-To: =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>
-Cc: Jan Beulich <jbeulich@suse.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, 
-	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>, 
-	xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 3:37=E2=80=AFPM Roger Pau Monn=C3=A9 <roger.pau@cit=
-rix.com> wrote:
->
-> On Mon, Jun 17, 2024 at 04:22:21PM +0200, Jan Beulich wrote:
-> > On 17.06.2024 16:13, Frediano Ziglio wrote:
-> > > Current timer tick is causing some deadline to fail.
-> > > The current high value constant was probably due to an old
-> > > bug in the Xen timer implementation causing errors if the
-> > > deadline was in the future.
-> > > This was fixed in Xen commit:
-> > > 19c6cbd90965 xen/vcpu: ignore VCPU_SSHOTTMR_future
-> >
-> > And then newer kernels are no longer reliably usable on Xen older than
-> > this?
->
-> I think this should reference the Linux commit that removed the usage
-> of VCPU_SSHOTTMR_future on Linux itself, not the change that makes Xen
-> ignore the flag.
->
+From: Chen Wang <unicorn_wang@outlook.com>
 
-Yes, Linux kernel stopped using this flag since 2016 with commit
-c06b6d70feb32d28f04ba37aa3df17973fd37b6b, "xen/x86: don't lose event
-interrupts", I'll add it in the commit message.
+This patchset is composed of two parts:
+- one is the improvement of the sdhci-of-dwcmshc framework,
+- the other is the support for sg2042 based on the improvement of the
+  framework.
+The reason for merging the two parts into one patchset is mainly to
+facilitate review, especially to facilitate viewing why we need to
+improve the framework and what benefits it will bring to us.
 
-> > > --- a/arch/x86/xen/time.c
-> > > +++ b/arch/x86/xen/time.c
-> > > @@ -30,7 +30,7 @@
-> > >  #include "xen-ops.h"
-> > >
-> > >  /* Minimum amount of time until next clock event fires */
-> > > -#define TIMER_SLOP 100000
-> > > +#define TIMER_SLOP 1000
-> >
-> > It may be just the lack of knowledge of mine towards noadays's Linux'es
-> > time handling, but the change of a value with this name and thus
-> > commented doesn't directly relate to "timer tick" rate. Could you maybe
-> > help me see the connection?
->
-> The TIMER_SLOP define is used in min_delta_{ns,ticks} field, and I
-> think this is wrong.
->
-> The min_delta_ns for the Xen timer is 1ns.  If Linux needs some
-> greater min delta than what the timer interface supports it should be
-> handled in the generic timer code, not open coded at the definition of
-> possibly each timer implementation.
->
+When I tried to add a new soc(SG2042) to sdhci-of-dwcmshc, I found
+that the existing driver code could be optimized to facilitate expansion
+for the new soc. Patch 1 "mmc: sdhci-of-dwcmshc: add callback functions
+for dwcmshc" is for this.
 
-I think this is done to reduce potential event handling frequency, in
-some other part of timer code (in kernel/time/clockevents.c) there's a
-comment "Deltas less than 1usec are pointless noise".
-I think it's hard for a software to get a frequency so high so I
-didn't propose 1ns.
-What are you suggesting? To put 1ns and see what happens? Is there any
-proper test code for this?
+Patch 2 ~ 3 are adding support for the mmc controller for Sophgo SG2042.
+Adding corresponding new compatible strings, and implement
+custom callbacks for SG2042 based on new framework.
 
-> Thanks, Roger.
+Patch 4 is the change for DTS.
 
-Frediano
+By the way, although I believe this patch only optimizes the framework
+of the code and does not change the specific logic, simple verification
+is certainly better. Since I don't have rk35xx/th1520 related hardware,
+it would be greatly appreciated if someone could help verify it.
+Note, the DTS change has dependency on clock changes for SG2042, which
+has not been merged in master/upstream, so if you want to test this
+new sdhci-of-dwcmshc driver for other hardware except SG2042, don't
+pick patch 4.
+
+---
+
+Changes in v4:
+
+  The patch series is based on latest 'next' branch of [mmc-git].
+
+  Improved the dirvier code as per comments from Adrian Hunter, drop moving
+  position and renaming for some helper functions.
+
+  Put the sg2042 support as part of this series, improve the bindings and code
+  as per comments from last review.
+
+Changes in v3:
+  
+  The patch series is based on latest 'next' branch of [mmc-git]. You can simply
+  review or test the patches at the link [3].
+
+  Improved the dirvier code as per comments from Adrian Hunter.
+  Define new structure for dwcmshc platform data/ops. In addition, I organized
+  the code and classified the helper functions.
+
+  Since the file changes were relatively large (though the functional logic did
+  not change much), I split the original patch into four for the convenience of
+  review.
+
+Changes in v2:
+
+  Rebased on latest 'next' branch of [mmc-git]. You can simply review or test the
+  patches at the link [2].
+
+Changes in v1:
+
+  The patch series is based on v6.9-rc1. You can simply review or test the
+  patches at the link [1].
+
+Link: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git [mmc-git]
+Link: https://lore.kernel.org/linux-mmc/cover.1713257181.git.unicorn_wang@outlook.com/ [1]
+Link: https://lore.kernel.org/linux-mmc/cover.1714270290.git.unicorn_wang@outlook.com/ [2]
+Link: https://lore.kernel.org/linux-mmc/cover.1718241495.git.unicorn_wang@outlook.com/ [3]
+
+---
+
+Chen Wang (4):
+  mmc: sdhci-of-dwcmshc: add callback functions for dwcmshc
+  dt-bindings: mmc: sdhci-of-dwcmhsc: Add Sophgo SG2042 support
+  mmc: sdhci-of-dwcmshc: Add support for Sophgo SG2042
+  riscv: dts: add mmc controllers for Sophgo SG2042 SoC
+
+ .../bindings/mmc/snps,dwcmshc-sdhci.yaml      |  69 ++-
+ .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |  17 +
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi        |  32 ++
+ drivers/mmc/host/sdhci-of-dwcmshc.c           | 499 ++++++++++++------
+ 4 files changed, 447 insertions(+), 170 deletions(-)
+
+
+base-commit: d6cd1206ffaaa890e81f5d1134856d9edd406ec6
+-- 
+2.25.1
+
 
