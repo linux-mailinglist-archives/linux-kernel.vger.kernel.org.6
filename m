@@ -1,139 +1,121 @@
-Return-Path: <linux-kernel+bounces-218929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88BD990C7D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:54:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 175DF90C7E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482BC286069
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:54:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5FC91F27739
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B241C9EBB;
-	Tue, 18 Jun 2024 09:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A901CCCC6;
+	Tue, 18 Jun 2024 09:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNXm7Dzk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="BUJHHirW"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3CB1C9EA9;
-	Tue, 18 Jun 2024 09:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E01156C5E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718702429; cv=none; b=jiy0a1IYKfprc7itY14JIfvcUwghr5h2KZC0q3ioaR0itKwaHgmg0bZP2PIy+NfzZ49iT6Lv40+ZMilNHl/J+7F3DH+yRMN0+RJRY5+xtVFZY6Ut6si1cS6zxZN+CalKWzqP8ojtGkemc2YwzWrIBbtNOIIXLXcj6NnyjRJpU3Q=
+	t=1718702683; cv=none; b=dmkfl+ZXnK4ztRxYLQSOnaYlAfCPE6Jpp/jsxoFLKtV4aKnDmqywe6ffBxRTKf8T5krGEfDWcgPys1dCQJcKyUCynwxspcAwb/DTeqxjSIqULQCJiVdGabih5QTXzQ0SNiyvxGkb77KiaMINIHwW4TxdV9gAp27Z9VFr1ayRVg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718702429; c=relaxed/simple;
-	bh=FiBK8BhydwXweraMDU8D+UrNScrsx6uojqAGwGP0Cbk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=chC2f4pmlR5CZYKhOOr1aGcFr7GWImn6QiIpgQIoSnU6+/QGS2X/GB8jhzJoGVTj7FIc7pxp1/GbTdBdXgq4Q5iZ57uM4gQAvJxGrEOdW7OR4Odm9wDopxptHJ40HkwYLCk+j85aUcNukWYdA7LY8re+KR77rvbQETplrGLmbCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNXm7Dzk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 58541C4AF51;
-	Tue, 18 Jun 2024 09:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718702429;
-	bh=FiBK8BhydwXweraMDU8D+UrNScrsx6uojqAGwGP0Cbk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qNXm7Dzkp7NIib+F9pt9XUU8zd/Sj106lKhKuBSIVPm8tO/jT5WuIvhZ3eFMSRYZt
-	 bpUAUPKCDbjrdu+Eaa0YE3cT33Y65st2ciItrVkEs9fT4osQ1Z9ljR+mZik7w9Nu4L
-	 WFyV6Ymee2fdQHwhLnHBUHOufgzFn+tXkaSTxhk3honh13JIUAptID0smJ8ZKw8g5S
-	 2c1mKdpo0SZNseHqYx6xgLDwktmVMcE7zF0hAXAap3+lMMLFPi/yMyazYRiYhCs9ak
-	 ySIFOQ8mnkK8JBI+OW12aep4jSmk+AjBadMwh+aVd3kAa4N29P+cm5IlSTcSCpVU97
-	 2GcKP8tb9q3Rg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 43925C32768;
-	Tue, 18 Jun 2024 09:20:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718702683; c=relaxed/simple;
+	bh=oBJwerAihFYiplkEDzlGI1NDEwEfHJ3sX6U0aolqAv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e2TJmReAAyE/f3h3wDlbuT4veo9xnCkoi815IxLaDYAPeYqX9yANajlBhAB+gCTtiTvIxDqOvLAFnlhlqmJj8N/r2+GkP4p05EWW/um6POrjJIoMabwk9iEHJgbZOZXcG6raTx8G1Cy7nRdgPZ/lvh56IC/o+pGWxHGznEMX0fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=BUJHHirW; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=VQpx
+	P2j7aKgW/u+/PViY3voxvgTT7XjaQRA3NCsZMak=; b=BUJHHirW8eldpUEAnkzk
+	klCXLCQye+1K1ywWP+hLzKWoXI/XrCjdGAhMIPL/DSaqOXUZx1ToWed/X+/r4gpD
+	TNwgVnYOrcJYLYIWrMAcHxPR7tCuUy2EGjT+muDOsul9cnChE+qEI2LJfGtbusCk
+	prDhWgMlnpQ7y7vlijiRemTUgdpv+qjcYXK2TU4/1FuRj9Oeblj1BZQIn9wABoyv
+	e8RG5KjJN9xLjrUO+qNsqOi62jkLh/AGFvyidh606Bl/ClX1u+SZzIlXqzdgiJI8
+	CsKCOUknnCPb9mNy8A2ABS5DUVh2mKWnOHKidD0OKOXmP2Z6FlLwev/3z11Fs3Hp
+	cg==
+Received: (qmail 172898 invoked from network); 18 Jun 2024 11:23:07 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Jun 2024 11:23:07 +0200
+X-UD-Smtp-Session: l3s3148p1@FScyoSYb/K8gAwDPXzjQABqqX1QYyOSW
+Date: Tue, 18 Jun 2024 11:23:06 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+	Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v9 1/1] gpio: add sloppy logic analyzer using polling
+Message-ID: <3h63msxchuuxqa5liufoivss4raqtzjlusjn7ufti5nyjkshcb@pqevlpuvrm5q>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>, 
+	Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20240610112700.80819-1-wsa+renesas@sang-engineering.com>
+ <20240610112700.80819-2-wsa+renesas@sang-engineering.com>
+ <CAMRc=MfZ11U+kAh1+K=DxtJ=QL+cY7Q_sBN4sQDF-RNgjpV0QA@mail.gmail.com>
+ <jvnvx7a4pn6evrp5ehfrt4qsiuprq6ogvrue2a3uupwtydmgcm@2rvat7ibvgb4>
+ <CAMRc=Mc4__0zzJZG3BPnmbua88SLuEbX=Wk=EZnKH5HQvB+JPg@mail.gmail.com>
+ <CACRpkda==5S75Bw6F3ZLUmf7kwgi_JkByiizR=m-61nrMDWuvQ@mail.gmail.com>
+ <ce1d8150-c595-44d5-b19a-040920481709@app.fastmail.com>
+ <CAMRc=McpRjQO8mUrOA4bU_YqO8Tc9-Ujytfy1fcjGUEgH9NW0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] netns: Make get_net_ns() handle zero refcount net
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171870242926.21013.3743600964363163093.git-patchwork-notify@kernel.org>
-Date: Tue, 18 Jun 2024 09:20:29 +0000
-References: <20240614131302.2698509-1-yuehaibing@huawei.com>
-In-Reply-To: <20240614131302.2698509-1-yuehaibing@huawei.com>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, tkhai@ya.ru, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Fri, 14 Jun 2024 21:13:02 +0800 you wrote:
-> Syzkaller hit a warning:
-> refcount_t: addition on 0; use-after-free.
-> WARNING: CPU: 3 PID: 7890 at lib/refcount.c:25 refcount_warn_saturate+0xdf/0x1d0
-> Modules linked in:
-> CPU: 3 PID: 7890 Comm: tun Not tainted 6.10.0-rc3-00100-gcaa4f9578aba-dirty #310
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> RIP: 0010:refcount_warn_saturate+0xdf/0x1d0
-> Code: 41 49 04 31 ff 89 de e8 9f 1e cd fe 84 db 75 9c e8 76 26 cd fe c6 05 b6 41 49 04 01 90 48 c7 c7 b8 8e 25 86 e8 d2 05 b5 fe 90 <0f> 0b 90 90 e9 79 ff ff ff e8 53 26 cd fe 0f b6 1
-> RSP: 0018:ffff8881067b7da0 EFLAGS: 00010286
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff811c72ac
-> RDX: ffff8881026a2140 RSI: ffffffff811c72b5 RDI: 0000000000000001
-> RBP: ffff8881067b7db0 R08: 0000000000000000 R09: 205b5d3730353139
-> R10: 0000000000000000 R11: 205d303938375420 R12: ffff8881086500c4
-> R13: ffff8881086500c4 R14: ffff8881086500b0 R15: ffff888108650040
-> FS:  00007f5b2961a4c0(0000) GS:ffff88823bd00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055d7ed36fd18 CR3: 00000001482f6000 CR4: 00000000000006f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  ? show_regs+0xa3/0xc0
->  ? __warn+0xa5/0x1c0
->  ? refcount_warn_saturate+0xdf/0x1d0
->  ? report_bug+0x1fc/0x2d0
->  ? refcount_warn_saturate+0xdf/0x1d0
->  ? handle_bug+0xa1/0x110
->  ? exc_invalid_op+0x3c/0xb0
->  ? asm_exc_invalid_op+0x1f/0x30
->  ? __warn_printk+0xcc/0x140
->  ? __warn_printk+0xd5/0x140
->  ? refcount_warn_saturate+0xdf/0x1d0
->  get_net_ns+0xa4/0xc0
->  ? __pfx_get_net_ns+0x10/0x10
->  open_related_ns+0x5a/0x130
->  __tun_chr_ioctl+0x1616/0x2370
->  ? __sanitizer_cov_trace_switch+0x58/0xa0
->  ? __sanitizer_cov_trace_const_cmp2+0x1c/0x30
->  ? __pfx_tun_chr_ioctl+0x10/0x10
->  tun_chr_ioctl+0x2f/0x40
->  __x64_sys_ioctl+0x11b/0x160
->  x64_sys_call+0x1211/0x20d0
->  do_syscall_64+0x9e/0x1d0
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f5b28f165d7
-> Code: b3 66 90 48 8b 05 b1 48 2d 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 81 48 2d 00 8
-> RSP: 002b:00007ffc2b59c5e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5b28f165d7
-> RDX: 0000000000000000 RSI: 00000000000054e3 RDI: 0000000000000003
-> RBP: 00007ffc2b59c650 R08: 00007f5b291ed8c0 R09: 00007f5b2961a4c0
-> R10: 0000000029690010 R11: 0000000000000246 R12: 0000000000400730
-> R13: 00007ffc2b59cf40 R14: 0000000000000000 R15: 0000000000000000
->  </TASK>
-> Kernel panic - not syncing: kernel: panic_on_warn set ...
-> 
-> [...]
-
-Here is the summary with links:
-  - netns: Make get_net_ns() handle zero refcount net
-    https://git.kernel.org/netdev/net/c/ff960f9d3edb
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5cmtaneuum5rgbom"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=McpRjQO8mUrOA4bU_YqO8Tc9-Ujytfy1fcjGUEgH9NW0A@mail.gmail.com>
 
 
+--5cmtaneuum5rgbom
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Bart,
+
+> I could see it using configfs instead of DT for configuration and iio
+> for presenting the output but - from what Wolfram said - insisting on
+> this will simply result in this development being dropped entirely.
+
+How do you assign a GPIO via debugfs? I only found the out-of-tree
+pwm-gpio driver[1] which uses a GPIO number. But those are deprecated
+these days, or? Any other driver doing this you can point me to?
+
+Thanks and happy hacking,
+
+   Wolfram
+
+[1] https://lore.kernel.org/lkml/1301630392-20793-3-git-send-email-bgat@billgatliff.com/raw
+
+--5cmtaneuum5rgbom
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZxUfYACgkQFA3kzBSg
+KbY9Gg/+J/laSTd6tafduUFC22pYQqluCmSo74Bd5De8pRLvrN0lFqK9aMOn/o/h
+jFuQVn/nGxfyPLo7jgyi29Q69EDcgbl/hPtWCMGvZNseyGWGtkoSyMBq8KzZOkiZ
+u1moGsYXsgfu/0CJvSzROWXf+pKTR0olr2+qMOmqINhLpH0tuWBHhhrtqvhDc2/Z
+Kdl8YQOjAOKKIDJBaD67pFFaLCPxAlebnzHh4hb5i65GgfCPLaHhT0TW/tM6J346
+FdOrNgWjRmXEjxuLQNRLGhU32wHDJKSE3NxWAScyaWxMiT3DtMvCOpjT0Pyqf0oG
+Gy2vom6A7C0LDoyRrrTEliKwwZ+IPtKxHXYjdFwkR5VBoj2Ko9RnogWhCdH2qO4g
+LF2nSEvBAXWNKFyJe0QdKFweIhyn96VbbwwVgt/QjSdfH06NDv0WcQ6Ny33vABE5
+GNngraGwSWmzWFMuz/s5qWy0G7j8Bod7OwJKHsK6Exkac1HcP1a8EPL1bz5MKM1e
+DAlffBHQYJo/Gg+tb8HfQPeWZeiAFK7ZpjGhooGgwgSRvP6s5GQHvW1PMeKvjMAf
+GjEtSCWVICJZcEWlGtyAOh1YJh5xoPh3TeEUEphHm+18lEZJ6O6Q/tn4bMLoX9A5
+U/iHHLHhD9vC2zI43v0EdQG6geQYBkwY3qgN1AjjtpMqlHjh1XE=
+=xoXQ
+-----END PGP SIGNATURE-----
+
+--5cmtaneuum5rgbom--
 
