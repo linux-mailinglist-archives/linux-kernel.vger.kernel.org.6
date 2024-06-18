@@ -1,119 +1,172 @@
-Return-Path: <linux-kernel+bounces-219425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934AF90D117
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:39:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8256C90D2A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900B01C24354
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:39:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 449ADB21913
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA3619DF98;
-	Tue, 18 Jun 2024 13:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3319219E7D7;
+	Tue, 18 Jun 2024 13:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRfgILo0"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="As6fjM6w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFB71581E9;
-	Tue, 18 Jun 2024 13:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD4119E7CE;
+	Tue, 18 Jun 2024 13:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718715961; cv=none; b=iZqbk7gdO4s2tAbZCPuje3aqdhSwVAkS2YjqBBlq012mJQw0h1JcACqki71D5GRNbGh/jhREH6OgizvUJ3qSO7aPgoQEYmQHyQeHbOEyFxb8JEabuBeandqyp4x/Ei7r2ntYDp8S6UO8F4/3Eg63I033UgISIKsmPL6Ou4kciB4=
+	t=1718715988; cv=none; b=s3uh+LXHTB9G6wCr3G5OJLkXYmfPiNuQPPmBJcbR2szQxxPi9ZkruGB2iop5tKyakuutF+hmDcqDQgSMGE90BjXGKthU8MG778AYGpXdjnoVllvHqCo6yxtobVVEmkR12dsLudpl4rqhIv7nFBZCXXQ5mezeO4Rct7GpmRBzf5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718715961; c=relaxed/simple;
-	bh=eF497iTWQ/oy3PQvzjizG/eU/LZDe+qLwMKE+tBtp3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X458up9RpGDy35wuDZ8nHr2BmDyf8DjSwEp61LX80nyQK5nq0woUcFrRVsipyn34aVjCYEPZzmCaxR5Y6bg4wkRAy/NsEBC/S6L6tS5BgSqAYLXsTwfhmTzGjbIgZqq09bIcJ8Zw8K0xwI3fiTZz0NfWREfieOkhZgLAlYDUyYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YRfgILo0; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52bbf73f334so5178552e87.2;
-        Tue, 18 Jun 2024 06:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718715958; x=1719320758; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yz2POXzlje0Rk92k3Asl8aSkFWAo/SOEkU2cZBWovB0=;
-        b=YRfgILo0V+7ggy59bwiItLfSq3ZnRQN2na0BX/xeAxW9XKlkJj8NyMkfMxbdktOniI
-         yNdgl8clf2e0za/NudnsqlmaX7blOj3p0a7X8wQxY5c4c8UKJG2bmtfDvTMZ7PBAzQt7
-         YgOqP+o1ChZq8HyJa4C9AqP8qOpN2Vbt6X5gU9NeFVkGyovmbb3i4o1hgsr2QJV2mCST
-         A/q0Ansrm7eHVDVQrLwCPCDsyxtZMfKc87xTZS2sId4vxPnXJsx3rTAboY6t9OYvmsXs
-         D5SbgvMdxUt1WE8a19kykd3O1qTxHI0POLJSQR1p/xLk51taAO1wHth+SfyVtCfQNx2G
-         cMYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718715958; x=1719320758;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yz2POXzlje0Rk92k3Asl8aSkFWAo/SOEkU2cZBWovB0=;
-        b=S823UbM2byTsObGtjA00pYa1f43MN4q/VqRhldCmzMfhYookwzjz7j5jPlpC9SbTFj
-         GhnGOUq0LqJXQCBrPEawC53VLr6nvNuOJ0LOY/wIf+m1rTIUd00zCioBJUXSTDmGNhGk
-         ueJhIBdSOYMaoR69ASwG0Zu8DtK2qjAQc4iE/IXwBDg80PxcbldBmBc8ChpDgltPFzRO
-         rBcFKfy0thdLgINCsnUZRkFGte4BK+QbCzn6oGLFUSbjnZ3AyRioN9OJis4FqPbZOXzZ
-         MOw220fo4AsZEYNNLUQEWLD1Z19jJZRx/fQufvrz3MW9Ydb7SABIfSpTStr6MPnjkz61
-         TkuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXw2UK06rPdvdoEib7f5trBR4QPWmSII3B61jy6FV6hsSnfBTvpFxc+x7jSoi35UzK5D7ejnIjW4k6bUGQBvz3/O5RncV1a25gwUg==
-X-Gm-Message-State: AOJu0YxB0jxH0ttRg9Bes10ek00BajYTUu8rPWl+hI9/dVn0jcxHEJ0/
-	PW1By/BjMDsKCjwz5DN0+NjNHl+RNMBGyDEm23q/zyU3PQlQGjKC
-X-Google-Smtp-Source: AGHT+IFkWxc6pexL44K2yH98VVFydVomvNRifmX98LXDDM7htKW6C5Gq43bAc/V0TD+tZp6EJj5ywA==
-X-Received: by 2002:a05:6512:558:b0:52c:8318:dc14 with SMTP id 2adb3069b0e04-52ca6e66feemr7610912e87.25.1718715957839;
-        Tue, 18 Jun 2024 06:05:57 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cc067b35asm390974e87.103.2024.06.18.06.05.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 06:05:57 -0700 (PDT)
-Message-ID: <15685ef6-92a5-41df-9148-1a67ceaec47b@gmail.com>
-Date: Tue, 18 Jun 2024 16:05:55 +0300
+	s=arc-20240116; t=1718715988; c=relaxed/simple;
+	bh=rPJPpkZkaxqw98GQ+C6ISYQGaCLzgfRkMZxyiI9GM8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gueVbIGB+/QqCtzP6rX8X0Eh89j+uwIQVwdMJAUHEKFE1TqvJNVDViVprXEWbtx/19l1XqKCizTe1GyPYaaPN/nvDoLxxgRguJfdI1apsNlcjKZKUVTgGq5AtTtTk5z6R9ZuX1NQzpJWEjSkv5VANdMFfvqBU5B+DkkXVNmer+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=As6fjM6w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AECAC3277B;
+	Tue, 18 Jun 2024 13:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718715988;
+	bh=rPJPpkZkaxqw98GQ+C6ISYQGaCLzgfRkMZxyiI9GM8Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=As6fjM6wLd4CmP97aqR2nJxzQdIgBUPQTRjqchbDHGqey68/UZSIR17v8zVkykIsk
+	 Sr6tETHMvvuxon7kw2WawlvpT3fOQgREiju9N+mwMjxIp5ermgHZ4qp2+tYaMp3M0J
+	 Wfp5xPwRP4qfmVqvADEYMc+VbsAE3RHkxWNUNh2BFs/qXM0E+KfRM9HWcnqGtJGGN6
+	 bc2C+cpcAT9glQI8/EKlopqo8F85D9+YMdtJZfKnWBiHlLHS//Vq9zlXZsemmQT7ax
+	 fQd3roT05m7/8cajvzmmXTyXhUruW6u5EPNZI6THyJVZLv0W3/8++r5YTb67EU1jM/
+	 kWpwKTlKkOPvw==
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5baf76164fbso264111eaf.1;
+        Tue, 18 Jun 2024 06:06:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUh96uwdYTb1iInZEFNUvwTbSUnMPaaLaCEQMFOjYVjbvvTPl4Dc6ZFkVCqtZRhE0cwIlXpIVg+Vm85vt1P0CaxX80gCpFLpbr1hmWuGdlh6NpI2m8d514oUlR5UqtdoR96I6dylQo=
+X-Gm-Message-State: AOJu0YzP4GnUmdXiXjUjEeGJbGVI9wrAcSvGg5vB+3CBhL5jTMQDvtUU
+	dpwnBuuiUkQ1m7mH3pKRAInyOIBeG1WmBHooQmy9V6esCXcKbqw4v18xBHUDQPjph7mgCpQ99tz
+	QNVnWsu15ZMRIQ2ASjfafD3kq1tQ=
+X-Google-Smtp-Source: AGHT+IGeWGVit1KK947UdGQyWn7z2tLgQXWDKb4MRfU12vK3X+xJJ3d98ko/WrnTUi5SREX1Rf3Yv+cI9VUdj8J/CoY=
+X-Received: by 2002:a4a:d6cd:0:b0:5bd:af39:c9d9 with SMTP id
+ 006d021491bc7-5bdaf39caa2mr12337275eaf.0.1718715987415; Tue, 18 Jun 2024
+ 06:06:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/23] Introduce irq_domain_instanciate()
-To: Thomas Gleixner <tglx@linutronix.de>,
- Herve Codina <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>, Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-um@lists.infradead.org, Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>,
- Steen Hegelund <steen.hegelund@microchip.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20240614173232.1184015-1-herve.codina@bootlin.com>
- <87msnju0x3.ffs@tglx>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <87msnju0x3.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <8409966.T7Z3S40VBb@kreacher> <2148114.bB369e8A3T@kreacher> <e54a7a9b-3fc7-457f-9f30-d6ab3a58c2b0@socionext.com>
+In-Reply-To: <e54a7a9b-3fc7-457f-9f30-d6ab3a58c2b0@socionext.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 18 Jun 2024 15:06:14 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hX8Bfu=RNbErbrLTBrQhi8dHqS15HX6NoPZD-h5TR_2w@mail.gmail.com>
+Message-ID: <CAJZ5v0hX8Bfu=RNbErbrLTBrQhi8dHqS15HX6NoPZD-h5TR_2w@mail.gmail.com>
+Subject: Re: [PATCH v1 12/14] thermal: uniphier: Use thermal_zone_for_each_trip()
+ for walking trip points
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/17/24 16:57, Thomas Gleixner wrote:
-> 
-> The result can be found at:
-> 
->     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-> 
-> Matti, can you please build your extensions on top of that?
+Hi,
 
-Will do, but it takes me a while as I'm on a vacation. I'll try to cook 
-it up when the next rainy day hits us ;) Thanks!
+On Tue, Jun 18, 2024 at 6:05=E2=80=AFAM Kunihiko Hayashi
+<hayashi.kunihiko@socionext.com> wrote:
+>
+> Hi Rafael,
+>
+> On 2024/06/18 3:07, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > It is generally inefficient to iterate over trip indices and call
+> > thermal_zone_get_trip() every time to get the struct thermal_trip
+> > corresponding to the given trip index, so modify the uniphier thermal
+> > driver to use thermal_zone_for_each_trip() for walking trips.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >   drivers/thermal/uniphier_thermal.c |   37
+> > +++++++++++++++++++++++--------------
+> >   1 file changed, 23 insertions(+), 14 deletions(-)
+> >
+> > Index: linux-pm/drivers/thermal/uniphier_thermal.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/uniphier_thermal.c
+> > +++ linux-pm/drivers/thermal/uniphier_thermal.c
+> > @@ -239,13 +239,32 @@ static irqreturn_t uniphier_tm_alarm_irq
+> >       return IRQ_HANDLED;
+> >   }
+> >
+> > +struct trip_walk_data {
+> > +     struct uniphier_tm_dev *tdev;
+> > +     int crit_temp;
+> > +     int index;
+> > +};
+> > +
+> > +static int uniphier_tm_trip_walk_cb(struct thermal_trip *trip, void *a=
+rg)
+> > +{
+> > +     struct trip_walk_data *twd =3D arg;
+> > +
+> > +     if (trip->type =3D=3D THERMAL_TRIP_CRITICAL &&
+> > +         trip->temperature < twd->crit_temp)
+> > +             twd->crit_temp =3D trip->temperature;
+> > +
+> > +     uniphier_tm_set_alert(twd->tdev, twd->index, trip->temperature);
+> > +     twd->tdev->alert_en[twd->index++] =3D true;
+> > +}
+> > +
+> >   static int uniphier_tm_probe(struct platform_device *pdev)
+> >   {
+> > +     struct trip_walk_data twd =3D { .crit_temp =3D INT_MAX, .index =
+=3D 0 };
+> >       struct device *dev =3D &pdev->dev;
+> >       struct regmap *regmap;
+> >       struct device_node *parent;
+> >       struct uniphier_tm_dev *tdev;
+> > -     int i, ret, irq, crit_temp =3D INT_MAX;
+> > +     int i, ret, irq;
+> >
+> >       tdev =3D devm_kzalloc(dev, sizeof(*tdev), GFP_KERNEL);
+> >       if (!tdev)
+> > @@ -293,20 +312,10 @@ static int uniphier_tm_probe(struct plat
+> >       }
+> >
+> >       /* set alert temperatures */
+> > -     for (i =3D 0; i < thermal_zone_get_num_trips(tdev->tz_dev); i++) =
+{
+> > -             struct thermal_trip trip;
+> > +     twd.tdev =3D tdev;
+> > +     thermal_zone_for_each_trip(tdev->tz_dev, uniphier_tm_trip_walk_cb=
+, &twd);
+> >
+> > -             ret =3D thermal_zone_get_trip(tdev->tz_dev, i, &trip);
+> > -             if (ret)
+> > -                     return ret;
+> > -
+> > -             if (trip.type =3D=3D THERMAL_TRIP_CRITICAL &&
+> > -                 trip.temperature < crit_temp)
+> > -                     crit_temp =3D trip.temperature;
+> > -             uniphier_tm_set_alert(tdev, i, trip.temperature);
+> > -             tdev->alert_en[i] =3D true;
+> > -     }
+> > -     if (crit_temp > CRITICAL_TEMP_LIMIT) {
+> > +     if (twd.crit_temp > CRITICAL_TEMP_LIMIT) {
+> >               dev_err(dev, "critical trip is over limit(>%d), or not se=
+t\n",
+> >                       CRITICAL_TEMP_LIMIT);
+> >               return -EINVAL;
+>
+> I confirmed the updated code using the helper function is equivalent
+> to the original.
+>
+> Reviewed-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-Yours,
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
-
+Thank you!
 
