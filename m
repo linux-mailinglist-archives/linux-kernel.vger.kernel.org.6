@@ -1,176 +1,321 @@
-Return-Path: <linux-kernel+bounces-218622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D813990C2A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:04:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F200490C2B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7201F2411F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E67F1F212DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2392655888;
-	Tue, 18 Jun 2024 04:04:16 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3357A19B3C9;
+	Tue, 18 Jun 2024 04:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3fdXkHK"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F752595
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A035613A265
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718683455; cv=none; b=ojpwU7l3lcLjymBCjkBS3+HZmp2IMPNhn1v5TRA7jrr802tsuDJDNFDBhHN0CIZxuKI8AMzdGXV2XAjQXssuQtLFGRZ9PEjcLqRkCCf4traPozIkbK6pd5iDGjTzzZ7hZSNcf/mFjg7VJA1ZroLgZsSJYgTVyCgn+qIuC/m+n7g=
+	t=1718683823; cv=none; b=JGVigCFCDGz8R6GgeWRhTl9GxbijNZw3/WRyys480UHHQQ5V6fQlXT31sNQMDyfLQ64uxQmQO3KISq+fmyZl9IaA3r+JcVz+/QFhu42Hq+a1OD2tfTsg19ZdWNs6aQ8Mvm7AV8wPq69PMVgeTkKWbdZ7DFGOVwx2Kns1aipAEYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718683455; c=relaxed/simple;
-	bh=94IvZ0knlZzd09LLiZCSkHk2vbZlQzsGrqSTZXOLB1w=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PMdVGQIgubG4bCsux9aSBebo1mC88xyD+8CcGg0g2a4UBn3lDIhydsV4roolVQt3GSp7imJKCKnwQdAkNCoucFxUeXRqdpABXChNvtkBGQLk9SfHH8G3RJRRaWqAy87Q4x+vs3GKx6rj0FFoHF3in7O0jiorD4MyBT3CE3uBPbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W3Cgy0XbqzxSKC;
-	Tue, 18 Jun 2024 11:59:58 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id C23EF140159;
-	Tue, 18 Jun 2024 12:04:08 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 18 Jun 2024 12:04:07 +0800
-Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
- ftl notifier
-To: Gagan Sidhu <broly@mac.com>, Daniel Golle <daniel@makrotopia.org>
-CC: Richard Weinberger <richard@nod.at>, ZhaoLong Wang
-	<wangzhaolong1@huawei.com>, dpervushin <dpervushin@embeddedalley.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-mtd
-	<linux-mtd@lists.infradead.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>, yangerkun <yangerkun@huawei.com>, yi
- zhang <yi.zhang@huawei.com>
-References: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com>
- <E3E2C13C-1E52-46F2-BE2D-D2592C3369DB@mac.com>
- <F2DCFCE7-68FA-4C09-AE5B-09F2233575F1@mac.com>
- <48D8B89B-0402-4D8B-B045-86104C0C797F@mac.com>
- <303502000.252057.1718647746641.JavaMail.zimbra@nod.at>
- <90A90DA4-8B68-432D-9577-0D3635AF84BB@mac.com>
- <296007365.252185.1718649153090.JavaMail.zimbra@nod.at>
- <3841F21D-CA54-456C-9D9C-F06EEA332A30@mac.com>
- <136290141.252319.1718650375432.JavaMail.zimbra@nod.at>
- <ZnCcsPA-flVcxiAT@makrotopia.org>
- <C20708FB-0626-475E-A996-DE42ACF57A8B@mac.com>
- <C7514984-8CEB-4D1F-A896-BD6E653D311B@mac.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <251ae039-9f46-081b-a7ee-fe47de268865@huawei.com>
-Date: Tue, 18 Jun 2024 12:03:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1718683823; c=relaxed/simple;
+	bh=r2cwQAjNoRc6C1R7nXh2MsWCqBNNYAC9Ih3/FIh75mw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JY3lbDYRqO4Cf3CSNJyEURTq979Mc9DEDimPaN3lhdwzfmWQyscou3yyN36+0k6o5ocCp5Ff1kRBkNUr8c1UEvl4/70qV9z3R5PXwJJ80Rg1HwaYTnRNjcL4sgS5qNDAJT4Cg17unqskVL/ILjVZ+y3pHOTOpyPyQyO9ZCXjHJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3fdXkHK; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4ecf43e29a0so1418578e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 21:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718683820; x=1719288620; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WVAmMf5zjhgua5uAQi4PwTrkecjeDqn4nRI+mC+wfvM=;
+        b=H3fdXkHKpO+HBeD77Iko6RBkgyEpZIeL07AOgutZ+Vh/G7Bf9YZxnoQ0Yfa72DDBvs
+         q3EHC8WQBZNRkpijaql8fomAi74kWGtYy9sm5D4a8OUXPyaZ61JYg8EJusxNBAJ1FJH0
+         A5d64Z5nNUl+ZGXern498oktjEiUdcmBrrRQWl5iB+jyIOkrDQT+AYhEMKJ7K25MyIIw
+         krA0tSZYFL2Ph4vPxKm9MP7wjEb6rZuP2ilz1UfEe/ySpsBuKLlXxkXASdvhDqPYba4C
+         ZCxPKzm3mKH0balsBuSXHBnHXRAzTnmJEifB4doBNNZItBVbPGr5Cd7tojOMxOwFUbJs
+         wzvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718683820; x=1719288620;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WVAmMf5zjhgua5uAQi4PwTrkecjeDqn4nRI+mC+wfvM=;
+        b=HRYAiz8vkywmNAMVSPUaN3EWhnFV3GBT1T2k8uppeqg4Fa8JbMS6pkhXzUDaegmyD7
+         m2D1lG6W2LTTKp2Av7OnA5lKsigkKKzsQtZeJ1Kuh1LTPCA0somdjTrtMH0GcSfugGyy
+         iMwh+kk8NK3+IafwdjSHdAoY9SGAYigACkjFU7pPgrd39lVgGmeOcDc3IJQ6u+UuSavD
+         jupgX6gIvQuuoA3vtN2R8M8yzsjj/EVRY5Qvp+Ahq74zemYgojCTpnTViN8sTPRnFQrY
+         6scUfH1guzR9Zm1FC6LcIpmzB3fDy6EUoTqApJROlRDvgcbb+5DfCEu3pFL+P6lpFsUq
+         TNJg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4YqP8vqTNMK3V3xyI/xC4ohl2z9BeY7RTXcqYb/AsTIQjBSEOmoPCO9X8QyUI+UFC5XLpmfXpveajpSZqJ0M5aQ5D4jKAhnKx3HR2
+X-Gm-Message-State: AOJu0Yx5/payW5GWPeTjt6a2z44/XwSDdsGamAOm+WKsRa0IElPFeTaN
+	02Wbh+EXijBJY/9Bn5xH8uTM2URgmUs4nCNMsDnDDtLERGU9KVC+dkMhq/nk65MkJYnzuzIZGBI
+	bD+NbKPZLSWWGQ0J7qk6YFgmTaDg=
+X-Google-Smtp-Source: AGHT+IFiKYv1VKDbLmV8FvDZX65MbakeTTQCheseXZDe6XThVx6hz/dTOzqDsu4d33b7RdHXMLGmkpI2ehfZxePy+dI=
+X-Received: by 2002:a05:6122:9a0:b0:4ec:f7c4:fe25 with SMTP id
+ 71dfb90a1353d-4ee41218591mr10862133e0c.15.1718683820275; Mon, 17 Jun 2024
+ 21:10:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <C7514984-8CEB-4D1F-A896-BD6E653D311B@mac.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm000013.china.huawei.com (7.193.23.81)
+References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
+ <CAGsJ_4zvG7gwukioZnqN+GpWHbpK1rkC0Jeqo5VFVL_RLACkaw@mail.gmail.com>
+ <2e3a3a3f-737c-ed01-f820-87efee0adc93@126.com> <9b227c9d-f59b-a8b0-b353-7876a56c0bde@126.com>
+ <CAGsJ_4ynfvjXsr6QFBA_7Gzk3PaO1pk+6ErKZaNCt4H+nuwiJw@mail.gmail.com> <4482bf69-eb07-0ec9-f777-28ce40f96589@126.com>
+In-Reply-To: <4482bf69-eb07-0ec9-f777-28ce40f96589@126.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 18 Jun 2024 16:10:08 +1200
+Message-ID: <CAGsJ_4ytYTpvRVgR1EoazsH=QxZCDE2e8H0BeXrY-6zWFD0kCg@mail.gmail.com>
+Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
+ non-CMA THP-sized page
+To: yangge1116 <yangge1116@126.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com, 
+	liuzixing@hygon.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-在 2024/6/18 6:13, Gagan Sidhu 写道:
-Hi,
-> spoke to a user, gave him a build without MTD_GLUEBI, restoring changes made by (HAHAHA you are! huawei), it booted fine.
-> 
+On Tue, Jun 18, 2024 at 3:32=E2=80=AFPM yangge1116 <yangge1116@126.com> wro=
+te:
+>
+>
+>
+> =E5=9C=A8 2024/6/18 =E4=B8=8A=E5=8D=889:55, Barry Song =E5=86=99=E9=81=93=
+:
+> > On Tue, Jun 18, 2024 at 9:36=E2=80=AFAM yangge1116 <yangge1116@126.com>=
+ wrote:
+> >>
+> >>
+> >>
+> >> =E5=9C=A8 2024/6/17 =E4=B8=8B=E5=8D=888:47, yangge1116 =E5=86=99=E9=81=
+=93:
+> >>>
+> >>>
+> >>> =E5=9C=A8 2024/6/17 =E4=B8=8B=E5=8D=886:26, Barry Song =E5=86=99=E9=
+=81=93:
+> >>>> On Tue, Jun 4, 2024 at 9:15=E2=80=AFPM <yangge1116@126.com> wrote:
+> >>>>>
+> >>>>> From: yangge <yangge1116@126.com>
+> >>>>>
+> >>>>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list fo=
+r
+> >>>>> THP-sized allocations") no longer differentiates the migration type
+> >>>>> of pages in THP-sized PCP list, it's possible to get a CMA page fro=
+m
+> >>>>> the list, in some cases, it's not acceptable, for example, allocati=
+ng
+> >>>>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
+> >>>>>
+> >>>>> The patch forbids allocating non-CMA THP-sized page from THP-sized
+> >>>>> PCP list to avoid the issue above.
+> >>>>
+> >>>> Could you please describe the impact on users in the commit log?
+> >>>
+> >>> If a large number of CMA memory are configured in the system (for
+> >>> example, the CMA memory accounts for 50% of the system memory), start=
+ing
+> >>> virtual machine with device passthrough will get stuck.
+> >>>
+> >>> During starting virtual machine, it will call pin_user_pages_remote(.=
+..,
+> >>> FOLL_LONGTERM, ...) to pin memory. If a page is in CMA area,
+> >>> pin_user_pages_remote() will migrate the page from CMA area to non-CM=
+A
+> >>> area because of FOLL_LONGTERM flag. If non-movable allocation request=
+s
+> >>> return CMA memory, pin_user_pages_remote() will enter endless loops.
+> >>>
+> >>> backtrace:
+> >>> pin_user_pages_remote
+> >>> ----__gup_longterm_locked //cause endless loops in this function
+> >>> --------__get_user_pages_locked
+> >>> --------check_and_migrate_movable_pages //always check fail and conti=
+nue
+> >>> to migrate
+> >>> ------------migrate_longterm_unpinnable_pages
+> >>> ----------------alloc_migration_target // non-movable allocation
+> >>>
+> >>>> Is it possible that some CMA memory might be used by non-movable
+> >>>> allocation requests?
+> >>>
+> >>> Yes.
+> >>>
+> >>>
+> >>>> If so, will CMA somehow become unable to migrate, causing cma_alloc(=
+)
+> >>>> to fail?
+> >>>
+> >>>
+> >>> No, it will cause endless loops in __gup_longterm_locked(). If
+> >>> non-movable allocation requests return CMA memory,
+> >>> migrate_longterm_unpinnable_pages() will migrate a CMA page to anothe=
+r
+> >>> CMA page, which is useless and cause endless loops in
+> >>> __gup_longterm_locked().
+> >
+> > This is only one perspective. We also need to consider the impact on
+> > CMA itself. For example,
+> > when CMA is borrowed by THP, and we need to reclaim it through
+> > cma_alloc() or dma_alloc_coherent(),
+> > we must move those pages out to ensure CMA's users can retrieve that
+> > contiguous memory.
+> >
+> > Currently, CMA's memory is occupied by non-movable pages, meaning we
+> > can't relocate them.
+> > As a result, cma_alloc() is more likely to fail.
+> >
+> >>>
+> >>> backtrace:
+> >>> pin_user_pages_remote
+> >>> ----__gup_longterm_locked //cause endless loops in this function
+> >>> --------__get_user_pages_locked
+> >>> --------check_and_migrate_movable_pages //always check fail and conti=
+nue
+> >>> to migrate
+> >>> ------------migrate_longterm_unpinnable_pages
+> >>>
+> >>>
+> >>>
+> >>>
+> >>>
+> >>>>>
+> >>>>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+> >>>>> THP-sized allocations")
+> >>>>> Signed-off-by: yangge <yangge1116@126.com>
+> >>>>> ---
+> >>>>>    mm/page_alloc.c | 10 ++++++++++
+> >>>>>    1 file changed, 10 insertions(+)
+> >>>>>
+> >>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> >>>>> index 2e22ce5..0bdf471 100644
+> >>>>> --- a/mm/page_alloc.c
+> >>>>> +++ b/mm/page_alloc.c
+> >>>>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone
+> >>>>> *preferred_zone,
+> >>>>>           WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
+> >>>>>
+> >>>>>           if (likely(pcp_allowed_order(order))) {
+> >>>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>>>> +               if (!IS_ENABLED(CONFIG_CMA) || alloc_flags &
+> >>>>> ALLOC_CMA ||
+> >>>>> +                                               order !=3D
+> >>>>> HPAGE_PMD_ORDER) {
+> >>>>> +                       page =3D rmqueue_pcplist(preferred_zone, zo=
+ne,
+> >>>>> order,
+> >>>>> +                                               migratetype,
+> >>>>> alloc_flags);
+> >>>>> +                       if (likely(page))
+> >>>>> +                               goto out;
+> >>>>> +               }
+> >>>>
+> >>>> This seems not ideal, because non-CMA THP gets no chance to use PCP.
+> >>>> But it
+> >>>> still seems better than causing the failure of CMA allocation.
+> >>>>
+> >>>> Is there a possible approach to avoiding adding CMA THP into pcp fro=
+m
+> >>>> the first
+> >>>> beginning? Otherwise, we might need a separate PCP for CMA.
+> >>>>
+> >>
+> >> The vast majority of THP-sized allocations are GFP_MOVABLE, avoiding
+> >> adding CMA THP into pcp may incur a slight performance penalty.
+> >>
+> >
+> > But the majority of movable pages aren't CMA, right?
+>
+> > Do we have an estimate for
+> > adding back a CMA THP PCP? Will per_cpu_pages introduce a new cacheline=
+, which
+> > the original intention for THP was to avoid by having only one PCP[1]?
+> >
+> > [1] https://patchwork.kernel.org/project/linux-mm/patch/20220624125423.=
+6126-3-mgorman@techsingularity.net/
+> >
+>
+> The size of struct per_cpu_pages is 256 bytes in current code containing
+> commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized
+> allocations").
+> crash> struct per_cpu_pages
+> struct per_cpu_pages {
+>      spinlock_t lock;
+>      int count;
+>      int high;
+>      int high_min;
+>      int high_max;
+>      int batch;
+>      u8 flags;
+>      u8 alloc_factor;
+>      u8 expire;
+>      short free_count;
+>      struct list_head lists[13];
+> }
+> SIZE: 256
+>
+> After revert commit 5d0a661d808f ("mm/page_alloc: use only one PCP list
+> for THP-sized allocations"), the size of struct per_cpu_pages is 272 byte=
+s.
+> crash> struct per_cpu_pages
+> struct per_cpu_pages {
+>      spinlock_t lock;
+>      int count;
+>      int high;
+>      int high_min;
+>      int high_max;
+>      int batch;
+>      u8 flags;
+>      u8 alloc_factor;
+>      u8 expire;
+>      short free_count;
+>      struct list_head lists[15];
+> }
+> SIZE: 272
+>
+> Seems commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+> THP-sized allocations") decrease one cacheline.
 
-May I have the layers' information about mtd/ubi, you can get it by 
-'mtdinfo -a' and 'ubinfo -a' after booting the device.
-I guess your device boots from ubiblock0_0. There are two ways loading 
-booting device:
-1. mtd(nand)
-    ubi(holds volume ubi0_0)
-    mtd12 (gluebi)
-    mtdblock12  (This way is cut by this patch, so mtdblock12 is not 
-generated, just like Daniel&Richard analyzed)
-2. mtd(nand)
-    ubi(holds volume ubi0_0)
-    ubiblock0_0
+the proposal is not reverting the patch but adding one CMA pcp.
+so it is "struct list_head lists[14]"; in this case, the size is still
+256?
 
-> so we need to think about either deprecating GLUEBI or setting an option in the Kconfig that ensures they are mutually exclusive.
-> 
-> gluebi is definitely highjacking the block device created by UBI_BLOCK and adding the MTD_UBIVOLUME flag to it.
 
-The gluebi(mtd) and ubiblock could exist on the same UBI volume at the 
-same time, but they cannot be opened at the same time. Here is an 
-example I tested on the local machine:
-
-                                              ↗ ubiblock0_0
-mtd0(nandsim) -> ubi0 (holds volume ubi0_0)
-                                              ↘ gluebi(mtd1)
-
-[root@localhost ~]# ubinfo -a
-UBI version:                    1
-Count of UBI devices:           1
-UBI control device major/minor: 10:61
-Present UBI devices:            ubi0
-
-ubi0
-Volumes count:                           1
-Logical eraseblock size:                 126976 bytes, 124.0 KiB
-Total amount of logical eraseblocks:     8192 (1040187392 bytes, 992.0 MiB)
-Amount of available logical eraseblocks: 0 (0 bytes)
-Maximum count of volumes                 128
-Count of bad physical eraseblocks:       0
-Count of reserved physical eraseblocks:  160
-Current maximum erase counter value:     2
-Minimum input/output unit size:          2048 bytes
-Character device major/minor:            246:0
-Present volumes:                         0
-
-Volume ID:   0 (on ubi0)
-Type:        dynamic
-Alignment:   1
-Size:        8026 LEBs (1019109376 bytes, 971.8 MiB)
-State:       OK
-Name:        vol_a
-Character device major/minor: 246:1
-[root@localhost ~]# mtdinfo -a
-Count of MTD devices:           2
-Present MTD devices:            mtd0, mtd1
-Sysfs interface supported:      yes
-
-mtd0
-Name:                           NAND simulator partition 0
-Type:                           nand
-Eraseblock size:                131072 bytes, 128.0 KiB
-Amount of eraseblocks:          8192 (1073741824 bytes, 1024.0 MiB)
-Minimum input/output unit size: 2048 bytes
-Sub-page size:                  512 bytes
-OOB size:                       64 bytes
-Character device major/minor:   90:0
-Bad blocks are allowed:         true
-Device is writable:             true
-
-mtd1
-Name:                           vol_a
-Type:                           ubi
-Eraseblock size:                126976 bytes, 124.0 KiB
-Amount of eraseblocks:          8026 (1019109376 bytes, 971.8 MiB)
-Minimum input/output unit size: 2048 bytes
-Sub-page size:                  2048 bytes
-Character device major/minor:   90:2
-Bad blocks are allowed:         false
-Device is writable:             true
-
-[root@localhost ~]# lsblk | grep ubi
-ubiblock0_0 251:0    0 971.9M  0 disk
-
-> 
-> there is no other explanation.
-> 
-> looks like this was an absolutely amazing exchange that even furthered our understanding of wtf is going on.
-> 
-> thanks for being a great moderator for MTD rich
-> 
-> Thanks,
-> Gagan
-
+>
+> >
+> >> Commit 1d91df85f399 takes a similar approach to filter, and I mainly
+> >> refer to it.
+> >>
+> >>
+> >>>>> +#else
+> >>>>>                   page =3D rmqueue_pcplist(preferred_zone, zone, or=
+der,
+> >>>>>                                          migratetype, alloc_flags);
+> >>>>>                   if (likely(page))
+> >>>>>                           goto out;
+> >>>>> +#endif
+> >>>>>           }
+> >>>>>
+> >>>>>           page =3D rmqueue_buddy(preferred_zone, zone, order, alloc=
+_flags,
+> >>>>> --
+> >>>>> 2.7.4
+> >>>>
+> >>>> Thanks
+> >>>> Barry
+> >>>>
+> >>
+> >>
+>
 
