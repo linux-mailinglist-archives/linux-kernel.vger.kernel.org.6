@@ -1,246 +1,197 @@
-Return-Path: <linux-kernel+bounces-218497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943E890C09F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:42:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F74790C0BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F82C1F217B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:42:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9194A281B0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D2C5672;
-	Tue, 18 Jun 2024 00:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408875672;
+	Tue, 18 Jun 2024 00:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IyMDiPV2"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="P6kR9Hzc"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2103.outbound.protection.outlook.com [40.107.244.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B414C8F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718671362; cv=none; b=Du+aTYUxe0xF6C5Ki0BqpQZUUxEZ/z1ByZMyD1QYxwLX2mjYO1+1iL5zMl8sSghuLj1VA8LasDIKUspVj5wigz5r+J6sk+iV8PQGsvcyn2xUn23VhQgmgszR0JBT+CrbTCayzQQn2DjkoCEmQk1gI4C+n0UOUdgCQFNzKRTZzZQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718671362; c=relaxed/simple;
-	bh=BYotfX760PqY2mcNOWxiaLsEIif4d7BNTEGHmIPKRls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SXyBL7JvfR0wrzF2gXGqZ/KD+6k9r3DEGRPrH35smHWqjoLJeseSiTMPUc9DJQQJWqls3gEa47gInCH5EfEVINRj8LLI/+gqCX/x2DTVbJShT9GeKbx+g9QeeJbWvboXz2fyctK+8xyV4BXQp4NvTDB2f8Pux9SOdjrhvxdH9ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IyMDiPV2; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-422f7c7af49so31315e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:42:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A5A7483
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.103
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718671886; cv=fail; b=Hbk5MZaXUP4EhMO8Cmpmzfz5g7jtH30W4nfZPdS4cPYfSIiaW47NWVgDgcX+N3dcJlur+tPewHK9PgWWWAql0eRc2C57RzicAqick+Pe1ZP2DZ0lFv/I5iwS4U7I3vGkTm5SVtlBF/rWcx0I8lLUy7Kf6Y3MJ5Jh/Z8y1DFzyM8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718671886; c=relaxed/simple;
+	bh=Q26OoYSv4Dzl5E9Aqxk2jkGmYkilLSzNVQWOsrPcwis=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=fu+YIeLrh8+I3QaZpa/oxbhdqM8KUp3ez/KXbYppAmwpuhFRZZCQ1kxNj0T5m+XaQTZrJgrzYhf9jRT+iZJHLiWd3nvvmHmNtWau+Jlxmi71f/QZ5Xh2Pb4VRDRI7+NP+CLPdurItmK3HIGq9ukIZr/xC7Pay0pk4uesrMEINps=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=P6kR9Hzc; arc=fail smtp.client-ip=40.107.244.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TSromftFS1get3uyCS7GUzFdRJD12BtHCT4tG8143deWn9mg6hMRBYRRDDmW03kD03XiDqkGj/S5sVUeC3S5+CqUshgLOWAAIRPMjHcCfvlgPuyqiDDWKD8Ao0upInHBpu0ApGFV5VJb/xb1Sq60V3QMiPXGOdmNPTB5SyrEvHxDVqtCx8AfBrTPlZ2ixEpEnT6HK5kwvCwdpxAeqi1Mw7NmvSNBktAsjCqcs6hgGM7laWZvu6dPDj61fR0cQCrYGGhcp+61B8nG7FI8TCFXB4I7LjWqqfNUJpGJ296+iBa9Gjk37nijqA4L+0mFPwWK4y0KFU1Yic23ivMs6Y7tHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iKWoEWRYMshx6zMGLdjrj4hRzjiylxM5Y3lmeXaCOT8=;
+ b=FPq1ZscBFnxXmRBCr8pGrLdtmuX+tHYJWIvlZoX86qFNP92eZ9R3t/jMr7dFwPBwFnCnfOG05slWvxYDFPSIMkVqf1jR/1AqathcBi/JxDkHyivvmIerKLzRXXJH7E5aqdM57r7r7Qyi5A0yDNu29eQbi7HgWwczq79nNGm4//LigpxQR/pTDitQ8Ka/2NANgOy2BuAeUED1RSUqoBBjQf/wbU+2rimJB++LYVDk7EP9dAplV4kZT6Nsguv6kB4tcDvkKejIW9JnCfx84BaiR7zgdKaHpisKVsm6r2VhrItFxAue9fEFbdr+E0fG3n46n6/NqT7gYcjPfk08Jh4Axg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718671358; x=1719276158; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=soNwY1feUT1m5F+Cl3agS6X9xd9R8atpsTjXhDrPfUA=;
-        b=IyMDiPV24PAXq4rnXjtaGZlAos9TVyYfdXNSEW+HHObkRsA1m2oNkWb+ksxSoVXD12
-         DlzUE2nxWQWQ8EWUIxTDuATmWenMDL8PDgpKlAlvqXKlJYZLqU2EPyBPo9uBVBS+0He1
-         YIz9/22fPMPpdg3Lehc85uSnT+xrRNww1GtF7lwJkoq943ptXpZR2l0j692hJy0Gz2d1
-         RpXOmcJfU0HcwxS1YksFd3Rcp52vM4gJiBEfK8l6DWXHo3jVAoRXMlnjc8x2fV3Rv2AG
-         bX9k9I04sfsxn8fgn4mKvklx9sx1mbe3/+r6wTflbDSnuvb1v2Umeot64XhX1s88jofW
-         ef9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718671358; x=1719276158;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=soNwY1feUT1m5F+Cl3agS6X9xd9R8atpsTjXhDrPfUA=;
-        b=F771lj8tQBXuV+ahQEg0wDOAf/L9y+0r0i2Y/O6SL0J7hXKtXhoPpy8p/Mf7/6V1BA
-         lnD6ShiUzshbng8xxKDvpGaTTTRMf9RBxQPZ2Sn76085iDMc1f6ehwGsTzdj28LxwccQ
-         hDA42MZhJpk0ycv9khqXYqevWEk01EgGGlXqMSQCkNIb1/5U4oj7jAvc+4vqH7o/viEx
-         ad6T2iDjb40ZjV8VH1RDX141l/VoOyPJZA9jZSrGFbxNlG8u9+uiTsxqiY1JxDiE3C/o
-         WjH7pbU09u+/BcLcm+nJLFz2t+U6I3gJ7D6Wx8XA/4TJdMmx7Zw+yryp4fE1kgPnH7y7
-         V/jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXj51LEF7Ei3nw82QVFLfgjepCm749AHV+IyzYJLEPpAyXwmkFZ3uN5tuW/tflSfkerxP0qyUGkMQeq7Zl+Bd6CgzjySqvUx4tWx+bP
-X-Gm-Message-State: AOJu0Yw9w4HXcwIGfLqe93DfqyAEVs+oUKwA6wTQ/POljHfv2PDh2KbI
-	e4hBURhKoln8fzGDv0+EwoUkFnEHRtWTQLI56OzN8p6IwrHeX4xhtlKsgN5htazBfT7MdjB9U91
-	+atp+qa0BNDHHONtSn9bDqUx+LFqJdpRRdAI=
-X-Google-Smtp-Source: AGHT+IHNmVOlymw36d8FbPeId/74lLBYVRkwza5mRQzCBLmEPmsh1tC8YXjJ7uxg3DFE227VBJeIvqy6bdsrQDBvAuc=
-X-Received: by 2002:a05:600c:1d99:b0:422:ff8d:5d25 with SMTP id
- 5b1f17b1804b1-42470e9825emr477335e9.5.1718671357826; Mon, 17 Jun 2024
- 17:42:37 -0700 (PDT)
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iKWoEWRYMshx6zMGLdjrj4hRzjiylxM5Y3lmeXaCOT8=;
+ b=P6kR9HzcSihWmxZRrwB6zi9kktoKAJWqz7tBjKsk7nRUwP98oMsEGqVlEJANDSOUUP96LwjLe3Mu3RBoxgEmBaAL3xKKfBMcnl45Kx8q7TvDFl3sFNKegiwVyh87DK6zQAPjUAQqDRXxV0zuAKofk1zrk4+i2ZHqC7WFAh4lrSE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ CYYPR01MB8410.prod.exchangelabs.com (2603:10b6:930:c9::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.30; Tue, 18 Jun 2024 00:51:21 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba%3]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 00:51:21 +0000
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: Robin Murphy <robin.murphy@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Subject: [PATCH v4 0/2] Mesh PMU: Add tertiary match group support
+Date: Mon, 17 Jun 2024 17:50:54 -0700
+Message-Id: <20240618005056.3092866-1-ilkka@os.amperecomputing.com>
+X-Mailer: git-send-email 2.40.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH2PR02CA0025.namprd02.prod.outlook.com
+ (2603:10b6:610:4e::35) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613015837.4132703-1-jstultz@google.com> <20240613100441.GC17707@noisy.programming.kicks-ass.net>
- <20240613115142.kxrmlf3btmwjcprg@airbuntu> <20240614094833.GM8774@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240614094833.GM8774@noisy.programming.kicks-ass.net>
-From: John Stultz <jstultz@google.com>
-Date: Mon, 17 Jun 2024 17:42:25 -0700
-Message-ID: <CANDhNCqcbCJNSyrKG5b7vyjmuHUm0kAJmDecqHF-QRZ_EHq=Zw@mail.gmail.com>
-Subject: Re: [PATCH] RFC: sched: Rework task_sched_runtime to avoid calling update_rq_clock
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Qais Yousef <qyousef@layalina.io>, LKML <linux-kernel@vger.kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|CYYPR01MB8410:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b6fbf8d-0df8-40f1-54f3-08dc8f30c518
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|1800799021|376011|52116011|366013|38350700011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KBKlCEcVMWSRKL77b2lCeZikMDURXxu0lnf+iuVGh+Mn8cB0mPRBp4bJt1gm?=
+ =?us-ascii?Q?l3ABNPgXVzJPh3esW0Hgp1EJ59wKdp7Bfhm0ixsTip9M26HE5Au6ggmpd4ky?=
+ =?us-ascii?Q?GuU/clfGf8brjGiV6nMhqHOk7RmKlCxWk0uiXzLx/V+ujCRUdfrMXfqBsJ+8?=
+ =?us-ascii?Q?eknpEfgBeEMDYL2yfpm7e8FT3+PeL93srPgKg5XfXSLCIr5Hnx9grlbinCM+?=
+ =?us-ascii?Q?rz1sFmwKc00RYuqhsz20qb2C1+i7EYQZ6lpG1D1BTRa0fQgSF1ORx9+bwLiS?=
+ =?us-ascii?Q?901OQV/hk/REcf9ODxWbh3nHAZvlqpuHcF6Pu8IJMEULwiEUqTWkwas59U8i?=
+ =?us-ascii?Q?GLEnOmdq9I4uG53Gk5mw1CdhEFUa0L/ipwR0/mjMcrlqZn5vlbCHZvgsfe1a?=
+ =?us-ascii?Q?zvzZxG/vd2FNC7h5khMqcWJqkxQ2sv7XCZe5vZZUnLFy4GBCDDCJPO5t6QJ4?=
+ =?us-ascii?Q?RbYg4iB7/n25872ClvVmByRhPA7ReIgjbvffGUcFCtcKmIIHXNHekDEBJebg?=
+ =?us-ascii?Q?WzNFqv9qo9FUwTEtygnFb21B02ERJMQRYfSE+7164Owtr9hhUEaIvoiIVhS9?=
+ =?us-ascii?Q?UD2mrDIcxJYKXbkJC4xvmn4vWJs2iVkZdsiBqCnh8RYK2VYHyJka1HFNXjrm?=
+ =?us-ascii?Q?UyGLwNE5JYYgPUqkhVMdYM864/JwucjSEGnYRpubiYSpXJoFJBkOCeQQBbzS?=
+ =?us-ascii?Q?0spkrPq1AIr/LnegVWBLsEj1QkYrrFN2oMi/zKukN3JviybnFDKxKAwToLND?=
+ =?us-ascii?Q?pxv41PqaNgyiJAgOg9xfdUWNCwYrnM1v8FxT/6QO3elJc88YtekxFV4dHfdf?=
+ =?us-ascii?Q?hztKnUBr7JxmDAHU88jHxtcdb26DmYaHYqMO6niA/WsoMeCjM/9zun4a9rzA?=
+ =?us-ascii?Q?EJJGFdJ31+sHUkI7cewHR/y8UbxjdK7uhK1U5D+dO02+l8PPsZD9743BFlAh?=
+ =?us-ascii?Q?qKdt4mxGe11urHnmcRk7utnvLhzXDVKXHSg/vrqzJm3uvupswLV0I7ncWJ5N?=
+ =?us-ascii?Q?vxtR1djhVUBnev9/7c6wX+UavHj00lgP/8UCXIInzysV9Ppu9miWdnpSAbVP?=
+ =?us-ascii?Q?yxS06MHoIayL7s/2EI56gCkeguOcqPIeUDLpBwPhGa4IoVnziDA/M2wKf7kF?=
+ =?us-ascii?Q?li7wAFXNQODpnLeiWeR3scAJm75JFFb3UDxmek+t5m3zG434AAp84/v21ArC?=
+ =?us-ascii?Q?0a2qVs2odaiz83yYwGlhwgocBSjo/JcpXVmbNyP01SQuGxOxtsz35lv+0Nml?=
+ =?us-ascii?Q?NcpuYodGDn+XqA+d3LIqKx2fGh0twEOOTQbr8pMJU++WFE1+UE/eGXs9KJzq?=
+ =?us-ascii?Q?BlejvoFNoGC2zR4TFcgCwgW2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(52116011)(366013)(38350700011);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gUKSW0JeI8EdotgL4J23wprNImNxCXLydPJcxt069Z0RSGmE6b1xTCggKeAh?=
+ =?us-ascii?Q?5bfZHgM3dp8uhE0VdjFFYJ5hVQ5L5khnXFEBzDgLsAYkSRP0X9jKRm3nGhgE?=
+ =?us-ascii?Q?X2LoIaHeXx5qkVYYZFyC535DrvDvDxyZfmajbQbYccGH7RgEipsiS8Dri27U?=
+ =?us-ascii?Q?9DIQn3shKIqWpwfm/3D/BGa9WZCzqh/lV8YucG0VJoIHKINksF0joI9Eu3jM?=
+ =?us-ascii?Q?xwe0htN36OeTOLBq1zoDxWVAil6ntrvSLwEBA6FyGSD2fSJWhialy+qg0OZz?=
+ =?us-ascii?Q?w22okOywhF5MuPg3+6B2TrlBO++bey1xVIjCtmvL3SOQhpTJqiXqrBXenSKD?=
+ =?us-ascii?Q?zzxa8N8p0eNwLjSPjSm7QG/hTVaj1J2HzlahI46NZljgUi4eSwK8yj20rIeL?=
+ =?us-ascii?Q?b8BgAHyiu77RbXpzDcVlkeLDLig2iAqoT3iV8zj5hAbPE8C+7KajkjAwmeW+?=
+ =?us-ascii?Q?hYyEZ1WU9jRiYElbSkD0reaxlJ0DPWr5l+ujjHOPJRqodZQAXtBREYpKUVH+?=
+ =?us-ascii?Q?da10CHlPj14gTrADygNu2HYfft2rhuiyUGTG15KXU3uVzgF0cABM0JEqqagc?=
+ =?us-ascii?Q?phqDfAoudksIjvZ1Uyuhk357FWekxoRA9uc+49A5UFw9h1EJptVLDssDdfXa?=
+ =?us-ascii?Q?JYFK9VCNZofB5Wl2W6RZ7e9dqfph2rvGIHcmdowRMW9BHxiubzFrJyBom34L?=
+ =?us-ascii?Q?cnYMuDRb8oorWBu7sl0HJT7KOapQbw2zuXYEJMvkQji99Tir0QdYJ/VcKWzV?=
+ =?us-ascii?Q?72EnBoWDMOaXyBJX5yWJtJmbyC0GqUZHZBGKxiLVWdR+dl1PkSL4cRVEdyzv?=
+ =?us-ascii?Q?kBfGQA3FJCODR1N4/I2JMrCeYE1W111WTxcNqJj863RQMhZYpC93ZImy9EL5?=
+ =?us-ascii?Q?Nos4hBGWjKesAZr9eCKq1ZdHH41zzcRnjTWK+15JfBiJLCcktX2VGjTggE0l?=
+ =?us-ascii?Q?swsljQF2zSVQQPiMYaD176SxnruQ3e749mJ/oIrztw2MbeaCoqFbLRdX3gNh?=
+ =?us-ascii?Q?dBuePTVyORqAzQYe8hf0M80RTkMhLa7s4r5wtLM4CT6BlmHoDGHU+V6nA/v6?=
+ =?us-ascii?Q?tioPpJ3dGaxrMXfk1E/hYXUvnwZpbavc7hY+4SGEO4Ka9RFYO96XdvuZUfjW?=
+ =?us-ascii?Q?URruzOk+rBdhnUfQlvE4IThHwhw+m+EoP6c/1qt5rpixRCFv4nP9zusuxuVp?=
+ =?us-ascii?Q?WxmpNDMLEXMDj+oKJhcJFDsLev37F+/chwIT0WGvtJrhYNZT+QmvKstfYsOP?=
+ =?us-ascii?Q?G4+SYqlwtaJ4ZSWn0trOg40OibJ3+YLzLHV2YlDMN2GV6BIrKo/7aEwNIkmC?=
+ =?us-ascii?Q?OtXT0NxUwJvtktohGUi3AxEGRR3hzqGKBOaqR5ILgzpa1rxnmTdaoWWtRUvL?=
+ =?us-ascii?Q?MXmkWqjmJiomH3YtzbOSvROxHaWsFkmoFV9tUsi5ENdKVyn2XZoJ/uFA9fCF?=
+ =?us-ascii?Q?kqsb4S4YJoEfCFYrDM2u09Cj/V8xQPgJcx7yD/dwk31srqovFauSlo/4fdOg?=
+ =?us-ascii?Q?FTg8ZYcYnsrbGTvRPGzj9eWntWmofkvKKqmSAGmYz5usICDCTJS8UApcbPm2?=
+ =?us-ascii?Q?JdUBLrtzCL0NYtG1Wq9LiKFKSunlXHouNWv91LzfExnRPOvrDcr7nGRv4nkm?=
+ =?us-ascii?Q?GCafMkN95KBWi5Q/Ov2VD0I=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b6fbf8d-0df8-40f1-54f3-08dc8f30c518
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 00:51:21.0447
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bVvYOCWJB/akk1XseHb3wPoevwCQB6zHkjiX2La9pn5hH5ON64HKJgqsjyLf6BE/89KaDhPsP4TNq+3oiP3gpNTCqAVHQCvPDMe96OOkggwRFZ7q6VYhxDMW+hBCcd+J
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR01MB8410
 
-On Fri, Jun 14, 2024 at 2:48=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
-> Which then gets me something like the (completely untested) below..
->
-> Hmm?
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 0935f9d4bb7b..36aed99d6a6c 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -724,7 +724,6 @@ static void update_rq_clock_task(struct rq *rq, s64 d=
-elta)
->
->         rq->prev_irq_time +=3D irq_delta;
->         delta -=3D irq_delta;
-> -       psi_account_irqtime(rq->curr, irq_delta);
->         delayacct_irq(rq->curr, irq_delta);
->  #endif
->  #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-> @@ -5459,6 +5458,8 @@ void sched_tick(void)
->
->         sched_clock_tick();
->
-> +       psi_account_irqtime(curr, NULL, &rq->psi_irq_time);
-> +
->         rq_lock(rq, &rf);
->
->         update_rq_clock(rq);
-> @@ -6521,6 +6524,7 @@ static void __sched notrace __schedule(unsigned int=
- sched_mode)
->                 ++*switch_count;
->
->                 migrate_disable_switch(rq, prev);
-> +               psi_account_irqtime(prev, next, &rq->psi_irq_time);
 
-FYI: These references to psi_irq_time hit build issues if
-CONFIG_IRQ_TIME_ACCOUNTING is disabled.
+v4:	* No changes, only rebased on top of v6.10-rc4
 
-Also, separately, while I didn't see this earlier testing on physical
-devices, when running virtualized, I can pretty easily trip over the
-following:
+v3:
+	* Replaced wp_cfg in arm_cmn_hw_event with wp_idx that keeps
+	  track, whether the event uses 0 or 1 index for the given direction
+	* Cleaned and simplified allocation/claiming of wp config
+	* arm_cmn_val_add_event() can't and won't fail anymore
+	* Separated wp_combine from wp[] in event validation phase
+	* use memset()/sizeof() when clearing an event
+	* Still kept wp config allocator in separate functions - at least
+	  for now
+	* https://lore.kernel.org/all/20240329013215.169345-1-ilkka@os.amperecomputing.com/
 
-[   65.207340] watchdog: BUG: soft lockup - CPU#0 stuck for 26s!
-[kworker/0:3:374]
-[   65.211107] irq event stamp: 118664
-[   65.212786] hardirqs last  enabled at (118663):
-[<ffffffff97a00e46>] asm_sysvec_apic_timer_interrupt+0x16/0x20
-[   65.218440] hardirqs last disabled at (118664):
-[<ffffffff977fdeca>] sysvec_apic_timer_interrupt+0xa/0xc0
-[   65.223074] softirqs last  enabled at (118546):
-[<ffffffff9676db78>] __irq_exit_rcu+0x88/0xe0
-[   65.227118] softirqs last disabled at (118541):
-[<ffffffff9676db78>] __irq_exit_rcu+0x88/0xe0
-[   65.231137] CPU: 0 PID: 374 Comm: kworker/0:3 Not tainted
-6.10.0-rc4-dirty #4393
-[   65.234625] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   65.239089] Workqueue: events psi_avgs_work
-[   65.241122] RIP: 0010:collect_percpu_times+0xff/0x310
-[   65.243525] Code: b9 02 00 00 00 48 89 df e8 8e a4 01 00 48 8b b4
-24 d0 00 00 00 48 89 df e8 5e 9e 01 00 58 45 8b 34 24 41 f6 c6 01 74
-0c f3 0
-[   65.252926] RSP: 0018:ffff958501263d50 EFLAGS: 00000202
-[   65.255433] RAX: 0000000000017b61 RBX: ffff9585b901d848 RCX: 00000000000=
-00006
-[   65.258755] RDX: ffffffff967eb6ac RSI: ffffffff9819e305 RDI: ffffffff981=
-77748
-[   65.262113] RBP: ffff958501263db0 R08: 0000000000000001 R09: 00000000000=
-00000
-[   65.265475] R10: 0000000000000001 R11: 0000000000000001 R12: ffff9585b90=
-1d840
-[   65.268785] R13: ffff9585b901d884 R14: 0000000000033d8b R15: 00000000000=
-00000
-[   65.272146] FS:  0000000000000000(0000) GS:ffff9585b9000000(0000)
-knlGS:0000000000000000
-[   65.275908] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   65.278629] CR2: 00005631aee8b000 CR3: 0000000116c0e001 CR4: 00000000003=
-70ef0
-[   65.282002] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
-00000
-[   65.285386] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
-00400
-[   65.288730] Call Trace:
-[   65.289958]  <IRQ>
-[   65.290965]  ? watchdog_timer_fn+0x275/0x310
-[   65.293185]  ? __pfx_watchdog_timer_fn+0x10/0x10
-[   65.295379]  ? __hrtimer_run_queues+0x190/0x3b0
-[   65.297795]  ? hrtimer_interrupt+0xf9/0x230
-[   65.299782]  ? __sysvec_apic_timer_interrupt+0x82/0x210
-[   65.302243]  ? sysvec_apic_timer_interrupt+0x98/0xc0
-[   65.304590]  </IRQ>
-[   65.305658]  <TASK>
-[   65.306708]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-[   65.309206]  ? psi_avgs_work+0x3c/0xb0
-[   65.311001]  ? collect_percpu_times+0xff/0x310
-[   65.313153]  psi_avgs_work+0x3c/0xb0
-[   65.314864]  process_one_work+0x1fe/0x700
-[   65.316782]  ? lock_is_held_type+0xcd/0x120
-[   65.318782]  worker_thread+0x1c7/0x3b0
-[   65.320571]  ? __pfx_worker_thread+0x10/0x10
-[   65.322626]  kthread+0xe0/0x110
-[   65.324103]  ? __pfx_kthread+0x10/0x10
-[   65.325853]  ret_from_fork+0x28/0x40
-[   65.327512]  ? __pfx_kthread+0x10/0x10
-[   65.329255]  ret_from_fork_asm+0x1a/0x30
-[   65.331073]  </TASK>
-[   65.332119] Kernel panic - not syncing: softlockup: hung tasks
+v2:
+        * Wp config registers are allocated on node basis, instead
+	  of using the same one globally
+	* Use bitmap in the event structure to keep track on the
+	  wp config registers assigned to the specific event.
+	* The bitmap tracks only either UP (wp conf 0&1) or DOWN
+	  (wp conf 2&3) registers.
+	* Dropped the second patch
+	  ("The patch set v2 is now in the internal mailing list")
+	  as perf/sysfs doesn't really support items with the same
+	  name even if visibility would handle them.
+	* Addressed a bunch of other comments by the author
+	* https://lore.kernel.org/all/20240307230929.6233-2-ilkka@os.amperecomputing.com/
 
-Where collect_percpu_times+0xff/0x310:
-__seqprop_sequence at include/linux/seqlock.h:211 (discriminator 2)
-(inlined by) get_recent_times at kernel/sched/psi.c:261 (discriminator 2)
-(inlined by) collect_percpu_times at kernel/sched/psi.c:359 (discriminator =
-2)
+v1:
+	* https://lore.kernel.org/all/20240126221215.1537377-1-ilkka@os.amperecomputing.com/
 
-Which looks like its getting stuck in the seqlock loop, and the only
-way I can see that catching right off, is if we're in some sort of
-livelock where the calls to psi_account_irqtime(curr, NULL,
-&rq->psi_irq_time) is coming in frequently enough to change the seqno
-each iteration through the reader.  But from my initial trace_printk
-debugging, it seems like from a kworker we enter the loop in
-get_recent_times(), hit an irq and somehow never really come back out
-of irq context. Though we continue to get ticks on the task and
-continue to call psi_account_irqtime().  I was worried we were somehow
-getting stuck in the 'while ((group =3D group->parent));' loop in
-psi_account_irqtime(), but that doesn't seem to be the case.
+Ilkka Koskinen (2):
+  perf/arm-cmn: Decouple wp_config registers from filter group number
+  perf/arm-cmn: Enable support for tertiary match group
 
-[  238.297094] kworker/-798       0..... 200647713us :
-collect_percpu_times: JDB: get_recent_times at top of loop 0!
-[  238.301705] kworker/-798       0..... 200647767us :
-collect_percpu_times: JDB: get_recent_times done with read (looped:
-1)!
-[  238.306689] kworker/-798       0..... 200647768us :
-collect_percpu_times: JDB: get_recent_times at top of loop 0!
-[  238.311313] kworker/-798       0..... 200647769us :
-collect_percpu_times: JDB: get_recent_times done with read (looped:
-1)!
-[  238.316318] kworker/-798       0d..2. 200647786us :
-psi_group_change: JDB: psi_group_change seqwrite
-<normal behavior above>
-[  238.320460] kworker/-10        0..... 200647790us :
-collect_percpu_times: JDB: get_recent_times at top of loop 0!
-[  238.325131] kworker/-10        0d.h.. 200648408us :
-psi_account_irqtime: JDB: psi_account_irqtime seqwrite (loop count: 0)
-[  238.330149] kworker/-10        0d.h.. 200649406us :
-psi_account_irqtime: JDB: psi_account_irqtime seqwrite (loop count: 0)
-[  238.335140] kworker/-10        0d.h.. 200650405us :
-psi_account_irqtime: JDB: psi_account_irqtime seqwrite (loop count: 0)
-...
-With the psi_account_irqtime just repeating there each ms/tick.
+ drivers/perf/arm-cmn.c | 116 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 93 insertions(+), 23 deletions(-)
 
-I'm still digging a bit here to understand what's going on. But I
-wanted to share.
+-- 
+2.40.1
 
-thanks
--john
 
