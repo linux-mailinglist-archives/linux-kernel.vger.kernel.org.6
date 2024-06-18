@@ -1,151 +1,139 @@
-Return-Path: <linux-kernel+bounces-219876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AD790D94E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:33:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796FE90D953
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCFCC285E00
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:33:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DB4E1C24AC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CBE13A3F6;
-	Tue, 18 Jun 2024 16:33:13 +0000 (UTC)
-Received: from irl.hu (irl.hu [95.85.9.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD00763E7;
+	Tue, 18 Jun 2024 16:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M0pnjbRq"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1B04D8BD;
-	Tue, 18 Jun 2024 16:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269E017547;
+	Tue, 18 Jun 2024 16:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718728393; cv=none; b=Kv+zo9ey2yUTnXJzqJN4nomqXqu6SLaWu+FY0rDX7M5bQD0ARrI5cBw5uUVbzf5gIfCEzeFuHFNzqymmobWk72a81j7DPnGOH1dsAl9Mi3Yo19EtT/T8OeY+dri/GX++BCXrLoI5/rHPC4CKTXcolLVzA6Y8P8054pTvxXWgtP0=
+	t=1718728444; cv=none; b=Yt2jMS3aecsSK9Nsoi1Dk02S6llgz8Bvf3Ita8wyvBNlpPDVV+i65xJQHvJZo0EK9WrMmk31zK2Tsp9vhhrJJ8D2cSsCLSvjYnbUfbWEGuw3N4OHGjSi+MnG4amB7PFwTAqdr5jcjkw3tBg/tNfqHAPI2YVYbEehPX0Oqv7L1Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718728393; c=relaxed/simple;
-	bh=7q4SLjqvoE5tKhcBw6h3BfxkMgZ1oGX4akOqYJf6/LM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=C8uZywfpAZzYNdipjHTUNJEkr4tTNZEb0JWiD58aH1EwC3Rw1BN98AuyDkpF3CXi8IX7Nl7WiYQWKEwmGALURTb7YNZWzUDeqdarQYC4lKhV2619ScvldUWawR6o4ZQfx4XZp3JCMU63Yb3jbBBFHWU6iGjM4mAn64PAwmrats0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
-Received: from fedori.lan (51b69c7d.dsl.pool.telekom.hu [::ffff:81.182.156.125])
-  (AUTH: CRAM-MD5 soyer@irl.hu, )
-  by irl.hu with ESMTPSA
-  id 0000000000071665.000000006671B6C4.002A21A5; Tue, 18 Jun 2024 18:33:03 +0200
-From: Gergo Koteles <soyer@irl.hu>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-  Mauro Carvalho Chehab <mchehab@kernel.org>,
-  John Bauer <johnebgood@securitylive.com>, ribalda@chromium.org,
-  linh.tp.vu@gmail.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-  Gergo Koteles <soyer@irl.hu>
-Subject: [PATCH v3 1/1] media: uvcvideo: UVC minimum relative pan/tilt/zoom speed fix.
-Date: Tue, 18 Jun 2024 18:32:40 +0200
-Message-ID: <b062c3ec615a69cbc1b154b1838df3cdc3e1282a.1718726777.git.soyer@irl.hu>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1718726777.git.soyer@irl.hu>
-References: <cover.1718726777.git.soyer@irl.hu>
+	s=arc-20240116; t=1718728444; c=relaxed/simple;
+	bh=vtqL5uLiXNZmhoRIDb32QUjO537rn0Pygvb/lubLcaM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BnkwegmMQAwyJObedYqbUnJfAlSNmNAr/7zdWJnAEEGltWFEPqk+A7IAPA2vQlUDvbncLVB2qZMPb8erQKBFnlc38/59yg6Sb14PGJcQ4vPLwbaaTB/9GVFQ29zVmFMWrDRSaoBK2YeYYafmFwzGFry5b3QsYxL2y2hdrRdr3j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M0pnjbRq; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57a4d7ba501so7039680a12.2;
+        Tue, 18 Jun 2024 09:34:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718728441; x=1719333241; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TpLrStmTGpoo6K4G77AeZx73ca3AbUqkqK/2aKkW3c4=;
+        b=M0pnjbRqwLs8Q34Owry2GNmozQCtnOLX7VXVdX8l1bG7l7DHWmmhmI/4yZxreDkALU
+         YvT8hoyq1vxp1tXTlQCkTaZprnQnc9EB7e3Q+VnOLYuAqyrEQoRiHED7niD48NeqyMXH
+         KFRCWbZ907tsvIjnO6Yc2S9TENJq4th8jPEe2X/kvqcyEVlCQNWkE8dpLtfaKBJgPbgR
+         55HZvSYBYP5VSrWDTjvcBOUtstj8B6oCRNDNPgqrHqXYUbx9Kq7hbXVWzfC4Q+26ybKI
+         4tI+Vt5Qv1+6K226h7u07Op0hkSiStXM1w74kDWS5utfG36M+oYpZbQLoLX8GWqNH1XS
+         rogQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718728441; x=1719333241;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TpLrStmTGpoo6K4G77AeZx73ca3AbUqkqK/2aKkW3c4=;
+        b=MucbcFFe26UEa55Jy073Fyw1Z9SiHrQVKQ+Gb9MQqFp+3RqGGzd4k6W8aTWIPZe0wG
+         CxW+uHN18JNc2paWqvpLHFOstJAiRG9uAeUMH1ahMQKPO7W2gnuZXmsJY4EBBzMOYXrR
+         jo2rZQlDNYRAkzLq7ohEkTK83NnBz1olrMxA1C5UqKKl2uAFYi8xKXTP0kbpbBTpNX7F
+         DXzSwqm1dp0x265+QROLvpDP1teyO95ULi7GJXkEfBtVwRytHNfIHmhvLPyEZFOYcZcF
+         pEyZrm+PmdxhAUDxT7PnuK6LDtzq2PzblftSCIcmJBfeqXtWHNql4c07QjSsnmTYyXaA
+         8nJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSCOnMlGjpkj6Nt8mHrHNpeX3MSNTP5ul15VxbwpGmZjP1qvqmeK3t2c9qNjaG/9YZgmsOsdr3UVGPn9/bp0uqhPR56dLJajPpcwO80dgKpgWqC7a5NPYcOtnHdNbbstf4KBqn2Ub2VrQWcQ==
+X-Gm-Message-State: AOJu0YxTtCOlEYn0aWj0JHJHlqF+06nnerTQNPXaQ89IHe2S789v2an8
+	rRbBS8nOMygTfBqeaiJOYKKiTQUVB6FrXJGCd0JBl8GHw+xFLqR/hNVQBRWoJXKbaIwm4TdxnAL
+	YUH5gH8b1eWzd92rXrnoobhIOgOo=
+X-Google-Smtp-Source: AGHT+IEshCt8XHunjxXajUUYc8cEJkBcPVr+pyxgi7wON07IhIVY9iZh4sfGDDKi0k0CzdMNcVHTnLUtpJ21Rwioa18=
+X-Received: by 2002:a50:930e:0:b0:57a:858d:20ca with SMTP id
+ 4fb4d7f45d1cf-57d07eabfc1mr9899a12.28.1718728441008; Tue, 18 Jun 2024
+ 09:34:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mime-Autoconverted: from 8bit to 7bit by courier 1.0
+MIME-Version: 1.0
+References: <20240617225127.23476-1-robdclark@gmail.com> <20240617225127.23476-5-robdclark@gmail.com>
+ <wnnjjljjyl5s3fkwiapux3f76243ngp2ppk2cm7kkhdp5dc4sz@v4wypnga3izv>
+In-Reply-To: <wnnjjljjyl5s3fkwiapux3f76243ngp2ppk2cm7kkhdp5dc4sz@v4wypnga3izv>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 18 Jun 2024 09:33:48 -0700
+Message-ID: <CAF6AEGvjeGxP+A2umyQHo49G1rAdZkY0bHuemvFP4jgNkspu3Q@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] drm/msm/adreno: Move hwcg table into a6xx specific info
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
+	Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: John Bauer <johnebgood@securitylive.com>
+On Tue, Jun 18, 2024 at 1:30=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Mon, Jun 17, 2024 at 03:51:14PM GMT, Rob Clark wrote:
+> > From: Rob Clark <robdclark@chromium.org>
+> >
+> > Introduce a6xx_info where we can stash gen specific stuff without
+> > polluting the toplevel adreno_info struct.
+> >
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > ---
+> >  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 65 +++++++++++++++++------
+> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     |  6 +--
+> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  9 ++++
+> >  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  6 ++-
+> >  4 files changed, 67 insertions(+), 19 deletions(-)
+> >
+>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>
+>
+> > @@ -98,7 +100,9 @@ struct adreno_info {
+> >       struct msm_gpu *(*init)(struct drm_device *dev);
+> >       const char *zapfw;
+> >       u32 inactive_period;
+> > -     const struct adreno_reglist *hwcg;
+> > +     union {
+> > +             const struct a6xx_info *a6xx;
+> > +     };
+> >       u64 address_space_size;
+> >       /**
+> >        * @speedbins: Optional table of fuse to speedbin mappings
+>
+> My preference would be towards wrapping the adreno_gpu, but that would
+> require more significant rework of the driver. Let's see if we can get
+> to that later.
+>
 
-The minimum UVC control value for the relative pan/tilt/zoom speeds
-cannot be probed as the implementation condenses the pan and tilt
-direction and speed into two 16 bit values. The minimum cannot be
-set at probe time because it is probed first and the maximum is not
-yet known. With this fix if a relative speed control is queried
-or set the minimum is set and checked based on the additive inverse of
-the maximum at that time.
+yeah, it was going to be more re-work, and I'm neck deep in
+gpuvm/vm_bind.. I just wanted to land this since it is a pita (and
+error prone) to rebase as more gpu's get added ;-)
 
-Signed-off-by: John Bauer <johnebgood@securitylive.com>
-Signed-off-by: Gergo Koteles <soyer@irl.hu>
----
- drivers/media/usb/uvc/uvc_ctrl.c | 38 +++++++++++++++++++++++++++-----
- 1 file changed, 33 insertions(+), 5 deletions(-)
+It isn't entirely unlike how we handle gpu gen specific options in
+mesa, where we have a somewhat bigger set of options, so I wouldn't
+say that this approach was worse than extending adreno_info.. just
+different..
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 4b685f883e4d..93ed2462e90b 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -441,7 +441,6 @@ static s32 uvc_ctrl_get_rel_speed(struct uvc_control_mapping *mapping,
- 		return (rel == 0) ? 0 : (rel > 0 ? data[first+1]
- 						 : -data[first+1]);
- 	case UVC_GET_MIN:
--		return -data[first+1];
- 	case UVC_GET_MAX:
- 	case UVC_GET_RES:
- 	case UVC_GET_DEF:
-@@ -1233,6 +1232,17 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
- 	return ~0;
- }
- 
-+static bool is_relative_ptz_ctrl(__u32 ctrl_id)
-+{
-+	switch (ctrl_id) {
-+	case V4L2_CID_ZOOM_CONTINUOUS:
-+	case V4L2_CID_PAN_SPEED:
-+	case V4L2_CID_TILT_SPEED:
-+		return true;
-+	}
-+	return false;
-+}
-+
- static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- 	struct uvc_control *ctrl,
- 	struct uvc_control_mapping *mapping,
-@@ -1322,14 +1332,23 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- 		break;
- 	}
- 
--	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN)
--		v4l2_ctrl->minimum = mapping->get(mapping, UVC_GET_MIN,
--				     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
--
- 	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX)
- 		v4l2_ctrl->maximum = mapping->get(mapping, UVC_GET_MAX,
- 				     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
- 
-+	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN) {
-+		/*
-+		 * For the relative speed implementation the minimum
-+		 * value cannot be probed so it becomes the additive
-+		 * inverse of maximum.
-+		 */
-+		if (is_relative_ptz_ctrl(v4l2_ctrl->id))
-+			v4l2_ctrl->minimum = -v4l2_ctrl->maximum;
-+		else
-+			v4l2_ctrl->minimum = mapping->get(mapping, UVC_GET_MIN,
-+						uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
-+	}
-+
- 	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES)
- 		v4l2_ctrl->step = mapping->get(mapping, UVC_GET_RES,
- 				  uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
-@@ -1916,6 +1935,15 @@ int uvc_ctrl_set(struct uvc_fh *handle,
- 				   uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
- 		max = mapping->get(mapping, UVC_GET_MAX,
- 				   uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
-+
-+		/*
-+		 * For the relative speed implementation the minimum
-+		 * value cannot be probed so it becomes the additive
-+		 * inverse of maximum.
-+		 */
-+		if (is_relative_ptz_ctrl(xctrl->id))
-+			min = -max;
-+
- 		step = mapping->get(mapping, UVC_GET_RES,
- 				    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
- 		if (step == 0)
--- 
-2.45.2
-
+BR,
+-R
 
