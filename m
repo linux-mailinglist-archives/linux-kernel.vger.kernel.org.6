@@ -1,122 +1,132 @@
-Return-Path: <linux-kernel+bounces-218578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649EB90C232
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:02:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA9D90C233
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0B81F233B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8C71F21BCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6351D19B3F2;
-	Tue, 18 Jun 2024 03:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C6F19B588;
+	Tue, 18 Jun 2024 03:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="mxiC3nGa"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Zhh96E9P"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEAD19B3E4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE1F19B3FD
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718679712; cv=none; b=F8q2iXdMsA3MyyjYYQWPvjP6QfK9B5QC1SIernYiPf3jrjocaTMRfhOzDtiXmQpqHMIyDIhG6f38Xbp3D0IrzI3BpH7BvuMroluQtr90mVCygjXJjv1Q4bjCSXnB+uVYdLeUhFxkSf3RV4vEqigKijXVHPHeRrJ/8fRLdEIaOLY=
+	t=1718679722; cv=none; b=keUbfHV/gzwWcB5nZuM3MeDY1SLsf8BXnG6HPEwuGMe5uZ80uHL97p3QZZkj79XT4yh9HpgI/UO0EFbygYlqocYtTLN6xEYo8XytQbSB2criKjNERcdo+BCUR9SPS/FUVN022N05JgTwiERnDUT5LkmSUA118HeTFo+SghoIJUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718679712; c=relaxed/simple;
-	bh=0y/hRRkuz60tuQsMwimd0Oojffeff4TiNV5boX/pAO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b2DgNk6chOE16iQXLCjVwKMTM11TlNLtAqWlxAXc3muIIzZkk/UEuuY8TmXfAuJhLUOldDwqN5mHWrTHEga8vnNzTteAu1thszpgwUOmHlPOCG6FBDn1GIOzs2ji96vFEBZpCG7Zh8TwbOpKM8U9N1NhYe0lcqLK3328BjA7hQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=mxiC3nGa; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=5+/vSUsusZJjzOquaKR+Lnhfb4Xwzp1gKdxtTXFkte4=; b=mxiC3nGaid5bpz8/d2SJUgWCT7
-	XGcYIScOMgs2Ia16c/9Uop9P5XpyHxINUzhE1PWpRZqbvhDgwwR31+8B7Sad7ho9pQ4srLIaYy6b6
-	QswCPdUJWeVLZ2OL1YyEnsDOoQy2K8Llmv1cLj5P8wU2C4UK6FPy6DfCXiHFLddlMVdgTRqc9qwzr
-	FbMvUfj5RFlb6YuS0KtxrkK4dwhQF8xTAjhQqruq/o6Xict2CYzENJhtsJQj3K1BB9rMiKKRcdNXf
-	xCU7sUR++PEl19NVR2yWoGNvQ8UjsncNj+m8L/KcJN78Is8xIXrEgOpXkkIHniXPqiTHIAazTayyh
-	fcwkkY9A==;
-Received: from [191.8.29.108] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sJP6T-004YXc-3W; Tue, 18 Jun 2024 05:01:49 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	nouveau@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: kernel-dev@igalia.com,
-	Melissa Wen <mwen@igalia.com>,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Simon Ser <contact@emersion.fr>,
-	Pekka Paalanen <ppaalanen@gmail.com>,
-	daniel@ffwll.ch,
-	Daniel Stone <daniel@fooishbar.org>,
-	=?UTF-8?q?=27Marek=20Ol=C5=A1=C3=A1k=27?= <maraeo@gmail.com>,
-	Dave Airlie <airlied@gmail.com>,
-	ville.syrjala@linux.intel.com,
-	Xaver Hugl <xaver.hugl@gmail.com>,
-	Joshua Ashton <joshua@froggi.es>,
-	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Karol Herbst <kherbst@redhat.com>,
-	Lyude Paul <lyude@redhat.com>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v7 9/9] drm/amdgpu: Make it possible to async flip overlay planes
-Date: Tue, 18 Jun 2024 00:00:24 -0300
-Message-ID: <20240618030024.500532-10-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240618030024.500532-1-andrealmeid@igalia.com>
-References: <20240618030024.500532-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1718679722; c=relaxed/simple;
+	bh=voa0fe3SjpggwiHBh/MwhciBY6+FADQBkwBOF/PUA44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pWJMeFI0SJ4bK6JiV2EkmXcxVG1cy+xnSXPECdQE1YfmQOGhv02UF/W75i7vz1MiOJ2D33fVKBCm8ugaq2OcEB9K9e1mpL+0JfeNx7tLg3hE1gmTzyKlD+6juKVTKEW7u3cVp0Os7gEeBG1IcThmQ9wCKc4bIyQlOtfA8V4VeYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Zhh96E9P; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7eb7bf1357cso198080539f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 20:02:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1718679720; x=1719284520; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=voa0fe3SjpggwiHBh/MwhciBY6+FADQBkwBOF/PUA44=;
+        b=Zhh96E9PTA67D1wwQXJfT4CimKejWrJePj98o801nq41/glod4XZfqcEWMrRch2ny8
+         hUXjtRrVDbsTTVpjlAruH0JUCmspGkMGXgqDuAWTW2kwfb7uecZ1UxJQPCEd/0yg35gt
+         UO9xX0e5CyfYW5Netd2cY9buChCpTZV54QX/81I1DgoCWwTakiLFtCakP+Wk7Bv1bhZk
+         hm4MedXqTJXmf/XANtNrvL9H450dXCK9jkBjIjbyMQX3Tzp0tfRfPcWb/YxeGi0EybmA
+         1p4TtZaMurflB8kTw8Zg3xnTl0l7Mm5DWxlJurjzcocesmjkLHwFgb3tYvkCR0cNPG3/
+         nkzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718679720; x=1719284520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=voa0fe3SjpggwiHBh/MwhciBY6+FADQBkwBOF/PUA44=;
+        b=g1ZRDlMplqr2JZoTorChvgcrVFyqR1kVAwpDOFbcnrdKQe84u/M6paEGX4NxPa/my3
+         LUTxlLm5i56BP640sGJTsWhqmYRMk+1YhZf3c2jgqdVUiDEXY0QPftiYOkfPIcxJYNNB
+         jefkQ/dwIoG7lUg5NF7uqTT9Zp4IBju17/9pFLEmAn0dzInl65t4m7urNCmNf/QAkeyN
+         L1JFWzYhzJj6w2XzgooQhGRLMsrr1glAgUneyOTVkDXm6t3AFg9jvUA0RMNrjBf1AdNn
+         T2iEseWsJE2MLDcIZoQlg2M1snyqKdRx4VR2ueg7zXz5Zkwx2aXgCMPowL0Q3L46FkE3
+         nfRA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3Fajcy0gPzS+MMwkw6Xhb59wwUONnX8Ioni/7iQRmhKmSGzoIhZ/AdugcEbIQ1qhgfmxeBTpTJ8QwEh81nh9cmGYQWbIRLKmXjA6F
+X-Gm-Message-State: AOJu0YwcnGyIKMyNSo7aTqR8NQrEly+JbkPn2yPqcoCAtTrcvZnA5OYR
+	qaOd7qG1vlmAqX2yZ2kMLBlxCaqnAFKcfgBGRjq1Wc/poCARWdqKKA4odYDsJ7q71H5umC0vC6P
+	qa/J64pQNL53sWPV+PoW4eiXs3SfyYwg05FIuRQ==
+X-Google-Smtp-Source: AGHT+IHWhSE+k8nI3ATV790kVcdaJx+X2XhzCDCnnNK4GDf4nHYtKrtEPv0N7J1xr51nXArplHNL9b+pWM9XSl88A3Y=
+X-Received: by 2002:a05:6602:3f8a:b0:7eb:b93d:4101 with SMTP id
+ ca18e2360f4ac-7ebeb4c0558mr1289632439f.9.1718679719882; Mon, 17 Jun 2024
+ 20:01:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240614142156.29420-1-zong.li@sifive.com> <20240614142156.29420-5-zong.li@sifive.com>
+ <a1a99374-dc40-4d57-9773-e660dc33beb2@linux.intel.com> <CANXhq0pQuoriKfHF51fXUtrZLkJBNOCe6M8Z6JbDjoRvbe1nWg@mail.gmail.com>
+ <20240617143920.GD791043@ziepe.ca>
+In-Reply-To: <20240617143920.GD791043@ziepe.ca>
+From: Zong Li <zong.li@sifive.com>
+Date: Tue, 18 Jun 2024 11:01:48 +0800
+Message-ID: <CANXhq0pXYoeiVMFSGAijo-QHTVoZyM8M_uU4HWsbCwDg2oFPYg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/10] iommu/riscv: add iotlb_sync_map operation support
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>, joro@8bytes.org, will@kernel.org, 
+	robin.murphy@arm.com, tjeznach@rivosinc.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, kevin.tian@intel.com, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-amdgpu can handle async flips on overlay planes, so mark it as true
-during the plane initialization.
+On Mon, Jun 17, 2024 at 10:39=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wro=
+te:
+>
+> On Mon, Jun 17, 2024 at 09:43:35PM +0800, Zong Li wrote:
+>
+> > I added it for updating the MSI mapping when we change the irq
+> > affinity of a pass-through device to another vCPU. The RISC-V IOMMU
+> > spec allows MSI translation to go through the MSI flat table, MRIF, or
+> > the normal page table. In the case of the normal page table, the MSI
+> > mapping is created in the second-stage page table, mapping the GPA of
+> > the guest's supervisor interrupt file to the HPA of host's guest
+> > interrupt file. This MSI mapping needs to be updated when the HPA of
+> > host's guest interrupt file is changed.
+>
+> It sounds like more thought is needed for the MSI architecture, having
+> the host read the guest page table to mirror weird MSI stuff seems
+> kind of wrong..
+>
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 1 +
- 1 file changed, 1 insertion(+)
+Perhaps I should rephrase it. Host doesn't read the guest page table.
+In a RISC-V system, MSIs are directed to a specific privilege level of
+a specific hart, including a specific virtual hart. In a hart's IMSIC
+(Incoming MSI Controller), it contains some 'interrupt files' for
+these specific privilege level harts. For instance, if the target
+address of MSI is the address of the interrupt file which is for a
+specific supervisor level hart, then that hart's supervisor mode will
+receive this MSI. Furthermore, when a hart implements the hypervisor
+extension, its IMSIC will have interrupt files for virtual harts,
+called 'guest interrupt files'.
+We will create the MSI mapping in S2 page table at boot time firstly,
+the mapping would be GPA of the interrupt file for supervisor level
+(in guest view, it thinks it use a supervisor level interrupt file) to
+HPA of the 'guest interrupt file' (in host view, the device should
+actually use a guest interrupt file). When the vCPU is migrated to
+another physical hart, the 'guest interrupt files' should be switched
+to another physical hart's IMSIC's 'guest interrupt file', it means
+that the HPA of this MSI mapping in S2 page table needs to be updated.
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-index 0c126c5609d3..7d508d816f0d 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-@@ -1709,6 +1709,7 @@ int amdgpu_dm_plane_init(struct amdgpu_display_manager *dm,
- 	} else if (plane->type == DRM_PLANE_TYPE_OVERLAY) {
- 		unsigned int zpos = 1 + drm_plane_index(plane);
- 		drm_plane_create_zpos_property(plane, zpos, 1, 254);
-+		plane->async_flip = true;
- 	} else if (plane->type == DRM_PLANE_TYPE_CURSOR) {
- 		drm_plane_create_zpos_immutable_property(plane, 255);
- 	}
--- 
-2.45.2
-
+> The S2 really needs to have the correct physical MSI pages statically
+> at boot time.
+>
+> Jason
 
