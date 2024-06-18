@@ -1,243 +1,191 @@
-Return-Path: <linux-kernel+bounces-218943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB7890C803
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1675D90C807
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C960B1C208C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:58:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E43AC1C22911
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78808157A5A;
-	Tue, 18 Jun 2024 09:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A871D0553;
+	Tue, 18 Jun 2024 09:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rxq++0DV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Q2YLQ9eU"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EED413E8A0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4472E13A248;
+	Tue, 18 Jun 2024 09:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718703133; cv=none; b=IRPY+4yp3aQHN7zTCPLRPGChqDRkzFmGvPG7imD1vuOoTs3ETquNMPOyoUXAbjlOHpMImTWmyL32ZRuhALyU4AVN7lkulBnONCkmtk9ldg3qH67LdrQtrxVlBEYNT/otIj5ebMs2vv4FXFO5/bG9CMTLYWVdyWhSaiSMDwpf/e8=
+	t=1718703212; cv=none; b=fOIZy+p6PegsNXATfMhVwBAjpCz0gssKLmMtKK4wJpslXv7jzQYfBtj3+e1mBrkRsU8Z3hyimblaoW8QCnvd9Vz1LesTCwMDgN8p7OLrE4oqcULXTBepkh7zOG9z7qoCQ6jZvjBHQlJoOS3OUysyMbg354kXVqUXfTo+5+2qzGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718703133; c=relaxed/simple;
-	bh=RzTXPSvJC6aaqPPKMMURA/I5IDh2yNcBeKoMyc5LG+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ScXQLfeS/OVj0JEdCL9WdVyq1TvWliwLgeStuOQ72RpBfrFlkzvOKvt0mJ0gVHj5p4uPWTtbYxKdcq49w22AUGopLWCUj+9ilWdEiAQX7CcbSqqahSRKbN+6kxlSOIGGCzjOPHYYh1Sf45IjCE6VgXR17qRfbONm2EgJzV13gao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rxq++0DV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C5BBC4AF1D
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:32:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718703133;
-	bh=RzTXPSvJC6aaqPPKMMURA/I5IDh2yNcBeKoMyc5LG+c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Rxq++0DV9Ix4+tP32p1L6JUdEvyGHxzMuTSe12D3h3NW81rUPsp6pU/BQtnn/+ZWi
-	 C3nyjjRcW0eDm57my7GDH9sF7hZ2lwh3Ymy50qSJUSbGjNgrPNc3PZmxsp6QGE5+q8
-	 ojm5xZFihZBXP52O/LhfDSK76upPo/zLxMddMu6HUG6r95MSTUb/IpxieUnV14FQ2K
-	 qz9SlFaLk4hvRMmNDjr9M8rvOFs99VUoZ5+mT3BdSDg9/HIEHZjmA00CDard5A9xKM
-	 oJOiL8QQamPc1wqQ0ox2Fio0PJOOlP5Jaj/Fdrx5kRdvXv63PNcLmNXMfoZ0xV1kUL
-	 ZVHjBunukEefQ==
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-375af3538f2so20870475ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:32:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVxC53IjBmtXQsbVj35qLcT3m/1N6iEScazNf2Pq5f4Vmbpwte+QkM1++Ch8odf/vemPY7yQzOeRYn7sVELRSD+JPAZ+4xMVK1X9B8U
-X-Gm-Message-State: AOJu0Yxwov8HiF/61pPrC5Ja+1feDnxr1iV9wPS+dBR7QXHO2WdSsAb6
-	AKCj2YuyR1o7knND7Z1BF5xALi5LeCfdZ3WeP+JfNto6j6n4kN8Bf9PS/As2HxYczwHaZvrFOvc
-	Ok7rLYm+aXfuv3nipo5GJk3loaqsBq/WlgwGe
-X-Google-Smtp-Source: AGHT+IGDT2gwYsBDsjs6Av3g2E8Dt0OuIpMrasTGPHmQmFzO4gRxDWFVNW8c3dBisJ0mlor+iFUQwGnf6dV0EonZ7N4=
-X-Received: by 2002:a05:6e02:17c9:b0:36c:4688:85aa with SMTP id
- e9e14a558f8ab-375e0e44edbmr147995195ab.10.1718703131415; Tue, 18 Jun 2024
- 02:32:11 -0700 (PDT)
+	s=arc-20240116; t=1718703212; c=relaxed/simple;
+	bh=Y4yVcjYnnY7W8lsoQT++en4t/iTVNF7h0Z1wL7oWS/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oMAGKJag17XAXsvHJ5INH0Hvvpf3OsyKqpdxvGb4hk6H3+taTKSXwn7fH7uusJxmLobKQp5SvJwJK/V0eL77GLuMd0Qpbn1SETLRInoehLSO5e47yndNdpdV5144PhjAjPiQQoSFVge4Y8I/sorIIkWyiDDjdKySN0QniQdXZr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Q2YLQ9eU; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I91GFD013050;
+	Tue, 18 Jun 2024 09:33:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=A
+	HwzZj6AgBzBAgYWznsea7PI3942li0K5f+aJcW29/M=; b=Q2YLQ9eUOV9qSqLd4
+	/reVoikE6bPfipSQcy8TR32JESn+fLSjGFnQkyJgOJ5uglqrEaXOBR+VPoYdnEMA
+	IM5jmmLNJBNJvx4QSKVtQpUvynaRZCNi0U2mHqF0LC63nCyYGS+GZVc2ZAlq//qs
+	jR1VIDCnWbAWjdH2cSJBQ7C6kGFft6sAqU872L5Y23Q84XNtb623VKs4gxij5Njc
+	YI5jg+u3+RGq2ZDLlL4kqWrnzJLMMyplnWjz+300WlWj1XBooXSHFv2UwKSi948V
+	YdJLq688l/lrGFsZZ47QdyZNj7IAZfYcla1YKVFVoLgmyHUjr1lGc4Z6VdY1ImHy
+	alh1w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yu6rkg6qy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 09:33:23 +0000 (GMT)
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45I9XMg5001731;
+	Tue, 18 Jun 2024 09:33:22 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yu6rkg6qw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 09:33:22 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45I85rcY009478;
+	Tue, 18 Jun 2024 09:33:21 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ysqgmhb0c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 09:33:21 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45I9XJkP48497230
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Jun 2024 09:33:21 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 15C745804B;
+	Tue, 18 Jun 2024 09:33:19 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BDBFF58059;
+	Tue, 18 Jun 2024 09:33:15 +0000 (GMT)
+Received: from [9.204.206.228] (unknown [9.204.206.228])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 18 Jun 2024 09:33:15 +0000 (GMT)
+Message-ID: <d1282b00-1f5d-43d1-8b4d-cb4ea5840330@linux.ibm.com>
+Date: Tue, 18 Jun 2024 15:03:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
- <CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com>
- <87cyp5575y.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAF8kJuN8HWLpv7=abVM2=M247KGZ92HLDxfgxWZD6JS47iZwZA@mail.gmail.com>
- <875xuw1062.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAF8kJuMc3sXKarq3hMPYGFfeqyo81Q63HrE0XtztK9uQkcZacA@mail.gmail.com>
- <87o78mzp24.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAF8kJuPLhmJqMi-unDOm820c8_kRnQVA_dnSfgRzMXaHKnDHAQ@mail.gmail.com>
- <875xum96nn.fsf@yhuang6-desk2.ccr.corp.intel.com> <CANeU7Q=iYzyjDwgMRLtSZwKv414JqtZK8w=XWDd6bWZ7Ah-8jA@mail.gmail.com>
- <87wmmw6w9e.fsf@yhuang6-desk2.ccr.corp.intel.com> <CANeU7Q=Epa438LXEX4WEccxLt6WOziLg2sp_=RA3C4PxtHD5uw@mail.gmail.com>
- <87a5jp6xuo.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAF8kJuMi198++-OHqE5pG1y3BnvRBPepG59zpq-wqjbgrrLdHw@mail.gmail.com>
- <8734pa68rl.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <8734pa68rl.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 18 Jun 2024 02:31:58 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuOfYMiD-aEhLa9i+oxAtasDcPhFb6__i6QRB2dGO1Lhcg@mail.gmail.com>
-Message-ID: <CAF8kJuOfYMiD-aEhLa9i+oxAtasDcPhFb6__i6QRB2dGO1Lhcg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster order
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Barry Song <baohua@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf: Timehist account sch delay for scheduled out
+ running
+Content-Language: en-US
+To: Fernand Sieber <sieberf@amazon.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20240618090339.87482-1-sieberf@amazon.com>
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <20240618090339.87482-1-sieberf@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: pXfN1wn1a4Nhaq1tAIc_DccxM17QE9rH
+X-Proofpoint-GUID: qziM_9SQu9cRK0ufqwmnIY3IRGzv1EoR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
+ lowpriorityscore=0 spamscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180069
 
-On Mon, Jun 17, 2024 at 11:56=E2=80=AFPM Huang, Ying <ying.huang@intel.com>=
- wrote:
->
-> Chris Li <chrisl@kernel.org> writes:
->
-> > That is in general true with all kernel development regardless of
-> > using options or not. If there is a bug in my patch, I will need to
-> > debug and fix it or the patch might be reverted.
-> >
-> > I don't see that as a reason to take the option path or not. The
-> > option just means the user taking this option will need to understand
-> > the trade off and accept the defined behavior of that option.
->
-> User configuration knobs are not forbidden for Linux kernel.  But we are
-> more careful about them because they will introduce ABI which we need to
-> maintain forever.  And they are hard to be used for users.  Optimizing
-> automatically is generally the better solution.  So, I suggest you to
-> think more about the automatically solution before diving into a new
-> option.
+Hi Fernand,
 
-I did, see my reply. Right now there are just no other options.
+On 18/06/24 14:33, Fernand Sieber wrote:
+> When using perf timehist, sch delay is only computed for a waking task,
+> not for a pre empted task. This patches changes sch delay to account for
+> both. This makes sense as testing scheduling policy need to consider the
+> effect of scheduling delay globally, not only for waking tasks.
+> 
+> Example of `perf timehist` report before the patch for `stress` task
+> competing with each other.
+> 
+> First column is wait time, second column sch delay, third column
+> runtime.
+> 
+> 1.492060 [0000]  s    stress[81]                          1.999      0.000      2.000      R  next: stress[83]
+> 1.494060 [0000]  s    stress[83]                          2.000      0.000      2.000      R  next: stress[81]
+> 1.496060 [0000]  s    stress[81]                          2.000      0.000      2.000      R  next: stress[83]
+> 1.498060 [0000]  s    stress[83]                          2.000      0.000      1.999      R  next: stress[81]
+> 
+> After the patch, it looks like this (note that all wait time is not zero
+> anymore):
+> 
+> 1.492060 [0000]  s    stress[81]                          1.999      1.999      2.000      R  next: stress[83]
+> 1.494060 [0000]  s    stress[83]                          2.000      2.000      2.000      R  next: stress[81]
+> 1.496060 [0000]  s    stress[81]                          2.000      2.000      2.000      R  next: stress[83]
+> 1.498060 [0000]  s    stress[83]                          2.000      2.000      1.999      R  next: stress[81]
+> 
+> Signed-off-by: Fernand Sieber <sieberf@amazon.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> ---
+>  tools/perf/Documentation/perf-sched.txt | 4 ++--
+>  tools/perf/builtin-sched.c              | 5 ++++-
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+> index a216d2991b19..74c812f7a4a4 100644
+> --- a/tools/perf/Documentation/perf-sched.txt
+> +++ b/tools/perf/Documentation/perf-sched.txt
+> @@ -64,8 +64,8 @@ There are several variants of 'perf sched':
+>      
+>     By default it shows the individual schedule events, including the wait
+>     time (time between sched-out and next sched-in events for the task), the
+> -   task scheduling delay (time between wakeup and actually running) and run
+> -   time for the task:
+> +   task scheduling delay (time between runnable and actually running) and
+> +   run time for the task:
 
->
-> >>
-> >> >> So, I prefer the transparent methods.  Just like THP vs. hugetlbfs.
-> >> >
-> >> > Me too. I prefer transparent over reservation if it can achieve the
-> >> > same goal. Do we have a fully transparent method spec out? How to
-> >> > achieve fully transparent and also avoid fragmentation caused by mix
-> >> > order allocation/free?
-> >> >
-> >> > Keep in mind that we are still in the early stage of the mTHP swap
-> >> > development, I can have the reservation patch relatively easily. If
-> >> > you come up with a better transparent method patch which can achieve
-> >> > the same goal later, we can use it instead.
-> >>
-> >> Because we are still in the early stage, I think that we should try to
-> >> improve transparent solution firstly.  Personally, what I don't like i=
-s
-> >> that we don't work on the transparent solution because we have the
-> >> reservation solution.
-> >
-> > Do you have a road map or the design for the transparent solution you c=
-an share?
-> > I am interested to know what is the short term step(e.g. a month)  in
-> > this transparent solution you have in mind, so we can compare the
-> > different approaches. I can't reason much just by the name
-> > "transparent solution" itself. Need more technical details.
-> >
-> > Right now we have a clear usage case we want to support, the swap
-> > in/out mTHP with bigger zsmalloc buffers. We can start with the
-> > limited usage case first then move to more general ones.
->
-> TBH, This is what I don't like.  It appears that you refuse to think
-> about the transparent (or automatic) solution.
+LGTM.
 
-Actually, that is not true, you make the wrong assumption about what I
-have considered. I want to find out what you have in mind to compare
-the near term solutions.
+Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
 
-In my recent LSF slide I already list 3 options to address this
-fragmentation problem.
-From easy to hard:
-1) Assign cluster an order on allocation and remember the cluster
-order. (short term).
-That is this patch series
-2) Buddy allocation on the swap entry (longer term)
-3) Folio write out compound discontinuous swap entry. (ultimate)
+Thanks and Regards
+Madadi Vineeth Reddy
 
-I also considered 4), which I did not put into the slide, because it
-is less effective than 3)
-4) migrating the swap entries, which require scan page table entry.
-I briefly mentioned it during the session.
+>      
+>                  time    cpu  task name             wait time  sch delay   run time
+>                               [tid/pid]                (msec)     (msec)     (msec)
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 5977c49ae2c7..7422c930abaf 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -2659,7 +2659,10 @@ static int timehist_sched_change_event(struct perf_tool *tool,
+>  		tr->last_state = state;
+>  
+>  		/* sched out event for task so reset ready to run time */
+> -		tr->ready_to_run = 0;
+> +		if (state == 'R')
+> +			tr->ready_to_run = t;
+> +		else
+> +			tr->ready_to_run = 0;
+>  	}
+>  
+>  	evsel__save_time(evsel, sample->time, sample->cpu);
 
-3) should might qualify as your transparent solution. It is just much
-harder to implement.
-Even when we have 3), having some form of 1) can be beneficial as
-well. (less IO count, no indirect layer of swap offset).
-
->
-> I haven't thought about them thoroughly, but at least we may think about
->
-> - promoting low order non-full cluster when we find a free high order
->   swap entries.
->
-> - stealing a low order non-full cluster with low usage count for
->   high-order allocation.
-
-Now we are talking.
-These two above fall well within 2) the buddy allocators
-But the buddy allocator will not be able to address all fragmentation
-issues, due to the allocator not being controlled the life cycle of
-the swap entry.
-It will not help Barry's zsmalloc usage case much because android
-likes to keep the swapfile full. I can already see that.
-
-> - freeing more swap entries when swap devices become fragmented.
-
-That requires a scan page table to free the swap entry, basically 4).
-
-It is all about investment and return. 1) is relatively easy to
-implement and with good improvement and return.
-
-Chris
-
-> >> >> >> that's really important for you, I think that it's better to des=
-ign
-> >> >> >> something like hugetlbfs vs core mm, that is, be separated from =
-the
-> >> >> >> normal swap subsystem as much as possible.
-> >> >> >
-> >> >> > I am giving hugetlbfs just to make the point using reservation, o=
-r
-> >> >> > isolation of the resource to prevent mixing fragmentation existin=
-g in
-> >> >> > core mm.
-> >> >> > I am not suggesting copying the hugetlbfs implementation to the s=
-wap
-> >> >> > system. Unlike hugetlbfs, the swap allocation is typically done f=
-rom
-> >> >> > the kernel, it is transparent from the application. I don't think
-> >> >> > separate from the swap subsystem is a good way to go.
-> >> >> >
-> >> >> > This comes down to why you don't like the reservation. e.g. if we=
- use
-> >> >> > two swapfile, one swapfile is purely allocate for high order, wou=
-ld
-> >> >> > that be better?
-> >> >>
-> >> >> Sorry, my words weren't accurate.  Personally, I just think that it=
-'s
-> >> >> better to make reservation related code not too intrusive.
-> >> >
-> >> > Yes. I will try to make it not too intrusive.
-> >> >
-> >> >> And, before reservation, we need to consider something else firstly=
-.
-> >> >> Whether is it generally good to swap-in with swap-out order?  Shoul=
-d we
-> >> >
-> >> > When we have the reservation patch (or other means to sustain mix si=
-ze
-> >> > swap allocation/free), we can test it out to get more data to reason
-> >> > about it.
-> >> > I consider the swap in size policy an orthogonal issue.
-> >>
-> >> No.  I don't think so.  If you swap-out in higher order, but swap-in i=
-n
-> >> lower order, you make the swap clusters fragmented.
-> >
-> > Sounds like that is the reason to apply swap-in the same order of the s=
-wap out.
-> > In any case, my original point still stands. We need to have the
-> > ability to allocate high order swap entries with reasonable success
-> > rate *before* we have the option to choose which size to swap in. If
-> > allocating a high order swap always fails, we will be forced to use
-> > the low order one, there is no option to choose from. We can't evalute
-> > "is it generally good to swap-in with swap-out order?" by actual runs.
->
-> I think we don't need to fight for that.  Just prove the value of your
-> patchset with reasonable use cases and normal workloads.  Data will
-> persuade people.
 
