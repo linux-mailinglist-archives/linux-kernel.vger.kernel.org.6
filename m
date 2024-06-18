@@ -1,113 +1,116 @@
-Return-Path: <linux-kernel+bounces-219972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3881390DAF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:47:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C3D90DAF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126F928399B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:47:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779971C218BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBF4146D6D;
-	Tue, 18 Jun 2024 17:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D47C1482E6;
+	Tue, 18 Jun 2024 17:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s/GM+j+e"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IqblZ/Gn"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5712C145B37
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 17:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A63F1CAB3;
+	Tue, 18 Jun 2024 17:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718732862; cv=none; b=JGtT9hGq62g6hOJ2Z3h5Y1wBYgfp6moKGZ/sgANsfhV50ZaW0ErhRdak+l4tEppeptdpJUaK37dWWZha7lMul4exf95u+M54kk0WaTqCd2lH7WjGForzc4XEExXU5JXbMvf1Y1TMHrmaLeuBGW+TBD0Zcy/FnJC0NfAb7O5tWlU=
+	t=1718732934; cv=none; b=m7CCPgxueGT9CH3d6Yd0Eo3iOLglAqO7wKOq2kLqclaGGd7pKK9aDVc6h5tvf7PkQ2uCZ7hy9/n+EaNude1u3jGS1ga0fFUHxNIcgBe2bs8DFX6aVB8Un2Rkd73MMOLsN81wSXEZ0UqtSaR6XCpHLFR7N8EGS0scDKzgzx+u8WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718732862; c=relaxed/simple;
-	bh=WtKpZWcUl0e+YJfunJzlBdQYEVufWtzLJiMSdeYhNkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RoKQfHgtoOeN4OLCgn2ev8x2SyM+ks7BP02QYrvXbAMRfuC19GOhpw8oo7zuKtuqwIV5XDRtucc6PH9iYYzhaNbQW5pvsBZyk+sl8LNy53BtZFHmjlNbYW9/qmsw6jLwDGaUTITEE6o8/e3gcxw6DJv7tlEnlXYQ4D/Cs/tFRnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s/GM+j+e; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dff0712ede2so6126316276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:47:41 -0700 (PDT)
+	s=arc-20240116; t=1718732934; c=relaxed/simple;
+	bh=83KueWuF69bcrQYC/+irrjopSPrUgxVb3Yjezczm0Zk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V5qgP/66N0tt3LiqMaREMVfl52wbUT1ESClqSnnce3uS1NHqpBjMK6shhANwf0kM/ymyR4op+rK0TkCK87DX6ckuDLVwiYUFbHDqvNlJk+Zg+xxrxxEns7eqnFnNavv+epcniAsV4AfjfEc5U99EDuTWVKBCfjSryWGtKCOoskM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IqblZ/Gn; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-421820fc26dso44886095e9.2;
+        Tue, 18 Jun 2024 10:48:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718732860; x=1719337660; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WtKpZWcUl0e+YJfunJzlBdQYEVufWtzLJiMSdeYhNkI=;
-        b=s/GM+j+ewxwl5okUZjGHFUX3IFYU94jfOhUo6R/ZlW/k/ZEu+CZIiqohXW9yogyJVh
-         UreuH6BJKxxn2X1+jsT1Dt0kL6miBt1KrA9laLRzQJaYH2+jHrIWnzjw4tKS1pTqFDHA
-         jGQb9vjf+M3vnWyeHTWf0+d2gBldYgIk17xQMnQLSoOAx76HQyiE2niKAy/9t7gilmEg
-         7ccOpHhV/M22OUyUPcZ+NoeZHcR7/Phku9UK/RGUC1NcKtoF4Va/jfpAaBB2hyWbEjB2
-         sv91gRujFHCyfhP9vGEHQ36vMqfHiGIYf9M6FfZC1qbCKRCCz7/K1IuDsCW7gicCY7I4
-         KUFA==
+        d=gmail.com; s=20230601; t=1718732931; x=1719337731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PPPc6JgDH2AdkCQWb3jSis24LYSdpaEfrT8uwjdGIKU=;
+        b=IqblZ/GnI+K4pSs2gvGbrOIdWsQUvshstPbRe0kPJkXZnc+KN6WprKWWdYAW4Vuqyq
+         baKW90rsvCmWj/lkZbtoeF9jb8rPbbjrMewcKarqxZm3eIdXpNlku/o6fzIyEYT+wO/M
+         1QtlsSk7Fm0qhdmVAk+7qHtEbHUOLC0imt5crcpbyxei1im/ypteT+uNvVIuX6p098Gf
+         kgNDwoJhzkCJTaz7MyRA5ED+ZQXO6Vz/Lsg1s/36aQkDGJcoXSE5LEgnAvx5yMk05qJU
+         dYSIJUhehXaqaqKnJJEpXQbe6olB4UPyf5klVryPqmFJvT8j0mzxwN+KObPjiIwtMVsr
+         MmAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718732860; x=1719337660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WtKpZWcUl0e+YJfunJzlBdQYEVufWtzLJiMSdeYhNkI=;
-        b=itCvcfz7hjV9r3Z513awCqI/QqMKevvjJO8dRrzCYIcRRgLIUCW6QITu2VA3mqnB2x
-         z978og87GDgnxeyjqstt9CbdMHA9jkKsE6WnWBZYd8tMO1VpUS/iMRZjwiywa/zuiK9E
-         7xSq3wU9BT5jqnOx1UGiDzOqZy9i2/2vu28wvio8+C/evT8pdVUEAe9czINcUC9z/IVZ
-         rXr1prYxLlic71HxNo1HVjx2Mfi3dyFk5+QuAurd8bubXmtzOsz8ynAJ+okk51SjTxq4
-         hU5FEkGvGxLGrT4ghXdczVZ4wHRTG/Jc/9TymImDNM7pREONA48TdpsdQXhCnoN2UVqc
-         /0JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbl1JVVmCGm+uY3biTQ5PH3EvFXe5/QBQMVV6glzqIp0j61OFqP4aAWDlxBxQxj875cnMjhxMTkScWU7mRpjblPkOcc70TOz4FZj38
-X-Gm-Message-State: AOJu0YzTgX0APdqVjnhe4m6m5FwOd8rHAB5h0Pwxm80EsQBQLP55TWRZ
-	PuLMeJuR7HkuvDyjg9f7YSVvcDIcKYoOiXpUkpIK9x3tlRjANvmkD0Q4Q+K0dL0LSZHM8kR9ZYk
-	sDZizzvo5wgSjIGoGoYd1Dw8kxrLC0mDuRjKOTw==
-X-Google-Smtp-Source: AGHT+IFappc3wA7RX8sQbYdiSE7dEKm/VYOIaHva/VzeNskm7446FG29AlCvkzHOdVWauRc4e+y8oo3dJe1/GIgFb3s=
-X-Received: by 2002:a25:846:0:b0:e01:bb57:4d1a with SMTP id
- 3f1490d57ef6-e02be13b828mr587249276.19.1718732860244; Tue, 18 Jun 2024
- 10:47:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718732931; x=1719337731;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PPPc6JgDH2AdkCQWb3jSis24LYSdpaEfrT8uwjdGIKU=;
+        b=ovg4PiMSD0a61bZ3wvDicgEkadrrNOZ2sTzEjFtOqm8Zkq+Dd17TwbLMG4MFTdNLue
+         ZvDpZh6Jc2wyfQCXV2xGqQBFAlXclKZkpq8dkP7t6nuI+co4BVPz3YoGl85vNDK50FoF
+         i2q5ABwG7rrAXGWfdgf8L4/68BZFi4wRZV+Eb1H9FKTTIrODRWuq6nINFkvWvbiyWFGx
+         1FTs+6q8b7vLDBDi6v9yxtEzlevzkjrsb3JdJkcRpANWWCfih+1bUYHHKemtkU7uNQFN
+         31APqgZcuoe/CJ+SjjeNwLtrBjK3JB3OFXAzCRdXl8RraDZuJu4Umc1vM7DjdK1go3kR
+         T2GA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrCkY3xa4T00zopfHPklRyD9QoIGsshU8XIsOLYSSJ1hNrXpwOHPv2v1oyzIxbIuR6ayvW1jqJDVvEmTfYdFGNW8jUvJYZ3St9FOP+zR5DHRjN/v2cjVtfVFJgyAGpYK0KYlKQqa3Png==
+X-Gm-Message-State: AOJu0Yxu7SEk+62gYlQf9GZC0DmxKzDAu/lnFyGeti3Eiz+RnNoxU9KY
+	yEb+Mdr8NCbLDqlLCPIv5z1lzKbWii7ZWog2JRsZqvN1rGn021zN
+X-Google-Smtp-Source: AGHT+IHR8VmbHYZ9D4l4SUfDQ0rC1PSQYFfJr5GUUQJ/VA8xU+FAcZMP7dOJd776FbfRzvmpCRJU2Q==
+X-Received: by 2002:a05:600c:1c8e:b0:423:b631:24e2 with SMTP id 5b1f17b1804b1-42475293225mr1284665e9.29.1718732930943;
+        Tue, 18 Jun 2024 10:48:50 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:d6f0:b448:a40c:81a7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36289a4faeasm1253644f8f.95.2024.06.18.10.48.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 10:48:50 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/4] pinctrl: renesas: rzg2l: Macro Updates and Reorganization for Pin Configuration
+Date: Tue, 18 Jun 2024 18:48:27 +0100
+Message-Id: <20240618174831.415583-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614140421.3172674-1-peter.griffin@linaro.org> <20240614140421.3172674-3-peter.griffin@linaro.org>
-In-Reply-To: <20240614140421.3172674-3-peter.griffin@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 18 Jun 2024 12:47:29 -0500
-Message-ID: <CAPLW+4mnCVdPwA8awj_95uwvbHXniGwCBJQyKztv6_vNOOQgmA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: lee@kernel.org, arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 14, 2024 at 9:04=E2=80=AFAM Peter Griffin <peter.griffin@linaro=
-.org> wrote:
->
-> For SoCs like gs101 that need a special regmap, register this with
-> of_syscon_register_regmap api, so it can be returned by
-> syscon_regmap_lookup_by_phandle() and friends.
->
-> For SoCs that don't require a custom regmap, revert back to syscon
-> creating the mmio regmap rather than duplicating the logic here.
->
-> exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
-> the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
-> is kept around until fw_devlink support for syscon property is added
-> for the pinctrl-samsung driver that also runs at postcore_initcall
-> level.
->
-> All other exynos client drivers can revert back to
-> syscon_regmap_lookup_by_phandle().
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Hi All,
 
-[snip]
+This patch series updates and reorganizes several macros in the
+Renesas RZ/G2L pinctrl driver to enhance clarity, align with the
+current configuration requirements, and address code structure
+improvements.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (4):
+  pinctrl: renesas: rzg2l: Update PIN_CFG_MASK() macro to be 32-bit wide
+  pinctrl: renesas: rzg2l: Adjust bit masks for PIN_CFG_VARIABLE to use
+    BIT(62)
+  pinctrl: renesas: rzg2l: Move RZG2L_SINGLE_PIN definition to top of
+    the file
+  pinctrl: renesas: rzg2l: Reorganize variable configuration macro
+
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 59 ++++++++++++++-----------
+ 1 file changed, 32 insertions(+), 27 deletions(-)
+
+-- 
+2.34.1
+
 
