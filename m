@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-220102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B63C90DCBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6905C90DCBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A1B281183
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:47:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106A6283DCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE6416CD31;
-	Tue, 18 Jun 2024 19:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F3616DED1;
+	Tue, 18 Jun 2024 19:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pXN2msVV"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOwRUN7j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBEA15ECFD
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6318F15ECFD;
+	Tue, 18 Jun 2024 19:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718740013; cv=none; b=ccKSPlHVBpZRKNyr7jbqssqzrWxtNaT1r4p5j1s8+DxG0A1Dhp58oMCYPHkyUrjWXbntWQ1E0lhJ0KyyNEVXUj91rIW/3R03miXFweKDPuPjhkwWBxZ5+E+I6V2PsgAVhxXzWQ3mfShqjc7LZbliZtnVSkcWGKfs37p2BLoImE8=
+	t=1718740019; cv=none; b=i/4ugX7nX3Z0e+ghJzAZ7yjgiCPIE6pIe5rl4nQ0dDFBA31QCI0Ej6yw79Ansp8pke9ryqhPw9VbNuKZmugH5zKbpKBjUQcPWBXG6kjixVh+Mv1U7TfQSmHQsnQxLKctdPKyzXahySMpJra2o/Ru6A6At4XhNOr4AMRRUkfojCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718740013; c=relaxed/simple;
-	bh=cCA6VLX62IDjCPZsqkeLgA2nW91IT5j8nl7XYymOaCs=;
+	s=arc-20240116; t=1718740019; c=relaxed/simple;
+	bh=aiweN8R/tdFh9tP/DAknkCDgF5q3E4DWtC81UsdOq8E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rr6ap8634tOHHdFuPwOWwlkp/csmNZTrjxp0e1KtRJywh4ZaUwHb+JOg8tWcYFrHlgjK/yZFxn3V1EDrBmJDqt99lMnclNJu3sktztyvbZ4SANjUNA6I9Gc64O++bqoCDmPzfYFNGcVveI28HaIbd3885yh5LtJT6JKEZHrtBR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=pXN2msVV; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52bc3130ae6so6283142e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:46:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718740010; x=1719344810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ho7/Qs26KEYzkDAAbDAFYeryla1DX+NBsAS+13y4jlk=;
-        b=pXN2msVVLJtSMxl9K4ff9tcFkr8F6WorAKurVHEJgUprvKZs19Cam06XJHGVNfW896
-         vAtI5qUrZ8TvEW9J5kYqw2yMHx67FNttzk+YCVAnz4Ovo1iYUj76DuKOGrjWtQuGY1ag
-         OnzB9Hzh6WI/xFm/VztfYI5OcRiUOkMEM5aUtWrvRIltW3aw2sa8M8q86c1OJOQ0PJmW
-         wLnlHF8COmWDx53m4SggtmGSGBuqtHwkW3jiU9oePs5o3fGkebEV0Xp/mtDpyM6QVBxr
-         75RUNtmcTH2AdbuGo/rpCNVYc5va8TC5Fb+rRShFjKZhd6ne7A4iJVl2FiZcRr3DpoEg
-         62Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718740010; x=1719344810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ho7/Qs26KEYzkDAAbDAFYeryla1DX+NBsAS+13y4jlk=;
-        b=dd5GQk0ejcXrtkF2/gCowaD9VdBb/vXRlnwfq9mYiZCn8lEnn51Qtcdj94a11Gd1yJ
-         eN8TJP7ouS35vnDkhrooI7wfh16KimDI669jChrGbu6s64Iz/RPHIE0oGORaFUsFXoXY
-         SedvZEHy/Jkz718Nqug3UYATY1GB2pawJl8J8XDxWqpmDigBKolB24pUrjKfHl6+Zkju
-         Ws0OUorzwjiy5+7t0yt15rjzMCrEtekDpU6ZrByo2sMpzTin7kk/pAr2WcDJ1Ww3Dm6/
-         VanJ0xmYqqJvCfOzn2vpztwDHkyqA8++pjTl35ifPV4rFnmys8iBViVUGvaSTMsH3Kxh
-         aSpA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8fPOfiP1YnF/0HkIzOJCI+IWKgQ55KVZ49v6jTqHEi1NRcQhEUukcytTfwSot+PXFhICta+6l1FrWiOmRGhKKBE6Z6xn3Lu/sOLtA
-X-Gm-Message-State: AOJu0YxpSQ6rqNNXQ3V/8shzr5vsYx1f3xum147a845vgBIhVdYzibz0
-	exsHj5586o+CEb+kLmi1VrhHEAJF7mIR45vU02VeY9eg9Bnir9poWSoFv6IV9lobHUJWb/r7RKj
-	KJm59nUybDqaL6v24W8o1Ie4WrMP7QsmKSwO+zQ==
-X-Google-Smtp-Source: AGHT+IFJweTCkdsgLEObHJA+yL+W9iel1opmGVNUxb9kenTWp/3n7/A86NF6dmRjIE6Abrtq21WliDB0UVutHnR03wM=
-X-Received: by 2002:ac2:4d84:0:b0:52b:5451:996a with SMTP id
- 2adb3069b0e04-52ccaa3768cmr253147e87.31.1718740009929; Tue, 18 Jun 2024
- 12:46:49 -0700 (PDT)
+	 To:Cc:Content-Type; b=jVb4NBteUQN9RVgRhw5iGqvT6VTvF6IeQdbPgSsonxOIO4+vck7FnGQBRrWN4bGXid5G5m5JxlC+s9nFWSq4Hpdi1xCkPWTY/pIS0XxIXsZgoasEuY+bS7mearue6aOzgOz5cROAUUK+ZsTucGXKTAjWJkewtKFo/RYsgWtfGo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOwRUN7j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1CBAC4AF1C;
+	Tue, 18 Jun 2024 19:46:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718740019;
+	bh=aiweN8R/tdFh9tP/DAknkCDgF5q3E4DWtC81UsdOq8E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jOwRUN7js75Taukqp7gPAkHipNPzWCDe2Uf5YbmxYv35fShcsSQiXevAM3zRVGQj6
+	 PobX5Oysm9UQ37ZzIH7ebqL5XDF/oUXoDpFaJpQckiL4EIa+GjJyIFkV94pcbspHhV
+	 Wse4zEyUfMrr4AGaXBACED6YMI237HN5FkK/so+ZF1n8akLRU9UwhoOOuj7DQvbQ7w
+	 ML3/6ljvsXatah74gCD14g9FK17MBtMfSJpYoFYkJYg4HQ+L4Rsdu8J/RT8I6AMvmA
+	 ISQkIpscXBb9U495uFQRey+o1X4G8zUjIH6VA2cBxuN1ELwT+woeY4G5rchtB0JA9B
+	 1F1XBms1/6sBg==
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5bad7941dcfso326455eaf.3;
+        Tue, 18 Jun 2024 12:46:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/ifHYlZqKsdg8Gdu2UAE2V5t90oZPJP4dP0YpwaQ/2mP/geKK+yRdFt9p/X9dal0Xo70UGZQJNG6GksqbKuHCAllv8W4QNk77ZdSARBoo2PGDxromg6FqBILwvPMPU05Y6aM+WIObvA==
+X-Gm-Message-State: AOJu0YxmwcQEuPwQA0py1zZCT2YdsLB7StcLok3iDewg7geHRMEIjugb
+	vz5s3q+T/l6D1AhccmnxGCPY8ykNEkBH8KGcbCH3UjcEcKjZuCa+XkUzF2XNFg+cL1NjNMlgdgT
+	zyHLOeBEeD/lMQvsfogUa/4J+dHI=
+X-Google-Smtp-Source: AGHT+IF+vr1jR35veCH/PAscHVF1nHi8FYG1cX55iyLK03KK8llcRZc9D/G7OanVNXebl308gN/LJJzK1mNaUMIqEhw=
+X-Received: by 2002:a05:6871:5823:b0:250:826d:5202 with SMTP id
+ 586e51a60fabf-25c94d792d0mr857583fac.3.1718740018130; Tue, 18 Jun 2024
+ 12:46:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610112700.80819-1-wsa+renesas@sang-engineering.com>
- <20240610112700.80819-2-wsa+renesas@sang-engineering.com> <CAMRc=MfZ11U+kAh1+K=DxtJ=QL+cY7Q_sBN4sQDF-RNgjpV0QA@mail.gmail.com>
- <jvnvx7a4pn6evrp5ehfrt4qsiuprq6ogvrue2a3uupwtydmgcm@2rvat7ibvgb4>
- <CAMRc=Mc4__0zzJZG3BPnmbua88SLuEbX=Wk=EZnKH5HQvB+JPg@mail.gmail.com>
- <CACRpkda==5S75Bw6F3ZLUmf7kwgi_JkByiizR=m-61nrMDWuvQ@mail.gmail.com>
- <ce1d8150-c595-44d5-b19a-040920481709@app.fastmail.com> <CAMRc=McpRjQO8mUrOA4bU_YqO8Tc9-Ujytfy1fcjGUEgH9NW0A@mail.gmail.com>
- <3h63msxchuuxqa5liufoivss4raqtzjlusjn7ufti5nyjkshcb@pqevlpuvrm5q> <CAMuHMdW5oiD93ng0fVotMKoGMavs0G3DV93GW6qEQVhGxLCK5Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdW5oiD93ng0fVotMKoGMavs0G3DV93GW6qEQVhGxLCK5Q@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 18 Jun 2024 21:46:38 +0200
-Message-ID: <CAMRc=McWEAx5v5BUyw_ZKcU_SxONZnkM-otge9HPRCP_z28nhw@mail.gmail.com>
-Subject: Re: [PATCH v9 1/1] gpio: add sloppy logic analyzer using polling
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20240614193241.7341-1-mario.limonciello@amd.com>
+ <CAJZ5v0gMcR1wkOMkd5kHp8BZKdZd-HE9DrxByP9puCK-OUfGPA@mail.gmail.com> <50fcefb1-e910-435d-be0d-d0f45071d179@amd.com>
+In-Reply-To: <50fcefb1-e910-435d-be0d-d0f45071d179@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 18 Jun 2024 21:46:47 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iFUBb41i8rRX3kN_PHL7b=s8LFPvQXRguc1jyeZ+1J7Q@mail.gmail.com>
+Message-ID: <CAJZ5v0iFUBb41i8rRX3kN_PHL7b=s8LFPvQXRguc1jyeZ+1J7Q@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: Only evaluate the Intel _OSC and _PDC on platforms
+ with HWP
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>, CL Lin <clin41@lenovo.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 8:58=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
+On Tue, Jun 18, 2024 at 9:33=E2=80=AFPM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
 >
-> Hi Wolfram,
->
-> On Tue, Jun 18, 2024 at 12:54=E2=80=AFPM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > > I could see it using configfs instead of DT for configuration and iio
-> > > for presenting the output but - from what Wolfram said - insisting on
-> > > this will simply result in this development being dropped entirely.
+> On 6/15/2024 05:38, Rafael J. Wysocki wrote:
+> > On Fri, Jun 14, 2024 at 9:33=E2=80=AFPM Mario Limonciello
+> > <mario.limonciello@amd.com> wrote:
+> >>
+> >> The UUID 4077A616-290C-47BE-9EBD-D87058713953 and _PDC methods are
+> >> only used on Intel platforms with HWP support.
 > >
-> > How do you assign a GPIO via debugfs? I only found the out-of-tree
-> > pwm-gpio driver[1] which uses a GPIO number. But those are deprecated
-> > these days, or? Any other driver doing this you can point me to?
+> > I beg to differ.  See arch_acpi_set_proc_cap_bits() definition.
 >
-> Do you really need debugfs (or configfs)?
-> I guess you can just write GPIO line names or GPIO chip
-> labels + offsets to the new_device file, like gpio-aggregator does?
+> Ah I see; thanks for sharing.  I agree with you.
 >
-> Documentation/admin-guide/gpio/gpio-aggregator.rst
+> >
+> >> Attempting to evaluate them and showing messages on hardware without
+> >> HWP is pointless needlessly noisy.
+> >>
+> >> Gate the code on X86_FEATURE_HWP.
+> >
+> > Not really.
 >
+> I guess this really started getting noisy in 6.6 (9527264).
+>
+> Would you be open to downgrading to debug instead?
 
-IMO that adds a lot of custom string parsing in kernel for no reason.
-TBH Today I'd NAK this interface and propose configfs instead as well.
+That would be fine, thanks!
 
-Bart
 
-> Gr{oetje,eeting}s,
+> >
+> >> Cc: PradeepVineshReddy (Pradeep Vinesh Reddy) Kodamati <PradeepVineshR=
+eddy.Kodamati@amd.com>
+> >> Suggested-by: CL Lin <clin41@lenovo.com>
+> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> >> ---
+> >>   drivers/acpi/acpi_processor.c | 2 ++
+> >>   1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_process=
+or.c
+> >> index 7a0dd35d62c9..84848b5e65d6 100644
+> >> --- a/drivers/acpi/acpi_processor.c
+> >> +++ b/drivers/acpi/acpi_processor.c
+> >> @@ -597,6 +597,8 @@ static bool __init acpi_early_processor_osc(void)
+> >>
+> >>   void __init acpi_early_processor_control_setup(void)
+> >>   {
+> >> +       if (!boot_cpu_has(X86_FEATURE_HWP))
+> >> +               return;
+> >>          if (acpi_early_processor_osc()) {
+> >>                  pr_info("_OSC evaluated successfully for all CPUs\n")=
+;
+> >>          } else {
+> >> --
+> >> 2.43.0
+> >>
 >
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
 
