@@ -1,235 +1,155 @@
-Return-Path: <linux-kernel+bounces-219723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F51E90D6EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:18:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9733090D6B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86D41F20FCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99AF71C246B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D840C15666B;
-	Tue, 18 Jun 2024 15:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9A3200DE;
+	Tue, 18 Jun 2024 15:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BKq93U2O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="FaBSxoqP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XoeTy9+A"
+Received: from wfhigh8-smtp.messagingengine.com (wfhigh8-smtp.messagingengine.com [64.147.123.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32614152511
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFE21CD20;
+	Tue, 18 Jun 2024 15:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718723546; cv=none; b=pun6ZDebTkPSVJv/IG0lbBDM/nJeRpZ9RdrcPTOV7Cxnr3pTyOzIi54hhyb+oLw9Tlo8kGb3EY+1btywvF8Mpp60xbEM67o8CTvtmsr4gEBWlaDUHJKod9HeSpSUxqTGt3XnhEsNPlqfykHgyLgDG8nFCaDZG6buRpxvIDJC5Kw=
+	t=1718723473; cv=none; b=Ik205GD4Axuy9ZSt7fcVotq+2ArBdx5Bmb1lDXioyjTW3h/ly320qVWfl+ntft532Ih6/yduo7YZ381MMe+EdMjGCRwRg9J5H0e5LUQled43gplgxcRvflIO5tWYufs3yEpQCvI8VCQBmKp3ll0JPgAlw78WhoFdaprpEU+fnMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718723546; c=relaxed/simple;
-	bh=NsG6/vxiH1rvV/LVDs1VbBDrJEIg8gETDx7rpE5RgCQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YbRk1G8ZnGOJxnyWq86yg9B4syA4k0f1UQm2V9tRIFO/Sw4ekWTixcZ2g3r9h6aLDNlDHjlgqYmTDKId1oerbjX04eYncLHxolwNQQXSBq8jd7xSSx9EHFXaSPTUJuj/vGbhx0eeiLNAJeeoo4G0b4c1JnBJVQThxqxqjZgeLNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BKq93U2O; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718723544; x=1750259544;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NsG6/vxiH1rvV/LVDs1VbBDrJEIg8gETDx7rpE5RgCQ=;
-  b=BKq93U2OVAfUZjIRocoCXuQUq1GK2jNRZJhuse8zCJn41Ge9tFSQJikg
-   jdieneSNBkIs5gQvBGisiwATJABC0mx752klzILc8tvS/+TUSQXc0sz88
-   Uw0HxJeIBegVQl+YI9XXovHaDkSinK2fdFb5DA73AjkZuBVHeW7I5iaua
-   rrXAmvVvm/qT8GRBpGQth+PLj25+XrcrI9MXnksbOesu0EVajs59jsj87
-   KG7JNSoEv6AWlpW73nnSQ1OWIYvJUTQr5ncK8UCJ1GrhQxFpRCe/Ejifg
-   yp2f43a6Jr3qYSvnfM1UtUqnepRZKgrgwl2Ep3/e72DpRIoWmeD8hucvw
-   w==;
-X-CSE-ConnectionGUID: Bp5JZXZQTRG+E7VY7ncGIw==
-X-CSE-MsgGUID: oRIXVvx6SPCDmJE9JmNDCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15374246"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15374246"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 08:12:19 -0700
-X-CSE-ConnectionGUID: utYVp4JORX+3hsvyQDN/KA==
-X-CSE-MsgGUID: C3kf3Vv2TfeLVWTdTQ6VXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="41426965"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa006.fm.intel.com with ESMTP; 18 Jun 2024 08:12:19 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@kernel.org,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com,
-	linux-kernel@vger.kernel.org
-Cc: ak@linux.intel.com,
-	eranian@google.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [RESEND PATCH 12/12] perf/x86/intel: Support RDPMC metrics clear mode
-Date: Tue, 18 Jun 2024 08:10:44 -0700
-Message-Id: <20240618151044.1318612-13-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20240618151044.1318612-1-kan.liang@linux.intel.com>
-References: <20240618151044.1318612-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1718723473; c=relaxed/simple;
+	bh=K3N59nwNldSfgDAHXVnjWYBImxW4g56QyolpLFrZVFY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZfpbkW1QqvV3PtqAweB9ZgUUUx5mAxIatsqo5MtD/2RIsqTBEyDxsZlPPYhzNH+NCbtu2t5j4w99+fwFhI47ABWUV6ZXi5+l/Z8rfT4yB7HPFQ+iRRq1MiRs4g4BEMNZdvOCrd5GGuu2vioYGqNW/Jsv+nu/3digpLLuyq8+tMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=FaBSxoqP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XoeTy9+A; arc=none smtp.client-ip=64.147.123.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 0EAA0180009E;
+	Tue, 18 Jun 2024 11:11:09 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Tue, 18 Jun 2024 11:11:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1718723469; x=1718809869; bh=GS
+	rBwu9bAC0f/uxRBDNmUvVdUkHdbVe6XDApK3YOq2Q=; b=FaBSxoqP1C9n5Xubfh
+	pNPJAXlLeIG0GkBHqNBiz2cMUD/IBDN5zLVHWaLVW3nj4XnOHYMm2xQo6reVO04N
+	FVMlMGMJP+oMZLPjXO/Q9x+Cpito6k4vhB3DIr84uUjZ7bcaT3M58lDeSRk4i1Sh
+	QdIYyCMAHyTbBr9GMc1cvYpBcnJXO4BH+GpAMZ3CUar4Ojsv9+TbNvdnHPTdkvq9
+	a4eQ8CHSfCm3M+FjxlFCiRIfY4a1uwxXM5R7SieYZBDaj8mAve85gk8TqzK56ZQz
+	D36zEsmak9wikSTA2mA7SkdU1nZ/Wf/70FmPRlBgJz2r4rId634QTRysYHVS7Dy/
+	H21w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm2; t=1718723469; x=1718809869; bh=GSrBwu9bAC0f/
+	uxRBDNmUvVdUkHdbVe6XDApK3YOq2Q=; b=XoeTy9+AcP7e7mKx1rKsMx6IJg6Lp
+	jftbt7zftVAmQmGxoqhjjNTzpEg9HMnatQ0F7ycfId8Hnni+LjSmA1IcqiYNJ5sX
+	2ZCNA2NwmHp1Lopz+hHFXCsHX3dxWgPcdzpfgAqCE30ymJ4wfsqKVHe6M8cDxa4K
+	Y2kufMh6TjtTRV8jy+zg7eq16LCv5q4nCCFSjuG05sogXfwWxpNI/RvBt2IRqeZL
+	sqAD/5uwVUlRS3XDxn5swH+IeRh6OpwXGyeJSDTMRb+YT6aAmNzhus8NJF7tWCSo
+	45G/1lCCP2XcF/8maV2VB1NwhimLVOdiweJ0A0MwvpOW9Ls/NCHQlEc8Q==
+X-ME-Sender: <xms:jaNxZhwD7IkSaruvcE0jUM7Olo7bSHshxv40KFnfXvkpFjceLSP2Fg>
+    <xme:jaNxZhSXDjLnWcBnHqP3bGmSBHmXt4IqyTig0uaRuNOTgaIt_7P9vkNXjzf6fePFs
+    RtOr6e4dgR_T6V3Z0s>
+X-ME-Received: <xmr:jaNxZrWjwgH_vWQ6n8EVxC2fOMSQ_aofKd-5whzbGgbzHqY1tBSSkwQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvkedgheehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpeflihgrgihu
+    nhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqnecugg
+    ftrfgrthhtvghrnhepgfevffejteegjeeflefgkeetleekhfeugfegvdeuueejkeejteek
+    kedvfffffedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehf
+    lhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:jaNxZji-s8QVOUFT3-wQ-e8jq8i_LPFpBJndxCwShRCN1joU8OETrA>
+    <xmx:jaNxZjASUmXHHK9jspscTrbx1kOoFZYtKXmmIsTpRztlYnbXpJ-06g>
+    <xmx:jaNxZsJ6b8VhJbaSu6mULsmZ_FeQ4dyRi8dCKum2qfD51uO9cztABQ>
+    <xmx:jaNxZiAiNxJ7s1mX21Xw-1gnnXvC2sZxH2H3KfNBK2QEBxvnlL1CqA>
+    <xmx:jaNxZn6QISwSorhwN16ycAlEFoUQ0sRJu_BZNotl-UtwmVBMJaLyOTUz>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 18 Jun 2024 11:11:08 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH v3 0/8] MIPS: Boston: Fix syscon devicetree binding and
+ node
+Date: Tue, 18 Jun 2024 16:11:00 +0100
+Message-Id: <20240618-boston-syscon-v3-0-c47c06647a26@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIWjcWYC/3WMzQrCMBAGX6Xs2Uh+29ST7yEeYrtpA9pIUoKl9
+ N1NehEFT8ss38wKEYPDCKdqhYDJReenDOJQQTeaaUDi+szAKZdUMUFuPs5+InGJXT4aBVPYSqN
+ bCdl5BrTutfcu18yjy+uw7PnEyvdfKTFCSSusVarphZL6bO/L4M187PwDSivxj18z/uvz4luNz
+ NDGmlp8+9u2vQGsPYmU7AAAAA==
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Burton <paulburton@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1598;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=K3N59nwNldSfgDAHXVnjWYBImxW4g56QyolpLFrZVFY=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrTCxT3Rh6U5bTfxLMqzlOOevPDr6YNrlMrFTEscfv9kW
+ +Q688qyjlIWBjEuBlkxRZYQAaW+DY0XF1x/kPUHZg4rE8gQBi5OAZjI3WpGhjVfGtL8nCMjzgvM
+ 3LK1W7GuRvxVu6jiqmMeBhk+bCqSPgz/FKvVQpc+NuBntFjyiXWi4qEz4qtesFcwLjS/+mTF0jP
+ GPAA=
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-From: Kan Liang <kan.liang@linux.intel.com>
-
-The new RDPMC enhancement, metrics clear mode, is to clear the
-PERF_METRICS-related resources as well as the fixed-function performance
-monitoring counter 3 after the read is performed. It is available for
-ring 3. The feature is enumerated by the
-IA32_PERF_CAPABILITIES.RDPMC_CLEAR_METRICS[bit 19]. To enable the
-feature, the IA32_FIXED_CTR_CTRL.METRICS_CLEAR_EN[bit 14] must be set.
-
-Two ways were considered to enable the feature.
-- Expose a knob in the sysfs globally. One user may affect the
-  measurement of other users when changing the knob. The solution is
-  dropped.
-- Introduce a new event format, metrics_clear, for the slots event to
-  disable/enable the feature only for the current process. Users can
-  utilize the feature as needed.
-The latter solution is implemented in the patch.
-
-The current KVM doesn't support the perf metrics yet. For
-virtualization, the feature can be enabled later separately.
-
-Update the document of perf metrics.
-
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 ---
- arch/x86/events/intel/core.c         | 20 +++++++++++++++++++-
- arch/x86/events/perf_event.h         |  1 +
- arch/x86/include/asm/perf_event.h    |  4 ++++
- tools/perf/Documentation/topdown.txt |  9 +++++++--
- 4 files changed, 31 insertions(+), 3 deletions(-)
+Changes in v3:
+- Drop CPU bindings in question
+- See individual patches
+- Link to v2: https://lore.kernel.org/r/20240612-boston-syscon-v2-0-9f8e1a07fa63@flygoat.com
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 3705b7df65e0..7a2053fc7f90 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2822,6 +2822,9 @@ static void intel_pmu_enable_fixed(struct perf_event *event)
- 			return;
- 
- 		idx = INTEL_PMC_IDX_FIXED_SLOTS;
-+
-+		if (event->attr.config1 & INTEL_TD_CFG_METRIC_CLEAR)
-+			bits |= INTEL_FIXED_3_METRICS_CLEAR;
- 	}
- 
- 	intel_set_masks(event, idx);
-@@ -4086,7 +4089,12 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 	 * is used in a metrics group, it too cannot support sampling.
- 	 */
- 	if (intel_pmu_has_cap(event, PERF_CAP_METRICS_IDX) && is_topdown_event(event)) {
--		if (event->attr.config1 || event->attr.config2)
-+		/* The metrics_clear can only be set for the slots event */
-+		if (event->attr.config1 &&
-+		    (!is_slots_event(event) || (event->attr.config1 & ~INTEL_TD_CFG_METRIC_CLEAR)))
-+			return -EINVAL;
-+
-+		if (event->attr.config2)
- 			return -EINVAL;
- 
- 		/*
-@@ -4673,6 +4681,8 @@ PMU_FORMAT_ATTR(in_tx,  "config:32"	);
- PMU_FORMAT_ATTR(in_tx_cp, "config:33"	);
- PMU_FORMAT_ATTR(eq,	"config:36"	); /* v6 + */
- 
-+PMU_FORMAT_ATTR(metrics_clear,	"config1:0"); /* PERF_CAPABILITIES.RDPMC_METRICS_CLEAR */
-+
- static ssize_t umask2_show(struct device *dev,
- 			   struct device_attribute *attr,
- 			   char *page)
-@@ -4692,6 +4702,7 @@ static struct device_attribute format_attr_umask2  =
- static struct attribute *format_evtsel_ext_attrs[] = {
- 	&format_attr_umask2.attr,
- 	&format_attr_eq.attr,
-+	&format_attr_metrics_clear.attr,
- 	NULL
- };
- 
-@@ -4719,6 +4730,13 @@ evtsel_ext_is_visible(struct kobject *kobj, struct attribute *attr, int i)
- 	if (i == 1)
- 		return (mask & ARCH_PERFMON_EVENTSEL_EQ) ? attr->mode : 0;
- 
-+	/* PERF_CAPABILITIES.RDPMC_METRICS_CLEAR */
-+	if (i == 2) {
-+		union perf_capabilities intel_cap = hybrid(dev_get_drvdata(dev), intel_cap);
-+
-+		return intel_cap.rdpmc_metrics_clear ? attr->mode : 0;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 498d56c8d2ad..45f5eef31463 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -624,6 +624,7 @@ union perf_capabilities {
- 		u64	pebs_output_pt_available:1;
- 		u64	pebs_timing_info:1;
- 		u64	anythread_deprecated:1;
-+		u64	rdpmc_metrics_clear:1;
- 	};
- 	u64	capabilities;
- };
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 709746cd7c19..21e1d1fe5972 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -41,6 +41,7 @@
- #define INTEL_FIXED_0_USER				(1ULL << 1)
- #define INTEL_FIXED_0_ANYTHREAD			(1ULL << 2)
- #define INTEL_FIXED_0_ENABLE_PMI			(1ULL << 3)
-+#define INTEL_FIXED_3_METRICS_CLEAR			(1ULL << 2)
- 
- #define HSW_IN_TX					(1ULL << 32)
- #define HSW_IN_TX_CHECKPOINTED				(1ULL << 33)
-@@ -378,6 +379,9 @@ static inline bool use_fixed_pseudo_encoding(u64 code)
- #define INTEL_TD_METRIC_MAX			INTEL_TD_METRIC_MEM_BOUND
- #define INTEL_TD_METRIC_NUM			8
- 
-+#define INTEL_TD_CFG_METRIC_CLEAR_BIT		0
-+#define INTEL_TD_CFG_METRIC_CLEAR		BIT_ULL(INTEL_TD_CFG_METRIC_CLEAR_BIT)
-+
- static inline bool is_metric_idx(int idx)
- {
- 	return (unsigned)(idx - INTEL_PMC_IDX_METRIC_BASE) < INTEL_TD_METRIC_NUM;
-diff --git a/tools/perf/Documentation/topdown.txt b/tools/perf/Documentation/topdown.txt
-index ae0aee86844f..f36c8ca1dc53 100644
---- a/tools/perf/Documentation/topdown.txt
-+++ b/tools/perf/Documentation/topdown.txt
-@@ -280,8 +280,13 @@ with no longer interval than a few seconds
- 
- 	perf stat -I 1000 --topdown ...
- 
--For user programs using RDPMC directly the counter can
--be reset explicitly using ioctl:
-+Starting from the Lunar Lake p-core, a RDPMC metrics clear mode is
-+introduced. The metrics and the fixed counter 3 are automatically
-+cleared after the read is performed. It is recommended to always enable
-+the mode. To enable the mode, the config1 of slots event is set to 1.
-+
-+On the previous platforms, for user programs using RDPMC directly, the
-+counter has to be reset explicitly using ioctl:
- 
- 	ioctl(perf_fd, PERF_EVENT_IOC_RESET, 0);
- 
+Changes in v2:
+- Write a new binding for this device (Krzysztof)
+- Sweep other warnings
+- Link to v1: https://lore.kernel.org/r/20240513-boston-syscon-v1-0-93ff557d3548@flygoat.com
+
+---
+Jiaxun Yang (8):
+      MIPS: dts: Boston: Add simple-mfd compatible for syscon
+      MIPS: dts: Boston: Move syscon-reboot node under syscon
+      MIPS: dts: Boston: Rename clock node as clock-controller
+      MIPS: dts: Boston: Remove unused #interrupt-cells
+      MIPS: dts: Boston: Add model property
+      MIPS: dts: Boston: Rename uart node
+      dt-bindings: mfd: Add img,boston-platform-regs
+      dt-bindings: mips: img: Add devices binding
+
+ .../devicetree/bindings/clock/img,boston-clock.txt | 31 --------
+ .../bindings/mfd/img,boston-platform-regs.yaml     | 74 +++++++++++++++++++
+ .../devicetree/bindings/mips/img/devices.yaml      | 33 +++++++++
+ .../bindings/mips/img/pistachio-marduk.txt         | 10 ---
+ .../devicetree/bindings/mips/img/pistachio.txt     | 42 -----------
+ .../devicetree/bindings/mips/img/xilfpga.txt       | 83 ----------------------
+ arch/mips/boot/dts/img/boston.dts                  | 25 ++++---
+ 7 files changed, 119 insertions(+), 179 deletions(-)
+---
+base-commit: 6ba6c795dc73c22ce2c86006f17c4aa802db2a60
+change-id: 20240513-boston-syscon-8e315e94a894
+
+Best regards,
 -- 
-2.35.1
+Jiaxun Yang <jiaxun.yang@flygoat.com>
 
 
