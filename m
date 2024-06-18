@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-219696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FE090D6AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:11:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E65990D6B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 083BD1C23E94
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CBF71F2318B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2058B23777;
-	Tue, 18 Jun 2024 15:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B735A4654E;
+	Tue, 18 Jun 2024 15:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IEyi7u4Z"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7PyaHIT"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DF7225D4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC6B39AEC;
+	Tue, 18 Jun 2024 15:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718723426; cv=none; b=Z2C8ohf+OzIu+FJbruOOqp2hroz1frXT1mAcKosOhxN7Bb1GzQoANGl11hdt7fCJoulaeQv/kkvlOsYSpIiPlkxKkNa9YhOtrx0HdtUXUXBjfpJkXzjaxh9pZH/Afq5Wkj1gcyVPgPtwneYsgIUuE/m+URnDwqaUzc7vDWsGAGw=
+	t=1718723431; cv=none; b=f7tTW2ByJStVklPbONzAtPmsdkcyPV99nSQTCm/MXbz+QQjV6t7wjyNFgRpuBYLGZOxBtLPeXEwukXO1duUGYbxSjPXgGP05JTjxuhHeJzKtY2vJ8RVBZ8snMfIzGVXPReFbIV25KUS1axg1LPDNzjHUB+usc+3Ad1hB5ZbGWfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718723426; c=relaxed/simple;
-	bh=SP7q81qWNq4cCLZnlLrfBW5vXhkXY9BLAjp64hjh5gk=;
+	s=arc-20240116; t=1718723431; c=relaxed/simple;
+	bh=xN2mfAnka7AHk12FmpCy3OOhbQwpVNUdiE+wZmLKRbU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rIch4CW3hDn+1XTP8UTKsjaP9AcoGIloGhsUiKd2/F1cSlgTw6Xvrf1PR2PREDSLa7wMvAgValxCfVQFM/Pi7Xk8qNfRjj2X0pY5nnp1DnXwM8xeaJ6pwQD3pHdoBT9vJjAD2kMp6+VnIqNMw8dfAHV0tsFYZkLtRv/830blZfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IEyi7u4Z; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a63359aaaa6so853541766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:10:23 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=IsCNf8u9dpT1RImcaII5Ve7TC1avvAbskWZ4WB3/nBjVn+iFFhANlDxJdJ5pd0y1Q9Q1o0IVMpK/JM5bWe+9UQttVbe0YMbm03DC0zlHWdk22fR6Gp06H0g0qcaTOYLDyNk8dH/RG5lgdfR/+V3JWPoywyTlmXSUyfruoGvpDMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7PyaHIT; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f99fe4dc5aso4838145ad.0;
+        Tue, 18 Jun 2024 08:10:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1718723422; x=1719328222; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iKBE1NSWSd15cPnGMhaK2tiiQsEvDMuGFKV4Mjnsw/I=;
-        b=IEyi7u4ZV8x6LKZATCJqVHna+Qgw4hWigoGooMw2HdKLbTNbTs+Dsh2uLHTM6yrpSW
-         9/RdP9fN9VxfUHaebVwZ4ZwQCgihQoB2IUsb7SpCsys4+lhf9QTX2VRS1Y9OPCuAdaTd
-         Ylsvb1t4Uv4healzfu788JdeFP3ZsNQmSIuVSgUEZrofk/T/I0pew9gWsdVj9Br7DuqK
-         fehdYzLeLhEUySYMYRyB83kiK0LL+Zwz+fQ+n1Nm7GciM/CSBKn7DNro4okNc1uARce2
-         V0K2qJfIX8h3HBXJ8ay3cN38mektq2LQzKQByUU7JTUIpSUSWlpTxkZVPznQQxTH5Ec3
-         5Yug==
+        d=gmail.com; s=20230601; t=1718723430; x=1719328230; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=llk5mM/CDBgeWUrb9/FImMBVCQSPWj3msI7bOeQH2Cw=;
+        b=G7PyaHITyzky5j/zsGPvn5PvIO2mgdsCl2/RNWlTKPv8blHEb+BLsyfn37ykITfuK1
+         AM5i+4K1JOzvJXCFXd1q449uNGMf3gz6POrU5cNAILmhCjTiCyIv6DsDpOylWBNrKfTh
+         O5DKsuFOjUZZTlr85XUSGnFp3dPwdETijK3KkaC0ifdqxpt5otNoNVOgxjpoau/w4fsC
+         lzjjX+BlIlXftn80g0flRPZCVe+v/FnjnGyYJE4uMgmAQosEe1KE+zxMn2ZABOrbzryx
+         h67wNmJdqBKs5hARWplHV7VDSHHRoOQPRjwWAod91x1ZJ7Dx9tAroFlwy81ZI+eVJIBW
+         VfUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718723422; x=1719328222;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iKBE1NSWSd15cPnGMhaK2tiiQsEvDMuGFKV4Mjnsw/I=;
-        b=ZhKZJH+Pvg6BIlFcwxvj88clDHyi0hxLkJDfrv1Q7RiaIEGwkpZqpP2QH1KfoWp3lZ
-         tJkt75vMBuVWmeWsTKpDmr4AphRgmNmsU4+VPtgsW3xOIokhjfEsnz7N9HCqshJbr7hu
-         5CVq8/nM5E3dsXb5oDnyt2gesqex8fh+qGN01koyMJJ/5TYEUcsefH1WbV7axXwoMGQM
-         mVBlcLdJ78iLWL7ucFSz/zeX/bSpbUvbtO9GjGSu/jUNObpucb51+1TLRoLqkE+x5Rg8
-         4uQEK6EaeHXKe4N6uVk4GsbbhTkNOpfh1QMXNmFlfEs4t/gIYUnwb8HfTkoB8YPiU5x/
-         54sA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+t2IjPegq98GJmqvrlc8In3z++ro9TIH4Q93dFdU/rzLQ+avv1T/EmNGgmNg0FHM/gGZtkMcMGX5aHCqj7im348+6MQA+JwsPYKKS
-X-Gm-Message-State: AOJu0YzgLs8N5Dir5BWnW3I0TssSJYFgIwQvEA+YNTv/fMwinLi4obTG
-	WMw72PvTZ+ET0bHKozjIXYWke3DiqOkjESYAfKSPNVWgHIB1s+tVvfjLYhv14pU=
-X-Google-Smtp-Source: AGHT+IHY8c3KDfS2CVVbRxmS3YzW470n5QtJw/ekP0zpRyqlNqmiR7aZ1yM+wIR4w7JGNw0jAYyOkw==
-X-Received: by 2002:a17:907:a092:b0:a6f:7591:9217 with SMTP id a640c23a62f3a-a6f7591974cmr712123866b.55.1718723422094;
-        Tue, 18 Jun 2024 08:10:22 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a8fsm14212761f8f.110.2024.06.18.08.10.20
+        d=1e100.net; s=20230601; t=1718723430; x=1719328230;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=llk5mM/CDBgeWUrb9/FImMBVCQSPWj3msI7bOeQH2Cw=;
+        b=jIPWR74+6B6+b5x9tAfg2+ejo4WwoSrN+KDwt3hSNUgqUCqA1q12T/vdFuIB76AqKy
+         bPHmeUmgmoLGm1BJa8V0njcr3UTW2g3ILa1aBUYglasaJZ+c+NchYgo6x6xMEklx6S+v
+         OJjibHvXO/opKptD520jyC1hPFCcAzyNVxwz7TMhXFNDnEtU1H9CAYrPUfk1+cTqSjPU
+         KdfA3vTMqFFiIK+lIiMXYkx+xLJNE0aAYDZON3boQRQhfhEdN+P5wxuytkUviiR1dR8k
+         6voUHR5Gsvptqtm21kGbv1ipATr8XyEAdr5G4/0YanUklCRWeZ+oKJDac8j0ceT7n5Yp
+         yRlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBuTByluc2/eVb9ZuBWgzbgpURmvwp54kXCGcmuT7HgtmzyQb7Se0cawgjEJkSxZ0+b9kLzPdb6R0Xvtv3m4vhsumtgi4o+ZuxKC0mxaHkSQOZRIS6DZnL1dAD3Vpw+I/LuIQgX9O8u95Vq1MYQh0wTEKFPCzt6vU8+mwDGZ6k/NMoaA==
+X-Gm-Message-State: AOJu0Yxm8m8yER7sbigQw6VI7Q5GEXRxGK40J1JFC/pjCMbez0oR8p3S
+	/2T9guCwv+dlSYqupHG0lFE5I/Zv5RYsGr2jLi/54A9Aj+26/xJ5
+X-Google-Smtp-Source: AGHT+IFz6s5oX3YKEyc4Fb2D5XO4b2N50oTkL7KFpITtcviobZGEeb53QbOSpCe2+dx1TS/hwVWRlg==
+X-Received: by 2002:a17:902:f552:b0:1f7:3379:1c71 with SMTP id d9443c01a7336-1f8625d96acmr140855505ad.27.1718723429519;
+        Tue, 18 Jun 2024 08:10:29 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9a24a3510sm7309415ad.65.2024.06.18.08.10.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 08:10:21 -0700 (PDT)
-Message-ID: <7809a177-e170-46f5-b463-3713b79acf22@suse.com>
-Date: Tue, 18 Jun 2024 18:10:20 +0300
+        Tue, 18 Jun 2024 08:10:28 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <dc73070a-d266-47ca-bb11-77c2d9d6dece@roeck-us.net>
+Date: Tue, 18 Jun 2024 08:10:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,218 +77,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/9] x86/virt/tdx: Exclude memory region hole within CMR
- as TDMR's reserved area
-To: Kai Huang <kai.huang@intel.com>, linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, dave.hansen@intel.com, dan.j.williams@intel.com,
- kirill.shutemov@linux.intel.com, rick.p.edgecombe@intel.com,
- peterz@infradead.org, tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
- hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
- isaku.yamahata@intel.com, binbin.wu@linux.intel.com
-References: <cover.1718538552.git.kai.huang@intel.com>
- <cfbed1139887416b6fe0d130883dbe210e97d598.1718538552.git.kai.huang@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
+Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Armin Wolf <W_Armin@gmx.de>, Stephen Horvath <s.horvath@outlook.com.au>
+References: <20240604040237.1064024-1-linux@roeck-us.net>
+ <20240604040237.1064024-6-linux@roeck-us.net>
+ <a5aa120d-8497-4ca8-9752-7d800240b999@molgen.mpg.de>
+ <efb77b37-30e5-48a8-b4af-eb9995a2882b@roeck-us.net>
+ <33f369c1-1098-458e-9398-30037bd8c5aa@molgen.mpg.de>
+ <4e09b843-3d2d-46d7-a8e1-2eabc4382dc7@roeck-us.net>
+ <f20ea816-5165-401e-948f-6e77682a2d1b@molgen.mpg.de>
+ <975af7e5-b1b0-400e-a1c3-6d9140421f25@roeck-us.net>
+ <8719fc64-2b51-4b79-ba52-0a3b9216f2db@molgen.mpg.de>
+ <f76a4d07-887b-4efb-b20e-52979db31216@roeck-us.net>
+ <fd8868ef-6179-45a7-8249-ee17994a8e78@molgen.mpg.de>
 Content-Language: en-US
-In-Reply-To: <cfbed1139887416b6fe0d130883dbe210e97d598.1718538552.git.kai.huang@intel.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <fd8868ef-6179-45a7-8249-ee17994a8e78@molgen.mpg.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hi Paul,
 
+On 6/18/24 07:59, Paul Menzel wrote:
+[ ... ]
 
-On 16.06.24 г. 15:01 ч., Kai Huang wrote:
-> A TDX module initialization failure was reported on a Emerald Rapids
-> platform:
+> I did
 > 
->    virt/tdx: initialization failed: TDMR [0x0, 0x80000000): reserved areas exhausted.
->    virt/tdx: module initialization failed (-28)
+>      $ tail -3 /etc/sensors3.conf
+>      chip "spd5118-*"
+>          set temp1_max 56000
+>          set temp1_crit 84000
 > 
-> As a step of initializing the TDX module, the kernel tells the TDX
-> module all the "TDX-usable memory regions" via a set of TDX architecture
-> defined structure "TD Memory Region" (TDMR).  Each TDMR must be in 1GB
-> aligned and in 1GB granularity, and all "non-TDX-usable memory holes" in
-> a given TDMR must be marked as a "reserved area".  Each TDMR only
-> supports a maximum number of reserved areas reported by the TDX module.
+> but it stays with the defaults:
 > 
-> As shown above, the root cause of this failure is when the kernel tries
-> to construct a TDMR to cover address range [0x0, 0x80000000), there
-> are too many memory holes within that range and the number of memory
-> holes exceeds the maximum number of reserved areas.
-> 
-> The E820 table of that platform (see [1] below) reflects this: the
-> number of memory holes among e820 "usable" entries exceeds 16, which is
-> the maximum number of reserved areas TDX module supports in practice.
-> 
-> === Fix ===
-> 
-> There are two options to fix this: 1) put less memory holes as "reserved
-> area" when constructing a TDMR; 2) reduce the TDMR's size to cover less
-> memory regions, thus less memory holes.
-> 
-> Option 1) is possible, and in fact is easier and preferable:
-> 
-> TDX actually has a concept of "Convertible Memory Regions" (CMRs).  TDX
-> reports a list of CMRs that meet TDX's security requirements on memory.
-> TDX requires all the "TDX-usable memory regions" that the kernel passes
-> to the module via TDMRs, a.k.a, all the "non-reserved regions in TDMRs",
-> must be convertible memory.
-> 
-> In other words, if a memory hole is indeed CMR, then it's not mandatory
-
-So TDX requires all TDMR to be CMR, and CMR regions are reported by the 
-BIOS, how did you arrive at the conclusion that if a hole is CMR there 
-is no point in creating a TDMR for it?
-
-> for the kernel to add it to the reserved areas.  The number of consumed
-> reserved areas can be reduced if the kernel doesn't add those memory
-> holes as reserved area.  Note this doesn't have security impact because
-> the kernel is out of TDX's TCB anyway.
-> 
-> This is feasible because in practice the CMRs just reflect the nature of
-> whether the RAM can indeed be used by TDX, thus each CMR tends to be a
-> large range w/o being split into small areas, e.g., in the way the e820
-> table does to contain a lot "ACPI *" entries.  [2] below shows the CMRs
-> reported on the problematic platform (using the off-tree TDX code).
-> 
-> So for this particular module initialization failure, the memory holes
-> that are within [0x0, 0x80000000) are mostly indeed CMR.  By not adding
-> them to the reserved areas, the number of consumed reserved areas for
-> the TDMR [0x0, 0x80000000) can be dramatically reduced.
-> 
-> On the other hand, although option 2) is also theoretically feasible, it
-> requires more complicated logic to handle around splitting TDMR into
-> smaller ones.  E.g., today one memory region must be fully in one TDMR,
-> while splitting TDMR will result in each TDMR only covering part of some
-> memory region.  And this also increases the total number of TDMRs, which
-> also cannot exceed a maximum value that TDX module supports.
+> ```
+> $ sensors
+> spd5118-i2c-0-53
+> Adapter: SMBus I801 adapter at efa0
+> temp1:        +20.8°C  (low  =  +0.0°C, high = +55.0°C)
+>                         (crit low =  +0.0°C, crit = +85.0°C)
 > 
 
-<snip>
+You'd have to write directly into the attribute files.
+For example, if you have
 
-> 
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> ---
->   arch/x86/virt/vmx/tdx/tdx.c | 149 ++++++++++++++++++++++++++++++++----
->   arch/x86/virt/vmx/tdx/tdx.h |  13 ++++
->   2 files changed, 146 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index ced40e3b516e..88a0c8b788b7 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -293,6 +293,10 @@ static int stbuf_read_sysmd_field(u64 field_id, void *stbuf, int offset,
->   	return 0;
->   }
->   
-> +/* Wrapper to read one metadata field to u8/u16/u32/u64 */
-> +#define stbuf_read_sysmd_single(_field_id, _pdata)	\
-> +	stbuf_read_sysmd_field(_field_id, _pdata, 0, sizeof(typeof(*(_pdata))))
+$ grep . /sys/class/hwmon/*/name
+/sys/class/hwmon/hwmon0/name:nvme
+/sys/class/hwmon/hwmon1/name:nct6687
+/sys/class/hwmon/hwmon2/name:k10temp
+/sys/class/hwmon/hwmon3/name:spd5118
+/sys/class/hwmon/hwmon4/name:spd5118
+/sys/class/hwmon/hwmon5/name:spd5118
+/sys/class/hwmon/hwmon6/name:spd5118
+/sys/class/hwmon/hwmon7/name:mt7921_phy0
+/sys/class/hwmon/hwmon8/name:amdgpu
 
-What value does adding yet another level of indirection bring here?
+you could run
 
-> +
->   struct field_mapping {
->   	u64 field_id;
->   	int offset;
-> @@ -349,6 +353,76 @@ static int get_tdx_module_version(struct tdx_sysinfo_module_version *modver)
->   	return stbuf_read_sysmd_multi(fields, ARRAY_SIZE(fields), modver);
->   }
->   
-> +/* Update the @cmr_info->num_cmrs to trim tail empty CMRs */
-> +static void trim_empty_tail_cmrs(struct tdx_sysinfo_cmr_info *cmr_info)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < cmr_info->num_cmrs; i++) {
-> +		u64 cmr_base = cmr_info->cmr_base[i];
-> +		u64 cmr_size = cmr_info->cmr_size[i];
-> +
-> +		if (!cmr_size) {
-> +			WARN_ON_ONCE(cmr_base);
-> +			break;
-> +		}
-> +
-> +		/* TDX architecture: CMR must be 4KB aligned */
-> +		WARN_ON_ONCE(!PAGE_ALIGNED(cmr_base) ||
-> +				!PAGE_ALIGNED(cmr_size));
-> +	}
-> +
-> +	cmr_info->num_cmrs = i;
-> +}
+sudo bash -c 'echo 56000 > /sys/class/hwmon/hwmon3/temp1_max'
 
-That function is somewhat weird, on the one hand its name suggests it's 
-doing some "optimisation" i.e removing empty cmrs, at the same time it 
-will simply cap the number of CMRs until it meets the first empty CMR, 
-what aif we have and will also WARN. In fact it could even crash the 
-machine if panic_on_warn is enabled, furthermore the alignement checks 
-suggest it's actually some sanity checking function. Furthermore if we 
-have:"
+Thanks,
+Guenter
 
-ORDINARY_CMR,EMPTY_CMR,ORDINARY_CMR
-
-(Is such a scenario even possible), in this case we'll ommit also the 
-last ordinary cmr region?
-
-> +
-> +#define TD_SYSINFO_MAP_CMR_INFO(_field_id, _member)	\
-> +	TD_SYSINFO_MAP(_field_id, struct tdx_sysinfo_cmr_info, _member)
-
-nit: Again, no real value in introducing yet another level of 
-indirection in this case.
-
-> +
-> +static int get_tdx_cmr_info(struct tdx_sysinfo_cmr_info *cmr_info)
-> +{
-> +	int i, ret;
-> +
-> +	ret = stbuf_read_sysmd_single(MD_FIELD_ID_NUM_CMRS,
-> +			&cmr_info->num_cmrs);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < cmr_info->num_cmrs; i++) {
-> +		const struct field_mapping fields[] = {
-> +			TD_SYSINFO_MAP_CMR_INFO(CMR_BASE0 + i, cmr_base[i]),
-> +			TD_SYSINFO_MAP_CMR_INFO(CMR_SIZE0 + i, cmr_size[i]),
-> +		};
-> +
-> +		ret = stbuf_read_sysmd_multi(fields, ARRAY_SIZE(fields),
-> +				cmr_info);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	/*
-> +	 * The TDX module may just report the maximum number of CMRs that
-> +	 * TDX architecturally supports as the actual number of CMRs,
-> +	 * despite the latter is smaller.  In this case all the tail
-> +	 * CMRs will be empty.  Trim them away.
-> +	 */
-> +	trim_empty_tail_cmrs(cmr_info);
-> +
-> +	return 0;
-> +}
-> +
-> +static void print_cmr_info(struct tdx_sysinfo_cmr_info *cmr_info)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < cmr_info->num_cmrs; i++) {
-> +		u64 cmr_base = cmr_info->cmr_base[i];
-> +		u64 cmr_size = cmr_info->cmr_size[i];
-> +
-> +		pr_info("CMR[%d]: [0x%llx, 0x%llx)\n", i, cmr_base,
-> +				cmr_base + cmr_size);
-> +	}
-> +}
-
-Do we really want to always print all CMR regions, won't that become way 
-too spammy and isn't this really useful in debug scenarios? Perhaps gate 
-this particular information behind a debug flag?
-
-> +
->   static void print_basic_sysinfo(struct tdx_sysinfo *sysinfo)
->   {
->   	struct tdx_sysinfo_module_version *modver = &sysinfo->module_version;
-
-<snip>
 
