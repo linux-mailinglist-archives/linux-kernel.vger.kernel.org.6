@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-219044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A7390C92E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:25:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F210290C932
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B84A28685E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:25:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC43E1C22E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3811313CFAC;
-	Tue, 18 Jun 2024 10:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a+Bh1b9h"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0E17345A;
+	Tue, 18 Jun 2024 10:20:52 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E6C13BC3F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355F582D98;
+	Tue, 18 Jun 2024 10:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718705976; cv=none; b=YHHp2r3t2wL6XkdZ4ooq9cKs8CNKnbPy4mV0lW1NHN4dZ/rxVoOsar9nvEb+Bd25mtcIrHbFZgwTNb29mz9Wm3yMWatQrRK4HZZcZpMj+M4V93JmtI6V4vsrPeMWzzNb5d6VKS6QSp2pMD59P18LTDWUxluxxu3glI4Ik6Od2AI=
+	t=1718706052; cv=none; b=U4CrPfQap/aPFhxEJ8Jt2FHULUAxpdWF4ZwYo/I9EOxM2XntcA7akd0FCsFvJFj+p7cV0EvBolvSfEEWRzgMPOAMsPjc5ZYnKiLcXfrEJoZBo9ubk/dRG/yH2XxUpdFUsJoCfjXjJP8BxmGsdpRG3l1Zt2fg/zSQTbR/QLmNEP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718705976; c=relaxed/simple;
-	bh=FL2m4h63/JYdTiaKJrp9jJf3fm87LLFXYnkOZJlTIJc=;
+	s=arc-20240116; t=1718706052; c=relaxed/simple;
+	bh=pGodE3qWq+wDKqfQ+tqM+fIvlcAWHzIcMuELcfr1Cug=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HeukVoAiVTNIpw+1D8aYto1shat1nCB3nRSiPnn0lIaYBc7IM7nFHIuP/gRcjYAlKJYOgtyFvreRlTKQU4pzUR3Qt6aQa4YwoN4kcyStTPtVl4TgH0Fd+3W73Lpgm+iLAyD9CcchILO4XhNdp6Zv384Sv3BhjmzdGZu21bDYT8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a+Bh1b9h; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec1ac1aed2so40156971fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:19:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718705973; x=1719310773; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dIyeFs4XULhFDZJgfL03OcH28UMXmwHIpiQH/OD/zBg=;
-        b=a+Bh1b9hpy5b1kmyC+FI+MyXek99RWTV4cWqOJvzsLBKalCAmVnFLLAUiVQD2549tU
-         3mEcUDsPfLZoUgzONuQ9t5uH06nWy04FIHp+YUKZtV8ds+SUHcXAK2TrFye8QIfxUYfX
-         NTxr3jE+Nn/07LzDVMbEknkauJJk9Pd5sBAZag6BtrWXWkLBITOfFuGtWSNJAnWSDDLA
-         w01WyZ40FGQoHk0IL0bdxjyRuO8dRukNnT4Q5TtkyU5f5TNm0eoovqXh+Oms1MDFgAQa
-         JZTtfr1/82F147ErRcGZ+Xhn3ovmC2h7/3aySz1224G5ueDyMa0p56+17WJHKP4gwPla
-         BJVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718705973; x=1719310773;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dIyeFs4XULhFDZJgfL03OcH28UMXmwHIpiQH/OD/zBg=;
-        b=N30MuHe3y6aFTXyXXrpAxJFyzQ/wqWZy0hnMzGP0WsCYKVa6LN/N+1kaAY6soM3oq5
-         gbINVwfjfmkuy2Ef8+QWg6xhcVIXUuxtjHZ57obJeQj0NsF3W/YdoUIzFENtLyYFMMvd
-         LKfUgsiWIrHMNGkvP6HIuwJ453dD0fDuqciREj6RMg1neax1f76PAwT/tVJbAz4N97wW
-         BR+QbCg08SxpA55oYMRDPyMpsJ8ZuvjbKjwK42oCOHelGRBcpcYQkeQcY6UQEbjVrfX3
-         o8U35ouob3Laem4UQQwy9GSb/PmtKflNCxQVIVYA/i/bvR6V9b/yv20aV1qCSv75JvMb
-         gpSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPMYH3HXvNoX2ApGmZIndLWVqdHy7sr5tGIwgjK8lt2zg4Z+VqWdxazOE8JfR81XfmlJ5RvxIBGvo1LEi0Kgcq6jei7JvvDb7g/f2c
-X-Gm-Message-State: AOJu0Yya0Gp+69kaAsAdGT97BWpVbOjpbKs/bC7YgKUslxE9ndiARiJ8
-	2C4sKONs09A4q51Am8YMiaNWhAd6NObNeHCHT9h+FsuY1pU+gXSMMyIQJBqjVZI=
-X-Google-Smtp-Source: AGHT+IEiSEe2+WeGXoJd3Xd2iIJeTICulV8Itc/CtPMx/C82PUg6rNZxzqUkmlCMCr0waHh4qMZ6Gg==
-X-Received: by 2002:a05:651c:1057:b0:2eb:de2b:940 with SMTP id 38308e7fff4ca-2ec0e6002d6mr73923941fa.41.1718705972634;
-        Tue, 18 Jun 2024 03:19:32 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec07d17709sm16507351fa.123.2024.06.18.03.19.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 03:19:32 -0700 (PDT)
-Message-ID: <b384e6d1-0cd5-45ca-b488-1ae2743c10cc@linaro.org>
-Date: Tue, 18 Jun 2024 12:19:31 +0200
+	 In-Reply-To:Content-Type; b=GfKk+uo3+NTTTshTLubiASjxShJR3LIbwwZUIQW/rPfqEmtS7eqMREMHfbNrbO49Jg333eUXFhWFXnU4pp1zlzPHZs199LeF2ftX6X6ywKmobT3uqgZ3DOTs7vksuDP+Lu6REvFZ5zM77xDBXUq2NDqd/JQTWG6Kj9ET8Q6YrrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4W3Mks2CVzz9v7Hl;
+	Tue, 18 Jun 2024 18:03:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 388A81407F5;
+	Tue, 18 Jun 2024 18:20:37 +0800 (CST)
+Received: from [10.221.99.159] (unknown [10.221.99.159])
+	by APP2 (Coremail) with SMTP id GxC2BwA3vzlpX3FmJUqoAA--.41471S2;
+	Tue, 18 Jun 2024 11:20:36 +0100 (CET)
+Message-ID: <ecacb016-55d8-8158-ee9c-1b7a22f498e6@huaweicloud.com>
+Date: Tue, 18 Jun 2024 12:20:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/8] serial: qcom-geni: Overhaul TX handling to fix
- crashes/hangs
-To: Douglas Anderson <dianders@chromium.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>
-Cc: Yicong Yang <yangyicong@hisilicon.com>, Tony Lindgren <tony@atomide.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Johan Hovold <johan+linaro@kernel.org>,
- John Ogness <john.ogness@linutronix.de>, linux-arm-msm@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
-References: <20240610222515.3023730-1-dianders@chromium.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3] tools/memory-model: Document herd7 (abstract)
+ representation
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240610222515.3023730-1-dianders@chromium.org>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, stern@rowland.harvard.edu,
+ will@kernel.org, peterz@infradead.org, npiggin@gmail.com,
+ dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ paulmck@kernel.org, akiyks@gmail.com, dlustig@nvidia.com,
+ joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, jonas.oberhauser@huaweicloud.com
+References: <20240617201759.1670994-1-parri.andrea@gmail.com>
+ <ZnC-cqQOEU2fd9tO@boqun-archlinux>
+ <07513d65-386d-1bfb-f5ad-8979708d5523@huaweicloud.com>
+ <ZnFZPJlILp5B9scN@andrea>
+From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+In-Reply-To: <ZnFZPJlILp5B9scN@andrea>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwA3vzlpX3FmJUqoAA--.41471S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr4xGrWfZF1DurykGry3Arb_yoWDJFc_Kr
+	yqgFWqka1Utr4Fgr47AFs5AF4SvFZYkF4vyw4rJwnxA3W3J39rJFyktwnrAayYvw4I9rnr
+	GFZ8Gr43G3srXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
+	04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0D
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
+X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
 
-
-
-On 6/11/24 00:24, Douglas Anderson wrote:
+On 6/18/2024 11:54 AM, Andrea Parri wrote:
+>> This follows from rmw \subset po. However, this might not be immediately
+>> clear for the reader so having it explicit is a good idea.
 > 
-> While trying to reproduce -EBUSY errors that our lab was getting in
-> suspend/resume testing, I ended up finding a whole pile of problems
-> with the Qualcomm GENI serial driver. I've posted a fix for the -EBUSY
-> issue separately [1]. This series is fixing all of the Qualcomm GENI
-> problems that I found.
+> Sure.  How about as follows:
 > 
-> As far as I can tell most of the problems have been in the Qualcomm
-> GENI serial driver since inception, but it can be noted that the
-> behavior got worse with the new kfifo changes. Previously when the OS
-> took data out of the circular queue we'd just spit stale data onto the
-> serial port. Now we'll hard lockup. :-P
+> diff --git a/tools/memory-model/Documentation/herd-representation.txt b/tools/memory-model/Documentation/herd-representation.txt
+> index 2fe270e902635..8255a2ff62e5f 100644
+> --- a/tools/memory-model/Documentation/herd-representation.txt
+> +++ b/tools/memory-model/Documentation/herd-representation.txt
+> @@ -14,7 +14,7 @@
+>   #	SRCU,	a Sleepable-Read-Copy-Update event
+>   #
+>   #	po,	a Program-Order link
+> -#	rmw,	a Read-Modify-Write link
+> +#	rmw,	a Read-Modify-Write link; every rmw link is a po link
+>   #
+>   # By convention, a blank entry/representation means "same as the preceding entry".
+>   #
 > 
-> I've tried to break this series up as much as possible to make it
-> easier to understand but the final patch is still a lot of change at
-> once. Hopefully it's OK.
+> I can respin the patch shortly to add something along these lines and
+> the collected tags.
+> 
+>    Andrea
 
-Tested-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Sounds good to me.
 
-Konrad
+Hernan
+
 
