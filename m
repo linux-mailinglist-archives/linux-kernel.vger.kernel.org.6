@@ -1,166 +1,491 @@
-Return-Path: <linux-kernel+bounces-218898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A4390C77D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:45:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DF890C783
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5479B24140
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:45:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12A50B2262A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB1D1BA86C;
-	Tue, 18 Jun 2024 08:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023701BB698;
+	Tue, 18 Jun 2024 08:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="AJTHda8q"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eMPbv+Rn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11ACF23BE
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F0E1552EB;
+	Tue, 18 Jun 2024 08:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718701061; cv=none; b=T0/YOLEXpE/HvgI+wJ28d8L/KTIff3HTwManD4IZKF2EmmYCswCzT4EH3L2O5m4ik4xM1e5vDdED7+tICIKhIfJHyXG3OU7nWfoaBmyszG6owhkJR2LeWLEvaSlBm8g7PQWx8EY5r9v8mCxK/Wk99GlNdYbFsBUH2U5n/QuVu3s=
+	t=1718701093; cv=none; b=rzMIP9tTZEoS7gvs4Becj1lmglAiUqxmIr2l/+KRzK/pn9+iregk1aRFMivpshzFZiAnBRCCFWY21h8n1lEDJ3MiFh7m+3K7zIgzekklxvpAmvygMygJLqNlRtmP9AF/T8E4fliWK9YUF11t82Gd/HenPVXdnKjssRjZQyKffjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718701061; c=relaxed/simple;
-	bh=c8iN7F59VK8HhpRn5l0fFGS0r0gE+mAVh1zkO8Ckw4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AoQ3KLzWoqOKFsFLrh0hryNO4+cKitD4x3j2TqeYxDUy9CdnXfuAkaLYZt3bqCrTOt9ajF+TaPOLC7jFPg4Tw5VfoG2kTLiJaMRfhh2/fN9NPezMNbi3lMyLzcmCTkvLOsCUIwr8bK75xVM8cGZbtFQJYAqBCXJimv6MCeOi3gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=AJTHda8q; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7953f1dcb01so449730485a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:57:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1718701059; x=1719305859; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1MJWeAXBDDEpLuGkGIY36gY2Jr0ZSeY/lNnVY9HPv1s=;
-        b=AJTHda8qFeJGi4Ouo/iCiDuY/IxDlt+zCXmu9Jaz9rfuoaFWAuHnKrlPgYoAlYnzkd
-         BpXvcp3bOWkaWUVfGS+/PzwaK+jziPtQyEvj3ToS0X40YSBs2v70LHF+1RuvJ+sVUKCr
-         GPHOklVb6nUApWKTEE8lxtgWObsXzEQtT+dSE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718701059; x=1719305859;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1MJWeAXBDDEpLuGkGIY36gY2Jr0ZSeY/lNnVY9HPv1s=;
-        b=mrTkf15cPnOKowfeSpcq+ycvEVzxR2boOlRTZp1WINtCQNAKQf0uQfMIZqheV4irPh
-         snInonhsm0MGTQt/OZU8J6zuolnQrDzOb7+TSHpTQQ8YHf09IP7ludoPcbYBfGdBqcXl
-         mNcSXy2VROL/WbEaPvWuM4p967Vn8jmaFt0l/UBMRy57j+rAtc/KLmiSqcrdAvhtL/gA
-         La6Q/FI6oEV9M3/iksGH7BLZK2HD7LTJbLMR7Zycf0Q/nT+npdiXWPJO+Hs3n/3z+8rh
-         D2I3cHOKPgaN/uHN0rkWpEJrVgzVLX5/2IvMoHo0mC2gvxSq8xwsJzXg+S10NMYYlKNy
-         1SmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXN40BVjE4KEsOakJVhl582ehQ5+orSskICLWQsVVrCt2l3Pxf0H07HnyrFPrcwXuVRd7AGWFp1fdu8EkPVjzSHmJEpC1DHRRxWZfIA
-X-Gm-Message-State: AOJu0Yzhc2pVIqlxmqaMN/f/6Oy0nraTmpCe3DcahnyjJ1azlXJb9lJg
-	usfjIabopb88Z2xi58Qtl6slxBCewm7Xva4iow731pVZ9pzWZBAE2tR8HCJdPRk=
-X-Google-Smtp-Source: AGHT+IFECmvJp1ez2eLa+dpQfO6eX8nUMX4FYtnOHPp9ThmxkkpraoTUSlv3dCTdEWRDY19HCOSrbQ==
-X-Received: by 2002:a05:620a:4005:b0:797:cfb3:155f with SMTP id af79cd13be357-798d240afdamr1497813685a.27.1718701058859;
-        Tue, 18 Jun 2024 01:57:38 -0700 (PDT)
-Received: from localhost ([213.195.124.163])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abe6b4dfsm506192185a.125.2024.06.18.01.57.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 01:57:38 -0700 (PDT)
-Date: Tue, 18 Jun 2024 10:57:35 +0200
-From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To: Frediano Ziglio <frediano.ziglio@cloud.com>
-Cc: Jan Beulich <jbeulich@suse.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/xen/time: Reduce Xen timer tick
-Message-ID: <ZnFL_0ihWiI7Yaf0@macbook>
-References: <20240617141303.53857-1-frediano.ziglio@cloud.com>
- <2fe6ef97-84f2-4bf4-870b-b0bb580fa38f@suse.com>
- <ZnBKDRWi_2cO6WbA@macbook>
- <CACHz=Zg4Zoyr4KNeig4yDDNUxvV325beJEyT-L-K0a+FHp7oDg@mail.gmail.com>
+	s=arc-20240116; t=1718701093; c=relaxed/simple;
+	bh=3W21+/H7uqXSeUl2bt/Yf5odrWTi0tOATJxnwNClTSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RnA4Vo2I9KEeqeKsPpXaaBmobyj1vikWE5aJIRLHezHGIXlJcbxBfRc52dgTefV4mLRdC8N16wirxsF4fb3yqWQmRh28AMuMtgVVbkq/yhXwzvfQa0PsNipPU+fzAUFBtRL84cqPINawnraPw6lYj7o+hqo/QWG2v4q4DeG4DB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eMPbv+Rn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I3ZZNw029915;
+	Tue, 18 Jun 2024 08:58:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FOCmB1tNzN+HF0fTxu3qndThVQYt4zFG9ozhTsAp/BA=; b=eMPbv+Rn8+BWp44a
+	iTFCqy8ryHYHzfuimMBy3YhTps/HOMSsuSepPeoJO/aoGl/pYtiPmvDQm8RThn53
+	SYgljCqRFiGjuSx4xxfDsmdL71bY56UCXW/U77LxuqAFmqBZwBkxVVwD72GuSB7l
+	Z/EZZh4KpeJVFvm6nnd+XWseS6JDjjgYjm/aITaYA8g+v5ullym8KARdbrmfcwlu
+	PCul3Tba2ePcqt0QWqKnuwiBaVehj+n/wEgciYwLA66UHwWA1PGh1YjXaYcTiThE
+	7ECFTJmfytWfkB9+deYCLeWchf5VERBiSD/0lFrAsg/MaB6qEOKE+pSuIiznHe6a
+	4KtEOw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytfut37pe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 08:58:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I8w6wJ029547
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 08:58:06 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 01:58:00 -0700
+Message-ID: <0c10b451-792d-4f71-943e-16511f9d2a3d@quicinc.com>
+Date: Tue, 18 Jun 2024 16:57:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACHz=Zg4Zoyr4KNeig4yDDNUxvV325beJEyT-L-K0a+FHp7oDg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 4/4] arm64: dts: qcom: aim300: add AIM300 AIoT
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        Qiang Yu <quic_qianyu@quicinc.com>,
+        Ziyue Zhang
+	<quic_ziyuzhan@quicinc.com>
+References: <20240618072202.2516025-1-quic_tengfan@quicinc.com>
+ <20240618072202.2516025-5-quic_tengfan@quicinc.com>
+ <qck3nuenuizs46an3kd2akhmadu6dwumxsv5jrg4uwk53ke4l2@vt47suphknyq>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <qck3nuenuizs46an3kd2akhmadu6dwumxsv5jrg4uwk53ke4l2@vt47suphknyq>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: FxSsyrT-LB7t5rafO8ZyfwlM4KmvXrKw
+X-Proofpoint-GUID: FxSsyrT-LB7t5rafO8ZyfwlM4KmvXrKw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0 mlxscore=0
+ adultscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180066
 
-On Tue, Jun 18, 2024 at 09:37:08AM +0100, Frediano Ziglio wrote:
-> On Mon, Jun 17, 2024 at 3:37 PM Roger Pau Monné <roger.pau@citrix.com> wrote:
-> >
-> > On Mon, Jun 17, 2024 at 04:22:21PM +0200, Jan Beulich wrote:
-> > > On 17.06.2024 16:13, Frediano Ziglio wrote:
-> > > > Current timer tick is causing some deadline to fail.
-> > > > The current high value constant was probably due to an old
-> > > > bug in the Xen timer implementation causing errors if the
-> > > > deadline was in the future.
-> > > > This was fixed in Xen commit:
-> > > > 19c6cbd90965 xen/vcpu: ignore VCPU_SSHOTTMR_future
-> > >
-> > > And then newer kernels are no longer reliably usable on Xen older than
-> > > this?
-> >
-> > I think this should reference the Linux commit that removed the usage
-> > of VCPU_SSHOTTMR_future on Linux itself, not the change that makes Xen
-> > ignore the flag.
-> >
+
+
+On 6/18/2024 4:48 PM, Dmitry Baryshkov wrote:
+> On Tue, Jun 18, 2024 at 03:22:02PM GMT, Tengfei Fan wrote:
+>> Add AIM300 AIoT Carrier board DTS support, including usb, UART, PCIe,
+>> I2C functions support.
+>> Here is a diagram of AIM300 AIoT Carrie Board and SoM
+>>   +--------------------------------------------------+
+>>   |             AIM300 AIOT Carrier Board            |
+>>   |                                                  |
+>>   |           +-----------------+                    |
+>>   |power----->| Fixed regulator |---------+          |
+>>   |           +-----------------+         |          |
+>>   |                                       |          |
+>>   |                                       v VPH_PWR  |
+>>   | +----------------------------------------------+ |
+>>   | |                          AIM300 SOM |        | |
+>>   | |                                     |VPH_PWR | |
+>>   | |                                     v        | |
+>>   | |   +-------+       +--------+     +------+    | |
+>>   | |   | UFS   |       | QCS8550|     |PMIC  |    | |
+>>   | |   +-------+       +--------+     +------+    | |
+>>   | |                                              | |
+>>   | +----------------------------------------------+ |
+>>   |                                                  |
+>>   |                    +----+          +------+      |
+>>   |                    |USB |          | UART |      |
+>>   |                    +----+          +------+      |
+>>   +--------------------------------------------------+
+>>
+>> Co-developed-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> Co-developed-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+>> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>>   .../boot/dts/qcom/qcs8550-aim300-aiot.dts     | 315 ++++++++++++++++++
+>>   2 files changed, 316 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>> index 0c1cebd16649..5576c7d6ea06 100644
+>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>> @@ -102,6 +102,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= qrb4210-rb2.dtb
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts b/arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
+>> new file mode 100644
+>> index 000000000000..d4fb10149e66
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
+>> @@ -0,0 +1,315 @@
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include <dt-bindings/leds/common.h>
+>> +#include "qcs8550-aim300.dtsi"
+>> +#include "pm8010.dtsi"
+>> +#include "pmr735d_a.dtsi"
+>> +#include "pmr735d_b.dtsi"
+>> +
+>> +/ {
+>> +	model = "Qualcomm Technologies, Inc. QCS8550 AIM300 AIOT";
+>> +	compatible = "qcom,qcs8550-aim300-aiot", "qcom,qcs8550-aim300", "qcom,qcs8550",
+>> +		     "qcom,sm8550";
+>> +
+>> +	aliases {
+>> +		serial0 = &uart7;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +
+>> +	gpio-keys {
+>> +		compatible = "gpio-keys";
+>> +
+>> +		pinctrl-0 = <&volume_up_n>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		key-volume-up {
+>> +			label = "Volume Up";
+>> +			debounce-interval = <15>;
+>> +			gpios = <&pm8550_gpios 6 GPIO_ACTIVE_LOW>;
+>> +			linux,code = <KEY_VOLUMEUP>;
+>> +			linux,can-disable;
+>> +			wakeup-source;
+>> +		};
+>> +	};
+>> +
+>> +	pmic-glink {
+>> +		compatible = "qcom,sm8550-pmic-glink", "qcom,pmic-glink";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		orientation-gpios = <&tlmm 11 GPIO_ACTIVE_HIGH>;
+>> +
+>> +		connector@0 {
+>> +			compatible = "usb-c-connector";
+>> +			reg = <0>;
+>> +			power-role = "dual";
+>> +			data-role = "dual";
+>> +
+>> +			ports {
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +
+>> +				port@0 {
+>> +					reg = <0>;
+>> +
+>> +					pmic_glink_hs_in: endpoint {
+>> +						remote-endpoint = <&usb_1_dwc3_hs>;
+>> +					};
+>> +				};
+>> +
+>> +				port@1 {
+>> +					reg = <1>;
+>> +
+>> +					pmic_glink_ss_in: endpoint {
+>> +						remote-endpoint = <&redriver_ss_out>;
+>> +					};
+>> +				};
+>> +
+>> +				port@2 {
+>> +					reg = <2>;
+>> +
+>> +					pmic_glink_sbu: endpoint {
+>> +						remote-endpoint = <&fsa4480_sbu_mux>;
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	vph_pwr: regulator-vph-pwr {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "vph_pwr";
+>> +		regulator-min-microvolt = <3700000>;
+>> +		regulator-max-microvolt = <3700000>;
+>> +
+>> +		regulator-always-on;
+>> +		regulator-boot-on;
+>> +	};
+>> +};
+>> +
+>> +&apps_rsc {
+>> +	regulators-0 {
+>> +		vdd-bob1-supply = <&vph_pwr>;
+>> +		vdd-bob2-supply = <&vph_pwr>;
+>> +	};
+>> +
+>> +	regulators-3 {
+>> +		vdd-s4-supply = <&vph_pwr>;
+>> +		vdd-s5-supply = <&vph_pwr>;
+>> +	};
+>> +
+>> +	regulators-4 {
+>> +		vdd-s4-supply = <&vph_pwr>;
+>> +	};
+>> +
+>> +	regulators-5 {
+>> +		vdd-s1-supply = <&vph_pwr>;
+>> +		vdd-s2-supply = <&vph_pwr>;
+>> +		vdd-s3-supply = <&vph_pwr>;
+>> +		vdd-s4-supply = <&vph_pwr>;
+>> +		vdd-s5-supply = <&vph_pwr>;
+>> +		vdd-s6-supply = <&vph_pwr>;
+>> +	};
+>> +};
+>> +
+>> +&i2c_hub_2 {
+>> +	status = "okay";
+>> +
+>> +	typec-mux@42 {
+>> +		compatible = "fcs,fsa4480";
+>> +		reg = <0x42>;
+>> +
+>> +		vcc-supply = <&vreg_bob1>;
+>> +
+>> +		mode-switch;
+>> +		orientation-switch;
+>> +
+>> +		port {
+>> +			fsa4480_sbu_mux: endpoint {
+>> +				remote-endpoint = <&pmic_glink_sbu>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	typec-retimer@1c {
+>> +		compatible = "onnn,nb7vpq904m";
+>> +		reg = <0x1c>;
+>> +
+>> +		vcc-supply = <&vreg_l15b_1p8>;
+>> +
+>> +		orientation-switch;
+>> +		retimer-switch;
+>> +
+>> +		ports {
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +
+>> +			port@0 {
+>> +				reg = <0>;
+>> +
+>> +				redriver_ss_out: endpoint {
+>> +					remote-endpoint = <&pmic_glink_ss_in>;
+>> +				};
+>> +			};
+>> +
+>> +			port@1 {
+>> +				reg = <1>;
+>> +
+>> +				redriver_ss_in: endpoint {
+>> +					data-lanes = <3 2 1 0>;
+>> +					remote-endpoint = <&usb_dp_qmpphy_out>;
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&mdss_dsi0 {
+>> +	status = "okay";
+>> +
+>> +	panel@0 {
+>> +		compatible = "visionox,vtdr6130";
+>> +		reg = <0>;
+>> +
+>> +		pinctrl-0 = <&dsi_active>, <&te_default>;
+>> +		pinctrl-1 = <&dsi_suspend>, <&te_default>;
+>> +		pinctrl-names = "default", "sleep";
+>> +
+>> +		reset-gpios = <&tlmm 133 GPIO_ACTIVE_LOW>;
+>> +
+>> +		vci-supply = <&vreg_l13b_3p0>;
+>> +		vdd-supply = <&vreg_l11b_1p2>;
+>> +		vddio-supply = <&vreg_l12b_1p8>;
+>> +
+>> +		port {
+>> +			panel0_in: endpoint {
+>> +				remote-endpoint = <&mdss_dsi0_out>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&mdss_dsi0_out {
+>> +	remote-endpoint = <&panel0_in>;
+>> +	data-lanes = <0 1 2 3>;
+>> +};
+>> +
+>> +&mdss_dsi0_phy {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pcie0 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pcie0_phy {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pcie1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pcie1_phy {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pm8550_gpios {
+>> +	volume_up_n: volume-up-n-state {
+>> +		pins = "gpio6";
+>> +		function = "normal";
+>> +		power-source = <1>;
+>> +		bias-pull-up;
+>> +		input-enable;
+>> +	};
+>> +};
+>> +
+>> +&pon_pwrkey {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pon_resin {
+>> +	linux,code = <KEY_VOLUMEDOWN>;
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>> +&qupv3_id_0 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&remoteproc_adsp {
+>> +	firmware-name = "qcom/qcs8550/adsp.mbn",
+>> +			"qcom/qcs8550/adsp_dtbs.mbn";
 > 
-> Yes, Linux kernel stopped using this flag since 2016 with commit
-> c06b6d70feb32d28f04ba37aa3df17973fd37b6b, "xen/x86: don't lose event
-> interrupts", I'll add it in the commit message.
+> adsp_dtb.mbn, not _dtbs.mbn.
 > 
-> > > > --- a/arch/x86/xen/time.c
-> > > > +++ b/arch/x86/xen/time.c
-> > > > @@ -30,7 +30,7 @@
-> > > >  #include "xen-ops.h"
-> > > >
-> > > >  /* Minimum amount of time until next clock event fires */
-> > > > -#define TIMER_SLOP 100000
-> > > > +#define TIMER_SLOP 1000
-> > >
-> > > It may be just the lack of knowledge of mine towards noadays's Linux'es
-> > > time handling, but the change of a value with this name and thus
-> > > commented doesn't directly relate to "timer tick" rate. Could you maybe
-> > > help me see the connection?
-> >
-> > The TIMER_SLOP define is used in min_delta_{ns,ticks} field, and I
-> > think this is wrong.
-> >
-> > The min_delta_ns for the Xen timer is 1ns.  If Linux needs some
-> > greater min delta than what the timer interface supports it should be
-> > handled in the generic timer code, not open coded at the definition of
-> > possibly each timer implementation.
-> >
+> https://lore.kernel.org/linux-arm-msm/s5gt3p6zsd5ebrkop4dhd33tykln33f6ahu3pibymecxsmakyd@lg5wfgec6dat/
+
+Previously, I observed different names in the comments and the patch, 
+and I initially think that "_dtb" is a clerical error. However, I now 
+realize that this is my mistake, and I will update "_dtbs" with "_dtb" 
+in the next verion patch series.
+
 > 
-> I think this is done to reduce potential event handling frequency, in
-> some other part of timer code (in kernel/time/clockevents.c) there's a
-> comment "Deltas less than 1usec are pointless noise".
+>> +	status = "okay";
+>> +};
+>> +
+>> +&remoteproc_cdsp {
+>> +	firmware-name = "qcom/qcs8550/cdsp.mbn",
+>> +			"qcom/qcs8550/cdsp_dtbs.mbn";
+>> +	status = "okay";
+>> +};
+>> +
+>> +&swr1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&swr2 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&tlmm {
+>> +	gpio-reserved-ranges = <32 8>;
+>> +
+>> +	dsi_active: dsi-active-state {
+>> +		pins = "gpio133";
+>> +		function = "gpio";
+>> +		drive-strength = <8>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	dsi_suspend: dsi-suspend-state {
+>> +		pins = "gpio133";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-pull-down;
+>> +	};
+>> +
+>> +	te_default: te-default-state {
+>> +		pins = "gpio86";
+>> +		function = "mdp_vsync";
+>> +		drive-strength = <2>;
+>> +		bias-pull-down;
+>> +	};
+>> +};
+>> +
+>> +&uart7 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_1_dwc3_hs {
+>> +	remote-endpoint = <&pmic_glink_hs_in>;
+>> +};
+>> +
+>> +&usb_1_hsphy {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_dp_qmpphy {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_dp_qmpphy_out {
+>> +	remote-endpoint = <&redriver_ss_in>;
+>> +};
+>> -- 
+>> 2.25.1
+>>
+> 
 
-Then why does the interface allow for timers having a resolution up to
-1ns then?
-
-> I think it's hard for a software to get a frequency so high so I
-> didn't propose 1ns.
-> What are you suggesting? To put 1ns and see what happens? Is there any
-> proper test code for this?
-
-The Xen timer interface has a resolution of 1ns, and the Linux
-structures that describe timers also support a 1ns resolution.  I can
-perfectly understand that deltas of 1ns make no sense, but given how
-the Xen timer works those won't be a problem.  The interrupt will get
-injected strictly after the hypercall to setup the timer, because by
-the time Xen processes the delta it will most likely have already
-expired.
-
-Forcing every timer to setup a minimal delta of 1usec is pointless.
-It either needs to be done in the generic code, or the interface to
-register timers needs to be adjusted to allow for a minimum resolution
-of 1usec.
-
-Thanks, Roger.
+-- 
+Thx and BRs,
+Tengfei Fan
 
