@@ -1,149 +1,193 @@
-Return-Path: <linux-kernel+bounces-219159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424CB90CAB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:58:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D2490CAB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5621F231C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:57:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0138284E8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB3D15CD71;
-	Tue, 18 Jun 2024 11:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JIbUsMz9"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260F815D5D6;
+	Tue, 18 Jun 2024 11:46:06 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B063E15CD66
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE20815D5C8;
+	Tue, 18 Jun 2024 11:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718711142; cv=none; b=SX0wY9vu9Gj5BYEwafolJibTKgVFYTKKDK7KngcGD2r/UW7bfPFCYPtMP+2Tofnb4CWd5qwwyA7luhq0MGptq5+/kg3reWdFX1dzkuPU6XFrLuAStQAz1iSUvMhWgb7glaNh9/PYPK64byavcuRXOkMG6uAR0r7/ODufxxsK+lM=
+	t=1718711165; cv=none; b=Io409czbgaMyOFojKOh3L5jDCHWRVqSGsjq1RfPuIpFKtInAVKnOw0BKt3oljXUZhjiCmazyMamnR0Jajr1u6cfTGqhyTdZvf1dbOXpAt/JmS7VSPMHKlOto4zydmL9PpgV8XrQkc/lK0vUHWm/gS1fY5Ioo7K0tG38xsZQfs/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718711142; c=relaxed/simple;
-	bh=tYe3DD1fCSMHGzPNpWN6MJvkH+q9PwDNhe1nQN+VMH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ua6AdldHYVMCbyfkCNn0QRk/RbDiXDPxVcAI2kFpuac65gNtWepe9oeX0V14LZ9rN43cqOyy747R0z2fXqy/GzrzDWdGX5fPdEcZv02nXQZqvNNI22K+OG4fyIy4AB8jv0duY4VvaVvpD8hPj6QCEflcAw6THATUp1g4VLxqQkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JIbUsMz9; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3620ee2cdf7so357739f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1718711139; x=1719315939; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LYDxvLQlYGKG+H67tH5VGth33yFnD49SE9fJWyG5TWQ=;
-        b=JIbUsMz9YKV810xZikRysFuWU6jHwx/dvWyjGfTvxkBY+FKRhJyf+U21qbWDxyNfbC
-         a6Y99nL1BvwN1Rc36wX1JpUiNCP623SYJAc2pE5ACTt/jwgeI9gTHCLGKVLyTORFzeV5
-         E08O7t4nYvSUMWH7P3dFt3Ktrw0acfORAQjn2FcEdSmuZE3NUMlrVM1q9qTg19mwRrBc
-         hrku79oJMBYB1xBlpAKG+bKraZ4SvkGjeb9YpETgH3J5xOt0kcUpNmaz2njG0kDt6o9Q
-         Q8ZQn57AycAwSkGj/Fo+vqw9ePrj/R5ZNzjSxxU1JT2bDplJT3y+12GehUagsXevnGFf
-         eloQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718711139; x=1719315939;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LYDxvLQlYGKG+H67tH5VGth33yFnD49SE9fJWyG5TWQ=;
-        b=Zgi+/+7SmEsqdSo4ZnixoYd9i15V1YJv8oxEoSHg5A3luXBOwEYnYD2KOphhPAyvXQ
-         sk0KCxs+8aort3zzPzSbuoMzJwKG3ZPs+frPJqRxBApG0xQkZXYEzXjS4F4mqvVqxPQb
-         Qgi+1q6wGjMvDuTaBRKFTJfrR92MUroeGdBIVCgVbos0lGH//Ahhcde+j5cuLhh/P3WR
-         he2fWHfdvj1Y3mLMEg0HyA7oTQarO0MDnzQYIcCa3T7sawA6Injfve/GpBxmAKKX0I9L
-         4hcoBlfe0KsFBCfbrlGpGHtIZ9KWO4VgZ+vsDzMP0+f3YPuNfVLxzzW8JdVpaJVh9Xn6
-         3DWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUp1RbgSnzFStOqm7N6udr3xX4NQcExuEZbrMjrkM24kDftMfxSkPXX8jHMzxgJGnY/CP/Qyw0ILYU2QrZ5mAxqP9GrXs5t9TDoqag
-X-Gm-Message-State: AOJu0Yxi/r7KmuzJTFzZFWyderMzXkOvhDSSH9QvDiHJUlBigpeyjVYb
-	sIjKkK+fvASzmCtozyvx7IM32LPRSDTbUkfDPJplJDpJ2BDWWgQAkA7CoASfV34=
-X-Google-Smtp-Source: AGHT+IFWr8Mwu092i/2cJesdM+pm/8E0cF3K/P15rEkIwx6q7O0QTmYvoW47jTNzu5m4wm/boVs8WQ==
-X-Received: by 2002:a5d:4e42:0:b0:35f:2c43:8861 with SMTP id ffacd0b85a97d-3607a78112bmr8449439f8f.66.1718711138987;
-        Tue, 18 Jun 2024 04:45:38 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3609d95bc02sm2506195f8f.18.2024.06.18.04.45.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 04:45:38 -0700 (PDT)
-Message-ID: <7a9eddb2-2ad1-4aab-8edb-548f05b524ec@suse.com>
-Date: Tue, 18 Jun 2024 14:45:37 +0300
+	s=arc-20240116; t=1718711165; c=relaxed/simple;
+	bh=1QIcrNptfaU/0/hqEe+Sb9+thzwL6QqBhrUZ3lP5deU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E8f28h2KWWbrZwT6KBKyA+veCTDYO58V9VAenoBNzu9bM5sum52+5a+5bZYAvIw/UNqyhWVTGHxH/KtEbA1e5kHLs30uLqF/UlH/W+Sb0nmz5+PEs74X54Mxoj/UlL07xALEnHIMB7hfUBaQYrqCRjgtuInv4q8lr6hlZtREIXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W3Pzx5LGBzdc8F;
+	Tue, 18 Jun 2024 19:44:29 +0800 (CST)
+Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
+	by mail.maildlp.com (Postfix) with ESMTPS id EAC25140361;
+	Tue, 18 Jun 2024 19:45:59 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 18 Jun 2024 19:45:59 +0800
+Message-ID: <815fcddf-85cc-126e-4be1-618b5ba8f823@huawei.com>
+Date: Tue, 18 Jun 2024 19:45:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] x86/virt/tdx: Abstract reading multiple global
- metadata fields as a helper
-To: Kai Huang <kai.huang@intel.com>, linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, dave.hansen@intel.com, dan.j.williams@intel.com,
- kirill.shutemov@linux.intel.com, rick.p.edgecombe@intel.com,
- peterz@infradead.org, tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
- hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
- isaku.yamahata@intel.com, binbin.wu@linux.intel.com
-References: <cover.1718538552.git.kai.huang@intel.com>
- <dd4ab4f97fc12780e4052f7ece94ceadffafd24d.1718538552.git.kai.huang@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <dd4ab4f97fc12780e4052f7ece94ceadffafd24d.1718538552.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v3] scsi: libsas: Fix exp-attached end device cannot be
+ scanned in again after probe failed
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <yanaijie@huawei.com>,
+	<jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<damien.lemoal@opensource.wdc.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
+	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
+References: <20240613122355.7797-1-yangxingui@huawei.com>
+ <437c99f4-a67d-48d9-98ee-58cbbc3d19f4@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <437c99f4-a67d-48d9-98ee-58cbbc3d19f4@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpemm500002.china.huawei.com (7.185.36.229) To
+ dggpemd100001.china.huawei.com (7.185.36.94)
 
+Hi, John,
 
+Thanks for your reply.
 
-On 16.06.24 г. 15:01 ч., Kai Huang wrote:
-> For now the kernel only reads "TD Memory Region" (TDMR) related global
-> metadata fields to a 'struct tdx_tdmr_sysinfo' for initializing the TDX
-> module.  Future changes will need to read other metadata fields that
-> don't make sense to populate to the "struct tdx_tdmr_sysinfo".
+On 2024/6/18 16:55, John Garry wrote:
+> On 13/06/2024 13:23, Xingui Yang wrote:
 > 
-> Now the code in get_tdx_tdmr_sysinfo() to read multiple global metadata
-> fields is not bound to the 'struct tdx_tdmr_sysinfo', and can support
-> reading all metadata element sizes.  Abstract this code as a helper for
-> future use.
+> Sorry for delay in responding and asking further questions.
+It doesn't matter.
 > 
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> ---
->   arch/x86/virt/vmx/tdx/tdx.c | 27 ++++++++++++++++-----------
->   1 file changed, 16 insertions(+), 11 deletions(-)
+>> We found that it is judged as broadcast flutter when the exp-attached end
+>> device reconnects after probe failed, as follows:
+>>
+>> [78779.654026] sas: broadcast received: 0
+>> [78779.654037] sas: REVALIDATING DOMAIN on port 0, pid:10
+>> [78779.654680] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+>> [78779.662977] sas: ex 500e004aaaaaaa1f phy05 originated 
+>> BROADCAST(CHANGE)
+>> [78779.662986] sas: ex 500e004aaaaaaa1f phy05 new device attached
+>> [78779.663079] sas: ex 500e004aaaaaaa1f phy05:U:8 attached: 
+>> 500e004aaaaaaa05 (stp)
+>> [78779.693542] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] found
+>> [78779.701155] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+>> [78779.707864] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+>> ...
+>> [78835.161307] sas: --- Exit sas_scsi_recover_host: busy: 0 failed: 0 
+>> tries: 1
+>> [78835.171344] sas: sas_probe_sata: for exp-attached device 
+>> 500e004aaaaaaa05 returned -19
+>> [78835.180879] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] is gone
+>> [78835.187487] sas: broadcast received: 0
+>> [78835.187504] sas: REVALIDATING DOMAIN on port 0, pid:10
+>> [78835.188263] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+>> [78835.195870] sas: ex 500e004aaaaaaa1f phy05 originated 
+>> BROADCAST(CHANGE)
+>> [78835.195875] sas: ex 500e004aaaaaaa1f rediscovering phy05
+>> [78835.196022] sas: ex 500e004aaaaaaa1f phy05:U:A attached: 
+>> 500e004aaaaaaa05 (stp)
+>> [78835.196026] sas: ex 500e004aaaaaaa1f phy05 broadcast flutter
+>> [78835.197615] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+>>
+>> The cause of the problem is that the related ex_phy's 
+>> attached_sas_addr was
+>> not cleared after the end device probe failed. In order to solve the 
+>> above
+>> problem, a function sas_ex_unregister_end_dev() is defined to clear the
+>> ex_phy information and unregister the end device after the 
+>> exp-attached end
+>> device probe failed.
 > 
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index 4392e82a9bcb..c68fbaf4aa15 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -304,6 +304,21 @@ struct field_mapping {
->   	  .offset   = offsetof(_struct, _member),		\
->   	  .size	    = sizeof(typeof(((_struct *)0)->_member)) }
->   
-> +static int stbuf_read_sysmd_multi(const struct field_mapping *fields,
+> Can you just manually clear the ex_phy's attached_sas_addr at the 
+> appropiate point (along with calling sas_unregister_dev())? It seems 
+> that we are using heavy-handed approach in calling 
+> sas_unregister_devs_sas_addr(), which does the clearing and much more.
 
-Rename it to read_system_metadata_fields i.e just use the plural form of 
-the single field function. Whatever you choose to rename the singular 
-form, just make this function be the plural. But as a general remark - I 
-don't see what value the "stbuf" prefix brings. 'sysmd' is also somewhat 
-unintuitive. Any of 
-read_metadata_fields/read_sys_metadata_fields/read_system_metadata_fields 
-seem better.
+I just tried it and it worked. If we only clear ex_phy's 
+attached_sas_addr, there is no need to call sas_destruct_ports(). We are 
+currently using sas_unregister_devs_sas_addr() which will add the port 
+to sas_port_del_list, so we need to call sas_destruct_ports() separately 
+to delete the port.
 
-> +				  int nr_fields, void *stbuf)
-> +{
-> +	int i, ret;
-> +
-> +	for (i = 0; i < nr_fields; i++) {
-> +		ret = stbuf_read_sysmd_field(fields[i].field_id, stbuf,
-> +				      fields[i].offset, fields[i].size);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   #define TD_SYSINFO_MAP_TDMR_INFO(_field_id, _member)	\
->   	TD_SYSINFO_MAP(_field_id, struct tdx_tdmr_sysinfo, _member)
->   
+Should we also delete the port after the devices probe failed?
 
-<snip>
+Maybe I can update another version and only clear ex_phy's 
+attached_sas_addr based on your suggestions.
+> 
+>>
+>> As devices may probe failed after done REVALIDATING DOMAIN when call
+>> sas_probe_devices(). Then after its port is added to the 
+>> sas_port_del_list,
+>> the port will not be deleted until the end of the next REVALIDATING 
+>> DOMAIN
+>> and sas_destruct_ports() is called. A warning about creating a duplicate
+>> port will occur in the new REVALIDATING DOMAIN when the end device
+>> reconnects. Therefore, the previous destroy_list and sas_port_del_list
+>> should be handled after devices probe failed.
+>>
+>> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+>> ---
+>> Changes since v2:
+>> - Add a helper for calling sas_destruct_devices() and 
+>> sas_destruct_ports(),
+>>    and put the new call at the end of sas_probe_devices() based on John's
+>>    suggestion.
+>>
+>> Changes since v1:
+>> - Simplify the process of getting ex_phy id based on Jason's suggestion.
+>> - Update commit information.
+>> ---
+>>   drivers/scsi/libsas/sas_discover.c | 32 +++++++++++++++++++-----------
+>>   drivers/scsi/libsas/sas_expander.c |  8 ++++++++
+>>   drivers/scsi/libsas/sas_internal.h |  6 +++++-
+>>   3 files changed, 33 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/scsi/libsas/sas_discover.c 
+>> b/drivers/scsi/libsas/sas_discover.c
+>> index 8fb7c41c0962..8c517e47d2b9 100644
+>> --- a/drivers/scsi/libsas/sas_discover.c
+>> +++ b/drivers/scsi/libsas/sas_discover.c
+>> @@ -17,6 +17,22 @@
+>>   #include <scsi/sas_ata.h>
+>>   #include "scsi_sas_internal.h"
+>> +static void sas_destruct_ports(struct asd_sas_port *port)
+>> +{
+>> +    struct sas_port *sas_port, *p;
+>> +
+>> +    list_for_each_entry_safe(sas_port, p, &port->sas_port_del_list, 
+>> del_list) {
+>> +        list_del_init(&sas_port->del_list);
+>> +        sas_port_delete(sas_port);
+>> +    }
+>> +}
+>> +
+>> +static void sas_destruct_devices_and_ports(struct asd_sas_port *port)
+> 
+> "and" in a function name never sounds right.
+> 
+> Can you just call sas_destruct_port(), as it takes a port arg? Maybe 
+> rename sas_destruct_ports() to sas_delete_ports(), as it does "delete" - 
+> this may avoid some confusion in names.
+As described above, if we only clear ex_phy's attached_sas_addr, we do 
+not need to call sas_destruct_ports().
+Thanks,
+Xingui
 
