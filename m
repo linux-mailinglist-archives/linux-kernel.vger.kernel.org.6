@@ -1,132 +1,361 @@
-Return-Path: <linux-kernel+bounces-220041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 618F290DBE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:51:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F8190DBE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F6152846F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:51:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8038A1F23201
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA3B15ECFE;
-	Tue, 18 Jun 2024 18:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F148315ECDF;
+	Tue, 18 Jun 2024 18:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B1CnBC4l"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5Rtj8SvJ"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2045.outbound.protection.outlook.com [40.107.237.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783C515ECCD
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 18:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718736662; cv=none; b=r0mZC2bcivBjjWjQWzzur2EHpCzo/j4C1GBtHy4NV1iNzIN243kZLcJlsJy+1zrg56Jm4xkzGUZ6PP7Bdmu8tGb059mPfOOhrd7AT4wbBnlI4ToR1nbkfhTT/Gqs+GPbhD6QOWy34Dgv45mJBCzLtv0ahhs0rfl0EPOJrG9c0xI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718736662; c=relaxed/simple;
-	bh=NkHkzXa3IOCwA/bnH2ptoDEs9xXxwvdNDNIjWAKEBgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V64yMD64NYmAxD4Yv0IRunwZKGn1SWs70UVShSBrd+3mVec4gb+hNNL3D3nlBcube/Egwu29P7fcFtaOsUsB3QPREEwUzx6r+TVmEl7p4bkCthWxjZYWGmjbbvh4AzzyPh3MOglgYy/iKP/PgC15h1GL9H9g9oXveX1Uq8u8ADU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B1CnBC4l; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-421bb51d81aso44036365e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:51:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718736659; x=1719341459; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4NNuHMGJgaTKLiPOtfYsc30dpCZBTyvx+s6PAIySkOw=;
-        b=B1CnBC4lv0uxVhTJbMMGvOs0BWMpAcBioHJ2pf2C56XX4fYvC27/QDtazMbHCar/ti
-         /kjpXDCVZcgA3iRYgkIaDHEEdYrP3oD+smcGm85WdlfdoaLXgUjAGnUrKbLiA8hg5P6R
-         +Jl0IeOt29DLT9UrjIieWa6Z9EgT340zxob6iBgrX7g8cYxCeZ4QXOKeQZVD/eELbsq0
-         cIviw/Buu7wB9o708z3WKx9xr40FCnBMjvzHg3IU8XDIPHZKkI6LU9JZzoWqJvSPaH4D
-         8jdP0z9r1b1nDK32Pwa2ABEl8jjHKR0vycOf9ORWyqU5pJ5KxdY4BOTUNJcH8XxxV2AT
-         OXLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718736659; x=1719341459;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4NNuHMGJgaTKLiPOtfYsc30dpCZBTyvx+s6PAIySkOw=;
-        b=A3j06IqEGZG3YWos2vrz3i4taQAyNJBsRxYORklMOqbn0YbCT+S6ldkKuhOkoyRUJS
-         SxbXb60OF7hQFe9Nx5nRFYEe1Kil4jJDug93hy2TlmrVIVOnsWvNP4qJ44IOavtapS2m
-         U/70m5+UDQ9bqIj25TRN3vdXQ0D6b6OXvxOYSPTcfwyVdE2M2ZukgVLLR25QckMCSvX7
-         OWEfCo7XBkMczAN6az3b/pRdS7XQsJkq8rzG0R5DElohb0hlJ/NNVL0tByh0ka/wnWlA
-         MDsr/52U5i9TmB2XG1cYYql2JyUy8PwfmjGd+EAOKWIXciwrvKBJIeYcpVV9Nt/jh4kj
-         TZ/w==
-X-Forwarded-Encrypted: i=1; AJvYcCURRj2TmbsUMnb7LjPSzpG8+sJk5YZH3ne1q4gNIk7bsenNaJoEL4PMJMc5QpURyY4t9JUif4FsZHHFUgN/aV+WFOfV6aJbYJaDCZVu
-X-Gm-Message-State: AOJu0Yw8wqf6+M3K8fFEPD7S8ddZLEWg5WifVbu7E+Y9Xkyoi1fGw/Z8
-	02+3eUNLS6mpTbp4tQvAowdt523ZgbWX4mdXvCcrBPm0AVflCtn/YqnbmhcB7WQ=
-X-Google-Smtp-Source: AGHT+IEQ5dUal8MlXaC9EXR+oZ5/RpW012l22b3onGYiqW8pfuRDA//boP9uvD07m2VUMQn/ucFrhQ==
-X-Received: by 2002:a05:6000:8:b0:35f:e0f:69a6 with SMTP id ffacd0b85a97d-363175b925cmr328399f8f.27.1718736658756;
-        Tue, 18 Jun 2024 11:50:58 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:5d11:7fa7:8997:f811? ([2a00:f41:9028:9df3:5d11:7fa7:8997:f811])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509c8fbsm14732083f8f.43.2024.06.18.11.50.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 11:50:58 -0700 (PDT)
-Message-ID: <ad04e203-4244-4cd3-9c9a-fae002962990@linaro.org>
-Date: Tue, 18 Jun 2024 20:50:52 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C311147773;
+	Tue, 18 Jun 2024 18:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718736699; cv=fail; b=C2r66+7QCoeckNK/HpvhfgdC2e/jBt/QWAH2R9Aa1O9IzhZiz39BKENtwznBgv3KMpVTCMrqO6YD8Wv/kId7G9UaAiT7sSDGXLolT3IOfgLrYJix4UW18NeRjqw463cZlU5DEOgyQuFM1Mx0y1qxTDrMWMtlP+oA1uwEFej5LCg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718736699; c=relaxed/simple;
+	bh=jjTxPR90Ckw8ze+b04Jo4MWsawALpO/NEgpBYUnqdfA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:In-Reply-To:
+	 Content-Type:MIME-Version; b=C3pff+xck5gQFazKPtyFFbfC6EUO/P53jI2mb2EtxfzbXLQg+TYHBn3sbilkmEb3g5fRC+CcAZXPNnGuHtOfWllJl3BYEyJkQj5sMscxkMhm2TVS5RKPJsySZEep31Z8skpXe/AcRXPbeh3PHmzapFN33/DZoZw0D24f7S+dRJM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5Rtj8SvJ; arc=fail smtp.client-ip=40.107.237.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EpUUjHfHMG+eOxcifhHvFcYrHXGRL++DlddVF50W1poIgi/Jf2o9l51FPSxPo/EoM6rmTNs4JJ0LLzZrG16N5XHQ5U4RrmutOizRA6bvH5g0iY1Wpxyou1ap19ATpgb8b5Rp/RRPbRA4o4F4oh2qOb+rJlk2j+HyDlDqB6FN7bdo/vreeCclG3DFHf52X4ShKc611LBjyse4s7yGE0OQRqsNqGTAqvFMvdsCdOlO6hBQwb3V2Qho7UX+53kZHxrIfxW1I/p6KyoG9iNVTOvU6YVW9mcKKyO8qm3Ig/l31P2oQd/L9WfEYmr51VTN1luVc20sL3LyDn+8FEY7Q3cT5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=okgzQiQBuMU7KvjgfIGOrHB9Fd3fOLQnRSZEmlJxdBs=;
+ b=dCd7l23pwQBmbzdOQKW1f18cfcL9NTqarZNGP27sn/ekF9+RrmI1TIAu4x/iEEIiYONbox170iEZ0VYSZi5zQTdR26xH5SjoMxtOnB99IqOJrVLKfO7XOVFcqjmusgZwsN1jtNxV/ZWyi4HLbEwYDloOCP73X6iNJt7cWcBieO5rr14MJQoqF0fd/ng8GKNP78LChrFfM42sYIKOvyTjZ8tZ1maHfR79tXAJ9QuaXuFhgk0jOtgRYjp2213gkQImEK/TS18GiUqi9B7PxhNaiZOSpQP4NeQ6+6dXln0d5aK51DQVHCMABdAUXqXiM2HyK2dYaH347lDtOM+pP+l+FA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=okgzQiQBuMU7KvjgfIGOrHB9Fd3fOLQnRSZEmlJxdBs=;
+ b=5Rtj8SvJSJICJ/+uEKBZQDGC/BKx2rY4xCnKqu6B5i/03M9a0CtKJmaZwl6PZ/vphCm6n2KX2e1vuS3eeyDCs3HkcyvT2c6S3G0q9KKO4JN4W8BmAtV7gbM/Fw37FD1Bg3YGVn/RPaCvaYe0HRzrjgP/mHzr3U4CkaD2hpp4KcE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BYAPR12MB2869.namprd12.prod.outlook.com (2603:10b6:a03:132::30)
+ by MW4PR12MB7213.namprd12.prod.outlook.com (2603:10b6:303:22a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Tue, 18 Jun
+ 2024 18:51:33 +0000
+Received: from BYAPR12MB2869.namprd12.prod.outlook.com
+ ([fe80::56a2:cd83:43e4:fad0]) by BYAPR12MB2869.namprd12.prod.outlook.com
+ ([fe80::56a2:cd83:43e4:fad0%5]) with mapi id 15.20.7698.017; Tue, 18 Jun 2024
+ 18:51:33 +0000
+Subject: Re: [PATCH v2] PCI: pciehp: Clear LBMS on hot-remove to prevent link
+ speed reduction
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Lukas Wunner <lukas@wunner.de>,
+ Yazen Ghannam <yazen.ghannam@amd.com>,
+ Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+ Bowman Terry <terry.bowman@amd.com>, Hagan Billy <billy.hagan@amd.com>,
+ Simon Guinot <simon.guinot@seagate.com>,
+ "Maciej W . Rozycki" <macro@orcam.me.uk>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <20240617231841.GA1232294@bhelgaas>
+From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Message-ID: <27be113e-3e33-b969-c1e3-c5e82d1b8b7f@amd.com>
+Date: Tue, 18 Jun 2024 11:51:31 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
+In-Reply-To: <20240617231841.GA1232294@bhelgaas>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR05CA0147.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d::32) To BYAPR12MB2869.namprd12.prod.outlook.com
+ (2603:10b6:a03:132::30)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/23] gcc-sdm845: Add rates to the GP clocks
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- phone-devel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
- <wnf3mfgdm4p4f5wrxdtlx4wccnizdvohc7iiyu5t22eeb67r57@xun3r73hksrg>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <wnf3mfgdm4p4f5wrxdtlx4wccnizdvohc7iiyu5t22eeb67r57@xun3r73hksrg>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2869:EE_|MW4PR12MB7213:EE_
+X-MS-Office365-Filtering-Correlation-Id: b56582c6-661d-4946-58a8-08dc8fc7ac80
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|376011|366013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S1E2S0YwaVRDL05lSS9uVkpacWdObFlRNlZvQm8zZGd2aUIxNGU0UkZDTGRS?=
+ =?utf-8?B?TEF0UGJlcFJMeHBoSnIwWGZwVXBxWlk0bnZkblpLT3A4TEVFUVBmTzVkMkps?=
+ =?utf-8?B?YkFmTWZ2UitJdCtSdzRqcjgrRmdCcythVld0cjBld082dUR4SHNtZ2l0WlBa?=
+ =?utf-8?B?ZWZ5UHJoUVNXNnhWQU5UdnF4MkZrRzIrTisvSHNFQkFCNE10T1ViNUlXUHJY?=
+ =?utf-8?B?alc1Qm1IUkwvMkRDZ1Jxekl0cG1rTjlwVXMxZ2RuMWoyMzU3cHFzaU0vVlVP?=
+ =?utf-8?B?YXdycTlDK2tuM3BmK3JhMmEyNk5WYmYrM2RyeUxVUTJmY0Vzb05Ba3FEZmtU?=
+ =?utf-8?B?QjJjYWlqMUVvYndnZkFkNlFvSmxuMHNaczFsSTRKTXBpU3BoT2RzWmdoK0Fh?=
+ =?utf-8?B?KytJZ1YwaTNFSmxlVnc2bDNGVnZpN2pia1VtWEh3N2JhZnRERUZQbXVFVWla?=
+ =?utf-8?B?eDIxeVZ1eGxDOEsrMzgrWnJkT0h5RS84S0ovS0R6NnRIM0lFVUhKaXpsbmJO?=
+ =?utf-8?B?OU5TRnpJWkNsZ0p5VnEzc1JSTnN3U0c3dGJxellFRS9HQmRtWjBTWnVDbFNa?=
+ =?utf-8?B?aHZxT2k1T2owV1c4aS8rUG50bnNGUCswN3dnZVhra0FDZHRKdHk2d1lyZmRj?=
+ =?utf-8?B?a1hNeTFuaGxZZ0xyOG16V1Fzb1pFSmNoSUExTU95Um9MVDVmcGE5RU5VMTRJ?=
+ =?utf-8?B?V1RYQzFON1F6UmNoMXZvbnZFbTFpdWFlTzN5QkZ4MmhVc0EySkJOckJLcHVy?=
+ =?utf-8?B?VHFrOG55amJPTXh0Ym5ObENCWnVVcFBtb2JDWURnL1E2dE1iTnQzTVVhMW54?=
+ =?utf-8?B?c1FyRU00NHdzS1RwYkhNaG9uRjJ0SXU5blhOZm9tVkQvN2tLUjZvQ0NGdHpr?=
+ =?utf-8?B?YjNsNmo4d1Y2c2pTenpPTXY1S1RHM2hQeTJocnRJT3NKdmxkeXZlWGtDbGdw?=
+ =?utf-8?B?dE1OUzJUNHFpQnFpU3ZPYlphZkdhYWVJRXJpRkd1bnQxeEhEVlNkMUxnMVVh?=
+ =?utf-8?B?cHFUMTh0dmt4b3VJc1VIUWpGbHBDSkNGYkFOY3B1KzR0bzJPMFpGTlJJTEhT?=
+ =?utf-8?B?Z1ZRejhKRzhyWTNySm02ZmJUUVBTQ3FnUVJjQ05mUEpXS3ErbzF6bjhlN0Z4?=
+ =?utf-8?B?dkQvWnZHbTR1VnpTMSszOW5rVWIzVTVaeXVlMlFCaHBWbnd4UXZtT3M1aWFa?=
+ =?utf-8?B?U2FWREd4YWNKcGxtSTJ5Q1BodDdqSHduV1NsaUk0UGNkenVCZnIxby9xQkZW?=
+ =?utf-8?B?aTRhRDZISWtVaWYzd2c0b1NQcGUzSkkxZXkzVUxYRmFtU0NWeXplYjY5bXNR?=
+ =?utf-8?B?cDRySXJMUWoxbUNUTXdIREtLUjVpczdYM1NWbVN2c3lmSXZ1SStHb3hQV1Vl?=
+ =?utf-8?B?ZTNGd28yeHJBbWI4dExJa2J5M002bHJyM1RuUmE2ZzJuK3YreEptQ05TMDJI?=
+ =?utf-8?B?cnMrY09MOG5KaUMva3hSK3pqZHNISVFiWDVCVDltdDRIMVhoZUJsY21Dd3Q4?=
+ =?utf-8?B?Z1hRNWdCdnA2Zmh0OTV1WCsvRFRVSDdKYnd6eEtwQmFTVG5IM1k4V3ZJeWI5?=
+ =?utf-8?B?UHhlTEdzaGRoZC9QVEFvVXVCVCt0MEZxZ2hQdGpra2JGT1luRGM0a284dDNz?=
+ =?utf-8?B?cDRISGRyTkhjWjRDcy9ESDZRb2hveDVsZ2pQVE9UUzk5djR5QVhBaC9VUjl6?=
+ =?utf-8?B?NXdMUi9sVk1QL2dNNFdneExKWDhuTEVQcDZqK05McFJXVjR5dmsvL2tnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB2869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(366013);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OSszbExhZUdJSFFab1lsTU5hUEQxcDNud3FOcTFpY3E2R2dzYlFud2Q2eHZD?=
+ =?utf-8?B?M0ZzaFJOUzM0T0NnZFBNOTFLaStVMjUrQlI0VTgvV3lnZ3FodnpQZXZWMk5m?=
+ =?utf-8?B?SHRubENFV1ZYUzRuYzYvamxsZjcvU1RjTUlXUkJEZ3JiN0JqcC8xQmtZWW51?=
+ =?utf-8?B?cHpmWFpVQ0Z0UFcyUmhnTFgvc3FOWTZYdDhMSTRLOVB1cGVUeUJpR3ZvanRi?=
+ =?utf-8?B?RjNrZk0wWGsrVGtubmlBeDQxTWhyVjk4aDZFTFBWZXFWOGNRc3A2eGFielpR?=
+ =?utf-8?B?bTB5ZFpOdXY4a1F1aW1JL25OaHJLcGtvZ1ZhU0V4S2ppa2hSNm5vQ3M2MXV0?=
+ =?utf-8?B?a2RCNk1VbFh0UTkzOGdXYjl5dmlPcFk3VSt5UjhMbE9LVmtKQWs2cmcvU1VH?=
+ =?utf-8?B?M1JnOFMxcDVQb3B2bnVUNUFSTFpOOXg1S2lsMDEvMytxdzFwWWFISG1LQlpt?=
+ =?utf-8?B?bUJ2NXBjUHI4ck9XKzg5WWRVSzRWbUxCUS9waHdKSmppcDNrT29Ta3hNZlZn?=
+ =?utf-8?B?US9RZHlWZUJ0Z3NiSEdtWHNhbG1BWnZFMTVDSWRMMzBLOWNVUWN3a3JCemdV?=
+ =?utf-8?B?Y2gxNWFDay9lUXFNbms1RW44dDFnL1A5MmdoY0p2Z21HUlkramVkUXpJSk1V?=
+ =?utf-8?B?Y1UrOHBMWkZvVUhqcUVFNlRCeGdQZENJamZVWTRBQ21RK0c5UE9qNkYyeU4z?=
+ =?utf-8?B?bElGV2Nra1FNbWxGUnFjbmlXK2xibWNDU1gyMzdiL2V4amh0U2lJVnk0RUpp?=
+ =?utf-8?B?ZU9YRDNMVVY5eG1IaUZaYmROb1lsWWRhNkRpWFgrR1NkYjFxREMrSkJndzFB?=
+ =?utf-8?B?emtqQnRhOXlIeDZNWVZHaUdZYmt4QndpeWN1SHM4T1QyQ2hiekhwMTNkOWx5?=
+ =?utf-8?B?WWdkc0U1d1lnQ0NWL1AwSFhMSFExUGNFTG85UXdBcjhFNjZKWmpYVjV3UDdu?=
+ =?utf-8?B?WTdKOHZjaVhRclZqbHc5YTNaaTAxUXVVcXJyV1pEMmtHaG04bG1vMmFGaS8v?=
+ =?utf-8?B?RkwvY3BNME55a25mbkJob2ZvYUdCVU5nUDJsbmhkVXBrUC9KYjhZVm9WR2lu?=
+ =?utf-8?B?NGZmQ2puTDVBTmxDNmlydUh2NDZkdk9haE1UR2F6dnUwVlNoUGNDakRsVU9Y?=
+ =?utf-8?B?NjFTaHlBNHBXeERhdEZRTjVWQnY3OVkzejVmREpRTXdubEZEdUtudFJOeDVl?=
+ =?utf-8?B?SG9MMGVPKzJMZ1diaXVlM1NaTUxNN2k4VExOTG13QSs3VWZKNzM3Qnd6cDlM?=
+ =?utf-8?B?bEpxOXc4K2RTK210NlRKSmY2cVVyQ3BmbHhBdmdSMkhJeEQzanVHQWFPaGZH?=
+ =?utf-8?B?c2c5VVBiVEdvd0s4dlV4K2Vta0N0L21rK3RhNmszTjhUdzVEYWo0azhzYXhq?=
+ =?utf-8?B?MHlwUXROTFVGdHRjYW0zVytPQ0h0cXpDVWlMR0dtL2tEVGgzeEZUTzhUNGoy?=
+ =?utf-8?B?VmhxSWJRa0FrZ2I1Y0gvMDgyOWhRMlQvMEQzZVdlNGRUcWFLQWRiTmdyU1lH?=
+ =?utf-8?B?TnZ1RmwxaHFtT2Z6Tit4MmcwL2lRNGo0MUhsV0JQQXJxeUNWQmhYMkVUVWFL?=
+ =?utf-8?B?OG9iRVFDU0tsMk5CSlBkU0N1T01TR1RxYzVLNnN2bjQzK2tmdldlTGR0cy9w?=
+ =?utf-8?B?bXA5OTY0Njk5dFFLMkpsOW1qcmhNTjNwbGdsbjQ4YVhmbGlwM2xWVis2dW8z?=
+ =?utf-8?B?M2xlTmNzWm9EczVWYXBwMUNaV3lybTQrcVh3Q2JCNG0xTUhpMkhNR2UyTVlw?=
+ =?utf-8?B?Y1dsdTdac1NFUGFpdzhlNS90WU9RWkpVU2hNYVB6T0Q4UVI3QnBBNUt6R21s?=
+ =?utf-8?B?UENYem51Q01ZRXVXUXcwd1ZnT0pOVEluTWdyYTJRR0F3TUVNdTB2dnM2LzFU?=
+ =?utf-8?B?Wkc0NW8vUjNhMzgvb1EyL1NaYTFuU1ZBZjhHTnhncjBGN0FPM0tiaDJKNkNt?=
+ =?utf-8?B?M2U1bEhJTVYreDdabTZYVWlXcmxsYXlGbCtncUJBeUg4bVEvdlpFTlhmNmI2?=
+ =?utf-8?B?c3FPdGdqWlFIZVpTREhhc2o3a0xIcHJVYVFVMlpXTjRTTGVTdng0eHZKYmlx?=
+ =?utf-8?B?cjNURk5pa25IWlF3NGJIdllmUjR2V0RXUThmMFdWVW9hbEQ2clRHZGcwNzFh?=
+ =?utf-8?Q?y24zBglu5rFQ/bl3gY+WKzyE3?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b56582c6-661d-4946-58a8-08dc8fc7ac80
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB2869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 18:51:33.6735
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4sw39WeAhXSiUFGivNhBCWVvgaTR8f4u6kpjHfXVPHMX3SdRG1yVGs6U/5FUyWMQJn0iqMyUSsfofQhCZKQg0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7213
 
-
-
-On 6/18/24 19:50, Dmitry Baryshkov wrote:
-> On Tue, Jun 18, 2024 at 04:59:36PM GMT, Dzmitry Sankouski wrote:
->> sdm845 has "General Purpose" clocks that can be muxed to
->> SoC pins.
+On 6/17/2024 4:18 PM, Bjorn Helgaas wrote:
+> On Mon, Jun 17, 2024 at 03:51:57PM -0700, Smita Koralahalli wrote:
+>> Hi Bjorn,
 >>
->> Those clocks may be used as e.g. PWM sources for external peripherals.
->> Add more frequencies to the table for those clocks so it's possible
->> for arbitrary peripherals to make use of them.
+>> On 6/17/2024 1:09 PM, Bjorn Helgaas wrote:
+>>> On Thu, May 16, 2024 at 08:47:48PM +0000, Smita Koralahalli wrote:
+>>>> Clear Link Bandwidth Management Status (LBMS) if set, on a hot-remove
+>>>> event.
+>>>>
+>>>> The hot-remove event could result in target link speed reduction if LBMS
+>>>> is set, due to a delay in Presence Detect State Change (PDSC) happening
+>>>> after a Data Link Layer State Change event (DLLSC).
+>>>>
+>>>> In reality, PDSC and DLLSC events rarely come in simultaneously. Delay in
+>>>> PDSC can sometimes be too late and the slot could have already been
+>>>> powered down just by a DLLSC event. And the delayed PDSC could falsely be
+>>>> interpreted as an interrupt raised to turn the slot on. This false process
+>>>> of powering the slot on, without a link forces the kernel to retrain the
+>>>> link if LBMS is set, to a lower speed to restablish the link thereby
+>>>> bringing down the link speeds [2].
+>>>
+>>> Not sure we need PDSC and DLLSC details to justify clearing LBMS if it
+>>> has no meaning for an empty slot?
 >>
->> See also: bf8bb8eaccf(clk: qcom: gcc-msm8916: Add rates to the GP clocks)
+>> I'm trying to also answer your below question here..
+>>
+>>> I guess the slot is empty, so retraining
+>>> is meaningless and will always fail.  Maybe avoiding it avoids a
+>>> delay?  Is the benefit that we get rid of the message and a delay?"
+>>
+>> The benefit of this patch is to "avoid link speed drops" on a hot remove
+>> event if LBMS is set and DLLLA is clear. But I'm not trying to solve delay
+>> issues here..
+>>
+>> I included the PDSC and DLLSC details as they are the cause for link speed
+>> drops on a remove event. On an empty slot, DLLLA is cleared and LBMS may or
+>> may not be set. And, we see cases of link speed drops here, if PDSC happens
+>> on an empty slot.
+>>
+>> We know for the fact that slot becomes empty if either of the events PDSC or
+>> DLLSC occur. Also, either of them do not wait for the other to bring down
+>> the device and mark the slot as "empty". That is the reason I was also
+>> thinking of waiting on both events PDSC and DLLSC to bring down the device
+>> as I mentioned in my comments in V1. We could eliminate link speed drops by
+>> taking this approach as well. But then we had to address cases where PDSC is
+>> hardwired to zero.
+>>
+>> On our AMD systems, we expect to see both events on an hot-remove event.
+>> But, mostly we see DLLSC happening first, which does the job of marking the
+>> slot empty. Now, if the PDSC event is delayed way too much and if it occurs
+>> after the slot becomes empty, kernel misinterprets PDSC as the signal to
+>> re-initialize the slot and this is the sequence of steps the kernel takes:
+>>
+>> pciehp_handle_presence_or_link_change()
+>>    pciehp_enable_slot()
+>>      __pciehp_enable_slot()
+>>          board_added
+>>            pciehp_check_link_status()
+>>              pcie_wait_for_link()
+>>                pcie_wait_for_link_delay()
+>>                  pcie_failed_link_retrain()
+>>
+>> while doing so, it hits the case of DLLLA clear and LBMS set and brings down
+>> the speeds.
 > 
-> Each time I look at the table attached to the GP CLK, I feel that it's
-> plain wrong. In the end the GPCLK can in theory have arbitrary value
-> depending on the usecase.
+> So I guess LBMS currently remains set after a device has been removed,
+> so the slot is empty, and later when a device is hot-added, *that*
+> device sees a lower-than expected link speed?
+
+Yes, when PDSC is fired after the slot is empty (i.e when DLLLA is clear).
+
+Thanks
+Smita
+
 > 
-> Bjorn, Konrad, maybe we should add special clk_ops for GP CLK which
-> allow more flexibility than a default clk_rcg2_ops?
-
-If we can somehow get max m/n/d values for all possible parents, sure
-
-Konrad
+>> The issue of PDSC and DLLSC never occurring simultaneously was a known thing
+>> from before and it wasn't breaking anything functionally as the kernel would
+>> just exit with the message: "No link" at pciehp_check_link_status().
+>>
+>> However, Commit a89c82249c37 ("PCI: Work around PCIe link training
+>> failures") introduced link speed downgrades to re-establish links if LBMS is
+>> set, and DLLLA is clear. This caused the devices to operate at 2.5GT/s after
+>> they were plugged-in which were previously operating at higher speeds before
+>> hot-remove.
+>>
+>>>> According to PCIe r6.2 sec 7.5.3.8 [1], it is derived that, LBMS cannot
+>>>> be set for an unconnected link and if set, it serves the purpose of
+>>>> indicating that there is actually a device down an inactive link.
+>>>
+>>> I see that r6.2 added an implementation note about DLLSC, but I'm not
+>>> a hardware person and can't follow the implication about a device
+>>> present down an inactive link.
+>>>
+>>> I guess it must be related to the fact that LBMS indicates either
+>>> completion of link retraining or a change in link speed or width
+>>> (which would imply presence of a downstream device).  But in both
+>>> cases I assume the link would be active.
+>>>
+>>> But IIUC LBMS is set by hardware but never cleared by hardware, so if
+>>> we remove a device and power off the slot, it doesn't seem like LBMS
+>>> could be telling us anything useful (what could we do in response to
+>>> LBMS when the slot is empty?), so it makes sense to me to clear it.
+>>>
+>>> It seems like pciehp_unconfigure_device() does sort of PCI core and
+>>> driver-related things and possibly could be something shared by all
+>>> hotplug drivers, while remove_board() does things more specific to the
+>>> hotplug model (pciehp, shpchp, etc).
+>>>
+>>>   From that perspective, clearing LBMS might fit better in
+>>> remove_board().  In that case, I wonder whether it should be done
+>>> after turning off slot power?  This patch clears is *before* turning
+>>> off the power, so I wonder if hardware could possibly set it again
+>>> before the poweroff?
+>>
+>> Yeah by talking to HW people I realized that HW could interfere possibly
+>> anytime to set LBMS when the slot power is on. Will change it to include in
+>> remove_board().
+>>
+>>>> However, hardware could have already set LBMS when the device was
+>>>> connected to the port i.e when the state was DL_Up or DL_Active. Some
+>>>> hardwares would have even attempted retrain going into recovery mode,
+>>>> just before transitioning to DL_Down.
+>>>>
+>>>> Thus the set LBMS is never cleared and might force software to cause link
+>>>> speed drops when there is no link [2].
+>>>>
+>>>> Dmesg before:
+>>>> 	pcieport 0000:20:01.1: pciehp: Slot(59): Link Down
+>>>> 	pcieport 0000:20:01.1: pciehp: Slot(59): Card present
+>>>> 	pcieport 0000:20:01.1: broken device, retraining non-functional downstream link at 2.5GT/s
+>>>> 	pcieport 0000:20:01.1: retraining failed
+>>>> 	pcieport 0000:20:01.1: pciehp: Slot(59): No link
+>>>>
+>>>> Dmesg after:
+>>>> 	pcieport 0000:20:01.1: pciehp: Slot(59): Link Down
+>>>> 	pcieport 0000:20:01.1: pciehp: Slot(59): Card present
+>>>> 	pcieport 0000:20:01.1: pciehp: Slot(59): No link
+>>>
+>>> I'm a little confused about the problem being solved here.  Obviously
+>>> the message is extraneous.  I guess the slot is empty, so retraining
+>>> is meaningless and will always fail.  Maybe avoiding it avoids a
+>>> delay?  Is the benefit that we get rid of the message and a delay?
+>>>
+>>>> [1] PCI Express Base Specification Revision 6.2, Jan 25 2024.
+>>>>       https://members.pcisig.com/wg/PCI-SIG/document/20590
+>>>> [2] Commit a89c82249c37 ("PCI: Work around PCIe link training failures")
+>>>>
+>>>> Fixes: a89c82249c37 ("PCI: Work around PCIe link training failures")
+>>>
+>>> Lukas asked about this; did you confirm that it is related?  Asking
+>>> because the Fixes tag may cause this to be backported along with
+>>> a89c82249c37.
+>>
+>> Yeah, without this patch we won't see link speed drops.
+>>
+>> Thanks,
+>> Smita
+>>
+>>>
+>>>> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+>>>> ---
+>>>> Link to v1:
+>>>> https://lore.kernel.org/all/20240424033339.250385-1-Smita.KoralahalliChannabasappa@amd.com/
+>>>>
+>>>> v2:
+>>>> 	Cleared LBMS unconditionally. (Ilpo)
+>>>> 	Added Fixes Tag. (Lukas)
+>>>> ---
+>>>>    drivers/pci/hotplug/pciehp_pci.c | 3 +++
+>>>>    1 file changed, 3 insertions(+)
+>>>>
+>>>> diff --git a/drivers/pci/hotplug/pciehp_pci.c b/drivers/pci/hotplug/pciehp_pci.c
+>>>> index ad12515a4a12..dae73a8932ef 100644
+>>>> --- a/drivers/pci/hotplug/pciehp_pci.c
+>>>> +++ b/drivers/pci/hotplug/pciehp_pci.c
+>>>> @@ -134,4 +134,7 @@ void pciehp_unconfigure_device(struct controller *ctrl, bool presence)
+>>>>    	}
+>>>>    	pci_unlock_rescan_remove();
+>>>> +
+>>>> +	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_LNKSTA,
+>>>> +				   PCI_EXP_LNKSTA_LBMS);
+>>>>    }
+>>>> -- 
+>>>> 2.17.1
+>>>>
 
