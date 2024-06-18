@@ -1,184 +1,246 @@
-Return-Path: <linux-kernel+bounces-218495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06FE90C098
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:42:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943E890C09F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9541C285C5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F82C1F217B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED6E6FC2;
-	Tue, 18 Jun 2024 00:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D2C5672;
+	Tue, 18 Jun 2024 00:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Hj+bkOdt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IyMDiPV2"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4BB5C99;
-	Tue, 18 Jun 2024 00:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B414C8F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718671133; cv=none; b=lCO9xPFW22pDdKgnqyI6MM3dSQuUb+d+Tgsd5jj5x3X+Ro5JPlt6uuAzm5MHV4a0rjYv78xJVRi96ajdTJNyluKWSURxWWz1z9Ox2QEisucKcamwWpEmeRGuScHcZPEVNiFB0R2EP7diQ/zPONA28O5IlPcSiRIRZb5em8HT/eI=
+	t=1718671362; cv=none; b=Du+aTYUxe0xF6C5Ki0BqpQZUUxEZ/z1ByZMyD1QYxwLX2mjYO1+1iL5zMl8sSghuLj1VA8LasDIKUspVj5wigz5r+J6sk+iV8PQGsvcyn2xUn23VhQgmgszR0JBT+CrbTCayzQQn2DjkoCEmQk1gI4C+n0UOUdgCQFNzKRTZzZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718671133; c=relaxed/simple;
-	bh=EPu8yNRPgkjN30FqQ0/xKvZOyIHNqxkwG+P/BwDOee8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UpgTCQtV3tDeUa3flrM1QCJkwQqOkCUI2ruOaZzVO3E8ricoWcpxSnX/h80m4THoGxboEoUePApa+U7DXAxauhib6oT0wX84sG2i2GTlwwLcP0Lwuj3bp6Fz6hXYFWxuO4S5cxKr2Lxd8ugMPn87KAwBNvbTXfIJqvbYdr00nU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Hj+bkOdt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E93CFC2BD10;
-	Tue, 18 Jun 2024 00:38:51 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Hj+bkOdt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1718671129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5zpgIOfekLV3UH6+yks33ApiI6XLkbCD6hrIOKNwA7s=;
-	b=Hj+bkOdtifI+V5WIsaCqAOPCq4Af58HRHxZve02QIVYgL2s43z6kj8zmjY2qYbu9qt3zoJ
-	KD4yVFyf4PSUbGTnTQsYjPXjrgDZ1hg1z1SS8cgw+SemNjTYFdGLiWvXsbEPruhnlHQK5V
-	Vkn8ji7yhjHauaIJx4Fpu0K0yayjAgA=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 086ed137 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 18 Jun 2024 00:38:49 +0000 (UTC)
-Date: Tue, 18 Jun 2024 02:38:47 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	tglx@linutronix.de, linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org, x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>
-Subject: Re: [PATCH v17 4/5] random: introduce generic vDSO getrandom()
- implementation
-Message-ID: <ZnDXFywDvqRitRgL@zx2c4.com>
-References: <20240614190646.2081057-1-Jason@zx2c4.com>
- <20240614190646.2081057-5-Jason@zx2c4.com>
- <CALCETrVQtQO87U3SEgQyHfkNKsrcS8PjeZrsy2MPAU7gQY70XA@mail.gmail.com>
- <ZnDQ-HQH8NlmCcIr@zx2c4.com>
+	s=arc-20240116; t=1718671362; c=relaxed/simple;
+	bh=BYotfX760PqY2mcNOWxiaLsEIif4d7BNTEGHmIPKRls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SXyBL7JvfR0wrzF2gXGqZ/KD+6k9r3DEGRPrH35smHWqjoLJeseSiTMPUc9DJQQJWqls3gEa47gInCH5EfEVINRj8LLI/+gqCX/x2DTVbJShT9GeKbx+g9QeeJbWvboXz2fyctK+8xyV4BXQp4NvTDB2f8Pux9SOdjrhvxdH9ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IyMDiPV2; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-422f7c7af49so31315e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718671358; x=1719276158; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=soNwY1feUT1m5F+Cl3agS6X9xd9R8atpsTjXhDrPfUA=;
+        b=IyMDiPV24PAXq4rnXjtaGZlAos9TVyYfdXNSEW+HHObkRsA1m2oNkWb+ksxSoVXD12
+         DlzUE2nxWQWQ8EWUIxTDuATmWenMDL8PDgpKlAlvqXKlJYZLqU2EPyBPo9uBVBS+0He1
+         YIz9/22fPMPpdg3Lehc85uSnT+xrRNww1GtF7lwJkoq943ptXpZR2l0j692hJy0Gz2d1
+         RpXOmcJfU0HcwxS1YksFd3Rcp52vM4gJiBEfK8l6DWXHo3jVAoRXMlnjc8x2fV3Rv2AG
+         bX9k9I04sfsxn8fgn4mKvklx9sx1mbe3/+r6wTflbDSnuvb1v2Umeot64XhX1s88jofW
+         ef9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718671358; x=1719276158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=soNwY1feUT1m5F+Cl3agS6X9xd9R8atpsTjXhDrPfUA=;
+        b=F771lj8tQBXuV+ahQEg0wDOAf/L9y+0r0i2Y/O6SL0J7hXKtXhoPpy8p/Mf7/6V1BA
+         lnD6ShiUzshbng8xxKDvpGaTTTRMf9RBxQPZ2Sn76085iDMc1f6ehwGsTzdj28LxwccQ
+         hDA42MZhJpk0ycv9khqXYqevWEk01EgGGlXqMSQCkNIb1/5U4oj7jAvc+4vqH7o/viEx
+         ad6T2iDjb40ZjV8VH1RDX141l/VoOyPJZA9jZSrGFbxNlG8u9+uiTsxqiY1JxDiE3C/o
+         WjH7pbU09u+/BcLcm+nJLFz2t+U6I3gJ7D6Wx8XA/4TJdMmx7Zw+yryp4fE1kgPnH7y7
+         V/jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXj51LEF7Ei3nw82QVFLfgjepCm749AHV+IyzYJLEPpAyXwmkFZ3uN5tuW/tflSfkerxP0qyUGkMQeq7Zl+Bd6CgzjySqvUx4tWx+bP
+X-Gm-Message-State: AOJu0Yw9w4HXcwIGfLqe93DfqyAEVs+oUKwA6wTQ/POljHfv2PDh2KbI
+	e4hBURhKoln8fzGDv0+EwoUkFnEHRtWTQLI56OzN8p6IwrHeX4xhtlKsgN5htazBfT7MdjB9U91
+	+atp+qa0BNDHHONtSn9bDqUx+LFqJdpRRdAI=
+X-Google-Smtp-Source: AGHT+IHNmVOlymw36d8FbPeId/74lLBYVRkwza5mRQzCBLmEPmsh1tC8YXjJ7uxg3DFE227VBJeIvqy6bdsrQDBvAuc=
+X-Received: by 2002:a05:600c:1d99:b0:422:ff8d:5d25 with SMTP id
+ 5b1f17b1804b1-42470e9825emr477335e9.5.1718671357826; Mon, 17 Jun 2024
+ 17:42:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnDQ-HQH8NlmCcIr@zx2c4.com>
+References: <20240613015837.4132703-1-jstultz@google.com> <20240613100441.GC17707@noisy.programming.kicks-ass.net>
+ <20240613115142.kxrmlf3btmwjcprg@airbuntu> <20240614094833.GM8774@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240614094833.GM8774@noisy.programming.kicks-ass.net>
+From: John Stultz <jstultz@google.com>
+Date: Mon, 17 Jun 2024 17:42:25 -0700
+Message-ID: <CANDhNCqcbCJNSyrKG5b7vyjmuHUm0kAJmDecqHF-QRZ_EHq=Zw@mail.gmail.com>
+Subject: Re: [PATCH] RFC: sched: Rework task_sched_runtime to avoid calling update_rq_clock
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Qais Yousef <qyousef@layalina.io>, LKML <linux-kernel@vger.kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 02:12:40AM +0200, Jason A. Donenfeld wrote:
-> Hi Andy,
-> 
-> On Mon, Jun 17, 2024 at 05:06:22PM -0700, Andy Lutomirski wrote:
-> > On Fri, Jun 14, 2024 at 12:08 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > >
-> > > Provide a generic C vDSO getrandom() implementation, which operates on
-> > > an opaque state returned by vgetrandom_alloc() and produces random bytes
-> > > the same way as getrandom(). This has a the API signature:
-> > >
-> > >   ssize_t vgetrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state);
-> > 
-> > Last time around, I mentioned some potential issues with this function
-> > signature, and I didn't see any answer.  My specific objection was to
-> > the fact that the caller passes in a pointer but not a length, and
-> > this potentially makes reasoning about memory safety awkward,
-> > especially if anything like CRIU is involved.
-> 
-> Oh, I understood this backwards last time - I thought you were
-> criticizing the size_t len argument, which didn't make any sense.
-> 
-> Re-reading now, what you're suggesting is that I add an additional
-> argument called `size_t opaque_len`, and then the implementation does
-> something like:
-> 
->     if (opaque_len != sizeof(struct vgetrandom_state))
->     	goto fallback_syscall;
-> 
-> With the reasoning that falling back to syscall is better than returning
-> -EINVAL, because that could happen in a natural way due to CRIU. In
-> contrast, your objection to opaque_state not being aligned falling back
-> to the syscall was that it should never happen ever, so -EFAULT is more
-> fitting.
-> 
-> Is that correct?
-> 
-> If I've gotten you right this time, I'll add that argument as described.
-> Seems straight forward to do. It's a bit annoying from a libc
-> perspective, as the length has to be stored, but that's not impossible.
+On Fri, Jun 14, 2024 at 2:48=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+> Which then gets me something like the (completely untested) below..
+>
+> Hmm?
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 0935f9d4bb7b..36aed99d6a6c 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -724,7 +724,6 @@ static void update_rq_clock_task(struct rq *rq, s64 d=
+elta)
+>
+>         rq->prev_irq_time +=3D irq_delta;
+>         delta -=3D irq_delta;
+> -       psi_account_irqtime(rq->curr, irq_delta);
+>         delayacct_irq(rq->curr, irq_delta);
+>  #endif
+>  #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+> @@ -5459,6 +5458,8 @@ void sched_tick(void)
+>
+>         sched_clock_tick();
+>
+> +       psi_account_irqtime(curr, NULL, &rq->psi_irq_time);
+> +
+>         rq_lock(rq, &rf);
+>
+>         update_rq_clock(rq);
+> @@ -6521,6 +6524,7 @@ static void __sched notrace __schedule(unsigned int=
+ sched_mode)
+>                 ++*switch_count;
+>
+>                 migrate_disable_switch(rq, prev);
+> +               psi_account_irqtime(prev, next, &rq->psi_irq_time);
 
-So, that looks like:
+FYI: These references to psi_irq_time hit build issues if
+CONFIG_IRQ_TIME_ACCOUNTING is disabled.
 
-diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vgetrandom.c
-index 6045ded5da90..794137fba649 100644
---- a/arch/x86/entry/vdso/vgetrandom.c
-+++ b/arch/x86/entry/vdso/vgetrandom.c
-@@ -6,12 +6,12 @@
+Also, separately, while I didn't see this earlier testing on physical
+devices, when running virtualized, I can pretty easily trip over the
+following:
 
- #include "../../../../lib/vdso/getrandom.c"
+[   65.207340] watchdog: BUG: soft lockup - CPU#0 stuck for 26s!
+[kworker/0:3:374]
+[   65.211107] irq event stamp: 118664
+[   65.212786] hardirqs last  enabled at (118663):
+[<ffffffff97a00e46>] asm_sysvec_apic_timer_interrupt+0x16/0x20
+[   65.218440] hardirqs last disabled at (118664):
+[<ffffffff977fdeca>] sysvec_apic_timer_interrupt+0xa/0xc0
+[   65.223074] softirqs last  enabled at (118546):
+[<ffffffff9676db78>] __irq_exit_rcu+0x88/0xe0
+[   65.227118] softirqs last disabled at (118541):
+[<ffffffff9676db78>] __irq_exit_rcu+0x88/0xe0
+[   65.231137] CPU: 0 PID: 374 Comm: kworker/0:3 Not tainted
+6.10.0-rc4-dirty #4393
+[   65.234625] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   65.239089] Workqueue: events psi_avgs_work
+[   65.241122] RIP: 0010:collect_percpu_times+0xff/0x310
+[   65.243525] Code: b9 02 00 00 00 48 89 df e8 8e a4 01 00 48 8b b4
+24 d0 00 00 00 48 89 df e8 5e 9e 01 00 58 45 8b 34 24 41 f6 c6 01 74
+0c f3 0
+[   65.252926] RSP: 0018:ffff958501263d50 EFLAGS: 00000202
+[   65.255433] RAX: 0000000000017b61 RBX: ffff9585b901d848 RCX: 00000000000=
+00006
+[   65.258755] RDX: ffffffff967eb6ac RSI: ffffffff9819e305 RDI: ffffffff981=
+77748
+[   65.262113] RBP: ffff958501263db0 R08: 0000000000000001 R09: 00000000000=
+00000
+[   65.265475] R10: 0000000000000001 R11: 0000000000000001 R12: ffff9585b90=
+1d840
+[   65.268785] R13: ffff9585b901d884 R14: 0000000000033d8b R15: 00000000000=
+00000
+[   65.272146] FS:  0000000000000000(0000) GS:ffff9585b9000000(0000)
+knlGS:0000000000000000
+[   65.275908] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   65.278629] CR2: 00005631aee8b000 CR3: 0000000116c0e001 CR4: 00000000003=
+70ef0
+[   65.282002] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[   65.285386] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[   65.288730] Call Trace:
+[   65.289958]  <IRQ>
+[   65.290965]  ? watchdog_timer_fn+0x275/0x310
+[   65.293185]  ? __pfx_watchdog_timer_fn+0x10/0x10
+[   65.295379]  ? __hrtimer_run_queues+0x190/0x3b0
+[   65.297795]  ? hrtimer_interrupt+0xf9/0x230
+[   65.299782]  ? __sysvec_apic_timer_interrupt+0x82/0x210
+[   65.302243]  ? sysvec_apic_timer_interrupt+0x98/0xc0
+[   65.304590]  </IRQ>
+[   65.305658]  <TASK>
+[   65.306708]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+[   65.309206]  ? psi_avgs_work+0x3c/0xb0
+[   65.311001]  ? collect_percpu_times+0xff/0x310
+[   65.313153]  psi_avgs_work+0x3c/0xb0
+[   65.314864]  process_one_work+0x1fe/0x700
+[   65.316782]  ? lock_is_held_type+0xcd/0x120
+[   65.318782]  worker_thread+0x1c7/0x3b0
+[   65.320571]  ? __pfx_worker_thread+0x10/0x10
+[   65.322626]  kthread+0xe0/0x110
+[   65.324103]  ? __pfx_kthread+0x10/0x10
+[   65.325853]  ret_from_fork+0x28/0x40
+[   65.327512]  ? __pfx_kthread+0x10/0x10
+[   65.329255]  ret_from_fork_asm+0x1a/0x30
+[   65.331073]  </TASK>
+[   65.332119] Kernel panic - not syncing: softlockup: hung tasks
 
--ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *state);
-+ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
+Where collect_percpu_times+0xff/0x310:
+__seqprop_sequence at include/linux/seqlock.h:211 (discriminator 2)
+(inlined by) get_recent_times at kernel/sched/psi.c:261 (discriminator 2)
+(inlined by) collect_percpu_times at kernel/sched/psi.c:359 (discriminator =
+2)
 
--ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *state)
-+ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
- {
--	return __cvdso_getrandom(buffer, len, flags, state);
-+	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
- }
+Which looks like its getting stuck in the seqlock loop, and the only
+way I can see that catching right off, is if we're in some sort of
+livelock where the calls to psi_account_irqtime(curr, NULL,
+&rq->psi_irq_time) is coming in frequently enough to change the seqno
+each iteration through the reader.  But from my initial trace_printk
+debugging, it seems like from a kworker we enter the loop in
+get_recent_times(), hit an irq and somehow never really come back out
+of irq context. Though we continue to get ticks on the task and
+continue to call psi_account_irqtime().  I was worried we were somehow
+getting stuck in the 'while ((group =3D group->parent));' loop in
+psi_account_irqtime(), but that doesn't seem to be the case.
 
--ssize_t getrandom(void *, size_t, unsigned int, void *)
-+ssize_t getrandom(void *, size_t, unsigned int, void *, size_t)
- 	__attribute__((weak, alias("__vdso_getrandom")));
-diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
-index 51251190a47e..4d89e34ff17d 100644
---- a/lib/vdso/getrandom.c
-+++ b/lib/vdso/getrandom.c
-@@ -40,6 +40,7 @@ static void memcpy_and_zero_src(void *dst, void *src, size_t len)
-  * @len:		Size of @buffer in bytes.
-  * @flags:		Zero or more GRND_* flags.
-  * @opaque_state:	Pointer to an opaque state area.
-+ * @opaque_len:		Length of opaque state area, as returned by vgetrandom_alloc().
-  *
-  * This implements a "fast key erasure" RNG using ChaCha20, in the same way that the kernel's
-  * getrandom() syscall does. It periodically reseeds its key from the kernel's RNG, at the same
-@@ -55,7 +56,7 @@ static void memcpy_and_zero_src(void *dst, void *src, size_t len)
-  */
- static __always_inline ssize_t
- __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_t len,
--		       unsigned int flags, void *opaque_state)
-+		       unsigned int flags, void *opaque_state, size_t opaque_len)
- {
- 	ssize_t ret = min_t(size_t, INT_MAX & PAGE_MASK /* = MAX_RW_COUNT */, len);
- 	struct vgetrandom_state *state = opaque_state;
-@@ -69,6 +70,10 @@ __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_
- 	if (unlikely(((unsigned long)opaque_state & ~PAGE_MASK) + sizeof(*state) > PAGE_SIZE))
- 		return -EFAULT;
+[  238.297094] kworker/-798       0..... 200647713us :
+collect_percpu_times: JDB: get_recent_times at top of loop 0!
+[  238.301705] kworker/-798       0..... 200647767us :
+collect_percpu_times: JDB: get_recent_times done with read (looped:
+1)!
+[  238.306689] kworker/-798       0..... 200647768us :
+collect_percpu_times: JDB: get_recent_times at top of loop 0!
+[  238.311313] kworker/-798       0..... 200647769us :
+collect_percpu_times: JDB: get_recent_times done with read (looped:
+1)!
+[  238.316318] kworker/-798       0d..2. 200647786us :
+psi_group_change: JDB: psi_group_change seqwrite
+<normal behavior above>
+[  238.320460] kworker/-10        0..... 200647790us :
+collect_percpu_times: JDB: get_recent_times at top of loop 0!
+[  238.325131] kworker/-10        0d.h.. 200648408us :
+psi_account_irqtime: JDB: psi_account_irqtime seqwrite (loop count: 0)
+[  238.330149] kworker/-10        0d.h.. 200649406us :
+psi_account_irqtime: JDB: psi_account_irqtime seqwrite (loop count: 0)
+[  238.335140] kworker/-10        0d.h.. 200650405us :
+psi_account_irqtime: JDB: psi_account_irqtime seqwrite (loop count: 0)
+...
+With the psi_account_irqtime just repeating there each ms/tick.
 
-+	/* If the caller passes the wrong size, which might happen due to CRIU, fallback. */
-+	if (unlikely(opaque_len != sizeof(*state)))
-+		goto fallback_syscall;
-+
- 	/*
- 	 * If the kernel's RNG is not yet ready, then it's not possible to provide random bytes from
- 	 * userspace, because A) the various @flags require this to block, or not, depending on
-@@ -222,7 +227,7 @@ __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_
- }
+I'm still digging a bit here to understand what's going on. But I
+wanted to share.
 
- static __always_inline ssize_t
--__cvdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state)
-+__cvdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
- {
--	return __cvdso_getrandom_data(__arch_get_vdso_rng_data(), buffer, len, flags, opaque_state);
-+	return __cvdso_getrandom_data(__arch_get_vdso_rng_data(), buffer, len, flags, opaque_state, opaque_len);
- }
+thanks
+-john
 
