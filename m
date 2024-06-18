@@ -1,270 +1,91 @@
-Return-Path: <linux-kernel+bounces-218987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4736A90C86F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:08:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE30190C871
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C07751F22F7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47AED28556E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D4D1586FB;
-	Tue, 18 Jun 2024 09:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB90D204EF3;
+	Tue, 18 Jun 2024 09:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="au2sTpPs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g922690h";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="au2sTpPs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g922690h"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1WJjSHB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB93205B0F;
-	Tue, 18 Jun 2024 09:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDAF205B0F;
+	Tue, 18 Jun 2024 09:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718704182; cv=none; b=gX5DuxuindmIN4MQJCrwzMuMxEdmPJRzt7jUWirgIehDQnEKJAsSXrq/E0RVMPNBfZlla48hMGLpf/wrUoQzcMC5ISllBR2uxazetl/tqTHKTNAFFlsPLQ7sTYlKB2aLFxJpNpdZAzMD2vMYBFui553DLsgpOC34xExEJyJQd+c=
+	t=1718704229; cv=none; b=YMTuXnQkTbUwkulwEGbqSONfZiKfS5LQDtV87RsBWVv5gh4RKg7wHOBbBt8dVFglhrvxj0t7VpwaCQlX5unH7qziv7ba/bGdqBlDDuQ19Kj2bo7wdfChu4Uzkgw/6ZgOGBzduwKNXG4qXrTqJSZ5y13Vw3gbqvtMzvnjmZfD7gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718704182; c=relaxed/simple;
-	bh=j2zbuA0EXWOXlcCx8XOXLDFqKwoh8yJG6MidhFefpN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UhhcaHLXESrUndd8jT6eaxbJrw4uwxux/02sCy9rsngo6jhUM79IZPg/9yzEuK+szL2J6npPwUUrWBHfW1zGB/SE1lc8x74PXffKpESs2HvWqc07Makz1i03e4CYeJ12JHtEfruuYmjrhacTY50fjba2Nud/tu5sAwGejrnAAS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=au2sTpPs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g922690h; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=au2sTpPs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g922690h; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F34391F397;
-	Tue, 18 Jun 2024 09:49:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718704175; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QI4+RixGFW9ZrNAjdbwVasoe3hLeUsr/76KFsPgkzIA=;
-	b=au2sTpPsRDOUWnlKa7dFLwrfvObDNfeiubIqHx4s+4SMhx4MIsXJJdSrLpJiHtbMjY/Izm
-	6u0zcQtr0wqZeBsKzvZRhgqKrvHFx5zsbaosxFZicJILnhJcKclNyeWDjw1nxPuFMWtlP1
-	TWBXHz3sgU3keLFQmgSAf5dglH3im38=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718704175;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QI4+RixGFW9ZrNAjdbwVasoe3hLeUsr/76KFsPgkzIA=;
-	b=g922690hjog51L4gQSvgupgMqIunUdwPojHLhuww8cWHWs8NBk4xtU5mHKYJgb8e0uBARY
-	uXqnqJxnxNz9DWCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=au2sTpPs;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=g922690h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718704175; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QI4+RixGFW9ZrNAjdbwVasoe3hLeUsr/76KFsPgkzIA=;
-	b=au2sTpPsRDOUWnlKa7dFLwrfvObDNfeiubIqHx4s+4SMhx4MIsXJJdSrLpJiHtbMjY/Izm
-	6u0zcQtr0wqZeBsKzvZRhgqKrvHFx5zsbaosxFZicJILnhJcKclNyeWDjw1nxPuFMWtlP1
-	TWBXHz3sgU3keLFQmgSAf5dglH3im38=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718704175;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QI4+RixGFW9ZrNAjdbwVasoe3hLeUsr/76KFsPgkzIA=;
-	b=g922690hjog51L4gQSvgupgMqIunUdwPojHLhuww8cWHWs8NBk4xtU5mHKYJgb8e0uBARY
-	uXqnqJxnxNz9DWCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E7B2C13AA0;
-	Tue, 18 Jun 2024 09:49:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YRWOOC5YcWZ6HwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 18 Jun 2024 09:49:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9A0A4A0886; Tue, 18 Jun 2024 11:49:34 +0200 (CEST)
-Date: Tue, 18 Jun 2024 11:49:34 +0200
-From: Jan Kara <jack@suse.cz>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: jack@suse.cz, paolo.valente@unimore.it, axboe@kernel.dk, tj@kernel.org,
-	josef@toxicpanda.com, linux-block@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH -next] block, bfq: remove blkg_path()
-Message-ID: <20240618094934.lnezpxyxktiz6637@quack3>
-References: <20240618032753.3502528-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1718704229; c=relaxed/simple;
+	bh=elONcxsWULUdEDPQ4LFBA+PJ3wyTRG1kyjBDnlyR1uc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Um/06ZkYD7PIQhH9JadMDuyuMvq2BpxnDReMi+n09DR4iHX09SQWA3aDUIjDwPuSPBgfo031NjpKzSHQY63Q5gIvNKtlLZcjeRGCAJEjzexE1zMj5uEL0IxfmFC7zOBWPk/+NtDgyJ9jP8tQUz22NIY+EXTF1+6fXWDZF2UaqnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1WJjSHB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9FA9DC4AF1D;
+	Tue, 18 Jun 2024 09:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718704228;
+	bh=elONcxsWULUdEDPQ4LFBA+PJ3wyTRG1kyjBDnlyR1uc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=k1WJjSHBe1oBJL7irtCrFkz+SBXSdY6qHHLQlMJvN4YoIxWE6FUL8NvW+lOWvrseu
+	 YEwM85LCucEfHvZayjEy41XpYPCs+xshsJoHnCwaM5GGU5YxOZdGvGq7Mabb06sB7R
+	 UjwytB2Q17NjVfq2qaWkdq+SFp5L6ST10OgZZEt0P9ptI8+1yU5Q0qbN2XL2Xnht2l
+	 4Ui5Q9fod1P+/BBG0+NV27X/kty4D6KLpq/CFeOnpc8JSrLOHHfAE2/pnLxox30r/e
+	 TMf7mOOKM/UFIalCB5D9OoGg3bPnhZGpTm8x2enb/esXYlK7sqto9FhKN24/XEzGck
+	 Un8L2X4CrBhOA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8F1D1D2D0F8;
+	Tue, 18 Jun 2024 09:50:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618032753.3502528-1-yukuai1@huaweicloud.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: F34391F397
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] qca_spi: Make interrupt remembering atomic
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171870422858.6440.11410226713577880340.git-patchwork-notify@kernel.org>
+Date: Tue, 18 Jun 2024 09:50:28 +0000
+References: <20240614145030.7781-1-wahrenst@gmx.net>
+In-Reply-To: <20240614145030.7781-1-wahrenst@gmx.net>
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, chf.fritz@googlemail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Tue 18-06-24 11:27:53, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Fri, 14 Jun 2024 16:50:30 +0200 you wrote:
+> The whole mechanism to remember occurred SPI interrupts is not atomic,
+> which could lead to unexpected behavior. So fix this by using atomic bit
+> operations instead.
 > 
-> After commit 35fe6d763229 ("block: use standard blktrace API to output
-> cgroup info for debug notes"), the field 'bfqg->blkg_path' is not used
-> and hence can be removed, and therefor blkg_path() is not used anymore
-> and can be removed.
+> Fixes: 291ab06ecf67 ("net: qualcomm: new Ethernet over SPI driver for QCA7000")
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
 > 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> [...]
 
-Yay, nice to see code removed! Feel free to add:
+Here is the summary with links:
+  - qca_spi: Make interrupt remembering atomic
+    https://git.kernel.org/netdev/net/c/2d7198278ece
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  block/bfq-cgroup.c  | 51 ---------------------------------------------
->  block/bfq-iosched.h |  3 ---
->  block/blk-cgroup.h  | 13 ------------
->  3 files changed, 67 deletions(-)
-> 
-> diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
-> index d442ee358fc2..b758693697c0 100644
-> --- a/block/bfq-cgroup.c
-> +++ b/block/bfq-cgroup.c
-> @@ -797,57 +797,6 @@ void bfq_bic_update_cgroup(struct bfq_io_cq *bic, struct bio *bio)
->  	 */
->  	bfq_link_bfqg(bfqd, bfqg);
->  	__bfq_bic_change_cgroup(bfqd, bic, bfqg);
-> -	/*
-> -	 * Update blkg_path for bfq_log_* functions. We cache this
-> -	 * path, and update it here, for the following
-> -	 * reasons. Operations on blkg objects in blk-cgroup are
-> -	 * protected with the request_queue lock, and not with the
-> -	 * lock that protects the instances of this scheduler
-> -	 * (bfqd->lock). This exposes BFQ to the following sort of
-> -	 * race.
-> -	 *
-> -	 * The blkg_lookup performed in bfq_get_queue, protected
-> -	 * through rcu, may happen to return the address of a copy of
-> -	 * the original blkg. If this is the case, then the
-> -	 * bfqg_and_blkg_get performed in bfq_get_queue, to pin down
-> -	 * the blkg, is useless: it does not prevent blk-cgroup code
-> -	 * from destroying both the original blkg and all objects
-> -	 * directly or indirectly referred by the copy of the
-> -	 * blkg.
-> -	 *
-> -	 * On the bright side, destroy operations on a blkg invoke, as
-> -	 * a first step, hooks of the scheduler associated with the
-> -	 * blkg. And these hooks are executed with bfqd->lock held for
-> -	 * BFQ. As a consequence, for any blkg associated with the
-> -	 * request queue this instance of the scheduler is attached
-> -	 * to, we are guaranteed that such a blkg is not destroyed, and
-> -	 * that all the pointers it contains are consistent, while we
-> -	 * are holding bfqd->lock. A blkg_lookup performed with
-> -	 * bfqd->lock held then returns a fully consistent blkg, which
-> -	 * remains consistent until this lock is held.
-> -	 *
-> -	 * Thanks to the last fact, and to the fact that: (1) bfqg has
-> -	 * been obtained through a blkg_lookup in the above
-> -	 * assignment, and (2) bfqd->lock is being held, here we can
-> -	 * safely use the policy data for the involved blkg (i.e., the
-> -	 * field bfqg->pd) to get to the blkg associated with bfqg,
-> -	 * and then we can safely use any field of blkg. After we
-> -	 * release bfqd->lock, even just getting blkg through this
-> -	 * bfqg may cause dangling references to be traversed, as
-> -	 * bfqg->pd may not exist any more.
-> -	 *
-> -	 * In view of the above facts, here we cache, in the bfqg, any
-> -	 * blkg data we may need for this bic, and for its associated
-> -	 * bfq_queue. As of now, we need to cache only the path of the
-> -	 * blkg, which is used in the bfq_log_* functions.
-> -	 *
-> -	 * Finally, note that bfqg itself needs to be protected from
-> -	 * destruction on the blkg_free of the original blkg (which
-> -	 * invokes bfq_pd_free). We use an additional private
-> -	 * refcounter for bfqg, to let it disappear only after no
-> -	 * bfq_queue refers to it any longer.
-> -	 */
-> -	blkg_path(bfqg_to_blkg(bfqg), bfqg->blkg_path, sizeof(bfqg->blkg_path));
->  	bic->blkcg_serial_nr = serial_nr;
->  }
->  
-> diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-> index 467e8cfc41a2..08ddf2cfae5b 100644
-> --- a/block/bfq-iosched.h
-> +++ b/block/bfq-iosched.h
-> @@ -1003,9 +1003,6 @@ struct bfq_group {
->  	/* must be the first member */
->  	struct blkg_policy_data pd;
->  
-> -	/* cached path for this blkg (see comments in bfq_bic_update_cgroup) */
-> -	char blkg_path[128];
-> -
->  	/* reference counter (see comments in bfq_bic_update_cgroup) */
->  	refcount_t ref;
->  
-> diff --git a/block/blk-cgroup.h b/block/blk-cgroup.h
-> index 25833221a12b..6dcaf63c560a 100644
-> --- a/block/blk-cgroup.h
-> +++ b/block/blk-cgroup.h
-> @@ -301,19 +301,6 @@ static inline struct blkcg *cpd_to_blkcg(struct blkcg_policy_data *cpd)
->  	return cpd ? cpd->blkcg : NULL;
->  }
->  
-> -/**
-> - * blkg_path - format cgroup path of blkg
-> - * @blkg: blkg of interest
-> - * @buf: target buffer
-> - * @buflen: target buffer length
-> - *
-> - * Format the path of the cgroup of @blkg into @buf.
-> - */
-> -static inline int blkg_path(struct blkcg_gq *blkg, char *buf, int buflen)
-> -{
-> -	return cgroup_path(blkg->blkcg->css.cgroup, buf, buflen);
-> -}
-> -
->  /**
->   * blkg_get - get a blkg reference
->   * @blkg: blkg to get
-> -- 
-> 2.39.2
-> 
+You are awesome, thank you!
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
