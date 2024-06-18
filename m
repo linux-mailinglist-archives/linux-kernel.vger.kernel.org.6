@@ -1,64 +1,55 @@
-Return-Path: <linux-kernel+bounces-218732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C004090C476
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:36:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85EE90C471
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 462C9B21C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:36:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD7291F21B60
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401A413A259;
-	Tue, 18 Jun 2024 07:17:32 +0000 (UTC)
-Received: from orthanc.universe-factory.net (orthanc.universe-factory.net [104.238.176.138])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910E6135A40;
+	Tue, 18 Jun 2024 07:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="teSK2Z1u"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDA07FF;
-	Tue, 18 Jun 2024 07:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.238.176.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022DA54724;
+	Tue, 18 Jun 2024 07:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718695051; cv=none; b=D3LQVRFZIW03Bgr9OvE4F/31P4T7N6LZbEbo9Uq8lwcwl8NwQC9kAJMOOwaetEGaW9Sd+7NbXB/g7O8mVZ7arx7MmRP8uQWAE1mMnm7RijH5uYh/t+Hh5c2oaOb0BaCEUUNrWaym0B9ZeiW1/E+84k2FOgSdA3CJcX3qXgURAPQ=
+	t=1718695229; cv=none; b=mj/lukqNABcunU4C9msfHhx9ImsrIahLpELXPCETJEKhP3gFODuQfWyEnu5Q7PhxI5fWx67hqfbmycBioWCKSca6zRVtja9b9mAHT7WO5deeFXnCXEVIpn8XLSez54C0v9C+dFmcg5KesXupt4/JBPiD0KfqJElGM+wXeSQeEuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718695051; c=relaxed/simple;
-	bh=ZwHbXoxfZwFmTMrqvIc1RRPSwwANtPx1seZj3r+0jZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pW6DepGBj/01xhATrQyJGCDYyo336dMuFeMjWAhXuCw11dQ0rcjLbDrbEb6S+TottIj3kQfaekvnOO1dyMF5lWfosYgvuPB0Uoyd+0zaMPDfqLBJOGgu3m6eSNph1N9bI6t0TAY9tKn/ReBHtXX+iF/+k7MlV4yi88hpiwoA9cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=universe-factory.net; spf=pass smtp.mailfrom=universe-factory.net; arc=none smtp.client-ip=104.238.176.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=universe-factory.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=universe-factory.net
-Received: from avalon.fritz.box (unknown [IPv6:2001:19f0:6c01:100::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by orthanc.universe-factory.net (Postfix) with ESMTPSA id 5C52B1FC32;
-	Tue, 18 Jun 2024 09:17:26 +0200 (CEST)
-From: Matthias Schiffer <mschiffer@universe-factory.net>
-To: =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1718695229; c=relaxed/simple;
+	bh=FIPT6lCf+zj99FHHyw3mQx//uLZykQ8rPdsZXxS6W+4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UWLtTZe4HQFP8dUnwLrl9wYZl2sPX4XFC1EABe6+GCtJlhqGCaErywTDNTw7STKYuzHyS7269gWASpIkIouLiuA4EZ40WFJbxmcqlOLki+wpkgatqitHOO49NacZH/azriN46uhi+x+b3bfUvyfXKHJknFuyTIkuErNBEH4CWbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=teSK2Z1u; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718695224; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=nDo5YAs2CRrhczpgfzOhYy/3dEdPBFGSExQgFzNnxkg=;
+	b=teSK2Z1uJK8Ct48u8YsNoDIu1LbRvgYRMrna5tIRlNO/HLcu8hPvqbYWx/4YbelL6eY5rm62sa+Pc0by9etczmFxlF3R9GLFGyKKXhLQRGumPbcz99P+EFp/mUVyyapr2IOwF6m0t8MJBdnAKu15z1sohwV+HUS57dEftWMmwxA=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W8jHIvY_1718695214;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W8jHIvY_1718695214)
+          by smtp.aliyun-inc.com;
+          Tue, 18 Jun 2024 15:20:24 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: rostedt@goodmis.org
+Cc: mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Schiffer <mschiffer@universe-factory.net>
-Subject: [PATCH net-next v3 2/2] net: dsa: mt7530: add support for bridge port isolation
-Date: Tue, 18 Jun 2024 09:17:13 +0200
-Message-ID: <499be699382f8b674d19516b6a365b2265de2151.1718694181.git.mschiffer@universe-factory.net>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <15c28e5ed5fa02ca7904c71540e254617d571eb8.1718694181.git.mschiffer@universe-factory.net>
-References: <15c28e5ed5fa02ca7904c71540e254617d571eb8.1718694181.git.mschiffer@universe-factory.net>
+	linux-trace-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] fgraph: Use str_plural() in test_graph_storage_single()
+Date: Tue, 18 Jun 2024 15:20:14 +0800
+Message-Id: <20240618072014.20855-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,82 +58,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove a pair of ports from the port matrix when both ports have the
-isolated flag set.
+Use existing str_plural() function rather than duplicating its
+implementation.
 
-Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+./kernel/trace/trace_selftest.c:880:56-60: opportunity for str_plural(size).
+
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9349
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 ---
+ kernel/trace/trace_selftest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2: removed unintended formatting change
-v3: no changes
-
- drivers/net/dsa/mt7530.c | 18 ++++++++++++++++--
- drivers/net/dsa/mt7530.h |  1 +
- 2 files changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
-index 9ce27ce07d77..ec18e68bf3a8 100644
---- a/drivers/net/dsa/mt7530.c
-+++ b/drivers/net/dsa/mt7530.c
-@@ -1311,6 +1311,7 @@ static void mt7530_update_port_member(struct mt7530_priv *priv, int port,
- 	struct dsa_port *cpu_dp = dp->cpu_dp;
- 	u32 port_bitmap = BIT(cpu_dp->index);
- 	int other_port;
-+	bool isolated;
+diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
+index adf0f436d84b..97f1e4bc47dc 100644
+--- a/kernel/trace/trace_selftest.c
++++ b/kernel/trace/trace_selftest.c
+@@ -877,7 +877,7 @@ static int __init test_graph_storage_single(struct fgraph_fixture *fixture)
+ 	int ret;
  
- 	dsa_switch_for_each_user_port(other_dp, priv->ds) {
- 		other_port = other_dp->index;
-@@ -1327,7 +1328,9 @@ static void mt7530_update_port_member(struct mt7530_priv *priv, int port,
- 		if (!dsa_port_offloads_bridge_dev(other_dp, bridge_dev))
- 			continue;
+ 	pr_cont("PASSED\n");
+-	pr_info("Testing fgraph storage of %d byte%s: ", size, size > 1 ? "s" : "");
++	pr_info("Testing fgraph storage of %d byte%s: ", size, str_plural(size));
  
--		if (join) {
-+		isolated = p->isolated && other_p->isolated;
-+
-+		if (join && !isolated) {
- 			other_p->pm |= PCR_MATRIX(BIT(port));
- 			port_bitmap |= BIT(other_port);
- 		} else {
-@@ -1354,7 +1357,7 @@ mt7530_port_pre_bridge_flags(struct dsa_switch *ds, int port,
- 			     struct netlink_ext_ack *extack)
- {
- 	if (flags.mask & ~(BR_LEARNING | BR_FLOOD | BR_MCAST_FLOOD |
--			   BR_BCAST_FLOOD))
-+			   BR_BCAST_FLOOD | BR_ISOLATED))
- 		return -EINVAL;
- 
- 	return 0;
-@@ -1383,6 +1386,17 @@ mt7530_port_bridge_flags(struct dsa_switch *ds, int port,
- 		mt7530_rmw(priv, MT753X_MFC, BC_FFP(BIT(port)),
- 			   flags.val & BR_BCAST_FLOOD ? BC_FFP(BIT(port)) : 0);
- 
-+	if (flags.mask & BR_ISOLATED) {
-+		struct dsa_port *dp = dsa_to_port(ds, port);
-+		struct net_device *bridge_dev = dsa_port_bridge_dev_get(dp);
-+
-+		priv->ports[port].isolated = !!(flags.val & BR_ISOLATED);
-+
-+		mutex_lock(&priv->reg_mutex);
-+		mt7530_update_port_member(priv, port, bridge_dev, true);
-+		mutex_unlock(&priv->reg_mutex);
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/dsa/mt7530.h b/drivers/net/dsa/mt7530.h
-index 2ea4e24628c6..28592123070b 100644
---- a/drivers/net/dsa/mt7530.h
-+++ b/drivers/net/dsa/mt7530.h
-@@ -721,6 +721,7 @@ struct mt7530_fdb {
-  */
- struct mt7530_port {
- 	bool enable;
-+	bool isolated;
- 	u32 pm;
- 	u16 pvid;
- 	struct phylink_pcs *sgmii_pcs;
+ 	ret = init_fgraph_fixture(fixture);
+ 	if (ret && ret != -ENODEV) {
 -- 
-2.45.2
+2.20.1.7.g153144c
 
 
