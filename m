@@ -1,42 +1,60 @@
-Return-Path: <linux-kernel+bounces-220342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB7090E003
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:41:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0D190E00D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F7A2840EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:41:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 987142863AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D53185E45;
-	Tue, 18 Jun 2024 23:40:49 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7117C18E77D;
+	Tue, 18 Jun 2024 23:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R99PvyYa"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E38D15EFAF;
-	Tue, 18 Jun 2024 23:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C079418E754;
+	Tue, 18 Jun 2024 23:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718754048; cv=none; b=eiadt5lx5XK2qR3p35zEpCmY6FYRor11C5TNCqBQdIQI7M7j3vEOsCzdT28VV3T2pDHTWec2K5q3ctg+QEE6RxcUEqq2JKkN0NadinIKJyegtP34t2YOjNYqXwtfPZVJCcKmiFQR9KKYIxatylAJoT3znaLS5K7iu/UQfnazeko=
+	t=1718754067; cv=none; b=EI0Tjlzgie/Ie7d2YX8J/30QeT8J/CAS1ybDWgCpF+6l5uK319+of3V2gcUjKezWi3NWo/weSNAjjGh2nn4+6QtdIhdSxB3NPOPOjYsn1NtUrBBfWZ6EwcZlVNgTBRUvtI4D6HzvIIztsb7ug74Ymm46YiuvW9Q90ESif4RW5C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718754048; c=relaxed/simple;
-	bh=PhVIethmpI/DLAqmGWjDLxd9jxBL8+RTgrvuFYs8qxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=Qt9cK1cRiTlyTeQcHafuRE1+8ct4+CCwidB876IZ09v0jhnLrW+WZpFjm2i3SpjBg4w49Spk0XM1xLefVSquHEXzLh55M/0/89myvp5RS0AZmD/xj5PkgLYhwuX0JlPmpKq39inAtBcqETi1V0kQXZanxF8j01W3gLK9ljIhscE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af4b2.dynamic.kabel-deutschland.de [95.90.244.178])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 02F7D61E5FE01;
-	Wed, 19 Jun 2024 01:39:58 +0200 (CEST)
-Message-ID: <6845cc2d-c50b-415b-af49-bf57333ee939@molgen.mpg.de>
-Date: Wed, 19 Jun 2024 01:39:57 +0200
+	s=arc-20240116; t=1718754067; c=relaxed/simple;
+	bh=O9eySkFBFFhyrOoADg7GSNhpc95wQVGdzH+2rsraOqM=;
+	h=Message-ID:Date:MIME-Version:From:To:Subject:CC:Content-Type; b=eoCZAj7eAU8J+LVMtkWiwOR1TwZVjZH7ftutg+/zSirC/j5LYWRFMCwsNZ4sgjTKICvsImSRKoLpNMd2zby+Ls6EqHNHCYiSooJge2wGZNNJeLNCI1D8252f2SvnrD4diUb1YerIVyXjl6TPDmZ9n47Zqj8bNg7HoEdTiv5SJuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R99PvyYa; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ILa25l014475;
+	Tue, 18 Jun 2024 23:41:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=O6Y10khejXzVQe3DeWLM3x
+	WF74pRoLDK/ugLwuZETo0=; b=R99PvyYarb1h/TWd4wiI4g4ILWHoaLuHXvioAB
+	N4MjKWj6U1UnxPAuUybUPr22rvNd1e4AGEMCJlFJFTQ+QcF1TadkCZds+68epQ0x
+	G0+yQGODfLCKEEHpE0k1tUxPBsqhVisq+o2CoDJItvYd+2fEAj8z/dv0zVM++agN
+	d673G+g3HK8F8dehbVrO5+9Y1Urq+i0VAwXmGs/lfscYom9FtgfPgrVzrOr1U1M5
+	1cWCX9jsnmHASETP8q16GYZOKcarweZYtlAy8VYk7UOVPtrTvVGYk4Dl82YNPM/p
+	Uww1GGwvs5NIfXSK3jTQ4wlaHL18ZwejkQkbL+xsddqI2stA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9x062j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 23:41:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45INf19N027603
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 23:41:01 GMT
+Received: from [10.48.243.231] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 16:41:01 -0700
+Message-ID: <563b8f82-9865-40ae-85d3-055b3bcda7d6@quicinc.com>
+Date: Tue, 18 Jun 2024 16:41:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,60 +62,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT PATCH v2 2/3] hwmon: (spd5118) Use spd5118 specific
- read/write operations
-To: Armin Wolf <W_Armin@gmx.de>, Guenter Roeck <linux@roeck-us.net>
-References: <20240618195348.1670547-1-linux@roeck-us.net>
- <20240618195348.1670547-3-linux@roeck-us.net>
- <a7f208df-4c9e-4fa2-9d17-80895db51182@molgen.mpg.de>
- <661def21-b0a9-49c1-937e-8526008f529c@roeck-us.net>
- <omsjeb6zbkcdhh4a3urjdrdeyj2kczb734tbhxwdcvngzlm7pe@dzdphvmm6asq>
- <4755d088-7eab-47ca-923c-db1fdf3611ab@gmx.de>
 Content-Language: en-US
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Ren=C3=A9_Rebe?=
- <rene@exactcode.de>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <linux@weissschuh.net>, Stephen Horvath <s.horvath@outlook.com.au>,
- Sasha Kozachuk <skozachuk@google.com>, John Hamrick <johnham@google.com>,
- Chris Sarra <chrissarra@google.com>, linux-hwmon@vger.kernel.org,
- Jean Delvare <jdelvare@suse.com>, Heiner Kallweit <hkallweit1@gmail.com>
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <4755d088-7eab-47ca-923c-db1fdf3611ab@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+To: Kees Cook <kees@kernel.org>
+Subject: mips gcc plugin issues
+CC: <linux-hardening@vger.kernel.org>,
+        open list
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uSOCDu-RnnuaxYfRpDI6E_b-VsWAXCt_
+X-Proofpoint-GUID: uSOCDu-RnnuaxYfRpDI6E_b-VsWAXCt_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_06,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=432
+ impostorscore=0 priorityscore=1501 suspectscore=0 mlxscore=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180174
 
-[Cc: +Heiner]
+I'm trying to do an allmodconfig build for ARCH=mips using:
+https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/13.2.0/x86_64-gcc-13.2.0-nolibc-mips-linux.tar.gz
 
+This build dies quickly with:
+  CC      scripts/mod/empty.o
+cc1: error: cannot load plugin ./scripts/gcc-plugins/randomize_layout_plugin.so: ./scripts/gcc-plugins/randomize_layout_plugin.so: undefined symbol: _ZNK6frange6acceptERK14vrange_visitor
+cc1: error: cannot load plugin ./scripts/gcc-plugins/latent_entropy_plugin.so: ./scripts/gcc-plugins/latent_entropy_plugin.so: undefined symbol: _ZNK6frange6acceptERK14vrange_visitor
+  CC      scripts/mod/devicetable-offsets.s
+make[2]: *** [scripts/Makefile.build:244: scripts/mod/empty.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+cc1: error: cannot load plugin ./scripts/gcc-plugins/randomize_layout_plugin.so: ./scripts/gcc-plugins/randomize_layout_plugin.so: undefined symbol: _ZNK6frange6acceptERK14vrange_visitor
+cc1: error: cannot load plugin ./scripts/gcc-plugins/latent_entropy_plugin.so: ./scripts/gcc-plugins/latent_entropy_plugin.so: undefined symbol: _ZNK6frange6acceptERK14vrange_visitor
+  HDRINST usr/include/linux/usb/tmc.h
+make[2]: *** [scripts/Makefile.build:117: scripts/mod/devicetable-offsets.s] Error 1
 
-Dear Armin,
+I see the following in my .config:
+CONFIG_HAVE_GCC_PLUGINS=y
+CONFIG_GCC_PLUGINS=y
+CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y
+CONFIG_GCC_PLUGIN_RANDSTRUCT=y
 
+So I'll turn those off, but just want to flag that this issue exists.
+Seems either the plugins should work or the allmodconfig should turn them off.
 
-Am 19.06.24 um 01:28 schrieb Armin Wolf:
-> Am 19.06.24 um 00:28 schrieb Wolfram Sang:
-> 
->>> to 86 degrees C. If that doesn't work, we'll be really out of luck
->>> with that controller (or at least I don't have an idea what else to 
->>> try).
->> 
->> Try CCing Heiner Kallweit for ideas about the i801 controller.
-
-> i am not Heiner Kallweit, but i found something interesting in
-> commit ba9ad2af7019 ("i2c: i801: Fix I2C Block Read on 8-Series/C220 and 
-> later").
-> 
-> Basically, it seems that the i802 i2c controller indeed features a SPD 
-> write disable bit which blocks all writes for slave addresses 0x50-0x57.
-> 
-> Does the i801 i2c controller driver print something like "SPD Write 
-> Disable is set" during boot?
-
-Nice find. Yes, it does:
-
-     [    5.462605] i801_smbus 0000:00:1f.4: SPD Write Disable is set
-     [    5.468399] i801_smbus 0000:00:1f.4: SMBus using PCI interrupt
-
-
-Kind regards,
-
-Paul
+/jeff
 
