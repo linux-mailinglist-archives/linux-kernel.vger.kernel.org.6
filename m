@@ -1,135 +1,120 @@
-Return-Path: <linux-kernel+bounces-219799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAEEA90D99F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:43:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AED90D82C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61CD0B2EFE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:53:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4771B3359A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BC3757FC;
-	Tue, 18 Jun 2024 15:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD4A47A7A;
+	Tue, 18 Jun 2024 15:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="JdwSHdYu"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGwXCwDa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477BF45977
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C092D2033A;
+	Tue, 18 Jun 2024 15:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718725898; cv=none; b=fefUhQiRqLo86gkThjH1ywihEbX3yqY6Yeb350yw/fzk5T4Uvb0XCZ8M7HgMQSxqU+AsOg05pcXpaIlSZdRCixLh672CvozEV18PU2Sv1xHslr3/puMJxyHmYonq8NsrdzXmL/hBNSap57ph+q7R4NenZyXgcUewt3E3KuQQKmI=
+	t=1718725550; cv=none; b=d3RdrYqHeLNO9fKXN4Gthan0CSpkgEVwmcLM4AmbqFH0jQucYEtFq+Wm357K0qCZdt/y5LqgRK8jPprK+J0dmkQVp8kAfPcJWW+pfKJJ3h9B3bohkwwol9PrGl6nnoni1VJX85bbomuYC70YoOmQHcQLck8/+tAixT2hLfGwtU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718725898; c=relaxed/simple;
-	bh=zsDwPG7tzMjzFGmeJoQG1AV2T9WH9A6kVLeIwITuy6c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RXVAl8Jqn51ewPWg++z3FBCrWQWOf3Q1KRyjWkMxyibhLon93hRGJuOM8rdfZR448Pi01n0CWEWtYhvCHHxZk/Y02rMt5LtE3gq729Jwa6He2qnC5DcpyH8kKhTR3MwIpzPm4BplImE2KlcKw7awMHp9N/EJGYqVvEV8J1AxVRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=JdwSHdYu; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1718725286;
-	bh=zsDwPG7tzMjzFGmeJoQG1AV2T9WH9A6kVLeIwITuy6c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JdwSHdYufZBIcz1XoKPrk/TGj0oRY8Eih1B7gx8oJ53OuGcFi2bx2dtPD87lQJ0sn
-	 5TJiMafMHN1FPtKE2au/JqTWmfHiQ/gaJI/1HUkeapGdYKSDz1yJUyTNBcm5pbBNgl
-	 r3I+zeJyO9JY1K0nqjNSFB58woQuCiDBaQA/n53AhvxzMDpWDMTYQaT+rIjOmHJj/b
-	 RSWq5or3aY+GRlnhJcWtHlhgxuyom9AkePTj6MQkjMoGeLHBhaJ0InVRvuSgXqMjB6
-	 Ejo7svBkytwJdM2zEA76F75V9ykToB7c5Jv+KjQ58D2HNARqI9TNasYDOuMx+ixhRX
-	 0x31/g1CjnfpQ==
-Received: from thinkos.internal.efficios.com (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4W3WFL4tw2z16qH;
-	Tue, 18 Jun 2024 11:41:26 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Dan Williams <dan.j.williams@intel.com>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	nvdimm@lists.linux.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 4/4] x86: Invoke pre_restart notifiers
-Date: Tue, 18 Jun 2024 11:41:57 -0400
-Message-Id: <20240618154157.334602-5-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240618154157.334602-1-mathieu.desnoyers@efficios.com>
-References: <20240618154157.334602-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1718725550; c=relaxed/simple;
+	bh=+Y3MShge4JrwWG3G/w1pr+rtYWkctyGlLWVNc3mtZi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wq7mK4BPrEsUGuL9Qom+ArGabfrT+AR+1WIeWCFdznugW2/c5BmZxqHs3riBp8SLq15g9KP8xCrYuD3cTpW1pcbJuXvrPQIQc7+Z5Le/XEiQy/S0s5sjv9iryBojpUopCXYyX3mWlD0MOZLjn+OfsirSFCOCCS3TxxF5CJtR1EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGwXCwDa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5B5C3277B;
+	Tue, 18 Jun 2024 15:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718725550;
+	bh=+Y3MShge4JrwWG3G/w1pr+rtYWkctyGlLWVNc3mtZi8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jGwXCwDakCJUruIfaIRhWshWGOnHV4qtpxMWon23cqUzaY8jEJuOA22gi8jFYI4rI
+	 ObhcFL5W/oPp5BKpvkSQPbSeJMaBSQDY4paLalSjjq9uuAvFugW98vG76DViAdYOSn
+	 MiTD7Ss5k696SALuI3kWSaJZa8iKyQFD54CkoT8nXfEeKa7N3G5eJ5jPIA4zc6BerC
+	 LF4UWypbUDJlKcLRe/EfmYH8NwbDEFkzR1hPB5T8igeCesOTYF0lEisHK+nLyQaZAS
+	 +qpVUGhnja4cYUWJ40SLHYLDaDLZSlmqkL93FSbpszLkGnOBTz2aGnRg1ivglLIfDK
+	 e0+BBcV7FGS4w==
+Date: Tue, 18 Jun 2024 16:45:45 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yangyu Chen <cyy@cyyself.name>
+Cc: linux-riscv@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/9] dt-bindings: riscv: Add SpacemiT X60 compatibles
+Message-ID: <20240618-vendor-debtor-c88a8a555a4c@spud>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+ <tencent_947689E304AE5A4C7A48682311DF8920B106@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EeJQNOojAFcHf82l"
+Content-Disposition: inline
+In-Reply-To: <tencent_947689E304AE5A4C7A48682311DF8920B106@qq.com>
 
-Invoke the pre_restart notifiers after shutdown, before machine restart.
-This allows preserving pmem memory across warm reboots.
 
-Invoke the pre_restart notifiers on emergency_machine_restart to cover
-the panic() scenario.
+--EeJQNOojAFcHf82l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: nvdimm@lists.linux.dev
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/kernel/reboot.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+On Mon, Jun 17, 2024 at 01:20:47AM +0800, Yangyu Chen wrote:
+> The X60 is RISC-V CPU cores from SpacemiT and currently used in their K1
+> SoC.
+>=20
+> Link: https://www.spacemit.com/en/spacemit-x60-core/
+>=20
 
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index f3130f762784..222619fa63c6 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -631,8 +631,10 @@ static void native_machine_emergency_restart(void)
- 	int orig_reboot_type = reboot_type;
- 	unsigned short mode;
- 
--	if (reboot_emergency)
-+	if (reboot_emergency) {
-+		do_kernel_pre_restart(NULL);
- 		emergency_reboot_disable_virtualization();
-+	}
- 
- 	tboot_shutdown(TB_SHUTDOWN_REBOOT);
- 
-@@ -760,12 +762,13 @@ static void __machine_emergency_restart(int emergency)
- 	machine_ops.emergency_restart();
- }
- 
--static void native_machine_restart(char *__unused)
-+static void native_machine_restart(char *cmd)
- {
- 	pr_notice("machine restart\n");
- 
- 	if (!reboot_force)
- 		machine_shutdown();
-+	do_kernel_pre_restart(cmd);
- 	__machine_emergency_restart(0);
- }
- 
--- 
-2.39.2
+nit: Delete the blank line
 
+> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+> ---
+>  Documentation/devicetree/bindings/riscv/cpus.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Document=
+ation/devicetree/bindings/riscv/cpus.yaml
+> index d87dd50f1a4b..5ad9cb410335 100644
+> --- a/Documentation/devicetree/bindings/riscv/cpus.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
+> @@ -46,6 +46,7 @@ properties:
+>                - sifive,u7
+>                - sifive,u74
+>                - sifive,u74-mc
+> +              - spacemit,x60
+>                - thead,c906
+>                - thead,c910
+>                - thead,c920
+> --=20
+> 2.45.1
+>=20
+
+--EeJQNOojAFcHf82l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnGrqQAKCRB4tDGHoIJi
+0iAJAQC7qcXuTq4ZwTJonJzf+JN6yAvGpeql2DX+RXgpHhAH2gEAySlx6N7CvLqG
+WLunJhEKHouFBjgCCw11FxvuAKBU4AI=
+=OF3D
+-----END PGP SIGNATURE-----
+
+--EeJQNOojAFcHf82l--
 
