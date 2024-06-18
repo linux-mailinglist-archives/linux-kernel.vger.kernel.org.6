@@ -1,236 +1,315 @@
-Return-Path: <linux-kernel+bounces-219681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E448890D669
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:00:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E3090D664
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0C7B1C22BED
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:00:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7877A1C23C63
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD6A4689;
-	Tue, 18 Jun 2024 15:00:18 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDB7132494;
+	Tue, 18 Jun 2024 14:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aeg1qpJz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0641A2139AC;
-	Tue, 18 Jun 2024 15:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7312139AC;
+	Tue, 18 Jun 2024 14:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718722817; cv=none; b=Vnv1HoxDs/JY+w4RBqCNw8WFgTrlTq38lOLh96Y1mJkpkFCKSxgipOAuwmNlUG5w8iXZxprtNqd6CfTYGZhv3kVZK8JLgu1aCpONcZy2fLYbbrJpQEjN9YodlzKEi24h1PyRO/9E9b8N72IrJDJTpP3lSz7hqtaIo4eRqUS7yNA=
+	t=1718722777; cv=none; b=N7TJP5BFY8x/FZwwRrm3Y2mkjMOp+FjDCkhV2/HZmzxozleWZHr8upm39nXHzZAt/E8XqDi5AAI9xgjGn8qXWH4CT9juQkNDfc2/p9Cbx/eAU/+BoR7PMwtNCQmKsHMq//i/ENRGOsW338Xo5uLktfZALsNeCm7jhxzEbRo0nTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718722817; c=relaxed/simple;
-	bh=woJD4wFg2/ZdP+6X/ByHM1hr7SWyHp6L48kgTdWsb1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZaKwBf4f2MNkX6h40LBPa0fd3r095cueNszTMWjKitqAdXIOhdtwjA4EtKW0OU4e0dTkECzMW9SrIvsiyber/7JoXoQBrynEL8dhNzp2gQstWAjEZ2ck/8NaxFkynaIhs3ja2vUgrwgRiAXGi3PcWzhKGkpmcsFCs6jZF7Rl5kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id DF2EE61E5FE01;
-	Tue, 18 Jun 2024 16:59:09 +0200 (CEST)
-Message-ID: <fd8868ef-6179-45a7-8249-ee17994a8e78@molgen.mpg.de>
-Date: Tue, 18 Jun 2024 16:59:09 +0200
+	s=arc-20240116; t=1718722777; c=relaxed/simple;
+	bh=9VFvLJ5D2bcVwMlb/aO0woCroDo49q//nKnY5oo0Vus=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=agn3GatWEjZXBdUPt6MxNNa35H3Bt4F6+Gq0+H8T4JS8corCDTbaXSYtx6FmYalgbGhEjZ2tXdaJnP1xhlRHNnpneO9gwTpp4HeNShXIjnyv2KYUWE9jHEonNxh9TcE1bKVnnYl/YpwNMLUA6O1t/wDoKunEwfYoPdABj/xJwQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aeg1qpJz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B634BC4AF55;
+	Tue, 18 Jun 2024 14:59:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718722776;
+	bh=9VFvLJ5D2bcVwMlb/aO0woCroDo49q//nKnY5oo0Vus=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Aeg1qpJzbdiwhk0HyabcDzTXwO9AQCbIcPBHS7QUTNJkXRqIfCgR1bVmJoAwJqIqW
+	 aA/mfHHKLn6NsqkPepHxDC+fxhid4DKHAx7TUdE+3ULPCiG1Dnpj0ZazWAGetk+T06
+	 Fpqb//mvvp6ioyECDSMv5z7hfiSYl75o2wb5jFEWqnnveBNbsHyvSshFRZp3Faw1RS
+	 I1nQT5+/0ON4TQ6ZRIi6vEVB78OXNSL8/Al7ICpwsSi6AGC4axkLIATerU0pHF4KEy
+	 rePk7ffEiv9dxbrVEHw+Brt4hhINevCU3yqR8++MMgH6r7KixVGf+RFAoK0wZFiJ9J
+	 g+yyDQpcEPjaw==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ebeefb9a6eso59211541fa.1;
+        Tue, 18 Jun 2024 07:59:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWepa+BaUb7KH1NPCSx/EOcQlfS3x0rcBgr1OqfIVuNtzmGnabMy00akWeGXCO9BnuWv0nqsZcTZnMSm4rzjbiGvNOouAaAPP9YSiXmQGR93Tuvn6G/7LMogRnhV/gBFU2L6I9o12a1
+X-Gm-Message-State: AOJu0YxU2/kBHb8PCvLIptU8bCDlU0vdp2rDyzKRSPM9ZM0Q+ARgeD+e
+	ViMNA7MQrYWrP+ZYza8wvQlGklOA4cbso6OEFV57bdq2g88uRGByWCAUnAUv23EaZjGBIoPixhc
+	+C9FaHcK4gAX7W7un9zujgkyYcFU=
+X-Google-Smtp-Source: AGHT+IFmKDr0UJF/vB46P5FDkAXrOS2m32z+9GBnyCDYe1Bfh6hX7g0qK5mLLgIhmZTL1cK7ajhZR9bGd8nlSWfuLOw=
+X-Received: by 2002:a2e:9b93:0:b0:2eb:f5ec:5acc with SMTP id
+ 38308e7fff4ca-2ec3cec5416mr669361fa.25.1718722774799; Tue, 18 Jun 2024
+ 07:59:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Armin Wolf <W_Armin@gmx.de>, Stephen Horvath <s.horvath@outlook.com.au>
-References: <20240604040237.1064024-1-linux@roeck-us.net>
- <20240604040237.1064024-6-linux@roeck-us.net>
- <a5aa120d-8497-4ca8-9752-7d800240b999@molgen.mpg.de>
- <efb77b37-30e5-48a8-b4af-eb9995a2882b@roeck-us.net>
- <33f369c1-1098-458e-9398-30037bd8c5aa@molgen.mpg.de>
- <4e09b843-3d2d-46d7-a8e1-2eabc4382dc7@roeck-us.net>
- <f20ea816-5165-401e-948f-6e77682a2d1b@molgen.mpg.de>
- <975af7e5-b1b0-400e-a1c3-6d9140421f25@roeck-us.net>
- <8719fc64-2b51-4b79-ba52-0a3b9216f2db@molgen.mpg.de>
- <f76a4d07-887b-4efb-b20e-52979db31216@roeck-us.net>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <f76a4d07-887b-4efb-b20e-52979db31216@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <aw675dhrbplkitj3szjut2vyidsxokogkjj3vi76wl2x4wybtg@5rhk5ca5zpmv> <san7zg5rohy7q2oep2kx6awf6gltpuv2f4xlfljw5ezxqydfkv@zkd4k4udcezz>
+In-Reply-To: <san7zg5rohy7q2oep2kx6awf6gltpuv2f4xlfljw5ezxqydfkv@zkd4k4udcezz>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 18 Jun 2024 16:59:22 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEr579hDqV5OuEbBB-O9meCOcmcTe_SZg97UKSLbKj6pw@mail.gmail.com>
+Message-ID: <CAMj1kXEr579hDqV5OuEbBB-O9meCOcmcTe_SZg97UKSLbKj6pw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] arm64: non leaf ptdump support
+To: Maxwell Bland <mbland@motorola.com>
+Cc: linux-mm@kvack.org, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Dear Guenter,
+On Tue, 18 Jun 2024 at 16:40, Maxwell Bland <mbland@motorola.com> wrote:
+>
+> Separate the pte_bits used in ptdump from pxd_bits used by pmd, p4d,
+> pud, and pgd descriptors, thereby adding support for printing key
+> intermediate directory protection bits, such as PXNTable, and enable the
+> associated support Kconfig option.
+>
+> Signed-off-by: Maxwell Bland <mbland@motorola.com>
+> ---
+>  arch/arm64/Kconfig     |   1 +
+>  arch/arm64/mm/ptdump.c | 140 ++++++++++++++++++++++++++++++++++++-----
+>  2 files changed, 125 insertions(+), 16 deletions(-)
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 5d91259ee7b5..f4c3290160db 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -98,6 +98,7 @@ config ARM64
+>         select ARCH_SUPPORTS_NUMA_BALANCING
+>         select ARCH_SUPPORTS_PAGE_TABLE_CHECK
+>         select ARCH_SUPPORTS_PER_VMA_LOCK
+> +       select ARCH_SUPPORTS_NON_LEAF_PTDUMP
+>         select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
+>         select ARCH_WANT_COMPAT_IPC_PARSE_VERSION if COMPAT
+>         select ARCH_WANT_DEFAULT_BPF_JIT
+> diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+> index 6986827e0d64..8f0b459c13ed 100644
+> --- a/arch/arm64/mm/ptdump.c
+> +++ b/arch/arm64/mm/ptdump.c
+> @@ -24,6 +24,7 @@
+>  #include <asm/memory.h>
+>  #include <asm/pgtable-hwdef.h>
+>  #include <asm/ptdump.h>
+> +#include <asm/pgalloc.h>
+>
+>
+>  #define pt_dump_seq_printf(m, fmt, args...)    \
+> @@ -105,11 +106,6 @@ static const struct prot_bits pte_bits[] = {
+>                 .val    = PTE_CONT,
+>                 .set    = "CON",
+>                 .clear  = "   ",
+> -       }, {
+> -               .mask   = PTE_TABLE_BIT,
+> -               .val    = PTE_TABLE_BIT,
+> -               .set    = "   ",
+> -               .clear  = "BLK",
+>         }, {
+>                 .mask   = PTE_UXN,
+>                 .val    = PTE_UXN,
+> @@ -143,34 +139,129 @@ static const struct prot_bits pte_bits[] = {
+>         }
+>  };
+>
+> +static const struct prot_bits pxd_bits[] = {
 
+This table will need to distinguish between table and block entries.
+In your sample output, I see
 
-Am 18.06.24 um 16:23 schrieb Guenter Roeck:
-> On 6/18/24 06:51, Paul Menzel wrote:
+2M PMD   TBL     RW               x            UXNTbl    MEM/NORMAL
 
->> Am 18.06.24 um 15:32 schrieb Guenter Roeck:
->>
->>> On 6/18/24 03:25, Paul Menzel wrote:
->>> [ ... ]
->>>>
->>>>      $ ls -l /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
->>>>      -r--r--r-- 1 root root 1024 Jun 18 12:17 /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
->>>>      $ cp /sys/bus/i2c/drivers/spd5118/0-0050/eeprom /tmp
->>>>      cp: error reading '/sys/bus/i2c/drivers/spd5118/0-0050/eeprom': No such device or address
->>>
->>> That suggests that the i801 driver got an error when trying some chip 
->>> operation.
->>> Unfortunately I have no idea what that error or the failed operation 
->>> might be.
->>>
->>>>      $ od -t x1 /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
->>>>      od: /sys/bus/i2c/drivers/spd5118/0-0050/eeprom: read error: No such device or address
->>>>      0000000
->>>>
->>>>> sudo i2cdump -y -f 0 0x50
->>>>
->>>>      $ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
->>>>      No size specified (using byte-data access)
->>>>      Error: Could not open file `/dev/i2c-0' or `/dev/i2c/0': No such file or directory
->>>>
->>> This should work after you load the "i2c-dev" module.
->>
->> Silly me. Thank you.
->>
->>> If you get it to work, please provide the output. Maybe it helps 
->>> tracking down the problem.
->>
->> ```
->> $ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
->> No size specified (using byte-data access)
->>       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
->> 00: 51 18 0a 86 32 03 32 00 00 00 00 00 ff 01 00 00    Q???2?2......?..
->> 10: 00 00 00 00 00 00 00 00 00 00 00 00 70 03 00 00    ............p?..
->> 20: 50 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00    P?..............
->> 30: 00 58 01 00 00 00 00 00 00 00 00 00 00 00 00 00    .X?.............
->> 40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->> 50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->> 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->> 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->> 80: 30 10 12 02 04 00 20 62 00 00 00 00 90 02 00 00    0????. b....??..
->> 90: 00 00 00 00 a0 01 f2 03 7a 0d 00 00 00 00 80 3e    ....????z?....?>
->> a0: 80 3e 80 3e 00 7d 80 bb 30 75 27 01 a0 00 82 00    ?>?>.}??0u'??.?.
->> b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->> c0: 00 00 00 00 00 00 88 13 08 88 13 08 20 4e 20 10    ......?????? N ?
->> d0: 27 10 15 34 20 10 27 10 c4 09 04 4c 1d 0c 00 00    '??4 ?'????L??..
->> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->> ```
->>
->> So (00,b) = 0x00 opposed to 0x07 in your example output.
->>
-> 
-> Yes, that assumed that reading the nvram/eeprom succeeded, which it didn't.
-> The value might also be 7 directly after booting and before loading
-> the spd5118 driver.
-> 
-> Anyway, it almost looks like setting the page doesn't work, or maybe write
-> operations in general.
-> 
-> Can you try the following ?
-> 
-> dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=64 
-> bs=1
-> 
-> and
-> 
-> dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=1 
-> bs=64
-> 
-> That should only try to read from page 0.
+for a table entry, which includes a memory type and access permissions
+based on descriptor fields that are not used for table descriptors.
 
-     $ sudo dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom 
-of=/tmp/eeprom count=64 bs=1
-     64+0 records in
-     64+0 records out
-     64 bytes copied, 0.046002 s, 1.4 kB/s
-     $ sudo dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom 
-of=/tmp/eeprom count=1 bs=64
-     1+0 records in
-     1+0 records out
-     64 bytes copied, 0.000215414 s, 297 kB/s
+Some other attributes listed below are equally inapplicable to table
+entries, but happen to be 0x0 so they don't appear in the output, but
+they would if the IGNORED bit in the descriptor happened to be set.
 
-> Also, please try to set a temperature limit, either temp1_max
-> or temp1_crit. Setting temp1_max to, say, 56000, or temp1_crit
-> to 84000 should do.
-
-I did
-
-     $ tail -3 /etc/sensors3.conf
-     chip "spd5118-*"
-         set temp1_max 56000
-         set temp1_crit 84000
-
-but it stays with the defaults:
-
-```
-$ sensors
-spd5118-i2c-0-53
-Adapter: SMBus I801 adapter at efa0
-temp1:        +20.8°C  (low  =  +0.0°C, high = +55.0°C)
-                        (crit low =  +0.0°C, crit = +85.0°C)
-
-spd5118-i2c-0-51
-Adapter: SMBus I801 adapter at efa0
-temp1:        +21.5°C  (low  =  +0.0°C, high = +55.0°C)
-                        (crit low =  +0.0°C, crit = +85.0°C)
-
-coretemp-isa-0000
-Adapter: ISA adapter
-Package id 0:  +32.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 0:        +28.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 4:        +29.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 8:        +28.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 12:       +27.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 16:       +25.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 20:       +28.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 24:       +25.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 28:       +28.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 32:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 33:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 34:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 35:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 36:       +28.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 37:       +28.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 38:       +28.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 39:       +28.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 40:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 41:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 42:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 43:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 44:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 45:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 46:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-Core 47:       +30.0°C  (high = +80.0°C, crit = +100.0°C)
-
-spd5118-i2c-0-52
-Adapter: SMBus I801 adapter at efa0
-temp1:        +21.5°C  (low  =  +0.0°C, high = +55.0°C)
-                        (crit low =  +0.0°C, crit = +85.0°C)
-
-spd5118-i2c-0-50
-Adapter: SMBus I801 adapter at efa0
-temp1:        +21.5°C  (low  =  +0.0°C, high = +55.0°C)
-                        (crit low =  +0.0°C, crit = +85.0°C)
-
-```
-
-Sorry, if I did something wrong.
+So I suspect that the distinction pte_bits <-> pxd_bits is not so
+useful here. It would be better to have tbl_bits[], with pointers to
+it in the pg_level array, where the PTE level one is set to NULL.
 
 
-Kind regards,
-
-Paul
+> +       {
+> +               .mask   = PMD_SECT_VALID,
+> +               .val    = PMD_SECT_VALID,
+> +               .set    = " ",
+> +               .clear  = "F",
+> +       }, {
+> +               .mask   = PMD_TABLE_BIT,
+> +               .val    = PMD_TABLE_BIT,
+> +               .set    = "TBL",
+> +               .clear  = "BLK",
+> +       }, {
+> +               .mask   = PMD_SECT_USER,
+> +               .val    = PMD_SECT_USER,
+> +               .set    = "USR",
+> +               .clear  = "   ",
+> +       }, {
+> +               .mask   = PMD_SECT_RDONLY,
+> +               .val    = PMD_SECT_RDONLY,
+> +               .set    = "ro",
+> +               .clear  = "RW",
+> +       }, {
+> +               .mask   = PMD_SECT_S,
+> +               .val    = PMD_SECT_S,
+> +               .set    = "SHD",
+> +               .clear  = "   ",
+> +       }, {
+> +               .mask   = PMD_SECT_AF,
+> +               .val    = PMD_SECT_AF,
+> +               .set    = "AF",
+> +               .clear  = "  ",
+> +       }, {
+> +               .mask   = PMD_SECT_NG,
+> +               .val    = PMD_SECT_NG,
+> +               .set    = "NG",
+> +               .clear  = "  ",
+> +       }, {
+> +               .mask   = PMD_SECT_CONT,
+> +               .val    = PMD_SECT_CONT,
+> +               .set    = "CON",
+> +               .clear  = "   ",
+> +       }, {
+> +               .mask   = PMD_SECT_PXN,
+> +               .val    = PMD_SECT_PXN,
+> +               .set    = "NX",
+> +               .clear  = "x ",
+> +       }, {
+> +               .mask   = PMD_SECT_UXN,
+> +               .val    = PMD_SECT_UXN,
+> +               .set    = "UXN",
+> +               .clear  = "   ",
+> +       }, {
+> +               .mask   = PMD_TABLE_PXN,
+> +               .val    = PMD_TABLE_PXN,
+> +               .set    = "NXTbl",
+> +               .clear  = "     ",
+> +       }, {
+> +               .mask   = PMD_TABLE_UXN,
+> +               .val    = PMD_TABLE_UXN,
+> +               .set    = "UXNTbl",
+> +               .clear  = "      ",
+> +       }, {
+> +               .mask   = PTE_GP,
+> +               .val    = PTE_GP,
+> +               .set    = "GP",
+> +               .clear  = "  ",
+> +       }, {
+> +               .mask   = PMD_ATTRINDX_MASK,
+> +               .val    = PMD_ATTRINDX(MT_DEVICE_nGnRnE),
+> +               .set    = "DEVICE/nGnRnE",
+> +       }, {
+> +               .mask   = PMD_ATTRINDX_MASK,
+> +               .val    = PMD_ATTRINDX(MT_DEVICE_nGnRE),
+> +               .set    = "DEVICE/nGnRE",
+> +       }, {
+> +               .mask   = PMD_ATTRINDX_MASK,
+> +               .val    = PMD_ATTRINDX(MT_NORMAL_NC),
+> +               .set    = "MEM/NORMAL-NC",
+> +       }, {
+> +               .mask   = PMD_ATTRINDX_MASK,
+> +               .val    = PMD_ATTRINDX(MT_NORMAL),
+> +               .set    = "MEM/NORMAL",
+> +       }, {
+> +               .mask   = PMD_ATTRINDX_MASK,
+> +               .val    = PMD_ATTRINDX(MT_NORMAL_TAGGED),
+> +               .set    = "MEM/NORMAL-TAGGED",
+> +       }
+> +};
+> +
+>  struct pg_level {
+>         const struct prot_bits *bits;
+>         char name[4];
+>         int num;
+>         u64 mask;
+> +       unsigned long size;
+>  };
+>
+>  static struct pg_level pg_level[] __ro_after_init = {
+>         { /* pgd */
+>                 .name   = "PGD",
+> -               .bits   = pte_bits,
+> -               .num    = ARRAY_SIZE(pte_bits),
+> +               .bits   = pxd_bits,
+> +               .num    = ARRAY_SIZE(pxd_bits),
+> +               .size   = PGDIR_SIZE,
+>         }, { /* p4d */
+>                 .name   = "P4D",
+> -               .bits   = pte_bits,
+> -               .num    = ARRAY_SIZE(pte_bits),
+> +               .bits   = pxd_bits,
+> +               .num    = ARRAY_SIZE(pxd_bits),
+> +               .size   = P4D_SIZE,
+>         }, { /* pud */
+>                 .name   = "PUD",
+> -               .bits   = pte_bits,
+> -               .num    = ARRAY_SIZE(pte_bits),
+> +               .bits   = pxd_bits,
+> +               .num    = ARRAY_SIZE(pxd_bits),
+> +               .size   = PUD_SIZE,
+>         }, { /* pmd */
+>                 .name   = "PMD",
+> -               .bits   = pte_bits,
+> -               .num    = ARRAY_SIZE(pte_bits),
+> +               .bits   = pxd_bits,
+> +               .num    = ARRAY_SIZE(pxd_bits),
+> +               .size   = PMD_SIZE,
+>         }, { /* pte */
+>                 .name   = "PTE",
+>                 .bits   = pte_bits,
+>                 .num    = ARRAY_SIZE(pte_bits),
+> +               .size   = PAGE_SIZE
+>         },
+>  };
+>
+> @@ -251,10 +342,27 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+>                         note_prot_wx(st, addr);
+>                 }
+>
+> -               pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
+> -                                  st->start_address, addr);
+> +               /*
+> +                * Non-leaf entries use a fixed size for their range
+> +                * specification, whereas leaf entries are grouped by
+> +                * attributes and may not have a range larger than the type
+> +                * specifier.
+> +                */
+> +               if (st->start_address == addr) {
+> +                       if (check_add_overflow(addr, pg_level[st->level].size,
+> +                                              &delta))
+> +                               delta = ULONG_MAX - addr + 1;
+> +                       else
+> +                               delta = pg_level[st->level].size;
+> +                       pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
+> +                                          addr, addr + delta);
+> +               } else {
+> +                       delta = (addr - st->start_address);
+> +                       pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
+> +                                          st->start_address, addr);
+> +               }
+>
+> -               delta = (addr - st->start_address) >> 10;
+> +               delta >>= 10;
+>                 while (!(delta & 1023) && unit[1]) {
+>                         delta >>= 10;
+>                         unit++;
+> --
+> 2.39.2
+>
+>
 
