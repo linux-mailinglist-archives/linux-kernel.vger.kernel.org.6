@@ -1,108 +1,164 @@
-Return-Path: <linux-kernel+bounces-220207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5FF90DE14
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:19:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DCB90DE16
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B720284776
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70945284A64
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9A8178384;
-	Tue, 18 Jun 2024 21:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C35017837F;
+	Tue, 18 Jun 2024 21:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="wlmvvA6B"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LwkttVTI"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7DB1741F0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 21:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70541741F0
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 21:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718745575; cv=none; b=mRLl8q6Sqc/qwOugtKT4A7c0cR5d5Un6DO4PTQ6LnNGXWm+DlyHfuBolNGdHYwCL8t847TFN0XKY4M7vVzMRFqlueZxhlBROFFSc6laoOus0e8udJLDeiHtkh4St0smI6zLaTvlqOSDThMkdJ2ZppHUumm0Sr2cKIh5+f+MVkmE=
+	t=1718745596; cv=none; b=Btyt4HBRAKtRcaJwxe7Ycw/VZQsPJMUvII2TMWiWAlZUpEfRcF6Lf9DD5rZqDvm9+gohE0PwIta6j6eYnw+KT9HggrHRSJvLOFE/40RsalFemO41sgrTBBh995BTRjPnGhBHNfgG5G/Ch23crqIm0s24UJPwXkPoqo2JNWaBchA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718745575; c=relaxed/simple;
-	bh=OmfcprcSrUb+Cz3hA2CEgypCro4sSFG4VGiwa764RG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TbLSfmK261sTLxQbOGjYCBkbe3kUhsZx1yGQgPRuWaspemfdAbd+V/X/4mmzoWaqcNacJsV+923cVopYuHrizygy9edt3y+8ltd9gmsnkbs/Erj/2HDnEe7Nha8myTcJpc0fhF6GbRMRMf+WuwnPJZDfbl6xiC83vGG5EZYvSSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=wlmvvA6B; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7042a8ad9f5so139598b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:19:33 -0700 (PDT)
+	s=arc-20240116; t=1718745596; c=relaxed/simple;
+	bh=Gp65oFcJHk79zm6jGkHE3iKZLC9l4N5bay4Ton5RAkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ok6hB2r/eY5YKCG5CqpOQx5JCHGT0//z0KJf19uQEdQSePtpATu37tDkVzw2IXf+k93AeJkQ8RiajxoESBISGRJouqdn2Odc++3uYIMbK8fdhIQj3HDVp633JqbtUsJkLXvcg3CPFOn/+oKL9sa1c0UNrHATfme2IMZ8ey57pkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LwkttVTI; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6c53a315c6eso4169312a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:19:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1718745573; x=1719350373; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gBOXu3AX8iawimeoI7cVv0ed5p6W28OLisBmj7DoqVw=;
-        b=wlmvvA6BvEqyuuBoqUKOoJyj4PwPrQFUKWUY5IQnA6vyE+rc+I+4L8TXE9roOC9KNq
-         2eJymBdop86ofjXk1IE38F6oSjUq+md1puHObDGI+MdxqRU5nQEp6UW9rX5M4v5LYOT0
-         pSsjmDtQtKue4APmmOpq7EVYrK7dgK7bW7DwGXZT4qd9SKkorJbdJblZzs48AEgKYhu2
-         wwpOPKhS+7Qbeg9aXb9GkAUJGL/lToe0/kw7SPHkL2nib6Mz2OTynozca04+VvrAakBW
-         1lCILexuJFfGDD51T8KhsaBdHcnhkLg6pxMr5BWv8W4jefX10WrDxiM+U74GfJTXEzpa
-         TEKw==
+        d=google.com; s=20230601; t=1718745594; x=1719350394; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=50YSa4Ao9uogaf7E1ijDuiJSBHVaTQT8KJlzelZTT/A=;
+        b=LwkttVTImLPCW3/wpbhz4VhC49V0EPWg1VVLkHbwFlEXSLvhmpdgW5Kat5d73rED+n
+         IhJqnelZbgXX1rD23hm2VwROQDn8gMIHH7Ai5uXF8rTRcjT78wnKOtQU6l5SVTNC7O1u
+         5uTMC30CrmtVs+ZkCsV5cqiTn/RMTFgaDrA/AAhqGOk7xebnTiRJc33DmZyf5+nW++Fx
+         opUGNb230qLaP7KfDYb/cx353a+KSBCOfMTK1lM+hpZ0S3mZBCEpKS4VrtYgx9E4J4A6
+         JhsKKBJ3yuj/mLiaD9fh2qEI1R4iHJ6KC075qH1F7VFT9ctp3dA0IKFFJXbaF8GB+fTQ
+         cZGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718745573; x=1719350373;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gBOXu3AX8iawimeoI7cVv0ed5p6W28OLisBmj7DoqVw=;
-        b=ghHPKHQV+CdwwMhRSm6m0e0ZP31/0nrvp37VTLmnA6nD80TjkUOSxKUArSqXM8Bn7D
-         epcarOJTMqbb/7zW9NQkJrCggBkytx0vQijZNfJy0MnQKkbpS7S6A1h2nytOqm768S0r
-         OfnYDrqgDy6MnIvFRyAtZonryKjZ80+ev909DAw88KZEUwKkLjhaI0BPXZDpnUom3ck/
-         D2kRs0JmKAZZKu+MXhceaSeaIm5kwvGYdTZfhZUyt/ihg4kIgUxCmZuoGZ6BUprqEeve
-         b008biSz5fkYkqkPxjHAj/jPehd5e+D1S4AH+0LV8tfmeGdY/KWlAEglRarWNzIFEyZ5
-         qWhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWUz7FxyHgogFfH0u8zUEkKn6JXQ6eTHnXWlGKuh6zFED+76Q2T0Ad8XlvPpkgcPlGRJXJMFg4S1ObhakjQdRJXJ154Yqyhcw/RKte
-X-Gm-Message-State: AOJu0Yxv3zorP9yTCrbajqp6PqmcpSUikFOEfj6Yash4caHMv5r0IQlB
-	uAO25nLl79kpv0SndT73HtgRWboIVqhF9FldnNPGpbefGZWILFT5YkP3hvdLDyA=
-X-Google-Smtp-Source: AGHT+IEDJdHgqhnpdjG6jF8Kggw629x32bz6eKrC/MAgTBCxU/oW9mH69BRNudTCCPM3Uu+J0MTMjg==
-X-Received: by 2002:a05:6a20:3c8a:b0:1b4:b9f0:ffc4 with SMTP id adf61e73a8af0-1bcab0528d7mr5844124637.18.1718745573134;
-        Tue, 18 Jun 2024 14:19:33 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-710744224c4sm390475a12.66.2024.06.18.14.19.32
+        d=1e100.net; s=20230601; t=1718745594; x=1719350394;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=50YSa4Ao9uogaf7E1ijDuiJSBHVaTQT8KJlzelZTT/A=;
+        b=tDhuXXXvX3GsoRK8xtXMjZWjLV54MKxSxt84Wc/2LFHBPSSfwoLkaehKG61Y6f/8y7
+         UDCaZyf+kFVRQ/WicDX8AR9dtkV5YGOkV8kqpA3V3S51AyPXd0VgPzdxCBXmRdkqXw0g
+         O0xHqj28MEmoowCIaVJddtqzN0frZF16C90pwyfoHQZml6NUNGHc3td6VYzdqlGE1AAF
+         DDzr0X4DcaHjTgL2qWnA3oarjn/smsb/qUshwHg170fZPjQCVAwiVPameRNqriFx5IzV
+         sDUkhJs29+nB/4nTM+owlb8UvAEFkW4Lf5tFxgoSJUkjendjLHLexhGJzLyA0eZR2rEK
+         9ewQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmCtXPyoPFT+p4uMpNC2zDwn39oyU8kJQjHE7atjWN4ROdAVxd+iMre3AiZGajDCaPJODORKtdCt4RrDHK2HatUlJR5O415mGHV+C+
+X-Gm-Message-State: AOJu0YxZnVk6SLjsWwXznO6cwNGcbfAxludlw6KHl4E4f6wtYgOyuEgW
+	PyPj3FVKv1w3bWn27M6Rc3NA/nMCssHlhtoU075m/vsl7Fos4B6D4mecY+vbGQ==
+X-Google-Smtp-Source: AGHT+IFC6LosG5J95Q/vdHU1XCPYWAnw91UYD1rLAPhQ60B8axl3RfeB1tNNTT7aB4UYI73ab2iYuQ==
+X-Received: by 2002:a17:902:eb44:b0:1f7:5a6c:ae3e with SMTP id d9443c01a7336-1f9aa3ec4a1mr7767585ad.33.1718745593732;
+        Tue, 18 Jun 2024 14:19:53 -0700 (PDT)
+Received: from google.com ([2620:0:1000:2510:5dfa:e7d1:8470:826c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f48951sm101769505ad.280.2024.06.18.14.19.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 14:19:32 -0700 (PDT)
-Date: Tue, 18 Jun 2024 14:19:24 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Omer Shpigelman <oshpigelman@habana.ai>
-Cc: Joe Damato <jdamato@fastly.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-rdma@vger.kernel.org"
- <linux-rdma@vger.kernel.org>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>, "ogabbay@kernel.org"
- <ogabbay@kernel.org>, Zvika Yehudai <zyehudai@habana.ai>
-Subject: Re: [PATCH 09/15] net: hbl_en: add habanalabs Ethernet driver
-Message-ID: <20240618141924.5a62a3d8@hermes.local>
-In-Reply-To: <16369c7d-af15-4959-9e84-8a495b6b5035@habana.ai>
-References: <20240613082208.1439968-1-oshpigelman@habana.ai>
-	<20240613082208.1439968-10-oshpigelman@habana.ai>
-	<ZmzIy3c0j8ubspIM@LQ3V64L9R2>
-	<16369c7d-af15-4959-9e84-8a495b6b5035@habana.ai>
+        Tue, 18 Jun 2024 14:19:53 -0700 (PDT)
+Date: Tue, 18 Jun 2024 14:19:47 -0700
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Kris Van Hees <kris.van.hees@oracle.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
+Message-ID: <20240618211947.GD1611012@google.com>
+References: <20240617175818.58219-17-samitolvanen@google.com>
+ <ZnHjO7x9nszs9pUC@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnHjO7x9nszs9pUC@bombadil.infradead.org>
 
-On Tue, 18 Jun 2024 19:37:36 +0000
-Omer Shpigelman <oshpigelman@habana.ai> wrote:
+Hi Luis,
 
-> > 
-> > Is there any reason in particular to call netif_receive_skb instead of
-> > napi_gro_receive ?
-> >   
+On Tue, Jun 18, 2024 at 12:42:51PM -0700, Luis Chamberlain wrote:
+> On Mon, Jun 17, 2024 at 05:58:19PM +0000, Sami Tolvanen wrote:
+> > The first 12 patches of this series add a small tool for computing
+> > symbol versions from DWARF, called gendwarfksyms. When passed a list
+> > of exported symbols, the tool generates an expanded type string
+> > for each symbol, and computes symbol CRCs similarly to genksyms.
 > 
-> As you can see, we also support polling mode which is a non-NAPI flow.
-> We could use napi_gro_receive() for NAPI flow and netif_receive_skb() for
-> polling mode but we don't support RX checksum offload anyway.
+> So this is too word centric Rust, let's think about this generically.
+> We still ahve a symbol limitation even in the C world then, and this
+> solution can solve that problem also for other reasons for *whatever*
+> reason we devise to-come-up-with-in-the-future for augmenting symbols.
+> Today Rust, tomorrow, who knows.
 
- Why non-NAPI? I thought current netdev policy was all drivers should
-use NAPI.
+If you're referring to the symbol hashing in the __versions table,
+that's not specific to Rust. Rust just happens to be the only source of
+long symbol names right now.
+
+> > gendwarfksyms is written in C and uses libdw to process DWARF, mainly
+> > because of the existing support for C host tools that use elfutils
+> > (e.g., objtool).
+> 
+> I agree with Masahiro, that testing this with vmlinux would be eye
+> opening to what challenges we really have ahead. So, to help with this
+> let's try to re-think about this  from another perspective.
+>
+> Yes, old userspace should not break, but you can add yet another option
+> to let you opt-in to a new world order of how these crc are mapped to
+> hashed repersentations of the symbols. This would allow us to:
+
+We did run into an issue with depmod in our testing, where it needs to
+be taught about hashed names to avoid 'unknown symbol' warnings. I'm not
+sure if this is acceptable, so I would like to hear feedback about the
+viability of the hashing scheme in general.
+
+If old userspace can't have any regressions because of long symbol
+names, I suspect we'll have to go back to omitting long symbols from
+struct modversion_info and adding a v2 of the __versions table with no
+symbol name length limitations. Happy to hear your thoughts.
+
+> a) Ensure correctness for all users / tools, so that proper plumbing is
+>    really done. By considering all symbols you increase your scope of
+>    awareness of anything that could really break.
+> 
+> b) Remove the "Rust" nature about this
+> 
+> c) Rust modules just becomes a *user* of this approach
+
+I believe the only Rust nature here is the last patch that enables
+gendwarfksyms only for Rust. Otherwise, there shouldn't be anything
+strictly Rust specific.
+
+> It gets me wondering, given Kris is also working on allowing traces to
+> map symbols to module names, how does this fit into that world [0]?
+
+AFAIK long symbol names are only a problem for struct modversion_info,
+which uses a relatively short name buffer, so I'm hoping other efforts
+won't be affected.
+
+> As for a) the reason I'm thinking about having the ability to test a
+> full real kernel and moules with this is, without that, how are you sure
+> you have the full scope of the changes needed?
+
+Sure, I can look into hooking this up for the entire kernel and seeing
+what breaks, in addition the issues Masahiro pointed out, of course.
+
+Sami
 
