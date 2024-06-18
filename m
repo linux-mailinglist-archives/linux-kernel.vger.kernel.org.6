@@ -1,369 +1,333 @@
-Return-Path: <linux-kernel+bounces-220024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76AE590DB96
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:32:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F2C90DBA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318632838F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:32:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB641F2321B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0466615E5CF;
-	Tue, 18 Jun 2024 18:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9961E15ECD2;
+	Tue, 18 Jun 2024 18:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IVnWenwl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lrzMnMf+"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2067.outbound.protection.outlook.com [40.107.93.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A962139C6;
-	Tue, 18 Jun 2024 18:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718735541; cv=none; b=pGty+yx+qjKrMVx1zXBkO9wzQLThwwV55lbi9AJPsMmgoulXtlmBigu/10dYomB9FSqDD/9C1MRtwQaxROM6l3PVZZpDHDMBm9larh2I3oRTn/HMwqZmC1spLpDpDMdnCxWqfnbcYtHS4sZpTmcBTOFdnDxufn39h4L350S2wwM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718735541; c=relaxed/simple;
-	bh=SrnPl07BTfc9+u75OWMWEt5md6swr5rr4F+oLflqxhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hHF2VcWOAM20HzuikmbJrL/yEjeZD+Tx2syEJ0j0ETXWPIRZxWeMjoec/vXI6j4TipdOi3fGj58F8zqaOm3cWNcywwN33BC96eUWm8K7hK83DDh5KpEwCtW71RdxV/rezhMqd5OGy3YTlBiULAEIEo1zEJEisbNu11PU2ng2qFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IVnWenwl; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718735539; x=1750271539;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SrnPl07BTfc9+u75OWMWEt5md6swr5rr4F+oLflqxhk=;
-  b=IVnWenwl66xUrIsa8jqpbPJQ4Rcqx3h0VVLyn1L0pBLT/KJnqckmMM00
-   F8X+uD+ySskDs9CGsVy2Rc83prAYxmVYxEGT7oS+GInrCieTxle972P9s
-   SyCFBqf1R94xMXpn8kVcgFGMnaH2C7p4QcbYWO+lc6kd6Ro6R5AgP5SU+
-   9LuLsBkzMlvuRAfgx9lP2lmQ/Uutw9XN8r2RJl1oX4nxRLE7IS1UHXKSA
-   vTf++6lmMFF9GxsZDLyiFhsjjloMimkmQgwpb4MQTKkGCdqWlW3ZhRlIz
-   Fo3BLEj8C+ynxVO81EYWEcM+8PM8PoM1DEzSJnCyEzNYTaoxVNSKT3WfH
-   Q==;
-X-CSE-ConnectionGUID: YwprC9RKSM+SUOzFra6mVQ==
-X-CSE-MsgGUID: nUQ3JLQdR3a70aMUFX/wCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15781613"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15781613"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 11:32:18 -0700
-X-CSE-ConnectionGUID: 925BNXD6T5u4irsJbYCTXw==
-X-CSE-MsgGUID: LkApo/3yTOCZ+96MX8jlcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="41741312"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 18 Jun 2024 11:32:15 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sJdcq-0005p4-1G;
-	Tue, 18 Jun 2024 18:32:12 +0000
-Date: Wed, 19 Jun 2024 02:31:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aaron Rainbolt <arainbolt@kfocus.org>, linux-acpi@vger.kernel.org,
-	rafael@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mario.limonciello@amd.com,
-	lenb@kernel.org, linux-kernel@vger.kernel.org, mmikowski@kfocus.org
-Subject: Re: [PATCH] acpi: Allow ignoring _OSC CPPC v2 bit via kernel
- parameter
-Message-ID: <202406190206.Z56zEzTy-lkp@intel.com>
-References: <ZnD22b3Br1ng7alf@kf-XE>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6182B1581E9;
+	Tue, 18 Jun 2024 18:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718735634; cv=fail; b=ODnMOQGrMEil+ho3516Zo4IaTFNnF4tot69af5VXy00waN7EEa7gI30u+1pzhI7HQNjJ1tn02KrRKzaiCFlFbpItNQ6cUhNsZVKVhRg3cVISUdqH2P4HCEaB9lkwJB4Gqi/3/sO8VzqFc7oU84SgPIzcNT4ZuzDb0OTZf/tjqSk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718735634; c=relaxed/simple;
+	bh=LFzUthoM1BXExljKAixmyKLODJwzVcifZGltd2nsIxA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MYMlKbAYQpAQ8Q4R8X+N3jwc6Wv8W79kL+4x5BS+7XdIGa0AkeMgtFCDaJ+m55LZ/56rQU35UpoJXzXju5in10V1vT/HiiJM0gavn+FKl8fXaP2dttbWChDYopUDV7szLmRbZ07aG6y4E15xCOUT1lpsRUoo5FXGn0NVyDQS51k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lrzMnMf+; arc=fail smtp.client-ip=40.107.93.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j9u56sykacbDtnLKqqIjOdK9VWEQiY7gCKucOZyYEiVKfPJ69IFGMd4RXiMKv+qYL/K7wU1rUtHjuywiaLaoJUYR1ThBT/S89+gJrrDtLsms8RNAalJtFotWkUgiOO7T63wrnStAu8RvenJ8W0ReYVACGGqExHOrDTspW+6J/NvPml5irQm3js1f2Q3cJh+ZG7udatzUwo/YAbTUzGTDPxUviCa0IjxNriQ82wrG8NF2QVMyWoXQCFffT+9n2SnXFlidW/hh+Gr8Ca5e9XHsVxwU27eQK+htpQQqORAy+q0Zn8Ah1YCSf4XaR1eWSMwvAQ5kH2bNYH23C7oa+o+Q9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K57Ck2EoACRkJcvW6iE8gT1MkTr1IgjlB4UgSKx7JTE=;
+ b=mvp6uu2++rP+gV0DTL87oaL+w80FGY5rqD9h7v3i0wXUEnBa18xQGB/m7AyYXoh5WvZsIs3fqeWlg0/8TGNg0nsO4mVmMgKTyFM0dU3xKzHTTp03SvdmTV6CxIHF+McodYzrLPesXA3bzcN+NTN8mzizwd3vy4S7j/invwC6r+SZeiuhDgRC1JWpnukamEwxefvyYksC6+nQs0x/B4yacwcPFHe01hkzrjDyqhHvvarnmsLM+fzORAleHn5mFKZB8aWQ47oXyhTt9sSGLp8HqMkCtgCGUiXhvK843mYEuloJIzZ9CG7Yu9A5hbVQR4UKSbd2dmRjUfJTOP+1QzH8iA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K57Ck2EoACRkJcvW6iE8gT1MkTr1IgjlB4UgSKx7JTE=;
+ b=lrzMnMf+ifIEFT7stxYRaqHxJEj/N67N1P/2HyXdVXCnhd596nfY0mmR+lNSwIG/22n9zJ1Pgu4zgrQFVyq2xJd3eUkbon5TY2DNEBfzV4vk2xDJz64nftMj9krnWuOoh56j6QFt1syDZtPKbt/+OzyES1tcX0NXEYYPpftgo8U=
+Received: from MW4PR03CA0318.namprd03.prod.outlook.com (2603:10b6:303:dd::23)
+ by MN0PR12MB5979.namprd12.prod.outlook.com (2603:10b6:208:37e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
+ 2024 18:33:49 +0000
+Received: from CO1PEPF000075EF.namprd03.prod.outlook.com
+ (2603:10b6:303:dd:cafe::b2) by MW4PR03CA0318.outlook.office365.com
+ (2603:10b6:303:dd::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31 via Frontend
+ Transport; Tue, 18 Jun 2024 18:33:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000075EF.mail.protection.outlook.com (10.167.249.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Tue, 18 Jun 2024 18:33:48 +0000
+Received: from [10.252.216.179] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 18 Jun
+ 2024 13:33:32 -0500
+Message-ID: <1035ec64-b3d3-c398-d6e7-99745a14c294@amd.com>
+Date: Wed, 19 Jun 2024 00:03:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnD22b3Br1ng7alf@kf-XE>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH v2 00/14] Introducing TIF_NOTIFY_IPI flag
+Content-Language: en-US
+To: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>
+CC: Vincent Guittot <vincent.guittot@linaro.org>,
+	<linux-kernel@vger.kernel.org>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
+	<ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Russell King
+	<linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>, Michal Simek
+	<monstr@monstr.eu>, Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn
+	<jonas@southpole.se>, Stefan Kristiansson
+	<stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller
+	<deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+	<npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen
+ N. Rao" <naveen.n.rao@linux.ibm.com>, Yoshinori Sato
+	<ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, "John Paul
+ Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, "David S. Miller"
+	<davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin"
+	<hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, "Dietmar
+ Eggemann" <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, "Daniel
+ Bristot de Oliveira" <bristot@redhat.com>, Valentin Schneider
+	<vschneid@redhat.com>, Andrew Donnellan <ajd@linux.ibm.com>, Benjamin Gray
+	<bgray@linux.ibm.com>, Frederic Weisbecker <frederic@kernel.org>, Xin Li
+	<xin3.li@intel.com>, "Kees Cook" <keescook@chromium.org>, Rick Edgecombe
+	<rick.p.edgecombe@intel.com>, Tony Battersby <tonyb@cybernetics.com>, Bjorn
+ Helgaas <bhelgaas@google.com>, Brian Gerst <brgerst@gmail.com>, Leonardo Bras
+	<leobras@redhat.com>, "Imran Khan" <imran.f.khan@oracle.com>, "Paul E.
+ McKenney" <paulmck@kernel.org>, "Rik van Riel" <riel@surriel.com>, Tim Chen
+	<tim.c.chen@linux.intel.com>, "David Vernet" <void@manifault.com>, Julia
+ Lawall <julia.lawall@inria.fr>, <linux-alpha@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-csky@vger.kernel.org>,
+	<linux-openrisc@vger.kernel.org>, <linux-parisc@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-sh@vger.kernel.org>,
+	<sparclinux@vger.kernel.org>, <linux-pm@vger.kernel.org>, <x86@kernel.org>
+References: <20240613181613.4329-1-kprateek.nayak@amd.com>
+ <20240614092801.GL8774@noisy.programming.kicks-ass.net>
+ <CAKfTPtBTxhbmh=605TJ9sRw-nFu6w-KY7QpAxRUh5AjhQWa2ig@mail.gmail.com>
+ <ZmxwWdW78hjNuxWU@chenyu5-mobl2>
+ <4748fabf-c359-9199-16aa-469840201540@amd.com>
+ <ZnE77ons3lb/JAxP@chenyu5-mobl2>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <ZnE77ons3lb/JAxP@chenyu5-mobl2>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075EF:EE_|MN0PR12MB5979:EE_
+X-MS-Office365-Filtering-Correlation-Id: 325485c3-40ee-4043-14a7-08dc8fc53210
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|36860700010|1800799021|7416011|376011|82310400023;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NTArVUU0K09aZzM4Q2t5NTJBaGs5U0t0bXY0NVJXMmcvakdqSmp3T2lVaUJn?=
+ =?utf-8?B?c2V6WU5JVko5KzFjK3p3UHMvQnlJZmQybVM1ZWRqeHRFUGdpZ3hoNEovU0c0?=
+ =?utf-8?B?cHBEb3FFdy9kbnM4L0dpNTJqNDBMWW1SZ3lhNnFoTm83VWFFby9sOTcvcm1N?=
+ =?utf-8?B?NTYvcDczTkYwRVZOcU54VVJPNDdEQVR3Sm5sS0JlM1RlcTUxY01TUEFLZ3Nw?=
+ =?utf-8?B?bmxQai9HU01TUEdzdWJudzUwNTBmM2FMVy9xOTU2eHhDVG9NQ29MUXkyQUhZ?=
+ =?utf-8?B?dU9VY2JvUlZ3UWFURVV4WDZNUkpTUm1pSUpMaytBNlNQRlJFNzExMnZXQyt6?=
+ =?utf-8?B?SHQ1QW1DUTRFMExmS3hHOUJZS1hXdElVVm84bW9ZYlc4eHFrcEU2OU1Pckp6?=
+ =?utf-8?B?OXgrL1dEaXVoZlNPWFV4TnlsR0ZRZXI1WVV5VE14Sk92MkV2ank0ZWdYL0Fj?=
+ =?utf-8?B?b29YUVdsNEZoOTNwcEZXbmREcjVneW1OR25sQmc1VTBDU1FPRmpjS1ZyaEVu?=
+ =?utf-8?B?ODYzaE5ocU9EVGpLSlJmY0djcEJDMFhsMU5SQ2RDaW4vcXRoRjJMRWZ3NWdv?=
+ =?utf-8?B?SFloekQrVllmdllGQk8xRklhaW5nZE5zMWVoQ3BidVRTOThWOHRlUDA0WWRC?=
+ =?utf-8?B?SldsNFJzbHFtaFZQc0U2ckFlZE9qS21EVUhjWGN4T1FyYlhPL1R3Z2VUck5P?=
+ =?utf-8?B?d2VXcnlJRFg2dnE2NzduMm50MGxwV0pPRWo2aTFwb3kreWxOTHBQUTBkMjVM?=
+ =?utf-8?B?WFBoc0crODNjRkROWURsc25Fa3R0ZVRFQUl3dVVIUFRqejI4bjhBQm5xY1oz?=
+ =?utf-8?B?VHZ4SnBkZTQwYUJjdmZxekp4RnZSSG5MZmk5cmlHY2VmK3NHMDBOYnc0OHNi?=
+ =?utf-8?B?dG9iRkFSVDhrQXQ4aUFtays4am5ZaDJkRkIxNkxjeTVSdEUxR0Jrd2VBUlhY?=
+ =?utf-8?B?NVJJNkdhTG50bHZKQ0Rlc3BraE1udWZYMjVKdjFkbnQzTHJjMjMxbGJGeFR1?=
+ =?utf-8?B?ZnJGWmU3VFJZQWl0bDBPUHl6eHVMNUpHcDBxNGZOdFcxK1EyRVFUL0xramZv?=
+ =?utf-8?B?bDFQQk9ZRTE0WlN4c21NZlJhZk04UWNLaVNlSWNEaFZvVGhoNC9LTm5sbjEz?=
+ =?utf-8?B?d2k5a1FSR3JpUHJBRlJHZWJVMzFlVHNlUVhLdFB2TDdkaWRTZEhqM041aTVp?=
+ =?utf-8?B?d0ZMdGgwS1pmM3NGU25tbWtldkNGdkZyK3QrdWtsNElQcUtkZVo1SDYzRW41?=
+ =?utf-8?B?Z2gwdFVjMG85MDEyTVA4Y3MzWDBRVHdpTXRTa3ZrU3FvWFJFWkFsWEFyKy8y?=
+ =?utf-8?B?ZUhIckZwRkczbmQzRlMxMUJaVkxDVDZqZ1V0NUxpcjZ1cGszSC90ZkRwRS9i?=
+ =?utf-8?B?TDYvamFCaGVQZjNsS3ZjUXNNN2lCczMwL0NuYXN5TG9aSS9aY0ZoMTk2Qk5o?=
+ =?utf-8?B?WElXcnlSVHFQMDcrUndvNitmQnlRWUtmdHdGbGx6dGNUS2cvUXdHcWFmeTFv?=
+ =?utf-8?B?QkUwWFc5R3VhelpYd3hGVjBRc0N5c0F1aXhKb3FaeUlFQkhGSnZFUTg4QWRa?=
+ =?utf-8?B?Ujd0ZjBOUFFHczAxcW1rSWtOYUZqUERZLzRxZ2dBUUJHVTBYQUprVWJaL0FM?=
+ =?utf-8?B?cUlyWnd6OEM2V0x6WVFvZnJKMlMzWFpUOXgreGFsa0lsRk9YajBWejVnbng2?=
+ =?utf-8?B?K21KUTlTTS9tOWJpNFhDVkpiWTNlM3dvY0dDUmlDNWFPNlV1Slh4aC9KTSt1?=
+ =?utf-8?B?SzJEZWtWNUxYKzQvcURsRExyUVVlKy9VQU9UVk8vK0ZyVmFBZ2xTaXV0cGJx?=
+ =?utf-8?B?emQ0VjhzUytMQUhOTEpJRW5ZRHR3NDFxRW9DUGFGb2RSZnI5YnVzTFB4VTAr?=
+ =?utf-8?B?N1JJN2d4aDE1dUoxNjdOVW0rbTU0cU04QkxURlUvcE9rV0E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(36860700010)(1800799021)(7416011)(376011)(82310400023);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 18:33:48.9136
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 325485c3-40ee-4043-14a7-08dc8fc53210
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075EF.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5979
 
-Hi Aaron,
+Hello Chenyu,
 
-kernel test robot noticed the following build warnings:
+On 6/18/2024 1:19 PM, Chen Yu wrote:
+> [..snip..]
+>>>>>
+>>>>>> Vincent [5] pointed out a case where the idle load kick will fail to
+>>>>>> run on an idle CPU since the IPI handler launching the ILB will check
+>>>>>> for need_resched(). In such cases, the idle CPU relies on
+>>>>>> newidle_balance() to pull tasks towards itself.
+>>>>>
+>>>>> Is this the need_resched() in _nohz_idle_balance() ? Should we change
+>>>>> this to 'need_resched() && (rq->nr_running || rq->ttwu_pending)' or
+>>>>> something long those lines?
+>>>>
+>>>> It's not only this but also in do_idle() as well which exits the loop
+>>>> to look for tasks to schedule
+>>>>
+>>>>>
+>>>>> I mean, it's fairly trivial to figure out if there really is going to be
+>>>>> work there.
+>>>>>
+>>>>>> Using an alternate flag instead of NEED_RESCHED to indicate a pending
+>>>>>> IPI was suggested as the correct approach to solve this problem on the
+>>>>>> same thread.
+>>>>>
+>>>>> So adding per-arch changes for this seems like something we shouldn't
+>>>>> unless there really is no other sane options.
+>>>>>
+>>>>> That is, I really think we should start with something like the below
+>>>>> and then fix any fallout from that.
+>>>>
+>>>> The main problem is that need_resched becomes somewhat meaningless
+>>>> because it doesn't  only mean "I need to resched a task" and we have
+>>>> to add more tests around even for those not using polling
+>>>>
+>>>>>
+>>>>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>>>>> index 0935f9d4bb7b..cfa45338ae97 100644
+>>>>> --- a/kernel/sched/core.c
+>>>>> +++ b/kernel/sched/core.c
+>>>>> @@ -5799,7 +5800,7 @@ static inline struct task_struct *
+>>>>>    __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+>>>>>    {
+>>>>>           const struct sched_class *class;
+>>>>> -       struct task_struct *p;
+>>>>> +       struct task_struct *p = NULL;
+>>>>>
+>>>>>           /*
+>>>>>            * Optimization: we know that if all tasks are in the fair class we can
+>>>>> @@ -5810,9 +5811,11 @@ __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+>>>>>           if (likely(!sched_class_above(prev->sched_class, &fair_sched_class) &&
+>>>>>                      rq->nr_running == rq->cfs.h_nr_running)) {
+>>>>>
+>>>>> -               p = pick_next_task_fair(rq, prev, rf);
+>>>>> -               if (unlikely(p == RETRY_TASK))
+>>>>> -                       goto restart;
+>>>>> +               if (rq->nr_running) {
+>>>>
+>>>> How do you make the diff between a spurious need_resched() because of
+>>>> polling and a cpu becoming idle ? isn't rq->nr_running null in both
+>>>> cases ?
+>>>> In the later case, we need to call sched_balance_newidle() but not in the former
+>>>>
+>>>
+>>> Not sure if I understand correctly, if the goal of smp_call_function_single() is to
+>>> kick the idle CPU and do not force it to launch the schedule()->sched_balance_newidle(),
+>>> can we set the _TIF_POLLING_NRFLAG rather than _TIF_NEED_RESCHED in set_nr_if_polling()?
+>>> I think writing any value to the monitor address would wakeup the idle CPU. And _TIF_POLLING_NRFLAG
+>>> will be cleared once that idle CPU exit the idle loop, so we don't introduce arch-wide flag.
+>> Although this might work for MWAIT, there is no way for the generic idle
+>> path to know if there is a pending interrupt within a TIF_POLLING_NRFLAG
+>> section. do_idle() sets TIF_POLLING_NRFLAG and relies on a bunch of
+>> need_resched() checks along the way to bail early until finally doing a
+>> current_clr_polling_and_test() before handing off to the cpuidle driver
+>> in call_cpuidle(). I believe this section will necessarily need the sender
+>> to indicate a pending interrupt via TIF_NEED_RESCHED flag to enable the
+>> early bail out before going into the cpuidle driver since this case cannot
+>> be considered the same as a break from MWAIT.
+>>
+> 
+> I see, this is a good point. So you mean with only TIF_POLLING_NRFLAG there is
+> possibility that the 'ipi kick CPU out of idle' is lost after the CPU enters
+> do_idle() and before finally entering the idle state. While setting _TIF_NEED_RESCHED
+> could help the do_idle() loop to detect pending request easier.
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.10-rc4 next-20240618]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Yup, that is correct.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Aaron-Rainbolt/acpi-Allow-ignoring-_OSC-CPPC-v2-bit-via-kernel-parameter/20240618-105454
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/ZnD22b3Br1ng7alf%40kf-XE
-patch subject: [PATCH] acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240619/202406190206.Z56zEzTy-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240619/202406190206.Z56zEzTy-lkp@intel.com/reproduce)
+> BTW, before the
+> commit b2a02fc43a1f ("smp: Optimize send_call_function_single_ipi()"), the
+> lost of ipi after entering do_idle() and before entering driver idle state
+> is also possible, right(the local irq is disabled)?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406190206.Z56zEzTy-lkp@intel.com/
+ From what I understand, the IPI remains pending until the interrupts
+are enabled again. Before the optimization, the interrupts would be
+disabled all the way until the instruction that is used to put the CPU
+to sleep which is what __sti_mwait() and native_safe_halt() does. The
+CPU would have received the IPI then and broke out of idle before
+Peter's optimization went in. There is an elaborate comment on this in
+do_idle() function above the call to local_irq_disable(). In  commit
+edc8fc01f608 ("x86: Fix CPUIDLE_FLAG_IRQ_ENABLE leaking timer
+reprogram") Peter describes a case of actually missing the break from
+an interrupt as the driver enabled interrupts much earlier than
+executing the sleep instruction.
 
-All warnings (new ones prefixed by >>):
+Since the CPU was in TIF_POLLING_NRFLAG state, one could simply get away
+by setting TIF_NEED_RESCHED and not sending an actual IPI which the
+need_resched() checks in the idle path would catch and the
+flush_smp_call_function_queue() on the exit path would have serviced the
+call function.
 
->> drivers/acpi/cppc_acpi.c:677: warning: Function parameter or struct member 'ignore_osc_cppc_bit' not described in 'acpi_cppc_processor_probe'
+MWAIT with Interrupt Break extension (CPUID 0x5 ECX[IBE]) can break out
+on pending interrupts even if interrupts are disabled  which is why
+"mwait_idle_with_hints()" now checks "ecx" to choose between "__mwait()"
+and "__mwait_sti()". The APM describes the extension to "allows
+interrupts to wake MWAIT, even when eFLAGS.IF = 0". (Vol. 3.
+"General-Purpose and System Instructions", Chapter 4. "System Instruction
+Reference", Section "MWAIT")
 
+I do hope someone corrects me if I'm wrong :)
 
-vim +677 drivers/acpi/cppc_acpi.c
-
-41ea667227bad5 Nathan Fontenot     2020-11-12  669  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  670  /**
-337aadff8e4567 Ashwin Chaugule     2015-10-02  671   * acpi_cppc_processor_probe - Search for per CPU _CPC objects.
-603fadf33604a2 Bjorn Helgaas       2019-03-25  672   * @pr: Ptr to acpi_processor containing this CPU's logical ID.
-337aadff8e4567 Ashwin Chaugule     2015-10-02  673   *
-337aadff8e4567 Ashwin Chaugule     2015-10-02  674   *	Return: 0 for success or negative value for err.
-337aadff8e4567 Ashwin Chaugule     2015-10-02  675   */
-e7e2a9d4606e2e Aaron Rainbolt      2024-06-17  676  int acpi_cppc_processor_probe(struct acpi_processor *pr, bool ignore_osc_cppc_bit)
-337aadff8e4567 Ashwin Chaugule     2015-10-02 @677  {
-337aadff8e4567 Ashwin Chaugule     2015-10-02  678  	struct acpi_buffer output = {ACPI_ALLOCATE_BUFFER, NULL};
-337aadff8e4567 Ashwin Chaugule     2015-10-02  679  	union acpi_object *out_obj, *cpc_obj;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  680  	struct cpc_desc *cpc_ptr;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  681  	struct cpc_reg *gas_t;
-158c998ea44ba3 Ashwin Chaugule     2016-08-16  682  	struct device *cpu_dev;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  683  	acpi_handle handle = pr->handle;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  684  	unsigned int num_ent, i, cpc_rev;
-85b1407bf6d2f4 George Cherian      2017-10-11  685  	int pcc_subspace_id = -1;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  686  	acpi_status status;
-f21a3509842294 Rafael J. Wysocki   2022-03-22  687  	int ret = -ENODATA;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  688  
-7feec7430edddb Mario Limonciello   2022-07-05  689  	if (!osc_sb_cppc2_support_acked) {
-7feec7430edddb Mario Limonciello   2022-07-05  690  		pr_debug("CPPC v2 _OSC not acked\n");
-e7e2a9d4606e2e Aaron Rainbolt      2024-06-17  691  		if (!ignore_osc_cppc_bit && !cpc_supported_by_cpu()) {
-5f8f9bc4d7bc8d Perry Yuan          2024-04-25  692  			pr_debug("CPPC is not supported by the CPU\n");
-c42fa24b44751c Rafael J. Wysocki   2022-03-16  693  			return -ENODEV;
-7feec7430edddb Mario Limonciello   2022-07-05  694  		}
-5f8f9bc4d7bc8d Perry Yuan          2024-04-25  695  	}
-c42fa24b44751c Rafael J. Wysocki   2022-03-16  696  
-603fadf33604a2 Bjorn Helgaas       2019-03-25  697  	/* Parse the ACPI _CPC table for this CPU. */
-337aadff8e4567 Ashwin Chaugule     2015-10-02  698  	status = acpi_evaluate_object_typed(handle, "_CPC", NULL, &output,
-337aadff8e4567 Ashwin Chaugule     2015-10-02  699  			ACPI_TYPE_PACKAGE);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  700  	if (ACPI_FAILURE(status)) {
-337aadff8e4567 Ashwin Chaugule     2015-10-02  701  		ret = -ENODEV;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  702  		goto out_buf_free;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  703  	}
-337aadff8e4567 Ashwin Chaugule     2015-10-02  704  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  705  	out_obj = (union acpi_object *) output.pointer;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  706  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  707  	cpc_ptr = kzalloc(sizeof(struct cpc_desc), GFP_KERNEL);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  708  	if (!cpc_ptr) {
-337aadff8e4567 Ashwin Chaugule     2015-10-02  709  		ret = -ENOMEM;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  710  		goto out_buf_free;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  711  	}
-337aadff8e4567 Ashwin Chaugule     2015-10-02  712  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  713  	/* First entry is NumEntries. */
-337aadff8e4567 Ashwin Chaugule     2015-10-02  714  	cpc_obj = &out_obj->package.elements[0];
-337aadff8e4567 Ashwin Chaugule     2015-10-02  715  	if (cpc_obj->type == ACPI_TYPE_INTEGER)	{
-337aadff8e4567 Ashwin Chaugule     2015-10-02  716  		num_ent = cpc_obj->integer.value;
-40d8abf364bcab Rafael J. Wysocki   2022-03-22  717  		if (num_ent <= 1) {
-40d8abf364bcab Rafael J. Wysocki   2022-03-22  718  			pr_debug("Unexpected _CPC NumEntries value (%d) for CPU:%d\n",
-40d8abf364bcab Rafael J. Wysocki   2022-03-22  719  				 num_ent, pr->id);
-40d8abf364bcab Rafael J. Wysocki   2022-03-22  720  			goto out_free;
-40d8abf364bcab Rafael J. Wysocki   2022-03-22  721  		}
-337aadff8e4567 Ashwin Chaugule     2015-10-02  722  	} else {
-f21a3509842294 Rafael J. Wysocki   2022-03-22  723  		pr_debug("Unexpected _CPC NumEntries entry type (%d) for CPU:%d\n",
-f21a3509842294 Rafael J. Wysocki   2022-03-22  724  			 cpc_obj->type, pr->id);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  725  		goto out_free;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  726  	}
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  727  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  728  	/* Second entry should be revision. */
-337aadff8e4567 Ashwin Chaugule     2015-10-02  729  	cpc_obj = &out_obj->package.elements[1];
-337aadff8e4567 Ashwin Chaugule     2015-10-02  730  	if (cpc_obj->type == ACPI_TYPE_INTEGER)	{
-337aadff8e4567 Ashwin Chaugule     2015-10-02  731  		cpc_rev = cpc_obj->integer.value;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  732  	} else {
-f21a3509842294 Rafael J. Wysocki   2022-03-22  733  		pr_debug("Unexpected _CPC Revision entry type (%d) for CPU:%d\n",
-f21a3509842294 Rafael J. Wysocki   2022-03-22  734  			 cpc_obj->type, pr->id);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  735  		goto out_free;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  736  	}
-337aadff8e4567 Ashwin Chaugule     2015-10-02  737  
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  738  	if (cpc_rev < CPPC_V2_REV) {
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  739  		pr_debug("Unsupported _CPC Revision (%d) for CPU:%d\n", cpc_rev,
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  740  			 pr->id);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  741  		goto out_free;
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  742  	}
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  743  
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  744  	/*
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  745  	 * Disregard _CPC if the number of entries in the return pachage is not
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  746  	 * as expected, but support future revisions being proper supersets of
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  747  	 * the v3 and only causing more entries to be returned by _CPC.
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  748  	 */
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  749  	if ((cpc_rev == CPPC_V2_REV && num_ent != CPPC_V2_NUM_ENT) ||
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  750  	    (cpc_rev == CPPC_V3_REV && num_ent != CPPC_V3_NUM_ENT) ||
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  751  	    (cpc_rev > CPPC_V3_REV && num_ent <= CPPC_V3_NUM_ENT)) {
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  752  		pr_debug("Unexpected number of _CPC return package entries (%d) for CPU:%d\n",
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  753  			 num_ent, pr->id);
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  754  		goto out_free;
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  755  	}
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  756  	if (cpc_rev > CPPC_V3_REV) {
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  757  		num_ent = CPPC_V3_NUM_ENT;
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  758  		cpc_rev = CPPC_V3_REV;
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  759  	}
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  760  
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  761  	cpc_ptr->num_entries = num_ent;
-4f4179fcf42087 Rafael J. Wysocki   2022-07-21  762  	cpc_ptr->version = cpc_rev;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  763  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  764  	/* Iterate through remaining entries in _CPC */
-337aadff8e4567 Ashwin Chaugule     2015-10-02  765  	for (i = 2; i < num_ent; i++) {
-337aadff8e4567 Ashwin Chaugule     2015-10-02  766  		cpc_obj = &out_obj->package.elements[i];
-337aadff8e4567 Ashwin Chaugule     2015-10-02  767  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  768  		if (cpc_obj->type == ACPI_TYPE_INTEGER)	{
-337aadff8e4567 Ashwin Chaugule     2015-10-02  769  			cpc_ptr->cpc_regs[i-2].type = ACPI_TYPE_INTEGER;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  770  			cpc_ptr->cpc_regs[i-2].cpc_entry.int_value = cpc_obj->integer.value;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  771  		} else if (cpc_obj->type == ACPI_TYPE_BUFFER) {
-337aadff8e4567 Ashwin Chaugule     2015-10-02  772  			gas_t = (struct cpc_reg *)
-337aadff8e4567 Ashwin Chaugule     2015-10-02  773  				cpc_obj->buffer.pointer;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  774  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  775  			/*
-337aadff8e4567 Ashwin Chaugule     2015-10-02  776  			 * The PCC Subspace index is encoded inside
-337aadff8e4567 Ashwin Chaugule     2015-10-02  777  			 * the CPC table entries. The same PCC index
-337aadff8e4567 Ashwin Chaugule     2015-10-02  778  			 * will be used for all the PCC entries,
-337aadff8e4567 Ashwin Chaugule     2015-10-02  779  			 * so extract it only once.
-337aadff8e4567 Ashwin Chaugule     2015-10-02  780  			 */
-337aadff8e4567 Ashwin Chaugule     2015-10-02  781  			if (gas_t->space_id == ACPI_ADR_SPACE_PLATFORM_COMM) {
-85b1407bf6d2f4 George Cherian      2017-10-11  782  				if (pcc_subspace_id < 0) {
-85b1407bf6d2f4 George Cherian      2017-10-11  783  					pcc_subspace_id = gas_t->access_width;
-85b1407bf6d2f4 George Cherian      2017-10-11  784  					if (pcc_data_alloc(pcc_subspace_id))
-85b1407bf6d2f4 George Cherian      2017-10-11  785  						goto out_free;
-85b1407bf6d2f4 George Cherian      2017-10-11  786  				} else if (pcc_subspace_id != gas_t->access_width) {
-f21a3509842294 Rafael J. Wysocki   2022-03-22  787  					pr_debug("Mismatched PCC ids in _CPC for CPU:%d\n",
-f21a3509842294 Rafael J. Wysocki   2022-03-22  788  						 pr->id);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  789  					goto out_free;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  790  				}
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  791  			} else if (gas_t->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  792  				if (gas_t->address) {
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  793  					void __iomem *addr;
-2f4a4d63a193be Jarred White        2024-03-01  794  					size_t access_width;
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  795  
-0651ab90e4ade1 Pierre Gondois      2022-05-18  796  					if (!osc_cpc_flexible_adr_space_confirmed) {
-0651ab90e4ade1 Pierre Gondois      2022-05-18  797  						pr_debug("Flexible address space capability not supported\n");
-09073396ea62d0 Mario Limonciello   2022-07-15  798  						if (!cpc_supported_by_cpu())
-0651ab90e4ade1 Pierre Gondois      2022-05-18  799  							goto out_free;
-0651ab90e4ade1 Pierre Gondois      2022-05-18  800  					}
-0651ab90e4ade1 Pierre Gondois      2022-05-18  801  
-2f4a4d63a193be Jarred White        2024-03-01  802  					access_width = GET_BIT_WIDTH(gas_t) / 8;
-2f4a4d63a193be Jarred White        2024-03-01  803  					addr = ioremap(gas_t->address, access_width);
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  804  					if (!addr)
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  805  						goto out_free;
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  806  					cpc_ptr->cpc_regs[i-2].sys_mem_vaddr = addr;
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  807  				}
-a2c8f92bea5f8f Steven Noonan       2021-12-24  808  			} else if (gas_t->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
-a2c8f92bea5f8f Steven Noonan       2021-12-24  809  				if (gas_t->access_width < 1 || gas_t->access_width > 3) {
-a2c8f92bea5f8f Steven Noonan       2021-12-24  810  					/*
-a2c8f92bea5f8f Steven Noonan       2021-12-24  811  					 * 1 = 8-bit, 2 = 16-bit, and 3 = 32-bit.
-a2c8f92bea5f8f Steven Noonan       2021-12-24  812  					 * SystemIO doesn't implement 64-bit
-a2c8f92bea5f8f Steven Noonan       2021-12-24  813  					 * registers.
-a2c8f92bea5f8f Steven Noonan       2021-12-24  814  					 */
-f21a3509842294 Rafael J. Wysocki   2022-03-22  815  					pr_debug("Invalid access width %d for SystemIO register in _CPC\n",
-a2c8f92bea5f8f Steven Noonan       2021-12-24  816  						 gas_t->access_width);
-a2c8f92bea5f8f Steven Noonan       2021-12-24  817  					goto out_free;
-a2c8f92bea5f8f Steven Noonan       2021-12-24  818  				}
-a2c8f92bea5f8f Steven Noonan       2021-12-24  819  				if (gas_t->address & OVER_16BTS_MASK) {
-a2c8f92bea5f8f Steven Noonan       2021-12-24  820  					/* SystemIO registers use 16-bit integer addresses */
-f21a3509842294 Rafael J. Wysocki   2022-03-22  821  					pr_debug("Invalid IO port %llu for SystemIO register in _CPC\n",
-a2c8f92bea5f8f Steven Noonan       2021-12-24  822  						 gas_t->address);
-a2c8f92bea5f8f Steven Noonan       2021-12-24  823  					goto out_free;
-a2c8f92bea5f8f Steven Noonan       2021-12-24  824  				}
-0651ab90e4ade1 Pierre Gondois      2022-05-18  825  				if (!osc_cpc_flexible_adr_space_confirmed) {
-0651ab90e4ade1 Pierre Gondois      2022-05-18  826  					pr_debug("Flexible address space capability not supported\n");
-09073396ea62d0 Mario Limonciello   2022-07-15  827  					if (!cpc_supported_by_cpu())
-0651ab90e4ade1 Pierre Gondois      2022-05-18  828  						goto out_free;
-0651ab90e4ade1 Pierre Gondois      2022-05-18  829  				}
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  830  			} else {
-a6cbcdd5ab5f24 Srinivas Pandruvada 2016-09-01  831  				if (gas_t->space_id != ACPI_ADR_SPACE_FIXED_HARDWARE || !cpc_ffh_supported()) {
-a2c8f92bea5f8f Steven Noonan       2021-12-24  832  					/* Support only PCC, SystemMemory, SystemIO, and FFH type regs. */
-f21a3509842294 Rafael J. Wysocki   2022-03-22  833  					pr_debug("Unsupported register type (%d) in _CPC\n",
-f21a3509842294 Rafael J. Wysocki   2022-03-22  834  						 gas_t->space_id);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  835  					goto out_free;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  836  				}
-a6cbcdd5ab5f24 Srinivas Pandruvada 2016-09-01  837  			}
-337aadff8e4567 Ashwin Chaugule     2015-10-02  838  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  839  			cpc_ptr->cpc_regs[i-2].type = ACPI_TYPE_BUFFER;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  840  			memcpy(&cpc_ptr->cpc_regs[i-2].cpc_entry.reg, gas_t, sizeof(*gas_t));
-337aadff8e4567 Ashwin Chaugule     2015-10-02  841  		} else {
-f21a3509842294 Rafael J. Wysocki   2022-03-22  842  			pr_debug("Invalid entry type (%d) in _CPC for CPU:%d\n",
-f21a3509842294 Rafael J. Wysocki   2022-03-22  843  				 i, pr->id);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  844  			goto out_free;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  845  		}
-337aadff8e4567 Ashwin Chaugule     2015-10-02  846  	}
-85b1407bf6d2f4 George Cherian      2017-10-11  847  	per_cpu(cpu_pcc_subspace_idx, pr->id) = pcc_subspace_id;
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  848  
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  849  	/*
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  850  	 * Initialize the remaining cpc_regs as unsupported.
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  851  	 * Example: In case FW exposes CPPC v2, the below loop will initialize
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  852  	 * LOWEST_FREQ and NOMINAL_FREQ regs as unsupported
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  853  	 */
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  854  	for (i = num_ent - 2; i < MAX_CPC_REG_ENT; i++) {
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  855  		cpc_ptr->cpc_regs[i].type = ACPI_TYPE_INTEGER;
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  856  		cpc_ptr->cpc_regs[i].cpc_entry.int_value = 0;
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  857  	}
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  858  
-4773e77cdc9b3a Prashanth Prakash   2018-04-04  859  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  860  	/* Store CPU Logical ID */
-337aadff8e4567 Ashwin Chaugule     2015-10-02  861  	cpc_ptr->cpu_id = pr->id;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  862  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  863  	/* Parse PSD data for this CPU */
-337aadff8e4567 Ashwin Chaugule     2015-10-02  864  	ret = acpi_get_psd(cpc_ptr, handle);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  865  	if (ret)
-337aadff8e4567 Ashwin Chaugule     2015-10-02  866  		goto out_free;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  867  
-603fadf33604a2 Bjorn Helgaas       2019-03-25  868  	/* Register PCC channel once for all PCC subspace ID. */
-85b1407bf6d2f4 George Cherian      2017-10-11  869  	if (pcc_subspace_id >= 0 && !pcc_data[pcc_subspace_id]->pcc_channel_acquired) {
-85b1407bf6d2f4 George Cherian      2017-10-11  870  		ret = register_pcc_channel(pcc_subspace_id);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  871  		if (ret)
-337aadff8e4567 Ashwin Chaugule     2015-10-02  872  			goto out_free;
-8482ef8c6e684a Prakash, Prashanth  2016-08-16  873  
-85b1407bf6d2f4 George Cherian      2017-10-11  874  		init_rwsem(&pcc_data[pcc_subspace_id]->pcc_lock);
-85b1407bf6d2f4 George Cherian      2017-10-11  875  		init_waitqueue_head(&pcc_data[pcc_subspace_id]->pcc_write_wait_q);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  876  	}
-337aadff8e4567 Ashwin Chaugule     2015-10-02  877  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  878  	/* Everything looks okay */
-337aadff8e4567 Ashwin Chaugule     2015-10-02  879  	pr_debug("Parsed CPC struct for CPU: %d\n", pr->id);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  880  
-158c998ea44ba3 Ashwin Chaugule     2016-08-16  881  	/* Add per logical CPU nodes for reading its feedback counters. */
-158c998ea44ba3 Ashwin Chaugule     2016-08-16  882  	cpu_dev = get_cpu_device(pr->id);
-501634759d55a5 Dan Carpenter       2016-11-30  883  	if (!cpu_dev) {
-501634759d55a5 Dan Carpenter       2016-11-30  884  		ret = -EINVAL;
-158c998ea44ba3 Ashwin Chaugule     2016-08-16  885  		goto out_free;
-501634759d55a5 Dan Carpenter       2016-11-30  886  	}
-158c998ea44ba3 Ashwin Chaugule     2016-08-16  887  
-603fadf33604a2 Bjorn Helgaas       2019-03-25  888  	/* Plug PSD data into this CPU's CPC descriptor. */
-28076483afac9d Rafael J. Wysocki   2016-12-10  889  	per_cpu(cpc_desc_ptr, pr->id) = cpc_ptr;
-28076483afac9d Rafael J. Wysocki   2016-12-10  890  
-158c998ea44ba3 Ashwin Chaugule     2016-08-16  891  	ret = kobject_init_and_add(&cpc_ptr->kobj, &cppc_ktype, &cpu_dev->kobj,
-158c998ea44ba3 Ashwin Chaugule     2016-08-16  892  			"acpi_cppc");
-28076483afac9d Rafael J. Wysocki   2016-12-10  893  	if (ret) {
-28076483afac9d Rafael J. Wysocki   2016-12-10  894  		per_cpu(cpc_desc_ptr, pr->id) = NULL;
-4d8be4bc94f74b Qiushi Wu           2020-05-27  895  		kobject_put(&cpc_ptr->kobj);
-158c998ea44ba3 Ashwin Chaugule     2016-08-16  896  		goto out_free;
-28076483afac9d Rafael J. Wysocki   2016-12-10  897  	}
-158c998ea44ba3 Ashwin Chaugule     2016-08-16  898  
-1132e6de11cfc3 Ionela Voinescu     2022-03-10  899  	arch_init_invariance_cppc();
-41ea667227bad5 Nathan Fontenot     2020-11-12  900  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  901  	kfree(output.pointer);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  902  	return 0;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  903  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  904  out_free:
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  905  	/* Free all the mapped sys mem areas for this CPU */
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  906  	for (i = 2; i < cpc_ptr->num_entries; i++) {
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  907  		void __iomem *addr = cpc_ptr->cpc_regs[i-2].sys_mem_vaddr;
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  908  
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  909  		if (addr)
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  910  			iounmap(addr);
-5bbb86aa4b8d84 Ashwin Chaugule     2016-08-16  911  	}
-337aadff8e4567 Ashwin Chaugule     2015-10-02  912  	kfree(cpc_ptr);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  913  
-337aadff8e4567 Ashwin Chaugule     2015-10-02  914  out_buf_free:
-337aadff8e4567 Ashwin Chaugule     2015-10-02  915  	kfree(output.pointer);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  916  	return ret;
-337aadff8e4567 Ashwin Chaugule     2015-10-02  917  }
-337aadff8e4567 Ashwin Chaugule     2015-10-02  918  EXPORT_SYMBOL_GPL(acpi_cppc_processor_probe);
-337aadff8e4567 Ashwin Chaugule     2015-10-02  919  
+>   
+>> On x86, there seems to be a possibility of missing an interrupt if
+>> someone writes _TIF_POLLING_NRFLAG to thread info between the target
+>> executing MONTOR and MWAIT. AMD64 Architecture Programmer’s Manual
+>> Volume 3: "General-Purpose and System Instructions", Chapter 4. "System
+>> Instruction Reference", section "MWAIT" carries the following note in
+>> the coding requirements:
+>>
+>> "MWAIT must be conditionally executed only if the awaited store has not
+>> already occurred. (This prevents a race condition between the MONITOR
+>> instruction arming the monitoring hardware and the store intended to
+>> trigger the monitoring hardware.)"
+>>
+>> There exists a similar note in the "Example" section for "MWAIT" in
+>> Intel 64 and IA-32 Architectures Software Developer’s Manual, Vol 2B
+>> Chapter 4.3 "Instructions (M-U)"
+>>
+> 
+> Thanks for the explaination of this race condition in detail.
+> 
+> thanks,
+> Chenyu
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks and Regards,
+Prateek
 
