@@ -1,42 +1,43 @@
-Return-Path: <linux-kernel+bounces-218596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3056890C26C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:24:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9689F90C26F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C331C21BF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:24:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4630F287254
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C52F19B3EE;
-	Tue, 18 Jun 2024 03:23:55 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827A119D064;
+	Tue, 18 Jun 2024 03:24:02 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF441B94F;
-	Tue, 18 Jun 2024 03:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9802E19CCFA;
+	Tue, 18 Jun 2024 03:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718681035; cv=none; b=QbaG5K2vqQUD7H9/Ou1OXXiH/y8qs0N8z05RrtV5i+n6MuMoJMoEIxcoj9O2HC8AZHubrcW6P18ezFHrmTnHWoMXdX0/dIYYQzqqpYuxS1fsFpSEDCWQj/hVD1zFREfG7jgqxt+b4VmfaYWzQ8E5X9Y7AlWStLdXNhBFAoen/JI=
+	t=1718681042; cv=none; b=kQMliGCJuCW11aCEOc8qWyjMPRRw32JzmxShFdhW9YaA6WlrkmTYG22us8M2zSq4biOEeo1bDoIYn8AF/5W4LQkLTytnxVHHDEzP7qaetks1/+Erf+9IdJUtW+dJAcAwYQsWdokD3U/XmaT9r6G1LvKJ/CgMfy66XitASnsYkF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718681035; c=relaxed/simple;
-	bh=Y+l45UM8hj2e/jO4PRlD7W9+/iyxkKt5sUyQW6vA+U4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TaPQkDsVM4fHl0p+9y+nvn34+DbGUvV2ICVEQf+e/oc+YcErYCInZRy6kvlTmxIr/M91nwZkKAvodaP+fqfMCgAQp9sSjY6PonF6Y1nX1MDK1DM0IOkMxG3K2ZFsnwB5uBOuln208vx1CQYji+I2NymhnbVYLAhPcQovVKCjRHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	s=arc-20240116; t=1718681042; c=relaxed/simple;
+	bh=IR5Dnh2yxlJC52kii/laGbwEZ959XlTDR+eUpfYN320=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cYySb4/j1s9Elao9GnP2br3cq7w5LCWdxauJpU7WYnwo+AeqdErHOUSolNLpvmVSkgatKPwIOnhm5SRM9hsgaaemQ9xq6VKoLrVVKA4qUlJEf733kfkkhYxxOnatXWAhNQkgtVZ4o45HzH6vmyxgFTPrXoookK0Tq6BZperzXCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4W3BpB3gcMzPr07;
-	Tue, 18 Jun 2024 11:20:18 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W3BnS01Wvz1S8XV;
+	Tue, 18 Jun 2024 11:19:40 +0800 (CST)
 Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id BFC9518007A;
-	Tue, 18 Jun 2024 11:23:49 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 282B6140361;
+	Tue, 18 Jun 2024 11:23:53 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
  (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 18 Jun
- 2024 11:23:48 +0800
+ 2024 11:23:52 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <linux@armlinux.org.uk>, <will@kernel.org>, <mark.rutland@arm.com>,
 	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
@@ -49,10 +50,12 @@ To: <linux@armlinux.org.uk>, <will@kernel.org>, <mark.rutland@arm.com>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<linux-perf-users@vger.kernel.org>
 CC: <ruanjinjie@huawei.com>
-Subject: [PATCH 0/2] ARM: 9259/1: stacktrace: Add USER_STACKTRACE support
-Date: Tue, 18 Jun 2024 11:26:18 +0800
-Message-ID: <20240618032620.2445395-1-ruanjinjie@huawei.com>
+Subject: [PATCH 1/2] ARM: 9258/1: Fix callchain_trace() return value
+Date: Tue, 18 Jun 2024 11:26:19 +0800
+Message-ID: <20240618032620.2445395-2-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240618032620.2445395-1-ruanjinjie@huawei.com>
+References: <20240618032620.2445395-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,18 +67,30 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemi100008.china.huawei.com (7.221.188.57)
 
-Add USER_STACKTRACE support and Fix callchain_trace() return value bug
-by the way.
+perf_callchain_store() return 0 on success, -1 otherwise, fix
+callchain_trace() to return correct bool value. So walk_stackframe() can
+have a chance to stop walking the stack ahead.
 
-Jinjie Ruan (2):
-  ARM: 9258/1: Fix callchain_trace() return value
-  ARM: 9259/1: stacktrace: Add USER_STACKTRACE support
+Fixes: 70ccc7c0667b ("ARM: 9258/1: stacktrace: Make stack walk callback consistent with generic code")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ arch/arm/kernel/perf_callchain.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- arch/arm/Kconfig                 |  1 +
- arch/arm/kernel/perf_callchain.c | 73 +++-----------------------------
- arch/arm/kernel/stacktrace.c     | 65 ++++++++++++++++++++++++++++
- 3 files changed, 73 insertions(+), 66 deletions(-)
-
+diff --git a/arch/arm/kernel/perf_callchain.c b/arch/arm/kernel/perf_callchain.c
+index 7147edbe56c6..1d230ac9d0eb 100644
+--- a/arch/arm/kernel/perf_callchain.c
++++ b/arch/arm/kernel/perf_callchain.c
+@@ -85,8 +85,7 @@ static bool
+ callchain_trace(void *data, unsigned long pc)
+ {
+ 	struct perf_callchain_entry_ctx *entry = data;
+-	perf_callchain_store(entry, pc);
+-	return true;
++	return perf_callchain_store(entry, pc) == 0;
+ }
+ 
+ void
 -- 
 2.34.1
 
