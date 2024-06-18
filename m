@@ -1,211 +1,158 @@
-Return-Path: <linux-kernel+bounces-218458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205A390C022
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:09:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D07FD90C024
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F87A1F22B57
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:09:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834641C20C5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5494617FE;
-	Tue, 18 Jun 2024 00:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD7A17E9;
+	Tue, 18 Jun 2024 00:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="NCcovWaK"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2031.outbound.protection.outlook.com [40.92.103.31])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cd3Jq+Ao"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9023C1367;
-	Tue, 18 Jun 2024 00:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718669351; cv=fail; b=rfxz6Cf1AobLPhd4UhDp3BmZ6MNQBljrJDqZuxsPISXXdVyh7y63unRstnK46zfaKA0Y+nghbqTtnc6+H0ngmOuqwSFADyLWGCqyw4js2yS+KwnwbX8iiOjpBNPrPpxn5IvppA/MrnaU6rHNOQVseT+tpi4V3vhmCf3tYZ+39Js=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718669351; c=relaxed/simple;
-	bh=BYz/2oaKD7NTQ+SNa2dn+XhCoVUwa2hPA6dDxgE9hi8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CZfk5T3h7Z7HP1xwlVunZ6g+Br/8hES0FeB8DWcau562i191bjzHNmlSeTQmjsnMBZo9/Z570bTm+XZzjuPGfsq3ccVm/qTVHTnP8vRkCN/NM2phX0KIypWC/TZoP1tg5LqS5ojBkFeObfdG0w6h1HN2O0giIcVu2mpzCjy1IW8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=NCcovWaK; arc=fail smtp.client-ip=40.92.103.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UF3pLVFMzfl8ZgAgC6lHBvzxUhm2Cmkm/IlC1nMGNn7knd2GGQwSkzibV1fXLhkaCfLTzSS+TW13GIwb2P2poW0Pnd1Cu0wA8TxXO2T0K4yeikP2N1lsLgn+N2IRXKpQ1opWbZG227Cmlq7kpQ6OmWJcbFRjFEePUohvk7lH5NwNHu8zNAaIXkqLN+lhtQYTqlgHXD7Ha53Kl5iBiL6700XKsHKs5nsHeKH+E10RqjJKhLN/c1aBsRCzTtXD0FMUoF51wTuK7Md3TYX/ksrHDqB+ES75l1kX3cXWUOMV3ObntNbvxsiVEcxlMUmkVLTLnz8Hiy1C1CWf625kTB1yiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PnA5P3qDAH+fqK/ueMY2TXU2K0iPm0phm3CIX3vY5HU=;
- b=AAMbIwJKpZDadcvbnzp9GwMQxkEh3/1BiE8ELSjVbq1oeIp+CDFA2j0Tmskgz7x6SAHyn7sGxJDw6wtw03UT09d2iJsV8CBDZReDgFUL+Zo32ZNZAG3eYAIl+Xc/jJeIvh1AHrve14kTTSet1RTfbRAgdG0SLZrWaxqZfX+4dyB25wusr6JBzqM6ju2uzos9jKJt5EIZ8tGHpyUnuYKRi4ymUpOnlxLQWbkz7UFEqZsCvZWNTf5dXuzz+nE3dUcEV3ALhb92seK+hPzQF4PAGQZe647T9aWpOJnnc5XKxCzsdSXhd5tkVW7TBN41nJLnp1Op8r3nKGJRYUoR1NYDQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PnA5P3qDAH+fqK/ueMY2TXU2K0iPm0phm3CIX3vY5HU=;
- b=NCcovWaKh5ixbT4qmE4l7tdd/SBJnYwhp4rkklO+aZbVLSh7A09k6Ux2/mEDJiNTytaFcjAGDVyBjfqKWJdF5+LqRY2UH8X47fRuy4+j4fh6OJI5Vo3DGyjSg3i/8FvGwhYuGr1anHCf8lERlwK83cfFHhI/ixyZLgso2M4IbXAZnE61eHasyvhtuhPeHdnL/8iFe/Sgama7IvFUjZZyU18flYOLVjmLe79YeXmYj9VQ0nygpPnjSuqYmHAiA8VTvuR4zPlz1CVNvRcEtfl3A6o7c/cnBySvok0tCqF2SPj9vzvPgDqT2QL42JWmfTYl7vAYB12JERY1IiCYB4r9uA==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by MA0P287MB1497.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:f3::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
- 2024 00:09:01 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 00:09:01 +0000
-Message-ID:
- <MA0P287MB2822FA0D5E803B0C91A0E19FFECE2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Tue, 18 Jun 2024 08:08:53 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] mmc: sdhci-of-dwcmshc: enhance framework
-To: Jisheng Zhang <jszhang@kernel.org>, Chen Wang <unicornxw@gmail.com>
-Cc: adrian.hunter@intel.com, aou@eecs.berkeley.edu, conor+dt@kernel.org,
- guoren@kernel.org, inochiama@outlook.com, krzysztof.kozlowski+dt@linaro.org,
- palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org,
- ulf.hansson@linaro.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
- haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, tingzhu.wang@sophgo.com
-References: <cover.1718241495.git.unicorn_wang@outlook.com>
- <ZnBFsLFJdi5TMA2e@xhacker>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <ZnBFsLFJdi5TMA2e@xhacker>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [SnAmz4zYLvP/EpSWIT7jXPI9dEsd6maz]
-X-ClientProxiedBy: TYCP286CA0255.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:456::15) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <04243d53-765e-470e-80a8-62371886542f@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00C6A3D;
+	Tue, 18 Jun 2024 00:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718669408; cv=none; b=lLWvs8aJqDKCFouzEiC6EDryCw5UahLJXVcaSKv3dqAOu2Gy8k0gkhJm9zEISD3EYujFHFEPiHx/Vi6d0+a9PlSrrxG24qrEVGJom+q68j7AlFPZALCY4rP0dmC2dLPtDbpGAHxbH7ufNEyGmCMlhupcNmW3vmrCBGviMRwpj2I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718669408; c=relaxed/simple;
+	bh=JV+ze2DhYby8M3srxTuMb/mFtvtSNrjhrOipVD4W4m4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DQk89EW+F9AP321k4enzHlO6ZvvIGiv4SlxRxSzy3C6u2BPtDs9t9AmmPcIylBDrZbjZzhmv7RWJ0eIHc4ypMg6rJhDzgQ3x7eqMo3avy9+OuCa9g89dOuxZtEouUWPKKQh3GizauEUsS6oyFuz1gjJV5VWMyL+y1HfyhcyA+h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cd3Jq+Ao; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718669404;
+	bh=JV+ze2DhYby8M3srxTuMb/mFtvtSNrjhrOipVD4W4m4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cd3Jq+AoMBgSWRqEb2AmeQXtUgz5YyUy/7qn7j/VJ+G7dhFvy3VPd9kJsBwqxgcHv
+	 RqmrloEor8MoTbkome2eEaOq9bLSctOjyrZmzfjBNDV1KclgYyO6sMzgYX3OontAHm
+	 4h4ZE55u9xO3nXcqdU1GEXWfmd6gCb3rWFmqQGJ8nvX3LDuO5FU52wGHdu/vhJRSGR
+	 7RkPhS0wN8e3bN6YebosXYQDsO8ecJdoRoJNa9d4P0S7HcHshuk79ZxNEYmeM5S2r1
+	 5z0CiFDsuUhZQJ9ws1HiAzATTdzDkYxfIA+jSnRqcmjqWo/T4jcZmvJEWTCepqX9iq
+	 +37t6MNWbsbeg==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9462C378042B;
+	Tue, 18 Jun 2024 00:10:04 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 23BA71060734; Tue, 18 Jun 2024 02:10:04 +0200 (CEST)
+Date: Tue, 18 Jun 2024 02:10:04 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Alexey Charkov <alchark@gmail.com>
+Cc: Jacobe Zang <jacobe.zang@wesion.com>, 
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>, 
+	"efectn@protonmail.com" <efectn@protonmail.com>, "jagan@edgeble.ai" <jagan@edgeble.ai>, 
+	"dsimic@manjaro.org" <dsimic@manjaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/5] arm64: dts: rockchip: Add AP6275P wireless
+ support to Khadas Edge 2
+Message-ID: <o5iyg5ha7k3goy65damt3apnyeyfxedbm7mzmu4v2zur32jsyj@x3ge4n52lkfs>
+References: <20240617071112.3133101-1-jacobe.zang@wesion.com>
+ <20240617071112.3133101-5-jacobe.zang@wesion.com>
+ <feeb8dcd-661f-415e-be08-afe175d0102e@gmail.com>
+ <TYZPR03MB70012C66B789B09195FCD92580CD2@TYZPR03MB7001.apcprd03.prod.outlook.com>
+ <CABjd4YyHUzm4EBPPzia5VRXGvJiXDObDHQYNCjpCMJDs=BqALg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|MA0P287MB1497:EE_
-X-MS-Office365-Filtering-Correlation-Id: de746c9e-1c92-4f00-d7f5-08dc8f2adb33
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199025|3412199022|4302099010|440099025|1602099009;
-X-Microsoft-Antispam-Message-Info:
-	XgJAc0yWCoWG0SdZXt1JsXOjVEUnIh6n3kuREiN3eTDcdZgeRNmNjys9Ia3w1nui3QnSM0djkdL0oo43tJ1k2MmWZiMZlvz+gF160UVedr/t/HObZp0ghVYsH3PmgTkXh8ylYEy+tMIjdUa1yJF+TDbtG6mTwBRkdnuJ13PzFj5llJ+qG5vj75Pbi713Kf0ZwzBQvfSgo7bofhQ5ObB6Kdb2LyLcifjhfu2oETOMbjTL9Vb2g1GVEcbXc/iMDD9pSp1D1iNv+wFSim2Zk9tkXJEeXvYW1FApLziKzIS594MnnHpmtYg9bNslv+pq1mZ+/u0dz8tGnlC6dztqVIR/+aXCrzrpQOtL2FSbULS4J65eMDd0qIEDgPOWT6x4vctUOqX64tV6YGmuiZ45Xtupwfq2OIzZZYdUNSKFGq6tPA6lSvd9Jp2fHJhodETAbkioJDUrJUwsd8ZF2BB+ap6vOduNl46e39CsF0IkKwdaeoQdEb6LoVvpjp63kL6AreLKBxLxLX7sBHsHZauCrwL+K9Zih3WEDnV6myS3fSSpFxIY++qCBp3Hb0mq5ZxXMg6+mv/cvaMTv3+k+5LyZIBPq1I+m4NqAjbz3Ar0S2Ztu8lD0SHykNHI8NHRXM2wWvqqKCtWlZxJ0sY8R18n5Ru1l+dI1InnQzfBq/sHwxY3DcEYYHYkfNG/n8keHWOcsOL0JLveK7u7lbMT7qTI3MSwAw==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WEY0MEZ2MDRaazZzVUFwK1dCNldSc2xLTEtrSVFjV0FLZTNuV1hnMkdDSUZi?=
- =?utf-8?B?eFNBVmtIaCtrZFBZNDZtb1NBNTBrSTg3UHFFam5vZ2hUdHpvVEFGUDQ5U0ww?=
- =?utf-8?B?MUxMQVZCQ1BudmoyZUZSNGYrclJtU1VRNzdRMDRzN2tvVzJDWDFaRzMwYmtx?=
- =?utf-8?B?U2lJdXBKOFg3YWNqYWRTbHl6RlFwTENBUHYxUXJpNHB6Z2NVVGtoQmoyaExK?=
- =?utf-8?B?amRyL091SHVscXNwWFZRbUg1N0t3c09JNU9FYkhub3dmMkF1bk0ydGEzbS94?=
- =?utf-8?B?di9icU92Ri9MY0tHa2JPK3FaN25aVUFKMUZVM2ZoVVRobXRWSWhJWE93Um82?=
- =?utf-8?B?TFBtWUZCSXBIdlYwMGZUd21ISFB3RERVQy9MR1pBeGlETU5ZRFFNVnBNcFI5?=
- =?utf-8?B?VkNTK200ajB1M2pYWWhBVzFldnV3N3BCVjR3dkI3RXJvMWRGdVBGQkZOTE8w?=
- =?utf-8?B?dXpiTWEzNktHNEhmYnlpQUZXUEtxaVdubUlaY1pkSEV5b0R3QUVIeU1sUkZO?=
- =?utf-8?B?YW5YWHUwY1VBYmpONDhOa3dXc0FaVGdXQlMyQ0J2dDFWWUlXcGtyKzRhVGVN?=
- =?utf-8?B?bXNsRktOYWFBUXNka3g1OE4wVGtRTTdyUUt4YVh4ZW1BeERkNXlBc2dBRkxn?=
- =?utf-8?B?b2F4TWtwY2lERERrT3ptL2hiZm92NXoxVEowLzBxY0pzUlVBdXJnZHJkTkZP?=
- =?utf-8?B?Z3NCUWV3VC9uUnhlSEY5cGNpdWhBbWtXa0FYRWk1TTdETW1WQ1BiTE9PbEF5?=
- =?utf-8?B?R0VEajZLbm1BczkrdnNWVDBZR2NiMXQ1blFtWlpBdnVEaXR1YzByOFc4ZGxt?=
- =?utf-8?B?enVEMWVQNjVySmJtK29INWVIc1k4anZuc09OSmVNdy81MTM0M3c4WGdjR1VO?=
- =?utf-8?B?eUswQWFoeURrYUUwaTRBWlVPdWc1RWUwRE9EODNhT0x2WVlWY2R5U3JPUlVq?=
- =?utf-8?B?NkxseWR3TUtPRU5jUG5tSHJhUjh5NnlJdGV6Q05MWEF6bHFkdXR3RnlqUEhC?=
- =?utf-8?B?NDVpL2grcXlkZW5pekltb0k2dXpnWUtwYjNXVG1xaUxlZWs2cmdsL3l4blpZ?=
- =?utf-8?B?QnlPVnlTNXBneUhyd01LZ1pMbE5DemI3ZTVOY09TSmxGQ1ByUm10WnhJTWVJ?=
- =?utf-8?B?ODhIR2dWaFhZRmxtYXVUaDVkalIxYTA0LzlVdDFZSDY2L21ySE5XRlFEbGtn?=
- =?utf-8?B?U1hRVWx6SStmVnNiTW9JQVpqb0gzTHJXRkkzUkJoQ0tJTStQdURRRFVWUVZO?=
- =?utf-8?B?RHJuS1Ewd2hybDFUdDVyVU4xNHorV2ljRHNNeFQyQktNSHRBMGhqOVRIWTJN?=
- =?utf-8?B?anJvZG5UcjJLb083M1M3M0xiZThjRWF3Wmt3R2NnYzdVS2hZN054Q0pFL1lK?=
- =?utf-8?B?TUVMYWIvNmx0Qml2SUFYamJUa0ZsaEwwV1I0eWZubitKYS9QNFNtVlFiREJQ?=
- =?utf-8?B?TjJaSk1zcUd0NmJNRURHazhNYkZYTjc4QjN6K2FUamZkbCsrRk5vMzJIT2JR?=
- =?utf-8?B?Ymkvd3NRZmI2bnZlQndFdFdlaTdpcDdMSWdLUVkwNmt6eExJOEF4cTJPNjEv?=
- =?utf-8?B?N1hzN0hqTXkyQW40NWlselh4eVphTnVzNmtZZlkrcG5YU1gwK0pSUy9lV2hp?=
- =?utf-8?B?djN1OTd3VEVYN0lWUWZvUFZSZFpEYnJRUE4xcEgxTytKKzlNYVZ0RmErZ2xv?=
- =?utf-8?Q?q0nVmQqhs0y6WSKNQiI+?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de746c9e-1c92-4f00-d7f5-08dc8f2adb33
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 00:09:01.1066
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1497
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uhnckguykm42725v"
+Content-Disposition: inline
+In-Reply-To: <CABjd4YyHUzm4EBPPzia5VRXGvJiXDObDHQYNCjpCMJDs=BqALg@mail.gmail.com>
 
 
-On 2024/6/17 22:18, Jisheng Zhang wrote:
-> On Thu, Jun 13, 2024 at 09:42:03AM +0800, Chen Wang wrote:
->> From: Chen Wang <unicorn_wang@outlook.com>
->>
->> When I tried to add a new soc to sdhci-of-dwcmshc, I found that the
->> existing driver code could be optimized to facilitate expansion for
->> the new soc. You can see another patch [sg2042-dwcmshc], which I am
->> working on to add SG2042 to sdhci-of-dwcmshc.
-> Hi Chen,
->
-> IMHO, you'd better put the sg2042 support as the last patch of this
-> series, we want to see why the enhancement is necessary and how does
-> it help sg2042 upstreaming.
->
-> thanks
+--uhnckguykm42725v
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, I will consider this in next revision.
+Hi,
 
-Thanks,
+On Mon, Jun 17, 2024 at 03:17:50PM GMT, Alexey Charkov wrote:
+> On Mon, Jun 17, 2024 at 2:58=E2=80=AFPM Jacobe Zang <jacobe.zang@wesion.c=
+om> wrote:
+> >
+> > >I'm also wondering why would adding a DT node for a PCI device be need=
+ed
+> > >in the first place, given that PCI supports device discovery?
+> >
+> > In fact, I learn that PCIe bus devices do not need compatible to probe =
+just now... Before sending this patch, I committed the code that added "pci=
+14e4,449d" to vendor-prefix.yaml and net/wireless/brcm,brcm4329-fmac.yaml. =
+Now I know the reason why my addition was rejected. By the way, except for =
+the compatible binding, is there any other binding that I should remove??
+>=20
+> If your PCI bridge is functioning properly and if your WiFi adapter is
+> connected and physically enabled (in terms of power and RFKILL) I
+> believe it should be automatically discovered and you should see it in
+> lspci. No additional DT nodes needed - but check if you need any
+> additional DT property somewhere to keep the HYM8563 clock enabled.
+> I'm not sure your pcie@0,0 node is needed either.
+>=20
+> Then it's up to the driver to recognize your adapter by its PCI ID and
+> attach. I guess you'd need to extend the hardware IDs table in the
+> brcmfmac driver for it to attach - similar to [1]
+>=20
+> [1] https://github.com/armbian/build/blob/main/patch/kernel/archive/rockc=
+hip-rk3588-6.10/0801-wireless-add-bcm43752.patch
 
-Chen
+RK3588 EVB1 has the same WLAN/BT module and I started looking
+into adding support at a low priority. I think this is very
+similar to the Qualcomm chip Bartosz Golaszewski worked on and
+thus should get a pwrseq driver, which handles the enable GPIOs,
+regulators and clocks. If any of them are missing the PCIe device
+is not discovered. Note, that this will actually require describing
+the PCIe device in DT to reference the pwrseq device.
 
->> By the way, although I believe this patch only optimizes the framework
->> of the code and does not change the specific logic, simple verification
->> is certainly better. Since I don't have rk35xx/th1520 related hardware,
->> it would be greatly appreciated if someone could help verify it.
->>
->> ---
->>
->> Changes in v3:
->>    
->>    The patch series is based on latest 'next' branch of [mmc-git].
->>
->>    Improved the dirvier code as per comments from Adrian Hunter.
->>    Define new structure for dwcmshc platform data/ops. In addition, I organized
->>    the code and classified the helper functions.
->>
->>    Since the file changes were relatively large (though the functional logic did
->>    not change much), I split the original patch into four for the convenience of
->>    review.
->>
->> Changes in v2:
->>
->>    Rebased on latest 'next' branch of [mmc-git]. You can simply review or test the
->>    patches at the link [2].
->>
->> Changes in v1:
->>
->>    The patch series is based on v6.9-rc1. You can simply review or test the
->>    patches at the link [1].
->>
->> Link: https://lore.kernel.org/linux-mmc/cover.1713258948.git.unicorn_wang@outlook.com/ [sg2042-dwcmshc]
->> Link: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git [mmc-git]
->> Link: https://lore.kernel.org/linux-mmc/cover.1713257181.git.unicorn_wang@outlook.com/ [1]
->> Link: https://lore.kernel.org/linux-mmc/cover.1714270290.git.unicorn_wang@outlook.com/ [2]
->>
->> ---
->>
->> Chen Wang (4):
->>    mmc: sdhci-of-dwcmshc: adjust positions of helper routines
->>    mmc: sdhci-of-dwcmshc: unify the naming of soc helper functions
->>    mmc: sdhci-of-dwcmshc: extract init function for rk35xx/th1520
->>    mmc: sdhci-of-dwcmshc: add callback functions for dwcmshc
->>
->>   drivers/mmc/host/sdhci-of-dwcmshc.c | 598 ++++++++++++++++------------
->>   1 file changed, 339 insertions(+), 259 deletions(-)
->>
->>
->> base-commit: d6cd1206ffaaa890e81f5d1134856d9edd406ec6
->> -- 
->> 2.25.1
->>
+Additionally the brcmfmac need to be extended to actually have
+working wlan.
+
+I put some links and notes about this here:
+
+https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/issu=
+es/1
+
+Greetings,
+
+-- Sebastian
+
+--uhnckguykm42725v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZw0FUACgkQ2O7X88g7
++prrpw//UYYL9Rg1H9dHWyJgdcc/4LeH3dB3tQX3tEs0eUL5NthX28Uunb+LpqC/
+9CsIQqGCYjptZP1dzJ4HUeFIPYOnGw63Y7WZaeWqqd/Wob1PsADOPlNFtXQ5th5U
+9Z87Uji/Wfm7h0oG/+1YVGK4TKuUqkkzSoSuvmb0VqtZjVdV4MS90nwtHGxD/jhI
+UTSwuAXa+E7nJg/p0USVW5vIegrJQyFOaTTXpmagiOiOFm2TR59LWURsw3n8+Xmb
+wYR88jc64on4zLqqtVkiqY624Q2f3lLHVAgswx7juZG+obFUputTZshah0bHTRE5
+jiiG8KcAHCNflRZGtS6pDHZmJ+/shcPvE8aoYbiMfMO1+5HDLhjKkM61HeLH1XJc
+JR1u0bH9azquf8LurJd4qEpVcg40drVq7FDvHbSyM5BTvhCIBNGRVNKxIb5klGEb
+WMbEtJKfS/XDtm6zSR4pxcFcvHH9ukRGxogYgKuHuS33QMQ7f0Wa80aIskcPZovT
+m8Nbn4EcleD6c0PVXXyX2s0vy094TohtoDBwHyMI9GWLqdU2LiNsc0bpjkaxdChN
+8mu9ajXgt3+fSpCvvQ8HJ5EAEyba59rhsdE7/cUJXQT8B4rD7KzoU94Rc1YJ6v+j
+0/Y+vb5mk/TkL+zaXT5wvopW0gPhXEpxfdhPMM8PiMqu3Y+gz1k=
+=6zaE
+-----END PGP SIGNATURE-----
+
+--uhnckguykm42725v--
 
