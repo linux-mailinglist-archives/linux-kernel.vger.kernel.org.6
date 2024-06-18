@@ -1,193 +1,194 @@
-Return-Path: <linux-kernel+bounces-220061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78BF90DC35
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:08:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65EA90DC36
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 702811F22C53
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:08:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A711F231AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1FA15EFB1;
-	Tue, 18 Jun 2024 19:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDF315EFB0;
+	Tue, 18 Jun 2024 19:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KT6Tg5AV"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UP0SvLK2"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4891BF50;
-	Tue, 18 Jun 2024 19:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C020A1BF50;
+	Tue, 18 Jun 2024 19:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718737684; cv=none; b=CtrCaspBK4vF/UgA2u/uIWF0QCDtcnnNbc4Uw5tQOjlEd2ER78ebdrExEesZR0FGqsebTK/I287iHpNKJ1rY6OTOfcmXzlVAWn+bkU82rLnS2R58mABLtogK9HLnBSs7f6mJ0SWJAikic1AyYeQREd7HVEy3Ypn5eJUsQVWc1Ps=
+	t=1718737896; cv=none; b=mA9ZfCAzz9ga+QY5CqlF8/aQbp15zM3+GZ2T1JN/9JdO816uBxzgeVMo+l9RkN59ol/6T0fKACjKIKCY3HykNj7SMRZAjeGdwGHlWkWCWepOKN2I7D/soveQq/VP+wZWBeVLDhG8u8K0fLKTVFaJk4ULH9ivF3qsiNtqvQ9J7AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718737684; c=relaxed/simple;
-	bh=vpmHfL9r9TyAE2DjCbaAMxhUUBeiCaKP/urqhM0ztMs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PspBFExPyJL2sMzDXiLddZbQIip48JvRDvMdY3J0IZrqIa011zCuTPN2f5/7fXjKCW63v8IjESWlFj+kzuweLRRaF2AiMhUa81vNdortBEWCY84niB0Rzw84NxtclNnHzPTogC14FTBte6oq6v2Kc2VwUwjQb+vZLKuAobwAdTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KT6Tg5AV; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1718737896; c=relaxed/simple;
+	bh=QkcZdI1SzK/GYifPDzyo4MXKlDf4yGGhyffzTmjSls0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i6nGxW72kGthFyTtpudpnA/uDcla+d0TwOS5XLHmUMdNuUxA+tU/U52M1ivEM9ZoEFGFvSEECW0dSxCDHnNuYaEQOJsWLmsWzQCPBSlqd94p98BlmZiadjUHghSPBr+e9zvZpd0lYhFht3lDyBJzSdpNHoLAKgCgQ5VzzK77KjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UP0SvLK2; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35f1691b18fso4744468f8f.2;
-        Tue, 18 Jun 2024 12:08:02 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b060f0f48aso26772156d6.1;
+        Tue, 18 Jun 2024 12:11:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718737681; x=1719342481; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0I0d/NKdwXHuOccz/djhmZkYE9cQJgTceoyjyWcQAP0=;
-        b=KT6Tg5AVFPpSusV/+CCwrmN+18gPs3hSLGSSISah3bI8DbXxpntHTL2QUWhnBHAmKo
-         scXlXfbUHI9NwJbpsLOEtOinFWQ9qRb/LUD9dYtZT9neOHQblHD96i6QsxkeXcm3+083
-         DPdAO3WR3GNSkwGCqu+ee5ZKz+1skhaIY9GjIA9SbNBrrOyJXUMXUFuLHDQKt0HP6Sp+
-         1vLca7i1yR8dzSEbsB1qyQsnWIEEy7vU+ZzqfpZ/NM0EsXrBPcNkP9WBGo4Ai4tPdcsP
-         7CdrVbc0+6nTI2KrJ2yR7YhqIGMqRjHnmEwxTJtOYw6f5glg/43F8f+NSgPzJxikmO2N
-         VGRw==
+        d=gmail.com; s=20230601; t=1718737893; x=1719342693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sjgSAIcGlBvcQWlcdFKimsWuEgiOFseD5bqrSyiqGzI=;
+        b=UP0SvLK2V7vUqfSmcIC9wdDKBUll79QfWxW/OiPey9tZ6LUnl5slkqS3Ly7mbHByRf
+         38FX4ewub/4jF1W2sEHBo8vBweWC0i/0Dk18wF6hd9IOro34950BuchgXr20a4f/HMPa
+         UXRgzgK+nIqf780QYEWpiz9H7b6fY7zlRyDs8/xu9kyaCjU2nd+07CY5hj4biqZYNOtp
+         5SqDwlP3sh4kKUy/1/cwgbatxS7kdy2L9ZNwm6rN8GsU99UBrFVmOd50qtejgov1j29a
+         BesPd4et5gzxcgRO4xyMc08y9QD9iED54x2QXnu+O21Mu6yICYSQh6/T/bKIkzXVTXNv
+         4smQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718737681; x=1719342481;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0I0d/NKdwXHuOccz/djhmZkYE9cQJgTceoyjyWcQAP0=;
-        b=SBmm18ZBNo9l0VB4MtJdbwWYPVXtnIc7veJM2c8XZPRI1pzNBwZnczV9zuusoRZDmf
-         795o9IgRSKTS/6nOIQ7IwKDUVlOkbe/9o22jxzrUk+ITcBTBX6lA1UPEwOAGQuF/STQ0
-         DO8YLjXNPSbapJnYlxcKjh1C8Pt5pVmuOpYaahvLA1J+f2thD/+8LFsUnRf//oiR2Ijn
-         ysLmqZMWRzXoTSJMatzYvSeVnlA/0CiVArjs4N0getxrcRZdWFdAG1zgXqCrqGCrInxM
-         MePytJBSpGMidSoWDTvingaDADgqfxROwxhSNf/lWP4DT0fv8LrcgTr/ePLwhoSdy4NY
-         JXZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkjwMESaAQXmekY5No7Jd8z0Z4Z6/AKKopsEDtYWuGCRtd9m99Oa8JL/wSGALKxyde9sK16OMnvdZ3eA4b//+ri+taSAVXdjSpYotTxBhhw9jYUz8rR8dihgZtKaeoxrhE9CC76xoXLlU9Ra5+odDO9+YloYUpfPLnX2VxfXeN9nHL
-X-Gm-Message-State: AOJu0YyTedA8UwmEWOCTgag/d6yDrd+ayqDrPstrOj8+yRnlzJA0mpYj
-	Lnm/WPAJQKUOs9RsofFGFbkOth5xKFSq/pTE6YN82iMZGWOAezAc
-X-Google-Smtp-Source: AGHT+IFRdLy3kSCQHiBaMb3kuFLG6/e8w+S8xgh9afjw30/pEnRE2G+RFO2vDbjC9cYfD1I+tprCyw==
-X-Received: by 2002:adf:e590:0:b0:360:6f9e:8a85 with SMTP id ffacd0b85a97d-363195b2334mr331834f8f.43.1718737681093;
-        Tue, 18 Jun 2024 12:08:01 -0700 (PDT)
-Received: from krava (85-193-35-215.rib.o2.cz. [85.193.35.215])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3608accd8b3sm9391893f8f.71.2024.06.18.12.07.59
+        d=1e100.net; s=20230601; t=1718737893; x=1719342693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sjgSAIcGlBvcQWlcdFKimsWuEgiOFseD5bqrSyiqGzI=;
+        b=l4PQBq3oFE9MEGP15EVMRYS1ZVEI5Sc1JGUDjekCmsgQuxRzGCb+Prp97EBC+wBpHV
+         jxbQt4h0GS2GftQ225zIsZpYUuwkyEz3gt4oYMBykoovqdXko7Isb/9qjO7W1tai0SbH
+         FUzG6Kz+mABJQoXROhCUkuADn2lR7h3n43OKkod9pNYXXhMP0AsdjzKC8kHRKeWxut3i
+         Ao5Ha3Y2SACTRIKQ3zBFYZDy2PZx2U69NrgrWoprmCuHClI4Icdc2SYPop59W/EzjFKn
+         6gnf2f/FWapd6La22cFLJ9uKD36A7mSLxGgdC1CnGmtgmlezvbFUCa+zuSh2ioYZez9y
+         rj7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWvuLNbaV/YvYKnsWlMMcOYNYkHqq2n+WDTlvJC96wZM/vb5kzh9upB0EhgIcLGI6c+lq0TaNTGsZaeYWZwYvfNsDMSCbs+L+3CMCrjbvI3aN4DacyEIEhVU/ibV8NLb41dKJSrDhROJeO+hXE=
+X-Gm-Message-State: AOJu0Yybu295IjFng26zT9UdwZr88/cJ1IBWs3GyiMB10G9fmf3gVEla
+	/vtHm3bS/wn36S1AwIN5cwFdebL1Pbn5FOTT8UFdbAskhAKT8Zmk
+X-Google-Smtp-Source: AGHT+IEP1SvUBgbecfLuQ12FLLwDmBC06TibPURy4ePUKsu2A0PH5rgyMjidMV8w8XcnsQFLMvR/TQ==
+X-Received: by 2002:a0c:ca0e:0:b0:6b0:7997:ee3b with SMTP id 6a1803df08f44-6b501e47ee4mr7097336d6.35.1718737893421;
+        Tue, 18 Jun 2024 12:11:33 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c466ccsm69670486d6.71.2024.06.18.12.11.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 12:08:00 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 18 Jun 2024 21:07:58 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Daniel Xu <dxu@dxuuu.xyz>,
-	shuah@kernel.org, ast@kernel.org, andrii@kernel.org,
-	eddyz87@gmail.com, daniel@iogearbox.net, quentin@isovalent.com,
-	alan.maguire@oracle.com, acme@kernel.org, mykolal@fb.com,
-	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-	haoluo@google.com, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH bpf-next v4 06/12] bpf: selftests: Fix
- bpf_session_cookie() kfunc prototype
-Message-ID: <ZnHbDgAnwgZqw6Lk@krava>
-References: <cover.1717881178.git.dxu@dxuuu.xyz>
- <34708481d71ea72c23a78a5209e04a76b261a01d.1717881178.git.dxu@dxuuu.xyz>
- <Zmb52Qp__CBzbgDh@krava>
- <CAEf4BzaT7XNnGFUqAr=+pi106bT0o4=TJ7JLOPNjZEBHw4+M7Q@mail.gmail.com>
- <ZnGBANDTF80gNDHR@krava>
- <CAEf4BzZVfppin_mfEJF9eVcZUu9hds5PKuLysWOXeSJ7gdV3dg@mail.gmail.com>
+        Tue, 18 Jun 2024 12:11:32 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id E0DCA120006C;
+	Tue, 18 Jun 2024 15:11:31 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 18 Jun 2024 15:11:31 -0400
+X-ME-Sender: <xms:49txZtMKwuEAjSl28-g4jrOYzR08I7Og_0vlseQDRMubpF0OpzPvzg>
+    <xme:49txZv9J0rEw-GfB7jyhMsZOCrQfCs6tgx-vBHNCoE3ijGiXvjgsARB7Zdrih9R1e
+    tT-3hDfmEZDoljrdQ>
+X-ME-Received: <xmr:49txZsTzePWd5a69Mw3W5zwRGJi83BUm6iBvUuG6sqzPgV28ekIVztb2FFvEHA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvkedguddtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
+    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:49txZptOFSWVxP9lRUADtEneVZO23NfpcIpvfKe-cIjOsHj_ZSidpw>
+    <xmx:49txZld-2QspmPgi25nr6-yLfv5tpqzPP7fqDQu9ZJ8Y1nVBHSiiuQ>
+    <xmx:49txZl2RN96aaDv2NgWAN2bwljcQfUv_amPNtFmm6m7V6aT99K1AKw>
+    <xmx:49txZh8EnKTXwvU9poVMwphBI8hrl-Ks-kBzUk9qA7Aqbg7ZhFbIIQ>
+    <xmx:49txZg9oZvk9WTofymcXIkNZGgk7DRGkvjjZFXNxuum8l1DdAmFsnO6n>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 18 Jun 2024 15:11:31 -0400 (EDT)
+Date: Tue, 18 Jun 2024 12:11:15 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Matt Gilbride <mattgilbride@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>,
+	Michel Lespinasse <michel@lespinasse.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/6] rust: rbtree: add `RBTreeCursor`
+Message-ID: <ZnHb05xshC0ZrGIi@boqun-archlinux>
+References: <20240606-b4-rbtree-v5-0-96fe1a0e97c0@google.com>
+ <20240606-b4-rbtree-v5-5-96fe1a0e97c0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZVfppin_mfEJF9eVcZUu9hds5PKuLysWOXeSJ7gdV3dg@mail.gmail.com>
+In-Reply-To: <20240606-b4-rbtree-v5-5-96fe1a0e97c0@google.com>
 
-On Tue, Jun 18, 2024 at 09:58:23AM -0700, Andrii Nakryiko wrote:
-> On Tue, Jun 18, 2024 at 5:43 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> >
-> > On Mon, Jun 17, 2024 at 03:25:53PM -0700, Andrii Nakryiko wrote:
-> > > On Mon, Jun 10, 2024 at 6:04 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> > > >
-> > > > On Sat, Jun 08, 2024 at 03:16:02PM -0600, Daniel Xu wrote:
-> > > > > The prototype defined in bpf_kfuncs.h was not in line with how the
-> > > > > actual kfunc was defined. This causes compilation errors when kfunc
-> > > > > prototypes are generated from BTF.
-> > > > >
-> > > > > Fix by aligning with actual kfunc definition.
-> > > > >
-> > > > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > > > > ---
-> > > > >  tools/testing/selftests/bpf/bpf_kfuncs.h                        | 2 +-
-> > > > >  tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c | 2 +-
-> > > > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
-> > > > > index be91a6919315..3b6675ab4086 100644
-> > > > > --- a/tools/testing/selftests/bpf/bpf_kfuncs.h
-> > > > > +++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
-> > > > > @@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
-> > > > >                                     struct bpf_key *trusted_keyring) __ksym;
-> > > > >
-> > > > >  extern bool bpf_session_is_return(void) __ksym __weak;
-> > > > > -extern long *bpf_session_cookie(void) __ksym __weak;
-> > > > > +extern __u64 *bpf_session_cookie(void) __ksym __weak;
-> > > >
-> > > > the original intent was to expose long instead of __u64 :-\
-> > > >
-> > >
-> > > Cookies internally are always u64 (8 byte values). Marking them
-> > > internally in the kernel as long could lead to problems on 32-bit
-> > > architectures, potentially (it still needs to be 64-bit value
-> > > according to BPF contract, but we'll allocate only 4 bytes for them).
-> > >
-> > > It seems better and safer to be explicit with __u64/u64 for cookies everywhere.
-> >
-> > hum, I based that on what we did for kprobe session,
-> > but I guess it makes sense just for bpf side:
-> 
-> yep, exactly, long is 64-bit only for BPF "architecture", but
-> internally it will be 4 bytes for 32-bit architectures, which will
-> potentially lead to problems. With recent kfunc vmlinux.h generation,
-> it's probably better to stick to explicitly sized types.
+On Thu, Jun 06, 2024 at 02:50:08PM +0000, Matt Gilbride wrote:
+[...]
+> +
+> +    /// Returns a cursor over the tree nodes based on the given key.
+> +    ///
+> +    /// If the given key exists, the cursor starts there.
+> +    /// Otherwise it starts with the first larger key in sort order.
+> +    /// If there is no larger key, it returns [`None`].
+> +    pub fn cursor_lower_bound(&mut self, key: &K) -> Option<RBTreeCursor<'_, K, V>>
+> +    where
+> +        K: Ord,
+> +    {
+> +        let mut node = self.root.rb_node;
+> +        let mut best_match: Option<NonNull<Node<K, V>>> = None;
+> +        while !node.is_null() {
+> +            // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
+> +            // point to the links field of `Node<K, V>` objects.
+> +            let this = unsafe { container_of!(node, Node<K, V>, links) }.cast_mut();
+> +            // SAFETY: `this` is a non-null node so it is valid by the type invariants.
+> +            let this_key = unsafe { &(*this).key };
+> +            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
+> +            let left_child = unsafe { (*node).rb_left };
+> +            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
+> +            let right_child = unsafe { (*node).rb_right };
+> +            if key == this_key {
+> +                // INVARIANT:
+> +                // - `node` is a valid node in the [`RBTree`] pointed to by `self`.
+> +                // - Due to the type signature of this function, the returned [`RBTreeCursor`]
+> +                //   borrows mutably from `self`.
+> +                return Some(RBTreeCursor {
+> +                    tree: self,
+> +                    current: node,
+> +                });
+> +            } else {
+> +                node = if key > this_key {
+> +                    right_child
+> +                } else {
+> +                    let is_better_match = match best_match {
+> +                        None => true,
+> +                        Some(best) => {
+> +                            // SAFETY: `best` is a non-null node so it is valid by the type invariants.
+> +                            let best_key = unsafe { &(*best.as_ptr()).key };
+> +                            best_key > this_key
+> +                        }
+> +                    };
+> +                    if is_better_match {
+> +                        best_match = NonNull::new(this);
+> +                    }
+> +                    left_child
+> +                }
+> +            };
 
-hm, it already got in 2b8dd87332cd, revert needs more changes in selftests
-I'll send formal patch with fix below
+These two lines above should really be:
 
-jirka
++                };
++            }
 
----
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 4b3fda456299..cd098846e251 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -3530,7 +3530,7 @@ __bpf_kfunc bool bpf_session_is_return(void)
- 	return session_ctx->is_return;
- }
- 
--__bpf_kfunc long *bpf_session_cookie(void)
-+__bpf_kfunc __u64 *bpf_session_cookie(void)
- {
- 	struct bpf_session_run_ctx *session_ctx;
- 
-diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
-index be91a6919315..3b6675ab4086 100644
---- a/tools/testing/selftests/bpf/bpf_kfuncs.h
-+++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
-@@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
- 				      struct bpf_key *trusted_keyring) __ksym;
- 
- extern bool bpf_session_is_return(void) __ksym __weak;
--extern long *bpf_session_cookie(void) __ksym __weak;
-+extern __u64 *bpf_session_cookie(void) __ksym __weak;
- #endif
-diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
-index d49070803e22..0835b5edf685 100644
---- a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
-+++ b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
-@@ -25,7 +25,7 @@ int BPF_PROG(trigger)
- 
- static int check_cookie(__u64 val, __u64 *result)
- {
--	long *cookie;
-+	__u64 *cookie;
- 
- 	if (bpf_get_current_pid_tgid() >> 32 != pid)
- 		return 1;
+, right? Any lint we can use to catch this?
+
+Regards,
+Boqun
+
+> +        }
+[...]
 
