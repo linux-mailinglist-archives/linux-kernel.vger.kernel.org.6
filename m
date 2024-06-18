@@ -1,259 +1,180 @@
-Return-Path: <linux-kernel+bounces-220072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9CE90DC5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:25:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C9390DC5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B55285823
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:25:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E3DF1F23410
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8612F1662F1;
-	Tue, 18 Jun 2024 19:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9CC166318;
+	Tue, 18 Jun 2024 19:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YAcl1mDd"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2064.outbound.protection.outlook.com [40.107.220.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="bQbk0rhJ"
+Received: from mail-il1-f193.google.com (mail-il1-f193.google.com [209.85.166.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F1916191E;
-	Tue, 18 Jun 2024 19:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718738731; cv=fail; b=OhcHUVQP01CPp6Fe5QNrsBYvhInOOBHNnfCqZE5+Cvr0IT6RHjavU6vHQ3C/9kmEMFfuwcIdRcxpveVsnW5AUqsSR/NBHvhC0/1XIGRuaIzpr+x/rjkPifD0MLiCsASq89PjUT+LM5uWuS0av47qzKVGvmoVoN8Vq66+3AXx2fg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718738731; c=relaxed/simple;
-	bh=n/lKeuKxOz958gpLE78jTM03KeQw9iTo5+B9wvhGi4w=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WYZ+7QbBgJB1jUJNvfLK+Yo4TszkIMsF9UJQYdl4G4KWbptpW1xHijVp/uOHlhQ2jSJ3sF4UyQQ8QOwwTJ+bGfAqmaPlcqm+j6R42iwk55AdGzRWiXUKSCOTZb4FFPlfgrQly5DFsLll5RT4dd4FSGQU+YxH3wFtw9Hy+dZOFCo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YAcl1mDd; arc=fail smtp.client-ip=40.107.220.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jFzvkVyY24hBYW1DNZKZjkOrVF3UknZBuQx20i8Wr2+nMO88R15Y2xY+TLqJJ4QDGQuJ7xc6T0P4uuHnH+v0PNcMSmHXj7qhyRgKYlTiYi+ztmXKYga1mmGTXLgXdnt4VuMtZ9/9t6My5xbPRycIrfSuPYHHjOuTYyl2LpzEglI7+zcM4HvrAqxMc8QJ30gT8WQiLwmj01oQReYS/PwC3fa6vTH7BbFShhoYg8xptsgO6s/+bGxAbcptHnjKDkgvWsWaUT0WR9zFriy9Ixdzq+qKyFB6EYYIlcZSMAgjx0LbxRJqKtFf9tIlOQUjnVFQTT78qmheFPXi2lCiQfqxDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xuE0HMixAYobTE9bOcR2PylYN1k6Sx+iIrVkFYPyFoU=;
- b=a2e89q7WZEYHO4o+8DqWFKMthtawgwp0IwDyDRxtxp7cVRGb/iTc59vrTP0O8Q4OP4X8ivsNcRUrvnqkmp2fVf+rFLhU+qCwn/cV4GBJSmUlkok0nTVM8TtIYGanktGzaK3Qyxy+x0m7wHJYD2PthDoQhgJpIi4FyoLmGBxdplqzPLHcAygy1q0sz0XCQRFa7RAO5fVqWLYdiCFqVb8mmd0iI5QGVWlmm/gxuYr0EyKJaLkw16OqDs81FbjzjKg+2D1i1smrJpiNAoNECoxamn8CSGv6UaxoCvxxNaTc6CLDgKpDyCBPq7Xs1BBkOep/VQ45Wy10zU6m/L/ji+5Lvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xuE0HMixAYobTE9bOcR2PylYN1k6Sx+iIrVkFYPyFoU=;
- b=YAcl1mDd7Dyw05t8CceSBzpvlyJTmKbHM0vZ8kp7c3crKEScd3S+OEuoEjGFebHhrVKb2+Crqudrs2WMy8syPs9YRJAJ03qB/sLGLpx1LO8lnJokL3BeOiDGVJ5QCUTJJXN0mlIlVFpmCenJ3CN0fT93yfQGc1B4+xciOdZCJ20=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by MN2PR12MB4112.namprd12.prod.outlook.com (2603:10b6:208:19a::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.18; Tue, 18 Jun
- 2024 19:25:28 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 19:25:28 +0000
-Message-ID: <09f985e8-5e53-47ed-84a8-baaee52dd483@amd.com>
-Date: Tue, 18 Jun 2024 14:25:25 -0500
-User-Agent: Mozilla Thunderbird
-From: Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v4 10/11] cpufreq: amd-pstate: auto-load pstate driver by
- default
-To: Perry Yuan <perry.yuan@amd.com>, rafael.j.wysocki@intel.com,
- viresh.kumar@linaro.org, Ray.Huang@amd.com, gautham.shenoy@amd.com,
- Borislav.Petkov@amd.com
-Cc: Alexander.Deucher@amd.com, Xinmei.Huang@amd.com, Xiaojian.Du@amd.com,
- Li.Meng@amd.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1718606975.git.perry.yuan@amd.com>
- <0a4699e224e1931c09d6ede2620d585382b7d168.1718606975.git.perry.yuan@amd.com>
-Content-Language: en-US
-In-Reply-To: <0a4699e224e1931c09d6ede2620d585382b7d168.1718606975.git.perry.yuan@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0075.namprd11.prod.outlook.com
- (2603:10b6:806:d2::20) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3B51662FC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718738747; cv=none; b=pFX+oR8vZRZS9dRShcSvNLMm46YHBmpXNFAYRtDKJTOsAwIXM9Y0brSGcfgf9ue1QRicRGxsFKTTJ51WE8zwRl7McIQqjaIT3RT9Q9wnEmeKN6Wuq0HTh8bA8xTi47xIQ0zkEqRLw823haLoFJIkAwu2aCz1x0CxHaA3h9TQnxI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718738747; c=relaxed/simple;
+	bh=z2AFd9pz/jXk/YAc5SISacv07MSOWo0blu7vJvfpBUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HoWMGln54KTLGGj5skJXB7fLY+u7o8u4zr8RNBTN7/+6ZP91yprMnDG+Av2lVimhykPW15s5fQpo8HmsKaOJ8iYYGm2BDGBN0tT3IRIfgcoBaPY8EjH38LAg7YP2spKidL1h4rp6LjG+F0WTBfcwO+a5Paj2SckOk3KhZAZFtE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=bQbk0rhJ; arc=none smtp.client-ip=209.85.166.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
+Received: by mail-il1-f193.google.com with SMTP id e9e14a558f8ab-37613975e20so2575915ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:25:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1718738744; x=1719343544; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AmK+WCzRtQqOjkKB2JoI/nzEulWCZnGrnBCxb5hHO0Y=;
+        b=bQbk0rhJR3XfusQGmaVR/P5jR/BJhrw7x3P9+rdQlcCn5NZm643X0EglX7XrbI/VF/
+         HVv/2Rw6umiVhwEgbSnOthZpkwBVOLJyQLWwd1PGakHu+KRwu+fGmJtc27Ug4l+oe4C4
+         B7FqfYsfg2E2wzaic4mI/nFKhX9TTIdYxxFtjFat6Y7xi/OoE448Xqg4rJNcPKTMekZb
+         JjIaUYWYscFwuDk91FTwGC7oHvaAJ7bC/msYdCvWRCvmtT9CnRNeYCx4R6hex5IF2Vtj
+         UzM27gUOOnzdt3spP3TZMBnWTVfJbc9Dtc99JREvHcN+cPX7ISQFd0pMrwq954xmXNF9
+         gdGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718738744; x=1719343544;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AmK+WCzRtQqOjkKB2JoI/nzEulWCZnGrnBCxb5hHO0Y=;
+        b=XZpRr4htuqBHk3ScybbUgoljAmJtCRf5dLFgHBbWJkCvo4ewXoxWWrzGH8I59ebuTr
+         ZespAbwitlMhCFyXDa2oSVax7H4Qq/nNvx8IWtpm3vh2rFj/GcsbKA4jVljrurA3P0AK
+         Nyc9g00wgL1S39z0Q16WHVa4PjiotHraJyKvkOhBA9l0eYDHhk9KQLeNwZDnk4OT3BXf
+         VS2E7GsP2oPRqaW6rxZMuhgxj/WCjTrawUenNwqYjbx2g9bWN9QfywYB0/bxHuCJhbhZ
+         Ns5tW1lQueLh3IcXIyXmW1n2VQxQ0aSIaxWC7WBu4oK8tfXcp3eii3VRHw3XjMKqzC8b
+         CJEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkWuj0KcwD8AzzI+n24rMfBztxKvEw/tpu60S/riyp9c5GJe8/q1CaYa1RmyCLPxZE1NPMYtBztjueM32/qp4TYQ/LktF1i7EtxBW2
+X-Gm-Message-State: AOJu0YznYmOpzPzxP713bI7jlclJnWmwehzqjusk/sdBI6zztM2llvSD
+	HUGEO/AxLMtDEUxnwIX7bGCu3lslpNh1QV/W/ImBVkdH+pfdu4E71TwiXIfvKAU=
+X-Google-Smtp-Source: AGHT+IGw+9KohnfLPrcSNmKX0uGzcp+zBSGth4mvsmBMnMKrkEA/97uLyyo5AazW40dOWlzHo7LoYA==
+X-Received: by 2002:a05:6e02:160b:b0:375:c296:bf90 with SMTP id e9e14a558f8ab-3761d63d71cmr8136105ab.7.1718738744559;
+        Tue, 18 Jun 2024 12:25:44 -0700 (PDT)
+Received: from kf-XE ([2607:fb91:111c:4643:b5f:d6ad:8a73:5578])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-375d86bfa6dsm22384015ab.50.2024.06.18.12.25.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 12:25:44 -0700 (PDT)
+Date: Tue, 18 Jun 2024 14:25:41 -0500
+From: Aaron Rainbolt <arainbolt@kfocus.org>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: linux-acpi@vger.kernel.org, rafael@kernel.org, lenb@kernel.org,
+	linux-kernel@vger.kernel.org, mmikowski@kfocus.org,
+	Perry.Yuan@amd.com
+Subject: Re: [PATCH] acpi: Allow ignoring _OSC CPPC v2 bit via kernel
+ parameter
+Message-ID: <ZnHfNbLTgY1op3Zv@kf-XE>
+References: <ZnD22b3Br1ng7alf@kf-XE>
+ <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com>
+ <ZnHSKiaYf2tIQo58@kf-XE>
+ <a7790c74-2bec-4a24-b6e5-223c4e1ed372@amd.com>
+ <ZnHXfLEwk2uRbg58@kf-XE>
+ <b4d65232-b69e-419d-9b15-d0ca64b78b26@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MN2PR12MB4112:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68eac34f-3316-4166-7960-08dc8fcc6910
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|1800799021;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YS9HTEFPRzBnTzg4N1ZDU2o4THNpMGxNMEtzNEZQYXFPWktieFRGakc4K3BH?=
- =?utf-8?B?OFFSZjBvUHM5azdxWjE4enh5TWNLMHB6UWFxZCtudmozWWlpT2FjZ1pNQVAv?=
- =?utf-8?B?M2V2U2R0NG1RWGxhc2FHcUQrRElPN2Rjb3pLOThYNlJjbTUwdjVaTGNlZ0hp?=
- =?utf-8?B?RGt4VU1Ed1ErMzBXWlluV0FHclJscmo0T0pPMWF2NUNJU1QvS3NWQnUwbHho?=
- =?utf-8?B?V3llclBXZWtwRU9BeTlITjV4aFpaNnVCYmFqcmlGZGdyUFEvK1YvZ3hqVUpG?=
- =?utf-8?B?L3hCZXhBKzg2KzJWZG9US1AwMUJnTnZBVThTR3UwbXhuZ3BBb29DUmlEU0Ux?=
- =?utf-8?B?ZkhSZFNmS1IrdzhvMDYyZkwwVHY3NTN0dzNmM2xvN2w4TkpRYU1ueC8vWC9D?=
- =?utf-8?B?TndPMklLc281WkFQY3ErQjg0QUNpZmxQemVUajUwMTNDWFpyUEtzSXpPREh4?=
- =?utf-8?B?WlpHTVZ2ZTdUWHFqSjlESUlDM3Vrd09HZnV6OFNGdnc2VEtCcDBndmNIRVJu?=
- =?utf-8?B?c0FIdGplLzBiT2JueTVIOFExd1A3d0Q1U3AvR2dKYjI1OFhOMExnemJ5U0pE?=
- =?utf-8?B?UDU5L04yWGhQbC8zMHI1dHRQRGp6YlJtelJIeTd5c2NHTjh3TXA0RXp0NUZC?=
- =?utf-8?B?QzhFdGhjL1I2cFdDMmhSUnpTT1FzcmRVdGZibUtRMnJVU09CREREdHltYzFw?=
- =?utf-8?B?OGVSQWdWUlhYSnhudWJ4WllVOCtqYzIwNU1MMXNTMlIzWjBrcExVNCs4TUlE?=
- =?utf-8?B?c1dYdGxIaGR2TE5JaklDbmI5OWtqd1F5cUNoMy9RRFlBRWhva3NTVzBVWko1?=
- =?utf-8?B?YlR4WTVWdnVlNVg3ZHFkZHlBK0N3OUtVcXBMMUY2V2RzOFRMY3JDYU1Xc2pp?=
- =?utf-8?B?K2Y2MjNUd0ZxazJjeURZcEV5YkJZQks3UnplQkl0VmFrOFg3OEwzcFJUZzNt?=
- =?utf-8?B?RE1XMVoyM0dpNmZpd1E2K2tlTGhkUHB2OXYrdnBqc1VNR0VnMWRTWXdsNXpY?=
- =?utf-8?B?TlFhUUp4RDBUMXBvcElYSjFhWlZTYmlEeDBGL2VpMDI4enZnTFRHU2RRd3kv?=
- =?utf-8?B?WmNQM3Q3SUsrWndsYmtCWW9Ba09MeWhMYTJBVytFcFdIdUY1MEV0cEw4NEZS?=
- =?utf-8?B?Q2t4N2RRdHo1SGNBc2N5QmFKWUFXZzduaTY0ZmhTZklscG1FZU16UGR2cktq?=
- =?utf-8?B?K3BVR1M2NnNxMUozTzRKaDdVRjU4eDV2WWhiekk5cnkyckpwZGFoaHhLQWFZ?=
- =?utf-8?B?c3Q3Qk5QdDBzNUdKblJwN3g4Wk5oZ1BiQUZHZWhvdkdMNG5QTjdyaklEbzJP?=
- =?utf-8?B?Z2pOa2k3bkxOdnVKRHNzaFQ0SnFnZWVvZnJOa3JvNUZGeXVYdU1uYmoxVFVO?=
- =?utf-8?B?TjhWTzB5bTRLYUIxL2xXTTcyZFErQzd3TXBnUEk0U3RSNnVQaExKSnRIZ3l5?=
- =?utf-8?B?cWxMdW9oeVlydEZmWWN1U3Z5ZlhvNmF1Q1J5aFZQdkFranB0Q3JqKytDQUNJ?=
- =?utf-8?B?cXZCdnlkOTlJelRTb3VwQWNGbXRydlp0WHBvVFgxMGxIQTNzREFlUndUYUVy?=
- =?utf-8?B?RHpuOFJZd3VBWDc1d3NZZDk3eVE4MjRabE84ZytsN3ZQVkdYQ05WV3dyZklB?=
- =?utf-8?B?MG04RVlMc1NOL0RoTHVGU09hcGdTc29GSDB2eHRQTHhyWHpRSWtYMkZNeXA4?=
- =?utf-8?Q?/7fe6jhgQ0/RQ/o7A6zJ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cXRyOSsrZzN0ckRHUWJXKyt3a09rYkx1NW5HVzJjNzF6Tkxmems2OVRJUmZ0?=
- =?utf-8?B?WDI1d2dSTmZYUWhiV3VENXoxcFRNOU5qS1RRRFhDdzdQUlgxY013dkVwVExo?=
- =?utf-8?B?UHBNL3BEbmE3dTcwT1p5dU9NUGNsUmV0QlZlUmZKMjZmNjh0UTMwQ0N4VWpC?=
- =?utf-8?B?RUZpY3pGMXg2NEVQZUJnRDc3NTZ5K1RURE1QNUNBOHNad0RkTy9icXBHZVly?=
- =?utf-8?B?ZTlSbGFsYlpsM1NTdUk2cG1QRjJQbDloNnhpT210dU41WC8ya211Ym5oNHd3?=
- =?utf-8?B?U2F3MVU0WUdXWm0yeDJhR0RyRWhkV21ib3pUaVUxenFlUkZiZnRiU0ZIb2RE?=
- =?utf-8?B?aGJDSmliRTlCWUkvOVdsRjIxdWZ1MytNSkxKK1dIQ3RzNm9WVFllUDBtbnFC?=
- =?utf-8?B?ZUcvZ1RqTWhtOUI3ZERzOWFqdFl2Z2lYYXRQRWdsOUwyelVqZjBzQ3VXM29X?=
- =?utf-8?B?N2hMcmdvWUV3cUxkU3lMTjBUWlB1cmRBSjdHRVZQUWtacHU5cjl3YURFSk1q?=
- =?utf-8?B?YXI1MkdOeE9NL0NtSEpTd0VGY1I3QUhLTXM5bUE0RXArSkxjdFN2eTZ2dnVO?=
- =?utf-8?B?YW43ajRRWGtsZkJHQTdlVmJocTJaVnBrbG1YcEtrTUlJNUpSVE1Jemc5Tjd4?=
- =?utf-8?B?YUVBaFEyQnRjWmFNcVVNckFocWpmbE51UWY5Y0dWM0paVm01VEVjdldPdy85?=
- =?utf-8?B?eUV1a2l4K1Rxd0x4eThGb3NBOTRKcDNJKzR0RFhzeTBxYmp0Qjk3dVdoSzA3?=
- =?utf-8?B?Wk8xZnNRTUdvZUNZTnZPaEhEYktObzdRR0VJY0ZUZFlWQ3A4RGpxVENiTzR4?=
- =?utf-8?B?am5IVTNKSjB4NWpkYnczb0wzbDdHSHEyN1o3aDdUS3BXZUJ2RGNKNEVFL0V2?=
- =?utf-8?B?dEIxTHdkYkZXeDVVWjZNZjZINGM1TFkvWitYUTY4Ty9Pc2xWNUQyUHYvRzVS?=
- =?utf-8?B?N1B0b09sSGZLaFh0ckpYdVVxZTYwSnJaQy9GN3JGaUNzcjJCendnZFNDdHVy?=
- =?utf-8?B?d2RwRkJNRHozdG51V3dhd1J2SFlzcWxveTBLWUpFOXdkeG5OcHFxRVoyZUF3?=
- =?utf-8?B?UDlZbmZOaGZCd2J4Sm9WeUZzU0YyUEN5cXgycEpsWkxlVzRJQ2JlYlJCK005?=
- =?utf-8?B?MmdWSCtESlQ0WW1tNWQ3dnhEaDFGWllobzA1T21vWHFxeUdKQU1ITkRISmhG?=
- =?utf-8?B?enJWc040cE9BYU0waW1sQ3ljU0RKaHhYZzF6ZVdUay9Ha083L1l1UUg0YTVm?=
- =?utf-8?B?OWxsUDRmWGttZ2JkU2ZIOUMxM2I3ODV2RVBTdmJaeThmcHhtWU5NRmkvOEhy?=
- =?utf-8?B?YjM5a3BqR1hhUkdmK1VmNlRzYWRhRkJyTnNCc3A3QVdVYTVRR1JwOU9mblVN?=
- =?utf-8?B?V1QycFBHRVorbnVuU25QVHpGNE5MbjBLUjMvOTBkb3dnWW5Hb2FtVUNqTjE5?=
- =?utf-8?B?ZmhnWWpybEs0S0NveXM1bUU4NFF3RGRPN1hDcllPNEZYdllINXg3OFMyR0xQ?=
- =?utf-8?B?Ri9Eb2Y3L0ZITUMvT2xaQ0xDZzNQK3lObVJ5YkMrbDBrOHdqL2cxVGdaRUxh?=
- =?utf-8?B?aGN6UVQ4R21LSHJyRGNuR1plQ21Td3kxUlFIMUFpdE1INFFUWkZrZE5hZzFq?=
- =?utf-8?B?eFFWRW9RQWdaRndFYnlvTjdQcEtWK1YyY2VGMFVKc2ErcFptT2orZ1RZZG1m?=
- =?utf-8?B?bDBQRE5zZGpKNlY1Rm5NckRRK0VncGVoVGhKeTJuazJkcUtzREFuRGJYR3lx?=
- =?utf-8?B?czRVWW4ySFZvVkxLYnpCSmJreHUzL0lVUkRoSStUbUpESlJuR01iUmRNbEJN?=
- =?utf-8?B?ZXY1aEx1MFBoU1FEcWVQbWcvTlFTMmpqd05YR0VKalVycldMRFd6UU53MCt2?=
- =?utf-8?B?alNGZnVRaGU4RXpFTUs0NzN6V1FtMWRJdXdIdElmdnE2QVQza1FCUTAyblhm?=
- =?utf-8?B?SlpjeDNyVkFVNnV5UW1oa1FXczRlUGtyQm54ZHNMR3A3YzFndk1FRW1zYzBN?=
- =?utf-8?B?ZlVwM0JzNjRQT21jNGs5aUVQMWV4MVFMZys5UHJzcm5sUVNEb0h4bFJJeUMv?=
- =?utf-8?B?M1hlZzVhMmRCa0VJa2FEeUtPQXNpNVoraTBrN1R4Q0p3ZWhJMGc3bjIvSnMr?=
- =?utf-8?Q?/A8lbIx7oWcz+xAZuVukCvda1?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68eac34f-3316-4166-7960-08dc8fcc6910
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 19:25:27.9955
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HBgFGZ27X2aTU3RUaEIbpk18JUCnUsjlNEoc65d1SiCsdDIiqDmakPK3v9ejMBZuABa/r3jCjaUjM97dyjuwsw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4112
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4d65232-b69e-419d-9b15-d0ca64b78b26@amd.com>
 
-On 6/17/2024 01:59, Perry Yuan wrote:
-> If the `amd-pstate` driver is not loaded automatically by default,
-> it is because the kernel command line parameter has not been added.
-> To resolve this issue, it is necessary to call the `amd_pstate_set_driver()`
-> function to enable the desired mode (passive/active/guided) before registering
-> the driver instance.
+On Tue, Jun 18, 2024 at 01:58:07PM -0500, Mario Limonciello wrote:
+> On 6/18/2024 13:52, Aaron Rainbolt wrote:
+> > On Tue, Jun 18, 2024 at 01:35:57PM -0500, Mario Limonciello wrote:
+> > > On 6/18/2024 13:30, Aaron Rainbolt wrote:
+> > > > On Tue, Jun 18, 2024 at 12:09:19PM -0500, Mario Limonciello wrote:
+> > > > > On 6/17/2024 21:54, Aaron Rainbolt wrote:
+> > > > > > acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
+> > > > > > 
+> > > > > > The _OSC is supposed to contain a bit indicating whether the hardware
+> > > > > > supports CPPC v2 or not. This bit is not always set, causing CPPC v2 to
+> > > > > > be considered absent. This results in severe single-core performance
+> > > > > > issues with the EEVDF scheduler.
+> > > > > > 
+> > > > > > To work around this, provide a new kernel parameter,
+> > > > > > "processor.ignore_osc_cppc_bit", which may be used to ignore the _OSC
+> > > > > > CPPC v2 bit and act as if the bit was enabled. This allows CPPC to be
+> > > > > > properly detected even if not "enabled" by _OSC, allowing users with
+> > > > > > problematic hardware to obtain decent single-core performance.
+> > > > > > 
+> > > > > > Tested-by: Michael Mikowski <mmikowski@kfocus.org>
+> > > > > > Signed-off-by: Aaron Rainbolt <arainbolt@kfocus.org>
+> > > > > 
+> > > > > This sounds like a platform bug and if we do accept a patch like this I
+> > > > > think we need a lot more documentation about the situation.
+> > > > 
+> > > > It is a platform bug, yes. See my previous email,
+> > > > https://lore.kernel.org/linux-acpi/d01b0a1f-bd33-47fe-ab41-43843d8a374f@kfocus.org/T/#u
+> > > > (I meant to send this email as a reply to that one, but failed to do so.)
+> > > > 
+> > > > > Can you please share more information about your hardware:
+> > > > > 1) Manufacturer?
+> > > > 
+> > > > Carbon Systems, models Iridium 14 and Iridium 16.
+> > > > 
+> > > > > 2) CPU?
+> > > > 
+> > > > Intel Core i5-13500H.
+> > > > 
+> > > > > 3) Manufacturer firmware version?
+> > > > 
+> > > > The systems use an AMI BIOS with version N.1.10CAR01 according to
+> > > > dmidecode. This is the latest BIOS available from the manufacturer.
+> > > > 
+> > > > > 4) If it's AMD what's the AGESA version?
+> > > > 
+> > > > Both affected systems are Intel-based and use heterogenous cores, not AMD.
+> > > > 
+> > > > > And most importantly do you have the latest system firmware version from
+> > > > > your manufacturer?  If not; please upgrade that first.
+> > > > 
+> > > > We are using the latest firmware. (We're trying to work with the ODM to
+> > > > potentially get a firmware update, but since this affects more than just
+> > > > us and a firmware update may not be possible for everyone, this would
+> > > > likely be worth providing a kernel-level workaround for.)
+> > > > 
+> > > > I can easily provide more detailed information - would the full output of
+> > > > 'dmidecode' and 'acpidump' be useful?
+> > > 
+> > > Does your BIOS offer any options for these?
+> > > 
+> > > Intel(R) SpeedStep(TM)
+> > > Intel Speed Shift Technology(TM)
+> > > 
+> > > I believe you need those enabled for this to work properly.
+> > 
+> > Neither option is available in the BIOS settings UI, however our ODM
+> > confirmed that both Intel Speed Shift Technology and Intel Turbo Boost Max
+> > Technology 3.0 are enabled by default. They did not mention SpeedStep,
+> > but I assume SpeedStep is working since frequency scaling in general
+> > works and the kernel patch fixes the issue.
 > 
-> This ensures that the driver is loaded correctly without relying on the kernel
-> command line parameter.
+> Got it.  If those are enabled I think it would be good to get comments from
+> Rafael and Srinivas about your specific situation then.
 > 
-> When there is no parameter added to command line, Kernel config will
-> provide the default mode to load.
-> 
-> Meanwhle, user can add driver mode in command line which will override
+> But regarding the patch, if they are agreeable to this "kind" of knob for
+> debugging I personally think it's better to have cpc_supported_by_cpu() look
+> at the kernel command line than plumb arguments from the module down through
+> every function.
 
-Meanwhile
-
-> the kernel config default option.
-
-I think you'll probably want to swap the order of patch 10 and patch 11.
-
-> 
-> Reported-by: Andrei Amuraritei <andamu@posteo.net>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218705
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-
-> ---
->   drivers/cpufreq/amd-pstate.c | 24 +++++++++++++++++-------
->   1 file changed, 17 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index cf68343219d1..b48fd60cbc6d 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -1857,8 +1857,13 @@ static int __init amd_pstate_init(void)
->   	/* check if this machine need CPPC quirks */
->   	dmi_check_system(amd_pstate_quirks_table);
->   
-> -	switch (cppc_state) {
-> -	case AMD_PSTATE_UNDEFINED:
-> +	/*
-> +	* determine the driver mode from the command line or kernel config.
-> +	* If no command line input is provided, cppc_state will be AMD_PSTATE_UNDEFINED.
-> +	* command line options will override the kernel config settings.
-> +	*/
-> +
-> +	if (cppc_state == AMD_PSTATE_UNDEFINED) {
->   		/* Disable on the following configs by default:
->   		 * 1. Undefined platforms
->   		 * 2. Server platforms
-> @@ -1870,15 +1875,20 @@ static int __init amd_pstate_init(void)
->   			pr_info("driver load is disabled, boot with specific mode to enable this\n");
->   			return -ENODEV;
->   		}
-> -		ret = amd_pstate_set_driver(CONFIG_X86_AMD_PSTATE_DEFAULT_MODE);
-> -		if (ret)
-> -			return ret;
-> -		break;
-> +		/* get driver mode from kernel config option [1:4] */
-> +		cppc_state = CONFIG_X86_AMD_PSTATE_DEFAULT_MODE;
-> +	}
-> +
-> +	switch (cppc_state) {
->   	case AMD_PSTATE_DISABLE:
-> +		pr_info("driver load is disabled, boot with specific mode to enable this\n");
->   		return -ENODEV;
->   	case AMD_PSTATE_PASSIVE:
->   	case AMD_PSTATE_ACTIVE:
->   	case AMD_PSTATE_GUIDED:
-> +		ret = amd_pstate_set_driver(cppc_state);
-> +		if (ret)
-> +			return ret;
->   		break;
->   	default:
->   		return -EINVAL;
-> @@ -1899,7 +1909,7 @@ static int __init amd_pstate_init(void)
->   	/* enable amd pstate feature */
->   	ret = amd_pstate_enable(true);
->   	if (ret) {
-> -		pr_err("failed to enable with return %d\n", ret);
-> +		pr_err("failed to enable driver mode(%d)\n", cppc_state);
->   		return ret;
->   	}
->   
-
+Just to be clear since I'm not all too familiar with how kernel params work,
+should core_param be used here? Or is there a variable that allows
+accessing the entire command line to look through it? I don't think I can
+use module_param in 'arch/x86/kernel/acpi/cppc.c', core_param has a
+comment over it describing it as "historical" so I don't think I should
+use it, and early_param looks like something one is only supposed to use
+in code that runs very early at kernel startup. I can probably figure it
+out on my own, but a quick pointer would be helpful.
 
