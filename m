@@ -1,342 +1,148 @@
-Return-Path: <linux-kernel+bounces-219028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC9D90C8FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:20:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D52D690C8FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564AA288254
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:20:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0819E1C219A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C05215748B;
-	Tue, 18 Jun 2024 10:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B6E15AACA;
+	Tue, 18 Jun 2024 10:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AbK3jcqg"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ptlSLm6K"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5CB2139A2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2CF158DD1
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718705204; cv=none; b=gwnYwun8CAFwZBM2H1AW+H+foOhUkw58ituLjmmY3aRRkXPWD1pDg1b6LefJtsyTEiuaoCuOu9+4VJITzgT11a1qzVgEMWXr/aa5yWK3utuc1rYGIiusEorYk5tS4xUqsIFMVXFC2C3xJMInwMhUGZo08aU8NzqAweRSQiOaunE=
+	t=1718705267; cv=none; b=SqtL2UhRq/lC1tJ2jt/z4T4Jmf2s5ymi0WDjuzesFzvnKggByNnEDhdw+5A8UlUuLxPSTlyP+88vrbwjLTfaEDa0i+RLSyZOoZeT9N0duAXbwPxqucleD5flCSerkzF28STZ6J7asYvQjmE0RUPnyb7VeNoYaLN2T7/ApnVPWAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718705204; c=relaxed/simple;
-	bh=ccCvrVFmurLl9+KG4CWrDeNU5t43iAbp9QCjKO+uA60=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qatWnyVmtCfn7v4ZQOaSirndOtl1KiWAbPHqPvjjTqdwgJ57hXO2DAQf4HqqMVHizccdt3Tq4EBi5Pq1qNZn9gymszV1D4zDFkUddHyIhEq7RhHwmFfLvNtN9sNJSTfiU9b1YkqQ/Xdq4UJMwmRZuH3h7HOeOcAjWcHxS73rPaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AbK3jcqg; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1718705267; c=relaxed/simple;
+	bh=v/D5FL4vw3khVU80PEPJGR8EkUujjMjlydKlY4DDxls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C4Bozlijukb/jO/GNovt8IreYKos7mm+b0SW7M7qgEaL0N3O4/FeTuQO2SPHL/QHZ/vO+5pC8QMXY1otu6+AxIUfGMIoT0Wj81D3KZgsAsoJkk65ZrxDoAAGloEDC51e6lRMyEdymK+2kEBVh0+BK6eoCYDG6shHvsiJktLqmA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ptlSLm6K; arc=none smtp.client-ip=209.85.219.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f11a2d18aso684610166b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:06:42 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dfe81d54db9so4996836276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:07:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718705201; x=1719310001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxtSEXxRG1fOCO7Q3yLdK5bi/XGSz1EBERPfpeBZjCU=;
-        b=AbK3jcqgdUEbNHNDS5cdHOHBPLip8tpYK0PMrQxAKfFqcn9Gf2OQ4sFzfar70Srew1
-         yx3owewQzXUKLJeiyv5eFooUKQRYy+upzv5kVVoXQOEbU2zPK+tiQa7M771hjPbVmTzL
-         JkvjQbTsx4GTsy9It0F2hervko4+RSliXMlh88hf2LLgjg1eO81PmlX4o2rG7gmQ9T/w
-         QIRgWPph9wB90InEE3KdpvzQN6/bpc2WBPYZUHZNaMvNMgvD54ahYpWc2Tl5RvEm2bxX
-         iHxM7X+6t12mSByDFkZ4iavWdwz+ncx2M8tb1UehuwGWpYxLxZgotYxd+/4ZrHIiGQTC
-         o7cA==
+        d=linaro.org; s=google; t=1718705265; x=1719310065; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OCx7fOAnUmTX/Xe4ctYyfLYc6JY69uTQO3mrnLIZgkE=;
+        b=ptlSLm6Kgl0CaAFzOYbmLSkmO6PFBF5hTp7xc4IXHSfoKGzt96F5d08DK26Zg/+kzp
+         Vx7b2ANWxNluZn3annDPgNELO7emRBwCAlPUH+WdprJVDc+wzwxIEtSy+vmqlryM1etQ
+         PU3bgzk0LXRYh9He5B/laGd8SAA/THXHCkd1CeFZ1PnDd9fTLiCUHyZouw4dxo/FNA9r
+         8jrjxTiH5awm0HQQwBDAxDNCNFRhWuU+f0uZ/q97mba+dIcI9261S117XFy+nyJuHANs
+         2t/jwGssWmLY+TO/Pv6kcgjW2CStAs/rMAjp6axspBayx+ytc14Ir6MvyL1zeiAPYjIN
+         0wVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718705201; x=1719310001;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxtSEXxRG1fOCO7Q3yLdK5bi/XGSz1EBERPfpeBZjCU=;
-        b=npIvgUENX6NEzPHIrFoSvh3/1Y7qYirLPV2swwby/m11V0tnXGkv1p16/zwGP0q1yk
-         TgV/24lkweOwb8SrO0SE6vui9TeWg6chesXFxtzpgw0i7E6El89kDHc8BlrtlBUAz/VG
-         Kgz2U52RQagI4TfwAjmBiBq0/3/ZYYqGFzgHykPODJG+ijOmesOLEgmIyiYtpSFFBCdi
-         zQ7am8s28N4mhH3UsEeq5vX3OloDIyd0Z2Z2ZgnUUSDqJEJ2M+RkrKZ+/wLGDPBhSE2E
-         CIlybNCt9OtyE/MChlFjPXA4B3lA2KDp/3iz0zCecCPGfoj4OdENaEsN8iXA9f/Rxm3w
-         lxcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVq3zYP1Tq2EBTeGxtZt/fBrjMZ8ESsv9Adwpc17s4s6muk3Zc/LwO88lyAWF9KK1AZ4/zPxIegzU42pCMPaEN974XdoYi3NzSQwTSJ
-X-Gm-Message-State: AOJu0Yxh2aiGdaQxVMCsnxdKWza3Sa7LtFXSk6OIh4ffSfO4RpFZH0uQ
-	CMO03LnWF/BoLcT1DwWReqV6b71v8DX+OkUmoltq2wErFY0sa+1ZtcVoA3yE6OY=
-X-Google-Smtp-Source: AGHT+IHOg/g0sa+NqKDaqzcUgXcPDGg4rNFhsWoxEGCvNIo0M9DZfAQueeBjxTg4h9KDdmiu7h5Zjw==
-X-Received: by 2002:a17:906:2c02:b0:a6f:24fe:f2a7 with SMTP id a640c23a62f3a-a6f60cf1dcbmr779303066b.10.1718705200555;
-        Tue, 18 Jun 2024 03:06:40 -0700 (PDT)
-Received: from ?IPV6:2a02:8109:aa0d:be00::52af? ([2a02:8109:aa0d:be00::52af])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f43220sm600161566b.185.2024.06.18.03.06.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 03:06:40 -0700 (PDT)
-Message-ID: <44e24399-6efa-41ed-8871-12180dd03e10@linaro.org>
-Date: Tue, 18 Jun 2024 12:06:38 +0200
+        d=1e100.net; s=20230601; t=1718705265; x=1719310065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OCx7fOAnUmTX/Xe4ctYyfLYc6JY69uTQO3mrnLIZgkE=;
+        b=CNcPu1w9RrMIoAO3AJRElTU/3QxDRTvie86kWHCFbeyt7GqJUI9iJ1jD9gFbBVwEmC
+         TnUhpB3J75jG7Pygmz1RAUcXwgF8zfY3eD5IehmElpCGfi2S7ks78srDQm7VtSJHRygS
+         Lz6VpBirzvD3k75zT4RwdcT6Ta9DDdWHFoV1+xWQ3iU+5H7Jt3jZB7Sn1+w05PDsflrw
+         EeaNvXQQ1doH0IdE/Swl+bUmdFdxCJ5Ik9UC84xaf3N4tP9uw8CdUFm46LOZ8LmOt8N+
+         Xfkqgb36/4VQzhablzcnOOZ0y3niWPYDt/xrzZhnSyqcTCuIWzzQHYxayY8nh3MHxDPq
+         3sEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWanBwdigiunwbRIDQ/ag3UM8NReZplMMGXng9gblkpzDWijYpkFn3P7Y/XJ2HCjc8gXtszDQk/cTCMNJQCH5/FBkxmCziJST3goEca
+X-Gm-Message-State: AOJu0Yy2iqynXeuVC3hlOzUf8O8x4FH6kq1qzD0RfmgsVOOpoBb6YoJ/
+	V78dXX6JRkF0VyoMx7CmGZuwFAqLcBfuhxIghiS+f2r1TsFY666iwW2ISYKANWphhFRrsAOrKH4
+	tOaBnsK77NIfbdrG9+X3z8r1c+Zd8p5X/1j4BNw==
+X-Google-Smtp-Source: AGHT+IFJ0kiksoEZDocVzYOcTdne8U7N6C+jsZexpeus6Jap6pxdsUb8A3nFZ7pup6bdeGO4XrwkK9/1Lawl6Ll+PGk=
+X-Received: by 2002:a25:abe1:0:b0:de4:828:b73c with SMTP id
+ 3f1490d57ef6-dff154d21d2mr9969203276.54.1718705264631; Tue, 18 Jun 2024
+ 03:07:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 2/4] arm64: dts: qcom: qcs8550: introduce qcs8550 dtsi
-To: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
- konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, dmitry.baryshkov@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20240618072202.2516025-1-quic_tengfan@quicinc.com>
- <20240618072202.2516025-3-quic_tengfan@quicinc.com>
-Content-Language: en-US
-From: Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <20240618072202.2516025-3-quic_tengfan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240618030024.500532-1-andrealmeid@igalia.com>
+ <20240618030024.500532-3-andrealmeid@igalia.com> <878qz2h9pp.fsf@intel.com>
+In-Reply-To: <878qz2h9pp.fsf@intel.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 18 Jun 2024 13:07:33 +0300
+Message-ID: <CAA8EJpqM4iaG3PKM5c0Op7Y7c1SRDrOCk_oOnwG8YfdCxC8w6g@mail.gmail.com>
+Subject: Re: [PATCH v7 2/9] drm: Support per-plane async flip configuration
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+	kernel-dev@igalia.com, Melissa Wen <mwen@igalia.com>, alexander.deucher@amd.com, 
+	christian.koenig@amd.com, Simon Ser <contact@emersion.fr>, 
+	Pekka Paalanen <ppaalanen@gmail.com>, daniel@ffwll.ch, Daniel Stone <daniel@fooishbar.org>, 
+	=?UTF-8?B?TWFyZWsgT2zFocOhaw==?= <maraeo@gmail.com>, 
+	Dave Airlie <airlied@gmail.com>, ville.syrjala@linux.intel.com, 
+	Xaver Hugl <xaver.hugl@gmail.com>, Joshua Ashton <joshua@froggi.es>, 
+	=?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>, 
+	Sam Ravnborg <sam@ravnborg.org>, Boris Brezillon <bbrezillon@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Karol Herbst <kherbst@redhat.com>, 
+	Lyude Paul <lyude@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-HI Tengfei,
+On Tue, 18 Jun 2024 at 12:38, Jani Nikula <jani.nikula@linux.intel.com> wro=
+te:
+>
+> On Tue, 18 Jun 2024, Andr=C3=A9 Almeida <andrealmeid@igalia.com> wrote:
+> > Drivers have different capabilities on what plane types they can or
+> > cannot perform async flips. Create a plane::async_flip field so each
+> > driver can choose which planes they allow doing async flips.
+> >
+> > Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> > ---
+> >  include/drm/drm_plane.h | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> > index 9507542121fa..0bebc72af5c3 100644
+> > --- a/include/drm/drm_plane.h
+> > +++ b/include/drm/drm_plane.h
+> > @@ -786,6 +786,11 @@ struct drm_plane {
+> >        * @kmsg_panic: Used to register a panic notifier for this plane
+> >        */
+> >       struct kmsg_dumper kmsg_panic;
+> > +
+> > +     /**
+> > +      * @async_flip: indicates if a plane can do async flips
+> > +      */
+>
+> When is it okay to set or change the value of this member?
+>
+> If you don't document it, people will find creative uses for this.
 
-On 18/06/2024 09:22, Tengfei Fan wrote:
-> QCS8550 is derived from SM8550. The difference between SM8550 and
-> QCS8550 is QCS8550 doesn't have modem RF system. QCS8550 is mainly used
-> in IoT products.
-> QCS8550 firmware has different memory map compared to SM8550.
-> The memory map will be runtime added through bootloader.
-> There are 3 types of reserved memory regions here:
-> 1. Firmware related regions which aren't shared with kernel.
->      The device tree source in kernel doesn't need to have node to indicate
-> the firmware related reserved information. Bootloader converys the
-> information by updating devicetree at runtime.
->      This will be described as: UEFI saves the physical address of the
-> UEFI System Table to dts file's chosen node. Kernel read this table and
-> add reserved memory regions to efi config table. Current reserved memory
-> region may have reserved region which was not yet used, release note of
-> the firmware have such kind of information.
-> 2. Firmware related memory regions which are shared with Kernel
->      The device tree source in the kernel needs to include nodes that
-> indicate fimware-related shared information. A label name is suggested
-> because this type of shared information needs to be referenced by
-> specific drivers for handling purposes.
->      Unlike previous platforms, QCS8550 boots using EFI and describes
-> most reserved regions in the ESRT memory map. As a result, reserved
-> memory regions which aren't relevant to the kernel(like the hypervisor
-> region) don't need to be described in DT.
-> 3. Remoteproc regions.
->      Remoteproc regions will be reserved and then assigned to subsystem
-> firmware later.
-> Here is a reserved memory map for this platform:
->   0x80000000 +-------------------+
->              |                   |
->              | Firmware Related  |
->              |                   |
->   0x8a800000 +-------------------+
->              |                   |
->              | Remoteproc Region |
->              |                   |
->   0xa7000000 +-------------------+
->              |                   |
->              | Kernel Available  |
->              |                   |
->   0xd4d00000 +-------------------+
->              |                   |
->              | Firmware Related  |
->              |                   |
-> 0x100000000 +-------------------+
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> ---
->   arch/arm64/boot/dts/qcom/qcs8550.dtsi | 162 ++++++++++++++++++++++++++
->   1 file changed, 162 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/qcom/qcs8550.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8550.dtsi b/arch/arm64/boot/dts/qcom/qcs8550.dtsi
-> new file mode 100644
-> index 000000000000..07b314834d88
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/qcs8550.dtsi
-> @@ -0,0 +1,162 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include "sm8550.dtsi"
-> +
-> +/delete-node/ &reserved_memory;
-> +
-> +/ {
-> +	reserved_memory: reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +
-> +		/* These are 3 types of reserved memory regions here:
-> +		 * 1. Firmware related regions which aren't shared with kernel.
-> +		 *     The device tree source in kernel doesn't need to have node to
-> +		 * indicate the firmware related reserved information. Bootloader
-> +		 * conveys the information by updating devicetree at runtime.
-> +		 *     This will be described as: UEFI saves the physical address of
-> +		 * the UEFI System Table to dts file's chosen node. Kernel read this
-> +		 * table and add reserved memory regions to efi config table. Current
-> +		 * reserved memory region may have reserved region which was not yet
-> +		 * used, release note of the firmware have such kind of information.
+Maybe it's better to have a callback instead of a static field? This
+way it becomes clear that it's only relevant at the time of the
+atomic_check().
 
-This is a lot of implementation detail about UEFI, I'd imagine that 
-anyone curious can go read the relevant docs instead. It's a lot of 
-words just to say "Firmware regions which the kernel doesn't need to 
-know about which are not included in the EFI provided memory map."
-> +		 * 2. Firmware related memory regions which are shared with Kernel
-> +		 *     The device tree source in the kernel needs to include nodes
-> +		 * that indicate fimware-related shared information. A label name
-> +		 * is suggested because this type of shared information needs to
-> +		 * be referenced by specific drivers for handling purposes.
+> > +     bool async_flip;
+> >  };
+> >
+> >  #define obj_to_plane(x) container_of(x, struct drm_plane, base)
+>
+> --
+> Jani Nikula, Intel
 
-"Firmware regions the kernel DOES need to know about, which are 
-described in the reserved-memory node".
-> +		 *     Unlike previous platforms, QCS8550 boots using EFI and describes
-> +		 * most reserved regions in the ESRT memory map. As a result, reserved
-> +		 * memory regions which aren't relevant to the kernel(like the hypervisor
-> +		 ( region) don't need to be described in DT.
 
-These would fall under (1) "firmware the kernel doesn't need to know about"
-> +		 * 3. Remoteproc regions.
-> +		 *     Remoteproc regions will be reserved and then assigned to
-> +		 * subsystem firmware later.
 
-How do these differ from those described in (2)?
-
-I think this comment is trying to describe too much at once. You're 
-trying to describe what the different types of reserved memory are, how 
-the kernel learns about them, and how this differs from previous 
-platforms all at once. I think you should tackle these points separately:
-
-First describe the types of reserved memory and how the kernel learns 
-about them (my suggestions above). Then describe the differences with 
-previous platforms (like the hypervisor example).
-
-Thanks and regards,
-> +		 * Here is a reserved memory map for this platform:
-> +		 *  0x80000000 +-------------------+
-> +		 *             |                   |
-> +		 *             | Firmware Related  |
-> +		 *             |                   |
-> +		 *  0x8a800000 +-------------------+
-> +		 *             |                   |
-> +		 *             | Remoteproc Region |
-> +		 *             |                   |
-> +		 *  0xa7000000 +-------------------+
-> +		 *             |                   |
-> +		 *             | Kernel Available  |
-> +		 *             |                   |
-> +		 *  0xd4d00000 +-------------------+
-> +		 *             |                   |
-> +		 *             | Firmware Related  |
-> +		 *             |                   |
-> +		 * 0x100000000 +-------------------+
-> +		 */
-> +
-> +		aop_image_mem: aop-image-region@81c00000 {
-> +			reg = <0x0 0x81c00000 0x0 0x60000>;
-> +			no-map;
-> +		};
-> +
-> +		aop_cmd_db_mem: aop-cmd-db-region@81c60000 {
-> +			compatible = "qcom,cmd-db";
-> +			reg = <0x0 0x81c60000 0x0 0x20000>;
-> +			no-map;
-> +		};
-> +
-> +		aop_config_mem: aop-config-region@81c80000 {
-> +			no-map;
-> +			reg = <0x0 0x81c80000 0x0 0x20000>;
-> +		};
-> +
-> +		smem_mem: smem-region@81d00000 {
-> +			compatible = "qcom,smem";
-> +			reg = <0x0 0x81d00000 0x0 0x200000>;
-> +			hwlocks = <&tcsr_mutex 3>;
-> +			no-map;
-> +		};
-> +
-> +		adsp_mhi_mem: adsp-mhi-region@81f00000 {
-> +			reg = <0x0 0x81f00000 0x0 0x20000>;
-> +			no-map;
-> +		};
-> +
-> +		mpss_mem: mpss-region@8a800000 {
-> +			reg = <0x0 0x8a800000 0x0 0x10800000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_mpss_dtb_mem: q6-mpss-dtb-region@9b000000 {
-> +			reg = <0x0 0x9b000000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_fw_mem: ipa-fw-region@9b080000 {
-> +			reg = <0x0 0x9b080000 0x0 0x10000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_gsi_mem: ipa-gsi-region@9b090000 {
-> +			reg = <0x0 0x9b090000 0x0 0xa000>;
-> +			no-map;
-> +		};
-> +
-> +		gpu_micro_code_mem: gpu-micro-code-region@9b09a000 {
-> +			reg = <0x0 0x9b09a000 0x0 0x2000>;
-> +			no-map;
-> +		};
-> +
-> +		spss_region_mem: spss-region@9b100000 {
-> +			reg = <0x0 0x9b100000 0x0 0x180000>;
-> +			no-map;
-> +		};
-> +
-> +		spu_secure_shared_memory_mem: spu-secure-shared-memory-region@9b280000 {
-> +			reg = <0x0 0x9b280000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		camera_mem: camera-region@9b300000 {
-> +			reg = <0x0 0x9b300000 0x0 0x800000>;
-> +			no-map;
-> +		};
-> +
-> +		video_mem: video-region@9bb00000 {
-> +			reg = <0x0 0x9bb00000 0x0 0x700000>;
-> +			no-map;
-> +		};
-> +
-> +		cvp_mem: cvp-region@9c200000 {
-> +			reg = <0x0 0x9c200000 0x0 0x700000>;
-> +			no-map;
-> +		};
-> +
-> +		cdsp_mem: cdsp-region@9c900000 {
-> +			reg = <0x0 0x9c900000 0x0 0x2000000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_cdsp_dtb_mem: q6-cdsp-dtb-region@9e900000 {
-> +			reg = <0x0 0x9e900000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_adsp_dtb_mem: q6-adsp-dtb-region@9e980000 {
-> +			reg = <0x0 0x9e980000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		adspslpi_mem: adspslpi-region@9ea00000 {
-> +			reg = <0x0 0x9ea00000 0x0 0x4080000>;
-> +			no-map;
-> +		};
-> +
-> +		mpss_dsm_mem: mpss_dsm_region@d4d00000 {
-> +			reg = <0x0 0xd4d00000 0x0 0x3300000>;
-> +			no-map;
-> +		};
-> +	};
-> +};
-
--- 
-// Caleb (they/them)
+--=20
+With best wishes
+Dmitry
 
