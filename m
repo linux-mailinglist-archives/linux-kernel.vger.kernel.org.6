@@ -1,177 +1,135 @@
-Return-Path: <linux-kernel+bounces-220142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083AA90DD26
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:19:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9563890DD3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4FE9284C7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:19:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5821F2247A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE161741CF;
-	Tue, 18 Jun 2024 20:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9B216F0EB;
+	Tue, 18 Jun 2024 20:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nCPgnJkx"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g8Af43Vq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3311E39AEC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0760417625B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718741975; cv=none; b=ews4aFofCDVbzsqyIKeUQsLzy3r5SgnnicKhcy8Qr4nJ9N1Q6ajTv7WBicuc73qSOot4KiExTNZT2BFY+K/V79f7sK+wW9RtlxKXcy0lPtR+IMKsPleN6g9lgd2aNFSyAXtS+ozVew11P17mTSn1/8qoZ6ZNqfyl23eQc6lkzKo=
+	t=1718742017; cv=none; b=tfouuoWGYhju5gQvp3e96SV4crZbh800MLyJctNCttInpJPbi9EXcx+sKj+YWN2a7dY62aqQt3KnKG7iaAfxOoOyXD3/Go38cSdtrev/aVTdo7lRPBh/Ru4rh6lJ/osR1WLUyGk6UcJIYTeVroqdHmFrHkp5Rh9XpCGU81095Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718741975; c=relaxed/simple;
-	bh=94jbta9RKhaSlDyNCdrM049X1zIhYddMYsT9+9JpVCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h7FdaTu4ykt/0PcOHSUWu+3/kDyMKGANMrO6D3g3OFcW6rYg8HejKvJndzvul+qU9vgoHi4eA91/WuYdAYhXMDHs7O1PWQIqLGfkgTNTKle2XGGOJ421XbdTwaQRObVOpvzEVualGJIoHtisoTaEJPK5Gf4mpo6QX9q138/54Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nCPgnJkx; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f4a0050b9aso50147875ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718741973; x=1719346773; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mV+obHqwFZWixpRN1P9+xUT02aptZp/gmo4vDnJf/nM=;
-        b=nCPgnJkxijXsbXuXvnvc6dhkOchG+VYl5E2NLv40o3JUTEelBIH/oPgQMBl8kp4Obi
-         gBI4kR0m9626Uh4ZNV/yENqRuzP5Qb/E7mgHg4aaETA6KRTKw+xDt1BMNvFJ/MTyUjhV
-         Rft47qohh8WZIsQeiPKkOIJHjNkZAXeugXCFPQW5gZRvF4/C+ZSGyeYmeqsFbegCiuow
-         SX9r4+IhIw4Q2AwDEJ3t39sZL41E32/e93hCTCBqf1/MnmOH+X7zsoKD26WRkUHC8P32
-         OoT2O8D695PeoTyJ8HXNSSPyr0xUDHhKKZ8mYmCP94X6K2E4lUQvTLMz+fMxKJaik9aH
-         OuQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718741973; x=1719346773;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mV+obHqwFZWixpRN1P9+xUT02aptZp/gmo4vDnJf/nM=;
-        b=bC96zr/wIUzkwDBT1q9vyS1XvbjyDWPwTgNPkK/vDoxqtLZLRru/ZyP2rTPPS84Ou3
-         ITURJhpRrjQfprI9THTg8fHiq7LxijZPrXpgpD6x36vHRi7Zkm1+sSjAiz5a2tKDX7cq
-         CJ5PW9GKRhu+wG2vEZXlJ+ARuSEJ0FGw9kLvqqWkW0OM/WT+WpUP/qz5zydp2oyXVesb
-         mkJeS/xuS4fz1pKvQ1SaJXMfxFjKfUCkAaNtWfq/D0FjGqlWZCvnBjSe4JObYx+qZ9V+
-         N/rVyunlu8p0iTzN5Xj8tH3zuqGo41ZpbX28mgu4V4aVg5behakleuKcn5Yk5OqINB76
-         Iw4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX/wwhe5cLsZrPfokaCf8T25PWG92DVAaw+R6AHUnbNALcjYnBn80/pzBaq9UZ+770D/Dq2+ytC5GA/YYuYPSpgBmiVTaBm/EBpa2WT
-X-Gm-Message-State: AOJu0YzJvrtuHQO3IkObBI8d59wIHBnusGNzAEmw8yiI4J8k1vqSNbzK
-	g5DMdD4nI867skd2EKpEtXjPf5JTOwP0nk1WoxEy/+NYfR9gQcYnk8dRx+Jg8A==
-X-Google-Smtp-Source: AGHT+IHyLOxXtzm0QV3I4PfO8dmxnhFR4zmQ5ve3IHxTlcknskE8vGuxSlOyocduRsCXhhHzmgHp0Q==
-X-Received: by 2002:a17:902:d504:b0:1f6:7fa4:e064 with SMTP id d9443c01a7336-1f9aa46e5b5mr7283155ad.61.1718741973072;
-        Tue, 18 Jun 2024 13:19:33 -0700 (PDT)
-Received: from google.com ([2620:0:1000:2510:5dfa:e7d1:8470:826c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f43ce3sm101374865ad.278.2024.06.18.13.19.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 13:19:32 -0700 (PDT)
-Date: Tue, 18 Jun 2024 13:19:27 -0700
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
-Message-ID: <20240618201927.GC1611012@google.com>
-References: <20240617175818.58219-17-samitolvanen@google.com>
- <2024061842-hatless-viewpoint-5024@gregkh>
- <CAK7LNAS_OsXeoDRoMbdXUGY=-jhuoHgo-L6W79n+Kb4G4xEBwQ@mail.gmail.com>
- <2024061828-tricky-playtime-f844@gregkh>
- <CAK7LNAR9qgk2AxtMUMiOw-jYZyjmj6aVDPH25aPa4K-1jQjOFw@mail.gmail.com>
+	s=arc-20240116; t=1718742017; c=relaxed/simple;
+	bh=JJgUrXpcAhAJI8K7hE8Nyifer/j3vPzwSf9NPTdPnx8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vFZQ2uo5oJ945Sxga7jV+IyclTv5WZF44Dnz2K3PRm7be74Mhs4dhskPsuzoCiPNB9i7Bc2gWjVj//KH2s3BsAVd+TvzjYm9K4v2QfzLqaUcWU6yqLdBj8jJwkLLBq9AyUtfHNjEOSLAQ9vBFc9ScB/A1VbKGOmd+HfrKj8zi8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g8Af43Vq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718742014;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pWagbOy3Dug1A8KU6tJo7JX4+oGGm8zUoClQdGRis5w=;
+	b=g8Af43VqggDha1wxYMKStaqhAKROANt7p3omPcZbDRQ1TLKtDZJWgU5ZcTMWL+otCOc7qZ
+	wOeFd28Hikk3ysi0SFF8bW6jqdJz8VJP5JJ+VlWZDPQsufKzhl3BMCk9ojF1kQMeqb6Lhv
+	vbC1b3lndCuulldl2GUg/RhfmYjweSE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-1-C6sZAUC2N7yQgBhcYt64-Q-1; Tue,
+ 18 Jun 2024 16:20:10 -0400
+X-MC-Unique: C6sZAUC2N7yQgBhcYt64-Q-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CAFAF19560B2;
+	Tue, 18 Jun 2024 20:20:08 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.32.193])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0E1B319560B0;
+	Tue, 18 Jun 2024 20:20:02 +0000 (UTC)
+From: Wander Lairson Costa <wander@redhat.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org (open list:SCHEDULER)
+Cc: rrendec@redhat.com,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: [PATCH] sched/deadline: fix task_struct reference leak
+Date: Tue, 18 Jun 2024 17:19:40 -0300
+Message-ID: <20240618201940.94955-1-wander@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNAR9qgk2AxtMUMiOw-jYZyjmj6aVDPH25aPa4K-1jQjOFw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Jun 19, 2024 at 04:03:45AM +0900, Masahiro Yamada wrote:
-> On Wed, Jun 19, 2024 at 2:18 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Jun 19, 2024 at 01:50:36AM +0900, Masahiro Yamada wrote:
-> > > On Wed, Jun 19, 2024 at 1:44 AM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > That's cool, can the C code be switched to also use this?  That way we
-> > > > only have one path/code for all of this?
-> > >
-> > >
-> > > As the description says, it requires CONFIG_DEBUG_INFO.
-> > > We can strip the debug info from the final vmlinux, but
-> > > I guess the build speed will be even slower than the current genksyms.
-> >
-> > For people who want genksyms (i.e. distros), don't they normally already
-> > enable DEBUG_INFO as well?  The problems of genksyms are well known and
-> > a pain (I speak from experience), so replacing it with info based on
-> > DWARF would be great, I'll gladly trade off the DEBUG_INFO issue for
-> > stablilty!
-> >
-> > thanks,
-> >
-> > greg k-h
-> >
-> 
-> 
-> 
-> I do not think gendwarfksyms is a drop-in replacement,
-> because it relies on libelf and libdw, which will not
-> work with LLVM bitcode when CONFIG_LTO_CLANG=y.
-> 
-> His "Let's postpone this until final linking" stuff will
-> come back?
-> Then, vmlinux.o is processed to extract the CRC
-> of all symbols?
+During the execution of the following stress test with linux-rt:
 
-I agree, this won't work with LTO unless we process vmlinux.o.
+stress-ng --cyclic 30 --timeout 30 --minimize --quiet
 
-> In my benchmark, this tool took 3.84 sec just for processing
-> a single rust/core.o object.
+kmemleak frequently reported a memory leak concerning the task_struct:
 
-To be fair, Rust currently exports all globals and core.o has 400
-exported symbols as a result. During my brief testing, this tool is
-faster than genksyms for normal C code.
+unreferenced object 0xffff8881305b8000 (size 16136):
+  comm "stress-ng", pid 614, jiffies 4294883961 (age 286.412s)
+  object hex dump (first 32 bytes):
+    02 40 00 00 00 00 00 00 00 00 00 00 00 00 00 00  .@..............
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  debug hex dump (first 16 bytes):
+    53 09 00 00 00 00 00 00 00 00 00 00 00 00 00 00  S...............
+  backtrace:
+    [<00000000046b6790>] dup_task_struct+0x30/0x540
+    [<00000000c5ca0f0b>] copy_process+0x3d9/0x50e0
+    [<00000000ced59777>] kernel_clone+0xb0/0x770
+    [<00000000a50befdc>] __do_sys_clone+0xb6/0xf0
+    [<000000001dbf2008>] do_syscall_64+0x5d/0xf0
+    [<00000000552900ff>] entry_SYSCALL_64_after_hwframe+0x6e/0x76
 
-> I'd love to see how long it will take to process vmlinux.o
+The issue occurs in start_dl_timer(), which increments the task_struct
+reference count and sets a timer. The timer callback, dl_task_timer,
+is supposed to decrement the reference count upon expiration. However,
+if enqueue_task_dl() is called before the timer expires and cancels it,
+the reference count is not decremented, leading to the leak.
 
-It's obviously going to be quite slow, my defconfig vmlinux.o has
-14k exported symbols:
+This patch fixes the reference leak by ensuring the task_struct
+reference count is properly decremented when the timer is canceled.
 
- Performance counter stats for './tools/gendwarfksyms/gendwarfksyms vmlinux.o':
+Signed-off-by: Wander Lairson Costa <wander@redhat.com>
+---
+ kernel/sched/deadline.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-        371,527.67 msec task-clock:u                     #    1.000 CPUs utilized
-                 0      context-switches:u               #    0.000 /sec
-                 0      cpu-migrations:u                 #    0.000 /sec
-           231,554      page-faults:u                    #  623.248 /sec
-   <not supported>      cycles:u
-   <not supported>      instructions:u
-   <not supported>      branches:u
-   <not supported>      branch-misses:u
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index c75d1307d86d..5953f89bfa96 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1805,7 +1805,9 @@ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
+ 			 * problem if it fires concurrently: boosted threads
+ 			 * are ignored in dl_task_timer().
+ 			 */
+-			hrtimer_try_to_cancel(&p->dl.dl_timer);
++			if (hrtimer_try_to_cancel(&p->dl.dl_timer) == 1 &&
++			    !dl_server(&p->dl))
++				put_task_struct(p);
+ 			p->dl.dl_throttled = 0;
+ 		}
+ 	} else if (!dl_prio(p->normal_prio)) {
+-- 
+2.45.1
 
-     371.686151684 seconds time elapsed
-
-     370.534637000 seconds user
-       0.987825000 seconds sys
-
-The tool is currently single-threaded, so if we really want to go this
-route, it could probably be made a bit faster.
-
-> And this occurs even when a single source file is changed
-> and vmlinux.o is re-linked.
-
-I suppose anyone using LTO already knows it won't be a quick rebuild
-though.
-
-Sami
 
