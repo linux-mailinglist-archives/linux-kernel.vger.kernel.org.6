@@ -1,309 +1,124 @@
-Return-Path: <linux-kernel+bounces-220091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00B890DC98
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:38:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CACC90DC9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2411F213E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:38:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D60FBB212A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3299B16D32D;
-	Tue, 18 Jun 2024 19:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8855916DED1;
+	Tue, 18 Jun 2024 19:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x3YBU3Dl"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ru6Aac5W"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68672176FBE;
-	Tue, 18 Jun 2024 19:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1D416DC24
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718739437; cv=none; b=epe49s0/CiADu0rRgWQr4tKpKoNI7RyjKtA6E9woxrHVwGqTIgVYMfKV2ujaQDuC3LZQUuG3SG7VP5J0wG6dMiqKBmpzuiTsEcCcBzqkK4yXMiKx4FBPZIv0++Qw3YBTP1QRkCfId5drR0YG/QyuDdh8O6LkzSrhO1T36pempA8=
+	t=1718739459; cv=none; b=EnDMc5SA+yR/PKvmC5SiRYOt6TyGLOvKlN9RpRQI3SlO6nrgr6l7P5hWgur170UvUZ07dot5n4j23T47xEorL4jygSw8GAA2+4SfqVSODdfqowlm48Sx6Yo5X2i6W35ybFUIEQRv1ObaCEUkQP/PUNsgqKUyoTQr0rWNGUnPslQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718739437; c=relaxed/simple;
-	bh=Vr36Mrc5+pMaudbJm0DZvFV1GjMw1OKzziXX3m3gtSo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IQbauC9L10ukoDeUJPRsOMaSkDswSDaNdeFLl+1z4NJIApQ4gDBd4XUbYCz8HYj2b7vuB0TBDzI3t+KA+aEmzj+wd/hqu7KmUF9gKYURX1q9E4XKZIhji+KkKVN5MS02ojV8zow5wGccic0wNxAhL+rxHv/b8mxur08gGN3z9ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=x3YBU3Dl; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45IJb2dq124989;
-	Tue, 18 Jun 2024 14:37:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718739422;
-	bh=D0YVHB8BnZFSn4Z7PUoeQy9u60qLcFRKuHXDp9XdVW8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=x3YBU3DloJGnlrlz5A61Vv7O5K5nVNuLRJDDQ9lCRLU5Zrl8JfLSrJ/+jLv7ypORg
-	 x3v5qf7O6dnfJNWUOsqF5eYwf4DJy/TaHPicFpb7otZLi7Pfkrfpym8Rx9bLfLJPrx
-	 CbjW9M639Q7m/KWwAw5ZAP+Us1nU5zC/St9iyoiQ=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45IJb23V116702
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Jun 2024 14:37:02 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Jun 2024 14:37:02 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Jun 2024 14:37:01 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45IJb1c5010668;
-	Tue, 18 Jun 2024 14:37:01 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>, <afd@ti.com>
-Subject: [PATCH v14 6/6] media: verisilicon : Use exported tables from v4l2-jpeg for hantro codec
-Date: Wed, 19 Jun 2024 01:06:51 +0530
-Message-ID: <20240618193651.2771478-7-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240618193651.2771478-1-devarsht@ti.com>
-References: <20240618193651.2771478-1-devarsht@ti.com>
+	s=arc-20240116; t=1718739459; c=relaxed/simple;
+	bh=gSqHCXD5yVQpuo69yCPK8Rw7sv+zOMXHljgTBsBe+3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D+9BNCnpJJa/YXWLW7cv2+KjcoIjEU6Xzo27aWFOimc4diZ14JOWqV1f4IeK7hk+kZm5QwkGgQPtSWnsl4AYPrITN1if7Q5NrGtNYt44Qex5F9D6jGx5qGxWJHblu70fyd0gU5QfumcW0nhqulklJqVnQllz5V9H6qotD4K3EqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ru6Aac5W; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3627ef1fc07so614410f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:37:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718739456; x=1719344256; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+x7nXuurumuNod617+6jOeuG6kek77q3rorK/HNomXM=;
+        b=Ru6Aac5W6RaUTTVpn9HEZ7AHMMT9SPC4Y/BLOuGoMby9uOaHlQ3HOCKeiUFodXw/Lt
+         Lz6rhxyuzQudPhORulPdha7+8KnX9JHPRxjWB7Jwuep98vGoAPWO2/ieOhmghULT0avQ
+         B3EzG21g3ohliCV9TYftxaKK9agv5jj+jKBgh21Leh291/f7vkSemJdEVqLARRF6wNb/
+         V5RwcV3XI/KzDhJjG+ljbE1DzfsJQr4bPrDmNYDR/M7nHeJyQ7eCHdxUi2OxB8oklwNC
+         29VfMS+vg85VirDN90iKlPB30QHer8TbqO9iA7T605C0sdqYeUL+8Olohj4z24QkH6J8
+         Tj6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718739456; x=1719344256;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+x7nXuurumuNod617+6jOeuG6kek77q3rorK/HNomXM=;
+        b=opFNlSYMIFBTp5FS8Du8X+rbtRyIfmifsmmMvGtoXu182uFufyaJiVGwpww2P7vRnA
+         9dYllcySP66L7KekCXzoob/aUOPtzH+iEO8G5DbupoRNHywAC7TllrvZjNyQAA+cshXD
+         KeE2AQxKIOWb+4Zq8UyOYaBk29OvNrtUtqDMwDbJirJfKeqgIWsZfI16alExNvt6Prco
+         WgsfBYoY9B+6co6PJQHU1AgQAgbRXHmb7jZ4sohKAkKiG17E8muLJZ/Z/uvzpE3kJtb5
+         aO/V2+dYdauIiRCAVpPeCFdAA+6EmylbPUyezHZ2ONshYxPylPgRh/EE4CHBGBTW6n5P
+         lDmQ==
+X-Gm-Message-State: AOJu0YwZe+XF1R7A7CM4tKMAi/W/7ZvLT+nvsfCeZ6Bp3PgfqPlFS7mn
+	iUUy4x76CTVNdGlNmKmVDxA/5jvJyyVSyQXcmjU6YbUoyCGHcLn5JoQbFGjpr8TCorZRm36H0yu
+	kRBM=
+X-Google-Smtp-Source: AGHT+IHbNuIhcfEEVc1QVOmdzsjHI7B9xoBv+YnkXNUz7rqiopLwZeKIpqwMjOzmC6LQdI8Utsn30g==
+X-Received: by 2002:adf:ed87:0:b0:361:bcc5:2e26 with SMTP id ffacd0b85a97d-363175b9043mr336005f8f.19.1718739456373;
+        Tue, 18 Jun 2024 12:37:36 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:9028:9df3:5d11:7fa7:8997:f811? ([2a00:f41:9028:9df3:5d11:7fa7:8997:f811])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750ad1absm14756740f8f.62.2024.06.18.12.37.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 12:37:36 -0700 (PDT)
+Message-ID: <027b9ba8-20b7-4d20-8128-156398f21902@linaro.org>
+Date: Tue, 18 Jun 2024 21:37:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 4/7] soc: qcom: Utilize qcom scmi vendor protocol for bus
+ dvfs
+To: Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
+ cristian.marussi@arm.com, andersson@kernel.org, jassisinghbrar@gmail.com,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, quic_rgottimu@quicinc.com,
+ quic_kshivnan@quicinc.com, conor+dt@kernel.org,
+ Amir Vajid <avajid@quicinc.com>
+References: <20240117173458.2312669-1-quic_sibis@quicinc.com>
+ <20240117173458.2312669-5-quic_sibis@quicinc.com>
+ <7e48e51e-e16a-41b9-800d-960c627b8da6@linaro.org>
+ <d24a3372-8ee5-528d-09ac-86c64f0896e5@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <d24a3372-8ee5-528d-09ac-86c64f0896e5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Use v4l2-jpeg core API to import reference quantization and huffman tables
-used for JPEG Encoding.
 
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-Acked-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
----
-V14: 
-- Directly use v4l2-jpeg exported jpeg tables.
-V11->V13: No change
-V10: Fix typo in commit message title
-V9: No change
-V8: Add Reviewed-by and Acked-by tags
-V1->V6 (No change, patch introduced in V7)
 
- drivers/media/platform/verisilicon/Kconfig    |   1 +
- .../media/platform/verisilicon/hantro_jpeg.c  | 129 ++----------------
- 2 files changed, 14 insertions(+), 116 deletions(-)
+On 2/12/24 11:33, Sibi Sankar wrote:
 
-diff --git a/drivers/media/platform/verisilicon/Kconfig b/drivers/media/platform/verisilicon/Kconfig
-index 9a34d14c6e40..149d0b32c324 100644
---- a/drivers/media/platform/verisilicon/Kconfig
-+++ b/drivers/media/platform/verisilicon/Kconfig
-@@ -12,6 +12,7 @@ config VIDEO_HANTRO
- 	select VIDEOBUF2_VMALLOC
- 	select V4L2_MEM2MEM_DEV
- 	select V4L2_H264
-+	select V4L2_JPEG_HELPER
- 	select V4L2_VP9
- 	help
- 	  Support for the Hantro IP based Video Processing Units present on
-diff --git a/drivers/media/platform/verisilicon/hantro_jpeg.c b/drivers/media/platform/verisilicon/hantro_jpeg.c
-index d07b1b449b61..13a60638e43f 100644
---- a/drivers/media/platform/verisilicon/hantro_jpeg.c
-+++ b/drivers/media/platform/verisilicon/hantro_jpeg.c
-@@ -11,6 +11,7 @@
- #include <linux/build_bug.h>
- #include <linux/kernel.h>
- #include <linux/string.h>
-+#include <media/v4l2-jpeg.h>
- #include "hantro_jpeg.h"
- #include "hantro.h"
- 
-@@ -24,42 +25,6 @@
- #define HUFF_CHROMA_DC_OFF	394
- #define HUFF_CHROMA_AC_OFF	427
- 
--/* Default tables from JPEG ITU-T.81
-- * (ISO/IEC 10918-1) Annex K, tables K.1 and K.2
-- */
--static const unsigned char luma_q_table[] = {
--	0x10, 0x0b, 0x0a, 0x10, 0x18, 0x28, 0x33, 0x3d,
--	0x0c, 0x0c, 0x0e, 0x13, 0x1a, 0x3a, 0x3c, 0x37,
--	0x0e, 0x0d, 0x10, 0x18, 0x28, 0x39, 0x45, 0x38,
--	0x0e, 0x11, 0x16, 0x1d, 0x33, 0x57, 0x50, 0x3e,
--	0x12, 0x16, 0x25, 0x38, 0x44, 0x6d, 0x67, 0x4d,
--	0x18, 0x23, 0x37, 0x40, 0x51, 0x68, 0x71, 0x5c,
--	0x31, 0x40, 0x4e, 0x57, 0x67, 0x79, 0x78, 0x65,
--	0x48, 0x5c, 0x5f, 0x62, 0x70, 0x64, 0x67, 0x63
--};
--
--static const unsigned char chroma_q_table[] = {
--	0x11, 0x12, 0x18, 0x2f, 0x63, 0x63, 0x63, 0x63,
--	0x12, 0x15, 0x1a, 0x42, 0x63, 0x63, 0x63, 0x63,
--	0x18, 0x1a, 0x38, 0x63, 0x63, 0x63, 0x63, 0x63,
--	0x2f, 0x42, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
--	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
--	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
--	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
--	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63
--};
--
--static const unsigned char zigzag[] = {
--	 0,  1,  8, 16,  9,  2,  3, 10,
--	17, 24, 32, 25, 18, 11,  4,  5,
--	12, 19, 26, 33, 40, 48, 41, 34,
--	27, 20, 13,  6,  7, 14, 21, 28,
--	35, 42, 49, 56, 57, 50, 43, 36,
--	29, 22, 15, 23, 30, 37, 44, 51,
--	58, 59, 52, 45, 38, 31, 39, 46,
--	53, 60, 61, 54, 47, 55, 62, 63
--};
--
- static const u32 hw_reorder[] = {
- 	 0,  8, 16, 24,  1,  9, 17, 25,
- 	32, 40, 48, 56, 33, 41, 49, 57,
-@@ -71,73 +36,6 @@ static const u32 hw_reorder[] = {
- 	38, 46, 54, 62, 39, 47, 55, 63
- };
- 
--/* Huffman tables are shared with CODA */
--static const unsigned char luma_dc_table[] = {
--	0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01,
--	0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
--	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
--	0x08, 0x09, 0x0a, 0x0b,
--};
--
--static const unsigned char chroma_dc_table[] = {
--	0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
--	0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
--	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
--	0x08, 0x09, 0x0a, 0x0b,
--};
--
--static const unsigned char luma_ac_table[] = {
--	0x00, 0x02, 0x01, 0x03, 0x03, 0x02, 0x04, 0x03,
--	0x05, 0x05, 0x04, 0x04, 0x00, 0x00, 0x01, 0x7d,
--	0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12,
--	0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07,
--	0x22, 0x71, 0x14, 0x32, 0x81, 0x91, 0xa1, 0x08,
--	0x23, 0x42, 0xb1, 0xc1, 0x15, 0x52, 0xd1, 0xf0,
--	0x24, 0x33, 0x62, 0x72, 0x82, 0x09, 0x0a, 0x16,
--	0x17, 0x18, 0x19, 0x1a, 0x25, 0x26, 0x27, 0x28,
--	0x29, 0x2a, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
--	0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
--	0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59,
--	0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
--	0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
--	0x7a, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89,
--	0x8a, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98,
--	0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7,
--	0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6,
--	0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3, 0xc4, 0xc5,
--	0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2, 0xd3, 0xd4,
--	0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xe1, 0xe2,
--	0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea,
--	0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8,
--	0xf9, 0xfa,
--};
--
--static const unsigned char chroma_ac_table[] = {
--	0x00, 0x02, 0x01, 0x02, 0x04, 0x04, 0x03, 0x04,
--	0x07, 0x05, 0x04, 0x04, 0x00, 0x01, 0x02, 0x77,
--	0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21,
--	0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71,
--	0x13, 0x22, 0x32, 0x81, 0x08, 0x14, 0x42, 0x91,
--	0xa1, 0xb1, 0xc1, 0x09, 0x23, 0x33, 0x52, 0xf0,
--	0x15, 0x62, 0x72, 0xd1, 0x0a, 0x16, 0x24, 0x34,
--	0xe1, 0x25, 0xf1, 0x17, 0x18, 0x19, 0x1a, 0x26,
--	0x27, 0x28, 0x29, 0x2a, 0x35, 0x36, 0x37, 0x38,
--	0x39, 0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
--	0x49, 0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
--	0x59, 0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
--	0x69, 0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
--	0x79, 0x7a, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
--	0x88, 0x89, 0x8a, 0x92, 0x93, 0x94, 0x95, 0x96,
--	0x97, 0x98, 0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5,
--	0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4,
--	0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3,
--	0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2,
--	0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda,
--	0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9,
--	0xea, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8,
--	0xf9, 0xfa,
--};
--
- /* For simplicity, we keep a pre-formatted JPEG header,
-  * and we'll use fixed offsets to change the width, height
-  * quantization tables, etc.
-@@ -292,11 +190,11 @@ jpeg_scale_quant_table(unsigned char *file_q_tab,
- {
- 	int i;
- 
--	BUILD_BUG_ON(ARRAY_SIZE(zigzag) != JPEG_QUANT_SIZE);
-+	BUILD_BUG_ON(ARRAY_SIZE(v4l2_jpeg_zigzag_scan_index) != JPEG_QUANT_SIZE);
- 	BUILD_BUG_ON(ARRAY_SIZE(hw_reorder) != JPEG_QUANT_SIZE);
- 
- 	for (i = 0; i < JPEG_QUANT_SIZE; i++) {
--		file_q_tab[i] = jpeg_scale_qp(tab[zigzag[i]], scale);
-+		file_q_tab[i] = jpeg_scale_qp(tab[v4l2_jpeg_zigzag_scan_index[i]], scale);
- 		reordered_q_tab[i] = jpeg_scale_qp(tab[hw_reorder[i]], scale);
- 	}
- }
-@@ -304,7 +202,6 @@ jpeg_scale_quant_table(unsigned char *file_q_tab,
- static void jpeg_set_quality(struct hantro_jpeg_ctx *ctx)
- {
- 	int scale;
--
- 	/*
- 	 * Non-linear scaling factor:
- 	 * [5,50] -> [1000..100], [51,100] -> [98..0]
-@@ -314,15 +211,17 @@ static void jpeg_set_quality(struct hantro_jpeg_ctx *ctx)
- 	else
- 		scale = 200 - 2 * ctx->quality;
- 
--	BUILD_BUG_ON(ARRAY_SIZE(luma_q_table) != JPEG_QUANT_SIZE);
--	BUILD_BUG_ON(ARRAY_SIZE(chroma_q_table) != JPEG_QUANT_SIZE);
-+	BUILD_BUG_ON(ARRAY_SIZE(v4l2_jpeg_ref_table_luma_qt) != JPEG_QUANT_SIZE);
-+	BUILD_BUG_ON(ARRAY_SIZE(v4l2_jpeg_ref_table_chroma_qt) != JPEG_QUANT_SIZE);
- 	BUILD_BUG_ON(ARRAY_SIZE(ctx->hw_luma_qtable) != JPEG_QUANT_SIZE);
- 	BUILD_BUG_ON(ARRAY_SIZE(ctx->hw_chroma_qtable) != JPEG_QUANT_SIZE);
- 
- 	jpeg_scale_quant_table(ctx->buffer + LUMA_QUANT_OFF,
--			       ctx->hw_luma_qtable, luma_q_table, scale);
-+			       ctx->hw_luma_qtable,
-+			       (const unsigned char *)v4l2_jpeg_ref_table_luma_qt, scale);
- 	jpeg_scale_quant_table(ctx->buffer + CHROMA_QUANT_OFF,
--			       ctx->hw_chroma_qtable, chroma_q_table, scale);
-+			       ctx->hw_chroma_qtable,
-+			       (const unsigned char *)v4l2_jpeg_ref_table_chroma_qt, scale);
- }
- 
- void hantro_jpeg_header_assemble(struct hantro_jpeg_ctx *ctx)
-@@ -337,12 +236,10 @@ void hantro_jpeg_header_assemble(struct hantro_jpeg_ctx *ctx)
- 	buf[WIDTH_OFF + 0] = ctx->width >> 8;
- 	buf[WIDTH_OFF + 1] = ctx->width;
- 
--	memcpy(buf + HUFF_LUMA_DC_OFF, luma_dc_table, sizeof(luma_dc_table));
--	memcpy(buf + HUFF_LUMA_AC_OFF, luma_ac_table, sizeof(luma_ac_table));
--	memcpy(buf + HUFF_CHROMA_DC_OFF, chroma_dc_table,
--	       sizeof(chroma_dc_table));
--	memcpy(buf + HUFF_CHROMA_AC_OFF, chroma_ac_table,
--	       sizeof(chroma_ac_table));
-+	memcpy(buf + HUFF_LUMA_DC_OFF, v4l2_jpeg_ref_table_luma_dc_ht, V4L2_JPEG_REF_HT_DC_LEN);
-+	memcpy(buf + HUFF_LUMA_AC_OFF, v4l2_jpeg_ref_table_luma_ac_ht, V4L2_JPEG_REF_HT_AC_LEN);
-+	memcpy(buf + HUFF_CHROMA_DC_OFF, v4l2_jpeg_ref_table_chroma_dc_ht, V4L2_JPEG_REF_HT_DC_LEN);
-+	memcpy(buf + HUFF_CHROMA_AC_OFF, v4l2_jpeg_ref_table_chroma_ac_ht, V4L2_JPEG_REF_HT_AC_LEN);
- 
- 	jpeg_set_quality(ctx);
- }
--- 
-2.39.1
+[...]
 
+
+>>
+>>> +            monitor->mon_type = (of_property_read_bool(monitor_np, "qcom,compute-mon")) ? 1 : 0;
+>>> +            monitor->ipm_ceil = (of_property_read_bool(monitor_np, "qcom,compute-mon")) ? 0 : 20000000;
+>>
+>> What does it even mean for a monitor to be a compute mon?
+>>
+> 
+> When a monitor is marked compute-mon it means that the table is
+> followed religiously irrespective whether the instruction per miss
+> count threshold (ipm) is exceeded or not. Equivalent to having
+> a cpufreq map -> l3/DDR bw mapping upstream.
+
+I'm sorta puzzled why the OS would even be required to program this, since
+L3/DDR/CPU frequencies are known by various stages of boot and secure firmware
+too.
+
+What happens if we omit this? Is the default configuration identical to this?
+Or does it need explicit enabling?
+
+Konrad
 
