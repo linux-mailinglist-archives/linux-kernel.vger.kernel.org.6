@@ -1,198 +1,119 @@
-Return-Path: <linux-kernel+bounces-219741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25D9990D728
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:25:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E20D090D729
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B68A28540B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:24:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F04DD1C257A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD55D46435;
-	Tue, 18 Jun 2024 15:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8F422F11;
+	Tue, 18 Jun 2024 15:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CrW1PmHm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wMMVX+eZ"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA1746421
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA5F208DA
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718724214; cv=none; b=Jr+2YX9jgLYgEop1evseTsFzPtoJYqOrK9FtSbYMHZGFvZA7Qgn/RYxBQ2yNmPUgSpVs6yXDVJi+dG57VxCMP+1Gjfjt7TTEJocff4yWYVTNPtygtmsYypcVC6CJ7Vg9TMvXB7PaBUEApV6rSdscfKkvpj50cS0y3E3qtL2MGEk=
+	t=1718724242; cv=none; b=eeNkj5FylMoSbUGnGEIN6ppYu+9G4CpZGxS8rUEyOPkFOo5RDyhWakvmK3pWbwz1bqjnbN6rE67wAGrOgHaleukuDOtK2V/WfJ8O8PRiHXCA4q/NPeufVoadyaN2uaaT90tlu6d/ou9IvKoe9YW57qSA+swS8pvcVwXk6xfBxDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718724214; c=relaxed/simple;
-	bh=vvexHnjIvYmG/ejgXg+QBlujqjn9rbQg609Vbpek4tQ=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=LLkdHe5d7mNCZhSZR7NBWR2vTw6zhJlapkzAkNxptmOirqFTWDRtIfAPpI9+WTwX/U85BbBmAiGk8zEf19MWKiKDbyZ0lN/pcz82rlTk2r8pEbQpB51dB+VYV/gglsv9aKtqqs9meeR5DPi7Hk8FccUz4xku3WX3BwvYxaRYpa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CrW1PmHm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718724212;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=xnSfUOzl5soJlS+p/lvY9xEkqH/WX9JQVHe/XXOgpks=;
-	b=CrW1PmHmHUMaUv45jRwxRWJ6sIsO3AzR2Snx/xwV9mNa16qAjAJOLXbCMKpMLnrV8k5x2f
-	K5+tDzH1NbJUKxNjJnSX/pBhAeU2pdobRfORJplrquEc443ThzNg9VoFrfr5Yvz6knpnSS
-	Y1d5VicQJ/Lr5f+uShdXVgR2Gq4/QLw=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-630-6nlj19WWNZKCaLWQ3BCPiw-1; Tue, 18 Jun 2024 11:23:30 -0400
-X-MC-Unique: 6nlj19WWNZKCaLWQ3BCPiw-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6b2aec935f5so63250176d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:23:30 -0700 (PDT)
+	s=arc-20240116; t=1718724242; c=relaxed/simple;
+	bh=yibzxZqYHodym8sXR0Vzp2MIh1p5lukJY/SWWCHv/g8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AMD2mEgsfocRFzAesKbixhlluLbh2URg9TxoENT44g/DBK7qLSXYpl91mRj03gUfJUH4nQ3zndk3x+w+EqAX7iR+wQuCgHhbhNgCSqwGKZDMOmhMZh+8zqoS6Qggal8sTT1yT8c6kjdQZPZZ0FEOWyjLBPokaEcHOYnL8NRKLvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wMMVX+eZ; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c3050f4c50so4390830a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:24:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718724240; x=1719329040; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yibzxZqYHodym8sXR0Vzp2MIh1p5lukJY/SWWCHv/g8=;
+        b=wMMVX+eZW1z/zcyRVZ+dJjDsfh0D0it5CJC5e8AxOYRIt9+oBNeuKy9BjxSgy+1gqX
+         yXOHg2wHrmYETwF46XvvHnQIU5P/UCwi9nOyE8XUUjXcr+D+Tv8hgXyAsiJdDMdIMb0E
+         j6/cahJuY+VDEdw2BUt2pbm8V+O0nHlD5b4Of1km8Zc4bRGtC21ZH2ZEtXWH7nn7XHh/
+         W94/tkDhUK2zcxg80RaYxybfxb6mQz2bZqXyy22rfecgDv/9YEnQs+NHHDnUaaYHQyGs
+         IT3PBkOAFbJcAHeckR2l96lZztaRAPVPV/UB8UJt3/VuUCA10iFf8HzTNdMeSk73josL
+         ebzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718724210; x=1719329010;
-        h=content-transfer-encoding:subject:cc:to:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xnSfUOzl5soJlS+p/lvY9xEkqH/WX9JQVHe/XXOgpks=;
-        b=lYdlcTKw2189cmrJY0uvOjJI9fUTHwqDQ3POe5+y/TK2y9arizLVOj4LpboJxwRNaX
-         c0DMOnkCCM220jBYHhhCNs+oecMrzAZhqRs7ePJlbZrT5CM0ddkoUg8mLXsQNcSl51x4
-         nM6SCVr46saSWnhngBaYJ8iDAua55/ZGDYlB2HCcN2a073eiGfkT42UEzbO1a7fNvZFW
-         9AxoJGh7mkK+0P5tj7VCWj89UpVaK5DZnJ90BsW7aPALtXEm4jEjkO5rJNQ39oi7b+q1
-         4s3+zW9vC8zIcjbLM5jGU/ptL2hhS0lY0YpTG4ewGxxSkdj7rwkzc8no6Dq8++v6Evet
-         esvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuyJJeF2TaIF+ZDBsxnuiNJWtfPdWAAxfSfb2MgVDtIPXOHaSmrQJoWGDtE6kmr32RLKZVJTsb2pJFoZtjGAJtYdvgcWX7dU4l0Zcu
-X-Gm-Message-State: AOJu0YzL3k2wVaEEBWAw2UhyXaFMcDEHkRkwGBuJMoWerTCURyInfsY5
-	qI09JHRnn0DpXBGaW7Lz28gsDUrzuFGkKPvVe1siL1h4sB4pbRDRo6aLq1YRkKa7q+FnMQl5MfX
-	UKYJJTbuKxEJGtz8jf3S5hSam14N9c3MNOa2Ne4qSqwau5/9xKNqohbGDE2GC4w==
-X-Received: by 2002:a05:6214:846:b0:6b0:7a82:8f96 with SMTP id 6a1803df08f44-6b501e262e9mr192876d6.22.1718724210202;
-        Tue, 18 Jun 2024 08:23:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG32EZem079Kf6QMs6MPKXUdnjMW4SFTsh9ESB2+hFKMTQthkpgQl2rJKP9hxXWEzfOi/Qpwg==
-X-Received: by 2002:a05:6214:846:b0:6b0:7a82:8f96 with SMTP id 6a1803df08f44-6b501e262e9mr192746d6.22.1718724209769;
-        Tue, 18 Jun 2024 08:23:29 -0700 (PDT)
-Received: from [10.0.0.200] (modemcable096.103-83-70.mc.videotron.ca. [70.83.103.96])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c32428sm66735016d6.64.2024.06.18.08.23.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 08:23:29 -0700 (PDT)
-Message-ID: <8f9e2a5c-fd30-4206-9311-946a06d031bb@redhat.com>
-Date: Tue, 18 Jun 2024 11:23:28 -0400
+        d=1e100.net; s=20230601; t=1718724240; x=1719329040;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yibzxZqYHodym8sXR0Vzp2MIh1p5lukJY/SWWCHv/g8=;
+        b=GHUiQ6W/hgPUXavTUf3MqrZaIZy3iBcqA15VsDuXCPDWWOSkTHoFiUHEyjCQZuS9yn
+         c6QNksXNWn/oSW/GU4wm4OfPTKgiUvTszSbdoXvG4WoGxgvWLtlcy3wIFHclav4h8Wdr
+         g9Jx1mHprNJyENO5rzXRe6Lq2rqhZ2W8CtM7znzKxJTlu2NmWLJoHe3sU5vMRMuP5eHr
+         oOwDhEBq8lHg+NGczZ3tbAUsoMP9Kqih85FiX2WWb1f1Xboqn8W9mM5bjkwz0CK895QV
+         w9VfipNDRFeXzmse/qnI1R7E6waWEyYVhHjaKUFqUM6vzjDqDl3SsFp4LS2uMtb+B52N
+         QJig==
+X-Forwarded-Encrypted: i=1; AJvYcCV67v3Ao9O8tL5OKmadujQNm7CRbhh53RGimdUYIQuPQD8Q+i7HZ/mDFOMeNDAfxxS2fi+C0kalH6jSsWeiIntCmtX/tULvVSVNblL4
+X-Gm-Message-State: AOJu0YwpXYorLHBP44udmlj3vUcr9KCs4jyTEe0IzFMVlgZYZX10b4Er
+	jC3ueTX+tejlcAcaG9SGSoLZ3mfO88opIbuWe+3wvFY3YsktJM7aO601XCpFDZZl/0QCdFwltum
+	5xG+oMrmckO59V+bs6IBdMsju8LrVEoD4oP/Ojw==
+X-Google-Smtp-Source: AGHT+IGYFxcARNsjA8bcaXtjEm6tJiEujAfiK4nrO31jZxBv9nnkIyeR7E6natOmhucaLIF+Kvu+9NoTSch78tc4AEE=
+X-Received: by 2002:a17:90b:3697:b0:2c4:aab1:e435 with SMTP id
+ 98e67ed59e1d1-2c7b5d8e663mr7215a91.44.1718724240490; Tue, 18 Jun 2024
+ 08:24:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US, en-CA
-From: Luiz Capitulino <luizcap@redhat.com>
-To: maciej.fijalkowski@intel.com, jesse.brandeburg@intel.com,
- anthony.l.nguyen@intel.com
-Cc: poros@redhat.com, netdev@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-Subject: [BUG] ice driver crash on arm64
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com> <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
+ <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
+ <20240616222003.agcz5osb2nkli75h@airbuntu> <CAKfTPtBikWsyPon6HweEZg5qjSP+QX=WZDQu4NHs7PUcSCqDDA@mail.gmail.com>
+ <20240617105348.ebtony3ciwxhvj2w@airbuntu>
+In-Reply-To: <20240617105348.ebtony3ciwxhvj2w@airbuntu>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 18 Jun 2024 17:23:49 +0200
+Message-ID: <CAKfTPtDPCPYvCi1c_Nh+Cn01ZVS7E=tAHQeNX-mArBt3BXdjYw@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding actual_cpu_capacity
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Xuewen Yan <xuewen.yan94@gmail.com>, Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
+	vschneid@redhat.com, vincent.donnefort@arm.com, ke.wang@unisoc.com, 
+	linux-kernel@vger.kernel.org, christian.loehle@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Mon, 17 Jun 2024 at 12:53, Qais Yousef <qyousef@layalina.io> wrote:
+>
+> On 06/17/24 11:07, Vincent Guittot wrote:
+>
+> > > And should effective_cpu_util() return a value higher than
+> > > get_actual_cpu_capacity()?
+> >
+> > I don't think we should because we want to return the effective
+> > utilization not the actual compute capacity.
+> > Having an utilization of the cpu or group of cpus above the actual
+> > capacity or the original capacity mainly means that we will have to
+> > run longer
+> >
+> > By capping the utilization we filter this information.
+> >
+> > capacity orig = 800
+> > util_avg = 700
+> >
+> > if we cap the capacity to 400 the cpu is expected to run twice longer
+> > for the same amount of work to be done
+>
+> Okay makes sense. Wouldn't the util be 'wrong' (to what degree will depend on
+> min/max freq ratio) though?
+>
+> We cap with arch_scale_capacity() still, I guess we know at this stage it is
+> 100% wrong if we allow returning higher values?
 
-We have an Ampere Mount Snow system (which is arm64) with an Intel E810-C
-NIC plugged in. The kernel is configured with 64k pages. We're observing
-the crash below when we run iperf3 as a server in this system and load traffic
-from another system with the same configuration. The crash is reproducible
-with latest Linus tree 14d7c92f:
-
-[  225.715759] Unable to handle kernel paging request at virtual address 0075e625f68aa42c
-[  225.723669] Mem abort info:
-[  225.726487]   ESR = 0x0000000096000004
-[  225.730223]   EC = 0x25: DABT (current EL), IL = 32 bits
-[  225.735526]   SET = 0, FnV = 0
-[  225.738568]   EA = 0, S1PTW = 0
-[  225.741695]   FSC = 0x04: level 0 translation fault
-[  225.746564] Data abort info:
-[  225.749431]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-[  225.754906]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[  225.759944]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[  225.765250] [0075e625f68aa42c] address between user and kernel address ranges
-[  225.772373] Internal error: Oops: 0000000096000004 [#1] SMP
-[  225.777932] Modules linked in: xfs(E) crct10dif_ce(E) ghash_ce(E) sha2_ce(E) sha256_arm64(E) sha1_ce(E) sbsa_gwdt(E) ice(E) nvme(E) libie(E) dimlib(E) nvme_core(E) gnss(E) nvme_auth(E) ixgbe(E) igb(E) mdio(E) i2c_algo_bit(E) i2c_designware_platform(E) xgene_hwmon(E) i2c_designware_core(E) dm_mirror(E) dm_region_hash(E) dm_log(E) dm_mod(E)
-[  225.807902] CPU: 61 PID: 7794 Comm: iperf3 Kdump: loaded Tainted: G            E      6.10.0-rc4+ #1
-[  225.817021] Hardware name: LTHPC GR2134/MP32-AR2-LT, BIOS F31j (SCP: 2.10.20220531) 08/01/2022
-[  225.825618] pstate: 00400009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[  225.832566] pc : __arch_copy_to_user+0x4c/0x240
-[  225.837088] lr : _copy_to_iter+0x104/0x518
-[  225.841173] sp : ffff80010978f6e0
-[  225.844474] x29: ffff80010978f730 x28: 0000000000007388 x27: 4775e625f68aa42c
-[  225.851597] x26: 0000000000000001 x25: 00000000000005a8 x24: 00000000000005a8
-[  225.858720] x23: 0000000000007388 x22: ffff80010978fa60 x21: ffff80010978fa60
-[  225.865842] x20: 4775e625f68aa42c x19: 0000000000007388 x18: 0000000000000000
-[  225.872964] x17: 0000000000000000 x16: 0000000000000000 x15: 4775e625f68aa42c
-[  225.880087] x14: aaa03e61c262c44f x13: 5fb01a5ebded22da x12: 415feff815830f22
-[  225.887209] x11: 7411a8ffaab6d3d7 x10: 95af4645d12e6d70 x9 : ffffba83c2faddac
-[  225.894332] x8 : c1cbcc6e9552ed64 x7 : dfcefe933cdc57ae x6 : 0000fffde5aa9e80
-[  225.901454] x5 : 0000fffde5ab1208 x4 : 0000000000000004 x3 : 0000000000016180
-[  225.908576] x2 : 0000000000007384 x1 : 4775e625f68aa42c x0 : 0000fffde5aa9e80
-[  225.915699] Call trace:
-[  225.918132]  __arch_copy_to_user+0x4c/0x240
-[  225.922304]  simple_copy_to_iter+0x4c/0x78
-[  225.926389]  __skb_datagram_iter+0x18c/0x270
-[  225.930647]  skb_copy_datagram_iter+0x4c/0xe0
-[  225.934991]  tcp_recvmsg_locked+0x59c/0x9a0
-[  225.939162]  tcp_recvmsg+0x78/0x1d0
-[  225.942638]  inet6_recvmsg+0x54/0x128
-[  225.946289]  sock_recvmsg+0x78/0xd0
-[  225.949766]  sock_read_iter+0x98/0x108
-[  225.953502]  vfs_read+0x2a4/0x318
-[  225.956806]  ksys_read+0xec/0x110
-[  225.960108]  __arm64_sys_read+0x24/0x38
-[  225.963932]  invoke_syscall.constprop.0+0x80/0xe0
-[  225.968624]  do_el0_svc+0xc0/0xe0
-[  225.971926]  el0_svc+0x48/0x1b0
-[  225.975056]  el0t_64_sync_handler+0x13c/0x158
-[  225.979400]  el0t_64_sync+0x1a4/0x1a8
-[  225.983051] Code: 78402423 780008c3 910008c6 36100084 (b8404423)
-[  225.989132] SMP: stopping secondary CPUs
-[  225.995919] Starting crashdump kernel...
-[  225.999829] Bye!
-
-I was able to find out this is actually a regression introduced in 6.3-rc1
-and was able to bisect it down to commit:
-
-commit 1dc1a7e7f4108bad4af4c7c838f963d342ac0544
-Author: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Date:   Tue Jan 31 21:44:59 2023 +0100
-
-     ice: Centrallize Rx buffer recycling
-
-     Currently calls to ice_put_rx_buf() are sprinkled through
-     ice_clean_rx_irq() - first place is for explicit flow director's
-     descriptor handling, second is after running XDP prog and the last one
-     is after taking care of skb.
-
-     1st callsite was actually only for ntc bump purpose, as Rx buffer to be
-     recycled is not even passed to a function.
-
-     It is possible to walk through Rx buffers processed in particular NAPI
-     cycle by caching ntc from beginning of the ice_clean_rx_irq().
-
-     To do so, let us store XDP verdict inside ice_rx_buf, so action we need
-     to take on will be known. For XDP prog absence, just store ICE_XDP_PASS
-     as a verdict.
-
-     Signed-off-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-     Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-     Reviewed-by: Alexander Lobakin <alexandr.lobakin@intel.com>
-     Link: https://lore.kernel.org/bpf/20230131204506.219292-7-maciej.fijalkowski@intel.com
-
-Some interesting/important information:
-
-  * Issue doesn't reproduce when:
-     - The kernel is configured w/ 4k pages
-     - UDP is used (ie. iperf3 -c <server> -u -b 0)
-     - legacy-rx is set
-  * The NIC firmware is version 4.30 (we haven't figured out how to update it from arm)
-
-By taking a quick look at the code, ICE_LAST_OFFSET in ice_can_reuse_rx_page() seems
-wrong since Rx buffers are 3k w/ bigger page sizes but just changing it to
-ICE_RXBUF_3072 doesn't fix the issue.
-
-Could you please help taking a look?
-
-Thanks!
-
+I think that capping utilization to max capacity generates some energy
+estimation error because it filters the fact that we run longer in
+some cases.
 
