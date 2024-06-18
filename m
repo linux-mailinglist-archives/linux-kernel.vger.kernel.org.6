@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-219870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA1390D93A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:29:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C693A90D937
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B84C81F22A7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBF5E1C24817
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2D556773;
-	Tue, 18 Jun 2024 16:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB426F30B;
+	Tue, 18 Jun 2024 16:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="hLs1EMY3"
-Received: from forward501c.mail.yandex.net (forward501c.mail.yandex.net [178.154.239.209])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XenkW4WI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8976770E4;
-	Tue, 18 Jun 2024 16:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9452555E48
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718728170; cv=none; b=fqcPiy8xOX2QNaV7UkX0OpLRFS0ak8gfyK14Umb9OFhC8z/zkhezqCXocOxrAMvd7lQsKOxBtCNfA/2O+cFGqfpBIDysMLfU24/koT1jyMrhQLa52SOe+7HnKalZ755iMzElFlHVAPuvSI/JQRx2RTYp1YrZxNhmvPTrek68qtE=
+	t=1718728164; cv=none; b=ui6+4eKKZJcrZ4xisHWEc8vcFKJyHikbtyuBBmfNhlAVlb3ALQyhrQFvq5w9xHk/NztoJ+hb9rT3iVMPM41Hcqy/w2pUj/9CjMLZbKEzv03PE0bEjuYaj2kx/pPxc+2AFflSnMf7rzXOWXtU6hDRNIz73urhzpdF5ZDE7+zc//o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718728170; c=relaxed/simple;
-	bh=NNATBtdDMGXed2giCTW1DwB6fcduOtiFaUb75X7xHFg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=R2ZmQJZTrY/aMwt2ou2Xa/7zdKeKMaTaoJ9G33XciysYCqZ4/DFHo/seBwKYEJYzF3ashVcipA+PhaWfgjefGK0o1BsY7e45hBv0j1ePjyXvwxAggedsvc+LzzTD6J5uK2YqL5JgfDZx9LnZrpX06GunJcsKUWnz70ahC75usH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=hLs1EMY3; arc=none smtp.client-ip=178.154.239.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Received: from mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:2146:0:640:e7:0])
-	by forward501c.mail.yandex.net (Yandex) with ESMTPS id 93E42613FE;
-	Tue, 18 Jun 2024 19:29:18 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id HTLk6SYoLqM0-BYs3NsdX;
-	Tue, 18 Jun 2024 19:29:18 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1718728158; bh=NNATBtdDMGXed2giCTW1DwB6fcduOtiFaUb75X7xHFg=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=hLs1EMY3K9bnMNXLJVXLcZcgwgn0K422xeCa9z+LXiA3YAiYLcIticJ54ttbQiRjP
-	 o76du3OpqHVXI3rX63EESDRT2+Lfjplx38d8+f8EFu+re6dYOa2aIZMRROH+iWbIUq
-	 PeDoACEdqbPk6OvOc+4RF1JhWsbKh1SpMzr5Vtfo=
-Authentication-Results: mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <6f9b86b6b79ca0fe7f0379e0e6c6bde4c4e07652.camel@maquefel.me>
-Subject: Re: [PATCH v10 04/38] pinctrl: add a Cirrus ep93xx SoC pin
- controller
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Arnd Bergmann
-	 <arnd@arndb.de>
-Date: Tue, 18 Jun 2024 19:29:17 +0300
-In-Reply-To: <CACRpkda_uMuk4AFOdQSPTWXuibH7nE3R_qSnrecboczddQw+uA@mail.gmail.com>
-References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
-	 <20240617-ep93xx-v10-4-662e640ed811@maquefel.me>
-	 <CACRpkda_uMuk4AFOdQSPTWXuibH7nE3R_qSnrecboczddQw+uA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1718728164; c=relaxed/simple;
+	bh=vuW5h/oY0hHvI7hND/3jeKMG7BATBbLvHjWp3v/iu08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxYnO959dZ+nX7ms4Pb94RBDoMxmLE27f+qXSBQbvXwketdhYdjqkwiDIZDlv9wy/Xtf19ntm6Jb/mqW/KAFTl6lDsIGKT5SJCx+cJMYtc6/U8D7VY1VDfPwyRQh5z9b8gZSPV/NXTHimnSO6/oo1S1X2is78PpvdCum037XCok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XenkW4WI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A114C3277B;
+	Tue, 18 Jun 2024 16:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718728164;
+	bh=vuW5h/oY0hHvI7hND/3jeKMG7BATBbLvHjWp3v/iu08=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=XenkW4WI8qQpvw4PWBNcQoUDMwxOt0AT51XCUUufyfmoT8njV1lULMb6d4Zv9+KkR
+	 AJ6cBMEN2MuHnuE0ss54UKrQqQQbqM5idtsRgdqoWTrkZUcfxIvKDL7hckt4GaMr5P
+	 NZTTYdbQajmapzVjcPjX8cR6PAFFdY0trZAXwW94ZFXWwNcuBdbdyF51UND3YOo3f/
+	 jOXbNO4YgtSuZVheUCW/oNVN84DDmLjzQ7I1uWg1iv+xLk7xcY5lIQnEjn3YiPWCSs
+	 9KmeitmJJhHJPK+GDTMBgb9k4DVBXa9U9B0acM95HC8/42lPTgncqzlatbIvzC7IVJ
+	 nWMnyRKXDDfEA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 129B4CE05B6; Tue, 18 Jun 2024 09:29:24 -0700 (PDT)
+Date: Tue, 18 Jun 2024 09:29:24 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, torvalds@linux-foundation.org,
+	rostedt@goodmis.org, mark.rutland@arm.com, juri.lelli@redhat.com,
+	joel@joelfernandes.org, raghavendra.kt@amd.com,
+	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH v2 16/35] preempt,rcu: warn on PREEMPT_RCU=n, preempt=full
+Message-ID: <c8c992d4-374a-4b7c-bafd-1e12d5506bc0@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
+ <20240528003521.979836-17-ankur.a.arora@oracle.com>
+ <20240529081404.GI26599@noisy.programming.kicks-ass.net>
+ <8734py6gvq.fsf@oracle.com>
+ <c6b5a5e4-e14e-4fbb-84af-75d4035ced32@paulmck-laptop>
+ <20240606115325.GD8774@noisy.programming.kicks-ass.net>
+ <c32af67a-a107-44d4-981d-53c6ed583d7e@paulmck-laptop>
+ <a3560a75-57ca-4c95-a152-2edae47b306d@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a3560a75-57ca-4c95-a152-2edae47b306d@paulmck-laptop>
 
-Hello Linus!
+On Mon, Jun 17, 2024 at 08:54:49AM -0700, Paul E. McKenney wrote:
+> On Thu, Jun 06, 2024 at 06:38:57AM -0700, Paul E. McKenney wrote:
+> > On Thu, Jun 06, 2024 at 01:53:25PM +0200, Peter Zijlstra wrote:
+> > > On Thu, May 30, 2024 at 04:20:26PM -0700, Paul E. McKenney wrote:
+> > > 
+> > > > My selfish motivation here is to avoid testing this combination unless
+> > > > and until someone actually has a good use for it.
+> > > 
+> > > That doesn't make sense, the whole LAZY thing is fundamentally identical
+> > > to FULL, except it sometimes delays the preemption a wee bit. But all
+> > > the preemption scenarios from FULL are possible.
+> > 
+> > As noted earlier in this thread, this is not the case for non-preemptible
+> > RCU, which disables preemption across its read-side critical sections.
+> > In addition, from a performance/throughput viewpoint, it is not just
+> > the possibility of preemption that matters, but also the probability.
+> > 
+> > > As such, it makes far more sense to only test FULL.
+> > 
+> > You have considerable work left to do in order to convince me of this one.
+> 
+> On the other hand, it does make sense to select Tiny SRCU for all !SMP
+> kernels, whether preemptible or not.
 
-On Tue, 2024-06-18 at 12:27 +0200, Linus Walleij wrote:
-> On Mon, Jun 17, 2024 at 11:38=E2=80=AFAM Nikita Shubin via B4 Relay
-> <devnull+nikita.shubin.maquefel.me@kernel.org> wrote:
->=20
-> > From: Nikita Shubin <nikita.shubin@maquefel.me>
-> >=20
-> > Add a pin control (only multiplexing) driver for ep93xx SoC so
-> > we can fully convert ep93xx to device tree.
-> >=20
-> > This driver is capable of muxing ep9301/ep9302/ep9307/ep9312/ep9315
-> > variants, this is chosen based on "compatible" in device tree.
-> >=20
-> > Co-developed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> > Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->=20
-> Is this patch dependent on the other patches or something I can just
-> apply?
+Except that testing made a liar out of me.  SRCU priority boosting would
+be required.  So this one is also strictly for pre-testing lazy
+preemption.
 
-Well... it won't work without DT and:
+As usual, it seemed like a good idea at the time...  ;-)
 
-- ARM: ep93xx: add regmap aux_dev
-- soc: Add SoC driver for Cirrus ep93xx
+							Thanx, Paul
 
-And the above will complain if
-
-- dt-bindings: soc: Add Cirrus EP93xx
-
-is missing.
-
-It's harmless and won't be compiled with current platform code, but
-will fail to compile if "ARM: ep93xx: add regmap aux_dev" is missing.
-
-
->=20
-> Yours,
-> Linus Walleij
-
+>                                       And it also makes sense to test
+> (but not *only* test and definitely *not* support) non-preemptible
+> RCU running in a preemptible kernel, perhaps as a one-off, perhaps
+> longer term.  The point being of course that the increased preemption
+> rate of a fully preemptible kernel should uncover bugs that might appear
+> in lazy-preemptible kernels only very rarely.
+> 
+> This might have been what you were getting at, and if so, apologies!
+> But in my defense, you did say "only test FULL" above.  ;-)
+> 
+> 							Thanx, Paul
 
