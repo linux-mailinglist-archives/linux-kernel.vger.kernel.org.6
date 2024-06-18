@@ -1,155 +1,175 @@
-Return-Path: <linux-kernel+bounces-219311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B35190CCBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:55:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5BE90CD26
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69CC11C20CAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1B3E28103F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D26119B5AD;
-	Tue, 18 Jun 2024 12:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A869D155A32;
+	Tue, 18 Jun 2024 12:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ykziTRJg"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6nwjaSa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE6D19047A;
-	Tue, 18 Jun 2024 12:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF91C2139A4;
+	Tue, 18 Jun 2024 12:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714381; cv=none; b=Yp1C/6mAOjCmGc10d8HVy1mSNenmsXYQzP9fbX/7bHA5X6tEumpTl17/pZJxk3fDYo5/sw4oSTaXYtWX1QCXe8A65fx+I5NotZ05FUUGHOjkPZC/T48wcAHBFwt1t7TQR9HWvNuvebh/rpozHt3aNVInRAATm+6x+KDHs6jndcU=
+	t=1718714421; cv=none; b=Ya+sDAKuzFwSPEf3jF9hYO+oxgU0EzspA5gtXYgFxClV7YUPoZJ3o4J1VcP1yLx4BsQUwy92FjjmysrYYpedGp8NonuAPGhj4JpRHSG30g4Ug8qP99MsoAtD7CQrsFARojWcCmSNDIYwZNZFL1D8cQnlmKK7FEfmR/iK9cjzU1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714381; c=relaxed/simple;
-	bh=e+/mKXkRdPvjBlGr8XNXuV89ZJiYt/k+nMVYcqGYbKw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hWU2mwnLGpEB2Qiy3P78uOtyG9BE4xcNofpXCzito+tiNFKegZTRNUVFTyEs67VLYlxvRii4sqTdwBeLeqkYVsZz7t0pbWdksHmbKlbYjd963ev/x+qF2VmuW372NS7n9KRoZUWOhYaPPR7t0Vpm1R0WH30FXM+wFnriRG8D83Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ykziTRJg; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718714377;
-	bh=e+/mKXkRdPvjBlGr8XNXuV89ZJiYt/k+nMVYcqGYbKw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ykziTRJg5Cai9lwNaWd4iGmTspqKZ/8uEq0NJOinsUZaTJgQRSq9nxRGFRXZOYqmq
-	 YwhMr3wTp0AjvEfb9B3pBj5Vclj264bU9APaHtq6XukCY5kJ/RMHnx4x6lL79m9Wif
-	 S95liCtyqX19lDj8euZlkjQ1vHZwmmU8DQNQnTMf4B+jqI+K2+7YijGPS1Ew6GU0uL
-	 U2kd1m6VD36AVzTp6dKuDvLFaDKR7zhAPLkrEBQcMywh6jLNA7jwqN7tXuVpEsrSno
-	 lm7dympUxa9TLpwKZWHrL2SzRElJLcNHLAP49S39FbDGis4BWJTiT3TReI8UjdpWOX
-	 pYRom/Y1ib8gQ==
-Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B09F73780BDB;
-	Tue, 18 Jun 2024 12:39:34 +0000 (UTC)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Jianfeng Liu <liujianfeng1994@gmail.com>
-Cc: alchark@gmail.com, andy.yan@rock-chips.com, conor+dt@kernel.org,
- cristian.ciocaltea@collabora.com, devicetree@vger.kernel.org,
- didi.debian@cknow.org, dsimic@manjaro.org, gregkh@linuxfoundation.org,
- heiko@sntech.de, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
- liujianfeng1994@gmail.com, mchehab@kernel.org, nicolas@ndufresne.ca,
- robh@kernel.org, sebastian.reichel@collabora.com
-Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
-Date: Tue, 18 Jun 2024 08:39:07 -0400
-Message-ID: <4302165.yKVeVyVuyW@arisu>
-Organization: Collabora
-In-Reply-To: <20240618121329.79936-1-liujianfeng1994@gmail.com>
-References:
- <4116468.VLH7GnMWUR@arisu> <20240618121329.79936-1-liujianfeng1994@gmail.com>
+	s=arc-20240116; t=1718714421; c=relaxed/simple;
+	bh=MUpmA9MZ4i76S7YO4RwWYwYhCpJTtuZDBDgbMrW0AAk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tr1J7od/Z6dcquej8RovxYcVnJ+a4ka0cWxFgfEXn5XYkdipJKsyoVDYCS6Y1Xbxcskgq2lDolvZ4APWsJ/drju68+W7FJ/OP7pOFZF9pUjcG7Fym9H0FAZMWXAdNKoxdi6omfl5lc/GKDmeYWe6r73YF1VsQKBaBXW99zJi8EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6nwjaSa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BDEBC3277B;
+	Tue, 18 Jun 2024 12:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718714420;
+	bh=MUpmA9MZ4i76S7YO4RwWYwYhCpJTtuZDBDgbMrW0AAk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=f6nwjaSa+7IYC+iDRxbJkfme21lTe/BE++FRgwgcJKEWBLy3tVv+L9AA1OeyjlEMM
+	 xn0W8dSJ+zHtevzCSwqkv/51sE3027GBVGaKYJKBgze6dI+JKrw2xXvcHo71XOvrta
+	 ek/X4jXjl4C0TNBf4T9x9JKe6yb6Eg9kDYEhcOORIUBW8jXNO+pQDl9Z3JVamEQmzP
+	 4CZshPJOx4/Iu721cngJGx6Nd5cL8ddgvZ4VXgmKg4bt7xAQrawPWzUoBnIsbnQERC
+	 UuhBI2WTdroag9ZZluhTRZerxZl/slgSmMkrQoD83vMQyuBMXooFimZ0m3V116yRjv
+	 Ea9KHZEBIAdCA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Martin Wilck <martin.wilck@suse.com>,
+	Rajashekhar M A <rajs@netapp.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Mike Christie <michael.christie@oracle.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	James.Bottomley@HansenPartnership.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 01/29] scsi: core: alua: I/O errors for ALUA state transitions
+Date: Tue, 18 Jun 2024 08:39:27 -0400
+Message-ID: <20240618124018.3303162-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4472750.OBFZWjSADL";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.94
+Content-Transfer-Encoding: 8bit
 
---nextPart4472750.OBFZWjSADL
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Jianfeng Liu <liujianfeng1994@gmail.com>
-Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
-Date: Tue, 18 Jun 2024 08:39:07 -0400
-Message-ID: <4302165.yKVeVyVuyW@arisu>
-Organization: Collabora
-In-Reply-To: <20240618121329.79936-1-liujianfeng1994@gmail.com>
-MIME-Version: 1.0
+From: Martin Wilck <martin.wilck@suse.com>
 
-On Tuesday, June 18, 2024 8:13:29 A.M. EDT Jianfeng Liu wrote:
-> Hi Detlev,
-> 
-> On Fri, 14 Jun 2024 21:56:27 -0400, Detlev Casanova wrote:
-> >+		.frmsize = {
-> >+			.min_width = 16,
-> >+			.max_width =  65520,
-> >+			.step_width = 16,
-> >+			.min_height = 16,
-> >+			.max_height =  65520,
-> >+			.step_height = 16,
-> >+		},
-> 
-> I think the min/max width/height are incorrect. From rockchip's TRM V1.0
-> Part1 page 374, supported image size is 64x64 to 65472x65472.
+[ Upstream commit 10157b1fc1a762293381e9145041253420dfc6ad ]
 
-Page 374 shows the sizes for h265. h264 is the next table, where 16x16 and 
-65520x65520 is documented.
+When a host is configured with a few LUNs and I/O is running, injecting FC
+faults repeatedly leads to path recovery problems.  The LUNs have 4 paths
+each and 3 of them come back active after say an FC fault which makes 2 of
+the paths go down, instead of all 4. This happens after several iterations
+of continuous FC faults.
 
-> And my
-> chromium can't use rkvdec2 because min width/height are set to 16, which
-> 
-> will cause error at here in rkvdec2_h264_validate_sps:
-> >+	if (width > ctx->coded_fmt.fmt.pix_mp.width ||
-> >+	    height > ctx->coded_fmt.fmt.pix_mp.height)
-> >+		return -EINVAL;
-> 
-> width is 16, height is 32 while ctx->coded_fmt.fmt.pix_mp.width and
-> ctx->coded_fmt.fmt.pix_mp.height are both 16.
+Reason here is that we're returning an I/O error whenever we're
+encountering sense code 06/04/0a (LOGICAL UNIT NOT ACCESSIBLE, ASYMMETRIC
+ACCESS STATE TRANSITION) instead of retrying.
 
-Maybe
+[mwilck: The original patch was developed by Rajashekhar M A and Hannes
+Reinecke. I moved the code to alua_check_sense() as suggested by Mike
+Christie [1]. Evan Milne had raised the question whether pg->state should
+be set to transitioning in the UA case [2]. I believe that doing this is
+correct. SCSI_ACCESS_STATE_TRANSITIONING by itself doesn't cause I/O
+errors. Our handler schedules an RTPG, which will only result in an I/O
+error condition if the transitioning timeout expires.]
 
-if (!(sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY))
-	height *= 2;
+[1] https://lore.kernel.org/all/0bc96e82-fdda-4187-148d-5b34f81d4942@oracle.com/
+[2] https://lore.kernel.org/all/CAGtn9r=kicnTDE2o7Gt5Y=yoidHYD7tG8XdMHEBJTBraVEoOCw@mail.gmail.com/
 
-is causing issues in this case, I can check.
+Co-developed-by: Rajashekhar M A <rajs@netapp.com>
+Co-developed-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Martin Wilck <martin.wilck@suse.com>
+Link: https://lore.kernel.org/r/20240514140344.19538-1-mwilck@suse.com
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Mike Christie <michael.christie@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/device_handler/scsi_dh_alua.c | 31 +++++++++++++++-------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
 
-> After changing them to 64 my chromium can use rkvdec2 to decode h264
-> videos now.
-> 
-> Anyway many thanks to your amazing work!
-> 
-> Best regards,
-> Jianfeng
-
-
---nextPart4472750.OBFZWjSADL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmZxf+sACgkQ5EFKUk4x
-7bYJOAf/Zme2uxfjX+cwsN758W5amw+QvLxn04CfI871RZj09w3zEbV6ZQ1ZYAPg
-mG4XI/KLEUI/tDA0AX6DvEkK0K81bxsoPx+NTzH7sMpeoyq52NtrscARBNUE+jrW
-hiMntPl1ZnnQub2q4K36Lvdiao7vdsM4xBQZC+bq2qo/CaaSY1KvJou6wsgMvug9
-lVVfhHT9EO2bpYntOpZgjJlleNCu6V1lN/b9VhKOFMxCAYhBKDMxXWnfJrx2J8sL
-ATZ68cdCoNSIC7xLlcMfOUzVM8lfTG/dvW8e+VLsoBBbX4FWll8Pk2wKC8r2/Sw8
-/+doLEMSMZG4MUevBqAHFpjkXgkMbA==
-=KICS
------END PGP SIGNATURE-----
-
---nextPart4472750.OBFZWjSADL--
-
-
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index 0781f991e7845..f5fc8631883d5 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -406,28 +406,40 @@ static char print_alua_state(unsigned char state)
+ 	}
+ }
+ 
+-static enum scsi_disposition alua_check_sense(struct scsi_device *sdev,
+-					      struct scsi_sense_hdr *sense_hdr)
++static void alua_handle_state_transition(struct scsi_device *sdev)
+ {
+ 	struct alua_dh_data *h = sdev->handler_data;
+ 	struct alua_port_group *pg;
+ 
++	rcu_read_lock();
++	pg = rcu_dereference(h->pg);
++	if (pg)
++		pg->state = SCSI_ACCESS_STATE_TRANSITIONING;
++	rcu_read_unlock();
++	alua_check(sdev, false);
++}
++
++static enum scsi_disposition alua_check_sense(struct scsi_device *sdev,
++					      struct scsi_sense_hdr *sense_hdr)
++{
+ 	switch (sense_hdr->sense_key) {
+ 	case NOT_READY:
+ 		if (sense_hdr->asc == 0x04 && sense_hdr->ascq == 0x0a) {
+ 			/*
+ 			 * LUN Not Accessible - ALUA state transition
+ 			 */
+-			rcu_read_lock();
+-			pg = rcu_dereference(h->pg);
+-			if (pg)
+-				pg->state = SCSI_ACCESS_STATE_TRANSITIONING;
+-			rcu_read_unlock();
+-			alua_check(sdev, false);
++			alua_handle_state_transition(sdev);
+ 			return NEEDS_RETRY;
+ 		}
+ 		break;
+ 	case UNIT_ATTENTION:
++		if (sense_hdr->asc == 0x04 && sense_hdr->ascq == 0x0a) {
++			/*
++			 * LUN Not Accessible - ALUA state transition
++			 */
++			alua_handle_state_transition(sdev);
++			return NEEDS_RETRY;
++		}
+ 		if (sense_hdr->asc == 0x29 && sense_hdr->ascq == 0x00) {
+ 			/*
+ 			 * Power On, Reset, or Bus Device Reset.
+@@ -494,7 +506,8 @@ static int alua_tur(struct scsi_device *sdev)
+ 
+ 	retval = scsi_test_unit_ready(sdev, ALUA_FAILOVER_TIMEOUT * HZ,
+ 				      ALUA_FAILOVER_RETRIES, &sense_hdr);
+-	if (sense_hdr.sense_key == NOT_READY &&
++	if ((sense_hdr.sense_key == NOT_READY ||
++	     sense_hdr.sense_key == UNIT_ATTENTION) &&
+ 	    sense_hdr.asc == 0x04 && sense_hdr.ascq == 0x0a)
+ 		return SCSI_DH_RETRY;
+ 	else if (retval)
+-- 
+2.43.0
 
 
