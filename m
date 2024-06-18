@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-219315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8242890CCC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:56:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A3290CCCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805C01C22AB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:56:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD0A82826CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CFF19DF9C;
-	Tue, 18 Jun 2024 12:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3D9155346;
+	Tue, 18 Jun 2024 12:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0a+6NT6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrmqJuKc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8642A19D062;
-	Tue, 18 Jun 2024 12:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4D719DFAF;
+	Tue, 18 Jun 2024 12:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714389; cv=none; b=jtNaLHDbKGJQMYhgGClh7oNtfqgKypwT0oXvhG5Ub4lthhNv5EX53OmF3bGx59cWyRvbyPAJn3PQAl6Sssx/WHxEA+NlpfvuPGYWsVwjF5snTFhD7AxO9dnxcFgeihFG+5IVzua5NCwM9mUYRDYqM7xgbuhlvjfvwRSiX+3IGUM=
+	t=1718714391; cv=none; b=O/kA+lNJSeqIFnIM1tEiTyVwSKnEpvKXkUKx+7DDtO1Yn0jbe0ww6h4w83WnlsFwX3+oYlc4l47p13hSChplb3Lw2zE/nWpD/P2d7dzShdJFc/8bz5d0hYVkty7e2EPYGVbzLO7LCO1NKoauAfRCJFDP4fsf6lIQ7Aqzn1nwnEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714389; c=relaxed/simple;
-	bh=o8dDAS7xYpYRWkj98g8+2z2aAJMviobaRTNS+Fya9oA=;
+	s=arc-20240116; t=1718714391; c=relaxed/simple;
+	bh=xKbLMgiN5IAoLyVRzguxR4ESonXkAZtyPLydiw8fPjI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PC95vejvpx8TBNfOiDTnb5YsY4UqA080V9R/wLoDL1LDqInsfVTRgxkN0PUad7w4bKqFOULs/yyeKhjpxzYWEqL14QxKZrJDKq0fHOMkQAx87KTDt4gWt44oQ4nFQb4aeTAYqE/7WHudHLPgsUfxwq35Y0pahg2c/ARXEth8/nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0a+6NT6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03B0C3277B;
-	Tue, 18 Jun 2024 12:39:48 +0000 (UTC)
+	 MIME-Version; b=Ys0Rmv0VV/RzPgrH+L7lpNaQHOxNAvRZppTgS4c4g3U95G+x1n9ZPUJ/afyxt8IwWFGaIOSjpWfx2g2YhHimePdeC0P9NUEkO383hEBlrUJ4zY6BsKmYj7XaUhJvB4xk+pWaMebYAuzQL/WAZ2MDmV3Pqr4y02hD6h4ERTvhm5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrmqJuKc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F32DEC4AF48;
+	Tue, 18 Jun 2024 12:39:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718714389;
-	bh=o8dDAS7xYpYRWkj98g8+2z2aAJMviobaRTNS+Fya9oA=;
+	s=k20201202; t=1718714390;
+	bh=xKbLMgiN5IAoLyVRzguxR4ESonXkAZtyPLydiw8fPjI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H0a+6NT6Anj/FpDwh3UvVw9sI1qTb4nf2P+Scav0k7+UKh/tE6h0nZ7KSGn+05dbw
-	 SFf7uMu1Zqbid/oQw7uy6KJreFB6A97qurzcgkSvK9l0ETrXjlsL5dPfdfeJsR9w+e
-	 +4DTrlQv1F+CquWNw1RMuxqy+LRJStmmFJMSP+QKfyTE3gNDAvNaHQbfMrC8YVEfbW
-	 bLqzXa5WxSDYBtNO0BraOvWEsP0Dw6PENq0kZk1CeqNogkU3eQggylzdyWenKxGdW0
-	 zpZsCLibSg63PlGsxhGr/GUd+ZccBSeNYqgn/QnUm9tJZjesrnQ5mDp3RBwVqWcLeV
-	 QS429g3GN9bAw==
+	b=QrmqJuKcZ2yDD8+qyYRwBwSTx9nJv6kLeYVvCkbEvnfwpFQ1QIt4ZgXzOR5RAbA8V
+	 et/S3XBmOK0tI1qEw6uOEh39F3ypWU3sGpfVS/y449SHrx5BVQZLGF42vZVx/TU2LD
+	 TqVSNEdvCizQQOlYy3W+sCxMc+XK92U0dIEcfm37Pv2pAQTRit0jy78MqeX2HNeYSy
+	 6tOcxu0L6jKoHNrVXFIrr3W4YkCUBYadD3yk3rpF817c9NOVtcKRD5WqfV0anccx9K
+	 4NJX5eGzQmwD+xU9LRd8ZGqB+MsETc4JHclDfixGEeZktIsakFVt+ycWO0IFMIYCcW
+	 wC5ZUfZ9ztHZA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
+Cc: Aseda Aboagye <aaboagye@chromium.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Benjamin Tissoires <bentiss@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 32/35] kconfig: remove wrong expr_trans_bool()
-Date: Tue, 18 Jun 2024 08:37:52 -0400
-Message-ID: <20240618123831.3302346-32-sashal@kernel.org>
+	jikos@kernel.org,
+	linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 33/35] input: Add event code for accessibility key
+Date: Tue, 18 Jun 2024 08:37:53 -0400
+Message-ID: <20240618123831.3302346-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240618123831.3302346-1-sashal@kernel.org>
 References: <20240618123831.3302346-1-sashal@kernel.org>
@@ -64,156 +66,61 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.34
 Content-Transfer-Encoding: 8bit
 
-From: Masahiro Yamada <masahiroy@kernel.org>
+From: Aseda Aboagye <aaboagye@chromium.org>
 
-[ Upstream commit 77a92660d8fe8d29503fae768d9f5eb529c88b36 ]
+[ Upstream commit 0c7dd00de018ff70b3452c424901816e26366a8a ]
 
-expr_trans_bool() performs an incorrect transformation.
+HUTRR116 added support for a new usage titled "System Accessibility
+Binding" which toggles a system-wide bound accessibility UI or command.
+This commit simply adds a new event code for the usage.
 
-[Test Code]
-
-    config MODULES
-            def_bool y
-            modules
-
-    config A
-            def_bool y
-            select C if B != n
-
-    config B
-            def_tristate m
-
-    config C
-            tristate
-
-[Result]
-
-    CONFIG_MODULES=y
-    CONFIG_A=y
-    CONFIG_B=m
-    CONFIG_C=m
-
-This output is incorrect because CONFIG_C=y is expected.
-
-Documentation/kbuild/kconfig-language.rst clearly explains the function
-of the '!=' operator:
-
-    If the values of both symbols are equal, it returns 'n',
-    otherwise 'y'.
-
-Therefore, the statement:
-
-    select C if B != n
-
-should be equivalent to:
-
-    select C if y
-
-Or, more simply:
-
-    select C
-
-Hence, the symbol C should be selected by the value of A, which is 'y'.
-
-However, expr_trans_bool() wrongly transforms it to:
-
-    select C if B
-
-Therefore, the symbol C is selected by (A && B), which is 'm'.
-
-The comment block of expr_trans_bool() correctly explains its intention:
-
-  * bool FOO!=n => FOO
-    ^^^^
-
-If FOO is bool, FOO!=n can be simplified into FOO. This is correct.
-
-However, the actual code performs this transformation when FOO is
-tristate:
-
-    if (e->left.sym->type == S_TRISTATE) {
-                             ^^^^^^^^^^
-
-While it can be fixed to S_BOOLEAN, there is no point in doing so
-because expr_tranform() already transforms FOO!=n to FOO when FOO is
-bool. (see the "case E_UNEQUAL" part)
-
-expr_trans_bool() is wrong and unnecessary.
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Aseda Aboagye <aaboagye@chromium.org>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Link: https://lore.kernel.org/r/Zl-e97O9nvudco5z@google.com
+Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kconfig/expr.c | 29 -----------------------------
- scripts/kconfig/expr.h |  1 -
- scripts/kconfig/menu.c |  2 --
- 3 files changed, 32 deletions(-)
+ drivers/hid/hid-debug.c                | 1 +
+ drivers/hid/hid-input.c                | 1 +
+ include/uapi/linux/input-event-codes.h | 1 +
+ 3 files changed, 3 insertions(+)
 
-diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
-index 81ebf8108ca74..81dfdf4470f75 100644
---- a/scripts/kconfig/expr.c
-+++ b/scripts/kconfig/expr.c
-@@ -396,35 +396,6 @@ static struct expr *expr_eliminate_yn(struct expr *e)
- 	return e;
- }
+diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+index 7dd83ec74f8a9..c629ab161d5b2 100644
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -974,6 +974,7 @@ static const char *keys[KEY_MAX + 1] = {
+ 	[KEY_CAMERA_ACCESS_ENABLE] = "CameraAccessEnable",
+ 	[KEY_CAMERA_ACCESS_DISABLE] = "CameraAccessDisable",
+ 	[KEY_CAMERA_ACCESS_TOGGLE] = "CameraAccessToggle",
++	[KEY_ACCESSIBILITY] = "Accessibility",
+ 	[KEY_DICTATE] = "Dictate",
+ 	[KEY_MICMUTE] = "MicrophoneMute",
+ 	[KEY_BRIGHTNESS_MIN] = "BrightnessMin",
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index e03d300d2bac4..d5a6e89c3086e 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -836,6 +836,7 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
+ 		if ((usage->hid & 0xf0) == 0xa0) {	/* SystemControl */
+ 			switch (usage->hid & 0xf) {
+ 			case 0x9: map_key_clear(KEY_MICMUTE); break;
++			case 0xa: map_key_clear(KEY_ACCESSIBILITY); break;
+ 			default: goto ignore;
+ 			}
+ 			break;
+diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+index 03edf2ccdf6c8..39f11ec676fae 100644
+--- a/include/uapi/linux/input-event-codes.h
++++ b/include/uapi/linux/input-event-codes.h
+@@ -618,6 +618,7 @@
+ #define KEY_CAMERA_ACCESS_ENABLE	0x24b	/* Enables programmatic access to camera devices. (HUTRR72) */
+ #define KEY_CAMERA_ACCESS_DISABLE	0x24c	/* Disables programmatic access to camera devices. (HUTRR72) */
+ #define KEY_CAMERA_ACCESS_TOGGLE	0x24d	/* Toggles the current state of the camera access control. (HUTRR72) */
++#define KEY_ACCESSIBILITY		0x24e	/* Toggles the system bound accessibility UI/command (HUTRR116) */
  
--/*
-- * bool FOO!=n => FOO
-- */
--struct expr *expr_trans_bool(struct expr *e)
--{
--	if (!e)
--		return NULL;
--	switch (e->type) {
--	case E_AND:
--	case E_OR:
--	case E_NOT:
--		e->left.expr = expr_trans_bool(e->left.expr);
--		e->right.expr = expr_trans_bool(e->right.expr);
--		break;
--	case E_UNEQUAL:
--		// FOO!=n -> FOO
--		if (e->left.sym->type == S_TRISTATE) {
--			if (e->right.sym == &symbol_no) {
--				e->type = E_SYMBOL;
--				e->right.sym = NULL;
--			}
--		}
--		break;
--	default:
--		;
--	}
--	return e;
--}
--
- /*
-  * e1 || e2 -> ?
-  */
-diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-index 4a9a23b1b7e1f..fa38f9f263f7e 100644
---- a/scripts/kconfig/expr.h
-+++ b/scripts/kconfig/expr.h
-@@ -295,7 +295,6 @@ void expr_free(struct expr *e);
- void expr_eliminate_eq(struct expr **ep1, struct expr **ep2);
- int expr_eq(struct expr *e1, struct expr *e2);
- tristate expr_calc_value(struct expr *e);
--struct expr *expr_trans_bool(struct expr *e);
- struct expr *expr_eliminate_dups(struct expr *e);
- struct expr *expr_transform(struct expr *e);
- int expr_contains_symbol(struct expr *dep, struct symbol *sym);
-diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
-index 61c442d84aef4..69a77f308fdc1 100644
---- a/scripts/kconfig/menu.c
-+++ b/scripts/kconfig/menu.c
-@@ -380,8 +380,6 @@ void menu_finalize(struct menu *parent)
- 				dep = expr_transform(dep);
- 				dep = expr_alloc_and(expr_copy(basedep), dep);
- 				dep = expr_eliminate_dups(dep);
--				if (menu->sym && menu->sym->type != S_TRISTATE)
--					dep = expr_trans_bool(dep);
- 				prop->visible.expr = dep;
- 
- 				/*
+ #define KEY_BRIGHTNESS_MIN		0x250	/* Set Brightness to Minimum */
+ #define KEY_BRIGHTNESS_MAX		0x251	/* Set Brightness to Maximum */
 -- 
 2.43.0
 
