@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-218583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5508590C245
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:14:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A3F90C24E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 025821F22878
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:14:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 724DB1C21852
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC6F19B3EA;
-	Tue, 18 Jun 2024 03:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KjG1+4nY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191BF19B3FB;
+	Tue, 18 Jun 2024 03:18:49 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFA31DFEB;
-	Tue, 18 Jun 2024 03:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FC51C69D;
+	Tue, 18 Jun 2024 03:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718680450; cv=none; b=pjC5ey9xoIU8oztO2NWWOtfsJztdbVF9Sd2jukA8IRq2f6u9SfyfSl7zz2cJrUr/kapA5fLzZUywfWNPJc9Vt/JlWC0TBAzoL4A+C0futTQs60qVM7op9W8O2F49hlgl3Fzs73T6fOM7br/15y/3O2bZM22z8uulq7FjXQbmcC8=
+	t=1718680728; cv=none; b=uh4XGc9rwek5BVzvqXlG7W6hB3L2SJwI/d5SpawQyvg5Evh5RCXHYshiNbhgKEyfdcEO3CAMjJLfjm2QvQHl+ztKhndyAou7X7he3nnEK6iKptpT512zJHqla83fdbX5RTtAlgIHBPQbure1aPScv2EsAM1h5fxIvonjIWZEKCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718680450; c=relaxed/simple;
-	bh=ZzTCxu7koRB+Nmw6IKwYOl0SXXNWsr4vN6+VsDuP8qk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=DU9AtUCLCvzo4w36bWSlR47EIkFPYITqNhF8ojxEh0yYygtH+lKdzLDqza0T7RS51ApcZTvEsmWYH2Nyr8fMBNtxgHLhv/aHun4s210eAPXVBhZy+CPMJdsCkxc3aoQVGUzVrd99pF/TQ5/GHsyAtWSPIKNhxMjH83TcxZCHFaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KjG1+4nY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I2IP0o001468;
-	Tue, 18 Jun 2024 03:14:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=hV4bY1WLsZBbZpKik4z+Bk
-	QCIpEuzxZQpIxUKWtFThM=; b=KjG1+4nY1qCTmu84q9rMi9tDmbAkMxzzmUtB8l
-	eV4CXPjliiq3PADo948CmcNG1YLxtdDZzeT4twAWaeFUu7eVX72LxhzjR/Bw/8bg
-	y9PKdB8mVO5CAnZ2RAY6K3laguK1RusYyD2xXPRSUwdh1i+gQjrODDRCvSDRCK6Y
-	SpMT0ZJR49WwhRF9hnHF/6QasOzQB3D6cJeoSRLWuMAlrg5uFwM4lR5fp1Tx0+/m
-	4dKbQco7cMgmGpE91SosxN3YdAKSseAM8SOezmwUcDetjH8NHgGGXnVYG7XxTPt5
-	ooYtBSqxJel1s6PPCZkrGOQ3R7ndyaRYxF1SqID+nRnlKyKA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu1b0r30m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 03:14:05 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I3E4K2016277
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 03:14:04 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
- 2024 20:14:04 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 17 Jun 2024 20:14:03 -0700
-Subject: [PATCH] fbdev: amifb: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718680728; c=relaxed/simple;
+	bh=iJDZc9m2RG0x8XpdmbtTCaEIW8kUeEyAjdeRKO/SaTk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Iwqavsf+/VWdgubR8cZO3BfvcavZHIIfw3WgJ2UR6LvkBvrtyR8fjS+pt4kgWLwnR5WvpsoYtYvwwY5EvBocHjVGPfDQwirUw54cNyQZdx1iI8AZ8zJO52IJH5wpRBLKife3hLUQIqef3xQGmF+Tc1UPGK2YYCe2JHyPY51NUoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W3Bm36j0fz4f3kvt;
+	Tue, 18 Jun 2024 11:18:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A89321A0181;
+	Tue, 18 Jun 2024 11:18:39 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCXAQ+N_HBmFJj8AA--.12964S4;
+	Tue, 18 Jun 2024 11:18:39 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	tj@kernel.org,
+	gregkh@linuxfoundation.org,
+	bvanassche@acm.org,
+	hch@infradead.org,
+	josef@toxicpanda.com,
+	lizefan.x@bytedance.com,
+	hannes@cmpxchg.org
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH RFC v2 0/7] blk-iocost: support to build iocost as kernel module
+Date: Tue, 18 Jun 2024 11:17:44 +0800
+Message-Id: <20240618031751.3470464-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240617-md-m68k-drivers-video-fbdev-amifb-v1-1-85f74746ecd4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAHr7cGYC/x3NwQ6CMAyA4VchPdsEFIf6KsbDRjtpdMO0upAQ3
- t3p8bv8/wrGKmxwaVZQLmIy54pu18A4+XxnFKqGfbvvW9cNmAiTOz2QVAqrYRHiGWMgLuiTxIC
- H6I7Ue8c0nKF2XspRlv/jeqsO3hiD+jxOv/JT8mfB5O3NCtv2BT2dsdOSAAAA
-To: Helge Deller <deller@gmx.de>
-CC: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 01GJ4uB8IPy56o-tuKQMdxV49UW0nG3D
-X-Proofpoint-ORIG-GUID: 01GJ4uB8IPy56o-tuKQMdxV49UW0nG3D
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
- adultscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406180023
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXAQ+N_HBmFJj8AA--.12964S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF4rKw18AF45Xr18XrW8WFg_yoW8Xr4UpF
+	sIgr15Cay7Grs7J3WfGw1293Wftw4kWFWrJ3ZxXr95Aw17JF1Iy3Wvv348G34xZFW7Ar4Y
+	gFW3Jry3Kr1ayFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+	UQvtAUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/amifb.o
+From: Yu Kuai <yukuai3@huawei.com>
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Changes from RFC v1:
+ - replace the first patch.
+ - add commit message of our motivation and advantages to build iocost
+ as kernel module.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/video/fbdev/amifb.c | 1 +
- 1 file changed, 1 insertion(+)
+The motivation is that iocost is not used widely in our production, and
+some customers don't want to increase kernel size to enable iocost that
+they will never use, and it'll be painful to maintain a new downstream
+kernel. Hence it'll be beneficially to build iocost as kernel module:
 
-diff --git a/drivers/video/fbdev/amifb.c b/drivers/video/fbdev/amifb.c
-index 305f396c764c..132638240521 100644
---- a/drivers/video/fbdev/amifb.c
-+++ b/drivers/video/fbdev/amifb.c
-@@ -3782,5 +3782,6 @@ static struct platform_driver amifb_driver __refdata = {
- 
- module_platform_driver_probe(amifb_driver, amifb_probe);
- 
-+MODULE_DESCRIPTION("Amiga builtin chipset frame buffer driver");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:amiga-video");
+- Kernel Size and Resource Usage, modules are loaded only when their
+specific functionality is required.
 
----
-base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-change-id: 20240617-md-m68k-drivers-video-fbdev-amifb-3f65d4a6ed79
+- Flexibility and Maintainability, allows for dynamic loading and unloading
+of modules at runtime without the need to recompile and restart the kernel,
+for example we can just replace blk-iocost.ko to fix iocost CVE in our
+production environment.
+
+Yu Kuai (7):
+  blk-cgroup: add a new helper pr_cont_blkg_path()
+  cgroup: export cgroup_parse_float
+  block: export some API
+  blk-iocost: factor out helpers to handle params from ioc_qos_write()
+  blk-iocost: parse params before initializing iocost
+  blk-iocost: support to free iocost
+  blk-iocost: support to build iocost as kernel module
+
+ block/Kconfig             |   2 +-
+ block/blk-cgroup.c        |  10 ++
+ block/blk-cgroup.h        |   1 +
+ block/blk-iocost.c        | 225 ++++++++++++++++++++++++++------------
+ block/blk-rq-qos.c        |   2 +
+ include/linux/blk_types.h |   2 +-
+ kernel/cgroup/cgroup.c    |   1 +
+ 7 files changed, 170 insertions(+), 73 deletions(-)
+
+-- 
+2.39.2
 
 
