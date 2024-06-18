@@ -1,95 +1,135 @@
-Return-Path: <linux-kernel+bounces-219102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C5890C9E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:42:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB8F90C9ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DD7D1F23F85
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:42:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DD951C231C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E59D1891B2;
-	Tue, 18 Jun 2024 11:02:22 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A80E1586C0;
+	Tue, 18 Jun 2024 11:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkbND8/E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E47D1581EF;
-	Tue, 18 Jun 2024 11:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4242157A61
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718708541; cv=none; b=G0431QOU1+nAib8yO+ZeBEwPA91tAEydbeUwNUOis0HsmuQjMxO+DppJAO/lRHLqe7qYUq+Chb3yjzDTolo+nQB0LJCTFID50buwbC3nY252L8sHB14PzRRwLDKKYQSsYx4wvUn9qXF14Bwcz6EIyOkpFO4fn3oNzJAs0gQSqhM=
+	t=1718708676; cv=none; b=O9lu6mO2HCg0XksYzjBNE/+HvBepVI0xco6SrGss9R33umVB7BRqpsEmVICmnKRR78zsQhuD3uQXwlfqLQB3IOUSc5Am4KJbK6L/fpZ+vNSOHs7fqS7xPDjS9yZCFOp0gZ0NGLlOw600tOL4vn1YgoyuTqdZSfSENIsMH4fge8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718708541; c=relaxed/simple;
-	bh=JmMqCzUFzGdntw8cFxUiHsUFzFPMlt7PsprJzWJyifA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bihPj+V+zLiX+vHh0+sLPa2PaDweqI7aBmNOQBJprwWjsHTw7iDoD2dxbnJwB1oqt49cee3Bhh2dxJLQl/kajTbwxgEG+pSCoTUT4LobV7UJO+H3IydYufP5t41Df/fM3wpSTq8V1/8xTOpA2jPiT7aSujLqYfk81us5iwME8hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 45IB1VAS0398675, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 45IB1VAS0398675
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Jun 2024 19:01:31 +0800
-Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 18 Jun 2024 19:01:31 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 18 Jun 2024 19:01:30 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Tue, 18 Jun 2024 19:01:30 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Markus Elfring <Markus.Elfring@web.de>, Simon Horman <horms@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        Andrew Lunn
-	<andrew@lunn.ch>, Hariprasad Kelam <hkelam@marvell.com>,
-        Jiri Pirko
-	<jiri@resnulli.us>, Larry Chiu <larry.chiu@realtek.com>,
-        Ping-Ke Shih
-	<pkshih@realtek.com>,
-        Ratheesh Kannoth <rkannoth@marvell.com>
-Subject: RE: [v20 02/13] rtase: Implement the .ndo_open function
-Thread-Topic: [v20 02/13] rtase: Implement the .ndo_open function
-Thread-Index: AQHawJ5eL1A+vv787Ey/gTxPzZ037bHL8dBA///X7QCAABcWAIABe3RQ
-Date: Tue, 18 Jun 2024 11:01:30 +0000
-Message-ID: <d8ca31ba65364e60af91bca644a96db5@realtek.com>
-References: <20240607084321.7254-3-justinlai0215@realtek.com>
- <1d01ece4-bf4e-4266-942c-289c032bf44d@web.de>
- <ef7c83dea1d849ad94acef81819f9430@realtek.com>
- <6b284a02-15e2-4eba-9d5f-870a8baa08e8@web.de>
- <0c57021d0bfc444ebe640aa4c5845496@realtek.com>
- <20240617185956.GY8447@kernel.org>
- <202406181007.45IA7eWxA3305754@rtits1.realtek.com.tw>
-In-Reply-To: <202406181007.45IA7eWxA3305754@rtits1.realtek.com.tw>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1718708676; c=relaxed/simple;
+	bh=NY46nA/XWYixeSE6/TIdJ0Mru4j2agru9bQrVnYDEZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gljh4UKjLIwvDvYF75h7AsyoEobAeA+deINTZ0K0wQNh+b39eO7LZMQJeAd7JMJR7EqO70cEuxsEhNW4Yra8zxaPQaAhb7BZt0YvxDTYdSrg+aZ3yhS7F18W5flvVdBzyWnncG/1cB0CZkCiSePEkaBU8gaEnaQbICdurI5HKXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkbND8/E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D9E1C4AF1D;
+	Tue, 18 Jun 2024 11:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718708676;
+	bh=NY46nA/XWYixeSE6/TIdJ0Mru4j2agru9bQrVnYDEZU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MkbND8/ENHkB+4ngD5QwaTxyG1rFJw4MP4C5E+HOS97H/Ct/x9rh+g2yudcs7Ptf2
+	 IGiZ6yQgB4URmFoTOkOD0jSg+pRXh5kv4kg8nGoJ6b5KDVxeEtizWihsyEoOnG6bHn
+	 9NEnrBD1GZBABcyvrf+BuTlg3nrP88hBYt/zc86SKnCRqN6K+ypY44bNgqo09E14zo
+	 RGghIT+rO8S7xZ8JnQIs1AZJM6+dn99w5jxr0L0jIyEBLESuNAy3uLzfHD3559/K6M
+	 tcRxfMT7DqtjxkKRIS9YifzD+twtbjRG8Tw4i9MepHz7qNL8VXgan9tKvwFQwbSVXT
+	 PY1ABvFXT/Fgw==
+Date: Tue, 18 Jun 2024 14:02:20 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: James Gowans <jgowans@amazon.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Alex Graf <graf@amazon.de>
+Subject: Re: [PATCH] memblocks: Move late alloc warning down to phys alloc
+Message-ID: <ZnFpPCSTAUj90FJF@kernel.org>
+References: <20240614133016.134150-1-jgowans@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614133016.134150-1-jgowans@amazon.com>
 
-PiANCj4gPiBJIHdvdWxkIGFsc28gc3VnZ2VzdCByZWFkaW5nIE1hcmt1cydzIGFkdmljZSB3aXRo
-IGR1ZSBjYXJlLCBhcyBpdCBpcw0KPiA+IG5vdCBhbHdheXMgYWxpZ25lZCB3aXRoIGJlc3QgcHJh
-Y3RpY2UgZm9yIE5ldHdvcmtpbmcgY29kZS4NCj4gDQo+IEkgZGFyZSB0byBwcm9wb3NlIGZ1cnRo
-ZXIgY29sbGF0ZXJhbCBldm9sdXRpb24gYWNjb3JkaW5nIHRvIGF2YWlsYWJsZQ0KPiBwcm9ncmFt
-bWluZyBpbnRlcmZhY2VzLg0KPiANCj4gUmVnYXJkcywNCj4gTWFya3VzDQoNClRoYW5rIHlvdSBm
-b3IgeW91ciBzdWdnZXN0aW9uLCBidXQgc2luY2Ugd2Ugc3RpbGwgbmVlZCB0byBzdXJ2ZXkgdGhl
-IG5ldw0KbWV0aG9kLCB3ZSB3YW50IHRvIHVzZSB0aGUgZ290byBtZXRob2QgZm9yIHRoaXMgY3Vy
-cmVudCB2ZXJzaW9uIG9mIHRoZQ0KcGF0Y2ggYW5kIG1ha2UgbW9kaWZpY2F0aW9ucyBiYXNlZCBv
-biBTaW1vbidzIHN1Z2dlc3Rpb25zLg0K
+On Fri, Jun 14, 2024 at 03:30:16PM +0200, James Gowans wrote:
+> Subject: [PATCH] memblocks: Move late alloc warning down to phys alloc
+
+Nit: memblock
+
+> If a driver/subsystem tries to do an allocation after memblocks have
+> been freed and the memory handed to the buddy allocator, it will not
+> actually be legal to use that allocation - the buddy allocator owns the
+> memory. This is handled by the memblocks function which does allocations
+> and returns virtual addresses by printing a warning and doing a kmalloc
+> instead. However, the physical allocation function does not to do this
+> check - callers of the physical alloc function are unprotected against
+> mis-use.
+
+Did you see such misuse or this is a theoretical issue?
+ 
+> Improve the error catching here by moving the check into the physical
+> allocation function which is used by the virtual addr allocation
+> function.
+> 
+> Signed-off-by: James Gowans <jgowans@amazon.com>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Alex Graf <graf@amazon.de>
+> ---
+>  mm/memblock.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index d09136e040d3..dd4f237dc1fc 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -1457,6 +1457,17 @@ phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+>  		align = SMP_CACHE_BYTES;
+>  	}
+>  
+> +	/*
+> +	 * Detect any accidental use of these APIs after slab is ready, as at
+> +	 * this moment memblock may be deinitialized already and its
+> +	 * internal data may be destroyed (after execution of memblock_free_all)
+> +	 */
+> +	if (WARN_ON_ONCE(slab_is_available())) {
+> +		void *vaddr = kzalloc_node(size, GFP_NOWAIT, nid);
+> +
+> +		return vaddr ? virt_to_phys(vaddr) : 0;
+> +	}
+
+I'd move this before alignment check.
+
+> +
+>  again:
+>  	found = memblock_find_in_range_node(size, align, start, end, nid,
+>  					    flags);
+> @@ -1576,13 +1587,6 @@ static void * __init memblock_alloc_internal(
+>  {
+>  	phys_addr_t alloc;
+>  
+> -	/*
+> -	 * Detect any accidental use of these APIs after slab is ready, as at
+> -	 * this moment memblock may be deinitialized already and its
+> -	 * internal data may be destroyed (after execution of memblock_free_all)
+> -	 */
+> -	if (WARN_ON_ONCE(slab_is_available()))
+> -		return kzalloc_node(size, GFP_NOWAIT, nid);
+>  
+>  	if (max_addr > memblock.current_limit)
+>  		max_addr = memblock.current_limit;
+> -- 
+> 2.34.1
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
