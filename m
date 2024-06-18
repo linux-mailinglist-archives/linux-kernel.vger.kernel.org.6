@@ -1,305 +1,222 @@
-Return-Path: <linux-kernel+bounces-219849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FF590D8D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:16:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1B890D888
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50F8B1C22E58
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 644EB281B03
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1046A156F3C;
-	Tue, 18 Jun 2024 16:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0E3143C4D;
+	Tue, 18 Jun 2024 16:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="EfjyD904"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EkDn0pKb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6145A14EC79;
-	Tue, 18 Jun 2024 16:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AA813BC31;
+	Tue, 18 Jun 2024 16:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718727153; cv=none; b=QUYdCfOJic327qKQccNqHpCYBpyIpF60UgQBcFX6NUueu/henjGWfJfqCwh/dvzwh6H0N619rkBBvRaA1OH7rYNbPfkyUQthHSFVBuiDfP8uEXalGJV/1IlNcXUuYz9lZjrUOPOc6LmZhewMWbTKrhlKlPiu6DF0ybVlFn6UPfk=
+	t=1718727004; cv=none; b=r1lUeUARbUcWClGdfPQ/J6Z7TJE4csz1qaOUDyHng0/gVZs62VYHbeHkHZnpWyhnGwOe0yQyiOVi4dn4ltxI0EY/qdSotNYaOzEmC3cRYcuoMfWs6hdZveuNVa7kFN/3ai15OiMsdG6rMZlNAp1/Th8dhWHOd98+IkWW0GaiiaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718727153; c=relaxed/simple;
-	bh=1F52Yx/ZQ4nCWj8eVMsenNJs/hsF0vmXXhuKUIvd89w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kaFuRXN0/B3e0mZGIJu0ygoEMcfiB8lejuOVq/8OCntwK9TIlbXovixNEkW2s/dpgiltNrAuD4cHRfGkiKCAVr3HPPJvwBz/3XU/XOWityDWfMbB85+o1JyoI7gv+wKhvyNU8kynykjHweNtH6PJHFCAE4QOQ8hFi9S3UqCbxyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=EfjyD904; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IFAEX5008943;
-	Tue, 18 Jun 2024 18:12:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	S+H8H+djGQYAAsQ0PjdqLYQJy1Hwlzih8CMqVRnehcE=; b=EfjyD9044mkD/CzS
-	aQyX5J8AxI0RFm2bxYDYHjqPGsFy2FDAWVMdZSPWydiRib+V8AD7Mc1Xz/U7JNb9
-	YXFnpOVTtVFmO6AjzVp00NrhL3eLEuzaTUUHpOGBwFwTdraaypUa8TrBr6ZDUr4F
-	oLfvYsCLArgGoVNCuBFfDTv95Px8TqiGcabS1cZ1r03cQIHsn/h30FADp/1EUteL
-	LhVNEv4D60hvmibrVSnKhEgcuO6Azjvkrwfh7C45iX645UU0/xZsDdN5jL63DK4J
-	JAH6z/cktZQsudySTjs/O/w0Aa/q7wndNg+doXN5hiMLgVlzPR7c59bvjbKlt9pj
-	HT+mFQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ysnwja5h9-1
+	s=arc-20240116; t=1718727004; c=relaxed/simple;
+	bh=P7jN1QUgt1wBJSkfffoMPyBDHt7gg3dnEuOkFlInuGQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jTc61J3r9u5sTQaMTeslqe/izchX/Yn+6aH+KcgSUYyWTBU39fVgDKpJCZZOxLkD2m2FAqdmaVZMHmrY8XEj/Vh85qoYhWBhZMhDS7fpW7bblMjs5iJAtCIyQO3TbaZDfQFewDv+J/YYUD783rrRCZaQvtfnK7MCiaVoevS26fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EkDn0pKb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IG0D8Z004914;
+	Tue, 18 Jun 2024 16:09:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:reply-to
+	:from:in-reply-to:content-type:content-transfer-encoding; s=pp1;
+	 bh=5usvpiL+Io5D2h/60jUJrWdD1F7ANVDv+OCowk5LQtY=; b=EkDn0pKbqVxa
+	moPy+9gbwrhs0f7kY7pyrxnqG4icUpX5lC1dn/lHZmMHuT9rJf71/8H5x5XC0mMo
+	qZfXsXqjwqt91E5Rg8BMbeGEKnX4qUEfWrrN7gnkj165rG1UpBn8obYExri3M+K4
+	r/poKqMXjXjBFvU9X+oDN1wvTMUSwJcAl7e+2THkMD9UwbsTFPD+L3YXTD3Efrix
+	Bupk87BmNikKCRVcJxvNcRGI/1dZLVZstburQLZfLqKV5iCHPGQlxYQT7/gvcGwW
+	dmwdIyX73iwNljkIktlSoBLxDL2twb4nsY4zh7tJhTAPQzC8jKKL2+sLvonZ6ptw
+	lBhjJ+Q1Eg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yudc800s5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 18:12:04 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 41F5F40045;
-	Tue, 18 Jun 2024 18:12:00 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 13D6721197B;
-	Tue, 18 Jun 2024 18:11:32 +0200 (CEST)
-Received: from localhost (10.252.27.64) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 18 Jun
- 2024 18:11:31 +0200
-From: Olivier Moysan <olivier.moysan@foss.st.com>
-To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: Olivier Moysan <olivier.moysan@foss.st.com>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 8/8] iio: adc: stm32-dfsdm: add scaling support to dfsdm
-Date: Tue, 18 Jun 2024 18:08:34 +0200
-Message-ID: <20240618160836.945242-9-olivier.moysan@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240618160836.945242-1-olivier.moysan@foss.st.com>
-References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
+	Tue, 18 Jun 2024 16:09:39 +0000 (GMT)
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45IG9cHN018365;
+	Tue, 18 Jun 2024 16:09:39 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yudc800s1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 16:09:38 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45IEgftM019567;
+	Tue, 18 Jun 2024 16:09:38 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysnp14yva-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 16:09:38 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45IG9ZIN61211104
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Jun 2024 16:09:37 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1390E58059;
+	Tue, 18 Jun 2024 16:09:35 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9D9D25805B;
+	Tue, 18 Jun 2024 16:09:20 +0000 (GMT)
+Received: from [9.43.113.104] (unknown [9.43.113.104])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 18 Jun 2024 16:09:20 +0000 (GMT)
+Message-ID: <ff2c43e3-31d3-40c8-a597-cd0be751c0f2@linux.ibm.com>
+Date: Tue, 18 Jun 2024 21:39:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf sched replay: Fix -r/--repeat command line option
+ for infinity
+To: James Clark <james.clark@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+        Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+        Fernand Sieber <sieberf@amazon.com>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20240618112907.15131-1-vineethr@linux.ibm.com>
+ <f435e2d2-f864-4a34-bc38-cb06ce140a6f@arm.com>
+Content-Language: en-US
+Reply-To: f435e2d2-f864-4a34-bc38-cb06ce140a6f@arm.com
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <f435e2d2-f864-4a34-bc38-cb06ce140a6f@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: tjFymmwJBwikScJkYRps53WbvyIExxxD
+X-Proofpoint-ORIG-GUID: O8JPM7kRh3ip9oMOrOD54XmAo8AxCS6d
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ adultscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 mlxlogscore=999 suspectscore=0 clxscore=1011
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180119
 
-Add scaling support to STM32 DFSDM.
+Hi James,
 
-Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
----
- drivers/iio/adc/Kconfig           |  1 +
- drivers/iio/adc/stm32-dfsdm-adc.c | 94 ++++++++++++++++++++++++++++++-
- 2 files changed, 92 insertions(+), 3 deletions(-)
+On 18/06/24 18:34, James Clark wrote:
+> 
+> 
+> On 18/06/2024 12:29, Madadi Vineeth Reddy wrote:
+>> Currently, the -r/--repeat option accepts values from 0 and complains
+>> for -1. The help section specifies:
+>> -r, --repeat <n>      repeat the workload replay N times (-1: infinite)
+>>
+> 
+> I was wondering if this was a regression or was always like this but
+> it's at least been broken long before it becomes difficult to build
+> Perf for me.
+> 
+>> The -r -1 option raises an error because replay_repeat is defined as
+>> an unsigned int.
+>>
+>> In the current implementation, the workload is repeated n times when
+>> -r <n> is used, except when n is 0.
+>>
+>> When -r is set to 0, the workload is also repeated once. This happens
+>> because when -r=0, the run_one_test function is not called. (Note that
+>> mutex unlocking, which is essential for child threads spawned to emulate
+>> the workload, happens in run_one_test.) However, mutex unlocking is
+>> still performed in the destroy_tasks function. Thus, -r=0 results in the
+>> workload running once coincidentally.
+>>
+> 
+> I also saw an intermittent hang waiting in destroy_tasks() which is now
+> fixed.
+>  
+>> To clarify and maintain the existing logic for -r >= 1 (which runs the
+>> workload the specified number of times) and to fix the issue with infinite
+>> runs, make -r=0 perform an infinite run.
+>>
+>> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+>> ---
+>>  tools/perf/Documentation/perf-sched.txt | 7 +++++++
+>>  tools/perf/builtin-sched.c              | 8 ++++++--
+>>  2 files changed, 13 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+>> index a216d2991b19..f1be8f0b249e 100644
+>> --- a/tools/perf/Documentation/perf-sched.txt
+>> +++ b/tools/perf/Documentation/perf-sched.txt
+>> @@ -202,6 +202,13 @@ OPTIONS for 'perf sched timehist'
+>>  --state::
+>>  	Show task state when it switched out.
+>>  
+>> +OPTIONS for 'perf sched replay'
+>> +------------------------------
+>> +
+>> +-r::
+>> +--repeat <n>::
+>> +	repeat the workload n times (0: infinite). Default is 10.
+>> +
+>>  SEE ALSO
+>>  --------
+>>  linkperf:perf-record[1]
+>> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+>> index 8cdf18139a7e..2c4ed5c2d695 100644
+>> --- a/tools/perf/builtin-sched.c
+>> +++ b/tools/perf/builtin-sched.c
+>> @@ -3383,8 +3383,12 @@ static int perf_sched__replay(struct perf_sched *sched)
+>>  	sched->thread_funcs_exit = false;
+>>  	create_tasks(sched);
+>>  	printf("------------------------------------------------------------\n");
+>> -	for (i = 0; i < sched->replay_repeat; i++)
+>> +
+>> +	i = 0;
+>> +	while (sched->replay_repeat == 0 || i < sched->replay_repeat) {
+> 
+> Very minor nit, but you don't really need to remove the for loop, just add
+> the new condition to the existing one. Not sure if it's worth re-spinning
+> for though.
+> 
+> Reviewed-by: James Clark <james.clark@arm.com>
+> 
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index f3dfdaa80678..858ae8161fa4 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -1223,6 +1223,7 @@ config STM32_DFSDM_ADC
- 	select IIO_BUFFER
- 	select IIO_BUFFER_HW_CONSUMER
- 	select IIO_TRIGGERED_BUFFER
-+	select IIO_BACKEND
- 	help
- 	  Select this option to support ADCSigma delta modulator for
- 	  STMicroelectronics STM32 digital filter for sigma delta converter.
-diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
-index 69b4764d7cba..93bf6035bd6d 100644
---- a/drivers/iio/adc/stm32-dfsdm-adc.c
-+++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-@@ -9,6 +9,7 @@
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
- #include <linux/iio/adc/stm32-dfsdm-adc.h>
-+#include <linux/iio/backend.h>
- #include <linux/iio/buffer.h>
- #include <linux/iio/hw-consumer.h>
- #include <linux/iio/sysfs.h>
-@@ -78,6 +79,7 @@ struct stm32_dfsdm_adc {
- 	/* ADC specific */
- 	unsigned int oversamp;
- 	struct iio_hw_consumer *hwc;
-+	struct iio_backend **backend;
- 	struct completion completion;
- 	u32 *buffer;
- 
-@@ -672,6 +674,8 @@ static int stm32_dfsdm_generic_channel_parse_of(struct stm32_dfsdm *dfsdm,
- 						struct fwnode_handle *node)
- {
- 	struct stm32_dfsdm_channel *df_ch;
-+	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-+	struct iio_backend *backend;
- 	const char *of_str;
- 	int ret, val;
- 
-@@ -721,6 +725,14 @@ static int stm32_dfsdm_generic_channel_parse_of(struct stm32_dfsdm *dfsdm,
- 	if (ret != -EINVAL)
- 		df_ch->alt_si = 0;
- 
-+	if (adc->dev_data->type == DFSDM_IIO) {
-+		backend = devm_iio_backend_subnode_get(&indio_dev->dev, NULL, node);
-+		if (IS_ERR(backend))
-+			return dev_err_probe(&indio_dev->dev, PTR_ERR(backend),
-+					     "Failed to get backend\n");
-+		adc->backend[ch->scan_index] = backend;
-+	}
-+
- 	return 0;
- }
- 
-@@ -1060,7 +1072,7 @@ static int stm32_dfsdm_update_scan_mode(struct iio_dev *indio_dev,
- static int stm32_dfsdm_postenable(struct iio_dev *indio_dev)
- {
- 	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
--	int ret;
-+	int i = 0, ret;
- 
- 	/* Reset adc buffer index */
- 	adc->bufi = 0;
-@@ -1071,6 +1083,15 @@ static int stm32_dfsdm_postenable(struct iio_dev *indio_dev)
- 			return ret;
- 	}
- 
-+	if (adc->backend) {
-+		while (adc->backend[i]) {
-+			ret = iio_backend_enable(&indio_dev->dev, adc->backend[i]);
-+			if (ret < 0)
-+				return ret;
-+			i++;
-+		}
-+	}
-+
- 	ret = stm32_dfsdm_start_dfsdm(adc->dfsdm);
- 	if (ret < 0)
- 		goto err_stop_hwc;
-@@ -1103,6 +1124,7 @@ static int stm32_dfsdm_postenable(struct iio_dev *indio_dev)
- static int stm32_dfsdm_predisable(struct iio_dev *indio_dev)
- {
- 	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-+	int i = 0;
- 
- 	stm32_dfsdm_stop_conv(indio_dev);
- 
-@@ -1110,6 +1132,13 @@ static int stm32_dfsdm_predisable(struct iio_dev *indio_dev)
- 
- 	stm32_dfsdm_stop_dfsdm(adc->dfsdm);
- 
-+	if (adc->backend) {
-+		while (adc->backend[i]) {
-+			iio_backend_disable(&indio_dev->dev, adc->backend[i]);
-+			i++;
-+		}
-+	}
-+
- 	if (adc->hwc)
- 		iio_hw_consumer_disable(adc->hwc);
- 
-@@ -1282,7 +1311,14 @@ static int stm32_dfsdm_read_raw(struct iio_dev *indio_dev,
- 				int *val2, long mask)
- {
- 	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
--	int ret;
-+
-+	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[adc->fl_id];
-+	struct stm32_dfsdm_filter_osr *flo = &fl->flo[fl->fast];
-+	u32 max = flo->max << (flo->lshift - chan->scan_type.shift);
-+	int ret, idx = chan->scan_index;
-+
-+	if (flo->lshift < chan->scan_type.shift)
-+		max = flo->max >> (chan->scan_type.shift - flo->lshift);
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
-@@ -1291,6 +1327,8 @@ static int stm32_dfsdm_read_raw(struct iio_dev *indio_dev,
- 			return ret;
- 		if (adc->hwc)
- 			ret = iio_hw_consumer_enable(adc->hwc);
-+		if (adc->backend[idx])
-+			ret = iio_backend_enable(&indio_dev->dev, adc->backend[idx]);
- 		if (ret < 0) {
- 			dev_err(&indio_dev->dev,
- 				"%s: IIO enable failed (channel %d)\n",
-@@ -1301,6 +1339,8 @@ static int stm32_dfsdm_read_raw(struct iio_dev *indio_dev,
- 		ret = stm32_dfsdm_single_conv(indio_dev, chan, val);
- 		if (adc->hwc)
- 			iio_hw_consumer_disable(adc->hwc);
-+		if (adc->backend[idx])
-+			iio_backend_disable(&indio_dev->dev, adc->backend[idx]);
- 		if (ret < 0) {
- 			dev_err(&indio_dev->dev,
- 				"%s: Conversion failed (channel %d)\n",
-@@ -1320,6 +1360,45 @@ static int stm32_dfsdm_read_raw(struct iio_dev *indio_dev,
- 		*val = adc->sample_freq;
- 
- 		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		/*
-+		 * Scale is expressed in mV.
-+		 * When fast mode is disabled, actual resolution may be lower
-+		 * than 2^n, where n=realbits-1.
-+		 * This leads to underestimating input voltage. To
-+		 * compensate this deviation, the voltage reference can be
-+		 * corrected with a factor = realbits resolution / actual max
-+		 */
-+		if (adc->backend[idx]) {
-+			iio_backend_read_raw(adc->backend[idx], val, val2, mask);
-+
-+			*val = div_u64((u64)*val * (u64)BIT(DFSDM_DATA_RES - 1), max);
-+			*val2 = chan->scan_type.realbits;
-+			if (chan->differential)
-+				*val *= 2;
-+		}
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+
-+	case IIO_CHAN_INFO_OFFSET:
-+		/*
-+		 * DFSDM output data are in the range [-2^n,2^n],
-+		 * with n=realbits-1.
-+		 * - Differential modulator:
-+		 * Offset correspond to SD modulator offset.
-+		 * - Single ended modulator:
-+		 * Input is in [0V,Vref] range, where 0V corresponds to -2^n, and Vref to 2^n.
-+		 * Add 2^n to offset. (i.e. middle of input range)
-+		 * offset = offset(sd) * vref / res(sd) * max / vref.
-+		 */
-+		if (adc->backend[idx]) {
-+			iio_backend_read_raw(adc->backend[idx], val, val2, mask);
-+
-+			*val = div_u64((u64)max * *val, BIT(*val2 - 1));
-+			if (!chan->differential)
-+				*val += max;
-+		}
-+		return IIO_VAL_INT;
- 	}
- 
- 	return -EINVAL;
-@@ -1449,7 +1528,15 @@ static int stm32_dfsdm_adc_chan_init_one(struct iio_dev *indio_dev, struct iio_c
- 	 * IIO_CHAN_INFO_RAW: used to compute regular conversion
- 	 * IIO_CHAN_INFO_OVERSAMPLING_RATIO: used to set oversampling
- 	 */
--	ch->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-+	if (child) {
-+		ch->info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+					BIT(IIO_CHAN_INFO_SCALE) |
-+					BIT(IIO_CHAN_INFO_OFFSET);
-+	} else {
-+		/* Legacy. Scaling not supported */
-+		ch->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-+	}
-+
- 	ch->info_mask_shared_by_all = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |
- 					BIT(IIO_CHAN_INFO_SAMP_FREQ);
- 
-@@ -1816,3 +1903,4 @@ module_platform_driver(stm32_dfsdm_adc_driver);
- MODULE_DESCRIPTION("STM32 sigma delta ADC");
- MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@st.com>");
- MODULE_LICENSE("GPL v2");
-+MODULE_IMPORT_NS(IIO_BACKEND);
--- 
-2.25.1
+Thank you for taking a look!
+
+Thanks and Regards
+Madadi Vineeth Reddy
+
+>>  		run_one_test(sched);
+>> +		i++;
+>> +	}
+>>  
+>>  	sched->thread_funcs_exit = true;
+>>  	destroy_tasks(sched);
+>> @@ -3548,7 +3552,7 @@ int cmd_sched(int argc, const char **argv)
+>>  	};
+>>  	const struct option replay_options[] = {
+>>  	OPT_UINTEGER('r', "repeat", &sched.replay_repeat,
+>> -		     "repeat the workload replay N times (-1: infinite)"),
+>> +		     "repeat the workload replay N times (0: infinite)"),
+>>  	OPT_PARENT(sched_options)
+>>  	};
+>>  	const struct option map_options[] = {
 
 
