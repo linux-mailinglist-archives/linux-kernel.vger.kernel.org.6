@@ -1,207 +1,150 @@
-Return-Path: <linux-kernel+bounces-218746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A7590C517
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:00:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C6490C5D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 931552830ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36A51C2125C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E81215533E;
-	Tue, 18 Jun 2024 07:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E032c5qG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C552A15B147;
+	Tue, 18 Jun 2024 07:27:22 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F91113A877
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A21813B7AF
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718695434; cv=none; b=MXdySEe8ILeabZd8EVX1kouUoae7FXsmdbKB79dZbiJtnk/qC0ixo9CQIP1gA3URUuqGDLUddawUFbiuyyMNW849Bi3yTPJkRg1zfViH0huszNYVDEe6LFV7SpoxRnikDJhFg291tUReX9QeU2+xfJAqHg7H8KTr3KgXG588/Lg=
+	t=1718695642; cv=none; b=Hfku1m1qxCELhT589u2blDOfzfdhDeV6jrGJAh/ABJOqKJaOfq6YdrFVI/lDFyiAYRJh0gsbTvklN1MTuxPqtrzDA24u3ibgDmTfWkiGCrynW9D+6fkiT9ZMunWpMIZJUCNrb9N+VOwPxYQcz3814byiea0dKLirq2H+Vz1dum8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718695434; c=relaxed/simple;
-	bh=jtutfQ/YnGXYiZoliavf4txQTcAFOGOJa0KhiybXy94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DU9797knw2Ro+ZI2WZOkUHxqDw0BXD+LHk6YG45nZrGRkjO0H/Vv4MYYYWjZCba1YMQ+/QfPX54qhDvcyTIhoSz4bvIkY7RdqUP+TUG3OVFlrcejc+vfMpYFAYAZR0u1Mb5Tm5JzEuIWefyN9fu2jFgI94kcHAhS00BwoUFDuAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E032c5qG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718695432;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ektUs2o9ZwmGp4QGKP67xVqU+KCA2sw3x/s+8mFOJyU=;
-	b=E032c5qG2LFD1yEBJwiOUNtLfKM3IjgLZZWWAAZxO4gAIGiOPMHJT46I1Qmj1LfNnRZdvX
-	kvg3S9BxlN8HbzuOjsPmFfwRobCSFqmwkVuQpBLI+TxN1RrtawHQwUiv+PxeWwVzB4P2Av
-	WOT8OvrTQC6pXwb35AlV6Ex40tmj/rw=
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
- [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-284-mk2WrX_DOhqloq_nzkGYmw-1; Tue, 18 Jun 2024 03:23:50 -0400
-X-MC-Unique: mk2WrX_DOhqloq_nzkGYmw-1
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-2502a80477bso109268fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:23:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718695429; x=1719300229;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ektUs2o9ZwmGp4QGKP67xVqU+KCA2sw3x/s+8mFOJyU=;
-        b=TlqIiMHBCEiQWrvbAFG5m7y1iDv1rytdFSJ7GwpJwr1NUGT74Dp5s8vpVCJEYGUIlV
-         Q1fy+EpoiXO0cDUprz3Mojkro39FBIO3M0++jBNphmslE1FWiinqVvunwQYGxI5e9No3
-         UGEL4koh8UL8w4atiCSZPpQoVwfM+yNiwY4ejItlmbcB6YibQkyHs1XBIbjsTJbNcZ7+
-         yJJW42GWbV/VftL9ZxKGB+7DuntSjDSo385awfT46eiEmKF8iZs84s0/cBIPNeKiW6dN
-         X71TM+BOUzYqfjNSeKnm9BDZE7ne6qxmIfFeoaKjAJ/AehUOwStD0eQ/OrT+EBj0yP4G
-         iKUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUarE5wizmVzao5p4nukBe7p+qGeJKAzLGFLC4BabL7JiGaV78jDkt6PV8gZCfIlaklQWNSbhP2xZDxFuX8oIAmj6vCeY/LGILSYDwm
-X-Gm-Message-State: AOJu0YzfRW3+tuyJDC6QIv0H4s+oAEMleZricqlrzaxrbOMM5hzkj+SD
-	0UY7aH6Z5+VIAqXB89gazaWFjWlPD0oUndPdwoC/ledVoJeWM/AwNvgtzg8bQQrN+cttKJr+m7J
-	dRKEgY7stHxNPWRiM6Ypf28o4NdN/0+OZjDeXRezxVdFLSk33PWSOQsayrv5LVg==
-X-Received: by 2002:a05:6870:9a25:b0:254:a7df:721b with SMTP id 586e51a60fabf-25842cfc466mr12492783fac.5.1718695428987;
-        Tue, 18 Jun 2024 00:23:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGzh9F+irOsR5lWcnREhTCTKn/pzQg2Hw7QKb2g0z70Pr0m1XAmIppde3Pf/VUtv48DRUNuQ==
-X-Received: by 2002:a05:6870:9a25:b0:254:a7df:721b with SMTP id 586e51a60fabf-25842cfc466mr12492771fac.5.1718695428566;
-        Tue, 18 Jun 2024 00:23:48 -0700 (PDT)
-Received: from [10.66.61.39] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3cda1sm8387767b3a.117.2024.06.18.00.23.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 00:23:48 -0700 (PDT)
-Message-ID: <25df0c92-8c02-4804-b4a0-7ec7a6790a89@redhat.com>
-Date: Tue, 18 Jun 2024 15:23:43 +0800
+	s=arc-20240116; t=1718695642; c=relaxed/simple;
+	bh=YhSdnwPfYHBCptd+IaRImgOqklxYVBgy1SqjBOm2jrw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g/Y85QFQ347P71kMUy4DmZZk/6wrju4zit1e+eruII/XCF5zuqR49nH2OBuITVW65jGa8dQiMyzIfTlW6ko3DN1D2hEO+rzOWZsbUcXIXoz2ojdyLAuxabEUjezCZ4VFBSctuyrVhu/WUn8JoSVHlRECFF+bYGEyazZ/O5V+CFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W3JBH1gltz1SCWS;
+	Tue, 18 Jun 2024 15:23:03 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9D1E11402C8;
+	Tue, 18 Jun 2024 15:27:16 +0800 (CST)
+Received: from hulk-vt.huawei.com (10.67.174.26) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 18 Jun 2024 15:27:16 +0800
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
+To: <akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 -next] mm/hugetlb_cgroup: register lockdep key for cftype
+Date: Tue, 18 Jun 2024 07:19:22 +0000
+Message-ID: <20240618071922.2127289-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/3] KVM: selftests: aarch64: Add invalid filter test
- in pmu_event_filter_test
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>,
- kvmarm@lists.linux.dev, Eric Auger <eric.auger@redhat.com>,
- James Morse <james.morse@arm.com>, Suzuki K Poulose
- <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
- linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240613082345.132336-1-shahuang@redhat.com>
- <20240613082345.132336-4-shahuang@redhat.com>
- <CAJHc60xpGAA1pmz0ad_Fq3a5M-pQMiyxQ4hdNhc6vQrgpSjGww@mail.gmail.com>
-Content-Language: en-US
-From: Shaoqin Huang <shahuang@redhat.com>
-In-Reply-To: <CAJHc60xpGAA1pmz0ad_Fq3a5M-pQMiyxQ4hdNhc6vQrgpSjGww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
+When CONFIG_DEBUG_LOCK_ALLOC is enabled, the following commands can
+trigger a bug,
 
+mount -t cgroup2 none /sys/fs/cgroup
+cd /sys/fs/cgroup
+echo "+hugetlb" > cgroup.subtree_control
 
-On 6/18/24 08:01, Raghavendra Rao Ananta wrote:
-> Hi Shaoqin,
-> 
-> On Thu, Jun 13, 2024 at 1:27 AM Shaoqin Huang <shahuang@redhat.com> wrote:
->>
->> Add the invalid filter test which sets the filter beyond the event
->> space and sets the invalid action to double check if the
->> KVM_ARM_VCPU_PMU_V3_FILTER will return the expected error.
->>
->> Reviewed-by: Eric Auger <eric.auger@redhat.com>
->> Signed-off-by: Shaoqin Huang <shahuang@redhat.com>
->> ---
->>   .../kvm/aarch64/pmu_event_filter_test.c       | 37 +++++++++++++++++++
->>   1 file changed, 37 insertions(+)
->>
->> diff --git a/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c b/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
->> index fb0fde1ed436..13b2f354c39b 100644
->> --- a/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
->> +++ b/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
->> @@ -8,6 +8,7 @@
->>    * This test checks if the guest only see the limited pmu event that userspace
->>    * sets, if the guest can use those events which user allow, and if the guest
->>    * can't use those events which user deny.
->> + * It also checks that setting invalid filter ranges return the expected error.
->>    * This test runs only when KVM_CAP_ARM_PMU_V3, KVM_ARM_VCPU_PMU_V3_FILTER
->>    * is supported on the host.
->>    */
->> @@ -178,6 +179,40 @@ static void destroy_vpmu_vm(void)
->>          kvm_vm_free(vpmu_vm.vm);
->>   }
->>
->> +static void test_invalid_filter(void)
->> +{
->> +       struct kvm_pmu_event_filter invalid;
->> +       int ret;
->> +
->> +       pr_info("Test: test_invalid_filter\n");
->> +
->> +       memset(&vpmu_vm, 0, sizeof(vpmu_vm));
->> +
->> +       vpmu_vm.vm = vm_create(1);
->> +       vpmu_vm.vcpu = vm_vcpu_add_with_vpmu(vpmu_vm.vm, 0, guest_code);
->> +       vpmu_vm.gic_fd = vgic_v3_setup(vpmu_vm.vm, 1, 64);
->> +       __TEST_REQUIRE(vpmu_vm.gic_fd >= 0,
->> +                      "Failed to create vgic-v3, skipping");
->> +
->> +       /* The max event number is (1 << 16), set a range largeer than it. */
-> nit: s/largeer/larger
-> 
-> Also, perhaps not in this series, but we can also check for -EBUSY
-> situations such as setting a (valid) filter after
-> KVM_ARM_VCPU_PMU_V3_INIT and after the vCPUs have started.
-> 
+The log is as below:
 
-That's also a great test, we can add it in the future.
+BUG: key ffff8880046d88d8 has not been registered!
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(1)
+WARNING: CPU: 3 PID: 226 at kernel/locking/lockdep.c:4945 lockdep_init_map_type+0x185/0x220
+Modules linked in:
+CPU: 3 PID: 226 Comm: bash Not tainted 6.10.0-rc4-next-20240617-g76db4c64526c #544
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:lockdep_init_map_type+0x185/0x220
+Code: 00 85 c0 0f 84 6c ff ff ff 8b 3d 6a d1 85 01 85 ff 0f 85 5e ff ff ff 48 c7 c6 21 99 4a 82 48 c7 c7 60 29 49 82 e8 3b 2e f5
+RSP: 0018:ffffc9000083fc30 EFLAGS: 00000282
+RAX: 0000000000000000 RBX: ffffffff828dd820 RCX: 0000000000000027
+RDX: ffff88803cd9cac8 RSI: 0000000000000001 RDI: ffff88803cd9cac0
+RBP: ffff88800674fbb0 R08: ffffffff828ce248 R09: 00000000ffffefff
+R10: ffffffff8285e260 R11: ffffffff828b8eb8 R12: ffff8880046d88d8
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff8880067281c0
+FS:  00007f68601ea740(0000) GS:ffff88803cd80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005614f3ebc740 CR3: 000000000773a000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ ? __warn+0x77/0xd0
+ ? lockdep_init_map_type+0x185/0x220
+ ? report_bug+0x189/0x1a0
+ ? handle_bug+0x3c/0x70
+ ? exc_invalid_op+0x18/0x70
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? lockdep_init_map_type+0x185/0x220
+ __kernfs_create_file+0x79/0x100
+ cgroup_addrm_files+0x163/0x380
+ ? find_held_lock+0x2b/0x80
+ ? find_held_lock+0x2b/0x80
+ ? find_held_lock+0x2b/0x80
+ css_populate_dir+0x73/0x180
+ cgroup_apply_control_enable+0x12f/0x3a0
+ cgroup_subtree_control_write+0x30b/0x440
+ kernfs_fop_write_iter+0x13a/0x1f0
+ vfs_write+0x341/0x450
+ ksys_write+0x64/0xe0
+ do_syscall_64+0x4b/0x110
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7f68602d9833
+Code: 8b 15 61 26 0e 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 01 00 00 00 08
+RSP: 002b:00007fff9bbdf8e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f68602d9833
+RDX: 0000000000000009 RSI: 00005614f3ebc740 RDI: 0000000000000001
+RBP: 00005614f3ebc740 R08: 000000000000000a R09: 0000000000000008
+R10: 00005614f3db6ba0 R11: 0000000000000246 R12: 0000000000000009
+R13: 00007f68603bd6a0 R14: 0000000000000009 R15: 00007f68603b8880
 
-> Besides that, Reviewed-by: Raghavendra Rao Ananta <rananta@google.com>
+For lockdep, there is a sanity check in lockdep_init_map_type(), the
+lock-class key must either have been allocated statically or must
+have been registered as a dynamic key. However the commit e18df2889ff9
+("mm/hugetlb_cgroup: prepare cftypes based on template") has changed
+the cftypes from static allocated objects to dynamic allocated objects,
+so the cft->lockdep_key must be registered proactively.
 
-Thanks a lot for your reviewing.
+Fixes: e18df2889ff9 ("mm/hugetlb_cgroup: prepare cftypes based on template")
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202406181046.8d8b2492-oliver.sang@intel.com
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-> 
-> - Raghavendra
-> 
-> 
-> 
->> +       invalid = __DEFINE_FILTER(BIT(15), BIT(15) + 1, 0);
->> +       ret = __kvm_device_attr_set(vpmu_vm.vcpu->fd, KVM_ARM_VCPU_PMU_V3_CTRL,
->> +                                   KVM_ARM_VCPU_PMU_V3_FILTER, &invalid);
->> +       TEST_ASSERT(ret && errno == EINVAL, "Set Invalid filter range "
->> +                   "ret = %d, errno = %d (expected ret = -1, errno = EINVAL)",
->> +                   ret, errno);
->> +
->> +       /* Set the Invalid action. */
->> +       invalid = __DEFINE_FILTER(0, 1, 3);
->> +       ret = __kvm_device_attr_set(vpmu_vm.vcpu->fd, KVM_ARM_VCPU_PMU_V3_CTRL,
->> +                                   KVM_ARM_VCPU_PMU_V3_FILTER, &invalid);
->> +       TEST_ASSERT(ret && errno == EINVAL, "Set Invalid filter action "
->> +                   "ret = %d, errno = %d (expected ret = -1, errno = EINVAL)",
->> +                   ret, errno);
->> +
->> +       destroy_vpmu_vm();
->> +}
->> +
->>   static void run_test(struct test_desc *t)
->>   {
->>          pr_info("Test: %s\n", t->name);
->> @@ -300,4 +335,6 @@ int main(void)
->>          TEST_REQUIRE(kvm_pmu_support_events());
->>
->>          run_tests();
->> +
->> +       test_invalid_filter();
->>   }
->> --
->> 2.40.1
->>
->>
-> 
+---
+v2: add bug log to commit message
+---
+ mm/hugetlb_cgroup.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
+index 2b899c4ae968..4ff238ba1250 100644
+--- a/mm/hugetlb_cgroup.c
++++ b/mm/hugetlb_cgroup.c
+@@ -836,6 +836,8 @@ hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
+ 			cft->file_offset = MEMFILE_OFFSET0(offset) +
+ 					   MEMFILE_FIELD_SIZE(offset) * idx;
+ 		}
++
++		lockdep_register_key(&cft->lockdep_key);
+ 	}
+ }
+ 
 -- 
-Shaoqin
+2.34.1
 
 
