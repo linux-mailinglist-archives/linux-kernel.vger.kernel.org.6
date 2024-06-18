@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-219176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB57990CB6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:15:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A9B90CAF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AB69B2CC45
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8432939D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AABC14B97B;
-	Tue, 18 Jun 2024 11:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jJGxUcBO"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385B815573D;
+	Tue, 18 Jun 2024 11:58:32 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2CD13DB9C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16FE17758
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718711670; cv=none; b=Vxe3jCceihNxPc92VyVZ1oaPgFyloYaQ7I5+sm+Gjis3FMiSn69vKliHoRPWSkfXq/lNMuhUaRZNXIr/7wsfcA6ZFiugXq5uth9kkF3qyDAvxwXpmapB4cQHWyd3Bx3jILMOGw4c4WoRBNKeOz3sznkj/UiaCMHYRl7NspQXTrI=
+	t=1718711911; cv=none; b=mhV3h7oyLW1sdbleyz0TI7+T57B/zKnS4vtsOjMejnENrqt+xo8x2jLycKrR2pwVwnZDXkGsQeWJiyd+gAt1W1fNJ+eGCkWcjabnh4VGiFVGbF1ca9CBnMPijK9qYkkrHtHtCFQ4MNdezRXGB4j9lDkZDcYNsqsibPWA6YEaWKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718711670; c=relaxed/simple;
-	bh=HcJujJfkQBTmZ3DibezE+G0B3FO/61FIBdkgOhELaik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eekfOAQzgE7CIrZcHXJcpIZ7iKm0d0GZ2B8+TxeSuvRs1bdREBcivyXhq8vWhnYlzpTOmXZOFKLv2SMwmnotJVoRQDDdkNcqy79T2g0XKn3/5B5rNnEaQLKj5ww++MbMYKxjmtz/lwHoFNLXXBvvMS70sVI9qlNd5Cvb8CzIHwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jJGxUcBO; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52bbf73f334so5104637e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:54:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718711667; x=1719316467; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2CImRxcj0sqY8tb0uHlqWB1E5GbxaXH/mqYnGe/rFRg=;
-        b=jJGxUcBO4BJLlFZ2VQYr4GsK22CJYdzmRMyIXw28mDvvVFWOKRhi8qKECE5fN8Nyy/
-         KBqdnBhDODSFqTrOcc/yU9W9nilttEgrDQOFMoRL1y05df7J6At9yTuUGMnXt5PgLFWb
-         4oHlqZ+7IeJ0MYfVg0V+eWTTbW7T5SIknzAM0wY6V5rBWno3h0EyxYypLTdd+OnJPaIx
-         q/B9b2GyKlQeAMHalHRvhvCRalRnKx4eCHtFbnD8G+GgoHFvbdq0+HNSFrJ66rZANv4T
-         V5vxPu2UtGyGOrCgmx/qKSxUOaMPt2nFCqc3N0E6ACIkSBHzjPEy2mxcPGmK/tnbJ5Ry
-         HLsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718711667; x=1719316467;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2CImRxcj0sqY8tb0uHlqWB1E5GbxaXH/mqYnGe/rFRg=;
-        b=h17rZtw8mfb7UYVhwfJGtpzvms7vlvOgxdd1mx4Tq+ZMH5POk/IueQNbNZoefdSjx7
-         4xW6I308tgRo4efJposmwHlQBfjoWgoALWXLira97m7q9Pbv80VIVcLzgHngoBijAcQN
-         PDVxdncnHdzCWuGzaT9I9QMQ9mYnLJGZVttjX3pkqk4Wzk8Db+3GBFBRERE0+H1YjtJZ
-         uG7mVhxIXIMK78Jq9eAW0DO6A5Sqsej0PA9FoLFRbmFnAl3sE1FaSATZHXQxO/D9Deur
-         ssfCTsUQekLqmTr5IgzFKKXLgNamicXQ4cAwjwl7d2/VBiCnv/Mv+nmG8A4HN4wzk4Rg
-         Sppw==
-X-Forwarded-Encrypted: i=1; AJvYcCW56ci36z4V2EzaoX4FllTIYC0OkrtYa8KmhdD0jnQt5wXftv7cq7F7jke/CQ7y0ejkYGS0Xf3FNmPl4cr08/hXrppm/xO6pjs9t+7S
-X-Gm-Message-State: AOJu0Yw7tUXAvOFkL3VTqXumRiCI9QZXvZD7DFCaAe1PkaLx4Gv0oP9E
-	Yv+cO1X1lN0EUoU4QMyUoMSGWqx95fivn2DvJ0yIoUCkCZN1gzDXPFsvmDvALpz5cpPvdQo/DZ0
-	A
-X-Google-Smtp-Source: AGHT+IF7wjYkkQFQakNw3p0WW30S+1nt9H2rjtDlB1CQ5eBznQTvIVTf7VadwyG2ee0wPE771uVkKg==
-X-Received: by 2002:a19:e015:0:b0:52c:a483:4cc6 with SMTP id 2adb3069b0e04-52ca6e6dd0emr7014214e87.36.1718711667488;
-        Tue, 18 Jun 2024 04:54:27 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2872471sm1500912e87.175.2024.06.18.04.54.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 04:54:27 -0700 (PDT)
-Message-ID: <312689d0-3d94-42bb-8359-2e498e09f2ca@linaro.org>
-Date: Tue, 18 Jun 2024 13:54:25 +0200
+	s=arc-20240116; t=1718711911; c=relaxed/simple;
+	bh=UYYaytc/6tmQBr/uhwIaBms+nVRmRGlyzlpUHUR1Fmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCCn3ea899IE8WlFBOV2MS0U8aTFohvGlhqKpVeccqZDxYkj0IvvyR8Zee4muWjkm2iHeyuNI+3xQIz6VfSUZIhZvXs0f2QM+o+zuDngBYEWbBOmy8pHAiR/8HpVtuh2VPpVDz1LpHc50+NC1xCUO2W0UBO+gbAlQuutg9ui0o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sJXTV-0007Go-Lq; Tue, 18 Jun 2024 13:58:09 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sJXTT-003Ddk-OE; Tue, 18 Jun 2024 13:58:07 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 5EE1F2EB692;
+	Tue, 18 Jun 2024 11:58:07 +0000 (UTC)
+Date: Tue, 18 Jun 2024 13:58:07 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Stefan Moring <stefan.moring@technolution.nl>
+Cc: Fabio Estevam <festevam@gmail.com>, broonie@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, linux-imx@nxp.com, 
+	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel@pengutronix.de, Sebastian Reichel <sre@kernel.org>, 
+	Benjamin Bigler <benjamin@bigler.one>, Stefan Bigler <linux@bigler.io>, 
+	Carlos Song <carlos.song@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, 
+	Adam Butcher <adam@jessamine.co.uk>, Thorsten Scherer <T.Scherer@eckelmann.de>
+Subject: Re: [PATCH] spi: Increase imx51 ecspi burst length based on transfer
+ length
+Message-ID: <20240618-oxpecker-of-ideal-mastery-db59f8-mkl@pengutronix.de>
+References: <20230628125406.237949-1-stefan.moring@technolution.nl>
+ <CAOMZO5AftBB8B-Bb-j0TrTnKiQdGpBkq+jZ3surLSs6xPm_pUQ@mail.gmail.com>
+ <CAB3BuKDcg=7Umxv4yUTDVsQ3X_ash6iFmz-3XaENfni2=R_LCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] ARM: dts: qcom: msm8926-motorola-peregrine: Update
- temperature sensor
-To: git@apitzsch.eu, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20240617-peregrine-v2-0-c8835d2da7af@apitzsch.eu>
- <20240617-peregrine-v2-2-c8835d2da7af@apitzsch.eu>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240617-peregrine-v2-2-c8835d2da7af@apitzsch.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ocrhnp3rrb37wajs"
+Content-Disposition: inline
+In-Reply-To: <CAB3BuKDcg=7Umxv4yUTDVsQ3X_ash6iFmz-3XaENfni2=R_LCw@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--ocrhnp3rrb37wajs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 6/17/24 23:22, André Apitzsch via B4 Relay wrote:
-> From: André Apitzsch <git@apitzsch.eu>
-> 
-> Add alert interrupt for the temperature sensor of Motorola Moto G 4G
-> (2013), although not used by the driver yet.
-> 
-> Signed-off-by: André Apitzsch <git@apitzsch.eu>
-> ---
+Hi Stefan,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+On 28.06.2023 15:20:39, Stefan Moring wrote:
+> In our application we send ~80kB at 10MHz. The total transfer time
+> went from ~80ms to 67ms, so that would be a reduction of 15%.
+> I tested it on an IMX8MM platform.
 
-Konrad
+I'm currently debugging a problem with spi-imx, HW CS and SPI_CS_WORD on
+torvalds/master. The breakage goes back this patch.
+
+I'm wondering what is your setup you have optimized with this patch?
+- Are you using HW or GPIO CS?
+- What are bits_per_word?
+- What's the length of the spi_transfer?
+
+I'm asking because with a 8, 16 or 32 bit-per-word setting, the driver
+should use dynamic_burst on the imx8mm, which will overwrite the burst
+length in spi_imx_push().
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--ocrhnp3rrb37wajs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZxdkwACgkQKDiiPnot
+vG+b8gf/Ycf4ZA92Vtp4bY6hGmJ8uRZ4rSh9e85QeMtTSPs54TIAAoXvWJDcfUSt
+tS/ykcZm12NF0OaFV7GGs6q9Uz9Ps6na861RELcOB4Ct5tv2DYsHpjlGrnRm2Olb
+MYoJ7RHyAgIdazeHNj64i+onbqwatnEezvrXE7vHQDTKEFDNxnfKmkVZbGOYKng9
+Csv0uq6IoE/Q1jcfOulsgHQJGamXjDWeMQlCe3gIB+IP79eCI1QQElL+Lkh0sL2z
+guzekqIkk97cv1jDJwY44lWRZXBcuVKXoR9jz2ui1TALXdfs3Q8CehpkEOo8lBjF
+U0ohNqg8BfGBfnmT6UkqDr+81Iv5nQ==
+=A6Kf
+-----END PGP SIGNATURE-----
+
+--ocrhnp3rrb37wajs--
 
