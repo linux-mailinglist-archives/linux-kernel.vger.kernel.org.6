@@ -1,197 +1,351 @@
-Return-Path: <linux-kernel+bounces-219687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8A690D687
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:05:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC03F90D689
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54B41C22B4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1709B28112D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461D11CD1B;
-	Tue, 18 Jun 2024 15:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BF71EB2C;
+	Tue, 18 Jun 2024 15:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f+QAV7et"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="FuDQ+uBK"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010C117BB5
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027C71F951
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718723149; cv=none; b=HC2SSOuegeJ+ty6EpuSSeNu9EfR8tsSdh8gbVAW1NOnTN4KHApL4ExDa5hx0+AG7FEfalz0D2jH+kn0navHTSFrsWcdUfqbadeyoUbz+EzfukWjzX/+t0Ah0rPvaCendxU50NOhhLsj/eGUQ4aPhjtmdBCpxEx6PbgFXmo+YqPU=
+	t=1718723155; cv=none; b=nvLIInEWD4Rwb3DLHERBPzamMzaETBa0sOOVf8uV9Maghl+53zC1iozcir9ZllEGQzkoy90s1vA9QszeXObsM/PQUdec+GO12M2c4oC2nkZEMiYrR60kKcFOsdvU8H1k/lUU6e7QnoM7gHt8Jv+ZNSAg8od9AFChLnqz7H3aShg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718723149; c=relaxed/simple;
-	bh=kCd4OKDue09xkLeRYSUln1FvuHgENd6Jhn9M/W7Y1FM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hwC07cOZxmUNMdUlWQ6jQqDAruJMQalEeWbdLo1vHYwsK4vkt2xJx9qzrcJheFaVRn0FxkS0ppCkHZPIDjYfWHlWToi3VpqqAGNsAZA2EBvQMnL38Jl7f3xU/+5GojjNCvK3ni+/cUlQM8oxzuv7R53WiYjHhoODP/UP/qOBhrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f+QAV7et; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b060f0f48aso25620056d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:05:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718723147; x=1719327947; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fy3M/AH6/xybCaot3WBwIJpFavAawHNjcL6fl3GGJgo=;
-        b=f+QAV7et32yU/vQfav+iZS1jQ5JCUkFtu8ptt/MVuYBp3aykDNDT0bn3GlRZYJ/2UH
-         PLi+SW1pBkeXv8i5Hii0MyEq09zntSATcl4V1Qxrpq01/t8kIZw/Lp3W0r4XBIUyh6iC
-         x7udLTaL1kNdzTOBu9H+2gWBUiTwlLL1gHq8skZiHM0znOeddzjFOUP0KP/ueUQV7Hyp
-         p0iNwU9HJdo8QTnc5cTbCKSjfgg9Er0q/2SuGYagxqDztG7Z5EAIXEb6Mc5+0smyYNuL
-         2osdMrb9F/61vgMG0HraM8v0eFZLwhMPut9wuy0Y3LtcCoI4UbTp0VmnysHo/F/6LdL6
-         aKqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718723147; x=1719327947;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fy3M/AH6/xybCaot3WBwIJpFavAawHNjcL6fl3GGJgo=;
-        b=tVrHtrfthRs2XdLo6z9goUZZfHVGXEAc+X3J6rzuAVwGwb+mUPmmFiLrPzrZOoMcQz
-         vlvWmyCSBKZVJU96XDKCRNsik3EYgw3k5+x9+oF/fZSmg5rFVYUCaGjmhk18D1Z0q1zF
-         vincDFTwImT8dj4Hp3I5lnU1lH5CPnWqKXd5cm8KdWH0QalOlpvH67kG2rOcJD0gMr//
-         Ro94ZJq4CXze2ANfOks/5De1llgBO0SFR3Cw2kYlC7qS4ALkqCctt8aJgn92DZ9z9KNq
-         gWZ3XIuzoGJtV6pSGFgQfU5d1KDXG19pKVSYNEYieeE9VwahP3eVEUV1ACRq+6uAkGsr
-         cLZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuTAEQnKoaK1P+sFV7m/E4x76g9ZK3Kn0asnrK3ol8NC+MqPihYY7toBjp+RHwCNdauPnVuBrzS9imtBPtWry/HuQtXGvt4f1fmS7w
-X-Gm-Message-State: AOJu0YznqmP362rXn5LLqmaucPx9J28948cf/D763xuiOJHMJxw7AdoE
-	pbshxsSJRn6n8EgfDm9cknLEXXzCVy+kO7hDxJ4okIvqPKTA/kZAsOBUFcAIHMdEBQJHCal9K9D
-	JnpNcKCGMVYowjy08pdvtKYWS2m/yLQiUvndP
-X-Google-Smtp-Source: AGHT+IFa6FCBqd8D9Nj1JaNGKSLtJBvp/bRoyV+oAG2O6vNiHQ1JuiqvjZSAmr21MMQcuWOKxcWHb2lgAwdr0eNcVzw=
-X-Received: by 2002:a0c:df02:0:b0:6b5:61:53a9 with SMTP id 6a1803df08f44-6b50061578fmr5936766d6.28.1718723146610;
- Tue, 18 Jun 2024 08:05:46 -0700 (PDT)
+	s=arc-20240116; t=1718723155; c=relaxed/simple;
+	bh=xD6H5N5EA3hm3uG1dpUoMdkeBOh3n5ZJIZFUKP8qA+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rPPI8sTBygECtUbEXAAZ79NoXUnfBAzsJBHnIzEeldWgg/mD3mTOMxga+cFkSjNlx9G9C4FyZlfuKy+LZ/OSu0tzh21/UMqdKXG1tFie8T0RWwjdbVhQIqW2ry7ypt8gklvUEaaJBI4dHWKWhLIy4h04TaWYjQaPQOFubMS0PNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=FuDQ+uBK; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
+X-Envelope-To: luca.weiss@fairphone.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+	s=key1; t=1718723150;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GbRspr//u1/FN9+1Fqd4DR9tBkA4YUmT0KQo9IetTDM=;
+	b=FuDQ+uBKOq/PfM+gGEVu45x3kJ2GXcYKk9LftMmPIUfxvhLL0Li686kQMIl2ucInAD8axa
+	MkrJaT9VUMo6YvgKH8J8Sg6hBpvtRV8P/kDCdk/sdYg6+FSS3gzHt++fH+4bH6HMQxplb0
+	WmAJlw2v1o9ymqUa5XSUCbuQ6m00raTW0R70BrOej2ArUmdILBkvsp/Scxldk9/UoscUQO
+	yrlwk5WklPG5D5+7y0I9naZxpuksd2tWSI+VSJC9dBC6BVhoM3Cgot6nVx1hqCLjZcXuRB
+	aQfccVtbrtDMslRsvMKqJqdshnSdba3XP8CICjCewrHEyN5Jx9tlOQfOScYvKQ==
+X-Envelope-To: andersson@kernel.org
+X-Envelope-To: konrad.dybcio@linaro.org
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: amartinz@shiftphones.com
+X-Envelope-To: ~postmarketos/upstreaming@lists.sr.ht
+X-Envelope-To: phone-devel@vger.kernel.org
+X-Envelope-To: linux-arm-msm@vger.kernel.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <75c70d8d-500b-4707-a21a-a138742516fc@postmarketos.org>
+Date: Tue, 18 Jun 2024 17:05:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613233044.117000-1-sj@kernel.org> <5a8a3c85760c19be66965630418e09a820f79277.camel@linux.ibm.com>
-In-Reply-To: <5a8a3c85760c19be66965630418e09a820f79277.camel@linux.ibm.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Tue, 18 Jun 2024 17:05:10 +0200
-Message-ID: <CAG_fn=VoCfRAKqesutB6eP2Qi0aG8Tyq4zqoiy0_A3MJDQAEfw@mail.gmail.com>
-Subject: Re: [PATCH v4 12/35] kmsan: Support SLAB_POISON
-To: Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: SeongJae Park <sj@kernel.org>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: qcm6490-shift-otter: Name the
+ regulators
+To: Luca Weiss <luca.weiss@fairphone.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alexander Martinz <amartinz@shiftphones.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240618-qcm6490-regulator-name-v1-0-69fa05e9f58e@fairphone.com>
+ <20240618-qcm6490-regulator-name-v1-2-69fa05e9f58e@fairphone.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Caleb Connolly <caleb@postmarketos.org>
+In-Reply-To: <20240618-qcm6490-regulator-name-v1-2-69fa05e9f58e@fairphone.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jun 14, 2024 at 1:44=E2=80=AFAM Ilya Leoshkevich <iii@linux.ibm.com=
-> wrote:
->
-> On Thu, 2024-06-13 at 16:30 -0700, SeongJae Park wrote:
-> > Hi Ilya,
-> >
-> > On Thu, 13 Jun 2024 17:34:14 +0200 Ilya Leoshkevich
-> > <iii@linux.ibm.com> wrote:
-> >
-> > > Avoid false KMSAN negatives with SLUB_DEBUG by allowing
-> > > kmsan_slab_free() to poison the freed memory, and by preventing
-> > > init_object() from unpoisoning new allocations by using __memset().
-> > >
-> > > There are two alternatives to this approach. First, init_object()
-> > > can be marked with __no_sanitize_memory. This annotation should be
-> > > used
-> > > with great care, because it drops all instrumentation from the
-> > > function, and any shadow writes will be lost. Even though this is
-> > > not a
-> > > concern with the current init_object() implementation, this may
-> > > change
-> > > in the future.
-> > >
-> > > Second, kmsan_poison_memory() calls may be added after memset()
-> > > calls.
-> > > The downside is that init_object() is called from
-> > > free_debug_processing(), in which case poisoning will erase the
-> > > distinction between simply uninitialized memory and UAF.
-> > >
-> > > Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-> > > ---
-> > >  mm/kmsan/hooks.c |  2 +-
-> > >  mm/slub.c        | 13 +++++++++----
-> > >  2 files changed, 10 insertions(+), 5 deletions(-)
-> > >
-> > [...]
-> > > --- a/mm/slub.c
-> > > +++ b/mm/slub.c
-> > > @@ -1139,7 +1139,12 @@ static void init_object(struct kmem_cache
-> > > *s, void *object, u8 val)
-> > >     unsigned int poison_size =3D s->object_size;
-> > >
-> > >     if (s->flags & SLAB_RED_ZONE) {
-> > > -           memset(p - s->red_left_pad, val, s->red_left_pad);
-> > > +           /*
-> > > +            * Use __memset() here and below in order to avoid
-> > > overwriting
-> > > +            * the KMSAN shadow. Keeping the shadow makes it
-> > > possible to
-> > > +            * distinguish uninit-value from use-after-free.
-> > > +            */
-> > > +           __memset(p - s->red_left_pad, val, s-
-> > > >red_left_pad);
-> >
-> > I found my build test[1] fails with below error on latest mm-unstable
-> > branch.
-> > 'git bisect' points me this patch.
-> >
-> >       CC      mm/slub.o
-> >     /mm/slub.c: In function 'init_object':
-> >     /mm/slub.c:1147:17: error: implicit declaration of function
-> > '__memset'; did you mean 'memset'? [-Werror=3Dimplicit-function-
-> > declaration]
-> >      1147 |                 __memset(p - s->red_left_pad, val, s-
-> > >red_left_pad);
-> >           |                 ^~~~~~~~
-> >           |                 memset
-> >     cc1: some warnings being treated as errors
-> >
-> > I haven't looked in deep, but reporting first.  Do you have any idea?
-> >
-> > [1]
-> > https://github.com/awslabs/damon-tests/blob/next/corr/tests/build_m68k.=
-sh
-> >
-> >
-> > Thanks,
-> > SJ
-> >
-> > [...]
->
-> Thanks for the report.
->
-> Apparently not all architectures have __memset(). We should probably go
-> back to memset_no_sanitize_memory() [1], but this time mark it with
-> noinline __maybe_unused __no_sanitize_memory, like it's done in, e.g.,
-> 32/35.
->
-> Alexander, what do you think?
 
-We could probably go without __no_sanitize_memory assuming that
-platforms supporting KMSAN always have __memset():
 
-  #if defined(CONFIG_KMSAN)
-  static inline void *memset_no_sanitize_memory(void *s, int c, size_t n)
-  {
-          return __memset(s, c, n);
-  }
-  #else
-  static inline void *memset_no_sanitize_memory(void *s, int c, size_t n)
-  {
-          return memset(s, c, n);
-  }
-  #endif
+On 18/06/2024 15:30, Luca Weiss wrote:
+> Without explicitly specifying names for the regulators they are named
+> based on the DeviceTree node name. This results in multiple regulators
+> with the same name, making debug prints and regulator_summary impossible
+> to reason about.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+
+Reviewed-by: Caleb Connolly <caleb@postmarketos.org>
+> ---
+>   arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 35 ++++++++++++++++++++++++
+>   1 file changed, 35 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
+> index e82938cab953..4667e47a74bc 100644
+> --- a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
+> @@ -235,46 +235,54 @@ regulators-0 {
+>   		qcom,pmic-id = "b";
+>   
+>   		vreg_s1b: smps1 {
+> +			regulator-name = "vreg_s1b";
+>   			regulator-min-microvolt = <1840000>;
+>   			regulator-max-microvolt = <2040000>;
+>   		};
+>   
+>   		vreg_s7b: smps7 {
+> +			regulator-name = "vreg_s7b";
+>   			regulator-min-microvolt = <535000>;
+>   			regulator-max-microvolt = <1120000>;
+>   		};
+>   
+>   		vreg_s8b: smps8 {
+> +			regulator-name = "vreg_s8b";
+>   			regulator-min-microvolt = <1200000>;
+>   			regulator-max-microvolt = <1500000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_RET>;
+>   		};
+>   
+>   		vreg_l1b: ldo1 {
+> +			regulator-name = "vreg_l1b";
+>   			regulator-min-microvolt = <825000>;
+>   			regulator-max-microvolt = <925000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l2b: ldo2 {
+> +			regulator-name = "vreg_l2b";
+>   			regulator-min-microvolt = <2700000>;
+>   			regulator-max-microvolt = <3544000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l3b: ldo3 {
+> +			regulator-name = "vreg_l3b";
+>   			regulator-min-microvolt = <312000>;
+>   			regulator-max-microvolt = <910000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l6b: ldo6 {
+> +			regulator-name = "vreg_l6b";
+>   			regulator-min-microvolt = <1140000>;
+>   			regulator-max-microvolt = <1260000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l7b: ldo7 {
+> +			regulator-name = "vreg_l7b";
+>   			/* Constrained for UFS VCC, at least until UFS driver scales voltage */
+>   			regulator-min-microvolt = <2952000>;
+>   			regulator-max-microvolt = <2952000>;
+> @@ -282,66 +290,77 @@ vreg_l7b: ldo7 {
+>   		};
+>   
+>   		vreg_l8b: ldo8 {
+> +			regulator-name = "vreg_l8b";
+>   			regulator-min-microvolt = <870000>;
+>   			regulator-max-microvolt = <970000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l9b: ldo9 {
+> +			regulator-name = "vreg_l9b";
+>   			regulator-min-microvolt = <1200000>;
+>   			regulator-max-microvolt = <1304000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l11b: ldo11 {
+> +			regulator-name = "vreg_l11b";
+>   			regulator-min-microvolt = <1504000>;
+>   			regulator-max-microvolt = <2000000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l12b: ldo12 {
+> +			regulator-name = "vreg_l12b";
+>   			regulator-min-microvolt = <751000>;
+>   			regulator-max-microvolt = <824000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l13b: ldo13 {
+> +			regulator-name = "vreg_l13b";
+>   			regulator-min-microvolt = <530000>;
+>   			regulator-max-microvolt = <824000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l14b: ldo14 {
+> +			regulator-name = "vreg_l14b";
+>   			regulator-min-microvolt = <1080000>;
+>   			regulator-max-microvolt = <1304000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l15b: ldo15 {
+> +			regulator-name = "vreg_l15b";
+>   			regulator-min-microvolt = <765000>;
+>   			regulator-max-microvolt = <1020000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l16b: ldo16 {
+> +			regulator-name = "vreg_l16b";
+>   			regulator-min-microvolt = <1100000>;
+>   			regulator-max-microvolt = <1300000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l17b: ldo17 {
+> +			regulator-name = "vreg_l17b";
+>   			regulator-min-microvolt = <1700000>;
+>   			regulator-max-microvolt = <1900000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l18b: ldo18 {
+> +			regulator-name = "vreg_l18b";
+>   			regulator-min-microvolt = <1800000>;
+>   			regulator-max-microvolt = <2000000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l19b: ldo19 {
+> +			regulator-name = "vreg_l19b";
+>   			regulator-min-microvolt = <1800000>;
+>   			regulator-max-microvolt = <2000000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> @@ -353,96 +372,112 @@ regulators-1 {
+>   		qcom,pmic-id = "c";
+>   
+>   		vreg_s1c: smps1 {
+> +			regulator-name = "vreg_s1c";
+>   			regulator-min-microvolt = <2190000>;
+>   			regulator-max-microvolt = <2210000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_s9c: smps9 {
+> +			regulator-name = "vreg_s9c";
+>   			regulator-min-microvolt = <1010000>;
+>   			regulator-max-microvolt = <1170000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l1c: ldo1 {
+> +			regulator-name = "vreg_l1c";
+>   			regulator-min-microvolt = <1800000>;
+>   			regulator-max-microvolt = <1980000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l2c: ldo2 {
+> +			regulator-name = "vreg_l2c";
+>   			regulator-min-microvolt = <1800000>;
+>   			regulator-max-microvolt = <1950000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l3c: ldo3 {
+> +			regulator-name = "vreg_l3c";
+>   			regulator-min-microvolt = <3000000>;
+>   			regulator-max-microvolt = <3400000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l4c: ldo4 {
+> +			regulator-name = "vreg_l4c";
+>   			regulator-min-microvolt = <1620000>;
+>   			regulator-max-microvolt = <3300000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l5c: ldo5 {
+> +			regulator-name = "vreg_l5c";
+>   			regulator-min-microvolt = <1620000>;
+>   			regulator-max-microvolt = <3300000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l6c: ldo6 {
+> +			regulator-name = "vreg_l6c";
+>   			regulator-min-microvolt = <1650000>;
+>   			regulator-max-microvolt = <3544000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l7c: ldo7 {
+> +			regulator-name = "vreg_l7c";
+>   			regulator-min-microvolt = <3000000>;
+>   			regulator-max-microvolt = <3544000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l8c: ldo8 {
+> +			regulator-name = "vreg_l8c";
+>   			regulator-min-microvolt = <1620000>;
+>   			regulator-max-microvolt = <2000000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l9c: ldo9 {
+> +			regulator-name = "vreg_l9c";
+>   			regulator-min-microvolt = <2700000>;
+>   			regulator-max-microvolt = <3544000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l10c: ldo10 {
+> +			regulator-name = "vreg_l10c";
+>   			regulator-min-microvolt = <720000>;
+>   			regulator-max-microvolt = <1050000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l11c: ldo11 {
+> +			regulator-name = "vreg_l11c";
+>   			regulator-min-microvolt = <2800000>;
+>   			regulator-max-microvolt = <3544000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l12c: ldo12 {
+> +			regulator-name = "vreg_l12c";
+>   			regulator-min-microvolt = <1650000>;
+>   			regulator-max-microvolt = <2000000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_l13c: ldo13 {
+> +			regulator-name = "vreg_l13c";
+>   			regulator-min-microvolt = <2700000>;
+>   			regulator-max-microvolt = <3544000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>   		};
+>   
+>   		vreg_bob: bob {
+> +			regulator-name = "vreg_bob";
+>   			regulator-min-microvolt = <3008000>;
+>   			regulator-max-microvolt = <3960000>;
+>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
+> 
 
