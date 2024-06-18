@@ -1,99 +1,111 @@
-Return-Path: <linux-kernel+bounces-218881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0365890C756
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:41:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7B190C760
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD422846CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:41:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B74EBB230D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816111B29B3;
-	Tue, 18 Jun 2024 08:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08871B3758;
+	Tue, 18 Jun 2024 08:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ek+gOgOm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Er5Bnz/W"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85A71B29A7;
-	Tue, 18 Jun 2024 08:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9590A1527B9;
+	Tue, 18 Jun 2024 08:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718700326; cv=none; b=t1bn+MVKwLIssQP30WyxTCotUsMjXBMAldK0z4+PvqhSM1tYOZviyoJC8ExlpAYOkuduARB8rfPlZTcOEhT2DGCQB0+02ULxpVEGtriclTRT9cniRSPuP1abq978Iq4D4xzZTKBVM1u4wmlNekpvQmCM5K+SvcuWWB+1khiQE3g=
+	t=1718700378; cv=none; b=JUzykseC7IDSeDDrpv4kfzpdfh8uKe0LGh5KzcmTkAofn/v6xNCiaxG2xbIqHk7owPV1v3TwcXTtfI2LU8YIsP+LJUxCkm/2OlV/CBtYzWn8zWc3QC281dxCQK7HAi/CNwfzvDa8+YChyS99/prxN9F3N4EsBJs0RED5BF53C3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718700326; c=relaxed/simple;
-	bh=IAIfOx059NZ6OKbdjowZC+ZcF824yt+ovxu/DQa0BdU=;
+	s=arc-20240116; t=1718700378; c=relaxed/simple;
+	bh=Ss8TNFVqnuGABYJsbuJPzNJXJH3S14DqdVq9lZzErZQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H1txjvZuHW5czsoZkHCTqAnSleusz4Gbmc3jk5lphoHeBgJqwqjKzL3RlxraoiiBXsztgAC6q2SjiiHnR0duNluxeioIaGUPS5ie1ZM0iP0pTcUi8ZMzZAM3lZqipC+PijL/HhMW3QNWZm3RGqMpqZKXdKZi+rdWnjYHm/OFj88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ek+gOgOm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0290C3277B;
-	Tue, 18 Jun 2024 08:45:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718700326;
-	bh=IAIfOx059NZ6OKbdjowZC+ZcF824yt+ovxu/DQa0BdU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ek+gOgOmgPxK6EduXAMFLoSWRx0oo0GKHqeBN4NuDvecQ2u0vNU0S8JIs5Qh22Plp
-	 RWQRL/bTt2ANE6vr2fq/cbCrfC/Q7uTABpvFSLD0hd7twrUFC0fmpovXIdjk2kFLdl
-	 3ExBgY2+rPCFgJ4adxteb/sztnIMBpG0EQxX3hMLICIPKDWwgpGdjutaVdXUdTPuEW
-	 w6OrHkxT4hb7B7IQQ/5f5oeFFUzG2pKaaGJPNoHKRW68uw5vCYOBriGrkhjm9b2buT
-	 R8xY8RrdMVeTEYVAKPSKMM6HszcdkZ7MM3+s8SibIlgRKOjmCzsPteaB3xxt/BCcif
-	 fKUW2ny7CtDAQ==
-Date: Tue, 18 Jun 2024 10:45:20 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Damien Le Moal <dlemoal@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" <linux-ide@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: ata: ahci-fsl-qoriq: convert to yaml
- format
-Message-ID: <ZnFJINOphiD1BWyR@ryzen.lan>
-References: <20240617180241.901377-1-Frank.Li@nxp.com>
- <ZnCKlj_Gp60_2otI@ryzen.lan>
- <09fad8cc-ff9e-48b4-b954-4f84c61f3ffc@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lyZKRyGClZNx9jI/cPI4AuC48OmGXpA/usUdjoEZFntEZ3ehTTRoTvMJoshfm7QlBpoOyfo3nEAoMXsS/NbU0c1lGqksW5YuBhqsDrZ+HUMOwb6DUjNe6Yk6rcjzLhsKLdEHhanWqtCjl+XG0qkqMGsVyyi0c89QnRtRMK9eX34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Er5Bnz/W; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=zIHDqg4NPWkZl96KD/WOqKYjN1qtBnxJUKffnMyzQ40=; b=Er5Bnz/WScS03rc7NF9KCx4m78
+	28rrMmcIFowoGeA+QRDAU2LTWurV+iS5YP1ZWBfU07S8gt2gCtpcPx55uyRn6M1NYKUxYwX3cQAHf
+	SptP8j/szqTuLTIsBQ2tF9cPUGX3MfNvjF0Kxx247DcLu8Ax0OvKkAAi9XtfKKpywEd8xzH9+BZL5
+	1aRpzJVNQVknZzHDsWKP5zQ2a7O8ROtaPG7RkwTRH6AFf9ID+ViBU9MneqxxqEfRQh57QldICLwOv
+	hys+w6nmCMhGFgINDxEhlR6M9Ud878qUEqetAKjj4CDI0MIYk6zniaRE/ehIeRwYWh6yamNxIqhr0
+	rIc38ZMg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJUTN-000000070lB-2ZIy;
+	Tue, 18 Jun 2024 08:45:57 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 14C9A300886; Tue, 18 Jun 2024 10:45:49 +0200 (CEST)
+Date: Tue, 18 Jun 2024 10:45:48 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, tglx@linutronix.de,
+	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
+	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>
+Subject: Re: [PATCH v17 4/5] random: introduce generic vDSO getrandom()
+ implementation
+Message-ID: <20240618084548.GE31592@noisy.programming.kicks-ass.net>
+References: <20240614190646.2081057-1-Jason@zx2c4.com>
+ <20240614190646.2081057-5-Jason@zx2c4.com>
+ <CALCETrVQtQO87U3SEgQyHfkNKsrcS8PjeZrsy2MPAU7gQY70XA@mail.gmail.com>
+ <ZnDQ-HQH8NlmCcIr@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <09fad8cc-ff9e-48b4-b954-4f84c61f3ffc@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZnDQ-HQH8NlmCcIr@zx2c4.com>
 
-On Tue, Jun 18, 2024 at 09:42:03AM +0200, Krzysztof Kozlowski wrote:
-> On 17/06/2024 21:12, Niklas Cassel wrote:
-> > On Mon, Jun 17, 2024 at 02:02:40PM -0400, Frank Li wrote:
-> >> Convert ahci-fsl-qoirq DT binding to yaml format.
-> >>
-> >> Additional changes:
-> >> - Add reg-names list, ahci and sata-ecc
-> >> - Add fsl,ls1028a-ahci and fsl,lx2060a-ahci
-> >>
-> >> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> >> ---
-> >>  .../bindings/ata/ahci-fsl-qoriq.txt           | 21 -------
-> >>  .../devicetree/bindings/ata/fsl,ahci.yaml     | 58 +++++++++++++++++++
-> >>  2 files changed, 58 insertions(+), 21 deletions(-)
-> >>  delete mode 100644 Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
-> >>  create mode 100644 Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-> > 
-> > Should this file perhaps be called:
-> > fsl,qoriq-ahci.yaml ?
-> > 
-> > Would be nice with some input from DT maintainers on this.
+On Tue, Jun 18, 2024 at 02:12:40AM +0200, Jason A. Donenfeld wrote:
+> Hi Andy,
 > 
-> This should be rather compatible.
+> On Mon, Jun 17, 2024 at 05:06:22PM -0700, Andy Lutomirski wrote:
+> > On Fri, Jun 14, 2024 at 12:08 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> > >
+> > > Provide a generic C vDSO getrandom() implementation, which operates on
+> > > an opaque state returned by vgetrandom_alloc() and produces random bytes
+> > > the same way as getrandom(). This has a the API signature:
+> > >
+> > >   ssize_t vgetrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state);
+> > 
+> > Last time around, I mentioned some potential issues with this function
+> > signature, and I didn't see any answer.  My specific objection was to
+> > the fact that the caller passes in a pointer but not a length, and
+> > this potentially makes reasoning about memory safety awkward,
+> > especially if anything like CRIU is involved.
+> 
+> Oh, I understood this backwards last time - I thought you were
+> criticizing the size_t len argument, which didn't make any sense.
+> 
+> Re-reading now, what you're suggesting is that I add an additional
+> argument called `size_t opaque_len`, and then the implementation does
+> something like:
 
-Considering that you gave your Reviewed-by tag, I interpret this sentence
-as that you are happy with the filename used (fsl,ahci.yaml) in this patch.
+Exactly, that's how I read amluto's suggestion as well. Also, I recently
+ran into this clang rfc:
+
+  https://discourse.llvm.org/t/rfc-enforcing-bounds-safety-in-c-fbounds-safety/70854
 
 
-Kind regards,
-Niklas
 
