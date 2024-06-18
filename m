@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-219146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8476790CA6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:53:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C0990CA6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20D83287B2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:53:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F921F24155
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B0014EC5A;
-	Tue, 18 Jun 2024 11:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E9A14F9D4;
+	Tue, 18 Jun 2024 11:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="N78y5zEG"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6jb7TK4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E976414E2CF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4674F383BD
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718710477; cv=none; b=ggz2HWxwFmBO5diPns3CLryaoI64vxEg4d24ETQIOP7TTjZxepZwGW2nY+kTi3ZFaEeHr1HI11KZrAZNzMh4jdPlZYdORBYBrodJt2FHry7G/TpU/R0RV1q1yX0/urYSeVu85JpyxMGDyD+Qq0lwI7WLlb2d+WtdAonzp+XZYPs=
+	t=1718710512; cv=none; b=Vcv1Z16Yg5pVpKoxXGsS/oRbGsHGwUvXQwkm6pjfRugg9PdhGWsoiBx0RmLf1nwV+tZ/9//nO0BMuhT503mxBsWvKEs2zXeuzk7e2i6kdoZG7XIjqSBCopHehDTxX4CDI86IzS+ht0/NS5vtG8l3byxjzqvlcxk3eCEsIUF+MLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718710477; c=relaxed/simple;
-	bh=UMkfk1uz4OiFUzUfIWw8xL19AnVl0WWu88Rh0CNSYCo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fdhe4lvf+fBGvSJ/DUhSq5q3OGTvUl0oxHFgGFVFqah2GXf85F3DfdLGh0Qjuh1SrXhMCqOKVymmUOMd/mY9XrV7JSpMpkWvgZhqvGkUw4wCZFwcCjHTA7YQBdqMd451oGoTD6EKUuyCIWB1dH6CzOUz8IqTt0ejL3boYFNierw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=N78y5zEG; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52caebc6137so2950277e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:34:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718710473; x=1719315273; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UMkfk1uz4OiFUzUfIWw8xL19AnVl0WWu88Rh0CNSYCo=;
-        b=N78y5zEGOvRJHsoLLBFoZ+q8mHQ7IzQHxJD75rVsXiyYWDEkN1TsiKGQFlCLFk575s
-         /hCii7YmfXLGkTnuSH56M3Z2lMxPynfUnKNv2VObGz2kLoooL+7KP9TBeMLmBpAsmHxh
-         0TtsvdZHNIkOHJ9RAlvIt+xEO2wc06+NE1paEaHSTd3FlaF4IfTWzH1ZbVPNlmqM84Si
-         HCdwi9WJlgI0S+GYOcY3651Vmq3Fru5bANNN8PLTbCBY7JWlkkEjtVEM8JeF+2e8/Xmo
-         BkKaliOhD+hP5eOya5xpSM6IpNSAcKqe9O0csqVrhFPCSonCVsXC5hOo1iffYNmbul0D
-         Yu2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718710473; x=1719315273;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UMkfk1uz4OiFUzUfIWw8xL19AnVl0WWu88Rh0CNSYCo=;
-        b=WiRQXUq4qew7RDFK8QBhgsCjG7/ayyfImjjacDscLxW8HB7VnV6aNL8a0FKBtvcHja
-         1Ne/WlCydlVXnpS6OyEW12qtX0SLbR05VQPUMUpGBHmHTHzG9DH+SE0fJ+VVL2aFWzY1
-         KwYYRso0oAhZqddJ63ZvBBa4J9yObdLulwLlCkqICySBhmCNETwsJkpGdUAjrWePLIe4
-         bW1o6jvefFYokj6oZxxr7KGz6cX6DRCzvlVsSsStXzB3oUEXNOqnPRPZC7nBLlV3uSZq
-         V2oEhz3Yll6hWPmEUyOR0BNrt+mFztcAQCAsO+/nygLUzD5AnEGobUxOm87AG+Ld/qLk
-         KcOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBZxotjMzBTqcKI45aWQiD6hHnaMpBuNn4thc3K3FcdtVhDDBk6oXYYem+u+DwDmhJbuV+9F9QiAltIgJe51ghBnX398MqDgztO0rk
-X-Gm-Message-State: AOJu0YzJ76rj7xq7CfZw6LTzeooEmd0Ua+iDPvpvTFYRoL6/8V9nrOB3
-	HpIiSsh58hBGbEZGzIxxcaEz7i7LGKDFAwZdKUW+bNsxiXdHKQQcA4GIRAAJnuzJcvfyYpDTnIB
-	4xTOQFhqGmRoC5GG/n1jwB/yU6tQRGCaco125qQ==
-X-Google-Smtp-Source: AGHT+IGyZn9ZxYOyqgLilSVSiYsQNPXHOBNuta8dqNri+uFDpDVvXJ/3px/0KeevQMRS1XyUFGcx9t0XkY+UWQx74Ag=
-X-Received: by 2002:a05:6512:ad0:b0:52c:8210:13bc with SMTP id
- 2adb3069b0e04-52ca6e98fe1mr9251684e87.64.1718710473025; Tue, 18 Jun 2024
- 04:34:33 -0700 (PDT)
+	s=arc-20240116; t=1718710512; c=relaxed/simple;
+	bh=M4pnuz8cNuPU8c1HstU6mEYOGHH4rhaGZOnyxFYYFMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqEGaNlFhFDzjcvna7P1FdXHHVJ+hk32UHmDHwxs3VD6pxahGEofp+QFPcTWiIKkN3FWEVy1O8gR5TW9BFapT+WcrwzVmZ2OE1TY9cfD5vfVWKrcIM9fp3liQ07wJyvJKCHD+vf5lxdlK/lV2Kyc6aOSkgnaPFuVOsCZY2+K+8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6jb7TK4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F4BAC32786;
+	Tue, 18 Jun 2024 11:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718710512;
+	bh=M4pnuz8cNuPU8c1HstU6mEYOGHH4rhaGZOnyxFYYFMo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l6jb7TK4AqUtxRSPRhtEDM4TaUnPyrlbwMYDEqbeCntG/CKNTpMISGpo6dvZ1IY05
+	 qJZpXMJJ3VRuM1wuEe4uZxHAicjpxqR6zBI1BusyqDnQRq+ZowrJWXf4vyWZCdsuxt
+	 1ldz1T5Myty+N7Gux4FdK0lJ0niiULGrKQqa8ViH8lj2TrIy7LV+GArNQkXJO+zV6x
+	 EkHlLiRCR/9E6DYPOe4Qpc3Vu2fYr7iiV9gLSRD3yA2M1W+E0Bwv29qQueIEYa5VJ8
+	 KcCWu3pAXPtNgrUzpwjmG+8XTA5zyPMi+13tV6ky+KCHhIJBfsehCABjgSSnowfhRj
+	 lO+3FoKUxyO5Q==
+Date: Tue, 18 Jun 2024 12:35:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>
+Subject: Re: Page select register restrictions in regmap core
+Message-ID: <1a62fc39-355c-4885-b5f6-b66f01a1328a@sirena.org.uk>
+References: <e3e11724-794d-423e-9326-ffe8eed5119c@roeck-us.net>
+ <4b22e04f-3142-4a5a-a8d1-366c4b8bbb73@sirena.org.uk>
+ <78c93d6b-af0e-4d96-b213-e1e402524361@roeck-us.net>
+ <adcd5997-84ee-4c72-aa37-2940afdc83bd@sirena.org.uk>
+ <c4a5fb5c-90b4-488b-8875-a0b819e24bcd@roeck-us.net>
+ <19893519-20a6-47cf-bb3b-c61dada627bc@sirena.org.uk>
+ <e6733f56-014e-4ea0-aaf8-059334f2b27f@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618111824.15593-1-brgl@bgdev.pl> <CACRpkdYWqsV+2a_L-dzyvGiV4WYAdS2B7WvOkKMyZh6tGT39Mw@mail.gmail.com>
-In-Reply-To: <CACRpkdYWqsV+2a_L-dzyvGiV4WYAdS2B7WvOkKMyZh6tGT39Mw@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 18 Jun 2024 13:34:21 +0200
-Message-ID: <CAMRc=MepWmLu5zW8G+T93H6Eunb81cJh+ng1SZN_aYK64yYP_Q@mail.gmail.com>
-Subject: Re: [PATCH RFT] pinctrl: da9062: replace gpiochip_get_desc() with gpio_device_get_desc()
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Support Opensource <support.opensource@diasemi.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YRK1sU5hNClG7S+h"
+Content-Disposition: inline
+In-Reply-To: <e6733f56-014e-4ea0-aaf8-059334f2b27f@roeck-us.net>
+X-Cookie: If you can read this, you're too close.
 
-On Tue, Jun 18, 2024 at 1:27=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
->
-> On Tue, Jun 18, 2024 at 1:18=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
->
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > In order to finally confine the unsafe gpiochip_get_desc() to
-> > drivers/gpio/, let's convert this driver to using the safer alternative
-> > that takes the gpio_device as argument.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> I guess you will apply this to the GPIO tree, else tell me what to do!
->
-> Yours,
-> Linus Walleij
 
-I can, yes. Thank you.
+--YRK1sU5hNClG7S+h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I'll give it some time to possibly get a Tested-by from Dialog.
+On Mon, Jun 17, 2024 at 04:15:33PM -0700, Guenter Roeck wrote:
+> On 6/17/24 15:47, Mark Brown wrote:
+> > On Mon, Jun 17, 2024 at 02:55:09PM -0700, Guenter Roeck wrote:
+> > > On 6/17/24 10:22, Mark Brown wrote:
 
-Bart
+> > > each register address and then accessing, say, the revision register
+> > > not as register 0x02 but as register 0x102. I would then define the matching
+> > > range from 0x100 .. 0x17f and the window from 0x00..0x7f.
+
+> > That would make the range exactly the same size as the window so there'd
+> > be no paging going on and the registers could be accessed directly?  I
+> > guess that's another check that should be added...
+
+> I tried to explain this before. The registers in address range 00..0x7f
+> are physical, but they are only accessible from page 0 with the exception
+> of the page select register. So, sure, the registers are not actually paged,
+> but page 0 must be selected to access them. That is the one and only reason
+> for specifying that first range and window. It ensures that page 0 is
+> selected when accessing the registers. If that wasn't the case, I could
+> define a single range for the actually paged addresses in the 0x80..0xff
+> window and be done with it.
+
+So surely this means that the entire register map is one window and
+there's no point in defining two ranges?  Those registers are paged with
+the same selector as the other registers.  At which point you can just
+sidestep the issue and be like the other current problematic drivers.
+
+> The non-regmap access all happens in the probe function before regmap is
+> initialized. It is needed for basic chip identification, to prevent someone
+> from instantiating the driver on a random nvram/eeprom and messing it up
+> with attempts to write the page select register. I would not want to be
+> held responsible for someone with, say, DDR4 DIMMs force-instantiating
+> the spd5118 driver and then complaining about bricked DIMMs.
+
+What some devices do for enumeration if the fully specified regmap won't
+work for all is create a trivial regmap used for enumeration, then throw
+that away and instantiate a new regmap based on the results of initial
+identification, though that wouldn't really work for letting you skip
+paging.  I don't see how you avoid handling paging in the probe theough,
+unless you just assume that the chip is left on page 0 by whatever came
+before.
+
+--YRK1sU5hNClG7S+h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZxcOsACgkQJNaLcl1U
+h9D65Qf+IrZCCyK+pbghAZoF7jmFba59dcZHCCApvqPHF0iT7x39Ku3wsQI3svaV
+XpGqASHAFySvOLSye2tn9/1d/NzJ2uV6cvXqzYF4ii36tzn5UbAcz0kM0rkhrW2I
+sKvamqkKlJJwEQWkEULegKoeXSLwcA6ZrGIhQGkWqltqD85RjA9fX5lfb9OPeMPZ
+UQb9UFGgWQjQhLgSBF+YHGGrWr0lbAUZ8dTnOIUm/iv1sECtYBuonW9GElAsbqhF
+xdyhITWcMne+DpH4wfsGvYvF+F7n0cGUgnxDO1GkYuMdMS9ltLO0dPrT0zOyBGwA
+082ExvYULGI0aGK0Ke+M4K5pnKUG7g==
+=nBui
+-----END PGP SIGNATURE-----
+
+--YRK1sU5hNClG7S+h--
 
