@@ -1,201 +1,722 @@
-Return-Path: <linux-kernel+bounces-218641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B4890C2FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:04:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FC690C302
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A8C284313
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E924284281
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9341C6BE;
-	Tue, 18 Jun 2024 05:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FDC1B970;
+	Tue, 18 Jun 2024 05:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EwFdyhL5"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2058.outbound.protection.outlook.com [40.107.102.58])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZ2eVkq0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEE579FD;
-	Tue, 18 Jun 2024 05:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718687062; cv=fail; b=QAkSK2lIYD2dYTOjZTDi7WqiWvT85/rLYr2TEwSMtRfBvSn5nYaDhcWrwtaSKNWSite26rjHEt8fqp4vjjgOeYm4aDoJ83wGFU2LEltRQgib6lAqCdDLzFIS/qF1MjJERRsKaQ/PHV6+t2X1p7CtC3g3aars0eSbuByclGWoHto=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718687062; c=relaxed/simple;
-	bh=Bpb+ZqFn6sBx0CvgVTwjtz8baFtg2nWoQeYliHHGXUs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HUcGcOBPXErAHeaM1zf+vs0F8odNTC8PU6ckVo5/LUdCPhzp9MBXHhKLzRenyLAvkzajeB/c47KaW08xN03nX0bXMaDtDUzMbb8aBKIQ3ecoY8i/3vURHDHXGgIT3g8ZBv4WkovJsJsJV1JpnWphll/h/mVXw8cF8mmX1C4T1xI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EwFdyhL5; arc=fail smtp.client-ip=40.107.102.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OtO/kaXrXgRlAqC9FmCy3MYld3WhVeTY6RGUUIpMGI8kOIjG67Wx06qDxboG3NZ09H9twu/jC/hcUGLp65/iteCx+veA8icq74GvoM3GsiyFPTSKd9z6qbmFcAVCgBn3OaUvIgYrTQGXkE6jp6sQXYTgfG64T6KOQPg+Ok6+j3SsAqGEVu0qPAu1dsUBZf9+TrJJplnN8d76694WpwWMq+UXLIW1PEOCCz7q1dEcP3/zkvHRe0P+8sbRHSccTudlw6RSkVVVjxxgrjVUWJyp/nQ9qEn+2uo78vrIIAugqNmNjhLcJ6jAEWvvtYGwezi/Avtc7i+M+i+voAPPXvo4DQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bpb+ZqFn6sBx0CvgVTwjtz8baFtg2nWoQeYliHHGXUs=;
- b=JTvUNr8jKGYn1U1+J9sUrstvH8VLj7e5z+HDrkDVrzMxIJPC92r5D66X803y3tgeVEuRHUFXJvPL/FIaBGJKZ3842uyt5pMK4L7SHzntzVKWli1OlVaOcSpb+PMSi9hk3f9qzvnqsz8lseT+TTQ/IQU6zxZddTkmoBvWK9Ti9Y23BouNXAfr1YmznU5XMYGo2CCNXUzBRqJVw139v4wTd7Hjfzt83KKTpZ85+Mz3msEgQKyAlr//MjUjYuHYrsjs4K5EunQk/idZvVFwGfk0zVwLxXslIMMHUU71uIvAQNUKxaVxBfBczXh3dBxwQ+RxseaRKNx9wHvJO8RaGb8YAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bpb+ZqFn6sBx0CvgVTwjtz8baFtg2nWoQeYliHHGXUs=;
- b=EwFdyhL5wY/PRDjqjXvk3xdTqvvA8oW+In938z6YR8qtMnPTGrwYRc7EiRuj5kQ+Amdc6yAJi63pM4vI1nowzoJ0YkHV0Y4059ZFRekHlFDA08kDai8mGfErBkzgiqtqgtN79u2XNGBH9e/BYLZlydxOj4SVk9vc3CmOiKH7vYrFZH3aVS8S0Kxret1cEF3zg35j61fPS5qI87RnJftoBQbqZCgeJmW5TXuA5bHskLYUQPz1TDrFaxixyZWQ6g0ETtOpHCTLpA9hF9bNvXsmsDItRHnG7fNVbsM5uyqi6L5SwXI3UQAwvcmauJin9xoRLpPOVr/jr1J7I9Go8OlzjQ==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by DS0PR12MB8041.namprd12.prod.outlook.com (2603:10b6:8:147::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Tue, 18 Jun
- 2024 05:04:18 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 05:04:17 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Jens Axboe <axboe@kernel.dk>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH 0/3] block: m68k: add missing MODULE_DESCRIPTION() macros
-Thread-Topic: [PATCH 0/3] block: m68k: add missing MODULE_DESCRIPTION() macros
-Thread-Index: AQHawRzjoY3hN3ry2EKaasG2UzsOMrHM97aA
-Date: Tue, 18 Jun 2024 05:04:17 +0000
-Message-ID: <b71c63e5-5ee3-4d20-8923-a8d57ace48e4@nvidia.com>
-References: <20240617-md-m68k-drivers-block-v1-0-b200599a315e@quicinc.com>
-In-Reply-To: <20240617-md-m68k-drivers-block-v1-0-b200599a315e@quicinc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|DS0PR12MB8041:EE_
-x-ms-office365-filtering-correlation-id: 28eb57a6-35ff-44d0-5185-08dc8f541b60
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|366013|376011|1800799021|38070700015;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NHNEVXU1aGFJS3UyaDgrZzJjeUd0Z3FvQTcvbHMzZUlDNjQ1ZE5ocFFXMU5k?=
- =?utf-8?B?N2RrWHZhUHQ0Z1pGL1l2YVFja3BLSTN1TDlVT3BLaFpsamxwcFE2RUlONXkw?=
- =?utf-8?B?MU40VTRWbjFKMzBzYXBaejcvTUFTZTJJcEdUbWxUUzQzRGw2NUhFY1lWOGJp?=
- =?utf-8?B?TGtmVEpxQmFMTXYwemF3TUZVVjNUc082bUtCMk95L2x4bVc3SDBuVnZwUmRR?=
- =?utf-8?B?c1gxZGx4WUhIT0k1WklOc0NXaHpjRU9Hc3lqbXFwWVB2QVVLSlE5R3VzMFZz?=
- =?utf-8?B?SUY5UTBqQ0ZwcVlPRkcvb0NQQ3cvOVRaT0puZlZ1aGl0WWhwM0l0bXhwMEpM?=
- =?utf-8?B?WmhhK1ZYa0tvc1FWbXlTY3duVmhxZUVMTlZCUFd4dG01a0JhcTZUaDlUVloy?=
- =?utf-8?B?cStJczJUM0gyL1h1ZmFRT3BoREp6bmF0WlJta0tEeURNU3BQNFdWczRTdU5L?=
- =?utf-8?B?N3U3SGNGRzNaZ3YrMVRUZWpFUGlWVGNaT0RTcS9TRTc4TVZQbzQ5b2hEMVFO?=
- =?utf-8?B?dnFlQjdremdNbHNnQTUvZi9hWWRidkpkeEQ1V2tOa0RlR1RhZGo5SGl4bEtV?=
- =?utf-8?B?MFJLamhBTEVtdlZhdGdlblMyemExSnBCRitxZGFQcCtQZ0NjdXJMdmNJYlVt?=
- =?utf-8?B?ZEl3eVMzN3QxWkloZDJPQ29VTjlveHJhNXlKY0RqMms1Q3RPWWdOY2tkV2Z5?=
- =?utf-8?B?ZmpnSDdwMlpRRnVGSTE1MklpNEtFMEpOZzVZRUEvYTFXTjdrdWI0UU9QYjU5?=
- =?utf-8?B?c3hHY1pXejhNNjhqSHhOZ3o1ZUVabDR2dWx2Yk4weXpEdlRtTCsydVJ3VGZS?=
- =?utf-8?B?NmVQTS9mSW9IWDVudmNmZnNtRDhCdCs4MS96NFVRYWhUOXg2NGlPNXMxUFNn?=
- =?utf-8?B?aUVrcjd5TVdYbWwrVGQxcnp6UWQ5MXR3Rm5CNWw3ZUk4THJzM0JWUnVrVFJ2?=
- =?utf-8?B?OXJXZnp5Q2VTa3ZDV25UT013aGFXMnR6VVNMRnR6dlVZdTJvdXRNcktGaENz?=
- =?utf-8?B?QUNPdTlaZjF6aGZNRzYxUFVOLzFhb0RBbmpLR24zOTNjUGxpeHpUWUF3clRN?=
- =?utf-8?B?UWhXZGY1eHUxSEZKVUt0NmlaMGJyMzhZTjJWMFJLNW9lNC82aVNSRm8zamRo?=
- =?utf-8?B?RWJkOCtsbkVKaGZPOGJRcWdTZkdSVXJReUxnTDl2bUNVODM1Uzd1TTJ6bGY1?=
- =?utf-8?B?ZXpZWFE2QU0wK1dIdlVjdHpya2cwanJKVlJNQ0hnT0xHdzBmckxZamdvb3pZ?=
- =?utf-8?B?aXV3R3I2a3BFVWZERDdaTzlsTE9zcVppT2ZuOEF1U2wwSm9oUHBCVk5Qdlg4?=
- =?utf-8?B?eTIxV3ZEbHVOL0lCMnhRNGRTRENlUVlJMm9SVFE0VGIyZ1lPTnNMUG9ub2N5?=
- =?utf-8?B?TW9Qd0lvOWJSR0xlSTJDTUdaWll0Y24relM4VmFMQjhXSHhrYkx2VHVlMWd2?=
- =?utf-8?B?SnlVWGRrUEpRYXVDMlAwMTF3QU9obkZHZHRtSXhiM1oxMHpjVWkrU2Z2QXd0?=
- =?utf-8?B?MmVKQzBOZDY3bnpoTDA2dnVjY3JlbTNmRWQ1SFNWWEJDWlpkL0ZtRzRaQlcr?=
- =?utf-8?B?dFRKOEI4Yk1GQWwrd0tvQTBDcE5ycGptTVpic2hTYmhJVVZlQlY2bTVmTWlI?=
- =?utf-8?B?c1pNVWdOQjZzTWhjbTJTYkEwQWdIZ2ppdUdBTk5nT3Z4SVpxUkNlRFJVd0JF?=
- =?utf-8?B?YUpXcHVrcStDSFkwa2tNNVFwbGtrMU80ZmNvY0h0cndhRXg0TFhvMXVwUmd6?=
- =?utf-8?B?SE9nTHZER3ZHRVQzcHprUzBqazYrZy9aZFZSL2pMbHB0VUprWnMxRzJ0VE5r?=
- =?utf-8?Q?uJKS5o6O2AVthi2qVzQLmuepxnLRQB6TzrHrQ=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(38070700015);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?K3ZtYlRBRWlteENab0NIeUVCTHpXTS90TStPOEY0T216VkluZWRhZUtJVlhs?=
- =?utf-8?B?L1NBTlYzbUNIejRsNHZXcFh1RUxPZ0o0MGFpdFN5dis2WHdUc0pYNm1iQVBU?=
- =?utf-8?B?c0ZvZXl0U3VGb25JSjVSWjAxYzlHY1k0QVlCeWVHS2M2YWFXanBnWU9sM25v?=
- =?utf-8?B?MXRYejRJUEpKWENUMGpXUTRUMFZuKzFJRDhCRW5Ra2hQNVVxSXlaOEltVVpr?=
- =?utf-8?B?bW4yRGMwNUNzZDBjU29SYXZFNURVbENmZ0hBZ3RSbURoeUsyb0tZdUxoT2Qx?=
- =?utf-8?B?Wlkxd0k5N2ZLMVhjYko3ZU5aYnlwN2VvZ0lYUXMySjV1Q3RqUktaQmVEOUlh?=
- =?utf-8?B?ODVMbG1Uc2M5aTJpWTA0bU9UWCtpdGVGVkdacWp2aThkS1FaazhWWm1nYS9r?=
- =?utf-8?B?b2l0V3lKbUZTMUhzaUZyRFJ0ZWk2cGViZVdzUE9tNjU4M2ZvcHE5bGw1RE1P?=
- =?utf-8?B?UVh2bVdYam9GL25wUkJvYldkT3lqZEpRbVZxSDdoZDM5OUNyemJkVkF5ME5t?=
- =?utf-8?B?RUJYWitHa09TbGJ1dXdmcHZYTnAzdVNYQ2x1RGdwRUkyOFUvODlXL0NmTXpk?=
- =?utf-8?B?SGo5KzF4S1NvNmZMczZQa3dPdWxDZ21oVW5vYjIwRjlQR09OcVdKeEtJanMv?=
- =?utf-8?B?b0J1eTFXZTdBbEExc2YyRUlXQ0txY25EK1RlK01pN01FK2lSQkFDTmdvZExv?=
- =?utf-8?B?eHBNUFlrOVNoeUcwZFF4Q3lLMHBod1EyOW8yTVNsVW1IcDdJTGZRbUhmRy96?=
- =?utf-8?B?K3QvN0x0dHdJTXFub0ZaTFl0TzBCWncyZG5JSHNNb01UYUFyMmtHdXJYS3Rj?=
- =?utf-8?B?dFB5dGd0WDNyZkJuZ2hTbTRWbi9xTVFBU3k2VWIvYTluV0VwQ3hTRy9BNGhk?=
- =?utf-8?B?N2JVYktTVlVzSVp0a01Xa2ZZcWhNTDloT1FTSnhzSmV1WmhYVThoS1FoMzdl?=
- =?utf-8?B?TnYyNGlpQkxZRHFVWHNQUEZYQkNvRUxiN1l4VW43b2xNWGZvV1U2dDBNNTND?=
- =?utf-8?B?Q2lQaStHWHhxZmdteDl3a3JFaklqQWt4enVGZlRZRTBhYjhBNUFTK3E2RlFT?=
- =?utf-8?B?Z2drM2VmV1JxVWN3THFGTnZNb0ZTQURYcGxNTERvSk5lc2toWXhkNCtITm5t?=
- =?utf-8?B?am1tZ2lhcFB2SGlyVVVEZXBNbHZET2ZOUzd0Mnp5ZE8yL0xFQlJmcWF0bU1t?=
- =?utf-8?B?ZXVvQ201UERweEVZekFUaFQrTlFnVFRaa1ZXV0VJNkxaVHlMQzgwN1FWMUNZ?=
- =?utf-8?B?WmZvekZXemxhKzA5T0htcng0TzUvWVJUZFAyWnNqeWJ5WE55bFJ1MmRXenVM?=
- =?utf-8?B?V2dBMFhkWW42YmRYc3ZRSzY3YzZNOVZpQUptTy9IVnpHSG9iZk9zZjdXN3pK?=
- =?utf-8?B?T1ptTjczc1dXSzJadjMwSFlPdU9MY0EyU2o1ZVVURlAwUkc5NDJZcy9KVWFr?=
- =?utf-8?B?QWpzWG5jUzBSYUpPZFp1UVFlUzFEQllwYUdRTVdTNzAxcnRjYmExc3pkcFlV?=
- =?utf-8?B?V3dobzhPdGV6ZytJWk9KRmsyUmg1RFgvemE2Yzh1bkZXMjdUMVhUV3gzOFZT?=
- =?utf-8?B?TTNoYTZkQnU5NDYvM0J3Tkk1S2kxdEFrRDhoRXl3ajNtWnJ2Y0RJVzkzcXgv?=
- =?utf-8?B?SllHclQ2cjMySnJldHIxRGkyRHdYbk00S21tY0dGUWJXL3Q3WHhSVk4rVjM5?=
- =?utf-8?B?ZGtLcXRYaDl5RDNsdWNrSmdYaXpGNEVuM3pHdmdDL29pYmhYWHA5cjV4dGdC?=
- =?utf-8?B?OHhVN1BtaWtzNWQ0cHY5b21VK3cyTkpxN2NIN2poaHIzYnJHVGpOOWpkdDJY?=
- =?utf-8?B?NWJDL1FWQWt4aHp4cTZsNUhJRXI3Zk00TUp1OVhQb0pPWW1nSkxJVTRFemR5?=
- =?utf-8?B?WkxFRVlvQkdJeHVqTkRCMHRROFBWTG0rK1pRNWhKRDU5WS9GdnB6VUR2ME5K?=
- =?utf-8?B?UXl4VFkrWDZxa0lzd2YyWlkyM3VSc1dCdno3dFFNbzhHWlh0a0xVUkJmRHlj?=
- =?utf-8?B?enNVRHFsQ0lGcVlxdXhNTFBucDNPUzB3WWtERzRkMmt0TkVqTmNKa3RTRmYv?=
- =?utf-8?B?a1YvNEZTeTJRbXdLdmdBdUpSdDVFa24zYzlSdlk4a2gxazZ6aDVDS1pYd2xy?=
- =?utf-8?B?R1dlc09HQjZVY29Lci9uNlhJMUZNb3FoeW1jdEUzeDhlOUJ2TXRza2JZbWkr?=
- =?utf-8?Q?zi1VI9KYC/oSfOqa0SCDDOsZnJY3bzDFMB2ouQnFzDqZ?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C866624464884148BA273C082CD832E8@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DB817C7F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 05:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718687198; cv=none; b=ENfZ2hK6Rx/0n462pLj/bZvsd08HrKf4V4OBewfhKLfEhs/M3IsPs6RyTEMBvMPqsJo/5TwkkbSw17F/H+oCFGKyzXDTJTARAsBP1wh58ISIil9ISfbV/KGhSPsvSD8/YZKkfJyxFKuX/Lh0yTv2VoGUW6/j76tLgNLv44rL+q4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718687198; c=relaxed/simple;
+	bh=vKcpzlA/Lk5YmTJbcaXAPo7ISyjfiSZf74loSRHFS80=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tm+RsfsArMvT9B1Ycr6L1GRg9QQqud26Bd7fCxyD3IWRWuc46Q9FIqNJSTeYz1ihc2NaRNR8mS5EWQNY8KtFgwdm4Fb24JXABdgBOl7c/VgQKpD+kFQh+dkxhAxpg0xU/wfrsva+XuV8Eyao1nUxop8ChY8mrNc1IkBbVHina5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZ2eVkq0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8868C4AF50
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 05:06:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718687197;
+	bh=vKcpzlA/Lk5YmTJbcaXAPo7ISyjfiSZf74loSRHFS80=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JZ2eVkq0dLujBfgy9vpOCLQ9fRCzJpaYRf3XbrA7kfuK7zN8NHH6lE29cQRGd4WsD
+	 Ic/CTZFI2OqnXFQQQryU4oAjt3Da5qWq5dPxKVZeGGsjk+GKtHGuoCRJqLwRoKhPHT
+	 aj9C2WxW4NUAUmX4YvwtzGHClf4gqOfOKcYXEyGuloH9SvOfoyfmmou1Q2woGdqTDl
+	 mPy1Bgd7m6gzO5irBIac7NHMLYrOXDE9ukyNBT6yKAdXMjAifbCUY8O5Dj4iJyMKbS
+	 btQjV40Xd5gkTuu23zdkAns4v8mceyQH7kCvy8zOt9blwZHKd55iz3Tl4Gbt0nfD68
+	 4bNL6tMrPaaiA==
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-37588517095so18962215ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 22:06:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVEB+FlBhIbEi1TxOtRcCW1fAX84WWlJCP82VUMz76Rrb7Zcb7yJBODwEcHI9eXX4/K8DF0HkBIl+8gktu/906RYGaCusWlt8n6cu7G
+X-Gm-Message-State: AOJu0YxTYiUOXR2UDQDMoNOe9df29rdKCDvP10CWnzqVKmtGkb6uEpwA
+	WdtP40qwqG0MSgmabjBynTwxDnkXlmWpQ5/w3va5VUYJLjObuh5o3PAh9xh0FOztuGFB0wRQM7/
+	FJUoCOq/KvZF5urbJI5pITFUEEebZdAlt3PIe
+X-Google-Smtp-Source: AGHT+IFCUzFWJxN/nnospyldJteUJQxqxe5kdHQquNXJ1t6vLsht4HvM7jdmrP5DnNMEMJ0JKa68t+J0GNymAowPzq4=
+X-Received: by 2002:a05:6e02:17c9:b0:36c:4688:85aa with SMTP id
+ e9e14a558f8ab-375e0e44edbmr143405955ab.10.1718687195910; Mon, 17 Jun 2024
+ 22:06:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28eb57a6-35ff-44d0-5185-08dc8f541b60
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2024 05:04:17.8815
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LvzTTbvlw6kKBs0MVDY0FlNYhfZVjjtr9FdfHweU/8mia2ZLpndrVQhYisB8YLMPdij1iFAeSqgUIjl0FAhhPg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8041
+References: <20240614-swap-allocator-v2-0-2a513b4a7f2f@kernel.org>
+ <20240614-swap-allocator-v2-1-2a513b4a7f2f@kernel.org> <87frtc5bxm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87frtc5bxm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Mon, 17 Jun 2024 22:06:23 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuMTAuGN6Zt-=Nb-4TPZ4aNBX17W6eop5LPVHYTakV+LHw@mail.gmail.com>
+Message-ID: <CAF8kJuMTAuGN6Zt-=Nb-4TPZ4aNBX17W6eop5LPVHYTakV+LHw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mm: swap: swap cluster switch to double link list
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gNi8xNy8yNCAxODoxMywgSmVmZiBKb2huc29uIHdyb3RlOg0KPiBXaXRoIEFSQ0g9bTY4aywg
-bWFrZSBhbGxtb2Rjb25maWcgJiYgbWFrZSBXPTEgQz0xIHJlcG9ydHM6DQo+IFdBUk5JTkc6IG1v
-ZHBvc3Q6IG1pc3NpbmcgTU9EVUxFX0RFU0NSSVBUSU9OKCkgaW4gZHJpdmVycy9ibG9jay9hbWlm
-bG9wLm8NCj4gV0FSTklORzogbW9kcG9zdDogbWlzc2luZyBNT0RVTEVfREVTQ1JJUFRJT04oKSBp
-biBkcml2ZXJzL2Jsb2NrL2F0YWZsb3Aubw0KPiBXQVJOSU5HOiBtb2Rwb3N0OiBtaXNzaW5nIE1P
-RFVMRV9ERVNDUklQVElPTigpIGluIGRyaXZlcnMvYmxvY2svejJyYW0ubw0KPg0KPiBTaW5jZSB0
-aGVzZSBoYXZlIHRyYWRpdGlvbmFsbHkgaGFkIGRpZmZlcmVudCBjb21taXQgcHJlZml4ZXMsIEkN
-Cj4gc3VibWl0dGVkIGluZGl2aWR1YWwgcGF0Y2hlcy4gTGV0IG1lIGtub3cgaWYgeW91IHdhbnQg
-bWUgdG8gc3F1YXNoDQo+IHRoZW0uDQo+DQo+IEluIGFkZGl0aW9uLCBkcml2ZXJzL2Jsb2NrL3N3
-aW0zLmMgaXMgYWxzbyBtaXNzaW5nIGENCj4gTU9EVUxFX0RFU0NSSVBUSU9OKCksIGJ1dCBJIGhh
-dmVuJ3QgeWV0IGFjdHVhbGx5IHRyaWdnZXJlZCB0aGUNCj4gd2FybmluZy4gSSBuZWVkIHRvIGN1
-c3RvbWl6ZSBhIFBQQyBjb25maWd1cmF0aW9uIHdoaWNoIGVuYWJsZXMNCj4gTUFDX0ZMT1BQWSBp
-biBvcmRlciB0byB0cmlnZ2VyIHRoZSB3YXJuaW5nIGFuZCB2ZXJpZnkgdGhlIGZpeC4NCj4NCj4g
-SSdsbCBnZXQgYXJvdW5kIHRvIHRoYXQgd2hlbiBJIGZpbmlzaCB0aGUgcmVtYWluaW5nIG02OGsg
-aXNzdWVzLg0KPg0KPiAtLS0NCj4gSmVmZiBKb2huc29uICgzKToNCj4gICAgICAgIGFtaWZsb3A6
-IGFkZCBtaXNzaW5nIE1PRFVMRV9ERVNDUklQVElPTigpIG1hY3JvDQo+ICAgICAgICBhdGFmbG9w
-OiBhZGQgbWlzc2luZyBNT0RVTEVfREVTQ1JJUFRJT04oKSBtYWNybw0KPiAgICAgICAgejJyYW06
-IGFkZCBtaXNzaW5nIE1PRFVMRV9ERVNDUklQVElPTigpIG1hY3JvDQo+DQo+ICAgZHJpdmVycy9i
-bG9jay9hbWlmbG9wLmMgfCAxICsNCj4gICBkcml2ZXJzL2Jsb2NrL2F0YWZsb3AuYyB8IDEgKw0K
-PiAgIGRyaXZlcnMvYmxvY2svejJyYW0uYyAgIHwgMSArDQo+ICAgMyBmaWxlcyBjaGFuZ2VkLCAz
-IGluc2VydGlvbnMoKykNCj4gLS0tDQo+IGJhc2UtY29tbWl0OiA2YmE1OWZmNDIyNzkyN2QzYTg1
-MzBmYzI5NzNiODBlOTRiNTRkNThmDQo+IGNoYW5nZS1pZDogMjAyNDA2MTctbWQtbTY4ay1kcml2
-ZXJzLWJsb2NrLTQ2YzMwMWI0NmY0OQ0KPg0KPg0KDQpGb3IgdGhlIHNlcmllcywgbG9va3MgZ29v
-ZCAuLi4NCg0KUmV2aWV3ZWQtYnk6IENoYWl0YW55YSBLdWxrYXJuaSA8a2NoQG52aWRpYS5jb20+
-DQoNCi1jaw0KDQoNCg==
+On Sun, Jun 16, 2024 at 11:21=E2=80=AFPM Huang, Ying <ying.huang@intel.com>=
+ wrote:
+>
+> Hi, Chris,
+>
+> Chris Li <chrisl@kernel.org> writes:
+>
+> > Previously, the swap cluster used a cluster index as a pointer
+> > to construct a custom single link list type "swap_cluster_list".
+> > The next cluster pointer is shared with the cluster->count.
+> > It prevents puting the non free cluster into a list.
+> > Change the cluster to use the standard double link list instead.
+> > This allows tracing the nonfull cluster in the follow up patch.
+> >
+> > Remove the cluster getter/setter for accessing the cluster
+> > struct member.
+> >
+> > The list operation is protected by the swap_info_struct->lock.
+> >
+> > Change cluster code to use "struct swap_cluster_info *" to
+> > reference the cluster rather than by using index. That is more
+> > consistent with the list manipulation. It avoids the repeat
+> > adding index to the cluser_info. The code is easier to understand.
+> >
+> > Remove the cluster next pointer is NULL flag, the double link
+> > list can handle the empty list pretty well.
+>
+> The above is more about "what" instead of "why".  We can identify "what"
+> from the patch itself.  I expect more "why".  I guess that we can reduce
+> swap_map[] scanning if we have lists of non-full/non-free clusters.
+
+In my mind, the "why" is captured by " This allows tracing the nonfull
+cluster in the follow up patch.".
+If you want to ask "why" we want the "nonfull cluster list". It is to
+get to the suitable candidate cluster with that order quicker than
+scanning swap_map[].
+
+>
+> > The "swap_cluster_info" struct is two pointer bigger, because
+> > 512 swap entries share one swap struct, it has very little impact
+> > on the average memory usage per swap entry. For 1TB swapfile, the
+> > swap cluster data structure increases from 8MB to 24MB.
+> >
+> > Other than the list conversion, there is no real function change
+> > in this patch.
+> >
+> > Signed-off-by: Chris Li <chrisl@kernel.org>
+> > ---
+> >  include/linux/swap.h |  28 +++----
+> >  mm/swapfile.c        | 227 +++++++++++++------------------------------=
+--------
+> >  2 files changed, 70 insertions(+), 185 deletions(-)
+> >
+> > diff --git a/include/linux/swap.h b/include/linux/swap.h
+> > index 3df75d62a835..cd9154a3e934 100644
+> > --- a/include/linux/swap.h
+> > +++ b/include/linux/swap.h
+> > @@ -242,23 +242,22 @@ enum {
+> >   * space with SWAPFILE_CLUSTER pages long and naturally aligns in disk=
+. All
+> >   * free clusters are organized into a list. We fetch an entry from the=
+ list to
+> >   * get a free cluster.
+> > - *
+> > - * The data field stores next cluster if the cluster is free or cluste=
+r usage
+> > - * counter otherwise. The flags field determines if a cluster is free.=
+ This is
+> > - * protected by swap_info_struct.lock.
+> >   */
+> >  struct swap_cluster_info {
+> >       spinlock_t lock;        /*
+> > -                              * Protect swap_cluster_info fields
+> > -                              * and swap_info_struct->swap_map
+> > +                              * Protect swap_cluster_info count and st=
+ate
+>
+> Protect swap_cluster_info fields except 'list' ?
+
+I change it to protect the swap_cluster_info bitfields in the second patch.
+>
+> > +                              * field and swap_info_struct->swap_map
+> >                                * elements correspond to the swap
+> >                                * cluster
+> >                                */
+> > -     unsigned int data:24;
+> > -     unsigned int flags:8;
+> > +     unsigned int count:12;
+> > +     unsigned int state:3;
+>
+> I still prefer normal data type over bit fields.  How about
+>
+>         u16 usage;
+>         u8  state;
+
+I don't mind the "count" rename to "usage". That is probably a better
+name. However I have another patch intended to add more bit fields in
+the cluster info struct. The second patch adds "order" and the later
+patch will add more. That is why I choose bitfield to be more condense
+with bits.
+
+>
+> And, how about use 'usage' instead of 'count'?  Personally I think that
+> it is more clear.  But I don't have strong opinions on this.
+>
+> > +     struct list_head list;  /* Protected by swap_info_struct->lock */
+> >  };
+> > -#define CLUSTER_FLAG_FREE 1 /* This cluster is free */
+> > -#define CLUSTER_FLAG_NEXT_NULL 2 /* This cluster has no next cluster *=
+/
+> > +
+> > +#define CLUSTER_STATE_FREE   1 /* This cluster is free */
+>
+> Can we use swap_cluster_info->count =3D=3D 0?
+
+It is not as good considering the second patch starts to track the
+state of the cluster of per cpu struct. We will be comparing both the
+cluster->count and cluster->state.
+
+>
+> > +#define CLUSTER_STATE_PER_CPU        2 /* This cluster on per_cpu_clus=
+ter  */
+> > +
+>
+> There's no users of this state in this patch.  IMHO, it's better to
+
+Yes, there is usage of this state in this patch in the sense that, if
+you remove that state definition,
+the code can't compile due to assignment of CLUSTER_STATE_PER_CPU.
+There is a code test if a cluster state is not a free state, which
+excludes "CLUSTER_STATE_PER_CPU".
+
+> introduce a symbol with its users, otherwise, it's hard to understand
+> why do we need it and how to use it.  And, IIUC, the state isn't
+> maintained properly, it should be changed when we move the cluster off
+> the per-cpu cluster.
+
+I am actually following the same usage principle as you suggested
+here. Only the second patch starts to use the off per cpu state
+(SCANNED). That is why I introduce it there.
+
+>
+> >  /*
+> >   * The first page in the swap file is the swap header, which is always=
+ marked
+> > @@ -283,11 +282,6 @@ struct percpu_cluster {
+> >       unsigned int next[SWAP_NR_ORDERS]; /* Likely next allocation offs=
+et */
+> >  };
+> >
+> > -struct swap_cluster_list {
+> > -     struct swap_cluster_info head;
+> > -     struct swap_cluster_info tail;
+> > -};
+> > -
+> >  /*
+> >   * The in-memory structure used to track swap areas.
+> >   */
+> > @@ -300,7 +294,7 @@ struct swap_info_struct {
+> >       unsigned int    max;            /* extent of the swap_map */
+> >       unsigned char *swap_map;        /* vmalloc'ed array of usage coun=
+ts */
+> >       struct swap_cluster_info *cluster_info; /* cluster info. Only for=
+ SSD */
+> > -     struct swap_cluster_list free_clusters; /* free clusters list */
+> > +     struct list_head free_clusters; /* free clusters list */
+> >       unsigned int lowest_bit;        /* index of first free in swap_ma=
+p */
+> >       unsigned int highest_bit;       /* index of last free in swap_map=
+ */
+> >       unsigned int pages;             /* total of usable pages of swap =
+*/
+> > @@ -331,7 +325,7 @@ struct swap_info_struct {
+> >                                        * list.
+> >                                        */
+> >       struct work_struct discard_work; /* discard worker */
+> > -     struct swap_cluster_list discard_clusters; /* discard clusters li=
+st */
+> > +     struct list_head discard_clusters; /* discard clusters list */
+> >       struct plist_node avail_lists[]; /*
+> >                                          * entries in swap_avail_heads,=
+ one
+> >                                          * entry per node.
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index 9c6d8e557c0f..2f878b374349 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -290,62 +290,9 @@ static void discard_swap_cluster(struct swap_info_=
+struct *si,
+> >  #endif
+> >  #define LATENCY_LIMIT                256
+> >
+> > -static inline void cluster_set_flag(struct swap_cluster_info *info,
+> > -     unsigned int flag)
+> > -{
+> > -     info->flags =3D flag;
+> > -}
+> > -
+> > -static inline unsigned int cluster_count(struct swap_cluster_info *inf=
+o)
+> > -{
+> > -     return info->data;
+> > -}
+> > -
+> > -static inline void cluster_set_count(struct swap_cluster_info *info,
+> > -                                  unsigned int c)
+> > -{
+> > -     info->data =3D c;
+> > -}
+> > -
+> > -static inline void cluster_set_count_flag(struct swap_cluster_info *in=
+fo,
+> > -                                      unsigned int c, unsigned int f)
+> > -{
+> > -     info->flags =3D f;
+> > -     info->data =3D c;
+> > -}
+> > -
+> > -static inline unsigned int cluster_next(struct swap_cluster_info *info=
+)
+> > -{
+> > -     return info->data;
+> > -}
+> > -
+> > -static inline void cluster_set_next(struct swap_cluster_info *info,
+> > -                                 unsigned int n)
+> > -{
+> > -     info->data =3D n;
+> > -}
+> > -
+> > -static inline void cluster_set_next_flag(struct swap_cluster_info *inf=
+o,
+> > -                                      unsigned int n, unsigned int f)
+> > -{
+> > -     info->flags =3D f;
+> > -     info->data =3D n;
+> > -}
+> > -
+> >  static inline bool cluster_is_free(struct swap_cluster_info *info)
+> >  {
+> > -     return info->flags & CLUSTER_FLAG_FREE;
+> > -}
+> > -
+> > -static inline bool cluster_is_null(struct swap_cluster_info *info)
+> > -{
+> > -     return info->flags & CLUSTER_FLAG_NEXT_NULL;
+> > -}
+> > -
+> > -static inline void cluster_set_null(struct swap_cluster_info *info)
+> > -{
+> > -     info->flags =3D CLUSTER_FLAG_NEXT_NULL;
+> > -     info->data =3D 0;
+> > +     return info->state =3D=3D CLUSTER_STATE_FREE;
+> >  }
+> >
+> >  static inline struct swap_cluster_info *lock_cluster(struct swap_info_=
+struct *si,
+> > @@ -394,65 +341,11 @@ static inline void unlock_cluster_or_swap_info(st=
+ruct swap_info_struct *si,
+> >               spin_unlock(&si->lock);
+> >  }
+> >
+> > -static inline bool cluster_list_empty(struct swap_cluster_list *list)
+> > -{
+> > -     return cluster_is_null(&list->head);
+> > -}
+> > -
+> > -static inline unsigned int cluster_list_first(struct swap_cluster_list=
+ *list)
+> > -{
+> > -     return cluster_next(&list->head);
+> > -}
+> > -
+> > -static void cluster_list_init(struct swap_cluster_list *list)
+> > -{
+> > -     cluster_set_null(&list->head);
+> > -     cluster_set_null(&list->tail);
+> > -}
+> > -
+> > -static void cluster_list_add_tail(struct swap_cluster_list *list,
+> > -                               struct swap_cluster_info *ci,
+> > -                               unsigned int idx)
+> > -{
+> > -     if (cluster_list_empty(list)) {
+> > -             cluster_set_next_flag(&list->head, idx, 0);
+> > -             cluster_set_next_flag(&list->tail, idx, 0);
+> > -     } else {
+> > -             struct swap_cluster_info *ci_tail;
+> > -             unsigned int tail =3D cluster_next(&list->tail);
+> > -
+> > -             /*
+> > -              * Nested cluster lock, but both cluster locks are
+> > -              * only acquired when we held swap_info_struct->lock
+> > -              */
+> > -             ci_tail =3D ci + tail;
+> > -             spin_lock_nested(&ci_tail->lock, SINGLE_DEPTH_NESTING);
+> > -             cluster_set_next(ci_tail, idx);
+> > -             spin_unlock(&ci_tail->lock);
+> > -             cluster_set_next_flag(&list->tail, idx, 0);
+> > -     }
+> > -}
+> > -
+> > -static unsigned int cluster_list_del_first(struct swap_cluster_list *l=
+ist,
+> > -                                        struct swap_cluster_info *ci)
+> > -{
+> > -     unsigned int idx;
+> > -
+> > -     idx =3D cluster_next(&list->head);
+> > -     if (cluster_next(&list->tail) =3D=3D idx) {
+> > -             cluster_set_null(&list->head);
+> > -             cluster_set_null(&list->tail);
+> > -     } else
+> > -             cluster_set_next_flag(&list->head,
+> > -                                   cluster_next(&ci[idx]), 0);
+> > -
+> > -     return idx;
+> > -}
+> > -
+> >  /* Add a cluster to discard list and schedule it to do discard */
+> >  static void swap_cluster_schedule_discard(struct swap_info_struct *si,
+> > -             unsigned int idx)
+> > +             struct swap_cluster_info *ci)
+> >  {
+> > +     unsigned int idx =3D ci - si->cluster_info;
+>
+> I see this multiple times in the patch, can we define a helper for this?
+Ack.
+
+>
+> >       /*
+> >        * If scan_swap_map_slots() can't find a free cluster, it will ch=
+eck
+> >        * si->swap_map directly. To make sure the discarding cluster isn=
+'t
+> > @@ -462,17 +355,14 @@ static void swap_cluster_schedule_discard(struct =
+swap_info_struct *si,
+> >       memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+> >                       SWAP_MAP_BAD, SWAPFILE_CLUSTER);
+> >
+> > -     cluster_list_add_tail(&si->discard_clusters, si->cluster_info, id=
+x);
+> > -
+> > +     list_add_tail(&ci->list, &si->discard_clusters);
+> >       schedule_work(&si->discard_work);
+> >  }
+> >
+> > -static void __free_cluster(struct swap_info_struct *si, unsigned long =
+idx)
+> > +static void __free_cluster(struct swap_info_struct *si, struct swap_cl=
+uster_info *ci)
+> >  {
+> > -     struct swap_cluster_info *ci =3D si->cluster_info;
+> > -
+> > -     cluster_set_flag(ci + idx, CLUSTER_FLAG_FREE);
+> > -     cluster_list_add_tail(&si->free_clusters, ci, idx);
+> > +     ci->state =3D CLUSTER_STATE_FREE;
+> > +     list_add_tail(&ci->list, &si->free_clusters);
+> >  }
+> >
+> >  /*
+> > @@ -481,21 +371,22 @@ static void __free_cluster(struct swap_info_struc=
+t *si, unsigned long idx)
+> >  */
+> >  static void swap_do_scheduled_discard(struct swap_info_struct *si)
+> >  {
+> > -     struct swap_cluster_info *info, *ci;
+> > +     struct swap_cluster_info *ci;
+> >       unsigned int idx;
+> >
+> > -     info =3D si->cluster_info;
+> > -
+> > -     while (!cluster_list_empty(&si->discard_clusters)) {
+> > -             idx =3D cluster_list_del_first(&si->discard_clusters, inf=
+o);
+> > +     while (!list_empty(&si->discard_clusters)) {
+> > +             ci =3D list_first_entry(&si->discard_clusters, struct swa=
+p_cluster_info, list);
+> > +             list_del(&ci->list);
+> > +             idx =3D ci - si->cluster_info;
+> >               spin_unlock(&si->lock);
+> >
+> >               discard_swap_cluster(si, idx * SWAPFILE_CLUSTER,
+> >                               SWAPFILE_CLUSTER);
+> >
+> >               spin_lock(&si->lock);
+> > -             ci =3D lock_cluster(si, idx * SWAPFILE_CLUSTER);
+> > -             __free_cluster(si, idx);
+> > +
+> > +             spin_lock(&ci->lock);
+>
+> Personally, I still prefer to use lock_cluster(), which is more readable
+> and matches unlock_cluster() below.
+
+lock_cluster() uses an index which is not matching unlock_cluster()
+which is using a pointer to cluster.
+When you get the cluster from the list, you have a cluster pointer. I
+feel it is unnecessary to convert to index then back convert to
+cluster pointer inside lock_cluster(). I actually feel using indexes
+to refer to the cluster is error prone because we also have offset.
+
+
+>
+> > +             __free_cluster(si, ci);
+> >               memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+> >                               0, SWAPFILE_CLUSTER);
+> >               unlock_cluster(ci);
+> > @@ -521,20 +412,19 @@ static void swap_users_ref_free(struct percpu_ref=
+ *ref)
+> >       complete(&si->comp);
+> >  }
+> >
+> > -static void alloc_cluster(struct swap_info_struct *si, unsigned long i=
+dx)
+> > +static struct swap_cluster_info *alloc_cluster(struct swap_info_struct=
+ *si, unsigned long idx)
+> >  {
+> > -     struct swap_cluster_info *ci =3D si->cluster_info;
+> > +     struct swap_cluster_info *ci =3D list_first_entry(&si->free_clust=
+ers, struct swap_cluster_info, list);
+> >
+> > -     VM_BUG_ON(cluster_list_first(&si->free_clusters) !=3D idx);
+> > -     cluster_list_del_first(&si->free_clusters, ci);
+> > -     cluster_set_count_flag(ci + idx, 0, 0);
+> > +     VM_BUG_ON(ci - si->cluster_info !=3D idx);
+> > +     list_del(&ci->list);
+> > +     ci->count =3D 0;
+>
+> Do we need this now?  If we keep CLUSTER_STATE_FREE, we need to change
+> it here.
+
+Good catch, thanks for catching that. Now I realized this is actually
+problematic and tricky to get it right. Let me work on that.
+
+>
+> > +     return ci;
+> >  }
+> >
+> > -static void free_cluster(struct swap_info_struct *si, unsigned long id=
+x)
+> > +static void free_cluster(struct swap_info_struct *si, struct swap_clus=
+ter_info *ci)
+> >  {
+> > -     struct swap_cluster_info *ci =3D si->cluster_info + idx;
+> > -
+> > -     VM_BUG_ON(cluster_count(ci) !=3D 0);
+> > +     VM_BUG_ON(ci->count !=3D 0);
+> >       /*
+> >        * If the swap is discardable, prepare discard the cluster
+> >        * instead of free it immediately. The cluster will be freed
+> > @@ -542,11 +432,11 @@ static void free_cluster(struct swap_info_struct =
+*si, unsigned long idx)
+> >        */
+> >       if ((si->flags & (SWP_WRITEOK | SWP_PAGE_DISCARD)) =3D=3D
+> >           (SWP_WRITEOK | SWP_PAGE_DISCARD)) {
+> > -             swap_cluster_schedule_discard(si, idx);
+> > +             swap_cluster_schedule_discard(si, ci);
+> >               return;
+> >       }
+> >
+> > -     __free_cluster(si, idx);
+> > +     __free_cluster(si, ci);
+> >  }
+> >
+> >  /*
+> > @@ -559,15 +449,15 @@ static void add_cluster_info_page(struct swap_inf=
+o_struct *p,
+> >       unsigned long count)
+> >  {
+> >       unsigned long idx =3D page_nr / SWAPFILE_CLUSTER;
+> > +     struct swap_cluster_info *ci =3D cluster_info + idx;
+> >
+> >       if (!cluster_info)
+> >               return;
+> > -     if (cluster_is_free(&cluster_info[idx]))
+> > +     if (cluster_is_free(ci))
+> >               alloc_cluster(p, idx);
+> >
+> > -     VM_BUG_ON(cluster_count(&cluster_info[idx]) + count > SWAPFILE_CL=
+USTER);
+> > -     cluster_set_count(&cluster_info[idx],
+> > -             cluster_count(&cluster_info[idx]) + count);
+> > +     VM_BUG_ON(ci->count + count > SWAPFILE_CLUSTER);
+> > +     ci->count +=3D count;
+> >  }
+> >
+> >  /*
+> > @@ -581,24 +471,20 @@ static void inc_cluster_info_page(struct swap_inf=
+o_struct *p,
+> >  }
+> >
+> >  /*
+> > - * The cluster corresponding to page_nr decreases one usage. If the us=
+age
+> > - * counter becomes 0, which means no page in the cluster is in using, =
+we can
+> > - * optionally discard the cluster and add it to free cluster list.
+> > + * The cluster ci decreases one usage. If the usage counter becomes 0,
+> > + * which means no page in the cluster is in using, we can optionally d=
+iscard
+> > + * the cluster and add it to free cluster list.
+> >   */
+> > -static void dec_cluster_info_page(struct swap_info_struct *p,
+> > -     struct swap_cluster_info *cluster_info, unsigned long page_nr)
+> > +static void dec_cluster_info_page(struct swap_info_struct *p, struct s=
+wap_cluster_info *ci)
+> >  {
+> > -     unsigned long idx =3D page_nr / SWAPFILE_CLUSTER;
+> > -
+> > -     if (!cluster_info)
+> > +     if (!p->cluster_info)
+> >               return;
+> >
+> > -     VM_BUG_ON(cluster_count(&cluster_info[idx]) =3D=3D 0);
+> > -     cluster_set_count(&cluster_info[idx],
+> > -             cluster_count(&cluster_info[idx]) - 1);
+> > +     VM_BUG_ON(ci->count =3D=3D 0);
+> > +     ci->count--;
+> >
+> > -     if (cluster_count(&cluster_info[idx]) =3D=3D 0)
+> > -             free_cluster(p, idx);
+> > +     if (!ci->count)
+> > +             free_cluster(p, ci);
+> >  }
+> >
+> >  /*
+> > @@ -611,10 +497,10 @@ scan_swap_map_ssd_cluster_conflict(struct swap_in=
+fo_struct *si,
+> >  {
+> >       struct percpu_cluster *percpu_cluster;
+> >       bool conflict;
+> > -
+>
+> Usually we use one blank line after local variable declaration.
+Ack.
+
+>
+> > +     struct swap_cluster_info *first =3D list_first_entry(&si->free_cl=
+usters, struct swap_cluster_info, list);
+> >       offset /=3D SWAPFILE_CLUSTER;
+> > -     conflict =3D !cluster_list_empty(&si->free_clusters) &&
+> > -             offset !=3D cluster_list_first(&si->free_clusters) &&
+> > +     conflict =3D !list_empty(&si->free_clusters) &&
+> > +             offset !=3D  first - si->cluster_info &&
+> >               cluster_is_free(&si->cluster_info[offset]);
+> >
+> >       if (!conflict)
+> > @@ -655,10 +541,14 @@ static bool scan_swap_map_try_ssd_cluster(struct =
+swap_info_struct *si,
+> >       cluster =3D this_cpu_ptr(si->percpu_cluster);
+> >       tmp =3D cluster->next[order];
+> >       if (tmp =3D=3D SWAP_NEXT_INVALID) {
+> > -             if (!cluster_list_empty(&si->free_clusters)) {
+> > -                     tmp =3D cluster_next(&si->free_clusters.head) *
+> > -                                     SWAPFILE_CLUSTER;
+> > -             } else if (!cluster_list_empty(&si->discard_clusters)) {
+> > +             if (!list_empty(&si->free_clusters)) {
+> > +                     ci =3D list_first_entry(&si->free_clusters, struc=
+t swap_cluster_info, list);
+> > +                     list_del(&ci->list);
+>
+> The free cluster is deleted from si->free_clusters now.  But later you
+> will call scan_swap_map_ssd_cluster_conflict() and may abandon the
+> cluster.  And in alloc_cluster() later, it may be deleted again.
+
+Yes, that is a bug. Thanks for catching that.
+
+>
+> > +                     spin_lock(&ci->lock);
+> > +                     ci->state =3D CLUSTER_STATE_PER_CPU;
+>
+> Need to change ci->state when move a cluster off the percpu_cluster.
+
+In the next patch. This patch does not use the off state yet.
+
+>
+> > +                     spin_unlock(&ci->lock);
+> > +                     tmp =3D (ci - si->cluster_info) * SWAPFILE_CLUSTE=
+R;
+> > +             } else if (!list_empty(&si->discard_clusters)) {
+> >                       /*
+> >                        * we don't have free cluster but have some clust=
+ers in
+> >                        * discarding, do discard now and reclaim them, t=
+hen
+> > @@ -1062,8 +952,8 @@ static void swap_free_cluster(struct swap_info_str=
+uct *si, unsigned long idx)
+> >
+> >       ci =3D lock_cluster(si, offset);
+> >       memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
+> > -     cluster_set_count_flag(ci, 0, 0);
+> > -     free_cluster(si, idx);
+> > +     ci->count =3D 0;
+> > +     free_cluster(si, ci);
+> >       unlock_cluster(ci);
+> >       swap_range_free(si, offset, SWAPFILE_CLUSTER);
+> >  }
+> > @@ -1336,7 +1226,7 @@ static void swap_entry_free(struct swap_info_stru=
+ct *p, swp_entry_t entry)
+> >       count =3D p->swap_map[offset];
+> >       VM_BUG_ON(count !=3D SWAP_HAS_CACHE);
+> >       p->swap_map[offset] =3D 0;
+> > -     dec_cluster_info_page(p, p->cluster_info, offset);
+> > +     dec_cluster_info_page(p, ci);
+> >       unlock_cluster(ci);
+> >
+> >       mem_cgroup_uncharge_swap(entry, 1);
+> > @@ -3003,8 +2893,8 @@ static int setup_swap_map_and_extents(struct swap=
+_info_struct *p,
+> >
+> >       nr_good_pages =3D maxpages - 1;   /* omit header page */
+> >
+> > -     cluster_list_init(&p->free_clusters);
+> > -     cluster_list_init(&p->discard_clusters);
+> > +     INIT_LIST_HEAD(&p->free_clusters);
+> > +     INIT_LIST_HEAD(&p->discard_clusters);
+> >
+> >       for (i =3D 0; i < swap_header->info.nr_badpages; i++) {
+> >               unsigned int page_nr =3D swap_header->info.badpages[i];
+> > @@ -3055,14 +2945,15 @@ static int setup_swap_map_and_extents(struct sw=
+ap_info_struct *p,
+> >       for (k =3D 0; k < SWAP_CLUSTER_COLS; k++) {
+> >               j =3D (k + col) % SWAP_CLUSTER_COLS;
+> >               for (i =3D 0; i < DIV_ROUND_UP(nr_clusters, SWAP_CLUSTER_=
+COLS); i++) {
+> > +                     struct swap_cluster_info *ci;
+> >                       idx =3D i * SWAP_CLUSTER_COLS + j;
+> > +                     ci =3D cluster_info + idx;
+> >                       if (idx >=3D nr_clusters)
+> >                               continue;
+> > -                     if (cluster_count(&cluster_info[idx]))
+> > +                     if (ci->count)
+> >                               continue;
+> > -                     cluster_set_flag(&cluster_info[idx], CLUSTER_FLAG=
+_FREE);
+> > -                     cluster_list_add_tail(&p->free_clusters, cluster_=
+info,
+> > -                                           idx);
+> > +                     ci->state =3D CLUSTER_STATE_FREE;
+> > +                     list_add_tail(&ci->list, &p->free_clusters);
+> >               }
+> >       }
+> >       return nr_extents;
+
+Thank you for the review and spotting the bug.
+
+Chris
 
