@@ -1,141 +1,207 @@
-Return-Path: <linux-kernel+bounces-218939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D6690C7F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:56:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E57090C7F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C5B8283B5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:56:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3164D1C208C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E83B1CEA14;
-	Tue, 18 Jun 2024 09:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031481CF3D0;
+	Tue, 18 Jun 2024 09:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QqxZPbTX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="x80VpSNI"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C1E156960;
-	Tue, 18 Jun 2024 09:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D2E156C6F;
+	Tue, 18 Jun 2024 09:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718702855; cv=none; b=NyvPZoCivEWzsTIE7GicGZ1UpoCeXr1K9PTFpdTkI2xhHX8DouXNw3SBp/zJqrbZpByWLh7bWaA3Rm4wPqQCfC8Cqmx9c9tV19Ofco0cOVteeuR4HWDorDaI4B6RLzazvUtIQyaonQzZGgPMpkO3DxZbJqdEQGUViEiGkLhSJkA=
+	t=1718702995; cv=none; b=XiFKmzqNmV/DzV/TVimh+LnAnE4gAGisoDCnk3JCu+eyBO7IvhNMrZ6pkC3lzP3KJhlt0sxw5DPF0ZJoEh/P3vaSP+EXO+znDJEuhfhLPdK1Z9T1ME+4Qa8UrZrh/PW1jFGbSsKisjXSjjk8Gixz5DtPx4BU8/aWuAD11TG6ZY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718702855; c=relaxed/simple;
-	bh=92lysn2R3TIjIHZA1as52NSzVBrlCHxTHK1HkSwRBUY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZQINwuUCbAeUYMzU6TLWgnZD1Xa4FjRpxelL+nFQpwLVF7ZckIrpNkG6NKsDsNdM4E8YkZx2t4qHGqoc5xZXHejk6bFGP/4AgWZy5r1vsFA11cqlPDVpyp9E82IiQqaK9xiFhNgNYmXBUZBlm3Ui/mm5D0wqUleDaht5pwHjllk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QqxZPbTX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I7vMiJ008963;
-	Tue, 18 Jun 2024 09:27:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=5CKTMwQnyrlDmzFvHrNQaY
-	QUXSiVWWEFF/dJG0musOI=; b=QqxZPbTX8DW2F07q0R85ktyd+AjgsJii1aUd1/
-	Its4Xy+lPzxQ8Ofk/2/+VY1S2pYO7WvgGDtbbs2DJYb7/Cc8LI5lRu/hidkBm+sT
-	G83Kq9zEut77oeBTjJGrxjvl+KyiYjdN7H2Gv3bKdBnukjGUwwpo1agp8LYnVt80
-	SyQ9YLyRkEP4psbHNZ5Tjzfvg/Zm71IKzJQ8wiZbq+BnHas2hPuxZWtyDZbB/ODp
-	s3ukjXxUXJfzZnXRVOK/13xKTS/580Y+jowBc4OBLLrKPOySDQgjdd8VCjkyrXtW
-	Q5BhNAaFsYdBAxifI/JoGIjMgZg05O5x5xWcRACmsXx8JY0w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytuav9h4h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 09:27:31 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I9RUqP017084
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 09:27:30 GMT
-Received: from hu-kbajaj-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 18 Jun 2024 02:27:26 -0700
-From: Komal Bajaj <quic_kbajaj@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Komal Bajaj <quic_kbajaj@quicinc.com>
-Subject: [PATCH v3] arm64: dts: qcom: qdu1000: Add secure qfprom node
-Date: Tue, 18 Jun 2024 14:57:11 +0530
-Message-ID: <20240618092711.15037-1-quic_kbajaj@quicinc.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1718702995; c=relaxed/simple;
+	bh=OylkFZBeJjThujKHXaJzf5IMFOgK/pwvhWGCCycLVMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRrU0Y/zIsMbHHi74jt7FarFfPd9h7507W91nl7uZEe4/wVyZyXp1mugcNwKzxRbIcvqhg+hGiuI5rda9N4Am99csLk//CRJs4Q8+7NExbEo18UkLLovAUkCYHo3Guo4SuZUuC+ODryBxzopdR70mkmONx8P5NJrakDrVYu624M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=x80VpSNI; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718702991;
+	bh=OylkFZBeJjThujKHXaJzf5IMFOgK/pwvhWGCCycLVMs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=x80VpSNIhycMLIIYe2tr+ox3BbJPCiaJYh75+KqRqv2AZ/7GbhMapAl62x/36ERi+
+	 WssKEjk9SaTUnWGcOW/sjoAcOQszP4goGdNV8aAaN4KUZRQ4BaKncqMyxwL/Kq+5yM
+	 rIiOi765bii8P5PGQeYmnkgfAk1XLqJbe8x8wyfx/Hw4Ao0weavnT/sSij4XV5ZZ2e
+	 XRLfCCEhLsxP1e1crjUTDOoIvwLDS1Hjmg+Lo3NNSLNduhWfpy4Li64sZgInf/gnRH
+	 tQ3Zfzns4/foFgyhUA9E6pfbnkcRRpoZ/el/r4CTumlfnK9vxIcHIkbH669RXuoSex
+	 Kv7kiZSd5r4ZQ==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sebastianfricke)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4431A37820D6;
+	Tue, 18 Jun 2024 09:29:51 +0000 (UTC)
+Date: Tue, 18 Jun 2024 11:29:50 +0200
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: "Jackson.lee" <jackson.lee@chipsnmedia.com>
+Cc: mchehab@kernel.org, nicolas@ndufresne.ca, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hverkuil@xs4all.nl,
+	nas.chung@chipsnmedia.com, lafley.kim@chipsnmedia.com,
+	b-brnich@ti.com
+Subject: Re: [RESEND PATCH v6 0/4] Add features to an existing driver
+Message-ID: <20240618092950.5xvkuhm7og27xgpj@basti-XPS-13-9310>
+References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PPXyRw7Fmpa7M7Mg7JA3JSsgOPQb3-6b
-X-Proofpoint-ORIG-GUID: PPXyRw7Fmpa7M7Mg7JA3JSsgOPQb3-6b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=798
- suspectscore=0 mlxscore=0 phishscore=0 adultscore=0 clxscore=1015
- spamscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- bulkscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180069
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
 
-Add secure qfprom node and also add properties for multi channel
-DDR. This is required for LLCC driver to pick the correct LLCC
-configuration.
+Hey Jackson,
 
-Fixes: 6209038f131f ("arm64: dts: qcom: qdu1000: Add LLCC/system-cache-controller")
-Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
----
-Changes in v3:
-* Addressed comment by Konrad
-* Added Fixes tag in commit message as suggested by Dmitry
-* Link to v2: https://lore.kernel.org/linux-arm-msm/20240612063424.2494-1-quic_kbajaj@quicinc.com/
+what is up with all the resends, I can see that you send V6 two times
+without a RESEND tag and once with a RESEND tag?
+Was that an error on your side or did you actually change something?
+Does it matter for me which version to consider or are they all the same
+content-wise?
 
-Changes in v2:
-* Minor correction in commit message
-* Link to v1: https://lore.kernel.org/linux-arm-msm/20240607113445.2909-1-quic_kbajaj@quicinc.com/
----
- arch/arm64/boot/dts/qcom/qdu1000.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Regards,
+Sebastian
 
-diff --git a/arch/arm64/boot/dts/qcom/qdu1000.dtsi b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
-index 7a77f7a55498..27f9fc87079c 100644
---- a/arch/arm64/boot/dts/qcom/qdu1000.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
-@@ -1584,6 +1584,21 @@ system-cache-controller@19200000 {
- 			reg-names = "llcc0_base",
- 				    "llcc_broadcast_base";
- 			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			nvmem-cells = <&multi_chan_ddr>;
-+			nvmem-cell-names = "multi-chan-ddr";
-+		};
-+
-+		sec_qfprom: efuse@221c8000 {
-+			compatible = "qcom,qdu1000-sec-qfprom", "qcom,sec-qfprom";
-+			reg = <0 0x221c8000 0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			multi_chan_ddr: multi-chan-ddr@12b {
-+				reg = <0x12b 0x1>;
-+				bits = <0 2>;
-+			};
- 		};
- 	};
-
---
-2.42.0
-
+On 17.06.2024 19:48, Jackson.lee wrote:
+>The wave5 codec driver is a stateful encoder/decoder.
+>The following patches is for supporting yuv422 inpuy format, supporting runtime suspend/resume feature and extra things.
+>
+>v4l2-compliance results:
+>========================
+>
+>v4l2-compliance 1.24.1, 64 bits, 64-bit time_t
+>
+>Buffer ioctls:
+>       warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS not supported
+>       warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS not supported
+>    test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>    test VIDIOC_EXPBUF: OK
+>    test Requests: OK (Not Supported)
+>
+>Total for wave5-dec device /dev/video0: 45, Succeeded: 45, Failed: 0, Warnings: 2 Total for wave5-enc device /dev/video1: 45, Succeeded: 45, Failed: 0, Warnings: 0
+>
+>Fluster test results:
+>=====================
+>
+>Running test suite JCT-VC-HEVC_V1 with decoder GStreamer-H.265-V4L2-Gst1.0 Using 1 parallel job(s)
+>Ran 132/147 tests successfully               in 88.745 secs
+>
+>(1 test fails because of not supporting to parse multi frames, 1 test fails because of a missing frame and slight corruption,
+> 2 tests fail because of sizes which are incompatible with the IP, 11 tests fail because of unsupported 10 bit format)
+>
+>Running test suite JVT-AVC_V1 with decoder GStreamer-H.264-V4L2-Gst1.0 Using 1 parallel job(s)
+>Ran 77/135 tests successfully               in 32.044 secs
+>
+>(58 fail because the hardware is unable to decode  MBAFF / FMO / Field / Extended profile streams.)
+>
+>Change since v5:
+>================
+>* For [PATCH v4 3/4] media: chips-media: wave5: Use helpers to calculate bytesperline and sizeimage.
+> - Fix v4l2-compliance error for the vidioc_enum_framesizes
+>
+>* For [PATCH v4 1/4] media: chips-media: wave5: Support SPS/PPS generation for each IDR
+> - Remove warning messages for the checkpatch.pl script
+>
+>Change since v4:
+>================
+>* For [PATCH v4 2/4] media: chips-media: wave5: Support runtime suspend/resume
+> - Fix warning message
+>
+>* For [PATCH v4 3/4] media: chips-media: wave5: Use helpers to calculate bytesperline and sizeimage.
+> - Fix warning message
+> - add Reviewed-By tag
+>
+>* For [PATCH v4 4/4] media: chips-media: wave5: Support YUV422 raw pixel-formats on the encoder
+> - add Reviewed-By tag
+>
+>Change since v3:
+>=================
+>
+>* For [PATCH v4 1/4] media: chips-media: wave5: Support SPS/PPS generation for each IDR
+> - add Reviewed-By tag
+>
+>* For [PATCH v4 2/4] media: chips-media: wave5: Support runtime suspend/resume
+> - add Reviewed-By tag
+>
+>* For [PATCH v4 3/4] media: chips-media: wave5: Use helpers to calculate bytesperline and sizeimage.
+> - modify the commit message
+> - define three framesize structures for decoder
+>
+>* For [PATCH v4 4/4] media: chips-media: wave5: Support YUV422 raw pixel-formats on the encoder
+> - modify the commit message
+> - use the v4l2_format_info to calculate luma, chroma size
+>
+>Change since v2:
+>=================
+>
+>* For [PATCH v3 0/4] media: chips-media: wave5: Support SPS/PPS generation for each IDR
+> - add the suggested _SHIFT suffix
+>
+>* For [PATCH v3 1/4] media: chips-media: wave5: Support runtime suspend/resume
+> - change a commit message
+>
+>* For [PATCH v3 2/4] media: chips-media: wave5: Use helpers to calculate bytesperline and sizeimage
+> - add pix_fmt_type parameter into wave5_update_pix_fmt function
+> - add min/max width/height values into dec_fmt_list
+>
+>Change since v1:
+>=================
+>
+>* For [PATCH v2 0/4] media: chips-media: wave5: Support SPS/PPS generation for each IDR
+> - define a macro for register addresses
+>
+>* For [PATCH v2 1/4] media: chips-media: wave5: Support runtime suspend/resume
+> - add auto suspend/resume
+>
+>* For [PATCH v2 2/4] media: chips-media: wave5: Use helpers to calculate bytesperline and sizeimage
+> - use helper functions to calculate bytesperline and sizeimage
+>
+>* For [PATCH v2 3/4] media: chips-media: wave5: Support YUV422 raw pixel-formats on the encoder
+> - remove unnecessary codes
+>
+>Change since v0:
+>=================
+>The DEFAULT_SRC_SIZE macro was defined using multiple lines, To make a simple define, tab and multiple lines has been removed, The macro is defined using one line.
+>
+>
+>jackson.lee (4):
+>  media: chips-media: wave5: Support SPS/PPS generation for each IDR
+>  media: chips-media: wave5: Support runtime suspend/resume
+>  media: chips-media: wave5: Use helpers to calculate bytesperline and
+>    sizeimage.
+>  media: chips-media: wave5: Support YUV422 raw pixel-formats on the
+>    encoder.
+>
+> .../platform/chips-media/wave5/wave5-helper.c |  24 ++
+> .../platform/chips-media/wave5/wave5-helper.h |   5 +
+> .../platform/chips-media/wave5/wave5-hw.c     |  30 +-
+> .../chips-media/wave5/wave5-vpu-dec.c         | 316 +++++++-----------
+> .../chips-media/wave5/wave5-vpu-enc.c         | 308 +++++++++--------
+> .../platform/chips-media/wave5/wave5-vpu.c    |  43 +++
+> .../platform/chips-media/wave5/wave5-vpu.h    |   5 +-
+> .../platform/chips-media/wave5/wave5-vpuapi.c |  14 +-
+> .../platform/chips-media/wave5/wave5-vpuapi.h |   1 +
+> .../chips-media/wave5/wave5-vpuconfig.h       |  27 +-
+> .../media/platform/chips-media/wave5/wave5.h  |   3 +
+> 11 files changed, 430 insertions(+), 346 deletions(-)
+>
+>-- 
+>2.43.0
+>
 
