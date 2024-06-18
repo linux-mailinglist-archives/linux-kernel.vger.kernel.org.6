@@ -1,95 +1,100 @@
-Return-Path: <linux-kernel+bounces-219818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586FB90D81F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA5790D82D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6FD1C242D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADB41C244A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3E64CB4B;
-	Tue, 18 Jun 2024 16:05:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FD95024E;
-	Tue, 18 Jun 2024 16:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5454DA0C;
+	Tue, 18 Jun 2024 16:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="jW7tpBvd"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF424D8A2;
+	Tue, 18 Jun 2024 16:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718726701; cv=none; b=bjjrOl+/QWuyq27DEEF0K48h5wJv/dsb5NdcRqthN1GQ8H2s+sEtZEAA729KHOc7Ho8FrWQBgHmyx2nCYZQchGymINNuQB6MhkeO1bGA+PocWQ0l7TYlIVbEc6ZZDhKlt2CvLF+SWaSNg1ZMClXjQpFOSB2X8p/zB0/oJj/qm5c=
+	t=1718726801; cv=none; b=hREip/vOhNM6RPNuNxNTa2Y28SZdyy1HUHpuwKtrU6gGO5FH2Elgw9p8qdFEO1ZBaT17mpeNd/aw3LzGB3IKu74ltJkTFQE9VMJjJnar9/DkwkPUGM4VD32mpWFYkSq9zN0f623KdA0FYpyWSn46giLGk/d/1gPQtyT1eqZOmLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718726701; c=relaxed/simple;
-	bh=1s7vqofYqI9LHjoQBC3wRUH/YTaQ8aq9oY96lCWv8jQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rQ2t5+S8VFy9o4ZgD6djWWaOQ3rsB/SrqkWnvOJPkuoGxXINN/m67F4pvECrNPyaarm0Up2m34KkVmM+ScUiNXgWo0770h2uj8Uw8elp8xaiJYNsnP/QG1GVdsvqrDm5M6e+2rsQVyf2KH5tJnF1iBYmBZPcwH99E1XICJfeNCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3245BDA7;
-	Tue, 18 Jun 2024 09:05:20 -0700 (PDT)
-Received: from donnerap.arm.com (donnerap.manchester.arm.com [10.32.101.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45AD13F6A8;
-	Tue, 18 Jun 2024 09:04:54 -0700 (PDT)
-From: Andre Przywara <andre.przywara@arm.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	devicetree@vger.kernel.org,
-	Jun Wu <jun.wu@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: cpus: Add new Cortex and Neoverse names
-Date: Tue, 18 Jun 2024 17:04:50 +0100
-Message-Id: <20240618160450.3168005-1-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718726801; c=relaxed/simple;
+	bh=ej9CJG6O1s5bXy2f7PT1FQmimnDOu7MWnSDO5jqF7lE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=I3hFitPaOvyVJURNBZX1ZrV4/nINNnxTS+vqM12nBFKDsmR5wGwM2BOvr9205XR7nEZBqM7xStUaZGnh2ke+LaqL20HBoaJSogf+7r4uJTyRVz015LoB5xFvgljkV7PpEjDWWNquLG2CU9RAiQTnMEyFMU/v2o4SKQgkO9KOSjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=jW7tpBvd; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I9ShoU030546;
+	Tue, 18 Jun 2024 11:06:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=+thUlenwK1uXI7DaaZQZ4MsBnxIoisz/NpS8YS1va7s=; b=
+	jW7tpBvd0murd5sYfF3vv/xToTNAZI/H9+gIGy37Ii3z3CSYj1ktjZT2x67v6No7
+	gQF8psTJ0+seTgF9wSz/VAXE15qfn/aipkENDMxjVaoMRY+2RBH8NDtBJNEteWG6
+	5pUr4vl1Q8DACI0sRbPZtWIr0M1RvSNy5WGz2eJK4GvWhR9XaKFIaw7+8dzvtdE8
+	4PyYx8k96ThjY+6qi23gJZrTMe0yhWmK4f7BveJ17yNly76lA43uvY3k50F47ars
+	cK5okCJl3wftfdy8LLt4QECRE1jlogRHmXBiWbQr8UmOUXlk3UAxrDDPg/vUREek
+	Y8mvplwrCufwKICsOR3N6g==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3ys8by3nmg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 11:06:19 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 17:06:01 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Tue, 18 Jun 2024 17:06:01 +0100
+Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id B0EBB820248;
+	Tue, 18 Jun 2024 16:06:01 +0000 (UTC)
+Message-ID: <7032b425-c2e3-4258-92f9-8035b354ea8b@opensource.cirrus.com>
+Date: Tue, 18 Jun 2024 17:06:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: cs35l56: Accept values greater than 0 as IRQ
+ numbers
+To: Mark Brown <broonie@kernel.org>
+CC: Simon Trimmer <simont@opensource.cirrus.com>,
+        <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+References: <20240617135338.82006-1-simont@opensource.cirrus.com>
+ <917507e5-dc6c-4e18-a7e1-554625de604e@sirena.org.uk>
+ <3451fcf6-ff33-4f72-83d1-945b026b925b@opensource.cirrus.com>
+ <007b01dac0c5$7807ac30$68170490$@opensource.cirrus.com>
+ <f04958f0-b9e9-4f80-8a83-af9740fa83a0@opensource.cirrus.com>
+ <a2946d8a-1ead-4514-b1a4-9c04e37cd8a8@sirena.org.uk>
+Content-Language: en-GB
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <a2946d8a-1ead-4514-b1a4-9c04e37cd8a8@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: FXReiKs950989sBZlAs2sjIeNIKvS5xH
+X-Proofpoint-GUID: FXReiKs950989sBZlAs2sjIeNIKvS5xH
+X-Proofpoint-Spam-Reason: safe
 
-Add compatible strings for the Arm Cortex-A725 and Cortex-A925 CPUs, as
-well as new Neoverse cores: Arm Neoverse N3, Neoverse V2, Neoverse V3,
-and Neoverse V3AE.
-
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- Documentation/devicetree/bindings/arm/cpus.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
-index cc5a21b47e26a..f308ff6c3532e 100644
---- a/Documentation/devicetree/bindings/arm/cpus.yaml
-+++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-@@ -147,6 +147,7 @@ properties:
-       - arm,cortex-a710
-       - arm,cortex-a715
-       - arm,cortex-a720
-+      - arm,cortex-a725
-       - arm,cortex-m0
-       - arm,cortex-m0+
-       - arm,cortex-m1
-@@ -161,10 +162,15 @@ properties:
-       - arm,cortex-x2
-       - arm,cortex-x3
-       - arm,cortex-x4
-+      - arm,cortex-x925
-       - arm,neoverse-e1
-       - arm,neoverse-n1
-       - arm,neoverse-n2
-+      - arm,neoverse-n3
-       - arm,neoverse-v1
-+      - arm,neoverse-v2
-+      - arm,neoverse-v3
-+      - arm,neoverse-v3ae
-       - brcm,brahma-b15
-       - brcm,brahma-b53
-       - brcm,vulcan
--- 
-2.25.1
-
+On 18/06/2024 17:00, Mark Brown wrote:
+> On Mon, Jun 17, 2024 at 03:54:04PM +0100, Richard Fitzgerald wrote:
+> 
+>> So 0 is invalid. Question is: is it also valid to pass -ve errors, or is
+>> 0 the _only_ invalid value?
+> 
+> Negative values should be fine.
+In that case this patch is necessary so we reject negative values
+as not an IRQ. Otherwise we'll try to request a non-existant IRQ and
+fail with an error.
 
