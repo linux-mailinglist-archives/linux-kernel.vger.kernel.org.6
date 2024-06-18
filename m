@@ -1,49 +1,81 @@
-Return-Path: <linux-kernel+bounces-218766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C6490C5D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:07:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F235690C5D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36A51C2125C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:07:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57A80B21828
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C552A15B147;
-	Tue, 18 Jun 2024 07:27:22 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD67813BC04;
+	Tue, 18 Jun 2024 07:27:10 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A21813B7AF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ABC15B0F0;
+	Tue, 18 Jun 2024 07:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718695642; cv=none; b=Hfku1m1qxCELhT589u2blDOfzfdhDeV6jrGJAh/ABJOqKJaOfq6YdrFVI/lDFyiAYRJh0gsbTvklN1MTuxPqtrzDA24u3ibgDmTfWkiGCrynW9D+6fkiT9ZMunWpMIZJUCNrb9N+VOwPxYQcz3814byiea0dKLirq2H+Vz1dum8=
+	t=1718695630; cv=none; b=BS/Od/u12tDVspxyZCsqYfmAcb1EZ2H0ULbgks4L4US1A37R4w2Asr4ulqpCeiuSgbqrurP8SsiOPxAWSXffKcAOlNwoiLLa2oiNmEtDFKxpL7M2+x4mQRfsRDK7rEQi2DUXSCF6Rts4DOF9TuUjQxnCnmlXHThUwdD3nhGmB00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718695642; c=relaxed/simple;
-	bh=YhSdnwPfYHBCptd+IaRImgOqklxYVBgy1SqjBOm2jrw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g/Y85QFQ347P71kMUy4DmZZk/6wrju4zit1e+eruII/XCF5zuqR49nH2OBuITVW65jGa8dQiMyzIfTlW6ko3DN1D2hEO+rzOWZsbUcXIXoz2ojdyLAuxabEUjezCZ4VFBSctuyrVhu/WUn8JoSVHlRECFF+bYGEyazZ/O5V+CFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W3JBH1gltz1SCWS;
-	Tue, 18 Jun 2024 15:23:03 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9D1E11402C8;
-	Tue, 18 Jun 2024 15:27:16 +0800 (CST)
-Received: from hulk-vt.huawei.com (10.67.174.26) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 18 Jun 2024 15:27:16 +0800
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-To: <akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 -next] mm/hugetlb_cgroup: register lockdep key for cftype
-Date: Tue, 18 Jun 2024 07:19:22 +0000
-Message-ID: <20240618071922.2127289-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718695630; c=relaxed/simple;
+	bh=v+8kEJ1OUngwE8rxso5D9lb/3tGgmgmX7ZUQc61K5XI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=nUC5rSUQqljSusl1t/tSehy9J3+8ZDyiQlbs+xL/ho3m3INua5cxUaJzEERjBL/cz3CDcxHwfU6LxDRNS2QgOhDtw4EG06OnxyLxq5GTFBFHw+Ys8f8JJ5iequkrWOP3oaB/sj4SdWKg8Oq23jVN56pHRoEGOs3Idd27xkixVZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 67bed1d82d4311ef9305a59a3cc225df-20240618
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:57452060-6d28-4dc8-8c16-2a184e905e64,IP:25,
+	URL:0,TC:0,Content:9,EDM:0,RT:0,SF:1,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:35
+X-CID-INFO: VERSION:1.1.38,REQID:57452060-6d28-4dc8-8c16-2a184e905e64,IP:25,UR
+	L:0,TC:0,Content:9,EDM:0,RT:0,SF:1,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:35
+X-CID-META: VersionHash:82c5f88,CLOUDID:9d76cedba94e646680ad55363fc6a752,BulkI
+	D:2406171554551IQWSKXU,BulkQuantity:1,Recheck:0,SF:24|72|19|42|74|57|66|81
+	7|102,TC:nil,Content:4|-5,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:ni
+	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
+	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
+	HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED
+	SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR, SN_UNTRUSTED
+	SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
+	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
+	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-UUID: 67bed1d82d4311ef9305a59a3cc225df-20240618
+X-User: lihongfu@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.255)] by mailgw.kylinos.cn
+	(envelope-from <lihongfu@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 2042290132; Tue, 18 Jun 2024 15:21:39 +0800
+From: Hongfu Li <lihongfu@kylinos.cn>
+To: yanjun.zhu@linux.dev
+Cc: allison.henderson@oracle.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	lihongfu@kylinos.cn,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	rds-devel@oss.oracle.com
+Subject: [PATCH] rds:Simplify the allocation of slab caches
+Date: Tue, 18 Jun 2024 15:21:21 +0800
+Message-Id: <20240618072121.67838-1-lihongfu@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <5a2cbc3e-bb37-4753-9c47-b196399ecf0a@linux.dev>
+References: <5a2cbc3e-bb37-4753-9c47-b196399ecf0a@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,100 +83,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500023.china.huawei.com (7.185.36.114)
 
-When CONFIG_DEBUG_LOCK_ALLOC is enabled, the following commands can
-trigger a bug,
+>> Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
+>> to simplify the creation of SLAB caches.
+>> 
+>> Signed-off-by: Hongfu Li <lihongfu@kylinos.cn>
+>> ---
+>>   net/rds/tcp.c      | 4 +---
+>>   net/rds/tcp_recv.c | 4 +---
+>>   2 files changed, 2 insertions(+), 6 deletions(-)
+>> 
+>> diff --git a/net/rds/tcp.c b/net/rds/tcp.c
+>> index d8111ac83bb6..3dc6956f66f8 100644
+>> --- a/net/rds/tcp.c
+>> +++ b/net/rds/tcp.c
+>> @@ -719,9 +719,7 @@ static int __init rds_tcp_init(void)
+>>   {
+>>   	int ret;
+>>   
+>> -	rds_tcp_conn_slab = kmem_cache_create("rds_tcp_connection",
+>> -					      sizeof(struct rds_tcp_connection),
+>> -					      0, 0, NULL);
+>> +	rds_tcp_conn_slab = KMEM_CACHE(rds_tcp_connection, 0);
 
-mount -t cgroup2 none /sys/fs/cgroup
-cd /sys/fs/cgroup
-echo "+hugetlb" > cgroup.subtree_control
+>KMEM_CACHE is declared as below:
+>
+>/*
+>  * Please use this macro to create slab caches. Simply specify the
+>  * name of the structure and maybe some flags that are listed above.
+>  *
+>  * The alignment of the struct determines object alignment. If you
+>  * f.e. add ____cacheline_aligned_in_smp to the struct declaration
+>  * then the objects will be properly aligned in SMP configurations.
+>  */
+>#define KMEM_CACHE(__struct, __flags)                                   \
+>                 kmem_cache_create(#__struct, sizeof(struct __struct),   \
+>                         __alignof__(struct __struct), (__flags), NULL)
 
-The log is as below:
+Sorry, I'll check it carefully next time.
 
-BUG: key ffff8880046d88d8 has not been registered!
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 3 PID: 226 at kernel/locking/lockdep.c:4945 lockdep_init_map_type+0x185/0x220
-Modules linked in:
-CPU: 3 PID: 226 Comm: bash Not tainted 6.10.0-rc4-next-20240617-g76db4c64526c #544
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-RIP: 0010:lockdep_init_map_type+0x185/0x220
-Code: 00 85 c0 0f 84 6c ff ff ff 8b 3d 6a d1 85 01 85 ff 0f 85 5e ff ff ff 48 c7 c6 21 99 4a 82 48 c7 c7 60 29 49 82 e8 3b 2e f5
-RSP: 0018:ffffc9000083fc30 EFLAGS: 00000282
-RAX: 0000000000000000 RBX: ffffffff828dd820 RCX: 0000000000000027
-RDX: ffff88803cd9cac8 RSI: 0000000000000001 RDI: ffff88803cd9cac0
-RBP: ffff88800674fbb0 R08: ffffffff828ce248 R09: 00000000ffffefff
-R10: ffffffff8285e260 R11: ffffffff828b8eb8 R12: ffff8880046d88d8
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff8880067281c0
-FS:  00007f68601ea740(0000) GS:ffff88803cd80000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005614f3ebc740 CR3: 000000000773a000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- ? __warn+0x77/0xd0
- ? lockdep_init_map_type+0x185/0x220
- ? report_bug+0x189/0x1a0
- ? handle_bug+0x3c/0x70
- ? exc_invalid_op+0x18/0x70
- ? asm_exc_invalid_op+0x1a/0x20
- ? lockdep_init_map_type+0x185/0x220
- __kernfs_create_file+0x79/0x100
- cgroup_addrm_files+0x163/0x380
- ? find_held_lock+0x2b/0x80
- ? find_held_lock+0x2b/0x80
- ? find_held_lock+0x2b/0x80
- css_populate_dir+0x73/0x180
- cgroup_apply_control_enable+0x12f/0x3a0
- cgroup_subtree_control_write+0x30b/0x440
- kernfs_fop_write_iter+0x13a/0x1f0
- vfs_write+0x341/0x450
- ksys_write+0x64/0xe0
- do_syscall_64+0x4b/0x110
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x7f68602d9833
-Code: 8b 15 61 26 0e 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 01 00 00 00 08
-RSP: 002b:00007fff9bbdf8e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f68602d9833
-RDX: 0000000000000009 RSI: 00005614f3ebc740 RDI: 0000000000000001
-RBP: 00005614f3ebc740 R08: 000000000000000a R09: 0000000000000008
-R10: 00005614f3db6ba0 R11: 0000000000000246 R12: 0000000000000009
-R13: 00007f68603bd6a0 R14: 0000000000000009 R15: 00007f68603b8880
+Thanks, 
 
-For lockdep, there is a sanity check in lockdep_init_map_type(), the
-lock-class key must either have been allocated statically or must
-have been registered as a dynamic key. However the commit e18df2889ff9
-("mm/hugetlb_cgroup: prepare cftypes based on template") has changed
-the cftypes from static allocated objects to dynamic allocated objects,
-so the cft->lockdep_key must be registered proactively.
+Hongfu Li
 
-Fixes: e18df2889ff9 ("mm/hugetlb_cgroup: prepare cftypes based on template")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202406181046.8d8b2492-oliver.sang@intel.com
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-
----
-v2: add bug log to commit message
----
- mm/hugetlb_cgroup.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
-index 2b899c4ae968..4ff238ba1250 100644
---- a/mm/hugetlb_cgroup.c
-+++ b/mm/hugetlb_cgroup.c
-@@ -836,6 +836,8 @@ hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
- 			cft->file_offset = MEMFILE_OFFSET0(offset) +
- 					   MEMFILE_FIELD_SIZE(offset) * idx;
- 		}
-+
-+		lockdep_register_key(&cft->lockdep_key);
- 	}
- }
- 
--- 
-2.34.1
-
+>>   	if (!rds_tcp_conn_slab) {
+>>   		ret = -ENOMEM;
+>>   		goto out;
+>> diff --git a/net/rds/tcp_recv.c b/net/rds/tcp_recv.c
+>> index c00f04a1a534..7997a19d1da3 100644
+>> --- a/net/rds/tcp_recv.c
+>> +++ b/net/rds/tcp_recv.c
+>> @@ -337,9 +337,7 @@ void rds_tcp_data_ready(struct sock *sk)
+>>   
+>>   int rds_tcp_recv_init(void)
+>>   {
+>> -	rds_tcp_incoming_slab = kmem_cache_create("rds_tcp_incoming",
+>> -					sizeof(struct rds_tcp_incoming),
+>> -					0, 0, NULL);
+>> +	rds_tcp_incoming_slab = KMEM_CACHE(rds_tcp_incoming, 0);
+>>   	if (!rds_tcp_incoming_slab)
+>>   		return -ENOMEM;
+>>   	return 0;
 
