@@ -1,243 +1,85 @@
-Return-Path: <linux-kernel+bounces-219774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D168090D79E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B062790D78E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA1661C22216
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:45:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99A841C21E14
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE835745ED;
-	Tue, 18 Jun 2024 15:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R2TyZkR+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B890945977;
+	Tue, 18 Jun 2024 15:43:13 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD5D7D401;
-	Tue, 18 Jun 2024 15:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD561CD29;
+	Tue, 18 Jun 2024 15:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718725427; cv=none; b=ZOWFnGZqjr6PvWnL/KyrYMQfwwOUSl2oixh1hWFFzdjyFXnuc+vsfM3k8pml/k86cOTHSWONm03+CSgVSIIyMUlGiJZkVwWEqz97U9xKQJyp6Tqw9Lh0SuCAsRCPcjAhPj3txZERAkSY/egw+kRfif8QfHBIDNS9oKnMl/J5/04=
+	t=1718725393; cv=none; b=Yfz81RglXadEPN7Jv9DxV+pO19aTm5Q2RiNGS0zZBtgRjyoHhaoyWOKlrWdvcTwKlLgXH31F1nE0UXA9E6sQ1ZfXQW7bLghbgaT5GIoiDKle8xEHYZ3X9BAUJko+1QHl+vIFVeItqM/dm72SIvUvTolytwb6KfFFhikcs9X+HEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718725427; c=relaxed/simple;
-	bh=1iyvyvdlNcpQgO68rGlstK2TPWgSviLBiSjlN5hjUcg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kSL3zp42qms3oz2ccyl3WqPtnldbhbC0GFr8iTpiqseGIu+38rjuEUdFLaYfTvxbWUf/KFjLtyiOhO3+Bml0maxnXLMa/nsKojCwIr9VwSerTNl0cAoYPV6hakNO/WGoUs9CtRcMTO7ZrincZ/LJonpkCsdwnp3lAp7K7CBRzP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R2TyZkR+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IBuea3018642;
-	Tue, 18 Jun 2024 15:43:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DmqfayM9s7xgTIVNPfY+wGeEaUtQTuZQkA9EwVbSZFo=; b=R2TyZkR+bEkdSxlD
-	4t0Le0sjQJ8AyE0qtNaHQge1ACltCkISaQnKC5W+76oPLhL8rxQCP5enbrgOlBRc
-	c3dTJFdWywZpcaRPXKKzr+ypAcEJFlWPLul4fBAfZ+HwC5ah3lF8/NK+p+k5csge
-	eufdKmi/maVneSEa9yE+STh4JmbJNoZuTlnoQ5Lm7F/koPWAKNYcVO5aJhhwteVr
-	Ha24B3pjodQcWclSHceTTCeJSTjH1NeUXRdlo2S8JCTT74wYI/eI1IN3rhaXzton
-	V3TTPP0pC7oHWK412GS7RYonakWxk4JvvfauO0Vculq3SrmNgg5P47ZdAuOIy1A1
-	qhJoLQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu22gsq1m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 15:43:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IFhelr016882
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 15:43:40 GMT
-Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 18 Jun 2024 08:43:35 -0700
-From: Sibi Sankar <quic_sibis@quicinc.com>
-To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <djakov@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <srinivas.kandagatla@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
-        <quic_sibis@quicinc.com>, <conor+dt@kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <abel.vesa@linaro.org>
-Subject: [PATCH V2 3/3] arm64: dts: qcom: x1e80100: Add BWMONs
-Date: Tue, 18 Jun 2024 21:13:06 +0530
-Message-ID: <20240618154306.279637-4-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240618154306.279637-1-quic_sibis@quicinc.com>
-References: <20240618154306.279637-1-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1718725393; c=relaxed/simple;
+	bh=gGx8gkJpM9wjGl4dfZe8iwSMFIAJ8nVorKm3b84gtgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s8yvTHbGkIXUzGTVTnyTqRBt0bQd79Yb357nObAAoUr0zogyp9+Ifb6j88FzRPQ7OyLH6QEoD7wgtNW4rLVUwFdUMpKlIrjo1KNKgY+E8CTxxTlBcXtKDkTylGVFaCSbY3Vd9LEvlBseVnhDjC4960ZnyG/kxquCMAiodLEEgEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE13C3277B;
+	Tue, 18 Jun 2024 15:43:08 +0000 (UTC)
+Date: Tue, 18 Jun 2024 11:43:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alexander Graf <graf@amazon.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Vincent Donnefort <vdonnefort@google.com>,
+ Joel Fernandes <joel@joelfernandes.org>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, <suleiman@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vineeth Pillai <vineeth@bitbyteword.org>, Youssef
+ Esmat <youssefesmat@google.com>, "Beau Belgrave"
+ <beaub@linux.microsoft.com>, Baoquan He <bhe@redhat.com>, "Borislav Petkov"
+ <bp@alien8.de>, "Paul E. McKenney" <paulmck@kernel.org>, David Howells
+ <dhowells@redhat.com>, Mike Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH v6 0/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Message-ID: <20240618114307.48513bb5@rorschach.local.home>
+In-Reply-To: <cd759ac0-73e6-4ab3-a2d0-94f43eec5752@amazon.com>
+References: <20240613155506.811013916@goodmis.org>
+	<b0ed328f-c4e5-4e9b-ae4e-5c60703ab376@amazon.com>
+	<20240613131212.7d1a7ffa@rorschach.local.home>
+	<7c90c574-5cfa-40cf-bd4c-1188136cd886@amazon.com>
+	<20240617164006.198b9ba3@rorschach.local.home>
+	<049b2e0f-00b2-4704-8868-1569a006a134@amazon.com>
+	<CAMj1kXF3AetyuLh-QU8yaE-wTLcgyzwuAwe-uo_3EqSDsAYhuQ@mail.gmail.com>
+	<cd759ac0-73e6-4ab3-a2d0-94f43eec5752@amazon.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -eGVITtBTPpmMSsNrRYd3YO9Eu9-W3WZ
-X-Proofpoint-GUID: -eGVITtBTPpmMSsNrRYd3YO9Eu9-W3WZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- clxscore=1015 malwarescore=0 priorityscore=1501 spamscore=0 suspectscore=0
- adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=916 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406180118
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add the CPU and LLCC BWMONs on X1E80100 SoCs.
+On Tue, 18 Jun 2024 13:47:49 +0200
+Alexander Graf <graf@amazon.com> wrote:
 
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
----
+> IMHO the big fat disclaimer should be in the argument name. 
+> "reserve_mem" to me sounds like it actually guarantees a reservation - 
+> which it doesn't. Can we name it more along the lines of "debug" (to 
+> indicate it's not for production data) or "phoenix" (usually gets reborn 
+> out of ashes, but you can never know for sure): "debug_mem", / 
+> "phoenix_mem"?
 
-v2:
-* Allow for opp-tables to be optional on X1E cpu-bwmon instances. [Konrad]
-* Use consistent numbering of the opps across instances. [Shiv]
-* Use ICC_TAG_ACTIVE_ONLY instead of magic numbers. [Konrad]
+I don't see any reason it will not reserve memory. That doesn't seem to
+be the issue.  What is not guaranteed is that it will be in the same
+location as last time. So the name is correct. It's not
+"reserve_consistent_memory" ;-)
 
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 120 +++++++++++++++++++++++++
- 1 file changed, 120 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 9944c654851e..d8b972c2bc3e 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -5299,6 +5299,126 @@ frame@1780d000 {
- 			};
- 		};
- 
-+		pmu@24091000 {
-+			compatible = "qcom,x1e80100-llcc-bwmon", "qcom,sc7280-llcc-bwmon";
-+			reg = <0 0x24091000 0 0x1000>;
-+
-+			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interconnects = <&mc_virt MASTER_LLCC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>;
-+
-+			operating-points-v2 = <&llcc_bwmon_opp_table>;
-+
-+			llcc_bwmon_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-0 {
-+					opp-peak-kBps = <800000>;
-+				};
-+
-+				opp-1 {
-+					opp-peak-kBps = <2188000>;
-+				};
-+
-+				opp-2 {
-+					opp-peak-kBps = <3072000>;
-+				};
-+
-+				opp-3 {
-+					opp-peak-kBps = <6220800>;
-+				};
-+
-+				opp-4 {
-+					opp-peak-kBps = <6835200>;
-+				};
-+
-+				opp-5 {
-+					opp-peak-kBps = <8371200>;
-+				};
-+
-+				opp-6 {
-+					opp-peak-kBps = <10944000>;
-+				};
-+
-+				opp-7 {
-+					opp-peak-kBps = <12748800>;
-+				};
-+
-+				opp-8 {
-+					opp-peak-kBps = <14745600>;
-+				};
-+
-+				opp-9 {
-+					opp-peak-kBps = <16896000>;
-+				};
-+			};
-+		};
-+
-+		pmu@240b3400 {
-+			compatible = "qcom,x1e80100-cpu-bwmon", "qcom,sdm845-bwmon";
-+			reg = <0 0x240b3400 0 0x600>;
-+
-+			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &gem_noc SLAVE_LLCC QCOM_ICC_TAG_ACTIVE_ONLY>;
-+
-+			operating-points-v2 = <&cpu_bwmon_opp_table>;
-+
-+			cpu_bwmon_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-0 {
-+					opp-peak-kBps = <4800000>;
-+				};
-+
-+				opp-1 {
-+					opp-peak-kBps = <7464000>;
-+				};
-+
-+				opp-2 {
-+					opp-peak-kBps = <9600000>;
-+				};
-+
-+				opp-3 {
-+					opp-peak-kBps = <12896000>;
-+				};
-+
-+				opp-4 {
-+					opp-peak-kBps = <14928000>;
-+				};
-+
-+				opp-5 {
-+					opp-peak-kBps = <17064000>;
-+				};
-+			};
-+		};
-+
-+		pmu@240b5400 {
-+			compatible = "qcom,x1e80100-cpu-bwmon", "qcom,sdm845-bwmon";
-+			reg = <0 0x240b5400 0 0x600>;
-+
-+			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &gem_noc SLAVE_LLCC QCOM_ICC_TAG_ACTIVE_ONLY>;
-+
-+			operating-points-v2 = <&cpu_bwmon_opp_table>;
-+		};
-+
-+		pmu@240b6400 {
-+			compatible = "qcom,x1e80100-cpu-bwmon", "qcom,sdm845-bwmon";
-+			reg = <0 0x240b6400 0 0x600>;
-+
-+			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &gem_noc SLAVE_LLCC QCOM_ICC_TAG_ACTIVE_ONLY>;
-+
-+			operating-points-v2 = <&cpu_bwmon_opp_table>;
-+		};
-+
- 		system-cache-controller@25000000 {
- 			compatible = "qcom,x1e80100-llcc";
- 			reg = <0 0x25000000 0 0x200000>,
--- 
-2.34.1
-
+-- Steve
 
