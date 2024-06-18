@@ -1,127 +1,118 @@
-Return-Path: <linux-kernel+bounces-218908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D22990C79B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:48:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8559690C7A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FFB4285BF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:48:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C987B20CC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017251BD4E9;
-	Tue, 18 Jun 2024 09:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDF31BD906;
+	Tue, 18 Jun 2024 09:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+Rp1Lgf"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iFRi77EF"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE25F1327E5;
-	Tue, 18 Jun 2024 09:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB65155359;
+	Tue, 18 Jun 2024 09:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718701625; cv=none; b=Jn0wvKPF58IDg/plZ0pYBKre21IdKn5JuDmF1AwbRImmeL8vlfhqwBp6lNJfg5M0FlWaorT2j16wl9v9rNcSwHC+HC7ijsEBJ8hii3zLWaKwi4WO0/LhmPSVmkjQgC7OB5UjRkuAE0YX4GxgG+gcTBvHFFnpEDQWdLHdaa0LDog=
+	t=1718701686; cv=none; b=Or5dG6ucXJi7oFNdeux+Ey90QrKxIVv8Bh2ZOxiPLIC0s1vqT7GNv257yQ+IDrFJCr2te4K5Bn3d39wTClOAAHaz3dwuac+jBWtiHvmwetnuz+NbxXgcgLczHcI7U9R2dveDi5mwMQkfYO3ac1YtrWi+kHrUPlMcQXDC6x9YSIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718701625; c=relaxed/simple;
-	bh=au8yhi+EmJrIbpHhK6erx6351t7jF0G+m5kzvhU0lhE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DsRg+54TQ9NGNO0rIzvFyIcLM4NTBqpXwx1Lh7T11ZAr6zLh9aP0uKe9rfmiZwvoUWo2g1mV75pALgpzjavMvZjy2CVDJMiOqQXEkduVfA0ZLOILQXZKqBr3piJ30HKiCE82GvBxBMwJc7gR/i9ByXZ7MV8Io74xkM0/lAkl0us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+Rp1Lgf; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f7b785a01so280648266b.1;
-        Tue, 18 Jun 2024 02:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718701622; x=1719306422; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3UbcOf0pxrejnIwiMiz1yEnw+fA4Gbsvc+uTFi94WOA=;
-        b=O+Rp1LgfJOky4k3KzptwtNEAXll6Z6ivgNz3FQpmaFatzlI+XPBgdyQGy/jtrOrdDQ
-         f7mYv/0cuD9brhzWRaUMSZIIphqyFkF9xgI0VdYd+AwPmwML/bbqTH/DcLtAVXzJ2e8O
-         2CKIwJCwc1uUmuQQAEJS7uJ8DzSBo2JNaP7GWAQxe5HxyPBf5Vz8S/6S9CM9d99LJmEO
-         emJ3MJIYDvzryb2hqaoHWAbZ/ejwGEzqr5/i9uQKjtiZmYM2p6clsGJfUm1bRrQxNlrO
-         go77DqLn+0TmM9yPCEF6LefJg3tpiEYR728ykfU0LPMCfnXBe4cfGACQj64B8jFxnuW7
-         M3hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718701622; x=1719306422;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3UbcOf0pxrejnIwiMiz1yEnw+fA4Gbsvc+uTFi94WOA=;
-        b=E2oFXbAieOTa1fp0g7zGrZQR9Zl6sppOdECyZk7tPwgjKaJII9VtythhI6j/ZVPwjB
-         bC4fORFdScF/MO52hOTKBdKUJ6+A41LG5St6GE385WgIQJy1A31IkBqkPTssD+W/K/qu
-         mcHtipXmudBzlu/thvAiHm/NchTXzY9xy41HxH0EiAwIBrkafP91tGjcYmWOqiAc4zdp
-         AeCORtRy34gNDe7QdmTqTV6MOJTJvnE+lKYSnOKoT46ULR5ou+oe10jH6moBCJvwyijn
-         m20YIJYYKV7Lfm3JMZuhWROHP5nvebeqW+cFf8zmhzFwupQuzz5v+vDHR+yOvpEewjJK
-         nWOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdkSvex5kzpdSU+gJe2tGO0TTdWi4x/XTi7qMuys0yz73Dmm1yscOqtUC7N99lIiTr9LFVn5SPhl3RgN8lDpfPzmSGHTG2BQ3C2Mni6m8SssLHSsy6sYD9DX8OejG1r/rJfJZubxtZY2GNWA==
-X-Gm-Message-State: AOJu0Yw/Tpy0qMGYp0S055UDWWSP0uHN9e4hamtJDBpFCqGcux3azKsy
-	xuxWcURHcG8Orx0r+uZr/A6wunGF2/L3PVvKhZGJiQaPHA5yPjEyXDmuMuESBbxV/ZpjmXsPJE4
-	RW42puvmTWaZU9JOgxpv9E+paW1Y=
-X-Google-Smtp-Source: AGHT+IF12XeEHiYb6oAXlGs3X906A3Hpl0vxdM8WrW3ESD2IlcRbjMqyZ9rtPT9hqCD2rLynX1q0MPAyWWXvar3ZWvA=
-X-Received: by 2002:a17:906:255b:b0:a6f:5db5:71a0 with SMTP id
- a640c23a62f3a-a6f60cefe2emr715634866b.14.1718701621969; Tue, 18 Jun 2024
- 02:07:01 -0700 (PDT)
+	s=arc-20240116; t=1718701686; c=relaxed/simple;
+	bh=aWEOLZxVcmFG7Tnj8nKoIk9Y+jEqw5pv7TQtLuUW/GM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bU2OC+Q68S98YqIggNUu0GdxWQJZTgIPO4FhFkh/Vj+DqVF4EzsoAWS0PW5kq7IRJa/7WSCN7xjx5pgyb74eoxRKxLIFFOG1tb60h4o729eWtnQVUeYCAvuW/3xR1vlBv0VNCesCr1mlqF9gOXj6kY+akWi9Nl/OZuTebqg+NAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iFRi77EF; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BAA2940E0219;
+	Tue, 18 Jun 2024 09:07:59 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id aGuF-HTpzT1b; Tue, 18 Jun 2024 09:07:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718701675; bh=hAO9+helngUuUeubF6L7V/zmmLQ0R5mhgBjYodP5Jf4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iFRi77EFPt40/h2RfC93fbcbpEk55gAB/W/g6MVNFoQc8uWRLdvMEqWnxD0DorZSg
+	 F6pGDuX1sHe/x+EDfVcYT1eR+XzDzq6Mz9u6GnZDSN3FVg2mTV4fHOR4X3IreV/ybN
+	 YkvD+xnJu0m2QR4eKN+AY42d1z+riZO7/4wo5L3gHVwD4ip8w7XVCqgJ1kWe8yxgYo
+	 VFS2wUQVeAUWiPpFDMUl8xN9RrL0uYx327vKkxWWUhZ/wwbc8PWtA30BCM5RDE7P9H
+	 VTUeDvKaFbqhqj/GJk19SKyGxQkbH7M8LzAeTSE54CQdebAmAaZYejswQVw7TY7cNf
+	 Bol8FbSafqQIKXR9lKK1C8NPfzZvihvmTg0EjGzToDUmEbQgh1qpVlf0WH/FpytIwG
+	 rVwz/vbh0KRQMhRSDwEvHvTK/ToEwszqK+7/IFbXfyW+kLGYsyaRc5xJUiUZnSb6JS
+	 czKCfqzUbQYXwQfSc180t/lGf4Bz3mWmvwGP/jBrYMaCAN7XBXHfqKRgQOAbYZwY2V
+	 1Dlwsdd+lAjbkpVvwA5UbG7Q6XbsZhE3kCvtrOR8Vl3jDs6AdoCtV88chL3T1AzoNw
+	 RPiLkrHSVdEaya9qkVuqeVxQcy6m1Wh/Epb/QENsPRuLjvPA3IO/6R5H2fapRJNTeA
+	 syoB+CbPNhsLVtRlsPpG7S0c=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 27D3540E01F9;
+	Tue, 18 Jun 2024 09:07:45 +0000 (UTC)
+Date: Tue, 18 Jun 2024 11:07:39 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [PATCH 1/2] x86/cpufeatures: Add HWP highest perf change feature
+ flag
+Message-ID: <20240618090739.GAZnFOW6FRwcE5EkQI@fat_crate.local>
+References: <20240618035122.438822-1-srinivas.pandruvada@linux.intel.com>
+ <20240618035122.438822-2-srinivas.pandruvada@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614163416.728752-1-yu.ma@intel.com> <20240614163416.728752-4-yu.ma@intel.com>
- <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
- <lzotoc5jwq4o4oij26tnzm5n2sqwqgw6ve2yr3vb4rz2mg4cee@iysfvyt77gkx>
- <fd4eb382a87baed4b49e3cf2cd25e7047f9aede2.camel@linux.intel.com>
- <8fa3f49b50515f8490acfe5b52aaf3aba0a36606.camel@linux.intel.com> <ZnFGy2nYI9XZSvMl@tiehlicka>
-In-Reply-To: <ZnFGy2nYI9XZSvMl@tiehlicka>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 18 Jun 2024 11:06:49 +0200
-Message-ID: <CAGudoHHaH8NgdxwC1gr-XdyFSzSfPsD__6jMymTC-FQ7=o_ERw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to put_unused_fd()
-To: Michal Hocko <mhocko@suse.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>, Yu Ma <yu.ma@intel.com>, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tim.c.chen@intel.com, pan.deng@intel.com, 
-	tianyou.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240618035122.438822-2-srinivas.pandruvada@linux.intel.com>
 
-On Tue, Jun 18, 2024 at 10:35=E2=80=AFAM Michal Hocko <mhocko@suse.com> wro=
-te:
->
-> On Mon 17-06-24 11:04:41, Tim Chen wrote:
-> > diff --git a/kernel/sys.c b/kernel/sys.c
-> > index 3a2df1bd9f64..b4e523728c3e 100644
-> > --- a/kernel/sys.c
-> > +++ b/kernel/sys.c
-> > @@ -1471,6 +1471,7 @@ static int do_prlimit(struct task_struct *tsk, un=
-signed int resource,
-> >                 return -EINVAL;
-> >         resource =3D array_index_nospec(resource, RLIM_NLIMITS);
-> >
-> > +       task_lock(tsk->group_leader);
-> >         if (new_rlim) {
-> >                 if (new_rlim->rlim_cur > new_rlim->rlim_max)
-> >                         return -EINVAL;
->
-> This is clearly broken as it leaves the lock behind on the error, no?
+On Mon, Jun 17, 2024 at 08:51:20PM -0700, Srinivas Pandruvada wrote:
+> When CPUID[6].EAX[15] is set to 1, this CPU supports notification for
+> HWP (Hardware P-states) highest performance change.
+> 
+> Add a feature flag to check if the CPU supports HWP highest performance
+> change.
+> 
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+>  arch/x86/include/asm/cpufeatures.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index 3c7434329661..4674ba5310b2 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -361,6 +361,7 @@
+>  #define X86_FEATURE_HWP_ACT_WINDOW	(14*32+ 9) /* HWP Activity Window */
+>  #define X86_FEATURE_HWP_EPP		(14*32+10) /* HWP Energy Perf. Preference */
+>  #define X86_FEATURE_HWP_PKG_REQ		(14*32+11) /* HWP Package Level Request */
+> +#define X86_FEATURE_HWP_HIGHEST_PERF_CHANGE (14*32+15) /* HWP Highest perf change */
 
-As I explained in my other e-mail there is no need to synchronize
-against rlimit changes, merely the code needs to honor the observed
-value, whatever it is.
+Doesn't belong in /proc/cpuinfo:
 
-This holds for the stock kernel, does not hold for v1 of the patchset
-and presumably will be addressed in v2.
+#define X86_FEATURE_HWP_HIGHEST_PERF_CHANGE (14*32+15) /* "" HWP Highest perf change */
 
-Even if some synchronization was required, moving the lock higher does
-not buy anything because the newly protected area only validates the
-new limit before there is any attempt at setting it and the old limit
-is not looked at.
+							^^^^^
 
-I think we can safely drop this area and patiently wait for v2.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
