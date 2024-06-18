@@ -1,259 +1,105 @@
-Return-Path: <linux-kernel+bounces-218791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3B990C611
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:14:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 404AC90C610
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 417881C21A9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:14:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1A631F22413
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE86155391;
-	Tue, 18 Jun 2024 07:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Hus3YdYD"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3337160784;
+	Tue, 18 Jun 2024 07:40:37 +0000 (UTC)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4F647A5D
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1781C47A5D;
+	Tue, 18 Jun 2024 07:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718696448; cv=none; b=OKjR1DPdAbjaSmP3iZDc7gusq7YdH/JFATmJ1aRz/RyzrWivXdqfQQBvedqaLVLqT1ZXWKbt5uDyE7qavpcyiFFvYBVN0dLDU2DCm1BXh4XYZUuV0FsNE3DgiG2MBynMlCoqyEOFc+swEpIEwjtGJI4haUSMEhZ1mgYUfeKpvCs=
+	t=1718696437; cv=none; b=U6FyAknh4m+1eGpLh0nC6rnZQexhWHg3Gn7/RC0uEF+0G30JRrgziHItndXl2PTx9594rK2P+m9GnmrMCkbk5K2c8JkgrRrCnG19VygtZEfAKLc7TPQLMUDD9HorJ6f53pwLBTbELeGwMLmZ+Xc5qO5pZoa3J8enidsu3mDG0zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718696448; c=relaxed/simple;
-	bh=fAjUUM5MGv+Nnw40efWK6OzEJmGeQtaSvdjCViDOsww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qs9BP5RJT7TAJFlTLsC+GxMk7c0wZj3gQ2I9KJ+sTNrC1vaHIkvEHhdYKxN9r4HHlmZIF8MAlG6sXklPhqgiG0Ktt79WRTgeo7SNirFjWKMMo3uvfhYmiKKMwU9rhIsgqDCjmOpCwg68X37nmXh28+kLJVDoJode8z4NouTUnCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Hus3YdYD; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45I7eNwQ130284;
-	Tue, 18 Jun 2024 02:40:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718696423;
-	bh=mOuw0vOFF+jtYkz65pWfpn2/WyQP4i6TqlpZ7ARxTvs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Hus3YdYDSM+RJlE82dC+X20qY97uaGFwOif4BTallVCuXaLcdYYQc7YOCq7ab5te5
-	 JAn7r1v/4yC7S9yiHqJQKcHdK8ORDSmbF+4UoNjLA59+MtRU6Q3vKBRE/qRo8MOVM5
-	 w3x9kY+epLm/HYXjtKVRT6YIJsdU7y8zX81op8kk=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45I7eNq5031856
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Jun 2024 02:40:23 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Jun 2024 02:40:23 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Jun 2024 02:40:23 -0500
-Received: from [172.24.227.55] (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.55])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45I7eIoY062389;
-	Tue, 18 Jun 2024 02:40:19 -0500
-Message-ID: <b1591cd8-47b1-4764-b768-f3a8ef80d495@ti.com>
-Date: Tue, 18 Jun 2024 13:10:17 +0530
+	s=arc-20240116; t=1718696437; c=relaxed/simple;
+	bh=yj43muI9Zx5DTjKKVxrlSMZFj+rvK9otEprK9qxy+is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tcSkXqlMPMQS/c07w0KC2U1LVSi9S+b3GaM1ycxPOQVMUtYngbMxgkmmBRcn1yGM0psicXzdKRq/fmShZGefu8DJ64Rs+Y09qrvJ9/CVSzJVX34jK+zMhD69one8G1ESpeXfAMcNPt9y9yMEohUwFtjT/7/jGTlGTJQHwXy3zH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dfe81d54db9so4870248276.2;
+        Tue, 18 Jun 2024 00:40:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718696434; x=1719301234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1+xcRo0rtv0+KrEU5Kv7T95pjKSl0TJAoMf3IC0KPCA=;
+        b=l+fy7Wp+RBz3XkXxD0jp9vu3p8twYEtGtwOyrYISQnwwuTZMzyhiK7OEgcRuhpNt1E
+         67+q9gOgb1g8bcOSnuNF+zQBU/Z+LIk2Hq548CIaDcqYTq15UUs26xc6RTmG79spiXOd
+         5PKTj/ZpPUumKVq3nhPHJYcCDvTVGb1RZqpXri9OLSaGIF/9HBFBavKwxUPwz2781nZW
+         AJxVqVqE2US/6WoS97arS7UGUpgI1MuZhlFOO/6OfYzPlOz0aR8nsZxuSMC3NM1XMLk/
+         z723BTK9NKuN1JnnmHGtshG2NP/qzO5qwhS+MRxxMscYtK8HjEuZ7FTLjFcJ8DkTYmGp
+         kAFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQAO3Lf/Pto2KTBi3dbr2X0z/tdYu0nsvfcbgKfxuHgAu3XMye3MIrWDKK7VDauD8t9mGru34M6d+M0/5SksqM21/S1blD6kok+KsPAseuRlisCXQgoVw2o4Az0EjiMvC36magBbe0LkM6jLntqUEoRt5mSBhAhlCJY3Tu76Ejdisgr83R/ugtIeI=
+X-Gm-Message-State: AOJu0Yxo8tu0ESWAIl0Y+pbwkTeZy0i+0Vl9ATIpoYSzw5Si+bRNnhRa
+	LETw2pZlrGYWV6q/ribP22NGsegjT94gwVJo7nbRmnzFCY5xKm2Uutyw5UAo
+X-Google-Smtp-Source: AGHT+IFE/eiJfk7YtJdLf8aJw3afMZg7pGrKWus/v4oMRqxTbo+xPXMcmiHIG+il54ABAhA4QIrP3Q==
+X-Received: by 2002:a25:24c:0:b0:e02:b7a9:48fd with SMTP id 3f1490d57ef6-e02b7a94d26mr144464276.29.1718696433939;
+        Tue, 18 Jun 2024 00:40:33 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dff046690f2sm2202434276.7.2024.06.18.00.40.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 00:40:33 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dfe43dca3bfso5695511276.0;
+        Tue, 18 Jun 2024 00:40:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX1/vBvIwbbPTqAqy6qGnPfZMsBeWRJgXO23kQAnMqVD9svqS3RyO9OaFtLUVFCQ11uXpF/+mG8DCKoWaNAPMrefHIZ3FtNr7GaeRLBpCVlY876epIAUA23Ba2D0zV6VTME8Wq51i0TyThny2aor5K2aRLTRXg7hF5W4C34uI5oP8RZmgrKFEkKQ+M=
+X-Received: by 2002:a25:688e:0:b0:dff:137:b5cb with SMTP id
+ 3f1490d57ef6-dff153aba11mr10722840276.23.1718696433486; Tue, 18 Jun 2024
+ 00:40:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: ti-sn65dsi86: Fix ti_sn_bridge_set_dsi_rate
- function
-To: Doug Anderson <dianders@chromium.org>
-CC: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <daniel@ffwll.ch>, <andersson@kernel.org>,
-        <robdclark@gmail.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240408073623.186489-1-j-choudhary@ti.com>
- <CAD=FV=V6vUgcPn0zhA+9k4cHVpqqeSVCSJG23XEE5KMAHUCCoQ@mail.gmail.com>
- <279a1467-9ba4-449c-9076-9b2acef9336c@ti.com>
- <CAD=FV=VVs56wPGMVwuuwvHN8ob2bUeX1U-G=Zt_xGeGMyuchQA@mail.gmail.com>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <CAD=FV=VVs56wPGMVwuuwvHN8ob2bUeX1U-G=Zt_xGeGMyuchQA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240617-md-m68k-sound-oss-dmasound-v1-1-5c19306be930@quicinc.com>
+In-Reply-To: <20240617-md-m68k-sound-oss-dmasound-v1-1-5c19306be930@quicinc.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Jun 2024 09:40:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWqMqakMH+rVoCc2LTpGj-+v+rF0XmEeQwTHrT73Ay5Rg@mail.gmail.com>
+Message-ID: <CAMuHMdWqMqakMH+rVoCc2LTpGj-+v+rF0XmEeQwTHrT73Ay5Rg@mail.gmail.com>
+Subject: Re: [PATCH] sound/oss/dmasound: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Doug,
+On Tue, Jun 18, 2024 at 3:37=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
+.com> wrote:
+> With ARCH=3Dm68k, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in sound/oss/dmasound/dmas=
+ound_core.o
+>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-On 11/04/24 10:12, Doug Anderson wrote:
-> Hi,
-> 
-> On Wed, Apr 10, 2024 at 4:42 AM Jayesh Choudhary <j-choudhary@ti.com> wrote:
->>
->> Hello Doug,
->>
->> Thanks for the review.
->>
->> On 08/04/24 14:33, Doug Anderson wrote:
->>> Hi,
->>>
->>> On Mon, Apr 8, 2024 at 12:36 AM Jayesh Choudhary <j-choudhary@ti.com> wrote:
->>>>
->>>> Due to integer calculations, the rounding off can cause errors in the final
->>>> value propagated in the registers.
->>>> Considering the example of 1080p (very common resolution), the mode->clock
->>>> is 148500, dsi->lanes = 4, and bpp = 24, with the previous logic, the DSI
->>>> clock frequency would come as 444 when we are expecting the value 445.5
->>>> which would reflect in SN_DSIA_CLK_FREQ_REG.
->>>> So move the division to be the last operation where rounding off will not
->>>> impact the register value.
->>>
->>> Given that this driver is used on a whole pile of shipping Chromebooks
->>> and those devices have been working just fine (with 1080p resolution)
->>> for years, I'm curious how you noticed this. Was it actually causing
->>> real problems for you, or did you notice it just from code inspection?
->>> You should include this information in the commit message.
->>
->> I am trying to add display support for TI SoC which uses this particular
->> bridge. While debugging, I was trying to get all the register value in
->> sync with the datasheet and it was then that I observed this issue while
->> inspecting the code.
->> Maybe Chromebooks are using different set of parameters which does not
->> expose this issue. Since parameters for my display (mentioned in commit
->> message) yields the frequency at the border, I saw this issue. My debug
->> is still ongoing but since the value is not in sync with the
->> documentation, I sent out this patch.
-> 
-> OK, sounds good. It would be good to include some of this type of into
-> in the patch description for the next version.
-> 
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-I am re-rolling v2 patch.. So I will mention that this was found during
-code inspection.
+Gr{oetje,eeting}s,
 
-> 
->>> I'm travelling for the next two weeks so I can't actually check on a
->>> device to see if your patch makes any difference on hardware I have,
->>> but I'd presume that things were working "well enough" with the old
->>> value and they'll still work with the new value?
->>>
->>>
->>
->> Yes, ideally they should still work well with this change.
-> 
-> OK, I can validate it in a few weeks.
-> 
-> 
->>>> Also according to the SN65DSI86 datasheet[0], the minimum value for that
->>>> reg is 0x08 (inclusive) and the maximum value is 0x97 (exclusive). So add
->>>> check for that.
->>>
->>> Maybe the range checking should be a separate patch?
->>
->> Check should be done before propagating the register value so I added it
->> in the same function and hence in the same patch.
-> 
-> I was thinking you could have patch #1 add the checks. ...then patch
-> #2 could fix the math.
-> 
+                        Geert
 
-Creating 2 patches. 1st for atomic check and another fixing the math.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> 
->>>> -#define MIN_DSI_CLK_FREQ_MHZ   40
->>>> +/*
->>>> + * NOTE: DSI clock frequency range: [40MHz,755MHz)
->>>> + * DSI clock frequency range is in 5-MHz increments
->>>> + * So minimum frequency 40MHz translates to 0x08
->>>> + * And maximum frequency 755MHz translates to 0x97
->>>> + */
->>>> +#define MIN_DSI_CLK_RANGE      0x8
->>>> +#define MAX_DSI_CLK_RANGE      0x97
->>>
->>> It's a little weird to call this min/max and have one be inclusive and
->>> one be exclusive. Be consistent and say that this is the minimum legal
->>> value and the maximum legal value. I think that means the MAX should
->>> be 0x96.
->>
->> The comment above does specify the inclusive/exclusive behavior.
->> Since a value corresponds to 5MHz range, associating the value with
->> the range makes more sense if I keep it 0x97 (0x97 * 5 -> 755MHz)
->> 0x96 corresponds to the range of [750Mz,755MHz).
->>
->> If this argument does not make sense, I can change it to 0x96 and handle
->> it with the inequalities in the function call.
-> 
-> Right that the comment is correct so that's good, but I'd still like
-> to see the constants changing. For instance, if I had code like this:
-> 
-> /*
->   * I know 2 * 2 is not really 5, but it makes my math work out
->   * so we'll just define it that way.
->   */
-> #define TWO_TIMES_TWO 5
-> 
-> ...and then later you had code:
-> 
-> if (x * y >= TWO_TIMES_TWO)
-> 
-> When you read the code you probably wouldn't go back and read the
-> comment so you'd be confused. AKA the above would be better as:
-> 
-> #define TWO_TIMES_TWO 4
-> 
-> if (x * y > TWO_TIMES_TWO)
-> 
-> Better to make the name of the #define make sense on its own. In this
-> case "min" and "max" should be the minimum legal value and the maximum
-> legal value, not "one past".
-> 
-
-Okay will use correct values.
-
-> 
->>>> +        */
->>>> +       bit_rate_khz = mode->clock *
->>>> +                      mipi_dsi_pixel_format_to_bpp(pdata->dsi->format);
->>>> +
->>>> +       /*
->>>> +        * For each increment in val, frequency increases by 5MHz
->>>> +        * and the factor of 1000 comes from kHz to MHz conversion
->>>> +        */
->>>> +       val = (bit_rate_khz / (pdata->dsi->lanes * 2 * 1000 * 5)) & 0xFF;
->>>> +
->>>> +       if (val >= MAX_DSI_CLK_RANGE || val < MIN_DSI_CLK_RANGE) {
->>>> +               drm_err(pdata->bridge.dev,
->>>> +                       "DSI clock frequency not in the supported range\n");
->>>> +               return -EINVAL;
->>>> +       }
->>>
->>> Shouldn't the above be in atomic_check()? There's a reason why
->>> atomic_enable() can't return error codes.
->>
->> Oops.
->> I will handle it how we are handling errors in case of link_training:
->> https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/bridge/ti-sn65dsi86.c#L1152
->>
->> That should be okay I guess?
-> 
-> I'm pretty sure it should be in atomic_check(). The atomic_check() is
-> supposed to confirm that all parameters are within valid ranges and
-> the enable function shouldn't fail because the caller passed bad
-> parameters. Specifically this could allow the caller to try different
-> parameters and see if those would work instead.
-> 
-> In the case of the link training failure it's not something we could
-> have detected until we actually tried to enable, so there's no choice.
-> 
-> -Doug
-
-
-I will have to move the whole calculation to atomic check since
-atomic check will be called first and then in bridge_enable I will
-write to the register.
-
-Thanks
--Jayesh
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
