@@ -1,206 +1,142 @@
-Return-Path: <linux-kernel+bounces-220022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2163890DB8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:27:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AAEB90DB90
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D6F1C2255F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:27:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BB0C1F233CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DBE15E5C9;
-	Tue, 18 Jun 2024 18:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1883413D50B;
+	Tue, 18 Jun 2024 18:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Kl6lmJZd"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="izFFSTog"
+Received: from mail-io1-f67.google.com (mail-io1-f67.google.com [209.85.166.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E82A13DDDF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 18:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FEF15E5DC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 18:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718735262; cv=none; b=T+pHQ2U3XHBfjwg2w+IjpPw/YPmD8uicChD8ohMwRgzmISPPZ8/987Jx5BlmJumoPBc6XsgciZ+soK/NYSQvnt6qf4zxbOKbMlCCMAcgWv+cYZ55zUfQ2aXZfuS4We8PF8KP5JAWjbI8s1f8Woa3kPSNduyvpq3a7BRl2y3+wg0=
+	t=1718735408; cv=none; b=KDZWNALHZ4lfLC95e5TE2f0aQahhovZ2vUSQeLC63ckLsc/KJfOEGk4zaLnUZ6vstHFFRiIAaTkhodzLnyCGrHJFhM7gZP2g0G9s5fudd44zDCeGYfmr3bK99pI6xst/y7gGwAg89+hTdP2NGGpnvwLelzM8HVlnlJP+W5DOYFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718735262; c=relaxed/simple;
-	bh=YceC5bBnKEC6aHUDP2oDZ+Mn0euoK29akkz6UYQlpbI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lg68dWKrrePNjLGmyu4tVvH5E5JGYjryJRFw8Xp/x7hLMOLGOqWLyxoF7EiELAV3vkRBOfluvV4GXR2xvW9nlKQlliGwR2hhpAltF2GDduNdDCadxIOE70W6E0NYsV1ht8Aj8KmFm6RT9ZnABghNYd7023wwPxD2mcP860aTKTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Kl6lmJZd; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IHu7lm010556;
-	Tue, 18 Jun 2024 18:27:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:from:to:cc:references
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=M
-	1iAGlrsA1Xd3EhMSg5oejou65JPVEJdAdC1ah+n+K4=; b=Kl6lmJZdIM+SkKGm6
-	wqneQZKEoAAMW4K2wlKg42vafvH/LlLHafCSuG+CNnJkDZ/PW0FNorAnjyaakKYP
-	PfU/b0RGckQf5aMx6c0KnblIEwJKQZLuVQT2SO2yLpmlV4tPX6hwfStk3CTilKqw
-	6kbqcGs8j8pEB6Bph7hQNf0C5MVJCoz0LVhlMYJN7M96FXNMKuxAPn57vXtWTsmD
-	HXTSsOtJf2WyufY6vhx421D3pvMCw5UdaxDd1RSoIXYGrzd+B4f3lSaC8G6A0N4n
-	Tp8GtMqxARF3Pmc4Xbg3fttJae3P+tznRBDQRxnQpK6SS4iatIn/DwifUMTx08kj
-	C1t/w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yuecs86rx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 18:27:11 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45IIOlIp023090;
-	Tue, 18 Jun 2024 18:27:11 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yuecs86rv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 18:27:10 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45IIR4fY019545;
-	Tue, 18 Jun 2024 18:27:09 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysnp160y3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 18:27:09 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45IIR7FI31720144
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Jun 2024 18:27:09 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E7F3658063;
-	Tue, 18 Jun 2024 18:27:06 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 81C2658066;
-	Tue, 18 Jun 2024 18:27:03 +0000 (GMT)
-Received: from [9.195.33.34] (unknown [9.195.33.34])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 18 Jun 2024 18:27:03 +0000 (GMT)
-Message-ID: <e7e2126f-40ca-44af-9287-888f4ec34b35@linux.ibm.com>
-Date: Tue, 18 Jun 2024 23:57:02 +0530
+	s=arc-20240116; t=1718735408; c=relaxed/simple;
+	bh=RbUj7YnGoY0hmCjZnaaNuFTp3lL/ckTgWn8Mt2zGzno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C6zIvwvX3OSy5IW3Swj5wz91/1zsWhsabLNeT2e8CeOPMUYDnmUzcBsBvvY9uaIZ/OggeJM063kG4YCYC9Y6PABIJYz+uiDiOPBoHwLKNCaszPtzPNaadPpWEOoa0jN3NcxmA9jHX8db+hEVuIKXqLszWyHb4RCSzdw9uh03VtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=izFFSTog; arc=none smtp.client-ip=209.85.166.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
+Received: by mail-io1-f67.google.com with SMTP id ca18e2360f4ac-7ebe019b9cdso186876839f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:30:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1718735406; x=1719340206; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zyO8jjK5Vx3n7QlCTiUf7qwKHCXenr2vDYIC8Apx6M0=;
+        b=izFFSTogk96UTpglToo32FbB463T7mVKJ/B3NcPqsx29Owb4DQwgmtnsqCAiYUp6gB
+         MyVXUK9pvM8K/dNd3jwwymF/Nthi4y8B9BjfcQrM6gGv1aDiRGf8QeFGd/GAig7mLPSI
+         tPKHR0fPiicuI5effGZ0VbXDBADdoWr5eEYRilbF1afBPviI+nQvIWlZ4QqfCbtHAAdr
+         fUjcTNY3DwIhpi47oRitCKUGq3SzY7LY+55SHQNtvux6qpyfZRwHK611dkNWVHhmfzEc
+         W9KSb0qqOEpc41hb03hGR8lFCaJV4tFL7HQS5xjDzCmPmvK0iLSSzG172MtB0Qum0E3p
+         Y8dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718735406; x=1719340206;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zyO8jjK5Vx3n7QlCTiUf7qwKHCXenr2vDYIC8Apx6M0=;
+        b=LmdQweF6wB2+8ajqiuxUbOI8w9Utls/uBTFMttTJt9fKq603gxvElHU+X3iXBokxPU
+         gee3xWYeCgViAzIbrywhDhRZHNKFGfqAeZeHrRrLa0dBGNa5MAocYgxMkZ78paGRGpDy
+         GOrggGXByq4zyeWd/iJEG+pysCzFpMZKSGHFUajP9LtfunnhPKl0B53IfYuUTCCTRKwc
+         cIGXOBT0agmQhFG/wMknlgkvVpJuBf0HwplaUYDY4YSQ8UkLQFaPZ8gTyYrQqLwujwNr
+         CRB8nlStjC2SnZqcfjMtLjVaUfQTNR1N63uPLW5+05oedx0aLib3uOjTmirbz/vQdU2T
+         i2rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUK6E9ETjHFpBA/7jFy2zDpeguBjvR8l+ysyy5A/G98K1CJxVF7DDPeD2kT62gnvwFMLYg++YBvk6i8UtFikVwSA73RKKbAxNIwVtH/
+X-Gm-Message-State: AOJu0YwqQDNFDtSCOwIL/HhK4FpbhB/QpSA1/5/iv+mMkruc26Ex9PFV
+	Ds1u860/yC8TP/ghaYl7FADW9AfvsDbXMpWYJEJbE+PDNz7KpPrkA/v0T6AAS4A=
+X-Google-Smtp-Source: AGHT+IF0icxSe74O6RCAPKxXCwaSwIU0zUDrbZT+AVM1VDUZdEm1EKxUuJJEWzguA5Y8GgkHjAN7Xw==
+X-Received: by 2002:a05:6602:6c15:b0:7eb:6cbc:8856 with SMTP id ca18e2360f4ac-7f13edb1690mr76350439f.2.1718735405750;
+        Tue, 18 Jun 2024 11:30:05 -0700 (PDT)
+Received: from kf-XE ([2607:fb91:111c:4643:b5f:d6ad:8a73:5578])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7ebdbaca62esm283635839f.36.2024.06.18.11.30.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 11:30:05 -0700 (PDT)
+Date: Tue, 18 Jun 2024 13:30:02 -0500
+From: Aaron Rainbolt <arainbolt@kfocus.org>
+To: mario.limonciello@amd.com
+Cc: linux-acpi@vger.kernel.org, rafael@kernel.org, lenb@kernel.org,
+	linux-kernel@vger.kernel.org, mmikowski@kfocus.org,
+	Perry.Yuan@amd.com
+Subject: Re: [PATCH] acpi: Allow ignoring _OSC CPPC v2 bit via kernel
+ parameter
+Message-ID: <ZnHSKiaYf2tIQo58@kf-XE>
+References: <ZnD22b3Br1ng7alf@kf-XE>
+ <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/35] PREEMPT_AUTO: support lazy rescheduling
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: tglx@linutronix.de, peterz@infradead.org, torvalds@linux-foundation.org,
-        paulmck@kernel.org, rostedt@goodmis.org, mark.rutland@arm.com,
-        juri.lelli@redhat.com, joel@joelfernandes.org, raghavendra.kt@amd.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <2d6ef6d8-6aef-4703-a9c7-90501537cdc5@linux.ibm.com>
- <8734pw51he.fsf@oracle.com>
- <71efae1a-6a27-4e1f-adac-19c1b18e0f0c@linux.ibm.com>
- <bbeca067-ae70-43ff-afab-6d06648c5481@linux.ibm.com>
- <87zfrts1l1.fsf@oracle.com>
- <17555273-a361-48b8-8543-9f63c2b8856b@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <17555273-a361-48b8-8543-9f63c2b8856b@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: oLyKlXaKHJ9IgerIA54ZWFwU40i8cKqk
-X-Proofpoint-GUID: D9KUM6pl9CPJwvaRFXuKPoB3tBX8Z4wE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 mlxlogscore=790 mlxscore=0 bulkscore=0 adultscore=0
- phishscore=0 suspectscore=0 clxscore=1011 priorityscore=1501 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180136
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com>
 
+On Tue, Jun 18, 2024 at 12:09:19PM -0500, Mario Limonciello wrote:
+> On 6/17/2024 21:54, Aaron Rainbolt wrote:
+> > acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
+> > 
+> > The _OSC is supposed to contain a bit indicating whether the hardware
+> > supports CPPC v2 or not. This bit is not always set, causing CPPC v2 to
+> > be considered absent. This results in severe single-core performance
+> > issues with the EEVDF scheduler.
+> > 
+> > To work around this, provide a new kernel parameter,
+> > "processor.ignore_osc_cppc_bit", which may be used to ignore the _OSC
+> > CPPC v2 bit and act as if the bit was enabled. This allows CPPC to be
+> > properly detected even if not "enabled" by _OSC, allowing users with
+> > problematic hardware to obtain decent single-core performance.
+> > 
+> > Tested-by: Michael Mikowski <mmikowski@kfocus.org>
+> > Signed-off-by: Aaron Rainbolt <arainbolt@kfocus.org>
+> 
+> This sounds like a platform bug and if we do accept a patch like this I
+> think we need a lot more documentation about the situation.
 
+It is a platform bug, yes. See my previous email,                      
+https://lore.kernel.org/linux-acpi/d01b0a1f-bd33-47fe-ab41-43843d8a374f@kfocus.org/T/#u
+(I meant to send this email as a reply to that one, but failed to do so.)
 
-On 6/15/24 8:34 PM, Shrikanth Hegde wrote:
-> 
-> 
-> On 6/10/24 12:53 PM, Ankur Arora wrote:
->>
-> _auto.
->>>
->>> 6.10-rc1:
->>> =========
->>> 10:09:50 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>> 09:45:23 AM  all    4.14    0.00   77.57    0.00   16.92    0.00    0.00    0.00    0.00    1.37
->>> 09:45:24 AM  all    4.42    0.00   77.62    0.00   16.76    0.00    0.00    0.00    0.00    1.20
->>> 09:45:25 AM  all    4.43    0.00   77.45    0.00   16.94    0.00    0.00    0.00    0.00    1.18
->>> 09:45:26 AM  all    4.45    0.00   77.87    0.00   16.68    0.00    0.00    0.00    0.00    0.99
->>>
->>> PREEMPT_AUTO:
->>> ===========
->>> 10:09:50 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>> 10:09:56 AM  all    3.11    0.00   72.59    0.00   21.34    0.00    0.00    0.00    0.00    2.96
->>> 10:09:57 AM  all    3.31    0.00   73.10    0.00   20.99    0.00    0.00    0.00    0.00    2.60
->>> 10:09:58 AM  all    3.40    0.00   72.83    0.00   20.85    0.00    0.00    0.00    0.00    2.92
->>> 10:10:00 AM  all    3.21    0.00   72.87    0.00   21.19    0.00    0.00    0.00    0.00    2.73
->>> 10:10:01 AM  all    3.02    0.00   72.18    0.00   21.08    0.00    0.00    0.00    0.00    3.71
->>>
->>> Used bcc tools hardirq and softirq to see if irq are increasing. softirq implied there are more
->>> timer,sched softirq. Numbers vary between different samples, but trend seems to be similar.
->>
->> Yeah, the %sys is lower and %irq, higher. Can you also see where the
->> increased %irq is? For instance are the resched IPIs numbers greater?
-> 
-> Hi Ankur,
-> 
-> 
-> Used mpstat -I ALL to capture this info for 20 seconds. 
-> 
-> HARDIRQ per second:
-> ===================
-> 6.10:
-> ===================
-> 18		19		22		23		48	49	50	51	LOC		BCT	LOC2	SPU	PMI	MCE	NMI	WDG	DBL
-> ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-> 417956.86	1114642.30	1712683.65	2058664.99	0.00	0.00	18.30	0.39	31978.37	0.00	0.35	351.98	0.00	0.00	0.00	6405.54	329189.45
-> 
-> Preempt_auto:
-> ===================
-> 18		19		22		23		48	49	50	51	LOC		BCT	LOC2	SPU	PMI	MCE	NMI	WDG	DBL
-> ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-> 609509.69	1910413.99	1923503.52	2061876.33	0.00	0.00	19.14	0.30	31916.59	0.00	0.45	497.88	0.00	0.00	0.00	6825.49	88247.85
-> 
-> 18,19,22,23 are called XIVE interrupts. These are IPI interrupts. I am not sure which type of IPI are these. will have to see why its increasing. 
-> 
-> 
-> SOFTIRQ per second:
-> ===================
-> 6.10:
-> =================== 
-> HI	TIMER	NET_TX	NET_RX	BLOCK	IRQ_POLL	TASKLET		SCHED		HRTIMER		RCU	
-> 0.00	3966.47	0.00	18.25	0.59	0.00		0.34		12811.00	0.00		9693.95
-> 
-> Preempt_auto:
-> ===================
-> HI	TIMER	NET_TX	NET_RX	BLOCK	IRQ_POLL	TASKLET		SCHED		HRTIMER		RCU	
-> 0.00	4871.67	0.00	18.94	0.40	0.00		0.25		13518.66	0.00		15732.77
-> 
-> Note: RCU softirq seems to increase significantly. Not sure which one triggers. still trying to figure out why. 
-> It maybe irq triggering to softirq or softirq causing more IPI. 
-> 
-> 
-> 
-> Also, Noticed a below config difference which gets removed in preempt auto. This happens because PREEMPTION make them as N. Made the changes in kernel/Kconfig.locks to get them 
-> enabled. I still see the same regression in hackbench. These configs still may need attention?
-> 		
-> 					6.10				       | 					preempt auto 
->   CONFIG_INLINE_SPIN_UNLOCK_IRQ=y                                              |  CONFIG_UNINLINE_SPIN_UNLOCK=y                                               
->   CONFIG_INLINE_READ_UNLOCK=y                                                  |  ----------------------------------------------------------------------------
->   CONFIG_INLINE_READ_UNLOCK_IRQ=y                                              |  ----------------------------------------------------------------------------
->   CONFIG_INLINE_WRITE_UNLOCK=y                                                 |  ----------------------------------------------------------------------------
->   CONFIG_INLINE_WRITE_UNLOCK_IRQ=y                                             |  ----------------------------------------------------------------------------
-> 
-> 
+> Can you please share more information about your hardware:
+> 1) Manufacturer?
 
-Did an experiment keeping the number of CPU constant, while changing the number of sockets they span across. 
-When all CPU belong to same socket, there is no regression w.r.t to PREEMPT_AUTO. Regression starts when the CPUs start 
-spanning across sockets. 
+Carbon Systems, models Iridium 14 and Iridium 16.
 
-Since Preempt auto by default enables preempt count, I think that may cause the regression. I see Powerpc uses generic implementation
-which may not scale well. Will try to shift to percpu based method and see. will get back if I can get that done successfully. 
+> 2) CPU?
+
+Intel Core i5-13500H.
+
+> 3) Manufacturer firmware version?
+
+The systems use an AMI BIOS with version N.1.10CAR01 according to
+dmidecode. This is the latest BIOS available from the manufacturer.
+
+> 4) If it's AMD what's the AGESA version?
+
+Both affected systems are Intel-based and use heterogenous cores, not AMD.
+
+> And most importantly do you have the latest system firmware version from
+> your manufacturer?  If not; please upgrade that first.
+
+We are using the latest firmware. (We're trying to work with the ODM to
+potentially get a firmware update, but since this affects more than just
+us and a firmware update may not be possible for everyone, this would
+likely be worth providing a kernel-level workaround for.)
+
+I can easily provide more detailed information - would the full output of
+'dmidecode' and 'acpidump' be useful?
 
