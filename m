@@ -1,49 +1,57 @@
-Return-Path: <linux-kernel+bounces-218509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D87D90C11D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:11:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B4D90C122
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0601C21437
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34C1282B73
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7314F20DD2;
-	Tue, 18 Jun 2024 01:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69436168DA;
+	Tue, 18 Jun 2024 01:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dl9W8qs8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="b1BuqTBw"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC7F1CD39;
-	Tue, 18 Jun 2024 01:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA457DF6C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718673031; cv=none; b=TSEpsZlVzRUJMduH09ue0Ve8REFmBFZt+HKpK/384e9Mq9CWgO5tpoEmUuecINVezwKjMnRjBs6GEW1Ia0tgb1vy0Qt7EJrbtkgZxG892lgEsLfJ3G/CXMmgTGtbcJ8GsK1w8Tx6dYI6o2WqZPY2wWzCJRpuB24x37c+8odi5gE=
+	t=1718673214; cv=none; b=du5s+sWCZ/8uXkV2O8+BfzaCT6IXFGYRWNC2HLsuQZ5dpFHY2P0bJTtbQfBwuR9c8UTH2BkprGLLbkCsW1Ey2my+2ECvDzR9615iAt9m8orJR4Wf7rb+ZJKgKiHycvnBSjgHqfSftEYY26G5r3y6IP6x2fBJP8cYMLm824EKM4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718673031; c=relaxed/simple;
-	bh=TsMx1cRC6kI5WzXKv9nNIBTGc4Np8d2AEZmiWV7MBTk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Vxm+Nmmsa1vLS0BnisThcja2zidwR/hUZ6cgBfaxzsgTOnnJ7XJjQR9G4j141SkkTjyAfC1Mip3xxQZQcgBFf5T9yZNWC+oVV3AiQq5+RDdNNUqZxKdVZo4My+1hOplwSCMQYkpCmv5FVsa27aPWqbdmDHSlTORJtA2gT7h/83c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dl9W8qs8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0AE8EC4DDF1;
-	Tue, 18 Jun 2024 01:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718673030;
-	bh=TsMx1cRC6kI5WzXKv9nNIBTGc4Np8d2AEZmiWV7MBTk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=dl9W8qs8489ULVgeqVbNx+TJHCRFoKyGqK4f4nSgBQoIo5wrOlYJ3thGCqlAoAyod
-	 nFHEjZT9rtILpPwODdliN/qoGC3vQYvFuyiypZIQXnBJyGxM6pHXL1m1klY18UhHEO
-	 Zzs9kySZVM35HU0rNgmB1bTNtx1va6L1YGeZ1XxqFT9u2lEMGVUWpBXsuYOcns1QDE
-	 qw/G4JVtoBkrc8oghs5rQcXfgsjBX6ANCzZj73RXfVBsV8DGi8OShZBHW+mRROdiM4
-	 eBTTk9I7vKjNlIgIIvlfwAtqNE3EgaStr+SujkUDUE1wBbPXjnedNFjrTjMQzIA9L8
-	 ziPyRxln3yX3A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F2C59D2D0FA;
-	Tue, 18 Jun 2024 01:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718673214; c=relaxed/simple;
+	bh=90vIj6K9YZdXsuNer0E/YjYMdzSlaGzufo6sg9kC4zk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FFBdd/k1kEq5mQajHewJnTGpp1am5Ea17vJgw34onHWC11A9xEBrFoztNjMfqUB2NfIILns1w534cSLLnHsE355ni4fEh5xuIomVbEiAx5VjGeWhauutHpxMU+Bd68JawscB2L4+m2NxLtK+EbuZcnF9JsQnYcKltHBYjoywVSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=b1BuqTBw; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718673202; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=F2EvtlmpzUqPwQjzdIlNTcw1IGFTPpGxTHB82p1P88g=;
+	b=b1BuqTBwr30tjLdECxPL8NewFyWEWczZ/hvb6AOdtzH76mOfFjYF2xFzw8nLqe6p/osL3sfSyptycFyv8yv23YJxkO1cTFPjPJo1e3CPxVU9KjquIpWpFYOIy/2eXqS3SmqeR5Nz6X3tThUmsr+LyhFqhmIdlcx1imEhaHbFPaE=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W8i3Xbu_1718673201;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0W8i3Xbu_1718673201)
+          by smtp.aliyun-inc.com;
+          Tue, 18 Jun 2024 09:13:22 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: suzuki.poulose@arm.com,
+	alexander.shishkin@linux.intel.com
+Cc: mike.leach@linaro.org,
+	james.clark@arm.com,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] coresight: stm: Remove unneeded semicolon
+Date: Tue, 18 Jun 2024 09:13:19 +0800
+Message-Id: <20240618011319.97542-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,45 +59,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: mana: Use mana_cleanup_port_context() for rxq
- cleanup
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171867302999.10892.13105498225110195396.git-patchwork-notify@kernel.org>
-Date: Tue, 18 Jun 2024 01:10:29 +0000
-References: <1718349548-28697-1-git-send-email-shradhagupta@linux.microsoft.com>
-In-Reply-To: <1718349548-28697-1-git-send-email-shradhagupta@linux.microsoft.com>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-hyperv@vger.kernel.org, schakrabarti@linux.microsoft.com,
- erick.archer@outlook.com, kotaranov@microsoft.com, horms@kernel.org,
- pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
- decui@microsoft.com, wei.liu@kernel.org, haiyangz@microsoft.com,
- kys@microsoft.com, shradhagupta@microsoft.com
 
-Hello:
+./drivers/hwtracing/coresight/coresight-priv.h:231:2-3: Unneeded
+semicolon
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9345
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ drivers/hwtracing/coresight/coresight-priv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, 14 Jun 2024 00:19:08 -0700 you wrote:
-> To cleanup rxqs in port context structures, instead of duplicating the
-> code, use existing function mana_cleanup_port_context() which does
-> the exact cleanup that's needed.
-> 
-> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> ---
->  drivers/net/ethernet/microsoft/mana/mana_en.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-
-Here is the summary with links:
-  - [net-next] net: mana: Use mana_cleanup_port_context() for rxq cleanup
-    https://git.kernel.org/netdev/net-next/c/e275e19c918b
-
-You are awesome, thank you!
+diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+index fc3617642b01..15fee93d7696 100644
+--- a/drivers/hwtracing/coresight/coresight-priv.h
++++ b/drivers/hwtracing/coresight/coresight-priv.h
+@@ -228,7 +228,7 @@ static inline void *coresight_get_uci_data_from_amba(const struct amba_id *table
+ 		if ((pid & table->mask) == table->id)
+ 			return coresight_get_uci_data(table);
+ 		table++;
+-	};
++	}
+ 	return NULL;
+ }
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.20.1.7.g153144c
 
 
