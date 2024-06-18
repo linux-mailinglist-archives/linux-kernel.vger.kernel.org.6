@@ -1,76 +1,86 @@
-Return-Path: <linux-kernel+bounces-218952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B4090C81F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:00:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2CB90C82A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02AB6286F54
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:00:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A4F1B23C82
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50871D47BE;
-	Tue, 18 Jun 2024 09:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548A9200127;
+	Tue, 18 Jun 2024 09:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TUKWJcjR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="l9wP0ruu"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E0B13B587;
-	Tue, 18 Jun 2024 09:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C4B1581EE;
+	Tue, 18 Jun 2024 09:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718703334; cv=none; b=JzN0E2b2U0C4Kwu8jPYMK+PsqloF7f7oqsg6//x9lqGqHy30++L6JOD8jY2GKIbV4AlgnutUpflN9NVuGNY6h8TQ3wuW0zyB1wyimTT1cFLodIrVswwpCzSMcj+I1pcE4SSEGeDFEDQOMW47J0NcKZpVCh0xWVEVY7yd5KTbV78=
+	t=1718703535; cv=none; b=RZ3q7MUsqX0SIL2Rd/AqqGXIgsfQUUaopFMJjo2BsUf+19Xuvp3y0x0ezIYwhghpgV7BjsGi0edWb/Zh74c+6TWtRH/eXLK4AT7UAYHKkzdNBqmTMuR3F8AfPylETzLGV+YvgdZilu64tWzSYV9FhA5io+TPXtxTN2IWSQlUwdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718703334; c=relaxed/simple;
-	bh=JHI6cNOEA2Auz04X8kWFFv6gM9/K4bsBXG/vkqd+DYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IocavyaGUH40PldM5lz5OxpjtkwKh/SrpUayIueqSH6qesnoAicbibrKO/ULguopnyHDuJpC1bvbKZal2coBLobfqpk3WiSqMXqJhWRYWu0nFtIWlwLZ6L1TY2MISSXRV1Nls/yzjWCbUK42oGyONxP6tdKnMuB6FBlr5AMGgvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TUKWJcjR; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718703333; x=1750239333;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JHI6cNOEA2Auz04X8kWFFv6gM9/K4bsBXG/vkqd+DYQ=;
-  b=TUKWJcjRVm7YAz13TxOaHYiwQCl8hg+ZOw+AnSqld4Mhtc3DWfrHM0wg
-   CQDhaCcoyKOus9R+UHrYyQC71Az0fnvo8COXPVzfy+s455sXWQfAWOmJ+
-   1vVmqKvLGoB6YUltmisWRfCdHpPme6+Cz4aCGOEwaass3bWkb3FkEttea
-   dA6i2Wz4h3TNX8eEXTHI8ZQOr4gNEMFoB8Rhnj2GZ8Y58hDm2maNWAGfc
-   m3Oj3cReDW8CVVzMeIa1d7+/s14IdgfOfwCzHXSkUQxBj7Tv+Ydw6Jsi+
-   PZcFL2Mt0lJz/jq360RD4FXlE4X/LEkYw33BBBZQX07Wg66fhbwVaIRzD
-   g==;
-X-CSE-ConnectionGUID: Zs3gzVEgQjCYM8rnN0P2eQ==
-X-CSE-MsgGUID: rOHjeK+iRmWPCZoZGcs6Vw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15400104"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15400104"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 02:35:32 -0700
-X-CSE-ConnectionGUID: laesWWKIR86l/Uw00dvT0w==
-X-CSE-MsgGUID: mOg0vcnYQVKsFTIBkL+01A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="41968704"
-Received: from leegavin-mobl.gar.corp.intel.com (HELO localhost.localdomain) ([10.246.105.197])
-  by orviesa006.jf.intel.com with ESMTP; 18 Jun 2024 02:35:31 -0700
-From: Kaiyen Chang <kaiyen.chang@intel.com>
-To: rafael@kernel.org,
-	pavel@ucw.cz,
-	len.brown@intel.com,
-	gregkh@linuxfoundation.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kaiyen.chang@intel.com
-Subject: [PATCH 1/1] PM: Start asynchronous suspend threads upfront
-Date: Tue, 18 Jun 2024 17:35:07 +0800
-Message-ID: <20240618093507.2143-2-kaiyen.chang@intel.com>
-X-Mailer: git-send-email 2.45.2.windows.1
-In-Reply-To: <20240618093507.2143-1-kaiyen.chang@intel.com>
-References: <20240618093507.2143-1-kaiyen.chang@intel.com>
+	s=arc-20240116; t=1718703535; c=relaxed/simple;
+	bh=nhjVr4cevvuOqH8B6Da8Fdh5LOC0w2bNsEcw/InfHUw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jzRNOxd+sddzGNumbV0Aw8QMXKFvP6o9mK2vZHhW74nG/o9YOkDlyMmvfnhAB3aUWAPmeJApf7XkEtL6EHXrh6X+eWmsHNeE27Ddz40NM2TCPPNrq2Wp8Kru+9qutHNSDBfE/Y930rPRG2AJuJAzq+owZXp4bjNamAQqpBQ/8zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=l9wP0ruu; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I6WpPp014186;
+	Tue, 18 Jun 2024 11:38:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=ly0QQHKw/UbAz9gVk1FA6b
+	NuTihqIRCOIk67BFECjqI=; b=l9wP0ruuSKDP00BNR9W2kx7dFPXfZpnjZtZ5BO
+	CmsFoK4ZdXeKi2eMguq6n6FUDXxeYkY6nBsDNw/3JvyNg9n09vqw8NgKZT7WQMpy
+	4qJFxWUICcddvNenjDz2+mpO4+T41WX2eAP38oPhsQqyJwmj20jZ4triPRi68UMg
+	lC810NVCnNoLhYsPg3a/Rib69Ps9MnKUGXqQiLMUK6syjK5VsGSQVp3iM7P7Wnxd
+	CiXZM3ryVf5Jlu6WtYgaYGmISdRqmYXh5ZtsfpTkefnUvcoHm24BDY0GhWJpP5sN
+	+3evXgCVs9h2HV5a27TBLIQeAYpzKDv1/2FCuhvLisqPFIEw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ys035jee4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 11:38:18 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C149E40045;
+	Tue, 18 Jun 2024 11:36:52 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2E1AC2138DC;
+	Tue, 18 Jun 2024 11:35:38 +0200 (CEST)
+Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 18 Jun
+ 2024 11:35:35 +0200
+From: Christophe Roullier <christophe.roullier@foss.st.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Marek Vasut <marex@denx.de>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] Series DTs to deliver Ethernet for STM32MP25
+Date: Tue, 18 Jun 2024 11:35:24 +0200
+Message-ID: <20240618093527.318239-1-christophe.roullier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,193 +88,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
 
-Currently, when performing a suspend operation, all devices on the
-dpm_list must wait for preceding "synchronous" devices to complete
-before the main suspend thread can start their suspend routines,
-even if they are "asynchronous". If the suspend routine of a
-synchronous device must enter a waiting state for some reason, it
-will cause the main suspend thread to wait as well, thereby
-delaying the processing of all subsequent devices, including
-asynchronous ones, thus ultimately extending the overall device
-suspend time.
+STM32MP25 is STM32 SOC with 2 GMACs instances.
+    GMAC IP version is SNPS 5.3x.
+    GMAC IP configure with 2 RX and 4 TX queue.
+    DMA HW capability register supported
+    RX Checksum Offload Engine supported
+    TX Checksum insertion supported
+    Wake-Up On Lan supported
+    TSO supported
 
-By starting the asynchronous suspend threads of asynchronous
-devices upfront we effectively move those devices towards the
-beginning of dpm_list, without breaking their ordering with respect
-to their parents and children. As a result, even if the main
-suspend thread enters a waiting state, these asynchronous threads
-can continue to run without delay.
+Delivered Ethernet2 instance for board EV1 which is connected 
+to Realtek PHY in RGMII mode.
+Ethernet1 instance will be delivered in next step.
 
-Signed-off-by: Kaiyen Chang <kaiyen.chang@intel.com>
----
- drivers/base/power/main.c | 90 +++++++++++++++++++++++++--------------
- 1 file changed, 57 insertions(+), 33 deletions(-)
+Christophe Roullier (3):
+  arm64: dts: st: add ethernet1 and ethernet2 support on stm32mp25
+  arm64: dts: st: add eth2 pinctrl entries in stm32mp25-pinctrl.dtsi
+  arm64: dts: st: enable Ethernet2 on stm32mp257f-ev1 board
 
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index 4a67e83300e1..6ddd6ef36625 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1283,6 +1283,7 @@ static void async_suspend_noirq(void *data, async_cookie_t cookie)
- 
- static int dpm_noirq_suspend_devices(pm_message_t state)
- {
-+	struct device *dev;
- 	ktime_t starttime = ktime_get();
- 	int error = 0;
- 
-@@ -1293,26 +1294,33 @@ static int dpm_noirq_suspend_devices(pm_message_t state)
- 
- 	mutex_lock(&dpm_list_mtx);
- 
-+	/*
-+	 * Trigger the suspend of "async" devices upfront so they don't have to
-+	 * wait for the "non-async" ones that don't depend on them.
-+	 */
-+
-+	list_for_each_entry_reverse(dev, &dpm_late_early_list, power.entry)
-+		dpm_async_fn(dev, async_suspend_noirq);
-+
- 	while (!list_empty(&dpm_late_early_list)) {
--		struct device *dev = to_device(dpm_late_early_list.prev);
-+		dev = to_device(dpm_late_early_list.prev);
- 
- 		list_move(&dev->power.entry, &dpm_noirq_list);
- 
--		if (dpm_async_fn(dev, async_suspend_noirq))
--			continue;
--
--		get_device(dev);
-+		if (!dev->power.async_in_progress) {
-+			get_device(dev);
- 
--		mutex_unlock(&dpm_list_mtx);
-+			mutex_unlock(&dpm_list_mtx);
- 
--		error = device_suspend_noirq(dev, state, false);
-+			error = device_suspend_noirq(dev, state, false);
- 
--		put_device(dev);
-+			put_device(dev);
- 
--		mutex_lock(&dpm_list_mtx);
-+			mutex_lock(&dpm_list_mtx);
- 
--		if (error || async_error)
--			break;
-+			if (error || async_error)
-+				break;
-+		}
- 	}
- 
- 	mutex_unlock(&dpm_list_mtx);
-@@ -1454,6 +1462,7 @@ static void async_suspend_late(void *data, async_cookie_t cookie)
-  */
- int dpm_suspend_late(pm_message_t state)
- {
-+	struct device *dev;
- 	ktime_t starttime = ktime_get();
- 	int error = 0;
- 
-@@ -1466,26 +1475,33 @@ int dpm_suspend_late(pm_message_t state)
- 
- 	mutex_lock(&dpm_list_mtx);
- 
-+	/*
-+	 * Trigger the suspend of "async" devices upfront so they don't have to
-+	 * wait for the "non-async" ones that don't depend on them.
-+	 */
-+
-+	list_for_each_entry_reverse(dev, &dpm_suspended_list, power.entry)
-+		dpm_async_fn(dev, async_suspend_late);
-+
- 	while (!list_empty(&dpm_suspended_list)) {
--		struct device *dev = to_device(dpm_suspended_list.prev);
-+		dev = to_device(dpm_suspended_list.prev);
- 
- 		list_move(&dev->power.entry, &dpm_late_early_list);
- 
--		if (dpm_async_fn(dev, async_suspend_late))
--			continue;
--
--		get_device(dev);
-+		if (!dev->power.async_in_progress) {
-+			get_device(dev);
- 
--		mutex_unlock(&dpm_list_mtx);
-+			mutex_unlock(&dpm_list_mtx);
- 
--		error = device_suspend_late(dev, state, false);
-+			error = device_suspend_late(dev, state, false);
- 
--		put_device(dev);
-+			put_device(dev);
- 
--		mutex_lock(&dpm_list_mtx);
-+			mutex_lock(&dpm_list_mtx);
- 
--		if (error || async_error)
--			break;
-+			if (error || async_error)
-+				break;
-+		}
- 	}
- 
- 	mutex_unlock(&dpm_list_mtx);
-@@ -1719,6 +1735,7 @@ static void async_suspend(void *data, async_cookie_t cookie)
-  */
- int dpm_suspend(pm_message_t state)
- {
-+	struct device *dev;
- 	ktime_t starttime = ktime_get();
- 	int error = 0;
- 
-@@ -1733,26 +1750,33 @@ int dpm_suspend(pm_message_t state)
- 
- 	mutex_lock(&dpm_list_mtx);
- 
-+	/*
-+	 * Trigger the suspend of "async" devices upfront so they don't have to
-+	 * wait for the "non-async" ones that don't depend on them.
-+	 */
-+
-+	list_for_each_entry_reverse(dev, &dpm_prepared_list, power.entry)
-+		dpm_async_fn(dev, async_suspend);
-+
- 	while (!list_empty(&dpm_prepared_list)) {
--		struct device *dev = to_device(dpm_prepared_list.prev);
-+		dev = to_device(dpm_prepared_list.prev);
- 
- 		list_move(&dev->power.entry, &dpm_suspended_list);
- 
--		if (dpm_async_fn(dev, async_suspend))
--			continue;
--
--		get_device(dev);
-+		if (!dev->power.async_in_progress) {
-+			get_device(dev);
- 
--		mutex_unlock(&dpm_list_mtx);
-+			mutex_unlock(&dpm_list_mtx);
- 
--		error = device_suspend(dev, state, false);
-+			error = device_suspend(dev, state, false);
- 
--		put_device(dev);
-+			put_device(dev);
- 
--		mutex_lock(&dpm_list_mtx);
-+			mutex_lock(&dpm_list_mtx);
- 
--		if (error || async_error)
--			break;
-+			if (error || async_error)
-+				break;
-+		}
- 	}
- 
- 	mutex_unlock(&dpm_list_mtx);
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi | 59 +++++++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        | 49 +++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp253.dtsi        | 51 ++++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    | 24 ++++++++
+ 4 files changed, 183 insertions(+)
+
+
+base-commit: efb459303dd5dd6e198a0d58322dc04c3356dc23
 -- 
-2.34.1
+2.25.1
 
 
