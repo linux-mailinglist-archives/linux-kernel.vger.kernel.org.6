@@ -1,148 +1,284 @@
-Return-Path: <linux-kernel+bounces-219029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52D690C8FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:20:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1446990C901
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0819E1C219A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:20:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 885E31F21B97
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B6E15AACA;
-	Tue, 18 Jun 2024 10:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ptlSLm6K"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EF115B0FE;
+	Tue, 18 Jun 2024 10:08:24 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2CF158DD1
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963D415AADA;
+	Tue, 18 Jun 2024 10:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718705267; cv=none; b=SqtL2UhRq/lC1tJ2jt/z4T4Jmf2s5ymi0WDjuzesFzvnKggByNnEDhdw+5A8UlUuLxPSTlyP+88vrbwjLTfaEDa0i+RLSyZOoZeT9N0duAXbwPxqucleD5flCSerkzF28STZ6J7asYvQjmE0RUPnyb7VeNoYaLN2T7/ApnVPWAg=
+	t=1718705303; cv=none; b=qunKr2fIJDQbKO2G0GzAksl3QGotyj48LFwn1XQAQ4wka2Rw6xhx/+llhNxbPdba8sSxUroS9O8dkftX86wptW7YGo28vfwglYS18ltxMeX8p8e7zWt8ZerILPWwishYlYlF8eYdOiZ0mh493OSZQ7EUsacHapgMHJFeB5LxI3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718705267; c=relaxed/simple;
-	bh=v/D5FL4vw3khVU80PEPJGR8EkUujjMjlydKlY4DDxls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C4Bozlijukb/jO/GNovt8IreYKos7mm+b0SW7M7qgEaL0N3O4/FeTuQO2SPHL/QHZ/vO+5pC8QMXY1otu6+AxIUfGMIoT0Wj81D3KZgsAsoJkk65ZrxDoAAGloEDC51e6lRMyEdymK+2kEBVh0+BK6eoCYDG6shHvsiJktLqmA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ptlSLm6K; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dfe81d54db9so4996836276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:07:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718705265; x=1719310065; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OCx7fOAnUmTX/Xe4ctYyfLYc6JY69uTQO3mrnLIZgkE=;
-        b=ptlSLm6Kgl0CaAFzOYbmLSkmO6PFBF5hTp7xc4IXHSfoKGzt96F5d08DK26Zg/+kzp
-         Vx7b2ANWxNluZn3annDPgNELO7emRBwCAlPUH+WdprJVDc+wzwxIEtSy+vmqlryM1etQ
-         PU3bgzk0LXRYh9He5B/laGd8SAA/THXHCkd1CeFZ1PnDd9fTLiCUHyZouw4dxo/FNA9r
-         8jrjxTiH5awm0HQQwBDAxDNCNFRhWuU+f0uZ/q97mba+dIcI9261S117XFy+nyJuHANs
-         2t/jwGssWmLY+TO/Pv6kcgjW2CStAs/rMAjp6axspBayx+ytc14Ir6MvyL1zeiAPYjIN
-         0wVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718705265; x=1719310065;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OCx7fOAnUmTX/Xe4ctYyfLYc6JY69uTQO3mrnLIZgkE=;
-        b=CNcPu1w9RrMIoAO3AJRElTU/3QxDRTvie86kWHCFbeyt7GqJUI9iJ1jD9gFbBVwEmC
-         TnUhpB3J75jG7Pygmz1RAUcXwgF8zfY3eD5IehmElpCGfi2S7ks78srDQm7VtSJHRygS
-         Lz6VpBirzvD3k75zT4RwdcT6Ta9DDdWHFoV1+xWQ3iU+5H7Jt3jZB7Sn1+w05PDsflrw
-         EeaNvXQQ1doH0IdE/Swl+bUmdFdxCJ5Ik9UC84xaf3N4tP9uw8CdUFm46LOZ8LmOt8N+
-         Xfkqgb36/4VQzhablzcnOOZ0y3niWPYDt/xrzZhnSyqcTCuIWzzQHYxayY8nh3MHxDPq
-         3sEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWanBwdigiunwbRIDQ/ag3UM8NReZplMMGXng9gblkpzDWijYpkFn3P7Y/XJ2HCjc8gXtszDQk/cTCMNJQCH5/FBkxmCziJST3goEca
-X-Gm-Message-State: AOJu0Yy2iqynXeuVC3hlOzUf8O8x4FH6kq1qzD0RfmgsVOOpoBb6YoJ/
-	V78dXX6JRkF0VyoMx7CmGZuwFAqLcBfuhxIghiS+f2r1TsFY666iwW2ISYKANWphhFRrsAOrKH4
-	tOaBnsK77NIfbdrG9+X3z8r1c+Zd8p5X/1j4BNw==
-X-Google-Smtp-Source: AGHT+IFJ0kiksoEZDocVzYOcTdne8U7N6C+jsZexpeus6Jap6pxdsUb8A3nFZ7pup6bdeGO4XrwkK9/1Lawl6Ll+PGk=
-X-Received: by 2002:a25:abe1:0:b0:de4:828:b73c with SMTP id
- 3f1490d57ef6-dff154d21d2mr9969203276.54.1718705264631; Tue, 18 Jun 2024
- 03:07:44 -0700 (PDT)
+	s=arc-20240116; t=1718705303; c=relaxed/simple;
+	bh=7IQZIzDUaH+DZTelsMvGbihcm8DZ7Mg6WJM/HZES0qo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CoDKwBrw40unew4RIAj69TsfBmxLVnlbacnxm+OfZvG5pyn9ayFHAzs6ad1pBNL3ZWewTm5kPVHcMzTIlKWE+2gncv5zDkq/B/Fci5A98DnqI46tXSqGyxH6ooxpyjkY6VAuyNw7KgXDnuq+BBavQxlZO9j3W5oqjaCFWUoY5k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D047BFF809;
+	Tue, 18 Jun 2024 10:08:16 +0000 (UTC)
+Message-ID: <b6464b49-a81d-45ab-9acc-95a86e9adb78@ovn.org>
+Date: Tue, 18 Jun 2024 12:08:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618030024.500532-1-andrealmeid@igalia.com>
- <20240618030024.500532-3-andrealmeid@igalia.com> <878qz2h9pp.fsf@intel.com>
-In-Reply-To: <878qz2h9pp.fsf@intel.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 18 Jun 2024 13:07:33 +0300
-Message-ID: <CAA8EJpqM4iaG3PKM5c0Op7Y7c1SRDrOCk_oOnwG8YfdCxC8w6g@mail.gmail.com>
-Subject: Re: [PATCH v7 2/9] drm: Support per-plane async flip configuration
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
-	kernel-dev@igalia.com, Melissa Wen <mwen@igalia.com>, alexander.deucher@amd.com, 
-	christian.koenig@amd.com, Simon Ser <contact@emersion.fr>, 
-	Pekka Paalanen <ppaalanen@gmail.com>, daniel@ffwll.ch, Daniel Stone <daniel@fooishbar.org>, 
-	=?UTF-8?B?TWFyZWsgT2zFocOhaw==?= <maraeo@gmail.com>, 
-	Dave Airlie <airlied@gmail.com>, ville.syrjala@linux.intel.com, 
-	Xaver Hugl <xaver.hugl@gmail.com>, Joshua Ashton <joshua@froggi.es>, 
-	=?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>, 
-	Sam Ravnborg <sam@ravnborg.org>, Boris Brezillon <bbrezillon@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Karol Herbst <kherbst@redhat.com>, 
-	Lyude Paul <lyude@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: i.maximets@ovn.org, netdev@vger.kernel.org, aconole@redhat.com,
+ echaudro@redhat.com, horms@kernel.org, dev@openvswitch.org,
+ Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Pravin B Shelar <pshelar@ovn.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
+To: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240603185647.2310748-1-amorenoz@redhat.com>
+ <20240603185647.2310748-6-amorenoz@redhat.com>
+ <4f89a9b9-999c-4d1f-8831-48045e6a74f6@ovn.org>
+ <CAG=2xmPHcyLbuMCVR6ysKigboWg1E_xCHFMxEKUceerioO-OFg@mail.gmail.com>
+ <ec135d28-5642-4393-a175-439c13c4d4f8@ovn.org>
+Content-Language: en-US
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ xsFNBF77bOMBEADVZQ4iajIECGfH3hpQMQjhIQlyKX4hIB3OccKl5XvB/JqVPJWuZQRuqNQG
+ /B70MP6km95KnWLZ4H1/5YOJK2l7VN7nO+tyF+I+srcKq8Ai6S3vyiP9zPCrZkYvhqChNOCF
+ pNqdWBEmTvLZeVPmfdrjmzCLXVLi5De9HpIZQFg/Ztgj1AZENNQjYjtDdObMHuJQNJ6ubPIW
+ cvOOn4WBr8NsP4a2OuHSTdVyAJwcDhu+WrS/Bj3KlQXIdPv3Zm5x9u/56NmCn1tSkLrEgi0i
+ /nJNeH5QhPdYGtNzPixKgPmCKz54/LDxU61AmBvyRve+U80ukS+5vWk8zvnCGvL0ms7kx5sA
+ tETpbKEV3d7CB3sQEym8B8gl0Ux9KzGp5lbhxxO995KWzZWWokVUcevGBKsAx4a/C0wTVOpP
+ FbQsq6xEpTKBZwlCpxyJi3/PbZQJ95T8Uw6tlJkPmNx8CasiqNy2872gD1nN/WOP8m+cIQNu
+ o6NOiz6VzNcowhEihE8Nkw9V+zfCxC8SzSBuYCiVX6FpgKzY/Tx+v2uO4f/8FoZj2trzXdLk
+ BaIiyqnE0mtmTQE8jRa29qdh+s5DNArYAchJdeKuLQYnxy+9U1SMMzJoNUX5uRy6/3KrMoC/
+ 7zhn44x77gSoe7XVM6mr/mK+ViVB7v9JfqlZuiHDkJnS3yxKPwARAQABzSJJbHlhIE1heGlt
+ ZXRzIDxpLm1heGltZXRzQG92bi5vcmc+wsGUBBMBCAA+AhsDBQsJCAcCBhUKCQgLAgQWAgMB
+ Ah4BAheAFiEEh+ma1RKWrHCY821auffsd8gpv5YFAmP+Y/MFCQjFXhAACgkQuffsd8gpv5Yg
+ OA//eEakvE7xTHNIMdLW5r3XnWSEY44dFDEWTLnS7FbZLLHxPNFXN0GSAA8ZsJ3fE26O5Pxe
+ EEFTf7R/W6hHcSXNK4c6S8wR4CkTJC3XOFJchXCdgSc7xS040fLZwGBuO55WT2ZhQvZj1PzT
+ 8Fco8QKvUXr07saHUaYk2Lv2mRhEPP9zsyy7C2T9zUzG04a3SGdP55tB5Adi0r/Ea+6VJoLI
+ ctN8OaF6BwXpag8s76WAyDx8uCCNBF3cnNkQrCsfKrSE2jrvrJBmvlR3/lJ0OYv6bbzfkKvo
+ 0W383EdxevzAO6OBaI2w+wxBK92SMKQB3R0ZI8/gqCokrAFKI7gtnyPGEKz6jtvLgS3PeOtf
+ 5D7PTz+76F/X6rJGTOxR3bup+w1bP/TPHEPa2s7RyJISC07XDe24n9ZUlpG5ijRvfjbCCHb6
+ pOEijIj2evcIsniTKER2pL+nkYtx0bp7dZEK1trbcfglzte31ZSOsfme74u5HDxq8/rUHT01
+ 51k/vvUAZ1KOdkPrVEl56AYUEsFLlwF1/j9mkd7rUyY3ZV6oyqxV1NKQw4qnO83XiaiVjQus
+ K96X5Ea+XoNEjV4RdxTxOXdDcXqXtDJBC6fmNPzj4QcxxyzxQUVHJv67kJOkF4E+tJza+dNs
+ 8SF0LHnPfHaSPBFrc7yQI9vpk1XBxQWhw6oJgy3OwU0EXvts4wEQANCXyDOic0j2QKeyj/ga
+ OD1oKl44JQfOgcyLVDZGYyEnyl6b/tV1mNb57y/YQYr33fwMS1hMj9eqY6tlMTNz+ciGZZWV
+ YkPNHA+aFuPTzCLrapLiz829M5LctB2448bsgxFq0TPrr5KYx6AkuWzOVq/X5wYEM6djbWLc
+ VWgJ3o0QBOI4/uB89xTf7mgcIcbwEf6yb/86Cs+jaHcUtJcLsVuzW5RVMVf9F+Sf/b98Lzrr
+ 2/mIB7clOXZJSgtV79Alxym4H0cEZabwiXnigjjsLsp4ojhGgakgCwftLkhAnQT3oBLH/6ix
+ 87ahawG3qlyIB8ZZKHsvTxbWte6c6xE5dmmLIDN44SajAdmjt1i7SbAwFIFjuFJGpsnfdQv1
+ OiIVzJ44kdRJG8kQWPPua/k+AtwJt/gjCxv5p8sKVXTNtIP/sd3EMs2xwbF8McebLE9JCDQ1
+ RXVHceAmPWVCq3WrFuX9dSlgf3RWTqNiWZC0a8Hn6fNDp26TzLbdo9mnxbU4I/3BbcAJZI9p
+ 9ELaE9rw3LU8esKqRIfaZqPtrdm1C+e5gZa2gkmEzG+WEsS0MKtJyOFnuglGl1ZBxR1uFvbU
+ VXhewCNoviXxkkPk/DanIgYB1nUtkPC+BHkJJYCyf9Kfl33s/bai34aaxkGXqpKv+CInARg3
+ fCikcHzYYWKaXS6HABEBAAHCwXwEGAEIACYCGwwWIQSH6ZrVEpascJjzbVq59+x3yCm/lgUC
+ Y/5kJAUJCMVeQQAKCRC59+x3yCm/lpF7D/9Lolx00uxqXz2vt/u9flvQvLsOWa+UBmWPGX9u
+ oWhQ26GjtbVvIf6SECcnNWlu/y+MHhmYkz+h2VLhWYVGJ0q03XkktFCNwUvHp3bTXG3IcPIC
+ eDJUVMMIHXFp7TcuRJhrGqnlzqKverlY6+2CqtCpGMEmPVahMDGunwqFfG65QubZySCHVYvX
+ T9SNga0Ay/L71+eVwcuGChGyxEWhVkpMVK5cSWVzZe7C+gb6N1aTNrhu2dhpgcwe1Xsg4dYv
+ dYzTNu19FRpfc+nVRdVnOto8won1SHGgYSVJA+QPv1x8lMYqKESOHAFE/DJJKU8MRkCeSfqs
+ izFVqTxTk3VXOCMUR4t2cbZ9E7Qb/ZZigmmSgilSrOPgDO5TtT811SzheAN0PvgT+L1Gsztc
+ Q3BvfofFv3OLF778JyVfpXRHsn9rFqxG/QYWMqJWi+vdPJ5RhDl1QUEFyH7ok/ZY60/85FW3
+ o9OQwoMf2+pKNG3J+EMuU4g4ZHGzxI0isyww7PpEHx6sxFEvMhsOp7qnjPsQUcnGIIiqKlTj
+ H7i86580VndsKrRK99zJrm4s9Tg/7OFP1SpVvNvSM4TRXSzVF25WVfLgeloN1yHC5Wsqk33X
+ XNtNovqA0TLFjhfyyetBsIOgpGakgBNieC9GnY7tC3AG+BqG5jnVuGqSTO+iM/d+lsoa+w==
+In-Reply-To: <ec135d28-5642-4393-a175-439c13c4d4f8@ovn.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: i.maximets@ovn.org
 
-On Tue, 18 Jun 2024 at 12:38, Jani Nikula <jani.nikula@linux.intel.com> wro=
-te:
->
-> On Tue, 18 Jun 2024, Andr=C3=A9 Almeida <andrealmeid@igalia.com> wrote:
-> > Drivers have different capabilities on what plane types they can or
-> > cannot perform async flips. Create a plane::async_flip field so each
-> > driver can choose which planes they allow doing async flips.
-> >
-> > Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> > ---
-> >  include/drm/drm_plane.h | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-> > index 9507542121fa..0bebc72af5c3 100644
-> > --- a/include/drm/drm_plane.h
-> > +++ b/include/drm/drm_plane.h
-> > @@ -786,6 +786,11 @@ struct drm_plane {
-> >        * @kmsg_panic: Used to register a panic notifier for this plane
-> >        */
-> >       struct kmsg_dumper kmsg_panic;
-> > +
-> > +     /**
-> > +      * @async_flip: indicates if a plane can do async flips
-> > +      */
->
-> When is it okay to set or change the value of this member?
->
-> If you don't document it, people will find creative uses for this.
+On 6/18/24 11:47, Ilya Maximets wrote:
+> On 6/18/24 09:33, Adrián Moreno wrote:
+>> On Mon, Jun 17, 2024 at 12:44:45PM GMT, Ilya Maximets wrote:
+>>> On 6/3/24 20:56, Adrian Moreno wrote:
+>>>> Add support for a new action: emit_sample.
+>>>>
+>>>> This action accepts a u32 group id and a variable-length cookie and uses
+>>>> the psample multicast group to make the packet available for
+>>>> observability.
+>>>>
+>>>> The maximum length of the user-defined cookie is set to 16, same as
+>>>> tc_cookie, to discourage using cookies that will not be offloadable.
+>>>>
+>>>> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+>>>> ---
+>>>>  Documentation/netlink/specs/ovs_flow.yaml | 17 ++++++++
+>>>>  include/uapi/linux/openvswitch.h          | 25 ++++++++++++
+>>>>  net/openvswitch/actions.c                 | 50 +++++++++++++++++++++++
+>>>>  net/openvswitch/flow_netlink.c            | 33 ++++++++++++++-
+>>>>  4 files changed, 124 insertions(+), 1 deletion(-)
+>>>
+>>> Some nits below, beside ones already mentioned.
+>>>
+>>
+>> Thanks, Ilya.
+>>
+>>>>
+>>>> diff --git a/Documentation/netlink/specs/ovs_flow.yaml b/Documentation/netlink/specs/ovs_flow.yaml
+>>>> index 4fdfc6b5cae9..a7ab5593a24f 100644
+>>>> --- a/Documentation/netlink/specs/ovs_flow.yaml
+>>>> +++ b/Documentation/netlink/specs/ovs_flow.yaml
+>>>> @@ -727,6 +727,12 @@ attribute-sets:
+>>>>          name: dec-ttl
+>>>>          type: nest
+>>>>          nested-attributes: dec-ttl-attrs
+>>>> +      -
+>>>> +        name: emit-sample
+>>>> +        type: nest
+>>>> +        nested-attributes: emit-sample-attrs
+>>>> +        doc: |
+>>>> +          Sends a packet sample to psample for external observation.
+>>>>    -
+>>>>      name: tunnel-key-attrs
+>>>>      enum-name: ovs-tunnel-key-attr
+>>>> @@ -938,6 +944,17 @@ attribute-sets:
+>>>>        -
+>>>>          name: gbp
+>>>>          type: u32
+>>>> +  -
+>>>> +    name: emit-sample-attrs
+>>>> +    enum-name: ovs-emit-sample-attr
+>>>> +    name-prefix: ovs-emit-sample-attr-
+>>>> +    attributes:
+>>>> +      -
+>>>> +        name: group
+>>>> +        type: u32
+>>>> +      -
+>>>> +        name: cookie
+>>>> +        type: binary
+>>>>
+>>>>  operations:
+>>>>    name-prefix: ovs-flow-cmd-
+>>>> diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
+>>>> index efc82c318fa2..a0e9dde0584a 100644
+>>>> --- a/include/uapi/linux/openvswitch.h
+>>>> +++ b/include/uapi/linux/openvswitch.h
+>>>> @@ -914,6 +914,30 @@ struct check_pkt_len_arg {
+>>>>  };
+>>>>  #endif
+>>>>
+>>>> +#define OVS_EMIT_SAMPLE_COOKIE_MAX_SIZE 16
+>>>> +/**
+>>>> + * enum ovs_emit_sample_attr - Attributes for %OVS_ACTION_ATTR_EMIT_SAMPLE
+>>>> + * action.
+>>>> + *
+>>>> + * @OVS_EMIT_SAMPLE_ATTR_GROUP: 32-bit number to identify the source of the
+>>>> + * sample.
+>>>> + * @OVS_EMIT_SAMPLE_ATTR_COOKIE: A variable-length binary cookie that contains
+>>>> + * user-defined metadata. The maximum length is 16 bytes.
+>>>
+>>> s/16/OVS_EMIT_SAMPLE_COOKIE_MAX_SIZE/
+>>>
+>>>> + *
+>>>> + * Sends the packet to the psample multicast group with the specified group and
+>>>> + * cookie. It is possible to combine this action with the
+>>>> + * %OVS_ACTION_ATTR_TRUNC action to limit the size of the packet being emitted.
+>>>> + */
+>>>> +enum ovs_emit_sample_attr {
+>>>> +	OVS_EMIT_SAMPLE_ATTR_UNPSEC,
+>>>> +	OVS_EMIT_SAMPLE_ATTR_GROUP,	/* u32 number. */
+>>>> +	OVS_EMIT_SAMPLE_ATTR_COOKIE,	/* Optional, user specified cookie. */
+>>>> +	__OVS_EMIT_SAMPLE_ATTR_MAX
+>>>> +};
+>>>> +
+>>>> +#define OVS_EMIT_SAMPLE_ATTR_MAX (__OVS_EMIT_SAMPLE_ATTR_MAX - 1)
+>>>> +
+>>>> +
+>>>>  /**
+>>>>   * enum ovs_action_attr - Action types.
+>>>>   *
+>>>> @@ -1004,6 +1028,7 @@ enum ovs_action_attr {
+>>>>  	OVS_ACTION_ATTR_ADD_MPLS,     /* struct ovs_action_add_mpls. */
+>>>>  	OVS_ACTION_ATTR_DEC_TTL,      /* Nested OVS_DEC_TTL_ATTR_*. */
+>>>>  	OVS_ACTION_ATTR_DROP,         /* u32 error code. */
+>>>> +	OVS_ACTION_ATTR_EMIT_SAMPLE,  /* Nested OVS_EMIT_SAMPLE_ATTR_*. */
+>>>>
+>>>>  	__OVS_ACTION_ATTR_MAX,	      /* Nothing past this will be accepted
+>>>>  				       * from userspace. */
+>>>> diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
+>>>> index 964225580824..3b4dba0ded59 100644
+>>>> --- a/net/openvswitch/actions.c
+>>>> +++ b/net/openvswitch/actions.c
+>>>> @@ -24,6 +24,11 @@
+>>>>  #include <net/checksum.h>
+>>>>  #include <net/dsfield.h>
+>>>>  #include <net/mpls.h>
+>>>> +
+>>>> +#if IS_ENABLED(CONFIG_PSAMPLE)
+>>>> +#include <net/psample.h>
+>>>> +#endif
+>>>> +
+>>>>  #include <net/sctp/checksum.h>
+>>>>
+>>>>  #include "datapath.h"
+>>>> @@ -1299,6 +1304,46 @@ static int execute_dec_ttl(struct sk_buff *skb, struct sw_flow_key *key)
+>>>>  	return 0;
+>>>>  }
+>>>>
+>>>> +static int execute_emit_sample(struct datapath *dp, struct sk_buff *skb,
+>>>> +			       const struct sw_flow_key *key,
+>>>> +			       const struct nlattr *attr)
+>>>> +{
+>>>> +#if IS_ENABLED(CONFIG_PSAMPLE)
+>>>> +	struct psample_group psample_group = {};
+>>>> +	struct psample_metadata md = {};
+>>>> +	struct vport *input_vport;
+>>>> +	const struct nlattr *a;
+>>>> +	int rem;
+>>>> +
+>>>> +	for (a = nla_data(attr), rem = nla_len(attr); rem > 0;
+>>>> +	     a = nla_next(a, &rem)) {
+>>>
+>>> Since the action is strictly validated, can use use nla_for_each_attr()
+>>> or nla_for_each_nested() ?
+>>>
+>>
+>> Probably, yes.
+>>
+>>>> +		switch (nla_type(a)) {
+>>>> +		case OVS_EMIT_SAMPLE_ATTR_GROUP:
+>>>> +			psample_group.group_num = nla_get_u32(a);
+>>>> +			break;
+>>>> +
+>>>> +		case OVS_EMIT_SAMPLE_ATTR_COOKIE:
+>>>> +			md.user_cookie = nla_data(a);
+>>>> +			md.user_cookie_len = nla_len(a);
+>>>> +			break;
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +	psample_group.net = ovs_dp_get_net(dp);
+>>>> +
+>>>> +	input_vport = ovs_vport_rcu(dp, key->phy.in_port);
+>>>> +	if (!input_vport)
+>>>> +		input_vport = ovs_vport_rcu(dp, OVSP_LOCAL);
+>>>
+>>> We may need to check that we actually found the local port.
+>>>
+>>
+>> Sure. What can cause the local port not to exist?
+> 
+> I would assume that since we're only protected by RCU here, there can be
+> a race with datapath destruction that will remove the local port.
 
-Maybe it's better to have a callback instead of a static field? This
-way it becomes clear that it's only relevant at the time of the
-atomic_check().
+But, actually, we don't even need to look anything up.  The original
+input vport should be available in OVS_CB(skb)->input_vport.
 
-> > +     bool async_flip;
-> >  };
-> >
-> >  #define obj_to_plane(x) container_of(x, struct drm_plane, base)
->
-> --
-> Jani Nikula, Intel
+Best regards, Ilya Maximets.
 
-
-
---=20
-With best wishes
-Dmitry
 
