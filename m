@@ -1,141 +1,104 @@
-Return-Path: <linux-kernel+bounces-219858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD1A90D8F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:20:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB52D90D8F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E8D42816D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:20:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F255A1C232A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3F01CF8B;
-	Tue, 18 Jun 2024 16:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EF84DA0C;
+	Tue, 18 Jun 2024 16:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Kjh5TorH"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQzgJSBP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314701CFA8
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330641C69D;
+	Tue, 18 Jun 2024 16:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718727524; cv=none; b=o7AtecOR5aR5cDu6A/qXAWRwM3RIsCCfjv7Xrcmknn2f53HI9J7Od2Bt8jJ9K/a75X1oA1XeP44xMcOB4Fe/XyCQSbMou/PzXgf7fiybJfpHiJtwFkggrH9KCl3q/YsWowiqXTjAHe2yvdniRauJaC3gSjATo+oALnvAnt6ILR4=
+	t=1718727595; cv=none; b=rL/SoG97jxGH6yBntlD/Q8mPCWyrYVo9Gm4xhwKDeZIesoaFk09tB49lgsOIccagAvNPO9Zk3hkfz8JXzDOKYfptbA3pc8ud9zm9wRsEVug9psIhcKVeeOLfcnFTwQzj5pHsFYBczWOPWaybOIoJf49bs3w4bUz8unpR3Vlu5VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718727524; c=relaxed/simple;
-	bh=yuXsMbZqPaXeKh8NOGAOCpmkk1JBjjn03dGQ3d1VVYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nmlcEtB014RYBnhXTKSa111Bfau9iRzN3i1yKIdsBFSRhrzgwY8OT3DzTYamIolBE17suy4RpdAjiTwj0yZpIXhj7tJohLEfBE4AK8EUTWeBo6wVOxymAcSMpEcvtX4tVHSaNWyiuOE4HceCv+b7sEB+qJnAeJDnvPREpPuZFq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Kjh5TorH; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YJvIf2DDEFs4F7cl6mRoHHDrlRyogLF3aAA6llHTpMM=; b=Kjh5TorHWywtTOKU3DR8seE9DT
-	J1P6eLTtgK4qTlj1CMVS13+GAY70esJ3ef2HogKsoiqh3fri7T5xblTJ/6SecVCjcr0bF/SjgDtju
-	mxpYCRqVNrSUd8SSb6v3+tn/mh1qzT/vKLbemhu3EWRPIz37DRBDDYNopMWKboku066wF+ZC7lBNH
-	/AHAcfHPHXVhRQfCBcsGUxBlUTKyi06lubS4wwy70jCElT81E0XG/+099c4XI1INCXVveu/9F0r0K
-	iGa6noh+fZQ0JkimLwpUbtwmoYweHKBhmvzpkKar/2LYRsAfAk+5LzuHq/IW5d5vvZew3yNanZZKG
-	b4isgE7A==;
-Received: from [177.172.122.99] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sJbXI-004na1-TW; Tue, 18 Jun 2024 18:18:21 +0200
-Message-ID: <fc67b552-6f61-4f30-9e34-dd6b2364d155@igalia.com>
-Date: Tue, 18 Jun 2024 13:18:10 -0300
+	s=arc-20240116; t=1718727595; c=relaxed/simple;
+	bh=+I09tVzQ9OtS9eIzACeB4nthPggIMP3+i7udNNOzVvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=HEgzKX07qqX8uiQS3h7zCEOFwmQvfy+e1JK9lLq7r4qsDMGG2u8L+9ifde1dZjk3IA9PhYDuQIVNHPwqbRS+utsLzc43apQsU9nXO0PQoUh4brS9TXQfH90FVIEItmkeVZRuv/21/jHhwmX3aCgfbWlUroezFl9Ye1MJmldiY2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQzgJSBP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A927C4AF1C;
+	Tue, 18 Jun 2024 16:19:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718727594;
+	bh=+I09tVzQ9OtS9eIzACeB4nthPggIMP3+i7udNNOzVvs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=LQzgJSBP7HFiHKA9jkri7zvJ7NUSfYuQQBSgKPuLmObptGzn1arS98vKbeihR775U
+	 GHvY/rrf46nqnbW7Q5H/7+Mx9E5qj8hlQr4tOaduAbDwmbMJ86Au5wGhh//4KEaklw
+	 nxhZE3I30uqXE+CkTmp3B3jNfcXdL1izhMeP99m81hqG0rJeBW4utT00qWx/s+5eEh
+	 pQrr7l25/x7MHNvOuJcGGPDit86H+B4evwMRuPpT1pFyH5f5pbRbx1pbfm5+rzZhv3
+	 HR8bVn/gZ3q+2pvNK570jImcDHca2ri4+oU3U2ZtSRd9GholN9FX0lWML3KYovd7y7
+	 6qBwy62s+zMQw==
+Date: Tue, 18 Jun 2024 11:19:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux NVMe <linux-nvme@lists.infradead.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>, Christoph Hellwig <hch@lst.de>,
+	gloriouseggroll@gmail.com, Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Re: Fwd: Regression: Kernel 6.4 rc1 and higher causes Steam Deck to
+ fail to wake from suspend (bisected)
+Message-ID: <20240618161952.GA1258613@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/9] drm: Support per-plane async flip configuration
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Jani Nikula <jani.nikula@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- kernel-dev@igalia.com, Melissa Wen <mwen@igalia.com>,
- alexander.deucher@amd.com, christian.koenig@amd.com,
- Simon Ser <contact@emersion.fr>, Pekka Paalanen <ppaalanen@gmail.com>,
- daniel@ffwll.ch, Daniel Stone <daniel@fooishbar.org>,
- =?UTF-8?B?TWFyZWsgT2zFocOhaw==?= <maraeo@gmail.com>,
- Dave Airlie <airlied@gmail.com>, ville.syrjala@linux.intel.com,
- Xaver Hugl <xaver.hugl@gmail.com>, Joshua Ashton <joshua@froggi.es>,
- =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
- Sam Ravnborg <sam@ravnborg.org>, Boris Brezillon <bbrezillon@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>
-References: <20240618030024.500532-1-andrealmeid@igalia.com>
- <20240618030024.500532-3-andrealmeid@igalia.com> <878qz2h9pp.fsf@intel.com>
- <CAA8EJpqM4iaG3PKM5c0Op7Y7c1SRDrOCk_oOnwG8YfdCxC8w6g@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <CAA8EJpqM4iaG3PKM5c0Op7Y7c1SRDrOCk_oOnwG8YfdCxC8w6g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4d09ffc-a8e4-4e9f-9032-7c8583ca6abd@leemhuis.info>
 
-Em 18/06/2024 07:07, Dmitry Baryshkov escreveu:
-> On Tue, 18 Jun 2024 at 12:38, Jani Nikula <jani.nikula@linux.intel.com> wrote:
->>
->> On Tue, 18 Jun 2024, André Almeida <andrealmeid@igalia.com> wrote:
->>> Drivers have different capabilities on what plane types they can or
->>> cannot perform async flips. Create a plane::async_flip field so each
->>> driver can choose which planes they allow doing async flips.
->>>
->>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
->>> ---
->>>   include/drm/drm_plane.h | 5 +++++
->>>   1 file changed, 5 insertions(+)
->>>
->>> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
->>> index 9507542121fa..0bebc72af5c3 100644
->>> --- a/include/drm/drm_plane.h
->>> +++ b/include/drm/drm_plane.h
->>> @@ -786,6 +786,11 @@ struct drm_plane {
->>>         * @kmsg_panic: Used to register a panic notifier for this plane
->>>         */
->>>        struct kmsg_dumper kmsg_panic;
->>> +
->>> +     /**
->>> +      * @async_flip: indicates if a plane can do async flips
->>> +      */
->>
->> When is it okay to set or change the value of this member?
->>
->> If you don't document it, people will find creative uses for this.
+On Tue, Jun 18, 2024 at 08:42:07AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> Hi Bjorn!
 > 
-> Maybe it's better to have a callback instead of a static field? This
-> way it becomes clear that it's only relevant at the time of the
-> atomic_check().
+> On 08.05.24 17:49, Bjorn Helgaas wrote:
+> > On Tue, Oct 31, 2023 at 03:21:20PM +0700, Bagas Sanjaya wrote:
+> >>
+> >> I notice a regression report on Bugzilla [1]. Quoting from it:
+> >> 
+> >>> On Kernel 6.4 rc1 and higher if you put the Steam Deck into suspend then press the power button again it will not wake up. 
+> >>>
+> >>> I don't have a clue as to -why- this commit breaks wake from suspend on steam deck, but it does. Bisected to:
+> >>>
+> >>> ```
+> >>> 1ad11eafc63ac16e667853bee4273879226d2d1b is the first bad commit
+> >>> commit 1ad11eafc63ac16e667853bee4273879226d2d1b
+> >>> Author: Bjorn Helgaas <bhelgaas@google.com>
+> >>> Date:   Tue Mar 7 14:32:43 2023 -0600
+> >>>
+> >>>     nvme-pci: drop redundant pci_enable_pcie_error_reporting()
+> >>>     
+> >>>     pci_enable_pcie_error_reporting() enables the device to send ERR_*
+> >>>     Messages.  Since f26e58bf6f54 ("PCI/AER: Enable error reporting when AER is
+> >>>     native"), the PCI core does this for all devices during enumeration, so the
+> >>>     driver doesn't need to do it itself.
+> >>> [...]
+> >>>
+> >>> Reverting that commit by itself on top of 6.5.9 (stable) allows it to wake from suspend properly.
+> >>
+> >>> https://bugzilla.kernel.org/show_bug.cgi?id=218090
+> >>
+> > I don't think regzbot picked this up [...]
 > 
+> This is still open and it seems nothing happened for a few weeks now
+> (sorry, should have sent a reminder earlier, but such old regressions
+> have a lower priority here). Did it fall through the cracks or is this
+> some good reason why giving up on this one might be the right thing to do?
 
-So we would have something like bool (*async_flip) for struct 
-drm_plane_funcs I suppose. Then each driver will implement this function 
-and check on runtime if it should flip or not, right?
+Thanks for the reminder.  Will work on it today.
 
-I agree that it makes more clear, but as far as I can see this is not 
-something that is subject to being changed at runtime at all, so it 
-seems a bit overkill to me to encapsulate a static information like 
-that. I prefer to improve the documentation on the struct member to see 
-if this solves the problem. What do you think of the following comment:
-
-/**
-  * @async_flip: indicates if a plane can perform async flips. The
-  * driver should set this true only for planes that the hardware
-  * supports flipping asynchronously. It may not be changed during
-  * runtime. This field is checked inside drm_mode_atomic_ioctl() to
-  * allow only the correct planes to go with DRM_MODE_PAGE_FLIP_ASYNC.
-  */
+Bjorn
 
