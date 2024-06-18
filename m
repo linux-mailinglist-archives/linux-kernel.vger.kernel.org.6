@@ -1,140 +1,90 @@
-Return-Path: <linux-kernel+bounces-220050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27A390DC09
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:57:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D7890DC0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D2FFB223C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:57:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90BA01C2313D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FED15ECFC;
-	Tue, 18 Jun 2024 18:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8494B15E5CA;
+	Tue, 18 Jun 2024 18:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UztlCJuZ"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XxliiDUX"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B0A14BF92;
-	Tue, 18 Jun 2024 18:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F95646426;
+	Tue, 18 Jun 2024 18:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718737041; cv=none; b=bUpUKAUVAACuK5Q0v7NOIUMmQSzOvcQZEDFrLPKO+LLwnCmCfqGaWNPwLei3kZEksG59v18DRSjrnCNPWC4a+X4jMQKVQNEzGOnWCEpdlQa//MFozPBFMgthVrQ6QJNRl0cXZF0CVscllb3Gazi7ON0cBj9mbMz3R7x+5VtYp14=
+	t=1718737060; cv=none; b=nXDCJRWHD5bZE8huEmZ2cuxdk5qcOwiUa01R0iLka4L6ndX0hGLvUcagHCiwGWjkpjERSJwsrjG1rNXybiqcmuB9VXjQARXLs83yB6+N8eTl/4gwDOq1YZPjCpCYxJEsqLKoiUqCEnfh1YiaWw8copFl2hfH9s7xIQpdX5oJJDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718737041; c=relaxed/simple;
-	bh=c+/c9FLDJnL3Ta+QVzbWgUNS2/GAvTls4vNC6buevl0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jOrCN6jrtVpEhrwswLAVBP+uBP7iuz7QoJz8oQAkOkfVDvs+kz2ZQSJuiOzV9d9ISeoiAkPTawk3Ii4NWoevqcURyvHjmqhw5GUjLMLFdhgibNQVRxzBuh2DyfBicJpjrQUPm7JuPXBRniLZOF8CEZ7/rG8IMOVYf2Df40MlzdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UztlCJuZ; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45IIv5gn023119;
-	Tue, 18 Jun 2024 13:57:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718737025;
-	bh=JhzGH4hdp0MF05nChSMa0dk6h+PwXRQQ1wDR6XavthA=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=UztlCJuZiFG54Ui/IsUuWw85U0mxDBXLCXb4eAdHCzxDTefu9dQvkcl6vXDAz29kQ
-	 Gb+6F3Abj+oaofQBcADQ0hPF7hl6MKHNCWS7aXbwDN88ddDMn1C0tWOIXxs5t8Tm5u
-	 yCjpEihHAUaUh11+iC4L5faZo0YBY5ir4ek5Sj/8=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45IIv5lJ096388
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Jun 2024 13:57:05 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Jun 2024 13:57:05 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Jun 2024 13:57:04 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45IIv5L4083546;
-	Tue, 18 Jun 2024 13:57:05 -0500
-Date: Tue, 18 Jun 2024 13:57:05 -0500
-From: Nishanth Menon <nm@ti.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
-        Linus
- Walleij <linus.walleij@linaro.org>,
-        Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: pinctrl-single: Define a max count
- for "pinctrl-single,gpio-range"
-Message-ID: <20240618185705.5fwevm7drphgvwl2@dilation>
-References: <20240618165102.2380159-1-nm@ti.com>
- <171873566448.3500109.16734660300499772836.robh@kernel.org>
+	s=arc-20240116; t=1718737060; c=relaxed/simple;
+	bh=V2M0mghClHrj2M1W92vMubTxRSy/b/LNfUMvZytS9g4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J6o6xBINEnmCiDaaqBHSExzdH7iQe+1+Auv1be/eMz3pnTi3lTwX5FaNy+dA7JP9QnqfOta8sp/ft54s2q3r2l2oYKqjbalf0eA1qycarskO2DRyERUITPG0+7C0lj8nlRlhfWLVXYoNEJxXVNvjuqhtK7gYpKwbP1HTwnZGoJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XxliiDUX; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fP0p/3mvmbIRDHw9DLHTHRUnXrWqbRc3mEb0WsGLk6g=; b=XxliiDUXXk8a92ZH7bFiybmuTC
+	mlqS4R7gFzQlaxVDDwHUR5TvgfnJMNJP+MJ9dPfWvLya4h5dbhQqc5mZRN0Wie2xs4TVnQ+FvMORI
+	gNqPgYUpbV1pcs8K+PQaARgb2fteZTjIsj0K5swYr68rar5bhGQ467HztOvYlpwagfh/fBOCSAZGB
+	89DxiblHTn3Liix0bWKnBEIHWp4O9HA8GQcqQfXgwV10zdFltJrJsHlfRyKlCv1Em0G5TcctwcWSb
+	yhetDHTS0/I+dM2CNyvrYvN26lai3igslpFh7S0CbZZeCRfaYGYRz+qWS3w74RaGBxbB/9yn3szLc
+	flHzLEDA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJe1S-0000000GHaO-2ejC;
+	Tue, 18 Jun 2024 18:57:38 +0000
+Date: Tue, 18 Jun 2024 11:57:38 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Nick Alcock <nick.alcock@oracle.com>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Jiri Olsa <olsajiri@gmail.com>,
+	Elena Zannoni <elena.zannoni@oracle.com>
+Subject: Re: [PATCH v4 2/3] kbuild, kconfig: generate offset range data for
+ builtin modules
+Message-ID: <ZnHYooN7o2JEgsWA@bombadil.infradead.org>
+References: <20240614171428.968174-1-kris.van.hees@oracle.com>
+ <20240614171428.968174-3-kris.van.hees@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <171873566448.3500109.16734660300499772836.robh@kernel.org>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20240614171428.968174-3-kris.van.hees@oracle.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On 12:34-20240618, Rob Herring wrote:
-> 
-> On Tue, 18 Jun 2024 11:51:02 -0500, Nishanth Menon wrote:
-> > "pinctrl-single,gpio-range" allows us to define a dis-contiguous
-> > range of pinctrl registers that can have different mux settings for
-> > GPIO mode of operation. However, the maxItems seem to be set to 1 in
-> > processed schema for some reason. This is incorrect. For example:
-> > arch/arm64/boot/dts/hisilicon/hi6220.dtsi and others have more than
-> > one dis-contiguous range.
-> > 
-> > Arbitrarily define a max 100 count to override the defaults.
-> > 
-> > Signed-off-by: Nishanth Menon <nm@ti.com>
-> > ---
-> > I am not sure if I should call this RFC or not.. and if this is even the
-> > right solution.. I am on 2024.05 dt-schema for this check.
-> > 
-> > I noticed this when adding gpio-ranges for am62p platform:
-> > https://gist.github.com/nmenon/7019cd2f24be47997640df5db60a7544
-> > 
-> > It is possible that this is a bug in dt-schema, but I have'nt been able
-> > to track it down either.
-> > 
-> > behavior seen is the following:
-> > pinctrl-single,gpio-range = <&mcu_pmx_range 0 21 7>;
-> > generates no warning
-> > However,
-> > pinctrl-single,gpio-range = <&mcu_pmx_range 0 21 7>, <&mcu_pmx_range 32 2 7>;
-> > 
-> > generates "is too long" warning.
-> > 
-> > 
-> >  Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml: properties:pinctrl-single,gpio-range: {'description': 'Optional list of pin base, nr pins & gpio function', '$ref': '/schemas/types.yaml#/definitions/phandle-array', 'maxItems': 100, 'items': [{'items': [{'description': 'phandle of a gpio-range node'}, {'description': 'pin base'}, {'description': 'number of pins'}, {'description': 'gpio function'}]}]} should not be valid under {'required': ['maxItems']}
-> 	hint: "maxItems" is not needed with an "items" list
-> 	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+On Fri, Jun 14, 2024 at 01:14:27PM -0400, Kris Van Hees wrote:
+> The offset range data for builtin modules is generated using:
+>  - modules.builtin: associates object files with module names
+>  - vmlinux.map: provides load order of sections and offset of first member
+>     per section
+>  - vmlinux.o.map: provides offset of object file content per section
+>  - .*.cmd: build cmd file with KBUILD_MODFILE and KBUILD_MODNAME
 
-yes, I had expected the same, but processed schema indicates a maxItems
-of 1 for reasons I am unable to make sense of.. will be great to have
-some additional eyes:
+What tests do we have to ensure this is working correctly and not
+spewing out lies? What proactive mechanisms do we have to verify the
+semantics won't change, or to warn at build time that this awk script
+will break upon new changes? Is this just best effort? Is that good
+enough? Why?
 
-https://gist.github.com/nmenon/7019cd2f24be47997640df5db60a7544#file-processed-schema-pinctrl
-
-next-20240617 baseline
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+  Luis
 
