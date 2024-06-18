@@ -1,177 +1,177 @@
-Return-Path: <linux-kernel+bounces-219451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E9090D2B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D67790D2B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73D9281AF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:52:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836E72815FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F297135A40;
-	Tue, 18 Jun 2024 13:26:17 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAE676036;
-	Tue, 18 Jun 2024 13:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD1713A868;
+	Tue, 18 Jun 2024 13:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6W2YwvB"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A9E13A895;
+	Tue, 18 Jun 2024 13:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718717177; cv=none; b=lmjx5hJjMaOv1OtPUiuEzlcHhsDGmWadEJaJFEFCUsJHH811Ik32jd6vU7uzInyfiD2tfwIxCPb//H3ZdQyHVFR7M4g82QxWbE8vZg8ZzmoXzL5DTg9UH4Q5jleFR1y0WuPsGjxIxIkMshxBMlUqYVk1s6VsEq7pbm6kdvYQ0Pg=
+	t=1718717260; cv=none; b=T8KuuGDrt5A3U8zk3rjwQzhR6ej0mwOOtSn+6o25PyWLGBhtz+z6zsLHJnmK6IKE1rAOJvfYcjaVwMJQJK8kfVsAAwnLq+I/7YmkSDqFoeVE5UhfahWV/jJPoa3Do6BBWYB3kSGxXhBJw1Nxm7iNx6oFywF2ISbAbJfBbpdmygQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718717177; c=relaxed/simple;
-	bh=ilL+aNMmlTmTWINmpxF0mYRwKVQqupyT2snELs2/YGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DWH6sRMMckOjgdssfwjrzHUWu9taKPSRkWWt3h6K/Wn/wB0AIf9H6Oi/my9piLLzmIdtygtdOPKXB7sQ4XovY/W5cQxD5rven7zU8tHIOgYlDawMI/0S0tE96YOUVbz7KvOTjPTxFFlYYIpDqIL+n+qJx52JhGr0j5ewVZnzmf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [112.20.110.225])
-	by gateway (Coremail) with SMTP id _____8DxzOryinFm2esHAA--.31900S3;
-	Tue, 18 Jun 2024 21:26:10 +0800 (CST)
-Received: from [192.168.100.8] (unknown [112.20.110.225])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxnsfwinFmTI4nAA--.30592S3;
-	Tue, 18 Jun 2024 21:26:09 +0800 (CST)
-Message-ID: <1d1b1633-63e3-428a-b572-fe4ef294f7d1@loongson.cn>
-Date: Tue, 18 Jun 2024 21:26:08 +0800
+	s=arc-20240116; t=1718717260; c=relaxed/simple;
+	bh=P8C3kZNC9TFvn43XN5wi5WNHC+Y2XUWCEIMIFb8aiTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bkYncDkU1+QUTAPz1ya9zbkwxWGEhGzbDeLMViAwttYi0qgkxpPZYi/ureuKXo9Qu+xMEKAUH/AkyvLEuK2fMbUa4els35qdvmJvP9GxZD2RPaulgsmLWYEuSmC+yxgehZ0DiVOa+vtaa9DL7Y3KOx1pr3WMBRmn6hBkxk3h5yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6W2YwvB; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b9a35a0901so1800902eaf.0;
+        Tue, 18 Jun 2024 06:27:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718717257; x=1719322057; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CdNdOEwtXS2JQSR1qzVkD9A7XBal8hZRGM6LmJ/+p9Y=;
+        b=l6W2YwvBkoLr8tQZq0rCVwtx/jSimHjpNEGu27akNzU+ZsAc/tzTCarRyscE5ekeQA
+         52JR/6G3SQ5x0Qmyc4TjvdNny6pixF3kCfNT9LwSvRCHxBih0fL3fXuZkdAro4/neIr4
+         9BJGADqJSUi8+jLtGhBfeHbyLC8ePLPfeDj7n5dpeKSWRxWwgQgDFBYmjluaxOIru7d2
+         +pLtJrHYftzVtsa2BnRP+Sw876D/XqnOtCUVQ++HebADVLP4EEQ4R7AkLMHeuqCx3sI/
+         mMN4tOK+RRE9arX08WXNHZDmIrbspZqvnNO8JvFsJfJi2RVyxcqwNOj+ifNjYsXmc7dI
+         Tr9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718717257; x=1719322057;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CdNdOEwtXS2JQSR1qzVkD9A7XBal8hZRGM6LmJ/+p9Y=;
+        b=vMEWKQKrHLd0Zs+fBMHJQhXK8SGOcA24xmIjQF2p/qeZl/8xH5GFA+3w2eWxpVE+B7
+         +8PdW9kM2MFSUrdEcxaJrsU/WDVns2Pw4r4asUY3Xq3BdPz0sQf9kBH5LbzQXZwAopYK
+         zlz1VRhWMU102bjo9bDscO5+n5kEGCAlpwl62aZLc4ffJ6c1UT7cJjxwhOq7KWgugrXS
+         6ptjRIAZuaaC9LxTFcLgC2402lIX6avCCPkahss9WVRy4UPYwm2ut67gn77cybzD/V2Y
+         R/edkKtVh7B4x18/xfSkf//OHnKF9GU9VIi1iFKPH+Y3aZ+zCiFoheEmqtscAadFfCY9
+         9A6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUa15yeitvNdQ7DtglNTc7QQD09MqL+pqXItqig2/n3AVdSxsy81I7u/VQCOpOLkknf6PaxjQKZk6meUgbD4uw8DFA+sq3xHhH4hSVxP5DwBAKewnbvbYgoyK4Lhs5GxGf8x2g4MU+9TFe1
+X-Gm-Message-State: AOJu0YxfuIeCLg+pNPexwyufOZSlk+nE8V5l2JP2z74CTTmarC1KsbAl
+	un0cO8L59Q4nanEoMF1xRyGU34W2Tzjk7Ltb0M8jhbQ4tJrLHstenNtLPMpHAo5/BtK289yZe6m
+	IPDGtAvX2a6L1b+R3+9JWW3Pawms=
+X-Google-Smtp-Source: AGHT+IHxlwSqQtRjMjtn/Lc54p7Vzqf7fp+SfJ6DO+Ng4Vn2vJjW4WCtOPDDggwmIApml74xjVqttMcF/cYgNat9V3k=
+X-Received: by 2002:a05:6820:554:b0:5ba:ea6f:acb8 with SMTP id
+ 006d021491bc7-5bdadbdecefmr12975302eaf.3.1718717257431; Tue, 18 Jun 2024
+ 06:27:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 RESEND 1/1] zh_CN/admin-guide: Add
- zh_CN/admin-guide/numastat.rst translation document
-To: Tao Zou <wodemia@foxmail.com>
-Cc: alexs@kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, wodemia@linux.alibaba.com
-References: <d9ee8cc2-8fd9-4a99-9673-b3a56187df95@loongson.cn>
- <tencent_262FCAE8F01C8D0582A45600851988585806@qq.com>
-Content-Language: en-US
-From: Yanteng Si <siyanteng@loongson.cn>
-In-Reply-To: <tencent_262FCAE8F01C8D0582A45600851988585806@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8BxnsfwinFmTI4nAA--.30592S3
-X-CM-SenderInfo: pvl1t0pwhqwqxorr0wxvrqhubq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxXry8JF17tw1UGrWfuw4rJFc_yoW5Cw1xpa
-	ykKFySg3Z7Jry5Cw1xKF12qF17Kr4Sgw4DJFySqw18t3s8Arn3tr43trZ09F93WrW0yay8
-	XayFgrWUur4Yy3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9jb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	XVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y
-	6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
-	AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
-	2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
-	C2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kfnx
-	nUUI43ZEXa7IU8CksDUUUUU==
+References: <20220919210025.2376254-1-Jason@zx2c4.com> <32f8797a-4b65-69df-ee8e-7891a6b4f1af@arm.com>
+ <Y9juvficPxFUfgHD@Red>
+In-Reply-To: <Y9juvficPxFUfgHD@Red>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Tue, 18 Jun 2024 18:57:21 +0530
+Message-ID: <CANAwSgTTzZOwBaR9zjJ5VMpxm5BydtW6rB2S7jg+dnoX8hAoWg@mail.gmail.com>
+Subject: Re: [PATCH] hw_random: rockchip: import driver from vendor tree
+To: Corentin LABBE <clabbe@baylibre.com>
+Cc: troy.lin@rock-chips.com, shawn.lin@rock-chips.com, hl@rock-chips.com, 
+	ty@wevs.org, mike.rudenko@gmail.com, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Heiko Stuebner <heiko@sntech.de>, 
+	linux-rockchip@lists.infradead.org, robin.murphy@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Corentin / Jason,
 
-在 2024/6/18 16:44, Tao Zou 写道:
-> Hi, Yanteng Si. Thanks for your suggestion.
+On Tue, 31 Jan 2023 at 16:10, Corentin LABBE <clabbe@baylibre.com> wrote:
 >
-> On Tue, 18 Jun 2024 12:01:33 +0800 Yanteng Si wrote:
->> 在 2024/6/18 10:47, wodemia@foxmail.com 写道:
->>> From: Tao Zou <wodemia@linux.alibaba.com>
->>>
->>> Add translation zh_CN/admin-guide/numastat.rst and link it to
->>> zh_CN/admin-guide/index.rst while clean its todo entry.
->>>
->>> Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
->>> ---
->>>
->>> I apologize, the previous PATCH had an incorrect email address for linux-doc when it was sent, so I need to resend it.
->>>    
->>>    .../translations/zh_CN/admin-guide/index.rst  |  2 +-
->>>    .../zh_CN/admin-guide/numastat.rst            | 50 +++++++++++++++++++
->>>    2 files changed, 51 insertions(+), 1 deletion(-)
->>>    create mode 100644 Documentation/translations/zh_CN/admin-guide/numastat.rst
->>>
->>> diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst b/Documentation/translations/zh_CN/admin-guide/index.rst
->>> index ac2960da33e6..0db80ab830a0 100644
->>> --- a/Documentation/translations/zh_CN/admin-guide/index.rst
->>> +++ b/Documentation/translations/zh_CN/admin-guide/index.rst
->>> @@ -68,6 +68,7 @@ Todolist:
->>>       cpu-load
->>>       cputopology
->>>       lockup-watchdogs
->>> +   numastat
->>>       unicode
->>>       sysrq
->>>       mm/index
->>> @@ -109,7 +110,6 @@ Todolist:
->>>    *   module-signing
->>>    *   mono
->>>    *   namespaces/index
->>> -*   numastat
->>>    *   parport
->>>    *   perf-security
->>>    *   pm/index
->>> diff --git a/Documentation/translations/zh_CN/admin-guide/numastat.rst b/Documentation/translations/zh_CN/admin-guide/numastat.rst
->>> new file mode 100644
->>> index 000000000000..4f7fee557cb5
->>> --- /dev/null
->>> +++ b/Documentation/translations/zh_CN/admin-guide/numastat.rst
->>> @@ -0,0 +1,50 @@
->>> +.. SPDX-License-Identifier: GPL-2.0
->>> +.. include:: ../disclaimer-zh_CN.rst
->>> +
->>> +:Original: Documentation/admin-guide/numastat.rst
->>> +:Translator: Tao Zou <wodemia@linux.alibaba.com>
->>> +
+> Le Tue, Sep 20, 2022 at 10:35:44AM +0100, Robin Murphy a =C3=A9crit :
+> > On 2022-09-19 22:00, Jason A. Donenfeld wrote:
+> > > The Rockchip driver has long existed out of tree, but not upstream.
+> > > There is support for it upstream in u-boot, but not in Linux proper.
+> > > This commit imports the GPLv2 driver written by Lin Jinhan, together
+> > > with the DTS and config blobs from Wevsty.
+> >
+> > Note that Corentin has a series enabling the full crypto driver for
+> > RK3328 and RK3399[1], so it would seem more sensible to add TRNG suppor=
+t
+> > to that. Having confliciting compatibles for the same hardware that
+> > force the user to change their DT to choose one functionality or the
+> > other isn't good (plus there's also no binding for this one).
+> >
+> > Robin.
+> >
+>
+> Hello
+>
+> I am very interested on how this serie was tested and which tools was use=
+d to ensure output was random.
+> And how did you get that CRYPTO_V1_TRNG_SAMPLE_PERIOD(100); was the best =
+choice.
+>
+Is there any update on this driver
 
->>> +.. _cn_numastat:
->> Drop it, because it introduces a warning.
-> I'm not quite sure which lines should be dropped, as you've mentioned several. Could you give me more details of the warning?
+I just tested this patch on my RK3399 board.
 
-Sorry, Drop  "+.. _cn_numastat:"
+ 8<-------------------------------------------------------------->8
+# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
+1+0 records in
+1+0 records out
+100000 bytes (100 kB, 98 KiB) copied, 0.829212 s, 121 kB/s
 
+#  cat /dev/hwrng | rngtest -c 1000
+...
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 0
+rngtest: FIPS 140-2 failures: 1000      <--  failures
+rngtest: FIPS 140-2(2001-10-10) Monobit: 21
+rngtest: FIPS 140-2(2001-10-10) Poker: 1000
+rngtest: FIPS 140-2(2001-10-10) Runs: 1000
+rngtest: FIPS 140-2(2001-10-10) Long run: 0
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 4
+rngtest: input channel speed: (min=3D18.079; avg=3D955.991; max=3D9765625.0=
+00)Kibits/s
+rngtest: FIPS tests speed: (min=3D18.062; avg=3D31.619; max=3D50.459)Mibits=
+/s
+rngtest: Program run time: 22125055 microseconds
 
-This label is useless, if you read the newly translated Chinese documents,
+Whereas for /dev/random
 
-you will find that all do not have this label.
+# cat /dev/random | rngtest -c 1000
+...
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 998
+rngtest: FIPS 140-2 failures: 2
+rngtest: FIPS 140-2(2001-10-10) Monobit: 0
+rngtest: FIPS 140-2(2001-10-10) Poker: 1
+rngtest: FIPS 140-2(2001-10-10) Runs: 0
+rngtest: FIPS 140-2(2001-10-10) Long run: 1
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+rngtest: input channel speed: (min=3D381.470; avg=3D5551.073; max=3D19073.4=
+86)Mibits/s
+rngtest: FIPS tests speed: (min=3D24.933; avg=3D70.400; max=3D79.805)Mibits=
+/s
+rngtest: Program run time: 276870 microseconds
 
+Thanks
 
-In fact, these labels should be removed from Chinese documents.
-
-Why is that? Because there is a duplicate tag in the original
-
-document, this will introduce some warning. Therefore, if
-
-there is a similar label in the original document, we should
-
-not bring it to the Chinese document.
-
-
-I'm not sure if _cn_xxxx will trigger a warning, it's been a while
-
-since I've seen a warning like this. But since it's useless,
-
-let's Drop it.
+-Anand
 
 
-Thanks,
-
-Yanteng
 
 
->>> +
->>> +
->>> +===============================
->>> +Numa策略命中/未命中统计
->>> +===============================
->>   Drop unnecessary "=".
->>
->> one English char,  one "="
->>
->> one Chinese char, two "="
-> Get it. I will fix it in PATCH v2.
-
+> Thanks
+> Regards
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
