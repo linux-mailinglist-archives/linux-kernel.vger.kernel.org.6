@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-219490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D02590D417
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:16:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A268990D4F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 340FBB22856
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:03:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3AEAB2EED7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DE1176FD6;
-	Tue, 18 Jun 2024 13:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F411849C4;
+	Tue, 18 Jun 2024 13:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Mq2qWFNO"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CmzOwNGP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF7116EB4E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE9D17E476;
+	Tue, 18 Jun 2024 13:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718717882; cv=none; b=MaUfCG1sQHMPnW4c1jg73RybljqJJgDrpS5DQCS9i2P1nm6X+c9vHb2+ncLhexDV8UMDjytFnpIepiOHOPMBkOD7PgoxwFz0m1oIAj+64+Tbol7T3nR4lilI35LAddqTCLI9I3j+yTINM/XW3Tfr8XQpezsKVUK7R0w0LMzqa4o=
+	t=1718717899; cv=none; b=CMtc/wrd0gBYgW5eklTScquxyPueItjblUB1Y6f0aPha89aLYGcVyDkgL5NdbNzKkQ2aEmF2gKq5C6t1CMzD26dnLaGAXUxH2lUQpCcUqBsyvf8QZLTSuXg210d3rO7cNqxugXrkRQQPNYkXVeqd/jR4hvTsFDH4JJXd/8tBV2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718717882; c=relaxed/simple;
-	bh=n7rLzzBBfHOdiSuzszfNn/euo2ePzTmy1Jk7b4uNXQ0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=shk7/ffjzjNfuclSUngJCDKi1n38vdOwotrgCdc8PilFZb/hcbfmYx4xzV7j1Rl6R+XnrHNUTW0knowcscmNIHdJLD+U7xW/ZrujlF1e6LIlSt+4OnteJmfotmPYwlMZOQRRRBorZeT+t7TgRTl3ImMY9Gmg3I32M7+kVpA3jy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Mq2qWFNO; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d226aff122so2955410b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:38:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718717880; x=1719322680; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C/eq9KiqE9DhkH+J1pTk62wzUPV+ZFcAncSfE/zn07s=;
-        b=Mq2qWFNOBV+XDeAiig97C0zvDRN7YUgzl+hkOr7jX2lwSGymaMVphRHukfuOOz4hOm
-         7YClKFW/3PC7hqu+w62Nm2x/19MXN1ZSVwccH1zxJBN1ExGPIDwT59VEPTzPAxInObJP
-         XZ+J/6lbiBavT9y4A7fwHp+q0rnrXF3FbRx8s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718717880; x=1719322680;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C/eq9KiqE9DhkH+J1pTk62wzUPV+ZFcAncSfE/zn07s=;
-        b=VnuszBQnPSz0pXCYu+rKqxlqO62a7V9Dk+AhFCFqMw0hcurdvbw32U+RqwM42q7YDt
-         Atr/EtlaXO8cKGAWAFgZyHAAaE+G7GP8rMwPbfzunGgZRD2AknLP8CVas1vFn+Q32WP/
-         afmOlUF9zeNcNmauB16uH68cp5My+LaRoZ59hnhnC3hD9TGmQoPQU4DtvCWYWzyWBtgI
-         haKai7AfXnRGiBGD7B5jyEKA72BB9PezYp21iD1lNt5Qk+GpT5LUh6WGaENSoSrOYGpu
-         sq0JFaZ5g0HnOhOkZqIdJNmZaYcF3jR67nP/22YHK8wP5JC2IXEgR7fWfkMU5oMadOx5
-         sT+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVyWPE4AyNJSPW2pCoTicayC+xeW2kT3X3fnNkYiDsE7BzP5U+ZuM6UG75VbtYMHMDuhkTYEXpaDuq0Qx+eHAG9znWMI1eF8c7eN/K2
-X-Gm-Message-State: AOJu0YybsYYfdLLlu+prZlLmbAkGFi1+TcR3VILe7QVMEUp0mmpKCiiP
-	d7pojC/C37a4hrsFpCPE53copvADPI5vmPhKiQ0CbDgdhwHHdXapcc5wzVPSdQ==
-X-Google-Smtp-Source: AGHT+IHK+MUXA9aHTIKx+La/+tL6XuNAxNsBHd2w0eK2r23/Txk8tr8Eu/lANB+LjBHcJGZuZjo8hg==
-X-Received: by 2002:a05:6808:1520:b0:3d2:2356:d273 with SMTP id 5614622812f47-3d24e8a9973mr15936428b6e.6.1718717880067;
-        Tue, 18 Jun 2024 06:38:00 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abc06e93sm521666385a.82.2024.06.18.06.37.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 06:37:59 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 18 Jun 2024 13:37:53 +0000
-Subject: [PATCH v5 10/10] media: venus: Refactor
- hfi_buffer_alloc_mode_supported
+	s=arc-20240116; t=1718717899; c=relaxed/simple;
+	bh=6faXDGSZijxkWpxmkup1dsDNKUawVzWBi0cOzGQkyWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPE9CIRG4ToVRXefusYeR2gHSlaJ9/ops/jJSm8vX8lrFayEvluruSoN2uyMeJ48A7iQREfFz1FCzcTtHpFcnCqgCljMmubNwujt6X88SWcKtZWSRsyPOTSg3bDdJeMKZJ9JNigdAUiVEyrGcmi/L6eh0c9C90g2quoSXh3OGF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CmzOwNGP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D041AC3277B;
+	Tue, 18 Jun 2024 13:38:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718717899;
+	bh=6faXDGSZijxkWpxmkup1dsDNKUawVzWBi0cOzGQkyWs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CmzOwNGPEZB1TQbxDWSTkdNEBB0bf6ldfAPMlLDndlSTX9tRURV+C6tNkNsfdVEkz
+	 20Uhrg5G4CcxWxQVASx5z30qZZqkygPa/CDIcPG6kXq5SR6Z7DIOpuXfNmf1ffLOEB
+	 p9Di7lBkMLOtG0794J4h1cxUsU+ZpQM59uWeJ8ow=
+Date: Tue, 18 Jun 2024 15:38:05 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: joswang <joswang1221@gmail.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	Jos Wang <joswang@lenovo.com>
+Subject: Re: [PATCH v4, 3/3] usb: dwc3: core: Workaround for CSR read timeout
+Message-ID: <2024061831-oyster-stoppage-8b1f@gregkh>
+References: <20240601092646.52139-1-joswang1221@gmail.com>
+ <20240612153922.2531-1-joswang1221@gmail.com>
+ <2024061203-good-sneeze-f118@gregkh>
+ <CAMtoTm0NWV_1sGNzpULAEH6qAzQgKT_xWz7oPaLrKeu49r2RzA@mail.gmail.com>
+ <20240618000502.n3elxua2is3u7bq2@synopsys.com>
+ <CAMtoTm1ZkT6NoBj9N-wKkzxASQ2AboYNdd-L7DHUEt8m8hootg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240618-cocci-flexarray-v5-10-6a8294942f48@chromium.org>
-References: <20240618-cocci-flexarray-v5-0-6a8294942f48@chromium.org>
-In-Reply-To: <20240618-cocci-flexarray-v5-0-6a8294942f48@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMtoTm1ZkT6NoBj9N-wKkzxASQ2AboYNdd-L7DHUEt8m8hootg@mail.gmail.com>
 
-Replace the old style single element array at the end of the struct with
-a flex array.
+On Tue, Jun 18, 2024 at 08:47:38PM +0800, joswang wrote:
+> On Tue, Jun 18, 2024 at 8:05 AM Thinh Nguyen <Thinh.Nguyen@synopsys.com> wrote:
+> >
+> > On Thu, Jun 13, 2024, joswang wrote:
+> > > On Thu, Jun 13, 2024 at 1:04 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Wed, Jun 12, 2024 at 11:39:22PM +0800, joswang wrote:
+> > > > > From: Jos Wang <joswang@lenovo.com>
+> > > > >
+> > > > > This is a workaround for STAR 4846132, which only affects
+> > > > > DWC_usb31 version2.00a operating in host mode.
+> > > > >
+> > > > > There is a problem in DWC_usb31 version 2.00a operating
+> > > > > in host mode that would cause a CSR read timeout When CSR
+> > > > > read coincides with RAM Clock Gating Entry. By disable
+> > > > > Clock Gating, sacrificing power consumption for normal
+> > > > > operation.
+> > > > >
+> > > > > Cc: stable@vger.kernel.org
+> > > > > Signed-off-by: Jos Wang <joswang@lenovo.com>
+> > > > > ---
+> > > > > v1 -> v2:
+> > > > > - add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch,
+> > > > >   this patch does not make any changes
+> > > > > v2 -> v3:
+> > > > > - code refactor
+> > > > > - modify comment, add STAR number, workaround applied in host mode
+> > > > > - modify commit message, add STAR number, workaround applied in host mode
+> > > > > - modify Author Jos Wang
+> > > > > v3 -> v4:
+> > > > > - modify commit message, add Cc: stable@vger.kernel.org
+> > > >
+> > > > This thread is crazy, look at:
+> > > >         https://urldefense.com/v3/__https://lore.kernel.org/all/20240612153922.2531-1-joswang1221@gmail.com/__;!!A4F2R9G_pg!a29V9NsG_rMKPnub-JtIe5I_lAoJmzK8dgo3UK-qD_xpT_TOgyPb6LkEMkIsijsDKIgdxB_QVLW_MwtdQLnyvOujOA$
+> > > > for how it looks.  How do I pick out the proper patches to review/apply
+> > > > there at all?  What would you do if you were in my position except just
+> > > > delete the whole thing?
+> > > >
+> > > > Just properly submit new versions of patches (hint, without the ','), as
+> > > > the documentation file says to, as new threads each time, with all
+> > > > commits, and all should be fine.
+> > > >
+> > > > We even have tools that can do this for you semi-automatically, why not
+> > > > use them?
+> > > >
+> > > > thanks,
+> > > >
+> > > > greg k-h
+> > >
+> > > We apologize for any inconvenience this may cause.
+> > > The following incorrect operation caused the problem you mentioned:
+> > > git send-email --in-reply-to command sends the new version patch
+> > > git format-patch --subject-prefix='PATCH v3
+> > >
+> > > Should I resend the v5 patch now?
+> >
+> > Please send this as a stand-alone patch outside of the series as v5. (ie.
+> > remove the "3/3"). I still need to review the other issue of the series.
+> >
+> > Thanks,
+> > Thinh
+> 
+> This patch has been sent separately, please help review it.
 
-The code does not allocate this structure, so the size change should not
-be a problem.
+You too can help review other commits on the list to reduce the
+maintainer load here.  Please do so in order to insure that there is
+time to review your changes as well.
 
-This fixes the following cocci warning:
-drivers/media/platform/qcom/venus/hfi_helper.h:1233:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+thanks,
 
-Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/qcom/venus/hfi_helper.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
-index 6202dcfc467a..242a3ba94555 100644
---- a/drivers/media/platform/qcom/venus/hfi_helper.h
-+++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-@@ -1223,7 +1223,7 @@ struct hfi_interlace_format_supported {
- struct hfi_buffer_alloc_mode_supported {
- 	u32 buffer_type;
- 	u32 num_entries;
--	u32 data[1];
-+	u32 data[];
- };
- 
- struct hfi_metadata_pass_through {
-
--- 
-2.45.2.627.g7a2c4fd464-goog
-
+greg k-h
 
