@@ -1,88 +1,166 @@
-Return-Path: <linux-kernel+bounces-219669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD3690D646
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:56:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3872790D64C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59C6E1C23A13
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 474A3281593
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4467C13A89B;
-	Tue, 18 Jun 2024 14:52:42 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE57A139D0C;
+	Tue, 18 Jun 2024 14:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="WspiMbRv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uSdJsRMC"
+Received: from wflow4-smtp.messagingengine.com (wflow4-smtp.messagingengine.com [64.147.123.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B0B768E1;
-	Tue, 18 Jun 2024 14:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F93F2139AC;
+	Tue, 18 Jun 2024 14:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718722361; cv=none; b=VQ5GUdNHJQ6c0YOkTvGi7cLY8SHuEzgqc8yviLpnSR++/d8JIUCLBLoXvL3/e5EEgbvvHpb4CwIcQ//Gkqu4/NlCjesoJ4tUQrWYYYySeXto3fQlMrBO4wKihho0ZkKVIqYmFOHdJxUW7WhHIPg5xjUMuZ0/9n1uQLhcoUwv20g=
+	t=1718722436; cv=none; b=UKuzgySjuOxw5gurUeId6BMOt+1Np0GCurZp3/telG3nQy6+aOnY/c3GiD2uCqcRdrLAkD2JJ5jvsACqHCWhHQffgn9S4Cl+tJR5UeWO05/IkGleMcyVC6zRWMzM5lnz8BGNezbAGVLasGCl+pP6tLz+GQCA6MxkHcZ5lM9eH4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718722361; c=relaxed/simple;
-	bh=TguY3CMuPmfVcYMtx2cC7kMtEqG6rcQyTG5JioFScNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YoN54gXO8UQMKF11NrWLX4w1L3sTRJQPw7/8m5HgKCQt0MC54rDkD2nB1Uur5xy5ULMdGGGzf4AQX67hBc6B9S5ORU3FFLrykA14k+GMAPcldmunNDmG5l5qB5lD2aXV1j53wUJUkgSMsrDXolytI0wHV7lRSZW3Ccn8WLtc0GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9345FC3277B;
-	Tue, 18 Jun 2024 14:52:40 +0000 (UTC)
-Date: Tue, 18 Jun 2024 10:52:39 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?= <digirigawa@gmail.com>
-Cc: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>, Linux regressions mailing list
- <regressions@lists.linux.dev>, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: Bug in Kernel 6.8.x, 6.9.x Causing Trace/Panic During
- Shutdown/Reboot
-Message-ID: <20240618105239.1feda53a@rorschach.local.home>
-In-Reply-To: <CAE4VaRFwdxNuUWb=S+itDLZf1rOZx9px+xoLWCi+hdUaWJwj6Q@mail.gmail.com>
-References: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
-	<5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
-	<20240527183139.42b6123c@rorschach.local.home>
-	<CAE4VaRHaijpV1CC9Jo_Lg4tNQb_+=LTHwygOp5Bm2z5ErVzeow@mail.gmail.com>
-	<20240528144743.149e351b@rorschach.local.home>
-	<CAE4VaRE3_MYVt+=BGs+WVCmKUiQv0VSKE2NT+JmUPKG0UF+Juw@mail.gmail.com>
-	<20240529144757.79d09eeb@rorschach.local.home>
-	<20240529154824.2db8133a@rorschach.local.home>
-	<CAE4VaRGRwsp+KuEWtsUCxjEtgv1FO+_Ey1-A9xr-o+chaUeteg@mail.gmail.com>
-	<20240530095953.0020dff9@rorschach.local.home>
-	<CAE4VaRGYoa_CAtttifVzmkdm4vW05WtoCwOrcH7=rSUVeD6n5g@mail.gmail.com>
-	<ceb24cb7-dbb0-48b0-9de2-9557f3e310b5@leemhuis.info>
-	<20240612115612.2e5f4b34@rorschach.local.home>
-	<CAE4VaRFwdxNuUWb=S+itDLZf1rOZx9px+xoLWCi+hdUaWJwj6Q@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718722436; c=relaxed/simple;
+	bh=0UMGObr4c/PBQHn9Sn0+mxPAO48JSjyOWOHPtEQMc6w=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=ZlM1WlOxsLwntvlEXf9Y6KN6qtiIyxVHKPl4INpDgRNmWQxZ9hxh28bamMmGM8s7c5dmjaadPVxGeE1X4TdBCsoXCqUcUO6cy6exg0RNKOHYFQ5mNl1o/80eQeF3GPo7xXpVEOdGrjBOlXZAvDE1jTkx+4qTi1tPBqgfFZ8NkKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=WspiMbRv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uSdJsRMC; arc=none smtp.client-ip=64.147.123.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailflow.west.internal (Postfix) with ESMTP id 2BF1B2CC008B;
+	Tue, 18 Jun 2024 10:53:52 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 18 Jun 2024 10:53:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1718722431;
+	 x=1718729631; bh=kcbpkU2iZLW5TZK6Y8fCG83H86YT8jkb38ChT7Si83Q=; b=
+	WspiMbRvMrVrg++N2gk/7bMfurwgpyJQrB/7lc+1YEwlRfvr4+qL9B0ikSP8MiwZ
+	bOf/1288yHNN7pUb2/ZXFD8tcsgG1tOO4q93G+RKxziKKZTHDaaWUaMkeyMGJgHP
+	VC+llVVnYIIO81/+4OHhhqHZXKu2vrLiTwlfOEgPZsaAijneWDt4g2DkxVByalVf
+	vVcCURoBNMdgH7jsLAbvCzVHSD1HBJ5VsfqEA5CQlFBwkPSgQFN60dbdGKHQ502k
+	lbLmzPIY5v8Rf5CKlUcCbyCB5BvQawKfsyPQz4zHMfHmtwDYwfuJtvP8xv2gkstM
+	Jwx6N0nhZNqHpbSlbg2t9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718722431; x=
+	1718729631; bh=kcbpkU2iZLW5TZK6Y8fCG83H86YT8jkb38ChT7Si83Q=; b=u
+	SdJsRMCljw9dO6nRoqCRSbf3v1s9J8J5tOv4uHC2y8Cq6yNQu9DuoFSmo+hn8+27
+	Gnjf7YDeIpmK+v6RVeRnUVrWpVHDzDec8Vnn7OcYN4GGhV43IAW4ZzM8Lu80yqpc
+	FLoBRsdIjjQUvYiKUXlcAxocWkX5woTqsidcHIN/LCV6x+oOQm4Vs/Z7S5Rbc8Uu
+	+lTlCMygk0vqoy0R6aXMtxUDDSxPBgPf0XpPrgKlvSFD0TUH/3U15WeoPxKn0cJl
+	uuN2liSFCvgABbntR+rfWipIQYpwtix+ygKcBSDlhxdw+2yjXkWRy1hcwjO61/Nh
+	a946buU4gjAzI+icNiv7g==
+X-ME-Sender: <xms:f59xZgWKesXdDDG9K0Vrq96WT5Oy7q7o8pUvafCCOmZ43RoRB0UvNQ>
+    <xme:f59xZklevwcfy6odWy_nPKhGPoibZW-_74-6smhGai-UNWVe1R-YdGsvvvT-KxJrT
+    Gy_Gths9f98TOTfu-k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvkedghedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:f59xZkYT3Wv9xpWIF_mEBkOGqxDRYSAjUTMUVwrEsnCGtHPFZBtUNg>
+    <xmx:f59xZvWE3UnO86LAHE9USvBALm8vQFXpk_cY9ZN0D_LcK8RUHCnJJQ>
+    <xmx:f59xZql-5bziqCYF6a0PJwLdsUXs224hiyD-x4D2I_NuvMLZjO4HMA>
+    <xmx:f59xZkdgNXCSsGCNxjscUkN_nfCuq7Y3_NWXXZB5RqmJHufWP3VRew>
+    <xmx:f59xZqt7fQC9zayGrAg38J0AEHme73ZScxYPO6YvwoTaBdM6eYpM1Jjl>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 25A2AB60092; Tue, 18 Jun 2024 10:53:50 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Message-Id: <b685d5e5-09d3-4916-ad0b-d329c166e149@app.fastmail.com>
+In-Reply-To: <20240527161450.326615-2-herve.codina@bootlin.com>
+References: <20240527161450.326615-1-herve.codina@bootlin.com>
+ <20240527161450.326615-2-herve.codina@bootlin.com>
+Date: Tue, 18 Jun 2024 16:53:30 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Herve Codina" <herve.codina@bootlin.com>,
+ "Simon Horman" <horms@kernel.org>,
+ "Sai Krishna Gajula" <saikrishnag@marvell.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Lee Jones" <lee@kernel.org>,
+ "Horatiu Vultur" <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, "Andrew Lunn" <andrew@lunn.ch>,
+ "Heiner Kallweit" <hkallweit1@gmail.com>,
+ "Russell King" <linux@armlinux.org.uk>,
+ "Saravana Kannan" <saravanak@google.com>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Lars Povlsen" <lars.povlsen@microchip.com>,
+ "Steen Hegelund" <Steen.Hegelund@microchip.com>,
+ "Daniel Machon" <daniel.machon@microchip.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Netdev <netdev@vger.kernel.org>, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ "Allan Nielsen" <allan.nielsen@microchip.com>,
+ "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+ "Clement Leger" <clement.leger@bootlin.com>
+Subject: Re: [PATCH v2 01/19] mfd: syscon: Add reference counting and device managed
+ support
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Jun 2024 10:32:24 +0300
-Ilkka Naulap=C3=A4=C3=A4 <digirigawa@gmail.com> wrote:
+On Mon, May 27, 2024, at 18:14, Herve Codina wrote:
+> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>
+> Syscon releasing is not supported.
+> Without release function, unbinding a driver that uses syscon whether
+> explicitly or due to a module removal left the used syscon in a in-use
+> state.
+>
+> For instance a syscon_node_to_regmap() call from a consumer retrieve a
+> syscon regmap instance. Internally, syscon_node_to_regmap() can create
+> syscon instance and add it to the existing syscon list. No API is
+> available to release this syscon instance, remove it from the list and
+> free it when it is not used anymore.
+>
+> Introduce reference counting in syscon in order to keep track of syscon
+> usage using syscon_{get,put}() and add a device managed version of
+> syscon_regmap_lookup_by_phandle(), to automatically release the syscon
+> instance on the consumer removal.
+>
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-> ok, so if you don't have any idea where this bug is after those debug
-> patches, I'll try to find some time to bisect it as a last resort.
-> Stay tuned.
+This all looks correct from an implementation perspective,
+but it does add a lot of complexity if now every syscon user
+feels compelled to actually free up their resources again,
+while nothing else should actually depend on this.
 
-FYI,
+The only reference I found in your series here is the
+reset controller, and it only does a single update to
+the regmap in the probe function.
 
-I just debugged a strange crash that was caused by my config having
-something leftover from your config. Specifically, that was:
+Would it be possible to just make the syscon support in
+the reset driver optional and instead poke the register
+in the mfd driver itself when this is used as a pci device?
+Or do you expect to see the syscon get used in other
+places in the future for the PCI case?
 
-CONFIG_FORCE_NR_CPUS
-
-Do you get any warning about nr cpus not matching at boot up?
-
-Regardless, can you disable that and see if you still get the same
-crash.
-
-Thanks,
-
--- Steve
+      Arnd
 
