@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-219181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9828490CAF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:04:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFDC90CB78
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E2831C20ADB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:04:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2C9FB26A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A833156C6F;
-	Tue, 18 Jun 2024 11:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94EC13AD32;
+	Tue, 18 Jun 2024 12:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dvbmmilm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="S/tXZM8/"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C092415688F;
-	Tue, 18 Jun 2024 11:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390C213A3EE;
+	Tue, 18 Jun 2024 12:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718711943; cv=none; b=uT/4ZHTzI7GC0AN99ghp1aXjTyGY/WH/2ubFoMlp5nqj80hvMjQ3IFWiXc09POtWUT17xeiAPS78jH/+zD6AUpURVYkAQ1g/u0/ndRrsrt9TXjhJIPdlO2JtP2e365Sym5Ov/CZcqyHRraFwOKgNGmv2wuFU7oyNf9axeY/YDa8=
+	t=1718712070; cv=none; b=LV4J198YV8COt1qSaLCTQ2gfGc8Jiqom1d1oIIZtD1YzkCIe5qxFEXtxajO2ociDzcoblFx3PuZVp7aksVt3/fPQy6/rqucofjIWclmWYgFY4s2BCEIlDyVglbiYmVGUpsN6VYIOCER8ttf7nk9FkBw1aFWx+SlOq5PVQqqw7ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718711943; c=relaxed/simple;
-	bh=PeQStbUscq8oKm2W8Tdn0/cT+IIXSaLj/fuD/VTRdN0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=OExXOthS0o8JYoWnKSG8UzhQTZ451mDFAiXFjhkMADmoeHC/AWRGnBXreGWIhgw+O3E2+sJgo+exOMUwrji6p//mbC9kTtDku42VyBBECfQg+329hJ2ifcXnhgvqAal/WmR8inZFrUSzCsZcoizatc5NAj0Y2tHkfauvpIjsweY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dvbmmilm; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718711941; x=1750247941;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=PeQStbUscq8oKm2W8Tdn0/cT+IIXSaLj/fuD/VTRdN0=;
-  b=DvbmmilmbflD/nCa54LGQWP10xGx00eLxdf906mcizWBUW8veR1fyS1g
-   +mZS/woJuvJt+6ObKsc4kTKN6lObW7FSAY08fJQTSovEOlLbiBRXGMOfd
-   8XPIxtGanITGAhLbE49q2FcDY7hTwc+MVkEtnP87YYjcnoIogkusBfFPl
-   90j/j22omGv+58Ng5dorGVZZbowZ0ugjtbAYFBDcUjX22TUvyII8SRBGQ
-   qI+jwKemK/gXwjF50dQ8GtDm8zWDzib2sblYhyNBgntcdfqIr+YL+czjA
-   NK1yj3BFmTwqH50xdYODKtdggyt3cNmn/lZurAxCIkNRyiYUryBrAsW2a
-   A==;
-X-CSE-ConnectionGUID: RWTA3JEpTCiebxhG70obzA==
-X-CSE-MsgGUID: /y2cA7+TTyWk2TNbwJ6gDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15727539"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15727539"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 04:59:01 -0700
-X-CSE-ConnectionGUID: /z9uheBwQuyd3nSf6XhO+A==
-X-CSE-MsgGUID: cNtcuSBEQryH3bVbtDzW2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="64765533"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.7])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 04:58:58 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 18 Jun 2024 14:58:54 +0300 (EEST)
-To: Armin Wolf <W_Armin@gmx.de>
-cc: matan@svgalib.org, agathe@boutmy.com, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] platform/x86: lg-laptop: Use ACPI device handle when
- evaluating WMAB/WMBB
-In-Reply-To: <20240606233540.9774-5-W_Armin@gmx.de>
-Message-ID: <60dfc0ce-ff3c-afd4-46e8-c0458e2db8d1@linux.intel.com>
-References: <20240606233540.9774-1-W_Armin@gmx.de> <20240606233540.9774-5-W_Armin@gmx.de>
+	s=arc-20240116; t=1718712070; c=relaxed/simple;
+	bh=jc50N0RnVWNFD2GgL6AtQC0sltoDiHKgy3x3xfHb+ew=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a9Ep1/kzaEULTdPTLAjZILfIrSNiEqvgjNO3cJvdihl5V5AtZjB/N9aKKArHxQlUI2CMIn3zQRgLkqSsj80RV/cTfjLNUu1Lu3lyaElndzr6ZDICmniRhJsLDqZCeTvGUglUHNsdryb7mcMMkQotN3QiMeMsDkyPgDupYHMHQBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=S/tXZM8/; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IA2Cuf014186;
+	Tue, 18 Jun 2024 14:00:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=pRncs9djhWB9Ja92W3g41f
+	UBElkvpH4tn5xTWy10eG0=; b=S/tXZM8/EV++30E8fS2Xvuf5Z0QCJH1k5K8+Ri
+	8pgtJS+4aBG+qT56h/wb62Zh9qFZS6ZpM3AYtfqQfmRvCJC+OUudFZSnYzxBTV5A
+	OPWgbBc16XtxSPw6+Eqj7IkhNMH8waXw0NBrJhDemrIj9ShGqi1cl1Yqqc6cMhDa
+	syihGUqouebz49ENPUyKnIg1KlC7HMkuOY/N0uJEZFmbkJzcZR4Apu6a8ONLM4+g
+	2HGECQaxT3S7spWfvLdhF85cARpW/9N7awzOb3NueNgw5ouowHK+nu/eIjPBH4JH
+	f5zN719srZ3DNUwt/8KClIR0l9PK94D/yvHXTDPT8C9d/Ruw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ys035k7pb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 14:00:20 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 720F040044;
+	Tue, 18 Jun 2024 14:00:14 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 55CFD21682C;
+	Tue, 18 Jun 2024 13:59:24 +0200 (CEST)
+Received: from localhost (10.252.27.64) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 18 Jun
+ 2024 13:59:24 +0200
+From: Olivier Moysan <olivier.moysan@foss.st.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>,
+        Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+CC: <alsa-devel@alsa-project.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] dt-bindings: iio: stm32: dfsdm: fix dtbs warnings on dfsdm audio port
+Date: Tue, 18 Jun 2024 13:59:12 +0200
+Message-ID: <20240618115912.706912-1-olivier.moysan@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1937100483-1718711934=:1400"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Fix warnings on DFSDM dtbs check
+Unevaluated properties are not allowed ('dfsdm-dai' was unexpected)
+'port' does not match any of the regexes: 'pinctrl-[0-9]+'
 
---8323328-1937100483-1718711934=:1400
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Fixes: 11183ac07a74 ("dt-bindings: stm32: convert dfsdm to json-schema")
+Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+---
+ .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml       | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On Fri, 7 Jun 2024, Armin Wolf wrote:
+diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
+index c1b1324fa132..2722edab1d9a 100644
+--- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
+@@ -246,6 +246,10 @@ patternProperties:
+                     From common IIO binding. Used to pipe external sigma delta
+                     modulator or internal ADC output to DFSDM channel.
+ 
++                port:
++                  $ref: /schemas/sound/audio-graph-port.yaml#
++                  unevaluatedProperties: false
++
+               required:
+                 - compatible
+                 - "#sound-dai-cells"
+-- 
+2.25.1
 
-> On the LG Gram 16Z90S, the WMAB and WMBB ACPI methods are not mapped
-> under \XINI, but instead are mapped under \_SB.XINI.
->=20
-> The reason for this is that the LGEX0820 ACPI device used by this
-> driver is mapped at \_SB.XINI, so the ACPI methods where moved as well
-> to appear below the LGEX0820 ACPI device.
->=20
-> Fix this by using the ACPI handle from the ACPI device when evaluating
-> both methods.
->=20
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218901
-> Tested-by: Agathe Boutmy <agathe@boutmy.com>
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-
-I remember looking this through earlier but it seems I never gave a tag=20
-for it...
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
-
---=20
- i.
-
---8323328-1937100483-1718711934=:1400--
 
