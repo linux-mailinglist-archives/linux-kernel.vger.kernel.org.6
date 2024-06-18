@@ -1,56 +1,59 @@
-Return-Path: <linux-kernel+bounces-219380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7A790CD8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DC390CD96
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9810D1F2229C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89B441F20F67
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CA41B3745;
-	Tue, 18 Jun 2024 12:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E86A1B29C6;
+	Tue, 18 Jun 2024 12:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="diQR/c1p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLJfNd6C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3551B3725;
-	Tue, 18 Jun 2024 12:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F9B1B375D;
+	Tue, 18 Jun 2024 12:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714564; cv=none; b=qHD8kbZTY81kXaQm6eds3wVHlXFl5vLZZA9Kr5JeES7mKwU9JYBqCrNqoaqVfZtnycve75Rw1HS1vqxUuMqIyahlYPeNQPh5lJWC09vqm+MV9dgopWsabDLS4thwHgQB5zwxn+mhL0O6KacudOUF/aJODiChUbLayIAedP16V9I=
+	t=1718714565; cv=none; b=forJZVhaLmFNnk86CNcD7dvOeEqqDxF6SoN8bndhzG9UPnM0kyes9Nhq6k3FtlS2BeZKNzZfLfcng5sqkK+29/Hr91rt9D/QpeTxp2hyenT0Ltgc75nIP/JR8y00SctJnqFSo69YkJ7SyiAGVESWEcWUUKFDbQzdMibu9zqL9UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714564; c=relaxed/simple;
-	bh=nrrRDgnq8qD0vJo6Y9EG2YqOkdbCrb2vcK/5Osfd3gk=;
+	s=arc-20240116; t=1718714565; c=relaxed/simple;
+	bh=gPsiLfMm2VpB7pQB/oWnBPAvw4xKkVsQZL1yUz4av58=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h/vvf4nXyIRMtR6F4hRQl4nzpAaSKLzt9yl6gUyKzCiLfq6+Km+hmhX/uc48dMb35CfFix1cLQV2A9Of9iopJS1JGLBxPS9OfcSiCBBBRLnSOh2rlsXT9hkceXQrGhxr2UTtLVr9ytV9PT0q8VP63sFzIe/4tT7tMLDhf1zL4aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=diQR/c1p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041C9C4AF48;
-	Tue, 18 Jun 2024 12:42:42 +0000 (UTC)
+	 MIME-Version; b=g+7TPHnjysVe9jAGYTPA6yPUWIG0ErY+ULLo1CaR7PGjd89G5Uunb+cnLlkRBMesxqwy3D7aju4Ui4DucuQIRXk886qcrhIIVDUh7qdKimba5SFJ1GOD7Gl0n++RXhbX+l8NIROXMYSP5QdJx9XTRchHkBAY1PK7z9I7/ljppaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLJfNd6C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD99C4AF1D;
+	Tue, 18 Jun 2024 12:42:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718714563;
-	bh=nrrRDgnq8qD0vJo6Y9EG2YqOkdbCrb2vcK/5Osfd3gk=;
+	s=k20201202; t=1718714565;
+	bh=gPsiLfMm2VpB7pQB/oWnBPAvw4xKkVsQZL1yUz4av58=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=diQR/c1paDxk4jvClU4SP5owMO6EDTemHBEsWeRrknaU9TteDa/od8JkiGrtLQ8mc
-	 x6G8DftwEo45Gij67Xsdag2nmtBoAOSerozVMX2/WLRvfpDGuGP0JScAZCwarWpZYH
-	 efmokiS1J9wvAsvkaF+rPrynXMWMc8HmbDW1GfU0Od9oWovzNu4fU8VHk2CHKyNEC1
-	 aJ0lv5CkkkH6bT5lPQsLJa20QBhUSNJYEKt+ksdKJYepX2pNPjvyfkfWRWekMvM7JX
-	 4/AZC0wiyD5gzLkucltOBmlXoUXUGp3Q6KoIuRdWIj27srN2bwjImh9uZNIkPGCZyw
-	 f1B9wfQYewyYg==
+	b=YLJfNd6C9VTtnxOTkm+sUgqWMZxmMSD4P9Mv6QEOaYE6dA3Wd/OVhsqr+qy3Aqmwc
+	 Hm10Tyrmw8sIYbcR6xPVsN/+Yf827ylmbwee/A5RkpK4aEhEi4lRzqspcH2a9WrttE
+	 A9U9wjUUq4MrMZ8EoiRnZn4HWMUOv5YWY5LaYP5fo6Ux0ONrYBqXzjdMqEccLvyQnW
+	 e8JT1JOK2YEnsKr3XcODHvaB2bW5a+3sxIb0wmqxqN1ucdfhTEoWfvqD6eKGU8/UtH
+	 9OyBQ3KqGTQKjn7FuwYvDfNlrjHdeoLE8DxbhAApIIdlvjRsvPyi1pjITwIHJl3yRk
+	 PH4zPbJq3TWbg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+Cc: Eric Dumazet <edumazet@google.com>,
+	Alexander Aring <aahringo@redhat.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-input@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 07/13] Input: silead - Always support 10 fingers
-Date: Tue, 18 Jun 2024 08:42:18 -0400
-Message-ID: <20240618124231.3304308-7-sashal@kernel.org>
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 08/13] net: ipv6: rpl_iptunnel: block BH in rpl_output() and rpl_input()
+Date: Tue, 18 Jun 2024 08:42:19 -0400
+Message-ID: <20240618124231.3304308-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240618124231.3304308-1-sashal@kernel.org>
 References: <20240618124231.3304308-1-sashal@kernel.org>
@@ -65,98 +68,91 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.10.219
 Content-Transfer-Encoding: 8bit
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 38a38f5a36da9820680d413972cb733349400532 ]
+[ Upstream commit db0090c6eb12c31246438b7fe2a8f1b833e7a653 ]
 
-When support for Silead touchscreens was orginal added some touchscreens
-with older firmware versions only supported 5 fingers and this was made
-the default requiring the setting of a "silead,max-fingers=10" uint32
-device-property for all touchscreen models which do support 10 fingers.
+As explained in commit 1378817486d6 ("tipc: block BH
+before using dst_cache"), net/core/dst_cache.c
+helpers need to be called with BH disabled.
 
-There are very few models with the old 5 finger fw, so in practice the
-setting of the "silead,max-fingers=10" is boilerplate which needs to
-be copy and pasted to every touchscreen config.
+Disabling preemption in rpl_output() is not good enough,
+because rpl_output() is called from process context,
+lwtunnel_output() only uses rcu_read_lock().
 
-Reporting that 10 fingers are supported on devices which only support
-5 fingers doesn't cause any problems for userspace in practice, since
-at max 4 finger gestures are supported anyways. Drop the max_fingers
-configuration and simply always assume 10 fingers.
+We might be interrupted by a softirq, re-enter rpl_output()
+and corrupt dst_cache data structures.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Link: https://lore.kernel.org/r/20240525193854.39130-2-hdegoede@redhat.com
+Fix the race by using local_bh_disable() instead of
+preempt_disable().
+
+Apply a similar change in rpl_input().
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Alexander Aring <aahringo@redhat.com>
+Acked-by: Paolo Abeni <pabeni@redhat.com>
+Link: https://lore.kernel.org/r/20240531132636.2637995-3-edumazet@google.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/silead.c | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
+ net/ipv6/rpl_iptunnel.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/input/touchscreen/silead.c b/drivers/input/touchscreen/silead.c
-index e8b6c3137420b..901e28bc01645 100644
---- a/drivers/input/touchscreen/silead.c
-+++ b/drivers/input/touchscreen/silead.c
-@@ -70,7 +70,6 @@ struct silead_ts_data {
- 	struct regulator_bulk_data regulators[2];
- 	char fw_name[64];
- 	struct touchscreen_properties prop;
--	u32 max_fingers;
- 	u32 chip_id;
- 	struct input_mt_pos pos[SILEAD_MAX_FINGERS];
- 	int slots[SILEAD_MAX_FINGERS];
-@@ -98,7 +97,7 @@ static int silead_ts_request_input_dev(struct silead_ts_data *data)
- 	input_set_abs_params(data->input, ABS_MT_POSITION_Y, 0, 4095, 0, 0);
- 	touchscreen_parse_properties(data->input, true, &data->prop);
+diff --git a/net/ipv6/rpl_iptunnel.c b/net/ipv6/rpl_iptunnel.c
+index 5fdf3ebb953fb..2ba605db69769 100644
+--- a/net/ipv6/rpl_iptunnel.c
++++ b/net/ipv6/rpl_iptunnel.c
+@@ -217,9 +217,9 @@ static int rpl_output(struct net *net, struct sock *sk, struct sk_buff *skb)
+ 	if (unlikely(err))
+ 		goto drop;
  
--	input_mt_init_slots(data->input, data->max_fingers,
-+	input_mt_init_slots(data->input, SILEAD_MAX_FINGERS,
- 			    INPUT_MT_DIRECT | INPUT_MT_DROP_UNUSED |
- 			    INPUT_MT_TRACK);
+-	preempt_disable();
++	local_bh_disable();
+ 	dst = dst_cache_get(&rlwt->cache);
+-	preempt_enable();
++	local_bh_enable();
  
-@@ -145,10 +144,10 @@ static void silead_ts_read_data(struct i2c_client *client)
- 		return;
+ 	if (unlikely(!dst)) {
+ 		struct ipv6hdr *hdr = ipv6_hdr(skb);
+@@ -239,9 +239,9 @@ static int rpl_output(struct net *net, struct sock *sk, struct sk_buff *skb)
+ 			goto drop;
+ 		}
+ 
+-		preempt_disable();
++		local_bh_disable();
+ 		dst_cache_set_ip6(&rlwt->cache, dst, &fl6.saddr);
+-		preempt_enable();
++		local_bh_enable();
  	}
  
--	if (buf[0] > data->max_fingers) {
-+	if (buf[0] > SILEAD_MAX_FINGERS) {
- 		dev_warn(dev, "More touches reported then supported %d > %d\n",
--			 buf[0], data->max_fingers);
--		buf[0] = data->max_fingers;
-+			 buf[0], SILEAD_MAX_FINGERS);
-+		buf[0] = SILEAD_MAX_FINGERS;
+ 	skb_dst_drop(skb);
+@@ -273,9 +273,8 @@ static int rpl_input(struct sk_buff *skb)
+ 		return err;
  	}
  
- 	touch_nr = 0;
-@@ -200,7 +199,6 @@ static void silead_ts_read_data(struct i2c_client *client)
+-	preempt_disable();
++	local_bh_disable();
+ 	dst = dst_cache_get(&rlwt->cache);
+-	preempt_enable();
  
- static int silead_ts_init(struct i2c_client *client)
- {
--	struct silead_ts_data *data = i2c_get_clientdata(client);
- 	int error;
+ 	skb_dst_drop(skb);
  
- 	error = i2c_smbus_write_byte_data(client, SILEAD_REG_RESET,
-@@ -210,7 +208,7 @@ static int silead_ts_init(struct i2c_client *client)
- 	usleep_range(SILEAD_CMD_SLEEP_MIN, SILEAD_CMD_SLEEP_MAX);
+@@ -283,14 +282,13 @@ static int rpl_input(struct sk_buff *skb)
+ 		ip6_route_input(skb);
+ 		dst = skb_dst(skb);
+ 		if (!dst->error) {
+-			preempt_disable();
+ 			dst_cache_set_ip6(&rlwt->cache, dst,
+ 					  &ipv6_hdr(skb)->saddr);
+-			preempt_enable();
+ 		}
+ 	} else {
+ 		skb_dst_set(skb, dst);
+ 	}
++	local_bh_enable();
  
- 	error = i2c_smbus_write_byte_data(client, SILEAD_REG_TOUCH_NR,
--					data->max_fingers);
-+					  SILEAD_MAX_FINGERS);
- 	if (error)
- 		goto i2c_write_err;
- 	usleep_range(SILEAD_CMD_SLEEP_MIN, SILEAD_CMD_SLEEP_MAX);
-@@ -437,13 +435,6 @@ static void silead_ts_read_props(struct i2c_client *client)
- 	const char *str;
- 	int error;
- 
--	error = device_property_read_u32(dev, "silead,max-fingers",
--					 &data->max_fingers);
--	if (error) {
--		dev_dbg(dev, "Max fingers read error %d\n", error);
--		data->max_fingers = 5; /* Most devices handle up-to 5 fingers */
--	}
--
- 	error = device_property_read_string(dev, "firmware-name", &str);
- 	if (!error)
- 		snprintf(data->fw_name, sizeof(data->fw_name),
+ 	err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
+ 	if (unlikely(err))
 -- 
 2.43.0
 
