@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-220015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F9E90DB7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:19:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1907290DB7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AABA51F231F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:19:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE5CB238C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D913A1607AB;
-	Tue, 18 Jun 2024 18:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1D71662F1;
+	Tue, 18 Jun 2024 18:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1QOFYNZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLvial6x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2254315FCFB;
-	Tue, 18 Jun 2024 18:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB0E160860;
+	Tue, 18 Jun 2024 18:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718734702; cv=none; b=g2UuxahRCM22E2j41bhtkE/uxGFh0gUE6bB/JtE4cEwJA6Erj6iVXG33fpZ6iJyL+gRZibdvsdS4qRy+SEOQIlYTtKAAde5/EManfplA7FdgUb+bRwHWzuPix5yGfS4vm0FDyOonFCjRrEVj7erR4B8E2u7GLGalWXnRjpXEn70=
+	t=1718734703; cv=none; b=TAQk4hdo70GAhmdtL/cXZ+ltpaaq3ddkW5hT0/S3b5rqj02hutQliISn19cxaTGzmZTETCLudLy87PGDOpg/UcnoSvO6a6/DBmWSSlgqrYQg9PfPUL0P536eaSPaqZ6PALipxvPCVCsg0ovRhVQ2HxBCNcgbj9/Qg0IG/mw2y7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718734702; c=relaxed/simple;
-	bh=IvB9TY1BgcO/wE27+FMWRz+Cg1k/Z3ehFmcdbgTDhfw=;
+	s=arc-20240116; t=1718734703; c=relaxed/simple;
+	bh=63ugfgzmyX4NmFqGz3i2C7qMQZ/sIyT4hK0C23YIhHI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PGWVTKZBEkJdwXqJSv14S5tN+1E6ceOfxV9Pag0SOtIJ4+I/3hIKS/GiILaZKFPBD7ifQJtX0pdacujfG1dm3J81t3kaFat5IS/C/YG92qoZllQvDtJTo9Z1e7p8nrJficrW/jMPSr4A4pfLmqjfwM8nmCXCg9HIqfppw9AzDp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1QOFYNZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FE3AC4AF50;
+	 MIME-Version; b=PUK51nNeGOqvAryRR+LDKKCnlJMMkjQPLVgfdMut4u8uiwSMZdqaqwmBeb0AengTILG/kZb2pQOgDQGmDNEzYt3GXrhidC22r5X7DiOxe/C10O/65AQBWiSIXpjUnx4bBIQdigmAh7FCQtAGKLS9XkX3/6vS+QvsMHwK/RoxENY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLvial6x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7D6DC4AF49;
 	Tue, 18 Jun 2024 18:18:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718734701;
-	bh=IvB9TY1BgcO/wE27+FMWRz+Cg1k/Z3ehFmcdbgTDhfw=;
+	s=k20201202; t=1718734702;
+	bh=63ugfgzmyX4NmFqGz3i2C7qMQZ/sIyT4hK0C23YIhHI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W1QOFYNZF8ejie0JzdmDiZs20qHP66bCShDkYs6kYuVfrgDXUx9RkIj2Vt689X0LL
-	 c5KGgHMaapOGrTmPZhmOjpu8mx7gR52gC1q2recUO41eCxmBKIcfIeDZhDC4F8wCDn
-	 pN5fhMg6QIdP2qketSZnuOJTmskmL1wvNkfaf8yOPiho89o7HCynwTtt0CyWbCWBVX
-	 uQ7NKuHV2FAqbxJsZ2v3dXdP5gNb0olBAmSaoys1f0Xr4P7Q9+dq1Ds0fNGgiav396
-	 kTXFgqE4YzjkhgibHfbI2pv9Ia1icBbKh7YPt3PQBF9BLsTaVIlNJr3GF0FI8U9fCv
-	 3jMgt+CtpQJAA==
+	b=oLvial6xmmuQ0yPDZAWQraZaKb6LAp115Mm79wORwQmYVnNAOzFEko+KxgpbPJLkz
+	 MRYok8GqL9vvB+Xng+vOPk6x2Ke23b0oGTXyeQGQo8z1inXgPxk4fopGgnRjedXhZy
+	 Eqrd1/iiBBe8JnYfDTnDFaiiUHu98i6oWKGJpphMMCb2CQJbEYesD+bDmm5pfzkviY
+	 1KZ8YT+nbf6AUahFRFTMWuenMt9RgUl8U+0ZAhSKipyrrpCZoOyO8V25BsNViSxrCe
+	 XKrsvzOBk9oEyDrM0MCHujO98I7Z0YxrtalloMZJBeENxgdIECdr4zIzpyBHS4z3gP
+	 fY0Sy3b+SnQUQ==
 From: SeongJae Park <sj@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: SeongJae Park <sj@kernel.org>,
 	damon@lists.linux.dev,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 08/12] mm/damon/sysfs-schemes: rename *_set_{schemes,scheme_filters,quota_score,schemes}()
-Date: Tue, 18 Jun 2024 11:18:05 -0700
-Message-Id: <20240618181809.82078-9-sj@kernel.org>
+Subject: [PATCH 09/12] mm/damon/reclaim: use damon_commit_ctx()
+Date: Tue, 18 Jun 2024 11:18:06 -0700
+Message-Id: <20240618181809.82078-10-sj@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240618181809.82078-1-sj@kernel.org>
 References: <20240618181809.82078-1-sj@kernel.org>
@@ -60,102 +60,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The functions were for updating DAMON structs that may or may not be
-partially populated.  Hence it was not for only adding items, but also
-removing unnecessary items and updating items in-place.  A previous
-commit has changed the functions to assume the structs are not partially
-populated, and do only adding items.  Make the names better explain the
-behavior.
+DAMON_RECLAIM manually manipulates the DAMON context struct for online
+parameters update.  Since the struct contains not only input parameters
+but also internal status and operation results, it is not that simple.
+Indeed, we found and fixed a few bugs in the code.  Now DAMON core layer
+provides a function for the usage, namely damon_commit_ctx().  Replace
+the manual manipulation logic with the function.  The core layer
+function could have its own bugs, but this change removes a source of
+bugs.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/damon/sysfs-common.h  |  2 +-
- mm/damon/sysfs-schemes.c | 12 ++++++------
- mm/damon/sysfs.c         |  2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ mm/damon/reclaim.c | 43 ++++++++++++++++++++++++-------------------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
 
-diff --git a/mm/damon/sysfs-common.h b/mm/damon/sysfs-common.h
-index a63f51577cff..9a18f3c535d3 100644
---- a/mm/damon/sysfs-common.h
-+++ b/mm/damon/sysfs-common.h
-@@ -38,7 +38,7 @@ void damon_sysfs_schemes_rm_dirs(struct damon_sysfs_schemes *schemes);
+diff --git a/mm/damon/reclaim.c b/mm/damon/reclaim.c
+index a05ccb41749b..be7f04b00d0c 100644
+--- a/mm/damon/reclaim.c
++++ b/mm/damon/reclaim.c
+@@ -195,59 +195,64 @@ static void damon_reclaim_copy_quota_status(struct damos_quota *dst,
  
- extern const struct kobj_type damon_sysfs_schemes_ktype;
- 
--int damon_sysfs_set_schemes(struct damon_ctx *ctx,
-+int damon_sysfs_add_schemes(struct damon_ctx *ctx,
- 		struct damon_sysfs_schemes *sysfs_schemes);
- 
- void damon_sysfs_schemes_update_stats(
-diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-index 77c0265dff5c..b095457380b5 100644
---- a/mm/damon/sysfs-schemes.c
-+++ b/mm/damon/sysfs-schemes.c
-@@ -1908,7 +1908,7 @@ static int damon_sysfs_memcg_path_to_id(char *memcg_path, unsigned short *id)
- 	return found ? 0 : -EINVAL;
- }
- 
--static int damon_sysfs_set_scheme_filters(struct damos *scheme,
-+static int damon_sysfs_add_scheme_filters(struct damos *scheme,
- 		struct damon_sysfs_scheme_filters *sysfs_filters)
+ static int damon_reclaim_apply_parameters(void)
  {
- 	int i;
-@@ -1947,7 +1947,7 @@ static int damon_sysfs_set_scheme_filters(struct damos *scheme,
- 	return 0;
- }
++	struct damon_ctx *param_ctx;
++	struct damon_target *param_target;
+ 	struct damos *scheme, *old_scheme;
+ 	struct damos_quota_goal *goal;
+ 	struct damos_filter *filter;
+-	int err = 0;
++	int err;
  
--static int damos_sysfs_set_quota_score(
-+static int damos_sysfs_add_quota_score(
- 		struct damos_sysfs_quota_goals *sysfs_goals,
- 		struct damos_quota *quota)
- {
-@@ -1990,7 +1990,7 @@ int damos_sysfs_set_quota_scores(struct damon_sysfs_schemes *sysfs_schemes,
- 			break;
- 
- 		sysfs_scheme = sysfs_schemes->schemes_arr[i];
--		err = damos_sysfs_set_quota_score(sysfs_scheme->quotas->goals,
-+		err = damos_sysfs_add_quota_score(sysfs_scheme->quotas->goals,
- 				&quota);
- 		if (err) {
- 			damos_for_each_quota_goal_safe(g, g_next, &quota)
-@@ -2070,13 +2070,13 @@ static struct damos *damon_sysfs_mk_scheme(
- 	if (!scheme)
- 		return NULL;
- 
--	err = damos_sysfs_set_quota_score(sysfs_quotas->goals, &scheme->quota);
-+	err = damos_sysfs_add_quota_score(sysfs_quotas->goals, &scheme->quota);
- 	if (err) {
- 		damon_destroy_scheme(scheme);
- 		return NULL;
- 	}
- 
--	err = damon_sysfs_set_scheme_filters(scheme, sysfs_filters);
-+	err = damon_sysfs_add_scheme_filters(scheme, sysfs_filters);
- 	if (err) {
- 		damon_destroy_scheme(scheme);
- 		return NULL;
-@@ -2084,7 +2084,7 @@ static struct damos *damon_sysfs_mk_scheme(
- 	return scheme;
- }
- 
--int damon_sysfs_set_schemes(struct damon_ctx *ctx,
-+int damon_sysfs_add_schemes(struct damon_ctx *ctx,
- 		struct damon_sysfs_schemes *sysfs_schemes)
- {
- 	int i;
-diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
-index f83ea6a166c6..cffc755e7775 100644
---- a/mm/damon/sysfs.c
-+++ b/mm/damon/sysfs.c
-@@ -1286,7 +1286,7 @@ static int damon_sysfs_apply_inputs(struct damon_ctx *ctx,
- 	err = damon_sysfs_add_targets(ctx, sys_ctx->targets);
+-	err = damon_set_attrs(ctx, &damon_reclaim_mon_attrs);
++	err = damon_modules_new_paddr_ctx_target(&param_ctx, &param_target);
  	if (err)
  		return err;
--	return damon_sysfs_set_schemes(ctx, sys_ctx->schemes);
-+	return damon_sysfs_add_schemes(ctx, sys_ctx->schemes);
+ 
+-	/* Will be freed by next 'damon_set_schemes()' below */
++	err = damon_set_attrs(ctx, &damon_reclaim_mon_attrs);
++	if (err)
++		goto out;
++
++	err = -ENOMEM;
+ 	scheme = damon_reclaim_new_scheme();
+ 	if (!scheme)
+-		return -ENOMEM;
++		goto out;
+ 	if (!list_empty(&ctx->schemes)) {
+ 		damon_for_each_scheme(old_scheme, ctx)
+ 			damon_reclaim_copy_quota_status(&scheme->quota,
+ 					&old_scheme->quota);
+ 	}
++	damon_set_schemes(ctx, &scheme, 1);
+ 
+ 	if (quota_mem_pressure_us) {
+ 		goal = damos_new_quota_goal(DAMOS_QUOTA_SOME_MEM_PSI_US,
+ 				quota_mem_pressure_us);
+-		if (!goal) {
+-			damon_destroy_scheme(scheme);
+-			return -ENOMEM;
+-		}
++		if (!goal)
++			goto out;
+ 		damos_add_quota_goal(&scheme->quota, goal);
+ 	}
+ 
+ 	if (quota_autotune_feedback) {
+ 		goal = damos_new_quota_goal(DAMOS_QUOTA_USER_INPUT, 10000);
+-		if (!goal) {
+-			damon_destroy_scheme(scheme);
+-			return -ENOMEM;
+-		}
++		if (!goal)
++			goto out;
+ 		goal->current_value = quota_autotune_feedback;
+ 		damos_add_quota_goal(&scheme->quota, goal);
+ 	}
+ 
+ 	if (skip_anon) {
+ 		filter = damos_new_filter(DAMOS_FILTER_TYPE_ANON, true);
+-		if (!filter) {
+-			/* Will be freed by next 'damon_set_schemes()' below */
+-			damon_destroy_scheme(scheme);
+-			return -ENOMEM;
+-		}
++		if (!filter)
++			goto out;
+ 		damos_add_filter(scheme, filter);
+ 	}
+-	damon_set_schemes(ctx, &scheme, 1);
+ 
+-	return damon_set_region_biggest_system_ram_default(target,
++	err = damon_set_region_biggest_system_ram_default(param_target,
+ 					&monitor_region_start,
+ 					&monitor_region_end);
++	if (err)
++		goto out;
++	err = damon_commit_ctx(ctx, param_ctx);
++out:
++	damon_destroy_ctx(param_ctx);
++	return err;
  }
  
- static struct damon_ctx *damon_sysfs_build_ctx(
+ static int damon_reclaim_turn(bool on)
 -- 
 2.39.2
 
