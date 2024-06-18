@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-220358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37F890E02B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:49:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE2890E02D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0C21C22EB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE431288557
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6671849F5;
-	Tue, 18 Jun 2024 23:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286D117BB00;
+	Tue, 18 Jun 2024 23:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xdd7ddzc"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wb4rjL3c"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2376013D625
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C667211CA9
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718754584; cv=none; b=rE/Z/BLrUsz9HEFQaj1fS8nG5hlpTX3hUvgwVyJj0nK3W3I1UN+ZlGLbqm/aLULNY3YHPQUsCAvbFC07biy9EY8ngxX6hckXAncxB3U9nZzMBhMSJOzWFfE9DPtG0ieWdxCnoVYPC48M0QxL6Zu3eF7YIEziZry4kkwquMb5ygU=
+	t=1718754607; cv=none; b=jhofM0O0SGryWs8EIhbkfTodnd1K1q93Kk1iFQb+bJEMbTMUwvRbhRa4FsX7/WqNSyuARADsmRF2Nwva404cY20ELL2whZNpnFBR/HWEQXEOAaZVtGrUGkjuwjHBoTR3lxttIpoDKrXGng6sZccwfprPiQ42fEP0qwkpgrlROCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718754584; c=relaxed/simple;
-	bh=1shUkAaX3hg07WagI4y+xlOIw7P/MVYlVX9TG3q3vrw=;
+	s=arc-20240116; t=1718754607; c=relaxed/simple;
+	bh=LuRs4UoMixZtW9wC9DXlGZ+iQJ7nv669Oq/k30wGXbM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cgGvqZUS2E0PkMwROp0YMIOcUXecm/8/IpeGh9OJKPYl29AQZBHWQsCfNSSrss2fyWiwe45WUR9j7V/1kyHKbBLOnRh12wnkyzI1QoR1ZNIJf1v1PkkVcnYac7zkKPsfzAEFLcfDMAFqaO5zgynLceplOjGty32nI6aZCLSu63E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Xdd7ddzc; arc=none smtp.client-ip=209.85.222.176
+	 To:Cc:Content-Type; b=JL8Zw1eED7JdVuxTc2dBep561CH7mXVVbKW/0mQWVMNC6avazWciXPMreSWiHhrmAM8hyjAjKIS5gQN/oyJcXdqPX0ARQlZFlFBD0MDDlbj/qyCH/BYVg8JFvrW0xySncdHBxRP6dDHVEN72g0BV1VsNS9KVNtM7H809AAJBMeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Wb4rjL3c; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-79bb8dc530cso2083885a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:49:42 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dff06b3f413so5659475276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:50:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718754580; x=1719359380; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1718754604; x=1719359404; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IEd8QmB1691hBRAZvofFeg0dEh0DbqURELeqCZwHCv4=;
-        b=Xdd7ddzcnYezg1aOHoWnW4fb6RhyWv4Jkatckr7SlFHR1uoA6+3zkGNz/2dEF7+k0v
-         waLibOU9saaNmvhQw8Ndu2MuCCEGl5zDvJtMqiXoWuX2M/8w2OU5Pu7SQBbfAO19+aH6
-         6BdGWAZYeCYuAlxXlLG0FyUd+OSLNa3Xe+IvE=
+        bh=LuRs4UoMixZtW9wC9DXlGZ+iQJ7nv669Oq/k30wGXbM=;
+        b=Wb4rjL3c9V7TjKOLUJV6mvSq1gvE1lPO9jUv48EoT24Eqj/BDOpyWdp2oywtpCeHpB
+         TH7HCacrg/RxvCga8UaxnF1HCkwMjttLBPZ38pcE3INB09cU7dpWHkQJQj9dCTqV6L9K
+         qtQ1HT7qEYOAhd/fhOMR16UX3TZRE+HGi3FkE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718754580; x=1719359380;
+        d=1e100.net; s=20230601; t=1718754604; x=1719359404;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IEd8QmB1691hBRAZvofFeg0dEh0DbqURELeqCZwHCv4=;
-        b=iJbYWcA7Ael+7W55+SYwP6RQv3Xuu2gAabo6n2aPtV3kmAPqLnrrnz/9rj2q8XNeib
-         fbn4lkxb2K+1kkS0/Rzz5LbJhVsRRR/012hP7qjs1gCZUX/gjOjCNV8pz7rpeMveQi7C
-         5BSqpAW2dGO99NJOsFxCyCZ2EXhSjblTb8xiwzz2k6Iqw+/udkr/fvo4FYw6rr7vvNCU
-         3QWQPnYrAQm/asjK8lRr1t9QOKwcf6ytYBCbC8hYTXDDhSE1vnImmXj/+HyRBNR6xNU9
-         7RyCQVzSS1m9mk5aPxwHyRh0JFKVSicQnbAJe33bpw383ULbYktJPE/HMhrKKbdCW9v2
-         9hkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhkutKv0ncoIebf1BtCo0cSawMixTpHiCiPBxFQGiv0LLAE0rDox4qWZ9QvW0TapGWdN8USFaRJiNUbD0sUAtBiqWzQl6oQLLl0paI
-X-Gm-Message-State: AOJu0YyVrk6rq7dSYRXTTZi81uh/HZPRQFpo1Z4tsVPbc5ybrsfh3xWA
-	JiUvIAwVTvKyHXUyZv3TMOaGCwoHqPzK0yq8HWLN9qkTnmMe96EyAWoNyuTIhkH7Nd3tqxf8nKQ
+        bh=LuRs4UoMixZtW9wC9DXlGZ+iQJ7nv669Oq/k30wGXbM=;
+        b=hWeTtyWAoTz2bXKlR7ZAy7y0AMCyJyViop5p4Nhv7G3rsYNI9LZ2u/hCY3IVA3ISpd
+         dwVna8DNlP0GsGfpimZ3yTiWFOdftXfxoefkxoMHLDZno6OKgsOWXOFibRrHTzDnO0oC
+         W7U4Bptciq4k8PyJfj0aO+LZYZuBEasL2K/kC/Zh/FH2TJzgeREqakaaeRGf4RyR//iY
+         790tVlU6/XEdOskVqiB9Bn7FtwZq4sE3DipqHUGSakJtiv0+xujIPodUEG1wOGoZspS+
+         LIDtU4oabHKFrLxEM1kbZOWKSnyH07A09hq7nNY4k+R2myZqdyQ7NIOiuK9URpahhozE
+         xO+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVfLEPFF94WFPyVXMJBZV7MzJf0RsG7bQE6EOAEHpw4XFuMpiUQIzCfdqFqSZlnV724Cv65AgpMxNTajgXCYrsYKr/qyEsEerkZ5fQz
+X-Gm-Message-State: AOJu0Yx8yUEx3ES9+n/dKlnqCXKneGYr9+NgPxiqguYrOEhzXX3CUM/S
+	UJV4pUcjUzW6ybPpB0HLHra75YYVvorJCVa2js/B0GzojLHTDNfWE/ZnO9eZd/lpeWla0LXYXKM
 	=
-X-Google-Smtp-Source: AGHT+IFC5U3IylYWzd89rvO59dWzsKfhcH5HTVG6WJN3CCGITn5UCOPwiWsPGRFJQCfDDQYoBJbYOA==
-X-Received: by 2002:a05:620a:2903:b0:795:49eb:c2ec with SMTP id af79cd13be357-79bb3654a63mr224789385a.38.1718754579716;
-        Tue, 18 Jun 2024 16:49:39 -0700 (PDT)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com. [209.85.160.176])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798ab6b25besm558760985a.71.2024.06.18.16.49.38
+X-Google-Smtp-Source: AGHT+IG7CrvdEjiaEhnZ5mwHd9ek7+461bcj6zLBz975tVWivhWgPp5Jg81FfrZkGgE77yHp99ucmg==
+X-Received: by 2002:a25:246:0:b0:e02:4329:4dff with SMTP id 3f1490d57ef6-e02be100f5bmr1358368276.2.1718754603565;
+        Tue, 18 Jun 2024 16:50:03 -0700 (PDT)
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com. [209.85.160.169])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441ef4f1e3csm60171701cf.25.2024.06.18.16.49.45
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 16:49:38 -0700 (PDT)
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-443586c2091so205911cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:49:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1EWSPscC++Lr2KKvm3JCaCf/S6M8hph3BpUoL/760lEThm0SZALTK2P9iypOAmydZOm5S3GFhU8QX7ThLSwMSnqOEMk3AJdhmf23Q
-X-Received: by 2002:a05:622a:144c:b0:444:9e8d:d82a with SMTP id
- d75a77b69052e-444aa3b5877mr664281cf.3.1718754577989; Tue, 18 Jun 2024
- 16:49:37 -0700 (PDT)
+        Tue, 18 Jun 2024 16:49:57 -0700 (PDT)
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-443586c2091so206021cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:49:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUqYQz3fJeKxIDUS5Owgw6Oyk4hI+YS7mYj6Xd6T1GGVVASVn4taU4H4qEDxHt6KtfqKBKnhjWMAaWPlQTQ6RLD7ffkQf+n4+Sq7PE2
+X-Received: by 2002:ac8:5982:0:b0:444:a616:de03 with SMTP id
+ d75a77b69052e-444aa3b5060mr753291cf.1.1718754584856; Tue, 18 Jun 2024
+ 16:49:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,81 +79,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240611074846.1.Ieb287c2c3ee3f6d3b0d5f49b29f746b93621749c@changeid>
  <ZmljNHteJ9L5EdE9@phenom.ffwll.local> <CAD=FV=V4C1AYVqG4gig+SiQr4n_mAPVASxneDDZT1a=7AY3Hzw@mail.gmail.com>
- <Zmm6i6iQOdP613w3@phenom.ffwll.local> <CAD=FV=WBVfBZrgGay=XY2Usq3FA3m9i6y0cU4=b=w7qO6gRBFQ@mail.gmail.com>
- <ZnBFgDO37xhMfvzV@phenom.ffwll.local>
-In-Reply-To: <ZnBFgDO37xhMfvzV@phenom.ffwll.local>
+ <Zmm6i6iQOdP613w3@phenom.ffwll.local> <CACRpkdbb5OdizDLSRW3bFEJJhrQ7Fs8Pb=Q2yxBog62Z1m-bOQ@mail.gmail.com>
+ <CAD=FV=Vm==ngDo_bZ+xqV4Ojj0SSOO3ZWaxAbWA906h6-e8FMA@mail.gmail.com> <ZnBGsbeJfvqP7wqI@phenom.ffwll.local>
+In-Reply-To: <ZnBGsbeJfvqP7wqI@phenom.ffwll.local>
 From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 18 Jun 2024 16:49:22 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UindNjK4rWMvsMybgp_bPULbNz2A-u8x60MD4scrnHSQ@mail.gmail.com>
-Message-ID: <CAD=FV=UindNjK4rWMvsMybgp_bPULbNz2A-u8x60MD4scrnHSQ@mail.gmail.com>
+Date: Tue, 18 Jun 2024 16:49:32 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WUNcS0uAUro-oXEksHcKMb37kF2NMfd4pE9FahT7jXVA@mail.gmail.com>
+Message-ID: <CAD=FV=WUNcS0uAUro-oXEksHcKMb37kF2NMfd4pE9FahT7jXVA@mail.gmail.com>
 Subject: Re: [PATCH] drm/panel: Avoid warnings w/ panel-simple/panel-edp at shutdown
-To: Doug Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Maxime Ripard <mripard@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Yuran Pereira <yuran.pereira@hotmail.com>, 
+To: Doug Anderson <dianders@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	dri-devel@lists.freedesktop.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Maxime Ripard <mripard@kernel.org>, Yuran Pereira <yuran.pereira@hotmail.com>, 
 	Chris Morgan <macromorgan@hotmail.com>, David Airlie <airlied@gmail.com>, 
 	Jessica Zhang <quic_jesszhan@quicinc.com>, 
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	linux-kernel@vger.kernel.org
+	linux-kernel@vger.kernel.org, Saravana Kannan <saravanak@google.com>
 Cc: Daniel Vetter <daniel@ffwll.ch>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Mon, Jun 17, 2024 at 7:17=E2=80=AFAM Daniel Vetter <daniel@ffwll.ch> wro=
+On Mon, Jun 17, 2024 at 7:22=E2=80=AFAM Daniel Vetter <daniel@ffwll.ch> wro=
 te:
 >
-> > That all being said, I'm also totally OK with any of the following:
-> >
-> > 1. Dropping my patch and just accepting that we will have warnings
-> > printed out for all DRM drivers that do things correctly and have no
-> > warnings for broken DRM drivers.
+> > I'm really not convinced that hacking with device links in order to
+> > get the shutdown notification in the right order is correct, though.
+> > The idea is that after we're confident that all DRM modeset drivers
+> > are calling shutdown properly that we should _remove_ any code
+> > handling shutdown from panel-edp and panel-simple. They should just
+> > get disabled as part of DRM's shutdown. That means that if we messed
+> > with devicelinks just to get a different shutdown order that it was
+> > just for a short term thing.
 >
-> Can't we just flip the warnings around? Like make the hacky cleanup
-> conditional on the panel not yet being disabled/cleaned up, and complain
-> in that case only. With that:
-> - drivers which call shutdown shouldn't get a warning anymore, and also
->   not a surplus call to drm_panel_disable/unprepare
-> - drivers which are broken still get the cleanup calls
-> - downside: we can't enforce this, because it's not yet enforced through
->   device_link ordering
-
-I feel like something is getting lost in the discussion here. I'm just
-not sure where to put the hacky cleanup without either having a list
-like I have or fixing the device link problem so that the DRM device
-shutdown gets called before the panel. Specifically, right now I think
-it's possible for the panel's shutdown() callback to happen before the
-DRM Device's shutdown(). Thus, we have:
-
-1. Panel shutdown() checks and says "it's not shutdown yet so do my
-hacky cleanup."
-2. DRM device shutdown() gets called and tries to cleanup again.
-
-...and thus in step #1 we can't detect a broken DRM device. What am I missi=
-ng?
-
-
-> > 2. Someone else posting / landing a patch to remove the hacky "disable
-> > / unprepare" for panel-simple and panel-edp and asserting that they
-> > don't care if they break any DRM drivers that are still broken. I
-> > don't want to be involved in authoring or landing this patch, but I
-> > won't scream loudly if others want to do it.
-> >
-> > 3. Someone else taking over trying to solve this problem.
-> >
-> > ...mostly this work is janitorial and I'm trying to help move the DRM
-> > framework forward and get rid of cruft, so if it's going to cause too
-> > much conflict I'm fine just stepping back.
+> The device links would allow us to add consistency checks to the panel
+> code to make sure that the shutdown has already happened.
 >
-> My issue is that you're trading an ugly warning that hurts maintenance
-> with an explicit list of working drivers, which also hurts maintenance.
-> Does seem like forward progress to me, just pushing the issue around.
+> And we do kinda need the device ordering still, because if they're shut
+> down in the wrong order the panel might lose it's power already, before
+> the drm driver had a chance to have the last chat with it. Only relevant
+> for non-dumb panels like dsi, but there's cases.
 
-IMO it at least moves things forward. If we make the warning obvious
-enough then I think we could assert that, within a few kernel
-versions, everyone who hit the warning would have addressed it. Once
-that happens we can fully get rid of the ugly list and just make the
-assumption that things are good. That feels like a clear path to me...
+My impression is that we shouldn't be relying on the driver-level
+"shutdown" call at all but should instead be relying on DRM core to
+call us at the right times. I get this impression based on the fact
+that panel drivers are encouraged _not_ to implement a shutdown()
+callback but instead to rely on the DRM driver to do an orderly power
+off of things (like via drm_atomic_helper_shutdown()) at shutdown
+time.
+
+I would also tend to say that for suspend/resume that things are more
+complicated than the driver model can really account for, which again
+is why DRM devices have prepare() and enable() phases with complicated
+rules about the ordering that the bridge chain runs those functions
+in.
+
+Said another way, I believe I could re-phrase your paragraph above and
+say the exact opposite and it would be just as true:
+
+And we do kinda need the device ordering still, because if they're
+shut down in the wrong order then the DRM device might lose its power
+already, before the panel driver has a chance to use it to send a few
+last commands to the panel.
+
+...but that would imply the exact opposite ordering. The issue is that
+there are established rules for the order things are powered on and
+off and those rules are encoded in the orders that prepare() and
+enable() are called. Trying to replicate these rules in the driver
+model just seems like something destined to fail and probably causes
+everyone who attempts this to give up.
+
+
+> > That being said, one could argue that having device links between the
+> > DRM device and the panel is the right thing long term anyway and that
+> > may well be. I guess the issue is that it's not necessarily obvious
+> > how the "parent/child" or "supplier/consumer" relationship works w/
+> > DRM devices, especially panels. My instinct says that the panel
+> > logically is a "child" or "consumer" of the DRM device and thus
+> > inserting the correct long term device link would mean we'd get
+> > shutdown notification in the wrong order. It would be hard to argue
+> > that the panel is the "parent" of a DRM device, but I guess you could
+> > call it a "supplier"? ...but it's also a "consumer" of some other
+> > stuff, like the pixels being output and also (perhaps) the DP AUX bus.
+> > All this complexity is why the DRM framework tends to use its own
+> > logic for things like prepare/enable instead of using what Linux gives
+> > you. I'm sure Saravanah can also tell you about all the crazy device
+> > link circular dependencies that DRM has thrown him through...
+>
+> The panel driver provides the panel, the drm device driver consumes it.
+> I'm not really clear why you want to structure this the other way round, =
+I
+> can't come up with another way that makes sense from a device driver
+> model. And it's device driver model stuff here, not what's really going o=
+n
+> at the hardware level when everything is set up.
+
+...but, at least on eDP, the DRM device driver provides the DP AUX bus
+and the panel consumes it. This is the reverse order. Perhaps you
+could say that you should have a separate "struct device" for the DP
+AUX bus and the panel consumes the DP AUX bus device but then the DRM
+device consumes the panel?
 
 -Doug
 
