@@ -1,121 +1,193 @@
-Return-Path: <linux-kernel+bounces-219077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0393A90C99D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:34:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC9390C9A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E43A41C21539
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:34:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85635282EE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4E414E2DF;
-	Tue, 18 Jun 2024 10:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F18516CD32;
+	Tue, 18 Jun 2024 10:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="EWExldOW"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="H3b3JD1U"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB81C13A410
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7278D16CD1A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718707092; cv=none; b=cOI5BDOac3s7O28u3U0eee90QTbEjLUzHa2cziSBzDJZZazvEKaLOvJp6IJlerg/v4ydEOqaLZEozb+tU5w6LpP9PJyCRDCWjsJlhaetGzi9wEnaK9vtFMa3Se7ZucXvrSFv/gROOyRJ/nJWoqlkkkelqERom9eexxgG8sVAn3U=
+	t=1718707108; cv=none; b=G2tcKNevIatp9hSNel8uHNpamcd+gwSu9amcPMj/gZI3SoNyDfkycMpsEEQ7sdn6JdTqHrtXxZxdUaTxfOu8oiVx1yNNnRCTIxpppOziKoBtHQlUSI6B6ZfPs7PPTYtpSXLfrcOd7ND6emww+DCnolQWV/tBebxuavb+JGag+4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718707092; c=relaxed/simple;
-	bh=rDC8IOSBsEF47eknnh++CAvoM08YFYdbqau0AY8SWdw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S+kA1JilJvCX9fdbA0O65KUI27QHY+xo/uK2NemEl7L1hb9R/sd4DPmktGG0AT1HK3fDST7879JuIp0mVXj9tIE33si/aLmqUoQMkU8sONS8mYNwh+BPQtx2N7AAu3fc5dsuzrkDvS4pOSN7famX3xsi2/cMvZzqAaLq6OBWeN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=EWExldOW; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70625e8860cso88313b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:38:10 -0700 (PDT)
+	s=arc-20240116; t=1718707108; c=relaxed/simple;
+	bh=AZdoksxUtXRL1JEsmNkEFGPiEJ6sXnqW05agL++pjYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UFUXJcMzpuqEMEDdWu6bcwcmEYdqFHrYSPBxegbkFc2h0u5Kg/JzLq1ksuIbb3166mmYIYbBYzPRqUr4mKQEqXg/ywcAijn+Lrhc7Ypg9/yRoa6stjjBKZgBfFbSBT9rnKJhzrZ3SF8jQ1FlR/GDo9EsqfDdeB8MuAcyA33/Z+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=H3b3JD1U; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6f9611fc320so2331399a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:38:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1718707090; x=1719311890; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=catoYdsWevgpEjlIZ+NShj85YA1mrFcOHb8JN6JQXXA=;
-        b=EWExldOWI+YKDhVUTYadEtTPFyu9FVO9yaPzEMwTIRoCnhj5pNqAmrxbRtaOYzG/rX
-         DOkCgJPba0j6Jt6GliPg2COXURDtXEfGawLBf4WuHh5A0EFu/1PBnXoUgW2JAklMxpgv
-         40SXuepRqPNBhbtv8TMjkIQNYVF9LahxzktCKnb5tnF18+93nG9F3jdRnB67AKgZ2sP4
-         ajCHQKNLTf5ZVAsloje3epNYpcopHA0O9ZbqnvmfCRT+RkK9aWkFrCyQB+roHMAv13tM
-         8/hSr9P45Vh1ueU3LfTVyR7a7iubxz15nxgtkfI7Dqke+nUIeg3GObdE5gOOegWwbZqd
-         q8lw==
+        d=sifive.com; s=google; t=1718707104; x=1719311904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qq1vFxMrgUe3BHqjNbGzwCUUF1/CTlGHAYljkroSrGs=;
+        b=H3b3JD1UjPuoFpTD5eJBtWFpvPHTxvbJ6DHa66eUhR4hQcLcg0WLURUpCNr9pfM54v
+         qLk4SrcsN7BcZlvTawATX7/4vGvcip1D3ctm8Y95a10XO1rt+TvNA5THtBWBWn1fDkLs
+         Nsc+NpuXIRCLgtl7H09UqZXE7f8H344EdkyRpYn4vPAiwbx1n9RQaG8Fr1tsrs4SqCbE
+         mqXHbCAIIzTO1r8pAxPggZuIUDKX/cM82OKTuwthBIoC/boGNnN4eYWGeY4MPh12n3OS
+         4SbywuA55v1Zm4N3Pnppzyp3v4BoGAolPrvLFys59y6VQzd16KiQkk5XQLpJRC5Ipo4H
+         ir9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718707090; x=1719311890;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=catoYdsWevgpEjlIZ+NShj85YA1mrFcOHb8JN6JQXXA=;
-        b=qwgjuT89/pswir1rEJXsx1txoBAEhVHLGs3/JQ06yuRGGd3WLpemJ2IpA7BYqpANu2
-         JnvGVKysNwQU6QCSz43DHKRZdNDkSBtahGTEEkAQEPCSvS5j/Ym0VxHgz4t5/bSUivS8
-         uiANzfn/kd1ztmaCDRXX3rRpB791EOfDqIugMqtsELv9LrIKRJ4gs/fLVGCiMhOgNY61
-         VPdlF3U0L9iW7gMlTBZCPZtsuQkjmEpNbNoKMCE/qtJtYdhGT6uHP/sRBY7GONqrGaFm
-         ycCSTqoQ+iK8OBHo7Ms//4TpZ7jWDuEv5ahre4xHvTiGRc/IqIiHxUVQumn6pQy6fwsa
-         AJuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVK/yrWKQijFD+/hEv/+M5pvDzMjpiR0lvU48AZsS5CoSj676USojz5+gtOkjKGkdSc+Pl4I9umzmytibRs43GON1Xxmqeio30Y2Q1w
-X-Gm-Message-State: AOJu0Yz/d+DyQ/0mXKMIrdYaszp/Y0Ldl6uEMa6rLNEdSXoZbdJuWmTd
-	NkNbixQTdF2r2Qi1j0XSvMjYEv4AeirQdxUNXdEtSX89hqTJqONNuhZ9yNNGnUY=
-X-Google-Smtp-Source: AGHT+IHf+BZuoVA2Xpv7qf8brMwvsr1IjVgs7uVQL0X7eDnkfLxqGefrMgAitNCtb2bohl/3B7BEAw==
-X-Received: by 2002:a05:6a20:daa8:b0:1b8:622a:cf7b with SMTP id adf61e73a8af0-1bae80222f8mr14219877637.44.1718707089932;
-        Tue, 18 Jun 2024 03:38:09 -0700 (PDT)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9a23ee04esm3375205ad.258.2024.06.18.03.38.07
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 18 Jun 2024 03:38:09 -0700 (PDT)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: alex@ghiti.fr,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH] riscv: Fix local irq restore when flags indicates irq disabled
-Date: Tue, 18 Jun 2024 18:38:03 +0800
-Message-Id: <20240618103803.40578-1-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+        d=1e100.net; s=20230601; t=1718707104; x=1719311904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qq1vFxMrgUe3BHqjNbGzwCUUF1/CTlGHAYljkroSrGs=;
+        b=dRg6q1JRz12kW4lF9AAVYKDLi7TAzxSSRh8qeOifq1h4xAPkt+o+Q71CI4rJXTjewo
+         GCoVsPfMPXfDrnDfiVyrb6Aabv+QkNWU2e1Xbw+tMZrdOrfjXY2kSGkbP2VD0Bd0j/2t
+         HKh9gAEE7/AhAOK1Ub7a+wcsKhZ4AjbFqg19h3uVDrW9/Mk8wEq05RaPR+9CY17ti1q3
+         AMN7yYmz2h0P3RjOQ4M/yK9HNP9cwlJ5PgRjfwTwaI9swr40sbVBzE0FZiwQbYU/gVPW
+         FrHYM929jlwMe+9TXZY0/i4u22f0XL1psqY/7BEltY9HKPWOSpbTkOYzyrfuGQDTfgNP
+         n9OQ==
+X-Gm-Message-State: AOJu0Yxzh4SunOZ6jdrl6hzvdb2pPRjeAw0ow+P3uFNMmVeJyXspQaJz
+	pWnZgpNipe4lrd2fyNmqQ+6fn/M7x6F55m2oVwXr9viWWG5XRSNsw3ffzIgsL0JO/KWjOQicI8t
+	cZa5jqNi7JC4RTYG6vGqu6zY4dQXoGDv5tWqHbg==
+X-Google-Smtp-Source: AGHT+IH2vZAzENDjSgV/6akmRJ7c2RZBHzcy/7oyoiwK4Myt+lBo2Y7nfaUbFeJ8Be+9iC0edhHwfsXFlrWYewHshLA=
+X-Received: by 2002:a05:6870:b4a2:b0:254:88ea:6d90 with SMTP id
+ 586e51a60fabf-2584285855cmr13792436fac.2.1718707104411; Tue, 18 Jun 2024
+ 03:38:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-3-yongxuan.wang@sifive.com> <20240605-atrium-neuron-c2512b34d3da@spud>
+In-Reply-To: <20240605-atrium-neuron-c2512b34d3da@spud>
+From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Date: Tue, 18 Jun 2024 18:38:13 +0800
+Message-ID: <CAMWQL2gQpHPD=bPenjD+=NP47k8n26+6KP05zogxUtsD6zY6GQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, apatel@ventanamicro.com, 
+	alex@ghiti.fr, ajones@ventanamicro.com, greentime.hu@sifive.com, 
+	vincent.chen@sifive.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When arch_local_irq_restore() is called with flags indicating irqs
-disabled, we need to clear SR_IE bit in CSR_STATUS, whereas current
-implementation based on csr_set() function only sets SR_IE bit of
-CSR_STATUS when SR_IE bit of flags is high and does nothing when
-SR_IE bit of flags is low.
+On Thu, Jun 6, 2024 at 12:55=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
+> > Add entries for the Svade and Svadu extensions to the riscv,isa-extensi=
+ons
+> > property.
+> >
+> > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > ---
+> >  .../devicetree/bindings/riscv/extensions.yaml | 30 +++++++++++++++++++
+> >  1 file changed, 30 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/=
+Documentation/devicetree/bindings/riscv/extensions.yaml
+> > index 468c646247aa..1e30988826b9 100644
+> > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > @@ -153,6 +153,36 @@ properties:
+> >              ratified at commit 3f9ed34 ("Add ability to manually trigg=
+er
+> >              workflow. (#2)") of riscv-time-compare.
+> >
+> > +        - const: svade
+> > +          description: |
+> > +            The standard Svade supervisor-level extension for raising =
+page-fault
+> > +            exceptions when PTE A/D bits need be set as ratified in th=
+e 20240213
+> > +            version of the privileged ISA specification.
+> > +
+> > +            Both Svade and Svadu extensions control the hardware behav=
+ior when
+> > +            the PTE A/D bits need to be set. The default behavior for =
+the four
+> > +            possible combinations of these extensions in the device tr=
+ee are:
+> > +            1. Neither svade nor svadu in DT: default to svade.
+>
+> I think this needs to be expanded on, as to why nothing means svade.
+>
+> > +            2. Only svade in DT: use svade.
+>
+> That's a statement of the obvious, right?
+>
+> > +            3. Only svadu in DT: use svadu.
+>
+> This is not relevant for Svade.
+>
+> > +            4. Both svade and svadu in DT: default to svade (Linux can=
+ switch to
+> > +               svadu once the SBI FWFT extension is available).
+>
+> "The privilege level to which this devicetree has been provided can switc=
+h to
+> Svadu if the SBI FWFT extension is available".
+>
+> > +        - const: svadu
+> > +          description: |
+> > +            The standard Svadu supervisor-level extension for hardware=
+ updating
+> > +            of PTE A/D bits as ratified at commit c1abccf ("Merge pull=
+ request
+> > +            #25 from ved-rivos/ratified") of riscv-svadu.
+> > +
+> > +            Both Svade and Svadu extensions control the hardware behav=
+ior when
+> > +            the PTE A/D bits need to be set. The default behavior for =
+the four
+> > +            possible combinations of these extensions in the device tr=
+ee are:
+>
+> @Anup/Drew/Alex, are we missing some wording in here about it only being
+> valid to have Svadu in isolation if the provider of the devicetree has
+> actually turned on Svadu? The binding says "the default behaviour", but
+> it is not the "default" behaviour, the behaviour is a must AFAICT. If
+> you set Svadu in isolation, you /must/ have turned it on. If you set
+> Svadu and Svade, you must have Svadu turned off?
+>
+> > +            1. Neither svade nor svadu in DT: default to svade.
+> > +            2. Only svade in DT: use svade.
+>
+> These two are not relevant to Svadu, I'd leave them out.
+>
+> > +            3. Only svadu in DT: use svadu.
+>
+> Again, statement of the obvious?
+>
+> > +            4. Both svade and svadu in DT: default to svade (Linux can=
+ switch to
+> > +               svadu once the SBI FWFT extension is available).
+>
+> Same here as in the Svade entry.
+>
+> Thanks,
+> Conor.
+>
 
-This commit supplies csr clear operation when calling irq restore
-function with flags indicating irq disabled.
+Hi Conor,
 
-Fixes: 6d60b6ee0c97 ("RISC-V: Device, timer, IRQs, and the SBI")
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
----
- arch/riscv/include/asm/irqflags.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I will update the description. Thank you!
 
-diff --git a/arch/riscv/include/asm/irqflags.h b/arch/riscv/include/asm/irqflags.h
-index 6fd8cbfcfcc7..f3aad7bfadb7 100644
---- a/arch/riscv/include/asm/irqflags.h
-+++ b/arch/riscv/include/asm/irqflags.h
-@@ -48,7 +48,10 @@ static inline int arch_irqs_disabled(void)
- /* set interrupt enabled status */
- static inline void arch_local_irq_restore(unsigned long flags)
- {
--	csr_set(CSR_STATUS, flags & SR_IE);
-+	if (flags & SR_IE)
-+		csr_set(CSR_STATUS, SR_IE);
-+	else
-+		csr_clear(CSR_STATUS, SR_IE);
- }
- 
- #endif /* _ASM_RISCV_IRQFLAGS_H */
--- 
-2.20.1
-
+Regards,
+Yong-Xuan
 
