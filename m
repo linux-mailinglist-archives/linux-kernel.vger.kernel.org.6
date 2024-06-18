@@ -1,145 +1,186 @@
-Return-Path: <linux-kernel+bounces-220245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0AF190DE66
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:30:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3A890DE69
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41C4D28A185
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:30:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18571C208A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1541618A93D;
-	Tue, 18 Jun 2024 21:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABB91741F0;
+	Tue, 18 Jun 2024 21:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="b1k1fwYz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YizVcSxT"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B331741F0;
-	Tue, 18 Jun 2024 21:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AA2176AC8;
+	Tue, 18 Jun 2024 21:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718746107; cv=none; b=FS7fuLgsLHGugVvnooTd0bqa7qYllQGTgXF76GU1/1aAx6geET5LCEO/XznU24Lqqcz9C4tM3EuFAtcgCnRW5JF9lVdA17hv+AYW+MKrNk63ej5lYA3+WlX4Fkw3TsMce4gGhTV6JWmYtxjjRzEu0w7n+jgEr83gQZUd+ds0b0k=
+	t=1718746138; cv=none; b=rHKHUBiNItTaxcsp1pDYpfEGt5Hpx0txjzLVJIRywt3SVjFAhznSe0NYuohc8EvPsOVvlDg7O8QNne6MpRjuDo5wPp/phWzsSK4Hp19At2MWP64bjNvdocjZvyxxIfxdFt9uLliV7FnVU8BzWgiJG7NqFtHLerNl86vMLTVoueU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718746107; c=relaxed/simple;
-	bh=oTOAK09bNCyzhYFed+xZ2W4HwUAk3QUtPWy3QMiakj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HX2ubtydthET03AUntUgOVZvnjhaUtkIBvfXJkawXk0EWyL/CW/BI6o3xXm8gfLdQCWeMZMc+0ShtmPeQco4I2wEWWIbX905wHwTrMIQ8wYOlHczzBbQ2E+gvw/7kpZngIp8MqMjGK42RCcaVwK0KnAKCr1zrMUWpD6fTIen7xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=b1k1fwYz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DC36B40E01A5;
-	Tue, 18 Jun 2024 21:28:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id NQ5p4vALchMD; Tue, 18 Jun 2024 21:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718746098; bh=vLq5vs7BzLPqxRinH41WctjbHEiIy7UiVfSMF4sqnnY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b1k1fwYzG8/DzCzvVgIHOz+OZ6EoeZd6T20Bbt+ENQ+49MpDVtN/2xoh11FQheHid
-	 Srs5J23bB7sPXOb1wYPc1rL0RrPDj+0F8DFrTFirHvk9F+mkZmLFDJkg5I9R4AAENS
-	 pxKyOfew3b//6fQpupHA+99K+HAbtLYJNTAekOayWOKNOKQNB2ocBT4/M/16mmE7v5
-	 9tsc/MC7VS/KgZ4mOPD7eLU4g+7MUoE8favcE9Ej03zg++oZx4C6WObRINliXvVLdJ
-	 q7lBxIRAsqKqUgaTnlU8vBanHyiqqWl8Pefw2Vw+x/bBLTdAZw8BXB57BZWhLmkNrc
-	 xXZOKUYkuiSi5Sp0vfYnxg9AcOOmTqhcX0VLY/ju8AzdAfBJz4x6Sx1zKVmazj+mgn
-	 Txdw+Q+jW1gGAfwCGAGoqbzxpSpCESM9NOzmHC7S4uj0HAaYDcRaUo/+3nn6dWCIE6
-	 iA+NnI5XeJxrc+vs7Hh6oQzeJL1kacXFVxq4gTRyktiysZTkdks+pWZyR7oZ+BuCE/
-	 YHSihyWumSL89r5cOnGL6U6v1GrJEPBZdQKj91+uAH1O58e0UM1Ds2ir8oFxmhrxuI
-	 +QsXcSxJIm18oaHFXsu0cBzoqrEnMlhwCvwgECc/Z6KnKeUrov20/DfJcGmcgN5wtP
-	 AXmIbT4GJrV7MMCpBDKKYUmo=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 611B440E0219;
-	Tue, 18 Jun 2024 21:28:02 +0000 (UTC)
-Date: Tue, 18 Jun 2024 23:28:01 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH PATCH 1/9] x86/cpu/topology: Add x86_cpu_type to struct
- cpuinfo_topology
-Message-ID: <20240618212801.GJZnH74Q4yknT-4X12@fat_crate.local>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <20240617-add-cpu-type-v1-1-b88998c01e76@linux.intel.com>
+	s=arc-20240116; t=1718746138; c=relaxed/simple;
+	bh=6hlB0hECyGkvGQGtEMCvgHqYDEJrDxinQ4kICJmV+7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cs67qGPNoC5LZPxIQzdo18SXJ5sT5nO3O4Iy1vCJEWeFkZa8te9bLUNR7tfyAw0jGvliz7H4Yjr/ZJPvRCHmZ5pwaXQrewCZXh9gSKNlc2erXcGvz4VRXSm7NwDiTsL33wK7BMPDx5WPI+MnLb1RHgWplcYzdbuly2GQXhc7UOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YizVcSxT; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=7R2zIVkttgawynmDjOMRLnd8AzpY7WCckj0OL06otS8=; b=YizVcSxTIzbxo5DGes/qs931iR
+	6ru4GPoSaeggSasc+l+NvPru5fEDsFEu0lDMyB5P+wJrn7kLOO+KRXX02z4TvUcfhSU/4L/Tr0PEf
+	FVs/4ApvgFHhzrntYs5YrVa9ntaWYM5KRMy11LF6uFSb9Dg4i2dC5lLnGAswbJRHRfrWE+03ZKza1
+	zIDwrxhXEcsqUpI5PEqcwTG4dHIFyqFW2nz+xZhEEbKtZ7TciVorIsuo1LaC5g83dt1EibGBCh5zh
+	VK9t+BQgFhia5dCQ7rUKBeO2msOhg5tmUTcLkRIF0gq/SI0qJQZkNiMkKv1YAVgsxjWtgJuuQw13E
+	cKyCSYYg==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJgNp-0000000Gff8-2UuT;
+	Tue, 18 Jun 2024 21:28:53 +0000
+Message-ID: <c2ef0570-0392-4290-a008-df74f980f76d@infradead.org>
+Date: Tue, 18 Jun 2024 14:28:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240617-add-cpu-type-v1-1-b88998c01e76@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] firmware: imx: adds miscdev
+To: Pankaj Gupta <pankaj.gupta@nxp.com>, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20240617-imx-se-if-v3-0-a7d28dea5c4a@nxp.com>
+ <20240617-imx-se-if-v3-5-a7d28dea5c4a@nxp.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240617-imx-se-if-v3-5-a7d28dea5c4a@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 17, 2024 at 02:11:26AM -0700, Pawan Gupta wrote:
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -95,6 +95,9 @@ struct cpuinfo_topology {
->  	// Core ID relative to the package
->  	u32			core_id;
->  
-> +	// CPU-type e.g. performance, efficiency etc.
-> +	u8			cpu_type;
+Hi--
+
+On 6/17/24 12:29 AM, Pankaj Gupta wrote:
+> Adds the driver for communication interface to secure-enclave,
+> for exchanging messages with NXP secure enclave HW IP(s) like
+> EdgeLock Enclave from:
+> - User-Space Applications via character driver.
+> 
+> ABI documentation for the NXP secure-enclave driver.
+> 
+> User-space library using this driver:
+> - i.MX Secure Enclave library:
+>   -- URL: https://github.com/nxp-imx/imx-secure-enclave.git,
+> - i.MX Secure Middle-Ware:
+>   -- URL: https://github.com/nxp-imx/imx-smw.git
+> 
+> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+> ---
+>  Documentation/ABI/testing/se-cdev |  42 +++
+>  drivers/firmware/imx/ele_common.c | 153 ++++++++-
+>  drivers/firmware/imx/ele_common.h |   4 +
+>  drivers/firmware/imx/se_ctrl.c    | 694 ++++++++++++++++++++++++++++++++++++++
+>  drivers/firmware/imx/se_ctrl.h    |  49 +++
+>  include/uapi/linux/se_ioctl.h     |  94 ++++++
+>  6 files changed, 1034 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/se-cdev b/Documentation/ABI/testing/se-cdev
+> new file mode 100644
+> index 000000000000..699525af6b86
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/se-cdev
+> @@ -0,0 +1,42 @@
+> +What:		/dev/<se>_mu[0-9]+_ch[0-9]+
+> +Date:		May 2024
+> +KernelVersion:	6.8
+> +Contact:	linux-imx@nxp.com, pankaj.gupta@nxp.com
+> +Description:
+> +		NXP offers multiple hardware IP(s) for  secure-enclaves like EdgeLock-
+
+		                                   for secure enclaves
+
+> +		Enclave(ELE), SECO. The character device file-descriptors
+
+		                                         file descriptors
+
+and what is SECO?
+
+> +		/dev/<se>_mu*_ch* are the interface between user-space NXP's secure-
+
+		                                            userspace        secure
+
+> +		enclave shared-library and the kernel driver.
+
+		        shared library
+
 > +
->  	// Logical ID mappings
->  	u32			logical_pkg_id;
->  	u32			logical_die_id;
-> diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-> index abe3a8f22cbd..b28ad9422afb 100644
-> --- a/arch/x86/include/asm/topology.h
-> +++ b/arch/x86/include/asm/topology.h
-> @@ -41,6 +41,14 @@
->  /* Mappings between logical cpu number and node number */
->  DECLARE_EARLY_PER_CPU(int, x86_cpu_to_node_map);
->  
-> +#define X86_CPU_TYPE_INTEL_SHIFT	24
+> +		The ioctl(2)-based ABI is defined and documented in
+> +		[include]<linux/firmware/imx/ele_mu_ioctl.h>
+> +		 ioctl(s) are used primarily for:
+> +			- shared memory management
+> +			- allocation of I/O buffers
+> +			- get mu info
+
+			- getting mu info
+
+> +			- setting a dev-ctx as receiver that is slave to fw
+> +			- get SoC info
+
+			- getting SoC info
+
 > +
-> +enum x86_topo_cpu_type {
-> +	X86_CPU_TYPE_UNKNOWN		= 0,
-> +	X86_CPU_TYPE_INTEL_ATOM		= 0x20,
-> +	X86_CPU_TYPE_INTEL_CORE		= 0x40,
+> +		The following file operations are supported:
+> +
+> +		open(2)
+> +		  Currently the only useful flags are O_RDWR.
+> +
+> +		read(2)
+> +		  Every read() from the opened character device context is waiting on
+> +		  wakeup_intruptible, that gets set by the registered mailbox callback
 
-Can we unify those core types and do our own (our == Linux) defines instead of
-using Intels or AMDs?
+		  typo in that name?
+		or is it something that this patch series introduces?
 
-There will be AMD variants too soon:
+> +		  function; indicating a message received from the firmware on message-
 
-https://lore.kernel.org/r/7aad57a98b37fa5893d4fe602d3dcef5c3f755d5.1718606975.git.perry.yuan@amd.com
+		  function,
 
-so can we have generic defines like
+> +		  unit.
+> +
+> +		write(2)
+> +		  Every write() to the opened character device context needs to acquire
+> +		  mailbox_lock, before sending message on to the message unit.
 
-PERF_CORE
-EFF_CORE
-bla_CORE
+		  mailbox_lock before
 
-and so on
+> +
+> +		close(2)
+> +		  Stops and free up the I/O contexts that was associated
 
-?
+		            frees up                 that were associated
 
-And then map each vendor's types to the Linux types?
+> +		  with the file descriptor.
+> +
+> +Users:		https://github.com/nxp-imx/imx-secure-enclave.git,
+> +		https://github.com/nxp-imx/imx-smw.git
+> +		crypto/skcipher,
+> +		drivers/nvmem/imx-ocotp-ele.c
 
-Thx.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+~Randy
 
