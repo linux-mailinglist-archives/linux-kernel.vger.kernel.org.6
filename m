@@ -1,143 +1,122 @@
-Return-Path: <linux-kernel+bounces-219503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A870690D385
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:07:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C0690D38B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A2B284713
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:07:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A82E51C24C4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C9615A847;
-	Tue, 18 Jun 2024 13:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1C4158DB2;
+	Tue, 18 Jun 2024 13:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GQj3DfAp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SedD39yC"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E0612B95;
-	Tue, 18 Jun 2024 13:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8A313D291
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718718320; cv=none; b=WfUuckxgg8GbSfZhBDojaugwEW1EE6iA0v38IHbN5v8nGlhctDEl6z17cFWpTtvbiuBi/CubYWTdVpAVEUDTG60enbIAcy4J6CEqNJVMBy1yH83rF6UJDjDvNgLunQ+UREsyTcNRbbTBfur/AQJhhTQI8bRhQWV0F3bnZIbg95M=
+	t=1718718560; cv=none; b=P9OnwBGPqI387BtA2dxuVPkfOLXVDjIEKH4j09SUBqahKBUoEI4mzmBIV3tnQmp3+PShrJMl3sCO8/nuYZLdOKdnzma1GACmAg8DM487sKAtKDPVcy1sFp2fheFcCMm7WLbUXKdYlIPJ6PU8VwIcaikonerowVA+hcjwWz7AEyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718718320; c=relaxed/simple;
-	bh=qIRP7WziDihj3AiKzpO4qsVfd9h7I4nske+kKM6qQOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MvPUarzy079TCb4g5YF1aL6zl5FTca0xgneuYn79V4VWkik6NLXTOObliO2UG+cO21w6ty/d99LWO8ckmldFUWU5qwQKAzsoeRkly+7MFojcEjkXxWgNmXYQhp+IwuIK4hrf7kC22l0SeAy8PQfn3mOJWWGnWz6n+Cd9/3w2eNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GQj3DfAp; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718718319; x=1750254319;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qIRP7WziDihj3AiKzpO4qsVfd9h7I4nske+kKM6qQOM=;
-  b=GQj3DfAp+5sS/nbjDFxugvM1QjbgCHi+RrZQ6tZeuxWIBxxdLXqwV5Wm
-   +nAHD5SHAQkb+wECF3vZcPHtLqnj9rFGanFOIok9toqX5TveXXdv8xKTI
-   1mvaSUNiJSxANNSkFtdUtsBXPLNGk0oPjfSycgwfPHKY9XoDAfwhVQqvD
-   pxNhFiXRQrf+cJ/kwJW7gkmlmucoHD0arEFyST/JHqrnt0HxApLdRnaVf
-   +oWxCncCJtP+JdRKHLCLll9Vn9T8UzpwzVVjFTk513NAiYHBy2KXFpwtC
-   rPLyckVQQdCGW7MXgP+NQE1kd7eIwWnnkfHQF9Fbj8yJQkP+RcL49svL+
-   Q==;
-X-CSE-ConnectionGUID: eLBePovlT/KbZ5KZ01b7dQ==
-X-CSE-MsgGUID: zPbksVpqT5mWLcLDBElfFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15740819"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15740819"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 06:45:18 -0700
-X-CSE-ConnectionGUID: RYQDIZYjSV6Vn+hV2fR+kA==
-X-CSE-MsgGUID: pxtX/aX1SxmRGvkmobxipQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="45922331"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 06:45:17 -0700
-Received: from [10.212.26.15] (kliang2-mobl1.ccr.corp.intel.com [10.212.26.15])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 9EDCF20B5703;
-	Tue, 18 Jun 2024 06:45:15 -0700 (PDT)
-Message-ID: <00ac4787-c290-424f-8461-7ba300a4c1a9@linux.intel.com>
-Date: Tue, 18 Jun 2024 09:45:14 -0400
+	s=arc-20240116; t=1718718560; c=relaxed/simple;
+	bh=0rziP/IoVXP3TfzQU7TMnmqKwrX7EBGqSRuKglqc2j8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZqlcdK9KQGZoe8vCY/Vpzxtaat6LVYrNylPOXL0iGxpXJjLGSI/ie0hJTBHGmJuv9qH5betufVuK2GcM9ewRoUeLZUewR0fRQQFIXq6iRV3BRLlZY0tRa9Yyy1jgxEC9cgJUeMjWxbykXI+MCcOyk00pZ0to9Sv2CQZ4LRRBgX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SedD39yC; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57cce3bc8c6so3805974a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:49:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718718557; x=1719323357; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BuVWP4GVK7L2zp39JVZyz0tyrIh2tPWyuf/GeYuNsvk=;
+        b=SedD39yCp4/30+t68X5wAHZV6a5lI5K6ZYLk39vACUZNuCzRYb2p0E1PGdRO8Aq7XU
+         lretK/jF87sR9nHPUF13P9NuHDtgCC3FmngrigZCJLjuxwLWjkGIGQdAB41ow7KyMQ4M
+         dzF9kYExv5Upaq3RDJskBSDtq5xvtkrA0/zk6SxQn99jLPthmh1yxas7lRBy59MUEE5f
+         xllJe0L81DVARq+v1hYBTXUm66tL0u851ddP2SMRMepoIn6dTmUvhp8BJmXNld11XM2b
+         dj7ct2q8jee+tm/VLSoQZOW+7bAiljTnKaap+ZQodiTQRvGtHON9AupXgwosLFk/X3X1
+         biSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718718557; x=1719323357;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BuVWP4GVK7L2zp39JVZyz0tyrIh2tPWyuf/GeYuNsvk=;
+        b=fhnf7Zm3m3mwqI1wdAqx55YKROBniB7B3+tJK9G4zF2e2bNAtOOTV1csWQyyPaNyY6
+         dnqL8NJ9B2cpN2cKRxRjrwQ4ooTwUyRHU2c8/bCX2VNN9ea8AJDx6cPId09+i9PaeFAn
+         umJYdkzvoaN3b1qZko3KVAb0iqQDyujdtkeVzKY/h5izVJmMjg/iaK67M2gcoYkH4Yvy
+         Wr87DKROZUR73UeP9qozwZEVVkVW3r40fbhk1SkizerqZneyd8yYJqAGl85fUx1zGyb4
+         fJxD35Ex6XiwtmF0v5nc+BzyB5y7gqjDZRvIskTMpHg/zI6qjPMtAicL/K4azxZW+uGB
+         UXMw==
+X-Forwarded-Encrypted: i=1; AJvYcCX44Na4dGNxpB3lAw5iSPXiHeMKMCmQyZd0dh+x3bwZMwAuPvvN+3NB+fYW4WgzGDJH5V4uEHQZfrQMTOwBP8lVd5yCpWnFa6r61s5C
+X-Gm-Message-State: AOJu0YzltwAdCq/x2j8uBMC+XHDuzmPGr+mjyqG276JlS1aoSbZC+tE+
+	FIfMTD3yuqtKeKehf8KZrXpG5njn2jcDb8e12Z89LIMkYWLbGDHICJdaYIOmn1s=
+X-Google-Smtp-Source: AGHT+IHtLz8KllMMtdCRU487RnyWpaHO2FxTL+sG63GWh7A5oH2EYJFnivoVxsZYulKG+Tu4+suuqA==
+X-Received: by 2002:a50:9518:0:b0:57d:32d:cacd with SMTP id 4fb4d7f45d1cf-57d032dcc18mr773381a12.29.1718718557369;
+        Tue, 18 Jun 2024 06:49:17 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cbdfe1428sm6678397a12.27.2024.06.18.06.49.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 06:49:16 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/2] ASoC: codecs: lpass-wsa: fix vi capture setup
+Date: Tue, 18 Jun 2024 14:48:59 +0100
+Message-Id: <20240618-lpass-wsa-vi-v1-0-416a6f162c81@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 13/37] perf vendor events: Update grandridge events and
- add counter information
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Cc: Weilin Wang <weilin.wang@intel.com>,
- Caleb Biggers <caleb.biggers@intel.com>
-References: <20240614230146.3783221-1-irogers@google.com>
- <20240614230146.3783221-14-irogers@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240614230146.3783221-14-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEuQcWYC/x2N0QqDMAwAf0XyvIBtt274K8OHVOMMbFUS0YH47
+ 6t7PI7jdjBWYYOm2kF5FZMpF3CXCrqR8otR+sLga3+to3vgeyYz3IxwFUwxhPtt8K6PAUqSyBi
+ TUu7GM/qQLaynmJUH+f4/z/Y4fr9rHRN3AAAA
+To: Banajit Goswami <bgoswami@quicinc.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Manikantan R <quic_manrav@quicinc.com>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=617;
+ i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
+ bh=0rziP/IoVXP3TfzQU7TMnmqKwrX7EBGqSRuKglqc2j8=;
+ b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmcZBchruVRYLTqV2qgDLV2m1brX+2D6w8mliGx
+ nMEC4qHyT6JATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZnGQXAAKCRB6of1ZxzRV
+ NzZmB/0b1yOCj8uIGXSEGCFq9LTGF1SrtMQlN/XPPJMs3FCcUZsCVEaN73ZWsKI6sfct1WEIoOv
+ HUkjDjBNHrYya09svQYDlJb31l6BOeRAvRd8a1sVqljMaULMQqYWvJopLkB9tS+EUbUErQ0ombC
+ XjeM7CZoFGWK88W6r0RdK9M0iA5oSe8nhkABDjfsB4TFr+39znDjipnR7D/wJJmGbrGygNXzWgM
+ 24IoWC83QY3fhTzOaiNWL2wM4/HMQdtSR8EXKTQwqC5CTYNPPD9wjksR5hn9g3bgJI1Xj+mOsQm
+ q0i8dbpSEfEdBDjRAgUthelIv93ynf5RvPmOwHuWEk8x3wo3
+X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
+ fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
 
+This two patches fixes issues with VI capture rate and path setup.
 
-On 2024-06-14 7:01 p.m., Ian Rogers wrote:
-> Update events from v1.01 to v1.02.
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+Srinivas Kandagatla (2):
+      ASoC: codecs:lpass-wsa-macro: Fix vi feedback rate
+      ASoC: codecs:lpass-wsa-macro: Fix logic of enabling vi channels
 
-The subject has a typo. It should be "perf vendor events: Update
-graniterapids events and add counter information", not grandridge.
+ sound/soc/codecs/lpass-wsa-macro.c | 111 +++++++++++++++++++++++++++++--------
+ 1 file changed, 88 insertions(+), 23 deletions(-)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240618-lpass-wsa-vi-b63375f21d63
 
-Thanks,
-Kan
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-> 
-> Bring in the event updates v1.02:
-> https://github.com/intel/perfmon/commit/0ff9f681bd07d0e84026c52f4941d21b1cd4c171
-> 
-> Add counter information. The most recent RFC patch set using this
-> information:
-> https://lore.kernel.org/lkml/20240412210756.309828-1-weilin.wang@intel.com/
-> 
-> There are over 1000 new events.
-> 
-> Co-authored-by: Weilin Wang <weilin.wang@intel.com>
-> Co-authored-by: Caleb Biggers <caleb.biggers@intel.com>
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  .../arch/x86/graniterapids/cache.json         |  825 ++++
->  .../arch/x86/graniterapids/counter.json       |   77 +
->  .../x86/graniterapids/floating-point.json     |  242 ++
->  .../arch/x86/graniterapids/frontend.json      |  469 ++-
->  .../arch/x86/graniterapids/memory.json        |  175 +-
->  .../arch/x86/graniterapids/other.json         |  150 +-
->  .../arch/x86/graniterapids/pipeline.json      | 1009 ++++-
->  .../arch/x86/graniterapids/uncore-cache.json  | 3674 +++++++++++++++++
->  .../arch/x86/graniterapids/uncore-cxl.json    |   31 +
->  .../graniterapids/uncore-interconnect.json    | 1849 +++++++++
->  .../arch/x86/graniterapids/uncore-io.json     | 1901 +++++++++
->  .../arch/x86/graniterapids/uncore-memory.json |  449 ++
->  .../arch/x86/graniterapids/uncore-power.json  |   11 +
->  .../x86/graniterapids/virtual-memory.json     |  159 +
->  tools/perf/pmu-events/arch/x86/mapfile.csv    |    2 +-
->  15 files changed, 10975 insertions(+), 48 deletions(-)
->  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/counter.json
->  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/floating-point.json
->  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-cache.json
->  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-cxl.json
->  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-interconnect.json
->  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-io.json
->  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-memory.json
->  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-power.json
 
