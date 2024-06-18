@@ -1,141 +1,107 @@
-Return-Path: <linux-kernel+bounces-219166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E302890CAFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 364EE90CB4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CBC6B2A6CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:00:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDD7EB286E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0312139DA;
-	Tue, 18 Jun 2024 11:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k3gaUvuP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316372139D5;
-	Tue, 18 Jun 2024 11:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA1E13C3C5;
+	Tue, 18 Jun 2024 11:51:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6997813AD14;
+	Tue, 18 Jun 2024 11:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718711391; cv=none; b=bqOAd3MRkquXCG0STA8+6HRN7QVGes1UbM+OH2DxNY/3BkPUsPzmQgSp6thPDNtnCblNG+Y5LVRdnT2rYrYtBiDiYchYuYMkLGk3DE6xMfNJb6wCosRgKUWKsT8vHppy2vL85Y4N+4+ORFLkAaOkPBCZvW2a/aK0Fz+wbk5rjug=
+	t=1718711474; cv=none; b=hjPfoVek5ex6/drqO/cxLg/gUSdCM9Hp7RS0x2FrNcxYuI1+IaN4xYmWYkfykRX/H5sOEiQL3RkVqmx6TYkECOZ6A0Ovxb3hrE3ZtZEYbUCPS3Bz0naz9IuiEjvR0jtmdJe0hNzvPKKpimHv4oMHgTWDpT+WFB/LFYdnoDGF83E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718711391; c=relaxed/simple;
-	bh=Tzk91DoHaadOT64YjBsGigmTYiJhoGfeUIu5jwYyKkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PfcIkk2wr3bWjUGeGO7t9O71Kpwhh1Gt6vyyG1E9aoHUxi0vTSRabVwXp94Tl+dkLgigINEW+urwVvkn930unWpkpNCO8YBm098j+rLJoc8e8e4RzRFcQCt3QW0Bez/L4HP0lwhvYlRpNXXmMTHVvKTSLh4q1C6WviBxMIAyjqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k3gaUvuP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I8MaPb009918;
-	Tue, 18 Jun 2024 11:49:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kLqwmlFh1zeU26wZiij4VFN4sDFCwOCWgt4zPJH3iPY=; b=k3gaUvuPyWASq1Cg
-	5FNuT+pZcEH09QupUc2UbgTkCii628olsY2Q8EZegqQGFtw7MIcz6w/0a33yfX6B
-	DkbaOJH/5Z6ItBSMwgJCh9FWU5aaoowjCpwonNVj5V1wDEcTiyO2ytAa+3a0o9lT
-	35z8PALQdlB98aPGPgXs12sqdceMNP/rEQ8iX/i1UE5W10LlWwDHXrBbKDpaG0Ht
-	AEpSoZQSjGuO5m9sxrhhip2MD/YudFCLoO6NW/LFYRwc7SOCjPwZUrmrH0E56nXl
-	ug8SI9vQrk/VEKa989qshYleDBzI2icP2jLm+RhVi+e8kjQTBWmSiAoUiCjeEfQC
-	woDJAw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytuav9w6a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 11:49:32 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IBnVup003790
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 11:49:31 GMT
-Received: from [10.216.29.175] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 04:49:26 -0700
-Message-ID: <b641f9dc-d0a3-85b6-c9ce-fe297e69dc80@quicinc.com>
-Date: Tue, 18 Jun 2024 17:19:23 +0530
+	s=arc-20240116; t=1718711474; c=relaxed/simple;
+	bh=XdG4V5fdx5obbim8cTvt4v8dje7MhW5oQe6IE41WLWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JxbABPETsAjZ9LP3qmziCtcOdm97epw0uDOMo1HNJRJ7yADOge+xHqIG6GO0VXOXOBC1KEIveZau3O+NSdR9ox4aEf9OMmJpqNoGAsmCQBMS9u1MDQ6iIKWgS9DMRSJZ7wdgmbwGer/7RQVlb7CGn0uuMKE9Kp/58mEWgaahNjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3ADECDA7;
+	Tue, 18 Jun 2024 04:51:36 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D0223F64C;
+	Tue, 18 Jun 2024 04:51:07 -0700 (PDT)
+Date: Tue, 18 Jun 2024 12:51:05 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <kees@kernel.org>, Yuntao Liu <liuyuntao12@huawei.com>,
+	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+	gor@linux.ibm.com, Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Leonardo Bras <leobras@redhat.com>, Mark Brown <broonie@kernel.org>,
+	imbrenda@linux.ibm.com, pawan.kumar.gupta@linux.intel.com
+Subject: Re: [PATCH] remove AND operation in choose_random_kstack_offset()
+Message-ID: <ZnF0qY-WoAGVuXXh@J2N7QTR9R3>
+References: <20240617133721.377540-1-liuyuntao12@huawei.com>
+ <ZnBbr2CAqBGDe2aN@J2N7QTR9R3>
+ <202406171122.B5FDA6A@keescook>
+ <d0959336-4430-4062-b909-54d553238468@app.fastmail.com>
+ <ZnFlQgVSTtf0t2cU@J2N7QTR9R3>
+ <dbca95d9-4818-4624-b3c2-4b51284fe83b@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 10/18] media: venus: Use flex array for
- hfi_session_release_buffer_pkt
-Content-Language: en-US
-To: Ricardo Ribalda <ribalda@chromium.org>,
-        Michael Tretter
-	<m.tretter@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Andy Walls <awalls@md.metrocast.net>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad
- Dybcio <konrad.dybcio@linaro.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        Hans
- Verkuil <hverkuil-cisco@xs4all.nl>
-References: <20240527-cocci-flexarray-v3-0-cda09c535816@chromium.org>
- <20240527-cocci-flexarray-v3-10-cda09c535816@chromium.org>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20240527-cocci-flexarray-v3-10-cda09c535816@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Tduht-B7wsvOtoH8g3f1yYD-jkIWaYIU
-X-Proofpoint-ORIG-GUID: Tduht-B7wsvOtoH8g3f1yYD-jkIWaYIU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- suspectscore=0 mlxscore=0 phishscore=0 adultscore=0 clxscore=1015
- spamscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- bulkscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dbca95d9-4818-4624-b3c2-4b51284fe83b@app.fastmail.com>
 
+On Tue, Jun 18, 2024 at 01:14:58PM +0200, Arnd Bergmann wrote:
+> On Tue, Jun 18, 2024, at 12:45, Mark Rutland wrote:
+> > On Mon, Jun 17, 2024 at 10:33:08PM +0200, Arnd Bergmann wrote:
+> >> On Mon, Jun 17, 2024, at 20:22, Kees Cook wrote:
+> >> > On Mon, Jun 17, 2024 at 04:52:15PM +0100, Mark Rutland wrote:
+> 
+> > Sorry, to be clear, I'm happy for this to change, so long as:
+> >
+> > * The commit message explains why that's safe.
+> >
+> >   IIUC this goes from 511 to 1023 bytes on arm64, which is ~3% of the
+> >   stack, so maybe that is ok. It'd be nice to see any rationale/analysis
+> >   beyond "the offset would be bitwise ANDed with 0x3FF".
+> 
+> Absolutely agreed, and the commit message should also clarify that
+> the increase has already happened as an unintended side-effect
+> of commit 9c573cd31343 ("randomize_kstack: Improve entropy
+> diffusion").
 
-On 5/28/2024 2:39 AM, Ricardo Ribalda wrote:
-> Replace the old style single element array with a flex array. We do not
-> allocate this structure, so the size change should not be an issue.
+FWIW, I think that alone is a reasonable justification.
+
+> > * The comments in architecture code referring to the masking get
+> >   removed/updated along with the masking.
 > 
-> This fixes the following cocci warning:
-> drivers/media/platform/qcom/venus/hfi_cmds.h:204:5-16: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+> Right.
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/platform/qcom/venus/hfi_cmds.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
-> index 41f765eac4d9..6dff949c4402 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_cmds.h
-> +++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
-> @@ -201,7 +201,7 @@ struct hfi_session_release_buffer_pkt {
->  	u32 extradata_size;
->  	u32 response_req;
->  	u32 num_buffers;
-> -	u32 buffer_info[1];
-> +	u32 buffer_info[];
->  };
->  
->  struct hfi_session_release_resources_pkt {
-> 
-Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> FWIW, I also wouldn't mind to having a compile-time option
+> that configures the number of random bits on the stack offset,
+> but my preference here is to have a reasonable default and
+> not need a config option.
+
+I agree; I think we should avoid a config option unless we actually see
+a need for it in testing.
+
+Mark.
 
