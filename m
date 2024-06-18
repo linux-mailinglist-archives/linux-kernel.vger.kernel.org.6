@@ -1,91 +1,146 @@
-Return-Path: <linux-kernel+bounces-218988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE30190C871
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:08:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C725690C880
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47AED28556E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51DFD1F21109
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB90D204EF3;
-	Tue, 18 Jun 2024 09:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CB82074AD;
+	Tue, 18 Jun 2024 09:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1WJjSHB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VsjrAVmf"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDAF205B0F;
-	Tue, 18 Jun 2024 09:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBEF1586CC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718704229; cv=none; b=YMTuXnQkTbUwkulwEGbqSONfZiKfS5LQDtV87RsBWVv5gh4RKg7wHOBbBt8dVFglhrvxj0t7VpwaCQlX5unH7qziv7ba/bGdqBlDDuQ19Kj2bo7wdfChu4Uzkgw/6ZgOGBzduwKNXG4qXrTqJSZ5y13Vw3gbqvtMzvnjmZfD7gw=
+	t=1718704363; cv=none; b=i85pIhiy3PkFP5u8G40QAgx94yLbwn7lnCtalv6tp9eHnaVrb9zf5vmkkaXd5iGxkQ3L98NBWsfFiwrSpeNWmzvY1CFQvhau3DW/2zoj8uFyIw7hCXTbaIi+HlVBPYSXhmOKii92h6xadWvjgrpxmlZkzXNQNoZ26nJkVjICxO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718704229; c=relaxed/simple;
-	bh=elONcxsWULUdEDPQ4LFBA+PJ3wyTRG1kyjBDnlyR1uc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Um/06ZkYD7PIQhH9JadMDuyuMvq2BpxnDReMi+n09DR4iHX09SQWA3aDUIjDwPuSPBgfo031NjpKzSHQY63Q5gIvNKtlLZcjeRGCAJEjzexE1zMj5uEL0IxfmFC7zOBWPk/+NtDgyJ9jP8tQUz22NIY+EXTF1+6fXWDZF2UaqnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1WJjSHB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9FA9DC4AF1D;
-	Tue, 18 Jun 2024 09:50:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718704228;
-	bh=elONcxsWULUdEDPQ4LFBA+PJ3wyTRG1kyjBDnlyR1uc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=k1WJjSHBe1oBJL7irtCrFkz+SBXSdY6qHHLQlMJvN4YoIxWE6FUL8NvW+lOWvrseu
-	 YEwM85LCucEfHvZayjEy41XpYPCs+xshsJoHnCwaM5GGU5YxOZdGvGq7Mabb06sB7R
-	 UjwytB2Q17NjVfq2qaWkdq+SFp5L6ST10OgZZEt0P9ptI8+1yU5Q0qbN2XL2Xnht2l
-	 4Ui5Q9fod1P+/BBG0+NV27X/kty4D6KLpq/CFeOnpc8JSrLOHHfAE2/pnLxox30r/e
-	 TMf7mOOKM/UFIalCB5D9OoGg3bPnhZGpTm8x2enb/esXYlK7sqto9FhKN24/XEzGck
-	 Un8L2X4CrBhOA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8F1D1D2D0F8;
-	Tue, 18 Jun 2024 09:50:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718704363; c=relaxed/simple;
+	bh=/lD+4/1pW5cDhxFei3+MLKsCC6iwlHSFD/OS/9oOq0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MBNDeMrG0Ggr7rYBZ9BgWZ4t82LmAr6HaNDZdKNIK68UXI0oW5ORYlOnBj7ZXXQa1Sj5bL0/jP9lrV3t2rLykNw04LmkEfI/JlGsddqFAd+uE1RfJsihJW+RB4ck9MgomcZWH8x6Bbn81jq+JDq0ULfK/MsfUnKLXCe2lk11xaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VsjrAVmf; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-630daaec9c7so45363627b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:52:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718704361; x=1719309161; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/lD+4/1pW5cDhxFei3+MLKsCC6iwlHSFD/OS/9oOq0k=;
+        b=VsjrAVmfhgKgk0BZz2OIJMF9bkJgUftEQSucdt4LClcFdeaIEazUlInTIYbKQswyIV
+         d+4RBPWvUu3nPmnArN0vcFRyv0q+/c/+QqtkfkN++EMG/fbX80mjNeuQZWV88lo0V0yN
+         G8ce0zJGquwCtM1xrfKMvuo+U/1xuHM3dkGDswFfwXlPaE4tASod2Dwb1l3J35H+9a4K
+         hgtODdwdRk5QVlkwnKqXv/PHSvTHBWfSM27tibrPdCi0jKqihzSbBoAVdgOq+KNfaXws
+         P8D6bu6wFEz2B7WXRuDd+YogrqAcVmzM2/x/tHk3/2thUU8MGwh6VJQ/Bg9ccMWw4udb
+         cTVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718704361; x=1719309161;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/lD+4/1pW5cDhxFei3+MLKsCC6iwlHSFD/OS/9oOq0k=;
+        b=vA2ESvj4hCMeAjZH/8y7gT/m6gD8GHUXmuWfuWuEL9hz1w+QAmhLMFN1EUpMcUhOIm
+         o3GGOPiMG6wi0h04ZK9NJ1Sur+aVlahKbZLcPgjpcGOA1L6jSaCh6SRncHi3hz9wngrS
+         Jnr88/l5Y41F1Aabeh/1BLVCTfSjKkZIRta4/HR7cjcYPCMbRBOImy9k959tlSUyVwE7
+         Lls66MxoRNT2GYD2CIO3fxvqRQwAt0qDjnfnyl6Xidg0k83EF9/1qrHTNJ5gjomFSY/e
+         TnTbitlwqsfuUYOb7Hen5bvICUwaJ0FjAlG1zt+tr5Eq6YScGCs9FarwMBgbxCUg/Akp
+         ro/g==
+X-Forwarded-Encrypted: i=1; AJvYcCW7bj/iMMAFSGUjbIZSsrKLaNdnmrujzPAiUDcCI6uXcy3cEVVMPNkf42FPKTQW4f67/Nm7oDrbb/hImAju+gHxoh9+6HqUQZ9Hq/yC
+X-Gm-Message-State: AOJu0Yw59k90woWp/slOb2LFSiUAQZjVnznI+5UPdvDVvQp9sssJgxxH
+	GuYfTwhy5gIBP1yv07SgFqkIF5807CYOA7fGOiLC0jaUTSGydel0/1vcezb/ebjWRwqSBuSqttZ
+	0Qn6jRisQ7dSWdHEWEOyxw7b3EcFODXtRvCBs
+X-Google-Smtp-Source: AGHT+IHXX6s3T5giMDf3tx1b3GNQGpbXZt612lcGTYaBiEl87A/J206Ls33wh8SD7x8kKB2X9MD+tfEpY+oW/2ib5Ck=
+X-Received: by 2002:a0d:d456:0:b0:632:c442:2316 with SMTP id
+ 00721157ae682-632c44224b4mr101739057b3.3.1718704360687; Tue, 18 Jun 2024
+ 02:52:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] qca_spi: Make interrupt remembering atomic
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171870422858.6440.11410226713577880340.git-patchwork-notify@kernel.org>
-Date: Tue, 18 Jun 2024 09:50:28 +0000
-References: <20240614145030.7781-1-wahrenst@gmx.net>
-In-Reply-To: <20240614145030.7781-1-wahrenst@gmx.net>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, chf.fritz@googlemail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+References: <20240613153924.961511-1-iii@linux.ibm.com> <20240613153924.961511-33-iii@linux.ibm.com>
+ <CAG_fn=X6wHfmGsVgdqwms_Hk1CQAZ6M5623WyatjVp=Uk-z9pQ@mail.gmail.com> <e91768f518876ec9b53ffa8069b798107434d0dd.camel@linux.ibm.com>
+In-Reply-To: <e91768f518876ec9b53ffa8069b798107434d0dd.camel@linux.ibm.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 18 Jun 2024 11:52:03 +0200
+Message-ID: <CAG_fn=XhWpLKbMO6ZHpnxQDh+PXrTxBnL9X-1zZtBj-CoVk0=g@mail.gmail.com>
+Subject: Re: [PATCH v4 32/35] s390/uaccess: Add KMSAN support to put_user()
+ and get_user()
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Tue, Jun 18, 2024 at 11:40=E2=80=AFAM Ilya Leoshkevich <iii@linux.ibm.co=
+m> wrote:
+>
+> On Tue, 2024-06-18 at 11:24 +0200, Alexander Potapenko wrote:
+> > On Thu, Jun 13, 2024 at 5:39=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm=
+.com>
+> > wrote:
+> > >
+> > > put_user() uses inline assembly with precise constraints, so Clang
+> > > is
+> > > in principle capable of instrumenting it automatically.
+> > > Unfortunately,
+> > > one of the constraints contains a dereferenced user pointer, and
+> > > Clang
+> > > does not currently distinguish user and kernel pointers. Therefore
+> > > KMSAN attempts to access shadow for user pointers, which is not a
+> > > right
+> > > thing to do.
+> > >
+> > > An obvious fix to add __no_sanitize_memory to __put_user_fn() does
+> > > not
+> > > work, since it's __always_inline. And __always_inline cannot be
+> > > removed
+> > > due to the __put_user_bad() trick.
+> > >
+> > > A different obvious fix of using the "a" instead of the "+Q"
+> > > constraint
+> > > degrades the code quality, which is very important here, since it's
+> > > a
+> > > hot path.
+> > >
+> > > Instead, repurpose the __put_user_asm() macro to define
+> > > __put_user_{char,short,int,long}_noinstr() functions and mark them
+> > > with
+> > > __no_sanitize_memory. For the non-KMSAN builds make them
+> > > __always_inline in order to keep the generated code quality. Also
+> > > define __put_user_{char,short,int,long}() functions, which call the
+> > > aforementioned ones and which *are* instrumented, because they call
+> > > KMSAN hooks, which may be implemented as macros.
+> >
+> > I am not really familiar with s390 assembly, but I think you still
+> > need to call kmsan_copy_to_user() and kmsan_copy_from_user() to
+> > properly initialize the copied data and report infoleaks.
+> > Would it be possible to insert calls to linux/instrumented.h hooks
+> > into uaccess functions?
+>
+> Aren't the existing instrument_get_user() / instrument_put_user() calls
+> sufficient?
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Fri, 14 Jun 2024 16:50:30 +0200 you wrote:
-> The whole mechanism to remember occurred SPI interrupts is not atomic,
-> which could lead to unexpected behavior. So fix this by using atomic bit
-> operations instead.
-> 
-> Fixes: 291ab06ecf67 ("net: qualcomm: new Ethernet over SPI driver for QCA7000")
-> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-> 
-> [...]
-
-Here is the summary with links:
-  - qca_spi: Make interrupt remembering atomic
-    https://git.kernel.org/netdev/net/c/2d7198278ece
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Oh, sorry, I overlooked them. Yes, those should be sufficient.
+But you don't include linux/instrumented.h, do you?
 
