@@ -1,132 +1,168 @@
-Return-Path: <linux-kernel+bounces-218579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA9D90C233
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:03:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA1C90C235
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8C71F21BCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:03:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EFDE1C21702
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C6F19B588;
-	Tue, 18 Jun 2024 03:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990621DFEB;
+	Tue, 18 Jun 2024 03:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Zhh96E9P"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svnjFOU3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE1F19B3FD
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F041D9503
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718679722; cv=none; b=keUbfHV/gzwWcB5nZuM3MeDY1SLsf8BXnG6HPEwuGMe5uZ80uHL97p3QZZkj79XT4yh9HpgI/UO0EFbygYlqocYtTLN6xEYo8XytQbSB2criKjNERcdo+BCUR9SPS/FUVN022N05JgTwiERnDUT5LkmSUA118HeTFo+SghoIJUU=
+	t=1718679860; cv=none; b=mfDXhZNyZHJJk6h1z3TRPuuJOeRac1c/4ezuU/6H9bxyzy3/hrpeO11/Z2oo5dwjKHbgaMcjjbdPzHiESWO615k5O73sLAEUQU4E3WNWmzIAQKIc+QJXHiNCLtTOrmVvSZF5zYen8BxmHy0B2H4L8Gb0gr+ZoQKZ8NRVfbQMmHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718679722; c=relaxed/simple;
-	bh=voa0fe3SjpggwiHBh/MwhciBY6+FADQBkwBOF/PUA44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pWJMeFI0SJ4bK6JiV2EkmXcxVG1cy+xnSXPECdQE1YfmQOGhv02UF/W75i7vz1MiOJ2D33fVKBCm8ugaq2OcEB9K9e1mpL+0JfeNx7tLg3hE1gmTzyKlD+6juKVTKEW7u3cVp0Os7gEeBG1IcThmQ9wCKc4bIyQlOtfA8V4VeYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Zhh96E9P; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7eb7bf1357cso198080539f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 20:02:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1718679720; x=1719284520; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=voa0fe3SjpggwiHBh/MwhciBY6+FADQBkwBOF/PUA44=;
-        b=Zhh96E9PTA67D1wwQXJfT4CimKejWrJePj98o801nq41/glod4XZfqcEWMrRch2ny8
-         hUXjtRrVDbsTTVpjlAruH0JUCmspGkMGXgqDuAWTW2kwfb7uecZ1UxJQPCEd/0yg35gt
-         UO9xX0e5CyfYW5Netd2cY9buChCpTZV54QX/81I1DgoCWwTakiLFtCakP+Wk7Bv1bhZk
-         hm4MedXqTJXmf/XANtNrvL9H450dXCK9jkBjIjbyMQX3Tzp0tfRfPcWb/YxeGi0EybmA
-         1p4TtZaMurflB8kTw8Zg3xnTl0l7Mm5DWxlJurjzcocesmjkLHwFgb3tYvkCR0cNPG3/
-         nkzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718679720; x=1719284520;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=voa0fe3SjpggwiHBh/MwhciBY6+FADQBkwBOF/PUA44=;
-        b=g1ZRDlMplqr2JZoTorChvgcrVFyqR1kVAwpDOFbcnrdKQe84u/M6paEGX4NxPa/my3
-         LUTxlLm5i56BP640sGJTsWhqmYRMk+1YhZf3c2jgqdVUiDEXY0QPftiYOkfPIcxJYNNB
-         jefkQ/dwIoG7lUg5NF7uqTT9Zp4IBju17/9pFLEmAn0dzInl65t4m7urNCmNf/QAkeyN
-         L1JFWzYhzJj6w2XzgooQhGRLMsrr1glAgUneyOTVkDXm6t3AFg9jvUA0RMNrjBf1AdNn
-         T2iEseWsJE2MLDcIZoQlg2M1snyqKdRx4VR2ueg7zXz5Zkwx2aXgCMPowL0Q3L46FkE3
-         nfRA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Fajcy0gPzS+MMwkw6Xhb59wwUONnX8Ioni/7iQRmhKmSGzoIhZ/AdugcEbIQ1qhgfmxeBTpTJ8QwEh81nh9cmGYQWbIRLKmXjA6F
-X-Gm-Message-State: AOJu0YwcnGyIKMyNSo7aTqR8NQrEly+JbkPn2yPqcoCAtTrcvZnA5OYR
-	qaOd7qG1vlmAqX2yZ2kMLBlxCaqnAFKcfgBGRjq1Wc/poCARWdqKKA4odYDsJ7q71H5umC0vC6P
-	qa/J64pQNL53sWPV+PoW4eiXs3SfyYwg05FIuRQ==
-X-Google-Smtp-Source: AGHT+IHWhSE+k8nI3ATV790kVcdaJx+X2XhzCDCnnNK4GDf4nHYtKrtEPv0N7J1xr51nXArplHNL9b+pWM9XSl88A3Y=
-X-Received: by 2002:a05:6602:3f8a:b0:7eb:b93d:4101 with SMTP id
- ca18e2360f4ac-7ebeb4c0558mr1289632439f.9.1718679719882; Mon, 17 Jun 2024
- 20:01:59 -0700 (PDT)
+	s=arc-20240116; t=1718679860; c=relaxed/simple;
+	bh=6zex10JdKWI5HrbQOQXxplme+gazghXqPQBVPelLR6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u4IqJWGR/KNDDX9NkJBPMVpLEas/amLCDzsVn36MUup/OmKjHrSPmTd2jl2zrbCmOHSEe7azMVXdMTQ1x2sLOg6etjfMiYvaa25SNmpbzhS7GtaGwRKym3N9GLnmKfeo1C8vO2DV6PWmqfEZq3ldftkPTjNx/ZVFiDSp9SnOqW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svnjFOU3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89F0FC2BD10;
+	Tue, 18 Jun 2024 03:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718679860;
+	bh=6zex10JdKWI5HrbQOQXxplme+gazghXqPQBVPelLR6I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=svnjFOU38R19vv3gxeJw12auHkOaxS1O6gLaA9aYS5h9VQgGKhqRSCHhVaOa6yXJv
+	 gJOlSo5wDHtAVt1MXkDODjSS5KcVfQdAts6IXlXmwEmLUhDXtIyuDwbL3IMGcuVf/6
+	 DQaI51JP23y6Uxm+Z5tUfbpR+C4qBTBK28aTzAhMgN1/2y50VKhcjX34ehyo8VJPD7
+	 I4d9u3ZZmw+qCxT4r7njBrAkkZi4iFykeLDTBz59Hb2Phy3fDgWvYaB8kiglJZoZdK
+	 PduNOTEboLt4yi0rs7TQhRBWgwbicoaTnxtnjwlkCsTsdZ1jmQXT5GrYpBNlmZGA8H
+	 631SZlbGUfoDw==
+Message-ID: <04825e07-04d4-4eef-8b06-1e2329880612@kernel.org>
+Date: Tue, 18 Jun 2024 11:04:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614142156.29420-1-zong.li@sifive.com> <20240614142156.29420-5-zong.li@sifive.com>
- <a1a99374-dc40-4d57-9773-e660dc33beb2@linux.intel.com> <CANXhq0pQuoriKfHF51fXUtrZLkJBNOCe6M8Z6JbDjoRvbe1nWg@mail.gmail.com>
- <20240617143920.GD791043@ziepe.ca>
-In-Reply-To: <20240617143920.GD791043@ziepe.ca>
-From: Zong Li <zong.li@sifive.com>
-Date: Tue, 18 Jun 2024 11:01:48 +0800
-Message-ID: <CANXhq0pXYoeiVMFSGAijo-QHTVoZyM8M_uU4HWsbCwDg2oFPYg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 04/10] iommu/riscv: add iotlb_sync_map operation support
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>, joro@8bytes.org, will@kernel.org, 
-	robin.murphy@arm.com, tjeznach@rivosinc.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, kevin.tian@intel.com, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] f2fs-tools: fix do_set_verity ioctl fail issue
+To: Xiuhong Wang <xiuhong.wang@unisoc.com>, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Cc: niuzhiguo84@gmail.com, ke.wang@unisoc.com, xiuhong.wang.cn@gmail.com,
+ hao_hao.wang@unisoc.com
+References: <20240617071114.150721-1-xiuhong.wang@unisoc.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240617071114.150721-1-xiuhong.wang@unisoc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 17, 2024 at 10:39=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wro=
-te:
->
-> On Mon, Jun 17, 2024 at 09:43:35PM +0800, Zong Li wrote:
->
-> > I added it for updating the MSI mapping when we change the irq
-> > affinity of a pass-through device to another vCPU. The RISC-V IOMMU
-> > spec allows MSI translation to go through the MSI flat table, MRIF, or
-> > the normal page table. In the case of the normal page table, the MSI
-> > mapping is created in the second-stage page table, mapping the GPA of
-> > the guest's supervisor interrupt file to the HPA of host's guest
-> > interrupt file. This MSI mapping needs to be updated when the HPA of
-> > host's guest interrupt file is changed.
->
-> It sounds like more thought is needed for the MSI architecture, having
-> the host read the guest page table to mirror weird MSI stuff seems
-> kind of wrong..
->
+On 2024/6/17 15:11, Xiuhong Wang wrote:
+> When using the f2fs_io tool to set_verity, it will fail as follows:
+> unisc:/data # ./f2fs_io set_verity file
+> FS_IOC_ENABLE_VERITY: Inappropriate ioctl for device
+> this is because commit: 95ae251fe828 ("f2fs: add fs-verity support"),
+> the passed parameters do not match the latest kernel version.
+> 
+> After patch:
+> unisoc:/data # ./f2fs_io set_verity file
+> Set fsverity bit to file
+> unisoc:/data # ./f2fs_io getflags file
+> get a flag on file ret=0, flags=verity
+> 
+> Fixes: 95ae251fe828 ("f2fs: add fs-verity support")
+> Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> ---
+>   include/android_config.h |  1 +
+>   tools/f2fs_io/f2fs_io.c  |  9 ++++++---
+>   tools/f2fs_io/f2fs_io.h  | 20 ++++++++++++++++++--
+>   3 files changed, 25 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/android_config.h b/include/android_config.h
+> index 05b686e..9c8b163 100644
+> --- a/include/android_config.h
+> +++ b/include/android_config.h
+> @@ -13,6 +13,7 @@
+>   #define HAVE_LINUX_XATTR_H 1
+>   #define HAVE_LINUX_FS_H 1
+>   #define HAVE_LINUX_FIEMAP_H 1
+> +#define HAVE_LINUX_VERITY_H 1
+>   #define HAVE_MNTENT_H 1
+>   #define HAVE_STDLIB_H 1
+>   #define HAVE_STRING_H 1
+> diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+> index a7b593a..2447490 100644
+> --- a/tools/f2fs_io/f2fs_io.c
+> +++ b/tools/f2fs_io/f2fs_io.c
+> @@ -182,16 +182,19 @@ static void do_fsync(int argc, char **argv, const struct cmd_desc *cmd)
+>   static void do_set_verity(int argc, char **argv, const struct cmd_desc *cmd)
+>   {
+>   	int ret, fd;
+> +	struct fsverity_enable_arg args = {.version = 1};
+> +
+> +	args.hash_algorithm = FS_VERITY_HASH_ALG_SHA256;
+> +	args.block_size = 4096;
+>   
+>   	if (argc != 2) {
+>   		fputs("Excess arguments\n\n", stderr);
+>   		fputs(cmd->cmd_help, stderr);
+>   		exit(1);
+>   	}
+> +	fd = open(argv[1], O_RDONLY);
+>   
+> -	fd = open(argv[1], O_RDWR);
 
-Perhaps I should rephrase it. Host doesn't read the guest page table.
-In a RISC-V system, MSIs are directed to a specific privilege level of
-a specific hart, including a specific virtual hart. In a hart's IMSIC
-(Incoming MSI Controller), it contains some 'interrupt files' for
-these specific privilege level harts. For instance, if the target
-address of MSI is the address of the interrupt file which is for a
-specific supervisor level hart, then that hart's supervisor mode will
-receive this MSI. Furthermore, when a hart implements the hypervisor
-extension, its IMSIC will have interrupt files for virtual harts,
-called 'guest interrupt files'.
-We will create the MSI mapping in S2 page table at boot time firstly,
-the mapping would be GPA of the interrupt file for supervisor level
-(in guest view, it thinks it use a supervisor level interrupt file) to
-HPA of the 'guest interrupt file' (in host view, the device should
-actually use a guest interrupt file). When the vCPU is migrated to
-another physical hart, the 'guest interrupt files' should be switched
-to another physical hart's IMSIC's 'guest interrupt file', it means
-that the HPA of this MSI mapping in S2 page table needs to be updated.
+It needs write permission?
 
-> The S2 really needs to have the correct physical MSI pages statically
-> at boot time.
->
-> Jason
+Thanks,
+
+> -
+> -	ret = ioctl(fd, FS_IOC_ENABLE_VERITY);
+> +	ret = ioctl(fd, FS_IOC_ENABLE_VERITY, &args);
+>   	if (ret < 0) {
+>   		perror("FS_IOC_ENABLE_VERITY");
+>   		exit(1);
+> diff --git a/tools/f2fs_io/f2fs_io.h b/tools/f2fs_io/f2fs_io.h
+> index b5c82f5..e55db5f 100644
+> --- a/tools/f2fs_io/f2fs_io.h
+> +++ b/tools/f2fs_io/f2fs_io.h
+> @@ -16,6 +16,9 @@
+>   #ifdef HAVE_LINUX_FS_H
+>   #include <linux/fs.h>
+>   #endif
+> +#ifdef HAVE_LINUX_VERITY_H
+> +#include <linux/fsverity.h>
+> +#endif
+>   
+>   #include <sys/types.h>
+>   
+> @@ -136,8 +139,21 @@ struct fscrypt_get_policy_ex_arg {
+>   #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+>   #define F2FS_IOC_GET_ENCRYPTION_PWSALT	FS_IOC_GET_ENCRYPTION_PWSALT
+>   
+> -#define FS_IOC_ENABLE_VERITY		_IO('f', 133)
+> -
+> +#ifndef FS_IOC_ENABLE_VERITY
+> +#define FS_IOC_ENABLE_VERITY    _IOW('f', 133, struct fsverity_enable_arg)
+> +#define FS_VERITY_HASH_ALG_SHA256       1
+> +struct fsverity_enable_arg {
+> +	__u32 version;
+> +	__u32 hash_algorithm;
+> +	__u32 block_size;
+> +	__u32 salt_size;
+> +	__u64 salt_ptr;
+> +	__u32 sig_size;
+> +	__u32 __reserved1;
+> +	__u64 sig_ptr;
+> +	__u64 __reserved2[11];
+> +};
+> +#endif
+>   /*
+>    * Inode flags
+>    */
 
