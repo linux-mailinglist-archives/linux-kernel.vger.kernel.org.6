@@ -1,248 +1,271 @@
-Return-Path: <linux-kernel+bounces-219838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7AAF90D8A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:13:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6F190D836
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADBE71C23A9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04DCB28329A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46888153BD7;
-	Tue, 18 Jun 2024 16:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743B54D8AE;
+	Tue, 18 Jun 2024 16:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="iEDxVhEs"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2116.outbound.protection.outlook.com [40.107.22.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSgSfmao"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B06350297;
-	Tue, 18 Jun 2024 16:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718727009; cv=fail; b=dwL1WdHB2WM27ApR53BKaXKH4aKS1nVauUjJbgdnjM+3eP141XIWCd39PB8iYWTW76aV1j/xyf9P9GKjPMvEMzKbQA39eQv7YfWyMjBeuZKJf0p2UJL84x1ItCzI/yqxeqWOXUSQOvj6E9TyxmKRICtptOObRJMZ63Jg5OEygIA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718727009; c=relaxed/simple;
-	bh=E7If3br4S8Uf2sF4XOo+1cQpwJ5a9s5Yad6QwfhILIQ=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=AUDlaiD1L7e7Plqky6BTlsipjCBuZNXgXQ8Kj5Hc8mx3dQeWzyU7Sxcx4gQpeBARJUAR1AqZyIUbKFyEJJtqtug0YHsHPMwJXHlPTdNLMJlyndEShj/j1CN7G5GEIse9bfh3ttkZiTUrmIXFypbLabKoZpEK1ZAZ3B0TPimUxVs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=iEDxVhEs; arc=fail smtp.client-ip=40.107.22.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JwbykTKDFaD4yEo5YzFvnKHubUs/XkvK6LQ+l66Jvzv883KPP8tZy6Mis4WyaqYfvrYn4lCU+8q2E0xPGzpkW9zSrPVP9yIkyxFifCPtiT8hHQtIEC37v8PgKBwucW7Qv26ayTQCoTSlAM1x2+MMwvbBybttfXHULzLUCpcIlmlZzyqFiQW+Jjjosty3QTSLrPl9h3timx0AFALUcHBJ8dyO6VucrFB/OOIFUgP0CaH9+dUSGhc4Ds7q/Os8bw0B2YBlqEgrPCpVS2oQMdbYMoFju7n/FO+DS1j33aZ2lvu+MyS98cO+ZAiZT97YD+hOqg4zlF/L8q0au5Z5H1gZ8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IH9XbuZw25y545jskZu/aOPTcM93uZ6UG+Rls/bNY74=;
- b=drcTPsu2OCXQYU/di9am+2/1JrfYeK0uG34StbQSB4C4DppE1SujNgzM80F5SyIcNzow1n+iy9hDVEssPqx9EU3qkKnkMesRZBhG3i9vvZeQ4RWQsAXDARAU5WDuYDHMMI95+l4x5HyGTyGR8jnAww9jVraGD3Ky1NAeMvNOnHVaZfdWlLRx4rqkbx2iia/tik4/6NU9uOxRorgBby5qXtUO94gFKfmfsKhuBpZlGTJxER/Djn2QbDzQ+GrnEmFi50b67q1KJWHtTKcRU7rLIfsl1x38DxmBOLvLgIPHB6LKhGvW5oCFv4A2AFsfJVBcjITQihjmEyKc8Mc5l+KdVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IH9XbuZw25y545jskZu/aOPTcM93uZ6UG+Rls/bNY74=;
- b=iEDxVhEs7mXDtcXUQthUZTH1af576QTrx5r1235Pa2mMOyQeD/O7w+XxEuTvNsEgfqhzShOY4YZXYxVzJL4a1/m0V1uUrFGMPr3tlgPOOQQR+G4Q7N+R5jAKJChU475/Kn2D4SS1NULFxFBpOseGzzqtAK+vSxffzAXxWFlFBew=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from VE1PR04MB6382.eurprd04.prod.outlook.com (2603:10a6:803:122::31)
- by VI2PR04MB10642.eurprd04.prod.outlook.com (2603:10a6:800:27f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Tue, 18 Jun
- 2024 16:09:51 +0000
-Received: from VE1PR04MB6382.eurprd04.prod.outlook.com
- ([fe80::2a24:328:711:5cd6]) by VE1PR04MB6382.eurprd04.prod.outlook.com
- ([fe80::2a24:328:711:5cd6%5]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 16:09:51 +0000
-From: Farouk Bouabid <farouk.bouabid@cherry.de>
-Date: Tue, 18 Jun 2024 18:06:51 +0200
-Subject: [PATCH v4 9/9] arm64: dts: rockchip: add mule mfd (0x18) on
- px30-ringneck
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240618-dev-mule-i2c-mux-v4-9-5462d28354c8@cherry.de>
-References: <20240618-dev-mule-i2c-mux-v4-0-5462d28354c8@cherry.de>
-In-Reply-To: <20240618-dev-mule-i2c-mux-v4-0-5462d28354c8@cherry.de>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
- Farouk Bouabid <farouk.bouabid@cherry.de>, 
- Quentin Schulz <quentin.schulz@cherry.de>, Peter Rosin <peda@axentia.se>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: VI1PR07CA0286.eurprd07.prod.outlook.com
- (2603:10a6:800:130::14) To VE1PR04MB6382.eurprd04.prod.outlook.com
- (2603:10a6:803:122::31)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C054C602;
+	Tue, 18 Jun 2024 16:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718726845; cv=none; b=lUlJS5xQSZ02fTDgdjTzmdBwFCZWHXIhLoPAzfdGPUvlp8t+88n0RDDiN/TIE5/xNnzYHYRg4jpFO8ETWQC/vZNwZMhlV7if7Z1PUE6xNb+j11xbO5kbuB2eeP0/r8PoAxi+qhnk/UFfNjR//kz35ymYqk05G6Pq3XdN7KUknyI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718726845; c=relaxed/simple;
+	bh=lZl6YIavIF+kRDulfiKUTLyof9QcmEhxe+li2JzXlLU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I7j9Y7rxJBBTac0jt5KZYK1zGHKZiqelkyTziEF/IexbFjxP+xLjzHjuo8uuh9IzY+YNdWAqEfM1KnpF4e+xw3n9aiNqY6neizHK+Uxr1mmoVK5X+ncnMcdIse1ZvYg+b4pF1WWzlbZkvhQw4pm35s0c5J2ow0Qq3ObMr3uXgSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSgSfmao; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d044aa5beso719947a12.2;
+        Tue, 18 Jun 2024 09:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718726842; x=1719331642; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0oM9Lpuyn36KdHk2D3fEb1p8PoQOkcQghffKZ0RgOmI=;
+        b=FSgSfmaoJVTOrrdplLTOJZPgz0VN/yVTLC9CgsGc7F8tJOCi1Pc1S8wynGHlBX4YOg
+         uudvcfBIcQIXeToeuXZAy8zL1wyfBGEJqLs1oYn3PZvCQXCBbF/h78sdpQE1m+LNNQc9
+         GfeIa4K3eJk2pABrY98IGqcbTJyNJICztVDD1r5G1vq5PXxKnwYYCyeQqtv/umQVzB2N
+         3+ydQ7WcMKFsRzloznA31GNw9yEY1ayU1cOq3lZrOv83qNWcFpFfVUIG6vzbzB+fSCtm
+         LvD8sqnsADl0yMBTbAiGW43DhUTog707l2nkhLgUEGQd5TBPsnKTTHZEUpvc7ytMKyzm
+         lX3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718726842; x=1719331642;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0oM9Lpuyn36KdHk2D3fEb1p8PoQOkcQghffKZ0RgOmI=;
+        b=hZFwCeo5r0F2OnAmKB6QNKfEoTP34ayaltZ2Jk8QgSco6NqmEQKWt6g/cXOmCFnLwb
+         VYwK0XhufwNUBgEvi2Rh8ldAiKwtbIXySA6wR83+uCTf7sJPIgZiI4oEJn+l5go9Jdqq
+         Mw1igiXlPzhPZrzAHE9DJcTX6RQ484TeV7+mGQx8+BqVcVX9F+oB8/aU4h7/33XQy+Cy
+         U2O1ifuJUOKZLkPYMuTO4MECTTeMTbKQTHdfnTi4cP08biyuBCFMqFFhenEljnssATh6
+         JhndupDVp75+4bg3dsEBX+N/h+oIShcu+HYLmgtd2u+/kQltD7qr2zWPJimcTja8GrcL
+         wfvg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5hV3PxlfOC4xjsMU7k3qv0Bt2ccRrGR7t3knuhvCma2Ccf3J7A7FH09J2C/ngFWU+cYP2QDaN6BbuXHwtM3e6gcFPttxbj4Kp5ZXHQsWe0eagob2NBSf5y/kozqwsL4kYM5mN4GR8ri9hvQ==
+X-Gm-Message-State: AOJu0YwTGr7m2tTOegeayPo2OULAPn+vUqkRdBpOcoaYfV3uWTaUUVUU
+	JqSz46IU4oXEQ65GKbs3mBu2myutPnw8tvmJt7F2JzljYGTugB/E1x3yQD3A/5vfbr4XOg7tDRk
+	Hlb5QzkV+3JCp42JcRcmNWMyhtJn87LKI
+X-Google-Smtp-Source: AGHT+IFjs9EVPcZ5EknH2hY5Vbz8DsydHG3hYmm4TN1ZEiaP41SGEv3GZKkeX6J3Eq7upNhMrDdxW/FP0IiAJe48pFE=
+X-Received: by 2002:a50:d648:0:b0:57c:61a2:ed47 with SMTP id
+ 4fb4d7f45d1cf-57cbd67f6b1mr7309877a12.24.1718726841682; Tue, 18 Jun 2024
+ 09:07:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VE1PR04MB6382:EE_|VI2PR04MB10642:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a2af6d7-26d7-495d-7bbc-08dc8fb11573
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|52116011|7416011|376011|366013|1800799021|38350700011|921017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Rm90MVhOa2VWVHpRYnhTWDQ0UjRpcDdmemtpZXFHK3ZSWnZRU1FkeFVqNS9n?=
- =?utf-8?B?dXlMS0oyYWlPODhrNTN6SFMzbkZnK1IzTSthOUh4N2tKdStVQ1FnQmRpeEZC?=
- =?utf-8?B?SGtFN1pwUFhhS1pYbEhWWnJSMHdSVWZoV3Y5WjFMTlFya0E0bjRBL3BvTDgw?=
- =?utf-8?B?OGYrRXhDRmRNb3hIY0JJZ3NxM09CRmx6VjUxY09ocVpZdUpxUGk1R0s1bGVt?=
- =?utf-8?B?aHB1c0NjVGFZcjhtT2pnZ0d5T1BxWFpzZndrR0MrbG5SR0IxTFh6bGt5MG1K?=
- =?utf-8?B?SE9uMWx0S1JPNWcrSmxUVWtLbU0vMmtpNlpSYWFSYzdYVHZLNU5zSDl2SjVT?=
- =?utf-8?B?RmFWOXlGaDhXUkYzSk14QnRZZ041MnpPRi92eXljR0c0MTN3MlhSTWVnWU03?=
- =?utf-8?B?VG5BTUpQeE5IeGhqYS8xc1VaZXZSdzZ3blhTa0ZlTjFnSWxMZElDQzhGNWpw?=
- =?utf-8?B?SnUxOW1ncEFxUVFhdnRGaG9WOHQza1Y3UkVEaWlvbzl1d2VXSVFtWWhnWlM1?=
- =?utf-8?B?WHhWREpKYWhjelZUTTJNWXBpY1FETFd5anZBMUczb2tsbGViY01lMElyejMr?=
- =?utf-8?B?NGVtZFRUMmVxVTVrZ3J1dXdMVjgzb1VGSEROb3RBWVE1UHdmbGMyanpZSkho?=
- =?utf-8?B?RGJYSEtjZnE4alF4NDh1ZXJmUVRMOVd0bUd4Tk9vcjlnNnp2dkJxNnMwc1JP?=
- =?utf-8?B?em1DYmNEeUxJSDRRTjh4R08waW9Ta3NpVnArMTExejZxbXVKNTFJR3NVcTZq?=
- =?utf-8?B?TWl2b2ZRRHplREdDSlFQVUhMdXp1T0NWQ1RwSjlJVkVwcCtGem8vWnZIM0Vx?=
- =?utf-8?B?dVQ2N0pDTDVuZzBQdXBrRGZyNUNxVWJ6WS83SVBQdU0razNLNWt4L2ViMnBT?=
- =?utf-8?B?b0hsKzBUVlJ5ZStyUWFzUnNaN0FKeGh4cnp0UDQwZmhaeEpIY3VqUmZTZzdG?=
- =?utf-8?B?M1RTaDYxdnAxeXdxQlNCRUZ1SDhMOUlFMEZpdjhWNENBSXFsWWhHTlN3TXI3?=
- =?utf-8?B?aFBHRmN2VStpYXZhaUNYdkdDamRwSlU2d1Y2cTZKaHl1VWw0TmlhV0xISVF0?=
- =?utf-8?B?aWJGNlBENFB2cW0rOEE1aVR5YXJVU3NaWUQwM3A2anJ1TTVyV1NLNHpxUzRX?=
- =?utf-8?B?M2xWdzZsZGlPd3ZIV0RaWFVNSUs1dHlMMGxLOUd0WUxNUkdqakxxbjdrb2Jr?=
- =?utf-8?B?QzJHZjJuZFZob2ZvVEJkMHlWODA4d3VUenNzdGJlaXNEc3V6L2pMVkdiclNL?=
- =?utf-8?B?ZzBIWUNPZG5EZkZyaFg0Z0RGZmMzTU9sWmpDc25vZktKS2ZQQ3cvWkk3RFFC?=
- =?utf-8?B?TlpLUzNrTVFEUlRPYUI3TUE4VTY2dVk2cjduNVdNRHBNcmYrbTFudmtBb2tz?=
- =?utf-8?B?ekU3U1VjdEVVdGF4TE1xWVBRMWxuT0VLb3A1YmgxN3U4WEVTcFUzMTJNdVFF?=
- =?utf-8?B?TkpwcmZaejRJWlBLSXJKR2ZxRFo4N29rVTFtQmJrTmduTm9VdlU2bWUybTB4?=
- =?utf-8?B?TXlGUFB6akV5LzhaSWo1OHVPYUEza21hWllsYWRmU3NIdnlBY0FxNTE2L0Yr?=
- =?utf-8?B?VVZOVFpvclZiQXR2T3I2WFcrY1I2V0I1QUF1anRZVjBnMlFCOGJ0UTlzR3Q2?=
- =?utf-8?B?c2hIVHBFenRzRWpJWTNRTjNnanJ2VGFmTjFPeDFrTFVHQlYzWU4raXBPWHQx?=
- =?utf-8?B?TmpleEtpLytscDJXbXlZTDBVTUtrMS9uZlI1QmJOenlpbVBSdzNNbGIyaTdV?=
- =?utf-8?B?V01IUHRGZGROa1lLMGdUR2ZXOGlHRXF3c0lYMWx6VWtzeVpVTGdSMElqVVV1?=
- =?utf-8?B?VnByRk56YW1USEc4OU84RE5YVmZDSUkzMkx1SWFud0orc3Q0bkxnTWd0QzhM?=
- =?utf-8?Q?eJoPSzr7dwSz6?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR04MB6382.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(52116011)(7416011)(376011)(366013)(1800799021)(38350700011)(921017);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NXRMSTRGb2hDUmQxWFlSM25BWitrSWFQMDlLN0hBQWtrV3pCVHRmNnZYOCs3?=
- =?utf-8?B?NThpSGk4YmhxOUdjdEJDeXF4UXVYWVZodnVMenBwSWZkWERQSlEwQnVvY3cv?=
- =?utf-8?B?S3AyUDRtKzg2bEJVOFJZa0FQekEwcXVFdElWZ1Z0N0c1T0FrNCtaaTZBWXhP?=
- =?utf-8?B?N1FxLzRwSm5QdWNLaXZBZTh2RDlxM0JGQXJpZzlNaVJGUGVhRjFNSmRTOVhl?=
- =?utf-8?B?OHpLYVZ4ZytuUWxRais1S1BVNnJQek0ybXQ4V3kxNDRIZ2xRcTAyS2wzSzZ1?=
- =?utf-8?B?ZGJDS1NLNVNHTDF3Z1MrSUVYNkJWTXBjdzBHOThFeUZ5bTU1UittVzd5Uk9p?=
- =?utf-8?B?RnErU0x1TnVJNDBLNGJZOEVITlB4MEJSM0xSbmlKNkovY3I0R1NFRzAxUXBV?=
- =?utf-8?B?V01TcTFEblMyVG1rd2JYL1B3aFdSYkNnLy8vMEpveGtxc1FWajRXK1ZJT2tV?=
- =?utf-8?B?elFGOXBVaUk2alpLMGNrZ2cwQUVsZ0FNRU8vUWl4WTFWdllVNGZObFVlT0Iz?=
- =?utf-8?B?REFCejlDNkMxbzAxS1puNlZXOGd5dzNUVml0eHhSWW1rYVNodllTOEZEanZH?=
- =?utf-8?B?VldyYjFITGpMSWhPYUkvZ3ozaGJqcW1Ta09uaVEwTTQyd016YWloSk8yV3lE?=
- =?utf-8?B?TURnV0VVb3BpRGo1TEtTWDk3bnJsdGtra1VvQ242NEFBSWMzZjRHQXpHN09B?=
- =?utf-8?B?NFJCRE5uZytDMWgwaURCbUs0Z3RmM0dJaEt6eE54MXQ5a2NvUlU2V2Faaitx?=
- =?utf-8?B?OHZveFRCOVVuYkVtL1FMclFxVmRaWWJTYnNmRTZweVRkcXdVZzdPdS90b1Jo?=
- =?utf-8?B?QmwzdGU1dnRyOW8vMTN6dzlOK1QySFVvSWhQNjR0RVFidm5WYS9kWWFIRXk3?=
- =?utf-8?B?aHFsSjU1a25nUmU2YXRVbjlEQzZlZGdITHhJd3dyT2toempPVVprU2VDTHJT?=
- =?utf-8?B?U2xHOGFXM3cxWmZ2ZnlQQ2tIYXBLRVE2NXpwdE1jMldUL1A0ZW5CWTk0bFdl?=
- =?utf-8?B?RGF5cFFDUjMxTWt4R0JueWQwZUJINlZ3Ly9yK3Voang1OHlNRWJmb1VGQ1RS?=
- =?utf-8?B?Ulc0TnRmdDlDRlpCMEMxNmFQTU5HMElNZlExNHBpMTZ4Syt2T2lvc3Jac1Fo?=
- =?utf-8?B?VVAxK3VYc0p0VnJsc0UzbW95cHZIVk1YeE9uejZUNDN4R1JGVmVDeER6L0Zp?=
- =?utf-8?B?N3FFU244N2NUZitXMjFSNnkzRVRzTXZLbHZ5Ylk0V1pnK3NZZFUzbWpQL0t5?=
- =?utf-8?B?WUQ4VVBmWFZCdmNoK2dVelp0WS9nM1hScXlMb25MTVJPbnpTUk5oclpTL1dh?=
- =?utf-8?B?Q1Fsd1U3YXpvMWdVajJ2NkdKam1qRHFiWWtjSkJoMmYvTHhWUndSVnB4Z3ph?=
- =?utf-8?B?TFc3KzJsMnV1eGVQcHZZdUxSNzI3cHlpckJXK3M3Mnl5MkxUd0RuY21TK2dS?=
- =?utf-8?B?WHBqdDY5d0ZidmRMOXJQMnBEaFIzajY3ZDZtWVU5QS8xNzQ0cm1mcmhQNlF2?=
- =?utf-8?B?c3A0QkIxVmk5TTE5YVpRNjRuWlpkS2ZsNkNiNHFBYm56ZjRsZUo1QXNjdnNn?=
- =?utf-8?B?YmJJUmpmbnFnY2Z2eWtKcWtoMkZaK0hjc0wzdGM5WG5DdXBRWittcEtwdVly?=
- =?utf-8?B?OG1YSTd4WlZ3c0Z2dVFjM2RNTjRSQWcvNFN0NzdiTGw2WHBOdkorVTBvd2V5?=
- =?utf-8?B?OTFDWWd6SFFRRmtXZmhkb1VGYjNhTDUzUlgzS2dhUUxuL0NHSG9PNkF4VHNB?=
- =?utf-8?B?RnJIWGFQU2F2QUhUZEFMRHFzSklseU1vNXFva09zMFpaSm55ODZpQTJCNS9h?=
- =?utf-8?B?ZFlDNk9veFNPOWZUTHE1TG5IWjlYdHlJMlRjazUrY2dORGFXNGh6WmdxSEho?=
- =?utf-8?B?cjhGcm5yVVFZSTU4UUNwaXNJdzV3eHRmWkhuVEROQVdtaTdoUE93dE5BK3V5?=
- =?utf-8?B?anYraTF4L2hEbUV0eks3MWJuQjFyTlNIZlFLK29Dd3IrWjF3TllVOXVtT1hk?=
- =?utf-8?B?TUI1b0d2NStLcDA3WGRpaUxTUFVSZkt2RkJsRE5mTmFBS1lZRUVKdFBtSkp2?=
- =?utf-8?B?SWtDVEdnb0RMTThtbmR3UExxR0hEL2hVR1ZVTFcyMDZxTVJ5MkMxVlhlaHRq?=
- =?utf-8?B?YnBnSmU3TE1UOC9zdkVIU0FjV2tvS0ZWbTNJNWYzcHNKU3dVL1orZUlFNUFJ?=
- =?utf-8?B?dHc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a2af6d7-26d7-495d-7bbc-08dc8fb11573
-X-MS-Exchange-CrossTenant-AuthSource: VE1PR04MB6382.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 16:09:51.4973
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4OQnwMSj4S837q2UyAyogROOIqTC0478rrDBJhVRsfav5/e2R90uDD6JuulUvmjhzfowUMaz5tLCqxI5gFopHZrrqiz6RY3cr+6hC54Dy/g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10642
+References: <20240604150136.493962-1-robdclark@gmail.com> <6f97a4b4-cdbe-466c-80d4-adc8da305f75@arm.com>
+ <CAF6AEGv+Ge2SD4=j1QhXfG+KkOzvFM+LieCqKuM20YL8gp5PRQ@mail.gmail.com>
+ <80fc63e5-0e79-47b3-91ae-90d7c7bc3f66@arm.com> <CAF6AEGuDq=YcyKuTfr1xZtff+VGyeeVWe40E4KEy--umwepcEQ@mail.gmail.com>
+ <CAN6iL-QqZXsFDB=3yCfqQeF0H5QaS_Trm62FxvDF-+qPoQ-VNA@mail.gmail.com>
+In-Reply-To: <CAN6iL-QqZXsFDB=3yCfqQeF0H5QaS_Trm62FxvDF-+qPoQ-VNA@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 18 Jun 2024 09:07:09 -0700
+Message-ID: <CAF6AEGv8LgAA91C+SkmDZ2besZyA8iCpgn6BStBJ7htZ21T9dg@mail.gmail.com>
+Subject: Re: [PATCH] iommu/arm-smmu: Pretty-print context fault related regs
+To: Pranjal Shrivastava <praan@google.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>, 
+	Rob Clark <robdclark@chromium.org>, Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Jerry Snitselaar <jsnitsel@redhat.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Mule emulates amc6821 and an I2C mux (mfd:0x18). The isl1208 is exposed
-behind this mux.
+On Tue, Jun 18, 2024 at 8:47=E2=80=AFAM Pranjal Shrivastava <praan@google.c=
+om> wrote:
+>
+> On Tue, Jun 18, 2024 at 8:28=E2=80=AFPM Rob Clark <robdclark@gmail.com> w=
+rote:
+> >
+> > On Mon, Jun 17, 2024 at 10:33=E2=80=AFAM Robin Murphy <robin.murphy@arm=
+.com> wrote:
+> > >
+> > > On 2024-06-17 5:18 pm, Rob Clark wrote:
+> > > > On Mon, Jun 17, 2024 at 6:07=E2=80=AFAM Robin Murphy <robin.murphy@=
+arm.com> wrote:
+> > > >>
+> > > >> On 04/06/2024 4:01 pm, Rob Clark wrote:
+> > > >>> From: Rob Clark <robdclark@chromium.org>
+> > > >>>
+> > > >>> Parse out the bitfields for easier-to-read fault messages.
+> > > >>>
+> > > >>> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > >>> ---
+> > > >>> Stephen was wanting easier to read fault messages.. so I typed th=
+is up.
+> > > >>>
+> > > >>> Resend with the new iommu list address
+> > > >>>
+> > > >>>    drivers/iommu/arm/arm-smmu/arm-smmu.c | 53 +++++++++++++++++++=
+++++++--
+> > > >>>    drivers/iommu/arm/arm-smmu/arm-smmu.h |  5 +++
+> > > >>>    2 files changed, 54 insertions(+), 4 deletions(-)
+> > > >>>
+> > > >>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iomm=
+u/arm/arm-smmu/arm-smmu.c
+> > > >>> index c572d877b0e1..06712d73519c 100644
+> > > >>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> > > >>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> > > >>> @@ -411,6 +411,8 @@ static irqreturn_t arm_smmu_context_fault(int=
+ irq, void *dev)
+> > > >>>        unsigned long iova;
+> > > >>>        struct arm_smmu_domain *smmu_domain =3D dev;
+> > > >>>        struct arm_smmu_device *smmu =3D smmu_domain->smmu;
+> > > >>> +     static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVA=
+L,
+> > > >>> +                                   DEFAULT_RATELIMIT_BURST);
+> > > >>>        int idx =3D smmu_domain->cfg.cbndx;
+> > > >>>        int ret;
+> > > >>>
+> > > >>> @@ -425,10 +427,53 @@ static irqreturn_t arm_smmu_context_fault(i=
+nt irq, void *dev)
+> > > >>>        ret =3D report_iommu_fault(&smmu_domain->domain, NULL, iov=
+a,
+> > > >>>                fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : =
+IOMMU_FAULT_READ);
+> > > >>>
+> > > >>> -     if (ret =3D=3D -ENOSYS)
+> > > >>> -             dev_err_ratelimited(smmu->dev,
+> > > >>> -             "Unhandled context fault: fsr=3D0x%x, iova=3D0x%08l=
+x, fsynr=3D0x%x, cbfrsynra=3D0x%x, cb=3D%d\n",
+> > > >>> -                         fsr, iova, fsynr, cbfrsynra, idx);
+> > > >>> +     if (ret =3D=3D -ENOSYS && __ratelimit(&rs)) {
+> > > >>> +             static const struct {
+> > > >>> +                     u32 mask; const char *name;
+> > > >>> +             } fsr_bits[] =3D {
+> > > >>> +                     { ARM_SMMU_FSR_MULTI,  "MULTI" },
+> > > >>> +                     { ARM_SMMU_FSR_SS,     "SS"    },
+> > > >>> +                     { ARM_SMMU_FSR_UUT,    "UUT"   },
+> > > >>> +                     { ARM_SMMU_FSR_ASF,    "ASF"   },
+> > > >>> +                     { ARM_SMMU_FSR_TLBLKF, "TLBLKF" },
+> > > >>> +                     { ARM_SMMU_FSR_TLBMCF, "TLBMCF" },
+> > > >>> +                     { ARM_SMMU_FSR_EF,     "EF"     },
+> > > >>> +                     { ARM_SMMU_FSR_PF,     "PF"     },
+> > > >>> +                     { ARM_SMMU_FSR_AFF,    "AFF"    },
+> > > >>> +                     { ARM_SMMU_FSR_TF,     "TF"     },
+> > > >>> +             }, fsynr0_bits[] =3D {
+> > > >>> +                     { ARM_SMMU_FSYNR0_WNR,    "WNR"    },
+> > > >>> +                     { ARM_SMMU_FSYNR0_PNU,    "PNU"    },
+> > > >>> +                     { ARM_SMMU_FSYNR0_IND,    "IND"    },
+> > > >>> +                     { ARM_SMMU_FSYNR0_NSATTR, "NSATTR" },
+> > > >>> +                     { ARM_SMMU_FSYNR0_PTWF,   "PTWF"   },
+> > > >>> +                     { ARM_SMMU_FSYNR0_AFR,    "AFR"    },
+> > > >>> +             };
+> > > >>> +
+> > > >>> +             pr_err("%s %s: Unhandled context fault: fsr=3D0x%x =
+(",
+> > > >>> +                    dev_driver_string(smmu->dev), dev_name(smmu-=
+>dev), fsr);
+> > > >>> +
+> > > >>> +             for (int i =3D 0, n =3D 0; i < ARRAY_SIZE(fsr_bits)=
+; i++) {
+> > > >>> +                     if (fsr & fsr_bits[i].mask) {
+> > > >>> +                             pr_cont("%s%s", (n > 0) ? "|" : "",=
+ fsr_bits[i].name);
+> > > >>
+> > > >> Given that SMMU faults have a high likelihood of correlating with =
+other
+> > > >> errors, e.g. the initiating device also reporting that it got an a=
+bort
+> > > >> back, this much pr_cont is a recipe for an unreadable mess. Furthe=
+rmore,
+> > > >> just imagine how "helpful" this would be when faults in two contex=
+ts are
+> > > >> reported by two different CPUs at the same time ;)
+> > > >
+> > > > It looks like arm_smmu_context_fault() is only used with non-thread=
+ed
+> > > > irq's.  And this fallback is only used if driver doesn't register i=
+t's
+> > > > own fault handler.  So I don't think this will be a problem.
+> > >
+> > > You don't think two different IRQs can fire on two different CPUs at =
+the
+> > > same time (or close to)? It's already bad enough when multiple CPUs
+> > > panic and one has to pick apart line-by-line interleaving of the
+> > > registers/stacktraces - imagine how much more utterly unusable that
+> > > would be with bits of different dumps randomly pr_cont'ed together on=
+to
+> > > the same line(s)...
+> >
+> > _different_ irq's, yes
+> >
+> > Anyways, the reason for pr_cont() was that there wasn't another
+> > reasonable way to decide where separator chars were needed with a
+> > single pr_err().  I could instead construct a string on stack and
+> > print that in a single call, but pr_cont() seemed like the more
+> > reasonable alternative.
+> >
+> > BR,
+> > -R
+>
+> The string approach sounds good to me, if possible, let's break this
+> out into a helper function, something like `arm_smmu_log_ctx_fault`
+> and put it under a module parameter, I guess? Not sure if this
+> requires a new Kconfig option, would like Robin's opinion on this.
 
-Add the mux node and isl1208 as a default device.
+I did notice that qcom_smmu_context_fault() appeared recently, also
+adding similar pretty-print.. but only for things with a tbu driver
+(and a bit more open coded).  So a helper would probably make sense.
 
-Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
----
- arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi | 33 +++++++++++++++++++------
- 1 file changed, 26 insertions(+), 7 deletions(-)
+Less sure about mod param or Kconfig, but I tend to be of the opinion
+that the kernel already has too much configurability.. others may have
+a different view.
 
-diff --git a/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi b/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi
-index bb1aea82e666..cb84295f118d 100644
---- a/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi
-@@ -9,6 +9,7 @@
- 
- / {
- 	aliases {
-+		i2c10 = &i2c10;
- 		mmc0 = &emmc;
- 		mmc1 = &sdio;
- 		rtc0 = &rtc_twi;
-@@ -291,15 +292,33 @@ &i2c1 {
- 	/* SE05x is limited to Fast Mode */
- 	clock-frequency = <400000>;
- 
--	fan: fan@18 {
--		compatible = "ti,amc6821";
-+	mule@18 {
-+		compatible = "tsd,mule";
- 		reg = <0x18>;
--		#cooling-cells = <2>;
--	};
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		fan: fan@18 {
-+			compatible = "ti,amc6821";
-+			reg = <0x18>;
-+		};
-+
-+		i2c-mux {
-+			compatible = "tsd,mule-i2c-mux";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 
--	rtc_twi: rtc@6f {
--		compatible = "isil,isl1208";
--		reg = <0x6f>;
-+			i2c10: i2c@0 {
-+				reg = <0x0>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				rtc_twi: rtc@6f {
-+					compatible = "isil,isl1208";
-+					reg = <0x6f>;
-+				};
-+			};
-+		};
- 	};
- };
- 
+BR,
+-R
 
--- 
-2.34.1
-
+> Thanks,
+> Pranjal
+>
+> >
+> > > Even when unrelated stuff gets interleaved because other CPUs just
+> > > happen to be calling printk() at the same time for unrelated reasons
+> > > it's still annoying, and pr_cont makes a bigger mess than not.
+> > > >> I'd prefer to retain the original message as-is, so there is at le=
+ast
+> > > >> still an unambiguous "atomic" view of a fault's entire state, then
+> > > >> follow it with a decode more in the style of arm64's ESR logging. =
+TBH I
+> > > >> also wouldn't disapprove of hiding the additional decode behind a
+> > > >> command-line/runtime parameter, since a fault storm can cripple a =
+system
+> > > >> enough as it is, without making the interrupt handler spend even l=
+onger
+> > > >> printing to a potentially slow console.
+> > > >
+> > > > It _is_ ratelimited.  But we could perhaps use a higher loglevel (p=
+r_debug?)
+> > >
+> > > Yeah, I'd have no complaint with pr_debug/dev_dbg either, if that sui=
+ts
+> > > your use case. True that the ratelimit may typically mitigate the
+> > > overall impact, but still in the worst case with a sufficiently slow
+> > > console and/or a sufficiently large amount to print per __ratelimit()
+> > > call, it can end up being slow enough to stay below the threshold. Do=
+n't
+> > > ask me how I know that :)
+> > >
+> > > Thanks,
+> > > Robin.
 
