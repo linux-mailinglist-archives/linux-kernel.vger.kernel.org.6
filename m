@@ -1,144 +1,215 @@
-Return-Path: <linux-kernel+bounces-219983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B9090DB27
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:55:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E767E90DB29
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B792B22CB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB213284CE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6224914D435;
-	Tue, 18 Jun 2024 17:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5421414C58E;
+	Tue, 18 Jun 2024 17:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="kB2rkWWt"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECWHyF+a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38F013F003
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 17:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9326A41C89;
+	Tue, 18 Jun 2024 17:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718733334; cv=none; b=QjSlRHn5p8XotVRqg0AGBddeIMAtkTJgaKfmEoDSd1EIOCK8aXOxIR53bdy3aTh23LGEaUjveBvQJD2PvODY1flQpxvGhfSfHm9YmFsDSGW024MYh+SzMFppeqQpAgBK0xDbZUeA5wixfyGzFDOGWN5Bgr9SFRzzcB6zOrGrh8Y=
+	t=1718733372; cv=none; b=GYJ7GJLuHoJLz/c4tij0STkdElABT5XqL4AeK39+bJ4jq9Kbsr/xVyx2tyvd8fQdv1dH4uqPU+O0O0PfVOa4w+LJpZ0Y2thsky4eLsCd0eA6+xKcTVvhtLiHBh98s40MAq48zwgiSEydwpPFUjY5H9dtZEw9dUHyn0Lh2vGGYcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718733334; c=relaxed/simple;
-	bh=DTLUZ676QRfLifqNmaQ9PMFqLKool7WG4v5zx1rImQY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WZX8+rDg0qXAbSxIoEj6bouF8Robjz9pgDQ3WcV1As+xCj6pjVsr+zQuZYyELAbIBhKWvLDnhpvW39hHFpSRC363gR4Aig2zgYHaeIQLSUemXr+A+IfUawp4sV4tH+Bj0SUdt+1p6SytFS2ADJqkeCMljH4kA5RDvW5RxwQRvig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=kB2rkWWt; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6f177b78dcso731117566b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:55:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1718733331; x=1719338131; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zTmVnnzmQsdyJIvy7P5jLUWUPiZqPVgC2Gi3EXBWni0=;
-        b=kB2rkWWtppZXitxZLFcDtx+kpT/Qndcko9E0yU6rFWKm0pqGFZkM2b5IbuU8JRKOe7
-         55XWcF1ZAqkciDUsfBtgdElcekhUL8G9arNvwgE+wC1Plt50vLW6uz2n4Mc7cZyU3haY
-         x/yw7tTvwOEwCpXq+vW8Y1NmlMZac/mHcEla66myzgXn8FVuPsUFPX1fT83YGdY9DweS
-         TFneWPMK3g6Kob0idDmuAQs+L9o4Rv8SKoW/OY0YPLt4lWCvRgqI9FQOIGKyOm5YYmxj
-         yqiuXK9ljx4+Qyxa4Uj80//xwuWtlzBDsQhk2SHodrUqilTla3eOibexHNV9yds/F9J6
-         il/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718733331; x=1719338131;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zTmVnnzmQsdyJIvy7P5jLUWUPiZqPVgC2Gi3EXBWni0=;
-        b=P3msGVxQfa4ANsQWX7oKKZOJsyI7S/+ll7+4CWTJ6ZuVJXFAO2IG8dJHg+y5tsRwhp
-         RrjnWZ05yh0l5/OGpFwEKkCtMfpY0akSTEvHHxbJeczCI9A2snJngYX+OONQjHIIlh51
-         XtCJnBdnGVf9ZJGVUzCeyZjb7w4tw7GVBOA3jJcewyH5dTZtTs9T/zic9Ilx+afnOb6v
-         SDRe4ip06nMOnailfbrhaYWURirrhVyfyLzgpPEZEdtbcs1Q5Rt9LS0aWs2Mv/VjoI1F
-         gt0hFTCabTHagMUebINimzrjhFpBcMwLMQp6itMY64DOSgQj0u3aQ7Rv7jnXIM6Z9wXC
-         8Qjw==
-X-Gm-Message-State: AOJu0YwbUIRI2pTEJkUmKLX2xi9EzWT4qYMlXJZ0m4t28Ocn/mDyQOK8
-	2Yos8qAmyD894RvpDw5WsQZNi0p34j2ZaACgY9DCXbUyAopXtGOTpYJCjeGHC2WlkfpGnLiURuC
-	RLqRWj1rwO9PEheRRYitwo8zHolpSwXjn2KARtbO/fPo5eGY=
-X-Google-Smtp-Source: AGHT+IGDO9MunPaTLk2H5XQt/NMq7+U7oPvCv8jQC1cNGWo0/s+agXuJNN4zhVSHAUJqe1AspkjtzsT7TrN2MZj0MyE=
-X-Received: by 2002:a17:906:c10d:b0:a6f:cce:4457 with SMTP id
- a640c23a62f3a-a6fab7dc751mr15171166b.71.1718733331107; Tue, 18 Jun 2024
- 10:55:31 -0700 (PDT)
+	s=arc-20240116; t=1718733372; c=relaxed/simple;
+	bh=+ouZkMb6OPt6rOGE+OpfwKOpmrEq55LDoi2O71YHst0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S1fOev8SuiEl9ruNmXE+t9tPDAXN9ATR9rGwn8T/OYvGfM2WcKhd/mOy/kmRr+iynS/Pqg2w9Y7LcM8iVs4mERVMPpsS5nqcA3OSa6sF/Mw7H6d/SOHtDlP6ohK/jC6VVX8Fq9p7rRtGBioExUVeBDvEAiUP/I/aD7SFbCt74/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECWHyF+a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A70AC3277B;
+	Tue, 18 Jun 2024 17:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718733372;
+	bh=+ouZkMb6OPt6rOGE+OpfwKOpmrEq55LDoi2O71YHst0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ECWHyF+aIDHlNpn5pxzycRJ4y6nojDmXufqIRiH6LwfU1Kl5pZ04sOfXbcpoI7wk3
+	 SM11dlJFdEvV27zxZmswP9ABFL5lHdYQKjHZtgz8a5fB0x7FoNWyyogEdzWyhvS56n
+	 fel/7OKMHQfdff1awhpOEy51cKHtW40EOeOPDioMflBQ+qsLN+5Go99ny1ljOx+jJC
+	 pgFP0YqwYjpjGTjjeqgkLAW3NrVwS28dxZaw1o1/+egnsxEYXdigGbf2M/EHYOWgvo
+	 2h1FFVir73XM6guIUJkmJL8bYZS5PgYBjo7PGpWiZQlRaSS7Tu+szdGA2nOB34seYJ
+	 vPUg7iRXxSbog==
+Date: Tue, 18 Jun 2024 14:56:08 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 5/5] perf trace: Add test for enum augmentation
+Message-ID: <ZnHKOKFgJSaJA9UI@x1>
+References: <20240618152652.3446472-1-howardchu95@gmail.com>
+ <20240618152652.3446472-6-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614190646.2081057-1-Jason@zx2c4.com> <20240614190646.2081057-5-Jason@zx2c4.com>
- <CALCETrVQtQO87U3SEgQyHfkNKsrcS8PjeZrsy2MPAU7gQY70XA@mail.gmail.com> <ZnDQ-HQH8NlmCcIr@zx2c4.com>
-In-Reply-To: <ZnDQ-HQH8NlmCcIr@zx2c4.com>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Tue, 18 Jun 2024 10:55:17 -0700
-Message-ID: <CALCETrWzXQMXjvL+nGq-+aLVUeiABJ46DACtLnrLXxmwh9s_dg@mail.gmail.com>
-Subject: Re: [PATCH v17 4/5] random: introduce generic vDSO getrandom() implementation
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de, 
-	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, "Carlos O'Donell" <carlos@redhat.com>, 
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <dhildenb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618152652.3446472-6-howardchu95@gmail.com>
 
-On Mon, Jun 17, 2024 at 5:12=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c4.com=
-> wrote:
->
-> Hi Andy,
->
-> On Mon, Jun 17, 2024 at 05:06:22PM -0700, Andy Lutomirski wrote:
-> > On Fri, Jun 14, 2024 at 12:08=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c=
-4.com> wrote:
-> > >
-> > > Provide a generic C vDSO getrandom() implementation, which operates o=
-n
-> > > an opaque state returned by vgetrandom_alloc() and produces random by=
-tes
-> > > the same way as getrandom(). This has a the API signature:
-> > >
-> > >   ssize_t vgetrandom(void *buffer, size_t len, unsigned int flags, vo=
-id *opaque_state);
-> >
-> > Last time around, I mentioned some potential issues with this function
-> > signature, and I didn't see any answer.  My specific objection was to
-> > the fact that the caller passes in a pointer but not a length, and
-> > this potentially makes reasoning about memory safety awkward,
-> > especially if anything like CRIU is involved.
->
-> Oh, I understood this backwards last time - I thought you were
-> criticizing the size_t len argument, which didn't make any sense.
->
-> Re-reading now, what you're suggesting is that I add an additional
-> argument called `size_t opaque_len`, and then the implementation does
-> something like:
->
->     if (opaque_len !=3D sizeof(struct vgetrandom_state))
->         goto fallback_syscall;
->
-> With the reasoning that falling back to syscall is better than returning
-> -EINVAL, because that could happen in a natural way due to CRIU. In
-> contrast, your objection to opaque_state not being aligned falling back
-> to the syscall was that it should never happen ever, so -EFAULT is more
-> fitting.
->
-> Is that correct?
+On Tue, Jun 18, 2024 at 11:26:52PM +0800, Howard Chu wrote:
+> Check for vmlinux's existence in sysfs as prerequisite.
 
-Yes, exactly.
+That is good, well done, but then we need to check if gcc is installed,
+and it may not be and we want to test this feature even so.
 
-My alternative suggestion, which is far less well formed, would be to
-make the opaque argument be somehow not pointer-like and be more of an
-opaque handle.  So it would be uintptr_t instead of void *, and the
-user API would be built around the user getting a list of handles
-instead of a block of memory.
+So please take a look at git log tools/perf/tests/workloads/, then add a
+tools/perf/tests/workloads/landlock_add_rule.c and finally you'll be
+able to replace the inline landlock .c file + gcc to build it and
+instead use:
 
-The benefit would be a tiny bit less overhead (potentially), but the
-API would need substantially more rework.  I'm not convinced that this
-would be worthwhile.
+  perf test -w landlock_add_rule
 
---Andy
+As your workload.
+
+Then you update the last patch in your series, test it all and resend
+the whole series with a v2, with the description of v1 and v2 in the
+cover letter.
+
+Thanks,
+
+- Arnaldo
+ 
+> Compile and run a script which calls landlock_add_rule syscall,
+> trace the syscall to judge if the output is desirable.
+> 
+> Trace the non-syscall tracepoint 'timer:hrtimer_init' and
+> 'timer:hrtimer_start', see if the 'mode' argument is augmented,
+> the 'mode' enum argument has the prefix of 'HRTIMER_MODE_'
+> in its name.
+> 
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/tests/shell/trace_btf_enum.sh | 104 +++++++++++++++++++++++
+>  1 file changed, 104 insertions(+)
+>  create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
+> 
+> diff --git a/tools/perf/tests/shell/trace_btf_enum.sh b/tools/perf/tests/shell/trace_btf_enum.sh
+> new file mode 100755
+> index 000000000000..14c73b0b594d
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/trace_btf_enum.sh
+> @@ -0,0 +1,104 @@
+> +#!/bin/sh
+> +# perf trace enum augmentation tests
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +err=0
+> +set -e
+> +
+> +syscall="landlock_add_rule"
+> +non_syscall="timer:hrtimer_init,timer:hrtimer_start"
+> +
+> +landlock_script=$(mktemp /tmp/landlock-XXXXX.c)
+> +landlock_ex=$(echo $landlock_script | sed -E 's/(.*).c$/\1/g')
+> +
+> +landlock_fd=24
+> +landlock_flags=25
+> +
+> +. "$(dirname $0)"/lib/probe.sh
+> +skip_if_no_perf_trace || exit 2
+> +
+> +enum_aug_prereq() {
+> +  echo "Checking perf trace enum augmentation prerequisites"
+> +  if ! ls /sys/kernel/btf/vmlinux 1>/dev/null 2>&1
+> +  then
+> +    echo "trace+enum test [Skipped missing vmlinux BTF support]"
+> +    err=2
+> +    return
+> +  fi
+> +}
+> +
+> +prepare_landlock_script() {
+> +  echo "Preparing script for ${syscall} syscall"
+> +
+> +  cat > $landlock_script << EOF
+> +#define _GNU_SOURCE
+> +#include <unistd.h>
+> +#include <linux/landlock.h>
+> +#include <sys/syscall.h>
+> +
+> +int main()
+> +{
+> +	int fd = ${landlock_fd};
+> +	int flags = ${landlock_flags};
+> +	struct landlock_path_beneath_attr path_beneath_attr = {
+> +	    .allowed_access = LANDLOCK_ACCESS_FS_READ_FILE,
+> +	};
+> +	struct landlock_net_port_attr net_port_attr = {
+> +	    .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +	    .port = 443,
+> +	};
+> +
+> +	syscall(SYS_landlock_add_rule, fd, LANDLOCK_RULE_PATH_BENEATH,
+> +		&path_beneath_attr, flags);
+> +
+> +	syscall(SYS_landlock_add_rule, fd, LANDLOCK_RULE_NET_PORT,
+> +		&net_port_attr, flags);
+> +
+> +	return 0;
+> +}
+> +EOF
+> +
+> +  gcc $landlock_script -o $landlock_ex
+> +}
+> +
+> +trace_landlock() {
+> +  echo "Tracing syscall ${syscall}"
+> +  if perf trace -e $syscall $landlock_ex 2>&1 | \
+> +     grep -q -E ".*landlock_add_rule\(ruleset_fd: ${landlock_fd}, rule_type: (LANDLOCK_RULE_PATH_BENEATH|LANDLOCK_RULE_NET_PORT), rule_attr: 0x[a-f0-9]+, flags: ${landlock_flags}\) = -1.*"
+> +  then
+> +    err=0
+> +  else
+> +    err=1
+> +  fi
+> +}
+> +
+> +trace_non_syscall() {
+> +  echo "Tracing non-syscall tracepoint ${non-syscall}"
+> +  if perf trace -e $non_syscall --max-events=1 2>&1 | \
+> +     grep -q -E '.*timer:hrtimer_.*\(.*mode: HRTIMER_MODE_.*\)$'
+> +  then
+> +    err=0
+> +  else
+> +    err=1
+> +  fi
+> +}
+> +
+> +cleanup() {
+> +  rm -f $landlock_script $landlock_ex
+> +}
+> +
+> +enum_aug_prereq
+> +
+> +prepare_landlock_script
+> +
+> +if [ $err = 0 ]; then
+> +  trace_landlock
+> +fi
+> +
+> +if [ $err = 0 ]; then
+> +  trace_non_syscall
+> +fi
+> +
+> +cleanup
+> +
+> +exit $err
+> -- 
+> 2.45.2
+> 
 
