@@ -1,57 +1,74 @@
-Return-Path: <linux-kernel+bounces-220019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383D490DB82
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:20:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7D590DBAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC0D0283400
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:20:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD3FA1C22759
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5961684B3;
-	Tue, 18 Jun 2024 18:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C4615EFA3;
+	Tue, 18 Jun 2024 18:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b83Rt0oM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NS89/eA9"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA0416630B;
-	Tue, 18 Jun 2024 18:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10E72139C6;
+	Tue, 18 Jun 2024 18:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718734704; cv=none; b=pK9UAJiGPXHPfoKr9AJDyss3JOFOthiiONEsRRSlNzNG+F333BNC9MuMQREdcC2CAaFOgH4RhKRzNiMANgLopKR5suNOyC1656jQ3FgLOdIB7ouk6tFxcwajR3HqPT5d98ayM5dc3veXZOk9FZx04orqwEKUXO2qAZfyXWMRKbU=
+	t=1718735901; cv=none; b=rWu/41OX80DpSyZVV6M9vl6d1etHT9sDCimit0J9i3nFNdz+uJn0+yOJBmpunPmu9NEONKXXjRkl3p/vJ5pMHK+VM71pGhhuT/mE1p3J18VCaZhtbE3zRdy47AVZUh72cWTVCFHNQy8ve+u2pcUVMs56TVmhaYgUQjjzmNXy2JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718734704; c=relaxed/simple;
-	bh=EHvHHvs3IdQ5P9rJaPK4ESC9R2II3qWxcAR6kWa1t4Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Thx5gemWxCHeFebJzz9LyuFriogJHRPVHaLnsPzfj3TkKpTjFIc7krSRjHN2Os3Mgs7DHY1rmJKtN1H//g3bzmxCovGY3pmT5eHKVU94Kfx0uGW+3U18S7vWg+pZ42OKWnf/9ibQDz//g8ZqeEtz5zOZRxnx/etvkMj7/TpiyBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b83Rt0oM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B564AC4AF1C;
-	Tue, 18 Jun 2024 18:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718734704;
-	bh=EHvHHvs3IdQ5P9rJaPK4ESC9R2II3qWxcAR6kWa1t4Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b83Rt0oMqPtrzFHwkktThAbwt6RLmjgTiYcJl5Yy8yP9GJeb/W67nnfp5KZK0arUv
-	 AILftpGiE3WMsdcmNVeO06uiWCOP57jzQFLd1M8NPK1GdpHyeeBWFks1meqa/uR74z
-	 DWfr3k0KW/cwRj2FJZ4zBkjFtSID93TaQ4C7+cS9bb0DBl9MUr+I84JLe5+2BrtIRJ
-	 BUqf6UfT/EeGXEDHkhVbNrnNcvbOZNlJIgR/RwJHs/r28rZ1dBIEY6OkC+j0xFOk89
-	 gykTKPRNkIWYUZK8UdpT7GsbE6qwRUCV9YHJ614stO3SWX0cnJ/oDWEJL45ZS2dn1m
-	 2zQtXOPOaSZGg==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 12/12] mm/damon/lru_sort: remove unnecessary online tuning handling code
-Date: Tue, 18 Jun 2024 11:18:09 -0700
-Message-Id: <20240618181809.82078-13-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240618181809.82078-1-sj@kernel.org>
-References: <20240618181809.82078-1-sj@kernel.org>
+	s=arc-20240116; t=1718735901; c=relaxed/simple;
+	bh=9iZR6qfhdq2inBfR21miynRAFj2tcgSizdsoz74Q7C0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kWNSnwYR/UcS243YrRlAPv7V6KJ+jT0PXGOwCBII9w9FWiKwe0ObUxY7srQ28knwRfDMe2rVjm37i9ChMa5japVU2DHyZhGo/SxmpMyHKzm1x+ECrDnNPDgSOSG6hgSgwiRrnSw7BV7LJ4zqkzNwKkYHgUoBhF1fDqOIg4Awar0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NS89/eA9; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718735897;
+	bh=9iZR6qfhdq2inBfR21miynRAFj2tcgSizdsoz74Q7C0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NS89/eA9OrJeKUWAjWeVXDiTwGODlZRi/gQdOEt1zpb8O6WhLOoeqHZLFQ09MleWX
+	 s1yBPsNUtBDO5QwUdd3jVIp9A264e9Q00yZVKYw5EMhMKbAztbX/S+u6orsN6YcFrr
+	 1OVoRFg/yQhCtCpQUQJG5eXC2DJ1jb/CM9dC2HR0IO0MqKczoeYesXI6MVtg/gd1Gg
+	 j0V7dZo2VPYd7c+BkebElRrDczuLJpplg2wTTe5uY6bMqoHZlVnjeiPDCW+0kLcZi3
+	 vGlTjHnWlS/bqoU1qYEECNRckuEZ93Fd0C7MJaAf9pZ3NTpV3wU++72Vt6qugYOmcD
+	 vm2oTrf4s3wrw==
+Received: from jupiter.universe (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8105B3780BFE;
+	Tue, 18 Jun 2024 18:38:17 +0000 (UTC)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id 2ABA24800C9; Tue, 18 Jun 2024 20:38:17 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jianfeng Liu <liujianfeng1994@gmail.com>,
+	Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	kernel@collabora.com
+Subject: [PATCH v7 0/6] RK3588 VEPU121/VPU121 support
+Date: Tue, 18 Jun 2024 20:18:31 +0200
+Message-ID: <20240618183816.77597-1-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,78 +77,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-DAMON_LRU_SORT contains code for handling of online DAMON parameters
-update edge cases.  It is no more necessary since damon_commit_ctx()
-takes care of the cases.  Remove the unnecessary code.
+Hi,
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/lru_sort.c | 28 +---------------------------
- 1 file changed, 1 insertion(+), 27 deletions(-)
+This series enables Hantro support for RK3588. It is based on these two
+previous series from Emmanuel Gil Peyrot and Jianfeng Liu, which looked
+stalled to me. Considering the full driver is already upstream, I think
+this low hanging fruit should be enabled in 6.11:
 
-diff --git a/mm/damon/lru_sort.c b/mm/damon/lru_sort.c
-index f83542973946..4af8fd4a390b 100644
---- a/mm/damon/lru_sort.c
-+++ b/mm/damon/lru_sort.c
-@@ -186,23 +186,11 @@ static struct damos *damon_lru_sort_new_cold_scheme(unsigned int cold_thres)
- 	return damon_lru_sort_new_scheme(&pattern, DAMOS_LRU_DEPRIO);
- }
- 
--static void damon_lru_sort_copy_quota_status(struct damos_quota *dst,
--		struct damos_quota *src)
--{
--	dst->total_charged_sz = src->total_charged_sz;
--	dst->total_charged_ns = src->total_charged_ns;
--	dst->charged_sz = src->charged_sz;
--	dst->charged_from = src->charged_from;
--	dst->charge_target_from = src->charge_target_from;
--	dst->charge_addr_from = src->charge_addr_from;
--}
--
- static int damon_lru_sort_apply_parameters(void)
- {
- 	struct damon_ctx *param_ctx;
- 	struct damon_target *param_target;
--	struct damos *scheme, *hot_scheme, *cold_scheme;
--	struct damos *old_hot_scheme = NULL, *old_cold_scheme = NULL;
-+	struct damos *hot_scheme, *cold_scheme;
- 	unsigned int hot_thres, cold_thres;
- 	int err;
- 
-@@ -215,22 +203,11 @@ static int damon_lru_sort_apply_parameters(void)
- 		goto out;
- 
- 	err = -ENOMEM;
--	damon_for_each_scheme(scheme, ctx) {
--		if (!old_hot_scheme) {
--			old_hot_scheme = scheme;
--			continue;
--		}
--		old_cold_scheme = scheme;
--	}
--
- 	hot_thres = damon_max_nr_accesses(&damon_lru_sort_mon_attrs) *
- 		hot_thres_access_freq / 1000;
- 	hot_scheme = damon_lru_sort_new_hot_scheme(hot_thres);
- 	if (!hot_scheme)
- 		goto out;
--	if (old_hot_scheme)
--		damon_lru_sort_copy_quota_status(&hot_scheme->quota,
--				&old_hot_scheme->quota);
- 
- 	cold_thres = cold_min_age / damon_lru_sort_mon_attrs.aggr_interval;
- 	cold_scheme = damon_lru_sort_new_cold_scheme(cold_thres);
-@@ -238,9 +215,6 @@ static int damon_lru_sort_apply_parameters(void)
- 		damon_destroy_scheme(hot_scheme);
- 		goto out;
- 	}
--	if (old_cold_scheme)
--		damon_lru_sort_copy_quota_status(&cold_scheme->quota,
--				&old_cold_scheme->quota);
- 
- 	damon_set_schemes(param_ctx, &hot_scheme, 1);
- 	damon_add_scheme(param_ctx, cold_scheme);
+ * https://lore.kernel.org/all/20240316071100.2419369-1-liujianfeng1994@gmail.com/
+ * https://lore.kernel.org/linux-rockchip/20240412151515.837824-1-linkmauve@linkmauve.fr/
+
+Their series got some feedback from Nicolas Dufresne, that there should be a
+plan how multi-core processing will be handled once it is supported in the
+kernel. I had a look (and internal discussion with Nicolas) and came up with a
+patch, which allows describing all the Hantro IP in DT. The driver will only
+probe for the first instance. This involves dropping the RK3568 compatible
+for the VEPU121, so that only kernels with the driver change will try to
+handle these IP. Once the kernel is capable of multi-core support, the same
+technique to disable cores 1-3 can be used to combine them all into one
+cluster.
+
+We also discussed, if they should be described as a cluster (e.g. by creating
+some kind of virtual bus for the 4 encoders in DT). Apparently the VSI doc
+describes the grouping of up to 4 instances. But there is no obvious reason
+why only these groups can be used as a cluster. It seems that even the 5th
+encoder from the combo VPU121 could be used together with the other clustered
+cores in theory. In practice this is probably a bad idea because of the shared
+cache of that encoder. Since that is handled with a different compatible, this
+can be thought about at a later point of time and handled in the kernel. Thus
+no special cluster description is needed in DT.
+
+Changes since PATCHv6:
+ * Collected Acked-by for RK3588 VEPU121 DT binding from Conor Dooley
+ * Fix resource leak of DT node in hantro_disable_multicore()
+ * Support disabled nodes in hantro_disable_multicore()
+ * Use correct match data (RK3568 VEPU instead of VPU) for RK3588 VEPU121
+
+Changes since PATCHv5:
+ * Fix binding for vepu121 (use enum)
+ * split hantro driver patch (multicore / vepu121 compatible)
+ * move video-codec@fdb50000 node to correct position
+ * change "jpeg_enc*" alias to "vepu121_*"
+ * change "vpu_*" alias to "vpu121_*" (to be consistent)
+
+Changes since PATCHv3 (VEPU121) / PATCHv4 (VPU121)
+ * combine both patchsets, since there is some overleap
+ * add patch to disable multi-core handling in the hantro driver
+ * drop the RK3568 fallback compatible for VEPU (see above for the reason)
+ * describe all RK3588 VEPU cores (possible because of driver change)
+
+Greetings,
+
+-- Sebastian
+
+Emmanuel Gil Peyrot (2):
+  media: dt-bindings: rk3568-vepu: Add RK3588 VEPU121
+  arm64: dts: rockchip: Add VEPU121 to RK3588
+
+Jianfeng Liu (2):
+  media: dt-bindings: rockchip-vpu: Add RK3588 VPU121
+  arm64: dts: rockchip: Add VPU121 support for RK3588
+
+Sebastian Reichel (2):
+  media: hantro: Disable multicore support
+  media: hantro: Add RK3588 VEPU121
+
+ .../bindings/media/rockchip,rk3568-vepu.yaml  |   1 +
+ .../bindings/media/rockchip-vpu.yaml          |   3 +
+ arch/arm64/boot/dts/rockchip/rk3588s.dtsi     | 101 ++++++++++++++++++
+ .../media/platform/verisilicon/hantro_drv.c   |  48 +++++++++
+ 4 files changed, 153 insertions(+)
+
 -- 
-2.39.2
+2.43.0
 
 
