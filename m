@@ -1,111 +1,116 @@
-Return-Path: <linux-kernel+bounces-218884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7B190C760
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:42:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789ED90C762
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B74EBB230D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:42:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F766283FD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08871B3758;
-	Tue, 18 Jun 2024 08:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2B41B3F0C;
+	Tue, 18 Jun 2024 08:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Er5Bnz/W"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jlK790GH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9590A1527B9;
-	Tue, 18 Jun 2024 08:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD54152DE3;
+	Tue, 18 Jun 2024 08:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718700378; cv=none; b=JUzykseC7IDSeDDrpv4kfzpdfh8uKe0LGh5KzcmTkAofn/v6xNCiaxG2xbIqHk7owPV1v3TwcXTtfI2LU8YIsP+LJUxCkm/2OlV/CBtYzWn8zWc3QC281dxCQK7HAi/CNwfzvDa8+YChyS99/prxN9F3N4EsBJs0RED5BF53C3k=
+	t=1718700417; cv=none; b=MfeWMyA3ETTWx89Qns9HrosugWmfKJw4iRvwR1N3MoMGX76nlP+q3hQnmhK0YVbh0LXE1lJ2Yyr0k3isS9A337JvgVZ58ie16rJa+h1btOz3tC9CvPq9+y9EXrh1/Z1orHrQ1IBo0yLW/VEC1YaGu7mb0fAcCpnKnrMny21+nuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718700378; c=relaxed/simple;
-	bh=Ss8TNFVqnuGABYJsbuJPzNJXJH3S14DqdVq9lZzErZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lyZKRyGClZNx9jI/cPI4AuC48OmGXpA/usUdjoEZFntEZ3ehTTRoTvMJoshfm7QlBpoOyfo3nEAoMXsS/NbU0c1lGqksW5YuBhqsDrZ+HUMOwb6DUjNe6Yk6rcjzLhsKLdEHhanWqtCjl+XG0qkqMGsVyyi0c89QnRtRMK9eX34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Er5Bnz/W; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=zIHDqg4NPWkZl96KD/WOqKYjN1qtBnxJUKffnMyzQ40=; b=Er5Bnz/WScS03rc7NF9KCx4m78
-	28rrMmcIFowoGeA+QRDAU2LTWurV+iS5YP1ZWBfU07S8gt2gCtpcPx55uyRn6M1NYKUxYwX3cQAHf
-	SptP8j/szqTuLTIsBQ2tF9cPUGX3MfNvjF0Kxx247DcLu8Ax0OvKkAAi9XtfKKpywEd8xzH9+BZL5
-	1aRpzJVNQVknZzHDsWKP5zQ2a7O8ROtaPG7RkwTRH6AFf9ID+ViBU9MneqxxqEfRQh57QldICLwOv
-	hys+w6nmCMhGFgINDxEhlR6M9Ud878qUEqetAKjj4CDI0MIYk6zniaRE/ehIeRwYWh6yamNxIqhr0
-	rIc38ZMg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJUTN-000000070lB-2ZIy;
-	Tue, 18 Jun 2024 08:45:57 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 14C9A300886; Tue, 18 Jun 2024 10:45:49 +0200 (CEST)
-Date: Tue, 18 Jun 2024 10:45:48 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, tglx@linutronix.de,
-	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
-	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>
-Subject: Re: [PATCH v17 4/5] random: introduce generic vDSO getrandom()
- implementation
-Message-ID: <20240618084548.GE31592@noisy.programming.kicks-ass.net>
-References: <20240614190646.2081057-1-Jason@zx2c4.com>
- <20240614190646.2081057-5-Jason@zx2c4.com>
- <CALCETrVQtQO87U3SEgQyHfkNKsrcS8PjeZrsy2MPAU7gQY70XA@mail.gmail.com>
- <ZnDQ-HQH8NlmCcIr@zx2c4.com>
+	s=arc-20240116; t=1718700417; c=relaxed/simple;
+	bh=EXUG2xOLGZ/+vsyiFn2tp5Pl5eqGfsMh0GN8fxltb1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I2ZkbvbJzOQ5+V+ZOknbNhWeEJsZTJIipHKtS99SYqSDnQXARU18/hBDcJGlXLpgaoUjsX2QFRwZn6sdFgP75zGok2UiVZWAeXf1hrU5ut/7OjjfGkUVU6SaghPWENCie2GPcPlcFttge4GwoTKuFGuA2bCFScCz/D3ubrjv1YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jlK790GH; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718700416; x=1750236416;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EXUG2xOLGZ/+vsyiFn2tp5Pl5eqGfsMh0GN8fxltb1A=;
+  b=jlK790GHHwq8aBkybRYV9i1agWAPnuQ8VsyBfi27wAW67SbWebNsOZPA
+   RQgEXWyZ8yAe4DoxzWd5ERnKkjM/yAWF8sfsFrmO54lc3QYAYmQccbQsA
+   soWht7eLYgHU6nDPFgkr4FhwliZAU/EvyxPqd6Cz/+k4CoepAoWAuOubk
+   QA6w0xBP/R5G4ZAr3TbAN0HNQ3na2AblYREwgo+FePtUhSuJu7Lf0Mou3
+   K3mDw0WleddYKz6eQ3QuN4gcXGgdbkegg8bi4Dg+p5q7uslYAF+pBk/ax
+   MDg9GAJgpa6xvwXPju6wmmgS1oHiZaypIL+G5tDGzhKzDCMEX9qQDgyss
+   g==;
+X-CSE-ConnectionGUID: 2dueHN8FScGCayWIEmNo0A==
+X-CSE-MsgGUID: ea/7cGzNRO2an851vimk4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15431585"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="15431585"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 01:46:55 -0700
+X-CSE-ConnectionGUID: JGj8NRShQV2f71LUFsZ3oA==
+X-CSE-MsgGUID: Jian/yQZTaatjlmZV4WTFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="78933621"
+Received: from shilinmu-mobl.ccr.corp.intel.com (HELO yhuang6-mobl2.ccr.corp.intel.com) ([10.255.28.204])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 01:46:52 -0700
+From: Huang Ying <ying.huang@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Bharata B Rao <bharata@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH v3 0/3] cxl/region: Support to calculate memory tier abstract distance
+Date: Tue, 18 Jun 2024 16:46:36 +0800
+Message-Id: <20240618084639.1419629-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnDQ-HQH8NlmCcIr@zx2c4.com>
 
-On Tue, Jun 18, 2024 at 02:12:40AM +0200, Jason A. Donenfeld wrote:
-> Hi Andy,
-> 
-> On Mon, Jun 17, 2024 at 05:06:22PM -0700, Andy Lutomirski wrote:
-> > On Fri, Jun 14, 2024 at 12:08 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > >
-> > > Provide a generic C vDSO getrandom() implementation, which operates on
-> > > an opaque state returned by vgetrandom_alloc() and produces random bytes
-> > > the same way as getrandom(). This has a the API signature:
-> > >
-> > >   ssize_t vgetrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state);
-> > 
-> > Last time around, I mentioned some potential issues with this function
-> > signature, and I didn't see any answer.  My specific objection was to
-> > the fact that the caller passes in a pointer but not a length, and
-> > this potentially makes reasoning about memory safety awkward,
-> > especially if anything like CRIU is involved.
-> 
-> Oh, I understood this backwards last time - I thought you were
-> criticizing the size_t len argument, which didn't make any sense.
-> 
-> Re-reading now, what you're suggesting is that I add an additional
-> argument called `size_t opaque_len`, and then the implementation does
-> something like:
+This series add support to calculate memory tier abstract distance for
+the node backed by a cxl region.
 
-Exactly, that's how I read amluto's suggestion as well. Also, I recently
-ran into this clang rfc:
+[2/3] implements the feature.  [1/3] fixes a race condition of
+dependency code.  [3/3] does some code simplification.
 
-  https://discourse.llvm.org/t/rfc-enforcing-bounds-safety-in-c-fbounds-safety/70854
+Changes:
+
+v3:
+
+- Collected acked-by from Dan, Thanks!
+
+- Added a race fixing patch [1/3].
+
+- Revised patch description of 2/3 (Thanks Alison!)
+
+- Added missing unregister_mt_adistance_algorithm() call.
+
+- Added a code simplification patch [3/3] (Thanks Alison!)
+
+- Link to v2: https://lore.kernel.org/linux-cxl/20240611055423.470574-1-ying.huang@intel.com/
+
+v2:
+
+- Added comments to struct cxl_region and minor fixes (Thanks Jonathan!)
+
+- Link to v1: https://lore.kernel.org/linux-cxl/20240531024852.282767-1-ying.huang@intel.com/
 
 
+--
+Best Regards,
+Huang, Ying
 
