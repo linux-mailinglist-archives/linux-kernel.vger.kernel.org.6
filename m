@@ -1,323 +1,230 @@
-Return-Path: <linux-kernel+bounces-218680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC13490C3AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:35:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F04190C3AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C49C91C210A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:35:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87AE4B2153B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0724D11D;
-	Tue, 18 Jun 2024 06:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C914DA08;
+	Tue, 18 Jun 2024 06:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tb1A7BqI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gDj3iDqM"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2016.outbound.protection.outlook.com [40.92.22.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E557F2E40D
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718692534; cv=none; b=rfOp3Z/6hxbNwSNYiEPHszgKuuFTrjyYR3ywXpw4cKYJ51pomd9+EbmWlz6dcE5ZFgtvU8BV9XLCBLIAUBZmZHOh7rxn1jYH8n1kYaNaeAStSMBGTfoi8K2YauS2kD7oHQpYR9hTbzL8J/Pz1Q08qYkAPYaU3r5Z6G4JxE9JqFQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718692534; c=relaxed/simple;
-	bh=75EzXSlIOr3eCHGyDlfdqxPM1qXslIc+io1cCCwt9+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gla9Oz4exKY3NvqhqbtrD2PEykLjxFXIoiEWO85aOXHg4swvomnWRGdTP/bp0zYBDqThO8NE55lnmFE3nkeynq65mwB3bAcTyg1Re7UX04m3Zh9Q54RJrF2Yy9d/J1/0NWBA+AVbOkP2pTKsoDSLaN+dh2i0KTijWyyR1scRBAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tb1A7BqI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718692531;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=75uo9YHVDFDNzO2TP5t8b5ORyU7MVa6C97VletJyJ/A=;
-	b=Tb1A7BqIz2H8EQBiHgZfdCjO1L9fLuPIOqGj/OA73D27PYwKSd/W9IiDtb88zRllP+bb36
-	gm/d84xBstQsuqBS5mIVp9iqBkn7m1X4JSrbUrZPmKm5taqCtNrudSxqKJf/XnCMRKD6y7
-	ooiIiJx1lMVLBOzTra11aJQEqTVGojs=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-e3JkgvvSN_CJ1a6ZegtGcQ-1; Tue, 18 Jun 2024 02:35:30 -0400
-X-MC-Unique: e3JkgvvSN_CJ1a6ZegtGcQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-421759c3556so30338625e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 23:35:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718692529; x=1719297329;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=75uo9YHVDFDNzO2TP5t8b5ORyU7MVa6C97VletJyJ/A=;
-        b=jQdGH/LdHV9+Sm/bYaLLL4613u4fy8R5PXR2S4/2oGqKsZdzu+W8gLKJL5VI5MxK7w
-         8aW06ocms6+5gf3wgbR2RTp4rWahV40JhPtG10Zlq2egyZUb5jp7tNNIv7PWy3pn14zC
-         KpnDR9Pdb1xhwFoJHkrqm5gmT/SxY5wZ5qHKPGBTF4COTpMrjaJZVIAfjeYY4ZTN895b
-         ILj/Lgj53waIEqtXMNdVzzRaoGpCOo+pjOkrNg3fxY8mWqoPr2snGyEiXWuDrmnXC7/B
-         wiM4eCJZ9U5U3zPEtPnwJ2uXTtCkV2NWap23nv1kyOwdHfOr2bRtrZshguujnW+o0dCL
-         blUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzPJjTehq1VbhlQhR4RuIZ3QaeoMoqV+VY6yzus3GntG/t2ZFfH7A46OtF4ti5lI0yWo/6UzLNGeVS/t+7DkF1bfXPi5pH89dnMllw
-X-Gm-Message-State: AOJu0Yyt0gN7VAXa60uKHrTx4RU+n0FyEDDwzFaAInRFvcOqVgPPfqmv
-	ed67jLxTjxAJrEC5FyR3JHuOwuF2BF0TkKIEj8pM5n8RmhdfPFvQEU91i2CR0m5LW/cu//f+AZD
-	hCwHR+a70Dxhn1kIBwIAnj76zz8z3L6nZVJEyibgT1Sp7wB+8hTJxhinEfj8Q3g==
-X-Received: by 2002:a05:600c:3781:b0:422:12bf:27be with SMTP id 5b1f17b1804b1-4246f597c94mr13379005e9.11.1718692529252;
-        Mon, 17 Jun 2024 23:35:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHYqMY9BBToQN3U/9HKkUTz0jJk1GTJFCpqtXngA8tUYs0G7ByLGIcrApkEe/BxGWj5go1BSA==
-X-Received: by 2002:a05:600c:3781:b0:422:12bf:27be with SMTP id 5b1f17b1804b1-4246f597c94mr13378755e9.11.1718692528724;
-        Mon, 17 Jun 2024 23:35:28 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:1400:78ba:c2d2:22a1:8858? (p200300cbc705140078bac2d222a18858.dip0.t-ipconnect.de. [2003:cb:c705:1400:78ba:c2d2:22a1:8858])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3608accd8b3sm7966387f8f.71.2024.06.17.23.35.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 23:35:28 -0700 (PDT)
-Message-ID: <dc8467bf-4f27-4aac-b7a2-a0aaff6a3eaa@redhat.com>
-Date: Tue, 18 Jun 2024 08:35:27 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D927288BD;
+	Tue, 18 Jun 2024 06:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718692612; cv=fail; b=OMbuSiFg87/acMV/OemK7jZVdJNGXZY0y9ikpzTkCmBe0GMF7C0aEWQH8VAZ94DEwpOnyNzQQOKeul3c5/jsxNZP3N4NtflTvkjc5osggw3s6iW7JUkcrj4ct8oGxOFaVtE8/wo53BTq5a7ILBE5DrCZKjzjpIolNrl6yso+0V0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718692612; c=relaxed/simple;
+	bh=GMXNDCl2fnC1wUZFGCemtINPac1t/jIFBouhwDye3LY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Q+Fl/BGAmBUuqTwdxnrX+mOzyw3fgYem5gWCXof3XwArW2hsNloBVqu/02/KrBzbmhwf6hjd93zs7h2LWpCDNMLBoor9zn5YjFac4lAJs98dC7Jye2LFTs9CsKmk2BuMYfRy77k1TAQmFwlQG/x7ZRZaUzM0yQHXss4FOwpib6E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=gDj3iDqM; arc=fail smtp.client-ip=40.92.22.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DIB5eAxeqPKXpV5NoiMiRBmrDApZzJQ1oBdCwUmVTfTh9gxJibaPjlV5Zf/t9xuCH0NIaThIyo5vxMlArRmOPzM/4igSdzim/p4ehBVQcERz1AbPddK2XKenMzbdonSLLN/c8POTWSeThnIpH0jHX/fxn7383QKd4pUJESo6LWRrTLg0c4W/Yd1WCAK9x1bxcqiu5Gg+f/IEIn1ReiOwr9wY0pHQtxCZQ5qqJY8IYxYJk0SiiY3pMdae9dEABncseC8A5H/teFlSJvWj65LCdRXN8Mg4w/hV5t1ZM0RNqgMWbdkr2MouS84TiMA9+MYb5ccYWFRHS7TT2KBEjc1XeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CkU90nQc6HucD2odw/Ijiop1X7T1oUi7sRcoPmEOKHc=;
+ b=Xvwq81AgLxvZMz7lMrTvikrhpxLCzw81RfnNBOsrRRMR/9ORZNBSijZeIwLny3M/gC5lce7NJaDYHP5J8KTKhVO6FVTUfa5yDlhSAhXxZeK09EMhGFwHYSqKz476nSTK/wDVmusrKznbRhJZWStCo3bPlRd1qu3A8CuoZoaIYZU/uIAo+JP6Z83/Fv8+DpG5qOhZ/gv0RcrL7Wnc7OZ9/hCfwMh9E2dJNbaXrd0O0NCt3Pu5PN/2lEiFGAWS4vGFxhgMH1DdUy4fQS2J2Dcr3yqi3thvphf04+uQPddF7lVBzgBrsF6buF+yRdlfunct6MjkB5DLBpON2PYcBOSWeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CkU90nQc6HucD2odw/Ijiop1X7T1oUi7sRcoPmEOKHc=;
+ b=gDj3iDqMagdaQHHYYE5tWa/GxYXYWJWrRUx2GDMyu4RJCGBRtGLyjaxDHBYhz6YweMfAikxFBySmzkudZbDvRh7OjlruMezPSCMql3u2X3z5nhEGOq7/K079eXBLqCZbWh0Ugu606TUpkmF4DRuTM4tjpL7Imwl4Glj48g2F0joEBhoSZpLEhokKYhIIaw9XWi44AspLgQnJlg7VIr7GyQVXm2uTeN61uGFjo6OgtcFpDUttYinDt7+0U+4suUxffcxPn+VcDlOVj9tlSMHZQGzX6/xsECkKVNjAhRQKhD7SeWeTHTfnR1h426pVdVMFDXtn/whG+rca4YrrdN/BnA==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by SN7PR20MB5958.namprd20.prod.outlook.com (2603:10b6:806:34b::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Tue, 18 Jun
+ 2024 06:36:48 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%6]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 06:36:48 +0000
+Date: Tue, 18 Jun 2024 14:36:30 +0800
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Samuel Holland <samuel.holland@sifive.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Yixun Lan <dlan@gentoo.org>, Inochi Amaoto <inochiama@outlook.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Chen Wang <unicorn_wang@outlook.com>, Chao Wei <chao.wei@sophgo.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Conor Dooley <conor@kernel.org>
+Subject: Re: [PATCH v2 1/6] riscv: dts: sophgo: Put sdhci compatible in dt of
+ specific SoC
+Message-ID:
+ <IA1PR20MB495388209FC7DCFF78FDD545BBCE2@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <20240612-sg2002-v2-0-19a585af6846@bootlin.com>
+ <20240612-sg2002-v2-1-19a585af6846@bootlin.com>
+ <IA1PR20MB49534C9E29E86B478205E4B3BBC02@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <20240616235829.GA4000183@ofsar>
+ <c75601a1-1389-400e-90b9-99c1e775a866@bootlin.com>
+ <ZnA3O14HOiV1SBPV@xhacker>
+ <20240617-exuberant-protegee-f7d414f0976d@spud>
+ <6a993b58-3d9e-4f92-bf47-7692c9639314@sifive.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a993b58-3d9e-4f92-bf47-7692c9639314@sifive.com>
+X-TMN: [GHCQjbzMTH8GUkDmGJ3CA1YZdmlbBT8P/cIv7+BYm9Q=]
+X-ClientProxiedBy: OS3P301CA0043.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:604:21e::11) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <bbteyk6qqdlqboufd2rnzjktr33kmmgsjrf2auotgoxsqagzvz@ujbc7uydizp2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] mm: convert page type macros to enum
-To: Andrew Morton <akpm@linux-foundation.org>,
- Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
- "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
- Omar Sandoval <osandov@osandov.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Hao Ge <gehao@kylinos.cn>,
- linux-debuggers@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240607202954.1198180-1-stephen.s.brennan@oracle.com>
- <20240607212738.bf55318aebd7172fadaa11c5@linux-foundation.org>
- <87ikygo1yb.fsf@oracle.com> <87bk3z1f76.fsf@oracle.com>
- <20240617142951.08a9cdc791c8edeeca50509b@linux-foundation.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240617142951.08a9cdc791c8edeeca50509b@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SN7PR20MB5958:EE_
+X-MS-Office365-Filtering-Correlation-Id: 580b976a-ba1d-41f3-dab1-08dc8f610757
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199025|3412199022|440099025|1710799023;
+X-Microsoft-Antispam-Message-Info:
+	QMw0wekZwQ/i5RsdxRrDK3zmtZKJwSSut1b8JNWmZH501ETBExGG+/pd8CoEF2Xr6GzRH1WBdf+ldbxeTFFwQjpT+I7qZQbF7ryYvT8f/zyJTUeuFpGeLioDEMDnU4dnfC9/ziJak9iL9yh82BkXFeuirULaOgbW2HMm2ZVJuGvAaIMLzKcKq9m6dM5gad/mk+vWTBHu9Jmn9SG5TODWWfhQ+cBy90qTMlCj8ndtAUDWJ1cvtV0wP1JnObDcgXLfIwQedXzyThp4kYmMJLyAoPQ3Dy+LPo8dnUynu7rIMarn+50RBmUgV5ULvIz7+WD+AFFNrSj7iMInsSc1IEtan59HqpnEqz9qDWB4NzGBxH0qWZjYPfG721AWQBv8eLvNkjCdusKQNDJuwuL98YR8vBJkGjJiAWxvO9GKYU3kyGdKSya+T8DiCvzDnHPFRgMtQg3UEwnXZkJP9MzHLxN5yK+tU1KLU3/TcfdepHyW0Xe6wIv/HDWt4PQ6+mCS69wRZRqML6bqu4cuebFuH5Vi9JOjjYdk7ojvVncs7UI4Nl5jBfFZ76LIBLRJd/oASRMn6ScfOJcn9VysEoFAtRwOJBMC2RxG/pkssumLb34pPhPJahbVHIessPWAT6C2VLVb
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nID416C/N8BbZAhVZqMU0A1PinZapmzyEqvUsmKhE3PKR36omijIhzePurrG?=
+ =?us-ascii?Q?RHBy6Oz8Gk5LAT/NxxlhIWyT+9/6CBHzO87MIKu9rhwpNIVeQPyFGVfhhtPV?=
+ =?us-ascii?Q?WQQhYMILXeBUw43KPLV+DKjN/NoclRDXWOStLbhz4W460rxHs3pPy0r3knUW?=
+ =?us-ascii?Q?OXRJlGFHmvq8TZBYzG0mzfhBpxJvmFVrAk1cdkfI/8XzOPqKvRfkT5AZ2BEG?=
+ =?us-ascii?Q?PMB00Yjp3ABStpO7a3uIvQ62yJMatjosDzFnNCb64NDxhhBW1cTXgvjjbZ07?=
+ =?us-ascii?Q?+5RmtlezcaUGMiBaOsM5Vo3pXb8zT7k33J5tecH/auwmiINhbkahDfwVy2b9?=
+ =?us-ascii?Q?DEBbvwy+ZWSf2lm2vMNMpNVUIub2oXcLWAvb6xrr7+aaXqgqLc1JBLQM+TcY?=
+ =?us-ascii?Q?yo98ruiozLs/tx2YrAFpLbb8PcMU7wkPge6tnlixziJfOBxil53ou4GW/WMK?=
+ =?us-ascii?Q?ny804+e2OeDlJCly5rFsVc2N5r8O6CaAuhXgJsEvofgzexMrriAVRGFeI+l7?=
+ =?us-ascii?Q?Ke+Mz5Ed+ooQpnM93d1kS9B6rWatucuPP6Fm3yoMKQSgQaitUtH+fNz6Bz4q?=
+ =?us-ascii?Q?7oLTTWCUeCNiNgZpWrxdjpX+LK6EKkkwHHIQhVCsAOHItko0SgeRAo/9GzLq?=
+ =?us-ascii?Q?Ncq7+3yVj5NZjh8mZoyB8aoFJ3lNEtkTUL+ZhOQeDK3RlyauZQVsyoV7PiwS?=
+ =?us-ascii?Q?s8VBk5gTsNMFvWW8bsmhYO0d3x5Ox47h2iaWeV8GD/xLgK3dHuy8dWqDv5lu?=
+ =?us-ascii?Q?thF+a+UOiLGxVi5+Edf8BL3JU4XZ3y/BfZQ6HDimUIRkhDsOG1CQT5f20Vnu?=
+ =?us-ascii?Q?vQxR60FVvJUV8vognIHRk4IZ8kK5mh6T0nE4uS0nFdIt6WpklmZMIBXR+HAF?=
+ =?us-ascii?Q?YQ6yYhA24GczGERBRfZiUbHlxdp/F4VbE42paYNl6FdXhlJSTjJjyRKV/Uiu?=
+ =?us-ascii?Q?aerkPgKbtUFAEtB/0wcxZUst2UqYuuuPrbdtFwcM5nTNpWu3FA9KiF8hyqW8?=
+ =?us-ascii?Q?nSaIyx7rJgJyFg5ddrGjyfrN7k+JzHSwC86NlQyGySkfjENDJRt7I+fD8GuM?=
+ =?us-ascii?Q?NEOr0GGTxJ9Bx/XqrpP1EZrUAr5Ci/SCUgm8//npqhCodBIf31V/iEcX+HwO?=
+ =?us-ascii?Q?pNKzsynNeIYTtHfC1R5vw+ilG6CQa/VJeoZNhrAxnmdZ2T31qN5wpij0mVy0?=
+ =?us-ascii?Q?IQ/iU0girJEMfUpBzOhRVZJVhR7tjn5hbHxuCmKwwI/BCVEIIzy2R738qV1m?=
+ =?us-ascii?Q?cSptFYHBpI0BCBXvadbN?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 580b976a-ba1d-41f3-dab1-08dc8f610757
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 06:36:47.9856
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR20MB5958
 
-On 17.06.24 23:29, Andrew Morton wrote:
-> On Mon, 17 Jun 2024 13:34:21 -0700 Stephen Brennan <stephen.s.brennan@oracle.com> wrote:
+On Mon, Jun 17, 2024 at 10:57:54AM GMT, Samuel Holland wrote:
+> Hi Jisheng, Thomas,
 > 
->>>>> Fixes: 46df8e73a4a3 ("mm: free up PG_slab")
->>>>
->>>> Should we backport this into 6.9.x?
->>>
->>> Hi Andrew,
->>>
->>> Looks like commit 46df8e73a4a3 ("mm: free up PG_slab") is introduced in
->>> the v6.10-rc's, and not backported to 6.9. So PG_slab is still part of
->>
->> Hi Andrew,
->>
->> I saw that you've merged this into mm-unstable, thank you!
->>
->> Since 46df8e73a4a3 ("mm: free up PG_slab") is part of the current 6.10
->> RC, it would be great if this patch could be part of the 6.10 release so
->> we don't release a kernel missing the PG_slab info.
->>
->> Can you confirm if mm-unstable will get merged in this release cycle? Or
->> else, would it be possible to include it in a branch that will?
+> On 2024-06-17 10:40 AM, Conor Dooley wrote:
+> > On Mon, Jun 17, 2024 at 09:16:43PM +0800, Jisheng Zhang wrote:
+> >> On Mon, Jun 17, 2024 at 11:16:32AM +0200, Thomas Bonnefille wrote:
+> >>> On 6/17/24 1:58 AM, Yixun Lan wrote:
+> >>>> On 18:47 Wed 12 Jun     , Inochi Amaoto wrote:
+> > 
+> >>>>> Is this change necessary? IIRC, the sdhci is the same across
+> >>>>> the whole series.
+> > 
+> >> sorry for being late, I was busy in the past 2.5 month. Per my
+> >> understanding, the sdhci in cv1800b is the same as the one in
+> >> sg200x. Maybe I'm wrong, but this was my impression when I cooked
+> >> the sdhci driver patch for these SoCs.
+> >>
+> >>>> I tend to agree with Inochi here, if it's same across all SoC, then no bother to
+> >>>> split, it will cause more trouble to maintain..
+> >>>>
+> >>>
+> >>> To be honest, I agree with this to, but as a specific compatible for the
+> >>> SG2002 was created in commit 849e81817b9b, I thought that the best practice
+> >>> was to use it.
+> >>
+> >> I'd like to take this chance to query DT maintainers: FWICT, in the past
+> >> even if the PLIC is the same between SoCs, adding a new compatible for
+> >> them seems a must. So when time goes on, the compatbile list would be
+> >> longer and longer, is it really necessary? Can we just use the existing
+> >> compatible string?
+> >> DT maintainers may answered the query in the past, if so, sorry for
+> >> querying again.
+> > 
+> > For new integrations of an IP, yes, new specific compatibles please. New
+> > integrations may have different bugs etc, even if the IP itself is the
+> > same. If there's different SoCs that are the same die, but with elements
+> > fused off, then sure, use the same compatible.
+> > 
+> > I expect the list of compatibles in the binding to grow rather large, but
+> > that is fine. No one SoC is going to do anything other than something like
+> > compatible = "renesas,$soc-plic", "andestech,corecomplex-plic", "riscv,plic";
+> > which I think is perfectly fine.
 > 
-> Turns out the patch as sent was based on David's "mm: allow reuse of
-> the lower 16 bit of the page type with an actual type", which changed
-> the page flags a lot,  I redid this patch thusly:
+> And you can do the same thing here for the SDHCI controller: if you think sg200x
+> has the same controller (and integration! e.g. number of clocks/resets) as
+> cv1800b, then you should keep sophgo,cv1800b-dwcmshc as a fallback compatible
+> string. Then the driver doesn't need any changes until/unless you eventually
+> find some reason they are not compatible.
 > 
-> --- a/include/linux/page-flags.h~mm-convert-page-type-macros-to-enum
-> +++ a/include/linux/page-flags.h
-> @@ -944,15 +944,22 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpois
->    * mistaken for a page type value.
->    */
->   
-> -#define PAGE_TYPE_BASE	0xf0000000
-> -/* Reserve		0x0000007f to catch underflows of _mapcount */
-> -#define PAGE_MAPCOUNT_RESERVE	-128
-> -#define PG_buddy	0x00000080
-> -#define PG_offline	0x00000100
-> -#define PG_table	0x00000200
-> -#define PG_guard	0x00000400
-> -#define PG_hugetlb	0x00000800
-> -#define PG_slab		0x00001000
-> +enum pagetype {
-> +	/*
-> +	 * Reserve 0xffff0000 - 0xfffffffe to catch _mapcount underflows and
-> +	 * allow owners that set a type to reuse the lower 16 bit for their own
-> +	 * purposes.
-> +	 */
+> It's better to have a SoC-specific compatible string in the DT and not need it,
+> than find out later you need one and not have it. :)
+> 
+> Regards,
+> Samuel
+> 
 
-As noted, we better maintain the original comment here.
+This is excellect and reasonable. I will take your advice for the DT
+change. With your suggetion, I think it may be acceptable to mark the
+low-profile SoC as the default value and let other override it.
 
-> +	PG_buddy	= 0x00000080,
-> +	PG_offline	= 0x00000100,
-> +	PG_table	= 0x00000200,
-> +	PG_guard	= 0x00000400,
-> +	PG_hugetlb	= 0x00000800,
-> +	PG_slab		= 0x00001000,
-> +
-> +	PAGE_TYPE_BASE	= 0xf0000000,
-> +	PAGE_MAPCOUNT_RESERVE	= -128,
-> +};
->   
->   #define PageType(page, flag)						\
->   	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-> _
->
+Let take the clk as the example:
 
-Apart from that LGTM.
+// in the base file cv18xx.dtsi
+clk: clock-controller@3002000 {
+	// set the "sophgo,cv1800-clk" as the fallback.
+	compatible = "sophgo,cv1800-clk";
+	[...]
+};
 
+// in the cv1800b.dtsi
+// now no need for the clk override since we have the compatible
+// default.
 
-> (please check carefully)
-> 
-> and David's later "mm: allow reuse of the lower 16 bit of the page type
-> with an actual type" becomes
-> 
->   include/linux/mm_types.h   |    5 +++++
->   include/linux/page-flags.h |   16 ++++++++--------
->   2 files changed, 13 insertions(+), 8 deletions(-)
-> 
-> --- a/include/linux/mm_types.h~mm-allow-reuse-of-the-lower-16-bit-of-the-page-type-with-an-actual-type
-> +++ a/include/linux/mm_types.h
-> @@ -157,6 +157,11 @@ struct page {
->   		 *
->   		 * See page-flags.h for a list of page types which are currently
->   		 * stored here.
-> +		 *
-> +		 * Owners of typed folios may reuse the lower 16 bit of the
-> +		 * head page page_type field after setting the page type,
-> +		 * but must reset these 16 bit to -1 before clearing the
-> +		 * page type.
->   		 */
->   		unsigned int page_type;
->   
-> --- a/include/linux/page-flags.h~mm-allow-reuse-of-the-lower-16-bit-of-the-page-type-with-an-actual-type
-> +++ a/include/linux/page-flags.h
-> @@ -951,15 +951,15 @@ enum pagetype {
->   	 * allow owners that set a type to reuse the lower 16 bit for their own
->   	 * purposes.
->   	 */
-> -	PG_buddy	= 0x00000080,
-> -	PG_offline	= 0x00000100,
-> -	PG_table	= 0x00000200,
-> -	PG_guard	= 0x00000400,
-> -	PG_hugetlb	= 0x00000800,
-> -	PG_slab		= 0x00001000,
-> +	PG_buddy	= 0x40000000,
-> +	PG_offline	= 0x20000000,
-> +	PG_table	= 0x10000000,
-> +	PG_guard	= 0x08000000,
-> +	PG_hugetlb	= 0x04008000,
-> +	PG_slab		= 0x02000000,
->   
-> -	PAGE_TYPE_BASE	= 0xf0000000,
-> -	PAGE_MAPCOUNT_RESERVE	= -128,
-> +	PAGE_TYPE_BASE	= 0x80000000,
-> +	PAGE_MAPCOUNT_RESERVE	=  (~0x0000ffff),
->   };
->   
->   #define PageType(page, flag)						\
-> _
-> 
-> and that patch's fixup becomes
-> 
-> --- a/include/linux/page-flags.h~mm-allow-reuse-of-the-lower-16-bit-of-the-page-type-with-an-actual-type-fix
-> +++ a/include/linux/page-flags.h
-> @@ -955,7 +955,7 @@ enum pagetype {
->   	PG_offline	= 0x20000000,
->   	PG_table	= 0x10000000,
->   	PG_guard	= 0x08000000,
-> -	PG_hugetlb	= 0x04008000,
-> +	PG_hugetlb	= 0x04000000,
->   	PG_slab		= 0x02000000,
->   
->   	PAGE_TYPE_BASE	= 0x80000000,
-> _
-> 
-> and "mm/zsmalloc: use a proper page type" becomes, in part,
-> 
-> --- a/include/linux/page-flags.h~mm-zsmalloc-use-a-proper-page-type
-> +++ a/include/linux/page-flags.h
-> @@ -957,6 +957,7 @@ enum pagetype {
->   	PG_guard	= 0x08000000,
->   	PG_hugetlb	= 0x04000000,
->   	PG_slab		= 0x02000000,
-> +	PG_zsmalloc	= 0x01000000,
->   
->   	PAGE_TYPE_BASE	= 0x80000000,
->   	PAGE_MAPCOUNT_RESERVE	=  (~0x0000ffff),
-> 
-> 
-> 
-> and the end result is identical to yesterday's mm-everything so that's
-> all good.
+// in the cv1812h.dtsi
+// we still need this override as it is not compatible
+&clk {
+	compatible = "sophgo,cv1810-clk";
+};
 
-Looks good.
+// in the sg2002.dtsi of the patch
+// we need this override as it is also not compatible
+&clk {
+	compatible = "sophgo,sg2000-clk";
+};
 
-> 
-> However I wouldn't want to send the altered version of "mm: convert
-> page type macros to enum" into 6.10-rcX because it gets so altered by
-> David's mm-unstable changes for the next merge window.  The new version
-> of the hotfixes patch won't have had any valid testing on its own.
-> 
-> So I'll temporarily drop David's "mm: page_type, zsmalloc and
-> page_mapcount_reset()" series from mm-unstable.  To permit the new "mm:
-> convert page type macros to enum" to get some linux-next exposure.
-> David, please remind me to restore that series in a week or so?
+Do I understand correctly? Or we still need to duplicate these node
+for SoCs with different profiles.
 
-I'll be on vacation next week, but will try to think of it. If you want 
-a resend based on the new mm-unstable state with that hotfix, let me know.
-
--- 
-Cheers,
-
-David / dhildenb
-
+Regards,
+Inochi
 
