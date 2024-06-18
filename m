@@ -1,164 +1,197 @@
-Return-Path: <linux-kernel+bounces-219620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6965090D59E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:41:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46CED90D5A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 136521F23091
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:41:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D5931C23309
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9A018E749;
-	Tue, 18 Jun 2024 14:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD8516D9D4;
+	Tue, 18 Jun 2024 14:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vLWw/EMn"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bq2T5lo8"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B4B16B395
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7061415FD1A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718720693; cv=none; b=tohciAg2YFPJOs8JQbbWok/Iroi+0KbbKmH5sftmAzVLLiyXm9sXrm11M97ccwr2cK5FCdMa3EezAHhlQzDX0rRzKLj3fqVkz2jPlPoAxqXz1qOY4nPTtGnBC43f0eQYHUJ4J9BHq9eRYQiQa93JgUKGB7/N474/sD3z8pdp2qU=
+	t=1718720811; cv=none; b=VoBz0IodBsl4GK9onJAtINIWUhuVJImRIpX4gYtqe2xbJFFHmky0828vt4iEzoYN0LXdmWup83SfJXXRASmawvLDyUbXHkuGqNyvjZ34Uk0EuLLQKu6EuiC+zp1Y7qi3fnEScxrhfuK0YOXdgTQCkNaR6CW5BJsl2idJwnHhBe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718720693; c=relaxed/simple;
-	bh=Qe9HrNwwuxUd4tggdrON7M6DcUwaSSBpvWLFq+kvi0k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BSB14hrQ3ySuKOZSD4xn44o9UHDLPAzUCQ8kopV6xqqxWeeu1AH6rQiAt5vJ2dOiw75thOdVKEBE8ulCWIGVOkD7nwrJi+YokCKkCyCH6gF/IDgw4Q4mQDFW/ILLTGUIqUTY3xv8v0gr86ajHLEb+YMEpvS9AmKjRjGhDoPXlGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vLWw/EMn; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62d032a07a9so115135237b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:24:51 -0700 (PDT)
+	s=arc-20240116; t=1718720811; c=relaxed/simple;
+	bh=6OODOhdNIVgojK0DD+bJ3xC5Pd0K2/xPp0YUVsVlCyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eNSbJV3OI7qr0/D4TSQJdpsy3B8IeLQvgq7s/a436/tj2F3H3pm0nVfo88O7NvT+9Hrl50UTeNRk1modqlsXwKBiGJ1Meuim9rgOAKeOCQ1RSSkn7jJoOfMngrGzLNvBW4mf7O0vsU67BkAyVsZFfdf7/lM4eIcsOBHQ/HqvKHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bq2T5lo8; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52b7ffd9f6eso5474908e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:26:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718720691; x=1719325491; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jzSqCA3tMwUTmQtJKAVbh37FZMaDGohCEsVYc68S+UM=;
-        b=vLWw/EMnWjvH9BSz1K4vzlYbh4vfBsUJWHiIW+kxgDzpysxiqhUEwHjrdUV9UkBNRM
-         61r2D6o+vcWOMiyjiKt2YE/qXfmJ5E75wrDi3gET7tcc/S8IRPIyuQNjPBNgYk5rmLTo
-         1IYKXU0NvXGetfNeM/MGol411eS8vFLPKtYbO/iVYkDvsUkVrfeScZk5KVtmYH2NbSs2
-         QMS4P4VVpRCyK+jp7Gh79AW1mpv/t1kz/JElJATmn8crNJTriDlMZpE09eHszwbYXiqb
-         8liCfT3zD4dMfIV4mePBs6uadoj1eJ5LRfkh3qnW1p2LK0QVBkX/PQ1lYp3cukng5TLe
-         zAeg==
+        d=linaro.org; s=google; t=1718720808; x=1719325608; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o4oltf+iDMEhrbAhAEQGa5uqGfEZG+Q9a3SV4m205oY=;
+        b=bq2T5lo8QNw+36MP39ZmaGDBuA5DcCGKbvgNA3hodWxR3LokbSz+50Gz/lqQXkF4eO
+         EOHrUSMV0PLAb/bVactpNPqIyUv6Yk8ZNrryyISKWNadAF4Dsr5uPZI/Fg7PF2AXJjTj
+         c6hCBuiHbBmBpWO/99mOJNWl8BM8Pd4Ry2D57AFLcP3cbW+zOO38YJv77DH8q0XPIfD7
+         +Th6hdEcD+WcJnXxaRU7doLac/IboZRFnpT2F5c8WhZqdOn3P0p/gldFmTC3XUGEpvBk
+         Jbl/VzRD7eCnKXP9TO1sACoau0TE0EsMuWWCYjApKga2Ti5tvVer0C5sxDquOmIDU6EW
+         xMQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718720691; x=1719325491;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jzSqCA3tMwUTmQtJKAVbh37FZMaDGohCEsVYc68S+UM=;
-        b=mr3ud0FXyVqeYOroijH+GMTz7LokCHmqVkAxgal6ZF6TiPR0VQGvanjLk7bFRjDjEg
-         IccOmVeRi0S1/RvIhxHyJT3Y84Vop0fjjPFEI8Snk1jZIrsZvaGU0jee+3O200hBUOlF
-         6o485Ez1K/3LL9PRvlMh1WGCeaRv0HekYZa55wo4c7QpwlnpxGpM0N2Ik82l7ie/BDdY
-         xq1MyYsZPKKU6ZQhfkDe+uPBGlGHGrvnbsqwRpV/vfmvAgUPEKsIOEVILrbAxRebZ6Rs
-         Tn9ALoMcMfuRRkJqRHgcxWpnmmCRPt3Omf3YqJmNzD2OFIKR9eD5JYqIz2WMrhDQ9wrm
-         bU/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUufNufGMbqrXexs6BnlL2bWzQJZYTwsPU89WbI4JGIuZl13goXpTMPnBKoWir0jZNI4GlKA6l2Vlagt1QIG6pRLAA5nA3P3PSTKbZA
-X-Gm-Message-State: AOJu0YzxXzfBq5B5XdZrvSi0hcMHzAEttdjkrq1L6qlwGDMR9hw6eIn7
-	pR3mkm+hh1zMBltSPduQlqfgdxMgK7L8FM8c9kj2HifVoV2KHn1jyM/kiy7ZYC+j/AzDSvOTFp9
-	+FQ==
-X-Google-Smtp-Source: AGHT+IGh7BKNV2fEETd8oRvVCeizF3GCJMhDwgMepnQy/LpS9SU28FXAV6MAuY5yJ3eBkzKaOl7h3OBeluU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:4b03:b0:61b:ebab:ce9b with SMTP id
- 00721157ae682-63222562162mr50792027b3.3.1718720691026; Tue, 18 Jun 2024
- 07:24:51 -0700 (PDT)
-Date: Tue, 18 Jun 2024 07:24:49 -0700
-In-Reply-To: <20240618104234.GF31592@noisy.programming.kicks-ass.net>
+        d=1e100.net; s=20230601; t=1718720808; x=1719325608;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o4oltf+iDMEhrbAhAEQGa5uqGfEZG+Q9a3SV4m205oY=;
+        b=xU/NN2Ho3kR67qzl1SRxrHp5EVx4kUXF46rCAbjrL6fn1mSPPZtDzlwlQXn68RTE7B
+         XcBmcCFXUhnonbKCO+86Im1DjUAm3ubnlWm7f+k7s6zHk1FwRZ4FPjpMzijVRs9OS6MF
+         J84U94fXCcdFVKQpjiAbdLQnyrZfeKI6Vd4CRNlHaQUO5zD47lQcD0tjnzyQrP8B5FLV
+         jLLV4Czlxm2j1y//4k4tzRSoUzeiJxhMLeSOuzyp+bJC6nFvL3WtzAPJeUoC665aXy0K
+         A4HSUPUJVTjt4jfBLeAUigZufwWuQXXPmDeKo7/sE1cRawPvHeufxPmcCNi+GG+PnAYa
+         ATTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpgaOnLiYVmj/jW5aDdWhN2gu6gSV+4j5dyIg/QwWBuPli7Z5G2lclvWtvIPMXLqTSsW2wvn6toWQ5NhIpAYKVVxwrV2v8t0gJoNjG
+X-Gm-Message-State: AOJu0YzxMtZcJv82OQEnuzub5CDhHbG1/wIOlMWUvclw0av/0nSi49Fq
+	B9A/1Mlki3i2Smd1O/UQBIaJq45dlpuANnCaAXv9X8WVcsobhaGQdOWA9EdXsZs=
+X-Google-Smtp-Source: AGHT+IFHGjpAatLTh5i/TLtY4OH/tjLw1j7KJbR3WWjxHPOYuCrWDKwfD8gaK8LpcWJj2ajdG7CPng==
+X-Received: by 2002:a19:c519:0:b0:52b:c025:859a with SMTP id 2adb3069b0e04-52ca6e56796mr8617234e87.2.1718720807536;
+        Tue, 18 Jun 2024 07:26:47 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2825bf0sm1511574e87.32.2024.06.18.07.26.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 07:26:47 -0700 (PDT)
+Message-ID: <08533ee4-ac72-4d36-84ef-c44e8865d16d@linaro.org>
+Date: Tue, 18 Jun 2024 16:26:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <202406141648.jO9qNGLa-lkp@intel.com> <20240614152228.GAZmxgNPmozj7UzRdV@fat_crate.local>
- <20240618104234.GF31592@noisy.programming.kicks-ass.net>
-Message-ID: <ZnGYsdiOYjLJBX1n@google.com>
-Subject: Re: [tip:x86/alternatives 14/14] arch/x86/kvm/kvm.o: warning:
- objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
-From: Sean Christopherson <seanjc@google.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>, kernel test robot <lkp@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] interconnect: qcom: icc-rpmh: Add QoS
+ configuration support
+To: Odelu Kukatla <quic_okukatla@quicinc.com>,
+ Mike Tipton <quic_mdtipton@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Georgi Djakov
+ <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kees Cook <keescook@chromium.org>,
+ cros-qcom-dts-watchers@chromium.org,
+ "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, quic_rlaggysh@quicinc.com
+References: <20240325181628.9407-1-quic_okukatla@quicinc.com>
+ <20240325181628.9407-2-quic_okukatla@quicinc.com>
+ <d59896bb-a559-4013-a615-37bb43278b2e@linaro.org>
+ <91f59477-1799-4db6-bcc2-3f0c5225d1c8@quicinc.com>
+ <0a58e05a-7bf5-459a-b202-66d88c095b45@linaro.org>
+ <20240508023716.GD25316@hu-mdtipton-lv.qualcomm.com>
+ <434c6cfa-cede-4e62-a785-35a81ae0d30d@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <434c6cfa-cede-4e62-a785-35a81ae0d30d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 18, 2024, Peter Zijlstra wrote:
-> On Fri, Jun 14, 2024 at 05:22:28PM +0200, Borislav Petkov wrote:
-> > On Fri, Jun 14, 2024 at 04:15:14PM +0800, kernel test robot wrote:
-> You sure? Afaict the thing is:
-> 
-> $ OBJTOOL_ARGS="--verbose" make O=tmp-build/ arch/x86/kvm/
-> ...
-> arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
-> arch/x86/kvm/kvm.o: warning: objtool:   em_loop.part.0+0x29: (alt)
-> arch/x86/kvm/kvm.o: warning: objtool:   em_loop.part.0+0x0: <=== (sym)
-> 0000 0000000000028220 <em_loop.part.0>:
-> 0000    28220:  0f b6 47 61             movzbl 0x61(%rdi),%eax
-> 0004    28224:  3c e2                   cmp    $0xe2,%al
-> 0006    28226:  74 2c                   je     28254 <em_loop.part.0+0x34>
-> 0008    28228:  48 8b 57 10             mov    0x10(%rdi),%rdx
-> 000c    2822c:  83 f0 05                xor    $0x5,%eax
-> 000f    2822f:  48 c1 e0 04             shl    $0x4,%rax
-> 0013    28233:  25 f0 00 00 00          and    $0xf0,%eax
-> 0018    28238:  81 e2 d5 08 00 00       and    $0x8d5,%edx
-> 001e    2823e:  80 ce 02                or     $0x2,%dh
-> 0021    28241:  48 05 00 00 00 00       add    $0x0,%rax        28243: R_X86_64_32S     em_setcc
-> 0027    28247:  52                      push   %rdx
-> 0028    28248:  9d                      popf
-> 0029    28249:  ff d0                   call   *%rax
-> 002b    2824b:  90                      nop
-> 002c    2824c:  90                      nop
-> 002d    2824d:  90                      nop
-> 002e    2824e:  31 d2                   xor    %edx,%edx
-> 0030    28250:  84 c0                   test   %al,%al
-> 0032    28252:  74 1d                   je     28271 <em_loop.part.0+0x51>
-> 0034    28254:  55                      push   %rbp
-> 0035    28255:  48 63 b7 d0 00 00 00    movslq 0xd0(%rdi),%rsi
-> 003c    2825c:  48 03 b7 90 00 00 00    add    0x90(%rdi),%rsi
-> 0043    28263:  48 89 e5                mov    %rsp,%rbp
-> 0046    28266:  e8 05 fe ff ff          call   28070 <assign_eip>
-> 004b    2826b:  5d                      pop    %rbp
-> 004c    2826c:  e9 00 00 00 00          jmp    28271 <em_loop.part.0+0x51>      2826d: R_X86_64_PLT32   __x86_return_thunk-0x4
-> 0051    28271:  89 d0                   mov    %edx,%eax
-> 0053    28273:  e9 00 00 00 00          jmp    28278 <em_loop.part.0+0x58>      28274: R_X86_64_PLT32   __x86_return_thunk-0x4
-> 0058    28278:  0f 1f 84 00 00 00 00 00         nopl   0x0(%rax,%rax,1)
-> 
-> Which is in fact test_cc() from em_loop().
-> 
-> Now, that .config is a FRAME_POINTER build, and the fast-call thing
-> don't do frames, so it is right to complain. Big question is why it
-> didn't complain previously I suppose.
-> 
-> Also, notably, this patch:
-> 
->   https://lkml.kernel.org/r/20231204093732.323101886@infradead.org
-> 
-> cures things.
 
-Speaking of that series, do you need/want any help pushing it along?  I ran into
-build issues[*] and didn't have the cycles to fully figure things out at the time.
- 
-  This fails for some of my builds that end up with CONFIG_OBJTOOl=n.  Adding a
-  stub for ASM_ANNOTATE() gets me past that:
-  
-  @@ -156,6 +171,7 @@
-   #define STACK_FRAME_NON_STANDARD(func)
-   #define STACK_FRAME_NON_STANDARD_FP(func)
-   #define ANNOTATE_NOENDBR
-  +#define ASM_ANNOTATE(x)
-   #define ASM_REACHABLE
-   #else
-   #define ANNOTATE_INTRA_FUNCTION_CALL
-  
-  but then I run into other issues:
-  
-  arch/x86/kernel/relocate_kernel_32.S: Assembler messages:
-  arch/x86/kernel/relocate_kernel_32.S:96: Error: Parameter named `type' does not exist for macro `annotate'
-  arch/x86/kernel/relocate_kernel_32.S:166: Error: Parameter named `type' does not exist for macro `annotate'
-  arch/x86/kernel/relocate_kernel_32.S:174: Error: Parameter named `type' does not exist for macro `annotate'
-  arch/x86/kernel/relocate_kernel_32.S:200: Error: Parameter named `type' does not exist for macro `annotate'
-  arch/x86/kernel/relocate_kernel_32.S:220: Error: Parameter named `type' does not exist for macro `annotate'
-  arch/x86/kernel/relocate_kernel_32.S:285: Error: Parameter named `type' does not exist for macro `annotate'
 
-[*] https://lore.kernel.org/all/ZXEEbrI7K6XGr2dN@google.com
+On 5/28/24 16:52, Odelu Kukatla wrote:
+> Hi Konrad,
+> 
+> On 5/8/2024 8:07 AM, Mike Tipton wrote:
+>> On Sat, Apr 13, 2024 at 09:31:47PM +0200, Konrad Dybcio wrote:
+>>> On 3.04.2024 10:45 AM, Odelu Kukatla wrote:
+>>>>
+>>>>
+>>>> On 3/27/2024 2:26 AM, Konrad Dybcio wrote:
+>>>>> On 25.03.2024 7:16 PM, Odelu Kukatla wrote:
+>>>>>> It adds QoS support for QNOC device and includes support for
+>>>>>> configuring priority, priority forward disable, urgency forwarding.
+>>>>>> This helps in priortizing the traffic originating from different
+>>>>>> interconnect masters at NoC(Network On Chip).
+>>>>>>
+>>>>>> Signed-off-by: Odelu Kukatla <quic_okukatla@quicinc.com>
+>>>>>> ---
+>>>
+>>> [...]
+>>>
+>>>>>> @@ -70,6 +102,7 @@ struct qcom_icc_node {
+>>>>>>   	u64 max_peak[QCOM_ICC_NUM_BUCKETS];
+>>>>>>   	struct qcom_icc_bcm *bcms[MAX_BCM_PER_NODE];
+>>>>>>   	size_t num_bcms;
+>>>>>> +	const struct qcom_icc_qosbox *qosbox;
+>>>>>
+>>>>> I believe I came up with a better approach for storing this.. see [1]
+>>>>>
+>>>>> Konrad
+>>>>>
+>>>>> [1] https://lore.kernel.org/linux-arm-msm/20240326-topic-rpm_icc_qos_cleanup-v1-4-357e736792be@linaro.org/
+>>
+>> Note that I replied to this patch series as well. Similar comments here
+>> for how that approach would apply to icc-rpmh.
+>>
+>>>>>
+>>>>
+>>>> I see in this series, QoS parameters are moved into struct qcom_icc_desc.
+>>>> Even though we program QoS at Provider/Bus level, it is property of the node/master connected to a Bus/NoC.
+>>>
+>>> I don't see how it could be the case, we're obviously telling the controller which
+>>> endpoints have priority over others, not telling nodes whether the data they
+>>> transfer can omit the queue.
+>>
+>> The QoS settings tune the priority of data coming out of a specific port
+>> on the NOC. The nodes are 1:1 with the ports. Yes, this does tell the
+>> NOC which ports have priority over others. But that's done by
+>> configuring each port's priority in their own port-specific QoS
+>> registers.
+>>
+>>>
+>>>> It will be easier later to know which master's QoS we are programming if we add in node data.
+>>>> Readability point of view,  it might be good to keep QoS parameters in node data.
+>>>
+>>> I don't agree here either, with the current approach we've made countless mistakes
+>>> when converting the downstream data (I have already submitted some fixes with more
+>>> in flight), as there's tons of jumping around the code to find what goes where.
+>>
+>> I don't follow why keeping the port's own QoS settings in that port's
+>> struct results in more jumping around. It should do the opposite, in
+>> fact. If someone wants to know the QoS settings applied to the qhm_qup0
+>> port, then they should be able to look directly in the qhm_qup0 struct.
+>> Otherwise, if it's placed elsewhere then they'd have to jump elsewhere
+>> to find what that logical qhm_qup0-related data is set to.
+>>
+>> If it *was* placed elsewhere, then we'd still need some logical way to
+>> map between that separate location and the node it's associated with.
+>> Which is a problem with your patch for cleaning up the icc-rpm QoS. In
+>> its current form, it's impossible to identify which QoS settings apply
+>> to which logical node (without detailed knowledge of the NOC register
+>> layout).
+>>
+>> Keeping this data with the node struct reduces the need for extra layers
+>> of mapping between the QoS settings and the node struct. It keeps all
+>> the port-related information all together in one place.
+>>
+>> I did like your earlier suggestion of using a compound literal to
+>> initialize the .qosbox pointers, such that we don't need a separate
+>> top-level variable defined for them. They're only ever referenced by a
+>> single node, so there's no need for them to be separate variables.
+>>
+>> But I don't see the logic in totally separating the QoS data from the
+>> port it's associated with.
+>>
+>>>
+> I will update the patch as per your suggestion of keeping .qosbox initialization inside *qcom_icc_node* structure.
+> I will post next version with this update and addressing other comments from v4.
+
+Sorry for the late answer, but ack, let's go forward with this
+
+Konrad
 
