@@ -1,191 +1,121 @@
-Return-Path: <linux-kernel+bounces-220119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E7F90DCDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:53:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446F290DCE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7BE1F23CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:53:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 901CEB22C18
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E8A16EB42;
-	Tue, 18 Jun 2024 19:53:24 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE0416DC11;
+	Tue, 18 Jun 2024 19:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XAhXj1BN"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D379E210EC;
-	Tue, 18 Jun 2024 19:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7310A15E5CA;
+	Tue, 18 Jun 2024 19:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718740403; cv=none; b=sj5csMur9l/+cK46TQ8aLCNcjPAW5uBhFYhtgVo7S7GTVPA+Ivy0EDq22/enZ8W/AzimrYzaVFgGmXxYAT2qKu49Zqp147HrVRwZDOoBCIDxsBm9EaopF3dIqpWmOoXTyg3WuYLS1ZSiRNsMNvLh+6x5Nner9pwoseLj7NGH9P0=
+	t=1718740434; cv=none; b=cSJvom5hVViDiHBpKLpjZCJ9ileT4NlZFlWDpxMDBV1aXnG/kSp6sqMeVAN5YdvVyo6KhQIT04N7hpX3zH1TU2ddy3HUqkCyIA5IZfcp1tVgsE7Y0pxmB3wvmBIY9MfxY8NWNwlU/zQ209EloYDJHaVXAa0twfBczD3A+zmi8ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718740403; c=relaxed/simple;
-	bh=eWNldh0fA+vF6SNTZKoJB9VnUA+3nIeMmjPBFEBYAj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hLSj/Vl/cESrqhUkMa+zYhd94SkYEUS2qmufkwivK6EP2PlY+NPawSIROOzyyaHQkfokhBgtY9k1N76/oM6xdyGPCXNlLUs3xwyraSFgM5/qWy15Z0g1M+7UL5uYBHL+3b6I1Ar6fgoAn1B428KIsCgsv3ON/RF3pfL1oT/uxJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B09AFC4AF1A;
-	Tue, 18 Jun 2024 19:53:21 +0000 (UTC)
-Date: Tue, 18 Jun 2024 15:53:20 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Takaya Saeki <takayas@chromium.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Andrew Morton
- <akpm@linux-foundation.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Junichi Uekawa
- <uekawa@chromium.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [PATCH] filemap: add trace events for get_pages, map_pages, and
- fault
-Message-ID: <20240618155320.75807db5@rorschach.local.home>
-In-Reply-To: <20240618093656.1944210-1-takayas@chromium.org>
-References: <20240618093656.1944210-1-takayas@chromium.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718740434; c=relaxed/simple;
+	bh=48hbnQ2T9qx+vWEMSlGI9VkZepMhop2InVAKIhpFVeY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mZz8giow7zma4MGR1PT9P24bfHp0CaI/NyIUsvhZn4tWkT8GmwzG30zQCAwSzTdPkaDn3zrcM0fMpQz4dy22FleNP0WnA959rVKASbJ0fp9RFLXxKNZDjFUKJKBpO4g3cYGmCf+V8xw3I9nL56G7TnactH/Y3vd+KJtuu5bAaXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XAhXj1BN; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-705fff50de2so121809b3a.1;
+        Tue, 18 Jun 2024 12:53:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718740432; x=1719345232; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=DBczn5UpQRXXikn8dQhHxMmY5ljdSnboHK2eCF3J4e8=;
+        b=XAhXj1BNEOpuCu7RI6Qx0NCcQNIXliAGPaqTvktbC0nXfJuQGYfAsaTi9KHnYwzOza
+         8mn1jL/ZAgiRk51Yljt+1REhsuiu8OQB1UmOfzz6Se/slo/lLWdV56qWTStR4M+7iS5f
+         GeqNsG6pQtl8nXK1NyaabVG36ATn31jvDCtOlETqBIA2Cba8jcytJf75kzicYxazim2g
+         GOQR0MyFpsjWXRa0zEd3GKLxDo4MWu/F2tBKpndQ3c1/r0pvvd8kSjVS8ddqoD7WdR56
+         xQMVgqFt9e3lQV46S7qWu10I8/me0waEnmuzMYfGzOJTRoP0FiD2G34resc+vqClAbHs
+         Mf6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718740432; x=1719345232;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DBczn5UpQRXXikn8dQhHxMmY5ljdSnboHK2eCF3J4e8=;
+        b=X7oPSYvOQAyAyS0HdDfRaWajc8H4UpBkNx13M09yAn0KlvjgeEViilM72jKhWJMgZA
+         /ltUGrNfW17xdn0eqaAexARJyNhmGbsodM43Pn7m4HFu/HWEfbysmawpKN2OuByLPQEp
+         XVW3MYTGcSgyYtUmEepcG8AYcSvqjLWSoICxHP0ztWEEE/MjYBpl/7ZaGuO+Kd8q2OIq
+         q6zJXEi4ubobg51x1O8flEUIPwjEJ2XHxHa5oSNeMYB9UmvhZ9reAekkxtc76xbVnzhC
+         gP3EezUtheWgyo0wzGq+7Aaex+1jBSJ4UvvZH3szOlydVsZyYIWE6y6wiSraLi5q3j2o
+         6/Og==
+X-Gm-Message-State: AOJu0YzmkbZZ62LlNw/GSIdGGmLSND8XLKmAKWD1670Ay+CWAGL4hYXd
+	Dul9Hr54CCwd0D+JKTRActypCsMWoQ4YjGKH6XUg9TY1E/eUfgKg9OAFVw==
+X-Google-Smtp-Source: AGHT+IFB0df60ze5pnoF8vT4dTHB6y9Mbkt3wgx3i9X0E2L6uQNVyPHU5WaHz5qxyoM0W52UmgfqJQ==
+X-Received: by 2002:aa7:9ddc:0:b0:704:229e:54bd with SMTP id d2e1a72fcca58-70628fa93eamr985310b3a.8.1718740432061;
+        Tue, 18 Jun 2024 12:53:52 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fedcf36b9esm8340985a12.19.2024.06.18.12.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 12:53:51 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	=?UTF-8?q?Ren=C3=A9=20Rebe?= <rene@exactcode.de>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Armin Wolf <W_Armin@gmx.de>,
+	Stephen Horvath <s.horvath@outlook.com.au>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Sasha Kozachuk <skozachuk@google.com>,
+	John Hamrick <johnham@google.com>,
+	Chris Sarra <chrissarra@google.com>,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: [RFT PATCH v2 0/3] hwmon: (spd5118) Various improvements
+Date: Tue, 18 Jun 2024 12:53:45 -0700
+Message-Id: <20240618195348.1670547-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 18 Jun 2024 09:36:56 +0000
-Takaya Saeki <takayas@chromium.org> wrote:
+The first patch of this series introduces multi-page support using the
+regmap infrastructure. This simplifies the code and improves regmap caching.
 
-> To allow precise tracking of page caches accessed, add new tracepoints
-> that trigger when a process actually accesses them.
-> 
-> The ureadahead program used by ChromeOS traces the disk access of
-> programs as they start up at boot up. It uses mincore(2) or the
-> 'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
-> this information in a "pack" file and on subsequent boots, it will read
-> the pack file and call readahead(2) on the information so that disk
-> storage can be loaded into RAM before the applications actually need it.
-> 
-> A problem we see is that due to the kernel's readahead algorithm that
-> can aggressively pull in more data than needed (to try and accomplish
-> the same goal) and this data is also recorded. The end result is that
-> the pack file contains a lot of pages on disk that are never actually
-> used. Calling readahead(2) on these unused pages can slow down the
-> system boot up times.
-> 
-> To solve this, add 3 new trace events, get_pages, map_pages, and fault.
-> These will be used to trace the pages are not only pulled in from disk,
-> but are actually used by the application. Only those pages will be
-> stored in the pack file, and this helps out the performance of boot up.
-> 
-> With the combination of these 3 new trace events and
-> mm_filemap_add_to_page_cache, we observed a reduction in the pack file
-> by 7.3% - 20% on ChromeOS varying by device.
-> 
-> Signed-off-by: Takaya Saeki <takayas@chromium.org>
+The second patch introduces a spd5118-specific regmap bus to implement
+SMBus accesses. This solves a problem seen with i801 I2C controllers
+when writing to the chip. The I2C_FUNC_SMBUS_I2C_BLOCK support implemented
+in those controllers does not work with spd5118 compatible chips, so
+byte-by-byte access needs to be used explicitly.
 
-Thanks Takaya.
+The third patch adds support for spd5118 compatible chips which follow
+the standard literally and block access to volatile registers if not
+on page 0.
 
-I just applied this and ran:
+RFT: I was able to test the code on AMD systems using the piix4 I2C
+controller. It needs testing with i801 controllers and with Renesas
+chips.
 
- # trace-cmd start -e filemap
+v2: Added patches 1 and 2; simplified patch 3 to rely on regmap
+    based paging.
 
-did a less and then:
+----------------------------------------------------------------
+Guenter Roeck (3):
+      hwmon: (spd5118) Use regmap to implement paging
+      hwmon: (spd5118) Use spd5118 specific read/write operations
+      hwmon: (spd5118) Add support for Renesas/ITD SPD5118 hub controllers
 
- # trace-cmd show | grep less-901 | grep 13f730
-            less-901     [005] .....    72.531607: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x113bad ofs=0 order=0
-            less-901     [005] .....    72.531613: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x113bcc ofs=4096 order=0
-            less-901     [005] .....    72.531617: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x113b19 ofs=8192 order=0
-            less-901     [005] .....    72.531620: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x114970 ofs=12288 order=0
-            less-901     [005] .....    72.532039: mm_filemap_get_pages: dev 253:3 ino 13f730 ofs=0 max_ofs=4096
-            less-901     [005] .....    72.532104: mm_filemap_get_pages: dev 253:3 ino 13f730 ofs=0 max_ofs=4096
-            less-901     [005] .....    72.532107: mm_filemap_get_pages: dev 253:3 ino 13f730 ofs=0 max_ofs=4096
-            less-901     [005] .....    72.532497: mm_filemap_fault: dev 253:3 ino 13f730 ofs=196608
-            less-901     [005] .....    72.532503: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x111232 ofs=131072 order=0
-            less-901     [005] .....    72.532505: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x110099 ofs=135168 order=0
-            less-901     [005] .....    72.532506: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11496b ofs=139264 order=0
-            less-901     [005] .....    72.532509: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x10b061 ofs=143360 order=0
-            less-901     [005] .....    72.532511: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x111230 ofs=147456 order=0
-            less-901     [005] .....    72.532512: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x110c88 ofs=151552 order=0
-            less-901     [005] .....    72.532515: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x1119ef ofs=155648 order=0
-            less-901     [005] .....    72.532518: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x111b49 ofs=159744 order=0
-            less-901     [005] .....    72.532519: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11498b ofs=163840 order=0
-            less-901     [005] .....    72.532521: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x1149ab ofs=167936 order=0
-            less-901     [005] .....    72.532523: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x113bcb ofs=172032 order=0
-            less-901     [005] .....    72.532525: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x1119f3 ofs=176128 order=0
-            less-901     [005] .....    72.532527: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x1171d0 ofs=180224 order=0
-            less-901     [005] .....    72.532529: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x112ae7 ofs=184320 order=0
-            less-901     [005] .....    72.532531: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x113bc0 ofs=188416 order=0
-            less-901     [005] .....    72.532534: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x111ad8 ofs=192512 order=0
-            less-901     [005] .....    72.532535: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x1149b6 ofs=196608 order=0
-
-I'm guessing the above is the kernel "readahead" kicking in.
-
-            less-901     [005] .....    72.533002: mm_filemap_fault: dev 253:3 ino 13f730 ofs=196608
-            less-901     [005] .....    72.533237: mm_filemap_map_pages: dev 253:3 ino 13f730 ofs=0 max_ofs=16384
-            less-901     [005] .....    72.533245: mm_filemap_map_pages: dev 253:3 ino 13f730 ofs=176128 max_ofs=196608
-            less-901     [005] .....    72.533644: mm_filemap_map_pages: dev 253:3 ino 13f730 ofs=0 max_ofs=16384
-            less-901     [005] .....    72.533644: mm_filemap_fault: dev 253:3 ino 13f730 ofs=4096
-            less-901     [005] .....    72.533652: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x110d59 ofs=16384 order=0
-            less-901     [005] .....    72.533655: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x1149a4 ofs=20480 order=0
-            less-901     [005] .....    72.533658: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11498c ofs=24576 order=0
-            less-901     [005] .....    72.533661: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x114969 ofs=28672 order=0
-            less-901     [005] .....    72.533663: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11496c ofs=32768 order=0
-            less-901     [005] .....    72.533666: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x113bc8 ofs=36864 order=0
-            less-901     [005] .....    72.533668: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x113b23 ofs=40960 order=0
-            less-901     [005] .....    72.533671: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11497f ofs=45056 order=0
-            less-901     [005] .....    72.533674: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x114981 ofs=49152 order=0
-            less-901     [005] .....    72.533676: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x114983 ofs=53248 order=0
-            less-901     [005] .....    72.533679: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11124e ofs=57344 order=0
-            less-901     [005] .....    72.533682: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x114d97 ofs=61440 order=0
-            less-901     [005] .....    72.533684: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x113bbe ofs=65536 order=0
-            less-901     [005] .....    72.533687: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x1161ff ofs=69632 order=0
-            less-901     [005] .....    72.533690: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11622f ofs=73728 order=0
-            less-901     [005] .....    72.533692: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x116554 ofs=77824 order=0
-            less-901     [005] .....    72.533695: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x116553 ofs=81920 order=0
-            less-901     [005] .....    72.533698: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11626d ofs=86016 order=0
-            less-901     [005] .....    72.533700: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11621f ofs=90112 order=0
-            less-901     [005] .....    72.533703: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x116564 ofs=94208 order=0
-            less-901     [005] .....    72.533706: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x116582 ofs=98304 order=0
-            less-901     [005] .....    72.533708: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x116580 ofs=102400 order=0
-            less-901     [005] .....    72.533713: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11657e ofs=106496 order=0
-            less-901     [005] .....    72.533716: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x11657d ofs=110592 order=0
-            less-901     [005] .....    72.533718: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x116237 ofs=114688 order=0
-            less-901     [005] .....    72.533721: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x1162a1 ofs=118784 order=0
-            less-901     [005] .....    72.533724: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x116569 ofs=122880 order=0
-            less-901     [005] .....    72.533726: mm_filemap_add_to_page_cache: dev 253:3 ino 13f730 pfn=0x1161fc ofs=126976 order=0
-
-Same here.
-
-            less-901     [005] .....    72.533769: mm_filemap_map_pages: dev 253:3 ino 13f730 ofs=0 max_ofs=16384
-            less-901     [005] .....    72.534352: mm_filemap_map_pages: dev 253:3 ino 13f730 ofs=0 max_ofs=16384
-            less-901     [005] .....    72.534354: mm_filemap_fault: dev 253:3 ino 13f730 ofs=16384
-            less-901     [005] .....    72.534358: mm_filemap_map_pages: dev 253:3 ino 13f730 ofs=0 max_ofs=16384
-            less-901     [005] .....    72.534580: mm_filemap_map_pages: dev 253:3 ino 13f730 ofs=20480 max_ofs=81920
-            less-901     [005] .....    72.534611: mm_filemap_map_pages: dev 253:3 ino 13f730 ofs=126976 max_ofs=172032
-            less-901     [005] .....    72.534630: mm_filemap_map_pages: dev 253:3 ino 13f730 ofs=32768 max_ofs=94208
-            less-901     [005] .....    72.534715: mm_filemap_map_pages: dev 253:3 ino 13f730 ofs=98304 max_ofs=122880
-
-Just to get some numbers:
-
- # trace-cmd show |grep less-901 | grep 13f730 | cut -d: -f2- |grep add_to_page | sort -u |wc -l
- 49
-
- # trace-cmd show |grep less-901 | grep 13f730 | cut -d: -f2- |grep fault | sort -u |wc -l
- 3
-
- # trace-cmd show |grep less-901 | grep 13f730 | cut -d: -f2- |grep get_pages | sort -u |wc -l
- 1
-
- # trace-cmd show |grep less-901 | grep 13f730 | cut -d: -f2- |grep map_pages | sort -u |wc -l
- 6
-
-Note, ureadahead ignores duplicate pages.
-
-If these new events really do only show what is used and not what is
-just pulled in, and doesn't miss anything, I can see it bringing down
-the number of pages needed to be saved dramatically.
-
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
--- Steve
+ drivers/hwmon/Kconfig   |   2 +-
+ drivers/hwmon/spd5118.c | 131 +++++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 102 insertions(+), 31 deletions(-)
 
