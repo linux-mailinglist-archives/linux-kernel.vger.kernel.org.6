@@ -1,168 +1,144 @@
-Return-Path: <linux-kernel+bounces-219982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C439A90DB21
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:53:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B9090DB27
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CFFB1F2552A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:53:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B792B22CB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BABE14F9E9;
-	Tue, 18 Jun 2024 17:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6224914D435;
+	Tue, 18 Jun 2024 17:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkOp7f3+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="kB2rkWWt"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB551CAB3;
-	Tue, 18 Jun 2024 17:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38F013F003
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 17:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718733192; cv=none; b=kSnnQIlXIyDZyMZIYrelGg5GpzzE6UVIcyin8UH+Cn7AikQJZPF1edfIg/CtsI+3QhrLSzWz/BdGb4Lhqgcik4J3r6Bbu1xp4dfhvaAk5tE3UbgB3lG0SGUE+s+KKQ2jmG0EiCcr8SJfHHDDLh31KRjqUovHz7Jsg2z5iI6Hb6w=
+	t=1718733334; cv=none; b=QjSlRHn5p8XotVRqg0AGBddeIMAtkTJgaKfmEoDSd1EIOCK8aXOxIR53bdy3aTh23LGEaUjveBvQJD2PvODY1flQpxvGhfSfHm9YmFsDSGW024MYh+SzMFppeqQpAgBK0xDbZUeA5wixfyGzFDOGWN5Bgr9SFRzzcB6zOrGrh8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718733192; c=relaxed/simple;
-	bh=1oG2z1L2HMCk/Y21GlrePdx7AXyrdRLAZGfQqNCTU9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hU2aa3P504iXMC1l6vLhXLIbQNepjd4AH8WLt94DPsNA7mEIN/5HYCHTkxQ6HT3Gci4rhNr5y0GLapeSQoG4woMhDbp8Lt9x2xb2Jgw5EUmVHAe2ppeVYx99Ci+xFayR5+C3nShY+YC/V11QrtUop5/rAzv6agxBm4meoPyyaMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkOp7f3+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078A0C3277B;
-	Tue, 18 Jun 2024 17:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718733192;
-	bh=1oG2z1L2HMCk/Y21GlrePdx7AXyrdRLAZGfQqNCTU9I=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=QkOp7f3+vMry8cAs4SIc1hm/gEn1nrjiwL7M2c0KKPR9yiamR54iaHuuCRGK7piGG
-	 +n42AXTyIq0ngAFYyq7228+ThonPylf7E7oMdT2aYR9Pj835uWmAGVPiU6S9gfNyhB
-	 yfkIq9lqKnRI9OARD5J0WUk6ozDPQ5dA8rkdgqCxf/WalWf2keAEK6iXZgRM6fR4Ch
-	 vHY9axBAPsFEWk9+VWTA6AYH4XWKV//PM6aKm/qaUrDDo0afnO6WO7QxPGZLE4pl9Y
-	 oz/l1kLMvMAbKJ2LAF3HRzkHJxiudjKsFXTmeXVFEuWrvtx/MztlGXtyweNvs6fNs6
-	 OSLwxNqjqPupw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A0B31CE05B6; Tue, 18 Jun 2024 10:53:11 -0700 (PDT)
-Date: Tue, 18 Jun 2024 10:53:11 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <6dad6e9f-e0ca-4446-be9c-1be25b2536dd@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
- <Zmrkkel0Fo4_g75a@zx2c4.com>
- <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
- <3b6fe525-626c-41fb-8625-3925ca820d8e@paulmck-laptop>
- <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
- <ZnCDgdg1EH6V7w5d@pc636>
- <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
- <ZnFT1Czb8oRb0SE7@pc636>
- <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
- <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
+	s=arc-20240116; t=1718733334; c=relaxed/simple;
+	bh=DTLUZ676QRfLifqNmaQ9PMFqLKool7WG4v5zx1rImQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WZX8+rDg0qXAbSxIoEj6bouF8Robjz9pgDQ3WcV1As+xCj6pjVsr+zQuZYyELAbIBhKWvLDnhpvW39hHFpSRC363gR4Aig2zgYHaeIQLSUemXr+A+IfUawp4sV4tH+Bj0SUdt+1p6SytFS2ADJqkeCMljH4kA5RDvW5RxwQRvig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=kB2rkWWt; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6f177b78dcso731117566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:55:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1718733331; x=1719338131; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zTmVnnzmQsdyJIvy7P5jLUWUPiZqPVgC2Gi3EXBWni0=;
+        b=kB2rkWWtppZXitxZLFcDtx+kpT/Qndcko9E0yU6rFWKm0pqGFZkM2b5IbuU8JRKOe7
+         55XWcF1ZAqkciDUsfBtgdElcekhUL8G9arNvwgE+wC1Plt50vLW6uz2n4Mc7cZyU3haY
+         x/yw7tTvwOEwCpXq+vW8Y1NmlMZac/mHcEla66myzgXn8FVuPsUFPX1fT83YGdY9DweS
+         TFneWPMK3g6Kob0idDmuAQs+L9o4Rv8SKoW/OY0YPLt4lWCvRgqI9FQOIGKyOm5YYmxj
+         yqiuXK9ljx4+Qyxa4Uj80//xwuWtlzBDsQhk2SHodrUqilTla3eOibexHNV9yds/F9J6
+         il/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718733331; x=1719338131;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zTmVnnzmQsdyJIvy7P5jLUWUPiZqPVgC2Gi3EXBWni0=;
+        b=P3msGVxQfa4ANsQWX7oKKZOJsyI7S/+ll7+4CWTJ6ZuVJXFAO2IG8dJHg+y5tsRwhp
+         RrjnWZ05yh0l5/OGpFwEKkCtMfpY0akSTEvHHxbJeczCI9A2snJngYX+OONQjHIIlh51
+         XtCJnBdnGVf9ZJGVUzCeyZjb7w4tw7GVBOA3jJcewyH5dTZtTs9T/zic9Ilx+afnOb6v
+         SDRe4ip06nMOnailfbrhaYWURirrhVyfyLzgpPEZEdtbcs1Q5Rt9LS0aWs2Mv/VjoI1F
+         gt0hFTCabTHagMUebINimzrjhFpBcMwLMQp6itMY64DOSgQj0u3aQ7Rv7jnXIM6Z9wXC
+         8Qjw==
+X-Gm-Message-State: AOJu0YwbUIRI2pTEJkUmKLX2xi9EzWT4qYMlXJZ0m4t28Ocn/mDyQOK8
+	2Yos8qAmyD894RvpDw5WsQZNi0p34j2ZaACgY9DCXbUyAopXtGOTpYJCjeGHC2WlkfpGnLiURuC
+	RLqRWj1rwO9PEheRRYitwo8zHolpSwXjn2KARtbO/fPo5eGY=
+X-Google-Smtp-Source: AGHT+IGDO9MunPaTLk2H5XQt/NMq7+U7oPvCv8jQC1cNGWo0/s+agXuJNN4zhVSHAUJqe1AspkjtzsT7TrN2MZj0MyE=
+X-Received: by 2002:a17:906:c10d:b0:a6f:cce:4457 with SMTP id
+ a640c23a62f3a-a6fab7dc751mr15171166b.71.1718733331107; Tue, 18 Jun 2024
+ 10:55:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
+References: <20240614190646.2081057-1-Jason@zx2c4.com> <20240614190646.2081057-5-Jason@zx2c4.com>
+ <CALCETrVQtQO87U3SEgQyHfkNKsrcS8PjeZrsy2MPAU7gQY70XA@mail.gmail.com> <ZnDQ-HQH8NlmCcIr@zx2c4.com>
+In-Reply-To: <ZnDQ-HQH8NlmCcIr@zx2c4.com>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Tue, 18 Jun 2024 10:55:17 -0700
+Message-ID: <CALCETrWzXQMXjvL+nGq-+aLVUeiABJ46DACtLnrLXxmwh9s_dg@mail.gmail.com>
+Subject: Re: [PATCH v17 4/5] random: introduce generic vDSO getrandom() implementation
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de, 
+	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, "Carlos O'Donell" <carlos@redhat.com>, 
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
+	Christian Brauner <brauner@kernel.org>, David Hildenbrand <dhildenb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 07:21:42PM +0200, Vlastimil Babka wrote:
-> On 6/18/24 6:48 PM, Paul E. McKenney wrote:
-> > On Tue, Jun 18, 2024 at 11:31:00AM +0200, Uladzislau Rezki wrote:
-> >> > On 6/17/24 8:42 PM, Uladzislau Rezki wrote:
-> >> > >> +
-> >> > >> +	s = container_of(work, struct kmem_cache, async_destroy_work);
-> >> > >> +
-> >> > >> +	// XXX use the real kmem_cache_free_barrier() or similar thing here
-> >> > > It implies that we need to introduce kfree_rcu_barrier(), a new API, which i
-> >> > > wanted to avoid initially.
-> >> > 
-> >> > I wanted to avoid new API or flags for kfree_rcu() users and this would
-> >> > be achieved. The barrier is used internally so I don't consider that an
-> >> > API to avoid. How difficult is the implementation is another question,
-> >> > depending on how the current batching works. Once (if) we have sheaves
-> >> > proven to work and move kfree_rcu() fully into SLUB, the barrier might
-> >> > also look different and hopefully easier. So maybe it's not worth to
-> >> > invest too much into that barrier and just go for the potentially
-> >> > longer, but easier to implement?
-> >> > 
-> >> Right. I agree here. If the cache is not empty, OK, we just defer the
-> >> work, even we can use a big 21 seconds delay, after that we just "warn"
-> >> if it is still not empty and leave it as it is, i.e. emit a warning and
-> >> we are done.
-> >> 
-> >> Destroying the cache is not something that must happen right away. 
-> > 
-> > OK, I have to ask...
-> > 
-> > Suppose that the cache is created and destroyed by a module and
-> > init/cleanup time, respectively.  Suppose that this module is rmmod'ed
-> > then very quickly insmod'ed.
-> > 
-> > Do we need to fail the insmod if the kmem_cache has not yet been fully
-> > cleaned up?
-> 
-> We don't have any such link between kmem_cache and module to detect that, so
-> we would have to start tracking that. Probably not worth the trouble.
+On Mon, Jun 17, 2024 at 5:12=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c4.com=
+> wrote:
+>
+> Hi Andy,
+>
+> On Mon, Jun 17, 2024 at 05:06:22PM -0700, Andy Lutomirski wrote:
+> > On Fri, Jun 14, 2024 at 12:08=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c=
+4.com> wrote:
+> > >
+> > > Provide a generic C vDSO getrandom() implementation, which operates o=
+n
+> > > an opaque state returned by vgetrandom_alloc() and produces random by=
+tes
+> > > the same way as getrandom(). This has a the API signature:
+> > >
+> > >   ssize_t vgetrandom(void *buffer, size_t len, unsigned int flags, vo=
+id *opaque_state);
+> >
+> > Last time around, I mentioned some potential issues with this function
+> > signature, and I didn't see any answer.  My specific objection was to
+> > the fact that the caller passes in a pointer but not a length, and
+> > this potentially makes reasoning about memory safety awkward,
+> > especially if anything like CRIU is involved.
+>
+> Oh, I understood this backwards last time - I thought you were
+> criticizing the size_t len argument, which didn't make any sense.
+>
+> Re-reading now, what you're suggesting is that I add an additional
+> argument called `size_t opaque_len`, and then the implementation does
+> something like:
+>
+>     if (opaque_len !=3D sizeof(struct vgetrandom_state))
+>         goto fallback_syscall;
+>
+> With the reasoning that falling back to syscall is better than returning
+> -EINVAL, because that could happen in a natural way due to CRIU. In
+> contrast, your objection to opaque_state not being aligned falling back
+> to the syscall was that it should never happen ever, so -EFAULT is more
+> fitting.
+>
+> Is that correct?
 
-Fair enough!
+Yes, exactly.
 
-> >  If not, do we have two versions of the same kmem_cache in
-> > /proc during the overlap time?
-> 
-> Hm could happen in /proc/slabinfo but without being harmful other than
-> perhaps confusing someone. We could filter out the caches being destroyed
-> trivially.
+My alternative suggestion, which is far less well formed, would be to
+make the opaque argument be somehow not pointer-like and be more of an
+opaque handle.  So it would be uintptr_t instead of void *, and the
+user API would be built around the user getting a list of handles
+instead of a block of memory.
 
-Or mark them in /proc/slabinfo?  Yet another column, yay!!!  Or script
-breakage from flagging the name somehow, for example, trailing "/"
-character.
+The benefit would be a tiny bit less overhead (potentially), but the
+API would need substantially more rework.  I'm not convinced that this
+would be worthwhile.
 
-> Sysfs and debugfs might be more problematic as I suppose directory names
-> would clash. I'll have to check... might be even happening now when we do
-> detect leaked objects and just leave the cache around... thanks for the
-> question.
-
-"It is a service that I provide."  ;-)
-
-But yes, we might be living with it already and there might already
-be ways people deal with it.
-
-							Thanx, Paul
-
-> >> > > Since you do it asynchronous can we just repeat
-> >> > > and wait until it a cache is furry freed?
-> >> > 
-> >> > The problem is we want to detect the cases when it's not fully freed
-> >> > because there was an actual read. So at some point we'd need to stop the
-> >> > repeats because we know there can no longer be any kfree_rcu()'s in
-> >> > flight since the kmem_cache_destroy() was called.
-> >> > 
-> >> Agree. As noted above, we can go with 21 seconds(as an example) interval
-> >> and just perform destroy(without repeating).
-> >> 
-> >> --
-> >> Uladzislau Rezki
-> 
+--Andy
 
