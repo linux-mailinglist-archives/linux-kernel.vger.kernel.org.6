@@ -1,135 +1,141 @@
-Return-Path: <linux-kernel+bounces-219080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6671B90C9A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E84990C9AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EE3E1F224B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:35:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6811F2197C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB51C16DC17;
-	Tue, 18 Jun 2024 10:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C5716DC36;
+	Tue, 18 Jun 2024 10:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T9RiuzsJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r2pj5gGx"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB4416D9C2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DA316EB44
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718707172; cv=none; b=HjSBnE6nItoTSKh3iqWwTyVOAPqB0DdCSY9eRU4DWJFxAN+pOQyNmcuN6z14D91QlgPufqANqyhCfcjbGHjY68XkethhLXswdbBCWq0vgAKNzT895BRKa16Q6wNYYsaAZk/RM9EuVqnZVoS2i43Rm5bcGXw/DsycCy4+dsC853Y=
+	t=1718707192; cv=none; b=j02lOHxyqbAOB1POi6zhVbO8466anYesdUQqaMwVtI0OGkri5M17ofKnA0BYJM4W1dppyH3TiZa7uNKb6Sx6l1QVPZ1tl3NEbNBnjRVGpnABAbplbon3vSgyxDpPBtmwW0V8SiSViYACqqtaZXJ3nlx7R5tZikn+i1ZrL7L6wzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718707172; c=relaxed/simple;
-	bh=dFrRBkJl7R9hxvgTFXcfhz/5bf+uuLP1erp6wT8mbB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MaBiT3ZIcWY4EZgOUKNY5FWmz/KWU1NeDqr7+6dGX3MO+8OkwsVdrCu2hjWG9Fs/PpZVzpYWJxD3XaWhrLj9oHHd5MhLq7rszIjYzmvBMxYKJm3do5ppB+5BCZ0Bme2j4YXg0j7EZ8Xx8sSpNbIOHfIuVZ93Eg80F5IitiNBQRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T9RiuzsJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718707169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hUpnx4iA/H5rFTjd+Mex3wPRNbIj26vNn+VnYBxGz0o=;
-	b=T9RiuzsJvbru3HMtYBNIqxK5tPq7An01B8nF0EWX0YJntRoYUNy/DT90zDxTe/Q5gmZSFS
-	4t+MlVbAdEllh9/t6QSER5yW3X/r6xbym/v9aUiC6h+0wmPkcUW6b/IdF8bJrliWg17OKB
-	0mJBwVO4LLtZpxqek9StKkFnOaxOD4c=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-664-0AESeZFuNyCX3vah7rm60Q-1; Tue, 18 Jun 2024 06:39:28 -0400
-X-MC-Unique: 0AESeZFuNyCX3vah7rm60Q-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52b7e000358so1552987e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:39:28 -0700 (PDT)
+	s=arc-20240116; t=1718707192; c=relaxed/simple;
+	bh=lPQaPdityDLfZbHzeDC8ojdjE2XvWy7QdXEXphUNQpc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Ja33nlbEdXWV45msDCKKUkXhKooNfly+EGiAYxpH1yGPUz1TypFbbvyr0rHSreATQN8RQDZxaN1mePgs8Nz9XcxOJKQnHZgGLDrmIDULMaDQzQfxaWqCGjQWT8Ij00nF1LHtFoETmsWa+9cIOCw2rAhNEFj4QtVUexHXUPOgOXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r2pj5gGx; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-48c4f2ff8c2so1431916137.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:39:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718707190; x=1719311990; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QEljk6ggn8rJlURGstQGLdKQqP2HSFqBtnN4P7FNF6w=;
+        b=r2pj5gGx+3sqGJ7cpRvOJdybxTMqRpghFxRBqd47Rjzh6vVbslyXcV0WklQbMrH4iq
+         RZDrZYdGwH/PBXN+mKrLm0/u9+HzlqZ2NL7S69T5nhZKFfa3S0hdRZ/WnaA2ycHg9p7f
+         m5i/FDccsSkoDK8banJ+Y3oyThH9BrmxiP13PJ5ydjle+IXVH/VjSwAlJBBbGCP1RRWL
+         bvrTlkLNOsu9+qHWdruaRccrJGDmUdAQgQFeGdc765m2qrzGBDHavsX3NX4Npu/FrlPu
+         9Gqz1SSYk2u7UTqLZNO1R+13qRMrnh96EvTRs17/9R4gclknrVx3Mcln5EVpyl3plJFG
+         nzEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718707167; x=1719311967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hUpnx4iA/H5rFTjd+Mex3wPRNbIj26vNn+VnYBxGz0o=;
-        b=ZxgGKqXptY8kGvBAgp89sTHST5By0iDfTGjkEvQlmCd5gKcU2nvjVXGAUtAK8UN92y
-         DTOjKfP6M2M5wYaDiUCuA4miX6pUiDw4kj5BK+z4EN6kMLb/yXnUlEoaD2RA3i62rfLL
-         YmF52ePJ8bDjZCuCiWdmQRyeNfDflXzfF7GIB2vjiH2rbmKblL+aQgJ5l54XXGZLMl2f
-         qluIeXDqlSaFLnVNBdf+UWEVsjriOdiZjB6iDQfOIZ4FJVPB0RDOxPukw+I+UTsDQ63W
-         8I1Tmwr/1mbO7PShyIyJJLDARbL0Olaq9UFDo6CyRhb0k8zyGfCVp19kEGEZMwPNt2B8
-         hmBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUMfpGvSF1M0e7cUd1cVGSmNY3AldMadIg/p/Cx2jyKwy+XB8vH55G5vm28UEGVgGZE6S2vCpx0qQ+fscVIGopbNlg/NKGf0kDKn/k
-X-Gm-Message-State: AOJu0YwDGdbdMg3l3pxh5A1RHHbaL2wVlIeGlQG0J2jVbIIaLkNXrmYi
-	E7ymvQODG/y7ZGzt2MA063L6T8KyMJCi5YDh9ucxLuXimL4v/sr2eEw2WbNgkGo2sCxcMPn/6Rb
-	k8QUrqj+bL4s3wBHiOke2kR4hTDPMO6B0rZ7heZCptT6BdzOA7jPw3phH5vudjQ==
-X-Received: by 2002:a05:6512:10c9:b0:52c:b5ab:b6cf with SMTP id 2adb3069b0e04-52cb5abb7e6mr5463293e87.45.1718707166754;
-        Tue, 18 Jun 2024 03:39:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFze+XHONw1pKhSFRlONo3MnV+d+IuBKNx7zowmQrnW5HIibz+c67gR1XvzUPSIqN7ibLJNTw==
-X-Received: by 2002:a05:6512:10c9:b0:52c:b5ab:b6cf with SMTP id 2adb3069b0e04-52cb5abb7e6mr5463273e87.45.1718707166240;
-        Tue, 18 Jun 2024 03:39:26 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc7:441:67bf:ebbb:9f62:dc29:2bdc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286eef9c1sm222635295e9.7.2024.06.18.03.39.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 03:39:25 -0700 (PDT)
-Date: Tue, 18 Jun 2024 06:39:21 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Jiri Pirko <jiri@resnulli.us>, Parav Pandit <parav@nvidia.com>,
-	Jason Wang <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>,
-	Dragos Tatulea <dtatulea@nvidia.com>,
-	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 1/2] vdpa: support set mac address from vdpa tool
-Message-ID: <20240618063613-mutt-send-email-mst@kernel.org>
-References: <PH0PR12MB5481BAABF5C43F9500D2852CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
- <ZnAETXPWG2BvyqSc@nanopsycho.orion>
- <PH0PR12MB5481F6F62D8E47FB6DFAD206DCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
- <ZnAgefA1ge11bbFp@nanopsycho.orion>
- <PH0PR12MB548116966222E720D831AA4CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
- <ZnAz8xchRroVOyCY@nanopsycho.orion>
- <20240617094314-mutt-send-email-mst@kernel.org>
- <20240617082002.3daaf9d4@kernel.org>
- <20240617121929-mutt-send-email-mst@kernel.org>
- <20240617094421.4ae387d7@kernel.org>
+        d=1e100.net; s=20230601; t=1718707190; x=1719311990;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QEljk6ggn8rJlURGstQGLdKQqP2HSFqBtnN4P7FNF6w=;
+        b=t7bgVRuf6X5vAI6f0xhGtxyzhfNppWAdrAkMzjjNkmhC9FwoCtcQ6Qc84H95tzc5pc
+         lLkHfjpOxY/QHLvfiCpaqxDCb478VV24rm0cpjKlvYQuzcYIYQv+7fAGQ7eBloHGwTJ/
+         FbX117a6y8fK57HN6ZnnigekD1qgLLBz1jCA0BpZ3g054jeVHXFk0CB2/U3FnGiqNTIp
+         ALihTublfIMLAnMn0fep7B2uE6dCqOce2MXebfZF/avN9rE86pUrTOFu28bOqC90p3sM
+         QF+dXL/VVM3JJrhs1i99Wj74MsQ1xzVyBCWH4XoFS/7TyKs9/BUgrOM/0qiNMgtzX1/x
+         z3zA==
+X-Gm-Message-State: AOJu0YxqVekcxlFSgexsDWX1rdlWRkabXPnZ3i5JIUcGf265RC/DutjZ
+	mmNiPT3jHzMkGCde3cvZx1RHGxsJ+X/rp2Wmwj9guEs6uKaxau9kSSXoTo/JUHkjM22rOJ9QpvY
+	zd119GWjHnt0mjQrPpdHNCbmOwy1ax8gKutk7YRHWp2FRr7h0vGbe4A==
+X-Google-Smtp-Source: AGHT+IGlfvQiDWgG3QUajDlpAVMqRKc0CBGEed89cfHiSCFaLDQXr5lx8fTA31fnYSylIf9pn2jzMiwAhKa5hARvZYA=
+X-Received: by 2002:a67:f88e:0:b0:48d:920a:bd41 with SMTP id
+ ada2fe7eead31-48dae38578dmr10393370137.16.1718707189697; Tue, 18 Jun 2024
+ 03:39:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617094421.4ae387d7@kernel.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 18 Jun 2024 16:09:38 +0530
+Message-ID: <CA+G9fYvULzMHHQo3OKkcFYU+Tiw1fFU6LKbt3zHfX-E-ozcsdA@mail.gmail.com>
+Subject: mm/slub.c:1163:17: error: implicit declaration of function
+ '__memset'; did you mean '__memset64'? [-Werror=implicit-function-declaration]
+To: open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Ilya Leoshkevich <iii@linux.ibm.com>, Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
+	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 17, 2024 at 09:44:21AM -0700, Jakub Kicinski wrote:
-> On Mon, 17 Jun 2024 12:20:19 -0400 Michael S. Tsirkin wrote:
-> > > But the virtio spec doesn't allow setting the MAC...
-> > > I'm probably just lost in the conversation but there's hypervisor side
-> > > and there is user/VM side, each of them already has an interface to set
-> > > the MAC. The MAC doesn't matter, but I want to make sure my mental model
-> > > matches reality in case we start duplicating too much..  
-> > 
-> > An obvious part of provisioning is specifying the config space
-> > of the device.
-> 
-> Agreed, that part is obvious.
-> Please go ahead, I don't really care and you clearly don't have time
-> to explain.
+The Following build failures have been noticed on Powerpc, mips and arc on the
+Linux next-20240617 tag.
 
-Thanks!
-Just in case Cindy who is working on it is also confused,
-here is what I meant:
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-- an interface to provision a device, including its config
-  space, makes sense to me
-- default mac address is part of config space, and would thus be covered
-- note how this is different from ability to tweak the mac of an existing
-  device
+Regressions found on mips:
+  - gcc-12-bcm47xx_defconfig
+  - gcc-12-cavium_octeon_defconfig
+  - gcc-8-malta_defconfig
+  - gcc-12-malta_defconfig
+  - gcc-12-allnoconfig
+  - gcc-8-bcm47xx_defconfig
+  - gcc-8-allnoconfig
+  - gcc-8-cavium_octeon_defconfig
+  - clang-18-allnoconfig
+  - clang-nightly-allnoconfig
 
 
--- 
-MST
+Regressions found on arc:
+  - gcc-9-allnoconfig
+  - gcc-9-defconfig
 
+Regressions found on powerpc:
+  - clang-18-maple_defconfig
+  - gcc-13-ppc6xx_defconfig
+  - clang-18-allnoconfig
+  - clang-18-defconfig
+  - clang-18-ppc64e_defconfig
+  - gcc-13-defconfig
+
+Build log:
+--------
+mm/slub.c: In function 'init_object':
+mm/slub.c:1163:17: error: implicit declaration of function '__memset';
+did you mean '__memset64'? [-Werror=implicit-function-declaration]
+ 1163 |                 __memset(p - s->red_left_pad, val, s->red_left_pad);
+      |                 ^~~~~~~~
+      |                 __memset64
+
+The commit id:
+  ad5dde7da5f9 kmsan: support SLAB_POISON
+
+metadata:
+  git_describe: next-20240617
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_sha: 76db4c64526c5e8ba0f56ad3d890dce8f9b00bbc
+
+Links:
+ - https://qa-reports.linaro.org/lkft/linux-next-master/  -
+next-20240617/testrun/24380474/suite/  -
+test/gcc-13-ppc64e_defconfig/log
+ - https://qa-reports.linaro.org/lkft/linux-next-master/  -
+next-20240617/testrun/24380474/suite/  -
+test/gcc-13-ppc64e_defconfig/details/
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
