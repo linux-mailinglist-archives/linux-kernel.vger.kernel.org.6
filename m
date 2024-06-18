@@ -1,127 +1,115 @@
-Return-Path: <linux-kernel+bounces-219648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB06790D612
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:51:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9379190D610
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69CB62859B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BDE61F21E85
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA82B15CD6D;
-	Tue, 18 Jun 2024 14:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A26A15E5A0;
+	Tue, 18 Jun 2024 14:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OZGT7TAl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="adUJu2+m"
-Received: from wfhigh8-smtp.messagingengine.com (wfhigh8-smtp.messagingengine.com [64.147.123.159])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPSVDKFM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAC8155736;
-	Tue, 18 Jun 2024 14:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A279515CD7A;
+	Tue, 18 Jun 2024 14:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718721816; cv=none; b=kDyD/wBJ0tbpmFbOfaWh+YQFh1kifus+HKYzyYB275XxLvzX0+/oGrwhpftS2FyT9gEzrj5hoG+17cs8WjFrfg0C+IRR6kx+5U9EsXYAlfZ2WurylXd4CAl3lkw9kkPNsYzAeUrNY2kl2DbsSHusP3HBhYD7Ry+ZUTVxtARDOSM=
+	t=1718721819; cv=none; b=e2j3+Xn946sqK/zLxLULnpu8jQtmhHj3D30p6ZxGaJo3gpJ/9u+Xkrpb9+LV5aA8hAVF0Ot/unkG3QwsSILDTaEgWwHtn/ezZ/dCMmVO23gJ4+bEePV9gqksaZ878vZHyuo7JJvWpx98w3BdA8dPGJ5Svuzx09mHCJWpbD3e2H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718721816; c=relaxed/simple;
-	bh=jhtdxxiKcQtU8NOMbWdD78vYivZuvtKtjslQPk3fePs=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Z51FS5WKHgbP/ZM/CP4xKKz5GIszBuz5/V7AD1T8kxOat1MD/+QCdhkdLEuL4LbNMCGRrWcTOCnPrHcXZsWp+eHi15BUIkD6LNQiLjTLg5VKN9QmVfY3+i6wgomYlvjOW/Y2H9k65r6ZUQskcDwOkitsD5eh3G8YjxQn+QF5i7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OZGT7TAl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=adUJu2+m; arc=none smtp.client-ip=64.147.123.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id D0C61180009D;
-	Tue, 18 Jun 2024 10:43:32 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 18 Jun 2024 10:43:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718721812; x=1718808212; bh=jhtdxxiKcQ
-	tU8NOMbWdD78vYivZuvtKtjslQPk3fePs=; b=OZGT7TAlONIb/zQP5k+AwuGJ8n
-	VL9QkJkmGv5PM2ABgZXjlfWKtNlt72OoRtplQsOTGmRROA/5ix4Y8dGpQBrVYpaA
-	Wd+HWhtZFl1KW8Uy77JFzWLwIdRbiBBZqCAmnEjiZtZcTYO4+aH0jMM3QYzpDOnE
-	g509yL/4Un/TorQArgfO59BPpcJuhxDTKIgMyjdpeoyBgeYgJKvoeyfQDmPeOLke
-	DyIKEW2xCfO/I4J7MYjUx5OL4w2biuCQupkKwLi3cdPYzLRLy+Gg1+Iw0OmnRjHc
-	LqASTSQso/w2LAh6THAS9Z2a9uxpM+95GwWvh+9YYkbz0uff8Zp6wUaBqHuw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1718721812; x=1718808212; bh=jhtdxxiKcQtU8NOMbWdD78vYivZu
-	vtKtjslQPk3fePs=; b=adUJu2+mAf1d/pEttH9wSL4fuSdsPWfeVwtQmejQWD2I
-	rEXBBT4fTYdTpKPrlbSj7Mv/786jpoXlEBmLpKeiHRfyootu+EOozVfftRZun5Ey
-	2PTYp3NKFk3OwQ3r0AHBJPMCWLfc3xPuiUvAWX3tJT25phb/sSVwt1r2BMYNEFGI
-	Q4+bI+OQMlubzS2tDRDMNGiD70Q9msEfmRdOnlGka3C16R5UY5b0kLxeQT4yGVQb
-	mDaUl0QfLa0tmRrM8d+lV3/3Cw/dajS/rjl2WJQ8/FjIQTQnNBtasgDeWUURIdpu
-	4109758U79+l/G7QAXmYygkNZncNDQjLLkaNGw5OwA==
-X-ME-Sender: <xms:FJ1xZsZmV_dakUtxJD53WUwSKhyzW4L3HmLr8OuQZ0AewLrndJQ4RA>
-    <xme:FJ1xZnbCCpEUibEW9plmF8M7CEaak4r42ZK2mJYwFbuhF9N3Qt0pouh7wSUiseiPp
-    pC5ZxQRntsolv66Fxg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvkedghedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:FJ1xZm8oc_zVeZeV6bbhkjRRuzQ3ytXzOtrp3t0B_v1S6UZ0vTjC_w>
-    <xmx:FJ1xZmpdk8D5H6_WcHXGen5CbnziQWtw9tBeWUzPn_jWAPYfxQfYNQ>
-    <xmx:FJ1xZnrGp6pAXlLRggtrsNvovP8rPIbAvd6GsCCv3DIYjHFIKB15MA>
-    <xmx:FJ1xZkS6H6v15-8t8Wt9HVqIGBaK3GJXOax73AW4-wMdCr0GTZifuQ>
-    <xmx:FJ1xZlgLTJmSn0qezCyBceEzGkwA__0c9Rny1_trfpMao9noE7zgEbOp>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id F4168B60093; Tue, 18 Jun 2024 10:43:31 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718721819; c=relaxed/simple;
+	bh=1UwzhECrbNMlnaKtuZTayxxlZhsNfsmTEwViXahAyMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gdu41SOqqOtHsXyujrGDX5cRq/O419INBeKiOtHKYmCLuRJVX+8wailhP5D/kncvluEoTbkghxouDfyj2bio9B2w+UkoFo0Gka05cOEOde2+jq1+HKAH2ZJpNR9z8jOljhUvs0YxrR8LkJQRwV+EMumgPzwIzoye+H2WL8+zymQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPSVDKFM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BE3EC4AF1C;
+	Tue, 18 Jun 2024 14:43:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718721818;
+	bh=1UwzhECrbNMlnaKtuZTayxxlZhsNfsmTEwViXahAyMo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EPSVDKFMc59K2ZxfIuoVRM4RvajTUeLlZ4COcsXV6z7pVsma53UwTsSN/gJwlcwRu
+	 nMSHr6cg+MDveM2Mu1PZF4Ti7e/9u4fmmnlmHOcT0FvU2tJjzbTaqUKLKZiJot622/
+	 SDkfn7T+6I4M35iv/e3GABSI6TTcFDcl9a6tSzRvSCXQA2XhfHrwmDO5JvPLEDcFLH
+	 nzvpZRx06V6yfLpFrV9ysM7hJ/cf6gGJCCiddSbK7OgM/LBj95sq9buorN65dhNnKp
+	 AXTfO1Q3tyZb2+IstKrqXQywERkXXj3bxwXKKIBBGmp6/5YTO3duwawy3VzzB4iTPh
+	 LreCkpEx/VT1g==
+Date: Tue, 18 Jun 2024 15:43:30 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alexandre Mergnat <amergnat@baylibre.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lee Jones <lee@kernel.org>, Flora Fu <flora.fu@mediatek.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Nicolas Belin <nbelin@baylibre.com>
+Subject: Re: [PATCH RESEND v5 00/16] Add audio support for the MediaTek Genio
+ 350-evk board
+Message-ID: <77872070-6d0d-408f-80c8-c4a996b9d260@sirena.org.uk>
+References: <20240226-audio-i350-v5-0-54827318b453@baylibre.com>
+ <ZmwODkYov79VHznK@finisterre.sirena.org.uk>
+ <85e9451d-2cd0-457f-a246-017433757fff@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <345206ea-512c-4781-b7c1-b53ef0da5f34@app.fastmail.com>
-In-Reply-To: <20240614140421.3172674-3-peter.griffin@linaro.org>
-References: <20240614140421.3172674-1-peter.griffin@linaro.org>
- <20240614140421.3172674-3-peter.griffin@linaro.org>
-Date: Tue, 18 Jun 2024 16:43:11 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Peter Griffin" <peter.griffin@linaro.org>, "Lee Jones" <lee@kernel.org>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Alim Akhtar" <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- "Saravana Kannan" <saravanak@google.com>,
- "William McVicker" <willmcvicker@google.com>,
- "Sam Protsenko" <semen.protsenko@linaro.org>, kernel-team@android.com
-Subject: Re: [PATCH 2/2] soc: samsung: exynos-pmu: update to use
- of_syscon_register_regmap()
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VWS3IQXFjAKUwyY9"
+Content-Disposition: inline
+In-Reply-To: <85e9451d-2cd0-457f-a246-017433757fff@baylibre.com>
+X-Cookie: If you can read this, you're too close.
 
-On Fri, Jun 14, 2024, at 16:04, Peter Griffin wrote:
-> For SoCs like gs101 that need a special regmap, register this with
-> of_syscon_register_regmap api, so it can be returned by
-> syscon_regmap_lookup_by_phandle() and friends.
->
-> For SoCs that don't require a custom regmap, revert back to syscon
-> creating the mmio regmap rather than duplicating the logic here.
->
-> exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
-> the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
-> is kept around until fw_devlink support for syscon property is added
-> for the pinctrl-samsung driver that also runs at postcore_initcall
-> level.
->
-> All other exynos client drivers can revert back to
-> syscon_regmap_lookup_by_phandle().
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+--VWS3IQXFjAKUwyY9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jun 17, 2024 at 10:05:37AM +0200, Alexandre Mergnat wrote:
+> On 14/06/2024 11:31, Mark Brown wrote:
+
+> > I seem to remember you had review comments that needed addressing from
+> > AngeloGioacchino, why resend without addressing those?
+
+> I don't see any comment:
+> https://lore.kernel.org/lkml/20240226-audio-i350-v5-0-e7e2569df481@baylibre.com/
+
+Possibly it was racing with comments on the previous version?  In any
+case I see it's still waiting for some review from AngeloGioacchino.
+
+--VWS3IQXFjAKUwyY9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZxnRIACgkQJNaLcl1U
+h9AftQf7B2zRtt6hSQ1Xu+5FarxKtCBDR6nBW7WYRVgndY5irQ8rB15/1pKg5ik1
+j0ms8fH3Q91pk4BjDrtj8z7/s2yL3YMJYPhEgKyeoUPs3lM1C3BDxTCiMvafx96y
+5tQ5ad+c9UQgS8pq7lTa/xtHXfKFxdA2ABym8/DYpfn8eJ/UyM13wo1OJmW+uLnO
+K/o8AJqCzj4+U0PnMPImGUQmX87qmN2XuWrHAFuwRPFsru1+w+Ii5A3pOdMwWSa+
+3z9SIUmF3NriAeP7ntviKHjg9Pe8x6fqG/R6WsPkYvp6ydg8si62JAluH8e49NkQ
+APIdSQGffLVEELyK6/xmm4XXm6CTQg==
+=u7CT
+-----END PGP SIGNATURE-----
+
+--VWS3IQXFjAKUwyY9--
 
