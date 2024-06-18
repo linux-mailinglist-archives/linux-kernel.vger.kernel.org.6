@@ -1,116 +1,232 @@
-Return-Path: <linux-kernel+bounces-219584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424A290D4F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:30:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E8F90D4F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2352E290976
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:30:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 740341C20B42
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37904154BE5;
-	Tue, 18 Jun 2024 14:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3FE157E9F;
+	Tue, 18 Jun 2024 14:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxOGMpVp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Dh4r60nu"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE3D6A33F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE3413AD22;
+	Tue, 18 Jun 2024 14:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718719528; cv=none; b=CBOYIFHlDICgm5jv0RS/X2PbaaM5iESwGJloMO/lBwzqcJgW8ls1zxtxQ41iP8uGieTX1J7JjD+uhXppChWwK3FAtABkNVLcjDaTqS2mRVE47Gafim9W4vF73uTV13Y9Ta1MvZgZga4fa9YggM8LH/eToc7H5aci9ezvTodLedU=
+	t=1718719468; cv=none; b=X1rmdtdu25EDoO8xp78VaPlFOWErI2PGDHbdKU9/6p+VCfrQMeZUjsFM0ccTqYHu0SvCqh2akLuaeUEA3P0ruCDXAjcNvZPSNMiyyV+xBVEP8BJkyLfCAqC6bOqTSeireZbcCBZ4vDtvv3TaZ0DGI/4vjQp6AKZFVMeUeZ4cqxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718719528; c=relaxed/simple;
-	bh=voUsZu4+P8cVPFpKsisVJUT4+hz+waGqy6KYjg3O6XU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KYdBYOJV4el4M+2spil2Q9prcmBJbkBbRQHtcrc7xEVhBHVeHUX7ZBKEHthBfJMoy6MxB7VFnOdLbFHS/bYICezHGdD+Sunp+EwZWqoyDkWx0hA2DRI1Un7RbFUDDk0UzqNXx3B0ebacA5mhUYlQk24coMBdV19ZO5JDIRxH7Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cxOGMpVp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 009C4C3277B;
-	Tue, 18 Jun 2024 14:05:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718719528;
-	bh=voUsZu4+P8cVPFpKsisVJUT4+hz+waGqy6KYjg3O6XU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=cxOGMpVp/uVKJnoBTxmmDq2a6L/KRzgLcPVWECOqziTVSLE+nRbXhcH/AT0tLUBAL
-	 h8M+t8rVGsu8JTdLjCfELjM/CzKgBHKxCvYmI2bfD+JMeNZ768pBdPwU98mA8K+Trc
-	 MkOAy2yvom4y8ztPyhdVRNFC2/Pmgbj4211Fgfgq3tOLIXdLE9WiRnxyEO7RDdegMK
-	 jH1z48fF8GyzDdj/CXR8K7yfkqq4hxCvYe9vhSqaW2mXyJL+vjEihAvZJFlrOANh/z
-	 Bt1IliRmBX2PC+sciovs5QCGWdUkTGjqDPrd7ioA/goFd8WASSJjezoNVAqPPsT5rh
-	 /l4pOUdrKc/Ow==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 18 Jun 2024 15:03:50 +0100
-Subject: [PATCH] arm64/fpsimd: Ensure that offlined CPUs are not using SME
+	s=arc-20240116; t=1718719468; c=relaxed/simple;
+	bh=axHNld+gcnZG9rffhIzbv1xdy2TaJnUvZMzMf5zvGVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gisiLJ+iSgLDj8K1/gpA9OUbCLcdwKG6Uo8aigyD9EO5LplLCpqOCy1r2IOAt2MyENm5PzBlc+jhBT34F0qdUuwGmgwK8e1QtGLSESO4NahOsM3osRFka1Le473aVpqMejYAIqFi+e8Oxzq6gfFP210sDnjOIcNEooPV/tmRqKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Dh4r60nu; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IDdrAG003059;
+	Tue, 18 Jun 2024 14:04:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=8eWZpaXj8ajqeHkSkF0V4aIXgp
+	nPIBV27f6Hrs6b4ws=; b=Dh4r60nuis4KFhwuKsIrdEw5YktkgakdqLAwzHweaF
+	/IBeDqVFQxBbePdIrgEFXILA+tG4/I+N1sWf07UctRPy8On1Bo+jF1Fbujd6Nlxl
+	iKwNlmm1gJ0OCQOkg4SNwy2Nt+FoJns7KQngKAAsmMTpQ9XLS4ncEGyljO+z/akO
+	4bS5GmAyDy/iyh1APqJmFT39U37lHcryslAl18+WtMuxPGZPphsEYC8LvrZbA2Ce
+	kHGjAS78HBABEOLaXUQPC908AKW13B3eqk7ksLxA7/vqR9lqnZq8zG4E4ixXLY5H
+	LQOoyhzWJrq1gRIYC3DtXm15HB7rsP6yssZUC5/BCYdw==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yuba682fh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 14:04:12 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45IDJr9Z011022;
+	Tue, 18 Jun 2024 14:04:11 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yspsn3n7a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 14:04:11 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45IE45U047972784
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Jun 2024 14:04:07 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E0E7E2004F;
+	Tue, 18 Jun 2024 14:04:04 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 55C5F20040;
+	Tue, 18 Jun 2024 14:04:00 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.43.108.117])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 18 Jun 2024 14:03:59 +0000 (GMT)
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        irogers@google.com, namhyung@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
+        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
+        disgoel@linux.vnet.ibm.com
+Subject: [PATCH V3 1/3] tools/perf: Fix the string match for "/tmp/perf-$PID.map" files in dso__load
+Date: Tue, 18 Jun 2024 19:33:52 +0530
+Message-Id: <20240618140354.5765-1-atrajeev@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240618-arm64-fpsimd-sme-cpu-die-v1-1-9a90d1a34918@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAMWTcWYC/x3MMQqAMAxA0atIZgM1qAWvIg7SppqhWhoUQXp3i
- +Mb/n9BOQsrTM0LmW9ROY+Krm3A7euxMYqvBjLUm7GzuOY49hiSSvSokdGlC70wDpbM4GwgMgw
- 1T5mDPP96Xkr5AByMX9FqAAAA
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.14-dev-d4707
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1642; i=broonie@kernel.org;
- h=from:subject:message-id; bh=voUsZu4+P8cVPFpKsisVJUT4+hz+waGqy6KYjg3O6XU=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmcZQlOfUtP8GynkL5ciAZnGDT43rip612ZKqNulU0
- 2D9L3f2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZnGUJQAKCRAk1otyXVSH0HPIB/
- 9qFQFzf6Kv8FGh2lCNWkw7r022T8RQMu2t56+VvJjGjE2R/wZjzeH1OCrQ5jXScZMqonk5JJ2burg+
- MkRKiHfE2oRNicvBkgdbqpSxyJKIvamJdv/TOOBastjQHzZLKMyKiVqNJwYFzFUOzY3HgE2qmlLrnM
- boRTkBuo7GDIIC1zFfKPrxAIqAAseWscgpuoKdl9qtSjhk11w+/lNDh8XsZoPPOn2MtUyWYXXGMrRC
- 1Ykk3oOzJBy9lVsgbcDgPod3xwjWn7XxLU4rnuizGmoCOXfl4yGk8U/il+2CzvBrqXN60yq9DK3Jne
- ItSqnzNlEni1RNRPQE6WNz8NA6tZLx
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: R66ewBh2gY1VofWqadUWnYhD00oLJh4m
+X-Proofpoint-ORIG-GUID: R66ewBh2gY1VofWqadUWnYhD00oLJh4m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 spamscore=0
+ phishscore=0 adultscore=0 bulkscore=0 mlxscore=0 clxscore=1015
+ impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406180104
 
-When we use CPU hotplug to offline a CPU we may transition directly from
-running a task which was using SME to the CPU being offlined. This means
-that PSTATE.{SM,ZA} may still be set, indicating to the system that SME is
-still in use. This could create contention with other still running CPUs if
-the system uses shared SMCUs.
+Perf test for perf probe of function from different CU fails
+as below:
 
-For most systems this shouldn't be an issue, we should have PSCI or some
-other power management mechanism which will take care of this as part of
-offlining the CPU. However we do still have support for spin tables, and it
-is possible that system firmware may not be ideally implemented, so let's
-explicitly disable SME during the process of offlining the CPU in order to
-ensure there's no spurious contention.
+	./perf test -vv "test perf probe of function from different CU"
+	116: test perf probe of function from different CU:
+	--- start ---
+	test child forked, pid 2679
+	Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Msa7iy89bx/testfile
+	  Error: Failed to add events.
+	--- Cleaning up ---
+	"foo" does not hit any event.
+	  Error: Failed to delete events.
+	---- end(-1) ----
+	116: test perf probe of function from different CU                   : FAILED!
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
+The test does below to probe function "foo" :
+
+	# gcc -g -Og -flto -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.c
+	-o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+	# gcc -g -Og -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.c
+	-o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+	# gcc -g -Og -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+	/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+	/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+
+	# ./perf probe -x /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile foo
+	Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+	   Error: Failed to add events.
+
+Perf probe fails to find symbol foo in the executable placed in
+/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7
+
+Simple reproduce:
+
+ # mktemp -d /tmp/perf-checkXXXXXXXXXX
+   /tmp/perf-checkcWpuLRQI8j
+
+ # gcc -g -o test test.c
+ # cp test /tmp/perf-checkcWpuLRQI8j/
+ # nm /tmp/perf-checkcWpuLRQI8j/test | grep foo
+   00000000100006bc T foo
+
+ # ./perf probe -x /tmp/perf-checkcWpuLRQI8j/test foo
+   Failed to find symbol foo in /tmp/perf-checkcWpuLRQI8j/test
+      Error: Failed to add events.
+
+But it works with any files like /tmp/perf/test. Only for
+patterns with "/tmp/perf-", this fails.
+
+Further debugging, commit 80d496be89ed ("perf report: Add support
+for profiling JIT generated code") added support for profiling JIT
+generated code. This patch handles dso's of form
+"/tmp/perf-$PID.map" .
+
+The check used "if (strncmp(self->name, "/tmp/perf-", 10) == 0)"
+to match "/tmp/perf-$PID.map". With this commit, any dso in
+/tmp/perf- folder will be considered separately for processing
+(not only JIT created map files ). Fix this by changing the
+string pattern to check for "/tmp/perf-%d.map". Add a helper
+function is_perf_pid_map_name to do this check.
+
+With the fix,
+	# ./perf test "test perf probe of function from different CU"
+	117: test perf probe of function from different CU                   : Ok
+
+Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
 ---
- arch/arm64/kernel/smp.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Changelog:
+v2 -> v3:
+Addressed review comment from Adrian and James.
+Added perf_pid_map_tid to save the tid and modified
+is_perf_pid_map_name to use this internally.
 
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index 31c8b3094dd7..9e8fc6ac758a 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -383,6 +383,10 @@ void __noreturn cpu_die(void)
- 	/* Tell cpuhp_bp_sync_dead() that this CPU is now safe to dispose of */
- 	cpuhp_ap_report_dead();
- 
-+	/* Ensure we are not spuriously contending any SMCU */
-+	if (system_supports_sme())
-+		sme_smstop();
+v1 -> v2:
+Addressed review comments from Adrian.
+Added helper function is_perf_pid_map_name to check
+dso name of form "/tmp/perf-%d.map". Used sscanf
+instead of regex comparison.
+
+ tools/perf/util/dso.c    | 12 ++++++++++++
+ tools/perf/util/dso.h    |  4 ++++
+ tools/perf/util/symbol.c |  3 ++-
+ 3 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+index dde706b71da7..2340c4f6d0c2 100644
+--- a/tools/perf/util/dso.c
++++ b/tools/perf/util/dso.c
+@@ -1652,3 +1652,15 @@ int dso__strerror_load(struct dso *dso, char *buf, size_t buflen)
+ 	scnprintf(buf, buflen, "%s", dso_load__error_str[idx]);
+ 	return 0;
+ }
 +
- 	/*
- 	 * Actually shutdown the CPU. This must never fail. The specific hotplug
- 	 * mechanism must perform all required cache maintenance to ensure that
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240617-arm64-fpsimd-sme-cpu-die-57205c7f220e
-
-Best regards,
++bool perf_pid_map_tid(const char *dso_name, int *tid)
++{
++	return sscanf(dso_name, "/tmp/perf-%d.map", tid) == 1;
++}
++
++bool is_perf_pid_map_name(const char *dso_name)
++{
++	int tid;
++
++	return perf_pid_map_tid(dso_name, &tid);
++}
+diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+index df2c98402af3..d72f3b8c37f6 100644
+--- a/tools/perf/util/dso.h
++++ b/tools/perf/util/dso.h
+@@ -809,4 +809,8 @@ void reset_fd_limit(void);
+ u64 dso__find_global_type(struct dso *dso, u64 addr);
+ u64 dso__findnew_global_type(struct dso *dso, u64 addr, u64 offset);
+ 
++/* Check if dso name is of format "/tmp/perf-%d.map" */
++bool perf_pid_map_tid(const char *dso_name, int *tid);
++bool is_perf_pid_map_name(const char *dso_name);
++
+ #endif /* __PERF_DSO */
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 9e5940b5bc59..aee0a4cfb383 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -1799,7 +1799,8 @@ int dso__load(struct dso *dso, struct map *map)
+ 	const char *map_path = dso__long_name(dso);
+ 
+ 	mutex_lock(dso__lock(dso));
+-	perfmap = strncmp(dso__name(dso), "/tmp/perf-", 10) == 0;
++	perfmap = is_perf_pid_map_name(map_path);
++
+ 	if (perfmap) {
+ 		if (dso__nsinfo(dso) &&
+ 		    (dso__find_perf_map(newmapname, sizeof(newmapname),
 -- 
-Mark Brown <broonie@kernel.org>
+2.35.3
 
 
