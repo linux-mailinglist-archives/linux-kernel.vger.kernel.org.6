@@ -1,148 +1,132 @@
-Return-Path: <linux-kernel+bounces-219364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453EF90CD5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:12:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD67390CD2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F16741F225C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 836B11F22C37
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D191AD9F4;
-	Tue, 18 Jun 2024 12:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB379149DEE;
+	Tue, 18 Jun 2024 12:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rq6ZNhSg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TZ/Dpies"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E17D158D7A;
-	Tue, 18 Jun 2024 12:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2B31586CB;
+	Tue, 18 Jun 2024 12:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714527; cv=none; b=pb8Fae/4Yt3uHiJGIl06WT7LxaZSo5JF84Qmdn4VBgTDLAue2j8bcXZ8MsO4fqHsviJ2Db2Ma64ATEiPDAx2C4keNyPWPKHdOk+PRdREaWtvlMgwdYpRxblnPvxEgyrSp2tVCYJuccVSTt4flszI68f5UavZk9GLd6GAztl3dLU=
+	t=1718714500; cv=none; b=WxQS2OMOspZET3JBIMt4NBQdvaEYMHaSdDQUIMmV98K9dNn+j9o+MmNg+mE91AEhF00kVkSvM8yIpjUN8w4huWn67bhU17aA8V+BNseIvRx4D1/iwOZSDtooZThdkKelUzLSObzp6kXRPoHG20HEUOWYCi+9WDsVYaWVHO9gKSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714527; c=relaxed/simple;
-	bh=y7TGi+zhK1eGf7RQTbK6YVn663xvsLjgKDYD4L0nIP4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C+bUVEyCtyU0sJY4qnIa7Xq9Lm//yEczTIGSYZ64+bpALQlhQhr6N6h+ILC4+pPZj6PNLbWYHYu4oCSrCSYAwk+/ZkzW/t2d5cbVZpwgQrZJ/Dg1gc4yS1YL5VItbnRicgDPv0CMtWXmJx/VQMuPUfR7P8eJ/jHCBCD1gN01Cb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rq6ZNhSg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC87FC4AF1D;
-	Tue, 18 Jun 2024 12:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718714527;
-	bh=y7TGi+zhK1eGf7RQTbK6YVn663xvsLjgKDYD4L0nIP4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rq6ZNhSgtyuWhcIyhNPOacS0IBhFBJyHbObIvEXDcQU3BzjjJYiZK3+dES+xyY4RW
-	 eUbMYp1oYMaVUFIumLU54vl4JFwED9r4D5CQ1V2geWpnh0XLoKN+cr8q179xI1Hod5
-	 0SGaWgYKR8LCciTOxTmKSaKXGfmIf1muRwvXIr0jyE/msi3WYUy/3S9+1IW2NMXRLq
-	 7t33ig6EHYKxFBn/Sp/yvsRmlemJOrNqGaTTl0gVErTEir/ITyTV8l+TaSFRmpl6hv
-	 bPe6kHWW8FkrgXMzLXD+Y9K2FRzM6YIsac7vNTlRhCJcOpfK2OjNhGf18qiMY96r/L
-	 775y2J2Cp9tRA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Dmitry Antipov <dmantipov@yandex.ru>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	johannes@sipsolutions.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 13/21] wifi: mac80211: fix UBSAN noise in ieee80211_prep_hw_scan()
-Date: Tue, 18 Jun 2024 08:41:12 -0400
-Message-ID: <20240618124139.3303801-13-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240618124139.3303801-1-sashal@kernel.org>
-References: <20240618124139.3303801-1-sashal@kernel.org>
+	s=arc-20240116; t=1718714500; c=relaxed/simple;
+	bh=cFiJw4HI0EqviMG50wxBbVTKnh+MB/rEBCj4norM1lA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=sZrVcrBXBW8abSbwJkU2XGXuI3MaBqUhtD52tPcsza6V1p74v6uU4MensL1uR80I+X3i58pFWlGZGYuidtx6g/mtSXJ6lNQV0ViSg8NUahrhrRQT6Yuq3aEOTjcFjAUyaggz4oJlxyR6TdfLN1ZxbtMj+of9WZB71XCg8kj6RqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TZ/Dpies; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45ICfPL6091833;
+	Tue, 18 Jun 2024 07:41:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718714485;
+	bh=dLDjoDfQuPoFFBdhtf2P+bCl26B8J4TnpGDN58KjHMc=;
+	h=From:Date:Subject:To:CC;
+	b=TZ/DpiescYp6w0AJXNX962/j+DW5xpX7X/meXBHxOk+lejXCLKRQKRdVzoHrCRGYs
+	 KARfQ89jpFTtSsXL+gYqWhzZ9MB4ZTs8SHInlselLkZo5w1dwUoPnJxUiTMMy9LN/n
+	 EvY/VuISj7vRhk1Atyc+ov5M1IuwopuAtXIUlBSE=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45ICfP8w122490
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 18 Jun 2024 07:41:25 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
+ Jun 2024 07:41:25 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 18 Jun 2024 07:41:25 -0500
+Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45ICfORZ024773;
+	Tue, 18 Jun 2024 07:41:25 -0500
+From: Kamlesh Gurudasani <kamlesh@ti.com>
+Date: Tue, 18 Jun 2024 18:11:13 +0530
+Subject: [PATCH v2] arm64: dts: ti: k3-am62a-main: Enable crypto
+ accelerator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.161
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240617-crytpo-am62a-v2-1-dc7a14f2635b@ti.com>
+X-B4-Tracking: v=1; b=H4sIAGiAcWYC/3WNQQ6CMBBFr0Jm7RhaSRtdeQ/DYtqO0gWUTBsiI
+ dzdwt7l+z8vb4PMEjnDo9lAeIk5pqmCvjTgB5o+jDFUBt3qrjXKope1zAlpNJrQOeOsMt3Newt
+ VcZQZndDkh0MaKReW45iF3/F7dl595SHmkmQ9s4s61j+FRaHCEGrlThyscs8Srz6N0O/7/gN8N
+ ocBvgAAAA==
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jayesh Choudhary <j-choudhary@ti.com>,
+        Kamlesh Gurudasani <kamlesh@ti.com>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718714484; l=1244;
+ i=kamlesh@ti.com; s=20230614; h=from:subject:message-id;
+ bh=cFiJw4HI0EqviMG50wxBbVTKnh+MB/rEBCj4norM1lA=;
+ b=FPqxIN1a/zrvHkDny25Js7SwPqlxR1Votkn+cRZvP20kKM1UEDJCBD+xowlp+zVadHI/CUP4Q
+ 75IjW9SJ5RrDz8Z1jwZZC2mni2w6P7d+cLg8pOFn89XSmH0CyTS9ShX
+X-Developer-Key: i=kamlesh@ti.com; a=ed25519;
+ pk=db9XKPVWDGJVqj2jDqgnPQd6uQf3GZ3oaQa4bq1odGo=
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Dmitry Antipov <dmantipov@yandex.ru>
+Add the node for sa3ul crypto accelerator.
 
-[ Upstream commit 92ecbb3ac6f3fe8ae9edf3226c76aa17b6800699 ]
-
-When testing the previous patch with CONFIG_UBSAN_BOUNDS, I've
-noticed the following:
-
-UBSAN: array-index-out-of-bounds in net/mac80211/scan.c:372:4
-index 0 is out of range for type 'struct ieee80211_channel *[]'
-CPU: 0 PID: 1435 Comm: wpa_supplicant Not tainted 6.9.0+ #1
-Hardware name: LENOVO 20UN005QRT/20UN005QRT <...BIOS details...>
-Call Trace:
- <TASK>
- dump_stack_lvl+0x2d/0x90
- __ubsan_handle_out_of_bounds+0xe7/0x140
- ? timerqueue_add+0x98/0xb0
- ieee80211_prep_hw_scan+0x2db/0x480 [mac80211]
- ? __kmalloc+0xe1/0x470
- __ieee80211_start_scan+0x541/0x760 [mac80211]
- rdev_scan+0x1f/0xe0 [cfg80211]
- nl80211_trigger_scan+0x9b6/0xae0 [cfg80211]
- ...<the rest is not too useful...>
-
-Since '__ieee80211_start_scan()' leaves 'hw_scan_req->req.n_channels'
-uninitialized, actual boundaries of 'hw_scan_req->req.channels' can't
-be checked in 'ieee80211_prep_hw_scan()'. Although an initialization
-of 'hw_scan_req->req.n_channels' introduces some confusion around
-allocated vs. used VLA members, this shouldn't be a problem since
-everything is correctly adjusted soon in 'ieee80211_prep_hw_scan()'.
-
-Cleanup 'kmalloc()' math in '__ieee80211_start_scan()' by using the
-convenient 'struct_size()' as well.
-
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
-Link: https://msgid.link/20240517153332.18271-2-dmantipov@yandex.ru
-[improve (imho) indentation a bit]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>
 ---
- net/mac80211/scan.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Changes in v2:
+- Removed unwanted properties as per Krzysztof's comments.
+- Link to v1: https://lore.kernel.org/r/20240617-crytpo-am62a-v1-1-ddb719aed71b@ti.com
+---
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
-index e692a2487eb5d..3bf3dd4bafa54 100644
---- a/net/mac80211/scan.c
-+++ b/net/mac80211/scan.c
-@@ -729,15 +729,21 @@ static int __ieee80211_start_scan(struct ieee80211_sub_if_data *sdata,
- 			local->hw_scan_ies_bufsize *= n_bands;
- 		}
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
+index ce4a2f105630..08b3aea1d30f 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
+@@ -216,6 +216,14 @@ k3_reset: reset-controller {
+ 		};
+ 	};
  
--		local->hw_scan_req = kmalloc(
--				sizeof(*local->hw_scan_req) +
--				req->n_channels * sizeof(req->channels[0]) +
--				local->hw_scan_ies_bufsize, GFP_KERNEL);
-+		local->hw_scan_req = kmalloc(struct_size(local->hw_scan_req,
-+							 req.channels,
-+							 req->n_channels) +
-+					     local->hw_scan_ies_bufsize,
-+					     GFP_KERNEL);
- 		if (!local->hw_scan_req)
- 			return -ENOMEM;
- 
- 		local->hw_scan_req->req.ssids = req->ssids;
- 		local->hw_scan_req->req.n_ssids = req->n_ssids;
-+		/* None of the channels are actually set
-+		 * up but let UBSAN know the boundaries.
-+		 */
-+		local->hw_scan_req->req.n_channels = req->n_channels;
++	crypto: crypto@40900000 {
++		compatible = "ti,am62-sa3ul";
++		reg = <0x00 0x40900000 0x00 0x1200>;
++		dmas = <&main_pktdma 0xf501 0>, <&main_pktdma 0x7506 0>,
++		       <&main_pktdma 0x7507 0>;
++		dma-names = "tx", "rx1", "rx2";
++	};
 +
- 		ies = (u8 *)local->hw_scan_req +
- 			sizeof(*local->hw_scan_req) +
- 			req->n_channels * sizeof(req->channels[0]);
+ 	secure_proxy_sa3: mailbox@43600000 {
+ 		compatible = "ti,am654-secure-proxy";
+ 		#mbox-cells = <1>;
+
+---
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240617-crytpo-am62a-bb6b71643cc7
+
+Best regards,
 -- 
-2.43.0
+Kamlesh Gurudasani <kamlesh@ti.com>
 
 
