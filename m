@@ -1,81 +1,67 @@
-Return-Path: <linux-kernel+bounces-219758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEBF90D765
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:34:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB62290D769
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 605DC1F24082
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:34:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B4C2826FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261783D0D5;
-	Tue, 18 Jun 2024 15:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAA145BF9;
+	Tue, 18 Jun 2024 15:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bC8GSTI/"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuegVrQj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7094A35
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5A04120B;
+	Tue, 18 Jun 2024 15:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718724865; cv=none; b=SW16fGDKCUJrGPl0TXThroV2U0D/81/okBcqjXVNnEyeaxZZO0G75yAhOUeqDUnfc4mA7rNzjvTlBzowNAe5iQpA+5FJP2W/iVS3GiaaVvSOpSPq2Y8YKM5JmNZT029e6WyC1RuFj4AS7AOZa60EKHt9j+izPTvbbO2yZV+4Zn8=
+	t=1718724866; cv=none; b=RI/SKej/XIeL/WpIRh8sENrXVIfS3/VaGGNAFhV+WDB73+QmZOunxW2UudoK6KeetltR+mKxZQPXgtDw3IKKAbmJLzpIvvUAPy0MFtUCge1IGMxcvVvjIlAkP38cA1fjGOzaFebuS2GSOT5aNVcdFzY39JJwSuPJvjfMa8z6DFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718724865; c=relaxed/simple;
-	bh=klRn8hEHrMEOkXwedKBnqGZoiaDq3LJBujN4oUNzn90=;
+	s=arc-20240116; t=1718724866; c=relaxed/simple;
+	bh=+nQiJq6jvTQndJvGZiYobP2khJ0xmO2XzOZLZ/frEfY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rKLA9kSk5B+Hm26QFck95k6BGjiaPq1Zu9y/qmDZi0JGdYOAJzHjWttqTu0GGNBZzh8rp1s60E/e9lnFXGGtiD7QdLhnQOFQeqNU57pie2YD8a7k6HnNbqp3DXk9QNITu9008eJyZKahRmtMGVbao1mmNNlO8Ix0HV9b7IV5sSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bC8GSTI/; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso658262866b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:34:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1718724861; x=1719329661; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=43PtNKyazrFRNMPvJuCC2xLcEd12xxILp702APcFCH0=;
-        b=bC8GSTI/zMe4Qirq9TjMP3H6XP/18rGkNd498oXtU3gOEesFqb1hBkWPNdmfJ5dCra
-         uawMyCNi1VSGuHRMAWisXiciKxDvY3ohIpzxsnxKH/IaycUgY6SyRVVKkH1DzGwwu5BB
-         DBiIGih7WTnDZuF+FRUA5CaGUbUFNfg3tOcawZe/39rd4NPwpI5je9HoKoxO+X3kil+s
-         zGWHyY4jSoyGQGoAHAN08N/lZt5x0JDcijHwkGeKQGb23FfXBNJpBnDY3OgKY3pHXwVe
-         dqPWee3cJ9DIV95V3s+Tq4sm6p4U7zcALSotEcr3wrEl0/ZZnonoSEJsGvTrM48zqOGQ
-         fAAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718724861; x=1719329661;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=43PtNKyazrFRNMPvJuCC2xLcEd12xxILp702APcFCH0=;
-        b=wCgCrftH+vGt3ibnFQS8JEqyBO6p+HwKsd97pQC0uzsGaAglo80BnMjyg1zoVZuyA+
-         vZkNwJXgLvvLDVPrzZLht1L6NclnuyxVTluiSyOAsa9IZWILq/pq7gG20PeMD4M5oxKc
-         PzuStF2+KijlfFm8/n6QjqzY8gSHcYltNT8v20dWJ4awMf6BjlyFchITeUjNoH1B0+kT
-         +xyW/LxUo3o9Kvy/gV/0gMg65LzhP9eQ7bec4ml0KivJvXQxteUjEVadp8pHoJvgMBJD
-         YkhIghzNC6bfDAvwfuHFpS1tGVDjTBBlfdp9LisoX5P2jZYhj0hUBiPBGDFfqPq3a+F9
-         XLOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXT9TEtuuSd6diKeN+yvB/dAmoEcosZO7SakmFy9CmEX3U2y+1A69+PLd4ec67sv3tc+CKGktyHhvK30d9PyKsD4dw4HCVIpwGNFmi6
-X-Gm-Message-State: AOJu0YwVWmUJg9yMH6U+lGS9maUmTvfMPGG/7pderXydwxqj8w2tFiv+
-	rzq9BTM7JqEbNzMULfdf95NB5fCWase5NFAyUhqzEYzS9qIvf8WBf9SDyK3XYJIzZO0nhV8Pwbm
-	o
-X-Google-Smtp-Source: AGHT+IGDpayvEFITYrmAlBbYdZfw9pR5A8Lp3WO6s98DJhd24h4nf2cHpplg42jxNxt5Cv8vWtqPHQ==
-X-Received: by 2002:a17:906:4f08:b0:a6e:2a67:7899 with SMTP id a640c23a62f3a-a6f60d40d5dmr740828666b.35.1718724861299;
-        Tue, 18 Jun 2024 08:34:21 -0700 (PDT)
-Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f6b2b04f5sm478728066b.192.2024.06.18.08.34.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 08:34:21 -0700 (PDT)
-Date: Tue, 18 Jun 2024 17:34:19 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v2 09/18] printk: nbcon: Start printing threads
-Message-ID: <ZnGo-7ctV9oidQM8@pathway.suse.cz>
-References: <20240603232453.33992-1-john.ogness@linutronix.de>
- <20240603232453.33992-10-john.ogness@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tN2SkbBgYKyY20SFgybZnBIiV5zDxpk/jE1J6aZSSLjx+UtzmUz8br6dNsZif84ZEsr3wusqKfWVQxI9dT/NTHQIsifA6K9ZqrKRwS9Tecyo+UZ/zfO0PW07AVg8eKyCQIZNG2K+iauW7f4eRGoqbiPDStsoUh9hvmlclH7B/JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CuegVrQj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697B8C3277B;
+	Tue, 18 Jun 2024 15:34:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718724866;
+	bh=+nQiJq6jvTQndJvGZiYobP2khJ0xmO2XzOZLZ/frEfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CuegVrQjPPoQBzx63RvFc+JE14Y3fYyjgERDi5hBBJZhwf08XwWG8hzJXk8Jsqk3P
+	 FgRO2Nlf3+qkTTGXlDf2BiO3B4VwXfGsfLlyQGWEXJzuCiO89yAiwd/NBWB7eR9lbl
+	 Zos0HBP5RHSaypeys4SxN0J6luoo3ioCGqNzON9uZK+L7Wu8BV20kq5K9KyDc5vk+/
+	 A/Tq6f+OoKE5jpNjAfKo8wuBvNFBUTl/DK9yw1cwSPNE74Ltn6r+37Jo3+dLxYbyiE
+	 v2pVmU7kMV3JDlUcWbBNXXVdYoXMk6r02zM7woVfqa7STdTLRomo85Abw9h1og2pdg
+	 gekUvQBeyKM0w==
+Date: Tue, 18 Jun 2024 16:34:20 +0100
+From: Will Deacon <will@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Andrew Halaney <ahalaney@redhat.com>,
+	Akhil P Oommen <quic_akhilpo@quicinc.com>,
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Rob Clark <robdclark@chromium.org>, linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/adreno: De-spaghettify the use of memory barriers
+Message-ID: <20240618153419.GC2354@willie-the-truck>
+References: <20240508-topic-adreno-v1-1-1babd05c119d@linaro.org>
+ <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
+ <ae4a77wt3kc73ejshptldqx6ugzrqguyq7etbbu54y4avhbdlt@qyt4r6gma7ev>
+ <20240516145005.gdksmvxp35m45ifh@hu-akhilpo-hyd.qualcomm.com>
+ <5vyrmxvkurdstqfiatxfqcqljwyiswda2vpkea27ighb2eqbav@n24yzdykbc23>
+ <20240604144055.GE20384@willie-the-truck>
+ <444f6a34-6636-44b0-850b-777c44fd62dd@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,92 +70,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240603232453.33992-10-john.ogness@linutronix.de>
+In-Reply-To: <444f6a34-6636-44b0-850b-777c44fd62dd@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue 2024-06-04 01:30:44, John Ogness wrote:
-> If there are no boot consoles, the printing threads are started
-> in early_initcall.
+On Thu, Jun 06, 2024 at 02:03:24PM +0200, Konrad Dybcio wrote:
+> On 4.06.2024 4:40 PM, Will Deacon wrote:
+> > On Thu, May 16, 2024 at 01:55:26PM -0500, Andrew Halaney wrote:
+> >> On Thu, May 16, 2024 at 08:20:05PM GMT, Akhil P Oommen wrote:
+> >>> On Thu, May 16, 2024 at 08:15:34AM -0500, Andrew Halaney wrote:
+> >>>> If I understand correctly, you don't need any memory barrier.
+> >>>> writel()/readl()'s are ordered to the same endpoint. That goes for all
+> >>>> the reordering/barrier comments mentioned below too.
+> >>>>
+> >>>> device-io.rst:
+> >>>>
+> >>>>     The read and write functions are defined to be ordered. That is the
+> >>>>     compiler is not permitted to reorder the I/O sequence. When the ordering
+> >>>>     can be compiler optimised, you can use __readb() and friends to
+> >>>>     indicate the relaxed ordering. Use this with care.
+> >>>>
+> >>>> memory-barriers.txt:
+> >>>>
+> >>>>      (*) readX(), writeX():
+> >>>>
+> >>>> 	    The readX() and writeX() MMIO accessors take a pointer to the
+> >>>> 	    peripheral being accessed as an __iomem * parameter. For pointers
+> >>>> 	    mapped with the default I/O attributes (e.g. those returned by
+> >>>> 	    ioremap()), the ordering guarantees are as follows:
+> >>>>
+> >>>> 	    1. All readX() and writeX() accesses to the same peripheral are ordered
+> >>>> 	       with respect to each other. This ensures that MMIO register accesses
+> >>>> 	       by the same CPU thread to a particular device will arrive in program
+> >>>> 	       order.
+> >>>>
+> >>>
+> >>> In arm64, a writel followed by readl translates to roughly the following
+> >>> sequence: dmb_wmb(), __raw_writel(), __raw_readl(), dmb_rmb(). I am not
+> >>> sure what is stopping compiler from reordering  __raw_writel() and __raw_readl()
+> >>> above? I am assuming iomem cookie is ignored during compilation.
+> >>
+> >> It seems to me that is due to some usage of volatile there in
+> >> __raw_writel() etc, but to be honest after reading about volatile and
+> >> some threads from gcc mailing lists, I don't have a confident answer :)
+> >>
+> >>>
+> >>> Added Will to this thread if he can throw some light on this.
+> >>
+> >> Hopefully Will can school us.
+> > 
+> > The ordering in this case is ensured by the memory attributes used for
+> > ioremap(). When an MMIO region is mapped using Device-nGnRE attributes
+> > (as it the case for ioremap()), the "nR" part means "no reordering", so
+> > readX() and writeX() to that region are ordered wrt each other.
+> > 
+> > Note that guarantee _doesn't_ apply to other flavours of ioremap(), so
+> > e.g. ioremap_wc() won't give you the ordering.
+> > 
+> > Hope that helps,
 > 
-> If there are boot consoles, the printing threads are started
-> after the last boot console has unregistered. The printing
-> threads do not need to be concerned about boot consoles because
-> boot consoles cannot register once a non-boot console has
-> registered.
-> 
-> Until a printing thread of a console has started, that console
-> will print using atomic_write() in the printk() caller context.
-> 
-> --- a/kernel/printk/nbcon.c
-> +++ b/kernel/printk/nbcon.c
-> @@ -1568,6 +1570,19 @@ void nbcon_kthread_create(struct console *con)
->  	sched_set_normal(con->kthread, -20);
->  }
->  
-> +static int __init printk_setup_threads(void)
-> +{
-> +	struct console *con;
-> +
-> +	console_list_lock();
-> +	printk_threads_enabled = true;
+> Just to make sure I'm following, would mapping things as nGnRnE effectively
+> get rid of write buffering, perhaps being a way of debugging whether that
+> in particular is causing issues (at the cost of speed)?
 
-What is the actual meaning of the variable?
+I think the "nE" part is just a hint, so it will depend on how the
+hardware has been built. On top of that, you'll still need something
+like a DSB to force the CPU to wait for the write response.
 
-Does it mean that kthreads can be created? (can be forked?)
-
-It does not guarantee that the kthreads will be running.
-They might still get blocked by a boot console.
-
-
-> +	for_each_console(con)
-> +		nbcon_kthread_create(con);
-> +	console_list_unlock();
-> +	return 0;
-> +}
-> +early_initcall(printk_setup_threads);
-> +
->  /**
->   * nbcon_alloc - Allocate buffers needed by the nbcon console
->   * @con:	Console to allocate buffers for
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2397,6 +2400,7 @@ asmlinkage int vprintk_emit(int facility, int level,
->  		 * consoles cannot print simultaneously with boot consoles.
->  		 */
->  		if (is_panic_context ||
-> +		    !printk_threads_enabled ||
->  		    (system_state > SYSTEM_RUNNING)) {
->  			nbcon_atomic_flush_pending();
-
-IMHO, this is not safe. nbcon_atomic_flush_pending()
-is synchronized only via the nbcon console context.
-It means that there might be races with boot consoles.
-
-Another problem is the meaning of @printk_threads_enabled variable.
-It does not guarantee that the kthreads are running. They might
-still be blocked by boot consoles.
-
-
-BTW: The same problem might have the system_state > SYSTEM_RUNNING.
-     The boot consoles are removed only when the preferred console
-     is registered and "keep_bootcon" is not set.
-
-     Note that printk_late_init() unregisters the boot consoles
-     only when they are using a code in the init sections.
-
->  		}
-
-My view:
-
-We need to enable creating the kthreads when:
-
-  1. the "kthreadd_task" is running. It is a kthread responsible for
-     forking new kthreads. And it is started after the init task.
-
-  2. There is no boot console.
-
-Plus we could use con->write_atomic() only under console_lock()
-when there is still a boot console.
-
-Best Regards,
-Petr
+Will
 
