@@ -1,363 +1,259 @@
-Return-Path: <linux-kernel+bounces-219728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DA790D6FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C80C190D6F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411ED1C24A53
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54631C23BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6865F15886D;
-	Tue, 18 Jun 2024 15:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6212374C;
+	Tue, 18 Jun 2024 15:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="ZqfGSJUW"
-Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2170.outbound.protection.outlook.com [40.92.62.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3621hHw"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41976158858;
-	Tue, 18 Jun 2024 15:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718723600; cv=fail; b=uJaK4E2cJQd4YT2Jk4gqsZxD8KOk5lUhrite2Bgg6bppEoOXRs3DFXJyaVUKmrZ0vPz43Zptd5eJZfeNl7WWR0ls6ZaU8A6GttbA5w/2BsY3WHP4dVFfj2cYZfTng1xgRDzuDz55mtQofO51XzOvsINsraAtQnMC7zdHvwi/TRQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718723600; c=relaxed/simple;
-	bh=jGcRsH+RuJNSMVuAv61pPI4aXoqvjbsVGQFeKhQZIDg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=El4MzRGTOrtTDSS7ABt4oEtpiItJeUaVcHNe+08futNp/aUBc8qPyvuRCtYPbOkHsoG7wZ2N+mtJjqsz9dlViUnqDerZFhQek8sp41tnoQbw+86ET2YtO7kNX62yoSILUHiNC5laJXgxFoCfp3n+iAiKUMVVgYU1E0P9GubDOP4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=ZqfGSJUW; arc=fail smtp.client-ip=40.92.62.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NEImUuKuPnQyBSr4eshPHl3KgZi9RoD+xvtVzy37JGp/4f6KuBrTqh3g8KTe9putiOCwMeowlKCP26qqHpV3BBWXRkxjWBc8LUR7MDo0liOeXwpPSjMkbSwz5pqWVd2u7ToZg3fXz5kLVH+y26G2PQbMGmC1pqW+yKBvXgVG68Cg2r+u7CPe0AFTrd7o2deVpXUsIg9JNkuIu3cQSpUze3QKjhhzaKmWQ3Pnjf7bKFBuWm8/1Bue8ouflyzkH03wILzVZH6zxBIi0xbWKLsa0OYQ3wMeI4UlYtan+hfgrG8N/f+90zIje4uuuHUw/912H54OpEFX4vb8gbtzlXjYYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5qRcENVB/ZWHZrlfBjkPdKJM0m6jFaudlENWzYlhVYE=;
- b=BuOOwacWvHY6ftIhevwZW3gNltQ+GWQ8EdcXOtJAFe7IOq/z0jTcZoAYPtLzJPKczvmNbn8vouu3fwGx4XxaqwCyW2Cp+q5O1YiqRxDigpszvhDUlXUM2VjG/J/R9jEOnd/cOYDKQ/rxSLNWA4RCGCmNuumb+zzsoDkf4nMfEx5Z0tSn1kewMrmqmLml6XXzEzu9DiVEFGnXR4MdDDf76sANtzGjDxH7UblS4AKMfIJ8dJillTA6XaSTjQMvvN78gditOhjte1vckuM+pcLrpgoA8I3ZE5FhBGpLW78rGgTaoiavCwY7X6jA3UNdUaLMoVaUAlH5HSgyxTsnqT+eNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5qRcENVB/ZWHZrlfBjkPdKJM0m6jFaudlENWzYlhVYE=;
- b=ZqfGSJUWEdJ33StzHNBEu4wRajFAd3I5S045bWBI1mqBPsxPpmxAowYMvshxsRly0kMmAc1BRpZ5wiZqTxrM4iJ8N1QS3BDKDBFHJTD6c9ufxhOgtStSE0+Newy7HZULQMj8U+MwnaQ6Pc+UvJchtu6PM/qByXhTjT5vQ2+sWXv+/ot9F5kR2bN9c9J5gwvFjiftG5T/FR/zKHpDlcULWptYCQfs0uTVagEIc9jZ0kkDFRCKtrYBKkfRdbwfuLlgB8dfHrjMUVW3FRRKr5J/619vQINpADd3J7AuO1Iua/ziamcaGSC9uOFlC0NOewpM+PsfX2D+AOGEcRIIrZf8nw==
-Received: from SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:9b::8) by
- SY7P282MB5268.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:2a9::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.31; Tue, 18 Jun 2024 15:13:12 +0000
-Received: from SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
- ([fe80::ac24:7d2b:92fe:20c3]) by SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
- ([fe80::ac24:7d2b:92fe:20c3%2]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 15:13:12 +0000
-From: Yuntao Dai <d1581209858@live.com>
-To: jassisinghbrar@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Yuntao Dai <d1581209858@live.com>
-Subject: [PATCH 3/3] mailbox: sophgo: add mailbox driver for cv18x SoCs
-Date: Tue, 18 Jun 2024 23:12:35 +0800
-Message-ID:
- <SYBP282MB2238F93AB57A398E322644C3C4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <SYBP282MB2238DE0DA19C6EF411B2356CC4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
-References: <SYBP282MB2238DE0DA19C6EF411B2356CC4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
-Content-Type: text/plain
-X-TMN: [X1/wqH4EahMq5oJ1l9UEVIWlavA4Z7ET]
-X-ClientProxiedBy: TYCP286CA0266.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:455::19) To SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:9b::8)
-X-Microsoft-Original-Message-ID: <20240618151235.5846-3-d1581209858@live.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B575523BE;
+	Tue, 18 Jun 2024 15:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718723572; cv=none; b=DsTV9mIGKLWWDvBLbFx3fy3kCNYBPzUxvNfXzLGU5Rk2zeGglvzc5MsuNq3BCwy/hm3uzJbatwUscAJ5T8fPmrC+DTZ0byaVrzS+DQaggRMRCdA8q/LZWTxKg+WQsPWppIj7tAsiOnq3s67gHhElM3uUSb8ejuibhsBNLqJGvZI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718723572; c=relaxed/simple;
+	bh=VmFNYzE1n5R7Mi+bi1Bih1Vka7yb6+Hzmuas90AeJP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ef6yw0Mu0mbUWNYYZ07RcQyxiWvSMY3Abwk580fKVfjg7ikkZWd/HLBppcwDFsNhXcltmV9Y6O/R+S3IQoIwgC+lm7gdd00/4XVJD9Z9o1Dkuyv0WldF8eqG17LnOEAktfeIY1JRQSoel2P0nAF3dXiiBMY1k65xJrrNfIolkzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3621hHw; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-705d9f4cd7bso3291819b3a.1;
+        Tue, 18 Jun 2024 08:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718723570; x=1719328370; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=OIBc07ZMpuSom2g6TOp1JREO7tlmjPpeaSY51LzNdW8=;
+        b=V3621hHwuWrGlVnavIwf3UitfRfXbZsezLmdoPwgTLdygdHaHeUCPhpBDVH4q5w/eC
+         pJCs3OCeyK43BY23qXy2xHUNKNdH9pJv4Ua4HupNAktQ+tHIz2HHmspu6NRn1Dcx3RrJ
+         L50ZcbitfyRxXIIpGjyWyVY8mImMRCDTFJcKqaj+EXlYQT1Px7tLdo25rNTAtknOa3ak
+         c6awOB3upz/Xpb0dv54pmzQxtewxYxOmQwEfGtuSb+R2OAvjHvHhGbU2oXuw3ZQgKcrF
+         ufMv1cCQ+80V4XGmwdO5DweLc5gYu1C8p4vtw/aL3zPVj18w94aJfBistDClNimW+H9v
+         mAKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718723570; x=1719328370;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OIBc07ZMpuSom2g6TOp1JREO7tlmjPpeaSY51LzNdW8=;
+        b=MSokArfngR2ZGW7Ujm+qjr2QYoATYOvKEe05s738zgYboywcU7/iVoSIs88oL9C2rd
+         CxCglXPj4e/MUunX/uQ7uuxjrRx0NWnKITe41IpIA/zezSAWMj3H8026LR2IU+GqiRoS
+         OVP+QFUG+27cOfPQJDCbiqnXywmlhjaSXbHfIcZoCZDo+cE5uU+fusp29gcYCtZV3utb
+         UfeTvkdRXIXUgFptW9nZNvv1yx36ljBAwmcxVoREvd1zJ6ptsJLiGEgK9+E4G8sy3g2d
+         2ItPC964Nrn/Su7RPNDE382VBbY7wG5PQ0Am5JsCOy7bwFRiw713i9j2oTW+nHg9Q+k7
+         Gf7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUAwxq9G+a3mQCJB/jrw/jLFoqTH10XMXy2BhkY8Q5Ruf7ZdxI531YQ3oJFobd3qcM2P2gWAKkX27+JiVem+ELxL0Plar418YdXJsQTcoIrWJNtxxaWGYlMRzdc6xwFjJ9kCwmBvN3FvniUKkcRbeDYBYorS0Yxn9cfK6w84CjfHj+D+A==
+X-Gm-Message-State: AOJu0YxQPXqEZl5BI3d9yJni3+kIGC/7i0DqOETcv4S2DfgiDM4ea93c
+	aeZn+u+N01iyPmKcQ+N+hBcwhqvJu4akt9a6uEWhSg//Y1D0zZ7j+PqXUA==
+X-Google-Smtp-Source: AGHT+IFauT8wQJUEYKoxfUqGp3B7tSk0s7iogE+J5JFtaQdlNyal7L44ebR+CZEOf/lNZ4iVGs4YwA==
+X-Received: by 2002:a05:6a20:5aa9:b0:1b6:a7c5:4faf with SMTP id adf61e73a8af0-1bae7eb3f32mr9931293637.19.1718723567696;
+        Tue, 18 Jun 2024 08:12:47 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fee2c4083asm8065733a12.65.2024.06.18.08.12.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 08:12:47 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <2532ca4a-83dd-4ab8-af04-6ebcd5ca8673@roeck-us.net>
+Date: Tue, 18 Jun 2024 08:12:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SYBP282MB2238:EE_|SY7P282MB5268:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d82d4f6-bea4-4faa-8132-08dc8fa92b51
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199025|3412199022|440099025|1710799023;
-X-Microsoft-Antispam-Message-Info:
-	3lhjfyFgihBlperWGsdED3yguNsI0jDv7BzTn7tHMct7UqaKXbPU/yq0ljG2QejYv1MI3mykyYt1mGJ7bNWAsqfGy8GoBFKjokbQNz+CXNlSN3xEDCk/872H1e9BSXN7hfFc+u2LkSBgab8l4Zd+8YVq7EyOiwqVcrNN3cd0wTwNCrnMz2z8jS5edtMFsTl4yOAORQzUnDmgVMNrZxmuH709W9HreqBkim11e2b57mBFdMLSwR0ngwkJYQ596SSALEqUD/aN2rrqG8OboNnwaaH7BYRdsJkgmQ8L5ySelhpTh/qyKH/uUZ5GGiSY3gkp24fFVXmQlyUPi+Z+JyYHDDZ2Bz8EMv/W96m2wAWkrnw87IWKm7ZCmeKzXmKNQv/+hWizfDIlQ6TN3B5aAaeYUKTkY2ceOZGjGYrkSeqp4Z6/Imysq0LCxMRfeURf884/RmOntX4dQSRo+iBX2/gVUM79uHuwTM/MueDfbXjLbhcuuuFzN0CgKO6NtijRUZqAQT0nTeboD9oZDQiAA0asdXRDPPeivFMdQ06rqwRWj4rB6Xd4Cm45t6M4izwvHPawRUdUKpRLxpAFM2XXVqRdri066jItaMsdZuCPzuCRgS6U1aVl0U7pu7q8jv2s8QiM
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HAzbi7G5kX/wrWfjZZUv0yLl8tmJbI+oJMdje336gIQBy7PLPB4TAwBKIoQ5?=
- =?us-ascii?Q?4hnMsmvHGanDd5mvtpVp8py6N8/wTCnrYQP1sEPJELxY61SUDLmtMGEZ8r0p?=
- =?us-ascii?Q?zZO4tGUKFjygcWXU/C6MpvClrfeLZb+vIfwOeHI8kdkjMAD7aBWS43txcgJ9?=
- =?us-ascii?Q?4TAWkNm4Ne9bAgvZ9idYcALrefQTJVFqtPORmPaagz2/IseZuC769Mvd8w4z?=
- =?us-ascii?Q?eaHy96DryokwQdY+JZJ4Ay/VOOstNoZUPyP8beI5TcZex70FRhqWjpVhovIC?=
- =?us-ascii?Q?q2pJ+0EyCKMvoT4ae9OkKwIna4J/v5+WxcdSc8r3Eztvh17lMCukW/vJpCrK?=
- =?us-ascii?Q?Pvb/Y6L50QQxy1vIGb2xZwKOxxpLBi7n4IRzAKdkN3cRg1tJWM4nEhRrNnYn?=
- =?us-ascii?Q?lUuz4usnHB2QhoBRhZAtyvFsY05+e9s1OW2uRwdt9MrgbpT92uZ7RCmlt3cb?=
- =?us-ascii?Q?gEmt1ATTfE3bYq1kGb6TG+NPSYBmxcCWezHMJQabqvgGG/g5YkWL4LZc78G4?=
- =?us-ascii?Q?QZMYXO0nGKg4ft6ZdtoQ1FDYjD9JS+fMJMhzlDrwc9WYYkDBKoiePFwBElE9?=
- =?us-ascii?Q?S5EZXScJvXerbfubYuGw9GlfXS1ZTEUVFghdXyrj6+8SuAGhn1dYZNOCGgKN?=
- =?us-ascii?Q?T9UwyTER2FgZWBDx2zFNoBXHMX1a5vv+N94/OA6ZWylY/i9juJREaiYzghD8?=
- =?us-ascii?Q?8X/icKgbHOwcWgwAKoAn5gXPQrdrk0Cm170Z/MuQBmd6ShANF09gW27OGq1t?=
- =?us-ascii?Q?KnJOgscVYm9DbGBIrcc06Z/Y1LRMvMxN7TARvup2AvsgREVHRMDwFvuTrgqD?=
- =?us-ascii?Q?96JDMcjPvU1PxmuRxcTdbIhAkVTX+8MGdddHNknr2tBwpEj3nLm7FgqAVYSm?=
- =?us-ascii?Q?DFFKnKaLuJpHZ5V0pdMiC/zsv/y5ZB4/Euc8N0L9AKhNQEqvTkU9oororlNL?=
- =?us-ascii?Q?sDMGanq5MaBhHiGBeeSTZ9CcR/yqZ0vXs3XyJ2cH5xD+7Kaa9E/AZX/JZIpk?=
- =?us-ascii?Q?UVNy2B5g0136NqAM0+UtjCu+NuL3lRjXvErrRPnjnxf+W02SlWd10GI5vmoT?=
- =?us-ascii?Q?oHNOK2y93uyqVTt4Z9gnN+hwUOTOQoCmovyromy5aEzDza/r9p8PygQDMGyo?=
- =?us-ascii?Q?SqftzsASCWzn/qKWlFa9Onr48Ql1JtO+/5mnPpnmZQurXAE13ONs33CMifqI?=
- =?us-ascii?Q?Jll3T8gNNmDpIGcL9eH4Pi4IOPzDSK+Wx2L/f+gAG5VnFufylSN98E2KPOU?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-746f3.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d82d4f6-bea4-4faa-8132-08dc8fa92b51
-X-MS-Exchange-CrossTenant-AuthSource: SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 15:13:12.1864
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY7P282MB5268
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Armin Wolf <W_Armin@gmx.de>, Stephen Horvath <s.horvath@outlook.com.au>
+References: <20240604040237.1064024-1-linux@roeck-us.net>
+ <20240604040237.1064024-6-linux@roeck-us.net>
+ <a5aa120d-8497-4ca8-9752-7d800240b999@molgen.mpg.de>
+ <efb77b37-30e5-48a8-b4af-eb9995a2882b@roeck-us.net>
+ <33f369c1-1098-458e-9398-30037bd8c5aa@molgen.mpg.de>
+ <4e09b843-3d2d-46d7-a8e1-2eabc4382dc7@roeck-us.net>
+ <f20ea816-5165-401e-948f-6e77682a2d1b@molgen.mpg.de>
+ <975af7e5-b1b0-400e-a1c3-6d9140421f25@roeck-us.net>
+ <8719fc64-2b51-4b79-ba52-0a3b9216f2db@molgen.mpg.de>
+ <f76a4d07-887b-4efb-b20e-52979db31216@roeck-us.net>
+ <fd8868ef-6179-45a7-8249-ee17994a8e78@molgen.mpg.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <fd8868ef-6179-45a7-8249-ee17994a8e78@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add mailbox controller driver for cv18x SoCs, tested on mailbox-test
-client.
+On 6/18/24 07:59, Paul Menzel wrote:
+> Dear Guenter,
+> 
+> 
+> Am 18.06.24 um 16:23 schrieb Guenter Roeck:
+>> On 6/18/24 06:51, Paul Menzel wrote:
+> 
+>>> Am 18.06.24 um 15:32 schrieb Guenter Roeck:
+>>>
+>>>> On 6/18/24 03:25, Paul Menzel wrote:
+>>>> [ ... ]
+>>>>>
+>>>>>      $ ls -l /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
+>>>>>      -r--r--r-- 1 root root 1024 Jun 18 12:17 /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
+>>>>>      $ cp /sys/bus/i2c/drivers/spd5118/0-0050/eeprom /tmp
+>>>>>      cp: error reading '/sys/bus/i2c/drivers/spd5118/0-0050/eeprom': No such device or address
+>>>>
+>>>> That suggests that the i801 driver got an error when trying some chip operation.
+>>>> Unfortunately I have no idea what that error or the failed operation might be.
+>>>>
+>>>>>      $ od -t x1 /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
+>>>>>      od: /sys/bus/i2c/drivers/spd5118/0-0050/eeprom: read error: No such device or address
+>>>>>      0000000
+>>>>>
+>>>>>> sudo i2cdump -y -f 0 0x50
+>>>>>
+>>>>>      $ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
+>>>>>      No size specified (using byte-data access)
+>>>>>      Error: Could not open file `/dev/i2c-0' or `/dev/i2c/0': No such file or directory
+>>>>>
+>>>> This should work after you load the "i2c-dev" module.
+>>>
+>>> Silly me. Thank you.
+>>>
+>>>> If you get it to work, please provide the output. Maybe it helps tracking down the problem.
+>>>
+>>> ```
+>>> $ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
+>>> No size specified (using byte-data access)
+>>>       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
+>>> 00: 51 18 0a 86 32 03 32 00 00 00 00 00 ff 01 00 00    Q???2?2......?..
+>>> 10: 00 00 00 00 00 00 00 00 00 00 00 00 70 03 00 00    ............p?..
+>>> 20: 50 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00    P?..............
+>>> 30: 00 58 01 00 00 00 00 00 00 00 00 00 00 00 00 00    .X?.............
+>>> 40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>> 50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>> 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>> 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>> 80: 30 10 12 02 04 00 20 62 00 00 00 00 90 02 00 00    0????. b....??..
+>>> 90: 00 00 00 00 a0 01 f2 03 7a 0d 00 00 00 00 80 3e    ....????z?....?>
+>>> a0: 80 3e 80 3e 00 7d 80 bb 30 75 27 01 a0 00 82 00    ?>?>.}??0u'??.?.
+>>> b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>> c0: 00 00 00 00 00 00 88 13 08 88 13 08 20 4e 20 10    ......?????? N ?
+>>> d0: 27 10 15 34 20 10 27 10 c4 09 04 4c 1d 0c 00 00    '??4 ?'????L??..
+>>> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>> ```
+>>>
+>>> So (00,b) = 0x00 opposed to 0x07 in your example output.
+>>>
+>>
+>> Yes, that assumed that reading the nvram/eeprom succeeded, which it didn't.
+>> The value might also be 7 directly after booting and before loading
+>> the spd5118 driver.
+>>
+>> Anyway, it almost looks like setting the page doesn't work, or maybe write
+>> operations in general.
+>>
+>> Can you try the following ?
+>>
+>> dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=64 bs=1
+>>
+>> and
+>>
+>> dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=1 bs=64
+>>
+>> That should only try to read from page 0.
+> 
+>      $ sudo dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=64 bs=1
+>      64+0 records in
+>      64+0 records out
+>      64 bytes copied, 0.046002 s, 1.4 kB/s
+>      $ sudo dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=1 bs=64
+>      1+0 records in
+>      1+0 records out
+>      64 bytes copied, 0.000215414 s, 297 kB/s
+> 
+>> Also, please try to set a temperature limit, either temp1_max
+>> or temp1_crit. Setting temp1_max to, say, 56000, or temp1_crit
+>> to 84000 should do.
+> 
+> I did
+> 
+>      $ tail -3 /etc/sensors3.conf
+>      chip "spd5118-*"
+>          set temp1_max 56000
+>          set temp1_crit 84000
+> 
+> but it stays with the defaults:
+> 
+> ```
+> $ sensors
 
-Signed-off-by: Yuntao Dai <d1581209858@live.com>
----
- drivers/mailbox/Kconfig           |  11 ++
- drivers/mailbox/Makefile          |   2 +
- drivers/mailbox/cv1800b-mailbox.c | 181 ++++++++++++++++++++++++++++++
- 3 files changed, 194 insertions(+)
- create mode 100644 drivers/mailbox/cv1800b-mailbox.c
+Did you run "sudo sensors -s" ?
 
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index 3b8842c4a..4e5593861 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -286,4 +286,15 @@ config QCOM_IPCC
- 	  acts as an interrupt controller for receiving interrupts from clients.
- 	  Say Y here if you want to build this driver.
- 
-+config CV1800B_MBOX
-+	tristate "cv1800b mailbox"
-+	depends on OF
-+	depends on ARCH_SOPHGO || COMPILE_TEST
-+	help
-+	  Mailbox driver implementation for Sophgo cv180x SoCs. This driver
-+	  can be used to send message between different processors in SoC. Any
-+	  processer can write data in a channel, and set co-responding register
-+	  to raise interrupt to notice another processor, and it is allowed to
-+	  send data to itself.
-+
- endif
-diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-index 5cf2f54de..71f0f746e 100644
---- a/drivers/mailbox/Makefile
-+++ b/drivers/mailbox/Makefile
-@@ -62,3 +62,5 @@ obj-$(CONFIG_SUN6I_MSGBOX)	+= sun6i-msgbox.o
- obj-$(CONFIG_SPRD_MBOX)		+= sprd-mailbox.o
- 
- obj-$(CONFIG_QCOM_IPCC)		+= qcom-ipcc.o
-+
-+obj-$(CONFIG_CV1800B_MBOX)	+= cv1800b-mailbox.o
-\ No newline at end of file
-diff --git a/drivers/mailbox/cv1800b-mailbox.c b/drivers/mailbox/cv1800b-mailbox.c
-new file mode 100644
-index 000000000..8ef2a5492
---- /dev/null
-+++ b/drivers/mailbox/cv1800b-mailbox.c
-@@ -0,0 +1,181 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/kfifo.h>
-+#include <linux/mailbox_controller.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#define MAILBOX_MAX_CHAN 0x0008
-+#define MAILBOX_DONE_OFFSET 0x0002
-+#define MAILBOX_CONTEXT_SIZE 0x0040
-+#define MAILBOX_CONTEXT_OFFSET 0x0400
-+
-+#define MBOX_EN_REG(cpu) (cpu << 2)
-+#define MBOX_DONE_REG(cpu) ((cpu << 2) + MAILBOX_DONE_OFFSET)
-+
-+#define MBOX_SET_CLR_REG(cpu) (0x10 + (cpu << 4))
-+#define MBOX_SET_INT_REG(cpu) (0x18 + (cpu << 4))
-+
-+#define MBOX_SET_REG 0x60
-+
-+struct cv1800b_mbox {
-+	struct mbox_controller mbox;
-+	struct mbox_chan chans[MAILBOX_MAX_CHAN];
-+	u64 *content[MAILBOX_MAX_CHAN];
-+	void __iomem *mbox_base;
-+	int sendto;
-+	int recvid;
-+};
-+
-+static irqreturn_t cv1800b_mbox_isr(int irq, void *dev_id)
-+{
-+	struct cv1800b_mbox *mbox = (struct cv1800b_mbox *)dev_id;
-+	size_t i;
-+
-+	for (i = 0; i < MAILBOX_MAX_CHAN; i++) {
-+		if (mbox->content[i]) {
-+			mbox_chan_received_data(&mbox->chans[i],
-+						mbox->content[i]);
-+			mbox->content[i] = NULL;
-+			return IRQ_HANDLED;
-+		}
-+	}
-+	return IRQ_NONE;
-+}
-+
-+static irqreturn_t cv1800b_mbox_irq(int irq, void *dev_id)
-+{
-+	struct cv1800b_mbox *mbox = (struct cv1800b_mbox *)dev_id;
-+	u8 set, valid;
-+	u64 *addr;
-+	size_t i;
-+
-+	set = readb(mbox->mbox_base + MBOX_SET_INT_REG(mbox->recvid));
-+
-+	if (!set)
-+		return IRQ_NONE;
-+
-+	for (i = 0; i < MAILBOX_MAX_CHAN; i++) {
-+		valid = set & (1 << i);
-+		addr = (u64 *)(mbox->mbox_base + MAILBOX_CONTEXT_OFFSET) + i;
-+		if (valid) {
-+			mbox->content[i] = addr;
-+			writeb(valid, mbox->mbox_base +
-+					      MBOX_SET_CLR_REG(mbox->recvid));
-+			writeb(~valid,
-+			       mbox->mbox_base + MBOX_EN_REG(mbox->recvid));
-+			return IRQ_WAKE_THREAD;
-+		}
-+	}
-+
-+	return IRQ_NONE;
-+}
-+
-+static int cv1800b_mbox_send_data(struct mbox_chan *chan, void *data)
-+{
-+	struct cv1800b_mbox *mbox = dev_get_drvdata(chan->mbox->dev);
-+	int idx = (int)chan->con_priv;
-+	u8 en, valid;
-+	u64 *addr = (u64 *)(mbox->mbox_base + MAILBOX_CONTEXT_OFFSET) + idx;
-+
-+	memcpy_toio(addr, data, 8);
-+
-+	valid = 1 << idx;
-+	writeb(valid, mbox->mbox_base + MBOX_SET_CLR_REG(mbox->sendto));
-+	en = readb(mbox->mbox_base + MBOX_EN_REG(mbox->sendto));
-+	writeb(en | valid, mbox->mbox_base + MBOX_EN_REG(mbox->sendto));
-+	writeb(valid, mbox->mbox_base + MBOX_SET_REG);
-+
-+	return 0;
-+}
-+
-+static bool cv1800b_last_tx_done(struct mbox_chan *chan)
-+{
-+	return true;
-+}
-+
-+static const struct mbox_chan_ops cv1800b_mbox_chan_ops = {
-+	.send_data = cv1800b_mbox_send_data,
-+	.last_tx_done = cv1800b_last_tx_done,
-+};
-+
-+static const struct of_device_id cv1800b_mbox_of_match[] = {
-+	{ .compatible = "sophgo,cv1800b-mailbox", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, cv1800b_mbox_of_match);
-+
-+static int cv1800b_mbox_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct cv1800b_mbox *mb;
-+	int irq, idx, err, cpu;
-+
-+	if (!dev->of_node)
-+		return -ENODEV;
-+
-+	mb = devm_kzalloc(dev, sizeof(*mb), GFP_KERNEL);
-+	if (!mb)
-+		return -ENOMEM;
-+
-+	mb->mbox_base = devm_of_iomap(dev, dev->of_node, 0, NULL);
-+	if (IS_ERR(mb->mbox_base))
-+		return dev_err_probe(dev, PTR_ERR(mb->mbox_base),
-+				     "Failed to map resource\n");
-+
-+	err = of_property_read_s32(dev->of_node, "sendto", &cpu);
-+	if (err)
-+		return dev_err_probe(dev, err,
-+				     "Failed to find <sendto> in of_node\n");
-+
-+	mb->sendto = cpu;
-+
-+	err = of_property_read_s32(dev->of_node, "recvid", &cpu);
-+	if (err) {
-+		return dev_err_probe(dev, err,
-+				     "Failed to find <recvid> in of_node\n");
-+	}
-+	mb->recvid = cpu;
-+
-+	mb->mbox.dev = dev;
-+	mb->mbox.num_chans = MAILBOX_MAX_CHAN;
-+	mb->mbox.chans = mb->chans;
-+	mb->mbox.ops = &cv1800b_mbox_chan_ops;
-+	mb->mbox.txdone_poll = true;
-+
-+	irq = platform_get_irq_byname(pdev, "mailbox");
-+	err = devm_request_threaded_irq(dev, irq, cv1800b_mbox_irq,
-+					cv1800b_mbox_isr, IRQF_ONESHOT,
-+					dev_name(&pdev->dev), mb);
-+	if (err < 0)
-+		return dev_err_probe(dev, err, "Failed to register irq\n");
-+
-+	for (idx = 0; idx < MAILBOX_MAX_CHAN; idx++)
-+		mb->mbox.chans[idx].con_priv = (void *)idx;
-+
-+	err = devm_mbox_controller_register(dev, &mb->mbox);
-+	if (err)
-+		return dev_err_probe(dev, err, "Failed to register mailbox\n");
-+
-+	platform_set_drvdata(pdev, mb);
-+	return 0;
-+}
-+
-+static struct platform_driver cv1800b_mbox_driver = {
-+	.driver = {
-+		.name = "cv1800b-mbox",
-+		.of_match_table = cv1800b_mbox_of_match,
-+	},
-+	.probe	= cv1800b_mbox_probe,
-+};
-+
-+module_platform_driver(cv1800b_mbox_driver);
-+
-+MODULE_DESCRIPTION("cv1800b mailbox driver");
-+MODULE_LICENSE("GPL");
--- 
-2.17.1
+I don't know if that would report errors, though.
+
+Thanks,
+Guenter
 
 
