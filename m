@@ -1,259 +1,252 @@
-Return-Path: <linux-kernel+bounces-219724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80C190D6F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:19:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59CF090D6F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54631C23BFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:19:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A191F24946
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6212374C;
-	Tue, 18 Jun 2024 15:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C154D8CB;
+	Tue, 18 Jun 2024 15:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3621hHw"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="P4kDpNwW"
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2084.outbound.protection.outlook.com [40.107.6.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B575523BE;
-	Tue, 18 Jun 2024 15:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718723572; cv=none; b=DsTV9mIGKLWWDvBLbFx3fy3kCNYBPzUxvNfXzLGU5Rk2zeGglvzc5MsuNq3BCwy/hm3uzJbatwUscAJ5T8fPmrC+DTZ0byaVrzS+DQaggRMRCdA8q/LZWTxKg+WQsPWppIj7tAsiOnq3s67gHhElM3uUSb8ejuibhsBNLqJGvZI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718723572; c=relaxed/simple;
-	bh=VmFNYzE1n5R7Mi+bi1Bih1Vka7yb6+Hzmuas90AeJP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ef6yw0Mu0mbUWNYYZ07RcQyxiWvSMY3Abwk580fKVfjg7ikkZWd/HLBppcwDFsNhXcltmV9Y6O/R+S3IQoIwgC+lm7gdd00/4XVJD9Z9o1Dkuyv0WldF8eqG17LnOEAktfeIY1JRQSoel2P0nAF3dXiiBMY1k65xJrrNfIolkzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3621hHw; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-705d9f4cd7bso3291819b3a.1;
-        Tue, 18 Jun 2024 08:12:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718723570; x=1719328370; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=OIBc07ZMpuSom2g6TOp1JREO7tlmjPpeaSY51LzNdW8=;
-        b=V3621hHwuWrGlVnavIwf3UitfRfXbZsezLmdoPwgTLdygdHaHeUCPhpBDVH4q5w/eC
-         pJCs3OCeyK43BY23qXy2xHUNKNdH9pJv4Ua4HupNAktQ+tHIz2HHmspu6NRn1Dcx3RrJ
-         L50ZcbitfyRxXIIpGjyWyVY8mImMRCDTFJcKqaj+EXlYQT1Px7tLdo25rNTAtknOa3ak
-         c6awOB3upz/Xpb0dv54pmzQxtewxYxOmQwEfGtuSb+R2OAvjHvHhGbU2oXuw3ZQgKcrF
-         ufMv1cCQ+80V4XGmwdO5DweLc5gYu1C8p4vtw/aL3zPVj18w94aJfBistDClNimW+H9v
-         mAKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718723570; x=1719328370;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OIBc07ZMpuSom2g6TOp1JREO7tlmjPpeaSY51LzNdW8=;
-        b=MSokArfngR2ZGW7Ujm+qjr2QYoATYOvKEe05s738zgYboywcU7/iVoSIs88oL9C2rd
-         CxCglXPj4e/MUunX/uQ7uuxjrRx0NWnKITe41IpIA/zezSAWMj3H8026LR2IU+GqiRoS
-         OVP+QFUG+27cOfPQJDCbiqnXywmlhjaSXbHfIcZoCZDo+cE5uU+fusp29gcYCtZV3utb
-         UfeTvkdRXIXUgFptW9nZNvv1yx36ljBAwmcxVoREvd1zJ6ptsJLiGEgK9+E4G8sy3g2d
-         2ItPC964Nrn/Su7RPNDE382VBbY7wG5PQ0Am5JsCOy7bwFRiw713i9j2oTW+nHg9Q+k7
-         Gf7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUAwxq9G+a3mQCJB/jrw/jLFoqTH10XMXy2BhkY8Q5Ruf7ZdxI531YQ3oJFobd3qcM2P2gWAKkX27+JiVem+ELxL0Plar418YdXJsQTcoIrWJNtxxaWGYlMRzdc6xwFjJ9kCwmBvN3FvniUKkcRbeDYBYorS0Yxn9cfK6w84CjfHj+D+A==
-X-Gm-Message-State: AOJu0YxQPXqEZl5BI3d9yJni3+kIGC/7i0DqOETcv4S2DfgiDM4ea93c
-	aeZn+u+N01iyPmKcQ+N+hBcwhqvJu4akt9a6uEWhSg//Y1D0zZ7j+PqXUA==
-X-Google-Smtp-Source: AGHT+IFauT8wQJUEYKoxfUqGp3B7tSk0s7iogE+J5JFtaQdlNyal7L44ebR+CZEOf/lNZ4iVGs4YwA==
-X-Received: by 2002:a05:6a20:5aa9:b0:1b6:a7c5:4faf with SMTP id adf61e73a8af0-1bae7eb3f32mr9931293637.19.1718723567696;
-        Tue, 18 Jun 2024 08:12:47 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fee2c4083asm8065733a12.65.2024.06.18.08.12.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 08:12:47 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2532ca4a-83dd-4ab8-af04-6ebcd5ca8673@roeck-us.net>
-Date: Tue, 18 Jun 2024 08:12:45 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD8E4D135
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718723591; cv=fail; b=WrfrAvoSaYEt69q1dSPPm90NxULE5Ef7Mr5/+qJjdQM7Qn+i/0djWD1NbheMihKd+bcSY469njYI5aed2TIpqL0bgdZQTIlH9RApgUZper6gzKFoRpTDGsW2nVkUggAZgXpfFdLnN9CVl8nntmwfUXJJO4ptBv6Vv473NoZJveE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718723591; c=relaxed/simple;
+	bh=zUu7GVI5PBIKyRZFP4OtkKKLDThNdGuQyQ2sKF8YH04=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=r4ODDrGU+78PsLZQiNYy0vqQJLQ97q44e2VzCT7XKx3LYlnKpKy/aWLKVLIlnMFpJBucGsiqR6fZ2mmTNFWBOSgmE+cuQx8ENOxIDs2LJWVepPsJZNRYVtWuiHSXHD/jLvrINjqO/0KFjmhPUs0jGLfxdJ7F4h0bzApd2Luvfxc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=P4kDpNwW; arc=fail smtp.client-ip=40.107.6.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GpHYHJq89ParnLivB5Kg9gNmo+hwryVFVpd75oPsLDwWCvtO4sPpD6ReeJv9LBQ2rWiFlSg5uFaQjEqQ0kFDrtw+GBzmxc1MUPv++N/aoxr1QLWwhwrArGGgh8DlEhEHM7AWuA9Ew5sfQYGtAx8xkOVAf8qV3x5Hxh12rE3AoaED9aHL/M9yq14s49+kFLGcIW9Cp3qRO3YqdR4jlo4lX6DXSS4HhKW+9cZKN0JAQOpWdA5X8ePc75zBjI9dutpq0ge9EfzKbKZFt+rq2nI4TLsd3uTgeqLt4n00vTybGuQ25kqL1nuSTdksBRxGooHhmCrf8ZwWsANXypEN0w9rZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gr5jB4FBNzKsSRpXIJjNCoMukhYMPPNAIVUHvJzKIyg=;
+ b=DYY5BjvgvxcGi6MAc4ciE82mbw7LD65ZlVdMou36lzsRukzhHy0rUJbegPAQ1iAbCjH6KzGIKjH2k+9pm1ShxddRcsG2pT6kBSxw2QJZF+ie4Szx04t1PW5aJRsf35/QknYQ1tXcejJ3l3STkK9MNNPU1wtX4LxPetATJ5g/tjl5CXkjDcVQnQVDtBj9wE/4yb90g38ptjU6aQlx3dJNpqfmHEXCpEzo0miy2SEIuhd914YTNRw2xkMxBMPRajsEtxz53WEBmOlJyEM+7rWngvMo+UyKapQdIJ4t5fOpHE3nkIu5JnlQAK+kvaz/luIIGtu5tdxC5y/sURqO+zYYDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gr5jB4FBNzKsSRpXIJjNCoMukhYMPPNAIVUHvJzKIyg=;
+ b=P4kDpNwWlBCaBYOGTz+31VBA0C3GapImclnhmR8vZWhP+ViKv6ERvbc/8Voe70fSvNLgUdHLRfaNLwcksZIkE2rtuxBzBEfo7ZroabBM2PQh7Z3Y33IvtNnmZnVQqvyixCV65SKbMh9rf9kgXfyKyN2Rd0OBi0fTbXlKGARPhYE=
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+ by VI0PR04MB10637.eurprd04.prod.outlook.com (2603:10a6:800:25f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
+ 2024 15:13:05 +0000
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256%5]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 15:13:04 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Jassi Brar
+	<jassisinghbrar@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+CC: Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH] mailbox: imx: fix TXDB_V2 channel race condition
+Thread-Topic: [PATCH] mailbox: imx: fix TXDB_V2 channel race condition
+Thread-Index: AQHara6pB5d0fDZleUSTT4bcpXDYYLHNyHvg
+Date: Tue, 18 Jun 2024 15:13:04 +0000
+Message-ID:
+ <AM6PR04MB5941581D46DA309123EE528888CE2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240524075632.1009044-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20240524075632.1009044-1-peng.fan@oss.nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|VI0PR04MB10637:EE_
+x-ms-office365-filtering-correlation-id: 84c3e3d9-4044-402d-b448-08dc8fa9271b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|376011|366013|1800799021|38070700015;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?U82zqxSgF565srM5Db9gtOxx+6fMTUixWlX+1yY+d1ZQEC94aD1JmSoN6ecE?=
+ =?us-ascii?Q?omX1lSXgNnYoj1DHy4I8awguOEC/T/LPNF88PAHJjDnCr51qndmsmS6xsLV4?=
+ =?us-ascii?Q?/Yqggx4VIYNBpV0FQ8TMVQfTRbiRv17mwxxVB6I5laEhlq3mv2CXBa/Ys337?=
+ =?us-ascii?Q?PRvLGNK4rfWPOuNvUKwWriWGooe3lyvk0hMnF/3cq6x4D4gQVFLhp+N5AKNZ?=
+ =?us-ascii?Q?9itzzUTeabwm6MoZMWNOMXbHN3Bx0xWIpHElJ0SDtq7clYX+4ghnVr8RGUxl?=
+ =?us-ascii?Q?dlnv0Q6ttJ3lCxc3t2BcJK2HkrRmE28CNkPhb1Lv2ZoXO8QjNFxK89ikv1M9?=
+ =?us-ascii?Q?n6QnuEytkK+izUtq0SKm7ZyJ4KeYE53uFahjvk7EaghyoT7zujXFMwLqsycQ?=
+ =?us-ascii?Q?2l1uXYjlGrrMRXFZTJcjyH42JFTvgBte6GfjX1Hw0Z9UGM6AmEN4zb6OjZSJ?=
+ =?us-ascii?Q?eSCnezh6AOcSgaZNun5dpsG3fX9t18Fcz16Ly85b5nGZ6R4Rk5Hj9TXYIMs3?=
+ =?us-ascii?Q?R/WEaoiZJ4u4axqdhT9W3DFEmjlDxQpSef31OQlqtOPSS5dOvFeycdK7RRIr?=
+ =?us-ascii?Q?qNSgrSvwa2kHMQKDFFEJLYQ0C9q9RIQrxmoeFvMYcbG1Vy9WUALcuVUxXW4z?=
+ =?us-ascii?Q?kkjSqcjHgizbxgqOsRK/QUsvHvWqSvKP1WJDzVF6NFdNI+vWzPSB5b0VtfpY?=
+ =?us-ascii?Q?FderGG7HK2oD08OGjYsUdqlvTVuzShH2vS6OOUY1y51GmoXJ3s1ctp3sSeOW?=
+ =?us-ascii?Q?bOS+bYs1Z1ocXQV2Qv5a/CXsdx8d8yOEpWH7w23bJbANVdgFytoYHbJ1xOTf?=
+ =?us-ascii?Q?TQGJ/pn1Tw3gx9DH8iKrdvP7+w4QLhGuQ2ZG76JhYurlM625/xFfn74GbcAA?=
+ =?us-ascii?Q?bP0yudpZZ18mmcrO5EY6rL4VzxwilXjjwYScAC9zpwGY2x4U0tsHgQ8ofb+M?=
+ =?us-ascii?Q?jKvtG9OM8HfV9Huyy14dvh2byjVkSRnKFvwoW/9cr4Nj/2mbEP6cjUlLyMKI?=
+ =?us-ascii?Q?/uoALTyRCFLlBd+6TvaQcwxdhJ/RUfH3AZy78qbNYL2JXIqrAIl+1G60gxnY?=
+ =?us-ascii?Q?DSnPAvYvsj4MON4bibGMmsJAG1szFKajHhmhUXLCiHjL9Lw1qkMiGzgVSXT5?=
+ =?us-ascii?Q?7Fb91JSM6HNXIZyDWYAROnOMcrdFbTw/FpSVYm3UaW+wGK6M6XLiTWU7nq4R?=
+ =?us-ascii?Q?TCyK6N9KxJZMnOxu9LMPUB58MkXn+Mc5IvehNyeY6lAYVoM6p8o0Yj3pmdal?=
+ =?us-ascii?Q?LT9ObZekU56YLM7gb64noGv+IGV+47E29WfP1JnKE11FtzwpbCmItYOPdu7G?=
+ =?us-ascii?Q?i27+izVCHI3tPt46hp6pGaO8SpiNrTJTT/HANEfO3JZ2hBJOJ9Q2424I8eas?=
+ =?us-ascii?Q?uvooNIM=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(366013)(1800799021)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?cGQhMM3cPMPvVGtef4rGZ0pZNYn0PkO99FcVCWYlgQheRwxDweOWkrAW2zwV?=
+ =?us-ascii?Q?t4VN4WbBxelqxUtXTKzbDt5mfZmbVDaWh1l1L64JbvFyUT2khNyXswH0V/RG?=
+ =?us-ascii?Q?ikI22TxhSNn8v/ggM1Bvn56/hz3ed6m0+xo+51EWe9vx+1UC0NzbGvPm347D?=
+ =?us-ascii?Q?i5CmLQqTqsEV0yr5tjXQdUUo59NoC6A3MMYtqVW9Tkg2/7hjTvTpj0O4iCt8?=
+ =?us-ascii?Q?jcEAj9bod3tWZCBOr5PVpTfytI1/faa9jUirYNNKhItHsSbWPG5xKyxqHZg+?=
+ =?us-ascii?Q?8INKGMqYa/nMKVHiRe5TwNRIKBh/HUDN2dg7oKPUzMqZqTeY6PQT/7stud1s?=
+ =?us-ascii?Q?0WjVsUjmzgGpNPDaJ8BoifCkQ0mnDiiSgolFfiUt4FwkxT2nBRrXGEJA9Xt2?=
+ =?us-ascii?Q?QWzNV+v+tDzF7Eg0c3xRmK/3MUAomAct5Cak0CDx+jjE7N6jWwksuAOsDTdG?=
+ =?us-ascii?Q?aUYJvHogcIlgjA1iavkaaGaDcsd61sPVYsI/BiMXEMofK9qzpk1FWxxFTQkK?=
+ =?us-ascii?Q?TBpGsdJYGsgd7tzFjxcdBhsOXwsXqyHg41qC9mOnMh8csO2w6SvshhrI/Q9e?=
+ =?us-ascii?Q?4JBl9XlaPDfFE5Z3b6f7QtdcDZSWiJeBqCPxDB/KTGWkXs8uK+O3uGSVZIRL?=
+ =?us-ascii?Q?P8azBzrRdv/NrHr1PcAiRGPIFbZesJdm/uP94i6wyXJFMd53/oRKwO7Z+uhv?=
+ =?us-ascii?Q?aivatNdjVO6PLeGeHuAxdX0mYHR+1kk+CNgG4zW8+xM7jRW2LqpPJFVeAef+?=
+ =?us-ascii?Q?iZd1wjXj8zf7Qz8mNXo8bGBVPK5FediggVZkpHTNKZl/m+ms/c4J/sTnq9XE?=
+ =?us-ascii?Q?ZU/fXzi/Nb+aQmdzyvazaQoFmA/1LKZ4KShNuyq8vShQguDe+ZRthoWNGz72?=
+ =?us-ascii?Q?0Tdpt2BNyNUsc6kAUOKEIUNdUkSDlM1SaG9XUtxSAIDdVYYs6HODuIfh7cQJ?=
+ =?us-ascii?Q?QvgCbcHSJPF7sdftvdPXIF28pk1Wg/aB07j0igai4SORFp0lIm2bkuKPEby9?=
+ =?us-ascii?Q?KzxOZymcXmnTzYx0RzTH9l3krURkrWj9hS3HHxf13mwGPCdatLlNnrgFA72Y?=
+ =?us-ascii?Q?ewnGx2cNNSWY5JsvOzneJGP09DV1YQry9Uil+jbpu9F+V525VAluytJFafPM?=
+ =?us-ascii?Q?xhz320snIB20ubcWpYY+4vfgFseOLH+HLZXUbUKWcEi05kcVhgOxT27YX0ww?=
+ =?us-ascii?Q?yYzijGmFs+ldyR8FfMcWzihPc5oneQR2+ayuLsMOtd+F+EUEc1ois1KyyKtJ?=
+ =?us-ascii?Q?r3bkxVS/Tgk6bgIJNT1RnJmiJZyHoDo3spnXHktT+8Ygb0ocICKuUCtx5tzF?=
+ =?us-ascii?Q?0fhWfxyq0g3QCddxsMaLRnU6Jcr8p19ybiaAm8rKuSx8cZ54kv0Obu3hEkIV?=
+ =?us-ascii?Q?Sr2A3DRQ08LPtOLLU+uMuPOi40hvIG/k9Q19kWl77kMwr6TV0EiJCnjbZW0d?=
+ =?us-ascii?Q?AC8jZi8dXPa6RA/D2WODrgAlmiJyJHLPAto6oaoW5Ia8aJGszidRmxcIpsga?=
+ =?us-ascii?Q?ubXY0fjTYFNSn4xdbU9PwGcdGLtO7Gtzxgo3VCInv0inJoLBkOtxndvY3U0U?=
+ =?us-ascii?Q?EhP0TJb0Sq33LHyBoE8=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Armin Wolf <W_Armin@gmx.de>, Stephen Horvath <s.horvath@outlook.com.au>
-References: <20240604040237.1064024-1-linux@roeck-us.net>
- <20240604040237.1064024-6-linux@roeck-us.net>
- <a5aa120d-8497-4ca8-9752-7d800240b999@molgen.mpg.de>
- <efb77b37-30e5-48a8-b4af-eb9995a2882b@roeck-us.net>
- <33f369c1-1098-458e-9398-30037bd8c5aa@molgen.mpg.de>
- <4e09b843-3d2d-46d7-a8e1-2eabc4382dc7@roeck-us.net>
- <f20ea816-5165-401e-948f-6e77682a2d1b@molgen.mpg.de>
- <975af7e5-b1b0-400e-a1c3-6d9140421f25@roeck-us.net>
- <8719fc64-2b51-4b79-ba52-0a3b9216f2db@molgen.mpg.de>
- <f76a4d07-887b-4efb-b20e-52979db31216@roeck-us.net>
- <fd8868ef-6179-45a7-8249-ee17994a8e78@molgen.mpg.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <fd8868ef-6179-45a7-8249-ee17994a8e78@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84c3e3d9-4044-402d-b448-08dc8fa9271b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2024 15:13:04.8044
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3ehvAr0NEFz/SZAA7YKM6jPhMvjHhRdbNL7tr53bbOUCU7AayNIEJDR/VcCm3JbXRQHQWu/LKK9/p8xFpDG1TQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10637
 
-On 6/18/24 07:59, Paul Menzel wrote:
-> Dear Guenter,
-> 
-> 
-> Am 18.06.24 um 16:23 schrieb Guenter Roeck:
->> On 6/18/24 06:51, Paul Menzel wrote:
-> 
->>> Am 18.06.24 um 15:32 schrieb Guenter Roeck:
->>>
->>>> On 6/18/24 03:25, Paul Menzel wrote:
->>>> [ ... ]
->>>>>
->>>>>      $ ls -l /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
->>>>>      -r--r--r-- 1 root root 1024 Jun 18 12:17 /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
->>>>>      $ cp /sys/bus/i2c/drivers/spd5118/0-0050/eeprom /tmp
->>>>>      cp: error reading '/sys/bus/i2c/drivers/spd5118/0-0050/eeprom': No such device or address
->>>>
->>>> That suggests that the i801 driver got an error when trying some chip operation.
->>>> Unfortunately I have no idea what that error or the failed operation might be.
->>>>
->>>>>      $ od -t x1 /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
->>>>>      od: /sys/bus/i2c/drivers/spd5118/0-0050/eeprom: read error: No such device or address
->>>>>      0000000
->>>>>
->>>>>> sudo i2cdump -y -f 0 0x50
->>>>>
->>>>>      $ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
->>>>>      No size specified (using byte-data access)
->>>>>      Error: Could not open file `/dev/i2c-0' or `/dev/i2c/0': No such file or directory
->>>>>
->>>> This should work after you load the "i2c-dev" module.
->>>
->>> Silly me. Thank you.
->>>
->>>> If you get it to work, please provide the output. Maybe it helps tracking down the problem.
->>>
->>> ```
->>> $ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
->>> No size specified (using byte-data access)
->>>       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
->>> 00: 51 18 0a 86 32 03 32 00 00 00 00 00 ff 01 00 00    Q???2?2......?..
->>> 10: 00 00 00 00 00 00 00 00 00 00 00 00 70 03 00 00    ............p?..
->>> 20: 50 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00    P?..............
->>> 30: 00 58 01 00 00 00 00 00 00 00 00 00 00 00 00 00    .X?.............
->>> 40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->>> 50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->>> 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->>> 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->>> 80: 30 10 12 02 04 00 20 62 00 00 00 00 90 02 00 00    0????. b....??..
->>> 90: 00 00 00 00 a0 01 f2 03 7a 0d 00 00 00 00 80 3e    ....????z?....?>
->>> a0: 80 3e 80 3e 00 7d 80 bb 30 75 27 01 a0 00 82 00    ?>?>.}??0u'??.?.
->>> b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->>> c0: 00 00 00 00 00 00 88 13 08 88 13 08 20 4e 20 10    ......?????? N ?
->>> d0: 27 10 15 34 20 10 27 10 c4 09 04 4c 1d 0c 00 00    '??4 ?'????L??..
->>> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->>> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
->>> ```
->>>
->>> So (00,b) = 0x00 opposed to 0x07 in your example output.
->>>
->>
->> Yes, that assumed that reading the nvram/eeprom succeeded, which it didn't.
->> The value might also be 7 directly after booting and before loading
->> the spd5118 driver.
->>
->> Anyway, it almost looks like setting the page doesn't work, or maybe write
->> operations in general.
->>
->> Can you try the following ?
->>
->> dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=64 bs=1
->>
->> and
->>
->> dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=1 bs=64
->>
->> That should only try to read from page 0.
-> 
->      $ sudo dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=64 bs=1
->      64+0 records in
->      64+0 records out
->      64 bytes copied, 0.046002 s, 1.4 kB/s
->      $ sudo dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=1 bs=64
->      1+0 records in
->      1+0 records out
->      64 bytes copied, 0.000215414 s, 297 kB/s
-> 
->> Also, please try to set a temperature limit, either temp1_max
->> or temp1_crit. Setting temp1_max to, say, 56000, or temp1_crit
->> to 84000 should do.
-> 
-> I did
-> 
->      $ tail -3 /etc/sensors3.conf
->      chip "spd5118-*"
->          set temp1_max 56000
->          set temp1_crit 84000
-> 
-> but it stays with the defaults:
-> 
-> ```
-> $ sensors
+Hi Jassi,
 
-Did you run "sudo sensors -s" ?
+> Subject: [PATCH] mailbox: imx: fix TXDB_V2 channel race condition
 
-I don't know if that would report errors, though.
+Ping..
 
 Thanks,
-Guenter
+Peng.
+
+>=20
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> Two TXDB_V2 channels are used between Linux and System
+> Manager(SM).
+> Channel0 for normal TX, Channel 1 for notification completion.
+> The TXDB_V2 trigger logic is using imx_mu_xcr_rmw which uses
+> read/modify/update logic.
+>=20
+> Note: clear MUB GSR BITs, the MUA side GCR BITs will also got cleared
+> per hardware design.
+> Channel0 Linux
+> read GCR->modify GCR->write GCR->M33 SM->read GSR----->clear GSR
+>                                                 |-(1)-|
+> Channel1 Linux start in time slot(1)
+> read GCR->modify GCR->write GCR->M33 SM->read GSR->clear GSR So
+> Channel1 read GCR will read back the GCR that Channel0 wrote,
+> because
+> M33 has not finish clear GSR, this means Channel1 GCR writing will
+> trigger Channel1 and Channel0 interrupt both which is wrong.
+>=20
+> Channel0 will be freed(SCMI channel status set to FREE) in M33 SM
+> when processing the 1st Channel0 interrupt. So when 2nd interrupt
+> trigger (channel 0/1 trigger together), SM will see a freed Channel0,
+> and report protocol error.
+>=20
+> To address the issue, not using read/modify/update logic, just use write,
+> because write 0 to GCR will be ignored. And after write MUA GCR, wait
+> the SM to clear MUB GSR by looping MUA GCR value.
+>=20
+> Fixes: 5bfe4067d350 ("mailbox: imx: support channel type tx doorbell
+> v2")
+> Reviewed-by: Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>=20
+> V1: This patch has got R-b inside NXP and could be directly applied to
+>     upstream linux, so I keep the R-b tag from Ranjani.
+>=20
+>  drivers/mailbox/imx-mailbox.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-
+> mailbox.c index 5c1d09cad761..38abe07babdf 100644
+> --- a/drivers/mailbox/imx-mailbox.c
+> +++ b/drivers/mailbox/imx-mailbox.c
+> @@ -224,6 +224,8 @@ static int imx_mu_generic_tx(struct
+> imx_mu_priv *priv,
+>  			     void *data)
+>  {
+>  	u32 *arg =3D data;
+> +	u32 val;
+> +	int ret;
+>=20
+>  	switch (cp->type) {
+>  	case IMX_MU_TYPE_TX:
+> @@ -235,7 +237,13 @@ static int imx_mu_generic_tx(struct
+> imx_mu_priv *priv,
+>  		tasklet_schedule(&cp->txdb_tasklet);
+>  		break;
+>  	case IMX_MU_TYPE_TXDB_V2:
+> -		imx_mu_xcr_rmw(priv, IMX_MU_GCR,
+> IMX_MU_xCR_GIRn(priv->dcfg->type, cp->idx), 0);
+> +		imx_mu_write(priv, IMX_MU_xCR_GIRn(priv->dcfg-
+> >type, cp->idx),
+> +			     priv->dcfg->xCR[IMX_MU_GCR]);
+> +		ret =3D readl_poll_timeout(priv->base + priv->dcfg-
+> >xCR[IMX_MU_GCR], val,
+> +					 !(val &
+> IMX_MU_xCR_GIRn(priv->dcfg->type, cp->idx)),
+> +					 0, 1000);
+> +		if (ret)
+> +			dev_warn_ratelimited(priv->dev, "channel
+> type: %d failure\n",
+> +cp->type);
+>  		break;
+>  	default:
+>  		dev_warn_ratelimited(priv->dev, "Send data on wrong
+> channel type: %d\n", cp->type);
+> --
+> 2.37.1
 
 
