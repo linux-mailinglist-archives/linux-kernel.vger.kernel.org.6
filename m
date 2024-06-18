@@ -1,205 +1,119 @@
-Return-Path: <linux-kernel+bounces-220334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B1090DFDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:28:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F3090DFDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BCD31F246D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:28:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00E74282021
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A031E1849E1;
-	Tue, 18 Jun 2024 23:27:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2D61891DF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641801849D8;
+	Tue, 18 Jun 2024 23:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="hgQ/YSY/"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A7316FF28;
+	Tue, 18 Jun 2024 23:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718753230; cv=none; b=FxOK4EcD2cAkJ9+1jYcHeHau/WL0759nMhNoYpcy7P10IZhYzru9eR+tvw4Ja4I6uSsHdKAAY+yD+OIpu1W7xGj1fY07PXyp2juequG/Yt0o+UooDbjuv4ExOjrYOZDFNhLZL5laJjMWBntYm/LKIkrh9e+khN1EXbDqyl1CmxM=
+	t=1718753359; cv=none; b=YUycmZO9MwGvcroF86VggWDzmk/awTfhx+TucpptN7xJRahdI+rPZZhZyKoZm2sIPeiFBt5musfr9hquc+QeXBuv/VL+qXbpArHKF380ib8HD/iKqAKxTUv4GxQrRYL81vi01yhpmkYCTTzfKYikMPCQ1Zesr7Ctcd/Qu/d+8Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718753230; c=relaxed/simple;
-	bh=Znl4Phg+yGQ/MP0Ne9Cpu0oIP0Wn8eDukS41b/ym+lM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pPc23c8YPA2u8sGMq6ugUKNaGuhX+/NfqjnKUXIrnXqA4t+rDKFmbppwYX/HDKD9VZbPT5EdyG2GSlqUi4CBtfZqToSXZnutYxdDU6eu8m5sEt7Mbw17rL4o892DylpnVfFE95mFHNwJV7jr7tNhBvfiSkgXq3xAoQ30eY15Wkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A856150C;
-	Tue, 18 Jun 2024 16:27:32 -0700 (PDT)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC8073F64C;
-	Tue, 18 Jun 2024 16:27:05 -0700 (PDT)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>,
-	Kairui Song <kasong@tencent.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Barry Song <baohua@kernel.org>,
-	Hugh Dickins <hughd@google.com>,
-	David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH v1 5/5] mm: swap: Optimize per-order cluster scanning
-Date: Wed, 19 Jun 2024 00:26:45 +0100
-Message-ID: <20240618232648.4090299-6-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240618232648.4090299-1-ryan.roberts@arm.com>
-References: <20240618232648.4090299-1-ryan.roberts@arm.com>
+	s=arc-20240116; t=1718753359; c=relaxed/simple;
+	bh=WOQWARhUZWSfqQvDlg3ncf6oaVVEQYvGzmOoJx/nlDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iRVbWdINRBcycb/Q3B+EviuDHUCmwHpS27PxICIcq+jgVjQHsZqqE3Ax5fGCZHvp6usBbbExLnlDZjx0Slgr4zjhiPuPKGP6RDwfFH/kZ/FKEP+tlAeqEAqVNwWeiiyBDzt9RrLI7xIpeNVbQiP3Rg1DSnqqOhAgMUOriU0FHT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=hgQ/YSY/; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1718753319; x=1719358119; i=w_armin@gmx.de;
+	bh=WOQWARhUZWSfqQvDlg3ncf6oaVVEQYvGzmOoJx/nlDI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=hgQ/YSY/LhXNAClFUG7qy9LhAs2FaJSQPBT9sBrCtwhHUZ7ZWkVpPrvaDs15MmH2
+	 fZkuYcODzxZIDQkydWpTAAMb277wsjNuA9GmvQw43MgBYkfKuG466t/8k8D0CiKn8
+	 LlWVSgXfiNaLpxqZt2Sp1fkb3BNKcYi7xNyKdIj+wsUZ7SMzGSHa4qgloPsM2eN+K
+	 Z3nVomuQqlDrA6JcWRcVJsXhjh/KAKERDOCsATFpdU9sIth+TQHFP2Dp8gopPRI/n
+	 brMbmZNViZdwYlvfIKFzGQYl3fuLAyUXw38BzhCwYRL1KYe9aAqS4Sx6CqczsrfEo
+	 e9q+9XjKYzIFmR0arQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MmDIo-1skHd11j3w-00gUUi; Wed, 19
+ Jun 2024 01:28:39 +0200
+Message-ID: <4755d088-7eab-47ca-923c-db1fdf3611ab@gmx.de>
+Date: Wed, 19 Jun 2024 01:28:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFT PATCH v2 2/3] hwmon: (spd5118) Use spd5118 specific
+ read/write operations
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Guenter Roeck <linux@roeck-us.net>, Paul Menzel <pmenzel@molgen.mpg.de>,
+ linux-kernel@vger.kernel.org, =?UTF-8?Q?Ren=C3=A9_Rebe?=
+ <rene@exactcode.de>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>, Stephen Horvath <s.horvath@outlook.com.au>,
+ Sasha Kozachuk <skozachuk@google.com>, John Hamrick <johnham@google.com>,
+ Chris Sarra <chrissarra@google.com>, linux-hwmon@vger.kernel.org,
+ Jean Delvare <jdelvare@suse.com>
+References: <20240618195348.1670547-1-linux@roeck-us.net>
+ <20240618195348.1670547-3-linux@roeck-us.net>
+ <a7f208df-4c9e-4fa2-9d17-80895db51182@molgen.mpg.de>
+ <661def21-b0a9-49c1-937e-8526008f529c@roeck-us.net>
+ <omsjeb6zbkcdhh4a3urjdrdeyj2kczb734tbhxwdcvngzlm7pe@dzdphvmm6asq>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <omsjeb6zbkcdhh4a3urjdrdeyj2kczb734tbhxwdcvngzlm7pe@dzdphvmm6asq>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:0d/yd16RBDh049RhGmMfdRqpa/84bjtrfH5mXCL9cwRLtotDwrI
+ DXJ7dSzsMuDrD2Vynw8GTwYdXPrWHiPYbIKx4HX9A8p6o9W3QGDGLzA1Yul4OkK8pP/KOY1
+ LRuV2JlJE8q2XzyMMz9nuu6wpiK9/cRm8yn7wFOttkvgFxvgGxQxYbz+3MCVJrGwkK/Nxl/
+ VGWA2L43AGJgH8p0+mhbg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:DwVp0R8OMCQ=;nTohlvIX4WCZcsQ+o04BanY0Tsz
+ hldDmwO+KU3/AjjEeog74YFcEzAT/A5BEoJDNlSgAApM/bPxulsBHCchPekMVABuBt5sPJy7m
+ /K3ShR7wLMpImGA25natabG6z7PLC7cTBwuN4bkNw3mx29rlLXuLiqFcW9wy9r6uKn62Xq3qp
+ PAk48PnpYR+qX8hlY3WKBtPTIprVKGJwcXmSEuy1S1pKBkY5utY7g9nBzX74OA992PrBnVCxq
+ gvUT2vliQr/vVPqYekeoBCrn1eLdFd4d1UVsY3LVJ/vrs/t1SI4q6d3ME1Qm/9A8XooCcNpN0
+ +vOyox1QUp+0sK0h8j7dZb4j0Kqox1dQXZROW6gE05FHE11Wwsw2LGliBs4Uj53w96mizrGUc
+ JE0qWAmMAmi2Z0iEfZIa1Ev9K9IhOGyvy6xyrEkc+VFgrlRVwgyvB/2ouyUJj5/CFY41vknMJ
+ yjgEvcHQ9CNMhBGmPYr18YxC3EUQEuTIt0lWSuTI5MpzpKuZjqym3Laf6ahMXw6fmSlgViMNO
+ kJa/xvibBo+MSOYgf1HEhH9ycTJgEnVSXCbrURj1cme3rT/PCi9Q9PSwHV0LanyEowHJ+4ZSv
+ Pt75BQEEQg3PiyhmL7pxs9Q0oq+dIPi4htmPsdgGx5k84K0WKWVow5qY/zZpPn/gelZHzx3r+
+ mnvbXDvAuaYRCTTssOHzToWQogJsUhi+DUEnBg4IHiGwzGL6lCxAM7EbdOD8hJMKPzNqaKKoV
+ 977QU9J3UWoNkNQQ1wneN79MylIxWHXuWdtXq+yK2rmWE0h2lZGL8SHRUN2Vfm/maphw4AFsz
+ JsptXPPtEUm9MLDaAHfBSar+fbr2sVSNdu6JB+Am/BNVA=
 
-Add CLUSTER_FLAG_SKIP_SCAN cluster flag, which is applied to a cluster
-under 1 of 2 conditions. When present, the cluster will be skipped
-during a scan.
+Am 19.06.24 um 00:28 schrieb Wolfram Sang:
 
-- When the number of free entries is less than the number of entries
-  that would be required for a new allocation of the order that the
-  cluster serves.
+>> to 86 degrees C. If that doesn't work, we'll be really out of luck
+>> with that controller (or at least I don't have an idea what else to try).
+> Try CCing Heiner Kallweit for ideas about the i801 controller.
+>
+Hi,
 
-- When scanning completes for the cluster, and no further scanners are
-  active for the cluster and no swap entries were freed for the cluster
-  since the last scan began. In this case, it has been proven that there
-  are no contiguous free entries of sufficient size to allcoate the
-  order that the cluster serves. In this case the cluster is made
-  eligible for scanning again when the next entry is freed.
+i am not Heiner Kallweit, but i found something interesting in
+commit ba9ad2af7019 ("i2c: i801: Fix I2C Block Read on 8-Series/C220 and later").
 
-The latter is implemented to permit multiple CPUs to scan the same
-cluster, which in turn garrantees that if there is a free block
-available in a cluster allocated for the desired order then it will be
-allocated on a first come, first served basis.
+Basically, it seems that the i802 i2c controller indeed features a SPD write disable bit
+which blocks all writes for slave addresses 0x50-0x57.
 
-As a result, the number of active scanners for a cluster must be
-tracked, costing 4 bytes per cluster.
+Does the i801 i2c controller driver print something like "SPD Write Disable is set" during
+boot?
 
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
----
- include/linux/swap.h |  3 +++
- mm/swapfile.c        | 36 ++++++++++++++++++++++++++++++++++--
- 2 files changed, 37 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 34ec4668a5c9..40c308749e79 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -257,9 +257,12 @@ struct swap_cluster_info {
- 	unsigned int data:24;
- 	unsigned int flags:4;
- 	unsigned int order:4;
-+	unsigned int nr_scanners;
- };
- #define CLUSTER_FLAG_FREE 1 /* This cluster is free */
- #define CLUSTER_FLAG_NEXT_NULL 2 /* This cluster has no next cluster */
-+#define CLUSTER_FLAG_SKIP_SCAN 4 /* Skip cluster for per-order scan */
-+#define CLUSTER_FLAG_DECREMENT 8 /* A swap entry was freed from cluster */
-
- /*
-  * swap_info_struct::max is an unsigned int, so the maximum number of pages in
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 24db03db8830..caf382b4ecd3 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -574,6 +574,9 @@ static void add_cluster_info_page(struct swap_info_struct *p,
- 	VM_BUG_ON(cluster_count(&cluster_info[idx]) + count > SWAPFILE_CLUSTER);
- 	cluster_set_count(&cluster_info[idx],
- 		cluster_count(&cluster_info[idx]) + count);
-+
-+	if (SWAPFILE_CLUSTER - cluster_count(&cluster_info[idx]) < count)
-+		cluster_info[idx].flags |= CLUSTER_FLAG_SKIP_SCAN;
- }
-
- /*
-@@ -595,6 +598,7 @@ static void dec_cluster_info_page(struct swap_info_struct *p,
- 	struct swap_cluster_info *cluster_info, unsigned long page_nr)
- {
- 	unsigned long idx = page_nr / SWAPFILE_CLUSTER;
-+	unsigned long count = 1 << cluster_info[idx].order;
-
- 	if (!cluster_info)
- 		return;
-@@ -603,6 +607,10 @@ static void dec_cluster_info_page(struct swap_info_struct *p,
- 	cluster_set_count(&cluster_info[idx],
- 		cluster_count(&cluster_info[idx]) - 1);
-
-+	cluster_info[idx].flags |= CLUSTER_FLAG_DECREMENT;
-+	if (SWAPFILE_CLUSTER - cluster_count(&cluster_info[idx]) >= count)
-+		cluster_info[idx].flags &= ~CLUSTER_FLAG_SKIP_SCAN;
-+
- 	if (cluster_count(&cluster_info[idx]) == 0)
- 		free_cluster(p, idx);
- }
-@@ -708,7 +716,8 @@ static unsigned int next_cluster_for_scan(struct swap_info_struct *si,
- 	end = offset_to_cluster(si, *stop);
-
- 	while (ci != end) {
--		if ((ci->flags & CLUSTER_FLAG_FREE) == 0 && ci->order == order)
-+		if ((ci->flags & (CLUSTER_FLAG_SKIP_SCAN | CLUSTER_FLAG_FREE)) == 0
-+		    && ci->order == order)
- 			break;
- 		ci = next_cluster_circular(si, ci);
- 	}
-@@ -722,6 +731,21 @@ static unsigned int next_cluster_for_scan(struct swap_info_struct *si,
- 	return cluster_to_offset(si, ci);
- }
-
-+static inline void cluster_inc_scanners(struct swap_cluster_info *ci)
-+{
-+	/* Protected by si lock. */
-+	ci->nr_scanners++;
-+	ci->flags &= ~CLUSTER_FLAG_DECREMENT;
-+}
-+
-+static inline void cluster_dec_scanners(struct swap_cluster_info *ci)
-+{
-+	/* Protected by si lock. */
-+	ci->nr_scanners--;
-+	if (ci->nr_scanners == 0 && (ci->flags & CLUSTER_FLAG_DECREMENT) == 0)
-+		ci->flags |= CLUSTER_FLAG_SKIP_SCAN;
-+}
-+
- /*
-  * Try to get swap entries with specified order from current cpu's swap entry
-  * pool (a cluster). This might involve allocating a new cluster for current CPU
-@@ -764,6 +788,8 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
- 				return false;
- 		} else
- 			return false;
-+
-+		cluster_inc_scanners(offset_to_cluster(si, tmp));
- 	}
-
- 	/*
-@@ -780,13 +806,19 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
- 	}
- 	unlock_cluster(ci);
- 	if (tmp >= max) {
-+		cluster_dec_scanners(ci);
- 		cluster->next[order] = SWAP_NEXT_INVALID;
- 		goto new_cluster;
- 	}
- 	*offset = tmp;
- 	*scan_base = tmp;
- 	tmp += nr_pages;
--	cluster->next[order] = tmp < max ? tmp : SWAP_NEXT_INVALID;
-+	if (tmp >= max) {
-+		cluster_dec_scanners(ci);
-+		cluster->next[order] = SWAP_NEXT_INVALID;
-+	} else {
-+		cluster->next[order] = tmp;
-+	}
- 	return true;
- }
-
---
-2.43.0
+Thanks,
+Armin Wolf
 
 
