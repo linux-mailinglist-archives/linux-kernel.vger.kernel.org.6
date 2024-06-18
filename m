@@ -1,201 +1,297 @@
-Return-Path: <linux-kernel+bounces-219866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD05590D91E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:24:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3E890D932
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D40291C23B8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:24:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A07B81C24872
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FAE74BE0;
-	Tue, 18 Jun 2024 16:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A31059164;
+	Tue, 18 Jun 2024 16:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="CtUqpVJt"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhNSThuG"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DADB46521
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2964D8B8;
+	Tue, 18 Jun 2024 16:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718727847; cv=none; b=Sep2VRfuAGJNL1WOUIQnyo9wWZONk3clcaSY91tUXPGZ2HnCdmfNJbNNNa2lRNrpdu5E6x5z0gWbGQShNkCq3zC8dvSb2Cbaje/l1+Nw9HagdtdQKZV1sOLcbAThCJdHQ8w5YftBTXPyw4/u+28Txx+1dGlMVkLbXo/h12/RD/o=
+	t=1718728067; cv=none; b=cWl7ycNXeXS7Pb/yO9Jq5xCZMYxoPwNzobb/DvG2e0Im/s2lfUSiNNLf0w/uHskW8rcQ/HtiYXyLO4lFFUcMnRjFjQbPZCkcgPKWWRUI1uyNXOclkI03i/w6HOgMDknjLEpDw6pibeARs/9n3xy1bK1i+UmtQT6uPBNXdm3dcPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718727847; c=relaxed/simple;
-	bh=iginfQEMH+QiHEvMKEZfi6Hc3mXKOtB6yNGCYGefA3w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fnwMuInSpJ14j3ufYjFfyNozaflWPAp6Bz8BvTlZ/E/3dbhXfdXGeeXi3MYW6nMbm15JsW1AqrwehY0NKH/UcpjQrDEnme3Lu4tLZoJwu36sy8jQeH6TxgtBoz8kIeLWi21z9nNTIZevp/9T+6TDGSC8NY2Nip00QZOwetvbzvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=CtUqpVJt; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ba70a0ed75so2879735eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:24:05 -0700 (PDT)
+	s=arc-20240116; t=1718728067; c=relaxed/simple;
+	bh=xk1eteDDh91RJlmYHOjTcgHEYiJ89rU1D3HcGQA/rCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r51NwzA6kWjx635KysaM2rveqo7l326WbrO41nYCrZGlrbrYXXAelpodFfEvyJjsMqdTdpJyVKmsPFygIzUMy75xmABoe9avKsk3g4+hU7gBKx+wmzQA8OGYvgykf0uCZ2Nglc3XATUqhhBAZsdHczaiGDJNQ0lrjUYlmMJbdcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhNSThuG; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b063047958so30470976d6.3;
+        Tue, 18 Jun 2024 09:27:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1718727844; x=1719332644; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=y2L36ZkKRa2ldLn+cK6LBceBfGVZn+/Ml/80DU+Rz8Y=;
-        b=CtUqpVJtoZjv1x2rlqFUFM7fOG8/Iyx97Sxwrqswdx5aeaaAnBht5NKUt8obY5Pzxt
-         49DnSc/UkBBfvTXKlGclJMac3km26LSo+z6Az/D8eeYUEkXJ71MKoH40BlOJAUrLo9n/
-         BzUBpRFNhrnR/pmkH6aJACfSGUM1kROGhvL/1+1Vl6rKWkSnzeRGgDjEkZtkGzg6ctgb
-         p9WrDZMtGkh1dK+xCdgcvuz3X+Mbn4P6JTvl5cYgqVoOpRr4ti9VmgpIZgz070boQVGD
-         jT+WjE9CXkpuLRQglU+ZlUQ9l7dGnKKJHCXBRixbhyzH8knnkHIYgEjPGhgWT2JfiKj+
-         nUkg==
+        d=gmail.com; s=20230601; t=1718728065; x=1719332865; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2oHa6Q/yu+mHpJNuQvmDw0WjTT0SzGDQU+6s6sa4h2U=;
+        b=jhNSThuGgDL6+Q5P4WUQLHkNRnHLRE+mJbww/xBOjKi3Bi4LSLaD/4KrzoCH9D5Ubt
+         +o/ASgl1Pd1z/gZ+pNyiwuWdm/1oB5OhGPa160SSy7pPdDy8DVMOBNs4OjKSvgD3Lg+e
+         yqvIHC/WFGPnb1eYxUzH/d6rAaudeWNU0ipHjEvPbkcCFKmR2GK8PFKWdu+PhKTyXGIZ
+         /5+30O59dcdDI0ATao869tt/YSlubzCcMpN5B4Tj/R3AayrwC3t0FY39ir9Fblq7BVo4
+         2F8aqvsXKd+3+WZubbaHAjHI/mh44jcJSHj5P6rCzxpJfpg1Buvo+TCYKiLnQlNauCs0
+         nzIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718727844; x=1719332644;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y2L36ZkKRa2ldLn+cK6LBceBfGVZn+/Ml/80DU+Rz8Y=;
-        b=E/W+gPlkbKLoZN7HqAEiIauW6orFBo7FI4zaPYnQc3rFQunKdXt9pIHf9JDxx/F/xW
-         qVOVSFEKmbDAQufASoihle8Lk4h0KAkMhPVoBG5hFhHTHiKxnQ/UOGF2VU5qqSLx4xY7
-         onKQoVI0swfvK2Fib9WY/rvGxa8obB7Djg0Q6RxrjC4WmRmUTznOvW0Oic2wbpOPxt7P
-         Szap6E5goe8bE+zpSvJsht0h4JgSHDeyUTpyT6l8PVBh3Ux2ASG1fr3xTRYmJeft/skx
-         llJ1fqQjYd/fQS/0NXxb4ylQrBy5cTv1JViGgf0F7MsMAhh/T39Jt4JQyxTkIn7631+9
-         a8iA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIR1AuC5gQAxQ7WJne5P25sp1vDkr/rwFcvL02aRCta5GLj36rY3sdaSmTns4XlE5wJi03YZyq5GMkWa7Y0LgRVsx/Oz/bu25nxB5+
-X-Gm-Message-State: AOJu0YzheFfxXuM+cWcvOywf+e7VeQooEWOyLzOzaXZiib6ttDW3xueY
-	9uTsd0zYD/VrAJsuNtONLL/LBEmrWWZ6hD2LNugrbDayGRpxIE0dQWW8HJJ+o8M=
-X-Google-Smtp-Source: AGHT+IFJbrVxZSy5MW1kEWYhiDGt9QvD0Fml+npOhQgHsfa3dm06eYcugngrvjSxbWiA5O9MHgS/Zg==
-X-Received: by 2002:a05:6359:5fa9:b0:1a0:d4b4:5eb5 with SMTP id e5c5f4694b2df-1a1fd59877dmr34733855d.28.1718727844503;
-        Tue, 18 Jun 2024 09:24:04 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:17:5fb9::7a9])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abe279c0sm532234285a.110.2024.06.18.09.24.03
+        d=1e100.net; s=20230601; t=1718728065; x=1719332865;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2oHa6Q/yu+mHpJNuQvmDw0WjTT0SzGDQU+6s6sa4h2U=;
+        b=JKYD7eYsxuHSKBGjoVVIRKb6PX5Ej8+1WG3KLtpSIDWJ5MsBTfGJRwui2nyV97fY3A
+         w4IcdvHnlXpR6Yh0Obb4CsMlTrUV7RkaFW351+EOCiDlfoLC8/cSSeN7DdzGO3doZzUb
+         7l4CcI4pAGWbpwD5Pmb9wF7A2L1XtYK9x508LZcFLP8KzeygR+V762nwlhGgKhwU/JiG
+         2lAO+zXxScd0vLnIPrhuV7kyFpFUNxtSEzO6P4RqihOhbfFUOZk+y1z/twnZk4bMGjlV
+         6BPuuytWt2Y0JmzkYyJvp4aHd3RP72Q8GmmmZxlqe3BcMe1pKGIPAbLUlkxZK7Bwdazc
+         YJBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGdnRU9B677KrnfYsqakh7iFLW+L/1eIMJMvty2amIMtAX3tk07JP7wgFKL9p/5OQ1ORL/oEN9+V4LgYQvZD5AKMKylxDHVwRFh59qPEZcDstGIlQheYmSH+39/0oURB4GnKofG3eTuQyADhE=
+X-Gm-Message-State: AOJu0Ywf/gFx0m4d8rD8sGwQohVO6JThdHrsh8PgsUliIHXoEATrnqDl
+	jIABy+YFJGT7CO04mTEh4Li0xjyEmHse7qygp7SJuzGeHPz7Gn4h
+X-Google-Smtp-Source: AGHT+IEYFVxBAZn8jgwg3zOZshPwhC49GBtiB0BMuf+VxUn1r8UeuVS7x+p/Tbbwy3zRDYbHiRDMRg==
+X-Received: by 2002:a0c:df0e:0:b0:6b2:b11b:c32d with SMTP id 6a1803df08f44-6b501eab16fmr2206076d6.52.1718728064721;
+        Tue, 18 Jun 2024 09:27:44 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5bf289csm68017476d6.26.2024.06.18.09.27.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 09:24:04 -0700 (PDT)
-Message-ID: <036bf0d7f657cae444d20ea6d279b47e3bf0164e.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: videobuf2: sync caches for dmabuf memory
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Tomasz Figa <tfiga@chromium.org>, TaoJiang <tao.jiang_2@nxp.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl, shawnguo@kernel.org, 
- robh+dt@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
- festevam@gmail.com, linux-imx@nxp.com, xiahong.bao@nxp.com,
- eagle.zhou@nxp.com,  ming.qian@oss.nxp.com, imx@lists.linux.dev,
- linux-media@vger.kernel.org,  linux-kernel@vger.kernel.org,
- m.szyprowski@samsung.com, sumit.semwal@linaro.org, 
- christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
- linaro-mm-sig@lists.linaro.org, Ming Qian <ming.qian@nxp.com>
-Date: Tue, 18 Jun 2024 12:24:03 -0400
-In-Reply-To: <CAAFQd5B_RTHsMwMdD59RAAyFne_0Ok_A4ExdkVOgi=G6-UGfRQ@mail.gmail.com>
-References: <20240618073004.3420436-1-tao.jiang_2@nxp.com>
-	 <CAAFQd5B_RTHsMwMdD59RAAyFne_0Ok_A4ExdkVOgi=G6-UGfRQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+        Tue, 18 Jun 2024 09:27:44 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 639CB1200043;
+	Tue, 18 Jun 2024 12:27:43 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 18 Jun 2024 12:27:43 -0400
+X-ME-Sender: <xms:f7VxZlKx9WBhldblMF_7Fw8sLfbHTUB2ly0r2Uh84Rab2SjNKGwHLw>
+    <xme:f7VxZhJIeuHqzOsZQDL4BUa2Vz9EeuSr2462dDtJamDMulkqzAv9rdQp8tZOoaL2G
+    SnzVVWh7mdFyzjwug>
+X-ME-Received: <xmr:f7VxZtszyeGZ3SgA-ysfEfWIFfihKQNcU2DD8EQQoM__uDB7cw-oka89xwZSyg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvkedgjedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehkeehvdeigeetueejleefveekkeevkeegheevueduleeiieehjeevfedu
+    jefgveenucffohhmrghinheprghspghrrgifrdgurghtrgenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhht
+    hhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquh
+    hnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:f7VxZmZCCeQcVG9P0r9oMRZ3AGb0j7xTxAG26yofqlsL7nhdNhyYVw>
+    <xmx:f7VxZsat5E9ZUFfKJwe6lEzYFICNgsTATSYyossnWAuQBDQn-u-p5Q>
+    <xmx:f7VxZqB97N_o3HSZf4Or_yButQk0Uqv3J6qk9iX1l-yDyHOIkzCw5Q>
+    <xmx:f7VxZqbOrNKVmZULGaKlLdR_fvHOwRgysdiqfRievrBt9CCOPjHCew>
+    <xmx:f7VxZort9XLKrHoXLZOteTmpmXg3d4_s_UWdza3lPPCKa0ITd5O8Qqp0>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 18 Jun 2024 12:27:42 -0400 (EDT)
+Date: Tue, 18 Jun 2024 09:27:27 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, mcgrof@kernel.org,
+	russ.weight@linux.dev, ojeda@kernel.org, alex.gaynor@gmail.com,
+	wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] rust: add firmware abstractions
+Message-ID: <ZnG1b6XculK88F5S@boqun-archlinux>
+References: <20240618154841.6716-1-dakr@redhat.com>
+ <20240618154841.6716-3-dakr@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618154841.6716-3-dakr@redhat.com>
 
-Le mardi 18 juin 2024 =C3=A0 16:47 +0900, Tomasz Figa a =C3=A9crit=C2=A0:
-> Hi TaoJiang,
->=20
-> On Tue, Jun 18, 2024 at 4:30=E2=80=AFPM TaoJiang <tao.jiang_2@nxp.com> wr=
-ote:
-> >=20
-> > From: Ming Qian <ming.qian@nxp.com>
-> >=20
-> > When the memory type is VB2_MEMORY_DMABUF, the v4l2 device can't know
-> > whether the dma buffer is coherent or synchronized.
-> >=20
-> > The videobuf2-core will skip cache syncs as it think the DMA exporter
-> > should take care of cache syncs
-> >=20
-> > But in fact it's likely that the client doesn't
-> > synchronize the dma buf before qbuf() or after dqbuf(). and it's
-> > difficult to find this type of error directly.
-> >=20
-> > I think it's helpful that videobuf2-core can call
-> > dma_buf_end_cpu_access() and dma_buf_begin_cpu_access() to handle the
-> > cache syncs.
-> >=20
-> > Signed-off-by: Ming Qian <ming.qian@nxp.com>
-> > Signed-off-by: TaoJiang <tao.jiang_2@nxp.com>
-> > ---
-> >  .../media/common/videobuf2/videobuf2-core.c   | 22 +++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> >=20
->=20
-> Sorry, that patch is incorrect. I believe you're misunderstanding the
-> way DMA-buf buffers should be managed in the userspace. It's the
-> userspace responsibility to call the DMA_BUF_IOCTL_SYNC ioctl [1] to
-> signal start and end of CPU access to the kernel and imply necessary
-> cache synchronization.
->=20
-> [1] https://docs.kernel.org/driver-api/dma-buf.html#dma-buffer-ioctls
->=20
-> So, really sorry, but it's a NAK.
+On Tue, Jun 18, 2024 at 05:48:35PM +0200, Danilo Krummrich wrote:
+> Add an abstraction around the kernels firmware API to request firmware
+> images. The abstraction provides functions to access the firmware's size
+> and backing buffer.
+> 
+> The firmware is released once the abstraction instance is dropped.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
 
+Acked-by: Boqun Feng <boqun.feng@gmail.com>
 
+Thanks!
 
-This patch *could* make sense if it was inside UVC Driver as an example, as=
- this
-driver can import dmabuf, to CPU memcpy, and does omits the required sync c=
-alls
-(unless that got added recently, I can easily have missed it).
+Regards,
+Boqun
 
-But generally speaking, bracketing all driver with CPU access synchronizati=
-on
-does not make sense indeed, so I second the rejection.
-
-Nicolas
-
->=20
-> Best regards,
-> Tomasz
->=20
-> > diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/=
-media/common/videobuf2/videobuf2-core.c
-> > index 358f1fe42975..4734ff9cf3ce 100644
-> > --- a/drivers/media/common/videobuf2/videobuf2-core.c
-> > +++ b/drivers/media/common/videobuf2/videobuf2-core.c
-> > @@ -340,6 +340,17 @@ static void __vb2_buf_mem_prepare(struct vb2_buffe=
-r *vb)
-> >         vb->synced =3D 1;
-> >         for (plane =3D 0; plane < vb->num_planes; ++plane)
-> >                 call_void_memop(vb, prepare, vb->planes[plane].mem_priv=
-);
-> > +
-> > +       if (vb->memory !=3D VB2_MEMORY_DMABUF)
-> > +               return;
-> > +       for (plane =3D 0; plane < vb->num_planes; ++plane) {
-> > +               struct dma_buf *dbuf =3D vb->planes[plane].dbuf;
-> > +
-> > +               if (!dbuf)
-> > +                       continue;
-> > +
-> > +               dma_buf_end_cpu_access(dbuf, vb->vb2_queue->dma_dir);
-> > +       }
-> >  }
-> >=20
-> >  /*
-> > @@ -356,6 +367,17 @@ static void __vb2_buf_mem_finish(struct vb2_buffer=
- *vb)
-> >         vb->synced =3D 0;
-> >         for (plane =3D 0; plane < vb->num_planes; ++plane)
-> >                 call_void_memop(vb, finish, vb->planes[plane].mem_priv)=
-;
-> > +
-> > +       if (vb->memory !=3D VB2_MEMORY_DMABUF)
-> > +               return;
-> > +       for (plane =3D 0; plane < vb->num_planes; ++plane) {
-> > +               struct dma_buf *dbuf =3D vb->planes[plane].dbuf;
-> > +
-> > +               if (!dbuf)
-> > +                       continue;
-> > +
-> > +               dma_buf_begin_cpu_access(dbuf, vb->vb2_queue->dma_dir);
-> > +       }
-> >  }
-> >=20
-> >  /*
-> > --
-> > 2.43.0-rc1
-> >=20
-
+> ---
+>  drivers/base/firmware_loader/Kconfig |   7 ++
+>  rust/bindings/bindings_helper.h      |   1 +
+>  rust/kernel/firmware.rs              | 101 +++++++++++++++++++++++++++
+>  rust/kernel/lib.rs                   |   2 +
+>  4 files changed, 111 insertions(+)
+>  create mode 100644 rust/kernel/firmware.rs
+> 
+> diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
+> index 5ca00e02fe82..a03701674265 100644
+> --- a/drivers/base/firmware_loader/Kconfig
+> +++ b/drivers/base/firmware_loader/Kconfig
+> @@ -37,6 +37,13 @@ config FW_LOADER_DEBUG
+>  	  SHA256 checksums to the kernel log for each firmware file that is
+>  	  loaded.
+>  
+> +config RUST_FW_LOADER_ABSTRACTIONS
+> +	bool "Rust Firmware Loader abstractions"
+> +	depends on RUST
+> +	depends on FW_LOADER=y
+> +	help
+> +	  This enables the Rust abstractions for the firmware loader API.
+> +
+>  if FW_LOADER
+>  
+>  config FW_LOADER_PAGED_BUF
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index ddb5644d4fd9..18a3f05115cb 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -9,6 +9,7 @@
+>  #include <kunit/test.h>
+>  #include <linux/errname.h>
+>  #include <linux/ethtool.h>
+> +#include <linux/firmware.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/mdio.h>
+>  #include <linux/phy.h>
+> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+> new file mode 100644
+> index 000000000000..b55ea1b45368
+> --- /dev/null
+> +++ b/rust/kernel/firmware.rs
+> @@ -0,0 +1,101 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Firmware abstraction
+> +//!
+> +//! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h")
+> +
+> +use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
+> +use core::ptr::NonNull;
+> +
+> +// One of the following: `bindings::request_firmware`, `bindings::firmware_request_nowarn`,
+> +// `firmware_request_platform`, `bindings::request_firmware_direct`
+> +type FwFunc =
+> +    unsafe extern "C" fn(*mut *const bindings::firmware, *const i8, *mut bindings::device) -> i32;
+> +
+> +/// Abstraction around a C `struct firmware`.
+> +///
+> +/// This is a simple abstraction around the C firmware API. Just like with the C API, firmware can
+> +/// be requested. Once requested the abstraction provides direct access to the firmware buffer as
+> +/// `&[u8]`. The firmware is released once [`Firmware`] is dropped.
+> +///
+> +/// # Invariants
+> +///
+> +/// The pointer is valid, and has ownership over the instance of `struct firmware`.
+> +///
+> +/// Once requested, the `Firmware` backing buffer is not modified until it is freed when `Firmware`
+> +/// is dropped.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// # use kernel::{c_str, device::Device, firmware::Firmware};
+> +///
+> +/// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
+> +/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
+> +///
+> +/// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev).unwrap();
+> +/// let blob = fw.data();
+> +/// ```
+> +pub struct Firmware(NonNull<bindings::firmware>);
+> +
+> +impl Firmware {
+> +    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
+> +        let mut fw: *mut bindings::firmware = core::ptr::null_mut();
+> +        let pfw: *mut *mut bindings::firmware = &mut fw;
+> +
+> +        // SAFETY: `pfw` is a valid pointer to a NULL initialized `bindings::firmware` pointer.
+> +        // `name` and `dev` are valid as by their type invariants.
+> +        let ret = unsafe { func(pfw as _, name.as_char_ptr(), dev.as_raw()) };
+> +        if ret != 0 {
+> +            return Err(Error::from_errno(ret));
+> +        }
+> +
+> +        // SAFETY: `func` not bailing out with a non-zero error code, guarantees that `fw` is a
+> +        // valid pointer to `bindings::firmware`.
+> +        Ok(Firmware(unsafe { NonNull::new_unchecked(fw) }))
+> +    }
+> +
+> +    /// Send a firmware request and wait for it. See also `bindings::request_firmware`.
+> +    pub fn request(name: &CStr, dev: &Device) -> Result<Self> {
+> +        Self::request_internal(name, dev, bindings::request_firmware)
+> +    }
+> +
+> +    /// Send a request for an optional firmware module. See also
+> +    /// `bindings::firmware_request_nowarn`.
+> +    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Self> {
+> +        Self::request_internal(name, dev, bindings::firmware_request_nowarn)
+> +    }
+> +
+> +    fn as_raw(&self) -> *mut bindings::firmware {
+> +        self.0.as_ptr()
+> +    }
+> +
+> +    /// Returns the size of the requested firmware in bytes.
+> +    pub fn size(&self) -> usize {
+> +        // SAFETY: Safe by the type invariant.
+> +        unsafe { (*self.as_raw()).size }
+> +    }
+> +
+> +    /// Returns the requested firmware as `&[u8]`.
+> +    pub fn data(&self) -> &[u8] {
+> +        // SAFETY: Safe by the type invariant. Additionally, `bindings::firmware` guarantees, if
+> +        // successfully requested, that `bindings::firmware::data` has a size of
+> +        // `bindings::firmware::size` bytes.
+> +        unsafe { core::slice::from_raw_parts((*self.as_raw()).data, self.size()) }
+> +    }
+> +}
+> +
+> +impl Drop for Firmware {
+> +    fn drop(&mut self) {
+> +        // SAFETY: Safe by the type invariant.
+> +        unsafe { bindings::release_firmware(self.as_raw()) };
+> +    }
+> +}
+> +
+> +// SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, which is safe to be used from
+> +// any thread.
+> +unsafe impl Send for Firmware {}
+> +
+> +// SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, references to which are safe to
+> +// be used from any thread.
+> +unsafe impl Sync for Firmware {}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index dd1207f1a873..7707cb013ce9 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -30,6 +30,8 @@
+>  mod build_assert;
+>  pub mod device;
+>  pub mod error;
+> +#[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
+> +pub mod firmware;
+>  pub mod init;
+>  pub mod ioctl;
+>  #[cfg(CONFIG_KUNIT)]
+> -- 
+> 2.45.1
+> 
 
