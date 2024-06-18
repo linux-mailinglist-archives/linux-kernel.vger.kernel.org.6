@@ -1,53 +1,74 @@
-Return-Path: <linux-kernel+bounces-218781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA1190C5FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:11:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0B990C5FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB7A1F22BA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:11:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59BF1C21788
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF3215EFD0;
-	Tue, 18 Jun 2024 07:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A83A13AD3F;
+	Tue, 18 Jun 2024 07:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Qm2zu9xR"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GLFkIoU1"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E53D6F08B;
-	Tue, 18 Jun 2024 07:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FD26F08B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718696065; cv=none; b=jYDMPi+7kDq/FDwRlU4PylDnua/gl0n3kY82C1/O1paf0Zl0UR9ywGgX/gbWBND2LE9oAWhMdbV13k2mR1/7OmEHkjJdQA5JY14q8gjC/FLTA/QbnElKneN/T1COTiPLGv12hwDbRjveIZIBrpsGu+ibvRYZ+GwaZXYKcVYlXS0=
+	t=1718696050; cv=none; b=EGMCGbGdgkKNUWD4GkL2lnhKf4B8sMMeveCkPfdMYn0zP/HicFYIFNPxttZM90RE6ULEJJdw7Pk7y8ma51l1C3QpzPEASeJ89/HVWom7jjVrEsPKAz5Jn/PB472Ch1hfxk9Us2r1ZgVrZeGjUl3iwfIRfMAQEdJHSEOsquY1mjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718696065; c=relaxed/simple;
-	bh=JvKUA0uAhWTBOu53AK8ZlfFwtpiLZgEgCTIKp6QqhqE=;
+	s=arc-20240116; t=1718696050; c=relaxed/simple;
+	bh=CIImvumzkAeN2g71CDXVF8iXYe2GO0UwOKirtMYFvqU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q1GenvcdOYAt6tKhdX3BZOXlIK8S8dCUZcdPJVX2msBjE2U91NDeCgRKlcXrpaTauCmMv95WIsypWC/BKN/QhMRemM7wFpaCpNbv4kkbHph0LtvYko0XHlbr4i4Nc80QZdNmJ32gpJJCSr+d3jKufmvIzywGaW7mG7naI86g4Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Qm2zu9xR; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45I7Xjax1896939
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 18 Jun 2024 00:33:46 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45I7Xjax1896939
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1718696027;
-	bh=D7YpJt/0zUNu+VsyD3AzsDyFHnAKQaQWvyS73/NuEfo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qm2zu9xRhmYJmV/eW2gBqcXhNDIjKpSDqaI1zrevwdivvXiFUNGp6cL9z9VNkdjDT
-	 cJ1qNMy2HNQLGdVSe/ghCN/XWYsrBJqolnEldzPmFJtbHgZAQRJG4/na2yai2XKVEM
-	 /iJnWikX6WazweObPWAlznQGwYx1BtMeVJrbndNfuKh4gDrHNXgwpeG12P0k/Cqs7n
-	 FR7lYZT8QUEpk6APN7pdcNG5LEvEjXSzWIWidB2T9usYY40C0X+xtyJSSEI2jyzZdD
-	 rbVCo5dJWBg17v0PvPpkz7BCxALjNgXCoS4fD7oseY0SqMyNyWa3haJ0umqOrjqKi8
-	 4v3Hnu4T8v3DA==
-Message-ID: <390e41a2-26c1-41da-86bd-6632b39f2706@zytor.com>
-Date: Tue, 18 Jun 2024 00:33:44 -0700
+	 In-Reply-To:Content-Type; b=jo+D7nRsZBDy4RqEobToIqCZ8TQPguVdK1IwAXbEuXxhs0SIzuQjslFz4SQ+1ntHI75K041RL1O7OAxYPUa23Pk5tITeawp2Tim1DShDHHCX2Z+4svG9+zl46Uti3kj+jEv2p65c33Rf+rwHWcguzQvUq4daWt+uYz+yejQDsTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GLFkIoU1; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42108856c33so37572455e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:34:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1718696046; x=1719300846; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S5rbHo29Bzcv6IgzEIj+saePdUmzo17xMUk+HWO4goE=;
+        b=GLFkIoU1WO3tepxt0KspCdQcl22OJRSAOttnup45B9fh6dNobbzq9X9BmGw04txs2V
+         BnDo6igMFxU3SBnkO3QnhwUY7uZny/lv5KbYrcp8YBonQwvTLEb1Ul+G8RuEYeMWKZH4
+         nBTXGC2/3TIJ9GyyMeX0WULHNFcCfslDUTc+N2NyFpxz2PI/mW32AWRettNuPl2LWvE6
+         YK3hGwLiQgXmQE5oZAMt4NskJLV5ulFdD5b3HHnLKsVnZ/AsebUYG9q2hCX0x7gj9vTv
+         Xxjw/rCRdztT9f7zU4LdFwDvEGxEWt76IvpiMTDdifPUV7qgb2xF35hJkLWzSO0vChc5
+         xniA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718696046; x=1719300846;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S5rbHo29Bzcv6IgzEIj+saePdUmzo17xMUk+HWO4goE=;
+        b=L0n/pkhk02om3Djx8mJ5TVqyaZPj79soD0sITHZLWHBMTO8gphDSge6zbrkPkRFuXy
+         0WT16HOOJn9YjrDxVtxGAULz900cyCjv9kVbvoqtAKLK4qLIQQrEDk1SQksd7iO6c+Lz
+         sFdG/wbWFZn1G4e4FZUdgTh8CEq2qYU9wPGiCxVFfKz80sZICS+ISa8m1YCG/ZmbT5uN
+         p+lFcx6klJoJNYnzsr8E/2ccWQmfVkmWUAhXpHEWuAAXZF2anBttR2ADFvTrWlF+ReYE
+         px+/fvCtHkOti5LtAImo/mG1uKb0lj8W2PsH1WK48sYs2Wqj+jxZtoaBmTOFG67iKFoG
+         OcSw==
+X-Forwarded-Encrypted: i=1; AJvYcCU32v3cRWE3o0BBlM4mskM2xctbJZWkIfvsfKGttgKiDkfYGtFF20cOXzhmPwWBiFzJ5Rp9mixtqBzNWvy1qRkwIrDW46wGdW6E0t2W
+X-Gm-Message-State: AOJu0Yy1MKu92uHN3DES/5YLR1MRMnECq+psZRFrH2wEw07e76LF6QXt
+	1fg8uPq7u4j31w80LyDhBmHNWePjRl2NUUlnTylHA+ohEOqXlyjdbAXvgBZ8nDvydEPvqysyt+N
+	t
+X-Google-Smtp-Source: AGHT+IGs6nMfyFgDynWsbFh3DQ7FHvym58ye8vd0+afKHhJ633/JxauO+1qBYCV6VN20sYRNPadGSA==
+X-Received: by 2002:a05:600c:358f:b0:421:79b5:6d84 with SMTP id 5b1f17b1804b1-4246f5dbeabmr15612205e9.17.1718696045685;
+        Tue, 18 Jun 2024 00:34:05 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.189])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320bd8sm180070125e9.32.2024.06.18.00.34.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 00:34:05 -0700 (PDT)
+Message-ID: <0a4ba0e5-3fb1-4ffc-b2d8-a4eb418707eb@tuxon.dev>
+Date: Tue, 18 Jun 2024 10:34:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,102 +76,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] x86/cpufeatures: Generate a feature mask header
- based on build config
-To: Brian Gerst <brgerst@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        will@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
-        acme@kernel.org, namhyung@kernel.org
-References: <20240616085743.1100704-1-xin@zytor.com>
- <20240616085743.1100704-3-xin@zytor.com>
- <CAMzpN2jQrgaPR2R_=sBRmjGvbpX1ZSCrr9zJ+TM9N1ymg5_OiA@mail.gmail.com>
+Subject: Re: [PATCH 02/12] dt-bindings: clock: renesas,rzg3s-vbattb-clk:
+ Document the VBATTB clock driver
 Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <CAMzpN2jQrgaPR2R_=sBRmjGvbpX1ZSCrr9zJ+TM9N1ymg5_OiA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Conor Dooley <conor@kernel.org>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-3-claudiu.beznea.uj@bp.renesas.com>
+ <20240615-angler-occupier-6188a3187655@spud>
+ <3d9ed0ec-ca9a-45b4-a633-8f7051d13cff@tuxon.dev>
+ <20240617-subsoil-creed-04bf5f13d081@spud>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240617-subsoil-creed-04bf5f13d081@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 6/17/2024 9:34 AM, Brian Gerst wrote:
-> On Sun, Jun 16, 2024 at 4:58 AM Xin Li (Intel) <xin@zytor.com> wrote:
->>
->> From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
->>
->> Introduce an AWK script to auto-generate a header with required and
->> disabled feature masks based on <asm/cpufeatures.h> and current build
->> config. Thus for any CPU feature with a build config, e.g., X86_FRED,
->> simply add
 
->> +
->> +file == 2 && $1 ~ /^CONFIG_X86_[A-Z]*_FEATURE_/ {
->> +       on = ($2 == "y");
->> +       printf "/* %s = %s (%d) */\n", $1, $2, on;
-> 
-> This looks like extra debugging output that doesn't need to be in the
-> final release.
-> 
->> +       if (split($1, fs, "CONFIG_X86_|_FEATURE_") == 3) {
->> +               printf "/* %s %s = %d */\n", fs[2], fs[3], on;
-> 
-> Same.
 
-Right, they are comments but better remove them.
-
->> +       printf "#define SSE_MASK\t\\\n";
->> +       printf "\t(REQUIRED_MASK0 & ((1<<(X86_FEATURE_XMM & 31)) | (1<<(X86_FEATURE_XMM2 & 31))))\n\n";
-> 
-> This could be moved to verify_cpu.S, since that is the only place it is used.
-
-NP.
-
->> +       printf "#endif /* _ASM_X86_FEATUREMASKS_H */\n";
->> +}
->> --
->> 2.45.1
+On 17.06.2024 18:19, Conor Dooley wrote:
+> On Mon, Jun 17, 2024 at 10:02:47AM +0300, claudiu beznea wrote:
 >>
 >>
+>> On 15.06.2024 15:17, Conor Dooley wrote:
+>>> On Fri, Jun 14, 2024 at 10:19:22AM +0300, Claudiu wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock that feeds
+>>>> the RTC and the tamper detector. Add documentation for the VBATTB clock
+>>>> driver.
+>>>>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>  .../clock/renesas,rzg3s-vbattb-clk.yaml       | 90 +++++++++++++++++++
+>>>>  1 file changed, 90 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..ef52a0c0f874
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml
+>>>> @@ -0,0 +1,90 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/clock/renesas,rzg3s-vbattb-clk.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Renesas VBATTB clock
+>>>> +
+>>>> +maintainers:
+>>>> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> +
+>>>> +description:
+>>>> +  Renesas VBATTB module is an always on powered module (backed by battery) which
+>>>> +  generates a clock (VBATTCLK). This clocks feeds the RTC and the tamper detector
+>>>> +  modules.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: renesas,rzg3s-vbattb-clk
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    items:
+>>>> +      - description: VBATTB module clock
+>>>> +      - description: VBATTB input xtal
+>>>> +
+>>>> +  clock-names:
+>>>> +    items:
+>>>> +      - const: bclk
+>>>> +      - const: vbattb_xtal
+>>>> +
+>>>> +  '#clock-cells':
+>>>> +    const: 0
+>>>> +
+>>>> +  power-domains:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  renesas,vbattb-load-nanofarads:
+>>>> +    description: load capacitance of the on board xtal
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>> +    enum: [ 4000, 7000, 9000, 12500 ]
+>>>> +
+>>>> +  renesas,vbattb-osc-bypass:
+>>>> +    description: set when external clock is connected to RTXOUT pin
+>>>> +    type: boolean
+>>>
+>>> When you say "external clock", is that an input or an output?
+>>
+>> I took that statement from the HW manual. As of the HW manual [1], table
+>> 42.2, that would be an input.
 > 
-> You could also generate {REQUIRED|DISABLED}_MASK_BIT_SET() in this
-> script, so that they are always in sync with NCAPINTS.
+> Forgive me for not wanting to open the zip etc and find the information
+> in the document, but why do you need an extra property? Is it not
+> something you can determine from the clocks/clock-names properties?
 
-Yeah, just better to make this an add-on patch.
+It can't be determined from clocks/clock-names as of my understanding. It
+depends on the type of the input clock (crystal oscillator or external
+hardware device generating the clock).
 
-Thanks!
-     Xin
+> It sounds like an additional clock from your description, is it actually
+> different way to provide the second clock you mention above?
 
+This is the block diagram (see [1], only picture this time) of the module
+controlling the clock. Please open it, it helps in understanding what I'll
+explain above.
+
+The VBATTB blocks controlling the VBATTBCLK are:
+- 32KHz-clock oscillator
+- the mux controlled by BKSCCR.SOSEL
+- the gate who's input is the mux output and XOSCCR.OUTEN
+
+To the 32 KHz-clock oscillator block could be connected:
+1/ either a crystal oscillator in which case it will be connected to both
+RTXIN and RTXOUT pins (the direction of RTXOUT is wrong in this picture for
+this case)
+2/ or a device (like [2]) generating a clock which has a single output and,
+from my understanding and experience with devices like this, only RTXIN is
+needed, RTXOUT is connected to the ground; for this case the 32KHz-clock
+oscillator block from [1] need to be bypassed in which case the newly
+introduced property will be used; this will select the XBYP on the mux.
+
+Thank you,
+Claudiu Beznea
+
+[1] https://pasteboard.co/QYsCvhfQlX6n.png
+[2]
+https://ro.mouser.com/datasheet/2/268/DSC1001_3_4_1_8V_3_3V_Low_Power_Precision_CMOS_Osc-3314582.pdf
+
+> 
+>>
+>> [1]
+>> https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11-ghz-cpu-and-dual-core-cortex-m33-250
+>>
 
