@@ -1,287 +1,134 @@
-Return-Path: <linux-kernel+bounces-218718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D184F90C492
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:48:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E5090C49D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0970B20AB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:48:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8664AB21C5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C05513D516;
-	Tue, 18 Jun 2024 06:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED0213E025;
+	Tue, 18 Jun 2024 06:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwQzBYzv"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="K96M58I3"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0704413C9B3;
-	Tue, 18 Jun 2024 06:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABB013C9B3;
+	Tue, 18 Jun 2024 06:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718693944; cv=none; b=HrHyeBF14um6zPdRge0ojunZb49VTYMJLfnOEPyzueWUgTkKQocHsPBzw6E8UpSXj4Beu/hddbEGdyvARPdcaE9pl2FyVpq8itxckBEPcbUVEUhe2zECwbwEEqhjpi8B0bFSMRjJVkvfxjuOyGJ5j5NiOMjwgl30wcAgl7YyXYI=
+	t=1718693969; cv=none; b=gRCXde3csUJyJ2XuRGMGctb9DCLq9h37820xwzedJ/3SoubihXChHedLpaBNraAWnObbgxUBHPcE17H3gAZSuNUg3LF0jpg7AtOHQbdqCfeAsuLZolhAAW+P6MLMxqIuf8vUptUTXxO+9m/WUQO+FyKTs4dksx1hXuT3xs5XqjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718693944; c=relaxed/simple;
-	bh=t9F6u6IJmEFG4P2YU5LD36dj4+mI/cyeimKQjVCUWlE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=AHzNDc2KHb6otiF6rKlDMW31c7REgHtG2XL71CjSdNEeWAptDHubcV15au/2OzltCEW0qTsTlc5k2WEVSGjk+1I89WbmGYpQERb56HJq/wg+rY1l+XlbiaNgP13u3LOPpXqQhbAWTl5+yZpsY5oyyWd3wFLq8rjqtAsIvwA6StE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kwQzBYzv; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70601bcfddcso1455994b3a.3;
-        Mon, 17 Jun 2024 23:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718693942; x=1719298742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t9F6u6IJmEFG4P2YU5LD36dj4+mI/cyeimKQjVCUWlE=;
-        b=kwQzBYzvSTWNLRTU4ko1+EBrdqwnyeewOV4vNV5sQSFB34Wh5Vj/5OmLXMGd+S1/X7
-         Saq+0ct6ZEiIbfBQ99aNJLUJstH+r+nACnk7uVAwpMn/+QdrWYAIww8NgEbJoBNI/8qg
-         57Gk5v6NRi3JAYlF7RL+XnzCm0uK6XGclHwOAnsneM5ORK5nAYjITnGIpgBxaif1+zNZ
-         4TfhsNpEGnVLEIErM1ksH+WK+tWf9m/hayBemt+56V6FOFzg1HuFtkjBPNmvRBmlVhip
-         2jF/Ck4mbFGCOlLcPHpVKcpbnStqpQw6HRcff5aLyhyhAn8WxGujYL/tMoBybRx3vUBF
-         wJbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718693942; x=1719298742;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=t9F6u6IJmEFG4P2YU5LD36dj4+mI/cyeimKQjVCUWlE=;
-        b=Ff9QWyDnHC5m06LQiBHryWd5+zKjZh5QPfovzgmbj+UkUY5sXiKEr8Se6hyBQFGHtZ
-         /JDTnTi7Sup4oFSh/Yubf49TDGRdDRw3w6SNTkkP+wpqGaqC9VyCHd1zS/QzTOe0F8Ie
-         DVNFH18VbUpqQHqzRiY0Jb/ge4glmhWZbwMLbXSV/7zdcUMbJalrImpA82z1y/K62fYP
-         7krLovOhYmbEKxIPtG9r2nP5USbtjvpjhWlI5dSimwIIQVdG/14o1IbECXRTpaBQfTp1
-         sy75Z47rZn/KwWtF/Xb/VlgoFboWVN5V/DIH3QvCVHvbc4+xDHQZv2AcNp6A1I8y1laP
-         K4Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCs90810W2a9LMKZnBB0LDm+uQfRgWZsIcT1JGV1cSVRkAfvmAm5CFO3WLEIzjI6Owh1y/soI6JBnTVe01sGLKMVP/VQQXYaW03i5sMCQbIzuqKKhugU2kOgkfM9eZ6vWQ9y3jXZB12A==
-X-Gm-Message-State: AOJu0Ywd+0Uj45w6xvafPHWLIPSg1C6TMLm0NsBVjPmLkGRva3oPBGBC
-	uDXG8FGGWTC8SO2vpcJlH5fyx3SoTylrIpYKFMQGATt0xSZGBYFm
-X-Google-Smtp-Source: AGHT+IEX9TfGGQ/S5B0tqGgdQQ9ZVCt+0dUpnuU5ru1HCrVIQoO7l66wIP5ByO9l79JqEaPnUT5ODg==
-X-Received: by 2002:a05:6a20:3946:b0:1b6:dffa:d6ec with SMTP id adf61e73a8af0-1bae823dbd6mr14600662637.46.1718693942175;
-        Mon, 17 Jun 2024 23:59:02 -0700 (PDT)
-Received: from [127.0.0.1] ([122.161.50.215])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f993eae952sm6720865ad.267.2024.06.17.23.58.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 23:59:01 -0700 (PDT)
-Date: Tue, 18 Jun 2024 12:28:48 +0530 (GMT+05:30)
-From: Shresth Prasad <shresthprasad7@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, heiko@sntech.de,
-	sebastian.reichel@collabora.com, andy.yan@rock-chips.com,
-	s.hauer@pengutronix.de, jbx6244@yandex.com,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	javier.carrasco.cruz@gmail.com, skhan@linuxfoundation.org
-Message-ID: <b7363a2e-7c49-4716-a43b-41d420a10438@gmail.com>
-In-Reply-To: <79f3ae72-e733-433c-a577-e0092e3ce20e@kernel.org>
-References: <20240617085341.34332-2-shresthprasad7@gmail.com> <f691c7f9-cd81-4bdf-a794-95118cb26686@kernel.org> <CAE8VWiLqBUq=-PzT2XVKB_C9nvEERM0x-maWU5qt0+aK1Rd-kg@mail.gmail.com> <79f3ae72-e733-433c-a577-e0092e3ce20e@kernel.org>
-Subject: Re: [PATCH v4] dt-bindings: phy: rockchip-emmc-phy: Convert to
- dtschema
+	s=arc-20240116; t=1718693969; c=relaxed/simple;
+	bh=3mK4TsHTIPeZapcY9c5aW4prx8bcHLdsxmGHIyRcCK0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KOm1ktj7CPAdN5bzxAluOJ1KK3oxX5tZUUG1GB/fggpezJTN/h6sIHMMiycXgG4/P0FrzUfzqSRw9BakqUEQecnchWUxS7v0ty1FhwKWiu9d1KT7lYkjFPkF7UuyBugGIXwMy24f7c7mMKP39QyUzxsxI/fr/3rdBxec8b1rMS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=K96M58I3; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718693967; x=1750229967;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3mK4TsHTIPeZapcY9c5aW4prx8bcHLdsxmGHIyRcCK0=;
+  b=K96M58I3v8riDvnkD3mT3oqLPIFVbrDfcWwFwN/u8KPp4K01qd3UgaJn
+   1J5eD56irh7RTfGiCWKSMUaK8C+IJmIUv5jaWAnxxoI/gHQAD7G/0LMxm
+   1bU89C4mJhxt6irG9MLJDBSSPPH4zsG2RY3rmXsUHMhaRsSM1S/C62MkW
+   vJQQFTeOTZfzC0txsprMZd34Aogn6GyfqlGAxVuhWQZuzQYKWCZ0CFlxg
+   mQ8R0IHD/HN2uYZcErVHIt0qSgMCzZaj9vjzA3Unvw6xRzNJsFWnpv7q6
+   wI/m/v/fmiF5euhf4m63CxjJX2TVwYb1biWSEE8C8NQIdpANdiad/swa9
+   A==;
+X-CSE-ConnectionGUID: z9K4V9M6RvG3elklgVnlnw==
+X-CSE-MsgGUID: /nE/O9yjS8y1iiBhZ+9ZHA==
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="asc'?scan'208";a="258886760"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Jun 2024 23:59:26 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 17 Jun 2024 23:59:10 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Mon, 17 Jun 2024 23:59:07 -0700
+Date: Tue, 18 Jun 2024 07:58:49 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Yangyu Chen <cyy@cyyself.name>
+CC: Conor Dooley <conor@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Yixun
+ Lan <dlan@gentoo.org>, <linux-riscv@lists.infradead.org>, Conor Dooley
+	<conor+dt@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, Anup
+ Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, <devicetree@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Jesse Taube <jesse@rivosinc.com>
+Subject: Re: [PATCH v1 0/9] riscv: add initial support for SpacemiT K1
+Message-ID: <20240618-pacifism-defendant-2a042a7fe1b9@wendy>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+ <20240616-exorcism-computing-e11e26084a62@spud>
+ <20240616224811.GC3983622@ofsar>
+ <ZnBEBQjTQtFs-fXt@xhacker>
+ <20240617-synapse-carmaker-0a59c7c6edb7@spud>
+ <tencent_26E7381EE1F6C5188428359AF3F908CA680A@qq.com>
+ <20240617-connected-avoid-82f0bdc05cdf@spud>
+ <tencent_53226D39C76ADCAA1883109DC6213E5EC107@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YwBUjE9FTTi9maDS"
+Content-Disposition: inline
+In-Reply-To: <tencent_53226D39C76ADCAA1883109DC6213E5EC107@qq.com>
+
+--YwBUjE9FTTi9maDS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <b7363a2e-7c49-4716-a43b-41d420a10438@gmail.com>
 
-18 June 2024 11:50:41=E2=80=AFam Krzysztof Kozlowski <krzk@kernel.org>:
+On Tue, Jun 18, 2024 at 01:42:34AM +0800, Yangyu Chen wrote:
+>=20
+>=20
+> > On Jun 18, 2024, at 01:14, Conor Dooley <conor@kernel.org> wrote:
+> >=20
+> > On Tue, Jun 18, 2024 at 12:39:30AM +0800, Yangyu Chen wrote:
+> >>=20
+> >> The vendor uses a special intel pxa uart driver, marked deprecated
+> >> in the kernel and incompatible with ns16550. If we use ns16550 in
+> >> the dt, the behavior of uart is like the uart has no interrupt and
+> >> stops working permanently when fifo overruns, making many developers
+> >> not know how to start unless they use the SBI HVC console, which
+> >> needs to turn on CONFIG_NONPORTABLE.
+> >=20
+> > This I just do not understand. Why did they use this IP? Is it free?
+> > Did they use it before for something else? It's a rather strange design
+> > choice to me.
+>=20
+> I don't know either. However, PXA is a subfamily of XScale. The
+> kernel also probed the UART as an XScale. So, using XScale compatible
+> string is OK.
 
-> On 17/06/2024 20:14, Shresth Prasad wrote:
->=20
->>>> +examples:
->>>> +=C2=A0 - |
->>>> +=C2=A0=C2=A0=C2=A0 grf: syscon@ff770000 {
->>>=20
->>> Drop label... actually entire node looks not needed.
->>=20
->> From what I understand, this `phy` node should be a sub-node of a `grf`
->> node which is why it is part of the example.
->>=20
->>>=20
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "rockchip,rk3399-grf", =
-"syscon", "simple-mfd";
->>>=20
->>> Drop
->>>=20
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0xff770000 0x10000>;
->>>=20
->>> Drop
->>=20
->> Removing `reg` causes the following warning:
->> Warning (unit_address_vs_reg): /example-0/syscon@ff770000: node has a
->> unit name, but no reg or ranges property
->>=20
->> Please let me know what the prefered solution would be here.
->=20
-> Obviously you need to drop entire node... You cannot just drop reg and
-> leave unit address.
->=20
->>=20
->>>=20
->>>=20
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <1>;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 emmcphy: phy@f780 {
->>>=20
->>> Drop label
->>>=20
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "rockchip,r=
-k3399-emmc-phy";
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0xf780 0x20>;
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&sdhci>;
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names =3D "emmcclk";
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drive-impedance-ohm =3D <5=
-0>;
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #phy-cells =3D <0>;
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
->>>> +=C2=A0=C2=A0=C2=A0 };
->>>> diff --git a/Documentation/devicetree/bindings/phy/rockchip-emmc-phy.t=
-xt b/Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
->>>> deleted file mode 100644
->>>> index 57d28c0d5696..000000000000
->>>> --- a/Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
->>>> +++ /dev/null
->>>> @@ -1,43 +0,0 @@
->>>> -Rockchip EMMC PHY
->>>> ------------------------
->>>> -
->>>> -Required properties:
->>>> - - compatible: rockchip,rk3399-emmc-phy
->>>> - - #phy-cells: must be 0
->>>> - - reg: PHY register address offset and length in "general
->>>> -=C2=A0=C2=A0 register files"
->>>> -
->>>> -Optional properties:
->>>> - - clock-names: Should contain "emmcclk".=C2=A0 Although this is list=
-ed as optional
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 (because most boards can get basic functionality without having
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 access to it), it is strongly suggested.
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 See ../clock/clock-bindings.txt for details.
->>>> - - clocks: Should have a phandle to the card clock exported by the SD=
-HCI driver.
->>>> - - drive-impedance-ohm: Specifies the drive impedance in Ohm.
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Possi=
-ble values are 33, 40, 50, 66 and 100.
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 If no=
-t set, the default value of 50 will be applied.
->>>> - - rockchip,enable-strobe-pulldown: Enable internal pull-down for the=
- strobe
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 line.=C2=
-=A0 If not set, pull-down is not used.
->>>> - - rockchip,output-tapdelay-select: Specifies the phyctrl_otapdlysec =
-register.
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 If not s=
-et, the register defaults to 0x4.
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Maximum =
-value 0xf.
->>>> -
->>>> -Example:
->>>> -
->>>> -
->>>> -grf: syscon@ff770000 {
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "rockchip,rk3399-grf", "sysco=
-n", "simple-mfd";
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <1>;
->>>> -
->>>> -...
->>>> -
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0 emmcphy: phy@f780 {
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 compatible =3D "rockchip,rk3399-emmc-phy";
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 reg =3D <0xf780 0x20>;
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 clocks =3D <&sdhci>;
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 clock-names =3D "emmcclk";
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 drive-impedance-ohm =3D <50>;
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 #phy-cells =3D <0>;
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0 };
->>>> -};
->>>> diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml b=
-/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
->>>> index 79798c747476..6e1b1cdea680 100644
->>>> --- a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
->>>> +++ b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
->>>> @@ -176,9 +176,12 @@ allOf:
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 Documentation/devicetree/bindings/phy/rockchip-pcie-phy.txt
->>>>=20
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 patternProperties:
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "phy@[0-9a-f]+$":
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 description:
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Do=
-cumentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "^phy@[0-9a-f]+$":
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 type: object
->>>> +
->>>=20
->>> Drop blank line
->>>=20
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 $ref: /schemas=
-/phy/rockchip,rk3399-emmc-phy.yaml#
->>>> +
->>>=20
->>> Drop blank line
->>=20
->> The rest of the document also has these blank lines, which is why I've
->> also kept them here. Are you sure I should remove them?
->=20
-> Yes
->=20
->>=20
->>>=20
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unevaluatedPro=
-perties: false
->>>>=20
->>>> =C2=A0=C2=A0 - if:
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
->>>=20
->>> Nothing in example? Isn't the example for 3399?
->>>=20
->>> We want only one complete example of such multi-children devices, so th=
-e
->>> example can be moved and included in existing one here.
->>=20
->> The example in this file is actually for `rockchip,rk3399-usb2phy` and
->> not `rockchip,rk3399-emmc-phy` which is why I haven't touched it.
->=20
-> What? That's gref, not usb2phy.
->=20
-> This patch and your explanations are very confusing.
->=20
->=20
->=20
-> Best regards,
-> Krzysztof
+Using a fallback to an Xscale compatible is okay, FTFY ;)
 
-Sorry about this, I'm still quite new to doing this.
-I ask that you be a bit more patient with me, I'm still trying to learn
-how things work here...
+--YwBUjE9FTTi9maDS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Shresth
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnEwHAAKCRB4tDGHoIJi
+0to+AP9w3gnQ362y8MnFZcbfQCKFvkpQBLoqodJyHtdQJpq/GAEA0V0/yvJzPuS8
+8hGxhLKG89Dg+3IulVD5SK6iFT5/EAU=
+=QSkx
+-----END PGP SIGNATURE-----
+
+--YwBUjE9FTTi9maDS--
 
