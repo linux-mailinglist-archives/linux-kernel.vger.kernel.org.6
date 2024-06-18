@@ -1,179 +1,156 @@
-Return-Path: <linux-kernel+bounces-220161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B4D90DDB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:47:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 687A690DD9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA311B2364A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17418285AF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D360B176FBD;
-	Tue, 18 Jun 2024 20:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B35178386;
+	Tue, 18 Jun 2024 20:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SHrBazZ9"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rg9FeT+7"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FB61891CB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DE815EFAF
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718743538; cv=none; b=exJLSTTbMjQLD5lWuxfiaRJZ/oxYCy8ZQ0KRsR574JAQzOrrjprCHVTorMxRno4+exvjs04PWTKiNf/3qjm6OZpARZyPkvpZwqfd88xMFyCcv88aPZfX/QwEFicZLSdFQcX9IYYDdrrqoBZrfiX9fqfqR91J6x5gXHfus5qtoqw=
+	t=1718743528; cv=none; b=jmeIOfGm9tLGroDJ2g9Z8QhMwxhvJEboHsa0jcfaidRONUS/JaJbIeF0xTWNa8VS7bKb/ve/q3d2wV8+LQ8C6tKoxW28mYjoup979FCG/ssVXrn6Rdsq/HZnbiQ1VwZc6mFbq9bjrVF1H8IBbO8bn091RSa69FwgCB0pioB2g9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718743538; c=relaxed/simple;
-	bh=g8FE+T2DD4IZWMYmlFPdiycIjv+h3ge8x8AC1b4ypRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mCG0zCWPEBBveTlrjkK5UOucumT2QFuMK9YVQdg3fYQkSPIPHUfXejDIffpVGkVE9lB5UVsDEHLFU8TTbV7smyUH4dfZ/6C7eu0ai9ZiyFV/MjfTNDbMHSQNsUi1hNeMptmpMgOIKfSGtf4dQXmTHujvPSmCMerYWgQwvQpqPAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SHrBazZ9; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NILpwn3nKSsVCdGL6dYtaZa5d4B531Bu8ZLW1v15jDk=; b=SHrBazZ9Oht6tUv5yhC8XwkKK+
-	Z7JGsPM+a/7GhYejyrGhkwh1ot8052qYKHbHdeAkexjOrRzTD2mDHV/Ka4jW4lh+M7h1vR28IeMKZ
-	fOiGepg1UK257Qtl3xf32caYoywveRgUvs0jhCsTeztWXILLhVYruj6GYOwiQ8ohGKrlvHkrQFK7w
-	I4NDd3vq+4e0dcJrL8KwxUBibvRDXO0WLUTBe19G3cbrAPfPqNnErWSjrY/40V2b48xWXFyHsHwx1
-	k8Qnx6eIpMpWPpQ5gVtRaXAYhWid/hHIqsJMext0a5RysOgffmuK9Ji9l3RfzxeWo8KAWk7aFgUK4
-	RDb7CAjg==;
-Received: from [179.193.2.197] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sJfhi-004sjC-0i; Tue, 18 Jun 2024 22:45:22 +0200
-Message-ID: <92595a28-fcc3-4a5e-bfcb-bd25aca603b9@igalia.com>
-Date: Tue, 18 Jun 2024 17:45:12 -0300
+	s=arc-20240116; t=1718743528; c=relaxed/simple;
+	bh=z1UyjqdAyG0LPVZ5wG40NVLSXp+qn3yQzxOTXQ/gFjQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JILIpkNJrMiTA3tr8L2rDmZpYAYO/Ktkhf9oHcI+ns5VgMoyUsSlMFgTCnflsHUzvHFCBXakfdiG5h8b0CvuMcZz2iRoZyNXOC57jWCv2VC38+LseLg/7Hgi47IJmegvLFtTB/5zo9+PxThiC3G+uYA/Gv4Awe1FkmOyeXBIOVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rg9FeT+7; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5ba090b0336so2843155eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:45:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718743524; x=1719348324; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JhcEpUixYW1NlD8vTPxrTj/5Uvw5ZqhDNkVhL4sqgko=;
+        b=Rg9FeT+7RruPCgAHq/kcseEtTwCRg78pmXU9nPUAJh4ywffkhonr/P9vH3AAUlh8Qv
+         E/+5aYnHmE5xOsXDQHGXQTn9O3JY47upIx8KoffVuVOoxIHwekD+gm2Cowvi2tjfdfnB
+         rnkaxx/ngGJAfQxPDMFXPB4xucTMzJXr7K7xxQ97Ruwvre2G6QpUMtbAMIe+6UVuHGcM
+         1KYF2SJi4Xl5VLMtu8Wxh7SbNabisyEB4TttxI3nmJ5wv2sMrikbmvgf/R1OvoNTgugh
+         x1xI590/yyYO9USFG/zQ25x2Aad007vQgu9KSzGVLomfaPZy3a5TAlCIQdqELGdQdsJ5
+         USkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718743524; x=1719348324;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JhcEpUixYW1NlD8vTPxrTj/5Uvw5ZqhDNkVhL4sqgko=;
+        b=P4eCuiRYzitqIa2NgB0JueDtl1KRQ0B8NOmIraF+rwLbd9+7qlNwHrBKh3XToRviFE
+         1PwqJs5w8BcPomb5iIJ0qoYya1EaQYnYfbz2w/rD+8rb2G/SONc9YzHtKHhy0Bt0kXC3
+         Oi3wiWdttE2jWLS9LDM6c2RN5NUtHT6rIZ0nYIkjjnk2eOgVUwDNHC0YFSXCqDg4dfwA
+         SB4LWZVERg2MN64fIESWTEwYihdYQWxep/NHCnzeD4rN2w6DiB/YSTYaFcfhbFw4gaQv
+         4J8cU+euvtTZxHJTLAjpITYDny765hX2GDoEa+HnRnAN7/gfhdJKxnPoeJD+qLTVKZDi
+         Hn8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXKcIRBFejAcZgDq6qqUdurDrXlzTKxbMuIaoIHZ5ju8TrRiJRPLDI6z+AArwBHsQDcLZUuscmBMPK3sb7V6ue+9eu2FDRlf1wOgXSX
+X-Gm-Message-State: AOJu0Yw+J9uto3esigYesMME2K/+gt9KwCu0+iheDm0y37hd3YpfRjxi
+	5dVYWzm8yDL9bqlSD1ssc76vKsZnW+dJawWBGFauez3K+NftNFCzbF0h8Ho231H8//+DDyqmdJ/
+	zLgM=
+X-Google-Smtp-Source: AGHT+IF2pnET8e+kKpto1cAvMwXd1n2tX30Z+TpufXJVT8R7Pig00Ik8aCpU+HEcP1N7AhulSTEWpw==
+X-Received: by 2002:a05:6870:7013:b0:254:a778:6fbd with SMTP id 586e51a60fabf-25c94901c85mr1114518fac.6.1718743524442;
+        Tue, 18 Jun 2024 13:45:24 -0700 (PDT)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5b1f57a1sm1971383a34.46.2024.06.18.13.45.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 13:45:24 -0700 (PDT)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] hwrng: exynos: Add support for Exynos850
+Date: Tue, 18 Jun 2024 15:45:16 -0500
+Message-Id: <20240618204523.9563-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/9] drm: Support per-plane async flip configuration
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
- dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- kernel-dev@igalia.com, Melissa Wen <mwen@igalia.com>,
- alexander.deucher@amd.com, christian.koenig@amd.com,
- Simon Ser <contact@emersion.fr>, Pekka Paalanen <ppaalanen@gmail.com>,
- daniel@ffwll.ch, Daniel Stone <daniel@fooishbar.org>,
- =?UTF-8?B?TWFyZWsgT2zFocOhaw==?= <maraeo@gmail.com>,
- Dave Airlie <airlied@gmail.com>, ville.syrjala@linux.intel.com,
- Xaver Hugl <xaver.hugl@gmail.com>, Joshua Ashton <joshua@froggi.es>,
- =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
- Sam Ravnborg <sam@ravnborg.org>, Boris Brezillon <bbrezillon@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>
-References: <20240618030024.500532-1-andrealmeid@igalia.com>
- <20240618030024.500532-3-andrealmeid@igalia.com> <878qz2h9pp.fsf@intel.com>
- <CAA8EJpqM4iaG3PKM5c0Op7Y7c1SRDrOCk_oOnwG8YfdCxC8w6g@mail.gmail.com>
- <fc67b552-6f61-4f30-9e34-dd6b2364d155@igalia.com>
- <aflfggx2dc2p3y2a76yecjgmahozmbpnkk2qpekrnkpvviih6i@g2uuxeubozbo>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <aflfggx2dc2p3y2a76yecjgmahozmbpnkk2qpekrnkpvviih6i@g2uuxeubozbo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Em 18/06/2024 14:43, Dmitry Baryshkov escreveu:
-> On Tue, Jun 18, 2024 at 01:18:10PM GMT, André Almeida wrote:
->> Em 18/06/2024 07:07, Dmitry Baryshkov escreveu:
->>> On Tue, 18 Jun 2024 at 12:38, Jani Nikula <jani.nikula@linux.intel.com> wrote:
->>>>
->>>> On Tue, 18 Jun 2024, André Almeida <andrealmeid@igalia.com> wrote:
->>>>> Drivers have different capabilities on what plane types they can or
->>>>> cannot perform async flips. Create a plane::async_flip field so each
->>>>> driver can choose which planes they allow doing async flips.
->>>>>
->>>>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
->>>>> ---
->>>>>    include/drm/drm_plane.h | 5 +++++
->>>>>    1 file changed, 5 insertions(+)
->>>>>
->>>>> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
->>>>> index 9507542121fa..0bebc72af5c3 100644
->>>>> --- a/include/drm/drm_plane.h
->>>>> +++ b/include/drm/drm_plane.h
->>>>> @@ -786,6 +786,11 @@ struct drm_plane {
->>>>>          * @kmsg_panic: Used to register a panic notifier for this plane
->>>>>          */
->>>>>         struct kmsg_dumper kmsg_panic;
->>>>> +
->>>>> +     /**
->>>>> +      * @async_flip: indicates if a plane can do async flips
->>>>> +      */
->>>>
->>>> When is it okay to set or change the value of this member?
->>>>
->>>> If you don't document it, people will find creative uses for this.
->>>
->>> Maybe it's better to have a callback instead of a static field? This
->>> way it becomes clear that it's only relevant at the time of the
->>> atomic_check().
->>>
->>
->> So we would have something like bool (*async_flip) for struct
->> drm_plane_funcs I suppose. Then each driver will implement this function and
->> check on runtime if it should flip or not, right?
->>
->> I agree that it makes more clear, but as far as I can see this is not
->> something that is subject to being changed at runtime at all, so it seems a
->> bit overkill to me to encapsulate a static information like that. I prefer
->> to improve the documentation on the struct member to see if this solves the
->> problem. What do you think of the following comment:
-> 
-> It looks like I keep on mixing async_flips as handled via the
-> DRM_MODE_PAGE_FLIP_ASYNC and the plane flips that are governed by
-> .atomic_async_check / .atomic_async_update / drm_atomic_helper_check()
-> and which end up being used just for legacy cursor updates.
-> 
-> So, yes, those are two different code paths, but with your changes I
-> think it becomes even easier to get confused between
-> atomic_async_check() and .async_flip member.
-> 
+Exynos850 has True Random Number Generator (TRNG) block which is very
+similar to Exynos5250 for which the driver already exists
+(exynos-trng.c). There are two differences though:
+  1. Additional SSS PCLK clock has to be enabled to make TRNG registers
+     accessible.
+  2. All SSS registers (including TRNG area) are protected with
+     TrustZone and can only be accessed from EL3 monitor. So the
+     corresponding SMC calls have to be used instead to interact with
+     TRNG block.
 
-I see, now that I read about atomic_async_check(), it got me confused as 
-well :)
+This patch series enables TRNG support on Exynos850 SoC. It was tested
+on the E850-96 board running Debian rootfs like this:
 
-I see that drivers define atomic_async_check() to tell DRM whether or 
-not such plane is able to do async flips... just like I'm trying to do 
-here. amdgpu implementation for that function is almost the opposite of 
-the restrictions that I've implemented in this patchset:
+    8<-------------------------------------------------------------->8
+    # cat /sys/devices/virtual/misc/hw_random/rng_current
+    12081400.rng
 
-int amdgpu_dm_plane_atomic_async_check(...) {
-	/* Only support async updates on cursor planes. */
-	if (plane->type != DRM_PLANE_TYPE_CURSOR)
-		return -EINVAL;
+    # dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+    ...
+    122KB/s
 
-	return 0;
-}
+    # apt install rng-tools5
+    # rngtest -c 1000 < /dev/hwrng
+    ...
+    rngtest: starting FIPS tests...
+    rngtest: bits received from input: 20000032
+    rngtest: FIPS 140-2 successes: 1000
+    rngtest: FIPS 140-2 failures: 0
+    rngtest: FIPS 140-2(2001-10-10) Monobit: 0
+    rngtest: FIPS 140-2(2001-10-10) Poker: 0
+    rngtest: FIPS 140-2(2001-10-10) Runs: 0
+    rngtest: FIPS 140-2(2001-10-10) Long run: 0
+    rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+    rngtest: input channel speed: (min=941.855; avg=965.515;
+             max=968.236)Kibits/s
+    rngtest: FIPS tests speed: (min=49.542; avg=52.886;
+             max=53.577)Mibits/s
+    rngtest: Program run time: 20590194 microseconds
+    8<-------------------------------------------------------------->8
 
-Anyway, I'll try to see if the legacy cursor path might be incorporated 
-somehow in the DRM_MODE_PAGE_FLIP_ASYNC path, or to come up with 
-something that makes them more distinguishable.
+Changes in v2:
+  - Removed the patch for renaming the dt-bindings doc file
+  - Added the patch for using devm_clk_get_enabled() to get the clock
+  - Addressed all review comments for v1 series
 
-Thanks!
+Sam Protsenko (7):
+  dt-bindings: rng: Add Exynos850 support to exynos-trng
+  hwrng: exynos: Improve coding style
+  hwrng: exynos: Use devm_clk_get_enabled() to get the clock
+  hwrng: exynos: Implement bus clock control
+  hwrng: exynos: Add SMC based TRNG operation
+  hwrng: exynos: Enable Exynos850 support
+  arm64: dts: exynos850: Enable TRNG
 
-> 
->> /**
->>   * @async_flip: indicates if a plane can perform async flips. The
->>   * driver should set this true only for planes that the hardware
->>   * supports flipping asynchronously. It may not be changed during
->>   * runtime. This field is checked inside drm_mode_atomic_ioctl() to
->>   * allow only the correct planes to go with DRM_MODE_PAGE_FLIP_ASYNC.
->>   */
-> 
+ .../bindings/rng/samsung,exynos5250-trng.yaml |  40 +++-
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     |   8 +
+ drivers/char/hw_random/exynos-trng.c          | 216 +++++++++++++-----
+ 3 files changed, 206 insertions(+), 58 deletions(-)
+
+-- 
+2.39.2
+
 
