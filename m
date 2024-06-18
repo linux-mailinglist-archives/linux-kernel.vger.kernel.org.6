@@ -1,270 +1,143 @@
-Return-Path: <linux-kernel+bounces-219502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4BA90D382
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:07:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A870690D385
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9094E286810
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:07:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A2B284713
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FC81849C0;
-	Tue, 18 Jun 2024 13:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C9615A847;
+	Tue, 18 Jun 2024 13:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kTMKmF/u"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GQj3DfAp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE95E18EFC3
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E0612B95;
+	Tue, 18 Jun 2024 13:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718718310; cv=none; b=VZyFjwN/NqU6DbbF7AVHBL9aND4RlM4snapXgJjFUWPmnNdsORQjjsb2b3W3CaGYrBIF3fk2QoDqCxbJPSo7cCoebzuKZUgnkLyWEvjk2++kVfd6kaxxQGotrh1wsnobJHAbdu+XCmeRE//5Z+HWcHTutKBjlvRWBo+TIBnLYU0=
+	t=1718718320; cv=none; b=WfUuckxgg8GbSfZhBDojaugwEW1EE6iA0v38IHbN5v8nGlhctDEl6z17cFWpTtvbiuBi/CubYWTdVpAVEUDTG60enbIAcy4J6CEqNJVMBy1yH83rF6UJDjDvNgLunQ+UREsyTcNRbbTBfur/AQJhhTQI8bRhQWV0F3bnZIbg95M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718718310; c=relaxed/simple;
-	bh=ae4pwjFhUlQcrVR7mQTgRv94AhEmxr16sF6IEJpjbGg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SzKNNOhMOrBD8Yt1XI5Xbnhl65JhmPDfZ6Gv3eD0bY4bTTG/J3ATNrOE4lPdPLjl2FBEgTbf53TgA+EZzTTxDOkz60h7BDAiMatvkXeTXEYo9oJvJtc+OSAroIoVmNn2rJFlTPFL51vBk8x711JnE4mSbh7KmycxZLV7qLWBM/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kTMKmF/u; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so61237751fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:45:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718718307; x=1719323107; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LmejdlmDlKHI06rCiq7kfLWivv1c0iup9shJzGhfZyM=;
-        b=kTMKmF/unm1iy5Dc+sTket50eoAUbQ/ssmcEE+Pfr73E8I22m+cTxJ9eGdR1QTfn6e
-         OQrRffwW9wOXsAFZdEtqQzOEWAGV/M+u+4I19gQ0XU3BOcVmvACppYDrRxBaBOvOjLYp
-         cV+s/ytz1HbPodug8aq7+nLJ/aDspJM8OkFJ6iMdEKF6Z67kH/B34Ktqh+it5b6FL0V+
-         QqtvokY5yes0K8xvVC2LRmHBG1FxdJw5LJb+85CPOIKtjbiXfq9U/1Y21yU6QqZfkYXZ
-         kboHV5/jfkPhVMZaiFSoyt/eZ/1Z5QoZv9B5PtH6QBWlu7ClMhewTuwGQjXc1eYGokG5
-         9DGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718718307; x=1719323107;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LmejdlmDlKHI06rCiq7kfLWivv1c0iup9shJzGhfZyM=;
-        b=EY436yKDOFSIv3JUf9fsvO8qFodhGhUNzZWwrVnLHqaZ2liZl1D8vRR7UneQtRyqOK
-         /e+ehEo/9MNeVccDRPNShaLARV40tgCnjoMq/pDv65ZZbKtqF8Uc3ozB+Lpmc9ISZDgQ
-         DC2iLnwKPjd9gYVs7RAivJ35fmxFp+zLEtofCpNYAGvOTjvPzDUsx7dUBVYG0X3VMrDg
-         hpf5CXB/B9fS8iDN6yevcY7zjflxu9V63tWXxnKXtDwQ+UOq1Jb5elObzaAB30M4e+ul
-         bonXbFeeEznsOEmwI953r5IrZWKbVAjoJDFC93QMgdIIwvfeqwTKEpCMxh3effBhEOE4
-         CDkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnfyIUUTykCcZcYEADJitzYjzE1HMWhL4hcCx0XOlPe+cUuapcaRE3pBe35h61OoyYuDgdGNJTP2xb/iLKcwItAuAiDFdKKy/c7rZt
-X-Gm-Message-State: AOJu0YzJXMzXov1qspWf4LaNMHCqf0HIdI/iq8c1YR8u9Afx2eNk5BKy
-	HN7acEIUHmkqIvlsx22oL29HIZGc8sPQf8KNPbYMpb2cdlACxZybbEOneHFxDVc=
-X-Google-Smtp-Source: AGHT+IHcoXJP3gEa+WaQYbFLEmPnvIPyvgKbTmvBrMFHfdFfqDYyn76MEt5EBTgP2Xe0lQpJygXuEg==
-X-Received: by 2002:a05:651c:c1:b0:2ec:3cc6:e156 with SMTP id 38308e7fff4ca-2ec3cc6e17amr420021fa.50.1718718304493;
-        Tue, 18 Jun 2024 06:45:04 -0700 (PDT)
-Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509c8d8sm14160147f8f.32.2024.06.18.06.45.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 06:45:04 -0700 (PDT)
-From: Guillaume Stols <gstols@baylibre.com>
-Date: Tue, 18 Jun 2024 13:45:00 +0000
-Subject: [PATCH v2] iio: adc: ad7606: remove frstdata check for serial mode
+	s=arc-20240116; t=1718718320; c=relaxed/simple;
+	bh=qIRP7WziDihj3AiKzpO4qsVfd9h7I4nske+kKM6qQOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MvPUarzy079TCb4g5YF1aL6zl5FTca0xgneuYn79V4VWkik6NLXTOObliO2UG+cO21w6ty/d99LWO8ckmldFUWU5qwQKAzsoeRkly+7MFojcEjkXxWgNmXYQhp+IwuIK4hrf7kC22l0SeAy8PQfn3mOJWWGnWz6n+Cd9/3w2eNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GQj3DfAp; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718718319; x=1750254319;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qIRP7WziDihj3AiKzpO4qsVfd9h7I4nske+kKM6qQOM=;
+  b=GQj3DfAp+5sS/nbjDFxugvM1QjbgCHi+RrZQ6tZeuxWIBxxdLXqwV5Wm
+   +nAHD5SHAQkb+wECF3vZcPHtLqnj9rFGanFOIok9toqX5TveXXdv8xKTI
+   1mvaSUNiJSxANNSkFtdUtsBXPLNGk0oPjfSycgwfPHKY9XoDAfwhVQqvD
+   pxNhFiXRQrf+cJ/kwJW7gkmlmucoHD0arEFyST/JHqrnt0HxApLdRnaVf
+   +oWxCncCJtP+JdRKHLCLll9Vn9T8UzpwzVVjFTk513NAiYHBy2KXFpwtC
+   rPLyckVQQdCGW7MXgP+NQE1kd7eIwWnnkfHQF9Fbj8yJQkP+RcL49svL+
+   Q==;
+X-CSE-ConnectionGUID: eLBePovlT/KbZ5KZ01b7dQ==
+X-CSE-MsgGUID: zPbksVpqT5mWLcLDBElfFA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15740819"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="15740819"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 06:45:18 -0700
+X-CSE-ConnectionGUID: RYQDIZYjSV6Vn+hV2fR+kA==
+X-CSE-MsgGUID: pxtX/aX1SxmRGvkmobxipQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="45922331"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 06:45:17 -0700
+Received: from [10.212.26.15] (kliang2-mobl1.ccr.corp.intel.com [10.212.26.15])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 9EDCF20B5703;
+	Tue, 18 Jun 2024 06:45:15 -0700 (PDT)
+Message-ID: <00ac4787-c290-424f-8461-7ba300a4c1a9@linux.intel.com>
+Date: Tue, 18 Jun 2024 09:45:14 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 13/37] perf vendor events: Update grandridge events and
+ add counter information
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Cc: Weilin Wang <weilin.wang@intel.com>,
+ Caleb Biggers <caleb.biggers@intel.com>
+References: <20240614230146.3783221-1-irogers@google.com>
+ <20240614230146.3783221-14-irogers@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240614230146.3783221-14-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240618-cleanup-ad7606-v2-1-b0fd015586aa@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAFuPcWYC/13MQQ6CMBCF4auQWVvTmWABV97DsCjtKJMgkFYbC
- eHuVhI3Lv+XvG+FyEE4wrlYIXCSKNOYgw4FuN6Od1bicwNpKnWJRrmB7fialfWV0UahQSb2TY1
- 1B/k0B77Jewevbe5e4nMKy+4n/K4/qvqnEipUJ0eWGmPIaXvp7DJIF/jopge027Z9AG3Is5qvA
- AAA
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- jstephan@baylibre.com, dlechner@baylibre.com, 
- Guillaume Stols <gstols@baylibre.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718718304; l=5944;
- i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
- bh=ae4pwjFhUlQcrVR7mQTgRv94AhEmxr16sF6IEJpjbGg=;
- b=UFHUE5RnD+Ur1KhALafDx0bqfNAbkQsQkxH64MYMSYGUORjK+ET2QDnqADfUI0UmPjBlXyHqd
- X5JQ/hyS94wCJ0gmqDESOfgMXIJpWCN0AmbvP5Dapgg5UbaFPtV+XGy
-X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
- pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
 
-Frstdata pin is set high during the first sample's transmission and then
-set low.  This code chunk attempts to recover from an eventual glitch in
-the clock by checking frstdata state after reading the first channel's
-sample.  Currently, in serial mode, this check happens AFTER the 16th
-pulse, and if frstdata is not set it resets the device and returns EINVAL.
-According to the datasheet, "The FRSTDATA output returns to a logic low
-following the 16th SCLK falling edge.", thus after the 16th pulse, the
-check will always be true, and the driver will not work as expected.  Thus
-it must be removed for serial mode.
 
-Signed-off-by: Guillaume Stols <gstols@baylibre.com>
----
-Changes in v2:
- - Remove frstdata check only for the serial interface as suggested by
-   Michael Hennerich.
- - Link to v1: https://lore.kernel.org/r/20240417-cleanup-ad7606-v1-1-5c2a29662c0a@baylibre.com
----
- drivers/iio/adc/ad7606.c     | 28 ++-----------------------
- drivers/iio/adc/ad7606.h     |  2 ++
- drivers/iio/adc/ad7606_par.c | 49 +++++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 50 insertions(+), 29 deletions(-)
+On 2024-06-14 7:01 p.m., Ian Rogers wrote:
+> Update events from v1.01 to v1.02.
 
-diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index 3a417595294f..c321c6ef48df 100644
---- a/drivers/iio/adc/ad7606.c
-+++ b/drivers/iio/adc/ad7606.c
-@@ -49,7 +49,7 @@ static const unsigned int ad7616_oversampling_avail[8] = {
- 	1, 2, 4, 8, 16, 32, 64, 128,
- };
- 
--static int ad7606_reset(struct ad7606_state *st)
-+int ad7606_reset(struct ad7606_state *st)
- {
- 	if (st->gpio_reset) {
- 		gpiod_set_value(st->gpio_reset, 1);
-@@ -60,6 +60,7 @@ static int ad7606_reset(struct ad7606_state *st)
- 
- 	return -ENODEV;
- }
-+EXPORT_SYMBOL_NS_GPL(ad7606_reset, IIO_AD7606);
- 
- static int ad7606_reg_access(struct iio_dev *indio_dev,
- 			     unsigned int reg,
-@@ -88,31 +89,6 @@ static int ad7606_read_samples(struct ad7606_state *st)
- {
- 	unsigned int num = st->chip_info->num_channels - 1;
- 	u16 *data = st->data;
--	int ret;
--
--	/*
--	 * The frstdata signal is set to high while and after reading the sample
--	 * of the first channel and low for all other channels. This can be used
--	 * to check that the incoming data is correctly aligned. During normal
--	 * operation the data should never become unaligned, but some glitch or
--	 * electrostatic discharge might cause an extra read or clock cycle.
--	 * Monitoring the frstdata signal allows to recover from such failure
--	 * situations.
--	 */
--
--	if (st->gpio_frstdata) {
--		ret = st->bops->read_block(st->dev, 1, data);
--		if (ret)
--			return ret;
--
--		if (!gpiod_get_value(st->gpio_frstdata)) {
--			ad7606_reset(st);
--			return -EIO;
--		}
--
--		data++;
--		num--;
--	}
- 
- 	return st->bops->read_block(st->dev, num, data);
- }
-diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-index 0c6a88cc4695..6649e84d25de 100644
---- a/drivers/iio/adc/ad7606.h
-+++ b/drivers/iio/adc/ad7606.h
-@@ -151,6 +151,8 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
- 		 const char *name, unsigned int id,
- 		 const struct ad7606_bus_ops *bops);
- 
-+int ad7606_reset(struct ad7606_state *st);
-+
- enum ad7606_supported_device_ids {
- 	ID_AD7605_4,
- 	ID_AD7606_8,
-diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
-index d8408052262e..1f7050297b64 100644
---- a/drivers/iio/adc/ad7606_par.c
-+++ b/drivers/iio/adc/ad7606_par.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/types.h>
- #include <linux/err.h>
-@@ -21,8 +22,30 @@ static int ad7606_par16_read_block(struct device *dev,
- 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct ad7606_state *st = iio_priv(indio_dev);
- 
--	insw((unsigned long)st->base_address, buf, count);
- 
-+	/*
-+	 * On the parallel interface, the frstdata signal is set to high while
-+	 * and after reading the sample of the first channel and low for all
-+	 * other channels.  This can be used to check that the incoming data is
-+	 * correctly aligned.  During normal operation the data should never
-+	 * become unaligned, but some glitch or electrostatic discharge might
-+	 * cause an extra read or clock cycle.  Monitoring the frstdata signal
-+	 * allows to recover from such failure situations.
-+	 */
-+	int num = count;
-+	u16 *_buf = buf;
-+
-+	if (st->gpio_frstdata) {
-+		insw((unsigned long)st->base_address, _buf, 1);
-+		if (!gpiod_get_value(st->gpio_frstdata)) {
-+			ad7606_reset(st);
-+			return -EIO;
-+		}
-+		_buf++;
-+		num--;
-+	}
-+	insw((unsigned long)st->base_address, _buf, num)
-+;
- 	return 0;
- }
- 
-@@ -35,8 +58,28 @@ static int ad7606_par8_read_block(struct device *dev,
- {
- 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct ad7606_state *st = iio_priv(indio_dev);
--
--	insb((unsigned long)st->base_address, buf, count * 2);
-+	/*
-+	 * On the parallel interface, the frstdata signal is set to high while
-+	 * and after reading the sample of the first channel and low for all
-+	 * other channels.  This can be used to check that the incoming data is
-+	 * correctly aligned.  During normal operation the data should never
-+	 * become unaligned, but some glitch or electrostatic discharge might
-+	 * cause an extra read or clock cycle.  Monitoring the frstdata signal
-+	 * allows to recover from such failure situations.
-+	 */
-+	int num = count;
-+	u16 *_buf = buf;
-+
-+	if (st->gpio_frstdata) {
-+		insb((unsigned long)st->base_address, _buf, 2);
-+		if (!gpiod_get_value(st->gpio_frstdata)) {
-+			ad7606_reset(st);
-+			return -EIO;
-+		}
-+		_buf++;
-+		num--;
-+	}
-+	insb((unsigned long)st->base_address, _buf, num * 2);
- 
- 	return 0;
- }
+The subject has a typo. It should be "perf vendor events: Update
+graniterapids events and add counter information", not grandridge.
 
----
-base-commit: 07d4d0bb4a8ddcc463ed599b22f510d5926c2495
-change-id: 20240416-cleanup-ad7606-161e2ed9818b
+Thanks,
+Kan
 
-Best regards,
--- 
-Guillaume Stols <gstols@baylibre.com>
-
+> 
+> Bring in the event updates v1.02:
+> https://github.com/intel/perfmon/commit/0ff9f681bd07d0e84026c52f4941d21b1cd4c171
+> 
+> Add counter information. The most recent RFC patch set using this
+> information:
+> https://lore.kernel.org/lkml/20240412210756.309828-1-weilin.wang@intel.com/
+> 
+> There are over 1000 new events.
+> 
+> Co-authored-by: Weilin Wang <weilin.wang@intel.com>
+> Co-authored-by: Caleb Biggers <caleb.biggers@intel.com>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  .../arch/x86/graniterapids/cache.json         |  825 ++++
+>  .../arch/x86/graniterapids/counter.json       |   77 +
+>  .../x86/graniterapids/floating-point.json     |  242 ++
+>  .../arch/x86/graniterapids/frontend.json      |  469 ++-
+>  .../arch/x86/graniterapids/memory.json        |  175 +-
+>  .../arch/x86/graniterapids/other.json         |  150 +-
+>  .../arch/x86/graniterapids/pipeline.json      | 1009 ++++-
+>  .../arch/x86/graniterapids/uncore-cache.json  | 3674 +++++++++++++++++
+>  .../arch/x86/graniterapids/uncore-cxl.json    |   31 +
+>  .../graniterapids/uncore-interconnect.json    | 1849 +++++++++
+>  .../arch/x86/graniterapids/uncore-io.json     | 1901 +++++++++
+>  .../arch/x86/graniterapids/uncore-memory.json |  449 ++
+>  .../arch/x86/graniterapids/uncore-power.json  |   11 +
+>  .../x86/graniterapids/virtual-memory.json     |  159 +
+>  tools/perf/pmu-events/arch/x86/mapfile.csv    |    2 +-
+>  15 files changed, 10975 insertions(+), 48 deletions(-)
+>  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/counter.json
+>  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/floating-point.json
+>  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-cache.json
+>  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-cxl.json
+>  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-interconnect.json
+>  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-io.json
+>  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-memory.json
+>  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore-power.json
 
