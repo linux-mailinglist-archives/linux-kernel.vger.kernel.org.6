@@ -1,196 +1,166 @@
-Return-Path: <linux-kernel+bounces-220190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B5190DDE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:02:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647E890DDE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F881C222A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:02:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0541C1F24AA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7837A17625D;
-	Tue, 18 Jun 2024 21:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6381741FE;
+	Tue, 18 Jun 2024 21:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oV5gLgHv"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2086.outbound.protection.outlook.com [40.107.94.86])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ERsVAp+o"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A3913AA46;
-	Tue, 18 Jun 2024 21:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718744513; cv=fail; b=t8KH49no/87+rVlTuj3PBdKFF+1P80xGb2asHIQ9vuxOEi6c35k2egNwnk/tYxiU3KTMsDPcqTlj7WnR5YgbdZXs0czhjANb12Vvvbiq2w31emIj1YIX9Lgy7BjuwfA16L5ZJyspqWXux5QDvuPYeH6n6IKZazNTl/2A5o4VIqU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718744513; c=relaxed/simple;
-	bh=stFDNBtFAFQAf2plAmILi2B0vcOj/ahvJoh6qeCMXZg=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=mmLXsTvSOZgMQIP5xDb8CHbOgrxQXbyjoIxmO5Tj6gTNpM1PnQRaRi1BzBTBXYphZ+cYGnZUWhMKPoOAmRzPB+cDEqncfMnQR4EmMdLf/ol/b8ua9GTp4i1/EDjBcx1yy/N6ZmfmfBXIkcVHLKBhkbIXXOap/CF0Ep5JlkehNjI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oV5gLgHv; arc=fail smtp.client-ip=40.107.94.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OUPxTBwg5A4rz7FunT1VbvXokt/Psy7FxqHXH39yenTKKrpsm+M1ZJcMFypjcBK180MrlTarwoZdoE6wzF7X6dgEBV3+5QeN8n24bG6lMsHEcQul1zIbAicOAil+uk7+eJ4YncBTfnU8rfui3EdeGjnAfh5QBLWeQ9L6X7Ygo1AmYUPwdg4+st7R9kgBlZc9S9s+P26v7aaiO/yJ4QNushvpgt5e15g6jxDx9BNqfnX5D6hJAA8M1r7XEqo2XnQySfS0QwV7uxpNt2ohnt0AfJEQJnS1XmDSJ7hv8lU2IiI6hSiThxm526b8vRlW9H6X2ImOMcxeZIV96gN1zORD2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0ZPGy7nDEp8typY7dDi6nXbzxj7BeZLEF0piFhnbLxI=;
- b=DpMq5Bdi8xkxkRdaCMdUUvrxYepSwnSoVxcZrEqQuC0GvfEpkGKKghips575al4hVOLUPKNGSsn6d9G2YuCFXVwJWoZjc0tto6eDupn9By54W2UlhLrnLQRg8AXZj46m+YFAuHk0Tap3wVZhZ5cP2BAnSkNR/sFqdIcltMr+Rl8G0TZh/OGRo8nFeEwYYrQM8be0FA0HdL4rD4xPPvYf5GwVKy3Rm4GP2W1ht4ddybddqc36NSylUW6v2xVjTzrCDaL/eBIRDw6gFPTvNnD9Btf02VSf5l5IJfAokBTKJeBjiAkurJSKALA/2zON5ayGqqdtBrVYKLudhOHv+RoFxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0ZPGy7nDEp8typY7dDi6nXbzxj7BeZLEF0piFhnbLxI=;
- b=oV5gLgHvHd/CO/EskfhdmQ/SYlm0O6/fHNOs9I2lOuVIOB6gkdBpnl/6xN7H67/YpgXfuiwRn3rQF4gHtQFocT2f23fCrANKakMB6Z5S5jAaQh9k49jVugtxUVRkkVMBFvt/VlWc5scjhh56i0CcqpEtdTCOIxZXs8eGOboUPPLXkmbWi5umDqDD4G7gkt8rZN3Alx3nr+ZoldtH9oryzZJDwWU9ApnScBWwjshN4bykqHgWQt211Ilgyh9BLzOU4hGB3JKEpkv7eycBA/ayDFs4oTkMXoPyZ2uQCb1lTp4J7+GPUm0Q71BY3qTPs5HMPj5FGSgsCddq3wMCxNqMsQ==
-Received: from BY3PR10CA0025.namprd10.prod.outlook.com (2603:10b6:a03:255::30)
- by MW5PR12MB5621.namprd12.prod.outlook.com (2603:10b6:303:193::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Tue, 18 Jun
- 2024 21:01:47 +0000
-Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
- (2603:10b6:a03:255:cafe::20) by BY3PR10CA0025.outlook.office365.com
- (2603:10b6:a03:255::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31 via Frontend
- Transport; Tue, 18 Jun 2024 21:01:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.15 via Frontend Transport; Tue, 18 Jun 2024 21:01:47 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Jun
- 2024 14:01:27 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Jun
- 2024 14:01:26 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 18 Jun 2024 14:01:26 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.10 000/770] 5.10.220-rc1 review
-In-Reply-To: <20240618123407.280171066@linuxfoundation.org>
-References: <20240618123407.280171066@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FD815E5CA
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 21:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718744546; cv=none; b=Qy6sgCRsFYRFMTizV57OiYHNcw3lAEhS+qMNrvhivxfh1M02ywBA9DNCJerMRf7ul+uuuxZjVgszHw5Vz7xYkJbvXZu/Zqydz4OVv+0w76/wfE4va8v+Rjgfq1ksF1S6+hwum/B1+qqa66+8orn3V8Ja30KJWIqRxpE4WgwHWq0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718744546; c=relaxed/simple;
+	bh=ZtlWpZazkZMr9hjqcT0x7ELefnO6avTkg5CabtOR7jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=In58l/nkH/QPQpwUuYszGV9awM4l49cCgS9HCBYTQipAI7WiPBPQqx1p17X5rNsLacK5bCJKZHg6mCJc77Z286mpi0ndeTQwlrBO4E6EEJ5R5sQ1MTg4ZvC6Gow0aYRn7Kv49ylZ0usyBjeOJlipX36U/oXae9mbSC7mJjOMUMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ERsVAp+o; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718744545; x=1750280545;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZtlWpZazkZMr9hjqcT0x7ELefnO6avTkg5CabtOR7jo=;
+  b=ERsVAp+o8h7vhcfNej+RfKaCtpSe2Eh3qlTX4kazs8wTlyiTW8lN/1Nv
+   cF9tSoRfG8Fn3QGHCppKiYEdk0EC9j9XmV4jTVZyMcNU4BJIghdaJ2USE
+   pwRYZYNq+YeFYMuU9O5punaLAQHj0qNfFOr3g5t0vJ3mp9XLZMlpzYzBA
+   I6N8GjD0Gh++DzAvEAOPc/ZNX2SnD6QwGqP6/2ANVUUBHjLJKt5sS1BJ5
+   NpQA0lmXo2wO62L9RC4RVUVz5klH4STP1wNfqlJeCrwnZkpl7p8cXaPJ6
+   prCWQs9ZhLAsLAD9UPBHLC6w/a3BEEav57YQrE5ja4GqKo7S7OLqziUx3
+   A==;
+X-CSE-ConnectionGUID: 9FX3tB66RVG+fGr2La7ttA==
+X-CSE-MsgGUID: UbVKeY+jSt+pnOkrWEOuIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="41061977"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="41061977"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 14:02:24 -0700
+X-CSE-ConnectionGUID: +GH3mnq+RBOf6kxw23WGQQ==
+X-CSE-MsgGUID: oyGdrqUoRKKa7VmngOHzwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="42394361"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 18 Jun 2024 14:02:22 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sJfy7-0005uQ-0t;
+	Tue, 18 Jun 2024 21:02:19 +0000
+Date: Wed, 19 Jun 2024 05:02:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Douglas Anderson <dianders@chromium.org>,
+	Daniel Thompson <daniel.thompson@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, kgdb-bugreport@lists.sourceforge.net,
+	Douglas Anderson <dianders@chromium.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Thorsten Blum <thorsten.blum@toblux.com>,
+	Yuran Pereira <yuran.pereira@hotmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/13] kdb: Abstract out parsing for mdWcN
+Message-ID: <202406190433.U3alc3Xi-lkp@intel.com>
+References: <20240617173426.11.I899d035485269f5110a3323fbb1680fbba718e4c@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <40613d8f-b325-4a5c-b954-e03a7fc26af4@rnnvmail204.nvidia.com>
-Date: Tue, 18 Jun 2024 14:01:26 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|MW5PR12MB5621:EE_
-X-MS-Office365-Filtering-Correlation-Id: baddc833-1afb-41e0-0d84-08dc8fd9ddb9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|36860700010|376011|7416011|82310400023|1800799021;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WG0xckVEVjZHL29RdEI1eTJ0ZlVZU2txRXo0clVPQUFEV2lxVXJpNDRGVDla?=
- =?utf-8?B?VGxyaGU3VXhnMklkOTIyQUlyNUNhWDVHY3FuU0dMd2lUUDZhYUZwZ0cxeHFN?=
- =?utf-8?B?ZG9YTGg1Z2JZYmsrZE1qZHVOMUJWc2NPNXRQS25zcDVYV2UzZFR0Q3N2TG9v?=
- =?utf-8?B?RlJPVVdiYW9veldsY1VCeFZCSEdwWDg0cHEyVzMwelF3dEtua3BRV2Y5M2hW?=
- =?utf-8?B?TDFzUDk1VnBtR3ZDQzErRGltSGIrTVFKcU95QmJ5OUN0ZzIzb0NCOWs5d2xK?=
- =?utf-8?B?b25FcDhaZUdQbTlkNVAvblFYTVFCb0dqcmhZZ1BkbFB1aXNldDVlZkJrdy9a?=
- =?utf-8?B?TzhjOEFMWVV6S01saEY4b25RekNSZnA1NHFmSDg3TFp4OXRGZkduV1M0N1Vt?=
- =?utf-8?B?c0ZyTEJzb2VTdk1TcnlUOE5CRmlmbHd6M1U1Y3JOVFVVNmZVcUx5RTN4MVU4?=
- =?utf-8?B?aWVXMkthcjBZR0txMlFFd2RGZ0U2THFISXpkcEpQMmVueGg4U3BqdzBqcUhH?=
- =?utf-8?B?MU4wZVErOU5oZzlDYzQyWG14Qkd3a0J0TWJlUU81Nm54RnRLZ3lPS1NtWXBq?=
- =?utf-8?B?VHVDMmxFTGRrQm1XNnlic2RvWlQ3UlBzZC9QcGFIUzdHOGJkTkFTVktNR1VK?=
- =?utf-8?B?bGh0djltQkM1c2ZrVTQvclZtNXJZem1sRkxodVZDT3JzMHpteWNJUTBPM21y?=
- =?utf-8?B?R2JicVhoa1B2bS9DZEk5WUJYOVRJUEI4djJTTndiaXU0RGJxVlhUT0FHM0RD?=
- =?utf-8?B?bWpWMWovSjBCMWMyaFhhcTJibHIxVzJRak03OGg5QW0rUDI2Vmd1RXRHaHhT?=
- =?utf-8?B?T3BCUVhMVGZ2YUtiSTFPTVAzVnJPN05MRkdIelM0SWFpWWNEY1o3NDM4Y3VH?=
- =?utf-8?B?SzhzSzNJYVRneTVWVDcydUZoSzNKSitySS9PR3N1UnVoYk1TSERLcE4wSnhy?=
- =?utf-8?B?M3NOTitvMHhPYlpnNm9EYXRGcEZONWVyVG16TXpYT1hrcW9aOWRUa2VHcWxw?=
- =?utf-8?B?NGpkai9tS1JrY0wrL05ZNlBjMnFyL2JNNmVqbWd3bEtOV0E5ekxQbUxPdW5o?=
- =?utf-8?B?Tk84N2VVSWFvclUvdDBvNyt6VkNTK0pURVlSN3g3bCtISE11L1ltLzdSSXVi?=
- =?utf-8?B?UmxYNDRKYUVNb2g4SzJMa2NCVkFIMisrdFM0Y3VoR3BpSzR4TU90WEZzWnNl?=
- =?utf-8?B?SWtUSkpzLzFmSjVMcWZZcU1NM2tjZ0tGQ1ZhZ3gwWXU4VTVGQW1Lak5Ybytx?=
- =?utf-8?B?SmtTbUtGNHRFVlRmcTVnMjJycmlKR2RKMTkwR2JXSmxId2FKZktJVnc4bi9v?=
- =?utf-8?B?VE13VGloeHN6bVhwYit1UittaHFPYkUxNk5HemlrclBobCtIVi9iUDQxU1dy?=
- =?utf-8?B?R1VEeE9YdUtnL0hDL0FYOGU0RWFUYW1Sa1FEVmFtRW5CcEpLM3F1N1lhOGNm?=
- =?utf-8?B?RE9GM1pwY3pERDVST0YycjR6bVdWeUlFRmRHY3gzSzUyZFBETzNrYWZ4WXB5?=
- =?utf-8?B?ZGN5NDh0SlFWNXFYeDZ5aG04dmx0a0JtMFNFdmttYjdoSWh2eGtQOEd3MEhG?=
- =?utf-8?B?NjFEbmFiQU5vcTBub2h0bjlERnFOdFJMdDJXakdVVCs1VFUvVVR0UjR4WHdC?=
- =?utf-8?B?TWN3dStqd3hJM3hIVk16bDlhelFOa2NEbHpKa1hVb24weE5SRW8wc3pGN01t?=
- =?utf-8?B?dnRRS3ZqWnZuZHd5M3UreUluN2lTU0l3S01hZVFDQ3QxbU5sOUw3U21xU3BB?=
- =?utf-8?B?R3BIdWhKV203ZG0xSDR4c0krUWF1R3ppRzhBMTViczlTa2E2TDhzNVVvK2R2?=
- =?utf-8?B?UXhVQUp3TEJpZmp1YWsyUWZkeE85OFdNeENZSllLNkZndlY1WWRuOEt1NlNV?=
- =?utf-8?B?V05hOVFJWS9zeUp0MFUrd1NNR0hBQUtPV2h4TnBTWEs0SHc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230037)(36860700010)(376011)(7416011)(82310400023)(1800799021);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 21:01:47.0179
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: baddc833-1afb-41e0-0d84-08dc8fd9ddb9
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5621
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617173426.11.I899d035485269f5110a3323fbb1680fbba718e4c@changeid>
 
-On Tue, 18 Jun 2024 14:27:33 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.220 release.
-> There are 770 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 20 Jun 2024 12:32:00 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.220-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Douglas,
 
-All tests passing for Tegra ...
+kernel test robot noticed the following build warnings:
 
-Test results for stable-v5.10:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    68 tests:	68 pass, 0 fail
+[auto build test WARNING on v6.10-rc4]
+[also build test WARNING on linus/master next-20240618]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Linux version:	5.10.220-rc1-g7927147b02fc
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+url:    https://github.com/intel-lab-lkp/linux/commits/Douglas-Anderson/kdb-Get-rid-of-minlen-for-the-md-command/20240618-084245
+base:   v6.10-rc4
+patch link:    https://lore.kernel.org/r/20240617173426.11.I899d035485269f5110a3323fbb1680fbba718e4c%40changeid
+patch subject: [PATCH 11/13] kdb: Abstract out parsing for mdWcN
+config: arc-randconfig-001-20240619 (https://download.01.org/0day-ci/archive/20240619/202406190433.U3alc3Xi-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240619/202406190433.U3alc3Xi-lkp@intel.com/reproduce)
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406190433.U3alc3Xi-lkp@intel.com/
 
-Jon
+All warnings (new ones prefixed by >>):
+
+>> kernel/debug/kdb/kdb_main.c:1606: warning: Function parameter or struct member 'bytesperword' not described in 'kdb_md_parse_arg0'
+
+
+vim +1606 kernel/debug/kdb/kdb_main.c
+
+  1593	
+  1594	/**
+  1595	 * kdb_md_parse_arg0() - Parse argv[0] for "md" command
+  1596	 *
+  1597	 * @cmd:         The name of the command, like "md"
+  1598	 * @arg0:        The value of argv[0].
+  1599	 * @repeat:      If argv0 modifies repeat count we'll adjust here.
+  1600	 * @bytesperword Ifargv0 modifies bytesperword we'll adjust here.
+  1601	 *
+  1602	 * Return: true if this was a valid cmd; false otherwise.
+  1603	 */
+  1604	static bool kdb_md_parse_arg0(const char *cmd, const char *arg0,
+  1605				      int *repeat, int *bytesperword)
+> 1606	{
+  1607		int cmdlen = strlen(cmd);
+  1608	
+  1609		/* arg0 must _start_ with the command string or it's a no-go. */
+  1610		if (strncmp(cmd, arg0, cmdlen) != 0)
+  1611			return false;
+  1612	
+  1613		/* If it's just the base command, we're done and it's good. */
+  1614		if (arg0[cmdlen] == '\0')
+  1615			return true;
+  1616	
+  1617		/*
+  1618		 * The first byte after the base command must be bytes per word, a
+  1619		 * digit. The actual value of bytesperword will be validated later.
+  1620		 */
+  1621		if (!isdigit(arg0[cmdlen]))
+  1622			return false;
+  1623		*bytesperword = (int)(arg0[cmdlen] - '0');
+  1624		cmdlen++;
+  1625	
+  1626		/* After the bytes per word must be end of string or a 'c'. */
+  1627		if (arg0[cmdlen] == '\0')
+  1628			return true;
+  1629		if (arg0[cmdlen] != 'c')
+  1630			return false;
+  1631		cmdlen++;
+  1632	
+  1633		/* After the "c" is the repeat. */
+  1634		return kstrtouint(arg0 + cmdlen, 10, repeat) == 0;
+  1635	}
+  1636	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
