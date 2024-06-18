@@ -1,109 +1,118 @@
-Return-Path: <linux-kernel+bounces-218524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E866090C155
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:38:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D7C90C154
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59201B2172D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C8C42829EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6D0FC19;
-	Tue, 18 Jun 2024 01:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D6613FF9;
+	Tue, 18 Jun 2024 01:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lI0yUzCH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BDMVx1BV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C2C134AB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2690FC0C;
+	Tue, 18 Jun 2024 01:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718674685; cv=none; b=n7kIvCeyOLgFof6Lx0uWmXumX/SzdMrZwUD84emPVgMrLgjfVFnvzN3qg3Xrbe2gxu1Y+C74UwEv+NAueAvfqOqpJg6EB17YTRV0A8Y6Nlc4ZbOm3Lkv6xaRMJs8GtpGMImQMa35de8OPZfJKUF7lWzO+E+U5xf4M8uIHWlyDgs=
+	t=1718674642; cv=none; b=JNAwIAt3XAOCVoSgMZvt6VyNi3ibhXuYeqW96Z+86nQRWfulZUVo2M6styfOn1YKNBy1YsmsHVAkvr8Rm5nBo/OLHJmhO6nxf/6uq3zBn5pawKJTwKvJXI2FpB4dwjgD5wNd6W83Xqbu6iT0c7/thaXm40txnO7iow8Y5fg8wzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718674685; c=relaxed/simple;
-	bh=4SfRuGLXuOtfgs+VhCcT8scU2Nzh8VcPuJvjNReQd84=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FsBM7cQFmqK6NmDsDVDiyELJKv+6ZiSFju8wefdI8lIU3Dj/bffxyO1ZEZj3rrjUVVNk5wopCNs54GkU6FdZbsvs8r/q2j7LYZgxkhg1rTQUsb4ypcgOdfARABn3Wi1ROMUnhUZqKKIzlHniAS2T3YMApyBbsO0HCHqAnR+xGc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lI0yUzCH; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718674684; x=1750210684;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=4SfRuGLXuOtfgs+VhCcT8scU2Nzh8VcPuJvjNReQd84=;
-  b=lI0yUzCHVwEuF+BzJJIs5kDFHt+SKXTVzeF7RbvzHcRQl19Bz96zfxZx
-   v6/zAGv5akfLG5V7EqFD4V/XFeOJlAx6pbL7xZj4d+PTmlJcC791MfGQz
-   RS15ekdM36JNlW1M4qIIVe5mSvbkZTNt/T4f4RLMcdqzOyWmyHPS+YU/N
-   3FQtq+0BNdd/t2PqnQIs1R5l5l0hhhZpesF37PofiXeoQyeBSl7m/xX6s
-   mNjnnHD1VgeFHz1sLqo383lk6sC6QfZTG7g8OBWpniQU5rOEj9m5lU+Q6
-   hYHT9bwVPaO5MKfRoGU1jJkZ8/xQCXo0/rtJv2v5Zlwc2WyTSUr1yQINQ
-   w==;
-X-CSE-ConnectionGUID: HcwrOd9cTeuhmJG2imHwtg==
-X-CSE-MsgGUID: Ns1oVu7ZRgeXp5+tyyBp9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="26158143"
-X-IronPort-AV: E=Sophos;i="6.08,246,1712646000"; 
-   d="scan'208";a="26158143"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 18:38:03 -0700
-X-CSE-ConnectionGUID: Ddl5w9urQ/iFSVCmAUcTRg==
-X-CSE-MsgGUID: kIYlmEebQyW7v5j/rRk+lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,246,1712646000"; 
-   d="scan'208";a="41481150"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa010.fm.intel.com with ESMTP; 17 Jun 2024 18:38:00 -0700
-Message-ID: <dea1adb9-2980-4c7b-8ddd-c7ed800f983c@linux.intel.com>
-Date: Tue, 18 Jun 2024 09:35:35 +0800
+	s=arc-20240116; t=1718674642; c=relaxed/simple;
+	bh=ZCxXsmDoBj5cP7xmfFJ0FJxotceeXczVqyGFhIBJQhc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=qUCWjHUZetXwyPfCuWEAiIuztRj/3L/pV6jJicIBIZOEl35kS36qm52naUEeqhJmsTclxOKBKg2VKCy/wWUGDTKB4hD2+lpMnNx+/jlbqMS++o3d3MGdQShzKTwUrBqi6NeUqPHlM1bQxQuwJ4kxCLrJIB4PZYHNNX7rxhM9GFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BDMVx1BV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HI3bDj005282;
+	Tue, 18 Jun 2024 01:37:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=g1wdLtvXj4www4hzRwlM1Q
+	0k4zjfx6II30nytPOxhnU=; b=BDMVx1BVD+hGdjvvbpUc0vgneiIDebG2dyNr4l
+	YKa96QiZm6abvGePzfZdPC34X7fgOJyQ3Hzwoi1aQrNLCRG9rDdhyWg9TR8BuwKc
+	epWkoHQ6o56pZIFGeTEpft030wGIVmeYNEcODVYMbxYI1amQFoec6zaVw3HnRGV6
+	+672liux7Fa5nUv0V7WKjpRmcTnnCHtdGcpsdN2+RTNdctsEkU1YNbK57mRsorKw
+	7WH7vVwgmKi+/J5gJpt7GhbGN7mHrXj0YDGDeebNRly58CnXZNFGJfS9i1K8JJ8/
+	onxSsk6vyfGZeQInAe4vnOoDl9io2myvRM/LxXYUSQ7dEbmA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytt378sxy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 01:37:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I1bBDg005114
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 01:37:11 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
+ 2024 18:37:10 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 17 Jun 2024 18:37:09 -0700
+Subject: [PATCH] sound/oss/dmasound: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 03/10] iommu: Add attach handle to struct iopf_group
-To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>
-References: <20240616061155.169343-1-baolu.lu@linux.intel.com>
- <20240616061155.169343-4-baolu.lu@linux.intel.com>
- <BN9PR11MB5276C5ED6E9CEB0B22B0CC108CCD2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB5276C5ED6E9CEB0B22B0CC108CCD2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240617-md-m68k-sound-oss-dmasound-v1-1-5c19306be930@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMTkcGYC/yXMQQ6CMBBA0auQWTtJqaSiVzEshnaUibY1HSEkh
+ LtbdfkW/2+gXIQVLs0GhRdRyamiPTTgJ0p3RgnVYI3tjGtPGANG1z9Q85wCZlUMkf44mz6QJ+v
+ s0UIdvArfZP3Nr0P1SMo4Fkp++i6fkuYVa/zmAvv+ATScFWaLAAAA
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: moh1qhAxtf_dMn5dNmEKsGjniZ6IOXhY
+X-Proofpoint-GUID: moh1qhAxtf_dMn5dNmEKsGjniZ6IOXhY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 mlxscore=0 bulkscore=0 phishscore=0
+ spamscore=0 mlxlogscore=999 adultscore=0 impostorscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180011
 
-On 6/17/24 3:41 PM, Tian, Kevin wrote:
->> From: Lu Baolu <baolu.lu@linux.intel.com>
->> Sent: Sunday, June 16, 2024 2:12 PM
->>
->> Add a new IOMMU capability flag, IOMMU_CAP_USER_IOASID_TABLE, which
->> indicates if the IOMMU driver supports user-managed PASID tables. In the
->> iopf deliver path, if no attach handle found for the iopf PASID, roll
->> back to RID domain when the IOMMU driver supports this capability.
->>
-> 
-> above is stale.
-> 
+With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/oss/dmasound/dmasound_core.o
 
-Yes. "a new IOMMU capability flag, IOMMU_CAP_USER_IOASID_TABLE" should
-be changed to "a static flag in iommu ops".
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Best regards,
-baolu
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ sound/oss/dmasound/dmasound_core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/oss/dmasound/dmasound_core.c b/sound/oss/dmasound/dmasound_core.c
+index 164335d3c200..4b1baf4dd50e 100644
+--- a/sound/oss/dmasound/dmasound_core.c
++++ b/sound/oss/dmasound/dmasound_core.c
+@@ -204,6 +204,7 @@ module_param(numWriteBufs, int, 0);
+ static unsigned int writeBufSize = DEFAULT_BUFF_SIZE ;	/* in bytes */
+ module_param(writeBufSize, int, 0);
+ 
++MODULE_DESCRIPTION("Atari/Amiga/Q40 core DMA sound driver");
+ MODULE_LICENSE("GPL");
+ 
+ static int sq_unit = -1;
+
+---
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+change-id: 20240617-md-m68k-sound-oss-dmasound-908daca26232
+
 
