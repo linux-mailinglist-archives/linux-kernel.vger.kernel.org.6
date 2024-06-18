@@ -1,123 +1,206 @@
-Return-Path: <linux-kernel+bounces-219653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56B690D75C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:31:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127C390D61F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30895B36173
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:52:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 967EB1F228C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8DD15EFD1;
-	Tue, 18 Jun 2024 14:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B755155389;
+	Tue, 18 Jun 2024 14:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GGg2XXbp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tppiOctU"
-Received: from wfhigh8-smtp.messagingengine.com (wfhigh8-smtp.messagingengine.com [64.147.123.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="DP6GEE3Q"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF01157E91;
-	Tue, 18 Jun 2024 14:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DFA139CFC;
+	Tue, 18 Jun 2024 14:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718721849; cv=none; b=Gs12HNRGJuxuxUxM26+ic+f2UlV78b05DqDAoo9p4Axg8lJEsQIrs5TsjlzMJaOJo1zTw9HgBp79Dm51HZjc6PgX7j/IGTtm23yr68gzFiBsyE30azbN6yPqK3ysL1iEdDuu9v3llzrvSVZZtVKpl2VZMnser2kBziwmLwll0Es=
+	t=1718721951; cv=none; b=Fq4caqE2sbpEw8TK970gRV8weo8zWtTRHZ4gDuffVEKlCCACrg/+h4ksSfl4QH+F8i6DQZyKXEZ48dQsEELaE6YWbRAK1+LvjywzBSdwzNqo4dGxUWqMkrsCtMbQw4k1Ahw02pLACCkkyGn3KJm1VJqvHjTje3NQDJH8PaGyYLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718721849; c=relaxed/simple;
-	bh=ml2UhN0QXyqPQlq6C6npK8L85MIMec/94MkmrBjN9CM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=JBLiwsGULmpLDkoupyloaxXgmZBSV5LefKIseNWyK2DTgtV6JXYcnFIZnZe4KuCE5fz5HmKTSQ9R1RXuDUaE6YfYJfLOWBxghu5TLrHdQmT2YE5gwpiT1scp3iuSMhnsjCQYFcsP54Zx+ywWvmVWkRl60ltODoYE4ACTBR/PjPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GGg2XXbp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tppiOctU; arc=none smtp.client-ip=64.147.123.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 46705180009D;
-	Tue, 18 Jun 2024 10:44:06 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 18 Jun 2024 10:44:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718721845; x=1718808245; bh=3CPbe4SFQV
-	4/zNzAZ9bSUaLdRIggzJj1JGK8pDrKFzM=; b=GGg2XXbpDKzrRcruoOQkP/ytUy
-	s266qFsw2ztkXsfcW7HJWvvkXd19YyV+h7oHp7J+uRbAH34OTEstuuedjH7BxobC
-	zsoIOjg+qrUNu9pGUPyuhnGvYo8oQDRsIlnDRT7bI1pjTTD6FH2HcpiBTv4sL+ei
-	U7YdB59vt3ji16pZGXgkSjeSAxhOifhyyjOGXzzJHK5kd9odgPHImTApJ4DnexX/
-	CRluElp7EmPIqQWsxcuvrBwzJ5Qpltptdk/N8mPZvKbTnVzcmqZ80KoQ90b8YLui
-	pF/XTCoEqGSV/fG/uV+6FMS7JFk64sH+sl9lxN+mljQIT9Puwxh+9hJzfJSA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1718721845; x=1718808245; bh=3CPbe4SFQV4/zNzAZ9bSUaLdRIgg
-	zJj1JGK8pDrKFzM=; b=tppiOctUrp+Qbq9ukuJQ19ckrJFVwhlVKY4W4IJQExBE
-	8A8kka6kg15+bBpbHxrWc946VpI/2oKxamszagJJe1n+ib99ka814ZZVRNUR3NmT
-	i7eiVHqyeZvX3AE0WWxuol19n7Ngs9p9vXMSf+mFpUPAV6p6QHYrH5/oQzldo4/o
-	OIUpAF/U0ZkqLl9othgGAlpw+EF0LkU0sinPZnIkHO+v7Eplta6mQC07dFEZdsIx
-	ASuMsmitDv5BbMXk7Cd6ovemR8fhiT1XzzSB9+a2OS3tHAIE8xMSbiPGMhoHHTwp
-	kQrgMGXdMbzaMXmWWKIEQuOFWlTfXQIEmJnNGmD/Tg==
-X-ME-Sender: <xms:NZ1xZniFtWs-OO3GVUfE8iAUbiqH2UNVEzX2-Dauq5I5-_2UbUPN9A>
-    <xme:NZ1xZkDAyVQSANWAGA6TuS6-beBdXzkdHTOJ2i_BHYjX3QmHEuvKnM62cpuztfMik
-    2PY-QNFGE7igdKpeUE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvkedgheduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:NZ1xZnGzAA_qS329TizHl7TVJ9KmtjbSuhTx9REnZz8dZNbat8gBmw>
-    <xmx:NZ1xZkRZk7M4QONeziSVTZHvOj5cRDMZF2pQVsrCtcm6GR-onHElhA>
-    <xmx:NZ1xZkze41blhsp0SQA07kW6bjnVJOh-Y7IgqVyI2n4H-BI8M5EzZg>
-    <xmx:NZ1xZq6KtA-MXkZmvuQgdeMGoigkMz4mryPxa3nw1D02XqLVEyuqMQ>
-    <xmx:NZ1xZvqQ-I3973rPcyXQ2bWBTvti1unvLKG-DSSUU-yXoD_y8u_Qoykt>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 42E78B60092; Tue, 18 Jun 2024 10:44:05 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718721951; c=relaxed/simple;
+	bh=/eXZnkslDtXtwLMQzzo568CwMVqG0SYfQ/UyG0IHN2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PClvj/rFzI5L73QDoEm8T0YiXyMA7l1cgxiF7hwo5WPEzWQxTDzo+NRkl0h70GBqZipDHXmCUJu3vSRCBeQr38yv6lf17GdnA+Z3FdVTXvg1rEEEpsSophYPRmgK21TktkGaHy4b1lu1EgXsLByHjVKhorbBPXkNZl3o5OJTQCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=DP6GEE3Q; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id C4C6A881DB;
+	Tue, 18 Jun 2024 16:45:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718721947;
+	bh=Ojk5mwSvw+tC6y+Z5fiUjKgjEOz15W+RAyfOfEfKZRE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DP6GEE3QWmViRXPM6lpRCuxF39Ag8BD30mSTgJgZ+ybArBY+nMyJ7lpF+LaQwzKXN
+	 j9YEfRiXQVVWVQc0+J2EbyF1OWL3GqSZl7lH12cs4sffPVLJ262yzAJj91O5O8JKLp
+	 0yW5hAxywVL2CSwdH4ABlkpbZsrrkg0S/Czhe7ETeMYCtOFxmMCCpBBv5hWZ7og6JB
+	 uHbVB7b5As54UTqFgbIDZBy1g/4umujstA2Htc6Ebr1DBePqJbm4dm352BcjhFKqVo
+	 2F7RqVgItXMoZKdUurHmuSGEf2luCN1wrdTKLWLtIRHM/JG4p3GMt+r/FRcVIOtAVh
+	 vME1LG1zfbQtQ==
+Date: Tue, 18 Jun 2024 16:45:45 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: <Woojung.Huh@microchip.com>
+Cc: <dan.carpenter@linaro.org>, <andrew@lunn.ch>, <olteanv@gmail.com>,
+ <kuba@kernel.org>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+ <edumazet@google.com>, <davem@davemloft.net>, <o.rempel@pengutronix.de>,
+ <Tristram.Ha@microchip.com>, <bigeasy@linutronix.de>, <horms@kernel.org>,
+ <ricardo@marliere.net>, <casper.casan@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <UNGLinuxDriver@microchip.com>
+Subject: Re: [PATCH v1 net-next] net: dsa: Allow only up to two HSR HW
+ offloaded ports for KSZ9477
+Message-ID: <20240618164545.14817f7e@wsk>
+In-Reply-To: <BL0PR11MB291397353642C808454F575CE7CE2@BL0PR11MB2913.namprd11.prod.outlook.com>
+References: <20240618130433.1111485-1-lukma@denx.de>
+	<339031f6-e732-43b4-9e83-0e2098df65ef@moroto.mountain>
+	<24b69bf0-03c9-414a-ac5d-ef82c2eed8f6@lunn.ch>
+	<1e2529b4-41f2-4483-9b17-50c6410d8eab@moroto.mountain>
+	<BL0PR11MB291397353642C808454F575CE7CE2@BL0PR11MB2913.namprd11.prod.outlook.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <4e8f3cd6-de4f-492a-b1c0-8e0a356d2954@app.fastmail.com>
-In-Reply-To: <20240614140421.3172674-2-peter.griffin@linaro.org>
-References: <20240614140421.3172674-1-peter.griffin@linaro.org>
- <20240614140421.3172674-2-peter.griffin@linaro.org>
-Date: Tue, 18 Jun 2024 16:43:45 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Peter Griffin" <peter.griffin@linaro.org>, "Lee Jones" <lee@kernel.org>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Alim Akhtar" <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- "Saravana Kannan" <saravanak@google.com>,
- "William McVicker" <willmcvicker@google.com>,
- "Sam Protsenko" <semen.protsenko@linaro.org>, kernel-team@android.com
-Subject: Re: [PATCH 1/2] mfd: syscon: add of_syscon_register_regmap() API
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/=faO5bG0JahLBSA=3O3EqoV";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Fri, Jun 14, 2024, at 16:04, Peter Griffin wrote:
-> The of_syscon_register_regmap() API allows an externally created regmap
-> to be registered with syscon. This regmap can then be returned to client
-> drivers using the syscon_regmap_lookup_by_phandle() APIs.
->
-> The API is used by platforms where mmio access to the syscon registers is
-> not possible, and a underlying soc driver like exynos-pmu provides a SoC
-> specific regmap that can issue a SMC or hypervisor call to write the
-> register.
->
-> This approach keeps the SoC complexities out of syscon, but allows common
-> drivers such as  syscon-poweroff, syscon-reboot and friends that are used
-> by many SoCs already to be re-used.
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+--Sig_/=faO5bG0JahLBSA=3O3EqoV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Hi Dan, Andrew, Woojung
+
+> Hi Dan & Andrew,
+>=20
+> > On Tue, Jun 18, 2024 at 03:52:23PM +0200, Andrew Lunn wrote: =20
+> > > > diff --git a/drivers/net/dsa/microchip/ksz_common.c =20
+> > b/drivers/net/dsa/microchip/ksz_common.c =20
+> > > > index 2818e24e2a51..181e81af3a78 100644
+> > > > --- a/drivers/net/dsa/microchip/ksz_common.c
+> > > > +++ b/drivers/net/dsa/microchip/ksz_common.c
+> > > > @@ -3906,6 +3906,11 @@ static int ksz_hsr_join(struct
+> > > > dsa_switch *ds, =20
+> > int port, struct net_device *hsr, =20
+> > > >             return -EOPNOTSUPP;
+> > > >     }
+> > > >
+> > > > +   if (hweight8(dev->hsr_ports) > 1) {
+> > > > +           NL_SET_ERR_MSG_MOD(extack, "Cannot offload more
+> > > > than two =20
+> > ports (in use=3D0x%x)", dev->hsr_ports); =20
+> > > > +           return -EOPNOTSUPP;
+> > > > +   } =20
+> > >
+> > > Hi Dan
+> > >
+> > > I don't know HSR to well, but this is offloading to hardware, to
+> > > accelerate what Linux is already doing in software. It should be,
+> > > if the hardware says it cannot do it, software will continue to
+> > > do the job. So the extack message should never be seen. =20
+> >=20
+> > Ah.  Okay.  However the rest of the function prints similar messages
+> > and so probably we could remove those error messages as well.  To be
+> > honest, I just wanted something which functioned as a comment and
+> > mentioned "two ports".  Perhaps the condition would be more clear
+> > as =20
+> > >=3D 2 instead of > 1? =20
+> >  =20
+>=20
+> I'm not a HSR expert and so could be a dummy question.
+>=20
+> I think this case (upto 2 HSR port offload) is different from other
+> offload error.=20
+
+It is not so different.
+
+In this case when we'd call:
+ip link add name hsr0 type hsr slave1 lan1 slave2 lan2 interlink lan3
+supervision 45 version 1
+
+lan1 and lan2 are correctly configured as ports, which can use HSR
+offloading on ksz9477.
+
+However, when we do already have two bits set in hsr_ports, we need to
+return (-ENOTSUPP), so the interlink port (HSR-SAN) would be used with
+SW based HSR interlink support.
+
+Otherwise, I do see some strange behaviour, as some HSR frames are
+visible on HSR-SAN network and vice versa causing switch to drop frames.
+
+Also conceptually - the interlink (i.e. HSR-SAN port) shall be only SW
+supported as it is also possible to use ksz9477 with only SW based HSR
+(i.e. port0/1 -> hsr0 with offloading, port2 -> HSR-SAN/interlink,
+port4/5 -> hsr1 with SW based HSR).
+
+> Others are checking whether offload is possible or
+> not, so SW HSR can kick in when -EOPNOTSUPP returns.=20
+
+Yes, this is exactly the case.
+
+> However, this
+> happens when joining 3rd (2+) port with hardware offload is enabled.
+> It is still working two ports are in HW HSR offload and next ports
+> are in SW HSR?
+
+As written above, it seems like the in-chip VLAN register is modified
+and some frames are passed between HSR and SAN networks, which is wrong.
+
+Best would be to have only two ports with HSR offloading enabled and
+then others with SW based HSR if required.
+
+For me the:
+
+NL_SET_ERR_MSG_MOD(extack, "Cannot offload more than two ports (in
+use=3D0x%x)", dev->hsr_ports);
+
+is fine - as it informs that no more HSR offloading is possible (and
+allows to SW based RedBox/HSR-SAN operation).
+
+>=20
+> Thanks.
+> Woojung
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/=faO5bG0JahLBSA=3O3EqoV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmZxnZkACgkQAR8vZIA0
+zr1pDAgAz8iqxMsI8PaedNynjdgMDokKLvfzbsccYcMauZXGlALZ1sKG4xrZ6w6b
+nKRiE6X+EAuCWKLP4d3sTegMP2wg7iAfNFSTwQYltBFndzTPwopi2rf7h5lHQIHV
+w+QxPdn4Dpap0Tcf1Qdb+c+NJzBirrNbNgONrqO5IXgfZA0IsEKxg7tpxj+y8r23
+ygZhw6fSR2As7b0xwy9Oy2f0FZAFXZRpfBgxvHmoj7v2HiRVRx6uuZJMVhU7Ov0q
+wUId3AIiXdrhOdgtyPrS6qTcniWtmPI3vT33KcFZQxzmZOvt5gvIAAJdt2ivuyS0
+OBFpZcy0HUyW2ig31R3SI2RftxSCFQ==
+=A1DY
+-----END PGP SIGNATURE-----
+
+--Sig_/=faO5bG0JahLBSA=3O3EqoV--
 
