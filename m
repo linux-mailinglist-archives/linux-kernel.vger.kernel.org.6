@@ -1,92 +1,84 @@
-Return-Path: <linux-kernel+bounces-220257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00CF590DE88
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:37:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F233190DE8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25DA1F24A9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981EC1F23A50
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFB71849CB;
-	Tue, 18 Jun 2024 21:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VjvXziCt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DEE178386;
+	Tue, 18 Jun 2024 21:38:36 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C8717E46A;
-	Tue, 18 Jun 2024 21:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1D113DDD2;
+	Tue, 18 Jun 2024 21:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718746595; cv=none; b=r8iiSwJACjGuiMXkpO2XGmYtV6O3ZAScH8oAEL9kWE/eNHWvZO/u90Bhs7IFg+A3K/qSgrNBJqcJD4lifix1zPnlMYPnGT4cKkzfdrLFy7z75GtjssaIGD6Nyv77bT2TF3KAE0DhvEOo92i4nKKj4hLjdqUbkY+VtBFqzONVM+I=
+	t=1718746715; cv=none; b=ZPOA3DDpjnEgpukP7SZTr41RheMFMVXpvaCHrr1JEua3wNG03lCuXwuFCzv02RH6HwOBQzWJGpmM4I9jPvSZ2/G/0mkjjmrjhKpgvJXzIjrZ6H60uxU32iZBMB2lGEQk1dUjLJR7PKtTUuPjyp82UPd9GXYPVFGakjCBUqFIKT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718746595; c=relaxed/simple;
-	bh=QdAgvz/eRFgxbWjUE+6h9i06/YLLhBFGTN2aDiUR8OI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Qq1B8Dw+DNor+Lvg7YALgSX/WOPi1aH8wrgBMqi91xDNsqEc0BcPsHKP9/Bflq+0lxCjgJWEVEFqTm/L3eIcCZ6CANli+RS2UYPJ33w7O0LcfOLC6y/6T+JlRYZuOI3T6vVXhTSl18PN06TsojUU9P0XbdSTAXfE9M6mqZSOqOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VjvXziCt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396E9C4AF53;
-	Tue, 18 Jun 2024 21:36:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718746595;
-	bh=QdAgvz/eRFgxbWjUE+6h9i06/YLLhBFGTN2aDiUR8OI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VjvXziCtoMIheG1gqO2FDGiBd/Ryq4bLZy4eL1bflr6mBUjdb7pfyhrxK6vADKrru
-	 TJlxPkaziIoxsFJP+Ig0ZBuL+2ZtbbCX1WFETMaoF+TE+cQ5lW70XjNDmzMc49HZwe
-	 JAQ2lS8w7NwGfeYBwGiUW88ouEavyX/WUrkn88UWzt20zeNM23UoQzjso7Z54BSVq5
-	 IwbIthcaDi9P272x0+e2WpZHZ1Y0Pk7y/PzHHXrZVGlnOhSO0+vsUCR3SpudDewQoW
-	 59/ReIQjigqq5uC2494TpVKfap+w+7V8XqJlw2I9M1O9FvlUQguATKMCylpGI9+1wL
-	 I1LX6eTlW/+AQ==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	SeongJae Park <sj@kernel.org>
-Cc: Honggyu Kim <honggyu.kim@sk.com>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] Docs/ABI/damon: document target_nid file
-Date: Tue, 18 Jun 2024 14:36:30 -0700
-Message-Id: <20240618213630.84846-3-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240618213630.84846-1-sj@kernel.org>
-References: <20240618213630.84846-1-sj@kernel.org>
+	s=arc-20240116; t=1718746715; c=relaxed/simple;
+	bh=AYq7euI/XVOdUL29dkH24ZxEpRRBcB8uSdj9EW0Rmrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ET/0u0Aw7YUHIKRVM1kVNuF7Ekz7CVfvb+sWxbW+C3ROSGrtVCAGBEw9UFEeLk6805Babvr8AllRXZ2Iana4v66T1kmoemJW03dY3IiWtem9FK8ixLBSyGnNcCKaL4L0/aCCd2NqhgTdB129mycp9tqCGj69yFpARwDWTwr5WR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1613BC3277B;
+	Tue, 18 Jun 2024 21:38:31 +0000 (UTC)
+Date: Tue, 18 Jun 2024 22:38:29 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
+	Ramon Fried <ramon@neureality.ai>,
+	Elad Nachman <enachman@marvell.com>
+Subject: Re: [PATCH RFC v2 2/5] of: get dma area lower limit
+Message-ID: <ZnH-VU2iz9Q2KLbr@arm.com>
+References: <cover.1712642324.git.baruch@tkos.co.il>
+ <230ea13ef8e9f576df849e1b03406184ca890ba8.1712642324.git.baruch@tkos.co.il>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <230ea13ef8e9f576df849e1b03406184ca890ba8.1712642324.git.baruch@tkos.co.il>
 
-Document target_nid DAMON sysfs file that introduced for
-DAMOS_MIGRATE_{HOT,COLD}.
+On Tue, Apr 09, 2024 at 09:17:55AM +0300, Baruch Siach wrote:
+> of_dma_get_max_cpu_address() returns the highest CPU address that
+> devices can use for DMA. The implicit assumption is that all CPU
+> addresses below that limit are suitable for DMA. However the
+> 'dma-ranges' property this code uses also encodes a lower limit for DMA
+> that is potentially non zero.
+> 
+> Rename to of_dma_get_cpu_limits(), and extend to retrieve also the lower
+> limit for the same 'dma-ranges' property describing the high limit.
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- Documentation/ABI/testing/sysfs-kernel-mm-damon | 6 ++++++
- 1 file changed, 6 insertions(+)
+I don't understand the reason for the lower limit. The way the Linux
+zones work is that ZONE_DMA always starts from the start of the RAM. It
+doesn't matter whether it's 0 or not, you'd not allocate below the start
+of RAM anyway. If you have a device that cannot use the bottom of the
+RAM, it is pretty broken and not supported by Linux.
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-damon b/Documentation/ABI/testing/sysfs-kernel-mm-damon
-index cef6e1d20b18..f1b90cf1249b 100644
---- a/Documentation/ABI/testing/sysfs-kernel-mm-damon
-+++ b/Documentation/ABI/testing/sysfs-kernel-mm-damon
-@@ -155,6 +155,12 @@ Contact:	SeongJae Park <sj@kernel.org>
- Description:	Writing to and reading from this file sets and gets the action
- 		of the scheme.
- 
-+What:		/sys/kernel/mm/damon/admin/kdamonds/<K>/contexts/<C>/schemes/<S>/target_nid
-+Date:		Jun 2024
-+Contact:	SeongJae Park <sj@kernel.org>
-+Description:	Action's target NUMA node id.  Supported by only relevant
-+		actions.
-+
- What:		/sys/kernel/mm/damon/admin/kdamonds/<K>/contexts/<C>/schemes/<S>/apply_interval_us
- Date:		Sep 2023
- Contact:	SeongJae Park <sj@kernel.org>
+I think you added this limit before we tried to move away from
+zone_dma_bits to a non-power-of-two limit (zone_dma_limit). With the
+latter, we no longer need tricks with the lower limit,
+of_dma_get_max_cpu_address() should capture the smallest upper CPU
+address limit supported by all devices (and that's where ZONE_DMA should
+end).
+
 -- 
-2.39.2
-
+Catalin
 
