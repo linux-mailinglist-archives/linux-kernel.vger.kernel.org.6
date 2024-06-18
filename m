@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-219062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5306E90C97D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:31:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7831E90CA0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1B58286A0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:31:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D92AB2D207
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DBB149E08;
-	Tue, 18 Jun 2024 10:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C263F14BF86;
+	Tue, 18 Jun 2024 10:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mnXP2JNv"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Y1IYSpUA"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B9D1459FC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABE814B958;
+	Tue, 18 Jun 2024 10:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718706805; cv=none; b=V2qVSu9EHbJ2UIq0MS1vPL2e/DAZ7gYMSTt3kr9sh2lImLU1qW+jPE7Ou2gLR4w1OJ/OBWJAg3CPfYVSXV6po9Vfn3Tb+ulE96QsFmrBnleJoSjVfr+X7/cYY0Sz6z9LGb5QhwuVui80C3NEF8/aRKDmaZXJbE4MXrkVV3kZesU=
+	t=1718706822; cv=none; b=Gn3RTcXXlF2vBA4Sx6hwTYT0tB5fo+vlDIhr2q8S++7hmlZf4IOVYZhJ28mCJZwN2XtH+V0R7Uc/RlByxSfBSlDahyp/QltfaGE39KRB7PX38lRB1cBmj705KGz1piPE3MSXbEGtGhuqFWYyNlsri0Q3xManForkpsD9ynGuLJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718706805; c=relaxed/simple;
-	bh=Xbsc4VENQqTGqL/ZwoOjc/hBAB6+yy+PsdnO0JKD194=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BNz6Z65CJNtityrEi/ng/v3S7TOMpMb82uUyt+cyEWHK2KAYXO2oZ9P6Q5TdaEqvBvFhzmIXc28YwNFLPVt1QM2UkDOFhVW+QTOuODrsTwAIDJXChdcPEvMTiYjxuhxTE0eyCrF6MdRp2UyrIHyUfFgBqzcthyFYApByIujjkVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mnXP2JNv; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57c83100cb4so5996806a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:33:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718706802; x=1719311602; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4LrSWMgyFt1tGbnNO2P7UCfeEdrvDolnINBnHsaSNfo=;
-        b=mnXP2JNv7ujTFLCDHh4N6vjmqzwqKywCDRE7+pCAuG8V57hmA5P63icyP3Rj1NouMH
-         hH0pJmq6n7Ie4Q5lQNa0DNcp/j741fFsMxY3QXh3cmDvH0Fz0a11qcJh3c/dHqfyH4pm
-         nRBc27eAA5XyWccXMmPZ0F5j7pGHb2BWDrUzFZKfKhdNhHiFoW66KxeUTF/P+T7bUT8i
-         fXvxRjSfxfjB7f7YBMKFyiv/e+QGGCJ2W3Rx3Bix/LD+yW6VyudggY6+gC5ITRAMZUGf
-         0qVtWs8L+SAf4sU2bYrnRJPb7Ie0tD6kVWEe1i58e3TL1C/yLWzoPz849Fix3Uhpm+oR
-         tf7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718706802; x=1719311602;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4LrSWMgyFt1tGbnNO2P7UCfeEdrvDolnINBnHsaSNfo=;
-        b=UhJ1hE295NN55YmYhuhYGe15C7mJkjiQrqG8JwHygGUOTbydPxf00ToqKvBLugpNil
-         Hhf63De1zIJUo/imA1GdPXQEdu3t1k2mSz9ZMLuuzgrCXxijjZXi5JSwXab0oX6lsiFR
-         wZe+D+woYPvQj58yTwWD7Iuc3nL5QfPYn5rv1yi9lLT0utDniv3bXlEMJek+NFWFhKTH
-         GnhQessZsGMufjLEMuORZRXsP5JfaoAH/Hws5yH4ZmUmn8870PyrSs+QSPsgCXoMSgQ7
-         nrY38bC9dYlpcUQr+wAheRUeunuVRnfMzIwOCJ/EKhTa2YXsXP1jS1MPbneSQcAfilp3
-         fQ4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXZAKiHJSw0Nnlw2NDtIc2salKbU9zr/acjk2xJmt9ISi08ZicqWnKK1Deqz7QcseyG2QII1JrGiaUUWw+aYKC7TfejLeokzYOofwn9
-X-Gm-Message-State: AOJu0Ywf2NOYGl6hwxo6K22HyN0Nz8MNM9vjx80fNbNccRIZTw4NpNeM
-	dUdtsXKRc53lzx2kFQjCua3QbxLgsicmACEk9eHkUkKpWfENtvHlw9ZNfIKPyGM=
-X-Google-Smtp-Source: AGHT+IEzJMrjAiuI3Fy97ZNQPTj97n9ZkgzQpZtU1gf7Kf7ZnduaPgCs6MOMVJ5nYE5CjVduo2rTjg==
-X-Received: by 2002:a50:99d2:0:b0:57c:5637:b2ae with SMTP id 4fb4d7f45d1cf-57cbd69dc7emr7152005a12.12.1718706801663;
-        Tue, 18 Jun 2024 03:33:21 -0700 (PDT)
-Received: from [192.168.2.107] ([79.115.63.178])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72ce12fsm7610410a12.7.2024.06.18.03.33.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 03:33:21 -0700 (PDT)
-Message-ID: <76f8be4e-3050-4ae6-93b4-9524a0689022@linaro.org>
-Date: Tue, 18 Jun 2024 11:33:19 +0100
+	s=arc-20240116; t=1718706822; c=relaxed/simple;
+	bh=x6nqyV1O+XGW4R94GMczGzhhdy9aXZXBMHFBLfOPs40=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=nLRHEtDxom2ZRQ1UTN29eSyIBVW5CzEl+vvL3Tw8/Q/VZr9WXxaAoaKiendYZvmiiEJLz52bI5Nr/pLNSCxrcExgfVkH0VxDhLidK0EGRNSynDDxfJfjWY+5jfFCEeuAI5X4YEgKQugStTL2IBllxfRHC0zeiYbssQwRu3158Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Y1IYSpUA; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mtd: spi-nor: winbond: fix w25q128 regression
-To: Michael Walle <mwalle@kernel.org>, Pratyush Yadav <pratyush@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- e9hack <e9hack@gmail.com>
-References: <20240610074809.2180535-1-mwalle@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240610074809.2180535-1-mwalle@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1718706816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ptTO7D1wdxlQ3ntloeWD3U/gouzYuciZ4yKoIe8LFNs=;
+	b=Y1IYSpUA/oo+qzTXgqv3/KSgqHPOZL+GwNcCb7yLUHH5hfsfxEPJDgciAGUW9LXmgbJPre
+	1Z3LKCMNZ+5hGSlCEg9UKyVCCpoDXepZnBCyKeBlnZ7UkCJUTgarQEF75ByE4riLLv5PhY
+	I1VZBSJ9/pLfKtozncYDU7QXR2TbhEPisrOFzOT6z8Fjx0raEdJee0QCyvm1ni9N2xxrPT
+	hFG/Nt6wiL6v8A1nHQumExH5VbOPcV9jkceND+dfV0uXMLSnY3brknya0fJ+PkynfGeb3i
+	knsPrde0yz2ZT3BKbQTckMTo9+1mrRu7fqEqVKVm5vc8fHyzxlsFZ8ngLRTlpQ==
+Date: Tue, 18 Jun 2024 12:33:36 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Qiang Yu <yuq825@gmail.com>, dri-devel@lists.freedesktop.org,
+ lima@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ linux-kernel@vger.kernel.org, Philip Muller <philm@manjaro.org>, Oliver
+ Smith <ollieparanoid@postmarketos.org>, Daniel Smith <danct12@disroot.org>,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] drm/lima: Mark simple_ondemand governor as softdep
+In-Reply-To: <20240618-great-hissing-skink-b7950e@houat>
+References: <fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org>
+ <CAKGbVbs8VmCXVOHbhkCYEHNJiKWwy10p0SV9J09h2h7xjs7hUg@mail.gmail.com>
+ <CAKGbVbsM4rCprWdp+aGXE-pvCkb6N7weUyG2z4nXqFpv+y=LrA@mail.gmail.com>
+ <20240618-great-hissing-skink-b7950e@houat>
+Message-ID: <4813a6885648e5368028cd822e8b2381@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
+Hello Qiang and Maxime,
 
+On 2024-06-18 10:13, Maxime Ripard wrote:
+> On Tue, Jun 18, 2024 at 04:01:26PM GMT, Qiang Yu wrote:
+>> On Tue, Jun 18, 2024 at 12:33 PM Qiang Yu <yuq825@gmail.com> wrote:
+>> >
+>> > I see the problem that initramfs need to build a module dependency chain,
+>> > but lima does not call any symbol from simpleondemand governor module.
+>> > softdep module seems to be optional while our dependency is hard one,
+>> > can we just add MODULE_INFO(depends, _depends), or create a new
+>> > macro called MODULE_DEPENDS()?
 
-On 6/10/24 8:48 AM, Michael Walle wrote:
-> Commit 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+I had the same thoughts, because softdeps are for optional module
+dependencies, while in this case it's a hard dependency.  Though,
+I went with adding a softdep, simply because I saw no better option
+available.
 
-That commit did:
--       { "w25q128", INFO(0xef4018, 0, 64 * 1024, 256)
--               NO_SFDP_FLAGS(SECT_4K) },
-+       { "w25q128", INFO(0xef4018, 0, 0, 0)
-+               PARSE_SFDP
-+               FLAGS(SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB) },
+>> This doesn't work on my side because depmod generates modules.dep
+>> by symbol lookup instead of modinfo section. So softdep may be our 
+>> only
+>> choice to add module dependency manually. I can accept the softdep
+>> first, then make PM optional later.
 
-> removed the flags for non-SFDP devices. It was assumed that it wasn't in
-> use anymore. This turned out to be wrong. Add the no_sfdp_flags as
-> well as the size again.
-> 
-> Reported-by: e9hack <e9hack@gmail.com>
-> Fixes: 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> ---
-> Hartmut, Linus, could you please test it on your boards? Also, do
-> you have a real name we should put in the Reported-by tag?
-> 
-> This will also need a manual backport to the stable kernels due to
-> the new syntax. But that should be straight forward.
-> ---
->  drivers/mtd/spi-nor/winbond.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-> index ca67bf2c46c3..6b6dec6f8faf 100644
-> --- a/drivers/mtd/spi-nor/winbond.c
-> +++ b/drivers/mtd/spi-nor/winbond.c
-> @@ -105,7 +105,9 @@ static const struct flash_info winbond_nor_parts[] = {
->  	}, {
->  		.id = SNOR_ID(0xef, 0x40, 0x18),
->  		.name = "w25q128",
-> +		.size = SZ_16M,
->  		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
-> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+I also thought about making devfreq optional in the Lima driver,
+which would make this additional softdep much more appropriate.
+Though, I'm not really sure that's a good approach, because not
+having working devfreq for Lima might actually cause issues on
+some devices, such as increased power consumption.
 
-and here you add dual and quad to trigger SFDP parsing I guess. All fine
-if the old flash supports dual and quad read. But please update the
-commit message describing the intention. With that ACK. Would be good to
-have this merged soon.
+In other words, it might be better to have Lima probing fail if
+devfreq can't be initialized, rather than having probing succeed
+with no working devfreq.  Basically, failed probing is obvious,
+while a warning in the kernel log about no devfreq might easily
+be overlooked, causing regressions on some devices.
 
->  	}, {
->  		.id = SNOR_ID(0xef, 0x40, 0x19),
->  		.name = "w25q256",
+> It's still super fragile, and depends on the user not changing the
+> policy. It should be solved in some other, more robust way.
+
+I see, but I'm not really sure how to make it more robust?  In
+the end, some user can blacklist the simple_ondemand governor
+module, and we can't do much about it.
+
+Introducing harddeps alongside softdeps would make sense from
+the design standpoint, but the amount of required changes wouldn't
+be trivial at all, on various levels.
 
