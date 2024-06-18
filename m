@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-219349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D6B90CD29
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:07:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837D690CD2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D2A1C2173E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:07:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27942841FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E00615820C;
-	Tue, 18 Jun 2024 12:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E32F1586C6;
+	Tue, 18 Jun 2024 12:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOvOhrna"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGL7EvW/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6702C1AB900;
-	Tue, 18 Jun 2024 12:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784281AB8ED;
+	Tue, 18 Jun 2024 12:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714478; cv=none; b=Yp3MndV62NFwHq3Yn+b9FB7IKc06pud7Efxo/DaxIsRJkscb5no8qQC9DXo5Xvx8FERSmg1gZsLOpgGNTN47iN2h881+mkqFzZWQi0/HzhYjS4R83Jrb5Pb0bbG2GfmYEbdHRCQdB3xauNADcNYuIpRfTtNEL85cSigTAk80FD0=
+	t=1718714479; cv=none; b=qPLA4cPW3RawIKNUvWO1GjX1efMAXqbyjabqL5GwFFiR+fm5ff20Ph5Izi/rHfQb7LxQQomaEurXhbLqz51J6lgeImu8qKQULLYE6JGun4U+/k4qFIGXBMeW7ctfeSHiG8i47TH4EmFP7l5n5t21PGFY23VePqNXtBCGA7vhNW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714478; c=relaxed/simple;
-	bh=il9y5YQNmW8K1OYqvsYN0/rpeVFuJ/TFQHFa5ot5gCA=;
+	s=arc-20240116; t=1718714479; c=relaxed/simple;
+	bh=vYfswvJzrtsRWRx3NsAYResCsxzDI1JtjJfaKrt5xvc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZfXNTQFxsQVjKIdBvzNORv3IUz9/uVx8pmaWJpUf/qvqX1D2NmMwY0//q0wE14DygD9tAlyEDobR990kHOrvsbjTZe3C2IPPMcMgv2wMepgdm4atZOZIDxa/Givtzaer6xJVmozMWlTCh8lDUPHCit5tnOeWvBkzQyJZyCluUPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOvOhrna; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AEDAC3277B;
-	Tue, 18 Jun 2024 12:41:17 +0000 (UTC)
+	 MIME-Version; b=Bk90vop7X3GZK7cBG2tjm5DPUwU6cPpCVYG3A6CDa+QC+klxMVLBLuKYTAg1dC7YC4ZPyuoK5j7V7qaUNXpaUJ1bvQJSr6W1lLxPojxqi6VSqAfyB3DalJmKYK+D8Ho3qt/ofL0Eg5ztJbJjHiV9kUZkarmwAG+B8/XpFFbZq/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGL7EvW/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F724C4AF1D;
+	Tue, 18 Jun 2024 12:41:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718714477;
-	bh=il9y5YQNmW8K1OYqvsYN0/rpeVFuJ/TFQHFa5ot5gCA=;
+	s=k20201202; t=1718714479;
+	bh=vYfswvJzrtsRWRx3NsAYResCsxzDI1JtjJfaKrt5xvc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vOvOhrnawToNgG8BGnl2j/s7zrQWjD372w8ey1oN+wqjGZjcRDTpKlZ7acBNgdZz4
-	 vjyq5GNaSynDcbAVwAVDsKE+f1HGoSj82QJ6/vOWJpL4DTtvIgAwPTIxTlptBhsqGi
-	 STHK9ex+p1ipJFkxzZdxFVQZOZws1fJ85vnb/leuGo6UprV+4vyce9MlGywQWROJZP
-	 MG5mlHqBxztsvfIFDqMd7N3zspn/YqXoQGJmcoeDu5jWFh6FjJLyE5jTxYNtroUCIU
-	 ElFc4e0amjIta/HyhltPTxOQUgcMtMbkanPt1NJ9rB4F3WKiP+m+TpTkzmUPn9SD9P
-	 Bg4PseWiJbN1Q==
+	b=mGL7EvW/cXy+gblvvE+TjfTTiGuw/c4aHMbjRNgAp9D78giiy4rs1t6DhWGpjsDo9
+	 eyAaNLSTG8f7vO6uyYebUcJHtTYwGcBW5zkqcKlLeQBaoIzfvHMJBnjFnD0DzFi6fL
+	 jFMRf+lG/Az39uiepP3BxZpSLpto9+yw/Fc0HMzezY3cXyHC4A8IRErEwqItsXRLxA
+	 jmXqmCQg8vOcjZy2bxevxsXHFnKPyhJLnMmmHFzlymO1GIlHiOh9vUg3CvORCl29g1
+	 xZF9fJl+g1dD4Q7Js1zEbpOYNsIdpw3MPzTaC5lxaCHQbyz7ebbP61KpaORHzLCejQ
+	 PcvUzSqYu6uGA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
+Cc: Louis Dalibard <ontake@ontake.dev>,
+	Jiri Kosina <jkosina@suse.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 28/29] kconfig: remove wrong expr_trans_bool()
-Date: Tue, 18 Jun 2024 08:39:54 -0400
-Message-ID: <20240618124018.3303162-28-sashal@kernel.org>
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 29/29] HID: Ignore battery for ELAN touchscreens 2F2C and 4116
+Date: Tue, 18 Jun 2024 08:39:55 -0400
+Message-ID: <20240618124018.3303162-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240618124018.3303162-1-sashal@kernel.org>
 References: <20240618124018.3303162-1-sashal@kernel.org>
@@ -64,156 +66,54 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.94
 Content-Transfer-Encoding: 8bit
 
-From: Masahiro Yamada <masahiroy@kernel.org>
+From: Louis Dalibard <ontake@ontake.dev>
 
-[ Upstream commit 77a92660d8fe8d29503fae768d9f5eb529c88b36 ]
+[ Upstream commit a3a5a37efba11b7cf1a86abe7bccfbcdb521764e ]
 
-expr_trans_bool() performs an incorrect transformation.
+At least ASUS Zenbook 14 (2023) and ASUS Zenbook 14 Pro (2023) are affected.
 
-[Test Code]
+The touchscreen reports a battery status of 0% and jumps to 1% when a
+stylus is used.
 
-    config MODULES
-            def_bool y
-            modules
+The device ID was added and the battery ignore quirk was enabled for it.
 
-    config A
-            def_bool y
-            select C if B != n
-
-    config B
-            def_tristate m
-
-    config C
-            tristate
-
-[Result]
-
-    CONFIG_MODULES=y
-    CONFIG_A=y
-    CONFIG_B=m
-    CONFIG_C=m
-
-This output is incorrect because CONFIG_C=y is expected.
-
-Documentation/kbuild/kconfig-language.rst clearly explains the function
-of the '!=' operator:
-
-    If the values of both symbols are equal, it returns 'n',
-    otherwise 'y'.
-
-Therefore, the statement:
-
-    select C if B != n
-
-should be equivalent to:
-
-    select C if y
-
-Or, more simply:
-
-    select C
-
-Hence, the symbol C should be selected by the value of A, which is 'y'.
-
-However, expr_trans_bool() wrongly transforms it to:
-
-    select C if B
-
-Therefore, the symbol C is selected by (A && B), which is 'm'.
-
-The comment block of expr_trans_bool() correctly explains its intention:
-
-  * bool FOO!=n => FOO
-    ^^^^
-
-If FOO is bool, FOO!=n can be simplified into FOO. This is correct.
-
-However, the actual code performs this transformation when FOO is
-tristate:
-
-    if (e->left.sym->type == S_TRISTATE) {
-                             ^^^^^^^^^^
-
-While it can be fixed to S_BOOLEAN, there is no point in doing so
-because expr_tranform() already transforms FOO!=n to FOO when FOO is
-bool. (see the "case E_UNEQUAL" part)
-
-expr_trans_bool() is wrong and unnecessary.
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+[jkosina@suse.com: reformatted changelog a bit]
+Signed-off-by: Louis Dalibard <ontake@ontake.dev>
+Signed-off-by: Jiri Kosina <jkosina@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kconfig/expr.c | 29 -----------------------------
- scripts/kconfig/expr.h |  1 -
- scripts/kconfig/menu.c |  2 --
- 3 files changed, 32 deletions(-)
+ drivers/hid/hid-ids.h   | 2 ++
+ drivers/hid/hid-input.c | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
-index 81ebf8108ca74..81dfdf4470f75 100644
---- a/scripts/kconfig/expr.c
-+++ b/scripts/kconfig/expr.c
-@@ -396,35 +396,6 @@ static struct expr *expr_eliminate_yn(struct expr *e)
- 	return e;
- }
- 
--/*
-- * bool FOO!=n => FOO
-- */
--struct expr *expr_trans_bool(struct expr *e)
--{
--	if (!e)
--		return NULL;
--	switch (e->type) {
--	case E_AND:
--	case E_OR:
--	case E_NOT:
--		e->left.expr = expr_trans_bool(e->left.expr);
--		e->right.expr = expr_trans_bool(e->right.expr);
--		break;
--	case E_UNEQUAL:
--		// FOO!=n -> FOO
--		if (e->left.sym->type == S_TRISTATE) {
--			if (e->right.sym == &symbol_no) {
--				e->type = E_SYMBOL;
--				e->right.sym = NULL;
--			}
--		}
--		break;
--	default:
--		;
--	}
--	return e;
--}
--
- /*
-  * e1 || e2 -> ?
-  */
-diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-index 9c9caca5bd5f2..c91060e19e477 100644
---- a/scripts/kconfig/expr.h
-+++ b/scripts/kconfig/expr.h
-@@ -296,7 +296,6 @@ void expr_free(struct expr *e);
- void expr_eliminate_eq(struct expr **ep1, struct expr **ep2);
- int expr_eq(struct expr *e1, struct expr *e2);
- tristate expr_calc_value(struct expr *e);
--struct expr *expr_trans_bool(struct expr *e);
- struct expr *expr_eliminate_dups(struct expr *e);
- struct expr *expr_transform(struct expr *e);
- int expr_contains_symbol(struct expr *dep, struct symbol *sym);
-diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
-index 109325f31bef3..9d4c3f366a061 100644
---- a/scripts/kconfig/menu.c
-+++ b/scripts/kconfig/menu.c
-@@ -380,8 +380,6 @@ void menu_finalize(struct menu *parent)
- 				dep = expr_transform(dep);
- 				dep = expr_alloc_and(expr_copy(basedep), dep);
- 				dep = expr_eliminate_dups(dep);
--				if (menu->sym && menu->sym->type != S_TRISTATE)
--					dep = expr_trans_bool(dep);
- 				prop->visible.expr = dep;
- 
- 				/*
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 405d88b08908d..4b8c1d18c21e0 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -417,6 +417,8 @@
+ #define I2C_DEVICE_ID_HP_SPECTRE_X360_13_AW0020NG  0x29DF
+ #define I2C_DEVICE_ID_ASUS_TP420IA_TOUCHSCREEN 0x2BC8
+ #define I2C_DEVICE_ID_ASUS_GV301RA_TOUCHSCREEN 0x2C82
++#define I2C_DEVICE_ID_ASUS_UX3402_TOUCHSCREEN 0x2F2C
++#define I2C_DEVICE_ID_ASUS_UX6404_TOUCHSCREEN 0x4116
+ #define USB_DEVICE_ID_ASUS_UX550VE_TOUCHSCREEN	0x2544
+ #define USB_DEVICE_ID_ASUS_UX550_TOUCHSCREEN	0x2706
+ #define I2C_DEVICE_ID_SURFACE_GO_TOUCHSCREEN	0x261A
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index 4ba5df3c1e039..b0091819fd58a 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -374,6 +374,10 @@ static const struct hid_device_id hid_battery_quirks[] = {
+ 	  HID_BATTERY_QUIRK_IGNORE },
+ 	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, I2C_DEVICE_ID_ASUS_GV301RA_TOUCHSCREEN),
+ 	  HID_BATTERY_QUIRK_IGNORE },
++	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, I2C_DEVICE_ID_ASUS_UX3402_TOUCHSCREEN),
++	  HID_BATTERY_QUIRK_IGNORE },
++	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, I2C_DEVICE_ID_ASUS_UX6404_TOUCHSCREEN),
++	  HID_BATTERY_QUIRK_IGNORE },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ELAN, USB_DEVICE_ID_ASUS_UX550_TOUCHSCREEN),
+ 	  HID_BATTERY_QUIRK_IGNORE },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ELAN, USB_DEVICE_ID_ASUS_UX550VE_TOUCHSCREEN),
 -- 
 2.43.0
 
