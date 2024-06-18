@@ -1,148 +1,169 @@
-Return-Path: <linux-kernel+bounces-219684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C507F90D67B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:04:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CC390D679
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5E451C25065
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC37284836
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361BC1CAB9;
-	Tue, 18 Jun 2024 15:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241FF1C6B5;
+	Tue, 18 Jun 2024 15:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="PFkQ76vE"
-Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2144.outbound.protection.outlook.com [40.92.62.144])
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="2OfyujLT"
+Received: from mx0b-00823401.pphosted.com (mx0b-00823401.pphosted.com [148.163.152.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1152B208A0;
-	Tue, 18 Jun 2024 15:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.144
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718723039; cv=fail; b=CTRreMWGnD8gPFyEXCX66k6HOQE3S61yphKAIWz5lvpgq2pAtYhtITzR49Zm9id5aUCf4ix5zo9gzZPPh5q/jRMpBVgiuI3u4QUbqlufEp03aYTvE+hy7KIz+nYt6RwYoEuHf3NVPeI5ia2nu2ePwPKiRqzCBVW7uZkChsBW1Ww=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718723039; c=relaxed/simple;
-	bh=KZmUMGJ2R4BUctimfp7c3VXWE4VatyAmcuCl2oDniRE=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=EHVS9BdGslEkvEyzTqc/0I3/C4RS3Op3s9eCHlicAHZ75rLXZB5H8Mx9a4gwy1E9S/QzV7Xcdv3Y/qVTst5VVgTDzWmG7kTOMs1s/uNgDbqnzellvXoNAIK7iCJ0NWFA/x/nA7FGsTwj08v1m1wq8md+OwWzzelgK+n8lyg1q9w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=PFkQ76vE; arc=fail smtp.client-ip=40.92.62.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X0kaYklC8Iqm+LK+YHBica6ZVhtSE0uVBDjpn0n8dhViLHPlz23uaI1v0N1I8X+ydiMv1FafdPsDWD6l2vgL+QxJLMPr2JpbLwpsBwBhH/PbW8k7QJXC/UADex2e5fnHmCNIsLbhUcKwTmjznGIMT0Sg29Uy1suSFrFRPG2WdvwbUliTpJ8cHzkuaFCbrLuPkEcWNAo2hQSe/XJ5tYi3Y14rH+tld6gDh73kznvCdaMGlbBrqoiPfXtwCW3KXha60jAxuUEAEIq8R3ppDbvj6ojFLom8I+KwhTxDaICaO8eV+lgyqn46Dc/catMeQ6nbWveXw1zoGUFBrB2uU7YZcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D3PMbhmIcHQwHTJoxl4VzJyO5ca9jnfp5cNkaqthJ/g=;
- b=cDCGU2PkTo6ZRxY7lrkPIgpODAq8R5DL8b8wqrATVeCEH6y/+ivG3X3M3PbFlgvULPme7s4R8V93p6lYhm7pCH3k37/PA05Ymv5dEdQjBStGvwZDtTI//xUz0LJKCIMfoSX1EYvodW8S6nKZHEdOKqGh/uFjFT2yQL0u2upfoLngfCgVhh45M6ddJ81TpPSxddnfZneJUjtUrQ9CP6Di6JYKDyx/E/SuJNCIQIp5jK9Kfh/PBeDNqsMxXBcMKUWw91OgSzk2F39+NKDFeYTiC4DnIFl5wMxrBGgMMFegyhj8XF2cBGLxgDSpuSkdh7VwKYKuOrB/W17OCEzYlyZrhA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D3PMbhmIcHQwHTJoxl4VzJyO5ca9jnfp5cNkaqthJ/g=;
- b=PFkQ76vEHR+xaDGAgEFydJUBGsMbJolTJ7ag4Hs+YJAvrw9/kqJnZfqy2nQFNKPeV4ZfMf/7Fhdkfpl9FXMiKZEpG3WvXbV/l6G5VJgf/hRaihXEh336xM8QnzSeS9VQWUfn6eC0RlthgeZ0ngfTiHhy5Q5klhGGnVnzRkDZnphVcX74jCviUykpTx87GaHgNuygD0Hm5eJn1oWojWawCuhg3x3U+vzs30HAMLLJgTXCEqT/Juw9Z5EEr2XfoOpqThZJc7tcs+2lj5xmoiSEtNuFjWKY1TRCBIVfwpRkZwCJGsxUK6Tcgl9Q6gbCl0MREO/DZJlShw0Jh770lR8mGg==
-Received: from SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:9b::8) by
- SY6P282MB4005.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:1d8::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.31; Tue, 18 Jun 2024 15:03:51 +0000
-Received: from SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
- ([fe80::ac24:7d2b:92fe:20c3]) by SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
- ([fe80::ac24:7d2b:92fe:20c3%2]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 15:03:51 +0000
-From: Yuntao Dai <d1581209858@live.com>
-To: jassisinghbrar@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Yuntao Dai <d1581209858@live.com>
-Subject: [PATCH 0/3] riscv: sophgo: add mailbox support for cv18x SoCs
-Date: Tue, 18 Jun 2024 23:03:19 +0800
-Message-ID:
- <SYBP282MB2238DE0DA19C6EF411B2356CC4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-TMN: [wzzAo9agJ6Z2G0H/2MwcClOf3eAtPNmX]
-X-ClientProxiedBy: TY2PR01CA0021.jpnprd01.prod.outlook.com
- (2603:1096:404:a::33) To SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:9b::8)
-X-Microsoft-Original-Message-ID: <20240618150319.4649-1-d1581209858@live.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F3A1367;
+	Tue, 18 Jun 2024 15:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718723024; cv=none; b=dAPhBinvW61hZJQo4EUBg+MK0hr0i0IQ96A0pQvL9Pgnhqlc3VQeOaXnjeEJ5lSdcAvMobqfT8e/xuszUimKTYLBdbJo+gRmhKsYTus1FEo3/inO/WgtU/myfhFIXFg/s3gp8tp6dl0vNEQtmCCrJDlDdoE/gdGP8Kh/0CmvXxc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718723024; c=relaxed/simple;
+	bh=bs7iNpgVUW5Chv5+nq8B2RJJ4Ksk5joWXZdYM6a+9II=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WudOH/nwXDKvFrcfJOv0+ewWAd8kRIkYWaXH3inUeXpgBbrOshbI8KqCWAoEjd+6ZIVTCl3e5oE6IqHEWRKGMBxkDhMzNuZnFj373E1c/cFMYT1PeZHcY2QjfL/MZJ2Nb2BRHghN6kC3o1vmR7l+RgUUVMDZVW055K9zFxqSigI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=2OfyujLT; arc=none smtp.client-ip=148.163.152.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355090.ppops.net [127.0.0.1])
+	by m0355090.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 45IEew5e009691;
+	Tue, 18 Jun 2024 15:03:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=DKIM202306; bh=LsDqHofp7K+2f2J0vx8uTn8
+	2tMHjx9v5dUOBs6FATk0=; b=2OfyujLTu3HMNZ/1kzSJ7E1hMLjFWJzgZiOaS3K
+	oRs1TGdAoCy1YW6xeop2sf/8y1LFz8HGoX5igUdv5lCr5PEm7MsN7azev4rIkkTG
+	mO6Vzt+Y5ef1nlT/APQIsXsaI6u9ChRY9JurZ+0SvYKIq8eOFiii6fQFEg68RhgG
+	oYaSMdFpo8C4zTzIIO2CZO3GptHawdoNaUGWva06xhWCmEF3zRJvLCWa+EbrQyiX
+	C4Svw4UQT4bVcuAq71bXyzFYnR1W6+SoyAuzj+B2hLOc9tiau9O+ouvEr7OJBoy0
+	8y21NM+a5F/la2x3fRmN4OPtzoAj89tsUByfesGdwNYrn+g==
+Received: from va32lpfpp03.lenovo.com ([104.232.228.23])
+	by m0355090.ppops.net (PPS) with ESMTPS id 3ysp9ry9k0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 15:03:24 +0000 (GMT)
+Received: from va32lmmrp01.lenovo.com (va32lmmrp01.mot.com [10.62.177.113])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by va32lpfpp03.lenovo.com (Postfix) with ESMTPS id 4W3VPS1FQLz51Q9v;
+	Tue, 18 Jun 2024 15:03:24 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by va32lmmrp01.lenovo.com (Postfix) with ESMTPSA id 4W3VPR6DTRz2VZRs;
+	Tue, 18 Jun 2024 15:03:23 +0000 (UTC)
+Date: Tue, 18 Jun 2024 10:03:22 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-mm@kvack.org, Will Deacon <will@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Alexandre Ghiti <alexghiti@rivosinc.com>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ptdump: add intermediate directory support
+Message-ID: <z6tpx36aipbbklsjfvllmcjurmsz7gdxoaazv7qgdvy3rdtn4i@cbapiyxw5hpz>
+References: <fik5ys53dbkpkl22o4s7sw7cxi6dqjcpm2f3kno5tyms73jm5y@buo4jsktsnrt>
+ <ZjtgCfhQDJus3dqI@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SYBP282MB2238:EE_|SY6P282MB4005:EE_
-X-MS-Office365-Filtering-Correlation-Id: a06af420-65ae-4005-16ba-08dc8fa7dd15
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199025|3412199022|440099025|1710799023;
-X-Microsoft-Antispam-Message-Info:
-	JcUjd/HhSzjOP+3a8bUkeLMdggUJpR0M3SeIDTTuksDU6nT2jQ/06Pha2O9XQ2CfMQap4/9ML5lZ3RU761V19TFigDyaROdjxwVT336LOolCzsyJSgWi+F5rMyxkmXb//2eX7G+RFPPBV2rHaTOTa5/yMt518PdJD4fVTjL0U+jW8BrjLEQfWFYki++ue+YJLByxbI1mcfqT5BAhEVtTJSipxHEJQssFx34W4aP6IQfZruzLFCt2ELVVla5gJW8G3RZEW8TJnhz3fIcdr6MBG/LkTyIA8M25GrPUzf/ujQ83Wx9nWxNw4ru5UXG2fMNpRxTa7Oy+NQfN6J0qaytG6282n3LBUrTV7U1WAoOTq/Em73lPfSDXXTyMlTIHkzdsriBQ72H7ZFCRilr8QwofnxgmiGH+5+d1nznJoGe6pIEOUDlQAN8RAllMqbe0ee8IYoa+1bpO5EzytA9ndeF1uTbfrLjRhXJxl/YwMHX2HWp4YqfZ7L2keCULrxO9LFduhnXlmiOrELFWmG4WUUUkJofDj7XD2FHbk1CAX3hg41mb6Xrw2wZof7CqlWlwOo9b1zyZuE5BLXfXlVrW3YWaUVLw1IcZoVi8K/QM1JKG9H4=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RwMQUuZsJCxwAozzv6tVvtLNL0ykm/WL8gZ0/2tKTJNwkYj+2XOXoAtNcymo?=
- =?us-ascii?Q?LRpu2c+FRTZbm0LBaxMNq4N6z5TRynK3DXEGiKBVs25y3Z7VmYzZvr5iHsw3?=
- =?us-ascii?Q?opmKTGgtlhiCdaYNzOTxlVuMMVjTzTwVaw1ioD370NcbENOcuP9QhroHXQru?=
- =?us-ascii?Q?06wjPk8Wnscu6QKKXEcHLKi00BZvUu1gV4DuryM4u8QXPSWGdZ0X5R9vN0s0?=
- =?us-ascii?Q?AT+OAXKe+tXT/1a2qR2aS8m5ywJkO7cHR8WrzJi4kP/QWQ02kvCsoWlBi1JN?=
- =?us-ascii?Q?0h6hUpwrJsf6xhe0eCcRb+YZv+8TTSxf8g/4DEzb+4Dy4IG4oG/rQoSCAPXW?=
- =?us-ascii?Q?Oq1ZLOclqz/PTEaB44iyluH974RUbHBZZIbZBqJKYswcEG83nZ2GCGOWfwIq?=
- =?us-ascii?Q?VSCHiyf40eTl8lTmSiucGFI9e2aQz1S1kqVJNRQ6vArA3gwqyK9LgTlyMuPo?=
- =?us-ascii?Q?f6ul7EDrXaAunoD+aWbsvlpzEYomWGim6HET5JXmWmUykLxpTCXiDqwJ7qUI?=
- =?us-ascii?Q?+8VzNV0dlocjfOMtWga67T1Z7CzHoybla68Sd55SHWeiO/pxSDTPUSaSIyvY?=
- =?us-ascii?Q?7JBi87QsVCUQvqCeyf70mmAeY5y7vk6hTVeFSMu2U65QaUbQzscrEDum14eL?=
- =?us-ascii?Q?c7u+mSgcO7TqHEgxkjcEbXO6ZaHBg80PywKFHmShkXkVjMcX4MXLr0h2sU41?=
- =?us-ascii?Q?J4CJR9nNOG7f+M0VDTdyQafSVSI1xxJT1cKYsBdz/H7KZtzHyuCj9rX/puYT?=
- =?us-ascii?Q?H8KF+9+5SSG7qv+xR6+9LIrhCObGAQml8b7MYfeGNq161rboeqyB6u/9oE5k?=
- =?us-ascii?Q?+hgfZyrDnIv2re4ukIFjIQ+HjCaRrGWcWICRRe9aaASSbBoW9uRSFXudBLve?=
- =?us-ascii?Q?e/b/CgDafj7WscUbl5uTqjWllFHRyNaz3vJGTgekAcpAA88tQMsPd34ia5O1?=
- =?us-ascii?Q?nYR2So8vDyaORCjCZmsmQw21KSMJ8UG5mB+58RXyYmXTIT5Z5pgP1QQ+9+to?=
- =?us-ascii?Q?5THTOTEFzZpojA50G1u14NIs+62Ys3tKBDbL+9VXSVypMf7UMsqWF9lwNktb?=
- =?us-ascii?Q?wa/ZYqEqVZB5Dx92TbSFGP6USEwu7C0ano1Nm+v9ik1HIYWfEFAjMLVW0s0G?=
- =?us-ascii?Q?3fTG6J4OvmYJvy05ja0HWa1XGp270fX7WwWWa04hVGcK0Q680T2vZbaRc9ca?=
- =?us-ascii?Q?QVbq6dHcmKeuCpizd5jC6ZcKyq2P3SKNUiApIgcN4TFIBAKzPCq8xiWgcCk?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-746f3.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: a06af420-65ae-4005-16ba-08dc8fa7dd15
-X-MS-Exchange-CrossTenant-AuthSource: SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 15:03:51.5615
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY6P282MB4005
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjtgCfhQDJus3dqI@arm.com>
+X-Proofpoint-GUID: 36Dl4qhOa9MmtRZLkP33Gicrqq9UYwHt
+X-Proofpoint-ORIG-GUID: 36Dl4qhOa9MmtRZLkP33Gicrqq9UYwHt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ mlxlogscore=999 priorityscore=1501 malwarescore=0 suspectscore=0
+ clxscore=1015 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180112
 
-Add mailbox support for Sophgo cv18x SoCs, and test on both cv1800b SoC for 
-milkv-duo and cv1812h SoC for milkv-duo256m
+On Wed, May 08, 2024 at 12:20:41PM GMT, Catalin Marinas wrote:
+> On Tue, Apr 30, 2024 at 11:05:01AM -0500, Maxwell Bland wrote:
+> > -ptdump is a debugfs interface that provides a detailed dump of the
 
-Yuntao Dai (3):
-  dt-bindings: mailbox: add Sophgo cv18x SoCs mailbox
-  riscv: dts: add mailbox for Sophgo cv18x SoCs
-  mailbox: sophgo: add mailbox driver for cv18x SoCs
+Hi Catalin! Apologies for the delayed response to this review, life got
+in the way. A version 4 that addresses your comments is available here:
 
- .../mailbox/sophgo,cv1800b-mailbox.yaml       |  75 ++++++++
- arch/riscv/boot/dts/sophgo/cv18xx.dtsi        |  11 ++
- drivers/mailbox/Kconfig                       |  11 ++
- drivers/mailbox/Makefile                      |   2 +
- drivers/mailbox/cv1800b-mailbox.c             | 182 ++++++++++++++++++
- 5 files changed, 281 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mailbox.yaml
- create mode 100644 drivers/mailbox/cv1800b-mailbox.c
+https://lore.kernel.org/all/aw675dhrbplkitj3szjut2vyidsxokogkjj3vi76wl2x4wybtg@5rhk5ca5zpmv/
 
--- 
-2.17.1
+> > +Assessing these attributes can assist in understanding the memory layout,
+> > +access patterns and security characteristics of the kernel pages.
+> 
+> I presume there's some new text here.
 
+Yes. Though after having a bit of time to think on it, I just reworked
+the presentation altogether for version 4.
+
+> 
+> >  	}, {
+> >  		.mask	= PTE_UXN,
+> >  		.val	= PTE_UXN,
+> 
+> Since you are adding a separate pmd_bits[] array, I think we could get
+> rid of the PTE_TABLE_BIT entry. It doesn't make sense for ptes anyway.
+
+Done! Sweet.
+
+> > +static const struct prot_bits pud_bits[] = {
+> [...]
+> > +};
+> 
+> Do we need pud_bits[] as well? Can we not just use pmd_bits[]? Call it
+> pxd_bits if you want, the format is the same for all p*d entries.
+
+Thanks, done!
+
+> 
+> Please separate the alignment changes into a different patch
+
+Done! 
+
+> > +			delta = (addr - st->start_address);
+> 
+> What's this supposed to show? In your example, it's strange that the PGD
+> is shown as 128 bytes:
+
+This was a bug due to my misunderstanding of what we were going for
+here. Thank you for pointing it out, as it made it easy to notice and
+patch.
+
+> >  	if (pgd_leaf(val)) {
+> >  		st->note_page(st, addr, 0, pgd_val(val));
+> >  		walk->action = ACTION_CONTINUE;
+> 
+> Is the difference between leaf and non-leaf calls only the walk->action?
+> We could have a single call to st->note_page() and keep the walk->action
+> setting separately. Do we also need to set ACTION_SUBTREE in case the
+> entry is a table entry? Or is it done in the caller somewhere? I could
+> not figure out.
+
+ACTION_SUBTREE is the default walk action, so it is implicitly set for
+table descriptors.
+
+> 
+> An alternative would be to have an ARCH_WANT_NON_LEAF_PTDUMP Kconfig
+> option instead of a bool note_non_leaf in struct ptdump_state. This
+> option seems to be entirely static, not sure it's worth a struct member
+> for it. You'd use IS_ENABLED() above instead of st->note_non_leaf.
+
+This was an excellent idea, thank you. Incorporated.
+
+BRs and thanks again for your help on this,
+Maxwell Bland
 
