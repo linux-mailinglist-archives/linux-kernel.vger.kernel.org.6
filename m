@@ -1,249 +1,195 @@
-Return-Path: <linux-kernel+bounces-219506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3827590D38F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:08:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C737C90D393
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BEDC1C24FB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:08:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5422C286BE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA95918EFFB;
-	Tue, 18 Jun 2024 13:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9989319ADBF;
+	Tue, 18 Jun 2024 13:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D6HayRqg"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="H5oo0uMz"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3951591E3
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DCA13A899;
+	Tue, 18 Jun 2024 13:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718718563; cv=none; b=DqIG3NG+KCBUdXM6fOKAj2O8yFVjJzteDGVpoY1/4U7KvSeygbi9rb4VUE9lvS/d+7dw0Vz6bd3ge4TtcjEHcABrCFB5izDjxAvLp/L/6Ej6f20o0hh6iw1lL+bTo0lfscCa0V442YZyiksKMkrd8L5W2e/JwHNe4szQ4yiB5y0=
+	t=1718718576; cv=none; b=j8xKqyQI/JzjNjdVGniY/osxYVJozMil+N7Vqcdl82bAnl9XZLtXwbE+r6kJmp/83oE/1iHQL32u7XemYIaGbF7iZpZ6jQv0ylr3d/sNkPCMLiSd421Es03932FnhCnUsi1lVlsQvqc2R4b2DeGtd8KOsCIaQDJ8qS6XNGpQn4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718718563; c=relaxed/simple;
-	bh=pqG99NiBWHTOG1yuOzvntktNTElMoxg2aP15S8zgv/o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=khy5hN0u7XXQLLAheuHVofUvlxXc+4B5fP76ByjW1AI0UILLCfy9TTL/Iiq/B7edahU5hfYyu7+CsYsUbB12YB+dc2LxnoCa/IdmU6hHfjqk5eZZTGOfwTjo0I920mM5sgU9rQtUnFV6p8IAi8qUSDauTsJPGy7spjuge4tBKm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D6HayRqg; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57c7ec8f1fcso6512067a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718718560; x=1719323360; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8cq8BNVyT1lxgezLa3xN77vJrD/ds6UBuIoYNpcAHr8=;
-        b=D6HayRqgWySabRCz7glCcAMWQzIKkuFSoKf30rQiv+mErs0sT5XtkxwePhPA61PnRe
-         rUD/OTH6NKr7hYXCZxuhghH4MiX9QWfzzC1Xs4Xo/XAlDUxS9KC8o1KFp8UgfpMqLIKW
-         wsNpCPPJXhjl21zjzddyI4SF1vyPYGwWqLGy0BP2RHQMs8K1BM9D4dnEQGQEaojRU620
-         Z2oj1Qb2n9a2dw6dwaPFB1JQFIJ3YlcBYVQGsasb9nGCq6kufvnja+ZH/UeYJFXk7DSf
-         G0ls/TXO9DXhzhueuMd2jXX/VsNjHIaomeZWzKZSUMTgR+veLuPUThUpMZpqTXBjqLaH
-         0TyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718718560; x=1719323360;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8cq8BNVyT1lxgezLa3xN77vJrD/ds6UBuIoYNpcAHr8=;
-        b=oGyKMb1iRi+EJ31N0XonmicAo+De/0TAoakrdrINcf4CThch27k7ANsQvG0U8heRjy
-         /xy6RhM90omPNRg8bzMMzq3Ckp2yhLcJZcv9N/qp+pa2Mkh/VL3S5n/aQ0cLEcS2WvKN
-         Fqy7luBfoFF628XF7XdcJtc4R4MTI5K72sR0utbXvO1BpmNMfuQ1eoNJdN9Ph8bkMDsz
-         2psb/eCCq2PxI+s7Baq58GnEIa6GIjcpPuW0O/JiXi44JpZe9V366up2XLMBssJrxeA/
-         CYR0rVKHcrixNir9KyObCoRJT5BdkWzC8SbeCac9JfJMvG0E+K9yi2O8zm07cReuCsaE
-         Cz0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUXYmpPI3C6+ORkfgwWlDmJ9xh0wdXPb7LMwRrZjpEQryXwoRaxNaHm/RjbNEYmHOZ8AHQoOG4wzyZEA9g1Gpx3qsKct5u6rFz4ITCN
-X-Gm-Message-State: AOJu0YwzOBmS8akGdNz9qyh8oKVjt/+i5qjo2Xq90H37jw3/37a+CKIh
-	EmOAl6e+6KvjVqN/1EzRUQUZPYAhzdgCaqroc4pe9UzkWDFCnN9V5+0jY6Oxft8=
-X-Google-Smtp-Source: AGHT+IH06zBAori5j78Ra33E+DRN1FHFA/kbfAGU8rA9O9veM5BnTvopHWzqDv6cMnW1092Kp2+/mw==
-X-Received: by 2002:a50:cc9c:0:b0:57c:6efa:8381 with SMTP id 4fb4d7f45d1cf-57cbd6a8656mr7531606a12.42.1718718560123;
-        Tue, 18 Jun 2024 06:49:20 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cbdfe1428sm6678397a12.27.2024.06.18.06.49.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 06:49:19 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 18 Jun 2024 14:49:01 +0100
-Subject: [PATCH 2/2] ASoC: codecs:lpass-wsa-macro: Fix logic of enabling vi
- channels
+	s=arc-20240116; t=1718718576; c=relaxed/simple;
+	bh=2Gh42P65F4M62z4zrr6A450lagcXTdXdAmZ6brdw7kM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tcGjCSkfdYT5UXcwq3rnIfyHvh0ILku25ENZLmOnQmeopbyWpIDKPiKuoaDQgc7TnQKk/pk7Qsf5EYD24S6xLJM+mexkaSzXfISK9xQGLp+Y5UmI9cD8Oynp0DnkZIDzcmuS8UElvfliIXxYKpfSleFtDllz2tiNv+OOCqROnUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=H5oo0uMz; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 2E34A8786C;
+	Tue, 18 Jun 2024 15:49:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718718571;
+	bh=7L0RwYFtaSvc1XTo/PTgwck491NQdc26UYc5Z/uRAPk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=H5oo0uMzhcdf6MZTiOZZ9245jhl7UKw3n3rOGVHJ24XQmLZtsWDGTzbd7reBPo3bO
+	 k7zaVRKp43gI+7ICR2JCyOG8e+2F6PzBP4flv/UzwYCS5m8gENo6Yx6rTmOv55uWm8
+	 BoGrd5sUkKZIWAgOXX3Px+8kmJarPesdhu5K2i1a9d1wDx2ErCLuEdO8KHJ2qPJEDe
+	 J4g0HLCx98HNpr2e+bTCnkzHmZ1s5TjgN6+E3uTVR4VDkHLJbH7+UbuwBv4KSj69+j
+	 unIea25fVI7E9S0RUKhnAHAGT7a0gPrNg7rCVqzUZodOyjT4gygaWDLn81E8b4Tqw5
+	 uVQ3Xpc4uxtjA==
+Date: Tue, 18 Jun 2024 15:49:28 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
+ netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
+ <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>, Oleksij
+ Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com, Sebastian
+ Andrzej Siewior <bigeasy@linutronix.de>, Simon Horman <horms@kernel.org>,
+ "Ricardo B. Marliere" <ricardo@marliere.net>, Casper Andersson
+ <casper.casan@gmail.com>, linux-kernel@vger.kernel.org, Woojung Huh
+ <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, Andrew Lunn
+ <andrew@lunn.ch>
+Subject: Re: [PATCH v1 net-next] net: dsa: Allow only up to two HSR HW
+ offloaded ports for KSZ9477
+Message-ID: <20240618154928.29f631e6@wsk>
+In-Reply-To: <339031f6-e732-43b4-9e83-0e2098df65ef@moroto.mountain>
+References: <20240618130433.1111485-1-lukma@denx.de>
+	<339031f6-e732-43b4-9e83-0e2098df65ef@moroto.mountain>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240618-lpass-wsa-vi-v1-2-416a6f162c81@linaro.org>
-References: <20240618-lpass-wsa-vi-v1-0-416a6f162c81@linaro.org>
-In-Reply-To: <20240618-lpass-wsa-vi-v1-0-416a6f162c81@linaro.org>
-To: Banajit Goswami <bgoswami@quicinc.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Manikantan R <quic_manrav@quicinc.com>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5876;
- i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
- bh=pqG99NiBWHTOG1yuOzvntktNTElMoxg2aP15S8zgv/o=;
- b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmcZBcvMB+6ZwW+EnK6qwhD7CqaHmPJAw6oa11a
- z5zg0bOOBKJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZnGQXAAKCRB6of1ZxzRV
- N9zXCAClFg7FM8O1767qza2EL7Ysm1biOGceunEJhBnkfwOpoPartajuKcOhnni0xR17yVoOLLV
- IDyZZZO8OUeftIbUjGus18unyLvGPtlSoW/H7NkUqdomkU/KBmFB6A8/2geK8t5RGyy4JuyVlTJ
- lAmoYTp42swJJKt7TxbwriZS6uyb+L93hGiZdepqMu1n1Eoe4DwzWwsUJQPM4L64sOvdu8J9EA5
- 3fI6weJ1eh8rGFkdhijE/NuR0OAWwbbXEDvm+XtmO1GOPVTzUpgI2u5SopoJ4Tuimn5MDxWwwxu
- e6OhUD3ewCUb+lIPNzRt+s9LTXM/U23Dc7nmmqzMulpccknT
-X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
- fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
+Content-Type: multipart/signed; boundary="Sig_/Xk=wfuMJ3pzqQq/ynaJuO7z";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Existing code only configures one of WSA_MACRO_TX0 or WSA_MACRO_TX1
-paths eventhough we enable both of them. Fix this bug by adding proper
-checks and rearranging some of the common code to able to allow setting
-both TX0 and TX1 paths
+--Sig_/Xk=wfuMJ3pzqQq/ynaJuO7z
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 2c4066e5d428 ("ASoC: codecs: lpass-wsa-macro: add dapm widgets and route")
-Co-developed-by: Manikantan R <quic_manrav@quicinc.com>
-Signed-off-by: Manikantan R <quic_manrav@quicinc.com>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- sound/soc/codecs/lpass-wsa-macro.c | 105 ++++++++++++++++++++++++-------------
- 1 file changed, 69 insertions(+), 36 deletions(-)
+Hi Dan,
 
-diff --git a/sound/soc/codecs/lpass-wsa-macro.c b/sound/soc/codecs/lpass-wsa-macro.c
-index 7b6d495ef596..7251fb179db9 100644
---- a/sound/soc/codecs/lpass-wsa-macro.c
-+++ b/sound/soc/codecs/lpass-wsa-macro.c
-@@ -1162,6 +1162,73 @@ static int wsa_macro_mclk_event(struct snd_soc_dapm_widget *w,
- 	return 0;
- }
- 
-+
-+static void wsa_macro_enable_disable_vi_sense(struct snd_soc_component *component, bool enable,
-+						u32 tx_reg0, u32 tx_reg1, u32 val)
-+{
-+	if (enable) {
-+		/* Enable V&I sensing */
-+		snd_soc_component_update_bits(component, tx_reg0,
-+					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
-+					      CDC_WSA_TX_SPKR_PROT_RESET);
-+		snd_soc_component_update_bits(component, tx_reg1,
-+					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
-+					      CDC_WSA_TX_SPKR_PROT_RESET);
-+		snd_soc_component_update_bits(component, tx_reg0,
-+					      CDC_WSA_TX_SPKR_PROT_PCM_RATE_MASK,
-+					      val);
-+		snd_soc_component_update_bits(component, tx_reg1,
-+					      CDC_WSA_TX_SPKR_PROT_PCM_RATE_MASK,
-+					      val);
-+		snd_soc_component_update_bits(component, tx_reg0,
-+					      CDC_WSA_TX_SPKR_PROT_CLK_EN_MASK,
-+					      CDC_WSA_TX_SPKR_PROT_CLK_ENABLE);
-+		snd_soc_component_update_bits(component, tx_reg1,
-+					      CDC_WSA_TX_SPKR_PROT_CLK_EN_MASK,
-+					      CDC_WSA_TX_SPKR_PROT_CLK_ENABLE);
-+		snd_soc_component_update_bits(component, tx_reg0,
-+					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
-+					      CDC_WSA_TX_SPKR_PROT_NO_RESET);
-+		snd_soc_component_update_bits(component, tx_reg1,
-+					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
-+					      CDC_WSA_TX_SPKR_PROT_NO_RESET);
-+	} else {
-+		snd_soc_component_update_bits(component, tx_reg0,
-+					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
-+					      CDC_WSA_TX_SPKR_PROT_RESET);
-+		snd_soc_component_update_bits(component, tx_reg1,
-+					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
-+					      CDC_WSA_TX_SPKR_PROT_RESET);
-+		snd_soc_component_update_bits(component, tx_reg0,
-+					      CDC_WSA_TX_SPKR_PROT_CLK_EN_MASK,
-+					      CDC_WSA_TX_SPKR_PROT_CLK_DISABLE);
-+		snd_soc_component_update_bits(component, tx_reg1,
-+					      CDC_WSA_TX_SPKR_PROT_CLK_EN_MASK,
-+					      CDC_WSA_TX_SPKR_PROT_CLK_DISABLE);
-+	}
-+}
-+
-+static void wsa_macro_enable_disable_vi_feedback(struct snd_soc_component *component,
-+						 bool enable, u32 rate)
-+{
-+	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
-+	u32 tx_reg0, tx_reg1;
-+
-+	if (test_bit(WSA_MACRO_TX0, &wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
-+		tx_reg0 = CDC_WSA_TX0_SPKR_PROT_PATH_CTL;
-+		tx_reg1 = CDC_WSA_TX1_SPKR_PROT_PATH_CTL;
-+		wsa_macro_enable_disable_vi_sense(component, enable, tx_reg0, tx_reg1, rate);
-+	}
-+
-+	if (test_bit(WSA_MACRO_TX1, &wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
-+		tx_reg0 = CDC_WSA_TX2_SPKR_PROT_PATH_CTL;
-+		tx_reg1 = CDC_WSA_TX3_SPKR_PROT_PATH_CTL;
-+		wsa_macro_enable_disable_vi_sense(component, enable, tx_reg0, tx_reg1, rate);
-+
-+	}
-+
-+}
-+
- static int wsa_macro_enable_vi_feedback(struct snd_soc_dapm_widget *w,
- 					struct snd_kcontrol *kcontrol,
- 					int event)
-@@ -1203,45 +1270,11 @@ static int wsa_macro_enable_vi_feedback(struct snd_soc_dapm_widget *w,
- 	switch (event) {
- 	case SND_SOC_DAPM_POST_PMU:
- 			/* Enable V&I sensing */
--		snd_soc_component_update_bits(component, tx_reg0,
--					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
--					      CDC_WSA_TX_SPKR_PROT_RESET);
--		snd_soc_component_update_bits(component, tx_reg1,
--					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
--					      CDC_WSA_TX_SPKR_PROT_RESET);
--		snd_soc_component_update_bits(component, tx_reg0,
--					      CDC_WSA_TX_SPKR_PROT_PCM_RATE_MASK,
--					      rate_val);
--		snd_soc_component_update_bits(component, tx_reg1,
--					      CDC_WSA_TX_SPKR_PROT_PCM_RATE_MASK,
--					      rate_val);
--		snd_soc_component_update_bits(component, tx_reg0,
--					      CDC_WSA_TX_SPKR_PROT_CLK_EN_MASK,
--					      CDC_WSA_TX_SPKR_PROT_CLK_ENABLE);
--		snd_soc_component_update_bits(component, tx_reg1,
--					      CDC_WSA_TX_SPKR_PROT_CLK_EN_MASK,
--					      CDC_WSA_TX_SPKR_PROT_CLK_ENABLE);
--		snd_soc_component_update_bits(component, tx_reg0,
--					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
--					      CDC_WSA_TX_SPKR_PROT_NO_RESET);
--		snd_soc_component_update_bits(component, tx_reg1,
--					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
--					      CDC_WSA_TX_SPKR_PROT_NO_RESET);
-+		wsa_macro_enable_disable_vi_feedback(component, true, rate_val);
- 		break;
- 	case SND_SOC_DAPM_POST_PMD:
- 		/* Disable V&I sensing */
--		snd_soc_component_update_bits(component, tx_reg0,
--					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
--					      CDC_WSA_TX_SPKR_PROT_RESET);
--		snd_soc_component_update_bits(component, tx_reg1,
--					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
--					      CDC_WSA_TX_SPKR_PROT_RESET);
--		snd_soc_component_update_bits(component, tx_reg0,
--					      CDC_WSA_TX_SPKR_PROT_CLK_EN_MASK,
--					      CDC_WSA_TX_SPKR_PROT_CLK_DISABLE);
--		snd_soc_component_update_bits(component, tx_reg1,
--					      CDC_WSA_TX_SPKR_PROT_CLK_EN_MASK,
--					      CDC_WSA_TX_SPKR_PROT_CLK_DISABLE);
-+		wsa_macro_enable_disable_vi_feedback(component, false, rate_val);
- 		break;
- 	}
- 
+> On Tue, Jun 18, 2024 at 03:04:33PM +0200, Lukasz Majewski wrote:
+> > The KSZ9477 allows HSR in-HW offloading for any of two selected
+> > ports. This patch adds check if one tries to use more than two
+> > ports with HSR offloading enabled.
+> >=20
+> > Signed-off-by: Lukasz Majewski <lukma@denx.de> =20
+>=20
+> Is this a bug fix?
 
--- 
-2.25.1
+This seems to be fixing stuff, which was added earlier to next-next.
 
+
+>  What is the impact for the user?
+
+Impact is that this board with this particular setup can just
+malfunction.
+
+>  Fixes tag?
+
+Ok.
+
+>  Add
+> this information to the commit message when you resend.
+
+I will wait a few days for input and then send v2.
+
+Thanks for the input.
+
+>=20
+> > ---
+> >  drivers/net/dsa/microchip/ksz_common.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >=20
+> > diff --git a/drivers/net/dsa/microchip/ksz_common.c
+> > b/drivers/net/dsa/microchip/ksz_common.c index
+> > 2818e24e2a51..0d68f0a5bf19 100644 ---
+> > a/drivers/net/dsa/microchip/ksz_common.c +++
+> > b/drivers/net/dsa/microchip/ksz_common.c @@ -3913,6 +3913,9 @@
+> > static int ksz_hsr_join(struct dsa_switch *ds, int port, struct
+> > net_device *hsr, if (ret) return ret;
+> > =20
+> > +	if (dev->chip_id =3D=3D KSZ9477_CHIP_ID &&
+> > hweight8(dev->hsr_ports) > 1)
+> > +		return -EOPNOTSUPP; =20
+>=20
+> Put this condition before the ksz_switch_macaddr_get().  Otherwise
+> we'd need to do a ksz_switch_macaddr_put().
+>=20
+> If dev->chip_id !=3D KSZ9477_CHIP_ID then we would have already
+> returned. Really, that should be the first check in this function.
+> The hsr_get_version() should be moved to right before we use the
+> version. (But that's a separate issue, not related to this patch so
+> ignore it).
+>=20
+> So do something like this but write a better error message.
+>=20
+> regards,
+> dan carpenter
+>=20
+> diff --git a/drivers/net/dsa/microchip/ksz_common.c
+> b/drivers/net/dsa/microchip/ksz_common.c index
+> 2818e24e2a51..181e81af3a78 100644 ---
+> a/drivers/net/dsa/microchip/ksz_common.c +++
+> b/drivers/net/dsa/microchip/ksz_common.c @@ -3906,6 +3906,11 @@
+> static int ksz_hsr_join(struct dsa_switch *ds, int port, struct
+> net_device *hsr, return -EOPNOTSUPP; }
+> =20
+> +	if (hweight8(dev->hsr_ports) > 1) {
+> +		NL_SET_ERR_MSG_MOD(extack, "Cannot offload more than
+> two ports (in use=3D0x%x)", dev->hsr_ports);
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+>  	/* Self MAC address filtering, to avoid frames traversing
+>  	 * the HSR ring more than once.
+>  	 */
+>=20
+>=20
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/Xk=wfuMJ3pzqQq/ynaJuO7z
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmZxkGgACgkQAR8vZIA0
+zr1YQwf/S+xziRYqZaOOkBrR3AVVSMhUkTpDUf39rSwfVvfe1M2H3R8tmJvaJK96
+/dfLP6om6L97IizZPbHOCmGHoeMyby6x25pTo+1PndmzX6++LbaKSjcICv8zDWWk
+0XMSx+UYu0rSpN4Ua75bgoTsPTXVn0vbHyXFR6vIs4L4xWrjk8D0PD6lfhhmna65
+qqL+qQJu5BkIVCCFFnWgKpEk+oXGh68GCjPZmI05bbP6z/xVUJzQjetAK9RT2gQS
+de9mGsDpckXFVQkwyPsTY64IrgJ6X8UcXbScnlksvBEpkAQe4ZZ4d/lQ7TKX3dTX
+yW0+4WXPEY2HD8w7s1a1BMLFE53CDQ==
+=Nfig
+-----END PGP SIGNATURE-----
+
+--Sig_/Xk=wfuMJ3pzqQq/ynaJuO7z--
 
