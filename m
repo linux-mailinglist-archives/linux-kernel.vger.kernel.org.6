@@ -1,181 +1,291 @@
-Return-Path: <linux-kernel+bounces-220275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BBE90DEC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:56:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB2690DEC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 801201F24BA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:56:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2284E1C23597
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED78179953;
-	Tue, 18 Jun 2024 21:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C78178398;
+	Tue, 18 Jun 2024 21:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fRMcKjsg"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2066.outbound.protection.outlook.com [40.107.94.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k28+dmHf"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616641741E5;
-	Tue, 18 Jun 2024 21:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718747723; cv=fail; b=NWsaONznYYtHyuD689HWsos82FIRfWVyQ0TSI7ztid9sMyh7V7ZpL9nyhM60M8W4Os1EbY/sFUgwbOFszuxDkMC7U4kSQhH4XAt/i+3WyyNGMjyiTgrRPEpPBh/oU0mRN8hmSW4TqTASLEZ2VWR+BCzWSjIvKlu+1pUDoza9J+I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718747723; c=relaxed/simple;
-	bh=KYEuLRMYijezD2UiHq50yo0wkk57ciTvKXoMRQxtNaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DsPaS24TWGQ19VI6jeamcjtMiJfxrm5FISCbutdqZ9NMOHjrEgBcIoMduKJdMLeVGlQUBThnSCSM6zODeviMhIn8FHHli0TWxU7lPnFINzqVoWGjug2PFidJOSjsLATOvekhvpcu01JIRcLdD6knge0lCEg9a4v65nORI3+wge4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fRMcKjsg; arc=fail smtp.client-ip=40.107.94.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Dw/nKIRexWJggo70W7cnS0XXGvwsjmlNyXC1R/FCYNZQLvJov6c29b6YPCvVAVvNaZQMzXTjgQTshks6m+baeaX2UqY1uG11bKeeIk3FDj8/GspHSJ3aUqQRGL8PtQy9v5I0Vr0cya+GUvd7O1DULe8ibMOaTHdP5Jl3ar2GWYur+X0y8WZ8LzzlIbUeKbybuHDhjkRge1TAqCyKpTyq20b6hXK9Q6ByDXIF0K/vQkEXMRg11JEmfu+Qm/5GEVX8q0V8OyMK/sXibZH11lBFlDmvMMPXxl+s5oR5snhyjrUuoOOabcg4SfM5JUgTbvwEiqQSkBT0p8GLvLgCCyzwjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Sj2kgZUo4iSns2TqrKpfBAS9wtFpm0Ppdmv48eRfwMc=;
- b=lpBL2K/z+wf/uH+XzR57g7d7L7RMwaVVE3g5F3eOa1cTc6G04nfXCwzBJFbZ0pDUoiiLH3lCVU9oq+zVhXrhsFnThUgM3Dwi4eQp1DuUGllwAYt1Sx1uC1K1YZt2DG+/wwBiHb+McQVL59SzB2IBR0ksKH8OVMiy3+f1R5ArRSqWOOxGhXc2mcB/zSIk0PoWM+OaXWPXA8FPQ4c/ZjSV34JHbLTVT2stWFKsb2jtKVa5Dbrv2ER7kctl06c9Z06cUzOO44bYS3iguZa/fLxwXBQRaZAsF0Z1+o6FuluMOrKZ9Gf4i/OXnYDOy6tql78A7uym9F5nQX/4dhINCiFdHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linux-foundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Sj2kgZUo4iSns2TqrKpfBAS9wtFpm0Ppdmv48eRfwMc=;
- b=fRMcKjsgkJXfs1W6ZuGCj3jTJembfjCufLLcBLISdkJ0FzmkG3eFWbXX35LbcTQllViEcIDvzwtfW+BiEmYA9PSEH2EJwtG+peXQzhXnj47wY1KDyEHX31TXHv67tz1XbPa+X0mmWQPNVZpDYYe2tMg3ijK3SnIwWtiiMBok9i/WTXHn6vZ546fVKdg+dxCLwH+tj2JSruf7r61mnlKSTyK9kp3Ga+I5vh1CGF2uxwCN/XwWAFohqoaNebCsKNAWySMoTsHZLhcq/Wggvd+fz5KworBjh81t+O0r9F1tSiKTBzmL2zZq1GS0knfHcjGSaIJP5RIlFvNFfTd/bcXZYA==
-Received: from BLAPR03CA0033.namprd03.prod.outlook.com (2603:10b6:208:32d::8)
- by DS0PR12MB7969.namprd12.prod.outlook.com (2603:10b6:8:146::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Tue, 18 Jun
- 2024 21:55:15 +0000
-Received: from MN1PEPF0000F0E1.namprd04.prod.outlook.com
- (2603:10b6:208:32d:cafe::77) by BLAPR03CA0033.outlook.office365.com
- (2603:10b6:208:32d::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31 via Frontend
- Transport; Tue, 18 Jun 2024 21:55:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- MN1PEPF0000F0E1.mail.protection.outlook.com (10.167.242.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.15 via Frontend Transport; Tue, 18 Jun 2024 21:55:15 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Jun
- 2024 14:55:01 -0700
-Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Jun
- 2024 14:55:00 -0700
-Message-ID: <9e1ab5f0-68ef-4eec-aa07-04a202037d5d@nvidia.com>
-Date: Tue, 18 Jun 2024 14:54:55 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD21482DA
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 21:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718747962; cv=none; b=Ggkf+rVankjiUokzHP1RwLkiflDONUuSdwv6c/WS1sXhklPvi1Lf0Yy+nRh/LcL3yE16oC0Bp8N40pyXQG78LDithL24gcXCPO4HdOzmVGBZOwCbDbV2oyoj0Ie7nKfll+j+x8gvjt1VbKSh/CsNAWveSOH3CpNnp8WTSyhtGjs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718747962; c=relaxed/simple;
+	bh=zm1VjWuxosVrdwVjAJrwwt8BO2mJfxlJ4vmwClREYEM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Qmr+g7jDod9pELR8LWYXlXJeKevonmhfVSb5dZWgE8NFp1yAYIInvlmGgL5SZn4lUDFCyqDikxvAp5ux3qLs50hwGGnVvYKi0S3rfwl9M4O8E7WsqQgMiXjsiRbjr5OCbiVsCfyyvyHle+liN6QTCS9GpFw4b+mPrsKAN2eiydQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k28+dmHf; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c7c3069f37so5718a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:59:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718747960; x=1719352760; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PR/q/l+rF1KRkhTzXDbNoun8qkscu1njT4o+yNkYLE4=;
+        b=k28+dmHfNWTYBNkesjarSmlQgL4JxPeLOS+kDxqK/QJVmvYdRBRMB7DBOXdquNL2iP
+         qqrUNtlrK1PbFMHjaVVOQpJwYS5WWO6Xb1/E1qAs7l9YfqV6/52aLl0tIykGXBo7+a9M
+         EnDdwgDCW9f7tC9R0Qs6puI4sKdQ4l2BVwyCcQgtpqYsVlrHqhdJivF5nqJQ7QCJT5DO
+         i5lUpyffdN2H04DrzuU5WGseAW2VWUfIyTQajPscMnY2TMpDnCW+ZMcZ0anZ91920lGj
+         Oc7rd0rbvaNPhxAdlZGb2CN8FhU/kj9MPu8Tk/z8LqioaSy/Ob4Nhj4WnYPEvMEQT8rV
+         i2kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718747960; x=1719352760;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PR/q/l+rF1KRkhTzXDbNoun8qkscu1njT4o+yNkYLE4=;
+        b=fjqvTfONaNbdu5zTCU/9Wxu5FT+Vn6KUdDfAnfdAh+8DsxiyXFMaM5q+JwdIWXnAAF
+         feSq+kUJ2FdAJyapq14yM9pYR/5En3G787xDVpawam+gVUoBpp+Ud2LjQhlg0jvrpv00
+         0KSyrwocmhklCmiTGTDTJqHUkDWgqrlT5VSn6HylVBEMI2cSHZL+J+7cFJBCXgYyqKB3
+         41hDY1xs+UXRtVSlUQ699GRqDjNI09DPxJNWyBCOdCnuVMbIaRH46RuPpjMucov9LpUj
+         HxDovniogUaVtVKveoSsgSmDvlAIm4iUTojYRjGLtIUvGZwFxsVBF6570OcxGPuZMZNn
+         iwpA==
+X-Gm-Message-State: AOJu0YzPRjnhCsqiE9p8+H839dbKYySGhp47YFR1Q7124EtMMTPaKZQe
+	qRbVNDUGmo14GEt1FoYfN7AdKFcD6fktTU7K/40JRqJxfB8zTpJ8/kfGx9EhwpUKEL6ss7pvyJH
+	ItinUDVeYjb/kroDXqGeqgdbY57swFp4cL9xgTdCjGW74i7BJRcfNExzoqfVfTCk8AVOYR5GArh
+	RQThoJ0bTiN6+Bf9aK7tKfgOZw30kuebTGYTFeB/IXDcLZ
+X-Google-Smtp-Source: AGHT+IGgLg+DqDmdh74AEadK98VEnNSHprUuW275qJ3Ck/6JtV96pLW1aeH/U9uruDpiZrekwAX5uOOWjIg8
+X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
+ (user=jstultz job=sendgmr) by 2002:a17:90b:808:b0:2c7:6305:990d with SMTP id
+ 98e67ed59e1d1-2c7b57f9b62mr2785a91.2.1718747958436; Tue, 18 Jun 2024 14:59:18
+ -0700 (PDT)
+Date: Tue, 18 Jun 2024 14:58:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] selftests/mm: mseal, self_elf: fix missing
- __NR_mseal
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: David Hildenbrand <david@redhat.com>, Jeff Xu <jeffxu@chromium.org>,
-	"Shuah Khan" <shuah@kernel.org>, Andrei Vagin <avagin@google.com>, Axel
- Rasmussen <axelrasmussen@google.com>, Christian Brauner <brauner@kernel.org>,
-	Kees Cook <kees@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Muhammad Usama Anjum
-	<usama.anjum@collabora.com>, Peter Xu <peterx@redhat.com>, Rich Felker
-	<dalias@libc.org>, <linux-mm@kvack.org>, <linux-kselftest@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-References: <20240618022422.804305-1-jhubbard@nvidia.com>
- <20240618022422.804305-2-jhubbard@nvidia.com>
- <0b152bea-ccb6-403e-9c57-08ed5e828135@redhat.com>
- <9d08f768-b9da-4a44-9d75-a16d6cde6b66@nvidia.com>
- <916f5ba4-02c4-4a33-97e1-5343bde5ae54@redhat.com>
- <ee207aed-d116-49b4-a5cc-91385c52e258@nvidia.com>
- <20240618145348.d49c130694dcde29ec7a6c8e@linux-foundation.org>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20240618145348.d49c130694dcde29ec7a6c8e@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E1:EE_|DS0PR12MB7969:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89b5ae8f-c431-4124-79c4-08dc8fe15658
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|82310400023|1800799021|7416011|376011|36860700010;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QW9FTHQ2emVBQWVrODZpWStWNVhnVEpwd05xaGVacEtuUmdnY3NOWFpDOTJ0?=
- =?utf-8?B?Wkg0MEpvVXkvMFdtYVZJMmM2cDN2b1Fqa2tKeEVmS3dPV01waml2bWJkaXlL?=
- =?utf-8?B?TWpUbW5DeXNjTDlSTjBTZWthM2YvRTV3RHlFdGNKWnB2SlRrYkJZcks4MmxW?=
- =?utf-8?B?SkcxK3pnNVV2YWZGei9yZUc0djl0RWJ5MkRUeVF5MEo5ZlFrRzY4K3N3Unh2?=
- =?utf-8?B?QjI2dHBiOHpQYUQ1Qjd0K01YVS81ZDNVRW1qS0dqY01sek56cEF4ZGxwYlox?=
- =?utf-8?B?LzFQaklQWVRseG5nZWtJcEVLM1BURUU4YmdlblUzRWI2Y3hWM1J4SldmQ2pU?=
- =?utf-8?B?MVFxcmxOdjBBeFQ1QlpOMXZVRmVVbFprbkdySm94amJ6NUhoVjlabjVzbjUz?=
- =?utf-8?B?R0hJT2VVOHlEZkNyVGVqYjR6dzg0Tm9HU2FHWWI4NEJLKzd0ODV4OHM3bDFN?=
- =?utf-8?B?elhsZDVkQXJIeGM2dVpuRWZnZjlvNmlJZnNkcEdML0dXeHcwQVBldFF3dnlX?=
- =?utf-8?B?cXNKN21BdXQ2TWVhR0d3UE5aRE92Zkozblp6ZXlsTHFTaXN6dEN2MTNNbm5o?=
- =?utf-8?B?RFEzTzJrK1lwakMxdjlBWGNDVGFvRVNWcEJBa2pTZzZtSmh2WHV3VGY3TmRn?=
- =?utf-8?B?dXJmQy9Gd0lmcjU1VE9VQ3FJZlRwQStsd2d6UmxjSW9yc3JaK0YrOTIvTjNJ?=
- =?utf-8?B?Z2Z2Y3dBaVBsdUxoWnp6bUFucVZDVlBBbzlMbldiNGVsUnVuSjFhdWM1S2Vn?=
- =?utf-8?B?MHdkdElHOWZ6ZHFIeFo1dFBuRldBUTlPNlRYWUVxUkQ2VWRWa3NJSU1yVk1J?=
- =?utf-8?B?NVhPTFlFS2VFOE1YbzJjdmdDdWZRYk55cW9qcDVGRERUNTNJMjJkRGdtU0dH?=
- =?utf-8?B?NFpWeGtEYXBnaW9Cb2tOaEp1cG1PM0EvSjMrQnk2dWZVQ0JFb1FZbmlWMGdQ?=
- =?utf-8?B?RWtIMGM5UFJreGRCZmljOVNWeXIzNzJDdVVPOUJZZDNFWS9MQnFpR1Fab2tV?=
- =?utf-8?B?MUR4TFU0dmtuUm45K3NESExrbHFFSUpxQjRqMTZTWkhhV2VSeVM1Z2sxRm9I?=
- =?utf-8?B?eGtlc0tJQ1R3eU94YUU2MloweURwdnA4N0NwK2FzU2wvNlF5a3RocE4vQ2NF?=
- =?utf-8?B?b1A2Sk5TS2xOVWhBUkxHUyt5M1hQUFNJUmlnZWdHWnRGZjFLZENCRE5sUEpO?=
- =?utf-8?B?cGVVZm9SNEh5OGJwaW9uS1NwQ0lFZXN4Z1M0eWVSMFJwVW9zdWIrZE0vMEdZ?=
- =?utf-8?B?M3ZjcVFiTnl0dzk0SVV4SlFhLzZCSDNTcThqb1A5NUM0dm5qS2R5SEh6NVAv?=
- =?utf-8?B?VmRlZ2kzRWtHSTVhYWNpV3Y3TU9hZkRPTjI5aE9yK29BcGVVeFpYbGFCNnJN?=
- =?utf-8?B?a0NTKzJnUVphYlpBRDZvaDJpUEtCc2hTVFNoQW4rOU1nVThucWVmam0rOXkz?=
- =?utf-8?B?bXk5d3pvVVF1WWx4QUh3M05LaThLWFpEYktFSHczTU1hNEMxb1FpUEZLbTdh?=
- =?utf-8?B?Y1NFb1EreWRzZzFYYUZENDlNblg3M3Y4aWZpZFNod1N2WG1pbHU2azRqN1BG?=
- =?utf-8?B?SElhazVsZUgwRFk2L2dwejFtKzZVbEhWUmVwaUFKdXF1OGZXbUp4ajdhVDVt?=
- =?utf-8?B?OG9rQlh3QnR1TkUzTXdtVjBJbWJnSnlFNzQydjVpTVlyWWUydTZ4YVlDaStp?=
- =?utf-8?B?MnlxRnJHTm9heVJtNU1ZTHovV0gxREtWOGFZdHRoYnByUUZ3bFJYWDBiTC9x?=
- =?utf-8?B?RUp0N2hBYnhySXBBWWxEVHBpN2tOQ0lvRVFKTVFQSXJMdFJSZnVmVjcrU1kx?=
- =?utf-8?B?WEJFaER5VEllVE9vZDdzRmxoSkZCODBBMEdYaEJvQ1BERlR5RUh0V1J0eHNy?=
- =?utf-8?B?eW1qSkN2RXVBUHkvQkJVeElSbDFHNHFma1RENkNqNUdzclE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230037)(82310400023)(1800799021)(7416011)(376011)(36860700010);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 21:55:15.6789
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89b5ae8f-c431-4124-79c4-08dc8fe15658
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0E1.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7969
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
+Message-ID: <20240618215909.4099720-1-jstultz@google.com>
+Subject: [PATCH] sched: Move psi_account_irqtime() out of update_rq_clock_task()
+ hotpath
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Chengming Zhou <zhouchengming@bytedance.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Qais Yousef <qyousef@layalina.io>, 
+	Joel Fernandes <joel@joelfernandes.org>, kernel-team@android.com, 
+	Jimmy Shiu <jimmyshiu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/18/24 2:53 PM, Andrew Morton wrote:
-> On Tue, 18 Jun 2024 14:29:32 -0700 John Hubbard <jhubbard@nvidia.com> wrote:
-> 
->> OK, I've drafted an updated commit description (below)
-> 
-> <copy><paste>
+It was reported that in moving to 6.1, a larger then 10%
+regression was seen in the performance of
+clock_gettime(CLOCK_THREAD_CPUTIME_ID,...).
 
-Awesome! :)
+Using a simple reproducer, I found:
+5.10:
+100000000 calls in 24345994193 ns => 243.460 ns per call
+100000000 calls in 24288172050 ns => 242.882 ns per call
+100000000 calls in 24289135225 ns => 242.891 ns per call
 
+6.1:
+100000000 calls in 28248646742 ns => 282.486 ns per call
+100000000 calls in 28227055067 ns => 282.271 ns per call
+100000000 calls in 28177471287 ns => 281.775 ns per call
 
-thanks,
+The cause of this was finally narrowed down to the addition of
+psi_account_irqtime() in update_rq_clock_task(), in commit
+52b1364ba0b1 ("sched/psi: Add PSI_IRQ to track IRQ/SOFTIRQ
+pressure").
+
+In my initial attempt to resolve this, I leaned towards moving
+all accounting work out of the clock_gettime() call path, but it
+wasn't very pretty, so it will have to wait for a later deeper
+rework. Instead, Peter shared this approach:
+
+Rework psi_account_irqtime() to use its own psi_irq_time base
+for accounting, and move it out of the hotpath, calling it
+instead from sched_tick() and __schedule().
+
+In testing this, we found the importance of ensuring
+psi_account_irqtime() is run under the rq_lock, which Johannes
+Weiner helpfully explained, so also add some lockdep annotations
+to make that requirement clear.
+
+With this change the performance is back in-line with 5.10:
+6.1+fix:
+100000000 calls in 24297324597 ns => 242.973 ns per call
+100000000 calls in 24318869234 ns => 243.189 ns per call
+100000000 calls in 24291564588 ns => 242.916 ns per call
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc: Valentin Schneider <vschneid@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Chengming Zhou <zhouchengming@bytedance.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Qais Yousef <qyousef@layalina.io>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: kernel-team@android.com
+Originally-by: Peter Zijlstra <peterz@infradead.org>
+Reported-by: Jimmy Shiu <jimmyshiu@google.com>
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+ kernel/sched/core.c  |  7 +++++--
+ kernel/sched/psi.c   | 21 ++++++++++++++++-----
+ kernel/sched/sched.h |  1 +
+ kernel/sched/stats.h | 11 ++++++++---
+ 4 files changed, 30 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index bcf2c4cc0522..59ce0841eb1f 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -723,7 +723,6 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+ 
+ 	rq->prev_irq_time += irq_delta;
+ 	delta -= irq_delta;
+-	psi_account_irqtime(rq->curr, irq_delta);
+ 	delayacct_irq(rq->curr, irq_delta);
+ #endif
+ #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+@@ -5665,7 +5664,7 @@ void sched_tick(void)
+ {
+ 	int cpu = smp_processor_id();
+ 	struct rq *rq = cpu_rq(cpu);
+-	struct task_struct *curr = rq->curr;
++	struct task_struct *curr;
+ 	struct rq_flags rf;
+ 	unsigned long hw_pressure;
+ 	u64 resched_latency;
+@@ -5677,6 +5676,9 @@ void sched_tick(void)
+ 
+ 	rq_lock(rq, &rf);
+ 
++	curr = rq->curr;
++	psi_account_irqtime(rq, curr, NULL);
++
+ 	update_rq_clock(rq);
+ 	hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
+ 	update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure);
+@@ -6737,6 +6739,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+ 		++*switch_count;
+ 
+ 		migrate_disable_switch(rq, prev);
++		psi_account_irqtime(rq, prev, next);
+ 		psi_sched_switch(prev, next, !task_on_rq_queued(prev));
+ 
+ 		trace_sched_switch(sched_mode & SM_MASK_PREEMPT, prev, next, prev_state);
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 7b4aa5809c0f..507d7b8d79af 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -773,6 +773,7 @@ static void psi_group_change(struct psi_group *group, int cpu,
+ 	enum psi_states s;
+ 	u32 state_mask;
+ 
++	lockdep_assert_rq_held(cpu_rq(cpu));
+ 	groupc = per_cpu_ptr(group->pcpu, cpu);
+ 
+ 	/*
+@@ -991,22 +992,32 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ }
+ 
+ #ifdef CONFIG_IRQ_TIME_ACCOUNTING
+-void psi_account_irqtime(struct task_struct *task, u32 delta)
++void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev)
+ {
+-	int cpu = task_cpu(task);
++	int cpu = task_cpu(curr);
+ 	struct psi_group *group;
+ 	struct psi_group_cpu *groupc;
+-	u64 now;
++	u64 now, irq;
++	s64 delta;
+ 
+ 	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+-	if (!task->pid)
++	if (!curr->pid)
++		return;
++
++	lockdep_assert_rq_held(rq);
++	group = task_psi_group(curr);
++	if (prev && task_psi_group(prev) == group)
+ 		return;
+ 
+ 	now = cpu_clock(cpu);
++	irq = irq_time_read(cpu);
++	delta = (s64)(irq - rq->psi_irq_time);
++	if (delta < 0)
++		return;
++	rq->psi_irq_time = irq;
+ 
+-	group = task_psi_group(task);
+ 	do {
+ 		if (!group->enabled)
+ 			continue;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index a831af102070..ef20c61004eb 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1126,6 +1126,7 @@ struct rq {
+ 
+ #ifdef CONFIG_IRQ_TIME_ACCOUNTING
+ 	u64			prev_irq_time;
++	u64			psi_irq_time;
+ #endif
+ #ifdef CONFIG_PARAVIRT
+ 	u64			prev_steal_time;
+diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
+index 38f3698f5e5b..b02dfc322951 100644
+--- a/kernel/sched/stats.h
++++ b/kernel/sched/stats.h
+@@ -110,8 +110,12 @@ __schedstats_from_se(struct sched_entity *se)
+ void psi_task_change(struct task_struct *task, int clear, int set);
+ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ 		     bool sleep);
+-void psi_account_irqtime(struct task_struct *task, u32 delta);
+-
++#ifdef CONFIG_IRQ_TIME_ACCOUNTING
++void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev);
++#else
++static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
++				       struct task_struct *prev) {}
++#endif /*CONFIG_IRQ_TIME_ACCOUNTING */
+ /*
+  * PSI tracks state that persists across sleeps, such as iowaits and
+  * memory stalls. As a result, it has to distinguish between sleeps,
+@@ -192,7 +196,8 @@ static inline void psi_ttwu_dequeue(struct task_struct *p) {}
+ static inline void psi_sched_switch(struct task_struct *prev,
+ 				    struct task_struct *next,
+ 				    bool sleep) {}
+-static inline void psi_account_irqtime(struct task_struct *task, u32 delta) {}
++static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
++				       struct task_struct *prev) {}
+ #endif /* CONFIG_PSI */
+ 
+ #ifdef CONFIG_SCHED_INFO
 -- 
-John Hubbard
-NVIDIA
+2.45.2.627.g7a2c4fd464-goog
 
 
