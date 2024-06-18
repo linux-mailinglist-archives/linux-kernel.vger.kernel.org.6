@@ -1,114 +1,270 @@
-Return-Path: <linux-kernel+bounces-218858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEEC990C718
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA3890C708
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5E21F25569
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:34:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6283D1F241EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AED11AB365;
-	Tue, 18 Jun 2024 08:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2374814EC69;
+	Tue, 18 Jun 2024 08:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXTbp1IA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Q/1O8pe1"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2060.outbound.protection.outlook.com [40.107.22.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8D114D2BB;
-	Tue, 18 Jun 2024 08:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718699210; cv=none; b=I0cP1H2myu6FP7uhakiGPb9AdJL6d1sXWJkPD3XbDo6Ewdei11jV2qdebW+dcpwIOn7No4eWJv0NCBdgBr4uQkJWRAcBNJVVoVp5hUgIzeSxfCo4iC7mxcJxYA1UaN+iiLBg5mW58cnneI1NuA6g2fo9DJhCujUyadXpQzJ5pto=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718699210; c=relaxed/simple;
-	bh=Pm+8c2oq+pxKwk88oQ4kb5hp6lv+Fu4iSSGi4aX+9vU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=eKaEVk/0CjOP3bQIMmGtf2PxL8z9RxmXBzuz0cWL8dhjwB33BZ4IEpqT99/9GZGauKHZfpgELO4sFTvaAAT1VPu95fFCGdmLo+0YJRguHDnuM1fhvbp1xEyPttu/UvZnPNGX75BZu5w2QqdLmXmJzFntyv6oxqZm8X+mNXJAv5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXTbp1IA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10F5C3277B;
-	Tue, 18 Jun 2024 08:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718699210;
-	bh=Pm+8c2oq+pxKwk88oQ4kb5hp6lv+Fu4iSSGi4aX+9vU=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=KXTbp1IAFiSehwcdqRRBeCUVn4XdHSwZW3FTXtyjRK6G4N3v4AoBkG0ltEp/+ATsx
-	 v02n1fmZn4u8hvPgd2Sx/7wp29r68MY39e4huZxsChZhesVnyYgyfFrr2WTEpzP6Ve
-	 /IuFCDZKl+RgzGEqbeW7crWqwlu+DJcmSiu4JRbwna6o9nRW8aaBZ0L7LuLOGFfxi/
-	 Ad+HUhKxCQiTeMEdLFEqjAQMexfWih5bBvEUzEA36PDkGU7xUA7vTYRUdRT2gJSqdt
-	 PFDbM9DSbOGdsRlRDU6hxkZBSBdQWNRD6gM1md0B7G4B9g1BdwdgeDJAQ7vRW2+33L
-	 rGzJ9QDtYjKcg==
-Message-ID: <852a66f0-7dc4-4736-abd3-7be9efaa3435@kernel.org>
-Date: Tue, 18 Jun 2024 10:26:46 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93937FF;
+	Tue, 18 Jun 2024 08:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718698899; cv=fail; b=oZJ3UXoxbF/NflZoQQa2qXP2WifA85SJDHi3ht6pC2HbPbJywYNPBGjCdrql8LCfU4uTh/u9nNvxkJ7jxvlQdlxTBJavgt9CFeg6mZbd1boJj447rUXdCdB2TXnOJtjbsN/nkf6cobNxLc863ABcZd7T/V4NFpdhYMRC6oFkwbU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718698899; c=relaxed/simple;
+	bh=m+3DZF06mysUGmvqOd7GbQSwNoWH5D41Qvzk7cTv9mc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=onpxZfTLtq05mqoCnyoxip2MkuI4VZ6Mx9YzWoicq40fcPAYbStY/xvJKVosROf4sKtBhP/HMuhhUUjmIgLW9Lq7JxxPOhvUKMbVFkmKPqN4KSvAT8JlMUN/Co+MaOJVBZnDmw+Xz0/D7QogqPQXuhEGIcU0Xv9jP7D/6NU4nHU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Q/1O8pe1; arc=fail smtp.client-ip=40.107.22.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S+pjYcdmUFQgTvvus6o4JG4BzXm3oGqvG7Jv/YrjZy5H+bRs/jvhgIIVPkQN7TeI2V+Sp+Wl9DPLLztb4OBiozYlXqs6G6Rq0avSgFSUej6ZF2wGQWJsEjyVI9ROnzg05l5904A7A4YnSpKbhvEp7jfBhpKClj4zFMPJ8iIAuuho9kFqky39OPcemC4D5c3bPQtfjPRz497FVaxuU+wpXoDctitav+uu1BOV/eKbHBHU8y7NvXKB0+rEW6zF7xhbw1i5AgAckRmaX4juiS9jmG2cDfD8rkQGISPLMhFOWO9th4nHXfnWvSUsndjBtAZYOJWtiUoWyDW+Um+GpatSxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6vC517gcaegSH6Enskl6/tSJist0pKrwB0MGrraQ3Gw=;
+ b=d0fXgPcl/2ic9n/gDYze2sZICm0WDfH+WNPBoS8nLUVaUnR3OKuBr/FX8Fg5GohiR2oLfSbjNbRXLZZJrj4ud4kFXN4JrFU+SmHrzIRT7MUBhxfOi0uH5wxfsuRY19u7mglWn1nUS5wc7FAsTLHC5yQzGd8+eRBWPmgbfHC4MkMcNcxa8jwT66e7UoHwk5cmwcgCeCu4BDpWzTVqlzSigcT9cb1cf/2gbQTIGZ2dFTi8bG3i3mHtHUhT6ebRL1U+Oy0DYk7qWwIKQ70Gd7DkrCgoKikd5PySlMTNYIS17KSaRpUfvQA6yKYH/YBLKC3surbt6hspQekak1kvCIyOKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6vC517gcaegSH6Enskl6/tSJist0pKrwB0MGrraQ3Gw=;
+ b=Q/1O8pe1wsOuwtmAoZur2sovrsY2l3RKouY9jCjPiXEfzM48xZG+Y+kAU6V5KHrG3/FnT/m3gidWom0gXftQpFkcSBJxBn/vCmgldsRFLF4Oh0itnhU+Oy2EnKquW5SrvfxHQTb3azgqDwly/ee+vswUv99rMIA1ZX8ay2zDLsw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8254.eurprd04.prod.outlook.com (2603:10a6:102:1cd::24)
+ by DBBPR04MB7643.eurprd04.prod.outlook.com (2603:10a6:10:203::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
+ 2024 08:21:33 +0000
+Received: from PAXPR04MB8254.eurprd04.prod.outlook.com
+ ([fe80::2755:55ac:5d6f:4f87]) by PAXPR04MB8254.eurprd04.prod.outlook.com
+ ([fe80::2755:55ac:5d6f:4f87%5]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 08:21:33 +0000
+Message-ID: <b0057315-2021-4015-96c8-d09fb6ddb7e0@oss.nxp.com>
+Date: Tue, 18 Jun 2024 16:27:56 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: videobuf2: sync caches for dmabuf memory
+To: Tomasz Figa <tfiga@chromium.org>, TaoJiang <tao.jiang_2@nxp.com>
+Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl, nicolas@ndufresne.ca,
+ shawnguo@kernel.org, robh+dt@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+ xiahong.bao@nxp.com, eagle.zhou@nxp.com, imx@lists.linux.dev,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ m.szyprowski@samsung.com, sumit.semwal@linaro.org, christian.koenig@amd.com,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ Ming Qian <ming.qian@nxp.com>
+References: <20240618073004.3420436-1-tao.jiang_2@nxp.com>
+ <CAAFQd5B_RTHsMwMdD59RAAyFne_0Ok_A4ExdkVOgi=G6-UGfRQ@mail.gmail.com>
+Content-Language: en-US
+From: ming qian <ming.qian@oss.nxp.com>
+In-Reply-To: <CAAFQd5B_RTHsMwMdD59RAAyFne_0Ok_A4ExdkVOgi=G6-UGfRQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SGXP274CA0009.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::21)
+ To PAXPR04MB8254.eurprd04.prod.outlook.com (2603:10a6:102:1cd::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools: build: use correct lib name for libtracefs feature
- detection
-To: Daniel Wagner <dwagner@suse.de>,
- Arnaldo Carvalho de Melo <acme@redhat.com>
-References: <20240617-rtla-build-v1-1-6882c34678e8@suse.de>
-Content-Language: en-US, pt-BR, it-IT
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Daniel Bristot de Oliveira <bristot@kernel.org>
-In-Reply-To: <20240617-rtla-build-v1-1-6882c34678e8@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8254:EE_|DBBPR04MB7643:EE_
+X-MS-Office365-Filtering-Correlation-Id: 388ff6d4-1f93-4f18-57f5-08dc8f6fa98b
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|7416011|1800799021|376011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eithMmh1ZmNhS0pLT3MwYThUMEdOTS9LRDBqUE4yOGxZNFdwNk41YlozaGtV?=
+ =?utf-8?B?MlR1WEdxLzZZb1lWczJXUE90SVppMWRNVE1mY3RWT0t4aHVuYU0xak1LVDdZ?=
+ =?utf-8?B?cEVOV0o5V1JUdEh6elIweVVIWWZLb2NCVnhvdDdNQTExdWxYRndXMXMxZFdV?=
+ =?utf-8?B?NS93NXlWL3ZROFZNR0hJaVBsOGxXMjlZWEkwZzBhVW5JRnczQkxFcVNLZjMy?=
+ =?utf-8?B?UFk4OStQMERDcEVTTEtZMHpNL3FMMWYvOHZrejg2OExkdmpuMXFwbmZoMFdV?=
+ =?utf-8?B?RCs3NU5qRlVVc1JYbnlQOGgwNm54clVkU1dZeTA2U0VQWnRJbjZ5SXpFeUhM?=
+ =?utf-8?B?RTJLNWNZWU43Mi9vYW9VVUZtN3ljNXErdFRhRjdCL2JuRzlMcWFMS21jU2lx?=
+ =?utf-8?B?ODdHdVNKK3Z6SlUrbnE4UzZFOTR5TnNOWmRWaitWb0Q2Rm5rT0x1VmNwSVdy?=
+ =?utf-8?B?T1Exd2MyOWNQVFNxVWNWanlKOHJLV2ZmaFYwcFVQSXd1VjdEeXFSeThVUUJU?=
+ =?utf-8?B?akVwZXRMZWhLVjBjQk9DdERzci9OdkdBdUtMcjNxVGZBR1VXY3J4QTdBSWFj?=
+ =?utf-8?B?QkliT05EbVl2alNuZ0NiV0xDMEd6RGhIK3hRYWlmNk0xMDZEckJJSlNRajg3?=
+ =?utf-8?B?S0d1Z0xFK1dZYklFSWpmNFNMKzRSKy92SnhEbGhmd1hQQjQ3cERNNXd3QjBZ?=
+ =?utf-8?B?QVZpb0NQUlpjM2FtOVVXNE1jdVZDaTErdTM2WkYxSHRGMjQ3a29sNFhaRFRz?=
+ =?utf-8?B?Vlg3YXdSRHhRdlRqSVdvSHlPWHduekM4YllVTjNBYXFZSjFwMkd2OGFRcHc1?=
+ =?utf-8?B?M3lqWUZYUFk1UmlURWdVdUpIOHNMeWNyNXBEYnhWQlpSNVZwZGdHWlhRVG5y?=
+ =?utf-8?B?OTdxb0xROHdYV2RKRDk2N3d1b3NvbFRJQlk0Slh5Q01SejhZanNDQU9TVG9x?=
+ =?utf-8?B?SjZKSEV4MkNwS3RiSUNzY3NyNHJaTDRpbkpvbGN1UHVRYTdDcmhTMDNFT2h3?=
+ =?utf-8?B?Y1J0T2QyeTllWTZNV3RSUDlmOXlYK3BFdnVrZTlEckNnNDFmUWdTSHNhK0dk?=
+ =?utf-8?B?Y21oUFJZa2FCVW03eFZFUXpMOUhMUklpOEs4VjdrNjFyTGNPVTh3enpsdWxI?=
+ =?utf-8?B?aVpoQ3EwanhlL1RmQ05tcWs5cVRqT1FLODdiUlQzeDc1a2syTXRJVjBES1BV?=
+ =?utf-8?B?U2RRcHE3bXFPY2VYRVl1TnkxYThBZkRpdHllNWplY2dUcElTbm9ONHFDVVFF?=
+ =?utf-8?B?OXFreFkrT3lzS2JuWFBwRUFzSDlVcjZYUUV2MW9NdmNEVlorM3U5TjFhakZE?=
+ =?utf-8?B?UnV5VG9ORStOaXlwT01TemhqaFNFem1jem4ycW1MNmFSUVZPR01DS1FOQUxQ?=
+ =?utf-8?B?d0tRWjB4M1VIaldxQ05haEt4UGU2bjd0K2NKajNXMlpQeGtWN1p5SnA5Mk9m?=
+ =?utf-8?B?WlhmeDlkc3FMT04rdVYwSDdORTZ0OGlBSzZnNllMdUN4dXVvTzBpVmJ5RjNT?=
+ =?utf-8?B?UjhTb094WlRYZWcvUkw2TUMwRUUvbXB0ck5PS1NXazlyQjEvbjlsQ3lWZ004?=
+ =?utf-8?B?SDRhNWFSeXVMU3RwV0ZqOHF3WnJkdmloQUlqeVAySm1Ba2p0cVVIaVZhWlJD?=
+ =?utf-8?B?Zk9MeEtubUNBcTVta2tmVXArcjZUUStjang2Zm9yL3FEWTN3OHZPT1JnVG51?=
+ =?utf-8?Q?XDChNNb/BOiOnERTeGxK?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8254.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(1800799021)(376011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Uk5BUlA5MExTTTZsSXVRcDJrclVYM3VMalhhcjRFQkJwYVZRR1hjM0VUVXlN?=
+ =?utf-8?B?Y1U3NkF4dUd6VkNHU1NmU2pmVmg5NVJQY1FPU3VGMWJ4SmFEZ1VKR0wzVU1v?=
+ =?utf-8?B?SWxXWS9uUnNRV1hlWHZlTjZrc2ZycTBBTURNOWNLdnRRMGg2NThqeEJxWkUw?=
+ =?utf-8?B?cXpTdHNXVkxUWkp6M052aVNVcEZoRm5BYjgwWlYwZmlsS3JKZlFTSWpnQjV3?=
+ =?utf-8?B?bWh0a3FmbGRtdU96RUZDQzR2Z3UreFFjRjJsVHYwNUpTeHRmYzRGeU1tMUdh?=
+ =?utf-8?B?bEZ4VEU1Y3ZtNXFjMTZWMmZXTmlFeFpYWm5WQm5CN1pHd3MwZy9JSmUxL3Uv?=
+ =?utf-8?B?Vm5jcXRIYUdWY2R6VjU1ODJ0ZGRMd0lnaVN6UHZxOHlvOFhPb3ZKOG84WHRF?=
+ =?utf-8?B?VHRneG5hWXBpdXlqQjhmVWJUTHpPNXpXeVVIdFg3Y3VWdlpOOEJ4NlYxMUZs?=
+ =?utf-8?B?KytldXFxZUE1dmpUNjhxM3M3c0NMekxvTnprcFhscmdxeGIvZ051S0NqOEc5?=
+ =?utf-8?B?OEFDL3A3YW9GQU1id2x3SGRCdmdLRkpCZ1BZQUg0VGEvNnZka21jQ2pucHRl?=
+ =?utf-8?B?bGR3eFRtUFZWSjRTcTNwL25YYmFRd2NKZGxmdW1Qd1dxeUovZkIrNlpRc2V1?=
+ =?utf-8?B?N2JsNUw2ZFN2bEtKNTcySGVtNGxhb2krVDJWekxvUllnWnh4RXJsbG9hWVAw?=
+ =?utf-8?B?U054b2JOeU12Mms0djJ4dXg1anErSHFtc1NWSEFVYy9CbEJWSnZVVGI1T3Ro?=
+ =?utf-8?B?Qlp5aEYzOEwwTlhIZHd2SnM0ck9rTVBMeTNFKzdrRDMwNVlnV21RVkFlVnN5?=
+ =?utf-8?B?Mk9yVndWNVpRZFNJUm8zWmZNNWlnWi9ZaVdhNGhreUVKN1dPSGlvZWc2emFK?=
+ =?utf-8?B?dkVyejNqMlhuLzl3MnRXZXkyUjR1QjRmYm9nd0ZlbUNGN3NtNkU1NFdBMVgw?=
+ =?utf-8?B?QloxYmNLZkpIZ2phS0FVR0RMWTJIVUpucitiTkluSkEwc05CdlNnYTgxb1dH?=
+ =?utf-8?B?aGR6OGw4QVp0YjI0UVFmNk5vRS8zcHVkNFgyeTNtWkZaUlFqRjBoRFE1K095?=
+ =?utf-8?B?bFh6WVdpU3BNbnAySGx6WDEwTkZoMW1jSTNuTG55Y0dhaXFOellEbXpLaUVq?=
+ =?utf-8?B?YzRvazhDbWFhdFVLaUZPSjE5VHNzZ01jREFPcDh2OTdLa1ZiaS94Y0gwU3ZM?=
+ =?utf-8?B?RVpkUmFTMXBqYm9yUEEwS0JiWlI5UndqcDdIV1pBY3FRL2t0WnFZZitOTDFi?=
+ =?utf-8?B?RTdDdFBLNm13UHlKQW5RS2JucFlQVGRIWkFIVUNoRVR1b2NXYlZlRXZQbXor?=
+ =?utf-8?B?SVBBc09kNTFmMVNNOEJ1UXBkNHNLN201L2MrWDcrczQwVDgwMytqZG1VSnRZ?=
+ =?utf-8?B?RTkzcmV2VlFEMHVxaDcyK1NraEdTL2MwWTZ6TnRRWDNtei93VCtndWRkKzRj?=
+ =?utf-8?B?eWJrbGRqdGgzOFlBd21OOXJMbjFVTzNmbnBWR2RkanNzQXlKR2FBdUpzb0ww?=
+ =?utf-8?B?Ri96NTdYL1hod2JUVUE0SFkzNUNhTUZkb1JwbHkzTTRtQW9aMXljQnk0Yzhv?=
+ =?utf-8?B?cTZzVGFadUYxSmkzTmo3VzgvSVE0U2NUWk9UTldValdueHp0WlVKZnUxVDlx?=
+ =?utf-8?B?V2ppRlJqWDd6STRGc0RzUmlmQ291SUxXVkhUNHRVNWVybW5Cb0p5S2FCRFdz?=
+ =?utf-8?B?L1NTaHBIeG9OdGVkV2xaZlU4WGlManpxMlpsM2ErSnd6a3I4R042OHlKWWV0?=
+ =?utf-8?B?cit0VEh6Z002Y1lpOHgvSnh0Z3czblZETVllSTF0YmJvYmltS25wTFFEaE82?=
+ =?utf-8?B?d3RDVDdWOUovNk16d095eEJyMzkzTkE2QUt0UGFHQnA3OHZucUwwWFlZNnc2?=
+ =?utf-8?B?N1d1T3ZnQWpKTFFRKzY3TCtQY2R0L2RVYTdqMGt6VjNJeUZFSFUyZ3lRcUpQ?=
+ =?utf-8?B?MGZyWm1wM1cxYmV4Rk1uMDRqdkw3NTdSZmhUVkFLVm9qZDg1Z1VGSHBHc1lu?=
+ =?utf-8?B?cmZmYXJXd252TmFqdVhtcW1VUno5NERCTmJQaUdkdUo3c0J0dVZKekF2NW9L?=
+ =?utf-8?B?Sklkby9oM0NwTUVwdGJHZGoyekxWdkVDUXB5R2l2di9EWHpVZWlqWi9xcFJS?=
+ =?utf-8?Q?XUV87eclTRR4NdxHDfQ7N7Ou1?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 388ff6d4-1f93-4f18-57f5-08dc8f6fa98b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8254.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 08:21:33.1506
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WZl6lW5yXZCXQiHQbwrtiYq7JQg1uEqHca9uTZ/qjIkTR2JG2/XJs7RrZw+U86DnqGeWfNpU2XBjBy4hpj30uQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7643
 
-Adding Arnaldo
 
-On 6/17/24 20:38, Daniel Wagner wrote:
-> Use libtracefs as package name to lookup the CFLAGS for libtracefs. This
-> makes it possible to use the distro specific path as include path for
-> the header file.
+
+> Hi TaoJiang,
 > 
-> Signed-off-by: Daniel Wagner <dwagner@suse.de>
-> ---
-> Our downstream packaging stop working. After a bit of didding I found out that
-> the libtracefs feature detection is not completely right.
+> On Tue, Jun 18, 2024 at 4:30 PM TaoJiang <tao.jiang_2@nxp.com> wrote:
+>>
+>> From: Ming Qian <ming.qian@nxp.com>
+>>
+>> When the memory type is VB2_MEMORY_DMABUF, the v4l2 device can't know
+>> whether the dma buffer is coherent or synchronized.
+>>
+>> The videobuf2-core will skip cache syncs as it think the DMA exporter
+>> should take care of cache syncs
+>>
+>> But in fact it's likely that the client doesn't
+>> synchronize the dma buf before qbuf() or after dqbuf(). and it's
+>> difficult to find this type of error directly.
+>>
+>> I think it's helpful that videobuf2-core can call
+>> dma_buf_end_cpu_access() and dma_buf_begin_cpu_access() to handle the
+>> cache syncs.
+>>
+>> Signed-off-by: Ming Qian <ming.qian@nxp.com>
+>> Signed-off-by: TaoJiang <tao.jiang_2@nxp.com>
+>> ---
+>>   .../media/common/videobuf2/videobuf2-core.c   | 22 +++++++++++++++++++
+>>   1 file changed, 22 insertions(+)
+>>
 > 
-> https://build.opensuse.org/build/benchmark/SLE_15_SP5/x86_64/rtla/_log
-> ---
->  tools/build/feature/Makefile          | 2 +-
->  tools/build/feature/test-libtracefs.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> Sorry, that patch is incorrect. I believe you're misunderstanding the
+> way DMA-buf buffers should be managed in the userspace. It's the
+> userspace responsibility to call the DMA_BUF_IOCTL_SYNC ioctl [1] to
+> signal start and end of CPU access to the kernel and imply necessary
+> cache synchronization.
 > 
-> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-> index ed54cef450f5..489cbed7e82a 100644
-> --- a/tools/build/feature/Makefile
-> +++ b/tools/build/feature/Makefile
-> @@ -213,7 +213,7 @@ endif
->  	$(BUILD) -ltraceevent
->  
->  $(OUTPUT)test-libtracefs.bin:
-> -	 $(BUILD) $(shell $(PKG_CONFIG) --cflags libtraceevent 2>/dev/null) -ltracefs
-> +	 $(BUILD) $(shell $(PKG_CONFIG) --cflags libtracefs 2>/dev/null) -ltracefs
->  
->  $(OUTPUT)test-libcrypto.bin:
->  	$(BUILD) -lcrypto
-> diff --git a/tools/build/feature/test-libtracefs.c b/tools/build/feature/test-libtracefs.c
-> index 8eff16c0c10b..29a757a7d848 100644
-> --- a/tools/build/feature/test-libtracefs.c
-> +++ b/tools/build/feature/test-libtracefs.c
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0
-> -#include <tracefs/tracefs.h>
-> +#include <tracefs.h>
->  
->  int main(void)
->  {
+> [1] https://docs.kernel.org/driver-api/dma-buf.html#dma-buffer-ioctls
 > 
-> ---
-> base-commit: 0bbac3facb5d6cc0171c45c9873a2dc96bea9680
-> change-id: 20240617-rtla-build-83020baf9277
+> So, really sorry, but it's a NAK.
 > 
 > Best regards,
+> Tomasz
 
+Hi Tomasz,
+     Thanks for your explanation, sorry for bothering due to our 
+misunderstanding
+
+Best regards,
+Ming
+
+> 
+>> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+>> index 358f1fe42975..4734ff9cf3ce 100644
+>> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+>> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+>> @@ -340,6 +340,17 @@ static void __vb2_buf_mem_prepare(struct vb2_buffer *vb)
+>>          vb->synced = 1;
+>>          for (plane = 0; plane < vb->num_planes; ++plane)
+>>                  call_void_memop(vb, prepare, vb->planes[plane].mem_priv);
+>> +
+>> +       if (vb->memory != VB2_MEMORY_DMABUF)
+>> +               return;
+>> +       for (plane = 0; plane < vb->num_planes; ++plane) {
+>> +               struct dma_buf *dbuf = vb->planes[plane].dbuf;
+>> +
+>> +               if (!dbuf)
+>> +                       continue;
+>> +
+>> +               dma_buf_end_cpu_access(dbuf, vb->vb2_queue->dma_dir);
+>> +       }
+>>   }
+>>
+>>   /*
+>> @@ -356,6 +367,17 @@ static void __vb2_buf_mem_finish(struct vb2_buffer *vb)
+>>          vb->synced = 0;
+>>          for (plane = 0; plane < vb->num_planes; ++plane)
+>>                  call_void_memop(vb, finish, vb->planes[plane].mem_priv);
+>> +
+>> +       if (vb->memory != VB2_MEMORY_DMABUF)
+>> +               return;
+>> +       for (plane = 0; plane < vb->num_planes; ++plane) {
+>> +               struct dma_buf *dbuf = vb->planes[plane].dbuf;
+>> +
+>> +               if (!dbuf)
+>> +                       continue;
+>> +
+>> +               dma_buf_begin_cpu_access(dbuf, vb->vb2_queue->dma_dir);
+>> +       }
+>>   }
+>>
+>>   /*
+>> --
+>> 2.43.0-rc1
+>>
 
