@@ -1,138 +1,234 @@
-Return-Path: <linux-kernel+bounces-218608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E7590C284
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:38:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24D690C28A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 788FF1C21B7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:38:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0DB1F2361F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32DC136E1D;
-	Tue, 18 Jun 2024 03:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF9416133B;
+	Tue, 18 Jun 2024 03:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="foLQDn1t"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8780933C9;
-	Tue, 18 Jun 2024 03:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="qeOybXQo"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAC84655F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718681915; cv=none; b=c6754BPUbNi+mZCn1s95dXYxAapTkfUEbzvAz0IdETmAei5oG9cA3lrSi/YjkJRloTjiIOaIAZNNAwoEhyCWnOidYa2rPO2tZKoaOmwkFw0j4lARNy5Wv3CsvzRiBHYpfFiZOqSZNWovGMDSxLahUXgzpo2oTbhW4KKN4Qd2eRI=
+	t=1718682152; cv=none; b=pGOIhChCLkODKwl6rLhfSR6GDFcvdliiRWB1f6RJKj2BGknEOg5ivq7avWHIERn538m3dM8YUdojGRaxzu1kqReGG8FetlTVaEOJLZ3b4KUWSCkmxi8DYRCJk95IIFB6iPstn8EVA2+78nerIOiQONWT4NOXJclOYJw/domZaoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718681915; c=relaxed/simple;
-	bh=16vjqC5pylA9Ku8yvf01alSldo9ulnmEY5mtiiBdDd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qbutWWr1gsFesuK7E8L/EqgoWdBdCxzIloUrg8vRjhWdVgGFLTLhM2A9sh+wObJRlkRg+jRn9eoTU3j0k3KmNbg5BztfZrS3xK1+QTdfdTYDbr9vaID+2ZiI30RiZgpXoCY0ZKSFZzzqHPc2+iXOk9u+SQWyF9ATVzYejbGvE/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=foLQDn1t; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b065d12e81so24411806d6.0;
-        Mon, 17 Jun 2024 20:38:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718681912; x=1719286712; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/L6383qc7XZyKDMmbl5YQqnW5/fQWf0HfmWMo0uUfgo=;
-        b=foLQDn1tBFQSq7y+4TrXfP9jXkeK6qcG+MbubyDVnM/hu5UJ2rsRYSB9BL0LJIJtOq
-         EonAqYTcCUR6eyo4JGsHxNKkHGhIAQatpibctO4rkLxRIozlFL7OR9D1aPqg/EMnXvM8
-         yyh0tviUL0MRVELeuRm+e7hfVATwOvE2WzqI1Ci18KkqN01VzIiL1g9EyM57elCOpdji
-         z+r3IPBKRdHbpRIRkHyQ2vBhToxbh/nC5qSxs1su0U+r8H9qSRvpEhO+3f9ha1dJonPi
-         bsNk/HXWIquwbjluUKAewoBqEgzNI+4q2tUF1vZ8xlEst5zsbKM2jJnPQwOF49tJPdAq
-         Oo4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718681912; x=1719286712;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/L6383qc7XZyKDMmbl5YQqnW5/fQWf0HfmWMo0uUfgo=;
-        b=qttZ2e49Op2LxfD+Le1Hcxx69CE9awIrhfjInGn7ukKC6oDe2JaHYFZ7+fyRS1wVxR
-         bPTZfeAgh0sIKHenv1Ro3AiTGaP3zz8yHseRc4TCkmqqrK0crnF5jjhszc1SkrcSx6Go
-         N81w4LfEL5tcFmBJLwH37iHbflWbUn0PO5r+txS3TLIIimaRvkOWJDKDLQ3Mctctfrse
-         slyUmGEtlMMT2jBgY0Ni7XE0+h3YUidRErXaKJh4Bt/oNX9iEDTRQQYk+YGw4hYBPppZ
-         qIviCqmllrPqyVMeUBvqtsi+2iU1Zsw92a549JbkUOotJAcQmD0Z5A0uIUbOKHX2JvBL
-         TU8A==
-X-Forwarded-Encrypted: i=1; AJvYcCV5/EaNzS2BDORkSd7p2yfYaPoRREB5hN2E1RRDZKL2/xwXuLtD2oNT4LHuR10tZaRhWxDjlnMYYpt5FrJJ71qw4nd01XhRY3FJhuHnZ98LZdSDjL+FZSolxf26p+1KmNiGXn041bK/Ng==
-X-Gm-Message-State: AOJu0YyCznAorjRg1Jlrrx5jWrkkmxoiA+M/+aavITQq8zOtEEMLO9H7
-	3fEJwjv4onhFj2N8Ke9NASbv0Z61e/aEABcoam0rjBVNbMAvideh
-X-Google-Smtp-Source: AGHT+IGTZ9y/IKf7+x9v3f+JI23cgeQY8nwOvBPIvDoArDIc+Hjb65TlWmj1M3n8w47AXywCCqqEEQ==
-X-Received: by 2002:a0c:ec86:0:b0:6b0:82cc:5e76 with SMTP id 6a1803df08f44-6b2afdb7cc5mr135967546d6.62.1718681912262;
-        Mon, 17 Jun 2024 20:38:32 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5ee07d9sm61740026d6.110.2024.06.17.20.38.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 20:38:31 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 4BB531200068;
-	Mon, 17 Jun 2024 23:38:31 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Mon, 17 Jun 2024 23:38:31 -0400
-X-ME-Sender: <xms:NwFxZjXt6SgesqS7KDxugg8C4buk-t7N1AP_WeZN-KG4Lv2bVyj_-w>
-    <xme:NwFxZrm5iYFony8lotoz3Taw8poQkYEkEaPsVsYs2zcfk0TlV9WZH1aUO40086nSg
-    Agaex1rxQNVKTBGig>
-X-ME-Received: <xmr:NwFxZvahbIB3Q5krQs7cYG033K22MfnQHEqv5PI-rC7H6ChCumZbZ2VCew>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedviedgjeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:NwFxZuVlby9fUFkwY8pR_tLGDN0UnwQssiqbmRn-rokG89VpM1_0CQ>
-    <xmx:NwFxZtnkWQmtMbZAFOtL7fwOg-T963hv8uoTpIYP48ASyKXHeJEjVw>
-    <xmx:NwFxZrcC1GUYpnkJGrhPq3KRtHBZSK2atYnOgUbaUEWo48qJZl3tCg>
-    <xmx:NwFxZnEjB3sSx6Yau2p8vnttrF099newrfM2EkunXqs-nEi2bpT_4w>
-    <xmx:NwFxZvlpvn6L7CvlZBbN1AYFG7DZdWQvv3yZy_QGgvA3jZ_6dOA7qOvn>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 17 Jun 2024 23:38:30 -0400 (EDT)
-Date: Mon, 17 Jun 2024 20:38:29 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: stern@rowland.harvard.edu, will@kernel.org, peterz@infradead.org,
-	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	hernan.poncedeleon@huaweicloud.com,
-	jonas.oberhauser@huaweicloud.com
-Subject: Re: [PATCH v3] tools/memory-model: Document herd7 (abstract)
- representation
-Message-ID: <ZnEBNXAKB1yzC-p5@Boquns-Mac-mini.home>
-References: <20240617201759.1670994-1-parri.andrea@gmail.com>
- <ZnC-cqQOEU2fd9tO@boqun-archlinux>
- <ZnD+sRgr9C6r8+v0@andrea>
+	s=arc-20240116; t=1718682152; c=relaxed/simple;
+	bh=XUxcd2xrP6BgK+ZWZVncZJUYuhpwuWh+/+DD8Rtq9ho=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ZGDyHGHIlwSJ+DvrbBPBAN5XOKXLSyFEmuh2TF1iNakv/jIlO05dYoA7JurfU7zG7jnp0D16e9UnnAdrgVHx6jU6rBdfgQexvQqPSgns5sGIQJL0wUCWAGy6Qyq2ZGY6mH4OaKQUPm1n8mztHI0j2FhTxUPIY7XcAGoZWQmNyXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=qeOybXQo; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Subject:From:Message-ID:Date:MIME-Version:
+	Content-Type; bh=QIrPTMY/YwesLH3jlvYihiQmQO6QVdAPAQ9OqtJ8dyI=;
+	b=qeOybXQoOix/iVFnwtrjm4DDH+/kahKuTK4JTccj6G/TIPYgb7BovTfx3e6wzu
+	PXwwFzXbJPKos/hwaVWzJN79kzFZt9Hlx6Rf5fPh1y91qIaQDA9gP48lhc/CD4Y0
+	/hdeqiS8O4wU4GlRYq1+a1K1J6uRuFFGAIKeEYxsppArg=
+Received: from [172.21.21.216] (unknown [118.242.3.34])
+	by gzga-smtp-mta-g1-2 (Coremail) with SMTP id _____wD3_12hAXFmHcQhDQ--.15301S2;
+	Tue, 18 Jun 2024 11:40:19 +0800 (CST)
+Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
+ non-CMA THP-sized page
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com,
+ liuzixing@hygon.cn
+References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
+ <CAGsJ_4zvG7gwukioZnqN+GpWHbpK1rkC0Jeqo5VFVL_RLACkaw@mail.gmail.com>
+ <2e3a3a3f-737c-ed01-f820-87efee0adc93@126.com>
+ <9b227c9d-f59b-a8b0-b353-7876a56c0bde@126.com>
+ <CAGsJ_4ynfvjXsr6QFBA_7Gzk3PaO1pk+6ErKZaNCt4H+nuwiJw@mail.gmail.com>
+From: yangge1116 <yangge1116@126.com>
+Message-ID: <ad2fc08b-9b25-d8de-0790-a7eab9bef907@126.com>
+Date: Tue, 18 Jun 2024 11:40:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnD+sRgr9C6r8+v0@andrea>
+In-Reply-To: <CAGsJ_4ynfvjXsr6QFBA_7Gzk3PaO1pk+6ErKZaNCt4H+nuwiJw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3_12hAXFmHcQhDQ--.15301S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtw17Gr4kuFyxZr4fWFyfJFb_yoW7AFy8pF
+	WfG3Waka1UXryUAwnrt3Z0kr10k34rKr48Wr1rXr18urnIyF1Iyr4xJr18uFyrAryUJF40
+	qr4UtasxZF4DAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bjEfrUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiWQsCG2VLayXP7QAAsJ
 
-On Tue, Jun 18, 2024 at 05:27:45AM +0200, Andrea Parri wrote:
-> > Just to double check, there is also a ->po relation between R*[once] and
-> > W*[once], right?
+
+
+在 2024/6/18 上午9:55, Barry Song 写道:
+> On Tue, Jun 18, 2024 at 9:36 AM yangge1116 <yangge1116@126.com> wrote:
+>>
+>>
+>>
+>> 在 2024/6/17 下午8:47, yangge1116 写道:
+>>>
+>>>
+>>> 在 2024/6/17 下午6:26, Barry Song 写道:
+>>>> On Tue, Jun 4, 2024 at 9:15 PM <yangge1116@126.com> wrote:
+>>>>>
+>>>>> From: yangge <yangge1116@126.com>
+>>>>>
+>>>>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+>>>>> THP-sized allocations") no longer differentiates the migration type
+>>>>> of pages in THP-sized PCP list, it's possible to get a CMA page from
+>>>>> the list, in some cases, it's not acceptable, for example, allocating
+>>>>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
+>>>>>
+>>>>> The patch forbids allocating non-CMA THP-sized page from THP-sized
+>>>>> PCP list to avoid the issue above.
+>>>>
+>>>> Could you please describe the impact on users in the commit log?
+>>>
+>>> If a large number of CMA memory are configured in the system (for
+>>> example, the CMA memory accounts for 50% of the system memory), starting
+>>> virtual machine with device passthrough will get stuck.
+>>>
+>>> During starting virtual machine, it will call pin_user_pages_remote(...,
+>>> FOLL_LONGTERM, ...) to pin memory. If a page is in CMA area,
+>>> pin_user_pages_remote() will migrate the page from CMA area to non-CMA
+>>> area because of FOLL_LONGTERM flag. If non-movable allocation requests
+>>> return CMA memory, pin_user_pages_remote() will enter endless loops.
+>>>
+>>> backtrace:
+>>> pin_user_pages_remote
+>>> ----__gup_longterm_locked //cause endless loops in this function
+>>> --------__get_user_pages_locked
+>>> --------check_and_migrate_movable_pages //always check fail and continue
+>>> to migrate
+>>> ------------migrate_longterm_unpinnable_pages
+>>> ----------------alloc_migration_target // non-movable allocation
+>>>
+>>>> Is it possible that some CMA memory might be used by non-movable
+>>>> allocation requests?
+>>>
+>>> Yes.
+>>>
+>>>
+>>>> If so, will CMA somehow become unable to migrate, causing cma_alloc()
+>>>> to fail?
+>>>
+>>>
+>>> No, it will cause endless loops in __gup_longterm_locked(). If
+>>> non-movable allocation requests return CMA memory,
+>>> migrate_longterm_unpinnable_pages() will migrate a CMA page to another
+>>> CMA page, which is useless and cause endless loops in
+>>> __gup_longterm_locked().
 > 
-> That's right.  rmw = rmw & po
+> This is only one perspective. We also need to consider the impact on
+> CMA itself. For example,
+> when CMA is borrowed by THP, and we need to reclaim it through
+> cma_alloc() or dma_alloc_coherent(),
+> we must move those pages out to ensure CMA's users can retrieve that
+> contiguous memory.
 > 
-> I could add a note about that, but I would stick with the current patch
-> /version (and your Reviewed-by:) unless other requests.
+> Currently, CMA's memory is occupied by non-movable pages, meaning we
+> can't relocate them.
+> As a result, cma_alloc() is more likely to fail.
 > 
+>>>
+>>> backtrace:
+>>> pin_user_pages_remote
+>>> ----__gup_longterm_locked //cause endless loops in this function
+>>> --------__get_user_pages_locked
+>>> --------check_and_migrate_movable_pages //always check fail and continue
+>>> to migrate
+>>> ------------migrate_longterm_unpinnable_pages
+>>>
+>>>
+>>>
+>>>
+>>>
+>>>>>
+>>>>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+>>>>> THP-sized allocations")
+>>>>> Signed-off-by: yangge <yangge1116@126.com>
+>>>>> ---
+>>>>>    mm/page_alloc.c | 10 ++++++++++
+>>>>>    1 file changed, 10 insertions(+)
+>>>>>
+>>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>>> index 2e22ce5..0bdf471 100644
+>>>>> --- a/mm/page_alloc.c
+>>>>> +++ b/mm/page_alloc.c
+>>>>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone
+>>>>> *preferred_zone,
+>>>>>           WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
+>>>>>
+>>>>>           if (likely(pcp_allowed_order(order))) {
+>>>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>>> +               if (!IS_ENABLED(CONFIG_CMA) || alloc_flags &
+>>>>> ALLOC_CMA ||
+>>>>> +                                               order !=
+>>>>> HPAGE_PMD_ORDER) {
+>>>>> +                       page = rmqueue_pcplist(preferred_zone, zone,
+>>>>> order,
+>>>>> +                                               migratetype,
+>>>>> alloc_flags);
+>>>>> +                       if (likely(page))
+>>>>> +                               goto out;
+>>>>> +               }
+>>>>
+>>>> This seems not ideal, because non-CMA THP gets no chance to use PCP.
+>>>> But it
+>>>> still seems better than causing the failure of CMA allocation.
+>>>>
+>>>> Is there a possible approach to avoiding adding CMA THP into pcp from
+>>>> the first
+>>>> beginning? Otherwise, we might need a separate PCP for CMA.
+>>>>
+>>
+>> The vast majority of THP-sized allocations are GFP_MOVABLE, avoiding
+>> adding CMA THP into pcp may incur a slight performance penalty.
+>>
+> 
+> But the majority of movable pages aren't CMA, right?
 
-Current version is fine to me, thanks!
+Yes.
 
-Regards,
-Boqun
+> Do we have an estimate for
+> adding back a CMA THP PCP? Will per_cpu_pages introduce a new cacheline, which
+> the original intention for THP was to avoid by having only one PCP[1]?
+> 
+> [1] https://patchwork.kernel.org/project/linux-mm/patch/20220624125423.6126-3-mgorman@techsingularity.net/
+> 
+> 
+>> Commit 1d91df85f399 takes a similar approach to filter, and I mainly
+>> refer to it.
+>>
+>>
+>>>>> +#else
+>>>>>                   page = rmqueue_pcplist(preferred_zone, zone, order,
+>>>>>                                          migratetype, alloc_flags);
+>>>>>                   if (likely(page))
+>>>>>                           goto out;
+>>>>> +#endif
+>>>>>           }
+>>>>>
+>>>>>           page = rmqueue_buddy(preferred_zone, zone, order, alloc_flags,
+>>>>> --
+>>>>> 2.7.4
+>>>>
+>>>> Thanks
+>>>> Barry
+>>>>
+>>
+>>
 
->   Andrea
 
