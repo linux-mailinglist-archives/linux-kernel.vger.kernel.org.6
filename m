@@ -1,221 +1,211 @@
-Return-Path: <linux-kernel+bounces-219751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E06490D738
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:27:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5E090D745
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F9621C23325
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:27:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B7FC1C23192
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A152A768E1;
-	Tue, 18 Jun 2024 15:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="auvvxpp2"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B96032C8C;
+	Tue, 18 Jun 2024 15:28:33 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C906F307;
-	Tue, 18 Jun 2024 15:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C49322F1C;
+	Tue, 18 Jun 2024 15:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718724379; cv=none; b=VkLD+m9zsSaXOBlorq+EJx3/jzCvlCuIkn5dK+Gk/MeihO7NSX82mAbtHwW+EKtbP4B96++IhpKXyAMsPUxs4bo1vTo25dAN5T/7P4BXesxp7CDQ8TSRgrPdtwB1RWABQ7vgglXlcJ4mSGAyBPxtN/ztE6AjhxpyGFjMYexopQg=
+	t=1718724513; cv=none; b=OPLVGgfD2hxIzPFqNNcjBq1snW9n3T9dWPhYKE0WaqL6Yxt9HAAwjPS98LTQa6oQtwRsqB61QR1qd4aQnwuqGgSi9i601RqjQ96zkLiWnjP75oWuOp+IEFHfyl/S5kbiCSB6IWd9QM+ia1PGaNzjS3MsInXTS1IEN2grNX3JIkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718724379; c=relaxed/simple;
-	bh=KacarSMJ2WTh7lJDtLEVdRO+H2BB7UwFV8aZDrR0HBs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RvmZBiHpVypNfSikcsIOeD7I4rCOaFJyjjFWhSQYbqUSgyTs1XvQlPoc0k5xaPtaDwXcK054R71AAVPWdvGemsnCuBIdmYRTEm7DN6XjxwdIA2rAlO1hS5KlXJULXy6vltmtM5+7Jbdhj+VD80VNtw2//NvvYUcksQjrbl5v42g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=auvvxpp2; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7061d37dc9bso871733b3a.2;
-        Tue, 18 Jun 2024 08:26:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718724378; x=1719329178; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0hkvZkfg/GcNlPEHzOoz4co9rHTk55S0Yh7Q8va3D4Q=;
-        b=auvvxpp2Sp3dYKZaFxjdE9ADRuRLThDR7cZUXKKEOD7aoirKynqM5dYgVeJoSwPJPv
-         5l98e8W9RyCjc8gGelXtvMkNGC2eyPEdhhaPAWVCJeGzzSEKf2Ww8uILRtdSpuKWIGvK
-         1fa3a0KfN61WySRJavU/fmTkWxEUCNZWSvbfIbCK7xjPNmoOq4V2HWQL8S1Hd1axfoaB
-         kSpx48z8Givte5CgysL0FswOJJGLbPix36r+9hlWoHCmFE5q7Dn4wndMWXwF/4RdqKIb
-         PDU7ACmBbMkvfDcamhx/C5Q5ST4q4XUnqbKpZBKrq6zDzoWIT1PWLLBnBGYa/FACjh9s
-         3Pvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718724378; x=1719329178;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0hkvZkfg/GcNlPEHzOoz4co9rHTk55S0Yh7Q8va3D4Q=;
-        b=DbhygaWEjUugvNnWuEwvdp4mxKGhxCW2uI1xymU6fiz1F4BdCMftvxGVgDId8E85vK
-         qBXQ0AbfYPUaFgZoTQwalu3ygV33+Ie8y6aIOQY0mJnZcfjPqPXvB6CgHQPxUC7X5bOO
-         hqTZ4u2NsfNOeO16kKUGECRYZNkzXMh65EjCOC/eM1F/OIi+JgyOpZ3y1wYaGxVqCSym
-         CBNr7R48cY7y0lMeHCqlyB7RdN5nhx+AGyImRW06RylWW/0jRw61fZPNjxvIgwobo+IW
-         wEcCoMEPUSQ1PgMa2W2UPkhK9e7d1JIlMNEt2Dbf5Dp4IAcpYrlQJmXCftuN8yxyaq6W
-         DAqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHxbHjfOzaaBzHwWy3jxPBx5SfyAxCoBZoXQYvFYg86fj35UkfIzQYJnyhmKYwzHJzzjg4Z4q0RChvP/TcIAAjQBQUF+hAuiM79N08d1v0s0Hfc+jVTqW8aecAnexhnO6OPlXG11B2Ik2nAhxNbA==
-X-Gm-Message-State: AOJu0Yzqh4qEQtH9wdbBeSm+oG+RFL7v6o/NxB2kQUhxWR/IzrGdoiXF
-	D42opAmPWW2CgpVqcOUA40kii5SYlCaeLRQ92P42+UFPoE6K4byj
-X-Google-Smtp-Source: AGHT+IHVbXPCeIWuYQGFM4Jjl8JWCQvhHH5BHXSuStg2xo0hpePlgku4VHHkhCrUZdCVvBzQC2YcbA==
-X-Received: by 2002:aa7:8702:0:b0:705:b81b:6ee2 with SMTP id d2e1a72fcca58-705d7155f7dmr12156188b3a.19.1718724377923;
-        Tue, 18 Jun 2024 08:26:17 -0700 (PDT)
-Received: from localhost.localdomain ([120.229.49.95])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb4265esm9071388b3a.116.2024.06.18.08.26.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 08:26:17 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH v1 5/5] perf trace: Add test for enum augmentation
-Date: Tue, 18 Jun 2024 23:26:52 +0800
-Message-ID: <20240618152652.3446472-6-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240618152652.3446472-1-howardchu95@gmail.com>
-References: <20240618152652.3446472-1-howardchu95@gmail.com>
+	s=arc-20240116; t=1718724513; c=relaxed/simple;
+	bh=F+ED/OioFLnqOYlwF4WKTud/ZqoBQqoLpm+kzsS3g1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qu6jETLPh63DbRnaCIRhsrt9XpJ1NYbZkiIYNUayrdMZEjTkv0nJbEwRKC1uLBD9oCM8GJfGNTJY7yQuWZUzt29TJhjgZRdKQqZZQqOkXM5WkZeTg2EX/f9jKA4eFn5aUEmTbROCHl5Mtlr/bgMWO9O+6CTt+8HsDFgWcaCoPe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 48A3261E5FE01;
+	Tue, 18 Jun 2024 17:27:50 +0200 (CEST)
+Message-ID: <c345a680-d5a3-4ca8-a9e2-8ac04f526284@molgen.mpg.de>
+Date: Tue, 18 Jun 2024 17:27:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Armin Wolf <W_Armin@gmx.de>, Stephen Horvath <s.horvath@outlook.com.au>
+References: <20240604040237.1064024-1-linux@roeck-us.net>
+ <20240604040237.1064024-6-linux@roeck-us.net>
+ <a5aa120d-8497-4ca8-9752-7d800240b999@molgen.mpg.de>
+ <efb77b37-30e5-48a8-b4af-eb9995a2882b@roeck-us.net>
+ <33f369c1-1098-458e-9398-30037bd8c5aa@molgen.mpg.de>
+ <4e09b843-3d2d-46d7-a8e1-2eabc4382dc7@roeck-us.net>
+ <f20ea816-5165-401e-948f-6e77682a2d1b@molgen.mpg.de>
+ <975af7e5-b1b0-400e-a1c3-6d9140421f25@roeck-us.net>
+ <8719fc64-2b51-4b79-ba52-0a3b9216f2db@molgen.mpg.de>
+ <f76a4d07-887b-4efb-b20e-52979db31216@roeck-us.net>
+ <fd8868ef-6179-45a7-8249-ee17994a8e78@molgen.mpg.de>
+ <2532ca4a-83dd-4ab8-af04-6ebcd5ca8673@roeck-us.net>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <2532ca4a-83dd-4ab8-af04-6ebcd5ca8673@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Check for vmlinux's existence in sysfs as prerequisite.
+Dear Guenter,
 
-Compile and run a script which calls landlock_add_rule syscall,
-trace the syscall to judge if the output is desirable.
 
-Trace the non-syscall tracepoint 'timer:hrtimer_init' and
-'timer:hrtimer_start', see if the 'mode' argument is augmented,
-the 'mode' enum argument has the prefix of 'HRTIMER_MODE_'
-in its name.
+Am 18.06.24 um 17:12 schrieb Guenter Roeck:
+> On 6/18/24 07:59, Paul Menzel wrote:
 
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
----
- tools/perf/tests/shell/trace_btf_enum.sh | 104 +++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
- create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
+>> Am 18.06.24 um 16:23 schrieb Guenter Roeck:
+>>> On 6/18/24 06:51, Paul Menzel wrote:
+>>
+>>>> Am 18.06.24 um 15:32 schrieb Guenter Roeck:
+>>>>
+>>>>> On 6/18/24 03:25, Paul Menzel wrote:
+>>>>> [ ... ]
+>>>>>>
+>>>>>>      $ ls -l /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
+>>>>>>      -r--r--r-- 1 root root 1024 Jun 18 12:17  /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
+>>>>>>      $ cp /sys/bus/i2c/drivers/spd5118/0-0050/eeprom /tmp
+>>>>>>      cp: error reading '/sys/bus/i2c/drivers/spd5118/0-0050/eeprom': No such device or address
+>>>>>
+>>>>> That suggests that the i801 driver got an error when trying some 
+>>>>> chip operation.
+>>>>> Unfortunately I have no idea what that error or the failed 
+>>>>> operation might be.
+>>>>>
+>>>>>>      $ od -t x1 /sys/bus/i2c/drivers/spd5118/0-0050/eeprom
+>>>>>>      od: /sys/bus/i2c/drivers/spd5118/0-0050/eeprom: read error: No such device or address
+>>>>>>      0000000
+>>>>>>
+>>>>>>> sudo i2cdump -y -f 0 0x50
+>>>>>>
+>>>>>>      $ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
+>>>>>>      No size specified (using byte-data access)
+>>>>>>      Error: Could not open file `/dev/i2c-0' or `/dev/i2c/0': No such file or directory
+>>>>>>
+>>>>> This should work after you load the "i2c-dev" module.
+>>>>
+>>>> Silly me. Thank you.
+>>>>
+>>>>> If you get it to work, please provide the output. Maybe it helps 
+>>>>> tracking down the problem.
+>>>>
+>>>> ```
+>>>> $ sudo LD_LIBRARY_PATH=~/src/i2c-tools/lib tools/i2cdump -y -f 0 0x50
+>>>> No size specified (using byte-data access)
+>>>>       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    
+>>>> 0123456789abcdef
+>>>> 00: 51 18 0a 86 32 03 32 00 00 00 00 00 ff 01 00 00    Q???2?2......?..
+>>>> 10: 00 00 00 00 00 00 00 00 00 00 00 00 70 03 00 00    ............p?..
+>>>> 20: 50 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00    P?..............
+>>>> 30: 00 58 01 00 00 00 00 00 00 00 00 00 00 00 00 00    .X?.............
+>>>> 40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>>> 50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>>> 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>>> 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>>> 80: 30 10 12 02 04 00 20 62 00 00 00 00 90 02 00 00    0????. b....??..
+>>>> 90: 00 00 00 00 a0 01 f2 03 7a 0d 00 00 00 00 80 3e    ....????z?....?>
+>>>> a0: 80 3e 80 3e 00 7d 80 bb 30 75 27 01 a0 00 82 00    ?>?>.}??0u'??.?.
+>>>> b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>>> c0: 00 00 00 00 00 00 88 13 08 88 13 08 20 4e 20 10    ......?????? N ?
+>>>> d0: 27 10 15 34 20 10 27 10 c4 09 04 4c 1d 0c 00 00    '??4 ?'????L??..
+>>>> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>>> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+>>>> ```
+>>>>
+>>>> So (00,b) = 0x00 opposed to 0x07 in your example output.
+>>>>
+>>>
+>>> Yes, that assumed that reading the nvram/eeprom succeeded, which it didn't.
+>>> The value might also be 7 directly after booting and before loading
+>>> the spd5118 driver.
+>>>
+>>> Anyway, it almost looks like setting the page doesn't work, or maybe write
+>>> operations in general.
+>>>
+>>> Can you try the following ?
+>>>
+>>> dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom 
+>>> count=64 bs=1
+>>>
+>>> and
+>>>
+>>> dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom 
+>>> count=1 bs=64
+>>>
+>>> That should only try to read from page 0.
+>>
+>>      $ sudo dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=64 bs=1
+>>      64+0 records in
+>>      64+0 records out
+>>      64 bytes copied, 0.046002 s, 1.4 kB/s
+>>      $ sudo dd if=/sys/bus/i2c/drivers/spd5118/0-0050/eeprom of=/tmp/eeprom count=1 bs=64
+>>      1+0 records in
+>>      1+0 records out
+>>      64 bytes copied, 0.000215414 s, 297 kB/s
+>>
+>>> Also, please try to set a temperature limit, either temp1_max
+>>> or temp1_crit. Setting temp1_max to, say, 56000, or temp1_crit
+>>> to 84000 should do.
+>>
+>> I did
+>>
+>>      $ tail -3 /etc/sensors3.conf
+>>      chip "spd5118-*"
+>>          set temp1_max 56000
+>>          set temp1_crit 84000
+>>
+>> but it stays with the defaults:
+>>
+>> ```
+>> $ sensors
+> 
+> Did you run "sudo sensors -s" ?
 
-diff --git a/tools/perf/tests/shell/trace_btf_enum.sh b/tools/perf/tests/shell/trace_btf_enum.sh
-new file mode 100755
-index 000000000000..14c73b0b594d
---- /dev/null
-+++ b/tools/perf/tests/shell/trace_btf_enum.sh
-@@ -0,0 +1,104 @@
-+#!/bin/sh
-+# perf trace enum augmentation tests
-+# SPDX-License-Identifier: GPL-2.0
-+
-+err=0
-+set -e
-+
-+syscall="landlock_add_rule"
-+non_syscall="timer:hrtimer_init,timer:hrtimer_start"
-+
-+landlock_script=$(mktemp /tmp/landlock-XXXXX.c)
-+landlock_ex=$(echo $landlock_script | sed -E 's/(.*).c$/\1/g')
-+
-+landlock_fd=24
-+landlock_flags=25
-+
-+. "$(dirname $0)"/lib/probe.sh
-+skip_if_no_perf_trace || exit 2
-+
-+enum_aug_prereq() {
-+  echo "Checking perf trace enum augmentation prerequisites"
-+  if ! ls /sys/kernel/btf/vmlinux 1>/dev/null 2>&1
-+  then
-+    echo "trace+enum test [Skipped missing vmlinux BTF support]"
-+    err=2
-+    return
-+  fi
-+}
-+
-+prepare_landlock_script() {
-+  echo "Preparing script for ${syscall} syscall"
-+
-+  cat > $landlock_script << EOF
-+#define _GNU_SOURCE
-+#include <unistd.h>
-+#include <linux/landlock.h>
-+#include <sys/syscall.h>
-+
-+int main()
-+{
-+	int fd = ${landlock_fd};
-+	int flags = ${landlock_flags};
-+	struct landlock_path_beneath_attr path_beneath_attr = {
-+	    .allowed_access = LANDLOCK_ACCESS_FS_READ_FILE,
-+	};
-+	struct landlock_net_port_attr net_port_attr = {
-+	    .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+	    .port = 443,
-+	};
-+
-+	syscall(SYS_landlock_add_rule, fd, LANDLOCK_RULE_PATH_BENEATH,
-+		&path_beneath_attr, flags);
-+
-+	syscall(SYS_landlock_add_rule, fd, LANDLOCK_RULE_NET_PORT,
-+		&net_port_attr, flags);
-+
-+	return 0;
-+}
-+EOF
-+
-+  gcc $landlock_script -o $landlock_ex
-+}
-+
-+trace_landlock() {
-+  echo "Tracing syscall ${syscall}"
-+  if perf trace -e $syscall $landlock_ex 2>&1 | \
-+     grep -q -E ".*landlock_add_rule\(ruleset_fd: ${landlock_fd}, rule_type: (LANDLOCK_RULE_PATH_BENEATH|LANDLOCK_RULE_NET_PORT), rule_attr: 0x[a-f0-9]+, flags: ${landlock_flags}\) = -1.*"
-+  then
-+    err=0
-+  else
-+    err=1
-+  fi
-+}
-+
-+trace_non_syscall() {
-+  echo "Tracing non-syscall tracepoint ${non-syscall}"
-+  if perf trace -e $non_syscall --max-events=1 2>&1 | \
-+     grep -q -E '.*timer:hrtimer_.*\(.*mode: HRTIMER_MODE_.*\)$'
-+  then
-+    err=0
-+  else
-+    err=1
-+  fi
-+}
-+
-+cleanup() {
-+  rm -f $landlock_script $landlock_ex
-+}
-+
-+enum_aug_prereq
-+
-+prepare_landlock_script
-+
-+if [ $err = 0 ]; then
-+  trace_landlock
-+fi
-+
-+if [ $err = 0 ]; then
-+  trace_non_syscall
-+fi
-+
-+cleanup
-+
-+exit $err
--- 
-2.45.2
+No, I did not.
 
+> I don't know if that would report errors, though.
+
+It looks like it does:
+
+     $ sudo sensors -s
+     Error: File /etc/sensors3.conf, line 522: Failed to set value
+     Error: File /etc/sensors3.conf, line 523: Failed to set value
+     spd5118-i2c-0-53: At least one "set" statement failed
+     Error: File /etc/sensors3.conf, line 522: Failed to set value
+     Error: File /etc/sensors3.conf, line 523: Failed to set value
+     spd5118-i2c-0-51: At least one "set" statement failed
+     Error: File /etc/sensors3.conf, line 522: Failed to set value
+     Error: File /etc/sensors3.conf, line 523: Failed to set value
+     spd5118-i2c-0-52: At least one "set" statement failed
+     Error: File /etc/sensors3.conf, line 522: Failed to set value
+     Error: File /etc/sensors3.conf, line 523: Failed to set value
+     spd5118-i2c-0-50: At least one "set" statement failed
+
+
+Kind regards,
+
+Paul
 
