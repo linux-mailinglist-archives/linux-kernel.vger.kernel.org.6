@@ -1,86 +1,155 @@
-Return-Path: <linux-kernel+bounces-219282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D8490CC58
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:48:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B35190CCBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51FD71F21E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69CC11C20CAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB583148313;
-	Tue, 18 Jun 2024 12:38:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D26119B5AD;
+	Tue, 18 Jun 2024 12:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ykziTRJg"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE12B1474A2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE6D19047A;
+	Tue, 18 Jun 2024 12:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714285; cv=none; b=A4gksRcpFHeWXg54/Rg1nOadS/gkKOTGdl4X4u2csV+aUR/w1KQXL6s/SekZT89bJtuvnpNnWSmw/bMZ3DsVUBYy/VgBf/M4yzriCSe4qbtJHzGbubZRAewOwLO+/tOrDII3LsPpxHjJrGwF3aTLl3gqrcl/YpWoWzeTNtfjDRA=
+	t=1718714381; cv=none; b=Yp1C/6mAOjCmGc10d8HVy1mSNenmsXYQzP9fbX/7bHA5X6tEumpTl17/pZJxk3fDYo5/sw4oSTaXYtWX1QCXe8A65fx+I5NotZ05FUUGHOjkPZC/T48wcAHBFwt1t7TQR9HWvNuvebh/rpozHt3aNVInRAATm+6x+KDHs6jndcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714285; c=relaxed/simple;
-	bh=fGTSPjnQr05i/Qz1njYxsPrj+v0954KqoCdZCgFqtHA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SCai9EtKPSY9aG6ZNUZ0+4aWfh8hf0JpK8MRuV/qj07WXQX5anMcSqAv5kzxuqBG9BKfJGAK5aLN9Bct2D8TlcFatIQC/30m3uONAECy+7Tu2S522knehLLUzgcBJqN5vhCdCKQuvUfDCUzbee+Cg0o85SXBrbNATdCql+tJyDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7eb1d659c76so700695939f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 05:38:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718714283; x=1719319083;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G31n2s5h9TgP7VMBf8zD67R7hIlXkzsxNuS5q3V8lvo=;
-        b=c4CsWCV6NlMR8GHgBcM3poSV/gXuBMUaZIot5IM7pcW0Pi5zqw+iW0U0i76VRuHAb6
-         8amupRdl2tTs9+v/L2kbrGD3qv7rs1aFRuDWMWHjmN9j7zqE73u58uOkI7DKzQbhV0bQ
-         0j2ZcpA0khKXUjiEdwssBHq2nroIdel4RUB8/Vt/GViuhOyCwJoS2WzjGSgT1xIzSxOB
-         Xzt/G5IQ+zo261GyY/ZZ2KU3Kho+eTuEr4hbkhhFs6J0K6NlVyv3xSRAeWmm2VKOnF2X
-         JCBTHOniFIGdAz62nEZdeFCnxCBS+VIhW+IYbCPVW2e3jJ6rwkQ461soHSh3Qz8HYr3C
-         qjEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYsL1zZwxhViCFmbvoDYkWLfyygOfnIQRYu34EipcdUlKR50txlLWs6fYQdhaV9fGCo9gnp5ZMYghZ002af5wqeLD2krcYx7eprBdb
-X-Gm-Message-State: AOJu0Yx76w/SqOsTrHlYvxnOoFvSvysTTXWOalEH+uJAkcSPb4O2dvHs
-	orBArFmmxYXwDIB/PTFhdxg7ETBfgwQi4MJuEV+21odamLCQ69aRKHAV2tPrKiuMPNY3k+6v0Tc
-	WzNRIC3ZVt2COw2WfacTNAjA4uMclQe67LlLJczjp7bWwcfkXJ1E50rQ=
-X-Google-Smtp-Source: AGHT+IGA6H74RoVlHPgLUYkCnJztGcZO9f+hnXqri2n6cFO/VcQG28o5xOHHsyAQNMpFYDV7m+zXjKie2NoGZTTXIV1cB7FHaquN
+	s=arc-20240116; t=1718714381; c=relaxed/simple;
+	bh=e+/mKXkRdPvjBlGr8XNXuV89ZJiYt/k+nMVYcqGYbKw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hWU2mwnLGpEB2Qiy3P78uOtyG9BE4xcNofpXCzito+tiNFKegZTRNUVFTyEs67VLYlxvRii4sqTdwBeLeqkYVsZz7t0pbWdksHmbKlbYjd963ev/x+qF2VmuW372NS7n9KRoZUWOhYaPPR7t0Vpm1R0WH30FXM+wFnriRG8D83Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ykziTRJg; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718714377;
+	bh=e+/mKXkRdPvjBlGr8XNXuV89ZJiYt/k+nMVYcqGYbKw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ykziTRJg5Cai9lwNaWd4iGmTspqKZ/8uEq0NJOinsUZaTJgQRSq9nxRGFRXZOYqmq
+	 YwhMr3wTp0AjvEfb9B3pBj5Vclj264bU9APaHtq6XukCY5kJ/RMHnx4x6lL79m9Wif
+	 S95liCtyqX19lDj8euZlkjQ1vHZwmmU8DQNQnTMf4B+jqI+K2+7YijGPS1Ew6GU0uL
+	 U2kd1m6VD36AVzTp6dKuDvLFaDKR7zhAPLkrEBQcMywh6jLNA7jwqN7tXuVpEsrSno
+	 lm7dympUxa9TLpwKZWHrL2SzRElJLcNHLAP49S39FbDGis4BWJTiT3TReI8UjdpWOX
+	 pYRom/Y1ib8gQ==
+Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B09F73780BDB;
+	Tue, 18 Jun 2024 12:39:34 +0000 (UTC)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+Cc: alchark@gmail.com, andy.yan@rock-chips.com, conor+dt@kernel.org,
+ cristian.ciocaltea@collabora.com, devicetree@vger.kernel.org,
+ didi.debian@cknow.org, dsimic@manjaro.org, gregkh@linuxfoundation.org,
+ heiko@sntech.de, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
+ liujianfeng1994@gmail.com, mchehab@kernel.org, nicolas@ndufresne.ca,
+ robh@kernel.org, sebastian.reichel@collabora.com
+Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
+Date: Tue, 18 Jun 2024 08:39:07 -0400
+Message-ID: <4302165.yKVeVyVuyW@arisu>
+Organization: Collabora
+In-Reply-To: <20240618121329.79936-1-liujianfeng1994@gmail.com>
+References:
+ <4116468.VLH7GnMWUR@arisu> <20240618121329.79936-1-liujianfeng1994@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3713:b0:4b9:6c10:36c1 with SMTP id
- 8926c6da1cb9f-4b96c103c50mr449016173.2.1718714282767; Tue, 18 Jun 2024
- 05:38:02 -0700 (PDT)
-Date: Tue, 18 Jun 2024 05:38:02 -0700
-In-Reply-To: <b82ee1f4-0a09-7976-0b5b-c762f5eb4186@netfilter.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004b8b81061b295a04@google.com>
-Subject: Re: [syzbot] [netfilter?] net-next test error: WARNING: suspicious
- RCU usage in _destroy_all_sets
-From: syzbot <syzbot+cfbe1da5fdfc39efc293@syzkaller.appspotmail.com>
-To: kadlec@netfilter.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="nextPart4472750.OBFZWjSADL";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-Hello,
+--nextPart4472750.OBFZWjSADL
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
+Date: Tue, 18 Jun 2024 08:39:07 -0400
+Message-ID: <4302165.yKVeVyVuyW@arisu>
+Organization: Collabora
+In-Reply-To: <20240618121329.79936-1-liujianfeng1994@gmail.com>
+MIME-Version: 1.0
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Tuesday, June 18, 2024 8:13:29 A.M. EDT Jianfeng Liu wrote:
+> Hi Detlev,
+> 
+> On Fri, 14 Jun 2024 21:56:27 -0400, Detlev Casanova wrote:
+> >+		.frmsize = {
+> >+			.min_width = 16,
+> >+			.max_width =  65520,
+> >+			.step_width = 16,
+> >+			.min_height = 16,
+> >+			.max_height =  65520,
+> >+			.step_height = 16,
+> >+		},
+> 
+> I think the min/max width/height are incorrect. From rockchip's TRM V1.0
+> Part1 page 374, supported image size is 64x64 to 65472x65472.
 
-Reported-and-tested-by: syzbot+cfbe1da5fdfc39efc293@syzkaller.appspotmail.com
+Page 374 shows the sizes for h265. h264 is the next table, where 16x16 and 
+65520x65520 is documented.
 
-Tested on:
+> And my
+> chromium can't use rkvdec2 because min width/height are set to 16, which
+> 
+> will cause error at here in rkvdec2_h264_validate_sps:
+> >+	if (width > ctx->coded_fmt.fmt.pix_mp.width ||
+> >+	    height > ctx->coded_fmt.fmt.pix_mp.height)
+> >+		return -EINVAL;
+> 
+> width is 16, height is 32 while ctx->coded_fmt.fmt.pix_mp.width and
+> ctx->coded_fmt.fmt.pix_mp.height are both 16.
 
-commit:         0eb94209 netfilter: ipset: Fix suspicious rcu_derefere..
-git tree:       git://blackhole.szhk.kfki.hu/nf main
-kernel config:  https://syzkaller.appspot.com/x/.config?x=33d942c3f3616a8f
-dashboard link: https://syzkaller.appspot.com/bug?extid=cfbe1da5fdfc39efc293
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Maybe
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+if (!(sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY))
+	height *= 2;
+
+is causing issues in this case, I can check.
+
+> After changing them to 64 my chromium can use rkvdec2 to decode h264
+> videos now.
+> 
+> Anyway many thanks to your amazing work!
+> 
+> Best regards,
+> Jianfeng
+
+
+--nextPart4472750.OBFZWjSADL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmZxf+sACgkQ5EFKUk4x
+7bYJOAf/Zme2uxfjX+cwsN758W5amw+QvLxn04CfI871RZj09w3zEbV6ZQ1ZYAPg
+mG4XI/KLEUI/tDA0AX6DvEkK0K81bxsoPx+NTzH7sMpeoyq52NtrscARBNUE+jrW
+hiMntPl1ZnnQub2q4K36Lvdiao7vdsM4xBQZC+bq2qo/CaaSY1KvJou6wsgMvug9
+lVVfhHT9EO2bpYntOpZgjJlleNCu6V1lN/b9VhKOFMxCAYhBKDMxXWnfJrx2J8sL
+ATZ68cdCoNSIC7xLlcMfOUzVM8lfTG/dvW8e+VLsoBBbX4FWll8Pk2wKC8r2/Sw8
+/+doLEMSMZG4MUevBqAHFpjkXgkMbA==
+=KICS
+-----END PGP SIGNATURE-----
+
+--nextPart4472750.OBFZWjSADL--
+
+
+
 
