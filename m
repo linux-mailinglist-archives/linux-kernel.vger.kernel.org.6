@@ -1,777 +1,285 @@
-Return-Path: <linux-kernel+bounces-219464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE21D90D357
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7E890D2FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E358B2B6AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:55:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3A7B2B2D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE6E15D5A8;
-	Tue, 18 Jun 2024 13:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A3B15B118;
+	Tue, 18 Jun 2024 13:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b="CffBMMYO"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zdXi1vLl"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A125315CD60
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F92F15B122
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718717455; cv=none; b=QGMhTpNcyk2YswS7WUZmT/MqhwKVu32sEzIp42BScDs8XOeIQRI8U+r0uCCXC+ob0RPGSPwFqfVWI6HcrIU4WO04cEO/3bQ6b/HS4K0u7GE4qpKEbMuQL+0flwEI9mq0a/xQWrdDcEe32cZfqoxav+YGGPS7Z0tO7X3UPOOWXTc=
+	t=1718717446; cv=none; b=aL59b3nAsE1HEhd/V4tPGRrhN2/UDiII5DnhEGdrcIJ7/8joDtqgi5z6ZnfInIxeGnjV78Hdi7vg3h7Aa2A6jgedxNWeOfDRj/tal7u+/05q+T6FsOadQ2Ft3awChNig0YUZLRCSLyyr/pmyzhu4J3o4l+/AAUQNimqkaFc48z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718717455; c=relaxed/simple;
-	bh=r25A03eIraXTw41z9ZfZjV9Rr4CjZjbiVKC5IMJT0pI=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bDCCyZYCfG2px3d4c/UHuwFUsQ9mLmae9rgcNkpHOvjB7dAEHJQvsEZ3QWVrQ/LB75IkMYXiuC/4btnSuUrXEZxMOdB5AIBs38+LVDhJzkqqs9Z1hEW6WIfBkgIo/+D/LkQQL4Wkw4PIqn4+pk36DjD5juF84h/QDx5MOpfEIQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk; spf=pass smtp.mailfrom=remote-tech.co.uk; dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b=CffBMMYO; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=remote-tech.co.uk
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f9fe791f8so36402666b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:30:51 -0700 (PDT)
+	s=arc-20240116; t=1718717446; c=relaxed/simple;
+	bh=NKx10kZQVFlFekzvoEnS/8ZTj3H2HcjEG4LOYzcq8J4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GfM6TkLtfbP9sOCUdzDR4Co0JWCL+HSLSycqBe1VR3y8qrIGEoTTiPDBe5JtXB6Bd9+abggaviots6RLuPrNZor9vBZA4BnkH0fxcOBdLESO+ksU1kEbKlimUP8iwZmYT1QTaoltc7RgQMnk79qB8kDtxlUulCYD3G+S4m0BMx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zdXi1vLl; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6f98178ceb3so2979739a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:30:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=remote-tech-co-uk.20230601.gappssmtp.com; s=20230601; t=1718717450; x=1719322250; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718717443; x=1719322243; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JcF9LGMhYeqqe8e6XFHkX4so/zLsXMeJT1kqXM73gBU=;
-        b=CffBMMYO0Me+2OuhB1Ta/U37F37P9EhQytSAXIz0sNcY1yqI4QDDofZLQOCWPRDuy2
-         H1N/Vry5HWw26oauAGbKds/pRs2n5Tzm6pt73wFwrBIfKjyV5UYXcooz1A7B6auecStR
-         zzCdDuQJ7mfhoDc9/h+oL5bd/+kvUWRMJ2G9XUV8SmaXQFmC/307LFaABksYDzTrXLhV
-         o4bpS2nBBSLMivGPQN0kcLo8xAwk6lTIRRvcOECCYZmrQd1udh+0Gcx7DmMPgztAaLhN
-         jC51U5XMSouNzbMHK8dBVwPHdBFLpoBG0g5AJntRaJVH7Lf/zSKSKX41Lpj8ouCameKD
-         +oVA==
+        bh=f27crG0t09naGQNeqsNy+BsT+aZ19Wc0lLslo+BFljo=;
+        b=zdXi1vLlUyVvsUkhUOtqRrG3X0SC+KGPfUaWToQb42o75ANcbwpqGqz4BuryMHUb3K
+         Z33yFiB4FX87EXpUmpsp6ByTWyLAMFjKzDLGQojNwzNEAxuGhnA8edWvhuyV66gM7vzG
+         NcWRPqYTMC6aZRblqRPmTwHvphgruoYN9+/dYZ9Ym8f55JyUfmlLVfWXFatyrSTTfwzP
+         QzMKPqc5E9Z2puwse1epvt9wNAuvtS/L+a4KODS8/+fgtfCCOl/XiMxEp2wQniDKwoXA
+         bP0nngZhc92JAfZg0xVt7PxCvqZzVgbc+GhzfIk5FzBTDP+sZsPFQvMYkU1CQrCD6oks
+         XSLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718717450; x=1719322250;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
+        d=1e100.net; s=20230601; t=1718717443; x=1719322243;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JcF9LGMhYeqqe8e6XFHkX4so/zLsXMeJT1kqXM73gBU=;
-        b=QfpV0NoAkbYXGsGBshPg1ow8bYIoMM9Nvn3phcZB439pa36QmapHpdFrcq4Fk7RQtN
-         4ATAsXieUgeeoWgCbyS7jSFEnUJwriDTEc1ihRykIdodTamQ1ED09G4+Z7SIhkOeJq1C
-         u9GI8+zGCb0nl0AHrO5Gu3C+wUm0Q1vQ2q8ggexyrgcYJ05O5mr6k5Q1I7P4hccPuaP0
-         uKMvg++YUrSVc0kp6KIgdHDL4Ymla6Nr2SoRBD5PTrczFiWQFX2BaU4TGKkrp6hC+d61
-         yVjc1Eqi7QMYzKYjys+VFP6zTEz9IqdeSTAMXhk8R08lC+Bj+7zDp6AlaSpg5Qq0fh81
-         l4bA==
-X-Forwarded-Encrypted: i=1; AJvYcCXffWqsTtRU2I9JDug1rYwApVvbl2vkG0xYfBvMPRr0wfAV6O+kS5sNiFX8mrfpy6jkV9deWkKsZx1muZEIIRQHYOjJJYzMg4nz10/L
-X-Gm-Message-State: AOJu0YyGzIQeMuW9zO5P5tgYjpxabnOir359R+4qccixkFXUo0bMF+WU
-	y0vtQc9ldfsil498fmRbNISC76gh20ufEONpI0BRdfh1pUqquwugjfJrpZXwRIPn7rSjUyMe22r
-	WFHbktUqkuNN39op9wEsauvrac11YsMWDZKFfy4uUaEBWyBH/oFjYaXQrNhmsRSjoNpfR/aMep8
-	FWQJSOJFnotOm/ZW7Vr83l7WLK/LrcuZgiytZ1X4CkGkY=
-X-Google-Smtp-Source: AGHT+IHGVOZVtR8gCHcLlnUxsWDmdchCnQ3xw52Oigqnui3voSbUrIN7ASVpHkmfUW2lIxO70uInog==
-X-Received: by 2002:a17:906:813:b0:a6f:881a:cd52 with SMTP id a640c23a62f3a-a6f94f2ab30mr165854966b.17.1718717449638;
-        Tue, 18 Jun 2024 06:30:49 -0700 (PDT)
-Received: from admins-Air ([2a02:810d:aec0:2a54:d850:f114:6022:6ebb])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f42badsm617510166b.184.2024.06.18.06.30.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 06:30:49 -0700 (PDT)
-Date: Tue, 18 Jun 2024 15:30:40 +0200
-From: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-To: pavel@ucw.cz, lee@kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: [PATCH v2 2/2] leds: Add LED1202 I2C driver
-Message-ID: <ZnGMAK9bd3pZjWmG@admins-Air>
+        bh=f27crG0t09naGQNeqsNy+BsT+aZ19Wc0lLslo+BFljo=;
+        b=v1GrFmNRQLBcwl5bLrEW2NIkIzK5q/d09f4T20T1Jq/NfWnBMLnFVi64ZegkMfYmEA
+         2hasXnMs0OtAAyh+O9B/asFZ4amNNPdo1kj5+iE1AcDnHbKvLe/jO2NriitqL/QhMCML
+         M/gizYbYIxVW2vf/Lx61Xj4h9nnMjex3c0Acd8JgVu5UzCfcJpsq9e1/8PNIg1Xlp2fL
+         KF1ANkxHeMyxtw2+Ay870Z7UlFFiBNNoTw2xvKmViWKoxbP8ktnUIRo8PKc69GsRolkZ
+         5oxtlkcMFKfrRSTYfVxKR1qLwMuO20tzYhADB0Uq//2MlWPYPOVugwp4JKao5RzaZ0Xn
+         j0Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQBlbrt0NqKl3sn2LLubJge0JOOZtvq4tj33i6fp2YlPYxQzdgXK4c02uTCnrb+sqTx0W3qxEvZ3myleuABCSMkd2oQNJn27t8V9mL
+X-Gm-Message-State: AOJu0YyopGdmbBZg6Bl9r4PABhDA25kDeiJCHbzBiRPAy6o75YwtJ+8F
+	2WPh21GlteVdfMQ5dmaWNN1ld8dxD+808zJl8VLvVMiSVc3a+1DwgK/CN010vu4=
+X-Google-Smtp-Source: AGHT+IGlgHuH6Aw7v0tedxzwDuhuIOOJp2cZSe2PENNmwz2c4i4yr/2Alb9Dd3EQ4ME8LxTLWFRfYg==
+X-Received: by 2002:a9d:6392:0:b0:6f9:64df:c67d with SMTP id 46e09a7af769-6fb93b19710mr12842240a34.36.1718717442797;
+        Tue, 18 Jun 2024 06:30:42 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5b1afdc3sm1828177a34.19.2024.06.18.06.30.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 06:30:42 -0700 (PDT)
+Message-ID: <791cd07d-de03-4f37-b00e-f4c67a9e9c76@baylibre.com>
+Date: Tue, 18 Jun 2024 08:30:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] iio: adc: ad7192: use
+ devm_regulator_get_enable_read_voltage
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+ <20240612-iio-adc-ref-supply-refactor-v2-1-fa622e7354e9@baylibre.com>
+ <20240615130858.22043725@jic23-huawei>
+ <dbf947a3-3d3b-4686-a707-a813b6a4ce5a@gmail.com>
+ <CAMknhBFJ01Xu69Arvd3S=dbADGFmzaYKm2XBtw_CtnjtYwnnew@mail.gmail.com>
+ <2d47aeef-5ee0-4e6f-a408-ba5d737d2c5a@gmail.com>
+ <8dd5f4b9-809f-43d8-ba5c-5f7be23107a4@baylibre.com>
+ <15a0c2d8-9df4-4a26-bdf4-01f9c3f76ca7@gmail.com>
+ <CAMknhBE=fEDdYPe1VeZwWWuvqf5TcUdM_LQGOugHCxGhSGP8-w@mail.gmail.com>
+ <bbc2f159-d673-4652-a6b9-a528f905b67c@gmail.com>
+ <4ff58005-4a71-491f-9400-cdecf2c25d66@baylibre.com>
+ <f338f479-edfc-462f-9c27-d025c85a5eec@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <f338f479-edfc-462f-9c27-d025c85a5eec@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The LED1202 is a 12-channel low quiescent 
-current LED driver. The output current can 
-be adjusted separately for each channel by 
-8-bit analog (current sink input) and 
-12-bit digital (PWM) dimming control.
+On 6/18/24 4:45 AM, Alisa-Dariana Roman wrote:
+> On 17.06.2024 23:00, David Lechner wrote:
+> ...
+> 
+>>
+>> We could make a ret2 local variable inside of the if block to avoid writing over ret.
+>>
+> 
+> Nice! If this looks alright, I will send it along my updated series.
+> 
+> From f84206b85b04f89d57b9293dd93e017efe8b350c Mon Sep 17 00:00:00 2001
+> From: David Lechner <dlechner@baylibre.com>
+> Date: Wed, 12 Jun 2024 16:03:05 -0500
+> Subject: [PATCH] iio: adc: ad7192: use devm_regulator_get_enable_read_voltage
+> 
+> This makes use of the new devm_regulator_get_enable_read_voltage()
+> function to reduce boilerplate code.
+> 
+> Error messages have changed slightly since there are now fewer places
+> where we print an error. The rest of the logic of selecting which
+> supply to use as the reference voltage remains the same.
+> 
+> Also 1000 is replaced by MILLI in a few places for consistency.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>  drivers/iio/adc/ad7192.c | 101 +++++++++++++--------------------------
+>  1 file changed, 34 insertions(+), 67 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
+> index c7fb51a90e87..2448b01e0d59 100644
+> --- a/drivers/iio/adc/ad7192.c
+> +++ b/drivers/iio/adc/ad7192.c
+> @@ -200,8 +200,6 @@ struct ad7192_chip_info {
+> 
+>  struct ad7192_state {
+>      const struct ad7192_chip_info    *chip_info;
+> -    struct regulator        *avdd;
+> -    struct regulator        *vref;
+>      struct clk            *mclk;
+>      u16                int_vref_mv;
+>      u32                aincom_mv;
+> @@ -1189,18 +1187,12 @@ static const struct ad7192_chip_info ad7192_chip_info_tbl[] = {
+>      },
+>  };
+> 
+> -static void ad7192_reg_disable(void *reg)
+> -{
+> -    regulator_disable(reg);
+> -}
+> -
+>  static int ad7192_probe(struct spi_device *spi)
+>  {
+>      struct device *dev = &spi->dev;
+>      struct ad7192_state *st;
+>      struct iio_dev *indio_dev;
+> -    struct regulator *aincom;
+> -    int ret;
+> +    int ret, ret2, avdd_mv;
+> 
+>      if (!spi->irq)
+>          return dev_err_probe(dev, -ENODEV, "Failed to get IRQ\n");
+> @@ -1218,72 +1210,47 @@ static int ad7192_probe(struct spi_device *spi)
+>       * Newer firmware should provide a zero volt fixed supply if wired to
+>       * ground.
+>       */
+> -    aincom = devm_regulator_get_optional(dev, "aincom");
+> -    if (IS_ERR(aincom)) {
+> -        if (PTR_ERR(aincom) != -ENODEV)
+> -            return dev_err_probe(dev, PTR_ERR(aincom),
+> -                         "Failed to get AINCOM supply\n");
+> -
+> -        st->aincom_mv = 0;
+> -    } else {
+> -        ret = regulator_enable(aincom);
+> -        if (ret)
+> -            return dev_err_probe(dev, ret,
+> -                         "Failed to enable specified AINCOM supply\n");
+> -
+> -        ret = devm_add_action_or_reset(dev, ad7192_reg_disable, aincom);
+> -        if (ret)
+> -            return ret;
+> -
+> -        ret = regulator_get_voltage(aincom);
+> -        if (ret < 0)
+> -            return dev_err_probe(dev, ret,
+> -                         "Device tree error, AINCOM voltage undefined\n");
+> -        st->aincom_mv = ret / MILLI;
+> +    ret = devm_regulator_get_enable_read_voltage(dev, "aincom");
+> +    if (ret < 0 && ret != -ENODEV)
+> +        return dev_err_probe(dev, ret, "Failed to get AINCOM voltage\n");
+> +
+> +    st->aincom_mv = ret == -ENODEV ? 0 : ret / MILLI;
+> +
+> +    /* AVDD can optionally be used as reference voltage */
+> +    ret = devm_regulator_get_enable_read_voltage(dev, "avdd");
+> +    if (ret == -ENODEV || ret == -EINVAL) {
 
-The LED1202 implements 12 low-side current 
-generators with independent dimming control.
-Internal volatile memory allows the user 
-to store up to 8 different patterns, each 
-pattern is a particular output configuration 
-in terms of PWM duty-cycle (on 4096 steps).
-Analog dimming (on 256 steps) is 
-per channel but common to all patterns.
+               int ret2;
 
-Each active=1 device tree LED node will
-have a corresponding entry in /sys/class/leds
-with the label name.
-The brightness property corresponds to the
-per channel analog dimming, while the 
-patterns[1-8] to the PWM dimming control.
+I would declare ret2 here since it is the only place it is used.
 
-Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
----
+> +        /*
+> +         * We get -EINVAL if avdd is a supply with unknown voltage. We
+> +         * still need to enable it since it is also a power supply.
+> +         */
+> +        ret2 = devm_regulator_get_enable(dev, "avdd");
+> +        if (ret2)
+> +            return dev_err_probe(dev, ret2,
+> +                         "Failed to enable AVDD supply\n");
+> +    } else if (ret < 0) {
+> +        return dev_err_probe(dev, ret, "Failed to get AVDD voltage\n");
+>      }
+> 
+> -    st->avdd = devm_regulator_get(dev, "avdd");
+> -    if (IS_ERR(st->avdd))
+> -        return PTR_ERR(st->avdd);
+> -
+> -    ret = regulator_enable(st->avdd);
+> -    if (ret)
+> -        return dev_err_probe(dev, ret,
+> -                     "Failed to enable specified AVdd supply\n");
+> -
+> -    ret = devm_add_action_or_reset(dev, ad7192_reg_disable, st->avdd);
+> -    if (ret)
+> -        return ret;
+> +    avdd_mv = (ret == -ENODEV) | (ret == -EINVAL) ? 0 : ret / MILLI;
 
-Changes in v2:
-  - Fix build error for device_attribute modes
+This could be simplified to ret < 0.
 
- drivers/leds/Kconfig        |  10 +
- drivers/leds/Makefile       |   1 +
- drivers/leds/leds-led1202.c | 617 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 628 insertions(+)
- create mode 100644 drivers/leds/leds-led1202.c
+Or if you want to leave it explicit, use || instead of |.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 05e6af88b88c..c65f2b1bbe30 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -899,6 +899,16 @@ config LEDS_LM36274
- 	  Say Y to enable the LM36274 LED driver for TI LMU devices.
- 	  This supports the LED device LM36274.
- 
-+config LEDS_LED1202
-+	tristate "LED Support for LED1202 I2C chips"
-+	depends on LEDS_CLASS
-+	depends on I2C
-+	depends on OF
-+	help
-+	  Say Y to enable support for LEDs connected to LED1202
-+	  LED driver chips accessed via the I2C bus.
-+	  Supported devices include LED1202.
-+
- config LEDS_TPS6105X
- 	tristate "LED support for TI TPS6105X"
- 	depends on LEDS_CLASS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index effdfc6f1e95..80423fa8818e 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_LEDS_IP30)			+= leds-ip30.o
- obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
- obj-$(CONFIG_LEDS_IS31FL319X)		+= leds-is31fl319x.o
- obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
-+obj-$(CONFIG_LEDS_LED1202)		+= leds-led1202.o
- obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
- obj-$(CONFIG_LEDS_LM3532)		+= leds-lm3532.o
- obj-$(CONFIG_LEDS_LM3533)		+= leds-lm3533.o
-diff --git a/drivers/leds/leds-led1202.c b/drivers/leds/leds-led1202.c
-new file mode 100644
-index 000000000000..4e82f0e66168
---- /dev/null
-+++ b/drivers/leds/leds-led1202.c
-@@ -0,0 +1,617 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Simple LED driver for ST LED1202 chip
-+ *
-+ * Copyright (C) 2024 Remote-Tech Ltd. UK
-+ */
-+#include <linux/module.h>
-+#include <linux/string.h>
-+#include <linux/ctype.h>
-+#include <linux/leds.h>
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/slab.h>
-+#include <linux/gpio.h>
-+#include <linux/delay.h>
-+
-+#define DRIVER_NAME "led-driver-1202"
-+#define DRIVER_VERSION "0.0.1"
-+
-+#define LL1202_MAX_LEDS 12
-+
-+#define LL1202_DEVICE_ID 0x00
-+#define LL1202_DEV_ENABLE 0x01
-+#define LL1202_CHAN_ENABLE_LOW 0x02
-+#define LL1202_CHAN_ENABLE_HIGH 0x03
-+#define LL1202_CONFIG_REG 0x04
-+#define LL1202_ILED_REG0 0x09
-+#define LL1202_PATTERN_REP 0x15
-+#define LL1202_PATTERN_DUR 0x16
-+#define LL1202_PATTERN_PWM 0x1E
-+#define LL1202_CLOCK_REG 0xE0
-+
-+struct ll1202_led {
-+	struct led_classdev led_cdev;
-+	struct ll1202_chip *chip;
-+	int led_num;
-+	char name[32];
-+	int is_active;
-+};
-+
-+struct ll1202_chip {
-+	struct i2c_client *client;
-+	struct mutex lock;
-+	struct ll1202_led leds[LL1202_MAX_LEDS];
-+};
-+
-+static struct ll1202_led *cdev_to_ll1202_led(struct led_classdev *cdev)
-+{
-+	return container_of(cdev, struct ll1202_led, led_cdev);
-+}
-+
-+static int ll1202_read_reg(struct ll1202_chip *chip, int reg, uint8_t *val)
-+{
-+	int ret = i2c_smbus_read_byte_data(chip->client, reg);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	*val = (uint8_t)ret;
-+	return 0;
-+}
-+
-+static int ll1202_write_reg(struct ll1202_chip *chip, int reg, uint8_t val)
-+{
-+	return i2c_smbus_write_byte_data(chip->client, reg, val);
-+}
-+
-+static int ll1202_get_channel(struct device *dev)
-+{
-+	struct device_node *np = dev->parent->of_node, *child;
-+	int err, ret = -1;
-+
-+	for_each_child_of_node(np, child) {
-+		if (strncmp(dev->kobj.name,
-+			    of_get_property(child, "label", NULL),
-+			    strnlen(dev->kobj.name, MAX_INPUT)) == 0) {
-+			err = of_property_read_u32(child, "reg", &ret);
-+			if (err) {
-+				of_node_put(child);
-+				pr_err(DRIVER_NAME
-+				       ": Failed to read property %s", child->name);
-+				return ret;
-+			}
-+			break;
-+		}
-+	}
-+	return ret;
-+}
-+
-+static ssize_t ll1202_show_all_registers(struct device *dev,
-+					 struct device_attribute *devattr,
-+					 char *buf)
-+{
-+	struct ll1202_chip *chip = dev_get_drvdata(dev);
-+	uint8_t reg_value = 0;
-+	int ret, i;
-+	char *bufp = buf;
-+
-+	mutex_lock(&chip->lock);
-+
-+	for (i = LL1202_DEVICE_ID; i <= LL1202_CLOCK_REG; i++) {
-+		ret = ll1202_read_reg(chip, i, &reg_value);
-+		if (ret != 0)
-+			dev_err(&chip->client->dev,
-+				"Reading register [0x%x] failed.\n", i);
-+
-+		bufp += snprintf(bufp, PAGE_SIZE, "Addr[0x%x] = 0x%x\n", i,
-+				 reg_value);
-+	}
-+
-+	mutex_unlock(&chip->lock);
-+	return strlen(buf);
-+}
-+
-+static ssize_t
-+ll1202_show_patt_sequence_repetition(struct device *dev,
-+				     struct device_attribute *attr, char *buf)
-+{
-+	struct ll1202_chip *chip = dev_get_drvdata(dev);
-+	unsigned int ret;
-+	uint8_t reg_value;
-+	char *bufp = buf;
-+
-+	mutex_lock(&chip->lock);
-+	ret = ll1202_read_reg(chip, LL1202_PATTERN_REP, &reg_value);
-+	if (ret != 0)
-+		dev_err(&chip->client->dev, "Reading register [0x%x] failed\n", LL1202_PATTERN_REP);
-+	mutex_unlock(&chip->lock);
-+	bufp += snprintf(bufp, PAGE_SIZE,
-+			 "Pattern sequence register, repetition value = %d (times)\n",
-+			 reg_value);
-+	return strlen(buf);
-+}
-+
-+static ssize_t
-+ll1202_store_patt_sequence_repetition(struct device *dev,
-+				      struct device_attribute *attr,
-+				      const char *buf, size_t count)
-+{
-+	struct ll1202_chip *chip = dev_get_drvdata(dev);
-+	unsigned int ret;
-+	unsigned long duration;
-+
-+	if (!count)
-+		return -EINVAL;
-+
-+	ret = kstrtoul(buf, 10, &duration);
-+	if (ret) {
-+		dev_err(&chip->client->dev, "sscanf failed with error :%d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	mutex_lock(&chip->lock);
-+	ret = ll1202_write_reg(chip, LL1202_PATTERN_REP, duration);
-+	if (ret != 0)
-+		dev_err(&chip->client->dev, "Writing register [0x%x] failed\n",
-+			LL1202_PATTERN_REP);
-+	mutex_unlock(&chip->lock);
-+	return count;
-+}
-+
-+static int ll1202_prescalar_to_miliamps(uint8_t reg_value)
-+{
-+	return reg_value * 20 / 255;
-+}
-+
-+static int ll1202_prescalar_to_miliseconds(uint8_t reg_value)
-+{
-+	return reg_value * 5660 / 255;
-+}
-+
-+static ssize_t ll1202_show_channel_mA_current(struct device *dev,
-+					      struct device_attribute *attr,
-+					      char *buf)
-+{
-+	struct ll1202_chip *chip = dev_get_drvdata(dev->parent);
-+	unsigned int ret;
-+	uint8_t reg_value;
-+	char *bufp = buf;
-+	int led_num = ll1202_get_channel(dev);
-+
-+	if (led_num < 0 || led_num >= LL1202_MAX_LEDS) {
-+		dev_err(&chip->client->dev,
-+			"Invalid register [0x%x] (out of range)\n",
-+			led_num);
-+	}
-+	mutex_lock(&chip->lock);
-+	ret = ll1202_read_reg(chip, LL1202_ILED_REG0 + led_num, &reg_value);
-+	if (ret != 0)
-+		dev_err(&chip->client->dev, "Reading analog dimming register [0x%x] failed\n",
-+			led_num);
-+	mutex_unlock(&chip->lock);
-+	bufp += snprintf(bufp, PAGE_SIZE, "Channel[%d] = %d mA\n", led_num,
-+			 ll1202_prescalar_to_miliamps(reg_value));
-+	return strlen(buf);
-+}
-+
-+static int ll1202_channel_activate(struct ll1202_led *led)
-+{
-+	struct ll1202_chip *chip;
-+	uint8_t reg_chan_low, reg_chan_high;
-+	int ret = 0;
-+
-+	chip = led->chip;
-+	if (led->is_active) {
-+		mutex_lock(&chip->lock);
-+
-+		ret = ll1202_read_reg(chip, LL1202_CHAN_ENABLE_LOW,
-+				      &reg_chan_low);
-+		if (ret < 0) {
-+			dev_err(&chip->client->dev,
-+				"Failed reading register [0x%x]\n", LL1202_CHAN_ENABLE_LOW);
-+		}
-+
-+		ret = ll1202_read_reg(chip, LL1202_CHAN_ENABLE_HIGH,
-+				      &reg_chan_high);
-+		if (ret < 0) {
-+			dev_err(&chip->client->dev,
-+				"Failed reading register [0x%x]\n", LL1202_CHAN_ENABLE_HIGH);
-+		}
-+
-+		reg_chan_low = reg_chan_low | BIT(led->led_num);
-+		ret = ll1202_write_reg(chip, LL1202_CHAN_ENABLE_LOW,
-+				       reg_chan_low);
-+		if (ret < 0) {
-+			dev_err(&chip->client->dev,
-+				"Failed writing to register [0x%x]\n", LL1202_CHAN_ENABLE_LOW);
-+		}
-+		reg_chan_high = reg_chan_high | (BIT(led->led_num) >> 7);
-+		ret = ll1202_write_reg(chip, LL1202_CHAN_ENABLE_HIGH,
-+				       reg_chan_high);
-+		if (ret < 0) {
-+			dev_err(&chip->client->dev,
-+				"Failed writing to register [0x%x]\n", LL1202_CHAN_ENABLE_HIGH);
-+		}
-+		mutex_unlock(&chip->lock);
-+	}
-+	return ret;
-+}
-+
-+#define LL1202_PWM_PATTERN_ATTR(pattern)                                          \
-+	static ssize_t ll1202_show_pwm_pattern##pattern(                          \
-+		struct device *dev, struct device_attribute *attr, char *buf)     \
-+	{                                                                         \
-+		struct ll1202_chip *chip = dev_get_drvdata(dev->parent);          \
-+		uint8_t duration = 0;                                             \
-+		uint8_t reg_value_l = 0;                                          \
-+		uint8_t reg_value_h = 0;                                          \
-+		uint16_t reg_value = 0;                                           \
-+		int ret;                                                          \
-+		char *bufp = buf;                                                 \
-+		int led_num = ll1202_get_channel(dev);                            \
-+		if (led_num < 0 || led_num >= LL1202_MAX_LEDS) {                  \
-+			dev_err(&chip->client->dev,                               \
-+				"Invalid register [0x%x] (out of range)\n",  \
-+				led_num);                                         \
-+		}                                                                 \
-+		mutex_lock(&chip->lock);                                          \
-+		ret = ll1202_read_reg(                                            \
-+			chip,                                                     \
-+			(LL1202_PATTERN_PWM + (led_num * 2) + 0x18 * pattern),    \
-+			&reg_value_l);                                            \
-+		if (ret != 0)                                                     \
-+			dev_err(&chip->client->dev,                               \
-+				"Reading pattern PWM register [0x%x] failed\n", led_num);     \
-+		ret = ll1202_read_reg(chip,                                       \
-+				      (LL1202_PATTERN_PWM + 0x1 +                 \
-+				       (led_num * 2) + 0x18 * pattern),           \
-+				      &reg_value_h);                              \
-+		if (ret != 0)                                                     \
-+			dev_err(&chip->client->dev,                               \
-+				"Reading pattern PWM register [0x%x] failed\n", led_num);     \
-+		reg_value = (uint16_t)reg_value_h << 8 | reg_value_l;             \
-+		ret = ll1202_read_reg(chip, (LL1202_PATTERN_DUR + pattern),       \
-+				      &duration);                                 \
-+		if (ret != 0)                                                     \
-+			dev_err(&chip->client->dev,                               \
-+				"Reading pattern durating register [0x%x] failed\n", led_num);     \
-+		bufp += snprintf(                                                 \
-+			bufp, PAGE_SIZE,                                          \
-+			"Pattern[%d][cs%d]: PWM = 0x%03X; DURATION = %d ms\n",    \
-+			pattern, led_num, reg_value,                              \
-+			ll1202_prescalar_to_miliseconds(duration));               \
-+		mutex_unlock(&chip->lock);                                        \
-+		return strlen(buf);                                               \
-+	}                                                                         \
-+	static ssize_t ll1202_store_pwm_pattern##pattern(                         \
-+		struct device *dev, struct device_attribute *attr,                \
-+		const char *buf, size_t count)                                    \
-+	{                                                                         \
-+		struct ll1202_chip *chip = dev_get_drvdata(dev->parent);          \
-+		unsigned int ret, reg_value;                                      \
-+		unsigned long duration;                                           \
-+		char buf_u8[16];                                                  \
-+		uint8_t reg_value_l = 0;                                          \
-+		uint8_t reg_value_h = 0;                                          \
-+		int led_num = ll1202_get_channel(dev);                            \
-+		if (led_num < 0 || led_num >= LL1202_MAX_LEDS) {                  \
-+			dev_err(&chip->client->dev,                               \
-+				"Invalid register [0x%x] (out of range)\n",  \
-+				led_num);                                         \
-+			return count;                                             \
-+		}                                                                 \
-+		if (!count)                                                       \
-+			return -EINVAL;                                           \
-+		ret = sscanf(buf, "%X %s", &reg_value, buf_u8);                   \
-+		if (ret == 0) {                                                   \
-+			dev_err(&chip->client->dev,                               \
-+				"sscanf failed with error :%d\n", ret);           \
-+			return ret;                                               \
-+		}                                                                 \
-+		ret = kstrtoul(buf_u8, 10, &duration);                            \
-+		if (ret)                                                          \
-+			return ret;                                               \
-+		reg_value_l = (uint8_t)reg_value;                                 \
-+		reg_value_h = (uint8_t)(reg_value >> 8);                          \
-+		mutex_lock(&chip->lock);                                          \
-+		ret = ll1202_write_reg(                                           \
-+			chip,                                                     \
-+			(LL1202_PATTERN_PWM + (led_num * 2) + 0x18 * pattern),    \
-+			(uint8_t)reg_value_l);                                    \
-+		if (ret != 0)                                                     \
-+			dev_err(&chip->client->dev,                               \
-+				"Writing to register [0x%x] failed, value %d\n",  \
-+				LL1202_PATTERN_PWM + (led_num * 2) +              \
-+					0x18 * pattern,                           \
-+				reg_value_l);                                     \
-+		ret = ll1202_write_reg(chip,                                      \
-+				       (LL1202_PATTERN_PWM + 0x1 +                \
-+					(led_num * 2) + 0x18 * pattern),          \
-+				       (uint8_t)reg_value_h);                     \
-+		if (ret != 0)                                                     \
-+			dev_err(&chip->client->dev,                               \
-+				"Writing to register [0x%x] failed, value %d\n",  \
-+				(LL1202_PATTERN_PWM + 0x1 + (led_num * 2) +       \
-+				 0x18 * pattern),                                 \
-+				reg_value_h);                                     \
-+		ret = ll1202_write_reg(chip, (LL1202_PATTERN_DUR + pattern),      \
-+				       (u8)duration);                             \
-+		if (ret != 0)                                                     \
-+			dev_err(&chip->client->dev,                               \
-+				"Writing to register [0x%x] failed, value %d\n", \
-+				(LL1202_PATTERN_DUR + pattern), (u8)duration);    \
-+		ret = ll1202_write_reg(chip, LL1202_CONFIG_REG,                   \
-+				       (0xC0 | pattern));                         \
-+		if (ret != 0) {                                                   \
-+			dev_err(&chip->client->dev,                               \
-+				"Failed writing to reg [0x%x]\n", LL1202_CONFIG_REG);     \
-+		}                                                                 \
-+		mutex_unlock(&chip->lock);                                        \
-+		ll1202_channel_activate(&chip->leds[led_num]);                    \
-+		return count;                                                     \
-+	}                                                                         \
-+	static struct device_attribute dev_attr_led_pwm_pattern##pattern = {		\
-+	.attr = {							\
-+	.name = __stringify(pwm_pattern##pattern),					\
-+	.mode =  00444 | 00200,						\
-+	},								\
-+	.show = ll1202_show_pwm_pattern##pattern,				\
-+	.store = ll1202_store_pwm_pattern##pattern,				\
-+}
-+
-+LL1202_PWM_PATTERN_ATTR(0);
-+LL1202_PWM_PATTERN_ATTR(1);
-+LL1202_PWM_PATTERN_ATTR(2);
-+LL1202_PWM_PATTERN_ATTR(3);
-+LL1202_PWM_PATTERN_ATTR(4);
-+LL1202_PWM_PATTERN_ATTR(5);
-+LL1202_PWM_PATTERN_ATTR(6);
-+LL1202_PWM_PATTERN_ATTR(7);
-+
-+static DEVICE_ATTR(led_device_regsdump, 00444, ll1202_show_all_registers,
-+		   NULL);
-+static DEVICE_ATTR(patt_sequence_repetition, 00444 | 00200,
-+		   ll1202_show_patt_sequence_repetition,
-+		   ll1202_store_patt_sequence_repetition);
-+static DEVICE_ATTR(current_mA, 00444, ll1202_show_channel_mA_current, NULL);
-+
-+static struct attribute *led_attrs[] = {
-+	&dev_attr_led_device_regsdump.attr,
-+	&dev_attr_patt_sequence_repetition.attr,
-+	NULL,
-+};
-+
-+static struct attribute *led_group_attrs[] = {
-+	&dev_attr_led_pwm_pattern0.attr, &dev_attr_led_pwm_pattern1.attr,
-+	&dev_attr_led_pwm_pattern2.attr, &dev_attr_led_pwm_pattern3.attr,
-+	&dev_attr_led_pwm_pattern4.attr, &dev_attr_led_pwm_pattern5.attr,
-+	&dev_attr_led_pwm_pattern6.attr, &dev_attr_led_pwm_pattern7.attr,
-+	&dev_attr_current_mA.attr,	 NULL,
-+};
-+
-+static struct attribute_group attr_group = {
-+	.attrs = led_attrs,
-+};
-+
-+static struct attribute_group attr_pat_group = {
-+	.attrs = led_group_attrs,
-+};
-+
-+static const struct attribute_group *ll1202_groups[] = { &attr_pat_group,
-+							 NULL };
-+
-+static void ll1202_brightness_set(struct led_classdev *led_cdev,
-+				  enum led_brightness value)
-+{
-+	struct ll1202_led *led = cdev_to_ll1202_led(led_cdev);
-+	struct ll1202_chip *chip = led->chip;
-+	int ret;
-+
-+	mutex_lock(&chip->lock);
-+	ret = ll1202_write_reg(chip, LL1202_ILED_REG0 + led->led_num, value);
-+	if (ret != 0)
-+		dev_err(&chip->client->dev, "Reading register [0x%x] failed\n",
-+			LL1202_ILED_REG0 + led->led_num);
-+	mutex_unlock(&chip->lock);
-+}
-+
-+static enum led_brightness ll1202_brightness_get(struct led_classdev *led_cdev)
-+{
-+	struct ll1202_led *led = cdev_to_ll1202_led(led_cdev);
-+	struct ll1202_chip *chip = led->chip;
-+	uint8_t reg_value;
-+	int ret;
-+
-+	mutex_lock(&chip->lock);
-+	ret = ll1202_read_reg(chip, LL1202_ILED_REG0 + led->led_num,
-+			      &reg_value);
-+	if (ret != 0)
-+		dev_err(&chip->client->dev, "Reading register [0x%x] failed\n",
-+			LL1202_ILED_REG0 + led->led_num);
-+
-+	mutex_unlock(&chip->lock);
-+	return reg_value;
-+}
-+
-+static int ll1202_dt_init(struct ll1202_chip *chip)
-+{
-+	struct device_node *np = chip->client->dev.of_node, *child;
-+	struct ll1202_led *led;
-+	int err, reg;
-+
-+	for_each_child_of_node(np, child) {
-+		err = of_property_read_u32(child, "reg", &reg);
-+		if (err) {
-+			of_node_put(child);
-+			pr_err(DRIVER_NAME ": Failed to get child node");
-+			return err;
-+		}
-+		if (reg < 0 || reg >= LL1202_MAX_LEDS) {
-+			of_node_put(child);
-+			pr_err(DRIVER_NAME ": Invalid register value [0x%x] (out of range)", reg);
-+			return -EINVAL;
-+		}
-+
-+		led = &chip->leds[reg];
-+		led->led_cdev.name = of_get_property(child, "label", NULL) ?:
-+					     child->name;
-+
-+		err = of_property_read_u32(child, "active", &led->is_active);
-+		if (err) {
-+			of_node_put(child);
-+			pr_err(DRIVER_NAME ": Failed to get child node");
-+			return err;
-+		}
-+
-+		led->led_cdev.brightness_set = ll1202_brightness_set;
-+		led->led_cdev.brightness_get = ll1202_brightness_get;
-+		led->led_cdev.groups = ll1202_groups;
-+	}
-+	return 0;
-+}
-+
-+static int ll1202_setup(struct ll1202_chip *chip)
-+{
-+	int ret;
-+
-+	mutex_lock(&chip->lock);
-+	ret = ll1202_write_reg(chip, LL1202_DEV_ENABLE, 0x1);
-+	if (ret < 0) {
-+		dev_err(&chip->client->dev, "Failed writing to register [0x%x]\n",
-+			LL1202_DEV_ENABLE);
-+	}
-+	mutex_unlock(&chip->lock);
-+	usleep_range(6500, 10000);
-+	mutex_lock(&chip->lock);
-+	ret = ll1202_write_reg(chip, LL1202_DEV_ENABLE, 0x80);
-+	if (ret < 0) {
-+		dev_err(&chip->client->dev, "Failed writing to register [0x%x]\n",
-+			LL1202_DEV_ENABLE);
-+	}
-+	mutex_unlock(&chip->lock);
-+	usleep_range(6500, 10000);
-+	mutex_lock(&chip->lock);
-+	ret = ll1202_write_reg(chip, LL1202_PATTERN_REP, 0xFF);
-+	if (ret < 0) {
-+		dev_err(&chip->client->dev, "Failed writing to register [0x%x]\n",
-+			LL1202_PATTERN_REP);
-+		return ret;
-+	}
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+
-+static int ll1202_probe(struct i2c_client *client)
-+{
-+	struct ll1202_chip *chip;
-+	struct ll1202_led *led;
-+	int ret, err;
-+	int i;
-+
-+	pr_info(DRIVER_NAME ": (I2C) " DRIVER_VERSION "\n");
-+
-+	if (!i2c_check_functionality(client->adapter,
-+				     I2C_FUNC_SMBUS_BYTE_DATA)) {
-+		dev_err(&client->dev, "SMBUS Byte Data not Supported\n");
-+		return -EIO;
-+	}
-+
-+	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	i2c_set_clientdata(client, chip);
-+
-+	mutex_init(&chip->lock);
-+	chip->client = client;
-+
-+	/* Device tree setup */
-+	ret = ll1202_dt_init(chip);
-+	if (ret < 0)
-+		goto exit;
-+
-+	/* Configuration setup */
-+	ret = ll1202_setup(chip);
-+	if (ret < 0)
-+		goto exit;
-+
-+	for (i = 0; i < LL1202_MAX_LEDS; i++) {
-+		led = &chip->leds[i];
-+		led->chip = chip;
-+		led->led_num = i;
-+		if (led->is_active) {
-+			err = led_classdev_register(&client->dev,
-+						    &led->led_cdev);
-+			if (err < 0) {
-+				pr_err(DRIVER_NAME
-+				       ": Failed to register LED class dev");
-+				goto exit;
-+			}
-+		}
-+	}
-+
-+	ret = sysfs_create_group(&client->dev.kobj, &attr_group);
-+	if (ret) {
-+		dev_err(&client->dev,
-+			"Failed to create sysfs group for ll1202\n");
-+		goto err_setup;
-+	}
-+
-+	return 0;
-+
-+err_setup:
-+	for (i = 0; i < LL1202_MAX_LEDS; i++)
-+		led_classdev_unregister(&chip->leds[i].led_cdev);
-+exit:
-+	mutex_destroy(&chip->lock);
-+	devm_kfree(&client->dev, chip);
-+	return ret;
-+}
-+
-+static void ll1202_remove(struct i2c_client *client)
-+{
-+	struct ll1202_chip *dev = i2c_get_clientdata(client);
-+	int i;
-+
-+	for (i = 0; i < LL1202_MAX_LEDS; i++)
-+		led_classdev_unregister(&dev->leds[i].led_cdev);
-+
-+	sysfs_remove_group(&client->dev.kobj, &attr_group);
-+
-+	mutex_destroy(&dev->lock);
-+	devm_kfree(&client->dev, dev->leds);
-+	devm_kfree(&client->dev, dev);
-+}
-+
-+static const struct i2c_device_id ll1202_id[] = {
-+	{ DRIVER_NAME "-i2c", 0 },
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(i2c, ll1202_id);
-+
-+static const struct of_device_id ll1202_dt_ids[] = {
-+	{
-+		.compatible = "st,led1202",
-+	},
-+};
-+
-+MODULE_DEVICE_TABLE(of, ll1202_dt_ids);
-+
-+static struct i2c_driver ll1202_driver = {
-+	.driver = {
-+		.name = "ll1202",
-+		.of_match_table = of_match_ptr(ll1202_dt_ids),
-+	},
-+	.probe = ll1202_probe,
-+	.remove = ll1202_remove,
-+	.id_table = ll1202_id,
-+};
-+
-+module_i2c_driver(ll1202_driver);
-+
-+MODULE_AUTHOR("Remote Tech LTD");
-+MODULE_DESCRIPTION("LED1202 : 12-channel constant current LED driver");
-+MODULE_LICENSE("GPL");
--- 
-2.25.1
+And () aren't really needed either.
+
+> 
+>      ret = devm_regulator_get_enable(dev, "dvdd");
+>      if (ret)
+>          return dev_err_probe(dev, ret, "Failed to enable specified DVdd supply\n");
+> 
+> -    st->vref = devm_regulator_get_optional(dev, "vref");
+> -    if (IS_ERR(st->vref)) {
+> -        if (PTR_ERR(st->vref) != -ENODEV)
+> -            return PTR_ERR(st->vref);
+> -
+> -        ret = regulator_get_voltage(st->avdd);
+> -        if (ret < 0)
+> -            return dev_err_probe(dev, ret,
+> -                         "Device tree error, AVdd voltage undefined\n");
+> -    } else {
+> -        ret = regulator_enable(st->vref);
+> -        if (ret)
+> -            return dev_err_probe(dev, ret,
+> -                         "Failed to enable specified Vref supply\n");
+> -
+> -        ret = devm_add_action_or_reset(dev, ad7192_reg_disable, st->vref);
+> -        if (ret)
+> -            return ret;
+> -
+> -        ret = regulator_get_voltage(st->vref);
+> -        if (ret < 0)
+> -            return dev_err_probe(dev, ret,
+> -                         "Device tree error, Vref voltage undefined\n");
+> +    /*
+> +     * This is either REFIN1 or REFIN2 depending on adi,refin2-pins-enable.
+> +     * If this supply is not present, fall back to AVDD as reference.
+> +     */
+> +    ret = devm_regulator_get_enable_read_voltage(dev, "vref");
+> +    if (ret == -ENODEV) {
+> +        if (avdd_mv == 0)
+> +            return dev_err_probe(dev, -ENODEV,
+> +                         "No reference voltage available\n");
+> +    } else if (ret < 0) {
+> +        return ret;
+>      }
+> -    st->int_vref_mv = ret / 1000;
+> +
+> +    st->int_vref_mv = ret == -ENODEV ? avdd_mv : ret / MILLI;
+> 
+>      st->chip_info = spi_get_device_match_data(spi);
+>      indio_dev->name = st->chip_info->name;
 
 
