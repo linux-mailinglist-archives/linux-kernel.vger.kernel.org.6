@@ -1,196 +1,164 @@
-Return-Path: <linux-kernel+bounces-218616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD8790C296
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35FAF90C298
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E08C8B2183F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 585B228418C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D850B19CD1B;
-	Tue, 18 Jun 2024 03:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDAB139568;
+	Tue, 18 Jun 2024 03:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n5i9fK6O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpqRRuUj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93B4158A21;
-	Tue, 18 Jun 2024 03:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F692AE6C;
+	Tue, 18 Jun 2024 03:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718682691; cv=none; b=ZBO3+hyaC5Q4WqqsxEt8F5BIXVy25D6z/a/DrSxobnadCuqp5/S8HI9dQoYLkS12QdwxXmWwQyHD4LvUFjjz1XbyHoQZiXEAj88Z4Hs+f5td+2V+aP4C14Xb4YA6f31i/pZZf7e8+RwCaPsXrczHYOV+r8oB9yW/ORraM9sS8w4=
+	t=1718682699; cv=none; b=sFFTfmxGY6ikzISJLTWiQ5KYn7fo61h5mwCiMCj9/qR3CCeeO1FmXgp23t5E27kq9SEPBudDeVUut6RL7eLjmKPr3xpxSVJLw2qQoVA5gBVVwk81yKndDkoatDC8+Zxqz9z6Nvk8gOUSzxtUGQO/914GQKhdCLD+QjErF+gqqVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718682691; c=relaxed/simple;
-	bh=ToLL9U63MC+1PeSC4IR0KmcmXUpq1cuEujftwBgIbBM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CyatjIlX7cXSgO+v2P/TJ02q8Q7SGdTyZ0hGl7EER7yDUQABIHqVwRbOw6UYxkDWQ3ZmRhXG8NgIokuUXwLBs+bBshSuyAyO0T9Uvna0PbAlrAY6IuLu0dZlzustKAWC2Jxe9MyQC+aHtjfYYHKl6y5B/mxaIgvYv7f6KcmdVDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n5i9fK6O; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718682689; x=1750218689;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ToLL9U63MC+1PeSC4IR0KmcmXUpq1cuEujftwBgIbBM=;
-  b=n5i9fK6OebPkSf9/JmundpmL2sZYlvzaFSG8//kzkG6qPljWPzcEg0q7
-   FSiS/1hPPUDi7cP239wLzPIGjsbP8VSrzjb4m53ZTjS9YIiE9/DMtoa9M
-   YTqVnUplLMTIv6zYaVEn0zVe4Sxw461il6SIouMHeqABwscdpnpR7ZDnT
-   7cvZv4n9MzFnKoDVWUma8PBiJ/gHZ4u8fkPKNdlhCvLlzrUVR+1HViMFM
-   GUZD29S61SfS/WlluZcZzQ8QV6MotHd1KoJdkt1VJZ6SDaDDhDd6BTX1s
-   LK/LWMlrmq5m8KMQ3E0KWAWo1zmyK4fbtrTCP3cAqIiQC8HsEGT16ktGT
-   w==;
-X-CSE-ConnectionGUID: rzrpamRYRr+wg6zkrR1UUQ==
-X-CSE-MsgGUID: K+SRVmdZQe6fEGsrCF3aag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="18449845"
-X-IronPort-AV: E=Sophos;i="6.08,246,1712646000"; 
-   d="scan'208";a="18449845"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 20:51:25 -0700
-X-CSE-ConnectionGUID: 6xy96Xf9Qi6E3TpvdFBKtA==
-X-CSE-MsgGUID: CcnMDP+3SzCZOe8y0spPTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,246,1712646000"; 
-   d="scan'208";a="41522553"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by orviesa009.jf.intel.com with ESMTP; 17 Jun 2024 20:51:24 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 2/2] cpufreq: intel_pstate: Support highest performance change interrupt
-Date: Mon, 17 Jun 2024 20:51:21 -0700
-Message-ID: <20240618035122.438822-3-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240618035122.438822-1-srinivas.pandruvada@linux.intel.com>
-References: <20240618035122.438822-1-srinivas.pandruvada@linux.intel.com>
+	s=arc-20240116; t=1718682699; c=relaxed/simple;
+	bh=nociqtk3bSsE8kJMMRF+XlvqQ7nBr3Me0jO5JnaUARA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=huIHS2rtHW2hIvobw9pKVYAu05d2oY9F+N1dy4MhNdx5nYZsGH6siZ5YE0kA/JJfIuyKEvSdhEVX5I5j2YegnvKAKwDQBYQSIa3xP2fueALEgRyzn5GFiYESLplZcaCjfaaODkMi0MFKcIyVOQdXDkygff4Yslo6MjDKy1zOWL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpqRRuUj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89DA0C3277B;
+	Tue, 18 Jun 2024 03:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718682698;
+	bh=nociqtk3bSsE8kJMMRF+XlvqQ7nBr3Me0jO5JnaUARA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RpqRRuUj84q3WV/qDrxDEUKr9893kHrhTYLZy99WTTwNiRvMRJM4VTEYpaUWTy3ln
+	 zdmz7SXynDwewm3gFEQ/plaSuoUbSYXGoafWfQMXzzc53oyxhv5z8ngafIDl/YnOQx
+	 eoOYvR1Y5ZwAWWJTs8tcEp5DNH6gMju+hwvu2b6dZIOuPCCPrMfJoqT3IOS5KjOq8m
+	 FzGLEzilQsXW9FoGwImyjPJCk5KXievG+QoJwLwvQ79Ow2D49osCOZYafESIFR1moX
+	 cHAbb5kfqBoRInuPgZb6hRNaHnBg34Hs6Vrnhprq1ZzFZUHGMQBUxOpTxs//MN0x+K
+	 1m3h86jFcueVA==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so56082741fa.2;
+        Mon, 17 Jun 2024 20:51:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXQsFUSZ7gMAtfqAb1pnHsk+DdmvVMiaMWC5xeMjJuvM6zgFoJAFFT6TDiCFbauZpsb+mU8Gk7opq0iq+W+qo8GzOGCwRoI9l+xflU93nHFta0//qpO3LrsC3kXMZdNtz/eVTKxVLh7wg==
+X-Gm-Message-State: AOJu0YxVrp+4hIGZ+BlrDUty56krHw/mFRqFUOQQ4C5VrAEW1ZTkw0+R
+	/lrDuW21HmN/zhuk5YZfiwU8ndpvaNd5rDOx9cBLl0c8LXJnFNIcbI8PhbY82sNki36uraGCObr
+	tWR/SyF4js5nAtcEZ0Wj+zF1hfIQ=
+X-Google-Smtp-Source: AGHT+IFaVVSBVOulKW48FnvJmKKkDbE+gEtF57GnFrkJQLztNJZHlO0dxBxd21B6cxjOkIOh3x8ql3Iyhs/qgNXKoes=
+X-Received: by 2002:a2e:7c0e:0:b0:2ec:2c72:624d with SMTP id
+ 38308e7fff4ca-2ec2c726298mr31679261fa.50.1718682696824; Mon, 17 Jun 2024
+ 20:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
+ <20240616-b4-mips-ipi-improvements-v1-4-e332687f1692@flygoat.com>
+ <CAAhV-H4LsuLYBefKZb5aHx_+fYyWjvO+Bm8h5=NFtSvk6E0Szw@mail.gmail.com> <7cbf218e-d311-4c33-aabb-7208eac231ed@app.fastmail.com>
+In-Reply-To: <7cbf218e-d311-4c33-aabb-7208eac231ed@app.fastmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 18 Jun 2024 11:51:25 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7RQu6wdBBjOBptZX6R63Ypw1qFCoJnZ335bFKd1f=XdA@mail.gmail.com>
+Message-ID: <CAAhV-H7RQu6wdBBjOBptZX6R63Ypw1qFCoJnZ335bFKd1f=XdA@mail.gmail.com>
+Subject: Re: [PATCH 04/10] MIPS: Move mips_smp_ipi_init call after prepare_cpus
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Serge Semin <fancer.lancer@gmail.com>, 
+	"paulburton@kernel.org" <paulburton@kernel.org>, 
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On some systems, the HWP (Hardware P-states) highest performance level
-can change from the value set at boot-up. This behavior can lead to two
-issues:
+On Tue, Jun 18, 2024 at 6:10=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygoat.co=
+m> wrote:
+>
+>
+>
+> =E5=9C=A82024=E5=B9=B46=E6=9C=8817=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=
+=E5=8D=882:53=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
+> > Hi, Jiaxun
+> >
+> > On Mon, Jun 17, 2024 at 5:03=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygoa=
+t.com> wrote:
+> >>
+> >> This will give platform code a genuine chance to setup
+> >> IPI IRQ in prepare_cpus.
+> >>
+> >> This is the best place for platforms to setup IPI as smp_setup
+> >> is too early for IRQ subsystem.
+> > mips_smp_ipi_init() is an early_initcall() function, why do you say it
+> > is in smp_setup()?
+>
+> Sorry, I was trying to say that smp_setup is not a good point so we shoul=
+d
+> go prepare_cpus.
+It is not in smp_setup() now, then how do you move it from smp_setup()?
 
-- The 'cpuinfo_max_freq' within the 'cpufreq' sysfs will not reflect
-the CPU's highest achievable performance.
-- Even if the CPU's highest performance level is increased after booting,
-the CPU may not reach the full expected performance.
+Huacai
 
-The availability of this feature is indicated by the CPUID instruction:
-if CPUID[6].EAX[15] is set to 1, the feature is supported. When supported,
-setting bit 2 of the MSR_HWP_INTERRUPT register enables notifications of
-the highest performance level changes. Therefore, as part of enabling the
-HWP interrupt, bit 2 of the MSR_HWP_INTERRUPT should also be set when this
-feature is supported.
-
-Upon a change in the highest performance level, a new HWP interrupt is
-generated, with bit 3 of the MSR_HWP_STATUS register set, and the
-MSR_HWP_CAPABILITIES register is updated with the new highest performance
-limit.
-
-The processing of the interrupt is the same as the guaranteed performance
-change. Notify change to cpufreq core and update MSR_HWP_REQUEST with new
-performance limits.
-
-The current driver implementation already takes care of the highest
-performance change as part of:
-commit dfeeedc1bf57 ("cpufreq: intel_pstate: Update cpuinfo.max_freq
-on HWP_CAP changes")
-
-For example:
-Before highest performance change interrupt:
-cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-3700000
-cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq
-3700000
-
-After highest performance changes interrupt:
-cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq
-3900000
-cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-3900000
-
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/cpufreq/intel_pstate.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 69d85b5bf366..708e62080a83 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1620,17 +1620,24 @@ static void intel_pstate_notify_work(struct work_struct *work)
- static DEFINE_SPINLOCK(hwp_notify_lock);
- static cpumask_t hwp_intr_enable_mask;
- 
-+#define HWP_GUARANTEED_PERF_CHANGE_STATUS      BIT(0)
-+#define HWP_HIGHEST_PERF_CHANGE_STATUS         BIT(3)
-+
- void notify_hwp_interrupt(void)
- {
- 	unsigned int this_cpu = smp_processor_id();
-+	u64 value, status_mask;
- 	unsigned long flags;
--	u64 value;
- 
- 	if (!hwp_active || !boot_cpu_has(X86_FEATURE_HWP_NOTIFY))
- 		return;
- 
-+	status_mask = HWP_GUARANTEED_PERF_CHANGE_STATUS;
-+	if (boot_cpu_has(X86_FEATURE_HWP_HIGHEST_PERF_CHANGE))
-+		status_mask |= HWP_HIGHEST_PERF_CHANGE_STATUS;
-+
- 	rdmsrl_safe(MSR_HWP_STATUS, &value);
--	if (!(value & 0x01))
-+	if (!(value & status_mask))
- 		return;
- 
- 	spin_lock_irqsave(&hwp_notify_lock, flags);
-@@ -1668,17 +1675,25 @@ static void intel_pstate_disable_hwp_interrupt(struct cpudata *cpudata)
- 		cancel_delayed_work_sync(&cpudata->hwp_notify_work);
- }
- 
-+#define HWP_GUARANTEED_PERF_CHANGE_REQ BIT(0)
-+#define HWP_HIGHEST_PERF_CHANGE_REQ    BIT(2)
-+
- static void intel_pstate_enable_hwp_interrupt(struct cpudata *cpudata)
- {
--	/* Enable HWP notification interrupt for guaranteed performance change */
-+	/* Enable HWP notification interrupt for performance change */
- 	if (boot_cpu_has(X86_FEATURE_HWP_NOTIFY)) {
-+		u64 interrupt_mask = HWP_GUARANTEED_PERF_CHANGE_REQ;
-+
- 		spin_lock_irq(&hwp_notify_lock);
- 		INIT_DELAYED_WORK(&cpudata->hwp_notify_work, intel_pstate_notify_work);
- 		cpumask_set_cpu(cpudata->cpu, &hwp_intr_enable_mask);
- 		spin_unlock_irq(&hwp_notify_lock);
- 
-+		if (boot_cpu_has(X86_FEATURE_HWP_HIGHEST_PERF_CHANGE))
-+			interrupt_mask |= HWP_HIGHEST_PERF_CHANGE_REQ;
-+
- 		/* wrmsrl_on_cpu has to be outside spinlock as this can result in IPC */
--		wrmsrl_on_cpu(cpudata->cpu, MSR_HWP_INTERRUPT, 0x01);
-+		wrmsrl_on_cpu(cpudata->cpu, MSR_HWP_INTERRUPT, interrupt_mask);
- 		wrmsrl_on_cpu(cpudata->cpu, MSR_HWP_STATUS, 0);
- 	}
- }
--- 
-2.44.0
-
+>
+> The intention of this patch is to move mips_smp_ipi_init to a certain poi=
+nt
+> so platform would gain control over it.
+>
+> Thanks
+> - Jiaxun
+>
+> >
+> >
+> > Huacai
+> >>
+> >> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> >> ---
+> >>  arch/mips/kernel/smp.c | 11 ++++++++++-
+> >>  1 file changed, 10 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
+> >> index fe053fe52147..ddf96c28e2f0 100644
+> >> --- a/arch/mips/kernel/smp.c
+> >> +++ b/arch/mips/kernel/smp.c
+> >> @@ -375,7 +375,6 @@ static int __init mips_smp_ipi_init(void)
+> >>
+> >>         return 0;
+> >>  }
+> >> -early_initcall(mips_smp_ipi_init);
+> >>  #endif
+> >>
+> >>  /*
+> >> @@ -460,12 +459,22 @@ void __init smp_cpus_done(unsigned int max_cpus)
+> >>  /* called from main before smp_init() */
+> >>  void __init smp_prepare_cpus(unsigned int max_cpus)
+> >>  {
+> >> +       int rc;
+> >> +
+> >>         init_new_context(current, &init_mm);
+> >>         current_thread_info()->cpu =3D 0;
+> >>         mp_ops->prepare_cpus(max_cpus);
+> >>         set_cpu_sibling_map(0);
+> >>         set_cpu_core_map(0);
+> >>         calculate_cpu_foreign_map();
+> >> +#ifdef CONFIG_GENERIC_IRQ_IPI
+> >> +       rc =3D mips_smp_ipi_init();
+> >> +       if (rc) {
+> >> +               pr_err("Failed to initialize IPI - disabling SMP");
+> >> +               init_cpu_present(cpumask_of(0));
+> >> +               return;
+> >> +       }
+> >> +#endif
+> >>  #ifndef CONFIG_HOTPLUG_CPU
+> >>         init_cpu_present(cpu_possible_mask);
+> >>  #endif
+> >>
+> >> --
+> >> 2.43.0
+> >>
+>
+> --
+> - Jiaxun
 
