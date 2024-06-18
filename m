@@ -1,124 +1,66 @@
-Return-Path: <linux-kernel+bounces-219913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BDF90DA10
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:54:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D502A90DA11
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF2D01C22204
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:54:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D33FB1C2236E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CB714EC79;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B0E14F13E;
 	Tue, 18 Jun 2024 16:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KqQXui8G"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4210013D528;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBAD13BC35;
 	Tue, 18 Jun 2024 16:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718729641; cv=none; b=a+dVuX4cVlgwYvA6iR8nLtCdnF5hLakSgHUcJ2nHU369dCsN+sAcHqtH9/Ko+yIojIqqiKRbqNQ22nD+JMR/M4zyYeGKar+c0ixYsbv24X91ng5pp3Rt5+Ylp6jrA6UOdcI1YkLdYC+8aFI80eA9bYSR8wUOhkvP9V8KPMEBhh4=
+	t=1718729642; cv=none; b=WbfDJbUxUmKba5ZrcBBBiD4SV+vcOQF0DFhWd9pDH1N85asQUQ0kyjKHvwfnwa+rfXJT0xGUHTNNNxiXgRnNXnyA49HEFYh2jZwwrp66oYv/2ytp9golcU9BIQYlm9c91cpd35v2Sqqr2AjPF7St94muNJ8u5ff8rGUUoFTuWRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718729641; c=relaxed/simple;
-	bh=oYute8/wy9hiVcWRO+JQF6ZA/DGfGn+3eK/4yP/RxNQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=hWZiZLUlLNS8UtWfmQXmoFn1eqppbv6lAGsmQ2Pv3hb/z3bYkbcjp8NUKkhTJCsZmIAl6L/HXfrVRztrzYJW17KVEpDTsQba3mCUqx3Gztt540VUKBajUW/dpbVhua11EzZILVydroVCCj9OIdY/wda8shWEi76+4YTPumoRUeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KqQXui8G; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IBChOl005240;
-	Tue, 18 Jun 2024 16:53:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=X6V/Yl7iMXuRwzk2uprHwg
-	UlY145d2MyTJHzRCYnK6w=; b=KqQXui8GBCwqA/c0zSkOKaEInLy2QTfZidAXUH
-	DveN6h+ODNo3HoBGJNNgemMuGqIfAIrG++kRATvaOQMnQ6nNp+RjkCaJupX3Dy9Z
-	ImuaEcrVDEuF3upZA/Ov+MON+noj+1k+FIfGv7HMOOvZkVFYVJYQOW+d7sbaWvM2
-	1a8A0z25cMO/yrUMjlRFqhW/J3JpJjWFEdeB50OGhoucjFTenep9VfqlQuLuHfVE
-	G29yLM0FS7LcTDKA4mRPavS4kSV78jTCri8YgD9A48q71lC/vwWmZjTRx6sNPGfn
-	smP4JaB5BEuUxVCHqCTROk3pquA2C43klYD/PQNVntETwYNw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu95rgvxy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 16:53:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IGrldi029289
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 16:53:47 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 09:53:47 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 18 Jun 2024 09:53:44 -0700
-Subject: [PATCH net-next] net: arcnet: com20020-isa: add missing
- MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718729642; c=relaxed/simple;
+	bh=MNkGRu9GKer6t/McohMZFDGB7NdhMCoyNOLnBy33Rus=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SJ4ln9VwnAsGkM4NiQWVUgZNeQYrAD6HoLnfXiBlEGmhWf43J9YYS8A+yuDJkcItBI1i3p24VRCxDWj7noTVXjk8N2Q0AgszTDIFhaEBlnC0dClri88ZBHDaOlvUIjdy3yz8T6cOGSa9XHxqyXdP/duqnYrlqLGkWX24bFvL3og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=fail smtp.mailfrom=linux.com; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=linux.com
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 7804B401EF; Tue, 18 Jun 2024 09:53:53 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 76EAF401CA;
+	Tue, 18 Jun 2024 09:53:53 -0700 (PDT)
+Date: Tue, 18 Jun 2024 09:53:53 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@linux.com>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: tglx@linutronix.de, axboe@kernel.dk, linux-kernel@vger.kernel.org, 
+    mingo@redhat.com, dvhart@infradead.org, dave@stgolabs.net, 
+    andrealmeid@igalia.com, Andrew Morton <akpm@linux-foundation.org>, 
+    urezki@gmail.com, hch@infradead.org, lstoakes@gmail.com, 
+    Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org, 
+    linux-mm@kvack.org, linux-arch@vger.kernel.org, malteskarupke@web.de
+Subject: Re: [PATCH v1 11/14] futex: Implement FUTEX2_NUMA
+In-Reply-To: <20240612174432.GK8774@noisy.programming.kicks-ass.net>
+Message-ID: <b476aa71-37ec-a4ee-6a8a-3a28811bb87c@linux.com>
+References: <20230721102237.268073801@infradead.org> <20230721105744.434742902@infradead.org> <9dc04e4c-2adc-5084-4ea1-b200d82be29f@linux.com> <20240612174432.GK8774@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240618-md-m68k-drivers-net-arcnet-v1-1-90e42bc58102@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAJe7cWYC/x2MywrCMBBFf6XM2oG0Shv8FXGRx9QO2lEmsQRK/
- 93E1eVwD2eHRMqU4NrtoLRx4rdU6E8dhMXJg5BjZRjMcDFjb3GNuI72iVF5I00olNFpaHOm2cb
- JToa8hRr4KM1c/vEbNEGoZLjXx7tE6NVJWFr8xfItuLqUSeE4fpeMILaVAAAA
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: UKTUcdgcdT1q81BCbzHmFRntShhrvUAy
-X-Proofpoint-ORIG-GUID: UKTUcdgcdT1q81BCbzHmFRntShhrvUAy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 adultscore=0 clxscore=1011 priorityscore=1501
- spamscore=0 phishscore=0 mlxlogscore=958 suspectscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180126
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/com20020-isa.o
+On Wed, 12 Jun 2024, Peter Zijlstra wrote:
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> I read this like: I tested it and it works for me. Is that a correct
+> reading of your statement?
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/net/arcnet/com20020-isa.c | 1 +
- 1 file changed, 1 insertion(+)
+We tested it and it works as we expected.
 
-diff --git a/drivers/net/arcnet/com20020-isa.c b/drivers/net/arcnet/com20020-isa.c
-index 293a621e654c..fef2ac2852a8 100644
---- a/drivers/net/arcnet/com20020-isa.c
-+++ b/drivers/net/arcnet/com20020-isa.c
-@@ -137,6 +137,7 @@ module_param(backplane, int, 0);
- module_param(clockp, int, 0);
- module_param(clockm, int, 0);
- 
-+MODULE_DESCRIPTION("ARCnet COM20020 chipset ISA driver");
- MODULE_LICENSE("GPL");
- 
- static struct net_device *my_dev;
-
----
-base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-change-id: 20240618-md-m68k-drivers-net-arcnet-3ef8d7870eb8
-
+Which in turn raises the issue if this could be done to other large 
+system hashes as well.
 
