@@ -1,225 +1,135 @@
-Return-Path: <linux-kernel+bounces-218872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99C390C73F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D5B90C741
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99D8D1C21E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:39:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67B81C220C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0F51AED46;
-	Tue, 18 Jun 2024 08:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664421AF68B;
+	Tue, 18 Jun 2024 08:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FKTjJ2LL"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8nh1Toq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326EB1AED3A;
-	Tue, 18 Jun 2024 08:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FCE1AED5C;
+	Tue, 18 Jun 2024 08:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718699921; cv=none; b=ekjeRBQYXt/rta9S4SxUXoZtuza9pk9Y1JMqch1+CZPsagdTcDCnrf8R+IrpA3pDgyGmiE7nGotG+mnnALdpufRhWMynDot1PSnANkOLvBLZq768Ts2X+CDXwElM1oK/rFu97VhjmojlNjyL479ZJvPHJqWTK7Emp9NuLTxHhsg=
+	t=1718699924; cv=none; b=ZnvMuLLZVwgw73pWY+XHkHntTge441Me91UTYpGb+pi9WOj8G6kbZmL5Xzf+gOPP1gV3872c4q+Ymc2hUMo17XkbKq+58L31WXdRzPDlDCbHEaskez5fR2XOZQpfrx3NK7TUMW54YE/gyZxXKxvDm7inetg4kCp6CSS/V8dEvrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718699921; c=relaxed/simple;
-	bh=B+llYKiMHvIXBuJSTjGy7QGQWVdZRavexk8e4cQMxWA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UUc8wuNeeQE2oqVm39ykwPkx5JkOIPNz0InoQoxTUwUZV9vdTtLiMugfmaQV3eCxzPSPRCJ/wXimHLtRHO/LaAbGAgXjACaf1sSXX1Z8Vao0EPvGc+RTl1OemqpVQprGJEqAgcpCgVOyOe/0MsWpb5QbPfcaeAqhoFGwQ0rxmQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FKTjJ2LL; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6fa11ac8695so2917787a34.3;
-        Tue, 18 Jun 2024 01:38:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718699919; x=1719304719; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f1GjDUQ3o3b4+jeUyqmth+0z9OUp8eftPqc5a3xc1TU=;
-        b=FKTjJ2LLTLr/pXCYTlBZ+8SYs4VHTtPRdN9Pbn9N0J1UjnfJv/m+QQqSEGyQLddMgD
-         AC4/PvX82YcFqBzYgmjwWKmnG8GNq+UdaG4rNyQjF8zfbh1nKiXgZEVC4qYlMHRktNT8
-         5DS8qCpR94s4ksB0RBtcCqVcsQ4w3px0NwVgHB31c/QLMoEj2jJUlU4WTqm8D8QAXUNt
-         QGY5caah0AecYcHi6npH0o0ZDjBHrjYNXwuPOVM65SQYbag2Dsfq/Q90nLFCjP5p0Mu0
-         rUjrKzJ27Hy2Shg+OOzcJ299xvbBvHzDaAOcZni6LsQhz9jbWRLzn5uxnXaQ56JDB/Sm
-         xuYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718699919; x=1719304719;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f1GjDUQ3o3b4+jeUyqmth+0z9OUp8eftPqc5a3xc1TU=;
-        b=hf29OjZxNBNEHVw2toYtlUR6a5nJDxZAMEqrSfyA4x1uPTTsTailTcC4IVwdul6xXS
-         gL+fEm7AFK74NRXCtZJWQ1aslRsOkc7HyDwevOTrGtKl2sItLwMS6r54H5XcaraGmFrf
-         dUhBkNoz3BjvpicVe+Jvm9Fv0s8JMSrgTfAlg7rLK2WonCp5xdVGdm3ajnqa1AVzMNMa
-         FqxmQyYdxIOt4CzGJtHq7IsinZGoZ+lfqhAuVYbc65CETaohI6/29/c18CyWkgYtxRRF
-         KD9cfi39KbSjFOUE5k5fWrh32qakV/tKkMim1b0LUJhzzxJ0RyS8/axTc77uo4+1vjxK
-         JrVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPLDwShqQnGFSg6Ii5F4X+8kwODdEMG3Vh8i5YtbvuvtDBvjfPTdcrnPvDtOEg05ehOaKMiApyOLwlqzhyTHGgP1nhuwa4mF7ampQ+sGU9JQ1+0IzLd4za4SOMPhMfH0gjh2H4iv0jijCuB8kpLMRw/CktGVtvXSdIzD1sB92/hiKV4Q==
-X-Gm-Message-State: AOJu0YzRZeOT/Vtz9TPMeVo37zwyCtGh1JJjHv1t/PVYit/xJUevjqZW
-	Weq3GknX0M0QWjWVIDU6xzILVVQ5+Kev9s1jy5rR/IjTycV+3rx49Rn3uIFw
-X-Google-Smtp-Source: AGHT+IFALoxJytTixSUwVOhyfDsBA+wYcZg2xiod4lujmIbAlaE/efLxS/7TXcwcLL+d05UFBkl5gw==
-X-Received: by 2002:a05:6830:1e70:b0:6f9:f231:3909 with SMTP id 46e09a7af769-6fb939f0984mr12894884a34.29.1718699919166;
-        Tue, 18 Jun 2024 01:38:39 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5b1b0bd9sm1779441a34.27.2024.06.18.01.38.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 01:38:37 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: adrian.hunter@intel.com,
-	aou@eecs.berkeley.edu,
-	conor+dt@kernel.org,
-	guoren@kernel.org,
-	inochiama@outlook.com,
-	jszhang@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	ulf.hansson@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	tingzhu.wang@sophgo.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v4 2/4] dt-bindings: mmc: sdhci-of-dwcmhsc: Add Sophgo SG2042 support
-Date: Tue, 18 Jun 2024 16:38:30 +0800
-Message-Id: <dcc060c3ada7a56eda02b586c16c47f0a0905c61.1718697954.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1718697954.git.unicorn_wang@outlook.com>
-References: <cover.1718697954.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1718699924; c=relaxed/simple;
+	bh=lhKn/iZcd+W6zpv9cuUEp7iHIwGV3stG6432eKxVRKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GbmPBISgK6tDL6Kg3GefsH6O/1okkVfWlS0n1URElQO6kfr+l3Ok9+paYDL7tGOnjy6lNe8eQsLOm1ohvAccp8i2GVvaMl2ezwWEPnaM4oYfwsjmCm4Oq4xvck23iqiQXab2gZfVmQ1Uc1y+KA1/kYzRhDEwJsEfmVkU39JcHfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8nh1Toq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F439C3277B;
+	Tue, 18 Jun 2024 08:38:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718699924;
+	bh=lhKn/iZcd+W6zpv9cuUEp7iHIwGV3stG6432eKxVRKs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s8nh1ToqCAzLq0p+OLEM+9UGuEGu9/8SYhHz/FOiimJHoQWTjlvubZx5uzanlNlWM
+	 M1Y9Ppv7KjB/EsOIv/7ATTV0xQnwkKiL1Vo+4J2AlzQqbJihcgLMA3YXN5/E5J1rhb
+	 yKvpZWCIDtp1xBjeoFXV5Jreji8UfGUj0a0zOdAyZZWJD7Xz21+hXu4OrC3HwUh45Y
+	 ql+zZ0j92G7y1fcgF+t6a7kRuxAQGYxARpG9o6aqr+rGp9RGx0NtPsJU3wGS8NMp04
+	 bnRwv9g78xzwv4EBRweP/tXdXzoi4rqTcONxavuMia55nnPukX3sMTxSXm8UCWWs6t
+	 zLBnclV47dplw==
+Date: Tue, 18 Jun 2024 09:38:39 +0100
+From: Simon Horman <horms@kernel.org>
+To: Geetha sowjanya <gakula@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
+	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
+Subject: Re: [net-next PATCH v5 05/10] octeontx2-af: Add packet path between
+ representor and VF
+Message-ID: <20240618083839.GE8447@kernel.org>
+References: <20240611162213.22213-1-gakula@marvell.com>
+ <20240611162213.22213-6-gakula@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611162213.22213-6-gakula@marvell.com>
 
-From: Chen Wang <unicorn_wang@outlook.com>
+On Tue, Jun 11, 2024 at 09:52:08PM +0530, Geetha sowjanya wrote:
+> Current HW, do not support in-built switch which will forward pkts
+> between representee and representor. When representor is put under
+> a bridge and pkts needs to be sent to representee, then pkts from
+> representor are sent on a HW internal loopback channel, which again
+> will be punted to ingress pkt parser. Now the rules that this patch
+> installs are the MCAM filters/rules which will match against these
+> pkts and forward them to representee.
+> The rules that this patch installs are for basic
+> representor <=> representee path similar to Tun/TAP between VM and
+> Host.
+> 
+> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
 
-SG2042 use Synopsys dwcnshc IP for SD/eMMC controllers.
+...
 
-SG2042 defines 3 clocks for SD/eMMC controllers.
-- AXI_EMMC/AXI_SD for aclk/hclk(Bus interface clocks in DWC_mshc)
-  and blck(Core Base Clock in DWC_mshc), these 3 clocks share one
-  source, so reuse existing "core".
-- 100K_EMMC/100K_SD for cqetmclk(Timer clocks in DWC_mshc), so reuse
-  existing "timer" which was added for rockchip specified.
-- EMMC_100M/SD_100M for cclk(Card clocks in DWC_mshc), add new "card".
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
 
-Adding example for sg2042.
+...
 
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
----
- .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 69 +++++++++++++------
- 1 file changed, 49 insertions(+), 20 deletions(-)
+> +void rvu_rep_update_rules(struct rvu *rvu, u16 pcifunc, bool ena)
+> +{
+> +	struct rvu_switch *rswitch = &rvu->rswitch;
+> +	struct npc_mcam *mcam = &rvu->hw->mcam;
+> +	u32 max = rswitch->used_entries;
+> +	int blkaddr;
+> +	u16 entry;
+> +
+> +	if (!rswitch->used_entries)
+> +		return;
+> +
+> +	blkaddr = rvu_get_blkaddr(rvu, BLKTYPE_NPC, 0);
+> +
+> +	if (blkaddr < 0)
+> +		return;
+> +
+> +	rvu_switch_enable_lbk_link(rvu, pcifunc, ena);
+> +	mutex_lock(&mcam->lock);
+> +	for (entry = 0; entry < max; entry++) {
+> +		if (rswitch->entry2pcifunc[entry] == pcifunc)
+> +			npc_enable_mcam_entry(rvu, mcam, blkaddr, entry, ena);
+> +	}
+> +	mutex_unlock(&mcam->lock);
+> +}
+> +
+> +int rvu_rep_pf_init(struct rvu *rvu)
+> +{
+> +	u16 pcifunc = rvu->rep_pcifunc;
+> +	struct rvu_pfvf *pfvf = rvu_get_pfvf(rvu, pcifunc);
 
-diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-index 4d3031d9965f..b53f20733f79 100644
---- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-+++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-@@ -21,6 +21,7 @@ properties:
-       - snps,dwcmshc-sdhci
-       - sophgo,cv1800b-dwcmshc
-       - sophgo,sg2002-dwcmshc
-+      - sophgo,sg2042-dwcmshc
-       - thead,th1520-dwcmshc
- 
-   reg:
-@@ -29,25 +30,6 @@ properties:
-   interrupts:
-     maxItems: 1
- 
--  clocks:
--    minItems: 1
--    items:
--      - description: core clock
--      - description: bus clock for optional
--      - description: axi clock for rockchip specified
--      - description: block clock for rockchip specified
--      - description: timer clock for rockchip specified
--
--
--  clock-names:
--    minItems: 1
--    items:
--      - const: core
--      - const: bus
--      - const: axi
--      - const: block
--      - const: timer
--
-   resets:
-     maxItems: 5
- 
-@@ -63,6 +45,43 @@ properties:
-     description: Specify the number of delay for tx sampling.
-     $ref: /schemas/types.yaml#/definitions/uint8
- 
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: sophgo,sg2042-dwcmshc
-+then:
-+  properties:
-+    clocks:
-+      items:
-+        - description: core clock
-+        - description: timer clock
-+        - description: card clock
-+
-+    clock-names:
-+      items:
-+        - const: core
-+        - const: timer
-+        - const: card
-+else:
-+  properties:
-+    clocks:
-+      minItems: 1
-+      items:
-+        - description: core clock
-+        - description: bus clock for optional
-+        - description: axi clock for rockchip specified
-+        - description: block clock for rockchip specified
-+        - description: timer clock for rockchip specified
-+
-+    clock-names:
-+      minItems: 1
-+      items:
-+        - const: core
-+        - const: bus
-+        - const: axi
-+        - const: block
-+        - const: timer
- 
- required:
-   - compatible
-@@ -96,5 +115,15 @@ examples:
-       #address-cells = <1>;
-       #size-cells = <0>;
-     };
--
-+  - |
-+    mmc@bb0000 {
-+      compatible = "sophgo,sg2042-dwcmshc";
-+      reg = <0xcc000 0x1000>;
-+      interrupts = <0 25 0x4>;
-+      clocks = <&cru 17>, <&cru 18>, <&cru 19>;
-+      clock-names = "core", "timer", "card";
-+      bus-width = <8>;
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+    };
- ...
--- 
-2.25.1
+nit: It would be nice to maintain reverse xmas tree order - longest line to
+     shortest - for local variable declarations in this file.
 
+     Here, I think that could be (completely untested!):
+
+	u16 pcifunc = rvu->rep_pcifunc;
+	struct rvu_pfvf *pfvf;
+
+	pfvf = rvu_get_pfvf(rvu, pcifunc);
+
+     Edward Cree's tool is useful here:
+     https://github.com/ecree-solarflare/xmastree
+
+> +
+> +	set_bit(NIXLF_INITIALIZED, &pfvf->flags);
+> +	rvu_switch_enable_lbk_link(rvu, pcifunc, true);
+> +	rvu_rep_rx_vlan_cfg(rvu, pcifunc);
+> +	return 0;
+> +}
+
+...
 
