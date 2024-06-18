@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-219845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908B290D8CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:15:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B839490D97D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 477D31F24F89
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:15:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6D86B30320
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FDB14431B;
-	Tue, 18 Jun 2024 16:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D0015699E;
+	Tue, 18 Jun 2024 16:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="taJAruR1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOy5JeVs"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8A9142652;
-	Tue, 18 Jun 2024 16:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8084F5EA;
+	Tue, 18 Jun 2024 16:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718727112; cv=none; b=F6WSLWHhECaZieihFn9dwtSR8WGmB01MJ/FdGRTHqzRdG494KicEsR2202jmvMrJB5I/cLjCJgq4SSWvo28nrw6ZqSrwc8nJ5EDniL3FBoZILFs4Fj9yQ25L+McxxMcfH++aeAn1dp4vA+/JHTIpNQYaGMyQoltx8z5EeFdNnRo=
+	t=1718727115; cv=none; b=LTXmfNXgyfHUcK4i6TaX/oBTzl1SAIqgVi8Y0rfLY2+M+E3yxkbXFQ85cwWjeSLCos3aP2Q33dZzt9CQqM1LcWO4MhtOnXhZWRnpHUkXMirZgJzMBitGH6HI8E8TAIIWNLgaQXTlYaERa/h2eZLGNSYKzQ0XoKsKPo/vP9H21E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718727112; c=relaxed/simple;
-	bh=+eJ/D0My0YrU0w5PvL3S5QzVlmK+i5KwqfGDEFVVvM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mf3NhAPKVPaIpQEdtRZDrIlZwtP6/DbQuUfsQSuiWn7uGNQnUBiyyVU5KNn5pBeC9oScx1CZDpEXaMmHgjWhf/hSzx8PFdJMECrGGMHnpSTBuDdtfA57TQuEwFuHXZUBqd9DbUuXLNb2/aW3cfbWdWEmLPP4jSDUbxCOhv+WKtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=taJAruR1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E488C4AF1D;
-	Tue, 18 Jun 2024 16:11:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718727111;
-	bh=+eJ/D0My0YrU0w5PvL3S5QzVlmK+i5KwqfGDEFVVvM0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=taJAruR1igm0wIms3Y2t513NyvzD6NWtt0gBrxs24PUhmhc8X4IZt26mpy92Ez4/W
-	 ieD6Ol0OK6TrBiL8W+DkFPNscrlS949GFrqlH4XehNm8xiLUSuvqcQofO2nCvyEvdb
-	 pWOzFMkrUJzhDcS13EoJ8pMGS1mu9bzr4faqela120Nl74JkZFIB7h8EoiZpJ+I9CK
-	 sYN+2wpjHgPw3ZEydhiG9FfONkZRaINhWY5OA45s6bc4iV7Qb7zfah5e5ZYVBOKW9K
-	 ct+AMt0odzZerJGnjojq5F592LP6Rii39lDcj0R+FkN5DpPnrRjRrTIi2t+t91wrIG
-	 1KK3zXzoL3KvA==
-Date: Tue, 18 Jun 2024 17:11:45 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Stefan Moring <stefan.moring@technolution.nl>,
-	Adam Butcher <adam@jessamine.co.uk>,
-	Benjamin Bigler <benjamin@bigler.one>,
-	Fabio Estevam <festevam@gmail.com>, s.hauer@pengutronix.de,
-	linux-kernel@vger.kernel.org, Stefan Bigler <linux@bigler.io>,
-	linux-spi@vger.kernel.org,
-	Thorsten Scherer <T.Scherer@eckelmann.de>,
-	Clark Wang <xiaoning.wang@nxp.com>, linux-imx@nxp.com,
-	kernel@pengutronix.de, Sebastian Reichel <sre@kernel.org>,
-	shawnguo@kernel.org, Carlos Song <carlos.song@nxp.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] spi: Increase imx51 ecspi burst length based on transfer
- length
-Message-ID: <00ea22f4-8c39-4f82-81f7-e76a87ace559@sirena.org.uk>
-References: <20230628125406.237949-1-stefan.moring@technolution.nl>
- <CAOMZO5AftBB8B-Bb-j0TrTnKiQdGpBkq+jZ3surLSs6xPm_pUQ@mail.gmail.com>
- <CAB3BuKDcg=7Umxv4yUTDVsQ3X_ash6iFmz-3XaENfni2=R_LCw@mail.gmail.com>
- <20240618-oxpecker-of-ideal-mastery-db59f8-mkl@pengutronix.de>
- <20240618-mature-private-peccary-29f0b6-mkl@pengutronix.de>
- <cd8d89d3-c304-4eb6-897f-b423e8196ef2@sirena.org.uk>
- <20240618-prehistoric-amphibian-firefly-a9b2d2-mkl@pengutronix.de>
+	s=arc-20240116; t=1718727115; c=relaxed/simple;
+	bh=2hmMSMcK/DYRjUA5lhYtRVqQYkfz7USAMb6rWWQ3auM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=a7NtX9hiKEF4CFLTZzfttGIbYAgX0RGrgk7Q6g095Xvwe71B1P9PDCBd+tWqw0iFqse6CQCKLXTCZqxKBbVyVKtQaC+Wn+Seeuw31j90Wh1HeAozCv1QrGMvZuh9eX8FgKY7qa8/d1lzOXemTfP7BHDdSSdnZCi8Re75QVeGQMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOy5JeVs; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57a4d7ba501so7011970a12.2;
+        Tue, 18 Jun 2024 09:11:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718727112; x=1719331912; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vdhfQI9T5+yxPiraAgbpmOt7qEOjgccH7WBORNtfHfE=;
+        b=XOy5JeVsltAB8Kdw6lBOYVtRkgs8gb6MTyYYSJwMrVGFF6ZebYByThmCyJoPOFvCqK
+         nQwOLQEdJRcQ6XfUgtN8ocq3TxUTBYhAob4/Itnp5bdVrvmfk1Z4XIylsRxiTct6CWm4
+         FRnBVqUPcIo5P1T1w7YOkVOw5HOYLhXLN+682YFUyIwrupDjj/u9veyRqjKod0QVuSw3
+         zzNm3KgCIxiBEl+JCMPnZq1+mqD9vRwjrayTVVu6tvEe3coRePCPiFR52yhzEjCZNiEw
+         9h37Ya/HxV+5MmX0gF15ux11Hxs5N6Q5M5eUSQpIg/0dw+wci1wmL48+I7l0IbrV1KJb
+         FEvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718727112; x=1719331912;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vdhfQI9T5+yxPiraAgbpmOt7qEOjgccH7WBORNtfHfE=;
+        b=vgQvB8qNMlyq+x7O9cf+Sgm7cOkm7DyveH8k6wbBbPTyxeMXhrts6YgpXvPhTiNjlq
+         RbuCT+OSX1HrqpTK+5/bqaVFn0aWwax5jML1bu/y8MSTi1mjCMkgdddkrwpQgyw6G8iO
+         s6zB/bXdAVMK0DcxTXNH0gDb5O4TqJNHiFAFkdsKx4vAHxybmoPel3GNdOnR0r0lRugf
+         D4X0nZkYObosrtcZm7Yo7OIstPPs+lCi9hrzKEPzYezn9bFeuaHRMzVRKx5aFPo7Urfe
+         +vUNR40DNm0vGXyESwTudOP+vUSn+i8S7PUj7HwBziMuR7R4boKJhICMhb+mHfg11TV2
+         2Ygg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBnL04FdD5yUJN2LZrIzMi+Q1fVaDUl7Zs9AXFfmZyVzlGclDxKFZMRJusPni+Bav89Va+T45RoSUCENQL1lPkPMYxVd3DQ8ff6vLF0Uw+kK8K7QhHSHiZvKW/xGUsIDWaL64MACrOquOig9pUpKIRGex9Iih3z5hD6CJX0hK7zg==
+X-Gm-Message-State: AOJu0YzYQJ0Hf6fAdSDoXJjwacG1OJKmM/x9u5NncwioGPCZuKp3ZpTi
+	fltibpkg/bYe9PMyYRr9nl7LwKAAnVq4EXkOJrbv/Pb/EBgjcVlJ
+X-Google-Smtp-Source: AGHT+IEfZ9HaFQBufIL+uJmK6fz39+P64leJ9sWW5fe/okGzJN3xQA3FngvVzo6bSVhv/MbpbmaRQA==
+X-Received: by 2002:a50:8a97:0:b0:572:7bda:1709 with SMTP id 4fb4d7f45d1cf-57cbd649655mr8559509a12.9.1718727112118;
+        Tue, 18 Jun 2024 09:11:52 -0700 (PDT)
+Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb74387ffsm7997213a12.81.2024.06.18.09.11.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 09:11:51 -0700 (PDT)
+Message-ID: <0b889b87-5442-4fd4-b26f-8d5d67695c77@gmail.com>
+Date: Tue, 18 Jun 2024 18:11:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3/054iokxb+MZLWU"
-Content-Disposition: inline
-In-Reply-To: <20240618-prehistoric-amphibian-firefly-a9b2d2-mkl@pengutronix.de>
-X-Cookie: If you can read this, you're too close.
+User-Agent: Mozilla Thunderbird
+From: Johan Jonker <jbx6244@gmail.com>
+Subject: [PATCH v1 0/3] cleanup arc emac
+To: heiko@sntech.de
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+The Rockchip emac binding for rk3036/rk3066/rk3188 has been converted to YAML
+with the ethernet-phy node in a mdio node. This requires some driver fixes
+by someone that can do hardware testing.
 
---3/054iokxb+MZLWU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In order to make a future fix easier make the driver 'Rockchip only'
+by removing the obsolete part of the arc emac driver.
 
-On Tue, Jun 18, 2024 at 06:06:02PM +0200, Marc Kleine-Budde wrote:
-> On 18.06.2024 17:02:22, Mark Brown wrote:
+Johan Jonker (3):
+  ARM: dts: rockchip: rk3xxx: fix emac node
+  net: ethernet: arc: remove emac_arc driver
+  dt-bindings: net: remove arc_emac.txt
 
-> > A single revert should be fine and is probably clearer.
+ .../devicetree/bindings/net/arc_emac.txt      | 46 ----------
+ arch/arm/boot/dts/rockchip/rk3066a.dtsi       |  4 -
+ arch/arm/boot/dts/rockchip/rk3xxx.dtsi        |  7 +-
+ drivers/net/ethernet/arc/Kconfig              | 10 ---
+ drivers/net/ethernet/arc/Makefile             |  1 -
+ drivers/net/ethernet/arc/emac_arc.c           | 88 -------------------
+ 6 files changed, 2 insertions(+), 154 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/net/arc_emac.txt
+ delete mode 100644 drivers/net/ethernet/arc/emac_arc.c
 
-> thanks for your quick answer. What about the Fixes-tag? Just the
-> original patch?
+--
+2.39.2
 
-> Fixes: 15a6af94a277 ("spi: Increase imx51 ecspi burst length based on transfer length")
-
-Either way should be fine there, so long as the original patch is
-mentioned.  It shouldn't do any harm to mention the others too though.
-
---3/054iokxb+MZLWU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZxscAACgkQJNaLcl1U
-h9BpCQgAgdiR6LCgZnD2PI6txPPzp9lfR7j/2BH43uvbUWFcKLL8bpzBjOBQx3Tk
-g9zDIXOskYqXzdn7+y/60gQWBvvVw+l6w5DTo1I65RUVTcPowJAbOrBLPSZPmdqw
-od40BS97CUhRgYk/OITELvj+GoUXND7Lhxy7ZtPrEJkUO+yvUkwQqdda7PQCTr5D
-9zrW4uKvaGDl66QpvmzLYE37Ih3j+Jn21z4nMZMvDTQmTT8zDAv+QlYLzR2jfpFJ
-fV0bNOWdmRRWicyM6T9jjao6N3fYnt3V47WslRkgOhm9RENEAXZw7ssTFLuF4v0N
-vHzDfHV3R03Moxymk4PoxzhokqWtcw==
-=HoFk
------END PGP SIGNATURE-----
-
---3/054iokxb+MZLWU--
 
