@@ -1,196 +1,169 @@
-Return-Path: <linux-kernel+bounces-218449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FA490BFFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:01:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A1690C001
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA7711C21A79
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:01:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD1A11F21904
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEAAA95E;
-	Tue, 18 Jun 2024 00:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9B279C4;
+	Tue, 18 Jun 2024 00:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LqACPPX7"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HScf538v"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E816B4D8C1
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0149EA95B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718668910; cv=none; b=HnT4SiNyP4iBPJkdwSf9/BQbPT11y9GPRwLg3uK/XyiXZXDb+HN/5qwcuYhyeha8zQjMAPNfgNGV8+V6LsBlLMWfeQDpQn1Tp6fTZvGgC8x8h2r6QRKlR+lVwCRzgsHLB+4tkj/bWE2vaibX7JRgZkfMyvdZfWlytlvLLNgUurQ=
+	t=1718668933; cv=none; b=homjwsDgGJXbHFfdyDqbOj8YVlo8TMtTmzcYzYl3TIIShWCmS9dVRVs04+mqmjHZKEFNLBBum6ovKD/0FBQ4qmLIhdYVosPzapHHcbbgL/y3OdZpJMlHwxV4HNzZW5qNVT7tmTjOVNtjctROGL9NRg3TCB5delJeLOOw7scfASw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718668910; c=relaxed/simple;
-	bh=WsXnkl7kVUYze+FeKGmExkt9GJ8bPzG9K5cBRVrE94Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CYKe5ZaU5gKjb9jMDbkoC6Tp5l1pAJ4vN2XlZeYYqtsc4jyEd3IZ6qsI40AsydmGCLV2EVnReO9ta3OMEhgtT1KjOUjbmONV6KURWP3XLeCgwv/nJFuv2TVSKqfXDZ5oZVANQfuMlRgpE071afL1KIJSCOu6k90bK/Ts1IsSzqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LqACPPX7; arc=none smtp.client-ip=209.85.160.181
+	s=arc-20240116; t=1718668933; c=relaxed/simple;
+	bh=MQ0UkyRa32S08P8X0GuZZXaCeFjdlR7ldXAmsqhG1NA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5wOUEaZtwhSi4HKnJH05XZZojztiBigX/a/3HjiNYOkC09plPfnFbrpJWehqU369i72o44MwiBGzhbebp9pTd3rrzPm+n03wrKLEwv+iuENTrNDqNyObU9p46JDK+9CydaU95SxZiNs431hUMiTe2YBDDrLK0ikLX/dG9PV5K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HScf538v; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-443580f290dso67511cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:01:48 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-70df2135439so310075a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:02:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718668908; x=1719273708; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=szeTbx+n4i/RQE7ZeuWhiCumzoRR7Ut1YseLs3KbJhQ=;
-        b=LqACPPX7taB8wao5TU2wDvxyePHktsw1vqMDPHKfrMc47roqxlrVwRAzmjj1IVRGiq
-         8V74Kmp29+vQIqFQZoiyBa1Fj5HY8llC+vnw6gEac9WLDIqNx34L8RR4LXE9OOcQ1yOU
-         vi7kYDb0mHWckOe66R3hmFGtinLmc7QPXIX7yo1F8o7wXCsZLsNuozE1AuplSN1NPhHy
-         rNXySMFsdZPS6KmVKJF8a/C5hGPjDNQDWnAqcSWYAXYt6CmO0q/sX/UHOg345S9f3dxC
-         tVx1qpVLp45gpzOvqKo5keZAINa08NJXwqLfHScFDduIAaYfEcN0avu0fhRW9zaQ32IZ
-         cguw==
+        d=google.com; s=20230601; t=1718668931; x=1719273731; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G5QggLKVvtXcjNE7wsmNHduvxN81Zmk7QTPLx0dgIXM=;
+        b=HScf538vzQCcKU0yixyl+LPJGwWdaehNLeik+MHo54cGJA/Qz9fvjF6EVSpZmtqGb/
+         88jOPit2rZCDLxuoTpPnKKsbRty9K0hpIX13er28hlwj/23ml7pdnqHupG36TaC6wJ1a
+         U7njKogCe6jDbJTvIC6wjEsCPvUddQVE15sLhcBffUdDKN8xdVE6JOIPzATWJVyCBpVA
+         iBn11QCnGoBrucYZAOjHn5qQeK/Z4cCtPcqkqoW4sVuMPm2T1L4GAxN9AuOsnyCa3VLm
+         B7hIJyf0gaqztWz436GM9EAZKjiB1NY2AHl8q2A5NH+O9p6WXguvWzc64f9GN1TsUokq
+         QEUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718668908; x=1719273708;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=szeTbx+n4i/RQE7ZeuWhiCumzoRR7Ut1YseLs3KbJhQ=;
-        b=i19Guv0fx6QoAjS3dC8iBK6GdIZmB+0N8RjyzCOmzaqDJVcqItMS78ASWKBZfO/6Yb
-         +1a71uUBeVkFL8FsBNqDhHx8ZZ3OXTUP3JPg7jljz6jZj40qOmGJqNSQx0HZyOztbQo7
-         x8ElgdGxM3CRu9Myo7YUvOPdZqEa5pYnohR1k9AXcMSFoJtscl0dRxYMoROGZTuwtj3H
-         trt2kpLLIKETSbTjktp9lSlGfKUz1b+s5fg86BVGa9wb2QdSdhcp2zXDf18RqvD/qiNM
-         KIxQt3Sv9RAxq1FUTAbkOfkYl8TAjqqrMUxv+6V/nUeC1bZRRxsSHMe13u2/PP7Zg/7k
-         xquQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXV7uG/oSmnLpPmXvqGzO8XFdbDxQ9wc1/7WXi4K+JrXlnNTqnfLlVexj5xB3m9bpKx8gtnANmkN3y4C9zmu4Dui4zpBXHlHEQlz3ys
-X-Gm-Message-State: AOJu0Yw+byaPP8peRPy73LxHauDHQqfJYysZ/3KUgRACwnfmvuVmWx0Y
-	noDNc+fVX/9pBhp5gT55RHfzwh7xiL6+FdGimjY7dP3qyS2HiQUxFEc8AGqdmK+YjLjK/1ZVa17
-	Y5r44xNdyFyBggpNAkhEcZyBvZhWZBw0yacTX
-X-Google-Smtp-Source: AGHT+IGHzkobBDc6M3yopcf16QeXn++VzvN+NTr0crpz0Mygnf9RbsKFdcd1bMRE+npFHMvEgbm3YMfrR8FegyixQZ4=
-X-Received: by 2002:a05:622a:1309:b0:43f:bba6:3759 with SMTP id
- d75a77b69052e-4449c68d727mr1309401cf.10.1718668907696; Mon, 17 Jun 2024
- 17:01:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718668931; x=1719273731;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G5QggLKVvtXcjNE7wsmNHduvxN81Zmk7QTPLx0dgIXM=;
+        b=eDZglXwr0/dYW6Qv+mdFOnpsnM7NaC/3USnLjmd9FyeVAkCFnewiv2a8eJ8GN/wOvj
+         o4lh5+b/ks/OSRaseqUB2bbD6h11eKxDL6eXR/orrC5KpOp3iX8VB+gL9sctDNzfYgjn
+         Xjrk/Au76L5/+0b2vtlqZTYmgNc0kCE39mAG1L9C8FmyVUs/HV+/dQcaMvOrWNFpyejC
+         NZPeNCzGTBfZeRh/Ghx7SzoFqTU6IMNJU4kX0dnpRKclf6jHZUQNtQeIJDkE1peG8UMs
+         R13zM0vZ91+vrc5AcmE1ZNWWdfTRetcgg9oUr3o1ubFHBBiNQDuGcYUGwdTm7u5cncy0
+         3mqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxm8OIjxrohhnE06cpE8SgciVChh6rSudWX0paQFPJQrniHFlSxOK1xjT+nbIk2I3h02vxDWuFp7GbB9teR3BTlrLeMDB4h9C2jpaO
+X-Gm-Message-State: AOJu0Yw0Ab10R+Se3ykQmDYqLo7G8VYhsFZNBAd5fhm4b9+be2+n3x+j
+	SHOKgfzDPv9IARMy10JLz7WOXPoibUdlK35r/BpSsP/sJtyLEYcnue+FsLlFmw==
+X-Google-Smtp-Source: AGHT+IEaL9SMJkuSl6W1G9gOHBSO4BNEF5ZdqBW01H+lkarcRA4jiV0wRtBSfOlpQ3DRHisvBSW3dw==
+X-Received: by 2002:a17:90a:ae06:b0:2c2:f6a3:3043 with SMTP id 98e67ed59e1d1-2c4db133ea3mr10836842a91.9.1718668930970;
+        Mon, 17 Jun 2024 17:02:10 -0700 (PDT)
+Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4c466c3desm9488343a91.46.2024.06.17.17.02.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 17:02:10 -0700 (PDT)
+Date: Tue, 18 Jun 2024 00:02:06 +0000
+From: Igor Pylypiv <ipylypiv@google.com>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Niklas Cassel <cassel@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/4] ata: libata-scsi: Report valid sense data for ATA
+ PT if present
+Message-ID: <ZnDOfqq9Jo-38LBl@google.com>
+References: <20240614191835.3056153-1-ipylypiv@google.com>
+ <20240614191835.3056153-4-ipylypiv@google.com>
+ <dfb741e5-2fe6-4b36-b1ab-55c3c33032d0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613082345.132336-1-shahuang@redhat.com> <20240613082345.132336-4-shahuang@redhat.com>
-In-Reply-To: <20240613082345.132336-4-shahuang@redhat.com>
-From: Raghavendra Rao Ananta <rananta@google.com>
-Date: Mon, 17 Jun 2024 17:01:36 -0700
-Message-ID: <CAJHc60xpGAA1pmz0ad_Fq3a5M-pQMiyxQ4hdNhc6vQrgpSjGww@mail.gmail.com>
-Subject: Re: [PATCH v9 3/3] KVM: selftests: aarch64: Add invalid filter test
- in pmu_event_filter_test
-To: Shaoqin Huang <shahuang@redhat.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, kvmarm@lists.linux.dev, 
-	Eric Auger <eric.auger@redhat.com>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dfb741e5-2fe6-4b36-b1ab-55c3c33032d0@kernel.org>
 
-Hi Shaoqin,
+On Mon, Jun 17, 2024 at 08:25:54AM +0900, Damien Le Moal wrote:
+> On 6/15/24 04:18, Igor Pylypiv wrote:
+> > Do not generate sense data from ATA status/error registers
+> > if valid sense data is already present.
+> 
+> This kind of contradicts what you said in patch 2... So I am really confused now.
 
-On Thu, Jun 13, 2024 at 1:27=E2=80=AFAM Shaoqin Huang <shahuang@redhat.com>=
- wrote:
+Sorry about the confustion. I think the problem is that I was using "sense data"
+to describe two different things:
+#1. SK/ASC/ASCQ
+#2. ATA Status Return sense data descriptor
+
+Both #1 and #2 need to be populated into sense buffer. The problem with
+the current code is that we can only have either valid #1 or valid #2 but
+not both at the same time.
+
+> Though this patch actually looks good to me, modulo the comment below.
+> But shouldn't this be squashed with patch 2 ?
+
+Yes, that's a good point. Let me factor out the sense data descriptor
+population code into a separate function and then squash this patch with
+the patch 2.
+
 >
-> Add the invalid filter test which sets the filter beyond the event
-> space and sets the invalid action to double check if the
-> KVM_ARM_VCPU_PMU_V3_FILTER will return the expected error.
+> > 
+> > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> > ---
+> >  drivers/ata/libata-scsi.c | 17 +++++++++++------
+> >  1 file changed, 11 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> > index 79e8103ef3a9..4bfe47e7d266 100644
+> > --- a/drivers/ata/libata-scsi.c
+> > +++ b/drivers/ata/libata-scsi.c
+> > @@ -858,12 +858,17 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
+> >  	unsigned char *desc = sb + 8;
+> >  	u8 sense_key, asc, ascq;
+> >  
+> > -	/*
+> > -	 * Use ata_to_sense_error() to map status register bits
+> > -	 * onto sense key, asc & ascq.
+> > -	 */
+> > -	if (qc->err_mask ||
+> > -	    tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
+> > +	if (qc->flags & ATA_QCFLAG_SENSE_VALID) {
+> > +		/*
+> > +		 * Do not generate sense data from ATA status/error
+> > +		 * registers if valid sense data is already present.
+> > +		 */
+> 
+> The empty "if" here is really horrible. Please revert the condition and add it
+> as a "&&" in the below if.
 >
-> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> Signed-off-by: Shaoqin Huang <shahuang@redhat.com>
-> ---
->  .../kvm/aarch64/pmu_event_filter_test.c       | 37 +++++++++++++++++++
->  1 file changed, 37 insertions(+)
+Adding the condition to the below if will change the code flow and we'll end
+up executing scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D) when
+ATA_QCFLAG_SENSE_VALID is set, which is not what we want.
+
+I agree about horrible :)
+
+Perhaps I should have factored out the descriptor population code into
+a separate function to make the code correct and not so horrible. Let me
+do that in v2.
+
+> > +	} else if (qc->err_mask ||
+> > +		   tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
+> > +		/*
+> > +		 * Use ata_to_sense_error() to map status register bits
+> > +		 * onto sense key, asc & ascq.
+> > +		 */
+> >  		ata_to_sense_error(qc->ap->print_id, tf->status, tf->error,
+> >  				   &sense_key, &asc, &ascq);
+> >  		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
+> 
+> -- 
+> Damien Le Moal
+> Western Digital Research
 >
-> diff --git a/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c =
-b/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
-> index fb0fde1ed436..13b2f354c39b 100644
-> --- a/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
-> +++ b/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
-> @@ -8,6 +8,7 @@
->   * This test checks if the guest only see the limited pmu event that use=
-rspace
->   * sets, if the guest can use those events which user allow, and if the =
-guest
->   * can't use those events which user deny.
-> + * It also checks that setting invalid filter ranges return the expected=
- error.
->   * This test runs only when KVM_CAP_ARM_PMU_V3, KVM_ARM_VCPU_PMU_V3_FILT=
-ER
->   * is supported on the host.
->   */
-> @@ -178,6 +179,40 @@ static void destroy_vpmu_vm(void)
->         kvm_vm_free(vpmu_vm.vm);
->  }
->
-> +static void test_invalid_filter(void)
-> +{
-> +       struct kvm_pmu_event_filter invalid;
-> +       int ret;
-> +
-> +       pr_info("Test: test_invalid_filter\n");
-> +
-> +       memset(&vpmu_vm, 0, sizeof(vpmu_vm));
-> +
-> +       vpmu_vm.vm =3D vm_create(1);
-> +       vpmu_vm.vcpu =3D vm_vcpu_add_with_vpmu(vpmu_vm.vm, 0, guest_code)=
-;
-> +       vpmu_vm.gic_fd =3D vgic_v3_setup(vpmu_vm.vm, 1, 64);
-> +       __TEST_REQUIRE(vpmu_vm.gic_fd >=3D 0,
-> +                      "Failed to create vgic-v3, skipping");
-> +
-> +       /* The max event number is (1 << 16), set a range largeer than it=
-. */
-nit: s/largeer/larger
-
-Also, perhaps not in this series, but we can also check for -EBUSY
-situations such as setting a (valid) filter after
-KVM_ARM_VCPU_PMU_V3_INIT and after the vCPUs have started.
-
-Besides that, Reviewed-by: Raghavendra Rao Ananta <rananta@google.com>
-
-- Raghavendra
-
-
-
-> +       invalid =3D __DEFINE_FILTER(BIT(15), BIT(15) + 1, 0);
-> +       ret =3D __kvm_device_attr_set(vpmu_vm.vcpu->fd, KVM_ARM_VCPU_PMU_=
-V3_CTRL,
-> +                                   KVM_ARM_VCPU_PMU_V3_FILTER, &invalid)=
-;
-> +       TEST_ASSERT(ret && errno =3D=3D EINVAL, "Set Invalid filter range=
- "
-> +                   "ret =3D %d, errno =3D %d (expected ret =3D -1, errno=
- =3D EINVAL)",
-> +                   ret, errno);
-> +
-> +       /* Set the Invalid action. */
-> +       invalid =3D __DEFINE_FILTER(0, 1, 3);
-> +       ret =3D __kvm_device_attr_set(vpmu_vm.vcpu->fd, KVM_ARM_VCPU_PMU_=
-V3_CTRL,
-> +                                   KVM_ARM_VCPU_PMU_V3_FILTER, &invalid)=
-;
-> +       TEST_ASSERT(ret && errno =3D=3D EINVAL, "Set Invalid filter actio=
-n "
-> +                   "ret =3D %d, errno =3D %d (expected ret =3D -1, errno=
- =3D EINVAL)",
-> +                   ret, errno);
-> +
-> +       destroy_vpmu_vm();
-> +}
-> +
->  static void run_test(struct test_desc *t)
->  {
->         pr_info("Test: %s\n", t->name);
-> @@ -300,4 +335,6 @@ int main(void)
->         TEST_REQUIRE(kvm_pmu_support_events());
->
->         run_tests();
-> +
-> +       test_invalid_filter();
->  }
-> --
-> 2.40.1
->
->
+Thank you,
+Igor 
 
