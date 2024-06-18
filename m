@@ -1,142 +1,119 @@
-Return-Path: <linux-kernel+bounces-219167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6266190CAC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:00:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A9990CAC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 638431C23606
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:00:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4DC51F21906
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B6E7EF04;
-	Tue, 18 Jun 2024 11:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FD92139D3;
+	Tue, 18 Jun 2024 11:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSBJ5ji6"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jb1bX24K"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546EE745C0;
-	Tue, 18 Jun 2024 11:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAB42139A8
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718711442; cv=none; b=qVTcQlBWuN4HS4eL2pI6Za7vvrrmAH3Irlo9QzNPv0yL00u+5lxFMawkn0Q3B4C0fSlqUy5Lp1kXXJs5nX6K2O8h3oUUN2vH7oxudp22g9wOttOWJ1enL94QeiKZu6S/1mYJpVOTX6WXQ/JH5yBP5CVnJb5QfZPIWz2cS14UJxk=
+	t=1718711388; cv=none; b=c5jdYdva9Z2zWWLjdNtHFhCGZM1Ir+ZPMNMzEEV42jGm+PyxD4V7gOfbmOO2ukowp91hpVoOHS541jSjEJpTsbIKUacSb2+J1c7MKhu0e8Q/r+Ye34dShWJLHyCkGPym+WEU3FLMjghQ8WsXr1amyZo/QlM1AcIWy8aEBA+CH0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718711442; c=relaxed/simple;
-	bh=gn5CPAnzZLTEwuHX/rg00l93QkVeW3D7QPysAsulW2s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gfvoHbXPq4kW0ZzgbZEJkVdTWNHO7lRH2qjYxcTC6V71T0O0Aq4DNlv20R68FZY26R/9jb17e6WlaTblGqMqxoEJfCEXA9IdYOE9B8NRl3F+QbIZplFe8Rf+Llac6ZX0gfSgisIOCS6ODbadjYWcpTfnYfvc5as3EM5e1fYtp0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSBJ5ji6; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f70131063cso41811085ad.2;
-        Tue, 18 Jun 2024 04:50:41 -0700 (PDT)
+	s=arc-20240116; t=1718711388; c=relaxed/simple;
+	bh=2hIo05tCUTPAFIRPPe6FAtdYmihwk6dkPz/hXvGOkPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SHSIRZmHZUOgc/6ceVkhr+SOvNEC7fz3tReaFWcX2PgQe0XCAMWCsn0xIidk0/cuEqAHxIORzCnhUOZXMId4G+OjP6ZYLm3Ef+3BdAgaI1mnJmp+7dLCNhy4q4UY3Via2W/yQrEPeS1prEDXUPT5sDF/rdbqjUQbjcN3TnMQUMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jb1bX24K; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so5678828a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:49:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718711440; x=1719316240; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5s6/LFX8WRrd2o/jtRmvisL1C8048AZKiXldCA8XPv8=;
-        b=PSBJ5ji6I3hZ3WKzyuqmEA1brrxCv9m/ug/yPLZpw+up79PxIC3NMxf6rc6McBZA2g
-         bh9xSkV58QdezsG0xUsnArqkT/OPAdOWdfH2S3b1vvq18c15kZcda/Hd7V8pxuoalWUi
-         55IN6OZowZiCAQl+9Tqh/OxnI/hL/aHQA+lHhv2OwNib1lTTezjYqaaYENtdQWKgBIaB
-         70ixQdWIhjtuYEPwyB+1391+ga/1DSbXwo4ZqMz9V5nWRdZ4keHaCHRUnq1pxxUvRpCK
-         9j7OYUPW0XiIwYdaxMRbII0n52qRSaD7FmT3mR3qYQM1BsGsMgXO2NCqtFmsDpDPC581
-         agOA==
+        d=linaro.org; s=google; t=1718711385; x=1719316185; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pKiWUiO1H/ACz4Ax5OKPh9Z7evBNHdBNqnuTlAaiBA8=;
+        b=jb1bX24KacQ+ZcgP19Ly1YAY2FNYEJSA6mpa+5Nt+9p0laeVI7GOnIbmXK0HhYHx/1
+         0wQGffp8lQW1y76bikgofHuw4onAABzt3bTdQ/lAHlqxNA6qUFHZDy5H1pNmL/52cngA
+         2xdJcJDEfdyBv/GswBYQJw8SQxyb6OTwuJpkp7xXiJxkPj0UD4JrPAIHUIwf9LeKw+PN
+         np+fNTBuUd49/OUSK84T0g7S3BuiR6MFGK+iC89V0TLR7/Ji5EE+Gjx39ZuH/OBsPbTX
+         IpV4GGralxJ3H6QaKiLugAlVrgNBJ6h2EwawUAskoElIM1m8Nz+8CHEFlZYjfo53XDb9
+         0e5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718711440; x=1719316240;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5s6/LFX8WRrd2o/jtRmvisL1C8048AZKiXldCA8XPv8=;
-        b=tLEp8ntnTIO79WXpj/e4f+5bgXFkQh2M1ITM4dsQvcSN+MNhr86KycADfDYuFl/xmQ
-         PlVYGkW1YFd9EYVo66GY9bvIcb+8qth2xZCX3GARQ6ZNwmiSsu8eJaYWrzM62q8Qo3JK
-         CEEtAfCzv3xtRCPySryxik+gjmHQe8ALHfg6INYZ6a1ZkZHu1n/UetikhgWBLy2gjlIl
-         KlrUbRroSRf0DtAMKWmKuhNqBRy0o+PqL4FjVvVgqCXBJ9fq/El9UxW+MVK50AZAosZ5
-         eF03K5Hguz1eLvoOSQc7AQ4Lyl5RsoLqAlbwvFAoD60OdqWTHteS0TzepSDnFPpXVtrQ
-         Arnw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2lYBBzq4SmW1dSBnXnrCx9bun3bOcQzuHy65tLc+kSC+p+GLtui8wnDRAULeJVqbtYZy23DCNmwk5BIMbHYSmcKMmLt9x/rh9WQllj4gfOtg7Tw1526V7uW0AUSUh/RzNhgoIQ+7Ea8fjpA==
-X-Gm-Message-State: AOJu0Yyva8qlJWIh11SMoUp8SBH9aCJkvCJdoxKpdCGchlvLEtLOmiuy
-	v92iYxgh4XVEWFQagRVw6zmZCEj85hS1stHkzitV4qwyMXRx9oBCynCwTiO5
-X-Google-Smtp-Source: AGHT+IH6Z3j/b0LjFf0GkWIaBhwNo56mHqUE9EsvTcdnjzrbDUZk8I1kDyLDNVWXU4Yb1P3z7Mag0g==
-X-Received: by 2002:a17:902:d50a:b0:1f7:23d9:f530 with SMTP id d9443c01a7336-1f862a0eadfmr139727715ad.66.1718711440120;
-        Tue, 18 Jun 2024 04:50:40 -0700 (PDT)
-Received: from BRUZZHANG-MB0.tencent.com ([43.132.141.21])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855ee7ce5sm95643995ad.129.2024.06.18.04.50.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 04:50:39 -0700 (PDT)
-From: Peng Zhang <zhangpengpeng0808@gmail.com>
-To: willy@infradead.org,
-	akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: bruzzhang <bruzzhang@tencent.com>,
-	Rongwei Wang <zigiwang@tencent.com>,
-	Vern Hao <vernhao@tencent.com>
-Subject: [PATCH RFC] mm/readahead: Fix repeat initial_readahead
-Date: Tue, 18 Jun 2024 19:49:41 +0800
-Message-Id: <20240618114941.5935-1-zhangpengpeng0808@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+        d=1e100.net; s=20230601; t=1718711385; x=1719316185;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pKiWUiO1H/ACz4Ax5OKPh9Z7evBNHdBNqnuTlAaiBA8=;
+        b=sODEhB3pFiSJMc5pUuWIYvuxi9PrHlK9BMyDm/9VkfwrW1h2+u0VdfmAW8x60oZfji
+         +gpaZj9umhoGY0M/4eqxXIrjIc/+SRpZgunC/j+jMoBb0BnGDN5nIN5Mx9M5mGARHoX2
+         eZPANa5ZADzWEov6/qUG6aWlVUXrkMtu9ObRZJ399uUjA1PEBcOq8hv/aAh0IctZcs5f
+         iXnQPmbIgEubzLNgDDuQULByOvVXJtt1MBg03EfeHI17RxPdJkYXerFGVq+iIEdet36L
+         ctRInLvB3W2gqDG2KvVqI0OefezN/Z8EB7/gX73HmmqtpRYm8K58rvqCEV3CXtoFnXrb
+         AZqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfTTQ/DFKivTp689n2qXmFIf9bYYKMxQyxZaw4a+R3c2zFMxkKUGr4KYSwwPBB46onAUDH7NpkmgNUgtokGyCTQhIwaKdQq0RNBPiZ
+X-Gm-Message-State: AOJu0YwIuWlYH9nsiWkYekLcgZK2FV0qHZZHsVqYmzM5XsBHaWiJ7fe3
+	/0v9r9+PjXtGrBQ92QRFokJJQ8UY3kbGrPT6+HZvZZFhyRYfaMHsYH9JtLjl4Rg=
+X-Google-Smtp-Source: AGHT+IFcJAnLDP0RCcx8fANvtIZTqrzyrZMXPlLyqSV5EPVm4qM43BQNRnz6ZYrtuyp8gP218NPPig==
+X-Received: by 2002:a05:6402:2293:b0:57c:c125:d638 with SMTP id 4fb4d7f45d1cf-57cc125dc2fmr8952918a12.39.1718711385488;
+        Tue, 18 Jun 2024 04:49:45 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-57cb743890dsm7659259a12.83.2024.06.18.04.49.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 04:49:44 -0700 (PDT)
+Message-ID: <ad6f4838-78f9-4b1c-b0e9-850458194ce8@linaro.org>
+Date: Tue, 18 Jun 2024 12:49:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: qcom: Add SM4250 pinctrl
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240612-sm4250-lpi-v1-0-f19c33e1cc6e@linaro.org>
+ <20240612-sm4250-lpi-v1-1-f19c33e1cc6e@linaro.org>
+ <e10eda85-68cf-4f66-ba34-3e746d286fa2@kernel.org>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <e10eda85-68cf-4f66-ba34-3e746d286fa2@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: bruzzhang <bruzzhang@tencent.com>
 
-Now, if read from start of file, readahead
-state will be repeatly initialized when
-first time async readahead after sync one.
-This case likes:
 
-sequence read
-page_cache_sync_readahead()
-  --> ondemand_readahead() <-- initial ra
-  --> folio ready <-- order=2, readahead flags
-folio_test_readahead(folio)
-filemap_readahead() <-- async readahead
- --> ondemand_readahead() <-- initial ra again
+On 13/06/2024 08:15, Krzysztof Kozlowski wrote:
+> On 12/06/2024 13:55, Srinivas Kandagatla wrote:
+>> +
+>> +description:
+>> +  Top Level Mode Multiplexer pin controller in the Low Power Audio SubSystem
+>> +  (LPASS) Low Power Island (LPI) of Qualcomm SM4250 SoC.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: qcom,sm4250-lpass-lpi-pinctrl
+>> +
+>> +  reg:
+>> +    maxItems: 2
+> 
+> Nothing changed.
 
-The second initialization of ra seems a
-mistake, and right ra window
-(start, size, async_size) should be (4,8,8)
-instead of (0,4,3) after async readahead.
+Looks like I messed up something here, Will send out v3 with this fixed.
 
-What's more, this patch can improve sequence
-read greatly, the result of test as following:
-
-case name             upstream    upstream+fix  speedup
-----------            --------    ------------  --------
-randread-4k-sync      48981.00    48948.0000    -0.0674%
-seqread-4k-sync       1162630.00  1334915.00    14.8186%
-randread-4k-libaio    47561.00    49910.00      4.9389%
-seqread-4k-libaio     1058526.00  1257134.00    18.7627%
-seqread-1024k-libaio  1365866.00  1411463.00    3.3383%
-
-Signed-off-by: bruzzhang <bruzzhang@tencent.com>
-Signed-off-by: Rongwei Wang <zigiwang@tencent.com>
-Signed-off-by: Vern Hao <vernhao@tencent.com>
----
- mm/readahead.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/readahead.c b/mm/readahead.c
-index c1b23989d..498708b4b 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -571,7 +571,7 @@ static void ondemand_readahead(struct readahead_control *ractl,
- 	/*
- 	 * start of file
- 	 */
--	if (!index)
-+	if (!folio && !index)
- 		goto initial_readahead;
- 
- 	/*
--- 
-2.39.3
-
+--srini
+> 
+> Best regards,
+> Krzysztof
+> 
 
