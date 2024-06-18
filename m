@@ -1,223 +1,127 @@
-Return-Path: <linux-kernel+bounces-218909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB47890C79D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:48:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D22990C79B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6ED2811D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:48:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FFB4285BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B583C1BD50E;
-	Tue, 18 Jun 2024 09:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017251BD4E9;
+	Tue, 18 Jun 2024 09:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2+RCRAad";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2VPE0btW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2+RCRAad";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2VPE0btW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+Rp1Lgf"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0738D13A3E4;
-	Tue, 18 Jun 2024 09:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE25F1327E5;
+	Tue, 18 Jun 2024 09:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718701646; cv=none; b=DWkhSGLv1/VBiitsEVVIeDEJhsCLTqAKUaZV10Y5SEt71dUgW1kxR/+FtHW3YOo7pJG3XkSycCdtU6Pyeu63i1rnEuT+6zO+vDPlTs8p6rcvYBtgLe+y/avipavF8NdXo0H+oOEKgmi8ueO36E44nlrPnuHT1ozAbw7F9SfiapY=
+	t=1718701625; cv=none; b=Jn0wvKPF58IDg/plZ0pYBKre21IdKn5JuDmF1AwbRImmeL8vlfhqwBp6lNJfg5M0FlWaorT2j16wl9v9rNcSwHC+HC7ijsEBJ8hii3zLWaKwi4WO0/LhmPSVmkjQgC7OB5UjRkuAE0YX4GxgG+gcTBvHFFnpEDQWdLHdaa0LDog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718701646; c=relaxed/simple;
-	bh=DcQDcRnTlysaR2fXOEprGScuMtRc/WhV+Vp5yh0HA2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EN4yfLEaAYGBLBkFJnUCSQcNped5N6kZh/YUu9JOOZz+MQJLc1bujLAw5JxOrm0hLbG3IPWSg62DV4MVoxEyRG/K2Z2Q8blisNBpAx0amNBPOJWws93iH70GU2+TyBpaO+XA1KuO5PrH9v0qu0CVhiExNyqa9qRg8s6URPDqWmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2+RCRAad; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2VPE0btW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2+RCRAad; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2VPE0btW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E1C0C2197E;
-	Tue, 18 Jun 2024 09:07:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718701639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6XvNCc8fANotT8kLlUCsy7ONYSq1LLRm8oXVuaOdGI8=;
-	b=2+RCRAad26ybIqGcDZKR7bEtMFLzNd0p5/JeWVVnBi52Kh2ghGqNPaoYCFj0ouQobO3NYY
-	Md41m8Se9+uzkNSa5i2WXkvn8SQ02DRDNSr1zc34Mq+yHqGVFmZmBGkFOJJaExf3jhs2W/
-	HGgt5APUltBG9ffyaeiMS45SgjM/Ot8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718701639;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6XvNCc8fANotT8kLlUCsy7ONYSq1LLRm8oXVuaOdGI8=;
-	b=2VPE0btWLUXNw75zeaLNl2Y9VKGedLyTjtlAskJwy4G0P7lV+8tvzsbyrs6zVAxx6Ev/tA
-	kFt5noXydKkqA6Dg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718701639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6XvNCc8fANotT8kLlUCsy7ONYSq1LLRm8oXVuaOdGI8=;
-	b=2+RCRAad26ybIqGcDZKR7bEtMFLzNd0p5/JeWVVnBi52Kh2ghGqNPaoYCFj0ouQobO3NYY
-	Md41m8Se9+uzkNSa5i2WXkvn8SQ02DRDNSr1zc34Mq+yHqGVFmZmBGkFOJJaExf3jhs2W/
-	HGgt5APUltBG9ffyaeiMS45SgjM/Ot8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718701639;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6XvNCc8fANotT8kLlUCsy7ONYSq1LLRm8oXVuaOdGI8=;
-	b=2VPE0btWLUXNw75zeaLNl2Y9VKGedLyTjtlAskJwy4G0P7lV+8tvzsbyrs6zVAxx6Ev/tA
-	kFt5noXydKkqA6Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A936413AC1;
-	Tue, 18 Jun 2024 09:07:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mEuZKEdOcWbcEQAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 18 Jun 2024 09:07:19 +0000
-From: Petr Vorel <pvorel@suse.cz>
-To: linux-kernel@vger.kernel.org
-Cc: Petr Vorel <pvorel@suse.cz>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH 2/2] tools: build: Fix bashisms in run.sh
-Date: Tue, 18 Jun 2024 11:06:41 +0200
-Message-ID: <20240618090641.359008-2-pvorel@suse.cz>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240618090641.359008-1-pvorel@suse.cz>
-References: <20240618090641.359008-1-pvorel@suse.cz>
+	s=arc-20240116; t=1718701625; c=relaxed/simple;
+	bh=au8yhi+EmJrIbpHhK6erx6351t7jF0G+m5kzvhU0lhE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DsRg+54TQ9NGNO0rIzvFyIcLM4NTBqpXwx1Lh7T11ZAr6zLh9aP0uKe9rfmiZwvoUWo2g1mV75pALgpzjavMvZjy2CVDJMiOqQXEkduVfA0ZLOILQXZKqBr3piJ30HKiCE82GvBxBMwJc7gR/i9ByXZ7MV8Io74xkM0/lAkl0us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+Rp1Lgf; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f7b785a01so280648266b.1;
+        Tue, 18 Jun 2024 02:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718701622; x=1719306422; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3UbcOf0pxrejnIwiMiz1yEnw+fA4Gbsvc+uTFi94WOA=;
+        b=O+Rp1LgfJOky4k3KzptwtNEAXll6Z6ivgNz3FQpmaFatzlI+XPBgdyQGy/jtrOrdDQ
+         f7mYv/0cuD9brhzWRaUMSZIIphqyFkF9xgI0VdYd+AwPmwML/bbqTH/DcLtAVXzJ2e8O
+         2CKIwJCwc1uUmuQQAEJS7uJ8DzSBo2JNaP7GWAQxe5HxyPBf5Vz8S/6S9CM9d99LJmEO
+         emJ3MJIYDvzryb2hqaoHWAbZ/ejwGEzqr5/i9uQKjtiZmYM2p6clsGJfUm1bRrQxNlrO
+         go77DqLn+0TmM9yPCEF6LefJg3tpiEYR728ykfU0LPMCfnXBe4cfGACQj64B8jFxnuW7
+         M3hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718701622; x=1719306422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3UbcOf0pxrejnIwiMiz1yEnw+fA4Gbsvc+uTFi94WOA=;
+        b=E2oFXbAieOTa1fp0g7zGrZQR9Zl6sppOdECyZk7tPwgjKaJII9VtythhI6j/ZVPwjB
+         bC4fORFdScF/MO52hOTKBdKUJ6+A41LG5St6GE385WgIQJy1A31IkBqkPTssD+W/K/qu
+         mcHtipXmudBzlu/thvAiHm/NchTXzY9xy41HxH0EiAwIBrkafP91tGjcYmWOqiAc4zdp
+         AeCORtRy34gNDe7QdmTqTV6MOJTJvnE+lKYSnOKoT46ULR5ou+oe10jH6moBCJvwyijn
+         m20YIJYYKV7Lfm3JMZuhWROHP5nvebeqW+cFf8zmhzFwupQuzz5v+vDHR+yOvpEewjJK
+         nWOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdkSvex5kzpdSU+gJe2tGO0TTdWi4x/XTi7qMuys0yz73Dmm1yscOqtUC7N99lIiTr9LFVn5SPhl3RgN8lDpfPzmSGHTG2BQ3C2Mni6m8SssLHSsy6sYD9DX8OejG1r/rJfJZubxtZY2GNWA==
+X-Gm-Message-State: AOJu0Yw/Tpy0qMGYp0S055UDWWSP0uHN9e4hamtJDBpFCqGcux3azKsy
+	xuxWcURHcG8Orx0r+uZr/A6wunGF2/L3PVvKhZGJiQaPHA5yPjEyXDmuMuESBbxV/ZpjmXsPJE4
+	RW42puvmTWaZU9JOgxpv9E+paW1Y=
+X-Google-Smtp-Source: AGHT+IF12XeEHiYb6oAXlGs3X906A3Hpl0vxdM8WrW3ESD2IlcRbjMqyZ9rtPT9hqCD2rLynX1q0MPAyWWXvar3ZWvA=
+X-Received: by 2002:a17:906:255b:b0:a6f:5db5:71a0 with SMTP id
+ a640c23a62f3a-a6f60cefe2emr715634866b.14.1718701621969; Tue, 18 Jun 2024
+ 02:07:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+References: <20240614163416.728752-1-yu.ma@intel.com> <20240614163416.728752-4-yu.ma@intel.com>
+ <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
+ <lzotoc5jwq4o4oij26tnzm5n2sqwqgw6ve2yr3vb4rz2mg4cee@iysfvyt77gkx>
+ <fd4eb382a87baed4b49e3cf2cd25e7047f9aede2.camel@linux.intel.com>
+ <8fa3f49b50515f8490acfe5b52aaf3aba0a36606.camel@linux.intel.com> <ZnFGy2nYI9XZSvMl@tiehlicka>
+In-Reply-To: <ZnFGy2nYI9XZSvMl@tiehlicka>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 18 Jun 2024 11:06:49 +0200
+Message-ID: <CAGudoHHaH8NgdxwC1gr-XdyFSzSfPsD__6jMymTC-FQ7=o_ERw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to put_unused_fd()
+To: Michal Hocko <mhocko@suse.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>, Yu Ma <yu.ma@intel.com>, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tim.c.chen@intel.com, pan.deng@intel.com, 
+	tianyou.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix bashisms:
+On Tue, Jun 18, 2024 at 10:35=E2=80=AFAM Michal Hocko <mhocko@suse.com> wro=
+te:
+>
+> On Mon 17-06-24 11:04:41, Tim Chen wrote:
+> > diff --git a/kernel/sys.c b/kernel/sys.c
+> > index 3a2df1bd9f64..b4e523728c3e 100644
+> > --- a/kernel/sys.c
+> > +++ b/kernel/sys.c
+> > @@ -1471,6 +1471,7 @@ static int do_prlimit(struct task_struct *tsk, un=
+signed int resource,
+> >                 return -EINVAL;
+> >         resource =3D array_index_nospec(resource, RLIM_NLIMITS);
+> >
+> > +       task_lock(tsk->group_leader);
+> >         if (new_rlim) {
+> >                 if (new_rlim->rlim_cur > new_rlim->rlim_max)
+> >                         return -EINVAL;
+>
+> This is clearly broken as it leaves the lock behind on the error, no?
 
-* exit -1 converted to 255 (exit|return with negative status code is not
-  supported on some shells)
-* 'function' is useless
+As I explained in my other e-mail there is no need to synchronize
+against rlimit changes, merely the code needs to honor the observed
+value, whatever it is.
 
-This fixes problems on dash, busybox ash or any other strictly POSIX
-compatible shell.
+This holds for the stock kernel, does not hold for v1 of the patchset
+and presumably will be addressed in v2.
 
-Fixes: c819e2cf2eb6f ("tools build: Add new build support")
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- tools/build/tests/run.sh | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Even if some synchronization was required, moving the lock higher does
+not buy anything because the newly protected area only validates the
+new limit before there is any attempt at setting it and the old limit
+is not looked at.
 
-diff --git a/tools/build/tests/run.sh b/tools/build/tests/run.sh
-index 2c54e4d435464..87d6cad57b20c 100755
---- a/tools/build/tests/run.sh
-+++ b/tools/build/tests/run.sh
-@@ -1,20 +1,20 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
- 
--function test_ex {
-+test_ex() {
- 	make -C ex V=1 clean > ex.out 2>&1
- 	make -C ex V=1 >> ex.out 2>&1
- 
- 	if [ ! -x ./ex/ex ]; then
- 	  echo FAILED
--	  exit -1
-+	  exit 255
- 	fi
- 
- 	make -C ex V=1 clean > /dev/null 2>&1
- 	rm -f ex.out
- }
- 
--function test_ex_suffix {
-+test_ex_suffix() {
- 	make -C ex V=1 clean > ex.out 2>&1
- 
- 	# use -rR to disable make's builtin rules
-@@ -24,19 +24,19 @@ function test_ex_suffix {
- 
- 	if [ -x ./ex/ex ]; then
- 	  echo FAILED
--	  exit -1
-+	  exit 255
- 	fi
- 
- 	if [ ! -f ./ex/ex.o -o ! -f ./ex/ex.i -o ! -f ./ex/ex.s ]; then
- 	  echo FAILED
--	  exit -1
-+	  exit 255
- 	fi
- 
- 	make -C ex V=1 clean > /dev/null 2>&1
- 	rm -f ex.out
- }
- 
--function test_ex_include {
-+test_ex_include() {
- 	make -C ex V=1 clean > ex.out 2>&1
- 
- 	# build with krava.h include
-@@ -45,7 +45,7 @@ function test_ex_include {
- 
- 	if [ ! -x ./ex/ex ]; then
- 	  echo FAILED
--	  exit -1
-+	  exit 255
- 	fi
- 
- 	# build without the include
-@@ -54,7 +54,7 @@ function test_ex_include {
- 
- 	if [ ! -x ./ex/ex ]; then
- 	  echo FAILED
--	  exit -1
-+	  exit 255
- 	fi
- 
- 	make -C ex V=1 clean > /dev/null 2>&1
--- 
-2.45.1
+I think we can safely drop this area and patiently wait for v2.
 
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
