@@ -1,193 +1,170 @@
-Return-Path: <linux-kernel+bounces-219160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D2490CAB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:58:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64B090CAB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0138284E8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:58:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB9B1C235FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260F815D5D6;
-	Tue, 18 Jun 2024 11:46:06 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAB615E5BF;
+	Tue, 18 Jun 2024 11:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eJFSyRuJ"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE20815D5C8;
-	Tue, 18 Jun 2024 11:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FDF15E5A1
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718711165; cv=none; b=Io409czbgaMyOFojKOh3L5jDCHWRVqSGsjq1RfPuIpFKtInAVKnOw0BKt3oljXUZhjiCmazyMamnR0Jajr1u6cfTGqhyTdZvf1dbOXpAt/JmS7VSPMHKlOto4zydmL9PpgV8XrQkc/lK0vUHWm/gS1fY5Ioo7K0tG38xsZQfs/E=
+	t=1718711226; cv=none; b=lrJz0B7wh58OpRHtjPZI/kQG6hYVRYEMXCDfJsE1DwiRS+D86oVO9pYxUX9uyBXwO14954uvUQlFKjjGBCuceeq8bf+iiebEC3Hez4xQZifOBwqqGTgLy3PrLeq6m5W2XCTJb4i03DUp68zYGHyWrMhC9lqwN0aCSkf5JhNAiEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718711165; c=relaxed/simple;
-	bh=1QIcrNptfaU/0/hqEe+Sb9+thzwL6QqBhrUZ3lP5deU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=E8f28h2KWWbrZwT6KBKyA+veCTDYO58V9VAenoBNzu9bM5sum52+5a+5bZYAvIw/UNqyhWVTGHxH/KtEbA1e5kHLs30uLqF/UlH/W+Sb0nmz5+PEs74X54Mxoj/UlL07xALEnHIMB7hfUBaQYrqCRjgtuInv4q8lr6hlZtREIXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W3Pzx5LGBzdc8F;
-	Tue, 18 Jun 2024 19:44:29 +0800 (CST)
-Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
-	by mail.maildlp.com (Postfix) with ESMTPS id EAC25140361;
-	Tue, 18 Jun 2024 19:45:59 +0800 (CST)
-Received: from [10.67.120.108] (10.67.120.108) by
- dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 18 Jun 2024 19:45:59 +0800
-Message-ID: <815fcddf-85cc-126e-4be1-618b5ba8f823@huawei.com>
-Date: Tue, 18 Jun 2024 19:45:59 +0800
+	s=arc-20240116; t=1718711226; c=relaxed/simple;
+	bh=ZHcxqMe2wl7XXw0sTwxebYt93dT7YO9q83kwx2ZKj6U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BPHgFFojZDCZ/RxeEBwRrbzYZ2rZ7MoOT+suEvV7ZWj9VbMg3JRD6sJM7FrvWBh+9JgO/ZZLU16ul1qC5OuS1tnvgicfvfvfb+AvFJzYLVCeV+enMQdMwYs8AuMMD1sBI3bWVcZhGXVf3MmNd/PYsxHrjOBuPyfDYrrPMKcckXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eJFSyRuJ; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-6c5a6151ff8so3783568a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:47:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1718711224; x=1719316024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N8+RGABEO6lna9EhwFH7VWtP9seFYP+2PecyhqqiBFA=;
+        b=eJFSyRuJUovruTCikD4RZh4+0NZwMqyftAgMYKyrE0XKA03kCRWoiOFOu3N9ays6IT
+         qee6cidxJyWBhxMHEek7ADNpD//59ckgA06kXtAw97Y6cSSoNDod6QvQMCnWvTY4Wncs
+         unLFjv67qA0tikSmgJvWjKTqcxoMquHEG3SRT8hzfB7GGI0E1DyO9L5GiGeR0d6SiJaO
+         KunXzVa+xiJAegH/jT4CCoOVI/S3UYvdEgmi0Z8UQnUw6y56Bh2ZCe8oyVG5yipbufCr
+         PZYZoVkuSGvAdL8ZXRJimaGG71JcZjUb0Ievr5TZ4sg68V8MyIbyUKGxKhGQoM+xDdXd
+         EAaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718711224; x=1719316024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N8+RGABEO6lna9EhwFH7VWtP9seFYP+2PecyhqqiBFA=;
+        b=pqDWcVO0URW0MdiLLuEgvl+rjb+swas1MF/WzsOQ20l5+I8km5xkBjYt/MlZ3sbyZJ
+         lQ+1iO/CnBw22LPdM07BUFGEC9qFF3PVknWlexNFkpIIv1ra1nd1SWeM/rlHGCCFZKwH
+         4/7ioZsobgGItvM2p38eS7VvgIoO71EBMk0CI8MiSRg0o45U7KEi7DjTs8+JbEwwTTMg
+         94uJPx4lPIGPWw4rACOTQJBicrnz+tf5DAKQqbxn+ZZzlRODu+oJG3HRc68S5yTQ5wSu
+         otsL7s6Fk6bs7PoNAidLjHTsjVLA4BakwnL5YGsNKkYqCkzuUeQeAnjGPcMi4OmuD7Hr
+         PnQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWInOEwbTCYi4Cbk43MIrCqq7K1A6zoAOo7IDmRa9nEtPBBJ4Jrl290Dm3DgRd1UKwaew9Hx5HPLW+RnC7c70tDsLF1ifwpvXh/s205
+X-Gm-Message-State: AOJu0YxbsATHP+qoVRDrEW9qZG0BLGOdShePz8yEA4i1QjGIPm6N9Ddd
+	FTwAzDAokjjfDrz+7pr7zdcqWnXy/JQrtvxR2TknTSO8CEBbBIzgv3nqOteeAKw=
+X-Google-Smtp-Source: AGHT+IGFDOB6kB9pshWCoiP1FpV8JeCOOgnEc3F8axKP2a4fh9M2ef6HmKlyehClnbcRTMajNGf0mQ==
+X-Received: by 2002:a05:6a21:81a9:b0:1b5:69cd:87e with SMTP id adf61e73a8af0-1bae7eb46afmr9188496637.21.1718711224523;
+        Tue, 18 Jun 2024 04:47:04 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.245])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855eeff53sm95717365ad.181.2024.06.18.04.46.59
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 18 Jun 2024 04:47:04 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: corbet@lwn.net,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	cleger@rivosinc.com,
+	evan@rivosinc.com,
+	conor.dooley@microchip.com,
+	cuiyunhui@bytedance.com,
+	costa.shul@redhat.com,
+	andy.chiu@sifive.com,
+	samitolvanen@google.com,
+	linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Palmer Dabbelt <palmer@rivosinc.com>
+Subject: [PATCH] RISC-V: Provide the frequency of mtime via hwprobe
+Date: Tue, 18 Jun 2024 19:46:53 +0800
+Message-Id: <20240618114653.12485-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v3] scsi: libsas: Fix exp-attached end device cannot be
- scanned in again after probe failed
-Content-Language: en-CA
-To: John Garry <john.g.garry@oracle.com>, <yanaijie@huawei.com>,
-	<jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<damien.lemoal@opensource.wdc.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
-	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
-References: <20240613122355.7797-1-yangxingui@huawei.com>
- <437c99f4-a67d-48d9-98ee-58cbbc3d19f4@oracle.com>
-From: yangxingui <yangxingui@huawei.com>
-In-Reply-To: <437c99f4-a67d-48d9-98ee-58cbbc3d19f4@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpemm500002.china.huawei.com (7.185.36.229) To
- dggpemd100001.china.huawei.com (7.185.36.94)
 
-Hi, John,
+From: Palmer Dabbelt <palmer@rivosinc.com>
 
-Thanks for your reply.
+A handful of user-visible behavior is based on the frequency of the
+machine-mode time.
 
-On 2024/6/18 16:55, John Garry wrote:
-> On 13/06/2024 13:23, Xingui Yang wrote:
-> 
-> Sorry for delay in responding and asking further questions.
-It doesn't matter.
-> 
->> We found that it is judged as broadcast flutter when the exp-attached end
->> device reconnects after probe failed, as follows:
->>
->> [78779.654026] sas: broadcast received: 0
->> [78779.654037] sas: REVALIDATING DOMAIN on port 0, pid:10
->> [78779.654680] sas: ex 500e004aaaaaaa1f phy05 change count has changed
->> [78779.662977] sas: ex 500e004aaaaaaa1f phy05 originated 
->> BROADCAST(CHANGE)
->> [78779.662986] sas: ex 500e004aaaaaaa1f phy05 new device attached
->> [78779.663079] sas: ex 500e004aaaaaaa1f phy05:U:8 attached: 
->> 500e004aaaaaaa05 (stp)
->> [78779.693542] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] found
->> [78779.701155] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
->> [78779.707864] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
->> ...
->> [78835.161307] sas: --- Exit sas_scsi_recover_host: busy: 0 failed: 0 
->> tries: 1
->> [78835.171344] sas: sas_probe_sata: for exp-attached device 
->> 500e004aaaaaaa05 returned -19
->> [78835.180879] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] is gone
->> [78835.187487] sas: broadcast received: 0
->> [78835.187504] sas: REVALIDATING DOMAIN on port 0, pid:10
->> [78835.188263] sas: ex 500e004aaaaaaa1f phy05 change count has changed
->> [78835.195870] sas: ex 500e004aaaaaaa1f phy05 originated 
->> BROADCAST(CHANGE)
->> [78835.195875] sas: ex 500e004aaaaaaa1f rediscovering phy05
->> [78835.196022] sas: ex 500e004aaaaaaa1f phy05:U:A attached: 
->> 500e004aaaaaaa05 (stp)
->> [78835.196026] sas: ex 500e004aaaaaaa1f phy05 broadcast flutter
->> [78835.197615] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
->>
->> The cause of the problem is that the related ex_phy's 
->> attached_sas_addr was
->> not cleared after the end device probe failed. In order to solve the 
->> above
->> problem, a function sas_ex_unregister_end_dev() is defined to clear the
->> ex_phy information and unregister the end device after the 
->> exp-attached end
->> device probe failed.
-> 
-> Can you just manually clear the ex_phy's attached_sas_addr at the 
-> appropiate point (along with calling sas_unregister_dev())? It seems 
-> that we are using heavy-handed approach in calling 
-> sas_unregister_devs_sas_addr(), which does the clearing and much more.
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+---
+ Documentation/arch/riscv/hwprobe.rst  | 2 ++
+ arch/riscv/include/asm/hwprobe.h      | 2 +-
+ arch/riscv/include/uapi/asm/hwprobe.h | 1 +
+ arch/riscv/kernel/sys_hwprobe.c       | 5 +++++
+ 4 files changed, 9 insertions(+), 1 deletion(-)
 
-I just tried it and it worked. If we only clear ex_phy's 
-attached_sas_addr, there is no need to call sas_destruct_ports(). We are 
-currently using sas_unregister_devs_sas_addr() which will add the port 
-to sas_port_del_list, so we need to call sas_destruct_ports() separately 
-to delete the port.
+diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+index fc015b452ebf..0cc3ef5b5541 100644
+--- a/Documentation/arch/riscv/hwprobe.rst
++++ b/Documentation/arch/riscv/hwprobe.rst
+@@ -229,3 +229,5 @@ The following keys are defined:
+ 
+ * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int which
+   represents the size of the Zicboz block in bytes.
++
++* :c:macro:`RISCV_HWPROBE_KEY_MTIME_FREQ`: Frequency (in Hz) of `mtime`.
+diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
+index 630507dff5ea..150a9877b0af 100644
+--- a/arch/riscv/include/asm/hwprobe.h
++++ b/arch/riscv/include/asm/hwprobe.h
+@@ -8,7 +8,7 @@
+ 
+ #include <uapi/asm/hwprobe.h>
+ 
+-#define RISCV_HWPROBE_MAX_KEY 6
++#define RISCV_HWPROBE_MAX_KEY 7
+ 
+ static inline bool riscv_hwprobe_key_is_valid(__s64 key)
+ {
+diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+index 7b95fadbea2a..f7d9646ff4ba 100644
+--- a/arch/riscv/include/uapi/asm/hwprobe.h
++++ b/arch/riscv/include/uapi/asm/hwprobe.h
+@@ -73,6 +73,7 @@ struct riscv_hwprobe {
+ #define		RISCV_HWPROBE_MISALIGNED_UNSUPPORTED	(4 << 0)
+ #define		RISCV_HWPROBE_MISALIGNED_MASK		(7 << 0)
+ #define RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE	6
++#define RISCV_HWPROBE_KEY_MTIME_FREQ	7
+ /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
+ 
+ /* Flags */
+diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+index 83fcc939df67..3fa519035416 100644
+--- a/arch/riscv/kernel/sys_hwprobe.c
++++ b/arch/riscv/kernel/sys_hwprobe.c
+@@ -8,6 +8,7 @@
+ #include <asm/cacheflush.h>
+ #include <asm/cpufeature.h>
+ #include <asm/hwprobe.h>
++#include <asm/delay.h>
+ #include <asm/sbi.h>
+ #include <asm/switch_to.h>
+ #include <asm/uaccess.h>
+@@ -226,6 +227,10 @@ static void hwprobe_one_pair(struct riscv_hwprobe *pair,
+ 			pair->value = riscv_cboz_block_size;
+ 		break;
+ 
++	case RISCV_HWPROBE_KEY_MTIME_FREQ:
++		pair->value = riscv_timebase;
++		break;
++
+ 	/*
+ 	 * For forward compatibility, unknown keys don't fail the whole
+ 	 * call, but get their element key set to -1 and value set to 0
+-- 
+2.20.1
 
-Should we also delete the port after the devices probe failed?
-
-Maybe I can update another version and only clear ex_phy's 
-attached_sas_addr based on your suggestions.
-> 
->>
->> As devices may probe failed after done REVALIDATING DOMAIN when call
->> sas_probe_devices(). Then after its port is added to the 
->> sas_port_del_list,
->> the port will not be deleted until the end of the next REVALIDATING 
->> DOMAIN
->> and sas_destruct_ports() is called. A warning about creating a duplicate
->> port will occur in the new REVALIDATING DOMAIN when the end device
->> reconnects. Therefore, the previous destroy_list and sas_port_del_list
->> should be handled after devices probe failed.
->>
->> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
->> ---
->> Changes since v2:
->> - Add a helper for calling sas_destruct_devices() and 
->> sas_destruct_ports(),
->>    and put the new call at the end of sas_probe_devices() based on John's
->>    suggestion.
->>
->> Changes since v1:
->> - Simplify the process of getting ex_phy id based on Jason's suggestion.
->> - Update commit information.
->> ---
->>   drivers/scsi/libsas/sas_discover.c | 32 +++++++++++++++++++-----------
->>   drivers/scsi/libsas/sas_expander.c |  8 ++++++++
->>   drivers/scsi/libsas/sas_internal.h |  6 +++++-
->>   3 files changed, 33 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/scsi/libsas/sas_discover.c 
->> b/drivers/scsi/libsas/sas_discover.c
->> index 8fb7c41c0962..8c517e47d2b9 100644
->> --- a/drivers/scsi/libsas/sas_discover.c
->> +++ b/drivers/scsi/libsas/sas_discover.c
->> @@ -17,6 +17,22 @@
->>   #include <scsi/sas_ata.h>
->>   #include "scsi_sas_internal.h"
->> +static void sas_destruct_ports(struct asd_sas_port *port)
->> +{
->> +    struct sas_port *sas_port, *p;
->> +
->> +    list_for_each_entry_safe(sas_port, p, &port->sas_port_del_list, 
->> del_list) {
->> +        list_del_init(&sas_port->del_list);
->> +        sas_port_delete(sas_port);
->> +    }
->> +}
->> +
->> +static void sas_destruct_devices_and_ports(struct asd_sas_port *port)
-> 
-> "and" in a function name never sounds right.
-> 
-> Can you just call sas_destruct_port(), as it takes a port arg? Maybe 
-> rename sas_destruct_ports() to sas_delete_ports(), as it does "delete" - 
-> this may avoid some confusion in names.
-As described above, if we only clear ex_phy's attached_sas_addr, we do 
-not need to call sas_destruct_ports().
-Thanks,
-Xingui
 
