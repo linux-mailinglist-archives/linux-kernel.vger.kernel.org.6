@@ -1,79 +1,122 @@
-Return-Path: <linux-kernel+bounces-220099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E191790DCB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:44:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A379090DCB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1AC1F23B7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D941C2294B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BCD16CD3B;
-	Tue, 18 Jun 2024 19:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC9116D4F2;
+	Tue, 18 Jun 2024 19:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NambipHs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="ONatoTr5"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F6616CD27
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B74D210EC;
+	Tue, 18 Jun 2024 19:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718739858; cv=none; b=iLEPwHTu2ZiyZKQg2/z/R7I81LZXA1tzdkPxuvwNzMZ0oBnknrWK9bFKmUoFTQuQl4zGV9mDmH6z7sU8097RKRCogEWbXgimmMlUY+AlAb6SwFoFsYSxLfXde0dM9kcEXVZ/epmVTjibkoRJ5KhwaL6nU0jt3B2EV9wT7UtPeyI=
+	t=1718739955; cv=none; b=lZzxnfz+QIw5PuGxOcY5pXtRyxgGHprQ0wqwvFFWuJhV0RfuQqvSuDvWxPqnx2adN0Pt1Lixmolq+oZ2TzwUYDDYPdQVeFpXG+0m1JCmWUnPj90S/CoY9Fhf0a4gXqWG9PrFTXwg+oSmPAOfCWP6fTUgG5pgoxO5Gs/6tSPKO1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718739858; c=relaxed/simple;
-	bh=rIJ5+GUJI1PTS3Z7ZAUJY72TPUFyF93XiS+gkPOXsT8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=niQiYc4xHQY84vTwua/ixo9neVgbW24w+pNv3BjUgZ1ToLHKWkYE7J4MB+jNgEq9oUFtPmQXmiRB0uaihFwM3BVmIk6HjjPncCvtjxMCmViUMpC6siiMTuwQ9vRgx5hv6HW+yD2s7tUuXlMz7SDE/3fRWUYYOOp3/32WGVNOxwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NambipHs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD95DC3277B;
-	Tue, 18 Jun 2024 19:44:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1718739858;
-	bh=rIJ5+GUJI1PTS3Z7ZAUJY72TPUFyF93XiS+gkPOXsT8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NambipHs6oeTEEEduV4YC6xIap54zm9+xZq6yO1xkiPG7yW2XUNCq3CS2YJruMwWG
-	 fJ8YwSTxZAWzs9MDxacG7cRDB51dOXBqE6LH4Oy7WGqXBy8+v1DuL3qJsbPZbD9RLP
-	 b1EvcEfh3nAoZykcYn5gMklmKxXBOPytrBelKQg0=
-Date: Tue, 18 Jun 2024 12:44:17 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Zi Yan <zi.yan@sent.com>, Hugh Dickins <hughd@google.com>, "Huang, Ying"
- <ying.huang@intel.com>, linux-mm@kvack.org, "Matthew Wilcox (Oracle)"
- <willy@infradead.org>, Yang Shi <shy828301@gmail.com>, David Hildenbrand
- <david@redhat.com>, Yin Fengwei <fengwei.yin@intel.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/migrate: make migrate_pages_batch() stats
- consistent.
-Message-Id: <20240618124417.08745f6c08f6ecb2c959a096@linux-foundation.org>
-In-Reply-To: <20240618134151.29214-1-zi.yan@sent.com>
-References: <20240618134151.29214-1-zi.yan@sent.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718739955; c=relaxed/simple;
+	bh=ZcyS2aedFrBTOzUQWPMBfmbdD6XfoC9oL5m2d4LzaaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W+TeKloN/1KhvJBWdxazJT+YRAr/6QQd3qpzyWigQqJ2Oz3FfzKIEwrvxmSOD9cnObkH3mrxTocwWPXK2Zs5zbB6pvMX+DyUOioC2beqVE0dQaH8aRePU+raJur+a8s86IV4CDf2Kp9r68iKxVji7pPkuKUeQpWGaA97wanGOvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=ONatoTr5; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7F80860005;
+	Tue, 18 Jun 2024 19:45:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+	t=1718739951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QuFZH3mA3heT0Lg52N52SIqXngyM9XRruerZhqmjgPE=;
+	b=ONatoTr5auORsRR6M+opH/ZKTYexrJGegtk2isFpLjGtCTslOWea4YKS2AsJtgGMrEHYP5
+	aSuMuN0OVU4y0eJPH7VKMncAJ4BFvrK/St6S5m8K7l7ZHbCc+QZD2+D/vuIX59wLYL8eRW
+	hBa9Ibgo761ySe+01sO8cqspr/nKepWeWKLAD5Gthxv3U1fpYgT/JeVBkjUuzEu95P1CV6
+	uWZo9rCiuS1aEwiIs5aNa+80q+ZDJ+Ey79UXw3Rg8LK9ceHcKUm+hf9Ek/1lq688d5EDOC
+	GCjfAor9SETQsoSpGLeSIN14/lTQiir3AEN0ufnnLIe/WnBwY4xgHwVYAPXHnQ==
+Message-ID: <c1417feb-d677-4e4d-bd1a-7ccb0d838630@arinc9.com>
+Date: Tue, 18 Jun 2024 22:45:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 1/2] net: dsa: mt7530: factor out bridge
+ join/leave logic
+To: Matthias Schiffer <mschiffer@universe-factory.net>,
+ Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
+ Sean Wang <sean.wang@mediatek.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <15c28e5ed5fa02ca7904c71540e254617d571eb8.1718694181.git.mschiffer@universe-factory.net>
+Content-Language: en-US
+From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <15c28e5ed5fa02ca7904c71540e254617d571eb8.1718694181.git.mschiffer@universe-factory.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: arinc.unal@arinc9.com
 
-On Tue, 18 Jun 2024 09:41:51 -0400 Zi Yan <zi.yan@sent.com> wrote:
-
-> From: Zi Yan <ziy@nvidia.com>
+On 18/06/2024 10.17, Matthias Schiffer wrote:
+> As preparation for implementing bridge port isolation, move the logic to
+> add and remove bits in the port matrix into a new helper
+> mt7530_update_port_member(), which is called from
+> mt7530_port_bridge_join() and mt7530_port_bridge_leave().
 > 
-> As Ying pointed out in [1], stats->nr_thp_failed needs to be updated to
-> avoid stats inconsistency between MIGRATE_SYNC and MIGRATE_ASYNC when
-> calling migrate_pages_batch().
+> Another part of the preparation is using dsa_port_offloads_bridge_dev()
+> instead of dsa_port_offloads_bridge() to check for bridge membership, as
+> we don't have a struct dsa_bridge in mt7530_port_bridge_flags().
 > 
+> The port matrix setting is slightly streamlined, now always first setting
+> the mt7530_port's pm field and then writing the port matrix from that
+> field into the hardware register, instead of duplicating the bit
+> manipulation for both the struct field and the register.
+> 
+> mt7530_port_bridge_join() was previously using |= to update the port
+> matrix with the port bitmap, which was unnecessary, as pm would only
+> have the CPU port set before joining a bridge; a simple assignment can
+> be used for both joining and leaving (and will also work when individual
+> bits are added/removed in port_bitmap with regard to the previous port
+> matrix, which is what happens with port isolation).
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
-Thanks.  I'll add
+Great explanation, thanks a lot!
 
-Fixes: 7262f208ca68 ("mm/migrate: split source folio if it is on deferred split list")
+Reviewed-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
 
-and shall queue it for 6.10-rcX.
+> ---
+> 
+> v2: no changes
+> v3: addressed overlooked review comments:
+> - Ran clang-format on the patch
+> - Restored code comment
+> - Extended commit message
+> 
+> Thanks for the clang-format pointer - last time I tried that on kernel
+> code (years ago), it was rather underwhelming, but it seems it has
+> improved a lot.
 
-Please don't forget such details.
+Cheers.
+Arınç
 
