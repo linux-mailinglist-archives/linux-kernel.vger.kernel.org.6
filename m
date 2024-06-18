@@ -1,73 +1,60 @@
-Return-Path: <linux-kernel+bounces-218722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5461790C468
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:33:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 231B590C457
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B9A828312D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332231F22B88
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADA66D1B9;
-	Tue, 18 Jun 2024 07:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3058877A03;
+	Tue, 18 Jun 2024 07:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hk4ul8FS"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1FxFYrJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F8F1B813
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443324EB37;
+	Tue, 18 Jun 2024 07:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718694269; cv=none; b=KjWtaDXGALmWdCqj+Dy/LEcFqmXUhs9oaJ8f8EuHzSC2F5Gtlswx6wxGrlWnrwprxZbNk423fcVE+EsstXaR61W+qAMdLkdrlObRnDD8viWvY9GNYIO1ChVlS2QJ9x7J7Mi33pykGE0Ih6aNARC7ILFK6HaxVIGHZLLobpwls5c=
+	t=1718694529; cv=none; b=KJ5M95+rn/7+bYWScQunSvRHlkqTrZoCmxagpf3vGFlnzMBoLft9azKYB5IAtiC8IRYlZazedhrCheJ5/z33qjpd2rbkF+jC2dDNRWFaFR3PMEMhR/lYTbtTnp48oke71vpk7MuL3acKwqZpx32Gn2rxn/EjnwYCrPmjwzIzfwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718694269; c=relaxed/simple;
-	bh=MDg6RkmO4Yfsh1OY/z+MpJauhy4HGsHIMFEcIS5bVm4=;
+	s=arc-20240116; t=1718694529; c=relaxed/simple;
+	bh=OQs0ZHAYq+kY+OsBzADzt52NHiH43maiNAIxI+O162A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDhBU32CeWiRyXc/KqPU2fzKk7kIkNqojzutwyqS8bYAf9Mz5M0Z6LM+eEQRCaYiKWCJ8tuPu7lTmO9xNc9Nls3W5xkF0UMF198/UfIe69HaHLVNzdg6sQPXIuZu2txyOtgl0KxAUac00NXvtKkDWq+GmTQsHCkgrIhDWYeHwkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hk4ul8FS; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=a32itoIQGPJ1mtia7JDbs0YlYwz6jPXDjPzhY4qzUcY=; b=hk4ul8FSgDOThtskWfLPHOe1MN
-	AOr3zCVWX0YDATupAgZQN/Jqatv0ehRNMX8VtZgU+xNi8vvgqzJPHPumkIfHeZoGxnIbEBaRHV4xi
-	ltw25976N8geH97pSWxk2cV/vujxT8cXrYq7GXjkd2pyj+sFARZOKILocNaPAJdqm9AtTKO0L4Xij
-	pwaVOyFADPZfcjOz8WhJJxz08/1bJPqejl1IA+kz7ViUTRIzfUJPx0SR5huMEK9ORWLXC6m+gn3WT
-	6heeO++3xfQIVjXXTF9jD3uSEeDBCeQm3A9koYSUggIP2CfBeJXg363TZYRPW0S2n6Surh8LzYd5D
-	oKvuswqA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJSt2-00000002v1L-4B1J;
-	Tue, 18 Jun 2024 07:04:14 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 68EB8300886; Tue, 18 Jun 2024 09:04:12 +0200 (CEST)
-Date: Tue, 18 Jun 2024 09:04:12 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joel@joelfernandes.org>, kernel-team@android.com
-Subject: Re: [PATCH] RFC: sched: Rework task_sched_runtime to avoid calling
- update_rq_clock
-Message-ID: <20240618070412.GA31592@noisy.programming.kicks-ass.net>
-References: <20240613015837.4132703-1-jstultz@google.com>
- <20240613100441.GC17707@noisy.programming.kicks-ass.net>
- <20240613115142.kxrmlf3btmwjcprg@airbuntu>
- <20240614094833.GM8774@noisy.programming.kicks-ass.net>
- <20240616223616.im3tlh6jheadlhnz@airbuntu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RKB9OBbvgjomXmCJMm+xPAXcc6GM4JS2jQJaZdS1DuqxUTLVsNzGZoREC1YcQzP5BAqNDAVH6hBPiE/qSgYIE3YBmVeaOZvv5I0jTMtXfAjSqyMHn0cgOpqdTnA43J93RKjqzYKhr0cPNUziDE0JLwuw+yN6UQzD9Ivdi5T/LxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1FxFYrJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EA54C3277B;
+	Tue, 18 Jun 2024 07:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718694528;
+	bh=OQs0ZHAYq+kY+OsBzADzt52NHiH43maiNAIxI+O162A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z1FxFYrJzlqCmkIEPx5iIrtt1ZKqeBrwJ147/RDW2mcrvLMMcKZAgVBcf1qSB2AHP
+	 ED5bZHkJzN140OWBDChSgi9D9vhs8sMAijm6CjK7Zxw2MyIFngQC+ZdxBa5ACZ9y5d
+	 YORPPk1F8xcaxcMBQIbmhyqUipnQz2CT+91w13PQ467C5hXA1btgaARGyJjQwsAtIY
+	 u90PpjG71SR6AxQLjZ7c+r1bYwEWrXRrihr2SvS1TSAydFyBQCUO64CoLObPMtnOhR
+	 rvahs/2U4L6yAZioj/6y+T5kCPt2kudlMtbClsIvOMUZ0Xujde8SQLi4j0UQTP6HoM
+	 rriRs2qYQVZAg==
+Date: Tue, 18 Jun 2024 10:08:43 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Omer Shpigelman <oshpigelman@habana.ai>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"ogabbay@kernel.org" <ogabbay@kernel.org>,
+	Zvika Yehudai <zyehudai@habana.ai>
+Subject: Re: [PATCH 04/15] net: hbl_cn: QP state machine
+Message-ID: <20240618070843.GD4025@unreal>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-5-oshpigelman@habana.ai>
+ <20240617131807.GE6805@unreal>
+ <a43d2eaf-e295-4ed4-b66a-3f2e96ea088c@habana.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,105 +63,148 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240616223616.im3tlh6jheadlhnz@airbuntu>
+In-Reply-To: <a43d2eaf-e295-4ed4-b66a-3f2e96ea088c@habana.ai>
 
-On Sun, Jun 16, 2024 at 11:36:16PM +0100, Qais Yousef wrote:
-
-> > Which then gets me something like the (completely untested) below..
+On Tue, Jun 18, 2024 at 05:50:15AM +0000, Omer Shpigelman wrote:
+> On 6/17/24 16:18, Leon Romanovsky wrote:
+> > [Some people who received this message don't often get email from leon@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
 > > 
-> > Hmm?
+> > On Thu, Jun 13, 2024 at 11:21:57AM +0300, Omer Shpigelman wrote:
+> >> Add a common QP state machine which handles the moving for a QP from one
+> >> state to another including performing necessary checks, draining
+> >> in-flight transactions, invalidating caches and error reporting.
+> >>
+> >> Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
+> >> Co-developed-by: Abhilash K V <kvabhilash@habana.ai>
+> >> Signed-off-by: Abhilash K V <kvabhilash@habana.ai>
+> >> Co-developed-by: Andrey Agranovich <aagranovich@habana.ai>
+> >> Signed-off-by: Andrey Agranovich <aagranovich@habana.ai>
+> >> Co-developed-by: Bharat Jauhari <bjauhari@habana.ai>
+> >> Signed-off-by: Bharat Jauhari <bjauhari@habana.ai>
+> >> Co-developed-by: David Meriin <dmeriin@habana.ai>
+> >> Signed-off-by: David Meriin <dmeriin@habana.ai>
+> >> Co-developed-by: Sagiv Ozeri <sozeri@habana.ai>
+> >> Signed-off-by: Sagiv Ozeri <sozeri@habana.ai>
+> >> Co-developed-by: Zvika Yehudai <zyehudai@habana.ai>
+> >> Signed-off-by: Zvika Yehudai <zyehudai@habana.ai>
+> >> ---
+> >>  .../ethernet/intel/hbl_cn/common/hbl_cn_qp.c  | 480 +++++++++++++++++-
+> >>  1 file changed, 479 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/net/ethernet/intel/hbl_cn/common/hbl_cn_qp.c b/drivers/net/ethernet/intel/hbl_cn/common/hbl_cn_qp.c
+> >> index 9ddc23bf8194..26ebdf448193 100644
+> >> --- a/drivers/net/ethernet/intel/hbl_cn/common/hbl_cn_qp.c
+> >> +++ b/drivers/net/ethernet/intel/hbl_cn/common/hbl_cn_qp.c
+> >> @@ -6,8 +6,486 @@
 > > 
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 0935f9d4bb7b..36aed99d6a6c 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -724,7 +724,6 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
-> >  
-> >  	rq->prev_irq_time += irq_delta;
-> >  	delta -= irq_delta;
-> > -	psi_account_irqtime(rq->curr, irq_delta);
-> >  	delayacct_irq(rq->curr, irq_delta);
-> >  #endif
-> >  #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-> > @@ -5459,6 +5458,8 @@ void sched_tick(void)
-> >  
-> >  	sched_clock_tick();
-> >  
-> > +	psi_account_irqtime(curr, NULL, &rq->psi_irq_time);
-> > +
-> >  	rq_lock(rq, &rf);
-> >  
-> >  	update_rq_clock(rq);
-> > @@ -6521,6 +6524,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
-> >  		++*switch_count;
-> >  
-> >  		migrate_disable_switch(rq, prev);
-> > +		psi_account_irqtime(prev, next, &rq->psi_irq_time);
+> > <...>
+> > 
+> >> +/* The following table represents the (valid) operations that can be performed on
+> >> + * a QP in order to move it from one state to another
+> >> + * For example: a QP in RTR state can be moved to RTS state using the CN_QP_OP_RTR_2RTS
+> >> + * operation.
+> >> + */
+> >> +static const enum hbl_cn_qp_state_op qp_valid_state_op[CN_QP_NUM_STATE][CN_QP_NUM_STATE] = {
+> >> +     [CN_QP_STATE_RESET] = {
+> >> +             [CN_QP_STATE_RESET]     = CN_QP_OP_2RESET,
+> >> +             [CN_QP_STATE_INIT]      = CN_QP_OP_RST_2INIT,
+> >> +             [CN_QP_STATE_SQD]       = CN_QP_OP_NOP,
+> >> +             [CN_QP_STATE_QPD]       = CN_QP_OP_NOP,
+> >> +     },
+> >> +     [CN_QP_STATE_INIT] = {
+> >> +             [CN_QP_STATE_RESET]     = CN_QP_OP_2RESET,
+> >> +             [CN_QP_STATE_ERR]       = CN_QP_OP_2ERR,
+> >> +             [CN_QP_STATE_INIT]      = CN_QP_OP_NOP,
+> >> +             [CN_QP_STATE_RTR]       = CN_QP_OP_INIT_2RTR,
+> >> +             [CN_QP_STATE_SQD]       = CN_QP_OP_NOP,
+> >> +             [CN_QP_STATE_QPD]       = CN_QP_OP_NOP,
+> >> +     },
+> >> +     [CN_QP_STATE_RTR] = {
+> >> +             [CN_QP_STATE_RESET]     = CN_QP_OP_2RESET,
+> >> +             [CN_QP_STATE_ERR]       = CN_QP_OP_2ERR,
+> >> +             [CN_QP_STATE_RTR]       = CN_QP_OP_RTR_2RTR,
+> >> +             [CN_QP_STATE_RTS]       = CN_QP_OP_RTR_2RTS,
+> >> +             [CN_QP_STATE_SQD]       = CN_QP_OP_NOP,
+> >> +             [CN_QP_STATE_QPD]       = CN_QP_OP_RTR_2QPD,
+> >> +     },
+> >> +     [CN_QP_STATE_RTS] = {
+> >> +             [CN_QP_STATE_RESET]     = CN_QP_OP_2RESET,
+> >> +             [CN_QP_STATE_ERR]       = CN_QP_OP_2ERR,
+> >> +             [CN_QP_STATE_RTS]       = CN_QP_OP_RTS_2RTS,
+> >> +             [CN_QP_STATE_SQD]       = CN_QP_OP_RTS_2SQD,
+> >> +             [CN_QP_STATE_QPD]       = CN_QP_OP_RTS_2QPD,
+> >> +             [CN_QP_STATE_SQERR]     = CN_QP_OP_RTS_2SQERR,
+> >> +     },
+> >> +     [CN_QP_STATE_SQD] = {
+> >> +             [CN_QP_STATE_RESET]     = CN_QP_OP_2RESET,
+> >> +             [CN_QP_STATE_ERR]       = CN_QP_OP_2ERR,
+> >> +             [CN_QP_STATE_SQD]       = CN_QP_OP_SQD_2SQD,
+> >> +             [CN_QP_STATE_RTS]       = CN_QP_OP_SQD_2RTS,
+> >> +             [CN_QP_STATE_QPD]       = CN_QP_OP_SQD_2QPD,
+> >> +             [CN_QP_STATE_SQERR]     = CN_QP_OP_SQD_2SQ_ERR,
+> >> +     },
+> >> +     [CN_QP_STATE_QPD] = {
+> >> +             [CN_QP_STATE_RESET]     = CN_QP_OP_2RESET,
+> >> +             [CN_QP_STATE_ERR]       = CN_QP_OP_2ERR,
+> >> +             [CN_QP_STATE_SQD]       = CN_QP_OP_NOP,
+> >> +             [CN_QP_STATE_QPD]       = CN_QP_OP_NOP,
+> >> +             [CN_QP_STATE_RTR]       = CN_QP_OP_QPD_2RTR,
+> >> +     },
+> >> +     [CN_QP_STATE_SQERR] = {
+> >> +             [CN_QP_STATE_RESET]     = CN_QP_OP_2RESET,
+> >> +             [CN_QP_STATE_ERR]       = CN_QP_OP_2ERR,
+> >> +             [CN_QP_STATE_SQD]       = CN_QP_OP_SQ_ERR_2SQD,
+> >> +             [CN_QP_STATE_SQERR]     = CN_QP_OP_NOP,
+> >> +     },
+> >> +     [CN_QP_STATE_ERR] = {
+> >> +             [CN_QP_STATE_RESET]     = CN_QP_OP_2RESET,
+> >> +             [CN_QP_STATE_ERR]       = CN_QP_OP_2ERR,
+> >> +     }
+> >> +};
+> > 
+> > I don't understand why IBTA QP state machine is declared in ETH driver
+> > and not in IB driver.
+> > 
 > 
-> Hmm are prev and next swapped here? next == curr in my view if there's no
-> subtly I missed
+> Implementing the actual transitions between the states requires full
+> knowledge of the HW e.g. when to flush, cache invalidation, timeouts.
+> Our IB driver is agnostic to the ASIC type by design. Note that more ASIC
+> generations are planned to be added and the IB driver should not be aware
+> of these additional HWs.
+> Hence we implemeted the QP state machine in the CN driver which is aware
+> of the actual HW.
 
-This is before context_switch() so prev == current at this point.
-However, more importantly, the PSI thing accounts to its 'curr' group
-and that should very much be the outgoing task's group in this case.
+Somehow ALL other IB drivers are able to implement this logic in the IB,
+while supporting multiple ASICs. I don't see a reason why you can't do
+the same.
 
-That is, we need to make sure the outgoing group is up-to-date before
-switching to a new group.
-
-Makes sense?
-
-> >  		psi_sched_switch(prev, next, !task_on_rq_queued(prev));
-> >  
-> >  		trace_sched_switch(sched_mode & SM_MASK_PREEMPT, prev, next, prev_state);
-> > diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> > index 146baa91d104..65bba162408f 100644
-> > --- a/kernel/sched/psi.c
-> > +++ b/kernel/sched/psi.c
-> > @@ -991,22 +991,31 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
-> >  }
-> >  
-> >  #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-> > -void psi_account_irqtime(struct task_struct *task, u32 delta)
-> > +void psi_account_irqtime(struct task_struct *curr, struct task_struct *prev, u64 *time)
-> >  {
-> > -	int cpu = task_cpu(task);
-> > +	int cpu = task_cpu(curr);
-> >  	struct psi_group *group;
-> >  	struct psi_group_cpu *groupc;
-> > -	u64 now;
-> > +	u64 now, irq;
-> > +	s64 delta;
-> >  
-> >  	if (static_branch_likely(&psi_disabled))
-> >  		return;
-> >  
-> > -	if (!task->pid)
-> > +	if (!curr->pid)
-> > +		return;
-> > +
-> > +	group = task_psi_group(curr);
-> > +	if( prev && task_psi_group(prev) == group)
 > 
-> nit: whitespace misplaced
-
-Ha!, is that's all and it all works in one go it's awesome :-)
-
-I'm still trying to learn to type again after switching keyboards. I've
-used a thinkpad keyboard (either on an actual laptop or the travel
-version on my desktop for nearly 20 years... Now I've picked up a split
-keyboard out of necessity (UHK 60 v2 for those interested) and muscle
-memory is still cursing me every single day.
-
-As a result, I now also cannot type on my laptop anymore, so lose-lose I
-suppose ... urgh.
-
-> LGTM otherwise.
+> >> +
+> > 
+> > <...>
+> > 
+> >> +             /* Release lock while we wait before retry.
+> >> +              * Note, we can assert that we are already locked.
+> >> +              */
+> >> +             port_funcs->cfg_unlock(cn_port);
+> >> +
+> >> +             msleep(20);
+> >> +
+> >> +             port_funcs->cfg_lock(cn_port);
+> > 
+> > lock/unlock through ops pointer doesn't look like a good idea.
+> > 
 > 
-> Reviewed-by: Qais Yousef <qyousef@layalina.io>
+> More ASIC generations will be added once we merge the current Gaudi2 code.
+> On other ASICs the locking granularity is different because some of the HW
+> resources are shared between different logical ports.
+> Hence it is was logical for us to implement it with a function pointer so
+> each ASIC specific code can implemnet the locking properly.
 
-Thanks!
+We are reviewing this code which is for the current ASIC, not for the
+unknown future ASICs. Please don't over engineer the first submission.
+You will always be able to improve/change the code once you decide to
+upstream your future ASICs.
 
-John, can you write up a changelog with some pretty numbers and all
-that? Also, when you re-post, can you make sure to Cc the PSI folks
-(johannes and suren iirc, get_maintainers.pl seems to find them).
+Thanks
 
