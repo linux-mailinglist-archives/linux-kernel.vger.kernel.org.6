@@ -1,182 +1,161 @@
-Return-Path: <linux-kernel+bounces-219794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6AD090D7CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD4090D7D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ADA31F23EE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:51:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C021F23474
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A459A4596F;
-	Tue, 18 Jun 2024 15:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B21513B585;
+	Tue, 18 Jun 2024 15:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zmsr+E2K"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SeI5NUWI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0712D45BF1
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B0A13790B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718725831; cv=none; b=bEO36A4Z5jDVsEXPqFUNp2Wooi/w6JzhpoyKPAV/GzkF0xDb6zOeob6Z0mDOAFBUXTofl1W940yoICeG4COkwMsP33kWKcEYzvY59dJE+eXMX3W4E7ENQgkkk1qvFdZwhEoelI8sP1g301/eiTK2OwwrsbMY+AA/H308V/8WaFg=
+	t=1718725901; cv=none; b=OqaXc7j1jV4tOJ6ghb+5U1ZZO6HsaModN93bGigARO7puZMMPhZughieP34lC1895HRO43gu07dxDIr2yA1JZHmSNpB/cW36gKwBC2jDufcL3mgFLAq5byC+lmHC4mbLm5qhP8hYrsjep4h/grMJaqMW0fzAE7k8hCqrBTvhMuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718725831; c=relaxed/simple;
-	bh=O83FNAdgJkgnscldJT04vDrZcANIzWxDsUu1SHrFuVQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ej8A37WlhCHwbbOEidOb8spM1ARgTnrs1Ojrm+JPfot5dAIfO7SsQM2mrzi/f0Igb7dWdUNHsEdV3R+nHGxlIcjqJ18vfC2V+vVclan4phewBkghLWqX4gBSDW5vdLtRw9WJr36zo21elHU12FZ8Wl2hmaEL8tDgtVtcjqXE+Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zmsr+E2K; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52bc29c79fdso7603170e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:50:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718725828; x=1719330628; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j0o2btwvxJuAvs23zoxm88cS8MnRzldpGlzftLOxRCk=;
-        b=zmsr+E2KfIvSDLv1hwZZ1RJlEQJ0yo37Ra82b0MjeNoEGbFl9XyM45wMHlrhO0UuVG
-         ZVPH+Kge0JYTpOUKMPAjoXXpwkzYK0Uratz4DCS8+DI6pc/wZ4N8oiGDEL/PqS48kDlW
-         iMdelv+bm05dQV4RhFmHzh47kJSXHZe8e0Y5kNcZgAj0e8wfJHkS+1pQB4Wgmci5JTK/
-         K71/pHY9BDbAzCmHInWLxRhFQjYds2u2tib0/GjwwLr/EYAqV6XYA+Dz9i3vDjrTOauC
-         u3Fm72G87Po1d9+r8hEJsveaoYD7DDPAHW0CGiYIAZXu9/7VHHLXane6n9LE2+HG8+eY
-         hn7w==
+	s=arc-20240116; t=1718725901; c=relaxed/simple;
+	bh=Lgpc90nKB87dyDcERAWICDYnV6YS1lcg3UEUBLb6OqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DY3iI/lOrCwP5kxcaTj85AnEZRIOHCfgy4U0CfA7qH3imA0bpBMqLR+kUBOkyG+Ns7wf0V+BV6DfpCPAULBadnaMtUTI8NxzYb98IGgMKEXS8OOGXpxt7e4qDCBSEOwasvPNzFDL5U2q/cflw6YYLWhvkX9VB9qcJhPMj4U9b9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SeI5NUWI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718725899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PjSGFR/9hcTm8rLTkGHUAeik1m3Y5cdjjiw+zxskYFU=;
+	b=SeI5NUWIV9nVSJh0/Ry5c4hBVPKkpL4kwnHwXfLmGDEyGDLltcy1aGa1QMBwOHt+DYA1gE
+	1kSUvHxxGOtGy7HXk0vJGuC+arWBc5zc0DIuK4epI/MP0zJbegh7ZEx9KeTHsjKlX4P7pn
+	HttvJKvGVsvrfdhK/srdslwQbLpZnP8=
+Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com
+ [209.85.160.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-612-38K0CyTZNJCD-4vc-nTeRA-1; Tue, 18 Jun 2024 11:51:37 -0400
+X-MC-Unique: 38K0CyTZNJCD-4vc-nTeRA-1
+Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-24c501a9406so4876108fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:51:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718725828; x=1719330628;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j0o2btwvxJuAvs23zoxm88cS8MnRzldpGlzftLOxRCk=;
-        b=cBu13KOrcXG3F1Qj0qD0ZX4lGiL7UiPiEupcP8zSGieOwQpboobZ6mOfl3HjqU1ty/
-         ENRk/btawVVN204I/Ef7fnICztSxeswE8XK7SUSGar80VXXmpXSVjjvaM0/Lm7y0SuIU
-         4P7r4ZYnXjiEaeOFAczi7dIA//AtVYLnrliiw9gMFV2NhhQP0IiAHTjvbadKwNFdoiEr
-         RYuGPYJ1jvy3qjJYckhSRmVwAbA63IJ53QnwUV0zUGC38e9/ly3LxF8wNQuUuEzF3k5U
-         zFGRMtcJluUO6WqznqVA6ReKfFPRgBkjhHHSeM1YOrRsi+qWmity9u+rg59jU2ucYbpg
-         MhEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMsmi85yCn9EP4lymJS1oM0sQMJTffGUYTZjLm1M4VeF77wS4TO8Qty5fT6/SheMrT6CsOeH9HS7Oz3Qnd+L7+YRnH+NhWuMPi5p0w
-X-Gm-Message-State: AOJu0Yy8J+l1NNuE7Ikt+R65rR8W1+5AL9UvLWrPxbKaBpJJcz3Ie0t3
-	9pRvoxm3L/dPsDOjlrRDuEY6lb0Ht50oE44qaWArsRTVQsEBjcuWSaHmz3SHANc=
-X-Google-Smtp-Source: AGHT+IHHHBPht25n9Gly0ArxuEAcjB2htzP4JMhnxdb/RauObkjrKLdR6j/+3D8xHpgeQ7/4CkMWXg==
-X-Received: by 2002:a19:750c:0:b0:52c:76ac:329b with SMTP id 2adb3069b0e04-52ccaa369d8mr30796e87.35.1718725828111;
-        Tue, 18 Jun 2024 08:50:28 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca287241csm1544550e87.172.2024.06.18.08.50.25
+        d=1e100.net; s=20230601; t=1718725897; x=1719330697;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PjSGFR/9hcTm8rLTkGHUAeik1m3Y5cdjjiw+zxskYFU=;
+        b=lBAlGIqSOL/pv3J6p/8IIcg7P/db6+aHgrShYvhhXm9ywcF5xEfE/xkmOuT6dxeoPS
+         BuspZYXKOm6ZZYyRFvxgojIN0jYtyzhRnvfUfebUePviglMESBOl/ncn9AtXPfpoN3qP
+         dztAJbLgnXt5NO8cl24ozl4vV7iRlx4vIEUGFjfZnWp4GXuALGTp6zlLv5DwyzvT6tpW
+         x8IqpXCDLoxrq75IQfsbaq8Cs+3sGxSuwK9lbsa/uYxr5AtDOXhCqVzIV9GKkTX6hfag
+         Qd1kg2PAHj+TzT8DXirKTO9hsKDVlQRgsPjK4IBtAXo3sIEUerh+vfh+kXV+OvluiSIs
+         ut8g==
+X-Forwarded-Encrypted: i=1; AJvYcCV4GhWafz74FBu2jtgRXFeFJXOQhMC0zlhJiDBIwQGlGMAgTO0ilFGiB4CW5Eh0RHgY+WddCdwTSUq8tai1J0E6Ve3E3og+H9IDuO74
+X-Gm-Message-State: AOJu0YyldweBqDstK6TjFtgGYpVgF4LBA5zPEEL7ea7ue/mcu7rAJakk
+	tDZMPyB8euWkoKDCrOdWATbpb1dIr/jVa8USQF7uStA+M9Zxkv9PIAtMd2OVpXtog2rvCtoSfnk
+	gltAqdwB5zExaeTYnDdxC2hgQ3+efHb4A+PeZObC1iecWZ4NBGSeC11LhiKD+GQ==
+X-Received: by 2002:a05:6870:8182:b0:254:8a0c:de4c with SMTP id 586e51a60fabf-25c94a21307mr170557fac.29.1718725896762;
+        Tue, 18 Jun 2024 08:51:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE94IS+ik8v5kXlspSo6TVS47o9TWiOF1gb6qUVvv+zpMjmsvNrcNTEoeLkyLjoERTXlXp6Bw==
+X-Received: by 2002:a05:6870:8182:b0:254:8a0c:de4c with SMTP id 586e51a60fabf-25c94a21307mr170537fac.29.1718725896455;
+        Tue, 18 Jun 2024 08:51:36 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2567a94e74fsm3228521fac.9.2024.06.18.08.51.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 08:50:26 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-Date: Tue, 18 Jun 2024 17:50:13 +0200
-Message-Id: <20240618155013.323322-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Tue, 18 Jun 2024 08:51:35 -0700 (PDT)
+Date: Tue, 18 Jun 2024 09:51:34 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Gerd
+ Bayer <gbayer@linux.ibm.com>, Matthew Rosato <mjrosato@linux.ibm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] vfio/pci: Tolerate oversized BARs by disallowing
+ mmap
+Message-ID: <20240618095134.41478bbf.alex.williamson@redhat.com>
+In-Reply-To: <20240529-vfio_pci_mmap-v3-2-cd217d019218@linux.ibm.com>
+References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
+	<20240529-vfio_pci_mmap-v3-2-cd217d019218@linux.ibm.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-In _set_opp() we are normally bailing out when trying to set an OPP that is
-the current one. This make perfect sense, but becomes a problem when
-_set_required_opps() calls it recursively.
+On Wed, 29 May 2024 13:36:25 +0200
+Niklas Schnelle <schnelle@linux.ibm.com> wrote:
 
-More precisely, when a required OPP is being shared by multiple PM domains,
-we end up skipping to request the corresponding performance-state for all
-of the PM domains, but the first one. Let's fix the problem, by calling
-_set_opp_level() from _set_required_opps() instead.
+> On s390 there is a virtual PCI device called ISM which has a few rather
+> annoying oddities. For one it claims to have a 256 TiB PCI BAR (not
+> a typo) which leads to any attempt to mmap() it failing during vmap.
+> 
+> Even if one tried to map this "BAR" only partially the mapping would not
+> be usable on systems with MIO support enabled however. This is because
+> of another oddity in that this virtual PCI device does not support the
+> newer memory I/O (MIO) PCI instructions and legacy PCI instructions are
+> not accessible by user-space when MIO is in use. If this device needs to
+> be accessed by user-space it will thus need a vfio-pci variant driver.
+> Until then work around both issues by excluding resources which don't
+> fit between IOREMAP_START and IOREMAP_END in vfio_pci_probe_mmaps().
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ---
+>  drivers/vfio/pci/vfio_pci_core.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+> index 80cae87fff36..0f1ddf2d3ef2 100644
+> --- a/drivers/vfio/pci/vfio_pci_core.c
+> +++ b/drivers/vfio/pci/vfio_pci_core.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/nospec.h>
+>  #include <linux/sched/mm.h>
+>  #include <linux/iommufd.h>
+> +#include <linux/ioremap.h>
+>  #if IS_ENABLED(CONFIG_EEH)
+>  #include <asm/eeh.h>
+>  #endif
+> @@ -129,9 +130,12 @@ static void vfio_pci_probe_mmaps(struct vfio_pci_core_device *vdev)
+>  		/*
+>  		 * The PCI core shouldn't set up a resource with a
+>  		 * type but zero size. But there may be bugs that
+> -		 * cause us to do that.
+> +		 * cause us to do that. There is also at least one
+> +		 * device which advertises a resource too large to
+> +		 * ioremap().
+>  		 */
+> -		if (!resource_size(res))
+> +		if (!resource_size(res) ||
+> +		    resource_size(res) > (IOREMAP_END + 1 - IOREMAP_START))
+>  			goto no_mmap;
+>  
+>  		if (resource_size(res) >= PAGE_SIZE) {
+> 
 
-Fixes: e37440e7e2c2 ("OPP: Call dev_pm_opp_set_opp() for required OPPs")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/opp/core.c | 47 +++++++++++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
+A powerpc build reports:
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index cb4611fe1b5b..45eca65f27f9 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -1061,6 +1061,28 @@ static int _set_opp_bw(const struct opp_table *opp_table,
- 	return 0;
- }
- 
-+static int _set_opp_level(struct device *dev, struct opp_table *opp_table,
-+			  struct dev_pm_opp *opp)
-+{
-+	unsigned int level = 0;
-+	int ret = 0;
-+
-+	if (opp) {
-+		if (opp->level == OPP_LEVEL_UNSET)
-+			return 0;
-+
-+		level = opp->level;
-+	}
-+
-+	/* Request a new performance state through the device's PM domain. */
-+	ret = dev_pm_domain_set_performance_state(dev, level);
-+	if (ret)
-+		dev_err(dev, "Failed to set performance state %u (%d)\n", level,
-+			ret);
-+
-+	return ret;
-+}
-+
- /* This is only called for PM domain for now */
- static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
- 			      struct dev_pm_opp *opp, bool up)
-@@ -1091,7 +1113,8 @@ static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
- 		if (devs[index]) {
- 			required_opp = opp ? opp->required_opps[index] : NULL;
- 
--			ret = dev_pm_opp_set_opp(devs[index], required_opp);
-+			ret = _set_opp_level(devs[index], opp_table,
-+					     required_opp);
- 			if (ret)
- 				return ret;
- 		}
-@@ -1102,28 +1125,6 @@ static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
- 	return 0;
- }
- 
--static int _set_opp_level(struct device *dev, struct opp_table *opp_table,
--			  struct dev_pm_opp *opp)
--{
--	unsigned int level = 0;
--	int ret = 0;
--
--	if (opp) {
--		if (opp->level == OPP_LEVEL_UNSET)
--			return 0;
--
--		level = opp->level;
--	}
--
--	/* Request a new performance state through the device's PM domain. */
--	ret = dev_pm_domain_set_performance_state(dev, level);
--	if (ret)
--		dev_err(dev, "Failed to set performance state %u (%d)\n", level,
--			ret);
--
--	return ret;
--}
--
- static void _find_current_opp(struct device *dev, struct opp_table *opp_table)
- {
- 	struct dev_pm_opp *opp = ERR_PTR(-ENODEV);
--- 
-2.34.1
+ERROR: modpost: "__kernel_io_end" [drivers/vfio/pci/vfio-pci-core.ko] undefined!
+
+Looks like only __kernel_io_start is exported.  Thanks,
+
+Alex
 
 
