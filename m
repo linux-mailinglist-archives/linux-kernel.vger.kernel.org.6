@@ -1,134 +1,120 @@
-Return-Path: <linux-kernel+bounces-219489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FAD90D353
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:03:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA38E90D38C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D14AC1C2497D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:03:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E46D3B27CE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917521741F3;
-	Tue, 18 Jun 2024 13:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1551AD9E8;
+	Tue, 18 Jun 2024 13:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h/q7QLM6"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pWXtEdL+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D006B16A937
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6051AD4BF;
+	Tue, 18 Jun 2024 13:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718717881; cv=none; b=rmUuhNkJ/stptnsQCr7Ch8Ru54FgfgboReqkVcX/tCPVyYKlogcz4ChHkpeRQN0yjtEQS5cbljbogZfzozi9gnEjAWEE17rqbhCKt2AL3I9f5f1s/KwkIxaVEo/suSDPD5usbvA++vg8wksjH60m2U4AoLoHQbPfXaEBO6porIc=
+	t=1718716846; cv=none; b=BBCCOEktjwXKM043JB8REIzknqVnMLqmLfrmhMOdth6hPmyHRVX0h5mrs/Jv9UCtN58ecItwMrayoMp00e+ZwKuc99/X1DXIKOpdx5SyD9eTdrpg8zcPc6xT/bdToc/46vVds+P5lAyXWYo6KOEJDRxDUV+ByqP39jqDrSf+j4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718717881; c=relaxed/simple;
-	bh=DZjQ6FV3T2FW/P5dZ/rmnh+9n/L8e1/dcKMQojAHidA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SPftZlRa/rB0rvOjh4iJGvhHVOyBBdWuG+X5vZUMGuSkDUirlJ4cSz1sL2aqDmqLJ2QgI4KcAXXkdy3I4U5X/FFufVMCO+zc7CFgSAOAbdqmBlRN0amC8JgRF7q5AkPgQPEf0pz+Hn5NGuE25vK4SlYP+2Iye6A5rIB7n36lQRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=h/q7QLM6; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-250671a1bc7so2597350fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718717879; x=1719322679; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A2IFt2EVdi+gZJF4jowtvIlbB+KtHxr9PizWbsBiOL8=;
-        b=h/q7QLM6kNjjkD99jkS7jDZvS4Ma4njXAHHAZcMhibE7R4o4NN/sCtPdmK51Lk7snj
-         YlOalbEqWwDmgiwNUnPbBuP/m4fW7QNTRocFM7XWxEMNvYUPvc8U8Hm1uboUpxuBebR5
-         pyL5NN6H3hpIm/vX6VhE4NaWq7fd3SWlsRqCU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718717879; x=1719322679;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A2IFt2EVdi+gZJF4jowtvIlbB+KtHxr9PizWbsBiOL8=;
-        b=D/RT0ipsXdoFqI0RN2N4iHufvsfFb2j7RxeXurbFo2saEIAgdvLbCspIh8WqGc0p6C
-         hxd7u684UVzdY76DEySBlSedKeCiKK02o3XiwMb4uAMdtSrIenZr4lzh8beeb108nx66
-         87/0mJP3QwslFeu9dMmFnMxQ2DOY4UFpzgp+ZK3HP79NgqHrFsWhnxfXaiRlviJn0wHk
-         A9PdfoWTlgM+hcVcMWLl8ucuW7baYnnMb+v53yp/Se2NG0xiDwS3QQ19ThNFGH9RP9fF
-         wplvu++FPPFtQkF4ZCErECiNSC5oIiTZFjtfin/Vo7Y6kATkYd+ww63+rO2mKrocdkYl
-         KVSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW91EAbpHgQhSGQLjuo+FK/aXSKoz7ZlWNqr4o0xNuXXCD4+b8m4QzzZpPYDbU4g3wOLxJ2vR07rp7O93uhwa/gjrrm1lp92jX06ixs
-X-Gm-Message-State: AOJu0YxTVYzR0vhDNATqHzNmClLthMztkucomwiEb4DTcgO6NbSDvFcX
-	rVJum+WH8bLHlFcA/Op1F6WeBzXf3jQiYFjQFf5w+KhI3b7OGnv8ykNm8NSenw==
-X-Google-Smtp-Source: AGHT+IFGZzzKWBOJ8T4ois2QX+pNAsJoUQREamSXoXS7bchmzONZY4R+JRX9+M2w5xew57/NtISAyA==
-X-Received: by 2002:a05:6870:7b4c:b0:259:8b4e:e71a with SMTP id 586e51a60fabf-2598b4f0ac6mr606072fac.46.1718717878982;
-        Tue, 18 Jun 2024 06:37:58 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abc06e93sm521666385a.82.2024.06.18.06.37.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 06:37:58 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 18 Jun 2024 13:37:52 +0000
-Subject: [PATCH v5 09/10] media: venus: Refactor
- hfi_session_fill_buffer_pkt
+	s=arc-20240116; t=1718716846; c=relaxed/simple;
+	bh=Qp7CM6iG5kz1apRwYVuMOrXU7YUSRpdnOK+KIpu+IfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfHkpEFZ2DoNXpGcUlnbeRIqWkHBaRGa52LnB6X0iHaD5A63yG3uJ+gfAdeKS8bTd0ZKq4/pFlzqaIG9Jiv5jGqLQd+fC8Bi2SufhhoFVjuPn2MMQIavcsy8CPs1bxZ822RWvVJYVWOsFbLLXNT0OaX5wKlLcP1nwnu2Sg8Mysc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pWXtEdL+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E428C4AF1D;
+	Tue, 18 Jun 2024 13:20:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718716846;
+	bh=Qp7CM6iG5kz1apRwYVuMOrXU7YUSRpdnOK+KIpu+IfM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pWXtEdL+ROtNJD/V6HrgwGTvypKlp5/8Z9Ww4dubowcTM1sOxGEJI8mwcqarzIno8
+	 1SFtTuAO2HBgsRHbtN7sAl49xiFTT+HvSTrJZ1ehK+jflnhcUot9f4NPykjLwrzSxr
+	 I37DKzh71NN0P8l8y+0uLtUuXGdRTHGJ3d6YVLTg=
+Date: Tue, 18 Jun 2024 15:09:28 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
+	linux-cve-announce@vger.kernel.org, cve@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: CVE-2023-52685: pstore: ram_core: fix possible overflow in
+ persistent_ram_init_ecc()
+Message-ID: <2024061823-employer-stylist-2505@gregkh>
+References: <2024051752-CVE-2023-52685-64c5@gregkh>
+ <87jzjeojwp.fsf@mailhost.krisman.be>
+ <2024052811-cornfield-monday-8bb9@gregkh>
+ <202406171413.DE595AF@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240618-cocci-flexarray-v5-9-6a8294942f48@chromium.org>
-References: <20240618-cocci-flexarray-v5-0-6a8294942f48@chromium.org>
-In-Reply-To: <20240618-cocci-flexarray-v5-0-6a8294942f48@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202406171413.DE595AF@keescook>
 
-The single data array data[1] is only used to save the extradata_size.
-Replace it with a single element field.
+On Mon, Jun 17, 2024 at 02:17:49PM -0700, Kees Cook wrote:
+> On Tue, May 28, 2024 at 09:01:13PM +0200, Greg Kroah-Hartman wrote:
+> > On Mon, May 27, 2024 at 08:32:54PM -0400, Gabriel Krisman Bertazi wrote:
+> > > Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> > > 
+> > > > Description
+> > > > ===========
+> > > >
+> > > > In the Linux kernel, the following vulnerability has been resolved:
+> > > >
+> > > > pstore: ram_core: fix possible overflow in persistent_ram_init_ecc()
+> > > >
+> > > > In persistent_ram_init_ecc(), on 64-bit arches DIV_ROUND_UP() will return
+> > > > 64-bit value since persistent_ram_zone::buffer_size has type size_t which
+> > > > is derived from the 64-bit *unsigned long*, while the ecc_blocks variable
+> > > > this value gets assigned to has (always 32-bit) *int* type.  Even if that
+> > > > value fits into *int* type, an overflow is still possible when calculating
+> > > > the size_t typed ecc_total variable further below since there's no cast to
+> > > > any 64-bit type before multiplication.  Declaring the ecc_blocks variable
+> > > > as *size_t* should fix this mess...
+> > > >
+> > > > Found by Linux Verification Center (linuxtesting.org) with the SVACE static
+> > > > analysis tool.
+> > > 
+> > > Hi Greg,
+> > > 
+> > > [Cc'ing Kees, who is listed as the pstore maintainer]
+> > > 
+> > > I want to dispute this CVE.  The overflow is in the module
+> > > initialization path, and can only happen at boot time or if the module
+> > > is loaded with specific parameters or due to specific acpi/device tree
+> > > data.  Either way, it would require root privileges to trigger.
+> > 
+> > Normally root privileges isn't the issue, as many containers allow root
+> > to do things (including loading modules, crazy systems...)
+> > 
+> > Anyway, I'll defer to Kees as to if this should be revoked or not.
+> 
+> It's a module parameter or device tree value that is at most INT_MAX or
+> UINT_MAX respectively. Also, it is bounds checked against the buffer
+> itself:
+>         if (ecc_total >= prz->buffer_size) {
+> 
+> So even if it wrapped around and got "too small", there's no damage to
+> be had here.
+> 
+> The worst case is that the ramoops info goes missing because pstore
+> refuses to do anything with the bad value, but pstore can be disabled
+> way more easily than that, by design.
+> 
+> So, no, I don't think this is CVE worthy. I took the patch because it's
+> reasonable to try to get the math right and provide better error
+> reporting.
 
-This fixes the following cocci warning:
-drivers/media/platform/qcom/venus/hfi_cmds.h:175:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+Now rejected, thanks.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/qcom/venus/hfi_cmds.c | 2 +-
- drivers/media/platform/qcom/venus/hfi_cmds.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.c b/drivers/media/platform/qcom/venus/hfi_cmds.c
-index 0a4de8ca1df5..3ae063094e3e 100644
---- a/drivers/media/platform/qcom/venus/hfi_cmds.c
-+++ b/drivers/media/platform/qcom/venus/hfi_cmds.c
-@@ -331,7 +331,7 @@ int pkt_session_ftb(struct hfi_session_fill_buffer_pkt *pkt, void *cookie,
- 	pkt->alloc_len = out_frame->alloc_len;
- 	pkt->filled_len = out_frame->filled_len;
- 	pkt->offset = out_frame->offset;
--	pkt->data[0] = out_frame->extradata_size;
-+	pkt->data = out_frame->extradata_size;
- 
- 	return 0;
- }
-diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
-index f91bc9087643..daba45720ddc 100644
---- a/drivers/media/platform/qcom/venus/hfi_cmds.h
-+++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
-@@ -172,7 +172,7 @@ struct hfi_session_fill_buffer_pkt {
- 	u32 output_tag;
- 	u32 packet_buffer;
- 	u32 extradata_buffer;
--	u32 data[1];
-+	u32 data;
- };
- 
- struct hfi_session_flush_pkt {
-
--- 
-2.45.2.627.g7a2c4fd464-goog
-
+greg k-h
 
