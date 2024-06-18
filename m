@@ -1,159 +1,210 @@
-Return-Path: <linux-kernel+bounces-218549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CC490C1C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:20:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3710790C1C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C02BD1C21ABB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EECD282D0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816FC1B94F;
-	Tue, 18 Jun 2024 02:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiMK7IcX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940D51CD20;
+	Tue, 18 Jun 2024 02:22:24 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CBF4689;
-	Tue, 18 Jun 2024 02:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726DC848D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718677220; cv=none; b=KngOUXCwKE/wHPzEdBtSQvFHdVAlx3ob7SHYqc/kxY4zhm+kXspZgixoiHeR46PHLvqRAyJ9q+9T4QW8pUDr/vqroj5nAKEjS0U+kZi2D2vvkIk13nhwLEz9fV9hz5VeIo1VEjT6mMn8stDd+rI5s7Jp4kI+V84xiBDP8BoNyyk=
+	t=1718677344; cv=none; b=iwArL8JYKgP7tiYDOdDYES+44XDd3KK7PcJyl4+nTwTl61NsemTJNwXOMJlU8VqS5dwIYTK4++xegKFaq13/qdJdWD/RT5C6su/5VYJ9wKD2XvUyBBLDbrF3I+qhJpScXMkRqkTSGVrg0DUriXVNoGtXA5XRa06XsfzD+d/QmdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718677220; c=relaxed/simple;
-	bh=AU8m4BLn7PksqMB0wIhU2UZKqSE8doPVgQ0p/Vh0wwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oHhw8vaesE/hoPhLKubwuU9zJltTG08knKwSwqjvmm/F2S2dnsu6fdZkma5VgFzXJq0E4sBhBT80XsS2uwxPVNand6W7ABi6axzmJudtMJl6+GgXT/aYtQsZ7MobQ7tLE76EB+ltdwiXCNcVv6S3sORsFrHHCH8TjHlJ4xRrSC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiMK7IcX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61B34C2BD10;
-	Tue, 18 Jun 2024 02:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718677220;
-	bh=AU8m4BLn7PksqMB0wIhU2UZKqSE8doPVgQ0p/Vh0wwE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AiMK7IcXe2a3Q+8e5/HZ+P72yEZjBpSGiIfNAKMRuACWSA9P1vMY+35NETRVC5aL7
-	 rcg4T7YLgUpFIeMVsgzxTrbUD7Ul9+DudW1o64PV+BIrpI60Nweuiiy6kEbaXOVMAL
-	 d8QG5P8vsxng1VhNnKxhFBCyFTv3PTSHLAqBCioa35uxLumIMeqvENu0YqQvn5dpLi
-	 cIAJ2/hQaiQVCOzG8mK/eb9ImJwOP/uCb8E7maVtMYppUx/i0oVNI0BX+B1ybodnq+
-	 aL8yAzxlTSthiJBqubsPadWw5YMFz/BZ6kt3LdR/ACkDypcU6hNql4/ORQjhzlI/NZ
-	 oyw/wYDiCEvRw==
-Message-ID: <46037b02-5dad-4249-a63f-80ac93977aa9@kernel.org>
-Date: Tue, 18 Jun 2024 11:20:18 +0900
+	s=arc-20240116; t=1718677344; c=relaxed/simple;
+	bh=Krx7BIGwbOfW7B/Nu86DGtNFQNHBINWH0kO1g6IQEno=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=t55Pa+YFxZODY2khJiQij5WDgdzczdaDKMg1k2gADa0edlXz4LyND811fvIY7mI6oELRZCVCimdL+zk3u7uouyI1PCDbyw1ZZC6wFDBu0n3+WDwbpnzh+0g5HPFXhdFxHKw4zxeC3YVhGNmU6Pw39FEUQrk8TyUyB1tV+bffXGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-375a1dbdd4dso58125135ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:22:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718677341; x=1719282141;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1rsL/flw0v+H7gOqJ0rkLoiD+h7tAoEgg4SPt2R5InQ=;
+        b=m0/P2ULcEV8WwEc8iZcUKdYbSfFNZpG1IC6hPUi2EdPKkOY2PVVfMH3xtQMLqfIFdY
+         umeFD3d/gExjzJipQEBFL7nqXKAmSJSVxvE7+jOCfr2vMhH6Si4zwfO9zyYdnpKfiym1
+         fr6UWg0RIy0WQTdKceOTMXP2ESlsXLaFcRaqxUWfTYIxa4tZ0fuGNkBu6J0X5MZ5RfDm
+         zcIGJ5EUX5r4rSTNI2eq4TjSoHAYJZmvL4T91IMww+C3kk3mU3nIcUiN6TMB8Tz3v475
+         tz5D7cY64/JVcL5sm/E2sb/inTccWgfTJ6SG/Rj36CeELzrWBMsu/HmO1i4WKHcrBaef
+         SmyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5tuQGDSQE3I2JhOmP2auHi8H1NtEXUAcKxS56fiTzakUvIBoGJxDwXSmfTAvQ0lH4pN9KyavpDXtlyRuQBPz5vG5Ggh1eb/ml1R5b
+X-Gm-Message-State: AOJu0YwtajqukUnKYi/+t6MTu+xBYYJL6tTavmspQa2HegEVvOgRnZ0Q
+	N5DLyUveifpfnk/zOpFaBG095FKm+ZRH5aEe7lJXVx2qtGZTrELlIRpv1RRZCRp817enjtJmyDo
+	jBpUWTlYdvZn+IHxjti2L/hVDDT3n/Sz6dbiFjux6heDF4u5mTvwkRig=
+X-Google-Smtp-Source: AGHT+IFjvgGDqwgzV3k/IEDTJWgutMnBsB0iUhHzpg1jjtijNwyQ/Zlg0dt4QOMKTNzE014IjwOc0bSeU8yCiRq9SukUTPP6xuGG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] ata: libata-scsi: Report valid sense data for ATA
- PT if present
-To: Igor Pylypiv <ipylypiv@google.com>
-Cc: Niklas Cassel <cassel@kernel.org>, Tejun Heo <tj@kernel.org>,
- Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240614191835.3056153-1-ipylypiv@google.com>
- <20240614191835.3056153-4-ipylypiv@google.com>
- <dfb741e5-2fe6-4b36-b1ab-55c3c33032d0@kernel.org>
- <ZnDOfqq9Jo-38LBl@google.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <ZnDOfqq9Jo-38LBl@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:164e:b0:375:a40f:97d1 with SMTP id
+ e9e14a558f8ab-375e0ec20dcmr9374315ab.4.1718677341642; Mon, 17 Jun 2024
+ 19:22:21 -0700 (PDT)
+Date: Mon, 17 Jun 2024 19:22:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006eb03a061b20c079@google.com>
+Subject: [syzbot] [kvm?] general protection fault in get_work_pool (2)
+From: syzbot <syzbot+0dc211bc2adb944e1fd6@syzkaller.appspotmail.com>
+To: Jason@zx2c4.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/18/24 09:02, Igor Pylypiv wrote:
-> On Mon, Jun 17, 2024 at 08:25:54AM +0900, Damien Le Moal wrote:
->> On 6/15/24 04:18, Igor Pylypiv wrote:
->>> Do not generate sense data from ATA status/error registers
->>> if valid sense data is already present.
->>
->> This kind of contradicts what you said in patch 2... So I am really confused now.
-> 
-> Sorry about the confustion. I think the problem is that I was using "sense data"
-> to describe two different things:
-> #1. SK/ASC/ASCQ
-> #2. ATA Status Return sense data descriptor
-> 
-> Both #1 and #2 need to be populated into sense buffer. The problem with
-> the current code is that we can only have either valid #1 or valid #2 but
-> not both at the same time.
-> 
->> Though this patch actually looks good to me, modulo the comment below.
->> But shouldn't this be squashed with patch 2 ?
-> 
-> Yes, that's a good point. Let me factor out the sense data descriptor
-> population code into a separate function and then squash this patch with
-> the patch 2.
-> 
->>
->>>
->>> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
->>> ---
->>>  drivers/ata/libata-scsi.c | 17 +++++++++++------
->>>  1 file changed, 11 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
->>> index 79e8103ef3a9..4bfe47e7d266 100644
->>> --- a/drivers/ata/libata-scsi.c
->>> +++ b/drivers/ata/libata-scsi.c
->>> @@ -858,12 +858,17 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
->>>  	unsigned char *desc = sb + 8;
->>>  	u8 sense_key, asc, ascq;
->>>  
->>> -	/*
->>> -	 * Use ata_to_sense_error() to map status register bits
->>> -	 * onto sense key, asc & ascq.
->>> -	 */
->>> -	if (qc->err_mask ||
->>> -	    tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
->>> +	if (qc->flags & ATA_QCFLAG_SENSE_VALID) {
->>> +		/*
->>> +		 * Do not generate sense data from ATA status/error
->>> +		 * registers if valid sense data is already present.
->>> +		 */
->>
->> The empty "if" here is really horrible. Please revert the condition and add it
->> as a "&&" in the below if.
->>
-> Adding the condition to the below if will change the code flow and we'll end
-> up executing scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D) when
-> ATA_QCFLAG_SENSE_VALID is set, which is not what we want.
+Hello,
 
-I did say "reverse the condition" :)
-So that if would be done only if ATA_QCFLAG_SENSE_VALID is *not* set.
+syzbot found the following issue on:
 
-> 
-> I agree about horrible :)
-> 
-> Perhaps I should have factored out the descriptor population code into
-> a separate function to make the code correct and not so horrible. Let me
-> do that in v2.
-> 
->>> +	} else if (qc->err_mask ||
->>> +		   tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
->>> +		/*
->>> +		 * Use ata_to_sense_error() to map status register bits
->>> +		 * onto sense key, asc & ascq.
->>> +		 */
->>>  		ata_to_sense_error(qc->ap->print_id, tf->status, tf->error,
->>>  				   &sense_key, &asc, &ascq);
->>>  		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
->>
->> -- 
->> Damien Le Moal
->> Western Digital Research
->>
-> Thank you,
-> Igor 
-> 
+HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16f23146980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39
+dashboard link: https://syzkaller.appspot.com/bug?extid=0dc211bc2adb944e1fd6
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
--- 
-Damien Le Moal
-Western Digital Research
+Unfortunately, I don't have any reproducer for this issue yet.
 
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/13cdb5bfbafa/vmlinux-2ccbdf43.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7a14f5d07f81/bzImage-2ccbdf43.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0dc211bc2adb944e1fd6@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xe003fbfffff80000: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: maybe wild-memory-access in range [0x001fffffffc00000-0x001fffffffc00007]
+CPU: 1 PID: 5570 Comm: kworker/1:5 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Workqueue: wg-crypt-wg2 wg_packet_tx_worker
+RIP: 0010:get_work_pool+0xcb/0x1c0 kernel/workqueue.c:887
+Code: 0d 36 00 48 89 d8 5b 5d c3 cc cc cc cc e8 8d 0d 36 00 48 81 e3 00 fe ff ff 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03 <80> 3c 02 00 0f 85 da 00 00 00 48 8b 1b e8 63 0d 36 00 48 89 d8 5b
+RSP: 0018:ffffc90000598738 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 001fffffffc00000 RCX: ffffffff815881f2
+RDX: 0003fffffff80000 RSI: ffffffff81588243 RDI: 0000000000000007
+RBP: 0000000000000004 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000004 R11: 0000000000000005 R12: ffffe8ffad288cc0
+R13: ffff888000596400 R14: dffffc0000000000 R15: ffff88805b626800
+FS:  0000000000000000(0000) GS:ffff88802c100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000f7f75598 CR3: 0000000056bd0000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ __queue_work+0x200/0x1020 kernel/workqueue.c:2301
+ queue_work_on+0x11a/0x140 kernel/workqueue.c:2410
+ wg_queue_enqueue_per_device_and_peer drivers/net/wireguard/queueing.h:176 [inline]
+ wg_packet_consume_data drivers/net/wireguard/receive.c:526 [inline]
+ wg_packet_receive+0xf65/0x2350 drivers/net/wireguard/receive.c:576
+ wg_receive+0x74/0xc0 drivers/net/wireguard/socket.c:326
+ udp_queue_rcv_one_skb+0xad1/0x18b0 net/ipv4/udp.c:2131
+ udp_queue_rcv_skb+0x198/0xd10 net/ipv4/udp.c:2209
+ udp_unicast_rcv_skb+0x165/0x3b0 net/ipv4/udp.c:2369
+ __udp4_lib_rcv+0x2636/0x3550 net/ipv4/udp.c:2445
+ ip_protocol_deliver_rcu+0x30c/0x4e0 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x316/0x570 net/ipv4/ip_input.c:233
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ ip_local_deliver+0x18e/0x1f0 net/ipv4/ip_input.c:254
+ dst_input include/net/dst.h:460 [inline]
+ ip_rcv_finish net/ipv4/ip_input.c:449 [inline]
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ ip_rcv+0x2c5/0x5d0 net/ipv4/ip_input.c:569
+ __netif_receive_skb_one_core+0x199/0x1e0 net/core/dev.c:5625
+ __netif_receive_skb+0x1d/0x160 net/core/dev.c:5739
+ process_backlog+0x133/0x760 net/core/dev.c:6068
+ __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6722
+ napi_poll net/core/dev.c:6791 [inline]
+ net_rx_action+0x9b6/0xf10 net/core/dev.c:6907
+ handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
+ do_softirq kernel/softirq.c:455 [inline]
+ do_softirq+0xb2/0xf0 kernel/softirq.c:442
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
+ wg_socket_send_skb_to_peer+0x14c/0x220 drivers/net/wireguard/socket.c:184
+ wg_packet_create_data_done drivers/net/wireguard/send.c:251 [inline]
+ wg_packet_tx_worker+0x1aa/0x810 drivers/net/wireguard/send.c:276
+ process_one_work+0x958/0x1ad0 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:get_work_pool+0xcb/0x1c0 kernel/workqueue.c:887
+Code: 0d 36 00 48 89 d8 5b 5d c3 cc cc cc cc e8 8d 0d 36 00 48 81 e3 00 fe ff ff 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03 <80> 3c 02 00 0f 85 da 00 00 00 48 8b 1b e8 63 0d 36 00 48 89 d8 5b
+RSP: 0018:ffffc90000598738 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 001fffffffc00000 RCX: ffffffff815881f2
+RDX: 0003fffffff80000 RSI: ffffffff81588243 RDI: 0000000000000007
+RBP: 0000000000000004 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000004 R11: 0000000000000005 R12: ffffe8ffad288cc0
+R13: ffff888000596400 R14: dffffc0000000000 R15: ffff88805b626800
+FS:  0000000000000000(0000) GS:ffff88802c100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000f7f75598 CR3: 0000000056bd0000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	0d 36 00 48 89       	or     $0x89480036,%eax
+   5:	d8 5b 5d             	fcomps 0x5d(%rbx)
+   8:	c3                   	ret
+   9:	cc                   	int3
+   a:	cc                   	int3
+   b:	cc                   	int3
+   c:	cc                   	int3
+   d:	e8 8d 0d 36 00       	call   0x360d9f
+  12:	48 81 e3 00 fe ff ff 	and    $0xfffffffffffffe00,%rbx
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	48 89 da             	mov    %rbx,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 da 00 00 00    	jne    0x10e
+  34:	48 8b 1b             	mov    (%rbx),%rbx
+  37:	e8 63 0d 36 00       	call   0x360d9f
+  3c:	48 89 d8             	mov    %rbx,%rax
+  3f:	5b                   	pop    %rbx
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
