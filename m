@@ -1,123 +1,182 @@
-Return-Path: <linux-kernel+bounces-219153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B817E90CA9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:56:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B20290CA9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E091C20F22
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:56:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE791C21564
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994DC159582;
-	Tue, 18 Jun 2024 11:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51661586DB;
+	Tue, 18 Jun 2024 11:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUBu1mHq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Vx/Ymzmc"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC7B155A46;
-	Tue, 18 Jun 2024 11:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09081586F5
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718710909; cv=none; b=rLEWEAEsFKaesDQfFKSIL111nwKegLrzRdmanmsewimzosB+mFJlQnlH7G6sDZQU+CXSCviyvwmadb8krPZEtlffym4nCGiW40CPC/jLYFqFyMiFDWa9OEgi3oWilLIJyEXHC7T1/3ykfkGSOt1htVTvAct420+orahhV6EJHsY=
+	t=1718710946; cv=none; b=EOhYTkmqSlrq2PKy5/kQSWbrCekyHKoBioGs+VpwXGSvvgQJ13nrb3GWPPlCBpNt7KveJXxsmj5Q3HuIgwAbjxQfA0fGKYs5OltfvBkdOIwdaKN79lIZoJcjWsZgCV+Vz9DSZV+C1FcT/YofO+C313Myri+PbLCU7EbedMYuDgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718710909; c=relaxed/simple;
-	bh=5LFOZBL74VuadUFLhOQql8yNTsCOeekeZ31KxfExPLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZNocAGWAZffcNO/C8p1XdIFgqpCNWLrI+vDCHTuIF2vJhuYyk31XuKyH5oUxoeSwLY5DwgopjC98DeBO261DngKIttwRc4zXydkfpJBWgyPFA9nVZP+dXUGDtV6F5ttM5u05AUGfG6lqmUxAnasjBzRSOsEvxV62/FdqJbv9348=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUBu1mHq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56FD3C4AF48;
-	Tue, 18 Jun 2024 11:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718710908;
-	bh=5LFOZBL74VuadUFLhOQql8yNTsCOeekeZ31KxfExPLI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=XUBu1mHqkoTeWfB4S8tz4MMHWNGaL+XLtLOF6h1ydK7QffhByJ44asu1CVLtq1+cv
-	 NXzDCx/hsObaHoOA32/xp0HURtoqoTZpeDE183pDerR1ZDepbRSwqf1twFZH+F/Ipa
-	 S34K/1/JI5HuWaER7AXeRw5PoqgXNjp9GIEDd3WmjbKhwkZmCeLmrlaArtY7j9+5EX
-	 5OjJ5Bgd3Tak2kbDQEMcdK2ZwrwXz8O0vpG4ga8g9thsCBC/C8h37OlodBYnja5Ahy
-	 QR/4esOOixvQ7rHv2KuWjCq8mrscYqb4NSKFI+8WAxufx/glx3L5C0oQFDTKT2juEY
-	 5F4rV4I1YH8hg==
-Date: Tue, 18 Jun 2024 12:41:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: David Sterba <dsterba@suse.com>, Filipe Manana <fdmanana@suse.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: linux-next: manual merge of the vfs-brauner tree with the btrfs tree
-Message-ID: <ZnFyeNLLrEcX5_g0@sirena.org.uk>
+	s=arc-20240116; t=1718710946; c=relaxed/simple;
+	bh=Pv9YG5VmtMAr1ULh/ECdcRJmYzVUxCUyifaRaj0QWRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I6/cBLCgWC0sajoq1wNE+/ZxdqZdYyOjSIPjqgMX+RZkvRSuGpm5TrpFt5aPHkB/3Z7+B5WFdQKS5YbtjEALnxycGm60HOKR2XGc2iz6lmQriJ66rmcUfmdqi0yceF3j1t8ZfRLB3BITYv+jF4kphMiw+6aTg02/HOXDaqTW5sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Vx/Ymzmc; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-421bb51d81aso40373365e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:42:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718710941; x=1719315741; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f7UmkjiJBk958rN0+3CFAHXb73T4tiq+66V/cS7zu0M=;
+        b=Vx/Ymzmcf7iz53Bu2Zmd1c14yJxA/bpGABPuE4h8AtVXYg+ffJkRnrtSmPpIGar3lT
+         TTNQlEDjDm9bGFYyJpRUlakhinCuMVbPIyU27xzq+D7Q3DQItqWlf0OMt06EJBF97WSZ
+         hPdM2mKw4zyw2RwLJnrNfZt0cB/xP+bn29xfo5Nsee4Dx0uhprZ7GVTGlge4lJyXVMnl
+         bN8TpDyVK7xmEwFsy0G6NMwTvtkOsVonzDXuapkHX1fSCuj5Wn+zv6pn2a8zKz7UBoHD
+         FF58tuvgXw6c4uO20JGEycVO3ja4wfhKVyteS8oN+G9ZsOGcmf4moKEyU41wsv3rNunU
+         WLzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718710941; x=1719315741;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f7UmkjiJBk958rN0+3CFAHXb73T4tiq+66V/cS7zu0M=;
+        b=Q9dEWquKuzZzzR74IfSunCppnj2ejFBGSfYYmCCfiwHPPHaq7dXau9bu3pLfxNeoUI
+         u5L+0tbgiGWvVzVYhdHYWSeEBNucLAmQVJ64jPUHEPQdmSy6zk1jf1Be4xGjF5NltFSp
+         xcg5iS77jED4YkDEDIqDkct+CzbQG9B/fmWXJoI/Hi4v+HyGNK0Wvo+fG1qkoo+emF/Y
+         htAjfPMUIKPYocbMyAgCRjcIbUh469sdlqtIp1QFA3OwxCO6ptD0SFbLS65N+jW2S36C
+         t9KVEzrV6IK+Dl/MCmf+Us6YNvV40HtZ52RRuCBW6l+eA1zZMAxaqSbAFvn1N1zPoX6N
+         Eiuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWn13Ejk2RNhKh03BVuAN97/vLteJxUmkVtMI8xuggRGDlpDQ02oLoy3LMULW43TWbNlsegMvBZzD/haqyy6A/Wci6Htkuo6N7acs4r
+X-Gm-Message-State: AOJu0Yy3DemJTi4tjjIDy8Mg/NLj0LN5M6AzD7dHEmHNfzji9zs+sdx/
+	URkMXWat+z4V4hemac7rh4SSasCksmQXXaxLI1X1dKCx1/5dt08AjKV/PQs61K0=
+X-Google-Smtp-Source: AGHT+IGybvnpNsXwNwdYnMA93MRhlhEbgIgkEd2VLdninN0UheKxGBH+tOGStyLG2+JGR2GxN7v2TQ==
+X-Received: by 2002:a05:600c:1553:b0:422:1609:a7db with SMTP id 5b1f17b1804b1-42304822a02mr96279175e9.8.1718710940945;
+        Tue, 18 Jun 2024 04:42:20 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750ad082sm13780507f8f.59.2024.06.18.04.42.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 04:42:20 -0700 (PDT)
+Message-ID: <a7552693-e0df-4225-9cbf-a5f482900626@suse.com>
+Date: Tue, 18 Jun 2024 14:42:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MyyM/Ybbte8ajK3U"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] x86/virt/tdx: Support global metadata read for all
+ element sizes
+To: Kai Huang <kai.huang@intel.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, dave.hansen@intel.com, dan.j.williams@intel.com,
+ kirill.shutemov@linux.intel.com, rick.p.edgecombe@intel.com,
+ peterz@infradead.org, tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
+ hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+ isaku.yamahata@intel.com, binbin.wu@linux.intel.com
+References: <cover.1718538552.git.kai.huang@intel.com>
+ <210f7747058e01c4d2ed683660a4cb18c5d88440.1718538552.git.kai.huang@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <210f7747058e01c4d2ed683660a4cb18c5d88440.1718538552.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+<snip>
 
---MyyM/Ybbte8ajK3U
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>   
+> -static int read_sys_metadata_field16(u64 field_id,
+> -				     int offset,
+> -				     void *stbuf)
+> +/*
+> + * Read one global metadata field and store the data to a location of a
+> + * given buffer specified by the offset and size (in bytes).
+> + */
+> +static int stbuf_read_sysmd_field(u64 field_id, void *stbuf, int offset,
 
-Hi all,
+read_system_metadat_field or read_sys_metadata_field or simply
+read_metadata_field
 
-Today's linux-next merge of the vfs-brauner tree got a conflict in:
+> +				  int bytes)
+s/bytes/size
+>   {
+> -	u16 *st_member = stbuf + offset;
+> +	void *st_member = stbuf + offset;
 
-  fs/btrfs/inode.c
+Again, this could be renamed to just 'member', what value does the 'st' 
+prefix bring?
 
-between commit:
+>   	u64 tmp;
+>   	int ret;
+>   
+> -	if (WARN_ON_ONCE(MD_FIELD_ID_ELE_SIZE_CODE(field_id) !=
+> -			MD_FIELD_ID_ELE_SIZE_16BIT))
+> +	if (WARN_ON_ONCE(MD_FIELD_BYTES(field_id) != bytes))
+>   		return -EINVAL;
+>   
+>   	ret = read_sys_metadata_field(field_id, &tmp);
+>   	if (ret)
+>   		return ret;
+>   
+> -	*st_member = tmp;
+> +	memcpy(st_member, &tmp, bytes);
+>   
+>   	return 0;
+>   }
+> @@ -294,11 +296,13 @@ static int read_sys_metadata_field16(u64 field_id,
+>   struct field_mapping {
+>   	u64 field_id;
+>   	int offset;
+> +	int size;
+>   };
+>   
+> -#define TD_SYSINFO_MAP(_field_id, _struct, _member)	\
+> -	{ .field_id = MD_FIELD_ID_##_field_id,		\
+> -	  .offset   = offsetof(_struct, _member) }
+> +#define TD_SYSINFO_MAP(_field_id, _struct, _member)		\
+> +	{ .field_id = MD_FIELD_ID_##_field_id,			\
+> +	  .offset   = offsetof(_struct, _member),		\
+> +	  .size	    = sizeof(typeof(((_struct *)0)->_member)) }
+>   
+>   #define TD_SYSINFO_MAP_TDMR_INFO(_field_id, _member)	\
+>   	TD_SYSINFO_MAP(_field_id, struct tdx_tdmr_sysinfo, _member)
+> @@ -319,9 +323,8 @@ static int get_tdx_tdmr_sysinfo(struct tdx_tdmr_sysinfo *tdmr_sysinfo)
+>   
+>   	/* Populate 'tdmr_sysinfo' fields using the mapping structure above: */
+>   	for (i = 0; i < ARRAY_SIZE(fields); i++) {
+> -		ret = read_sys_metadata_field16(fields[i].field_id,
+> -						fields[i].offset,
+> -						tdmr_sysinfo);
+> +		ret = stbuf_read_sysmd_field(fields[i].field_id, tdmr_sysinfo,
+> +				fields[i].offset, fields[i].size);
+>   		if (ret)
+>   			return ret;
+>   	}
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
+> index b701f69485d3..812943516946 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.h
+> +++ b/arch/x86/virt/vmx/tdx/tdx.h
+> @@ -53,7 +53,8 @@
+>   #define MD_FIELD_ID_ELE_SIZE_CODE(_field_id)	\
+>   		(((_field_id) & GENMASK_ULL(33, 32)) >> 32)
+>   
+> -#define MD_FIELD_ID_ELE_SIZE_16BIT	1
+> +#define MD_FIELD_BYTES(_field_id)	\
 
-  adaac2633c9ad ("btrfs: remove super block argument from btrfs_iget_locked=
-()")
+Just name it MD_FIELD_SIZE, even the MD_FIELD_ID member is called 
+ELEMENT_SIZE_CODE, rather than ELEMENT_BYTES_CODE or some such.
 
-=66rom the btrfs tree and commit:
-
-  b49558e8ce3dc ("btrfs: use iget5_locked_rcu")
-
-=66rom the vfs-brauner tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc fs/btrfs/inode.c
-index 89e58647d08de,cbb2c92b6c084..0000000000000
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@@ -5582,7 -5587,7 +5582,7 @@@ static struct inode *btrfs_iget_locked(
-  	args.ino =3D ino;
-  	args.root =3D root;
- =20
-- 	inode =3D iget5_locked(root->fs_info->sb, hashval, btrfs_find_actor,
- -	inode =3D iget5_locked_rcu(s, hashval, btrfs_find_actor,
-++	inode =3D iget5_locked_rcu(root->fs_info->sb, hashval, btrfs_find_actor,
-  			     btrfs_init_locked_inode,
-  			     (void *)&args);
-  	return inode;
-
---MyyM/Ybbte8ajK3U
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZxcncACgkQJNaLcl1U
-h9B7mwf6Ai8p+Mn7fzmsdlFxYwDN1ZrQsqzBKfxyLisx3ug7uHVnNNUp/mVT8WiV
-9jyBPnZc2+PzXD4u6yHT3KY3cGx3tDdu/gthZTVMd+UX8BkX30/oqwe9WDUIdX+7
-TYsdSCeuVFIM4R65xw0hAyuagXhhxbo004B6Q+89lE0oyTDtrSkyFME8BDOg2AJZ
-FBkVKdsVvJaQWZGAG35RABDqqB1kb4D/WrQpNQuW33q9zqGZlHNxg9cCr+votUrH
-pn1EuhEF5pZxfx3uvJ8/erW/zYQlK91ltoXruXtLBrBck6grDFjFZ3iXU9RU1bKW
-tB32dtEHyWxcArMtcCK2DQ22LliTqA==
-=4b7d
------END PGP SIGNATURE-----
-
---MyyM/Ybbte8ajK3U--
+> +		(1 << MD_FIELD_ID_ELE_SIZE_CODE(_field_id))
+>   
+>   struct tdmr_reserved_area {
+>   	u64 offset;
 
