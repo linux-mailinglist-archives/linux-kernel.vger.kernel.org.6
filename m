@@ -1,224 +1,119 @@
-Return-Path: <linux-kernel+bounces-218639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC9D90C2FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:56:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E2690C2FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256AB1C22CB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:56:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D0F91F2429A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AF11CA9F;
-	Tue, 18 Jun 2024 04:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106401BC53;
+	Tue, 18 Jun 2024 05:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AAz28KRA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WvPRJArM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376B433987;
-	Tue, 18 Jun 2024 04:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6ED91D9503;
+	Tue, 18 Jun 2024 05:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718686544; cv=none; b=qsr9m7GWu9m9XUrh0/lqvfRcOtWyCXc7vBe3SqONzlRUs7CRLzL97qdhH1SyZILESy266Osh+CO95afUxTik9DIHHZI9hrQccxAdWspzF5p+KBGKsAdHE2EJB9mS+ONfoPqHFCjpKIYOUaD4SYuk4I8pEMYKeNx/CSLRQ4Yx/V0=
+	t=1718686942; cv=none; b=jFB5fd52ZGzgYhOjd13iVFJPlNNFAIvyX3g2Ix/ynyafNqqu3Tu/rSXxIJOhTaLbCjOZ9hbwHKX6VsM6xzubMGlz9b8+MFoPi1GpwuIMOlDjPiX8l0QG3i6Ad95V2CrJE74HEVYUaAuWfyh8P4F5mMGHHhjPppNi8cAUVeE9iqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718686544; c=relaxed/simple;
-	bh=o6ukNG1uFMlN+wMsdfJhh/d4ANa/v4iREsteg6C/Kn4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iViIZInV45xiNWwCFmHIPfJlmTNt+gBFa/IoL6Rn0B3+m/nmYbMZF2UmBsJUxXbW6JcEl/jBTk2xv5k7sJTsU7PtZAEmIJntyeDbq9r8qr6bwwBjMoiMXUR9FQjpInwsRaDrAWieiLSj1YJitjVr5V9fcsw2MSovvQ4T0/Ouboo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AAz28KRA; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718686543; x=1750222543;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=o6ukNG1uFMlN+wMsdfJhh/d4ANa/v4iREsteg6C/Kn4=;
-  b=AAz28KRAYLXEF7e16h8eoR8IJbGJXyjDp2Jwm2kHq+MCOxhHtHrRyi+u
-   QcfySXj8SjWPmdGFS7Qqfjoy0ca3ZO+5buyjcUb8HikxF0LoWhSlFlxUJ
-   pv4hrIO3V5W/Mpz4Af0+PVBim6CWElrhby5qE335AJ1ubio/lSD3Calzi
-   qPPEA1hdfTNkHvA6KMOD5Nz+mBaMVx9XTt/MQvcZDB3Mv3bEIFEC2F1tJ
-   LsG7vTDvhUXdjh2lHQPQR4RPn/uCIzYaEhlel27/NzY3BGbuDjRZiPGrw
-   +rukUoIG3HzHSkyElHRuWWOXv6XV3RJrAlGJR8B0TDbIMVYwoZTwuaNH+
-   g==;
-X-CSE-ConnectionGUID: uVKlq61VTxOxHBgoYdSnQA==
-X-CSE-MsgGUID: +2eCEEfbT2CqpMDuy9Pt/w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="38062814"
-X-IronPort-AV: E=Sophos;i="6.08,246,1712646000"; 
-   d="scan'208";a="38062814"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 21:55:43 -0700
-X-CSE-ConnectionGUID: cGjUpZAVTlOGqT9EhAt4MA==
-X-CSE-MsgGUID: x5pOJKYJTHq3YjdhNcNAzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,246,1712646000"; 
-   d="scan'208";a="41507407"
-Received: from unknown (HELO tlindgre-MOBL1.intel.com) ([10.245.247.4])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 21:55:38 -0700
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tony Lindgren <tony@atomide.com>
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org,
-	Tony Lindgren <tony.lindgren@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] serial: core: Rename preferred console handling for match and update
-Date: Tue, 18 Jun 2024 07:54:50 +0300
-Message-ID: <20240618045458.14731-4-tony.lindgren@linux.intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240618045458.14731-1-tony.lindgren@linux.intel.com>
-References: <20240618045458.14731-1-tony.lindgren@linux.intel.com>
+	s=arc-20240116; t=1718686942; c=relaxed/simple;
+	bh=AlZ/wCfSEhRubv+Tmz0Bqb1i838j6C8aXAwYxBrB4zc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=izoxnf+VL9JdaxHwpU923gC9gV5kYG8EOFL413zeXzdeI8AB3N4jRUpxG5Ayf6q3sJKnU0WhPDGvpgV2onAOvgjo1L8UwJ21fH/OAZ9QHvQ+9nfPXqwRMtV54FuQTdYBBbfbuKjl8A4+7KPSwTJcLC99tVvg8VECRkKwPBKRsE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WvPRJArM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HJoYWI027454;
+	Tue, 18 Jun 2024 05:02:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=1APkn2ueUgDZ94kOPMZfO4
+	eT2SKheEiO99NTt1S1EL0=; b=WvPRJArMeEC0Lflu2MVSkwjr/QywSzwX1a1q3r
+	mamYLn6lh0ep1IDbeZU+EpBSS1AaTQ85S/rpW6Echdipv+rHb+Ul+4xk/Q9LVMHs
+	9q7KYbowNVw0ogb+QX7MRGc1vuPlZ+zHWOfjf2rmmDXsmjV4pCKOq5/TFZln4gbP
+	hgrzz46mquHMImI/q5D7JlrDAzxhe5eqBidfLXcat8MGHBo+eEnEP6kis61SHObf
+	hCT4Km8YMz3X4oYi0W0YvgiuormwvZvOh9B3HpMv2x1ahmDIWiuXs+uNdr7q4/Zu
+	rKiMIpJaosnPku0sS+Jwop/MK+RqIhE3diQR7LU04E1uiBZA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys3qf5jrr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 05:02:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I52F2w016138
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 05:02:16 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
+ 2024 22:02:15 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 17 Jun 2024 22:02:11 -0700
+Subject: [PATCH] dsp56k: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240617-md-m68k-drivers-char-dsp56k-v1-1-56e435ffa664@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIANIUcWYC/x3MQQrCMBBA0auUWTvQhBhbryIukmZqh5pYZrQUS
+ u9udPng83dQEiaFa7OD0MrKr1JhTg0MUygPQk7VYFvrWm8umBNm382YhFcSxVoJJl3OfkbnOmN
+ TH8c+WaiHRWjk7X+/3atjUMIooQzT7/nk8tkwB32TwHF8AfoKV+GMAAAA
+To: Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Jqom5GfUZgX4k1517bxiaalDyJ_2vQ7j
+X-Proofpoint-ORIG-GUID: Jqom5GfUZgX4k1517bxiaalDyJ_2vQ7j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 mlxlogscore=877 bulkscore=0 phishscore=0
+ lowpriorityscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180035
 
-We are now matching and updating the preferred console, not adding it.
-Let's update the naming accordingly to avoid confusion.
+With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/dsp56k.o
 
-Suggested-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Tony Lindgren <tony.lindgren@linux.intel.com>
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- drivers/tty/serial/8250/8250_core.c  |  4 ++--
- drivers/tty/serial/serial_base.h     |  4 ++--
- drivers/tty/serial/serial_base_bus.c | 21 +++++++++++----------
- 3 files changed, 15 insertions(+), 14 deletions(-)
+ drivers/char/dsp56k.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index ff15022369e4..3556fe42ec65 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -42,7 +42,7 @@
- 
- #include <asm/irq.h>
- 
--#include "../serial_base.h"	/* For serial_base_add_isa_preferred_console() */
-+#include "../serial_base.h"	/* For serial_base_match_and_update_isa_preferred_console() */
- 
- #include "8250.h"
- 
-@@ -564,7 +564,7 @@ static void __init serial8250_isa_init_ports(void)
- 		if (serial8250_isa_config != NULL)
- 			serial8250_isa_config(i, &up->port, &up->capabilities);
- 
--		serial_base_add_isa_preferred_console(serial8250_reg.dev_name, i);
-+		serial_base_match_and_update_isa_preferred_console(serial8250_reg.dev_name, i);
- 	}
+diff --git a/drivers/char/dsp56k.c b/drivers/char/dsp56k.c
+index bda27e595da1..1c2c8439797c 100644
+--- a/drivers/char/dsp56k.c
++++ b/drivers/char/dsp56k.c
+@@ -530,5 +530,6 @@ static void __exit dsp56k_cleanup_driver(void)
  }
+ module_exit(dsp56k_cleanup_driver);
  
-diff --git a/drivers/tty/serial/serial_base.h b/drivers/tty/serial/serial_base.h
-index 743a72ac34f3..a5632eeda250 100644
---- a/drivers/tty/serial/serial_base.h
-+++ b/drivers/tty/serial/serial_base.h
-@@ -68,12 +68,12 @@ int serial_base_add_preferred_console(struct uart_driver *drv,
- 
- #ifdef CONFIG_SERIAL_8250_CONSOLE
- 
--int serial_base_add_isa_preferred_console(const char *name, int idx);
-+int serial_base_match_and_update_isa_preferred_console(const char *name, int idx);
- 
- #else
- 
- static inline
--int serial_base_add_isa_preferred_console(const char *name, int idx)
-+int serial_base_match_and_update_isa_preferred_console(const char *name, int idx)
- {
- 	return 0;
- }
-diff --git a/drivers/tty/serial/serial_base_bus.c b/drivers/tty/serial/serial_base_bus.c
-index 2cf86f1ff298..391d41ef5942 100644
---- a/drivers/tty/serial/serial_base_bus.c
-+++ b/drivers/tty/serial/serial_base_bus.c
-@@ -207,8 +207,9 @@ void serial_base_port_device_remove(struct serial_port_device *port_dev)
- 
- #ifdef CONFIG_SERIAL_CORE_CONSOLE
- 
--static int serial_base_add_one_prefcon(const char *match, const char *dev_name,
--				       int port_id)
-+static int serial_base_match_and_update_one_prefcon(const char *match,
-+						    const char *dev_name,
-+						    int port_id)
- {
- 	int ret;
- 
-@@ -237,7 +238,7 @@ static int serial_base_add_sparc_console(const char *dev_name, int idx)
- 		return 0;
- 	}
- 
--	return serial_base_add_one_prefcon(name, dev_name, idx);
-+	return serial_base_match_and_update_one_prefcon(name, dev_name, idx);
- }
- 
- #else
-@@ -249,7 +250,7 @@ static inline int serial_base_add_sparc_console(const char *dev_name, int idx)
- 
- #endif
- 
--static int serial_base_add_prefcon(const char *name, int idx)
-+static int serial_base_match_and_update_prefcon(const char *name, int idx)
- {
- 	const char *char_match __free(kfree) = NULL;
- 	const char *nmbr_match __free(kfree) = NULL;
-@@ -262,7 +263,7 @@ static int serial_base_add_prefcon(const char *name, int idx)
- 		if (!nmbr_match)
- 			return -ENODEV;
- 
--		ret = serial_base_add_one_prefcon(nmbr_match, name, idx);
-+		ret = serial_base_match_and_update_one_prefcon(nmbr_match, name, idx);
- 		if (ret)
- 			return ret;
- 
-@@ -277,7 +278,7 @@ static int serial_base_add_prefcon(const char *name, int idx)
- 	if (!char_match)
- 		return -ENOMEM;
- 
--	return serial_base_add_one_prefcon(char_match, name, idx);
-+	return serial_base_match_and_update_one_prefcon(char_match, name, idx);
- }
- 
- /**
-@@ -304,7 +305,7 @@ int serial_base_add_preferred_console(struct uart_driver *drv,
- 	const char *port_match __free(kfree) = NULL;
- 	int ret;
- 
--	ret = serial_base_add_prefcon(drv->dev_name, port->line);
-+	ret = serial_base_match_and_update_prefcon(drv->dev_name, port->line);
- 	if (ret)
- 		return ret;
- 
-@@ -314,7 +315,7 @@ int serial_base_add_preferred_console(struct uart_driver *drv,
- 		return -ENOMEM;
- 
- 	/* Translate a hardware addressing style console=DEVNAME:0.0 */
--	return serial_base_add_one_prefcon(port_match, drv->dev_name, port->line);
-+	return serial_base_match_and_update_one_prefcon(port_match, drv->dev_name, port->line);
- }
- 
- #endif
-@@ -326,9 +327,9 @@ int serial_base_add_preferred_console(struct uart_driver *drv,
-  * This should be only called from serial8250_isa_init_preferred_console(),
-  * other callers are likely wrong and should rely on earlycon instead.
-  */
--int serial_base_add_isa_preferred_console(const char *name, int idx)
-+int serial_base_match_and_update_isa_preferred_console(const char *name, int idx)
- {
--	return serial_base_add_prefcon(name, idx);
-+	return serial_base_match_and_update_prefcon(name, idx);
- }
- 
- #endif
--- 
-2.45.2
++MODULE_DESCRIPTION("Atari DSP56001 Device Driver");
+ MODULE_LICENSE("GPL");
+ MODULE_FIRMWARE("dsp56k/bootstrap.bin");
+
+---
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+change-id: 20240617-md-m68k-drivers-char-dsp56k-44812d9bf9d2
 
 
