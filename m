@@ -1,119 +1,214 @@
-Return-Path: <linux-kernel+bounces-218810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBAB190C65F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:20:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A9590C674
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629A91F22707
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE4281C213D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE2513D618;
-	Tue, 18 Jun 2024 07:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="I5iRKQed"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A756185E73;
+	Tue, 18 Jun 2024 07:51:49 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B731013AD2B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B592513A245;
+	Tue, 18 Jun 2024 07:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718696978; cv=none; b=bv6jynyXR5mOqy3fKhaU2qsRJpOznDk8FRkr2NqNedXNUa/b2O0kvWBGrPKCySvOXHGqErdUI3IoNja8NdcVy2T+KBrgoW8jEIyQ53jYDmQbwWTPX2jBL9DyV8cpWaASWfZ1ANDbDcSB+xla1kL9X60x2jGe8i+9b653wjOhIGY=
+	t=1718697108; cv=none; b=PyPo80jnIrvPudYrkCRghfLnR3X2+SmhMH3z5L40ayQ5HlFNaDHVhbAtEV+ce43pmyCcxoSRoSv0OgjviaOJ8l2jWOgnxoq6GmG7U6QSebnxboaJOweotf7wVxIw/m+CIpQGi2T3pJHRqRWLRZi3ww4in75aTEIsBcHFkJB3Q8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718696978; c=relaxed/simple;
-	bh=M6IjAQJ7uWC7h4ilG1WLKnCCSBc0hUV/buoGZiIOrfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DYvEVDHJp3hII1Hl80xLyE4l76IYwzGayMMy3fe/gfbcdvLMOUVVljFhKMI1Ut6urLdxWPWy2v15mwWv66uYeucjAuWxdd7XWcSZKo4XPxNyZBeCJ3ywf6p0mj0UgRvXa7WWc1TiA9XZDYL61D9/ntr5wj14o6d5cwGUP4dUyLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=I5iRKQed; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-421d32fda86so54649975e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:49:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718696975; x=1719301775; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=slVhHLNHnoer2IgmxdtW2n42We64zqnTXEtmuZh6XNg=;
-        b=I5iRKQedDIFFDJpbWTppdtVGZllCVr10lV9ML78jpGdOU98sGYNnRjyy/o/engNfWG
-         KTvIn+JRb+RgzzDSFhLx2MzeWK85xVtBHrPz9hYZ/HXCTlH2rffk/UhsHn4nP7Paq0pz
-         SDRt5tqoON1zBiWTz/3z1jqjAZucwbbsqInpi1GRZFb+WeI1GJLX33zMmnIyAsFWPepT
-         p3bnltcqIUIdL+25Gfx2bcwgTsjWL8LctQfMP1sHi7EzkCJwaBHnD0TvfgPiTiEfSjkM
-         +aRXueKxArEPBZE8zUJpOsn0IMl5TeBVHbywhyepHQDdsRZmcxWeu3K/1/E3VZD0Js8E
-         XoRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718696975; x=1719301775;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=slVhHLNHnoer2IgmxdtW2n42We64zqnTXEtmuZh6XNg=;
-        b=TPqMjq1Or0OlcfyW1qfbapGlcDAmmrB84geq3nrF/TssWwhARJhvc7QDjTzOSvWUny
-         45/cFCCbL/knRcWFvLQj2iqmrD6dwxvRF4DYuzr+/JrhqOseePW3Ql7RD5ESm22XC5GB
-         fCaLXAxd/ivfUqAL4Qsf8qNIcy2lrVbzdPdgCPBRhTvXNCPDRomrIQnULNeQaP/TuZV0
-         2fLtGCRxYYAhFxWLU+ZOUKX4+/a5xLbwTMfs06LO6eE96OCgaHGBkwO1ZJ9q6GngPiVF
-         g/gyLTKqF05KO2naKxsCUlv/Ofl4Fb7ttbkWvoucge8f2CTHTLgexRT+wIe8wOZi7UoC
-         pWFg==
-X-Gm-Message-State: AOJu0YwnMYDlSGGTpE3iAEMwAOAuXwD2d6mEItStomrhyHrDEPCAtv+t
-	XiYKCMkptfBPi5x0XeJjgHKaIcDh6g4EqYroveV3jWyXj9TYruPTbd9rr8IzPG8=
-X-Google-Smtp-Source: AGHT+IHAe9Sp/boX/61amtrpHaGVSdWp1zPS7L3crhK53BIAjo0hqkzbwsV3DM2DqDUJ03cDNj5hig==
-X-Received: by 2002:a05:600c:4f83:b0:421:29cd:5c95 with SMTP id 5b1f17b1804b1-42304820b3bmr138531575e9.10.1718696974946;
-        Tue, 18 Jun 2024 00:49:34 -0700 (PDT)
-Received: from [192.168.1.70] ([84.102.31.231])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe919bsm215819655e9.19.2024.06.18.00.49.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 00:49:34 -0700 (PDT)
-Message-ID: <01f2ee94-f8b0-449c-aa19-3ee38a2e36a1@baylibre.com>
-Date: Tue, 18 Jun 2024 09:49:31 +0200
+	s=arc-20240116; t=1718697108; c=relaxed/simple;
+	bh=bk2jLyABiJ8wha3uvX9kVBJQC7PjnYSXD2YVCtySO3o=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=G2/JLuij/KXJmVxZjzHrItLbtFPXEr4Bady7ThkH+Y7AObJOz+XHMGaQbQk31ij8HvZE2ctmOifSWEnL4FRWsMxGulLDEmJsts5gUzCXr/w64LGtHrwMXBlWIoM36aU2tXykUAwNxv9ty+jVFgiMGOP4lwC2zYDOn8sYPddd49U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 45I7pKb15197341, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 45I7pKb15197341
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Jun 2024 15:51:20 +0800
+Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 18 Jun 2024 15:51:20 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 18 Jun 2024 15:51:19 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Tue, 18 Jun 2024 15:51:19 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Simon Horman <horms@kernel.org>
+CC: Markus Elfring <Markus.Elfring@web.de>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric
+ Dumazet" <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Hariprasad Kelam <hkelam@marvell.com>, Jiri Pirko
+	<jiri@resnulli.us>,
+        Larry Chiu <larry.chiu@realtek.com>,
+        Ping-Ke Shih
+	<pkshih@realtek.com>,
+        Ratheesh Kannoth <rkannoth@marvell.com>
+Subject: RE: [v20 02/13] rtase: Implement the .ndo_open function
+Thread-Topic: [v20 02/13] rtase: Implement the .ndo_open function
+Thread-Index: AQHawJ5eL1A+vv787Ey/gTxPzZ037bHL8dBA///X7QCAAVF5MA==
+Date: Tue, 18 Jun 2024 07:51:19 +0000
+Message-ID: <416da6e14d134caeaa4bfe29291f0eb2@realtek.com>
+References: <20240607084321.7254-3-justinlai0215@realtek.com>
+ <1d01ece4-bf4e-4266-942c-289c032bf44d@web.de>
+ <ef7c83dea1d849ad94acef81819f9430@realtek.com>
+ <6b284a02-15e2-4eba-9d5f-870a8baa08e8@web.de>
+ <0c57021d0bfc444ebe640aa4c5845496@realtek.com>
+ <20240617185956.GY8447@kernel.org>
+In-Reply-To: <20240617185956.GY8447@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the mediatek tree
-To: Mark Brown <broonie@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>,
- Nicolas Pitre <npitre@baylibre.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <ZnBn-vSj-ssrJFr2@sirena.org.uk>
-Content-Language: en-US
-From: Julien Panis <jpanis@baylibre.com>
-In-Reply-To: <ZnBn-vSj-ssrJFr2@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 6/17/24 18:44, Mark Brown wrote:
-> Hi all,
->
-> After merging the mediatek tree, today's linux-next build (arm64
-> defconfig) failed like this:
->
-> /tmp/next/build/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-display.dtsi:113.6-121.3: Warning (graph_port): /fragment@4/__overlay__: graph port node name should be 'port'
-> Error: /tmp/next/build/arch/arm64/boot/dts/mediatek/mt8186.dtsi:2399.29-30 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[4]: *** [/tmp/next/build/scripts/Makefile.lib:431: arch/arm64/boot/dts/mediatek/mt8186-corsola-magneton-sku393216.dtb] Error 1
->
-> Caused by commit
->
->    d7c1bde38bf37a5 ("arm64: dts: mediatek: mt8186: add default thermal zones")
->
-> I have used the last version of the mediatek tree from 20240613 instead.
+> On Mon, Jun 17, 2024 at 01:28:51PM +0000, Justin Lai wrote:
+> >
+> > > >> How do you think about to increase the application of scope-based
+> > > >> resource
+> > > management?
+> > > >> https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/c
+> > > >> lean
+> > > >> up.h#L8
+> > > >
+> > > > Due to our tx and rx each having multiple queues that need to
+> > > > allocate descriptors, if any one of the queues fails to allocate,
+> > > > rtase_alloc_desc() will return an error. Therefore, using 'goto'
+> > > > here rather than directly returning seems to be reasonable.
+> > >
+> > > Some goto chains can be replaced by further usage of advanced
+> > > cleanup techniques, can't they?
+> > >
+> > > Regards,
+> > > Markus
+> >
+> > rtase_alloc_desc() is used to allocate DMA memory.
+> > I'd like to ask if it's better to keep our current method?
+>=20
+> Hi Justin,
+>=20
+> It may be the case that the techniques recently added by cleanup.h could =
+be
+> used here. But, OTOH, it is the case that using goto for unwinding errors=
+ is in
+> keeping with current Networking driver best practices.
+>=20
+> Regardless of the above, I would suggest that if an error occurs in
+> rtase_alloc_desc() then it release any resources it has allocated. Assumi=
+ng the
+> elements of tp->tx_ring and tp->rx_ring are initialised to NULL when
+> rtase_alloc_desc is called, it looks like that can be achieved by
+> rtase_alloc_desc() calling rtase_free_desc().
+>=20
+> Something like the following (completely untested!).
+> Please also note that there is probably no need to call netdev_err on err=
+or, as
+> the memory core should already log on error.
+>=20
+> static int rtase_alloc_desc(struct rtase_private *tp) {
+>         struct pci_dev *pdev =3D tp->pdev;
+>         u32 i;
+>=20
+>         /* rx and tx descriptors needs 256 bytes alignment.
+>          * dma_alloc_coherent provides more.
+>          */
+>         for (i =3D 0; i < tp->func_tx_queue_num; i++) {
+>                 tp->tx_ring[i].desc =3D
+>                                 dma_alloc_coherent(&pdev->dev,
+>=20
+> RTASE_TX_RING_DESC_SIZE,
+>=20
+> &tp->tx_ring[i].phy_addr,
+>                                                    GFP_KERNEL);
+>                 if (!tp->tx_ring[i].desc)
+>                         goto err;
+>         }
+>=20
+>         for (i =3D 0; i < tp->func_rx_queue_num; i++) {
+>                 tp->rx_ring[i].desc =3D
+>                                 dma_alloc_coherent(&pdev->dev,
+>=20
+> RTASE_RX_RING_DESC_SIZE,
+>=20
+> &tp->rx_ring[i].phy_addr,
+>                                                    GFP_KERNEL);
+>                 if (!tp->rx_ring[i].desc)
+>                         goto err;
+>                 }
+>         }
+>=20
+>         return 0;
+>=20
+> err:
+>         rtase_free_desc(tp)
+>         return -ENOMEM;
+> }
+>=20
+> And then rtase_alloc_desc can be called like this in rtase_open():
+>=20
+> static int rtase_open(struct net_device *dev) {
+>         struct rtase_private *tp =3D netdev_priv(dev);
+>         const struct pci_dev *pdev =3D tp->pdev;
+>         struct rtase_int_vector *ivec;
+>         u16 i =3D 0, j;
+>         int ret;
+>=20
+>         ivec =3D &tp->int_vector[0];
+>         tp->rx_buf_sz =3D RTASE_RX_BUF_SIZE;
+>=20
+>         ret =3D rtase_alloc_desc(tp);
+>         if (ret)
+>                 return ret;
+>=20
+>         ret =3D rtase_init_ring(dev);
+>         if (ret)
+>                 goto err_free_all_allocated_mem;
+>=20
+> ...
+>=20
+> err_free_all_allocated_mem:
+>         rtase_free_desc(tp);
+>=20
+>         return ret;
+> }
+>=20
+> This is would be in keeping with my understanding of best practices for
+> Networking drivers: that callers don't have to worry about cleaning up
+> resources allocated by functions that return an error.
+>=20
+>=20
+> I would also suggest reading Markus's advice with due care, as it is not =
+always
+> aligned with best practice for Networking code.
 
-Hello Mark,
+Hi Simon,
+Thank you for your response. Based on your suggestion, if the descriptor
+allocation of DMA memory fails, I will directly do error handling in
+rtase_alloc_desc() using the 'goto' method. Moreover, in the error
+handling section, I will call rtase_free_desc(tp) to free the already
+allocated descriptor.
 
-Here is the explanation:
-https://lore.kernel.org/all/71d53ff6-fdae-440d-b60d-3ae6f0c881d9@baylibre.com/
-https://lore.kernel.org/all/6d9e0f19-9851-4f23-a8b8-6acc82ae7a3d@baylibre.com/
-
-For some reason, the 2 first commits of the series were not applied
-with the dts. These commits are needed because they contain some
-definitions used by the dts.
-
-Julien
 
