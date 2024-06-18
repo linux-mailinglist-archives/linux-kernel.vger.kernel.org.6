@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-219638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9476790D5ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:47:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A26290D5F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A497A1C23A07
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:47:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160F21F242C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D4915218D;
-	Tue, 18 Jun 2024 14:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1B1153BC7;
+	Tue, 18 Jun 2024 14:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YjLEw97L"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RNSBxOqJ"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA551509B4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1715A1527B1
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718721551; cv=none; b=WEa7QsYsPE3c5TXJts+60suC4RRSx8aoG1X2u6qMAe+1Gc3P6FHXvJNL/ZCVATZobXon4WTaUEiP1/g2ecQDXuQmsTegsquRxfDQ7HXURMtAYfZTQTTOAIQXEkYk16+xQVflzI2jtVSTrhHN6Pq7ouJ8S0+H6K6JNO0D2P8uv/I=
+	t=1718721556; cv=none; b=sm0FAbOGsm/hXbdk6UTLCBMXxs8KmnSCqxSaFt8QByRa6caMIExXQr7LnJZkhzVr8937zXkyDoUXVuGJXKPtXsHyIQ7dZuDoMyy/Jhg0gDJbDwsw+6O/fDhx94pzEMtxpOYU7mtKMGCd5K26AbKIi73rJgnse+QFPZ3Alm5RlJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718721551; c=relaxed/simple;
-	bh=dBK+Ndw0Vot1wf/eS0eqhW75oHUr4im8qRpkAfEJRNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fI4GEvOVVX8SvDtWmOsZWTeIunLsARLUsZgztZ3BjCEzsOPqsjVZx6jeFDxuh7DUsVMGZheT3cUtlZJXpoPxWcssDFC5Rl2fwYsOCFns6gm7gz7PQyEpPRrY/jHHhliGxqiaYrCCtTP8xwFawhpwrnBY4ED0+O9p2YORFslR7bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YjLEw97L; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f97a4c4588so3293788a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:39:09 -0700 (PDT)
+	s=arc-20240116; t=1718721556; c=relaxed/simple;
+	bh=zrVZtKOw1wtm34lfpGY8EB2vsDosS6TKH8DIDwhCmGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EKWSwPTklTBrIW9AqttNCBsBkah4TDaSRwZQDNSUkXnyc8W8b8ILxeMQ1uEfv6xsYJ0JAOpBC/QMt6W+9xXC+BSgcsENorF0VdG0oizPy0JFBvQ84tEodaQ/F4yOi6gIE4lvcxjg8kJmuOjdriCwzeGKJN4fDPugkHEzaj2CpB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RNSBxOqJ; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cdbso38426481fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:39:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718721548; x=1719326348; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dBK+Ndw0Vot1wf/eS0eqhW75oHUr4im8qRpkAfEJRNo=;
-        b=YjLEw97LcDvrYFVevvaMmoIBRMpHrSATUHvBtdgvCWP5EJ8d9tCMM0iH+dxskBFebH
-         OGuNMF/mCr/iI2AEO+QmNGi3Zq10CJ2RNCG1nZUohstMfZuTq6mLxNK0wveBOKMiCcXZ
-         VXzkVtPS28uXylXJI4GWSrVXtzxGG/pxP9h6sA9ySwcqEBXkQfsNBdk76x4y18s3BVPS
-         UktNu9Mt+4W4PsfN2nFsaunMdYXGvC/b43JEHg1bhaErNfc+zReY6OcgxOPIk9TvBdYB
-         e1MJXER3Yhz1ka0wYxMwD4SzILpq8wKl5u5S0nB1bP4Er6G4kkQVGo1vNfvUIBT/DOcx
-         IA+A==
+        d=linaro.org; s=google; t=1718721553; x=1719326353; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wdAgFpCSfsBaoK3eiN4GlXTRiQPusSTXTIM+J24lOEM=;
+        b=RNSBxOqJIstc+XUQn7OUh9Bzi6stsMnI/6slcpqBKEn7bZUrrQF/20HJ5ivM63PoVV
+         NtY4EHFLUMMEkCn+qsNclFFnPPgvCgaIZ4upkeSFBARyTQcTXdtl23DYNoJqRmw1MFki
+         /ievN6j5MR9ui71olGFCmpk5WyrzBmK51TNKJV/iMeXQY++kAQK/ibOEI/j/ytGwcHf0
+         njFz3XdUhoZrZLaTw/6mBGuOvOJAygSGU3FfGvfG98La7cUsbh54LvLEZznEzcQqemge
+         mcJgu2BMrCZc/XZuKn7avqQ+b+Es4SxryLQc+/wet1a4zLbEz85UZLQkLZlr9bNFH207
+         f00Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718721548; x=1719326348;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dBK+Ndw0Vot1wf/eS0eqhW75oHUr4im8qRpkAfEJRNo=;
-        b=RwxbbWpc38/bbtBLzI+2tPmX+5QvKtX1HTiaV5NjN3PX3p39uCXmJ2zibM6PcLZ7DY
-         g/HGNkozAFBIFtG38A/NOhBcEOkLL9QKOqtobkfzho8c0JaBtJ+jyAvU+/nX40VXkRrW
-         OWBBoqGDHRL+fXC10veRvHOsmAwGxMOrT4/wsm5TXGTKv7QfVK91Fkostm6JZ8opifP+
-         uOkpm4yIESCzKhBxE3npvZiK37smEO8BoNk9TvY+utIEt2H3jIGqfbfcWMGSbI9hA62E
-         pDeCBz6ssSTveY+U1jb5/cRopht4gI9HSvYK4Iqp60oSRtGMYLzrVLgLoFDKY9qqbo1u
-         6h/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVLu3vdtUBg9CX89utxquDVdOYDvdzm4v9y5QC3eAzv6wM4CZGaklJN/DNu5LBcuPNOt7VK3Btr7tKm/nkhHcKQvQQ0d41ncaVFagTn
-X-Gm-Message-State: AOJu0YwmL8VfL1g2KNwcAvd70evXOrWXykYqQTmHYw8kkP5TEPzJqPa1
-	9gQfYv5Fk2RyuMNQ1EluDlKSkSNNyF8Rnf2+IAU7jY+wmIlfcPIqJ0JVwjsCRTnwZSJ40757zP0
-	h8LE+4ePMosnpo/wC5ZjojqQ/jE+Pw7E3pwvo
-X-Google-Smtp-Source: AGHT+IHvmtXD/5jdcU/F3gCaBUEdfvS5SdhkcxvX24T00XkUY5xtucdhFcs/3zm/3mx3Jnt7TCz3MWavkll+mwgIPtY=
-X-Received: by 2002:a05:6830:1d8f:b0:6f9:6e0d:dfaf with SMTP id
- 46e09a7af769-6fb93b08befmr13854300a34.26.1718721548293; Tue, 18 Jun 2024
- 07:39:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718721553; x=1719326353;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wdAgFpCSfsBaoK3eiN4GlXTRiQPusSTXTIM+J24lOEM=;
+        b=nE1HPhAeiNU5c6saDNK2N8jyNIJu3rtldVXX2H5v1h7wu8lOaTINInvF1rA0YZ9P1Z
+         bIk7nFMwWAHEvyJdO3RsA+LEZV85ZVTqzNZxOEEyLATXrtRFB+0nsed5daXHngRQFICj
+         GURr51hUQt5D3s6QvnvJacUae1Lq5oMhJvOEswC70tSkbg4+41U5sWuwagut+gwYiIDu
+         kTqh3z8fMstcPvtcc5mFkTcwlbAPcDozRFU8TBbfoZZA1mT4BSqxYooPuPhM2PyH256O
+         n2LsxxGdBLoSaPXe5iS+oLIuC7HdcmcQXPR3oC5njH34ix35zWn/6yOM5V/SQqSGI0yv
+         Pabg==
+X-Gm-Message-State: AOJu0Yya4FqgvMSEgg+5NOTP8O4fG1qFH1bTww2iySO95aXnVzyGATt0
+	vss92wYVKjQTajIXsdBc7D7CHksa+ahaKU/lPoMMh2lAZWVneBLahynCVFLL78s=
+X-Google-Smtp-Source: AGHT+IFpKUjGdBUk/w3QFo4wFb49hKoT3v+xxZtiuL1ieNzPlljX7lEbvTogCzQzGRTD99k7+qiidw==
+X-Received: by 2002:a2e:a317:0:b0:2eb:d924:43fb with SMTP id 38308e7fff4ca-2ec3cfe9ee8mr277231fa.41.1718721553229;
+        Tue, 18 Jun 2024 07:39:13 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c0605bsm17294671fa.47.2024.06.18.07.39.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 07:39:12 -0700 (PDT)
+Message-ID: <7395f6ca-31d7-4ebc-b846-6c68e2ae2efe@linaro.org>
+Date: Tue, 18 Jun 2024 16:39:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613153924.961511-1-iii@linux.ibm.com> <20240613153924.961511-17-iii@linux.ibm.com>
-In-Reply-To: <20240613153924.961511-17-iii@linux.ibm.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Tue, 18 Jun 2024 16:38:31 +0200
-Message-ID: <CAG_fn=Uyx7ijj-igC2hgSpdzmChM0FVy46HTRXyKzNAA0OFK7A@mail.gmail.com>
-Subject: Re: [PATCH v4 16/35] mm: slub: Unpoison the memchr_inv() return value
-To: Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] arm64: dts: qcom: x1e80100: Enable bwmon and fastrpc
+ support
+To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
+ djakov@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ srinivas.kandagatla@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+ quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org,
+ dmitry.baryshkov@linaro.org, abel.vesa@linaro.org
+References: <20240604011157.2358019-1-quic_sibis@quicinc.com>
+ <be2dc908-c8d3-4739-9f46-8f8daf0f328e@linaro.org>
+ <24d2d3b3-d676-8e86-bae4-c3538b7b9981@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <24d2d3b3-d676-8e86-bae4-c3538b7b9981@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 5:39=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm.com=
-> wrote:
->
-> Even though the KMSAN warnings generated by memchr_inv() are suppressed
-> by metadata_access_enable(), its return value may still be poisoned.
->
-> The reason is that the last iteration of memchr_inv() returns
-> `*start !=3D value ? start : NULL`, where *start is poisoned. Because of
-> this, somewhat counterintuitively, the shadow value computed by
-> visitSelectInst() is equal to `(uintptr_t)start`.
->
-> The intention behind guarding memchr_inv() behind
-> metadata_access_enable() is to touch poisoned metadata without
-> triggering KMSAN, so unpoison its return value.
 
-What do you think about applying __no_kmsan_checks to these functions inste=
-ad?
+
+On 6/13/24 19:27, Sibi Sankar wrote:
+> 
+> 
+> On 6/6/24 16:00, Konrad Dybcio wrote:
+>> On 4.06.2024 3:11 AM, Sibi Sankar wrote:
+>>> This patch series enables bwmon and fastrpc support on X1E80100 SoCs.
+>>>
+>>> This series applies on:
+>>> next-20240603 + https://lore.kernel.org/lkml/20240603205859.2212225-1-quic_sibis@quicinc.com/
+>>>
+>>
+>> Going back to [1], is memlat-over-scmi not enough to give us good numbers
+>> without OS intervention? Does probing bwmon and making some decisions in
+>> Linux actually help here?
+> 
+> Memlat and bwmon are meant to cover to different use cases. Though
+> they have a big overlap on when they get triggered bwmon is specifically
+> meant to address cases where band-width aggregation is required (meaning
+> if other peripherals already have a avg bw vote on active LLCC/DDR, the
+> vote from bwmon would be an additional request on top of that). However
+> to make use of this we should vote for avg-kbps in addition to peak from
+> icc-bwmon driver which we don't currently do (Shiv was planning on
+> sending a fix for it).
+
+Great, thanks for confirming
+
+Konrad
 
