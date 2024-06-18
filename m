@@ -1,140 +1,108 @@
-Return-Path: <linux-kernel+bounces-219031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3778990C906
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:21:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64C490C909
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6ADD1F21855
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:21:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 612B3282FB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7090413AD1C;
-	Tue, 18 Jun 2024 10:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B94813C839;
+	Tue, 18 Jun 2024 10:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U0COPhka"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CP9sJJbQ"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328716A33F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA6613BC31
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718705396; cv=none; b=IX3nuw0Lbbbzg2AGx38WRBmf3onn/ebo5edXSguHwp6rDsXKKmrV7iZrJ1joDwS6XThfVNIqpQBmQrBcm/nkvYPmDNlr6n7WIOZQGV5XMq23QcdLNOUH/BXZ8j4rAvfAgdRiT7ZJUrcX8qJ4YiPV+1PaRwJaK/po2jTGMTkCKS0=
+	t=1718705423; cv=none; b=EPZAzdvd3rjYTQs1N0W95xh+GJT/XOr6NMP/iNY5lfHmwo6uxY2e77emJQV0lUGxAx/L8vneZGAImN5PP0aioE5oY7djBRnmFBzr7xCtolKqS8rlS9h5YpzcMCY6NFvqB1cB2AL2P4VtTW+fCf89ps1weCUF09HP6nauUGlmFjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718705396; c=relaxed/simple;
-	bh=7oxJcCqLRhSocPcJIPCN/nopqjreH5+gh/HYi4HAm8Y=;
+	s=arc-20240116; t=1718705423; c=relaxed/simple;
+	bh=rRdvEX8LeL4ZldtK1EB4UBDTGqjoriC0preu44uvUtI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FYRsOOMkhkURAz+ZMIeAq1pYVeEbTkOkzWsajgXqtQYJUqN+juqvJs9UD+3OEMyFjbRVu7UQUzRLlUSUn0Had3ICKBuOsqtos0uJnxRGWXKL4270kKg0NLInemneNfqwBh6U9/gRHmD+BVLQk+N0tf/SWGvJT1WhBwknUz5bqgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U0COPhka; arc=none smtp.client-ip=209.85.219.169
+	 To:Cc:Content-Type; b=CXnSycsAftAj0tvPdE8DEfxYO6glrxdEcYjnaClY0oRjHt7kyLzSmqURPziOCHHcn09af2K1Iu2AzHq68jLjEHPdI3b3VdMHPOTjV2cY3LYWPCheaNLXwQA4+8h5RDalyqRvB9dOpOQkqg6h0sDqGzdoy8v2NzkDybRH/Ek0t+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CP9sJJbQ; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02b571b0f6so297553276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:09:55 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so92814871fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:10:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718705394; x=1719310194; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IqR5wZUp1Tx3xq+bP/edl3bl9htsL0tG2NWiQ3t5YmQ=;
-        b=U0COPhka2fJHarakC/UPCuLPh8POWGbEoa/x/28PwNG5bso9U8Bj3Db14LdmLE3wNY
-         60TYiwGn5UTYdQErSmsoPZCOz++h0id89mor6afRV4N6konAJ+eArVLuKX5XGRDqaPzP
-         5GAIcMR+CWvtWZ+CjxkgvVkXlZwbEigVyUZXZ7UgHZ/odDhdVuZKaGARByu9b5x8lC4o
-         Vh9JW0Ac4xGWDXogQvUkKu4eU7UUFo+ACG0tBY9YGBbOmq6Uxjrz01s4pbWvBOUzFSH+
-         4fDiSNV12zXHolwvaL0oJfMwK04B0lVThOHsz/zMfb3ESb0GB1FGlHzTlSTTgX7yLGZU
-         u0MQ==
+        d=linaro.org; s=google; t=1718705420; x=1719310220; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rRdvEX8LeL4ZldtK1EB4UBDTGqjoriC0preu44uvUtI=;
+        b=CP9sJJbQne0MhAmo8rOjgGTa5enpN80rBOj8n3vRjmNcJdpVbozJGzLV0xMWa/4xZP
+         YtM2lFpE4C0WWRtju4kEOwznNnqCPeTTtkJtz7k9QyoznyG+1PUV6UQc0rzOAGusywvV
+         AxmfI7vGlSsLx0zmxDq+kIb9Fd4BWM4CzV6ElJCX44z60/E4KNd98zmrPYELXheogE9y
+         /GmXm0cJzGVRRv9bvBo/irnCcZTjrAtjMRS046a1qewokT5adVNYq+xlvMCBrSqexaiu
+         we2cI00mLfzVuXXHgJgXlgFfZE8gG/j3H1sVlmFO7xEawxfywj4DDO32ngN11CrWwgzI
+         P3xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718705394; x=1719310194;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IqR5wZUp1Tx3xq+bP/edl3bl9htsL0tG2NWiQ3t5YmQ=;
-        b=GdWTpHmRn+hMyBd/07ZNjO8xvI6cmeEcSOWwgvYycCThdz3okX5bfK2/BtBJ3YP1Q7
-         omsXrcMx3FZec9WtCGhL1iG1Zko9hyoCaepL0Js3g5Bj8ndRJfX4xYkJ7rqDaN5vrlgu
-         T4UE+4cyDYzKv1L3rm5veF/aKX/j58QjGsvIpXFA8UP3aTrEbsBwF4ZPrkf//sQDV2s1
-         eM+M2pYR5s1GQyxN1+kFymQXCOm0P9kMzp/y2BvaAcrd5AjV1NEs1BpYr2Sxvkx6tOkF
-         nj1ZcmIt67NL1br1GZfvB8nv5iMeRdVCH32DndDAusCUs9gV3yuSQmrRQpilkTimZMN4
-         z8fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSakyJBMIWKv4LI9vVyukiNFweCyOsnsd7oAvRiZJgVI9+azKjlTV1UV9vkE7SR6iAZJ+ytiO/dccWuTLo3CW3/17Hb+fCVY60UAqe
-X-Gm-Message-State: AOJu0YwX4rhz3gVAuoNPPg/QXY0gwXp48hRSTmIKRntCyzXuQKA68bI5
-	azh+K88Vaw+mMmRIFdxWFOe16CDKxq3ZKoVKlifz51yatOLThSPfHDgU8kE91FLraKvlshyk4+r
-	g7Qk/HNWyOfhH2h66hE0bvBxxedOoi5t151yTdA==
-X-Google-Smtp-Source: AGHT+IHRwPCQfQa69fMu0wKjL3vPrpLu3LBFBhI//GsCDP56r0T5z4Wbx99DpWuIJj4GMQDFqn1DNosmf91VMnQnZz4=
-X-Received: by 2002:a25:6b07:0:b0:dff:4a3:2de9 with SMTP id
- 3f1490d57ef6-dff15385bddmr11704923276.20.1718705394187; Tue, 18 Jun 2024
- 03:09:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718705420; x=1719310220;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rRdvEX8LeL4ZldtK1EB4UBDTGqjoriC0preu44uvUtI=;
+        b=mt0Z9/asSL1i/oToUaxLLlksn9NoLkF/nxLjMfFkh5yMOukJDawVuFHAIPZWPAe0Df
+         XazpFKZTrY49Fj+ukfYl4Ui4kklUWCDavYbDkNJGLgI7qLimVW/P7Hx2lZ+rCXPDQX3S
+         EniwjfS8aRkgmx9/8H345oCH0pr8TmmkZmCit/RlH7cKAC18Ow2u1tEM/zb0rvkl5Vuo
+         3Jby8g2oYlJJfhJwzSUgxtEPBN68JFxSIP5U5xIHYH4Mz8YGwoZIUVOLgd9eye0onwya
+         i4zw3j2nBBpjtiRoGKU0n4FC9iOkf4+lQ+lHYdMUGaAHMs5P7T6XK1duOLE5yNdorZ1i
+         IKvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbeTToQi5hKwbaSJ7NLWa1tOg+DM8zBHRC3x3XMBqZig/T3rQLBR0WGN9X3fiIwxh1b9ImpGkDe11ZBBhC7SIeIrDHQlYGvC8xYVvl
+X-Gm-Message-State: AOJu0Yxy9tUsOksULHCaDCoW6n0u4sYhymlGIE+bCwZxreQnfnxidI3A
+	yetJ76abKdh/X3CaUzRX4uUReeyn/w7BBUhsq/nIz8Yk67NuI9H1GqmXlwY84nCIr++tz+pPvJ7
+	ukbdqGYU+2ClJo+yiqK9pAsmPpRkKlgyriopu4A==
+X-Google-Smtp-Source: AGHT+IF6Xt+V7qAkTNt3OUDshHfo309i5lYo8MHcybfwbujbr4eDujZIPADYU0a0RAObz82l0EeG0F+biFDYfMB+ZUk=
+X-Received: by 2002:a05:6512:34d9:b0:52c:993d:b462 with SMTP id
+ 2adb3069b0e04-52ca6e6e25amr8100164e87.29.1718705418225; Tue, 18 Jun 2024
+ 03:10:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618081418.250953-1-j-choudhary@ti.com> <20240618081418.250953-3-j-choudhary@ti.com>
- <k4t7zcvweap6e3fqrcixu7szqtvykn3nnqryyd3hdybhhufcgk@snimim34rrwh> <a34116ff-989f-411b-8846-2f53b16b3773@ti.com>
-In-Reply-To: <a34116ff-989f-411b-8846-2f53b16b3773@ti.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 18 Jun 2024 13:09:42 +0300
-Message-ID: <CAA8EJpq2UkMn9ArSNaJcOyw28H4uUcRwvUqfUBBqSCALmozBrg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] drm/bridge: ti-sn65dsi86: Fix ti_sn_bridge_set_dsi_rate
- function
-To: Jayesh Choudhary <j-choudhary@ti.com>
-Cc: dianders@chromium.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, mripard@kernel.org, 
-	linux-kernel@vger.kernel.org, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, 
-	daniel@ffwll.ch, spanda@codeaurora.org, a-bhatia1@ti.com, 
-	dri-devel@lists.freedesktop.org
+References: <20240610074809.2180535-1-mwalle@kernel.org>
+In-Reply-To: <20240610074809.2180535-1-mwalle@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 18 Jun 2024 12:10:07 +0200
+Message-ID: <CACRpkdbXpcjUxbrMTmAmWgmMoCHR0dxvNzn4gSYfBjr83k4kAQ@mail.gmail.com>
+Subject: Re: [PATCH] mtd: spi-nor: winbond: fix w25q128 regression
+To: Michael Walle <mwalle@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, e9hack <e9hack@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 18 Jun 2024 at 13:05, Jayesh Choudhary <j-choudhary@ti.com> wrote:
+On Mon, Jun 10, 2024 at 9:48=E2=80=AFAM Michael Walle <mwalle@kernel.org> w=
+rote:
+
+> Commit 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+> removed the flags for non-SFDP devices. It was assumed that it wasn't in
+> use anymore. This turned out to be wrong. Add the no_sfdp_flags as
+> well as the size again.
 >
-> Hello Dmitry,
->
-> On 18/06/24 14:33, Dmitry Baryshkov wrote:
-> > On Tue, Jun 18, 2024 at 01:44:18PM GMT, Jayesh Choudhary wrote:
-> >> During code inspection, it was found that due to integer calculations,
-> >> the rounding off can cause errors in the final value propagated in the
-> >> registers.
-> >> Considering the example of 1080p (very common resolution), the mode->clock
-> >> is 148500, dsi->lanes = 4, and bpp = 24, with the previous logic, the DSI
-> >> clock frequency would come as 444 when we are expecting the value 445.5
-> >> which would reflect in SN_DSIA_CLK_FREQ_REG.
-> >> So move the division to be the last operation where rounding off will not
-> >> impact the register value.
-> >
-> > Should this division use DIV_ROUND_UP instead? DIV_ROUND_CLOSEST?
-> >
->
-> Floor of the final value is expected according to datasheet.
-> The error was due to taking floor earlier and then error propagation
-> due to multiplication later on.
-> I think we can come up with a case when DIV_ROUND_UP can also give this
-> error. So this particular approach seemed okay to me.
+> Reported-by: e9hack <e9hack@gmail.com>
+> Fixes: 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> ---
+> Hartmut, Linus, could you please test it on your boards? Also, do
+> you have a real name we should put in the Reported-by tag?
 
-Ack
+I'm unable to bring mainline Linux back up on this device, so sadly I can't
+test it right now. But it sure looks fine to me:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
->
-> >>
-> >> Fixes: a095f15c00e2 ("drm/bridge: add support for sn65dsi86 bridge driver")
-> >> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> >
-> > Fixes should go before feature patches. Please change the order of you
-> > patches for the next submission.
->
-> Okay. this was supposed to be code snippet movement in the first patch
-> and fix in the second patch as suggested in v1:
-> https://patchwork.kernel.org/project/dri-devel/patch/20240408073623.186489-1-j-choudhary@ti.com/#25801801
-
-My point is pretty simple: fixes are backported to the earlier
-kernels. non-fixing commits are not. In your patchset you have added a
-dependency from the fix onto a non-fix (and
-not-selected-for-backporting) patch, which is not so good.
-
->
-> I can fix it in next revision.
-
-
--- 
-With best wishes
-Dmitry
+Yours,
+Linus Walleij
 
