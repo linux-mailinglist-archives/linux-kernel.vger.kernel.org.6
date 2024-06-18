@@ -1,318 +1,236 @@
-Return-Path: <linux-kernel+bounces-219418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A612790D0D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:37:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38B290D0A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71CB3B27572
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:34:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388A41F245AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7ACD1779BB;
-	Tue, 18 Jun 2024 12:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5054185E4C;
+	Tue, 18 Jun 2024 13:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWctGH4v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="XuOK2Q++"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB55A18040;
-	Tue, 18 Jun 2024 12:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718715527; cv=none; b=OKS4OZ0JQo+APT3L9ul0PZVaLUjVD4/+Vmhgz2MgnwZto/ePhhi+jnhvrJ9sO72qY0952YBMNIa2nIHMlo879G3qdWq1xKyLo25DqzwSVz/CSX3G1RUN2DO+8d21NlOheYClZPV39DDMyHEuOTLKc7tRJ6Te6IRF51Y7BSS2JIA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718715527; c=relaxed/simple;
-	bh=ALpN953I2oGcWDEYKbFMfEltWuwARYMRhRvOvM8R09A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hAyq4NZek+rBdpELKk8SXl7GIq2cqCMF6X2ZkG6xX0hATH+IkcL64OL5OA+sZDaB37I9EeDIhw6Gczu29gl1alf0NtwKgyxj7geGgJaWlES9vU88TBicUIJ4rgaDOiNZekBTTy+HT4CmCYxysYBc4BR4Cp0ZwyvI77RHFD96hR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWctGH4v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F046BC4AF50;
-	Tue, 18 Jun 2024 12:58:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718715527;
-	bh=ALpN953I2oGcWDEYKbFMfEltWuwARYMRhRvOvM8R09A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TWctGH4vf18mZxw/c/tYFJZGy8LVeH+FohXzVrJgK/cvQEuFrN4KeuEqWAYneC3Yp
-	 BBf6wSxdF2dQg/PPhqziOu8N58XCptappPR5Vt4+zzi/QmS3w2jZR2K436fmEP1p3+
-	 hy5ed0q3uDzNHnY59sB6s18/RkT+bJqXKAXEeO3SqxapO3cNG6Jbdz5UHtY+vse5Fd
-	 2GgdJT/uDTE/KIsP2od5ummInqIMjR+gXEn8FgsoqJaFnPKw5E6Rm0hFYNMca4YF1x
-	 lpNKlUhfw4PvN6GVdT4VsdXOgLBQbIlr7mIlKYIOB2fF7phs769oVqKpF2FZL/BqNI
-	 b2Iqmf6p198ZQ==
-Date: Tue, 18 Jun 2024 15:58:42 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Omer Shpigelman <oshpigelman@habana.ai>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"ogabbay@kernel.org" <ogabbay@kernel.org>,
-	Zvika Yehudai <zyehudai@habana.ai>
-Subject: Re: [PATCH 11/15] RDMA/hbl: add habanalabs RDMA driver
-Message-ID: <20240618125842.GG4025@unreal>
-References: <20240613082208.1439968-1-oshpigelman@habana.ai>
- <20240613082208.1439968-12-oshpigelman@habana.ai>
- <20240613191828.GJ4966@unreal>
- <fbb34afa-8a38-4124-9384-9b858ce2c4e5@habana.ai>
- <20240617190429.GB4025@unreal>
- <461bf44e-fd2f-4c8b-bc41-48d48e5a7fcb@habana.ai>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2569815699E;
+	Tue, 18 Jun 2024 12:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718715601; cv=fail; b=BQpMa22+YHJCEtKBwAb0hBcIkVOPJZxiLp/DuNFMHS927NM2RtJ+9LzkYVJ3URPjZUvkRTQW2ziIEnA94iOWwkZlsXpOT9qlSZIWick89YW1yJrYg7iWmzOrOxnrhxqYDX8fTas+fiRklX/6LyQqYXmovsthPH6WtGaYNTVinuw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718715601; c=relaxed/simple;
+	bh=YDIUnZbJyaT6G12GzF6xysw8BRWwG7maVat3ia9/32s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=i/be8SlIuBqBOThF0jU9dbIfxY8iRg+iOJn7gB2qHYAVAfhyXIvsyRSVPa9uwFXtAoOXuksD5PJo7iPLSAGp2BQj9PqCt0SDC0U/3jh/GGiGffvvb7S+ADXJ+AOpPbshX1pdCtsH9U2ooih0M3POtARatL0qc4LU6OQZEE8e+BM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=XuOK2Q++; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I9OmPA018747;
+	Tue, 18 Jun 2024 05:59:48 -0700
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2049.outbound.protection.outlook.com [104.47.70.49])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ysafh9pgv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 05:59:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gE1+EWhtQo9Bjr+YtsxdlmpRxNMZbKnCz4tcT7/U6qS/Ot35PMo0qeByVaSH/KnSN19VLk74Son1uHeCTMYTPmsLE2HGgjFVTJdPkmBBbpE4/iNWByQ8u9QaquNmPPHUMJf132Zdk5lkIIAq/xZGZlsKqTXIzOOmPpSievjRP4ev5e4vaDB4/JYQ5pOl3MuGT8xxO96aB/WptSjl38Uz4w6uawMU7ezBk/b3PrU7kQURkBUmHLUJJ9LLOtVi+CnxWawl42xfY9ANNNsxARE4f2PZolzHB7mvbfuCT285gb1X3QcNVl7LswRj8iBw4krQDNDtF8DJEXpMhv3i9ziugg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NSvIO/pOngIZGHG9KFJnfyzdQhrQBERIi0VUTJOveJo=;
+ b=XzFe+1ekKCACIpKGfsaniLYOXL5hM6uF0uzBu1NKfZjNlVL6qOZ3BFb/7xV2gtcvEI1SMQebzKrr8GC/ASFNJi4iqJ1O1CxtBCI8qGKY7KaC51Yr2co/GPCbp/bFB2jiYJzceUYZ0ZGK61S6MOh7Ma7Q/deFXGE23nwn/hqjsfolX3bKQXYXCIETqqTHE1L8rP2aHg0QXjexFiRHIGTgDO3gWN+Z9jIQnGvbmEN8+MbPu9Po3FToVljcdvyYFtl6p3mHGEi0LZVLP3fkI/mm9fpV1d7nPR7JoQkKASqbP8+y2MwAS2mhSHeCYB3dAYraKluNNmGz/Nuen++dMN1yTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NSvIO/pOngIZGHG9KFJnfyzdQhrQBERIi0VUTJOveJo=;
+ b=XuOK2Q++TE2eh40u5T1mxpCxAfXVQG+QLuZSh+NCSrn4BOS+1+E1eiSp9yVQwXIf3HB+DWftz+nqVeY/EamaqpdWq57aEzWu7F3KZ/ZkjgstpxUWHgq6CFaZPbUO9ob53pEN+K9y81PAr9AUh49smAg9PvRCU2x+2AbsDlIgBzE=
+Received: from CO6PR18MB4098.namprd18.prod.outlook.com (2603:10b6:5:34b::5) by
+ CO3PR18MB4878.namprd18.prod.outlook.com (2603:10b6:303:17d::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
+ 2024 12:59:44 +0000
+Received: from CO6PR18MB4098.namprd18.prod.outlook.com
+ ([fe80::5331:f53:fcd:d7e1]) by CO6PR18MB4098.namprd18.prod.outlook.com
+ ([fe80::5331:f53:fcd:d7e1%3]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 12:59:43 +0000
+From: Witold Sadowski <wsadowski@marvell.com>
+To: Mark Brown <broonie@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh@kernel.org"
+	<robh@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org"
+	<krzysztof.kozlowski+dt@linaro.org>,
+        "conor+dt@kernel.org"
+	<conor+dt@kernel.org>,
+        "pthombar@cadence.com" <pthombar@cadence.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v8 4/4] spi: cadence: Add MRVL overlay xfer
+ operation support
+Thread-Topic: [EXTERNAL] Re: [PATCH v8 4/4] spi: cadence: Add MRVL overlay
+ xfer operation support
+Thread-Index: AQHauO4LZaM3qdOTaUCf+ifD3OpGhLHBMgQAgAxYbmA=
+Date: Tue, 18 Jun 2024 12:59:43 +0000
+Message-ID: 
+ <CO6PR18MB40984F00856BC88C801ADA88B0CE2@CO6PR18MB4098.namprd18.prod.outlook.com>
+References: <20240607151831.3858304-1-wsadowski@marvell.com>
+ <20240607151831.3858304-5-wsadowski@marvell.com>
+ <ZmcnhGH2fcmrXn1G@finisterre.sirena.org.uk>
+In-Reply-To: <ZmcnhGH2fcmrXn1G@finisterre.sirena.org.uk>
+Accept-Language: en-US, pl-PL
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO6PR18MB4098:EE_|CO3PR18MB4878:EE_
+x-ms-office365-filtering-correlation-id: c9dc983b-795e-43c5-3dd1-08dc8f9685f7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|366013|376011|1800799021|38070700015;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?yYv2yca/t3/0+ScBdsPE20/jGP9ktUPmsOPtaaUPdHuk1blPWNT9idD+GBeB?=
+ =?us-ascii?Q?xVFobV5TAKvc/apRlNtRbsKowMrP+Vx0KmrZ1Er9I6vytDSLGLAe5ayn5++a?=
+ =?us-ascii?Q?1+5NUYax7Tha4MW2GKEJh8j3bmeDw0ZhHN9NMg16YltqOiYTNtz+p0ULRXLV?=
+ =?us-ascii?Q?On8i20RrclU1iDZ/4R3srYmMfKM8UHITTSoCB8g8mZvLEroghH80rWZNE/H1?=
+ =?us-ascii?Q?tKppnegcthkdIoSSet7oXEDKGbI7wko+x9TYuIvUt5LYuLW48xtYoMw24Qfn?=
+ =?us-ascii?Q?5sMOVPuZJiGVFUC6SQz5NFGiP3VfRZNKIM/a4ziZir47NPpNMy6mNGRNqCBr?=
+ =?us-ascii?Q?00nlCXbGaW7LYuomwgViFTWa9l3bEj0LkrcTIATnMuiJ2degHnrFi+t/+OSl?=
+ =?us-ascii?Q?MTzDQO3T1ytc7Tmb4BUFCQJ6gXNRW39orclCMJPC45Wrd1BbIHaxpEVm5ssD?=
+ =?us-ascii?Q?bJUiRTAy6cb3lK0aJ81XrQL9i7oU25bYjXm8R4DpziVrSeWyONgI2gNXzxmf?=
+ =?us-ascii?Q?Jm6vEP1qmaXneJEsPzWsJhE5ayOQ0fZ6WjlctM+7Qg7TH5q6es/C2Qvjmmxj?=
+ =?us-ascii?Q?TyAvT2KALnZhWzWYkHdqHK0TJ49uUiycAN+x+s7cr/aOPdz/36sP7VeGpA1y?=
+ =?us-ascii?Q?LAGjCgGMlUS5zJVVNORljbJeRtQd+5hpCnWjQFgl8f9b87EsieIS2peS6Oov?=
+ =?us-ascii?Q?99WJlV3ZIHSVAHoVWao1rAGpOXFYH4nqKEi7z88mSJKqUqmygExOh4doxbH2?=
+ =?us-ascii?Q?1OEv41IDbzxvqHy5ogmAvrLYreXHlz9g8o27IhPPHkb3HJLQf9T4FY7NmHbY?=
+ =?us-ascii?Q?ZNrm5MUpiPnNHrTJGpDFdgDiYSWgEYf/6LVKZHYmzTVm1BXBOQigr/W6aMB4?=
+ =?us-ascii?Q?iKpsiY+IYHlem6oG1Jf/LViexPGbEwhm8jaJTMBiSmwHeU9rNVtsAzYD60AY?=
+ =?us-ascii?Q?DHVviufu18dlkGMEM1KSBmyus6LvNnbl2KM/4dbXpYXcQJsjLaMwMVzBiVZt?=
+ =?us-ascii?Q?wTts0sGLR6zcfHf70t4UaA9h1iqxRDuEoBfiR4OJlBeFndQq2T0rsXQbRvwN?=
+ =?us-ascii?Q?GiNkVc3OdZn0rXZ4tJRaZlYWmRUWy04DRlYs9CfqcN596JmrkgkpmWMSVPEy?=
+ =?us-ascii?Q?S7ohn2lzQ68Q6M8CtXOvfFt6OhPGLQeHRbHc4z/+82yYgpdbpBMJ8BVUPv/w?=
+ =?us-ascii?Q?//6Y3CPfYs55QXH4ht1k5OSVnHPGGySwXEA5eajfDmRYFtG9lmPI1lBCalDE?=
+ =?us-ascii?Q?yUaWvMMheCTiN7AvmMVG071ui4vQtngK02D+uzy2nzo/DjOp8ShhDu31OxpH?=
+ =?us-ascii?Q?lwga70Xjguu2E2O9Q5vVlaRCjC1xelZ4A5BTorr8tMHtg9uqjn2maPZKB+iR?=
+ =?us-ascii?Q?4Vdn9Xw=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR18MB4098.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(38070700015);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?u8/eWnn2lET+nYzxTS0avcJlpBSarYTPCgQq3u1hVhLpHD4Vs+EZ9pJbhZzG?=
+ =?us-ascii?Q?uELLFTUprlwxkDHWlrLmMHIO0tlCuP4PbsqaFtTHfvAN3mW+giWJtoeukFDi?=
+ =?us-ascii?Q?CM7QIuEHjFEyFnf5SriA1o9LD+7TXWxhj+BlqhAkDEvPmNn+YYPLwdTT884Z?=
+ =?us-ascii?Q?/bfFh5G1wl6f1KbpYUZVSVCyBqBEeH/I8BGp24tNSVaR7Te02n+6a1qL2AAe?=
+ =?us-ascii?Q?nWbGENoEiQGpN89itRk0y/Np4OvHXsm20ho1efHDsNH4PcGlQBc3lbZvlThu?=
+ =?us-ascii?Q?Lur7OFnU7sqNMCqsz2H+Hq6DsTAVgvh1DGxeelVZNbq2xRBLG6awMnKXKMM8?=
+ =?us-ascii?Q?5rDJIT/X7KdCu+eEfJaHbj4Cm7isup4aDN8ybDCD0V5Okyo+78Y5TG0351H0?=
+ =?us-ascii?Q?nsAvgmfL9c6D4ZxX787AXjcH8eS9Cs140cSvEHScGfj/qetWE1f0j7E1NuV5?=
+ =?us-ascii?Q?oPFYiZ8DLi2Jcm6YD+JhOpuPbok5ysJ6FG4tnWBcf+bXpRB4AhqnNJMg0jQQ?=
+ =?us-ascii?Q?yn5K0ZG4yRV8x/4AEQC4mrtlDln34CSANnPHNt9piBo3ARU1AgnqKP3ZXzwE?=
+ =?us-ascii?Q?lCt04MhfIZOfSaIyeA1CTW2xU3wLkAPzbcULo0noeURYbNSsAEQ5wsjjAkyg?=
+ =?us-ascii?Q?zmx3GXO6CiQF5/22Cpt0RmyKJP8n9IkAhAxDMcs8kZ1XYQQT/ZIvkCnragbC?=
+ =?us-ascii?Q?UmdVod0FQFdUA9DcST0OSncFhMMrxRBFeUKnNczqFzczg4VIJ+9AeNQhbZZ/?=
+ =?us-ascii?Q?7VbKdf7FtgpAGcQUc0drM2zhoLo+8S50ATMOBZNWYFm6BrdFlxIDU65abWty?=
+ =?us-ascii?Q?dSIEw4VjzbhdW9aYKd7rRBFk9ZNYXbqWs1S3NKglBfAu9AaLvkzJueVDBv3P?=
+ =?us-ascii?Q?vBovzKKXJrZNfP1WHk0CezE1/515/V1n+fIQzjPJcQUNLcaZMH+qDaPgnlWK?=
+ =?us-ascii?Q?s1nF3ka4lnBSrkeCoBIiT0rLFNDxsuj0O1BouAWnag784gBKLeNWxuQsL3DW?=
+ =?us-ascii?Q?hUC2D4UL0xtFfImgUacpqxRfsBTWivjXs0GZxnrgHvkhNc4z0qKPjghngNge?=
+ =?us-ascii?Q?vu/y3jlfSpBSrf/TFER/6wd+BfRSwVJDxjCQUNzK6ZCjDvNEzb6et8tUibyW?=
+ =?us-ascii?Q?13Xr8F0dIZ5Q21ml9QEYRO8vL2mrIuqy86sXZ7mqNOmjVL+e6fK+23lawANB?=
+ =?us-ascii?Q?mjwa3Rl9xfTeJUBO2I+ex8LuTXJDurFCiGiZWadE2v/+naTNmSW88jmd2jfA?=
+ =?us-ascii?Q?J6Qnxld0EDyKUpGNS18l4dwOE7/ZSbqBF5JtyVODKYgHqCRr9fT8rfg0PtMk?=
+ =?us-ascii?Q?A6BLPQ+X2qzkr4Y1sSLUNqoaiwOxn8PobQqEnVrvWeWg7M3qK6u2W7TI9lpS?=
+ =?us-ascii?Q?mQnTRNy0gp7nfIsRaemusn1s8QrceWcwWiFWq1wRd4GI0J7Szm+ZxrWS1H+A?=
+ =?us-ascii?Q?abDdoHg1UQuQjE36CykiA3ZwrNdn4lOGTsVfoZYJjMkOVnN1VZIwORP2ixrp?=
+ =?us-ascii?Q?rTNS8aOBA5y2LBc7Gw91W3YDkiNakhxgs9FQYlmBy5/SrdW6hQzMWGnNR+OF?=
+ =?us-ascii?Q?YR7ZxIaJdhrLEsI+F4YHS0bndRtaXc9sZyPIJCkn?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <461bf44e-fd2f-4c8b-bc41-48d48e5a7fcb@habana.ai>
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4098.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9dc983b-795e-43c5-3dd1-08dc8f9685f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2024 12:59:43.4811
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: g0IS6NExKRXysXS+ZTm+0B1uOmPRYk5umqkgBBcLbCGAK/8TLTso0D9QSaT1lAzJ58DwXvHMkYmsjCzIFePkGA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO3PR18MB4878
+X-Proofpoint-ORIG-GUID: U8ZWHXjqtfhCZDnKCU4HEp8QwVG-v9zc
+X-Proofpoint-GUID: U8ZWHXjqtfhCZDnKCU4HEp8QwVG-v9zc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
 
-On Tue, Jun 18, 2024 at 11:08:34AM +0000, Omer Shpigelman wrote:
-> On 6/17/24 22:04, Leon Romanovsky wrote:
-> > [Some people who received this message don't often get email from leon@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> > 
-> > On Mon, Jun 17, 2024 at 05:43:49PM +0000, Omer Shpigelman wrote:
-> >> On 6/13/24 22:18, Leon Romanovsky wrote:
-> >>> [Some people who received this message don't often get email from leon@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> >>>
-> >>> On Thu, Jun 13, 2024 at 11:22:04AM +0300, Omer Shpigelman wrote:
-> >>>> Add an RDMA driver of Gaudi ASICs family for AI scaling.
-> >>>> The driver itself is agnostic to the ASIC in action, it operates according
-> >>>> to the capabilities that were passed on device initialization.
-> >>>> The device is initialized by the hbl_cn driver via auxiliary bus.
-> >>>> The driver also supports QP resource tracking and port/device HW counters.
-> >>>>
-> >>>> Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
-> >>>> Co-developed-by: Abhilash K V <kvabhilash@habana.ai>
-> >>>> Signed-off-by: Abhilash K V <kvabhilash@habana.ai>
-> >>>> Co-developed-by: Andrey Agranovich <aagranovich@habana.ai>
-> >>>> Signed-off-by: Andrey Agranovich <aagranovich@habana.ai>
-> >>>> Co-developed-by: Bharat Jauhari <bjauhari@habana.ai>
-> >>>> Signed-off-by: Bharat Jauhari <bjauhari@habana.ai>
-> >>>> Co-developed-by: David Meriin <dmeriin@habana.ai>
-> >>>> Signed-off-by: David Meriin <dmeriin@habana.ai>
-> >>>> Co-developed-by: Sagiv Ozeri <sozeri@habana.ai>
-> >>>> Signed-off-by: Sagiv Ozeri <sozeri@habana.ai>
-> >>>> Co-developed-by: Zvika Yehudai <zyehudai@habana.ai>
-> >>>> Signed-off-by: Zvika Yehudai <zyehudai@habana.ai>
-> >>>
-> >>> I afraid that you misinterpreted the "Co-developed-by" tag. All these
-> >>> people are probably touch the code and not actually sit together at
-> >>> the same room and write the code together. So, please remove the
-> >>> extensive "Co-developed-by" tags.
-> >>>
-> >>> It is not full review yet, but simple pass-by-comments.
-> >>>
-> >>
-> >> Actually except of two, all of the mentioned persons sat in the same room
-> >> and developed the code together.
-> >> The remaining two are located on a different site (but also together).
-> >> Isn't that what "Co-developed-by" tag for?
-> >> I wanted to give them credit for writing the code but I can remove if it's
-> >> not common.
-> > 
-> > Signed-off-by will be enough to give them credit.
-> > 
-> 
-> Ok, good enough.
-> 
-> >>
-> >>>> ---
-> >>>>  MAINTAINERS                              |   10 +
-> >>>>  drivers/infiniband/Kconfig               |    1 +
-> >>>>  drivers/infiniband/hw/Makefile           |    1 +
-> >>>>  drivers/infiniband/hw/hbl/Kconfig        |   17 +
-> >>>>  drivers/infiniband/hw/hbl/Makefile       |    8 +
-> >>>>  drivers/infiniband/hw/hbl/hbl.h          |  326 +++
-> >>>>  drivers/infiniband/hw/hbl/hbl_main.c     |  478 ++++
-> >>>>  drivers/infiniband/hw/hbl/hbl_verbs.c    | 2686 ++++++++++++++++++++++
-> >>>>  include/uapi/rdma/hbl-abi.h              |  204 ++
-> >>>>  include/uapi/rdma/hbl_user_ioctl_cmds.h  |   66 +
-> >>>>  include/uapi/rdma/hbl_user_ioctl_verbs.h |  106 +
-> >>>>  include/uapi/rdma/ib_user_ioctl_verbs.h  |    1 +
-> >>>>  12 files changed, 3904 insertions(+)
-> >>>>  create mode 100644 drivers/infiniband/hw/hbl/Kconfig
-> >>>>  create mode 100644 drivers/infiniband/hw/hbl/Makefile
-> >>>>  create mode 100644 drivers/infiniband/hw/hbl/hbl.h
-> >>>>  create mode 100644 drivers/infiniband/hw/hbl/hbl_main.c
-> >>>>  create mode 100644 drivers/infiniband/hw/hbl/hbl_verbs.c
-> >>>>  create mode 100644 include/uapi/rdma/hbl-abi.h
-> >>>>  create mode 100644 include/uapi/rdma/hbl_user_ioctl_cmds.h
-> >>>>  create mode 100644 include/uapi/rdma/hbl_user_ioctl_verbs.h
-> >>>
-> >>> <...>
-> >>>
-> >>>> +#define hbl_ibdev_emerg(ibdev, format, ...)  ibdev_emerg(ibdev, format, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_alert(ibdev, format, ...)  ibdev_alert(ibdev, format, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_crit(ibdev, format, ...)   ibdev_crit(ibdev, format, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_err(ibdev, format, ...)    ibdev_err(ibdev, format, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_warn(ibdev, format, ...)   ibdev_warn(ibdev, format, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_notice(ibdev, format, ...) ibdev_notice(ibdev, format, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_info(ibdev, format, ...)   ibdev_info(ibdev, format, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_dbg(ibdev, format, ...)    ibdev_dbg(ibdev, format, ##__VA_ARGS__)
-> >>>> +
-> >>>> +#define hbl_ibdev_emerg_ratelimited(ibdev, fmt, ...)         \
-> >>>> +     ibdev_emerg_ratelimited(ibdev, fmt, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_alert_ratelimited(ibdev, fmt, ...)         \
-> >>>> +     ibdev_alert_ratelimited(ibdev, fmt, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_crit_ratelimited(ibdev, fmt, ...)          \
-> >>>> +     ibdev_crit_ratelimited(ibdev, fmt, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_err_ratelimited(ibdev, fmt, ...)           \
-> >>>> +     ibdev_err_ratelimited(ibdev, fmt, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_warn_ratelimited(ibdev, fmt, ...)          \
-> >>>> +     ibdev_warn_ratelimited(ibdev, fmt, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_notice_ratelimited(ibdev, fmt, ...)                \
-> >>>> +     ibdev_notice_ratelimited(ibdev, fmt, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_info_ratelimited(ibdev, fmt, ...)          \
-> >>>> +     ibdev_info_ratelimited(ibdev, fmt, ##__VA_ARGS__)
-> >>>> +#define hbl_ibdev_dbg_ratelimited(ibdev, fmt, ...)           \
-> >>>> +     ibdev_dbg_ratelimited(ibdev, fmt, ##__VA_ARGS__)
-> >>>> +
-> >>>
-> >>> Please don't redefine the existing macros. Just use the existing ones.
-> >>>
-> >>>
-> >>> <...>
-> >>>
-> >>
-> >> That's a leftover from some debug code. I'll remove.
-> >>
-> >>>> +     if (hbl_ib_match_netdev(ibdev, netdev))
-> >>>> +             ib_port = hbl_to_ib_port_num(hdev, netdev->dev_port);
-> >>>> +     else
-> >>>> +             return NOTIFY_DONE;
-> >>>
-> >>> It is not kernel coding style. Please write:
-> >>> if (!hbl_ib_match_netdev(ibdev, netdev))
-> >>>     return NOTIFY_DONE;
-> >>>
-> >>> ib_port = hbl_to_ib_port_num(hdev, netdev->dev_port);
-> >>>
-> >>
-> >> I'll fix the code, thanks.
-> >>
-> >>>> +
-> >>>
-> >>> <...>
-> >>>
-> >>>> +static int hbl_ib_probe(struct auxiliary_device *adev, const struct auxiliary_device_id *id)
-> >>>> +{
-> >>>> +     struct hbl_aux_dev *aux_dev = container_of(adev, struct hbl_aux_dev, adev);
-> >>>> +     struct hbl_ib_aux_ops *aux_ops = aux_dev->aux_ops;
-> >>>> +     struct hbl_ib_device *hdev;
-> >>>> +     ktime_t timeout;
-> >>>> +     int rc;
-> >>>> +
-> >>>> +     rc = hdev_init(aux_dev);
-> >>>> +     if (rc) {
-> >>>> +             dev_err(&aux_dev->adev.dev, "Failed to init hdev\n");
-> >>>> +             return -EIO;
-> >>>> +     }
-> >>>> +
-> >>>> +     hdev = aux_dev->priv;
-> >>>> +
-> >>>> +     /* don't allow module unloading while it is attached */
-> >>>> +     if (!try_module_get(THIS_MODULE)) {
-> >>>
-> >>> This part makes wonder, what are you trying to do here? What doesn't work for you
-> >>> in standard driver core and module load mechanism?
-> >>>
-> >>
-> >> Before auxiliary bus was introduced, we used EXPORT_SYMBOLs for inter
-> >> driver communication. That incremented the refcount of the used module so
-> >> it couldn't be removed while it is in use.
-> >> Auxiliary bus usage doesn't increment the used module refcount and hence
-> >> the used module can be removed while it is in use and that's something
-> >> we don't want to allow.
-> >> We could solve it by some global locking or in_use atomic but the most
-> >> simple and clean way is just to increment the used module refcount on
-> >> auxiliary device probe and decrement it on auxiliary device removal.
-> > 
-> > No, you was supposed to continue to use EXPORT_SYMBOLs and don't
-> > invent auxiliary ops structure (this is why you lost module
-> > reference counting).
-> > 
-> 
-> Sorry, but according to the auxiliary bus doc, a domain-specific ops
-> structure can be used.
-> We followed the usage example described at drivers/base/auxiliary.c.
-> What am I missing? 
+Hi
 
-Being the one who implemented auxiliary bus in the kernel and converted
-number of drivers to use it, I strongly recommend do NOT follow the example
-provided there.
+>=20
+> > +static unsigned char reverse_bits(unsigned char num) {
+> > +	unsigned int count =3D sizeof(num) * 8 - 1;
+> > +	unsigned int reverse_num =3D num;
+> > +
+> > +	num >>=3D 1;
+> > +	while (num) {
+> > +		reverse_num <<=3D 1;
+> > +		reverse_num |=3D num & 1;
+> > +		num >>=3D 1;
+> > +		count--;
+> > +	}
+> > +	reverse_num <<=3D count;
+> > +	return reverse_num;
+> > +}
+>=20
+> I can't help but think there ought to be a helper for this though I can't
+> think what it is off the top of my head.  If there isn't it probably make=
+s
+> sense to add this as one.
 
-So you are missing "best practice", and "best practice" is to use
-EXPORT_SYMBOLs and rely on module reference counting.
+It seems bitrev8 is doing what I want.
 
-> Moreover, we'd like to support the mode where the IB or the ETH driver is
-> not loaded at all. But this cannot be achieved if we use EXPORT_SYMBOLs
-> exclusively for inter driver communication.
+>=20
+> > +	/* Enable xfer state machine */
+> > +	if (!cdns_xspi->xfer_in_progress) {
+> > +		u32 xfer_control =3D readl(cdns_xspi->xferbase +
+> > +MRVL_XFER_FUNC_CTRL);
+> > +
+> > +		cdns_xspi->current_xfer_qword =3D 0;
+> > +		cdns_xspi->xfer_in_progress =3D true;
+> > +		xfer_control |=3D (MRVL_XFER_RECEIVE_ENABLE |
+> > +				 MRVL_XFER_CLK_CAPTURE_POL |
+> > +				 MRVL_XFER_FUNC_START |
+> > +				 MRVL_XFER_SOFT_RESET |
+> > +				 FIELD_PREP(MRVL_XFER_CS_N_HOLD, (1 << cs)));
+> > +		xfer_control &=3D ~(MRVL_XFER_FUNC_ENABLE |
+> MRVL_XFER_CLK_DRIVE_POL);
+> > +		writel(xfer_control, cdns_xspi->xferbase +
+> MRVL_XFER_FUNC_CTRL);
+> > +	}
+>=20
+> Could this just be a prepare_transfer_hardware() and we could just use
+> transfer_one()?
 
-It is not true and not how the kernel works. You can perfectly load core
-driver without IB and ETH, at some extent this is how mlx5 driver works.
+I have run some experiments, and it won't be possible. HW expects reset aft=
+er
+completing whole transfer. With prepare_transfer_hardware() and unprepared_=
+transfer_hardware(),
+that reset won't be guaranteed.
+Also, there will be a problem when CS line will be changed(without overlay =
+reinit)
 
-> 
-> >>
-> >>>> +             dev_err(hdev->dev, "Failed to increment %s module refcount\n",
-> >>>> +                     module_name(THIS_MODULE));
-> >>>> +             rc = -EIO;
-> >>>> +             goto module_get_err;
-> >>>> +     }
-> >>>> +
-> >>>> +     timeout = ktime_add_ms(ktime_get(), hdev->pending_reset_long_timeout * MSEC_PER_SEC);
-> >>>> +     while (1) {
-> >>>> +             aux_ops->hw_access_lock(aux_dev);
-> >>>> +
-> >>>> +             /* if the device is operational, proceed to actual init while holding the lock in
-> >>>> +              * order to prevent concurrent hard reset
-> >>>> +              */
-> >>>> +             if (aux_ops->device_operational(aux_dev))
-> >>>> +                     break;
-> >>>> +
-> >>>> +             aux_ops->hw_access_unlock(aux_dev);
-> >>>> +
-> >>>> +             if (ktime_compare(ktime_get(), timeout) > 0) {
-> >>>> +                     dev_err(hdev->dev, "Timeout while waiting for hard reset to finish\n");
-> >>>> +                     rc = -EBUSY;
-> >>>> +                     goto timeout_err;
-> >>>> +             }
-> >>>> +
-> >>>> +             dev_notice_once(hdev->dev, "Waiting for hard reset to finish before probing IB\n");
-> >>>> +
-> >>>> +             msleep_interruptible(MSEC_PER_SEC);
-> >>>> +     }
-> >>>
-> >>> The code above is unexpected.
-> >>>
-> >>
-> >> We have no control on when the user insmod the IB driver.
-> > 
-> > It is not true, this is controlled through module dependencies
-> > mechanism.
-> > 
-> 
-> Yeah, if we would use EXPORT_SYMBOLs for inter driver communication but
-> we don't.
-
-So please use it and don't add complexity where it is not needed.
-
-> 
-> >> As a result it is possible that the IB auxiliary device will be probed
-> >> while the compute device is under reset (due to some HW error).
-> > 
-> > No, it is not possible. If you structure your driver right.
-> > 
-> 
-> Again, it is not possible if we would use EXPORT_SYMBOLs.
-> Please let me know if we misunderstood something because AFAIU we followed
-> the auxiliary bus doc usage example.
-
-It is better to follow actual drivers that use auxiliary bus and see how
-they implemented it and not rely on examples in the documentation.
-
-Thanks
-
-> 
-> > Thanks
+Regards
+Witek
 
