@@ -1,166 +1,361 @@
-Return-Path: <linux-kernel+bounces-220146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4AB90DD6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:25:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7782390DD71
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C33A1F249A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:25:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07FB4284D94
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6991741F8;
-	Tue, 18 Jun 2024 20:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20D01741EA;
+	Tue, 18 Jun 2024 20:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="xC4Qi3Cz"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eWO9seBw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456BF1741CF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B1516EB66
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718742339; cv=none; b=CXtgf4z9EmibNeSXa1t0T2UhTg0REofsZPsQ9ZqpE2kaHWG3vGq/LWl44+gpm7AyaR0JoHCZEWXVoIYQU4pTzeof49Mtzs5Gf0K0UM8cZdqSFQ4x357kF1mtPcDcyDG8CpK6UM1mGL0LfStVKTWA516rImTKcMZ1oJo3bOYRWuY=
+	t=1718742585; cv=none; b=JM4zE2BsI+bE+8UB0cXDoOvPe8OvoRX1tb/nO20XMz1iqkFTLn5e9WqIPPPBlf3XFkD3Bt9csd6IgAnUdtNeaTJDtfDwNydQ/FNZ6ml3yKXGNBpjMEmxuFDLDS+e6kY3TQ1pOSqF1/J+X7bvBU9KSSrg0/Es9CpCaG3aNkBdwXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718742339; c=relaxed/simple;
-	bh=8oNrbsJDUFi2arQpoa8E9JtxUyxztZ4m37R7NbDLcBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nUqqmG1okc2AYSSli+Nq0tK85Y9Sx/bRSXKo6zoWvqRKZNBBB7otDqwpiaIBOF0wgw499tRg9s32NPa4Zr8oxpo4eETR7opVjDk5fW2rvRnZ1carahmj5tlAhk73wFpmh/DxAlJchSkMrr1auiarSRtjSlu9HIQizgCVcImMpiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=xC4Qi3Cz; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-37613975e20so2843185ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1718742336; x=1719347136; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TQhc1tsGSf/rNyW7LBFRXj7br5aBpicaH2yUEpkeax4=;
-        b=xC4Qi3CzN0n/65xRGX3g60MG0yennwhcCjN44Cc9S8Z0iAISaMM2KxK6CdzHjWrfS4
-         HE6rpoEWf2+G7fWo+X6sLiSRiIaFpGZZ+L0j9NFeiDjfti/5zFz5HbzSA0LU2/SDWrqv
-         nw2rcr73NUCv2D/Axv0mp9sOLW+5xWY9g4dBEPDUGt59E0ZW5iRGOJroEt0TW3RJovMx
-         FNaYCXWhqdVL2fLjM9qR8D8cyHbiuKqAxuYMJJ3UEP6cHypzu3dbP9OoZRV2J9xcguPh
-         vxOP2SZrcx9N+z0O78a7UKILJA5i4BlQxuQKNDZL0IRkumkdrvJ44zsP4K4cX7ZPTb0j
-         gV2g==
+	s=arc-20240116; t=1718742585; c=relaxed/simple;
+	bh=0EY5kqxsoldm7cuYsyNd9fah7kjTj3xoaitJlbVR78k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ne5csXLHvYzZqjoGSYwYk2if5lPJHpUgkqyX55C0p1E2qfGFaG2a7hV7KDZoTzSlVUGtAD3F5TE8ErxrldUS9tHnKpudfwr4/e1DIBgCEXqCAtNdwoxNfQ/VgLv4bXIONUucnMIEEQkA133EEma0bYIQGKvAgt8SATtXPrIhkA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eWO9seBw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718742582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SG1pahsNFyeWnRJMLnP/UTfWOjHeAffBOrHctLI/8J8=;
+	b=eWO9seBwNGXIvvw0CqC0CYPQXhwuscz9mCiLMUE+IXQz9GqQwzbnMhXCKGhG3GPiMTDeLi
+	/xy3eW4PU8nVZ03X1D8wqprMMW1Miga5iRA1/f1I9Mx+0gxm0hOCB9J7l3F9x6qc042fCZ
+	0Mc9NtDu0PTz4Iw7pxICUPCVcaKPpAc=
+Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com
+ [209.85.160.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-226-vaOZl72XOwOL1wRySQBZ0g-1; Tue, 18 Jun 2024 16:29:41 -0400
+X-MC-Unique: vaOZl72XOwOL1wRySQBZ0g-1
+Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-24c9f218317so6496032fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:29:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718742336; x=1719347136;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TQhc1tsGSf/rNyW7LBFRXj7br5aBpicaH2yUEpkeax4=;
-        b=LZUsoKFERLWqMSW4tjDLweyKuy45zZZzi0m/jr0HHk6vDRYHytvP7uixsqdUgyx1ZE
-         mkn1cGEfCVIPdEKZ1/z/smLZBPE2yiTkw8/JF6BRZmCZmaxXveuznAOBUopCVyb70+et
-         Sk1k0vrKQ2QU8SD5oNNfY65qPmBg7TZz7ItVyp/a7nwqfywWN2t5Exe6XrqFCBAnufVD
-         53rF0DD88eQO1wHHYXgmxgr0Fj7TM7X1YBA/4zVPtLB6JOqOtRUcYYa3IehSPsS/kaYp
-         mncGt9vcf7qB9E9fyXbPOLpMe+XI5dCkp4brac2nA07+688IWITLw5EmUDgjs4IOzCx2
-         bwLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWr+tnE5y1mLMAdD86K2KOxIM9qd6D3cFI6IgZIRX/1PZk17vzyrJL2CUHRIv/rqcIlbZAQQZuZt085pZSn+B5f+ucENtucEk14hXjf
-X-Gm-Message-State: AOJu0YzzJ57aJhYEte//RaY5oOeLzv5mJ1LRRDhDR22Bf/rtXIf3CiKw
-	LnWiEWo0SJtJ24uDIre8AaUn1Nwp1B6+mipsV3BZ2x12KTpHM7E2tq+gThh14q8=
-X-Google-Smtp-Source: AGHT+IHoJT1oMZwvIoV4Bftj499G+4TSIa9T4NEJOxqAqW/MxiIzVA6CWXBDsjwnR6+dLu4QLUTFLw==
-X-Received: by 2002:a05:6e02:138d:b0:375:c394:4344 with SMTP id e9e14a558f8ab-3761d7084a2mr7438245ab.21.1718742336400;
-        Tue, 18 Jun 2024 13:25:36 -0700 (PDT)
-Received: from kf-XE ([2607:fb91:111c:4643:b5f:d6ad:8a73:5578])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-375d8b45132sm22438025ab.73.2024.06.18.13.25.35
+        d=1e100.net; s=20230601; t=1718742581; x=1719347381;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SG1pahsNFyeWnRJMLnP/UTfWOjHeAffBOrHctLI/8J8=;
+        b=S0yKSc25d3BLTAuZAj8gHiU9OOuMi+PEE/QAwEETbnu2/ALwg/wbhN/MlKrrtRK3lT
+         qHv5TiFryoUVvC8mSyShI7vpdaWS4PL2bylZkXW6U7oQD0B2dxVRtyxtP6O6CELrfk5r
+         yPO8aH08jUrSqir2eF9Iwln7X8dTvAKP7zKswDGs8kz9E/X0I7bOEyVmXO1hdkLW/gFe
+         2wtmeIFlin1D+eLilmlHFkuEupJEVEGeZXqdEKipXXhUM+r9oFZHd7R4k8UC96qRlvLl
+         fna/quUMkHwfnwfJBCgY23rRGcUV3U2cK0BqZNrOzq0g2ljqU8Rq07CkXCxGpbALxzgF
+         ajEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ/uLDB/H5zsgieQ5acJXMTyFWBkEJFVeAA5VlL6cFDQK3H7JfmRv1DWiGA14WQtYnY3jt+5eLZFr2rPdqhqwzKe03q6zqur47Zw4a
+X-Gm-Message-State: AOJu0Yy4vluI2GEw5vAaByy4wbSL/7CkIv13ZkP59RXuKdrATXecd80O
+	1Ti4LoYbgcjPg/F3YAKWdcHFdMA1gLo/4jj+zC/uR7rygwnuYFPwbo7y1KPJJUl1Nbh7wUm/s2+
+	2y638UE2jovZ4EDoYsxVbNBZWvSYsQqFgc19q/L7E60VZlW/zKH8sOUgGW4jv4Q==
+X-Received: by 2002:a05:6870:6593:b0:254:ab8e:471b with SMTP id 586e51a60fabf-25c94e48921mr1087698fac.50.1718742580750;
+        Tue, 18 Jun 2024 13:29:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFDdgr3Spkd8lHoFHFSmzJEvst+OAsL3TJQBtRNfBw7S0f8ei8LxcslOnai254xYA7CMuWGVQ==
+X-Received: by 2002:a05:6870:6593:b0:254:ab8e:471b with SMTP id 586e51a60fabf-25c94e48921mr1087658fac.50.1718742580376;
+        Tue, 18 Jun 2024 13:29:40 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5b75648asm1937270a34.72.2024.06.18.13.29.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 13:25:36 -0700 (PDT)
-Date: Tue, 18 Jun 2024 15:25:33 -0500
-From: Aaron Rainbolt <arainbolt@kfocus.org>
-To: mario.limonciello@amd.com, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: rafael@kernel.org, lenb@kernel.org, mmikowski@kfocus.org,
-	Perry.Yuan@amd.com
-Subject: Re: [PATCH V2 RFC] acpi: Allow ignoring _OSC CPPC v2 bit via kernel
- parameter
-Message-ID: <ZnHtPbszYT8afOOk@kf-XE>
-References: <ZnD22b3Br1ng7alf@kf-XE>
- <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com>
- <ZnHSKiaYf2tIQo58@kf-XE>
- <a7790c74-2bec-4a24-b6e5-223c4e1ed372@amd.com>
- <ZnHXfLEwk2uRbg58@kf-XE>
- <b4d65232-b69e-419d-9b15-d0ca64b78b26@amd.com>
- <ZnHfNbLTgY1op3Zv@kf-XE>
- <fb8c965a-5f1c-4975-8e7d-6f6a0eb4d02f@amd.com>
+        Tue, 18 Jun 2024 13:29:39 -0700 (PDT)
+Date: Tue, 18 Jun 2024 14:29:37 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Fred Griffoul <fgriffo@amazon.co.uk>
+Cc: <griffoul@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Zefan Li
+ <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner
+ <hannes@cmpxchg.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier
+ <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, Mark Brown
+ <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Joey Gouly
+ <joey.gouly@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, Jeremy Linton
+ <jeremy.linton@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu
+ <yi.l.liu@intel.com>, Kevin Tian <kevin.tian@intel.com>, Eric Auger
+ <eric.auger@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, "Christian
+ Brauner" <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>, "Reinette
+ Chatre" <reinette.chatre@intel.com>, Ye Bin <yebin10@huawei.com>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <kvm@vger.kernel.org>, <cgroups@vger.kernel.org>
+Subject: Re: [PATCH v6 2/2] vfio/pci: add interrupt affinity support
+Message-ID: <20240618142937.553f8f1e.alex.williamson@redhat.com>
+In-Reply-To: <20240611174430.90787-3-fgriffo@amazon.co.uk>
+References: <20240611174430.90787-1-fgriffo@amazon.co.uk>
+	<20240611174430.90787-3-fgriffo@amazon.co.uk>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fb8c965a-5f1c-4975-8e7d-6f6a0eb4d02f@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
+On Tue, 11 Jun 2024 17:44:25 +0000
+Fred Griffoul <fgriffo@amazon.co.uk> wrote:
 
-The _OSC is supposed to contain a bit indicating whether the hardware
-supports CPPC v2 or not. This bit is not always set, causing CPPC v2 to
-be considered absent. This results in severe single-core performance
-issues with the EEVDF scheduler on heterogenous-core Intel processors.
+> The usual way to configure a device interrupt from userland is to write
+> the /proc/irq/<irq>/smp_affinity or smp_affinity_list files. When using
+> vfio to implement a device driver or a virtual machine monitor, this may
+> not be ideal: the process managing the vfio device interrupts may not be
+> granted root privilege, for security reasons. Thus it cannot directly
+> control the interrupt affinity and has to rely on an external command.
+> 
+> This patch extends the VFIO_DEVICE_SET_IRQS ioctl() with a new data flag
+> to specify the affinity of interrupts of a vfio pci device.
+> 
+> The CPU affinity mask argument must be a subset of the process cpuset,
+> otherwise an error -EPERM is returned.
+> 
+> The vfio_irq_set argument shall be set-up in the following way:
+> 
+> - the 'flags' field have the new flag VFIO_IRQ_SET_DATA_CPUSET set
+> as well as VFIO_IRQ_SET_ACTION_TRIGGER.
+> 
+> - the variable-length 'data' field is a cpu_set_t structure, as
+> for the sched_setaffinity() syscall, the size of which is derived
+> from 'argsz'.
+> 
+> Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
+> ---
+>  drivers/vfio/pci/vfio_pci_core.c  |  2 +-
+>  drivers/vfio/pci/vfio_pci_intrs.c | 41 +++++++++++++++++++++++++++++++
+>  drivers/vfio/vfio_main.c          | 15 ++++++++---
+>  include/uapi/linux/vfio.h         | 15 ++++++++++-
+>  4 files changed, 67 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+> index 80cae87fff36..fbc490703031 100644
+> --- a/drivers/vfio/pci/vfio_pci_core.c
+> +++ b/drivers/vfio/pci/vfio_pci_core.c
+> @@ -1174,7 +1174,7 @@ static int vfio_pci_ioctl_get_irq_info(struct vfio_pci_core_device *vdev,
+>  		return -EINVAL;
+>  	}
+>  
+> -	info.flags = VFIO_IRQ_INFO_EVENTFD;
+> +	info.flags = VFIO_IRQ_INFO_EVENTFD | VFIO_IRQ_INFO_CPUSET;
+>  
+>  	info.count = vfio_pci_get_irq_count(vdev, info.index);
+>  
+> diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+> index 8382c5834335..b339c42cb1c0 100644
+> --- a/drivers/vfio/pci/vfio_pci_intrs.c
+> +++ b/drivers/vfio/pci/vfio_pci_intrs.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/vfio.h>
+>  #include <linux/wait.h>
+>  #include <linux/slab.h>
+> +#include <linux/cpuset.h>
+>  
+>  #include "vfio_pci_priv.h"
+>  
+> @@ -82,6 +83,40 @@ vfio_irq_ctx_alloc(struct vfio_pci_core_device *vdev, unsigned long index)
+>  	return ctx;
+>  }
+>  
+> +static int vfio_pci_set_affinity(struct vfio_pci_core_device *vdev,
+> +				 unsigned int start, unsigned int count,
+> +				 struct cpumask *irq_mask)
+> +{
+> +	cpumask_var_t allowed_mask;
+> +	int irq, err = 0;
+> +	unsigned int i;
+> +
+> +	if (!alloc_cpumask_var(&allowed_mask, GFP_KERNEL))
+> +		return -ENOMEM;
+> +
+> +	cpuset_cpus_allowed(current, allowed_mask);
+> +	if (!cpumask_subset(irq_mask, allowed_mask)) {
+> +		err = -EPERM;
+> +		goto finish;
+> +	}
+> +
+> +	for (i = start; i < start + count; i++) {
+> +		irq = pci_irq_vector(vdev->pdev, i);
+> +		if (irq < 0) {
+> +			err = -EINVAL;
+> +			break;
+> +		}
+> +
+> +		err = irq_set_affinity(irq, irq_mask);
+> +		if (err)
+> +			break;
+> +	}
 
-To work around this, provide a new kernel parameter, "ignore_osc_cppc_bit",
-which may be used to ignore the _OSC CPPC v2 bit and act as if the bit was
-enabled. This allows CPPC to be properly detected even if not "enabled" by
-_OSC, allowing users with problematic hardware to obtain decent single-core
-performance.
+Sorry I didn't have an opportunity to reply to your previous comments,
+but you stated:
 
-Signed-off-by: Aaron Rainbolt <arainbolt@kfocus.org>
+On Tue, 11 Jun 2024 09:58:48 +0100
+Frederic Griffoul <griffoul@gmail.com> wrote:
+> My main use case is to configure NVMe queues in a virtual machine monitor
+> to interrupt only the physical CPUs assigned to that vmm. Then we can
+> set the same cpu_set_t to all the admin and I/O queues with a single ioctl().
 
----
+So if I interpolate a little, the vmm's cpuset is likely set elsewhere
+by some management tool, but that management tool isn't monitoring
+registration of interrupts so you want the vmm to make some default
+choice about interrupt affinity as they're enabled.  If that's all we
+want, couldn't we just add a flag that directs the existing SET_IRQS
+ioctl to call irq_set_affinity() based on the cpuset_cpus_allowed()
+when called with DATA_EVENTFD|ACTION_TRIGGER?
 
-V1 -> V2: Rewrite to work in cpc_supported_by_cpu.
+What you're proposing here has a lot more versatility, but it's also
+not clear how the vmm would really make an optimal choice at this
+granularity.  Whether it's better to target an interrupt to the pCPU
+running the vCPU where the guest has configured affinity isn't even
+necessarily the right choice.  It could be for posted interrupts, but
+could also induce a vmexit otherwise.  Is the vCPU necessarily even
+within the allowed cpuset of the vmm itself when this ioctl is called?
 
-RFC: I have not yet tested this patch to ensure it functions properly,
- nor have I attempted to compile it against mainline. My system takes
- a couple of hours or so to build a kernel, and I'd like to submit this
- for feedback now and test once it's sent.
+I also wonder if there might be something through the irqbypass
+framework where the interrupt consumer could direct the affinity of the
+interrupt producer.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index b600df82669d..af2d8973ba3a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2063,6 +2063,12 @@
- 			could change it dynamically, usually by
- 			/sys/module/printk/parameters/ignore_loglevel.
- 
-+	ignore_osc_cppc_bit
-+			Assume CPPC is present and ignore the CPPC v2 bit from
-+			the ACPI _OSC method. This is useful for working
-+			around buggy firmware where CPPC is supported, but
-+			_OSC incorrectly reports it as being absent.
-+
- 	ignore_rlimit_data
- 			Ignore RLIMIT_DATA setting for data mappings,
- 			print warning at first misuse.  Can be changed via
-diff --git a/arch/x86/kernel/acpi/cppc.c b/arch/x86/kernel/acpi/cppc.c
-index ff8f25faca3d..7346a25e68ce 100644
---- a/arch/x86/kernel/acpi/cppc.c
-+++ b/arch/x86/kernel/acpi/cppc.c
-@@ -11,6 +11,14 @@
- 
- /* Refer to drivers/acpi/cppc_acpi.c for the description of functions */
- 
-+static bool ignore_osc_cppc_bit;
-+static int __init parse_ignore_osc_cppc_bit(char *arg)
-+{
-+	ignore_osc_cppc_bit = true;
-+	return 0;
-+}
-+early_param("ignore_osc_cppc_bit", parse_ignore_osc_cppc_bit);
-+
- bool cpc_supported_by_cpu(void)
- {
- 	switch (boot_cpu_data.x86_vendor) {
-@@ -24,6 +32,10 @@ bool cpc_supported_by_cpu(void)
- 			return true;
- 		return boot_cpu_has(X86_FEATURE_CPPC);
- 	}
-+
-+	if (ignore_osc_cppc_bit) {
-+		return true;
-+	}
- 	return false;
- }
- 
+It'd really be preferable to see a viable userspace application of this
+to prove it's worthwhile.
+
+> +
+> +finish:
+> +	free_cpumask_var(allowed_mask);
+> +	return err;
+> +}
+> +
+>  /*
+>   * INTx
+>   */
+> @@ -665,6 +700,9 @@ static int vfio_pci_set_intx_trigger(struct vfio_pci_core_device *vdev,
+>  	if (!is_intx(vdev))
+>  		return -EINVAL;
+>  
+> +	if (flags & VFIO_IRQ_SET_DATA_CPUSET)
+> +		return vfio_pci_set_affinity(vdev, start, count, data);
+> +
+>  	if (flags & VFIO_IRQ_SET_DATA_NONE) {
+>  		vfio_send_intx_eventfd(vdev, vfio_irq_ctx_get(vdev, 0));
+>  	} else if (flags & VFIO_IRQ_SET_DATA_BOOL) {
+> @@ -713,6 +751,9 @@ static int vfio_pci_set_msi_trigger(struct vfio_pci_core_device *vdev,
+>  	if (!irq_is(vdev, index))
+>  		return -EINVAL;
+>  
+> +	if (flags & VFIO_IRQ_SET_DATA_CPUSET)
+> +		return vfio_pci_set_affinity(vdev, start, count, data);
+> +
+>  	for (i = start; i < start + count; i++) {
+>  		ctx = vfio_irq_ctx_get(vdev, i);
+>  		if (!ctx)
+> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+> index e97d796a54fb..2e4f4e37cf89 100644
+> --- a/drivers/vfio/vfio_main.c
+> +++ b/drivers/vfio/vfio_main.c
+> @@ -1505,23 +1505,30 @@ int vfio_set_irqs_validate_and_prepare(struct vfio_irq_set *hdr, int num_irqs,
+>  		size = 0;
+>  		break;
+>  	case VFIO_IRQ_SET_DATA_BOOL:
+> -		size = sizeof(uint8_t);
+> +		size = size_mul(hdr->count, sizeof(uint8_t));
+>  		break;
+>  	case VFIO_IRQ_SET_DATA_EVENTFD:
+> -		size = sizeof(int32_t);
+> +		size = size_mul(hdr->count, sizeof(int32_t));
+> +		break;
+> +	case VFIO_IRQ_SET_DATA_CPUSET:
+> +		size = hdr->argsz - minsz;
+> +		if (size < cpumask_size())
+> +			return -EINVAL;
+> +		if (size > cpumask_size())
+> +			size = cpumask_size();
+
+You previously stated that a valid cpu_set_t could be smaller than a
+cpumask_var_t, but it looks like we're handling that as an error here?
+Truncating user data that's too large seems no more correct than
+masking in user data that's too small.  Thanks,
+
+Alex
+
+>  		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+>  
+>  	if (size) {
+> -		if (hdr->argsz - minsz < hdr->count * size)
+> +		if (hdr->argsz - minsz < size)
+>  			return -EINVAL;
+>  
+>  		if (!data_size)
+>  			return -EINVAL;
+>  
+> -		*data_size = hdr->count * size;
+> +		*data_size = size;
+>  	}
+>  
+>  	return 0;
+> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> index 2b68e6cdf190..d2edf6b725f8 100644
+> --- a/include/uapi/linux/vfio.h
+> +++ b/include/uapi/linux/vfio.h
+> @@ -530,6 +530,10 @@ struct vfio_region_info_cap_nvlink2_lnkspd {
+>   * Absence of the NORESIZE flag indicates that vectors can be enabled
+>   * and disabled dynamically without impacting other vectors within the
+>   * index.
+> + *
+> + * The CPUSET flag indicates the interrupt index supports setting
+> + * its affinity with a cpu_set_t configured with the SET_IRQ
+> + * ioctl().
+>   */
+>  struct vfio_irq_info {
+>  	__u32	argsz;
+> @@ -538,6 +542,7 @@ struct vfio_irq_info {
+>  #define VFIO_IRQ_INFO_MASKABLE		(1 << 1)
+>  #define VFIO_IRQ_INFO_AUTOMASKED	(1 << 2)
+>  #define VFIO_IRQ_INFO_NORESIZE		(1 << 3)
+> +#define VFIO_IRQ_INFO_CPUSET		(1 << 4)
+>  	__u32	index;		/* IRQ index */
+>  	__u32	count;		/* Number of IRQs within this index */
+>  };
+> @@ -580,6 +585,12 @@ struct vfio_irq_info {
+>   *
+>   * Note that ACTION_[UN]MASK specify user->kernel signaling (irqfds) while
+>   * ACTION_TRIGGER specifies kernel->user signaling.
+> + *
+> + * DATA_CPUSET specifies the affinity for the range of interrupt vectors.
+> + * It must be set with ACTION_TRIGGER in 'flags'. The variable-length 'data'
+> + * array is the CPU affinity mask represented as a 'cpu_set_t' structure, as
+> + * for the sched_setaffinity() syscall argument: the 'argsz' field is used
+> + * to check the actual cpu_set_t size.
+>   */
+>  struct vfio_irq_set {
+>  	__u32	argsz;
+> @@ -587,6 +598,7 @@ struct vfio_irq_set {
+>  #define VFIO_IRQ_SET_DATA_NONE		(1 << 0) /* Data not present */
+>  #define VFIO_IRQ_SET_DATA_BOOL		(1 << 1) /* Data is bool (u8) */
+>  #define VFIO_IRQ_SET_DATA_EVENTFD	(1 << 2) /* Data is eventfd (s32) */
+> +#define VFIO_IRQ_SET_DATA_CPUSET	(1 << 6) /* Data is cpu_set_t */
+>  #define VFIO_IRQ_SET_ACTION_MASK	(1 << 3) /* Mask interrupt */
+>  #define VFIO_IRQ_SET_ACTION_UNMASK	(1 << 4) /* Unmask interrupt */
+>  #define VFIO_IRQ_SET_ACTION_TRIGGER	(1 << 5) /* Trigger interrupt */
+> @@ -599,7 +611,8 @@ struct vfio_irq_set {
+>  
+>  #define VFIO_IRQ_SET_DATA_TYPE_MASK	(VFIO_IRQ_SET_DATA_NONE | \
+>  					 VFIO_IRQ_SET_DATA_BOOL | \
+> -					 VFIO_IRQ_SET_DATA_EVENTFD)
+> +					 VFIO_IRQ_SET_DATA_EVENTFD | \
+> +					 VFIO_IRQ_SET_DATA_CPUSET)
+>  #define VFIO_IRQ_SET_ACTION_TYPE_MASK	(VFIO_IRQ_SET_ACTION_MASK | \
+>  					 VFIO_IRQ_SET_ACTION_UNMASK | \
+>  					 VFIO_IRQ_SET_ACTION_TRIGGER)
+
 
