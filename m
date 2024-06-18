@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-220280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F3690DEEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:03:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8FC90DEF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D35AB28569B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:03:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4A671F21305
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96F1179650;
-	Tue, 18 Jun 2024 22:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0085178398;
+	Tue, 18 Jun 2024 22:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hljIireA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LslMQf9B"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCF71C2BD;
-	Tue, 18 Jun 2024 22:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46151154C15
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 22:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718748213; cv=none; b=GWn55vqHZUf7sYqDgoiuZkZSi9BVAyxTZdeFWsHRo1BiTETyWvHsWjJV4dquRqMzL/8WS6cOzMft6rhEE3v65CYdwqaMyS0DSuunWHnddPY+RR4dVUyMYDv3T2YYEQJLRDk9UCkOIM8ve1ew8tjQZydsNLcE1SuhkwYnJz/CS+Q=
+	t=1718748272; cv=none; b=iKInfXWGK8qtI462tZ2BXYbK7TvijOR7ifIJldYyabqBkhg9qW54t407Os6QLw/LAlAwJLCc7OH6Atw46UhvjpL5aRcA3FxXVSybJ4Q67cC3ZZAUz8Dvl5UZth8/muTeg8SIzcyXG2HDUA+1vhWftHjBcz5+e9P+jxjwZcwGZ20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718748213; c=relaxed/simple;
-	bh=GteTNKzehBwLLVoIA8lW5G0D40vaeVY+cFH0tsyPv4M=;
+	s=arc-20240116; t=1718748272; c=relaxed/simple;
+	bh=k+AclwJ00wodQRcHvDDfQG4xJoRkvU++PvRojRz0nO4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ksd7JzGi+BfC5GpvkJ+z9GPMHEYyLB1f7Wt2hfodGuo+HJhgrneS4lswogOV8gRHe+0Eek27cMjV8helzhu5C+qzXKi6dVEu/EII+ASQmWgoASkaoPohXKrLoElt2c18tjHRrT6LVmmXXEHJ0gooPhUbhG6DsaghFUVLe+3PsEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hljIireA; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718748212; x=1750284212;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GteTNKzehBwLLVoIA8lW5G0D40vaeVY+cFH0tsyPv4M=;
-  b=hljIireAQWh6ht/JI4LAIS+48pZCyDyXbUCzwZlrsVY+GSyvVsfy1TkI
-   lo8W1rxEckA/CrxVRUokg5tp8rVNLbR4WGSKd2VbKDD5DInf+6TSaUIAr
-   N55a7jK3+DoV/DZLxSm7l8iTTx186wA1Me7wGjDGL5jmVmfASjeSA2kzE
-   F4K6cT5lI9NABkAvdoVk6GvUk4bukTawsP229rsS8vhlRZJOpmgyIsYi7
-   0dyuPn8yzh3XBGlcnLtiQxdC53dMk+e9XTjcRk1FvTozB9V3Rnh+DDyd4
-   2mq/KMS8W/rQM3+ao07eXWlPAo4a1RUtN3pfyQla/RpWDJ2by1N2aeOVS
-   w==;
-X-CSE-ConnectionGUID: +NkCzu1qS6y415cM5RUVNQ==
-X-CSE-MsgGUID: SjmwZeIfT3G1hYK8cUzAkA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15422546"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15422546"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 15:03:31 -0700
-X-CSE-ConnectionGUID: GLWwbtdsRzSMD2rUMhrsNw==
-X-CSE-MsgGUID: U8qtaCuYTPus+TcTsYDfQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="46826413"
-Received: from mgoodin-mobl2.amr.corp.intel.com (HELO [10.124.220.122]) ([10.124.220.122])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 15:03:30 -0700
-Message-ID: <e5d64bde-b464-4014-b75a-e892fc330b3c@intel.com>
-Date: Tue, 18 Jun 2024 15:03:29 -0700
+	 In-Reply-To:Content-Type; b=NfyZo1evb5y/GfYUJGnTL9hwSQMBu+u6wIy4/QLot002Py0iiqP7spXI24x9EOK0zsGSTblIvXxlk2ETlw58W99nXtpcbvf292V9FNgKsGj2I0OVbKwZKZ8La7rDv9HmZl+uGREaJo8F+zeKyr008FMmMYtn+DIdUYnE0xValAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LslMQf9B; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718748269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3ndV5FarTOlzZV/t0MMVk4Q1U46OLyggJTJ8Uaq4m1Q=;
+	b=LslMQf9Bg8zB7kBnhl9nRywUBBTe2wQcvHelMrxo5XxWN5bTI5/EXJLA/HPzMz0ig8YFSz
+	I7Gls35kc+x2XvBVGYflomxx8IW80PsRJOpDrtaaFZ22Sw51d7aq55L9t2YlQJ1kzz6RDT
+	NiAa0juCgGaImRur/joOr9P/9li/zWU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-522-mFc_M_x-NcCVdC71lcIDow-1; Tue, 18 Jun 2024 18:04:27 -0400
+X-MC-Unique: mFc_M_x-NcCVdC71lcIDow-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4217b3d2044so45620365e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:04:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718748266; x=1719353066;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3ndV5FarTOlzZV/t0MMVk4Q1U46OLyggJTJ8Uaq4m1Q=;
+        b=GlWWYAB85QrXqcHqNCysWJ5vtpJ1rec6coq7GSHkK6qiDjXguUHldgl7QFMvduRzeL
+         B92OkO207/e1OEXINvB9LavRr51ofhYqZqzEW3sXB07/raCWCsRMK5H/+cYFLeUskGxs
+         C+qJkzJ/X0MlC2LrsW2s5q1AIShkf0vqH/2dv0sTGmRvXxxTxXB1wEGYTVtpPSsNVaHG
+         EjWxKIbpxuRQ0Hq5rFhQDuK6bAg6kQD6cDVSndEGMHY5w/x7Lp6bI5uMCk5Ys1eX8U4j
+         12PLgwGBqBqt9jL1fee6ZvUrEHdnlIwzDn6qiag1l+0AbsmsvXwq7UJPmg8kBjoES2Ee
+         gRIA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8/7DobpNCjIiUuAIl1vICJeAoeYns9QgBChqYQ8aQjeTNVVVvtcI2+7plZQIzQkGa2llfYxUpGzf63TYm2D63uQuIYD1NnXaMajGy
+X-Gm-Message-State: AOJu0YxNqbNk1Lp3WhUJN+ZLwc94pdygzz9ipEjUsYH4lLHSrnKOJHKM
+	x0YmoxOvpP4XMzAfSndtvsA40nePKYhs0PSbBpfg9O2n418czu+bKaQNUui1Ry6d7yGZcXJrQ4x
+	JsKT7auKCXzfKKRYvBluFa3UV60GT760/tTkboy772IgJ9QnTbeoMNEE26gb+JUCU9FrthA==
+X-Received: by 2002:a05:600c:1990:b0:421:7997:bf79 with SMTP id 5b1f17b1804b1-4247529b19bmr5546725e9.36.1718748266249;
+        Tue, 18 Jun 2024 15:04:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHGJAy7vVj2i/xBWOLbYxsadYShTEsT6E2xN9Aah1dml2fUURa916XLtKeZT9X9ildyswuGXg==
+X-Received: by 2002:a05:600c:1990:b0:421:7997:bf79 with SMTP id 5b1f17b1804b1-4247529b19bmr5546535e9.36.1718748265769;
+        Tue, 18 Jun 2024 15:04:25 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:1400:78ba:c2d2:22a1:8858? (p200300cbc705140078bac2d222a18858.dip0.t-ipconnect.de. [2003:cb:c705:1400:78ba:c2d2:22a1:8858])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750f2295sm15269409f8f.82.2024.06.18.15.04.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 15:04:25 -0700 (PDT)
+Message-ID: <1454f3e5-8b42-4568-a6c2-a0872397230a@redhat.com>
+Date: Wed, 19 Jun 2024 00:04:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,99 +82,173 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH PATCH 1/9] x86/cpu/topology: Add x86_cpu_type to struct
- cpuinfo_topology
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org
-Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>, Perry Yuan <Perry.Yuan@amd.com>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <20240617-add-cpu-type-v1-1-b88998c01e76@linux.intel.com>
- <9ad335f7-bfda-42f2-8ba2-830684c01c0d@amd.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v3 1/6] selftests/mm: mseal, self_elf: fix missing
+ __NR_mseal
+To: John Hubbard <jhubbard@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>,
+ Axel Rasmussen <axelrasmussen@google.com>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240618022422.804305-1-jhubbard@nvidia.com>
+ <20240618022422.804305-2-jhubbard@nvidia.com>
+ <0b152bea-ccb6-403e-9c57-08ed5e828135@redhat.com>
+ <9d08f768-b9da-4a44-9d75-a16d6cde6b66@nvidia.com>
+ <916f5ba4-02c4-4a33-97e1-5343bde5ae54@redhat.com>
+ <ee207aed-d116-49b4-a5cc-91385c52e258@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <9ad335f7-bfda-42f2-8ba2-830684c01c0d@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ee207aed-d116-49b4-a5cc-91385c52e258@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 6/18/24 14:33, Mario Limonciello wrote:
->> +enum x86_topo_cpu_type {
->> +    X86_CPU_TYPE_UNKNOWN        = 0,
->> +    X86_CPU_TYPE_INTEL_ATOM        = 0x20,
->> +    X86_CPU_TYPE_INTEL_CORE        = 0x40,
->> +};
->> +
-...
-> What do you think about having a common enum rather with words that are
-> marketing strings? 
+On 18.06.24 23:29, John Hubbard wrote:
+> On 6/18/24 1:54 PM, David Hildenbrand wrote:
+>> On 18.06.24 22:14, John Hubbard wrote:
+>>> On 6/17/24 11:56 PM, David Hildenbrand wrote:
+>>>> On 18.06.24 04:24, John Hubbard wrote:
+>>> ...
+> ...
+>>> I can update the commit description with some of the above, if it helps.
+>>
+>> I think it will. The main concern I had was that we could be ending up including headers with *wrong* data. As long as (a) it compiles where it's supposed to compile (b) it runs where it's supposed to run, we're good :)
+>>
+> 
+> OK, I've drafted an updated commit description (below), and in order
+> to reduce email churn perhaps it's best for me to hold onto it for a
+> day or two, while we see how v3 fares in linux-next. (Thanks, Andrew,
+> for patching that up with my Makefile fix.)
+> 
+> Here's the draft:
+> selftests/mm: mseal, self_elf: fix missing __NR_mseal
+> 
+> The selftests/mm build isn't exactly "broken", according to the current
+> documentation, which still claims that one must run "make headers",
+> before building the kselftests. However, according to the new plan to
+> get rid of that requirement [1], they are future-broken: attempting to
+> build selftests/mm *without* first running "make headers" will fail due
+> to not finding __NR_mseal.
+> 
+> Therefore, include asm-generic/unistd.h, which has all of the system
+> call numbers that are needed, abstracted across the various CPU arches.
+> 
+> Some explanation in support of this "asm-generic" approach:
+> 
+> For most user space programs, the header file inclusion behaves as
+> per this microblaze example, which comes from David Hildenbrand
+> (thanks!) :
+> 
+>       arch/microblaze/include/asm/unistd.h
+>           -> #include <uapi/asm/unistd.h>
+> 
+>       arch/microblaze/include/uapi/asm/unistd.h
+>           -> #include <asm/unistd_32.h>
+>           -> Generated during "make headers"
+> 
+>       usr/include/asm/unistd_32.h is generated via
+>       arch/microblaze/kernel/syscalls/Makefile with the syshdr command.
+> 
+>       So we never end up including asm-generic/unistd.h directly on
+>       microblaze... [2]
+> 
+> However, those programs are installed on a single computer that has a
+> single set of asm and kernel headers installed.
+> 
+> In contrast, the kselftests are quite special, because they must provide
+> a set of user space programs that:
+> 
+>       a) Mostly avoid using the installed (distro) system header files.
+> 
+>       b) Build (and run) on all supported CPU architectures
+> 
+>       c) Occasionally use symbols that have so new that they have not
+>          yet been included in the distro's header files.
+> 
+> Doing (a) creates a new problem: how to get a set of cross-platform
+> headers that works in all cases.
+> 
+> Fortunately, asm-generic headers solve that one. Which is why we need to
+> use them here--at least, for particularly difficult headers such as
+> unistd.h.
+> 
+> The reason this hasn't really come up yet, is that until now, the
+> kselftests requirement (which I'm trying to eventually remove) was that
+> "make headers" must first be run. That allowed the selftests to get a
+> snapshot of sufficiently new header files that looked just like (and
+> conflict with) the installed system headers.
+> 
+> And as an aside, this is also an improvement over past practices of
+> simply open-coding in a single (not per-arch) definition of a new
+> symbol, directly into the selftest code.
+> 
+> [1] commit e076eaca5906 ("selftests: break the dependency upon local
+> header files")
+> 
+> [2] https://lore.kernel.org/all/0b152bea-ccb6-403e-9c57-08ed5e828135@redhat.com/
+> 
+> Fixes: 4926c7a52de7 ("selftest mm/mseal memory sealing")
+> Cc: Jeff Xu <jeffxu@chromium.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-They're not really marketing strings.  They really are architectural and
-have specific functional meaning just like ->x86_model and ->x86_family.
+Thanks!
 
-For instance, we are effectively doing this today:
+Acked-by: David Hildenbrand <david@redhat.com>
 
-	if (c->cpu_x86_vfm == INTEL_ALDER_LAKE &&
-	    c->cpu_type == X86_CPU_TYPE_INTEL_ATOM)
-		setup_force_cpu_bug(FOO);
+-- 
+Cheers,
 
-That check is truly specific to the core being an "ATOM" and not being
-an efficient core.  There might be a future non-Atom efficient CPU or a
-future non-Core performance CPU.
+David / dhildenb
 
-We very well might have a use in the future to tag a processor as
-"efficient" or "performance" in a vendor-neutral manner.  That mechanism
-could very well be derived from ->cpu_type.  But I think that's actually
-independent from Pawan's series.
 
