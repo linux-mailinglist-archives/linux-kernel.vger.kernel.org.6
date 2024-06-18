@@ -1,144 +1,153 @@
-Return-Path: <linux-kernel+bounces-219498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE9990D375
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:05:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2BE90D379
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391D41C24BD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B5328490A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F3218A947;
-	Tue, 18 Jun 2024 13:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432A018E74C;
+	Tue, 18 Jun 2024 13:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vjESDmIY"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ojv6ZS4a"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FB413C683
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B17158A2F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718718155; cv=none; b=hvQGo37TwLkE77+WHzIchKa8hs8jCj6G5o2MLOfNRzE9fQZ0gEtuEf/L9BiUItTTIHvZLtCSNA2WSfQFc7P2bJulf70vmCy1B6d+C3/BHma9pIxH7MGN09gbm6bOWqkd1QJ2ekvFBFCjAj77qKJ5YIFSi9Y9dayFvzzpI5tbcdY=
+	t=1718718179; cv=none; b=fiF5dIoMZfwySnnL9zj5b5k4OZI9/7QPXwyru/kVwl7Yujh8bHYfv59pnNI3KT4eWcZTHsv+yZWE3l62fxXa/QzyTDcvPyWOXYfO7VvuM63nmNBi5RDHRZw3xTv35lYqamraR0k+CHwzHOxdXfvn1steOGojyA2Fxjp6iehdSTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718718155; c=relaxed/simple;
-	bh=Hw2rKRrQ/vNk+YVNe/TVwDJWQKj5mGabhKIzMLIBezU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e9AfaMBzinosM4AkxEKjKEGz4ybUkGVcZuy0QFyXT1rChQUGNZyuPSiz7dE2K9wdnAoyR44xpP1yiy/PqrLDccAF85FrMlIwdhgFVGjj+4wEZCizceZ1VN3O7jtPMEHxkExgSy/TxUdD/Sny1L4MDiEi/XsKnfCDegbbdU9sNqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vjESDmIY; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6f980c89db8so2979455a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:42:33 -0700 (PDT)
+	s=arc-20240116; t=1718718179; c=relaxed/simple;
+	bh=wgmy2onw829qz+4Uv8pd08kIiD5wyvr8mfP+Z0pXRGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rxpSvilYmuqQE50p6iqHtaM34grs6mfrm9YB13f3TNTwfaVh7j2gDHLhyTX65EsHKAFhye8TbS+6msaGn4aTfHh5sbhD4W3tq6f6u9xxV4o4DLlR/CP8gkwajeJr3bZpvX/LOZJ/DP7OTczZzCEi1WAIrQjc4hN6abcu/83+Pv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ojv6ZS4a; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c815e8e9eso5416265e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:42:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718718152; x=1719322952; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n2yaAmgIQdF+jsEnorEZWLhxEmZSW+woyCJvm4XIFQg=;
-        b=vjESDmIYKDbrgsnUIvhTS3Qajji9YiT/X6+aoXZyHhN4aZIw0rZxpFXHzSXQdDgPSB
-         CGQoLJwRAFB3VR4K2+o2Q52LUQZkjXKbzxcpXc9dGGu5oArS5Ub4Q0WK6lHzvnqfvX3h
-         aOIO7+MKgEzASMG6H0rq+acAoK1VGE5M7QV0jvypWP5UBlEIi+ap7NurdTFJ0mJT1sOj
-         GmJGE/WBN1oh0il+zCRE40UCjyvWfkhsmYys0swctfYvyOGtG410zVudQBv3+feRQ7vs
-         Y7qt4pbMT4qx1v+A2dGOPj4LSntM8jVtaRdZomt99h2pBic762IgkwHhDn4/2YSlQWY1
-         zFyw==
+        d=linaro.org; s=google; t=1718718176; x=1719322976; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MyKbHIGiUrlL0z6PTCr0chCyy+szTmigFpVqeU5aaNI=;
+        b=ojv6ZS4aQbi4vCuM5f7zNRINdiJuAVXKAwU0XZaP4RV9NlkoLnTBZyPYUF6fDSpvZk
+         Z+ZTjOHsbRwdRpPFydjS3xufLrl5b3t1sd0IlNWiEChhzHY1xO85/iRUdV/i0uPTaVn1
+         NIg1eQMscBW3I79qXdNhlLBTlSYJUiagz8R+XfsqjEmgx0kAXXhOSe38hnVjpAdOjDp3
+         C8l9GMQEZdpk802rW23lrrInbHGEvtdlK5Jg9iBzAWOAMYZUIrBjKEUCoN9p/8MExSYV
+         EFHpWIREl2P9bMsjytoWe2hE/rZLxDJEvtdgpDZrt70cb3+h1Hj4S394FWkH/g7RzOAv
+         lOLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718718152; x=1719322952;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n2yaAmgIQdF+jsEnorEZWLhxEmZSW+woyCJvm4XIFQg=;
-        b=AG7P+7J7g1F4jlYsN6C9q+XqiP0w59OfNPYxoT2mNgNPLTmsKAPix7/9JkFGRbaC5j
-         5Pf65CcV+W5pOppE8HFVPE1t0m0qSZTTZHLjaMpMOl8oBwKg/g9sKaLzDPW/+Cbmed41
-         kGR/Q7Fy8ysGC37tSnKVtsJmfk4eWuTQtKhm///2BEs5nOjg8rVn7zgyUXPuqR92VQ0L
-         1su+igIi81YU5zYV/OwDqqV0eB8IxvDKEChRo5SP7j9Cr/IODxzvt2KNQZ5KPitqqWh6
-         MVhjMjFsgwHslJf98+SkQsnbRoZl0KYcBPlgyFhbZuPqcRYIRwvxL2D7yvmv3wkKIK3R
-         LOUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgWh38rq257+ngh3qwDE4mPsq990wwfCJzuRVmjCCEePluphadOd+ict2jicyTQzN85sOEy4sb76g7Raf8qiRnGhPMIjRY3uBs2tik
-X-Gm-Message-State: AOJu0Yzp2TOsmkwOGC7wCbPRQjS/rhR9TH/cOLOpLLpywFTlBBRLHGBl
-	T4aeQ3uHQT9MVUYtbLcH7m7KssSIrQV2np3nnQUpjjHQwFzw6AncrvvS4Q9EYE4=
-X-Google-Smtp-Source: AGHT+IH0XBL+oYGfFfDAABV2lY6rjFGswntrsxIQtwr5eSwP1oqGMYpSQ45XFMtQjvOVFYM82V+h4A==
-X-Received: by 2002:a9d:6d92:0:b0:6f9:6e0b:4ac3 with SMTP id 46e09a7af769-6fb939ec9b6mr14767727a34.23.1718718152649;
-        Tue, 18 Jun 2024 06:42:32 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5afa9ffesm1824394a34.15.2024.06.18.06.42.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 06:42:32 -0700 (PDT)
-Message-ID: <edc38640-42ee-4bde-bc95-500498b5a461@baylibre.com>
-Date: Tue, 18 Jun 2024 08:42:31 -0500
+        d=1e100.net; s=20230601; t=1718718176; x=1719322976;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MyKbHIGiUrlL0z6PTCr0chCyy+szTmigFpVqeU5aaNI=;
+        b=lPUo19wTTdDoSW15x7iTPvbNs81dt6qO5/g5rnVT0b5ugLDY4DYuD7sVxJ5PCqvD2x
+         lW+263k/h3a5ypQWZ91MGXOm6OQq2yFF0fehknbyCcgFpWXsFzDb8lBDakPO6efstC6e
+         I12w7pBBCHPt03l3LWcspzceYY0JDRZTW2ZLhLq72MueDSNJoK18GWdBpDa0TAj52kxo
+         Fx7SxJbTJBW2ZlNFXgng7QUaNR+GTZlX1B2Zvnf5x18bSbOb0sHdoB2IsP5nR++O9jsO
+         pHl36+v+dfrk+eeprFYdAw7VuWwjgiU11R+som8xW0p4OVzOCy5wLVth/189po/KMeAm
+         UgGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQGC42u5F/zNEac+Y7S1TBkWMVhGd6x6sc3Sp3yGEo0OXrOZ/ekiYxliYZAKrZ2WkjmGwbnTu5Fxg6i+qoPV28kxTa8DqpCy1LODFb
+X-Gm-Message-State: AOJu0YxsZ2fZ9ewg5sC94PUr/nGsCpLAxgXIIikq5Idfv4O/tSA2s+PO
+	vlhucoGvk5q02McRcA4BHkuu4xXGbqjC8XuCjPFfzbG2wG5Epwj7ZzBxW7i7FTo=
+X-Google-Smtp-Source: AGHT+IFbZaekvOAfpvKvP60byK6JENEdTAi8wmrKnde8Cg1ymJ2PhoUiqKQ6z2KvNDSiInKdsaG4dA==
+X-Received: by 2002:a05:6512:1384:b0:52c:b456:a918 with SMTP id 2adb3069b0e04-52cb456adc7mr6829126e87.9.1718718175607;
+        Tue, 18 Jun 2024 06:42:55 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-362822f53f6sm775635f8f.0.2024.06.18.06.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 06:42:55 -0700 (PDT)
+Date: Tue, 18 Jun 2024 16:42:51 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Oleksij Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Casper Andersson <casper.casan@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v1 net-next] net: dsa: Allow only up to two HSR HW
+ offloaded ports for KSZ9477
+Message-ID: <339031f6-e732-43b4-9e83-0e2098df65ef@moroto.mountain>
+References: <20240618130433.1111485-1-lukma@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] iio: dac: ltc2664: Add driver for LTC2664 and
- LTC2672
-To: "Paller, Kim Seer" <KimSeer.Paller@analog.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "Hennerich, Michael" <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- kernel test robot <lkp@intel.com>
-References: <20240603012200.16589-1-kimseer.paller@analog.com>
- <20240603012200.16589-6-kimseer.paller@analog.com>
- <408aa030-23df-418d-a04d-a5551119624b@baylibre.com>
- <PH0PR03MB714164FC9335DFBC003E4F57F9CE2@PH0PR03MB7141.namprd03.prod.outlook.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <PH0PR03MB714164FC9335DFBC003E4F57F9CE2@PH0PR03MB7141.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618130433.1111485-1-lukma@denx.de>
 
-On 6/18/24 5:32 AM, Paller, Kim Seer wrote:
+On Tue, Jun 18, 2024 at 03:04:33PM +0200, Lukasz Majewski wrote:
+> The KSZ9477 allows HSR in-HW offloading for any of two selected ports.
+> This patch adds check if one tries to use more than two ports with
+> HSR offloading enabled.
 > 
-> 
->>> +}
->>> +
->>> +static int ltc2672_scale_get(const struct ltc2664_state *st, int c)
->>> +{
->>> +	const struct ltc2664_chan *chan = &st->channels[c];
->>> +	int span, fs;
->>> +
->>> +	span = chan->span;
->>> +	if (span < 0)
->>> +		return span;
->>> +
->>> +	fs = 1000 * st->vref / st->rfsadj;
->>> +
->>> +	if (span == LTC2672_MAX_SPAN)
->>> +		return 4800 * fs;
->>> +
->>> +	return LTC2672_SCALE_MULTIPLIER(span) * fs;
->>
->> Are we losing accuracy by multiplying after dividing here as well?
-> 
-> Hi,
-> 
-> In the case of max span for ltc2672, I found that performing multiplication
-> before division causes an integer overflow during testing. I was wondering
-> how the upstream handles this case. Could you provide some advice?
-> 
-> Thanks,
-> Kim
-> 
-> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
 
-In cases like this, we usually do 64-bit multiplication to avoid the
-overflow. There are helper functions for this sort of thing in
-linux/math64.h.
+Is this a bug fix?  What is the impact for the user?  Fixes tag?  Add
+this information to the commit message when you resend.
 
-For example, if LTC2672_SCALE_MULTIPLIER(span) is unsigned, you
-could probably do something like this:
+> ---
+>  drivers/net/dsa/microchip/ksz_common.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+> index 2818e24e2a51..0d68f0a5bf19 100644
+> --- a/drivers/net/dsa/microchip/ksz_common.c
+> +++ b/drivers/net/dsa/microchip/ksz_common.c
+> @@ -3913,6 +3913,9 @@ static int ksz_hsr_join(struct dsa_switch *ds, int port, struct net_device *hsr,
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (dev->chip_id == KSZ9477_CHIP_ID && hweight8(dev->hsr_ports) > 1)
+> +		return -EOPNOTSUPP;
 
-mul_u64_u32_div(LTC2672_SCALE_MULTIPLIER(span), 1000 * st->vref, st->rfsadj);
+Put this condition before the ksz_switch_macaddr_get().  Otherwise we'd
+need to do a ksz_switch_macaddr_put().
+
+If dev->chip_id != KSZ9477_CHIP_ID then we would have already returned.
+Really, that should be the first check in this function.  The
+hsr_get_version() should be moved to right before we use the version.
+(But that's a separate issue, not related to this patch so ignore it).
+
+So do something like this but write a better error message.
+
+regards,
+dan carpenter
+
+diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+index 2818e24e2a51..181e81af3a78 100644
+--- a/drivers/net/dsa/microchip/ksz_common.c
++++ b/drivers/net/dsa/microchip/ksz_common.c
+@@ -3906,6 +3906,11 @@ static int ksz_hsr_join(struct dsa_switch *ds, int port, struct net_device *hsr,
+ 		return -EOPNOTSUPP;
+ 	}
+ 
++	if (hweight8(dev->hsr_ports) > 1) {
++		NL_SET_ERR_MSG_MOD(extack, "Cannot offload more than two ports (in use=0x%x)", dev->hsr_ports);
++		return -EOPNOTSUPP;
++	}
++
+ 	/* Self MAC address filtering, to avoid frames traversing
+ 	 * the HSR ring more than once.
+ 	 */
+
+
 
