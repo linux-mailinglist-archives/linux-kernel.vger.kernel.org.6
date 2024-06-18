@@ -1,81 +1,71 @@
-Return-Path: <linux-kernel+bounces-220138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE87290DD1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:14:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083AB90DD22
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C008D1C22546
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:14:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A111B21DA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E9016F277;
-	Tue, 18 Jun 2024 20:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7254816CD01;
+	Tue, 18 Jun 2024 20:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ENYMfO1Y"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2040.outbound.protection.outlook.com [40.107.243.40])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E+ZnJbf5"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E469156F25;
-	Tue, 18 Jun 2024 20:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718741663; cv=fail; b=gYHwk/NEVhK/FAsJqXK8TavFDkoZW7zHfBcBxN63PYmLSWb3xTEITTplCGIYdrK+RNmhmkcUhHdJ7pSilc0N2KAd3BfFvJBzpikeRJnAOVmH6wQQ9KPwrJp7ZP8HxCrEFz9VUxPScUJgjjx2jYYWcl2smQfP1dWeUgFIeeHtOCE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718741663; c=relaxed/simple;
-	bh=9Mi2A01YJndftjBrCp8Dy3LGPcw7VGkuDcP8GWEcEJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mqeHwBJvLA9WLP+lyCF5XolBIocYdHeWIJTjNctDpEHLJ/5MI+KqNcy1BVV/3l9d8uezC6iZKcmjhJ32UTuhUvYrQpP6of3nGJYRvRhbf+EmOk7rODmnnTj6uAFv8ceWHxmaQ4b9ER7L2rkBXUy0Hyz5I3Tup7jsL8y7X8sbioE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ENYMfO1Y; arc=fail smtp.client-ip=40.107.243.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JHVt8dYueFD5HnamqXrSssi2pd5vllFgslBfl03hGGyq9PUV8cla8VyTxBk7KTkbJ5gKw4NHDDGme+4J+O+XvQKl3Drenm1wqOou0AG0YDp+uXLLkHZwc/HW3Xv8IFAarBLYNCku4JeeHwl+nJ9qk+L/T/4zr5T9ostjQWEUH2T2XtotApcH7+Qgsj6NFfj7ddWfjJTBBK1fqevR8QVT1NABgjkrDGyIOWD3DEjjQClnrdjZku84S7AaIKkB05dq2XbVUfGkUZos/CIisjzuN/hLgakSsYgdSJwBuX/cAEhr+ZN4jHkopuWw2YDuRGaPcDCqbTESux4tJ5sEqWiqig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ANFJbhWFT9hCZ6ZWUkGbNvpfG/z/lMrP8b4fhljEpxI=;
- b=f/5mTVJjHv1s4HTXrkr2DgzpPvxDBrekHwFD6tDvTJlsNwB4Z1DSsJfjs0E3dSp5nX5L4Qsji9d6lAXkOaU05nRV2zIdmuo/Qab+abzqxYC6P8wTr10N5kNGbjMJ3HFQaYKkT58rbeTXXCnICuckkDtjruamyAiangUErCBrrFqVbbsAHvUu6Mj6ocG3l2SwdQ9AfGjm1bBoEpMkuqKw2aWIxXcy7p9RK3GgOMyFS21CYu+ks/UZHEcWYD/UFhjNFWcA6LZJwsiWC8QDym1m77ebRyqq/2AZ8aAHTBpMF15CjWioWROy2+w8ffSu4Za43VMjHJyzUm6ZM8I7tyNfFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ANFJbhWFT9hCZ6ZWUkGbNvpfG/z/lMrP8b4fhljEpxI=;
- b=ENYMfO1YQAzvJZbZqBH6j43VMl9iX7jm6FiV7cjg/ssq5i58EdBNoUR1ujnTM1Jh0sZW/cGAsKWBkUEmLUBllkecdUNFDenk0GEFxzMnnhCEJV45UyqQsq7R/E8lP0lPuIkB114lRQxta7oNyz1svsxb/u1o5QauTBDxkOb1mu1kEz84D9hqJQltrH1Lq4UxGIQ3Ed9JB34KUNmg3dU7VmbgSMvOgbNKyM/EgYz4yKLCYiSMbzueaBgfzIIOdTdv++f9FX/Q5JPagMO2r77d24GAEID8lDQ/DarEmtqx+e3AcDT6PYgjTX94+56r3cq9VyfrjA1/BV4EADNee9A8iQ==
-Received: from DM6PR06CA0009.namprd06.prod.outlook.com (2603:10b6:5:120::22)
- by LV8PR12MB9134.namprd12.prod.outlook.com (2603:10b6:408:180::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
- 2024 20:14:19 +0000
-Received: from DS3PEPF000099D6.namprd04.prod.outlook.com
- (2603:10b6:5:120:cafe::21) by DM6PR06CA0009.outlook.office365.com
- (2603:10b6:5:120::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31 via Frontend
- Transport; Tue, 18 Jun 2024 20:14:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS3PEPF000099D6.mail.protection.outlook.com (10.167.17.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.15 via Frontend Transport; Tue, 18 Jun 2024 20:14:19 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Jun
- 2024 13:14:06 -0700
-Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Jun
- 2024 13:14:05 -0700
-Message-ID: <9d08f768-b9da-4a44-9d75-a16d6cde6b66@nvidia.com>
-Date: Tue, 18 Jun 2024 13:14:05 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2DB39AEC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718741872; cv=none; b=pPs+x5OF1UZnZaEgQy4f0f9skYHUFW0/xDhYX8uYM8pfOI0b2mFicpxIYEZr8eqsCukA9mJnF4GI7pcTyvGfBgQBQXociokVoDZWdZe3+4bL7R4+SLmix1nmkCZuyuuEjXH0220Q7+Wo/nd497sCobKw/g89zpk591AZ3Knq3+Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718741872; c=relaxed/simple;
+	bh=yyrfiLjqPi0uO1ISvzwWt3Wh6ZRh8LSDYclWV6U83tc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=OSm4FLxH1nsCWFMFeEqsmWrZ8au6za2FAuIEVqT2zJvwCC+eW22wk5xEPUHXsi/dwnOwwrrr9djBcV9nqhmiW3oIrf40aPo7JU5IAK+SAkAwDN20I1clpA71iN8BoT6rNoc8Jf73ITCeTTIRfEBk/JRnZk3bDa2lrcJ4VfUS7PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=E+ZnJbf5; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240618201745euoutp016e523b2df511b3490c6a3cb895087735~aMp7DFLNH0106201062euoutp01b
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:17:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240618201745euoutp016e523b2df511b3490c6a3cb895087735~aMp7DFLNH0106201062euoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1718741865;
+	bh=dB0AWSkQTUOU9QyCV/W0Hl3ec8vt1AE5YCai3dZxvxE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=E+ZnJbf56qX8YDIZQAfxnrF5IKiXc2wLCJcGlqRtS5nNlpRD9L7N4nS4rAwevEmVU
+	 YGf14SwPeLV7F3et75LHiHaH62umUjmZsqTC+mGTM4J5gT24z+UqpMkZLDPG5EYLQ5
+	 KkKX/MsQ6Fbu3D1yE/aQZNTR0tqXGGLY4ygSt/9Q=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240618201745eucas1p2325c1b00dbb107b983278aff464c5ddf~aMp69O3iV2058020580eucas1p2W;
+	Tue, 18 Jun 2024 20:17:45 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 12.EE.09620.96BE1766; Tue, 18
+	Jun 2024 21:17:45 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240618201744eucas1p1d5ea63c6b776e2e1770a6d0ba9c86ae4~aMp6tkffr0594905949eucas1p1L;
+	Tue, 18 Jun 2024 20:17:44 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240618201744eusmtrp2ee4b83c956fdf522fec86d97c74046b4~aMp6tHBih0178501785eusmtrp25;
+	Tue, 18 Jun 2024 20:17:44 +0000 (GMT)
+X-AuditID: cbfec7f5-d31ff70000002594-ae-6671eb6994d3
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id A5.B2.08810.86BE1766; Tue, 18
+	Jun 2024 21:17:44 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240618201744eusmtip153bb8ff0d0e262733b53e0f3787050f0~aMp6SvKOr0174501745eusmtip1c;
+	Tue, 18 Jun 2024 20:17:44 +0000 (GMT)
+Message-ID: <7afd05e8-21bb-42c0-8c11-ff2108a74880@samsung.com>
+Date: Tue, 18 Jun 2024 22:17:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,154 +73,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] selftests/mm: mseal, self_elf: fix missing
- __NR_mseal
-To: David Hildenbrand <david@redhat.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>, Shuah Khan
-	<shuah@kernel.org>
-CC: Andrei Vagin <avagin@google.com>, Axel Rasmussen
-	<axelrasmussen@google.com>, Christian Brauner <brauner@kernel.org>, Kees Cook
-	<kees@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, "Liam R .
- Howlett" <Liam.Howlett@oracle.com>, Muhammad Usama Anjum
-	<usama.anjum@collabora.com>, Peter Xu <peterx@redhat.com>, Rich Felker
-	<dalias@libc.org>, <linux-mm@kvack.org>, <linux-kselftest@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-References: <20240618022422.804305-1-jhubbard@nvidia.com>
- <20240618022422.804305-2-jhubbard@nvidia.com>
- <0b152bea-ccb6-403e-9c57-08ed5e828135@redhat.com>
+Subject: Re: [PATCH v2 -next] mm/hugetlb_cgroup: register lockdep key for
+ cftype
+To: Xiu Jianfeng <xiujianfeng@huawei.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <0b152bea-ccb6-403e-9c57-08ed5e828135@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099D6:EE_|LV8PR12MB9134:EE_
-X-MS-Office365-Filtering-Correlation-Id: e193a25b-d43f-4802-be59-08dc8fd33c3f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|7416011|1800799021|376011|36860700010|82310400023;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c1AzWEVLaWJtbXNCWGIrK2hxeXMxUlcxaVp1U3RUTGpJbFZTQXVWTkU5Si9s?=
- =?utf-8?B?Y2dyblFsU2JaL1Zrb0toWHN0SzdXdEsrN0w4M0s3bi9pZDF2Ymw1ZXVYeFJI?=
- =?utf-8?B?dGdrYjJVcHpyazlVZDAwWG4wK0xoUnlhUFdBNml2Qi9sTFR1OE0zY0Z0MjhI?=
- =?utf-8?B?NjRKclFtcWVCQ0tqbUQ5VC9XVHBLQ3FKUExGeUlrUThESTU0cmtnU3FHZGp5?=
- =?utf-8?B?Z2hGaUtsR0xqMHpSaFA1Sm9ic0xBUzN4dHpXdDRnWFZxRHNVT0JocWRJT2pQ?=
- =?utf-8?B?cnFlL3VyR3NSbzFyek9xVXRhOTlLRGV4MDM2QjMxd3NsNDB6WnhUSjFIbEU2?=
- =?utf-8?B?MzhMb3hhbGFNdS9uNmw3QU8raVlDTU5tRXZzb0hpQUs2ejJIb3RLdVlPZkxl?=
- =?utf-8?B?VWRtMEM4ZGFvbGJGMFYwRGpjZjFvN2FNSW9GRXYwVGQ1OGFNeGJoajRpcnJz?=
- =?utf-8?B?dkNITGw4Z29kTTR4YWh0WUNmUmxQc2w2QWhxN1BKOGZZVlMwVTVMbDY2dkRw?=
- =?utf-8?B?cFN4bnR1Q2ZudFUwb2dlRXA0cmUxVHR1dHlid1J1amJaWlJzVHNxWXBLaXlO?=
- =?utf-8?B?WVV2VW5sVVFGRVZFV3h4bEpIODNWamx1SkhWNGw3RjNIMEVNTkdoKzgxSk1z?=
- =?utf-8?B?QzF3YjJWVjVwM3RNamZKNUhLR1pFTFo3cWo4Z28vekN3M2hGRk43WUw2dlJs?=
- =?utf-8?B?ekZVLzlURlNDZXhzTTNPaTJEQ0t6cUxqUFZ4R1dLSUZ2WlJoaUpINlFNcVUv?=
- =?utf-8?B?citzcVJ6R1pVOE8zOGxQYkUvSjNnZVFhZ2luYXNUandqWHpvSVdYdE84enJn?=
- =?utf-8?B?V1BraFRGS0NqeWNwK3JySElNVE85U0NyRWRLVHhZT2hIZFdYdlBWSmlEQVlK?=
- =?utf-8?B?MFIrS1NVamZqUms1R05LRDNBaGNnbGplY3pSVmF0WTN0UGpndzJQTUp6Y3ZN?=
- =?utf-8?B?TWRCclU4eDdGSGVpS0dGK0hKRTExaVoyV2ZDUjU0M2ZqVm11cFBHNWdQZmhQ?=
- =?utf-8?B?cFJBQ1JqRzZzcWJKbmVabGxzeFBWKzV1RFhmRlE1UlJxd1VyWVNGL25TTlVE?=
- =?utf-8?B?MUJaNHdVV1FzY3FQWks3Q0xoT25DUlF6cHN4NFVORk5xK0hFY2xQVDVManhB?=
- =?utf-8?B?aFQ0RTErQXpMREdTVzU2UTN6SnJuNWhHNU5sR1dRTjJFQlZFVXlkeVpTYWtS?=
- =?utf-8?B?VTAxeHlBdzI0OUxFUHBYdWtmdXBJd0xIbDVsOGdZd29FSUhwN2xmL0hVNnRH?=
- =?utf-8?B?M0s4Qm1uOW4wT0VYa1Z6enFENFBmRmtmQTExak9sdXoxTi83aUN2MXVsdW5p?=
- =?utf-8?B?ZFBoMWc1WDl2aDdxSXVUUFNHQjMzZ2pGTGcrY0RkWHZ5WGoyQmZiM1dnTWIy?=
- =?utf-8?B?bGdLODdOZWlmMWxDK25UYzZYNUorcFJyTkYyNHk0T3QwUlhjWUo5c0h6WXY3?=
- =?utf-8?B?R2k3MTFOQzhXcWtoeVZ3YzltaE16dnpidWJNSjZYQ29DYVFlaXMyTnhGTjlZ?=
- =?utf-8?B?ZDFQRXdrdFAzZGszeVBxdDkySGRIak1haitJMEcwTWR6RWQ0dkpxVXptSHhh?=
- =?utf-8?B?MVgzbE5ubW5waU44b2NBcURjL0ZybnA4SmZ0NU0zNVYrdzhOb1hjQllDRS93?=
- =?utf-8?B?d0RiYXB2OW51cFB5RGVMQTlMaGUrVG5QcUp2WmsvaUZ6U3JhdkRpSExlZHFo?=
- =?utf-8?B?S0hFdDl4T2luUndFOHE5M1NrT0MrbldiWEVTbEU3NXpRYVR2Q1ZrT1pQTG9s?=
- =?utf-8?B?QTUyc1lLNC80WkFDS1EwVTNpV1JQK1FQeHAySytFY1E3SVl1Q1h2eTdGL094?=
- =?utf-8?B?WEFieThrQ0QyUzBmSUoreXAyVndTVHBwL2JsQWg1ZktKWTlEbG5ORUpkM1JO?=
- =?utf-8?B?dlFBUGF4OXpGSGFwT2pEa1BSTmVISG8reVNlWmhwbkFlTnc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230037)(7416011)(1800799021)(376011)(36860700010)(82310400023);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 20:14:19.0043
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e193a25b-d43f-4802-be59-08dc8fd33c3f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099D6.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9134
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20240618071922.2127289-1-xiujianfeng@huawei.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZduzned3M14VpBnP+slrMWb+GzeLyrjls
+	FvfW/Ge12D5rB6MDi0fLkbesHps+TWL3ODHjN4vH501yASxRXDYpqTmZZalF+nYJXBlndq9m
+	LtigUDF72USmBsafUl2MnBwSAiYSd1/fZepi5OIQEljBKLFo7XpGCOcLo8ThbY1Qmc+MEuvn
+	fGWGafm06w8bRGI5o8TeuUfYIZyPjBKX309l7WLk4OAVsJP4/jYFpIFFQFVi17LzbCA2r4Cg
+	xMmZT1hAbFEBeYn7t2awg9jCAkESh08sYwWxRQRcJNqOzwSrYQZadr/1ISuELS5x68l8JhCb
+	TcBQouttF9hMTqBVu2Y2sUPUyEtsfzuHGeQeCYE9HBK71u1kgbjaRWJZ82I2CFtY4tXxLewQ
+	tozE/53zmSAa2hklFvy+D+VMYJRoeH6LEaLKWuLOuV9sIJ8xC2hKrN+lDxF2lGj/fRXsYQkB
+	PokbbwUhjuCTmLRtOjNEmFeio00IolpNYtbxdXBrD164xDyBUWkWUrDMQvLmLCTvzELYu4CR
+	ZRWjeGppcW56arFxXmq5XnFibnFpXrpecn7uJkZgcjn97/jXHYwrXn3UO8TIxMF4iFGCg1lJ
+	hNdpWl6aEG9KYmVValF+fFFpTmrxIUZpDhYlcV7VFPlUIYH0xJLU7NTUgtQimCwTB6dUA1Nt
+	f9DKyZMaAv/daE5unmZ/oUT7S4/E7n0pYn8nP7zYXizL6Z9801vIgu/NZOWpfPcnljarnw54
+	UnkncXoJ/5aDDNEHt83PnGjftTN4zcI7QvulZr2s7ru6/N3LDre2K6UX+N5YxrztupK2qmzD
+	5Sd2ttUz3+SLlipG823iuvG8XTvKaI3+SQ91H77rS9w5N5n9lIqvf1IhMdvsk9gyw+Ue6a0c
+	Nn4GQZ8Xd1zJ0hfRDVO4z/rk51LRZI2qnoVG7wzSAtgmTYt7UrE6eJYve/PPCa4/Dj3aZLt1
+	1qIeZeNXzdOMo7j6Bf5t2f3qbm7aPrtZrzo2Tmt+bFPUn3RMvWW92qGb71Yw+SueOlH9UVOJ
+	pTgj0VCLuag4EQD6WVh+nQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsVy+t/xu7oZrwvTDO7dM7CYs34Nm8XlXXPY
+	LO6t+c9qsX3WDkYHFo+WI29ZPTZ9msTucWLGbxaPz5vkAlii9GyK8ktLUhUy8otLbJWiDS2M
+	9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DLO7F7NXLBBoWL2solMDYw/pboYOTkk
+	BEwkPu36w9bFyMUhJLCUUaJh1l42iISMxMlpDawQtrDEn2tdYHEhgfeMEkt6yrsYOTh4Bewk
+	vr9NAQmzCKhK7Fp2HqyEV0BQ4uTMJywgtqiAvMT9WzPYQWxhgSCJwyeWgY0UEXCRaDs+E6yG
+	GeiG+60PWSHG20o0tu9mhoiLS9x6Mp8JxGYTMJToegtxAifQ2l0zm9ghaswkurZ2MULY8hLb
+	385hnsAoNAvJGbOQjJqFpGUWkpYFjCyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAiNp27Gf
+	m3cwznv1Ue8QIxMH4yFGCQ5mJRFep2l5aUK8KYmVValF+fFFpTmpxYcYTYFhMZFZSjQ5HxjL
+	eSXxhmYGpoYmZpYGppZmxkrivJ4FHYlCAumJJanZqakFqUUwfUwcnFINTEVd0bxz9A7Zm8Sv
+	CPldUCuTnZm3iHfKx0DeXcFtR86zf2jN8TreJbduj5uMYfit6St2/DPpSVk1/Y1Gau3F+b3H
+	FjTL/BbQsOadK3pcx+Rzylqlaw3OOhzhtzJFfkZYds+eO8+gfELwkU+J6TVc2Tp5MoYCR5Ss
+	z3ButWD6yirq5xSUe9Bz3y/e/zz3/gQYuswXtuWVmdrjy/fi/Z2bkktnp7CYzm9TjM1bdmKx
+	Er8L/zUb9l0WRv9X/FcwiPb4/+uY9U+JXz9OVGYd0axq28q/J3/H7yM56dtNt3H+WaYo5zJp
+	qUjp8n0nuRj5GZ5ql8QyGs3pe/JwycKmd4+1VHgq/2lY6137/tbNoMBZiaU4I9FQi7moOBEA
+	3WT5by0DAAA=
+X-CMS-MailID: 20240618201744eucas1p1d5ea63c6b776e2e1770a6d0ba9c86ae4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240618201744eucas1p1d5ea63c6b776e2e1770a6d0ba9c86ae4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240618201744eucas1p1d5ea63c6b776e2e1770a6d0ba9c86ae4
+References: <20240618071922.2127289-1-xiujianfeng@huawei.com>
+	<CGME20240618201744eucas1p1d5ea63c6b776e2e1770a6d0ba9c86ae4@eucas1p1.samsung.com>
 
-On 6/17/24 11:56 PM, David Hildenbrand wrote:
-> On 18.06.24 04:24, John Hubbard wrote:
-...
->> diff --git a/tools/testing/selftests/mm/seal_elf.c b/tools/testing/selftests/mm/seal_elf.c
->> index f2babec79bb6..27bf2f84231d 100644
->> --- a/tools/testing/selftests/mm/seal_elf.c
->> +++ b/tools/testing/selftests/mm/seal_elf.c
->> @@ -2,7 +2,7 @@
->>   #define _GNU_SOURCE
->>   #include <sys/mman.h>
->>   #include <stdint.h>
->> -#include <unistd.h>
->> +#include <asm-generic/unistd.h>
->>   #include <string.h>
->>   #include <sys/time.h>
->>   #include <sys/resource.h>
-> 
-> Still confused. Let's take a look at "microblaze".
-> 
-> arch/microblaze/include/asm/unistd.h
->   -> #include <uapi/asm/unistd.h>
-> 
-> arch/microblaze/include/uapi/asm/unistd.h
->   -> #include <asm/unistd_32.h>
->    -> Generated during "make headers"
-> 
-> usr/include/asm/unistd_32.h is generated via
-> arch/microblaze/kernel/syscalls/Makefile with the syshdr command.
-> 
-> So we never end up including asm-generic/unistd.h directly on microblaze, but rather converts it (IIUC) to something else.
+On 18.06.2024 09:19, Xiu Jianfeng wrote:
+> When CONFIG_DEBUG_LOCK_ALLOC is enabled, the following commands can
+> trigger a bug,
 >
+> mount -t cgroup2 none /sys/fs/cgroup
+> cd /sys/fs/cgroup
+> echo "+hugetlb" > cgroup.subtree_control
+>
+> The log is as below:
+>
+> BUG: key ffff8880046d88d8 has not been registered!
+> ------------[ cut here ]------------
+> DEBUG_LOCKS_WARN_ON(1)
+> WARNING: CPU: 3 PID: 226 at kernel/locking/lockdep.c:4945 lockdep_init_map_type+0x185/0x220
+> Modules linked in:
+> CPU: 3 PID: 226 Comm: bash Not tainted 6.10.0-rc4-next-20240617-g76db4c64526c #544
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> RIP: 0010:lockdep_init_map_type+0x185/0x220
+> Code: 00 85 c0 0f 84 6c ff ff ff 8b 3d 6a d1 85 01 85 ff 0f 85 5e ff ff ff 48 c7 c6 21 99 4a 82 48 c7 c7 60 29 49 82 e8 3b 2e f5
+> RSP: 0018:ffffc9000083fc30 EFLAGS: 00000282
+> RAX: 0000000000000000 RBX: ffffffff828dd820 RCX: 0000000000000027
+> RDX: ffff88803cd9cac8 RSI: 0000000000000001 RDI: ffff88803cd9cac0
+> RBP: ffff88800674fbb0 R08: ffffffff828ce248 R09: 00000000ffffefff
+> R10: ffffffff8285e260 R11: ffffffff828b8eb8 R12: ffff8880046d88d8
+> R13: 0000000000000000 R14: 0000000000000000 R15: ffff8880067281c0
+> FS:  00007f68601ea740(0000) GS:ffff88803cd80000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00005614f3ebc740 CR3: 000000000773a000 CR4: 00000000000006f0
+> Call Trace:
+>   <TASK>
+>   ? __warn+0x77/0xd0
+>   ? lockdep_init_map_type+0x185/0x220
+>   ? report_bug+0x189/0x1a0
+>   ? handle_bug+0x3c/0x70
+>   ? exc_invalid_op+0x18/0x70
+>   ? asm_exc_invalid_op+0x1a/0x20
+>   ? lockdep_init_map_type+0x185/0x220
+>   __kernfs_create_file+0x79/0x100
+>   cgroup_addrm_files+0x163/0x380
+>   ? find_held_lock+0x2b/0x80
+>   ? find_held_lock+0x2b/0x80
+>   ? find_held_lock+0x2b/0x80
+>   css_populate_dir+0x73/0x180
+>   cgroup_apply_control_enable+0x12f/0x3a0
+>   cgroup_subtree_control_write+0x30b/0x440
+>   kernfs_fop_write_iter+0x13a/0x1f0
+>   vfs_write+0x341/0x450
+>   ksys_write+0x64/0xe0
+>   do_syscall_64+0x4b/0x110
+>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x7f68602d9833
+> Code: 8b 15 61 26 0e 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 01 00 00 00 08
+> RSP: 002b:00007fff9bbdf8e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f68602d9833
+> RDX: 0000000000000009 RSI: 00005614f3ebc740 RDI: 0000000000000001
+> RBP: 00005614f3ebc740 R08: 000000000000000a R09: 0000000000000008
+> R10: 00005614f3db6ba0 R11: 0000000000000246 R12: 0000000000000009
+> R13: 00007f68603bd6a0 R14: 0000000000000009 R15: 00007f68603b8880
+>
+> For lockdep, there is a sanity check in lockdep_init_map_type(), the
+> lock-class key must either have been allocated statically or must
+> have been registered as a dynamic key. However the commit e18df2889ff9
+> ("mm/hugetlb_cgroup: prepare cftypes based on template") has changed
+> the cftypes from static allocated objects to dynamic allocated objects,
+> so the cft->lockdep_key must be registered proactively.
+>
+> Fixes: e18df2889ff9 ("mm/hugetlb_cgroup: prepare cftypes based on template")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202406181046.8d8b2492-oliver.sang@intel.com
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-Yes.
-  
-> That will work as expected here?
-> 
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-No. :)
+> ---
+> v2: add bug log to commit message
+> ---
+>   mm/hugetlb_cgroup.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
+> index 2b899c4ae968..4ff238ba1250 100644
+> --- a/mm/hugetlb_cgroup.c
+> +++ b/mm/hugetlb_cgroup.c
+> @@ -836,6 +836,8 @@ hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
+>   			cft->file_offset = MEMFILE_OFFSET0(offset) +
+>   					   MEMFILE_FIELD_SIZE(offset) * idx;
+>   		}
+> +
+> +		lockdep_register_key(&cft->lockdep_key);
+>   	}
+>   }
+>   
 
-The problem, and the source of confusion here, is that for most user
-space programs, the header file inclusion behaves as you've mentioned
-above. However, those programs are installed on a single computer that
-has a single set of asm and kernel headers installed.
-
-We are quite special here, because we are building a set of user space
-programs that:
-
-     a) Mostly avoids using the installed (distro) system header files.
-
-     b) Must build (and run) on all supported CPU architectures
-
-     c) Must occasionally use symbols that have so new that they have not
-        yet been included in the distro's header files.
-
-Doing (a) creates a new problem: how to get a set of cross-platform
-headers that works in all cases.
-
-Fortunately, asm-generic headers solve that one. Which is why we need to
-use them here.
-
-The reason this hasn't really come up yet, is that until now, the
-kselftests requirement (which I'm trying to remove) was that "make
-headers" must first be run. That allowed the selftests to get a snapshot
-of sufficiently new header files that looked just like (and conflict
-with) the installed system headers.
-
-I can update the commit description with some of the above, if it helps.
-
-thanks,
+Best regards
 -- 
-John Hubbard
-NVIDIA
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
