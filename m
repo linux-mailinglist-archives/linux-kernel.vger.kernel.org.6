@@ -1,221 +1,136 @@
-Return-Path: <linux-kernel+bounces-218780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0B990C5FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:11:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4FB390C5FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59BF1C21788
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DD891F228FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A83A13AD3F;
-	Tue, 18 Jun 2024 07:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GLFkIoU1"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E61C13D8AE;
+	Tue, 18 Jun 2024 07:36:27 +0000 (UTC)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FD26F08B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03C812D1E7;
+	Tue, 18 Jun 2024 07:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718696050; cv=none; b=EGMCGbGdgkKNUWD4GkL2lnhKf4B8sMMeveCkPfdMYn0zP/HicFYIFNPxttZM90RE6ULEJJdw7Pk7y8ma51l1C3QpzPEASeJ89/HVWom7jjVrEsPKAz5Jn/PB472Ch1hfxk9Us2r1ZgVrZeGjUl3iwfIRfMAQEdJHSEOsquY1mjU=
+	t=1718696186; cv=none; b=azdl5rJM91JtXkP6T1DolnXnbQEbvTG1OG17UA1yUliTaWZXnmBxv9r8PUbIVJK9R2a3mhsK5VcJ+7loCbK8TCmWHHYviJQydlr5A8wK8lTwdtcChdTerWlbzQKm0je3aJrD/olUR2KBIWsE/wXnIN7oJxWtbg9B0VSMW5ap0I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718696050; c=relaxed/simple;
-	bh=CIImvumzkAeN2g71CDXVF8iXYe2GO0UwOKirtMYFvqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jo+D7nRsZBDy4RqEobToIqCZ8TQPguVdK1IwAXbEuXxhs0SIzuQjslFz4SQ+1ntHI75K041RL1O7OAxYPUa23Pk5tITeawp2Tim1DShDHHCX2Z+4svG9+zl46Uti3kj+jEv2p65c33Rf+rwHWcguzQvUq4daWt+uYz+yejQDsTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GLFkIoU1; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42108856c33so37572455e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:34:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1718696046; x=1719300846; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S5rbHo29Bzcv6IgzEIj+saePdUmzo17xMUk+HWO4goE=;
-        b=GLFkIoU1WO3tepxt0KspCdQcl22OJRSAOttnup45B9fh6dNobbzq9X9BmGw04txs2V
-         BnDo6igMFxU3SBnkO3QnhwUY7uZny/lv5KbYrcp8YBonQwvTLEb1Ul+G8RuEYeMWKZH4
-         nBTXGC2/3TIJ9GyyMeX0WULHNFcCfslDUTc+N2NyFpxz2PI/mW32AWRettNuPl2LWvE6
-         YK3hGwLiQgXmQE5oZAMt4NskJLV5ulFdD5b3HHnLKsVnZ/AsebUYG9q2hCX0x7gj9vTv
-         Xxjw/rCRdztT9f7zU4LdFwDvEGxEWt76IvpiMTDdifPUV7qgb2xF35hJkLWzSO0vChc5
-         xniA==
+	s=arc-20240116; t=1718696186; c=relaxed/simple;
+	bh=l4qwCNd0eHbNyQN6OXtnKQBtjHNXZNH/GE/oi7U5ry0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=buOdFfQjP8gyxAYJahlOjPSJ5loDSgy2hNygYnssasdNwXg1qzCdmtXJetkzNCDQryh7Hfi1jcvEJ7wyFRr97KPGA7gZxe6QPEYLET3bPJ59cIII2vRLknuwc8oEpLp1RDeFtsDLgiFcfJ0fYT2CcsNfWMBf+6kPlQpuVldAF1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-62ffc495935so54202127b3.1;
+        Tue, 18 Jun 2024 00:36:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718696046; x=1719300846;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S5rbHo29Bzcv6IgzEIj+saePdUmzo17xMUk+HWO4goE=;
-        b=L0n/pkhk02om3Djx8mJ5TVqyaZPj79soD0sITHZLWHBMTO8gphDSge6zbrkPkRFuXy
-         0WT16HOOJn9YjrDxVtxGAULz900cyCjv9kVbvoqtAKLK4qLIQQrEDk1SQksd7iO6c+Lz
-         sFdG/wbWFZn1G4e4FZUdgTh8CEq2qYU9wPGiCxVFfKz80sZICS+ISa8m1YCG/ZmbT5uN
-         p+lFcx6klJoJNYnzsr8E/2ccWQmfVkmWUAhXpHEWuAAXZF2anBttR2ADFvTrWlF+ReYE
-         px+/fvCtHkOti5LtAImo/mG1uKb0lj8W2PsH1WK48sYs2Wqj+jxZtoaBmTOFG67iKFoG
-         OcSw==
-X-Forwarded-Encrypted: i=1; AJvYcCU32v3cRWE3o0BBlM4mskM2xctbJZWkIfvsfKGttgKiDkfYGtFF20cOXzhmPwWBiFzJ5Rp9mixtqBzNWvy1qRkwIrDW46wGdW6E0t2W
-X-Gm-Message-State: AOJu0Yy1MKu92uHN3DES/5YLR1MRMnECq+psZRFrH2wEw07e76LF6QXt
-	1fg8uPq7u4j31w80LyDhBmHNWePjRl2NUUlnTylHA+ohEOqXlyjdbAXvgBZ8nDvydEPvqysyt+N
-	t
-X-Google-Smtp-Source: AGHT+IGs6nMfyFgDynWsbFh3DQ7FHvym58ye8vd0+afKHhJ633/JxauO+1qBYCV6VN20sYRNPadGSA==
-X-Received: by 2002:a05:600c:358f:b0:421:79b5:6d84 with SMTP id 5b1f17b1804b1-4246f5dbeabmr15612205e9.17.1718696045685;
-        Tue, 18 Jun 2024 00:34:05 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.189])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320bd8sm180070125e9.32.2024.06.18.00.34.04
+        d=1e100.net; s=20230601; t=1718696183; x=1719300983;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CXevbHTVVB5W4AkAG0SpByLTlEWY1oXg3P8wa0a9S0A=;
+        b=r0IfGcPhfZYyQWXairOgAgwizEQJe5RDIO6zrw19717ZOWUvYnmqtjM7B4oa9cLvCB
+         WCfJLTWVOr+Xr+rHWGki/pdYeeAGHYOnKAUoOxwqfmFYRbbFw1daaTm6IgsOw5GU9Smm
+         mV/OsfEw5WcsXauiQ9gGqWJW/O9HLeBHzWJ6ZxKJ8ZIxDO3InOvlfpefSuWsEqHoKO/Z
+         Uda326XqpMY1u6ncFlZtMsngRCulC7bWoDDpXV8yphp1qxz6Q/mBLkBWD96yFjHh2MEz
+         8ot8UcrFZYgSQdsQtrZRQXOnUh41octR+xADEJAt87oTeZAvfAsCYz49/1+hZq2WvCPR
+         zTng==
+X-Forwarded-Encrypted: i=1; AJvYcCUOukw2EwThVa7nL0uLHaPTzWMDlDfpzMq6veMYjtAXBKpaTUAy2mph6kcnm/pia1GS+oM69FoH1hWTpdua/f5C7xm2OlfcMq/1BYFBgBmcYPxJbmkONlOqK9v2LsbnxeXTa7kM2I5pAEHp+Kls
+X-Gm-Message-State: AOJu0Yw0emlEM/xjRFTbOicfLxPk/ABN5eG99DmfBIaR7R/LdC54fZjC
+	3CuUweAhzIxbn/sn0enno1eW3CSCqAdiVDeXFk+4H5tLUtE4pfRFk3d1W6tt
+X-Google-Smtp-Source: AGHT+IFHM7mhk6Fuf00JLZYzz+PxhP5osyYqbgo/fDNP4um2W196bHwxHFYnGRtXfjCOh/LW37DKOw==
+X-Received: by 2002:a05:690c:fd0:b0:632:d12d:9378 with SMTP id 00721157ae682-632d12d96c4mr110481527b3.11.1718696183275;
+        Tue, 18 Jun 2024 00:36:23 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6311a92c147sm16986257b3.111.2024.06.18.00.36.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 00:34:05 -0700 (PDT)
-Message-ID: <0a4ba0e5-3fb1-4ffc-b2d8-a4eb418707eb@tuxon.dev>
-Date: Tue, 18 Jun 2024 10:34:03 +0300
+        Tue, 18 Jun 2024 00:36:23 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e02a6d4bdbeso264296276.2;
+        Tue, 18 Jun 2024 00:36:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6kngJvNXkTbtBZSYmHdg+mGD3+/El+XP7kR/Zyqekiet9VGVInvQsb0du8twR8N0gLTlyDRdSuxcpbpWBkmahsII9y8MPkKz4D6XgYN8xSnKTnf50Ifj0XwG34QGG82sNPUF7rKTKpCDSw2Fq
+X-Received: by 2002:a25:8689:0:b0:e02:721b:756a with SMTP id
+ 3f1490d57ef6-e02721b80f5mr1035835276.47.1718696182911; Tue, 18 Jun 2024
+ 00:36:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/12] dt-bindings: clock: renesas,rzg3s-vbattb-clk:
- Document the VBATTB clock driver
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
- alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
- <20240614071932.1014067-3-claudiu.beznea.uj@bp.renesas.com>
- <20240615-angler-occupier-6188a3187655@spud>
- <3d9ed0ec-ca9a-45b4-a633-8f7051d13cff@tuxon.dev>
- <20240617-subsoil-creed-04bf5f13d081@spud>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240617-subsoil-creed-04bf5f13d081@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240617-md-m68k-arch-m68k-v1-1-57d38beaeb13@quicinc.com>
+In-Reply-To: <20240617-md-m68k-arch-m68k-v1-1-57d38beaeb13@quicinc.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Jun 2024 09:36:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWD0Je3HZ+RJyfdxKxKcBp7nt6ooP_YUpiju77Zf1QzVw@mail.gmail.com>
+Message-ID: <CAMuHMdWD0Je3HZ+RJyfdxKxKcBp7nt6ooP_YUpiju77Zf1QzVw@mail.gmail.com>
+Subject: Re: [PATCH] m68k: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jeff,
 
+On Tue, Jun 18, 2024 at 1:47=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
+.com> wrote:
+> With ARCH=3Dm68k, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/m68k/emu/nfblock.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/m68k/emu/nfcon.o
+>
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-On 17.06.2024 18:19, Conor Dooley wrote:
-> On Mon, Jun 17, 2024 at 10:02:47AM +0300, claudiu beznea wrote:
->>
->>
->> On 15.06.2024 15:17, Conor Dooley wrote:
->>> On Fri, Jun 14, 2024 at 10:19:22AM +0300, Claudiu wrote:
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock that feeds
->>>> the RTC and the tamper detector. Add documentation for the VBATTB clock
->>>> driver.
->>>>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>> ---
->>>>  .../clock/renesas,rzg3s-vbattb-clk.yaml       | 90 +++++++++++++++++++
->>>>  1 file changed, 90 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml
->>>> new file mode 100644
->>>> index 000000000000..ef52a0c0f874
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.yaml
->>>> @@ -0,0 +1,90 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/clock/renesas,rzg3s-vbattb-clk.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Renesas VBATTB clock
->>>> +
->>>> +maintainers:
->>>> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>> +
->>>> +description:
->>>> +  Renesas VBATTB module is an always on powered module (backed by battery) which
->>>> +  generates a clock (VBATTCLK). This clocks feeds the RTC and the tamper detector
->>>> +  modules.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: renesas,rzg3s-vbattb-clk
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  clocks:
->>>> +    items:
->>>> +      - description: VBATTB module clock
->>>> +      - description: VBATTB input xtal
->>>> +
->>>> +  clock-names:
->>>> +    items:
->>>> +      - const: bclk
->>>> +      - const: vbattb_xtal
->>>> +
->>>> +  '#clock-cells':
->>>> +    const: 0
->>>> +
->>>> +  power-domains:
->>>> +    maxItems: 1
->>>> +
->>>> +  renesas,vbattb-load-nanofarads:
->>>> +    description: load capacitance of the on board xtal
->>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>> +    enum: [ 4000, 7000, 9000, 12500 ]
->>>> +
->>>> +  renesas,vbattb-osc-bypass:
->>>> +    description: set when external clock is connected to RTXOUT pin
->>>> +    type: boolean
->>>
->>> When you say "external clock", is that an input or an output?
->>
->> I took that statement from the HW manual. As of the HW manual [1], table
->> 42.2, that would be an input.
-> 
-> Forgive me for not wanting to open the zip etc and find the information
-> in the document, but why do you need an extra property? Is it not
-> something you can determine from the clocks/clock-names properties?
+Thanks for your patch!
 
-It can't be determined from clocks/clock-names as of my understanding. It
-depends on the type of the input clock (crystal oscillator or external
-hardware device generating the clock).
+> --- a/arch/m68k/emu/nfblock.c
+> +++ b/arch/m68k/emu/nfblock.c
+> @@ -193,4 +193,5 @@ static void __exit nfhd_exit(void)
+>  module_init(nfhd_init);
+>  module_exit(nfhd_exit);
+>
+> +MODULE_DESCRIPTION("ARAnyM block device driver");
 
-> It sounds like an additional clock from your description, is it actually
-> different way to provide the second clock you mention above?
+I think that should be s/ARAnyM/Atari NatFeat/, as I believe NatFeat
+is also available on other Atari emulators. See also nfeth.c
 
-This is the block diagram (see [1], only picture this time) of the module
-controlling the clock. Please open it, it helps in understanding what I'll
-explain above.
+>  MODULE_LICENSE("GPL");
+> diff --git a/arch/m68k/emu/nfcon.c b/arch/m68k/emu/nfcon.c
+> index 17b2987c2bf5..0ab2e4d08871 100644
+> --- a/arch/m68k/emu/nfcon.c
+> +++ b/arch/m68k/emu/nfcon.c
+> @@ -173,4 +173,5 @@ static void __exit nfcon_exit(void)
+>  module_init(nfcon_init);
+>  module_exit(nfcon_exit);
+>
+> +MODULE_DESCRIPTION("ARAnyM console driver");
 
-The VBATTB blocks controlling the VBATTBCLK are:
-- 32KHz-clock oscillator
-- the mux controlled by BKSCCR.SOSEL
-- the gate who's input is the mux output and XOSCCR.OUTEN
+Likewise.
 
-To the 32 KHz-clock oscillator block could be connected:
-1/ either a crystal oscillator in which case it will be connected to both
-RTXIN and RTXOUT pins (the direction of RTXOUT is wrong in this picture for
-this case)
-2/ or a device (like [2]) generating a clock which has a single output and,
-from my understanding and experience with devices like this, only RTXIN is
-needed, RTXOUT is connected to the ground; for this case the 32KHz-clock
-oscillator block from [1] need to be bypassed in which case the newly
-introduced property will be used; this will select the XBYP on the mux.
+>  MODULE_LICENSE("GPL");
 
-Thank you,
-Claudiu Beznea
+If you agree, I can make these changes while queuing in the m68k tree
+for v6.11.
 
-[1] https://pasteboard.co/QYsCvhfQlX6n.png
-[2]
-https://ro.mouser.com/datasheet/2/268/DSC1001_3_4_1_8V_3_3V_Low_Power_Precision_CMOS_Osc-3314582.pdf
+Gr{oetje,eeting}s,
 
-> 
->>
->> [1]
->> https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11-ghz-cpu-and-dual-core-cortex-m33-250
->>
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
