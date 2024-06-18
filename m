@@ -1,107 +1,156 @@
-Return-Path: <linux-kernel+bounces-219422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BEA90D209
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:47:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD5290D0FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2781B25DE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:38:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B31951C23FFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE99119B3E1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3EE19B3C3;
 	Tue, 18 Jun 2024 13:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="O3yR47ZZ"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DCC157493;
-	Tue, 18 Jun 2024 13:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB72155736;
+	Tue, 18 Jun 2024 13:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718715892; cv=none; b=frKt/DbSjXgALjzMKd6QzczYVfbFVzR2ea2NN+gl9wXgW9CiNIUhGbe5TCfZqC/3MOqUrpbr+4Ml32QY6jVGl2GtqQvCV8PdeIsfgMyAbQdqe1sptQ6PcYyP9dJuoQUsIEtmsNHzsKEYJo4uVPxS8jVORmNjphNGAAxX01UARUo=
+	t=1718715892; cv=none; b=jh7sObEgsokD+knFIIRhm8RT42f4qlPllFyEHbPUMzwJqxaCfxQvYFDng3qHd2f+ktgQlXLaPBmjlO7isTe4G/KYjORmOwrzeY1hoD8K2D4SmfBiMG2q23ef0s54gw/Ti4djdWTF9JUMDt4XIPj/KJH0a7zcSNwvFh/URo02ONs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718715892; c=relaxed/simple;
-	bh=pTRWcYeQ/Qjey8SyqFLEGBXI9pzeAqd5f6ZDqSfVn9Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Mcc4qXhitiS1WoZWpll0PINb/+jr1JGI5pXl5sBJ7At2kOgJQW2WiSSz8t0IsRaNL7yJA3AD+Q+dbwUA4yeWAKZa0ZcbiVocGi6XyGOsfUEYgtyCUY9QyfL5r+cKtCWm/nt++7wi9Tehc3qqYMVSGi2qohRHDcaUWq+GK37UEyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=O3yR47ZZ; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 579398824C;
-	Tue, 18 Jun 2024 15:04:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1718715888;
-	bh=t69zzJZDwGELaNEhVEfGmfOE2SSJ5q6M6ley+H5/T4Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=O3yR47ZZ9lD+CROtump1UE863UaS5I97USo1udbjgPqVIKp2kgErXUdjb7UiYZ+zu
-	 K0W6fqCVAmoyli8hkjUIJpCQFBmDzDt0siyb7qqtvAnOoiYBcbVPn69th1cYJk5wVo
-	 igsWGGtOTDuSwNxhqzZH7RbKcJuu1zi/9ZDY+jeXBEwSdvHy6GaBqLCBNT1DYZhlHs
-	 7mVa80EHqLPL4Kb4AIiPmgLUyijQ6F/KLDcmR1Fxz3EiChELpXhKWmYRS3tV4Ftj8t
-	 FuuuV9eH67VoB3Ne9AjTbmcpc/IF8LWsthi11SnLJwk2Gee6i2LDVR1DoN7BWiIdC0
-	 U3eO6OtY0EkIQ==
-From: Lukasz Majewski <lukma@denx.de>
-To: Vladimir Oltean <olteanv@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Tristram.Ha@microchip.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	Casper Andersson <casper.casan@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH v1 net-next] net: dsa: Allow only up to two HSR HW offloaded ports for KSZ9477
-Date: Tue, 18 Jun 2024 15:04:33 +0200
-Message-Id: <20240618130433.1111485-1-lukma@denx.de>
-X-Mailer: git-send-email 2.39.2
+	bh=utGAo2ifRsMXL+0U5Vdjs3fahesCbSupcZDfbwU3OYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BLGAqJbl2kSLvHj0YNVAdsumDDvWpGUkhIzH6JOu7PF61Wk8y4HW3WQpoC93CVKrA1bMEKO+tuXYWkHm9SuBGi4/j0FlErijqry3V6UbZEKL+U5ed/YliITbeSzoev5+bDySn4wM4NyOtVdI8RS5qJy2cWwFhWm9oUXuXVS3EHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38E46DA7;
+	Tue, 18 Jun 2024 06:05:11 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6257D3F64C;
+	Tue, 18 Jun 2024 06:04:44 -0700 (PDT)
+Message-ID: <f435e2d2-f864-4a34-bc38-cb06ce140a6f@arm.com>
+Date: Tue, 18 Jun 2024 14:04:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf sched replay: Fix -r/--repeat command line option
+ for infinity
+To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Chen Yu <yu.c.chen@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+ Fernand Sieber <sieberf@amazon.com>,
+ linux-perf-users <linux-perf-users@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240618112907.15131-1-vineethr@linux.ibm.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <20240618112907.15131-1-vineethr@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The KSZ9477 allows HSR in-HW offloading for any of two selected ports.
-This patch adds check if one tries to use more than two ports with
-HSR offloading enabled.
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
----
- drivers/net/dsa/microchip/ksz_common.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index 2818e24e2a51..0d68f0a5bf19 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -3913,6 +3913,9 @@ static int ksz_hsr_join(struct dsa_switch *ds, int port, struct net_device *hsr,
- 	if (ret)
- 		return ret;
+On 18/06/2024 12:29, Madadi Vineeth Reddy wrote:
+> Currently, the -r/--repeat option accepts values from 0 and complains
+> for -1. The help section specifies:
+> -r, --repeat <n>      repeat the workload replay N times (-1: infinite)
+> 
+
+I was wondering if this was a regression or was always like this but
+it's at least been broken long before it becomes difficult to build
+Perf for me.
+
+> The -r -1 option raises an error because replay_repeat is defined as
+> an unsigned int.
+> 
+> In the current implementation, the workload is repeated n times when
+> -r <n> is used, except when n is 0.
+> 
+> When -r is set to 0, the workload is also repeated once. This happens
+> because when -r=0, the run_one_test function is not called. (Note that
+> mutex unlocking, which is essential for child threads spawned to emulate
+> the workload, happens in run_one_test.) However, mutex unlocking is
+> still performed in the destroy_tasks function. Thus, -r=0 results in the
+> workload running once coincidentally.
+> 
+
+I also saw an intermittent hang waiting in destroy_tasks() which is now
+fixed.
  
-+	if (dev->chip_id == KSZ9477_CHIP_ID && hweight8(dev->hsr_ports) > 1)
-+		return -EOPNOTSUPP;
-+
- 	ksz9477_hsr_join(ds, port, hsr);
- 	dev->hsr_dev = hsr;
- 	dev->hsr_ports |= BIT(port);
--- 
-2.20.1
+> To clarify and maintain the existing logic for -r >= 1 (which runs the
+> workload the specified number of times) and to fix the issue with infinite
+> runs, make -r=0 perform an infinite run.
+> 
+> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> ---
+>  tools/perf/Documentation/perf-sched.txt | 7 +++++++
+>  tools/perf/builtin-sched.c              | 8 ++++++--
+>  2 files changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+> index a216d2991b19..f1be8f0b249e 100644
+> --- a/tools/perf/Documentation/perf-sched.txt
+> +++ b/tools/perf/Documentation/perf-sched.txt
+> @@ -202,6 +202,13 @@ OPTIONS for 'perf sched timehist'
+>  --state::
+>  	Show task state when it switched out.
+>  
+> +OPTIONS for 'perf sched replay'
+> +------------------------------
+> +
+> +-r::
+> +--repeat <n>::
+> +	repeat the workload n times (0: infinite). Default is 10.
+> +
+>  SEE ALSO
+>  --------
+>  linkperf:perf-record[1]
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 8cdf18139a7e..2c4ed5c2d695 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -3383,8 +3383,12 @@ static int perf_sched__replay(struct perf_sched *sched)
+>  	sched->thread_funcs_exit = false;
+>  	create_tasks(sched);
+>  	printf("------------------------------------------------------------\n");
+> -	for (i = 0; i < sched->replay_repeat; i++)
+> +
+> +	i = 0;
+> +	while (sched->replay_repeat == 0 || i < sched->replay_repeat) {
 
+Very minor nit, but you don't really need to remove the for loop, just add
+the new condition to the existing one. Not sure if it's worth re-spinning
+for though.
+
+Reviewed-by: James Clark <james.clark@arm.com>
+
+>  		run_one_test(sched);
+> +		i++;
+> +	}
+>  
+>  	sched->thread_funcs_exit = true;
+>  	destroy_tasks(sched);
+> @@ -3548,7 +3552,7 @@ int cmd_sched(int argc, const char **argv)
+>  	};
+>  	const struct option replay_options[] = {
+>  	OPT_UINTEGER('r', "repeat", &sched.replay_repeat,
+> -		     "repeat the workload replay N times (-1: infinite)"),
+> +		     "repeat the workload replay N times (0: infinite)"),
+>  	OPT_PARENT(sched_options)
+>  	};
+>  	const struct option map_options[] = {
 
