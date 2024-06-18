@@ -1,167 +1,294 @@
-Return-Path: <linux-kernel+bounces-219999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6E690DB56
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F8D90DB59
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E320283B5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:10:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 054DC2839FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636B0156F21;
-	Tue, 18 Jun 2024 18:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA1A156F3B;
+	Tue, 18 Jun 2024 18:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHr+daw2"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsB1ggxD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEC8156C6B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 18:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E13156C6C;
+	Tue, 18 Jun 2024 18:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718734214; cv=none; b=R5hB05p3P8QIPuih+uaOS4dhj5bOSKKFaGzNW01+LH/nzYW165deZdihl027CLYra8v8+oGR6jagGfra0RgrnZNxP+xxibnbOQv2gRPkEIHhaFI/zzhYIqxvGhjNvMIzEh3AvAKTJQi8vbw/gfmn5Dob8rtL26gOQLoFLHZBkzU=
+	t=1718734239; cv=none; b=d7qtzPmQm+ikAuNQAI5aRCnQsfztOIyW4hrlp46wqhYdM5C3WklyUs2enxyVLinK/NV6lY0YhY+pUxdj1QXHSuJXLfgQLxrEW4nz9LmdLbRJ6sBl+qu2mNFTwCqt+6yJLtK3pT0Xi5yR/carebAEWPsqv63pCEQMDfehaO6oqVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718734214; c=relaxed/simple;
-	bh=rbJs8MNAFE8VWRdIQYKsP31mA+TYArgJV+Rm6c69Uo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JEq1JTYZfkBqWLc4WK7hj7bJoWcyuG2wo3MeX1/xrXVdMrwHHbZFgz/Ac95rwlVOYgAdVLl736C6X7RliT+TUOH6J4P+vjpmtnD0Kz9nUfYMdO16m0gKFHTRnOFKS5XzpYxw3+VOJ5Rh6RvZahxV20ChGQ9xsm2ixV/8gvCryQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHr+daw2; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-705fff50de2so57937b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:10:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718734212; x=1719339012; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=tksP8iwOTDl5VporpnBvdxtHrBevWiA9FB09E64Mkfc=;
-        b=AHr+daw2288lJaL35c9tGTqTt+DSgYdALHj/qCmbEF23A8/y5yA5yscdJ14RedbnFC
-         i0rpu+X9H5uCjHjMfpxVi4cbzNI8dSkrHa4CUyUb+FASyfBfXfxgOtwOCgiXqRk/7DuG
-         4PMCKBdAFmRNxFuNtcO87fNsO0ue7NlQnbum6TgJkhFcdY2TaqbOS2SO5o9mxBC/0WeD
-         H/CAX/frdKJBvJOXq/PhdmeBICOIaPSCiz0d6TDBdMb458tVIjz1dciQzCCeHDsPUgwL
-         +gwpMeQ06WRuuO/9kzSt5n0eQ1+G2PGm5U9FX82X0/QkgByoZzMIVT9KpEVpF/WzWLCI
-         FKQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718734212; x=1719339012;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tksP8iwOTDl5VporpnBvdxtHrBevWiA9FB09E64Mkfc=;
-        b=CBcIBfAWcFyqxa8nMLxoCsIfsHJ2QTjk2D5mdUzuSfP2N4ngPD4D3Upp/W+G5lf5SZ
-         4qrScdW4TFmvci4XsO6aXNmZ+WM1PpmUF/8cJodad3srXRKZ2bX1nqQqvlgKzW0GFIzL
-         q+wt1JAxBsGdsazZjXABJUFMjIJfOUa2JPHqJpww3nGUiF9Z+wDHaomEC+lIfDMH8L9m
-         tkqCXXWR5BthMhIY/zADZGSyWAARguUAcE12rSQy8HE1zo1jM5RF1QOZ4zWnLeVgLrM3
-         MKmH3nNYYDbphO1gDxX+DQs+LkahNdLw/yiVsPBtgDJoZukibQZTND5uT2b31R/3M17e
-         s41Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUM5bgnPUT13ACgHacnq2/m2M2XE8uNLJHa8J60eGQ1or3huvaSt4qNZbelguRVYnGd+QgWkcwL92a4bC9b4aiw+wllpNNVPCi660Z0
-X-Gm-Message-State: AOJu0YyKtQpU/CykqpMcDvQ17ANfINvYq1qkQnRDn1Uf981BU1demny+
-	+eobEShcjki5M6C+YsGRTGG5DH/qR7s1OC2H2XOFYA5FC9tP7bRP55RsDg==
-X-Google-Smtp-Source: AGHT+IHDHF118TZfIHIIpEuJTLKU2jjQrbOE6fdjOkoKVtxM2BHw9JPhhH9vAjSNy6wGXMZZtpaSsQ==
-X-Received: by 2002:a05:6a20:3b98:b0:1b8:af57:7bba with SMTP id adf61e73a8af0-1bcba179d0dmr786532637.15.1718734212238;
-        Tue, 18 Jun 2024 11:10:12 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6b788sm9267506b3a.164.2024.06.18.11.10.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 11:10:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <5e070081-8757-4384-989c-25f6e0cfa7e7@roeck-us.net>
-Date: Tue, 18 Jun 2024 11:10:09 -0700
+	s=arc-20240116; t=1718734239; c=relaxed/simple;
+	bh=EAvgZ3jMRCuTBhjZ/B+YPumQ+F27xwXs2WGNI9/iw6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CathX58dYt05ftmnRGcLyj0TLlqFvOgLKm2gpPE5VKqqnJVFMAHGU9GvdiEZWQeRZ85QwKGuYtvcRay89IqNJ73lH0H0i8TpifJyrTOhAMwFwsrJ/ZyC92/+vnEJFh89q8Y7JF+piYWlHwHxp5v22wRqcLgtvHU2AWR1O1Ljv7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsB1ggxD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D31EC3277B;
+	Tue, 18 Jun 2024 18:10:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718734239;
+	bh=EAvgZ3jMRCuTBhjZ/B+YPumQ+F27xwXs2WGNI9/iw6w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UsB1ggxDjMVJ2bkpOY1nKfMR+8EDszY1zyaQ5sHAm5770BSZXaG2f6OB+YNYYXa6q
+	 JPKFtXmGx6H4GmFZ+pdBKNvJ1eWUsXVnCmEnOpTL0Dh1PFH93SXT08T46h5g1vm5cG
+	 ayKhoikeHx/EcWdFzABFU3tAdtaYi9GxJw4TGJBQe0cWXJYif06tuTUvoF6x2dSYcH
+	 BAOL8V7giCyQP1QeNs7qtVGHoFLN/cYqyCkFxCPzdO2AxFQqaBhoaw/ExuhmPOxK7d
+	 TduN9cJ8gbcDNEwCcAXQQw1cjeqQ7K9zWRxZD/u3kSjjO/+Q5Lw2Wzz2QrxTgcddEo
+	 swS7EoMEUABbA==
+Date: Tue, 18 Jun 2024 19:10:33 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	alsa-devel@alsa-project.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] dt-bindings: iio: dfsdm: move to backend framework
+Message-ID: <20240618-footwear-impotence-5284985a609d@spud>
+References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
+ <20240618160836.945242-5-olivier.moysan@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Page select register restrictions in regmap core
-To: Mark Brown <broonie@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>
-References: <e3e11724-794d-423e-9326-ffe8eed5119c@roeck-us.net>
- <4b22e04f-3142-4a5a-a8d1-366c4b8bbb73@sirena.org.uk>
- <78c93d6b-af0e-4d96-b213-e1e402524361@roeck-us.net>
- <adcd5997-84ee-4c72-aa37-2940afdc83bd@sirena.org.uk>
- <c4a5fb5c-90b4-488b-8875-a0b819e24bcd@roeck-us.net>
- <19893519-20a6-47cf-bb3b-c61dada627bc@sirena.org.uk>
- <e6733f56-014e-4ea0-aaf8-059334f2b27f@roeck-us.net>
- <1a62fc39-355c-4885-b5f6-b66f01a1328a@sirena.org.uk>
- <0287c32d-0b63-4873-9f71-0094a912f8bb@roeck-us.net>
- <44d4fce5-2ec9-4f62-b7ac-a317c7d843db@sirena.org.uk>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <44d4fce5-2ec9-4f62-b7ac-a317c7d843db@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4SiWeHDoe2HNgIcV"
+Content-Disposition: inline
+In-Reply-To: <20240618160836.945242-5-olivier.moysan@foss.st.com>
 
-On 6/18/24 10:45, Mark Brown wrote:
-> On Tue, Jun 18, 2024 at 09:14:56AM -0700, Guenter Roeck wrote:
-> 
->> Anyway, this may be all irrelevant in respect to regmap support.
->> It turns out that at least some i801 controllers don't work with the
->> access mechanism used by regmap, or maybe the spd5118 chips don't support
->> I2C_FUNC_SMBUS_I2C_BLOCK. I already found that those chips don't support
->> auto-incrementing the register address and actually reset the address on byte
->> reads (i.e., subsequent calls to i2c_smbus_read_byte() always return the data
->> from the first register). Since regmap doesn't have a means for me to say
->> "don't use I2C_FUNC_SMBUS_I2C_BLOCK even if the controller supports it",
->> I may have to drop regmap support entirely anyway. That would be annoying,
->> but right now I have no idea how to work around that problem.
-> 
-> You can set the use_single_read and use_single_write flags in the config
-> to ensure registers are accessed one at a time, that restriction is
-> moderately common.
 
-I'll give it a try.
+--4SiWeHDoe2HNgIcV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+On Tue, Jun 18, 2024 at 06:08:30PM +0200, Olivier Moysan wrote:
+> Change the DFSDM binding to use the new IIO backend framework,
+> along with the adoption of IIO generic channels.
+> This binding change allows to add scaling support to the DFSDM.
+>=20
+> Keep the legacy binding as deprecated for backward compatibility.
+>=20
+> The io-backends property is supported only in generic IIO channel
+> binding.
+>=20
+> - Channel description with the generic binding (Audio and Analog):
+>=20
+>   Properties supersed by generic properties:
+>     st,adc-channels: becomes "reg" property in channel node
+>     st,adc-channel-names: becomes "label" property in channel node
+>   Properties moved to channel child node:
+>     st,adc-channel-types, st,adc-channel-clk-src, st,adc-alt-channel
+>=20
+> - Analog binding:
+>=20
+>   DFSDM filter channel is configured as an IIO backend consumer.
+>   Add io-backends property in channel child nodes.
+>=20
+>   DFSDM is no more configured as a channel consumer from SD modulator.
+>   Use of io-channels in DFSDM node is deprecated.
+>=20
+> - Audio binding:
+>=20
+>   DFSDM audio DAI is configured as a channel consumer from DFSDM filter.
+>   No change compare to legacy.
+>=20
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> ---
+>  .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml  | 158 +++++++++++++++++-
+>  1 file changed, 152 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc=
+=2Eyaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
+> index c1b1324fa132..dd414bab74c1 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
+> @@ -102,9 +102,11 @@ patternProperties:
+>          items:
+>            minimum: 0
+>            maximum: 7
+> +        deprecated: true
+> =20
+>        st,adc-channel-names:
+>          description: List of single-ended channel names.
+> +        deprecated: true
+> =20
+>        st,filter-order:
+>          description: |
+> @@ -118,6 +120,12 @@ patternProperties:
+>        "#io-channel-cells":
+>          const: 1
+> =20
+> +      '#address-cells':
+> +        const: 1
+> +
+> +      '#size-cells':
+> +        const: 0
+> +
+>        st,adc-channel-types:
+>          description: |
+>            Single-ended channel input type.
+> @@ -128,6 +136,7 @@ patternProperties:
+>          items:
+>            enum: [ SPI_R, SPI_F, MANCH_R, MANCH_F ]
+>          $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +        deprecated: true
+> =20
+>        st,adc-channel-clk-src:
+>          description: |
+> @@ -139,6 +148,7 @@ patternProperties:
+>          items:
+>            enum: [ CLKIN, CLKOUT, CLKOUT_F, CLKOUT_R ]
+>          $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +        deprecated: true
+> =20
+>        st,adc-alt-channel:
+>          description:
+> @@ -147,6 +157,7 @@ patternProperties:
+>            If not set, channel n is connected to SPI input n.
+>            If set, channel n is connected to SPI input n + 1.
+>          type: boolean
+> +        deprecated: true
+> =20
+>        st,filter0-sync:
+>          description:
+> @@ -165,11 +176,65 @@ patternProperties:
+>        - compatible
+>        - reg
+>        - interrupts
+> -      - st,adc-channels
+> -      - st,adc-channel-names
+>        - st,filter-order
+>        - "#io-channel-cells"
+> =20
+> +    patternProperties:
+> +      "^channel@([0-9]|1[0-9])$":
+> +        type: object
+> +        $ref: adc.yaml
+> +        description: Represents the external channels which are connecte=
+d to the DFSDM.
+> +
+> +        properties:
+> +          reg:
+> +            items:
+> +              minimum: 0
+> +              maximum: 8
+> +
+> +          label:
+> +            description:
+> +              Unique name to identify which channel this is.
+> +
+> +          st,adc-channel-types:
+> +            description: |
+> +              Single-ended channel input type.
+> +              - "SPI_R": SPI with data on rising edge (default)
+> +              - "SPI_F": SPI with data on falling edge
+> +              - "MANCH_R": manchester codec, rising edge =3D logic 0, fa=
+lling edge =3D logic 1
+> +              - "MANCH_F": manchester codec, rising edge =3D logic 1, fa=
+lling edge =3D logic 0
+> +            items:
+> +              enum: [ SPI_R, SPI_F, MANCH_R, MANCH_F ]
+> +            $ref: /schemas/types.yaml#/definitions/non-unique-string-arr=
+ay
 
-Guenter
+Why is this an array? And why is the property plural? Can a channel have
+more than one type?
 
+> +
+> +          st,adc-channel-clk-src:
+> +            description: |
+> +              Conversion clock source.
+> +              - "CLKIN": external SPI clock (CLKIN x)
+> +              - "CLKOUT": internal SPI clock (CLKOUT) (default)
+> +              - "CLKOUT_F": internal SPI clock divided by 2 (falling edg=
+e).
+> +              - "CLKOUT_R": internal SPI clock divided by 2 (rising edge=
+).
+> +            items:
+> +              enum: [ CLKIN, CLKOUT, CLKOUT_F, CLKOUT_R ]
+> +            $ref: /schemas/types.yaml#/definitions/non-unique-string-arr=
+ay
+
+Ditto here, but s/type/clock source/
+
+Thanks,
+Conor.
+
+> +
+> +          st,adc-alt-channel:
+> +            description:
+> +              Must be defined if two sigma delta modulators are
+> +              connected on same SPI input.
+> +              If not set, channel n is connected to SPI input n.
+> +              If set, channel n is connected to SPI input n + 1.
+> +            type: boolean
+> +
+> +          io-backends:
+> +            description:
+> +              From common IIO binding.
+
+Drop this from the description.
+
+> Used to pipe external sigma delta
+> +              modulator or internal ADC backend to DFSDM channel.
+> +
+> +        required:
+> +          - reg
+> +
+> +        additionalProperties: false
+> +
+>      allOf:
+>        - if:
+>            properties:
+> @@ -199,9 +264,19 @@ patternProperties:
+>                description:
+>                  From common IIO binding. Used to pipe external sigma del=
+ta
+>                  modulator or internal ADC output to DFSDM channel.
+> +              deprecated: true
+> =20
+> -          required:
+> -            - io-channels
+> +          if:
+> +            required:
+> +              - st,adc-channels
+> +          then:
+> +            required:
+> +              - io-channels
+> +
+> +          patternProperties:
+> +            "^channel@([0-9]|1[0-9])$":
+> +              required:
+> +                - io-backends
+
+Why is this here, rather than with reg above? Only some channels require
+a backend?
+
+--4SiWeHDoe2HNgIcV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnHNmQAKCRB4tDGHoIJi
+0qHWAP4sIhBxMJaoCYlRr235U6E4PaT7TkOaskE90Tjd/qpLJQEAyeBOaQxiIt+1
+NK/yqLrQ0NQySGaW07Y716L/6hIBTgs=
+=tTur
+-----END PGP SIGNATURE-----
+
+--4SiWeHDoe2HNgIcV--
 
