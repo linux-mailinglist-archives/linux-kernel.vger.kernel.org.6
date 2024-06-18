@@ -1,168 +1,113 @@
-Return-Path: <linux-kernel+bounces-220323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575CA90DFC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:19:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8EA390DFC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5AF52853B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:19:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74E74B21E33
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD1B181CE9;
-	Tue, 18 Jun 2024 23:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3746B17B41B;
+	Tue, 18 Jun 2024 23:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="0PWmDC2n"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jbt0qkPe"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B33713A418;
-	Tue, 18 Jun 2024 23:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A91813A418
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718752777; cv=none; b=PaLHT+USVtNm0a/PWcNAUaHtO4iS/7tqbTiBhbUnBJg1IzgFImtveaNvJmpylCiUuD1OxmWSHAHzVj9VvvHMWayhD9t0bfCdLhwvqpaL0suShb2bDBZnHFb/2HjsWWx6FWSpxFF6TCwOHoTTKDUyIG/zfVrRZYg2RXffDejs5BE=
+	t=1718752792; cv=none; b=dXF5s84V8lg+OevOyqHY59eeEycPwP7+Y7fH4rMXH1LrP7EdEqExyWK992iRKDQzlBlDegq2XCR1pOKN03Jet0XEVzqaRG/A5xoY5z0AF7UIRJHCiga7f1ABmZ+W6sPp6mTFIGJJS0ldWs1TnmufX1lvMc0OyQZUcj6dKRA0Fb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718752777; c=relaxed/simple;
-	bh=sExA9pwsgk1Wl6JFNsUML9t4gRXkufNH45PnrfyBEQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cO/nZNC4rGUtJV5zV1ldUzmlSO2qcoKzQGiLuOm+LSwsQ4LhXyJDfZl1hX/0VAMhJomTAsjy9LoKS85viHjrFw6phQqLWpHAsv3UiJ2M/DxR/wXTISr4QjqTvrdWZ9nU/h9+fMXjFmOGLSCxR70p1Wrd9C6DCxkQNTZS6MU1pSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=0PWmDC2n; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718752773;
-	bh=sExA9pwsgk1Wl6JFNsUML9t4gRXkufNH45PnrfyBEQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0PWmDC2niBCHHTdHMgiQ49LXLpRhWdLxHZA6Grs8N7bIZtcmdX0e9ZEyWrvMGZ0Vq
-	 9nxT2EJW6UQwFDk/lOlh1+aNz4N/69F15De6quGAF1LysO7ZeFuOxA9ej4pqO4mkBz
-	 25wOWLeftRm9/QYb31PnhJuCPdPh8et8R5vlimhHT/2DkFt8u+E1YBLZGJWFYzat/U
-	 e85wnN35ZC5NKsNXL6eZ9MqwkoXQv337GOFOBkGtdF1Sas70O99wdxOwXlhJHA7SJu
-	 mH2REathmZddrzRVY1aBJe8qoYdS29AJlnB3mPA16lwUsI8ikpIlp+cRJkKf7YaTnT
-	 HaMC+fmsL5I4A==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5A4F8378205D;
-	Tue, 18 Jun 2024 23:19:33 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id DEC671060B1F; Wed, 19 Jun 2024 01:19:32 +0200 (CEST)
-Date: Wed, 19 Jun 2024 01:19:32 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-Subject: Re: [PATCH v4 2/2] power: supply: add support for MAX1720x
- standalone fuel gauge
-Message-ID: <dzrsh5dsraz62sc3mfhlmf5yolkzjet2agv2ochg3xg4ryfofs@bnmxbtsavv4o>
-References: <20240617184504.304211-1-dima.fedrau@gmail.com>
- <20240617184504.304211-3-dima.fedrau@gmail.com>
+	s=arc-20240116; t=1718752792; c=relaxed/simple;
+	bh=jRbM95jfpOwuaJSZ6zapVf12ZwahESC/BSNU+/AJPPw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=D9CdyQzSq22h/dK+p5ioI9YS+F3uxds8E/fwj7VYBPw7ei4akaX8meuFkuKzder2kNVRZ67Ghgv/wvNLkrg/ol6IdPYM2k8ekvoKlkBunhoVz9ICTQjf2IKX+WT45eaDYo3PdajjtXGLtsv8csESOayio3O1+FE+OK635Kz46sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jbt0qkPe; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1f6ea6afba0so2078965ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:19:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718752790; x=1719357590; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/817AErV5RHGHALrV4PiucygGj2MnKUpiGCv3RHz83w=;
+        b=Jbt0qkPeak3o+LDGTAe+blCkwpGdnz0M2WN4WotASGDs5aFG4wBIqLB/2QzA/Zv5Ng
+         wnGwzPDiBx8Z/o19gpdmoTunaZQGjvdKHm+0MYkkmPttP4A9jRsgDrHphrGtn/fBQWMh
+         Ez7Q7WoQ97kt+phKQsPkVb75BIcPigvi9WB/W0mUBL8YeyJh+CWi6fijRwkiQX1H3vAb
+         6YVNx+3v7BRgt4qhnvWTGeUfVVPBG8wK6/XKIAvVLKB0lPI2oriPwl2+7cwoKeFOheAP
+         KBJy+P3ilm3cDyOXjYS2ih/oK6kTRnxCv7IChs+avRt2NSU8tGGa0t+BU4jNIfpELucn
+         TlYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718752790; x=1719357590;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/817AErV5RHGHALrV4PiucygGj2MnKUpiGCv3RHz83w=;
+        b=CQSEsE3KVr+gsIZwmJYjUwfiVa3+IrODT4Icisg1VVNnGgpI5b5z+8EvlRE3W2Fgun
+         jQgmcrRQhFZs0QxV8BkWlGYoeiSSHjTiDQlbsFh3DSHxLGGAPhJ48PavuW4VZyZbBGeh
+         0rcAJBg7TqpS+TpfDnIMzZz4adXoRB4YlHQHxMhxZHwjNCjDYkr1ZW1yNVtUUYCJ1b9o
+         nU7hflbJaFg6xJHS/ac/OSzCJQ3YOS20B5w2r5Jq2jGzadiAE58TpyqUO2udsPwbOuPc
+         15QoH5Hrs6i251G6t74uywpPpeEJqk96MVZdMDu2qGFmPdJLSqN7QRa6lribjNh91CW9
+         Jq4g==
+X-Forwarded-Encrypted: i=1; AJvYcCW7BIIjAeUB+THp8nnSZt875ckWxvqYXMRGQs871l6KAFc+Qj5XmO7BCJ4P0p0wHWaxz28ymHcNrC7iGRP32PoPxqrtqkq1hIVZeVqT
+X-Gm-Message-State: AOJu0YzTgP7zaDR2SaGD1t14fdDb+fYdLNkbtW5B2b9eeOHX2T1D49jC
+	s9dww0QjwlCmvPXeWRtDUElyGRVTb62TO+JrtCQSULTVt2VpSoVKEAZxEeLRsGo5TURlPdnFRVN
+	sZw==
+X-Google-Smtp-Source: AGHT+IGzClFmSTJcFUIBNsjpYLZdAvEQWkl7PL3o8ZDCHfzvI0LMduG3qLVX4qiXtcMULKDUIkK2TvTPAlo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:d50e:b0:1f8:66fb:1683 with SMTP id
+ d9443c01a7336-1f9a993310fmr858855ad.3.1718752790360; Tue, 18 Jun 2024
+ 16:19:50 -0700 (PDT)
+Date: Tue, 18 Jun 2024 16:19:48 -0700
+In-Reply-To: <20240618200539.GHZnHok3nr60R4BXSK@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bguifedf2yapndzu"
-Content-Disposition: inline
-In-Reply-To: <20240617184504.304211-3-dima.fedrau@gmail.com>
+Mime-Version: 1.0
+References: <202406141648.jO9qNGLa-lkp@intel.com> <20240614152228.GAZmxgNPmozj7UzRdV@fat_crate.local>
+ <20240618104234.GF31592@noisy.programming.kicks-ass.net> <20240618104700.GT12673@noisy.programming.kicks-ass.net>
+ <20240618200539.GHZnHok3nr60R4BXSK@fat_crate.local>
+Message-ID: <ZnIWFHYipU2DsLK6@google.com>
+Subject: Re: [PATCH] x86/alternatives, kvm: Fix a couple of CALLs without a
+ frame pointer
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, kernel test robot <lkp@intel.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-
---bguifedf2yapndzu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Mon, Jun 17, 2024 at 08:45:04PM GMT, Dimitri Fedrau wrote:
-> The MAX17201 monitors a single cell pack. The MAX17205 monitors and
-> balances a 2S or 3S pack or monitors a multiple-series cell pack. Both
-> devices use a I2C interface.
->=20
-> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+On Tue, Jun 18, 2024, Borislav Petkov wrote:
+> Ok, I was able to scratch up this from the whole shebang:
+> 
+> ---
+> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+> Date: Tue, 18 Jun 2024 21:57:27 +0200
+> 
+> objtool complains:
+> 
+>   arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
+>   vmlinux.o: warning: objtool: .altinstr_replacement+0x2eb: call without frame pointer save/setup
+> 
+> Make sure rSP is an output operand to the respective asm() statements.
+> 
+> The test_cc() hunk courtesy of peterz. Also from him add some helpful
+> debugging info to the documentation.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406141648.jO9qNGLa-lkp@intel.com/
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 > ---
 
-[...]
+Feel free to take this through tip, I'll be flabbergasted if someone sends a patch
+that modifies test_cc().
 
-> +static int max1720x_read_word_data_nvmem(struct i2c_client *ancillary, u=
-8 addr)
-> +{
-> +	u8 rx[2];
-> +	struct i2c_msg msgs[] =3D {
-> +		{
-> +			.addr =3D ancillary->addr,
-> +			.flags =3D 0,
-> +			.len =3D 1,
-> +			.buf =3D &addr,
-> +		},
-> +		{
-> +			.addr =3D ancillary->addr,
-> +			.flags =3D I2C_M_RD,
-> +			.len =3D 2,
-> +			.buf =3D &rx[0],
-> +		},
-> +	};
-> +	int ret;
-> +
-> +	ret =3D i2c_transfer(ancillary->adapter, msgs, ARRAY_SIZE(msgs));
-> +	if (ret !=3D ARRAY_SIZE(msgs))
-> +		return ret < 0 ? ret : -EIO;
-> +
-> +	return get_unaligned_le16(&rx[0]);
-> +}
-
-Have you tried using i2c_smbus_read_word_data(ancillary, addr)
-instead of the above?
-
-[...]
-
-> +static int max1720x_probe(struct i2c_client *client)
-> +{
-> +	struct power_supply_config psy_cfg =3D {};
-> +	struct device *dev =3D &client->dev;
-> +	struct max1720x_device_info *info;
-> +	struct power_supply *bat;
-> +	int ret;
-> +
-> +	info =3D devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
-> +	if (!info)
-> +		return -ENOMEM;
-> +
-> +	psy_cfg.drv_data =3D info;
-
-psy_cfg.fwnode =3D dev_fwnode(dev);
-
-Otherwise LGTM.
-
-Thanks for your patch,
-
--- Sebastian
-
---bguifedf2yapndzu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZyFfsACgkQ2O7X88g7
-+prx6xAAlwpQKbrS94H1MDRsPhvwptjkxWRBnLE4X7JrpCrtwV2e2kxMHwpOqfgu
-9s1jkhf5eqrjn92PpasZgHOPe5u/gpdpVXga1ZMb9WCydqUxEOLyFohLIwa4hTH7
-aaqox/+B9chUuhtzVEThsp9CFbgbALsUFRUBkbAC7jjL0WaRoImXKf5JtxCipMX1
-NLijICv5iP2ygApLi+VXhh7jtH+NF0JuFZf5u8lFjHvmyXqVrVZj7ZQ5DwFyPogo
-7cem9dUxmXbeO8YPKio66RWoQDZ0u0pYa0hQueltckyJf4iHR5/SEUZd15n0/cKJ
-Ye8D92KTH+mT5Axerd/DFVClMJbr8BipNb1CAMKqriQAFYy07m7OcZzuaVFfNyDB
-xrWmJsRDNsP4FmVznB7s87dJrz2lwldB4N1scMDrRyZ/lt+LUUO2MX+F0dhAIyI/
-+n1VOKsRiON+LTBUJcpzh8Gfn+YU/pJUkQPp/xz3mHKD2PW2VpJ/8rechB9FWwIp
-Pw4gkNLduDaW+ve47IGF/fMhyyaY3nlrMLCt5RptaNTzf9GpCdLXyV/vAIh1Kwwe
-LydtYatJjVL0Nm0aemLFIhQmbY4uxrlLNifsKx21rIFF7W3zO+xz+KVNaRQb7uzH
-VyOWvLjGyHN7dcTxt6muscGMKQqRWRZ35oxb6h9TrHGySptTyok=
-=f0lW
------END PGP SIGNATURE-----
-
---bguifedf2yapndzu--
+Acked-by: Sean Christopherson <seanjc@google.com>
 
