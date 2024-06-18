@@ -1,351 +1,105 @@
-Return-Path: <linux-kernel+bounces-219688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC03F90D689
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:06:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34B990D68B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1709B28112D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23FFD2873F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BF71EB2C;
-	Tue, 18 Jun 2024 15:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9616A1CFA8;
+	Tue, 18 Jun 2024 15:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="FuDQ+uBK"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TcPgzO3d"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027C71F951
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7191C6A7;
+	Tue, 18 Jun 2024 15:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718723155; cv=none; b=nvLIInEWD4Rwb3DLHERBPzamMzaETBa0sOOVf8uV9Maghl+53zC1iozcir9ZllEGQzkoy90s1vA9QszeXObsM/PQUdec+GO12M2c4oC2nkZEMiYrR60kKcFOsdvU8H1k/lUU6e7QnoM7gHt8Jv+ZNSAg8od9AFChLnqz7H3aShg=
+	t=1718723183; cv=none; b=aDok0JVA8f3R3p69dF6kazJTBRNNM82o9CV3Xs4xKnGECoOyrRSVCkQyeQtStcBIV6VAxYHkiMrK1OEF6coLElEzhG9FI7mDqxehkQdyWhlgaq00mV7q9WbP90RJlFIJyizr9eRGH+N4onrC0Lk1HlcsahzPYyoUByK92FGRp60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718723155; c=relaxed/simple;
-	bh=xD6H5N5EA3hm3uG1dpUoMdkeBOh3n5ZJIZFUKP8qA+o=;
+	s=arc-20240116; t=1718723183; c=relaxed/simple;
+	bh=cTbpVT23FE/WdzJQYZy+vAP+uyhaBpAzNVPE9fPplag=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rPPI8sTBygECtUbEXAAZ79NoXUnfBAzsJBHnIzEeldWgg/mD3mTOMxga+cFkSjNlx9G9C4FyZlfuKy+LZ/OSu0tzh21/UMqdKXG1tFie8T0RWwjdbVhQIqW2ry7ypt8gklvUEaaJBI4dHWKWhLIy4h04TaWYjQaPQOFubMS0PNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=FuDQ+uBK; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
-X-Envelope-To: luca.weiss@fairphone.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-	s=key1; t=1718723150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GbRspr//u1/FN9+1Fqd4DR9tBkA4YUmT0KQo9IetTDM=;
-	b=FuDQ+uBKOq/PfM+gGEVu45x3kJ2GXcYKk9LftMmPIUfxvhLL0Li686kQMIl2ucInAD8axa
-	MkrJaT9VUMo6YvgKH8J8Sg6hBpvtRV8P/kDCdk/sdYg6+FSS3gzHt++fH+4bH6HMQxplb0
-	WmAJlw2v1o9ymqUa5XSUCbuQ6m00raTW0R70BrOej2ArUmdILBkvsp/Scxldk9/UoscUQO
-	yrlwk5WklPG5D5+7y0I9naZxpuksd2tWSI+VSJC9dBC6BVhoM3Cgot6nVx1hqCLjZcXuRB
-	aQfccVtbrtDMslRsvMKqJqdshnSdba3XP8CICjCewrHEyN5Jx9tlOQfOScYvKQ==
-X-Envelope-To: andersson@kernel.org
-X-Envelope-To: konrad.dybcio@linaro.org
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: krzk+dt@kernel.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: amartinz@shiftphones.com
-X-Envelope-To: ~postmarketos/upstreaming@lists.sr.ht
-X-Envelope-To: phone-devel@vger.kernel.org
-X-Envelope-To: linux-arm-msm@vger.kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <75c70d8d-500b-4707-a21a-a138742516fc@postmarketos.org>
-Date: Tue, 18 Jun 2024 17:05:46 +0200
+	 In-Reply-To:Content-Type; b=uy4JiiLo2e35fDnOYUUHHfMXTiW2jnJgVYBSC88De0D6A46BbOPD1NfeK9tO2zCc27sy1xG4lSnpFeRawLNc/RfKawatwSl/VohbMUOR31Af2xOEQre4P1SNQlJb51jDkwUKDt64FCcBrqEn3DmkBKe66vXI4IarwWbCt5DfPuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TcPgzO3d; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718723180;
+	bh=cTbpVT23FE/WdzJQYZy+vAP+uyhaBpAzNVPE9fPplag=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TcPgzO3deaTccIkpgSR4l5GHYEa1/1Nd/6rbe9PZsM/lscs+kHQ7+CMyuvks22NPd
+	 Hv75ZTy4yYSjkUrFAhuWMSZBM6E5rh7rWKi3Vr+MBRwQokslmEoG5i+gCUfbu9hK29
+	 AQpboHeiI+5/7qG4V84zS7a5j8GUQCkYGtyqZzh/sY+XUCr+QgkBTqGP0TbkZtYBoV
+	 rvCv/iDSbdXlNVZbkR2of/lKC0YJmIexUGYLa01iu7vK8AkpmAI0BzuWAidx6llUhe
+	 ueOu2igMvTSj/CHuxPbLFZlMHTCgYLwLa5VXfap1hPbDaENnntCgXdiyqGZs+jC7UN
+	 7BoRo9W+njIrw==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 541B73780844;
+	Tue, 18 Jun 2024 15:06:19 +0000 (UTC)
+Message-ID: <dd33eae5-4d5d-4210-aac1-69d1c0339911@collabora.com>
+Date: Tue, 18 Jun 2024 17:06:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: qcm6490-shift-otter: Name the
- regulators
-To: Luca Weiss <luca.weiss@fairphone.com>,
- Bjorn Andersson <andersson@kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sc7180-trogdor: Disable pwmleds node
+ where unused
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>,
  Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alexander Martinz <amartinz@shiftphones.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240618-qcm6490-regulator-name-v1-0-69fa05e9f58e@fairphone.com>
- <20240618-qcm6490-regulator-name-v1-2-69fa05e9f58e@fairphone.com>
+ <conor+dt@kernel.org>, Rob Clark <robdclark@chromium.org>,
+ Douglas Anderson <dianders@chromium.org>, Stephen Boyd <swboyd@chromium.org>
+Cc: kernel@collabora.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240614-sc7180-pwmleds-probe-v1-1-e2c3f1b42a43@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Caleb Connolly <caleb@postmarketos.org>
-In-Reply-To: <20240618-qcm6490-regulator-name-v1-2-69fa05e9f58e@fairphone.com>
+In-Reply-To: <20240614-sc7180-pwmleds-probe-v1-1-e2c3f1b42a43@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-
-
-On 18/06/2024 15:30, Luca Weiss wrote:
-> Without explicitly specifying names for the regulators they are named
-> based on the DeviceTree node name. This results in multiple regulators
-> with the same name, making debug prints and regulator_summary impossible
-> to reason about.
+Il 14/06/24 22:59, Nícolas F. R. A. Prado ha scritto:
+> Currently the keyboard backlight is described in the common
+> sc7180-trogdor dtsi as an led node below a pwmleds node, and the led
+> node is set to disabled. Only the boards that have a keyboard backlight
+> enable it.
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> However, since the parent pwmleds node is still enabled everywhere, even
+> on boards that don't have keyboard backlight it is probed and fails,
+> resulting in an error:
+> 
+>    leds_pwm pwmleds: probe with driver leds_pwm failed with error -22
+> 
+> as well as a failure in the DT kselftest:
+> 
+>    not ok 45 /pwmleds
+> 
+> Fix this by controlling the status of the parent pwmleds node instead of
+> the child led, based on the presence of keyboard backlight. This is what
+> is done on sc7280 already.
+> 
+> While at it add a missing blank line before the child node to follow the
+> coding style.
+> 
+> Fixes: 7ec3e67307f8 ("arm64: dts: qcom: sc7180-trogdor: add initial trogdor and lazor dt")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-Reviewed-by: Caleb Connolly <caleb@postmarketos.org>
-> ---
->   arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 35 ++++++++++++++++++++++++
->   1 file changed, 35 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
-> index e82938cab953..4667e47a74bc 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
-> @@ -235,46 +235,54 @@ regulators-0 {
->   		qcom,pmic-id = "b";
->   
->   		vreg_s1b: smps1 {
-> +			regulator-name = "vreg_s1b";
->   			regulator-min-microvolt = <1840000>;
->   			regulator-max-microvolt = <2040000>;
->   		};
->   
->   		vreg_s7b: smps7 {
-> +			regulator-name = "vreg_s7b";
->   			regulator-min-microvolt = <535000>;
->   			regulator-max-microvolt = <1120000>;
->   		};
->   
->   		vreg_s8b: smps8 {
-> +			regulator-name = "vreg_s8b";
->   			regulator-min-microvolt = <1200000>;
->   			regulator-max-microvolt = <1500000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_RET>;
->   		};
->   
->   		vreg_l1b: ldo1 {
-> +			regulator-name = "vreg_l1b";
->   			regulator-min-microvolt = <825000>;
->   			regulator-max-microvolt = <925000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l2b: ldo2 {
-> +			regulator-name = "vreg_l2b";
->   			regulator-min-microvolt = <2700000>;
->   			regulator-max-microvolt = <3544000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l3b: ldo3 {
-> +			regulator-name = "vreg_l3b";
->   			regulator-min-microvolt = <312000>;
->   			regulator-max-microvolt = <910000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l6b: ldo6 {
-> +			regulator-name = "vreg_l6b";
->   			regulator-min-microvolt = <1140000>;
->   			regulator-max-microvolt = <1260000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l7b: ldo7 {
-> +			regulator-name = "vreg_l7b";
->   			/* Constrained for UFS VCC, at least until UFS driver scales voltage */
->   			regulator-min-microvolt = <2952000>;
->   			regulator-max-microvolt = <2952000>;
-> @@ -282,66 +290,77 @@ vreg_l7b: ldo7 {
->   		};
->   
->   		vreg_l8b: ldo8 {
-> +			regulator-name = "vreg_l8b";
->   			regulator-min-microvolt = <870000>;
->   			regulator-max-microvolt = <970000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l9b: ldo9 {
-> +			regulator-name = "vreg_l9b";
->   			regulator-min-microvolt = <1200000>;
->   			regulator-max-microvolt = <1304000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l11b: ldo11 {
-> +			regulator-name = "vreg_l11b";
->   			regulator-min-microvolt = <1504000>;
->   			regulator-max-microvolt = <2000000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l12b: ldo12 {
-> +			regulator-name = "vreg_l12b";
->   			regulator-min-microvolt = <751000>;
->   			regulator-max-microvolt = <824000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l13b: ldo13 {
-> +			regulator-name = "vreg_l13b";
->   			regulator-min-microvolt = <530000>;
->   			regulator-max-microvolt = <824000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l14b: ldo14 {
-> +			regulator-name = "vreg_l14b";
->   			regulator-min-microvolt = <1080000>;
->   			regulator-max-microvolt = <1304000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l15b: ldo15 {
-> +			regulator-name = "vreg_l15b";
->   			regulator-min-microvolt = <765000>;
->   			regulator-max-microvolt = <1020000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l16b: ldo16 {
-> +			regulator-name = "vreg_l16b";
->   			regulator-min-microvolt = <1100000>;
->   			regulator-max-microvolt = <1300000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l17b: ldo17 {
-> +			regulator-name = "vreg_l17b";
->   			regulator-min-microvolt = <1700000>;
->   			regulator-max-microvolt = <1900000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l18b: ldo18 {
-> +			regulator-name = "vreg_l18b";
->   			regulator-min-microvolt = <1800000>;
->   			regulator-max-microvolt = <2000000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l19b: ldo19 {
-> +			regulator-name = "vreg_l19b";
->   			regulator-min-microvolt = <1800000>;
->   			regulator-max-microvolt = <2000000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> @@ -353,96 +372,112 @@ regulators-1 {
->   		qcom,pmic-id = "c";
->   
->   		vreg_s1c: smps1 {
-> +			regulator-name = "vreg_s1c";
->   			regulator-min-microvolt = <2190000>;
->   			regulator-max-microvolt = <2210000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_s9c: smps9 {
-> +			regulator-name = "vreg_s9c";
->   			regulator-min-microvolt = <1010000>;
->   			regulator-max-microvolt = <1170000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l1c: ldo1 {
-> +			regulator-name = "vreg_l1c";
->   			regulator-min-microvolt = <1800000>;
->   			regulator-max-microvolt = <1980000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l2c: ldo2 {
-> +			regulator-name = "vreg_l2c";
->   			regulator-min-microvolt = <1800000>;
->   			regulator-max-microvolt = <1950000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l3c: ldo3 {
-> +			regulator-name = "vreg_l3c";
->   			regulator-min-microvolt = <3000000>;
->   			regulator-max-microvolt = <3400000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l4c: ldo4 {
-> +			regulator-name = "vreg_l4c";
->   			regulator-min-microvolt = <1620000>;
->   			regulator-max-microvolt = <3300000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l5c: ldo5 {
-> +			regulator-name = "vreg_l5c";
->   			regulator-min-microvolt = <1620000>;
->   			regulator-max-microvolt = <3300000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l6c: ldo6 {
-> +			regulator-name = "vreg_l6c";
->   			regulator-min-microvolt = <1650000>;
->   			regulator-max-microvolt = <3544000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l7c: ldo7 {
-> +			regulator-name = "vreg_l7c";
->   			regulator-min-microvolt = <3000000>;
->   			regulator-max-microvolt = <3544000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l8c: ldo8 {
-> +			regulator-name = "vreg_l8c";
->   			regulator-min-microvolt = <1620000>;
->   			regulator-max-microvolt = <2000000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l9c: ldo9 {
-> +			regulator-name = "vreg_l9c";
->   			regulator-min-microvolt = <2700000>;
->   			regulator-max-microvolt = <3544000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l10c: ldo10 {
-> +			regulator-name = "vreg_l10c";
->   			regulator-min-microvolt = <720000>;
->   			regulator-max-microvolt = <1050000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l11c: ldo11 {
-> +			regulator-name = "vreg_l11c";
->   			regulator-min-microvolt = <2800000>;
->   			regulator-max-microvolt = <3544000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l12c: ldo12 {
-> +			regulator-name = "vreg_l12c";
->   			regulator-min-microvolt = <1650000>;
->   			regulator-max-microvolt = <2000000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_l13c: ldo13 {
-> +			regulator-name = "vreg_l13c";
->   			regulator-min-microvolt = <2700000>;
->   			regulator-max-microvolt = <3544000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   
->   		vreg_bob: bob {
-> +			regulator-name = "vreg_bob";
->   			regulator-min-microvolt = <3008000>;
->   			regulator-max-microvolt = <3960000>;
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-> 
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+
 
