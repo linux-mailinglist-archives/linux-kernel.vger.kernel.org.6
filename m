@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-219912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659AD90DA0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:54:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8758A90DA12
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E161C21F1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85CBD1C21C8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EC1149001;
-	Tue, 18 Jun 2024 16:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C038314F13D;
+	Tue, 18 Jun 2024 16:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GK8Nog0G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Et6DxZZl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183BD13F016;
-	Tue, 18 Jun 2024 16:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081811494DA;
+	Tue, 18 Jun 2024 16:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718729641; cv=none; b=koqm17h8Fly4si+SRye455z139zLAwaJpBwCMTgnZokR/kXDoUBKKfQ6wAl9W1fLiFM8QFySvcasmr4ooQ0l1ux3MVfz2BlB14/KgpQMOLOhAlufeI0LuRjoYvDrE008CtlJaLdggmT8N6rS2vYSjkPA6EcfE2zCgnRpcII4JsE=
+	t=1718729642; cv=none; b=WO4fv1eITEoF6q6jJpfQ07SmE4s8fVYfWFjshtN9lsHLXn5JLFM5OSufDMbd1a9p9YGrU2KnCo6CRC9fPzkE+2PkklMSloBhbJgcw5CHmOGE9eVFXKhnLvsSPNOH3XsORKuk4Rfueu9a+ic4JpocdMtO3ewkAOWzkOFo+SQR4D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718729641; c=relaxed/simple;
-	bh=pi1s9JzXbV/imk2EIUojuF6yHVD4/lluGwnh58k352E=;
+	s=arc-20240116; t=1718729642; c=relaxed/simple;
+	bh=M3dXsTI8S1ItZw3XuJcDiIRq8FIhqSg2BtRyqdaJxVo=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=gCQ0w1s2Ni8Dqk0At1ERc36we477n7n5kAbq8gq+OKVOeCqNQOdFOTjopiFYSTGoT0o4ZprAmlqxoNkDYIScWfDNCPGAwAf8FdvNyfw1HC//bDPlvCHp7pjegp1sP+JZHchv9BlPZD2iVfBT3hM2FDEu3az20hcaY6wgAmXOq+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GK8Nog0G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CA0FC4AF64;
-	Tue, 18 Jun 2024 16:54:00 +0000 (UTC)
+	 Message-Id:Subject; b=Lt3hrCTdrAo4nkpVnp4ttjPlzEa3SSBqiCK1eJc9p/y2QvJiloN/52e2OC9iLqgv7kfIY5Rs/MU4o4EYYIEWQ9/HxYgiSelA54liZNh8KUuBepwC/I+UjGaMclwzFP+1OOC5Yui5Lf2RgXVEWVWKwhjt6rSt6eSAC6FrULVyBKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Et6DxZZl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3EFBC4AF66;
+	Tue, 18 Jun 2024 16:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718729640;
-	bh=pi1s9JzXbV/imk2EIUojuF6yHVD4/lluGwnh58k352E=;
+	s=k20201202; t=1718729641;
+	bh=M3dXsTI8S1ItZw3XuJcDiIRq8FIhqSg2BtRyqdaJxVo=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=GK8Nog0GRPQFKv4Bfioz4q801P9MX5gLhJJ5Kjvcl1VR+0ZUukb2CL1FMiKZ5ye4r
-	 tYXSTjDQYOiJOtY944SglSxxtZvRN02hIWk1OEcECVDiur5hjXLkDnsDg6L+/uS0na
-	 hd9XmxrIBipeGMozPvpqkTU3RK3i55zNrvwmJdaeR7Q5SI+JGIlLgVLd3KLNDIfqt9
-	 LRRmFZujT8xd2Zm1tOXonz63uJY/zky0jeF4IVtlPgnUBRzOnRx6jOc5nKBwh4kz5P
-	 pbt6GWIviEmxO2JLnOuX9LGWIuB57pxCgbZnH5riGuw6MU+FSw6J6JcRBEwJFWllb0
-	 4yeYwmEW89tDw==
-Date: Tue, 18 Jun 2024 10:53:59 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	b=Et6DxZZltQp4/HaVCgZjMhEBk28Q79+FXmjjPL2hNSAHrM5jtLcG3O95YjBagmz9x
+	 uYpc6hg8HqPrHQBfoa4QvwJe2FuuhSMRVTKoR8HUt+RuATBY08ytPuS156lRGgvrh7
+	 hf0Wh/PjZOzNw7OIb9KRgLqDkHpalRWdjw2CTdnKzoARdkxCkc+pnf7G7MvVdjXPkS
+	 DipApUS6tAwIX+V+IJqa7E5QtYI94nqxGU3QVdUKnEloTrAa743CstsR30tKG6Xm5d
+	 o/SfpcjacozJAoroYyVzYyoRl3TCuIxSb2e2ixFrtNM4T9yLmAzC9vDaEQUuiqFF7P
+	 CLuNR64Uwsm7Q==
+Date: Tue, 18 Jun 2024 10:54:00 -0600
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,42 +50,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Pavel Machek <pavel@ucw.cz>, 
- linux-input@vger.kernel.org, Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Mark Brown <broonie@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
- Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>, 
- linux-samsung-soc@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, 
- linux-clk@vger.kernel.org, Maxime Ripard <mripard@kernel.org>, 
- linux-leds@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- phone-devel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
- David Airlie <airlied@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>
-In-Reply-To: <20240618-starqltechn_integration_upstream-v3-9-e3f6662017ac@gmail.com>
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-9-e3f6662017ac@gmail.com>
-Message-Id: <171872963565.3062659.8558146217368306841.robh@kernel.org>
-Subject: Re: [PATCH v3 09/23] dt-bindings: mfd: add samsung,s2dos05
+To: Yuntao Dai <d1581209858@live.com>
+Cc: conor+dt@kernel.org, jassisinghbrar@gmail.com, 
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ inochiama@outlook.com, aou@eecs.berkeley.edu, palmer@dabbelt.com, 
+ linux-kernel@vger.kernel.org, paul.walmsley@sifive.com, 
+ unicorn_wang@outlook.com, krzk+dt@kernel.org
+In-Reply-To: 
+ <SYBP282MB22389FD1E07BBDC6FE1D90A0C4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
+References: <SYBP282MB2238DE0DA19C6EF411B2356CC4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
+ <SYBP282MB22389FD1E07BBDC6FE1D90A0C4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
+Message-Id: <171872963677.3062707.7560457462678270333.robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: mailbox: add Sophgo cv18x SoCs
+ mailbox
 
 
-On Tue, 18 Jun 2024 16:59:43 +0300, Dzmitry Sankouski wrote:
-> add samsung,s2dos05 core MFD module binding
+On Tue, 18 Jun 2024 23:12:33 +0800, Yuntao Dai wrote:
+> Add devicetree bindings documentation for Sophgo cv18x SoCs mailbox
 > 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> Signed-off-by: Yuntao Dai <d1581209858@live.com>
 > ---
->  .../devicetree/bindings/mfd/samsung,s2dos05.yaml   | 89 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 90 insertions(+)
+>  .../mailbox/sophgo,cv1800b-mailbox.yaml       | 75 +++++++++++++++++++
+>  1 file changed, 75 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mailbox.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -93,11 +80,12 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/mfd/samsung,s2dos05.example.dtb: /example-0/i2c/pmic@60: failed to match any schema with compatible: ['samsung,s2dos05']
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mailbox.yaml: recvid: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mailbox.yaml: sendto: missing type definition
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240618-starqltechn_integration_upstream-v3-9-e3f6662017ac@gmail.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/SYBP282MB22389FD1E07BBDC6FE1D90A0C4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
