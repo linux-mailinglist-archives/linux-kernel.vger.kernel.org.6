@@ -1,321 +1,236 @@
-Return-Path: <linux-kernel+bounces-219089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F27390C9C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:38:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C402A90CA15
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 359AC1C23451
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:38:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45606B293F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087D015573F;
-	Tue, 18 Jun 2024 10:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE3A156220;
+	Tue, 18 Jun 2024 10:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FInN7Rae"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Ov6KREqx"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4015815532F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930EB14A62B;
+	Tue, 18 Jun 2024 10:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718707812; cv=none; b=s8AY2+vKs79sE9SSK5eJ+HP2makSJf/RFMlFCc/A8hGGjeM58HkW4Jwqlq50ZKp1qLs6/vh6XtlqjYCu93kQWAMjiK4jKYek15gmCWo5u2NG7VZ0focn+V8hKtPtd6/vyDA/VC337D0sU4F2+Pz5vX8QIvU8zDCWS1eoMxjYWl0=
+	t=1718707964; cv=none; b=giGi08b5jY4sastvmKsSqRv7gV2Uh/E6yudAGdzqTrb3COVBmr/ALL+y/xOcWwwyFEvc+BrRwVgQ9Mc1xfw9kDFI1SKTpYiQKCVx5RfkjfOlk3GmQAza4PnCjFDzvF6OMBKRSIMbOqSkPKR1kZnyt5syJb1PTF7S/4Y3ysTPlIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718707812; c=relaxed/simple;
-	bh=zuIaHaRc2wHSelfPBTrftpxGVNzZzHi84yYkdxXtb/w=;
-	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D4QUiF6iLAu/MeN2B2gWY8H2v1EMWhAzxuokPQyf5803PBpd3brEEdzVb8oOS3GaZyleWswwvdto9VRf48Pv6SQmeA9fEftgZ04aPKjcDDE/hJpdKDBPbDnyy3E9HFzmtNXHJpJ7ZSuHthGAvIa7/693odEp4yVoy06/IfAHbX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FInN7Rae; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718707809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l/ChfiVgZBMW+Q5CvBZD4jxxA/Fmx+01TB6ag5A/b44=;
-	b=FInN7RaeP35/Mn1vLllt+UF6g5vrgdgJKYIo6W1NfLZpYevCZDtPQ6OrjUExgQBzks71lA
-	AdBr5A5QS2M54ZVT7qTEMtNGQyT/qppj7MaMUCrd1CKXM4Pe86MD3cF6nm8J29PrZe1qzM
-	CfRJl997ZoofSwcT1bs/MtJEmaCHJrk=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-58-BEjOfVXDNKauTWZf91gqQw-1; Tue, 18 Jun 2024 06:50:07 -0400
-X-MC-Unique: BEjOfVXDNKauTWZf91gqQw-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b062c433cfso61109566d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:50:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718707807; x=1719312607;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
-         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=l/ChfiVgZBMW+Q5CvBZD4jxxA/Fmx+01TB6ag5A/b44=;
-        b=MGfNIpbYCfjIdPfR1YUukh00A8ys1TJm6STjdZjipd5PVL5wJkKt/LybVMVPomZJxh
-         /hB3QoEjvfsnu5JkNtZTrAi9ud65h0hjAMXXWBGfK9Se35xxFwgvrW/wiavfHSxhpsVJ
-         zvz6IBMlbNvaRLGgps/utf2ofk5jUkGYUQgYkcskY72E6AMODe8FQf+4nuka7HMYerbD
-         28DJFcPJR/JAHGKXn71jPcmZgJsefWV7UqQdVE1UKx7qFLd2b9B4ImlqV0BSjCeNid47
-         JLOUKeSBXT86jnOqjhjILZaS8fYZsJAOGA2k2YXcjmROgjTfdgtZ+5RSOuyUceu+fA68
-         Krrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGhMGTEEqOlTeHWq/NRyugvWnQzlIZOLa9rNzMXlv6q4svHUHq5q/vmuDvu433bdsgRwla+R1OXt0sz/FGjXvrOAXDLRmXr70JeMVk
-X-Gm-Message-State: AOJu0YxeT7U98FRul8Klq6SCkkB0ihSYUtnwiRPPJaXjNwoSdzAMNKm9
-	GtVHnJODxo1vScDfxKQ0OWLMflpLsC/BeAsgAYzjFK6501Vulqc+VptMw5SMRtFYDnpO851Vr6Q
-	q9NSDx0rpmAUcP20Jo4GvPnchnLMS6Q5459MqKInrHaJM0g6U82TPD1PrASo6gBzidwW2e3+BjX
-	nzaSjhXw+her5zci8pBM0MOMkyPk/zPAbnOLBq
-X-Received: by 2002:ad4:5150:0:b0:6b0:77a8:f416 with SMTP id 6a1803df08f44-6b2b00bfea5mr127020746d6.47.1718707807307;
-        Tue, 18 Jun 2024 03:50:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZcXk+B1DGjBzWsshT0SLNobf3SFzVN5baTdv30Ptg1ZIe+fv5v4OlrJ687YcCxXqWrUXq11SvL/itCPlicUg=
-X-Received: by 2002:ad4:5150:0:b0:6b0:77a8:f416 with SMTP id
- 6a1803df08f44-6b2b00bfea5mr127020526d6.47.1718707806942; Tue, 18 Jun 2024
- 03:50:06 -0700 (PDT)
-Received: from 311643009450 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 18 Jun 2024 10:50:05 +0000
-From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
-References: <20240603185647.2310748-1-amorenoz@redhat.com> <20240603185647.2310748-8-amorenoz@redhat.com>
- <8624ccf8-e9e2-4a95-a25c-7d3166bb3256@ovn.org> <f8050877-1728-4723-acb8-8a8ab7674470@ovn.org>
- <CAG=2xmPAwvCR4ky0cu7Yai29v3H592-ATXtNkhsNJ-vTwR4BVw@mail.gmail.com> <5f293bac-4117-4f93-8d3f-636d6ce236a4@ovn.org>
+	s=arc-20240116; t=1718707964; c=relaxed/simple;
+	bh=PStlxCg0Yn+hSsz17AdTX+Yu5sTSazftZUeKH5skRYM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H9qpCxxEQXsZ+uVIhRQoPWJCaRVQy408Wicx1MpbsqyMWRH2YAJ7w4Eakjk8TfbVhx9lp8lrQZ/PMMT7QioRFoIcEb7Nc+v+Zi3+BlXFzRNglGNAC97bp7n3c32aBj+tHydAxuRxJ+q/Is/uuuMgg0xSjeLCoiRhafKfqg6nZ9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Ov6KREqx; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IAYRDD007465;
+	Tue, 18 Jun 2024 06:52:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=LF8rafwwJ18wMjJApttWCsXEq0k
+	eigzP29TsId0Pwjw=; b=Ov6KREqxcqD0looOqhgEc1gjy86Qvi7+2t0HHNd2PQh
+	2nldKQwCWoMKsQEC4oAedg93/zN7XvbteqsjN6vFiRxzVk2QSy3+9hR6HGA0WH/B
+	423x/gfRj6/bXTI26NrVDUCF8T2M7T4pxVCQOvvryiSX9Qfz0ExT1yf2mnSYW5uU
+	KS6fgef78z2VpK8dWUmiGh0+ci64MMr5qYKgYly7jSk80CjEDG9ZMLq3URHV67Ov
+	PI8AzzJK4eDDbFfM4M4u5fz8WOiOm97GSISt9mTbkwcjLv7ccEBvY6uorkl6Pyg4
+	gMB/fao3ITUI+ubOFotYJWtmirU6/Cx+FdHsDYsDBMg==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3ys7v32c86-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 06:52:24 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 45IAqNKn010770
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 18 Jun 2024 06:52:23 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Tue, 18 Jun 2024 06:52:22 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Tue, 18 Jun 2024 06:52:22 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Tue, 18 Jun 2024 06:52:20 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com ([10.65.36.213])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 45IAq1xm010996;
+	Tue, 18 Jun 2024 06:52:03 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Ramona Gradinariu <ramona.gradinariu@analog.com>,
+        Antoniu Miclaus
+	<antoniu.miclaus@analog.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        "Michael
+ Hennerich" <Michael.Hennerich@analog.com>,
+        Jonathan Cameron
+	<jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet
+	<corbet@lwn.net>,
+        Jun Yan <jerrysteve1101@gmail.com>,
+        Matti Vaittinen
+	<mazziesaccount@gmail.com>,
+        Mehdi Djait <mehdi.djait.k@gmail.com>,
+        "Andy
+ Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        Mario Limonciello
+	<mario.limonciello@amd.com>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
+Subject: [PATCH 1/3] dt-bindings: iio: accel: add ADXL380
+Date: Tue, 18 Jun 2024 13:50:54 +0300
+Message-ID: <20240618105150.38141-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5f293bac-4117-4f93-8d3f-636d6ce236a4@ovn.org>
-Date: Tue, 18 Jun 2024 10:50:05 +0000
-Message-ID: <CAG=2xmPbpvYGy1rAkcLsK6PFxCx3bmZyXKX5RTag8XZBTxMZdg@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 7/9] net: openvswitch: do not notify drops
- inside sample
-To: Ilya Maximets <i.maximets@ovn.org>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com, 
-	horms@kernel.org, dev@openvswitch.org, Pravin B Shelar <pshelar@ovn.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: g_er1EJ2Z9Jif94dzS7heBcdHXGwrbiZ
+X-Proofpoint-GUID: g_er1EJ2Z9Jif94dzS7heBcdHXGwrbiZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
+ phishscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0 spamscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180080
 
-On Tue, Jun 18, 2024 at 12:22:23PM GMT, Ilya Maximets wrote:
-> On 6/18/24 09:00, Adri=C3=A1n Moreno wrote:
-> > On Mon, Jun 17, 2024 at 02:10:37PM GMT, Ilya Maximets wrote:
-> >> On 6/17/24 13:55, Ilya Maximets wrote:
-> >>> On 6/3/24 20:56, Adrian Moreno wrote:
-> >>>> The OVS_ACTION_ATTR_SAMPLE action is, in essence,
-> >>>> observability-oriented.
-> >>>>
-> >>>> Apart from some corner case in which it's used a replacement of clon=
-e()
-> >>>> for old kernels, it's really only used for sFlow, IPFIX and now,
-> >>>> local emit_sample.
-> >>>>
-> >>>> With this in mind, it doesn't make much sense to report
-> >>>> OVS_DROP_LAST_ACTION inside sample actions.
-> >>>>
-> >>>> For instance, if the flow:
-> >>>>
-> >>>>   actions:sample(..,emit_sample(..)),2
-> >>>>
-> >>>> triggers a OVS_DROP_LAST_ACTION skb drop event, it would be extremel=
-y
-> >>>> confusing for users since the packet did reach its destination.
-> >>>>
-> >>>> This patch makes internal action execution silently consume the skb
-> >>>> instead of notifying a drop for this case.
-> >>>>
-> >>>> Unfortunately, this patch does not remove all potential sources of
-> >>>> confusion since, if the sample action itself is the last action, e.g=
-:
-> >>>>
-> >>>>     actions:sample(..,emit_sample(..))
-> >>>>
-> >>>> we actually _should_ generate a OVS_DROP_LAST_ACTION event, but we a=
-ren't.
-> >>>>
-> >>>> Sadly, this case is difficult to solve without breaking the
-> >>>> optimization by which the skb is not cloned on last sample actions.
-> >>>> But, given explicit drop actions are now supported, OVS can just add=
- one
-> >>>> after the last sample() and rewrite the flow as:
-> >>>>
-> >>>>     actions:sample(..,emit_sample(..)),drop
-> >>>>
-> >>>> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> >>>> ---
-> >>>>  net/openvswitch/actions.c | 13 +++++++++++--
-> >>>>  1 file changed, 11 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-> >>>> index 33f6d93ba5e4..54fc1abcff95 100644
-> >>>> --- a/net/openvswitch/actions.c
-> >>>> +++ b/net/openvswitch/actions.c
-> >>>> @@ -82,6 +82,15 @@ static struct action_fifo __percpu *action_fifos;
-> >>>>  static struct action_flow_keys __percpu *flow_keys;
-> >>>>  static DEFINE_PER_CPU(int, exec_actions_level);
-> >>>>
-> >>>> +static inline void ovs_drop_skb_last_action(struct sk_buff *skb)
-> >>>> +{
-> >>>> +	/* Do not emit packet drops inside sample(). */
-> >>>> +	if (OVS_CB(skb)->probability)
-> >>>> +		consume_skb(skb);
-> >>>> +	else
-> >>>> +		ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
-> >>>> +}
-> >>>> +
-> >>>>  /* Make a clone of the 'key', using the pre-allocated percpu 'flow_=
-keys'
-> >>>>   * space. Return NULL if out of key spaces.
-> >>>>   */
-> >>>> @@ -1061,7 +1070,7 @@ static int sample(struct datapath *dp, struct =
-sk_buff *skb,
-> >>>>  	if ((arg->probability !=3D U32_MAX) &&
-> >>>>  	    (!arg->probability || get_random_u32() > arg->probability)) {
-> >>>>  		if (last)
-> >>>> -			ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
-> >>>> +			ovs_drop_skb_last_action(skb);
-> >>
-> >> Always consuming the skb at this point makes sense, since having smapl=
-e()
-> >> as a last action is a reasonable thing to have.  But this looks more l=
-ike
-> >> a fix for the original drop reason patch set.
-> >>
-> >
-> > I don't think consuming the skb at this point makes sense. It was very
-> > intentionally changed to a drop since a very common use-case for
-> > sampling is drop-sampling, i.e: replacing an empty action list (that
-> > triggers OVS_DROP_LAST_ACTION) with a sample(emit_sample()). Ideally,
-> > that replacement should not have any effect on the number of
-> > OVS_DROP_LAST_ACTION being reported as the packets are being treated in
-> > the same way (only observed in one case).
-> >
-> >
-> >>>>  		return 0;
-> >>>>  	}
-> >>>>
-> >>>> @@ -1579,7 +1588,7 @@ static int do_execute_actions(struct datapath =
-*dp, struct sk_buff *skb,
-> >>>>  		}
-> >>>>  	}
-> >>>>
-> >>>> -	ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
-> >>>> +	ovs_drop_skb_last_action(skb);
-> >>>
-> >>> I don't think I agree with this one.  If we have a sample() action wi=
-th
-> >>> a lot of different actions inside and we reached the end while the la=
-st
-> >>> action didn't consume the skb, then we should report that.  E.g.
-> >>> "sample(emit_sample(),push_vlan(),set(eth())),2"  should report that =
-the
-> >>> cloned skb was dropped.  "sample(push_vlan(),emit_sample())" should n=
-ot.
-> >>>
-> >
-> > What is the use case for such action list? Having an action branch
-> > executed randomly doesn't make sense to me if it's not some
-> > observability thing (which IMHO should not trigger drops).
->
-> It is exactly my point.  A list of actions that doesn't end is some sort
-> of a terminal action (output, drop, etc) does not make a lot of sense and
-> hence should be signaled as an unexpected drop, so users can re-check the
-> pipeline in case they missed the terminal action somehow.
->
-> >
-> >>> The only actions that are actually consuming the skb are "output",
-> >>> "userspace", "recirc" and now "emit_sample".  "output" and "recirc" a=
-re
-> >>> consuming the skb "naturally" by stealing it when it is the last acti=
-on.
-> >>> "userspace" has an explicit check to consume the skb if it is the las=
-t
-> >>> action.  "emit_sample" should have the similar check.  It should like=
-ly
-> >>> be added at the point of action introduction instead of having a sepa=
-rate
-> >>> patch.
-> >>>
-> >
-> > Unlinke "output", "recirc", "userspace", etc. with emit_sample the
-> > packet does not continue it's way through the datapath.
->
-> After "output" the packet leaves the datapath too, i.e. does not continue
-> it's way through OVS datapath.
->
+From: Ramona Gradinariu <ramona.gradinariu@analog.com>
 
-I meant a broader concept of "datapath". The packet continues. For the
-userspace action this is true only for the CONTROLLER ofp action but
-since the datapath does not know which action it's implementing, we
-cannot do better.
+Add dt-bindings for ADXL380/ADLX382 low noise density, low
+power, 3-axis accelerometer with selectable measurement ranges.
 
-> >
-> > It would be very confusing if OVS starts monitoring drops and adds a bu=
-nch
-> > of flows such as "actions:emit_sample()" and suddently it stops reporti=
-ng such
-> > drops via standard kfree_skb_reason. Packets _are_ being dropped here,
-> > we are just observing them.
->
-> This might make sense from the higher logic in user space application, bu=
-t
-> it doesn't from the datapath perspective.  And also, if the user adds the
-> 'emit_sample' action for drop monitring, they already know where to find
-> packet samples, they don't need to use tools like dropwatch anymore.
-> This packet is not dropped from the datapath perspective, it is sampled.
->
-> >
-> > And if we change emit_sample to trigger a drop if it's the last action,
-> > then "sample(50%, emit_sample()),2" will trigger a drop half of the tim=
-es
-> > which is also terribly confusing.
->
-> If emit_sample is the last action, then skb should be consumed silently.
-> The same as for "output" and "userspace".
->
-> >
-> > I think we should try to be clear and informative with what we
-> > _actually_ drop and not require the user that is just running
-> > "dropwatch" to understand the internals of the OVS module.
->
-> If someone is already using sampling to watch their packet drops, why wou=
-ld
-> they use dropwatch?
->
-> >
-> > So if you don't want to accept the "observational" nature of sample(),
-> > the only other solution that does not bring even more confusion to OVS
-> > drops would be to have userspace add explicit drop actions. WDYT?
-> >
->
-> These are not drops from the datapath perspective.  Users can add explici=
-t
-> drop actions if they want to, but I'm really not sure why they would do t=
-hat
-> if they are already capturing all these packets in psample, sFlow or IPFI=
-X.
+Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+---
+ .../bindings/iio/accel/adi,adxl380.yaml       | 83 +++++++++++++++++++
+ MAINTAINERS                                   |  7 ++
+ 2 files changed, 90 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/accel/adi,adxl380.yaml
 
-Because there is not a single "user". Tools and systems can be built on
-top of tracepoints and samples and they might not be coordinated between
-them. Some observability application can be always enabled and doing
-constant network monitoring or statistics while other lower level tools
-can be run at certain moments to troubleshoot issues.
-
-In order to run dropwatch in a node you don't need to have rights to
-access the OpenFlow controller and ask it to change the OpenFlow rules
-or else dropwatch simply will not show actual packet drops.
-
-To me it seems obvious that drop sampling (via emit_sample) "includes"
-drop reporting via emit_sample. In both cases you get the packet
-headers, but in one case you also get OFP controller metadata. Now even
-if there is a system that uses both, does it make sense to push to them
-the responsibility of dealing with them being mutually exclusive?
-
-I think this makes debugging OVS datapath unnecessarily obscure when we
-know the packet is actually being dropped intentionally by OVS.
-
-What's the problem with having OVS write the following?
-    "sample(50%, emit_sample()),drop(0)"
-
-Thanks,
-Adri=C3=A1n
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl380.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl380.yaml
+new file mode 100644
+index 000000000000..992e2ab841e2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl380.yaml
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/accel/adi,adxl380.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices ADXL380/382 3-Axis Digital Accelerometer
++
++maintainers:
++  - Ramona Gradinariu <ramona.gradinariu@analog.com>
++  - Antoniu Miclaus <antoniu.miclaus@analog.com>
++
++description: |
++  The ADXL380/ADXL382 is a low noise density, low power, 3-axis
++  accelerometer with selectable measurement ranges. The ADXL380
++  supports the ±4 g, ±8 g, and ±16 g ranges, and the ADXL382 supports
++  ±15 g, ±30 g, and ±60 g ranges.
++  The ADXL380/ADXL382 offers industry leading noise, enabling precision
++  applications with minimal calibration. The low noise, and low power
++  ADXL380/ADXL382 enables accurate measurement in an environment with
++  high vibration, heart sounds and audio.
++
++  In addition to its low power consumption, the ADXL380/ADXL382 has
++  many features to enable true system level performance. These
++  include a built-in micropower temperature sensor, single / double /
++  triple tap detection and a state machine to prevent a false
++  triggering. In addition, the ADXL380/ADXL382 has provisions for
++  external control of the sampling time and/or an external clock.
++
++    https://www.analog.com/en/products/adxl380.html
++
++properties:
++  compatible:
++    enum:
++      - adi,adxl380
++      - adi,adxl382
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      accelerometer@54 {
++        compatible = "adi,adxl380";
++        reg = <0x54>;
++        interrupt-parent = <&gpio>;
++        interrupts = <25 IRQ_TYPE_LEVEL_HIGH>;
++      };
++    };
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    spi {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      accelerometer@0 {
++        compatible = "adi,adxl380";
++        reg = <0>;
++        spi-max-frequency = <8000000>;
++        interrupt-parent = <&gpio>;
++        interrupts = <25 IRQ_TYPE_LEVEL_HIGH>;
++      };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b68c8b25bb93..2adee5198891 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -608,6 +608,13 @@ F:	drivers/iio/accel/adxl372.c
+ F:	drivers/iio/accel/adxl372_i2c.c
+ F:	drivers/iio/accel/adxl372_spi.c
+ 
++ADXL380 THREE-AXIS DIGITAL ACCELEROMETER DRIVER
++M:	Ramona Gradinariu <ramona.gradinariu@analog.com>
++M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
++S:	Supported
++W:	https://ez.analog.com/linux-software-drivers
++F:	Documentation/devicetree/bindings/iio/accel/adi,adxl380.yaml
++
+ AF8133J THREE-AXIS MAGNETOMETER DRIVER
+ M:	Ondřej Jirman <megi@xff.cz>
+ S:	Maintained
+-- 
+2.45.2
 
 
