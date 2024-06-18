@@ -1,51 +1,47 @@
-Return-Path: <linux-kernel+bounces-218690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FC090C3D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:42:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFB990C3D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538F21F240FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:42:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB4A61C22678
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC54460B96;
-	Tue, 18 Jun 2024 06:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDB761FE3;
+	Tue, 18 Jun 2024 06:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="GpwweqzV"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpJCjIC6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7063219F6;
-	Tue, 18 Jun 2024 06:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF4B4F20C;
+	Tue, 18 Jun 2024 06:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718692936; cv=none; b=qucuIg/SieOLJbukFHVqUxkh6tZby8fwFJz3ZUC4d8X/V8RMzgC1iouikuppqOOl8qlgr1d8SLsci/TpGxxIqYAgcs+ceAzRKTNNx9Rx/QficpDlPLIYYth24MRR0rPaY9DV6cJySG17m5yFrDV7pkmhHbzlCOQ7kluCYVXA66I=
+	t=1718692946; cv=none; b=mn05KsUY6FGwWwBElAylQF+Zf+T82buRhLU399dZfkyAw8QjyKwLtLl6daEVky+gHC4dkU9aLjN6G4QAf4NjHIjMSAru/r+HunYFTJb3cvEqdMbPWh1cL4zY4aFdabMPWzI+uYIWzfOMGkBJwazUfxn6lqIOiTghZBd2algkY9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718692936; c=relaxed/simple;
-	bh=AhTLoDlSVCG/LHgqM8ZrXxu6yxrWcrH0cYlmPQnN/B0=;
+	s=arc-20240116; t=1718692946; c=relaxed/simple;
+	bh=b4G0M+0SDXvu/gr/P6DTgGODddDAWFkgwimbWQ/CUz8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MST3ovJVG596uWZOunZ3Lei+cYTShXZMdLAl/ZaoLXOOXHItfJ/0b9KXLQ11DE9R/6PwkbPlOKG5iY5GAeCKKwJ2VGB0bsn+9VTkMkDbz9FB0n5it3zspThsfshNOFWwMXaz6KyaDVW5MZ8CnS4+p96UxfXYTOkAxSmMG5tBRkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=GpwweqzV; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=NaDAiRmFCXMwg/Jif66ZjmayEhJaZCZNrfQ3r+T5BQA=;
-	t=1718692933; x=1719124933; b=GpwweqzVBB0DYxw6gVD/nab+QI89nixbewcXee88kF8c76J
-	sSySkW0ymJhjUkVhSXbVSxACZPPdkFkm9p+5dluQCfikLYlfZMPb4Btcq9U/AQEoyrAzNmwP2tedZ
-	w+3tvH5xdkGORQsLQh+PXfsDOmHUhb2WgkE6Ia6mnn9k00GJlrzNFNVU/+A25adcna5fMYn3wRO9l
-	OLVQ+ky82FYAm465sgcZ32dWtbaP9FYyFJgEja29ZJzcF3aMBfOAPlNbyrvmBewmLmCA/2IOxmEXO
-	/novFrkz0J6w46Q4ZtWsjmBtuoCBoZx+OssHA8YclQGFexPjx+mxhcK8VyYsPbzA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sJSXg-0004zv-56; Tue, 18 Jun 2024 08:42:08 +0200
-Message-ID: <b4d09ffc-a8e4-4e9f-9032-7c8583ca6abd@leemhuis.info>
-Date: Tue, 18 Jun 2024 08:42:07 +0200
+	 In-Reply-To:Content-Type; b=jFvgdnPQwhZO3PZpEhFNXPXMc+V9OEpHpHMjTQkXmmfhOQiH9j/HqxDFxxIHDuQzhwyHCjmI307SpNE7FkzYQTAqypRjMxGeuejBmp3a2Gyu2nzpLO/lSmm831q37HpJuo7l/sMWOd4kI06i7BtVYYMUUpD7XiplB5eYcj41MVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpJCjIC6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A6F0C4AF1D;
+	Tue, 18 Jun 2024 06:42:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718692946;
+	bh=b4G0M+0SDXvu/gr/P6DTgGODddDAWFkgwimbWQ/CUz8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YpJCjIC6hNrHVALlQs2FR/7rlX/G/Jo7sH+9YCItIZ4Dq6xM0oB2tU4U3/PyNSSa4
+	 cILLnHE04Pbga2EzN5+5CJ/JqRMPbUnNNmWtyk7uTCA+rEWSvgSn4Qc9OcTdublFt0
+	 x1M664h0iurnKP56jKvRsdGq0PlNCC8APcEEgoLaYwkLvshyuLL7PoM1rbjN4co4VL
+	 jf9eCEs8uWqiyHEJfelnE9OzxB+jVT8VI0e8CW4f3MnlmOOR7XVq1VwthV7VnissgW
+	 opY2aQfxevaX16VFBeGNcTOS9dPuncu7ZDfHzUlVSQ/CSUriIqLtVCyIPA0ItpFnhy
+	 7edfAJlfYK/qQ==
+Message-ID: <fc5ebd40-56a8-4ed7-ab8d-bda734224d23@kernel.org>
+Date: Tue, 18 Jun 2024 08:42:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,67 +49,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Fwd: Regression: Kernel 6.4 rc1 and higher causes Steam Deck to
- fail to wake from suspend (bisected)
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Regressions <regressions@lists.linux.dev>,
- Linux NVMe <linux-nvme@lists.infradead.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Chaitanya Kulkarni <kch@nvidia.com>,
- Christoph Hellwig <hch@lst.de>, gloriouseggroll@gmail.com,
- Bagas Sanjaya <bagasdotme@gmail.com>
-References: <20240508154950.GA1768252@bhelgaas>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <20240508154950.GA1768252@bhelgaas>
+Subject: Re: [PATCH 3/4] dt-bindings: phy: rockchip,rk3588-hdptx-phy: Add
+ #clock-cells
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@collabora.com, linux-phy@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240618-rk3588-hdmiphy-clkprov-v1-0-80e4aa12177e@collabora.com>
+ <20240618-rk3588-hdmiphy-clkprov-v1-3-80e4aa12177e@collabora.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240618-rk3588-hdmiphy-clkprov-v1-3-80e4aa12177e@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718692933;de0b4c71;
-X-HE-SMSGID: 1sJSXg-0004zv-56
 
-Hi Bjorn!
+On 17/06/2024 23:48, Cristian Ciocaltea wrote:
+> The HDMI PHY can be used as a clock provider on RK3588 SoC, hence add
+> the necessary '#clock-cells' property.
+> 
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
-On 08.05.24 17:49, Bjorn Helgaas wrote:
-> On Tue, Oct 31, 2023 at 03:21:20PM +0700, Bagas Sanjaya wrote:
->>
->> I notice a regression report on Bugzilla [1]. Quoting from it:
->> 
->>> On Kernel 6.4 rc1 and higher if you put the Steam Deck into suspend then press the power button again it will not wake up. 
->>>
->>> I don't have a clue as to -why- this commit breaks wake from suspend on steam deck, but it does. Bisected to:
->>>
->>> ```
->>> 1ad11eafc63ac16e667853bee4273879226d2d1b is the first bad commit
->>> commit 1ad11eafc63ac16e667853bee4273879226d2d1b
->>> Author: Bjorn Helgaas <bhelgaas@google.com>
->>> Date:   Tue Mar 7 14:32:43 2023 -0600
->>>
->>>     nvme-pci: drop redundant pci_enable_pcie_error_reporting()
->>>     
->>>     pci_enable_pcie_error_reporting() enables the device to send ERR_*
->>>     Messages.  Since f26e58bf6f54 ("PCI/AER: Enable error reporting when AER is
->>>     native"), the PCI core does this for all devices during enumeration, so the
->>>     driver doesn't need to do it itself.
->>> [...]
->>>
->>> Reverting that commit by itself on top of 6.5.9 (stable) allows it to wake from suspend properly.
->>
->>> https://bugzilla.kernel.org/show_bug.cgi?id=218090
->>
-> I don't think regzbot picked this up [...]
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-This is still open and it seems nothing happened for a few weeks now
-(sorry, should have sent a reminder earlier, but such old regressions
-have a lower priority here). Did it fall through the cracks or is this
-some good reason why giving up on this one might be the right thing to do?
+Best regards,
+Krzysztof
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-#regzbot poke
 
