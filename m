@@ -1,144 +1,106 @@
-Return-Path: <linux-kernel+bounces-219128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB63D90CA2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:48:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7614290CA2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D481F2392D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:48:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3891F22169
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79961A00F3;
-	Tue, 18 Jun 2024 11:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785DA185E4A;
+	Tue, 18 Jun 2024 11:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="tYqlNT8G";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P0pGtVLl"
-Received: from wfhigh6-smtp.messagingengine.com (wfhigh6-smtp.messagingengine.com [64.147.123.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4bIjzSV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC8D19B5A8;
-	Tue, 18 Jun 2024 11:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3E615A844;
+	Tue, 18 Jun 2024 11:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718709340; cv=none; b=lWY61/YabZugXXy9HqXMjSkJkhoFQxUWBRlmFrvyQoJ0APHJrL3hBXn5L+DYHBIOyR46rFZzMYIyqYwyHziDIKZEYuNe+z3R6M5WuOUEv8eGZMSzQ/VUYwgCYD1VCSONvwmcnjWssTsR8PqEtPX1Q52U3FMzKXkayM/56xME0YE=
+	t=1718709310; cv=none; b=P9fhfvjMlUadZmAt8Z/ZuAqTB2NOxm1hcFB5v/ICXQWl6wIajvxnGGU09+ewSg5mQYDpZV/CLloaL4jhchUDlMBwwtBK36t5fKwY3asvpIcsYmMCMHzJ81Zsth/qLiUL9FhhPrLDQUnZMIVa6XHTj6M4mUDdj6Ajrq/wo+Fwnfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718709340; c=relaxed/simple;
-	bh=bQ8atcDoAMJDfXcR5CtM6JEhwxnxsPOFsW5HLOyaBgQ=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=BcBmVxk6m36/OszCdG0wgkRYCNtBolt3FHlqfHI56+HiZDAfKWe2J26JeYq3NGyUsxPi3/PzztCji+54mQJDAPPAtc5xd7NqhXHMTbbo4vEu0xMNG5sUFldcsfuGGGe2dMWu0V4VKMjFvqhOHIh7HvEuPW8aQrFao4HWw+vQ7AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=tYqlNT8G; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=P0pGtVLl; arc=none smtp.client-ip=64.147.123.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 4449E18000DA;
-	Tue, 18 Jun 2024 07:15:36 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 18 Jun 2024 07:15:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718709335; x=1718795735; bh=ALp4QxWC9z
-	gKoPTEnvdpcdX1IlHBjC/eM21B181t8Qs=; b=tYqlNT8GAC/WBA3lxV5xMGLFUF
-	nriSWTGMpCIvmCW2quS6yOJsmEG99h5lD6miqXzBpVSs1tvxyGB2SFeoyChM2or+
-	QEZ85imi6sTtpQ4nJZELEpNvLjGSH2zpO0xaTSabgP29IbJxmFNaAZ3brdCFTTx9
-	yhPYyocFG+FZFuy0Inxn2D9L+1hHfyJNm6mIU820DivdXGeCcp8HZeo4nwxDQWvh
-	MxVxZlwgU6L6MWl7vrNhEWGZ9QzVCERobCX4Q5vjOqN5nmjwTYXNkdGWYDWOpQMG
-	sSLuIqs30B34hhVNCJZhmOgP+VLan/iaAZuKRKmD3bsyR9Tq1c8tkT6B2CSA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1718709335; x=1718795735; bh=ALp4QxWC9zgKoPTEnvdpcdX1IlHB
-	jC/eM21B181t8Qs=; b=P0pGtVLl3EUqZ5r9okCduwGpVptn3qNKep//qgjPBOqg
-	DAG8XsqhGZp8DahniuR+g0c/ZuRk3l8yHWVLSUhiGRSyf83CbK+t0SFCruLi3C6u
-	U2CsT5SHPSm58BEmw+mTAbGGxTa2eGTFy438A8mJPmv0iqCD6Rc5OJAGjoBtwVjt
-	d7HI6QH1mw2edwa/Wg9XIVonepy69OmGQkRB5sDhSkjZHBc+3gJyP417eDSbIJKf
-	P7s0U7AO5i9xFt/hfRdo0M0KK9tGbY/Rj2jxejONoFZwasblEgHxWDkKcGmqShMY
-	WAV/PMQnq128JAaMjHHekEQsWif/EjO83qPzGVv8FQ==
-X-ME-Sender: <xms:V2xxZmIcczWuFP7LV0BrvGEGZNHEj44n8ywbVCxcLwfJSc4mJ6rKuw>
-    <xme:V2xxZuI90ZsHwQA71xJHahTGT2EGEnWe97hDBXfn7wEvxj1UKSTfCZTn2QVdZIpqa
-    vUiz850Kgs8D2HQ2YI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvkedgtdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:V2xxZmu9aFVnHY0rnU8XOxvHiEL1PQVZpN1NHD5vkdtp34TUFVWR_w>
-    <xmx:V2xxZrY0TiXzIF0BSdeIf_NdpXn3Chg3x_idvT18FRKozRr-CnezRw>
-    <xmx:V2xxZta5s82tbYTMno3f7pMakDX_Sk-DfzqIwWUUAYer8jwQ1AU0oQ>
-    <xmx:V2xxZnAAq3QXrzyq-zNbH0zOg9wEj16rqt0UXf2xqgabPu_1vjgwUQ>
-    <xmx:V2xxZhKxiUrYAQ-wuS7SjAjAfFCNzCG8DJeaKMovWV92Pa0FQfwjE-RL>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 2CF1DB60092; Tue, 18 Jun 2024 07:15:35 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718709310; c=relaxed/simple;
+	bh=FhuwRLQO68CQIh1e4REGDMaFZVAy4zws0a+cKVmWB6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uLJ+MLUHQYx//sX7rIyeOVhU0qgwAjmwAUu+5/GJxrrhTiHAGvKvB2JOni1DYk9F3UlZDRPMB5c9M/On3wrdA9xZv6Je+H81P2pDNHGE3+9WDkVlmkmSdDXbEyHQ3swbnk09eaDwQ5Z8L9zGgC2NyVPhMTksgdPD6A5wnzSL3CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4bIjzSV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27420C32786;
+	Tue, 18 Jun 2024 11:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718709310;
+	bh=FhuwRLQO68CQIh1e4REGDMaFZVAy4zws0a+cKVmWB6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h4bIjzSVPAu4fkvyJyB7moPqIUratKHa2oT88TgrlOFzik2cza/FWitwjT4vRm0kB
+	 CPUUKIDPQtGeT3fKthaJpQJAjPxRIC3qKjXUYAOm+vtUfYRQhXP1ya+N4mJh2cdcux
+	 o9ABxKD7i7hGruhZRyP2HFaQRn3EyPfn0Mog5Gm5XSX1HpSbmf1BuWqNnMnOsZ8tbG
+	 Vrf4oTcy1fbLlCfpTDl0uKeHjkePbLtIgRtjY6iFJzdTMIa5enrbAlZeVHshc8YQqb
+	 tvrClkZdjbX6k3bhnULszCBliCxN00ni5+Xzxngnb2oql6zxKgX6OkKmYs9VP6M3by
+	 xUZlSn8n2eupQ==
+Date: Tue, 18 Jun 2024 12:15:05 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] net: usb: ax88179_178a: improve link status logs
+Message-ID: <20240618111505.GA650324@kernel.org>
+References: <20240617103405.654567-1-jtornosm@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <dbca95d9-4818-4624-b3c2-4b51284fe83b@app.fastmail.com>
-In-Reply-To: <ZnFlQgVSTtf0t2cU@J2N7QTR9R3>
-References: <20240617133721.377540-1-liuyuntao12@huawei.com>
- <ZnBbr2CAqBGDe2aN@J2N7QTR9R3> <202406171122.B5FDA6A@keescook>
- <d0959336-4430-4062-b909-54d553238468@app.fastmail.com>
- <ZnFlQgVSTtf0t2cU@J2N7QTR9R3>
-Date: Tue, 18 Jun 2024 13:14:58 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Mark Rutland" <mark.rutland@arm.com>
-Cc: "Kees Cook" <kees@kernel.org>, "Yuntao Liu" <liuyuntao12@huawei.com>,
- x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- linux-hardening@vger.kernel.org, "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, "Heiko Carstens" <hca@linux.ibm.com>,
- gor@linux.ibm.com, "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "Leonardo Bras" <leobras@redhat.com>, "Mark Brown" <broonie@kernel.org>,
- imbrenda@linux.ibm.com, pawan.kumar.gupta@linux.intel.com
-Subject: Re: [PATCH] remove AND operation in choose_random_kstack_offset()
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617103405.654567-1-jtornosm@redhat.com>
 
-On Tue, Jun 18, 2024, at 12:45, Mark Rutland wrote:
-> On Mon, Jun 17, 2024 at 10:33:08PM +0200, Arnd Bergmann wrote:
->> On Mon, Jun 17, 2024, at 20:22, Kees Cook wrote:
->> > On Mon, Jun 17, 2024 at 04:52:15PM +0100, Mark Rutland wrote:
+On Mon, Jun 17, 2024 at 12:33:59PM +0200, Jose Ignacio Tornos Martinez wrote:
+> Avoid spurious link status logs that may ultimately be wrong; for example,
+> if the link is set to down with the cable plugged, then the cable is
+> unplugged and afer this the link is set to up, the last new log that is
+> appearing is incorrectly telling that the link is up.
+> 
+> In order to aovid errors, show link status logs after link_reset
+> processing, and in order to avoid spurious as much as possible, only show
+> the link loss when some link status change is detected.
+> 
+> cc: stable@vger.kernel.org
+> Fixes: e2ca90c276e1 ("ax88179_178a: ASIX AX88179_178A USB 3.0/2.0 to gigabit ethernet adapter driver")
+> Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+> ---
+>  drivers/net/usb/ax88179_178a.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
+> index c2fb736f78b2..60357796be99 100644
+> --- a/drivers/net/usb/ax88179_178a.c
+> +++ b/drivers/net/usb/ax88179_178a.c
+> @@ -326,7 +326,8 @@ static void ax88179_status(struct usbnet *dev, struct urb *urb)
+>  
+>  	if (netif_carrier_ok(dev->net) != link) {
+>  		usbnet_link_change(dev, link, 1);
+> -		netdev_info(dev->net, "ax88179 - Link status is: %d\n", link);
+> +		if (!link)
+> +			netdev_info(dev->net, "ax88179 - Link status is: %d\n", link);
 
-> Sorry, to be clear, I'm happy for this to change, so long as:
->
-> * The commit message explains why that's safe.
->
->   IIUC this goes from 511 to 1023 bytes on arm64, which is ~3% of the
->   stack, so maybe that is ok. It'd be nice to see any rationale/analysis
->   beyond "the offset would be bitwise ANDed with 0x3FF".
+Sorry Jose,
 
-Absolutely agreed, and the commit message should also clarify that
-the increase has already happened as an unintended side-effect
-of commit 9c573cd31343 ("randomize_kstack: Improve entropy
-diffusion").
+one more nit I noticed after sending my previous email.
 
-> * The comments in architecture code referring to the masking get
->   removed/updated along with the masking.
+The line above looks like it could be wrapped to <= 80 columns wide,
+which is still preferred for Networking code.
 
-Right.
+Flagged by checkpatch.pl --max-line-length=80
 
-FWIW, I also wouldn't mind to having a compile-time option
-that configures the number of random bits on the stack offset,
-but my preference here is to have a reasonable default and
-not need a config option.
+>  	}
+>  }
+>  
 
-    Arnd
+...
 
