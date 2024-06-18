@@ -1,125 +1,93 @@
-Return-Path: <linux-kernel+bounces-219597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174D590D54E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EF290D559
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78E31F2275D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:35:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17DBE1F234DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A575152E0C;
-	Tue, 18 Jun 2024 14:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDD3155C8A;
+	Tue, 18 Jun 2024 14:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbxyrMmM"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MDZypJh1"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4581514EE;
-	Tue, 18 Jun 2024 14:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF83155A56;
+	Tue, 18 Jun 2024 14:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718720204; cv=none; b=spE5R/bsxJQUwP7nKqVvTFe5mic4yz+QKV4pbmzvzYt6ZY485RRWLjBzeVvuLIa4lYEbLoqOth3poExDH5LDrsQc/ld0q7pCmDX7XaDiRBgK3sq4Z35eCy7RxKMzRkKnoDBdof6J0jAR2apyuk+YK7eXC4gdwBPWrlJXhenTvkw=
+	t=1718720348; cv=none; b=mzQuAQ1l079o/Zzw0NLbVwMoURczmxIwEqA9a20WjihUhKoETxJahX/QpzAkaDesOdtojNWixsoK9HuJzoa4kRon7rg9zHCzg6vgsnmdt8kMrg7CvFBUauIZim1XBNfKjwrVVAFnlhhCgn7M+fGR6eS2wxDolx+LQFeOihJRHKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718720204; c=relaxed/simple;
-	bh=Om4iC8WD2JaG4NL4a3+9I68t3tIKpeGHX/9WOTfeeHU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IpjIIjLzR1Mv87j8pV0/HOm0UPL4vXaukfGlM/jfenS8ONaiymMFHhptd1NaEWtak+Zx1t3sCDDq5Xq3xPLMD5XXUCeVi3SSZo5tDeL6t1oEVYjXwgrCfEjMyq4FesYJPwJNWLg51Y5Gpe9fQN3s5XIwQju12CVpkW43p7w1qwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbxyrMmM; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5c1996a197fso689506eaf.0;
-        Tue, 18 Jun 2024 07:16:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718720202; x=1719325002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Om4iC8WD2JaG4NL4a3+9I68t3tIKpeGHX/9WOTfeeHU=;
-        b=bbxyrMmMzubrCsARUdiK5w8f3pelzV8WXRbWKWyAF/woViyX9qOokkp9EgiTLmm8lZ
-         7p+c5WF5EXbmLc9SC7bLu56uXDU+b/Y3yv/6urya6pdcIX63fDmZz5yhNgs0FJk9czUd
-         dBhcZTJv3wqj82ppkaaRflOmOJ8Qi4MOvuGk6818Y/R6WaGsILDCPI+rgRZWDyIMrMDu
-         L25R9bFzJisFKQUbpebtQe4Fqy42O1SqOS6BslIoMXFob4/BLO3SWenlAg27Y2el2hBU
-         ZDm+ob8FeQUA1jOag0rPOwQp4Dy6lY9hBYjblFp/H9hP97B6/Ayiiiyo7sQ8JM+U81nn
-         E+Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718720202; x=1719325002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Om4iC8WD2JaG4NL4a3+9I68t3tIKpeGHX/9WOTfeeHU=;
-        b=aBeOljCLbllDWfHOZdko6RW5F30NuwqpR+eTBc+OWvcDOObYQdFBcl3U4d3/nf8r7H
-         Qzds0zgYSy9AfznUmBHZF/FANnvGEp3qTjs08abrdBmmEM94PUmYnmnTtIOyneDxr5tO
-         yid/snpCG0Q/NEulW9A9C9/Q20uQqsO1v9cNnhlftus2pNHVn/qRRGzvFWZoL7N4b6is
-         c/XTgJN5KqNUTuUEOFYwL3ddGH4oNnEuZneF/Z90rG0/uO5d35OrbKR8FT95yLhnsSkJ
-         YdE6p/FAccKgom54iPmr48Fy3yXHlMizgXrUfcXrTsKvfnccsUV8vDx08TFM1d1fEIxh
-         vmbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUJMUwALnNHqCj8yh6Jj44A50K8Dh57dv8zFRNXFZ99k/ITXnldmTzcGdtA1Q3jOwVJBKCT+rdJsHDN5pB/s83F0G7rN1cXgRHllUUSMIWYE3H2LbPwURkE1gVlX9vuGzEc2vhZsBCfcfOkTO3EnIeij6/b2nptxadxHQcaSpZsptxulpY0VF8qD8KIO+Uv/ukWeSY7raWlv3mWbwJhy9MH7Y1Xu02Ghec9ysRGk73pIrRt4r31ydCTaBFY5IcxG7c4xdhHwQkXdjooiXpj+3zurAEAMbeRXsYVZ94lK3L9qQJtAiAX/JflNWGnCvEuQh8LzPBauWtYppoGOCxVzK99W26xgiexKetF2kka3H9VqtpVtsSfQpGyUIjUEFlR+ymsZpvmyf7yDd0Epp9EzvVqxMnvUI7qETfNK0r1fs03RiquQ1j1EwXO3CMdet4kqY=
-X-Gm-Message-State: AOJu0YzqNK+TlOlC5zg32m8jfK8ql0e1F5oKtcKxYFLUark15dJuP05l
-	2MT2E42xWkPA54RtIYrpbo7DKlJhQAl8tjBwEx3ni8DcQ86u+jBttRLKxuMMZ4ERfZNXxmdoW2W
-	Mzthbb8QaLHyacDRkyC9Axut5KzQ=
-X-Google-Smtp-Source: AGHT+IFVxJEPFbT79HYd7zoJLAxyrPm1gzxY90KGBgQZvvizvrURzGFMbP7julYl6JpqzUKt2q+uL/xgIcBmlrzc4oI=
-X-Received: by 2002:a05:6870:b525:b0:259:ae64:9231 with SMTP id
- 586e51a60fabf-259ae6493e7mr583749fac.15.1718720201642; Tue, 18 Jun 2024
- 07:16:41 -0700 (PDT)
+	s=arc-20240116; t=1718720348; c=relaxed/simple;
+	bh=3q4E1Yg0D77nrOFykHyo9O4ie2FnEOchmgONMr8mB2g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BJsjqMvmY7IrqX6r5qo3cXI4vGHH1+Q5IzB3A/jSl5LK1dNIWsaXpNEeSI8dqn7u9H8SiIOozbhB+WP71bz1OmUL3AEKWBUSGlIAfvwHe8KK111oDXNFaZUfmvOFaBzeFrl0zoG5xez+JqLjzpABmJzFXXCO1NMbPl4ZYoGOET8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MDZypJh1; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3CE5B1C0002;
+	Tue, 18 Jun 2024 14:19:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718720342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gyL/hw59WqU2reMGUKBGMooPbHmAQCDP31Jx4rlQFm8=;
+	b=MDZypJh1alvXt+BkMK+ZSeTMTlIF87U8/pjpPaFhHroT+PNoT7pgzaMBXpZxecE+evTAMo
+	0wsAEN2zm1ceqcTrhyELoYzVGnDOCnFVxAwNWISGgBCQ+Go/E5g1jDYvV5cuZF0OoUt92Q
+	2qdwKwOI8LWUi4r7+c5P5Xvxjlo8kAuHMcCuw1GrB0KvtxKHFxxOdJS4iDe+/dgrqFn5FM
+	PVCQCzzcWVo2Eqigiu9nypBq7GhFnUy+ygXxfFsvJjDfRKNRP4ZBbtRmHB2ACItvjwDX1d
+	PlYnL0OhbbIOqCWIh1GGQOpYbC2x5SXIc/cZ8gLcsFK0XtLwZ7OHibA10TtK2Q==
+From: Richard Genoud <richard.genoud@bootlin.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Udit Kumar <u-kumar1@ti.com>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Esteban Blanc <eblanc@baylibre.com>,
+	linux-rtc@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Richard Genoud <richard.genoud@bootlin.com>
+Subject: [PATCH v3 0/3] rtc: tps6594: Add power management support
+Date: Tue, 18 Jun 2024 16:18:48 +0200
+Message-ID: <20240618141851.1810000-1-richard.genoud@bootlin.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-22-e3f6662017ac@gmail.com> <e6a81932-0609-4476-82b6-43ee30b7de43@linaro.org>
-In-Reply-To: <e6a81932-0609-4476-82b6-43ee30b7de43@linaro.org>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Tue, 18 Jun 2024 17:16:29 +0300
-Message-ID: <CABTCjFAKFMQJXdwELZitCKpZQn+irfrHW6uOpHzwvFv=T7zKDA@mail.gmail.com>
-Subject: Re: [PATCH v3 22/23] arm64: dts: qcom: starqltechn: fix usb regulator mistake
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: richard.genoud@bootlin.com
 
-=D0=B2=D1=82, 18 =D0=B8=D1=8E=D0=BD. 2024=E2=80=AF=D0=B3. =D0=B2 17:08, Kon=
-rad Dybcio <konrad.dybcio@linaro.org>:
->
->
->
-> On 6/18/24 15:59, Dzmitry Sankouski wrote:
-> > Usb regulator was wrongly pointed to vreg_l1a_0p875.
-> > However, on starqltechn it's powered from vreg_l5a_0p8.
-> >
-> > Fixes: d711b22eee55 ("arm64: dts: qcom: starqltechn: add initial device=
- tree for starqltechn")
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> > ---
->
-> How did you confirm that?
-Vendor kernel source code:
-https://github.com/klabit87/twrp_android_samsung_kernel_sdm845/blob/e8bb630=
-39008e1704a2f1bde68d39ded9c16ea88/arch/arm64/boot/dts/samsung/sdm845-sec-st=
-arqlte-chnhk-r14_v2.1.dts#L10242
-https://github.com/klabit87/twrp_android_samsung_kernel_sdm845/blob/e8bb630=
-39008e1704a2f1bde68d39ded9c16ea88/arch/arm64/boot/dts/samsung/sdm845-sec-st=
-arqlte-chnhk-r14_v2.1.dts#L23401
->
-> Konrad
+This series add power management support for tps6594_rtc.
+
+The 1st patch fixes a memleak found in the probe()
+The 2nd patch simply introduce a private structure as drvdata that will
+be used in the 3rd patch. (no functionnal change)
+The 3rd patch introduce the power management support.
+
+Changes in v3:
+ - Fix a memleak found in probe()
+ - introduce a private structure to prevent squatting the mfd structure
+   (struct tps6594) with rtc-only related stuff.
+
+Changes in v2:
+ - use DEFINE_SIMPLE_DEV_PM_OPS instead of deprecated SIMPLE_DEV_PM_OPS
+   (This fixes the defined but unsed warning when CONFIG_PM is unset)
+
+Richard Genoud (3):
+  rtc: tps6594: Fix memleak in probe
+  rtc: tps6594: introduce private structure as drvdata
+  rtc: tps6594: Add power management support
+
+ drivers/rtc/rtc-tps6594.c | 75 ++++++++++++++++++++++++++++++++-------
+ 1 file changed, 63 insertions(+), 12 deletions(-)
+
 
