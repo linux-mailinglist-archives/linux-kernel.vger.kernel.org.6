@@ -1,187 +1,348 @@
-Return-Path: <linux-kernel+bounces-218808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD84F90C65C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:19:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614AD90C65D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0AE51C217C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:19:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B9812822F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E53178CE7;
-	Tue, 18 Jun 2024 07:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oCoLP7pr"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2FF179953;
+	Tue, 18 Jun 2024 07:48:49 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857AF13C3F2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F77113BAFB
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718696906; cv=none; b=pIZnamZO2lZlZYABtvr5J3KSxU/ptfyZlkcFK+N8wOsDvAM5S+KJG/+aVvQwlg/T8ZK9JnvFcKunWaXIa6+5qtPW+qDX3sGlwcw94gBg6AUbBECB3DvPY9Jfxd96ziilNvYD2e0TngQZS7zCCL9Ao16gh2U0qGG77ISer+BUu6M=
+	t=1718696929; cv=none; b=CGfe4D2vuH/lnALU8gaA3jMX2p9mTiM3VDTVNRay+K70kfr3DxHOk7hqCXo9p18FSBDQtvDdZm1EiJaDENVRxXHV2yoEqVZ4TBdw0pFw5mrInQDBVG+tqlWg9QCXJLzD1UOlG2erj7UcwMQmGqXqqKf5GiAnsZnTntZNmreLWz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718696906; c=relaxed/simple;
-	bh=+i2usPNZNgsyG7GktfYMCH5Ks0ugtDc9juyqEc/9YzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QjrO4q8qNuEcvl++2qAOetoFOc9hCMu8l2o+DlUpsrUNgwOrsOv5fN2nIRq7E/Mskxnayi5br5XEQQnPep+zXHpbSgXgKf28K02t+BLRZm29pIEfSngQcUBpLvS939reWGCD+33KI83vAs9aOpuphq+3NzLQESuaiqgeDJtVgrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oCoLP7pr; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6efae34c83so628589466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:48:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718696901; x=1719301701; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sCxa0N6a/etTSTm358fxjAycnT2MNf/L62aewqr2SjQ=;
-        b=oCoLP7preiduLiZUSmEIU0D9PNWQdD3yaKWarnveFckNSTypHuBLHGGF2JVIQRiYRG
-         LnDKJat3Mvf9U96C3jiSERM9wcjtR8o6REaC17p8wtjVPFsd+F0VNDAbNDmrWkSCxZMk
-         h2J54ZFBXbiFGTARopi4NHQVOHdwHAMEIO8qU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718696901; x=1719301701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sCxa0N6a/etTSTm358fxjAycnT2MNf/L62aewqr2SjQ=;
-        b=EdzdDjfmkqnouB5qB7HVCebNXm63pmHgFWfpkD1116B2mG9sjBxD8XYycj+w/+53Xb
-         /YsZreUscGQBvpzxWUI02X/p4GHLcvbimtkk+0m9g2mP9FXXH5bHeKTdQ1p18RZJptoh
-         gYCeGz9fpJ7WqN3vk7W6MIySZZsMtFbZU723bPKtfAko/Uh6hhPjjmdUCjPncIjZdiiP
-         zPX8q7ssGJCls4Lcva3ZFxDJ7fQxWkxpO66+jQC6Uw6UBXvxzFBUNvOMcf1yru6rKEnR
-         xlBjPmep/qp9VS1ECLOLie2dSCg5kBvEWwMCcefjhHjhKy7AUW8/23cvg7wLjnTRjIk8
-         pxIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSnA8oEdq2DWHyZBz6tE0bNgLtT8Chta71WXVuUEz2DllfFr4qyqNhjDuQAtmQAMouDO8ggAWa7FcQSZ1dt/3trmsWLSo6x7rJaz7u
-X-Gm-Message-State: AOJu0YyaQakn7GhFN40bJCrjYov0/tKc6i1zTa7mibmO1mgahbtDBfiY
-	0K3kTPk2LBPFa5H/quFfxfWh9boLYtWK+ILMVQWIYers8NnMjOMjI1t1DbAEbLHHyIrXi+iA6S7
-	1tP89
-X-Google-Smtp-Source: AGHT+IFr0AQaO8k0jU9duljuTIPFfLkvBMm5kku2vUXgzS8MIJ0+tpttm4TqmpLjoB1u66TK6PrFaw==
-X-Received: by 2002:a17:907:1608:b0:a6f:6b6a:e8cf with SMTP id a640c23a62f3a-a6f6b6aec22mr733515666b.2.1718696901556;
-        Tue, 18 Jun 2024 00:48:21 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f9e05fa34sm9678266b.15.2024.06.18.00.48.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 00:48:20 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f1c4800easo622942866b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:48:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXQAHMZlqKplMLtEFa5LKRuJFzk3xaj6kGiAHlTTWxGrA/9MnHBeqh4gMc2E3fVpKILoW2BsRNHrpnpO5F+WKlcwHNUe78VaozQbG1N
-X-Received: by 2002:a17:906:ca0d:b0:a6f:fbc:b3f3 with SMTP id
- a640c23a62f3a-a6f60dc89cbmr680235166b.47.1718696899670; Tue, 18 Jun 2024
- 00:48:19 -0700 (PDT)
+	s=arc-20240116; t=1718696929; c=relaxed/simple;
+	bh=TFxbyycY/bPvvhtWOg5G0fgnwzjW/Qu4JB14u5ITZHA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bPQ2cl/VCwUjtbYI4qiFHkbTdsCS6Hxow8Fol5UWpql7y8KVmpsV1j8r+uMCJti3pVps3OjcOKti8xAv7B6g38cpOIuX40CjNQfmsDAuzJtqoOOVDIL+vqac2wvuRS/cIbz+B5RbMnR5s+QHUk2FIiPOzNxILUJ2yWgcSGP57zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7C8342000A;
+	Tue, 18 Jun 2024 07:48:39 +0000 (UTC)
+Message-ID: <db8c5502-e598-4695-ac13-5c381021e69e@ghiti.fr>
+Date: Tue, 18 Jun 2024 09:48:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618073004.3420436-1-tao.jiang_2@nxp.com>
-In-Reply-To: <20240618073004.3420436-1-tao.jiang_2@nxp.com>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Tue, 18 Jun 2024 16:47:45 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5B_RTHsMwMdD59RAAyFne_0Ok_A4ExdkVOgi=G6-UGfRQ@mail.gmail.com>
-Message-ID: <CAAFQd5B_RTHsMwMdD59RAAyFne_0Ok_A4ExdkVOgi=G6-UGfRQ@mail.gmail.com>
-Subject: Re: [PATCH] media: videobuf2: sync caches for dmabuf memory
-To: TaoJiang <tao.jiang_2@nxp.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl, nicolas@ndufresne.ca, 
-	shawnguo@kernel.org, robh+dt@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, 
-	xiahong.bao@nxp.com, eagle.zhou@nxp.com, ming.qian@oss.nxp.com, 
-	imx@lists.linux.dev, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com, 
-	sumit.semwal@linaro.org, christian.koenig@amd.com, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	Ming Qian <ming.qian@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf: RISC-V: Check standard event availability
+From: Alexandre Ghiti <alex@ghiti.fr>
+To: Atish Patra <atishp@rivosinc.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Mark Rutland <mark.rutland@arm.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <20240418014652.1143466-1-samuel.holland@sifive.com>
+ <79087773-9115-4d4c-b566-028a21049d61@rivosinc.com>
+ <4c4c70ed-3bff-471c-86ca-872d41380402@ghiti.fr>
+Content-Language: en-US
+In-Reply-To: <4c4c70ed-3bff-471c-86ca-872d41380402@ghiti.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hi TaoJiang,
+Hi Samuel, Atish,
 
-On Tue, Jun 18, 2024 at 4:30=E2=80=AFPM TaoJiang <tao.jiang_2@nxp.com> wrot=
-e:
+On 24/05/2024 22:00, Alexandre Ghiti wrote:
+> Hi Samuel,
 >
-> From: Ming Qian <ming.qian@nxp.com>
+> On 26/04/2024 17:38, Atish Patra wrote:
+>> On 4/17/24 18:46, Samuel Holland wrote:
+>>> The RISC-V SBI PMU specification defines several standard hardware and
+>>> cache events. Currently, all of these events are exposed to userspace,
+>>> even when not actually implemented. They appear in the `perf list`
+>>> output, and commands like `perf stat` try to use them.
+>>>
+>>> This is more than just a cosmetic issue, because the PMU driver's .add
+>>> function fails for these events, which causes pmu_groups_sched_in() to
+>>> prematurely stop scheduling in other (possibly valid) hardware events.
+>>>
+>>> Add logic to check which events are supported by the hardware (i.e. can
+>>> be mapped to some counter), so only usable events are reported to
+>>> userspace. Since the kernel does not know the mapping between events 
+>>> and
+>>> possible counters, this check must happen during boot, when no counters
+>>> are in use. Make the check asynchronous to minimize impact on boot 
+>>> time.
+>>>
+>>> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+>>> ---
+>>> Before this patch:
+>>> $ perf list hw
+>>>
+>>> List of pre-defined events (to be used in -e or -M):
+>>>
+>>>    branch-instructions OR branches [Hardware event]
+>>>    branch-misses [Hardware event]
+>>>    bus-cycles [Hardware event]
+>>>    cache-misses [Hardware event]
+>>>    cache-references [Hardware event]
+>>>    cpu-cycles OR cycles [Hardware event]
+>>>    instructions [Hardware event]
+>>>    ref-cycles [Hardware event]
+>>>    stalled-cycles-backend OR idle-cycles-backend [Hardware event]
+>>>    stalled-cycles-frontend OR idle-cycles-frontend [Hardware event]
+>>>
+>>> $ perf stat -ddd true
+>>>
+>>>   Performance counter stats for 'true':
+>>>
+>>>                4.36 msec task-clock                       # 0.744 
+>>> CPUs utilized
+>>>                   1      context-switches                 # 229.325 
+>>> /sec
+>>>                   0      cpu-migrations                   # 0.000 /sec
+>>>                  38      page-faults                      # 8.714 K/sec
+>>>           4,375,694      cycles                           # 1.003 
+>>> GHz                         (60.64%)
+>>>             728,945      instructions                     # 0.17  
+>>> insn per cycle
+>>>              79,199      branches                         # 18.162 
+>>> M/sec
+>>>              17,709      branch-misses                    # 22.36% 
+>>> of all branches
+>>>             181,734      L1-dcache-loads                  # 41.676 
+>>> M/sec
+>>>               5,547      L1-dcache-load-misses            # 3.05% of 
+>>> all L1-dcache accesses
+>>>       <not counted> LLC-loads (0.00%)
+>>>       <not counted> LLC-load-misses (0.00%)
+>>>       <not counted> L1-icache-loads (0.00%)
+>>>       <not counted> L1-icache-load-misses (0.00%)
+>>>       <not counted> dTLB-loads (0.00%)
+>>>       <not counted> dTLB-load-misses (0.00%)
+>>>       <not counted> iTLB-loads (0.00%)
+>>>       <not counted> iTLB-load-misses (0.00%)
+>>>       <not counted> L1-dcache-prefetches (0.00%)
+>>>       <not counted> L1-dcache-prefetch-misses (0.00%)
+>>>
+>>>         0.005860375 seconds time elapsed
+>>>
+>>>         0.000000000 seconds user
+>>>         0.010383000 seconds sys
+>>>
+>>> After this patch:
+>>> $ perf list hw
+>>>
+>>> List of pre-defined events (to be used in -e or -M):
+>>>
+>>>    branch-instructions OR branches [Hardware event]
+>>>    branch-misses [Hardware event]
+>>>    cache-misses [Hardware event]
+>>>    cache-references [Hardware event]
+>>>    cpu-cycles OR cycles [Hardware event]
+>>>    instructions [Hardware event]
+>>>
+>>> $ perf stat -ddd true
+>>>
+>>>   Performance counter stats for 'true':
+>>>
+>>>                5.16 msec task-clock                       # 0.848 
+>>> CPUs utilized
+>>>                   1      context-switches                 # 193.817 
+>>> /sec
+>>>                   0      cpu-migrations                   # 0.000 /sec
+>>>                  37      page-faults                      # 7.171 K/sec
+>>>           5,183,625      cycles                           # 1.005 GHz
+>>>             961,696      instructions                     # 0.19  
+>>> insn per cycle
+>>>              85,853      branches                         # 16.640 
+>>> M/sec
+>>>              20,462      branch-misses                    # 23.83% 
+>>> of all branches
+>>>             243,545      L1-dcache-loads                  # 47.203 
+>>> M/sec
+>>>               5,974      L1-dcache-load-misses            # 2.45% of 
+>>> all L1-dcache accesses
+>>>     <not supported>      LLC-loads
+>>>     <not supported>      LLC-load-misses
+>>>     <not supported>      L1-icache-loads
+>>>     <not supported>      L1-icache-load-misses
+>>>     <not supported>      dTLB-loads
+>>>              19,619      dTLB-load-misses
+>>>     <not supported>      iTLB-loads
+>>>               6,831      iTLB-load-misses
+>>>     <not supported>      L1-dcache-prefetches
+>>>     <not supported>      L1-dcache-prefetch-misses
+>>>
+>>>         0.006085625 seconds time elapsed
+>>>
+>>>         0.000000000 seconds user
+>>>         0.013022000 seconds sys
+>>>
+>>>
+>>> Changes in v2:
+>>>   - Move the event checking to a workqueue to make it asynchronous
+>>>   - Add more details to the commit message based on the v1 discussion
+>>>
+>>>   drivers/perf/riscv_pmu_sbi.c | 45 
+>>> +++++++++++++++++++++++++++++++++---
+>>>   1 file changed, 42 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/perf/riscv_pmu_sbi.c 
+>>> b/drivers/perf/riscv_pmu_sbi.c
+>>> index 8cbe6e5f9c39..c326954af066 100644
+>>> --- a/drivers/perf/riscv_pmu_sbi.c
+>>> +++ b/drivers/perf/riscv_pmu_sbi.c
+>>> @@ -20,6 +20,7 @@
+>>>   #include <linux/cpu_pm.h>
+>>>   #include <linux/sched/clock.h>
+>>>   #include <linux/soc/andes/irq.h>
+>>> +#include <linux/workqueue.h>
+>>>     #include <asm/errata_list.h>
+>>>   #include <asm/sbi.h>
+>>> @@ -109,7 +110,7 @@ struct sbi_pmu_event_data {
+>>>       };
+>>>   };
+>>>   -static const struct sbi_pmu_event_data pmu_hw_event_map[] = {
+>>> +static struct sbi_pmu_event_data pmu_hw_event_map[] = {
+>>>       [PERF_COUNT_HW_CPU_CYCLES]        = {.hw_gen_event = {
+>>>                               SBI_PMU_HW_CPU_CYCLES,
+>>>                               SBI_PMU_EVENT_TYPE_HW, 0}},
+>>> @@ -143,7 +144,7 @@ static const struct sbi_pmu_event_data 
+>>> pmu_hw_event_map[] = {
+>>>   };
+>>>     #define C(x) PERF_COUNT_HW_CACHE_##x
+>>> -static const struct sbi_pmu_event_data 
+>>> pmu_cache_event_map[PERF_COUNT_HW_CACHE_MAX]
+>>> +static struct sbi_pmu_event_data 
+>>> pmu_cache_event_map[PERF_COUNT_HW_CACHE_MAX]
+>>>   [PERF_COUNT_HW_CACHE_OP_MAX]
+>>>   [PERF_COUNT_HW_CACHE_RESULT_MAX] = {
+>>>       [C(L1D)] = {
+>>> @@ -288,6 +289,34 @@ static const struct sbi_pmu_event_data 
+>>> pmu_cache_event_map[PERF_COUNT_HW_CACHE_M
+>>>       },
+>>>   };
+>>>   +static void pmu_sbi_check_event(struct sbi_pmu_event_data *edata)
+>>> +{
+>>> +    struct sbiret ret;
+>>> +
+>>> +    ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_CFG_MATCH,
+>>> +            0, cmask, 0, edata->event_idx, 0, 0);
+>>> +    if (!ret.error) {
+>>> +        sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_STOP,
+>>> +              ret.value, 0x1, SBI_PMU_STOP_FLAG_RESET, 0, 0, 0);
+>>> +    } else if (ret.error == SBI_ERR_NOT_SUPPORTED) {
+>>> +        /* This event cannot be monitored by any counter */
+>>> +        edata->event_idx = -EINVAL;
+>>> +    }
+>>> +}
+>>> +
+>>> +static void pmu_sbi_check_std_events(struct work_struct *work)
+>>> +{
+>>> +    for (int i = 0; i < ARRAY_SIZE(pmu_hw_event_map); i++)
+>>> +        pmu_sbi_check_event(&pmu_hw_event_map[i]);
+>>> +
+>>> +    for (int i = 0; i < ARRAY_SIZE(pmu_cache_event_map); i++)
+>>> +        for (int j = 0; j < ARRAY_SIZE(pmu_cache_event_map[i]); j++)
+>>> +            for (int k = 0; k < 
+>>> ARRAY_SIZE(pmu_cache_event_map[i][j]); k++)
+>>> + pmu_sbi_check_event(&pmu_cache_event_map[i][j][k]);
+>>> +}
+>>> +
+>>> +static DECLARE_WORK(check_std_events_work, pmu_sbi_check_std_events);
+>>> +
+>>>   static int pmu_sbi_ctr_get_width(int idx)
+>>>   {
+>>>       return pmu_ctr_list[idx].width;
+>>> @@ -473,6 +502,12 @@ static int pmu_sbi_event_map(struct perf_event 
+>>> *event, u64 *econfig)
+>>>       u64 raw_config_val;
+>>>       int ret;
+>>>   +    /*
+>>> +     * Ensure we are finished checking standard hardware events for
+>>> +     * validity before allowing userspace to configure any events.
+>>> +     */
+>>> +    flush_work(&check_std_events_work);
+>>> +
+>>>       switch (type) {
+>>>       case PERF_TYPE_HARDWARE:
+>>>           if (config >= PERF_COUNT_HW_MAX)
+>>> @@ -634,7 +669,8 @@ static inline void pmu_sbi_stop_all(struct 
+>>> riscv_pmu *pmu)
+>>>        * which may include counters that are not enabled yet.
+>>>        */
+>>>       sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_STOP,
+>>> -          0, pmu->cmask, 0, 0, 0, 0);
+>>> +          0, pmu->cmask, SBI_PMU_STOP_FLAG_RESET, 0, 0, 0);
+>>> +
+>>
+>> Why is this required for this patch?
+>>
+>> If the intention is a generic improvement to reset mhpmevent at boot 
+>> time, it should be separate patch.
+>>
+>>>   }
+>>>     static inline void pmu_sbi_stop_hw_ctrs(struct riscv_pmu *pmu)
+>>> @@ -1108,6 +1144,9 @@ static int pmu_sbi_device_probe(struct 
+>>> platform_device *pdev)
+>>>         register_sysctl("kernel", sbi_pmu_sysctl_table);
+>>>   +    /* Asynchronously check which standard events are available */
+>>> +    schedule_work(&check_std_events_work);
+>>> +
+>>>       return 0;
+>>>     out_unregister:
+>>
+>> Until we have the new SBI interface defined to optimize these SBI 
+>> calls, we can use this individual call approach to fix the current 
+>> issue.
+>>
+>> lgtm otherwise.
+>>
+>> Reviewed-by: Atish Patra <atishp@rivosinc.com>
+>> Tested-by: Atish Patra <atishp@rivosinc.com>
 >
-> When the memory type is VB2_MEMORY_DMABUF, the v4l2 device can't know
-> whether the dma buffer is coherent or synchronized.
 >
-> The videobuf2-core will skip cache syncs as it think the DMA exporter
-> should take care of cache syncs
+> Can you add a Fixes tag for this so that we can merge in 6.10-rcX?
 >
-> But in fact it's likely that the client doesn't
-> synchronize the dma buf before qbuf() or after dqbuf(). and it's
-> difficult to find this type of error directly.
+> Thanks,
 >
-> I think it's helpful that videobuf2-core can call
-> dma_buf_end_cpu_access() and dma_buf_begin_cpu_access() to handle the
-> cache syncs.
->
-> Signed-off-by: Ming Qian <ming.qian@nxp.com>
-> Signed-off-by: TaoJiang <tao.jiang_2@nxp.com>
-> ---
->  .../media/common/videobuf2/videobuf2-core.c   | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
+> Alex
 
-Sorry, that patch is incorrect. I believe you're misunderstanding the
-way DMA-buf buffers should be managed in the userspace. It's the
-userspace responsibility to call the DMA_BUF_IOCTL_SYNC ioctl [1] to
-signal start and end of CPU access to the kernel and imply necessary
-cache synchronization.
 
-[1] https://docs.kernel.org/driver-api/dma-buf.html#dma-buffer-ioctls
+So I'd choose the following commit as a Fixes tag: e9991434596f 
+("RISC-V: Add perf platform driver based on SBI PMU extension")
 
-So, really sorry, but it's a NAK.
+In addition, this patch does not apply cleanly on top of 6.10, the 
+resolution I came up with is there 
+https://github.com/linux-riscv/linux-riscv/pull/1043/commits/0a440d8b9e90117261f02f4d019359847c64cb38
 
-Best regards,
-Tomasz
+Can you guys check it's correct?
 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/me=
-dia/common/videobuf2/videobuf2-core.c
-> index 358f1fe42975..4734ff9cf3ce 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-core.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
-> @@ -340,6 +340,17 @@ static void __vb2_buf_mem_prepare(struct vb2_buffer =
-*vb)
->         vb->synced =3D 1;
->         for (plane =3D 0; plane < vb->num_planes; ++plane)
->                 call_void_memop(vb, prepare, vb->planes[plane].mem_priv);
-> +
-> +       if (vb->memory !=3D VB2_MEMORY_DMABUF)
-> +               return;
-> +       for (plane =3D 0; plane < vb->num_planes; ++plane) {
-> +               struct dma_buf *dbuf =3D vb->planes[plane].dbuf;
-> +
-> +               if (!dbuf)
-> +                       continue;
-> +
-> +               dma_buf_end_cpu_access(dbuf, vb->vb2_queue->dma_dir);
-> +       }
->  }
+Thanks,
+
+Alex
+
+
 >
->  /*
-> @@ -356,6 +367,17 @@ static void __vb2_buf_mem_finish(struct vb2_buffer *=
-vb)
->         vb->synced =3D 0;
->         for (plane =3D 0; plane < vb->num_planes; ++plane)
->                 call_void_memop(vb, finish, vb->planes[plane].mem_priv);
-> +
-> +       if (vb->memory !=3D VB2_MEMORY_DMABUF)
-> +               return;
-> +       for (plane =3D 0; plane < vb->num_planes; ++plane) {
-> +               struct dma_buf *dbuf =3D vb->planes[plane].dbuf;
-> +
-> +               if (!dbuf)
-> +                       continue;
-> +
-> +               dma_buf_begin_cpu_access(dbuf, vb->vb2_queue->dma_dir);
-> +       }
->  }
 >
->  /*
-> --
-> 2.43.0-rc1
+>>
+>>
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 >
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
