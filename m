@@ -1,240 +1,163 @@
-Return-Path: <linux-kernel+bounces-220313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E88190DF92
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:07:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE7890DF9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FCF2834C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:07:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93181C22365
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B29117E46A;
-	Tue, 18 Jun 2024 23:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57B41849C6;
+	Tue, 18 Jun 2024 23:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LCBVJ+bh"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ZW3SbKez"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549EA14D44D;
-	Tue, 18 Jun 2024 23:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD8F14D44D;
+	Tue, 18 Jun 2024 23:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718752028; cv=none; b=DwFBtqzdzUrvySX2wTWBKMEEPiPoOghu4VsadHFHSsSQ3y5CudKIXhhULPP1ksJZQh8wQ0HSUuLqq/hpL4A55Uye4FfdL3GnC9kB96dfeUFOhu5uFMtAyj0FfU8EnfVAmU16+Z3EU1eVVPMOeQdTswM00nLpL51aHocGS6pXuQM=
+	t=1718752244; cv=none; b=ut5+OD2ED2MJkOGae+S5dukVwqqe9Lc05meeiY1pYnCWIHYyhimUKCQP1T3rKgIhOwARsBsnAkKxmU5VQLSNmN0FXUyHlXmN0GHDV7vXeKwuv3dMC6miLPO5Ffw/J3cMWdPM1AxOJ/S+GqBdUM39RSuq5d91bkpoBoY0U71DCUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718752028; c=relaxed/simple;
-	bh=rLHj80WUE2+fqZKOctbyThli+33cV0baGHwwVi3cLXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=imEn61cMVXnLcudivqB06Q2RGmMY2fEmWAMBnJ2lUrNlvIARE3EPFffsodXzaGbJd6kFSYi6P0e99Ih/VptBThjKMzLNo/OG8B4OaugAQ4sbI51fCH6NL0CM8GFd/mg3fzyBvYlCCnebxaBnygN4mtSMKtRS+70Of/i02+PJHjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LCBVJ+bh; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=4IXDZGrTHOCcVijFhNelt76fRUU2bbr5+gSV3CvtiIo=; b=LCBVJ+bh4tBuAHjdDGmmou7SM3
-	MwksOS2BUYQykQcSDDFaUswwdG7U4uwIyKefauUnHRNUXIs60h4QofxhGlZeAil62MJSM+q3f/wc3
-	MFmJYYBS445uM9UAyZ2lshOWqBJmQcwtoTV/+yddy7HIzNTKKD5PrmptCaRh5N3m+kH0+23Sn0pf1
-	VkHRktbb1t/X0rCb6UYuYCcUTibHvfAkIxl2Oi1NMbnigNKC8XMA8T/sqUINFcRYZS3hD0pyDIRGb
-	GxeKoBnHcjpIjE2V90sTSwhx1/7VzIXAGxzDAtAAtgzR+y4788uJqZZSJ/sUGcRNCIuhh7dVdPPMU
-	hK7bO3Uw==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJhul-0000000Gqb4-0Ly7;
-	Tue, 18 Jun 2024 23:06:59 +0000
-Message-ID: <b5c1536b-1d8e-4d57-aeda-c5d06a2793bd@infradead.org>
-Date: Tue, 18 Jun 2024 16:06:57 -0700
+	s=arc-20240116; t=1718752244; c=relaxed/simple;
+	bh=ZYdStGFd3utereEsSYiaVDaHMRfhLIco0X94W92XqXc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ekuV16ewnQLEwVYiFPwyQTaAObuPdHwjVexD7PRKuuSWOG1S7imsBe4NTXzs9abw25GftL3OruUHOGi5Ff8ygmRzZQelGqGJWOciT0RuGRqmv0jSy4x0+uX1S4JOqPBfurs6EfGetcxxxITIZGIhrTEdlgR2rEzOGmznF/h0h38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ZW3SbKez; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ILXenJ028414;
+	Tue, 18 Jun 2024 19:10:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=GJKMkDLc5zy/PiUEj3DuN/xa3kY
+	P87c6xBFdrTOetcA=; b=ZW3SbKezReWHrOhcUBOI/TAXUCXjqS+TUCHziApkV6x
+	nbsjhN0s44Gr/E2q0e8TOgHEfJHfa4KM2YH2F1sDx9l6BAhgIjwNvWvPA7R/TTnq
+	vduFv7irrB9rHNcDPuaeu9dH1zbSzFNFhkz3MSs9iyKmNpe+EMqYrMd+MOi7NRhM
+	Ly+WwYFuLPtiATYfAnxG19kFKFXvFCfCMNfvwaG0SyrnBtt16Mm3TnbkbsDHCXlQ
+	/Y2HQCSbbzVsrWQoL77GocD5QwxpbLfWpxOmt0UYf6Vf+oWvdPfo03AIYqBWZatb
+	UK58H7PIeKDWIjspdXjz6cTEHS9qMtLIxDaQxd41OYg==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3yuj8s87t1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 19:10:25 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 45INAOwl005792
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 18 Jun 2024 19:10:24 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Tue, 18 Jun 2024 19:10:23 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Tue, 18 Jun 2024 19:10:23 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Tue, 18 Jun 2024 19:10:23 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.129])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 45INA9Ix021723;
+	Tue, 18 Jun 2024 19:10:12 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <broonie@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <jic23@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <nuno.sa@analog.com>, <dlechner@baylibre.com>,
+        <marcelo.schmitt1@gmail.com>
+CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/6] Add support for AD4000 series of ADCs
+Date: Tue, 18 Jun 2024 20:10:07 -0300
+Message-ID: <cover.1718749981.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] arm64: add attrs and format to ptdump document
-To: Maxwell Bland <mbland@motorola.com>, linux-mm@kvack.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <aw675dhrbplkitj3szjut2vyidsxokogkjj3vi76wl2x4wybtg@5rhk5ca5zpmv>
- <2hhihkaeeyyy3xj22mjdx44zlied2sp4mfewj7y6ffrnakw7cy@3fuds6n7f4ew>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <2hhihkaeeyyy3xj22mjdx44zlied2sp4mfewj7y6ffrnakw7cy@3fuds6n7f4ew>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: 1nEfj8sg0fTbDmMrapqCAQmpmbzLM_Ct
+X-Proofpoint-ORIG-GUID: 1nEfj8sg0fTbDmMrapqCAQmpmbzLM_Ct
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_06,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 mlxscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 spamscore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180169
 
-Hi,-
+This patch series extends the SPI bitbang, gpio, and spi-engine controllers to
+support configurable MOSI line idle state.
+It then introduces the ad4000 driver which uses the MOSI idle configuration to
+properly support AD4000 series of ADCs.
 
-On 6/18/24 7:43 AM, Maxwell Bland wrote:
-> Update the ptdump content with a precise explanation of the attribute
-> symbols and the identical-entry coalescing implicit in the code.
-> 
-> Remove unnecessary layout example given the existing cat example,
-> and opt instead for a precise, clear explantination of address markers,
+Change log v3 -> v4:
 
-                                       explanation
+[SPI]
+- spi: Added documentation for the MOSI idle configuration.
+- spi: spi_setup() now fails on improper MOSI idle state configuration.
+- spi: spi_setup() now fails if controller doesn't support requested MOSI config.
+- spi: spi-engine: Only set MOSI idle mode bits if spi-engine version supports it.
+[Device tree]
+- dt: Made grouped compatible strings for devices that are similar to each other.
+- dt: Updated dt-bindings to constrain properties that depend on reg access to
+  "3-wire" mode only.
+- dt: adi,gain-milli is now a 16-bit device tree property.
+[IIO/ADC]
+- ad4000: Used devm_regulator_get_enable_read_voltage() for ref regulator.
+- ad4000: Tweaked gpiod_set_value comment explaining what happens when CNV GPIO is
+  defined and when it is not.
+- ad4000: Device configuration register write will now only happen if device is
+  connected in a mode that allows register access.
+- ad4000: scale attribute now only writeable if device connection allows user to
+  change the scale.
+- ad4000: scale_available attribute now is only visible if scale is writeable.
+- ad4000: many minor changes.
 
-> format, attributes.
-> 
-> Update example to match the new cosmetic and intermediate-directory
-> printing changes.
-> 
-> Signed-off-by: Maxwell Bland <mbland@motorola.com>
-> ---
->  Documentation/arch/arm64/ptdump.rst | 126 ++++++++++++++--------------
->  1 file changed, 61 insertions(+), 65 deletions(-)
-> 
-> diff --git a/Documentation/arch/arm64/ptdump.rst b/Documentation/arch/arm64/ptdump.rst
-> index 5dcfc5d7cddf..fee7600dd4d1 100644
-> --- a/Documentation/arch/arm64/ptdump.rst
-> +++ b/Documentation/arch/arm64/ptdump.rst
-> @@ -29,68 +29,64 @@ configurations and mount debugfs::
->   mount -t debugfs nodev /sys/kernel/debug
->   cat /sys/kernel/debug/kernel_page_tables
->  
-> -On analysing the output of ``cat /sys/kernel/debug/kernel_page_tables``
-> -one can derive information about the virtual address range of the entry,
-> -followed by size of the memory region covered by this entry, the
-> -hierarchical structure of the page tables and finally the attributes
-> -associated with each page. The page attributes provide information about
-> -access permissions, execution capability, type of mapping such as leaf
-> -level PTE or block level PGD, PMD and PUD, and access status of a page
-> -within the kernel memory. Assessing these attributes can assist in
-> -understanding the memory layout, access patterns and security
-> -characteristics of the kernel pages.
-> -
-> -Kernel virtual memory layout example::
-> -
-> - start address        end address         size             attributes
-> - +---------------------------------------------------------------------------------------+
-> - | ---[ Linear Mapping start ]---------------------------------------------------------- |
-> - | ..................                                                                    |
-> - | 0xfff0000000000000-0xfff0000000210000  2112K PTE RW NX SHD AF  UXN  MEM/NORMAL-TAGGED |
-> - | 0xfff0000000210000-0xfff0000001c00000 26560K PTE ro NX SHD AF  UXN  MEM/NORMAL        |
-> - | ..................                                                                    |
-> - | ---[ Linear Mapping end ]------------------------------------------------------------ |
-> - +---------------------------------------------------------------------------------------+
-> - | ---[ Modules start ]----------------------------------------------------------------- |
-> - | ..................                                                                    |
-> - | 0xffff800000000000-0xffff800008000000   128M PTE                                      |
-> - | ..................                                                                    |
-> - | ---[ Modules end ]------------------------------------------------------------------- |
-> - +---------------------------------------------------------------------------------------+
-> - | ---[ vmalloc() area ]---------------------------------------------------------------- |
-> - | ..................                                                                    |
-> - | 0xffff800008010000-0xffff800008200000  1984K PTE ro x  SHD AF       UXN  MEM/NORMAL   |
-> - | 0xffff800008200000-0xffff800008e00000    12M PTE ro x  SHD AF  CON  UXN  MEM/NORMAL   |
-> - | ..................                                                                    |
-> - | ---[ vmalloc() end ]----------------------------------------------------------------- |
-> - +---------------------------------------------------------------------------------------+
-> - | ---[ Fixmap start ]------------------------------------------------------------------ |
-> - | ..................                                                                    |
-> - | 0xfffffbfffdb80000-0xfffffbfffdb90000    64K PTE ro x  SHD AF  UXN  MEM/NORMAL        |
-> - | 0xfffffbfffdb90000-0xfffffbfffdba0000    64K PTE ro NX SHD AF  UXN  MEM/NORMAL        |
-> - | ..................                                                                    |
-> - | ---[ Fixmap end ]-------------------------------------------------------------------- |
-> - +---------------------------------------------------------------------------------------+
-> - | ---[ PCI I/O start ]----------------------------------------------------------------- |
-> - | ..................                                                                    |
-> - | 0xfffffbfffe800000-0xfffffbffff800000    16M PTE                                      |
-> - | ..................                                                                    |
-> - | ---[ PCI I/O end ]------------------------------------------------------------------- |
-> - +---------------------------------------------------------------------------------------+
-> - | ---[ vmemmap start ]----------------------------------------------------------------- |
-> - | ..................                                                                    |
-> - | 0xfffffc0002000000-0xfffffc0002200000     2M PTE RW NX SHD AF  UXN  MEM/NORMAL        |
-> - | 0xfffffc0002200000-0xfffffc0020000000   478M PTE                                      |
-> - | ..................                                                                    |
-> - | ---[ vmemmap end ]------------------------------------------------------------------- |
-> - +---------------------------------------------------------------------------------------+
-> -
-> -``cat /sys/kernel/debug/kernel_page_tables`` output::
-> -
-> - 0xfff0000001c00000-0xfff0000080000000     2020M PTE  RW NX SHD AF   UXN    MEM/NORMAL-TAGGED
-> - 0xfff0000080000000-0xfff0000800000000       30G PMD
-> - 0xfff0000800000000-0xfff0000800700000        7M PTE  RW NX SHD AF   UXN    MEM/NORMAL-TAGGED
-> - 0xfff0000800700000-0xfff0000800710000       64K PTE  ro NX SHD AF   UXN    MEM/NORMAL-TAGGED
-> - 0xfff0000800710000-0xfff0000880000000  2089920K PTE  RW NX SHD AF   UXN    MEM/NORMAL-TAGGED
-> - 0xfff0000880000000-0xfff0040000000000     4062G PMD
-> - 0xfff0040000000000-0xffff800000000000     3964T PGD
-> +``/sys/kernel/debug/kernel_page_tables`` provides a line of information
-> +for each group of page table entries sharing the same attributes and
-> +type of mapping, i.e. leaf level PTE or block level PGD, PMD, and PUD.
-> +Assessing these attributes can assist in determining memory layout,
-> +access patterns and security characteristics of the kernel pages.
-> +
-> +Lines are formatted as follows::
-> +
-> + <start_vaddr>-<end_vaddr> <size> <type> <attributes>
-> +
-> +Note that the set of attributes, and therefore formatting, is not
-> +equivalent between leaf and non-leaf entries. For example, PMD entries
-> +can support the PXNTable permission bit and do not share that same set
-> +of attributes as leaf level PTE entries.
-> +
-> +The following attributes are presently supported::
-> +
-> +F		Entry is invalid
-> +USER		Memory is user mapped
-> +ro		Memory is read-only
-> +RW		Memory is read-write
-> +NX		Memory is privileged execute never
-> +x               Memory is privileged executable
 
-Please use tabs above for indentation, like the other lines.
+Link to v3: https://lore.kernel.org/linux-iio/cover.1717539384.git.marcelo.schmitt@analog.com/
+Link to v2: https://lore.kernel.org/linux-iio/cover.1712585500.git.marcelo.schmitt@analog.com/
+Link to v1: https://lore.kernel.org/linux-iio/cover.1711131830.git.marcelo.schmitt@analog.com/
 
-Why lower case x and ro but upper case for the others?
+Thanks,
+Marcelo
 
-> +SHD		Memory is shared
-> +AF		Entry accessed flag is set
-> +NG		Entry Not-Global flag is set
-> +CON		Entry contiguous bit is set
-> +UXN		Memory is unprivileged execute never
-> +GP		Memory supports BTI
+Marcelo Schmitt (6):
+  spi: Enable controllers to extend the SPI protocol with MOSI idle
+    configuration
+  spi: bitbang: Implement support for MOSI idle state configuration
+  spi: spi-gpio: Add support for MOSI idle state configuration
+  spi: spi-axi-spi-engine: Add support for MOSI idle configuration
+  dt-bindings: iio: adc: Add AD4000
+  iio: adc: Add support for AD4000
 
-Most of the abbreviations make some sense, but not that one (IMHO). ;)
-
-> +TBL		Entry is a table descriptor
-> +BLK		Entry is a block descriptor
-> +NXTbl		Entry's referenced table is PXN
-> +UXNTbl		Entry's referenced table is unprivileged execute never
-> +DEVICE/*	Entry is device memory, see ARM reference for types
-> +MEM/*		Entry is non-device memory, see ARM reference for types
-> +
-> +The beginning and end of each region is also delineated by a single line
-> +tag in the following format::
-> +
-> + ---[ <marker_name> ]---
-> +
-> +With supported address markers including the kernel's linear mapping,
-> +kasan shadow memory, kernel modules memory, vmalloc memory, PCI I/O
-> +memory, and the kernel's fixmap region.
-> +
-> +Example ``cat /sys/kernel/debug/kernel_page_tables`` output::
-> +
-> +---[ Linear Mapping start ]---
-> +0xffff000000000000-0xffff31ffffffffff                  50T PGD
-> +0xffff320000000000-0xffffffffffffffff                 206T PGD   TBL     RW               x      NXTbl UXNTbl    MEM/NORMAL
-> +    0xffff320000000000-0xffff3251ffffffff             328G PUD
-> +    0xffff325200000000-0xffff32523fffffff               1G PUD   TBL     RW               x      NXTbl UXNTbl    MEM/NORMAL
-> +      0xffff325200000000-0xffff3252001fffff             2M PMD   TBL     RW               x      NXTbl UXNTbl    MEM/NORMAL
-> +        0xffff325200000000-0xffff3252001fffff           2M PTE       RW NX SHD AF NG     UXN    MEM/NORMAL-TAGGED
-> +      0xffff325200200000-0xffff3252003fffff             2M PMD   TBL     RW               x      NXTbl UXNTbl    MEM/NORMAL
-> +        0xffff325200200000-0xffff32520020ffff          64K PTE       RW NX SHD AF NG     UXN    MEM/NORMAL-TAGGED
-> +        0xffff325200210000-0xffff3252003fffff        1984K PTE       ro NX SHD AF NG     UXN    MEM/NORMAL
-> +      0xffff325200400000-0xffff325201dfffff            26M PMD   BLK     ro SHD AF NG     NX UXN                 MEM/NORMAL
-> +      0xffff325201e00000-0xffff325201ffffff             2M PMD   TBL     RW               x      NXTbl UXNTbl    MEM/NORMAL
-> +        0xffff325201e00000-0xffff325201e0ffff          64K PTE       ro NX SHD AF NG     UXN    MEM/NORMAL
-> +        0xffff325201e10000-0xffff325201ffffff        1984K PTE       RW NX SHD AF NG     UXN    MEM/NORMAL-TAGGED
+ .../bindings/iio/adc/adi,ad4000.yaml          | 231 ++++++
+ Documentation/spi/spi-summary.rst             |  83 ++
+ MAINTAINERS                                   |   8 +
+ drivers/iio/adc/Kconfig                       |  12 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/ad4000.c                      | 715 ++++++++++++++++++
+ drivers/spi/spi-axi-spi-engine.c              |   8 +
+ drivers/spi/spi-bitbang.c                     |  24 +
+ drivers/spi/spi-gpio.c                        |  12 +-
+ drivers/spi/spi.c                             |   9 +-
+ include/linux/spi/spi.h                       |   6 +
+ include/linux/spi/spi_bitbang.h               |   1 +
+ include/uapi/linux/spi/spi.h                  |   5 +-
+ 13 files changed, 1111 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+ create mode 100644 drivers/iio/adc/ad4000.c
 
 -- 
-thanks.
-~Randy
+2.43.0
+
 
