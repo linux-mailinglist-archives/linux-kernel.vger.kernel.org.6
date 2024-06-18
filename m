@@ -1,273 +1,295 @@
-Return-Path: <linux-kernel+bounces-218540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9168490C1AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36AC290C1AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0886C1F22E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:57:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A81F51F23341
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBC617BD3;
-	Tue, 18 Jun 2024 01:56:31 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71DD1C2A8;
+	Tue, 18 Jun 2024 01:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMWmskBQ"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884E2224D4;
-	Tue, 18 Jun 2024 01:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2691AAC4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718675790; cv=none; b=iPNYloQPMpM8+LQgL7r5X5ipsmYSFBSgJzDRiKoRVhNazrWy/DxqEqPZyxr232CkUVPrYWK3GWzrGXG0MocicptIFQG3lCQ2//bM5LHgnMUJCtBnUkbG3Gbn0C8xDbQgKIb29v495X9oSza5Zehn+VeC7trHMS4cZ1ISFgGUgWs=
+	t=1718675826; cv=none; b=aQ+qbpmeB8s8lulKhspXGYXWQuWbEMVMGJmiucnO5ZfA/LoyZ0TjQCLpnyocjNnmrHIp2YWVirjMiszk+5kLp7ZTKjiyIoOX3lKggpiEczKS284qWE4A3P/cjV65KvSQOA/i0xw4Dj7dwDJJmJIZz7pyWdbJ8ZCPYr+kwMcUdHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718675790; c=relaxed/simple;
-	bh=p7isMOra9FpG2OZdR17eldiCEM6yKNyBFY+JP6GWxAo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N35QbQkpDJg014YZhPfwoq2zR9yvN4daoMsmQGW0oj1dNfvTrJXkGnUgwBeQwvSHR349xBOet089z+kTB0otCZ06fdgSDnH6GuIGg+AN/FbHPefKnLY1oEhzlkCwBOIreMJIkQCu6NPbhTBCjauqM/hipKgVZ8EiP/CEjAn3Tvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W38vZ3j5Tzdc5t;
-	Tue, 18 Jun 2024 09:54:50 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7DFC918006C;
-	Tue, 18 Jun 2024 09:56:20 +0800 (CST)
-Received: from M910t.huawei.com (10.110.54.157) by
- kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 18 Jun 2024 09:56:18 +0800
-From: Changbin Du <changbin.du@huawei.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
-	<namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Liang,
- Kan" <kan.liang@linux.intel.com>, Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
-	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<llvm@lists.linux.dev>, Changbin Du <changbin.du@huawei.com>
-Subject: [PATCH v3 4/4] perf: symbol: try to seach vdso path if not given by user
-Date: Tue, 18 Jun 2024 09:55:30 +0800
-Message-ID: <20240618015530.3699434-5-changbin.du@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240618015530.3699434-1-changbin.du@huawei.com>
-References: <20240618015530.3699434-1-changbin.du@huawei.com>
+	s=arc-20240116; t=1718675826; c=relaxed/simple;
+	bh=odAnsVgnE7y15a0UvI6TvSybOS6OLblSm+qtLSwK3QE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HewKe0hZureA9zW69DZhkJCuDoaJINELhA2KxWBjDtTTONJQn1bqQpGfritJsfZqjTNIpVvzGYc5C0kB85gUBjCgE3HTUD4ITrCyHe+BOr1TToSu4A3/hD5UUMO2xo+9x+cX2x0ot+a5Kjw9BwnF3Fa+ODt6yXuKtWb55+hk6es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMWmskBQ; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57c75464e77so5975098a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718675823; x=1719280623; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wae8M8t+Wn0YykTgf7N/e/0Ifm2hpdV8ttPW81oP2Ak=;
+        b=PMWmskBQumqJp6aayGfJh+f1Y/WWqByxBFoKZgRZd6//OCAEiWdtPixz04vX2E2Dgi
+         otdD9oTdA5c9186WPZxJl4rWDyMCsYHdFd99gDdfQ1Gp1reEUUIhLlQJrR4Bcmum2NNO
+         mbKucim7EqXq3gjqKd/6WVMyebvw0o9OyBVplcAWqgd2ON+JEHJV9XJDgnYUi7xtGXyi
+         NthUE8P057Ec6fm5ftuo4W0GzLfGELfWMThMsQOp4EAIu3HxxS1IzG4VTSI0WjanyhjL
+         jWP2k9Sox8CeIG1UMSkjS9IakUtkMcBfEEfwzunnK2HHiu8sS9Knq66u60dPeRuK4DvC
+         PzKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718675823; x=1719280623;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wae8M8t+Wn0YykTgf7N/e/0Ifm2hpdV8ttPW81oP2Ak=;
+        b=jkzdJ3LvEH5+LrLxB9cSfO8+5XFso+ZkHc2wCGPwyMTD40rg4huo/Wz+3k01OBe/gQ
+         xNP0IHgHEivIPxd9f3Kw72Pm4dS5i/VTZkNUOUC3rlkBNnFAURPPSQAmbEW0yzycU5Xa
+         cSx/t2LmHkUZ5zn33OZLNauHz2TbzLQ9OsD0zxqHSC1gE55L4jKSsuvlJ8aM2byK59PJ
+         L8APzKIc4/L4USWa69sw5cWkARcDZ5qsk/bwLvoH1RnGxGkvK0+o8Zxa1IJRbHB+5i+m
+         Tp+USRIJpynGJQ8JufaX0A49AwGCzq19YQuZQTMIBFElSXX8MqmOeYucvdEV1bJ2yGNK
+         Q7SA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjG7uovIDuTcVDdsMWAQbE6o1fj3470VRWWNpfv8gwAUsZiL7Gfdy40ZKUI6cPTQrGWWviNA6/uR0IZa8Txj3YUV4CWoMAq7ad9Q7d
+X-Gm-Message-State: AOJu0YzL0fwqNIACg5/yZe4gsgYOMRBUB9o7by2Brb2wxcErDAPzoJ9/
+	iKWt1mjR++MWtb9GSiyvwbfUph/WTOVre2X3CyhS2WSBH+vW1Eb4KjOf6n5NYgiiFtgiek+mGWe
+	ozbx/8vE5ziKdSduLkJkKn9wov68=
+X-Google-Smtp-Source: AGHT+IF75sPalUePJwA4s9srnEf6OaVwVv/+ZRszkXP2keldbLUTIdhmHDwB7fEMt/PwKK1/GGubep5KLtiyfb8sFkI=
+X-Received: by 2002:a50:8d45:0:b0:57c:713c:cdbf with SMTP id
+ 4fb4d7f45d1cf-57cbd8b9828mr7320014a12.38.1718675822477; Mon, 17 Jun 2024
+ 18:57:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd100011.china.huawei.com (7.221.188.204)
+References: <20240614015138.31461-1-ioworker0@gmail.com> <20240614015138.31461-4-ioworker0@gmail.com>
+ <e7c0aff1-b690-4926-9a34-4e32c9f3faaa@redhat.com>
+In-Reply-To: <e7c0aff1-b690-4926-9a34-4e32c9f3faaa@redhat.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Tue, 18 Jun 2024 09:56:51 +0800
+Message-ID: <CAK1f24kaGo3PJSd83=-t_uAFTTJiSsZvJTmsX9co4ueFDiPneA@mail.gmail.com>
+Subject: Re: [PATCH v8 3/3] mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
+	baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com, 
+	ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com, 
+	fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com, 
+	xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com, 
+	songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Just like vmlinux, try to search vdso in predefined path if it's not given
-by user. The searched path usually has debugging info.
+On Tue, Jun 18, 2024 at 2:04=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> Sorry for taking so long to review ... getting there. Mostly nits.
 
-For example, the vdso can be found in
-/lib/modules/<version>/build/arch/x86/entry/vdso/vdso*.so.dbg for local
-build on x86.
+No worries at all :)
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Changbin Du <changbin.du@huawei.com>
----
- tools/perf/builtin-annotate.c   |  1 +
- tools/perf/builtin-kallsyms.c   |  2 ++
- tools/perf/builtin-probe.c      |  2 ++
- tools/perf/builtin-top.c        |  2 ++
- tools/perf/tests/builtin-test.c |  3 ++-
- tools/perf/util/symbol.c        | 41 +++++++++++++++++++++++++++++++++
- tools/perf/util/symbol.h        |  1 +
- tools/perf/util/symbol_conf.h   |  1 +
- 8 files changed, 52 insertions(+), 1 deletion(-)
+Thanks for taking time to review!
 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index ff466882065d..6c5019c39068 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -883,6 +883,7 @@ int cmd_annotate(int argc, const char **argv)
- 		goto out_delete;
- 
- 	symbol_conf.try_vmlinux_path = true;
-+	symbol_conf.try_vdso_path = true;
- 
- 	ret = symbol__init(&annotate.session->header.env);
- 	if (ret < 0)
-diff --git a/tools/perf/builtin-kallsyms.c b/tools/perf/builtin-kallsyms.c
-index a3c2ffdc1af8..d049025a4959 100644
---- a/tools/perf/builtin-kallsyms.c
-+++ b/tools/perf/builtin-kallsyms.c
-@@ -63,6 +63,8 @@ int cmd_kallsyms(int argc, const char **argv)
- 		usage_with_options(kallsyms_usage, options);
- 
- 	symbol_conf.try_vmlinux_path = (symbol_conf.vmlinux_name == NULL);
-+	symbol_conf.try_vdso_path = (symbol_conf.vdso_name[0] == NULL &&
-+				     symbol_conf.vdso_name[1] == NULL);
- 	if (symbol__init(NULL) < 0)
- 		return -1;
- 
-diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
-index 003a3bcebfdf..91770eda37c0 100644
---- a/tools/perf/builtin-probe.c
-+++ b/tools/perf/builtin-probe.c
-@@ -667,6 +667,8 @@ __cmd_probe(int argc, const char **argv)
- 	 * Only consider the user's kernel image path if given.
- 	 */
- 	symbol_conf.try_vmlinux_path = (symbol_conf.vmlinux_name == NULL);
-+	symbol_conf.try_vdso_path = (symbol_conf.vdso_name[0] == NULL &&
-+				     symbol_conf.vdso_name[1] == NULL);
- 
- 	/*
- 	 * Except for --list, --del and --add, other command doesn't depend
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index a3cce4e76eb9..5a2dc7a0dbb8 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1792,6 +1792,8 @@ int cmd_top(int argc, const char **argv)
- 	annotation_config__init();
- 
- 	symbol_conf.try_vmlinux_path = (symbol_conf.vmlinux_name == NULL);
-+	symbol_conf.try_vdso_path = (symbol_conf.vdso_name[0] == NULL &&
-+				     symbol_conf.vdso_name[1] == NULL);
- 	status = symbol__init(NULL);
- 	if (status < 0)
- 		goto out_delete_evlist;
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index c3d84b67ca8e..176196e3c183 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -575,7 +575,8 @@ int cmd_test(int argc, const char **argv)
- 
- 	symbol_conf.priv_size = sizeof(int);
- 	symbol_conf.try_vmlinux_path = true;
--
-+	symbol_conf.try_vdso_path = (symbol_conf.vdso_name[0] == NULL &&
-+				     symbol_conf.vdso_name[1] == NULL);
- 	if (symbol__init(NULL) < 0)
- 		return -1;
- 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 83e5c3807a2c..4dc1a76005d5 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -49,11 +49,13 @@ static int dso__load_vdso_sym(struct dso *dso, struct map *map);
- static bool symbol__is_idle(const char *name);
- 
- struct dso_filename_paths vmlinux_paths;
-+struct dso_filename_paths vdso_paths;
- 
- struct symbol_conf symbol_conf = {
- 	.nanosecs		= false,
- 	.use_modules		= true,
- 	.try_vmlinux_path	= true,
-+	.try_vdso_path		= true,
- 	.demangle		= true,
- 	.demangle_kernel	= false,
- 	.cumulate_callchain	= true,
-@@ -2304,6 +2306,16 @@ struct dso_filename_pattern vmlinux_patterns[] = {
- 	{"/usr/lib/debug/boot/vmlinux-%s.debug", 1},
- };
- 
-+struct dso_filename_pattern vdso_patterns[] = {
-+	{"/lib/modules/%s/vdso/vdso.so", 1},
-+	{"/lib/modules/%s/vdso/vdso64.so", 1},
-+	{"/lib/modules/%s/vdso/vdso32.so", 1},
-+	{"/lib/modules/%s/build/arch/%s/vdso/vdso.so.dbg", 2},
-+	{"/lib/modules/%s/build/arch/%s/kernel/vdso/vdso.so.dbg", 2},
-+	{"/lib/modules/%s/build/arch/%s/entry/vdso/vdso32.so.dbg", 2},
-+	{"/lib/modules/%s/build/arch/%s/entry/vdso/vdso64.so.dbg", 2},
-+};
-+
- static int dso_filename_path__add(struct dso_filename_paths *paths, const char *new_entry)
- {
- 	paths->paths[paths->nr_entries] = strdup(new_entry);
-@@ -2418,6 +2430,22 @@ static int dso__load_vdso(struct dso *dso, struct map *map,
- 	return err;
- }
- 
-+static int dso__load_vdso_path(struct dso *dso, struct map *map)
-+{
-+	int i, ret = 0;
-+
-+	pr_debug("Looking at the vdso_path (%d entries long)\n",
-+		 vdso_paths.nr_entries + 1);
-+
-+	for (i = 0; i < vdso_paths.nr_entries; ++i) {
-+		ret = dso__load_vdso(dso, map, vdso_paths.paths[i]);
-+		if (ret > 0)
-+			return ret;
-+	}
-+
-+	return ret;
-+}
-+
- static int dso__load_vdso_sym(struct dso *dso, struct map *map)
- {
- 	int ret;
-@@ -2433,6 +2461,12 @@ static int dso__load_vdso_sym(struct dso *dso, struct map *map)
- 		}
- 	}
- 
-+	if (vdso_paths.paths != NULL) {
-+		ret = dso__load_vdso_path(dso, map);
-+		if (ret > 0)
-+			return ret;
-+	}
-+
- 	return -1;
- }
- 
-@@ -2566,6 +2600,12 @@ int symbol__init(struct perf_env *env)
- 		return -1;
- 	}
- 
-+	if (symbol_conf.try_vdso_path &&
-+	    dso_filename_path__init(&vdso_paths, vdso_patterns,
-+				    ARRAY_SIZE(vdso_patterns), env) < 0) {
-+		return -1;
-+	}
-+
- 	if (symbol_conf.field_sep && *symbol_conf.field_sep == '.') {
- 		pr_err("'.' is the only non valid --field-separator argument\n");
- 		return -1;
-@@ -2642,6 +2682,7 @@ void symbol__exit(void)
- 	intlist__delete(symbol_conf.pid_list);
- 	intlist__delete(symbol_conf.addr_list);
- 	dso_filename_path__exit(&vmlinux_paths);
-+	dso_filename_path__exit(&vdso_paths);
- 	symbol_conf.sym_list = symbol_conf.dso_list = symbol_conf.comm_list = NULL;
- 	symbol_conf.bt_stop_list = NULL;
- 	symbol_conf.initialized = false;
-diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index 30056884945b..08c339594d4e 100644
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -107,6 +107,7 @@ struct dso_filename_paths {
- };
- 
- extern struct dso_filename_paths vmlinux_paths;
-+extern struct dso_filename_paths vdso_paths;
- 
- static inline void *symbol__priv(struct symbol *sym)
- {
-diff --git a/tools/perf/util/symbol_conf.h b/tools/perf/util/symbol_conf.h
-index 108356e3c981..58c4c4358ece 100644
---- a/tools/perf/util/symbol_conf.h
-+++ b/tools/perf/util/symbol_conf.h
-@@ -12,6 +12,7 @@ struct symbol_conf {
- 	bool		nanosecs;
- 	unsigned short	priv_size;
- 	bool		try_vmlinux_path,
-+			try_vdso_path,
- 			init_annotation,
- 			force,
- 			ignore_vmlinux,
--- 
-2.34.1
+>
+> > @@ -497,6 +499,13 @@ static inline void split_huge_pmd_locked(struct vm=
+_area_struct *vma,
+> >                                        unsigned long address, pmd_t *pm=
+d,
+> >                                        bool freeze, struct folio *folio=
+) {}
+> >
+> > +static inline bool unmap_huge_pmd_locked(struct vm_area_struct *vma,
+> > +                                      unsigned long addr, pmd_t *pmdp,
+> > +                                      struct folio *folio)
+> > +{
+> > +     return false;
+> > +}
+> > +
+> >   #define split_huge_pud(__vma, __pmd, __address)     \
+> >       do { } while (0)
+> >
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index e766d3f3a302..425374ae06ed 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -2688,6 +2688,82 @@ static void unmap_folio(struct folio *folio)
+> >       try_to_unmap_flush();
+> >   }
+> >
+> > +static bool __discard_anon_folio_pmd_locked(struct vm_area_struct *vma=
+,
+> > +                                         unsigned long addr, pmd_t *pm=
+dp,
+> > +                                         struct folio *folio)
+> > +{
+> > +     VM_WARN_ON_FOLIO(folio_test_swapbacked(folio), folio);
+> > +     VM_WARN_ON_FOLIO(!folio_test_anon(folio), folio);
+>
+> I would drop these (that's exactly what the single caller checks). In
 
+Agreed. I will drop these.
+
+> any case don't place them above the variable declaration ;)
+
+Yep, I see.
+
+>
+> > +
+> > +     struct mm_struct *mm =3D vma->vm_mm;
+> > +     int ref_count, map_count;
+> > +     pmd_t orig_pmd =3D *pmdp;
+> > +     struct page *page;
+> > +
+> > +     if (unlikely(!pmd_present(orig_pmd) || !pmd_trans_huge(orig_pmd))=
+)
+> > +             return false;
+> > +
+> > +     page =3D pmd_page(orig_pmd);
+> > +     if (unlikely(page_folio(page) !=3D folio))
+> > +             return false;
+>
+> I'm curious, how could that happen? And how could it happen that we have
+> !pmd_trans_huge() ? Didn't rmap walking code make sure that this PMD
+> maps the folio already, and we are holding the PTL?
+
+Makes sense to me. I was adding these just in case, but it's probably too m=
+uch.
+
+Let's drop them ;)
+
+>
+> > +
+> > +     if (folio_test_dirty(folio) || pmd_dirty(orig_pmd))
+> > +             return false;
+> > +
+> > +     orig_pmd =3D pmdp_huge_clear_flush(vma, addr, pmdp);
+> > +
+> > +     /*
+> > +      * Syncing against concurrent GUP-fast:
+> > +      * - clear PMD; barrier; read refcount
+> > +      * - inc refcount; barrier; read PMD
+> > +      */
+> > +     smp_mb();
+> > +
+> > +     ref_count =3D folio_ref_count(folio);
+> > +     map_count =3D folio_mapcount(folio);
+> > +
+> > +     /*
+> > +      * Order reads for folio refcount and dirty flag
+> > +      * (see comments in __remove_mapping()).
+> > +      */
+> > +     smp_rmb();
+> > +
+> > +     /*
+> > +      * If the folio or its PMD is redirtied at this point, or if ther=
+e
+> > +      * are unexpected references, we will give up to discard this fol=
+io
+> > +      * and remap it.
+> > +      *
+> > +      * The only folio refs must be one from isolation plus the rmap(s=
+).
+> > +      */
+> > +     if (folio_test_dirty(folio) || pmd_dirty(orig_pmd) ||
+> > +         ref_count !=3D map_count + 1) {
+> > +             set_pmd_at(mm, addr, pmdp, orig_pmd);
+> > +             return false;
+> > +     }
+> > +
+> > +     folio_remove_rmap_pmd(folio, page, vma);
+> > +     zap_deposited_table(mm, pmdp);
+> > +     add_mm_counter(mm, MM_ANONPAGES, -HPAGE_PMD_NR);
+> > +     if (vma->vm_flags & VM_LOCKED)
+> > +             mlock_drain_local();
+> > +     folio_put(folio);
+> > +
+> > +     return true;
+> > +}
+> > +
+> > +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
+ddr,
+> > +                        pmd_t *pmdp, struct folio *folio)
+> > +{
+> > +     VM_WARN_ON_FOLIO(!folio_test_pmd_mappable(folio), folio);
+> > +     VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
+> > +     VM_WARN_ON_ONCE(!IS_ALIGNED(addr, HPAGE_PMD_SIZE));
+> > +
+> > +     if (folio_test_anon(folio) && !folio_test_swapbacked(folio))
+> > +             return __discard_anon_folio_pmd_locked(vma, addr, pmdp, f=
+olio);
+> > +
+> > +     return false;
+> > +}
+> > +
+> >   static void remap_page(struct folio *folio, unsigned long nr)
+> >   {
+> >       int i =3D 0;
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index dacf24bc82f0..7d97806f74cd 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -1678,16 +1678,23 @@ static bool try_to_unmap_one(struct folio *foli=
+o, struct vm_area_struct *vma,
+> >                       goto walk_abort;
+> >               }
+> >
+> > -             if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
+> > -                     /*
+> > -                      * We temporarily have to drop the PTL and start =
+once
+> > -                      * again from that now-PTE-mapped page table.
+> > -                      */
+> > -                     split_huge_pmd_locked(vma, pvmw.address, pvmw.pmd=
+,
+> > -                                           false, folio);
+> > -                     flags &=3D ~TTU_SPLIT_HUGE_PMD;
+> > -                     page_vma_mapped_walk_restart(&pvmw);
+> > -                     continue;
+> > +             if (!pvmw.pte) {
+> > +                     if (unmap_huge_pmd_locked(vma, pvmw.address, pvmw=
+.pmd,
+> > +                                               folio))
+> > +                             goto walk_done;
+> > +
+> > +                     if (flags & TTU_SPLIT_HUGE_PMD) {
+> > +                             /*
+> > +                              * We temporarily have to drop the PTL an=
+d start
+> > +                              * once again from that now-PTE-mapped pa=
+ge
+> > +                              * table.
+>
+> Nit: it's not a PTE-mapped page table.
+>
+> Maybe
+>
+> "... restart so we can process the PTE-mapped THP."
+
+Nice. Will adjust as you suggested.
+
+>
+>
+>
+> >               }
+> >
+> >               /* Unexpected PMD-mapped THP? */
+>
+> Nothing else jumped at me :)
+
+Thanks again for your time!
+Lance
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
