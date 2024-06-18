@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-218888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7B290C765
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:43:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F79990C76B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B2D8B23E6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:43:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332521C2142B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E291B47C4;
-	Tue, 18 Jun 2024 08:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B507F1B4C23;
+	Tue, 18 Jun 2024 08:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RMUh02+q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="shhjpxUb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EBB1B47AF;
-	Tue, 18 Jun 2024 08:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F0015383C;
+	Tue, 18 Jun 2024 08:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718700427; cv=none; b=a+fqOThj04vfxoQcZZF9Lze1CIaV0KkeCbloVPqgXDDTe1KpS5B2MBjvtJqdoix1Gbbsse0TL8DZeY896Xrn6WGNUJ4SPx2SoVJ3jCrqP1NYUTJ1Xe8oGsTx1RqaFEbu6YtrcYBXuHjmLS3gHTL3GFk5FLpF4VfLKeNQrL1StUE=
+	t=1718700439; cv=none; b=cnPrkGg7f1+XWupyvi5750UzqiCHRpy5RhVS3Nfs442Wv5o8QRT/Z5y4nUing99GJRuSTgcTnL+tH6pYM7IToFscuP1I3a4S23aw/3OvjMUYmJ5oS2Lg828mMwM8cjYW5SMKQEz3TTI8jqLEWfmLmB0y/OTRE20dKM90mTPv0Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718700427; c=relaxed/simple;
-	bh=yvDV6rkVOu8P+lVXQDeRsjn3mWeP51TtXp+eTIfxlKM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WjugFk7DfGo7MCeRuLwjAhzXYDy1QMQemf8qvYrHWNVIDy0SL5lWWUkEo2AGt+FcEY7Lopkubt0xbMbisrBWgcpXMKlxXQ3t+QXarwVCescD0gp6gh4QY17Nt3aDwLHI08EuyLz77JKuYHjKSoGk8D3yCBp7OteDVR40Yole+k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RMUh02+q; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718700426; x=1750236426;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yvDV6rkVOu8P+lVXQDeRsjn3mWeP51TtXp+eTIfxlKM=;
-  b=RMUh02+q63erZLKce4NHL94jrBNqt4P0ViaSjM60YRO7Y12HiTn7Sehc
-   gXuuKzX65xb3fCiz+wapIM1PlpEs6unzFNgXUOChF3nOHIwRqwZ9ppNZ9
-   2RQed4sc7Doq4hxePPIh8ip60wa5V/PuF+m8+O6cG39RUAOwZAh1V7f8E
-   LMjrhNxejOykp0egpShJ5Kt4FO0nSdmY1DSaQwTuzJHPSGvVDLCMZVVDy
-   YFNRrJoHacTfGNEnxxwotgWpNfS8zl3JP+tcLZzjq+NMCXX8tpLPROssZ
-   GF4tj+S8sMH8COhSMyxk6ENUajgG995SOybOni8sDumq7GV19daPL2RSv
-   w==;
-X-CSE-ConnectionGUID: FgMccW4ORoe+ieCVFAnQZQ==
-X-CSE-MsgGUID: lkU/WpRHQbuwWuKAtlmrYg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15431626"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15431626"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 01:47:05 -0700
-X-CSE-ConnectionGUID: uwH9aXqWR7eUp36iAtGaSQ==
-X-CSE-MsgGUID: lBOFY5XPQgOGQN4wMCAlqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="78933659"
-Received: from shilinmu-mobl.ccr.corp.intel.com (HELO yhuang6-mobl2.ccr.corp.intel.com) ([10.255.28.204])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 01:47:02 -0700
-From: Huang Ying <ying.huang@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Huang Ying <ying.huang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Bharata B Rao <bharata@amd.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: [PATCH v3 3/3] cxl/region: Simplify cxl_region_nid()
-Date: Tue, 18 Jun 2024 16:46:39 +0800
-Message-Id: <20240618084639.1419629-4-ying.huang@intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240618084639.1419629-1-ying.huang@intel.com>
-References: <20240618084639.1419629-1-ying.huang@intel.com>
+	s=arc-20240116; t=1718700439; c=relaxed/simple;
+	bh=IJBABfjAh0ttcgppmfOXhHAXlhKIIJ7UV1d5Jx+ypyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kUL1lgUPpVAxZnYJCxrnSoUokev+xyeJc4Flp0WgAOM38ubx0lTRbmKPB4wi/N4Mn5L4HBAX3Qr5KSD/NrJJDdvyBtvIAowDb/wUXz0f3C35H+jnoJa6mwUK9WvQH1rZa6F4uyWu0j/5yNF6AGfD23pcFbX5HkaHKH2gA8BZt8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=shhjpxUb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I7VsCa027658;
+	Tue, 18 Jun 2024 08:47:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:sender:content-transfer-encoding:mime-version; s=
+	pp1; bh=XwFJTtSJoTEXJS1zghGN7Es3hsEk5ci2iZ/dPo3C2Gg=; b=shhjpxUb
+	fYnjnZDC4IwoSLxeS/KBklBllUaktkKzcArY6BlLtep3AJ2CSeytPIh/vLM6V2i7
+	kBXEw95o5836dSqiQpOGEbXJpBGh00lM+mWcxZdMISyjGFF5ps371i8u5kWqd+LL
+	83fpZJ4KHFlgd3Vyp6BOFlC22cZbbOtnkLOVLgwM9rThmYCN1/9AR2HRDZ8GowG7
+	OJ6OOOg/ebLob/0qp02fRlijL7Z3OjHYypnamzfLPd7ldXsly+WoflEHqrFMZZWt
+	YPDsn9wuRtrUZBVAmKziJmtyhdwFLaSREaneqY8W7XyKu+AJwNSNjQVrAZ5JJRLX
+	zjZYoRvbifwnQw==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yu5wx85yr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 08:47:11 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45I8iD7g006189;
+	Tue, 18 Jun 2024 08:47:10 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ysn9uhmut-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 08:47:10 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45I8l6gn51511714
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Jun 2024 08:47:09 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D930D2004B;
+	Tue, 18 Jun 2024 08:47:06 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C7F4D20043;
+	Tue, 18 Jun 2024 08:47:06 +0000 (GMT)
+Received: from p1gen4-pw042f0m (unknown [9.152.212.219])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 18 Jun 2024 08:47:06 +0000 (GMT)
+Received: from bblock by p1gen4-pw042f0m with local (Exim 4.97.1)
+	(envelope-from <bblock@linux.ibm.com>)
+	id 1sJUUc-00000003vRt-21hT;
+	Tue, 18 Jun 2024 10:47:06 +0200
+Date: Tue, 18 Jun 2024 10:47:06 +0200
+From: Benjamin Block <bblock@linux.ibm.com>
+To: Li Feng <fengli@smartx.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH] scsi: sd: Keep the discard mode stable
+Message-ID: <20240618084706.GB843635@p1gen4-pw042f0m.fritz.box>
+References: <20240614160350.180490-1-fengli@smartx.com>
+ <20240617162657.GA843635@p1gen4-pw042f0m.fritz.box>
+ <DBAA6B83-E60A-437C-A8D8-B854E625F6CD@smartx.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DBAA6B83-E60A-437C-A8D8-B854E625F6CD@smartx.com>
+Sender: Benjamin Block <bblock@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: AETSN814Q2MFHvUzJ7pjTcE0pEM1GzK4
+X-Proofpoint-ORIG-GUID: AETSN814Q2MFHvUzJ7pjTcE0pEM1GzK4
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ malwarescore=0 phishscore=0 spamscore=0 mlxscore=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180061
 
-The node ID of the region can be gotten via resource start address
-directly.  This simplifies the implementation of cxl_region_nid().
+On Tue, Jun 18, 2024 at 11:06:13AM +0800, Li Feng wrote:
+> > 2024年6月18日 00:26，Benjamin Block <bblock@linux.ibm.com> 写道：
+> > On Sat, Jun 15, 2024 at 12:03:47AM +0800, Li Feng wrote:
+> >> There is a scenario where a large number of discard commands
+> >> are issued when the iscsi initiator connects to the target
+> >> and then performs a session rescan operation. 
+> > 
+> > Is this with just one specific target implementation? This sounds like a
+> > broken/buggy target, or is there a reason why this happens in general?
+> > 
+> > And broken target sounds like device quirk, rather than impacting every
+> > possible target.
+> 
+> This is a common problem. Before sending a rescan, discard has been 
+> negotiated to UNMAP. After the rescan, there will be a short window for 
+> it to become WS16, and then it will immediately become UNMAP. 
+> However, during this period, a small amount of discard commands 
+> may become WS16, resulting in a strange problem.
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Suggested-by: Alison Schofield <alison.schofield@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Bharata B Rao <bharata@amd.com>
-Cc: Alistair Popple <apopple@nvidia.com>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
----
- drivers/cxl/core/region.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Ok, interesting. Do you know why this short window happens? 
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index dc15ceba7ab7..605efe3562c6 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -2309,15 +2309,13 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
- static int cxl_region_nid(struct cxl_region *cxlr)
- {
- 	struct cxl_region_params *p = &cxlr->params;
--	struct cxl_endpoint_decoder *cxled;
--	struct cxl_decoder *cxld;
-+	struct resource *res;
- 
- 	guard(rwsem_read)(&cxl_region_rwsem);
--	cxled = p->targets[0];
--	if (!cxled)
-+        res = p->res;
-+	if (!res)
- 		return NUMA_NO_NODE;
--	cxld = &cxled->cxld;
--	return phys_to_target_node(cxld->hpa_range.start);
-+	return phys_to_target_node(res->start);
- }
- 
- static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
+> >> There is a time
+> >> window, most of the commands are in UNMAP mode, and some
+> >> discard commands become WRITE SAME with UNMAP.
+> >> 
+> >> The discard mode has been negotiated during the SCSI probe. If
+> >> the mode is temporarily changed from UNMAP to WRITE SAME with
+> >> UNMAP, IO ERROR may occur because the target may not implement
+> >> WRITE SAME with UNMAP. Keep the discard mode stable to fix this
+> >> issue.
+> >> 
+> >> Signed-off-by: Li Feng <fengli@smartx.com>
+> >> ---
+
 -- 
-2.39.2
-
+Best Regards, Benjamin Block        /        Linux on IBM Z Kernel Development
+IBM Deutschland Research & Development GmbH    /   https://www.ibm.com/privacy
+Vors. Aufs.-R.: Wolfgang Wendt         /        Geschäftsführung: David Faller
+Sitz der Ges.: Böblingen     /    Registergericht: AmtsG Stuttgart, HRB 243294
 
