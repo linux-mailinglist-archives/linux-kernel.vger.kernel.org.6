@@ -1,158 +1,127 @@
-Return-Path: <linux-kernel+bounces-219646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC86B90D601
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:50:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C804290D604
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C74286ED0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:50:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80D231F22136
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD1515B15B;
-	Tue, 18 Jun 2024 14:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF31815B96C;
+	Tue, 18 Jun 2024 14:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WlSGIjgn"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="wvP/R0rX"
+Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132F9158D99
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9407315443F;
+	Tue, 18 Jun 2024 14:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718721768; cv=none; b=MU1z0GWIWdn83XSMxfgMaBlWy+AOftAJkvfhy1BwgREqGsF7inFcQpKf0/VQxLsklemKYowdq07DgfcAYQnevIn32Hb1rNI+s8lCP+SDvZqcvfLhC8iN7JUgAOaND3IT8Olz6iHFZotgxrbetdMQzwgUOechjgI8wcQgDUAjJzA=
+	t=1718721795; cv=none; b=URWikavOOMti3RTtGS/ryrSJPFRA1pJaZZM1CCeQXEHaN40EELV37WRYUb6VJjQYhx2bDIWHYrjtJ6YK/va0S//TwB9KfkPPPURcmQHmBUEIYGqhGIXRw30WXScBFgNfeQT2t1PLEyOHQtFppGc5pOP5h+cKgkk6X7v7H6Rp6cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718721768; c=relaxed/simple;
-	bh=NXi93RHwbSOV2Q0lAqG0v6/Wr5YQ9AqTGkNCwpCWTe4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mwNi6npvsYTmL1RpKbEBkchKldExJVwUfvujwxcs/rMxyZXZiywgXAnqjAzRWlk4KK1uvCK9r8LFWWjQUWdc4JvsrA8f0wogNvV+m/UpKM1G4P/2hoZozPEDa4UMQpdHGy4DGNZYSfCbG3lGm0PWOxxApLB8AJ2myyUkBWq6lb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WlSGIjgn; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-44051a92f37so44974321cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:42:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718721765; x=1719326565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mf9vRDQj5buX/JWcYXzCfiraRviKrpzpPs7rdFb3Wds=;
-        b=WlSGIjgnVu2h/YL83xQ0V9vicTteYBmiT7suLM580lI3GeUi8HgcHPV/cTH6m84Gme
-         FEcRPqMnKSEl0L/D6fP57vwx7RY67hwJ2EEem+wSMPDL779iuQptv8mhluWtPY9tJQLA
-         R7CjAtBM/gExg870lyRy40xxrzgAT5t8tDl1I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718721765; x=1719326565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mf9vRDQj5buX/JWcYXzCfiraRviKrpzpPs7rdFb3Wds=;
-        b=ZEFZ9nnBi9fIF+BLudmzNkRWr7R5JbMeBukMTSz1fKW15d0M6Q+NMF/cxJmlzSAT3B
-         l2xo5SIbvxuqkmVZrp1wt7IxBLXue5Be6Y+SGWsjbUMewZzcGbaBpVqQxFqdxvUurmWL
-         9tEilFoZ3F41BJ2EiY1VSVYT4aJgAiGZGAJ0FolYqQei3LGz87YJ0NbRVxkdHTOwSL4l
-         LMMgLY+20P8eJvP9IxQNZBlAF0Gg7JVjVSD1y5/UN/5LJEkONsSOnbaNy2HDx7I1W9iO
-         DzSNaEwZX1FLaZl28zLS1j1xuoQMNJgqTWfiFXSx3shqJIjpqrR99m2k7dMagOxT3YnI
-         6taA==
-X-Forwarded-Encrypted: i=1; AJvYcCXq5aVxSW6u6ih0utFwmfPXvU0fJSqqLlqewU56vmYF9FaXoU9JzD9jpaGLuGyFC6RsLFCxdMiIt+3PnzDf3xY+KPVLSfUJtFrl7Ylz
-X-Gm-Message-State: AOJu0YxUpIurTf2yFFTM/CDIfpPOYP1IvYeBpEKAGgMg2iykpHZ3+haZ
-	hj880e3aXiQQ8nyaLR8qyt+Cvmx0ho9Gom5yOsIfEwNx2gkVkwyXqNUAfF5r0ncydqiPaRqFG+A
-	=
-X-Google-Smtp-Source: AGHT+IEm6IbulDTE1svAVO40UvUE8Xw0rYsY3e4ltHNeUcUIV6DAfdno5Vg20hfgW40ddVsySb1LMg==
-X-Received: by 2002:a05:622a:110b:b0:444:a44d:10bb with SMTP id d75a77b69052e-444a7846a84mr1708441cf.4.1718721764693;
-        Tue, 18 Jun 2024 07:42:44 -0700 (PDT)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com. [209.85.160.176])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f30f427dsm55991391cf.92.2024.06.18.07.42.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 07:42:44 -0700 (PDT)
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-443586c2091so474051cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:42:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjNY/rRhYUYS+L+d7ZkV9dcn/25ErAJQz7dZVRYCb8AhhO/Y73mlMpSBL4NIl4/0NNBjZ797kcGWUa46QhTd8/PmftXvbnEVaEiV7w
-X-Received: by 2002:a05:622a:15cd:b0:43e:295:f160 with SMTP id
- d75a77b69052e-4449c71abfdmr3212491cf.24.1718721763326; Tue, 18 Jun 2024
- 07:42:43 -0700 (PDT)
+	s=arc-20240116; t=1718721795; c=relaxed/simple;
+	bh=+A5fEnwsn8wJ0yrjqe3VxaNXE674cwgEAhGpvjluXEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AjJKqAc/8wReOg7+0lxVJ6tfxvc7OLOdShsl7na2cBD8+cohyZaaMqlm/eQs8MYq88O2MMSUH9r/77GO5Iz9FVIbaz33CWvTV0a+E96ZlAuKb8ZjdjPeY7LGidJzKcjZrV5+BKG6duAbD8HlyMEwRORyS7PYX1D6/8UTaMvm2b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=wvP/R0rX; arc=none smtp.client-ip=148.163.148.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355086.ppops.net [127.0.0.1])
+	by mx0a-00823401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IDF1Ec018084;
+	Tue, 18 Jun 2024 14:42:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=DKIM202306; bh=k7mR/1SYybA1E3VAkvQonOe
+	ZDJRDOYjJN4T4w1geSnY=; b=wvP/R0rX9a8dgx5FDpQnFK1jCQK+H4ZG2fYy7Cd
+	Mykjl4BJafMvBub/tcH9tDgOBl3/wwmJ49aWM69M0GBjRl/jOoH/GUGHfugjUTHa
+	sAUDYiIWPEO7CSJLTwCa1Bk2G4j/u+Kaq6kXToN4Z7esMnB31aUD/TPxXS0FQTqS
+	kYQ6YmvXIqXXhA1ae7MxS837nWBAT5/wWkRwt01qulCHG++C5uXn7rsgsxOByr1N
+	tik4nW1LhEuKFDr6/VmUaMrjQDRbyLPWLSvMrN05ncPDMwVS1aqV/OwW0NpjUICa
+	KQPuBItc6I8fBgAodSNFwdM/L+7iuLA4CKC1gbotYVSxO1w==
+Received: from va32lpfpp01.lenovo.com ([104.232.228.21])
+	by mx0a-00823401.pphosted.com (PPS) with ESMTPS id 3ysrqk6n1s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 14:42:58 +0000 (GMT)
+Received: from ilclmmrp02.lenovo.com (ilclmmrp02.mot.com [100.65.83.26])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by va32lpfpp01.lenovo.com (Postfix) with ESMTPS id 4W3Txr6TbMzfBb1;
+	Tue, 18 Jun 2024 14:42:56 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by ilclmmrp02.lenovo.com (Postfix) with ESMTPSA id 4W3Txr5H2Bz3p6jp;
+	Tue, 18 Jun 2024 14:42:56 +0000 (UTC)
+Date: Tue, 18 Jun 2024 09:42:55 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: linux-mm@kvack.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Maxwell Bland <mbland@motorola.com>,
+        Alexandre Ghiti <alexghiti@rivosinc.com>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 4/5] arm64: exclusive upper bound for ptdump entries
+Message-ID: <hb7v5p6y4aqydsecsnla2ystu3kocevngekyhdbn4kuwboetjq@s3uaiuwd73wl>
+References: <aw675dhrbplkitj3szjut2vyidsxokogkjj3vi76wl2x4wybtg@5rhk5ca5zpmv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618003546.4144638-1-dianders@chromium.org>
- <20240617173426.6.Ia1d546061f9430a90df0e7521097040e0e939c58@changeid> <20240618113754.GD11330@aspen.lan>
-In-Reply-To: <20240618113754.GD11330@aspen.lan>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 18 Jun 2024 07:42:31 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X6kzg4ySwWtTQkatNmSJAFpWYZqJuc_p7e+BjXz0zNhg@mail.gmail.com>
-Message-ID: <CAD=FV=X6kzg4ySwWtTQkatNmSJAFpWYZqJuc_p7e+BjXz0zNhg@mail.gmail.com>
-Subject: Re: [PATCH 06/13] kdb: Remove "mdW" and "mdWcN" handling of "W" == 0
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: kgdb-bugreport@lists.sourceforge.net, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Jason Wessel <jason.wessel@windriver.com>, 
-	Thorsten Blum <thorsten.blum@toblux.com>, Yuran Pereira <yuran.pereira@hotmail.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aw675dhrbplkitj3szjut2vyidsxokogkjj3vi76wl2x4wybtg@5rhk5ca5zpmv>
+X-Proofpoint-ORIG-GUID: lUW5eH0wfVUKzgqnNwLox3eS303p6jMG
+X-Proofpoint-GUID: lUW5eH0wfVUKzgqnNwLox3eS303p6jMG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 malwarescore=0
+ spamscore=0 mlxlogscore=941 bulkscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180110
 
-Hi,
+Update the upper bound of all ptdump entries to not include the byte
+which is actually governed by the next entry. As the lowest byte is
+included and governed, this makes the size specifications exact.
 
-On Tue, Jun 18, 2024 at 4:38=E2=80=AFAM Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
->
-> On Mon, Jun 17, 2024 at 05:34:40PM -0700, Douglas Anderson wrote:
-> > The "mdW" and "mdWcN" generally lets the user control more carefully
-> > what word size we display memory in and exactly how many words should
-> > be displayed. Specifically, "md4" says to display memory w/ 4
-> > bytes-per word and "md4c6" says to display 6 words of memory w/
-> > 4-bytes-per word.
-> >
-> > The kdb "md" implementation has a special rule for when "W" is 0. In
-> > this case:
-> > * If you run with "W" =3D=3D 0 and you've never run a kdb "md" command
-> >   this reboot then it will pick 4 bytes-per-word, ignoring the normal
-> >   default from the environment.
-> > * If you run with "W" =3D=3D 0 and you've run a kdb "md" command this
-> >   reboot then it will pick up the bytes per word of the last command.
-> >
-> > As an example:
-> >   [1]kdb> md2 0xffffff80c8e2b280 1
-> >   0xffffff80c8e2b280 0200 0000 0000 0000 e000 8235 0000 0000   ...
-> >   [1]kdb> md0 0xffffff80c8e2b280 1
-> >   0xffffff80c8e2b280 0200 0000 0000 0000 e000 8235 0000 0000   ...
-> >   [1]kdb> md 0xffffff80c8e2b280 1
-> >   0xffffff80c8e2b280 0000000000000200 000000008235e000   ...
-> >   [1]kdb> md0 0xffffff80c8e2b280 1
-> >   0xffffff80c8e2b280 0000000000000200 000000008235e000   ...
-> >
-> > This doesn't seem like particularly useful behavior and adds a bunch
-> > of complexity to the arg parsing. Remove it.
-> >
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> >
-> >  kernel/debug/kdb/kdb_main.c | 5 -----
-> >  1 file changed, 5 deletions(-)
-> >
-> > diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-> > index c013b014a7d3..700b4e355545 100644
-> > --- a/kernel/debug/kdb/kdb_main.c
-> > +++ b/kernel/debug/kdb/kdb_main.c
-> > @@ -1611,11 +1611,6 @@ static int kdb_md(int argc, const char **argv)
-> >
-> >       if (isdigit(argv[0][2])) {
-> >               bytesperword =3D (int)(argv[0][2] - '0');
-> > -             if (bytesperword =3D=3D 0) {
-> > -                     bytesperword =3D last_bytesperword;
-> > -                     if (bytesperword =3D=3D 0)
-> > -                             bytesperword =3D 4;
-> > -             }
-> >               last_bytesperword =3D bytesperword;
-> >               repeat =3D mdcount * 16 / bytesperword;
->
-> Isn't this now a divide-by-zero?
+Signed-off-by: Maxwell Bland <mbland@motorola.com>
+---
+ arch/arm64/mm/ptdump.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Dang, you're right. It goes away in a later patch, though, since we
-stop re-calculating everything until the end when things are
-validated. I'll plan to reorder this patch to be after the patch
-("kdb: In kdb_md() make `repeat` and `mdcount` calculations more
-obvious").
+diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+index 2ec16b523043..63f17c08c406 100644
+--- a/arch/arm64/mm/ptdump.c
++++ b/arch/arm64/mm/ptdump.c
+@@ -359,11 +359,11 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+ 			else
+ 				delta = pg_level[st->level].size;
+ 			pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
+-					   addr, addr + delta);
++					   addr, addr + delta - 1);
+ 		} else {
+ 			delta = (addr - st->start_address);
+ 			pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
+-					   st->start_address, addr);
++					   st->start_address, addr - 1);
+ 		}
+ 
+ 		/* Align region information regardlesss of level */
+-- 
+2.39.2
+
+
 
