@@ -1,81 +1,59 @@
-Return-Path: <linux-kernel+bounces-219095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B17390C9D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:40:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2C790C9DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CDAF1C20309
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:40:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094B22865B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4D4156C69;
-	Tue, 18 Jun 2024 10:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2C1157474;
+	Tue, 18 Jun 2024 10:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mQ3+RYHf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1ZTi43O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCD715696F;
-	Tue, 18 Jun 2024 10:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AB7DDDA;
+	Tue, 18 Jun 2024 10:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718708094; cv=none; b=bYvyBHHH0yYZ5sRzVwHnJaiCS5JRZ2HaNDPolgpPxi/8XjCO2y01xMtmJ1wwuckpu08bWvJ3Rq78wNj+x9vbQYXgyAeKemCAeIZoHBVgVACaAajoDk6lhOqpQ6bBYuQFculT5wEhG4d0Rp0bOpKMCmLoAioQ1QdDOVuso7ygx1A=
+	t=1718708226; cv=none; b=JTbZDBrbmi29nS/6AG5r6FYNUJZLFHJzTiaFRz+ITnA384fFkvbRZ6bMaV5o9byYLfTIQnDiNN7jTY3zUwjTwx4sZqncXZcJ6W2FmuolhUFEG1cbpLTbo8wiRdBplNa3oJBK/04HpEzMvYnqUSyracWA8erJ2HyOYXpR+tHt2f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718708094; c=relaxed/simple;
-	bh=e2j9tPr71G9COGAqpm4dvPHiyv9zdqsEbZNaiH19Qs4=;
+	s=arc-20240116; t=1718708226; c=relaxed/simple;
+	bh=XG0My1/c07ozmDk65TvEOPJoQ8jeo+r+3UR7UrRFX9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lYp400nvUh4FpCkWK6E6yydvkX2drCkkXUzlPHdGIX+u7JzbjwjuntJIfEWQ9JEABIAN+BSIymVq+sOkaCR5AQ1ywQGju/02BUlm32JT5fPZTxt4x3v6Ev2oLi21bEWL4S/T42/WnozOuyZLkMCHI1gFgFYaQLJ7ch9s3OgvZnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mQ3+RYHf; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718708092; x=1750244092;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e2j9tPr71G9COGAqpm4dvPHiyv9zdqsEbZNaiH19Qs4=;
-  b=mQ3+RYHfUMB+DzSZbQDsgORuIQyeAl94oOIQDhZP/7qjg5MJrJptYLWf
-   FVLc+BekcPmzb9hMmzwnZ20JoMNhZN6tUlGwm5MBuf/Xl8L8dX4jMU8M0
-   MsDiQ3FZWrSp4OtSE2fpNfh2T2N0RvP64KMjL5OLbhmPFZnssNqZMjCiQ
-   ZGZVS+ZQxbTwcqdG/0YhqJAxanX2XBG/Vsd5NVg1kGz002a6SmSsaAo9I
-   tP9Hd3Ij/modr7x1hb/ycYspn1jn85zXLD41UR7wKpWicOBtcKiQWxKfd
-   GnQcol/WTaMvu/P7l8eQ+tEu12roadqbbViMfvCpUYT1XZ1TyOLBhTYur
-   Q==;
-X-CSE-ConnectionGUID: kOGoj8nAQgWY28jC/zuPgQ==
-X-CSE-MsgGUID: HJSjtFIIRviTunX7Yo5LHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15540296"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15540296"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 03:54:52 -0700
-X-CSE-ConnectionGUID: wupW+ub7TMirTcf+ZbKKwA==
-X-CSE-MsgGUID: XlSls2vbRPGIL0IYXbgfQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="41464837"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 18 Jun 2024 03:54:47 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sJWU9-0005QW-0E;
-	Tue, 18 Jun 2024 10:54:45 +0000
-Date: Tue, 18 Jun 2024 18:54:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Roman Kisel <romank@linux.microsoft.com>, akpm@linux-foundation.org,
-	apais@linux.microsoft.com, ardb@kernel.org, bigeasy@linutronix.de,
-	brauner@kernel.org, ebiederm@xmission.com, jack@suse.cz,
-	keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	nagvijay@microsoft.com, oleg@redhat.com, tandersen@netflix.com,
-	vincent.whitchurch@axis.com, viro@zeniv.linux.org.uk
-Cc: oe-kbuild-all@lists.linux.dev, apais@microsoft.com,
-	ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
-Subject: Re: [PATCH 1/1] binfmt_elf, coredump: Log the reason of the failed
- core dumps
-Message-ID: <202406181823.dr4ogEY0-lkp@intel.com>
-References: <20240617234133.1167523-2-romank@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fDIuflyw/02VwP3rwS2OMfWVTqEuEFc8hqmLaGyszto8/5z3K8d09gklzMfXh+ua3GlHD4mj+T8fpD/iQ8jyNYH/ypdgIR7jDa1444PABOu3SnKTtio2DPW/xoFCGZSt0v4+JLEdCM0K9bRN/G5h0VHPHHzwpkDbcmBtwuiZCUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1ZTi43O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97AEDC4AF48;
+	Tue, 18 Jun 2024 10:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718708225;
+	bh=XG0My1/c07ozmDk65TvEOPJoQ8jeo+r+3UR7UrRFX9Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o1ZTi43OV4DFMNq83eALZBNS3qIlWr5eADtosWX4DgtESBzUNdTR/d2EzaJmsu/bO
+	 cnMqrA0Ud+oRE5gVAefVlysGPl7G7oSxTN6bepTEZBfDUmO0Jlpb7FU80CWs+LcjLI
+	 BiASfcHx02cUPHf15TKw0hKk3Rp+mhHAxq45ZCKz5VUiDeFkuqE0oL8QEiGlw4p73A
+	 t39OEeM3WlcMTMZaDOftM2hoeGgbGwtN2HytKqCDaLMHt/Y5GCh9th8sfOXzUhvKQJ
+	 EPXVN7uLfojG1BRJvKdq+b9SfOWltzE8MgxKt+eJJ9LY02fZzf7sTfd974GDmXeKTx
+	 mjfcSoil3sgiA==
+Date: Tue, 18 Jun 2024 11:56:59 +0100
+From: Simon Horman <horms@kernel.org>
+To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	linux@armlinux.org.uk, vadim.fedorenko@linux.dev, andrew@lunn.ch,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, git@amd.com
+Subject: Re: [PATCH net-next v6 3/4] net: macb: Add ARP support to WOL
+Message-ID: <20240618105659.GL8447@kernel.org>
+References: <20240617070413.2291511-1-vineeth.karumanchi@amd.com>
+ <20240617070413.2291511-4-vineeth.karumanchi@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,56 +62,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240617234133.1167523-2-romank@linux.microsoft.com>
+In-Reply-To: <20240617070413.2291511-4-vineeth.karumanchi@amd.com>
 
-Hi Roman,
+On Mon, Jun 17, 2024 at 12:34:12PM +0530, Vineeth Karumanchi wrote:
+> Extend wake-on LAN support with an ARP packet.
+> 
+> Currently, if PHY supports WOL, ethtool ignores the modes supported
+> by MACB. This change extends the WOL modes with MACB supported modes.
+> 
+> Advertise wake-on LAN supported modes by default without relying on
+> dt node. By default, wake-on LAN will be in disabled state.
+> Using ethtool, users can enable/disable or choose packet types.
+> 
+> For wake-on LAN via ARP, ensure the IP address is assigned and
+> report an error otherwise.
+> 
+> Co-developed-by: Harini Katakam <harini.katakam@amd.com>
+> Signed-off-by: Harini Katakam <harini.katakam@amd.com>
+> Signed-off-by: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
 
-kernel test robot noticed the following build warnings:
+...
 
-[auto build test WARNING on 831bcbcead6668ebf20b64fdb27518f1362ace3a]
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Roman-Kisel/binfmt_elf-coredump-Log-the-reason-of-the-failed-core-dumps/20240618-074419
-base:   831bcbcead6668ebf20b64fdb27518f1362ace3a
-patch link:    https://lore.kernel.org/r/20240617234133.1167523-2-romank%40linux.microsoft.com
-patch subject: [PATCH 1/1] binfmt_elf, coredump: Log the reason of the failed core dumps
-config: x86_64-buildonly-randconfig-002-20240618 (https://download.01.org/0day-ci/archive/20240618/202406181823.dr4ogEY0-lkp@intel.com/config)
-compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240618/202406181823.dr4ogEY0-lkp@intel.com/reproduce)
+...
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406181823.dr4ogEY0-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from kernel/signal.c:29:
-   include/linux/coredump.h: In function 'do_coredump':
->> include/linux/coredump.h:47:1: warning: no return statement in function returning non-void [-Wreturn-type]
-    static inline int do_coredump(const kernel_siginfo_t *siginfo) {}
-    ^~~~~~
+> @@ -84,8 +85,7 @@ struct sifive_fu540_macb_mgmt {
+>  #define GEM_MTU_MIN_SIZE	ETH_MIN_MTU
+>  #define MACB_NETIF_LSO		NETIF_F_TSO
+>  
+> -#define MACB_WOL_HAS_MAGIC_PACKET	(0x1 << 0)
+> -#define MACB_WOL_ENABLED		(0x1 << 1)
+> +#define MACB_WOL_ENABLED		(0x1 << 0)
 
 
-vim +47 include/linux/coredump.h
+nit: BIT() could be used here
 
-    34	
-    35	/*
-    36	 * These are the only things you should do on a core-file: use only these
-    37	 * functions to write out all the necessary info.
-    38	 */
-    39	extern void dump_skip_to(struct coredump_params *cprm, unsigned long to);
-    40	extern void dump_skip(struct coredump_params *cprm, size_t nr);
-    41	extern int dump_emit(struct coredump_params *cprm, const void *addr, int nr);
-    42	extern int dump_align(struct coredump_params *cprm, int align);
-    43	int dump_user_range(struct coredump_params *cprm, unsigned long start,
-    44			    unsigned long len);
-    45	extern int do_coredump(const kernel_siginfo_t *siginfo);
-    46	#else
-  > 47	static inline int do_coredump(const kernel_siginfo_t *siginfo) {}
-    48	#endif
-    49	
+>  
+>  #define HS_SPEED_10000M			4
+>  #define MACB_SERDES_RATE_10G		1
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+...
+
+> @@ -5290,6 +5289,14 @@ static int __maybe_unused macb_suspend(struct device *dev)
+>  		macb_writel(bp, TSR, -1);
+>  		macb_writel(bp, RSR, -1);
+>  
+> +		tmp = (bp->wolopts & WAKE_MAGIC) ? MACB_BIT(MAG) : 0;
+> +		if (bp->wolopts & WAKE_ARP) {
+> +			tmp |= MACB_BIT(ARP);
+> +			/* write IP address into register */
+> +			tmp |= MACB_BFEXT(IP,
+> +					 (__force u32)(cpu_to_be32p((uint32_t *)&ifa->ifa_local)));
+
+Hi Vineeth and Harini,
+
+I guess I must be reading this wrong, beause I am confused
+by the intent of the endeness handling above.
+
+* ifa->ifa_local is a 32-bit big-endian value
+
+* It's address is cast to a 32-bit host-endian pointer
+
+  nit: I think u32 would be preferable to uint32_t; this is kernel code.
+
+* The value at this address is then converted to a host byte order value.
+
+  nit: Why is cpu_to_be32p() used here instead of the more commonly used
+       cpu_to_be32() ?
+
+  More importantly, why is a host byte order value being converted from
+  big-endian to host byte order?
+
+* The value returned by cpu_to_be32p, which is big-endian, because
+  that is what that function does, is then cast to host-byte order.
+
+
+So overall we have:
+
+1. Cast from big endian to host byte order
+2. Conversion from host byte order to big endian
+   (a bytes-swap on litte endian hosts; no-op on big endian hosts)
+3. Cast from big endian to host byte oder
+
+All three of these steps seem to warrant explanation.
+And the combination is confusing to say the least.
+
+
+> +		}
+> +
+>  		/* Change interrupt handler and
+>  		 * Enable WoL IRQ on queue 0
+
+...
 
