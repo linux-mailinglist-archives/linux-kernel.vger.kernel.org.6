@@ -1,236 +1,124 @@
-Return-Path: <linux-kernel+bounces-219909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5813590D9E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:52:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BDF90DA10
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9CD91F266AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:52:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF2D01C22204
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF86982D6D;
-	Tue, 18 Jun 2024 16:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CB714EC79;
+	Tue, 18 Jun 2024 16:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="WIekAJcr"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2120.outbound.protection.outlook.com [40.107.105.120])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KqQXui8G"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5F54CB4B;
-	Tue, 18 Jun 2024 16:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.120
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718729496; cv=fail; b=ms6fOmrDCUN9vgUXTI4a3PXs0o2IY6xYMAwQ2AshgRSmKazqj+XpWV8mpKWm6NMGX2nngeArTsnDnurRYzOCROK+GdgnIDPT0HyKnZqfIYgOdiarxb1Us/GtaOLdpGyXoHAhTaHXPETUltKNhBhvcQG4fY8wVagfycp9EgLdSG8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718729496; c=relaxed/simple;
-	bh=ctN2MDIo4BRKeAwzh1iTt/Mf/ANoQRhZKHG5nWAkkY8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YA0xV8ZEjpM0FQK+7qQHlDU5ALAcLekBpw2G640ef6fhiYBXe11buiYD8VoaKB0/iWhu1mvF/9m+vMimujvdz0JaMg3X8MoA3aHR7qCoZwb8Jodx1zRoaY/A8Y+SNjq/tJ5818vYbaHWNUbderZ5l1OryJaI9+K6lXK6eIkGCLA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=WIekAJcr; arc=fail smtp.client-ip=40.107.105.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L+kRdqaP5KOkHe7Ti8uP27AWs5TwYGKzIC3FASxylw1xtNr6GaAcQfRBvxs8vFrEkaGbXQRzcQk+DKCjLVjG4d378G3j2QwIRl1NqZFh1OAXgl4fBaINKWppB5Vh3nljCwxLux6o6DYt6cO6dAs5th9e4TygK4sFKoUxcUn90IijOJLDxS6YLUAA3l8+kAsod5GgbBuDwA5SEg2Z4XJH8V9SgC1JKEd5nXKOfMq2dkwBY59bqHjnVzuHlRy0P9mo52Rfusf0fE5xpZbW7WxSiE0bn/mMMX6W9FaPZ/AMgbORK8199Q5/YVGzPa/CU8qVlGyXobdJGHCjQnZFllPS/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aFRCPWndMqS7WX4RpH6o4dIBQj0c1TQ+raMxI9WsqnM=;
- b=eKXps7K2L35QoC8NfvBKzhKHzTrOdziIOuLib254+j0AgVEB4CcqG1VeyN5X9t4/afuxmGxcF8aNbpyiTht86hIQWSrUfRQB17C5eMvNSTRg3jZyCUmsFosz4W62UgMPR9gOfhMPABoX2ar0Wf8yU+ns5lMyvcMj705tVE8rOfIXdPbnLdjJUqse4Dq/SQsxjhaGkVsWRL9u4bAdZLa+znbqmCQJQ/iy9Kg3HNwoyK/mWDrPhih3ETFpcRdpI7HeyuKVxUQGjFUpCmQa4Y+f4dhWJsvhL4wWXr4X71gZQHEc+LkisHXfiJ+nT/yA3Crm0+8+vFbf9Bjh1Cvvd94jRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aFRCPWndMqS7WX4RpH6o4dIBQj0c1TQ+raMxI9WsqnM=;
- b=WIekAJcrOi0BMN6EaFQ/w5Wyp1eGsJUEcwYjDdnfpcdHMLDVz80+iYxlwrjbrA8TcVJRnK6oUUgoGSAE09LBo/zGIq2bnQY8kY8YHdOVijMBjMReu6Uko4ktg/onxDtpRphH+NdQe/+9H32XssZbqTFdXFxI0SNgd2shVkvDkPM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com (2603:10a6:102:c4::9)
- by AS8PR04MB7542.eurprd04.prod.outlook.com (2603:10a6:20b:299::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.18; Tue, 18 Jun
- 2024 16:51:31 +0000
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af]) by PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af%4]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 16:51:31 +0000
-Message-ID: <4f92528b-8311-4c0b-998b-f0221d7bd474@cherry.de>
-Date: Tue, 18 Jun 2024 18:51:28 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/9] Add Mule MFD support
-To: Guenter Roeck <linux@roeck-us.net>,
- Farouk Bouabid <farouk.bouabid@cherry.de>, Jean Delvare <jdelvare@suse.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Peter Rosin <peda@axentia.se>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20240618-dev-mule-i2c-mux-v4-0-5462d28354c8@cherry.de>
- <fdeea79f-4568-4e70-9b49-0c02abc91170@roeck-us.net>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <fdeea79f-4568-4e70-9b49-0c02abc91170@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA1P291CA0008.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:19::19) To PA4PR04MB7982.eurprd04.prod.outlook.com
- (2603:10a6:102:c4::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4210013D528;
+	Tue, 18 Jun 2024 16:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718729641; cv=none; b=a+dVuX4cVlgwYvA6iR8nLtCdnF5hLakSgHUcJ2nHU369dCsN+sAcHqtH9/Ko+yIojIqqiKRbqNQ22nD+JMR/M4zyYeGKar+c0ixYsbv24X91ng5pp3Rt5+Ylp6jrA6UOdcI1YkLdYC+8aFI80eA9bYSR8wUOhkvP9V8KPMEBhh4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718729641; c=relaxed/simple;
+	bh=oYute8/wy9hiVcWRO+JQF6ZA/DGfGn+3eK/4yP/RxNQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=hWZiZLUlLNS8UtWfmQXmoFn1eqppbv6lAGsmQ2Pv3hb/z3bYkbcjp8NUKkhTJCsZmIAl6L/HXfrVRztrzYJW17KVEpDTsQba3mCUqx3Gztt540VUKBajUW/dpbVhua11EzZILVydroVCCj9OIdY/wda8shWEi76+4YTPumoRUeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KqQXui8G; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IBChOl005240;
+	Tue, 18 Jun 2024 16:53:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=X6V/Yl7iMXuRwzk2uprHwg
+	UlY145d2MyTJHzRCYnK6w=; b=KqQXui8GBCwqA/c0zSkOKaEInLy2QTfZidAXUH
+	DveN6h+ODNo3HoBGJNNgemMuGqIfAIrG++kRATvaOQMnQ6nNp+RjkCaJupX3Dy9Z
+	ImuaEcrVDEuF3upZA/Ov+MON+noj+1k+FIfGv7HMOOvZkVFYVJYQOW+d7sbaWvM2
+	1a8A0z25cMO/yrUMjlRFqhW/J3JpJjWFEdeB50OGhoucjFTenep9VfqlQuLuHfVE
+	G29yLM0FS7LcTDKA4mRPavS4kSV78jTCri8YgD9A48q71lC/vwWmZjTRx6sNPGfn
+	smP4JaB5BEuUxVCHqCTROk3pquA2C43klYD/PQNVntETwYNw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu95rgvxy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 16:53:48 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IGrldi029289
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 16:53:47 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 09:53:47 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 18 Jun 2024 09:53:44 -0700
+Subject: [PATCH net-next] net: arcnet: com20020-isa: add missing
+ MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7982:EE_|AS8PR04MB7542:EE_
-X-MS-Office365-Filtering-Correlation-Id: d309bfd0-2c89-4431-1712-08dc8fb6e78e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|7416011|366013|376011|921017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NVozWGlSNnVpdWN1VGxncGpvZktMOVRlem1md1dSLzdYS3B3cHZneDVPNFdk?=
- =?utf-8?B?UnQyelF4bXZuRGcrbFZHeW1RRWFrUGd0YjhNSnlmdzU2TE4yZUxMSGxkcUZ1?=
- =?utf-8?B?TTJjTVBVU0VLNlBvUnprclJsVnZxTHo1R3FYODhHRHB2bzJMbnBKMnFNczlo?=
- =?utf-8?B?VlV3anBCTUs5ZXl6L1c3ZDk0TnlwK1c0REVQT3UrU05mWVNlWEl0WEpqUWpI?=
- =?utf-8?B?UHpja0U0aFFNaVRRQ2V3TTVTVU5TdG9PVEF2dkRpTUF6cWJnOCtnSzNlS25Z?=
- =?utf-8?B?aUZkenl1UGIzVVExRjVRMVFLNElyTk9JNVM3RERUc3d4bWNWbkRMZXpTYU45?=
- =?utf-8?B?aW91U24rbVhnVmY2dWVHdDNWY2lDN0xsbjJLYUlwMlBGRTNEUElXa29ObXV1?=
- =?utf-8?B?N0VlTWZEVWFHYStFL0RURmNaSnJOZGUwVFhwS1VkQzFtOFFIbXZ5TXhCZHBZ?=
- =?utf-8?B?Mzl3b2hqbnJUSTNQVzVlcFZNNmFvaFNURDRSKytuS3FtTmdjT3JHSExmc2Ns?=
- =?utf-8?B?Y3ZncEYxazhXQ3VhUjhaMGFMNmxTQmRvN3RSUmN2MUpIMzQwSEZZYm5TNGFm?=
- =?utf-8?B?RVBkV0JadzUrVnJKMDFxYnpUK1dwcWtCdUNDc292YnlSUjRkc2FSQ2c0T3Y1?=
- =?utf-8?B?TTVZQ3BMbzFpV1Ztcmk5cWdrRzV4MnJWekc0Mm1tdWJadEZDeHYwL3pKc2dB?=
- =?utf-8?B?OS84MjJHY3o0ZGJnUjVFZXA1aFQ1ZWZ5VU9HSVRMNmpsT0xiZVpQd0JxbkF2?=
- =?utf-8?B?ODhPUmxFVHhtRHJCT0REOTBZU1pKakFTdlJ1MGVvWEcrMXRRb1B0SWp4aGla?=
- =?utf-8?B?OGtwamo3TncrQmVJc05JRmlvaERadFIwT0ExVGhOSlpMNU44Umd0QWVTRnJW?=
- =?utf-8?B?K3BZTFpHM3FYa2FLNlpRL00yMUVQOXJCdEM5SUFwU3d3RGdkTHVyWWdqb0lW?=
- =?utf-8?B?L01Yc1pleDhLOGsyTi9FNU5GRmUxUW5wUjgyWnI3bkRXYlRyUHZWdUtjbUZC?=
- =?utf-8?B?Vm5tOTUvYjRjYzU5cURmenRjMmFKSFBoUzRMVTdtanUxV2VidDlNN2pLMklR?=
- =?utf-8?B?bjRTcDRVbmRQOHVUd3VmQUhXN1JsRnFqa0NVSHozT0ZUaTJGcHNmUUFzODhK?=
- =?utf-8?B?aG56SlpENHc0ZDZGbEFoWDZtQmdySjdSL2NXalhVTU9BRG04SHB0OXQrcDQ5?=
- =?utf-8?B?L1RpYkxiOC92bWhrU3VnRXFqNlEvY21zSWlUVDdJaVlJeDMvRlRWYUxMR0xZ?=
- =?utf-8?B?NjlKcWhhU2dMbVRMUE8zRjRoRjFBUVJEZ2ZQUmV1M254RGxFRTIzQW14VkU5?=
- =?utf-8?B?Zkt3SjRyYkwxeTRSekZTUkxBb0NTM3Nod3BmVVpKcmdBRXhVc05pdVpHczB3?=
- =?utf-8?B?R29hRTFIZHFzOGlFYjVIQXIwaGh6NTJLUHMrTm1iQWp2aFZ1RU5jaDdZRlJv?=
- =?utf-8?B?a3FzMjluUVNGQmhMMExLVjEwM09EMnVSb25ZdUhwNG1hVVM5NUVrK0R1Zjcx?=
- =?utf-8?B?cSsrYUd4clVVVE5iMjFwWFd3RTlHMmlXZnpScFRiaE4wZ1BqbFpiSlpFbUo4?=
- =?utf-8?B?K3IxbmJwTXYwTCtmZ2pDM3h0YUtGbTVnSU5oTG81V3BxRGhvOHA4Z3Z3M1kr?=
- =?utf-8?B?TjVxQ3VLQmFkcWNnVlRjUGppUE5PRWo4WFJVZWI4d1VRbnBEVjIxalZCdkFC?=
- =?utf-8?B?Zyt2bWJyUzRmZWNmT3ZMMnR2YTRHUGF5aXJuaDZ0eFl1SVlldHV4aUkyeFZG?=
- =?utf-8?B?b253clN4RzZ6M3ZtZkQyUHJGNUxMYitJSnhpbWJEdmlGcENkTWlTQlFWK1pW?=
- =?utf-8?Q?wAyCOv4Yy4EM0c51wxxq0/5Q0+OjmZkC3RAd4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7982.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(7416011)(366013)(376011)(921017);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Ukl4MUdFOWVsWHpPVWE2MEQxQ2h1VVM5eEhLRThSblhDYlErOHR5cDBaRlJw?=
- =?utf-8?B?ZEpvY0d2NFhYeVY0b1dEQWpJYzhaSjhtVUhwQlpONWZSOFRaRVJleG9Kd2tP?=
- =?utf-8?B?cXl2TlhzVWVXN25HWVQwSG1sUmUzMGU3WXphZmczSEY4VGhJdC9ybmk2N09G?=
- =?utf-8?B?SWhZaE42K2E3dk1oVHhvM0djUjBVMzZrZHk2MmdDSWJ0S2xZaU9wcXRETzFa?=
- =?utf-8?B?T1E0bEhyRHVzeUxJZXE0dGx3UmlsNnRydHVZSjJxZVBvZ2c3MFI4ajlKY0Jp?=
- =?utf-8?B?bVhLZTRKekNsdy9QRTVnWFVBMTJlR0ZqTWxhRVMzbHZiWlRyVk54eS9rUU9K?=
- =?utf-8?B?WFNIeURLajREbnpUbkhXMXJveVArMHhFd2pvZ1FoYXVxNHdsdWwwLzVXTnh1?=
- =?utf-8?B?Y29JVkFpWVREakVIL0pqNzNZTmVkQ1NRRFV6dy9pVVZxaDdQTm9ETGFHUWZ4?=
- =?utf-8?B?QzlYYTlDRHN6L3NGTUllRVcxRFM4OEJOK2NPL2NaVjd2eFZCbFJ0Qmd3aldW?=
- =?utf-8?B?TnU2Q2tsbmdDWDBPMTBLaExsTitXNE5DaEpMYjlWcUhxb0VtWFQzR3JpSm9B?=
- =?utf-8?B?blBOMjRYWmEyT2hNMXl4czlMamc2amRtbmxBd3hUNjZIQm9TQVlLK29OL1pa?=
- =?utf-8?B?VGMzZDVYQ2ZvZkczUUZNK2ltTm4yaFcrQmV4eUFRN2U0QytRb0V4c3Q0TVlR?=
- =?utf-8?B?VWMxN0pQbWFHTWluUGVySGZjbzZTM0ZaL0FqTythb0dLQnFUMWR4elVnMi85?=
- =?utf-8?B?WUdlMGR2MFlUK2dQOFJOQUNsaDFTUzB0MDBnVGNJeXhxeXNjeXMxbmhpcitM?=
- =?utf-8?B?U0w0UHQzUUZ4VmdQTWQvdU1OMHNFeGtKemRYOTI4TkxZVFBZOG5RbUt5L1B5?=
- =?utf-8?B?YWlGSG1OcXJIZ3d4S01vMVArbWt5L25ZSUZGb04wRVRCazZyMEFKaG1hSCs1?=
- =?utf-8?B?TVZkNVNUV3M0LzduMXBBNTRRZGM1TkFJc1AyWldjMkdWUXQ4SlZ0bjhFVWc0?=
- =?utf-8?B?Z05jc3ErRUtrcWZ0aTF3NlpodDZPVldheDhRVzVZclJRVnptcmowZWtyV1o4?=
- =?utf-8?B?ZzJJNDRSbkU3VjUvS3RjNUNwT3BZUjVyaVJWNVVCbVhWUVRWbXE5eXJCR2E5?=
- =?utf-8?B?K1V0WFJBV2FLQjdQNGp5T0FOK3VyNUFrTWZjZkYwK0RScmhmS2RHT0NyZjdL?=
- =?utf-8?B?TU41aEMzbVQzb3RVTEtVeXR5QmNHMWJBUWwwdkJEdUZHY09DZjBTN2xZSlEx?=
- =?utf-8?B?VVoxSmFBR0VGUzVhZ3RBTm40Q0JQOEd6UGpWaWYweUxPZ3QrVXk3MkxRL0RE?=
- =?utf-8?B?UXUrMlZ2UElqMUloQ002MkpqbkFEOWdNSGhtY3R4aVJwUnRqNWZVZWxqaXJk?=
- =?utf-8?B?UG9mQ0huYnBicmpwSEpIdTFJTnJETnpEL0pob1RhY1puQUZJSTROc2Vvbm1H?=
- =?utf-8?B?V21ac0VvSmpKczlJUDFVNVJMaHJnNHBWY0FlTUJleVNZRHZFZTVYbDhnOUVs?=
- =?utf-8?B?dFlSekhCbHVRZFNOWXR1RjcyNHhJd1RTc1VoK2lqWEw1bHV4RUw2eEdQV3Rv?=
- =?utf-8?B?NEJ3VHRrMkFpMzUzdzBmZUI3UjIzc1dGUEhTbitOdDNZS3VWYVdFWElpQXlv?=
- =?utf-8?B?RmlaT0VvR3JJN0dsTWJ5MDFraGRsVVFlSkJ2NlpLdnY4VkE4dTNXUWRtSlhq?=
- =?utf-8?B?OTc1MFZyNlBZb1Z4ZkVVcUdkRGFhWDBpajVNcElFZjRpQUtDaEdXSnZBTnVK?=
- =?utf-8?B?eDRoby8vR2txQlV1WXZ5Tm9wZW5oRnlpNWJXK3VpcHd3cGthTUZ6MWJZUStZ?=
- =?utf-8?B?ODdrM3RZeHVmWXN5ekZVQnRrSk9BY1BaYXhJMVVrQzVtRHpSdVIxUHc4Q1NN?=
- =?utf-8?B?TlpRS0Q4aHhYek5RbzhnalVBQmdBS0hGQzJ2bzZlQk5sZEl0L1BMZVFPZUFP?=
- =?utf-8?B?OHZuU2cwb2YwK05qSEdmMy85a1JQQ2xkcEFIYW94U1lLdlcvQVNjc0tmZjdX?=
- =?utf-8?B?VWpQWjZRQkxhMXhDZmRyU1BDckEzUVAxelIzSmV3R1J4cllnamFyOUJza2pY?=
- =?utf-8?B?bk1IL0dpMlo0eFVGcjgyM1VsRWk4WFY2SncwS0pQUUtwYk1hTVRyZWIrYW90?=
- =?utf-8?B?eDU3VjBrdUU3dnowZHlES0R0dWMxMWFHQjdVd1NCOGhocURvZ0g0SFhmUkcv?=
- =?utf-8?B?ZXc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: d309bfd0-2c89-4431-1712-08dc8fb6e78e
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7982.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 16:51:31.2785
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dhjsRP0piJYglkXoBPj/A84qJnye/xSwx+WpGjZVHDKR8SRihSWWbYJQV99uZuto0Jse5NCg+dnJmm0fTgBPWbHwmWhgnkgeb465jtdO1uU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7542
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240618-md-m68k-drivers-net-arcnet-v1-1-90e42bc58102@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJe7cWYC/x2MywrCMBBFf6XM2oG0Shv8FXGRx9QO2lEmsQRK/
+ 93E1eVwD2eHRMqU4NrtoLRx4rdU6E8dhMXJg5BjZRjMcDFjb3GNuI72iVF5I00olNFpaHOm2cb
+ JToa8hRr4KM1c/vEbNEGoZLjXx7tE6NVJWFr8xfItuLqUSeE4fpeMILaVAAAA
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UKTUcdgcdT1q81BCbzHmFRntShhrvUAy
+X-Proofpoint-ORIG-GUID: UKTUcdgcdT1q81BCbzHmFRntShhrvUAy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 clxscore=1011 priorityscore=1501
+ spamscore=0 phishscore=0 mlxlogscore=958 suspectscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180126
 
-Hi Guenter,
+With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/com20020-isa.o
 
-On 6/18/24 6:29 PM, Guenter Roeck wrote:
-> On 6/18/24 09:06, Farouk Bouabid wrote:
->> Mule is an MCU that emulates a set of I2C devices which are reachable
->> through an I2C-mux.
->>
->> The mux and amc6821 combined make the Mule multi-function device (@0x18)
->>
-> 
-> I don't think that is appropriate. Those devices should all have separate
-> devicetree entries and be modeled as individual i2c devices.
-> 
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-I think there is a misunderstanding around the wording. They all have 
-separate devicetree entries and they all are individual i2c devices 
-(from the PoV of the kernel, they all are emulated within the same MCU).
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/net/arcnet/com20020-isa.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-- AMC6821 on address 0x18 for registers from 0x00 to 0xfe.
-- Mux (paging, however you want to call it) on address 0x18 for register 
-0xff.
+diff --git a/drivers/net/arcnet/com20020-isa.c b/drivers/net/arcnet/com20020-isa.c
+index 293a621e654c..fef2ac2852a8 100644
+--- a/drivers/net/arcnet/com20020-isa.c
++++ b/drivers/net/arcnet/com20020-isa.c
+@@ -137,6 +137,7 @@ module_param(backplane, int, 0);
+ module_param(clockp, int, 0);
+ module_param(clockm, int, 0);
+ 
++MODULE_DESCRIPTION("ARCnet COM20020 chipset ISA driver");
+ MODULE_LICENSE("GPL");
+ 
+ static struct net_device *my_dev;
 
-Note that AMC6821 is **emulated** in the MCU so this is not some HW 
-trickery here.
+---
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+change-id: 20240618-md-m68k-drivers-net-arcnet-3ef8d7870eb8
 
-This MCU also emulates ISL1208 on 0x6f, as well as a PWM controller 
-(merge request pending) and two small AT24 "protocol" EEPROMs, on that 
-same address. Those are behind a paging/muxing mechanism. You access 
-ISL1208 through page 0, PWM controller through page 1, etc...
-
-So basically, the point is:
-- 0x18 on i2c is now MFD Mule
-   - two platform devices behind MFD = AMC6821 (reg 0x00 to 0xfe) + Mux 
-(reg 0xff)
-- 0x6f for devices "behind" the Mux
-   - page 0 for device behind adapter 0
-   - page 1 for device behind adapter 1
-   - ...
-
-All of the above are part of the same MCU.
-
-Mule MFD is a simple-mfd-i2c device with its own devicetree entry.
-Child nodes of the Mule MFD are AMC6821 as a platform device (but 
-operates over i2c) and Mule Mux. That's what was meant as "The mux and 
-amc6821 combined make the Mule multi-function device (@0x18)".
-
-The Mule Mux then creates N i2c adapters representing the mux/pages, all 
-of those being represented in DT. Each of those have one device on 
-address 0x6f, all represented in DT as well.
-
-Nothing hidden or hardcoded, everything in DT.
-
-Did I miss something here?
-
-Cheers,
-Quentin
 
