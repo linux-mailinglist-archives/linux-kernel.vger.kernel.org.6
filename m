@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-220107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE2B90DCC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:48:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B52190DCC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CBB61F25299
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:48:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E81F283E2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA67E16DC13;
-	Tue, 18 Jun 2024 19:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E3915ECEE;
+	Tue, 18 Jun 2024 19:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Wa9xinY/"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="HenJYAdY"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B965016D9A7
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77CB16DC07
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718740055; cv=none; b=qIxp/xXzuZ0tldV1YAdiUd8wLZFYqPc954niO6i2UaF90XCtrRlu1yYsOTVhpz29eVGfAgbGPfQBGv7xfo14X2OEQQp54kNYNuCoA9Sugk9UlKkPRwij2KKDMaHuvdZFS5DCHtFykRJXJ35GkPAhXSv8xtBun5/JnVbaZhRpQFM=
+	t=1718740055; cv=none; b=o8iMwaDUBdtLQanCg4vv0wBD/uA2vAkhIBrANzueoi7t9BYi2kzHVa3HwigSUyGaZlkX/osCa9QVLH59/PQHflWfxSUmCPaM/MozYeMrNKNxwLap1MsExXDFAoYSi+GINKP5PFuPSnXa4SK73wdRN3SDozvkEQnoZVx/vHvXnwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718740055; c=relaxed/simple;
-	bh=Qh8AdjS4ngXJ9v45ESBuH58r0izmWZpA9ETBlIq0EHg=;
+	bh=f7MDqrTS9VA2w94f9+abC6s+OPf3kDOoiI4lylYuxJk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c78Xtb1DJSF/gOKmMN550OXBVILng/0YDe1Sc9LL6XyUHggcncxJSHsyjn3CoTRXm1tRu7Qy2THHaM8PZ2HhSP3LXUxLELEkM8AIn2iWlJOw81d2Ws6fQ7Kn/iNhJ4W59o2Whyzipnx9Za7G2kz/j54cRBvClWcbyY7T94XvMUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Wa9xinY/; arc=none smtp.client-ip=149.28.215.223
+	 MIME-Version; b=EfimfgLdWrAL5pK9AkqwfAtj73Jb5STptVArgXoQb82nA6Aqydutvl2QKSDO/P5yPUhrKERfR7dKa5jV4zoVHiVJeZ2ZKdT1JPGL6ZAch8L1401SmYgiQzGGJQW8q/BCtpaTe/FO+86wbRTdvj5r+1mUelrX0dGm8imVZXt/pxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=HenJYAdY; arc=none smtp.client-ip=149.28.215.223
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1718740035; bh=cSv0Y1BnoDAoVs4qW1oCzHu3mFidb6wxsTUaMwSm0e0=;
- b=Wa9xinY/u1/b0Bo/UAewJZG3InX7D3BO8WzdSp4kfJxCzaJHunAsJB8i2TMrj4UmnCqCBQPqv
- bsggkkfBt+h8kRiPpptyZcCZ2l4M/WHAAx/h3wvvA0OgHX+8ZJC2r9aMp5+DmMK9KDjFEGhidHO
- SH41rw+pz47lyYZslveBIawb7xvMvS/7y4gnl2nCRNcvC+dn+n+kgXf3qq5UifFEMfBhSN0Fmqh
- JILcjYsdDGsjxTldvQMHIN67nLXpJe828enc88Loocd4i9kRpXnD5futkuWcwpl7kVEZFLudR2z
- 5Q69iYfB2AArj4ILmal58mJ88dWbVGrSCXm3KCQz2K1g==
+ t=1718740037; bh=KB45lJtSwQJs9wxJYwKUH/S/Frg3RhjQrCXHEaw5DeQ=;
+ b=HenJYAdYjg+PRVnPJ0uai12GuMaqdaDEywRDETcDa2zsws1szChQvi3TGKyjVfISrGXl768Kr
+ lycQDdzoCcuSMLsvRk6fP1QGinOqYGv35jbAkyWABOv8WVQcon4hSxiKFa+YXlLj5v4pCBesfhY
+ 1DQnHrz6ssolwYW+UplVfuC71MCz5IUme35Y8wU3ianW+wF+rxYfg1wj4pdE/JUBYInMJ11b9/x
+ PyG5GTzWTMJyfDK8O4jiIGK4+WQU2bHsOFjJzZIs1h1JyiR4fNWvtjlzUXU82GO+9rdlkIIwDRm
+ VCswyX4WbIQTMg4P9GESbB+cLtYep4w+TtvbAWNAYawA==
 From: Jonas Karlman <jonas@kwiboo.se>
 To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
  <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, "Greg
@@ -51,9 +51,9 @@ Cc: Alex Bee <knaerzche@gmail.com>, Nicolas Dufresne
  <detlev.casanova@collabora.com>, linux-media@vger.kernel.org,
  linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
  linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH v5 03/10] media: rkvdec: h264: Use bytesperline and buffer height as virstride
-Date: Tue, 18 Jun 2024 19:46:27 +0000
-Message-ID: <20240618194647.742037-4-jonas@kwiboo.se>
+Subject: [PATCH v5 04/10] media: rkvdec: h264: Don't hardcode SPS/PPS parameters
+Date: Tue, 18 Jun 2024 19:46:28 +0000
+Message-ID: <20240618194647.742037-5-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240618194647.742037-1-jonas@kwiboo.se>
 References: <20240618194647.742037-1-jonas@kwiboo.se>
@@ -70,14 +70,17 @@ X-Complaints-To: abuse@forwardemail.net
 X-ForwardEmail-Version: 0.4.40
 X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  149.28.215.223
-X-ForwardEmail-ID: 6671e43b64ade33c90059f9e
+X-ForwardEmail-ID: 6671e43f64ade33c90059fb7
 
-Use bytesperline and buffer height to calculate the strides configured.
+From: Alex Bee <knaerzche@gmail.com>
 
-This does not really change anything other than ensuring the
-bytesperline that is signaled to userspace matches what is configured
-in HW.
+Some SPS/PPS parameters are currently hardcoded in the driver even
+though they exist in the stable uapi controls.
 
+Use values from SPS/PPS controls instead of hardcoding them.
+
+Signed-off-by: Alex Bee <knaerzche@gmail.com>
+[jonas@kwiboo.se: constraint_set_flags condition, commit message]
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
@@ -90,49 +93,45 @@ v4:
 - No change
 
 v3:
-- Remove unnecessary yuv_virstride +=
+- New patch
 
- drivers/staging/media/rkvdec/rkvdec-h264.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/staging/media/rkvdec/rkvdec-h264.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/media/rkvdec/rkvdec-h264.c b/drivers/staging/media/rkvdec/rkvdec-h264.c
-index 4fc167b42cf0..7a1e76d423df 100644
+index 7a1e76d423df..8bce8902b8dd 100644
 --- a/drivers/staging/media/rkvdec/rkvdec-h264.c
 +++ b/drivers/staging/media/rkvdec/rkvdec-h264.c
-@@ -896,9 +896,9 @@ static void config_registers(struct rkvdec_ctx *ctx,
- 	dma_addr_t rlc_addr;
- 	dma_addr_t refer_addr;
- 	u32 rlc_len;
--	u32 hor_virstride = 0;
--	u32 ver_virstride = 0;
--	u32 y_virstride = 0;
-+	u32 hor_virstride;
-+	u32 ver_virstride;
-+	u32 y_virstride;
- 	u32 yuv_virstride = 0;
- 	u32 offset;
- 	dma_addr_t dst_addr;
-@@ -909,16 +909,16 @@ static void config_registers(struct rkvdec_ctx *ctx,
+@@ -655,13 +655,14 @@ static void assemble_hw_pps(struct rkvdec_ctx *ctx,
  
- 	f = &ctx->decoded_fmt;
- 	dst_fmt = &f->fmt.pix_mp;
--	hor_virstride = (sps->bit_depth_luma_minus8 + 8) * dst_fmt->width / 8;
--	ver_virstride = round_up(dst_fmt->height, 16);
-+	hor_virstride = dst_fmt->plane_fmt[0].bytesperline;
-+	ver_virstride = dst_fmt->height;
- 	y_virstride = hor_virstride * ver_virstride;
+ #define WRITE_PPS(value, field) set_ps_field(hw_ps->info, field, value)
+ 	/* write sps */
+-	WRITE_PPS(0xf, SEQ_PARAMETER_SET_ID);
+-	WRITE_PPS(0xff, PROFILE_IDC);
+-	WRITE_PPS(1, CONSTRAINT_SET3_FLAG);
++	WRITE_PPS(sps->seq_parameter_set_id, SEQ_PARAMETER_SET_ID);
++	WRITE_PPS(sps->profile_idc, PROFILE_IDC);
++	WRITE_PPS(!!(sps->constraint_set_flags & (1 << 3)), CONSTRAINT_SET3_FLAG);
+ 	WRITE_PPS(sps->chroma_format_idc, CHROMA_FORMAT_IDC);
+ 	WRITE_PPS(sps->bit_depth_luma_minus8, BIT_DEPTH_LUMA);
+ 	WRITE_PPS(sps->bit_depth_chroma_minus8, BIT_DEPTH_CHROMA);
+-	WRITE_PPS(0, QPPRIME_Y_ZERO_TRANSFORM_BYPASS_FLAG);
++	WRITE_PPS(!!(sps->flags & V4L2_H264_SPS_FLAG_QPPRIME_Y_ZERO_TRANSFORM_BYPASS),
++		  QPPRIME_Y_ZERO_TRANSFORM_BYPASS_FLAG);
+ 	WRITE_PPS(sps->log2_max_frame_num_minus4, LOG2_MAX_FRAME_NUM_MINUS4);
+ 	WRITE_PPS(sps->max_num_ref_frames, MAX_NUM_REF_FRAMES);
+ 	WRITE_PPS(sps->pic_order_cnt_type, PIC_ORDER_CNT_TYPE);
+@@ -688,8 +689,8 @@ static void assemble_hw_pps(struct rkvdec_ctx *ctx,
+ 		  DIRECT_8X8_INFERENCE_FLAG);
  
- 	if (sps->chroma_format_idc == 0)
- 		yuv_virstride = y_virstride;
- 	else if (sps->chroma_format_idc == 1)
--		yuv_virstride += y_virstride + y_virstride / 2;
-+		yuv_virstride = y_virstride + y_virstride / 2;
- 	else if (sps->chroma_format_idc == 2)
--		yuv_virstride += 2 * y_virstride;
-+		yuv_virstride = 2 * y_virstride;
- 
- 	reg = RKVDEC_Y_HOR_VIRSTRIDE(hor_virstride / 16) |
- 	      RKVDEC_UV_HOR_VIRSTRIDE(hor_virstride / 16) |
+ 	/* write pps */
+-	WRITE_PPS(0xff, PIC_PARAMETER_SET_ID);
+-	WRITE_PPS(0x1f, PPS_SEQ_PARAMETER_SET_ID);
++	WRITE_PPS(pps->pic_parameter_set_id, PIC_PARAMETER_SET_ID);
++	WRITE_PPS(pps->seq_parameter_set_id, PPS_SEQ_PARAMETER_SET_ID);
+ 	WRITE_PPS(!!(pps->flags & V4L2_H264_PPS_FLAG_ENTROPY_CODING_MODE),
+ 		  ENTROPY_CODING_MODE_FLAG);
+ 	WRITE_PPS(!!(pps->flags & V4L2_H264_PPS_FLAG_BOTTOM_FIELD_PIC_ORDER_IN_FRAME_PRESENT),
 -- 
 2.45.2
 
