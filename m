@@ -1,127 +1,104 @@
-Return-Path: <linux-kernel+bounces-218792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EA490C613
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:14:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E854990C619
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F09DE1C21CA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:14:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73F79B22D26
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE62D160885;
-	Tue, 18 Jun 2024 07:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgUAMR3M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B3F168495;
+	Tue, 18 Jun 2024 07:41:25 +0000 (UTC)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB8347A5D;
-	Tue, 18 Jun 2024 07:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD2213AD04;
+	Tue, 18 Jun 2024 07:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718696463; cv=none; b=XfQ3bMJfrx8LMh2OeAFKcWKcYT8Z2q6//1rhQv24cEFI00FB/cOS9m9SWiaoAEd6n7rr3r0moodNtgdIbe8bI4v6t08tZ76d6plXz2XhSpUbt3z3tpBr0bWvkkMSSvuBegdXBmENx2UBPJpxbPXdMsN19F/Mow2g+s2OSy4EelM=
+	t=1718696484; cv=none; b=ZGiRo6brXPRuH+lE4sVxfpA2P9S6PUuQhujhngSyWuQCQkK+BoUZtAX/bhEjALiChaxm55fxZP+odjDfVwP78lM30yCi+uAvA4dMRKy7zwIb+n20okkvFovnGuu6oKG4+V7vOh2vIoZQWK3m/7T95TBjCZDW8BRXDens//Igec8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718696463; c=relaxed/simple;
-	bh=kWoPBUQm3BlOjgFdJfsDu5HMF2BzOEKyQniwyMyajYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RU+1BQZvxkV+FUBIq8MFeW+OD+T66ZgesG//R/Vnnl4CgD3jAZD9Sz/PeT76GIdHbRhLD+xnrE+g1csoVrU88a3T+c7Uwg/JMcDcuN4dShdco0djU7VU2VOpY6IT5hgLjOi3B8G2HF6HOKzFGRgjIW8eCdFrhiYtqeRha/FZFAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgUAMR3M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8DE6C3277B;
-	Tue, 18 Jun 2024 07:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718696462;
-	bh=kWoPBUQm3BlOjgFdJfsDu5HMF2BzOEKyQniwyMyajYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CgUAMR3MXK+t17MY08oKmJBeH72dkdheWyF+wvBu7C30JySBHO7RbmBe6aw3OWBv1
-	 lLNgMyu6EeC82CFkS4KhrozEw/ThSchYZ2hYnqG1Q/9euJLAFCPnRKQALcWOSTZ18A
-	 CiOZKWqb9hxOd3mCKkzT4dxn2K9SsECdrFuEr9jb7YqSlt+B+cqpRzKMTA3LWfSSp/
-	 m5dX5AhgobO0M00PKPTyYyOM7iHtdMrfqaPweyj8ZqfsvCbt82HcxVAED9FZIUwuRk
-	 /pmgJgkYQGlEbDdJpHV4/rOqfrMIvqREeAbNlzzS7SoX3Tgczc1SJqzQvwK0t3Wz9/
-	 EPTGNNmQIFGZA==
-Date: Tue, 18 Jun 2024 08:40:58 +0100
-From: Simon Horman <horms@kernel.org>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Subject: Re: [net-next PATCH v5 01/10] octeontx2-pf: Refactoring RVU driver
-Message-ID: <20240618074058.GC8447@kernel.org>
-References: <20240611162213.22213-1-gakula@marvell.com>
- <20240611162213.22213-2-gakula@marvell.com>
+	s=arc-20240116; t=1718696484; c=relaxed/simple;
+	bh=QUyX7m4x1EJUeMRxMQZtH9yOwSDPCuwZz+EG+U7QqsI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CiT2jyHhasJCZgykBtQ52tX/gThYkgSPH2PXo9ipMsiJu4QX/bAKct7S5x/svaHi9Si8YNd4N34m/jxQrxKHYaYpB+sVHbdnQMPhTrXQET4lxX4jj3lY1OcBT9KEUb46QJ+owGbSx74pI4cZIwFnRXs6DHveRHRnrzQ2OnOJkR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfef7b13c98so5464745276.0;
+        Tue, 18 Jun 2024 00:41:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718696482; x=1719301282;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RoMlu7MLsmT3dUH1EyHiBP5bZpobTchIxYqN6vNhfv0=;
+        b=YaXpKdv0K70sD5pP/PGmJGeclnskIy+Xly7YY1lVEc0oa9SLExrRi+0dj1SIyW74c4
+         5S/9oyhjqkNqh6AwTM9YubBriRA41vXnkqSJdLakVQjerWuN8QWYbU2m4zqQdF+83h6T
+         qgjAUB3cwye+ncTK5TGAyGhsKe9N+o9HJn+lWLJprwjsg5+QDX+V/BA4uxelunWR+hb0
+         qYo1aTzxkM5hW3uZVe1spnbf+fHOiwItL1go4ivmxxpcVCADYT/qc4n2BD37QZz4cNJD
+         EYWF5nlC1TQkVLAV7Nchj6J13BbxeKKjbv/Iiotmeru/6SEBULdxis4Oqsj14o8O2cQP
+         LMgw==
+X-Forwarded-Encrypted: i=1; AJvYcCU950BiFxvx25HEPAcoo8qbo/KT9sO+jRYk27OhsxW0mpWaAzrapdyC/1SSh4N6ax/wLVnQ+GQrNWA7jGIUQw/PJA8oA96DKXZQs308MIn/Bmtl0TXpSgIBjrEyCbx2+SNiGmMgRRlwXIrV9e8ZKdyCgDX+SyExhcd8b250RUTdQDzQnFKz0A7gvmI=
+X-Gm-Message-State: AOJu0YxRG9S1KqB4BVrZXOCGGJVjJp65B1xr3Ss7DOadAmuGAooY3jvj
+	bBnCWFUgWEQKD+LySSnDaxee9LkBG18wvdny21p8xhWDtyetoC4uoG7nDUlc
+X-Google-Smtp-Source: AGHT+IFnT7T+gAYhJvbH0lyttQveZfNN628U2Eogww/DjWSG5+0W18mKUzgBatJ7Ffqqpz6MTqNfYQ==
+X-Received: by 2002:a25:aa94:0:b0:e02:b545:1bfd with SMTP id 3f1490d57ef6-e02b5453014mr518998276.18.1718696482092;
+        Tue, 18 Jun 2024 00:41:22 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e029f77236asm139036276.59.2024.06.18.00.41.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 00:41:21 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a2424ed00so59402457b3.1;
+        Tue, 18 Jun 2024 00:41:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXHDulv0t63Iii2udNJ09xRJEBLWBjQrz+YTIK10vXskBmpoQVuT4bnmok2N8OymwsksZQmh2RfQB2kOlvaG+PAwWzBfa8NjerJHQT7iyS6/mdEQAFoMBKXAxuWyJtvlMCWdcwEpxb9XlfwUuwODfN2nUmbAqQRE/Vvz1Vv1kZrAVLmwCwz8PiDfFg=
+X-Received: by 2002:a25:8284:0:b0:dfa:85e4:c8bc with SMTP id
+ 3f1490d57ef6-dff1534634emr11457833276.6.1718696481744; Tue, 18 Jun 2024
+ 00:41:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611162213.22213-2-gakula@marvell.com>
+References: <20240617-md-m68k-drivers-block-v1-0-b200599a315e@quicinc.com> <20240617-md-m68k-drivers-block-v1-1-b200599a315e@quicinc.com>
+In-Reply-To: <20240617-md-m68k-drivers-block-v1-1-b200599a315e@quicinc.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Jun 2024 09:41:10 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXn8F_4Fi7XiUFGhQhJ19NBrCn7a=ofUZ3vGWeeTJDrjg@mail.gmail.com>
+Message-ID: <CAMuHMdXn8F_4Fi7XiUFGhQhJ19NBrCn7a=ofUZ3vGWeeTJDrjg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] amiflop: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 09:52:04PM +0530, Geetha sowjanya wrote:
-> Refactoring and export list of shared functions such that
-> they can be used by both RVU NIC and representor driver.
-> 
-> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+On Tue, Jun 18, 2024 at 3:14=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
+.com> wrote:
+> With ARCH=3Dm68k, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/amiflop.o
+>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-...
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+Gr{oetje,eeting}s,
 
-...
+                        Geert
 
-> @@ -2949,6 +2952,7 @@ static int nix_tx_vtag_alloc(struct rvu *rvu, int blkaddr,
->  	mutex_unlock(&vlan->rsrc_lock);
->  
->  	regval = size ? vtag : vtag << 32;
-> +	regval |= (vtag & ~GENMASK_ULL(47, 0)) << 48;
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Hi Geetha,
-
-I'm a little confused by the line above.
-
-vtag is a 64 bit value.
-It is masked, leaving the upper 16 bits intact,
-and the lower 48 bits as zeros.
-It is then left-shifted 48 bits.
-By my reasoning the result is always 0.
-
-e.g.
-  0x123456789abcdef1 & ~GENMASK_ULL(47, 0) => 0x1234000000000000
-  0x1234000000000000 << 48 => 0
-
-Also, I suspect that FIELD_PREP could be used to good effect here.
-(And, as an aside, elsewhere in this file/driver.)
-
->  	rvu_write64(rvu, blkaddr,
->  		    NIX_AF_TX_VTAG_DEFX_DATA(index), regval);
-> @@ -4619,6 +4623,7 @@ static void nix_link_config(struct rvu *rvu, int blkaddr,
->  	rvu_get_lbk_link_max_frs(rvu, &lbk_max_frs);
->  	rvu_get_lmac_link_max_frs(rvu, &lmac_max_frs);
->  
-> +	rvu_write64(rvu, blkaddr, NIX_AF_SDP_LINK_CREDIT, SDP_LINK_CREDIT);
->  	/* Set default min/max packet lengths allowed on NIX Rx links.
->  	 *
->  	 * With HW reset minlen value of 60byte, HW will treat ARP pkts
-> @@ -4630,14 +4635,14 @@ static void nix_link_config(struct rvu *rvu, int blkaddr,
->  				((u64)lmac_max_frs << 16) | NIC_HW_MIN_FRS);
->  	}
->  
-> -	for (link = hw->cgx_links; link < hw->lbk_links; link++) {
-> +	for (link = hw->cgx_links; link < hw->cgx_links + hw->lbk_links; link++) {
->  		rvu_write64(rvu, blkaddr, NIX_AF_RX_LINKX_CFG(link),
->  			    ((u64)lbk_max_frs << 16) | NIC_HW_MIN_FRS);
->  	}
->  	if (hw->sdp_links) {
->  		link = hw->cgx_links + hw->lbk_links;
->  		rvu_write64(rvu, blkaddr, NIX_AF_RX_LINKX_CFG(link),
-> -			    SDP_HW_MAX_FRS << 16 | NIC_HW_MIN_FRS);
-> +			    SDP_HW_MAX_FRS << 16 | SDP_HW_MIN_FRS);
->  	}
->  
->  	/* Get MCS external bypass status for CN10K-B */
-
-...
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
