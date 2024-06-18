@@ -1,183 +1,135 @@
-Return-Path: <linux-kernel+bounces-219222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCC690CB80
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:20:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5407F90CB85
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E0321C225A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:20:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090B21F22D5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76D713792B;
-	Tue, 18 Jun 2024 12:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562E61386C9;
+	Tue, 18 Jun 2024 12:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gqFLIg4g";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+IuhtfVE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gqFLIg4g";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+IuhtfVE"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AqsE8Afz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3039D82D6D
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFCF535A3;
+	Tue, 18 Jun 2024 12:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718713209; cv=none; b=K17QQor+zm1tlLC9zv8pfN5Wqpl5pnN/C8UdoqJHhz49qne8fMEm9S+pzeyewbghCAkv+GqhYHjZK+2ak6YKgG5Rf8Q8idYeN3c8qjdtKqXfFPH/JvYyoglo0SBhtheGMksUBD9+mG80+zrcRZproKswlgoGW+dBOwPD+UTiPuE=
+	t=1718713229; cv=none; b=dfAniZIDVlYJhykYZMNj3ktd7wtvIRb9Bg8w03JGOS+cBg5/5WDSBhiPyFRUbdTdsueIi074nYZP6GuEf657dPq4fP2DSWErW8TkG0RwclYbVIg6fDshuf6Xd5ya+MsokiyKboH+v2hThjr31nIr1rHnFjo4OlXj9fh31cOmGpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718713209; c=relaxed/simple;
-	bh=LYZK/JIvlpXw18c+dn3dcS27z7IJEcxgu/uuiTPlMqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ybryr0DpvUAoC+f5vkhvfmlp31ZbIkxM/YwoSD5spdQcVana8voPzMTz1cE3q1a70XyDfCZoDP+xCUeGMXKly3Do4wkfAGocrNZi+CnoLMWek/bUn5+s/K//J84iDH0zExGRwJOCLc1qp2ioBSKCPcAOHSwQ20afe16Dx3ZMm2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gqFLIg4g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+IuhtfVE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gqFLIg4g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+IuhtfVE; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1F2801F45B;
-	Tue, 18 Jun 2024 12:20:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718713204; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nuNLBQkTsfR+V25TRmViz6z/l9TGgt8MxTKJQZRNjBM=;
-	b=gqFLIg4gld/fG1yn0eyBj7TfaGYGO9OlGnGPjYP8jAP5gYEET+f66S7hEL36PIacEcbdsB
-	5TvL4QiRnoX/5KZns2Cev4LHzOlm1Vs9xnZAE5Mgn77KGlRp5qBJAx7o0qpaJiiilhHdoR
-	AaGJKB/zpSOYnRL7BBDTeR99wBQ1Ulc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718713204;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nuNLBQkTsfR+V25TRmViz6z/l9TGgt8MxTKJQZRNjBM=;
-	b=+IuhtfVEbPt8vqETwXxupFZAddYd0pZlrgIplACwzdB64L2qcpx3wV9h/Dtia0b7vqddx8
-	/zTEOzM7nlFnxoBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718713204; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nuNLBQkTsfR+V25TRmViz6z/l9TGgt8MxTKJQZRNjBM=;
-	b=gqFLIg4gld/fG1yn0eyBj7TfaGYGO9OlGnGPjYP8jAP5gYEET+f66S7hEL36PIacEcbdsB
-	5TvL4QiRnoX/5KZns2Cev4LHzOlm1Vs9xnZAE5Mgn77KGlRp5qBJAx7o0qpaJiiilhHdoR
-	AaGJKB/zpSOYnRL7BBDTeR99wBQ1Ulc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718713204;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nuNLBQkTsfR+V25TRmViz6z/l9TGgt8MxTKJQZRNjBM=;
-	b=+IuhtfVEbPt8vqETwXxupFZAddYd0pZlrgIplACwzdB64L2qcpx3wV9h/Dtia0b7vqddx8
-	/zTEOzM7nlFnxoBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D1D9F13AA0;
-	Tue, 18 Jun 2024 12:20:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6QtPLHJ7cWZmTwAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Tue, 18 Jun 2024 12:20:02 +0000
-Date: Tue, 18 Jun 2024 14:20:00 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard 
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Doug Anderson
- <dianders@chromium.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2] drm/display: Drop obsolete dependency on COMPILE_TEST
-Message-ID: <20240618142000.3307858f@endymion.delvare>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1718713229; c=relaxed/simple;
+	bh=4POtStJCjE5RRoSLSG+N/j3IB3Xj43A0ipVnukEbGJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxwuthxfYCHDQ280Ml/KVPnBDRkJwVIvhjxbp5qZHb8ycY4LXgqrHEctESkdXxEu11ZEwfh0akhEpu3ik3kjC4oBj38IngqdYA8SMbJg2CEzOQLWDTDOg2ufkA3RasZWIChws/vzZ/F9N2cBDSo08PFqXiohvM8oBJ56CEsEUE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AqsE8Afz; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718713229; x=1750249229;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4POtStJCjE5RRoSLSG+N/j3IB3Xj43A0ipVnukEbGJg=;
+  b=AqsE8AfzsiAg98dDm5LLCK/trgzd/9MsC/v3eH7dRtq3RzU9fjxc5GmE
+   GnyDeCGGw07FLWaeqM5nHGpI4ziwIoZrG6KOMhOx0Tf8c5xBhITCC1SY2
+   x0mgx4d6N14YKk0GrdDFgKIZg+JmS0ISvXRpraHli4UR38GV1ObqdwFOF
+   UYlkDgJWioU6A18U+vz4AHyCN6I7ulcW2tuz1hhqOeHIaAigF4tgIIMg/
+   WN7DOe7Zn/oKcUCJrI1aSWNxCI2rmW2lCzyJjQyLAOSLyutEaP4tnau/u
+   IlYsdHx2RPCAwOGNk1xPiYWUkbV3nzlHVokw0lqfy7Vo14L7WoEH5Vxmc
+   g==;
+X-CSE-ConnectionGUID: Ie/mVklxRzmDhZaZbO+o9w==
+X-CSE-MsgGUID: HLX8MHSPSoKIRoxfu30ffw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="26169871"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="26169871"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 05:20:28 -0700
+X-CSE-ConnectionGUID: DwcjCin0ROGMSatLBuCePA==
+X-CSE-MsgGUID: I5+5RDgfRiK1kXbdoeW9pQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="46659137"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 18 Jun 2024 05:20:22 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 381D71CB; Tue, 18 Jun 2024 15:20:20 +0300 (EEST)
+Date: Tue, 18 Jun 2024 15:20:20 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Elena Reshetova <elena.reshetova@intel.com>, 
+	Jun Nakajima <jun.nakajima@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	"Kalra, Ashish" <ashish.kalra@amd.com>, Sean Christopherson <seanjc@google.com>, 
+	"Huang, Kai" <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org, linux-hyperv@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv11 18/19] x86/acpi: Add support for CPU offlining for
+ ACPI MADT wakeup method
+Message-ID: <noxbrmequ4inpxgnwna6drnzuymcn3k6ik2kvlbzacxvr2udgf@pximrevgcgmu>
+References: <icu4yecqfwhmbexupo4zzei4lbe5sgavsfkm27jd6t6gyjynul@c2wap3jhtik7>
+ <20240610134020.GCZmcCRFxuObyv1W_d@fat_crate.local>
+ <hidvykk3yan5rtlhum6go7j3lwgrcfcgxlwyjug3osfakw2x6f@4ohvo23zaesv>
+ <nh7cihzlsjtoddtec6m62biqdn62k3ka5svs6m64qekhpebu5z@dkplwad2urgp>
+ <20240611194653.GGZmiprSNzK0JSJL17@fat_crate.local>
+ <2kc27uzrsvpevtvos2harqj3bgfkizi5dhhxkigswlylpnogr5@lk6fi2okv53i>
+ <20240612092943.GCZmlqh7O662JB-yGu@fat_crate.local>
+ <w6ohbffl5wwmralg255ec7nozxksge4z4nnkmwncthxzhuv46d@qq46r2wrjlog>
+ <20240613145636.GGZmsIpHn16R04QlaN@fat_crate.local>
+ <8efff872-7843-2025-dce2-a5dcdbf31143@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_TLS_ALL(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch,chromium.org,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8efff872-7843-2025-dce2-a5dcdbf31143@amd.com>
 
-Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
-is possible to test-build any driver which depends on OF on any
-architecture by explicitly selecting OF. Therefore depending on
-COMPILE_TEST as an alternative is no longer needed.
+On Fri, Jun 14, 2024 at 09:06:30AM -0500, Tom Lendacky wrote:
+> On 6/13/24 09:56, Borislav Petkov wrote:
+> > On Thu, Jun 13, 2024 at 04:41:00PM +0300, Kirill A. Shutemov wrote:
+> > > It is easy enough to do. See the patch below.
+> > 
+> > Thanks, will have a look.
+> > 
+> > > But I am not sure if I can justify it properly. If someone doesn't really
+> > > need 5-level paging, disabling it at compile-time would save ~34K of
+> > > kernel code with the configuration.
+> > > 
+> > > Is it worth saving ~100 lines of code?
+> > 
+> > Well, it goes both ways: is it worth saving ~34K kernel text and for that make
+> > the code a lot less conditional, more readable, contain less ugly ifdeffery,
+> 
+> Won't getting rid of the config option cause 5-level to be used by default
+> on all platforms that support it? The no5lvl command line option would have
+> to be used to get 4-level paging at that point.
 
-To avoid reintroducing the randconfig bug originally fixed by commit
-876271118aa4 ("drm/display: Fix build error without CONFIG_OF"),
-DRM_MSM which selects DRM_DISPLAY_DP_HELPER must explicitly depend
-on OF. This is consistent with what all other DRM drivers are doing.
+Yes, there won't be compile-time option to disable 5-level paging.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
----
-For regular builds, this is a no-op, as OF is always enabled on
-ARCH_QCOM and SOC_IMX5. So this change only affects test builds. As
-explained before, allowing test builds only when OF is enabled
-improves the quality of these test builds, as the result is then
-closer to how the code is built on its intended targets.
+Is it a problem?
 
-Changes since v1:
-* Let DRM_MSM depend on OF so that random test builds won't break.
+We benchmarked it back when 5-level paging got introduced and were not able
+to see a measurable difference between 4- and 5-level paging on the same
+machine. There's some memory overhead on more page table, but it shouldn't
+be a show stopper.
 
- drivers/gpu/drm/display/Kconfig |    2 +-
- drivers/gpu/drm/msm/Kconfig     |    1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
---- linux-6.9.orig/drivers/gpu/drm/display/Kconfig
-+++ linux-6.9/drivers/gpu/drm/display/Kconfig
-@@ -3,7 +3,7 @@
- config DRM_DP_AUX_BUS
- 	tristate
- 	depends on DRM
--	depends on OF || COMPILE_TEST
-+	depends on OF
- 
- config DRM_DISPLAY_HELPER
- 	tristate
---- linux-6.9.orig/drivers/gpu/drm/msm/Kconfig
-+++ linux-6.9/drivers/gpu/drm/msm/Kconfig
-@@ -6,6 +6,7 @@ config DRM_MSM
- 	depends on ARCH_QCOM || SOC_IMX5 || COMPILE_TEST
- 	depends on COMMON_CLK
- 	depends on IOMMU_SUPPORT
-+	depends on OF
- 	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
- 	depends on QCOM_OCMEM || QCOM_OCMEM=n
- 	depends on QCOM_LLCC || QCOM_LLCC=n
-
+I would prefer to get 5-level paging enabled if the machine supports it.
+"no5lvl" cmdline option can be useful for debug or if your workload is
+somehow special.
 
 -- 
-Jean Delvare
-SUSE L3 Support
+  Kiryl Shutsemau / Kirill A. Shutemov
 
