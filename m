@@ -1,143 +1,141 @@
-Return-Path: <linux-kernel+bounces-218686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF98F90C3BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:39:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C856790C3C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5715F1F218D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:39:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8941C20A34
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E100756B7C;
-	Tue, 18 Jun 2024 06:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AF36F099;
+	Tue, 18 Jun 2024 06:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="eRmwnu98";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n8xmEqUH"
-Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/iU2yGS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53316BFAA;
-	Tue, 18 Jun 2024 06:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3629150285;
+	Tue, 18 Jun 2024 06:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718692735; cv=none; b=suu92b0j3kGWRqPVCYU6jqgPW0Z3ZdMGhDIci2UFgdSiaaR35zNXzGLRNfIcuTxDHyT8KsC0ctj9PSzT1RbLpEW6Ai9LFrYmS1x0nVLXolMwESxI/KjGBr0LF2liisDSFSnGG5HWMVXGvUdf/uvfCaMdfqMH+2aMqv0hkF0+wnM=
+	t=1718692758; cv=none; b=sEKR/LaNNmqiXRQOpV7FSBCrNFmn2OlrqOiLP9PMitTeFR1wqLPiSk0xSeKE2W0IOU1QI3Sh10yhHXaDamKninSHLCyLU0YeThfWylykLYnJFVoKoC1VF72EPT6dMPBP47sUcEnx2xmKVXAR/w28zxC+zqoLmL2DXXEMAA7Z9HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718692735; c=relaxed/simple;
-	bh=2MHzymjsptfmyDg7nkJWUgpNKKI9/H3dw6H8umrDA/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rv7AzGZKGBAAt7Pcrdhk1IGAJtWaeVnfqSMdpl5sNp0zT8XIm5tyX1VZEO2pvLq+HbVLmeRZn58xk1HVTZ6KjDI6UMuq0YnPKNpFMEPM0p2/12NwSuDpSWe4dP7BnnqU2QC90Rrx1FxYHBIlzZZp/ZVEXyY89WvLgFos3HxFVIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=eRmwnu98; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n8xmEqUH; arc=none smtp.client-ip=64.147.123.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 3FE5018000D1;
-	Tue, 18 Jun 2024 02:38:52 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 18 Jun 2024 02:38:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1718692731; x=1718779131; bh=MelmEiifL3
-	mefmpiNyW6L73XRVlNle+exQ08leADDXE=; b=eRmwnu98b1+f62nfFifpY8Y7se
-	hkKWXGiqSEivcgJVMHY/7F4oK26Nh2hYW4dFXYK+XeoEPtBceJAnNHlRz7N21CzX
-	qTNq7tYVj3GkOrjDA3gnAlPRAvg3sUg0KPcSu4YE3XX0S11PFIJ1s1SJfEXgsD94
-	olNXFin/71/h3ljwjvVSlcaEys4bcxZrY6i746dojtrVycCxGyg6ck50DH83+HaB
-	ye9s4iNAdXisuCXhT/Inf8wW7umNLvaSJhacRN3WAtFv1YsQlUAM5zsaii3AG2Pg
-	xBN46sn+ZujTmtg+d7rGCfGdGBk9zv2EscXEtXlGIRiy9vceopH1CuaqJvFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1718692731; x=1718779131; bh=MelmEiifL3mefmpiNyW6L73XRVlN
-	le+exQ08leADDXE=; b=n8xmEqUHI/5mmb02Z1+IZYfCIQ4Wq7OtiY8ygvfpUTfb
-	FMN/+NTRP7gabrQ+Z/9UMxqVGD9gSPCz/H7hWBFMos/5rfEzCI46cgJi3mSfik7m
-	18Mkl1jkzu7PoJl9b2DMEBi4AV6Y79oV1Knqg2ZfX/AMFr7nOmVpkRELhuBC1hSn
-	JJKjOGlFf3cu01KJqsUcrTwqgau9VH9ZeV2D6DzUvlxyhKjJe/zx6RJfbGHxn2LV
-	G5l7nmofHQheGtxNFM8IZyBIf8ibT5GTDj/VqNSFz8LitddlrfzVA+VF+CByuczt
-	cO8tLX5koGy/7g9xBpXU1/TP0QWgB6Fy+YQeEoIVig==
-X-ME-Sender: <xms:eytxZunYQy-NhdCszhu7qkeYgjKLFXqgZpNcAeml5vDZf8WvqnRSZQ>
-    <xme:eytxZl3NhmHA-IUAgX7pWAlQSVw9QTzOaG2xe9QGzdZoa7RH8rvO0OhYodjwhdh-8
-    oYCMDdooxXa5Q>
-X-ME-Received: <xmr:eytxZspWA5I4ARwAWpSolFeHx7C1uT-ZJYDOEDG3wAh2P3QqgavsoawFOUEKfbZ_pPuFKyG-Nzfgx8rNDNpevy0SKhI1dkGbYu1B8g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedviedgudduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgv
-    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehge
-    dvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhroh
-    grhhdrtghomh
-X-ME-Proxy: <xmx:eytxZincgJ4JsR2pqFnYM74WBJbf8GNDe2vvAOW34jpspnkUwvmuFQ>
-    <xmx:eytxZs1XugIqhJr5gq4zYOifowyzyuySZ1_kavkh522_IOTRISFONQ>
-    <xmx:eytxZpssHMxJuUhmoRNAwJU0ulfq6L4F43lCgcAUNUqrAa3HdhODog>
-    <xmx:eytxZoXRkzOoUBRIEE9raKi62oJzYiTswliLfyXdsodbJD8_O0a6mQ>
-    <xmx:eytxZmNVE6GRY6JAViC_A_gaO_lDXS4v-uL75o1F_6uX-Phn0UKKuQJA>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Jun 2024 02:38:50 -0400 (EDT)
-Date: Tue, 18 Jun 2024 08:38:48 +0200
-From: Greg KH <greg@kroah.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>,
-	Gustavo Silva <gustavograzs@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Sumit Garg <sumit.garg@linaro.org>
-Subject: Re: linux-next: manual merge of the char-misc tree with the qcom tree
-Message-ID: <2024061841-embellish-epilepsy-3a20@gregkh>
-References: <ZnCUDSypSIPCTfJ8@sirena.org.uk>
+	s=arc-20240116; t=1718692758; c=relaxed/simple;
+	bh=etFrlf2PYqV0eSgRzTXNnsDE4NLFvh1oNzyCmytsCNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cCTmr9RSJmQgem9xy2UDvTYICrmAUjx/ZQEQ8TiGuex3k+IJzEX6uMq+LlDc8uVwLBXX63Zn1qAXP9sg5lZMpYQdUOBzjlCdIvjSuaZax2S7vyxi+YRUFoqv5z9+PGqQ6Y9LxUqI0GgB3Hp9xFHNlHUo+pdib4MIFJfYujyuwik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/iU2yGS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E08C4AF1C;
+	Tue, 18 Jun 2024 06:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718692757;
+	bh=etFrlf2PYqV0eSgRzTXNnsDE4NLFvh1oNzyCmytsCNo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K/iU2yGSg4URsowg0dyKTU5qaq3Fp1htc1Kp7b6iMkw9QEmjvw9s97uG68dQ2SQZ0
+	 rMtjjxF8VO2+NpoDn/18PZUpZfz9t8vAUYPemM1ghEaEfQvrKSP4qFOye639gz1tdy
+	 nyKDfahwAtiSqeRy7srZMl6Tr7BR7I/JKPV7bNwJ4f/kIHWSI4NTA6MKdGdZ3z9i15
+	 VLJqg0BQu9raHqJ+ZlTNZ12hSgiNxibCYYOX7KnUZ+8/l7bb1xVNJGwagqzSujLeyV
+	 0XA669TFvZ5rAqNXLRGq3YyuIcSm4/MAQZ2WX7sgBxYRyhbP1Ww7gKpmFyQmdcvqmA
+	 1OaWDqDxa5iAw==
+Message-ID: <94d50353-15ba-4769-bd98-57f4430f5fc2@kernel.org>
+Date: Tue, 18 Jun 2024 08:39:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnCUDSypSIPCTfJ8@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] hwrng: exynos: Enable Exynos850 support
+To: Sam Protsenko <semen.protsenko@linaro.org>,
+ =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240618003743.2975-1-semen.protsenko@linaro.org>
+ <20240618003743.2975-7-semen.protsenko@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240618003743.2975-7-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 17, 2024 at 08:52:45PM +0100, Mark Brown wrote:
-> Hi all,
+On 18/06/2024 02:37, Sam Protsenko wrote:
+> Add Exynos850 compatible and its driver data. It's only possible to
+> access TRNG block via SMC calls in Exynos850, so specify that fact using
+> QUIRK_SMC in the driver data.
 > 
-> Today's linux-next merge of the char-misc tree got a conflict in:
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  drivers/char/hw_random/exynos-trng.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
->   Documentation/devicetree/bindings/vendor-prefixes.yaml
-> 
-> between commit:
-> 
->   1fabbb0888c3d ("dt-bindings: vendor-prefixes: Add Schneider Electric")
-> 
-> from the qcom tree and commit:
-> 
->   202ce3eaa6912 ("dt-bindings: vendor-prefixes: add ScioSense")
-> 
-> from the char-misc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc Documentation/devicetree/bindings/vendor-prefixes.yaml
-> index 56ad56d7733e9,044e2001f4e3a..0000000000000
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> @@@ -1264,8 -1254,8 +1264,10 @@@ patternProperties
->       description: Smart Battery System
->     "^schindler,.*":
->       description: Schindler
->  +  "^schneider,.*":
->  +    description: Schneider Electric
-> +   "^sciosense,.*":
-> +     description: ScioSense B.V.
->     "^seagate,.*":
->       description: Seagate Technology PLC
->     "^seeed,.*":
+> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
+> index 98b7a8ebb909..3368a08df9ce 100644
+> --- a/drivers/char/hw_random/exynos-trng.c
+> +++ b/drivers/char/hw_random/exynos-trng.c
+> @@ -333,6 +333,9 @@ static DEFINE_SIMPLE_DEV_PM_OPS(exynos_trng_pm_ops, exynos_trng_suspend,
+>  static const struct of_device_id exynos_trng_dt_match[] = {
+>  	{
+>  		.compatible = "samsung,exynos5250-trng",
+> +	}, {
+> +		.compatible = "samsung,exynos850-trng",
+> +		.data = (void *)QUIRK_SMC,
 
-Looks good, thanks!
+Probably this (and in previous patch) should be called flags, not
+quirks. Quirks are for work-arounds.
+
+Best regards,
+Krzysztof
+
 
