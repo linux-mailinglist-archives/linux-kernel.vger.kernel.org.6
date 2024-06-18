@@ -1,100 +1,131 @@
-Return-Path: <linux-kernel+bounces-219822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA5790D82D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:07:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBF990D827
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADB41C244A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86822282DDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5454DA0C;
-	Tue, 18 Jun 2024 16:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="jW7tpBvd"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD7B4D8BD;
+	Tue, 18 Jun 2024 16:06:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF424D8A2;
-	Tue, 18 Jun 2024 16:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A72D208A0
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718726801; cv=none; b=hREip/vOhNM6RPNuNxNTa2Y28SZdyy1HUHpuwKtrU6gGO5FH2Elgw9p8qdFEO1ZBaT17mpeNd/aw3LzGB3IKu74ltJkTFQE9VMJjJnar9/DkwkPUGM4VD32mpWFYkSq9zN0f623KdA0FYpyWSn46giLGk/d/1gPQtyT1eqZOmLc=
+	t=1718726782; cv=none; b=itFOGriLjbaTWcPoI1wjYxsYEb/mJDkZJNNTbTCgOfmCLxunF+7YId1J1GXWHF7fcuWhl2uKhSyCP259Lp8iwMv2tLTsAPL34KNQUfn0gZ14NHlxWY3G+qOWT5EJKQyXwoKn6WZW89hZtnyZPq1Jtg0zehISE1d3+CLWxSm0Mzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718726801; c=relaxed/simple;
-	bh=ej9CJG6O1s5bXy2f7PT1FQmimnDOu7MWnSDO5jqF7lE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I3hFitPaOvyVJURNBZX1ZrV4/nINNnxTS+vqM12nBFKDsmR5wGwM2BOvr9205XR7nEZBqM7xStUaZGnh2ke+LaqL20HBoaJSogf+7r4uJTyRVz015LoB5xFvgljkV7PpEjDWWNquLG2CU9RAiQTnMEyFMU/v2o4SKQgkO9KOSjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=jW7tpBvd; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I9ShoU030546;
-	Tue, 18 Jun 2024 11:06:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=+thUlenwK1uXI7DaaZQZ4MsBnxIoisz/NpS8YS1va7s=; b=
-	jW7tpBvd0murd5sYfF3vv/xToTNAZI/H9+gIGy37Ii3z3CSYj1ktjZT2x67v6No7
-	gQF8psTJ0+seTgF9wSz/VAXE15qfn/aipkENDMxjVaoMRY+2RBH8NDtBJNEteWG6
-	5pUr4vl1Q8DACI0sRbPZtWIr0M1RvSNy5WGz2eJK4GvWhR9XaKFIaw7+8dzvtdE8
-	4PyYx8k96ThjY+6qi23gJZrTMe0yhWmK4f7BveJ17yNly76lA43uvY3k50F47ars
-	cK5okCJl3wftfdy8LLt4QECRE1jlogRHmXBiWbQr8UmOUXlk3UAxrDDPg/vUREek
-	Y8mvplwrCufwKICsOR3N6g==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3ys8by3nmg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 11:06:19 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 17:06:01 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Tue, 18 Jun 2024 17:06:01 +0100
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id B0EBB820248;
-	Tue, 18 Jun 2024 16:06:01 +0000 (UTC)
-Message-ID: <7032b425-c2e3-4258-92f9-8035b354ea8b@opensource.cirrus.com>
-Date: Tue, 18 Jun 2024 17:06:01 +0100
+	s=arc-20240116; t=1718726782; c=relaxed/simple;
+	bh=H8XHBp9P2ehcQnUd2bYOBT8GSZ3UXNnVgaRcoelNjcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GNSMGTjDdjrPthegtl5Jm2ouOysdOkM+eY/DPzI07p2ADQS3bgPW3CrKknTS1+E1j8nIpwsPOo8+9Zw8y0LXB6lCyeZOabF0+i5HxAy5US1GPUJS894D6031DiaivAL98cDcIiVM4TQpwRemWtofsv2Ik7PdnffUkPI4OZSjgHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sJbLQ-0003C9-49; Tue, 18 Jun 2024 18:06:04 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sJbLP-003GVK-H9; Tue, 18 Jun 2024 18:06:03 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 1FC942EB9EE;
+	Tue, 18 Jun 2024 16:06:03 +0000 (UTC)
+Date: Tue, 18 Jun 2024 18:06:02 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Stefan Moring <stefan.moring@technolution.nl>, 
+	Adam Butcher <adam@jessamine.co.uk>, Benjamin Bigler <benjamin@bigler.one>, 
+	Fabio Estevam <festevam@gmail.com>, s.hauer@pengutronix.de, linux-kernel@vger.kernel.org, 
+	Stefan Bigler <linux@bigler.io>, linux-spi@vger.kernel.org, 
+	Thorsten Scherer <T.Scherer@eckelmann.de>, Clark Wang <xiaoning.wang@nxp.com>, linux-imx@nxp.com, 
+	kernel@pengutronix.de, Sebastian Reichel <sre@kernel.org>, shawnguo@kernel.org, 
+	Carlos Song <carlos.song@nxp.com>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] spi: Increase imx51 ecspi burst length based on transfer
+ length
+Message-ID: <20240618-prehistoric-amphibian-firefly-a9b2d2-mkl@pengutronix.de>
+References: <20230628125406.237949-1-stefan.moring@technolution.nl>
+ <CAOMZO5AftBB8B-Bb-j0TrTnKiQdGpBkq+jZ3surLSs6xPm_pUQ@mail.gmail.com>
+ <CAB3BuKDcg=7Umxv4yUTDVsQ3X_ash6iFmz-3XaENfni2=R_LCw@mail.gmail.com>
+ <20240618-oxpecker-of-ideal-mastery-db59f8-mkl@pengutronix.de>
+ <20240618-mature-private-peccary-29f0b6-mkl@pengutronix.de>
+ <cd8d89d3-c304-4eb6-897f-b423e8196ef2@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: cs35l56: Accept values greater than 0 as IRQ
- numbers
-To: Mark Brown <broonie@kernel.org>
-CC: Simon Trimmer <simont@opensource.cirrus.com>,
-        <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-References: <20240617135338.82006-1-simont@opensource.cirrus.com>
- <917507e5-dc6c-4e18-a7e1-554625de604e@sirena.org.uk>
- <3451fcf6-ff33-4f72-83d1-945b026b925b@opensource.cirrus.com>
- <007b01dac0c5$7807ac30$68170490$@opensource.cirrus.com>
- <f04958f0-b9e9-4f80-8a83-af9740fa83a0@opensource.cirrus.com>
- <a2946d8a-1ead-4514-b1a4-9c04e37cd8a8@sirena.org.uk>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <a2946d8a-1ead-4514-b1a4-9c04e37cd8a8@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: FXReiKs950989sBZlAs2sjIeNIKvS5xH
-X-Proofpoint-GUID: FXReiKs950989sBZlAs2sjIeNIKvS5xH
-X-Proofpoint-Spam-Reason: safe
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nowtmb2ukpc2l4sg"
+Content-Disposition: inline
+In-Reply-To: <cd8d89d3-c304-4eb6-897f-b423e8196ef2@sirena.org.uk>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 18/06/2024 17:00, Mark Brown wrote:
-> On Mon, Jun 17, 2024 at 03:54:04PM +0100, Richard Fitzgerald wrote:
-> 
->> So 0 is invalid. Question is: is it also valid to pass -ve errors, or is
->> 0 the _only_ invalid value?
-> 
-> Negative values should be fine.
-In that case this patch is necessary so we reject negative values
-as not an IRQ. Otherwise we'll try to request a non-existant IRQ and
-fail with an error.
+
+--nowtmb2ukpc2l4sg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hey Mark,
+
+On 18.06.2024 17:02:22, Mark Brown wrote:
+> On Tue, Jun 18, 2024 at 05:59:36PM +0200, Marc Kleine-Budde wrote:
+>=20
+> > This patch (15a6af94a277 ("spi: Increase imx51 ecspi burst length based
+> > on transfer length")) is wrong and the 4 fixes on top of it don't
+> > finally fix it. I can send a series of 5 reverts, or a manually revert
+> > the burst length calculation to the original value in one patch.
+>=20
+> A single revert should be fine and is probably clearer.
+
+thanks for your quick answer. What about the Fixes-tag? Just the
+original patch?
+
+Fixes: 15a6af94a277 ("spi: Increase imx51 ecspi burst length based on trans=
+fer length")
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--nowtmb2ukpc2l4sg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZxsGgACgkQKDiiPnot
+vG+rEggAj+mDrz6GY9k/Zso42swFjVmS+6JBJRxu8NhDHYLouktgqkZfNr8Ha638
+y1+8Sa292UmMNY3x//BwiVhvmY1UBOXt8hWPxp2GYjIDDxO4c3ZZjMEjU7zeol7Q
+GwH+lq7SeLo1BLlRxxtfE5Wlsv5PGBqgvaBMzifNGvPjJszzYDUKUU+Vz0sCTaNT
+1Xik/0U3agaJI44592JegUFK7vPYVtRt1/jsHy/u0bm0tkFY9YVcl3H8Z9faIkxY
+np/QGE53Echg77AdCFluPWbzsClckDWbyYjSH0P2PBdAeADrqtnO9S/SzfqyiP1w
+gg370NIqr84yDvNUO0QTEAa4ku+/mA==
+=OcCY
+-----END PGP SIGNATURE-----
+
+--nowtmb2ukpc2l4sg--
 
