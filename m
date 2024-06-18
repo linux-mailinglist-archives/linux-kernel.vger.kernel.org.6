@@ -1,361 +1,212 @@
-Return-Path: <linux-kernel+bounces-220147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7782390DD71
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:29:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B15290DD74
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07FB4284D94
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:29:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1591F22610
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20D01741EA;
-	Tue, 18 Jun 2024 20:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553DA1741E5;
+	Tue, 18 Jun 2024 20:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eWO9seBw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUBhGKq7"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B1516EB66
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B23148317;
+	Tue, 18 Jun 2024 20:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718742585; cv=none; b=JM4zE2BsI+bE+8UB0cXDoOvPe8OvoRX1tb/nO20XMz1iqkFTLn5e9WqIPPPBlf3XFkD3Bt9csd6IgAnUdtNeaTJDtfDwNydQ/FNZ6ml3yKXGNBpjMEmxuFDLDS+e6kY3TQ1pOSqF1/J+X7bvBU9KSSrg0/Es9CpCaG3aNkBdwXo=
+	t=1718742613; cv=none; b=fFbLDjK9JpFhCHh735NqtziI+6iE9DQjfi+cAC23r0TN2pNlopILH+JrgPRRSoXrJ299Tl9sG48g0nebsBZtaXrCqR/QfOV+twm9I1eb3JK8RVqPp0WPovGIQ9c7tnyrGCRxgm6mTcNi0PpoRDAvtZTErsLF6vNA8UKmZKxH8qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718742585; c=relaxed/simple;
-	bh=0EY5kqxsoldm7cuYsyNd9fah7kjTj3xoaitJlbVR78k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ne5csXLHvYzZqjoGSYwYk2if5lPJHpUgkqyX55C0p1E2qfGFaG2a7hV7KDZoTzSlVUGtAD3F5TE8ErxrldUS9tHnKpudfwr4/e1DIBgCEXqCAtNdwoxNfQ/VgLv4bXIONUucnMIEEQkA133EEma0bYIQGKvAgt8SATtXPrIhkA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eWO9seBw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718742582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SG1pahsNFyeWnRJMLnP/UTfWOjHeAffBOrHctLI/8J8=;
-	b=eWO9seBwNGXIvvw0CqC0CYPQXhwuscz9mCiLMUE+IXQz9GqQwzbnMhXCKGhG3GPiMTDeLi
-	/xy3eW4PU8nVZ03X1D8wqprMMW1Miga5iRA1/f1I9Mx+0gxm0hOCB9J7l3F9x6qc042fCZ
-	0Mc9NtDu0PTz4Iw7pxICUPCVcaKPpAc=
-Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com
- [209.85.160.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-226-vaOZl72XOwOL1wRySQBZ0g-1; Tue, 18 Jun 2024 16:29:41 -0400
-X-MC-Unique: vaOZl72XOwOL1wRySQBZ0g-1
-Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-24c9f218317so6496032fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:29:41 -0700 (PDT)
+	s=arc-20240116; t=1718742613; c=relaxed/simple;
+	bh=parQLZjD+AD70GGa8AxoYbPVlMkcicmKSSN2+Z+lEf0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UjVTmdBy0qANM/7iMiuLSW+qPQMv108HTW1Kw7Fb/E1w+d0EjFoZ7JdGWNk2AGDwzmGuDP2iccTWrqewNewbFVfAoJ4hqx0fL5EHgm7bmU+DCyp6dOliLeRsws26ex9iFsz5YKadwAkZ08qXXnonk9QpvAog2Wl/uGB1R8YsgT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUBhGKq7; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2c2d25b5432so4592018a91.2;
+        Tue, 18 Jun 2024 13:30:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718742611; x=1719347411; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8sdGl/afX0YdqF2izjKJpjDwG4bb8CQeTgAN7Er/JQc=;
+        b=mUBhGKq7qcjqBHWryFFD9rvVfuPQurdamkgegdCF1vlIrUgXHm4diQByrW3XF8sja8
+         PNkheEkTVr2BtsGzoVGfxiltQOiz9516ZsB7IQe+BaxkAK8UESX5fo9A0ZCb5YRekYsC
+         TUMKJfzeczhdUDiZ+K+E9EUKvJLkHz0urr92nG1gcInM9DXLiKOiggpyRJZRadAk28rv
+         wUCAR8XEdwOTMC2g2Ppz2Oe7iVOPXORTgop6mVbKhB01WMWdafmbymUGcVyftThRqJcq
+         XZFxIsCd93RfmfeTV1kIODeVD76LOOTWrN+5ClmAb7EXR7b3WhCVxhgvJolDm1bpyQcM
+         rtuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718742581; x=1719347381;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718742611; x=1719347411;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SG1pahsNFyeWnRJMLnP/UTfWOjHeAffBOrHctLI/8J8=;
-        b=S0yKSc25d3BLTAuZAj8gHiU9OOuMi+PEE/QAwEETbnu2/ALwg/wbhN/MlKrrtRK3lT
-         qHv5TiFryoUVvC8mSyShI7vpdaWS4PL2bylZkXW6U7oQD0B2dxVRtyxtP6O6CELrfk5r
-         yPO8aH08jUrSqir2eF9Iwln7X8dTvAKP7zKswDGs8kz9E/X0I7bOEyVmXO1hdkLW/gFe
-         2wtmeIFlin1D+eLilmlHFkuEupJEVEGeZXqdEKipXXhUM+r9oFZHd7R4k8UC96qRlvLl
-         fna/quUMkHwfnwfJBCgY23rRGcUV3U2cK0BqZNrOzq0g2ljqU8Rq07CkXCxGpbALxzgF
-         ajEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ/uLDB/H5zsgieQ5acJXMTyFWBkEJFVeAA5VlL6cFDQK3H7JfmRv1DWiGA14WQtYnY3jt+5eLZFr2rPdqhqwzKe03q6zqur47Zw4a
-X-Gm-Message-State: AOJu0Yy4vluI2GEw5vAaByy4wbSL/7CkIv13ZkP59RXuKdrATXecd80O
-	1Ti4LoYbgcjPg/F3YAKWdcHFdMA1gLo/4jj+zC/uR7rygwnuYFPwbo7y1KPJJUl1Nbh7wUm/s2+
-	2y638UE2jovZ4EDoYsxVbNBZWvSYsQqFgc19q/L7E60VZlW/zKH8sOUgGW4jv4Q==
-X-Received: by 2002:a05:6870:6593:b0:254:ab8e:471b with SMTP id 586e51a60fabf-25c94e48921mr1087698fac.50.1718742580750;
-        Tue, 18 Jun 2024 13:29:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFDdgr3Spkd8lHoFHFSmzJEvst+OAsL3TJQBtRNfBw7S0f8ei8LxcslOnai254xYA7CMuWGVQ==
-X-Received: by 2002:a05:6870:6593:b0:254:ab8e:471b with SMTP id 586e51a60fabf-25c94e48921mr1087658fac.50.1718742580376;
-        Tue, 18 Jun 2024 13:29:40 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5b75648asm1937270a34.72.2024.06.18.13.29.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 13:29:39 -0700 (PDT)
-Date: Tue, 18 Jun 2024 14:29:37 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Fred Griffoul <fgriffo@amazon.co.uk>
-Cc: <griffoul@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Zefan Li
- <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner
- <hannes@cmpxchg.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier
- <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, Mark Brown
- <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Joey Gouly
- <joey.gouly@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, Jeremy Linton
- <jeremy.linton@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu
- <yi.l.liu@intel.com>, Kevin Tian <kevin.tian@intel.com>, Eric Auger
- <eric.auger@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, "Christian
- Brauner" <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>, "Reinette
- Chatre" <reinette.chatre@intel.com>, Ye Bin <yebin10@huawei.com>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <kvm@vger.kernel.org>, <cgroups@vger.kernel.org>
-Subject: Re: [PATCH v6 2/2] vfio/pci: add interrupt affinity support
-Message-ID: <20240618142937.553f8f1e.alex.williamson@redhat.com>
-In-Reply-To: <20240611174430.90787-3-fgriffo@amazon.co.uk>
-References: <20240611174430.90787-1-fgriffo@amazon.co.uk>
-	<20240611174430.90787-3-fgriffo@amazon.co.uk>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+        bh=8sdGl/afX0YdqF2izjKJpjDwG4bb8CQeTgAN7Er/JQc=;
+        b=WISi2reN1BQb5mffofmIw4V/JHRWpeifPdX9Vuu/JQj9h4InpHTUILdEWkiPb/WohM
+         rK0KIgbZMzfG6/JvjpERy7lUyQz0rqs02y/MrMF118nYMB6QCU8lpmpNp+GZCm2Od4Tx
+         p3CV81jJ5bsoMfKe0CZCLugYbaoxEr6XApxQfgI4AcDzCCWlY8PBjJbexqLLI99uXAZE
+         gLrRTqt/+lqO2qOknhHCqijRpul3zw2guZFkhxfgcnp8nlOjGphAyCFo1ys8hL7GgwLb
+         n+lqtI+U34TW5QPPihLPIKHkO1nSma0FHnUatDVr7oG6hMZLI6j92M5vc44iPbfBjDyy
+         ZCpw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2xuxCz8WAnvE1jZQQZdmIFxl13t6g/omEjXCm5gWjL+70T/4bHNQ+PrTtYGzYXnphMIq7MbU9dfPPjLzUPG+z5SFYnlTALfOZLNA4f4tpZK2fQMz/jWmTFvaqm3otywLdESYObCo2hQM9E1QgEHselw7NvVeH7E1BIe2QE/Z/LS4U
+X-Gm-Message-State: AOJu0YyPP7dQl83aZ6Dz9wYZeQwU8PFW+NsHt2zR6cyyZcQB7sDeK2tL
+	mmsaJKuuYcFAlOECV1RdKLOQ2TfHiNQUgOHh1W/iSdH56zo2P1yIxTuYPpcKt0Oz6eOG0O5+5E5
+	8xdH0eAV7XHJT1IXouaFo0OA2mnM=
+X-Google-Smtp-Source: AGHT+IFhXcVeXB8AfX7ORYeRBj9j+XZ7jC603Aumldq9OH/VTLlG+78+I2e2KsJG9hYtoAf/osziQwU0dnrTUbpQGkg=
+X-Received: by 2002:a17:90b:104c:b0:2c7:6305:9905 with SMTP id
+ 98e67ed59e1d1-2c7b57ff1f9mr819272a91.10.1718742611233; Tue, 18 Jun 2024
+ 13:30:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1717881178.git.dxu@dxuuu.xyz> <34708481d71ea72c23a78a5209e04a76b261a01d.1717881178.git.dxu@dxuuu.xyz>
+ <Zmb52Qp__CBzbgDh@krava> <CAEf4BzaT7XNnGFUqAr=+pi106bT0o4=TJ7JLOPNjZEBHw4+M7Q@mail.gmail.com>
+ <ZnGBANDTF80gNDHR@krava> <CAEf4BzZVfppin_mfEJF9eVcZUu9hds5PKuLysWOXeSJ7gdV3dg@mail.gmail.com>
+ <ZnHbDgAnwgZqw6Lk@krava>
+In-Reply-To: <ZnHbDgAnwgZqw6Lk@krava>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 18 Jun 2024 13:29:59 -0700
+Message-ID: <CAEf4BzZZatwRGmfLRuyCboz_B9JfKjPDo=QPSzPrEXkF_Q-5gg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 06/12] bpf: selftests: Fix bpf_session_cookie()
+ kfunc prototype
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Daniel Xu <dxu@dxuuu.xyz>, shuah@kernel.org, ast@kernel.org, andrii@kernel.org, 
+	eddyz87@gmail.com, daniel@iogearbox.net, quentin@isovalent.com, 
+	alan.maguire@oracle.com, acme@kernel.org, mykolal@fb.com, 
+	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com, 
+	haoluo@google.com, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Jun 2024 17:44:25 +0000
-Fred Griffoul <fgriffo@amazon.co.uk> wrote:
+On Tue, Jun 18, 2024 at 12:08=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wro=
+te:
+>
+> On Tue, Jun 18, 2024 at 09:58:23AM -0700, Andrii Nakryiko wrote:
+> > On Tue, Jun 18, 2024 at 5:43=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> =
+wrote:
+> > >
+> > > On Mon, Jun 17, 2024 at 03:25:53PM -0700, Andrii Nakryiko wrote:
+> > > > On Mon, Jun 10, 2024 at 6:04=E2=80=AFAM Jiri Olsa <olsajiri@gmail.c=
+om> wrote:
+> > > > >
+> > > > > On Sat, Jun 08, 2024 at 03:16:02PM -0600, Daniel Xu wrote:
+> > > > > > The prototype defined in bpf_kfuncs.h was not in line with how =
+the
+> > > > > > actual kfunc was defined. This causes compilation errors when k=
+func
+> > > > > > prototypes are generated from BTF.
+> > > > > >
+> > > > > > Fix by aligning with actual kfunc definition.
+> > > > > >
+> > > > > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > > > > > ---
+> > > > > >  tools/testing/selftests/bpf/bpf_kfuncs.h                      =
+  | 2 +-
+> > > > > >  tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.=
+c | 2 +-
+> > > > > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > > > > >
+> > > > > > diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/t=
+esting/selftests/bpf/bpf_kfuncs.h
+> > > > > > index be91a6919315..3b6675ab4086 100644
+> > > > > > --- a/tools/testing/selftests/bpf/bpf_kfuncs.h
+> > > > > > +++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
+> > > > > > @@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct =
+bpf_dynptr *data_ptr,
+> > > > > >                                     struct bpf_key *trusted_key=
+ring) __ksym;
+> > > > > >
+> > > > > >  extern bool bpf_session_is_return(void) __ksym __weak;
+> > > > > > -extern long *bpf_session_cookie(void) __ksym __weak;
+> > > > > > +extern __u64 *bpf_session_cookie(void) __ksym __weak;
+> > > > >
+> > > > > the original intent was to expose long instead of __u64 :-\
+> > > > >
+> > > >
+> > > > Cookies internally are always u64 (8 byte values). Marking them
+> > > > internally in the kernel as long could lead to problems on 32-bit
+> > > > architectures, potentially (it still needs to be 64-bit value
+> > > > according to BPF contract, but we'll allocate only 4 bytes for them=
+).
+> > > >
+> > > > It seems better and safer to be explicit with __u64/u64 for cookies=
+ everywhere.
+> > >
+> > > hum, I based that on what we did for kprobe session,
+> > > but I guess it makes sense just for bpf side:
+> >
+> > yep, exactly, long is 64-bit only for BPF "architecture", but
+> > internally it will be 4 bytes for 32-bit architectures, which will
+> > potentially lead to problems. With recent kfunc vmlinux.h generation,
+> > it's probably better to stick to explicitly sized types.
+>
+> hm, it already got in 2b8dd87332cd, revert needs more changes in selftest=
+s
+> I'll send formal patch with fix below
 
-> The usual way to configure a device interrupt from userland is to write
-> the /proc/irq/<irq>/smp_affinity or smp_affinity_list files. When using
-> vfio to implement a device driver or a virtual machine monitor, this may
-> not be ideal: the process managing the vfio device interrupts may not be
-> granted root privilege, for security reasons. Thus it cannot directly
-> control the interrupt affinity and has to rely on an external command.
-> 
-> This patch extends the VFIO_DEVICE_SET_IRQS ioctl() with a new data flag
-> to specify the affinity of interrupts of a vfio pci device.
-> 
-> The CPU affinity mask argument must be a subset of the process cpuset,
-> otherwise an error -EPERM is returned.
-> 
-> The vfio_irq_set argument shall be set-up in the following way:
-> 
-> - the 'flags' field have the new flag VFIO_IRQ_SET_DATA_CPUSET set
-> as well as VFIO_IRQ_SET_ACTION_TRIGGER.
-> 
-> - the variable-length 'data' field is a cpu_set_t structure, as
-> for the sched_setaffinity() syscall, the size of which is derived
-> from 'argsz'.
-> 
-> Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
+Yeah, I was a bit late to the party. But I replied on the original
+thread as well, I think we should use __u64 (or unsigned long long if
+we worry about __u64 typedef, but I think at least for vmlinux.h it
+doesn't matter).
+
+And thanks for working on a fix!
+
+>
+> jirka
+>
 > ---
->  drivers/vfio/pci/vfio_pci_core.c  |  2 +-
->  drivers/vfio/pci/vfio_pci_intrs.c | 41 +++++++++++++++++++++++++++++++
->  drivers/vfio/vfio_main.c          | 15 ++++++++---
->  include/uapi/linux/vfio.h         | 15 ++++++++++-
->  4 files changed, 67 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-> index 80cae87fff36..fbc490703031 100644
-> --- a/drivers/vfio/pci/vfio_pci_core.c
-> +++ b/drivers/vfio/pci/vfio_pci_core.c
-> @@ -1174,7 +1174,7 @@ static int vfio_pci_ioctl_get_irq_info(struct vfio_pci_core_device *vdev,
->  		return -EINVAL;
->  	}
->  
-> -	info.flags = VFIO_IRQ_INFO_EVENTFD;
-> +	info.flags = VFIO_IRQ_INFO_EVENTFD | VFIO_IRQ_INFO_CPUSET;
->  
->  	info.count = vfio_pci_get_irq_count(vdev, info.index);
->  
-> diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-> index 8382c5834335..b339c42cb1c0 100644
-> --- a/drivers/vfio/pci/vfio_pci_intrs.c
-> +++ b/drivers/vfio/pci/vfio_pci_intrs.c
-> @@ -19,6 +19,7 @@
->  #include <linux/vfio.h>
->  #include <linux/wait.h>
->  #include <linux/slab.h>
-> +#include <linux/cpuset.h>
->  
->  #include "vfio_pci_priv.h"
->  
-> @@ -82,6 +83,40 @@ vfio_irq_ctx_alloc(struct vfio_pci_core_device *vdev, unsigned long index)
->  	return ctx;
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 4b3fda456299..cd098846e251 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -3530,7 +3530,7 @@ __bpf_kfunc bool bpf_session_is_return(void)
+>         return session_ctx->is_return;
 >  }
->  
-> +static int vfio_pci_set_affinity(struct vfio_pci_core_device *vdev,
-> +				 unsigned int start, unsigned int count,
-> +				 struct cpumask *irq_mask)
-> +{
-> +	cpumask_var_t allowed_mask;
-> +	int irq, err = 0;
-> +	unsigned int i;
-> +
-> +	if (!alloc_cpumask_var(&allowed_mask, GFP_KERNEL))
-> +		return -ENOMEM;
-> +
-> +	cpuset_cpus_allowed(current, allowed_mask);
-> +	if (!cpumask_subset(irq_mask, allowed_mask)) {
-> +		err = -EPERM;
-> +		goto finish;
-> +	}
-> +
-> +	for (i = start; i < start + count; i++) {
-> +		irq = pci_irq_vector(vdev->pdev, i);
-> +		if (irq < 0) {
-> +			err = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		err = irq_set_affinity(irq, irq_mask);
-> +		if (err)
-> +			break;
-> +	}
-
-Sorry I didn't have an opportunity to reply to your previous comments,
-but you stated:
-
-On Tue, 11 Jun 2024 09:58:48 +0100
-Frederic Griffoul <griffoul@gmail.com> wrote:
-> My main use case is to configure NVMe queues in a virtual machine monitor
-> to interrupt only the physical CPUs assigned to that vmm. Then we can
-> set the same cpu_set_t to all the admin and I/O queues with a single ioctl().
-
-So if I interpolate a little, the vmm's cpuset is likely set elsewhere
-by some management tool, but that management tool isn't monitoring
-registration of interrupts so you want the vmm to make some default
-choice about interrupt affinity as they're enabled.  If that's all we
-want, couldn't we just add a flag that directs the existing SET_IRQS
-ioctl to call irq_set_affinity() based on the cpuset_cpus_allowed()
-when called with DATA_EVENTFD|ACTION_TRIGGER?
-
-What you're proposing here has a lot more versatility, but it's also
-not clear how the vmm would really make an optimal choice at this
-granularity.  Whether it's better to target an interrupt to the pCPU
-running the vCPU where the guest has configured affinity isn't even
-necessarily the right choice.  It could be for posted interrupts, but
-could also induce a vmexit otherwise.  Is the vCPU necessarily even
-within the allowed cpuset of the vmm itself when this ioctl is called?
-
-I also wonder if there might be something through the irqbypass
-framework where the interrupt consumer could direct the affinity of the
-interrupt producer.
-
-It'd really be preferable to see a viable userspace application of this
-to prove it's worthwhile.
-
-> +
-> +finish:
-> +	free_cpumask_var(allowed_mask);
-> +	return err;
-> +}
-> +
->  /*
->   * INTx
->   */
-> @@ -665,6 +700,9 @@ static int vfio_pci_set_intx_trigger(struct vfio_pci_core_device *vdev,
->  	if (!is_intx(vdev))
->  		return -EINVAL;
->  
-> +	if (flags & VFIO_IRQ_SET_DATA_CPUSET)
-> +		return vfio_pci_set_affinity(vdev, start, count, data);
-> +
->  	if (flags & VFIO_IRQ_SET_DATA_NONE) {
->  		vfio_send_intx_eventfd(vdev, vfio_irq_ctx_get(vdev, 0));
->  	} else if (flags & VFIO_IRQ_SET_DATA_BOOL) {
-> @@ -713,6 +751,9 @@ static int vfio_pci_set_msi_trigger(struct vfio_pci_core_device *vdev,
->  	if (!irq_is(vdev, index))
->  		return -EINVAL;
->  
-> +	if (flags & VFIO_IRQ_SET_DATA_CPUSET)
-> +		return vfio_pci_set_affinity(vdev, start, count, data);
-> +
->  	for (i = start; i < start + count; i++) {
->  		ctx = vfio_irq_ctx_get(vdev, i);
->  		if (!ctx)
-> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-> index e97d796a54fb..2e4f4e37cf89 100644
-> --- a/drivers/vfio/vfio_main.c
-> +++ b/drivers/vfio/vfio_main.c
-> @@ -1505,23 +1505,30 @@ int vfio_set_irqs_validate_and_prepare(struct vfio_irq_set *hdr, int num_irqs,
->  		size = 0;
->  		break;
->  	case VFIO_IRQ_SET_DATA_BOOL:
-> -		size = sizeof(uint8_t);
-> +		size = size_mul(hdr->count, sizeof(uint8_t));
->  		break;
->  	case VFIO_IRQ_SET_DATA_EVENTFD:
-> -		size = sizeof(int32_t);
-> +		size = size_mul(hdr->count, sizeof(int32_t));
-> +		break;
-> +	case VFIO_IRQ_SET_DATA_CPUSET:
-> +		size = hdr->argsz - minsz;
-> +		if (size < cpumask_size())
-> +			return -EINVAL;
-> +		if (size > cpumask_size())
-> +			size = cpumask_size();
-
-You previously stated that a valid cpu_set_t could be smaller than a
-cpumask_var_t, but it looks like we're handling that as an error here?
-Truncating user data that's too large seems no more correct than
-masking in user data that's too small.  Thanks,
-
-Alex
-
->  		break;
->  	default:
->  		return -EINVAL;
->  	}
->  
->  	if (size) {
-> -		if (hdr->argsz - minsz < hdr->count * size)
-> +		if (hdr->argsz - minsz < size)
->  			return -EINVAL;
->  
->  		if (!data_size)
->  			return -EINVAL;
->  
-> -		*data_size = hdr->count * size;
-> +		*data_size = size;
->  	}
->  
->  	return 0;
-> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> index 2b68e6cdf190..d2edf6b725f8 100644
-> --- a/include/uapi/linux/vfio.h
-> +++ b/include/uapi/linux/vfio.h
-> @@ -530,6 +530,10 @@ struct vfio_region_info_cap_nvlink2_lnkspd {
->   * Absence of the NORESIZE flag indicates that vectors can be enabled
->   * and disabled dynamically without impacting other vectors within the
->   * index.
-> + *
-> + * The CPUSET flag indicates the interrupt index supports setting
-> + * its affinity with a cpu_set_t configured with the SET_IRQ
-> + * ioctl().
->   */
->  struct vfio_irq_info {
->  	__u32	argsz;
-> @@ -538,6 +542,7 @@ struct vfio_irq_info {
->  #define VFIO_IRQ_INFO_MASKABLE		(1 << 1)
->  #define VFIO_IRQ_INFO_AUTOMASKED	(1 << 2)
->  #define VFIO_IRQ_INFO_NORESIZE		(1 << 3)
-> +#define VFIO_IRQ_INFO_CPUSET		(1 << 4)
->  	__u32	index;		/* IRQ index */
->  	__u32	count;		/* Number of IRQs within this index */
->  };
-> @@ -580,6 +585,12 @@ struct vfio_irq_info {
->   *
->   * Note that ACTION_[UN]MASK specify user->kernel signaling (irqfds) while
->   * ACTION_TRIGGER specifies kernel->user signaling.
-> + *
-> + * DATA_CPUSET specifies the affinity for the range of interrupt vectors.
-> + * It must be set with ACTION_TRIGGER in 'flags'. The variable-length 'data'
-> + * array is the CPU affinity mask represented as a 'cpu_set_t' structure, as
-> + * for the sched_setaffinity() syscall argument: the 'argsz' field is used
-> + * to check the actual cpu_set_t size.
->   */
->  struct vfio_irq_set {
->  	__u32	argsz;
-> @@ -587,6 +598,7 @@ struct vfio_irq_set {
->  #define VFIO_IRQ_SET_DATA_NONE		(1 << 0) /* Data not present */
->  #define VFIO_IRQ_SET_DATA_BOOL		(1 << 1) /* Data is bool (u8) */
->  #define VFIO_IRQ_SET_DATA_EVENTFD	(1 << 2) /* Data is eventfd (s32) */
-> +#define VFIO_IRQ_SET_DATA_CPUSET	(1 << 6) /* Data is cpu_set_t */
->  #define VFIO_IRQ_SET_ACTION_MASK	(1 << 3) /* Mask interrupt */
->  #define VFIO_IRQ_SET_ACTION_UNMASK	(1 << 4) /* Unmask interrupt */
->  #define VFIO_IRQ_SET_ACTION_TRIGGER	(1 << 5) /* Trigger interrupt */
-> @@ -599,7 +611,8 @@ struct vfio_irq_set {
->  
->  #define VFIO_IRQ_SET_DATA_TYPE_MASK	(VFIO_IRQ_SET_DATA_NONE | \
->  					 VFIO_IRQ_SET_DATA_BOOL | \
-> -					 VFIO_IRQ_SET_DATA_EVENTFD)
-> +					 VFIO_IRQ_SET_DATA_EVENTFD | \
-> +					 VFIO_IRQ_SET_DATA_CPUSET)
->  #define VFIO_IRQ_SET_ACTION_TYPE_MASK	(VFIO_IRQ_SET_ACTION_MASK | \
->  					 VFIO_IRQ_SET_ACTION_UNMASK | \
->  					 VFIO_IRQ_SET_ACTION_TRIGGER)
-
+>
+> -__bpf_kfunc long *bpf_session_cookie(void)
+> +__bpf_kfunc __u64 *bpf_session_cookie(void)
+>  {
+>         struct bpf_session_run_ctx *session_ctx;
+>
+> diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/sel=
+ftests/bpf/bpf_kfuncs.h
+> index be91a6919315..3b6675ab4086 100644
+> --- a/tools/testing/selftests/bpf/bpf_kfuncs.h
+> +++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
+> @@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct bpf_dynptr=
+ *data_ptr,
+>                                       struct bpf_key *trusted_keyring) __=
+ksym;
+>
+>  extern bool bpf_session_is_return(void) __ksym __weak;
+> -extern long *bpf_session_cookie(void) __ksym __weak;
+> +extern __u64 *bpf_session_cookie(void) __ksym __weak;
+>  #endif
+> diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cooki=
+e.c b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
+> index d49070803e22..0835b5edf685 100644
+> --- a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
+> +++ b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
+> @@ -25,7 +25,7 @@ int BPF_PROG(trigger)
+>
+>  static int check_cookie(__u64 val, __u64 *result)
+>  {
+> -       long *cookie;
+> +       __u64 *cookie;
+>
+>         if (bpf_get_current_pid_tgid() >> 32 !=3D pid)
+>                 return 1;
 
