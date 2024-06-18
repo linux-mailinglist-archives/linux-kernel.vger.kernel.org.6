@@ -1,178 +1,202 @@
-Return-Path: <linux-kernel+bounces-218967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDBE190C840
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:03:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C3C90C847
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F48B1F21D5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55D91C22D94
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82391158876;
-	Tue, 18 Jun 2024 09:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F5718FC8B;
+	Tue, 18 Jun 2024 09:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZTdiwBh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eZM3MPKF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mABUynCX"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B599B158216;
-	Tue, 18 Jun 2024 09:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0D021C182;
+	Tue, 18 Jun 2024 09:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718703871; cv=none; b=RSSlxhVrCXMDy8BQ1JbygOA2qCFUNasTN07dGndqxEdUjZEW37/9LEiMOr1OKz+8d2uiN799QMcCuDvYuvD7teYXjb6rsr+toxhFxQO5x4XYBZSlDyvc1bx1zNezy2mY+Df5O/bwmMB83dYL/hQB/+cOn5Vs8OKlLQ8YivW9HZk=
+	t=1718703903; cv=none; b=S3pb9yFrGX5Wynx9lwQ5foDxhEhKP1jzEyAhpHMuNkqFmE44vbWM1tKS3U7q09HItWS4VUH/XkMAXn5GHKpBFgI586i2ulx9cnPK8Em1mYy+aXXAAQYWs/WtDqG7ZoSONnZlz3uHrxQM61vXKMh7MPVWiCsspPLsaU5h/AA1zV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718703871; c=relaxed/simple;
-	bh=3oAxYZunFcgJip6AK4A73PGRCJ7aIiU6dscSL48J7rY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jSmagKrvY3w5YG5PQVxYWFd5O/q9pWgR4WN3ArVwYtY6JW2cvBb05SQNTpaekypdYwC3uY+k43pG4IzM813CjoNptH1lbGjzgVfrOZTzjnzpYHjZjyvR0TGUE9KBlVwz0Sfvh107IzKFy/WIn2IhiXvydqw3OmqT9n+jyd/ZGdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZTdiwBh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F6AC3277B;
-	Tue, 18 Jun 2024 09:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718703871;
-	bh=3oAxYZunFcgJip6AK4A73PGRCJ7aIiU6dscSL48J7rY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lZTdiwBhX+9KSjDhSjnNqL+CrDUhMwCPPBpLP36PtsBK7q2iOrR5ViF+3jku6yg/t
-	 uXc46+MI3Z/s7cd2VtKfwtQU7w/ZcTa2gLR44n8btdWUVD1EW0Qc6cbLBgHIgJv4Mr
-	 8Bf9OxOL9kH6X3E+i96C/xs23kox4bl62v2a46hC2EqWGYXxxnEvff3gJzJiO/3rIA
-	 FDwQpE7jNnt+aJIof4HrtmVDIOkEWO1eT6uYtQwpfSh0uw3FcIx6YpiazJXNtmE8BJ
-	 HGMd4EXJ79ktmuBgko1M4nh8G77tpLnEM1oeCcXsgoGAj9XVTbqEmwUqXbDlbYrB1n
-	 mMf1oT9CpfMSA==
-Date: Tue, 18 Jun 2024 11:44:25 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" <linux-ide@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: ata: ahci-fsl-qoriq: convert to yaml
- format
-Message-ID: <ZnFW-d1ktgWTZutZ@ryzen.lan>
-References: <20240617180241.901377-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1718703903; c=relaxed/simple;
+	bh=xDOJH9QGA9nkiobcKvyoyM2cZxpscpkobDKyo0Cvo00=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Vu3QVUcWtRRv2CK0o7GbLuE+rDTqJe3FHcpa08jS7qiuqJXR5m1esvHMjgEYMVpiGPgHYSl//qoniVU6L6IEf+OcrtQ965jLdNA31l2DKIIPkEx/O0ls20hlV3Gs27GLvISiuIBoUiGB+1Sj09osST8yZOP2trwgDmZme3AJrD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eZM3MPKF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mABUynCX; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 18 Jun 2024 09:44:57 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718703898;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/L7w44N1Ohz0K0uBbVS84Qujb3/y5mujvugWLEGTW+U=;
+	b=eZM3MPKFyy6PAFPTPoHn9TXi3f1kskMdgBk3FH2AIxnBw/e1qJVGYmT/QTmuGwti2egOav
+	STFGwpnE8BhFxGIQ4cP3VzZ0d69DCtHqsH4Vk0r61/nbz99vE7OGZnnPRLpJmwMEaJwbDd
+	6l6yyWwhLlNAuLXgzXk3tYwJXMKyFgXsV0rAceyD+uIfX1EvjP+18uK9k67+l4jd/Fmgj3
+	2o5zmLDnEUdvSs4xWAvAji9aUjjEkGPJW4tSN1IPPlWE492nVHe63dFn3L47IlyEoZPE8d
+	4OUd7qzxaBjBTTtDUbIUDBdlyk2qGez1+VOOJ7NieoUp15EPhCcAbN8PvSTacQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718703898;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/L7w44N1Ohz0K0uBbVS84Qujb3/y5mujvugWLEGTW+U=;
+	b=mABUynCXCevOxHiGX4NEIKjkMuESzNXJfSkMEA70by2UT2LX7nlmGYZQA8xDsg2+Q0meLD
+	AlX/67j/c/nNnoDA==
+From: "tip-bot2 for Tom Lendacky" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/sev] x86/sev: Allow non-VMPL0 execution when an SVSM is present
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3C2ce7cf281cce1d0cba88f3f576687ef75dc3c953=2E17176?=
+ =?utf-8?q?00736=2Egit=2Ethomas=2Elendacky=40amd=2Ecom=3E?=
+References: =?utf-8?q?=3C2ce7cf281cce1d0cba88f3f576687ef75dc3c953=2E171760?=
+ =?utf-8?q?0736=2Egit=2Ethomas=2Elendacky=40amd=2Ecom=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617180241.901377-1-Frank.Li@nxp.com>
+Message-ID: <171870389765.10875.470184657623651765.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 17, 2024 at 02:02:40PM -0400, Frank Li wrote:
-> Convert ahci-fsl-qoirq DT binding to yaml format.
-> 
-> Additional changes:
-> - Add reg-names list, ahci and sata-ecc
-> - Add fsl,ls1028a-ahci and fsl,lx2060a-ahci
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/ata/ahci-fsl-qoriq.txt           | 21 -------
->  .../devicetree/bindings/ata/fsl,ahci.yaml     | 58 +++++++++++++++++++
->  2 files changed, 58 insertions(+), 21 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
->  create mode 100644 Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt b/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
-> deleted file mode 100644
-> index 7c3ca0e13de05..0000000000000
-> --- a/Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
-> +++ /dev/null
-> @@ -1,21 +0,0 @@
-> -Binding for Freescale QorIQ AHCI SATA Controller
-> -
-> -Required properties:
-> -  - reg: Physical base address and size of the controller's register area.
-> -  - compatible: Compatibility string. Must be 'fsl,<chip>-ahci', where
-> -    chip could be ls1021a, ls1043a, ls1046a, ls1088a, ls2080a etc.
-> -  - clocks: Input clock specifier. Refer to common clock bindings.
-> -  - interrupts: Interrupt specifier. Refer to interrupt binding.
-> -
-> -Optional properties:
-> -  - dma-coherent: Enable AHCI coherent DMA operation.
-> -  - reg-names: register area names when there are more than 1 register area.
-> -
-> -Examples:
-> -	sata@3200000 {
-> -		compatible = "fsl,ls1021a-ahci";
-> -		reg = <0x0 0x3200000 0x0 0x10000>;
-> -		interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-> -		clocks = <&platform_clk 1>;
-> -		dma-coherent;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-> new file mode 100644
-> index 0000000000000..162b3bb5427ed
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/ata/fsl,ahci.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale QorIQ AHCI SATA Controller
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - fsl,ls1021a-ahci
-> +      - fsl,ls1043a-ahci
-> +      - fsl,ls1028a-ahci
-> +      - fsl,ls1088a-ahci
-> +      - fsl,ls2080a-ahci
-> +      - fsl,lx2160a-ahci
-> +
-> +  reg:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  reg-names:
-> +    items:
-> +      - const: ahci
-> +      - const: sata-ecc
-> +    minItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  dma-coherent: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    sata@3200000 {
-> +        compatible = "fsl,ls1021a-ahci";
-> +        reg = <0x3200000 0x10000>;
-> +        interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&platform_clk 1>;
-> +        dma-coherent;
-> +    };
-> -- 
-> 2.34.1
-> 
+The following commit has been merged into the x86/sev branch of tip:
 
-Applied:
-https://git.kernel.org/pub/scm/linux/kernel/git/libata/linux.git/log/?h=for-6.11
+Commit-ID:     99ef9f59847cab1f9091cd4b9d7efbee0ae4fc86
+Gitweb:        https://git.kernel.org/tip/99ef9f59847cab1f9091cd4b9d7efbee0ae4fc86
+Author:        Tom Lendacky <thomas.lendacky@amd.com>
+AuthorDate:    Wed, 05 Jun 2024 10:18:56 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 17 Jun 2024 20:42:58 +02:00
+
+x86/sev: Allow non-VMPL0 execution when an SVSM is present
+
+To allow execution at a level other than VMPL0, an SVSM must be present.
+Allow the SEV-SNP guest to continue booting if an SVSM is detected and
+the hypervisor supports the SVSM feature as indicated in the GHCB
+hypervisor features bitmap.
+
+  [ bp: Massage a bit. ]
+
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/2ce7cf281cce1d0cba88f3f576687ef75dc3c953.1717600736.git.thomas.lendacky@amd.com
+---
+ arch/x86/boot/compressed/sev.c    | 17 ++++++++++++++---
+ arch/x86/include/asm/sev-common.h |  1 +
+ arch/x86/kernel/sev.c             | 20 ++++++++++++--------
+ 3 files changed, 27 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
+index ce941a9..6970572 100644
+--- a/arch/x86/boot/compressed/sev.c
++++ b/arch/x86/boot/compressed/sev.c
+@@ -610,11 +610,15 @@ void sev_enable(struct boot_params *bp)
+ 	 * features.
+ 	 */
+ 	if (sev_status & MSR_AMD64_SEV_SNP_ENABLED) {
+-		if (!(get_hv_features() & GHCB_HV_FT_SNP))
++		u64 hv_features;
++		int ret;
++
++		hv_features = get_hv_features();
++		if (!(hv_features & GHCB_HV_FT_SNP))
+ 			sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
+ 
+ 		/*
+-		 * Enforce running at VMPL0.
++		 * Enforce running at VMPL0 or with an SVSM.
+ 		 *
+ 		 * Use RMPADJUST (see the rmpadjust() function for a description of
+ 		 * what the instruction does) to update the VMPL1 permissions of a
+@@ -623,7 +627,14 @@ void sev_enable(struct boot_params *bp)
+ 		 * only ever run at a single VMPL level so permission mask changes of a
+ 		 * lesser-privileged VMPL are a don't-care.
+ 		 */
+-		if (rmpadjust((unsigned long)&boot_ghcb_page, RMP_PG_SIZE_4K, 1))
++		ret = rmpadjust((unsigned long)&boot_ghcb_page, RMP_PG_SIZE_4K, 1);
++
++		/*
++		 * Running at VMPL0 is not required if an SVSM is present and the hypervisor
++		 * supports the required SVSM GHCB events.
++		 */
++		if (ret &&
++		    !(snp_vmpl && (hv_features & GHCB_HV_FT_SNP_MULTI_VMPL)))
+ 			sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_NOT_VMPL0);
+ 	}
+ 
+diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
+index 78a4c25..e90d403 100644
+--- a/arch/x86/include/asm/sev-common.h
++++ b/arch/x86/include/asm/sev-common.h
+@@ -122,6 +122,7 @@ enum psc_op {
+ 
+ #define GHCB_HV_FT_SNP			BIT_ULL(0)
+ #define GHCB_HV_FT_SNP_AP_CREATION	BIT_ULL(1)
++#define GHCB_HV_FT_SNP_MULTI_VMPL	BIT_ULL(5)
+ 
+ /*
+  * SNP Page State Change NAE event
+diff --git a/arch/x86/kernel/sev.c b/arch/x86/kernel/sev.c
+index 53ac3e0..726d9df 100644
+--- a/arch/x86/kernel/sev.c
++++ b/arch/x86/kernel/sev.c
+@@ -2352,23 +2352,27 @@ static void dump_cpuid_table(void)
+  * expected, but that initialization happens too early in boot to print any
+  * sort of indicator, and there's not really any other good place to do it,
+  * so do it here.
++ *
++ * If running as an SNP guest, report the current VM privilege level (VMPL).
+  */
+-static int __init report_cpuid_table(void)
++static int __init report_snp_info(void)
+ {
+ 	const struct snp_cpuid_table *cpuid_table = snp_cpuid_get_table();
+ 
+-	if (!cpuid_table->count)
+-		return 0;
++	if (cpuid_table->count) {
++		pr_info("Using SNP CPUID table, %d entries present.\n",
++			cpuid_table->count);
+ 
+-	pr_info("Using SNP CPUID table, %d entries present.\n",
+-		cpuid_table->count);
++		if (sev_cfg.debug)
++			dump_cpuid_table();
++	}
+ 
+-	if (sev_cfg.debug)
+-		dump_cpuid_table();
++	if (cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
++		pr_info("SNP running at VMPL%u.\n", snp_vmpl);
+ 
+ 	return 0;
+ }
+-arch_initcall(report_cpuid_table);
++arch_initcall(report_snp_info);
+ 
+ static int __init init_sev_config(char *str)
+ {
 
