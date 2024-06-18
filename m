@@ -1,145 +1,188 @@
-Return-Path: <linux-kernel+bounces-218822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42E890C693
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:23:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BECB90C6BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7AD71C21D90
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:23:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D724A2820AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3163019CCF6;
-	Tue, 18 Jun 2024 07:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B051619D070;
+	Tue, 18 Jun 2024 07:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MrlQNZru"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="pXDgWWGX"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01olkn2096.outbound.protection.outlook.com [40.92.107.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F025213DBB2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718697403; cv=none; b=p+fLXhSlDbxPZ4Fqgbg5CC5wUihIm3rZKmWjaWG7QxXFZ711UI5xNXxD25WeHVHLnYcuoLq0l02Sss1YdAvVxLLJALCZ8sgmmmDBrHUzmipgLMsgkFJj3Daahqgo0HzCw65lp+18/3pcnyHYtSlIUkhTMAnogQ/YiJpXHBP6lR4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718697403; c=relaxed/simple;
-	bh=X7oXfGqsaROPIv0d321bPJMWdfKZBHlFilMIFo4qMew=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pc4SD+H21fncY8MnnLy/fZtXecFiC8dUE3uvuuGFlTebDjf26p49nryArF8cFEiwPCq5MHslJJk6aNLLPA3SEz4uWCYdW+oFHGPdCfol/aZRx+v4F+9UWBKPg+6x7VLojAjdo0Miu8HZtnTVn1fGpul9uBQT6/Np+QqidpXNZwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MrlQNZru; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718697400;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X7oXfGqsaROPIv0d321bPJMWdfKZBHlFilMIFo4qMew=;
-	b=MrlQNZruF7xHb8vmBvrmi8hEoZ+Y4c+olT+NKe7sCRKOXVz78xqlYe12W6Rv6osHEzRG2K
-	La7Pq0LZRWw1axqa5n580rB1i7x3PMtOxc99ZdWfCL7hfTvlNbp11a0ZX4zx42D1ws/qgh
-	P75AnIpI9JEPOK31uOTiyGtUtcD3MlE=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-187-M9EicROlM-KHaFzg5ICV_w-1; Tue, 18 Jun 2024 03:56:39 -0400
-X-MC-Unique: M9EicROlM-KHaFzg5ICV_w-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42180a0730dso5173375e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:56:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718697398; x=1719302198;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X7oXfGqsaROPIv0d321bPJMWdfKZBHlFilMIFo4qMew=;
-        b=u3PVHE3cm1dbGnVsNKShi4GZt7GDGh7sURdUNinn50aFB2X+qxRctkFPYev+eo0Zba
-         3GDRDq+V5uthYdQyLmWLOXbHG5Cl/fFxDZG50QBTpcyddC0xq0goFd4WTCE0rJOKaiRC
-         DI5n//rSuk/IXAv0U/WLnGsRNzU6w4e6UC6Pb/wNb7Jid1dwJUb4LOfeLlUTkciC3mOS
-         DvtZ5sAaLQNsuQxZIapnoYk1PYE00yTMANUBy0eNPFdrRnLvsOJ49tHd73mbpm5RQTc+
-         030BWUMqCt7EEktaNAueuSYqY9duZjgvI2XcQzk9aTssIoyuuEd/k0eowgLcBFuGtCQj
-         bX4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUX+2FPBRQz8de+uWWUs5hyuxFEpYYirn+wfwHuwIO07KWFFEgqf+bsgGmwUz1DZATMPZhJgtL3iYt0xvMN38DqV1CMKDpwvYJp2h7L
-X-Gm-Message-State: AOJu0Yw09329rDCieeVUjawoI1RDTZK8uADAOFVIOdb0woxWhYo/wgnt
-	D1+CEAqPMknj/X9rdsu+mqkyym3eBm7ARA+DZ0ws7VFQmoqX/1P1Ewduv8Yy5KegJVRtkZOgEn5
-	81Ocq60c+q/0wiUL7Me8ll+gZ4QMPQgd7Re+6EYqKTN3F2eMlywYa5iBmz9zSuA==
-X-Received: by 2002:a05:600c:4fc9:b0:422:2f06:92d1 with SMTP id 5b1f17b1804b1-4230484ea73mr83191025e9.2.1718697398460;
-        Tue, 18 Jun 2024 00:56:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElQg2MnML4c3e9aZwFA6IJ+FN0+5pNCUzrjPBudpNMYeXrjO8WNPBPXb35SYsoR8Fe93j85g==
-X-Received: by 2002:a05:600c:4fc9:b0:422:2f06:92d1 with SMTP id 5b1f17b1804b1-4230484ea73mr83190795e9.2.1718697398070;
-        Tue, 18 Jun 2024 00:56:38 -0700 (PDT)
-Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f602e802sm181674215e9.11.2024.06.18.00.56.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 00:56:37 -0700 (PDT)
-Message-ID: <0d9fe3d3c52fa618b6c4e1d3414373b2e5417f32.camel@redhat.com>
-Subject: Re: [PATCH v9 10/13] PCI: Give pci_intx() its own devres callback
-From: Philipp Stanner <pstanner@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Hans de Goede
- <hdegoede@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, Sam
- Ravnborg <sam@ravnborg.org>,  dakr@redhat.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org
-Date: Tue, 18 Jun 2024 09:56:36 +0200
-In-Reply-To: <20240617164604.GA1217529@bhelgaas>
-References: <20240617164604.GA1217529@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C639F19E7D8;
+	Tue, 18 Jun 2024 07:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.107.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718697419; cv=fail; b=ctE3rRhjA2L8SaBPFpEVtRW0jEJgXQ+dm3qzU5qFy2Sxw8iuGMGv69Moj8J/B4MS7lwo5y5ZMJI67PU7X6QbqvvfEk6rpbRUdD6scAjjz8AvoeTptCKXCqok4Aiz9vRKQCGg8bH2UQIV4v1qOdtQCV3c/QTOvDhwu1TwM00/7Ww=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718697419; c=relaxed/simple;
+	bh=sLKNYJMEIwFBgLtle/yzFaFpdLDZdTHh8NjIVY0DA18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=IAXKp0zP3jwzH+vafFl8z3hVjLQYSz95+8npIFZc7OiTrmlbyy8nY6ECj6IDNI/nwJF0PmZeGI9u/4IuMBiXXr3NyZyK2xyEh2RQRJ+82YR76wTDbs0oc883KrdLfnLCPT+Z/mon6E+lJobbNuR5QGUr0osL/S5mGfCZmMfzVk4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=pXDgWWGX; arc=fail smtp.client-ip=40.92.107.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ahcdyYxo4PMVCP3XNu1c9o+fzOg6lPZgtx8BXtr4Y4WjczP4KMiyYjYV8AkuG00S6xxO+LqOozDUnzka/Zu5TLBGJZqW1n9ny35zyWzSI3Uuy7SugXeCqwDpN+gq5uIRi+ZQIpHA18G08tUqq2feUYpBQOZeGefSDiLf3d1UvrJ4/FkWWYLMuKNTt0PR/k3vgRphPIvg4KYMukWIXOVxuDiqXLDGnch/6zTtBhNkLLkAQxPU763kOlLbzn58h/Y4VVU8KOB4gIO7Xu/s5NtXn6d6Mbt1KfftCtV0D1pQMzYoHTEfLrZ59VX6ngP/U7i6DrC0MD01+612v0ZIClKnJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bwfPlO/5RrSfM7eMyDj1n12oEj1ui5VmVU5X++uh9MU=;
+ b=JLkYR0jdLJR/ejPMy0x8jmlNhC3mptSS7q9v/5APKE0hwCwP2HEN6HVyhRBfBypqvyZsqNGcGo0cPMtCwPBhGnzcgurJqbNCOfxc9u7GH7WIA/aE2XBMcG8uLOCTpmt6VgFTR2RxSTZiMHthqHVK0zY/4rgtb67QmBeHukKLy4J1moq5Teva+LTmKrn8UOsHKS0fYaGK34d4CT3dC8hl2YFNuLwkYJ68ZX2BVlYgA8177kK+naQCOngOiqLwpogSxTAzkJDRCq7Sk3sTtrmVuJH9i6f4muVZIdzhk1OJrJ1MJXkQXEaw4yozUXPv1FRX2DoD2WEiJO137r/ds3IIzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bwfPlO/5RrSfM7eMyDj1n12oEj1ui5VmVU5X++uh9MU=;
+ b=pXDgWWGXc5Sti9T1yrHdKV29+FRYjHZ1A5pqi7h/aucIjsmXJqmmtLyQg17SiMQMJt6uyR4gM7DlAk/TKuCOsI9qNgkdgleI9lLHdDrpgitL0ShK/H82osjXpqtvrUWeVO0FfeYrUg7woTZ+fKmo57nOaRF4EApiOdLt5QUyO9C0eY+ucvbyyLNw/hRVjoGOomAMPXFaeCWF3z1YjgQR4m9T9gr9l0WuEKYKiM29drvkZdyZGnzszz587p89ekd1fkh4vbUwVq2zJtIO7G6VCv4ne0e6U8h5T33HB8yrFqAFbxlW6l95p0stjehTKvqGpAnwWSNh7L+XsdRDybzKPg==
+Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:56::12) by TYSPR01MB5963.apcprd01.prod.exchangelabs.com
+ (2603:1096:400:46f::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
+ 2024 07:56:52 +0000
+Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ ([fe80::b674:8f70:6e29:3756]) by SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ ([fe80::b674:8f70:6e29:3756%4]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 07:56:52 +0000
+Date: Tue, 18 Jun 2024 07:56:43 +0000
+From: Haylen Chu <heylenay@outlook.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Inochi Amaoto <inochiama@outlook.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: sophgo,cv180x-thermal: Add
+ Sophgo CV180x thermal
+Message-ID:
+ <SEYPR01MB4221A739D0645EF0255336EBD7CE2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+References: <SG2PR01MB4218013241B3EED779D3BAE8D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
+ <SG2PR01MB42189977B4172405F5704CC4D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
+ <IA1PR20MB49531F55C8D7DC5D0050CAF9BBF92@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <20240605-tightwad-janitor-82cfceb1469d@spud>
+ <SEYPR01MB4221F0E46F600E013974F21BD7FA2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+ <20240606-reaction-thirsting-8c22d1b5ab72@spud>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606-reaction-thirsting-8c22d1b5ab72@spud>
+X-TMN: [gdQ1kSMIlPm8UBCT49aEkLCr7+eUGyRb]
+X-ClientProxiedBy: SI1PR02CA0013.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::7) To SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:56::12)
+X-Microsoft-Original-Message-ID: <ZnE9u9we3i9rTkZl@ketchup>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR01MB4221:EE_|TYSPR01MB5963:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ab71bdc-a61b-407d-8827-08dc8f6c3706
+X-Microsoft-Antispam: BCL:0;ARA:14566002|461199025|440099025|3412199022;
+X-Microsoft-Antispam-Message-Info:
+	5+hCHJ3lJhbQiRpIKNkL3KjvU7upZDz+PlFnAcXg2FdctlYvgaWDUHNzv8TE4k+xo5Uwvy9iNLf4XOUtkdBNP2uKbVHZPLh/zQUhm22+0thp0QJaUWZicMYeEzGmbWXg20ofqKKsUlXDYoB2hgGNgtQPDFaTpszq2iyCEjIoUsIg95H67dZR8RK6lHS+B+nJ3W6f0yu7+OAD4OY0sSOf+yUiChx7c9DUvi69XCLKZMtBTyY49tObnFyTt1mejcgUyM881dW1p9YLU+1qiKM+NOiyk/2YIjeYwiwrv4wQGwj0xulxfmF1CslwjxJqFLFTIjoDZI1eYQpIyqkEmB1WDyN7Xmgq+NlFhK0Pb5nO8YNOawjXqZhRt5ya0oGdUdYIcNRjQq97G9zgY1z73fdPiyTtgGvHO5lcYjjxLyXy4xyZ45V2jJPSouZm1CTyrQwhXgbFBObvd/YJv6hui8KwwZHO8BLTuWpG0sbnQjYW9lSccjCW7gaMEH9a1gT0YUH18vFVQHuIyUDA4bH8IGZnZVsoZ4jutI4ZHec/GffWI62W83dObN7Kdp5SqixsJR6j
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/AZqUNs/k+h+wXjkftpffgM/+UsZjjlF3KC/Rnm83Y6NFCDYyr0TQKhum5TD?=
+ =?us-ascii?Q?FqrQsu3riM9mXW4nPaKB3Je2fBYXTVlh/zlS85HAtlRgtAni/tNIt9HbOiIO?=
+ =?us-ascii?Q?vIxlJcbbN71iQO2x2v1XAY0nQ5VsXxDcKL3wTNprxrhwmEFyPoFhldmG5Iqm?=
+ =?us-ascii?Q?Uqndgv8YC2mkeWDzEjO5zrNZI2mqYEDIiCVeg3s+RRe3glqh6wm0IuavEBXe?=
+ =?us-ascii?Q?LzE9OvgRXRQx+shDbS085FLpj80tAhc1e6nd8kcT0YI009l40IJREVCfoSMJ?=
+ =?us-ascii?Q?pIkkCQUczxhzDT+7f88YqNY9TIFXS6LEoSB8szBYSMCHig2ZfeUwdcavpIxJ?=
+ =?us-ascii?Q?c6U33TFHLMWhN7BpsyPIaxn4w8M5eGf6eMG1h3JfUu35H2xjENsV8qUWLT4L?=
+ =?us-ascii?Q?FRRoOuQRLg0wxTSb7yE/96ALWXfCFXpvtNbKbcD9vyb3Crpovv+L5LdkkO7c?=
+ =?us-ascii?Q?H0qqWWSKx7TNnBS0W/lsNWXZ7eviA6/tqqDfrRQ6UxW6cYXvTx8lsOz/DDRH?=
+ =?us-ascii?Q?yiEMCAQna6Xt4zH8GPKO8M+ShCyofgr25XCGpzvxF6nPV6ITNsY/NXo+gbtc?=
+ =?us-ascii?Q?/tZ9+uBiHoHwxf1C5H6H995JGwYoScLEh8r1sPOPvUoUswutokCK2iQg+qLc?=
+ =?us-ascii?Q?n8o2Ue01KQp5Dnsw44u6h5qByIRDIyo00HBD4YacwXdGZ3zopYFvcrnC3Y8+?=
+ =?us-ascii?Q?mkQviPkqYm2BiiBVg35H3cOFBJ+dchXpcIH/dvAhHLxwzWG7glMQyvWxWYLj?=
+ =?us-ascii?Q?ixcbB1AJoS9663IPyYLdrdmH0pJyCqY1BhVRLIKgpDVas9fJTGrZjhAdcBZ6?=
+ =?us-ascii?Q?ofNTKD8X4bVzDoWlN8EMjkTqyAGRMJG46syPcYZI+zTvB7Ba9GZcVzAJUo1A?=
+ =?us-ascii?Q?Ru8bLzHfNRabjcYH8HQJCXnURtdoKYZicODnKzachP7oZph3jlElrg2ewk9r?=
+ =?us-ascii?Q?/NfJPltUiMyLN+4s8cT7GQ6G31br8idgjpSb1NWkMXugjV4kw/wj8JKDn57r?=
+ =?us-ascii?Q?KDJJkHf/XEURK3RqU6lPM6dQoTlI7Oc3LhW6WtF8uBkGvRKVrdhOglb788L4?=
+ =?us-ascii?Q?5749uVLLio+cxLTfQ7cHAxXE4Fwc4GfbFUK8nQznC0eczYVp4/dJSvWoPAeV?=
+ =?us-ascii?Q?KbMntzZRjubIOUVG6Yds1BpUlpKEFoNXOQf1s9bskwUMmVSuyX6Sa2nYadis?=
+ =?us-ascii?Q?S8l0tQ5UcbyhLqmqAQOqDnL90P3BG5MW8zZKMl8imjN5CxaFa604S3WnO40?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ab71bdc-a61b-407d-8827-08dc8f6c3706
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 07:56:52.4647
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR01MB5963
 
-On Mon, 2024-06-17 at 11:46 -0500, Bjorn Helgaas wrote:
-> On Mon, Jun 17, 2024 at 10:21:10AM +0200, Philipp Stanner wrote:
-> > On Fri, 2024-06-14 at 11:14 -0500, Bjorn Helgaas wrote:
-> > > On Fri, Jun 14, 2024 at 10:09:46AM +0200, Philipp Stanner wrote:
-> > ...
->=20
-> > > > Apparently INTx is "old IRQ management" and should be done
-> > > > through
-> > > > pci_alloc_irq_vectors() nowadays.
-> > >=20
-> > > Do we have pcim_ support for pci_alloc_irq_vectors()?
-> >=20
-> > Nope.
->=20
-> Should we?=C2=A0 Or is IRQ support not amenable to devm?
+On Thu, Jun 06, 2024 at 06:05:30PM +0100, Conor Dooley wrote:
+> On Thu, Jun 06, 2024 at 01:32:46PM +0000, Haylen Chu wrote:
+> > Both accumulation-period and chop-period specify how the sensor
+> > measures temperature. Making these parameters up to end users brings
+> > extra unnecessary code complexity. Being configurable for each board
+> > should be enough and other thermal drivers have been doing things in
+> > this way.
+> 
+> Other systems may well have properties for this, but something being
+> done in the past doesn't mean it might be the right thing to do now.
+> I don't really buy that this is something you set to a fixed value per
+> board, but rather the use case of a particular board would factor into
+> whether or not you would want to use a shorter or longer accumulation
+> period.
 
-I don't see why it wouldn't work, AFAIU you just register a callback
-that deregisters the interrupts again.
+Accumulation period and chop period do only affect the accuracy of its
+result, in a range about 1 Celsius degree. Changing these parameters
+does not mean much to end users, as this is only a thermal sensor and
+1 Celsius is quite good for its usage. And users could always switch to
+another configuration with a dt-overlay.
 
-This series here, though, stems from me trying to clean up drivers in
-DRM. That's when I discovered that regions / IO-mappings (which I need)
-are broken.
+> > I do not catch your idea. These values directly map to raw register
+> > configuration, which simplify the implementation a lot.
+> 
+> It should be trivial to convert them to register values in your driver.
 
-Adding further stuff to pci/devres.c is no problem at all and
-independent from this series; one just has to add the code and call the
-appropriate devm_ functions.
+Okay, I will do this.
 
->=20
-> Happened to see this new driver:
-> https://lore.kernel.org/all/20240617100359.2550541-3-Basavaraj.Natikar@am=
-d.com/
-> that uses devm and the only PCI-related part of .remove() is cleaning
-> up the IRQs.
->=20
+> > > > > +    default: 3
+> > > > > +
+> > > > > +  sample-cycle-us:
+> > > > > +    description: Period between samples
+> > > > > +    default: 1000000
+> > > No constraints?
+> > 
+> > Sample cycle is more flexible because of hardware designing.
+> 
+> It quite likely has constraints, flexible or not. Is the hardware
+> capable of both 1 us and uint32_max us?
 
-OK. They also use pcim_iomap_table() and stuff. I think we should
-inform about the deprecation.
+It should be a value between 524 and 2^24 - 1. Will document this in
+next revision.
 
-I don't have a user for IRQ at hand for my DRM work right now. I'd try
-to upstream new infrastructure we need there as I did for vboxvideo.
+> Thanks,
+> Conor.
 
-
-Gr=C3=BC=C3=9Fe,
-P.
-
+Best regards,
+Haylen Chu
 
