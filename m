@@ -1,150 +1,129 @@
-Return-Path: <linux-kernel+bounces-220205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F2F90DE0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146E390DE0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B2E81C236A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09941F249E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C17176ADE;
-	Tue, 18 Jun 2024 21:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A14A13BC30;
+	Tue, 18 Jun 2024 21:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Rw5MiVuX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h2nG7ESl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B29176AB2;
-	Tue, 18 Jun 2024 21:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1AC14D6FC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 21:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718745267; cv=none; b=uWrqkJKskf5PemO2kjIgWuSB0wcTK1qfGcQbr7IU8oi3bku2D5/j/zrULGVbnhUxxzXd5nuj12Y17HxhSQB66Brqqe6epqwVJS6tYllzDzaUtPPnnF0llZ7rux6I/ZAS8XzxRUjNOtXtxUZ7ReO7uLvC7z4tKDmwz2TeL8Kc90U=
+	t=1718745338; cv=none; b=rcUAuTRKemnG3ydmEl/x/QmIWuNyEL+H8qB8iiIruh8OZbGU9QufKwCn83PRzv6twnVhla+PP47QdOrQXsMtWEoH7FGEbYYz9GH6O6ncgl0cesWMY8YaSCpH7HwHLRa9HpUp/9XtiD2F93r+2weXlePJb++tYK1n3/RMEFl5i00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718745267; c=relaxed/simple;
-	bh=z9XvycQfjh13D3iusq5+A1VVeBIk2Ofyo59g4rSmQHU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GKczZ/eOYCwDijd7z0HsGC9XmiQh64xw/GKrs4NO6Iu269rWwc3hQkmotol3X5pd/pOhKQ2kE11okXVmXEbqW1umhqAYG/Xu9FjWdVVFShYuGC3PydqED46GS2no0D30JlsT9ceY5t0o52igbXuLCSPnG2HQRnNLuoZmpYZgzVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Rw5MiVuX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A933EC32786;
-	Tue, 18 Jun 2024 21:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1718745265;
-	bh=z9XvycQfjh13D3iusq5+A1VVeBIk2Ofyo59g4rSmQHU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Rw5MiVuX3wIP8cGngGfu7tr1Y2f8+/hZRIv3MFq9Hhbk683v6sG0QeBYio9TQfq6e
-	 dFsmxt1OzzToGd+ZDSGKrY5A9KIM25NvyeghgRwMCdjd9kB6zF6jcGvBT2xG+jjpl5
-	 csStnF0f/UZsBOGt4DmcsL3ckzZ6HxbzD6wxLzCs=
-Date: Tue, 18 Jun 2024 14:14:24 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
- "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, Omar Sandoval
- <osandov@osandov.com>, David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Hao Ge <gehao@kylinos.cn>,
- linux-debuggers@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] mm: convert page type macros to enum
-Message-Id: <20240618141424.0bd414c8fcc537e7709eadcd@linux-foundation.org>
-In-Reply-To: <878qz31ajh.fsf@oracle.com>
-References: <20240607202954.1198180-1-stephen.s.brennan@oracle.com>
-	<20240607212738.bf55318aebd7172fadaa11c5@linux-foundation.org>
-	<87ikygo1yb.fsf@oracle.com>
-	<87bk3z1f76.fsf@oracle.com>
-	<20240617142951.08a9cdc791c8edeeca50509b@linux-foundation.org>
-	<878qz31ajh.fsf@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718745338; c=relaxed/simple;
+	bh=sf4Kk8xdQqZve48iGjYcOf7KxledJ7m6ar/8nEH3AHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kjoz7RHNgnnGmyp/GIHwcmedT77fCjC4JDfzebxpPgg2goapk/6Zo5UccDNd/zYdUL8+DbDKMOki8sA00UGAEVNKIbAlornjoF/nPW+UZ7J0ConIhEQaYWdkYliN78kYACz7oztF438scxCBdVMzDqBoKISmFSrl0a/lhDQYbDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h2nG7ESl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718745336;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=96nBoDElHbTtsoCtF5N08Hdwjkz7BYhf+kPf44yoMq8=;
+	b=h2nG7ESlqTSdZoAf8sTL8LCJ2N3ewGGbsnXupktCssENx1Qxp4xd9PGHKjUJchmKqfcJXH
+	bzD+spesbMC4WIrGmKcAql+9Q7lMMotzRrJUus006Fr6ZeG3OQ7GOPLr2TkunwVcExlT2m
+	Qub6DYt/tdDcIDY7la5mtpy+dNcwmAQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-115-s3sOmFj5O5GwlcDCoqr4gQ-1; Tue, 18 Jun 2024 17:15:34 -0400
+X-MC-Unique: s3sOmFj5O5GwlcDCoqr4gQ-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4217f941ca8so38372965e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:15:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718745333; x=1719350133;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=96nBoDElHbTtsoCtF5N08Hdwjkz7BYhf+kPf44yoMq8=;
+        b=Ij4etr4JtIb+bNV4mc/rFTRTEQuCCoRzz9weIuitRKx5TBhIw3ATcpaE8SGNFvN7pY
+         CYkxcJU8Q46q7MVL4uPzWJDoNWF8NLB9O0g7TN526b4o/1hGRqOsvBunoyrxhTsrQRpl
+         5UMQoSreuzLqKcWZW5TSbjTRTEVfaACXJH2gOoW02c/WUZub9T7rwibhSDFLks7yOoiB
+         meCPs+crY4krDCye7LVJ5ToK6vwBP6f8o2sl4190XulU4J2oZRdLswVhLTRVypz7PouG
+         CiAdAyZimZ8+eHa+F0LuI9UHf2KJjLK0djBDEl7HjEkMR3KNaFIA903N5Y6F/IQfRaZa
+         tVng==
+X-Forwarded-Encrypted: i=1; AJvYcCXywttxSJ0abfqiuWOPqBDsUMO0b4Y+iVIAEz4YSZ7EoQqIURvxgF1eqeV53b6yhPOI7oKywCA/PMN6waBxAfwSzrMiLBz2Jny+f4cq
+X-Gm-Message-State: AOJu0YzMYgZAVvGrvChOPvs3wr9GEWPEaa+OwtoL7QGIIpSUGFaBuo33
+	LIoz++hQrPIqc+hEkK6/72I9l3s7k+4llnLYYOH1pNfrPo8pR3H9eTLHt8HFsvKVZAzvfZ/x/u7
+	djY+ylDHprwn0eMmKhe28rM2BN819qqyiInQOltaifXmat8AAD8MSAaDxwoxO3w==
+X-Received: by 2002:a05:600c:214c:b0:422:6e65:a4bb with SMTP id 5b1f17b1804b1-4247507a10cmr3164135e9.5.1718745333712;
+        Tue, 18 Jun 2024 14:15:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGmkvm6Wpg+T20KkbVracoP2lwhqgErIro0Zt5eKTCJ6OBKJ/cZuGS4YIJx2hS2d1tS9Nt4pQ==
+X-Received: by 2002:a05:600c:214c:b0:422:6e65:a4bb with SMTP id 5b1f17b1804b1-4247507a10cmr3163985e9.5.1718745333366;
+        Tue, 18 Jun 2024 14:15:33 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe91f7sm239240225e9.16.2024.06.18.14.15.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 14:15:32 -0700 (PDT)
+Message-ID: <175e7744-1234-44c0-b031-24ac42524b44@redhat.com>
+Date: Tue, 18 Jun 2024 23:15:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] rust: add firmware abstractions
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, russ.weight@linux.dev,
+ ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
+ airlied@gmail.com, fujita.tomonori@gmail.com, pstanner@redhat.com,
+ ajanulgu@redhat.com, lyude@redhat.com, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240617203010.101452-1-dakr@redhat.com>
+ <20240617203010.101452-3-dakr@redhat.com>
+ <ZnHkQpyiX4UKdLEt@bombadil.infradead.org>
+Content-Language: en-US
+From: Danilo Krummrich <dakr@redhat.com>
+Organization: RedHat
+In-Reply-To: <ZnHkQpyiX4UKdLEt@bombadil.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Jun 2024 15:14:58 -0700 Stephen Brennan <stephen.s.brennan@oracle.com> wrote:
+Hi Luis,
 
-> > -#define PAGE_TYPE_BASE	0xf0000000
-> > -/* Reserve		0x0000007f to catch underflows of _mapcount */
-> > -#define PAGE_MAPCOUNT_RESERVE	-128
-> > -#define PG_buddy	0x00000080
-> > -#define PG_offline	0x00000100
-> > -#define PG_table	0x00000200
-> > -#define PG_guard	0x00000400
-> > -#define PG_hugetlb	0x00000800
-> > -#define PG_slab		0x00001000
-> > +enum pagetype {
-> > +	/*
-> > +	 * Reserve 0xffff0000 - 0xfffffffe to catch _mapcount underflows and
-> > +	 * allow owners that set a type to reuse the lower 16 bit for their own
-> > +	 * purposes.
-> > +	 */
+On 6/18/24 21:47, Luis Chamberlain wrote:
+> On Mon, Jun 17, 2024 at 10:29:41PM +0200, Danilo Krummrich wrote:
+>> Add an abstraction around the kernels firmware API to request firmware
+>> images. The abstraction provides functions to access the firmware's size
+>> and backing buffer.
+>>
+>> The firmware is released once the abstraction instance is dropped.
+>>
+>> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
 > 
-> This comment is a bit out of place now, because it refers to David's
-> change which has not yet been applied. Maybe it should continue to read
+> I don't speak Rust, so if we're gonna add this, I'd just ask you also
+> become a firmware loader maintainer, willing to spend time to help
+> review both C and Rust code. Is that too much to ask?
+
+That is fine, I'm happy to help out. I think Greg applied the patch already.
+But I can send a separate one adding the corresponding entry later on.
+
+- Danilo
+
 > 
-> "Reserve	0x0000007f to catch underflows of _mapcount"
+>    Luis
 > 
-> until "mm: allow reuse of the lower 16 bit of the page type with an
-> actual type" changes it?
-
-Updated, thanks.
-
-The post-Stephen code is now
-
-/*
- * For pages that are never mapped to userspace,
- * page_type may be used.  Because it is initialised to -1, we invert the
- * sense of the bit, so __SetPageFoo *clears* the bit used for PageFoo, and
- * __ClearPageFoo *sets* the bit used for PageFoo.  We reserve a few high and
- * low bits so that an underflow or overflow of _mapcount won't be
- * mistaken for a page type value.
- */
-
-enum pagetype {
-	PG_buddy	= 0x00000080,
-	PG_offline	= 0x00000100,
-	PG_table	= 0x00000200,
-	PG_guard	= 0x00000400,
-	PG_hugetlb	= 0x00000800,
-	PG_slab		= 0x00001000,
-
-	PAGE_TYPE_BASE	= 0xf0000000,
-	/* Reserve 0x0000007f to catch underflows of _mapcount */
-	PAGE_MAPCOUNT_RESERVE	= -128,
-};
-
-
-And the post-David code is now:
-
-/*
- * For pages that are never mapped to userspace,
- * page_type may be used.  Because it is initialised to -1, we invert the
- * sense of the bit, so __SetPageFoo *clears* the bit used for PageFoo, and
- * __ClearPageFoo *sets* the bit used for PageFoo.  We reserve a few high and
- * low bits so that an underflow or overflow of _mapcount won't be
- * mistaken for a page type value.
- */
-
-enum pagetype {
-	PG_buddy	= 0x40000000,
-	PG_offline	= 0x20000000,
-	PG_table	= 0x10000000,
-	PG_guard	= 0x08000000,
-	PG_hugetlb	= 0x04008000,
-	PG_slab		= 0x02000000,
-
-	PAGE_TYPE_BASE	= 0x80000000,
-
-	/*
-	 * Reserve 0xffff0000 - 0xfffffffe to catch _mapcount underflows and
-	 * allow owners that set a type to reuse the lower 16 bit for their own
-	 * purposes.
-	 */
-	PAGE_MAPCOUNT_RESERVE	= ~0x0000ffff,
-};
-
 
 
