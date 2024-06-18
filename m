@@ -1,115 +1,152 @@
-Return-Path: <linux-kernel+bounces-220028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0104D90DBA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:37:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD2590DBC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26ECE1C225D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:37:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 753211F232EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB1E15E5D6;
-	Tue, 18 Jun 2024 18:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A0E1684A6;
+	Tue, 18 Jun 2024 18:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fc5dIQSc"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OHhlhrBV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201FE156F25
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 18:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A14166317;
+	Tue, 18 Jun 2024 18:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718735822; cv=none; b=c14hyvZIFowiJw5EvVWqR11Igts+orm1GZB1fPY1bsJWupnENDMfd/54GMcCdm2UcWt1Ius7XUefPvCtI/nj8G9llv9xkVm3ZZ2ZCZ8yB0YjN+QWD+VBO+g/vSfYIOyQuJQ58xwKxgabI37R+6zjW+XFx6ff1o/gU/W7Q4i+Yc0=
+	t=1718735909; cv=none; b=sXryqxl01EGwny1xzNUT1k1njyHHE/Q/JQn5wRFlsBTw8kBijMoaW06EpZW+ZZSgq9oWZBJzjXovg/M40K1Tf8NtO3c3q8fBeoiGfvLU1lLKb9xypSg6MMslq2p9Dr1WqE/BsoEoGnFhIhUIdGClQg8Yo+5AroPQvexFDH2oxL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718735822; c=relaxed/simple;
-	bh=6dqI5FMicCFOtzWkymzM/4W739wxDKCyS1QKnMAJiE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PzYRYaB/4aMDwTqbJYDq9duBtOWsf6Dg0liAjO+ZT/EmMC2eD/+rV566LgtwJVZTwnZbU28x5tOD30NXtu7hViv5Rt3P3VbCh05c3T1hUdX685HzxkEgQomgVPETeH8pEXZKWlobelHUqYmV3jJD/Njv72l/rV4rTTvopk/qgh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fc5dIQSc; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 877C640E0219;
-	Tue, 18 Jun 2024 18:36:56 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id LRW06gXU3vjC; Tue, 18 Jun 2024 18:36:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718735812; bh=v4ekNk7M9X1ZXaB//Hg4UEVPT3/BcXHuBouv1vwQ6ds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fc5dIQScYhhPk+Y6M37kp6LIA3gBSoFpIOfuwav9kNLME7pOyQm6O1G4ZuuoxT4OO
-	 jZAjPtiC8657tnCcNFp3ncr+F/sRfhvztGfo+RjMdaKk0OdLSeOzEaOEiu6LZLYo5u
-	 lXnyXpNcjNFy68bGGN4vbxhZBoKNXVunW5ANJZE/6HHI3sRU8t7vVPVyGrJ3WjDBVR
-	 VdpL1JITEYa+rB2omsfq2t5pxNjqvsBzaae7FI9afIfJOOghM/XeicAbICLbeh5dTJ
-	 1vGFfiGRZeASt3hMTE+fExhK6elB7JU9e6x+QXOeUC/KAyCETSQrNVMwQPfaZ4jfDi
-	 JY8Li8mGQU/KY2kqqBilmdmkqrLTPojuQ7fessgl61QVvS7q1vr82Fr/spnm0wMFmK
-	 seGN2ZAjqEM5Uo68JGd9tXyqM4obsH9DmMfUuBHhPPnI/VCTszCLFFAS2DJLKw/bvP
-	 j3OnixlED7Mgo6kS08vGY3DrBYznHIpGXNDChqRB9KxjQds5Rk9ZkgXY1+a5xEnu05
-	 AfJxeEjTvzRIHdz6W6ELobQZnoRqnq4n7nPMCcPeLgQz0qReNbQ9x+/1p0YzfZnOQh
-	 JyFtqT2hpbdBG/INE5arUsQL5MNvXpaoxdk02CAre35ixncyLO6RTSwOfA3Y6rcw3C
-	 MoHa3XDl3oHvGMMgtwV8qu3A=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E166140E019D;
-	Tue, 18 Jun 2024 18:36:46 +0000 (UTC)
-Date: Tue, 18 Jun 2024 20:36:41 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Borislav Petkov <bp@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] x86/cpufeatures: Flip the /proc/cpuinfo appearance
- logic
-Message-ID: <20240618183641.GGZnHTuS2zS4e1fPv2@fat_crate.local>
-References: <20240618113840.24163-1-bp@kernel.org>
- <ZnGUVcEUUF_1Vqmi@google.com>
+	s=arc-20240116; t=1718735909; c=relaxed/simple;
+	bh=6vafE+NNpVQtd0n++Rsd3ICmN32Uzta329jfAyQTRl8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2EZczqhQ3okxhgubbkMHR6DVC2q4CucnWZqOuSm1booGjWH8TmjEesMVlqeUwPIX6CNeXYsEGLvGfZoqtY7OUIGF/kd/1lyUE/aVqpheJEDVc1fWxuiNPSsaioAdTSFa2pacCI2CGYDvYHm27BEx0akHD71DmMvdBPouNidFPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OHhlhrBV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ICqkDd006229;
+	Tue, 18 Jun 2024 18:38:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=hzJDQuddYS+nIuxMYXY3l1iu
+	roExK2HuuOngnKTN9oo=; b=OHhlhrBV7Sx4LXFm8LfK3XfN/ANxDhJTYWmIZuBc
+	Z5X23MWAil8xNCKgmCcVYS79wA834/rBWefMuAK/+YCx0kbYKi/wbsW4ZiQNdrJ9
+	U/7wXtRr/5sY1pRdSrq2rMeVTBOfpTJquPsa7qQpU5toHBjIZ6FdM7m7ENEJbv02
+	VyN95dvzEUMokeIto6/LDz/WbALpCxXhYgNgYjrpxHHriudmLSGu8fCC0D6HucKF
+	J7PHifJ9gVOaWiPpXyOhWsyEcAgufSy+cPtXh44RFpQCOTFtIOJWR847l5DLrx8+
+	AY1RlRdUgsb2GHiG292h+0KCFShSY8s7n9eptnu1jEOlSA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuamp0v70-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 18:38:22 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IIcKxF008425
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 18:38:20 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 18 Jun 2024 11:38:17 -0700
+Date: Wed, 19 Jun 2024 00:08:13 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Komal Bajaj <quic_kbajaj@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] arm64: dts: qcom: qdu1000: Add secure qfprom node
+Message-ID: <ZnHUFVFKTP+74Iie@hu-mojha-hyd.qualcomm.com>
+References: <20240618092711.15037-1-quic_kbajaj@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <ZnGUVcEUUF_1Vqmi@google.com>
+In-Reply-To: <20240618092711.15037-1-quic_kbajaj@quicinc.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JzvoszPKtuzs-LwUahTW8hPU2ARboyyv
+X-Proofpoint-GUID: JzvoszPKtuzs-LwUahTW8hPU2ARboyyv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=776 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 mlxscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180138
 
-On Tue, Jun 18, 2024 at 07:06:13AM -0700, Sean Christopherson wrote:
-> If we're going to churn the whole file, why not take the opportunity make it more
-> structured?  E.g. use a variadic macro so the name doesn't need to be buried in a
-> string inside a comment, and so that each feature doesn't have to open code the
-> math.  Lack of third input omits the flag from /proc/cpuinfo, and a magic keyword,
-> e.g. AUTO, uses the feature name.
+On Tue, Jun 18, 2024 at 02:57:11PM +0530, Komal Bajaj wrote:
+> Add secure qfprom node and also add properties for multi channel
+> DDR. This is required for LLCC driver to pick the correct LLCC
+> configuration.
 > 
-> There are quite a few games that could be played with macros, and IMO pretty much
-> all of them would be better than comment+string shenanigans.
+> Fixes: 6209038f131f ("arm64: dts: qcom: qdu1000: Add LLCC/system-cache-controller")
+> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+> ---
+> Changes in v3:
+> * Addressed comment by Konrad
+> * Added Fixes tag in commit message as suggested by Dmitry
+> * Link to v2: https://lore.kernel.org/linux-arm-msm/20240612063424.2494-1-quic_kbajaj@quicinc.com/
 > 
-> #define X86F(word, bit, abi_name...) ((word) * 32 + bit)
+> Changes in v2:
+> * Minor correction in commit message
+> * Link to v1: https://lore.kernel.org/linux-arm-msm/20240607113445.2909-1-quic_kbajaj@quicinc.com/
+> ---
+>  arch/arm64/boot/dts/qcom/qdu1000.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 > 
-> #define X86_FEATURE_FPU           X86F(0,  0, AUTO)
+> diff --git a/arch/arm64/boot/dts/qcom/qdu1000.dtsi b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+> index 7a77f7a55498..27f9fc87079c 100644
+> --- a/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+> @@ -1584,6 +1584,21 @@ system-cache-controller@19200000 {
+>  			reg-names = "llcc0_base",
+>  				    "llcc_broadcast_base";
+>  			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			nvmem-cells = <&multi_chan_ddr>;
+> +			nvmem-cell-names = "multi-chan-ddr";
+> +		};
+> +
+> +		sec_qfprom: efuse@221c8000 {
+> +			compatible = "qcom,qdu1000-sec-qfprom", "qcom,sec-qfprom";
+> +			reg = <0 0x221c8000 0 0x1000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			multi_chan_ddr: multi-chan-ddr@12b {
+> +				reg = <0x12b 0x1>;
+> +				bits = <0 2>;
+> +			};
+
+LGTM, without this change, LLCC driver for QDU1000 will result in probe failure.
+
+Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+
+-Mukesh
+
+>  		};
+>  	};
 > 
-> #define X86_FEATURE_XMM		  X86F(0, 25, SSE2)
+> --
+> 2.42.0
 > 
-> #define X86_FEATURE_K8		  X86F(3,  4)
-
-I'm always open to those things, sure. But it'll have to go ontop ofc.
-
-"X86F(3, 4)" is not very readable but we'll get used to it. I like the aspect of
-not having to open code the word math. But then having it opencoded is
-maximally readable...
-
-Yeah, we'll see what the others say too.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
 
