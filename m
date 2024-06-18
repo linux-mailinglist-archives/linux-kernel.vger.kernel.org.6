@@ -1,744 +1,994 @@
-Return-Path: <linux-kernel+bounces-219432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C7790D2D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:54:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC1490D25D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02C91B227A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:42:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E9F9B27906
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AAD1A0701;
-	Tue, 18 Jun 2024 13:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E7F1A072D;
+	Tue, 18 Jun 2024 13:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+108jVz"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="IJtYKB1V"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F591586D5
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4871813C695
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718716175; cv=none; b=MS0fAGDHKeBtG6e0Nir2/50eapXfgJx0Owk4+Fl7uGdaITG8WP5a7Ky0ck5THYHYVElQf+GFuoiQ4GSMaBaRnExK8qxLuHIDDFH3TUSQeNTE/F+QM+kfS4SD6TfxgWHLZuusv6joaLLvHYC41BAzx22D/KdmMAAjzNON7jyIYd4=
+	t=1718716199; cv=none; b=IJme/M3HRRUPZOXO70AP97vGqL1zpVUJMaREC/Dp8wbG/HIrVzmtPPc2P22bB3T2HQq7g4OpP2++oBsCwlUfnfvGqhRdd8lOsXXVFcP5h3n9Z76m2mngOQzBir+SvDdLwS3yBRAtlweA8q7LNWw5Pb545yY+KVQSFgcFJoQCHfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718716175; c=relaxed/simple;
-	bh=zFROGPFjwg0hhdy23j6MYsnSW6bikq/lPBXg4zXyoac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cUH+o4kMwOKumqIIjqRkBLHoHHTGmWw9F5xIzpp426UnsAoVPxFWZ0QePsdxezEOJb7GMeOkxsJLnmOoJ8DKoS3WicZBzC6Hbc558xmnWqr+o7DYznbAry2H9sey3Vw/FMmuN9tWkPwppEU4tcOnNx7DBzpiWgE9/hpxZ1BlpJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+108jVz; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-710437d0affso55515a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:09:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718716173; x=1719320973; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=47yQg/nNms4faS6WR5f+f02f7Q7XUomMXTsbsjJAW2U=;
-        b=b+108jVzqk0iX/DCUnDpfvCHyznz93LseiYBOgOxbkAaF3r36vpjTYPUeuzk/sA0ha
-         G4qG2xvW6VSpQw609IgRrWBr97kMfQmUCUTAnjLrgEFNlrA9X+osNurVT7S0x/cWQ5GZ
-         Z+h1LAgXvkM12ZT+9juKEO9MyZG6CmOsYmjOCCcMWXHsRe4ps5Ve1XMuaF8CdMXOSBf9
-         Y6lPTK1PKtLWrQPysd2sHjx+nVaGwJH4jT3+R8dgvj2DJp2oSzYbMNO3ez+oibF/RGD/
-         oekzuM5W4f9nQoNiIMYRONeBSed/iHbFkVAG/xRnZCKfQaCtWR6qSLzbUbDaEVXtPBxH
-         s6Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718716173; x=1719320973;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=47yQg/nNms4faS6WR5f+f02f7Q7XUomMXTsbsjJAW2U=;
-        b=U4gITL/osVxlfSjVqO55fkni2UjnYEOHSSV8qs2SOHLBdeigVYvBKj8tVkHp/8BiDl
-         yaXS2aXfzsssWbQb5uwqYW+7yPHrVilyaEQKrHDJenc96e1xu3OTr0t/5P2ejmxGhnkN
-         shVjV0fVdSJ69Zu4/rUCJKJeHB6SMkqPgt74iCdBXyK7thgCUvye26sW+deVqCfG5Qmn
-         blilHjIfEirXx6UFOQlpOWXw672b8adqSczq1joTDD4VW+6csovGN28EjAvxve2692Vm
-         vBp+XJ+HQiRypufcr0t9fKGqkTfKLeZTy6R8bQVaCNOeVJtE7H2kTdRULugdtnv9x+TP
-         VVlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWka1LvyzDfKEKHxjYmtXpe42HCPfhKWcE+xC9jIeQb2nDBxDQvB+LPVUSgRD3MyYCdJix83z3e2YRjs6B9eVpmHOUpFhrjtB651By
-X-Gm-Message-State: AOJu0YwJw/rUOqgoGC6iAmm0KVcfvwPXVlKRV4CKR8hqQQXl/w/rZ+Vl
-	nH6o18l0XFiQ0TBSx1ZHZ+4SmDLzzEuC2Eq63Rp30SLKXe0Qh+mJ/hXL1tPSe6untxNw6jf911d
-	a5aNPYKpOlprDRvXMW5JylG440o8=
-X-Google-Smtp-Source: AGHT+IH7s6C+piRRxY6/jHm1tmuHgLRps1sl7GAHAFBvchF9y/GnHSyH4N7WJNeGs9fF4KkRPKIhtn8ua+IWjDzWK3c=
-X-Received: by 2002:a17:903:1c7:b0:1f7:364f:1162 with SMTP id
- d9443c01a7336-1f8627cb650mr142736655ad.31.1718716172637; Tue, 18 Jun 2024
- 06:09:32 -0700 (PDT)
+	s=arc-20240116; t=1718716199; c=relaxed/simple;
+	bh=YfDi6HGYR5LIOKtrxxUqgZIttCq0sqaaOeo0Oxqmoxg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rdTMjw4hn0ToUDY5D2fQ9lJ5u2ZnH5wKNLuoKHttmnK3pKUBoAV4hMRi0CLWrl7bGhSUId0A81nf8uf5VakrykrytIk+kiur3Cn48aZ+ALjbOjGUF9NR7lIYiD7tmXA+4FdPyNGtZStuY/8jRzpHLnJSHpSoNBjm93mN3Kj4Wfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=IJtYKB1V; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IBxJo3015585;
+	Tue, 18 Jun 2024 06:09:51 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=B
+	Gu70HBe/apZidTcgLycaceylvQXY8z8dIEqNB2YJzo=; b=IJtYKB1VB69Jt+C4F
+	kYMEF/5hSNmRnzoJ1yag3CJioANDHBNEeJI7U1y0xNX+RZL2pxyF6lr7EJ0rIlg9
+	eLHqok/e7QsoZ49DLuVpi9xEcHCiT4kHed8C4yHDl48PRJFUIyI0XMu0BAunTuxB
+	tfMVHwgRskJnVJQ0d43qIes563JwVm0slJ9pO4Zyni+3Wiptd8gWQTjTUuBa92bc
+	QdrjODRCfdKTEjBhrGzXpf63UF+nNDgQDPoPJ0cDffHDpfQg7g5Da6OrklLiTj67
+	Er84wuzeoxDsby48BCjjE2mUYkEg9vb9sXwzZhE/srPSN9oAe0m9fOfMlIbCaDxB
+	bYT3A==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3yu0nwsy6c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 06:09:51 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 18 Jun 2024 06:09:49 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 18 Jun 2024 06:09:49 -0700
+Received: from localhost.localdomain (unknown [10.28.36.156])
+	by maili.marvell.com (Postfix) with ESMTP id 1E8DA3F706D;
+	Tue, 18 Jun 2024 06:09:46 -0700 (PDT)
+From: Vamsi Attunuru <vattunuru@marvell.com>
+To: <gregkh@linuxfoundation.org>
+CC: <vattunuru@marvell.com>, <jerinj@marvell.com>, <schalla@marvell.com>,
+        <arnd@arndb.de>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v8 1/1] misc: mrvl-cn10k-dpi: add Octeon CN10K DPI administrative driver
+Date: Tue, 18 Jun 2024 06:09:37 -0700
+Message-ID: <20240618130937.3070993-1-vattunuru@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <2024060412-amulet-unflawed-f37a@gregkh>
+References: <2024060412-amulet-unflawed-f37a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMOvFfkQscju1spNKHmEC_Rut+2=qfhKGZSvGhCk_nd5VhuDkg@mail.gmail.com>
- <4ce90767-7d85-47b0-9187-4eb8d257e7e0@leemhuis.info> <44dc1df5f5a1b740b76d1efbf607c49f9d50dda0.camel@sjtu.edu.cn>
- <06cbfba8-13a3-42a3-9262-98310b8ed0ad@leemhuis.info> <7159aa82cbff8eea90cce45fcfc7ecd30a632094.camel@sjtu.edu.cn>
- <CAMOvFfmSU=dFmY+NZQpAV9urLrJM612FvG4OusRVn1omQ_8c_w@mail.gmail.com>
- <457d6431e128a3ee7e053538ddf51578fbdb31f5.camel@sjtu.edu.cn> <CAMOvFfnhfNdw-oF44x9S2ohkYG19Qnx=TJrzZoYmzVTku=u0gw@mail.gmail.com>
-In-Reply-To: <CAMOvFfnhfNdw-oF44x9S2ohkYG19Qnx=TJrzZoYmzVTku=u0gw@mail.gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 18 Jun 2024 09:09:20 -0400
-Message-ID: <CADnq5_OdhFZtZhmLQcFrao_VJG54Nq+cQnA-03bmWUKhXFuXVQ@mail.gmail.com>
-Subject: Re: [bug report] drm/amdgpu: amdgpu crash on playing videos, linux 6.10-rc
-To: Winston Ma <winstonhyypia@gmail.com>
-Cc: Wang Yunchen <mac-wang@sjtu.edu.cn>, Thorsten Leemhuis <regressions@leemhuis.info>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Felix.Kuehling@amd.com, Xinhui.Pan@amd.com, 
-	alexander.deucher@amd.com, amd-gfx@lists.freedesktop.org, 
-	christian.koenig@amd.com, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 5iAuB9-yUz-rFxGAcmkJhfwofu1VUJI1
+X-Proofpoint-ORIG-GUID: 5iAuB9-yUz-rFxGAcmkJhfwofu1VUJI1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
 
-On Tue, Jun 18, 2024 at 3:42=E2=80=AFAM Winston Ma <winstonhyypia@gmail.com=
-> wrote:
->
-> As reported in my previous email. In my device I don't see a more
-> critical system freeze, which causes system reboot, during video play.
-> But I still experience green screen problem during full screen
-> toggling while watching video (Screenshot: https://ibb.co/8Dpdxc3). It
-> didn't cause my system to reboot but I guess there are bug to be
-> fixed.
->
-> Should this issue be monitored by another new ticket?
+Adds a misc driver for Marvell CN10K DPI(DMA Engine) device's physical
+function which initializes DPI DMA hardware's global configuration and
+enables hardware mailbox channels between physical function (PF) and
+it's virtual functions (VF). VF device drivers (User space drivers) use
+this hw mailbox to communicate any required device configuration on it's
+respective VF device. Accordingly, this DPI PF driver provisions the
+VF device resources.
 
-Please file a ticket:
-https://gitlab.freedesktop.org/drm/amd/-/issues/
-And ideally bisect.  Thanks,
+At the hardware level, the DPI physical function (PF) acts as a management
+interface to setup the VF device resources, VF devices are only provisioned
+to handle or control the actual DMA Engine's data transfer capabilities.
 
-Alex
+Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+Reviewed-by: Srujana Challa <schalla@marvell.com>
+---
+Changes V7 -> V8:
+- Used bit shift operations to access mbox msg fields
+- Removed bitfields in mailbox msg structure
 
->
-> Thanks and Regards,
-> Winston
->
-> On Mon, Jun 17, 2024 at 5:40=E2=80=AFPM Wang Yunchen <mac-wang@sjtu.edu.c=
-n> wrote:
-> >
-> > On Mon, 2024-06-17 at 06:55 +0800, Winston Ma wrote:
-> > > I only build the kernel once. I could try but I think you couldn't
-> > > expect much from my side.
-> > >
-> > > BTW I installed 6.10-rc4 this morning from Ubuntu mainline
-> > > (https://kernel.ubuntu.com/mainline/v6.10-rc4/amd64/) and I couldn't
-> > > replicate the video crash problem. Yunchen could you try 6.10-rc4 and
-> > > see if you still have the video crash problem?
-> > >
-> > > But I still get the green blocky object when I keep toggling full
-> > > screen during youtube watch (Screenshot: https://ibb.co/8Dpdxc3). I
-> > > didn't see the green block in 6.9 so it could be another issue.
-> > >
-> > > Thanks and Regards,
-> > > Winston
-> > >
-> > >
-> > > On Sun, Jun 16, 2024 at 12:10=E2=80=AFAM Wang Yunchen <mac-wang@sjtu.=
-edu.cn> wrote:
-> > > >
-> > > > On Sat, 2024-06-15 at 17:50 +0200, Thorsten Leemhuis wrote:
-> > > > > [reply made easier by moving something in the quote]
-> > > > >
-> > > > > On 12.06.24 18:55, Wang Yunchen wrote:
-> > > > > > On Wed, 2024-06-12 at 15:14 +0200, Linux regression tracking (T=
-horsten
-> > > > > > Leemhuis) wrote:
-> > > > > > > On 06.06.24 05:06, Winston Ma wrote:
-> > > > > > > > Hi I got the same problem on Linux Kernel 6.10-rc2. I got t=
-he
-> > > > > > > > problem
-> > > > > > > > by
-> > > > > > > > following the procedure below:
-> > > > > > > >
-> > > > > > > >  1. Boot Linux Kernel 6.10-rc2
-> > > > > > > >  2. Open Firefox (Any browser should work)
-> > > > > > > >  3. Open a Youtube Video
-> > > > > > > >  4. On the playing video, toggle fullscreen quickly Then af=
-ter 10-
-> > > > > > > > 20
-> > > > > > > >     times of fullscreen toggling, the screen would enter fr=
-eeze
-> > > > > > > > mode.
-> > > > > > > >     This is the log that I captured using the above method.
-> > > > > > >
-> > > > > > > Hmm, seems nothing happened here for a while. Could you maybe=
- try to
-> > > > > > > bisect this
-> > > > > > > (
-> > > > > > > https://docs.kernel.org/admin-guide/verify-bugs-and-bisect-re=
-gressions.ht
-> > > > > > > ml
-> > > > > > > )?
-> > > > > >
-> > > > > > It seems that the issue persists on 6.10 rc3.
-> > > > >
-> > > > > That's good to know, but...
-> > > > >
-> > > > > > > @amd-gfx devs: Or is this unneeded, as the cause found or may=
-be even
-> > > > > > > fixed meanwhile?
-> > > > >
-> > > > > ...as there was no reply to that inquiry it seems we really need =
-either
-> > > > > you or Winston Ma (or somebody else that is affected we don't yet=
- know
-> > > > > about) to perform a git bisection (see the link quoted above) to =
-find
-> > > > > the exact change that broke things. Without this it might not be =
-getting
-> > > > > fixed.
-> > > > >
-> > > > > Ciao, Thorsten
-> > > > >
-> > > > > > > > This is the kernel log
-> > > > > > > >
-> > > > > > > > 2024-06-06T10:26:40.747576+08:00 kernel:
-> > > > > > > > gmc_v10_0_process_interrupt:
-> > > > > > > > 6 callbacks suppressed
-> > > > > > > > 2024-06-06T10:26:40.747618+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > [mmhub] page fault (src_id:0 ring:8 vmid:2
-> > > > > > > > pasid:32789)
-> > > > > > > > 2024-06-06T10:26:40.747623+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > in process RDD Process pid 39524 thread
-> > > > > > > > firefox-bi:cs0 pid 40342
-> > > > > > > > 2024-06-06T10:26:40.747625+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:   in page starting at address
-> > > > > > > > 0x0000800106ffe000 from client 0x12 (VMC)
-> > > > > > > > 2024-06-06T10:26:40.747628+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > MMVM_L2_PROTECTION_FAULT_STATUS:0x00203811
-> > > > > > > > 2024-06-06T10:26:40.747629+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          Faulty UTCL2 client ID: VCN (0x1c)
-> > > > > > > > 2024-06-06T10:26:40.747631+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          MORE_FAULTS: 0x1
-> > > > > > > > 2024-06-06T10:26:40.747651+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          WALKER_ERROR: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747653+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          PERMISSION_FAULTS: 0x1
-> > > > > > > > 2024-06-06T10:26:40.747655+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          MAPPING_ERROR: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747656+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          RW: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747658+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > [mmhub] page fault (src_id:0 ring:8 vmid:2
-> > > > > > > > pasid:32789)
-> > > > > > > > 2024-06-06T10:26:40.747660+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > in process RDD Process pid 39524 thread
-> > > > > > > > firefox-bi:cs0 pid 40342
-> > > > > > > > 2024-06-06T10:26:40.747662+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:   in page starting at address
-> > > > > > > > 0x0000800106e00000 from client 0x12 (VMC)
-> > > > > > > > 2024-06-06T10:26:40.747663+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > MMVM_L2_PROTECTION_FAULT_STATUS:0x00000000
-> > > > > > > > 2024-06-06T10:26:40.747664+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          Faulty UTCL2 client ID: MP0 (0x0)
-> > > > > > > > 2024-06-06T10:26:40.747666+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          MORE_FAULTS: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747667+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          WALKER_ERROR: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747668+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          PERMISSION_FAULTS: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747670+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          MAPPING_ERROR: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747671+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          RW: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747674+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > [mmhub] page fault (src_id:0 ring:8 vmid:2
-> > > > > > > > pasid:32789)
-> > > > > > > > 2024-06-06T10:26:40.747677+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > in process RDD Process pid 39524 thread
-> > > > > > > > firefox-bi:cs0 pid 40342
-> > > > > > > > 2024-06-06T10:26:40.747680+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:   in page starting at address
-> > > > > > > > 0x0000800106e07000 from client 0x12 (VMC)
-> > > > > > > > 2024-06-06T10:26:40.747683+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > MMVM_L2_PROTECTION_FAULT_STATUS:0x00000000
-> > > > > > > > 2024-06-06T10:26:40.747686+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          Faulty UTCL2 client ID: MP0 (0x0)
-> > > > > > > > 2024-06-06T10:26:40.747688+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          MORE_FAULTS: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747691+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          WALKER_ERROR: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747693+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          PERMISSION_FAULTS: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747696+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          MAPPING_ERROR: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747698+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          RW: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747700+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > [mmhub] page fault (src_id:0 ring:8 vmid:2
-> > > > > > > > pasid:32789)
-> > > > > > > > 2024-06-06T10:26:40.747703+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > in process RDD Process pid 39524 thread
-> > > > > > > > firefox-bi:cs0 pid 40342
-> > > > > > > > 2024-06-06T10:26:40.747705+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:   in page starting at address
-> > > > > > > > 0x0000800107001000 from client 0x12 (VMC)
-> > > > > > > > 2024-06-06T10:26:40.747707+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > MMVM_L2_PROTECTION_FAULT_STATUS:0x00000000
-> > > > > > > > 2024-06-06T10:26:40.747710+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          Faulty UTCL2 client ID: MP0 (0x0)
-> > > > > > > > 2024-06-06T10:26:40.747713+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          MORE_FAULTS: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747716+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          WALKER_ERROR: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747718+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          PERMISSION_FAULTS: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747721+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          MAPPING_ERROR: 0x0
-> > > > > > > > 2024-06-06T10:26:40.747723+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:          RW: 0x0
-> > > > > > > > 2024-06-06T10:26:51.094991+08:00 kernel: [drm:amdgpu_job_ti=
-medout
-> > > > > > > > [amdgpu]] *ERROR* ring vcn_dec_0 timeout,
-> > > > > > > > signaled seq=3D24897, emitted seq=3D24898
-> > > > > > > > 2024-06-06T10:26:51.095023+08:00 kernel: [drm:amdgpu_job_ti=
-medout
-> > > > > > > > [amdgpu]] *ERROR* Process information: process
-> > > > > > > > RDD Process pid 39524 thread firefox-bi:cs0 pid 40342
-> > > > > > > > 2024-06-06T10:26:51.095025+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > GPU reset begin!
-> > > > > > > > 2024-06-06T10:26:52.305509+08:00 kernel: [drm] Register(0)
-> > > > > > > > [mmUVD_POWER_STATUS] failed to reach value 0x00000001
-> > > > > > > > !=3D 0x00000002n
-> > > > > > > > 2024-06-06T10:26:52.586019+08:00 kernel: [drm] Register(0)
-> > > > > > > > [mmUVD_RBC_RB_RPTR] failed to reach value 0x000003c0 !=3D
-> > > > > > > > 0x00000360n
-> > > > > > > > 2024-06-06T10:26:52.639506+08:00 kernel: [drm] Register(0)
-> > > > > > > > [mmUVD_POWER_STATUS] failed to reach value 0x00000001
-> > > > > > > > !=3D 0x00000002n
-> > > > > > > > 2024-06-06T10:26:52.639521+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > MODE2 reset
-> > > > > > > > 2024-06-06T10:26:52.650614+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > GPU reset succeeded, trying to resume
-> > > > > > > > 2024-06-06T10:26:52.650633+08:00 kernel: [drm] PCIE GART of=
- 1024M
-> > > > > > > > enabled (table at 0x000000F41FC00000).
-> > > > > > > > 2024-06-06T10:26:52.650637+08:00 kernel: [drm] VRAM is lost=
- due to
-> > > > > > > > GPU
-> > > > > > > > reset!
-> > > > > > > > 2024-06-06T10:26:52.650641+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > PSP is resuming...
-> > > > > > > > 2024-06-06T10:26:52.673474+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > reserve 0xa00000 from 0xf41e000000 for PSP
-> > > > > > > > TMR
-> > > > > > > > 2024-06-06T10:26:53.001513+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > RAS: optional ras ta ucode is not available
-> > > > > > > > 2024-06-06T10:26:53.013802+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > RAP: optional rap ta ucode is not available
-> > > > > > > > 2024-06-06T10:26:53.013816+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > SECUREDISPLAY: securedisplay ta ucode is not
-> > > > > > > > available
-> > > > > > > > 2024-06-06T10:26:53.013819+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > SMU is resuming...
-> > > > > > > > 2024-06-06T10:26:53.016519+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > SMU is resumed successfully!
-> > > > > > > > 2024-06-06T10:26:53.017502+08:00 kernel: [drm] DMUB hardwar=
-e
-> > > > > > > > initialized: version=3D0x04000044
-> > > > > > > > 2024-06-06T10:26:53.677511+08:00 kernel: [drm] kiq ring mec=
- 2 pipe
-> > > > > > > > 1 q
-> > > > > > > > 0
-> > > > > > > > 2024-06-06T10:26:53.958512+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > [drm:amdgpu_ring_test_helper [amdgpu]] *ERROR* ring
-> > > > > > > > vcn_dec_0 test failed (-110)
-> > > > > > > > 2024-06-06T10:26:53.958536+08:00 kernel:
-> > > > > > > > [drm:amdgpu_device_ip_resume_phase2 [amdgpu]] *ERROR* resum=
-e of IP
-> > > > > > > > block
-> > > > > > > > <vcn_v3_0> failed -110
-> > > > > > > > 2024-06-06T10:26:53.958539+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > GPU reset(1) failed
-> > > > > > > > 2024-06-06T10:26:53.958541+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > GPU reset end with ret =3D -110
-> > > > > > > > 2024-06-06T10:26:53.959180+08:00 kernel: [drm:amdgpu_job_ti=
-medout
-> > > > > > > > [amdgpu]] *ERROR* GPU Recovery Failed: -110
-> > > > > > > > 2024-06-06T10:26:55.261509+08:00 kernel: [drm] Register(0)
-> > > > > > > > [mmUVD_POWER_STATUS] failed to reach value 0x00000001
-> > > > > > > > !=3D 0x00000002n
-> > > > > > > > 2024-06-06T10:26:55.540507+08:00 kernel: [drm] Register(0)
-> > > > > > > > [mmUVD_RBC_RB_RPTR] failed to reach value 0x00000010 !=3D
-> > > > > > > > 0x00000000n
-> > > > > > > > 2024-06-06T10:27:04.407149+08:00 kernel: [drm] Register(0)
-> > > > > > > > [mmUVD_POWER_STATUS] failed to reach value 0x00000001
-> > > > > > > > !=3D 0x00000002n
-> > > > > > > > 2024-06-06T10:27:04.407252+08:00 kernel: [drm:amdgpu_job_ti=
-medout
-> > > > > > > > [amdgpu]] *ERROR* ring vcn_dec_0 timeout,
-> > > > > > > > signaled seq=3D24898, emitted seq=3D24898
-> > > > > > > > 2024-06-06T10:27:04.407257+08:00 kernel: [drm:amdgpu_job_ti=
-medout
-> > > > > > > > [amdgpu]] *ERROR* Process information: process
-> > > > > > > > RDD Process pid 39524 thread firefox-bi:cs0 pid 40342
-> > > > > > > > 2024-06-06T10:27:04.407259+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > GPU reset begin!
-> > > > > > > > 2024-06-06T10:27:05.033745+08:00 kernel: ------------[ cut =
-here ]-
-> > > > > > > > ----
-> > > > > > > > -------
-> > > > > > > > 2024-06-06T10:27:05.033773+08:00 kernel: WARNING: CPU: 8 PI=
-D:
-> > > > > > > > 47039 at
-> > > > > > > > drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c:630
-> > > > > > > > amdgpu_irq_put+0x9c/0xb0 [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.033777+08:00 kernel: Modules linked in:
-> > > > > > > > nft_reject_inet nf_reject_ipv4 nf_reject_ipv6
-> > > > > > > > nft_reject xt_conntrack nft_chain_nat xt_MASQUERADE nf_nat
-> > > > > > > > nf_conntrack_netlink nf_conntrack nf_defrag_ipv6
-> > > > > > > > nf_defrag_ipv4 xt_addrtype nft_compat nf_tables libcrc32c
-> > > > > > > > br_netfilter
-> > > > > > > > bridge stp llc hid_logitech_hidpp usbhid
-> > > > > > > > xfrm_interface xfrm6_tunnel tunnel4 tunnel6 xfrm_user xfrm_=
-algo
-> > > > > > > > uhid
-> > > > > > > > rfcomm snd_seq_dummy snd_hrtimer cmac
-> > > > > > > > algif_hash algif_skcipher af_alg overlay qrtr bnep binfmt_m=
-isc
-> > > > > > > > uvcvideo videobuf2_vmalloc uvc videobuf2_memops
-> > > > > > > > videobuf2_v4l2 btusb btrtl videodev btintel btbcm
-> > > > > > > > snd_acp6x_pdm_dma
-> > > > > > > > snd_soc_dmic snd_soc_acp6x_mach amd_atl
-> > > > > > > > intel_rapl_msr btmtk videobuf2_common bluetooth mc
-> > > > > > > > intel_rapl_common
-> > > > > > > > snd_sof_amd_acp63 snd_sof_amd_vangogh
-> > > > > > > > snd_sof_amd_rembrandt iwlmvm snd_sof_amd_renoir snd_sof_amd=
-_acp
-> > > > > > > > snd_sof_pci snd_sof_xtensa_dsp amdgpu snd_sof
-> > > > > > > > edac_mce_amd mac80211 snd_sof_utils snd_pci_ps
-> > > > > > > > snd_hda_codec_realtek
-> > > > > > > > snd_amd_sdw_acpi kvm_amd soundwire_amd
-> > > > > > > > snd_hda_codec_generic soundwire_generic_allocation soundwir=
-e_bus
-> > > > > > > > 2024-06-06T10:27:05.033782+08:00 kernel:
-> > > > > > > > snd_hda_scodec_cs35l41_spi
-> > > > > > > > nls_iso8859_1 snd_hda_codec_hdmi
-> > > > > > > > snd_hda_scodec_component libarc4 kvm snd_soc_core snd_hda_i=
-ntel
-> > > > > > > > snd_ctl_led snd_intel_dspcfg snd_compress
-> > > > > > > > snd_intel_sdw_acpi amdxcp snd_seq_midi ac97_bus crct10dif_p=
-clmul
-> > > > > > > > drm_exec snd_hda_codec polyval_clmulni
-> > > > > > > > snd_pcm_dmaengine snd_seq_midi_event gpu_sched polyval_gene=
-ric
-> > > > > > > > iwlwifi
-> > > > > > > > ghash_clmulni_intel snd_rpl_pci_acp6x
-> > > > > > > > drm_buddy sha256_ssse3 snd_hda_core snd_rawmidi snd_acp_pci
-> > > > > > > > drm_suballoc_helper snd_hda_scodec_cs35l41_i2c
-> > > > > > > > sha1_ssse3 drm_ttm_helper snd_acp_legacy_common snd_hwdep
-> > > > > > > > snd_hda_scodec_cs35l41 aesni_intel snd_pci_acp6x amd_pmf
-> > > > > > > > snd_hda_cs_dsp_ctls ttm crypto_simd snd_pci_acp5x
-> > > > > > > > snd_soc_cs_amp_lib
-> > > > > > > > asus_nb_wmi cs_dsp cryptd amdtee snd_seq
-> > > > > > > > snd_rn_pci_acp3x drm_display_helper snd_pcm asus_wmi
-> > > > > > > > snd_acp_config
-> > > > > > > > rapl wmi_bmof sparse_keymap snd_seq_device
-> > > > > > > > cfg80211 snd_soc_cs35l41_lib cec snd_soc_acpi ccp rc_core
-> > > > > > > > snd_timer
-> > > > > > > > i2c_algo_bit i2c_piix4 snd_pci_acp3x k10temp
-> > > > > > > > amd_sfh tee snd platform_profile soundcore
-> > > > > > > > serial_multi_instantiate
-> > > > > > > > amd_pmc acpi_tad
-> > > > > > > > 2024-06-06T10:27:05.033784+08:00 kernel:  joydev input_leds
-> > > > > > > > mac_hid
-> > > > > > > > serio_raw parport_pc ppdev lp parport
-> > > > > > > > efi_pstore nfnetlink dmi_sysfs ip_tables x_tables autofs4
-> > > > > > > > hid_multitouch nvme video ucsi_acpi hid_generic
-> > > > > > > > crc32_pclmul nvme_core typec_ucsi xhci_pci i2c_hid_acpi
-> > > > > > > > xhci_pci_renesas nvme_auth typec i2c_hid wmi hid 8250_dw
-> > > > > > > > 2024-06-06T10:27:05.033785+08:00 kernel: CPU: 8 PID: 47039 =
-Comm:
-> > > > > > > > kworker/u64:0 Tainted: G        W
-> > > > > > > > 6.10.0-061000rc2-generic #202406022333
-> > > > > > > > 2024-06-06T10:27:05.033787+08:00 kernel: Hardware name: ASU=
-STeK
-> > > > > > > > COMPUTER INC. Zenbook UM5302TA_UM5302TA/UM5302TA,
-> > > > > > > > BIOS UM5302TA.311 01/17/2023
-> > > > > > > > 2024-06-06T10:27:05.033788+08:00 kernel: Workqueue: amdgpu-=
-reset-
-> > > > > > > > dev
-> > > > > > > > drm_sched_job_timedout [gpu_sched]
-> > > > > > > > 2024-06-06T10:27:05.033789+08:00 kernel: RIP:
-> > > > > > > > 0010:amdgpu_irq_put+0x9c/0xb0 [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.033790+08:00 kernel: Code: 31 f6 31 ff =
-e9 c0
-> > > > > > > > 05 2f
-> > > > > > > > e6 44 89 e2 48 89 de 4c 89 f7 e8 97 fc ff
-> > > > > > > > ff 5b 41 5c 41 5d 41 5e 5d 31 d2 31 f6 31 ff e9 9f 05 2f e6=
- <0f>
-> > > > > > > > 0b b8
-> > > > > > > > ea ff ff ff eb c3 b8 fe ff ff ff eb bc 0f
-> > > > > > > > 1f 40 00 90 90
-> > > > > > > > 2024-06-06T10:27:05.033791+08:00 kernel: RSP:
-> > > > > > > > 0018:ffffb65847227c18
-> > > > > > > > EFLAGS: 00010246
-> > > > > > > > 2024-06-06T10:27:05.033793+08:00 kernel: RAX: 0000000000000=
-000
-> > > > > > > > RBX:
-> > > > > > > > ffff9ac0a0280c60 RCX: 0000000000000000
-> > > > > > > > 2024-06-06T10:27:05.033794+08:00 kernel: RDX: 0000000000000=
-000
-> > > > > > > > RSI:
-> > > > > > > > 0000000000000000 RDI: 0000000000000000
-> > > > > > > > 2024-06-06T10:27:05.033796+08:00 kernel: RBP: ffffb65847227=
-c38
-> > > > > > > > R08:
-> > > > > > > > 0000000000000000 R09: 0000000000000000
-> > > > > > > > 2024-06-06T10:27:05.033797+08:00 kernel: R10: 0000000000000=
-000
-> > > > > > > > R11:
-> > > > > > > > 0000000000000000 R12: 0000000000000000
-> > > > > > > > 2024-06-06T10:27:05.033798+08:00 kernel: R13: 0000000000000=
-001
-> > > > > > > > R14:
-> > > > > > > > ffff9ac0a0280000 R15: ffff9ac0a0280000
-> > > > > > > > 2024-06-06T10:27:05.033799+08:00 kernel: FS:
-> > > > > > > > 0000000000000000(0000)
-> > > > > > > > GS:ffff9ac38e600000(0000)
-> > > > > > > > knlGS:0000000000000000
-> > > > > > > > 2024-06-06T10:27:05.033800+08:00 kernel: CS:  0010 DS: 0000=
- ES:
-> > > > > > > > 0000
-> > > > > > > > CR0: 0000000080050033
-> > > > > > > > 2024-06-06T10:27:05.033802+08:00 kernel: CR2: 00007d1a5edfe=
-000
-> > > > > > > > CR3:
-> > > > > > > > 000000001863c000 CR4: 0000000000f50ef0
-> > > > > > > > 2024-06-06T10:27:05.033803+08:00 kernel: PKRU: 55555554
-> > > > > > > > 2024-06-06T10:27:05.033805+08:00 kernel: Call Trace:
-> > > > > > > > 2024-06-06T10:27:05.033806+08:00 kernel:  <TASK>
-> > > > > > > > 2024-06-06T10:27:05.033807+08:00 kernel:  ? show_regs+0x6c/=
-0x80
-> > > > > > > > 2024-06-06T10:27:05.033845+08:00 kernel:  ? __warn+0x88/0x1=
-40
-> > > > > > > > 2024-06-06T10:27:05.034598+08:00 kernel:  ?
-> > > > > > > > amdgpu_irq_put+0x9c/0xb0
-> > > > > > > > [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.034615+08:00 kernel:  ? report_bug+0x18=
-2/0x1b0
-> > > > > > > > 2024-06-06T10:27:05.034618+08:00 kernel:  ? handle_bug+0x51=
-/0xa0
-> > > > > > > > 2024-06-06T10:27:05.034619+08:00 kernel:  ?
-> > > > > > > > exc_invalid_op+0x18/0x80
-> > > > > > > > 2024-06-06T10:27:05.034620+08:00 kernel:  ?
-> > > > > > > > asm_exc_invalid_op+0x1b/0x20
-> > > > > > > > 2024-06-06T10:27:05.034621+08:00 kernel:  ?
-> > > > > > > > amdgpu_irq_put+0x9c/0xb0
-> > > > > > > > [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.034623+08:00 kernel:  ?
-> > > > > > > > amdgpu_irq_put+0x55/0xb0
-> > > > > > > > [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.035573+08:00 kernel:
-> > > > > > > > gmc_v10_0_hw_fini+0x67/0xe0
-> > > > > > > > [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.035580+08:00 kernel:
-> > > > > > > > gmc_v10_0_suspend+0xe/0x20
-> > > > > > > > [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.035581+08:00 kernel:
-> > > > > > > > amdgpu_device_ip_suspend_phase2+0x251/0x480 [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.035582+08:00 kernel:
-> > > > > > > > amdgpu_device_ip_suspend+0x49/0x80 [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.036529+08:00 kernel:
-> > > > > > > > amdgpu_device_pre_asic_reset+0xd1/0x490 [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.036546+08:00 kernel:
-> > > > > > > > amdgpu_device_gpu_recover+0x406/0xa30 [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.036548+08:00 kernel:
-> > > > > > > > amdgpu_job_timedout+0x141/0x200 [amdgpu]
-> > > > > > > > 2024-06-06T10:27:05.036550+08:00 kernel:
-> > > > > > > > drm_sched_job_timedout+0x70/0x110 [gpu_sched]
-> > > > > > > > 2024-06-06T10:27:05.036551+08:00 kernel:
-> > > > > > > > process_one_work+0x186/0x3e0
-> > > > > > > > 2024-06-06T10:27:05.036552+08:00 kernel:
-> > > > > > > > worker_thread+0x304/0x440
-> > > > > > > > 2024-06-06T10:27:05.036554+08:00 kernel:  ?
-> > > > > > > > srso_alias_return_thunk+0x5/0xfbef5
-> > > > > > > > 2024-06-06T10:27:05.036555+08:00 kernel:  ?
-> > > > > > > > _raw_spin_lock_irqsave+0xe/0x20
-> > > > > > > > 2024-06-06T10:27:05.036556+08:00 kernel:  ?
-> > > > > > > > __pfx_worker_thread+0x10/0x10
-> > > > > > > > 2024-06-06T10:27:05.036557+08:00 kernel:  kthread+0xe4/0x11=
-0
-> > > > > > > > 2024-06-06T10:27:05.036558+08:00 kernel:  ?
-> > > > > > > > __pfx_kthread+0x10/0x10
-> > > > > > > > 2024-06-06T10:27:05.036559+08:00 kernel:  ret_from_fork+0x4=
-7/0x70
-> > > > > > > > 2024-06-06T10:27:05.036561+08:00 kernel:  ?
-> > > > > > > > __pfx_kthread+0x10/0x10
-> > > > > > > > 2024-06-06T10:27:05.036562+08:00 kernel:
-> > > > > > > > ret_from_fork_asm+0x1a/0x30
-> > > > > > > > 2024-06-06T10:27:05.036563+08:00 kernel:  </TASK>
-> > > > > > > > 2024-06-06T10:27:05.036564+08:00 kernel: ---[ end trace
-> > > > > > > > 0000000000000000 ]---
-> > > > > > > > 2024-06-06T10:27:05.036565+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > MODE2 reset
-> > > > > > > > 2024-06-06T10:27:05.046502+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > GPU reset succeeded, trying to resume
-> > > > > > > > 2024-06-06T10:27:05.047516+08:00 kernel: [drm] PCIE GART of=
- 1024M
-> > > > > > > > enabled (table at 0x000000F41FC00000).
-> > > > > > > > 2024-06-06T10:27:05.047533+08:00 kernel: [drm] VRAM is lost=
- due to
-> > > > > > > > GPU
-> > > > > > > > reset!
-> > > > > > > > 2024-06-06T10:27:05.047538+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > PSP is resuming...
-> > > > > > > > 2024-06-06T10:27:05.070481+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > reserve 0xa00000 from 0xf41e000000 for PSP
-> > > > > > > > TMR
-> > > > > > > > 2024-06-06T10:27:05.397519+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > RAS: optional ras ta ucode is not available
-> > > > > > > > 2024-06-06T10:27:05.409509+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > RAP: optional rap ta ucode is not available
-> > > > > > > > 2024-06-06T10:27:05.409517+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > SECUREDISPLAY: securedisplay ta ucode is not
-> > > > > > > > available
-> > > > > > > > 2024-06-06T10:27:05.409518+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > SMU is resuming...
-> > > > > > > > 2024-06-06T10:27:05.411482+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > SMU is resumed successfully!
-> > > > > > > > 2024-06-06T10:27:05.413504+08:00 kernel: [drm] DMUB hardwar=
-e
-> > > > > > > > initialized: version=3D0x04000044
-> > > > > > > > 2024-06-06T10:27:06.055474+08:00 kernel: [drm] kiq ring mec=
- 2 pipe
-> > > > > > > > 1 q
-> > > > > > > > 0
-> > > > > > > > 2024-06-06T10:27:06.335476+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > [drm:amdgpu_ring_test_helper [amdgpu]] *ERROR* ring
-> > > > > > > > vcn_dec_0 test failed (-110)
-> > > > > > > > 2024-06-06T10:27:06.335495+08:00 kernel:
-> > > > > > > > [drm:amdgpu_device_ip_resume_phase2 [amdgpu]] *ERROR* resum=
-e of IP
-> > > > > > > > block
-> > > > > > > > <vcn_v3_0> failed -110
-> > > > > > > > 2024-06-06T10:27:06.335498+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > GPU reset(2) failed
-> > > > > > > > 2024-06-06T10:27:06.335499+08:00 kernel: amdgpu 0000:03:00.=
-0:
-> > > > > > > > amdgpu:
-> > > > > > > > GPU reset end with ret =3D -110
-> > > > > > > > 2024-06-06T10:27:06.335631+08:00 kernel: [drm:amdgpu_job_ti=
-medout
-> > > > > > > > [amdgpu]] *ERROR* GPU Recovery Failed: -110
-> > > >
-> > > > I'm limited by time and computing power, can Winston do a bisect?
-> > > >
-> > > > If Winston can't I can do a bisect, but don't expect results before
-> > > > days...
-> > > > I've only got this laptop and it's heavily used, so it really takes=
- time.
-> > > >
-> > > > Best,
-> > > > Yunchen
-> >
-> > I'm switched to some rather obscure setup, so sorry I couldn't test the
-> > kernel. If it seemed okay on your side, then maybe this problem is now =
-fixed,
-> > considering some APU-specific fixes pulled from drm-next during the wee=
-ks.
-> >
-> > If there aren't any more case reports for the next few days then maybe =
-we can
-> > regard this as resolved?
-> >
-> > Best,
-> > Yunchen
+Changes V6 -> V7:
+- Updated documentation with required references
+- Addressed V6 review comments
+
+Changes V5 -> V6:
+- Updated documentation
+- Fixed data types in uapi file
+
+Changes V4 -> V5:
+- Fixed license and data types in uapi file
+
+Changes V3 -> V4:
+- Moved ioctl definations to .h file
+- Fixed structure alignements which are passed in ioctl
+
+Changes V2 -> V3:
+- Added ioctl operation to the fops
+- Used managed version of kzalloc & request_irq
+- Addressed miscellaneous comments
+
+Changes V1 -> V2:
+- Fixed return values and busy-wait loops
+- Merged .h file into .c file
+- Fixed directory structure
+- Removed module params
+- Registered the device as misc device
+
+ Documentation/misc-devices/index.rst          |   1 +
+ Documentation/misc-devices/mrvl_cn10k_dpi.rst |  52 ++
+ .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+ MAINTAINERS                                   |   5 +
+ drivers/misc/Kconfig                          |  14 +
+ drivers/misc/Makefile                         |   1 +
+ drivers/misc/mrvl_cn10k_dpi.c                 | 670 ++++++++++++++++++
+ include/uapi/misc/mrvl_cn10k_dpi.h            |  37 +
+ 8 files changed, 781 insertions(+)
+
+diff --git a/Documentation/misc-devices/index.rst b/Documentation/misc-devices/index.rst
+index 2d0ce9138588..8c5b226d8313 100644
+--- a/Documentation/misc-devices/index.rst
++++ b/Documentation/misc-devices/index.rst
+@@ -21,6 +21,7 @@ fit into other categories.
+    isl29003
+    lis3lv02d
+    max6875
++   mrvl_cn10k_dpi
+    oxsemi-tornado
+    pci-endpoint-test
+    spear-pcie-gadget
+diff --git a/Documentation/misc-devices/mrvl_cn10k_dpi.rst b/Documentation/misc-devices/mrvl_cn10k_dpi.rst
+new file mode 100644
+index 000000000000..a75e372723d8
+--- /dev/null
++++ b/Documentation/misc-devices/mrvl_cn10k_dpi.rst
+@@ -0,0 +1,52 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++===============================================
++Marvell CN10K DMA packet interface (DPI) driver
++===============================================
++
++Overview
++========
++
++DPI is a DMA packet interface hardware block in Marvell's CN10K silicon.
++DPI hardware comprises a physical function (PF), its virtual functions,
++mailbox logic, and a set of DMA engines & DMA command queues.
++
++DPI PF function is an administrative function which services the mailbox
++requests from its VF functions and provisions DMA engine resources to
++it's VF functions.
++
++mrvl_cn10k_dpi.ko misc driver loads on DPI PF device and services the
++mailbox commands submitted by the VF devices and accordingly initializes
++the DMA engines and VF device's DMA command queues. Also, driver creates
++/dev/mrvl-cn10k-dpi node to set DMA engine and PEM (PCIe interface) port
++attributes like fifo length, molr, mps & mrrs.
++
++DPI PF driver is just an administrative driver to setup its VF device's
++queues and provisions the hardware resources, it cannot initiate any
++DMA operations. Only VF devices are provisioned with DMA capabilities.
++
++Driver location
++===============
++
++drivers/misc/mrvl_cn10k_dpi.c
++
++Driver IOCTLs
++=============
++
++:c:macro::`DPI_MPS_MRRS_CFG`
++ioctl that sets max payload size & max read request size parameters of
++a pem port to which DMA engines are wired.
++
++
++:c:macro::`DPI_ENGINE_CFG`
++ioctl that sets DMA engine's fifo sizes & max outstanding load request
++thresholds.
++
++User space code example
++=======================
++
++DPI VF devices are probed and accessed from user space applications using
++vfio-pci driver. Below is a sample dpi dma application to demonstrate on
++how applications use mailbox and ioctl services from DPI PF kernel driver.
++
++https://github.com/MarvellEmbeddedProcessors/dpi-sample-app
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index a141e8e65c5d..def539770439 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -362,6 +362,7 @@ Code  Seq#    Include File                                           Comments
+ 0xB6  all    linux/fpga-dfl.h
+ 0xB7  all    uapi/linux/remoteproc_cdev.h                            <mailto:linux-remoteproc@vger.kernel.org>
+ 0xB7  all    uapi/linux/nsfs.h                                       <mailto:Andrei Vagin <avagin@openvz.org>>
++0xB8  01-02  uapi/misc/mrvl_cn10k_dpi.h                              Marvell CN10K DPI driver
+ 0xC0  00-0F  linux/usb/iowarrior.h
+ 0xCA  00-0F  uapi/misc/cxl.h
+ 0xCA  10-2F  uapi/misc/ocxl.h
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 24d372f7653e..4e250f1bd2be 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13470,6 +13470,11 @@ S:	Supported
+ F:	Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
+ F:	drivers/mmc/host/sdhci-xenon*
+ 
++MARVELL OCTEON CN10K DPI DRIVER
++M:	Vamsi Attunuru <vattunuru@marvell.com>
++S:	Supported
++F:	drivers/misc/mrvl_cn10k_dpi.c
++
+ MATROX FRAMEBUFFER DRIVER
+ L:	linux-fbdev@vger.kernel.org
+ S:	Orphan
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index faf983680040..965641017a62 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -585,6 +585,20 @@ config NSM
+ 	  To compile this driver as a module, choose M here.
+ 	  The module will be called nsm.
+ 
++config MARVELL_CN10K_DPI
++	tristate "Octeon CN10K DPI driver"
++	depends on ARM64 && PCI
++	help
++	  Enables Octeon CN10K DMA packet interface (DPI) driver which
++	  intializes DPI hardware's physical function (PF) device's
++	  global configuration and its virtual function (VFs) resource
++	  configuration to enable DMA transfers. DPI PF device does not
++	  have any data movement functionality, it only serves VF's
++	  resource configuration requests.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called mrvl_cn10k_dpi.
++
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index 153a3f4837e8..852a7e3a5472 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -69,3 +69,4 @@ obj-$(CONFIG_TMR_INJECT)	+= xilinx_tmr_inject.o
+ obj-$(CONFIG_TPS6594_ESM)	+= tps6594-esm.o
+ obj-$(CONFIG_TPS6594_PFSM)	+= tps6594-pfsm.o
+ obj-$(CONFIG_NSM)		+= nsm.o
++obj-$(CONFIG_MARVELL_CN10K_DPI)	+= mrvl_cn10k_dpi.o
+diff --git a/drivers/misc/mrvl_cn10k_dpi.c b/drivers/misc/mrvl_cn10k_dpi.c
+new file mode 100644
+index 000000000000..35ad9532750d
+--- /dev/null
++++ b/drivers/misc/mrvl_cn10k_dpi.c
+@@ -0,0 +1,670 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Marvell Octeon CN10K DPI driver
++ *
++ * Copyright (C) 2024 Marvell.
++ *
++ */
++
++#include <linux/bitfield.h>
++#include <linux/compat.h>
++#include <linux/delay.h>
++#include <linux/miscdevice.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++
++#include <uapi/misc/mrvl_cn10k_dpi.h>
++
++/* PCI device IDs */
++#define PCI_DEVID_MRVL_CN10K_DPI_PF	0xA080
++#define PCI_SUBDEVID_MRVL_CN10K_DPI_PF	0xB900
++
++/* PCI BAR Number */
++#define PCI_DPI_CFG_BAR	0
++
++/* MSI-X interrupts */
++#define DPI_MAX_REQQ_INT	0x20
++#define DPI_MAX_CC_INT		0x40
++
++/* MBOX MSI-X interrupt vector index */
++#define DPI_MBOX_PF_VF_INT_IDX	0x75
++
++#define DPI_MAX_IRQS (DPI_MBOX_PF_VF_INT_IDX + 1)
++
++#define DPI_MAX_VFS	0x20
++
++#define DPI_MAX_ENG_FIFO_SZ	0x20
++#define DPI_MAX_ENG_MOLR	0x400
++
++#define DPI_DMA_IDS_DMA_NPA_PF_FUNC(x)	FIELD_PREP(GENMASK_ULL(31, 16), x)
++#define DPI_DMA_IDS_INST_STRM(x)	FIELD_PREP(GENMASK_ULL(47, 40), x)
++#define DPI_DMA_IDS_DMA_STRM(x)		FIELD_PREP(GENMASK_ULL(39, 32), x)
++#define DPI_DMA_ENG_EN_MOLR(x)		FIELD_PREP(GENMASK_ULL(41, 32), x)
++#define DPI_EBUS_PORTX_CFG_MPS(x)	FIELD_PREP(GENMASK(6, 4), x)
++#define DPI_DMA_IDS_DMA_SSO_PF_FUNC(x)	FIELD_PREP(GENMASK(15, 0), x)
++#define DPI_DMA_IDS2_INST_AURA(x)	FIELD_PREP(GENMASK(19, 0), x)
++#define DPI_DMA_IBUFF_CSIZE_CSIZE(x)	FIELD_PREP(GENMASK(13, 0), x)
++#define DPI_EBUS_PORTX_CFG_MRRS(x)	FIELD_PREP(GENMASK(2, 0), x)
++#define DPI_ENG_BUF_BLKS(x)		FIELD_PREP(GENMASK(5, 0), x)
++#define DPI_DMA_CONTROL_DMA_ENB		GENMASK_ULL(53, 48)
++
++#define DPI_DMA_CONTROL_O_MODE		BIT_ULL(14)
++#define DPI_DMA_CONTROL_LDWB		BIT_ULL(32)
++#define DPI_DMA_CONTROL_WQECSMODE1	BIT_ULL(37)
++#define DPI_DMA_CONTROL_ZBWCSEN		BIT_ULL(39)
++#define DPI_DMA_CONTROL_WQECSOFF(ofst)	(((u64)ofst) << 40)
++#define DPI_DMA_CONTROL_WQECSDIS	BIT_ULL(47)
++#define DPI_DMA_CONTROL_PKT_EN		BIT_ULL(56)
++#define DPI_DMA_IBUFF_CSIZE_NPA_FREE	BIT(16)
++
++#define DPI_CTL_EN			BIT_ULL(0)
++#define DPI_DMA_CC_INT			BIT_ULL(0)
++#define DPI_DMA_QRST			BIT_ULL(0)
++
++#define DPI_REQQ_INT_INSTRFLT		BIT_ULL(0)
++#define DPI_REQQ_INT_RDFLT		BIT_ULL(1)
++#define DPI_REQQ_INT_WRFLT		BIT_ULL(2)
++#define DPI_REQQ_INT_CSFLT		BIT_ULL(3)
++#define DPI_REQQ_INT_INST_DBO		BIT_ULL(4)
++#define DPI_REQQ_INT_INST_ADDR_NULL	BIT_ULL(5)
++#define DPI_REQQ_INT_INST_FILL_INVAL	BIT_ULL(6)
++#define DPI_REQQ_INT_INSTR_PSN		BIT_ULL(7)
++
++#define DPI_REQQ_INT \
++	(DPI_REQQ_INT_INSTRFLT		| \
++	DPI_REQQ_INT_RDFLT		| \
++	DPI_REQQ_INT_WRFLT		| \
++	DPI_REQQ_INT_CSFLT		| \
++	DPI_REQQ_INT_INST_DBO		| \
++	DPI_REQQ_INT_INST_ADDR_NULL	| \
++	DPI_REQQ_INT_INST_FILL_INVAL	| \
++	DPI_REQQ_INT_INSTR_PSN)
++
++#define DPI_PF_RAS_EBI_DAT_PSN	BIT_ULL(0)
++#define DPI_PF_RAS_NCB_DAT_PSN	BIT_ULL(1)
++#define DPI_PF_RAS_NCB_CMD_PSN	BIT_ULL(2)
++
++#define DPI_PF_RAS_INT \
++	(DPI_PF_RAS_EBI_DAT_PSN  | \
++	 DPI_PF_RAS_NCB_DAT_PSN  | \
++	 DPI_PF_RAS_NCB_CMD_PSN)
++
++/* Message fields in word_l of DPI mailbox structure */
++#define DPI_MBOX_VFID(msg)		FIELD_GET(GENMASK_ULL(7, 0), msg)
++#define DPI_MBOX_CMD(msg)		FIELD_GET(GENMASK_ULL(11, 8), msg)
++#define DPI_MBOX_CBUF_SIZE(msg)		FIELD_GET(GENMASK_ULL(27, 12), msg)
++#define DPI_MBOX_CBUF_AURA(msg)		FIELD_GET(GENMASK_ULL(47, 28), msg)
++#define DPI_MBOX_SSO_PFFUNC(msg)	FIELD_GET(GENMASK_ULL(63, 48), msg)
++
++/* Message fields in word_h of DPI mailbox structure */
++#define DPI_MBOX_NPA_PFFUNC(msg)	FIELD_GET(GENMASK_ULL(15, 0), msg)
++#define DPI_MBOX_WQES_COMPL(msg)	FIELD_GET(GENMASK_ULL(16, 16), msg)
++#define DPI_MBOX_WQES_OFFSET(msg)	FIELD_GET(GENMASK_ULL(23, 17), msg)
++
++#define DPI_DMAX_IBUFF_CSIZE(x)	(0x0ULL | ((x) << 11))
++#define DPI_DMAX_IDS(x)		(0x18ULL | ((x) << 11))
++#define DPI_DMAX_IDS2(x)	(0x20ULL | ((x) << 11))
++#define DPI_DMAX_QRST(x)	(0x30ULL | ((x) << 11))
++
++#define DPI_CTL				0x10010ULL
++#define DPI_DMA_CONTROL			0x10018ULL
++#define DPI_PF_RAS			0x10308ULL
++#define DPI_PF_RAS_ENA_W1C		0x10318ULL
++#define DPI_MBOX_VF_PF_INT		0x16300ULL
++#define DPI_MBOX_VF_PF_INT_W1S		0x16308ULL
++#define DPI_MBOX_VF_PF_INT_ENA_W1C	0x16310ULL
++#define DPI_MBOX_VF_PF_INT_ENA_W1S	0x16318ULL
++
++#define DPI_DMA_ENGX_EN(x)		(0x10040ULL | ((x) << 3))
++#define DPI_ENGX_BUF(x)			(0x100C0ULL | ((x) << 3))
++#define DPI_EBUS_PORTX_CFG(x)		(0x10100ULL | ((x) << 3))
++#define DPI_DMA_CCX_INT(x)		(0x11000ULL | ((x) << 3))
++#define DPI_DMA_CCX_INT_ENA_W1C(x)	(0x11800ULL | ((x) << 3))
++#define DPI_REQQX_INT(x)		(0x12C00ULL | ((x) << 5))
++#define DPI_REQQX_INT_ENA_W1C(x)	(0x13800ULL | ((x) << 5))
++#define DPI_MBOX_PF_VF_DATA0(x)		(0x16000ULL | ((x) << 4))
++#define DPI_MBOX_PF_VF_DATA1(x)		(0x16008ULL | ((x) << 4))
++
++#define DPI_WCTL_FIF_THR	0x17008ULL
++
++#define DPI_EBUS_MAX_PORTS	2
++
++#define DPI_EBUS_MRRS_MIN	128
++#define DPI_EBUS_MRRS_MAX	1024
++#define DPI_EBUS_MPS_MIN	128
++#define DPI_EBUS_MPS_MAX	1024
++#define DPI_WCTL_FIFO_THRESHOLD	0x30
++
++#define DPI_QUEUE_OPEN		0x1
++#define DPI_QUEUE_CLOSE		0x2
++#define DPI_REG_DUMP		0x3
++#define DPI_GET_REG_CFG		0x4
++#define DPI_QUEUE_OPEN_V2	0x5
++
++enum dpi_mbox_rsp_type {
++	DPI_MBOX_TYPE_CMD,
++	DPI_MBOX_TYPE_RSP_ACK,
++	DPI_MBOX_TYPE_RSP_NACK,
++};
++
++struct dpivf_config {
++	u32 aura;
++	u16 csize;
++	u16 sso_pf_func;
++	u16 npa_pf_func;
++};
++
++struct dpipf_vf {
++	struct dpivf_config vf_config;
++	bool setup_done;
++	u8 this_vfid;
++};
++
++/* DPI device mailbox */
++struct dpi_mbox {
++	struct work_struct work;
++	/* lock to serialize mbox requests */
++	struct mutex lock;
++	struct dpipf *pf;
++	u8 __iomem *pf_vf_data_reg;
++	u8 __iomem *vf_pf_data_reg;
++};
++
++struct dpipf {
++	struct miscdevice miscdev;
++	void __iomem *reg_base;
++	struct pci_dev *pdev;
++	struct dpipf_vf vf[DPI_MAX_VFS];
++	/* Mailbox to talk to VFs */
++	struct dpi_mbox *mbox[DPI_MAX_VFS];
++};
++
++struct dpi_mbox_message {
++	uint64_t word_l;
++	uint64_t word_h;
++};
++
++static inline void dpi_reg_write(struct dpipf *dpi, u64 offset, u64 val)
++{
++	writeq(val, dpi->reg_base + offset);
++}
++
++static inline u64 dpi_reg_read(struct dpipf *dpi, u64 offset)
++{
++	return readq(dpi->reg_base + offset);
++}
++
++static void dpi_wqe_cs_offset(struct dpipf *dpi, u8 offset)
++{
++	u64 reg;
++
++	reg = dpi_reg_read(dpi, DPI_DMA_CONTROL);
++	reg &= ~DPI_DMA_CONTROL_WQECSDIS;
++	reg |= DPI_DMA_CONTROL_ZBWCSEN | DPI_DMA_CONTROL_WQECSMODE1;
++	reg |= DPI_DMA_CONTROL_WQECSOFF(offset);
++	dpi_reg_write(dpi, DPI_DMA_CONTROL, reg);
++}
++
++static int dpi_queue_init(struct dpipf *dpi, struct dpipf_vf *dpivf, u8 vf)
++{
++	u16 sso_pf_func = dpivf->vf_config.sso_pf_func;
++	u16 npa_pf_func = dpivf->vf_config.npa_pf_func;
++	u16 csize = dpivf->vf_config.csize;
++	u32 aura = dpivf->vf_config.aura;
++	unsigned long timeout;
++	u64 reg;
++
++	dpi_reg_write(dpi, DPI_DMAX_QRST(vf), DPI_DMA_QRST);
++
++	/* Wait for a maximum of 3 sec */
++	timeout = jiffies + msecs_to_jiffies(3000);
++	while (!time_after(jiffies, timeout)) {
++		reg = dpi_reg_read(dpi, DPI_DMAX_QRST(vf));
++		if (!(reg & DPI_DMA_QRST))
++			break;
++
++		/* Reset would take time for the request cache to drain */
++		usleep_range(500, 1000);
++	}
++
++	if (reg & DPI_DMA_QRST) {
++		dev_err(&dpi->pdev->dev, "Queue reset failed\n");
++		return -EBUSY;
++	}
++
++	dpi_reg_write(dpi, DPI_DMAX_IDS2(vf), 0);
++	dpi_reg_write(dpi, DPI_DMAX_IDS(vf), 0);
++
++	reg = DPI_DMA_IBUFF_CSIZE_CSIZE(csize) | DPI_DMA_IBUFF_CSIZE_NPA_FREE;
++	dpi_reg_write(dpi, DPI_DMAX_IBUFF_CSIZE(vf), reg);
++
++	reg = dpi_reg_read(dpi, DPI_DMAX_IDS2(vf));
++	reg |= DPI_DMA_IDS2_INST_AURA(aura);
++	dpi_reg_write(dpi, DPI_DMAX_IDS2(vf), reg);
++
++	reg = dpi_reg_read(dpi, DPI_DMAX_IDS(vf));
++	reg |= DPI_DMA_IDS_DMA_NPA_PF_FUNC(npa_pf_func);
++	reg |= DPI_DMA_IDS_DMA_SSO_PF_FUNC(sso_pf_func);
++	reg |= DPI_DMA_IDS_DMA_STRM(vf + 1);
++	reg |= DPI_DMA_IDS_INST_STRM(vf + 1);
++	dpi_reg_write(dpi, DPI_DMAX_IDS(vf), reg);
++
++	return 0;
++}
++
++static void dpi_queue_fini(struct dpipf *dpi, u8 vf)
++{
++	dpi_reg_write(dpi, DPI_DMAX_QRST(vf), DPI_DMA_QRST);
++
++	/* Reset IDS and IDS2 registers */
++	dpi_reg_write(dpi, DPI_DMAX_IDS2(vf), 0);
++	dpi_reg_write(dpi, DPI_DMAX_IDS(vf), 0);
++}
++
++static void dpi_poll_pfvf_mbox(struct dpipf *dpi)
++{
++	u64 reg;
++	u32 vf;
++
++	reg = dpi_reg_read(dpi, DPI_MBOX_VF_PF_INT);
++	if (reg) {
++		for (vf = 0; vf < pci_num_vf(dpi->pdev); vf++) {
++			if (reg & BIT_ULL(vf))
++				schedule_work(&dpi->mbox[vf]->work);
++		}
++		dpi_reg_write(dpi, DPI_MBOX_VF_PF_INT, reg);
++	}
++}
++
++static irqreturn_t dpi_mbox_intr_handler(int irq, void *data)
++{
++	struct dpipf *dpi = data;
++
++	dpi_poll_pfvf_mbox(dpi);
++
++	return IRQ_HANDLED;
++}
++
++static int queue_config(struct dpipf *dpi, struct dpipf_vf *dpivf, struct dpi_mbox_message *msg)
++{
++	int ret = 0;
++
++	switch (DPI_MBOX_CMD(msg->word_l)) {
++	case DPI_QUEUE_OPEN:
++	case DPI_QUEUE_OPEN_V2:
++		dpivf->vf_config.aura = DPI_MBOX_CBUF_AURA(msg->word_l);
++		dpivf->vf_config.csize = DPI_MBOX_CMD(msg->word_l) == DPI_QUEUE_OPEN ?
++					 DPI_MBOX_CBUF_SIZE(msg->word_l) >> 3 :
++					 DPI_MBOX_CBUF_SIZE(msg->word_l);
++		dpivf->vf_config.sso_pf_func = DPI_MBOX_SSO_PFFUNC(msg->word_l);
++		dpivf->vf_config.npa_pf_func = DPI_MBOX_NPA_PFFUNC(msg->word_h);
++		ret = dpi_queue_init(dpi, dpivf, DPI_MBOX_VFID(msg->word_l));
++		if (!ret) {
++			if (DPI_MBOX_WQES_COMPL(msg->word_h))
++				dpi_wqe_cs_offset(dpi, DPI_MBOX_WQES_OFFSET(msg->word_h));
++			dpivf->setup_done = true;
++		}
++		break;
++	case DPI_QUEUE_CLOSE:
++		memset(&dpivf->vf_config, 0, sizeof(struct dpivf_config));
++		dpi_queue_fini(dpi, DPI_MBOX_VFID(msg->word_l));
++		dpivf->setup_done = false;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return ret;
++}
++
++static void dpi_pfvf_mbox_work(struct work_struct *work)
++{
++	struct dpi_mbox *mbox = container_of(work, struct dpi_mbox, work);
++	struct dpi_mbox_message msg;
++	struct dpipf_vf *dpivf;
++	struct dpipf *dpi;
++	int vfid, ret;
++
++	dpi = mbox->pf;
++	memset(&msg, 0, sizeof(msg));
++
++	mutex_lock(&mbox->lock);
++	msg.word_l = readq(mbox->vf_pf_data_reg);
++	if (msg.word_l == (u64)-1)
++		goto exit;
++
++	vfid = DPI_MBOX_VFID(msg.word_l);
++	if (vfid >= pci_num_vf(dpi->pdev))
++		goto exit;
++
++	dpivf = &dpi->vf[vfid];
++	msg.word_h = readq(mbox->pf_vf_data_reg);
++
++	ret = queue_config(dpi, dpivf, &msg);
++	if (ret < 0)
++		writeq(DPI_MBOX_TYPE_RSP_NACK, mbox->pf_vf_data_reg);
++	else
++		writeq(DPI_MBOX_TYPE_RSP_ACK, mbox->pf_vf_data_reg);
++exit:
++	mutex_unlock(&mbox->lock);
++}
++
++/* Setup registers for a PF mailbox */
++static void dpi_setup_mbox_regs(struct dpipf *dpi, int vf)
++{
++	struct dpi_mbox *mbox = dpi->mbox[vf];
++
++	mbox->pf_vf_data_reg = dpi->reg_base + DPI_MBOX_PF_VF_DATA0(vf);
++	mbox->vf_pf_data_reg = dpi->reg_base + DPI_MBOX_PF_VF_DATA1(vf);
++}
++
++static int dpi_pfvf_mbox_setup(struct dpipf *dpi)
++{
++	int vf;
++
++	for (vf = 0; vf < DPI_MAX_VFS; vf++) {
++		dpi->mbox[vf] = devm_kzalloc(&dpi->pdev->dev, sizeof(*dpi->mbox[vf]), GFP_KERNEL);
++
++		if (!dpi->mbox[vf])
++			return -ENOMEM;
++
++		mutex_init(&dpi->mbox[vf]->lock);
++		INIT_WORK(&dpi->mbox[vf]->work, dpi_pfvf_mbox_work);
++		dpi->mbox[vf]->pf = dpi;
++		dpi_setup_mbox_regs(dpi, vf);
++	}
++
++	return 0;
++}
++
++static void dpi_pfvf_mbox_destroy(struct dpipf *dpi)
++{
++	unsigned int vf;
++
++	for (vf = 0; vf < DPI_MAX_VFS; vf++) {
++		if (work_pending(&dpi->mbox[vf]->work))
++			cancel_work_sync(&dpi->mbox[vf]->work);
++
++		dpi->mbox[vf] = NULL;
++	}
++}
++
++static void dpi_init(struct dpipf *dpi)
++{
++	unsigned int engine, port;
++	u8 mrrs_val, mps_val;
++	u64 reg;
++
++	for (engine = 0; engine < DPI_MAX_ENGINES; engine++) {
++		if (engine == 4 || engine == 5)
++			reg = DPI_ENG_BUF_BLKS(16);
++		else
++			reg = DPI_ENG_BUF_BLKS(8);
++
++		dpi_reg_write(dpi, DPI_ENGX_BUF(engine), reg);
++	}
++
++	reg = DPI_DMA_CONTROL_ZBWCSEN | DPI_DMA_CONTROL_PKT_EN | DPI_DMA_CONTROL_LDWB |
++	      DPI_DMA_CONTROL_O_MODE | DPI_DMA_CONTROL_DMA_ENB;
++
++	dpi_reg_write(dpi, DPI_DMA_CONTROL, reg);
++	dpi_reg_write(dpi, DPI_CTL, DPI_CTL_EN);
++
++	mrrs_val = 2; /* 512B */
++	mps_val = 1; /* 256B */
++
++	for (port = 0; port < DPI_EBUS_MAX_PORTS; port++) {
++		reg = dpi_reg_read(dpi, DPI_EBUS_PORTX_CFG(port));
++		reg &= ~(DPI_EBUS_PORTX_CFG_MRRS(7) | DPI_EBUS_PORTX_CFG_MPS(7));
++		reg |= DPI_EBUS_PORTX_CFG_MPS(mps_val) | DPI_EBUS_PORTX_CFG_MRRS(mrrs_val);
++		dpi_reg_write(dpi, DPI_EBUS_PORTX_CFG(port), reg);
++	}
++
++	dpi_reg_write(dpi, DPI_WCTL_FIF_THR, DPI_WCTL_FIFO_THRESHOLD);
++}
++
++static void dpi_fini(struct dpipf *dpi)
++{
++	unsigned int engine;
++
++	for (engine = 0; engine < DPI_MAX_ENGINES; engine++)
++		dpi_reg_write(dpi, DPI_ENGX_BUF(engine), 0);
++
++	dpi_reg_write(dpi, DPI_DMA_CONTROL, 0);
++	dpi_reg_write(dpi, DPI_CTL, 0);
++}
++
++static void dpi_free_irq_vectors(void *pdev)
++{
++	pci_free_irq_vectors((struct pci_dev *)pdev);
++}
++
++static int dpi_irq_init(struct dpipf *dpi)
++{
++	struct pci_dev *pdev = dpi->pdev;
++	struct device *dev = &pdev->dev;
++	int i, ret;
++
++	/* Clear all RAS interrupts */
++	dpi_reg_write(dpi, DPI_PF_RAS, DPI_PF_RAS_INT);
++
++	/* Clear all RAS interrupt enable bits */
++	dpi_reg_write(dpi, DPI_PF_RAS_ENA_W1C, DPI_PF_RAS_INT);
++
++	for (i = 0; i < DPI_MAX_REQQ_INT; i++) {
++		dpi_reg_write(dpi, DPI_REQQX_INT(i), DPI_REQQ_INT);
++		dpi_reg_write(dpi, DPI_REQQX_INT_ENA_W1C(i), DPI_REQQ_INT);
++	}
++
++	for (i = 0; i < DPI_MAX_CC_INT; i++) {
++		dpi_reg_write(dpi, DPI_DMA_CCX_INT(i), DPI_DMA_CC_INT);
++		dpi_reg_write(dpi, DPI_DMA_CCX_INT_ENA_W1C(i), DPI_DMA_CC_INT);
++	}
++
++	ret = pci_alloc_irq_vectors(pdev, DPI_MAX_IRQS, DPI_MAX_IRQS, PCI_IRQ_MSIX);
++	if (ret != DPI_MAX_IRQS) {
++		dev_err(dev, "DPI: Failed to alloc %d msix irqs\n", DPI_MAX_IRQS);
++		return ret;
++	}
++
++	ret = devm_add_action_or_reset(dev, dpi_free_irq_vectors, pdev);
++	if (ret) {
++		dev_err(dev, "DPI: Failed to add irq free action\n");
++		return ret;
++	}
++
++	ret = devm_request_irq(dev, pci_irq_vector(pdev, DPI_MBOX_PF_VF_INT_IDX),
++			       dpi_mbox_intr_handler, 0, "dpi-mbox", dpi);
++	if (ret) {
++		dev_err(dev, "DPI: request_irq failed for mbox; err=%d\n", ret);
++		return ret;
++	}
++
++	dpi_reg_write(dpi, DPI_MBOX_VF_PF_INT_ENA_W1S, GENMASK_ULL(31, 0));
++
++	return 0;
++}
++
++static int dpi_mps_mrrs_config(struct dpipf *dpi, void __user *arg)
++{
++	struct dpi_mps_mrrs_cfg cfg;
++	u8 mrrs_val, mps_val;
++	u64 reg;
++
++	if (copy_from_user(&cfg, arg, sizeof(struct dpi_mps_mrrs_cfg)))
++		return -EFAULT;
++
++	if (cfg.max_read_req_sz < DPI_EBUS_MRRS_MIN || cfg.max_read_req_sz > DPI_EBUS_MRRS_MAX ||
++	    !is_power_of_2(cfg.max_read_req_sz))
++		return -EINVAL;
++
++	if (cfg.max_payload_sz < DPI_EBUS_MPS_MIN || cfg.max_payload_sz > DPI_EBUS_MPS_MAX ||
++	    !is_power_of_2(cfg.max_payload_sz))
++		return -EINVAL;
++
++	if (cfg.port >= DPI_EBUS_MAX_PORTS)
++		return -EINVAL;
++
++	mrrs_val = fls(cfg.max_read_req_sz >> 8);
++	mps_val = fls(cfg.max_payload_sz >> 8);
++
++	reg = dpi_reg_read(dpi, DPI_EBUS_PORTX_CFG(cfg.port));
++	reg &= ~(DPI_EBUS_PORTX_CFG_MRRS(0x7) | DPI_EBUS_PORTX_CFG_MPS(0x7));
++	reg |= DPI_EBUS_PORTX_CFG_MPS(mps_val) | DPI_EBUS_PORTX_CFG_MRRS(mrrs_val);
++	dpi_reg_write(dpi, DPI_EBUS_PORTX_CFG(cfg.port), reg);
++
++	return 0;
++}
++
++static int dpi_engine_config(struct dpipf *dpi, void __user *arg)
++{
++	struct dpi_engine_cfg cfg;
++	unsigned int engine;
++	u8 *eng_buf;
++	u64 reg;
++
++	if (copy_from_user(&cfg, arg, sizeof(struct dpi_engine_cfg)))
++		return -EFAULT;
++
++	eng_buf = (u8 *)&cfg.fifo_mask;
++
++	for (engine = 0; engine < DPI_MAX_ENGINES; engine++) {
++		if (eng_buf[engine] > DPI_MAX_ENG_FIFO_SZ)
++			return -EINVAL;
++		dpi_reg_write(dpi, DPI_ENGX_BUF(engine), eng_buf[engine]);
++
++		if (cfg.update_molr) {
++			if (cfg.molr[engine] > DPI_MAX_ENG_MOLR)
++				return -EINVAL;
++			reg = DPI_DMA_ENG_EN_MOLR(cfg.molr[engine]);
++			dpi_reg_write(dpi, DPI_DMA_ENGX_EN(engine), reg);
++		}
++	}
++
++	return 0;
++}
++
++static long dpi_dev_ioctl(struct file *fptr, unsigned int cmd, unsigned long data)
++{
++	void __user *arg = (void __user *)data;
++	struct dpipf *dpi;
++	int ret;
++
++	dpi = container_of(fptr->private_data, struct dpipf, miscdev);
++
++	switch (cmd) {
++	case DPI_MPS_MRRS_CFG:
++		ret = dpi_mps_mrrs_config(dpi, arg);
++		break;
++	case DPI_ENGINE_CFG:
++		ret = dpi_engine_config(dpi, arg);
++		break;
++	default:
++		ret = -ENOTTY;
++		break;
++	}
++
++	return ret;
++}
++
++static const struct file_operations dpi_device_fops = {
++	.owner = THIS_MODULE,
++	.unlocked_ioctl = dpi_dev_ioctl,
++	.compat_ioctl = compat_ptr_ioctl,
++};
++
++static int dpi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
++{
++	struct device *dev = &pdev->dev;
++	struct dpipf *dpi;
++	int ret;
++
++	dpi = devm_kzalloc(dev, sizeof(*dpi), GFP_KERNEL);
++	if (!dpi)
++		return -ENOMEM;
++
++	dpi->pdev = pdev;
++
++	ret = pcim_enable_device(pdev);
++	if (ret) {
++		dev_err(dev, "DPI: Failed to enable PCI device\n");
++		return ret;
++	}
++
++	ret = pcim_iomap_regions(pdev, BIT(0) | BIT(4), KBUILD_MODNAME);
++	if (ret) {
++		dev_err(dev, "DPI: Failed to request MMIO region\n");
++		return ret;
++	}
++
++	dpi->reg_base = pcim_iomap_table(pdev)[PCI_DPI_CFG_BAR];
++
++	/* Initialize global PF registers */
++	dpi_init(dpi);
++
++	/* Setup PF-VF mailbox */
++	ret = dpi_pfvf_mbox_setup(dpi);
++	if (ret) {
++		dev_err(dev, "DPI: Failed to setup pf-vf mbox\n");
++		goto err_dpi_fini;
++	}
++
++	/* Register interrupts */
++	ret = dpi_irq_init(dpi);
++	if (ret) {
++		dev_err(dev, "DPI: Failed to initialize irq vectors\n");
++		goto err_dpi_mbox_free;
++	}
++
++	pci_set_drvdata(pdev, dpi);
++	dpi->miscdev.minor = MISC_DYNAMIC_MINOR;
++	dpi->miscdev.name = KBUILD_MODNAME;
++	dpi->miscdev.fops = &dpi_device_fops;
++	dpi->miscdev.parent = dev;
++
++	ret = misc_register(&dpi->miscdev);
++	if (ret) {
++		dev_err(dev, "DPI: Failed to register misc device\n");
++		goto err_dpi_mbox_free;
++	}
++
++	return 0;
++
++err_dpi_mbox_free:
++	dpi_pfvf_mbox_destroy(dpi);
++err_dpi_fini:
++	dpi_fini(dpi);
++	return ret;
++}
++
++static void dpi_remove(struct pci_dev *pdev)
++{
++	struct dpipf *dpi = pci_get_drvdata(pdev);
++
++	misc_deregister(&dpi->miscdev);
++	pci_sriov_configure_simple(pdev, 0);
++	dpi_pfvf_mbox_destroy(dpi);
++	dpi_fini(dpi);
++	pci_set_drvdata(pdev, NULL);
++}
++
++static const struct pci_device_id dpi_id_table[] = {
++	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_CAVIUM, PCI_DEVID_MRVL_CN10K_DPI_PF,
++			 PCI_VENDOR_ID_CAVIUM, PCI_SUBDEVID_MRVL_CN10K_DPI_PF) },
++	{ 0, }  /* end of table */
++};
++
++static struct pci_driver dpi_driver = {
++	.name = KBUILD_MODNAME,
++	.id_table = dpi_id_table,
++	.probe = dpi_probe,
++	.remove = dpi_remove,
++	.sriov_configure = pci_sriov_configure_simple,
++};
++
++module_pci_driver(dpi_driver);
++MODULE_DEVICE_TABLE(pci, dpi_id_table);
++MODULE_AUTHOR("Marvell.");
++MODULE_DESCRIPTION("Marvell Octeon CN10K DPI Driver");
++MODULE_LICENSE("GPL");
+diff --git a/include/uapi/misc/mrvl_cn10k_dpi.h b/include/uapi/misc/mrvl_cn10k_dpi.h
+new file mode 100644
+index 000000000000..d27b1bd8cd8d
+--- /dev/null
++++ b/include/uapi/misc/mrvl_cn10k_dpi.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * Marvell Octeon CN10K DPI driver
++ *
++ * Copyright (C) 2024 Marvell.
++ *
++ */
++
++#ifndef __MRVL_CN10K_DPI_H__
++#define __MRVL_CN10K_DPI_H__
++
++#include <linux/types.h>
++
++#define DPI_MAX_ENGINES 6
++
++struct dpi_mps_mrrs_cfg {
++	__u16 max_read_req_sz; /* Max read request size */
++	__u16 max_payload_sz;  /* Max payload size */
++	__u8 port; /* Ebus port */
++};
++
++struct dpi_engine_cfg {
++	__u64 fifo_mask; /* FIFO size mask in KBytes */
++	__u16 molr[DPI_MAX_ENGINES]; /* Max outstanding load requests */
++	__u8 update_molr; /* '1' to update engine MOLR */
++};
++
++/* DPI ioctl numbers */
++#define DPI_MAGIC_NUM	0xB8
++
++/* Set MPS & MRRS parameters */
++#define DPI_MPS_MRRS_CFG _IOW(DPI_MAGIC_NUM, 1, struct dpi_mps_mrrs_cfg)
++
++/* Set Engine FIFO configuration */
++#define DPI_ENGINE_CFG   _IOW(DPI_MAGIC_NUM, 2, struct dpi_engine_cfg)
++
++#endif /* __MRVL_CN10K_DPI_H__ */
+-- 
+2.25.1
+
 
