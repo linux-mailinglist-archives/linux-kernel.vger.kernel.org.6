@@ -1,110 +1,86 @@
-Return-Path: <linux-kernel+bounces-219475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E0390D326
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:59:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04AE690D32A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D45251F217C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:59:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044C11C24484
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153B6156661;
-	Tue, 18 Jun 2024 13:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2142156C70;
+	Tue, 18 Jun 2024 13:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mz1NFZJW"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RyETr0v+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C957512DD92
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C1212DD92;
+	Tue, 18 Jun 2024 13:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718717748; cv=none; b=KMQPD4iP2bzzhPSoSAnwERx4cPRzKtpKeo2C6Kg52IX8f3aSudivhB9jnSMWrVoAhH5PSP7KThE/W+Z2yYwYvWiujOk++LDaWOLByNfq5r9iUJNmvGjqCY1pjRwxDF/u8MQBfoH413f7FJoLCzQw49+c7CaG0gK4aCFEErI0rAg=
+	t=1718717763; cv=none; b=kTNPUK3q1BdoCzsz2ADYHaVE9D91IxbPhIpoUtrJxh753wHtFTvB4jcZaUl9gL7QxMlM8JrugqkZma/kfes86bgd0vFhdlijj9pGLDeMDs3QtQUe34gPZWaRqptMWOHopu0fT5G9DknNo72N4rjVtl54MlL8CwcHJFE4JPYIEqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718717748; c=relaxed/simple;
-	bh=gE5K1CMg0FDplJQ5qb/JC8BlAQdTg4qg1zpQnY6aNRI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PalVOnopMd5cSh8K4ekZP8rBTL0mP1ZZZ2r/DVSLj62wEAwpbOmsdgAuzZ68JE9be6tF7HFUag86t2vnVB7pY60EKs4Oc5Kkme62Vz3F2T1Cm7kk5OlQLhWYy5tbYTrovvVAbcYGMz/HgNj7NXeaB0FqHICe01BdBfs8i9fgrqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mz1NFZJW; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ead2c6b50bso59897731fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:35:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718717744; x=1719322544; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G9s5hs5ZuL2Zn53VjZAMHLo13K1X8TUCRyypHJObaGA=;
-        b=mz1NFZJWpiq65eSwDWuPoDz3ZahC4Hi718IVwT7Rd41037lj1hdmSWWILaMTn7hDdg
-         uT2qRfGvMeSW6UdF4YznZMJqdLbiyhSSqcHfgmKCGPgmeKqCwtQ32EFv1uohr4ejLOKO
-         IqAHpl2KY+uDkHSjaLkEoxHOvqxyggCBtylxaIhvGX+zIXyEp8qAd02BR7VAGAgOjsw7
-         szEv5f5sdusYFc423maXJ6ai7FE3qqmhkwVE5A7oTwiRFlHIjJL5a5epbGHfgD54cPfL
-         Xt35GXl0Az2d0Ima72XD1dLgVIuh+/fEZO4z4D0wSylJxwb49eSxag//zgne/iBrojPT
-         mY8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718717744; x=1719322544;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G9s5hs5ZuL2Zn53VjZAMHLo13K1X8TUCRyypHJObaGA=;
-        b=cfFHM5FVb9TukCoCnmJbsoIVU/SAc6TglVaEymAm9yRVZRrvcND6CdZMRwAu4jh56d
-         8qT4fo7WePF9viWrJMCQs4e9QHMw6kwSMl+ho2QBXbrEew3AmfiGvYZLvTfChlYhCBz0
-         PD5LiUhnoZnMajhxHtSMJgDZEYn95E8rsokOQTL4PeM3Ut40kIZ0TAXPZ1RD584JcGcn
-         nNoqrLRI2u+QIMCrAa48GV5lyEiA8s4+eBlJjCqv+aYfgczRwZXU2uI+pmeCgciu94y2
-         r8tSDMbVYZgAIEu3vPJduvL1mLuIDNQdpa02EM9un8KGgglRd3M5uXFIKjHmAuE5hMEd
-         M8+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXRjw6ivzeF8/EhrSgysDmAjcPa7SNjMzIQsJ+/1UTI22KBA+paxeVheGXoJHsbwInBuPxiZPFxnzReT+I2t7/Xz5foJ/Ts/gAgYwa/
-X-Gm-Message-State: AOJu0YwD5WYHFzLRABB05CADun6QiUy1Q6jO5T5PEcTTgMGt8NqfNxGb
-	6HGS04ztGFpNxbCY2OUygA7ndvu+WgTXHB6P1nPXzqXjCtUY/JBu5ng1XNsHjIE=
-X-Google-Smtp-Source: AGHT+IEKKcmYXRZGLCQoh1/2bz9eoQuNYXaJrxW4J4yKb9lxs1Zcann/PJVH0hN3sJo50UZMHp4w5Q==
-X-Received: by 2002:a05:651c:546:b0:2ec:fa4:e310 with SMTP id 38308e7fff4ca-2ec0fa4e522mr96437711fa.34.1718717743930;
-        Tue, 18 Jun 2024 06:35:43 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c89ce7sm16950161fa.112.2024.06.18.06.35.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 06:35:43 -0700 (PDT)
-Message-ID: <c0c30696-0d38-410e-8a59-e5ad146da7c8@linaro.org>
-Date: Tue, 18 Jun 2024 15:35:41 +0200
+	s=arc-20240116; t=1718717763; c=relaxed/simple;
+	bh=18wvR2VgD6SuCinm13A5EGVFInqKVMlwI+0FKFOQny8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Meig04PFuD8PNxEuq+17nAyxYJdXYDDeR5vpqCD5Xnls/+T+prf62bx4Wh3r1B7c31x8HQkVRjyGpJogRQy5VzOjAebPdnjdQ2g4xdAXmj1yJKWprXmBCO8ovEAzfXMUCDqQYGiDKtraIrf3M+b5LTDWO2z6K3+KynAJGoPt7hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RyETr0v+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC18C3277B;
+	Tue, 18 Jun 2024 13:36:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718717762;
+	bh=18wvR2VgD6SuCinm13A5EGVFInqKVMlwI+0FKFOQny8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RyETr0v+jwdiT2mqIrFgW2uaNIzMjZdZV3tvLwRHC/YA827r0toGorNxynIT5s5Br
+	 GhQhmK93Dfn1Da5kqNsHCLBMDOLdE6bShxE4gmqGyQHz84hPk9gltyALoI/rFMfQ79
+	 s+YuVItDUDB01lSvr8itkVZl7Bs8GNq4Q9kbcONMg2OG1beuLZCAYT0aXhcA29hDx+
+	 VjyapUSjAqeYErAVfcOgiBNLyCcC/zlmn5+JQVMari+d+1yDpg6wadlcqSahhfbdBt
+	 nsmGMt6S1kFNu1S03CCINzqoZ2JzteZHAhdjg7L8LY3hE6FoR2Gm210IN30MKS6A8u
+	 eqce8b3e/B4kQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] MAINTAINERS: TPM DEVICE DRIVER: Update the W-tag
+Date: Tue, 18 Jun 2024 16:35:56 +0300
+Message-ID: <20240618133556.105604-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: qcm6490-fairphone-fp5: Name the
- regulators
-To: Luca Weiss <luca.weiss@fairphone.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Caleb Connolly <caleb@postmarketos.org>,
- Alexander Martinz <amartinz@shiftphones.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240618-qcm6490-regulator-name-v1-0-69fa05e9f58e@fairphone.com>
- <20240618-qcm6490-regulator-name-v1-1-69fa05e9f58e@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240618-qcm6490-regulator-name-v1-1-69fa05e9f58e@fairphone.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Git hosting for the test suite has been migrated from Gitlab to Codeberg,
+given the "less hostile environment".
 
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Link: https://codeberg.org/jarkko/linux-tpmdd-test
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 6/18/24 15:30, Luca Weiss wrote:
-> Without explicitly specifying names for the regulators they are named
-> based on the DeviceTree node name. This results in multiple regulators
-> with the same name, making debug prints and regulator_summary impossible
-> to reason about.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
+diff --git a/MAINTAINERS b/MAINTAINERS
+index aacccb376c28..022aac78a000 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22746,7 +22746,7 @@ M:	Jarkko Sakkinen <jarkko@kernel.org>
+ R:	Jason Gunthorpe <jgg@ziepe.ca>
+ L:	linux-integrity@vger.kernel.org
+ S:	Maintained
+-W:	https://gitlab.com/jarkkojs/linux-tpmdd-test
++W:	https://codeberg.org/jarkko/linux-tpmdd-test
+ Q:	https://patchwork.kernel.org/project/linux-integrity/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+ F:	Documentation/devicetree/bindings/tpm/
+-- 
+2.45.2
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Konrad
 
