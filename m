@@ -1,135 +1,115 @@
-Return-Path: <linux-kernel+bounces-220143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9563890DD3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:20:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC4A90DD52
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5821F2247A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:20:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A5581C220E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9B216F0EB;
-	Tue, 18 Jun 2024 20:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7F21741CB;
+	Tue, 18 Jun 2024 20:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g8Af43Vq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ffTN8y3u"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0760417625B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BB739AEC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718742017; cv=none; b=tfouuoWGYhju5gQvp3e96SV4crZbh800MLyJctNCttInpJPbi9EXcx+sKj+YWN2a7dY62aqQt3KnKG7iaAfxOoOyXD3/Go38cSdtrev/aVTdo7lRPBh/Ru4rh6lJ/osR1WLUyGk6UcJIYTeVroqdHmFrHkp5Rh9XpCGU81095Ic=
+	t=1718742138; cv=none; b=A8ASStjr0gPzNtTV+ABUXkscuaI2J6iYDZVH01HBIvl3aQ12hTLNDbHWTN7Rl3kDH+6cOcMpnBdyrPtStOpB/I57SkqA5vY7nc1lKizfSOBYDhCeKFCHSRjeN+78cxNyEq/eQVOZ7LzoKZ1h8PmqTJCXX82IlgNOdHzL9/BkeIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718742017; c=relaxed/simple;
-	bh=JJgUrXpcAhAJI8K7hE8Nyifer/j3vPzwSf9NPTdPnx8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vFZQ2uo5oJ945Sxga7jV+IyclTv5WZF44Dnz2K3PRm7be74Mhs4dhskPsuzoCiPNB9i7Bc2gWjVj//KH2s3BsAVd+TvzjYm9K4v2QfzLqaUcWU6yqLdBj8jJwkLLBq9AyUtfHNjEOSLAQ9vBFc9ScB/A1VbKGOmd+HfrKj8zi8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g8Af43Vq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718742014;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=pWagbOy3Dug1A8KU6tJo7JX4+oGGm8zUoClQdGRis5w=;
-	b=g8Af43VqggDha1wxYMKStaqhAKROANt7p3omPcZbDRQ1TLKtDZJWgU5ZcTMWL+otCOc7qZ
-	wOeFd28Hikk3ysi0SFF8bW6jqdJz8VJP5JJ+VlWZDPQsufKzhl3BMCk9ojF1kQMeqb6Lhv
-	vbC1b3lndCuulldl2GUg/RhfmYjweSE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-1-C6sZAUC2N7yQgBhcYt64-Q-1; Tue,
- 18 Jun 2024 16:20:10 -0400
-X-MC-Unique: C6sZAUC2N7yQgBhcYt64-Q-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CAFAF19560B2;
-	Tue, 18 Jun 2024 20:20:08 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.32.193])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0E1B319560B0;
-	Tue, 18 Jun 2024 20:20:02 +0000 (UTC)
-From: Wander Lairson Costa <wander@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org (open list:SCHEDULER)
-Cc: rrendec@redhat.com,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: [PATCH] sched/deadline: fix task_struct reference leak
-Date: Tue, 18 Jun 2024 17:19:40 -0300
-Message-ID: <20240618201940.94955-1-wander@redhat.com>
+	s=arc-20240116; t=1718742138; c=relaxed/simple;
+	bh=ruEwwY0sCQgIx4+51Mr+KTsL/uQU36KsSPbTkDJyj4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J04Sakt74XsA0OnGAop+yyHRJQUQV2Z3AGWlvQN7WwKZ6vDX3EfNbWy9SPvcdC6AlYNf4v/EvgzsIpHVmmp8WbvY6WToLtx157ZOQIJG+Ca56lKTmX/F9lTU3morhfg+rP/pMU6TI92y/GkZkUpPeyINwYWlduKkngAQovjvuXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ffTN8y3u; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-375ff733262so662315ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1718742134; x=1719346934; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OD3hjWlOreueuZ2eKAGTshwNE/qfElO5xeeHy8WIAhQ=;
+        b=ffTN8y3urhcX4LBsgrcWlZxxhNxD7pRo1Zzva4Iap1XLRTFz+v8cyZZhQeiOhSLv4g
+         fW3n/Uy1MiODrBsyJs/za6CqRnqZ2S8/7Jk1htUJRksRHMjakqg2k5J/d9hxWhpFnly2
+         UiqqiKdjA4QaFmwOteEgoTVf7IA2zlHoNxSdA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718742134; x=1719346934;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OD3hjWlOreueuZ2eKAGTshwNE/qfElO5xeeHy8WIAhQ=;
+        b=DZABlMjl/K22yYbBGu51J5l3rg3949tmgRFayrEGHCVTJ7+zdrnxTpvOAvxoZryi+Z
+         1qPtMOYJndj1ECMxy83YzFj186scsbjotYOjWHmb1yxzQ4yPmKfmawxctRD7FLnukmfa
+         WxMb40OKXzohayjJflwiosPlt44bXh5UgRRBZ5zPnEUEGcRkX1w/R6i0mgNTIVCVfC2z
+         WBttKFhSYXdj1vBOnPUIdmDCXPye2JDvozdeVfjqyWOC0DVtV3/WixvjseCjvyqiuPLf
+         fMT5+JxQJ+hX5psqL1xeX7p17Jk6UwXpSch3t3lP57RcAKBurTmowkMuYP39EvDR7rKY
+         s3ww==
+X-Forwarded-Encrypted: i=1; AJvYcCVNSr3fGBaA+HARumAvOLEQOOZ8c7hU9Po0iO1o75zHLVv4H8zouvamSoHT4XfkQwouDn/B98v5iDFzZbDCFG9PiFBcY0vgnoHF9XuE
+X-Gm-Message-State: AOJu0YzmaOwgTfV1ae7IEOKCUxUURBRAmJwdCGgEU3syAiTIZ6bxTJno
+	2gsE0ypTh8ZJhov+D1YsjVGdTMtrsLLEtE/CTYqsrps/sIRVzgbz2qYTuFLAQ6g=
+X-Google-Smtp-Source: AGHT+IEKrbwpMAjzjfhp85KwcKFf7Fg/nY7eNZEcazaP5FLtxaCvOFmjeTpwJXw8irpidJKaiyifiA==
+X-Received: by 2002:a6b:7203:0:b0:7eb:f05a:7d4d with SMTP id ca18e2360f4ac-7f13ee8b981mr94008039f.2.1718742134360;
+        Tue, 18 Jun 2024 13:22:14 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b95696ae3asm3331249173.75.2024.06.18.13.22.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 13:22:13 -0700 (PDT)
+Message-ID: <d47043de-628c-4f9e-8791-a2a8dbf4ed21@linuxfoundation.org>
+Date: Tue, 18 Jun 2024 14:22:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpupower: Remove absent 'v' parameter from monitor man
+ page
+To: Roman Storozhenko <romeusmeister@gmail.com>,
+ Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240618-change-mon-format-v1-1-efa263a8e286@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240618-change-mon-format-v1-1-efa263a8e286@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-During the execution of the following stress test with linux-rt:
+On 6/18/24 13:21, Roman Storozhenko wrote:
+> Remove not supported '-v' parameter from the cpupower's 'monitor'
+> command description.
+> 
 
-stress-ng --cyclic 30 --timeout 30 --minimize --quiet
+Nice find.
 
-kmemleak frequently reported a memory leak concerning the task_struct:
+> Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
+> ---
+> There is a '-v' parameter described in cpupower's 'monitor' command man
+> page. It isn't supported at the moment, and perhaps has never been
+> supported. When I run the monitor with this parameter I get the
+> following:
+> 
+> $ sudo LD_LIBRARY_PATH=lib64/ bin/cpupower monitor -v
+> monitor: invalid option -- 'v'
+> invalid or unknown argument
+> $ sudo LD_LIBRARY_PATH=lib64/ bin/cpupower monitor -V
+> monitor: invalid option -- 'V'
+> invalid or unknown argument
 
-unreferenced object 0xffff8881305b8000 (size 16136):
-  comm "stress-ng", pid 614, jiffies 4294883961 (age 286.412s)
-  object hex dump (first 32 bytes):
-    02 40 00 00 00 00 00 00 00 00 00 00 00 00 00 00  .@..............
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  debug hex dump (first 16 bytes):
-    53 09 00 00 00 00 00 00 00 00 00 00 00 00 00 00  S...............
-  backtrace:
-    [<00000000046b6790>] dup_task_struct+0x30/0x540
-    [<00000000c5ca0f0b>] copy_process+0x3d9/0x50e0
-    [<00000000ced59777>] kernel_clone+0xb0/0x770
-    [<00000000a50befdc>] __do_sys_clone+0xb6/0xf0
-    [<000000001dbf2008>] do_syscall_64+0x5d/0xf0
-    [<00000000552900ff>] entry_SYSCALL_64_after_hwframe+0x6e/0x76
+You are burying important information in throw away text. Please
+add all of the above text to commit log and send me v2.
 
-The issue occurs in start_dl_timer(), which increments the task_struct
-reference count and sets a timer. The timer callback, dl_task_timer,
-is supposed to decrement the reference count upon expiration. However,
-if enqueue_task_dl() is called before the timer expires and cancels it,
-the reference count is not decremented, leading to the leak.
-
-This patch fixes the reference leak by ensuring the task_struct
-reference count is properly decremented when the timer is canceled.
-
-Signed-off-by: Wander Lairson Costa <wander@redhat.com>
----
- kernel/sched/deadline.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index c75d1307d86d..5953f89bfa96 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1805,7 +1805,9 @@ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
- 			 * problem if it fires concurrently: boosted threads
- 			 * are ignored in dl_task_timer().
- 			 */
--			hrtimer_try_to_cancel(&p->dl.dl_timer);
-+			if (hrtimer_try_to_cancel(&p->dl.dl_timer) == 1 &&
-+			    !dl_server(&p->dl))
-+				put_task_struct(p);
- 			p->dl.dl_throttled = 0;
- 		}
- 	} else if (!dl_prio(p->normal_prio)) {
--- 
-2.45.1
-
+thanks,
+-- Shuah
 
