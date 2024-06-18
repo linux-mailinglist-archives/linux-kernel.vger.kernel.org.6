@@ -1,107 +1,97 @@
-Return-Path: <linux-kernel+bounces-219169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB5D90CB77
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D84EB90CB7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F97BB2BFA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:00:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 162B7B258E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D672E13B5A0;
-	Tue, 18 Jun 2024 11:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBZwbDD6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62F91420BB;
+	Tue, 18 Jun 2024 11:52:41 +0000 (UTC)
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2DE13A877;
-	Tue, 18 Jun 2024 11:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FAD13FD9F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718711473; cv=none; b=hQhrXdi+U6/nSdpdXCdSyeKhB8GLRqjxPEwb5EgULsZ5csvFJDG0WG0FlsSae5/ycZPrtV0KuvBVaSreeB7Ki9gqynw0IcTQsMGumlnZs1qBgg446m5QraU6fxFllElx5VlMdn80GQ8Hnp6BxKsabWF/fiYePRZAlQj1o1kKjZ0=
+	t=1718711561; cv=none; b=ZMelrKCV7sGDh7GIMFAolo7sKP++Qln6aUSPBCRQNfLf2rwMUC0UGUFLSgtSFTLInN3BJAgw85b8vDQvBK/+T055YqBzmysRmGVOv83mnxMBRnfHd/atRCvo2m1sIBvvyrbyVmDJKMBpheWiczb5rE3rqxLQSLEdoC4P9YdQZDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718711473; c=relaxed/simple;
-	bh=itnLaYU73scIBSDS2g3n+5LVak3YlcHt72uWNFY4DjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EgLptlAelP05sdRY0hJ+aQrn3bToV0TCXiTLG8qfnNhwxFwmH0wVlMe/rcPb65hUCv/D907PZD1JFydkNer5pp5Qk4eqqWXtE3jtN2GaIDMVD8X56MzBGy36BARwPHrwgwe0ra/JwZYHZi9lR2i4haPjJh8P1q8DKu3YFm7pzmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBZwbDD6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAFB9C4AF50;
-	Tue, 18 Jun 2024 11:51:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718711473;
-	bh=itnLaYU73scIBSDS2g3n+5LVak3YlcHt72uWNFY4DjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KBZwbDD6sYQU7aQZTWb9SY0CLy/8qhIuWGTnwgEqitFRPMyEv/kECh3uYZPuJ/f1Q
-	 H5Dmm26e6Wtbnl8cLBAxJP9FjaU3/FcD4XxQdFtCSb8YE8q7aczJ7oXzyR7WFaDFbn
-	 QPHi/0X5zRE4k0YJHieQZYraFeUd7TMKiWjwppzpOvcDRHte+2ZRfznSuxONQDvxK8
-	 D00URor2c7FfEkEFTcNEeqCUJYIhGFYCR4oFIB2KxS5/x/DifjqfJSEsb+H99Gd/Jm
-	 wDu/yo7UVTYQeX4AtXyic/yLff/ZbITnm6CBiTHS1yxE1WchY8C4MPoroegtbXG/S9
-	 giyG5s01suKBg==
-Date: Tue, 18 Jun 2024 12:51:07 +0100
-From: Mark Brown <broonie@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Julien Panis <jpanis@baylibre.com>,
-	Nicolas Pitre <npitre@baylibre.com>
-Subject: Re: linux-next: build failure after merge of the mediatek tree
-Message-ID: <b376b01d-45e0-40dd-be10-81ac154ead7c@sirena.org.uk>
-References: <ZnBn-vSj-ssrJFr2@sirena.org.uk>
- <01f2ee94-f8b0-449c-aa19-3ee38a2e36a1@baylibre.com>
- <d87b7376-5ba2-4810-90cb-76648d4a8080@kernel.org>
+	s=arc-20240116; t=1718711561; c=relaxed/simple;
+	bh=ry3TqrT9h7jK8A5SjX+EQVSOg9/YHE19C/+4e6RIneg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zo+qjkdsGOj6Tb6+HmjW+614POANBwnd8FrFRJK3qYVIwjMkJqAqVZQqUzFw+2qkGonjtbMOC/4WMApYwJBqVNCalZtkKS78gPoiyUvCM8X4eki1CPo68IdGca1BTj8j3xihhJS9yKUifvmNJsnIFhjs2zw+Y6bxzL9n84eXKDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 47927E000B;
+	Tue, 18 Jun 2024 11:52:36 +0000 (UTC)
+Message-ID: <9268589d-9ccc-4cdd-9de2-5019407ef313@ghiti.fr>
+Date: Tue, 18 Jun 2024 13:52:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qVqD02ii6DMmnPdV"
-Content-Disposition: inline
-In-Reply-To: <d87b7376-5ba2-4810-90cb-76648d4a8080@kernel.org>
-X-Cookie: If you can read this, you're too close.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH] riscv: Fix local irq restore when flags
+ indicates irq disabled
+Content-Language: en-US
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Xu Lu <luxu.kernel@bytedance.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20230725070549.89810-1-luxu.kernel@bytedance.com>
+ <mhng-a0239c56-385e-40a9-8a71-45d50e28b45d@palmer-ri-x1c9>
+ <CAPYmKFvXf7q_8QzFe4VFL1s-j0P3ZGSZ8nG1q4HmtU4rzek77Q@mail.gmail.com>
+ <CAPYmKFvqpe48zaLKrTz085cJcO9fwL+BtHujU4p48onR1Nodfw@mail.gmail.com>
+ <329b22c6-435c-424a-8211-b9a029b0897d@ghiti.fr> <ZnFqDRXRjoHMaJXW@andrea>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <ZnFqDRXRjoHMaJXW@andrea>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
+
+Hi Andrea,
+
+On 18/06/2024 13:05, Andrea Parri wrote:
+> (merging replies)
+>
+>>>> However, if local_irq_save() is called when irq is disabled. The SR_IE bit of
+>>>> flag returned is clear. If some code between local_irq_save() and
+>>>> local_irq_restore() reenables irq, causing the SR_IE bit of CSR_STATUS
+>>>> back to 1, then local_irq_restore() can not restore irq status back to disabled.
+> But doesn't that represent some bogus manipulation of the irq flags? cf.
+>
+> config DEBUG_IRQFLAGS
+> 	bool "Debug IRQ flag manipulation"
+> 	help
+> 	  Enables checks for potentially unsafe enabling or disabling of
+> 	  interrupts, such as calling raw_local_irq_restore() when interrupts
+> 	  are enabled.
+>
+> in particular, raw_check_bogus_irq_restore() in raw_local_irq_restore().
+>
+>
+>> This got lost but this is still correct and needed.
+> You mean because of the mentioned rtl8723e example? are there other such
+> instances?  IOW, why do you say that the changes in question are needed?
 
 
---qVqD02ii6DMmnPdV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Simply because the scenario in this driver and I looked at the arm64 
+implementation which restores flags unconditionally.
 
-On Tue, Jun 18, 2024 at 12:03:44PM +0200, AngeloGioacchino Del Regno wrote:
-> Il 18/06/24 09:49, Julien Panis ha scritto:
+But if that's considered bogus, let's drop this. Sorry Xu for the noise, 
+and thanks Andrea for pointing this.
 
-> > For some reason, the 2 first commits of the series were not applied
-> > with the dts. These commits are needed because they contain some
-> > definitions used by the dts.
+Alex
 
-> I'm not sure how should I proceed here.
 
-> Only the mediatek tree is broken, linux-next is ok... should I pick the
-> commits from next or should I remove the dts commits from the mediatek trees?
-
-> First time happening.... :-)
-
-linux-next is only OK because I am merging an old version of the
-mediatek tree rather than your current one.  The mediatek tree should be
-fixed somehow so that it builds, either mechanism should be fine.
-
---qVqD02ii6DMmnPdV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZxdKoACgkQJNaLcl1U
-h9D3fAf/eh2z/5WZx5xJ+uk5O84ROaOiosRiUwVl+JhlIZ8Ihgv00i32eoTM3De9
-rsllAKch1KgVdqT5s//fnKFOilTixOznoej1Brfwcd8kiZsGrxfaleqSvhSPxBkz
-fc9YfKPQs0wEK2dmohJRFf3we7gy7BOEHr15DYZNtovF0xrOq9jOtZka0hHXODA+
-qqHRMvWyBVSk5/xts5lAaomSbN1rYrQ+sxsRlYcDdKQE9fxZ2/HQHkPOYYO+RM17
-nSPD82K1sf+f2LmBdKv8e/YDYiO4FpM5YsahNm2FrJV9ycxYdGcZHnNdeGw+cRcf
-VD8gOBBa8ei6wkMYKPmLOXAcWfIKbA==
-=rTMi
------END PGP SIGNATURE-----
-
---qVqD02ii6DMmnPdV--
+>
+>    Andrea
 
