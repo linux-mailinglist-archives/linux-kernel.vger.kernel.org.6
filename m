@@ -1,125 +1,259 @@
-Return-Path: <linux-kernel+bounces-218787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4629890C60A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:13:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3B990C611
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91AD1F22A25
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:13:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 417881C21A9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5D915FA64;
-	Tue, 18 Jun 2024 07:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE86155391;
+	Tue, 18 Jun 2024 07:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHVbaEvh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Hus3YdYD"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC66F6D1B9;
-	Tue, 18 Jun 2024 07:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4F647A5D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718696375; cv=none; b=ZVwhr+P8GIXVctsTww+PnuDSKNuv8tEzlf3zoygZIxK9cRfU+kHkhtF1TrwMnM57tj9GN/hnRQ/yHQOLcROFjXMfCWxPFqY17l83WeHpSukcf/POhhHimOYj5RgkA3/0MsmS4/8Umg10dZl1HEk3z7ciKMMB1RAY6jYUFP2QjOg=
+	t=1718696448; cv=none; b=OKjR1DPdAbjaSmP3iZDc7gusq7YdH/JFATmJ1aRz/RyzrWivXdqfQQBvedqaLVLqT1ZXWKbt5uDyE7qavpcyiFFvYBVN0dLDU2DCm1BXh4XYZUuV0FsNE3DgiG2MBynMlCoqyEOFc+swEpIEwjtGJI4haUSMEhZ1mgYUfeKpvCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718696375; c=relaxed/simple;
-	bh=0El7CzpYQS3gWNlhG7y7pashdZiYbHusc0JthGLSWkY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jDNTWzyvvEXSiXIAviGbmlpqIMC+gNSF5XWCn5oxZbGM+HPwhrwrlc8cFkofyanPOwmhjBAuB8UQvHBRvejQF9pdMWOCUIOVFGJlH/LTFh/Fc6G8vQguOImx1ir18KJRjrCyILhwgppLgkpJTNoCUgk5LZC7RIebedmWqfS43h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHVbaEvh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2875BC3277B;
-	Tue, 18 Jun 2024 07:39:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718696375;
-	bh=0El7CzpYQS3gWNlhG7y7pashdZiYbHusc0JthGLSWkY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WHVbaEvhFnB00H9byY/5+JXJ2c+htVOhH6C0vUNPgD8fByXctSUPL76khukO5RQ3M
-	 pDgHC8mfcl4zVuJyCGdaAwXtlcenmC+qR3p9icVhNf2cXI9mEByMEZJJPlYgieFJSa
-	 038WgFwbsc/8OfjhB4EBCxh7wriV/VD6EcST2b9HM0t/EWM9ZK4lUXKXvRt8nqkLmp
-	 wfMOAu9T3qQwx7vqk28pazMkGktRmhUDIdHDxWpg3BiE7soFnBWsXjkzc7Zbj/Fj+N
-	 CMpwHWxKyooAfRIK4tMmvk0Y7gWEEYqBnxxWjyam6bDI7zzb3EZYNRqfKEYUqOosEk
-	 TqVLMDt5NTXmQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sJTRE-004rtB-RG;
-	Tue, 18 Jun 2024 08:39:32 +0100
-Date: Tue, 18 Jun 2024 08:39:32 +0100
-Message-ID: <86ed8uk8cr.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Shaoqin Huang <shahuang@redhat.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	kvmarm@lists.linux.dev,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] KVM: arm64: Allow userspace to change ID_AA64PFR1_EL1
-In-Reply-To: <20240618063808.1040085-2-shahuang@redhat.com>
-References: <20240618063808.1040085-1-shahuang@redhat.com>
-	<20240618063808.1040085-2-shahuang@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1718696448; c=relaxed/simple;
+	bh=fAjUUM5MGv+Nnw40efWK6OzEJmGeQtaSvdjCViDOsww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qs9BP5RJT7TAJFlTLsC+GxMk7c0wZj3gQ2I9KJ+sTNrC1vaHIkvEHhdYKxN9r4HHlmZIF8MAlG6sXklPhqgiG0Ktt79WRTgeo7SNirFjWKMMo3uvfhYmiKKMwU9rhIsgqDCjmOpCwg68X37nmXh28+kLJVDoJode8z4NouTUnCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Hus3YdYD; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45I7eNwQ130284;
+	Tue, 18 Jun 2024 02:40:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718696423;
+	bh=mOuw0vOFF+jtYkz65pWfpn2/WyQP4i6TqlpZ7ARxTvs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Hus3YdYDSM+RJlE82dC+X20qY97uaGFwOif4BTallVCuXaLcdYYQc7YOCq7ab5te5
+	 JAn7r1v/4yC7S9yiHqJQKcHdK8ORDSmbF+4UoNjLA59+MtRU6Q3vKBRE/qRo8MOVM5
+	 w3x9kY+epLm/HYXjtKVRT6YIJsdU7y8zX81op8kk=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45I7eNq5031856
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 18 Jun 2024 02:40:23 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
+ Jun 2024 02:40:23 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 18 Jun 2024 02:40:23 -0500
+Received: from [172.24.227.55] (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.55])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45I7eIoY062389;
+	Tue, 18 Jun 2024 02:40:19 -0500
+Message-ID: <b1591cd8-47b1-4764-b768-f3a8ef80d495@ti.com>
+Date: Tue, 18 Jun 2024 13:10:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: shahuang@redhat.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: ti-sn65dsi86: Fix ti_sn_bridge_set_dsi_rate
+ function
+To: Doug Anderson <dianders@chromium.org>
+CC: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>,
+        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
+        <airlied@gmail.com>, <daniel@ffwll.ch>, <andersson@kernel.org>,
+        <robdclark@gmail.com>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240408073623.186489-1-j-choudhary@ti.com>
+ <CAD=FV=V6vUgcPn0zhA+9k4cHVpqqeSVCSJG23XEE5KMAHUCCoQ@mail.gmail.com>
+ <279a1467-9ba4-449c-9076-9b2acef9336c@ti.com>
+ <CAD=FV=VVs56wPGMVwuuwvHN8ob2bUeX1U-G=Zt_xGeGMyuchQA@mail.gmail.com>
+Content-Language: en-US
+From: Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <CAD=FV=VVs56wPGMVwuuwvHN8ob2bUeX1U-G=Zt_xGeGMyuchQA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, 18 Jun 2024 07:38:06 +0100,
-Shaoqin Huang <shahuang@redhat.com> wrote:
+Hello Doug,
+
+On 11/04/24 10:12, Doug Anderson wrote:
+> Hi,
 > 
-> Allow userspace to change the guest-visible value of the register with
-> some severe limitation:
+> On Wed, Apr 10, 2024 at 4:42 AM Jayesh Choudhary <j-choudhary@ti.com> wrote:
+>>
+>> Hello Doug,
+>>
+>> Thanks for the review.
+>>
+>> On 08/04/24 14:33, Doug Anderson wrote:
+>>> Hi,
+>>>
+>>> On Mon, Apr 8, 2024 at 12:36 AM Jayesh Choudhary <j-choudhary@ti.com> wrote:
+>>>>
+>>>> Due to integer calculations, the rounding off can cause errors in the final
+>>>> value propagated in the registers.
+>>>> Considering the example of 1080p (very common resolution), the mode->clock
+>>>> is 148500, dsi->lanes = 4, and bpp = 24, with the previous logic, the DSI
+>>>> clock frequency would come as 444 when we are expecting the value 445.5
+>>>> which would reflect in SN_DSIA_CLK_FREQ_REG.
+>>>> So move the division to be the last operation where rounding off will not
+>>>> impact the register value.
+>>>
+>>> Given that this driver is used on a whole pile of shipping Chromebooks
+>>> and those devices have been working just fine (with 1080p resolution)
+>>> for years, I'm curious how you noticed this. Was it actually causing
+>>> real problems for you, or did you notice it just from code inspection?
+>>> You should include this information in the commit message.
+>>
+>> I am trying to add display support for TI SoC which uses this particular
+>> bridge. While debugging, I was trying to get all the register value in
+>> sync with the datasheet and it was then that I observed this issue while
+>> inspecting the code.
+>> Maybe Chromebooks are using different set of parameters which does not
+>> expose this issue. Since parameters for my display (mentioned in commit
+>> message) yields the frequency at the border, I saw this issue. My debug
+>> is still ongoing but since the value is not in sync with the
+>> documentation, I sent out this patch.
 > 
->   - No changes to features not virtualized by KVM (MPAM_frac, RAS_frac)
-> ---
->  arch/arm64/kvm/sys_regs.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> OK, sounds good. It would be good to include some of this type of into
+> in the patch description for the next version.
 > 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 22b45a15d068..bead81867bce 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -2306,7 +2306,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  		   ID_AA64PFR0_EL1_GIC |
->  		   ID_AA64PFR0_EL1_AdvSIMD |
->  		   ID_AA64PFR0_EL1_FP), },
-> -	ID_SANITISED(ID_AA64PFR1_EL1),
-> +	ID_WRITABLE(ID_AA64PFR1_EL1, ~(ID_AA64PFR1_EL1_RAS_frac |
-> +				       ID_AA64PFR1_EL1_MPAM_frac)),
->  	ID_UNALLOCATED(4,2),
->  	ID_UNALLOCATED(4,3),
->  	ID_WRITABLE(ID_AA64ZFR0_EL1, ~ID_AA64ZFR0_EL1_RES0),
 
-This isn't a valid patch.
+I am re-rolling v2 patch.. So I will mention that this was found during
+code inspection.
 
-Furthermore, how about all the other features that may or may not be
-currently handled by KVM? Please see [1] and make sure that all
-existing fields have a known behaviour (a combination of masked,
-preserved, capped, writable or read-only).
+> 
+>>> I'm travelling for the next two weeks so I can't actually check on a
+>>> device to see if your patch makes any difference on hardware I have,
+>>> but I'd presume that things were working "well enough" with the old
+>>> value and they'll still work with the new value?
+>>>
+>>>
+>>
+>> Yes, ideally they should still work well with this change.
+> 
+> OK, I can validate it in a few weeks.
+> 
+> 
+>>>> Also according to the SN65DSI86 datasheet[0], the minimum value for that
+>>>> reg is 0x08 (inclusive) and the maximum value is 0x97 (exclusive). So add
+>>>> check for that.
+>>>
+>>> Maybe the range checking should be a separate patch?
+>>
+>> Check should be done before propagating the register value so I added it
+>> in the same function and hence in the same patch.
+> 
+> I was thinking you could have patch #1 add the checks. ...then patch
+> #2 could fix the math.
+> 
 
-I can at least see problems with MTE_frac and MTEX, plus all the other
-things that KVM doesn't know how to save/restore (THE, GCS, NMI...).
+Creating 2 patches. 1st for atomic check and another fixing the math.
 
-What I asked you to handle the whole register, I really meant it.
+> 
+>>>> -#define MIN_DSI_CLK_FREQ_MHZ   40
+>>>> +/*
+>>>> + * NOTE: DSI clock frequency range: [40MHz,755MHz)
+>>>> + * DSI clock frequency range is in 5-MHz increments
+>>>> + * So minimum frequency 40MHz translates to 0x08
+>>>> + * And maximum frequency 755MHz translates to 0x97
+>>>> + */
+>>>> +#define MIN_DSI_CLK_RANGE      0x8
+>>>> +#define MAX_DSI_CLK_RANGE      0x97
+>>>
+>>> It's a little weird to call this min/max and have one be inclusive and
+>>> one be exclusive. Be consistent and say that this is the minimum legal
+>>> value and the maximum legal value. I think that means the MAX should
+>>> be 0x96.
+>>
+>> The comment above does specify the inclusive/exclusive behavior.
+>> Since a value corresponds to 5MHz range, associating the value with
+>> the range makes more sense if I keep it 0x97 (0x97 * 5 -> 755MHz)
+>> 0x96 corresponds to the range of [750Mz,755MHz).
+>>
+>> If this argument does not make sense, I can change it to 0x96 and handle
+>> it with the inequalities in the function call.
+> 
+> Right that the comment is correct so that's good, but I'd still like
+> to see the constants changing. For instance, if I had code like this:
+> 
+> /*
+>   * I know 2 * 2 is not really 5, but it makes my math work out
+>   * so we'll just define it that way.
+>   */
+> #define TWO_TIMES_TWO 5
+> 
+> ...and then later you had code:
+> 
+> if (x * y >= TWO_TIMES_TWO)
+> 
+> When you read the code you probably wouldn't go back and read the
+> comment so you'd be confused. AKA the above would be better as:
+> 
+> #define TWO_TIMES_TWO 4
+> 
+> if (x * y > TWO_TIMES_TWO)
+> 
+> Better to make the name of the #define make sense on its own. In this
+> case "min" and "max" should be the minimum legal value and the maximum
+> legal value, not "one past".
+> 
 
-	M.
+Okay will use correct values.
 
-[1] https://developer.arm.com/documentation/ddi0601/2024-03/AArch64-Registers/ID-AA64PFR1-EL1--AArch64-Processor-Feature-Register-1?lang=en
+> 
+>>>> +        */
+>>>> +       bit_rate_khz = mode->clock *
+>>>> +                      mipi_dsi_pixel_format_to_bpp(pdata->dsi->format);
+>>>> +
+>>>> +       /*
+>>>> +        * For each increment in val, frequency increases by 5MHz
+>>>> +        * and the factor of 1000 comes from kHz to MHz conversion
+>>>> +        */
+>>>> +       val = (bit_rate_khz / (pdata->dsi->lanes * 2 * 1000 * 5)) & 0xFF;
+>>>> +
+>>>> +       if (val >= MAX_DSI_CLK_RANGE || val < MIN_DSI_CLK_RANGE) {
+>>>> +               drm_err(pdata->bridge.dev,
+>>>> +                       "DSI clock frequency not in the supported range\n");
+>>>> +               return -EINVAL;
+>>>> +       }
+>>>
+>>> Shouldn't the above be in atomic_check()? There's a reason why
+>>> atomic_enable() can't return error codes.
+>>
+>> Oops.
+>> I will handle it how we are handling errors in case of link_training:
+>> https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/bridge/ti-sn65dsi86.c#L1152
+>>
+>> That should be okay I guess?
+> 
+> I'm pretty sure it should be in atomic_check(). The atomic_check() is
+> supposed to confirm that all parameters are within valid ranges and
+> the enable function shouldn't fail because the caller passed bad
+> parameters. Specifically this could allow the caller to try different
+> parameters and see if those would work instead.
+> 
+> In the case of the link training failure it's not something we could
+> have detected until we actually tried to enable, so there's no choice.
+> 
+> -Doug
 
--- 
-Without deviation from the norm, progress is not possible.
+
+I will have to move the whole calculation to atomic check since
+atomic check will be called first and then in bridge_enable I will
+write to the register.
+
+Thanks
+-Jayesh
 
