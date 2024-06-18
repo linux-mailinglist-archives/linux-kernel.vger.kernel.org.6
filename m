@@ -1,202 +1,114 @@
-Return-Path: <linux-kernel+bounces-219625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6C690D6E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:16:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3DF790D5BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E610FB28699
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B3192854B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B521741CC;
-	Tue, 18 Jun 2024 14:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7590B19047A;
+	Tue, 18 Jun 2024 14:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uuj9PezC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtcHG/1U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F14016ABC6;
-	Tue, 18 Jun 2024 14:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF3E143722;
+	Tue, 18 Jun 2024 14:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718721001; cv=none; b=eTCvG+SsII/T5pdzStoDMjDrnnXmUb1eynswHigWxkol8tm61Tg20xURqEQ17J+WCi/yquHQjeHJJOZ9E/T9NaBZepaAvOsZgm5wCMN6JOgYBq0x2tcwMlE737smL9KGwUOZ8YyFlqCtZbH/Pbz+Ze9COEG3S9Kb/+w4sxf0uTM=
+	t=1718721011; cv=none; b=cQmlTUYCTXJo7U/673hVBLBvJIK1X02+QzOazjSXzEjk9QLf9P9eW/92groFWKt4Sjqib8SuciEv0LEAOKFeVCKoEWPuJiY+oYTwaE7lHfkTDa+UKTFFzyzbHxrWbqfs4IpW062y75hz6YPKe5brW8sfsMgdazILz2a8I2ZX8vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718721001; c=relaxed/simple;
-	bh=aAUJ4RS80Dus1HHmyBu5Y79cj3kmhTtE0lhAPkwjXdw=;
+	s=arc-20240116; t=1718721011; c=relaxed/simple;
+	bh=TM69GXsRpsgu4g/uBzlfWRyyvsHdvl4/BPKSHavtFl8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gvCKJYOQsA6sBiWQ20MZfDZOIBQEq7hmCj4PllV1TV7SiOHNKE5f8tm6yNSrAMfAPRlHyGXt9KZ4GLie04Ymk8EX8hIn1SHkOJndORk9vBEMRRE8KnyLJpZESujAvh8SBwhOSyeVz289gygGzyy9UO1tfXkOapTMmZP0D//LfRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uuj9PezC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED115C3277B;
-	Tue, 18 Jun 2024 14:30:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OImGMp6GWmOMjzeM7fV/UzSz5pNkqD9EOuW/hHMGcRpYyQ84BPeuC1Ilw3UoImIBf6AcHyjop0k4Al14cmJQpAZQJdmtxb+ZnrZtC3zk1U3v14bgDHskV3hBsIdFT45j9QpEG1siWJ9xYlGtShX1YtG8sY+YO7szFLMj1MpsxlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtcHG/1U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98B0DC4AF1C;
+	Tue, 18 Jun 2024 14:30:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718721001;
-	bh=aAUJ4RS80Dus1HHmyBu5Y79cj3kmhTtE0lhAPkwjXdw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Uuj9PezC/ZxGAMrDosUCIHXsmiBrPiQAVgFQ+UzY+2DiHMzAjbUQdBjeCCw+YZVO6
-	 ThiOA1ny8FYt3bNQ2SEnrqLxfsYDldgJI72jd7/PGwkrYRB7r7YxZv+JK7d8Mm32aq
-	 CoYpUOCOTxo9rPY04Xe11IKaRp7dWf6I1Xy7BtFKIILI80CGftyVoAmE+uoxKF9wlc
-	 j9DdMjxZYLZthtHNeHr2fyLC4jYz04CNZ24Gc5sYHSjF42+SVHydc2XAYc4tqbj9PN
-	 vXfTKNGW0mLROQnyYyABI7H/sMd+W2Aak8LQ+eY7nnpwkZOH6uXTRURQDDkJ5KESUV
-	 h/8QdvYtHVnow==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 92409CE04AF; Tue, 18 Jun 2024 07:30:00 -0700 (PDT)
-Date: Tue, 18 Jun 2024 07:30:00 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	lance@osuosl.org
-Subject: Re: [PATCH V3] rcutorture: Add CFcommon.arch for the various arch's
- need
-Message-ID: <7150e2fa-c627-435c-97d2-80065d1f1920@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240612013527.1325751-1-zhouzhouyi@gmail.com>
- <def32dd4-b205-45b8-a5ed-e6e28a0ac4f4@paulmck-laptop>
- <ZnBkHosMDhsh4H8g@J2N7QTR9R3>
- <76deed7a-9852-4d21-bbcc-8b14e267fe89@paulmck-laptop>
- <CAABZP2z0-zHTADL5REThay5CYcfSBaHA4mUXO6NYu-JJA7=Xvg@mail.gmail.com>
+	s=k20201202; t=1718721011;
+	bh=TM69GXsRpsgu4g/uBzlfWRyyvsHdvl4/BPKSHavtFl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YtcHG/1US+LXxj3l6SMLVJDzIvDPYcd5xzwXFJl62sApms7zHFBElbICEOXMEuaef
+	 uFv/gOnzwgjrKSlDEp1SPjTynSXii5lZ8dpZ5d1ld/14Ty4V9nSY/lSGxyixS1Q6XE
+	 k2m59fxmhUMS3x5SOvdWzHJwhXm5tP3X+/0TX/ytr8K1KizQtEo5hQL6oTDR/YiJ/O
+	 vjVJjBDmr4Txh3qlM3C2mc1jmAlSOb9jcmmEQlAoX92iE1rFl4UzVKTORTYjpjeZCR
+	 hJV9+aU+KHJF00By89j2iBlXJDfaUipJM/k2q1VdDiPXpB9TR13jLZdguF0Dd+TIar
+	 A9CQawUYpRDMQ==
+Date: Tue, 18 Jun 2024 11:30:07 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: dwarves@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>,
+	Jiri Olsa <jolsa@kernel.org>, Jan Engelhardt <jengelh@inai.de>,
+	Matthias Schwarzott <zzam@gentoo.org>,
+	Viktor Malik <vmalik@redhat.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Jan Alexander Steffens <heftig@archlinux.org>,
+	Domenico Andreoli <cavok@debian.org>,
+	Dominique Leuenberger <dimstar@opensuse.org>,
+	Daniel Xu <dxu@dxuuu.xyz>, Yonghong Song <yonghong.song@linux.dev>,
+	llvm@lists.linux.dev
+Subject: [PATCH fyi 1/1] dwarf_loader: Add missing cus__add(cus, cu) to
+ cus__merge_and_process_cu()
+Message-ID: <ZnGZ71a4E29kPrvS@x1>
+References: <ZmjBHWw-Q5hKBiwA@x1>
+ <20240613214019.GA1423015@thelio-3990X>
+ <ZnCQ-Psf_WswMk1W@x1>
+ <ZnCWRMfRDMHqSxBb@x1>
+ <20240617210810.GA1877676@thelio-3990X>
+ <ZnGQ8CDRaMBIj5R5@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAABZP2z0-zHTADL5REThay5CYcfSBaHA4mUXO6NYu-JJA7=Xvg@mail.gmail.com>
+In-Reply-To: <ZnGQ8CDRaMBIj5R5@x1>
 
-On Tue, Jun 18, 2024 at 06:41:22AM +0800, Zhouyi Zhou wrote:
-> On Tue, Jun 18, 2024 at 12:47 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > On Mon, Jun 17, 2024 at 05:28:14PM +0100, Mark Rutland wrote:
-> > > On Tue, Jun 11, 2024 at 07:57:29PM -0700, Paul E. McKenney wrote:
-> > > > On Wed, Jun 12, 2024 at 01:35:27AM +0000, Zhouyi Zhou wrote:
-> > > > > Add CFcommon.arch for the various arch's need for rcutorture.
-> > > > >
-> > > > > According to [1] and [2], this patch
-> > > > > Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options") by moving
-> > > > > x86 specific kernel option CONFIG_HYPERVISOR_GUEST to CFcommon.arch
-> > > > >
-> > > > > The patch has been revised and improved under
-> > > > > Paul E. McKenney's guidance [3].
-> > > > >
-> > > > > [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
-> > > > > [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
-> > > > > [3] https://lore.kernel.org/lkml/cd3709dc-2c08-4ac2-a19b-d8edb66195e3@paulmck-laptop/T/
-> > > > >
-> > > > > Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
-> > > > >
-> > > > > Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-> > > >
-> > > > Much better, thank you!
-> > > >
-> > > > I queued and pushed for review and testing with the usual editing,
-> > > > so please let me know if I messed anything up.
-> > > >
-> > > > I added Mark on CC in case he has thoughts from an ARM perspective.
-> > >
-> > > Ah, thanks!
-> > >
-> > > >From a quick scan, the only thing I spot is that CONFIG_KVM_GUEST is
-> > > also not an arm64 thing, and only exists on x86 & powerpc, so pulling
-> > > that out too would be nice.
-> yes, CONFIG_KVM_GUEST exists in powerpc & x86, which makes me think it
-> is global.
-> >
-> > Thank you for looking this over!
-> >
-> > Zhouyi, would you be willing to add this change, either as a new version
-> > of this patch or as a new patch on top of it?  (Your choice.)
-> Thanks to Paul and Mark's guidance, I achieved a lot during this process ;-)
-> 
-> I am going to create a new version of the patch, and test is both on
-> X86 and PowerPC
+Just FYI, I added this on top of the previous one initializing cu->node.
 
-Very good, looking forward to it!
+Tested with that cast_common.ko and the vmlinux you made available.
 
-							Thanx, Paul
+- Arnaldo
 
-> Cheers
-> Zhouyi
-> >
-> > > That aside, this looks good to me; having the infrastructure to do this
-> > > per-arch is nice!
-> >
-> > Glad you like it!  May we have your ack?
-> Very happy that Mark likes it ;-)
-> >
-> >                                                         Thanx, Paul
-> >
-> > > Mark.
-> > >
-> > > >
-> > > >                                                     Thanx, Paul
-> > > >
-> > > > ------------------------------------------------------------------------
-> > > >
-> > > > commit 29cf4c63d04b9752a32e33d46a57717121353ef7
-> > > > Author: Zhouyi Zhou <zhouzhouyi@gmail.com>
-> > > > Date:   Wed Jun 12 01:35:27 2024 +0000
-> > > >
-> > > >     rcutorture: Add CFcommon.arch for the various arch's need
-> > > >
-> > > >     Add CFcommon.arch for the various arch's need for rcutorture.
-> > > >
-> > > >     In accordance with [1] and [2], this patch moves x86 specific kernel
-> > > >     option CONFIG_HYPERVISOR_GUEST to CFcommon.arch
-> > > >
-> > > >     [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
-> > > >     [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
-> > > >
-> > > >     Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
-> > > >
-> > > >     Link: https://lore.kernel.org/lkml/cd3709dc-2c08-4ac2-a19b-d8edb66195e3@paulmck-laptop/T/
-> > > >
-> > > >     Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
-> > > >     Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> > > >     Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-> > > >     Cc: Mark Rutland <mark.rutland@arm.com>
-> > > >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > >
-> > > > diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> > > > index b33cd87536899..ad79784e552d2 100755
-> > > > --- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> > > > +++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> > > > @@ -68,6 +68,8 @@ config_override_param "--gdb options" KcList "$TORTURE_KCONFIG_GDB_ARG"
-> > > >  config_override_param "--kasan options" KcList "$TORTURE_KCONFIG_KASAN_ARG"
-> > > >  config_override_param "--kcsan options" KcList "$TORTURE_KCONFIG_KCSAN_ARG"
-> > > >  config_override_param "--kconfig argument" KcList "$TORTURE_KCONFIG_ARG"
-> > > > +config_override_param "$config_dir/CFcommon.$(uname -m)" KcList \
-> > > > +                 "`cat $config_dir/CFcommon.$(uname -m) 2> /dev/null`"
-> > > >  cp $T/KcList $resdir/ConfigFragment
-> > > >
-> > > >  base_resdir=`echo $resdir | sed -e 's/\.[0-9]\+$//'`
-> > > > diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> > > > index 0e92d85313aa7..cf0387ae53584 100644
-> > > > --- a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> > > > +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> > > > @@ -1,6 +1,5 @@
-> > > >  CONFIG_RCU_TORTURE_TEST=y
-> > > >  CONFIG_PRINTK_TIME=y
-> > > > -CONFIG_HYPERVISOR_GUEST=y
-> > > >  CONFIG_PARAVIRT=y
-> > > >  CONFIG_KVM_GUEST=y
-> > > >  CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC=n
-> > > > diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-> > > > new file mode 100644
-> > > > index 0000000000000..2770560d56a0c
-> > > > --- /dev/null
-> > > > +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-> > > > @@ -0,0 +1 @@
-> > > > +CONFIG_HYPERVISOR_GUEST=y
-> > > > diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-> > > > new file mode 100644
-> > > > index 0000000000000..2770560d56a0c
-> > > > --- /dev/null
-> > > > +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-> > > > @@ -0,0 +1 @@
-> > > > +CONFIG_HYPERVISOR_GUEST=y
+---
+
+In cus__finalize() if cu__finalize() returns LSK__DELETE, i.e. if the
+tool processing the cu is done with it, we will assume that it is in the
+cus list of cu instances, remove it and then delete it.
+
+This was not being done by cus__merge_and_process_cu(), used when
+merging all DWARF CUs into a single 'struct cu', such as when processing
+binaries generated by clang using LTO. Add the missing cus__add() to
+keep cus->nr_entries consistent.
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ dwarf_loader.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/dwarf_loader.c b/dwarf_loader.c
+index b832c93cc2194eaf..3caf32457f42ec2e 100644
+--- a/dwarf_loader.c
++++ b/dwarf_loader.c
+@@ -3452,6 +3452,7 @@ static int cus__merge_and_process_cu(struct cus *cus, struct conf_load *conf,
+ 			cu->priv = dcu;
+ 			cu->dfops = &dwarf__ops;
+ 			cu->language = attr_numeric(cu_die, DW_AT_language);
++			cus__add(cus, cu);
+ 		}
+ 
+ 		Dwarf_Die child;
+-- 
+2.45.0
+
 
