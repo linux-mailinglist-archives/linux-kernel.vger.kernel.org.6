@@ -1,191 +1,175 @@
-Return-Path: <linux-kernel+bounces-218656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61F390C355
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:11:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D50590C35A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5160C2847A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:11:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74F691C22A63
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB03249EB;
-	Tue, 18 Jun 2024 06:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AAF1E53A;
+	Tue, 18 Jun 2024 06:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="WngEI+ij"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="OLIdqPLF";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="aay66l+r"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116EA81E;
-	Tue, 18 Jun 2024 06:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9349E1D9535;
+	Tue, 18 Jun 2024 06:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718691100; cv=none; b=fCytyWHluHdUYyzcjvjNdTO1AkyYYkh4eyF8yzkWypVJ3q48c24iblvFbzN5wv2aSMdl5Dzx+1CJbUfFVxtqfuJWQbVmMpfFlPZGyD2zPbsCID+9JUM6qImE4l8v5f0fqakTbxIuIXG6IfB/kGmfPlYU1vlj/UenKUsSsAa4M3k=
+	t=1718691351; cv=none; b=BURXV24yCpT4n6uNp136yheHgo2uz4/zM1sAvY0lxvUXIAjMl6QJGTZkNebIacK8YuY4bNqYjz5HSEJyG6SUwQDDOSTVssO6AhGsqcM12fgeOorVVIUdEN57AUcjw8WSCFu3qGdG8wquYhyXE0G+T8s9FPARLu/+knORjFpZloU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718691100; c=relaxed/simple;
-	bh=kME9BdtvzC+4KF2BU+0JcBQkX5uvuN2MNShMq84mZBI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BobZxPtrsbuHefQdbuP+5NpgVxb0Pm9pTphsG70pE88/Ci/COK4hW0QnGzgJ27asmRTVMuUxR4CfNo9bHagNxgS1iQdPyak7iDI1KKxMO2HD7TxQaoDk+7HCl5eLa5fvj6TFS6LzD8/f/qyIZUEoTkmIFoSXlm9q6Eo9oMVRZ4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=WngEI+ij; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HIkL2a017645;
-	Mon, 17 Jun 2024 23:11:31 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	pfpt0220; bh=CO/bmxZ8gDB4g2Hg2KtGgps+FXjnTZ/iMxrbvKGZ0xM=; b=Wng
-	EI+ijvWm08/NwejTHwzNJimcUUzn3/F73SL4Ms2HjKnZDldS5kY2n+5sBJgIE1DQ
-	0zm2O8f9jEpvijGBV8mPOBXqTnUU4cUoWloUFHe+/8868byoXwR6SvKrAu1izA+9
-	BjcflWmiJqdK73yXsZ+EkXnQFdogJ6ZGSWT1pjKLK9jvHRqtWw4pK5H8zCiQ1t9b
-	kP4mBMzcJhKuhLSxZ6FrLeNXWb+6qYamymkVOohM4rb+9ahWwk5sceIhbhndd/7A
-	4k02ZA1l1ZYAMUXy/xgkaPRWBTVp1Fr4Z6v/rEnPizxcvKm88zl9hHuhyCxjCZz8
-	NQFfeaW84ulS+evijJA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ysafh8drv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 23:11:30 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 17 Jun 2024 23:11:30 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 17 Jun 2024 23:11:30 -0700
-Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
-	by maili.marvell.com (Postfix) with ESMTP id 7A96A3F706D;
-	Mon, 17 Jun 2024 23:11:25 -0700 (PDT)
-From: Geetha sowjanya <gakula@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
-        <edumazet@google.com>, <sgoutham@marvell.com>, <gakula@marvell.com>,
-        <sbhatta@marvell.com>, <hkelam@marvell.com>
-Subject: [net PATCH] octeontx2-pf: Fix linking objects into multiple modules
-Date: Tue, 18 Jun 2024 11:41:22 +0530
-Message-ID: <20240618061122.6628-1-gakula@marvell.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1718691351; c=relaxed/simple;
+	bh=NYu7HmNaUXvKxLQBShfSo7YY2rt3DR0kHagqqDYAtfU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fyoRZgHQh7BBtjSTZEwIhYv17lADhQKrxuqAUg1pDZtUonBXNS2nzPquX/6KfOXB71vOWhQ04V8D5sowvO7esOZpaPrqYwbsCj9UxEgxfJrZblbqD4TAfYdOlbcuEHspTXV0C1jYa917AISEuntXOb5zsEBjOachtjv4RbS1+d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=OLIdqPLF; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=aay66l+r reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1718691348; x=1750227348;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=j0CT5+u8v+Tt5ly5F8d6KLAmQFfq4ACni1Ma8+3IMes=;
+  b=OLIdqPLFRueluqZ5KhR3+ILqcQpfjTHUsxaEs38xb/IxhSquT43+cY8i
+   nyovEDkGpd/IaEsFQvT0SXFJAIrDkT/N9yFBqg7B4h+hMbARakr/tqNPe
+   7qEnAMfVlRb/p7kkVHWRq6EEd8VqzpOuk63NCCqqALb8UkeozOC0EgUI7
+   lcvJgATPB2YawH3EXsvCdDASYlKGQlkUY92BkemH6z3kfUEJ3MF3N3dbM
+   a6tPaE73Yy7sMyG/UfiF5uMVyelEzA2Sdh8xKmqsnYi7/D/2VamxbWfI5
+   MC04RT75uo7vE0P8cdTNHscZIRhOlr5K02p5cTD+wguM7TSod2idnY2Xt
+   Q==;
+X-CSE-ConnectionGUID: uSJ4tK8CTSuWQAuRdEbI8A==
+X-CSE-MsgGUID: h3c3S3bTTlqWutSMcG/7qw==
+X-IronPort-AV: E=Sophos;i="6.08,246,1712613600"; 
+   d="scan'208";a="37439566"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 18 Jun 2024 08:15:45 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 70990165E7E;
+	Tue, 18 Jun 2024 08:15:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1718691340;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=j0CT5+u8v+Tt5ly5F8d6KLAmQFfq4ACni1Ma8+3IMes=;
+	b=aay66l+rtmKWsmSR8PlojeyltfrnzJEs4Ojsh0PwJU1Qw0Hd5biwloAj5kYTFP2wfInCif
+	BSBRBzYq3NOP+iO3toNNNhJYaV3VHGieJsAvCWePli5t/fhKDFz3A5oj3sZRgVIreHYBxT
+	E6esHFpiFfZyenRu+WLY5jjs/ksYP5Cqng1DVM8nbpIn+asucWmCziml3AG762nLFoaMqf
+	CpXiTMOZ7D/pYCG7+UhbxxcIk0/HU+X/Y5lJ0HEGhX5N4Ys6Vm7jScokiYloabfnjoD96h
+	WKpPjzf/f/cKL7XSca6KYLQZ2e9Wfp9Zfwiom7UOneetaC6M6rR2zjn8LyNrBA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: linux-arm-kernel@lists.infradead.org, Adam Ford <aford173@gmail.com>
+Cc: aford@beaconembedded.com, marex@denx.de, Adam Ford <aford173@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, Marco Felsch <m.felsch@pengutronix.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: imx8mp: Fix pgc_mlmix location
+Date: Tue, 18 Jun 2024 08:15:41 +0200
+Message-ID: <5814494.DvuYhMxLoT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240617223952.1899201-1-aford173@gmail.com>
+References: <20240617223952.1899201-1-aford173@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: lm4U5CH5WfhHlLydH643g_56zZn9gQxe
-X-Proofpoint-GUID: lm4U5CH5WfhHlLydH643g_56zZn9gQxe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-This patch fixes the below build warning messages that are
-caused due to linking same files to multiple modules by
-exporting the required symbols.
+Hi Adam,
 
-"scripts/Makefile.build:244: drivers/net/ethernet/marvell/octeontx2/nic/Makefile:
-otx2_devlink.o is added to multiple modules: rvu_nicpf rvu_nicvf
+Am Dienstag, 18. Juni 2024, 00:39:51 CEST schrieb Adam Ford:
+> The pgc_mlmix shows a power-domain@24, but the reg value is
+> IMX8MP_POWER_DOMAIN_MLMIX which is set to 4.
+>=20
+> The stuff after the @ symbol should match the stuff referenced
+> by 'reg' so reorder the pgc_mlmix so it to appear as power-domain@4.
 
-scripts/Makefile.build:244: drivers/net/ethernet/marvell/octeontx2/nic/Makefile:
-otx2_dcbnl.o is added to multiple modules: rvu_nicpf rvu_nicvf"
+Taking a look this mismatch seems to be also true for:
+* IMX8MP_POWER_DOMAIN_VPUMIX
+* IMX8MP_POWER_DOMAIN_VPU_G1
+* IMX8MP_POWER_DOMAIN_VPU_G2
+* IMX8MP_POWER_DOMAIN_VPU_VC8000E
 
-Fixes: 8e67558177f8 ("octeontx2-pf: PFC config support with DCBx").
-Signed-off-by: Geetha sowjanya <gakula@marvell.com>
----
- drivers/net/ethernet/marvell/octeontx2/nic/Makefile       | 3 +--
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c   | 7 +++++++
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c | 2 ++
- 3 files changed, 10 insertions(+), 2 deletions(-)
+Would you mind fixing them as well?
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/Makefile b/drivers/net/ethernet/marvell/octeontx2/nic/Makefile
-index 5664f768cb0c..64a97a0a10ed 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/Makefile
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/Makefile
-@@ -9,10 +9,9 @@ obj-$(CONFIG_OCTEONTX2_VF) += rvu_nicvf.o otx2_ptp.o
- rvu_nicpf-y := otx2_pf.o otx2_common.o otx2_txrx.o otx2_ethtool.o \
-                otx2_flows.o otx2_tc.o cn10k.o otx2_dmac_flt.o \
-                otx2_devlink.o qos_sq.o qos.o
--rvu_nicvf-y := otx2_vf.o otx2_devlink.o
-+rvu_nicvf-y := otx2_vf.o
- 
- rvu_nicpf-$(CONFIG_DCB) += otx2_dcbnl.o
--rvu_nicvf-$(CONFIG_DCB) += otx2_dcbnl.o
- rvu_nicpf-$(CONFIG_MACSEC) += cn10k_macsec.o
- 
- ccflags-y += -I$(srctree)/drivers/net/ethernet/marvell/octeontx2/af
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c
-index 28fb643d2917..aa01110f04a3 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dcbnl.c
-@@ -54,6 +54,7 @@ int otx2_pfc_txschq_config(struct otx2_nic *pfvf)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(otx2_pfc_txschq_config);
- 
- static int otx2_pfc_txschq_alloc_one(struct otx2_nic *pfvf, u8 prio)
- {
-@@ -122,6 +123,7 @@ int otx2_pfc_txschq_alloc(struct otx2_nic *pfvf)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(otx2_pfc_txschq_alloc);
- 
- static int otx2_pfc_txschq_stop_one(struct otx2_nic *pfvf, u8 prio)
- {
-@@ -260,6 +262,7 @@ int otx2_pfc_txschq_update(struct otx2_nic *pfvf)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(otx2_pfc_txschq_update);
- 
- int otx2_pfc_txschq_stop(struct otx2_nic *pfvf)
- {
-@@ -282,6 +285,7 @@ int otx2_pfc_txschq_stop(struct otx2_nic *pfvf)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(otx2_pfc_txschq_stop);
- 
- int otx2_config_priority_flow_ctrl(struct otx2_nic *pfvf)
- {
-@@ -321,6 +325,7 @@ int otx2_config_priority_flow_ctrl(struct otx2_nic *pfvf)
- 	mutex_unlock(&pfvf->mbox.lock);
- 	return err;
- }
-+EXPORT_SYMBOL(otx2_config_priority_flow_ctrl);
- 
- void otx2_update_bpid_in_rqctx(struct otx2_nic *pfvf, int vlan_prio, int qidx,
- 			       bool pfc_enable)
-@@ -385,6 +390,7 @@ void otx2_update_bpid_in_rqctx(struct otx2_nic *pfvf, int vlan_prio, int qidx,
- 			 "Updating BPIDs in CQ and Aura contexts of RQ%d failed with err %d\n",
- 			 qidx, err);
- }
-+EXPORT_SYMBOL(otx2_update_bpid_in_rqctx);
- 
- static int otx2_dcbnl_ieee_getpfc(struct net_device *dev, struct ieee_pfc *pfc)
- {
-@@ -472,3 +478,4 @@ int otx2_dcbnl_set_ops(struct net_device *dev)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(otx2_dcbnl_set_ops);
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
-index 99ddf31269d9..458d34a62e18 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
-@@ -113,6 +113,7 @@ int otx2_register_dl(struct otx2_nic *pfvf)
- 	devlink_free(dl);
- 	return err;
- }
-+EXPORT_SYMBOL(otx2_register_dl);
- 
- void otx2_unregister_dl(struct otx2_nic *pfvf)
- {
-@@ -124,3 +125,4 @@ void otx2_unregister_dl(struct otx2_nic *pfvf)
- 				  ARRAY_SIZE(otx2_dl_params));
- 	devlink_free(dl);
- }
-+EXPORT_SYMBOL(otx2_unregister_dl);
--- 
-2.25.1
+Despite that, for this patch:
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+
+Thanks and best regards,
+Alexander
+
+> Fixes: 834464c8504c ("arm64: dts: imx8mp: add mlmix power domain")
+> Fixes: 4bedc468b725 ("arm64: dts: imx8mp: Add NPU Node")
+>=20
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mp.dtsi
+> index b92abb5a5c53..3576d2b89b43 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -789,6 +789,23 @@ pgc_usb2_phy: power-domain@3 {
+>  						reg =3D <IMX8MP_POWER_DOMAIN_USB2_PHY>;
+>  					};
+> =20
+> +					pgc_mlmix: power-domain@4 {
+> +						#power-domain-cells =3D <0>;
+> +						reg =3D <IMX8MP_POWER_DOMAIN_MLMIX>;
+> +						clocks =3D <&clk IMX8MP_CLK_ML_AXI>,
+> +							 <&clk IMX8MP_CLK_ML_AHB>,
+> +							 <&clk IMX8MP_CLK_NPU_ROOT>;
+> +						assigned-clocks =3D <&clk IMX8MP_CLK_ML_CORE>,
+> +								  <&clk IMX8MP_CLK_ML_AXI>,
+> +								  <&clk IMX8MP_CLK_ML_AHB>;
+> +						assigned-clock-parents =3D <&clk IMX8MP_SYS_PLL1_800M>,
+> +									 <&clk IMX8MP_SYS_PLL1_800M>,
+> +									 <&clk IMX8MP_SYS_PLL1_800M>;
+> +						assigned-clock-rates =3D <800000000>,
+> +								       <800000000>,
+> +								       <300000000>;
+> +					};
+> +
+>  					pgc_audio: power-domain@5 {
+>  						#power-domain-cells =3D <0>;
+>  						reg =3D <IMX8MP_POWER_DOMAIN_AUDIOMIX>;
+> @@ -900,23 +917,6 @@ pgc_vpu_vc8000e: power-domain@22 {
+>  						reg =3D <IMX8MP_POWER_DOMAIN_VPU_VC8000E>;
+>  						clocks =3D <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>;
+>  					};
+> -
+> -					pgc_mlmix: power-domain@24 {
+> -						#power-domain-cells =3D <0>;
+> -						reg =3D <IMX8MP_POWER_DOMAIN_MLMIX>;
+> -						clocks =3D <&clk IMX8MP_CLK_ML_AXI>,
+> -							 <&clk IMX8MP_CLK_ML_AHB>,
+> -							 <&clk IMX8MP_CLK_NPU_ROOT>;
+> -						assigned-clocks =3D <&clk IMX8MP_CLK_ML_CORE>,
+> -								  <&clk IMX8MP_CLK_ML_AXI>,
+> -								  <&clk IMX8MP_CLK_ML_AHB>;
+> -						assigned-clock-parents =3D <&clk IMX8MP_SYS_PLL1_800M>,
+> -									 <&clk IMX8MP_SYS_PLL1_800M>,
+> -									 <&clk IMX8MP_SYS_PLL1_800M>;
+> -						assigned-clock-rates =3D <800000000>,
+> -								       <800000000>,
+> -								       <300000000>;
+> -					};
+>  				};
+>  			};
+>  		};
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
