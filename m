@@ -1,81 +1,77 @@
-Return-Path: <linux-kernel+bounces-219549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362C290D619
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE04B90D5E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6B18B2B60C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:22:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A92DFB2DB37
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014FC16B39B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BECD16B3B1;
 	Tue, 18 Jun 2024 14:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fAi+QEcR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bCxfG6W1"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mFc3iOYi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WL2UuDs3"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA0416A94C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF8816A953;
 	Tue, 18 Jun 2024 14:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718719309; cv=none; b=IVcga+RyPepckDjUfsz2HWUpoZKBqPvVbOdFZdkf0QenjNt0wkxwQWUR5ulbwWyhRGyCrZpUg4ev3ZC6HotEwB87DrfaICSVfSUHYCVXecrR7TFqn0uT1f00xvsKpBzIbt34EgLl4s+AY22B29ekWsjZxUNAgOCUwKNoSy/5l+0=
+	t=1718719309; cv=none; b=bDbSQFyLfN/PDd9n7eXeWUMZ9ZCPpJC49PzOmUi0/RCZoajuZFN2I77GSauwG1Hcrg8MmNNWY4wkuQVBwatv6ulHwlRo7BUBQ1UATczgb9tdCR58tRsBc/BqtfTzrbEtL0ZUGp/vefT+pDtzMPEsMYMYaYh2OS7SAFubyfwGqoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718719309; c=relaxed/simple;
-	bh=8de1Nd38MM5wN7T6XMaiBtWMZBF1JbpceyfCt2HJdRE=;
+	bh=n3RH3MQHU7G0vP7NA9NG2KXIVrEweb8f0LbcattsHcs=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ux8mi3i1+xdKrsHZPc9BvdhxA3VenPeSRU/E6HmN+S6s72SbtHBzb7usUf4q/iBPFp7XwDiHFIMivq3WRIDa/HOzIuJe8KeGFMNiePNw/MGz4Ih4vCXzqdkEdqj1yIwZRuYkzo05Sm7qlC/uWU/DEG3pxMWyCeDMLeCbI8TAT2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fAi+QEcR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bCxfG6W1; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=OyUn1fMZmkuapgVX+g8fEV9lkZuWhBpRARcmygAQSMMmSLsQeM63Gg1akrLhy7Je69l0AsY5+WAf4cVKnfaYkvI1wZeuxH8qg2DW9XSmAn/v+7xm2ZZl5xZe83Pq3ia46bR6FigIuzD6L/AcKIcneY2ODarzULAZtThu0oBZTxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mFc3iOYi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WL2UuDs3; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 18 Jun 2024 14:01:37 -0000
+Date: Tue, 18 Jun 2024 14:01:38 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718719298;
+	s=2020; t=1718719299;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SK7h0C0KVTLZxO68wwzEK/AcQDwtH6VNHjwCjSnaAu0=;
-	b=fAi+QEcR6U6OQzKGvgxVIM9K8rP0uf+7D6n46x/gVOydcZPVVmbGtFu+lnzWzIShaX+W2d
-	aEfeoI2eOpeAmgaEKc9pXybQ0uHU8LjuQ+KW2vAOHzMOeFHsl3Ucs+JKDVTgUWZnGsWrXl
-	zXTHV/qVK/54w3glHPoRLRXlxqwCNhsNFNEHFXKqI9DAoWCOvdWX8dZh4rLoJBg3Qjfuqz
-	lD1rRCBQ5R+A6rux6jlEaGANa4BwFKg+Phx+r08ZbBv98ZO6/7XCicvnDWPTdIHjeeRaJ5
-	kBgZc5D17yOaCFgDQs7srx7Xk48fJDRdsGN+Pbbk6b5QJs0y55V86FcY5FhZzg==
+	bh=iIJJnWb/VtD0XI7h2vuxtI2j2mK9glkVqOu+go+pKDs=;
+	b=mFc3iOYi1UkptY5lSzBjZcPSmus2FkrbfOwwXJR/ldY6tHiJtnysS01x4kBLHT7KLoOGsN
+	+t91Sfx0I+OHbk6oSi5S+r4G10ufIVy4TPTbkuzp/4jqscp6ZI3Yk8SmvuhIIOfnZAAhoB
+	GbymaIMjxcuN/xsnT0y/ClmXBh3pxoKtch0XicnfYL7++38fOM+IViOblmZ0noeQ1RrqxR
+	i0Cprg1/opLi1GMY8lzJNiUM1t7ENEa4/6iOp0oo3hKV4OmFGozSpDUhV7fAfpKbWLcX4Z
+	cBpQoQzmNOeG7HZCFBDviqhEeWsU1H7dCITHMs9sfMIZ+tG2GympEnCoxfKizw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718719298;
+	s=2020e; t=1718719299;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SK7h0C0KVTLZxO68wwzEK/AcQDwtH6VNHjwCjSnaAu0=;
-	b=bCxfG6W1hSadlRqwM5cXGsc6GoElbm3jWyxMcvd9wQ0UO4tt/GWZ9zUngBSriDopPT+DuB
-	DDcPZHuVdWqZxFCg==
+	bh=iIJJnWb/VtD0XI7h2vuxtI2j2mK9glkVqOu+go+pKDs=;
+	b=WL2UuDs3SjunaCHHyjso8exoC6HmQjEtQFwObS/xeDzbWgX3+N93DQJBEY+YdV5TgTLH3s
+	3s+3Yd1TVkx1uBBQ==
 From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cc] ACPI: tables: Print MULTIPROC_WAKEUP when MADT is parsed
+Subject: [tip: x86/cc] x86/mm: Introduce kernel_ident_mapping_free()
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Baoquan He <bhe@redhat.com>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Tao Liu <ltao@redhat.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240614095904.1345461-20-kirill.shutemov@linux.intel.com>
-References: <20240614095904.1345461-20-kirill.shutemov@linux.intel.com>
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Kai Huang <kai.huang@intel.com>,
+ Tao Liu <ltao@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240614095904.1345461-18-kirill.shutemov@linux.intel.com>
+References: <20240614095904.1345461-18-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171871929790.10875.2508282628662679382.tip-bot2@tip-bot2>
+Message-ID: <171871929865.10875.2820034553680551750.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -85,56 +81,133 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/cc branch of tip:
 
-Commit-ID:     16df35946120fca2346c415fae429c821391eef8
-Gitweb:        https://git.kernel.org/tip/16df35946120fca2346c415fae429c821391eef8
+Commit-ID:     d88e7b3e35cff2c318042990d70828f64c3ae296
+Gitweb:        https://git.kernel.org/tip/d88e7b3e35cff2c318042990d70828f64c3ae296
 Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate:    Fri, 14 Jun 2024 12:59:04 +03:00
+AuthorDate:    Fri, 14 Jun 2024 12:59:02 +03:00
 Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 17 Jun 2024 17:46:28 +02:00
+CommitterDate: Mon, 17 Jun 2024 17:46:22 +02:00
 
-ACPI: tables: Print MULTIPROC_WAKEUP when MADT is parsed
+x86/mm: Introduce kernel_ident_mapping_free()
 
-When MADT is parsed, print MULTIPROC_WAKEUP information:
+The helper complements kernel_ident_mapping_init(): it frees the identity
+mapping that was previously allocated. It will be used in the error path to free
+a partially allocated mapping or if the mapping is no longer needed.
 
-  ACPI: MP Wakeup (version[1], mailbox[0x7fffd000], reset[0x7fffe068])
-
-This debug information will be very helpful during bringup.
+The caller provides a struct x86_mapping_info with the free_pgd_page() callback
+hooked up and the pgd_t to free.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Baoquan He <bhe@redhat.com>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 Acked-by: Kai Huang <kai.huang@intel.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Tested-by: Tao Liu <ltao@redhat.com>
-Link: https://lore.kernel.org/r/20240614095904.1345461-20-kirill.shutemov@linux.intel.com
+Link: https://lore.kernel.org/r/20240614095904.1345461-18-kirill.shutemov@linux.intel.com
 ---
- drivers/acpi/tables.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/x86/include/asm/init.h |  3 +-
+ arch/x86/mm/ident_map.c     | 73 ++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 76 insertions(+)
 
-diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-index b976e5f..9e1b01c 100644
---- a/drivers/acpi/tables.c
-+++ b/drivers/acpi/tables.c
-@@ -198,6 +198,20 @@ void acpi_table_print_madt_entry(struct acpi_subtable_header *header)
- 		}
- 		break;
+diff --git a/arch/x86/include/asm/init.h b/arch/x86/include/asm/init.h
+index cc9ccf6..14d7272 100644
+--- a/arch/x86/include/asm/init.h
++++ b/arch/x86/include/asm/init.h
+@@ -6,6 +6,7 @@
  
-+	case ACPI_MADT_TYPE_MULTIPROC_WAKEUP:
-+		{
-+			struct acpi_madt_multiproc_wakeup *p =
-+				(struct acpi_madt_multiproc_wakeup *)header;
-+			u64 reset_vector = 0;
+ struct x86_mapping_info {
+ 	void *(*alloc_pgt_page)(void *); /* allocate buf for page table */
++	void (*free_pgt_page)(void *, void *); /* free buf for page table */
+ 	void *context;			 /* context for alloc_pgt_page */
+ 	unsigned long page_flag;	 /* page flag for PMD or PUD entry */
+ 	unsigned long offset;		 /* ident mapping offset */
+@@ -16,4 +17,6 @@ struct x86_mapping_info {
+ int kernel_ident_mapping_init(struct x86_mapping_info *info, pgd_t *pgd_page,
+ 				unsigned long pstart, unsigned long pend);
+ 
++void kernel_ident_mapping_free(struct x86_mapping_info *info, pgd_t *pgd);
 +
-+			if (p->version >= ACPI_MADT_MP_WAKEUP_VERSION_V1)
-+				reset_vector = p->reset_vector;
+ #endif /* _ASM_X86_INIT_H */
+diff --git a/arch/x86/mm/ident_map.c b/arch/x86/mm/ident_map.c
+index 968d700..c451272 100644
+--- a/arch/x86/mm/ident_map.c
++++ b/arch/x86/mm/ident_map.c
+@@ -4,6 +4,79 @@
+  * included by both the compressed kernel and the regular kernel.
+  */
+ 
++static void free_pte(struct x86_mapping_info *info, pmd_t *pmd)
++{
++	pte_t *pte = pte_offset_kernel(pmd, 0);
 +
-+			pr_debug("MP Wakeup (version[%d], mailbox[%#llx], reset[%#llx])\n",
-+				 p->version, p->mailbox_address, reset_vector);
-+		}
-+		break;
++	info->free_pgt_page(pte, info->context);
++}
 +
- 	case ACPI_MADT_TYPE_CORE_PIC:
- 		{
- 			struct acpi_madt_core_pic *p = (struct acpi_madt_core_pic *)header;
++static void free_pmd(struct x86_mapping_info *info, pud_t *pud)
++{
++	pmd_t *pmd = pmd_offset(pud, 0);
++	int i;
++
++	for (i = 0; i < PTRS_PER_PMD; i++) {
++		if (!pmd_present(pmd[i]))
++			continue;
++
++		if (pmd_leaf(pmd[i]))
++			continue;
++
++		free_pte(info, &pmd[i]);
++	}
++
++	info->free_pgt_page(pmd, info->context);
++}
++
++static void free_pud(struct x86_mapping_info *info, p4d_t *p4d)
++{
++	pud_t *pud = pud_offset(p4d, 0);
++	int i;
++
++	for (i = 0; i < PTRS_PER_PUD; i++) {
++		if (!pud_present(pud[i]))
++			continue;
++
++		if (pud_leaf(pud[i]))
++			continue;
++
++		free_pmd(info, &pud[i]);
++	}
++
++	info->free_pgt_page(pud, info->context);
++}
++
++static void free_p4d(struct x86_mapping_info *info, pgd_t *pgd)
++{
++	p4d_t *p4d = p4d_offset(pgd, 0);
++	int i;
++
++	for (i = 0; i < PTRS_PER_P4D; i++) {
++		if (!p4d_present(p4d[i]))
++			continue;
++
++		free_pud(info, &p4d[i]);
++	}
++
++	if (pgtable_l5_enabled())
++		info->free_pgt_page(p4d, info->context);
++}
++
++void kernel_ident_mapping_free(struct x86_mapping_info *info, pgd_t *pgd)
++{
++	int i;
++
++	for (i = 0; i < PTRS_PER_PGD; i++) {
++		if (!pgd_present(pgd[i]))
++			continue;
++
++		free_p4d(info, &pgd[i]);
++	}
++
++	info->free_pgt_page(pgd, info->context);
++}
++
+ static void ident_pmd_init(struct x86_mapping_info *info, pmd_t *pmd_page,
+ 			   unsigned long addr, unsigned long end)
+ {
 
