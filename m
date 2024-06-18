@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-218570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025E590C20C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:01:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD03290C21A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939DC284856
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:01:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06741C21969
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954577347B;
-	Tue, 18 Jun 2024 03:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5237819B5AD;
+	Tue, 18 Jun 2024 03:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="mw/EUmuT"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="B45UZoMX"
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B80233DF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF9D1D9503
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718679654; cv=none; b=jRPwZFYJvCkrTTznqRJHDSHqNIKLxl5gJTA1W7LxznZRu3or46mbJSgBNGcb/CxhnSv8vrj54UNpAU05Q9T31QiIDSdMWIJyRtNihrQalvXxQOdmodixHtj8D0LP73rCq//GzoiVVFB9B3kciwD5fKWfAYnwwa5NjbvgIz09+qM=
+	t=1718679657; cv=none; b=ou7E+je2nzvSGJpWpS6NfobWk4LcKvLiKHTtl646Rzl88wg+KlEEdTUKONJ0dKrbsBqfUBIkgZwIias2OjFv7ey+ulZr5kf0EW2vC0DGqYqS68uGkZM7jiswmkbb39UIUZFSemtssPKGGoAgF2nFNKHx2Do7cEXv440PW+DoVCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718679654; c=relaxed/simple;
-	bh=Dh2KtUvAtiglq0b5/QtxJb7/lWsVoYr0FusrI650O/U=;
+	s=arc-20240116; t=1718679657; c=relaxed/simple;
+	bh=/9XXFoMIDUejWLXPGASjELUaNhjf29SkPsmiAKjFxIg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P1EBOpF6AGVLOqJlmmTEu1BJzylKwd6tCnZjbERhSlb6XJ2ee1q3NGtlZn2yN/YiUF5P2uxAXFxkUoyvt1cjGnFkfOR9uRjV1US5E21UmPrGAyhF855Py0C3dvACL9LujJcAuNJH1kkCi+ZUMqcTJswgBMns4W53dE0Mu5WE8x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=mw/EUmuT; arc=none smtp.client-ip=178.60.130.6
+	 MIME-Version:Content-Type; b=pyWu/9rqsM1mLr05xlhtZgLsqs8sXkASSjGJBeW5RbaPxARnQDLue1msRaAXsQ50sT7aS6HfirB605plbkGd4HQ6DgSzVAn3eHUw+5hGX8cwTk1Tz65UriSnyCKMcl7iKRBD7W6nYOssKZkJZOT+HdOdck21wLr9VPJA/0g5W/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=B45UZoMX; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -36,16 +36,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=Ld6CWp6MvzsfLCexkDmw2gq97DL2MMR6pnNJDMxtfIA=; b=mw/EUmuTRH+Mvzsqt73ouRnJz3
-	LWS2nHuqMo/Q4WgO+Gsi441NQIraJa28h7vsH/F60J7RpYJLaoKIlLi62s2cUNf9GAEBeyIyIVYmu
-	4Gn9bm5BFI2ADzOBUxNgw/2MnRa/uEB/1BDOjpFbkzeU+0aJaYxylOsCbt3T+7n/JWXLi2mcE3bWA
-	B/kpcmLGis8/MgHXqmHpM7Sw5Mt1+H5tEgSZ07a8xu9FVuL8kH59tg5/mTr5cZnKRnylMHFVfVkaF
-	QLhKajlp8aHcR8YgH/XKghxUgHBwIy001z1BUhbV93QAFSXqT2vBL5zyzVPSJsO3VO4yi4K0Gq8Do
-	wXODCEww==;
+	bh=rZ3Tb4qAu6Z+twWJyOcZ2EZNot0n9kRT91kObBenkKQ=; b=B45UZoMX/ee8Rq+ArfpTmWwIIx
+	GMD49HtipMR6pUyRxth9XneNoqH/GPE4ok7wQg96kroUv6/TAaQNr0T+aloAM9yHS2g3PImG7hl4M
+	cPXt3ZHLgSJmy4Yz/rKFrYWd6EZ0BtX+bX4rLL5rODbfAVGNAQI9jUcTR0B26dEVCebFsuA2Viaej
+	GGDOC8ZMOKdjs9sDUAcDCOPEdR7gyTy5gLN1tDyoNU4dBcqQnvazoSsijtu3ADcSiUp8j6AkMNrI3
+	QdH7C2KPtIb/0kib/kl992VHsQC1CSGo6Gx8H1cubbXfFk9BXCup/Ntb5K1781Khf4Bcs2ClhUpDH
+	tINbMfoQ==;
 Received: from [191.8.29.108] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sJP5O-004YXc-NX; Tue, 18 Jun 2024 05:00:43 +0200
+	id 1sJP5X-004YXc-0k; Tue, 18 Jun 2024 05:00:51 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: dri-devel@lists.freedesktop.org,
 	amd-gfx@lists.freedesktop.org,
@@ -81,9 +81,9 @@ Cc: kernel-dev@igalia.com,
 	Karol Herbst <kherbst@redhat.com>,
 	Lyude Paul <lyude@redhat.com>,
 	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v7 1/9] drm/atomic: Allow userspace to use explicit sync with atomic async flips
-Date: Tue, 18 Jun 2024 00:00:16 -0300
-Message-ID: <20240618030024.500532-2-andrealmeid@igalia.com>
+Subject: [PATCH v7 2/9] drm: Support per-plane async flip configuration
+Date: Tue, 18 Jun 2024 00:00:17 -0300
+Message-ID: <20240618030024.500532-3-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240618030024.500532-1-andrealmeid@igalia.com>
 References: <20240618030024.500532-1-andrealmeid@igalia.com>
@@ -96,30 +96,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Allow userspace to use explicit synchronization with atomic async flips.
-That means that the flip will wait for some hardware fence, and then
-will flip as soon as possible (async) in regard of the vblank.
+Drivers have different capabilities on what plane types they can or
+cannot perform async flips. Create a plane::async_flip field so each
+driver can choose which planes they allow doing async flips.
 
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
 ---
- drivers/gpu/drm/drm_atomic_uapi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/drm/drm_plane.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-index 22bbb2d83e30..2e1d9391febe 100644
---- a/drivers/gpu/drm/drm_atomic_uapi.c
-+++ b/drivers/gpu/drm/drm_atomic_uapi.c
-@@ -1070,7 +1070,9 @@ int drm_atomic_set_property(struct drm_atomic_state *state,
- 			break;
- 		}
+diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+index 9507542121fa..0bebc72af5c3 100644
+--- a/include/drm/drm_plane.h
++++ b/include/drm/drm_plane.h
+@@ -786,6 +786,11 @@ struct drm_plane {
+ 	 * @kmsg_panic: Used to register a panic notifier for this plane
+ 	 */
+ 	struct kmsg_dumper kmsg_panic;
++
++	/**
++	 * @async_flip: indicates if a plane can do async flips
++	 */
++	bool async_flip;
+ };
  
--		if (async_flip && prop != config->prop_fb_id) {
-+		if (async_flip &&
-+		    prop != config->prop_fb_id &&
-+		    prop != config->prop_in_fence_fd) {
- 			ret = drm_atomic_plane_get_property(plane, plane_state,
- 							    prop, &old_val);
- 			ret = drm_atomic_check_prop_changes(ret, old_val, prop_value, prop);
+ #define obj_to_plane(x) container_of(x, struct drm_plane, base)
 -- 
 2.45.2
 
