@@ -1,152 +1,126 @@
-Return-Path: <linux-kernel+bounces-218531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D2290C19C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20DCA90C1A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5A551C20FD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 214081C21A53
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022DE182DB;
-	Tue, 18 Jun 2024 01:48:07 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB361C697;
-	Tue, 18 Jun 2024 01:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B8A18B1A;
+	Tue, 18 Jun 2024 01:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="odVU79oE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59540E56A;
+	Tue, 18 Jun 2024 01:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718675286; cv=none; b=mfACiNlEfFkK4YXCyQgLBGbphFttriAV7Q/ic2sHiuR6/BOL9IRbCgLkFgEMJ+8r8UYTK3Hn9oIRkVfdBlF9GH5+qgLAgSkMcfxIAFdcYb2qQJOqdGh65rXHa6glIv8DLSzW7c3Mm8aAPtriEGVqOvrUCE/asY8Z+Gm3b2FMHWM=
+	t=1718675429; cv=none; b=OOCqf6LKG6wz/3kUS/mR3rN+3gLwhoAnBayQAzFNyUJr2PAStvg8kjzjh+9pbPVVqLhgpA7Q3uE71wroh7Yruvqou5eC1t1dae2NMW293sRDVb9JOqTMWI/e+uRHf3HDZLWl8BTAK6Y7AhmioE/9tYofljsUETMWufml/ZZap3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718675286; c=relaxed/simple;
-	bh=9nibZJ0FWduyum7S7nLwNvrtxl5PR55RgEHP66fZR1A=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=jwA7VdXpzv6fdapX2ErwgoWobPJ1PNRcxOUJYrSEUUpDW5OoNwpOJw+TYpZsE32gZxIRZCpS2T6MTFjjWPo/2kFmgONSMzpdlsrZTDbjYuGebzLcp6ToERi/KpZ2TP+U3ALcfOEmzPI+Iu2waRGHfvw11u+InSkS6ZxSbuLerJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxvOpR53Bmi8cHAA--.30934S3;
-	Tue, 18 Jun 2024 09:48:01 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxBMVO53Bm16omAA--.17683S3;
-	Tue, 18 Jun 2024 09:48:00 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: KVM: Delay secondary mmu tlb flush before
- guest entry
-To: Sean Christopherson <seanjc@google.com>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240615025930.1408266-1-maobibo@loongson.cn>
- <ZnBNCYZHuflw83jq@google.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <756c9cb4-35b9-4523-7ac7-9a70bdf6ddba@loongson.cn>
-Date: Tue, 18 Jun 2024 09:47:58 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1718675429; c=relaxed/simple;
+	bh=PKpDxjQLVo6wtTTfpFPstcUJb+vLoicNbbWQdJIWqpA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ZXMvyR2auxm7hkMqH1IQG48AZKAGokB2x++yHMQzGGiBuRESbWh/fDmsNf69H42IvAM5cKNrfkWYJSGJfEG8ztn8EzKL2dIM1qjg344bWkTdbnp/XR/q+1rEJa/6LGadBpxNW/VEpjNT3qjDRefJ2rVw/ly7hJacTDEIXkGPOCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=odVU79oE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CA20FC3277B;
+	Tue, 18 Jun 2024 01:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718675428;
+	bh=PKpDxjQLVo6wtTTfpFPstcUJb+vLoicNbbWQdJIWqpA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=odVU79oEmB45LzpwjCapeOqmNg9zX7LApAqwKJ+TSKGx+DzO0GqzDJe/2sU9RM3XO
+	 x7o9Vy+kX0gYMNLSa8zjIi9sY6WirU4SLrnjFUTSROn3vCnvnd9LDkBeO83WTOVmc5
+	 W7LR+GVhJbrJIsgo3otgsKIAU9t1FX1VcPBkXnHQ+4A5B5EbtIKYPlP4J07zvkL1mF
+	 Xp3vFFSPtfxmwO87761gt8cjkD/B14vP2thffGau10DYqpTYjzkJnfncRapN+X3jaQ
+	 E8oGUMW72XXctEN9gu7KmpYtO2QaqnrrtieGF7wnRaOdvBXHqFJRY6+5DsqWROGEYj
+	 Yqv2YnZv2785Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B8066C4166F;
+	Tue, 18 Jun 2024 01:50:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZnBNCYZHuflw83jq@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8AxBMVO53Bm16omAA--.17683S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7tF1Dur47Gry5JFW8WF1xZwc_yoW8tF4fpF
-	97uFs5JF4Fgr1xta42vwnxWrsxXrs3Kr1293W3KFW5Ar4aqF1kXFykKFZxZFyUXw4rAa1I
-	qFyrJw1avFZ8tacCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
-	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UU
-	UUU==
+Subject: Re: [PATCH net-next v15 00/14] net: Make timestamping selectable
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171867542874.561.14086778565538344175.git-patchwork-notify@kernel.org>
+Date: Tue, 18 Jun 2024 01:50:28 +0000
+References: <20240612-feature_ptp_netnext-v15-0-b2a086257b63@bootlin.com>
+In-Reply-To: <20240612-feature_ptp_netnext-v15-0-b2a086257b63@bootlin.com>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+ andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ richardcochran@gmail.com, radu-nicolae.pirea@oss.nxp.com,
+ j.vosburgh@gmail.com, andy@greyhouse.net, nicolas.ferre@microchip.com,
+ claudiu.beznea@tuxon.dev, willemdebruijn.kernel@gmail.com, corbet@lwn.net,
+ horatiu.vultur@microchip.com, UNGLinuxDriver@microchip.com, horms@kernel.org,
+ vladimir.oltean@nxp.com, thomas.petazzoni@bootlin.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, maxime.chevallier@bootlin.com,
+ rrameshbabu@nvidia.com, willemb@google.com, shannon.nelson@amd.com,
+ wintera@linux.ibm.com
 
-Sean,
+Hello:
 
-Thanks for reviewing the patch, we are not familiar with open source 
-community, it gives us much helps.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 2024/6/17 下午10:49, Sean Christopherson wrote:
-> On Sat, Jun 15, 2024, Bibo Mao wrote:
->> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
->> index c87b6ea0ec47..98078e01dd55 100644
->> --- a/arch/loongarch/include/asm/kvm_host.h
->> +++ b/arch/loongarch/include/asm/kvm_host.h
->> @@ -30,6 +30,7 @@
->>   #define KVM_PRIVATE_MEM_SLOTS		0
->>   
->>   #define KVM_HALT_POLL_NS_DEFAULT	500000
->> +#define KVM_REQ_TLB_FLUSH_GPA		KVM_ARCH_REQ(0)
->>   
->>   #define KVM_GUESTDBG_SW_BP_MASK		\
->>   	(KVM_GUESTDBG_ENABLE | KVM_GUESTDBG_USE_SW_BP)
->> @@ -190,6 +191,7 @@ struct kvm_vcpu_arch {
->>   
->>   	/* vcpu's vpid */
->>   	u64 vpid;
->> +	unsigned long flush_gpa;
+On Wed, 12 Jun 2024 17:04:00 +0200 you wrote:
+> Up until now, there was no way to let the user select the hardware
+> PTP provider at which time stamping occurs. The stack assumed that PHY time
+> stamping is always preferred, but some MAC/PHY combinations were buggy.
 > 
-> Side topic, GPAs should really use "gpa_t" instead of "unsigned long", otherwise
-> 32-bit kernels running on CPUs with 64-bit physical addresses will fail miserably
-> (which may or may not be a problem in practice for LoongArch).
-Sure, will modify.
+> This series updates the default MAC/PHY default timestamping and aims to
+> allow the user to select the desired hwtstamp provider administratively.
+> 
+> [...]
 
-> 
->> diff --git a/arch/loongarch/kvm/tlb.c b/arch/loongarch/kvm/tlb.c
->> index 02535df6b51f..55f7f3621e38 100644
->> --- a/arch/loongarch/kvm/tlb.c
->> +++ b/arch/loongarch/kvm/tlb.c
->> @@ -21,12 +21,9 @@ void kvm_flush_tlb_all(void)
->>   	local_irq_restore(flags);
->>   }
->>   
->> +/* Called with irq disabled */
-> 
-> Rather than add a comment, add:
-> 
-> 	lockdep_assert_irqs_disabled()
-Good point, will modify.
+Here is the summary with links:
+  - [net-next,v15,01/14] net_tstamp: Add TIMESTAMPING SOFTWARE and HARDWARE mask
+    (no matching commit)
+  - [net-next,v15,02/14] net: Move dev_set_hwtstamp_phylib to net/core/dev.h
+    https://git.kernel.org/netdev/net-next/c/efb459303dd5
+  - [net-next,v15,03/14] net: Make dev_get_hwtstamp_phylib accessible
+    (no matching commit)
+  - [net-next,v15,04/14] net: Make net_hwtstamp_validate accessible
+    (no matching commit)
+  - [net-next,v15,05/14] net: Change the API of PHY default timestamp to MAC
+    (no matching commit)
+  - [net-next,v15,06/14] net: net_tstamp: Add unspec field to hwtstamp_source enumeration
+    (no matching commit)
+  - [net-next,v15,07/14] net: Add struct kernel_ethtool_ts_info
+    (no matching commit)
+  - [net-next,v15,08/14] ptp: Add phc source and helpers to register specific PTP clock or get information
+    (no matching commit)
+  - [net-next,v15,09/14] net: Add the possibility to support a selected hwtstamp in netdevice
+    (no matching commit)
+  - [net-next,v15,10/14] net: netdevsim: ptp_mock: Convert to netdev_ptp_clock_register
+    (no matching commit)
+  - [net-next,v15,11/14] net: macb: Convert to netdev_ptp_clock_register
+    (no matching commit)
+  - [net-next,v15,12/14] net: ptp: Move ptp_clock_index() to builtin symbol
+    (no matching commit)
+  - [net-next,v15,13/14] net: ethtool: tsinfo: Add support for hwtstamp provider and get/set hwtstamp config
+    (no matching commit)
+  - [net-next,v15,14/14] netlink: specs: tsinfo: Enhance netlink attributes and add a set command
+    (no matching commit)
 
-> 
-> in the function.
-> 
->>   void kvm_flush_tlb_gpa(struct kvm_vcpu *vcpu, unsigned long gpa)
->>   {
->> -	unsigned long flags;
->> -
->> -	local_irq_save(flags);
->>   	gpa &= (PAGE_MASK << 1);
->>   	invtlb(INVTLB_GID_ADDR, read_csr_gstat() & CSR_GSTAT_GID, gpa);
->> -	local_irq_restore(flags);
->>   }
->> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
->> index 9e8030d45129..ae9ae88c11db 100644
->> --- a/arch/loongarch/kvm/vcpu.c
->> +++ b/arch/loongarch/kvm/vcpu.c
->> @@ -51,6 +51,16 @@ static int kvm_check_requests(struct kvm_vcpu *vcpu)
->>   	return RESUME_GUEST;
->>   }
->>   
->> +/* Check pending request with irq disabled */
-> 
-> Same thing here.
-Will modify in next version.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Regards
-Bibo Mao
 
 
