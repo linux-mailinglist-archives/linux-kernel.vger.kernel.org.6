@@ -1,176 +1,173 @@
-Return-Path: <linux-kernel+bounces-218562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F2790C1E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:46:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203D990C1EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5942F1F22660
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:46:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FDF31F2252E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A8619AD9E;
-	Tue, 18 Jun 2024 02:46:36 +0000 (UTC)
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2114.outbound.protection.outlook.com [40.107.215.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BEE19ADAD;
+	Tue, 18 Jun 2024 02:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="xJ1GcQZ4"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8516E179AE;
-	Tue, 18 Jun 2024 02:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.114
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718678796; cv=fail; b=L1imzjTB9geedCYcC+RpKjTCeH7xglA4acNtYzhnaWCPcvTg/yJiDu6qVlIOO9t0CnIcqwaBlGM3BF3MFAro8X3zK3VEio5UkeMFsudAZQP0KBtWonahZ2w7haONB+FVKVE1zqXIf2v6FC2w9QNoSmydgMPOoTogTvrmLuT7huA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718678796; c=relaxed/simple;
-	bh=S1p71wQ6DKFkcffIuWc3bwQxls93mmWhft1NovVF5qM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=k4MVu/W6+EYLXF9nfgaIIO+dmiqKLm3tJk9kPIRJXaamml0eAwyS/l4mNRK7qs0CjVos/Y5lqsdXLf/cj+3hbjJxS65js7AmYRq7mzuNd0hOprU2L16jbrAEqysvADp8ucu2ygT0wv13weDIY7FuZzEltRd8vS1lGrb5Q1Kaogs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.215.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IEoa6OSfBgBGNl7/LYcZivdoOBHMolHEvUF9ALbQV7YevKDudkyBNzSUX43XTMxFmKhZE+biUT4ayMxOplFBllW5SL5OcTZFB4hcx2eBFo4uF+phtAwB4KBRcTLx5je0Gy/zUeurrjThiDQUHZLiKPsvSLts73sp4XQeh7RqxGW5sSnn3hddsOiaZoqOXsURT+C35JkvIyBUwlhYUju63e7gIFBtQETMK8Av2CtHgXQ+j3ne/zmrd9yswUzOlKdgWD5e8t3lJtA2+AO3OcpS6zLGUGsLTe+Trw62ahFCKXLz2Bbp2QLTJ6Wujs0qTsOK1z3vJ9E2gKUX8sZA++J7jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S1p71wQ6DKFkcffIuWc3bwQxls93mmWhft1NovVF5qM=;
- b=CcX0llbuXweyx66vO3SGHZEatRVj35fWhMO5W1q81oSlgIRil+w8wcBmz2KCUnV2RprUmJrP5J+ew2g7cqPBFq0KFW2ZT489n9BUoCNMirxM1dOlaR9PGSpk0+EZ/zVWQO2gd0Vhmea2I3IHiPkVx1vsjdanvNGNb27RwLItWbvePjGiS17q0MoX3bXoGRMEigFMjUCgoqfjSFW8TWGZWBjlr1V89ic5pbC8ZAxhPTWxUdnf5K6MzAi8JS8qC17fofuF80ddRRwOxHmqFFn+8Negq7RDr1cO3e+E59A3Uk9E322diSGbDDOrdmoPLhcUd3ES61uxL8/jqDJ5bWm8CA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
- dkim=pass header.d=wesion.com; arc=none
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
- by KL1PR03MB8287.apcprd03.prod.outlook.com (2603:1096:820:10f::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
- 2024 02:46:31 +0000
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0%6]) with mapi id 15.20.7677.029; Tue, 18 Jun 2024
- 02:46:31 +0000
-From: Jacobe Zang <jacobe.zang@wesion.com>
-To: =?iso-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>
-CC: Nick Xie <nick@khadas.com>, "efectn@protonmail.com"
-	<efectn@protonmail.com>, "jagan@edgeble.ai" <jagan@edgeble.ai>,
-	"dsimic@manjaro.org" <dsimic@manjaro.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
-	<linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] arm64: dts: rockchip: Add HDMI & VOP2 to Khadas
- Edge 2
-Thread-Topic: [PATCH v2 3/5] arm64: dts: rockchip: Add HDMI & VOP2 to Khadas
- Edge 2
-Thread-Index: AQHawIWTOKEi5OAZqkeNQSj3WmLAerHMaI2AgABmr9o=
-Date: Tue, 18 Jun 2024 02:46:30 +0000
-Message-ID:
- <TYZPR03MB7001E6413C47535F2CF7102380CE2@TYZPR03MB7001.apcprd03.prod.outlook.com>
-References: <20240617071112.3133101-1-jacobe.zang@wesion.com>
- <20240617071112.3133101-4-jacobe.zang@wesion.com> <28646794.czjnFlTdjD@diego>
-In-Reply-To: <28646794.czjnFlTdjD@diego>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wesion.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB7001:EE_|KL1PR03MB8287:EE_
-x-ms-office365-filtering-correlation-id: 25c10ae4-6ea9-4904-d9e7-08dc8f40dbe9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230037|366013|1800799021|376011|7416011|38070700015;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?KOgLVEJIj44rgNWDpecT7kn6wvojKdWWE3D44dq4FWfKWnjeRgMsfksZKG?=
- =?iso-8859-1?Q?k66knZiK6VzR5ZWp+nu9dH/dcmNC/qAJwXE2NaPgNw+a5D33WjkssbAq3e?=
- =?iso-8859-1?Q?ugQ52Kl7t20uP2DM5dU4e79fI5216GERK0jeYJYb6M9l+kUt7kIZvEk0od?=
- =?iso-8859-1?Q?cPf+ecNqfUI1DdbIjAQazrIxB8Vk+EqlUR9juHYOowJqJH+YROr3rGa6EU?=
- =?iso-8859-1?Q?zuHgn0UdZzbGXh/7g6yXDc9pMqmbg4GkSDg15CsoGKnkjeJXKF8t7pMoSq?=
- =?iso-8859-1?Q?Hgi2fyTSu7AfE8thJUaoCc2YUHKPbW/5iUpFvY7FLMUcRpZoTdJ3N9wjhV?=
- =?iso-8859-1?Q?BZL65T9KqL9SEnVRNuh/gwmrQ1fgJ+ymsDzlLoRABU6+p+50TqgWE67Ec4?=
- =?iso-8859-1?Q?pGGdPGABFg+3sImtOxAbQ/238JhqtlSxs7Co02f6wHjy9YMArO87Vojhaa?=
- =?iso-8859-1?Q?kjG5y3sy7lYcMVxD5+qBjQmmvx0cMOkuIQibf3t4BMnvnKFFzSwXuJ1kIm?=
- =?iso-8859-1?Q?DIqGNY0fInKFCH7BMKiDSpFkrXTULEaDN9UnNxbritOKdD6Gf8ojOITAiN?=
- =?iso-8859-1?Q?IZU5SpY8pDk4nt9b3fDK4a/fBrtWuiC9f9PxzxY0gauwy41wAos7dmAEp6?=
- =?iso-8859-1?Q?3GQrWFhwD2obrDQ3m1kofbLXPCb2ysu1S3BaVssD+72a9I5SgxyW9XdNuS?=
- =?iso-8859-1?Q?k7fhsnYiv4F4RpKIqZCnfWeIfV61ClYoI97GWEJ4ResU7F0wm8Oo3nLAMg?=
- =?iso-8859-1?Q?4AfXPbmZUG4KLaRaezp2oiCo2fQVQla0irf3W1Hs/rCNSd38+O/NhHJdjM?=
- =?iso-8859-1?Q?RCu+tWhShpL/0Dh5cL5VkuvgED/fThVulIUsmY2Xb8EhyRzWEj34Z3Iz8i?=
- =?iso-8859-1?Q?CbqhSdSkKyXuHp9NzWTyaFVKrBvVkNKp+H+UarZ7uiPqpI9eyJneDKrPuU?=
- =?iso-8859-1?Q?y6Yylk5Uu7rShqZ5tqq2ykGgPB1O0rYOeHARPgH+1Yu5+zGQBAd98WxGM9?=
- =?iso-8859-1?Q?Wvwl76qP0834snsRUjT9sxP2HLauiO7CAVhM2Hm4Le/5m4hHoWSIp4Cqf6?=
- =?iso-8859-1?Q?xEBXbIw1DiJKoun8GJyWtaQ+gCcqahX2qTg5tHMSb41Umz5lzXUHqeEZ7V?=
- =?iso-8859-1?Q?Dm5VROP4+xjc/MQNZbdyTGpIP5L2l+wgf+PuQnjQgnmos3AB74PkBimak3?=
- =?iso-8859-1?Q?Y5/2omLu8Xm+HMZcaZZeDyB/0rkRuJgBNAtPpV5wda851ITL/8wSPh1klD?=
- =?iso-8859-1?Q?OrAug4vO2MjizzK+azr5j9nKhs5D+6wkazASHBi4gkHfd5b1sLcXsMW6Lg?=
- =?iso-8859-1?Q?3qQ4ZM4lL3I9V6PP8ADuilxEctfRCO4MfvF0DgLbx43JBwCyQSo/Gzpit/?=
- =?iso-8859-1?Q?tkDVBpPybmeF7qJo3+4MPuy4l2TxE9q12bR9+qDO31WU5pRnkkF9w=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(1800799021)(376011)(7416011)(38070700015);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?79ZWrvYBv3aw16E17Be8UnMJkUFFN0HUfItrsY6HtDiQLPjUdKi4a8IRx7?=
- =?iso-8859-1?Q?Rltdx+dU6nohdGjix/ZAY+oa3LkFofLXuhLkbGyPg90kODNmQvKipxiAit?=
- =?iso-8859-1?Q?GqhrtocKV+zE7zK7uqUN3ILZAADn/Ab3DkPRuZ5W2hNZFMfmQSPzxFYmqc?=
- =?iso-8859-1?Q?/J8I2BUjLfajjWjNDgy/HNF39b2aVjPdjvCzBggRPd0AUBFM3SjzizpAJo?=
- =?iso-8859-1?Q?fITNAVCwT2Uz+2kpm2SaRu5EQwBDON68Xqpx1H4HDVNfi7pfSadi0FgID1?=
- =?iso-8859-1?Q?uLkns/CGnfUqhPoONr1W0saTTnncEvzzxLsZuhVBnlJkxEbU/V3+ISK+RE?=
- =?iso-8859-1?Q?G7EqFRmr037c5p5Oqlp0maNllKk42pg4wYabFJGe2RHpwZpRERl4tA65VN?=
- =?iso-8859-1?Q?0UvTOh3CRW6LNIZLNb05WeihYdltc5siREr3D/yS70TSCoeEV4LWWMcjwA?=
- =?iso-8859-1?Q?GraxZb2I483vez9VKYpXIi6K+gbctpB3aMmk3YA9fz3aXkbmhJshMwTgRv?=
- =?iso-8859-1?Q?gFBlyY5uune/IIpEqw0YL5p+MYvvWu+in9qTmOvRW4WP4acc742jWflDFn?=
- =?iso-8859-1?Q?Vk+nJrofEDN96atBwniDnlKHgyWrdh708O42XWBncaZfIGOXjWc5REavWk?=
- =?iso-8859-1?Q?JZN5lxoMZ4yjz1jnamjJ2FHUjiS53G+UexE5f22f4+ykchBMfNn5Y2rQVQ?=
- =?iso-8859-1?Q?jXXR3tOQk38Cn2xHOh1+yhj9HGxEzoh6f55kNHeOJ+VFjpPW2hlBK5NlNK?=
- =?iso-8859-1?Q?lxo8/ppJAf30ESbNGowe9EWObs+3z4On+vPkOTKvX6NYL0jqQ44QTDex40?=
- =?iso-8859-1?Q?CxNRh01ZqODrCeN8r7x7/dL1dZXLXe0WUYCdwHb6VfQfRm8QpRQR6mbUTm?=
- =?iso-8859-1?Q?CDg7tBAoFXMHwZG7kJBeNQACGAMXeNhfLfXQaa63RxRYLM7Lykv4JTGwem?=
- =?iso-8859-1?Q?SEiqLEMdA4SM6smx1+VWLjML1EBTHoe9fLctOMkXttRfSwP+vluxNA8nz/?=
- =?iso-8859-1?Q?UVhCMMz+Dq1LGouIpIPmi6mpXYLxuYc+xOEyPpqvtZRXMMocRProb0usId?=
- =?iso-8859-1?Q?DoGayy5iEaUcmDKVRobhQkO85lplNP/9LuaFs8BFbEXuZA2LwA0WYPFM3m?=
- =?iso-8859-1?Q?uyN3a7q4afPyHkIRkoSKX/UYVoXZFPinwULFO5vsO6yJHVujBIpf5gcrYR?=
- =?iso-8859-1?Q?a8Js2LG/YcKZi+KjSl3hAaND/4NiKgU6ocCLB7XaLFrjvexgoqqtZd299o?=
- =?iso-8859-1?Q?1KFvFbCQXlHvZsRugFBTQdk7nfgfggDIEeG68XxDZGn3P/+4QEOqipbRa7?=
- =?iso-8859-1?Q?XSjxUXFtd/lQyksZ4SsXBEHz5ijNiK9ojLafqcn/nbM8ynGqkrpdbtG667?=
- =?iso-8859-1?Q?XFohNSqsJ5VNjzk9PjBuaMEcP/2Q3deIqHRjK4aGzsCDcY4V+YwX0xAy5t?=
- =?iso-8859-1?Q?rS2sMDEfXSQi8p6ooLdeVMR0HmkolaJNP/xxgZFzTNelt2VXJh5fQLWq+1?=
- =?iso-8859-1?Q?B656ihqxbnW6HFXv8vzsGn4MBZDR9Y+4b1exWiDaSkRfDB5p1GDYMxwdeG?=
- =?iso-8859-1?Q?X4WIIyDbRqSCMsue4Kutm1WvBOnYWt8r0fTiTXrT+5n3MbkMCF3xigeAsI?=
- =?iso-8859-1?Q?dTgAK6A2MXrcRuidlx9/I4J4xaDoXT38kP?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29E6197A7B;
+	Tue, 18 Jun 2024 02:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718678877; cv=none; b=AYXRMIWWXRGaPp7zetMG0hBlGUQikRaU50YO43W9kPGdvsf5092zPVLr03gLGejkjO4RgJlrjqjyPMojQnAx/IkykUxVePo9eEKcJfB1xrv5nXQaal+1ixfehKZjlQyuh4lWzC4Id7RlC8NC/ZLYe46DfZpXN/AH8vxahRwxFPY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718678877; c=relaxed/simple;
+	bh=Of9hd9gJdC44iU0TcP82vIPNrhugyO6E3ElDHzolkOU=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=g2/P7NzcS1MUDH14WoN5x9v8GhyZ8dhv4JiX0u4qz/UntwYFHw5a+T3lo6dKOx+M09yWDZw07YxMcy3N6Ryc3t+Rhtkgga27UcIGWA1pGbKtbxBGohjS8ROksuzcvC0agf8ZSSfrrYKI03lDTmlTd+UqGcNDbKu8rQA1/UdX5t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=xJ1GcQZ4; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1718678861;
+	bh=+PgtJypd92me9yUpBAxp9FE7WuW9NkxbHeiGjuU9UJA=;
+	h=From:To:Cc:Subject:Date;
+	b=xJ1GcQZ4OvYeoGoT9brQMiF19/Y+VpV8j/o2JrkdQGAyuNlLXwNCVqIK6/i+uUtI6
+	 kZ07yDiSyCEIggg1sT37i7uFTrJUH15X2cfquxxu7C8NoRsDefFkJ2ElIujiZa9xdM
+	 LF+TEF0fKXaYKwLnrAatfihg62ijPL/NswKrFdak=
+Received: from localhost.localdomain ([203.119.160.30])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id BE6A6499; Tue, 18 Jun 2024 10:47:38 +0800
+X-QQ-mid: xmsmtpt1718678858tlzx1vhih
+Message-ID: <tencent_227A20B261EF28E4C37834F2089D5AD91408@qq.com>
+X-QQ-XMAILINFO: MmpliBmRb3iCozKJu14BkAyOGk/AAu8guHS+mU/NbcekN6R7XfkmN4oZlAJee/
+	 35L6pt8eoh9KgfQudDoAVGG0+2rXzSkNxCAFdGlzKbrgHBAqOqb+pC2wS1/JBEZtQ/SYK1VaRC+9
+	 KkUO0+xVGKzFRqJfOuNwqwYYJ5qS+zReaWC6HMugL0J3dY0Tm6XcwUfLbPzzjRVWHAsAhYXv+HXP
+	 yMWNaJYOlJIjIJBu+lSaUwAKSKQ5MyMr5MNROH8fex4S3mAltt8kzkyUrp8cjq6ts+9/qVmhTSZx
+	 UGZTlIeuWWIGOYCF9j+o+Zhm8xvfAAGoHP8bMi+vsEHSxDLkcyxMZAHpnAajs1YqJR3ZvejKdHQQ
+	 O4fAvEfZz36wH+0s1pKtcX1//AHBcPOaTkUQPOoDYxWE0EL3f3r3Dr9TaK6fs1dXJQyfF3c8PM8T
+	 noZ6uF+qeQtrDt4hEeO4k7zEtTwEEn9A3lp6GXobVYLJWm7cfdDBEbU8L3iH5+kqnnRaTF+9jwwv
+	 +dU+CUUOWMUiPU7UsArQejXDp25/VjgkkON0mFDjq3JYWnfh03EkBwDonTHpeCSEQC7q+FboVzvu
+	 To44bomw6TCbagDNjT7/nhzuOk/wxGoPtc1hQzH3PbiI62Hh82I4aYVv6r+V3Xl5mi9GP21ZGy4A
+	 s84JT0XuWcEfpJyO1wFMvY+rAfQKm5Zou8v6meyW3gwLT5jbEISIJeEmWRdqIqUfcwIWZ/ILw3CC
+	 xLh3OzOzwRi2YDoyIiWmKLAuQ/JipTk3UZqzGIa7eh4s2exXlvJHB9zvP0oOxGGzkKO7v2VCpT2t
+	 7ayye7ilvKzBQnpVsk36L//fLci5wQq0CplU6YBXj9jk5z/BR81XAcMIBe5Arl7ryyvIELPjsG/O
+	 SBUm6gw0OrVrdzte4CpsbCrbnCffqiwGYYPEJs792MRtJYIUrJjJWWMr81fssM4wTXBe6hvp0OTh
+	 Xh5g+xZOkJPsSLZCF8i5nzpO2t35Pz6o5MJfoEEBmJi59Bfgl4MQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: wodemia@foxmail.com
+To: alexs@kernel.org,
+	siyanteng@loongson.cn,
+	corbet@lwn.net
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tao Zou <wodemia@linux.alibaba.com>
+Subject: [PATCH V1 RESEND 1/1] zh_CN/admin-guide: Add zh_CN/admin-guide/numastat.rst translation document
+Date: Tue, 18 Jun 2024 10:47:37 +0800
+X-OQ-MSGID: <20240618024737.76204-1-wodemia@foxmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: wesion.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25c10ae4-6ea9-4904-d9e7-08dc8f40dbe9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2024 02:46:30.9871
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bwrhCI623/KE89JmGypm2JOakgljtV9NHbAHHRq3QdX3nIFGopSHy1cw/Za0rpkunYOHUmOjEIkVkba1LYIUpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8287
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Heiko,=0A=
-=0A=
-> The rk3588's hdmi controller was just posted in a v1 and from=0A=
-> comments received it looks like it'll still take a bit of time before=0A=
-> that is ready to land.=0A=
-=0A=
-All right. I will recommit after the posted patch was merged by mainline. B=
-y the way, could you provide information on the specific patch or share a l=
-ink to it?=0A=
-=0A=
----=0A=
-Best Regards=0A=
-Jacobe=
+From: Tao Zou <wodemia@linux.alibaba.com>
+
+Add translation zh_CN/admin-guide/numastat.rst and link it to
+zh_CN/admin-guide/index.rst while clean its todo entry.
+
+Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
+---
+
+I apologize, the previous PATCH had an incorrect email address for linux-doc when it was sent, so I need to resend it.
+ 
+ .../translations/zh_CN/admin-guide/index.rst  |  2 +-
+ .../zh_CN/admin-guide/numastat.rst            | 50 +++++++++++++++++++
+ 2 files changed, 51 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/admin-guide/numastat.rst
+
+diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst b/Documentation/translations/zh_CN/admin-guide/index.rst
+index ac2960da33e6..0db80ab830a0 100644
+--- a/Documentation/translations/zh_CN/admin-guide/index.rst
++++ b/Documentation/translations/zh_CN/admin-guide/index.rst
+@@ -68,6 +68,7 @@ Todolist:
+    cpu-load
+    cputopology
+    lockup-watchdogs
++   numastat
+    unicode
+    sysrq
+    mm/index
+@@ -109,7 +110,6 @@ Todolist:
+ *   module-signing
+ *   mono
+ *   namespaces/index
+-*   numastat
+ *   parport
+ *   perf-security
+ *   pm/index
+diff --git a/Documentation/translations/zh_CN/admin-guide/numastat.rst b/Documentation/translations/zh_CN/admin-guide/numastat.rst
+new file mode 100644
+index 000000000000..4f7fee557cb5
+--- /dev/null
++++ b/Documentation/translations/zh_CN/admin-guide/numastat.rst
+@@ -0,0 +1,50 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/admin-guide/numastat.rst
++:Translator: Tao Zou <wodemia@linux.alibaba.com>
++
++.. _cn_numastat:
++
++
++===============================
++Numa策略命中/未命中统计
++===============================
++
++/sys/devices/system/node/node*/numastat
++
++所有数据的单位都是页面。巨页有独立的计数器。
++
++numa_hit、numa_miss和numa_foreign计数器反应了进程是否能够在他们偏好的节点上分配内存。
++如果进程成功在偏好的节点上分配内存则在偏好的节点上增加numa_hit计数，否则在偏好的节点上增
++加numa_foreign计数同时在实际内存分配的节点上增加numa_miss计数。
++
++通常，偏好的节点是进程运行所在的CPU的本地节点，但是一些限制可以改变这一行为，比如内存策略，
++因此同样有两个基于CPU本地节点的计数器。local_node和numa_hit类似，当在CPU所在的节点上分
++配内存时增加local_node计数，other_node和numa_miss类似，当在CPU所在节点之外的其他节点
++上成功分配内存时增加other_node计数。需要注意，没有和numa_foreign对应的计数器。
++
++更多细节内容:
++
++=============== ============================================================
++numa_hit        一个进程想要从本节点分配内存并且成功。
++
++numa_miss       一个进程想要从其他节点分配内存但是最终在本节点完成内存分配。
++
++numa_foreign    一个进程想要在本节点分配内存但是最终在其他节点完成内存分配。
++
++local_node      一个进程运行在本节点的CPU上并且从本节点上获得了内存。
++
++other_node      一个进程运行在其他节点的CPU上但是在本节点上获得了内存。
++
++interleave_hit  内存交叉分配策略下想要从本节点分配内存并且成功。
++=============== ============================================================
++
++你可以使用numactl软件包（http://oss.sgi.com/projects/libnuma/）中的numastat工具
++来辅助阅读。需要注意，numastat工具目前只在有少量CPU的机器上运行良好。
++
++需要注意，在有无内存节点（一个节点有CPUs但是没有内存）的系统中numa_hit，numa_miss和
++numa_foreign统计数据会被严重曲解。在当前的内核实现中，如果一个进程偏好一个无内存节点（即
++进程正在该节点的一个本地CPU上运行），实际上会从距离最近的有内存节点中挑选一个作为偏好节点。
++结果会导致相应的内存分配不会增加无内存节点上的numa_foreign计数器，并且会扭曲最近节点上的
++numa_hit、numa_miss和numa_foreign统计数据。
+-- 
+2.39.3 (Apple Git-146)
+
 
