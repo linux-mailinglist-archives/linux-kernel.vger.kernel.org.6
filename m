@@ -1,252 +1,140 @@
-Return-Path: <linux-kernel+bounces-220049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BCBC90DC06
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:57:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27A390DC09
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73CB1F235E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:57:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D2FFB223C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2270115ECF0;
-	Tue, 18 Jun 2024 18:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FED15ECFC;
+	Tue, 18 Jun 2024 18:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CABPPSSe";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vrV0m/pk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UztlCJuZ"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4122C15E5CA;
-	Tue, 18 Jun 2024 18:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B0A14BF92;
+	Tue, 18 Jun 2024 18:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718737025; cv=none; b=ZNgG0VaRPFcpYvaoK9w+Q6Hz6RKP49Jmm+JOMseA6++L4XS6p4WIBKh8/WJmCB+0OLcZH6ke2CESnpMZGDPDkQTTUus1muGn18G6Hy3NXhgCU+0S5cBISt73dtjY8lMZzdjV4+8b+pogman1jEQPastFblJ7NWv4Rib7scE6BDg=
+	t=1718737041; cv=none; b=bUpUKAUVAACuK5Q0v7NOIUMmQSzOvcQZEDFrLPKO+LLwnCmCfqGaWNPwLei3kZEksG59v18DRSjrnCNPWC4a+X4jMQKVQNEzGOnWCEpdlQa//MFozPBFMgthVrQ6QJNRl0cXZF0CVscllb3Gazi7ON0cBj9mbMz3R7x+5VtYp14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718737025; c=relaxed/simple;
-	bh=xfSDyu97JueS0a9gLKLkYXG4Plr8J+murWmnStzkUrY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ki7lN2Qrr6364MOuKz8zBX9/LUy5CWWggHrt2JyW0bxpQ7ZYXfY/M3KchP0lhOBgN+ov1vR/B0IOTZ2wXm88jv1VoXCRjUsNhIB/PrqRjSs+THvB+gWhTx8hh9kootPQtulCuPHyN9oNYQwFadltMnm4er/Imjwzfzbe6AL3JrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CABPPSSe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vrV0m/pk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718737021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KW1FZlJufvw9GbeqjoUcpDXZdjkkY+hrousdX2da4kY=;
-	b=CABPPSSeAnuve3PoZ4tmzelTrmPomJLfBEl+r+5bUg7l2nXInhva9FnMNVQbvMl0H4Xpsn
-	haIxLqtgSP4mjCqZOXUQkAjDSDRiOwMuUU+2XryH64F+GTTNU5OwsUJOEtWBe9YaSfa7Tr
-	NV9dpxB/PIADGTi2Cb3J9AgduzNVDy91MkcgdaYVN0HBmZgM3RrjFpreKvP2CbpxKYYI44
-	6jC7v96MYVwkhE9bMNMqtYKQNzGvXH+scLGxPsHz15ATkPoEaX54ffeeG0dX3d5Iip7yKR
-	jzAPs1MTc0lp628xtkjmXJn3M1H34bVQ8qQ10dpwJ/f9sNNZjvq1U3/u0a2lUw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718737021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KW1FZlJufvw9GbeqjoUcpDXZdjkkY+hrousdX2da4kY=;
-	b=vrV0m/pkLdaEj8/zZF9i96CYG4ENPuCiJ6bqi1ZJs96tAnU4g555rKz7JeHGZvMB8qSvzM
-	fM5PEoGgTuXFaCAQ==
-To: Derek Barbosa <debarbos@redhat.com>, pmladek@suse.com,
- rostedt@goodmis.org, senozhatsky@chromium.org,
- linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: williams@redhat.com, jlelli@redhat.com, ahalaney@redhat.com,
- lgoncalv@redhat.com, jwyatt@redhat.com, aubaker@redhat.com
-Subject: Re: [BUG] printk/nbcon.c: watchdog BUG: softlockup - CPU#x stuck
- for 78s
-In-Reply-To: <ZnHF5j1DUDjN1kkq@debarbos-thinkpadt14sgen2i.remote.csb>
-References: <ZnHF5j1DUDjN1kkq@debarbos-thinkpadt14sgen2i.remote.csb>
-Date: Tue, 18 Jun 2024 21:03:00 +0206
-Message-ID: <87msni13lv.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1718737041; c=relaxed/simple;
+	bh=c+/c9FLDJnL3Ta+QVzbWgUNS2/GAvTls4vNC6buevl0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOrCN6jrtVpEhrwswLAVBP+uBP7iuz7QoJz8oQAkOkfVDvs+kz2ZQSJuiOzV9d9ISeoiAkPTawk3Ii4NWoevqcURyvHjmqhw5GUjLMLFdhgibNQVRxzBuh2DyfBicJpjrQUPm7JuPXBRniLZOF8CEZ7/rG8IMOVYf2Df40MlzdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UztlCJuZ; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45IIv5gn023119;
+	Tue, 18 Jun 2024 13:57:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718737025;
+	bh=JhzGH4hdp0MF05nChSMa0dk6h+PwXRQQ1wDR6XavthA=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=UztlCJuZiFG54Ui/IsUuWw85U0mxDBXLCXb4eAdHCzxDTefu9dQvkcl6vXDAz29kQ
+	 Gb+6F3Abj+oaofQBcADQ0hPF7hl6MKHNCWS7aXbwDN88ddDMn1C0tWOIXxs5t8Tm5u
+	 yCjpEihHAUaUh11+iC4L5faZo0YBY5ir4ek5Sj/8=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45IIv5lJ096388
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 18 Jun 2024 13:57:05 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
+ Jun 2024 13:57:05 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 18 Jun 2024 13:57:04 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45IIv5L4083546;
+	Tue, 18 Jun 2024 13:57:05 -0500
+Date: Tue, 18 Jun 2024 13:57:05 -0500
+From: Nishanth Menon <nm@ti.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
+        Linus
+ Walleij <linus.walleij@linaro.org>,
+        Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: pinctrl-single: Define a max count
+ for "pinctrl-single,gpio-range"
+Message-ID: <20240618185705.5fwevm7drphgvwl2@dilation>
+References: <20240618165102.2380159-1-nm@ti.com>
+ <171873566448.3500109.16734660300499772836.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <171873566448.3500109.16734660300499772836.robh@kernel.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Derek,
+On 12:34-20240618, Rob Herring wrote:
+> 
+> On Tue, 18 Jun 2024 11:51:02 -0500, Nishanth Menon wrote:
+> > "pinctrl-single,gpio-range" allows us to define a dis-contiguous
+> > range of pinctrl registers that can have different mux settings for
+> > GPIO mode of operation. However, the maxItems seem to be set to 1 in
+> > processed schema for some reason. This is incorrect. For example:
+> > arch/arm64/boot/dts/hisilicon/hi6220.dtsi and others have more than
+> > one dis-contiguous range.
+> > 
+> > Arbitrarily define a max 100 count to override the defaults.
+> > 
+> > Signed-off-by: Nishanth Menon <nm@ti.com>
+> > ---
+> > I am not sure if I should call this RFC or not.. and if this is even the
+> > right solution.. I am on 2024.05 dt-schema for this check.
+> > 
+> > I noticed this when adding gpio-ranges for am62p platform:
+> > https://gist.github.com/nmenon/7019cd2f24be47997640df5db60a7544
+> > 
+> > It is possible that this is a bug in dt-schema, but I have'nt been able
+> > to track it down either.
+> > 
+> > behavior seen is the following:
+> > pinctrl-single,gpio-range = <&mcu_pmx_range 0 21 7>;
+> > generates no warning
+> > However,
+> > pinctrl-single,gpio-range = <&mcu_pmx_range 0 21 7>, <&mcu_pmx_range 32 2 7>;
+> > 
+> > generates "is too long" warning.
+> > 
+> > 
+> >  Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml: properties:pinctrl-single,gpio-range: {'description': 'Optional list of pin base, nr pins & gpio function', '$ref': '/schemas/types.yaml#/definitions/phandle-array', 'maxItems': 100, 'items': [{'items': [{'description': 'phandle of a gpio-range node'}, {'description': 'pin base'}, {'description': 'number of pins'}, {'description': 'gpio function'}]}]} should not be valid under {'required': ['maxItems']}
+> 	hint: "maxItems" is not needed with an "items" list
+> 	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
 
-On 2024-06-18, Derek Barbosa <debarbos@redhat.com> wrote:
-> The realtime team at Red Hat has recently backported the latest printk
-> changes present in 6.6-rt stable (HEAD at 20fd4439f644 printk: nbcon:
-> move locked_port flag to struct uart_port) to CentOS Stream 9 for
-> performance improvements and printk-related bugfixes.
->
-> Since merging this said code, we've hit an interesting bug during
-> testing, specifically, on larger systems, a softlockup may be reported
-> by the watchdog when there is a heavy amount of printing to tty
-> devices (whether it be through printk, /dev/kmsg, etc).
->
-> We have a modicum of reasonable suspicion to believe that
-> nbcon_reacquire, or some other nbcon mechanism *may* be causing such
-> behavior.
->
-> Since we've succesfully reproduced this in the Kernel-ARK/Fedora-ELN
-> (osbuild-rt), and linux-rt-devel 6.10.rc4-rt6, we are reporting this
-> bug upstream.
->
-> Anyway, here is a more in-depth description, along with some call traces.
->
-> Description:
->
-> On x86 systems with a large amount of logical cores (nproc ~> 60), a
-> softlockup can be observed with accompanying call trace when a large
-> amount of "printing" activity is taking place.
->
-> As shown in the call traces appended below, during some kind of numa
-> balancing/numa_migration after a task_numa_fault --where a set of
-> processess are being migrated/swapped between two CPUs-- there is a
-> busy thread that is being waited on (in the order of seconds), causing
-> a livelock. Additional investigation of collected vmcores by toggling
-> panic on softlockup shows that the waiting thread may be waiting for a
-> thread looping with nbcon_reacquire.
->
-> I suspect that some logic within nbcon_context_try_acquire may be a
-> good place to start. My understanding of the code becomes a bit fuzzy
-> here, so apologies in advance for any erroneous statements. As I see
-> it, there may be something happening during migration (or under heavy
-> load) in which nbcon_reacquire() is in a non-migratable or
-> non-preemtible state as it is attempting to regain access to a
-> lost/taken console. It could very well be a situation in which context
-> was forcefully taken from the printing thread.
->
-> Alternatively, Andrew Halaney <ahalaney@redhat.com> suspects that it
-> is the loop within nbcon_kthread_func() -- since there is nothing that
-> would yield the task in said loop (cant_migrate()), the migrate code
-> would be essentially waiting forever for the aforementioned loop to
-> "finish". I believe in PREEMPT_RT, there would be a preemption point
-> here. Furthermore, in his investigation, there were signs that the
-> loop was just iterating up until the crash, leaving reason to believe
-> that task would be the culprit.
->
-> In fact, with the following diff, we noticed this output:
->
-> ```
-> ahalaney@x1gen2nano ~/git/linux-rt-devel (git)-[tags/v6.10-rc4-rt6-rebase] % git diff | cat
-> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-> index bb9689f94d30..d716b72bf2f8 100644
-> --- a/kernel/printk/nbcon.c
-> +++ b/kernel/printk/nbcon.c
-> @@ -1075,6 +1075,7 @@ static int nbcon_kthread_func(void *__console)
->       *
->       * This pairs with rcuwait_has_sleeper:A and nbcon_kthread_wake:A.
->       */
-> +    trace_printk("Before rcuwait_wait_event()\n");
->      ret = rcuwait_wait_event(&con->rcuwait,
->                   nbcon_kthread_should_wakeup(con, ctxt),
->                   TASK_INTERRUPTIBLE); /* LMM(nbcon_kthread_func:A) */
-> @@ -1086,7 +1087,10 @@ static int nbcon_kthread_func(void *__console)
->      if (ret)
->          goto wait_for_event;
->
-> +    trace_printk("Starting do while(backlog) loop \n");
-> +    unsigned long int loop = 0;
->      do {
-> +        trace_printk("On loop %lu\n", ++loop);
->          backlog = false;
->
->          cookie = console_srcu_read_lock();
-> @@ -1121,6 +1125,7 @@ static int nbcon_kthread_func(void *__console)
->          console_srcu_read_unlock(cookie);
->
->      } while (backlog);
-> +    trace_printk("End of while(backlog) loop, looped %lu times \n", loop);
->
->      goto wait_for_event;
-> ```
->
-> The output:
->
-> ```
-> [ 1681.309720] pr/ttyS0-18       21.N... 893365994us : nbcon_kthread_func: On loop 2117
-> [ 1681.309727] pr/ttyS0-18       21.N... 893374418us : nbcon_kthread_func: On loop 2118
-> [ 1681.309734] pr/ttyS0-18       21.N... 893382860us : nbcon_kthread_func: On loop 2119
-> (...)
-> [ 1681.396193] pr/ttyS0-18       21.N... 954571399us : nbcon_kthread_func: On loop 14025
-> [ 1681.396200] pr/ttyS0-18       21.N... 954576525us : nbcon_kthread_func: On loop 14026
-> [ 1681.396207] pr/ttyS0-18       21.N... 954581561us : nbcon_kthread_func: On loop 14027
-> [ 1681.396213] pr/ttyS0-18       21.N... 954584954us : nbcon_kthread_func: On loop 14028
-> [ 1681.396220] pr/ttyS0-18       21.N... 954590111us : nbcon_kthread_func: On loop 14029
-> [ 1681.396223] ---------------------------------
-> [ 1681.396230] Kernel panic - not syncing: softlockup: hung tasks
-> (...)
-> ```
->
-> Demonstrating evidence that the nbcon kthread function is invoked
-> continuously up until the point of panic. I do believe that this
-> approach is more sound than my initial hints (or it could be more than
-> a handful of threads). Some traces around
-> serial8250_console_write_thread() also denote continuous calls without
-> any holdups.
->
-> As a sidenote, we are seeing the softlockup with !CONFIG_PREEMPT_RT
+yes, I had expected the same, but processed schema indicates a maxItems
+of 1 for reasons I am unable to make sense of.. will be great to have
+some additional eyes:
 
-This trace shows that the thread is successfully printing
-lines. So I doubt nbcon_reacquire() is involved here.
+https://gist.github.com/nmenon/7019cd2f24be47997640df5db60a7544#file-processed-schema-pinctrl
 
-Assuming the ringbuffer is getting filled as fast or faster than the
-thread can print, then we effectively have this:
-
-DEFINE_STATIC_SRCU(test_srcu);
-static DEFINE_SPINLOCK(test_lock);
-
-static int kthread_func(void *arg)
-{
-	unsigned long flags;
-
-	do {
-		srcu_read_lock_nmisafe(&test_srcu);
-		spin_lock_irqsave(&test_lock, flags);
-		udelay(5000);  // print a line to serial
-		spin_unlock_irqrestore(&test_lock, flags);
-		srcu_read_unlock_nmisafe(&test_srcu);
-	} while (true);
-
-	return 0;
-}
-
-And since the thread has a nice value of -20, it will get a lot of CPU
-time allocated to it. Is that a problem? Shouldn't the scheduler
-eventually kick the task off the CPU after its timeslice is up?
-
-> Some questions arise from this, as we've never encountered this in our
-> testing with John Ogness' console_blast (kudos to <jwyatt@redhat.com>)
-> and other printk torture tests that have been compiled
-> [here](https://gitlab.com/debarbos/printktorture).
-
-Yes, that is odd since those tests will ensure that the printing thread
-never exits its printing loop because it will never catch up. So it
-should be the same situation.
-
-> We are curious to understand why is it that the printing thread is
-> chosen by the NUMA balancer for migration/swap, and how that
-> interaction is handled within the code (in other words, how else would
-> nbcon handle a migrated printing thread?).
-
-The nbcon console can only be owned when migration is disabled. In the
-case of the printing thread for serial, this is under the
-spin_lock_irqsave(). The NUMA balancer would only be able to migrate the
-thread outside of the spin_lock critical section. And outside of the
-spin_lock critical section, the thread does not own/hold any resources
-at all. So it should be no problem to migrate it.
-
-> Our next round of tests aim to disable numa balancing on
-> large-multi-core-systems to determine whether it is the NUMA
-> mechanisms + nbcon interactions are at fault here.
-
-I am curious if starting a kthread using the code I wrote above (with
-nice=-20) would cause similar issues.
-
-> How to reproduce:
-
-I am currently traveling, so my time/resources are limited. But next
-week I will be able to look into this in detail. Thanks for this work!
-
-John Ogness
+next-20240617 baseline
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
