@@ -1,111 +1,146 @@
-Return-Path: <linux-kernel+bounces-219660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB4390D62C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:54:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1DB90D631
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CDA81C210B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:54:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D5441C22DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D328E13F00A;
-	Tue, 18 Jun 2024 14:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962C514E2DF;
+	Tue, 18 Jun 2024 14:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z7bGY1TZ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FEbEx+UZ"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B142913F003
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD282139C1;
+	Tue, 18 Jun 2024 14:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718722076; cv=none; b=jcxkhA+SzYQPklVCDiixUza9HO0vLwcSBwzy0yngPdBiQNpTfDApuq0N91KG02ecl7c2CP2YG9Xm/sM+9DolGxS8auhQv6zVlwHzX3R/Q1Pmpp79/dI/mbF/WEyegByqc77tpQ0dxAJS7oqz8XXQDq+kN5avAZFsqTHMCabIBeY=
+	t=1718722083; cv=none; b=oPNbFNjqTodqmy6Ur4LyuaL7N5rEpC4Lc8tBTosiHCUbjtJr5vxZJ64nqG8R5l85AlZWdqo3ifHpVPDg+Lgxz4rni9uNgdotJZ18f3Zo/8PV6Vrg21SA/SvcvKVV0PHKMbK/y9LXAidWN7+Sk6MGqVCY1nDI1qhmh38RwOUp594=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718722076; c=relaxed/simple;
-	bh=9+QYKsnxwciPPkF5LJewp9ve91BAy8qGJgnDlZZqgZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iKXbJ0SUCW1YMs4Urdad+O6JAi4eBSnH+6ARZD7QocTuLfBl+k6PGRLzlMi1glBhGvffLmG0Yoqz430n1cCrKMcEOc04aSZlAO9J1vHzwjz5cZWITZ6ftA29dAj/6zireq5xjeuwlAISxYvspQrxBL/hhphCMQco6nIUgThg6mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z7bGY1TZ; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4230366ad7bso50333975e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:47:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718722073; x=1719326873; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+cbw6Bx2xA/wA1wsLz+oR6E+oVt4SHwS049oMAcuOIY=;
-        b=Z7bGY1TZGDTiDLjdhkTBum7NCYhdBbkLzPs4wsWTd3EOkoRC95fqSvHN54S13HmNsO
-         xngDaAWv2OH7nkm6jCZmJcj4cv0RcdwXq7+dnT/ewToKIJX4PkU52ANvPG2movi3vkaQ
-         oL2IAYh6dgmkDNz47rVL74ohq+obQzgVHFV+Tj5ZBGfFiytWGmYx8qQEI9coaAeNIi0+
-         qAOxBQPspcCciap2GYsNdHSnLZtezwyfE2gGu1UTQEcI+ANPO05pXONgjlufmUP3z44o
-         JhOIaftgv52xtTenGKbxcP+MYmwmWdYF+bEKIQOEbSbQknAHMuQnI9wQZUxvjhJTGiUc
-         j4XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718722073; x=1719326873;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+cbw6Bx2xA/wA1wsLz+oR6E+oVt4SHwS049oMAcuOIY=;
-        b=d1RZ5NAPWO+WXRSAxmNvKAxyeMlIX3KFjptRaTogELrRC/HL4bwTcWL2HWoFa5PAsJ
-         eq5xp57i8z9JPwFE1DC0OWjOXgTkziNMClZ6YXkZxNcLqBUvSDLRnt4mqtXdWXGZZV+9
-         GS/QMi2X5TtO07wxiOwNKu3/GTOsqLhnyndfqLeP4dYAbqTjyyHPKHj+5t2BXTnj+7y2
-         RRqX96kU/3pasnmNnTVghpvjpC6Kro8aVCRfok2q3vM4kvrE9oj7beCK3NIt59iPMFXH
-         /ltgK3klKcUIIt0ZSPLkfkR/vhXjhQxyRpkQcrqkVeKgxnjLB97P0gHkpAW/1Ri/Lq7A
-         kKwA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7kBh5f8zMExbCp8EGjwvdH0vBs9PdCsz7siWt1+Vdp7jeJeXQOoi5YEkoHXaW/uCN7sESmWzkfcxQl5eTalVUVSxTXtN0rtvB4WKT
-X-Gm-Message-State: AOJu0YxVGGjG2cQpVIQns6FuH22odT6B0TGsF8riAYd6N5HoGKXuU4Ra
-	hlL0Lf0B3u/BJK99nssbMvCUudN3g72pCJBsAfJbc0e2SnOSSwAcQ5jfxD2AkKY=
-X-Google-Smtp-Source: AGHT+IF9eWD+iBGTTbMd7s7/ZxukSrBvSi6su/3uP4mI5cG6RCpXNcaANJ63gsUAM54GxX0XWDZuVQ==
-X-Received: by 2002:a05:600c:5118:b0:422:2044:a0dd with SMTP id 5b1f17b1804b1-42304825795mr110428695e9.18.1718722073231;
-        Tue, 18 Jun 2024 07:47:53 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de63asm229867065e9.30.2024.06.18.07.47.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 07:47:52 -0700 (PDT)
-Message-ID: <1e10252a-c759-4767-beb2-12bf79c26315@linaro.org>
-Date: Tue, 18 Jun 2024 16:47:49 +0200
+	s=arc-20240116; t=1718722083; c=relaxed/simple;
+	bh=AptMB+YIiD2q53qVWsQoJqIp+iSh1nUp7RFHH6Hf/ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PY+C86f19fnMpYAK3uWWLSu2Kqh0wgHPeQK8M2aTwZHwMnC/dUuqeiawS0ElUc7pO3td+LIwrWkvPoU0OyGXNXiXAwJXTxperJ/bgbME95RWEJYoAE7S/J5OxDoyW1Rrc1hvbf8C04NlNdhL98+/BGeEoyD83f3OSo5uzsu9SzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FEbEx+UZ; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718722080;
+	bh=AptMB+YIiD2q53qVWsQoJqIp+iSh1nUp7RFHH6Hf/ik=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FEbEx+UZSasLc7cTDBrhO6RxoZODD2ORZ/GcdPip5l5O1vtkDrBkWHydICrYy80cZ
+	 AkgZIln2jKxEU8mSYvmtCtHSoUMn3Vt2KzOTPVe5BSgh5dDOh1XBoQyOIKTFVYDFZL
+	 f5ulw1hxHi/tpLIyrWit4RzFFzUZLrv3dv8WGi88112JMtorTp9LhO8xfM/cKk58vl
+	 b8o034LkaZdrDSz7PbB2inMB/sbFCoNaQ/er1LVNoM8IIxKGvhX51n08wApd/P0A1k
+	 l0BWdgmScyVvQjDD1rEDESKSuEGhvR5SVdo3zgsGxZw96/FLCn5a8dL0dnVBBAzEJJ
+	 66x0QI/ESyvDw==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 35C6B3780629;
+	Tue, 18 Jun 2024 14:48:00 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id D25721060734; Tue, 18 Jun 2024 16:47:59 +0200 (CEST)
+Date: Tue, 18 Jun 2024 16:47:59 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Arend Van Spriel <aspriel@gmail.com>
+Cc: Jacobe Zang <jacobe.zang@wesion.com>, kvalo@kernel.org, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, nick@khadas.com, 
+	arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] dt-bindings: net: wireless: BCM4329 binding: add
+ pci14e4,449d
+Message-ID: <si3gjsfqcixdrwzf4nmxvugpcbrhglchxxm5vwnr52rhsvuflc@5r2g4g2xd7au>
+References: <20240617024341.3106240-1-jacobe.zang@wesion.com>
+ <b6b06a15-b7de-4351-ab9e-5234d2b91496@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/4] arm64: dts: qcom: sc7280: Add clocks for QOS
- configuration
-To: Odelu Kukatla <quic_okukatla@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>, Georgi Djakov <djakov@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, cros-qcom-dts-watchers@chromium.org,
- "Gustavo A . R . Silva" <gustavoars@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, quic_rlaggysh@quicinc.com,
- quic_mdtipton@quicinc.com
-References: <20240607173927.26321-1-quic_okukatla@quicinc.com>
- <20240607173927.26321-5-quic_okukatla@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240607173927.26321-5-quic_okukatla@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bqocjo5pd32uxgd2"
+Content-Disposition: inline
+In-Reply-To: <b6b06a15-b7de-4351-ab9e-5234d2b91496@gmail.com>
 
 
+--bqocjo5pd32uxgd2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 6/7/24 19:39, Odelu Kukatla wrote:
-> Add clocks which need to be enbaled for configuring
-> QoS on sc7280.
-> 
-> Signed-off-by: Odelu Kukatla <quic_okukatla@quicinc.com>
-> ---
+Hi,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+On Tue, Jun 18, 2024 at 01:09:07PM GMT, Arend Van Spriel wrote:
+> On 6/17/2024 4:43 AM, Jacobe Zang wrote:
+> > It's a Broadcom Wi-Fi module connected via the PCIe interface and also
+> > add prefix in vendor-prefix.yaml
+> >=20
+> > Link:https://lore.kernel.org/linux-devicetree/20240617023517.3104427-1-=
+jacobe.zang@wesion.com/T/#u
+> > Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> > ---
+> >   .../devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml      | 1 +
+> >   1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/net/wireless/brcm,bcm432=
+9-fmac.yaml b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-f=
+mac.yaml
+> > index e564f20d8f415..0477566acd72a 100644
+> > --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.=
+yaml
+> > +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.=
+yaml
+> > @@ -53,6 +53,7 @@ properties:
+> >             - pci14e4,4488  # BCM4377
+> >             - pci14e4,4425  # BCM4378
+> >             - pci14e4,4433  # BCM4387
+> > +          - pci14e4,449d  # BCM4329
+>=20
+> I can not find that device id. Can you provide more information where you
+> came across this device. The BCM4329 as I know it is an 802.11n *SDIO*
+> device. Not a PCI device.
 
-Konrad
+It's the device id used by AP6275P, see this discussion from half a
+year ago [0]. It is used by Rockchip's RK3588 evaluation board, which
+apparently resulted in some RK3588 boards using the same chip.
+
+[0] https://patchwork.kernel.org/project/linux-wireless/patch/c7b331edd65b6=
+6521a6605177d654e55051568a3.camel@toradex.com/
+
+Greetings,
+
+-- Sebastian
+
+--bqocjo5pd32uxgd2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZxnhEACgkQ2O7X88g7
++prHZA/+PhQDVUsUiui4n/4jAvQYSZ6Q5SB7dV1JndGlFwxfs+u8IuBLfSRxID3U
+nAkQTcdiC1cPj1g7NPcoI15IM8Xjejt3x9yF+sd7Vx9QqAikJpyT2K/tZynMnikc
+2z5LOkNkEBTbGSOWTglD4WsLhz3WDYZRkEGE5ff6WmqODuNwRbJdC2FvgVOkHcn2
+hlSSiNeRXW7w6x7HpqHpZZSerauuTIDYSfUMsbnxW8QCKsKv41UwLDWaLy/rplOx
+yIUSrHFcgVvhGpB+cAQnjLcGOqrThJ3fuFghn7a9kIdfnj2Wes98kV8nbewMCLd/
+c+2hRA61BsNNtfli2xHRShQhkmYuzL+/koO4D4Z6rRnxEftLZx0oITarlTkdOChh
+K4pfyQegkK6FM4RJgEwrJh8JrurEwNp3kaVS5nO5S6bHRlrl2R6hZD1B56W70amg
+SChGzcyz4mDl8vIEMhWnLh1jAUCtupJtYpNbWJNvD71ouCMgBmyQQrYVSl5nTM6V
+K+GTtv4Fr8HlvECgQpU7GbqW/RdNz4y7VOyN1ZWkvfu6ilARR7sr+d3LcKRGwm3+
+Ke/Tbjr2VCRy2oUG/T7JO+JutPQABDx9tqhdO7Tzezbp6KZUDnQiz8dKr4YpP4bU
+2N3GcDORymGCwqL3ZwnfU4eWcvRQkgGjuT7iJUPPtsr7LGWQG5s=
+=UN5E
+-----END PGP SIGNATURE-----
+
+--bqocjo5pd32uxgd2--
 
