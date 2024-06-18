@@ -1,109 +1,114 @@
-Return-Path: <linux-kernel+bounces-219761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1EA90D90C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 327E290D999
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FD26B2B90D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:36:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1928FB36016
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF2A23777;
-	Tue, 18 Jun 2024 15:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E474E46426;
+	Tue, 18 Jun 2024 15:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ysXS1H4f"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="PbLw1o/q"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8914A35
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4781645BFD
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718724979; cv=none; b=G3iZlpUXA6rZ9rOswsBj0uKENUFr4pWmUxoB9fBHtBmBpDo0FWjNjXAXwyA7l728rL74JExbYRqOGzV+82zMPSRzZDl0toQafH34Bm3ADEp6Z5ygI/bfRO892t/beEHn9Xiss0qzpuKriD6QoeF1lC3ZZObFTyDoEtnGVG+newg=
+	t=1718725896; cv=none; b=pECqqBMwpXoecuTdrh2mIY4w9L6HzJbPLBz2dLU5hQ/KTrbK6ODC8ayrFedUnb+gwMX0T/CDynMaCc+heCAIUfNGyTSjX4zkGI6WupJJLkG/G1r1hWjxYaboZvGQ4Cwj9v0E4aFEHEWFqlYMZn7n0UB7HHSxrfFghOZGgyAfhts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718724979; c=relaxed/simple;
-	bh=5RGeJPOFaWHdjpCL2phNpFb4SArUUUeonhkd+IsWbC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VApVp92DW72sCo3rocDppWvafTfzb1QRPlJfDnsZuRTQ+3ZQFJsTNEB2zVR7vcGGdE0inIel5RCN5NgmZtnCuSIME6AmkY8g1Q0t/U1FzqFlnDnunQwEcZPdnPr1nbVhN5kwaxFZ701GO86GWFSvWu/629NZo6ROKu9aLjZJALE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ysXS1H4f; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6fc36865561so1513604a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:36:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718724977; x=1719329777; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5RGeJPOFaWHdjpCL2phNpFb4SArUUUeonhkd+IsWbC4=;
-        b=ysXS1H4fS2mPV03Y4L/m84FKCjlkHSxi4xOu32dnqb6LzOwsyaraZoWoQH+LcpDk1H
-         cFgLindy9f2RhCTqS2qdoZsnPhxjDYvAYZAuddd4mGhwuKseFVr+T63p/7jRFd9y+8Cu
-         iq0nWFCXflnt8DFMsx1/RMCPABIQxCQpdHxEGONq+sFpQwMV16Ue7TY3DTYPNXp/mhaL
-         MO9tdYbrl+a/D/gLdejAg8ugwKJEf4tbZHMNevcmsVyEtI1oi6TnGsm6KCITtEcIjsmo
-         X9j0hF2G1+SGmpdKf/cBeoxvm0rOSp5qNU5/nl/oIjxpF4+GluSqPb5OiFNDRVFGRs8d
-         BLBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718724977; x=1719329777;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5RGeJPOFaWHdjpCL2phNpFb4SArUUUeonhkd+IsWbC4=;
-        b=QHWS/3ToPJhv2dDDiplwYoFEeU0S2IcOzjDg8orsPxjJGTJ/dMob/Wlms2jA7oEJ69
-         8Qw/J/n/qZUT0u84LDXau/U8abbivIkwMSSaF6TFDTCW6kVsVwRniX5EDFH60vzgGdpL
-         I/N3YMRQZj9T7lzNNaTMGFOTLD6LaqSKQNR9/Odtfb5a/BDMXeYBS51wqmaARiHM81Oc
-         YBTv98PArn7TTuxcWucjptH6rwSjFYG9L83eIxzXhCnbBGcj5dVH/mJYMcnT9TNvdrGS
-         WqQOAEE6dIstFcyHjmhWwUAj3jH2lxwWeMX+Oq4cRyHtUmpJlr88MM40/dt1jm0tYHkU
-         4CiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0JaQs/eZlI0FKmIoyN96rntiD3/jk5vicrM98WCWHhEX28hcxF9BLn2aXgUdBd5Tm8Sbe1mJsV8VCacH6TgkIOp6cvaltqq/eu3Wm
-X-Gm-Message-State: AOJu0YxLrUVk2z2LPZHlY7sObakfr3jhPmfbzn8UOEOWP6t++U0XAwP9
-	p1/MizRtuWIPDwxihrmtcUgnrZe5HwLvU2e1LNx/hcloiNZMmVdfqpg0E3DvhcKZfd9MG0Dd9kT
-	kMKysUV728gd5MKxcTTQPBaOKOukC0CScxY0s
-X-Google-Smtp-Source: AGHT+IEspShaRu1ToIazyKYK7a+yojtYmsB71BOjBBtI4HtP9AWTraCEUo7NTIwtb9GkxSM1Qq0A95f/tFWqAqFyrLk=
-X-Received: by 2002:a9d:6510:0:b0:6fd:6240:9dba with SMTP id
- 46e09a7af769-70074ebf134mr77156a34.16.1718724976930; Tue, 18 Jun 2024
- 08:36:16 -0700 (PDT)
+	s=arc-20240116; t=1718725896; c=relaxed/simple;
+	bh=EC4aqitERxCehlbxkC0+MICQzxA9puJoMAcU63x/ppQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JEuocg6d+VolNd+h+fqRDgKT8Yvk+iewlwkeAZJmYmN4FMXr0sqMP3UkxIzYu/S6X0zF8dSgsPrxTB7NyKrj5CR+/0CwPfo9PcY/KsCY9jtScwLlKI3ZwUrPx/Pd+oLqorvB2ene6IVbJpePOlGhrDRuATUgLurfN1iwuKkYJVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=PbLw1o/q; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1718725286;
+	bh=EC4aqitERxCehlbxkC0+MICQzxA9puJoMAcU63x/ppQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PbLw1o/q0ac0JhAzMHAQOtpU6u6hhhphom/imkTrN1lbbDJ7bPUizbKpcFnISjWi2
+	 AjjbVwuCJxj4zv8YT6DHab0xJO0glqLjLdgCGLAjWZQ3KKWJt1cMbnpaCFxS7Kmpt/
+	 3R2g2E7F9m0QdjWiULG1fPDdjpYK2/BwuvDq6OxUUxO0odHN5O75SQfHID3Zai2uH2
+	 S76+zYWU97obK98s5lAMDZ/7ig0iE0wiDL2Y8TCFvN+8hVIHyJcNXXwXMnTZAjQDWz
+	 Wg9XUfip1k7A8LUS3y1dqY0QOZOs6xADKHlMHieGrET5DMvGEd/F6vBXCQwHLVlvTC
+	 A8Qegl7XPsMVw==
+Received: from thinkos.internal.efficios.com (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4W3WFL28PNz16Pn;
+	Tue, 18 Jun 2024 11:41:26 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	nvdimm@lists.linux.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 3/4] arm64: Invoke pre_restart notifiers
+Date: Tue, 18 Jun 2024 11:41:56 -0400
+Message-Id: <20240618154157.334602-4-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240618154157.334602-1-mathieu.desnoyers@efficios.com>
+References: <20240618154157.334602-1-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613153924.961511-1-iii@linux.ibm.com> <20240613153924.961511-10-iii@linux.ibm.com>
-In-Reply-To: <20240613153924.961511-10-iii@linux.ibm.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Tue, 18 Jun 2024 17:35:36 +0200
-Message-ID: <CAG_fn=VT5u6fn6eaqzdB4bDZ+aw0kKBta7_Ff2Thn813RG6EVQ@mail.gmail.com>
-Subject: Re: [PATCH v4 09/35] kmsan: Expose kmsan_get_metadata()
-To: Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 13, 2024 at 5:39=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm.com=
-> wrote:
->
-> Each s390 CPU has lowcore pages associated with it. Each CPU sees its
-> own lowcore at virtual address 0 through a hardware mechanism called
-> prefixing. Additionally, all lowcores are mapped to non-0 virtual
-> addresses stored in the lowcore_ptr[] array.
->
-> When lowcore is accessed through virtual address 0, one needs to
-> resolve metadata for lowcore_ptr[raw_smp_processor_id()].
->
-> Expose kmsan_get_metadata() to make it possible to do this from the
-> arch code.
->
-> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Reviewed-by: Alexander Potapenko <glider@google.com>
+Invoke the pre_restart notifiers after shutdown, before machine restart.
+This allows preserving pmem memory across warm reboots.
+
+Invoke the pre_restart notifiers before emergency machine restart as
+well to cover the panic() scenario.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: nvdimm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+---
+ arch/arm64/kernel/process.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+index 4ae31b7af6c3..4a27397617fb 100644
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -129,6 +129,8 @@ void machine_restart(char *cmd)
+ 	local_irq_disable();
+ 	smp_send_stop();
+ 
++	do_kernel_pre_restart(cmd);
++
+ 	/*
+ 	 * UpdateCapsule() depends on the system being reset via
+ 	 * ResetSystem().
+-- 
+2.39.2
+
 
