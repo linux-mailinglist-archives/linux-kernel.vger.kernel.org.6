@@ -1,105 +1,116 @@
-Return-Path: <linux-kernel+bounces-218548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842C890C1C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:18:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C533490C1B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6D128352C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B93C1F2256B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 02:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2669E18B1A;
-	Tue, 18 Jun 2024 02:17:55 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60060199B0;
+	Tue, 18 Jun 2024 02:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACmlPoXY"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E074689
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7383C848D;
+	Tue, 18 Jun 2024 02:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718677074; cv=none; b=PbYu4Eu5jMz/KW/qYgZEGL+BID4mD3RhRmFbk+yAknzt3XTayUgsd3aSGzFS1yvy9aSTvR0VvXKj9N6MFI8wNssVMXUpAF9zDVscN5M6KGbv/TtAMZ3wi+lHGYs74pLN2KEkczv/1pq3rzyMxzFyYO0kfl/6Wdvw1AJYVyJtHPQ=
+	t=1718676423; cv=none; b=L6VI5sN6f8nif9vOrBIrF9fFXYHaamf4vpRSVJ5SaY3q0YJ0aPVtClN5kxcBlBI7/ZrYr/M81a3OIIZVIAGi53PUIa9eZuqwR4t/44hx6rhYsSEnuyEMwAxhcZSvRhM6vKW/a6i6zU2LbR6XqL3LOWWuodV/T5wQGEDnKImKaTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718677074; c=relaxed/simple;
-	bh=vozIaQ3SmAeCFCnzgGlIwGb9OCx0Xu21bviml6F2h44=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ctdXnd4afWvUroh52xOS41mF89pOeEgoG0rTmz/lvAdIwjzHJ8Xs0Z8eBzXNabqz5a9kBL1H4cRZidKbMBqROotmDHarbK7iwZiiduD6HImrJ3z8JjdcdlH5kydVPFxm7p13imleI8QPqyFpwpalP67j/pIRTNGV02W/XkiJdE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 7497720e2d1411ef9305a59a3cc225df-20240618
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:c3f8d9b5-79d8-4cab-8348-7e72cbe7caab,IP:15,
-	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:5
-X-CID-INFO: VERSION:1.1.38,REQID:c3f8d9b5-79d8-4cab-8348-7e72cbe7caab,IP:15,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:5
-X-CID-META: VersionHash:82c5f88,CLOUDID:de079e7db15eee2918a1ab7ec45f4431,BulkI
-	D:24061809453831AL2JP5,BulkQuantity:0,Recheck:0,SF:66|24|72|19|44|102,TC:n
-	il,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
-	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR
-	SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
-	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-	ABX_MISS_RDNS
-X-UUID: 7497720e2d1411ef9305a59a3cc225df-20240618
-X-User: lihongfu@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.255)] by mailgw.kylinos.cn
-	(envelope-from <lihongfu@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 2099277101; Tue, 18 Jun 2024 09:45:35 +0800
-From: Hongfu Li <lihongfu@kylinos.cn>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Hongfu Li <lihongfu@kylinos.cn>
-Subject: [PATCH] khugepaged: Simplify the allocation of slab caches
-Date: Tue, 18 Jun 2024 09:45:17 +0800
-Message-Id: <20240618014517.25954-1-lihongfu@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718676423; c=relaxed/simple;
+	bh=tDDhJBx2kQ1aLSfqQqgYyhSVtBWlyuSbl2KCKioVHGU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oWZtdURztU3FBjmsdN8hE/5tIw52jF6JAvpTem9Dzk0EbeIOWqz+KqLB6/982OKnLECsiVWob4ACqOdhPv1dgBCGwZ8ZTLgl908s2pvPzqvo+aYcrfdDDtAvHFBDVrONXFo/hv5b5EpjemVdZOhimdtLV1xYflABe+y4jrX7mEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACmlPoXY; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c4e2cd931aso697032a91.0;
+        Mon, 17 Jun 2024 19:07:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718676422; x=1719281222; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nHBxFQeQWiychYaWcoZDG4DV0SlUdCq7PLvbbl4B7kM=;
+        b=ACmlPoXYju309q5la2OWv0WgFI9aEkp0wPIcemkm3PJF/FelBZNchv26CpXZQ6Qlgy
+         JGsVbIvSS/DV6urPWepLXy0FmD5/bneVzG/EffRGXnZSQS8SbXIh+7ZsZCZsye5wiSru
+         ptSE7izsnuaJGEi6PLedOvl32s+83E3TnvV27E0pmhyXOaZ4VzMA/fZVd4jANSyYgG6A
+         2HQ4Go7Bh/VJcv1NlqeH8fwdq2CudCtZCdbLRu24c57yGuM4mprg4GvILV5fRE2hFDbR
+         AwjQczo6inB9ZBL/81zZ9wS3u6BEWlB4G78CQurcyFsFLszTATnybvg+TNKR5ySkai8z
+         ThgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718676422; x=1719281222;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nHBxFQeQWiychYaWcoZDG4DV0SlUdCq7PLvbbl4B7kM=;
+        b=FHUIbAn+d+wcbYGtK3GdLW4KqlDttTenWx29mZOjN5DqyJxrNFFrL3ZcC+HNxTWbtg
+         18ofoqgp4QZ4z7iCKQqGDq4YGhSXYbfhGWYz5yCqevpmZm/QFFdty0Xmq+s8cQA07mhG
+         fZt10avOwCo4SoW4p59WRwc3gLg8qVK1wnZvWvpORgcU6aL0aoiJ+9kFOI6yBjZXAV2t
+         NfgpWlD48XMQVW5dE1ig0j6ByzkJx/C5dg2/rj3f4LrPOaxdKnADkjGyuMTO5DFPC704
+         mVLn2aipWGmwrNgj5uiP1LjUxg14xLlqap3C0gtMCE54euo+TNWXYVuku+buUjO2UsOn
+         A26w==
+X-Forwarded-Encrypted: i=1; AJvYcCUjuCN8gTkLWukkb5jranKRKv9VGAlCYJ6ZZ3L7XOQUxNYC5HehSS/glcfSnwv8clUuQwSb6oBYFYMC5bcYs5DgGfYUqdP/TOkFraoOCY9PJVeYM/N02VF5CrlEeSjic0PXF70zJ6AgBA==
+X-Gm-Message-State: AOJu0Ywvja3hnWHYbEMd6RRbpw4TkseqebO4/lerZQCUrHYpUKhoc1rt
+	Ks2KnXzpHnW4RFB6ItJjJLcAAyDpFXba5wbRQZA2TKsCxFXkUo6kR8xYIKUwplVviQaGDXMISkO
+	PKTSEY7ONWsUavc9sN4zP5q/LSTI=
+X-Google-Smtp-Source: AGHT+IHXFbCfgwFRqQQzynC26fl0SQoMru8/nbeWeM4xylrZ+LYezcIbS61zdeadnIVSbaoyw+wsp5+0qpHN/34+nqo=
+X-Received: by 2002:a05:6a20:1584:b0:1af:cefe:dba3 with SMTP id
+ adf61e73a8af0-1bae7b3d2c7mr13813299637.0.1718676421778; Mon, 17 Jun 2024
+ 19:07:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240617223100.1539796-1-Frank.Li@nxp.com> <20240617223100.1539796-4-Frank.Li@nxp.com>
+In-Reply-To: <20240617223100.1539796-4-Frank.Li@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 17 Jun 2024 23:06:50 -0300
+Message-ID: <CAOMZO5Ck6iME0d4X3fV=wyO2Y6GvX1-=EtxWo7TGLRZjFpABFg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] arm64: dts: imx95-19x19-evk: add PCIe[0,1] support
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
-to simplify the creation of SLAB caches.
+On Mon, Jun 17, 2024 at 7:31=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
 
-Signed-off-by: Hongfu Li <lihongfu@kylinos.cn>
----
- mm/khugepaged.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> +       reg_pcie0: regulator-pcie {
+> +               compatible =3D "regulator-fixed";
+> +               regulator-name =3D "PCIE_WLAN_EN";
+> +               regulator-min-microvolt =3D <3300000>;
+> +               regulator-max-microvolt =3D <3300000>;
+> +               vin-supply =3D <&reg_m2_pwr>;
+> +               gpio =3D <&i2c7_pcal6524 6 GPIO_ACTIVE_HIGH>;
+> +               enable-active-high;
+> +               regulator-always-on;
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 774a97e6e2da..f8d08b49420c 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -385,10 +385,7 @@ int hugepage_madvise(struct vm_area_struct *vma,
- 
- int __init khugepaged_init(void)
- {
--	mm_slot_cache = kmem_cache_create("khugepaged_mm_slot",
--					  sizeof(struct khugepaged_mm_slot),
--					  __alignof__(struct khugepaged_mm_slot),
--					  0, NULL);
-+	mm_slot_cache = KMEM_CACHE(khugepaged_mm_slot, 0);
- 	if (!mm_slot_cache)
- 		return -ENOMEM;
- 
--- 
-2.25.1
+As this regulator has a consumer, 'regulator-always-on' can be removed.
 
+> +       };
+> +
+> +       reg_slot_pwr: regulator-slot-pwr {
+> +               compatible =3D "regulator-fixed";
+> +               regulator-name =3D "PCIe slot-power";
+> +               regulator-min-microvolt =3D <3300000>;
+> +               regulator-max-microvolt =3D <3300000>;
+> +               gpio =3D <&i2c7_pcal6524 14 GPIO_ACTIVE_HIGH>;
+> +               enable-active-high;
+> +               regulator-always-on;
+
+Ditto.
 
