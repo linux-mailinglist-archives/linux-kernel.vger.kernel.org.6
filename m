@@ -1,171 +1,125 @@
-Return-Path: <linux-kernel+bounces-219808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D119290D7F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0784990D7F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62CB2833B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:00:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AD2E282CEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722E646450;
-	Tue, 18 Jun 2024 16:00:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678BD46435;
+	Tue, 18 Jun 2024 15:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ugL/8yd4"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A867B47A6A
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 16:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A334596F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718726406; cv=none; b=hUUDcftUbiBALoNC20tH38EYlGBItilCBB3nGYQM6QK+pXrhczaMvGBlt+OnAiKX33Uh4JVS5xeFpg7hVcjpO03hYJbKGFUrxvGpP/JvPk4krCmrZcQ2aKQV66uVQK5aum2Hau0cecL3arpF0o9vSHV6hxYqd2PW8dfMvrWknUY=
+	t=1718726383; cv=none; b=o1+sPWSpYeUC3ENXK0n2+xk5kw4zjTNELoeZmR9Vl/nTDVO/YLw+ZwwPtu0pcXk5RO9yZCAQxGREtH14puWgT06r3sq/8ZPajrSYc8oNtmm1RCHujGMzrtuxSjIdy1wfYVLkNTFFB0p4l2iVCDC6zO0vbW/0Ynkdm9BazwlBkPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718726406; c=relaxed/simple;
-	bh=YfmNsKQrdFIhymJvhNwj8WBsPYQaKjuSTOSBbLkNdP8=;
+	s=arc-20240116; t=1718726383; c=relaxed/simple;
+	bh=cCY+Z9WivXsDOXzXQEezmM6C/lb8JINVV72i9++S2Kw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ItuOPm99Wl1K0ZELk1cKublBJltWUh/UlAUOurlgcGItpYFBagJZdPUX6fYmL8Bm1EoIVXISG9o17yUhXnj873xhS33aqgjAYa0GyTjDLlCn8BmTIFi7e4C2ilIdSEsQKkcC6JfXXZcXEloyTn8so7HSw6WPJDl+AtUkXfSvvFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sJbFF-0001yh-AL; Tue, 18 Jun 2024 17:59:41 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sJbFB-003GHr-2h; Tue, 18 Jun 2024 17:59:37 +0200
-Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id B828E2EB9D2;
-	Tue, 18 Jun 2024 15:59:36 +0000 (UTC)
-Date: Tue, 18 Jun 2024 17:59:36 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Stefan Moring <stefan.moring@technolution.nl>
-Cc: Adam Butcher <adam@jessamine.co.uk>, 
-	Benjamin Bigler <benjamin@bigler.one>, Fabio Estevam <festevam@gmail.com>, s.hauer@pengutronix.de, 
-	linux-kernel@vger.kernel.org, Stefan Bigler <linux@bigler.io>, linux-spi@vger.kernel.org, 
-	Thorsten Scherer <T.Scherer@eckelmann.de>, broonie@kernel.org, Clark Wang <xiaoning.wang@nxp.com>, 
-	linux-imx@nxp.com, kernel@pengutronix.de, Sebastian Reichel <sre@kernel.org>, 
-	shawnguo@kernel.org, Carlos Song <carlos.song@nxp.com>, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] spi: Increase imx51 ecspi burst length based on transfer
- length
-Message-ID: <20240618-mature-private-peccary-29f0b6-mkl@pengutronix.de>
-References: <20230628125406.237949-1-stefan.moring@technolution.nl>
- <CAOMZO5AftBB8B-Bb-j0TrTnKiQdGpBkq+jZ3surLSs6xPm_pUQ@mail.gmail.com>
- <CAB3BuKDcg=7Umxv4yUTDVsQ3X_ash6iFmz-3XaENfni2=R_LCw@mail.gmail.com>
- <20240618-oxpecker-of-ideal-mastery-db59f8-mkl@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=djC9SZYMJQfvPaNqbc4DQ2OfEsCG1GnENM7RGJDBZpo6bYPAkmD8cFhDTA/5h9Ym3UjOuryJzIu7tYGfFOhxU3FNopPIjZJr0GKXKYpX0MtUVPxx5KMaUoU9OIMMGucQXVhpLZpdIlkIl2gCHyRD8nJqleOBQEH9KyA6ZzdkJJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ugL/8yd4; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42189d3c7efso58593685e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:59:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718726380; x=1719331180; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KW5CYpn36l//7aM9dysfyiIEFCEnSC7/zTj92FzcYsw=;
+        b=ugL/8yd4mkLuD4QKB/MuhEzE5pekZD4b44moHQ8lWQsTg7IYij8NnLOcOfslzCwsJu
+         N9zaFknV0wZbCy4/sSib/JYf0zEFOnYStrQX5NXpOUum37qjTt78vmQik1h6swkRKoDZ
+         kal0NUgAeMa1zHcfEc8C4ysk54nvm2oFHNDfBIKiZN33YYsosOEZWUtLRkoL+XUMBjJd
+         IgkcoTuNUeDpbFYWa/qa6nAWh6hAXspJsO1vGr7HjwHK4RrA1NjP+823vYc5evRZ2Uzq
+         T7aX7wJ6+Oq5ONf2/CFX+4wIwFYfETIkMtUgbVhPno8WhPrgCZJyldTSRfGu/4pn9/Bg
+         n9SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718726380; x=1719331180;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KW5CYpn36l//7aM9dysfyiIEFCEnSC7/zTj92FzcYsw=;
+        b=Aay8x+2Go6n82cE0hV7FEOWCX17rv8xH7MCu/QcabWfpkPB5P1+jlUo7fGKjfWcD3T
+         wEtgm1xWV8bANblTnIE2u37/13zKvtSIseI9egLSDXJIwCpiEUug98D1dURL/AneyRUL
+         CGXoTeolshkw9VmFQw3SdZmDE1iq3R9J8vUSOQ97eznSuStT4FisJnQb7utala5FM4My
+         vnWKd/WByMJLKSVX6PiMfhjVK1gpwXpBjMn3I9lG2P0sebIqunHP2S4xnUAvX23uNkFC
+         w5hjvSjJw3OVjBNWzDrWyh08yxQvHA7j8OwjiO1nj/39cmQrXCRy5qosk/O4tp+Bvw23
+         fLIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjV821ZT6vBTiHmSiPR+CAQ3IvPoOUAEAD1u35wjNA4ItiqV9LinVhvtEAB40QfQesQRNa0XnnsOWQVnMWkBvuqjACRWlbY9tq7NSI
+X-Gm-Message-State: AOJu0YxvMhFK26AxHOSTDUe0BydXhmR/Z/kJ+5vZwhzQzBo654YQRfPh
+	Y4czEGsG/PAqq2bMJZ5zs4jgOQoV+zIZx3U7frHnT1htQDguidgrXeZZfAgSuOQ51Ir9T2SOsSx
+	KvSI=
+X-Google-Smtp-Source: AGHT+IEOulskKK0DQifFRFKsJWs4iBdG02SkiZn2is5YgIwx6kR6gYve5+eWcIIhl+AbQIyMYcD69A==
+X-Received: by 2002:a05:600c:474d:b0:422:178b:bedd with SMTP id 5b1f17b1804b1-4230481a0bdmr116566685e9.1.1718726380384;
+        Tue, 18 Jun 2024 08:59:40 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870e9590sm228819345e9.23.2024.06.18.08.59.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 08:59:39 -0700 (PDT)
+Date: Tue, 18 Jun 2024 16:59:38 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: kgdb-bugreport@lists.sourceforge.net,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Thorsten Blum <thorsten.blum@toblux.com>,
+	Yuran Pereira <yuran.pereira@hotmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/13] kdb: Add mdi, mdiW / mdiWcN commands to show
+ iomapped memory
+Message-ID: <20240618155938.GG11330@aspen.lan>
+References: <20240618003546.4144638-1-dianders@chromium.org>
+ <20240617173426.13.I572fb3cf62fae1e728dd154081101ae264dc3670@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z5dplvlwecvagwxu"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240618-oxpecker-of-ideal-mastery-db59f8-mkl@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20240617173426.13.I572fb3cf62fae1e728dd154081101ae264dc3670@changeid>
+
+On Mon, Jun 17, 2024 at 05:34:47PM -0700, Douglas Anderson wrote:
+> Add commands that are like the other "md" commands but that allow you
+> to read memory that's in the IO space.
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+
+Sorry to be the bearer of bad news but...
 
 
---z5dplvlwecvagwxu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> ---
+> <snip>
+> +/*
+> + * kdb_getioword
+> + * Inputs:
+> + *	word	Pointer to the word to receive the result.
+> + *	addr	Address of the area to copy.
+> + *	size	Size of the area.
+> + * Returns:
+> + *	0 for success, < 0 for error.
+> + */
+> +int kdb_getioword(unsigned long *word, unsigned long addr, size_t size)
+> +{
+> +	void __iomem *mapped = ioremap(addr, size);
 
-On 18.06.2024 13:58:07, Marc Kleine-Budde wrote:
-> Hi Stefan,
->=20
-> On 28.06.2023 15:20:39, Stefan Moring wrote:
-> > In our application we send ~80kB at 10MHz. The total transfer time
-> > went from ~80ms to 67ms, so that would be a reduction of 15%.
-> > I tested it on an IMX8MM platform.
->=20
-> I'm currently debugging a problem with spi-imx, HW CS and SPI_CS_WORD on
-> torvalds/master. The breakage goes back this patch.
->=20
-> I'm wondering what is your setup you have optimized with this patch?
-> - Are you using HW or GPIO CS?
-> - What are bits_per_word?
-> - What's the length of the spi_transfer?
->=20
-> I'm asking because with a 8, 16 or 32 bit-per-word setting, the driver
-> should use dynamic_burst on the imx8mm, which will overwrite the burst
-> length in spi_imx_push().
+ioremap() is a might_sleep() function. It's unsafe to call it from the
+debug trap handler.
 
-This patch, even with all the fixes on top of it (torvalds/master)
-breaks the HW CS + SPI_CS_WORD support which was added in 6e95b23a5b2d
-("spi: imx: Implement support for CS_WORD").
+I'm afraid I don't know a safe alternative either. Machinary such as
+kmap_atomic() needs a page and iomem won't have one.
 
-I think this also breaks the support for bits-per-word !=3D multiple of 8
-bits. For these transfers the in-memory wordsizes are powers of two
-bytes (e.g. 20 bit samples use 32 bits) [1] and via the burst length
-configuration only the bits-per-word number of bits are shifted out.
 
-[1] https://elixir.bootlin.com/linux/v6.9/source/include/linux/spi/spi.h#L1=
-44
-
-| 	if (spi_imx->target_mode && is_imx53_ecspi(spi_imx))
-| 		ctrl |=3D (spi_imx->target_burst * 8 - 1)
-| 			<< MX51_ECSPI_CTRL_BL_OFFSET;
-| 	else {
-| 		if (spi_imx->usedma) {
-| 			ctrl |=3D (spi_imx->bits_per_word - 1)
-| 				<< MX51_ECSPI_CTRL_BL_OFFSET;
-| 		} else {
-| 			if (spi_imx->count >=3D MX51_ECSPI_CTRL_MAX_BURST)
-| 				ctrl |=3D (MX51_ECSPI_CTRL_MAX_BURST * BITS_PER_BYTE - 1)
-| 						<< MX51_ECSPI_CTRL_BL_OFFSET;
-| 			else
-| 				ctrl |=3D (spi_imx->count / DIV_ROUND_UP(spi_imx->bits_per_word,
-| 						BITS_PER_BYTE) * spi_imx->bits_per_word - 1)
-| 						<< MX51_ECSPI_CTRL_BL_OFFSET;
-| 		}
-| 	}
-
-Consider a message with bits-per-word =3D 9 consisting of 4 words. It uses
-4 word x 2 bytes/word =3D 8 bytes of memory. This boils down to a burst
-length of 36 bits. Which means the spi-imx sends the first 36 bits from
-the 64 bits of memory, this is clearly wrong.
-
-This patch (15a6af94a277 ("spi: Increase imx51 ecspi burst length based
-on transfer length")) is wrong and the 4 fixes on top of it don't
-finally fix it. I can send a series of 5 reverts, or a manually revert
-the burst length calculation to the original value in one patch.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---z5dplvlwecvagwxu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZxruQACgkQKDiiPnot
-vG8H1Qf8CsAhg/kHYuztF587L2y+5Kn+hX4YQkorzpboDrGh93rN0zZmV2a1Cw4G
-aqIitN+nIH3W2ITT6s4fKv4tW8+oO+FWHmL3ZIHEXlY/sJAOC4X6c7lfcKynyIxP
-Hnv9+wSrx0ybmW4rbQeRhJNNMSVNfgR/Lde0YxxJV4QgnT+94bhJqpdLL1tcYzEB
-37YolPA/fWxx/pgoowkEwkUqnWtE/jrVTmObZ8+XXD+6BQvsBWtwiobF6cNisX1l
-QdlpDXUB+CGbNKrvIeVrSbTj9sG0AX/UFhDkS1USKwM/YC75r7oRVk53st6qTfm9
-2MA/LgwpCmUJvutqlWat0uB3PCNycQ==
-=2b2U
------END PGP SIGNATURE-----
-
---z5dplvlwecvagwxu--
+Daniel.
 
