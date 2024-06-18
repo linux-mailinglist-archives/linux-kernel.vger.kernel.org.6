@@ -1,91 +1,125 @@
-Return-Path: <linux-kernel+bounces-219767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D263F90D78C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:41:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 844D190D7D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B328286306
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:41:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EE2B1F237CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A03A4595D;
-	Tue, 18 Jun 2024 15:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2524C602;
+	Tue, 18 Jun 2024 15:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7IaDs7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ruPl0PEK"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602C91CD29
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BA44595D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718725267; cv=none; b=uLtv79YRI53LoNo5DjtWuRfLb6qS/IfbbwMQwzT5RlWukOemC2tspuLuv0vBcbUPRf7dCETVrhZY3VoPq9Zn1WabarHG+6gr2Ax7hb7FM9A0UPwUOQEsdvSXFIGHa7N5J4ri5G+EUMasOREU7+ppdvMGwPZLn88ClZHWe70sxUM=
+	t=1718725896; cv=none; b=VtbfwChWklivfxCFBzb9JmgStHK3IiM+Wq8Kr89xeptkLqKYxhMDGJQADRSZVlUZ2VL9ObU7zbs29t/VKPNivG1ZprwSRZFZ22/M0Y2oEREE80kLiGYEhTQ69SxOWYwErOyMHJP1Au2VcX8tkHjcMbM68s95ZsUou2/Kkayza1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718725267; c=relaxed/simple;
-	bh=CJrK0+s51TojWb4uz38DIYO+IOAei4tLxpuCbpdl00c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZBMfqUCw7otY48g4SsMnossIq6mi9EPG6t/OT2KFTbqThKFjDbpSxuJthk8SalpWGRfzQp/MfFrr4hNY1uzdJFAGp3vQJcS9UIeqHMKR82TBCllvWMCBizSyMCOuOazUvp6SfncuZRR8v0jXJUbA9oaXlge5HhuICzMtYCFkzV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7IaDs7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 335B6C3277B;
-	Tue, 18 Jun 2024 15:41:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718725267;
-	bh=CJrK0+s51TojWb4uz38DIYO+IOAei4tLxpuCbpdl00c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j7IaDs7M6Yli1+SoiM1yhQ+EI5uySoIl8uIxOYCAH0jpByhipRbq0r4YKhqx/k7pJ
-	 KxmafVwC20DStPa5AAMGCE9DoQ4Xj64rNVnLVptLkq1ubnwee/fxvqMorbcjvbiKQ3
-	 lzc2pQSvt/+0hqI/k03NCrB/RRQq2NjDLsTd4Plm5Xrdb7W1U9oyP0IQJ6+yJCnLEF
-	 C1aI2JgbdROO4Z8py7QC3HWRO3ohX13KFJsCyGA0gF/icwTcMc4/eGkezN8zBrs6/W
-	 1i3KoAthWUYJa9rhVAkowWC+0yh6JCxUgzofH3qQDxhg3BZaRzkME/v7UhaTSmlwq4
-	 Iblj3xZ9IZ3PQ==
-Date: Tue, 18 Jun 2024 16:41:02 +0100
-From: Will Deacon <will@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, James Clark <james.clark@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: arm_pmuv3: Avoid assigning fixed cycle counter
- with threshold
-Message-ID: <20240618154102.GD2354@willie-the-truck>
-References: <20240611155012.2286044-1-robh@kernel.org>
+	s=arc-20240116; t=1718725896; c=relaxed/simple;
+	bh=z68f1glzn8W2C+bMjjEW4ShrQhXTjCIJIGeZFccSLPY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gSItBqnScDcn8Fc4W7rUEqLeT0F3oYez9m5kox1KrZSDTKyyo0TYXmohxJw16AiF2QvmyQmuxWzx+RBmT7YxKaYXhzD0iPI5RK2knAhN2QFkNSlVZr+6uqdOkY3fl5DBhGYrNazyO9CIW0685Ef25MwwNB3wu65WnN+MBAv+Wdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=ruPl0PEK; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1718725285;
+	bh=z68f1glzn8W2C+bMjjEW4ShrQhXTjCIJIGeZFccSLPY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ruPl0PEK6sazyyfliImMeV4N/RZ2w8trQpW+3BuxpBgfY74vvT/HTIXHFg/jkFBQc
+	 /uBO2xX+9egDFU5OrOj2KpijQr4ZUW5T+4hy6xikS7DNQecF40c7bVg/Cxc/LZoDSp
+	 DYjYYdqNCSUbc0Rz4MVpOFUjPlXBIuXLohSoA+4D5d95W41rtitl5ImkDQZdJfEjkB
+	 hSBVD6dG4LDuD+4rA29R9WFRnnKK6gQKolTmEr5i3euC7TvREsV86F0zeU99zuak82
+	 vZQ07ATaYtykem/C52Uzhjjt2JgKx769WJm5J/bFWPMniHwGcaJojALjUvaobuC0+Z
+	 oS+lXuzA5GT4A==
+Received: from thinkos.internal.efficios.com (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4W3WFK0rrfz16Vj;
+	Tue, 18 Jun 2024 11:41:25 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	nvdimm@lists.linux.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 0/4] Flush nvdimm/pmem to memory before machine restart
+Date: Tue, 18 Jun 2024 11:41:53 -0400
+Message-Id: <20240618154157.334602-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611155012.2286044-1-robh@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 11, 2024 at 09:50:12AM -0600, Rob Herring (Arm) wrote:
-> If the user has requested a counting threshold for the CPU cycles event,
-> then the fixed cycle counter can't be assigned as it lacks threshold
-> support. Currently, the thresholds will work or not randomly depending
-> on which counter the event is assigned.
-> 
-> While using thresholds for CPU cycles doesn't make much sense, it can be
-> useful for testing purposes.
-> 
-> Fixes: 816c26754447 ("arm64: perf: Add support for event counting threshold")
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  drivers/perf/arm_pmuv3.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-> index 23fa6c5da82c..2612be29ee23 100644
-> --- a/drivers/perf/arm_pmuv3.c
-> +++ b/drivers/perf/arm_pmuv3.c
-> @@ -939,9 +939,10 @@ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
->  	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
->  	struct hw_perf_event *hwc = &event->hw;
->  	unsigned long evtype = hwc->config_base & ARMV8_PMU_EVTYPE_EVENT;
-> +	bool has_threshold = !!(hwc->config_base & ARMV8_PMU_EVTYPE_TH);
+Introduce a new pre_restart notifier chain for callbacks that need to
+be executed after the system has been made quiescent with
+syscore_shutdown(), before machine restart.
 
-Just a nit, but I don't think you need the '!!' here.
+Register pre-restart notifiers to flush pmem areas from CPU data cache
+to memory on reboot, immediately before restarting the machine. This
+ensures all other CPUs are quiescent before the pmem data is flushed to
+memory.
 
-Will
+The use-case for this new notifier chain is to preserve tracing data
+within pmem areas on systems where the BIOS does not clear memory across
+warm reboots.
+
+I did an earlier POC that flushed caches on panic/die oops notifiers [1],
+but it did not cover the reboot case. I've been made aware that some
+distribution vendors have started shipping their own modified version of
+my earlier POC patch. This makes a strong argument for upstreaming this
+work.
+
+Link: https://lore.kernel.org/linux-kernel/f6067e3e-a2bc-483d-b214-6e3fe6691279@efficios.com/ [1]
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: nvdimm@lists.linux.dev
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+
+Mathieu Desnoyers (4):
+  kernel/reboot: Introduce pre_restart notifiers
+  nvdimm/pmem: Flush to memory before machine restart
+  arm64: Invoke pre_restart notifiers
+  x86: Invoke pre_restart notifiers
+
+ arch/arm64/kernel/process.c |  2 ++
+ arch/x86/kernel/reboot.c    |  7 +++--
+ drivers/nvdimm/pmem.c       | 29 ++++++++++++++++++++-
+ drivers/nvdimm/pmem.h       |  2 ++
+ include/linux/reboot.h      |  4 +++
+ kernel/reboot.c             | 51 +++++++++++++++++++++++++++++++++++++
+ 6 files changed, 92 insertions(+), 3 deletions(-)
+
+-- 
+2.39.2
 
