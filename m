@@ -1,117 +1,214 @@
-Return-Path: <linux-kernel+bounces-218643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCAA90C305
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:16:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA0F90C311
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FA22284E8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:16:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C60A4B21E43
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1A41C286;
-	Tue, 18 Jun 2024 05:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67791BC53;
+	Tue, 18 Jun 2024 05:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JRUv03Of"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ejXP4tF/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3D617C8;
-	Tue, 18 Jun 2024 05:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAE433C9
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 05:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718687768; cv=none; b=B/qlfr7xuJ2pX0jdqiCe0U8lebRYWeNfewFOFWMf65EkOnsdblMgE4t+3pOzxix7+IxS7wzwYL9JKXotHF+gZwJVe1idpHUODPRaP8NC7aGHrGBrK1HYo3NF08JL10Xe9TkLR0Bj5v4Hxgq+pKKDajCYWaiC9UzqWuQ4uXjlZys=
+	t=1718688278; cv=none; b=TTM3T84fYnPwRUnhEFmRFIGx3zXrROHXIWHisBFzT7u73DOtFB+36Rf1aq6SH746HbgMjWWyMhU1haYfI2mq2+KVcxjS9mrs9ToTgbFsTxTeX71FDOVZUQvKYnzNVC20TGSbjrX0qHEqH8yLOsDrlN+qS6UBwayrPJK2Etp3DaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718687768; c=relaxed/simple;
-	bh=JFuaEL0i5O+a1x7snaYcxyqNALKR5Ngkjb5nlZpxD0I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=lXEzfYsRzRkFAqxFfG636Gh1TZag0zcJ6VWhkFwp16Oj0Lgk1A2u9JJ5O+SDWMGtI0HmaiTOB2MtokS4LqNMNRGC4TKPYgmpGvJsrKUUQT5O/8yN7T1v+evEHru5M/1MiqVOAtDdcBe3fumG9nkFHa3yU57JWutmlE7PzojPqeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JRUv03Of; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I38H20019454;
-	Tue, 18 Jun 2024 05:16:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=TNTw+Ygvej0cWOhb6Ygm6e
-	kDY8ur0ZnUwnkQN2wPkyI=; b=JRUv03OfooJ9bbLHgUbOlE2sJ8pAijXdDllpt2
-	FIBp2+TukyUTD31rLp2yxuPY/WL+1HO/fY2zAgQZzQ9OnIioqusvDbeKYCXZN33K
-	ELHOUFuTF3td/pknOLN3K0mfIhXZxKBtG4nFtq7QifvwXcnjkM/1wpaAgrNGxMkK
-	52IWOD3zqtLTgANaHTn83LlAygn/+J8M+iNw7LA8x3To9os2BLhnaZ5VcwxOBIrX
-	VbOG2x2+CBpqhIZZq0HeV/hvbbD+TtJ/u3xdmy77bM+pQpuyp9SZMOfMIPyAyNeH
-	cKmtaAKbU0gDOQxDpD6EAvqTyLAezkNN5qS1d0dreaC0QGyQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu22gr761-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 05:16:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I5FxSk016528
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 05:15:59 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
- 2024 22:15:59 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 17 Jun 2024 22:15:56 -0700
-Subject: [PATCH] dtlk: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718688278; c=relaxed/simple;
+	bh=jJfPR4QHTWkMGUrAoBmf26Lc/NWHCmoaOl7MqleKAcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rSiKuHOxVYmgg0r+GfcJGZUTtN5YuZAPGNsd3kedsjHqv71rHfQoNeG4ia4kgRcfrimeiJqfPNM77NXmsmFsZt6XxZ5OZIDL3bVbiQD1dOygO3WjbegwwR/Ip7e0OEbThkS+wLu8apGxDuv7k4Fke5oyWZJUKrxYJOI7FNJ+slc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ejXP4tF/; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718688277; x=1750224277;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=jJfPR4QHTWkMGUrAoBmf26Lc/NWHCmoaOl7MqleKAcc=;
+  b=ejXP4tF/cB3B03HZq5qKZ9tDTsbh08jVug6m1c8M8oXjcrC8I542Xeqt
+   I7oOt/IeF7d2/22OZmxkIb/TiP+kkoplgjGkAu8ptr7n7+F9OnfvtauW9
+   e2Qa0lDsVBdVjRVEmduCWHzSmcUx6zbQbBDu+RtbTTuSJM2Nke7V0B8N+
+   yeYbbA4KH2q54jdfBNE7qnPTsTqI9k3XFeD9q30d+NdMy9OoyWRmUGJ0H
+   87I0QcwW/NRike7Jj+WcJrZV5RmU4y8RdNSjjlD86lIE73zoW3NAzHB77
+   HZW3JGJ7xBSwSOKDSiaDsdA+WVetZzQRm+Blchsuffo+sMUQCHJ/4N/MB
+   Q==;
+X-CSE-ConnectionGUID: rTHUBUerR+2Vh0ZrbIxEEQ==
+X-CSE-MsgGUID: CR+iV8dlS8yci14HYvLWnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="38064848"
+X-IronPort-AV: E=Sophos;i="6.08,246,1712646000"; 
+   d="scan'208";a="38064848"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 22:24:37 -0700
+X-CSE-ConnectionGUID: WXKXD2NATputQiupD1gRzQ==
+X-CSE-MsgGUID: ZSgeD7xYSOibpehWi3PwDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,246,1712646000"; 
+   d="scan'208";a="41512985"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 17 Jun 2024 22:24:34 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sJRKa-0005Eb-19;
+	Tue, 18 Jun 2024 05:24:32 +0000
+Date: Tue, 18 Jun 2024 13:23:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-wcd939x.ko]
+ has no CRC!
+Message-ID: <202406181338.v4PIq1VH-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240617-md-m68k-drivers-char-dtlk-v1-1-a53a237f1f06@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAsYcWYC/x3Myw6CMBCF4Vchs3YSWg1WX8Ww6GWQCbSaGSQkh
- He3uvySc/4dlIRJ4d7sILSy8qtUmFMDcfTlScipGmxrL21nrpgT5s5NmIRXEsW6EkzLPOGtOw/
- WRUMuBaj/t9DA27/96KuDV8IgvsTxV5y5fDbMXhcSOI4vCjxJV4oAAAA=
-To: "James R. Van Zandt" <jrv@vanzandt.mv.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <blinux-list@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: h0JKSCpyjTmy0Mj6txXhvZoAGjVHT_nM
-X-Proofpoint-GUID: h0JKSCpyjTmy0Mj6txXhvZoAGjVHT_nM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- clxscore=1011 malwarescore=0 priorityscore=1501 spamscore=0 suspectscore=0
- adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=874 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406180037
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/dtlk.o
+Hi Neil,
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+First bad commit (maybe != root cause):
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/char/dtlk.c | 1 +
- 1 file changed, 1 insertion(+)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   14d7c92f8df9c0964ae6f8b813c1b3ac38120825
+commit: 10f514bd172a40b9d03d759678e4711612d671a1 ASoC: codecs: Add WCD939x Codec driver
+date:   5 months ago
+config: sparc-randconfig-002-20240618 (https://download.01.org/0day-ci/archive/20240618/202406181338.v4PIq1VH-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240618/202406181338.v4PIq1VH-lkp@intel.com/reproduce)
 
-diff --git a/drivers/char/dtlk.c b/drivers/char/dtlk.c
-index 6946c1cad9f6..5a1a73310e97 100644
---- a/drivers/char/dtlk.c
-+++ b/drivers/char/dtlk.c
-@@ -660,4 +660,5 @@ static char dtlk_write_tts(char ch)
- 	return 0;
- }
- 
-+MODULE_DESCRIPTION("RC Systems DoubleTalk PC speech card driver");
- MODULE_LICENSE("GPL");
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406181338.v4PIq1VH-lkp@intel.com/
 
----
-base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-change-id: 20240617-md-m68k-drivers-char-dtlk-963f28c1e8db
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
+WARNING: modpost: "__udelay" [drivers/media/i2c/tda1997x.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/i2c/vpx3220.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/tuners/max2165.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/tuners/mt20xx.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/tuners/mxl5007t.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/tuners/tuner-simple.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/tuners/tda18271.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/common/b2c2/b2c2-flexcop.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/common/saa7146/saa7146.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/platform/cadence/cdns-csi2tx.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/pci/ttpci/budget-core.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/pci/ttpci/budget.ko] has no CRC!
+WARNING: modpost: "__ndelay" [drivers/media/pci/ddbridge/ddbridge.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/pci/saa7146/hexium_orion.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/pci/cx25821/cx25821.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/pci/saa7134/saa7134.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/pci/saa7134/saa7134-dvb.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/pci/saa7164/saa7164.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/pci/solo6x10/solo6x10.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/pci/tw686x/tw686x.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/pci/zoran/zr36067.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/dvb-frontends/atbm8830.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/dvb-frontends/m88rs2000.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/dvb-frontends/mt312.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/dvb-frontends/s5h1420.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/dvb-frontends/stv0299.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/dvb-frontends/stv6110.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/dvb-frontends/zl10353.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/v4l2-core/tuner.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/dvb-core/dvb-core.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/media/radio/tea575x.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/watchdog/wdt_pci.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/watchdog/da9062_wdt.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/mmc/host/sdhci.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/mmc/host/sdhci-milbeaut.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/mmc/host/alcor.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/mmc/host/cb710-mmc.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/mmc/host/sdhci-cadence.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/mmc/core/pwrseq_emmc.ko] has no CRC!
+WARNING: modpost: "__ndelay" [drivers/memstick/host/jmb38x_ms.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/leds/leds-bd2802.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/leds/leds-is31fl319x.ko] has no CRC!
+WARNING: modpost: "__ndelay" [drivers/siox/siox-bus-gpio.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/rapidio/rapidio.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/rapidio/rio-scan.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/rapidio/switches/idt_gen3.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/pcmcia/pcmcia_core.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/hwmon/ad7418.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/hwmon/lm93.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/hwmon/powr1220.ko] has no CRC!
+WARNING: modpost: "__ndelay" [drivers/hwmon/sht15.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/hwmon/pmbus/ucd9000.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/ssb/ssb.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/bcma/bcma.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/comedi.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/adl_pci9118.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/amplc_pci230.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/gsc_hpdi.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/icp_multi.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/jr3_pci.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/cb_pcidas.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/ni_pcidio.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/ni_pcimio.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/ni_daq_700.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/ni_mio_cs.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/comedi/drivers/ni_labpc_common.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/accel/mma9551_core.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/adc/adi-axi-adc.ko] has no CRC!
+WARNING: modpost: "__ndelay" [drivers/iio/adc/hx711.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/adc/nau7802.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/adc/palmas_gpadc.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/adc/ti-ads7924.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/dac/ad5592r-base.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/gyro/itg3200.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/potentiometer/ad5272.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/pressure/dlhl60d.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/pressure/mprls0025pa.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/iio/proximity/ping.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/fpga/altera-pr-ip-core.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/fsi/fsi-master-hub.ko] has no CRC!
+WARNING: modpost: "__udelay" [drivers/fsi/fsi-master-aspeed.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/core/snd-timer.ko] has no CRC!
+WARNING: modpost: "___rw_read_exit" [sound/core/seq/snd-seq.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/pci/ac97/snd-ac97-codec.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/snd-soc-core.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-adau1701.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-adau17x1.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-aw8738.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-cs42l73.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-cs4265.ko] has no CRC!
+WARNING: modpost: "__ndelay" [sound/soc/codecs/snd-soc-cs4270.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-dmic.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-nau8540.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-nau8824.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-sgtl5000.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-sta350.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-tlv320aic23.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-tlv320aic31xx.ko] has no CRC!
+WARNING: modpost: "__ndelay" [sound/soc/codecs/snd-soc-tlv320aic31xx.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-tlv320aic3x.ko] has no CRC!
+>> WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-wcd939x.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-wm8510.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-wm8711.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-wm8903.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-wm8961.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/codecs/snd-soc-wm8974.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/amd/acp_audio_dma.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/fsl/snd-soc-fsl-asrc.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/fsl/snd-soc-fsl-sai.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/fsl/snd-soc-fsl-easrc.ko] has no CRC!
+WARNING: modpost: "__udelay" [sound/soc/fsl/snd-soc-fsl-xcvr.ko] has no CRC!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
