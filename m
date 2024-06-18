@@ -1,96 +1,94 @@
-Return-Path: <linux-kernel+bounces-219151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712F490CA95
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:55:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834AE90CA99
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29C411F24067
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:55:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EEA9289187
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E0F156997;
-	Tue, 18 Jun 2024 11:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F39157488;
+	Tue, 18 Jun 2024 11:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdLtsA24"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjLYd5iD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFD6156672;
-	Tue, 18 Jun 2024 11:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E451DDDA;
+	Tue, 18 Jun 2024 11:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718710829; cv=none; b=fZadtqtwjzMsC8lFMnGeOGw++oVMZcs2nW7W+9OA6tsP0mG9g7CVzPzLOUFo5V3ASveoU+QdZINTFV5X9BUV7GZJpZIT8nsuWSuR1+6sn6L64Rd+Np3MyEhXqWkd7+lPKuQRVdOGNkYPm7mGxE/GhdaHQEe/APIv8adO0lv/X2I=
+	t=1718710861; cv=none; b=ei6RzZPsQcsRs4KYkftTvowe0jSaKseXU04UBfrIBYVvlGq0Q9UbMeLC1H4HDtzwVc5ZDaFx7+xu+6x7wmLOC+Z/8NA6Q2OR7hR7FMaj2fuqjGzMDFGOdFThaLAk/hWzXtS71PnXHjSN2Mk0ICRjSEfUfOiuaCRcjDiexf+IXGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718710829; c=relaxed/simple;
-	bh=6XCAr2mYKvzKVAFGzZelSVJo2mipIQQ42ELvJnsHiG4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=h9epPNVM7+YSIDfT3YY9wDzCUjrJI0jqzzW0bP2Yop4WS11pMFxjnpRxLdT5kmy0/eb2Zdaf3/RF+7HAEcxqvVTJ0JLheS35kIAmvl/cdaCpqYR9PmIY8L/5hszqRE41Yw8b/5LppHl9MXkK14zmtyn7dp7sWZcegGfY/Yhou9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdLtsA24; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C4BFCC4AF48;
-	Tue, 18 Jun 2024 11:40:28 +0000 (UTC)
+	s=arc-20240116; t=1718710861; c=relaxed/simple;
+	bh=iDIeJMIVE5Xw9gFrWbn28dRlmrubU9PS94cMczEVSQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T30uujz7HyzwLaCht3CuDbdRKXBZYuQdBYSqoIZKvnB/ZjmRnG6OMwwkz2TCozLzY1ZWkaAJyIrryisP4OgnOyb8vKfr2v2muUgHOjZCeB71Fw1G0J8aCObXj1VpStQ40SqkP+f8c6hftfeWzPyFUrUx6HO6MuUat6fjbnV/bho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjLYd5iD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEBCEC4AF48;
+	Tue, 18 Jun 2024 11:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718710828;
-	bh=6XCAr2mYKvzKVAFGzZelSVJo2mipIQQ42ELvJnsHiG4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OdLtsA24lWJMUjHRPvxkYb6AgasZXvPNvp4GvbpWo/VvCGL2OuKSbzNHpc5n0tdwp
-	 74A2ODLVNiLH47fVb0CKq1W4Md/Y7Ins9YHQKmAeeQ9lOSnCJglUhg93dOhh0hUvPH
-	 868CqjN1NwPYsr/t4ogsIQCyXlMumIYbpnCfhUEZx+CFDAq2o9FXnu24X5OPZYiKQ/
-	 sNhVisY5rZIm/kcpyMwJWzQro4GIBH+yvLRATtbY8L9mZgA0kL/QONOrHqqlhJEWKU
-	 TCYYYRjMlnkuIzwRIO+8uEqCagJWy1B4uAliGEanLA0wkNfw+XijIOmLYPUokmFHBf
-	 4rgnmV9Z1Njyw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B1D41D2D0F8;
-	Tue, 18 Jun 2024 11:40:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1718710861;
+	bh=iDIeJMIVE5Xw9gFrWbn28dRlmrubU9PS94cMczEVSQg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LjLYd5iDAn1NGIh98XCh+8Bg6hSIHFwd7vzh9FtKbxNVmyCvHUXtlUGaWXMKktayJ
+	 dhuXRXiyaKews/09nf6vCZE0EEqzTHbFdI71n9R7ElOpOExj4x9ReSHxV/YnD10K5x
+	 M322JGUzMwo7BTZrL6gZKCCFzCSp4NGhxWZWp5EoZtTpNINID8DuNFRs0Fv869EJSh
+	 3zJswoQekIQSYqbLBK9Q+74uJLORkqYmcORrO7zwcLvRywVY3ENoIbxj6H61YcPVXH
+	 oD+ztXBd96G5W8b3x3DO8J7VwMdcBHxeQPRtX3s6fIk/taeuJK3cmW8I8H86Ztz/ln
+	 pPZxiv3Bg2KAw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sJXCs-000000002oR-30Wa;
+	Tue, 18 Jun 2024 13:40:58 +0200
+Date: Tue, 18 Jun 2024 13:40:58 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rajendra Nayak <quic_rjendra@quicinc.com>
+Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: Enable tsens and thermal
+ zone nodes
+Message-ID: <ZnFySuwi-Hz6DNDM@hovoldconsulting.com>
+References: <20240614-x1e80100-dts-thermal-v2-1-4d4f9effacc6@linaro.org>
+ <ZnAAxlH6yhlJf6fV@hovoldconsulting.com>
+ <ZnFapqOxQBK5YViU@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/2] Introduce PHY mode 10G-QXGMII
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171871082872.5930.6285205303729820096.git-patchwork-notify@kernel.org>
-Date: Tue, 18 Jun 2024 11:40:28 +0000
-References: <20240615120028.2384732-1-quic_luoj@quicinc.com>
-In-Reply-To: <20240615120028.2384732-1-quic_luoj@quicinc.com>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk, corbet@lwn.net,
- vladimir.oltean@nxp.com, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnFapqOxQBK5YViU@linaro.org>
 
-Hello:
+On Tue, Jun 18, 2024 at 01:00:06PM +0300, Abel Vesa wrote:
+> On 24-06-17 11:24:22, Johan Hovold wrote:
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Sat, 15 Jun 2024 20:00:26 +0800 you wrote:
-> This patch series adds 10G-QXGMII mode for PHY driver. The patch
-> series is split from the QCA8084 PHY driver patch series below.
-> https://lore.kernel.org/all/20231215074005.26976-1-quic_luoj@quicinc.com/
+> > The CPU bottom thermal zones fail to register with v2:
+> > 
+> > [    0.146219] thermal_sys: Thermal zone name (cpu0-0-bottom-thermal) too long, should be under 20 chars
 > 
-> Per Andrew Lunn’s advice, submitting this patch series for acceptance
-> as they already include the necessary 'Reviewed-by:' tags. This way,
-> they need not wait for QCA8084 series patches to conclude review.
+> Urgh, did not test after renaming the zones.
 > 
-> [...]
+> Talking to Daniel Lezcano, he seems to suggest that the size can become
+> dynamic at some point. For now will switch back to
+> cpu0-0-0-bottom-thermal and cpuss0-0-thermal. So that's O for top and 1
+> for bottom.
 
-Here is the summary with links:
-  - [net-next,v2,1/2] net: phy: introduce core support for phy-mode = "10g-qxgmii"
-    https://git.kernel.org/netdev/net-next/c/777b8afb8179
-  - [net-next,v2,2/2] dt-bindings: net: ethernet-controller: add 10g-qxgmii mode
-    https://git.kernel.org/netdev/net-next/c/5dfabcdd76b1
+Did you mean to say 'cpu0-0-0-thermal' and 'cpu0-0-1-thermal'?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Abbreviating 'bottom' (e.g. as 'btm') also works and may be preferred as
+it's not very obvious what any of the zeroes in 'cpu0-0-0-thermal' stand
+for.
 
-
+Johan
 
