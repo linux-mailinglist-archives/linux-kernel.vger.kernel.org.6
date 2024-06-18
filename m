@@ -1,220 +1,330 @@
-Return-Path: <linux-kernel+bounces-219516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5251890D3AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:10:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FCDE90D4EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5456C1C24A83
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:10:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FBE2B2B543
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A555113E033;
-	Tue, 18 Jun 2024 13:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C2913C675;
+	Tue, 18 Jun 2024 13:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fE6ZMgje"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FPtT5eS7"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10B113A3E8;
-	Tue, 18 Jun 2024 13:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718718757; cv=fail; b=PFA4FF6owIZVz/KizL7nHGZ6KPfdnsTfe4Ok9erJVYdn3VNVvaIGKxXIdPAsM3AMBFIvp84AoEoIILHv2CFNGVurMNy6fxaGeReUOV+fDi2Im1Q7bkWgP0fnTakEh75tDweXuHZwd46KwhR4NX9No8ywq0yEN6flAmhGkdAIA6E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718718757; c=relaxed/simple;
-	bh=QMCvn+4ifbzhaFlLPxMJmT5kQMDt3M+9tddSNZmoLmo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JIsOiGDnsegKd8NdlMHEq0SDhFRfLC7ad0V4nJJhGYWWkI/1fdRy05c8YFp/aiiv6LCEQu8K9XL51n+FfOzL+JqAAlKv2NJKBWvBpl0wOGvCtE8mjKbC9sC5H4eHyrve09GpYF1IUGeCfXtt7sWmKVD0ItV5aOv8VZEXRApgtA8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fE6ZMgje; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718718756; x=1750254756;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=QMCvn+4ifbzhaFlLPxMJmT5kQMDt3M+9tddSNZmoLmo=;
-  b=fE6ZMgjepnQTAtx7+W2G3L/4Sc49kZVjpf+LZh+p8DPO+V5IFTPb1dbb
-   tNitW+MzTw2W5r8gfujfhF89ESauxH563Itewhd+rUaKHir+V7sLqlTKU
-   YLJFuLCUxMLJBS80wJlWqPSaNH+4GjrFEJ5I6vUjaMs+V5hY43vc10GfS
-   sRriN7k6I531xI0jOragKOcAwQW0Jg/+5whP3NECostGZcmEzg3/3uxLS
-   9qr6zzVTMuBzV534t9aiv3czYBmp0QEa+PRR3ocYMlOxU+RcgLU60YxtT
-   ovj2hTkDDTr8Omk5YS6B58Yvvwwg6Ae/PDJM30mYuP2Z32vixvNq7eKQV
-   A==;
-X-CSE-ConnectionGUID: GmfvxyjYQcqRhnZOPvQkIw==
-X-CSE-MsgGUID: S6vcM4YWTGS/SITdmSzawA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15359823"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="15359823"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 06:52:35 -0700
-X-CSE-ConnectionGUID: Iu2Vv1VpT6+Kwy+zso7Ndw==
-X-CSE-MsgGUID: dRvhgs2YQqWJbNsJmHz4dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="41669985"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Jun 2024 06:52:37 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 18 Jun 2024 06:52:34 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 18 Jun 2024 06:52:34 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 18 Jun 2024 06:52:34 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.170)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 18 Jun 2024 06:52:34 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y8OQAFXtlTjX8vLc76mD60/HzadOXhitBkRClVqvmpRyjshu2sfrgbMptA1KqD7pR7C/bYecUx0l9a1gaV9uwHNidSZtNGyCYxBX0MJgvz8RIoJrO6y3btXc+AiSNWssBGV/BOBZvd1Rqw+pxHqLKJOSLbM9jkJ0CHTJ2h2bUC6nEQ77ulhtM0109ooWsEF3smQd6d+5wHjwGQXOyiWDDNSqx2+H+NYQOTpaVeZD+/7AjMfI3fwjdOxE0UTeboEO07X+eC8n5GO+da/x8K5I1hnJgwfwJ15nTmzC0njYyLeqnMxK3A1VMNmPqUihhOwKfDTsKYuCGIYyeiSga5Yulw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+ZisSaP8mG+DosHojVXFLtY1J7MUJZyYyye1VbKuqIo=;
- b=BtIXzIb9WjF264hrQxYMBiTTP1Mu+tn04OblGjX3AhczNMQqRena9jnIoZrTj6EXLB5K5WEMeD4Sn3BKB7v9OIVdsAnKFkLn4AnNBaAVeCtdkmcGOjVUXtMFQuFsaR46nGxVVOhThoq46n4akYPQvSHyl5axJBpJthgbshP/rJb+pUEv3m8uxnLu1tQQkSJCLktMalBBUEOjlfMAPYJCPDyHgYUa4zeUUH/lf7BsMegffpOamJX5tmH8VpQNqhw7ZKdCPUo+6SXAk2a5bTMOZORHlB7los/i0kXcm42TfPjqwrhKt8Vdx5xJgsYqm3VdQfcepSRpFaO8G8KefKNHoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
- PH8PR11MB8064.namprd11.prod.outlook.com (2603:10b6:510:253::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.27; Tue, 18 Jun 2024 13:52:27 +0000
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce%7]) with mapi id 15.20.7633.036; Tue, 18 Jun 2024
- 13:52:27 +0000
-Date: Tue, 18 Jun 2024 21:52:15 +0800
-From: Chen Yu <yu.c.chen@intel.com>
-To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-CC: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
-	<namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Athira Rajeev
-	<atrajeev@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, "Ingo
- Molnar" <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang
-	<kan.liang@linux.intel.com>, <acme@redhat.com>, linux-perf-users
-	<linux-perf-users@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] perf sched map: Add command-name, fuzzy-name options
- to filter the output map
-Message-ID: <ZnGRDyWrAUHnghtb@chenyu5-mobl2>
-References: <20240617125006.31654-1-vineethr@linux.ibm.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240617125006.31654-1-vineethr@linux.ibm.com>
-X-ClientProxiedBy: TYCP301CA0060.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:384::9) To DM4PR11MB6020.namprd11.prod.outlook.com
- (2603:10b6:8:61::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAD71386D1
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718718743; cv=none; b=gd+2PbHjgw1Isr0DndHyderZ+lqlGnE8cSYpuYK5RWFpJgHlq6aWam0G2R6aNfDtayQ8xsOWdtYlc/Dr+rs9UPUK8o8hiX0kcr082n4wCPCFnjO5iv54Vp1aovi7O9Sq9tZh42Vqg4jLcMd2/YZy20mRBFl4ugc1A0T0UdzYiGw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718718743; c=relaxed/simple;
+	bh=6ji8bImoZphxUZlGZKL5B1WUGYaN4s5foLziwZaot34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oqlx4JZtrFz6ZwGTHoYbTtBn229psT2/uTHklEkP8cT8Hg8CrY94yJBr+u7DSwBA4lNAQB3RYKZum9+GxBCrU3PX9rwPAGp0ElShrqiDhbwH04ePZZowYsnB4JNaSOuzE8uNpmmuHR//vwMgYBn3SvUN6Hxof+0PB+vuBnCZpAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FPtT5eS7; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-421eab59723so39627275e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718718739; x=1719323539; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bif8Dk+Gwh0B8c6YxRG9d+wF5fvhza7hN5IkBJa7yMQ=;
+        b=FPtT5eS7VaBp1OsTq1Gn2QLj26RqbM5j7uK95ArK9+pU8tvlyUH/xv5n5GOmll0jFD
+         8/VOnv4VrDc+5T05UMlzD393YFtmRRi14R5d/W/a3HGL28MH6WPNdt6KHd1WvbGD55ev
+         QkQrRXaqzwr1gNxJU511SUtqHLonAbIekedWlJsf1vIJ+U8YUxIhgGekmtgE/hcxsmj/
+         3qBoZrn3HtmB4BxIyUHKS62bJc5OO5VJpGT574zcABs6q5k0bOVB9n8MK4F8e1o69fEb
+         GJ/82CbD8B7FzD1B9H6QXu+2gtZH04C1rStwGCZLjvP6s+D1URFP68xzxjzFddgJfhLK
+         xNQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718718739; x=1719323539;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bif8Dk+Gwh0B8c6YxRG9d+wF5fvhza7hN5IkBJa7yMQ=;
+        b=wwl1AiM9QxeUKiYGlHxzKaQcRBvPVa5u2pFa/ATMIsH11hNuIqHxxBjiYz4x9zD1WS
+         qXjrRDeZmYSJRopJN18Bfx1rw3+hqdTsb1KZyLXB+VoYJCR4jrESJ4cRhm+j/thUehq7
+         ZH0aQT+hXFAu1MFHsqiXLu4Em4qKReHBEh732aa3itR+cPvg0wJH8iAxHE+tFwz5o4s7
+         99u72CUO11nCqrYbzMiIch2WhdiKWPpAWLzoHG48f1Z7nKNixnZzHWS3JxEKb8O47jjf
+         +8tXF1OqFeMhIQxXqaJPe/xhFyb6Y2k6WPPYN4Rr6a2KSdTkBL6VKSTJmXcvT0P2rbnr
+         tWxA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnQMh/dRiLLz3CqfWcYDsfrMFYnRiRMvs1ErP09fTz1tGYmDdpezWGMpV7w203ycyOcnWyY3ocJSNI9ffT23Q/8dcrsmpAuGGK8ECV
+X-Gm-Message-State: AOJu0Yy5k1hfzZeVE4jFrQgMJSWCXvWa7Mq2G21+2C9HcTmLpP5G4Cjh
+	gG7tK3Oqj2F6DIOIG33QmCPZkIZGw9/TBhvKQEWE0euqDZPRK2zR6GabbEM4G3Q=
+X-Google-Smtp-Source: AGHT+IGe9QQWwMJrGfB2O4fZVYflKAtUzGz49+pn9fRyvLAyJPHj5WAU6UpUgoQ9tXE7ZmEhXmLKpA==
+X-Received: by 2002:a05:600c:3d88:b0:422:dfb0:8644 with SMTP id 5b1f17b1804b1-4230484918cmr104030475e9.33.1718718739242;
+        Tue, 18 Jun 2024 06:52:19 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f5f33bcfsm186576125e9.1.2024.06.18.06.52.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 06:52:18 -0700 (PDT)
+Message-ID: <d8b657a4-ab2d-417e-be24-cbbd7ce99380@suse.com>
+Date: Tue, 18 Jun 2024 16:52:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|PH8PR11MB8064:EE_
-X-MS-Office365-Filtering-Correlation-Id: a9346b1a-0549-434f-add8-08dc8f9de2d5
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|7416011|376011|366013;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?rK4jLHIpK1oGH7XHFdmX4AJLRoYi75hS98upLORQZOmytihdqcLrgNVcZp4w?=
- =?us-ascii?Q?YDqsDUFFpXihoS0W7OZElJ9UKDRPceqfkrjW9DPBoml7z8ePgnJkL8gC2V30?=
- =?us-ascii?Q?YKGu72VOvpGyk/bcQ8IzFUt2ceit1cixVaW5FccXu6HZE/+B5jxEgq3Sjut7?=
- =?us-ascii?Q?nhN3rapmpRYfUOLbzvYhvGkeytadtEQDbYgQSFkySr+eYt8Q5CgzMOVasLs8?=
- =?us-ascii?Q?FMEFHAEa9nijVuQodkWE3qaY4gygx2JazrPjUqhiRcG1/DodjUHYGJo+f2WJ?=
- =?us-ascii?Q?Rhu2cUXOZMTAlnhDwdRPgqmZ4n3sX82lVMfkdIzSCBekSmk/3e0KKcDm9ZnS?=
- =?us-ascii?Q?jv6CgvueBzdDwsFoUoQ4mR0lH+CX4SERj+PgeVyBBrM4j6zWyehxeim2EdwK?=
- =?us-ascii?Q?Av+ls4f7Tx6h1RSypHcdi+4GTytVL7McqYd2PlaRmJFMUvsWMb9hhUkLy03J?=
- =?us-ascii?Q?zEvAiG3/HIQKNpxrRMP/AUiSd2ko8ZBMU/2vMe/t3tYvsV+32g9icgpPRylV?=
- =?us-ascii?Q?QYte78auGK/BLkxsanQBlKu5HEyHHi2q1R+Au10ZUwzJoOtiSMlD+GA+LZ8J?=
- =?us-ascii?Q?sZzMIBzI1I5P9vVFYhEZlNbhZTlcpH5HYO5qYBpT86daADI1mVO8NcDyaLTH?=
- =?us-ascii?Q?obKNCXm1/0cV/KMGu4pLRAxem7uZrE31/HjOhR9mFMZ33tT55PQuFS/vWehY?=
- =?us-ascii?Q?rB0V4tBstZ2USCT5FMMs0QmnGmrYDcMv0hkphg094ipVpbpW6Q5nP3GtdciT?=
- =?us-ascii?Q?ikvV6AM/+Qu7rGRKViqv7VfCzJ9FE1sKaFgfF5HKfubjguLFAAEuCdforZ5n?=
- =?us-ascii?Q?sTvvQ2NW4yFmPYX3dO5e2sbmDLDVZNRqnoGDzeUWzzmdlkjLmbU/qCJVx8IB?=
- =?us-ascii?Q?ihGpOyojYa7eDBZkFP3rtZ500zxeCAASLXm1Aa05fT1rK8ZlcO/2hEwqQ/So?=
- =?us-ascii?Q?dGiv0fN8gPW2sIGYYVn7vSE9o90GpWSvb/XQjA9ltJQML9zhfdY3J9Qz1kiF?=
- =?us-ascii?Q?uieMMjOHFymhLGkzEQtyajzCSDwxM3VBMfgLVrrn/p3PsCEgKaWwsCb8f2/a?=
- =?us-ascii?Q?L2jUWwLCMmvp0WcnL+xjPSSNsCE0oSWMGZUP4ekuiTuK2vJnWLr83RM1WTTN?=
- =?us-ascii?Q?Cgev0eaVBjHvsVuldmGOaKf+5NNO7kencHMXmhJDU4Wtnqmak8ToQ8jUPvZG?=
- =?us-ascii?Q?pX/l8vYhc50pZbZc3UNjWXj2pyzP/iaSYIEGvabEzhAZkmrzrgK45qV7nXDc?=
- =?us-ascii?Q?ZT6bVoueMbdXTopK+P2Dn/Vwvj4YrnyAjHkL3quj0vDVGuffTGBepwn4fQeF?=
- =?us-ascii?Q?aOk8yS71+0z8hFxjVEU29zsI?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(7416011)(376011)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2ULFQPRlJLc2S4QK9XM/JNprC0GYfS4er1MgD4uRAqoxjHUTjXENuDBqbrkp?=
- =?us-ascii?Q?jMy+l2pUifMlg+8jL7eaIDfau0d9Kb3CVtUX5Emf0ESWYpfpIjmQb8LPF2Zd?=
- =?us-ascii?Q?Ws6AA1J0gTia7FWfyPNF5WIjPSTwRkhhRXZGzuzaEDTuvGGeOI9DJCGGt5if?=
- =?us-ascii?Q?CTcce+G53ptz+QH6jI1Z2RcIev20QwTc0HMw9uqFBndK2OT6YaXdHVwo09uq?=
- =?us-ascii?Q?ENTDdXfsK3t8fYMM/hFOt6zUlTBcQuAjORVYrKaIOt25fWSgp1VB8x+ENmhn?=
- =?us-ascii?Q?qnrvie2svpfX/ABUl19kyDtEILKkM9FwhxND2XawSbcsTIosMfKSIc70iw3W?=
- =?us-ascii?Q?urFQM6elb3RFD2dm+c+rN/VMl2GDIlLsn2YNgh+5uRZTx7fFCoA9i/dxRfjW?=
- =?us-ascii?Q?k0SZv7L3gU/Cx3N/nqwHtQxGBUPt7pSp3+7vQ5wF4ZxNmU5WLXfnLllPXyMf?=
- =?us-ascii?Q?mxu5YPzMSZIFbVKJJOQcAwbJzojxbBbeMroaCbhly6MJFwfeaEV4u+Z7zfKA?=
- =?us-ascii?Q?8+zNxA+gaRoluuKhWxst/+1D1jWK3AZchj9oe/hGeSVVa68x1ptS048/q8eu?=
- =?us-ascii?Q?7pdI2IJQQgmjbiF2TNoHRSBLWVhICgrwOHP6DcpL9XEQjS0QYlnzD8mpjcjd?=
- =?us-ascii?Q?RAJ8OD7wvkpM03FPsCNaVbMhDFglXdxoMHjRND8S528XqytTMuMbKB/42hHP?=
- =?us-ascii?Q?aK5VJtsu0DLM0Whn6NrbWkeZ6hY1BSpKXxMD+YHDN2jSndfHvoh7jLoTfaTz?=
- =?us-ascii?Q?HdKxLS81vXr83tRhcesh8YJhEpxsSRUnUw66rg01aWds4Cdtqk9p6vylwsH9?=
- =?us-ascii?Q?NmBwxL3LLpFK3qk01/h+ctpdVMuCauFCt8lfSprdf0bh2NXh64ZVG5OCqLba?=
- =?us-ascii?Q?6LYy8ljXUKUP9qqISTesrnnyDgBMg9eNNaOjzp841CMzCo+mZALj/a1n8I/G?=
- =?us-ascii?Q?SYizU1zKIbcBWu4migw9JjoD94Ahtabn0TJkl3lWaWG73/43kipE16NE5o2n?=
- =?us-ascii?Q?CGEBVf3R/EfwNrRldEDZDGn0pTmkTBp2BDYarALaC79pTGlrx0XnZe3LBKRi?=
- =?us-ascii?Q?Z4vtip2C2we457GxiDWXe9WwtP0eJBZby9gACyDPS7GwQEKET2fcAO4Lo4Z3?=
- =?us-ascii?Q?tdxQ3cYLr9QV2ntAmq3KAFMFov4s1DnLf3SD1p8YA2LJ2V3Jov4XJA37kCIh?=
- =?us-ascii?Q?mogwY4vwHWnwdZqweAjsGlNvX3SqsiuBCh0GEQKe0Q0BFWcc50taD8wnULg+?=
- =?us-ascii?Q?7dI8NIvqQ9owWbdtObPq2amE6w5UWdoqJxkovpFMQZxKgNhOY67AqZbeoc1I?=
- =?us-ascii?Q?rFrqirJGXvEBdbamdiedXWKqDpC6Zugcw0Mg8kADTACUrrV73+RRmaQGEFLh?=
- =?us-ascii?Q?f50q4dOn1yW/4KH26WrR2gcluih7Ig6zYg/joLnLx0fbuSFE2dqctoUiH3n/?=
- =?us-ascii?Q?KtfQWPMBU37eRBBrI9MqGtmWYAumTppkg4OjyNkV0XJ7zNKULPBZZgHmlAMv?=
- =?us-ascii?Q?m2KL1H+Jav+pWZfVWzqKjF4Hw5dmlxIdFow7yg7vQx25rIRFwgZVkPEP75n8?=
- =?us-ascii?Q?/LpF88aDOkzUdDPApreEiPmg1KUZfxd6WN+MFDQG?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9346b1a-0549-434f-add8-08dc8f9de2d5
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 13:52:27.5136
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7oh09/371yVKlNWz18q6mLyWEuVVmQWXrQnvHcv5YVMvq3Q3NPYKZstXbWNx9nRvogJl5z6H/cjKtAegf697qA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8064
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/9] x86/virt/tdx: Print TDX module basic information
+To: Kai Huang <kai.huang@intel.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, dave.hansen@intel.com, dan.j.williams@intel.com,
+ kirill.shutemov@linux.intel.com, rick.p.edgecombe@intel.com,
+ peterz@infradead.org, tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
+ hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+ isaku.yamahata@intel.com, binbin.wu@linux.intel.com
+References: <cover.1718538552.git.kai.huang@intel.com>
+ <f81ed362dcb88bdb60859b998d5b9a4ee258a5f3.1718538552.git.kai.huang@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <f81ed362dcb88bdb60859b998d5b9a4ee258a5f3.1718538552.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024-06-17 at 18:19:30 +0530, Madadi Vineeth Reddy wrote:
 
-> +static struct CommandList *parse_commands(const char *commands)
+
+On 16.06.24 г. 15:01 ч., Kai Huang wrote:
+> Currently the kernel doesn't print any information regarding the TDX
+> module itself, e.g. module version.  Printing such information is not
+> mandatory for initializing the TDX module, but in practice such
+> information is useful, especially to the developers.
+
+It's understood that it's not mandatory to print any information, just 
+remove this sentence and leave the "In practice such...."
+
+> 
+> For instance, there are couple of use cases for dumping module basic
+> information:
+> 
+> 1) When something goes wrong around using TDX, the information like TDX
+>     module version, supported features etc could be helpful [1][2].
+> 
+> 2) For Linux, when the user wants to update the TDX module, one needs to
+>     replace the old module in a specific location in the EFI partition
+>     with the new one so that after reboot the BIOS can load it.  However,
+>     after kernel boots, currently the user has no way to verify it is
+>     indeed the new module that gets loaded and initialized (e.g., error
+>     could happen when replacing the old module).  With the module version
+>     dumped the user can verify this easily.
+> 
+> So dump the basic TDX module information:
+> 
+>   - TDX module type: Debug or Production.
+>   - TDX_FEATURES0: Supported TDX features.
+>   - TDX module version, and the build date.
+> 
+> And dump the information right after reading global metadata, so that
+> this information is printed no matter whether module initialization
+> fails or not.
+
+Instead of printing this on 3 separate rows why not print something like:
+
+"Initialising TDX Module $NUMERIC_VERSION ($BUILD_DATE 
+$PRODUCTION_STATE), $TDX_FEATURES"
+
+That way:
+a) You convey the version information
+b) You explicitly state that initialisation has begun and make no 
+guarantees that because this has been printed the module is indeed 
+properly initialised. I'm thinking if someone could be mistaken that if 
+this information is printed this surely means that the module is 
+properly working, which is not the case.
+
+
+
+> 
+> The actual dmesg will look like:
+> 
+>    virt/tdx: Production module.
+>    virt/tdx: TDX_FEATURES0: 0xfbf
+>    virt/tdx: Module version: 1.5.00.00.0481, build_date: 20230323
+> 
+> Link: https://lore.kernel.org/lkml/e2d844ad-182a-4fc0-a06a-d609c9cbef74@suse.com/T/#m352829aedf6680d4628c7e40dc40b332eda93355 [1]
+> Link: https://lore.kernel.org/lkml/e2d844ad-182a-4fc0-a06a-d609c9cbef74@suse.com/T/#m351ebcbc006d2e5bc3e7650206a087cb2708d451 [2]
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> ---
+>   arch/x86/virt/vmx/tdx/tdx.c | 67 +++++++++++++++++++++++++++++++++++++
+>   arch/x86/virt/vmx/tdx/tdx.h | 33 +++++++++++++++++-
+>   2 files changed, 99 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index 4683884efcc6..ced40e3b516e 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -319,6 +319,61 @@ static int stbuf_read_sysmd_multi(const struct field_mapping *fields,
+>   	return 0;
+>   }
+>   
+> +#define TD_SYSINFO_MAP_MOD_INFO(_field_id, _member)	\
+> +	TD_SYSINFO_MAP(_field_id, struct tdx_sysinfo_module_info, _member)
+
+What's the point of this define, simply use the raw TD_SYSINFO_MAP 
+inside the respective function. It doesn't really add any value 
+especially everything is encapsulated in one function. Literally you add 
+it so that you don't have to type "struct tdx_sysinfo_module_info" on 
+each of the 2 lines this define is used...
+
+> +
+> +static int get_tdx_module_info(struct tdx_sysinfo_module_info *modinfo)
 > +{
-> +	char *commands_copy = strdup(commands);
-
-Should we check if commands_copy is NULL in case of allocation failure?
-
-> +	char *token = strtok(commands_copy, ",");
-> +	struct CommandList *cmd_list = malloc(sizeof(struct CommandList));
+> +	static const struct field_mapping fields[] = {
+> +		TD_SYSINFO_MAP_MOD_INFO(SYS_ATTRIBUTES, sys_attributes),
+> +		TD_SYSINFO_MAP_MOD_INFO(TDX_FEATURES0,  tdx_features0),
+> +	};
 > +
-> +	if (cmd_list == NULL)
-> +		return NULL;
+> +	return stbuf_read_sysmd_multi(fields, ARRAY_SIZE(fields), modinfo);
+> +}
 > +
-> +	cmd_list->command_count = 0;
-> +	cmd_list->command_list = NULL;
+> +#define TD_SYSINFO_MAP_MOD_VERSION(_field_id, _member)	\
+> +	TD_SYSINFO_MAP(_field_id, struct tdx_sysinfo_module_version, _member)
+
+DITTO
+
 > +
-> +	while (token != NULL) {
-> +		cmd_list->command_list = realloc(cmd_list->command_list, sizeof(char *)
-> +							*(cmd_list->command_count + 1));
-> +		cmd_list->command_list[cmd_list->command_count] = strdup(token);
+> +static int get_tdx_module_version(struct tdx_sysinfo_module_version *modver)
+> +{
+> +	static const struct field_mapping fields[] = {
+> +		TD_SYSINFO_MAP_MOD_VERSION(MAJOR_VERSION,    major),
+> +		TD_SYSINFO_MAP_MOD_VERSION(MINOR_VERSION,    minor),
+> +		TD_SYSINFO_MAP_MOD_VERSION(UPDATE_VERSION,   update),
+> +		TD_SYSINFO_MAP_MOD_VERSION(INTERNAL_VERSION, internal),
+> +		TD_SYSINFO_MAP_MOD_VERSION(BUILD_NUM,	     build_num),
+> +		TD_SYSINFO_MAP_MOD_VERSION(BUILD_DATE,	     build_date),
+> +	};
+> +
+> +	return stbuf_read_sysmd_multi(fields, ARRAY_SIZE(fields), modver);
+> +}
+> +
+> +static void print_basic_sysinfo(struct tdx_sysinfo *sysinfo)
+> +{
+> +	struct tdx_sysinfo_module_version *modver = &sysinfo->module_version;
+> +	struct tdx_sysinfo_module_info *modinfo = &sysinfo->module_info;
+> +	bool debug = modinfo->sys_attributes & TDX_SYS_ATTR_DEBUG_MODULE;
+> +
+> +	pr_info("%s module.\n", debug ? "Debug" : "Production");
+> +
+> +	pr_info("TDX_FEATURES0: 0x%llx\n", modinfo->tdx_features0);
+> +
+> +	/*
+> +	 * TDX module version encoding:
+> +	 *
+> +	 *   <major>.<minor>.<update>.<internal>.<build_num>
+> +	 *
+> +	 * When printed as text, <major> and <minor> are 1-digit,
+> +	 * <update> and <internal> are 2-digits and <build_num>
+> +	 * is 4-digits.
+> +	 */
+> +	pr_info("Module version: %u.%u.%02u.%02u.%04u, build_date: %u\n",
+> +			modver->major,		modver->minor,
+> +			modver->update,		modver->internal,
+> +			modver->build_num,	modver->build_date);
+> +}
+> +
+>   #define TD_SYSINFO_MAP_TDMR_INFO(_field_id, _member)	\
+>   	TD_SYSINFO_MAP(_field_id, struct tdx_sysinfo_tdmr_info, _member)
+>   
+> @@ -339,6 +394,16 @@ static int get_tdx_tdmr_sysinfo(struct tdx_sysinfo_tdmr_info *tdmr_sysinfo)
+>   
+>   static int get_tdx_sysinfo(struct tdx_sysinfo *sysinfo)
+>   {
+> +	int ret;
+> +
+> +	ret = get_tdx_module_info(&sysinfo->module_info);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = get_tdx_module_version(&sysinfo->module_version);
+> +	if (ret)
+> +		return ret;
+> +
+>   	return get_tdx_tdmr_sysinfo(&sysinfo->tdmr_info);
+>   }
+>   
+> @@ -1121,6 +1186,8 @@ static int init_tdx_module(void)
+>   	if (ret)
+>   		return ret;
+>   
+> +	print_basic_sysinfo(&sysinfo);
+> +
+>   	/*
+>   	 * To keep things simple, assume that all TDX-protected memory
+>   	 * will come from the page allocator.  Make sure all pages in the
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
+> index 6b61dc67b0af..d80ec797fbf1 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.h
+> +++ b/arch/x86/virt/vmx/tdx/tdx.h
+> @@ -31,6 +31,15 @@
+>    *
+>    * See Table "Global Scope Metadata", TDX module 1.5 ABI spec.
+>    */
 
-ditto.
+nit:
 
-thanks,
-Chenyu
+[Not related to this patch but still a problem in its own]
+
+Those fields are defined in the global_metadata.json which is part of 
+the  "Intel TDX Module v1.5 ABI Definitions" and not the 1.5 ABI spec, 
+as the ABI spec is the pdf.
+
+> +#define MD_FIELD_ID_SYS_ATTRIBUTES		0x0A00000200000000ULL
+> +#define MD_FIELD_ID_TDX_FEATURES0		0x0A00000300000008ULL
+> +#define MD_FIELD_ID_BUILD_DATE			0x8800000200000001ULL
+> +#define MD_FIELD_ID_BUILD_NUM			0x8800000100000002ULL
+> +#define MD_FIELD_ID_MINOR_VERSION		0x0800000100000003ULL
+> +#define MD_FIELD_ID_MAJOR_VERSION		0x0800000100000004ULL
+> +#define MD_FIELD_ID_UPDATE_VERSION		0x0800000100000005ULL
+> +#define MD_FIELD_ID_INTERNAL_VERSION		0x0800000100000006ULL
+> +
+>   #define MD_FIELD_ID_MAX_TDMRS			0x9100000100000008ULL
+>   #define MD_FIELD_ID_MAX_RESERVED_PER_TDMR	0x9100000100000009ULL
+>   #define MD_FIELD_ID_PAMT_4K_ENTRY_SIZE		0x9100000100000010ULL
+> @@ -124,8 +133,28 @@ struct tdmr_info_list {
+>    *
+>    * Note not all metadata fields in each class are defined, only those
+>    * used by the kernel are.
+> + *
+> + * Also note the "bit definitions" are architectural.
+>    */
+>   
+> +/* Class "TDX Module Info" */
+> +struct tdx_sysinfo_module_info {
+> +	u32 sys_attributes;
+> +	u64 tdx_features0;
+> +};
+> +
+> +#define TDX_SYS_ATTR_DEBUG_MODULE	0x1
+> +
+> +/* Class "TDX Module Version" */
+> +struct tdx_sysinfo_module_version {
+> +	u16 major;
+> +	u16 minor;
+> +	u16 update;
+> +	u16 internal;
+> +	u16 build_num;
+> +	u32 build_date;
+> +};
+> +
+>   /* Class "TDMR Info" */
+>   struct tdx_sysinfo_tdmr_info {
+>   	u16 max_tdmrs;
+> @@ -134,7 +163,9 @@ struct tdx_sysinfo_tdmr_info {
+>   };
+>   
+>   struct tdx_sysinfo {
+> -	struct tdx_sysinfo_tdmr_info tdmr_info;
+> +	struct tdx_sysinfo_module_info		module_info;
+> +	struct tdx_sysinfo_module_version	module_version;
+> +	struct tdx_sysinfo_tdmr_info		tdmr_info;
+>   };
+>   
+>   #endif
 
