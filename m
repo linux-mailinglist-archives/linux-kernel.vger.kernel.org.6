@@ -1,83 +1,94 @@
-Return-Path: <linux-kernel+bounces-220046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6DD390DBF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:55:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5D290DBFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49F51C22FFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:55:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 940B0B22406
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B903115EFAC;
-	Tue, 18 Jun 2024 18:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E318C15ECE2;
+	Tue, 18 Jun 2024 18:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HXqAQtuz"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GeRU7INo"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D3C15ECCD
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 18:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721A615ECE0
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 18:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718736913; cv=none; b=WqCfj8Go69MlmSuZEz2qK2ti6ImSg2XTNZh7SPDPtsqwZL1qTBMPlPTGhGiNsVeNEFPUSgfQlzYdBFdn8IPTaItd5pcJmdCwNSLgoIaxS0PqhhBEvySG/QJZdD2gkHDF2UapdaDTODOXUGddLzUDMpxpudyJEDCJ6Pac6teQq4U=
+	t=1718736962; cv=none; b=mInFA9Lz9abfv3mWzS7JwXCx6fUWw2oFJ8kD01XTAaYxrMw3RNBnrBwSmqrMV/+bMWvjzdzNcHMArXdImK9JgbgGRZOqFf5AUzkRzbbzK8Xh0imBkV2NTxyRwxW0kQTUeB9q5Qrq1acYaSKo7dnOp2UzTwBlYZzYtlqsGyLv8h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718736913; c=relaxed/simple;
-	bh=UNFVAPuelWNv7Oeq53TScOsxnOnzZlhh3VXd9HNUGyg=;
+	s=arc-20240116; t=1718736962; c=relaxed/simple;
+	bh=GZ8cNz7HxzJEA3fctUo9rko9xv2fpo9Fak4LOEr1XU4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q1dYouwrnkMr4RlI7Kt1D8Ef4PiAB0sLy2fBmNGv9wyUtlNMB2RfppYFZtwa3Wuom/iWrL2PN344Cxm64gcbVOUG6ihv2zwjvT+tt3TUHeTKWTk8oucbccGwplxVJfwxv8dLq+r84RmhF8XM4tvenfhpoN1nJh4Al/Prz3qNVsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HXqAQtuz; arc=none smtp.client-ip=209.85.167.48
+	 Content-Type:Content-Disposition:In-Reply-To; b=WjABf9Epc0ofnNnS8G5i1bct++gvM/q/oshEtSDq7sniBz/Sor9thw7vgaGurG67LjQSUfoHRqy9BI71on+3xT+dDdQoVb+39WRxaaRs5c/oDghUpdt4JSTTTBruXYSeZIgx5nhnDxKxLf0/x9Qw23IY+aF3EeAV4nKZNcEk+CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GeRU7INo; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b7ffd9f6eso5734655e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:55:10 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eae5b2ddd8so1192781fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:56:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718736909; x=1719341709; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718736958; x=1719341758; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=27ULhBa6NF2Bs7Hi7tIhonbGGD8DbNJDz+k7oeA0y6Q=;
-        b=HXqAQtuzqclHE1Tfkp579HcGaaZZgFwRzxX+H9pRdanvcbtAIVifU2Z88Rq+hwsvjV
-         +GibgBYgwYPW1fvdh9GjD4GWidl4cRK7Xf4wf8TVPUcvTAUZNMNBkEshb0uwMPnZc1Tt
-         g9m9xEfSYyqKv4GseAvLWWCiSPcsi75nl8zXWzolwuxVJc+q0GO7z6VNC31hz8GAmO4t
-         GomLe0Pf8GKPRLmPLKfmEWX7a2uWcKL9UgoQuFyoH2DWDD2e9XgawG163+urz7T4s2Jk
-         qcfuQNmSjyqyyUXvuW1aPYe5hDdGCwsy03JN4keGE7liR/FfmE6DwidjlRuUgs8pM6jr
-         ABpA==
+        bh=YzQHQlKHxgZaRZfXLT1ynkXMYrdCKCTUr57+vqG9rY0=;
+        b=GeRU7INomSFeMNtL8EVDnQzIoAcfn6UJYd5inJkPB/uTioDG3tZY+aL9ES/3jONXhQ
+         M2RgMsLS9L6v9zVuxPtjDo2uwnUvN6acbIaAmgnyL9vMNO9Yv7Ec+a7HSdisdyCo6Hw8
+         ek/T0XJ0VuSDm+O31+Sy7ltYOeJYPFGs7908IhiBw96qdYtaDtMnXVgtDJZxXSy5ssZR
+         ZIrc1jO3QP3Asb1rIDCW5W5MQP629lz19+618mYuqgLBxVRaX7bv5rZpTo45pU8RWqii
+         6C5Sg749OFNPe4BxTDVWKonOE/7HBYSyEbGvfaueQEtwi5ORNuvowcBV7LvQb+39C8Yz
+         TJxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718736909; x=1719341709;
+        d=1e100.net; s=20230601; t=1718736958; x=1719341758;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=27ULhBa6NF2Bs7Hi7tIhonbGGD8DbNJDz+k7oeA0y6Q=;
-        b=qPsWPqho3F36gbSwCZtMyh2AnPrLhA2TtHpTn/+geKlcDGydB120Z9koC/utjcKV6Q
-         X/A6wnHANV0AA6IrQ4K5BVt8TWa2cOURO8lUO8r7/DVhoBMFeNDht6f4MPKVQUL5NbEC
-         fIVFUrYMcETvP/VOJIuBt01+THpuweyfpeYQz1LsjQc386N8lW8duZ//A1xoGjJxuCRf
-         aX6ZnXusB5Q/O9wKfQZx7GhmPyeXxr7SRPH4vXPL+1DhGk3cslfIVVFek+UGODHkQJ5M
-         dYVg5ad5SGhSwF3cpIYs0rk/sJHpjEj1OYh0y4ijsuVqDxUr1We2OOFuZoXn8mt/9TtF
-         MPjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnCMQuehqbZ9aCeFLUlN9dEfFojj+duNpAQkDdZOGeqWuP1sFeRdzT9eRrOYOWFnkWpCFVyAUrxk1w9zupPnZ57dFONQwNriPDepRP
-X-Gm-Message-State: AOJu0YxZEeDQkUcbr5e6M+YMz9Q3DbOml9ByoZGwwMxrNPqvSq1eQKAA
-	G6NpSmOYxg30bKDNIi8tjVCFRZPROor/f11ONTid3Nh83BmHbKQa3PJkJLXeLvI=
-X-Google-Smtp-Source: AGHT+IF2Xuc+j5GQniwyckTVq0FVa/bh12Lgiw0qNMq3HIEExse2nNOx3fGWmOmKvYSecoALF0y/9Q==
-X-Received: by 2002:ac2:5974:0:b0:52c:8009:e0cb with SMTP id 2adb3069b0e04-52ccaa62705mr256788e87.41.1718736908660;
-        Tue, 18 Jun 2024 11:55:08 -0700 (PDT)
+        bh=YzQHQlKHxgZaRZfXLT1ynkXMYrdCKCTUr57+vqG9rY0=;
+        b=eU9QTGwelQasBDz5BAHhJVpr/bRBOLw1m7nqpPmRy3XnrkzSka/KojYspCWYomK6a4
+         RCELaQ7eaMMb0e5PlENuoco3Mi2RYEiLvICmjDHWUx7/j7NOcee79IIWFgwyhrDbqDJU
+         vAQ+BaFud6jRYpr+wT9TSPQDzhtNj+oDdxZyOQVvnarax39gCSZU+WrejQtu+cYVPxOc
+         a0whCl+cWNlq4kyT22j40EqpeWPQ3BWMI/nRzQYV7akug5mvjM2UR0gh9Dsr9k+y61uy
+         DTI6Yd4ABrVzxiCAfy1K3/VujUNsQJAK/wUJJEL6BbKjnffgD7grHSA/icO9KTsV0iuE
+         x5WA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwUGzPQC5/XvpDB6ibOwZH6FRRKl35XcEChgg5bCt+7JB5hkYO7mqDBuqnOLkk1Qb72gcUq4Vv3uMXaVgWwfSZxUQYmLRdaH9KzA+o
+X-Gm-Message-State: AOJu0Ywu60rvXh1iifImuth9MDl35jlORSJVV8MSROjJxGV5BbgWFRME
+	a026STS2tuSdM2DAdPpeW9scl48CR+rQX02pouMg9AAYrbEB42UohCpFmw03Iis=
+X-Google-Smtp-Source: AGHT+IGC5OJR3gZ0AgVkD1dpAKYbvhHSigXJJVNaqgqzU/pJEsxEJFZWPzPeEkSJ7Z7mUZbZszMNQQ==
+X-Received: by 2002:a2e:9257:0:b0:2eb:fcea:2f18 with SMTP id 38308e7fff4ca-2ec3ce7dfdbmr2013211fa.2.1718736958673;
+        Tue, 18 Jun 2024 11:55:58 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282f1dbsm1578550e87.110.2024.06.18.11.55.07
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec07126057sm17344181fa.59.2024.06.18.11.55.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 11:55:08 -0700 (PDT)
-Date: Tue, 18 Jun 2024 21:55:06 +0300
+        Tue, 18 Jun 2024 11:55:58 -0700 (PDT)
+Date: Tue, 18 Jun 2024 21:55:56 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, djakov@kernel.org, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	srinivas.kandagatla@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, quic_rgottimu@quicinc.com, 
-	quic_kshivnan@quicinc.com, conor+dt@kernel.org, abel.vesa@linaro.org
-Subject: Re: [PATCH V2 2/3] soc: qcom: icc-bwmon: Allow for interrupts to be
- shared across instances
-Message-ID: <d4f3rlk3jgqegxvto2b6vyemspommtsbs3ixqgan2rmknet3je@ohonicqa2iqy>
-References: <20240618154306.279637-1-quic_sibis@quicinc.com>
- <20240618154306.279637-3-quic_sibis@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Dzmitry Sankouski <dsankouski@gmail.com>, 
+	Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	phone-devel@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 02/23] gcc-sdm845: Add rates to the GP clocks
+Message-ID: <lwrz4rvn6ogseea5v6j7plc3yi3xnzo76dvrsl3muat3iswlkb@zmwa3xo3xgw4>
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
+ <wnf3mfgdm4p4f5wrxdtlx4wccnizdvohc7iiyu5t22eeb67r57@xun3r73hksrg>
+ <ad04e203-4244-4cd3-9c9a-fae002962990@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,67 +97,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240618154306.279637-3-quic_sibis@quicinc.com>
+In-Reply-To: <ad04e203-4244-4cd3-9c9a-fae002962990@linaro.org>
 
-On Tue, Jun 18, 2024 at 09:13:05PM GMT, Sibi Sankar wrote:
-> The multiple BWMONv4 instances available on the X1E80100 SoC use the
-> same interrupt number. Mark them are shared to allow for re-use across
-> instances. Handle the ensuing race introduced by relying on bwmon_disable
-> to disable the interrupt and coupled with explicit request/free irqs.
+On Tue, Jun 18, 2024 at 08:50:52PM GMT, Konrad Dybcio wrote:
 > 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
 > 
-> v2:
-> * Use explicit request/free irq and add comments regarding the race
->   introduced when adding the IRQF_SHARED flag. [Krzysztof/Dmitry]
+> On 6/18/24 19:50, Dmitry Baryshkov wrote:
+> > On Tue, Jun 18, 2024 at 04:59:36PM GMT, Dzmitry Sankouski wrote:
+> > > sdm845 has "General Purpose" clocks that can be muxed to
+> > > SoC pins.
+> > > 
+> > > Those clocks may be used as e.g. PWM sources for external peripherals.
+> > > Add more frequencies to the table for those clocks so it's possible
+> > > for arbitrary peripherals to make use of them.
+> > > 
+> > > See also: bf8bb8eaccf(clk: qcom: gcc-msm8916: Add rates to the GP clocks)
+> > 
+> > Each time I look at the table attached to the GP CLK, I feel that it's
+> > plain wrong. In the end the GPCLK can in theory have arbitrary value
+> > depending on the usecase.
+> > 
+> > Bjorn, Konrad, maybe we should add special clk_ops for GP CLK which
+> > allow more flexibility than a default clk_rcg2_ops?
 > 
->  drivers/soc/qcom/icc-bwmon.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
-> index fb323b3364db..4a4e28b41509 100644
-> --- a/drivers/soc/qcom/icc-bwmon.c
-> +++ b/drivers/soc/qcom/icc-bwmon.c
-> @@ -781,9 +781,10 @@ static int bwmon_probe(struct platform_device *pdev)
->  	bwmon->dev = dev;
->  
->  	bwmon_disable(bwmon);
-> -	ret = devm_request_threaded_irq(dev, bwmon->irq, bwmon_intr,
-> -					bwmon_intr_thread,
-> -					IRQF_ONESHOT, dev_name(dev), bwmon);
-> +
-> +	/* SoCs with multiple cpu-bwmon instances can end up using a shared interrupt line */
+> If we can somehow get max m/n/d values for all possible parents, sure
 
-... using devm_ here might result in the IRQ handler being executed
-after bwmon_disable in bwmon_remove()
+Calculate them at runtime?
 
-> +	ret = request_threaded_irq(bwmon->irq, bwmon_intr, bwmon_intr_thread,
-> +				   IRQF_ONESHOT | IRQF_SHARED, dev_name(dev), bwmon);
->  	if (ret)
->  		return dev_err_probe(dev, ret, "failed to request IRQ\n");
->  
-> @@ -798,6 +799,13 @@ static void bwmon_remove(struct platform_device *pdev)
->  	struct icc_bwmon *bwmon = platform_get_drvdata(pdev);
->  
->  	bwmon_disable(bwmon);
-> +
-> +	/*
-> +	 * Handle the race introduced, when dealing with multiple bwmon instances
-> +	 * using a shared interrupt line, by relying on bwmon_disable to disable
-> +	 * the interrupt and followed by an explicit free.
-> +	 */
-
-This sounds more like a part of the commit message. The comment before
-request_threaded_irq() should be enough.
-
-> +	free_irq(bwmon->irq, bwmon);
->  }
->  
->  static const struct icc_bwmon_data msm8998_bwmon_data = {
-> -- 
-> 2.34.1
-> 
 
 -- 
 With best wishes
