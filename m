@@ -1,200 +1,318 @@
-Return-Path: <linux-kernel+bounces-219448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A4890D2A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:51:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1612490D1FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815C81C22D51
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:51:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 560C9B29324
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87811AD9C6;
-	Tue, 18 Jun 2024 13:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wec5upIj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D1A16CD09;
+	Tue, 18 Jun 2024 12:55:33 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A67B1AD4BF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F034415B99B;
+	Tue, 18 Jun 2024 12:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718716840; cv=none; b=IJkNd8k5AWrRhJ1nrTBEfT8nyqurhSPjuLzt0DWkQgO4RLuodyjx1n1PyY4j6SCBCZvbVQeA9/7gTnlJVEmGsAsurfKDn0+mtk1bGlutHOm54FBZkvgEZOZOnZFRzR/lrge9icbuAFz9KW/Ya7jnacT5a5O/XZN8+FezNhyKEY8=
+	t=1718715332; cv=none; b=iA9mUpDPKFxgMupnfxLfbYjhKp0DrH0jX1q2oRCpLWT4bZOo1rw8iWBgi7f3Ca8fzzKg/SEmFhJ3T+g7/W5m8vD1n9RGichZ8OoBMqK4zYnb5nhTc28e40J7PFQ+aR+0XYNjpR3G9XnQDzyC5yOqhKxyUx/VBrOxa3DQCWFbVUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718716840; c=relaxed/simple;
-	bh=TchHJF4H6pZ5HhgR8lD+C3/ZokyoEJaEyP3Iiw2Qbog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HS1pZlku0qnbP1B2yXY7NnjOC7LW8uOao9//4D8pdgOI7cEsvOShC/3o99Cj5n/Ls0mX4P+sxldeItjatnQzJmfO36MNhAeF2eYhO6qG+DB0y/Dk20iGSN4zdkBZ6Ff+N3E7vxxHaYx0ra96CMpjQRfuqjShXPQkovLlpVsyqPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wec5upIj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A1AC32786;
-	Tue, 18 Jun 2024 13:20:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718716840;
-	bh=TchHJF4H6pZ5HhgR8lD+C3/ZokyoEJaEyP3Iiw2Qbog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wec5upIjb+m4Xq+QKZFTRFbkytlPf1BL/+qeOlHRSjgfKL9kiMoegzke1qlDRYKUT
-	 j5hmHfhYkTbwmL5zOsr5U0ODY/5l2zUEj1QI3QcDmZgK0CeDO2CWMBs6YAgPW04XeZ
-	 Poo23CGLa9aSvFi228OSTiaG6UlckXl38fkF/Zks=
-Date: Tue, 18 Jun 2024 14:54:53 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 1/1] container_of: Document container_of_const() is
- preferred
-Message-ID: <2024061820-scrambled-playback-a73a@gregkh>
-References: <20240617100825.2510728-1-sakari.ailus@linux.intel.com>
- <2024061702-vexingly-hypocrisy-d93d@gregkh>
- <ZnFOrziVMDwtu1NA@kekkonen.localdomain>
- <2024061827-revival-handwrite-5eb0@gregkh>
- <ZnF06GjogseJut9q@kekkonen.localdomain>
+	s=arc-20240116; t=1718715332; c=relaxed/simple;
+	bh=Kn8S8dUnZbDCIC+TWAp5uw60QXnA0M97hIF8La7hjMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WfLtZ4hsf77wYsamSG35StzrGldL8GDNtbNCvKRTGarpLlaA3lCUA2Xims3kWAxvliB1M15SL7lv7wpJi5IuFKFkCFopGkrnJk5zJ2xDjuFybwRBOMOSGv65c+iKl3Q0dPSVhyGl+Gvqjr5F/GO7NbZFrGa/zRaF8xZU2Gn2pJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W3RYY5Z23z4f3jtC;
+	Tue, 18 Jun 2024 20:55:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 91F081A0FAD;
+	Tue, 18 Jun 2024 20:55:20 +0800 (CST)
+Received: from [10.67.111.172] (unknown [10.67.111.172])
+	by APP4 (Coremail) with SMTP id gCh0CgCH8A21g3FmuWgiAQ--.31099S3;
+	Tue, 18 Jun 2024 20:55:18 +0800 (CST)
+Message-ID: <5ab67b75-4334-3678-40d2-8be98460d496@huaweicloud.com>
+Date: Tue, 18 Jun 2024 20:55:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnF06GjogseJut9q@kekkonen.localdomain>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v6 1/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Content-Language: en-US
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Vincent Donnefort <vdonnefort@google.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ suleiman@google.com, Thomas Gleixner <tglx@linutronix.de>,
+ Vineeth Pillai <vineeth@bitbyteword.org>,
+ Youssef Esmat <youssefesmat@google.com>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Alexander Graf <graf@amazon.com>,
+ Baoquan He <bhe@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, David Howells
+ <dhowells@redhat.com>, Mike Rapoport <rppt@kernel.org>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+References: <20240613155506.811013916@goodmis.org>
+ <20240613155527.437020271@goodmis.org>
+From: Zhengyejian <zhengyejian@huaweicloud.com>
+In-Reply-To: <20240613155527.437020271@goodmis.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCH8A21g3FmuWgiAQ--.31099S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxtFW3tw13Gry5Wry8Gr1Utrb_yoW3Gr18pr
+	WxJr1FyFZrtr1xXr4Ikw1Uu3yru3Z3KF1ag34DAryDuFsrWr12gw4jgr4Yv3s5ArWvgF4q
+	qF4vyayI9w4DJ3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6r106r1rM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UZ18PUUUUU=
+X-CM-SenderInfo: x2kh0w51hmxt3q6k3tpzhluzxrxghudrp/
 
-On Tue, Jun 18, 2024 at 11:52:08AM +0000, Sakari Ailus wrote:
-> Hi Greg,
+On 2024/6/13 23:55, Steven Rostedt wrote:
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 > 
-> On Tue, Jun 18, 2024 at 12:01:30PM +0200, Greg Kroah-Hartman wrote:
-> > On Tue, Jun 18, 2024 at 09:09:03AM +0000, Sakari Ailus wrote:
-> > > Hi Greg,
-> > > 
-> > > On Mon, Jun 17, 2024 at 12:44:55PM +0200, Greg Kroah-Hartman wrote:
-> > > > On Mon, Jun 17, 2024 at 01:08:25PM +0300, Sakari Ailus wrote:
-> > > > > There is a warning in kerneldoc documentation of container_of() that
-> > > > > constness of @ptr is lost. While this is a suggestion container_of_const()
-> > > > > should be used instead, the vast majority of new code still uses
-> > > > > container_of():
-> > > > > 
-> > > > > $ git diff v6.8 v6.9|grep container_of\(|wc -l
-> > > > > 788
-> > > > > $ git diff v6.8 v6.9|grep container_of_const|wc -l
-> > > > > 11
-> > > > 
-> > > > That is because container_of_const is new, and you don't normally go
-> > > > back and change things unless you have to.  Which is what I am starting
-> > > > to do for some cases now in the driver core interactions, but generally
-> > > > it's rare to need this.
-> > > 
-> > > container_of_const() does provide a useful a useful sanity check and I
-> > > think we should encourage people to use it. I'm happy to see many macros
-> > > under include/ use container_of_const() already, but there seem to be more
-> > > than 1000 cases where the constness qualifier of a pointer is just
-> > > discarded just in the scope that got compiled with my current .config (not
-> > > allyesconfig). While the vast majority are probably benign, I wouldn't be
-> > > certain there aren't cases where the container of a const pointer ends up
-> > > being modified.
-> > > 
-> > > > 
-> > > > Also note that container_of_const does not work in an inline function,
-> > > > which is another reason people might not want to use it.
-> > > 
-> > > Does not work or is less useful (compared to a macro)? _Generic() would
-> > > need to be used if you'd like to have const and non-const variants of an
-> > > inline function but I guess in most cases macros are just fine.
-> > 
-> > I could not figure out a way to make this an inline function at all.
-> > Try it yourself and see, maybe I was wrong.
+> In order to allow for requesting a memory region that can be used for
+> things like pstore on multiple machines where the memory layout is not the
+> same, add a new option to the kernel command line called "reserve_mem".
 > 
-> I didn't have any issues (apart from me misspelling function names ;)) with
-> GCC 12, neither in using container_of_const() in a static inline function
-> nor in using a static inline function as a _Generic() expression.
-
-Really?  And how do you handle the pointer being either const or not,
-and propagating that back out as the return type?  I'd like to see your
-inline function please.
-
-> If other compilers have issues we can update the documentation I guess? Or
-> only make the check on compilers that properly support it? Or in the best
-> case, fix those compilers. This does tend to take a long time though.
-
-I tested this all with gcc-12 when I did the original work, so that
-should be fine.
-
-> > > > > Make an explicit recommendation to use container_of_const(), unless @ptr
-> > > > > is const but its container isn't.
-> > > > > 
-> > > > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > > > ---
-> > > > >  include/linux/container_of.h | 4 +++-
-> > > > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/include/linux/container_of.h b/include/linux/container_of.h
-> > > > > index 713890c867be..7563015ff165 100644
-> > > > > --- a/include/linux/container_of.h
-> > > > > +++ b/include/linux/container_of.h
-> > > > > @@ -13,7 +13,9 @@
-> > > > >   * @type:	the type of the container struct this is embedded in.
-> > > > >   * @member:	the name of the member within the struct.
-> > > > >   *
-> > > > > - * WARNING: any const qualifier of @ptr is lost.
-> > > > > + * WARNING: any const qualifier of @ptr is lost. container_of() should only be
-> > > > > + * used in cases where @ptr is const and its container is not and you know what
-> > > > > + * you're doing. Otherwise always use container_of_const().
-> > > > 
-> > > > I know of no cases where a @ptr would be const yet the container would
-> > > > not be, do you?  So why say that here?  That implies that it is a valid
-> > > > thing to actually do.
-> > > > 
-> > > > I don't understand the goal here, do you want to just not have new
-> > > > usages use container_of() at all?  Or are you trying to warn people of a
-> > > > common problem that they make?  Having a const @ptr is not normal in the
-> > > > kernel, so this should be ok.  If not, send patches to fix up those
-> > > > users please.
-> > > 
-> > > My immediate goal is to encourage people to use container_of_const() for
-> > > the added sanity check and stop adding technical debt (code that ignores
-> > > const qualifier). Currently people also do think they should be using
-> > > container_of() instead of container_of_const() because the pointer they
-> > > have is not const (at the time of writing the code at least).
-> > 
-> > That's fine, so for new things, use container_of_const(), but generally
-> > the need for a const is quite rare, outside of the driver core
-> > interactions.
+> The format is:  reserve_mem=nn:align:name
 > 
-> Right, but I'm also looking to avoid drivers doing this inadvertly. Those
-> instances are just as much a blocker for turning container_of() const-aware
-> as anything else.
-
-Almost no driver should be using container_of on their own, they should
-be using the bus-provided macros instead.  Or if they are, they are
-doing it for their own internal structures and as those are probably not
-const, then there's not an issue here.
-
-Specific examples of where you are seeing this being added where it
-shouldn't be would be good.
-
-Also, just start sweeping the tree if you want to, and send patches to
-fix up where this is done incorrectly should be gladly accepted.
-
-> > > Eventually (or hopefully?) adding that sanity check for container_of() may
-> > > be possible so we'd again have just one macro for the job.
-> > 
-> > That would be nice, try doing that and see what blows up.
+> Where it will find nn amount of memory at the given alignment of align.
+> The name field is to allow another subsystem to retrieve where the memory
+> was found. For example:
 > 
-> Currently a lot of things but it can be done gradually, one instance at a
-> time.
+>    reserve_mem=12M:4096:oops ramoops.mem_name=oops
 > 
-> How changing the container_of() documentation to this:
+> Where ramoops.mem_name will tell ramoops that memory was reserved for it
+> via the reserve_mem option and it can find it by calling:
 > 
->  * WARNING: any const qualifier of @ptr is lost. Use container_of_const()
->  * instead.
+>    if (reserve_mem_find_by_name("oops", &start, &size)) {
+> 	// start holds the start address and size holds the size given
+> 
+> This is typically used for systems that do not wipe the RAM, and this
+> command line will try to reserve the same physical memory on soft reboots.
+> Note, it is not guaranteed to be the same location. For example, if KASLR
+> places the kernel at the location of where the RAM reservation was from a
+> previous boot, the new reservation will be at a different location.  Any
+> subsystem using this feature must add a way to verify that the contents of
+> the physical memory is from a previous boot, as there may be cases where
+> the memory will not be located at the same location.
+> 
+> Not all systems may work either. There could be bit flips if the reboot
+> goes through the BIOS. Using kexec to reboot the machine is likely to
+> have better results in such cases.
+> 
+> Link: https://lore.kernel.org/all/ZjJVnZUX3NZiGW6q@kernel.org/
+> 
+> Suggested-by: Mike Rapoport <rppt@kernel.org>
+> Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>   .../admin-guide/kernel-parameters.txt         |  22 ++++
+>   include/linux/mm.h                            |   2 +
+>   mm/memblock.c                                 | 117 ++++++++++++++++++
+>   3 files changed, 141 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index b600df82669d..56e18b1a520d 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -5710,6 +5710,28 @@
+>   			them.  If <base> is less than 0x10000, the region
+>   			is assumed to be I/O ports; otherwise it is memory.
+>   
+> +	reserve_mem=	[RAM]
+> +			Format: nn[KNG]:<align>:<label>
+> +			Reserve physical memory and label it with a name that
+> +			other subsystems can use to access it. This is typically
+> +			used for systems that do not wipe the RAM, and this command
+> +			line will try to reserve the same physical memory on
+> +			soft reboots. Note, it is not guaranteed to be the same
+> +			location. For example, if anything about the system changes
+> +			or if booting a different kernel. It can also fail if KASLR
+> +			places the kernel at the location of where the RAM reservation
+> +			was from a previous boot, the new reservation will be at a
+> +			different location.
+> +			Any subsystem using this feature must add a way to verify
+> +			that the contents of the physical memory is from a previous
+> +			boot, as there may be cases where the memory will not be
+> +			located at the same location.
+> +
+> +			The format is size:align:label for example, to request
+> +			12 megabytes of 4096 alignment for ramoops:
+> +
+> +			reserve_mem=12M:4096:oops ramoops.mem_name=oops
+> +
+>   	reservetop=	[X86-32,EARLY]
+>   			Format: nn[KMG]
+>   			Reserves a hole at the top of the kernel virtual
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 9849dfda44d4..077fb589b88a 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -4263,4 +4263,6 @@ static inline bool pfn_is_unaccepted_memory(unsigned long pfn)
+>   void vma_pgtable_walk_begin(struct vm_area_struct *vma);
+>   void vma_pgtable_walk_end(struct vm_area_struct *vma);
+>   
+> +int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phys_addr_t *size);
+> +
+>   #endif /* _LINUX_MM_H */
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index d09136e040d3..b7b0e8c3868d 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -2244,6 +2244,123 @@ void __init memblock_free_all(void)
+>   	totalram_pages_add(pages);
+>   }
+>   
+> +/* Keep a table to reserve named memory */
+> +#define RESERVE_MEM_MAX_ENTRIES		8
+> +#define RESERVE_MEM_NAME_SIZE		16
+> +struct reserve_mem_table {
+> +	char			name[RESERVE_MEM_NAME_SIZE];
+> +	phys_addr_t		start;
+> +	phys_addr_t		size;
+> +};
+> +static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
+> +static int reserved_mem_count;
+> +
+> +/* Add wildcard region with a lookup name */
+> +static void __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
+> +				   const char *name)
+> +{
+> +	struct reserve_mem_table *map;
+> +
+> +	map = &reserved_mem_table[reserved_mem_count++];
+> +	map->start = start;
+> +	map->size = size;
+> +	strscpy(map->name, name);
+> +}
+> +
+> +/**
+> + * reserve_mem_find_by_name - Find reserved memory region with a given name
+> + * @name: The name that is attached to a reserved memory region
+> + * @start: If found, holds the start address
+> + * @size: If found, holds the size of the address.
+> + *
+> + * @start and @size are only updated if @name is found.
+> + *
+> + * Returns: 1 if found or 0 if not found.
+> + */
+> +int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phys_addr_t *size)
+> +{
+> +	struct reserve_mem_table *map;
+> +	int i;
+> +
+> +	for (i = 0; i < reserved_mem_count; i++) {
+> +		map = &reserved_mem_table[i];
+> +		if (!map->size)
+> +			continue;
+> +		if (strcmp(name, map->name) == 0) {
+> +			*start = map->start;
+> +			*size = map->size;
+> +			return 1;
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(reserve_mem_find_by_name);
+> +
+> +/*
+> + * Parse reserve_mem=nn:align:name
+> + */
+> +static int __init reserve_mem(char *p)
+> +{
+> +	phys_addr_t start, size, align, tmp;
+> +	char *name;
+> +	char *oldp;
+> +	int len;
+> +
+> +	if (!p)
+> +		return -EINVAL;
+> +
+> +	/* Check if there's room for more reserved memory */
+> +	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
+> +		return -EBUSY;
+> +
+> +	oldp = p;
+> +	size = memparse(p, &p);
+> +	if (!size || p == oldp)
+> +		return -EINVAL;
+> +
+> +	if (*p != ':')
+> +		return -EINVAL;
+> +
+> +	align = memparse(p+1, &p);
+> +	if (*p != ':')
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * memblock_phys_alloc() doesn't like a zero size align,
+> +	 * but it is OK for this command to have it.
+> +	 */
+> +	if (align < SMP_CACHE_BYTES)
+> +		align = SMP_CACHE_BYTES;
+> +
+> +	name = p + 1;
+> +	len = strlen(name);
+> +
+> +	/* name needs to have length but not too big */
+> +	if (!len || len >= RESERVE_MEM_NAME_SIZE)
+> +		return -EINVAL;
+> +
+> +	/* Make sure that name has text */
+> +	for (p = name; *p; p++) {
+> +		if (!isspace(*p))
+> +			break;
+> +	}
+> +	if (!*p)
+> +		return -EINVAL;
+> +
+> +	/* Make sure the name is not already used */
+> +	if (reserve_mem_find_by_name(name, &start, &tmp))
+> +		return -EBUSY;
+> +
+> +	start = memblock_phys_alloc(size, align);
+> +	if (!start)
+> +		return -ENOMEM;
+> +
+> +	reserved_mem_add(start, size, name);
+> +
+> +	return 0;
 
-Is that really going to change anyone's opinion of what to use here?
+Hi, steve, should here return 1 ? Other __setup functions
+return 1 when it success.
 
-thanks,
+> +}
+> +__setup("reserve_mem=", reserve_mem);
+> +
+>   #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
+>   static const char * const flagname[] = {
+>   	[ilog2(MEMBLOCK_HOTPLUG)] = "HOTPLUG",
 
-greg k-h
 
