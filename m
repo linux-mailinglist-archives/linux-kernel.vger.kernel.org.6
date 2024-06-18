@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-219636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6F590D781
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:39:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5D090D5EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCA5CB2EA8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:47:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA92E1F23279
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AC014BF86;
-	Tue, 18 Jun 2024 14:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F10E14EC62;
+	Tue, 18 Jun 2024 14:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="Ku35k3sK"
-Received: from mx0b-00823401.pphosted.com (mx0b-00823401.pphosted.com [148.163.152.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2DWNxsjk"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E09E12B95;
-	Tue, 18 Jun 2024 14:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785CE14E2DF
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718721475; cv=none; b=p2CY1m+WO/KIQLuxfA2nFildPdrq7zJ9xE+gaMaQcPbeJtCjR5qX6fhEmOrYxdh257PkqpCb3a8lrIKbK3OfEAOjrBLacfHXQa39AbMXvGkMh6mRlj6B70AFpoujfFLUS/e/7cLABBUtXjOGkCAYmXIr+nEdqoTwrxbHEqYLcR0=
+	t=1718721515; cv=none; b=Zl1LESD0FE8+sT6KySd5tHIJSJfy93LYuh1wtmkHtSViL+LULMY7mAibXmIee2X7awsvoqj+bxlbxStvOcVbisisSBYVPfTvjt0+5V6lVhSyN7VGlKXM5vK0Au0jEvoMgk3YrUvj7g8i+1ewE8VeoXNaVOgrwVrk7DEbOUJhXQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718721475; c=relaxed/simple;
-	bh=na6KOdcwocOVWP2D6fkDzWxcGI4FluP9gWc0IEeBvPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eXyanUxR6wFbnkPYZZogsQ9F9ehIqij0CvfjhehdioEdU80Jbio0sI2v1SgKqiHn/leRM94flEuugT0uF6/zEZ2NtOgH+uvExSCYSXRrOsg3PeaWeXuBbNt39C32dcbTebCLdAjhQdhyDEBRk+ogLr3zBnxF0RsYNkoxN5Q7Zio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=Ku35k3sK; arc=none smtp.client-ip=148.163.152.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
-Received: from pps.filterd (m0355090.ppops.net [127.0.0.1])
-	by m0355090.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 45ID7VG6016852;
-	Tue, 18 Jun 2024 14:37:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	DKIM202306; bh=6Mjw2tZfiMJ6uFQ21cibQZKdgxepVkmAZq6TGlRIs6s=; b=K
-	u35k3sKb/hwe5r6DQ+an+DiZErYoP+FlxXltcHOVH0ZpyQnC0QYc/bRGfemHQYda
-	SI5DWRGAWxNKAQQdJOpfbDnRU6MCkmGGJQuAq5ZdP9YdVLu6o6v3O9JrHysPno27
-	86TqMRK9zrfSrrI4athTEedOvHuWkt4mDRvk0+TSW0VKG5QQkE1imAuNV3QHc8X0
-	yhtfumdL3xRjS5A0LVuO/AlqMUMiXzsxI6teCrQbvA6JXSFPzNw2MD3MBhNhpS5J
-	WTQk5jq5mf5cAQp9BbzMwq//CJwNNDUb4mVDQ+VCGiQFAbbcdBf8YKmszcFdSWfN
-	XpwZxk7c8gUtnkZemuYMg==
-Received: from va32lpfpp03.lenovo.com ([104.232.228.23])
-	by m0355090.ppops.net (PPS) with ESMTPS id 3ysp9ry6sy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 14:37:34 +0000 (GMT)
-Received: from ilclmmrp02.lenovo.com (ilclmmrp02.mot.com [100.65.83.26])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by va32lpfpp03.lenovo.com (Postfix) with ESMTPS id 4W3Tqf0Zkyz4yjWh;
-	Tue, 18 Jun 2024 14:37:34 +0000 (UTC)
-Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mbland)
-	by ilclmmrp02.lenovo.com (Postfix) with ESMTPSA id 4W3Tqd65lDz3p6jp;
-	Tue, 18 Jun 2024 14:37:33 +0000 (UTC)
-Date: Tue, 18 Jun 2024 09:37:32 -0500
-From: Maxwell Bland <mbland@motorola.com>
-To: linux-mm@kvack.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Maxwell Bland <mbland@motorola.com>,
-        Alexandre Ghiti <alexghiti@rivosinc.com>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/5] ptdump: add intermediate directory support
-Message-ID: <aw675dhrbplkitj3szjut2vyidsxokogkjj3vi76wl2x4wybtg@5rhk5ca5zpmv>
+	s=arc-20240116; t=1718721515; c=relaxed/simple;
+	bh=asXpl0JeYor9a6fnYwHucBKXJR1r4vtn+68cuYeq1jQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AYwbG+ZTfxNeYrFk1wZ5VSmucxkl8kqSojb8Jj7WFuVXOcN5VCBNdXyYjxiN9IqO9sCaBciOLVDWevvkTIZy7AjTI3eLbJrOd7uqf3u6nzdRIzlI2rVYIkZXxHdaDrGUsNSgMrI9TxLWZYJb2niRZuill5VcP4GUEEx4EoH1g2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2DWNxsjk; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b081c675e7so28552466d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:38:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718721512; x=1719326312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=asXpl0JeYor9a6fnYwHucBKXJR1r4vtn+68cuYeq1jQ=;
+        b=2DWNxsjkfDnqP1LPkjLJazw5K1B9X+xJZnvH3stNIiPS1NuZPErg8WeDny0sVuAxTY
+         Ko3M7I7dseGaBL42cI5ZbXrq1MyRgPmOZwl79rtEoPGVX09BFiTzX5ZzYRxbn3H0DnvR
+         JLESnoLbRrInBiexOGOhGkYdGW+M5vXv+beHNqRruub0LSk7tT4ncdsJ/HbuNJW8o9IN
+         KP/iM1R6XPaC5kuvj83c/Yuh7L0SU5wmsIhs2ssIT4GUdCQIqB9+bYZKr197c2uYpg7c
+         Mvr+mkf+nFq0tvukpg7Yu1bwOyoIyCFm6G0sLlLgSNK6DBJtlowgKX0MsAItzXa1hvyw
+         7Z+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718721512; x=1719326312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=asXpl0JeYor9a6fnYwHucBKXJR1r4vtn+68cuYeq1jQ=;
+        b=v49smRc3r0obPOIene1DIhFb4dVa6SN/b3UUyUFTcwa7V6qEV+niOHO/jIkyM7hXCQ
+         JHexfZq1DJH9IlfoinWMbKgoH1YaCWGi26Lx2tpSIBzm2Qn7ZbjXJslG8NOOCAwAo90+
+         GJw41MNyDU97sEe2/zFVQzIaCw0q60SeB+LV+JhgquLk1RD2COY6NYe0BXb+Iwtvzp9b
+         vjuQvxGhYBb6kW9AI0ra8Hhny23BhjJac3kLzBByk1R8fNOwy4jOxK9ALoXGF59dXeXm
+         N0vVOsilEPUKGfkTPRjFLkDcZo4085YZRl4G+lnQ0GUmv2W4DwNEk4nYBUfk4jtzUAIp
+         IOeA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3ivRTVpU8JI8TnUfvbVIzUoMwml5bEmzt+raRL+dlgYd2fBVo3jzQzuTgYa3qwA4FZ42GOUQXbznmQzfTjx/TD/+PGKK7AqXahlKz
+X-Gm-Message-State: AOJu0Yxi2/AhU9AEZdk1feESEc38nPc7OWjigBKkFIn1IqHMq7XoTowf
+	lu9HHQcWLFR/0G0QYeBBwagYQpuhPWPaTW2CxXgMNkbFHAin6+JA0XU40vkb+JjzsISpYWDekIk
+	JLSOacFoGPYqgErEHAB0je7ii4JZ3FPEfV/kI
+X-Google-Smtp-Source: AGHT+IG4JaLnVUVMywHgKWR5RLAZx4PZdexzuK6i5qlGKBVjqac751o/32budwVfajonH+PxBsa2bq093K+sijHFr4Y=
+X-Received: by 2002:a0c:8e47:0:b0:6b0:7864:90ac with SMTP id
+ 6a1803df08f44-6b2afc6efb7mr135971756d6.11.1718721512230; Tue, 18 Jun 2024
+ 07:38:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Proofpoint-GUID: sc6QcvRW6h6thBBf9R7Kxq_tsknsRC8q
-X-Proofpoint-ORIG-GUID: sc6QcvRW6h6thBBf9R7Kxq_tsknsRC8q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- mlxlogscore=999 priorityscore=1501 malwarescore=0 suspectscore=0
- clxscore=1011 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180108
+References: <20240613153924.961511-1-iii@linux.ibm.com> <20240613153924.961511-15-iii@linux.ibm.com>
+In-Reply-To: <20240613153924.961511-15-iii@linux.ibm.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 18 Jun 2024 16:37:55 +0200
+Message-ID: <CAG_fn=UZ+gCgvgYtn7=p0o8P8sj+iDkD5t-PpihMNNN1W33XyQ@mail.gmail.com>
+Subject: Re: [PATCH v4 14/35] kmsan: Do not round up pg_data_t size
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Makes many several improvements to (arm64) ptdump debugging, including:
+On Thu, Jun 13, 2024 at 5:39=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm.com=
+> wrote:
+>
+> x86's alloc_node_data() rounds up node data size to PAGE_SIZE. It's not
+> explained why it's needed, but it's most likely for performance
+> reasons, since the padding bytes are not used anywhere. Some other
+> architectures do it as well, e.g., mips rounds it up to the cache line
+> size.
+>
+> kmsan_init_shadow() initializes metadata for each node data and assumes
+> the x86 rounding, which does not match other architectures. This may
+> cause the range end to overshoot the end of available memory, in turn
+> causing virt_to_page_or_null() in kmsan_init_alloc_meta_for_range() to
+> return NULL, which leads to kernel panic shortly after.
+>
+> Since the padding bytes are not used, drop the rounding.
 
-- support note_page on intermediate table entries
-- (arm64) print intermediate entries and add an array for their specific
-  attributes
-- (arm64) adjust the entry ranges to remove the implicit exclusive upper
-  bound
-- (arm64) indent page table by level while maintaining attribute
-  alignment
-- (arm64) improve documentation clarity, detail, and precision
+Nice catch, thanks!
 
-Thank you again to the maintainers for their review of this patch.
-
-A comparison of the differences in output is provided here:
-github.com/maxwell-bland/linux-patch-data/tree/main/ptdump-non-leaf
-
-New in v4:
-- Inclusive upper bounds on range specifications
-- Splits commit into multiple smaller commits and separates cosmetic,
-  documentation, and logic changes
-- Updates documentation more sensibly
-- Fixes bug in size computation and handles ULONG_MAX bound overflow
-
-v3:
-https://lore.kernel.org/all/fik5ys53dbkpkl22o4s7sw7cxi6dqjcpm2f3kno5tyms73jm5y@buo4jsktsnrt/
-- Added tabulation to delineate entries
-- Fixed formatting issues with mailer and rebased to mm/linus
-
-v2:
-https://lore.kernel.org/r/20240423142307.495726312-1-mbland@motorola.com
-- Rebased onto linux-next/akpm (the incorrect branch)
-
-v1:
-https://lore.kernel.org/all/20240423121820.874441838-1-mbland@motorola.com/
-
-
-Maxwell Bland (5):
-  mm: add ARCH_SUPPORTS_NON_LEAF_PTDUMP
-  arm64: non leaf ptdump support
-  arm64: indent ptdump by level, aligning attributes
-  arm64: exclusive upper bound for ptdump entries
-  arm64: add attrs and format to ptdump document
-
- Documentation/arch/arm64/ptdump.rst | 126 ++++++++++++-----------
- arch/arm64/Kconfig                  |   1 +
- arch/arm64/mm/ptdump.c              | 149 +++++++++++++++++++++++++---
- mm/Kconfig.debug                    |   9 ++
- mm/ptdump.c                         |  21 ++--
- 5 files changed, 217 insertions(+), 89 deletions(-)
-
--- 
-2.39.2
-
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
