@@ -1,54 +1,88 @@
-Return-Path: <linux-kernel+bounces-218763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6BA90C487
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:42:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1D490C48A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 09:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CECA1F22F0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:42:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A0B3B21B9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 07:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAA115ADB1;
-	Tue, 18 Jun 2024 07:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E952E13B7A3;
+	Tue, 18 Jun 2024 07:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8HBx8Aa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EScJdUd7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F3C15ADAB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9841E863;
+	Tue, 18 Jun 2024 07:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718695590; cv=none; b=tDj/Nl0WSwhqSsJGblZa7vIyOr2V08Gm+vS8PiJ0f/TJ+ktaZbRTRL62L2T/hW+Bt8l8vKh/4EOrGH8D0M37Yvdp7sKzKX/fg8jshwuppqVu16XA8AT+iBhupI9cK5+yWsH/ba/9b1I0wP+1qleEg2jC+4yXgNfBSpe8BT5L4rU=
+	t=1718695697; cv=none; b=i/5hMeqYEiE/FZBr/VoCCuv4zjUpMCTkeuKMX46RjRNtP+rp0g5Ru5QCqKd2a20N20BsWCbipqr3A40fqdtO7Z3SRAp/oSafiHi3N6t6fz0DPZirxc9DsjqD30buq3Pl/72xUQBY16at4kv4kTgV/O2H6QQd+Y0dSlkYXPdZD6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718695590; c=relaxed/simple;
-	bh=KONhJvRsGKe9Je25O438ETYA1LD2QrAImWkgO4iDTkE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mWdNH3uRHDz+/6YAGhirwd0zNJNKl+ksMLqpDGXDxsb/0F/JWtKdmucL9th+UAPbYNKqq+fCaKeD/Qxw1rOA+x1nMq1cYlgHdv1GYumRaebK6wyIWMVl6Yv5Lg28//44OsRRNdoak5Fma6h3LX4kUtJN427NH3p5rvhnjtjkHTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8HBx8Aa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF46EC4AF1D;
-	Tue, 18 Jun 2024 07:26:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718695590;
-	bh=KONhJvRsGKe9Je25O438ETYA1LD2QrAImWkgO4iDTkE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X8HBx8AaJTixloScUfXKYiN8u5tzU+rzS9gH2zqvDNRSnKD0VfCmNk09o3JMVKHUm
-	 UR4J8B5JP+5pnGNQxLsLuqDgtMQvBDDRa/GUScgLMvVOAZb/m3d4j3vOsBiRY23eqh
-	 qrqM/Y5EUdgyLpkiBe+TN6XkZMJgeBA4fBD8FN0e87b7II7yAMaSBdq78Ivl/5jKvv
-	 qWRUV+5BbZOBp7bAM7XZYZD4GZKnuPv7guKz5kOq8wUj8f9rPbB8galgaf/boDtaDJ
-	 TBIPPmRDcpmxsaVthDN3dw4BWkb3mXqxq7Xd+ZXJKx2fQdIKAY7ovGQfb/HKZ59z/J
-	 VFXVhxkpwhP/g==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v3] f2fs: get rid of buffer_head use
-Date: Tue, 18 Jun 2024 15:26:20 +0800
-Message-Id: <20240618072620.720535-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1718695697; c=relaxed/simple;
+	bh=Pm+g1zuO3lpBcnw4Y+4LbimsaZWAveg3kEfjlLAa/k0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l1lu/PhVnWwbIlOgKIbKB4E2v7vpAnf4Wzupwk7eST11H0ANlEpqSFoNnNE8iuQUagvXXX/I+v9kolRPLIUmf4pYqcxDlapfe2vjj54+PelaDgxXUHSqVZ4BJdkkCx4cOVl2CHfX6N27WC/XZBLciWtol6L9vAlehkNrdzDzfIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EScJdUd7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HLfSXN025439;
+	Tue, 18 Jun 2024 07:27:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=WVaPTYXZ+AMwgmFA5PnrJu
+	PY3/z3kl0dMUW5njXHbq8=; b=EScJdUd7aEBQG/nPJUQEgIwpm1FS+ffW/EDANy
+	O9GVebWqzgFzHXRzB2jWirUvsZKHPsyEM3mXox+OL72B2A5J3/dCcDw6QZywiNJL
+	cc2/mm5Bf9U515U6KA6SVDd5ZOX02+YB/kmTmtbXt+/BGN2FeNeMjkKn0c68cLnA
+	86GG1JV/UBoKmoHdeMg66uUSAQGumQ0kUHuiVNFET3W0oPEoM9ck7JZdzAPeQqRG
+	YPXrAdzNGge0tK4WmAKG9W2kWKFxcMfC0DpXU8B8JBvjlVqb3IYbQHOCyP04wdO8
+	sMX+YEumNnk78i8lgc0IZ15yEl6+qiE31PPRi2q5XwAQvcMg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys3qf5ta9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 07:27:58 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45I7Rv2N024337
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 07:27:57 GMT
+Received: from jiegan-gv.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 18 Jun 2024 00:27:45 -0700
+From: Jie Gan <quic_jiegan@quicinc.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose
+	<suzuki.poulose@arm.com>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Konrad Dybcio <konradybcio@gmail.com>,
+        Mike Leach <mike.leach@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC: Jinlong Mao <quic_jinlmao@quicinc.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Tao Zhang
+	<quic_taozha@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Song Chai
+	<quic_songchai@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <andersson@kernel.org>,
+        <quic_yijiyang@quicinc.com>, <quic_yuanjiey@quicinc.com>,
+        <quic_liuxin@quicinc.com>, <quic_yanzl@quicinc.com>,
+        <quic_xinlon@quicinc.com>, <quic_xueqnie@quicinc.com>,
+        <quic_sijiwu@quicinc.com>
+Subject: [PATCH v1 0/3] Add coresight slave register driver to support data filter function
+Date: Tue, 18 Jun 2024 15:27:23 +0800
+Message-ID: <20240618072726.3767974-1-quic_jiegan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,281 +90,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jv1hjDa81jJN9reNr2ZGwldPlZi59B5j
+X-Proofpoint-ORIG-GUID: jv1hjDa81jJN9reNr2ZGwldPlZi59B5j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0 phishscore=0
+ lowpriorityscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180054
 
-Convert to use folio and related functionality.
+The Coresight Slave Register(CSR) device hosts miscellaneous configuration
+registers to control various features related to TMC ETR device.
 
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-- support large folio
-- use bd_mapping instead of bd_inode->i_mapping
- fs/f2fs/data.c  |  1 -
- fs/f2fs/f2fs.h  | 11 +++++-
- fs/f2fs/file.c  |  1 -
- fs/f2fs/inode.c |  1 -
- fs/f2fs/super.c | 93 +++++++++++++++++++++++++++++--------------------
- 5 files changed, 66 insertions(+), 41 deletions(-)
+The CSR device works as a helper device physically connected to the TMC ETR device.
+---------------------------------------------------------
+             |ETR0|             |ETR1|
+              . \                 / .
+              .  \               /  .
+              .   \             /   .
+              .    \           /    .
+---------------------------------------------------     
+ETR0ATID0-ETR0ATID3     CSR     ETR1ATID0-ETR1ATID3
+---------------------------------------------------
+Each ETR has four ATID registers with 128 bits long in total.
+e.g. ETR0ATID0-ETR0ATID3 registers are used by ETR0 device.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b6dcb3bcaef7..0b4f563f2361 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -7,7 +7,6 @@
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
--#include <linux/buffer_head.h>
- #include <linux/sched/mm.h>
- #include <linux/mpage.h>
- #include <linux/writeback.h>
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f7ee6c5e371e..777497919c62 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -11,7 +11,6 @@
- #include <linux/uio.h>
- #include <linux/types.h>
- #include <linux/page-flags.h>
--#include <linux/buffer_head.h>
- #include <linux/slab.h>
- #include <linux/crc32.h>
- #include <linux/magic.h>
-@@ -1990,6 +1989,16 @@ static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
- 	return (struct f2fs_super_block *)(sbi->raw_super);
- }
- 
-+static inline struct f2fs_super_block *F2FS_SUPER_BLOCK(struct folio *folio,
-+								pgoff_t index)
-+{
-+	pgoff_t idx_in_folio = index % (1 << folio_order(folio));
-+
-+	return (struct f2fs_super_block *)
-+		(page_address(folio_page(folio, idx_in_folio)) +
-+						F2FS_SUPER_OFFSET);
-+}
-+
- static inline struct f2fs_checkpoint *F2FS_CKPT(struct f2fs_sb_info *sbi)
- {
- 	return (struct f2fs_checkpoint *)(sbi->ckpt);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index e4a7cff00796..7508c744c157 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -8,7 +8,6 @@
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
- #include <linux/stat.h>
--#include <linux/buffer_head.h>
- #include <linux/writeback.h>
- #include <linux/blkdev.h>
- #include <linux/falloc.h>
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index dbfebbddf675..87982e06bbe7 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -7,7 +7,6 @@
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
--#include <linux/buffer_head.h>
- #include <linux/writeback.h>
- #include <linux/sched/mm.h>
- #include <linux/lz4.h>
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 4a1bc8f40f9a..c664db2b2a5e 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -11,7 +11,6 @@
- #include <linux/fs_context.h>
- #include <linux/sched/mm.h>
- #include <linux/statfs.h>
--#include <linux/buffer_head.h>
- #include <linux/kthread.h>
- #include <linux/parser.h>
- #include <linux/mount.h>
-@@ -3333,24 +3332,42 @@ loff_t max_file_blocks(struct inode *inode)
- 	return result;
- }
- 
--static int __f2fs_commit_super(struct buffer_head *bh,
--			struct f2fs_super_block *super)
-+static int __f2fs_commit_super(struct f2fs_sb_info *sbi, struct folio *folio,
-+						pgoff_t index, bool update)
- {
--	lock_buffer(bh);
--	if (super)
--		memcpy(bh->b_data + F2FS_SUPER_OFFSET, super, sizeof(*super));
--	set_buffer_dirty(bh);
--	unlock_buffer(bh);
--
-+	struct bio *bio;
- 	/* it's rare case, we can do fua all the time */
--	return __sync_dirty_buffer(bh, REQ_SYNC | REQ_PREFLUSH | REQ_FUA);
-+	blk_opf_t opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH | REQ_FUA;
-+	int ret;
-+
-+	folio_lock(folio);
-+	folio_wait_writeback(folio);
-+	if (update)
-+		memcpy(F2FS_SUPER_BLOCK(folio, index), F2FS_RAW_SUPER(sbi),
-+					sizeof(struct f2fs_super_block));
-+	folio_mark_dirty(folio);
-+	folio_clear_dirty_for_io(folio);
-+	folio_start_writeback(folio);
-+	folio_unlock(folio);
-+
-+	bio = bio_alloc(sbi->sb->s_bdev, 1, opf, GFP_NOFS);
-+
-+	/* it doesn't need to set crypto context for superblock update */
-+	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(folio_index(folio));
-+
-+	if (!bio_add_folio(bio, folio, folio_size(folio), 0))
-+		f2fs_bug_on(sbi, 1);
-+
-+	ret = submit_bio_wait(bio);
-+	folio_end_writeback(folio);
-+
-+	return ret;
- }
- 
- static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
--					struct buffer_head *bh)
-+					struct folio *folio, pgoff_t index)
- {
--	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
--					(bh->b_data + F2FS_SUPER_OFFSET);
-+	struct f2fs_super_block *raw_super = F2FS_SUPER_BLOCK(folio, index);
- 	struct super_block *sb = sbi->sb;
- 	u32 segment0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
- 	u32 cp_blkaddr = le32_to_cpu(raw_super->cp_blkaddr);
-@@ -3425,7 +3442,7 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
- 			set_sbi_flag(sbi, SBI_NEED_SB_WRITE);
- 			res = "internally";
- 		} else {
--			err = __f2fs_commit_super(bh, NULL);
-+			err = __f2fs_commit_super(sbi, folio, index, false);
- 			res = err ? "failed" : "done";
- 		}
- 		f2fs_info(sbi, "Fix alignment : %s, start(%u) end(%llu) block(%u)",
-@@ -3438,12 +3455,11 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
- }
- 
- static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
--				struct buffer_head *bh)
-+					struct folio *folio, pgoff_t index)
- {
- 	block_t segment_count, segs_per_sec, secs_per_zone, segment_count_main;
- 	block_t total_sections, blocks_per_seg;
--	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
--					(bh->b_data + F2FS_SUPER_OFFSET);
-+	struct f2fs_super_block *raw_super = F2FS_SUPER_BLOCK(folio, index);
- 	size_t crc_offset = 0;
- 	__u32 crc = 0;
- 
-@@ -3601,7 +3617,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 	}
- 
- 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
--	if (sanity_check_area_boundary(sbi, bh))
-+	if (sanity_check_area_boundary(sbi, folio, index))
- 		return -EFSCORRUPTED;
- 
- 	return 0;
-@@ -3948,7 +3964,7 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
- {
- 	struct super_block *sb = sbi->sb;
- 	int block;
--	struct buffer_head *bh;
-+	struct folio *folio;
- 	struct f2fs_super_block *super;
- 	int err = 0;
- 
-@@ -3957,32 +3973,32 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
- 		return -ENOMEM;
- 
- 	for (block = 0; block < 2; block++) {
--		bh = sb_bread(sb, block);
--		if (!bh) {
-+		folio = read_mapping_folio(sb->s_bdev->bd_mapping, block, NULL);
-+		if (IS_ERR(folio)) {
- 			f2fs_err(sbi, "Unable to read %dth superblock",
- 				 block + 1);
--			err = -EIO;
-+			err = PTR_ERR(folio);
- 			*recovery = 1;
- 			continue;
- 		}
- 
- 		/* sanity checking of raw super */
--		err = sanity_check_raw_super(sbi, bh);
-+		err = sanity_check_raw_super(sbi, folio, block);
- 		if (err) {
- 			f2fs_err(sbi, "Can't find valid F2FS filesystem in %dth superblock",
- 				 block + 1);
--			brelse(bh);
-+			folio_put(folio);
- 			*recovery = 1;
- 			continue;
- 		}
- 
- 		if (!*raw_super) {
--			memcpy(super, bh->b_data + F2FS_SUPER_OFFSET,
-+			memcpy(super, F2FS_SUPER_BLOCK(folio, block),
- 							sizeof(*super));
- 			*valid_super_block = block;
- 			*raw_super = super;
- 		}
--		brelse(bh);
-+		folio_put(folio);
- 	}
- 
- 	/* No valid superblock */
-@@ -3996,7 +4012,8 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
- 
- int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
- {
--	struct buffer_head *bh;
-+	struct folio *folio;
-+	pgoff_t index;
- 	__u32 crc = 0;
- 	int err;
- 
-@@ -4014,22 +4031,24 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
- 	}
- 
- 	/* write back-up superblock first */
--	bh = sb_bread(sbi->sb, sbi->valid_super_block ? 0 : 1);
--	if (!bh)
--		return -EIO;
--	err = __f2fs_commit_super(bh, F2FS_RAW_SUPER(sbi));
--	brelse(bh);
-+	index = sbi->valid_super_block ? 0 : 1;
-+	folio = read_mapping_folio(sbi->sb->s_bdev->bd_mapping, index, NULL);
-+	if (IS_ERR(folio))
-+		return PTR_ERR(folio);
-+	err = __f2fs_commit_super(sbi, folio, index, true);
-+	folio_put(folio);
- 
- 	/* if we are in recovery path, skip writing valid superblock */
- 	if (recover || err)
- 		return err;
- 
- 	/* write current valid superblock */
--	bh = sb_bread(sbi->sb, sbi->valid_super_block);
--	if (!bh)
--		return -EIO;
--	err = __f2fs_commit_super(bh, F2FS_RAW_SUPER(sbi));
--	brelse(bh);
-+	index = sbi->valid_super_block;
-+	folio = read_mapping_folio(sbi->sb->s_bdev->bd_mapping, index, NULL);
-+	if (IS_ERR(folio))
-+		return PTR_ERR(folio);
-+	err = __f2fs_commit_super(sbi, folio, index, true);
-+	folio_put(folio);
- 	return err;
- }
- 
+Based on the trace id which is programed in CSR ATID register of
+specific ETR, trace data with that trace id can get into ETR's buffer
+while other trace data gets ignored. CSR may contain several ATID registers. 
+Each ATID register is associated with an ETR device.
+
+To achieve this function, the trace id is obtained and stored in the related
+ETR device's driver data just before enabling the CSR. Then, the CSR
+device can easily obtain the trace ID from the ETR's driver data because the
+ETR's driver data is passed to the CSR's enable/disable functions.
+
+Ensure that every source device has already allocated a trace ID in its probe
+session because the sink device should always be the first device to
+enable when operating coresight_enable_path function. As a helper device of the
+ETR, the CSR device will program the ATID register of a specific ETR according to
+the trace id to enable data filter function at a very early stage. Without the
+correct trace ID, the enablement session will not work.
+
+Each CSR's enable session will set one bit in the ATID register.
+Every CSR's disbale seesion will reset all bits of the ATID register.
+
+This patch only supports sysfs mode. I will send the perf mode part patch
+once it is ready.
+
+Looking forward to receiving comments as this is a new driver.
+
+Thanks!
+
+Jie Gan (3):
+  dt-bindings: arm: Add binding document for Coresight Slave Register
+    device.
+  coresight: Add coresight slave register driver to support data filter
+    function in sysfs mode
+  arm64: dts: qcom: Add CSR and ETR nodes for SA8775p
+
+ .../bindings/arm/arm,coresight-tmc.yaml       |   8 +
+ .../bindings/arm/qcom,coresight-csr.yaml      |  49 +++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 167 ++++++++++
+ drivers/hwtracing/coresight/Kconfig           |   6 +
+ drivers/hwtracing/coresight/Makefile          |   1 +
+ drivers/hwtracing/coresight/coresight-core.c  |   6 +-
+ drivers/hwtracing/coresight/coresight-csr.c   | 315 ++++++++++++++++++
+ drivers/hwtracing/coresight/coresight-csr.h   |  24 ++
+ .../coresight/coresight-etm4x-core.c          |   1 +
+ drivers/hwtracing/coresight/coresight-stm.c   |  50 ---
+ drivers/hwtracing/coresight/coresight-sysfs.c |  45 ++-
+ .../hwtracing/coresight/coresight-tmc-core.c  |   1 +
+ drivers/hwtracing/coresight/coresight-tmc.h   |   2 +
+ include/linux/coresight-stm.h                 |  44 +++
+ 14 files changed, 665 insertions(+), 54 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-csr.yaml
+ create mode 100644 drivers/hwtracing/coresight/coresight-csr.c
+ create mode 100644 drivers/hwtracing/coresight/coresight-csr.h
+
 -- 
-2.40.1
+2.34.1
 
 
