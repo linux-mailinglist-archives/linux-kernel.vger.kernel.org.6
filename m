@@ -1,125 +1,137 @@
-Return-Path: <linux-kernel+bounces-219444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797D990D24B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:49:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C8790D286
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FCC2286BC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41A37284B41
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFC51AC240;
-	Tue, 18 Jun 2024 13:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374B61AC771;
+	Tue, 18 Jun 2024 13:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jv31aY0r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ls5WQkd0"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A8113D888
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E1A1AC77C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718716668; cv=none; b=mowCRL3LrQJHmAgs0rVuGOo82Dw92/QigeaVz2yc3KqeS03sriPeH2DimRhboKQssWhql8vVSH1jwtT9L0G601ZCPUWAjcr+1XTsKVYd6OeEaA/QBgievBUaHC532sfgqdyYEsMDMJqP5A/L2XrEz5l8+AVNDX5FO0OKd0SiAtw=
+	t=1718716704; cv=none; b=mPOh/sOrzP7Ck7iEjI3ZBTzKXeteSS4RZNLE1t8XGFR4KrXXX+nvM2sF2wwg+XAquVNaIrYEkTqGuU7l031jzdwBmLP786bQMHx7eS9yqHEGqWLObtWZU3XlakHkWWH2aKbwU4LPRCUMhVAxji70UyAV0D0J8OPAhnY7FhebKAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718716668; c=relaxed/simple;
-	bh=0fFikviDWcprlSP9pQuMSjycM5eGEUhkT5N4rUYJUkU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iPXLZYMWHgj46T4wLwc/2Sval8pEID9PIAYb3P5hjsyQ6MvBGnAsA8uv54p6WOw9fMrRyiRpz4wAy/BydqNmNrLyGJG59JS7vPYO65ncte3HASt7ZtTqY5owa6DlwxwPDiB/f37/+UTGnXyizk71d1iBwOJV2YjLb+bvQuVB5ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jv31aY0r; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718716666;
+	s=arc-20240116; t=1718716704; c=relaxed/simple;
+	bh=xdNJyy7AbGdQ1i50lrsLKpWuwkwIPlV0VSoeVxgrHnY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nPXAXW1i0tiEuJ6v/o15ieYBfqNEePsXQYJUMV9H76qQfLUdhrX04ALJW9I3Vj1tG/rrz80X/d9PJ921BIsmxYY13D0+ox2eQ9EAWS8IBMAQPkRjpT/E2Rp5uw/eaqjexiUZeI/4yO4VsjZ6S23jdiUIlS+UbFepoR7Uc28kuFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ls5WQkd0; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: davem@davemloft.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718716699;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wkG/y0EVJpO2MLmRR695aEiMGaJSIz5IAvVHId9VoG0=;
-	b=Jv31aY0riM2uYHwBqyHzVygZ30qiE9++59zsqsNE+82r4eyp+a6R6tX6bY5UjUA4XZJF0S
-	ZV120n3FZurPNPc7bOSIMXtPnCUi0j4XwExHxo1oh3AF2/y0qIXGw4F1R9ri9toebtfzrm
-	YcaOZQbiGZiZMMiu5VRfrgBR/vhzim4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-502-Kjq8FwCvN92fgwMlDKj8fQ-1; Tue,
- 18 Jun 2024 09:17:44 -0400
-X-MC-Unique: Kjq8FwCvN92fgwMlDKj8fQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 565A119560B3;
-	Tue, 18 Jun 2024 13:17:42 +0000 (UTC)
-Received: from RHTRH0061144 (dhcp-17-72.bos.redhat.com [10.18.17.72])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 55DB91955E83;
-	Tue, 18 Jun 2024 13:17:40 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org,  Pravin B Shelar <pshelar@ovn.org>,  "David S.
- Miller" <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Shuah Khan
- <shuah@kernel.org>,  dev@openvswitch.org,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] selftests: openvswitch: Set value to nla flags.
-In-Reply-To: <20240618072922.218757-1-amorenoz@redhat.com> (Adrian Moreno's
-	message of "Tue, 18 Jun 2024 09:29:21 +0200")
-References: <20240618072922.218757-1-amorenoz@redhat.com>
-Date: Tue, 18 Jun 2024 09:17:38 -0400
-Message-ID: <f7t34pamlu5.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kOHzNpRqSeMMg3Mv1dLmq/tYAO6AeuY9nP4v5FPhv0M=;
+	b=Ls5WQkd0ds60je0Q4pHsltFc+6tFgkyi7RtkkSvypiWlOdhmtjQnd1c/5p4KlphUpnI7QB
+	YUonG9gnx3uv3LYukSUMkIwXnyMocg4EoK04Swx45z+jJNE9E5OvZ5Npd0kvjJuhYplMTL
+	3DLtJ6KaLt9V699peCFCtzG5dvMIqDM=
+X-Envelope-To: edumazet@google.com
+X-Envelope-To: kuba@kernel.org
+X-Envelope-To: pabeni@redhat.com
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: yajun.deng@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yajun Deng <yajun.deng@linux.dev>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yajun Deng <yajun.deng@linux.dev>
+Subject: [PATCH net-next] net: core: Remove the dup_errno parameter in dev_prep_valid_name()
+Date: Tue, 18 Jun 2024 21:17:43 +0800
+Message-Id: <20240618131743.2690-1-yajun.deng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Adrian Moreno <amorenoz@redhat.com> writes:
+netdev_name_in_use() return -EEXIST makes more sense if it's not NULL.
+But dev_alloc_name() should keep the -ENFILE errno.
 
-> Netlink flags, although they don't have payload at the netlink level,
-> are represented as having "True" as value in pyroute2.
->
-> Without it, trying to add a flow with a flag-type action (e.g: pop_vlan)
-> fails with the following traceback:
->
-> Traceback (most recent call last):
->   File "[...]/ovs-dpctl.py", line 2498, in <module>
->     sys.exit(main(sys.argv))
->              ^^^^^^^^^^^^^^
->   File "[...]/ovs-dpctl.py", line 2487, in main
->     ovsflow.add_flow(rep["dpifindex"], flow)
->   File "[...]/ovs-dpctl.py", line 2136, in add_flow
->     reply = self.nlm_request(
->             ^^^^^^^^^^^^^^^^^
->   File "[...]/pyroute2/netlink/nlsocket.py", line 822, in nlm_request
->     return tuple(self._genlm_request(*argv, **kwarg))
->                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->   File "[...]/pyroute2/netlink/generic/__init__.py", line 126, in
-> nlm_request
->     return tuple(super().nlm_request(*argv, **kwarg))
->            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->   File "[...]/pyroute2/netlink/nlsocket.py", line 1124, in nlm_request
->     self.put(msg, msg_type, msg_flags, msg_seq=msg_seq)
->   File "[...]/pyroute2/netlink/nlsocket.py", line 389, in put
->     self.sendto_gate(msg, addr)
->   File "[...]/pyroute2/netlink/nlsocket.py", line 1056, in sendto_gate
->     msg.encode()
->   File "[...]/pyroute2/netlink/__init__.py", line 1245, in encode
->     offset = self.encode_nlas(offset)
->              ^^^^^^^^^^^^^^^^^^^^^^^^
->   File "[...]/pyroute2/netlink/__init__.py", line 1560, in encode_nlas
->     nla_instance.setvalue(cell[1])
->   File "[...]/pyroute2/netlink/__init__.py", line 1265, in setvalue
->     nlv.setvalue(nla_tuple[1])
->                  ~~~~~~~~~^^^
-> IndexError: list index out of range
->
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
+Remove the dup_errno parameter in dev_prep_valid_name() and add a
+conditional operator to dev_alloc_name(), replace -EEXIST with
+-ENFILE.
 
-Acked-by: Aaron Conole <aconole@redhat.com>
+Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
+---
+ net/core/dev.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/net/core/dev.c b/net/core/dev.c
+index c361a7b69da8..29e4c786cb8a 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -1151,8 +1151,7 @@ static int __dev_alloc_name(struct net *net, const char *name, char *res)
+ 
+ /* Returns negative errno or allocated unit id (see __dev_alloc_name()) */
+ static int dev_prep_valid_name(struct net *net, struct net_device *dev,
+-			       const char *want_name, char *out_name,
+-			       int dup_errno)
++			       const char *want_name, char *out_name)
+ {
+ 	if (!dev_valid_name(want_name))
+ 		return -EINVAL;
+@@ -1161,7 +1160,7 @@ static int dev_prep_valid_name(struct net *net, struct net_device *dev,
+ 		return __dev_alloc_name(net, want_name, out_name);
+ 
+ 	if (netdev_name_in_use(net, want_name))
+-		return -dup_errno;
++		return -EEXIST;
+ 	if (out_name != want_name)
+ 		strscpy(out_name, want_name, IFNAMSIZ);
+ 	return 0;
+@@ -1183,7 +1182,10 @@ static int dev_prep_valid_name(struct net *net, struct net_device *dev,
+ 
+ int dev_alloc_name(struct net_device *dev, const char *name)
+ {
+-	return dev_prep_valid_name(dev_net(dev), dev, name, dev->name, ENFILE);
++	int ret;
++
++	ret = dev_prep_valid_name(dev_net(dev), dev, name, dev->name);
++	return ret == -EEXIST ? -ENFILE : ret;
+ }
+ EXPORT_SYMBOL(dev_alloc_name);
+ 
+@@ -1192,7 +1194,7 @@ static int dev_get_valid_name(struct net *net, struct net_device *dev,
+ {
+ 	int ret;
+ 
+-	ret = dev_prep_valid_name(net, dev, name, dev->name, EEXIST);
++	ret = dev_prep_valid_name(net, dev, name, dev->name);
+ 	return ret < 0 ? ret : 0;
+ }
+ 
+@@ -11395,7 +11397,7 @@ int __dev_change_net_namespace(struct net_device *dev, struct net *net,
+ 		/* We get here if we can't use the current device name */
+ 		if (!pat)
+ 			goto out;
+-		err = dev_prep_valid_name(net, dev, pat, new_name, EEXIST);
++		err = dev_prep_valid_name(net, dev, pat, new_name);
+ 		if (err < 0)
+ 			goto out;
+ 	}
+-- 
+2.25.1
 
 
