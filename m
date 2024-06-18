@@ -1,885 +1,309 @@
-Return-Path: <linux-kernel+bounces-220321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AECD90DFB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:13:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A841290DFB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76D41B23089
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:13:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03527B21E40
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8202D1849E6;
-	Tue, 18 Jun 2024 23:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE5C178CD6;
+	Tue, 18 Jun 2024 23:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="o8xl37fB"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HgVibELk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24DE176AC9;
-	Tue, 18 Jun 2024 23:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718752393; cv=none; b=gS9ycmOnhyb0GNw5m+fYcFa5Gl2wQecImhlh3BDYv2COojJhI/rl7C9ahPr16OLXRWHSQBpMS/91YoFx0kKzBFa8bJKeK2/1yydU/vX2KmkwnV44AXhzXakBaJiOzJoW6nnrUY7sHm0sRmeixSnN57gO7RXNzWDtPG74L0hbX3A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718752393; c=relaxed/simple;
-	bh=qYbYayJhCcdODM0lOgZVE2O1cBf70uMydTPHysfR+Cg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eqAG15UNBeAw72bqneLcr6v0uz44WMqfI/PmU6bcEimDpRWG+07Pcl94auaiDncDbFYRHVK5JAYu1jbang8GzIcaB6cHpZwb0qxjVjzqN8fsriP6LGqnsdW7vDiE9ZHlXZJiXmjB7/0SXyKHsokvj8M3if+m0Abxa2wXOe31AH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=o8xl37fB; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ILXQq4005213;
-	Tue, 18 Jun 2024 19:12:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=20MbZ
-	3N3aV/AXWLtdKTaArvP3JyQcTzxXbC0XjE33/s=; b=o8xl37fBXGIJo343NOUqh
-	neSavXirbcEfT/mzp/Z7OKzXJ3RX5HqBMm0XuQHV1tvJASEt612IoEo1zZX17Mad
-	/rOtzrOiYti7AR9tKmWrt5YXbn2lcs2Sl1DrtRqjfrxDvSTksHBbR9APTI8e34a3
-	pxTUAtJ+lSJP11VJGCSG6ctXE6jvbGJzMteA9k1Yl0hQ71FtfMue2/ASXX0txT8A
-	BDiT87RMM5dYX1RcUnT7NQDdDO3CSxZ7JzBqHdCmspiS6flFl6JeeRI6vqsye+NG
-	tDzQieYeRwTRMO/Gmn9zsqK1vdd/WH7L+8Hjthx9Y/avThzfbsrdLtGzmN1A1AhW
-	w==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3yuj8qg8k9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 19:12:55 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 45INCsbx005978
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Jun 2024 19:12:54 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3457E13A418;
+	Tue, 18 Jun 2024 23:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718752550; cv=fail; b=cC9LS8FHXYpHwd3cpkwQ2bxsUJZIyP325D6zaAPqLZ9xsUpdVc0QR1/Q6XVaERQI0mAwHWAdISeJiydFhXlcSb3MsJDKPa233k3f9Uk/lVkTrpyGG7TGLgHAKLwTLvvngBKit26xaX5EKuqnU2s9HeoI6haegjv3laLwDjospjc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718752550; c=relaxed/simple;
+	bh=nbhJwmNKrbctPbB7IaHoS0wktAAH0AuAWcQH9T93d2Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=UoWAbdiWwlKMi49Ij8eJDNs9UJIlMPOvT6yIvm1CT3lfXeX6X/CJNmfnLkFHbpfHsqrpgh/qAGtfiL+4umn1sxiDNUHS8QN20Uqbae0clQk1ab4qupP3BtDd+WbvhvsXvtGNsO47neyuzzNAeIoN3qSx9iVAdounXoccFLAhxp4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HgVibELk; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718752548; x=1750288548;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=nbhJwmNKrbctPbB7IaHoS0wktAAH0AuAWcQH9T93d2Y=;
+  b=HgVibELkMTFH5rEJI+B4y2Pq2yclcfzHuOy6ych7MAaRNIZB/X6HjLol
+   fh8UqXDTD96PZNPuMsuNbWihJSX5tmIGGzM3/nAzUo6sTCDzWo4sLu5Q+
+   piInxBTW70kcv5/2o0CBaN+egGASpOQpaY6VmzPOyw6BnIXDYIwvshSkz
+   XQTjpmGTBNwI2vqaQPUkggZYJ2Cdp5z18fBVM/8Dc+aOx7lXqJg8M0Uh0
+   TyqwzTJpcG6fMGEOA01m50IrYDJS18E44g6PX8dPtmP1PXO4QWgnDjvvg
+   KcHz7VaME0SX8nREDPmIwGrUBtK4+H/APjY9na8/ncbsJlvbb+1K6xNga
+   A==;
+X-CSE-ConnectionGUID: 6NZXW7SqToCHrl4QAHgPSA==
+X-CSE-MsgGUID: m8urXUpTSYKrw5SzxwL8Ww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15427869"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="15427869"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 16:15:47 -0700
+X-CSE-ConnectionGUID: igF75uRgQP6lYcjEQJL5SA==
+X-CSE-MsgGUID: e6RD4wDVTjKCraGr5xirjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="46151961"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Jun 2024 16:15:47 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 18 Jun 2024 16:15:46 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 18 Jun 2024 16:15:46 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.170)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 18 Jun 2024 19:12:53 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 18 Jun 2024 19:12:53 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 18 Jun 2024 19:12:53 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.129])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 45INCcCR021790;
-	Tue, 18 Jun 2024 19:12:41 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <broonie@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <jic23@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <nuno.sa@analog.com>, <dlechner@baylibre.com>,
-        <marcelo.schmitt1@gmail.com>
-CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 6/6] iio: adc: Add support for AD4000
-Date: Tue, 18 Jun 2024 20:12:37 -0300
-Message-ID: <e77a00d1020baa178cb6a0201053b66cb27c39a9.1718749981.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <cover.1718749981.git.marcelo.schmitt@analog.com>
-References: <cover.1718749981.git.marcelo.schmitt@analog.com>
+ 15.1.2507.39; Tue, 18 Jun 2024 16:15:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Zs5lJHPoUCYR4fR73TrP15dH1BX6b8dqFNxogYkifL18lJMfPZXTamgH4x8JO4YOUyEH1cA9D/BPjl82qTW+k0I5wr/sfe6v9p84rK1wSEqxpjoPz4Jq5/vWgk8qmpnHy9MNOh7xIWi3khkPzEbjJborhgWaKSsZ24bZ2JjcEHneTh5/9CHb+Eh8Nl/0g+7oGH6j4A15C0/mimZCzOsCw5jY/5qJhY2rIlFKC+04Gxc6HkRTHO2T2eTT2D6dUx2bMx8zXaT7UK+n14npDIohYnKRusAoy7VD1CCsF+LJ94TRqcrknMnK+EwJZ/LPu9ZtRJiZkhqRf7UqHMWehtr6WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nbhJwmNKrbctPbB7IaHoS0wktAAH0AuAWcQH9T93d2Y=;
+ b=fmRgRG8PG6+5bxEMVimR5Kky2NVS6qA13AM9dBwtUfdrbHetTeCE4k74bjmxpQs54HyYmAIBqi+m0IerWUIopoWfAjGwU4Py64yiRREl0cQJL5I4ZKPFkcsr8WJYRLzU8D9qE1p2i8bDLsrC8tvFY0yNM2TuMjrISpNjcbXM0QlOygVMh7NaxcOCfcDkXclets7mIyH8DNJNE7mpdnCSMyvS7Xy0ezMcOfLffl+X0+PG+QOcCblDeMTi7F8shfRm3bCLjnOw9e8KeWGLpykveZ8CQ5Cv+9PmZeey6nDOQSEYp7+8BtlOZyRPIWCP0fLkiQjbQ3yJPO3e0RVUorMaYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by IA0PR11MB7187.namprd11.prod.outlook.com (2603:10b6:208:441::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Tue, 18 Jun
+ 2024 23:15:37 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%5]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 23:15:37 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "chenridong@huawei.com" <chenridong@huawei.com>,
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>, "mkoutny@suse.com"
+	<mkoutny@suse.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "haitao.huang@linux.intel.com"
+	<haitao.huang@linux.intel.com>, "tim.c.chen@linux.intel.com"
+	<tim.c.chen@linux.intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "tj@kernel.org" <tj@kernel.org>,
+	"jarkko@kernel.org" <jarkko@kernel.org>, "Mehta, Sohil"
+	<sohil.mehta@intel.com>, "hpa@zytor.com" <hpa@zytor.com>, "bp@alien8.de"
+	<bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>
+CC: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+	"seanjc@google.com" <seanjc@google.com>, "anakrish@microsoft.com"
+	<anakrish@microsoft.com>, "Zhang, Bo" <zhanb@microsoft.com>,
+	"kristen@linux.intel.com" <kristen@linux.intel.com>, "yangjie@microsoft.com"
+	<yangjie@microsoft.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+	"chrisyan@microsoft.com" <chrisyan@microsoft.com>
+Subject: Re: [PATCH v15 05/14] x86/sgx: Implement basic EPC misc cgroup
+ functionality
+Thread-Topic: [PATCH v15 05/14] x86/sgx: Implement basic EPC misc cgroup
+ functionality
+Thread-Index: AQHawLVpCFAs5aGEAU+I+soWZvGHW7HNZJYAgAAX1QCAAKz/AA==
+Date: Tue, 18 Jun 2024 23:15:37 +0000
+Message-ID: <b2ee67d2d1540c1eca1545a4121a4f9b34036e06.camel@intel.com>
+References: <20240617125321.36658-1-haitao.huang@linux.intel.com>
+	 <20240617125321.36658-6-haitao.huang@linux.intel.com>
+	 <aa686e57fad34041fb941f87c10fb017f048d29f.camel@intel.com>
+	 <op.2pkbj8lbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <op.2pkbj8lbwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.50.3 (3.50.3-1.fc39) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|IA0PR11MB7187:EE_
+x-ms-office365-filtering-correlation-id: 0565004f-be4e-4446-9fd5-08dc8fec9055
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|366013|7416011|376011|1800799021|38070700015|921017;
+x-microsoft-antispam-message-info: =?utf-8?B?QmNWa0dqN3ZNdFQ0L1FoTDMzU1ZGN1RkL1JQa0pvNjJPSFlGOUxKZXI0Tzcz?=
+ =?utf-8?B?Wlg0c0NNL2YvdmFWNHR4ZmgwUytJa2d3L044bHdyYm53VENOaWRMaEdObS9Y?=
+ =?utf-8?B?RG16Y0tSY0tzaktxZklKZ3VsQXVERXRnTFRGRG9WaHo5a2R2MUdRclR0aDVW?=
+ =?utf-8?B?YXF2MGdqc1hLS0VkeER0VzNKUCtObUlJOERMcUlISGIwL0VFNk44N2Q1dGl0?=
+ =?utf-8?B?bUY3amtCbVRrWkVrSUVQcVc0VlVaVkhXL04wUDljbzVGZ1QrM0h2aFl1WnNF?=
+ =?utf-8?B?b0QrK1pIMEVRc1dIWWMwK2VYYW1RRjgrTnFOUFZZT1Q5NjRaMndBSTBVNVN5?=
+ =?utf-8?B?ZW84NDMwT0dZUlVPZmxPbG1YYkFnOGNBNjNKK1NLaDhRZzJYQnRzSUdnSTda?=
+ =?utf-8?B?b2tER3l6cFpCNGZ2dnlUcUI3TWhOVjhUblhOTno2dUZjbnd2cG9rQkpIQWph?=
+ =?utf-8?B?ZEt0SXB3RW5Yb09yUGRTa0djaHVjNmY0cVE4VFpMT0FpcHJaRExpd1hSbkZM?=
+ =?utf-8?B?Q2owdDR3TzNHVWJMYkJFMy9BMURqTmVLbDlqYkExclo4VitEN09Ja1UveUM1?=
+ =?utf-8?B?QjI3dlRnenJwdFF6SmFWV2Y1ZkhCejVZdzgreXlMUUlMaE1QNnUya3hDdmdh?=
+ =?utf-8?B?dUhkMFpGWUljeFJVbnhpRWZXMWpGdFVmOGRqdCtaWENYdTZQVi8wZXBMRnl1?=
+ =?utf-8?B?U3FPb09idlhuQS9ISDIzWDBqNnp1TGhYZFRBY2U3ZDdjNi9XM0lxOU80VkFi?=
+ =?utf-8?B?ekRhTmJFcmorNHMveXNKVGpVWUhFdjJQMmhpR0RuUFhZZGdzc0Q0MjNodUJD?=
+ =?utf-8?B?RUMvQWxURVZ0L2RDcHNVZXpUWm5ucDRRT3ZVK2JzbUtEcktrbEd6eVNlczZW?=
+ =?utf-8?B?b0wyb0ZxVS92Kzc4MTdUdW9HWXlPb2FVaFJzTStIOXYvM3k0Vi83V3RqWEhK?=
+ =?utf-8?B?VUwrdjJUdFFQSDBHU0d1SWQ2MEdYUmZNWVAxLzZBTk1PcFJ6d0xUQnJRNHdh?=
+ =?utf-8?B?b1lnQlJ6Q29KaTlyWVNPWUJTVDZPVnFJeVRNRkpLYXdJY1JOaFpnRUZpQ3U5?=
+ =?utf-8?B?dFBHbmpMRDQ1TGsxVUcxdFRCK2FUNFBoMEVESm0wclIzRVpGWlNDYkFqSTZG?=
+ =?utf-8?B?ekZQTVBIR0pncDVpNkFqWGtvVUlXYmpLVDM0WXdsTHBxV3piUGNTSjVhcllo?=
+ =?utf-8?B?aitQcndNbElIWUJ1VmZ6TEJGVjVDYXdsOWtETndXQitnNDNwQ0hVczlQTDEy?=
+ =?utf-8?B?blV5TnQ1N1M5QWpscVl4M2NyZGE2dncyaHBUbzFIN0ZBR2FyRElXMzk0OGRB?=
+ =?utf-8?B?OHJ3L3d4aTBJTFFVMkl3ejFISm9Sb2dPNXFhR0gzVWRGNnZjUWhkK1IzQ2hr?=
+ =?utf-8?B?MWpKMVQraXRZQ1U2VDVYdENqTDFTQlBDMitKem9neWxmVXpZWDBqRndXOUpH?=
+ =?utf-8?B?N1VXUS8xSXRyVDQ2L2psUXdWL1Y2Y29HVU5pUFZvNFp3aVl5Q2lTNlBybUNQ?=
+ =?utf-8?B?ZUlFaUZWd3V1TFRDUFdhenZLMGd4ZWFvVHQ4R3plNlBjNnI2bzJCNktDSzZP?=
+ =?utf-8?B?UE9EbUYxbjJrbmRPOXpuUlZsRWJpYmF4RXIxak5nZXdpaE9tS3UvWkFUTi8v?=
+ =?utf-8?B?QTVlQzdvMDR2TUN5YW42S1JJcU5naUFjc1NJSzJoTHcydUhQWStSZWJyZ2My?=
+ =?utf-8?B?QWNlV3lVTW81dXFDeUhscDhIZDdVWloxL0F0eUJHOE9Iem1QTnl0d3JNUHc3?=
+ =?utf-8?B?WWVhd3ByZWhnWldieFpkdWdnTjdRSmMzVHkwblRENlBHRDlSSzFGaCtyRU1N?=
+ =?utf-8?B?NXE1bmZhSmVXTGpMaGxKY3FpR2pRQnM0ZGgvbXVJSWNlMkJXWFVid21nVlpp?=
+ =?utf-8?Q?WDs1BP+WclJkT?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021)(38070700015)(921017);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TXNmUERPQXZDanNnNnpuOFQrWTEwdHRDeHU0NVFJbFRtbjVIQkV4ZEZKZ0M0?=
+ =?utf-8?B?RERkay9OTlZzWno3Y1ZUZFQwcWR2NWRPVmZBRDg5TFRhQ0h3bVJoTUdZR2Y3?=
+ =?utf-8?B?NmFpb0xTTkVrV29Lc3B1SVJvWFQ4SFFodHBsN25sSDFoZExVeVBRRDNtR3NP?=
+ =?utf-8?B?aDNnQy9kZTVoQnl4aGNwSkpMUUhYbmpkSWVCbWE1djZmNkc3RThYVGUrVFVL?=
+ =?utf-8?B?RjVzSnVpVkxBRUhRN3hXVmVHTkZxRHU0VGlpRG4yRmdaWGlOZzloT3ZGOXF5?=
+ =?utf-8?B?U0xSVGI1akt5OG5ob0pHcjN5U2JSTVZsVW8xUm4wTFpwdmx4bGJLVTVRMHpW?=
+ =?utf-8?B?cUlaK3VQS1FtRkpMaFJCaFQ2QUI3dUx4WVEzSHJJNFFUNUJUZUovN1ZTR3Rq?=
+ =?utf-8?B?ZjcvOU5qaWN6ZEM4LzhTVTNpaGRyS1JCeG5UeEJiRFVKamlnaysyME1LVGYz?=
+ =?utf-8?B?dkI1NURhdWxnVTZQeldCRGprejB0dlozVlJNUTVpaXY2ZEsvNXNMc0tlTThB?=
+ =?utf-8?B?Kys4eWlCRXFmWWI0YWhnbC80TTJ2cjdUTnA3b2hvVXNDcFJSbzFGZVBiYkti?=
+ =?utf-8?B?SmdrakpuRHhwZVFzMXpaMlE4dWorM1FYaEpKdkxqbllIS2U3QmE3emRqTXBS?=
+ =?utf-8?B?VmhJWWwxTTdlakwrSmg4QTBCa0xvMVVSdnliQ1VyenEzNEtTUG8xUVRYSk8r?=
+ =?utf-8?B?bS9SOFF2WEJReFoyOThqZmNRYVBQZHBoeUdvcFVoVW50clovOWJjZ1dZQXBk?=
+ =?utf-8?B?UE5vaDdibmx1ejJJL2FNajVFNlZMMkZCSXE1VzlvT0JjVWlTbnZrNFZJMTBQ?=
+ =?utf-8?B?Q1I4ZHBSbnh6TGZ6ZTlwT2x0bm5hWlVmMjRNUnNaVkJsV2k1T1NjbnQvV250?=
+ =?utf-8?B?bUdPYXNlUjhmMzQyT3Fuak1lKzhGdldjRHl5dWlheENSbjdQbVA5Tlo1S0da?=
+ =?utf-8?B?TXd0WjhSVnVNZHJPVTJ0QTl6UGpYZ0lBK3RBTjk2WE14MGU5MjhDMXhIWFlL?=
+ =?utf-8?B?a1c1Sy9aTnVyM0I2c2ZtdHZUc2ROQUUvRjBYakd3bEx5NUJ3SFd2eC96YS9H?=
+ =?utf-8?B?T0E4cVcvTmIyZWF3R2V5VkV4Y3RkaFVvUHZ5L2ZYZFpYNTJKTDdQSUdnVUh4?=
+ =?utf-8?B?bTBNYjQyNmJ0amtUZXFMeExsSjd4UUlQdy8xKys2MzJDT0ttbDdTMCt4YUNO?=
+ =?utf-8?B?YWsvZXJ3bnhCREJqWituT0ZITStpMW51MTBUMkdDbksxZFRIeXBLbC82cXVp?=
+ =?utf-8?B?RXRkSGdCb1hhOVU4MmNPM0lnS3V2a2FUYU5CU0VoaWNUcjlSN3N1RUZTSkpY?=
+ =?utf-8?B?MS8vR3M3akVOWExRbnNqVDBWakRqcHVnMm9kVUhpSDhhR0ZQWXhVOGNzQVdO?=
+ =?utf-8?B?OWQvOCtOU0M0b1hqOVdtamxpazVQVVNVUm9hcEd6YkhHdTIzTWhDVis0Njdz?=
+ =?utf-8?B?bXh6Rk5HMHVEL1ByUkdvZk9QYU5tZzlZTUdKa044dGNONWdUaVdpL2pEUVVj?=
+ =?utf-8?B?YytsTHVRakxKaEFxWGJoaENBVmFqZDVqNTdGVm1mN0xhWWRFbllZUzNGNUlu?=
+ =?utf-8?B?WHhrMWs2U1ZSOTB4anNRZmYrUDFhNDNLamZQV3djQVdSTk9ib25CQ2Yzb0t3?=
+ =?utf-8?B?T0Nla204d2Vya2lxdkhPOTJBUzM5dGZiQ3BsVHhvb05GSGU4YlR0OFFrNW4x?=
+ =?utf-8?B?cy9IUDErSzMyeFREc0xjclNNc1VGYUxJdnFOdWtvRXFvYVREaWxZOVBqSFd4?=
+ =?utf-8?B?dzVyUzE0RTFFeHlOZ1J6V254ejVUdGpSWWpIR3BuaCt5Q3ArZHk2aGxBM3hu?=
+ =?utf-8?B?NVJRdjc1ZWxxd2tpTFF0eWhua0p6b0pGWVdQRWlVVnZ3NDVrOVFTSGZoSXQ4?=
+ =?utf-8?B?ZTU4cFRQKzZoOXhBazVJNGEwZlpyY3kzWU16eUpEU1JRcDduM1VtT0NCLzRP?=
+ =?utf-8?B?a3pUUHlYUjJGUjBUNWVHUmZZek1zMklRUkJtejVid1JzZU5FTzh0N25adllq?=
+ =?utf-8?B?RXVtV0N4Sm42R3ZzNUVJZTQ5M2tUUC9Rc0Z6SEdhQVZVMjNRZUF3cFJnNzEz?=
+ =?utf-8?B?YmpCZm5ScGNqK2d5WnpCVVpiV01pbFBQVm1Rb2VEaVpOZ2FCMGdjb1VPZmls?=
+ =?utf-8?Q?YO/sUdvD2k29EZnCT8KGS6ad8?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8AA413FA25DA5D499D504DA335147510@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: mhQufvQHzkooRdbLbuQMLw-bVtlOBNyO
-X-Proofpoint-GUID: mhQufvQHzkooRdbLbuQMLw-bVtlOBNyO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_06,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
- impostorscore=0 clxscore=1015 phishscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180169
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0565004f-be4e-4446-9fd5-08dc8fec9055
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2024 23:15:37.6210
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9y/TkKeBsDY/A+ZGZSSAOjwAPnEnTsbx42ISJJAGpuBqi0Iv9HYBLn2gmlxQKd872J2aO8IDFN7BelCAmQiZYA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7187
+X-OriginatorOrg: intel.com
 
-Add support for AD4000 series of low noise, low power, high speed,
-successive aproximation register (SAR) ADCs.
-
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
- MAINTAINERS              |   1 +
- drivers/iio/adc/Kconfig  |  12 +
- drivers/iio/adc/Makefile |   1 +
- drivers/iio/adc/ad4000.c | 715 +++++++++++++++++++++++++++++++++++++++
- 4 files changed, 729 insertions(+)
- create mode 100644 drivers/iio/adc/ad4000.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1f052b9cd912..c732cf13f511 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1206,6 +1206,7 @@ L:	linux-iio@vger.kernel.org
- S:	Supported
- W:	https://ez.analog.com/linux-software-drivers
- F:	Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-+F:	drivers/iio/adc/ad4000.c
- 
- ANALOG DEVICES INC AD4130 DRIVER
- M:	Cosmin Tanislav <cosmin.tanislav@analog.com>
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 5030319249c5..dcc49d9711a4 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -21,6 +21,18 @@ config AD_SIGMA_DELTA
- 	select IIO_BUFFER
- 	select IIO_TRIGGERED_BUFFER
- 
-+config AD4000
-+	tristate "Analog Devices AD4000 ADC Driver"
-+	depends on SPI
-+	select IIO_BUFFER
-+	select IIO_TRIGGERED_BUFFER
-+	help
-+	  Say yes here to build support for Analog Devices AD4000 high speed
-+	  SPI analog to digital converters (ADC).
-+
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called ad4000.
-+
- config AD4130
- 	tristate "Analog Device AD4130 ADC Driver"
- 	depends on SPI
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index 37ac689a0209..c32bd0ef6128 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -6,6 +6,7 @@
- # When adding new entries keep the list in alphabetical order
- obj-$(CONFIG_AB8500_GPADC) += ab8500-gpadc.o
- obj-$(CONFIG_AD_SIGMA_DELTA) += ad_sigma_delta.o
-+obj-$(CONFIG_AD4000) += ad4000.o
- obj-$(CONFIG_AD4130) += ad4130.o
- obj-$(CONFIG_AD7091R) += ad7091r-base.o
- obj-$(CONFIG_AD7091R5) += ad7091r5.o
-diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-new file mode 100644
-index 000000000000..310f81a2a1d9
---- /dev/null
-+++ b/drivers/iio/adc/ad4000.c
-@@ -0,0 +1,715 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * AD4000 SPI ADC driver
-+ *
-+ * Copyright 2024 Analog Devices Inc.
-+ */
-+#include <asm/unaligned.h>
-+#include <linux/bits.h>
-+#include <linux/bitfield.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/math.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/spi/spi.h>
-+#include <linux/sysfs.h>
-+#include <linux/units.h>
-+#include <linux/util_macros.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/iio/buffer.h>
-+#include <linux/iio/triggered_buffer.h>
-+#include <linux/iio/trigger_consumer.h>
-+
-+#define AD4000_READ_COMMAND	0x54
-+#define AD4000_WRITE_COMMAND	0x14
-+
-+#define AD4000_CONFIG_REG_DEFAULT	0xE1
-+
-+/* AD4000 Configuration Register programmable bits */
-+#define AD4000_CFG_STATUS		BIT(4) /* Status bits output */
-+#define AD4000_CFG_SPAN_COMP		BIT(3) /* Input span compression  */
-+#define AD4000_CFG_HIGHZ		BIT(2) /* High impedance mode  */
-+#define AD4000_CFG_TURBO		BIT(1) /* Turbo mode */
-+
-+#define AD4000_TQUIET1_NS		190
-+#define AD4000_TQUIET2_NS		60
-+#define AD4000_TCONV_NS			320
-+
-+#define AD4000_18BIT_MSK	GENMASK(31, 14)
-+#define AD4000_20BIT_MSK	GENMASK(31, 12)
-+
-+#define AD4000_DIFF_CHANNEL(_sign, _real_bits, _3wire)				\
-+{										\
-+	.type = IIO_VOLTAGE,							\
-+	.indexed = 1,								\
-+	.differential = 1,							\
-+	.channel = 0,								\
-+	.channel2 = 1,								\
-+	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |				\
-+			      BIT(IIO_CHAN_INFO_SCALE),				\
-+	.info_mask_separate_available = _3wire ? BIT(IIO_CHAN_INFO_SCALE) : 0,	\
-+	.scan_type = {								\
-+		.sign = _sign,							\
-+		.realbits = _real_bits,						\
-+		.storagebits = _real_bits > 16 ? 32 : 16,			\
-+		.shift = _real_bits > 16 ? 32 - _real_bits : 0,			\
-+		.endianness = IIO_BE,						\
-+	},									\
-+}
-+
-+#define AD4000_PSEUDO_DIFF_CHANNEL(_sign, _real_bits, _3wire)			\
-+{										\
-+	.type = IIO_VOLTAGE,							\
-+	.indexed = 1,								\
-+	.channel = 0,								\
-+	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |				\
-+			      BIT(IIO_CHAN_INFO_SCALE) |			\
-+			      BIT(IIO_CHAN_INFO_OFFSET),			\
-+	.info_mask_separate_available = _3wire ? BIT(IIO_CHAN_INFO_SCALE) : 0,	\
-+	.scan_type = {								\
-+		.sign = _sign,							\
-+		.realbits = _real_bits,						\
-+		.storagebits = _real_bits > 16 ? 32 : 16,			\
-+		.shift = _real_bits > 16 ? 32 - _real_bits : 0,			\
-+		.endianness = IIO_BE,						\
-+	},									\
-+}
-+
-+enum ad4000_spi_mode {
-+	/* datasheet calls this "4-wire mode" (controller CS goes to ADC SDI!) */
-+	AD4000_SPI_MODE_DEFAULT,
-+	/* datasheet calls this "3-wire mode" (not related to SPI_3WIRE!) */
-+	AD4000_SPI_MODE_SINGLE,
-+};
-+
-+/* maps adi,spi-mode property value to enum */
-+static const char * const ad4000_spi_modes[] = {
-+	[AD4000_SPI_MODE_DEFAULT] = "",
-+	[AD4000_SPI_MODE_SINGLE] = "single",
-+};
-+
-+struct ad4000_chip_info {
-+	const char *dev_name;
-+	struct iio_chan_spec chan_spec;
-+	struct iio_chan_spec three_w_chan_spec;
-+};
-+
-+static const struct ad4000_chip_info ad4000_chip_info = {
-+	.dev_name = "ad4000",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 0),
-+	.three_w_chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4001_chip_info = {
-+	.dev_name = "ad4001",
-+	.chan_spec = AD4000_DIFF_CHANNEL('s', 16, 0),
-+	.three_w_chan_spec = AD4000_DIFF_CHANNEL('s', 16, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4002_chip_info = {
-+	.dev_name = "ad4002",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 0),
-+	.three_w_chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4003_chip_info = {
-+	.dev_name = "ad4003",
-+	.chan_spec = AD4000_DIFF_CHANNEL('s', 18, 0),
-+	.three_w_chan_spec = AD4000_DIFF_CHANNEL('s', 18, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4004_chip_info = {
-+	.dev_name = "ad4004",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 0),
-+	.three_w_chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4005_chip_info = {
-+	.dev_name = "ad4005",
-+	.chan_spec = AD4000_DIFF_CHANNEL('s', 16, 0),
-+	.three_w_chan_spec = AD4000_DIFF_CHANNEL('s', 16, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4006_chip_info = {
-+	.dev_name = "ad4006",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 0),
-+	.three_w_chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4007_chip_info = {
-+	.dev_name = "ad4007",
-+	.chan_spec = AD4000_DIFF_CHANNEL('s', 18, 0),
-+	.three_w_chan_spec = AD4000_DIFF_CHANNEL('s', 18, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4008_chip_info = {
-+	.dev_name = "ad4008",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 0),
-+	.three_w_chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4010_chip_info = {
-+	.dev_name = "ad4010",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 0),
-+	.three_w_chan_spec = AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4011_chip_info = {
-+	.dev_name = "ad4011",
-+	.chan_spec = AD4000_DIFF_CHANNEL('s', 18, 0),
-+	.three_w_chan_spec = AD4000_DIFF_CHANNEL('s', 18, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4020_chip_info = {
-+	.dev_name = "ad4020",
-+	.chan_spec = AD4000_DIFF_CHANNEL('s', 20, 0),
-+	.three_w_chan_spec = AD4000_DIFF_CHANNEL('s', 20, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4021_chip_info = {
-+	.dev_name = "ad4021",
-+	.chan_spec = AD4000_DIFF_CHANNEL('s', 20, 0),
-+	.three_w_chan_spec = AD4000_DIFF_CHANNEL('s', 20, 1),
-+};
-+
-+static const struct ad4000_chip_info ad4022_chip_info = {
-+	.dev_name = "ad4022",
-+	.chan_spec = AD4000_DIFF_CHANNEL('s', 20, 0),
-+	.three_w_chan_spec = AD4000_DIFF_CHANNEL('s', 20, 1),
-+};
-+
-+static const struct ad4000_chip_info adaq4001_chip_info = {
-+	.dev_name = "adaq4001",
-+	.chan_spec = AD4000_DIFF_CHANNEL('s', 16, 0),
-+	.three_w_chan_spec = AD4000_DIFF_CHANNEL('s', 16, 1),
-+};
-+
-+static const struct ad4000_chip_info adaq4003_chip_info = {
-+	.dev_name = "adaq4003",
-+	.chan_spec = AD4000_DIFF_CHANNEL('s', 18, 0),
-+	.three_w_chan_spec = AD4000_DIFF_CHANNEL('s', 18, 1),
-+};
-+
-+struct ad4000_state {
-+	struct spi_device *spi;
-+	struct gpio_desc *cnv_gpio;
-+	struct spi_transfer xfers[2];
-+	struct spi_message msg;
-+	int vref_mv;
-+	enum ad4000_spi_mode spi_mode;
-+	bool span_comp;
-+	bool turbo_mode;
-+	u16 gain_milli;
-+	int scale_tbl[2][2];
-+
-+	/*
-+	 * DMA (thus cache coherency maintenance) requires the
-+	 * transfer buffers to live in their own cache lines.
-+	 */
-+	struct {
-+		union {
-+			__be16 sample_buf16;
-+			__be32 sample_buf32;
-+		} data;
-+		s64 timestamp __aligned(8);
-+	} scan __aligned(IIO_DMA_MINALIGN);
-+	__be16 tx_buf;
-+	__be16 rx_buf;
-+};
-+
-+static void ad4000_fill_scale_tbl(struct ad4000_state *st,
-+				  struct iio_chan_spec const *chan)
-+{
-+	int val, tmp0, tmp1;
-+	int scale_bits;
-+	u64 tmp2;
-+
-+	/*
-+	 * ADCs that output two's complement code have one less bit to express
-+	 * voltage magnitude.
-+	 */
-+	if (chan->scan_type.sign == 's')
-+		scale_bits = chan->scan_type.realbits - 1;
-+	else
-+		scale_bits = chan->scan_type.realbits;
-+
-+	/*
-+	 * The gain is stored as a fraction of 1000 and, as we need to
-+	 * divide vref_mv by the gain, we invert the gain/1000 fraction.
-+	 * Also multiply by an extra MILLI to preserve precision.
-+	 * Thus, we have MILLI * MILLI equals MICRO as fraction numerator.
-+	 */
-+	val = mult_frac(st->vref_mv, MICRO, st->gain_milli);
-+	/* Would multiply by NANO here but we multiplied by extra MILLI */
-+	tmp2 = shift_right((u64)val * MICRO, scale_bits);
-+	tmp0 = div_s64_rem(tmp2, NANO, &tmp1);
-+	/* Store scale for when span compression is disabled */
-+	st->scale_tbl[0][0] = tmp0; /* Integer part */
-+	st->scale_tbl[0][1] = abs(tmp1); /* Fractional part */
-+	/* Store scale for when span compression is enabled */
-+	st->scale_tbl[1][0] = tmp0;
-+	/* The integer part is always zero so don't bother to divide it. */
-+	if (chan->differential)
-+		st->scale_tbl[1][1] = DIV_ROUND_CLOSEST(abs(tmp1) * 4, 5);
-+	else
-+		st->scale_tbl[1][1] = DIV_ROUND_CLOSEST(abs(tmp1) * 9, 10);
-+}
-+
-+static int ad4000_write_reg(struct ad4000_state *st, uint8_t val)
-+{
-+	st->tx_buf = cpu_to_be16(AD4000_WRITE_COMMAND << BITS_PER_BYTE | val);
-+	return spi_write(st->spi, &st->tx_buf, sizeof(st->tx_buf));
-+}
-+
-+static int ad4000_read_reg(struct ad4000_state *st, unsigned int *val)
-+{
-+	struct spi_transfer t[] = {
-+		{
-+			.tx_buf = &st->tx_buf,
-+			.rx_buf = &st->rx_buf,
-+			.len = 2,
-+		},
-+	};
-+	int ret;
-+
-+	st->tx_buf = cpu_to_be16(AD4000_READ_COMMAND << BITS_PER_BYTE);
-+	ret = spi_sync_transfer(st->spi, t, ARRAY_SIZE(t));
-+	if (ret < 0)
-+		return ret;
-+
-+	*val = be16_to_cpu(st->rx_buf);
-+
-+	return ret;
-+}
-+
-+static void ad4000_unoptimize_msg(void *msg)
-+{
-+	spi_unoptimize_message(msg);
-+}
-+
-+/*
-+ * This executes a data sample transfer for when the device connections are
-+ * in "3-wire" mode, selected by setting the adi,spi-mode device tree property
-+ * to "single". In this connection mode, the ADC SDI pin is connected to MOSI or
-+ * to VIO and ADC CNV pin is connected either to a SPI controller CS or to a GPIO.
-+ * AD4000 series of devices initiate conversions on the rising edge of CNV pin.
-+ *
-+ * If the CNV pin is connected to an SPI controller CS line (which is by default
-+ * active low), the ADC readings would have a latency (delay) of one read.
-+ * Moreover, since we also do ADC sampling for filling the buffer on triggered
-+ * buffer mode, the timestamps of buffer readings would be disarranged.
-+ * To prevent the read latency and reduce the time discrepancy between the
-+ * sample read request and the time of actual sampling by the ADC, do a
-+ * preparatory transfer to pulse the CS/CNV line.
-+ */
-+static int ad4000_prepare_3wire_mode_message(struct ad4000_state *st,
-+					     const struct iio_chan_spec *chan)
-+{
-+	unsigned int cnv_pulse_time = st->turbo_mode ? AD4000_TQUIET1_NS
-+						     : AD4000_TCONV_NS;
-+	struct spi_transfer *xfers = st->xfers;
-+	int ret;
-+
-+	xfers[0].cs_change = 1;
-+	xfers[0].cs_change_delay.value = cnv_pulse_time;
-+	xfers[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
-+
-+	xfers[1].rx_buf = &st->scan.data;
-+	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
-+	xfers[1].delay.value = AD4000_TQUIET2_NS;
-+	xfers[1].delay.unit = SPI_DELAY_UNIT_NSECS;
-+
-+	spi_message_init_with_transfers(&st->msg, st->xfers, 2);
-+
-+	ret = spi_optimize_message(st->spi, &st->msg);
-+	if (ret)
-+		return ret;
-+
-+	return devm_add_action_or_reset(&st->spi->dev, ad4000_unoptimize_msg,
-+					&st->msg);
-+}
-+
-+/*
-+ * This executes a data sample transfer for when the device connections are
-+ * in "4-wire" mode, selected when the adi,spi-mode device tree
-+ * property is absent or empty. In this connection mode, the controller CS pin
-+ * is connected to ADC SDI pin and a GPIO is connected to ADC CNV pin.
-+ * The GPIO connected to ADC CNV pin is set outside of the SPI transfer.
-+ */
-+static int ad4000_prepare_4wire_mode_message(struct ad4000_state *st,
-+					     const struct iio_chan_spec *chan)
-+{
-+	unsigned int cnv_to_sdi_time = st->turbo_mode ? AD4000_TQUIET1_NS
-+						      : AD4000_TCONV_NS;
-+	struct spi_transfer *xfers = st->xfers;
-+	int ret;
-+
-+	/*
-+	 * Dummy transfer to cause enough delay between CNV going high and SDI
-+	 * going low.
-+	 */
-+	xfers[0].cs_off = 1;
-+	xfers[0].delay.value = cnv_to_sdi_time;
-+	xfers[0].delay.unit = SPI_DELAY_UNIT_NSECS;
-+
-+	xfers[1].rx_buf = &st->scan.data;
-+	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
-+
-+	spi_message_init_with_transfers(&st->msg, st->xfers, 2);
-+
-+	ret = spi_optimize_message(st->spi, &st->msg);
-+	if (ret)
-+		return ret;
-+
-+	return devm_add_action_or_reset(&st->spi->dev, ad4000_unoptimize_msg,
-+					&st->msg);
-+}
-+
-+static int ad4000_convert_and_acquire(struct ad4000_state *st)
-+{
-+	int ret;
-+
-+	/*
-+	 * In 4-wire mode, the CNV line is held high for the entire conversion
-+	 * and acquisition process. In other modes, the CNV GPIO is optional
-+	 * and, if provided, replaces controller CS. If CNV GPIO is not defined
-+	 * gpiod_set_value_cansleep() has no effect.
-+	 */
-+	gpiod_set_value_cansleep(st->cnv_gpio, 1);
-+	ret = spi_sync(st->spi, &st->msg);
-+	gpiod_set_value_cansleep(st->cnv_gpio, 0);
-+
-+	return ret;
-+}
-+
-+static int ad4000_single_conversion(struct iio_dev *indio_dev,
-+				    const struct iio_chan_spec *chan, int *val)
-+{
-+	struct ad4000_state *st = iio_priv(indio_dev);
-+	u32 sample;
-+	int ret;
-+
-+	ret = ad4000_convert_and_acquire(st);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (chan->scan_type.storagebits > 16)
-+		sample = be32_to_cpu(st->scan.data.sample_buf32);
-+	else
-+		sample = be16_to_cpu(st->scan.data.sample_buf16);
-+
-+	switch (chan->scan_type.realbits) {
-+	case 16:
-+		break;
-+	case 18:
-+		sample = FIELD_GET(AD4000_18BIT_MSK, sample);
-+		break;
-+	case 20:
-+		sample = FIELD_GET(AD4000_20BIT_MSK, sample);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (chan->scan_type.sign == 's')
-+		*val = sign_extend32(sample, chan->scan_type.realbits - 1);
-+
-+	return IIO_VAL_INT;
-+}
-+
-+static int ad4000_read_raw(struct iio_dev *indio_dev,
-+			   struct iio_chan_spec const *chan, int *val,
-+			   int *val2, long info)
-+{
-+	struct ad4000_state *st = iio_priv(indio_dev);
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_RAW:
-+		iio_device_claim_direct_scoped(return -EBUSY, indio_dev)
-+			return ad4000_single_conversion(indio_dev, chan, val);
-+		unreachable();
-+	case IIO_CHAN_INFO_SCALE:
-+		*val = st->scale_tbl[st->span_comp][0];
-+		*val2 = st->scale_tbl[st->span_comp][1];
-+		return IIO_VAL_INT_PLUS_NANO;
-+	case IIO_CHAN_INFO_OFFSET:
-+		*val = 0;
-+		if (st->span_comp)
-+			*val = mult_frac(st->vref_mv, 1, 10);
-+
-+		return IIO_VAL_INT;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad4000_read_avail(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     const int **vals, int *type, int *length,
-+			     long info)
-+{
-+	struct ad4000_state *st = iio_priv(indio_dev);
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_SCALE:
-+		*vals = (int *)st->scale_tbl;
-+		*length = 2 * 2;
-+		*type = IIO_VAL_INT_PLUS_NANO;
-+		return IIO_AVAIL_LIST;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad4000_write_raw_get_fmt(struct iio_dev *indio_dev,
-+				    struct iio_chan_spec const *chan, long mask)
-+{
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SCALE:
-+		return IIO_VAL_INT_PLUS_NANO;
-+	default:
-+		return IIO_VAL_INT_PLUS_MICRO;
-+	}
-+}
-+
-+static int ad4000_write_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *chan, int val, int val2,
-+			    long mask)
-+{
-+	struct ad4000_state *st = iio_priv(indio_dev);
-+	unsigned int reg_val;
-+	bool span_comp_en;
-+	int ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SCALE:
-+		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-+			ret = ad4000_read_reg(st, &reg_val);
-+			if (ret < 0)
-+				return ret;
-+
-+			span_comp_en = val2 == st->scale_tbl[1][1];
-+			reg_val &= ~AD4000_CFG_SPAN_COMP;
-+			reg_val |= FIELD_PREP(AD4000_CFG_SPAN_COMP, span_comp_en);
-+
-+			ret = ad4000_write_reg(st, reg_val);
-+			if (ret < 0)
-+				return ret;
-+
-+			st->span_comp = span_comp_en;
-+			return 0;
-+		}
-+		unreachable();
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static irqreturn_t ad4000_trigger_handler(int irq, void *p)
-+{
-+	struct iio_poll_func *pf = p;
-+	struct iio_dev *indio_dev = pf->indio_dev;
-+	struct ad4000_state *st = iio_priv(indio_dev);
-+	int ret;
-+
-+	ret = ad4000_convert_and_acquire(st);
-+	if (ret < 0)
-+		goto err_out;
-+
-+	iio_push_to_buffers_with_timestamp(indio_dev, &st->scan,
-+					   iio_get_time_ns(indio_dev));
-+
-+err_out:
-+	iio_trigger_notify_done(indio_dev->trig);
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct iio_info ad4000_3wire_info = {
-+	.read_raw = &ad4000_read_raw,
-+	.read_avail = &ad4000_read_avail,
-+	.write_raw = &ad4000_write_raw,
-+	.write_raw_get_fmt = &ad4000_write_raw_get_fmt,
-+
-+};
-+
-+static const struct iio_info ad4000_info = {
-+	.read_raw = &ad4000_read_raw,
-+};
-+
-+static int ad4000_config(struct ad4000_state *st)
-+{
-+	unsigned int reg_val = AD4000_CONFIG_REG_DEFAULT;
-+
-+	if (device_property_present(&st->spi->dev, "adi,high-z-input"))
-+		reg_val |= FIELD_PREP(AD4000_CFG_HIGHZ, 1);
-+
-+	return ad4000_write_reg(st, reg_val);
-+}
-+
-+static int ad4000_probe(struct spi_device *spi)
-+{
-+	const struct ad4000_chip_info *chip;
-+	struct iio_dev *indio_dev;
-+	struct ad4000_state *st;
-+	int ret;
-+
-+	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	chip = spi_get_device_match_data(spi);
-+	if (!chip)
-+		return -EINVAL;
-+
-+	st = iio_priv(indio_dev);
-+	st->spi = spi;
-+
-+	ret = devm_regulator_get_enable(&spi->dev, "vdd");
-+	if (ret)
-+		return dev_err_probe(&spi->dev, ret, "Failed to enable VDD supply\n");
-+
-+	ret = devm_regulator_get_enable(&spi->dev, "vio");
-+	if (ret)
-+		return dev_err_probe(&spi->dev, ret, "Failed to enable VIO supply\n");
-+
-+	st->vref_mv = devm_regulator_get_enable_read_voltage(&spi->dev, "ref");
-+	if (ret < 0)
-+		return dev_err_probe(&spi->dev, st->vref_mv,
-+				     "Failed to get ref regulator reference\n");
-+	st->vref_mv = st->vref_mv / 1000;
-+
-+	st->cnv_gpio = devm_gpiod_get_optional(&spi->dev, "cnv", GPIOD_OUT_HIGH);
-+	if (IS_ERR(st->cnv_gpio))
-+		return dev_err_probe(&spi->dev, PTR_ERR(st->cnv_gpio),
-+				     "Failed to get CNV GPIO");
-+
-+	ret = device_property_match_property_string(&spi->dev, "adi,spi-mode",
-+						    ad4000_spi_modes,
-+						    ARRAY_SIZE(ad4000_spi_modes));
-+	/* Default to 4-wire mode if adi,spi-mode property is not present */
-+	if (ret == -EINVAL)
-+		st->spi_mode = AD4000_SPI_MODE_DEFAULT;
-+	else if (ret < 0)
-+		return dev_err_probe(&spi->dev, ret,
-+				     "getting adi,spi-mode property failed\n");
-+	else
-+		st->spi_mode = ret;
-+
-+	switch (st->spi_mode) {
-+	case AD4000_SPI_MODE_DEFAULT:
-+		indio_dev->info = &ad4000_info;
-+		indio_dev->channels = &chip->chan_spec;
-+		ret = ad4000_prepare_4wire_mode_message(st, indio_dev->channels);
-+		if (ret)
-+			return ret;
-+
-+		break;
-+	case AD4000_SPI_MODE_SINGLE:
-+		indio_dev->info = &ad4000_3wire_info;
-+		indio_dev->channels = &chip->three_w_chan_spec;
-+
-+		/*
-+		 * In "3-wire mode", the ADC SDI line must be kept high when
-+		 * data is not being clocked out of the controller.
-+		 * Request the SPI controller to make MOSI idle high.
-+		 */
-+		spi->mode = SPI_MODE_0 | SPI_MOSI_IDLE_HIGH;
-+		ret = spi_setup(spi);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = ad4000_prepare_3wire_mode_message(st, indio_dev->channels);
-+		if (ret)
-+			return ret;
-+
-+		ret = ad4000_config(st);
-+		if (ret < 0)
-+			dev_warn(&st->spi->dev, "Failed to config device\n");
-+
-+		break;
-+	}
-+
-+	indio_dev->name = chip->dev_name;
-+	indio_dev->num_channels = 1;
-+
-+	/* Hardware gain only applies to ADAQ devices */
-+	st->gain_milli = 1000;
-+	if (device_property_present(&spi->dev, "adi,gain-milli")) {
-+		ret = device_property_read_u16(&spi->dev, "adi,gain-milli",
-+					       &st->gain_milli);
-+		if (ret)
-+			return dev_err_probe(&spi->dev, ret,
-+					     "Failed to read gain property\n");
-+	}
-+
-+	ad4000_fill_scale_tbl(st, indio_dev->channels);
-+
-+	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
-+					      &iio_pollfunc_store_time,
-+					      &ad4000_trigger_handler, NULL);
-+	if (ret)
-+		return ret;
-+
-+	return devm_iio_device_register(&spi->dev, indio_dev);
-+}
-+
-+static const struct spi_device_id ad4000_id[] = {
-+	{ "ad4000", (kernel_ulong_t)&ad4000_chip_info },
-+	{ "ad4001", (kernel_ulong_t)&ad4001_chip_info },
-+	{ "ad4002", (kernel_ulong_t)&ad4002_chip_info },
-+	{ "ad4003", (kernel_ulong_t)&ad4003_chip_info },
-+	{ "ad4004", (kernel_ulong_t)&ad4004_chip_info },
-+	{ "ad4005", (kernel_ulong_t)&ad4005_chip_info },
-+	{ "ad4006", (kernel_ulong_t)&ad4006_chip_info },
-+	{ "ad4007", (kernel_ulong_t)&ad4007_chip_info },
-+	{ "ad4008", (kernel_ulong_t)&ad4008_chip_info },
-+	{ "ad4010", (kernel_ulong_t)&ad4010_chip_info },
-+	{ "ad4011", (kernel_ulong_t)&ad4011_chip_info },
-+	{ "ad4020", (kernel_ulong_t)&ad4020_chip_info },
-+	{ "ad4021", (kernel_ulong_t)&ad4021_chip_info },
-+	{ "ad4022", (kernel_ulong_t)&ad4022_chip_info },
-+	{ "adaq4001", (kernel_ulong_t)&adaq4001_chip_info },
-+	{ "adaq4003", (kernel_ulong_t)&adaq4003_chip_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, ad4000_id);
-+
-+static const struct of_device_id ad4000_of_match[] = {
-+	{ .compatible = "adi,ad4000", .data = &ad4000_chip_info },
-+	{ .compatible = "adi,ad4001", .data = &ad4001_chip_info },
-+	{ .compatible = "adi,ad4002", .data = &ad4002_chip_info },
-+	{ .compatible = "adi,ad4003", .data = &ad4003_chip_info },
-+	{ .compatible = "adi,ad4004", .data = &ad4004_chip_info },
-+	{ .compatible = "adi,ad4005", .data = &ad4005_chip_info },
-+	{ .compatible = "adi,ad4006", .data = &ad4006_chip_info },
-+	{ .compatible = "adi,ad4007", .data = &ad4007_chip_info },
-+	{ .compatible = "adi,ad4008", .data = &ad4008_chip_info },
-+	{ .compatible = "adi,ad4010", .data = &ad4010_chip_info },
-+	{ .compatible = "adi,ad4011", .data = &ad4011_chip_info },
-+	{ .compatible = "adi,ad4020", .data = &ad4020_chip_info },
-+	{ .compatible = "adi,ad4021", .data = &ad4021_chip_info },
-+	{ .compatible = "adi,ad4022", .data = &ad4022_chip_info },
-+	{ .compatible = "adi,adaq4001", .data = &adaq4001_chip_info },
-+	{ .compatible = "adi,adaq4003", .data = &adaq4003_chip_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ad4000_of_match);
-+
-+static struct spi_driver ad4000_driver = {
-+	.driver = {
-+		.name   = "ad4000",
-+		.of_match_table = ad4000_of_match,
-+	},
-+	.probe          = ad4000_probe,
-+	.id_table       = ad4000_id,
-+};
-+module_spi_driver(ad4000_driver);
-+
-+MODULE_AUTHOR("Marcelo Schmitt <marcelo.schmitt@analog.com>");
-+MODULE_DESCRIPTION("Analog Devices AD4000 ADC driver");
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
-
+T24gVHVlLCAyMDI0LTA2LTE4IGF0IDA3OjU2IC0wNTAwLCBIYWl0YW8gSHVhbmcgd3JvdGU6DQo+
+IE9uIFR1ZSwgMTggSnVuIDIwMjQgMDY6MzE6MDkgLTA1MDAsIEh1YW5nLCBLYWkgPGthaS5odWFu
+Z0BpbnRlbC5jb20+IHdyb3RlOg0KPiANCj4gPiANCj4gPiA+IEBAIC05MjEsNyArOTU2LDggQEAg
+c3RhdGljIGludCBfX2luaXQgc2d4X2luaXQodm9pZCkNCj4gPiA+ICAJaWYgKCFzZ3hfcGFnZV9j
+YWNoZV9pbml0KCkpDQo+ID4gPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4gPiA+IA0KPiA+ID4gLQlp
+ZiAoIXNneF9wYWdlX3JlY2xhaW1lcl9pbml0KCkpIHsNCj4gPiA+ICsJaWYgKCFzZ3hfcGFnZV9y
+ZWNsYWltZXJfaW5pdCgpIHx8ICFzZ3hfY2dyb3VwX2luaXQoKSkgew0KPiA+ID4gKwkJbWlzY19j
+Z19zZXRfY2FwYWNpdHkoTUlTQ19DR19SRVNfU0dYX0VQQywgMCk7DQo+ID4gPiAgCQlyZXQgPSAt
+RU5PTUVNOw0KPiA+ID4gIAkJZ290byBlcnJfcGFnZV9jYWNoZTsNCj4gPiA+ICAJfQ0KPiA+IA0K
+PiA+IFRoaXMgY29kZSBjaGFuZ2UgaXMgd3JvbmcgZHVlIHRvIHR3byByZWFzb25zOg0KPiA+IA0K
+PiA+IDEpIElmIHNneF9wYWdlX3JlY2xhaW1lcl9pbml0KCkgd2FzIHN1Y2Nlc3NmdWwsIGJ1dCBz
+Z3hfY2dyb3VwX2luaXQoKQ0KPiA+IGZhaWxlZCwgeW91IGFjdHVhbGx5IG5lZWQgdG8gJ2dvdG8g
+ZXJyX2t0aHJlYWQnIGJlY2F1c2UgdGhlIGtzZ3hkKCkgIA0KPiA+IGtlcm5lbA0KPiA+IHRocmVh
+ZCBpcyBhbHJlYWR5IGNyZWF0ZWQgYW5kIGlzIHJ1bm5pbmcuDQo+ID4gDQo+ID4gMikgVGhlcmUg
+YXJlIG90aGVyIGNhc2VzIGFmdGVyIGhlcmUgdGhhdCBjYW4gYWxzbyByZXN1bHQgaW4gc2d4X2lu
+aXQoKSB0bw0KPiA+IGZhaWwgY29tcGxldGVseSwgZS5nLiwgcmVnaXN0ZXJpbmcgc2d4X2Rldl9w
+cm92aXNpb24gbWljcyBkZXZpY2UuICBXZSAgDQo+ID4gbmVlZA0KPiA+IHRvIHJlc2V0IHRoZSBj
+YXBhY2l0eSB0byAwIGZvciB0aG9zZSBjYXNlcyBhcyB3ZWxsLg0KPiA+IA0KPiA+IEFGQUlDVCwg
+eW91IG5lZWQgc29tZXRoaW5nIGxpa2U6DQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gveDg2
+L2tlcm5lbC9jcHUvc2d4L21haW4uYw0KPiA+IGIvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvbWFp
+bi5jDQo+ID4gaW5kZXggMjc4OTJlNTdjNGVmLi40NmY5YzI2OTkyYTcgMTAwNjQ0DQo+ID4gLS0t
+IGEvYXJjaC94ODYva2VybmVsL2NwdS9zZ3gvbWFpbi5jDQo+ID4gKysrIGIvYXJjaC94ODYva2Vy
+bmVsL2NwdS9zZ3gvbWFpbi5jDQo+ID4gQEAgLTkzMCw2ICs5MzAsMTAgQEAgc3RhdGljIGludCBf
+X2luaXQgc2d4X2luaXQodm9pZCkNCj4gPiAgICAgICAgIGlmIChyZXQpDQo+ID4gICAgICAgICAg
+ICAgICAgIGdvdG8gZXJyX2t0aHJlYWQ7DQo+ID4gKyAgICAgICByZXQgPSBzZ3hfY2dyb3VwX2lu
+aXQoKTsNCj4gPiArICAgICAgIGlmIChyZXQpDQo+ID4gKyAgICAgICAgICAgICAgIGdvdG8gZXJy
+X3Byb3Zpc2lvbjsNCj4gPiArDQo+ID4gICAgICAgICAvKg0KPiA+ICAgICAgICAgICogQWx3YXlz
+IHRyeSB0byBpbml0aWFsaXplIHRoZSBuYXRpdmUgKmFuZCogS1ZNIGRyaXZlcnMuDQo+ID4gICAg
+ICAgICAgKiBUaGUgS1ZNIGRyaXZlciBpcyBsZXNzIHBpY2t5IHRoYW4gdGhlIG5hdGl2ZSBvbmUg
+YW5kDQo+ID4gQEAgLTk0MSwxMCArOTQ1LDEyIEBAIHN0YXRpYyBpbnQgX19pbml0IHNneF9pbml0
+KHZvaWQpDQo+ID4gICAgICAgICByZXQgPSBzZ3hfZHJ2X2luaXQoKTsNCj4gPiAgICAgICAgaWYg
+KHNneF92ZXBjX2luaXQoKSAmJiByZXQpDQo+ID4gLSAgICAgICAgICAgICAgIGdvdG8gZXJyX3By
+b3Zpc2lvbjsNCj4gPiArICAgICAgICAgICAgICAgZ290byBlcnJfY2dyb3VwOw0KPiA+ICAgICAg
+ICByZXR1cm4gMDsNCj4gPiArZXJyX2Nncm91cDoNCj4gPiArICAgICAgIC8qIFNHWCBFUEMgY2dy
+b3VwIGNsZWFudXAgKi8NCj4gPiAgZXJyX3Byb3Zpc2lvbjoNCj4gPiAgICAgICAgIG1pc2NfZGVy
+ZWdpc3Rlcigmc2d4X2Rldl9wcm92aXNpb24pOw0KPiA+IEBAIC05NTIsNiArOTU4LDggQEAgc3Rh
+dGljIGludCBfX2luaXQgc2d4X2luaXQodm9pZCkNCj4gPiAgICAgICAgIGt0aHJlYWRfc3RvcChr
+c2d4ZF90c2spOw0KPiA+IGVycl9wYWdlX2NhY2hlOg0KPiA+ICsgICAgICAgbWlzY19taXNjX2Nn
+X3NldF9jYXBhY2l0eShNSVNDX0NHX1JFU19TR1hfRVBDLCAwKTsNCj4gPiArDQo+ID4gICAgICAg
+ICBmb3IgKGkgPSAwOyBpIDwgc2d4X25yX2VwY19zZWN0aW9uczsgaSsrKSB7DQo+ID4gICAgICAg
+ICAgICAgICAgIHZmcmVlKHNneF9lcGNfc2VjdGlvbnNbaV0ucGFnZXMpOw0KPiA+ICAgICAgICAg
+ICAgICAgICBtZW11bm1hcChzZ3hfZXBjX3NlY3Rpb25zW2ldLnZpcnRfYWRkcik7DQo+ID4gDQo+
+ID4gDQo+ID4gSSBwdXQgdGhlIHNneF9jZ3JvdXBfaW5pdCgpIGJlZm9yZSBzZ3hfZHJ2X2luaXQo
+KSBhbmQgc2d4X3ZlcGNfaW5pdCgpLA0KPiA+IG90aGVyd2lzZSB5b3Ugd2lsbCBuZWVkIHNneF9k
+cnZfY2xlYW51cCgpIGFuZCBzZ3hfdmVwY19jbGVhbnVwKCkNCj4gPiByZXNwZWN0aXZlbHkgd2hl
+biBzZ3hfY2dyb3VwX2luaXQoKSBmYWlscy4NCj4gPiANCj4gDQo+IFllcywgZ29vZCBjYXRjaC4N
+Cj4gDQo+ID4gVGhpcyBsb29rcyBhIGxpdHRsZSBiaXQgd2VpcmQgdG9vLCB0aG91Z2g6DQo+ID4g
+DQo+ID4gQ2FsbGluZyBtaXNjX21pc2NfY2dfc2V0X2NhcGFjaXR5KCkgdG8gcmVzZXQgY2FwYWNp
+dHkgdG8gMCBpcyBkb25lIGF0IGVuZA0KPiA+IG9mIHNneF9pbml0KCkgZXJyb3IgcGF0aCwgYmVj
+YXVzZSB0aGUgInNldCBjYXBhY2l0eSIgcGFydCBpcyBkb25lIGluDQo+ID4gc2d4X2VwY19jYWNo
+ZV9pbml0KCkuICANCj4gPiBCdXQgbG9naWNhbGx5LCBib3RoICJzZXQgY2FwYWNpdHkiIGFuZCAi
+cmVzZXQgY2FwYWNpdHkgdG8gMCIgc2hvdWxkIGJlICANCj4gPiBTR1gNCj4gPiBFUEMgY2dyb3Vw
+IG9wZXJhdGlvbiwgc28gaXQncyBtb3JlIHJlYXNvbmFibGUgdG8gZG8gInNldCBjYXBhY2l0eSIg
+aW4NCj4gPiBzZ3hfY2dyb3VwX2luaXQoKSBhbmQgZG8gInJlc2V0IHRvIDAiIGluIHRoZQ0KPiA+
+IA0KPiA+IAkvKiBTR1ggRVBDIGNncm91cCBjbGVhbnVwICovDQo+ID4gDQo+ID4gYXMgc2hvd24g
+YWJvdmUuDQo+ID4gDQo+ID4gRXZlbnR1YWxseSwgeW91IHdpbGwgbmVlZCB0byBkbyBFUEMgY2dy
+b3VwIGNsZWFudXAgYW55d2F5LCBlLmcuLCB0byBmcmVlDQo+ID4gdGhlIHdvcmtxdWV1ZSwgc28g
+aXQncyBvZGQgdG8gaGF2ZSB0d28gcGxhY2VzIHRvIGhhbmRsZSBFUEMgY2dyb3VwDQo+ID4gY2xl
+YW51cC4NCj4gPiANCj4gPiBJIHVuZGVyc3RhbmQgdGhlIHJlYXNvbiAic2V0IGNhcGFjaXR5IiBw
+YXJ0IGlzIGRvbmUgaW4NCj4gPiBzZ3hfcGFnZV9jYWNoZV9pbml0KCkgbm93IGlzIGJlY2F1c2Ug
+aW4gdGhhdCBmdW5jdGlvbiB5b3UgY2FuIGVhc2lseSBnZXQNCj4gPiB0aGUgY2FwYWNpdHkuICBC
+dXQgdGhlIGZhY3QgaXMgQHNneF9udW1hX25vZGVzIGFsc28gdHJhY2tzIEVQQyBzaXplIGZvcg0K
+PiA+IGVhY2ggbm9kZSwgc28geW91IGNhbiBhbHNvIGdldCB0aGUgdG90YWwgRVBDIHNpemUgZnJv
+bSBAc2d4X251bWFfbm9kZSBpbg0KPiA+IHNneF9jZ3JvdXBfaW5pdCgpIGFuZCBzZXQgY2FwYWNp
+dHkgdGhlcmUuDQo+ID4gDQo+ID4gSW4gdGhpcyBjYXNlLCB5b3UgY2FuIHB1dCAicmVzZXQgY2Fw
+YWNpdHkgdG8gMCIgYW5kICJmcmVlIHdvcmtxdWV1ZSINCj4gPiB0b2dldGhlciBhcyB0aGUgIlNH
+WCBFUEMgY2dyb3VwIGNsZWFudXAiLCB3aGljaCBpcyB3YXkgbW9yZSBjbGVhciBJTUhPLg0KPiA+
+IA0KPiBPa2F5LCB3aWxsICBleHBvc2UgQHNneF9udW1hX25vZGVzIHRvIGVwY19jZ3JvdXAuYyBh
+bmQgZG8gdGhlIGNhbGN1bGF0aW9ucyAgDQo+IGluIHNneF9jZ3JvdXBfaW5pdCgpLg0KPiANCg0K
+TG9va3MgeW91IHdpbGwgYWxzbyBuZWVkIHRvIGV4cG9zZSBAc2d4X251bWFfbWFzaywgd2hpY2gg
+bG9va3Mgb3ZlcmtpbGwuDQoNCk90aGVyIG9wdGlvbnM6DQoNCjEpIEV4cG9zZSBhIGZ1bmN0aW9u
+IHRvIHJldHVybiB0b3RhbCBFUEMgcGFnZXMvc2l6ZSBpbiAic2d4LmgiLg0KDQoyKSBNb3ZlIG91
+dCB0aGUgbmV3ICdjYXBhY2l0eScgdmFyaWFibGUgaW4gdGhpcyBwYXRjaCBhcyBhIGdsb2JhbCB2
+YXJpYWJsZQ0KYW5kIGV4cG9zZSBpdCBpbiAic2d4LmgiIChwZXJoYXBzIHJlbmFtZSB0byAnc2d4
+X3RvdGFsX2VwY19wYWdlcy9zaXplJykuDQoNCjMpIE1ha2Ugc2d4X2Nncm91cF9pbml0KCkgdG8g
+dGFrZSBhbiBhcmd1bWVudCBvZiB0b3RhbCBFUEMgcGFnZXMvc2l6ZSwgYW5kDQpwYXNzIGl0IGlu
+IHNneF9pbml0KCkuIMKgDQoNCkZvciAzKSB0aGVyZSBhcmUgYWxzbyBvcHRpb25zIHRvIGdldCB0
+b3RhbCBFUEMgcGFnZXMvc2l6ZToNCg0KYSkgTW92ZSBvdXQgdGhlIG5ldyAnY2FwYWNpdHknIHZh
+cmlhYmxlIGluIHRoaXMgcGF0Y2ggYXMgYSBzdGF0aWMuDQoNCmIpIEFkZCBhIGZ1bmN0aW9uIHRv
+IGNhbGN1bGF0ZSB0b3RhbCBFUEMgcGFnZXMvc2l6ZSBmcm9tIHNneF9udW1hX25vZGVzLg0KDQpI
+bW0uLiBJIHRoaW5rIHdlIGNhbiBqdXN0IHVzZSBvcHRpb24gMik/DQoNCg0KDQo=
 
