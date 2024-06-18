@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-219223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5407F90CB85
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:20:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3853A90CBC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090B21F22D5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:20:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71BFCB2414E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562E61386C9;
-	Tue, 18 Jun 2024 12:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527C2139D0A;
+	Tue, 18 Jun 2024 12:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AqsE8Afz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ceXORIav"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFCF535A3;
-	Tue, 18 Jun 2024 12:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD452139B2;
+	Tue, 18 Jun 2024 12:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718713229; cv=none; b=dfAniZIDVlYJhykYZMNj3ktd7wtvIRb9Bg8w03JGOS+cBg5/5WDSBhiPyFRUbdTdsueIi074nYZP6GuEf657dPq4fP2DSWErW8TkG0RwclYbVIg6fDshuf6Xd5ya+MsokiyKboH+v2hThjr31nIr1rHnFjo4OlXj9fh31cOmGpg=
+	t=1718713330; cv=none; b=HcsQT8ZWDTrIluer6HYzSsX+BM2UvIeW1bOrru95C5Un7unJTNVuUkD2gp6v0/tbt4oJyXb789DwPlNtl3kl3VDB+uEML8lMdDGKGpa12UviGRJf873OhUhZ+GHM2Lxa4zlFd+tP4BDKnX3d3LsFWhsHa6q+3yqoywI9PeXmSJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718713229; c=relaxed/simple;
-	bh=4POtStJCjE5RRoSLSG+N/j3IB3Xj43A0ipVnukEbGJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nxwuthxfYCHDQ280Ml/KVPnBDRkJwVIvhjxbp5qZHb8ycY4LXgqrHEctESkdXxEu11ZEwfh0akhEpu3ik3kjC4oBj38IngqdYA8SMbJg2CEzOQLWDTDOg2ufkA3RasZWIChws/vzZ/F9N2cBDSo08PFqXiohvM8oBJ56CEsEUE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AqsE8Afz; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718713229; x=1750249229;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4POtStJCjE5RRoSLSG+N/j3IB3Xj43A0ipVnukEbGJg=;
-  b=AqsE8AfzsiAg98dDm5LLCK/trgzd/9MsC/v3eH7dRtq3RzU9fjxc5GmE
-   GnyDeCGGw07FLWaeqM5nHGpI4ziwIoZrG6KOMhOx0Tf8c5xBhITCC1SY2
-   x0mgx4d6N14YKk0GrdDFgKIZg+JmS0ISvXRpraHli4UR38GV1ObqdwFOF
-   UYlkDgJWioU6A18U+vz4AHyCN6I7ulcW2tuz1hhqOeHIaAigF4tgIIMg/
-   WN7DOe7Zn/oKcUCJrI1aSWNxCI2rmW2lCzyJjQyLAOSLyutEaP4tnau/u
-   IlYsdHx2RPCAwOGNk1xPiYWUkbV3nzlHVokw0lqfy7Vo14L7WoEH5Vxmc
-   g==;
-X-CSE-ConnectionGUID: Ie/mVklxRzmDhZaZbO+o9w==
-X-CSE-MsgGUID: HLX8MHSPSoKIRoxfu30ffw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="26169871"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="26169871"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 05:20:28 -0700
-X-CSE-ConnectionGUID: DwcjCin0ROGMSatLBuCePA==
-X-CSE-MsgGUID: I5+5RDgfRiK1kXbdoeW9pQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="46659137"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 18 Jun 2024 05:20:22 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 381D71CB; Tue, 18 Jun 2024 15:20:20 +0300 (EEST)
-Date: Tue, 18 Jun 2024 15:20:20 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Elena Reshetova <elena.reshetova@intel.com>, 
-	Jun Nakajima <jun.nakajima@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	"Kalra, Ashish" <ashish.kalra@amd.com>, Sean Christopherson <seanjc@google.com>, 
-	"Huang, Kai" <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org, linux-hyperv@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Tao Liu <ltao@redhat.com>
-Subject: Re: [PATCHv11 18/19] x86/acpi: Add support for CPU offlining for
- ACPI MADT wakeup method
-Message-ID: <noxbrmequ4inpxgnwna6drnzuymcn3k6ik2kvlbzacxvr2udgf@pximrevgcgmu>
-References: <icu4yecqfwhmbexupo4zzei4lbe5sgavsfkm27jd6t6gyjynul@c2wap3jhtik7>
- <20240610134020.GCZmcCRFxuObyv1W_d@fat_crate.local>
- <hidvykk3yan5rtlhum6go7j3lwgrcfcgxlwyjug3osfakw2x6f@4ohvo23zaesv>
- <nh7cihzlsjtoddtec6m62biqdn62k3ka5svs6m64qekhpebu5z@dkplwad2urgp>
- <20240611194653.GGZmiprSNzK0JSJL17@fat_crate.local>
- <2kc27uzrsvpevtvos2harqj3bgfkizi5dhhxkigswlylpnogr5@lk6fi2okv53i>
- <20240612092943.GCZmlqh7O662JB-yGu@fat_crate.local>
- <w6ohbffl5wwmralg255ec7nozxksge4z4nnkmwncthxzhuv46d@qq46r2wrjlog>
- <20240613145636.GGZmsIpHn16R04QlaN@fat_crate.local>
- <8efff872-7843-2025-dce2-a5dcdbf31143@amd.com>
+	s=arc-20240116; t=1718713330; c=relaxed/simple;
+	bh=eWTx4dkb6c1hoGtuHgyxOdxMRdCw8Iaokd4mAvSC4yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EZ/uvBwj5ro3yq75A9pyAymUhDU8sPM22r5fP3mTV+7cWmR+p01WTFYk7mgBo2/w3CnFs0r3oWBrNuScOQ/QeDjr0D4mrHi0lidE7C4CsWrX+QxyKvU7nppFRfm2XlDlbbt/autUW52kDD4ZMPH+kcgB/H2Iey4euzGZdDZXw4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ceXORIav; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IBH34J002594;
+	Tue, 18 Jun 2024 12:21:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ySxhmM+oROELP46KKRd5/R3Mb8d7yjG3/FhWMFsbRyU=; b=ceXORIavdi/4iU3B
+	+pAy/weS0KQXnATx0UqyeOiDy9FqLPVPXsg9IkdnwzKsU8C9XiElTW3HyNxvnus7
+	aX8QPrH415Lx5wGRcIRus3+VZufrYjzeTrk6mrITp0Fx+CY4zibqSqy4pR8YZysq
+	z7BsRMFenA1B8FQ3Ryr/ock2KrCij6ysYnfRD9r9aFsfmTkzlgH+1qDXJg1vgjFK
+	UCrSaqCsgOAcV4G+eyXbGqIXW4DoyWY/z4cIMFqwp2l+tgqy8C/bwsJ2QfvtetHP
+	A80rIQjfvd6djrwRVfqRzw0/yb32Cg86Y3tIaJUdX5rBAcQXP6SlcrmxaGQRC6Bb
+	r6RtAA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu1b0sac9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 12:21:43 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45ICLh99026734
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 12:21:43 GMT
+Received: from [10.216.29.175] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 05:21:38 -0700
+Message-ID: <ba921d4d-8a3f-b9c3-eb24-a61dbd47adb8@quicinc.com>
+Date: Tue, 18 Jun 2024 17:51:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8efff872-7843-2025-dce2-a5dcdbf31143@amd.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3 14/18] media: venus: Refactor
+ hfi_session_empty_buffer_uncompressed_plane0_pkt
+Content-Language: en-US
+To: Ricardo Ribalda <ribalda@chromium.org>,
+        Michael Tretter
+	<m.tretter@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Andy Walls <awalls@md.metrocast.net>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad
+ Dybcio <konrad.dybcio@linaro.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        Hans
+ Verkuil <hverkuil-cisco@xs4all.nl>
+References: <20240527-cocci-flexarray-v3-0-cda09c535816@chromium.org>
+ <20240527-cocci-flexarray-v3-14-cda09c535816@chromium.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20240527-cocci-flexarray-v3-14-cda09c535816@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9Y9WPIRK1ZRsC1IXGdpO21Kg97EJw_Pu
+X-Proofpoint-ORIG-GUID: 9Y9WPIRK1ZRsC1IXGdpO21Kg97EJw_Pu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
+ adultscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180092
 
-On Fri, Jun 14, 2024 at 09:06:30AM -0500, Tom Lendacky wrote:
-> On 6/13/24 09:56, Borislav Petkov wrote:
-> > On Thu, Jun 13, 2024 at 04:41:00PM +0300, Kirill A. Shutemov wrote:
-> > > It is easy enough to do. See the patch below.
-> > 
-> > Thanks, will have a look.
-> > 
-> > > But I am not sure if I can justify it properly. If someone doesn't really
-> > > need 5-level paging, disabling it at compile-time would save ~34K of
-> > > kernel code with the configuration.
-> > > 
-> > > Is it worth saving ~100 lines of code?
-> > 
-> > Well, it goes both ways: is it worth saving ~34K kernel text and for that make
-> > the code a lot less conditional, more readable, contain less ugly ifdeffery,
+
+
+On 5/28/2024 2:39 AM, Ricardo Ribalda wrote:
+> The single element array data[1] is never used. Replace it whit a
+whit -> with
+
+> padding field of the same size.
 > 
-> Won't getting rid of the config option cause 5-level to be used by default
-> on all platforms that support it? The no5lvl command line option would have
-> to be used to get 4-level paging at that point.
-
-Yes, there won't be compile-time option to disable 5-level paging.
-
-Is it a problem?
-
-We benchmarked it back when 5-level paging got introduced and were not able
-to see a measurable difference between 4- and 5-level paging on the same
-machine. There's some memory overhead on more page table, but it shouldn't
-be a show stopper.
-
-I would prefer to get 5-level paging enabled if the machine supports it.
-"no5lvl" cmdline option can be useful for debug or if your workload is
-somehow special.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> This fixes the following cocci error:
+> drivers/media/platform/qcom/venus/hfi_cmds.h:163:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/platform/qcom/venus/hfi_cmds.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
+> index f5708fdfb197..8768ee052adc 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_cmds.h
+> +++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
+> @@ -160,7 +160,7 @@ struct hfi_session_empty_buffer_uncompressed_plane0_pkt {
+>  	u32 input_tag;
+>  	u32 packet_buffer;
+>  	u32 extradata_buffer;
+> -	u32 data[1];
+> +	u32 data;
+>  };
+>  
+>  struct hfi_session_fill_buffer_pkt {
+> 
+With typo fixed,
+Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
