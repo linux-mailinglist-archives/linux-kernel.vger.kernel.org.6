@@ -1,265 +1,355 @@
-Return-Path: <linux-kernel+bounces-219788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7226F90D7B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:49:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630B990D7B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02C381F23D42
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:49:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB79F28753D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A105E524B4;
-	Tue, 18 Jun 2024 15:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EDA4779D;
+	Tue, 18 Jun 2024 15:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cWHLc05B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cojZHNZ5"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AF347A76
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DAB45C0B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718725733; cv=none; b=HQENhVtkQFpmgu0b7IltE3k+OTmLXhFeWb0uUXxIxheC6YRumqds7Mx6aIevgs1dxSevV63ZHiKgp/IhplUUs8X/UZYaG6QjhhuzDLPl496D/ydznuJNLKA6goyPzZAb748y5vHi1DraGURPuXP6BHr7eT4DzHWqW8z3xjvDmyQ=
+	t=1718725730; cv=none; b=Ds7giVvuWoULaIRyij4+2t6qlYUQ9KevUpFXWTKxfuDb3EsU8RiYR3Oscc+P6nKaJzlj2Uo4P+sHcam/A2a9pxlWMbCwHdnn9JMn1twajNIH3K0IUS6bSIij099xGiQCGs9LNrss/u4R3RhQAyqt6MxAu2VhpI1wunguqpJ8rME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718725733; c=relaxed/simple;
-	bh=A8M6FF7htEPo5boFGolkHiGeAc6qKIiKNMl16i3X2mY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aeihJoKq2mfLHWV7G1uhCpwKeiGZ1zKONwJ9qxCMSOUjx0jL6/bIJtHu1Hp42dOZCJiVVguR3MzIpfZloW0TPEFAPS1OM7ngJS07m3FaOUfQK6y8Q0rRr27LPgP7f6NveZmRESoAPbh4nO61G6Q+Fuhk3iiHc/rmTl/rxNeRTLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cWHLc05B; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718725731;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xI+z2ALaUfW3Qgvh6spulMhk7FV84f8kGNKB6ILw4nc=;
-	b=cWHLc05BxQlGnr/d5N+GJGP+dLGkitG4hOzsOvWpbZ7pnkRhrZPI/zfuVpQBBYTesIR4rA
-	/UB7c+9J7v8Eqlo1JVXnsV4NtA2iy2Es96sQxbUe+INKiN6hmLB/NeIX6XxEozAf2v6lhQ
-	lt9pkZXQdzq5Ar3hHhqLdjJ6GP3g+mM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-478-Whv6pJHfP6GISNZgmjvPYA-1; Tue, 18 Jun 2024 11:48:49 -0400
-X-MC-Unique: Whv6pJHfP6GISNZgmjvPYA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4246ed3f877so9166515e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:48:49 -0700 (PDT)
+	s=arc-20240116; t=1718725730; c=relaxed/simple;
+	bh=7nYwdxwp+v0UdRiaHwObwWEhHmUzgbvBhanukfXuTMQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CVRh8gTkCrGLTzjCs22JVTShqgGzD4wnPAwh2zvTnQpfKtBhtOMMdTmlK0WkUpoxZkdQqJ2XWELjFf6IpknZEyjovA3G1SRYuROAmw166ZIuAJK7V+5T6FClZ7duzV6Zdl9FUXS4qTRxJw6+OHnYo5EJ9H0pVlvORSNz1iwLyOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cojZHNZ5; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52c8ddc2b29so6065606e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:48:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1718725727; x=1719330527; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+inZ/rA5cGwmfLVrVBxGHIe/ByHkiXTR9D7JYXq2mRY=;
+        b=cojZHNZ52K5Ka0AojyyLRyrUQwbjSHMQYL4Gc3bIBY5cT3rek3Kz5xWD2WTaqBe6ft
+         c8mZPFC3x3bKIbPueNlHAy69AMgEBQkRjirmpc5wNcfzF4I2HxXKI+blmjsSYenubbIt
+         jMnMtBoMSORlvENLYvBl9+GaJls6Tt4teaEFEuYg0XtA2MWNGMXVQ1NcUDqxCt86g8Zg
+         Jx2RMnCKu1Uyjov21tsYDjMO3qWjn1Di0Zz4dm1vzxvQBZuKROqNUlxxV63loWCc/v83
+         FSg+4UM+9skZ2x6c7tgS2aRGBbsmTfLkM+yVCqb4AYEAFPdbclmmjs2d26yNNivauTdF
+         Cvag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718725728; x=1719330528;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718725727; x=1719330527;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xI+z2ALaUfW3Qgvh6spulMhk7FV84f8kGNKB6ILw4nc=;
-        b=Z586cF4yq9ZzQ73KK/E2nhiKTvkNhrvuZn8+oZS3v8Ep+minb5IJlKaX5pgsSf3cCb
-         oubbgO28xQm8ZAk+WtuC/sW/bfz7DbQ3HHIC5C20/f0Q9XllMyVTNZcYxRguYJvJiqmE
-         Utw1jqTWlq8KRuOglE3dQ6n6izXSCZKVzHkY6SSS04XmucAT8d+s7ER9lR5dNFEzsKqi
-         X4AJWefyATCAgiZd2mF9CxvbVAKnZGqaKR0niLMR5/7WXCoXpTTOuCURJkc9lnHt4p+E
-         bvG/vCb7qJouiJnESFLawPCuvzVL4d0xzCREc651OBAnN11f7SD1sZDn6pAQgiJNabC9
-         LoJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnaWbZDLEk4JFl4W8357JA+Z2/cH3tbn4f7UnBUw4Oa5sLDpCn4dTSjO46jUoLZ2f2WgnDVBhakTm6Q8RWvRBAKvi0CS4l3ljcgLAG
-X-Gm-Message-State: AOJu0YwVUuc1zsarynSi3gr/j472yv67G0LxRhvSWMmKgXAtYFJK4Bai
-	DWwFYuQQ19SbpjeNJLmizvuCQB9k1E6pmXUis4104SGGwWKFC34ZqGdQXZKTBLPlr3q+p20AYAj
-	YCn6HSYpQOILBbEqvlVhfPB0RW2/tjFZt+ghMVbp6bS81jX9/AmQqCmn4oTEybQ==
-X-Received: by 2002:a05:600c:4689:b0:423:366:ad3d with SMTP id 5b1f17b1804b1-42304827295mr116544475e9.13.1718725728562;
-        Tue, 18 Jun 2024 08:48:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJRfslaNzO0MT9naZttnfdrE59e+FdUbIWj9i48YWC3rqAh7vph7/cJ7kamA2KST40N2lgYQ==
-X-Received: by 2002:a05:600c:4689:b0:423:366:ad3d with SMTP id 5b1f17b1804b1-42304827295mr116544285e9.13.1718725728147;
-        Tue, 18 Jun 2024 08:48:48 -0700 (PDT)
-Received: from cassiopeiae.. ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f5f33bcfsm189385045e9.1.2024.06.18.08.48.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 08:48:47 -0700 (PDT)
-From: Danilo Krummrich <dakr@redhat.com>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	mcgrof@kernel.org,
-	russ.weight@linux.dev,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	wedsonaf@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@samsung.com,
-	aliceryhl@google.com,
-	airlied@gmail.com,
-	fujita.tomonori@gmail.com,
-	pstanner@redhat.com,
-	ajanulgu@redhat.com,
-	lyude@redhat.com
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@redhat.com>
-Subject: [PATCH v4 1/2] rust: add abstraction for struct device
-Date: Tue, 18 Jun 2024 17:48:34 +0200
-Message-ID: <20240618154841.6716-2-dakr@redhat.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240618154841.6716-1-dakr@redhat.com>
-References: <20240618154841.6716-1-dakr@redhat.com>
+        bh=+inZ/rA5cGwmfLVrVBxGHIe/ByHkiXTR9D7JYXq2mRY=;
+        b=Rv/5McYhF9K9C76k5A7KaPlyM9/Oho0AjZSzMDYmws2y+KRRTcRz8glizIRDc9afwt
+         iS6sW1WtCp0pFFLvgDkMgX8biTvBLLzEjBm8xNnAENu+1GaK7AH22HqpEnzJtxL4qkyu
+         lWuLBdEvYpHnAU71bFmvfkGg7DdUJY0D6ivdJuYfKYzo/mtpHQ5kKS5zY+EYmRT/KuR8
+         cZx1XV4QpQaoqlAApu2LcpV3bZkX2Epmn5Vr6N2qeNSEaFlAXbJKPZoJaboeWPH97kGG
+         P1dqEb43xEDkRAbRDTo0UwXUph6JpZ646pVp33f5HirjC+pAFXEW/SzEzc1OYuAlpdHH
+         vM3g==
+X-Forwarded-Encrypted: i=1; AJvYcCX91v1kXDaWBvOpc+KNFPN4nynSc3OHJWijsvKKNNiuZrxfHRNI8fCfyeTt6ATepcemc0RWSBaAW56qa2MrtcAF/0piTXmZJBa/jwV1
+X-Gm-Message-State: AOJu0YyANCE9+UZFvdV/tbNnyed83zYdNv5oR9+Z1iLoZJMsO8a/OiTV
+	/QH80QnUqx1I1WeNmeDq2oWYwUT5G62ZPo59GnZSfzeNvFC1raZm/TlG48vXshEqesKAw38Tnsa
+	RQISfqJnqlQ7Jf6vZqw/V30tZ4GQCwOqWYfWmtg==
+X-Google-Smtp-Source: AGHT+IHCofJB3nYZ6lnH+ZjdxZ2DthLF1hCVxttcISmMh5ZfJdkYeASXNXsViX1ARHn9yLCyM1WKZsQdPaZ/1TcUt9I=
+X-Received: by 2002:a05:6512:3119:b0:52c:8079:b264 with SMTP id
+ 2adb3069b0e04-52ccaa2c834mr37588e87.9.1718725726403; Tue, 18 Jun 2024
+ 08:48:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240222094006.1030709-1-apatel@ventanamicro.com>
+ <20240222094006.1030709-2-apatel@ventanamicro.com> <CAJM55Z9hGKo4784N3s3DhWw=nMRKZKcmvZ58x7uVBghExhoc9A@mail.gmail.com>
+In-Reply-To: <CAJM55Z9hGKo4784N3s3DhWw=nMRKZKcmvZ58x7uVBghExhoc9A@mail.gmail.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Tue, 18 Jun 2024 21:18:35 +0530
+Message-ID: <CAK9=C2WP2+gKScUFuoE9782gjSfnDtcLAw01eCwram3LMAStBg@mail.gmail.com>
+Subject: Re: [PATCH v14 01/18] irqchip/sifive-plic: Convert PLIC driver into a
+ platform driver
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Frank Rowand <frowand.list@gmail.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org, 
+	Saravana Kannan <saravanak@google.com>, Marc Zyngier <maz@kernel.org>, Anup Patel <anup@brainfault.org>, 
+	linux-kernel@vger.kernel.org, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	Atish Patra <atishp@atishpatra.org>, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Andrew Jones <ajones@ventanamicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add an (always) reference-counted abstraction for a generic C `struct
-device`. This abstraction encapsulates existing `struct device` instances
-and manages its reference count.
+On Tue, Jun 18, 2024 at 7:00=E2=80=AFPM Emil Renner Berthing
+<emil.renner.berthing@canonical.com> wrote:
+>
+> Anup Patel wrote:
+> > The PLIC driver does not require very early initialization so convert
+> > it into a platform driver.
+> >
+> > After conversion, the PLIC driver is probed after CPUs are brought-up
+> > so setup cpuhp state after context handler of all online CPUs are
+> > initialized otherwise PLIC driver crashes for platforms with multiple
+> > PLIC instances.
+> >
+> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+>
+> Hi Anup,
+>
+> Sorry for the late reply to the mailing list, but ever since 6.9 where th=
+is was
+> applied my Allwinner D1 based boards no longer boot. This is the log of m=
+y
+> LicheeRV Dock booting plain 6.10-rc4, locking up and then rebooting due t=
+o the
+> the watchdog timing out:
+>
+> https://pastebin.com/raw/nsbzgEKW
+>
+> On 6.10-rc4 I can bring the same board to boot by reverting this patch an=
+d all
+> patches building on it. Eg.:
+>
+>   git revert e306a894bd51 a7fb69ffd7ce abb720579490 \
+>              956521064780 a15587277a24 6c725f33d67b \
+>              b68d0ff529a9 25d862e183d4 8ec99b033147
 
-Subsystems may use this abstraction as a base to abstract subsystem
-specific device instances based on a generic `struct device`, such as
-`struct pci_dev`.
+Does your board boot with only SBI timer driver enabled ?
 
-Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-Signed-off-by: Danilo Krummrich <dakr@redhat.com>
----
- rust/helpers.c        |   1 +
- rust/kernel/device.rs | 102 ++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs    |   1 +
- 3 files changed, 104 insertions(+)
- create mode 100644 rust/kernel/device.rs
+If yes then probing of Allwinner timer driver needs to be fixed since it
+depends on PLIC.
 
-diff --git a/rust/helpers.c b/rust/helpers.c
-index 2c37a0f5d7a8..0e02b2c64c72 100644
---- a/rust/helpers.c
-+++ b/rust/helpers.c
-@@ -23,6 +23,7 @@
- #include <kunit/test-bug.h>
- #include <linux/bug.h>
- #include <linux/build_bug.h>
-+#include <linux/device.h>
- #include <linux/err.h>
- #include <linux/errname.h>
- #include <linux/mutex.h>
-diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-new file mode 100644
-index 000000000000..e445e87fb7d7
---- /dev/null
-+++ b/rust/kernel/device.rs
-@@ -0,0 +1,102 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Generic devices that are part of the kernel's driver model.
-+//!
-+//! C header: [`include/linux/device.h`](srctree/include/linux/device.h)
-+
-+use crate::{
-+    bindings,
-+    types::{ARef, Opaque},
-+};
-+use core::ptr;
-+
-+/// A reference-counted device.
-+///
-+/// This structure represents the Rust abstraction for a C `struct device`. This implementation
-+/// abstracts the usage of an already existing C `struct device` within Rust code that we get
-+/// passed from the C side.
-+///
-+/// An instance of this abstraction can be obtained temporarily or permanent.
-+///
-+/// A temporary one is bound to the lifetime of the C `struct device` pointer used for creation.
-+/// A permanent instance is always reference-counted and hence not restricted by any lifetime
-+/// boundaries.
-+///
-+/// For subsystems it is recommended to create a permanent instance to wrap into a subsystem
-+/// specific device structure (e.g. `pci::Device`). This is useful for passing it to drivers in
-+/// `T::probe()`, such that a driver can store the `ARef<Device>` (equivalent to storing a
-+/// `struct device` pointer in a C driver) for arbitrary purposes, e.g. allocating DMA coherent
-+/// memory.
-+///
-+/// # Invariants
-+///
-+/// The pointer stored in `Self` is non-null and valid for the lifetime of the `ARef` instance. In
-+/// particular, the `ARef` instance owns an increment on the underlying object’s reference count.
-+///
-+/// `bindings::device::release` is valid to be called from any thread, hence `ARef<Device>` can be
-+/// dropped from any thread.
-+#[repr(transparent)]
-+pub struct Device(Opaque<bindings::device>);
-+
-+impl Device {
-+    /// Creates a new reference-counted abstraction instance of an existing `struct device` pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// Callers must ensure that `ptr` is valid, non-null, and has a non-zero reference count,
-+    /// i.e. it must be ensured that the reference count of the C `struct device` `ptr` points to
-+    /// can't drop to zero, for the duration of this function call.
-+    ///
-+    /// It must also be ensured that `bindings::device::release` can be called from any thread.
-+    /// While not officially documented, this should be the case for any `struct device`.
-+    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
-+        // SAFETY: By the safety requirements, ptr is valid.
-+        // Initially increase the reference count by one to compensate for the final decrement once
-+        // this newly created `ARef<Device>` instance is dropped.
-+        unsafe { bindings::get_device(ptr) };
-+
-+        // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::device`.
-+        let ptr = ptr.cast::<Self>();
-+
-+        // SAFETY: By the safety requirements, ptr is valid.
-+        unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(ptr)) }
-+    }
-+
-+    /// Obtain the raw `struct device *`.
-+    pub(crate) fn as_raw(&self) -> *mut bindings::device {
-+        self.0.get()
-+    }
-+
-+    /// Convert a raw C `struct device` pointer to a `&'a Device`.
-+    ///
-+    /// # Safety
-+    ///
-+    /// Callers must ensure that `ptr` is valid, non-null, and has a non-zero reference count,
-+    /// i.e. it must be ensured that the reference count of the C `struct device` `ptr` points to
-+    /// can't drop to zero, for the duration of this function call and the entire duration when the
-+    /// returned reference exists.
-+    pub unsafe fn as_ref<'a>(ptr: *mut bindings::device) -> &'a Self {
-+        // SAFETY: Guaranteed by the safety requirements of the function.
-+        unsafe { &*ptr.cast() }
-+    }
-+}
-+
-+// SAFETY: Instances of `Device` are always reference-counted.
-+unsafe impl crate::types::AlwaysRefCounted for Device {
-+    fn inc_ref(&self) {
-+        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-+        unsafe { bindings::get_device(self.as_raw()) };
-+    }
-+
-+    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
-+        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
-+        unsafe { bindings::put_device(obj.cast().as_ptr()) }
-+    }
-+}
-+
-+// SAFETY: As by the type invariant `Device` can be sent to any thread.
-+unsafe impl Send for Device {}
-+
-+// SAFETY: `Device` can be shared among threads because all immutable methods are protected by the
-+// synchronization in `struct device`.
-+unsafe impl Sync for Device {}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index fbd91a48ff8b..dd1207f1a873 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -28,6 +28,7 @@
- 
- pub mod alloc;
- mod build_assert;
-+pub mod device;
- pub mod error;
- pub mod init;
- pub mod ioctl;
--- 
-2.45.1
+Regards,
+Anup
 
+>
+> After that it boots but run into this separate issue:
+> https://lore.kernel.org/all/DM6PR01MB58047C810DDD5D0AE397CADFF7C22@DM6PR0=
+1MB5804.prod.exchangelabs.com/
+>
+> Samuel: After the reverts above applying this also prevents my board from
+> booting:
+> https://lore.kernel.org/all/20240312192519.1602493-1-samuel.holland@sifiv=
+e.com/
+>
+> /Emil
+>
+> > ---
+> >  drivers/irqchip/irq-sifive-plic.c | 101 ++++++++++++++++++------------
+> >  1 file changed, 61 insertions(+), 40 deletions(-)
+> >
+> > diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-si=
+five-plic.c
+> > index 5b7bc4fd9517..7400a07fc479 100644
+> > --- a/drivers/irqchip/irq-sifive-plic.c
+> > +++ b/drivers/irqchip/irq-sifive-plic.c
+> > @@ -64,6 +64,7 @@
+> >  #define PLIC_QUIRK_EDGE_INTERRUPT    0
+> >
+> >  struct plic_priv {
+> > +     struct device *dev;
+> >       struct cpumask lmask;
+> >       struct irq_domain *irqdomain;
+> >       void __iomem *regs;
+> > @@ -406,30 +407,50 @@ static int plic_starting_cpu(unsigned int cpu)
+> >       return 0;
+> >  }
+> >
+> > -static int __init __plic_init(struct device_node *node,
+> > -                           struct device_node *parent,
+> > -                           unsigned long plic_quirks)
+> > +static const struct of_device_id plic_match[] =3D {
+> > +     { .compatible =3D "sifive,plic-1.0.0" },
+> > +     { .compatible =3D "riscv,plic0" },
+> > +     { .compatible =3D "andestech,nceplic100",
+> > +       .data =3D (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+> > +     { .compatible =3D "thead,c900-plic",
+> > +       .data =3D (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+> > +     {}
+> > +};
+> > +
+> > +static int plic_probe(struct platform_device *pdev)
+> >  {
+> >       int error =3D 0, nr_contexts, nr_handlers =3D 0, i;
+> > -     u32 nr_irqs;
+> > -     struct plic_priv *priv;
+> > +     struct device *dev =3D &pdev->dev;
+> > +     unsigned long plic_quirks =3D 0;
+> >       struct plic_handler *handler;
+> > +     struct plic_priv *priv;
+> > +     bool cpuhp_setup;
+> >       unsigned int cpu;
+> > +     u32 nr_irqs;
+> > +
+> > +     if (is_of_node(dev->fwnode)) {
+> > +             const struct of_device_id *id;
+> > +
+> > +             id =3D of_match_node(plic_match, to_of_node(dev->fwnode))=
+;
+> > +             if (id)
+> > +                     plic_quirks =3D (unsigned long)id->data;
+> > +     }
+> >
+> >       priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+> >       if (!priv)
+> >               return -ENOMEM;
+> >
+> > +     priv->dev =3D dev;
+> >       priv->plic_quirks =3D plic_quirks;
+> >
+> > -     priv->regs =3D of_iomap(node, 0);
+> > +     priv->regs =3D of_iomap(to_of_node(dev->fwnode), 0);
+> >       if (WARN_ON(!priv->regs)) {
+> >               error =3D -EIO;
+> >               goto out_free_priv;
+> >       }
+> >
+> >       error =3D -EINVAL;
+> > -     of_property_read_u32(node, "riscv,ndev", &nr_irqs);
+> > +     of_property_read_u32(to_of_node(dev->fwnode), "riscv,ndev", &nr_i=
+rqs);
+> >       if (WARN_ON(!nr_irqs))
+> >               goto out_iounmap;
+> >
+> > @@ -439,13 +460,13 @@ static int __init __plic_init(struct device_node =
+*node,
+> >       if (!priv->prio_save)
+> >               goto out_free_priority_reg;
+> >
+> > -     nr_contexts =3D of_irq_count(node);
+> > +     nr_contexts =3D of_irq_count(to_of_node(dev->fwnode));
+> >       if (WARN_ON(!nr_contexts))
+> >               goto out_free_priority_reg;
+> >
+> >       error =3D -ENOMEM;
+> > -     priv->irqdomain =3D irq_domain_add_linear(node, nr_irqs + 1,
+> > -                     &plic_irqdomain_ops, priv);
+> > +     priv->irqdomain =3D irq_domain_add_linear(to_of_node(dev->fwnode)=
+, nr_irqs + 1,
+> > +                                             &plic_irqdomain_ops, priv=
+);
+> >       if (WARN_ON(!priv->irqdomain))
+> >               goto out_free_priority_reg;
+> >
+> > @@ -455,7 +476,7 @@ static int __init __plic_init(struct device_node *n=
+ode,
+> >               int cpu;
+> >               unsigned long hartid;
+> >
+> > -             if (of_irq_parse_one(node, i, &parent)) {
+> > +             if (of_irq_parse_one(to_of_node(dev->fwnode), i, &parent)=
+) {
+> >                       pr_err("failed to parse parent for context %d.\n"=
+, i);
+> >                       continue;
+> >               }
+> > @@ -491,7 +512,7 @@ static int __init __plic_init(struct device_node *n=
+ode,
+> >
+> >               /* Find parent domain and register chained handler */
+> >               if (!plic_parent_irq && irq_find_host(parent.np)) {
+> > -                     plic_parent_irq =3D irq_of_parse_and_map(node, i)=
+;
+> > +                     plic_parent_irq =3D irq_of_parse_and_map(to_of_no=
+de(dev->fwnode), i);
+> >                       if (plic_parent_irq)
+> >                               irq_set_chained_handler(plic_parent_irq,
+> >                                                       plic_handle_irq);
+> > @@ -533,20 +554,29 @@ static int __init __plic_init(struct device_node =
+*node,
+> >
+> >       /*
+> >        * We can have multiple PLIC instances so setup cpuhp state
+> > -      * and register syscore operations only when context handler
+> > -      * for current/boot CPU is present.
+> > +      * and register syscore operations only once after context
+> > +      * handlers of all online CPUs are initialized.
+> >        */
+> > -     handler =3D this_cpu_ptr(&plic_handlers);
+> > -     if (handler->present && !plic_cpuhp_setup_done) {
+> > -             cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
+> > -                               "irqchip/sifive/plic:starting",
+> > -                               plic_starting_cpu, plic_dying_cpu);
+> > -             register_syscore_ops(&plic_irq_syscore_ops);
+> > -             plic_cpuhp_setup_done =3D true;
+> > +     if (!plic_cpuhp_setup_done) {
+> > +             cpuhp_setup =3D true;
+> > +             for_each_online_cpu(cpu) {
+> > +                     handler =3D per_cpu_ptr(&plic_handlers, cpu);
+> > +                     if (!handler->present) {
+> > +                             cpuhp_setup =3D false;
+> > +                             break;
+> > +                     }
+> > +             }
+> > +             if (cpuhp_setup) {
+> > +                     cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTI=
+NG,
+> > +                                       "irqchip/sifive/plic:starting",
+> > +                                       plic_starting_cpu, plic_dying_c=
+pu);
+> > +                     register_syscore_ops(&plic_irq_syscore_ops);
+> > +                     plic_cpuhp_setup_done =3D true;
+> > +             }
+> >       }
+> >
+> > -     pr_info("%pOFP: mapped %d interrupts with %d handlers for"
+> > -             " %d contexts.\n", node, nr_irqs, nr_handlers, nr_context=
+s);
+> > +     pr_info("%pOFP: mapped %d interrupts with %d handlers for %d cont=
+exts.\n",
+> > +             to_of_node(dev->fwnode), nr_irqs, nr_handlers, nr_context=
+s);
+> >       return 0;
+> >
+> >  out_free_enable_reg:
+> > @@ -563,20 +593,11 @@ static int __init __plic_init(struct device_node =
+*node,
+> >       return error;
+> >  }
+> >
+> > -static int __init plic_init(struct device_node *node,
+> > -                         struct device_node *parent)
+> > -{
+> > -     return __plic_init(node, parent, 0);
+> > -}
+> > -
+> > -IRQCHIP_DECLARE(sifive_plic, "sifive,plic-1.0.0", plic_init);
+> > -IRQCHIP_DECLARE(riscv_plic0, "riscv,plic0", plic_init); /* for legacy =
+systems */
+> > -
+> > -static int __init plic_edge_init(struct device_node *node,
+> > -                              struct device_node *parent)
+> > -{
+> > -     return __plic_init(node, parent, BIT(PLIC_QUIRK_EDGE_INTERRUPT));
+> > -}
+> > -
+> > -IRQCHIP_DECLARE(andestech_nceplic100, "andestech,nceplic100", plic_edg=
+e_init);
+> > -IRQCHIP_DECLARE(thead_c900_plic, "thead,c900-plic", plic_edge_init);
+> > +static struct platform_driver plic_driver =3D {
+> > +     .driver =3D {
+> > +             .name           =3D "riscv-plic",
+> > +             .of_match_table =3D plic_match,
+> > +     },
+> > +     .probe =3D plic_probe,
+> > +};
+> > +builtin_platform_driver(plic_driver);
+> > --
+> > 2.34.1
+> >
+> >
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
