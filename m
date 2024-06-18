@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-219548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584E090D4D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:27:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2D890D49A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76E7C28551B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E591F237B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31DE16A95F;
-	Tue, 18 Jun 2024 14:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158C81A38C1;
+	Tue, 18 Jun 2024 14:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Fv7Jlq4z";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TPshMj6s"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eGQBU/yO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2Q3JUbRH"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E2B16A935;
-	Tue, 18 Jun 2024 14:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731A316CD03;
+	Tue, 18 Jun 2024 14:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718719308; cv=none; b=Rm6noTS9jJAs932RN0XipBKauf537JOY8S1J69sL+kaHvV4k1MyRCgsd3puPIs9NGR/RNrQMJuppilMPRlo85I2RFy0CeGCUZcfXhPCbCIM1K9ZYPUv+5bu/PTLU9O5fYybH2MXFBF6aVrESPkBwHRyVUx3nlf7MZ6qeKWCl3vE=
+	t=1718719313; cv=none; b=cC/RFaU50B1sg22b4PB9ZY4h4VJrD5njm0vlbBipr6zWVqS6L2wZN/yGJQgcLkFE+RMQ0SwUkgTimf2BH03yZAEHt40yCKQnoF8Gg0panX6vrWAy6xNFlX/ULnQQW0mObQI+MRuAVQY50UkenRjil07a73pPNZ0OajrxceaM0OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718719308; c=relaxed/simple;
-	bh=ve/ngJAhfosBQNRupidosFaH088GWR4cv/SdiOiXoaQ=;
+	s=arc-20240116; t=1718719313; c=relaxed/simple;
+	bh=u1frbaHGWjzLBHSXA3BXKK9Hqja+/d580Tp7fUn7518=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=EyU2atGyqS7mLi6mM4G9aR//Z5+SpuLPPnx46jBfi3DWtJBlxRayQOKapvsHfToj365R5oVbL7SLIUvhsP2XwTqluG/vVOsVoIvKi3HvV8vHfqAIZUeMsZSeXC9b9P1shHkpiMrBWWIAsHA7xl2sP53JQPmHRxnKFu5mmcxaxqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Fv7Jlq4z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TPshMj6s; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=g0z0cgbjmGTEFi3azdwfZwvraDJIPsPKmkz59ztw90ANAbCG1cIj4DDPKg0jDx8SkKQQKcTJ51dOV5ItVChKfl823NioiMMFtuXCZCH4ybnmaHsfCz82JsQYpI2doWXApd8wWoZqltGTYerQeuZKTbq0rhC5hVGAtDry7gxf6jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eGQBU/yO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2Q3JUbRH; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Tue, 18 Jun 2024 14:01:39 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718719299;
+	s=2020; t=1718719300;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=h2gKTm1BjGd6PCm/nkcn25v1uKAARWjN3e1JnLoBJM0=;
-	b=Fv7Jlq4zh14KvOWAYbBREYS4h1Ozvy9GLgBZq5xesPcdiEm1w6uWq7dwaweHQoGfPJtEg4
-	5gD5Yr5Md7Lx2gnIB+EdAbjXT1Rj/KNJZkWa8M9OwjgzO4fFtwNU47DtjvD9R43SDrCF5h
-	PTtaBQLzkuLUOIhs/c7MB5vYcZey9uu/R31vGjp/wdqS25LNb7vlJrNxJSgLECY503R7g5
-	7vO5J+036magAow1GpYFauOPT88colHeiKpbA4XKiTYVwl9iS0AcZ87SfhRUIvlaD5kwoU
-	VtiIRMZ9ulnRD6qu7/XwrCkN8IExSirhINIotQLmhhS2BbOvfWrOA6HezWryoQ==
+	bh=UkXsrRcH4s3oYeNAqGgzDUSRO9Ptw0QpT5nENImM2Lo=;
+	b=eGQBU/yOwfluHRXuiQkeaZB41H4juIbwl/W3Yq4w9O+IwQUMj9daca+o+Uyc2D4TP4lryQ
+	RAacX4103R4wQDq/qPH1DP7UB91Q6zQYN4XibOYwM0R0CYWYME3LJgJrLMu4kfbT+0L89N
+	S7WJnsWAsDXwpOdRxXT3/G4U6eL4iloZJ7/mAKPUoHU94ap1Sx3vnMc/LcTy+GSVkKYkX7
+	LUWcMcwKn6yhf10J3Kp6Fj9hDjqGJwBq9mr0BVzpRJMaRuoR96Q1RAMBqzVOtgl4DRtTev
+	EbkjMMxU23LxLVYsEyAnChmAkqIehDzi6SFriuA/++ti16wzJl9THB7E1YkKLQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718719299;
+	s=2020e; t=1718719300;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=h2gKTm1BjGd6PCm/nkcn25v1uKAARWjN3e1JnLoBJM0=;
-	b=TPshMj6sHDXK30O7P2Q2aAreATqoqFPXaDbFNz0jkdLrqPji+YoLMPxbE8VKdgLKKt82v1
-	8V7YCt373x7M+NCQ==
+	bh=UkXsrRcH4s3oYeNAqGgzDUSRO9Ptw0QpT5nENImM2Lo=;
+	b=2Q3JUbRHtepQOUD8JmNcpVz8VDgohlRpmsH3Vn74tnNBXEdeRnXKyhLOFB49EOvogCy2W2
+	NxXFFQQsyr6YHOBw==
 From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cc] x86/smp: Add smp_ops.stop_this_cpu() callback
+Subject: [tip: x86/cc] x86/acpi: Rename fields in the
+ acpi_madt_multiproc_wakeup structure
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
- Kai Huang <kai.huang@intel.com>, Tao Liu <ltao@redhat.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240614095904.1345461-17-kirill.shutemov@linux.intel.com>
-References: <20240614095904.1345461-17-kirill.shutemov@linux.intel.com>
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Kai Huang <kai.huang@intel.com>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Tao Liu <ltao@redhat.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240614095904.1345461-15-kirill.shutemov@linux.intel.com>
+References: <20240614095904.1345461-15-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171871929905.10875.16141330651329081078.tip-bot2@tip-bot2>
+Message-ID: <171871929973.10875.15941098463748118730.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,78 +85,66 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/cc branch of tip:
 
-Commit-ID:     26ba7353caaa7140561d3f7693a77a3eb68c722c
-Gitweb:        https://git.kernel.org/tip/26ba7353caaa7140561d3f7693a77a3eb68c722c
+Commit-ID:     6630cbce7cd7785f76b1055f33a71199ef28510b
+Gitweb:        https://git.kernel.org/tip/6630cbce7cd7785f76b1055f33a71199ef28510b
 Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate:    Fri, 14 Jun 2024 12:59:01 +03:00
+AuthorDate:    Fri, 14 Jun 2024 12:58:59 +03:00
 Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 17 Jun 2024 17:46:20 +02:00
+CommitterDate: Mon, 17 Jun 2024 17:46:15 +02:00
 
-x86/smp: Add smp_ops.stop_this_cpu() callback
+x86/acpi: Rename fields in the acpi_madt_multiproc_wakeup structure
 
-If the helper is defined, it is called instead of halt() to stop the CPU at the
-end of stop_this_cpu() and on crash CPU shutdown.
+In order to support MADT wakeup structure version 1, provide more appropriate
+names for the fields in the structure.
 
-ACPI MADT will use it to hand over the CPU to BIOS in order to be able to wake
-it up again after kexec.
+Rename 'mailbox_version' to 'version'. This field signifies the version of the
+structure and the related protocols, rather than the version of the mailbox.
+This field has not been utilized in the code thus far.
+
+Rename 'base_address' to 'mailbox_address' to clarify the kind of address it
+represents. In version 1, the structure includes the reset vector address. Clear
+and distinct naming helps to prevent any confusion.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Kai Huang <kai.huang@intel.com>
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Kai Huang <kai.huang@intel.com>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Tested-by: Tao Liu <ltao@redhat.com>
-Link: https://lore.kernel.org/r/20240614095904.1345461-17-kirill.shutemov@linux.intel.com
+Link: https://lore.kernel.org/r/20240614095904.1345461-15-kirill.shutemov@linux.intel.com
 ---
- arch/x86/include/asm/smp.h | 1 +
- arch/x86/kernel/process.c  | 7 +++++++
- arch/x86/kernel/reboot.c   | 6 ++++++
- 3 files changed, 14 insertions(+)
+ arch/x86/kernel/acpi/madt_wakeup.c | 2 +-
+ include/acpi/actbl2.h              | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index a35936b..ca073f4 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -35,6 +35,7 @@ struct smp_ops {
- 	int (*cpu_disable)(void);
- 	void (*cpu_die)(unsigned int cpu);
- 	void (*play_dead)(void);
-+	void (*stop_this_cpu)(void);
+diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/madt_wakeup.c
+index d222be8..004801b 100644
+--- a/arch/x86/kernel/acpi/madt_wakeup.c
++++ b/arch/x86/kernel/acpi/madt_wakeup.c
+@@ -75,7 +75,7 @@ int __init acpi_parse_mp_wake(union acpi_subtable_headers *header,
  
- 	void (*send_call_func_ipi)(const struct cpumask *mask);
- 	void (*send_call_func_single_ipi)(int cpu);
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index b844114..f63f8fd 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -835,6 +835,13 @@ void __noreturn stop_this_cpu(void *dummy)
- 	 */
- 	cpumask_clear_cpu(cpu, &cpus_stop_mask);
+ 	acpi_table_print_madt_entry(&header->common);
  
-+#ifdef CONFIG_SMP
-+	if (smp_ops.stop_this_cpu) {
-+		smp_ops.stop_this_cpu();
-+		unreachable();
-+	}
-+#endif
-+
- 	for (;;) {
- 		/*
- 		 * Use native_halt() so that memory contents don't change
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index bb7a44a..0e0a4cf 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -880,6 +880,12 @@ static int crash_nmi_callback(unsigned int val, struct pt_regs *regs)
- 	cpu_emergency_disable_virtualization();
+-	acpi_mp_wake_mailbox_paddr = mp_wake->base_address;
++	acpi_mp_wake_mailbox_paddr = mp_wake->mailbox_address;
  
- 	atomic_dec(&waiting_for_crash_ipi);
-+
-+	if (smp_ops.stop_this_cpu) {
-+		smp_ops.stop_this_cpu();
-+		unreachable();
-+	}
-+
- 	/* Assume hlt works */
- 	halt();
- 	for (;;)
+ 	cpu_hotplug_disable_offlining();
+ 
+diff --git a/include/acpi/actbl2.h b/include/acpi/actbl2.h
+index ae747c8..fa63362 100644
+--- a/include/acpi/actbl2.h
++++ b/include/acpi/actbl2.h
+@@ -1194,9 +1194,9 @@ struct acpi_madt_generic_translator {
+ 
+ struct acpi_madt_multiproc_wakeup {
+ 	struct acpi_subtable_header header;
+-	u16 mailbox_version;
++	u16 version;
+ 	u32 reserved;		/* reserved - must be zero */
+-	u64 base_address;
++	u64 mailbox_address;
+ };
+ 
+ #define ACPI_MULTIPROC_WAKEUP_MB_OS_SIZE        2032
 
