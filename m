@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-219647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C804290D604
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:50:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB06790D612
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80D231F22136
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69CB62859B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF31815B96C;
-	Tue, 18 Jun 2024 14:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA82B15CD6D;
+	Tue, 18 Jun 2024 14:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="wvP/R0rX"
-Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OZGT7TAl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="adUJu2+m"
+Received: from wfhigh8-smtp.messagingengine.com (wfhigh8-smtp.messagingengine.com [64.147.123.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9407315443F;
-	Tue, 18 Jun 2024 14:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAC8155736;
+	Tue, 18 Jun 2024 14:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718721795; cv=none; b=URWikavOOMti3RTtGS/ryrSJPFRA1pJaZZM1CCeQXEHaN40EELV37WRYUb6VJjQYhx2bDIWHYrjtJ6YK/va0S//TwB9KfkPPPURcmQHmBUEIYGqhGIXRw30WXScBFgNfeQT2t1PLEyOHQtFppGc5pOP5h+cKgkk6X7v7H6Rp6cw=
+	t=1718721816; cv=none; b=kDyD/wBJ0tbpmFbOfaWh+YQFh1kifus+HKYzyYB275XxLvzX0+/oGrwhpftS2FyT9gEzrj5hoG+17cs8WjFrfg0C+IRR6kx+5U9EsXYAlfZ2WurylXd4CAl3lkw9kkPNsYzAeUrNY2kl2DbsSHusP3HBhYD7Ry+ZUTVxtARDOSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718721795; c=relaxed/simple;
-	bh=+A5fEnwsn8wJ0yrjqe3VxaNXE674cwgEAhGpvjluXEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AjJKqAc/8wReOg7+0lxVJ6tfxvc7OLOdShsl7na2cBD8+cohyZaaMqlm/eQs8MYq88O2MMSUH9r/77GO5Iz9FVIbaz33CWvTV0a+E96ZlAuKb8ZjdjPeY7LGidJzKcjZrV5+BKG6duAbD8HlyMEwRORyS7PYX1D6/8UTaMvm2b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=wvP/R0rX; arc=none smtp.client-ip=148.163.148.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
-Received: from pps.filterd (m0355086.ppops.net [127.0.0.1])
-	by mx0a-00823401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IDF1Ec018084;
-	Tue, 18 Jun 2024 14:42:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=DKIM202306; bh=k7mR/1SYybA1E3VAkvQonOe
-	ZDJRDOYjJN4T4w1geSnY=; b=wvP/R0rX9a8dgx5FDpQnFK1jCQK+H4ZG2fYy7Cd
-	Mykjl4BJafMvBub/tcH9tDgOBl3/wwmJ49aWM69M0GBjRl/jOoH/GUGHfugjUTHa
-	sAUDYiIWPEO7CSJLTwCa1Bk2G4j/u+Kaq6kXToN4Z7esMnB31aUD/TPxXS0FQTqS
-	kYQ6YmvXIqXXhA1ae7MxS837nWBAT5/wWkRwt01qulCHG++C5uXn7rsgsxOByr1N
-	tik4nW1LhEuKFDr6/VmUaMrjQDRbyLPWLSvMrN05ncPDMwVS1aqV/OwW0NpjUICa
-	KQPuBItc6I8fBgAodSNFwdM/L+7iuLA4CKC1gbotYVSxO1w==
-Received: from va32lpfpp01.lenovo.com ([104.232.228.21])
-	by mx0a-00823401.pphosted.com (PPS) with ESMTPS id 3ysrqk6n1s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 14:42:58 +0000 (GMT)
-Received: from ilclmmrp02.lenovo.com (ilclmmrp02.mot.com [100.65.83.26])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by va32lpfpp01.lenovo.com (Postfix) with ESMTPS id 4W3Txr6TbMzfBb1;
-	Tue, 18 Jun 2024 14:42:56 +0000 (UTC)
-Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mbland)
-	by ilclmmrp02.lenovo.com (Postfix) with ESMTPSA id 4W3Txr5H2Bz3p6jp;
-	Tue, 18 Jun 2024 14:42:56 +0000 (UTC)
-Date: Tue, 18 Jun 2024 09:42:55 -0500
-From: Maxwell Bland <mbland@motorola.com>
-To: linux-mm@kvack.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Maxwell Bland <mbland@motorola.com>,
-        Alexandre Ghiti <alexghiti@rivosinc.com>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/5] arm64: exclusive upper bound for ptdump entries
-Message-ID: <hb7v5p6y4aqydsecsnla2ystu3kocevngekyhdbn4kuwboetjq@s3uaiuwd73wl>
-References: <aw675dhrbplkitj3szjut2vyidsxokogkjj3vi76wl2x4wybtg@5rhk5ca5zpmv>
+	s=arc-20240116; t=1718721816; c=relaxed/simple;
+	bh=jhtdxxiKcQtU8NOMbWdD78vYivZuvtKtjslQPk3fePs=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=Z51FS5WKHgbP/ZM/CP4xKKz5GIszBuz5/V7AD1T8kxOat1MD/+QCdhkdLEuL4LbNMCGRrWcTOCnPrHcXZsWp+eHi15BUIkD6LNQiLjTLg5VKN9QmVfY3+i6wgomYlvjOW/Y2H9k65r6ZUQskcDwOkitsD5eh3G8YjxQn+QF5i7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OZGT7TAl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=adUJu2+m; arc=none smtp.client-ip=64.147.123.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id D0C61180009D;
+	Tue, 18 Jun 2024 10:43:32 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 18 Jun 2024 10:43:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1718721812; x=1718808212; bh=jhtdxxiKcQ
+	tU8NOMbWdD78vYivZuvtKtjslQPk3fePs=; b=OZGT7TAlONIb/zQP5k+AwuGJ8n
+	VL9QkJkmGv5PM2ABgZXjlfWKtNlt72OoRtplQsOTGmRROA/5ix4Y8dGpQBrVYpaA
+	Wd+HWhtZFl1KW8Uy77JFzWLwIdRbiBBZqCAmnEjiZtZcTYO4+aH0jMM3QYzpDOnE
+	g509yL/4Un/TorQArgfO59BPpcJuhxDTKIgMyjdpeoyBgeYgJKvoeyfQDmPeOLke
+	DyIKEW2xCfO/I4J7MYjUx5OL4w2biuCQupkKwLi3cdPYzLRLy+Gg1+Iw0OmnRjHc
+	LqASTSQso/w2LAh6THAS9Z2a9uxpM+95GwWvh+9YYkbz0uff8Zp6wUaBqHuw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1718721812; x=1718808212; bh=jhtdxxiKcQtU8NOMbWdD78vYivZu
+	vtKtjslQPk3fePs=; b=adUJu2+mAf1d/pEttH9wSL4fuSdsPWfeVwtQmejQWD2I
+	rEXBBT4fTYdTpKPrlbSj7Mv/786jpoXlEBmLpKeiHRfyootu+EOozVfftRZun5Ey
+	2PTYp3NKFk3OwQ3r0AHBJPMCWLfc3xPuiUvAWX3tJT25phb/sSVwt1r2BMYNEFGI
+	Q4+bI+OQMlubzS2tDRDMNGiD70Q9msEfmRdOnlGka3C16R5UY5b0kLxeQT4yGVQb
+	mDaUl0QfLa0tmRrM8d+lV3/3Cw/dajS/rjl2WJQ8/FjIQTQnNBtasgDeWUURIdpu
+	4109758U79+l/G7QAXmYygkNZncNDQjLLkaNGw5OwA==
+X-ME-Sender: <xms:FJ1xZsZmV_dakUtxJD53WUwSKhyzW4L3HmLr8OuQZ0AewLrndJQ4RA>
+    <xme:FJ1xZnbCCpEUibEW9plmF8M7CEaak4r42ZK2mJYwFbuhF9N3Qt0pouh7wSUiseiPp
+    pC5ZxQRntsolv66Fxg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvkedghedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:FJ1xZm8oc_zVeZeV6bbhkjRRuzQ3ytXzOtrp3t0B_v1S6UZ0vTjC_w>
+    <xmx:FJ1xZmpdk8D5H6_WcHXGen5CbnziQWtw9tBeWUzPn_jWAPYfxQfYNQ>
+    <xmx:FJ1xZnrGp6pAXlLRggtrsNvovP8rPIbAvd6GsCCv3DIYjHFIKB15MA>
+    <xmx:FJ1xZkS6H6v15-8t8Wt9HVqIGBaK3GJXOax73AW4-wMdCr0GTZifuQ>
+    <xmx:FJ1xZlgLTJmSn0qezCyBceEzGkwA__0c9Rny1_trfpMao9noE7zgEbOp>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id F4168B60093; Tue, 18 Jun 2024 10:43:31 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aw675dhrbplkitj3szjut2vyidsxokogkjj3vi76wl2x4wybtg@5rhk5ca5zpmv>
-X-Proofpoint-ORIG-GUID: lUW5eH0wfVUKzgqnNwLox3eS303p6jMG
-X-Proofpoint-GUID: lUW5eH0wfVUKzgqnNwLox3eS303p6jMG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- spamscore=0 mlxlogscore=941 bulkscore=0 adultscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180110
+Message-Id: <345206ea-512c-4781-b7c1-b53ef0da5f34@app.fastmail.com>
+In-Reply-To: <20240614140421.3172674-3-peter.griffin@linaro.org>
+References: <20240614140421.3172674-1-peter.griffin@linaro.org>
+ <20240614140421.3172674-3-peter.griffin@linaro.org>
+Date: Tue, 18 Jun 2024 16:43:11 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Peter Griffin" <peter.griffin@linaro.org>, "Lee Jones" <lee@kernel.org>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ "Saravana Kannan" <saravanak@google.com>,
+ "William McVicker" <willmcvicker@google.com>,
+ "Sam Protsenko" <semen.protsenko@linaro.org>, kernel-team@android.com
+Subject: Re: [PATCH 2/2] soc: samsung: exynos-pmu: update to use
+ of_syscon_register_regmap()
+Content-Type: text/plain
 
-Update the upper bound of all ptdump entries to not include the byte
-which is actually governed by the next entry. As the lowest byte is
-included and governed, this makes the size specifications exact.
+On Fri, Jun 14, 2024, at 16:04, Peter Griffin wrote:
+> For SoCs like gs101 that need a special regmap, register this with
+> of_syscon_register_regmap api, so it can be returned by
+> syscon_regmap_lookup_by_phandle() and friends.
+>
+> For SoCs that don't require a custom regmap, revert back to syscon
+> creating the mmio regmap rather than duplicating the logic here.
+>
+> exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
+> the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
+> is kept around until fw_devlink support for syscon property is added
+> for the pinctrl-samsung driver that also runs at postcore_initcall
+> level.
+>
+> All other exynos client drivers can revert back to
+> syscon_regmap_lookup_by_phandle().
+>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-Signed-off-by: Maxwell Bland <mbland@motorola.com>
----
- arch/arm64/mm/ptdump.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
-index 2ec16b523043..63f17c08c406 100644
---- a/arch/arm64/mm/ptdump.c
-+++ b/arch/arm64/mm/ptdump.c
-@@ -359,11 +359,11 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 			else
- 				delta = pg_level[st->level].size;
- 			pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
--					   addr, addr + delta);
-+					   addr, addr + delta - 1);
- 		} else {
- 			delta = (addr - st->start_address);
- 			pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
--					   st->start_address, addr);
-+					   st->start_address, addr - 1);
- 		}
- 
- 		/* Align region information regardlesss of level */
--- 
-2.39.2
-
-
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
