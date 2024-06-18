@@ -1,78 +1,120 @@
-Return-Path: <linux-kernel+bounces-219664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BD990D638
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:55:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33F690D668
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EB291F22605
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:55:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A5D1B33CF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2FC155C8A;
-	Tue, 18 Jun 2024 14:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1E0156C65;
+	Tue, 18 Jun 2024 14:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/yOdriu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBK236Wa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4E21553BB;
-	Tue, 18 Jun 2024 14:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E699D15623B;
+	Tue, 18 Jun 2024 14:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718722207; cv=none; b=Rj6g8Y07j5NLXjbb3/v3a0V2OaQHx8tBTvOkTe0Dua4SK3J9QA9oMjOYWfBIQHn3SQGFSjPGW26pd5q5Wp1BBReOkrEui3LIXrcvRfkRDXtpOU8hch23CWK/HS6WWqNjbgWsshaXwt9W+I8gdm0JfQmvJ0073DXi2lh2ZAu1jxI=
+	t=1718722232; cv=none; b=FsI50XVieoulWHxGbYGfdWiV3UC9GlMEkNpLpzYWHUSo7R8z4ulvdO/NPoYBDJoKBEOnd6XBmpjtu8IhoMMJyoiMrkQ/3lF28JS8rCCbeQSEmMa8k2bztHYT521ORWqpnhxc8oh6MztroieTu0dvElbS5A1Gfy0SHj3P9x/M5nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718722207; c=relaxed/simple;
-	bh=fY633jyQ5BVypOhSXWHCxi7JzWD09Tr8VLpPLszpwJQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=iQAlnU4rvh3vIBA08m0rKV1MGqqLYUiZ6cUD6+4SXiUvj9SRXQWd9FBMn0XdIAZZDuhF+OoFXaAP4Mn6jiDPIWph4Q6XajvKo8ovCXZRDdK/oJwZI/auhk+ymhKY4cj8DhdFr8VIgMX5rUIb3lIzyejbBx+JoOYUsYu0l5ZW5L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/yOdriu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 001C7C3277B;
-	Tue, 18 Jun 2024 14:50:06 +0000 (UTC)
+	s=arc-20240116; t=1718722232; c=relaxed/simple;
+	bh=1aJu4gzP+6qRFGjmKsiszYNo8UrJ18EAQQCBEzbAfL8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Nt/GNgdfAeKo+yK2xj5X2kb1CUXZHZAPwnPhGa+8R5I0qZGankAbxD1pCFnyLrx9SHT3ueWlYluXl7mmnkaVVyvYkG9djR5zVlOI+YZLJ2exWhNgxZ981miZBOZaEcc/HTGXRUYYaG7a/8kVuXXMJspWXqBW6eqkr00d/kTn6JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBK236Wa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5B77FC3277B;
+	Tue, 18 Jun 2024 14:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718722207;
-	bh=fY633jyQ5BVypOhSXWHCxi7JzWD09Tr8VLpPLszpwJQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=D/yOdriuk8q1kf5/ykqRKY9Bst1tdw1UphI9Pa+C6H05WDolNGlBKh8mC3JmqtJ5E
-	 oWDvWlSwEXvB/9OhpRN+//SQ0I+wnsUkdwdGGMMr5g5LCNxWF8dc0CJVvl4s3WLjwm
-	 PGFvYA+jK/B8gmnYHsugiVkjfb4eVlhPOaZ1UQ0tYllD4mmrCAi5ZrjqvnbdRBFEzf
-	 RKE4sAVSR0vukCKMr0bT5e76TknyfNtRB1tba9ruEORUbjVnrwlS9bSBwMYKxN2N7b
-	 Xps0epMZz3edgrEKyHaY1FghWSTilTIDRU/nzXESCnV4Wc/tt9J1SKo36mUSsZeyEa
-	 XiBCCR8h9GoHw==
+	s=k20201202; t=1718722231;
+	bh=1aJu4gzP+6qRFGjmKsiszYNo8UrJ18EAQQCBEzbAfL8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EBK236WaHkbw+y8k1pGkP9KRay2OvIVFDTZIlOvxyKGrnGfTgLetMHW8J/a2PE7/W
+	 k16tQmX8IvcbKZ+/AVPfemI3gJdnYhI6BOAwuyDkEjmckZ8ALwWDnu9WXNFDjzBJN4
+	 RS/4xf6r49/Upte2JHspwwGVaorBwcPwSZIGiLuJ3ldoWZbMyP3w4fzToxza16eTEI
+	 MtALGVbTBkZF6Cr1ZzFwP0A3fjJfwq3aA+Q7WaMF6ryQTltnwxYM4f87RrvunJfQlV
+	 B2lVExja2VdK1XXlUYNLYfrBF0SdcHsYoVbmuIOT/VdWJmGDlEOrKjtmZPGwZjnMXN
+	 AGwkasbCtQSGA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B1A50D2D0F8;
-	Tue, 18 Jun 2024 14:50:06 +0000 (UTC)
-Subject: Re: [GIT PULL] lsm/lsm-pr-20240617
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <278d13277e281ab2e358499fce8a849a@paul-moore.com>
-References: <278d13277e281ab2e358499fce8a849a@paul-moore.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <278d13277e281ab2e358499fce8a849a@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240617
-X-PR-Tracked-Commit-Id: 9a95c5bfbf02a0a7f5983280fe284a0ff0836c34
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3d54351c64e8f9794e8838196036a2de3d752fce
-Message-Id: <171872220665.2478.14917639723232943459.pr-tracker-bot@kernel.org>
-Date: Tue, 18 Jun 2024 14:50:06 +0000
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4ADF5C39563;
+	Tue, 18 Jun 2024 14:50:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] Bluetooth: btusb: Add RTL8852BE device 0489:e125 to device
+ tables
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <171872223129.2471.16979094399869238103.git-patchwork-notify@kernel.org>
+Date: Tue, 18 Jun 2024 14:50:31 +0000
+References: <20240617090518.3237642-1-hildawu@realtek.com>
+In-Reply-To: <20240617090518.3237642-1-hildawu@realtek.com>
+To: Hilda Wu <hildawu@realtek.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alex_lu@realsil.com.cn, max.chou@realtek.com, kidman@realtek.com
 
-The pull request you sent on Mon, 17 Jun 2024 16:47:53 -0400:
+Hello:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240617
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3d54351c64e8f9794e8838196036a2de3d752fce
+On Mon, 17 Jun 2024 17:05:18 +0800 you wrote:
+> Add the support ID 0489:e125 to usb_device_id table for
+> Realtek RTL8852B chip.
+> 
+> The device info from /sys/kernel/debug/usb/devices as below.
+> 
+> T:  Bus=01 Lev=01 Prnt=01 Port=07 Cnt=03 Dev#=  5 Spd=12   MxCh= 0
+> D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+> P:  Vendor=0489 ProdID=e125 Rev= 0.00
+> S:  Manufacturer=Realtek
+> S:  Product=Bluetooth Radio
+> S:  SerialNumber=00e04c000001
+> C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+> E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+> E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> 
+> [...]
 
-Thank you!
+Here is the summary with links:
+  - [v2] Bluetooth: btusb: Add RTL8852BE device 0489:e125 to device tables
+    https://git.kernel.org/bluetooth/bluetooth-next/c/9360c2da682f
 
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
