@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-219773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A661F90D79D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:44:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CB690D7A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9C42889D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:44:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B2F2289131
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEAC56B8C;
-	Tue, 18 Jun 2024 15:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B716C13B780;
+	Tue, 18 Jun 2024 15:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZVBhP5B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HV97QNHt"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71979745ED
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2335913AD2B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718725424; cv=none; b=Ie8rJLjm/w+uqbP0b6E7zdAMRT0Q44AOahyghBeyZ5Pe9FSpg1bSZiXnllFCheg0arubCw1phQslTx9N7vwhiOAt3H6Wrwe4IHb1ulo99yBkzoxasTgtBetCK749QVxvk3vr5aLKuZA614yM1mYgHtgspdSNMni7oXr2lTsIxDg=
+	t=1718725443; cv=none; b=RKnz7Wf1r9Am3QEZ2sTLpRx/PVgOCy7H2DiUUDWtxJKNFx+8C5PXhZP1PvvmL0RfWhG+B621OyAxqZaRzrdncTbGlfIOPNvFfOMliEut6YPvQyqVUEUAgErXigz5gnK+0yYMiiHpfkclrkSKV5rjs1Qa5beks9al0lp22rgNlzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718725424; c=relaxed/simple;
-	bh=4zsI49DcZDsdL2v6wMfGPIPF25Eu/iZX0mc0tTS2fVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+P+/SaCLPj7b8WD8frUF0R12OficCTmakn/aNQAEf36WyXBu6sSZS98LOqdlRe9aoGZ4zCO+FkHHYk/Y9Mc7LHaiAets+prtcGHce0FNSZa/0f1ZJfikYrSHPCwXAoM/oaUzX7auslXwKSEgRbBjdrqdrTNurRKSDI+Rbxb3mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZVBhP5B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 852B1C4AF48;
-	Tue, 18 Jun 2024 15:43:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718725423;
-	bh=4zsI49DcZDsdL2v6wMfGPIPF25Eu/iZX0mc0tTS2fVI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AZVBhP5B/moy4GwOmX9eZ1yYVwYcU8i/6xDRL19pVk3FTGr0wu9Ki5PcuOpC3/FIg
-	 ph1tNvXcaMgVIpo7kGmiYvUN53IX/nhZxT2+RLre3mY/vPG4DJa72x+k1qb3W92c6t
-	 QGAcIECjXM8Fih6OXInZSvSgwPvpsLTrlk0szzls1JCiHRQGiZ/BEJViOF+C7fhxN1
-	 l2DrUUMtB7MH2g8h14cSt4ddfxAzIiiXzqcPrR9x1Sve0lNvlOOVV8z0BXiSSlFB8w
-	 W0gQx0NyuZ25yz0NLPhWVgFecfbz0Dee0GpM9xYcHbDz8IDbU8rMOt2+Um749SR0Em
-	 j5qI03bg4yLng==
-Date: Tue, 18 Jun 2024 16:43:39 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/fpsimd: Ensure that offlined CPUs are not using SME
-Message-ID: <73a2dbc7-6297-401a-a8b2-3ed02afe5e4f@sirena.org.uk>
-References: <20240618-arm64-fpsimd-sme-cpu-die-v1-1-9a90d1a34918@kernel.org>
- <ZnGfA-kGqCjbDu90@J2N7QTR9R3>
+	s=arc-20240116; t=1718725443; c=relaxed/simple;
+	bh=FAGlBqy4JBDt8y0wts2hlPUEXD7L16b572e1kQI9Upk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kCSZVfvnX7rnjyKNHGTzoG8aYEDLINVUxdGsWlJCDLQiJwZn96rtbY5flqWjCZsQE34+EaRhmEWf9VLeC6AkXmoWfGNanNC1J0DAcuHcG0XE2n/qIhx8VlhdFFQZc9Zr5AMp5tbMzIBlO4k6KoCdqRvAvQ1YBBaIKndisvKNtcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HV97QNHt; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f9fe791f8so62195966b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:44:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718725440; x=1719330240; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TCMSZa96o2nrKV3G9cdghkmIXburemNmuNpcxVHi410=;
+        b=HV97QNHtNXVKXI0evqSctsPybgFNGhlrGpzH0XH3LdnNYjHon3q2pLuHKSPW5Tb8/C
+         YzmWwbKeznA9OI67OY9eC/+/DO1IJ6MgLhvGWafxEqalvZwgVsTXm3LR2Ae1ZsTBWczz
+         iN/QVWvJdywFZrrrWJsNu9RZnap2Dzp/EE/WU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718725440; x=1719330240;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TCMSZa96o2nrKV3G9cdghkmIXburemNmuNpcxVHi410=;
+        b=oMx2VVRIysoIAR/6DOiepRiUpTGf34fz4JtIZ/4jz1ljvUOo1zLTBUlPkXDZZQyScb
+         6/e5K+Vn3MzeTPaO+EhqF+pzvPWIZdkXi5UnpSg5URRezzEdlzSqsTa1rf+fQHfkOZG4
+         +wCJSeMzmXnV+YruDzh0HCsaX3Vg1JpCPgnthr1S4uraSDH+a0/EpuF9NLP1iHfbkNo+
+         TcMICckmxH7VmrWekF3KFWfbeFRiBye0n37P3/KvpJBeM37RwDYBPt5I4lS1mtVo+ZDo
+         nbkhmPHegqPvNu5mNsP5agNefmgkMlekmD67tEXGIQoyA96Okwb47gXnEg/VVSQ3jcFq
+         P/KQ==
+X-Gm-Message-State: AOJu0YxxJOQ336MePwirD1Kev2unYgYIQhzqOkcy1QdWzPRpCoNKa9wq
+	hYtV6GncAW+rAjzuidFGf08CcgcDhGoL6N59mCRp5rYv+pn1saM3O8g196qcePrfkEoL2VB48C5
+	+04Q=
+X-Google-Smtp-Source: AGHT+IGvUE/ktyCxW9Sa5SEtXb+yuGOhxSwB5BQldAsgZEOKYaMtpdSbs/KDuWRNd64gnRhGI5bf6A==
+X-Received: by 2002:a17:907:d042:b0:a6f:9550:c0ee with SMTP id a640c23a62f3a-a6fa430f3f1mr15221066b.18.1718725440182;
+        Tue, 18 Jun 2024 08:44:00 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db67c4sm629765366b.60.2024.06.18.08.43.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 08:43:59 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6269885572so1123201766b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:43:59 -0700 (PDT)
+X-Received: by 2002:a17:906:4903:b0:a6e:ab8b:aff4 with SMTP id
+ a640c23a62f3a-a6f94e1f998mr181524566b.13.1718725439032; Tue, 18 Jun 2024
+ 08:43:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p/f/KnoKXBxCI4tt"
-Content-Disposition: inline
-In-Reply-To: <ZnGfA-kGqCjbDu90@J2N7QTR9R3>
-X-Cookie: If you can read this, you're too close.
+References: <20240618105036.208a8860@rorschach.local.home>
+In-Reply-To: <20240618105036.208a8860@rorschach.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 18 Jun 2024 08:43:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whzYU-tOzxKg4f_i9G+D9No_r=uZ6g11w5UjkgfRZDf5g@mail.gmail.com>
+Message-ID: <CAHk-=whzYU-tOzxKg4f_i9G+D9No_r=uZ6g11w5UjkgfRZDf5g@mail.gmail.com>
+Subject: Re: Crash when CONFIG_FORCE_NR_CPUS is set and nr_cpus does not match
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 18 Jun 2024 at 07:50, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+>
+> I was confused to how rtpcp could be passing in a NULL pointer as it is
+> a per cpu variable set up at boot. But I also noticed I was hitting
+> this warning at boot up which I've been ignoring but now find it is
+> related:
+>
+> [    0.128523] ------------[ cut here ]------------
+> [    0.129275] WARNING: CPU: 0 PID: 0 at include/linux/cpumask.h:48 setup_nr_cpu_ids+0x11/0x30
 
---p/f/KnoKXBxCI4tt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, that warning very much means "you aren't running a valid config".
 
-On Tue, Jun 18, 2024 at 03:51:47PM +0100, Mark Rutland wrote:
-> On Tue, Jun 18, 2024 at 03:03:50PM +0100, Mark Brown wrote:
+That said, I think FORCE_NR_CPUS was a mistake. It improves bitmask op
+code generation a tiny bit (quite a lot actually on a micro level, but
+not necessarily hugely noticeable in the big picture) by making
+nr_cpu_ids a compile-time constant, but it's such a special-case
+embedded-only (or "tuned for my particular machine") option that it's
+just not worth it.
 
-> > When we use CPU hotplug to offline a CPU we may transition directly from
-> > running a task which was using SME to the CPU being offlined. This means
-> > that PSTATE.{SM,ZA} may still be set, indicating to the system that SME=
- is
-> > still in use. This could create contention with other still running CPU=
-s if
-> > the system uses shared SMCUs.
+It's behind "EXPERT", and while that *should* mean that it doesn't get
+enabled by default, I think the fact that many distros enable EXPERT
+in their default distro config means that the whole thing has lost all
+meaning.
 
-> Does it actually cause contention if the CPU isn't issuing SME
-> instructions?
+If you start out with the distro config, you're magically an expert.
+And when everybody is an expert, no one is.
 
-It was misbehaving, I didn't dig into the specifics of how.  There will
-be a power impact too regardless of any instructions being issued.
-
-> Is this theoretical or something you see in practice?
-
-It was inspired by a report, the reporter was able to fix their firmware
-to be more sensible and issue the SMSTOP itself but it seemed like
-reasonable defensiveness/politeness for us to release the resource
-anyway.
-
-> I don't think spin-table is relevant; there's no support whatsoever for
-> offlining CPUs with spin-table (and offlining will be rejected long
-> before cpu_die()).
-
-Ah, good - I didn't spend enough time to convince myself there were no
-situations where we'd try to take down the CPU anyway.
-
-> > and it is possible that system firmware may not be ideally
-> > implemented, so let's explicitly disable SME during the process of
-> > offlining the CPU in order to ensure there's no spurious contention.
-
-> If this is an issue, surely it's the same with idle, or any other long
-> period spent in the kernel, or any long period where userspace leaves
-> the CPU in streaming mode?
-
-> It feels very odd that we should need to do something for cpu offlining
-> in particular.
-
-Yes, it's an issue for idle too in the case where we're not using
-cpuidle - I sent a separate patch for that.  cpuidle should already
-cover this either itself or when it notifies us that register state
-will be lost. =20
-
-A good chunk of the other users that spend noticable time in kernel mode
-will be using kernel mode floating point so disable anyway due to that,
-and for everything else there's a tricky tradeoff with how long we're
-spending in kernel vs how much pressure is being applied and the
-likelyhood of returning to the same userspace process.  That feels like
-we need some more real world experience to see what if anything is
-needed.
-
---p/f/KnoKXBxCI4tt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZxqyoACgkQJNaLcl1U
-h9BA7Af+Ohjo17i8FsJvBpk/mpV/X2Lcv/96OpBtAavt6Ol08JF9y0+62fgG8EUN
-n8bQwYaLgktTZkTwC8doPT+8Mw7C8KHDOYd3KU1pGpLReF9g4zQ0udpMS4P+wJhX
-qNGxwc+dr6gBOAzCHxDeGgmpyaHmDn7P7wvcVggptQe0vxQoSh3IAagug+V3DzBa
-pLXvpSXHekK6n8WA0t51m+47oE2SCW02vh1qUo+7wEJL10VwZJfdZS7xEWTo8ABf
-66Bvv5ZMwwXFI15mJ6YG3wa76uSlIRMnnjfrV5zI4XV8aWH3JXZH1eZCg3GtidLm
-nSAB8K9z38doPnT2/2xocNl2ey/VAQ==
-=sW36
------END PGP SIGNATURE-----
-
---p/f/KnoKXBxCI4tt--
+                Linus
 
