@@ -1,152 +1,104 @@
-Return-Path: <linux-kernel+bounces-218922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F87A90C7BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:52:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E867390C7C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71FEE1C220AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:52:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 579FDB2462B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10701C2317;
-	Tue, 18 Jun 2024 09:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+D8twzo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E6015665E;
+	Tue, 18 Jun 2024 09:15:49 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1859A155CBE;
-	Tue, 18 Jun 2024 09:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3E418040;
+	Tue, 18 Jun 2024 09:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718702044; cv=none; b=fN+NZsb4HuODlP40DUCEmcn1f3N2r+61HDjSNVfhR2CUeayhIKDZkhRkg/RlUWgGLZbBOuQK3hAAqkFGjhcX4wjE9KU99r0n5X28sLYjpFYuz9ELI7+qtu2qCuJeeny4dLdXXsL+owRWsqsYzXWJO/TthuSZsis1s70nupSzNwc=
+	t=1718702149; cv=none; b=erwdowP/zcSGrOzqSPULU5Xa+diEjMTiitGFt5rJ4BZscLE+rijPOnHyVSBME+PQbtCrkBpbcPcgciCZaC2Fc98i6Vl4E23e826mK+F0j7g7a4yEcHtSHoplPdXJo/U1V/gikHVINupVI6VlEXOrFrps9sUjVU08uI2CiWchsVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718702044; c=relaxed/simple;
-	bh=ttYN9V7Bv0xdEUu9yvXJ2Kb1OFzdBlAYZwrbDTsO7FI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TQl1Fl/vziVpGdP4oAdkKMwYwub10OsKdb1b5+6QocBrlLwTHhyxoMR79byjuAQ/3bSGyhGaGsNcdajJFL1vxI8wPRo7M1BvMczGIO6UkYblZP+l0cWKosERUo6DN4rpTEK4ApcnbZjDp9xTR3k/EBA7ytgxCYRJNBnx+7KcoZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+D8twzo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C196C3277B;
-	Tue, 18 Jun 2024 09:13:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718702043;
-	bh=ttYN9V7Bv0xdEUu9yvXJ2Kb1OFzdBlAYZwrbDTsO7FI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C+D8twzoSvvGoWOZwivYtyP5feM5zLG61KgFlipYdDyKEU8NLYzTatHWDSpxYHf3S
-	 3kEvuMJ19ajA2An6lx+jDXSFsnb2EDI1Q6WSj4Qeo230r7R7w2lUmRpuFUbuBqko7I
-	 e2h/hRuz7y4t/uVkTPkqE5yi/X7tUzVcJzeXNa9OrZ2ZCRiSqJEtnHE0SEl2PQr3uK
-	 1xlgWUMGfDrK+lP6CYeu98f4LrdJ3l8quXoD3asIdQ5PYQ4dS2beKnBerTy+s5W6/i
-	 0M6uxuJmAVzVlX+QzIuPudK2RkNejBIKyzJOu5UQ4rd379w2RLrT0EMAbsI+yltSG7
-	 qoX/xmI+iit5Q==
-Message-ID: <bfda328d-572e-4eca-b451-8e7a112c2f48@kernel.org>
-Date: Tue, 18 Jun 2024 11:13:54 +0200
+	s=arc-20240116; t=1718702149; c=relaxed/simple;
+	bh=VK2Wlb6lDMjzM8Zz61fmRi73Hu0Rvxc798K1at6fAXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=geSHIymiUlxgupJFb+PJI9Qo7FTvkm04vb4gWun3P7uNPi7JtLwFqYEcYTL9HOqEdCCAdJqBixhlfm6D8aaJAxbLi6zuiN1nBcMjwl0oRyp6Q3WbhBC05rSPULzutQ6N1y/Nwh7IMe1NQZX83OQ9xpd0ueJd0ivmSWNWSkOvXm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 60CED1C009A; Tue, 18 Jun 2024 11:15:45 +0200 (CEST)
+Date: Tue, 18 Jun 2024 11:15:44 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Sourabh Jain <sourabhjain@linux.ibm.com>
+Cc: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+	hbathini@linux.ibm.com, bhe@redhat.com, akpm@linux-foundation.org,
+	bhelgaas@google.com, aneesh.kumar@kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Naveen N Rao <naveen@kernel.org>
+Subject: Re: [PATCH AUTOSEL 6.9 18/23] powerpc: make fadump resilient with
+ memory add/remove events
+Message-ID: <ZnFQQEBeFfO8vOnl@duo.ucw.cz>
+References: <20240527155123.3863983-1-sashal@kernel.org>
+ <20240527155123.3863983-18-sashal@kernel.org>
+ <944f47df-96f0-40e8-a8e2-750fb9fa358e@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: ata: ahci-fsl-qoriq: convert to yaml
- format
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Damien Le Moal <dlemoal@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)"
- <linux-ide@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- imx@lists.linux.dev
-References: <20240617180241.901377-1-Frank.Li@nxp.com>
- <ZnCKlj_Gp60_2otI@ryzen.lan>
- <09fad8cc-ff9e-48b4-b954-4f84c61f3ffc@kernel.org>
- <ZnFJINOphiD1BWyR@ryzen.lan>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZnFJINOphiD1BWyR@ryzen.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="TzzIxnkKCl22NOl6"
+Content-Disposition: inline
+In-Reply-To: <944f47df-96f0-40e8-a8e2-750fb9fa358e@linux.ibm.com>
 
-On 18/06/2024 10:45, Niklas Cassel wrote:
-> On Tue, Jun 18, 2024 at 09:42:03AM +0200, Krzysztof Kozlowski wrote:
->> On 17/06/2024 21:12, Niklas Cassel wrote:
->>> On Mon, Jun 17, 2024 at 02:02:40PM -0400, Frank Li wrote:
->>>> Convert ahci-fsl-qoirq DT binding to yaml format.
->>>>
->>>> Additional changes:
->>>> - Add reg-names list, ahci and sata-ecc
->>>> - Add fsl,ls1028a-ahci and fsl,lx2060a-ahci
->>>>
->>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>>> ---
->>>>  .../bindings/ata/ahci-fsl-qoriq.txt           | 21 -------
->>>>  .../devicetree/bindings/ata/fsl,ahci.yaml     | 58 +++++++++++++++++++
->>>>  2 files changed, 58 insertions(+), 21 deletions(-)
->>>>  delete mode 100644 Documentation/devicetree/bindings/ata/ahci-fsl-qoriq.txt
->>>>  create mode 100644 Documentation/devicetree/bindings/ata/fsl,ahci.yaml
->>>
->>> Should this file perhaps be called:
->>> fsl,qoriq-ahci.yaml ?
->>>
->>> Would be nice with some input from DT maintainers on this.
->>
->> This should be rather compatible.
-> 
-> Considering that you gave your Reviewed-by tag, I interpret this sentence
-> as that you are happy with the filename used (fsl,ahci.yaml) in this patch.
-> 
 
-Yes, maybe indeed fsl,qoriq-ahci or compatible-based would be better,
-but probably I provided a bit different review on other patch, so don't
-want to block useful conversion.
+--TzzIxnkKCl22NOl6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> Hello Sasha,
+>=20
+> Thank you for considering this patch for the stable tree 6.9, 6.8, 6.6, a=
+nd
+> 6.1.
+>=20
+> This patch does two things:
+> 1. Fixes a potential memory corruption issue mentioned as the third point=
+ in
+> the commit message
+> 2. Enables the kernel to avoid unnecessary fadump re-registration on memo=
+ry
+> add/remove events
+
+Actually, I'd suggest dropping this one, as it fixes two things and is
+over 200 lines long, as per stable kernel rules.
+
+(If those are outdated, update them).
 
 Best regards,
-Krzysztof
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
+--TzzIxnkKCl22NOl6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZnFQQAAKCRAw5/Bqldv6
+8iXnAKCSkZNG/q44rY4Pt+FmeDt77CBpPgCfeMR7jMzrKnZIcmrU7qCTdt0H+Us=
+=WgYp
+-----END PGP SIGNATURE-----
+
+--TzzIxnkKCl22NOl6--
 
