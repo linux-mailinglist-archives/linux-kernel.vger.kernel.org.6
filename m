@@ -1,92 +1,105 @@
-Return-Path: <linux-kernel+bounces-218804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542BA90C63F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:17:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7424E90C648
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFC58B22B9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:17:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B18B1F22203
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEF416EB5E;
-	Tue, 18 Jun 2024 07:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A576115DBA0;
+	Tue, 18 Jun 2024 07:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iXUtjvos"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="hWXSjWUx"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82139199B0;
-	Tue, 18 Jun 2024 07:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AF75B1E4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718696680; cv=none; b=nZVJtEiAP0StJMHUdBkXm/tYNIDhhDkt2S969CvK1cSUulj8VwZrXzoq6SlA7ZvpGIamAvBm9YNGDGQ6p4rgbFyDwc8On94die45wk8MFQDDJRQ9O+CrFkbouzAul2BlYteTkznrwZNNh/563qFqiFFHUaMCkl1H+TUqJNJ4kCU=
+	t=1718696731; cv=none; b=ItGF7YVtIEjMBn4KZZSJZrPEsO+S881k4XFKbGCf1ssak2FyFS1zP5qXrQbXlkW6MrDi4RIfp9vFMhx8mXHtE1CRXLxuXs6ZBU73YrFJKLoDbvxsTJNRW9neVzqu6ZsNumbex7hWsUA5FYigufjNGWGhSmNo3Hw9+o7XMvrCFyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718696680; c=relaxed/simple;
-	bh=mVgU9l3ssXBCKl+L8OKT5S/qcig22kETQEUfkY4SGlE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LbgmMjTOiGbM3MHe+r47hRqonnVt6fY2/Y1yQJv2oeVoi7p1xaNLeEN0Z+WKnKzB4Kvbd766QcWPofj88USupxaLTvTDDDYnQUBTekJs7mfq67xMr4JEAEdczB8vArATVPQwLpFF4m3uqayhdNvk5bbPablFXlHMd+NIJQK4aEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iXUtjvos; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718696674; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=zJbcWWfueqXUtA+KBou0jijEhlAukONtUiICTRfCdWM=;
-	b=iXUtjvosyXo+8PjgNl8++pLrruoK1sAiaGMPdG3kFtB7enw2fTysYbZocNgSqdLw4TKT4k6/FYC8ApTzSaM1T0dTyae2/qvDmFeiPcuXz227MyGJQ39UaeC9GOc0we2UyazSiAQwzgqZSG+/p/6xau2fF5n0yuKv5DE7Ry9Yb6s=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0W8jSXV-_1718696667;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W8jSXV-_1718696667)
-          by smtp.aliyun-inc.com;
-          Tue, 18 Jun 2024 15:44:33 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: john.g.garry@oracle.com
-Cc: yanaijie@huawei.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] scsi: libsas: Use str_plural() in _sas_resume_ha()
-Date: Tue, 18 Jun 2024 15:44:26 +0800
-Message-Id: <20240618074426.97217-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1718696731; c=relaxed/simple;
+	bh=6y9EBQd9spPSlym6ahMvT//O8fjaB25I4zeYnyNC18E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M8safV12OO9DueVsQjgF3a2Y4EGmyCDKAYzEDjRSQAxH8rXbtvkTxhsk6YRABz2i14PS1kWCGNCuumuIU/tMZRE//iLM3u/L9Cn7EedaNC5voyv1hSCH++QjjDI8ODGv9pekMChB3nkX66tkpx/FWMPgj3HUYADIViSxh/c774U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=hWXSjWUx; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6aedd5167d1so25897636d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 00:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1718696728; x=1719301528; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6y9EBQd9spPSlym6ahMvT//O8fjaB25I4zeYnyNC18E=;
+        b=hWXSjWUxp/+QywILHkarQljr0/9b7wjzNcg6UpG5ard/0oACWbBB1y2iFzMJ2Xhu39
+         QG50Pqvvb09TbN6Nl/A1dYdNO5NNiRkMhdJx5ZMqj8p9T8dq9RJNW7+RtzK84x6po3Fw
+         r2F0jO4LDbxmgV3EVcCWOYLuiICpcvsLHFkDZBNW0EJP4MVYJX0quuZuTngvq9ABVx1D
+         dwvtPZGu1uwV9ss/lX7iITypdqcG6DowwkSZiWzjKtRMcIMutRBOcFbgJibBRw4T6sUl
+         SkLbloFLJYarBdukj4sOl/uGRPcLBdK8Cm3dm/wxtiYI4+7XoMiCv0VWWYes6Y4pEzOt
+         vSzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718696728; x=1719301528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6y9EBQd9spPSlym6ahMvT//O8fjaB25I4zeYnyNC18E=;
+        b=eUWT8/OaM7Oq4K6nCpvvwp8e+T36Uj79Qjveo+K6lHBRaV/nRZLv8DXhd8/QCTgrKC
+         I0hVPY7zz3hyk9JpiY4Uu03do9SUmWVeGxiKG2gKsziZn7zB2QKfQJ6CnZo7vZKWjP5T
+         R2bmFNchgXkImcHDBNfJTxU12qoMc7eOL6pBiElDp5MuiOYAsh6VCdP9FMYbKBamZZQe
+         AXYyDymzrVNeTsZ8N1zVUdJfpQO6E/Kpc1XoowpUThvCkAaCxu7TDjYQvwHhr2TRKacz
+         aMTd+0oggfpQDR6qcjFuB4HDlCwlffoadUFlfGTS1FlejM1m4k16n95AgRcxp5P3bCNF
+         /GVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPquWZx5KLkTK3oNRcICKMwXtbzRu+oVV6JQYwkGT4fEcdObs8fqE3aa71+1UYSlMfRjhcJDrr7ehWK0ffs92MZsinZW4YsMh9BNqd
+X-Gm-Message-State: AOJu0YzG4gvXPAG+xgUtcDUhYNwkiuq5UeesdoQTwkCESoI0vyG0wlZW
+	YKQh5tjK96H3EswRQrb8L4fgyM2eZ7Qni6zGHW/s+D89cqaUUC8ExCr2NzsLwl8gsTX9S/2VfP9
+	7Ha7ogbQ3Fh+ZiziSiWK4sseO9njQg35NZ2uNdQ==
+X-Google-Smtp-Source: AGHT+IH7+3WcSHlqSCn8E776/vDX4KlNni6h709sa81SFyuFMo7TNQZN/dD9TK/cBC9XEnkBmumnQonT9vtIqu2MJcM=
+X-Received: by 2002:a0c:c58d:0:b0:6b1:e371:99cb with SMTP id
+ 6a1803df08f44-6b2afd7792dmr117082556d6.3.1718696728034; Tue, 18 Jun 2024
+ 00:45:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240614163500.386747-5-piotr.wojtaszczyk@timesys.com> <3fb7f6db-6822-413e-9aa3-953a5e3cd566@web.de>
+In-Reply-To: <3fb7f6db-6822-413e-9aa3-953a5e3cd566@web.de>
+From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Date: Tue, 18 Jun 2024 09:45:16 +0200
+Message-ID: <CAG+cZ05LW5WZJqzs1yXZ3zV972iA-mE2HBtdGZPf+B0bAyWO_A@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] ASoC: fsl: Add i2s and pcm drivers for LPC32xx CPUs
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Chancel Liu <chancel.liu@nxp.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Jonathan Downing <jonathan.downing@nautel.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Rob Herring <robh@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Takashi Iwai <tiwai@suse.com>, 
+	Vladimir Zapolskiy <vz@mleia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use existing str_plural() function rather than duplicating its
-implementation.
+On Mon, Jun 17, 2024 at 9:30=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+> Would you become interested to apply a statement like =E2=80=9Cguard(mute=
+x)(&i2s_info_p->lock);=E2=80=9D?
+> https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/mutex.h#L=
+196
 
-./drivers/scsi/libsas/sas_init.c:426:7-8: opportunity for str_plural(i).
+I take it. Thanks.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9351
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/scsi/libsas/sas_init.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/libsas/sas_init.c b/drivers/scsi/libsas/sas_init.c
-index 9c8cc723170d..67017c03d4da 100644
---- a/drivers/scsi/libsas/sas_init.c
-+++ b/drivers/scsi/libsas/sas_init.c
-@@ -422,8 +422,8 @@ static void _sas_resume_ha(struct sas_ha_struct *ha, bool drain)
- 	 */
- 	i = phys_suspended(ha);
- 	if (i)
--		dev_info(ha->dev, "waiting up to 25 seconds for %d phy%s to resume\n",
--			 i, i > 1 ? "s" : "");
-+		dev_info(ha->dev, "waiting up to 25 seconds for %d phy%s to resume\n", i,
-+			 str_plural(i));
- 	wait_event_timeout(ha->eh_wait_q, phys_suspended(ha) == 0, tmo);
- 	for (i = 0; i < ha->num_phys; i++) {
- 		struct asd_sas_phy *phy = ha->sas_phy[i];
--- 
-2.20.1.7.g153144c
-
+--=20
+Piotr Wojtaszczyk
+Timesys
 
