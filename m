@@ -1,160 +1,144 @@
-Return-Path: <linux-kernel+bounces-218628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C73690C2DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:34:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2140D90C2EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B507EB2192D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:34:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70054B2193E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 04:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586A013E8BE;
-	Tue, 18 Jun 2024 04:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220F018036;
+	Tue, 18 Jun 2024 04:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CK+x7iMg"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bh6Na5MH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE891C01;
-	Tue, 18 Jun 2024 04:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF7C53A9;
+	Tue, 18 Jun 2024 04:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718685246; cv=none; b=oF88d0YwI8cmVaYcvG+YF8g3PW3QFTukmv2m7sLfGZlF3hI0P5nbsfDsEavoVQfUtv11xrARkQ0ezMeu/jq5KcLqFcsChlgrWGVmTQfT+Ccy6OfeUWkVv6uBpQ4Ovvy8nJRhg2oVJUkaiA9UMBULLQ8Vw8iqJnSv6ED4t/62BzU=
+	t=1718686107; cv=none; b=gvD/YlOrPwp7FlCEH0yNCTn5sswcYNLtyrAEOwXEohskf9p68P8JA7VAf5K1KW8Pisy/zmPontjSATo5kIs+Nye1EQo3Jo0BE4vQ2fh+MReuWSwIjcl0AkVyIYQ3swgfXTBerLYyNEk3ho+jv+OAgd+yJ5oS+/WIyrM8bV8yH50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718685246; c=relaxed/simple;
-	bh=JG5ilIHKoW/BF0yg9UG/0JJKxeLZlEF3zEaC7zcQSDs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c8kQFy158KpqBkt5FDL3COCGciFIodpvWN0oTyN6kG+dzmcF/AVhSwe0sYmhramWffIV7h9Ie7fMkadJcxRAzbo1jC/Z1Y5XJnGg60gu1i+JFQSABlWwOr1Mp7ZC7MSGu6EsZgosnE7SzjwoijQV9Lo3yyhI2G7XrkNA/mQagxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CK+x7iMg; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6f09b457fdso460155066b.2;
-        Mon, 17 Jun 2024 21:34:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718685243; x=1719290043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BIwHA+mxDZIARtoB5DwfNg0Gfwpm3V2PRBL0EbC93+0=;
-        b=CK+x7iMgTd3G2rVWVKMjeuyrifbBQDWduUmkrM41oevWeKR00ZviJ0FxXW4uv8LnHD
-         5nq0w8z1eD411ylOs//oh8yf2vLKQsbCk4attPoO1jyiggAkblQmi8BlpMqA978puWeG
-         qtE9gm7Zgjw/sNJBTOJLTXjHHBz1uptXx7Kodidz847W4CrkZvtJ81d2STG1G0k9G35w
-         8vP5VKtkjeVzSpLVLUC036F9bFAYxLhBLHNFrP7nfmOreC1ZY5JI2EwXCfFr5cZfsi/B
-         bcgzlQFdoSy2vIM/2PfT0cXiAw0hS2qxft0KiyRGWdKzdtfCTovqoOxenj601ZOXLdpK
-         n/pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718685243; x=1719290043;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BIwHA+mxDZIARtoB5DwfNg0Gfwpm3V2PRBL0EbC93+0=;
-        b=nnOEqDZ72Ohr5b4gc5SsrKVWfcetS2/k2MzVPR0ydFeNH4pjarok4WKEvbq86Y4eIQ
-         xBXrSlmcr5TOA+7ML4u18LLwQqikPKlExlPdYezAHSt8RXoGntNcMsHpJ7y352tplO+w
-         TTHcrhN8rOy6XIhcbIEBH+EoN9m9GMKJYuzkdjfRG+Ywf3wtyjLB4/8S0vIvBTYpFQA6
-         IBwABe6jnrIOi14pfNJmRoqqRHfpLa5joJ6cqTEWlv7IS6ZqoyV51ZUOtZy/Gjo2G4Sd
-         hGwSe+bf8lSvl9LiSTc/MHt9/eoiB8bFzDVNpK+lXxKCl0xhcam/aMRzVPCSg4VNM30j
-         +MiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdw4Mqy6iQGfbsVo6z373NrbdRPW4X1Sqox5iZLNyFRBc4I5NgV+f5vUEzoIxPCau4M5vYw5K5B+pibrNjJFj/EvWuSNpbrLg30kND4GdjUQGhn+NI8INSSqMGiSgA8yyUTNiN
-X-Gm-Message-State: AOJu0Yw2PojsMwXcRS99R4a2z6VEaeUGCOtpicyz5MQqdu7EIIf7aAZO
-	pKVt+yiTlnoJ7UhyouxGZwkD6mvt6gPZ/ur9FXBdIduwJJ1clbJ4HytAltaahPWpOVxS1vIrC+r
-	qvlbAGCPAHD+ZcyuL4B0Zi9pAShU=
-X-Google-Smtp-Source: AGHT+IEvIyNa10vntkg70/P22cvrLRrQaET/PryqCiwiAaxtddZK8JGlqlKFD8nYwOFg282VPsumofyXlGoruVft9M0=
-X-Received: by 2002:a17:906:4ac4:b0:a6f:493d:5b9f with SMTP id
- a640c23a62f3a-a6f60d3f4aamr803279566b.35.1718685242877; Mon, 17 Jun 2024
- 21:34:02 -0700 (PDT)
+	s=arc-20240116; t=1718686107; c=relaxed/simple;
+	bh=uQRT705hswxV4eHkecwYH5nnl/fTVa9ZyWh6LbZP3oM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KPacbMyM3YsPwIzmOxDnVcO9MzLKlghrKaL02VWhaG8OBG2Fm1ZJ0nw+gF4F2aWWEyaaK01qqJn5LxO42oATLIleoCStXbA+7FZRolQAflXDhMcT8pmU+yqE6x7QnK/s/cPFjA/W9ATbZvPYLuYylnH6TNfZvZXlTpqfnx4/sxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bh6Na5MH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92685C3277B;
+	Tue, 18 Jun 2024 04:48:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718686107;
+	bh=uQRT705hswxV4eHkecwYH5nnl/fTVa9ZyWh6LbZP3oM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bh6Na5MHc3JrAvMbsJpyCpZKvDy2XEoJrEmyR5EvCKzupYOrvNfZogz7BJtaibGlm
+	 fYBMJkQONTPddF47mFqhUbUTi/T832VplagecpzuDma3vWQnxjImCiAxuk4n516Zfx
+	 ueMvb1lpkIBFBTmtdXj8CSo1lf9btx8mnO4JDrofcdsCyUJN/KG9ohJ5Wa6qc3mdx7
+	 8FhaxrQz87M3Vh+dRwj6vVA/3vmqFvZkovmoqYNCrUJYpChnLGj3fWI4g2nnqdfWtH
+	 V1FhxpfJT5gGQ4nwmXEzFsg++64f6qdQSzLAqyE9PylKgo9sAlYumN4wghb2pk6MCU
+	 LMG/+hx82la7w==
+Date: Tue, 18 Jun 2024 12:34:27 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Yixun Lan <dlan@gentoo.org>, Yangyu Chen <cyy@cyyself.name>,
+	linux-riscv@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jesse Taube <jesse@rivosinc.com>
+Subject: Re: [PATCH v1 0/9] riscv: add initial support for SpacemiT K1
+Message-ID: <ZnEOU7D00J8Jzy-1@xhacker>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+ <20240616-exorcism-computing-e11e26084a62@spud>
+ <20240616224811.GC3983622@ofsar>
+ <ZnBEBQjTQtFs-fXt@xhacker>
+ <20240617-synapse-carmaker-0a59c7c6edb7@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org>
-In-Reply-To: <fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org>
-From: Qiang Yu <yuq825@gmail.com>
-Date: Tue, 18 Jun 2024 12:33:50 +0800
-Message-ID: <CAKGbVbs8VmCXVOHbhkCYEHNJiKWwy10p0SV9J09h2h7xjs7hUg@mail.gmail.com>
-Subject: Re: [PATCH] drm/lima: Mark simple_ondemand governor as softdep
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, linux-kernel@vger.kernel.org, 
-	Philip Muller <philm@manjaro.org>, Oliver Smith <ollieparanoid@postmarketos.org>, 
-	Daniel Smith <danct12@disroot.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240617-synapse-carmaker-0a59c7c6edb7@spud>
 
-I see the problem that initramfs need to build a module dependency chain,
-but lima does not call any symbol from simpleondemand governor module.
+On Mon, Jun 17, 2024 at 04:32:59PM +0100, Conor Dooley wrote:
+> On Mon, Jun 17, 2024 at 10:11:17PM +0800, Jisheng Zhang wrote:
+> > On Sun, Jun 16, 2024 at 10:48:11PM +0000, Yixun Lan wrote:
+> > > Hi Conor
+> > >  Thanks for bringing this up
+> > > 
+> > > On 19:35 Sun 16 Jun     , Conor Dooley wrote:
+> > > > On Mon, Jun 17, 2024 at 01:18:52AM +0800, Yangyu Chen wrote:
+> > > > 
+> > > > No MAINTAINERS update, so I figure that means you don't want to maintain
+> > > > it going forwards? If there's someone out that that does care about the
+> > > > spacemit k1 (Jesse maybe?), then I'd be more than happy to have them
+> > > > look after it.
+> > > Yangyu kind of has limited time, too many stuff for him..
+> > > 
+> > > I'd volunteered to help on this if it can fill the gap
+> > > Also I'd be more than happy if anyone willing step forward to co-maintain..
+> > 
+> > Does maintainership work like this? Is willing to do enough?
+> > FWICT, maintainership involves active patch contributing, reviewing and
+> > maintaining the whole SoC. It is better to take over the maintainership
+> > after showing enough patch contributions and understanding of the SoC.
+> 
+> I was going to reply to your other patch about providing more complete
+> "basic" support for the SoC, but I guess I'll reply here and address
+> both points. After the k230 and th1520, which were both merged with very
 
-softdep module seems to be optional while our dependency is hard one,
-can we just add MODULE_INFO(depends, _depends), or create a new
-macro called MODULE_DEPENDS()?
+When I saw k230 a few minutes ago, I assumed you mean k210 since I
+didn't found k230 support in linus tree now. After searching the
+maillist, I found oh there is a k230 series which is similar to this
+series, no pinctrl, no clk, no reset. Since the incomplete K230 initial
+series hasn't been merged into Linus tree now, is it possible to drop
+it so that we can avoid the same mistake for k230.
 
-On Tue, Jun 18, 2024 at 4:22=E2=80=AFAM Dragan Simic <dsimic@manjaro.org> w=
-rote:
->
-> Lima DRM driver uses devfreq to perform DVFS, while using simple_ondemand
-> devfreq governor by default.  This causes driver initialization to fail o=
-n
-> boot when simple_ondemand governor isn't built into the kernel statically=
-,
-> as a result of the missing module dependency and, consequently, the requi=
-red
-> governor module not being included in the initial ramdisk.  Thus, let's m=
-ark
-> simple_ondemand governor as a softdep for Lima, to have its kernel module
-> included in the initial ramdisk.
->
-> This is a rather longstanding issue that has forced distributions to buil=
-d
-> devfreq governors statically into their kernels, [1][2] or may have force=
-d
-> some users to introduce unnecessary workarounds.
->
-> Having simple_ondemand marked as a softdep for Lima may not resolve this
-> issue for all Linux distributions.  In particular, it will remain unresol=
-ved
-> for the distributions whose utilities for the initial ramdisk generation =
-do
-> not handle the available softdep information [3] properly yet.  However, =
-some
-> Linux distributions already handle softdeps properly while generating the=
-ir
-> initial ramdisks, [4] and this is a prerequisite step in the right direct=
-ion
-> for the distributions that don't handle them properly yet.
->
-> [1] https://gitlab.manjaro.org/manjaro-arm/packages/core/linux-pinephone/=
--/blob/6.7-megi/config?ref_type=3Dheads#L5749
-> [2] https://gitlab.com/postmarketOS/pmaports/-/blob/7f64e287e7732c9eaa029=
-653e73ca3d4ba1c8598/main/linux-postmarketos-allwinner/config-postmarketos-a=
-llwinner.aarch64#L4654
-> [3] https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/commit/?id=
-=3D49d8e0b59052999de577ab732b719cfbeb89504d
-> [4] https://github.com/archlinux/mkinitcpio/commit/97ac4d37aae084a050be51=
-2f6d8f4489054668ad
->
-> Cc: Philip Muller <philm@manjaro.org>
-> Cc: Oliver Smith <ollieparanoid@postmarketos.org>
-> Cc: Daniel Smith <danct12@disroot.org>
-> Cc: stable@vger.kernel.org
-> Fixes: 1996970773a3 ("drm/lima: Add optional devfreq and cooling device s=
-upport")
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
->  drivers/gpu/drm/lima/lima_drv.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/lima/lima_drv.c b/drivers/gpu/drm/lima/lima_=
-drv.c
-> index 739c865b556f..10bce18b7c31 100644
-> --- a/drivers/gpu/drm/lima/lima_drv.c
-> +++ b/drivers/gpu/drm/lima/lima_drv.c
-> @@ -501,3 +501,4 @@ module_platform_driver(lima_platform_driver);
->  MODULE_AUTHOR("Lima Project Developers");
->  MODULE_DESCRIPTION("Lima DRM Driver");
->  MODULE_LICENSE("GPL v2");
-> +MODULE_SOFTDEP("pre: governor_simpleondemand");
+> basic support and have made very little progress towards being a useful
+> platform, I'm pretty reluctant to merge another platform in a super
+> basic state. I was going to make this point before you brought it up,
+> but it's good to know I am not the only one with that view. To be clear,
+> I'm not pointing blame for those platforms, I'd just like to avoid a
+
+Yep previously I thought it was fine to use a fixed clock or dummy clock
+during the initial patches, but I changed my mind now, especially after
+Samuel complained the cv1800b reset dt changes.
+
+> repeat. If Yangyu doesn't have time to do any development work on the
+> platform, I'd like to see someone else (and as I mentioned Jesse is
+> interested) take on getting some of the basic driver patches written and
+> merge only when those are accepted. Having no in-tree clock and pinctrl
+> drivers is definitely a hindrance to other people doing parallel
+> development of drivers and I'd like to avoid that.
+> 
+> Getting back to your point in this mail, whoever gets the platform to
+> that state is well suited to looking after it going forwards. Some other
+
+The person who can bring the platfrom support to a well-moduled state,
+IE, proper clk, pinctrl, reset drivers shows the passion, the code
+contribution and solid understanding of the SoC, sure he/she is
+definitely suited to maintain the SoC. I just don't think it's 
+a good practice a person can became maintainer even w/o one LoC
+contrubition to the SoC, because IMHO code contribution matters
+for maintainership.
+
+> interested parties could also join as reviewers. I don't want to see
+> people joining as maintainers that are not going to have an interest
+> in the platform going forward, as that'll just end up with me as the
+> defacto maintainer.
+
+> 
+> Thanks,
+> Conor.
+
+
 
