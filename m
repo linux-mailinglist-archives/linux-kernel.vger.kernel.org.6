@@ -1,96 +1,104 @@
-Return-Path: <linux-kernel+bounces-219508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393FB90D398
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:08:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C4590D399
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2984285838
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:08:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09DD01C2480F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE0619CCF8;
-	Tue, 18 Jun 2024 13:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE1619D063;
+	Tue, 18 Jun 2024 13:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyBXJ8sb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Np9hyOb1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB4913A899;
-	Tue, 18 Jun 2024 13:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E8513A899;
+	Tue, 18 Jun 2024 13:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718718580; cv=none; b=p+qYQV61cKZmXfV2/u5tELML8w6RBN5OD04JCJMF7MBgvVLz3ESr0yiK0cq7JNeK1y2ogdE913r50TAd5b1AvswuhV5Pf2RB/uYm4zsDAJRJBXrNd7UxM2aXCv+zUHZNbCUxp5D1rrCCKlRTUAorlis9AsUrT360Vex+pRV6y4c=
+	t=1718718592; cv=none; b=ZLyG2wuck3sJA7TKCwcHpbJD5OmhF9QEoheNaADv3gUosahGVBQiO/IidlV15xb1xzfwJ9f4D1iL9Nd88Hlf1B2myJDBws6o5ddNhAjRTWOQ0JTXx5gRKEv//E4ge+WWCLZSODhFnOEajeBm3Encv5PSiTAYokEpDv0ogWHAnFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718718580; c=relaxed/simple;
-	bh=E17YAOzFbfC+jQEJ9xvHNzCYANA0NHzB40zEgSfNb8o=;
+	s=arc-20240116; t=1718718592; c=relaxed/simple;
+	bh=486EuC1Qa+540iWb9uOgEPEU+eCRbRp/ccQhLGFvMKA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tkaxz2R2zdVcegNe7nVeilMy3F9t0gWIQva8zFkCQeAmh3z6zF/PVhi2QA+jxYUf8wVy3otGYI3/kzNtI4n6vmnghbX35XQ4N//mEYFEJdCUA+7n+XqNJGqXIQU9bgJ4TUc1w3KCexrDFOtOIxS+FYPwCO+5n6jJoq26lBw3GCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyBXJ8sb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1732DC4AF48;
-	Tue, 18 Jun 2024 13:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718718580;
-	bh=E17YAOzFbfC+jQEJ9xvHNzCYANA0NHzB40zEgSfNb8o=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=YkQn3JkK9zsDrB8KrgKWDaSbW0ocnBIuZNA7ORhAFepr5oNLObiyA4cZkx8l/WnjcQzzML2oF6dFAe00xRtxqD/6UE+ZtwGNoCwBkkJOEZYvhnV1Wvj2APu/j7+hm9ZT+G+WQIr5J60r4C7IWNLSVHlQdYmYIpMSdhKALU1OUzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Np9hyOb1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2E57740E0219;
+	Tue, 18 Jun 2024 13:49:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id z7ezAWjHbROx; Tue, 18 Jun 2024 13:49:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718718582; bh=XPQQaX4opESoUj6CHeeMTyyF5g0cOfCXuQkyPS5k100=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FyBXJ8sbS3dmNBGeyUaA+c+2R2KiipS5dL9JTLa8BnYrINsYiaFxPkIHwoKrj2EHn
-	 g1lu1bBF2p7MkvVsQN/cNCZaE+04AaKlBul9WrDNWDTv0V1E9ZfURi9po4dgpH5Pqv
-	 wn8jFHlvmmo8C955fOQ3FRiahq3Lm5uidyyKdCpXfYkk6XB7K6PQiMMxm3pY7FIfoi
-	 +lxKdpd/Ml8nGui7OaKx7RJNOsh+jY2SF7m6pkzrK/mYAfDPm1yNF/3gUsw9iOOacc
-	 Qj7zeLkvXSLMsbGQW08X2cu9QnSDa9/CHzkwdiMOMJb05+Gpprb3PlZ7fxOHSHtFOk
-	 wntuIYlFNeW0w==
-Date: Tue, 18 Jun 2024 14:49:36 +0100
-From: Mark Brown <broonie@kernel.org>
-To: alain.peteut@gmail.com
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alain.peteut@spacetek.ch
-Subject: Re: [PATCH] spi: omap2-mcspi: consider gpiod chip selects.
-Message-ID: <c7239675-6021-46d5-8325-03059db244aa@sirena.org.uk>
-References: <20240615100610.11587-2-alain.peteut@spacetek.ch>
+	b=Np9hyOb1RtEO55hrgA0hHeSV9w1EYvbncvtWXGzYLP8N/JFV7qVXO426ZioYu4W1z
+	 paBwGIxswnWkBHSGz/GX3piH/tO03FE+rJpj9rYpPGepn9ZNyFUsezXgtpIYdcbmB1
+	 1ntF4hKuokgLtzb6VgeMqP8UvNVY7vV2ECkiUUXWifNWJVswmm/ZB+Z3Ph9jt13KLp
+	 LnQjUPkWpZIGrx2WyqnRgIXud8RZ6YXsJMrr2GeCVUI3QuaUQr6ycseubAXvt55YnS
+	 J8seAcQSwLSgMvxyJ2IhH2lElJp/oV36ipqKHOIsxlRJXstjDMg79ah6gwIm/uUEo/
+	 DiTGft/InIrGl+Ysq0Nl5VfCqnPSVYpHe3mJ8yci3ZxiDfCnbNUw7l+VKt/X8Elp3D
+	 9MdUsQ/tZdUFb+kad9cAbFc97XUYn3jHPHafripMFLD5monW5DMFWnBPmKQaKDpfev
+	 DZVUipbHCUWIJP2XjQsKJ2Drm2gCjf9B69oHM3Rg4xQpWOLqPA2XY/IjLqyz2S8vRR
+	 ZAAppGHtRd+lg+fznCsSZPOQbz/Er0eW1Cqbz3gtzG9t3MWxe9E0wS4U3CRpvJy6wF
+	 00UDaJkG7/98+1E5o2Z1oW3+CxIcRXw6s1mbMFt4gqNnmgaoiwHKZXO5IfhqVB0eEt
+	 YmL5wlg1Te182yf+yT1RZZPM=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EC0E740E019D;
+	Tue, 18 Jun 2024 13:49:37 +0000 (UTC)
+Date: Tue, 18 Jun 2024 15:49:37 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] KVM: SVM: Use compound literal in lieu of
+ __maybe_unused rdmsr() param
+Message-ID: <20240618134937.GFZnGQcd1iF1k5Nn1Q@fat_crate.local>
+References: <20240617210432.1642542-1-seanjc@google.com>
+ <20240617210432.1642542-4-seanjc@google.com>
+ <20240618102434.GDZnFgYsJHTGibyuX1@fat_crate.local>
+ <ZnGPSEB9GOclr9yO@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QuW5hXZiGpRnuM4b"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240615100610.11587-2-alain.peteut@spacetek.ch>
-X-Cookie: Do you like "TENDER VITTLES"?
+In-Reply-To: <ZnGPSEB9GOclr9yO@google.com>
 
+On Tue, Jun 18, 2024 at 06:44:40AM -0700, Sean Christopherson wrote:
+> Yeah, I'm 50/50 on whether it's too clever.  I'm totally fine keeping msr_hi,
+> what I really want to do is rewrite the rdmsr() macros to return values :-/
 
---QuW5hXZiGpRnuM4b
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+... and make them inline functions while at it? And perhaps unify that mess:
+rdmsr, rdmsrl, rdmsr_safe, __rdmsr... And, and, ... And, and, ...
 
-On Sat, Jun 15, 2024 at 12:06:11PM +0200, alain.peteut@gmail.com wrote:
-> From: Alain P=E9teut <alain.peteut@spacetek.ch>
->=20
-> Consider gpiod chip selects, in which case channel 0 is used.
+Yeah, it certainly needs scrubbing.
 
-This doesn't apply against current code, please check and resend.
+Once we agree on the approach we can split the work so that it can get done
+gradually, without any humongous patchsets converting the world and flag days
+and what not breakage...
 
-> Upstream-Status: Pending
+Thx.
 
-That upstream-status thing probably shouldn't be in submissions.
+-- 
+Regards/Gruss,
+    Boris.
 
---QuW5hXZiGpRnuM4b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZxkG8ACgkQJNaLcl1U
-h9BYrgf+PP4V3EMTNKTKmYva3ta57wFqC/Ry0F0M+v9gryMZ+k9VrJFwoeYn+zkj
-v1yGf6oC+PEuYPNB+kfRz6wGCmEYH5N5ax0d258jO3hOyjWGuL1X3TtaCtIuo3mL
-lnyxo0wZJjLC2mBxcs1iuRHKWkeuBRaXA4AkXxWIxxAT4XXsgfiY1IvfF2ni9kcR
-ullWDv2EWRGNvTb7PpDbmgQLSzU1Q+Yx3Xt8JWLMkWwbVqhqNvvyeW6NltV3QDuU
-gFr/YTMXU0+Iak4JRIr5MWOE1yftndbVyMd/Qo6x5l8yrW2eeF37R2T/OQqmESs1
-79vKDOBkh2xoqOOSSx5FIKlbHIrqkw==
-=aTGY
------END PGP SIGNATURE-----
-
---QuW5hXZiGpRnuM4b--
+https://people.kernel.org/tglx/notes-about-netiquette
 
