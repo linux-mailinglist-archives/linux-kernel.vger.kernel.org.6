@@ -1,128 +1,106 @@
-Return-Path: <linux-kernel+bounces-218864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D8E990C725
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:36:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C93590C726
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CAFFB242BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:36:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 193E8B218A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BE41ABCBA;
-	Tue, 18 Jun 2024 08:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D721AC228;
+	Tue, 18 Jun 2024 08:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XgTq5jhI"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TrYJIaUe"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E34E383BD
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5AF19F496;
+	Tue, 18 Jun 2024 08:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718699457; cv=none; b=eh0JLe4+/hEggcvNK75NThJFArXIxCfxyqaImmSHbu/x0nYiFa/mYoDP9f6/WaYMbbgZMRGOfekiiPdTiLYUw+RhA1CtahdpVvEGgVMYzed/SkXCqVj70ixGgcHmZtW+4hf94UIbjugaganUbCbgsEW9BgTPbv2BP+ODawoGvyU=
+	t=1718699478; cv=none; b=SP5JB4DkT5r+npbHI7HXuuluFHk+tF8ZVimkGHNp6FAgYOb1zfTokRuUNaIZZoNda7Dy+qv8nPIDLsxNGERpDoZHferBo9bsa0f+puTCjAReECHFfpKuZUfhijkZ6nSgWiM9cCm29ykcDgkAWZbaJmQJp/P9XOwgccp3YmVjB9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718699457; c=relaxed/simple;
-	bh=R+5azQZ6+mBwxY5RI7RSFeuG0Vd7freNSUMqsMzkf0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gr1Ehoq34ZvO4rwbRL6omZ3J5SWIn+fym4klOa4OdUuMcIVUtvJI6Y2EM2NqUMP5yYgYd9/ynnVlAXh719K3n6MPFXSowx6oynyxZvR08W+8ClNA+EqXkKdvUvUCNFCDj/luSO5Nh82w5ljN2KRZX+U6YEzf0+pIUxWRCFcISzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XgTq5jhI; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so61525561fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:30:55 -0700 (PDT)
+	s=arc-20240116; t=1718699478; c=relaxed/simple;
+	bh=LcpTTRTfS5LkKlaT2xsUTd0pWn/fr7vvmKAfJCXkyjM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fVnvbYVPMtQkdzWrwqCAj2/hsIxD6Ut/NHRewdBRFVRwvh89uwiSBHCckXnMDT/hbjo0OLIiQ+o1P2gnXUdpA9Oxk53A4HII8WbfXNyvci8xByrYaQ2ZmeRwuk03RDa+ljqqVZatPNVgtst+DmPLLmII3JVO3CVP8RZBZFD8kVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TrYJIaUe; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-6c4926bf9baso4303447a12.2;
+        Tue, 18 Jun 2024 01:31:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718699454; x=1719304254; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZN9k85Mrk3anlVUN1YElezSrnWglII9Sg2PXq/CTuRk=;
-        b=XgTq5jhIP5bJwJ4vZgIFpk1jW3/ybhzJbcV5mZms7hDibpbHF16NzdXAVbRxWNZZSu
-         NqY+WvQwHSoeQCCgqsXZMhkKgyMRQee2OYBz5Q3tnztBzgsyYzVoDbr+6ZMh90QeCRkO
-         3sdNQtePYPB1x6nYralXACy6+iBIqeSsou7YQbpF2/1BS28HtNVukPdARPQ97ajt1XlE
-         n3SENz2y76GrO3K5TSWc1KwwFjToaocqPPxgqt0uR861FFFIE0CXdbGxZ7Ei1b66h9SU
-         /N9Nkw18QxKzjTOR+k66ay7yJbTQlprowQqS5fWrdHHErSq4wRYaFKPca/cRPI18X++A
-         Ivdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718699454; x=1719304254;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718699476; x=1719304276; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZN9k85Mrk3anlVUN1YElezSrnWglII9Sg2PXq/CTuRk=;
-        b=VZRmCj12PyofJIsvdNd3lydTTw7lZ4S077Wwgka1++gV7ebU6uhQ0PrmZM4utboppg
-         241hDeEp1Cc3OVtzbExHkpxAXBnyZvkFR5ghhf4LTixGuU0R+ycdsE84PINf/Rz3o5+4
-         r3Gv083/jh2BG9IS54JZHJ1VxUO4sDuOb2UKagxEktOXoj80H+GhUjXCORnqpfcXpRUI
-         zjI6cuWbJ6jVCaQJBFYcBaT2BqQoZrxMd1ziFIx8OvWJ/D4lIP3M5QFPWLP/rEx8Dn/o
-         5CU1rhkL4R0j+ImiFa74/7CtbMPKXp3TpsbHVSPwqRN0GGuTtRTfNrN9bk9vCDNLY21Q
-         bw6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVns/cldAsHLBX5B3X3NyWU4TOASgcAD9KJP8EL7zNW/UPt4N6IqCoOQVaZV2j8lHxGbiJY/vvQN7E9W6cme1pS6TBC268APEEd3X/i
-X-Gm-Message-State: AOJu0YyJ7hjXrSW+c2cpJGk+6UbEth3yRWlcaqBC6P9jsZgnW8qZy+pC
-	FpX5qBb4qbGeloRDx88NrqfUqTY4ObBaHOuzILjBC96RE7BIPr7sShAKB5dkbmc=
-X-Google-Smtp-Source: AGHT+IH9eAQFAL6zDipOK/sDJ/uS/aCTBJG7zVkZruzaxOD1yJH8wQC7geS+TrEfqa1CGkcOieAZdQ==
-X-Received: by 2002:a05:651c:2117:b0:2ec:f8a:6f14 with SMTP id 38308e7fff4ca-2ec0f8a7023mr83274231fa.38.1718699453663;
-        Tue, 18 Jun 2024 01:30:53 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c8a2a1sm16266141fa.114.2024.06.18.01.30.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 01:30:53 -0700 (PDT)
-Date: Tue, 18 Jun 2024 11:30:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/5] drm/msm/adreno: Move hwcg table into a6xx
- specific info
-Message-ID: <wnnjjljjyl5s3fkwiapux3f76243ngp2ppk2cm7kkhdp5dc4sz@v4wypnga3izv>
-References: <20240617225127.23476-1-robdclark@gmail.com>
- <20240617225127.23476-5-robdclark@gmail.com>
+        bh=0N18gaKSY5xzchREG42esnR3ZJkUD/at7qWWDDlXqO4=;
+        b=TrYJIaUenl8X52eCgztlBN/M1VpOvxUfR9UObadWkJwuWNPQJ+otquhSzua0PXFmD7
+         Og1pnXrYsUueVUh+2gpOQW3iSGICQkAnB3nI8H6HHowoWHWfZylLOIEI5FiGozbpE6Hn
+         POdSc1XRyAqtnQVc+J+TC13CggvARMwkjlYGHkAyMWYjKRCbZB4BVJKMZpDLj7O5ZlD+
+         PSAQ76ZLm3N5fFh9sVDDtBbBQF4TpfKNuh5RpirtFy1PKOJviognaIAe6Xi6M7KjTUdJ
+         Rp5u9K68zh5d3D+wyCa4VUvzBnsBx+YrAwtCAVvVoTWD5BNadFo0gB6vHMZ08CbIlgzW
+         ufaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718699476; x=1719304276;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0N18gaKSY5xzchREG42esnR3ZJkUD/at7qWWDDlXqO4=;
+        b=SMyPl4RiIYbg37VWGxCD6rftftk4esSRIekdU69+eZHueR/4guoey9/Nr/Y0ZITRmY
+         TdtlSRXKdFtFILxhumF1yo3xlyK7sJwSsbu8owqsRAZQLqbUGZsXSNMNADfT4gQhl1hK
+         kosvwWvFaukxvoj9zfCpxgTJdN4aKT0p1MI+HP8ZkQU/kAWA9mWsLnZ7lGncQhCAhB/f
+         iNukqHdQ8ux4jJHLX+QvjewjPWVXX8lYylT88Ij865GormMulvUg+FwMeteR2yDepdyQ
+         7U2uX7tCMD+ooW8O1j5T9V4WUFYumGZJ73kq89BEn7/3IfEj5CoZwN5aUQMKUEqQrYiV
+         i/WA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRTHbF/deinCVQLC6w1psCsTWSgg19Uc3vXixV24wwXzE78LRORtyCCuo9gUQjpy57iKy6IHWI4BdARhtPHpHX8vM6xHJxEs5gfKLTulLuwtcn9VjaEud+tnXzu/kFD65GqpWqzwa/bAsVUSc=
+X-Gm-Message-State: AOJu0YyyNajewVmUCE2FP/zDMd47M+E3bhkj0txN8K+qZyxeBeWHuvy7
+	Z9Uy9I1xpXZpuDe0zIRD32fk/c/t2JtVe1rBIoEvpJsu7qdjd3FAYitD3lnoc5Rb8K1/N1Sjrsx
+	yZcm/MwXCELakAKtcNX7i4oyEdo4=
+X-Google-Smtp-Source: AGHT+IGIsdl0GFjOJQXvNV2rKGlS18lw1WiDrFuxbT/zOVrAAUgUyCTmyKQxkEkJfE2O/ZydOP/DmHR5nFUt/fIe5Ng=
+X-Received: by 2002:a17:90b:4a51:b0:2bf:8fbf:e4c7 with SMTP id
+ 98e67ed59e1d1-2c4db242694mr11733858a91.16.1718699475911; Tue, 18 Jun 2024
+ 01:31:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617225127.23476-5-robdclark@gmail.com>
+References: <20240617203010.101452-1-dakr@redhat.com> <20240617203010.101452-2-dakr@redhat.com>
+ <2024061823-judo-overhang-eeb1@gregkh> <2024061819-deprecate-bladder-8639@gregkh>
+In-Reply-To: <2024061819-deprecate-bladder-8639@gregkh>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 18 Jun 2024 10:31:03 +0200
+Message-ID: <CANiq72kwROB8=HdmcbU49csAixKZkxfUUry7umZbpzPRUZ+3BA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] rust: add abstraction for struct device
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Danilo Krummrich <dakr@redhat.com>, rafael@kernel.org, mcgrof@kernel.org, 
+	russ.weight@linux.dev, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, 
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 03:51:14PM GMT, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Introduce a6xx_info where we can stash gen specific stuff without
-> polluting the toplevel adreno_info struct.
-> 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 65 +++++++++++++++++------
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     |  6 +--
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  9 ++++
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  6 ++-
->  4 files changed, 67 insertions(+), 19 deletions(-)
-> 
+On Tue, Jun 18, 2024 at 7:32=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> Wait, I should just take this in my driver-core tree, right?  Any
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+That would be ideal, yeah. Thanks!
 
+> objections for me taking both of these there now for 6.11-rc1 inclusion?
 
-> @@ -98,7 +100,9 @@ struct adreno_info {
->  	struct msm_gpu *(*init)(struct drm_device *dev);
->  	const char *zapfw;
->  	u32 inactive_period;
-> -	const struct adreno_reglist *hwcg;
-> +	union {
-> +		const struct a6xx_info *a6xx;
-> +	};
->  	u64 address_space_size;
->  	/**
->  	 * @speedbins: Optional table of fuse to speedbin mappings
+Perhaps give it a couple days to see if any last minute feedback comes
+(and given Boqun's in 2/2, I think Danilo may want to send a quick
+v4).
 
-My preference would be towards wrapping the adreno_gpu, but that would
-require more significant rework of the driver. Let's see if we can get
-to that later.
-
--- 
-With best wishes
-Dmitry
+Cheers,
+Miguel
 
