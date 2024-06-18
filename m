@@ -1,113 +1,134 @@
-Return-Path: <linux-kernel+bounces-220065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9071390DC48
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:16:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED7590DC4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA231F23609
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:16:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15C191F22CC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6AF15EFC3;
-	Tue, 18 Jun 2024 19:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A7E16191E;
+	Tue, 18 Jun 2024 19:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QSNTP0rP"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfCpjrwO"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D81C136675
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96628160873;
+	Tue, 18 Jun 2024 19:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718738166; cv=none; b=DYReRkmwceOXfnbpWsg8aKBBqWIlu1WVBuFczg4z3zNXNgA20oBIHjxfdN6tbqKOH34xmXfqFlmxqOQVtkI4rLas1oLWQWr3/c2Env7oFVpSPTLfNU3SR7ainUdhAjS4xxR4u0noDhqiyMsGPm4Oao7EE1lIMF7t/H6XHd4ESLQ=
+	t=1718738488; cv=none; b=GCt7Y8vlPmuLnZoHu19FIwkOUL15sNixwF+CoXtoGNf/9aUfisQuXOqR8qUmcs4tUZaKWDpjZAADxy/U5OeqYGLPoNQKa+rXiWGDpYBUzdlNpMBEd2nXxCDXhO5AeGJvp1nHR1T15YaxMs10fHtRGYbEgRX8W2XoPlLxzTotwIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718738166; c=relaxed/simple;
-	bh=TACrqL2IKLNSUk/raSljLCO4G8W1ngIppSQslfB1Q1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t98L77tEFbeA4pBgcseqRYukLR8oys89jWPwIzrVSu+J1U/uMxsOuZxb/1aFERYU5MHmrlNO6KYz66V0EqmcPrDj1DIEOjBJZggxfHaD5KigMRBeg9/teaC3H0PcGp15DJkqamErfo/gbjBxrba250f1oMavtmces6g9J6yHRmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QSNTP0rP; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52c525257feso7443806e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:16:03 -0700 (PDT)
+	s=arc-20240116; t=1718738488; c=relaxed/simple;
+	bh=qguTjeAy2Z/scLac/lyof9AClI7qTzDnSmloofIkUn4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YDzP1iOzlTcN5ZBS8ykE3kocKN/OjtkVrigOWnBAzAE7PiBDwr3LEqa1ZSL7GJqmmN1zDW59AYDfxolDrL9MCAWUD7+oSA67W667BtFCZ2K6o2bBggkv4k7xcjacQ8GtMDuGeLjbIBL9AuCzRE8gBFaL8yR+Q90W/USahei6Yp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jfCpjrwO; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42138eadf64so47027475e9.3;
+        Tue, 18 Jun 2024 12:21:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718738162; x=1719342962; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ECQOXrsJUqE9K11MCllBBxGvMWQM8nm0UCcxG5gDKg4=;
-        b=QSNTP0rPtDArO09FrpvEKcXrm2yr3vYmVUYx8poIcN3wnOpFVpwr7EXdLG2Np0IIkM
-         W7UfmIAXiq+pnWlT5wqBNxPKJQB1iqU1cYM0DzzF4/4zTrA3RAputLl4A692Jsuky8+L
-         GgKP0DXXGaBaF13YNbWjg2dSIn37T8PcTtt7hq0Y91GETSipgNPwTz53OpDc/lqTnF5R
-         vGNhFZhb++N+5jGRZTK2AyMJ+3YCjpNLVHJcwCTkR6GMmDXr1uqMNPrZZivAaQQcNczt
-         lE5vJO3IJbfKfuqZVKbo5nrmpeLSuPWuMaHw13BpWazxiZRnJ6PU03usAzlJbMJt/BoL
-         ysvQ==
+        d=gmail.com; s=20230601; t=1718738484; x=1719343284; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pchh2odHcmU3CdscbrO/Fnxv7MxpmGp5B4JKAi9AQjQ=;
+        b=jfCpjrwOe9C3w31A3lWd5bwrK2Ad+iY4Zuq/tLYs8HcnD4uoX6Nvk2iuw6+QK3Sh69
+         wwtkasSICfcNt8vaToG9iYWk8UZZmpqfIOs65VUS/yZU+rfa55JA+Mza2+DN+vhfWjlg
+         EolBa5Tf2Mw5L8kOox4OBAdwCURfYlZ8b9ySCfzfrPSuc+GEVd3P7KvVxf+T04580zey
+         QxvYnXELJclHjF139vuSFwaNASK/tO+otK76WBq7SmOEaV9qxr5+vriGqJeo43A+X9+I
+         yhfAclWOBtm2saMqncdvh5eUAezQCjQrVj/L43pMUHPgThxUt2Y6cNlWVJ0CyUNJNSNF
+         F/mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718738162; x=1719342962;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ECQOXrsJUqE9K11MCllBBxGvMWQM8nm0UCcxG5gDKg4=;
-        b=Sr3YmK+feFfz1Pht3TxbQnFsXv/aTVsLPW310go2LBk+VAq0+lRo22Ep5lB3c0iod3
-         Bqqkr7DboGnnRJlS4PgmAjkcfICtJ8gil4w6f4DXNZ+zU29o0KT2Y8gc85IB/3e4l1xB
-         FapdHeQ8AXR5+i5nCXBzuqZgo7kc1LbH4IMM1SKEpDHqQSOH3XWAKhl76N/FnX0rrUmE
-         g+o/JUOlqts5SP+7h0yCoKvCKe4NmWP3qj5Sw20i72Mt5BLmVwzXlBIdaNjdH29nau5q
-         vUJhbql9PFyXdZ9R+h/Gw7mF7ZH69NpQTkL03gl6XQHpQuYRzbeiIyalzDez8IPO7dSZ
-         ck0Q==
-X-Gm-Message-State: AOJu0YxkXBKsHkEP3y/9vY2P5ENTiskTbwc97FQgIM46MSjI7JTMyZO+
-	5rVhAImaClLgborutL0R+1Unfyq6yxb/5zKzLl2nWDpNZfgyu9OLnbKJlYL+awk=
-X-Google-Smtp-Source: AGHT+IGlQshmVXLZ1sG8YQepgCvrhHbCGcquy4u7nKJHJooWSW0mg9mEt3h/BZrbEMTcbToiONJ3Tg==
-X-Received: by 2002:a05:6512:3090:b0:52c:9d45:6b52 with SMTP id 2adb3069b0e04-52ccaa57a64mr406922e87.43.1718738161725;
-        Tue, 18 Jun 2024 12:16:01 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:5d11:7fa7:8997:f811? ([2a00:f41:9028:9df3:5d11:7fa7:8997:f811])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e7060sm234778135e9.40.2024.06.18.12.16.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 12:16:01 -0700 (PDT)
-Message-ID: <2fb391fe-84ab-4c15-9d8f-4119bff0572c@linaro.org>
-Date: Tue, 18 Jun 2024 21:15:59 +0200
+        d=1e100.net; s=20230601; t=1718738484; x=1719343284;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pchh2odHcmU3CdscbrO/Fnxv7MxpmGp5B4JKAi9AQjQ=;
+        b=YsMdMD38EbAuJ+BY5aRZn54Oq7VD1I7g5wXMt8joRvpeJgUBC3cvt97HPRGMPW15LQ
+         A4633uMVMTFmnsCW7hXgDyqFC7th9xpV9e4aN3mD5sMubL16Fg/zKeUxPZ8ZitRLkjI2
+         0Fds/V1OhzzoF/AE0H7+xbnn2vhKWRCpOKQbCNwoPYlLkOq93+IlIl539vXj5g3Z3g76
+         Jn4r3Ff1USH7bKuUg0f487w2pvdZWXc6AaQv7X2kOFw70L30Ipa0Ln5YAXxZxk1ergII
+         R9pSB5GygBd6KOGRZLXMzMTly2jjG2I1bO7+GCo1lArpD1WOVYkck35KUi3Gd3gylW7Q
+         jeVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVj1mCGeiZvZ+WrjItORyp8Slt0dL4tspZBYk7IckXZiPnVROstkn1zY8fkIUARrzXkT+gdYls4KxiefUUphjFsnJM840bJGw9qvlQlaFGaztdPIWzfyxFeQhFz4a4bQekEz4Yf7dI=
+X-Gm-Message-State: AOJu0YyT+B4lwX63xZzUNd4Cr6gxdS2EfXEOpLVMUnw65V76Dpz7R6UY
+	oud14BJL5qICmi9irvT/5MZb1kxdbynVZqJkrXbCeZcmlSFfX4XxiMYsfg==
+X-Google-Smtp-Source: AGHT+IFiit/oGOg9IzPavVOI8qAoio9GqNSaXKOEQvmRE54GqkfQvo1DOqhdp62aPfun+1X/1vKPKg==
+X-Received: by 2002:a05:600c:548f:b0:421:a575:99b1 with SMTP id 5b1f17b1804b1-42475293dacmr2579765e9.29.1718738483784;
+        Tue, 18 Jun 2024 12:21:23 -0700 (PDT)
+Received: from [127.0.1.1] (31-179-0-202.dynamic.chello.pl. [31.179.0.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3632d8562a1sm295757f8f.2.2024.06.18.12.21.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 12:21:23 -0700 (PDT)
+From: Roman Storozhenko <romeusmeister@gmail.com>
+Date: Tue, 18 Jun 2024 21:21:12 +0200
+Subject: [PATCH] cpupower: Remove absent 'v' parameter from monitor man
+ page
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] arm64: dts: qcom: x1e80100: Add fastrpc nodes
-To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
- krzk+dt@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, conor+dt@kernel.org,
- dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
- srinivas.kandagatla@linaro.org
-References: <20240618145601.239101-1-quic_sibis@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240618145601.239101-1-quic_sibis@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240618-change-mon-format-v1-1-efa263a8e286@gmail.com>
+X-B4-Tracking: v=1; b=H4sIACfecWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDM0MLXahobn6eblp+UW5iia6xgYGhqbmZYbKpRaoSUF9BUWpaZgXYzOj
+ Y2loAtUVeZGMAAAA=
+To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Roman Storozhenko <romeusmeister@gmail.com>
+X-Mailer: b4 0.14.0
 
+Remove not supported '-v' parameter from the cpupower's 'monitor'
+command description.
 
+Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
+---
+There is a '-v' parameter described in cpupower's 'monitor' command man
+page. It isn't supported at the moment, and perhaps has never been
+supported. When I run the monitor with this parameter I get the
+following:
 
-On 6/18/24 16:56, Sibi Sankar wrote:
-> Add fastrpc nodes for ADSP and CDSP on X1E80100 SoC.
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
+$ sudo LD_LIBRARY_PATH=lib64/ bin/cpupower monitor -v
+monitor: invalid option -- 'v'
+invalid or unknown argument
+$ sudo LD_LIBRARY_PATH=lib64/ bin/cpupower monitor -V
+monitor: invalid option -- 'V'
+invalid or unknown argument
+---
+ tools/power/cpupower/man/cpupower-monitor.1 | 5 -----
+ 1 file changed, 5 deletions(-)
 
-[...]
+diff --git a/tools/power/cpupower/man/cpupower-monitor.1 b/tools/power/cpupower/man/cpupower-monitor.1
+index 8ee737eefa5c..991f931cfc38 100644
+--- a/tools/power/cpupower/man/cpupower-monitor.1
++++ b/tools/power/cpupower/man/cpupower-monitor.1
+@@ -81,11 +81,6 @@ Measure idle and frequency characteristics of an arbitrary command/workload.
+ The executable \fBcommand\fP is forked and upon its exit, statistics gathered since it was
+ forked are displayed.
+ .RE
+-.PP
+-\-v
+-.RS 4
+-Increase verbosity if the binary was compiled with the DEBUG option set.
+-.RE
+ 
+ .SH MONITOR DESCRIPTIONS
+ .SS "Idle_Stats"
 
-> +
-> +					compute-cb@1 {
-> +						compatible = "qcom,fastrpc-compute-cb";
-> +						reg = <1>;
-> +						iommus = <&apps_smmu 0x0c01 0x20>,
-> +							 <&apps_smmu 0x0c21 0x20>;
+---
+base-commit: 0c52056d9f77508cb6d4d68d3fc91c6c08ec71af
+change-id: 20240618-change-mon-format-30015761c58e
 
-(0x0c01 & ~0x20) == (0x0c21 & ~0x20), is this repetition required by
-the firmware, or would it work with the latter entry dropped? (and
-all others in this cdsp fastrpc list)
+Best regards,
+-- 
+Roman Storozhenko <romeusmeister@gmail.com>
 
-Konrad
 
