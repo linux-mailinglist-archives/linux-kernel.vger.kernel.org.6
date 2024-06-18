@@ -1,270 +1,112 @@
-Return-Path: <linux-kernel+bounces-219145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67BD90CA63
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:52:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8476790CA6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23A66283661
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20D83287B2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5105314900B;
-	Tue, 18 Jun 2024 11:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B0014EC5A;
+	Tue, 18 Jun 2024 11:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PKmmLshU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="N78y5zEG"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC59F1482FA;
-	Tue, 18 Jun 2024 11:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E976414E2CF
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718710347; cv=none; b=cJqUC7XcPoI67TDrpiBT7Da4Xy6fb9R56i7N/GaDMEtGn4LziXdzdZ80ZQi7z8HJ2lzk805mWFerqnK8qAWNjNCgAYcKf7O1ZnK3jMhOfxvdbzxEvMMmtWSZMMlD8vmY0c6O6m2tSv7uruKj+SakdziX4Rcf1itPVPY/ih69TLg=
+	t=1718710477; cv=none; b=ggz2HWxwFmBO5diPns3CLryaoI64vxEg4d24ETQIOP7TTjZxepZwGW2nY+kTi3ZFaEeHr1HI11KZrAZNzMh4jdPlZYdORBYBrodJt2FHry7G/TpU/R0RV1q1yX0/urYSeVu85JpyxMGDyD+Qq0lwI7WLlb2d+WtdAonzp+XZYPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718710347; c=relaxed/simple;
-	bh=9/VNuOy6f41HZQkBY0gWS/PVvybaUlmHcB4BzVq3fj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X/IbtO8AyBauWC8DSJ4ILafqKCvHxmdGy1fmibPlir2pDeLeJ/nOFF/wdhrtN+cq1IvCg4x1maT7McRwpQ7XUKTPoBRmGiV6wBc7ElVJwAm27XnvOTNdtoA+YKUzSvnJbvW8ULfDeNJUbJ9yPisORyuXep7zHo5SeDjBMz+LCd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PKmmLshU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IBCqbl005316;
-	Tue, 18 Jun 2024 11:32:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fLHp7/SHMGmvtgP/YBRXcnsXboqjNC1Kcw5z6pT1Kow=; b=PKmmLshUv911AkHf
-	cMu8uDBhV4WpE13ywdvklDMwIqFi3UqLxitTunySvMX52+0tNqdm5CbNM6TFY/pF
-	eJStiXb3HhmvchHuFESpU4DP9gE+WPjCNGcgUa54MpqjGy+/Kr6tCzeRe3FeCHZY
-	bsdbOpE5COi/4SnA4JLk6rVSypiwzmGL3xLU16kMQMEJ76+tlgu3Z7SnnAT2TPaK
-	yuSl4J7n3NPNDvPo3WHyzDopZOTkdljk/Ct13dWwwkgvGL4mEC4+0oTJKgsjdJIk
-	RRy88aTlaIHTbnduac1VHsePpfDDFcrNbgKbe45dWZ5ysX2/gwLfkB9s6HdUpMWZ
-	I7botQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu95rg2a9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 11:32:05 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IBW4mi009390
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 11:32:04 GMT
-Received: from [10.216.29.175] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 04:31:59 -0700
-Message-ID: <15adb142-b88b-e6e1-ddc7-1b4613d1a510@quicinc.com>
-Date: Tue, 18 Jun 2024 17:01:56 +0530
+	s=arc-20240116; t=1718710477; c=relaxed/simple;
+	bh=UMkfk1uz4OiFUzUfIWw8xL19AnVl0WWu88Rh0CNSYCo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fdhe4lvf+fBGvSJ/DUhSq5q3OGTvUl0oxHFgGFVFqah2GXf85F3DfdLGh0Qjuh1SrXhMCqOKVymmUOMd/mY9XrV7JSpMpkWvgZhqvGkUw4wCZFwcCjHTA7YQBdqMd451oGoTD6EKUuyCIWB1dH6CzOUz8IqTt0ejL3boYFNierw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=N78y5zEG; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52caebc6137so2950277e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:34:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718710473; x=1719315273; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UMkfk1uz4OiFUzUfIWw8xL19AnVl0WWu88Rh0CNSYCo=;
+        b=N78y5zEGOvRJHsoLLBFoZ+q8mHQ7IzQHxJD75rVsXiyYWDEkN1TsiKGQFlCLFk575s
+         /hCii7YmfXLGkTnuSH56M3Z2lMxPynfUnKNv2VObGz2kLoooL+7KP9TBeMLmBpAsmHxh
+         0TtsvdZHNIkOHJ9RAlvIt+xEO2wc06+NE1paEaHSTd3FlaF4IfTWzH1ZbVPNlmqM84Si
+         HCdwi9WJlgI0S+GYOcY3651Vmq3Fru5bANNN8PLTbCBY7JWlkkEjtVEM8JeF+2e8/Xmo
+         BkKaliOhD+hP5eOya5xpSM6IpNSAcKqe9O0csqVrhFPCSonCVsXC5hOo1iffYNmbul0D
+         Yu2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718710473; x=1719315273;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UMkfk1uz4OiFUzUfIWw8xL19AnVl0WWu88Rh0CNSYCo=;
+        b=WiRQXUq4qew7RDFK8QBhgsCjG7/ayyfImjjacDscLxW8HB7VnV6aNL8a0FKBtvcHja
+         1Ne/WlCydlVXnpS6OyEW12qtX0SLbR05VQPUMUpGBHmHTHzG9DH+SE0fJ+VVL2aFWzY1
+         KwYYRso0oAhZqddJ63ZvBBa4J9yObdLulwLlCkqICySBhmCNETwsJkpGdUAjrWePLIe4
+         bW1o6jvefFYokj6oZxxr7KGz6cX6DRCzvlVsSsStXzB3oUEXNOqnPRPZC7nBLlV3uSZq
+         V2oEhz3Yll6hWPmEUyOR0BNrt+mFztcAQCAsO+/nygLUzD5AnEGobUxOm87AG+Ld/qLk
+         KcOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBZxotjMzBTqcKI45aWQiD6hHnaMpBuNn4thc3K3FcdtVhDDBk6oXYYem+u+DwDmhJbuV+9F9QiAltIgJe51ghBnX398MqDgztO0rk
+X-Gm-Message-State: AOJu0YzJ76rj7xq7CfZw6LTzeooEmd0Ua+iDPvpvTFYRoL6/8V9nrOB3
+	HpIiSsh58hBGbEZGzIxxcaEz7i7LGKDFAwZdKUW+bNsxiXdHKQQcA4GIRAAJnuzJcvfyYpDTnIB
+	4xTOQFhqGmRoC5GG/n1jwB/yU6tQRGCaco125qQ==
+X-Google-Smtp-Source: AGHT+IGyZn9ZxYOyqgLilSVSiYsQNPXHOBNuta8dqNri+uFDpDVvXJ/3px/0KeevQMRS1XyUFGcx9t0XkY+UWQx74Ag=
+X-Received: by 2002:a05:6512:ad0:b0:52c:8210:13bc with SMTP id
+ 2adb3069b0e04-52ca6e98fe1mr9251684e87.64.1718710473025; Tue, 18 Jun 2024
+ 04:34:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 09/18] media: venus: Remove unused structs
-To: Ricardo Ribalda <ribalda@chromium.org>,
-        Michael Tretter
-	<m.tretter@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Andy Walls <awalls@md.metrocast.net>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad
- Dybcio <konrad.dybcio@linaro.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        Hans
- Verkuil <hverkuil-cisco@xs4all.nl>
-References: <20240527-cocci-flexarray-v3-0-cda09c535816@chromium.org>
- <20240527-cocci-flexarray-v3-9-cda09c535816@chromium.org>
-Content-Language: en-US
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20240527-cocci-flexarray-v3-9-cda09c535816@chromium.org>
+References: <20240618111824.15593-1-brgl@bgdev.pl> <CACRpkdYWqsV+2a_L-dzyvGiV4WYAdS2B7WvOkKMyZh6tGT39Mw@mail.gmail.com>
+In-Reply-To: <CACRpkdYWqsV+2a_L-dzyvGiV4WYAdS2B7WvOkKMyZh6tGT39Mw@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 18 Jun 2024 13:34:21 +0200
+Message-ID: <CAMRc=MepWmLu5zW8G+T93H6Eunb81cJh+ng1SZN_aYK64yYP_Q@mail.gmail.com>
+Subject: Re: [PATCH RFT] pinctrl: da9062: replace gpiochip_get_desc() with gpio_device_get_desc()
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Support Opensource <support.opensource@diasemi.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tNFSyOd5xrxEVQT2jHL6m7c7QQfraI0y
-X-Proofpoint-ORIG-GUID: tNFSyOd5xrxEVQT2jHL6m7c7QQfraI0y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 adultscore=0 clxscore=1011 priorityscore=1501
- spamscore=0 phishscore=0 mlxlogscore=991 suspectscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180085
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ricardo,
+On Tue, Jun 18, 2024 at 1:27=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
+>
+> On Tue, Jun 18, 2024 at 1:18=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+>
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > In order to finally confine the unsafe gpiochip_get_desc() to
+> > drivers/gpio/, let's convert this driver to using the safer alternative
+> > that takes the gpio_device as argument.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> I guess you will apply this to the GPIO tree, else tell me what to do!
+>
+> Yours,
+> Linus Walleij
 
-On 5/28/2024 2:38 AM, Ricardo Ribalda wrote:
-> This structures are not used, and have a single element array at the end
-> of them. Remove them.
-> 
-> This fix the following cocci warnings:
-> drivers/media/platform/qcom/venus/hfi_helper.h:764:5-15: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> drivers/media/platform/qcom/venus/hfi_helper.h:1041:5-15: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> drivers/media/platform/qcom/venus/hfi_helper.h:1088:39-51: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> drivers/media/platform/qcom/venus/hfi_helper.h:1093:5-22: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> drivers/media/platform/qcom/venus/hfi_helper.h:1144:4-8: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> drivers/media/platform/qcom/venus/hfi_helper.h:1239:4-8: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> drivers/media/platform/qcom/venus/hfi_helper.h:1272:4-13: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> drivers/media/platform/qcom/venus/hfi_cmds.h:85:5-16: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> drivers/media/platform/qcom/venus/hfi_cmds.h:180:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> drivers/media/platform/qcom/venus/hfi_cmds.h:189:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/platform/qcom/venus/hfi_cmds.h   | 26 -----------------
->  drivers/media/platform/qcom/venus/hfi_helper.h | 39 --------------------------
->  2 files changed, 65 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
-> index 20acd412ee7b..41f765eac4d9 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_cmds.h
-> +++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
-> @@ -77,14 +77,6 @@ struct hfi_sys_get_property_pkt {
->  	u32 data[1];
->  };
->  
-> -struct hfi_sys_set_buffers_pkt {
-> -	struct hfi_pkt_hdr hdr;
-> -	u32 buffer_type;
-> -	u32 buffer_size;
-> -	u32 num_buffers;
-> -	u32 buffer_addr[1];
-> -};
-> -
->  struct hfi_sys_ping_pkt {
->  	struct hfi_pkt_hdr hdr;
->  	u32 client_data;
-> @@ -171,24 +163,6 @@ struct hfi_session_empty_buffer_uncompressed_plane0_pkt {
->  	u32 data[1];
->  };
->  
-> -struct hfi_session_empty_buffer_uncompressed_plane1_pkt {
-> -	u32 flags;
-> -	u32 alloc_len;
-> -	u32 filled_len;
-> -	u32 offset;
-> -	u32 packet_buffer2;
-> -	u32 data[1];
-> -};
-> -
-> -struct hfi_session_empty_buffer_uncompressed_plane2_pkt {
-> -	u32 flags;
-> -	u32 alloc_len;
-> -	u32 filled_len;
-> -	u32 offset;
-> -	u32 packet_buffer3;
-> -	u32 data[1];
-> -};
-> -
->  struct hfi_session_fill_buffer_pkt {
->  	struct hfi_session_hdr_pkt shdr;
->  	u32 stream_id;
-> diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
-> index e4c05d62cfc7..7c0edef263ae 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_helper.h
-> +++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-> @@ -759,11 +759,6 @@ struct hfi_multi_stream_3x {
->  	u32 enable;
->  };
->  
-> -struct hfi_multi_view_format {
-> -	u32 views;
-> -	u32 view_order[1];
-> -};
-> -
->  #define HFI_MULTI_SLICE_OFF			0x1
->  #define HFI_MULTI_SLICE_BY_MB_COUNT		0x2
->  #define HFI_MULTI_SLICE_BY_BYTE_COUNT		0x3
-> @@ -1036,11 +1031,6 @@ struct hfi_codec_supported {
->  	u32 enc_codecs;
->  };
->  
-> -struct hfi_properties_supported {
-> -	u32 num_properties;
-> -	u32 properties[1];
-> -};
-> -
->  struct hfi_max_sessions_supported {
->  	u32 max_sessions;
->  };
-> @@ -1083,16 +1073,6 @@ struct hfi_resource_ocmem_requirement {
->  	u32 size;
->  };
->  
-> -struct hfi_resource_ocmem_requirement_info {
-> -	u32 num_entries;
-> -	struct hfi_resource_ocmem_requirement requirements[1];
-The struct "hfi_resource_ocmem_requirement" can also be removed alongwith this.
+I can, yes. Thank you.
 
-> -};
-> -
-> -struct hfi_property_sys_image_version_info_type {
-> -	u32 string_size;
-> -	u8  str_image_version[1];
-> -};
-> -
->  struct hfi_codec_mask_supported {
->  	u32 codecs;
->  	u32 video_domains;
-> @@ -1135,15 +1115,6 @@ struct hfi_index_extradata_config {
->  	u32 index_extra_data_id;
->  };
->  
-> -struct hfi_extradata_header {
-> -	u32 size;
-> -	u32 version;
-> -	u32 port_index;
-> -	u32 type;
-> -	u32 data_size;
-> -	u8 data[1];
-> -};
-> -
->  struct hfi_batch_info {
->  	u32 input_batch_count;
->  	u32 output_batch_count;
-> @@ -1234,11 +1205,6 @@ static inline void hfi_bufreq_set_count_min_host(struct hfi_buffer_requirements
->  		req->count_min = val;
->  };
->  
-> -struct hfi_data_payload {
-> -	u32 size;
-> -	u8 data[1];
-> -};
-> -
->  struct hfi_enable_picture {
->  	u32 picture_type;
->  };
-> @@ -1267,11 +1233,6 @@ struct hfi_buffer_alloc_mode_supported {
->  	u32 data[1];
->  };
->  
-> -struct hfi_mb_error_map {
-> -	u32 error_map_size;
-> -	u8 error_map[1];
-> -};
-> -
->  struct hfi_metadata_pass_through {
->  	int enable;
->  	u32 size;
-> 
-Regards,
-Vikash
+I'll give it some time to possibly get a Tested-by from Dialog.
+
+Bart
 
