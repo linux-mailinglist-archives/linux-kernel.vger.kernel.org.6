@@ -1,200 +1,110 @@
-Return-Path: <linux-kernel+bounces-220126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A755C90DCEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:59:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0AC90DCFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503ED285A85
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:59:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610EC1C23A40
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC41C16DC19;
-	Tue, 18 Jun 2024 19:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209D716DC1B;
+	Tue, 18 Jun 2024 20:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2d37N+5e"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/+jn9Bm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8690E15E5BB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA2528DCC;
+	Tue, 18 Jun 2024 20:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718740743; cv=none; b=jgOVbQZNPdDvuQuUQDgzwwIPpifkpumD+kjdV5p+1QG0VE7/XNLy7rPEyRbiyoDBaeQZ7vFfpqG51brDyG0pnGLgTdfLjga8SwYkZsV0ScS7agjVAwqPIO+pDTEwDTWTRtAprkF4sxRcVm1utpEUtDbvcqSTmMXecrYhL4cMmhU=
+	t=1718740849; cv=none; b=MvAoOvwNxQ8Ws0KFC5iJ6cpCa/cEjda2nn3fd0r8aom6L/YKDIsTWp7V1eSviwm2Vp1GSkKSnb9bmzeZIiDPbI4yAkalBDLdPo7vM7T1PkD8cN3PNwt1nopv7XWaQs98B/K6pjv6w3kteIQnGI0QrNwB24RgKoLQv1nBAQcDGSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718740743; c=relaxed/simple;
-	bh=DzUvNMgjfp2wSkyzXhS9hHtcy9tOJqV336Yg0S2PK1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mf1+aV5tb00qyzp+HLR/qhUKyN1CZeq999poiwLXSI7xDzRMXaeTAt39sqPOH20fD+L1Cp56qmZeaAm+l04U0Bj35UwmKjwF4yNuIjbGpWTJgfwB8H/E4TihD4+xupnRn5+HpZ0JqN/4Cod3ZHH7B5onCwyaAv5jiCqoI6ONB/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2d37N+5e; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f70fdc9644so1545335ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:59:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718740741; x=1719345541; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FFHOdkZMtbgVnUKrgsjlYBo8PKQHi5OtnFCvxiR7rC8=;
-        b=2d37N+5eVY/Y0ZqgYh84LUoF8b+Q4i6zmFWs/3L94kI/kmA9u4z7FLP5Mui/MpZiaC
-         QhmwvxL7fLNIQ/KjpwtiGStaSdHpUnnl50Jw8GIxYRg1taP4FB02Xr4j+nXM4oWB75Gu
-         ZX5I/kKNgWvogfoGYTaOfAbinQcv0PtYhly+V/fAa4uMtDKcHNJZM957K4fLmrARE3ti
-         xFJXMAepSDqg01lDAy4xR19ZUGzSVc16gC1IOZFLJwySLYyuj1hUt+IfQt0X8s4kwDEs
-         WPniM39Aq5y90Z6gugId+CZsNcsLys1Jv4u3CS/WpvKXqMo3YDfIXbmHXvCKowqPMXKP
-         pxjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718740741; x=1719345541;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FFHOdkZMtbgVnUKrgsjlYBo8PKQHi5OtnFCvxiR7rC8=;
-        b=eXJMCfkVSkgzr3JaPkbDq04rtMwhbLRjFSKhi61PbZzFXNAhD/oH7/T8qweLebp8XO
-         sGeQtSepyz6/4DM98WVfNwVrhv7MeomYBkAR0+HTK9e8vw//BPbRQdXUyrgnm74Pg3od
-         5UWgVyRgFTG8lc488qkYc9xhujI/sHsDcM9QDY8aHLgcx+GRajaNDvNqBb33Rx1yUz4v
-         +nzTgqESBo23R8ru9d63E0TjMjpIg3Znf+Uwuj+slTuKz5hIiLEHzyPP7rgHQPkk4SW7
-         V+bjw2BDu++rQfqaNzsEA2XTJARI8sBxhvQTvv7EZCIEBuD4A/Mqqx8empkdNBATWG5/
-         zZbg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8CQXpp+1+Zx/BVBWA1A0snAqV+0WvT2Aw5Py0dzuRyLz5uUDiYCVLRVttInTd6D/J9DbOgm8no4F3nUzA2/QJ4BHt54ZXbUWqs3EB
-X-Gm-Message-State: AOJu0Yx4fPiXxb38wu0rLy6ki9nKh7wqxHN6qUwcNz30eu1vp2L6Gtmk
-	/dFcqwe9/H8kPkZsbRpcxHaZVJ1oYtr5cqbqbmJ398LwEHZV9WXVfo3TLvIxGg==
-X-Google-Smtp-Source: AGHT+IHos8Ko7w2LymzJi+scCR3rc7KvYmpUWTzsYJ5tsLPJalRVKanhrbNFJ9Z1kEE299imQvxT2A==
-X-Received: by 2002:a17:902:f684:b0:1f6:a572:86ab with SMTP id d9443c01a7336-1f9a8d5de07mr11411455ad.15.1718740740445;
-        Tue, 18 Jun 2024 12:59:00 -0700 (PDT)
-Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e6dfb7sm101248115ad.64.2024.06.18.12.58.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 12:58:59 -0700 (PDT)
-Date: Tue, 18 Jun 2024 19:58:56 +0000
-From: Igor Pylypiv <ipylypiv@google.com>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/4] ata: libata: Remove redundant sense_buffer memsets
-Message-ID: <ZnHnACszbExFJSuY@google.com>
-References: <20240614191835.3056153-1-ipylypiv@google.com>
- <20240614191835.3056153-2-ipylypiv@google.com>
- <ZnAS1nux75l7QlqF@ryzen.lan>
+	s=arc-20240116; t=1718740849; c=relaxed/simple;
+	bh=fAhiLVURfgay222nRJe4+GfOvxzl6P/qliqGaISmi6o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=L6ah/XCI3qJKmVO3NhW202/Tk5H7nObHEsNrqrEkRtVVZHGyitLDWaIS2eTpYBgy2PThkpVCMbjEhatEtp3ScOZWAgSNe5rZx3OjOCnD/k36kaVttnNNymUYyUiIh9bH1OJ1AWk7ONrN3+2okfi8LrjiCvvXCUpwVDbDsHhtqK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/+jn9Bm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC022C3277B;
+	Tue, 18 Jun 2024 20:00:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718740849;
+	bh=fAhiLVURfgay222nRJe4+GfOvxzl6P/qliqGaISmi6o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=k/+jn9BmLRHP49qv6veutBe42+CoigaB41DD3vIzqtznwjPDHmxPL0lxZyJq4ocXB
+	 U2yriGLN6gYLfLyEG0Le5P3Q0jMFzRk41ssCFR+pH9YUJEL4xP8aeMBL0omD0SPnr0
+	 TosWu/EsHyKnd/XPvk2B8nX9BKL1w8gh+2dHPcE+XODRg77Zm+XYdq6P4bBstrKurf
+	 5EDOAcq1U8Dle4axeJVrKBKAxJ8JxaHqUfOvx+6VgArq9UFnYGR8Embf92i6PyWxVe
+	 GEFsFiCRfiI+ak5kK+6QkBm8ZyfSL/yV99+bCNIddJlSnUn9MyOe0RcdeINLkiH8/Q
+	 bfSu6ZhYLOn/A==
+From: Mark Brown <broonie@kernel.org>
+To: patrice.chotard@foss.st.com
+Cc: linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ christophe.kerello@foss.st.com
+In-Reply-To: <20240618132951.2743935-1-patrice.chotard@foss.st.com>
+References: <20240618132951.2743935-1-patrice.chotard@foss.st.com>
+Subject: Re: (subset) [PATCH 0/3] spi: OCTAL mode fixes
+Message-Id: <171874084769.162949.15399594588029522021.b4-ty@kernel.org>
+Date: Tue, 18 Jun 2024 21:00:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnAS1nux75l7QlqF@ryzen.lan>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-On Mon, Jun 17, 2024 at 12:41:26PM +0200, Niklas Cassel wrote:
-> On Fri, Jun 14, 2024 at 07:18:32PM +0000, Igor Pylypiv wrote:
-> > scsi_queue_rq() memsets sense_buffer before a command is dispatched.
-> > 
-> > Libata is not memsetting sense_buffer before setting sense data that
-> > was obtained from a disk so there should be no reason to do a memset
-> > for ATA PASS-THROUGH / ATAPI.
-> > 
-> > Memsetting the sense_buffer in ata_gen_passthru_sense() is erasing valid
-> > sense data that was previously obtained from a disk. A follow-up patch
-> > will modify ata_gen_passthru_sense() to stop generating sense data based
-> > on ATA status register bits if a valid sense data is already present.
-> > 
-> > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> > ---
-> >  drivers/ata/libata-eh.c   | 2 --
-> >  drivers/ata/libata-scsi.c | 4 ----
-> >  2 files changed, 6 deletions(-)
-> > 
-> > diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
-> > index 214b935c2ced..b5e05efe73f6 100644
-> > --- a/drivers/ata/libata-eh.c
-> > +++ b/drivers/ata/libata-eh.c
-> > @@ -1479,8 +1479,6 @@ unsigned int atapi_eh_request_sense(struct ata_device *dev,
-> >  	struct ata_port *ap = dev->link->ap;
-> >  	struct ata_taskfile tf;
-> >  
-> > -	memset(sense_buf, 0, SCSI_SENSE_BUFFERSIZE);
-> > -
+On Tue, 18 Jun 2024 15:29:48 +0200, patrice.chotard@foss.st.com wrote:
+> During tests performed using spidev_test in OCTAL mode with spi-stm32-qspi.c,
+> several issues has been found :
+>   _ OCTAL mode wasn't supported in spi.c
+>   _ CCR register wasn't set correctly when OCTAL mode is set in spi-stm32-qspi.c.
+>   _ Fix dual flash mode sanity test in spi-stm32-qspi.c
 > 
-> Are you sure that this is safe?
+> Patrice Chotard (3):
+>   spi: stm32: qspi: Fix dual flash mode sanity test in
+>     stm32_qspi_setup()
+>   spi: stm32: qspi: Clamp stm32_qspi_get_mode() output to CCR_BUSWIDTH_4
+>   spi: add OCTAL mode support
 > 
-> atapi_eh_request_sense() is called both by:
-> ata_eh_analyze_tf():
-> tmp = atapi_eh_request_sense(.., qc->scsicmd->sense_buffer, ..)
-> 
-> and by:
-> atapi_eh_clear_ua():
-> atapi_eh_request_sense(.., sense_buffer, ..);
-> where sense_buffer is dev->link->ap->sector_buf.
-> 
+> [...]
 
-Thanks for pointing this out, Niklas!
+Applied to
 
-ata_eh_analyze_tf() case is safe because qc->scsicmd->sense_buffer is cleared
-by scsi_queue_rq().
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-atapi_eh_clear_ua() case is safe right now because the sense buffer contents
-are not being used. However, someone might start using the sense data in
-the future so it is not safe to leave it as-is.
+Thanks!
 
-There's one more place where this function is being called:
+[1/3] spi: stm32: qspi: Fix dual flash mode sanity test in stm32_qspi_setup()
+      commit: c2bd0791c5f02e964402624dfff45ca8995f5397
+[2/3] spi: stm32: qspi: Clamp stm32_qspi_get_mode() output to CCR_BUSWIDTH_4
+      commit: 63deee52811b2f84ed2da55ad47252f0e8145d62
+[3/3] spi: add OCTAL mode support
+      commit: d6a711a898672dd873aab3844f754a3ca40723a5
 
-zpready():
-atapi_eh_request_sense(..., sense_buf, ...);
-where sense_buffer is dev->link->ap->sector_buf.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-This one is actually using the obtained sense buffer so it would be
-a nasty bug if we don't do a memset().
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-I think we should explicitly memset buffers before passing them to
-atapi_eh_request_sense() in atapi_eh_clear_ua() and zpready() so that
-atapi_eh_request_sense() can have the same behavior as ata_eh_request_sense()
-with regards to sense buffer expectations i.e. both functions will expect
-buffers that are already memeset to zero.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> 
-> Wouldn't a better fix be for ata_gen_* functions to return early if
-> ATA_QCFLAG_SENSE_VALID is set?
-> 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-It would be possible to return early if ATA_QCFLAG_SENSE_VALID is set once
-we factor out "ATA Status Return sense data descriptor" population out of
-ata_gen_passthru_sense() into a separate function. I'll factor out the
-descriptor population code in v2.
+Thanks,
+Mark
 
-I think that it is still benefitial to remove the redundant memset() from
-the ata_eh_analyze_tf() -> atapi_eh_request_sense() path?
-
-> 
-> >  	/* initialize sense_buf with the error register,
-> >  	 * for the case where they are -not- overwritten
-> >  	 */
-> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> > index cdf29b178ddc..032cf11d0bcc 100644
-> > --- a/drivers/ata/libata-scsi.c
-> > +++ b/drivers/ata/libata-scsi.c
-> > @@ -858,8 +858,6 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
-> >  	unsigned char *desc = sb + 8;
-> >  	u8 sense_key, asc, ascq;
-> >  
-> > -	memset(sb, 0, SCSI_SENSE_BUFFERSIZE);
-> > -
-> >  	/*
-> >  	 * Use ata_to_sense_error() to map status register bits
-> >  	 * onto sense key, asc & ascq.
-> > @@ -953,8 +951,6 @@ static void ata_gen_ata_sense(struct ata_queued_cmd *qc)
-> >  	u64 block;
-> >  	u8 sense_key, asc, ascq;
-> >  
-> > -	memset(sb, 0, SCSI_SENSE_BUFFERSIZE);
-> > -
-> >  	if (ata_dev_disabled(dev)) {
-> >  		/* Device disabled after error recovery */
-> >  		/* LOGICAL UNIT NOT READY, HARD RESET REQUIRED */
-> > -- 
-> > 2.45.2.627.g7a2c4fd464-goog
-> >
-
-Thank you,
-Igor 
 
