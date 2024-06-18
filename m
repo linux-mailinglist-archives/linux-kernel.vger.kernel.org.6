@@ -1,171 +1,162 @@
-Return-Path: <linux-kernel+bounces-219407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD2790CF15
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 037E990CF41
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2FF91C22453
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:24:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14AB31C21A3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9331BF338;
-	Tue, 18 Jun 2024 12:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FD115CD53;
+	Tue, 18 Jun 2024 12:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="drh5Zze2"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mq7FLMPA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FE21A4F1D;
-	Tue, 18 Jun 2024 12:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABD050297;
+	Tue, 18 Jun 2024 12:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714631; cv=none; b=gS2ANoPR6YjlFM7+kKCSg6wjAsExlR/Dr4pNOKM/dNv7RJPYpwaRE/1DdfQZ1CeoGvh5igbvi3oYz4Mk1YA9B3Z0uHhk0AHoq6RdSXSLt74SV1JDd161yNWpdedPK3IOjW8OFzyIkPkmiMrP8hPwrQ0KC58qHJy3yM4wFe190k0=
+	t=1718714774; cv=none; b=oZYwIrAkLhFquqnjfLtyV171f0spf6558kz3aiQwO+WBiEYApY/mKC9kVni/EMl1XclMDnrUJjsYV5hg7TfdH844Lsw6P4bCvBk1t24Qjk1Lf7COVQa+qNM7WAF/3b1WZNwTVlJ29v8BJ7r7YB37ruRDjc+3o0gDlPaJeCNcj/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714631; c=relaxed/simple;
-	bh=QUAzUy4onAAF6jIhz9BhKFZSRxoOz6ehfEuVXM43BKs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MRpqfiez+mCoVi6VJis8sUto+7hnhS9Grduq05vRkEeSD14CiX6HFbTFl78CHCTzV+dBcc4SNtBTMdBwxZf6IyN/fBXS9IPUc3qnfX93pKqdwZv+mAE88aVxVWxMnDWbaAj2THw4JWGNRG3OfijzU69Cz2QqxiQiVqQPLar41rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=drh5Zze2; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6ef793f4b8so556331166b.1;
-        Tue, 18 Jun 2024 05:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718714628; x=1719319428; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+9lG+gQG2kpp6YJba8a9qUBiAr0ayiGiMtXPv1kcl7c=;
-        b=drh5Zze2/khNNyeI0jdwDeBTPPdH10Z43sXM4jb9AzJ3M/IWa3RO/m2tPyG8NGDWVO
-         6hby6QZ9s8gr3AHz5rweJO6J6Nai0ea5pRVnYkW1kAw1UgZ8TFlknGU4jdroOrA1ljUg
-         /h1Y0SwOdg5NdL3cqbus4cIbbQymCnQo1PkJSvwP3+NWanSnd1dUVpkY2PNd5kcsj4y/
-         MV5rCiDfIdx9HugMzHzYQ7CMk3sHCAnsFINbm05orvMe1Q+1r6XDUuLYRInoNJN5MSdG
-         Zgg3S8Hxe8pVNVDY7ZCT5YeD40suQ4wGM4mDMTVuW2A/ZokoDkgt2gjt+gtfV9lz8F5Z
-         Pm+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718714628; x=1719319428;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+9lG+gQG2kpp6YJba8a9qUBiAr0ayiGiMtXPv1kcl7c=;
-        b=akLJDwiChFCLppV7UG+J3YVDw8dPW2vBk6G0+oLKVwACEgDHImgzIP1D+XNTrZpB3Z
-         hWOw//5bmeGfglrqeeCkOvvsor2s9cSiEZn/Sl9N21Cefa4S4IwjAjLKwyvKHlfXQVMF
-         edtflqKqDx1HnvjPX3J1TATbgsRWEaH5lM5RwoshhaTqlR4m/sDCJpQtUAuQpJ/lycyp
-         YIjGVUAqjXJsfU9o0dfjUo2o+6iyIf5jxDJqyDIqpU1b4XF3OChcZ5xO6/KQE1+st48z
-         A5LA3yfAdrwflMjxGJotAh+M3LJ7NCYmjkCq5PhdyG9w9RvELgoj34TRlLTs6dNsqF88
-         ckAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwe64nyiKoGnm+hveVs4zozsnmA/napAW4Ab81UhGujHsZE41mbtHzvPhjPHjNT05FoHC1guhYJ7/aGCXrrcfOVw6eawUKODZCd9wGFLVOqGT6RfpL6CzgPS0/BTsCbxF4sPtahJjFlLxu8hxTijc4+Otq9/4smKCtCvpy27b2c2BO
-X-Gm-Message-State: AOJu0YzIT8G24OqK9gJR06ujT6j1gjd6Z5IN/MLivR08+hIdHVhpjZhC
-	ZEMBKN33301GmJY4iuQy4RGpvIRajTar6uC2ijvI/haxPv8hbyAe
-X-Google-Smtp-Source: AGHT+IFhQ5TJhZiQGfJWznWvinxacb9G9eNHS5sBp4Ss9PzaItdY1bvwNXPD1UrF6O3Tza/MbzZviA==
-X-Received: by 2002:a17:907:3f03:b0:a6f:5fe2:56e9 with SMTP id a640c23a62f3a-a6f60d2b9a7mr1032178766b.17.1718714627812;
-        Tue, 18 Jun 2024 05:43:47 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db5b3asm618118366b.52.2024.06.18.05.43.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 05:43:47 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 18 Jun 2024 14:43:44 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Daniel Xu <dxu@dxuuu.xyz>,
-	shuah@kernel.org, ast@kernel.org, andrii@kernel.org,
-	eddyz87@gmail.com, daniel@iogearbox.net, quentin@isovalent.com,
-	alan.maguire@oracle.com, acme@kernel.org, mykolal@fb.com,
-	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-	haoluo@google.com, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH bpf-next v4 06/12] bpf: selftests: Fix
- bpf_session_cookie() kfunc prototype
-Message-ID: <ZnGBANDTF80gNDHR@krava>
-References: <cover.1717881178.git.dxu@dxuuu.xyz>
- <34708481d71ea72c23a78a5209e04a76b261a01d.1717881178.git.dxu@dxuuu.xyz>
- <Zmb52Qp__CBzbgDh@krava>
- <CAEf4BzaT7XNnGFUqAr=+pi106bT0o4=TJ7JLOPNjZEBHw4+M7Q@mail.gmail.com>
+	s=arc-20240116; t=1718714774; c=relaxed/simple;
+	bh=QCngadtoE4VKjayI+GFG7V10hXE4SfjWwY3nE5aHu4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VlvdX0Jvumz/Ny8usK8cHMZVmLfJ9jye2+7vdlp3ueKYKbxr+b4FQkPqZnpmfrOyAhYsq7Wt4kitTsRoiu178ZJoIYza+/9q7Aq2vy9LI/FZv2OfF9skz8BREZs8O4tJDIbtbbN+LmT/UrLekCeKqJ4KlZ1PHJlWXDWjmnh4ZE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mq7FLMPA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F01DC3277B;
+	Tue, 18 Jun 2024 12:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718714774;
+	bh=QCngadtoE4VKjayI+GFG7V10hXE4SfjWwY3nE5aHu4g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mq7FLMPAaB1kzN+wisXx1EZf36Er4LGukxc2CkD8W1xxQC5ek4DwHSDpizxs7zzv4
+	 wiRnGjY2LW7ligSi51TsMwhtNuAaJXOVNdCPHqrhpRjoeh+rSNe1WW8rvGTZ3/7Op1
+	 WHzInCEBRfZ05Y4MiPB+JVk+OyliKIWRIcdORGNdtut2Xual8kDiStUfi0ixHHs72/
+	 Arn0IgRh1Aqj5JI77vR997T4H4XppmzEhXtd7qh8gcHxYBfvGxdiYTN0mwpgQ9Gze3
+	 +rz/q0bpPGQAMNZc220CId8+o8l4Ks5/Ovso1BCrdsNSOR9zBOL3Gi5ZRhpPg2aan2
+	 TifJ34hJv0qbg==
+Date: Tue, 18 Jun 2024 13:46:10 +0100
+From: Simon Horman <horms@kernel.org>
+To: nikita.shubin@maquefel.me
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v10 17/38] net: cirrus: add DT support for Cirrus EP93xx
+Message-ID: <20240618124610.GN8447@kernel.org>
+References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
+ <20240617-ep93xx-v10-17-662e640ed811@maquefel.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzaT7XNnGFUqAr=+pi106bT0o4=TJ7JLOPNjZEBHw4+M7Q@mail.gmail.com>
+In-Reply-To: <20240617-ep93xx-v10-17-662e640ed811@maquefel.me>
 
-On Mon, Jun 17, 2024 at 03:25:53PM -0700, Andrii Nakryiko wrote:
-> On Mon, Jun 10, 2024 at 6:04 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> >
-> > On Sat, Jun 08, 2024 at 03:16:02PM -0600, Daniel Xu wrote:
-> > > The prototype defined in bpf_kfuncs.h was not in line with how the
-> > > actual kfunc was defined. This causes compilation errors when kfunc
-> > > prototypes are generated from BTF.
-> > >
-> > > Fix by aligning with actual kfunc definition.
-> > >
-> > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > > ---
-> > >  tools/testing/selftests/bpf/bpf_kfuncs.h                        | 2 +-
-> > >  tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c | 2 +-
-> > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
-> > > index be91a6919315..3b6675ab4086 100644
-> > > --- a/tools/testing/selftests/bpf/bpf_kfuncs.h
-> > > +++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
-> > > @@ -77,5 +77,5 @@ extern int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_ptr,
-> > >                                     struct bpf_key *trusted_keyring) __ksym;
-> > >
-> > >  extern bool bpf_session_is_return(void) __ksym __weak;
-> > > -extern long *bpf_session_cookie(void) __ksym __weak;
-> > > +extern __u64 *bpf_session_cookie(void) __ksym __weak;
-> >
-> > the original intent was to expose long instead of __u64 :-\
-> >
+On Mon, Jun 17, 2024 at 12:36:51PM +0300, Nikita Shubin via B4 Relay wrote:
+> From: Nikita Shubin <nikita.shubin@maquefel.me>
 > 
-> Cookies internally are always u64 (8 byte values). Marking them
-> internally in the kernel as long could lead to problems on 32-bit
-> architectures, potentially (it still needs to be 64-bit value
-> according to BPF contract, but we'll allocate only 4 bytes for them).
+> - add OF ID match table
+> - get phy_id from the device tree, as part of mdio
+> - copy_addr is now always used, as there is no SoC/board that aren't
+> - dropped platform header
 > 
-> It seems better and safer to be explicit with __u64/u64 for cookies everywhere.
+> Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+> Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-hum, I based that on what we did for kprobe session,
-but I guess it makes sense just for bpf side:
+Hi Nikita,
 
-  https://lore.kernel.org/bpf/CAEf4BzbyQpKvZS-mUECLRq3gyBJbsqQghOKyAbutoB76mJM8xw@mail.gmail.com/
+Some minor feedback from my side.
 
-jirka
+...
 
-> 
-> What am I missing?
-> 
-> > could we rather change the bpf_session_cookie function to return long?
-> > should be just return value type change
-> >
-> > thanks,
-> > jirka
-> >
-> >
-> > >  #endif
-> > > diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
-> > > index d49070803e22..0835b5edf685 100644
-> > > --- a/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
-> > > +++ b/tools/testing/selftests/bpf/progs/kprobe_multi_session_cookie.c
-> > > @@ -25,7 +25,7 @@ int BPF_PROG(trigger)
-> > >
-> > >  static int check_cookie(__u64 val, __u64 *result)
-> > >  {
-> > > -     long *cookie;
-> > > +     __u64 *cookie;
-> > >
-> > >       if (bpf_get_current_pid_tgid() >> 32 != pid)
-> > >               return 1;
-> > > --
-> > > 2.44.0
-> > >
+> @@ -786,27 +766,47 @@ static void ep93xx_eth_remove(struct platform_device *pdev)
+>  
+>  static int ep93xx_eth_probe(struct platform_device *pdev)
+>  {
+> -	struct ep93xx_eth_data *data;
+>  	struct net_device *dev;
+>  	struct ep93xx_priv *ep;
+>  	struct resource *mem;
+> +	void __iomem *base_addr;
+> +	struct device_node *np;
+> +	u32 phy_id;
+>  	int irq;
+>  	int err;
+
+nit: Please consider maintaining reverse xmas tree order - longest line
+     to shortest - for local variable declarations. As preferred in
+     Networking code.
+
+     Edward Cree's tool can be of assistance here.
+     https://github.com/ecree-solarflare/xmastree
+
+>  
+>  	if (pdev == NULL)
+>  		return -ENODEV;
+> -	data = dev_get_platdata(&pdev->dev);
+>  
+>  	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	irq = platform_get_irq(pdev, 0);
+>  	if (!mem || irq < 0)
+>  		return -ENXIO;
+>  
+> -	dev = ep93xx_dev_alloc(data);
+> +	base_addr = ioremap(mem->start, resource_size(mem));
+> +	if (!base_addr)
+> +		return dev_err_probe(&pdev->dev, -EIO, "Failed to ioremap ethernet registers\n");
+
+nit: Please consider line-wrapping to limiting lines to 80 columns wide
+     where it can be trivially achieved, which seems to be the case here.
+     80 columns is still preferred for Networking code.
+
+     Flagged by checkpatch.pl --max-line-length=80
+
+> +
+> +	np = of_parse_phandle(pdev->dev.of_node, "phy-handle", 0);
+> +	if (!np)
+> +		return dev_err_probe(&pdev->dev, -ENODEV, "Please provide \"phy-handle\"\n");
+> +
+> +	err = of_property_read_u32(np, "reg", &phy_id);
+> +	of_node_put(np);
+> +	if (err)
+> +		return dev_err_probe(&pdev->dev, -ENOENT, "Failed to locate \"phy_id\"\n");
+> +
+> +	dev = alloc_etherdev(sizeof(struct ep93xx_priv));
+>  	if (dev == NULL) {
+>  		err = -ENOMEM;
+>  		goto err_out;
+>  	}
+> +
+> +	eth_hw_addr_set(dev, base_addr + 0x50);
+
+base_addr is an __iomem address. As such I don't think it is correct
+to pass it (+ offset) to eth_hw_addr_set. Rather, I would expect base_addr
+to be read using a suitable iomem accessor, f.e. readl. And one possible
+solution would be to use readl to read the mac address into a buffer
+which is passed to eth_hw_addr_set.
+
+Flagged by Sparse.
+
+> +	dev->ethtool_ops = &ep93xx_ethtool_ops;
+> +	dev->netdev_ops = &ep93xx_netdev_ops;
+> +	dev->features |= NETIF_F_SG | NETIF_F_HW_CSUM;
+> +
+>  	ep = netdev_priv(dev);
+>  	ep->dev = dev;
+>  	SET_NETDEV_DEV(dev, &pdev->dev);
+
+...
 
