@@ -1,217 +1,223 @@
-Return-Path: <linux-kernel+bounces-219667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BA890D640
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E3990D63D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 467801C246FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86FCB1C2453B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AD7158D9A;
-	Tue, 18 Jun 2024 14:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="lZi+4Z+u";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TOKykJP4"
-Received: from wfout7-smtp.messagingengine.com (wfout7-smtp.messagingengine.com [64.147.123.150])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4867D156F5B;
+	Tue, 18 Jun 2024 14:50:40 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365DF13AD29;
-	Tue, 18 Jun 2024 14:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1DB15623B
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718722256; cv=none; b=YuHXve6RxpnngDdZS05wQxKyWYvzvt1pHBqvw3+x0IhWTlH+VovFXsygl0fnBWpkm8bK+KbMLeqFiEKhsy7NOTkNpFZ+kSxg4eGDxw3eLNBUmE6+0TaZoKuxkaSdIFW9rULA/iTJjmZYDjtlNBlANii4ZmS5um3EMW67O8rHig8=
+	t=1718722239; cv=none; b=Q3T6sWfN9TlIyHvwJIxlj+3fFEmX+zqBIUS5fFJAzf/2NUZL8iuJRrQeLdUeZnWe4WCoJcVLQvBPFaIjhaVnGoYErBfYeWQnJ4YBkpIzrixz1nin0Phm02fQAbtTV8umuhBGIsEzPc/mGaAiuuqqHrQHG4x16d//50PfNIiyC4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718722256; c=relaxed/simple;
-	bh=hGcbKw7n7y063SAaMZ8ffGbjHZGhut2D+dmcWhtpEH8=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=UnueXPSks1Bv0jqrlyU+TV/0QTpS1fiu3tw53xUH+Sriu+jklla9S+2hkm607Bz0b03r74WKyHRyiY1g7L7ZIqGtc/8jlCaT5flUMoIiSskcud024U1RcpfVWrqxH7uLtbICUwYbUI/tPmcfMrm3S15wdBF5IgWNSiMgPtTA8PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=lZi+4Z+u; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TOKykJP4; arc=none smtp.client-ip=64.147.123.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.west.internal (Postfix) with ESMTP id BD91B1C000E3;
-	Tue, 18 Jun 2024 10:50:53 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Tue, 18 Jun 2024 10:50:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718722253;
-	 x=1718808653; bh=C90Sq4PGFbLE3AmGVlHhSTr6SX3wdgYia1raOYnOhKg=; b=
-	lZi+4Z+uhSAxvGONZNO8PhBIWtE0wt0EJyIgsmUi7mBCb7giaESo7VyuX8VvKe/z
-	/LbskahmcgqQssLJMh9f9XPBGkVwYbqf9FChw9uqBC94+fk0xEte3mT07GHbZ8UW
-	plcSAOc5zDaHnaWZp84ANTPpVdMHbpU0Zo7xV/p4nrZ7gvOO6VkoszjxA6iM5aZI
-	3LqJwOZ9MNkvVIF6polj+S7tRENE61evUvZDtvWvdS/WH6pDQwk1+ZPAHVVJaDeC
-	RUt3ZvWHByxsqjXCkdgbgn3f1ljZDVfN0D6cOQhPz7v+LGkEawlXTcS5ervPIpEv
-	L9oalGKxY36/h5L9uJ3yjA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718722253; x=
-	1718808653; bh=C90Sq4PGFbLE3AmGVlHhSTr6SX3wdgYia1raOYnOhKg=; b=T
-	OKykJP4OUst02UPJvpI1+MR2C7+kR/rFPvCyzstS2GyAxVBqzmZMqXnYTi226OLn
-	OWYxejUjSFuU/d10ssQjY93aw1jWtGFP/qTScifgc7dJdmX5tccCtWm5co9ks2gB
-	jC0BG5pUdk0gla88LuIYhOWH9Q78Ywz1w2ehxnj7nbLDlfRlXS5pY1+p0uLcf1oG
-	HxYfz8ar9i+4tBiDTZEdGvoiMNM0jql27AGz81hM6WI/zn/+Gydbgvj4a57l0j0L
-	Ooa6B3drxI6GnVwUm5i8AB1XOGeUJT69pYwXnoavTPzNq+m24HCtIwxbCLZeEp2K
-	m9sHKpZoEXWb4EqHI1K2g==
-X-ME-Sender: <xms:zJ5xZv4rkCXTfkHr70K9NVrv11ZUtjjFBhkDS3bGTagyb2sOwyJOgQ>
-    <xme:zJ5xZk4LB6BpZMGwoqqgWykP8iPRQlRvJ1dNZinyTnghfVfLbtCX--oM9Gey7rTkU
-    EOgXzEdODv7SdZ1sg0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvkedghedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:zJ5xZmc8cH7BP6g7ZRVs2Lk_NUbV1wObc751dfQdpOjeGTb4o3X7OQ>
-    <xmx:zJ5xZgKu5fEFkwZKQ50hD-Hg6FUXnOepKdHE_JoyESf8ln6aMH7FpA>
-    <xmx:zJ5xZjKnPLup1zcBPLGvR4UCBEGMBVN5CviX_HfPytVvFUZT8J9kTg>
-    <xmx:zJ5xZpy4CDZBLe6zebisWLCqFEiqpU5Dqfbd08FePnmyqXfWPOFcpw>
-    <xmx:zZ5xZq8MUzFJulJB6_wrzzJDi6c5-bzs5AYjcq6msfxLBqS-kbfY3WIc>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id AD18036A0074; Tue, 18 Jun 2024 10:50:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718722239; c=relaxed/simple;
+	bh=N9C4EcJ/VlzaLDIunlMZ84aF364AsJvgZz/5QDloHX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WydmtZMJ6SYMGUEOdHAlhuqDVoCRy1et521u8BapKrX4yOBu7vVU0JMVULxlo36NDwem8WXdcGOIlqkd0cbWCLjD4++fiZZz2qgB7FXVT935uuFlHVR9YXcq3D0OlY/i2mDVjPIBxGVxx9UEM/QzGLcTQgXN+BmT9ICAbK+mOzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F9F3C3277B;
+	Tue, 18 Jun 2024 14:50:38 +0000 (UTC)
+Date: Tue, 18 Jun 2024 10:50:36 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Peter Zijlstra <peterz@infradead.org>
+Subject: Crash when CONFIG_FORCE_NR_CPUS is set and nr_cpus does not match
+Message-ID: <20240618105036.208a8860@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <a3d57a7e-6134-4da5-bd4a-b150d2c97912@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H7RQu6wdBBjOBptZX6R63Ypw1qFCoJnZ335bFKd1f=XdA@mail.gmail.com>
-References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
- <20240616-b4-mips-ipi-improvements-v1-4-e332687f1692@flygoat.com>
- <CAAhV-H4LsuLYBefKZb5aHx_+fYyWjvO+Bm8h5=NFtSvk6E0Szw@mail.gmail.com>
- <7cbf218e-d311-4c33-aabb-7208eac231ed@app.fastmail.com>
- <CAAhV-H7RQu6wdBBjOBptZX6R63Ypw1qFCoJnZ335bFKd1f=XdA@mail.gmail.com>
-Date: Tue, 18 Jun 2024 15:50:33 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Florian Fainelli" <florian.fainelli@broadcom.com>,
- "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Serge Semin" <fancer.lancer@gmail.com>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/10] MIPS: Move mips_smp_ipi_init call after prepare_cpus
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Not sure if this is considered an issue or not, but I've been working
+on my user space libraries and in one of the self tests I run caused
+the following crash:
+
+[  406.491501] BUG: unable to handle page fault for address: ffffffffad02bc08
+[  406.494714] #PF: supervisor read access in kernel mode
+[  406.496689] #PF: error_code(0x0000) - not-present page
+[  406.499033] PGD 175018067 P4D 175018067 PUD 175019063 PMD 10c51e063 PTE 800ffffe8a7d4062
+[  406.502285] Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+[  406.504432] CPU: 0 PID: 14 Comm: rcu_tasks_rude_ Tainted: G        W          6.10.0-rc2-test-dirty #7
+[  406.507979] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  406.511249] RIP: 0010:rcu_tasks_one_gp+0x331/0x3e0
+[  406.513690] Code: e5 e9 de 00 48 8b 8b b8 00 00 00 48 c7 c0 e8 7a 61 ac eb 10 48 83 c0 08 48 3d e0 7c 61 ac 0f 84 ca fe ff ff 48 8b 10 48 01 ca <48> 8b 52 48 48 85 d2 74 e1 0f 0b eb dd 48 8b b3 28 01 00 00 48 c7
+[  406.523889] RSP: 0018:ffff9f8a0007be78 EFLAGS: 00010086
+[  406.525887] RAX: ffffffffac617b20 RBX: ffffffffac92e800 RCX: 000000000001cbc0
+[  406.529585] RDX: ffffffffad02bbc0 RSI: 0000000000000000 RDI: 0000000000000000
+[  406.532222] RBP: ffffffffac92e808 R08: 0000000000000000 R09: 0000000000000000
+[  406.534815] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000202
+[  406.537591] R13: 0000000000000293 R14: 0000000000000001 R15: 0000000000000003
+[  406.540339] FS:  0000000000000000(0000) GS:ffff8f3c3de00000(0000) knlGS:0000000000000000
+[  406.543448] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  406.545751] CR2: ffffffffad02bc08 CR3: 0000000175016001 CR4: 0000000000170ef0
+[  406.548460] Call Trace:
+[  406.549621]  <TASK>
+[  406.550665]  ? __die+0x1f/0x70
+[  406.552017]  ? page_fault_oops+0x15c/0x470
+[  406.553532]  ? search_module_extables+0x15/0x60
+[  406.555166]  ? search_bpf_extables+0x5b/0x90
+[  406.556715]  ? exc_page_fault+0x142/0x150
+[  406.558119]  ? asm_exc_page_fault+0x22/0x30
+[  406.561599]  ? rcu_tasks_one_gp+0x331/0x3e0
+[  406.563041]  ? rcu_tasks_one_gp+0x1d7/0x3e0
+[  406.564432]  ? __pfx_rcu_tasks_kthread+0x10/0x10
+[  406.565945]  rcu_tasks_kthread+0xb5/0xc0
+[  406.567812]  kthread+0xce/0x100
+[  406.569417]  ? __pfx_kthread+0x10/0x10
+[  406.570987]  ret_from_fork+0x30/0x50
+[  406.572648]  ? __pfx_kthread+0x10/0x10
+[  406.574538]  ret_from_fork_asm+0x1a/0x30
+[  406.576534]  </TASK>
+[  406.577873] Modules linked in: qrtr hid_generic usbhid iTCO_wdt iTCO_vendor_support intel_rapl_msr intel_rapl_common snd_hda_codec_generic crct10dif_pclmul crc32_pclmul ghash_clmulni_intel snd_hda_intel sha512_ssse3 sha256_ssse3 snd_intel_dspcfg sha1_ssse3 snd_hda_codec aesni_intel snd_hwdep ahci psmouse crypto_simd snd_hda_core cryptd virtio_rng i2c_i801 vmw_vsock_virtio_transport libahci lpc_ich vmw_vsock_virtio_transport_common i2c_smbus vsock snd_pcm xhci_pci xhci_pci_renesas snd_timer input_leds evbug serio_raw mac_hid ip_tables x_tables
+[  406.595464] CR2: ffffffffad02bc08
+[  406.596443] ---[ end trace 0000000000000000 ]---
+[  406.597624] RIP: 0010:rcu_tasks_one_gp+0x331/0x3e0
+[  406.598841] Code: e5 e9 de 00 48 8b 8b b8 00 00 00 48 c7 c0 e8 7a 61 ac eb 10 48 83 c0 08 48 3d e0 7c 61 ac 0f 84 ca fe ff ff 48 8b 10 48 01 ca <48> 8b 52 48 48 85 d2 74 e1 0f 0b eb dd 48 8b b3 28 01 00 00 48 c7
+[  406.602946] RSP: 0018:ffff9f8a0007be78 EFLAGS: 00010086
+[  406.604253] RAX: ffffffffac617b20 RBX: ffffffffac92e800 RCX: 000000000001cbc0
+[  406.605923] RDX: ffffffffad02bbc0 RSI: 0000000000000000 RDI: 0000000000000000
+[  406.607590] RBP: ffffffffac92e808 R08: 0000000000000000 R09: 0000000000000000
+[  406.609266] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000202
+[  406.610932] R13: 0000000000000293 R14: 0000000000000001 R15: 0000000000000003
+[  406.612626] FS:  0000000000000000(0000) GS:ffff8f3c3de00000(0000) knlGS:0000000000000000
+[  406.614534] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  406.615941] CR2: ffffffffad02bc08 CR3: 0000000175016001 CR4: 0000000000170ef0
+[  406.617604] note: rcu_tasks_rude_[14] exited with irqs disabled
+[  406.619075] note: rcu_tasks_rude_[14] exited with preempt_count 1
+
+At first I thought it may have to do with some of my work on eventfs.
+And started looking at where it started. I tested 6.10-rc2, 6.9, 6.8,
+6.7, 6.6 and they had the same crash. I know I added a lot of code in
+6.6, and was thinking it had to do with that. But then I tested 6.5 and
+it crashed the same way too!
+
+Now I went back to 6.10-rc2 to debug in normally. I found that the
+crash can happen if you do:
+
+ # cd /sys/kernel/tracing
+ # mkdir instance/foo
+ # echo function > instance/foo/current_tracer
+ # echo nop > instance/foo/current_tracer
+
+Note, it only crashed when function tracing was started on an instance
+and not at the top level. That's because the top level uses a global
+descriptor to keep track of what functions are being traced, where as
+an instance would allocate one, and when disabled, it must call RCU for
+synchronization to be done to free that descriptor. That's where the
+crash occurred.
+
+ I found the crash happened here:
+
+ rcu_tasks_need_gpcb():
+
+		if (rtp->percpu_dequeue_lim == 1) {
+			for (cpu = rtp->percpu_dequeue_lim; cpu < nr_cpu_ids; cpu++) {
+				struct rcu_tasks_percpu *rtpcp = per_cpu_ptr(rtp->rtpcpu, cpu);
+
+				WARN_ON_ONCE(rcu_segcblist_n_cbs(&rtpcp->cblist));
+			}
+		}
+
+Specifically it was here:
+
+ /* Return number of callbacks in segmented callback list. */
+ static inline long rcu_segcblist_n_cbs(struct rcu_segcblist *rsclp)
+ {
+ #ifdef CONFIG_RCU_NOCB_CPU
+	return atomic_long_read(&rsclp->len);
+ #else
+	return READ_ONCE(rsclp->len);   <<<<------------ CRASH
+ #endif
+ }
+
+I was confused to how rtpcp could be passing in a NULL pointer as it is
+a per cpu variable set up at boot. But I also noticed I was hitting
+this warning at boot up which I've been ignoring but now find it is
+related:
+
+[    0.128523] ------------[ cut here ]------------
+[    0.129275] WARNING: CPU: 0 PID: 0 at include/linux/cpumask.h:48 setup_nr_cpu_ids+0x11/0x30
+[    0.130625] Modules linked in:
+[    0.131119] CPU: 0 PID: 0 Comm: swapper Tainted: G        W          6.10.0-rc2-test-dirty #7
+[    0.132507] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    0.134006] RIP: 0010:setup_nr_cpu_ids+0x11/0x30
+[    0.134751] Code: 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 e8 db 37 df fd 48 8b 05 f4 16 5a ff 48 85 c0 75 09 <0f> 0b 31 c0 e9 f6 90 cb fe 48 0f bd c0 83 f8 3f 75 ee 31 c0 e9 e6
+[    0.137819] RSP: 0000:ffffffffbec03ef8 EFLAGS: 00010093 ORIG_RAX: 0000000000000000
+[    0.139042] RAX: 0000000000000007 RBX: 0000000000000000 RCX: 0000000000000000
+[    0.140187] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[    0.141333] RBP: ffffffffbf51c020 R08: 0000000000000000 R09: 0000000000000000
+[    0.142473] R10: ffffa0c9c62c86c0 R11: 0000000000000000 R12: fffffffffffffff8
+[    0.143622] R13: 0000000000000000 R14: 0000000000000000 R15: 000000000008a000
+[    0.144775] FS:  0000000000000000(0000) GS:ffffffffbf40f000(0000) knlGS:0000000000000000
+[    0.146074] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.146996] CR2: ffffa0c89ea01000 CR3: 000000015dc16000 CR4: 00000000000200b0
+[    0.148147] Call Trace:
+[    0.148557]  <TASK>
+[    0.148895]  ? __warn+0x7c/0x120
+[    0.149415]  ? setup_nr_cpu_ids+0x11/0x30
+[    0.150060]  ? report_bug+0x16e/0x1a0
+[    0.150649]  ? early_fixup_exception+0xc5/0xe0
+[    0.151467]  ? early_idt_handler_common+0x2f/0x40
+[    0.152228]  ? setup_nr_cpu_ids+0x11/0x30
+[    0.152883]  ? setup_nr_cpu_ids+0x5/0x30
+[    0.153513]  start_kernel+0x20c/0x870
+[    0.154103]  x86_64_start_reservations+0x14/0x30
+[    0.154846]  x86_64_start_kernel+0xa8/0xc0
+[    0.155504]  common_startup_64+0x13b/0x148
+[    0.156166]  </TASK>
+[    0.156522] ---[ end trace 0000000000000000 ]---
+
+That warning is:
+
+ static inline void set_nr_cpu_ids(unsigned int nr)
+ {
+ #if (NR_CPUS == 1) || defined(CONFIG_FORCE_NR_CPUS)
+	WARN_ON(nr != nr_cpu_ids);
+ #else
+	nr_cpu_ids = nr;
+ #endif
+ }
+
+Looking at my config (which I used to help someone else debug a
+problem, but never reset it[*]), it has:
+
+ CONFIG_FORCE_NR_CPUS=y
+ CONFIG_NR_CPUS=64
+
+Disabling CONFIG_FORCE_NR_CPUS makes both the warning and the crash go
+away.
+
+My question is:  Is this something we should be concerned with?
+
+Do we want to be robust enough to handle this case. It appears if we
+force the NR_CPUS to something greater than what we have, things can
+break in strange ways. Maybe that's OK. But as I spent a few hours
+debugging this, I figured I report it and see if this is something we
+care about.
+
+-- Steve
 
 
 
-=E5=9C=A82024=E5=B9=B46=E6=9C=8818=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=E5=
-=8D=884:51=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> On Tue, Jun 18, 2024 at 6:10=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygo=
-at.com> wrote:
->>
->>
->>
->> =E5=9C=A82024=E5=B9=B46=E6=9C=8817=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=
-=E5=8D=882:53=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
->> > Hi, Jiaxun
->> >
->> > On Mon, Jun 17, 2024 at 5:03=E2=80=AFAM Jiaxun Yang <jiaxun.yang@fl=
-ygoat.com> wrote:
->> >>
->> >> This will give platform code a genuine chance to setup
->> >> IPI IRQ in prepare_cpus.
->> >>
->> >> This is the best place for platforms to setup IPI as smp_setup
->> >> is too early for IRQ subsystem.
->> > mips_smp_ipi_init() is an early_initcall() function, why do you say=
- it
->> > is in smp_setup()?
->>
->> Sorry, I was trying to say that smp_setup is not a good point so we s=
-hould
->> go prepare_cpus.
-> It is not in smp_setup() now, then how do you move it from smp_setup()?
-[...]
+[*] hmm, that bug still exists, I wonder if this is related to that too!
 
-Well I was trying to justify where should I move it to, not where
-does it from.
-
-I should improve the commit message to justify the reason first.
-
-Thanks
-- Jiaxun
->
-> Huacai
->
->>
->> The intention of this patch is to move mips_smp_ipi_init to a certain=
- point
->> so platform would gain control over it.
->>
->> Thanks
->> - Jiaxun
->>
->> >
->> >
->> > Huacai
->> >>
->> >> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> >> ---
->> >>  arch/mips/kernel/smp.c | 11 ++++++++++-
->> >>  1 file changed, 10 insertions(+), 1 deletion(-)
->> >>
->> >> diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
->> >> index fe053fe52147..ddf96c28e2f0 100644
->> >> --- a/arch/mips/kernel/smp.c
->> >> +++ b/arch/mips/kernel/smp.c
->> >> @@ -375,7 +375,6 @@ static int __init mips_smp_ipi_init(void)
->> >>
->> >>         return 0;
->> >>  }
->> >> -early_initcall(mips_smp_ipi_init);
->> >>  #endif
->> >>
->> >>  /*
->> >> @@ -460,12 +459,22 @@ void __init smp_cpus_done(unsigned int max_c=
-pus)
->> >>  /* called from main before smp_init() */
->> >>  void __init smp_prepare_cpus(unsigned int max_cpus)
->> >>  {
->> >> +       int rc;
->> >> +
->> >>         init_new_context(current, &init_mm);
->> >>         current_thread_info()->cpu =3D 0;
->> >>         mp_ops->prepare_cpus(max_cpus);
->> >>         set_cpu_sibling_map(0);
->> >>         set_cpu_core_map(0);
->> >>         calculate_cpu_foreign_map();
->> >> +#ifdef CONFIG_GENERIC_IRQ_IPI
->> >> +       rc =3D mips_smp_ipi_init();
->> >> +       if (rc) {
->> >> +               pr_err("Failed to initialize IPI - disabling SMP");
->> >> +               init_cpu_present(cpumask_of(0));
->> >> +               return;
->> >> +       }
->> >> +#endif
->> >>  #ifndef CONFIG_HOTPLUG_CPU
->> >>         init_cpu_present(cpu_possible_mask);
->> >>  #endif
->> >>
->> >> --
->> >> 2.43.0
->> >>
->>
->> --
->> - Jiaxun
-
---=20
-- Jiaxun
 
