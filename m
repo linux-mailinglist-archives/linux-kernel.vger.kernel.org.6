@@ -1,99 +1,119 @@
-Return-Path: <linux-kernel+bounces-219033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABAD290C90D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:21:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D4390C910
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A009280DDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:21:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7C0D1F21A29
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AB515B14B;
-	Tue, 18 Jun 2024 10:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F46B7BB14;
+	Tue, 18 Jun 2024 10:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uT4f4Ii1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BLVcSc/R"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FC313BC31;
-	Tue, 18 Jun 2024 10:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0377E1CD1F;
+	Tue, 18 Jun 2024 10:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718705433; cv=none; b=K4C7Sndfsjmqbr53G92GLKiUS+hhG994j+rlmjP1cNmdIAAzwAAbWEqi1+uQJnYd7/EV/xcFEWwRV/BtG/OSAr8UcEhu06G9K4ZyBHzCOWofD0lOEnS+/MJ49OI7LkF6G7fxcmhwUyv3Bl0w4mkDFk7ufzOo2Yt0dTQkwW9+2Rs=
+	t=1718705481; cv=none; b=uYbMww/cQXPXp8JKdHG0/fjT8+edk6H5meM7qikdEK7e2bYRLiRQS4iplYE5kz3x6szcaFnpoK3JHpEQx88LJ38camVKQBRXh78i05x+NVLoBxh4Jarh4ou88IuXp3pm631p9blyWRgs7v3gJPB/toHDOFsvMy0AHDB/JJXK/z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718705433; c=relaxed/simple;
-	bh=a7jB79oONKETKnADzdC0pB8BUr9yJfbstgM1k2AIKjA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=NWOvfencx98yli12D3JttWWwMdBkbX1YufBTwZfpnTB+k5Cn7WBIhJA/VGjRkpRTiC7Opj0GLCWqnSzLkpACTA6DXcabgQ/+Vd5pNvPc4qpp+2AUiAm5thEqbyXAMKwUexw4CsWYvq0Q9wPwEHhbczyjqqRqX4O8fgSoul4sVVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uT4f4Ii1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6CEB7C4AF1D;
-	Tue, 18 Jun 2024 10:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718705432;
-	bh=a7jB79oONKETKnADzdC0pB8BUr9yJfbstgM1k2AIKjA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=uT4f4Ii1ATHBM+fVZLNywfp7tD1l7orghJkVWL8BnUFAprG7yqOCNgT+7Tw8sF3xy
-	 jVMgHFVIcrRejjfOkERgkXGEbq1w335MvbzlqXtE8e2LInGUGEXGx0Yiw+Kib+8KVd
-	 SHrTa6N84fJ50/pvRezCaxJc8BVah13hEOmVsi8Ty3tCisGO0P+H9PZQW/rqSWOGpM
-	 5pTLYhlz4pzicexUZSPj9xKHZPFY/slkPPhT6pcHQpDckxh2v2jXk/oCn2VXlWlydk
-	 jeoe445rbma5GOJ9i9vM/X/gzwb8AVN35qWZ0u29HTZreeYX5w6YMDeZOkj+HEecyy
-	 AeHBzFfyCby8A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 507E3C4361C;
-	Tue, 18 Jun 2024 10:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718705481; c=relaxed/simple;
+	bh=+esyxqS3tdZvSJCjCtk3Ip0cCeIIF02j8XzN7jQXpCE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NKzPoE0h5QpQ859WEPm3J+gcMNsHfx0o4wUvk5sKfJvALBPgXaXKVY9U6sNQfKdGsAWZfxqjmtY40dH15g+Eh7tNzXRLvRlSiIiNiY8PBGNyY7JGijU8hVHwL5nW6SGXWqFKmxsRIWtzC0OCyafzkPJn9KPx+TG1629Bk90qBL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BLVcSc/R; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718705480; x=1750241480;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=+esyxqS3tdZvSJCjCtk3Ip0cCeIIF02j8XzN7jQXpCE=;
+  b=BLVcSc/R0mBRRnCYoBokBRDsXMxUwAJj1jjyLO747cG8pPyt9dD2WeRQ
+   aCz7/kO43DySHul0ErOXSnFdgDVEFZqQlTYTQJKGeMmlxVVNFHiM90/eU
+   5VXTmynWaqfJ8nN6b5A8R+N/zGkFJaD4ea3Pjjb2jQUTK4cR2fo1p/4Nv
+   oNUnyaVlQug7ObhfoMhj7Qysm+bDgEbhes1yp3IoIgmMXSzUiqthPA1Nz
+   tEQli9hVOF+Yweh/nB7fjwbrwwLjKvRcj2U7T/00p9SRrNpZDWvvq7McZ
+   317WYfJ/pC49LMLJOi5rQSke5TJt629fOV+iXjjung2LudZrhEwG+qMRp
+   A==;
+X-CSE-ConnectionGUID: Glxd7KxnQ6SUpWjPwbMyFA==
+X-CSE-MsgGUID: 0nNApkh4Rq+mil0AX1PwlA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15714895"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="15714895"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 03:11:20 -0700
+X-CSE-ConnectionGUID: htgZpYJCTTOqlbAAaObr5A==
+X-CSE-MsgGUID: xX2xh0RNTDSoGE7mDmEVmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="78957802"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 03:11:20 -0700
+Message-ID: <12e498226b33c6cb30e40dac6a11652f29ef48ea.camel@linux.intel.com>
+Subject: Re: [PATCH 2/2] cpufreq: intel_pstate: Support highest performance
+ change interrupt
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
+Date: Tue, 18 Jun 2024 03:11:18 -0700
+In-Reply-To: <20240618090836.GBZnFOlFurqQiLeI7a@fat_crate.local>
+References: <20240618035122.438822-1-srinivas.pandruvada@linux.intel.com>
+	 <20240618035122.438822-3-srinivas.pandruvada@linux.intel.com>
+	 <20240618090836.GBZnFOlFurqQiLeI7a@fat_crate.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net V5 0/3] net: lan743x: Fixes for multiple WOL related
- issues
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171870543232.18151.11499833236578491242.git-patchwork-notify@kernel.org>
-Date: Tue, 18 Jun 2024 10:10:32 +0000
-References: <20240614171157.190871-1-Raju.Lakkaraju@microchip.com>
-In-Reply-To: <20240614171157.190871-1-Raju.Lakkaraju@microchip.com>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
- linux-kernel@vger.kernel.org, bryan.whitehead@microchip.com, andrew@lunn.ch,
- linux@armlinux.org.uk, sbauer@blackbox.su, hmehrtens@maxlinear.com,
- lxu@maxlinear.com, hkallweit1@gmail.com, edumazet@google.com,
- pabeni@redhat.com, wojciech.drewek@intel.com, UNGLinuxDriver@microchip.com
 
-Hello:
-
-This series was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Fri, 14 Jun 2024 22:41:54 +0530 you wrote:
-> This patch series implement the following fixes:
-> 1. Disable WOL upon resume in order to restore full data path operation
-> 2. Support WOL at both the PHY and MAC appropriately
-> 3. Remove interrupt mask clearing from config_init
-> 
-> Patch-3 was sent seperately earlier. Review comments in link:
-> https://lore.kernel.org/lkml/4a565d54-f468-4e32-8a2c-102c1203f72c@lunn.ch/T/
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,V5,1/3] net: lan743x: disable WOL upon resume to restore full data path operation
-    https://git.kernel.org/netdev/net/c/7725363936a8
-  - [net,V5,2/3] net: lan743x: Support WOL at both the PHY and MAC appropriately
-    https://git.kernel.org/netdev/net/c/8c248cd83601
-  - [net,V5,3/3] net: phy: mxl-gpy: Remove interrupt mask clearing from config_init
-    https://git.kernel.org/netdev/net/c/c44d3ffd85db
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+SGkgQm9yaXNsYXYsCgpPbiBUdWUsIDIwMjQtMDYtMTggYXQgMTE6MDggKzAyMDAsIEJvcmlzbGF2
+IFBldGtvdiB3cm90ZToKPiBPbiBNb24sIEp1biAxNywgMjAyNCBhdCAwODo1MToyMVBNIC0wNzAw
+LCBTcmluaXZhcyBQYW5kcnV2YWRhIHdyb3RlOgo+ID4gK8KgwqDCoMKgwqDCoMKgc3RhdHVzX21h
+c2sgPSBIV1BfR1VBUkFOVEVFRF9QRVJGX0NIQU5HRV9TVEFUVVM7Cj4gPiArwqDCoMKgwqDCoMKg
+wqBpZiAoYm9vdF9jcHVfaGFzKFg4Nl9GRUFUVVJFX0hXUF9ISUdIRVNUX1BFUkZfQ0hBTkdFKSkK
+PiAKPiBzL2Jvb3RfY3B1X2hhcy9jcHVfZmVhdHVyZV9lbmFibGVkL2cKCkkgd2lsbCBjaGFuZ2Ug
+aW4gVjIKCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc3RhdHVzX21hc2sgfD0g
+SFdQX0hJR0hFU1RfUEVSRl9DSEFOR0VfU1RBVFVTOwo+ID4gKwo+ID4gwqDCoMKgwqDCoMKgwqDC
+oHJkbXNybF9zYWZlKE1TUl9IV1BfU1RBVFVTLCAmdmFsdWUpOwo+ID4gLcKgwqDCoMKgwqDCoMKg
+aWYgKCEodmFsdWUgJiAweDAxKSkKPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghKHZhbHVlICYgc3Rh
+dHVzX21hc2spKQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm47Cj4g
+PiDCoAo+ID4gwqDCoMKgwqDCoMKgwqDCoHNwaW5fbG9ja19pcnFzYXZlKCZod3Bfbm90aWZ5X2xv
+Y2ssIGZsYWdzKTsKPiA+IEBAIC0xNjY4LDE3ICsxNjc1LDI1IEBAIHN0YXRpYyB2b2lkCj4gPiBp
+bnRlbF9wc3RhdGVfZGlzYWJsZV9od3BfaW50ZXJydXB0KHN0cnVjdCBjcHVkYXRhICpjcHVkYXRh
+KQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjYW5jZWxfZGVsYXllZF93b3Jr
+X3N5bmMoJmNwdWRhdGEtCj4gPiA+aHdwX25vdGlmeV93b3JrKTsKPiA+IMKgfQo+ID4gwqAKPiA+
+ICsjZGVmaW5lIEhXUF9HVUFSQU5URUVEX1BFUkZfQ0hBTkdFX1JFUSBCSVQoMCkKPiA+ICsjZGVm
+aW5lIEhXUF9ISUdIRVNUX1BFUkZfQ0hBTkdFX1JFUcKgwqDCoCBCSVQoMikKPiA+ICsKPiA+IMKg
+c3RhdGljIHZvaWQgaW50ZWxfcHN0YXRlX2VuYWJsZV9od3BfaW50ZXJydXB0KHN0cnVjdCBjcHVk
+YXRhCj4gPiAqY3B1ZGF0YSkKPiA+IMKgewo+ID4gLcKgwqDCoMKgwqDCoMKgLyogRW5hYmxlIEhX
+UCBub3RpZmljYXRpb24gaW50ZXJydXB0IGZvciBndWFyYW50ZWVkCj4gPiBwZXJmb3JtYW5jZSBj
+aGFuZ2UgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoC8qIEVuYWJsZSBIV1Agbm90aWZpY2F0aW9uIGlu
+dGVycnVwdCBmb3IgcGVyZm9ybWFuY2UgY2hhbmdlCj4gPiAqLwo+ID4gwqDCoMKgwqDCoMKgwqDC
+oGlmIChib290X2NwdV9oYXMoWDg2X0ZFQVRVUkVfSFdQX05PVElGWSkpIHsKPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1NjQgaW50ZXJydXB0X21hc2sgPQo+ID4gSFdQX0dVQVJB
+TlRFRURfUEVSRl9DSEFOR0VfUkVROwo+ID4gKwo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqBzcGluX2xvY2tfaXJxKCZod3Bfbm90aWZ5X2xvY2spOwo+ID4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBJTklUX0RFTEFZRURfV09SSygmY3B1ZGF0YS0+aHdwX25vdGlm
+eV93b3JrLAo+ID4gaW50ZWxfcHN0YXRlX25vdGlmeV93b3JrKTsKPiA+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgY3B1bWFza19zZXRfY3B1KGNwdWRhdGEtPmNwdSwKPiA+ICZod3Bf
+aW50cl9lbmFibGVfbWFzayk7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNw
+aW5fdW5sb2NrX2lycSgmaHdwX25vdGlmeV9sb2NrKTsKPiA+IMKgCj4gPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgaWYKPiA+IChib290X2NwdV9oYXMoWDg2X0ZFQVRVUkVfSFdQX0hJ
+R0hFU1RfUEVSRl9DSEFOR0UpKWEKPiAKPiBEaXR0by4KCldpbGwgY2hhbmdlIGluIHYyLgoKClRo
+YW5rcywKU3Jpbml2YXMKCg==
 
 
