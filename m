@@ -1,255 +1,144 @@
-Return-Path: <linux-kernel+bounces-218535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E593E90C1A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62AE790C1A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6435F1F22E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 151471F23011
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65948179AE;
-	Tue, 18 Jun 2024 01:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYgzvDNW"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B27E1CAB8;
+	Tue, 18 Jun 2024 01:56:26 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBD14C98
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815451C69D;
+	Tue, 18 Jun 2024 01:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718675740; cv=none; b=DtMJFmzd756CKftrn7veLa7UOKntMpr3EwPa2/vB8JPGv9JW0nH9nH+1K5iejANR3lJ0mcLF+LfYC7MgS/b/7jmvaQay8bcXChDTDGkxHpi1/1+Jeycqn/eyrS5idqqrZFvByx8plRdfpA/AcI54/TET7MjAsmZB1AmIfXYXAcE=
+	t=1718675785; cv=none; b=bw1LWQysDcSVLaic90lIM/lN/IJvCaukNbwCGPvRQ+RUTeCd/PdEiJdieCMFJT/jf6ZJGqwNcr2d3l5RkkaJWN6H0/bX42oW0dMTDeDjMNfmOjjPMFiDt2XfVxiTkIzYJzBGjRTkjVm7G29/nsoZ2aIKUzw2iUTHgE81WTPmwe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718675740; c=relaxed/simple;
-	bh=kWhxQgRiUo3VEggC2ElibfY3WYE0LoeKsdSreXJqG38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OQp/o20h8EDbyulSwCpouIB+xLv7ELWgLFVgjJGnSvrMslhdBXy2w1HwdUeDqPDk2bPCGFaK9hv1tISZzXxowEaD5Udb0tU2ro1uud25b7P7g3839M1YtQsXeUZBhTGcxbZkc70L0/P3s8WBw59Qn1OeUmvC654Kv1ES4/tWkcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kYgzvDNW; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-80b755c6c06so1677679241.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718675738; x=1719280538; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zpsy0npL52e1fCtTldxY0aQBwvhZxOEFkncwykjvpy4=;
-        b=kYgzvDNWA6veeh9VE6yFErrCurEQg+th5zbv8wptLsDuF9KgkmmGoEarR0JBHZGoC9
-         ztBVaOr/PCqFLrNhkaWvmexs0hRItPrv3816ofZ265dmNgnJpHsNrjfqU7y0IE7MeRLj
-         tKQTpByg4ibis3w8pdJFigvDgvzGwsRn/8zy+eYW39dOgKrSTFaheiDTZgZhkIAzNHpT
-         TPy+2GHtU/NB2JlwL19qL8yxbYx9kRcMU6bbH/SRSSaxt7cU9D4/h1NUHFhffg20wP0W
-         hh6n5J7y9hndxI1C70M6ygIc9zJ1hSTPJGb5mf6g5ZiRhyBLvMKtZ3xzyT8UBVLBanJO
-         YL+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718675738; x=1719280538;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zpsy0npL52e1fCtTldxY0aQBwvhZxOEFkncwykjvpy4=;
-        b=Ff0ltvPIwDD5Eg3XtCDsAlpZKgulLuuaDX8rneapRK/quY7Pzn2ZpBCGner8E9STOh
-         jFoDkFl0t2zenc8RZZ6ZQ+LkBAsV0qNNfHQ4WzIzieQqC15whDxto0HuGNePFrMbPFUs
-         3jFwPQh7x17CHJLbSxCyrU1FA34xD4rgFflrTlfGjD6TGm8rcEBduPgYtLf65w8t45E0
-         Dla461Xzr1VkmxYDzIzu6guv6y8eC1Lqko32YNq2dNKr9d9WWKT+PhkLLozfAyWT1BQE
-         AleZGjIYwyw9Prmv6bYUDhphJjhiOE+uhnzCvzoLhtNoGm0okmvxiTHrJ/Kii5bGHLbv
-         DgJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpC0lpxAn0QYxwnUUUzXdr1T2qoq5a0KCY1DA81LneTsdqJuPdjLcHGUZFn1l1bZ4GbEzWs4DPS4Y3k2Xy9rnfOBDAsyUJQ3fsdQ1v
-X-Gm-Message-State: AOJu0YwvYdO638Yl3Veax7HPvH6NLvLRHolcGkQqMvnmgFvif3H4Ry+I
-	YtjBtVl74NMWn6Z7q4PQBNob33042zdCdUxtErtWg3prPXXaE3+HhrnV+FwqlBfokZChww2cJa+
-	NECNtxgILzdnevfiKTAgrBTKyZGtoRPKDf70=
-X-Google-Smtp-Source: AGHT+IHeuUoHNmBJX6etzjqRwU2rFGzePFITlJqydbzcSwjLfvLQ5wjO0NeGCPoWT2MH8a8EsKuBzl+yJ6zTST214pE=
-X-Received: by 2002:a05:6102:50aa:b0:48c:3731:e537 with SMTP id
- ada2fe7eead31-48dae346888mr15604114137.12.1718675737576; Mon, 17 Jun 2024
- 18:55:37 -0700 (PDT)
+	s=arc-20240116; t=1718675785; c=relaxed/simple;
+	bh=Rk0sBnDeEUwYk2u6sbtH2hGz9DywdWOuFfeOzip7/NE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L0x5Axy34enirW/FFunwW8G8tE6y5/HPH/vI4gG62Sfggld+PNm5YLZFw/ExYTN5kUABaUhcj9KdiyYNeTRfHgcdkGUqywIF4xpHN7fvLv4ws+9ZClByopxtZx6CA59rHJMeoWSdQXrOnUQYiJK5gnhoKA8YlA7WhyqytidwoUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4W38rk3bdTz1j5S5;
+	Tue, 18 Jun 2024 09:52:22 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
+	by mail.maildlp.com (Postfix) with ESMTPS id D735218001B;
+	Tue, 18 Jun 2024 09:56:14 +0800 (CST)
+Received: from M910t.huawei.com (10.110.54.157) by
+ kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 18 Jun 2024 09:56:13 +0800
+From: Changbin Du <changbin.du@huawei.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+	<namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Liang,
+ Kan" <kan.liang@linux.intel.com>, Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<llvm@lists.linux.dev>, Changbin Du <changbin.du@huawei.com>
+Subject: [PATCH v3 0/4] perf: support specify vdso path in cmdline
+Date: Tue, 18 Jun 2024 09:55:26 +0800
+Message-ID: <20240618015530.3699434-1-changbin.du@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
- <CAGsJ_4zvG7gwukioZnqN+GpWHbpK1rkC0Jeqo5VFVL_RLACkaw@mail.gmail.com>
- <2e3a3a3f-737c-ed01-f820-87efee0adc93@126.com> <9b227c9d-f59b-a8b0-b353-7876a56c0bde@126.com>
-In-Reply-To: <9b227c9d-f59b-a8b0-b353-7876a56c0bde@126.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 18 Jun 2024 09:55:24 +0800
-Message-ID: <CAGsJ_4ynfvjXsr6QFBA_7Gzk3PaO1pk+6ErKZaNCt4H+nuwiJw@mail.gmail.com>
-Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
- non-CMA THP-sized page
-To: yangge1116 <yangge1116@126.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com, 
-	liuzixing@hygon.cn
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100011.china.huawei.com (7.221.188.204)
 
-On Tue, Jun 18, 2024 at 9:36=E2=80=AFAM yangge1116 <yangge1116@126.com> wro=
-te:
->
->
->
-> =E5=9C=A8 2024/6/17 =E4=B8=8B=E5=8D=888:47, yangge1116 =E5=86=99=E9=81=93=
-:
-> >
-> >
-> > =E5=9C=A8 2024/6/17 =E4=B8=8B=E5=8D=886:26, Barry Song =E5=86=99=E9=81=
-=93:
-> >> On Tue, Jun 4, 2024 at 9:15=E2=80=AFPM <yangge1116@126.com> wrote:
-> >>>
-> >>> From: yangge <yangge1116@126.com>
-> >>>
-> >>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
-> >>> THP-sized allocations") no longer differentiates the migration type
-> >>> of pages in THP-sized PCP list, it's possible to get a CMA page from
-> >>> the list, in some cases, it's not acceptable, for example, allocating
-> >>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
-> >>>
-> >>> The patch forbids allocating non-CMA THP-sized page from THP-sized
-> >>> PCP list to avoid the issue above.
-> >>
-> >> Could you please describe the impact on users in the commit log?
-> >
-> > If a large number of CMA memory are configured in the system (for
-> > example, the CMA memory accounts for 50% of the system memory), startin=
-g
-> > virtual machine with device passthrough will get stuck.
-> >
-> > During starting virtual machine, it will call pin_user_pages_remote(...=
-,
-> > FOLL_LONGTERM, ...) to pin memory. If a page is in CMA area,
-> > pin_user_pages_remote() will migrate the page from CMA area to non-CMA
-> > area because of FOLL_LONGTERM flag. If non-movable allocation requests
-> > return CMA memory, pin_user_pages_remote() will enter endless loops.
-> >
-> > backtrace:
-> > pin_user_pages_remote
-> > ----__gup_longterm_locked //cause endless loops in this function
-> > --------__get_user_pages_locked
-> > --------check_and_migrate_movable_pages //always check fail and continu=
-e
-> > to migrate
-> > ------------migrate_longterm_unpinnable_pages
-> > ----------------alloc_migration_target // non-movable allocation
-> >
-> >> Is it possible that some CMA memory might be used by non-movable
-> >> allocation requests?
-> >
-> > Yes.
-> >
-> >
-> >> If so, will CMA somehow become unable to migrate, causing cma_alloc()
-> >> to fail?
-> >
-> >
-> > No, it will cause endless loops in __gup_longterm_locked(). If
-> > non-movable allocation requests return CMA memory,
-> > migrate_longterm_unpinnable_pages() will migrate a CMA page to another
-> > CMA page, which is useless and cause endless loops in
-> > __gup_longterm_locked().
+The vdso dumped from process memory (in buildid-cache) lacks debugging
+info. To annotate vdso symbols with source lines we need specify a
+debugging version.
 
-This is only one perspective. We also need to consider the impact on
-CMA itself. For example,
-when CMA is borrowed by THP, and we need to reclaim it through
-cma_alloc() or dma_alloc_coherent(),
-we must move those pages out to ensure CMA's users can retrieve that
-contiguous memory.
+For x86, we can find them from your local build as
+'arch/x86/entry/vdso/vdso{32,64}.so.dbg'. Or they may resides in
+'/lib/modules/<version>/vdso/vdso{32,64}.so' on Ubuntu. But notice that the
+builid has to match. 
 
-Currently, CMA's memory is occupied by non-movable pages, meaning we
-can't relocate them.
-As a result, cma_alloc() is more likely to fail.
+If user doesn't specify the path, perf will search them internally as long
+as vmlinux.
 
-> >
-> > backtrace:
-> > pin_user_pages_remote
-> > ----__gup_longterm_locked //cause endless loops in this function
-> > --------__get_user_pages_locked
-> > --------check_and_migrate_movable_pages //always check fail and continu=
-e
-> > to migrate
-> > ------------migrate_longterm_unpinnable_pages
-> >
-> >
-> >
-> >
-> >
-> >>>
-> >>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for
-> >>> THP-sized allocations")
-> >>> Signed-off-by: yangge <yangge1116@126.com>
-> >>> ---
-> >>>   mm/page_alloc.c | 10 ++++++++++
-> >>>   1 file changed, 10 insertions(+)
-> >>>
-> >>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> >>> index 2e22ce5..0bdf471 100644
-> >>> --- a/mm/page_alloc.c
-> >>> +++ b/mm/page_alloc.c
-> >>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone
-> >>> *preferred_zone,
-> >>>          WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
-> >>>
-> >>>          if (likely(pcp_allowed_order(order))) {
-> >>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >>> +               if (!IS_ENABLED(CONFIG_CMA) || alloc_flags &
-> >>> ALLOC_CMA ||
-> >>> +                                               order !=3D
-> >>> HPAGE_PMD_ORDER) {
-> >>> +                       page =3D rmqueue_pcplist(preferred_zone, zone=
-,
-> >>> order,
-> >>> +                                               migratetype,
-> >>> alloc_flags);
-> >>> +                       if (likely(page))
-> >>> +                               goto out;
-> >>> +               }
-> >>
-> >> This seems not ideal, because non-CMA THP gets no chance to use PCP.
-> >> But it
-> >> still seems better than causing the failure of CMA allocation.
-> >>
-> >> Is there a possible approach to avoiding adding CMA THP into pcp from
-> >> the first
-> >> beginning? Otherwise, we might need a separate PCP for CMA.
-> >>
->
-> The vast majority of THP-sized allocations are GFP_MOVABLE, avoiding
-> adding CMA THP into pcp may incur a slight performance penalty.
->
+Below samples are captured on my local build kernel. perf succesfully
+find debugging version vdso and we can annotate with source without
+specifying vdso path.
 
-But the majority of movable pages aren't CMA, right? Do we have an estimate=
- for
-adding back a CMA THP PCP? Will per_cpu_pages introduce a new cacheline, wh=
-ich
-the original intention for THP was to avoid by having only one PCP[1]?
+$ sudo perf record -a
+$ sudo perf report --objdump=llvm-objdump
 
-[1] https://patchwork.kernel.org/project/linux-mm/patch/20220624125423.6126=
--3-mgorman@techsingularity.net/
+Samples: 17K of event 'cycles:P', 4000 Hz, Event count (approx.): 1760
+__vdso_clock_gettime  /work/linux-host/arch/x86/entry/vdso/vdso64.so.d
+Percent│       movq    -48(%rbp),%rsi
+       │       testq   %rax,%rax
+       │     ;               return vread_hvclock();
+       │       movq    %rax,%rdx
+       │     ;               if (unlikely(!vdso_cycles_ok(cycles)))
+       │     ↑ js      eb
+       │     ↑ jmp     74
+       │     ;               ts->tv_sec = vdso_ts->sec;
+  0.02 │147:   leaq    2(%rbx),%rax
+       │       shlq    $4, %rax
+       │       addq    %r10,%rax
+       │     ;               while ((seq = READ_ONCE(vd->seq)) & 1) {
+  9.38 │152:   movl    (%r10),%ecx
 
+When doing cross platform analysis, we need to specify the vdso path if
+we are interested in its symbols. At most two vdso can be given.
 
-> Commit 1d91df85f399 takes a similar approach to filter, and I mainly
-> refer to it.
->
->
-> >>> +#else
-> >>>                  page =3D rmqueue_pcplist(preferred_zone, zone, order=
-,
-> >>>                                         migratetype, alloc_flags);
-> >>>                  if (likely(page))
-> >>>                          goto out;
-> >>> +#endif
-> >>>          }
-> >>>
-> >>>          page =3D rmqueue_buddy(preferred_zone, zone, order, alloc_fl=
-ags,
-> >>> --
-> >>> 2.7.4
-> >>
-> >> Thanks
-> >> Barry
-> >>
->
->
+$ sudo perf report --objdump=llvm-objdump \
+      --vdso arch/x86/entry/vdso/vdso64.so.dbg,arch/x86/entry/vdso/vdso32.so.dbg
+
+v3:
+  - update documentation.
+v2:
+  - now search vdso automatically as long as vmlinux, as suggested by Adrian.
+  - remove change 'prefer symsrc_filename for filename'.
+
+Changbin Du (4):
+  perf: support specify vdso path in cmdline
+  perf: disasm: use build_id_path if fallback failed
+  perf: symbol: generalize vmlinux path searching
+  perf: symbol: try to seach vdso path if not given by user
+
+ tools/perf/Documentation/perf-annotate.txt |   3 +
+ tools/perf/Documentation/perf-c2c.txt      |   3 +
+ tools/perf/Documentation/perf-inject.txt   |   3 +
+ tools/perf/Documentation/perf-report.txt   |   3 +
+ tools/perf/Documentation/perf-script.txt   |   3 +
+ tools/perf/Documentation/perf-top.txt      |   3 +
+ tools/perf/builtin-annotate.c              |   3 +
+ tools/perf/builtin-c2c.c                   |   2 +
+ tools/perf/builtin-inject.c                |   2 +
+ tools/perf/builtin-kallsyms.c              |   2 +
+ tools/perf/builtin-probe.c                 |   2 +
+ tools/perf/builtin-report.c                |   2 +
+ tools/perf/builtin-script.c                |   2 +
+ tools/perf/builtin-top.c                   |   4 +
+ tools/perf/tests/builtin-test.c            |   3 +-
+ tools/perf/util/disasm.c                   | 122 +++++++----
+ tools/perf/util/machine.c                  |   4 +-
+ tools/perf/util/symbol.c                   | 233 ++++++++++++++++-----
+ tools/perf/util/symbol.h                   |   9 +-
+ tools/perf/util/symbol_conf.h              |   6 +
+ 20 files changed, 312 insertions(+), 102 deletions(-)
+
+-- 
+2.34.1
+
 
