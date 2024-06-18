@@ -1,126 +1,144 @@
-Return-Path: <linux-kernel+bounces-218868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC74C90C732
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:37:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD2790C734
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE6371C21B48
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:37:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3B1BB246B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F9D1AD9C3;
-	Tue, 18 Jun 2024 08:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCC11527A8;
+	Tue, 18 Jun 2024 08:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B1u1g1qO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b="fNfv5I9Q"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3490813B5B5;
-	Tue, 18 Jun 2024 08:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86DA14EC64
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718699752; cv=none; b=onywxCu3/sCpjdiLVE4EyONQkL6faK+ySsBbgPTTZ8EevH4PMslqIdFJ+3T/qZti4X3rcdyTZ2p5fGw7dTpfp3BWKs3tNYkKESOyRpH83cCk19t7GOPWgfHsyACltpgYFokVDcgrE7erAf1QiX/T7jFFR+/aJ8E+VCgTnormwb8=
+	t=1718699853; cv=none; b=T1hCxvzTS5SS8DKpTiV4HOey+OGk6Olu9tZrpvOtNKQPgw6QaPThoU5eZdo/so64Cdb4WC6exK/jUHzxE1H/GAax3loUvjUKYVnNjk3ox9gTwdQNOSd6TC57YVmWvvLBisb5JqHNTzzAXdVWB6tovIav88SqZNnhBVvI1TWSzC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718699752; c=relaxed/simple;
-	bh=nYvoxFAcUSVYJxLnDXRVnyZjqM6DX0X3xxOLqPkbgB4=;
-	h=From:Date:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=H/5VSqBHAeuRagf1DmAxxGGQua2AT109VLX8P2A244nI7cC/Wo2P+Bw3fUHMBWwNO3avE65lozJRdTsQRZlAYJUHUOU2RXZT2YfUTLKCkntNC0AzUgqz2if8LnHRNloilhmpLtZ2POaPGaGqYLnOXGO3lgrvp0OH3xPxVy0vKms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B1u1g1qO; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718699750; x=1750235750;
-  h=from:date:to:cc:subject:message-id:mime-version;
-  bh=nYvoxFAcUSVYJxLnDXRVnyZjqM6DX0X3xxOLqPkbgB4=;
-  b=B1u1g1qOfU+BjU3qOiM6+bWo0tow7hIwNOrtCToAky8KQQInbiP0OBL6
-   3U9XggqgUOnY/FR8Q4pRdSImZSkUsarSfsXgWgV/JhHsRokjtMqgepLjR
-   xPvZvtInNSuq0sVuviXRTlFqymnCx2yXZvg6bV/SJruf++bbY62p2G1bf
-   UtWnwR4k0+oC97i/6U20Els5dKhiwT9Ixz+MaeODXcYXYoqXN3bz+gQjV
-   SHRRY4R7k6aWZ6J0oPOripP8CVROuFYNgSNBRsbdRwBNnqyx8K5GcN0Q7
-   ADpZm7W07a2fiQOqjueOvYhMIdyD0fQ9bOVnd+9XJnqSwKTsegc2lvoeE
-   g==;
-X-CSE-ConnectionGUID: p/ZJXP0hQ1W61Ok03odo4A==
-X-CSE-MsgGUID: X9tizdnxQLS6gzzKI7a7ig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="38082591"
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="38082591"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 01:35:50 -0700
-X-CSE-ConnectionGUID: CmK7bRVETQ6TvX+2UQKiDw==
-X-CSE-MsgGUID: mhYCFdATQl62EEBY3AIHHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="64700456"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.7])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 01:35:44 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 18 Jun 2024 11:35:40 +0300 (EEST)
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-    Sebastian Reichel <sre@kernel.org>, 
-    Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-    Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-    Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pm@vger.kernel.org, 
-    devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, 
-    linux-arm-msm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>, 
-    Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [GIT PULL] Immutable branch between pdx86 lenovo c630 branch,
- power/supply and USB
-Message-ID: <e999261e-cba8-740e-430b-4a4e702fd609@linux.intel.com>
+	s=arc-20240116; t=1718699853; c=relaxed/simple;
+	bh=EZrrEdTGR3wfSwj9GagNuZDUkq9I2ZUD5+n1beC7TYY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JNkfzrYdjkZO8yp8EbZ+CpCJ68UKaaNZ0ivhvTP3jheAZ3ou4OAHaDnh+wXrtkIWUGaij7HrLfrIlmJhBTMD2oyxZ6YClkivJNUTLckyMHlVBbNvSiFCCBY6Zs/nPL14PVxFjUPi7SUfj4xvR/H1nTEmYAO/rLs9+7cCKTLZ5Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b=fNfv5I9Q; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f95be3d4c4so2003854a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:37:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloud.com; s=cloud; t=1718699851; x=1719304651; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eb0RXj6kXsdM0uSSP81X1dIWEztXTh0vf9AdUTcavuo=;
+        b=fNfv5I9Q8Gk8KkYVKrxJ6XfFj1mODMUy0nCZooHr8SL08g/Ae5Wo0gC7Zco4UwP0vs
+         zwk6MmMm4KGGVkmRH3ZQZxjvypP0NpZt7DeCjjtD5kIufHf08OvNORCc1nui7W9E9be8
+         /RUtbT4TziAKL1G0Z+EApb7Tza64CB3KZfLE4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718699851; x=1719304651;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eb0RXj6kXsdM0uSSP81X1dIWEztXTh0vf9AdUTcavuo=;
+        b=Rkjf06f5ZiJV9H7Wuw0Wa4WhaskLANOYSMefPTmbeUv/Ry12CSjcXIzUi/Ke3ddceW
+         Zau2pRWQ4cZTX68ChvnDmf8tqteBguPtH8py/iwPZs2kjCHgAd5kA96WJ3pczplZWao2
+         jDtogjMR8MdtbPDDXIr5uw0w7pMCPCPKPM3yZYQ7wO9ThxKUQ8pC0ifDZcPw+ZDPnEih
+         gTARMHopQDV1oe6+vdSwQBaLql1oYDSJcI0oZ0xWO47vhRmAZMQ8IYC7VrJ7N8jiVqXJ
+         aX3mbQab3eeXj0c+6xpWgc1UBXSzVMm7bu/fp6MpTu+MSIhu8SiPa/amPNSiBs/jlxbS
+         QHXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjG+Km/FaCNPAIpdeMh1SnBJw5QrjoK+mKjSvY+Ns9zM4ooLBcbsLJlOtuvF0Gq0DDTL+kJ3q28G0quGn7869Q+FEwTrXS3lQZ1XFV
+X-Gm-Message-State: AOJu0YwjEmyNkU3HLSUIu5Ud6TQQLCPDhK1ojavsNdAOR9+nITOZ/U03
+	rMpWll66KXudemCFNC7OvV1XaiKqP++NS0q70jIS34jm+t8PvZr8FAuHsRfDDWGSUBBQMqVZqnM
+	nIJ3EsjC46jBwl/3g3A/JLAaE5NWHDxDKF8L5sRiO1d7HZXuoe9ZrdUOI
+X-Google-Smtp-Source: AGHT+IEWkf5j2W5kw2iqzjVXFFr/KNj2UxQ6QnKHSgfx22Hyq9qpLr4BXiXOgbfkFgo2DeJ1XRr/iFXuaj+25RD/LPA=
+X-Received: by 2002:a05:6870:b011:b0:254:a89e:acca with SMTP id
+ 586e51a60fabf-2584258a3d9mr12682841fac.0.1718699850938; Tue, 18 Jun 2024
+ 01:37:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240617141303.53857-1-frediano.ziglio@cloud.com>
+ <2fe6ef97-84f2-4bf4-870b-b0bb580fa38f@suse.com> <ZnBKDRWi_2cO6WbA@macbook>
+In-Reply-To: <ZnBKDRWi_2cO6WbA@macbook>
+From: Frediano Ziglio <frediano.ziglio@cloud.com>
+Date: Tue, 18 Jun 2024 09:37:08 +0100
+Message-ID: <CACHz=Zg4Zoyr4KNeig4yDDNUxvV325beJEyT-L-K0a+FHp7oDg@mail.gmail.com>
+Subject: Re: [PATCH] x86/xen/time: Reduce Xen timer tick
+To: =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>
+Cc: Jan Beulich <jbeulich@suse.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, 
+	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>, 
+	xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Jun 17, 2024 at 3:37=E2=80=AFPM Roger Pau Monn=C3=A9 <roger.pau@cit=
+rix.com> wrote:
+>
+> On Mon, Jun 17, 2024 at 04:22:21PM +0200, Jan Beulich wrote:
+> > On 17.06.2024 16:13, Frediano Ziglio wrote:
+> > > Current timer tick is causing some deadline to fail.
+> > > The current high value constant was probably due to an old
+> > > bug in the Xen timer implementation causing errors if the
+> > > deadline was in the future.
+> > > This was fixed in Xen commit:
+> > > 19c6cbd90965 xen/vcpu: ignore VCPU_SSHOTTMR_future
+> >
+> > And then newer kernels are no longer reliably usable on Xen older than
+> > this?
+>
+> I think this should reference the Linux commit that removed the usage
+> of VCPU_SSHOTTMR_future on Linux itself, not the change that makes Xen
+> ignore the flag.
+>
 
-Here is the IB containing the platform patches (1-2) the other patches in 
-the Lenovo C630 series depend on (Dmitry was going to do a minor update on 
-the remaining patches before they are ready to be merged).
+Yes, Linux kernel stopped using this flag since 2016 with commit
+c06b6d70feb32d28f04ba37aa3df17973fd37b6b, "xen/x86: don't lose event
+interrupts", I'll add it in the commit message.
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+> > > --- a/arch/x86/xen/time.c
+> > > +++ b/arch/x86/xen/time.c
+> > > @@ -30,7 +30,7 @@
+> > >  #include "xen-ops.h"
+> > >
+> > >  /* Minimum amount of time until next clock event fires */
+> > > -#define TIMER_SLOP 100000
+> > > +#define TIMER_SLOP 1000
+> >
+> > It may be just the lack of knowledge of mine towards noadays's Linux'es
+> > time handling, but the change of a value with this name and thus
+> > commented doesn't directly relate to "timer tick" rate. Could you maybe
+> > help me see the connection?
+>
+> The TIMER_SLOP define is used in min_delta_{ns,ticks} field, and I
+> think this is wrong.
+>
+> The min_delta_ns for the Xen timer is 1ns.  If Linux needs some
+> greater min delta than what the timer interface supports it should be
+> handled in the generic timer code, not open coded at the definition of
+> possibly each timer implementation.
+>
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+I think this is done to reduce potential event handling frequency, in
+some other part of timer code (in kernel/time/clockevents.c) there's a
+comment "Deltas less than 1usec are pointless noise".
+I think it's hard for a software to get a frequency so high so I
+didn't propose 1ns.
+What are you suggesting? To put 1ns and see what happens? Is there any
+proper test code for this?
 
-are available in the Git repository at:
+> Thanks, Roger.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-ib-lenovo-c630-v6.11
-
-for you to fetch changes up to 5e5f2f92cccc29f356422d3cbc104f7f42430f22:
-
-  platform: arm64: add Lenovo Yoga C630 WOS EC driver (2024-06-14 12:51:30 +0300)
-
-----------------------------------------------------------------
-Immutable branch between pdx86 lenovo c630 branch, power/supply and USB
-subsystems due for the v6.11 merge window.
-
-platform-drivers-x86-ib-lenovo-c630-v6.11:
-  v6.10-rc1 + platform-drivers-x86-lenovo-c630
-for merging into the power/supply and USB subsystems for v6.11.
-
-----------------------------------------------------------------
-Bjorn Andersson (1):
-      dt-bindings: platform: Add Lenovo Yoga C630 EC
-
-Dmitry Baryshkov (1):
-      platform: arm64: add Lenovo Yoga C630 WOS EC driver
-
- .../bindings/platform/lenovo,yoga-c630-ec.yaml     |  83 ++++++
- drivers/platform/arm64/Kconfig                     |  14 +
- drivers/platform/arm64/Makefile                    |   1 +
- drivers/platform/arm64/lenovo-yoga-c630.c          | 291 +++++++++++++++++++++
- include/linux/platform_data/lenovo-yoga-c630.h     |  44 ++++
- 5 files changed, 433 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/platform/lenovo,yoga-c630-ec.yaml
- create mode 100644 drivers/platform/arm64/lenovo-yoga-c630.c
- create mode 100644 include/linux/platform_data/lenovo-yoga-c630.h
+Frediano
 
