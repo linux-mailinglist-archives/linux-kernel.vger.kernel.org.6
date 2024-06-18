@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-218934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EEBE90C7E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:55:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3849990C7E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616051C213B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:55:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E6FC1C221A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D09157462;
-	Tue, 18 Jun 2024 09:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9C31CD5D0;
+	Tue, 18 Jun 2024 09:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iWYCzkO2"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="1zHS64/b"
+Received: from aposti.net (aposti.net [89.234.176.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB059156F31
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 09:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D1D15746C;
+	Tue, 18 Jun 2024 09:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.234.176.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718702734; cv=none; b=Gu7V1wrnfj6J68x2c2alT7fmktb+ns/wgdnfH/CX4DlrqXyWB3gLEx86LPRpWlu6Ic9JZXngkWQ0cfFeL92Ds9o6Ww0fzhj3U8pWE0fIbjv/VFJwAtlGGtbvuonSUCSDuXVPDo50s9VYo8VfIv1e1R/IeFuKxbMW9NxVhkTYLDo=
+	t=1718702770; cv=none; b=bKyEYjwd+pRRrysRZrT5t6ZMPcf0jJCYHeXaqDS1Te3Wkz26QpyKytmuVXEfdRNG2RL5yj1Q/rm4h3qcgTdv+adhQ+hkrIADHlU2/6R9PEM81sd8t4PcZqellPh/J7K7YveGN9hi2rJJO72jJ30oeaVyJs7wF1/3AgroqCDE5EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718702734; c=relaxed/simple;
-	bh=V4MXEMKcp5I9XclPQt9HVJ1nbtcnQ61M4kMdjmYxvDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T/l3mx3nOLIcptXAqRJ6H3phorgjeJMoEJD8Q9kg/mG7G8Es6meDhr7NfP4N7D+D97Jgeb3ny2D5+7f8jWmy0OcZwa6eNMCgH1+kv1XEsNguJ8YPRbJCpfMjMOMBofjynN/psY7mHgwIpOmX4nK5y326JkeL+l+G1PHNlePo72g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iWYCzkO2; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6adc63c2ee0so20139556d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 02:25:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718702732; x=1719307532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V4MXEMKcp5I9XclPQt9HVJ1nbtcnQ61M4kMdjmYxvDU=;
-        b=iWYCzkO2aQ4jbNDIn8dhx7ku6V/hpVtnIMC/LqSHgHMo4+sylr/jQbVpzFXgelK3Td
-         mYmTFx6ETJpfAnVje4CGB+fBJntk/YCA4FjskOR5YyG8EMQFVaa43o9KlXSr5lkq5pYz
-         0G8DHtSZHm87gBeQuHxKcsor37yJ4O3IybtfjsDdKj3ZK3cpz2YQBUjjXlaNHszYt82N
-         jbQAOZ7SiLhSlYrDTyGjyQBWR173f/A3kzEkWIznn4bjDkzFF3uJhlLRTdASGoR/6pg0
-         i83flfrT7vsZwTVpBvwttYpcT3/s8aSMs3yzTIwta8ojhs+YH/zwPXygsnrVdfmykAU8
-         iMvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718702732; x=1719307532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V4MXEMKcp5I9XclPQt9HVJ1nbtcnQ61M4kMdjmYxvDU=;
-        b=eTKntXDy9DPT/rafDbzBCg/5tVL54IJvVOcIO/vJ/1dEM6Dp23Lhte4kegN/8Wt4oQ
-         OlIRmHZaq8O3z+Y2wk8LeHSIgNdFB7AfuefrG7DEbKjMgPuVomUTpeW09E/FJ8e7uJlJ
-         54fqnp0sr+msTNbkfQpBhSKm405xBLSGSY7qQdZa4cv43uJYOnJS+3EcqgutqhKdYRIM
-         fMuf5X4dMOJLcMhKkuNBO6B0lzEq8MB9Dmzi5yiDbIodUVr5u1nE+Xc0e1p7E+Acz0d3
-         KH480HFa7iLqtFSeRndakt41u/5nCVgelSGf3EkXCqU1OuM2wEV36w5nz5IREUPhG/Qo
-         jvLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVe/oO6WmBgPYcvagVXYkoJM+XEQntDV7yChDp9pkxkvuLIpQey3VXDt39qTA3oAKACDdyNEgcW65b4SZIXTCSvFumr+oABuwgPMskU
-X-Gm-Message-State: AOJu0Yw7HAXJvbRFFjIJa5FJ5I+AYRrncX+VGSdh8tuotqR61puBth3u
-	nNSvtGTJxV6pzWrOORpJoQ+ylOjGcl34gr0iXfUWitB7bE+2ZMX+haz5qNpkP202x7jaBLkZ11x
-	EoYJgYdsm0GnyO5d+4IdO7ExlM2WrRR5jtoUe
-X-Google-Smtp-Source: AGHT+IFRfUNJYndL8wAjatn8zq6n+Qt93BmmyIN+4VFyPbObVSvS4+erMVXHgpMv+VY+5qiKm1XXOgO0W2m66i2IHQI=
-X-Received: by 2002:a0c:c607:0:b0:6b2:9c01:86b7 with SMTP id
- 6a1803df08f44-6b2afc76589mr116376566d6.5.1718702731438; Tue, 18 Jun 2024
- 02:25:31 -0700 (PDT)
+	s=arc-20240116; t=1718702770; c=relaxed/simple;
+	bh=GCW7NA4dl5Xd1S18xVblRR4uRlpHDpp4NbT+Np6s3/M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fiuYas1Lt82WrH1tA8EDn00rCFDVca71+BH1MADE6Bx9GsBs2T+N1rkpMnvcM8X2MLT3jGBRtN3RWaXSnxwyYXuRk3pKzq3tztiFhOIj+TszaVMPCWIzNf0ALb8MTmqWperjgqjnh3GVSvxf4M35fwAe8prDfew2br91F3ZB1c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=1zHS64/b; arc=none smtp.client-ip=89.234.176.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+	s=mail; t=1718702760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vXPLlenIHOVNSxchFiFQi3fw6uzbHuydzsC7VVd5GHk=;
+	b=1zHS64/bgpAwap7kyt5U4z7WR4EDDIxoqY22qu0YQI2O3XifRrK4zNIuwTYEFuqIWKzqwm
+	ifzecavzaf/TxD8N/PWg+YI6BApCdvIJdQi6EAIC+YwCwJYikgL3muFWH05TOODkNzbNrN
+	hSdAQ748taP5Coys1FUqn3WmyiG0X5E=
+Message-ID: <31c868f86d47195e0658eeafc4d6a2cbb9c013ce.camel@crapouillou.net>
+Subject: Re: [PATCH v10 3/6] iio: core: Add new DMABUF interface
+ infrastructure
+From: Paul Cercueil <paul@crapouillou.net>
+To: Markus Elfring <Markus.Elfring@web.de>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>, linux-iio@vger.kernel.org, dmaengine@vger.kernel.org,
+  linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linaro-mm-sig@lists.linaro.org, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <christian.koenig@amd.com>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>, Sumit Semwal <sumit.semwal@linaro.org>, Vinod
+ Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, Jonathan
+ Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
+Date: Tue, 18 Jun 2024 11:25:52 +0200
+In-Reply-To: <6a41fd88-5496-462a-86d2-446c2990fcf7@web.de>
+References: <20240605110845.86740-4-paul@crapouillou.net>
+	 <6a41fd88-5496-462a-86d2-446c2990fcf7@web.de>
+Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
+ keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
+ LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
+ FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
+ z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
+ +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
+ 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
+ 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
+ 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
+ dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
+ 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
+ rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
+ lBwgAhlGy6nqP7O3u7q23hRW5AQ0EXQqFwQEIAMo+MgvYHsyjX3Ja4Oolg1Txzm8woj30ch2nACFC
+ qaO0R/1kLj2VVeLrDyQUOlXx9PD6IQI4M8wy8m0sR4wV2p/g/paw7k65cjzYYLh+FdLNyO7IWYXnd
+ JO+wDPi3aK/YKUYepqlP+QsmaHNYNdXEQDRKqNfJg8t0f5rfzp9ryxd1tCnbV+tG8VHQWiZXNqN70
+ 62DygSNXFUfQ0vZ3J2D4oAcIAEXTymRQ2+hr3Hf7I61KMHWeSkCvCG2decTYsHlw5Erix/jYWqVOt
+ X0roOOLqWkqpQQJWtU+biWrAksmFmCp5fXIg1Nlg39v21xCXBGxJkxyTYuhdWyu1yDQ+LSIUAEQEA
+ AYkBNgQYAQoAIBYhBNdHYd8OeCBwpMuVxnPua9InSr1BBQJdCoXBAhsMAAoJEHPua9InSr1B4wsH/
+ Az767YCT0FSsMNt1jkkdLCBi7nY0GTW+PLP1a4zvVqFMo/vD6uz1ZflVTUAEvcTi3VHYZrlgjcxmc
+ Gu239oruqUS8Qy/xgZBp9KF0NTWQSl1iBfVbIU5VV1vHS6r77W5x0qXgfvAUWOH4gmN3MnF01SH2z
+ McLiaUGF+mcwl15rHbjnT3Nu2399aSE6cep86igfCAyFUOXjYEGlJy+c6UyT+DUylpjQg0nl8MlZ/
+ 7Whg2fAU9+FALIbQYQzGlT4c71SibR9T741jnegHhlmV4WXXUD6roFt54t0MSAFSVxzG8mLcSjR2c
+ LUJ3NIPXixYUSEn3tQhfZj07xIIjWxAYZo=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613153924.961511-1-iii@linux.ibm.com> <20240613153924.961511-33-iii@linux.ibm.com>
-In-Reply-To: <20240613153924.961511-33-iii@linux.ibm.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Tue, 18 Jun 2024 11:24:50 +0200
-Message-ID: <CAG_fn=X6wHfmGsVgdqwms_Hk1CQAZ6M5623WyatjVp=Uk-z9pQ@mail.gmail.com>
-Subject: Re: [PATCH v4 32/35] s390/uaccess: Add KMSAN support to put_user()
- and get_user()
-To: Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 5:39=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm.com=
-> wrote:
->
-> put_user() uses inline assembly with precise constraints, so Clang is
-> in principle capable of instrumenting it automatically. Unfortunately,
-> one of the constraints contains a dereferenced user pointer, and Clang
-> does not currently distinguish user and kernel pointers. Therefore
-> KMSAN attempts to access shadow for user pointers, which is not a right
-> thing to do.
->
-> An obvious fix to add __no_sanitize_memory to __put_user_fn() does not
-> work, since it's __always_inline. And __always_inline cannot be removed
-> due to the __put_user_bad() trick.
->
-> A different obvious fix of using the "a" instead of the "+Q" constraint
-> degrades the code quality, which is very important here, since it's a
-> hot path.
->
-> Instead, repurpose the __put_user_asm() macro to define
-> __put_user_{char,short,int,long}_noinstr() functions and mark them with
-> __no_sanitize_memory. For the non-KMSAN builds make them
-> __always_inline in order to keep the generated code quality. Also
-> define __put_user_{char,short,int,long}() functions, which call the
-> aforementioned ones and which *are* instrumented, because they call
-> KMSAN hooks, which may be implemented as macros.
+Hi Markus,
 
-I am not really familiar with s390 assembly, but I think you still
-need to call kmsan_copy_to_user() and kmsan_copy_from_user() to
-properly initialize the copied data and report infoleaks.
-Would it be possible to insert calls to linux/instrumented.h hooks
-into uaccess functions?
+Le lundi 17 juin 2024 =C3=A0 08:56 +0200, Markus Elfring a =C3=A9crit=C2=A0=
+:
+> =E2=80=A6
+> > +++ b/drivers/iio/industrialio-buffer.c
+> =E2=80=A6
+> > =C2=A0static int iio_buffer_chrdev_release(struct inode *inode, struct
+> > file *filep)
+> > =C2=A0{
+> =E2=80=A6
+> > =C2=A0	wake_up(&buffer->pollq);
+> >=20
+> > +	mutex_lock(&buffer->dmabufs_mutex);
+> > +
+> > +	/* Close all attached DMABUFs */
+> =E2=80=A6
+> > +	mutex_unlock(&buffer->dmabufs_mutex);
+> > +
+> > =C2=A0	kfree(ib);
+> =E2=80=A6
+>=20
+> Would you become interested to apply a statement like
+> =E2=80=9Cguard(mutex)(&buffer->dmabufs_mutex);=E2=80=9D?
+> https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/mutex.h#L=
+196
+
+I'll update the patch to use it.
+
+Cheers,
+-Paul
 
