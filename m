@@ -1,101 +1,106 @@
-Return-Path: <linux-kernel+bounces-218728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FEB90C4B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:06:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7EAA90C4B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B59BB22322
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:06:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26A92B225DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D92F149001;
-	Tue, 18 Jun 2024 07:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VPdACAh2"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AC6149E1B;
+	Tue, 18 Jun 2024 07:14:52 +0000 (UTC)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576CB78685;
-	Tue, 18 Jun 2024 07:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E273C78685;
+	Tue, 18 Jun 2024 07:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718694863; cv=none; b=sKq0TSJ/YI66EWZxM1eqxL08srhfdzb6Q379lYvRGMxuY8uhCThUDwPuN4FUOYdY2GJ4idd4cn4jNyaA+TYycwJ1+bEo7cTun7GLsAg0755liDnkSb0KmsZTvORYjWnwokWT6NanDPuh/wlDepgVHtHsLpWrrrty7iW2Bn8IT/0=
+	t=1718694892; cv=none; b=d5GSkQiKYWZEssYUXhYnpYdMxOtp+uKwA37EKetzDpVi5FOzI2QYvFuoF02PONOM0ecQl6Dkiwffgb8WPmGMxp0BShhDYUnhRfrA0VgVd1Liut6whwBSKJhJ8a0KzrsZBCfP9lskL4D6VMGEN20qSm0tjBqk1rgRFKG0Uq8qupA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718694863; c=relaxed/simple;
-	bh=wowTK5TYToslKW5XGholQeFgdh+7aoc4XItg7czlNDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AwuqcxnmyQAQRMiwXpjy+blelLvtQNTYaNtRHFqeoZ4Fwa74Hf4ohKUGOyHYamf/HXYqqdcCyUB4mVSZYqX0rdrCf+S2+Lx80O7XP+JZqBEhzW5X3+j6bo1wZQQ+TU2Nyh5e0f+Mo1AVHCZiF38hscc8IdSBXJKy6Q1fHZ4DG/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VPdACAh2; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=f5X5UKrMFaaMGdpeomrAuXRRk/Mpc59vJz2yey6mys8=; b=VPdACAh2UixWVDsuISGGQP0Nhb
-	Os90zluy+hybYIynlqgAkn4I+WUhvFEfEIF6eLaNsH1mt0+7LRp5MVP+UBb/Hc9XfXsBSR/ZlM48C
-	C9OFMCHx4O2nZrdrerFxqGKh9p7vFxPOW88AvZm4lzK5LneJ1q2H6ibLos+yg19ykYMUXsGit9rV7
-	EdpIdzCJA2/rY9EuMyaUQK5co2Dq3hRzkOsLNyc/krZjM6e0fi4OgpxRFrR9liQ284+mlW8MDXL2z
-	XJyW6TmhLsr2BJCK1Lh1zVaIYGm1uGBOoIbWJ6ge2fFwzehMFW8Iw7d8mthEXPYtZDRoEuPk027gN
-	K5X7KqOA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJT2m-0000000DvGq-4056;
-	Tue, 18 Jun 2024 07:14:16 +0000
-Date: Tue, 18 Jun 2024 00:14:16 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, tj@kernel.org, gregkh@linuxfoundation.org,
-	bvanassche@acm.org, hch@infradead.org, josef@toxicpanda.com,
-	lizefan.x@bytedance.com, hannes@cmpxchg.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: Re: [PATCH RFC v2 3/7] block: export some API
-Message-ID: <ZnEzyJW9WAX0Rjsx@infradead.org>
-References: <20240618031751.3470464-1-yukuai1@huaweicloud.com>
- <20240618031751.3470464-4-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1718694892; c=relaxed/simple;
+	bh=MZfw96ZY4lyuDL1eut5U5Wp4+N8ISP/QZHIF+wEzR9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gJrEmFGLZF3NAgPgH9SDYlEH2LvRXRpyXprbEqzPjQpw4hTRIPWDJy8So71X8WoZOXkKRRBTtzeG5GcKBHI+7sXb8B565I2LItcgDo0Z3AunFhHSg2kKNYAf2gas+09P8cJJHDY/Q86Zxh/9/eAuf8pgxG5etDidbz/SrWphsCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-63186c222eeso46963107b3.2;
+        Tue, 18 Jun 2024 00:14:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718694888; x=1719299688;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rz6LJGzD4G8AYqhBAzwk0Rq4f7QZMRwIAsp6KRs4lxo=;
+        b=cZsjxAk/MCmoD59QVH1CM1NhKfZFnRDRjeUcbX79rpRM1BKr9+G1T6y2VcTShHTyY1
+         0hmHnHfcumI3m+PbIBDMYJVOO1ArdLsfI3v9OL68U4Tnerbo5asLRUdNrniWf2xRkUiH
+         LG1yHtiyobUdsnHPhxUCSuYMQHPnne9UmPMejZ+i/fB3hDRokGu0OEbxLKaWWQaWOTC5
+         lYgkfpW9KB5j9Dr+/N7vpEumv/ps+T73+kGESq1U5w83YA4Ynk4r9zFRq2kszke6IQL4
+         /TPeRfMRfmXlr78jD88jAghWuh8i9HUSQOVg/R0uyOX679IeX5jSYIZG68e9djAW29dC
+         qoVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFLzotiqM9WtJJMcu+xRlWcKlm9BQL1N5j7VhngBTx7oPusuRR1FOXgIkn8gD7LvQ8d50/vwBhl2q6etHRX1wxCYODqmvAn0HW5vYUt3hPcrP80pCvGbmei5iPXsBF3iMTxAd2RJdY+qkGYBC4yeC0AMWOwZrNp9O2PynBsHHstefEHiQtCSvgclo=
+X-Gm-Message-State: AOJu0Yy4jnU7P13bhTFOWfjXA6cQluSCC6UuqvEjJz6YBh2aeLNZ1+YX
+	UoAMJPl1J/fWSka4gatfsQI32DBC0/mgzMibixUVud21N1WU43gqjGKQFWDb
+X-Google-Smtp-Source: AGHT+IH42Z5KMOvIe6Jop5M3yX/Iy3Ae4qU5+meOcku5VisPGlWheHapZoxGfs7P0pX5m9Goy3Mz5g==
+X-Received: by 2002:a05:690c:84d:b0:627:7ff0:fb4e with SMTP id 00721157ae682-632231463bdmr114553337b3.26.1718694888579;
+        Tue, 18 Jun 2024 00:14:48 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-631183d80b8sm17191777b3.7.2024.06.18.00.14.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 00:14:48 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-63186c222eeso46962937b3.2;
+        Tue, 18 Jun 2024 00:14:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6g994ArvguYO67ypLL5ClyB02l/Uco6EF27bINH95jFerPnDbzz2VfqM+tRlN4o91NnTRl0EnZ8/WFT8bNRot6g2UkK91JGYij7IS5ZCuBlTHzYT4U+tOG+EJih5H79inGHeGeY02V3ZTnU3aSU4beaLzxmr3udvVXc0IecvYHNWZk+oWRmXI56U=
+X-Received: by 2002:a05:690c:24d:b0:62c:efa2:a091 with SMTP id
+ 00721157ae682-63222a58bc1mr110730687b3.14.1718694888087; Tue, 18 Jun 2024
+ 00:14:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618031751.3470464-4-yukuai1@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20240617-md-m68k-drivers-video-fbdev-amifb-v1-1-85f74746ecd4@quicinc.com>
+In-Reply-To: <20240617-md-m68k-drivers-video-fbdev-amifb-v1-1-85f74746ecd4@quicinc.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Jun 2024 09:14:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX6G6sXpJmtHXCZobuOstvn4Kw-90mpky-ZXPcoe_ezUQ@mail.gmail.com>
+Message-ID: <CAMuHMdX6G6sXpJmtHXCZobuOstvn4Kw-90mpky-ZXPcoe_ezUQ@mail.gmail.com>
+Subject: Re: [PATCH] fbdev: amifb: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 11:17:47AM +0800, Yu Kuai wrote:
->  bool blkcg_debug_stats = false;
-> +EXPORT_SYMBOL_GPL(blkcg_debug_stats);
+On Tue, Jun 18, 2024 at 5:14=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
+.com> wrote:
+> With ARCH=3Dm68k, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/ami=
+fb.o
+>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-exporting variables is lways a bad idea.a
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
->  
->  static DEFINE_RAW_SPINLOCK(blkg_stat_lock);
->  
-> @@ -688,6 +689,7 @@ const char *blkg_dev_name(struct blkcg_gq *blkg)
->  		return NULL;
->  	return bdi_dev_name(blkg->q->disk->bdi);
->  }
-> +EXPORT_SYMBOL_GPL(blkg_dev_name);
+Gr{oetje,eeting}s,
 
-And this helper is just horribly to be honest.  The bdi_dev_name
-should not be used anywhere in block code, and something like this
-certainly should not be exported even if we have to keep it for
-legacy reasons.
+                        Geert
 
->  /**
->   * blkcg_print_blkgs - helper for printing per-blkg data
-> @@ -815,6 +817,7 @@ int blkg_conf_open_bdev(struct blkg_conf_ctx *ctx)
->  	ctx->bdev = bdev;
->  	return 0;
->  }
-> +EXPORT_SYMBOL_GPL(blkg_conf_open_bdev);
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-This again is a horrible function papeing over blk-cgroup design
-mistakes.  I absolutely should not be exported.
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
