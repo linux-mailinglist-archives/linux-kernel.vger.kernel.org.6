@@ -1,144 +1,130 @@
-Return-Path: <linux-kernel+bounces-219568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B1B190D4C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:26:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BCCB90D691
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51EEC1C2148D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:26:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D23C5B286C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1766116B3B8;
-	Tue, 18 Jun 2024 14:02:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116FA16DC13
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7CD1AB909;
+	Tue, 18 Jun 2024 14:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YquMQCKL"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB4513AD29
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718719335; cv=none; b=RDPuknXCN4v0JplYps0L/97I7HKa26Wu1co7wVvAR7V3MVHsy/B16CCF3AP+BVMEMdZDb8mrfheuGghmqgGGtUoJrkrNlSwzrDXOiIHkqr2kZUHKCCoG7i7Ha36g1a3a09qVVyu06v6ybeM1drMB9s8Jt0U/G42izZFh+feIEsk=
+	t=1718719359; cv=none; b=t2Jvaq86DrR/Rf301wajZFpaFXixgadtNINFezB7OhiXCS2nnsqoGPXg3mYibEcta//NLnj9S0F3WYfE0mBSPYTJcXE4KEyd65zB1wjW9C6YVsJvaLs+PA8ONL01geKtUWD7ivlMp5rfG2YiAPiZqu7kLNvjQgLZJdZuyDeNsxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718719335; c=relaxed/simple;
-	bh=SxOBJJqyZpXNmD01GyQFkSfg8fr2KyuHVVdyRSegJU0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d2MMMXdZUcFhMbFHDRcVS9iL7Iscd2oNNGepHibzeUosR7qFJvOIbtCGzx6Wtxe9UlnZD+Dk3AeUhI4AAkMxBXGKK6gLYplzAU1GM6psDWKHfPY70w1ZW+9cl9WOZthIrwcEElrVc8RPnB5H8UtNwH1Zg1YfYiargU7OnBUcMso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A05CCDA7;
-	Tue, 18 Jun 2024 07:02:36 -0700 (PDT)
-Received: from e133380.cambridge.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 813213F6A8;
-	Tue, 18 Jun 2024 07:02:08 -0700 (PDT)
-From: Dave Martin <Dave.Martin@arm.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: James Morse <james.morse@arm.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>,
-	Babu Moger <Babu.Moger@amd.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	baolin.wang@linux.alibaba.com,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	Peter Newman <peternewman@google.com>,
-	dfustini@baylibre.com,
-	amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>
-Subject: [PATCH v2] x86/resctrl: Don't try to free nonexistent RMIDs
-Date: Tue, 18 Jun 2024 15:01:52 +0100
-Message-Id: <20240618140152.83154-1-Dave.Martin@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718719359; c=relaxed/simple;
+	bh=dQxXp9Op1zTGeFN8lKe401hgz5qSQTwXXD+bvc/TFcM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OzlDUOAkjH9QmBMrNJbundjBr2r+c5KPSaTdanYrJa+qva3w2Bx8txy/37CrVfMNm6UPpIvloBeX8xGt/RcArGO3ULeYT3fDSFcq4ItlgYbvsSX2cEm8d50OGeKz+64YEm8F+7cS1ck4v8psWdRqW+JxMHvJqgQZkGAKd3R8JCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YquMQCKL; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-421f4d1c057so43097045e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 07:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718719354; x=1719324154; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fySTWzP7+2Q4hnnSyXij3ZpjveKlFndsAqH5BZexb8w=;
+        b=YquMQCKLSr+dQ5OqmcKk61B3NmSeoZK7G3VtifXDN/Yu5tfTV83njaPyt2wMIqyCo/
+         gup6dqaL5rAGYWZjk5FoX5vyVaMtWh6cr9hNB5UjNj8qJerWZ+ln4Q0oIir5fMP4QQzi
+         9IUu0KLtTPpBEr3ndc7PIRdLvtVuaDmqwrgrKi/NBo8RvSUYgD1M4rk/leAsM3T1ec3I
+         cbjsTwsbuMYKfjUjc1svresGfHs1ovu0hxfU5+NjEMtOBTMUgOxqsxKSoCFq84xMo0v8
+         zopspJRFb4ponLJ7xPfnypO39WxvcP4WJkbuIxrrMqDH8FoWjns19Kk04VHtbDRQJs4V
+         QBVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718719354; x=1719324154;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fySTWzP7+2Q4hnnSyXij3ZpjveKlFndsAqH5BZexb8w=;
+        b=sFkxj8xHLrQRTPZ9i9jRAgPmIktaWA6U/v+liDPK/peFw3d9akJPr+6vmoXZZqwHP0
+         ASNYXgXDxdnoSpOwI5MQzGPUpuSXfgnPPJMlzYW332WBQ2PTKuT9WCRkzca7y82BP4NA
+         wvfVKp6Kli7cmNtlcJakNhjddoedITLH/+vCzjgDG4bST05GzS5NAc0yjm5d53X5tMZc
+         iBX+16JqaV2eZ1cWXctYOGoGSmm7ReTAB7Rav1waL1/hyLaS9F7iJ26U2hX8+OlJV613
+         Jc3Gy9au2om3BputBwAsN4iugkPTHC9HPMWeFDWfmyPF2Tjqz25vzCt1qX3g0XHyI2EY
+         JCow==
+X-Forwarded-Encrypted: i=1; AJvYcCXxCq0JPdm9CtxgF3lcuOPGnu7Mlg5PBWp1d9CYzgd+4rABxfBZ6uZy9gG7kVJcWqGmVIvqrvcQP0GsFe9FIwC36zCAgckARG2t/nCT
+X-Gm-Message-State: AOJu0YwzwIrRSslgQ6OWn0hEUreU0nvRsszeZtKjROOnQ8QtL2jyYxL5
+	bndL0H8/7tMRoJY1L6L2hb6Cl/XxXLRbw5+Djzm1NHsfRhNYDxZpIwAyzG8LGsY=
+X-Google-Smtp-Source: AGHT+IFjv5B5zrwnrKG07bNRwmngFblZ30ls8fBQs0cX2uPWV+t6prLL9CNFqYpst13GA6h8bFeT5A==
+X-Received: by 2002:a5d:550f:0:b0:362:fa8b:224b with SMTP id ffacd0b85a97d-362fa8b22c8mr15107f8f.47.1718719354290;
+        Tue, 18 Jun 2024 07:02:34 -0700 (PDT)
+Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750f22absm14412546f8f.79.2024.06.18.07.02.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 07:02:33 -0700 (PDT)
+From: Guillaume Stols <gstols@baylibre.com>
+Subject: [PATCH 0/9] iio: adc: ad7606: Improvements
+Date: Tue, 18 Jun 2024 14:02:32 +0000
+Message-Id: <20240618-cleanup-ad7606-v1-0-f1854d5c779d@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHiTcWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDE0Mz3eSc1MS80gLdxBRzMwMzXUMzw1Sj1BRLC0OLJCWgpoKi1LTMCrC
+ B0bG1tQDo3breYAAAAA==
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Beniamin Bia <beniamin.bia@analog.com>, 
+ Stefan Popa <stefan.popa@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Guillaume Stols <gstols@baylibre.com>, jstephan@baylibre.com, 
+ dlechner@baylibre.com
+X-Mailer: b4 0.14.0
 
-Commit 6791e0ea3071 ("x86/resctrl: Access per-rmid structures by
-index") adds logic to map individual monitoring groups into a
-global index space used for tracking allocated RMIDs.
+This series adds the following improvements over the current AD7606's
+driver implementation:
 
-Attempts to free the default RMID are ignored in free_rmid(),
-and this works fine on x86.
+- Fix wrong usage of gpio array
+- Fix standby that was documented as ACTIVE_LOW but handled in the
+  driver as if it was ACTIVE_HIGH
+- Improve dt-bindings documentation
+- Switch mutex lock to scoped guard
 
-With arm64 MPAM, there is a latent bug here however: on platforms
-with no monitors exposed through resctrl, each control group still
-gets a different monitoring group ID as seen by the hardware, since
-the CLOSID always forms part of the monitoring group ID.  This
-means that when removing a control group, the code may try to free
-this group's default monitoring group RMID for real.  If there are
-no monitors however, the RMID tracking table rmid_ptrs[] would be a
-waste of memory and is never allocated, leading to a splat when
-free_rmid() tries to dereference the table.
-
-One option would be to treat RMID 0 as special for every CLOSID,
-but this would be ugly since we still want to do bookkeeping for
-these monitoring group IDs when there are monitors present in the
-hardware.
-
-Instead, add a gating check of resctrl_arch_mon_capable() in
-free_rmid(), and just do nothing if the hardware doesn't have
-monitors.
-
-This fix mirrors the gating checks already present in
-mkdir_rdt_prepare_rmid_alloc() and elsewhere.
-
-No functional change on x86.
-
-Fixes: 6791e0ea3071 ("x86/resctrl: Access per-rmid structures by index")
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Tested-by: Reinette Chatre <reinette.chatre@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-
+Signed-off-by: Guillaume Stols <gstols@baylibre.com>
 ---
+Guillaume Stols (9):
+      dt-bindings: iio: adc: adi,ad7606: add missing datasheet link
+      dt-bindings: iio: adc: adi,ad7606: comment and sort the compatible names
+      dt-bindings: iio: adc: adi,ad7606: improve descriptions
+      dt-bindings: iio: adc: adi,ad7606: add supply properties
+      dt-bindings: iio: adc: adi,ad7606: add conditions
+      dt-bindings: iio: adc: adi,ad7606: fix example
+      iio: adc: ad7606: switch mutexes to scoped_guard
+      iio: adc: ad7606: fix oversampling gpio array
+      iio: adc: ad7606: fix standby gpio state to match the documentation
 
-Based on v6.10-rc3.
-
-Tested on x86 (But so far for the monitors-present case.
-Testing on Atom would be appreciated.)
-
-Tested on arm64 for the no-monitors case.
-
-Changes since v1:
-
- * Typo fixes and rewording in commit message; slurp maintainer tags.
-
-(no code changes)
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 126 +++++++++++++++------
+ drivers/iio/adc/ad7606.c                           |  79 ++++++-------
+ drivers/iio/adc/ad7606_spi.c                       |   5 +-
+ 3 files changed, 134 insertions(+), 76 deletions(-)
 ---
- arch/x86/kernel/cpu/resctrl/monitor.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+base-commit: 07d4d0bb4a8ddcc463ed599b22f510d5926c2495
+change-id: 20240416-cleanup-ad7606-161e2ed9818b
 
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 2345e6836593..366f496ca3ce 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -519,7 +519,8 @@ void free_rmid(u32 closid, u32 rmid)
- 	 * allows architectures that ignore the closid parameter to avoid an
- 	 * unnecessary check.
- 	 */
--	if (idx == resctrl_arch_rmid_idx_encode(RESCTRL_RESERVED_CLOSID,
-+	if (!resctrl_arch_mon_capable() ||
-+	    idx == resctrl_arch_rmid_idx_encode(RESCTRL_RESERVED_CLOSID,
- 						RESCTRL_RESERVED_RMID))
- 		return;
- 
-
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+Best regards,
 -- 
-2.34.1
+Guillaume Stols <gstols@baylibre.com>
 
 
