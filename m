@@ -1,64 +1,52 @@
-Return-Path: <linux-kernel+bounces-220020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA28C90DB86
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:21:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9992A90DB8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 977661F232F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588E52845E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2715115ECD2;
-	Tue, 18 Jun 2024 18:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bXnk0DbK"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BA615E5D1;
+	Tue, 18 Jun 2024 18:26:08 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE0D15E5CF;
-	Tue, 18 Jun 2024 18:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0D213DDDF;
+	Tue, 18 Jun 2024 18:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718734777; cv=none; b=k5T08lIsFj3GUbRK7qgmDFvNviRjcQwB6VIkUOwtAfU1SX2PfE5ru3+WlLckBNuw42Xf7Sg0sa5F+HcVKLnJENIEOM/d3BDubTtRFq4o7VmqA8wwd15x436RL+vhISoTRnXWkr/4qkJPoZkyghEN0GnRJAQCY5QlYkWvzS6cA2I=
+	t=1718735168; cv=none; b=kBIX+iMqPMNSv+T/R1g9Dku5iaf1DmNvePZtinyujXGB3i3bXgKdw+AVgz0n7h9m5qAEFxDfsrXSPYfF2bnEMt49Qe2da72JFyEgU9HbwNLShI9IkDJssNG0mJkp2KJPciZDBHB+VTNbansnr4Jprmz/QrFEy+J0860C9RzGkGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718734777; c=relaxed/simple;
-	bh=CLRncUBTVR45wvAAsnnxKrLdiCWAIAAdhMnHTW424Ww=;
+	s=arc-20240116; t=1718735168; c=relaxed/simple;
+	bh=eIhKmpC3djJFZ9shjBBZf16rVsZJLfZRd1LV9/wQDMI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISUFgDySGaXmWCNl3RHoaEe4q0vgeNjTPwOCHpIa67ULxLBssd8Podcvd40/pngmDqAVDp39824xEjj3JJTV2TTS79xFni3aNa0wlGZy/TCCfxgKomKxmgpHeL/wLW+9+c03XYZr/6/vwsoHEaHbsPoCPIEo+oSzUbEPrltTYCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bXnk0DbK; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=6rF013NYkWJ7vC3dig6F3esypwWGqLP9D25G+i9avEQ=; b=bXnk0DbK9InWp0ysw0ZGDBc6yC
-	6QCcBK5AvURctxeWVAS/qAiQzwQRUh1a3iYpJ5+6wRi/mO0hUrIKygoT6F5m5CXlH1f7+PctwVwPS
-	JebNBhHZyVcami3ElkOslYTSNM3KSCGByLSPGKbGp52izFyC1CSh4FCVTAau4PZ0bk+g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sJdQE-000PKk-Jc; Tue, 18 Jun 2024 20:19:10 +0200
-Date: Tue, 18 Jun 2024 20:19:10 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Michal Simek <michal.simek@amd.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-	linux-kernel@vger.kernel.org,
-	"David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH net-next 3/3] net: xilinx: axienet: Add statistics support
-Message-ID: <a4bea058-c5cd-4d8f-ab0f-cd637ccb3969@lunn.ch>
-References: <20240610231022.2460953-1-sean.anderson@linux.dev>
- <20240610231022.2460953-4-sean.anderson@linux.dev>
- <40cff9a6-bad3-4f85-8cbc-6d4bc72f9b9f@lunn.ch>
- <4d3871c1-afa1-4402-ad62-2fdb9d58dc3c@linux.dev>
- <6f4916a0-f949-4289-9839-d89af574600d@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnalVy1l+BCv/mkh/+Co6TsrZZKwW7vdGdFJiVcVvzDaf9baSXtyMM/6LaXpfgym8L+NeuKwsJ5tlYVsQIm0HoqhuuBiGpO7UkS5AaOkmUyoABH21H15Uz/dk9rgOslKjcMtagE3rMbPMQ8DgiCRHyA7V8vkAjSFrjSP4FpdisU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 716D2C3277B;
+	Tue, 18 Jun 2024 18:26:04 +0000 (UTC)
+Date: Tue, 18 Jun 2024 19:26:02 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
+	Ramon Fried <ramon@neureality.ai>,
+	Elad Nachman <enachman@marvell.com>
+Subject: Re: [PATCH RFC v2 1/5] dma-mapping: replace zone_dma_bits by
+ zone_dma_limit
+Message-ID: <ZnHROk1Xs7KcR4I0@arm.com>
+References: <cover.1712642324.git.baruch@tkos.co.il>
+ <fda45c91f69e65ec14b9aaec9aa053e6982e5b87.1712642324.git.baruch@tkos.co.il>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,82 +55,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6f4916a0-f949-4289-9839-d89af574600d@linux.dev>
+In-Reply-To: <fda45c91f69e65ec14b9aaec9aa053e6982e5b87.1712642324.git.baruch@tkos.co.il>
 
-On Tue, Jun 18, 2024 at 01:03:47PM -0400, Sean Anderson wrote:
-> Hi Andrew,
+(finally getting around to looking at this series, sorry for the delay)
+
+On Tue, Apr 09, 2024 at 09:17:54AM +0300, Baruch Siach wrote:
+> From: Catalin Marinas <catalin.marinas@arm.com>
 > 
-> On 6/11/24 11:36, Sean Anderson wrote:
-> > On 6/10/24 20:26, Andrew Lunn wrote:
-> >>> +static u64 axienet_stat(struct axienet_local *lp, enum temac_stat stat)
-> >>> +{
-> >>> +	return u64_stats_read(&lp->hw_stats[stat]);
-> >>> +}
-> >>> @@ -1695,6 +1760,35 @@ axienet_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *stats)
-> >>>  		stats->tx_packets = u64_stats_read(&lp->tx_packets);
-> >>>  		stats->tx_bytes = u64_stats_read(&lp->tx_bytes);
-> >>>  	} while (u64_stats_fetch_retry(&lp->tx_stat_sync, start));
-> >>> +
-> >>> +	if (!(lp->features & XAE_FEATURE_STATS))
-> >>> +		return;
-> >>> +
-> >>> +	do {
-> >>> +		start = u64_stats_fetch_begin(&lp->hw_stat_sync);
-> >>> +		stats->rx_length_errors =
-> >>> +			axienet_stat(lp, STAT_RX_LENGTH_ERRORS);
-> >> 
-> >> I'm i reading this correctly. You are returning the counters from the
-> >> last refresh period. What is that? 2.5Gbps would wrapper around a 32
-> >> byte counter in 13 seconds. I hope these statistics are not 13 seconds
-> >> out of date?
-> > 
-> > By default we use a 1 Hz refresh period. You can of course configure this
-> > up to 13 seconds, but we refuse to raise it further since we risk missing
-> > a wrap-around. It's configurable by userspace so they can determine how
-> > out-of-date they like their stats (vs how often they want to wake up the
-> > CPU).
-> > 
-> >> Since axienet_stats_update() also uses the lp->hw_stat_sync, i don't
-> >> see why you cannot read the hardware counter value and update to the
-> >> latest value.
-> > 
-> > We would need to synchronize against updates to hw_last_counter. Imagine
-> > a scenario like
-> > 
-> > CPU 1					CPU 2
-> > __axienet_device_reset()
-> > 	axienet_stats_update()
-> > 					axienet_stat()
-> > 						u64_stats_read()
-> > 						axienet_ior()
-> > 	/* device reset */
-> > 	hw_last_counter = 0
-> > 						stats->foo = ... - hw_last_counter[...]
-> > 
-> > and now we have a glitch in the counter values, since we effectively are
-> > double-counting the current counter value. Alternatively, we could read
-> > the counter after reset but before hw_last_counter was updated and get a
-> > glitch due to underflow.
+> Hardware DMA limit might not be power of 2. When RAM range starts above
+> 0, say 4GB, DMA limit of 30 bits should end at 5GB. A single high bit
+> can not encode this limit.
 > 
-> Does this make sense to you? If it does, I'll send v2 with just the mutex
-> change and the variable rename pointed out by Simon.
+> Use direct phys_addr_t limit address for DMA zone limit.
+> 
+> Following commits will add explicit base address to DMA zone.
+> 
+> ---
+> Catalin,
+> 
+> This is taken almost verbatim from your email:
+> 
+>   https://lore.kernel.org/all/ZZ2HnHJV3gdzu1Aj@arm.com/
+> 
+> Would you provide your sign-off?
 
-What you have is O.K. I just think you can do better.
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 
-As you point out, there is a potential race. There are a few
-synchronisation mechanisms for that.
+Thanks for writing a commit log. However, I think more work is needed.
+See below.
 
-Often you arrange to have exclusive access to a data structure, so you
-know it cannot change while you use it. But as you pointed out, you
-are not in a context which can block on a mutex.
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 03efd86dce0a..00508c69ca9e 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -113,36 +113,24 @@ static void __init arch_reserve_crashkernel(void)
+>  				    low_size, high);
+>  }
+>  
+> -/*
+> - * Return the maximum physical address for a zone accessible by the given bits
+> - * limit. If DRAM starts above 32-bit, expand the zone to the maximum
+> - * available memory, otherwise cap it at 32-bit.
+> - */
+> -static phys_addr_t __init max_zone_phys(unsigned int zone_bits)
+> +static phys_addr_t __init max_zone_phys(phys_addr_t zone_limit)
+>  {
+> -	phys_addr_t zone_mask = DMA_BIT_MASK(zone_bits);
+> -	phys_addr_t phys_start = memblock_start_of_DRAM();
+> -
+> -	if (phys_start > U32_MAX)
+> -		zone_mask = PHYS_ADDR_MAX;
+> -	else if (phys_start > zone_mask)
+> -		zone_mask = U32_MAX;
+> -
+> -	return min(zone_mask, memblock_end_of_DRAM() - 1) + 1;
+> +	return min(zone_limit, memblock_end_of_DRAM() - 1) + 1;
+>  }
+>  
+>  static void __init zone_sizes_init(void)
+>  {
+>  	unsigned long max_zone_pfns[MAX_NR_ZONES]  = {0};
+> -	unsigned int __maybe_unused acpi_zone_dma_bits;
+> -	unsigned int __maybe_unused dt_zone_dma_bits;
+> -	phys_addr_t __maybe_unused dma32_phys_limit = max_zone_phys(32);
+> +	phys_addr_t __maybe_unused acpi_zone_dma_limit;
+> +	phys_addr_t __maybe_unused dt_zone_dma_limit;
+> +	phys_addr_t __maybe_unused dma32_phys_limit =
+> +		max_zone_phys(DMA_BIT_MASK(32));
+>  
+>  #ifdef CONFIG_ZONE_DMA
+> -	acpi_zone_dma_bits = fls64(acpi_iort_dma_get_max_cpu_address());
+> -	dt_zone_dma_bits = fls64(of_dma_get_max_cpu_address(NULL));
+> -	zone_dma_bits = min3(32U, dt_zone_dma_bits, acpi_zone_dma_bits);
+> -	arm64_dma_phys_limit = max_zone_phys(zone_dma_bits);
+> +	acpi_zone_dma_limit = acpi_iort_dma_get_max_cpu_address();
+> +	dt_zone_dma_limit = of_dma_get_max_cpu_address(NULL);
+> +	zone_dma_limit = min(dt_zone_dma_limit, acpi_zone_dma_limit);
+> +	arm64_dma_phys_limit = max_zone_phys(zone_dma_limit);
+>  	max_zone_pfns[ZONE_DMA] = PFN_DOWN(arm64_dma_phys_limit);
+>  #endif
+>  #ifdef CONFIG_ZONE_DMA32
 
-Another mechanism is to know if the data structure has changed while
-you where using it. If it has, throw away what you have, and start
-again. That is what lp->hw_stat_sync etc is all about. You loop while
-its value changes, indicating something made changes. You should be
-able to use this when returning statistics to user space, to return
-the real current statistics, not old cached values.
+I think this goes wrong if zone_dma_limit ends up above 32-bit (e.g. no
+restrictive dma-ranges properties) but the start of RAM is below 4G.
+We'd simply reduce ZONE_DMA32 to zero and ZONE_DMA potentially covering
+the whole RAM. Prior to this change, we capped zone_dma_bits to 32 via
+min3(). I think we should maintain this cap if memblock_start_of_DRAM()
+is below 4G.
 
-    Andrew
+We could fix this up in max_zone_phys() above:
 
+	if (memblock_start_of_DRAM() < U32_MAX)
+		zone_limit = min(U32_MAX, zone_limit);
+
+	return min(zone_limit, memblock_end_of_DRAM() - 1) + 1;
+
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 4d543b1e9d57..3b2ebcd4f576 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -20,7 +20,7 @@
+>   * it for entirely different regions. In that case the arch code needs to
+>   * override the variable below for dma-direct to work properly.
+>   */
+> -unsigned int zone_dma_bits __ro_after_init = 24;
+> +phys_addr_t zone_dma_limit __ro_after_init = DMA_BIT_MASK(24);
+>  
+>  static inline dma_addr_t phys_to_dma_direct(struct device *dev,
+>  		phys_addr_t phys)
+> @@ -59,7 +59,7 @@ static gfp_t dma_direct_optimal_gfp_mask(struct device *dev, u64 *phys_limit)
+>  	 * zones.
+>  	 */
+>  	*phys_limit = dma_to_phys(dev, dma_limit);
+> -	if (*phys_limit <= DMA_BIT_MASK(zone_dma_bits))
+> +	if (*phys_limit <= zone_dma_limit)
+>  		return GFP_DMA;
+>  	if (*phys_limit <= DMA_BIT_MASK(32))
+>  		return GFP_DMA32;
+
+It's worth noting that if ZONE_DMA ends up entirely above 32-bit, there
+won't be any ZONE_DMA32. Thinking about it, this could be a potential
+problem. For example, if a device has a 32-bit DMA mask and an offset
+that lifts this into the 32-36G range, the above may fail to set
+GFP_DMA32.
+
+Actually, I think these checks can go wrong even with the current
+implementation, assuming RAM below 4G and no DMA offsets. For example,
+we have two devices, one with a coherent mask of 30 bits, the other 31
+bits. zone_dma_bits would be set to the smaller of the two, so 30 bit
+(as per of_dma_get_max_cpu_address()). For the second device, phys_limit
+would be ((1 << 31) - 1) but that's higher than DMA_BIT_MASK(30) so we
+fail to set GFP_DMA. We do set GFP_DMA32 because of the second test but
+that's not sufficient since that's 32-bit rather than 31-bit as the
+device needs. Similarly if we have some weird device with a 33-bit DMA
+coherent mask but the RAM is addressed by more bits. We'd fail to set
+GFP_DMA32.
+
+Ignoring this patch, I think the checks above in mainline should be
+something like:
+
+	if (*phys_limit < DMA_BIT_MASK(32))
+		return GFP_DMA;
+	if (*phys_limit < memblock_end_of_DRAM())
+		return GFP_DMA32;
+
+IOW, zone_dma_bits is pretty useless for this check IMHO. It gives us
+the minimum hence not sufficient to test for devices that fall between
+ZONE_DMA and ZONE_DMA32 coherent masks.
+
+With your series, the above test wouldn't work since we don't have a
+zone_dma32_limit and zone_dma_limit is above DMA_BIT_MASK(32). We might
+need to introduce zone_dma32_limit and maybe drop zone_dma_limit
+altogether.
+
+-- 
+Catalin
 
