@@ -1,138 +1,110 @@
-Return-Path: <linux-kernel+bounces-219491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A268990D4F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:29:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BEF90D39C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3AEAB2EED7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:04:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD4262853DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F411849C4;
-	Tue, 18 Jun 2024 13:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC7E185E54;
+	Tue, 18 Jun 2024 13:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CmzOwNGP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FIAamhF0"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE9D17E476;
-	Tue, 18 Jun 2024 13:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5608157E94
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718717899; cv=none; b=CMtc/wrd0gBYgW5eklTScquxyPueItjblUB1Y6f0aPha89aLYGcVyDkgL5NdbNzKkQ2aEmF2gKq5C6t1CMzD26dnLaGAXUxH2lUQpCcUqBsyvf8QZLTSuXg210d3rO7cNqxugXrkRQQPNYkXVeqd/jR4hvTsFDH4JJXd/8tBV2A=
+	t=1718717929; cv=none; b=W2hjq42Q/umUvi7PwHW/yo+Zy9jVqohqmb1a/713uTe5O/5fK1TK5ojMiVatexjFWAg/yod8T2jochRZ1rAn/qVUBx5XO5Gk8MHO1Cz6tHUw00TRRVBfXn3GaGc062/jKaATEcjkVs19BllW9jJ00Ke2rCtb+xigoFyBD1N7Anc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718717899; c=relaxed/simple;
-	bh=6faXDGSZijxkWpxmkup1dsDNKUawVzWBi0cOzGQkyWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPE9CIRG4ToVRXefusYeR2gHSlaJ9/ops/jJSm8vX8lrFayEvluruSoN2uyMeJ48A7iQREfFz1FCzcTtHpFcnCqgCljMmubNwujt6X88SWcKtZWSRsyPOTSg3bDdJeMKZJ9JNigdAUiVEyrGcmi/L6eh0c9C90g2quoSXh3OGF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CmzOwNGP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D041AC3277B;
-	Tue, 18 Jun 2024 13:38:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718717899;
-	bh=6faXDGSZijxkWpxmkup1dsDNKUawVzWBi0cOzGQkyWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CmzOwNGPEZB1TQbxDWSTkdNEBB0bf6ldfAPMlLDndlSTX9tRURV+C6tNkNsfdVEkz
-	 20Uhrg5G4CcxWxQVASx5z30qZZqkygPa/CDIcPG6kXq5SR6Z7DIOpuXfNmf1ffLOEB
-	 p9Di7lBkMLOtG0794J4h1cxUsU+ZpQM59uWeJ8ow=
-Date: Tue, 18 Jun 2024 15:38:05 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: joswang <joswang1221@gmail.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	Jos Wang <joswang@lenovo.com>
-Subject: Re: [PATCH v4, 3/3] usb: dwc3: core: Workaround for CSR read timeout
-Message-ID: <2024061831-oyster-stoppage-8b1f@gregkh>
-References: <20240601092646.52139-1-joswang1221@gmail.com>
- <20240612153922.2531-1-joswang1221@gmail.com>
- <2024061203-good-sneeze-f118@gregkh>
- <CAMtoTm0NWV_1sGNzpULAEH6qAzQgKT_xWz7oPaLrKeu49r2RzA@mail.gmail.com>
- <20240618000502.n3elxua2is3u7bq2@synopsys.com>
- <CAMtoTm1ZkT6NoBj9N-wKkzxASQ2AboYNdd-L7DHUEt8m8hootg@mail.gmail.com>
+	s=arc-20240116; t=1718717929; c=relaxed/simple;
+	bh=ZXkUgUNTrV2Fb75kL30lUgvJVNwEi/AAcntzHmWItcE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C691oOCrg0FA95jYKWd4staVroQubFOTNncUpz+qnP0/vS3ZIbAo34qd/MBE2OoBHYl5mV+tbV/6Sw4fJ4PlsxLVkJXDKPxS9w7FvNleHh67IW6Bqwr7eyTEgeOsJC34PAhcqjTcKlORkMfJyh45CK8AxeuRpWiJXi7WDcXV1YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FIAamhF0; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c525257feso7052235e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:38:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718717925; x=1719322725; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1Ro2D1q0Iet+JsxqYv5jvanxXyaHmbiQwWFVhwfDlws=;
+        b=FIAamhF0V9693BMdus4wQuGNWEmIOyfMJ/Odz0QiAdEzJwrz3GyHrD+4tyBCMwXRXV
+         8VlgHOUl3b0QmmGwqIM0biPJ+s2WC/ibIWJbrURUsdm6d25h80/JxaTFEBX82b0WK6Fv
+         ZvvA+Pl0YcIAXUz1kXpOW42PqxyTs3WKYUhoABQxe5w2SrmcbpqvlzoIkiFBpwL034N1
+         b427WaGr9dfjcoEwyr0hskfzytmjCcEZ96MIYiHZpsYhzYqOCy8dTrKCp6DKFoAhwEly
+         SpHmOcMDX9CiWGiC8iY9TEx3QN2O7vRfLT5ozhMLetR5U+y3kWYwr54d85n9Bt315HZT
+         nW6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718717925; x=1719322725;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Ro2D1q0Iet+JsxqYv5jvanxXyaHmbiQwWFVhwfDlws=;
+        b=fiqYoZy9lXOnrf64nhjOAMpaZxu8juyzUrHSfauiy0YqSWhlO6bQ1N7HHRxOxV1DhG
+         MAPRde2THr7jTPWBNdUG7aG2AHrHFEqZjMLhYL3TSgNnSC9fhwVdChUgrOM2Xy1nMU13
+         qCfYU/0v7lqh+UfqxXXoEZLGwx25dQysHI/oMlXy6ZHT1hELWpRSKPA5nUA0QJB853yw
+         Gu8sA7ErgIzd6EnJR+yHq0EdWl6QPDRkuwqUMoTE3kCrFqSPkHijFvAHJXYKJu5FAINP
+         35Qv/je7FVydbyQmMWutnhcjXcpJBWaGpxxZ8htd2Oopx4L8RgLeAijTnQh9sBJx/2hJ
+         xkqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEW7AtJUyhlcJKEAEgWe/FosXsoqoVpya515X3P1cPaE3FkvdNDFuxHM/s89WhzbxZxsO9TyUsLNSwKdklb3Pu8l83oFE+jivs8lT3
+X-Gm-Message-State: AOJu0YwKtKM9mlHTgCaWVpZdEtc2tu47NvVqkmzNa7c7JpTTDfDhKpsu
+	hOxadLstiFEQINC0cT+1n2rihP5DRE5NgIexnhunF3VGHue8LZ6I8intzocs4xQ=
+X-Google-Smtp-Source: AGHT+IF87ZxV1Eqx7KyoE3WteMFt56EssikJPs0A4NGrSgdY3b3dUyfEiaDVHF88FgnOxhFSt2XIWA==
+X-Received: by 2002:ac2:57c3:0:b0:52b:c292:f7c with SMTP id 2adb3069b0e04-52ca6e9886emr7565855e87.62.1718717924535;
+        Tue, 18 Jun 2024 06:38:44 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cbc12bc4fsm627269e87.292.2024.06.18.06.38.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 06:38:44 -0700 (PDT)
+Message-ID: <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
+Date: Tue, 18 Jun 2024 15:38:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMtoTm1ZkT6NoBj9N-wKkzxASQ2AboYNdd-L7DHUEt8m8hootg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] arm64: dts: qcom: sdx75: update reserved memory
+ regions for mpss
+To: Naina Mehta <quic_nainmeht@quicinc.com>, andersson@kernel.org,
+ mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, manivannan.sadhasivam@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240618131342.103995-1-quic_nainmeht@quicinc.com>
+ <20240618131342.103995-4-quic_nainmeht@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240618131342.103995-4-quic_nainmeht@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 18, 2024 at 08:47:38PM +0800, joswang wrote:
-> On Tue, Jun 18, 2024 at 8:05 AM Thinh Nguyen <Thinh.Nguyen@synopsys.com> wrote:
-> >
-> > On Thu, Jun 13, 2024, joswang wrote:
-> > > On Thu, Jun 13, 2024 at 1:04 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Wed, Jun 12, 2024 at 11:39:22PM +0800, joswang wrote:
-> > > > > From: Jos Wang <joswang@lenovo.com>
-> > > > >
-> > > > > This is a workaround for STAR 4846132, which only affects
-> > > > > DWC_usb31 version2.00a operating in host mode.
-> > > > >
-> > > > > There is a problem in DWC_usb31 version 2.00a operating
-> > > > > in host mode that would cause a CSR read timeout When CSR
-> > > > > read coincides with RAM Clock Gating Entry. By disable
-> > > > > Clock Gating, sacrificing power consumption for normal
-> > > > > operation.
-> > > > >
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Signed-off-by: Jos Wang <joswang@lenovo.com>
-> > > > > ---
-> > > > > v1 -> v2:
-> > > > > - add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch,
-> > > > >   this patch does not make any changes
-> > > > > v2 -> v3:
-> > > > > - code refactor
-> > > > > - modify comment, add STAR number, workaround applied in host mode
-> > > > > - modify commit message, add STAR number, workaround applied in host mode
-> > > > > - modify Author Jos Wang
-> > > > > v3 -> v4:
-> > > > > - modify commit message, add Cc: stable@vger.kernel.org
-> > > >
-> > > > This thread is crazy, look at:
-> > > >         https://urldefense.com/v3/__https://lore.kernel.org/all/20240612153922.2531-1-joswang1221@gmail.com/__;!!A4F2R9G_pg!a29V9NsG_rMKPnub-JtIe5I_lAoJmzK8dgo3UK-qD_xpT_TOgyPb6LkEMkIsijsDKIgdxB_QVLW_MwtdQLnyvOujOA$
-> > > > for how it looks.  How do I pick out the proper patches to review/apply
-> > > > there at all?  What would you do if you were in my position except just
-> > > > delete the whole thing?
-> > > >
-> > > > Just properly submit new versions of patches (hint, without the ','), as
-> > > > the documentation file says to, as new threads each time, with all
-> > > > commits, and all should be fine.
-> > > >
-> > > > We even have tools that can do this for you semi-automatically, why not
-> > > > use them?
-> > > >
-> > > > thanks,
-> > > >
-> > > > greg k-h
-> > >
-> > > We apologize for any inconvenience this may cause.
-> > > The following incorrect operation caused the problem you mentioned:
-> > > git send-email --in-reply-to command sends the new version patch
-> > > git format-patch --subject-prefix='PATCH v3
-> > >
-> > > Should I resend the v5 patch now?
-> >
-> > Please send this as a stand-alone patch outside of the series as v5. (ie.
-> > remove the "3/3"). I still need to review the other issue of the series.
-> >
-> > Thanks,
-> > Thinh
+
+
+On 6/18/24 15:13, Naina Mehta wrote:
+> Rename qdss@88800000 memory region as qlink_logging memory region
+> and add qdss_mem memory region at address of 0x88500000.
+> Split mpss_dsmharq_mem region into 2 separate regions and
+> reduce the size of mpssadsp_mem region.
 > 
-> This patch has been sent separately, please help review it.
+> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+> ---
 
-You too can help review other commits on the list to reduce the
-maintainer load here.  Please do so in order to insure that there is
-time to review your changes as well.
+Alright, we're getting somewhere. The commit message should however motivate
+why such changes are necessary. For all we know, the splitting in two is
+currently done for no reason, as qdss_mem and qlink_logging_mem are contiguous
+- does the firmware have some expectations about them being separate?
 
-thanks,
-
-greg k-h
+Konrad
 
