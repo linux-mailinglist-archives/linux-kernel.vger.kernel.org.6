@@ -1,110 +1,183 @@
-Return-Path: <linux-kernel+bounces-218843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B498B90C6ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:30:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDF890C6F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D312826BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:30:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0851B21D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F911A2565;
-	Tue, 18 Jun 2024 08:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMnw/u+p"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151A814C5A3;
+	Tue, 18 Jun 2024 08:16:51 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D3B1A073C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C73C13A272;
+	Tue, 18 Jun 2024 08:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718698541; cv=none; b=EsoMXuXypfa+uvEqLUtIymuGL7NoX7Qg1jOxWbwC8FEc60haFdfRKmx6dc8eJ2e1El9okjLyIcNxFmhWIEGPBk+NJCOSsufQBbKqFC0DN6oYTGXQ7FLyyL9X2hfCq3VLxFz/NCu+7q5ApsgUYVjmvSDlllgLPP5HS7R5X9hBJJI=
+	t=1718698610; cv=none; b=kLr/r5LkuukWsZG8bDE5nx+zd28dtB7OwE1ltuD60mhtDSNfPTumxl7W6pYhUuq5gSb+lkWv6qEmXazSVgBayH44OlzyIGCrEfSmhffn7D/+ZLTPMnJ4ZRyTl1tL9K8OemGGRROMebaIQcaSRiV5N4Xtp24d45dpeI6BZvBc2Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718698541; c=relaxed/simple;
-	bh=iYioEWORDDUMLHtKnujTc36m4+0j/4elywu9H2FX8UQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HmMGQGeD8uNPKQ52KNzEgSBh58JV/OKVzS91xBZtuVjtmDOPorO2LjdEvn3hib3tqi2oxTmr/vB4XsX5UPIIIMFLhrE7jwDPkceDMpdOlckL3D11I4I3sg/OG3TS1Sdbn0yhv13q9XtDkiHg1cuDk3xKiPFtYw+J4ljb2IoGnkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMnw/u+p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1E01C3277B;
-	Tue, 18 Jun 2024 08:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718698540;
-	bh=iYioEWORDDUMLHtKnujTc36m4+0j/4elywu9H2FX8UQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OMnw/u+pJ6a9Sb30gXqTMC78NV+7Mdo/Q3XtkF3C8QAzLBPb6c8BveAHaLw2f1SR4
-	 UMqEFyr9cvZVbObLQetIsi+5rNsvfXo1ruqiSz2IIPH+Wa34sBRpLkFkeJquZ+6jHP
-	 cOzKGttDTC/0pfURvv0KlVj9fqH+umGW7PaQadMDLMnX8p4v5UPr/EH1vLbYh2s4q4
-	 HyAANnAJ5QCLIQHk5n2NRQS1XdGC7OrLLkWBzyWbUZTojDbMbiKBn0GXfqkuDIzkUL
-	 V5WdpCM8WJTWSAHtZjaRi9LEpGTsZnUUKjqSL3Cv7gV7EMEgXrcZkOi7gltII5YiT4
-	 /GXoXw17gfK1A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sJU0A-004sL0-JB;
-	Tue, 18 Jun 2024 09:15:38 +0100
-Date: Tue, 18 Jun 2024 09:15:37 +0100
-Message-ID: <86cyoek6om.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	mark.rutland@arm.com,
-	ryan.roberts@arm.com,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] arm64/mm: Stop using ESR_ELx_FSC_TYPE during fault
-In-Reply-To: <20240618034703.3622510-1-anshuman.khandual@arm.com>
-References: <20240618034703.3622510-1-anshuman.khandual@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1718698610; c=relaxed/simple;
+	bh=QkCmAAUod9n4KGAifdFH23eiokidB9zlzC26O9n+bgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jQnTqJX8TmTHVlk2WgIcNXVXe9Aq/x0EVL9NW4HKAVQ6ID0GOW0FKhLwLKK3clcAXUl8ieaoj+yij7vbLpZKdxah4w0KnhTcFqKkYzyLhHr13sFNMvbFfNBmf8imQKPhVbTjk3utdAsWJqN8N++TgIuXwhbyKz4a0t3+/t+3Odw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04C61C3277B;
+	Tue, 18 Jun 2024 08:16:47 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	loongson-kernel@lists.loongnix.cn,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH] LoongArch: Always enumerate MADT and setup logical-physical CPU mapping
+Date: Tue, 18 Jun 2024 16:16:30 +0800
+Message-ID: <20240618081630.3997018-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, ryan.roberts@arm.com, catalin.marinas@arm.com, will@kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 18 Jun 2024 04:47:03 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
-> Fault status codes at page table level 0, 1, 2 and 3 for access, permission
-> and translation faults are architecturally organized in a way, that masking
-> out ESR_ELx_FSC_TYPE, fetches Level 0 status code for the respective fault.
-> 
-> Helpers like esr_fsc_is_[translation|permission|access_flag]_fault() mask
-> out ESR_ELx_FSC_TYPE before comparing against corresponding Level 0 status
-> code as the kernel does not yet care about the page table level, where in
-> the fault really occurred previously.
-> 
-> This scheme is starting to crumble after FEAT_LPA2 when level -1 got added.
-> Fault status code for translation fault at level -1 is 0x2B which does not
-> follow ESR_ELx_FSC_TYPE, requiring esr_fsc_is_translation_fault() changes.
-> 
-> This changes above helpers to compare against individual fault status code
-> values for each page table level and stop using ESR_ELx_FSC_TYPE, which is
-> losing its value as a common mask.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Some drivers want to use cpu_logical_map(), early_cpu_to_node() and some
+other CPU mapping APIs, even if we use "nr_cpus=1" to hard limit the CPU
+number. This is strongly required for the multi-bridges machines.
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
+Currently, we stop parsing the MADT if the nr_cpus limit is reached, but
+to achieve the above goal we should always enumerate the MADT table and
+setup logical-physical CPU mapping whether there is a nr_cpus limit.
 
-	M.
+Rework the MADT enumeration:
 
+1. Define a flag "cpu_enumerated" to distinguish the first enumeration
+   (cpu_enumerated=0) and the physical hotplug case (cpu_enumerated=1)
+   for set_processor_mask().
+
+2. If cpu_enumerated=0, stop parsing only when NR_CPUS limit is reached,
+   so we can setup logical-physical CPU mapping; if cpu_enumerated=1,
+   stop parsing when nr_cpu_ids limit is reached, so we can avoid some
+   runtime bugs. Once logical-physical CPU mapping is setup, we will let
+   cpu_enumerated=1.
+
+3. Use find_first_zero_bit() instead of cpumask_next_zero() to find the
+   next zero bit (free logical CPU id) in the cpu_present_mask, because
+   cpumask_next_zero() will stop at nr_cpu_ids.
+
+4. Only touch cpu_possible_mask if cpu_enumerated=0, this is in order to
+   avoid some potential crashes, because cpu_possible_mask is marked as
+   __ro_after_init.
+
+5. In prefill_possible_map(), clear cpu_present_mask bits greater than
+   nr_cpu_ids, in order to avoid a CPU be "present" but not "possible".
+
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ arch/loongarch/kernel/acpi.c  | 22 ++++++++++++++++------
+ arch/loongarch/kernel/setup.c |  4 +++-
+ arch/loongarch/kernel/smp.c   |  7 +++----
+ 3 files changed, 22 insertions(+), 11 deletions(-)
+
+diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+index 5cf59c617126..929a497c987e 100644
+--- a/arch/loongarch/kernel/acpi.c
++++ b/arch/loongarch/kernel/acpi.c
+@@ -57,15 +57,22 @@ void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size)
+ 		return ioremap_cache(phys, size);
+ }
+ 
++static int cpu_enumerated = 0;
++
+ #ifdef CONFIG_SMP
+ static int set_processor_mask(u32 id, u32 flags)
+ {
+-
++	int nr_cpus;
+ 	int cpu, cpuid = id;
+ 
+-	if (num_processors >= nr_cpu_ids) {
+-		pr_warn(PREFIX "nr_cpus/possible_cpus limit of %i reached."
+-			" processor 0x%x ignored.\n", nr_cpu_ids, cpuid);
++	if (!cpu_enumerated)
++		nr_cpus = NR_CPUS;
++	else
++		nr_cpus = nr_cpu_ids;
++
++	if (num_processors >= nr_cpus) {
++		pr_warn(PREFIX "nr_cpus limit of %i reached."
++			" processor 0x%x ignored.\n", nr_cpus, cpuid);
+ 
+ 		return -ENODEV;
+ 
+@@ -73,11 +80,13 @@ static int set_processor_mask(u32 id, u32 flags)
+ 	if (cpuid == loongson_sysconf.boot_cpu_id)
+ 		cpu = 0;
+ 	else
+-		cpu = cpumask_next_zero(-1, cpu_present_mask);
++		cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
++
++	if (!cpu_enumerated)
++		set_cpu_possible(cpu, true);
+ 
+ 	if (flags & ACPI_MADT_ENABLED) {
+ 		num_processors++;
+-		set_cpu_possible(cpu, true);
+ 		set_cpu_present(cpu, true);
+ 		__cpu_number_map[cpuid] = cpu;
+ 		__cpu_logical_map[cpu] = cpuid;
+@@ -138,6 +147,7 @@ static void __init acpi_process_madt(void)
+ 	acpi_table_parse_madt(ACPI_MADT_TYPE_EIO_PIC,
+ 			acpi_parse_eio_master, MAX_IO_PICS);
+ 
++	cpu_enumerated = 1;
+ 	loongson_sysconf.nr_cpus = num_processors;
+ }
+ 
+diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+index 3d048f1be143..0f0740f0be27 100644
+--- a/arch/loongarch/kernel/setup.c
++++ b/arch/loongarch/kernel/setup.c
+@@ -576,8 +576,10 @@ static void __init prefill_possible_map(void)
+ 
+ 	for (i = 0; i < possible; i++)
+ 		set_cpu_possible(i, true);
+-	for (; i < NR_CPUS; i++)
++	for (; i < NR_CPUS; i++) {
++		set_cpu_present(i, false);
+ 		set_cpu_possible(i, false);
++	}
+ 
+ 	set_nr_cpu_ids(possible);
+ }
+diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+index 1436d2465939..03b2b7669cf5 100644
+--- a/arch/loongarch/kernel/smp.c
++++ b/arch/loongarch/kernel/smp.c
+@@ -271,11 +271,10 @@ static void __init fdt_smp_setup(void)
+ 		if (cpuid >= nr_cpu_ids)
+ 			continue;
+ 
+-		if (cpuid == loongson_sysconf.boot_cpu_id) {
++		if (cpuid == loongson_sysconf.boot_cpu_id)
+ 			cpu = 0;
+-		} else {
+-			cpu = cpumask_next_zero(-1, cpu_present_mask);
+-		}
++		else
++			cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
+ 
+ 		num_processors++;
+ 		set_cpu_possible(cpu, true);
 -- 
-Without deviation from the norm, progress is not possible.
+2.43.0
+
 
