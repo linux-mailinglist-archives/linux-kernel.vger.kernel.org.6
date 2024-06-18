@@ -1,183 +1,197 @@
-Return-Path: <linux-kernel+bounces-219037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F42690C965
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD88C90C939
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4AE6B2971F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:22:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD84EB266F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC05A139D13;
-	Tue, 18 Jun 2024 10:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D9213A87A;
+	Tue, 18 Jun 2024 10:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cw45v3lG"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="0H5wjngi"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB0254724
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 10:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D9677104;
+	Tue, 18 Jun 2024 10:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718705759; cv=none; b=nOm57bDXPOD/Y8rUe3tIdpUb3w8KK98ZGoQXaiSK5WtVSW3bRgC+fqShzjE8lswTfabLtwCnadbejL0S/H05YkG5fnb6LdK/dOiq9gFc9jm+y4KRBT2XF3LSc1LQkKcRFLCdC5J5wy3ETYWuG059GI2quE/no7jePthaRs4rl10=
+	t=1718705823; cv=none; b=LSqbacQohPGLsQ4/xD1oqcWq0q34OshDdZwivaZr8baPhGbcgKbNHzXzATwmqGfoW3tPiKkB8KWrLwUDl4rc4G0WNmdOR3Ac8yLRr5q7xcFho8bnMipw4WEVSnJII++EFZ+/b8BjGSEL7A06u23nv1G/LalkeivZeKlnYnHB5MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718705759; c=relaxed/simple;
-	bh=NIdZ2bTKasH+nk1kkXDFEdLvkov1+pEV1h3fA2Sb+PU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o7BGPHlt+IpHHxNhRHBUDu4bb2sncctp+46/A9KwOmYqBJYEMwyxU6d3YQ+Jre7CC2Atd25X1q0SyrTTXGLJ1wKJB6bKWKiEJxJrZeHuoUlA/QFEj/HZQ++T8n5jDC6QtUyFO/fnlES973JHNx0/5vclTnjmL8lz/bjWLUOrrss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cw45v3lG; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dfe81d54db9so5004878276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:15:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718705756; x=1719310556; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XhPNLiHLoa3orzHyeJcCWczzW2ldawXh2vT5fW5oe5g=;
-        b=cw45v3lGwh9ibs+BkVPS8XNLTjdmsHttYcOvH1/JB0BK1X4qkdBFWTd5h9/JffK2Q4
-         bMqkZCM4cz00gi4b/5raWUhPKZpvwm4dwe+Yp8T0732mA8/rOzrH/1Z0jl6sLZwTJx7e
-         Vx6TwaoxOSGY/zBrrV/rL7oI7+1/t90uXcdBQewh094KVaGVZ/OxmpJC77u7D0VMFTBW
-         TYV9WZJetl2us1GcNBaa9LUeabSNQTQ9NZFZ8whSHnyuF+iXTcGYhFHAbWrALnhBY9L1
-         RAIZw3zkMvbHKNBq8Camt63WaMRgILFnXQ11daDlQ2M9PWIMERTJXvLEDVwfxhVN4mhr
-         cWQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718705756; x=1719310556;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XhPNLiHLoa3orzHyeJcCWczzW2ldawXh2vT5fW5oe5g=;
-        b=vPLaQjq+XtzGm080Z31cEBFx8uxWBzcaHIB6Wb+riTrkIc5qzB2YUMsqRagEVbrD2l
-         GTuh/S7aRF+eEPMOOvdHfhl+dbu1eozCR17lUMbK0EdkrnMzB7kobDDqFVr0MOUCXH32
-         ELnIqd4P0RekOLNwC8stJwpnE5GZ9sn6Jv0G8byDVCvsJGy6h3+LYjE5p2QC/9Du7Lme
-         rBf6xpZOnYwxQtCgl6EAtwiUDbXBbQbDmuGaIzggtmf2qRYx32GQkrbrdpw1ucbCvCqA
-         l/NG/J1ncBy5qfX8Ab8HxZjL+YSzKuFA8mNQx9M1Qcaxe4CijXcGvAsihmBlO4Q6O9+U
-         skiw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+3CXsp0otuohKkH5tT9+62UGwlEYC+tvwTTQYg7LHpVGUsnyd0rFUON9tX7PfQZQ4m2PWeLBkIz2kLNlc6GbPUx+8pbS5q8XppYZ7
-X-Gm-Message-State: AOJu0YxL5s4D9BpS2P4n6e0q6bCw4LocX5xvkNcp5H61vFwvKvsqd5Ew
-	rNPCt2pyppNGry/PtM5EGTZe9KoVPwyoFAb6J9RUlm5InNE13B4kP2DyNzEY/Fmk3K7dRLssYo/
-	eVBULxxVHLBrhpVPbsIIo7HaMbus7T5HzPcqNxA==
-X-Google-Smtp-Source: AGHT+IEsv7IfYeMsArzBejH8niE9nZt3hfwkV12Dx+vdDglKTjgIuNRzw5dNj2kD/OX+usllX3TQnPLf/mPK46iUQlw=
-X-Received: by 2002:a05:6902:11cc:b0:dff:310b:9b40 with SMTP id
- 3f1490d57ef6-dff310b9ea5mr8048320276.45.1718705756426; Tue, 18 Jun 2024
- 03:15:56 -0700 (PDT)
+	s=arc-20240116; t=1718705823; c=relaxed/simple;
+	bh=gx5XNpX9FgJu98i8CWmHAYRyuGCEFHvQShWetZfMZMk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HHulMumhYi41xDIurI/VJMMzUF7OSBsPVWQbkpcVykMuiwXM9UczvriHziG3vho5gRrrqjhfd9VI0JrCFKef3RzWyF+r9U4Si+TFdmkJeSGM2Us/Z3QUqG2rVi0A3FXs8EBzLgMxfESA+uZnp40slY2Us0KAEUjLLKxqmNLU/kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=0H5wjngi; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718705821; x=1750241821;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gx5XNpX9FgJu98i8CWmHAYRyuGCEFHvQShWetZfMZMk=;
+  b=0H5wjngiS/dWh90CUW5R0m01syYMj0uhnSix3qOfk+4AfEHtNG2yI9vJ
+   agaAd4gp5avwcDn+bTYBv7Dv11hDozStt8+BfGUdANcd+ka7yHUTPe1Lf
+   vFTkuKysQp+TGzElUI6OPaoldxU/dZ5MbXS5sA1/PkjPR2kFsfetNpfkh
+   kpokRS81DHi8oCfSlg92b9Qwf6gBu3Cquoq5S13HEz75MYk6txuZ3DQsn
+   wY26vqAeFRqSkWD1u5XEYH/s54dQ+UZz4U/ke7hGQpDzhs02nftYDrwEt
+   EmS3pqHeSh0JDov3ipE7gqD0YnWUK7YOikekDoO1VOsdKxZw9oUhaGywX
+   w==;
+X-CSE-ConnectionGUID: o2SKGVjbQSiEKU8bW2iCXQ==
+X-CSE-MsgGUID: 7ZBDQuLCQhWCJdZiKrs8Rg==
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="asc'?scan'208";a="195429902"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Jun 2024 03:16:53 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 18 Jun 2024 03:16:49 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex04.mchp-main.com (10.10.85.152)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Tue, 18 Jun 2024 03:16:46 -0700
+Date: Tue, 18 Jun 2024 11:16:28 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Jisheng Zhang <jszhang@kernel.org>
+CC: Conor Dooley <conor@kernel.org>, Yixun Lan <dlan@gentoo.org>, Yangyu Chen
+	<cyy@cyyself.name>, <linux-riscv@lists.infradead.org>, Conor Dooley
+	<conor+dt@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, Anup
+ Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Jesse Taube <jesse@rivosinc.com>
+Subject: Re: [PATCH v1 0/9] riscv: add initial support for SpacemiT K1
+Message-ID: <20240618-hardwood-footrest-ab5ec5bce3cf@wendy>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+ <20240616-exorcism-computing-e11e26084a62@spud>
+ <20240616224811.GC3983622@ofsar>
+ <ZnBEBQjTQtFs-fXt@xhacker>
+ <20240617-synapse-carmaker-0a59c7c6edb7@spud>
+ <ZnEOU7D00J8Jzy-1@xhacker>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618081418.250953-1-j-choudhary@ti.com> <20240618081418.250953-2-j-choudhary@ti.com>
- <r5szraxdqfs4v4hnvqgx6tbmc5e5ew5ljyf5xlaobywm55bohy@6kygxenn2tvd> <e236648c-e257-42a3-a0a3-a1b88b539459@ti.com>
-In-Reply-To: <e236648c-e257-42a3-a0a3-a1b88b539459@ti.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 18 Jun 2024 13:15:45 +0300
-Message-ID: <CAA8EJprX0ePM1Xvmo9DahSFAnADRPBuwVo95A423xeffgpr49w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] drm/bridge: ti-sn65dsi86: Add atomic_check hook
- for the bridge
-To: Jayesh Choudhary <j-choudhary@ti.com>
-Cc: dianders@chromium.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, mripard@kernel.org, 
-	linux-kernel@vger.kernel.org, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, 
-	daniel@ffwll.ch, spanda@codeaurora.org, a-bhatia1@ti.com, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ls0dFZComN3YRvgQ"
+Content-Disposition: inline
+In-Reply-To: <ZnEOU7D00J8Jzy-1@xhacker>
 
-On Tue, 18 Jun 2024 at 12:56, Jayesh Choudhary <j-choudhary@ti.com> wrote:
->
-> Hello Dmitry,
->
-> Thanks for the review.
->
-> On 18/06/24 14:29, Dmitry Baryshkov wrote:
-> > On Tue, Jun 18, 2024 at 01:44:17PM GMT, Jayesh Choudhary wrote:
-> >> Add the atomic_check hook to ensure that the parameters are within the
-> >> valid range.
-> >> As of now, dsi clock freqency is being calculated in bridge_enable but
-> >> this needs to be checked in atomic_check which is called before
-> >> bridge_enable so move this calculation to atomic_check and write the
-> >> register value in bridge_enable as it is.
-> >>
-> >> For now, add mode clock check for the max resolution supported by the
-> >> bridge as mentioned in the SN65DSI86 datasheet[0] and dsi clock range
-> >> check for SN_DSIA_CLK_FREQ_REG.
-> >> According to the datasheet[0], the minimum value for that reg is 0x08
-> >> and the maximum value is 0x96. So add check for that.
-> >>
-> >> [0]: <https://www.ti.com/lit/gpn/sn65dsi86>
-> >>
-> >> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> >> ---
-> >>   drivers/gpu/drm/bridge/ti-sn65dsi86.c | 65 +++++++++++++++++++--------
-> >>   1 file changed, 46 insertions(+), 19 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> >> index 84698a0b27a8..d13b42d7c512 100644
-> >> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> >> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> >> @@ -113,6 +113,20 @@
-> >>
->
-> [...]
->
-> >>
-> >> +static int ti_sn_bridge_atomic_check(struct drm_bridge *bridge,
-> >> +                                 struct drm_bridge_state *bridge_state,
-> >> +                                 struct drm_crtc_state *crtc_state,
-> >> +                                 struct drm_connector_state *conn_state)
-> >> +{
-> >> +    struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
-> >> +    struct drm_display_mode *mode = &crtc_state->mode;
-> >> +    unsigned int bit_rate_mhz, clk_freq_mhz;
-> >> +
-> >> +    /* Pixel clock check */
-> >> +    if (mode->clock > SN65DSI86_MAX_PIXEL_CLOCK_KHZ)
-> >> +            return -EINVAL;
-> >> +
-> >> +    bit_rate_mhz = (mode->clock / 1000) *
-> >> +                    mipi_dsi_pixel_format_to_bpp(pdata->dsi->format);
-> >> +    clk_freq_mhz = bit_rate_mhz / (pdata->dsi->lanes * 2);
-> >> +
-> >> +    /* for each increment in dsi_clk_range, frequency increases by 5MHz */
-> >> +    pdata->dsi_clk_range = (MIN_DSI_CLK_FREQ_MHZ / 5) +
-> >> +            (((clk_freq_mhz - MIN_DSI_CLK_FREQ_MHZ) / 5) & 0xFF);
-> >
-> > atomic_check might be called several times, it might be called to test
-> > the state. As such, it should not modify anything outside of the
-> > state variables.
-> >
->
-> If not in atomic_check, then where should I move this calculation and check?
-> mode_valid with returning MODE_BAD in case of failure?
+--ls0dFZComN3YRvgQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I didn't write that it's the wrong place for math. I wrote that you
-should not be modifying global structure.
+On Tue, Jun 18, 2024 at 12:34:27PM +0800, Jisheng Zhang wrote:
+> On Mon, Jun 17, 2024 at 04:32:59PM +0100, Conor Dooley wrote:
+> > On Mon, Jun 17, 2024 at 10:11:17PM +0800, Jisheng Zhang wrote:
+> > > On Sun, Jun 16, 2024 at 10:48:11PM +0000, Yixun Lan wrote:
+> > > > Hi Conor
+> > > >  Thanks for bringing this up
+> > > >=20
+> > > > On 19:35 Sun 16 Jun     , Conor Dooley wrote:
+> > > > > On Mon, Jun 17, 2024 at 01:18:52AM +0800, Yangyu Chen wrote:
+> > > > >=20
+> > > > > No MAINTAINERS update, so I figure that means you don't want to m=
+aintain
+> > > > > it going forwards? If there's someone out that that does care abo=
+ut the
+> > > > > spacemit k1 (Jesse maybe?), then I'd be more than happy to have t=
+hem
+> > > > > look after it.
+> > > > Yangyu kind of has limited time, too many stuff for him..
+> > > >=20
+> > > > I'd volunteered to help on this if it can fill the gap
+> > > > Also I'd be more than happy if anyone willing step forward to co-ma=
+intain..
+> > >=20
+> > > Does maintainership work like this? Is willing to do enough?
+> > > FWICT, maintainership involves active patch contributing, reviewing a=
+nd
+> > > maintaining the whole SoC. It is better to take over the maintainersh=
+ip
+> > > after showing enough patch contributions and understanding of the SoC.
+> >=20
+> > I was going to reply to your other patch about providing more complete
+> > "basic" support for the SoC, but I guess I'll reply here and address
+> > both points. After the k230 and th1520, which were both merged with very
+>=20
+> When I saw k230 a few minutes ago, I assumed you mean k210 since I
+> didn't found k230 support in linus tree now. After searching the
+> maillist, I found oh there is a k230 series which is similar to this
+> series, no pinctrl, no clk, no reset. Since the incomplete K230 initial
+> series hasn't been merged into Linus tree now, is it possible to drop
+> it so that we can avoid the same mistake for k230.
 
-So you have to subclass drm_bridge_state for the driver and store the
-value there. Or just add a helper function and call it from
-atomic_check(), mode_valid() and set_dsi_rate(). It really looks like
-a simpler solution here.
+Yeah, I think you're right there and I should drop the k230 stuff from
+for-next. I forgot that it was not already in, because I had sent it for
+6.10 and Arnd didn't like some of the inter-branch dependencies that my
+PR had and told me to drop it. If nobody really cares for getting the
+platform to a reasonably usable state, then I guess we will just not
+support it. And it seems like there's little interest in it, despite
+being the first system you could buy with ratified vector. It's not a
+great platform to work with documentation wise, at least as a non-Chinese
+speaker like myself nor is the U-Boot M-Mode -> OpenSBI -> Linux vendor
+boot flow good for iterating on kernels.
 
-Note, there is a significant difference between mode_valid() and
-atomic_check(). The former function is used for filtering the modes,
-while the latter one is used for actually checking that the parameters
-passed from the client are correct.
+> > basic support and have made very little progress towards being a useful
+> > platform, I'm pretty reluctant to merge another platform in a super
+> > basic state. I was going to make this point before you brought it up,
+> > but it's good to know I am not the only one with that view. To be clear,
+> > I'm not pointing blame for those platforms, I'd just like to avoid a
+>=20
+> Yep previously I thought it was fine to use a fixed clock or dummy clock
+> during the initial patches, but I changed my mind now, especially after
+> Samuel complained the cv1800b reset dt changes.
+>=20
+> > repeat. If Yangyu doesn't have time to do any development work on the
+> > platform, I'd like to see someone else (and as I mentioned Jesse is
+> > interested) take on getting some of the basic driver patches written and
+> > merge only when those are accepted. Having no in-tree clock and pinctrl
+> > drivers is definitely a hindrance to other people doing parallel
+> > development of drivers and I'd like to avoid that.
+> >=20
+> > Getting back to your point in this mail, whoever gets the platform to
+> > that state is well suited to looking after it going forwards. Some other
+>=20
+> The person who can bring the platfrom support to a well-moduled state,
+> IE, proper clk, pinctrl, reset drivers shows the passion, the code
+> contribution and solid understanding of the SoC, sure he/she is
+> definitely suited to maintain the SoC. I just don't think it's=20
+> a good practice a person can became maintainer even w/o one LoC
+> contrubition to the SoC, because IMHO code contribution matters
+> for maintainership.
 
->
-> I had to move it from bridge_enable based on the comments on v1:
-> https://patchwork.kernel.org/project/dri-devel/patch/20240408073623.186489-1-j-choudhary@ti.com/#25801801
->
-> Warm Regards,
-> Jayesh
->
-> [...]
+Right, and the th1520 is suffering a bit from that at the moment, the
+maintainers other than yourself haven't sent a single LoC for it, and
+have not gotten involved after you have become unable to spend time on
+it. I do know that things are likely to change there soon, which is
+good.
 
+Thanks,
+Conor.
 
+--ls0dFZComN3YRvgQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-With best wishes
-Dmitry
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnFefAAKCRB4tDGHoIJi
+0njCAQDRmhJBRDXSxo9jmNwWNsNOWf+p+Of21MpteeW5PvqBYQD+PRRpSWRtgdSR
+MTHkDx0FRVW1eds3JwR/x3zZL4n7/Ak=
+=BGK6
+-----END PGP SIGNATURE-----
+
+--ls0dFZComN3YRvgQ--
 
