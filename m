@@ -1,122 +1,123 @@
-Return-Path: <linux-kernel+bounces-219654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD8690D61B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:52:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56B690D75C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F2CD1C23885
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:52:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30895B36173
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AB813C673;
-	Tue, 18 Jun 2024 14:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8DD15EFD1;
+	Tue, 18 Jun 2024 14:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="lytISdkA"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GGg2XXbp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tppiOctU"
+Received: from wfhigh8-smtp.messagingengine.com (wfhigh8-smtp.messagingengine.com [64.147.123.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7024E2139DB;
-	Tue, 18 Jun 2024 14:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF01157E91;
+	Tue, 18 Jun 2024 14:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718721939; cv=none; b=B8IB8fIUDEdVTG7wGbOhXX/udVvzQOYk19s2f+OximddBBPapY/gCo9j1ERuS/z13X5Te+BU66eX1FkTp47uowfh7WTAsQ2pA3fYFmHGnYzqsFQzZpq7nKxTQtDPf8+30XkRJP2fZHgZpvZdlgDD0bRNBlxPnY6qNg/0ee+AxCg=
+	t=1718721849; cv=none; b=Gs12HNRGJuxuxUxM26+ic+f2UlV78b05DqDAoo9p4Axg8lJEsQIrs5TsjlzMJaOJo1zTw9HgBp79Dm51HZjc6PgX7j/IGTtm23yr68gzFiBsyE30azbN6yPqK3ysL1iEdDuu9v3llzrvSVZZtVKpl2VZMnser2kBziwmLwll0Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718721939; c=relaxed/simple;
-	bh=4yMZjbqyortOGO62oRy9tFToIlzpFEbqV+s8Ppu12O4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FxF89Y13TkY+k6SE9M2ElQdF+aYDMIzElF4PjmmZOgAKcK2/BNCmERaIdXfNzMBGSiurJMFzue+HoNTitI6L8/a5relYzzJIJjJm0NxLUIEwG0euJqn4D4kcwWQP3rQ1CxmDLgr8xVgFeo9EL4sA5TFw/LgAjAk9gl4QF+uWmac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=lytISdkA; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 9412D100002;
-	Tue, 18 Jun 2024 17:45:08 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1718721908; bh=SoquFa1edqrv14w1JgAqEyQzfSLztJhALwMOpgTEqNo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=lytISdkAjnCC/VvV6yIOTeaF8FvWWus8tQxADwXqKXlXoC9KgJb8W7ZhY7xkn03F2
-	 +nDm6zCBxL2xniDITldHn36O3gygOyec/mT0JieGqgYTb6l36AeoE9Mp2+LeXbWOlX
-	 YdwV3vc9qDKdxoD1gipjO4QOOfzEUpIjZ4KeGliJi9WPcI83PklZWaiw7pVTh9ocrS
-	 HAubFNdf+b3QNwOxhimKjWe/D5/fJtmwBJE0yCnG1hlMGcL7VMQHedojImS19xpWKG
-	 3Vu1qxGPBD2iRKM+MYnZCaAf0vDA6iTuNvErqnj2KwXqgXLjhTRN088ufj9Tx4rDdi
-	 ilyf/0zL90YoA==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Tue, 18 Jun 2024 17:44:24 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 17:44:04 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Keerthy <j-keerthy@ti.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Linus Walleij
-	<linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Grygorii
- Strashko <grygorii.strashko@ti.com>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] gpio: davinci: Validate the obtained number of IRQs
-Date: Tue, 18 Jun 2024 17:43:44 +0300
-Message-ID: <20240618144344.16943-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1718721849; c=relaxed/simple;
+	bh=ml2UhN0QXyqPQlq6C6npK8L85MIMec/94MkmrBjN9CM=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=JBLiwsGULmpLDkoupyloaxXgmZBSV5LefKIseNWyK2DTgtV6JXYcnFIZnZe4KuCE5fz5HmKTSQ9R1RXuDUaE6YfYJfLOWBxghu5TLrHdQmT2YE5gwpiT1scp3iuSMhnsjCQYFcsP54Zx+ywWvmVWkRl60ltODoYE4ACTBR/PjPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GGg2XXbp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tppiOctU; arc=none smtp.client-ip=64.147.123.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 46705180009D;
+	Tue, 18 Jun 2024 10:44:06 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 18 Jun 2024 10:44:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1718721845; x=1718808245; bh=3CPbe4SFQV
+	4/zNzAZ9bSUaLdRIggzJj1JGK8pDrKFzM=; b=GGg2XXbpDKzrRcruoOQkP/ytUy
+	s266qFsw2ztkXsfcW7HJWvvkXd19YyV+h7oHp7J+uRbAH34OTEstuuedjH7BxobC
+	zsoIOjg+qrUNu9pGUPyuhnGvYo8oQDRsIlnDRT7bI1pjTTD6FH2HcpiBTv4sL+ei
+	U7YdB59vt3ji16pZGXgkSjeSAxhOifhyyjOGXzzJHK5kd9odgPHImTApJ4DnexX/
+	CRluElp7EmPIqQWsxcuvrBwzJ5Qpltptdk/N8mPZvKbTnVzcmqZ80KoQ90b8YLui
+	pF/XTCoEqGSV/fG/uV+6FMS7JFk64sH+sl9lxN+mljQIT9Puwxh+9hJzfJSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1718721845; x=1718808245; bh=3CPbe4SFQV4/zNzAZ9bSUaLdRIgg
+	zJj1JGK8pDrKFzM=; b=tppiOctUrp+Qbq9ukuJQ19ckrJFVwhlVKY4W4IJQExBE
+	8A8kka6kg15+bBpbHxrWc946VpI/2oKxamszagJJe1n+ib99ka814ZZVRNUR3NmT
+	i7eiVHqyeZvX3AE0WWxuol19n7Ngs9p9vXMSf+mFpUPAV6p6QHYrH5/oQzldo4/o
+	OIUpAF/U0ZkqLl9othgGAlpw+EF0LkU0sinPZnIkHO+v7Eplta6mQC07dFEZdsIx
+	ASuMsmitDv5BbMXk7Cd6ovemR8fhiT1XzzSB9+a2OS3tHAIE8xMSbiPGMhoHHTwp
+	kQrgMGXdMbzaMXmWWKIEQuOFWlTfXQIEmJnNGmD/Tg==
+X-ME-Sender: <xms:NZ1xZniFtWs-OO3GVUfE8iAUbiqH2UNVEzX2-Dauq5I5-_2UbUPN9A>
+    <xme:NZ1xZkDAyVQSANWAGA6TuS6-beBdXzkdHTOJ2i_BHYjX3QmHEuvKnM62cpuztfMik
+    2PY-QNFGE7igdKpeUE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvkedgheduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:NZ1xZnGzAA_qS329TizHl7TVJ9KmtjbSuhTx9REnZz8dZNbat8gBmw>
+    <xmx:NZ1xZkRZk7M4QONeziSVTZHvOj5cRDMZF2pQVsrCtcm6GR-onHElhA>
+    <xmx:NZ1xZkze41blhsp0SQA07kW6bjnVJOh-Y7IgqVyI2n4H-BI8M5EzZg>
+    <xmx:NZ1xZq6KtA-MXkZmvuQgdeMGoigkMz4mryPxa3nw1D02XqLVEyuqMQ>
+    <xmx:NZ1xZvqQ-I3973rPcyXQ2bWBTvti1unvLKG-DSSUU-yXoD_y8u_Qoykt>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 42E78B60092; Tue, 18 Jun 2024 10:44:05 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <4e8f3cd6-de4f-492a-b1c0-8e0a356d2954@app.fastmail.com>
+In-Reply-To: <20240614140421.3172674-2-peter.griffin@linaro.org>
+References: <20240614140421.3172674-1-peter.griffin@linaro.org>
+ <20240614140421.3172674-2-peter.griffin@linaro.org>
+Date: Tue, 18 Jun 2024 16:43:45 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Peter Griffin" <peter.griffin@linaro.org>, "Lee Jones" <lee@kernel.org>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ "Saravana Kannan" <saravanak@google.com>,
+ "William McVicker" <willmcvicker@google.com>,
+ "Sam Protsenko" <semen.protsenko@linaro.org>, kernel-team@android.com
+Subject: Re: [PATCH 1/2] mfd: syscon: add of_syscon_register_regmap() API
 Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185989 [Jun 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/06/18 13:19:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/18 13:21:00 #25648410
-X-KSMG-AntiVirus-Status: Clean, skipped
 
-Value of pdata->gpio_unbanked is taken from Device Tree. In case of broken
-DT due to any error this value can be any. Without this value validation
-there can be out of chips->irqs array boundaries access in
-davinci_gpio_probe().
+On Fri, Jun 14, 2024, at 16:04, Peter Griffin wrote:
+> The of_syscon_register_regmap() API allows an externally created regmap
+> to be registered with syscon. This regmap can then be returned to client
+> drivers using the syscon_regmap_lookup_by_phandle() APIs.
+>
+> The API is used by platforms where mmio access to the syscon registers is
+> not possible, and a underlying soc driver like exynos-pmu provides a SoC
+> specific regmap that can issue a SMC or hypervisor call to write the
+> register.
+>
+> This approach keeps the SoC complexities out of syscon, but allows common
+> drivers such as  syscon-poweroff, syscon-reboot and friends that are used
+> by many SoCs already to be re-used.
+>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-Validate the obtained nirq value so that it won't exceed the maximum
-number of IRQs per bank.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ numbering")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/gpio/gpio-davinci.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index bb499e362912..1d0175d6350b 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -225,6 +225,11 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	else
- 		nirq = DIV_ROUND_UP(ngpio, 16);
- 
-+	if (nirq > MAX_INT_PER_BANK) {
-+		dev_err(dev, "Too many IRQs!\n");
-+		return -EINVAL;
-+	}
-+
- 	chips = devm_kzalloc(dev, sizeof(*chips), GFP_KERNEL);
- 	if (!chips)
- 		return -ENOMEM;
--- 
-2.30.2
-
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
