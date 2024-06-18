@@ -1,255 +1,161 @@
-Return-Path: <linux-kernel+bounces-220198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D635990DDF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:05:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA3B90DDFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAB021C21840
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:05:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 283AFB2210D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA47176AB0;
-	Tue, 18 Jun 2024 21:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183161741FF;
+	Tue, 18 Jun 2024 21:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QFwg5tQN"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P/1ffTEd"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7668C1741D4;
-	Tue, 18 Jun 2024 21:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718744697; cv=fail; b=JdFmd8UdXVE5QZwRx3WGZ37EdbW+jW1WZKE/d2ghRhUeXZx/Pgk12MSPpG0vJcTsQx92zePGjRuqz/QDZko7omTdY3itvqVlrfKM8Awn1GXfNJogkFRXH8CMJuOBy4QCsxffAi+eqI+bFD1odXqcrB2JI2IGmZo/ylPSL2CFWIw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718744697; c=relaxed/simple;
-	bh=xFf1KKyViViscPkXZTxU49Uk9jEg+sBSWEgT/vsIep0=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AORmXg3Sw8NpMA7/44/OC/Arfb6tu0zMOHY5DUIkNyTcT1y4otYXALm1Zh1DlQpMPmQxxDuV0DdzhNS1oL2PJSEnozg/EuB9pAYOnkqwPDX2ZROOK1XjJyOW1BmMxP3+V7vt6nCpC+u609DmfKsm9fk/KtHi5z6DrWFsNCdeVzI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QFwg5tQN; arc=fail smtp.client-ip=40.107.223.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hGUWMR7T/+rErx4V/0dQ31nsnsOTuNVsZXKWfitHRvrcAgoYZcZ0DxxDtTmYlhlmZIu/u8Cw/9JQCaSyEFcQHLV5f6wQrOT+88TapIXnjcHagzqncGb7szg36eeW8ZJWeA6dc6JwUHMx+V5AUgSof0SxL6Cf4bZzc0VYS8jdWFhFwrBKCcitaAmueqzAF1oVCSb05141oTnOBcdsz4MAjJZFWjtkX2gS8LfmLwvaKDFCUNtV/DzW1+SKzr+dGtYTrD8aa6X+M+RuiPMg0mncAS4eYXpX0ZpKkXGcUDgPcYmxojJTLG5ZRrClL1W74y7ZFjzMgCzjlhGQuEU3gsrabg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3P5EnYvlHNWyOLrUozkZAUf2EmqH4TlTy7fcSLbHApU=;
- b=b66SYIEbn2yJuNnira3JBZtgE3iW9jhR00Q+mKYTqVVDU3eaK+gM0fLwsl5N6GaWyNWCh6UN6Urw9rhIZ3T7zdgMmjf4AZOCm6/YOF60UYLQ6TosJAwab1QCzuFn3ivzIhs9kcTItCbHqnWhOVYLDLvDYCaycVoICTwsrxGvLqDjy0KJymI8zfwyTpHcuQkrrAVOc+Y/pJL7WzetXb2LAhtF2GkT2bxk9AzgFDV5VTXnIHMIj7YYpasRVgcqOkkzVQo6Mu8QTzaJYtALYNHhCGjonOzXLJduzHZDpB6EZzrw9GjTLmiZrBD+SqDBbvOdW+33WzTje5lQ1pzHKxFASw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3P5EnYvlHNWyOLrUozkZAUf2EmqH4TlTy7fcSLbHApU=;
- b=QFwg5tQNWTxnt9V73WXZTNnh6WBy4DmpvxCg9XLCFAPC/mxCG5Jjdd2qrRxh/BmCODreywWP2/+/Bi2qC7wSD50kLbXuBR1kJnUUob67utjy7JILOqx4SLtsdXAe8K+biTIgx8aI0o+KyCMH6g4/aHKWS+pg/Si6jhi0hDVqYts=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by MN2PR12MB4360.namprd12.prod.outlook.com (2603:10b6:208:266::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
- 2024 21:04:52 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.7698.017; Tue, 18 Jun 2024
- 21:04:52 +0000
-Message-ID: <6030f4b8-6576-6ae9-ba8a-9f1e42dfe7d5@amd.com>
-Date: Tue, 18 Jun 2024 16:04:48 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-From: "Moger, Babu" <babu.moger@amd.com>
-Subject: Re: [PATCH v4 06/19] x86/resctrl: Introduce interface to display
- number of ABMC counters
-Reply-To: babu.moger@amd.com
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1716552602.git.babu.moger@amd.com>
- <6fdb1c3df8960a9d634a7a904421c63406b1a4b7.1716552602.git.babu.moger@amd.com>
- <23aa42c1-6b55-4d29-8995-29fbddf98ed4@intel.com>
-Content-Language: en-US
-In-Reply-To: <23aa42c1-6b55-4d29-8995-29fbddf98ed4@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA9P221CA0030.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:806:25::35) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D9D15E5CA
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 21:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718744758; cv=none; b=Dwoyb/x/rqlpw9XTh3MiGhfepRj7wLTToyy4UDU0bFKurwuvMygw21rTxnShMCsceguVhM1op+0k2DmTKclo85K0jYUmA8bj4y/a/VcFW6KejFnWErmjguWlYBNlnaqXD73ki9hiS5hH4XIWj0JPTHIiW2N2QjBJhRJOyqzlKOs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718744758; c=relaxed/simple;
+	bh=ephjuVUCNI5g9OmET8XQKQoHAS6wUuhtl3/3VU6hlMQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GRp5AO7X9xeZsczvl3RxFk04SM+rLmwue6KYEnJHwpws6dd5qW+crEeZCkt0JNghKkwTJ2s/VbTwRYSTvpyF6CG1R8bZhcs+6b9LtOIJEgpezzPgL5GPAnFS1gUxVF5VwjFgMvqvfBBBrwBWVWaVuUsDWugyTTrVwkqJh+BHo50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P/1ffTEd; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c3050f4c50so4655769a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:05:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718744756; x=1719349556; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1HLO6ZiZ3mGv6VRzJAYgv6PhGFKY4aF3Dj1yNL2HBw=;
+        b=P/1ffTEdq0rMIDpCjlRTQlKYUWpVKwp3DUVjdzt00PKa0GTqI2X6lb6hgHWPMudqF5
+         q/t1Mw3zUEqq7K7oBizHmRWPYeLxskQf7iUWFgm7bPkWAXZ9xpILfsoHJfZ724I05gjO
+         nDN9My1jOSkWChHfNFfPMv03IO2/KcrE2ZN0rbSuZhDexr+2RrgQNkLlAm9+LfwFn+FJ
+         4Y2pAFUW1CoXrm9jPZzrDKhMB0S0nzYktNq5O0Ed3KrRCcew/+jGHNCwch1vqnQJEx/H
+         jGBbSYt/3LN1T2YeDIrfe9qUHJ6LPiNQxd9Xqsu/rcWTov9q89E8WTCZbKClAxx+1xzR
+         XK8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718744756; x=1719349556;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v1HLO6ZiZ3mGv6VRzJAYgv6PhGFKY4aF3Dj1yNL2HBw=;
+        b=WHDGuaTUWPXWf+Zeb2eBBNF1Yqv64+Qd9Q0opAKLCHL8yFpPb4Wpc1QL36EUfPosAF
+         I+gkwrSZWAw3omcADxcQ5Xl/RdCziRwVsC0tRmwZrKQsZC6JGbcq1PJCIpWG0F5sdugX
+         kFD8ROTylAB4mOiN/xiMBikFPIIZvSU+uuVHSFHLIjMt5dlKom21QOUBpKkB0VQ0IO5M
+         4exTzeMQwPQRPso29MIL8eAl7E4jBK/WUMtTcKl7h9DaVcHKInC6P+1gshRS5W9TP7/4
+         U/d4iLVJoBOMMTudPwdFvfMRcJIkuSRTtqwVp1Huo0KyqgzaCuyNjqovdAYrC/FB8B2t
+         z0ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUPMFYBszSrwnuLHuTmZH3UuMlDdWEENHYhcZXaIoBedpUmWxVa6P8AcLo7xIYNuLNcX4I62A6mVfYdA1oT4Y98Z/edZCnkRboQPiz
+X-Gm-Message-State: AOJu0YzaiWVbF178vXBZ6SEwZodpa56Lp6O0JuWI5addFxsY0d4v2Mvz
+	CJ5UzND4M1p4FL+xhk/Xb8yQHuXRgD2i45Ak7JXqR1wCMgrQCH1ExXZgM8eypf8Wh/2QQw7PkQ6
+	viHFhVSEk+D653n6MFdU4R2FfyPOxRkqU+bHuuQ==
+X-Google-Smtp-Source: AGHT+IH7c7AIGjET1dusErKHhBLkEgMToHh2NSoln4tKcsWBFZs3SzmQ+8Wbp0WdnBZvyHrU6VRDcF37Sh/C+IdpdLk=
+X-Received: by 2002:a17:90a:1fcc:b0:2c4:ddb5:7bb0 with SMTP id
+ 98e67ed59e1d1-2c7b5d56bd6mr796987a91.30.1718744755941; Tue, 18 Jun 2024
+ 14:05:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|MN2PR12MB4360:EE_
-X-MS-Office365-Filtering-Correlation-Id: f4d43c35-c4b8-4053-b8d7-08dc8fda4c1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|7416011|376011|1800799021;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MVVWcUdnbG5FaFVmUUEwTHh2azhmZjJoWEREMlVBRE0rZDgrUVU2N2NpUnFF?=
- =?utf-8?B?Ty9lajJhUzhic1FHY1ROZEpFVFdCZ2ZLcndoUGxGbEoyZGQ0SzNxNktINjZr?=
- =?utf-8?B?dUJTNmRsL3F4aE9zWExRRVZrNE9pYkpCRzQxWWVGOTZsWkpQalZrNENDQ1Ju?=
- =?utf-8?B?Z0VuMU91TXptQnBIZHhiY0lPNmQ4ZGJ3dmtWSGg0KzdoS1BCNEZrNWFhcXdj?=
- =?utf-8?B?aXBvRFlxbVU0dEI0U1NSTnJsdWVpRFgxNHptNFJLVHFKcjAwNlkyZWU4SnY3?=
- =?utf-8?B?eldzN1ZrMTYrSnZYTmZWRFhmZS8yNCtnRTdKQ29iWVVBcXREbkRCTzB3ejVa?=
- =?utf-8?B?UkVERUYwZENFRHVrVXZSU2V1aWFjdGg1aWRGNjJpYzJqU2pQSDE0WVIwVGZx?=
- =?utf-8?B?RTh3UllUVzhIbWpJU05BTlh2cnZuTzVwbWhZaXFkWnJqUXV5U0ViWnB4OW9v?=
- =?utf-8?B?eGwwWE80VXFkdlpTdEl3WXJmOUh0MGZCc3RmT3hHcThXVGNhdHhvNklpTjV0?=
- =?utf-8?B?N0xDZlQ0Sk9oWHc2R0Y4M3lWQ1NSbElKTXlnUmMxY2lhZThwUnNVelRhQy92?=
- =?utf-8?B?OHdSL1c5RFYyOVB4Si9LZ1NHMEwxNGo4MVVCLy90OXJQTFhVelFSMlF4c1Jr?=
- =?utf-8?B?Q2JJUEtOTldlT3ZZMlY1QkNkQTNtNjFocHFqYjltM0E5amxkb2hiRU5lQXBI?=
- =?utf-8?B?dnZ5Um9XMmgxVTB0ekM0UnArNU1kNUZmTllhMUNxdDkvZFBmMkRhaGFWVE5T?=
- =?utf-8?B?WCt5cEczOE1JRzkzcGtmbDM3bnhpaDNxaDVrSkR4djZzcEkvbDVBOHBTSGMw?=
- =?utf-8?B?YnhCL2tOU3IxeFJsZ1BaNkEvSmxLMHZ1RGY1azBUbmNaQjZCS3c4V1k1SFZI?=
- =?utf-8?B?L0FDLzgwVWljeFlRSEZOajFFT3pKdzBMYysxYnlkeGFibG9xbFFIbDB0Uk9i?=
- =?utf-8?B?NGVHdHkyN2ZKTExJRzdua2E0R1FwRmhxbEp4YTAzMDEwTTRoWDVQRW4vQVhy?=
- =?utf-8?B?THdHRk5CRFN2TVRyY05XM0Y1azhEQjQzTWdaaG5NREJXYTdidTJ5U0Y0Mllo?=
- =?utf-8?B?NllqaXRHb3RHWThSSUVSd1dGRUJoTURXTnVsazBHRGFnNXdudCs1dHBMYklH?=
- =?utf-8?B?UUE5ekNWeWdUNUJ2RjdIOEtaSFFXWFd3Yjl4c3dQRGFUK2F2UkdUeGtmVkhv?=
- =?utf-8?B?NVErTGY2bVFlSUY3TUZha1JrOW12am8xLzBzWWtua2owR3Fpd0JsQWNFWFM3?=
- =?utf-8?B?UHJnNlQ5S3NqdFJub052eEZoSFZScTdBUkpvSDFqZXMxY3V4WmtySS9QMGVG?=
- =?utf-8?B?MmZkd1VWcFEzTkF6NXM0QkJoUnFCVjlLdDNFRkJEdCtZR2tERkpvNERscSt6?=
- =?utf-8?B?elhIL0FDOHIwVEFGMXJUYUJEcWJaVEdIR1hoblRCN2tmdXZ4cFJRdzJHOE5O?=
- =?utf-8?B?SU9jVnFpVUtRaHRNb2R4amxxL3VlZzlFNUdwbG5tNFJoWlYwdDFtR2ptOTZ0?=
- =?utf-8?B?Qm52UFYrSmRZWktuTlZFVkpFY1V2ZElqdEg3cHpYaU1JUEExSHRZa3gvc3I3?=
- =?utf-8?B?M1dydWxYUTVxQTJGOTBPNFRkL3N2a2JreFRwUmhuM01mWWUzWHZmSTQ1M3By?=
- =?utf-8?B?aWVOWVgveE9kVmZXZDNucVNNUUxXSGRXRDhnSE9Wdi9FemRudDdUZ0hSWU5H?=
- =?utf-8?B?c2dVS2dIS21XSVNjVlAyTnRpR0F4SEMzY1lLMll2Wmc2b3N3eTdnZ2JlbmlJ?=
- =?utf-8?Q?lacnq6ogUesJnevj/xKmg3aet1El/KC1csJ+EVC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NDBlUkcwMUFzTFhDUnh5VC8rcUJxWGdNR2V2NjBzWUFmZjJadDBjUlVhZnVF?=
- =?utf-8?B?SUlBUkJlNi8rNTU2T0pvWEtWa3ozbFZJZ1pCZXA4YndNUGh3dUNBeHpPWC9Q?=
- =?utf-8?B?Z2hJR2dVTFNMZ3NKdnBLR3BvSVgxbkVGbC9NcmxzY0RqeFErdk9ISTZoM3lP?=
- =?utf-8?B?WGNyYWVlYm1McEtDRUNIT01Qa1VhSWRPSzgzblpRem94V3pUL3lHV2ZlZUhQ?=
- =?utf-8?B?dkVWS0V3Q0JzYnFqS0ttelZmK1ZYQm1qRUhmcUNMMUk4UUU3SlZiSXZDNjBm?=
- =?utf-8?B?U2ZjTzQ0MENrTXg0RlpoNytyTXBSREl6NHdxQS9FWGpueXlFdXRhb0hwOTF3?=
- =?utf-8?B?a1g1Umt5bXJMOGtzUVhTejE1enRUYUNraklNRGpQZGdFWVBwTFNEa293WWds?=
- =?utf-8?B?cXN6Z3Q5SUE4bUtBSVJCM3BNZnVLaXQ2ZGlQS016RlR0VjZhaWlKYzNQRWZB?=
- =?utf-8?B?WlhuQlB6Smd4VjdDNW9sMm5vaW0xbDZzK2pOay9mSFVYdDJjYjl1c0xpZmhS?=
- =?utf-8?B?cTRTNUhJbjgvMVBxaHk0dURiUnVvRVVvWjFkN1BXdFZTbVJMTTI4SFFtVm43?=
- =?utf-8?B?TDFCMDRzZFhSUzFQcVpycG9FT1lOclNzWk9YUlNsZEFVR3U0R1h5cG5GNzZt?=
- =?utf-8?B?ekRSVmlrbWtVeTQzcitkUHZzZnY3QzlndU52OW12bjUxNUZMVk8xSkFndkhC?=
- =?utf-8?B?ejVyck8zMU5SQ0Z5UjVlNnJMNGd6c3VJZnBNai96NTQwb2l3akxXbzU5Ly9x?=
- =?utf-8?B?am9VZEhHWFdCRlF5bU9lWUgyeEU5ZElRbVV3SmNKakROVG1zUUpQaS9abEEr?=
- =?utf-8?B?WUxUVVJHcXlvZ1RGdWxYRUROWmNTbEpTejVDcXV1amRxNVIzQ0NqOXBaNDRx?=
- =?utf-8?B?dGM4UE41SUVxL2lqL3VWUmFpT2V2VStDcDlYNUF4dzJYZlBJSFhhZTlsd28x?=
- =?utf-8?B?OFd1ZWw1U0M4UnRLT2RKQlFhMzAwcEd4dDlEeTJYVkJzZGdURmxoUXhRcFd5?=
- =?utf-8?B?NzhoWHRkeWtISnVXUWgrZFBaWnlSVGlWWjl3NzE3REhQWU1JMENianR0WXpS?=
- =?utf-8?B?MlRYSHBxcGxBbjkzUWJRRDJ1bGowTU81QVNxdHRTd09HbUVobDNEV0tWNGNG?=
- =?utf-8?B?ZUVGNkNzVEROTlVHdm1ZM3NsSC9MdlQwZnViY3BHSlBROU1XUzl0Sll4TEFq?=
- =?utf-8?B?ODRXL1Y4aWhUMldpa21lTEsrWmZUdzFSTzA3VjJxc1ZZRElrZ1JkaG1GSUl5?=
- =?utf-8?B?SDg0U1ZpcXAxSWJnZndLZEJnV2lGZkxRV2pKRDlHVkJOaExZODBkZ0RHeUxy?=
- =?utf-8?B?Rkpkb0dja2U0TWN6d3k5QklGUkdRYlRzamFEc2dML3oyNGZIbHZrTTRXaHBz?=
- =?utf-8?B?dlhYNzR3WFlZcVpnSy9SalBCajdLRm9vY3REaFBrNGZ3aFJFSWpNTmlTVHRu?=
- =?utf-8?B?SUhCOVQzTzZPaUdBNW1tNTV6UW1pbUZENk9JN2RNR1FFVmRGWGMwMDBoWCtO?=
- =?utf-8?B?Q1dESEZBT004UFJFUVdEeDd2d1N3S1ZzSjJUNnJKMHpqenhzVURtTUErdFV5?=
- =?utf-8?B?S3JUcVQyWCtvd01pbEJTU21tWEVaaUlCT3lWSlovandyTUs3ZmpDK2hNT2FD?=
- =?utf-8?B?eGVrMnlRK3R6eVdJdkVML0ZLNHVpY29IdTBTNnEzbTQrbzFqTEFXMnFiUWtk?=
- =?utf-8?B?Z3RmK1lXMHhIeDRpS2VKaklVYkJMem5DNEFYcVF1Yk1Ya21ZaGVKbmNtczhB?=
- =?utf-8?B?ck93dGlSQTYxQlFqUHQyMTJEaGlGeEFVSnZLYUJ1bkJxZm9sSTZIY0EyMmhx?=
- =?utf-8?B?c1dNZi9vVmN6akpFMTJFVU9vd01Vemx1QVBLSnErazNSeDNrc29NU0FJc1h5?=
- =?utf-8?B?SWFtcCt3OUs0ZDZ5NFFhV2ExY0xpS0pWYVNsbGZLQU56U05DeW0xWlZQWE9w?=
- =?utf-8?B?VjZyWHdLTitLR29mVlVvTHdYdk42cTA2Y0hMcjQvbHVvVzBONXc1OUxWL0pC?=
- =?utf-8?B?S0lkWVNtL05PbzRCRnAvU1hZMjJsbWdORG9rMStnck5vbGJQblVvQStEMnll?=
- =?utf-8?B?NHZiL3E5Z0pmUkgxNlZnM0tBOUxsOU9oQ3Zyd0dVSVBVUWMxcDc4cVAvVTFo?=
- =?utf-8?B?eDFFSm1XYW5Gcmd3RmUxQVlxQVhvakphYlJVQTVXTlhFdVoyZkxpazgwY3RO?=
- =?utf-8?Q?+HNGkOyRWEBRdyW7VANin0R3jn1qPlGXiaPnxFh9uQ0m?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4d43c35-c4b8-4053-b8d7-08dc8fda4c1a
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 21:04:52.6269
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Zx4zWD+GGALhW2NUlqvWdEwY9DbpBcTTF4hcVaWeTdaRnY+T+vZCuSuAnPWKQV6z
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4360
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com> <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
+ <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
+ <20240616222003.agcz5osb2nkli75h@airbuntu> <CAKfTPtBikWsyPon6HweEZg5qjSP+QX=WZDQu4NHs7PUcSCqDDA@mail.gmail.com>
+ <20240617105348.ebtony3ciwxhvj2w@airbuntu> <CAKfTPtDPCPYvCi1c_Nh+Cn01ZVS7E=tAHQeNX-mArBt3BXdjYw@mail.gmail.com>
+ <20240618153931.ub5ezml3imd5mwu7@airbuntu>
+In-Reply-To: <20240618153931.ub5ezml3imd5mwu7@airbuntu>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 18 Jun 2024 23:05:44 +0200
+Message-ID: <CAKfTPtAgXHDjjPhNhDPZzWbPX-DNJzb5TH9DeF-cYOcEC=4igg@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding actual_cpu_capacity
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Xuewen Yan <xuewen.yan94@gmail.com>, Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
+	vschneid@redhat.com, vincent.donnefort@arm.com, ke.wang@unisoc.com, 
+	linux-kernel@vger.kernel.org, christian.loehle@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Reinette,
+On Tue, 18 Jun 2024 at 17:39, Qais Yousef <qyousef@layalina.io> wrote:
+>
+> On 06/18/24 17:23, Vincent Guittot wrote:
+> > On Mon, 17 Jun 2024 at 12:53, Qais Yousef <qyousef@layalina.io> wrote:
+> > >
+> > > On 06/17/24 11:07, Vincent Guittot wrote:
+> > >
+> > > > > And should effective_cpu_util() return a value higher than
+> > > > > get_actual_cpu_capacity()?
+> > > >
+> > > > I don't think we should because we want to return the effective
+> > > > utilization not the actual compute capacity.
+> > > > Having an utilization of the cpu or group of cpus above the actual
+> > > > capacity or the original capacity mainly means that we will have to
+> > > > run longer
+> > > >
+> > > > By capping the utilization we filter this information.
+> > > >
+> > > > capacity orig = 800
+> > > > util_avg = 700
+> > > >
+> > > > if we cap the capacity to 400 the cpu is expected to run twice longer
+> > > > for the same amount of work to be done
+> > >
+> > > Okay makes sense. Wouldn't the util be 'wrong' (to what degree will depend on
+> > > min/max freq ratio) though?
+> > >
+> > > We cap with arch_scale_capacity() still, I guess we know at this stage it is
+> > > 100% wrong if we allow returning higher values?
+> >
+> > I think that capping utilization to max capacity generates some energy
+> > estimation error because it filters the fact that we run longer in
+> > some cases.
+>
+> Yes, I think so too and that was my first statement. But I think this is
+> a bigger change to do separately.
+>
+> I *think* we have another source of error, we take util/cpu_cap as a percentage
+> of time the CPU is busy. We assume an implicit multiplication with a time
+> period, T. I am not sure if this implicit assumption is accurate and things are
+> aligned properly. Especially with how utilization loses the temporal info due
+> to invariance. util can be low but actual runtime will be much longer. I'm not
 
-On 6/13/24 19:57, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 5/24/24 5:23 AM, Babu Moger wrote:
->> The ABMC feature provides an option to the user to assign a hardware
->> counter to an RMID and monitor the bandwidth as long as the counter
->> is assigned. Number of assignments depend on number of ABMC counters
->> available.
-> 
-> Take care that this interface will not just be used by ABMC. I assumed that
-> when the user switches to "soft-RMID" then the value of "num_cntrs" will
-> change?
+I'm not sure to get what you mean by " how utilization loses the
+temporal info due to invariance"
 
-It can be used by both ABMC and "soft-RMID". Will update the information
-to be bit generic.
+Utilization aims to estimate the number of instructions to execute
+whatever the CPU of the system, which once divided by the compute
+capacity of the OPP of a CPU will estimate how long it will take to do
+the job. So if the capa of an OPP of a CPU is low, it will reflect
+that the actual runtime will be much longer.  A low utilization means
+that you don't have much instruction to execute but not the speed at
+which you will execute them.
 
-> 
->>
->> Provide the interface to display the number of ABMC counters supported.
->>
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> ---
->> v4: Changed the counter name to num_cntrs. And few text changes.
->>
->> v3: Changed the field name to mbm_assign_cntrs.
->>
->> v2: Changed the field name to mbm_assignable_counters from abmc_counters.
->> ---
->>   Documentation/arch/x86/resctrl.rst     |  4 ++++
->>   arch/x86/kernel/cpu/resctrl/monitor.c  |  1 +
->>   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 16 ++++++++++++++++
->>   3 files changed, 21 insertions(+)
->>
->> diff --git a/Documentation/arch/x86/resctrl.rst
->> b/Documentation/arch/x86/resctrl.rst
->> index 02790efaabcc..7ab8172ef208 100644
->> --- a/Documentation/arch/x86/resctrl.rst
->> +++ b/Documentation/arch/x86/resctrl.rst
->> @@ -257,6 +257,10 @@ with the following files:
->>           # cat /sys/fs/resctrl/info/L3_MON/mbm_local_bytes_config
->>           0=0x30;1=0x30;3=0x15;4=0x15
->>   +"num_cntrs":
->> +    Available when ABMC feature is supported. The number of ABMC counters
->> +    available for configuration.
-> 
-> This can only be understood by folks already familiar with AMD's ABMC
-> feature. There is
-> no information about what "ABMC feature" is, what an "ABMC counter" is and
-> what
-> "configuration" can be done with it.
+Then, problems start when we cap utilization to the CPU capacity as an
+example because we cap this temporal info.
 
-I can move this patch after 8/19. I will add details on ABMC feature in
-Patch 8/19. Also, keep the details bit generic.
+> sure if this implicit multiplication is handling this properly. Beside due
+> performance domains having shared CPUs, I am not sure this period is aligned
+> across all CPUs for this implicit multiplication to work as intended.
 
-> 
-> Do you think this num_cntrs will only be used by ABMC? What will happen
-> when user
-> enables "soft-RMID" or some other mode?
+It's all about average because it's too expensive if not even possible
+to know when the instruction will be executed on the other CPUs. We
+can only take the edge case (currently the worst case)
 
-This can be used by both the features. But we don't know how soft-RMID
-will be implemented. But, I can make this explanation bit more generic.
-> 
-> Reinette
-> 
+Beside the impact of uclamp making the selected OPP not always
+sustainable but sometimes temporary
 
--- 
-Thanks
-Babu Moger
+>
+> I yet to study this properly. But I thought I'll mention it as I think this
+> (energy estimation) is increasingly becoming an important area to improve on.
 
