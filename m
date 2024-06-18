@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-219272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8642690CC57
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:48:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DBBB90CC3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E144B28A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:46:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD71628468B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659E015ECE2;
-	Tue, 18 Jun 2024 12:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E916015EFA3;
+	Tue, 18 Jun 2024 12:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eukuJcKR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbCfz8OV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFEA139584;
-	Tue, 18 Jun 2024 12:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D7215ECE4;
+	Tue, 18 Jun 2024 12:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714255; cv=none; b=QrdQ7hYzpCdylNpYjxAygOPUfd2YjGPYh0D/s2yNvL/aM2DBVSxYWRgCxCaBt21P7EshMcTfwNonhwrzD7El3pHQ7c7QnuGdzHD1kPKEIkkQSpiyjUlZELhGgILQMieYwexgvsji/voL0288mZKQHNujJ8OXLRvxQzqQiAqfaD0=
+	t=1718714257; cv=none; b=bxr/Ir/FVxY03/qnluAzPxgO62Bq4alqDF9Z9qj2jybMUh8MMNdYXvFnlToFF4AaA+OmZVZ1Hdvas09QIkNOEuJRSpoOGdArulZJWXzy6TNhZEmO4Hnr5HEerlRgE35GaeB7tQ52RIO5ahwiTjNRA8IRPwf7yhSgSjjp4ySXfms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714255; c=relaxed/simple;
-	bh=yHfu11Q0TNfcdwLLbOwG08ojnZJ5W0mmaAwpwYhmZxY=;
+	s=arc-20240116; t=1718714257; c=relaxed/simple;
+	bh=EpeNOuTzRYQMGIT8zYf8o2LrLhjf2W6iYUh+DoIYeeQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UN7oZFnvbeF5cG4kdV0OTtzzNPp4lsFc2zHfVJLVzJ7zbxg6+HzCAvfkaVxHC5vTGRTLv04AyYnc9XsqtyCBKhk2NY7TCDV+CfUFH8cdObjXvQJOxSFLpUGelF7JkylqapxcFyih7PF/hIvRjKMpYZ60DVvTTaigqtHQZ5kZLsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eukuJcKR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F070C3277B;
-	Tue, 18 Jun 2024 12:37:34 +0000 (UTC)
+	 MIME-Version; b=eS6CYzC7cN5mP08YN87qznF/KqRBhEpjjWaQjR+2GK9/H+OPqMelVDB2qE9QEtFvxGnTZWvwsCfa1uHLPlkhvHDa9wtaAoYHk6rgvoMLBbG2f2r9MHMGJq0CjsuN6g+ug5drSxakQoVEJb30Z7Uh3fO9/KRSaStJc+Ced9qG69E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbCfz8OV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC711C4AF1D;
+	Tue, 18 Jun 2024 12:37:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718714255;
-	bh=yHfu11Q0TNfcdwLLbOwG08ojnZJ5W0mmaAwpwYhmZxY=;
+	s=k20201202; t=1718714256;
+	bh=EpeNOuTzRYQMGIT8zYf8o2LrLhjf2W6iYUh+DoIYeeQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eukuJcKRqx1CM4R7adnbj4WElmKUMBcy5rAz1OEsVGw6Vj4UMSmYsyU3NUOZtu0ag
-	 GMpVR+vCtSqqp47suQWJaXIWbJB8xyNAQMI6zUGXBOI9JKUShFVibPnGw1CssLJ4Y3
-	 4TcBcNkIbBRRpA/qFFHxDPsvUDc6ueK4x46iXiAvYoKcls/C/1rm8n6UzEEm2khltY
-	 XznZdJ+rzDEM6qWKD6CIvoyMq8Gybe2zybIq6vKyWrIkragnj0kUrmqFFyC8ha4hcY
-	 xSrIgxuk69zDUadrlShv5Jb1ZDgXpaTy7eWrVx6XlVSyI7xJjJS744cA8vlf+W5kKq
-	 JvIrHtZQpwySQ==
+	b=KbCfz8OVOkzm1O1kyxmpwksm2WWoB32B2o5ZOaHSTzRDj60CHvq3lDzWYq0yEFlno
+	 5edvwGP/UZ6/oQJrYBnwVx8eGwIENvznB1paazA7xWqSiswUBfweIzcruAmmVv0Lb9
+	 9pJtKbt2BUHo3VJckzCny1OlGKURlVvrPntPmrRfnckQwNL59mgS1QpkqNUkTt8OdG
+	 xBE9zIcpqGCal9UH6gD/udNgutvLrhyUG/KGj6Esdn1Fb4d4QXyNFo+2DrzD6Fap1o
+	 v+uhaPaFFs0fb4DkOaNGhsIa1FSCKoqCyVc6CZS37aH97AgjwNPXXgKQySUijNdnd9
+	 x8uecYe4vorAA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
+Cc: Hagar Hemdan <hagarhem@amazon.com>,
+	Maximilian Heyne <mheyne@amazon.de>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <sashal@kernel.org>,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.9 35/44] ila: block BH in ila_output()
-Date: Tue, 18 Jun 2024 08:35:16 -0400
-Message-ID: <20240618123611.3301370-35-sashal@kernel.org>
+	io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.9 36/44] io_uring: fix possible deadlock in io_register_iowq_max_workers()
+Date: Tue, 18 Jun 2024 08:35:17 -0400
+Message-ID: <20240618123611.3301370-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240618123611.3301370-1-sashal@kernel.org>
 References: <20240618123611.3301370-1-sashal@kernel.org>
@@ -67,58 +65,57 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.9.5
 Content-Transfer-Encoding: 8bit
 
-From: Eric Dumazet <edumazet@google.com>
+From: Hagar Hemdan <hagarhem@amazon.com>
 
-[ Upstream commit cf28ff8e4c02e1ffa850755288ac954b6ff0db8c ]
+[ Upstream commit 73254a297c2dd094abec7c9efee32455ae875bdf ]
 
-As explained in commit 1378817486d6 ("tipc: block BH
-before using dst_cache"), net/core/dst_cache.c
-helpers need to be called with BH disabled.
+The io_register_iowq_max_workers() function calls io_put_sq_data(),
+which acquires the sqd->lock without releasing the uring_lock.
+Similar to the commit 009ad9f0c6ee ("io_uring: drop ctx->uring_lock
+before acquiring sqd->lock"), this can lead to a potential deadlock
+situation.
 
-ila_output() is called from lwtunnel_output()
-possibly from process context, and under rcu_read_lock().
+To resolve this issue, the uring_lock is released before calling
+io_put_sq_data(), and then it is re-acquired after the function call.
 
-We might be interrupted by a softirq, re-enter ila_output()
-and corrupt dst_cache data structures.
+This change ensures that the locks are acquired in the correct
+order, preventing the possibility of a deadlock.
 
-Fix the race by using local_bh_disable().
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Paolo Abeni <pabeni@redhat.com>
-Link: https://lore.kernel.org/r/20240531132636.2637995-5-edumazet@google.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Suggested-by: Maximilian Heyne <mheyne@amazon.de>
+Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
+Link: https://lore.kernel.org/r/20240604130527.3597-1-hagarhem@amazon.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/ila/ila_lwt.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ io_uring/register.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/ipv6/ila/ila_lwt.c b/net/ipv6/ila/ila_lwt.c
-index 0601bad798221..ff7e734e335b0 100644
---- a/net/ipv6/ila/ila_lwt.c
-+++ b/net/ipv6/ila/ila_lwt.c
-@@ -58,7 +58,9 @@ static int ila_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 		return orig_dst->lwtstate->orig_output(net, sk, skb);
+diff --git a/io_uring/register.c b/io_uring/register.c
+index 99c37775f974c..1ae8491e35abb 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -355,8 +355,10 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
  	}
  
-+	local_bh_disable();
- 	dst = dst_cache_get(&ilwt->dst_cache);
-+	local_bh_enable();
- 	if (unlikely(!dst)) {
- 		struct ipv6hdr *ip6h = ipv6_hdr(skb);
- 		struct flowi6 fl6;
-@@ -86,8 +88,11 @@ static int ila_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 			goto drop;
- 		}
- 
--		if (ilwt->connected)
-+		if (ilwt->connected) {
-+			local_bh_disable();
- 			dst_cache_set_ip6(&ilwt->dst_cache, dst, &fl6.saddr);
-+			local_bh_enable();
-+		}
+ 	if (sqd) {
++		mutex_unlock(&ctx->uring_lock);
+ 		mutex_unlock(&sqd->lock);
+ 		io_put_sq_data(sqd);
++		mutex_lock(&ctx->uring_lock);
  	}
  
- 	skb_dst_set(skb, dst);
+ 	if (copy_to_user(arg, new_count, sizeof(new_count)))
+@@ -381,8 +383,10 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
+ 	return 0;
+ err:
+ 	if (sqd) {
++		mutex_unlock(&ctx->uring_lock);
+ 		mutex_unlock(&sqd->lock);
+ 		io_put_sq_data(sqd);
++		mutex_lock(&ctx->uring_lock);
+ 	}
+ 	return ret;
+ }
 -- 
 2.43.0
 
