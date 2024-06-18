@@ -1,166 +1,117 @@
-Return-Path: <linux-kernel+bounces-220191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647E890DDE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:02:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B24E90DDDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0541C1F24AA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:02:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9273F282614
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6381741FE;
-	Tue, 18 Jun 2024 21:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D944C1741FC;
+	Tue, 18 Jun 2024 20:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ERsVAp+o"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QlMBFEaP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FD815E5CA
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 21:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38A436AEF
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718744546; cv=none; b=Qy6sgCRsFYRFMTizV57OiYHNcw3lAEhS+qMNrvhivxfh1M02ywBA9DNCJerMRf7ul+uuuxZjVgszHw5Vz7xYkJbvXZu/Zqydz4OVv+0w76/wfE4va8v+Rjgfq1ksF1S6+hwum/B1+qqa66+8orn3V8Ja30KJWIqRxpE4WgwHWq0=
+	t=1718744239; cv=none; b=mfE8ljvj5LwsneNcMZq2kPTRmUQloZA391a7rYvvq7a4A9yUK1S/mT6veMRxJtn/qIg7e5ATVfL+4AhktYIJpy4izBAlo3ZUDZO4Cvxlf0ixPdzz3P+npbUpu2Pp4TFAxx9Ik+GwVJD3f9CRsxU9wveX+QYF2dyVDXv/1fYeum0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718744546; c=relaxed/simple;
-	bh=ZtlWpZazkZMr9hjqcT0x7ELefnO6avTkg5CabtOR7jo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=In58l/nkH/QPQpwUuYszGV9awM4l49cCgS9HCBYTQipAI7WiPBPQqx1p17X5rNsLacK5bCJKZHg6mCJc77Z286mpi0ndeTQwlrBO4E6EEJ5R5sQ1MTg4ZvC6Gow0aYRn7Kv49ylZ0usyBjeOJlipX36U/oXae9mbSC7mJjOMUMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ERsVAp+o; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1718744239; c=relaxed/simple;
+	bh=gP5S8+T89IutLznPSZIbG6xZFxcSA1v6woREFaxuiSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q8c82zKmu5ZXLcW/5wQQoMUqT3s11xlmEJInJ8Wm1q0o8RcDwY+meFNQp6IKXxIR8M7dI9kwd+Z1pHTjrnnkOnf7JjCg0xbaAT/4klUUZ2RQz3Wo7F69SaP8zc3Yh7aaE1XUB6XtDaLkotn//No1wJsZodgOUVGFX8xZYC11MDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QlMBFEaP; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718744545; x=1750280545;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZtlWpZazkZMr9hjqcT0x7ELefnO6avTkg5CabtOR7jo=;
-  b=ERsVAp+o8h7vhcfNej+RfKaCtpSe2Eh3qlTX4kazs8wTlyiTW8lN/1Nv
-   cF9tSoRfG8Fn3QGHCppKiYEdk0EC9j9XmV4jTVZyMcNU4BJIghdaJ2USE
-   pwRYZYNq+YeFYMuU9O5punaLAQHj0qNfFOr3g5t0vJ3mp9XLZMlpzYzBA
-   I6N8GjD0Gh++DzAvEAOPc/ZNX2SnD6QwGqP6/2ANVUUBHjLJKt5sS1BJ5
-   NpQA0lmXo2wO62L9RC4RVUVz5klH4STP1wNfqlJeCrwnZkpl7p8cXaPJ6
-   prCWQs9ZhLAsLAD9UPBHLC6w/a3BEEav57YQrE5ja4GqKo7S7OLqziUx3
-   A==;
-X-CSE-ConnectionGUID: 9FX3tB66RVG+fGr2La7ttA==
-X-CSE-MsgGUID: UbVKeY+jSt+pnOkrWEOuIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="41061977"
+  t=1718744238; x=1750280238;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=gP5S8+T89IutLznPSZIbG6xZFxcSA1v6woREFaxuiSY=;
+  b=QlMBFEaP4qF4qsLNCj3c83LtpHfDv82yd3Srt4UruM5ZXK65l2aLQsqy
+   QtHWMu99I+0JFCDdXu8V+szZwXoIBpdhLcCuVWBE0K+kO2O7XQGgrOpPJ
+   bOcovEz6DCzwlqqNnHp4oBrqU6xaCi7W6SBiR5ap+eLq6MxHZ0SqdLBox
+   g3HgVS1IWhB/nejpDvIXUpJfuqyJGoWw5JOgyiiNUjxzMxu77R8rKYLSY
+   OCeqze8OShB+AQb1kCq1MfeYuqfAfRor0BsQ/+K2/yp4YXrkau2PELs95
+   Ko0DZDKaLWh656QUmv9RoVTdBGfgLPffic/xvaeSU2SW35I7SikHEFu4i
+   g==;
+X-CSE-ConnectionGUID: mwLE/AzaS22/40brZOn8Qg==
+X-CSE-MsgGUID: GWDVweQyQTyg9xYX4daeLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="27071003"
 X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="41061977"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 14:02:24 -0700
-X-CSE-ConnectionGUID: +GH3mnq+RBOf6kxw23WGQQ==
-X-CSE-MsgGUID: oyGdrqUoRKKa7VmngOHzwg==
+   d="scan'208";a="27071003"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 13:57:17 -0700
+X-CSE-ConnectionGUID: lfEKpDG0RkakbKnHFVTaww==
+X-CSE-MsgGUID: sivuB8YdQHqTRWA3Pgl50w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="42394361"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 18 Jun 2024 14:02:22 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sJfy7-0005uQ-0t;
-	Tue, 18 Jun 2024 21:02:19 +0000
-Date: Wed, 19 Jun 2024 05:02:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Douglas Anderson <dianders@chromium.org>,
-	Daniel Thompson <daniel.thompson@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, kgdb-bugreport@lists.sourceforge.net,
-	Douglas Anderson <dianders@chromium.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Thorsten Blum <thorsten.blum@toblux.com>,
-	Yuran Pereira <yuran.pereira@hotmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] kdb: Abstract out parsing for mdWcN
-Message-ID: <202406190433.U3alc3Xi-lkp@intel.com>
-References: <20240617173426.11.I899d035485269f5110a3323fbb1680fbba718e4c@changeid>
+   d="scan'208";a="46060513"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 13:57:16 -0700
+Date: Tue, 18 Jun 2024 14:02:22 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH] x86/irq: Fix comment on IRQ vector layout
+Message-ID: <20240618140222.13086b0c@jacob-builder>
+In-Reply-To: <20240618201320.2066726-1-sohil.mehta@intel.com>
+References: <20240618201320.2066726-1-sohil.mehta@intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617173426.11.I899d035485269f5110a3323fbb1680fbba718e4c@changeid>
-
-Hi Douglas,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on v6.10-rc4]
-[also build test WARNING on linus/master next-20240618]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Douglas-Anderson/kdb-Get-rid-of-minlen-for-the-md-command/20240618-084245
-base:   v6.10-rc4
-patch link:    https://lore.kernel.org/r/20240617173426.11.I899d035485269f5110a3323fbb1680fbba718e4c%40changeid
-patch subject: [PATCH 11/13] kdb: Abstract out parsing for mdWcN
-config: arc-randconfig-001-20240619 (https://download.01.org/0day-ci/archive/20240619/202406190433.U3alc3Xi-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240619/202406190433.U3alc3Xi-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406190433.U3alc3Xi-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> kernel/debug/kdb/kdb_main.c:1606: warning: Function parameter or struct member 'bytesperword' not described in 'kdb_md_parse_arg0'
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
-vim +1606 kernel/debug/kdb/kdb_main.c
+On Tue, 18 Jun 2024 20:13:20 +0000, Sohil Mehta <sohil.mehta@intel.com>
+wrote:
 
-  1593	
-  1594	/**
-  1595	 * kdb_md_parse_arg0() - Parse argv[0] for "md" command
-  1596	 *
-  1597	 * @cmd:         The name of the command, like "md"
-  1598	 * @arg0:        The value of argv[0].
-  1599	 * @repeat:      If argv0 modifies repeat count we'll adjust here.
-  1600	 * @bytesperword Ifargv0 modifies bytesperword we'll adjust here.
-  1601	 *
-  1602	 * Return: true if this was a valid cmd; false otherwise.
-  1603	 */
-  1604	static bool kdb_md_parse_arg0(const char *cmd, const char *arg0,
-  1605				      int *repeat, int *bytesperword)
-> 1606	{
-  1607		int cmdlen = strlen(cmd);
-  1608	
-  1609		/* arg0 must _start_ with the command string or it's a no-go. */
-  1610		if (strncmp(cmd, arg0, cmdlen) != 0)
-  1611			return false;
-  1612	
-  1613		/* If it's just the base command, we're done and it's good. */
-  1614		if (arg0[cmdlen] == '\0')
-  1615			return true;
-  1616	
-  1617		/*
-  1618		 * The first byte after the base command must be bytes per word, a
-  1619		 * digit. The actual value of bytesperword will be validated later.
-  1620		 */
-  1621		if (!isdigit(arg0[cmdlen]))
-  1622			return false;
-  1623		*bytesperword = (int)(arg0[cmdlen] - '0');
-  1624		cmdlen++;
-  1625	
-  1626		/* After the bytes per word must be end of string or a 'c'. */
-  1627		if (arg0[cmdlen] == '\0')
-  1628			return true;
-  1629		if (arg0[cmdlen] != 'c')
-  1630			return false;
-  1631		cmdlen++;
-  1632	
-  1633		/* After the "c" is the repeat. */
-  1634		return kstrtouint(arg0 + cmdlen, 10, repeat) == 0;
-  1635	}
-  1636	
+> commit f5a3562ec9dd ("x86/irq: Reserve a per CPU IDT vector for posted
+> MSIs") changed the first system vector from LOCAL_TIMER_VECTOR to
+> POSTED_MSI_NOTIFICATION_VECTOR. Reflect this change in the vector layout
+> comment as well.
+> 
+> However, instead of pointing to the specific vector, use the
+> FIRST_SYSTEM_VECTOR indirection which essentially refers to the same.
+> This would avoid unnecessary modifications to the same comment whenever
+> additional system vectors get added.
+> 
+> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+> ---
+>  arch/x86/include/asm/irq_vectors.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/irq_vectors.h
+> b/arch/x86/include/asm/irq_vectors.h index 13aea8fc3d45..970a89e7c6b7
+> 100644 --- a/arch/x86/include/asm/irq_vectors.h
+> +++ b/arch/x86/include/asm/irq_vectors.h
+> @@ -18,8 +18,8 @@
+>   *  Vectors   0 ...  31 : system traps and exceptions - hardcoded events
+>   *  Vectors  32 ... 127 : device interrupts
+>   *  Vector  128         : legacy int80 syscall interface
+> - *  Vectors 129 ... LOCAL_TIMER_VECTOR-1
+> - *  Vectors LOCAL_TIMER_VECTOR ... 255 : special interrupts
+> + *  Vectors 129 ... FIRST_SYSTEM_VECTOR-1
+Should this range be explicitly labeled as "device interrupts"?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+
+Jacob
 
