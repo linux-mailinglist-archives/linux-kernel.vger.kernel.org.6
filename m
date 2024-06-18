@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-219798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DF690D7D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:53:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F3590D7D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 589A22881B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:53:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC6541C226E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12035339D;
-	Tue, 18 Jun 2024 15:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3010C4C62B;
+	Tue, 18 Jun 2024 15:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BdmTw2rV"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="WacNiq9z"
 Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477EB45BF0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B6543AC3
 	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718725897; cv=none; b=ZPr45qbGjRvp65zRyhOeElYblPuXUuyOOTcC9gTb+CcTXQxCpLR79auJCKXHUGQF5xxidToyOdOIeARN2C/SFM+8IkVrnaLRAIbfR4H0FnXco1TW8FZslLaOhbSsUbQ62JE/CvOUKaTg26fNA4wbI2d7q5nDcKmCmRmJa7PkEZs=
+	t=1718725896; cv=none; b=BvTYD4bsg1Fi59dkNAOthuLTO9YDdxv/Tm7hWxXlP479saXYPqgp9+Y2QUq3+C5/mchh+Sck6O+y24z97rAA+QwnXdHTOF/iNw/TTZ8kqruElMZo8mjnOQARHgBviw+LAC8VDfscFs8X10dRnFUigxLTcANIkb7QDeB2PrUPgTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718725897; c=relaxed/simple;
-	bh=jTsRXZWDrdZtdx6WmpzbW/Nftt5x+XgMG9sQFaT8uLA=;
+	s=arc-20240116; t=1718725896; c=relaxed/simple;
+	bh=FctRNyLMVCXApM+zZ0hjS0VrXYFC+wVXydecSREV5uo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gufQfHf2uJ6pBxlkCvp527N8CvCtxoGrsBCTOC3BLMJfcZoNu+xwc7qXDjhvadbJKCX5cSEkvRl3Bv+MsksAS0j9ceCnGCex3IYHQu+upHWg0Jtkfk8AovQunN/OgI6HczY0/XHEjLdKVgelwIIt/r2Eqed6DrAqhHH4wy4Pf1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BdmTw2rV; arc=none smtp.client-ip=167.114.26.122
+	 MIME-Version; b=jYjB5vRMiFbk2JQs05xoZRvYr3IdvTHxw+nTskRDGfr8x5AA6Wd7/XNa61Ju5dtEzQXqWs1ik6+BwPn0IyMzwq1wKGKFe7/PHRmbU561awuN7HzKLgmXFczObUEoApdNVXKJNqapx1wTreRbd+Dq+jxa8+XEO8cTvf+wUi5MizI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=WacNiq9z; arc=none smtp.client-ip=167.114.26.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1718725285;
-	bh=jTsRXZWDrdZtdx6WmpzbW/Nftt5x+XgMG9sQFaT8uLA=;
+	s=smtpout1; t=1718725286;
+	bh=FctRNyLMVCXApM+zZ0hjS0VrXYFC+wVXydecSREV5uo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BdmTw2rVkWR9+JJqI+o4JX5VlLiPCM1FILZZebXr7UYTqaAu4ZgXN67HxRBAqLs3o
-	 uiqycDFqGX5WMcgh/bQb1YaJ+Vo1NA56c+ymHFoL809xggEiEZUBhnctZY8sLWR7fH
-	 uE+Q+8PRam0T2BSpjnZyiPCZ5b3/PZqMZLkekmC9qI5smi6e9hysqUdHJKchOWsfDl
-	 +jv5pkhTpQylxH8Bi7utC+Ag+o+T7LBRqlqdpTHDLeHeYhPbg1dWH8hPrHIeQZ5zfM
-	 SNccLW3MpIavcOg/dFWT2LbKxwTkj9/ktR/kx1qU8Z7IaTxxDMs+tYaYWMpzoX6H/f
-	 bVZR18PU4rfag==
+	b=WacNiq9z+yhx9wZepGion63OStdao/cmKMlYCKm67HDIvEhchEczlFxFJ2tQQTwjU
+	 h6PS+ZyBPgGmpw08s7aW1taZ9RIbDzGUgoOswYRsbapzcGJcwxaDN6qHb+zJ0oFWYA
+	 2RI5cE30TiGkGQZEeBqKJR5vFwUZRgOdYH+zDGjGQLejuDOOJT5PkjmuTTvH75dHwu
+	 qjsvd05m+ujXNlZ/GzCkHRrEUqU7uPA4TXi6MeKuhosWsrs6xnDi/XFiZou8g5w4Qo
+	 ZhyqhYIGuN4g6EJ0hsFI0Kx/re1sbFzccoI03pfENXRQq1TUxYsPWErkC/gW7tbdIP
+	 i7uV1nwBsFbOQ==
 Received: from thinkos.internal.efficios.com (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4W3WFK3bDsz171G;
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4W3WFK6N1Vz16w4;
 	Tue, 18 Jun 2024 11:41:25 -0400 (EDT)
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Dan Williams <dan.j.williams@intel.com>,
@@ -61,9 +61,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
 	linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 1/4] kernel/reboot: Introduce pre_restart notifiers
-Date: Tue, 18 Jun 2024 11:41:54 -0400
-Message-Id: <20240618154157.334602-2-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH 2/4] nvdimm/pmem: Flush to memory before machine restart
+Date: Tue, 18 Jun 2024 11:41:55 -0400
+Message-Id: <20240618154157.334602-3-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240618154157.334602-1-mathieu.desnoyers@efficios.com>
 References: <20240618154157.334602-1-mathieu.desnoyers@efficios.com>
@@ -75,33 +75,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a new pre_restart notifier chain for callbacks that need to
-be executed after the system has been made quiescent with
-syscore_shutdown(), before machine restart.
+Register pre-restart notifiers to flush pmem areas from CPU data cache
+to memory on reboot, immediately before restarting the machine. This
+ensures all other CPUs are quiescent before the pmem data is flushed to
+memory.
 
-This pre_restart notifier chain should be invoked on machine restart and
-on emergency machine restart.
+I did an earlier POC that flushed caches on panic/die oops notifiers [1],
+but it did not cover the reboot case. I've been made aware that some
+distribution vendors have started shipping their own modified version of
+my earlier POC patch. This makes a strong argument for upstreaming this
+work.
 
-The use-case for this new notifier chain is to preserve tracing data
-within pmem areas on systems where the BIOS does not clear memory across
-warm reboots.
+Use the newly introduced "pre-restart" notifiers to flush pmem data to
+memory immediately before machine restart.
 
-Why do we need a new notifier chain ?
+Delta from my POC patch [1]:
 
-1) The reboot and restart_prepare notifiers are called too early in the
-   reboot sequence: they are invoked before syscore_shutdown(), which
-   leaves other CPUs actively running threads while those notifiers are
-   invoked.
+Looking at the panic() code, it invokes emergency_restart() to restart
+the machine, which uses the new pre-restart notifiers. There is
+therefore no need to hook into panic handlers explicitly.
 
-2) The "restart" notifier is meant to trigger the actual machine
-   restart, and is not meant to be invoked as a last step immediately
-   before restart. It is also not always used: some architecture code
-   choose to bypass this restart notifier and reboot directly from the
-   architecture code.
+Looking at the die notifiers, those don't actually end up triggering
+a machine restart, so it does not appear to be relevant to flush pmem
+to memory there. I must admit I originally looked at how ftrace hooked
+into panic/die-oops handlers for its ring buffers, but the use-case it
+different here: we only want to cover machine restart use-cases.
 
-Wiring up the architecture code to call this notifier chain is left to
-follow-up arch-specific patches.
-
+Link: https://lore.kernel.org/linux-kernel/f6067e3e-a2bc-483d-b214-6e3fe6691279@efficios.com/ [1]
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Vishal Verma <vishal.l.verma@intel.com>
@@ -119,87 +119,106 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org
 ---
- include/linux/reboot.h |  4 ++++
- kernel/reboot.c        | 51 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
+ drivers/nvdimm/pmem.c | 29 ++++++++++++++++++++++++++++-
+ drivers/nvdimm/pmem.h |  2 ++
+ 2 files changed, 30 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/reboot.h b/include/linux/reboot.h
-index abcdde4df697..c7f340e81451 100644
---- a/include/linux/reboot.h
-+++ b/include/linux/reboot.h
-@@ -50,6 +50,10 @@ extern int register_restart_handler(struct notifier_block *);
- extern int unregister_restart_handler(struct notifier_block *);
- extern void do_kernel_restart(char *cmd);
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 598fe2e89bda..bf1d187a9dca 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -26,12 +26,16 @@
+ #include <linux/dax.h>
+ #include <linux/nd.h>
+ #include <linux/mm.h>
++#include <linux/reboot.h>
+ #include <asm/cacheflush.h>
+ #include "pmem.h"
+ #include "btt.h"
+ #include "pfn.h"
+ #include "nd.h"
  
-+extern int register_pre_restart_handler(struct notifier_block *);
-+extern int unregister_pre_restart_handler(struct notifier_block *);
-+extern void do_kernel_pre_restart(char *cmd);
++static int pmem_pre_restart_handler(struct notifier_block *self,
++		unsigned long ev, void *unused);
 +
- /*
-  * Architecture-specific implementations of sys_reboot commands.
-  */
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index 22c16e2564cc..b7287dd48d35 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -235,6 +235,57 @@ void do_kernel_restart(char *cmd)
- 	atomic_notifier_call_chain(&restart_handler_list, reboot_mode, cmd);
+ static struct device *to_dev(struct pmem_device *pmem)
+ {
+ 	/*
+@@ -423,6 +427,7 @@ static void pmem_release_disk(void *__pmem)
+ {
+ 	struct pmem_device *pmem = __pmem;
+ 
++	unregister_pre_restart_notifier(&pmem->pre_restart_notifier);
+ 	dax_remove_host(pmem->disk);
+ 	kill_dax(pmem->dax_dev);
+ 	put_dax(pmem->dax_dev);
+@@ -575,9 +580,14 @@ static int pmem_attach_disk(struct device *dev,
+ 			goto out_cleanup_dax;
+ 		dax_write_cache(dax_dev, nvdimm_has_cache(nd_region));
+ 	}
+-	rc = device_add_disk(dev, disk, pmem_attribute_groups);
++	pmem->pre_restart_notifier.notifier_call = pmem_pre_restart_handler;
++	pmem->pre_restart_notifier.priority = 0;
++	rc = register_pre_restart_notifier(&pmem->pre_restart_notifier);
+ 	if (rc)
+ 		goto out_remove_host;
++	rc = device_add_disk(dev, disk, pmem_attribute_groups);
++	if (rc)
++		goto out_unregister_reboot;
+ 	if (devm_add_action_or_reset(dev, pmem_release_disk, pmem))
+ 		return -ENOMEM;
+ 
+@@ -589,6 +599,8 @@ static int pmem_attach_disk(struct device *dev,
+ 		dev_warn(dev, "'badblocks' notification disabled\n");
+ 	return 0;
+ 
++out_unregister_pre_restart:
++	unregister_pre_restart_notifier(&pmem->pre_restart_notifier);
+ out_remove_host:
+ 	dax_remove_host(pmem->disk);
+ out_cleanup_dax:
+@@ -751,6 +763,21 @@ static void nd_pmem_notify(struct device *dev, enum nvdimm_event event)
+ 	}
  }
  
 +/*
-+ *	Notifier list for kernel code which wants to be called immediately
-+ *	before restarting the system.
++ * For volatile memory use-cases where explicit flushing of the data cache is
++ * not useful after stores, the pmem reboot notifier is called on preparation
++ * for restart to make sure the content of the pmem memory area is flushed from
++ * data cache to memory, so it can be preserved across warm reboot.
 + */
-+static ATOMIC_NOTIFIER_HEAD(pre_restart_handler_list);
-+
-+/**
-+ *	register_pre_restart_handler - Register function to be called in preparation
-+ *				       to reset the system
-+ *	@nb: Info about handler function to be called
-+ *
-+ *	Registers a function with code to be called in preparation to restart
-+ *	the system.
-+ *
-+ *	Currently always returns zero, as atomic_notifier_chain_register()
-+ *	always returns zero.
-+ */
-+int register_pre_restart_handler(struct notifier_block *nb)
++static int pmem_pre_restart_handler(struct notifier_block *self,
++		unsigned long ev, void *unused)
 +{
-+	return atomic_notifier_chain_register(&pre_restart_handler_list, nb);
-+}
-+EXPORT_SYMBOL(register_pre_restart_handler);
++	struct pmem_device *pmem = container_of(self, struct pmem_device, pre_restart_notifier);
 +
-+/**
-+ *	unregister_pre_restart_handler - Unregister previously registered
-+ *					 pre-restart handler
-+ *	@nb: Hook to be unregistered
-+ *
-+ *	Unregisters a previously registered pre-restart handler function.
-+ *
-+ *	Returns zero on success, or %-ENOENT on failure.
-+ */
-+int unregister_pre_restart_handler(struct notifier_block *nb)
-+{
-+	return atomic_notifier_chain_unregister(&pre_restart_handler_list, nb);
-+}
-+EXPORT_SYMBOL(unregister_pre_restart_handler);
-+
-+/**
-+ *	do_kernel_pre_restart - Execute kernel pre-restart handler call chain
-+ *
-+ *	Calls functions registered with register_pre_restart_handler.
-+ *
-+ *	Expected to be called from machine_restart and
-+ *	machine_emergency_restart before invoking the restart handlers.
-+ */
-+void do_kernel_pre_restart(char *cmd)
-+{
-+	atomic_notifier_call_chain(&pre_restart_handler_list, reboot_mode, cmd);
++	arch_wb_cache_pmem(pmem->virt_addr, pmem->size);
++	return NOTIFY_DONE;
 +}
 +
- void migrate_to_reboot_cpu(void)
- {
- 	/* The boot cpu is always logical cpu 0 */
+ MODULE_ALIAS("pmem");
+ MODULE_ALIAS_ND_DEVICE(ND_DEVICE_NAMESPACE_IO);
+ MODULE_ALIAS_ND_DEVICE(ND_DEVICE_NAMESPACE_PMEM);
+diff --git a/drivers/nvdimm/pmem.h b/drivers/nvdimm/pmem.h
+index 392b0b38acb9..b8a2a518cf82 100644
+--- a/drivers/nvdimm/pmem.h
++++ b/drivers/nvdimm/pmem.h
+@@ -4,6 +4,7 @@
+ #include <linux/page-flags.h>
+ #include <linux/badblocks.h>
+ #include <linux/memremap.h>
++#include <linux/notifier.h>
+ #include <linux/types.h>
+ #include <linux/pfn_t.h>
+ #include <linux/fs.h>
+@@ -27,6 +28,7 @@ struct pmem_device {
+ 	struct dax_device	*dax_dev;
+ 	struct gendisk		*disk;
+ 	struct dev_pagemap	pgmap;
++	struct notifier_block	pre_restart_notifier;
+ };
+ 
+ long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
 -- 
 2.39.2
 
