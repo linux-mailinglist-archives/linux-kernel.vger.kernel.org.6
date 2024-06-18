@@ -1,66 +1,126 @@
-Return-Path: <linux-kernel+bounces-219915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D502A90DA11
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:55:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A152C90D9F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D33FB1C2236E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:55:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4D1E1C21F25
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B0E14F13E;
-	Tue, 18 Jun 2024 16:54:02 +0000 (UTC)
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA9813B780;
+	Tue, 18 Jun 2024 16:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGn76P3i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBAD13BC35;
-	Tue, 18 Jun 2024 16:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB6C45BE6;
+	Tue, 18 Jun 2024 16:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718729642; cv=none; b=WbfDJbUxUmKba5ZrcBBBiD4SV+vcOQF0DFhWd9pDH1N85asQUQ0kyjKHvwfnwa+rfXJT0xGUHTNNNxiXgRnNXnyA49HEFYh2jZwwrp66oYv/2ytp9golcU9BIQYlm9c91cpd35v2Sqqr2AjPF7St94muNJ8u5ff8rGUUoFTuWRQ=
+	t=1718729638; cv=none; b=U5i+K4FVKC5FOBzlb4VXOwqcWLwLW9opvxwl/+MlaoucMC49Wk1+3TKCI+SUcg99RuM4JbplBPHf5coTDCXINP8XsIMetTZwIKMh2xFIaI0mMv8GlG+YzfSjEKc3px52Mr/GiiffF2OHFxKKxIOj5+wumrGfYeN9znyzobagNh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718729642; c=relaxed/simple;
-	bh=MNkGRu9GKer6t/McohMZFDGB7NdhMCoyNOLnBy33Rus=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SJ4ln9VwnAsGkM4NiQWVUgZNeQYrAD6HoLnfXiBlEGmhWf43J9YYS8A+yuDJkcItBI1i3p24VRCxDWj7noTVXjk8N2Q0AgszTDIFhaEBlnC0dClri88ZBHDaOlvUIjdy3yz8T6cOGSa9XHxqyXdP/duqnYrlqLGkWX24bFvL3og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=fail smtp.mailfrom=linux.com; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=linux.com
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 7804B401EF; Tue, 18 Jun 2024 09:53:53 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 76EAF401CA;
-	Tue, 18 Jun 2024 09:53:53 -0700 (PDT)
-Date: Tue, 18 Jun 2024 09:53:53 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@linux.com>
-To: Peter Zijlstra <peterz@infradead.org>
-cc: tglx@linutronix.de, axboe@kernel.dk, linux-kernel@vger.kernel.org, 
-    mingo@redhat.com, dvhart@infradead.org, dave@stgolabs.net, 
-    andrealmeid@igalia.com, Andrew Morton <akpm@linux-foundation.org>, 
-    urezki@gmail.com, hch@infradead.org, lstoakes@gmail.com, 
-    Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org, 
-    linux-mm@kvack.org, linux-arch@vger.kernel.org, malteskarupke@web.de
-Subject: Re: [PATCH v1 11/14] futex: Implement FUTEX2_NUMA
-In-Reply-To: <20240612174432.GK8774@noisy.programming.kicks-ass.net>
-Message-ID: <b476aa71-37ec-a4ee-6a8a-3a28811bb87c@linux.com>
-References: <20230721102237.268073801@infradead.org> <20230721105744.434742902@infradead.org> <9dc04e4c-2adc-5084-4ea1-b200d82be29f@linux.com> <20240612174432.GK8774@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1718729638; c=relaxed/simple;
+	bh=gVRTf/IytGfnTahbvcX22LWVmgHV0CjJyuZCT03dLm8=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=TEToBIKCVDCTR2QBUSOgLbFiPp+UiQHWVE+35KxY7N1vxegv8b0wV/oIzA4E23YgLgbOaN+PZhI5DEHlqgh5J2ocSE0/j7iLunV93afWMmUlfLzqoHt9xlxzWPmvaanVDKsJLYq5IgaZqxznQd6egNnpnFSV1XFdcXjyrsOi7BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGn76P3i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3C9AC3277B;
+	Tue, 18 Jun 2024 16:53:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718729637;
+	bh=gVRTf/IytGfnTahbvcX22LWVmgHV0CjJyuZCT03dLm8=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=rGn76P3inYALIrqOuHRyp3qYpyXdlDP1LcM8JfnRExzzdlHzNBsO7zK+jimOqoHxj
+	 l7OqtMzpIALi6Iw+RfB8UrV02NKx6DFHaG7o0E3rr6O1FwkcQTcaww9wUfkrNiBaCf
+	 Bdp97xroVof7T5P4o4PAzrN00GwtOOBDX9Q3a9rFKw+XhYgvb0OIyPaE9PFKPDkoDS
+	 rqOsRk4cxHy+pwtQuji0+mTqcOrWexRnDJuM2O9cfGerjwHXBgUMWjsWcLZYGRIeSZ
+	 pGKo/KKoTCZauyQHlh+5oLDCw/3WTnQ1F2GvNnzdQPykTCLfSvbcj39q2eV749C53d
+	 vhBPR5mRggmeA==
+Date: Tue, 18 Jun 2024 10:53:56 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Sebastian Reichel <sre@kernel.org>, linux-pwm@vger.kernel.org, 
+ phone-devel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Sam Ravnborg <sam@ravnborg.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
+ Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org, 
+ Bjorn Andersson <andersson@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Daniel Vetter <daniel@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
+ Pavel Machek <pavel@ucw.cz>, David Airlie <airlied@gmail.com>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, linux-leds@vger.kernel.org, 
+ linux-input@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+In-Reply-To: <20240618-starqltechn_integration_upstream-v3-4-e3f6662017ac@gmail.com>
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-4-e3f6662017ac@gmail.com>
+Message-Id: <171872963372.3062561.18354991193259441972.robh@kernel.org>
+Subject: Re: [PATCH v3 04/23] dt-bindings: mfd: add maxim,max77705
 
-On Wed, 12 Jun 2024, Peter Zijlstra wrote:
 
-> I read this like: I tested it and it works for me. Is that a correct
-> reading of your statement?
+On Tue, 18 Jun 2024 16:59:38 +0300, Dzmitry Sankouski wrote:
+> maxim,max77705 is MAX77705 pmic binding part
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+>  .../devicetree/bindings/mfd/maxim,max77705.yaml    | 112 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 113 insertions(+)
+> 
 
-We tested it and it works as we expected.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Which in turn raises the issue if this could be done to other large 
-system hashes as well.
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/maxim,max77705.example.dtb: pmic@66: charger: False schema does not allow {'compatible': ['maxim,max77705-charger'], 'monitored-battery': [[4294967295]], 'phandle': [[2]]}
+	from schema $id: http://devicetree.org/schemas/mfd/maxim,max77705.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/maxim,max77705.example.dtb: pmic@66: fuelgauge: False schema does not allow {'compatible': ['maxim,max77705-fg'], 'monitored-battery': [[4294967295]], 'power-supplies': [[2]], 'rsense': [[5]]}
+	from schema $id: http://devicetree.org/schemas/mfd/maxim,max77705.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/maxim,max77705.example.dtb: pmic@66: haptic: False schema does not allow {'compatible': ['maxim,max77705-haptic'], 'haptic-supply': [[4294967295]], 'pwms': [[4294967295, 0, 50000]]}
+	from schema $id: http://devicetree.org/schemas/mfd/maxim,max77705.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/maxim,max77705.example.dtb: pmic@66: leds: False schema does not allow {'compatible': ['maxim,max77705-led'], '#address-cells': [[1]], '#size-cells': [[0]], 'led@1': {'reg': [[1]], 'label': ['red:usr1']}, 'led@2': {'reg': [[2]], 'label': ['green:usr2']}, 'led@3': {'reg': [[3]], 'label': ['blue:usr3']}}
+	from schema $id: http://devicetree.org/schemas/mfd/maxim,max77705.yaml#
+Documentation/devicetree/bindings/mfd/maxim,max77705.example.dtb: /example-0/i2c14/pmic@66/leds: failed to match any schema with compatible: ['maxim,max77705-led']
+Documentation/devicetree/bindings/mfd/maxim,max77705.example.dtb: /example-0/i2c14/pmic@66/charger: failed to match any schema with compatible: ['maxim,max77705-charger']
+Documentation/devicetree/bindings/mfd/maxim,max77705.example.dtb: /example-0/i2c14/pmic@66/fuelgauge: failed to match any schema with compatible: ['maxim,max77705-fg']
+Documentation/devicetree/bindings/mfd/maxim,max77705.example.dtb: /example-0/i2c14/pmic@66/haptic: failed to match any schema with compatible: ['maxim,max77705-haptic']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240618-starqltechn_integration_upstream-v3-4-e3f6662017ac@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
