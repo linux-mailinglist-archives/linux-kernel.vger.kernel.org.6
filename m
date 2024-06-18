@@ -1,364 +1,177 @@
-Return-Path: <linux-kernel+bounces-220141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6C890DD24
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:18:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083AA90DD26
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CF2CB2235E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:18:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4FE9284C7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF1A171E7C;
-	Tue, 18 Jun 2024 20:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE161741CF;
+	Tue, 18 Jun 2024 20:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ujafPQ6l"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2070.outbound.protection.outlook.com [40.107.243.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nCPgnJkx"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB10439AEC;
-	Tue, 18 Jun 2024 20:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718741897; cv=fail; b=suUqY5muNIMOAv8GSzOgj20WVL/tEEQoULi7aFK8VEhMkcApSqwMAtJAm4Cukh7BWZ5inzXUOJ3f6zw+xKbfzvjd1VNfdJjjjdI4dkdzYD+sTVDo3n981t8JgZpcxc+mxX5CSgQAuaL3p+Rj6j5AZ3rhTCl7PxkapByfxyyOc/Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718741897; c=relaxed/simple;
-	bh=QMACK3j7zvKFZENZ050wFltHghVR5bhMIf4vdCFVqNg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UuUgm7YEFo1e3ysh34hN3MXvjGawN9N2Ia85+tzdG8VYLaQ5GmD+/iAdsTu6I9GRrHkefe9zqWuUgK5SOY6b41hBG8tjPqpwoh0kZQjGHJnMpRYDHhFkJIEq81xLhVTmigjQ1hz6jOov3HNvO6tSMB6aeepsGlWiU9JYzjIEfns=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ujafPQ6l; arc=fail smtp.client-ip=40.107.243.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ol9OMKezxjhWGgcy+o1xZLeH3dbf6a9P5FV3DT2NJ6ESHrXR0tBDkW+0j3Q9rRrlkefctf03qw3XsSvlsU7uUqstn6fUTuYkQPx/A20ue/fH74t89Hk8rOAWH1/dy+t9wXb46YnAUU1bopAcaOcRPii6v/n293jt2qI6eMTVDYzohjv+NNFUyg1nIQvlTtycyv4mUjMkPXoIrswgxt9YMKr4v8p3Jn+XxJRAkkvGnGEJUXUyMYptC5FXnxj+29iUBKhvSgMwnUfW0ipkDUxXb90BFkzp0zzynPSGhj6m5ktHEv7mIpzS+mwRMfA6XxMV0ELj9ejsN8zXudcz0idmaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wVDHdYuFP+kqsUn27U7YfO/tGnwP1lh1X+8L4cX0UW0=;
- b=blhMt8dT/OOyKDkAbKMHxqjJw2Ty+tpitkzoCWCUjjGD35m74+57BozYYj/ur1winx1YrBdP371no2iUiZcTsU+s+x0Mu3zk+vPue5477YcfMYzCDbVXToIr80lLbN1ZRc1jUDd3Wsr97btgZZk3PTUNmoIFr5/Dsl8x/9DN9JrWPcSTms1l4bSd0WU5K+NTkR+KrLYJjwmsEZkDdgK9az9Z1igA7rJuL/b47kjbYHjH/oEaaT01z6jMFOyjnSho+EI89EfAcfOZz8jrYuNBov9JAinWnRD4SX/JWRxRg9bQen/shV+opikRIrFKP6GCXy7vCOkdZF3bbvkA5TwUxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linux-foundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wVDHdYuFP+kqsUn27U7YfO/tGnwP1lh1X+8L4cX0UW0=;
- b=ujafPQ6ltkp1opyZ1GQr1CFJl+AZ4LaZHPezRT1YW2OqJSg1eSgWAze8maSw68rjynIRoUZE9UMEO1rcafYpl6uUCjiiDNUiqgWclFOlNDUMzvDTH56sQBpVOFeojtKhlJR8iF65rhNu4TVpIUBi03CnWaBOhGnoxRBjE9WzLVVapFjL2yh7v7A89WBUg1wDTqlUpdjgZ+pnk/92nJRJJYf426R6GPfMAz5JFTGUgW5DEeNGT4dSIiDJ1VxQhAKFi1A8F2qDtqsc2Q55uceMEL+IhYS6X4mGIy/yLa7ghiTFVBNG8YsefBuAxISZhCLXewXnaB7Kv8CrkcHjCHzwwg==
-Received: from DS0PR17CA0020.namprd17.prod.outlook.com (2603:10b6:8:191::27)
- by DM4PR12MB6012.namprd12.prod.outlook.com (2603:10b6:8:6c::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.31; Tue, 18 Jun 2024 20:18:10 +0000
-Received: from CY4PEPF0000E9D7.namprd05.prod.outlook.com
- (2603:10b6:8:191:cafe::2) by DS0PR17CA0020.outlook.office365.com
- (2603:10b6:8:191::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.32 via Frontend
- Transport; Tue, 18 Jun 2024 20:18:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000E9D7.mail.protection.outlook.com (10.167.241.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.15 via Frontend Transport; Tue, 18 Jun 2024 20:18:08 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Jun
- 2024 13:17:46 -0700
-Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Jun
- 2024 13:17:45 -0700
-Message-ID: <01685978-f6b1-4c24-8397-22cd3c24b91a@nvidia.com>
-Date: Tue, 18 Jun 2024 13:17:45 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3311E39AEC
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718741975; cv=none; b=ews4aFofCDVbzsqyIKeUQsLzy3r5SgnnicKhcy8Qr4nJ9N1Q6ajTv7WBicuc73qSOot4KiExTNZT2BFY+K/V79f7sK+wW9RtlxKXcy0lPtR+IMKsPleN6g9lgd2aNFSyAXtS+ozVew11P17mTSn1/8qoZ6ZNqfyl23eQc6lkzKo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718741975; c=relaxed/simple;
+	bh=94jbta9RKhaSlDyNCdrM049X1zIhYddMYsT9+9JpVCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h7FdaTu4ykt/0PcOHSUWu+3/kDyMKGANMrO6D3g3OFcW6rYg8HejKvJndzvul+qU9vgoHi4eA91/WuYdAYhXMDHs7O1PWQIqLGfkgTNTKle2XGGOJ421XbdTwaQRObVOpvzEVualGJIoHtisoTaEJPK5Gf4mpo6QX9q138/54Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nCPgnJkx; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f4a0050b9aso50147875ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:19:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718741973; x=1719346773; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mV+obHqwFZWixpRN1P9+xUT02aptZp/gmo4vDnJf/nM=;
+        b=nCPgnJkxijXsbXuXvnvc6dhkOchG+VYl5E2NLv40o3JUTEelBIH/oPgQMBl8kp4Obi
+         gBI4kR0m9626Uh4ZNV/yENqRuzP5Qb/E7mgHg4aaETA6KRTKw+xDt1BMNvFJ/MTyUjhV
+         Rft47qohh8WZIsQeiPKkOIJHjNkZAXeugXCFPQW5gZRvF4/C+ZSGyeYmeqsFbegCiuow
+         SX9r4+IhIw4Q2AwDEJ3t39sZL41E32/e93hCTCBqf1/MnmOH+X7zsoKD26WRkUHC8P32
+         OoT2O8D695PeoTyJ8HXNSSPyr0xUDHhKKZ8mYmCP94X6K2E4lUQvTLMz+fMxKJaik9aH
+         OuQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718741973; x=1719346773;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mV+obHqwFZWixpRN1P9+xUT02aptZp/gmo4vDnJf/nM=;
+        b=bC96zr/wIUzkwDBT1q9vyS1XvbjyDWPwTgNPkK/vDoxqtLZLRru/ZyP2rTPPS84Ou3
+         ITURJhpRrjQfprI9THTg8fHiq7LxijZPrXpgpD6x36vHRi7Zkm1+sSjAiz5a2tKDX7cq
+         CJ5PW9GKRhu+wG2vEZXlJ+ARuSEJ0FGw9kLvqqWkW0OM/WT+WpUP/qz5zydp2oyXVesb
+         mkJeS/xuS4fz1pKvQ1SaJXMfxFjKfUCkAaNtWfq/D0FjGqlWZCvnBjSe4JObYx+qZ9V+
+         N/rVyunlu8p0iTzN5Xj8tH3zuqGo41ZpbX28mgu4V4aVg5behakleuKcn5Yk5OqINB76
+         Iw4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX/wwhe5cLsZrPfokaCf8T25PWG92DVAaw+R6AHUnbNALcjYnBn80/pzBaq9UZ+770D/Dq2+ytC5GA/YYuYPSpgBmiVTaBm/EBpa2WT
+X-Gm-Message-State: AOJu0YzJvrtuHQO3IkObBI8d59wIHBnusGNzAEmw8yiI4J8k1vqSNbzK
+	g5DMdD4nI867skd2EKpEtXjPf5JTOwP0nk1WoxEy/+NYfR9gQcYnk8dRx+Jg8A==
+X-Google-Smtp-Source: AGHT+IHyLOxXtzm0QV3I4PfO8dmxnhFR4zmQ5ve3IHxTlcknskE8vGuxSlOyocduRsCXhhHzmgHp0Q==
+X-Received: by 2002:a17:902:d504:b0:1f6:7fa4:e064 with SMTP id d9443c01a7336-1f9aa46e5b5mr7283155ad.61.1718741973072;
+        Tue, 18 Jun 2024 13:19:33 -0700 (PDT)
+Received: from google.com ([2620:0:1000:2510:5dfa:e7d1:8470:826c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f43ce3sm101374865ad.278.2024.06.18.13.19.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 13:19:32 -0700 (PDT)
+Date: Tue, 18 Jun 2024 13:19:27 -0700
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
+Message-ID: <20240618201927.GC1611012@google.com>
+References: <20240617175818.58219-17-samitolvanen@google.com>
+ <2024061842-hatless-viewpoint-5024@gregkh>
+ <CAK7LNAS_OsXeoDRoMbdXUGY=-jhuoHgo-L6W79n+Kb4G4xEBwQ@mail.gmail.com>
+ <2024061828-tricky-playtime-f844@gregkh>
+ <CAK7LNAR9qgk2AxtMUMiOw-jYZyjmj6aVDPH25aPa4K-1jQjOFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] selftests/mm: mseal, self_elf: factor out test
- macros and other duplicated items
-To: Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
-	Shuah Khan <shuah@kernel.org>
-CC: Andrei Vagin <avagin@google.com>, Axel Rasmussen
-	<axelrasmussen@google.com>, Christian Brauner <brauner@kernel.org>, "David
- Hildenbrand" <david@redhat.com>, Kees Cook <kees@kernel.org>, Kent Overstreet
-	<kent.overstreet@linux.dev>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, Peter Xu
-	<peterx@redhat.com>, Rich Felker <dalias@libc.org>, <linux-mm@kvack.org>,
-	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20240618022422.804305-1-jhubbard@nvidia.com>
- <20240618022422.804305-3-jhubbard@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20240618022422.804305-3-jhubbard@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D7:EE_|DM4PR12MB6012:EE_
-X-MS-Office365-Filtering-Correlation-Id: c627987e-0283-4c9b-d14b-08dc8fd3c4c7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|7416011|376011|36860700010|1800799021|82310400023;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VUNvMVg5Zy9UZ2k3enJGV2FwV0VpM3lDTHdSN3g2QUlZVlV6OWo0QWJ0VDhM?=
- =?utf-8?B?cmdFNGQyeDRYejNWNEV6NG5uOVIya1ROUVBUSzFEUUdBZnp6alM3a3k0SEly?=
- =?utf-8?B?SEtGckVncXRBTlhDRmFDSVhFZWZzMy8rQVVHd3p4UEVKUkNiS3RobElRUnlq?=
- =?utf-8?B?cDdTeWtWWVU1MXg3T0NWSEEwQUZnMzJIUVZzMG5Tb0h2VjRPMG1ZaEV5bWJQ?=
- =?utf-8?B?L05oTGIzcXdqYnVTS29HaFN4c1ExYjZGb3cwN01KS01ubmpuVC8vWldaU2pO?=
- =?utf-8?B?aWN2RXpJZjhySGpNMG5lYytZQzNGNjlqZGpta2RPU28xczNBWXBUTHZEZjIv?=
- =?utf-8?B?c00vMC82MlR2YVVaeFo3YjdLaEk3S3RIcW1uTHY4d3IybHU1amtPMnN0VEpz?=
- =?utf-8?B?NHpCZlhZSzkxNU1rcy9SRjZzN1NSK3pkZDdNdVJBVUx2YnRReHcvd3g2dmdL?=
- =?utf-8?B?dTdOMnBKczEwdFFBV0JYNTBBZldOSWV5a3hUTnZFYzhtVlhyL3F0eDdzMXVJ?=
- =?utf-8?B?MmJjUnZkNEFpMzI3cG44L2VEMkdKNy9ZZVdBQk4zMkhGZUxhZmFDSnh6SUxT?=
- =?utf-8?B?YnFSeUZwcXpjUTUva0hxSXN0L0tsUGF6VnlKTkJhTTJLRDBCMnpIUCs0dEV6?=
- =?utf-8?B?YndPTWFvOSttdDIrM2JEQVN1TDRkWUxLRjVVcmtHVysyYzNXWXFGVHU2R2Nz?=
- =?utf-8?B?c1RjaU91WWI2TjBCa0RiQURvN1F6ZE5xSlg3aXhpNVd3b0FTTmhQS0hmVXNr?=
- =?utf-8?B?NWlYTXJ3M09VOGRkQUYxSFRnNytSdFdyRUVldnlwSnZDNTlEV0VwcVVzSHg5?=
- =?utf-8?B?TmkwRFdHd3duOUNLYktBNzB3VXRjMHlzOWk1MEdBZVM1SVRhRzFlTWg0Qkkz?=
- =?utf-8?B?QTU3OWczREZHdk1DVEFLSFJMVGx5enFodTFWT1luWkx1ZXRzT3RvZE85dC9y?=
- =?utf-8?B?TzVHbXJ0MDRDMmcvUzNhc0xnL0NNWkg3QnFGY0krN3k1ejlGMk4rMGVucUVJ?=
- =?utf-8?B?aWtENmlDQk1aVFcwL2Q5cWtyUEZtMEZSZ2Q4LzhxWlc5aEJ4RkQvazZkYnhB?=
- =?utf-8?B?MVdPbzlGdnpTQXpOa1d0bnNyaDl0VHNsRENIVmJqQjB1YUtZTkdXZEg4ZVV0?=
- =?utf-8?B?R1Z6RDZoY1lCSFFzVGsxUUtjOGZNMU5CUUdpaGQyM3dEVFUvaWVPK0lXR0dF?=
- =?utf-8?B?SUYvU0pXaUFiNHI4WHZsTS9kWStCckt4Wm9TeDIxWUFXbVVRVzB2cE52Lzlt?=
- =?utf-8?B?d0hDeHIvNFhXemU0TkRvc0pmOXBJVnZia0VuSnZLbEhlN1hLVkNCcytKRWd3?=
- =?utf-8?B?UU80cmlsN0xMTzhlZ2VZTm5qNnlEV3p1WW80SHpRSjQzSVVFK0ZhVU9QZ09J?=
- =?utf-8?B?YmY1UzVKSGc1WXRYTDY1dUZiekpocnF6N2dQN3FqdFc5b2NPbFhpbk5XK3JC?=
- =?utf-8?B?ZFdTQXJwcHQyTEF0ZmJwS0dSZUl3VmRtZ0hBeDFaU2tXSkFqQWV1c2ZxMXJX?=
- =?utf-8?B?MytYYVlUVldqRlhqOHpBdE1rT3dzSXpQclJRM3hORGl6aGZuTHpiaVo4K3po?=
- =?utf-8?B?U2ZPZy93Nm9ZOVAvMFU2ZDgvMTBpcDFSQnVQbE1TOWlOZkw4ZUFRY0ZJOHR6?=
- =?utf-8?B?bGFFZ2RxNTE2THNCcm5SWWRHdURHek9xY0hyVEdJcGhhMmhFRUZ4djU1NWJ0?=
- =?utf-8?B?N3pUYW55WHhLaDUxQ2tLOFhVdFhSeEhFZnd4MmxtU0Q3UWlIZ3E1RG9rdEdI?=
- =?utf-8?B?WTJqdEE3SGFoUkVDOWZTejg1WCtVOG1wYjU3UUZzR1dxMUxzWVJic0VNcXpD?=
- =?utf-8?B?Tmw0ZzBDNFE5ZVk5TkdmYW0xb3hnNHBaQWJvQ1VwbnJsSkI4ODB4YW1jTlJS?=
- =?utf-8?B?L1h5Y2RGOFBua2swNmVLZGFNa1dZc3ZEQmVyajRhT0xZSlE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230037)(7416011)(376011)(36860700010)(1800799021)(82310400023);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 20:18:08.0193
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c627987e-0283-4c9b-d14b-08dc8fd3c4c7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D7.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6012
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNAR9qgk2AxtMUMiOw-jYZyjmj6aVDPH25aPa4K-1jQjOFw@mail.gmail.com>
 
-On 6/17/24 7:24 PM, John Hubbard wrote:
-> Clean up and move some copy-pasted items into a new mseal_helpers.h.
+On Wed, Jun 19, 2024 at 04:03:45AM +0900, Masahiro Yamada wrote:
+> On Wed, Jun 19, 2024 at 2:18 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Wed, Jun 19, 2024 at 01:50:36AM +0900, Masahiro Yamada wrote:
+> > > On Wed, Jun 19, 2024 at 1:44 AM Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > That's cool, can the C code be switched to also use this?  That way we
+> > > > only have one path/code for all of this?
+> > >
+> > >
+> > > As the description says, it requires CONFIG_DEBUG_INFO.
+> > > We can strip the debug info from the final vmlinux, but
+> > > I guess the build speed will be even slower than the current genksyms.
+> >
+> > For people who want genksyms (i.e. distros), don't they normally already
+> > enable DEBUG_INFO as well?  The problems of genksyms are well known and
+> > a pain (I speak from experience), so replacing it with info based on
+> > DWARF would be great, I'll gladly trade off the DEBUG_INFO issue for
+> > stablilty!
+> >
+> > thanks,
+> >
+> > greg k-h
+> >
 > 
-> 1. The test macros can be made safer and simpler, by observing that they
-> are invariably called when about to return. This means that the macros
-> do not need an intrusive label to goto; they can simply return.
 > 
-> 2. PKEY* items. We cannot, unfortunately use pkey-helpers.h. The best we
-> can do is to factor out these few items into mseal_helpers.h.
 > 
-> 3. These tests still need their own definition of u64, so also move that
-> to the header file.
-
-And I just noticed that I left out this one:
-
-4. Be sure to include the new mseal_helpers.h in the Makefile dependencies.
-
-In other words, this hunk is also needed:
-
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index 3b49bc3d0a3b..23daa097d5b7 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -2,6 +2,7 @@
-  # Makefile for mm selftests
-  
-  LOCAL_HDRS += $(selfdir)/mm/local_config.h $(top_srcdir)/mm/gup_test.h
-+LOCAL_HDRS += $(selfdir)/mm/mseal_helpers.h
-  
-  include local_config.mk
-
-
-I'll send out a v4 with that, once we resolve the discussion around patch 1/6.
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
+> I do not think gendwarfksyms is a drop-in replacement,
+> because it relies on libelf and libdw, which will not
+> work with LLVM bitcode when CONFIG_LTO_CLANG=y.
 > 
-> Cc: Jeff Xu <jeffxu@chromium.org>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->   tools/testing/selftests/mm/mseal_helpers.h | 41 ++++++++++++++++++
->   tools/testing/selftests/mm/mseal_test.c    | 49 +---------------------
->   tools/testing/selftests/mm/seal_elf.c      | 33 +--------------
->   3 files changed, 43 insertions(+), 80 deletions(-)
->   create mode 100644 tools/testing/selftests/mm/mseal_helpers.h
-> 
-> diff --git a/tools/testing/selftests/mm/mseal_helpers.h b/tools/testing/selftests/mm/mseal_helpers.h
-> new file mode 100644
-> index 000000000000..108d3fd0becb
-> --- /dev/null
-> +++ b/tools/testing/selftests/mm/mseal_helpers.h
-> @@ -0,0 +1,41 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#define FAIL_TEST_IF_FALSE(test_passed)					\
-> +	do {								\
-> +		if (!(test_passed)) {					\
-> +			ksft_test_result_fail("%s: line:%d\n",		\
-> +						__func__, __LINE__);	\
-> +			return;						\
-> +		}							\
-> +	} while (0)
-> +
-> +#define SKIP_TEST_IF_FALSE(test_passed)					\
-> +	do {								\
-> +		if (!(test_passed)) {					\
-> +			ksft_test_result_skip("%s: line:%d\n",		\
-> +						__func__, __LINE__);	\
-> +			return;						\
-> +		}							\
-> +	} while (0)
-> +
-> +#define TEST_END_CHECK() ksft_test_result_pass("%s\n", __func__)
-> +
-> +#ifndef PKEY_DISABLE_ACCESS
-> +#define PKEY_DISABLE_ACCESS	0x1
-> +#endif
-> +
-> +#ifndef PKEY_DISABLE_WRITE
-> +#define PKEY_DISABLE_WRITE	0x2
-> +#endif
-> +
-> +#ifndef PKEY_BITS_PER_PKEY
-> +#define PKEY_BITS_PER_PKEY	2
-> +#endif
-> +
-> +#ifndef PKEY_MASK
-> +#define PKEY_MASK	(PKEY_DISABLE_ACCESS | PKEY_DISABLE_WRITE)
-> +#endif
-> +
-> +#ifndef u64
-> +#define u64 unsigned long long
-> +#endif
-> diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
-> index 58c888529f42..d4d6ae42f502 100644
-> --- a/tools/testing/selftests/mm/mseal_test.c
-> +++ b/tools/testing/selftests/mm/mseal_test.c
-> @@ -17,54 +17,7 @@
->   #include <sys/ioctl.h>
->   #include <sys/vfs.h>
->   #include <sys/stat.h>
-> -
-> -/*
-> - * need those definition for manually build using gcc.
-> - * gcc -I ../../../../usr/include   -DDEBUG -O3  -DDEBUG -O3 mseal_test.c -o mseal_test
-> - */
-> -#ifndef PKEY_DISABLE_ACCESS
-> -# define PKEY_DISABLE_ACCESS    0x1
-> -#endif
-> -
-> -#ifndef PKEY_DISABLE_WRITE
-> -# define PKEY_DISABLE_WRITE     0x2
-> -#endif
-> -
-> -#ifndef PKEY_BITS_PER_PKEY
-> -#define PKEY_BITS_PER_PKEY      2
-> -#endif
-> -
-> -#ifndef PKEY_MASK
-> -#define PKEY_MASK       (PKEY_DISABLE_ACCESS | PKEY_DISABLE_WRITE)
-> -#endif
-> -
-> -#define FAIL_TEST_IF_FALSE(c) do {\
-> -		if (!(c)) {\
-> -			ksft_test_result_fail("%s, line:%d\n", __func__, __LINE__);\
-> -			goto test_end;\
-> -		} \
-> -	} \
-> -	while (0)
-> -
-> -#define SKIP_TEST_IF_FALSE(c) do {\
-> -		if (!(c)) {\
-> -			ksft_test_result_skip("%s, line:%d\n", __func__, __LINE__);\
-> -			goto test_end;\
-> -		} \
-> -	} \
-> -	while (0)
-> -
-> -
-> -#define TEST_END_CHECK() {\
-> -		ksft_test_result_pass("%s\n", __func__);\
-> -		return;\
-> -test_end:\
-> -		return;\
-> -}
-> -
-> -#ifndef u64
-> -#define u64 unsigned long long
-> -#endif
-> +#include "mseal_helpers.h"
->   
->   static unsigned long get_vma_size(void *addr, int *prot)
->   {
-> diff --git a/tools/testing/selftests/mm/seal_elf.c b/tools/testing/selftests/mm/seal_elf.c
-> index 27bf2f84231d..45c73213775b 100644
-> --- a/tools/testing/selftests/mm/seal_elf.c
-> +++ b/tools/testing/selftests/mm/seal_elf.c
-> @@ -16,38 +16,7 @@
->   #include <sys/ioctl.h>
->   #include <sys/vfs.h>
->   #include <sys/stat.h>
-> -
-> -/*
-> - * need those definition for manually build using gcc.
-> - * gcc -I ../../../../usr/include   -DDEBUG -O3  -DDEBUG -O3 seal_elf.c -o seal_elf
-> - */
-> -#define FAIL_TEST_IF_FALSE(c) do {\
-> -		if (!(c)) {\
-> -			ksft_test_result_fail("%s, line:%d\n", __func__, __LINE__);\
-> -			goto test_end;\
-> -		} \
-> -	} \
-> -	while (0)
-> -
-> -#define SKIP_TEST_IF_FALSE(c) do {\
-> -		if (!(c)) {\
-> -			ksft_test_result_skip("%s, line:%d\n", __func__, __LINE__);\
-> -			goto test_end;\
-> -		} \
-> -	} \
-> -	while (0)
-> -
-> -
-> -#define TEST_END_CHECK() {\
-> -		ksft_test_result_pass("%s\n", __func__);\
-> -		return;\
-> -test_end:\
-> -		return;\
-> -}
-> -
-> -#ifndef u64
-> -#define u64 unsigned long long
-> -#endif
-> +#include "mseal_helpers.h"
->   
->   /*
->    * define sys_xyx to call syscall directly.
+> His "Let's postpone this until final linking" stuff will
+> come back?
+> Then, vmlinux.o is processed to extract the CRC
+> of all symbols?
 
+I agree, this won't work with LTO unless we process vmlinux.o.
 
+> In my benchmark, this tool took 3.84 sec just for processing
+> a single rust/core.o object.
+
+To be fair, Rust currently exports all globals and core.o has 400
+exported symbols as a result. During my brief testing, this tool is
+faster than genksyms for normal C code.
+
+> I'd love to see how long it will take to process vmlinux.o
+
+It's obviously going to be quite slow, my defconfig vmlinux.o has
+14k exported symbols:
+
+ Performance counter stats for './tools/gendwarfksyms/gendwarfksyms vmlinux.o':
+
+        371,527.67 msec task-clock:u                     #    1.000 CPUs utilized
+                 0      context-switches:u               #    0.000 /sec
+                 0      cpu-migrations:u                 #    0.000 /sec
+           231,554      page-faults:u                    #  623.248 /sec
+   <not supported>      cycles:u
+   <not supported>      instructions:u
+   <not supported>      branches:u
+   <not supported>      branch-misses:u
+
+     371.686151684 seconds time elapsed
+
+     370.534637000 seconds user
+       0.987825000 seconds sys
+
+The tool is currently single-threaded, so if we really want to go this
+route, it could probably be made a bit faster.
+
+> And this occurs even when a single source file is changed
+> and vmlinux.o is re-linked.
+
+I suppose anyone using LTO already knows it won't be a quick rebuild
+though.
+
+Sami
 
