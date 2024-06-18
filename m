@@ -1,180 +1,184 @@
-Return-Path: <linux-kernel+bounces-220073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C9390DC5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:26:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 995AD90DC5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:26:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E3DF1F23410
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:26:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 996221C2281E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9CC166318;
-	Tue, 18 Jun 2024 19:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6AC1662EF;
+	Tue, 18 Jun 2024 19:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="bQbk0rhJ"
-Received: from mail-il1-f193.google.com (mail-il1-f193.google.com [209.85.166.193])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="An9P9Ci9"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3B51662FC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19D0161901
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718738747; cv=none; b=pFX+oR8vZRZS9dRShcSvNLMm46YHBmpXNFAYRtDKJTOsAwIXM9Y0brSGcfgf9ue1QRicRGxsFKTTJ51WE8zwRl7McIQqjaIT3RT9Q9wnEmeKN6Wuq0HTh8bA8xTi47xIQ0zkEqRLw823haLoFJIkAwu2aCz1x0CxHaA3h9TQnxI=
+	t=1718738808; cv=none; b=OByrevc+wBT7RchhZ1YHUGpZc/MyVKYpSJOpOeUjEBPtvcAuaEnMESxvZv41mHRt/rZsxKS1TD28qrYcU6N3KNrbDQYErGGc01R34d31vsQ04xtEA8PRIxiTK7Xh3i4mtBNkwyyS91EsC55+qWoJbdE6Jr0JlNEf7GXqpEz/IHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718738747; c=relaxed/simple;
-	bh=z2AFd9pz/jXk/YAc5SISacv07MSOWo0blu7vJvfpBUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HoWMGln54KTLGGj5skJXB7fLY+u7o8u4zr8RNBTN7/+6ZP91yprMnDG+Av2lVimhykPW15s5fQpo8HmsKaOJ8iYYGm2BDGBN0tT3IRIfgcoBaPY8EjH38LAg7YP2spKidL1h4rp6LjG+F0WTBfcwO+a5Paj2SckOk3KhZAZFtE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=bQbk0rhJ; arc=none smtp.client-ip=209.85.166.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
-Received: by mail-il1-f193.google.com with SMTP id e9e14a558f8ab-37613975e20so2575915ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:25:45 -0700 (PDT)
+	s=arc-20240116; t=1718738808; c=relaxed/simple;
+	bh=+FyiA+pYK8APwK75QeRcyo/HcZRVxSHlp1CzDFB8ZR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EMIBIxpfzGzzhRJTe//sNcLUFWEp+QAoq+EJD2fJdePVuB29jLb1w+wP6gsev4DxB9TDURs6hgRakNWR2vIWrIP6NVtkkTACdXb5JW9SKFAEYiK0b5EYNZtU4CCGIy/vAHyA3raSTzcl6N+Y6nAo69uoGv/3dPDV6aGUxDWzdJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=An9P9Ci9; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfa48f505dfso6215578276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:26:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1718738744; x=1719343544; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AmK+WCzRtQqOjkKB2JoI/nzEulWCZnGrnBCxb5hHO0Y=;
-        b=bQbk0rhJR3XfusQGmaVR/P5jR/BJhrw7x3P9+rdQlcCn5NZm643X0EglX7XrbI/VF/
-         HVv/2Rw6umiVhwEgbSnOthZpkwBVOLJyQLWwd1PGakHu+KRwu+fGmJtc27Ug4l+oe4C4
-         B7FqfYsfg2E2wzaic4mI/nFKhX9TTIdYxxFtjFat6Y7xi/OoE448Xqg4rJNcPKTMekZb
-         JjIaUYWYscFwuDk91FTwGC7oHvaAJ7bC/msYdCvWRCvmtT9CnRNeYCx4R6hex5IF2Vtj
-         UzM27gUOOnzdt3spP3TZMBnWTVfJbc9Dtc99JREvHcN+cPX7ISQFd0pMrwq954xmXNF9
-         gdGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718738744; x=1719343544;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1718738806; x=1719343606; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AmK+WCzRtQqOjkKB2JoI/nzEulWCZnGrnBCxb5hHO0Y=;
-        b=XZpRr4htuqBHk3ScybbUgoljAmJtCRf5dLFgHBbWJkCvo4ewXoxWWrzGH8I59ebuTr
-         ZespAbwitlMhCFyXDa2oSVax7H4Qq/nNvx8IWtpm3vh2rFj/GcsbKA4jVljrurA3P0AK
-         Nyc9g00wgL1S39z0Q16WHVa4PjiotHraJyKvkOhBA9l0eYDHhk9KQLeNwZDnk4OT3BXf
-         VS2E7GsP2oPRqaW6rxZMuhgxj/WCjTrawUenNwqYjbx2g9bWN9QfywYB0/bxHuCJhbhZ
-         Ns5tW1lQueLh3IcXIyXmW1n2VQxQ0aSIaxWC7WBu4oK8tfXcp3eii3VRHw3XjMKqzC8b
-         CJEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkWuj0KcwD8AzzI+n24rMfBztxKvEw/tpu60S/riyp9c5GJe8/q1CaYa1RmyCLPxZE1NPMYtBztjueM32/qp4TYQ/LktF1i7EtxBW2
-X-Gm-Message-State: AOJu0YznYmOpzPzxP713bI7jlclJnWmwehzqjusk/sdBI6zztM2llvSD
-	HUGEO/AxLMtDEUxnwIX7bGCu3lslpNh1QV/W/ImBVkdH+pfdu4E71TwiXIfvKAU=
-X-Google-Smtp-Source: AGHT+IGw+9KohnfLPrcSNmKX0uGzcp+zBSGth4mvsmBMnMKrkEA/97uLyyo5AazW40dOWlzHo7LoYA==
-X-Received: by 2002:a05:6e02:160b:b0:375:c296:bf90 with SMTP id e9e14a558f8ab-3761d63d71cmr8136105ab.7.1718738744559;
-        Tue, 18 Jun 2024 12:25:44 -0700 (PDT)
-Received: from kf-XE ([2607:fb91:111c:4643:b5f:d6ad:8a73:5578])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-375d86bfa6dsm22384015ab.50.2024.06.18.12.25.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 12:25:44 -0700 (PDT)
-Date: Tue, 18 Jun 2024 14:25:41 -0500
-From: Aaron Rainbolt <arainbolt@kfocus.org>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: linux-acpi@vger.kernel.org, rafael@kernel.org, lenb@kernel.org,
-	linux-kernel@vger.kernel.org, mmikowski@kfocus.org,
-	Perry.Yuan@amd.com
-Subject: Re: [PATCH] acpi: Allow ignoring _OSC CPPC v2 bit via kernel
- parameter
-Message-ID: <ZnHfNbLTgY1op3Zv@kf-XE>
-References: <ZnD22b3Br1ng7alf@kf-XE>
- <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com>
- <ZnHSKiaYf2tIQo58@kf-XE>
- <a7790c74-2bec-4a24-b6e5-223c4e1ed372@amd.com>
- <ZnHXfLEwk2uRbg58@kf-XE>
- <b4d65232-b69e-419d-9b15-d0ca64b78b26@amd.com>
+        bh=9JdIhONv4P+97AjtXHbls42T4V6PxnxrDwc043W4vOo=;
+        b=An9P9Ci9QQ1c5s7gcjCkRnfqnMy/q/1l90M1HEk38mkKcMwJZBQlZMctXfkqRwSUXs
+         GoPq7wRdaI6U/3SLlTkld9O9xMIEW898NrHgJ5ZvD1Lr4OmxwqBuJAsW4yM+pHXzJxpR
+         7nD63JgJO44ZJKs1g6sf+ebcMpAbxWguzEbmvWFUt6OuCOSTSw2BrzfsPEWdzsY7707j
+         rWtNw7QDxpd2TlVGM3WjuBNYx87Rt4Hj18CLPXNFWmlDM/cNLmXbHS6zJMOeVvQP/YkL
+         HANnyn/aSn8+kyhCDH07N21Yr/MZbZIFYuSshUVYPxj9n/ophLf8LjeOLU0DkbmqJDPG
+         EPow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718738806; x=1719343606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9JdIhONv4P+97AjtXHbls42T4V6PxnxrDwc043W4vOo=;
+        b=rvuPlX2pRTSpwtwUsVH+JA7yvjfDB2aH8aQgw8XrAo8K16LqE/sSY1mbWicEyjCWdp
+         dveUZ2UxMadEQ9xbyyc6pzRRyxVA7v1P7hF4yB0VTQnpQdnZ595W3KZtycGCQkQp+qeB
+         gqLTIhoZBtLxQqfR9SKbt2GSnW2VjImg84FUV5D1quFWdX8gCRghtpp/MEfN4bSVy4UQ
+         GPCBLgDroZxpZ2BKKInDz+goK5v3fPTf5X6tzZ8T/kcFT3Vz54AIScrx6CGRyAyiqvay
+         3XiBNwXGjjkOqI6xUM5lIeJXYAPZsH9vZzdhJRPpBxnJ+eEMFeXsS0cAoOMCQ6PkSWvG
+         yXSA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0Pxi/bMr6NvxMnHDKKGTWZ/7LPRzADAILWuWNahwhqD80O6VA5QP8LZ7yUSzGSZmwTmU9kk86LHruhdwm3vMxliTLJKReXr/MF51x
+X-Gm-Message-State: AOJu0YxUfhlW1cNst0X6WByq3ffoexL050XQI2kBqzyu/6qVamc9khv7
+	5VCpFnwCCl0G+8gl3fVhQgvPr/kK2EI/xNUXevxSLPiOQUGrpJWph6w8BLwgbOVfiN2aPt1vE/F
+	6xz6+udqHlKoy+6QX/+y/qzuExvClIhB2x43Hng==
+X-Google-Smtp-Source: AGHT+IEgckfSzpfRkRk3dzsXY6WG0jQp3J3r598HIt7lADXYgT+sH/QiHeZPNODRKExgkh5yZnVfoB+gxVSZC+8vuoE=
+X-Received: by 2002:a5b:c4d:0:b0:dfd:c928:cc9f with SMTP id
+ 3f1490d57ef6-e02be142117mr988991276.26.1718738805816; Tue, 18 Jun 2024
+ 12:26:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4d65232-b69e-419d-9b15-d0ca64b78b26@amd.com>
+References: <20240618003743.2975-1-semen.protsenko@linaro.org>
+ <20240618003743.2975-5-semen.protsenko@linaro.org> <CANAwSgSaYip=oqtLfTzFMq_HWGJMMbEXOqKWC8ANzxNZmBFXTw@mail.gmail.com>
+In-Reply-To: <CANAwSgSaYip=oqtLfTzFMq_HWGJMMbEXOqKWC8ANzxNZmBFXTw@mail.gmail.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Tue, 18 Jun 2024 14:26:34 -0500
+Message-ID: <CAPLW+4kGH+WJS5x6ujGacD_uhsUb9Mi7w1F+ocnc6hZz628kew@mail.gmail.com>
+Subject: Re: [PATCH 4/7] hwrng: exynos: Implement bus clock control
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 01:58:07PM -0500, Mario Limonciello wrote:
-> On 6/18/2024 13:52, Aaron Rainbolt wrote:
-> > On Tue, Jun 18, 2024 at 01:35:57PM -0500, Mario Limonciello wrote:
-> > > On 6/18/2024 13:30, Aaron Rainbolt wrote:
-> > > > On Tue, Jun 18, 2024 at 12:09:19PM -0500, Mario Limonciello wrote:
-> > > > > On 6/17/2024 21:54, Aaron Rainbolt wrote:
-> > > > > > acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
-> > > > > > 
-> > > > > > The _OSC is supposed to contain a bit indicating whether the hardware
-> > > > > > supports CPPC v2 or not. This bit is not always set, causing CPPC v2 to
-> > > > > > be considered absent. This results in severe single-core performance
-> > > > > > issues with the EEVDF scheduler.
-> > > > > > 
-> > > > > > To work around this, provide a new kernel parameter,
-> > > > > > "processor.ignore_osc_cppc_bit", which may be used to ignore the _OSC
-> > > > > > CPPC v2 bit and act as if the bit was enabled. This allows CPPC to be
-> > > > > > properly detected even if not "enabled" by _OSC, allowing users with
-> > > > > > problematic hardware to obtain decent single-core performance.
-> > > > > > 
-> > > > > > Tested-by: Michael Mikowski <mmikowski@kfocus.org>
-> > > > > > Signed-off-by: Aaron Rainbolt <arainbolt@kfocus.org>
-> > > > > 
-> > > > > This sounds like a platform bug and if we do accept a patch like this I
-> > > > > think we need a lot more documentation about the situation.
-> > > > 
-> > > > It is a platform bug, yes. See my previous email,
-> > > > https://lore.kernel.org/linux-acpi/d01b0a1f-bd33-47fe-ab41-43843d8a374f@kfocus.org/T/#u
-> > > > (I meant to send this email as a reply to that one, but failed to do so.)
-> > > > 
-> > > > > Can you please share more information about your hardware:
-> > > > > 1) Manufacturer?
-> > > > 
-> > > > Carbon Systems, models Iridium 14 and Iridium 16.
-> > > > 
-> > > > > 2) CPU?
-> > > > 
-> > > > Intel Core i5-13500H.
-> > > > 
-> > > > > 3) Manufacturer firmware version?
-> > > > 
-> > > > The systems use an AMI BIOS with version N.1.10CAR01 according to
-> > > > dmidecode. This is the latest BIOS available from the manufacturer.
-> > > > 
-> > > > > 4) If it's AMD what's the AGESA version?
-> > > > 
-> > > > Both affected systems are Intel-based and use heterogenous cores, not AMD.
-> > > > 
-> > > > > And most importantly do you have the latest system firmware version from
-> > > > > your manufacturer?  If not; please upgrade that first.
-> > > > 
-> > > > We are using the latest firmware. (We're trying to work with the ODM to
-> > > > potentially get a firmware update, but since this affects more than just
-> > > > us and a firmware update may not be possible for everyone, this would
-> > > > likely be worth providing a kernel-level workaround for.)
-> > > > 
-> > > > I can easily provide more detailed information - would the full output of
-> > > > 'dmidecode' and 'acpidump' be useful?
-> > > 
-> > > Does your BIOS offer any options for these?
-> > > 
-> > > Intel(R) SpeedStep(TM)
-> > > Intel Speed Shift Technology(TM)
-> > > 
-> > > I believe you need those enabled for this to work properly.
-> > 
-> > Neither option is available in the BIOS settings UI, however our ODM
-> > confirmed that both Intel Speed Shift Technology and Intel Turbo Boost Max
-> > Technology 3.0 are enabled by default. They did not mention SpeedStep,
-> > but I assume SpeedStep is working since frequency scaling in general
-> > works and the kernel patch fixes the issue.
-> 
-> Got it.  If those are enabled I think it would be good to get comments from
-> Rafael and Srinivas about your specific situation then.
-> 
-> But regarding the patch, if they are agreeable to this "kind" of knob for
-> debugging I personally think it's better to have cpc_supported_by_cpu() look
-> at the kernel command line than plumb arguments from the module down through
-> every function.
+On Mon, Jun 17, 2024 at 11:26=E2=80=AFPM Anand Moon <linux.amoon@gmail.com>=
+ wrote:
+>
+> Hi Sam,
+>
+> On Tue, 18 Jun 2024 at 06:08, Sam Protsenko <semen.protsenko@linaro.org> =
+wrote:
+> >
+> > Some SoCs like Exynos850 might require the SSS bus clock (PCLK) to be
+> > enabled in order to access TRNG registers. Add and handle optional PCLK
+> > clock accordingly to make it possible.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >  drivers/char/hw_random/exynos-trng.c | 22 ++++++++++++++++++++--
+> >  1 file changed, 20 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_ran=
+dom/exynos-trng.c
+> > index 88a5088ed34d..4520a280134c 100644
+> > --- a/drivers/char/hw_random/exynos-trng.c
+> > +++ b/drivers/char/hw_random/exynos-trng.c
+> > @@ -47,7 +47,8 @@
+> >  struct exynos_trng_dev {
+> >         struct device   *dev;
+> >         void __iomem    *mem;
+> > -       struct clk      *clk;
+> > +       struct clk      *clk;   /* operating clock */
+> > +       struct clk      *pclk;  /* bus clock */
+> >         struct hwrng    rng;
+> >  };
+> >
+> > @@ -141,10 +142,23 @@ static int exynos_trng_probe(struct platform_devi=
+ce *pdev)
+> >                 goto err_clock;
+> >         }
+> >
+> > +       trng->pclk =3D devm_clk_get_optional(&pdev->dev, "pclk");
+>
+> Use devm_clk_get_optional_enabled to avoid clk_prepare_enable
+>
 
-Just to be clear since I'm not all too familiar with how kernel params work,
-should core_param be used here? Or is there a variable that allows
-accessing the entire command line to look through it? I don't think I can
-use module_param in 'arch/x86/kernel/acpi/cppc.c', core_param has a
-comment over it describing it as "historical" so I don't think I should
-use it, and early_param looks like something one is only supposed to use
-in code that runs very early at kernel startup. I can probably figure it
-out on my own, but a quick pointer would be helpful.
+Thanks for pointing that out! Will fix in v2.
+
+> > +       if (IS_ERR(trng->pclk)) {
+> > +               ret =3D dev_err_probe(&pdev->dev, PTR_ERR(trng->pclk),
+> > +                                   "cannot get pclk");
+> > +               goto err_clock;
+> > +       }
+> > +
+> > +       ret =3D clk_prepare_enable(trng->pclk);
+> > +       if (ret) {
+> > +               dev_err(&pdev->dev, "Could not enable the pclk.\n");
+> > +               goto err_clock;
+> > +       }
+> > +
+> >         ret =3D clk_prepare_enable(trng->clk);
+>
+> Use devm_clk_get_enabled for this clock
+>
+> >         if (ret) {
+> >                 dev_err(&pdev->dev, "Could not enable the clk.\n");
+> > -               goto err_clock;
+> > +               goto err_clock_enable;
+> >         }
+> >
+> >         ret =3D devm_hwrng_register(&pdev->dev, &trng->rng);
+> > @@ -160,6 +174,9 @@ static int exynos_trng_probe(struct platform_device=
+ *pdev)
+> >  err_register:
+> >         clk_disable_unprepare(trng->clk);
+> >
+> > +err_clock_enable:
+> > +       clk_disable_unprepare(trng->pclk);
+> > +
+> >  err_clock:
+> >         pm_runtime_put_noidle(&pdev->dev);
+> >
+> > @@ -174,6 +191,7 @@ static void exynos_trng_remove(struct platform_devi=
+ce *pdev)
+> >         struct exynos_trng_dev *trng =3D platform_get_drvdata(pdev);
+> >
+> >         clk_disable_unprepare(trng->clk);
+> > +       clk_disable_unprepare(trng->pclk);
+> >
+> >         pm_runtime_put_sync(&pdev->dev);
+> >         pm_runtime_disable(&pdev->dev);
+> > --
+> > 2.39.2
+> >
+> >
+>
+> Thanks
+> -Anand
 
