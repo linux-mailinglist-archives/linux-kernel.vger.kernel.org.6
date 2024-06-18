@@ -1,49 +1,77 @@
-Return-Path: <linux-kernel+bounces-218620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A822D90C29E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:55:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D62490C292
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 05:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 860AF1C21367
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:55:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C74285345
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 03:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F00944375;
-	Tue, 18 Jun 2024 03:55:22 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F93F4D8A7;
+	Tue, 18 Jun 2024 03:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eKhl6YT5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026254C6D
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 03:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FF24C6D;
+	Tue, 18 Jun 2024 03:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718682921; cv=none; b=iUxyLf+ZLyLjg3FwTPtmuGDhdgorhlu7CwmIjJG/ePbGgvbrJm0kQ2Ylf1KadYfhDJmqANAy8x3efcEXn1k4DH98AV7tARSrVazIV5mNtDhq7ftN4MvYe4p7XqmjFozWP4DqwpHJL4Y7rEU8JNIj+a8sLkeLGnV87sM4kYFeNAU=
+	t=1718682687; cv=none; b=CMTtRPVlFqpZq5pOQnZWxjg5/qAkjYgEnPH36roeTD6atvmlnVzrp5SHiv4zVK/5vBzz3xLr3qiN3RwRp/8+DbXQ/4UVkRovpzVm4Ixg4AgYfm/IYr17Bz+gs54mtHB6v8U3ydDAMiZVxpT3D448jD+9JvLx5Hy+wfVU5fmGm0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718682921; c=relaxed/simple;
-	bh=VeEQ2LLw0AnrCnhN7XVkzjGjzXezS7uhaf2Ca31ZvNQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P1yzzT8aWOTGQLXLEd/PdpPHwG/EKGiQJM2QYSAdmiQiBFuv7XtjetCzCRz4uahxYTyQHTMKk5u8HUO2lGSJmyoBXlfKWfboTxPaejlwbx2PxqlGpvZ5DgOz9aOBvbP61BcSyfcfgEopAiGjXi5HsciyP3I4XiZQ9bWqb5pjKsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W3CTk63rfzxRvh;
-	Tue, 18 Jun 2024 11:51:06 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8E0BB1402C8;
-	Tue, 18 Jun 2024 11:55:17 +0800 (CST)
-Received: from hulk-vt.huawei.com (10.67.174.26) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 18 Jun 2024 11:55:17 +0800
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-To: <akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] mm/hugetlb_cgroup: register lockdep key for cftype
-Date: Tue, 18 Jun 2024 03:47:23 +0000
-Message-ID: <20240618034723.2122429-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718682687; c=relaxed/simple;
+	bh=JvPgI74SdVU6FuwH5VSMfmRpXFtZAyArAeCYZLvAMG4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QYrtONK659KH2jIKwJiIo83nVs5Ozx9JqoeGbL/LuhIL9onXSgFXN6B/TF9XLjNY8tr/aMo9ExRhFvU58Ei+saB+v2BRyCSjxiBrSrDK8Pu8rcnF6S2weGze6PioQaoN29twlCyjLfBJcrEK4W6Ze+9UkJgVF1qCLqLX58Pue3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eKhl6YT5; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718682685; x=1750218685;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JvPgI74SdVU6FuwH5VSMfmRpXFtZAyArAeCYZLvAMG4=;
+  b=eKhl6YT5jeSc7+p22Yiq5zI2395hSg5P/YMZwAveLtW3kMJzfHgwTbNO
+   PVOkOpSClhYsQzS0wnl7b4vzUfCPNAovfZJnGseht3WiJb5LjJh0aex6g
+   p9ubtBdGygY3vPtt//TGMcTUpLrogyB+E5beeu4k6j0sboGPK01S75vNk
+   8enshJD0/DAJxBx8GZdrzkoJrI9fDdGsLRckrz009dA9zDdWLfCJIxQt5
+   6nTKQpsFNE7PRa+mNTTDABqgSeQTOEgeIIKwRbR3YGUxNju03zw1YFLdJ
+   7Xj0BAdjIAIKCen0+7EbRtHX5BrKWld0rf/p/ocDjB7WRxji6rTCNhuFC
+   A==;
+X-CSE-ConnectionGUID: djTkORnWQI6GPVkTxZD7Qg==
+X-CSE-MsgGUID: xPxD/aKfTiWmsZJOYzGFxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="18449831"
+X-IronPort-AV: E=Sophos;i="6.08,246,1712646000"; 
+   d="scan'208";a="18449831"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 20:51:24 -0700
+X-CSE-ConnectionGUID: PIZ+IaktSj+sNULCG/AwCA==
+X-CSE-MsgGUID: DVTWpzDvTkmlI9IrB+y2fg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,246,1712646000"; 
+   d="scan'208";a="41522550"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by orviesa009.jf.intel.com with ESMTP; 17 Jun 2024 20:51:24 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 0/2] Update highest frequency of a CPU after boot
+Date: Mon, 17 Jun 2024 20:51:19 -0700
+Message-ID: <20240618035122.438822-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,36 +79,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500023.china.huawei.com (7.185.36.114)
 
-The commit e18df2889ff9 ("mm/hugetlb_cgroup: prepare cftypes based on
-template") has changed the cftypes from static allocated objects to
-dynamic ones, so the cft->lockdep_key should be registered proactively.
+Intel Xeon servers, which are capable of dynamic performance changes,
+are unable to achieve the highest frequency when the performance profile
+is changed.
 
-Fixes: e18df2889ff9 ("mm/hugetlb_cgroup: prepare cftypes based on template")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202406181046.8d8b2492-oliver.sang@intel.com
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- mm/hugetlb_cgroup.c | 2 ++
- 1 file changed, 2 insertions(+)
+The highest frequency at which a CPU can operate is not fixed and can
+vary after the system boots. These changes can be initiated by switching
+to different performance profiles using the Intel Speed Select Technology
+interface. Additionally, adjustments can be made remotely through a BMC
+(Baseboard Management Controller) interface. Administrators can select
+various performance profiles to align with specific performance
+requirements, as these choices will directly influence the total power
+consumption and cooling requirements.
 
-diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
-index 2b899c4ae968..4ff238ba1250 100644
---- a/mm/hugetlb_cgroup.c
-+++ b/mm/hugetlb_cgroup.c
-@@ -836,6 +836,8 @@ hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
- 			cft->file_offset = MEMFILE_OFFSET0(offset) +
- 					   MEMFILE_FIELD_SIZE(offset) * idx;
- 		}
-+
-+		lockdep_register_key(&cft->lockdep_key);
- 	}
- }
- 
+Whenever an administrator switches to a different performance profile that
+alters the highest frequency, the hardware sends an interrupt and update
+the new highest frequency at which the system can operate. This interrupt
+can be enabled via the MSR_HWP_INTERRUPT register, and only if support is
+indicated by the CPUID[6].EAX[15] = 1.
+
+To enable changes to the highest frequency, add a CPU features flag and 
+enable the HWP (Hardware P-states) highest performance change interrupt
+when it is supported by the CPU.
+
+Srinivas Pandruvada (2):
+  x86/cpufeatures: Add HWP highest perf change feature flag
+  cpufreq: intel_pstate: Support highest performance change interrupt
+
+ arch/x86/include/asm/cpufeatures.h |  1 +
+ drivers/cpufreq/intel_pstate.c     | 23 +++++++++++++++++++----
+ 2 files changed, 20 insertions(+), 4 deletions(-)
+
 -- 
-2.34.1
+2.44.0
 
 
