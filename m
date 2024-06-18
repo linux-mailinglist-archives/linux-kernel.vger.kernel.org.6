@@ -1,120 +1,143 @@
-Return-Path: <linux-kernel+bounces-219281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3676B90CC56
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E963090CBF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E10261F23DFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A24811F223E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A01161916;
-	Tue, 18 Jun 2024 12:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE2915688E;
+	Tue, 18 Jun 2024 12:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcCgCrLo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dECsmbWT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC1B161307;
-	Tue, 18 Jun 2024 12:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FAE15530C;
+	Tue, 18 Jun 2024 12:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714273; cv=none; b=DnO1NH5U5THcCNolqAH+3c2pJ81VXTiOMb6dE9GF3AkkMlVK7OAeRHu6n2taCueUFaT2ARu2bbaiTiCOC2Whf5Eq2uKc7zcDt87qPpv/rBPHjwJ93aDxsu0wfdNrePq+yXJIf/yjwImbwtRGjZfkUFLwVtzhRnr6ZOf7mfMa3r4=
+	t=1718714200; cv=none; b=Ir8KZom2w2uo3yDltUoPb0IuIQr7x9DWut/ms8OCOOpIY84IlXC2VLv5Oe2nZAaTLLPBjBIBwAkA8AOABI6G8njDGnDXhZh6ngglCZAJUaKxaGVCY/6A7VL27HguA51iZQWM1+7/u/t6V2+JdJ4UKup+u2M719DagaB6W4sf7K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714273; c=relaxed/simple;
-	bh=WU/ecu/cqXf8TbX521ocAfNCVNpp0ahcPYQQV8HphKA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VinMDM4mh9eg427SaTa+/qPsBtz+PqqLyQ0gWapVzeFE5403NnB5kkzQ62kM4/NlabPHeVcu9P493oE5iv2j7fdu1n8OUlIiArvLtbCF6XfKlwIyOjrq5+9P8rWtaJD62EmKMZ2dqL4l6ALoaHo+qxIL4y9U5w92ME4N+7Wr1AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gcCgCrLo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369B4C4AF1D;
-	Tue, 18 Jun 2024 12:37:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718714273;
-	bh=WU/ecu/cqXf8TbX521ocAfNCVNpp0ahcPYQQV8HphKA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gcCgCrLoohWJ59/caCRFTNsF4NVnY4uOsxCUxG+uj0Ha9ODUhhnQlk6b7nHDfDoxW
-	 hDuuoDIKA5qFk+WOWi9MosXHlAdRWiWJuBJsg5LCgN7j44vIyQkSmNM/pzjDthsGHl
-	 zg6t4/g33J2JClCXAsn3ArQiqLKB6C3swLYXKfVpIFBam1xV63xecQYAZWRpfH5Cfa
-	 hPSi/7wXArfu/QZEbxWrj3shcXzDv79ONl969OaI5ffw5I/otjKjz6gAHOu4zGqcHP
-	 Tu7KKoEqfT80nIDbbSWY8wgGilM7+yoMjlSk8VyOPfHPss9xSD+bt61+/FmhMVmFyD
-	 vquQ/VUP1xGNw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Louis Dalibard <ontake@ontake.dev>,
-	Jiri Kosina <jkosina@suse.com>,
-	Sasha Levin <sashal@kernel.org>,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.9 44/44] HID: Ignore battery for ELAN touchscreens 2F2C and 4116
-Date: Tue, 18 Jun 2024 08:35:25 -0400
-Message-ID: <20240618123611.3301370-44-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240618123611.3301370-1-sashal@kernel.org>
-References: <20240618123611.3301370-1-sashal@kernel.org>
+	s=arc-20240116; t=1718714200; c=relaxed/simple;
+	bh=OBcdjLrWWFK3QokNiE+RzQm1SYM29rnb0cpZDwr2rGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y4o702rkcLhUalpYYKzsKBdLMG4YPgOiCG35gEXFwlypTSrU6+LZLvNf4mWl3sDfV71dDDHR+dPRkfi2ap6l0r3QCpbPxl2WEprRcdBW9gizxYw+xTCuuqYddEnMK3mExUEHh3RI4TB7+/PBxOlXxeVNtUX7zVoONilrRpk/X34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dECsmbWT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IC8tGl019570;
+	Tue, 18 Jun 2024 12:36:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	T5gyq14bj4+J/6gdfSxcbHQ8pwsxw9GLir8vbhb2hgc=; b=dECsmbWTg13Wcwal
+	U2Iep6Ijmdv3JkObB9SOXZUBZ2HmS4rHO4sfDukHlCqFbbHzO6q8eiCWFiWDBJlg
+	Ool9JmAUAB0Pjf1djFgNcc7HId5XpwKoZ5r+LadQGD+By8DL6ZoQ9B0fo/7Vgp+6
+	ADYRbVxHeye52q1HRWfhMPURlqiL/Wyz8VKd9AyV+ECTPfKGKlf/eoBvl8Uulk2C
+	CqFriOjKabjHBDqX1ljncc32+7/Wp5BkLDAFs8jlTTtNqKuNDoZMFadkqL7G4Npb
+	z77siYlGdF6TPUoPmJk9Z7WYjkRZbf6OeQcXTCHIFqYLAtCR5OPMAxSzWugkomgX
+	mieXYw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu22gs8ba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 12:36:34 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45ICaX7B020572
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 12:36:33 GMT
+Received: from [10.216.29.175] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 05:36:29 -0700
+Message-ID: <4e3d8f03-11d0-7728-1068-1c965ef79a1a@quicinc.com>
+Date: Tue, 18 Jun 2024 18:06:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.9.5
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4] media: venus: fix use after free in vdec_close
+Content-Language: en-US
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Stanimir Varbanov
+	<stanimir.varbanov@linaro.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+References: <1715231669-16795-1-git-send-email-quic_dikshita@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <1715231669-16795-1-git-send-email-quic_dikshita@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: nKOpWW-_hJ1r8GSBrkvzwJhLjtc01U7K
+X-Proofpoint-GUID: nKOpWW-_hJ1r8GSBrkvzwJhLjtc01U7K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ clxscore=1011 malwarescore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180093
 
-From: Louis Dalibard <ontake@ontake.dev>
 
-[ Upstream commit a3a5a37efba11b7cf1a86abe7bccfbcdb521764e ]
+On 5/9/2024 10:44 AM, Dikshita Agarwal wrote:
+> There appears to be a possible use after free with vdec_close().
+> The firmware will add buffer release work to the work queue through
+> HFI callbacks as a normal part of decoding. Randomly closing the
+> decoder device from userspace during normal decoding can incur
+> a read after free for inst.
+> 
+> Fix it by cancelling the work in vdec_close.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: af2c3834c8ca ("[media] media: venus: adding core part and helper functions")
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+> Changes since v3:
+> - Fixed style issue with fixes tag 
+> 
+> Changes since v2:
+> - Fixed email id
+> 
+> Changes since v1:
+> - Added fixes and stable tags
+> 
+>  drivers/media/platform/qcom/venus/vdec.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index 29130a9..56f8a25 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -1747,6 +1747,7 @@ static int vdec_close(struct file *file)
+>  
+>  	vdec_pm_get(inst);
+>  
+> +	cancel_work_sync(&inst->delayed_process_work);
+>  	v4l2_m2m_ctx_release(inst->m2m_ctx);
+>  	v4l2_m2m_release(inst->m2m_dev);
+>  	vdec_ctrl_deinit(inst);
 
-At least ASUS Zenbook 14 (2023) and ASUS Zenbook 14 Pro (2023) are affected.
-
-The touchscreen reports a battery status of 0% and jumps to 1% when a
-stylus is used.
-
-The device ID was added and the battery ignore quirk was enabled for it.
-
-[jkosina@suse.com: reformatted changelog a bit]
-Signed-off-by: Louis Dalibard <ontake@ontake.dev>
-Signed-off-by: Jiri Kosina <jkosina@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/hid/hid-ids.h   | 2 ++
- drivers/hid/hid-input.c | 4 ++++
- 2 files changed, 6 insertions(+)
-
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 8376fb5e2d0b4..005239dbd7f18 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -421,6 +421,8 @@
- #define I2C_DEVICE_ID_HP_SPECTRE_X360_13_AW0020NG  0x29DF
- #define I2C_DEVICE_ID_ASUS_TP420IA_TOUCHSCREEN 0x2BC8
- #define I2C_DEVICE_ID_ASUS_GV301RA_TOUCHSCREEN 0x2C82
-+#define I2C_DEVICE_ID_ASUS_UX3402_TOUCHSCREEN 0x2F2C
-+#define I2C_DEVICE_ID_ASUS_UX6404_TOUCHSCREEN 0x4116
- #define USB_DEVICE_ID_ASUS_UX550VE_TOUCHSCREEN	0x2544
- #define USB_DEVICE_ID_ASUS_UX550_TOUCHSCREEN	0x2706
- #define I2C_DEVICE_ID_SURFACE_GO_TOUCHSCREEN	0x261A
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 8bb16e9b94aa5..c9094a4f281e9 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -377,6 +377,10 @@ static const struct hid_device_id hid_battery_quirks[] = {
- 	  HID_BATTERY_QUIRK_IGNORE },
- 	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, I2C_DEVICE_ID_ASUS_GV301RA_TOUCHSCREEN),
- 	  HID_BATTERY_QUIRK_IGNORE },
-+	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, I2C_DEVICE_ID_ASUS_UX3402_TOUCHSCREEN),
-+	  HID_BATTERY_QUIRK_IGNORE },
-+	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, I2C_DEVICE_ID_ASUS_UX6404_TOUCHSCREEN),
-+	  HID_BATTERY_QUIRK_IGNORE },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ELAN, USB_DEVICE_ID_ASUS_UX550_TOUCHSCREEN),
- 	  HID_BATTERY_QUIRK_IGNORE },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ELAN, USB_DEVICE_ID_ASUS_UX550VE_TOUCHSCREEN),
--- 
-2.43.0
-
+Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
