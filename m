@@ -1,98 +1,292 @@
-Return-Path: <linux-kernel+bounces-219695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9D990D6AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02FE090D6AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D89C1C244B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:10:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 083BD1C23E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566A5208CB;
-	Tue, 18 Jun 2024 15:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2058B23777;
+	Tue, 18 Jun 2024 15:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYUzmmSz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IEyi7u4Z"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA574689;
-	Tue, 18 Jun 2024 15:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DF7225D4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718723421; cv=none; b=V6XdawWXPJ62x8SFdV2zcrB9armutBj+caQfDNoVRMquXj4B+923lltILiOqznu1jPACSMaSetQW2nc4X/RxMysAopgZgmNyaKXJ5uOwcHEc1YdBgjB5BzoPAdT3mfWIkIoxlHRztESngR2zngablC7rQDC1gR0DTurxaDSOhTA=
+	t=1718723426; cv=none; b=Z2C8ohf+OzIu+FJbruOOqp2hroz1frXT1mAcKosOhxN7Bb1GzQoANGl11hdt7fCJoulaeQv/kkvlOsYSpIiPlkxKkNa9YhOtrx0HdtUXUXBjfpJkXzjaxh9pZH/Afq5Wkj1gcyVPgPtwneYsgIUuE/m+URnDwqaUzc7vDWsGAGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718723421; c=relaxed/simple;
-	bh=lQqNRhwMATkQdkE2YrgiY4aa+9P+Rk0Zwz4NXkvk11g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9HVvhDS4aOqleGJ8PS/RYszofTpxL5F7TVKR/ZOIVDW0zEMgfkAunK+/6PJm7HxXNEYNwy80rKTnk44IfwsVLOwFR4TvXKp+HCbIvK08nkCF12B2duNWRcAyKCmjbx503dIoz79gvYqKTRZ6OUKn9Yf+kboYknz1e2v5eKrQPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYUzmmSz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF71C4AF1C;
-	Tue, 18 Jun 2024 15:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718723421;
-	bh=lQqNRhwMATkQdkE2YrgiY4aa+9P+Rk0Zwz4NXkvk11g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gYUzmmSz0KYwkcZx4qdmojw/HqN0D93dfSe5hro10tgcKlOjmHXNWKFk3eohjB2IY
-	 s3Ws/FiClAjdDSAWVzr/SSpZ5aO3TCbleDTTncXns6gn7WkNxbQO9fEThGy4IkTjK+
-	 D4nzHPW4nn7GSzK2vedVhLQlpr+rHQoLudtUDAyIxmijmGoG8lE6kueoh3eykKHt0W
-	 sLzq5jDR68VoplDH59Ifwj04dedMA8ptblZD8SAzDLNJdOSV33XpVZoKvfwmYhz/Af
-	 FQQPEM/Cx4jQ9+xpEHqFuTeF5IWWrQVCA0p9395LtMOB9aQrxnoZPeJJggJoqBH3i8
-	 VEihOtE0XdBwg==
-Date: Tue, 18 Jun 2024 16:10:15 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Beniamin Bia <beniamin.bia@analog.com>,
-	Stefan Popa <stefan.popa@analog.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	jstephan@baylibre.com, dlechner@baylibre.com
-Subject: Re: [PATCH 6/9] dt-bindings: iio: adc: adi,ad7606: fix example
-Message-ID: <20240618-rack-synthetic-1d1747b34a6a@spud>
-References: <20240618-cleanup-ad7606-v1-0-f1854d5c779d@baylibre.com>
- <20240618-cleanup-ad7606-v1-6-f1854d5c779d@baylibre.com>
+	s=arc-20240116; t=1718723426; c=relaxed/simple;
+	bh=SP7q81qWNq4cCLZnlLrfBW5vXhkXY9BLAjp64hjh5gk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rIch4CW3hDn+1XTP8UTKsjaP9AcoGIloGhsUiKd2/F1cSlgTw6Xvrf1PR2PREDSLa7wMvAgValxCfVQFM/Pi7Xk8qNfRjj2X0pY5nnp1DnXwM8xeaJ6pwQD3pHdoBT9vJjAD2kMp6+VnIqNMw8dfAHV0tsFYZkLtRv/830blZfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IEyi7u4Z; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a63359aaaa6so853541766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:10:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718723422; x=1719328222; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iKBE1NSWSd15cPnGMhaK2tiiQsEvDMuGFKV4Mjnsw/I=;
+        b=IEyi7u4ZV8x6LKZATCJqVHna+Qgw4hWigoGooMw2HdKLbTNbTs+Dsh2uLHTM6yrpSW
+         9/RdP9fN9VxfUHaebVwZ4ZwQCgihQoB2IUsb7SpCsys4+lhf9QTX2VRS1Y9OPCuAdaTd
+         Ylsvb1t4Uv4healzfu788JdeFP3ZsNQmSIuVSgUEZrofk/T/I0pew9gWsdVj9Br7DuqK
+         fehdYzLeLhEUySYMYRyB83kiK0LL+Zwz+fQ+n1Nm7GciM/CSBKn7DNro4okNc1uARce2
+         V0K2qJfIX8h3HBXJ8ay3cN38mektq2LQzKQByUU7JTUIpSUSWlpTxkZVPznQQxTH5Ec3
+         5Yug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718723422; x=1719328222;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iKBE1NSWSd15cPnGMhaK2tiiQsEvDMuGFKV4Mjnsw/I=;
+        b=ZhKZJH+Pvg6BIlFcwxvj88clDHyi0hxLkJDfrv1Q7RiaIEGwkpZqpP2QH1KfoWp3lZ
+         tJkt75vMBuVWmeWsTKpDmr4AphRgmNmsU4+VPtgsW3xOIokhjfEsnz7N9HCqshJbr7hu
+         5CVq8/nM5E3dsXb5oDnyt2gesqex8fh+qGN01koyMJJ/5TYEUcsefH1WbV7axXwoMGQM
+         mVBlcLdJ78iLWL7ucFSz/zeX/bSpbUvbtO9GjGSu/jUNObpucb51+1TLRoLqkE+x5Rg8
+         4uQEK6EaeHXKe4N6uVk4GsbbhTkNOpfh1QMXNmFlfEs4t/gIYUnwb8HfTkoB8YPiU5x/
+         54sA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+t2IjPegq98GJmqvrlc8In3z++ro9TIH4Q93dFdU/rzLQ+avv1T/EmNGgmNg0FHM/gGZtkMcMGX5aHCqj7im348+6MQA+JwsPYKKS
+X-Gm-Message-State: AOJu0YzgLs8N5Dir5BWnW3I0TssSJYFgIwQvEA+YNTv/fMwinLi4obTG
+	WMw72PvTZ+ET0bHKozjIXYWke3DiqOkjESYAfKSPNVWgHIB1s+tVvfjLYhv14pU=
+X-Google-Smtp-Source: AGHT+IHY8c3KDfS2CVVbRxmS3YzW470n5QtJw/ekP0zpRyqlNqmiR7aZ1yM+wIR4w7JGNw0jAYyOkw==
+X-Received: by 2002:a17:907:a092:b0:a6f:7591:9217 with SMTP id a640c23a62f3a-a6f7591974cmr712123866b.55.1718723422094;
+        Tue, 18 Jun 2024 08:10:22 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a8fsm14212761f8f.110.2024.06.18.08.10.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 08:10:21 -0700 (PDT)
+Message-ID: <7809a177-e170-46f5-b463-3713b79acf22@suse.com>
+Date: Tue, 18 Jun 2024 18:10:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KqEybsG53Fsmklth"
-Content-Disposition: inline
-In-Reply-To: <20240618-cleanup-ad7606-v1-6-f1854d5c779d@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/9] x86/virt/tdx: Exclude memory region hole within CMR
+ as TDMR's reserved area
+To: Kai Huang <kai.huang@intel.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, dave.hansen@intel.com, dan.j.williams@intel.com,
+ kirill.shutemov@linux.intel.com, rick.p.edgecombe@intel.com,
+ peterz@infradead.org, tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
+ hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+ isaku.yamahata@intel.com, binbin.wu@linux.intel.com
+References: <cover.1718538552.git.kai.huang@intel.com>
+ <cfbed1139887416b6fe0d130883dbe210e97d598.1718538552.git.kai.huang@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <cfbed1139887416b6fe0d130883dbe210e97d598.1718538552.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---KqEybsG53Fsmklth
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 02:02:38PM +0000, Guillaume Stols wrote:
-> Example uses adi,ad7606-8 as compatible, but adi,sw-mode is not
-> available for it. So remove this property from example.
->=20
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+On 16.06.24 г. 15:01 ч., Kai Huang wrote:
+> A TDX module initialization failure was reported on a Emerald Rapids
+> platform:
+> 
+>    virt/tdx: initialization failed: TDMR [0x0, 0x80000000): reserved areas exhausted.
+>    virt/tdx: module initialization failed (-28)
+> 
+> As a step of initializing the TDX module, the kernel tells the TDX
+> module all the "TDX-usable memory regions" via a set of TDX architecture
+> defined structure "TD Memory Region" (TDMR).  Each TDMR must be in 1GB
+> aligned and in 1GB granularity, and all "non-TDX-usable memory holes" in
+> a given TDMR must be marked as a "reserved area".  Each TDMR only
+> supports a maximum number of reserved areas reported by the TDX module.
+> 
+> As shown above, the root cause of this failure is when the kernel tries
+> to construct a TDMR to cover address range [0x0, 0x80000000), there
+> are too many memory holes within that range and the number of memory
+> holes exceeds the maximum number of reserved areas.
+> 
+> The E820 table of that platform (see [1] below) reflects this: the
+> number of memory holes among e820 "usable" entries exceeds 16, which is
+> the maximum number of reserved areas TDX module supports in practice.
+> 
+> === Fix ===
+> 
+> There are two options to fix this: 1) put less memory holes as "reserved
+> area" when constructing a TDMR; 2) reduce the TDMR's size to cover less
+> memory regions, thus less memory holes.
+> 
+> Option 1) is possible, and in fact is easier and preferable:
+> 
+> TDX actually has a concept of "Convertible Memory Regions" (CMRs).  TDX
+> reports a list of CMRs that meet TDX's security requirements on memory.
+> TDX requires all the "TDX-usable memory regions" that the kernel passes
+> to the module via TDMRs, a.k.a, all the "non-reserved regions in TDMRs",
+> must be convertible memory.
+> 
+> In other words, if a memory hole is indeed CMR, then it's not mandatory
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+So TDX requires all TDMR to be CMR, and CMR regions are reported by the 
+BIOS, how did you arrive at the conclusion that if a hole is CMR there 
+is no point in creating a TDMR for it?
 
---KqEybsG53Fsmklth
-Content-Type: application/pgp-signature; name="signature.asc"
+> for the kernel to add it to the reserved areas.  The number of consumed
+> reserved areas can be reduced if the kernel doesn't add those memory
+> holes as reserved area.  Note this doesn't have security impact because
+> the kernel is out of TDX's TCB anyway.
+> 
+> This is feasible because in practice the CMRs just reflect the nature of
+> whether the RAM can indeed be used by TDX, thus each CMR tends to be a
+> large range w/o being split into small areas, e.g., in the way the e820
+> table does to contain a lot "ACPI *" entries.  [2] below shows the CMRs
+> reported on the problematic platform (using the off-tree TDX code).
+> 
+> So for this particular module initialization failure, the memory holes
+> that are within [0x0, 0x80000000) are mostly indeed CMR.  By not adding
+> them to the reserved areas, the number of consumed reserved areas for
+> the TDMR [0x0, 0x80000000) can be dramatically reduced.
+> 
+> On the other hand, although option 2) is also theoretically feasible, it
+> requires more complicated logic to handle around splitting TDMR into
+> smaller ones.  E.g., today one memory region must be fully in one TDMR,
+> while splitting TDMR will result in each TDMR only covering part of some
+> memory region.  And this also increases the total number of TDMRs, which
+> also cannot exceed a maximum value that TDX module supports.
+> 
 
------BEGIN PGP SIGNATURE-----
+<snip>
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnGjVwAKCRB4tDGHoIJi
-0lqFAQCX4SX21H8XY7GASSWedZdYZZ5vWePW1cJzZc0jzxUzFgD6A2Tr1cr6CAmF
-rhhfcZNmk3CFCIh0iGPJkw/3eSYyFAU=
-=mtpE
------END PGP SIGNATURE-----
+> 
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> ---
+>   arch/x86/virt/vmx/tdx/tdx.c | 149 ++++++++++++++++++++++++++++++++----
+>   arch/x86/virt/vmx/tdx/tdx.h |  13 ++++
+>   2 files changed, 146 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index ced40e3b516e..88a0c8b788b7 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -293,6 +293,10 @@ static int stbuf_read_sysmd_field(u64 field_id, void *stbuf, int offset,
+>   	return 0;
+>   }
+>   
+> +/* Wrapper to read one metadata field to u8/u16/u32/u64 */
+> +#define stbuf_read_sysmd_single(_field_id, _pdata)	\
+> +	stbuf_read_sysmd_field(_field_id, _pdata, 0, sizeof(typeof(*(_pdata))))
 
---KqEybsG53Fsmklth--
+What value does adding yet another level of indirection bring here?
+
+> +
+>   struct field_mapping {
+>   	u64 field_id;
+>   	int offset;
+> @@ -349,6 +353,76 @@ static int get_tdx_module_version(struct tdx_sysinfo_module_version *modver)
+>   	return stbuf_read_sysmd_multi(fields, ARRAY_SIZE(fields), modver);
+>   }
+>   
+> +/* Update the @cmr_info->num_cmrs to trim tail empty CMRs */
+> +static void trim_empty_tail_cmrs(struct tdx_sysinfo_cmr_info *cmr_info)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < cmr_info->num_cmrs; i++) {
+> +		u64 cmr_base = cmr_info->cmr_base[i];
+> +		u64 cmr_size = cmr_info->cmr_size[i];
+> +
+> +		if (!cmr_size) {
+> +			WARN_ON_ONCE(cmr_base);
+> +			break;
+> +		}
+> +
+> +		/* TDX architecture: CMR must be 4KB aligned */
+> +		WARN_ON_ONCE(!PAGE_ALIGNED(cmr_base) ||
+> +				!PAGE_ALIGNED(cmr_size));
+> +	}
+> +
+> +	cmr_info->num_cmrs = i;
+> +}
+
+That function is somewhat weird, on the one hand its name suggests it's 
+doing some "optimisation" i.e removing empty cmrs, at the same time it 
+will simply cap the number of CMRs until it meets the first empty CMR, 
+what aif we have and will also WARN. In fact it could even crash the 
+machine if panic_on_warn is enabled, furthermore the alignement checks 
+suggest it's actually some sanity checking function. Furthermore if we 
+have:"
+
+ORDINARY_CMR,EMPTY_CMR,ORDINARY_CMR
+
+(Is such a scenario even possible), in this case we'll ommit also the 
+last ordinary cmr region?
+
+> +
+> +#define TD_SYSINFO_MAP_CMR_INFO(_field_id, _member)	\
+> +	TD_SYSINFO_MAP(_field_id, struct tdx_sysinfo_cmr_info, _member)
+
+nit: Again, no real value in introducing yet another level of 
+indirection in this case.
+
+> +
+> +static int get_tdx_cmr_info(struct tdx_sysinfo_cmr_info *cmr_info)
+> +{
+> +	int i, ret;
+> +
+> +	ret = stbuf_read_sysmd_single(MD_FIELD_ID_NUM_CMRS,
+> +			&cmr_info->num_cmrs);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < cmr_info->num_cmrs; i++) {
+> +		const struct field_mapping fields[] = {
+> +			TD_SYSINFO_MAP_CMR_INFO(CMR_BASE0 + i, cmr_base[i]),
+> +			TD_SYSINFO_MAP_CMR_INFO(CMR_SIZE0 + i, cmr_size[i]),
+> +		};
+> +
+> +		ret = stbuf_read_sysmd_multi(fields, ARRAY_SIZE(fields),
+> +				cmr_info);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	/*
+> +	 * The TDX module may just report the maximum number of CMRs that
+> +	 * TDX architecturally supports as the actual number of CMRs,
+> +	 * despite the latter is smaller.  In this case all the tail
+> +	 * CMRs will be empty.  Trim them away.
+> +	 */
+> +	trim_empty_tail_cmrs(cmr_info);
+> +
+> +	return 0;
+> +}
+> +
+> +static void print_cmr_info(struct tdx_sysinfo_cmr_info *cmr_info)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < cmr_info->num_cmrs; i++) {
+> +		u64 cmr_base = cmr_info->cmr_base[i];
+> +		u64 cmr_size = cmr_info->cmr_size[i];
+> +
+> +		pr_info("CMR[%d]: [0x%llx, 0x%llx)\n", i, cmr_base,
+> +				cmr_base + cmr_size);
+> +	}
+> +}
+
+Do we really want to always print all CMR regions, won't that become way 
+too spammy and isn't this really useful in debug scenarios? Perhaps gate 
+this particular information behind a debug flag?
+
+> +
+>   static void print_basic_sysinfo(struct tdx_sysinfo *sysinfo)
+>   {
+>   	struct tdx_sysinfo_module_version *modver = &sysinfo->module_version;
+
+<snip>
 
