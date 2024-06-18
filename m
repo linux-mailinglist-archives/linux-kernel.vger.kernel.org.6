@@ -1,62 +1,55 @@
-Return-Path: <linux-kernel+bounces-219141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B926790CAA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:56:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B12E90CA5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 481C0B20EBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:51:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3170F1F21FC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DF613B596;
-	Tue, 18 Jun 2024 11:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C9313E05E;
+	Tue, 18 Jun 2024 11:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a14oTl9w"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m31V2R7s"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4F913A26E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004FB13DDDA;
+	Tue, 18 Jun 2024 11:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718710211; cv=none; b=StKgjJPFh9k4hxyvuDAhvauEHj5k1TOcPruITpS9R/DF2s4HgzT+T+OWBv0MQpXC4t/Fic8FTNHxeXNzRf/nzLwCVbBlDbbNEQd7+nSUB99VeGEmrGwQD99ACh6jXXGrrfv5tvD/j/AS1rIX3IzAMUW3nteE4estmcOpCyJIbBE=
+	t=1718710244; cv=none; b=EOFixWEwVJqTCOJYedql4QlJG8yfyGRyLeOKqyER6q1aVOij44iiZOHfxlXdLcM410WgkIh2Kl6coSva5BuDvslcp0yyX5r2pk3wEekSne0/+gv7EyiA6My9eqEGzJYXp/AqQlq/64davwaA8ZyEIWhqc0Vpua5G3sAZEvQASOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718710211; c=relaxed/simple;
-	bh=SdZl0lzNFA6+bFoy69xrA0z4UuPAdPlQ9xOSKSdBNms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=vC/kzgqsqFdYhVc8mhLCbR90NxMLhIeK+DOTHhj6A22YsO78FDJYcCbBp0UURE+pFdGwjK7qVP1xOyzHJ9Tcs0t5E1JvyFtmpG2L6gEfD9+c0ScFekkoLlmGGrlIQeo6tPriMeQKDyesT22cFIUjIlSTooNANaxLe3bNkOBLLMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a14oTl9w; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I7UI2S005163;
-	Tue, 18 Jun 2024 11:30:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8o2KhfJ6rcu8IFy/SAe3tszB0Qixa4y7+JbhSmiHSeI=; b=a14oTl9wYzsJSu0P
-	ccHRX2kzzmt1GWUAljELnmpA1gYY2KwG3PiCuNDGlERDp9LFkLc79P/HsskbTcsa
-	zjEJGasEt4EJ151jvWuz9jH/8TXRUnGuDY+7wcg3S4vp1JJPe6wm/gl+yTstz9NA
-	qoQCE9hS0eJ7wWxTFgpE33ew1wWFDWyY7mon1P/Wr8gcmaHMgKEf9iCiulMLxEYM
-	GrQ0rP3aTbLU3SGBsckTKvGUS76DqWfwWwgVP/ttkDtS6P8bcAxXjVKhsY+Sw7jw
-	QeTZKrPdUQePtHVlkze4Bnd60B0DwRm4qVSQ5yI7QyQChCdOZAnrRH6jWsoVsgfe
-	mFUyWA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytt37a07a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 11:30:05 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IBU3L5004002
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 11:30:04 GMT
-Received: from [10.253.13.202] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 04:30:02 -0700
-Message-ID: <d029d754-aeb7-493a-8e48-6acaa53fee1e@quicinc.com>
-Date: Tue, 18 Jun 2024 19:29:59 +0800
+	s=arc-20240116; t=1718710244; c=relaxed/simple;
+	bh=Fvq1y+koqj8fOQevp53Pmnpz9AgYuJGBtdWNg1G1Scw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pbV6kdR2nCnjJb1ik6ZQwdoD/oqI+VLZDJPoK11FzQx72uHMVQBmo4VwwoKCnufq4DBHX2B+lRmRIhR3/9sgwnUmA4OeYkHK1+k4fmmlAw6eNvvhFSaC7YqageN7PPcVN00VNziXq79HPmSI33dTgotwcEqULFssuybzkcF2ebg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m31V2R7s; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718710214; x=1719315014; i=markus.elfring@web.de;
+	bh=Fvq1y+koqj8fOQevp53Pmnpz9AgYuJGBtdWNg1G1Scw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=m31V2R7soGq6GQZ+fiv99i2+9GduwzVKaySyLRE/OTx1VFLkL2D3oEUsyeOWFbQD
+	 tkaJXVq7ZHnChpeezbdBgd48xvelMK+rWNCwrunUznKHfUz0lN/KBGZo0YT5xJxBm
+	 pfTDyQ1V/84BV2dvfF1hyI8L2j8JDh9oa5PVt5M1g64Qg1M/xFhfF56SD10XRNtYq
+	 68gpJRZo+HvL7jdraLFfrq9j/8TOE+jzXLmaeFBTZLWVXhGus4XIDaxXpwhOIZpY/
+	 TtKda8mnJ1UDCE+yTsQm5NFYLY11ncgmMny+xuioApBQTSZ3eOusTDzNoDpGjgSZb
+	 TgzrKRlRThNPR9ZwyQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6Jxd-1sPtj23usT-00vvRF; Tue, 18
+ Jun 2024 13:30:14 +0200
+Message-ID: <3f3f57dc-88c1-44ab-a69a-457633360fbd@web.de>
+Date: Tue, 18 Jun 2024 13:30:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,62 +57,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] devres: Initialize a uninitialized struct member
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <rafael@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1718629765-32720-1-git-send-email-quic_zijuhu@quicinc.com>
- <2024061726-payment-editor-7431@gregkh>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <2024061726-payment-editor-7431@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jBHCvr99YttQpzs_DCg9OfOZwec00My1
-X-Proofpoint-GUID: jBHCvr99YttQpzs_DCg9OfOZwec00My1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 mlxscore=0 bulkscore=0 phishscore=0
- spamscore=0 mlxlogscore=714 adultscore=0 impostorscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406180085
+Subject: Re: [v20 02/13] rtase: Implement the .ndo_open function
+To: Justin Lai <justinlai0215@realtek.com>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Hariprasad Kelam <hkelam@marvell.com>,
+ Jiri Pirko <jiri@resnulli.us>, Larry Chiu <larry.chiu@realtek.com>,
+ Ping-Ke Shih <pkshih@realtek.com>, Ratheesh Kannoth <rkannoth@marvell.com>
+References: <20240607084321.7254-3-justinlai0215@realtek.com>
+ <1d01ece4-bf4e-4266-942c-289c032bf44d@web.de>
+ <ef7c83dea1d849ad94acef81819f9430@realtek.com>
+ <6b284a02-15e2-4eba-9d5f-870a8baa08e8@web.de>
+ <0c57021d0bfc444ebe640aa4c5845496@realtek.com>
+ <20240617185956.GY8447@kernel.org>
+ <202406181007.45IA7eWxA3305754@rtits1.realtek.com.tw>
+ <d8ca31ba65364e60af91bca644a96db5@realtek.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <d8ca31ba65364e60af91bca644a96db5@realtek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HQWoZ1zR902uFm4bsPscR4h5SeyaamFsUAkVv9Cl8KQq08NyzhW
+ 9Dbnm7muODpM/JkLKyK3pdzHHDN9crnYVmb8mMhakJFQ1QWaC0de7E4966E1FIZ0tIjG3Ey
+ fKf5/uCGrjq5JvOYkyXr/cfgLDD/bpciBObRaE+s3la4IvStEm3oQb3s9FjxNCDoaujRYAp
+ 6oUQ6gj+5eKEZV97/y/0g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YmUCZHo1Yd0=;hAaTHTQxgNJCPZcDGMgj94JTeMO
+ 7yjAb+NNCP/Zud39D1AhLOVlwTCWpPWICtKjPB2/VXixeItg099hoahf4dCBS8r2MWHymV+7L
+ i7npaGN9jDMR4YNqhyG5MW82gOKzYyY9cF128JjBlYSMopnrWDbo5d4lPugoO/CukW/eWV6NL
+ qu3879fhlRqxjzCy4zXicCV+qQoEno1UxEjTUIw3xfvN6hT/aUN0u+on5SWx32E2dWdFpYq3M
+ f7f1qdgiHhoeqgSh/pvTrw9fCgrl3T9BhV8J4CCu4LfbaQjoUNHrdztPx90I0ORCFau0h6TTq
+ mQEIOM9vQHNYSD/7hq3iautK9jGE3pjYrh/DgMDisGGM2uVvPAmk4pj6JtrSif2F2qD8QhBjJ
+ HJ4vaLn3P/FzPIevoxuxAVy5+m8r42y8UC93KdS9Qo4QY1E1+CzAD46Su9CnxqdlgcSZkNJ+I
+ OijVN6/dlvDsZIXZ2F4+uwLJxx7sZ7YbUEGmw8iUA+UDrU+QVAj85aYweDl9SQuIJTa6ITeOc
+ DCZqsEEVfxX0FgtrL44vMvPvS9svVxnT6hqbE0LB83GtCTpTbvm+Go0Qi6+E+KQINxsp7Bj/1
+ EmbruTVBySheUs5sZLddcVE7/L77MzmDnYwIyOvBl8gSaVhbXoT61E242UGZqW/7EIZQrFQB+
+ FT00mp9CZk5uHhN6OARaTNG7rJ4RQtwV5Uwuv+/ktsF7q9TgQtv/K93hMziyyICy7ukr0RC0d
+ 0pZjN/C6pioIc9USTfzevWvIzN2F8ppmi/Nmh7nntogc0D6dv3K3kSors4nnWrtIiG3jVJMfH
+ z+wneR+JaWarQx+FDYE+EP/6aSDzpJNq4rWU4Ov1K1fzU=
 
-On 6/18/2024 2:14 AM, Greg KH wrote:
-> On Mon, Jun 17, 2024 at 09:09:25PM +0800, Zijun Hu wrote:
->> Use memset() after kmalloc() a struct devres_group to initialize
->> potential uninitialized members such as @color within kernel API
->> devres_open_group() as alloc_dr() does.
->>
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->>  drivers/base/devres.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
->> index 3df0025d12aa..ba3e4603cd77 100644
->> --- a/drivers/base/devres.c
->> +++ b/drivers/base/devres.c
->> @@ -558,6 +558,10 @@ void * devres_open_group(struct device *dev, void *id, gfp_t gfp)
->>  	if (unlikely(!grp))
->>  		return NULL;
->>  
->> +	/* No need to clear memory twice */
->> +	if (!(gfp & __GFP_ZERO))
->> +		memset(grp, 0, sizeof(*grp));
-> 
-> Is this an actual bugfix (i.e. do we have uninitialized fields today?)
-> 
-no, maybe take it as code optimization instead of bugfix.
-yes, field grp->color is NOT initialized.
-> If so, what commit does this fix?
-> 
-> thanks,
-> 
-> greg k-h
+>> I dare to propose further collateral evolution according to available
+>> programming interfaces.
+=E2=80=A6
+> Thank you for your suggestion,
 
+I became curious how the clarification will evolve further for adjusting
+API usage in some ways.
+
+
+> but since we still need to survey the new method,
+
+Would you like to take another look at any intermediate application statis=
+tics?
+
+Example:
+Looking at guard usage (with SmPL)
+https://lore.kernel.org/cocci/2dc6a1c7-79bf-42e3-95cc-599a1e154f57@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2024-05/msg00090.html
+
+
+> we want to use the goto method for this current version of the patch
+
+Goto chains can still be applied for another while.
+
+
+> and make modifications based on Simon's suggestions.
+The change acceptance is evolving also according to known software transfo=
+rmations,
+isn't it?
+
+Regards,
+Markus
 
