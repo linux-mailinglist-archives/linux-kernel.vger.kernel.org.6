@@ -1,145 +1,148 @@
-Return-Path: <linux-kernel+bounces-219682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B1D590D672
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:02:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C507F90D67B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 17:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC32282834
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:02:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5E451C25065
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185CA1CAB9;
-	Tue, 18 Jun 2024 15:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361BC1CAB9;
+	Tue, 18 Jun 2024 15:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="OTJlfVTQ"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="PFkQ76vE"
+Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2144.outbound.protection.outlook.com [40.92.62.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF0123BE;
-	Tue, 18 Jun 2024 15:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718722946; cv=none; b=CV64EYoTB+iMZaV+6Iv87C8axMqZ+JoWQ/s2IZ2bIzXU119adiDDYyuzKoKpdBIJvhwuIqLzhMxr1canLIle8cL1xTAZpxH9r98SO2og4h3CMi8pUmyFzChwhQw3IayYX6cPluMlK9/COyi6DkJZvXnl61wack/bobjmfCWGRPM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718722946; c=relaxed/simple;
-	bh=4DP/pLvJr5FCTp8Gs8CSgpa+4kUePHLrQ/FzhjNULbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fknrQIa8y0LkvPhysaYPeWXlPRrWnp+wsTAHKlbRU6pIEv/XN/32PVBOKQL8k8yL6B8EIfAtRitS4IMkYij5Z99BeU1DAu2WwXgOHkFEQr+txSx4LeT/7fUXjgcs5wDT+Qzem3x3yEpcmVD1G16CsOuXA49O++G8n3xlf6aZRYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=OTJlfVTQ; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 3B4FF882DB;
-	Tue, 18 Jun 2024 17:02:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1718722942;
-	bh=9ns9gHRZfDY4bi8jkbvd27zNfS1kRiPooJSAoQsIPe4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OTJlfVTQ1wHzhvj9MakaFaygopHypaAxW2vJgac91reYHZOvBgkNuikuu9kXccGoA
-	 CORnroR7Nqk49LZr+ZZEXLX36mkhBJDi/UK1mezXpkSEK9NmPGkMnngg65hpG1Vy1O
-	 RuDoP6Hq0Amh1dJT79FSZFwEajTvsmLEVV4JZWHRAFVTipdsO91klqnEMm2t08+BbN
-	 Of96jM8m5inuNl+d0ODaFvRr6TTYUXd+abFF4wkdKqRaoKKg8PFmmOVPjCnymrD8y5
-	 CuIXdjWOlviEMgUlAZh199oFd2yswT4QNe6uk54QPx8lqlzyIBDxpMJodVkuzhr7g/
-	 z10GrvV0817+g==
-Date: Tue, 18 Jun 2024 17:02:20 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Woojung.Huh@microchip.com, dan.carpenter@linaro.org, olteanv@gmail.com,
- kuba@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- edumazet@google.com, davem@davemloft.net, o.rempel@pengutronix.de,
- Tristram.Ha@microchip.com, bigeasy@linutronix.de, horms@kernel.org,
- ricardo@marliere.net, casper.casan@gmail.com, linux-kernel@vger.kernel.org,
- UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH v1 net-next] net: dsa: Allow only up to two HSR HW
- offloaded ports for KSZ9477
-Message-ID: <20240618170220.7c9217bd@wsk>
-In-Reply-To: <6a011bd4-8494-4a6f-9ec4-723ab52c4fbf@lunn.ch>
-References: <20240618130433.1111485-1-lukma@denx.de>
-	<339031f6-e732-43b4-9e83-0e2098df65ef@moroto.mountain>
-	<24b69bf0-03c9-414a-ac5d-ef82c2eed8f6@lunn.ch>
-	<1e2529b4-41f2-4483-9b17-50c6410d8eab@moroto.mountain>
-	<BL0PR11MB291397353642C808454F575CE7CE2@BL0PR11MB2913.namprd11.prod.outlook.com>
-	<20240618164545.14817f7e@wsk>
-	<6a011bd4-8494-4a6f-9ec4-723ab52c4fbf@lunn.ch>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1152B208A0;
+	Tue, 18 Jun 2024 15:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.144
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718723039; cv=fail; b=CTRreMWGnD8gPFyEXCX66k6HOQE3S61yphKAIWz5lvpgq2pAtYhtITzR49Zm9id5aUCf4ix5zo9gzZPPh5q/jRMpBVgiuI3u4QUbqlufEp03aYTvE+hy7KIz+nYt6RwYoEuHf3NVPeI5ia2nu2ePwPKiRqzCBVW7uZkChsBW1Ww=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718723039; c=relaxed/simple;
+	bh=KZmUMGJ2R4BUctimfp7c3VXWE4VatyAmcuCl2oDniRE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=EHVS9BdGslEkvEyzTqc/0I3/C4RS3Op3s9eCHlicAHZ75rLXZB5H8Mx9a4gwy1E9S/QzV7Xcdv3Y/qVTst5VVgTDzWmG7kTOMs1s/uNgDbqnzellvXoNAIK7iCJ0NWFA/x/nA7FGsTwj08v1m1wq8md+OwWzzelgK+n8lyg1q9w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=PFkQ76vE; arc=fail smtp.client-ip=40.92.62.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=X0kaYklC8Iqm+LK+YHBica6ZVhtSE0uVBDjpn0n8dhViLHPlz23uaI1v0N1I8X+ydiMv1FafdPsDWD6l2vgL+QxJLMPr2JpbLwpsBwBhH/PbW8k7QJXC/UADex2e5fnHmCNIsLbhUcKwTmjznGIMT0Sg29Uy1suSFrFRPG2WdvwbUliTpJ8cHzkuaFCbrLuPkEcWNAo2hQSe/XJ5tYi3Y14rH+tld6gDh73kznvCdaMGlbBrqoiPfXtwCW3KXha60jAxuUEAEIq8R3ppDbvj6ojFLom8I+KwhTxDaICaO8eV+lgyqn46Dc/catMeQ6nbWveXw1zoGUFBrB2uU7YZcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D3PMbhmIcHQwHTJoxl4VzJyO5ca9jnfp5cNkaqthJ/g=;
+ b=cDCGU2PkTo6ZRxY7lrkPIgpODAq8R5DL8b8wqrATVeCEH6y/+ivG3X3M3PbFlgvULPme7s4R8V93p6lYhm7pCH3k37/PA05Ymv5dEdQjBStGvwZDtTI//xUz0LJKCIMfoSX1EYvodW8S6nKZHEdOKqGh/uFjFT2yQL0u2upfoLngfCgVhh45M6ddJ81TpPSxddnfZneJUjtUrQ9CP6Di6JYKDyx/E/SuJNCIQIp5jK9Kfh/PBeDNqsMxXBcMKUWw91OgSzk2F39+NKDFeYTiC4DnIFl5wMxrBGgMMFegyhj8XF2cBGLxgDSpuSkdh7VwKYKuOrB/W17OCEzYlyZrhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D3PMbhmIcHQwHTJoxl4VzJyO5ca9jnfp5cNkaqthJ/g=;
+ b=PFkQ76vEHR+xaDGAgEFydJUBGsMbJolTJ7ag4Hs+YJAvrw9/kqJnZfqy2nQFNKPeV4ZfMf/7Fhdkfpl9FXMiKZEpG3WvXbV/l6G5VJgf/hRaihXEh336xM8QnzSeS9VQWUfn6eC0RlthgeZ0ngfTiHhy5Q5klhGGnVnzRkDZnphVcX74jCviUykpTx87GaHgNuygD0Hm5eJn1oWojWawCuhg3x3U+vzs30HAMLLJgTXCEqT/Juw9Z5EEr2XfoOpqThZJc7tcs+2lj5xmoiSEtNuFjWKY1TRCBIVfwpRkZwCJGsxUK6Tcgl9Q6gbCl0MREO/DZJlShw0Jh770lR8mGg==
+Received: from SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:9b::8) by
+ SY6P282MB4005.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:1d8::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.31; Tue, 18 Jun 2024 15:03:51 +0000
+Received: from SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::ac24:7d2b:92fe:20c3]) by SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::ac24:7d2b:92fe:20c3%2]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 15:03:51 +0000
+From: Yuntao Dai <d1581209858@live.com>
+To: jassisinghbrar@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	unicorn_wang@outlook.com,
+	inochiama@outlook.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Yuntao Dai <d1581209858@live.com>
+Subject: [PATCH 0/3] riscv: sophgo: add mailbox support for cv18x SoCs
+Date: Tue, 18 Jun 2024 23:03:19 +0800
+Message-ID:
+ <SYBP282MB2238DE0DA19C6EF411B2356CC4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-TMN: [wzzAo9agJ6Z2G0H/2MwcClOf3eAtPNmX]
+X-ClientProxiedBy: TY2PR01CA0021.jpnprd01.prod.outlook.com
+ (2603:1096:404:a::33) To SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:9b::8)
+X-Microsoft-Original-Message-ID: <20240618150319.4649-1-d1581209858@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/sSiMgKlQi8mtC+G=LfOwu2c";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SYBP282MB2238:EE_|SY6P282MB4005:EE_
+X-MS-Office365-Filtering-Correlation-Id: a06af420-65ae-4005-16ba-08dc8fa7dd15
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199025|3412199022|440099025|1710799023;
+X-Microsoft-Antispam-Message-Info:
+	JcUjd/HhSzjOP+3a8bUkeLMdggUJpR0M3SeIDTTuksDU6nT2jQ/06Pha2O9XQ2CfMQap4/9ML5lZ3RU761V19TFigDyaROdjxwVT336LOolCzsyJSgWi+F5rMyxkmXb//2eX7G+RFPPBV2rHaTOTa5/yMt518PdJD4fVTjL0U+jW8BrjLEQfWFYki++ue+YJLByxbI1mcfqT5BAhEVtTJSipxHEJQssFx34W4aP6IQfZruzLFCt2ELVVla5gJW8G3RZEW8TJnhz3fIcdr6MBG/LkTyIA8M25GrPUzf/ujQ83Wx9nWxNw4ru5UXG2fMNpRxTa7Oy+NQfN6J0qaytG6282n3LBUrTV7U1WAoOTq/Em73lPfSDXXTyMlTIHkzdsriBQ72H7ZFCRilr8QwofnxgmiGH+5+d1nznJoGe6pIEOUDlQAN8RAllMqbe0ee8IYoa+1bpO5EzytA9ndeF1uTbfrLjRhXJxl/YwMHX2HWp4YqfZ7L2keCULrxO9LFduhnXlmiOrELFWmG4WUUUkJofDj7XD2FHbk1CAX3hg41mb6Xrw2wZof7CqlWlwOo9b1zyZuE5BLXfXlVrW3YWaUVLw1IcZoVi8K/QM1JKG9H4=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?RwMQUuZsJCxwAozzv6tVvtLNL0ykm/WL8gZ0/2tKTJNwkYj+2XOXoAtNcymo?=
+ =?us-ascii?Q?LRpu2c+FRTZbm0LBaxMNq4N6z5TRynK3DXEGiKBVs25y3Z7VmYzZvr5iHsw3?=
+ =?us-ascii?Q?opmKTGgtlhiCdaYNzOTxlVuMMVjTzTwVaw1ioD370NcbENOcuP9QhroHXQru?=
+ =?us-ascii?Q?06wjPk8Wnscu6QKKXEcHLKi00BZvUu1gV4DuryM4u8QXPSWGdZ0X5R9vN0s0?=
+ =?us-ascii?Q?AT+OAXKe+tXT/1a2qR2aS8m5ywJkO7cHR8WrzJi4kP/QWQ02kvCsoWlBi1JN?=
+ =?us-ascii?Q?0h6hUpwrJsf6xhe0eCcRb+YZv+8TTSxf8g/4DEzb+4Dy4IG4oG/rQoSCAPXW?=
+ =?us-ascii?Q?Oq1ZLOclqz/PTEaB44iyluH974RUbHBZZIbZBqJKYswcEG83nZ2GCGOWfwIq?=
+ =?us-ascii?Q?VSCHiyf40eTl8lTmSiucGFI9e2aQz1S1kqVJNRQ6vArA3gwqyK9LgTlyMuPo?=
+ =?us-ascii?Q?f6ul7EDrXaAunoD+aWbsvlpzEYomWGim6HET5JXmWmUykLxpTCXiDqwJ7qUI?=
+ =?us-ascii?Q?+8VzNV0dlocjfOMtWga67T1Z7CzHoybla68Sd55SHWeiO/pxSDTPUSaSIyvY?=
+ =?us-ascii?Q?7JBi87QsVCUQvqCeyf70mmAeY5y7vk6hTVeFSMu2U65QaUbQzscrEDum14eL?=
+ =?us-ascii?Q?c7u+mSgcO7TqHEgxkjcEbXO6ZaHBg80PywKFHmShkXkVjMcX4MXLr0h2sU41?=
+ =?us-ascii?Q?J4CJR9nNOG7f+M0VDTdyQafSVSI1xxJT1cKYsBdz/H7KZtzHyuCj9rX/puYT?=
+ =?us-ascii?Q?H8KF+9+5SSG7qv+xR6+9LIrhCObGAQml8b7MYfeGNq161rboeqyB6u/9oE5k?=
+ =?us-ascii?Q?+hgfZyrDnIv2re4ukIFjIQ+HjCaRrGWcWICRRe9aaASSbBoW9uRSFXudBLve?=
+ =?us-ascii?Q?e/b/CgDafj7WscUbl5uTqjWllFHRyNaz3vJGTgekAcpAA88tQMsPd34ia5O1?=
+ =?us-ascii?Q?nYR2So8vDyaORCjCZmsmQw21KSMJ8UG5mB+58RXyYmXTIT5Z5pgP1QQ+9+to?=
+ =?us-ascii?Q?5THTOTEFzZpojA50G1u14NIs+62Ys3tKBDbL+9VXSVypMf7UMsqWF9lwNktb?=
+ =?us-ascii?Q?wa/ZYqEqVZB5Dx92TbSFGP6USEwu7C0ano1Nm+v9ik1HIYWfEFAjMLVW0s0G?=
+ =?us-ascii?Q?3fTG6J4OvmYJvy05ja0HWa1XGp270fX7WwWWa04hVGcK0Q680T2vZbaRc9ca?=
+ =?us-ascii?Q?QVbq6dHcmKeuCpizd5jC6ZcKyq2P3SKNUiApIgcN4TFIBAKzPCq8xiWgcCk?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-746f3.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: a06af420-65ae-4005-16ba-08dc8fa7dd15
+X-MS-Exchange-CrossTenant-AuthSource: SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 15:03:51.5615
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY6P282MB4005
 
---Sig_/sSiMgKlQi8mtC+G=LfOwu2c
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Add mailbox support for Sophgo cv18x SoCs, and test on both cv1800b SoC for 
+milkv-duo and cv1812h SoC for milkv-duo256m
 
-Hi Andrew,
+Yuntao Dai (3):
+  dt-bindings: mailbox: add Sophgo cv18x SoCs mailbox
+  riscv: dts: add mailbox for Sophgo cv18x SoCs
+  mailbox: sophgo: add mailbox driver for cv18x SoCs
 
-> > For me the:
-> >=20
-> > NL_SET_ERR_MSG_MOD(extack, "Cannot offload more than two ports (in
-> > use=3D0x%x)", dev->hsr_ports);
-> >=20
-> > is fine - as it informs that no more HSR offloading is possible (and
-> > allows to SW based RedBox/HSR-SAN operation). =20
->=20
-> Does user space actually get to see it? I would expect the HSR code
-> sees the EOPNOTSUPP, does not consider it an fatal error, and return 0
-> to user space.
->=20
-> If userspace does see it, maybe we should make it clearer it is not an
-> actually error.=20
->=20
-> "Cannot offload more than two ports, using software bridging"
->=20
-> so something similar.
->=20
+ .../mailbox/sophgo,cv1800b-mailbox.yaml       |  75 ++++++++
+ arch/riscv/boot/dts/sophgo/cv18xx.dtsi        |  11 ++
+ drivers/mailbox/Kconfig                       |  11 ++
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/cv1800b-mailbox.c             | 182 ++++++++++++++++++
+ 5 files changed, 281 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mailbox.yaml
+ create mode 100644 drivers/mailbox/cv1800b-mailbox.c
 
-Exactly - this is useful information - not error indication.
+-- 
+2.17.1
 
-(The same case is when we do want to set the MAC address already
-"taken" by ksz9477 HSR configuration.)
-
->    Andrew
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/sSiMgKlQi8mtC+G=LfOwu2c
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmZxoXwACgkQAR8vZIA0
-zr2f0Af/YOZs1ZZDgwlYntv1FPHh044NpxAhElR9o6wgCRRTDgQGdRs3KbqXFOvZ
-OY+hO4fAPk8Qu4zvisM42a0kyW1wm754WMpSqzUp6PF/oSLAALwTqBqPTyiBxojW
-4KUvIj6pv0Aq2iGB88B8QzkNAiPWvVT+kWj2UaJi93w6nnKlVtWw8EBEBIpd4Ts0
-JF5NGojlZ4f8B/r7ukdkfmtLaVcT6m+NOetg7g+fCqElu5mxHJI7iQr5oRWZAo7V
-QR+SBXhR/nnzUKTYxlJL118jjsbHCwushvKBN90LS4rO9oDvA60CSJFLJCoDG0oV
-VTNZaNSbPPZ3RxLWrAvlPlEFDsmvNw==
-=kTCU
------END PGP SIGNATURE-----
-
---Sig_/sSiMgKlQi8mtC+G=LfOwu2c--
 
