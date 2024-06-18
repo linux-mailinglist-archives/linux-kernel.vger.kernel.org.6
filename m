@@ -1,123 +1,143 @@
-Return-Path: <linux-kernel+bounces-218685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9850C90C3BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:39:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF98F90C3BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EABB3281006
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:39:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5715F1F218D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65445589B;
-	Tue, 18 Jun 2024 06:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E100756B7C;
+	Tue, 18 Jun 2024 06:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i3YVwJhx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="eRmwnu98";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n8xmEqUH"
+Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A339D5381E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53316BFAA;
+	Tue, 18 Jun 2024 06:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718692711; cv=none; b=sev/BNuZ7vpxvPkPrgKHHzNA924Y4VFRC4Tnop1PcCcn21b582qFpnWpitU8GpYaRawBSaZgkYOEsxmAuLeoOGmtlWK8l1Un22V2dZTLRdW3p2x3Wo5xL/tD2D/emNeLZqYeeZ0OnMEvq3jEQMYgu8kdt9OApQbbUGxrnFWPj78=
+	t=1718692735; cv=none; b=suu92b0j3kGWRqPVCYU6jqgPW0Z3ZdMGhDIci2UFgdSiaaR35zNXzGLRNfIcuTxDHyT8KsC0ctj9PSzT1RbLpEW6Ai9LFrYmS1x0nVLXolMwESxI/KjGBr0LF2liisDSFSnGG5HWMVXGvUdf/uvfCaMdfqMH+2aMqv0hkF0+wnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718692711; c=relaxed/simple;
-	bh=yZibYMJjphjSQPewr/4pSWzfmq4H5qUL95kiFKQUh58=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GII+83Wm0SEWmVAaLhdzP4la7csxbecgDtgV4prVSnr75uj+qu1HtbNC1Rx2Au/kVaqbbfutzUW47DDNNS1P6YkMhSeVOqsqFzKtyMNdlSuirb9UaoOJYGmI3rwGRP39lgfE9sSqw2uJxSK+lbYUBTDU9KAv+SMV1h16yAtxvRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i3YVwJhx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718692708;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IbWYqwPZGlitF1Q/AHtRrV6NnCJnn8PMkQJSXJ4jkmQ=;
-	b=i3YVwJhxq6avLPIpjK1t+s/jqCFnesP+0gssMs37kbS3iHpoJy7uc6dz+kIN/xFK2ZoNbE
-	Irg3d82yqIVRQMiqqtniOaJR1WgXZuicvWvcVz7E9MmtWdaJ5dL6kTB4mzaJaIE+PKl0Jx
-	9j/sZWTZXzFLevM2zHX+CLpWxajiQ2c=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-479-tUUjrOzpOUiqM22L91BlIA-1; Tue,
- 18 Jun 2024 02:38:23 -0400
-X-MC-Unique: tUUjrOzpOUiqM22L91BlIA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A284219560A7;
-	Tue, 18 Jun 2024 06:38:21 +0000 (UTC)
-Received: from virt-mtcollins-01.lab.eng.rdu2.redhat.com (virt-mtcollins-01.lab.eng.rdu2.redhat.com [10.8.1.196])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D35F91956048;
-	Tue, 18 Jun 2024 06:38:17 +0000 (UTC)
-From: Shaoqin Huang <shahuang@redhat.com>
-To: Oliver Upton <oliver.upton@linux.dev>,
-	Marc Zyngier <maz@kernel.org>,
-	kvmarm@lists.linux.dev
-Cc: Shaoqin Huang <shahuang@redhat.com>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] KVM: selftests: aarch64: Add writable test for ID_AA64PFR1_EL1
-Date: Tue, 18 Jun 2024 02:38:07 -0400
-Message-Id: <20240618063808.1040085-3-shahuang@redhat.com>
-In-Reply-To: <20240618063808.1040085-1-shahuang@redhat.com>
-References: <20240618063808.1040085-1-shahuang@redhat.com>
+	s=arc-20240116; t=1718692735; c=relaxed/simple;
+	bh=2MHzymjsptfmyDg7nkJWUgpNKKI9/H3dw6H8umrDA/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rv7AzGZKGBAAt7Pcrdhk1IGAJtWaeVnfqSMdpl5sNp0zT8XIm5tyX1VZEO2pvLq+HbVLmeRZn58xk1HVTZ6KjDI6UMuq0YnPKNpFMEPM0p2/12NwSuDpSWe4dP7BnnqU2QC90Rrx1FxYHBIlzZZp/ZVEXyY89WvLgFos3HxFVIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=eRmwnu98; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n8xmEqUH; arc=none smtp.client-ip=64.147.123.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 3FE5018000D1;
+	Tue, 18 Jun 2024 02:38:52 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 18 Jun 2024 02:38:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1718692731; x=1718779131; bh=MelmEiifL3
+	mefmpiNyW6L73XRVlNle+exQ08leADDXE=; b=eRmwnu98b1+f62nfFifpY8Y7se
+	hkKWXGiqSEivcgJVMHY/7F4oK26Nh2hYW4dFXYK+XeoEPtBceJAnNHlRz7N21CzX
+	qTNq7tYVj3GkOrjDA3gnAlPRAvg3sUg0KPcSu4YE3XX0S11PFIJ1s1SJfEXgsD94
+	olNXFin/71/h3ljwjvVSlcaEys4bcxZrY6i746dojtrVycCxGyg6ck50DH83+HaB
+	ye9s4iNAdXisuCXhT/Inf8wW7umNLvaSJhacRN3WAtFv1YsQlUAM5zsaii3AG2Pg
+	xBN46sn+ZujTmtg+d7rGCfGdGBk9zv2EscXEtXlGIRiy9vceopH1CuaqJvFg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1718692731; x=1718779131; bh=MelmEiifL3mefmpiNyW6L73XRVlN
+	le+exQ08leADDXE=; b=n8xmEqUHI/5mmb02Z1+IZYfCIQ4Wq7OtiY8ygvfpUTfb
+	FMN/+NTRP7gabrQ+Z/9UMxqVGD9gSPCz/H7hWBFMos/5rfEzCI46cgJi3mSfik7m
+	18Mkl1jkzu7PoJl9b2DMEBi4AV6Y79oV1Knqg2ZfX/AMFr7nOmVpkRELhuBC1hSn
+	JJKjOGlFf3cu01KJqsUcrTwqgau9VH9ZeV2D6DzUvlxyhKjJe/zx6RJfbGHxn2LV
+	G5l7nmofHQheGtxNFM8IZyBIf8ibT5GTDj/VqNSFz8LitddlrfzVA+VF+CByuczt
+	cO8tLX5koGy/7g9xBpXU1/TP0QWgB6Fy+YQeEoIVig==
+X-ME-Sender: <xms:eytxZunYQy-NhdCszhu7qkeYgjKLFXqgZpNcAeml5vDZf8WvqnRSZQ>
+    <xme:eytxZl3NhmHA-IUAgX7pWAlQSVw9QTzOaG2xe9QGzdZoa7RH8rvO0OhYodjwhdh-8
+    oYCMDdooxXa5Q>
+X-ME-Received: <xmr:eytxZspWA5I4ARwAWpSolFeHx7C1uT-ZJYDOEDG3wAh2P3QqgavsoawFOUEKfbZ_pPuFKyG-Nzfgx8rNDNpevy0SKhI1dkGbYu1B8g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedviedgudduudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgv
+    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehge
+    dvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhroh
+    grhhdrtghomh
+X-ME-Proxy: <xmx:eytxZincgJ4JsR2pqFnYM74WBJbf8GNDe2vvAOW34jpspnkUwvmuFQ>
+    <xmx:eytxZs1XugIqhJr5gq4zYOifowyzyuySZ1_kavkh522_IOTRISFONQ>
+    <xmx:eytxZpssHMxJuUhmoRNAwJU0ulfq6L4F43lCgcAUNUqrAa3HdhODog>
+    <xmx:eytxZoXRkzOoUBRIEE9raKi62oJzYiTswliLfyXdsodbJD8_O0a6mQ>
+    <xmx:eytxZmNVE6GRY6JAViC_A_gaO_lDXS4v-uL75o1F_6uX-Phn0UKKuQJA>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 18 Jun 2024 02:38:50 -0400 (EDT)
+Date: Tue, 18 Jun 2024 08:38:48 +0200
+From: Greg KH <greg@kroah.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>,
+	Gustavo Silva <gustavograzs@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sumit Garg <sumit.garg@linaro.org>
+Subject: Re: linux-next: manual merge of the char-misc tree with the qcom tree
+Message-ID: <2024061841-embellish-epilepsy-3a20@gregkh>
+References: <ZnCUDSypSIPCTfJ8@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnCUDSypSIPCTfJ8@sirena.org.uk>
 
-Add writable test for the ID_AA64PFR1_EL1 register.
+On Mon, Jun 17, 2024 at 08:52:45PM +0100, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the char-misc tree got a conflict in:
+> 
+>   Documentation/devicetree/bindings/vendor-prefixes.yaml
+> 
+> between commit:
+> 
+>   1fabbb0888c3d ("dt-bindings: vendor-prefixes: Add Schneider Electric")
+> 
+> from the qcom tree and commit:
+> 
+>   202ce3eaa6912 ("dt-bindings: vendor-prefixes: add ScioSense")
+> 
+> from the char-misc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index 56ad56d7733e9,044e2001f4e3a..0000000000000
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@@ -1264,8 -1254,8 +1264,10 @@@ patternProperties
+>       description: Smart Battery System
+>     "^schindler,.*":
+>       description: Schindler
+>  +  "^schneider,.*":
+>  +    description: Schneider Electric
+> +   "^sciosense,.*":
+> +     description: ScioSense B.V.
+>     "^seagate,.*":
+>       description: Seagate Technology PLC
+>     "^seeed,.*":
 
-Signed-off-by: Shaoqin Huang <shahuang@redhat.com>
----
- tools/testing/selftests/kvm/aarch64/set_id_regs.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/tools/testing/selftests/kvm/aarch64/set_id_regs.c b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-index a7de39fa2a0a..9c93637595ec 100644
---- a/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-@@ -133,6 +133,14 @@ static const struct reg_ftr_bits ftr_id_aa64pfr0_el1[] = {
- 	REG_FTR_END,
- };
- 
-+static const struct reg_ftr_bits ftr_id_aa64pfr1_el1[] = {
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, SME, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, MTE, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, SSBS, ID_AA64PFR1_EL1_SSBS_NI),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, BT, 0),
-+	REG_FTR_END,
-+};
-+
- static const struct reg_ftr_bits ftr_id_aa64mmfr0_el1[] = {
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, ECV, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, EXS, 0),
-@@ -199,6 +207,7 @@ static struct test_feature_reg test_regs[] = {
- 	TEST_REG(SYS_ID_AA64ISAR1_EL1, ftr_id_aa64isar1_el1),
- 	TEST_REG(SYS_ID_AA64ISAR2_EL1, ftr_id_aa64isar2_el1),
- 	TEST_REG(SYS_ID_AA64PFR0_EL1, ftr_id_aa64pfr0_el1),
-+	TEST_REG(SYS_ID_AA64PFR1_EL1, ftr_id_aa64pfr1_el1),
- 	TEST_REG(SYS_ID_AA64MMFR0_EL1, ftr_id_aa64mmfr0_el1),
- 	TEST_REG(SYS_ID_AA64MMFR1_EL1, ftr_id_aa64mmfr1_el1),
- 	TEST_REG(SYS_ID_AA64MMFR2_EL1, ftr_id_aa64mmfr2_el1),
--- 
-2.40.1
-
+Looks good, thanks!
 
