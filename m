@@ -1,122 +1,177 @@
-Return-Path: <linux-kernel+bounces-220100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A379090DCB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:46:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA2190DCBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D941C2294B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:46:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A89A4284D7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC9116D4F2;
-	Tue, 18 Jun 2024 19:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420EF16DC11;
+	Tue, 18 Jun 2024 19:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="ONatoTr5"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="nocVBP05"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B74D210EC;
-	Tue, 18 Jun 2024 19:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7568C16CD1C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718739955; cv=none; b=lZzxnfz+QIw5PuGxOcY5pXtRyxgGHprQ0wqwvFFWuJhV0RfuQqvSuDvWxPqnx2adN0Pt1Lixmolq+oZ2TzwUYDDYPdQVeFpXG+0m1JCmWUnPj90S/CoY9Fhf0a4gXqWG9PrFTXwg+oSmPAOfCWP6fTUgG5pgoxO5Gs/6tSPKO1w=
+	t=1718740040; cv=none; b=qy/mI72160qjjzIOeYr2WRL5NrlDifYDRhIXDf28OBJFO5/gIaPZadISY0P5r7lz28SGRxwc9V5EMUJZmjf0/ZFHz209ENMP6zjDGfrSf+i+UKy5iApEAtVWsQQ3h05P2s5WvZlqJCpyZE/5jvA0GGrz9Arr6H/d5IQkCdfMuOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718739955; c=relaxed/simple;
-	bh=ZcyS2aedFrBTOzUQWPMBfmbdD6XfoC9oL5m2d4LzaaQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W+TeKloN/1KhvJBWdxazJT+YRAr/6QQd3qpzyWigQqJ2Oz3FfzKIEwrvxmSOD9cnObkH3mrxTocwWPXK2Zs5zbB6pvMX+DyUOioC2beqVE0dQaH8aRePU+raJur+a8s86IV4CDf2Kp9r68iKxVji7pPkuKUeQpWGaA97wanGOvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=ONatoTr5; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7F80860005;
-	Tue, 18 Jun 2024 19:45:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1718739951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QuFZH3mA3heT0Lg52N52SIqXngyM9XRruerZhqmjgPE=;
-	b=ONatoTr5auORsRR6M+opH/ZKTYexrJGegtk2isFpLjGtCTslOWea4YKS2AsJtgGMrEHYP5
-	aSuMuN0OVU4y0eJPH7VKMncAJ4BFvrK/St6S5m8K7l7ZHbCc+QZD2+D/vuIX59wLYL8eRW
-	hBa9Ibgo761ySe+01sO8cqspr/nKepWeWKLAD5Gthxv3U1fpYgT/JeVBkjUuzEu95P1CV6
-	uWZo9rCiuS1aEwiIs5aNa+80q+ZDJ+Ey79UXw3Rg8LK9ceHcKUm+hf9Ek/1lq688d5EDOC
-	GCjfAor9SETQsoSpGLeSIN14/lTQiir3AEN0ufnnLIe/WnBwY4xgHwVYAPXHnQ==
-Message-ID: <c1417feb-d677-4e4d-bd1a-7ccb0d838630@arinc9.com>
-Date: Tue, 18 Jun 2024 22:45:44 +0300
+	s=arc-20240116; t=1718740040; c=relaxed/simple;
+	bh=bIXxso8A/hZp4Oq1/DAIOgmiMrZchGG3V5DivXV6cWs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=msoRlAnpC1dV/n2GZqYuqDOSf5ZfqWojWCaIpa0wsPshCwWG7PVrUZ+C0u4pnad2HnAUi9saEC6/pDySf1k1OXIPmw5PhpjpVTM3vhQ3QBafJNX+Qj58pRU+6Ahsd2K8Jq2kd7ZjHpTAeVShoaGVArXTaG/oFAtcXgS9fk3c+eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=nocVBP05; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From; q=dns/txt; s=fe-e1b5cab7be; t=1718740014;
+ bh=YAAXxga0MG8jXLgcQK8Lgyj9QF0HIlvekYbBctGFp48=;
+ b=nocVBP05S7asK6pRnqkn8o8qM9RmMVgLV2cYvseKoWnDZPwn9xd6hXZwMn4yW8jyHBAr03RID
+ pizX3Xww2fY2Ef10PPtIYduUmKcy8Azw4wW4YsiV2d+P8X8D0G4heOkqQG8MMxW1ftQ68oKH4nD
+ W/g2cqcu4JrM71OTvb/ZKoKDwLvMABjbEy2cOcD5RJlkxFqlR37MhI8ryHT/4QhuZZgePX8Y4fG
+ +b/ORwWh1U0s9sFZK640nW8K8TSdy1fCt8fc+b6qEza7dna/9Kqhc0iPzCIQIsAQIjvn9d+liYi
+ 42PDruYCIyCLSxEpd716wTVEHOUhmIvmXGebKaoFRIbQ==
+From: Jonas Karlman <jonas@kwiboo.se>
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Alex Bee <knaerzche@gmail.com>, Nicolas Dufresne
+ <nicolas.dufresne@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Sebastian Fricke
+ <sebastian.fricke@collabora.com>, Christopher Obbard
+ <chris.obbard@collabora.com>, Detlev Casanova
+ <detlev.casanova@collabora.com>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>
+Subject: [PATCH v5 00/10] media: rkvdec: Add H.264 High 10 and 4:2:2 profile support
+Date: Tue, 18 Jun 2024 19:46:24 +0000
+Message-ID: <20240618194647.742037-1-jonas@kwiboo.se>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 1/2] net: dsa: mt7530: factor out bridge
- join/leave logic
-To: Matthias Schiffer <mschiffer@universe-factory.net>,
- Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <15c28e5ed5fa02ca7904c71540e254617d571eb8.1718694181.git.mschiffer@universe-factory.net>
-Content-Language: en-US
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <15c28e5ed5fa02ca7904c71540e254617d571eb8.1718694181.git.mschiffer@universe-factory.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 6671e42d64ade33c90059f61
 
-On 18/06/2024 10.17, Matthias Schiffer wrote:
-> As preparation for implementing bridge port isolation, move the logic to
-> add and remove bits in the port matrix into a new helper
-> mt7530_update_port_member(), which is called from
-> mt7530_port_bridge_join() and mt7530_port_bridge_leave().
-> 
-> Another part of the preparation is using dsa_port_offloads_bridge_dev()
-> instead of dsa_port_offloads_bridge() to check for bridge membership, as
-> we don't have a struct dsa_bridge in mt7530_port_bridge_flags().
-> 
-> The port matrix setting is slightly streamlined, now always first setting
-> the mt7530_port's pm field and then writing the port matrix from that
-> field into the hardware register, instead of duplicating the bit
-> manipulation for both the struct field and the register.
-> 
-> mt7530_port_bridge_join() was previously using |= to update the port
-> matrix with the port bitmap, which was unnecessary, as pm would only
-> have the CPU port set before joining a bridge; a simple assignment can
-> be used for both joining and leaving (and will also work when individual
-> bits are added/removed in port_bitmap with regard to the previous port
-> matrix, which is what happens with port isolation).
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+This is a re-revival of an old series [1] now that NV15/NV20/NV30 support
+for display driver have landed in linux v6.7.
 
-Great explanation, thanks a lot!
+This series adds H.264 High 10 and 4:2:2 profile support to the Rockchip
+Video Decoder driver.
 
-Reviewed-by: Arınç ÜNAL <arinc.unal@arinc9.com>
-Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+Patch 1 adds helpers for calculating plane bytesperline and sizeimage.
+Patch 2 adds two new pixelformats for semi-planer 10-bit 4:2:0/4:2:2 YUV.
 
-> ---
-> 
-> v2: no changes
-> v3: addressed overlooked review comments:
-> - Ran clang-format on the patch
-> - Restored code comment
-> - Extended commit message
-> 
-> Thanks for the clang-format pointer - last time I tried that on kernel
-> code (years ago), it was rather underwhelming, but it seems it has
-> improved a lot.
+Patch 3 change to use bytesperline and buffer height to configure strides.
+Patch 4 change to use values from SPS/PPS control to configure the HW.
 
-Cheers.
-Arınç
+Patch 5-9 refactor code to support filtering of CAPUTRE formats based
+on the image format returned from a get_image_fmt ops.
+
+Patch 10 adds final bits to support H.264 High 10 and 4:2:2 profiles.
+
+Tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
+
+  v4l2-compliance 1.26.1, 64 bits, 64-bit time_t
+  ...
+  Total for rkvdec device /dev/video3: 47, Succeeded: 47, Failed: 0, Warnings: 0
+
+  Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-V4L2-request
+  ...
+  Ran 65/69 tests successfully
+
+  Running test suite JVT-AVC_V1 with decoder FFmpeg-H.264-V4L2-request
+  ...
+  Ran 129/135 tests successfully
+
+Before this series:
+
+  Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-V4L2-request
+  ...
+  Ran 44/69 tests successfully
+
+Changes in v5:
+- Drop Remove SPS validation at streaming start patch
+- Move buffer align from rkvdec_fill_decoded_pixfmt to min/step_width
+- Use correct profiles for V4L2_CID_MPEG_VIDEO_H264_PROFILE
+- Collect r-b and t-b tags
+- Fluster test score same as v4, see [4] and [5]
+Link to v4: https://lore.kernel.org/linux-media/20231105165521.3592037-1-jonas@kwiboo.se/
+
+Changes in v4:
+- Fix failed v4l2-compliance tests related to CAPTURE queue
+- Rework CAPTURE format filter anv validate to use an image format
+- Run fluster test suite JVT-FR-EXT [4] and JVT-AVC_V1 [5]
+Link to v3: https://lore.kernel.org/linux-media/20231029183427.1781554-1-jonas@kwiboo.se/
+
+Changes in v3:
+- Drop merged patches
+- Use bpp and bpp_div instead of prior misuse of block_w/block_h
+- New patch to use values from SPS/PPS control to configure the HW
+- New patch to remove an unnecessary call to validate sps at streaming start
+- Reworked pixel format validation
+Link to v2: https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo.se/
+
+Changes in v2:
+- Collect r-b tags
+- SPS pic width and height in mbs validation moved to rkvdec_try_ctrl
+- New patch to not override output buffer sizeimage
+- Reworked pixel format validation
+- Only align decoded buffer instead of changing frmsize step_width
+Link to v1: https://lore.kernel.org/linux-media/20200701215616.30874-1-jonas@kwiboo.se/
+
+To fully runtime test this series you may need ffmpeg patches from [2],
+this series is also available at [3].
+
+[1] https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo.se/
+[2] https://github.com/Kwiboo/FFmpeg/commits/v4l2-request-n6.1-dev/
+[3] https://github.com/Kwiboo/linux-rockchip/commits/linuxtv-rkvdec-high-10-v5/
+[4] https://gist.github.com/Kwiboo/f4ac15576b2c72887ae2bc5d58b5c865
+[5] https://gist.github.com/Kwiboo/459a1c8f1dcb56e45dc7a7a29cc28adf
+
+Regards,
+Jonas
+
+Alex Bee (1):
+  media: rkvdec: h264: Don't hardcode SPS/PPS parameters
+
+Jonas Karlman (9):
+  media: v4l2-common: Add helpers to calculate bytesperline and
+    sizeimage
+  media: v4l2: Add NV15 and NV20 pixel formats
+  media: rkvdec: h264: Use bytesperline and buffer height as virstride
+  media: rkvdec: Extract rkvdec_fill_decoded_pixfmt into helper
+  media: rkvdec: Move rkvdec_reset_decoded_fmt helper
+  media: rkvdec: Extract decoded format enumeration into helper
+  media: rkvdec: Add image format concept
+  media: rkvdec: Add get_image_fmt ops
+  media: rkvdec: h264: Support High 10 and 4:2:2 profiles
+
+ .../media/v4l/pixfmt-yuv-planar.rst           | 128 ++++++++++
+ drivers/media/v4l2-core/v4l2-common.c         |  80 ++++---
+ drivers/media/v4l2-core/v4l2-ioctl.c          |   2 +
+ drivers/staging/media/rkvdec/rkvdec-h264.c    |  64 +++--
+ drivers/staging/media/rkvdec/rkvdec.c         | 226 +++++++++++++-----
+ drivers/staging/media/rkvdec/rkvdec.h         |  18 +-
+ include/uapi/linux/videodev2.h                |   2 +
+ 7 files changed, 399 insertions(+), 121 deletions(-)
+
+-- 
+2.45.2
+
 
