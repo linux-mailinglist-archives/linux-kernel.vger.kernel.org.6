@@ -1,208 +1,114 @@
-Return-Path: <linux-kernel+bounces-220259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235B990DE8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:39:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E839390DE94
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73521F23ABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FF651F24E3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC7517838C;
-	Tue, 18 Jun 2024 21:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B53317B50E;
+	Tue, 18 Jun 2024 21:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K1wAzfUr"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EgRq9jIK"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC58913DDD2;
-	Tue, 18 Jun 2024 21:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8CF17965E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 21:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718746757; cv=none; b=eteqkqxQ8KiT4DqyVEZGo337AKwQrJD5OsGzP3f3JR6iNEwO7+mfvnC7czhgB13gbmMpKr2urv7Jv5n6tJLk5pV1pf7WT1u4x1iDM8voWqhCqneij6E6yzwWKbFhJVneVvj/YuZgaAEqEIH/ElWKzgTsEy8gcI72CJTBQZ8Uyzc=
+	t=1718746831; cv=none; b=FaLiiIVgud9JqtnNrluvZXElPzoQUS4Z+ttSnj/Taum0on3mAkTz6fFeVBX1jGf8LnSW2WiqfiS8rC/H0cV7XvfC8ApAxpMZIP4gr9IYSzBpH3jKi/bVL1tdmRAu5seaE7diVC96u5aTsYAEJGEBVQx9GSbH/qC9gN998z+Vbic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718746757; c=relaxed/simple;
-	bh=U0Eg57Cn4OqXvwMom/OSpj1QqTJKcmBbmsEXCWhvtX8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rDWyGXpmTqbIJbQYLS0DYXtkMfdPCGA7Lv+gB0dQQjgGR45eQ9GFf8Qe1jaTpomUDXreqz/AW1yvmI71xTJc/K1qWvyEgeGtaQJHnXpFCIEieuxHqWCynBPO1dAsjFBKMfVMp0SVi7U0JYz22ygIG2+xVyt/HyPNTOYKyuGrasg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=K1wAzfUr; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=o8G8ifLXVT/4fr2bGcys3dHGbQ+B9Z7Bqubv+Pu8ANc=; b=K1wAzfUr5mz1ZuifiHsVo1OfEV
-	UF+ZeLA/mo6mnmm+TdvzdWxuMRHF6lsaFGH3V1t2wIUglCRGNS2ZPN9rq09JJaryp5m34Fkdxy3Gm
-	k0DVmDVIQy2h9ZzUaenGCffyX5I4KVY7Zkc2jl61wmLjA5xQorvGI069zJlLs0JwsO6hFWZa+sWWr
-	z7sHgdOzasXTx5/F+sfTjodJZTb5a4t70x5zkJwvAhbJIloDLJMoOJ8TWgBAclCxBI12nvejmnbDK
-	ZB0Edq73rPcM7NzE2VPqiZJF7IdvBOfORRIj4j10gC5WsidS/CxRUA+4+FVxUdlyOrPtJXe+I7yfw
-	0VT5cWHA==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJgXo-0000000GhXx-3pHy;
-	Tue, 18 Jun 2024 21:39:13 +0000
-Message-ID: <c9007e7e-ca1e-4a2e-a80b-4ee3cd873fa8@infradead.org>
-Date: Tue, 18 Jun 2024 14:39:11 -0700
+	s=arc-20240116; t=1718746831; c=relaxed/simple;
+	bh=DGSDIZNzOB7EP74kRaVZRQkMcJutKVSH4GwWSZZcB4E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AadV/iaMVd68CifLlpZ9wCCIhH1qTjggi1mXOUMtE6/Uwdw+l3FPB/ZXszuiNTmHAZYQbmgBv93++pFeI1DjjfVVDffyWNeJKT66Ih/3Nb1+R9SLGQtGzjra2kHT77AkTPnZqpPkQkfmA73Y94p95EH1dyQWg6qatV59c8w9TrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EgRq9jIK; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57c7ec8f1fcso7091327a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:40:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718746828; x=1719351628; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=t2sFsCkBK5Jgj2XfBETPiTRynBfNBU9KxoV9zhHNOLk=;
+        b=EgRq9jIKNN9uJbq//JNmG6IhzzDzUOVQinylb/rToZjVJ2gidFTnRZhfNMX6sSVVho
+         3Zl0F0zq/mhxlqhennU1hTQDxOj+RFhNV5GUJ1idyXcJj7RPExvygA0p1Fxt57Y429q4
+         HA9x0R0JWYPSboLrlEQV7FcmX3P4RZTspC4dA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718746828; x=1719351628;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t2sFsCkBK5Jgj2XfBETPiTRynBfNBU9KxoV9zhHNOLk=;
+        b=YV6lU7J6GGNLl8qnVkcXl16p/5Yrb81GhMmnptaVAglU35vN56mxm0KZmuhV1w7Df2
+         jAoixmrSC0b8Qke3O/zl3P6Vx+AP3EpaFNen2rlpRzoRZjleJTpY8KTyoSkpFJlmVVre
+         3ao+enXMH4Fs3MufA4+EiAQb5a2w+0GD1PwAr1LCXD1QX5CftnQx4px6BET6574DCe2E
+         ehDYlV/L+R/W6t4xvWo2kH4dZPGsDyXbwpERAe+dgsnorORAWXgs2vrdkqYFML9H9u8D
+         LFWvOT5c/hbpBK/fMIxijT5WZK4VzaZuF7VvkPaOdoC18dek3vSWo6COmN3rR4w0v+Cs
+         XjTA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+upFAmwXB0SmJhSzp0DHV/9CvvubL/xi+H0+2RN05z6209ooFOeG+zE9Cnqp9H80Yhbw8uD5ty2XSQLcaLbZkiu89v/LKPWeou8SN
+X-Gm-Message-State: AOJu0YyloYHa5O/CJH5W3zpn8AJgXhaRrxKGPXduw260VUaqhotoFq3P
+	iaJ7dx8JmM3mUVBLXqup+zOedWUAqo8d1AjsQq9EZjxf6/9Mv7MrYKFyOE8VhQvZLkwU24DI3Fa
+	LIsY=
+X-Google-Smtp-Source: AGHT+IEJiPS5yjC0DTFryXg0GdD0WQyX2x4oLTrb37mfuS3IOgvAxEoCjI8B7rfB7dx9MMdXo5H/ag==
+X-Received: by 2002:a50:9f85:0:b0:57c:5996:cfc8 with SMTP id 4fb4d7f45d1cf-57d07e6baa8mr359903a12.5.1718746827630;
+        Tue, 18 Jun 2024 14:40:27 -0700 (PDT)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72cdfc4sm7916362a12.19.2024.06.18.14.40.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 14:40:27 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6ef64b092cso740709466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 14:40:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXipWWHFM66IaeMuZMrgfZIwrT3NdIuGjp+EN+YuxjX6hck5bldz2VDr1FuiUDwV0dA5XhQU2aMoGAD+7ZyV0QpSyzjQ+P6jP16kGlM
+X-Received: by 2002:a17:906:6d08:b0:a6f:e4f:65ff with SMTP id
+ a640c23a62f3a-a6fab7dda71mr36334866b.76.1718746826235; Tue, 18 Jun 2024
+ 14:40:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] firmware: imx: adds miscdev
-From: Randy Dunlap <rdunlap@infradead.org>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>, Jonathan Corbet <corbet@lwn.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20240617-imx-se-if-v3-0-a7d28dea5c4a@nxp.com>
- <20240617-imx-se-if-v3-5-a7d28dea5c4a@nxp.com>
- <c2ef0570-0392-4290-a008-df74f980f76d@infradead.org>
-Content-Language: en-US
-In-Reply-To: <c2ef0570-0392-4290-a008-df74f980f76d@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240618213421.282381-1-shakeel.butt@linux.dev>
+In-Reply-To: <20240618213421.282381-1-shakeel.butt@linux.dev>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 18 Jun 2024 14:40:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh97fGxpyzKTUCrug_uhrLHJHh5W4wLbLkZ9cJSFh7RHQ@mail.gmail.com>
+Message-ID: <CAHk-=wh97fGxpyzKTUCrug_uhrLHJHh5W4wLbLkZ9cJSFh7RHQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: ratelimit oversized kvmalloc warnings instead of once
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@kernel.org>, kernel-team@meta.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Kyle McMartin <kyle@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Sorry, I missed one comment here:
+On Tue, 18 Jun 2024 at 14:34, Shakeel Butt <shakeel.butt@linux.dev> wrote:
+>
+> Simply replace WARN_ON_ONCE with WARN_RATELIMIT.
 
+NAK.
 
-On 6/18/24 2:28 PM, Randy Dunlap wrote:
-> Hi--
-> 
-> On 6/17/24 12:29 AM, Pankaj Gupta wrote:
->> Adds the driver for communication interface to secure-enclave,
->> for exchanging messages with NXP secure enclave HW IP(s) like
->> EdgeLock Enclave from:
->> - User-Space Applications via character driver.
->>
->> ABI documentation for the NXP secure-enclave driver.
->>
->> User-space library using this driver:
->> - i.MX Secure Enclave library:
->>   -- URL: https://github.com/nxp-imx/imx-secure-enclave.git,
->> - i.MX Secure Middle-Ware:
->>   -- URL: https://github.com/nxp-imx/imx-smw.git
->>
->> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
->> ---
->>  Documentation/ABI/testing/se-cdev |  42 +++
->>  drivers/firmware/imx/ele_common.c | 153 ++++++++-
->>  drivers/firmware/imx/ele_common.h |   4 +
->>  drivers/firmware/imx/se_ctrl.c    | 694 ++++++++++++++++++++++++++++++++++++++
->>  drivers/firmware/imx/se_ctrl.h    |  49 +++
->>  include/uapi/linux/se_ioctl.h     |  94 ++++++
->>  6 files changed, 1034 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/ABI/testing/se-cdev b/Documentation/ABI/testing/se-cdev
->> new file mode 100644
->> index 000000000000..699525af6b86
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/se-cdev
->> @@ -0,0 +1,42 @@
->> +What:		/dev/<se>_mu[0-9]+_ch[0-9]+
->> +Date:		May 2024
->> +KernelVersion:	6.8
->> +Contact:	linux-imx@nxp.com, pankaj.gupta@nxp.com
->> +Description:
->> +		NXP offers multiple hardware IP(s) for  secure-enclaves like EdgeLock-
-> 
-> 		                                   for secure enclaves
-> 
->> +		Enclave(ELE), SECO. The character device file-descriptors
-> 
-> 		                                         file descriptors
-> 
-> and what is SECO?
-> 
->> +		/dev/<se>_mu*_ch* are the interface between user-space NXP's secure-
-> 
-> 		                                            userspace        secure
-> 
->> +		enclave shared-library and the kernel driver.
-> 
-> 		        shared library
-> 
->> +
->> +		The ioctl(2)-based ABI is defined and documented in
->> +		[include]<linux/firmware/imx/ele_mu_ioctl.h>
->> +		 ioctl(s) are used primarily for:
->> +			- shared memory management
->> +			- allocation of I/O buffers
->> +			- get mu info
-> 
-> 			- getting mu info
-> 
->> +			- setting a dev-ctx as receiver that is slave to fw
+Sadly, the RATELIMIT cases are useless.
 
-Documentation/process/coding-style.rst says not to introduce new uses of the
-word "slave":
+The normal rate limiting is basically "burst of up to ten, every five seconds".
 
-For symbol names and documentation, avoid introducing new usage of
-'master / slave' (or 'slave' independent of 'master') and 'blacklist /
-whitelist'.
+That's going to completely swamp things and hide any other issue.
 
-Recommended replacements for 'master / slave' are:
-    '{primary,main} / {secondary,replica,subordinate}'
-    '{initiator,requester} / {target,responder}'
-    '{controller,host} / {device,worker,proxy}'
-    'leader / follower'
-    'director / performer'
+If we ratelimit it to "at most 1 per hour", maybe something like that
+would be acceptable.
 
+But honestly, I do not understand your "first abuser only" complaint.
+There should not be *any* abusers. So just fix that first one already.
 
->> +			- get SoC info
-> 
-> 			- getting SoC info
-> 
->> +
->> +		The following file operations are supported:
->> +
->> +		open(2)
->> +		  Currently the only useful flags are O_RDWR.
->> +
->> +		read(2)
->> +		  Every read() from the opened character device context is waiting on
->> +		  wakeup_intruptible, that gets set by the registered mailbox callback
-> 
-> 		  typo in that name?
-> 		or is it something that this patch series introduces?
-> 
->> +		  function; indicating a message received from the firmware on message-
-> 
-> 		  function,
-> 
->> +		  unit.
->> +
->> +		write(2)
->> +		  Every write() to the opened character device context needs to acquire
->> +		  mailbox_lock, before sending message on to the message unit.
-> 
-> 		  mailbox_lock before
-> 
->> +
->> +		close(2)
->> +		  Stops and free up the I/O contexts that was associated
-> 
-> 		            frees up                 that were associated
-> 
->> +		  with the file descriptor.
->> +
->> +Users:		https://github.com/nxp-imx/imx-secure-enclave.git,
->> +		https://github.com/nxp-imx/imx-smw.git
->> +		crypto/skcipher,
->> +		drivers/nvmem/imx-ocotp-ele.c
-> 
-> 
+If you have more than one, you have bigger issues. So what is the real
+reason for this broken patch? Why didn't you fix the first one?
 
--- 
-~Randy
+            Linus
 
