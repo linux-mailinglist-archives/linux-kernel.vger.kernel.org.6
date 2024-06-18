@@ -1,268 +1,182 @@
-Return-Path: <linux-kernel+bounces-219191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F90F90CB1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:07:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A1690CB22
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790E42830B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:07:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059411C236B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242622139B6;
-	Tue, 18 Jun 2024 12:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EAB18040;
+	Tue, 18 Jun 2024 12:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="KVm2sfvO"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2033.outbound.protection.outlook.com [40.92.23.33])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bfIsS6he"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178D92139AF;
-	Tue, 18 Jun 2024 12:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718712327; cv=fail; b=Nqxd7oKEMv55juzPwFyPbIR4MavK8MLacFneEf/izS5BMEDGiPozeJx4Qconx9SKBs4M0+OJ4HLejI5xZ2xThWbfA27O1rwgU9bxQNW5sPrDCFNa9p7t/+KI+livG0CNXz7vOip58mZH6944D4QuXY0d/vwjD7Otj4gNfXEfkV0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718712327; c=relaxed/simple;
-	bh=AU/tAjqJbGUN2h1c7ekJ+CYla+AobS07/Hm8JIYxjlU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CNfh1b1Q1krFnpAQWVRtH/SAtJHrJeAE/DbCYcyuCHHjFQcBtC8mKvaucOzkPN4kRvZZshQyW3ry7kpdBkCrwPbnxaZHe4Z2KHVgoJyCj4mAFw18OgngVAn2yeXsHOlKztNMeD4AT10W3QeAXs8W2Oj0B31N8wgoa2VYiaJ2jX8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=KVm2sfvO; arc=fail smtp.client-ip=40.92.23.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FQbZtpoQ+PSQn7pkwGwZkRHXFQKf6+jhh4e/51aOBwAU4fUWfWSd1V5C+9MxkzRa1LJJC32ZoJveFPPZA4l+ab1iWZcbgXdoVWuHeHfHs8HNA7K5C7aOG0U0cMkhuFPpfd6Nuepjpc0MpIRToJgKE1K4WqYwxIQpOUBh7KGqFSRZs+fHjYPACHu5h1DHoswLcDh6Zx/sf0JG9W5cthuOTN+HArpvvMtK7VcZ6y+ZrRtKymRnSr/kpLpM4iumTFN7ZpCjn/6J7doZpmfLa9B2LHCb9eUcugpIkItIkcy4TWTEzuFMWrC9gVMEQM37OX4vQcKg2ABLOBowPXHJxzXZ9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1zXH04wzzGel1jsED1gLaXtxLrZ7HCf4x2tq0XT3oQ0=;
- b=Pl1AYCou69em+9YSq64ulQzYdNQUl8dixko3MnMPetfV5HT9V+11gCdt9XKhSXWLFKtI6BTAbE7vKCYxxNr7WLJgnU3Qhfw8cgaukw+V08ek7HEoze9ua9pSl5hzZJlNgKqeSJynYEoR3fa/UrHpsLvTVltpblQpnOZJxmXVNWYYll6yHweHbbKYR6fjR02HswGC/xs5ksLV8eP8d23S4iV60a5LUHDdrqvLCUzOt3lyFyH2h6tHsJ9tAS26AsSRis6yn4RKked31LAsBEDTbv0e++n5+GUKLNUZl6X5/lRDZCzXfiqr4JMdmK8Q5JPvxL4llqDAnS5BopceK5KEog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1zXH04wzzGel1jsED1gLaXtxLrZ7HCf4x2tq0XT3oQ0=;
- b=KVm2sfvO5aWfh8OR3iqCyRvZTe7oVdDmnnEYNtyu1N/k6F+l1xTfwJlVH8f+DFgg7sgeGtVI5Aa0DDQliaCeRnG+mrO9I7VM32Gc5oaAJ047KkPNti8TEqOuCY4nVMoEdZhwxXn3pICaP8gCUrpMHzs+XJ2yGqLU26l1GCblsL2xpLHQ8dwmxBxkRtefPbmgZ1ZssGoIC/xeU5h4/KMYrGiblI1vs8oscmPNNIs4Zp3DRvPwgC0lVmNfjLd157Xnqi72+BiZLCse/1kwJb70rSwE4dw2P0ojVT88jviutL2eltm1Z38TF9idCHdZ9VdmnJilghirpbUdHD1AcUfRsg==
-Received: from SN7PR12MB8101.namprd12.prod.outlook.com (2603:10b6:806:321::7)
- by CH3PR12MB8660.namprd12.prod.outlook.com (2603:10b6:610:177::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
- 2024 12:05:22 +0000
-Received: from SN7PR12MB8101.namprd12.prod.outlook.com
- ([fe80::fdb:e120:f99c:c899]) by SN7PR12MB8101.namprd12.prod.outlook.com
- ([fe80::fdb:e120:f99c:c899%5]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 12:05:22 +0000
-Message-ID:
- <SN7PR12MB810159A22C9814AA7FC1AB96A4CE2@SN7PR12MB8101.namprd12.prod.outlook.com>
-Date: Tue, 18 Jun 2024 20:05:13 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] iio:proximity:hx9023s: Add TYHX HX9023S sensor
- driver
-To: Jonathan Cameron <jic23@kernel.org>, kernel test robot <lkp@intel.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- Yasin Lee <yasin.lee.x@gmail.com>
-References: <SN7PR12MB8101D4BC788B5954608D677DA4CC2@SN7PR12MB8101.namprd12.prod.outlook.com>
- <202406171946.qe83Tde0-lkp@intel.com> <20240617202248.35994484@jic23-huawei>
-Content-Language: en-US
-From: Yasin Lee <yasin.lee.x@outlook.com>
-In-Reply-To: <20240617202248.35994484@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [tcurI1lzZRfz6zIKdzWFDEGMHflUqkMuVVIe2J5drZ//L7lZ+pe4fzNxfOIQz6bk]
-X-ClientProxiedBy: SG2PR02CA0101.apcprd02.prod.outlook.com
- (2603:1096:4:92::17) To SN7PR12MB8101.namprd12.prod.outlook.com
- (2603:10b6:806:321::7)
-X-Microsoft-Original-Message-ID:
- <bc4fd213-78b3-4bf8-bfb6-b31b60965d54@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466792139AF;
+	Tue, 18 Jun 2024 12:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718712400; cv=none; b=NBeGyRSbnjX0LqI+fe1wIv4mMBqbknMuQcYkzy/+uUyaqzJvikdt3oW40RolQvO6Gem6O0tM6GnfSqE332L9FBO5uvw8DYmVrOFaiCIDnkDAPDeb7Vo0wt6qYwiGfL/xatOON/LZuu11I4yEJ8jmaKhqN+OqdJOY3ktFr1Qjt+Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718712400; c=relaxed/simple;
+	bh=PUxRGSzgzp4vRmnK1LHLDw8NXD+ShCbOt5l2m4UpRRY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PUHFv8BwC8rBRb3U9/5Rl8MIjAfpzlk0Y1nw0pwRTd85BKgGRaPzU1oRYrvwqXezTRN4At9jTIm6SkVRmN0/Gc3hW/fgPwZADPpcNeUir0p3io/YOu45LXkXaPgkv80W5b+2/DBQcRLW80UHj+o99Sx2//kNdOY7IEQp3U1gv6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bfIsS6he; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I6bHvV004481;
+	Tue, 18 Jun 2024 12:06:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BPoFZkZVeA1ImwyMY0d+//L134+Nq0+28Z4RqcXKJQc=; b=bfIsS6he2ziqqmBZ
+	w8t6xxKDfpMbiIiUPFb+AK7yYwoFE8rrlL1vflpmz9fcyRP/ruTmEuF1qJUzNZe0
+	q2M42CmmFhsCPRmmGIFTC5UFsXNlMLCipIvgJ2rvMTQTbJsNyTCIBqLOCMpFxhP1
+	fP9Mlw5JyWZX1Lz8EDp2Z+qTjNXalhs3L+zWa1RA4IRSd6/4fEIqs1DVY14XIDzQ
+	xzJsbeXSxMmxNYRbNuKlElywZK2hakyWgrukLNI+5+N3b4lpFtyhHPxHGPVEB0b2
+	hsXu3ZoBspxNGmQ5XQUUolqHaSWGhfdomef6vgYZ3+RN4Ifk5U4F4YCedP0iQFVg
+	bfGiRw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytt37a37f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 12:06:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IC6GeE006473
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 12:06:16 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 05:06:11 -0700
+Message-ID: <003bfe18-fa51-42b0-bdd3-1cbb245cfff7@quicinc.com>
+Date: Tue, 18 Jun 2024 17:36:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8101:EE_|CH3PR12MB8660:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9745ef0e-8e92-4f7d-507c-08dc8f8eee39
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199025|3412199022|4302099010|440099025|1602099009;
-X-Microsoft-Antispam-Message-Info:
-	EehFTZ7jyWP/io5+d5iZiGotlGlekvmai0POcnxv70mAM44daEWROvVXWHPgiyBB0IwuXJniPIrrqAIeARLx4viSYFMFVb4g0NhuXHAu8L5ytJL0ezZyC6HSKg5fHV9Yc8CHCnw4dKrs2oWoshxNBQqKUAckiSWWlX+j1ASch0LlTNf0ZgVRnBdxoRWNimA81p9xjOMVkVRQjc2G3iPWqjcRNDxQxrbCMJPxmrYQyzWfYEj2ZoX6du/ANIZtS/iuwHnP4o4mtg1D9V+i6J76D6TM2snu2lPSiidCFrOCz34o+uydq/HRQT83VfGzyj1IqY81SAiQQNrzPSprpkW9fHvEzBoUpNZ+3jdoEu3vzWfPxb5+Yzw2s4ShuochH293KVmzMy7asoQ1aLoRTFTSAa85za3DUTMvRrdg8/rruDysbMqdKZKCYe+xf70RVNmH5r79PKh/Cf8uXWNBYxXMI6SRtXfK/WG9mfGzlpglNREg6J3hGz+lF/DBCzqW1/ZwnHX8vGBngoo7r1wEoNmto3mXNUXT3QbFp703BhTvcKBJGyOrJe/b/rC5USCSUJcPt2ZiTKShI+uVL4cj0bOAOQWsGSIgKfVwL6UJ6LWLIG8sxoiAt7KAfDiacsCbSywZTd42F53hk8ugWUCONPSpoJL6CPodfVRM8YXViknpoNhacvzQ3RurV9fePG5IIhr0IpfZ+XY+IQOFUX3YwJv/FQ==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MEZSeFQwSm15VGpkWFhQMnd0dW5PZk1mNGpJaGNZSVNubkN5VW53eWV1Nzcv?=
- =?utf-8?B?ZDI0S0xiRlNHZWVIT3B3MlVyQnMwV1F1MGhleDZEYVY3VGwySE5rbU1kckcy?=
- =?utf-8?B?WURISXhjeWxuWUxZZkZXekxFSC9ZMlp4TEp4c1dORFZnOVBxWXpvOVM4eXo2?=
- =?utf-8?B?eFFTUWxuaUJCQTU5d25YNGNnaEx5eWZlaXJPV292MFd2bGdUaVFoc3BqNnFn?=
- =?utf-8?B?eHJaTmF3VGxFZXZHZmp4SzBsdlFRVUdwaDZqUDNmSXMxenlwNGkrQTM4WXZT?=
- =?utf-8?B?djV1VkRjclQ0eU54V1d2bFZ4aWFqLzc0dWlDNG1qM1J5aXh1SGNxOGJZSHdL?=
- =?utf-8?B?T2pMTzczY0E4bGJqMDNWMkt1ZmJ3Vm0yV05KaHpiekxWMjVYbDIzaEpnRXJv?=
- =?utf-8?B?Mk4vdkVmaEpsbVBIRU1KREUrVnhGdHhzakZyUUlua0pMQ1RnOGk3WWFRd3hU?=
- =?utf-8?B?d1VkK0d6UWE2bnhBcEZRaUcvT1QzWjhQMVNPeS8wbU5TYWFocWNuY25BTUtP?=
- =?utf-8?B?ZXNhTnhwdW1rSUdaVWFESC9qd0w0WHBOWVMvcVA4bGpuRlZpUmpRdlRvbVJk?=
- =?utf-8?B?c0pBVVZLNERIdEtoUmtJNS8yYW1pdVVZWUZxQ3hTM3lkZWYyS2pxV0p4OE00?=
- =?utf-8?B?NG4zRmZINEJUNjhuR2hxTHJCT1FHOWdRR3Y0eFovNDdxSk5LMnpWYTRzZ2NB?=
- =?utf-8?B?YVJHYXFPWEVTano3TTFxamNUM3pKbFBCY0xmSVV2aWtMVEJaZjlqYmh2RHRz?=
- =?utf-8?B?Z2YxeHFwMy8xYS9GcFBnRkU2a1JxUlRrQ1JDL01XaTBvTFU3SEUyZTBtaDha?=
- =?utf-8?B?eXBleFR0NVI0Q0ZLWm1iQ0VmbFF3RjI0VWFqSXpKeEdSSzU2dkgzcGZNeUs5?=
- =?utf-8?B?VjZzYmNqNi9wbjhQTExIVzlZaFZEMU56aHdyUkZJd2FnN2hTbzlWdnFaS2Zx?=
- =?utf-8?B?ZDQvczN1SjJad2RXR3NhVS9DNGJEN3h3Vnc5V1lBbU5Yc2pvVjlNNGRHamRW?=
- =?utf-8?B?TXBUTk1FNVB0TUtMWE1DWlNqcnN1YjFKaEFncWdJOE5tYytFNll3Vk1YZUpV?=
- =?utf-8?B?Rk1iSzE2cG5kUUtNUllXVllRemV1M1k5NXlIZHdIbnUyeFpXTkZVMEExREk2?=
- =?utf-8?B?K0Nkc1FjZkx1US9QZGhVZnEraWNLNjFGUnd2ejJkU1lwVXljbk9QRU9XQk9Y?=
- =?utf-8?B?SXU5UllyTmNpMzBkM2NKNEw5THZ0U05BQW40WVlRVVlpd01LUnNleUlWaWRt?=
- =?utf-8?B?czBGTmJFT0xXSGkyU1JERUowMVU0Q2J2d3h6azhwS0dqSDBJUnljUDJOOWl3?=
- =?utf-8?B?MlFidm10K010RFk3bEpOR1JlNk80YkNRZlRiWTZSbDVxUytjSmZCSjFSbzBN?=
- =?utf-8?B?RkFWZkJxbUVRSDlNTlk2UVMraG1wemdHRjJiTFVwdkxxNURmZ1dNak1QR3o5?=
- =?utf-8?B?RktuZGhvSnUzSFZ3QlJCTGtSS0E5QTJUL0tiYm5wUDFabUVOQmsxc3Mvc2t6?=
- =?utf-8?B?MUxnV0RzNGVBY2l1enNxNGZvaHJMZldWd1RXckNVeUhFb3B5aFNFL0dHR2Yv?=
- =?utf-8?B?QjkrSGoyL2xzUml6QVZmTklWY1FXdnpueHBjMmdGMzRmelZiNDlqQkE2TUl2?=
- =?utf-8?B?OCtMazVNRU5pS2JnY0VYZm5UVDlid29rMTdrbDQ4U2dtZ2RKY2ZkRlBpZ0FE?=
- =?utf-8?B?azR4Q0NDN0VwYnp2VXpyaGpMWVpMcndhRFZjcTlEKzlKaC91MGZ1bysvVnJt?=
- =?utf-8?Q?qHTN92AWwGxelc3gCWWjrENlbosiIEPOARxsQkz?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9745ef0e-8e92-4f7d-507c-08dc8f8eee39
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 12:05:22.8253
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8660
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm8650: Add video and camera
+ clock controllers
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>
+References: <20240602114439.1611-1-quic_jkona@quicinc.com>
+ <20240602114439.1611-9-quic_jkona@quicinc.com>
+ <0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: AJBLjWTGSKkcAk_lHOi8NonjZiUqewe2
+X-Proofpoint-GUID: AJBLjWTGSKkcAk_lHOi8NonjZiUqewe2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ priorityscore=1501 lowpriorityscore=0 mlxscore=0 bulkscore=0 phishscore=0
+ spamscore=0 mlxlogscore=999 adultscore=0 impostorscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180090
 
 
-On 2024/6/18 03:22, Jonathan Cameron wrote:
-> On Mon, 17 Jun 2024 19:34:30 +0800
-> kernel test robot <lkp@intel.com> wrote:
->
->> Hi Yasin,
+
+On 6/13/2024 2:52 AM, Vladimir Zapolskiy wrote:
+> Hi Jagadeesh.
+> 
+> On 6/2/24 14:44, Jagadeesh Kona wrote:
+>> Add device nodes for video and camera clock controllers on Qualcomm
+>> SM8650 platform.
 >>
->> kernel test robot noticed the following build warnings:
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sm8650.dtsi | 26 ++++++++++++++++++++++++++
+>>   1 file changed, 26 insertions(+)
 >>
->> [auto build test WARNING on jic23-iio/togreg]
->> [also build test WARNING on robh/for-next linus/master v6.10-rc4 next-20240613]
->> [If your patch is applied to the wrong git tree, kindly drop us a note.
->> And when submitting patch, we suggest to use '--base' as documented in
->> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/Yasin-Lee/dt-bindings-iio-proximity-Add-hx9023s-binding/20240616-154122
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
->> patch link:    https://lore.kernel.org/r/SN7PR12MB8101D4BC788B5954608D677DA4CC2%40SN7PR12MB8101.namprd12.prod.outlook.com
->> patch subject: [PATCH v5 3/3] iio:proximity:hx9023s: Add TYHX HX9023S sensor driver
->> config: arm64-randconfig-r132-20240617 (https://download.01.org/0day-ci/archive/20240617/202406171946.qe83Tde0-lkp@intel.com/config)
->> compiler: aarch64-linux-gcc (GCC) 13.2.0
->> reproduce: (https://download.01.org/0day-ci/archive/20240617/202406171946.qe83Tde0-lkp@intel.com/reproduce)
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202406171946.qe83Tde0-lkp@intel.com/
->>
->> sparse warnings: (new ones prefixed by >>)
->>>> drivers/iio/proximity/hx9023s.c:955:44: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 @@     got int diff @@
->>     drivers/iio/proximity/hx9023s.c:955:44: sparse:     expected restricted __be16
->>     drivers/iio/proximity/hx9023s.c:955:44: sparse:     got int diff
->>
->> vim +955 drivers/iio/proximity/hx9023s.c
->>
->>     931	
->>     932	static irqreturn_t hx9023s_trigger_handler(int irq, void *private)
->>     933	{
->>     934		struct iio_poll_func *pf = private;
->>     935		struct iio_dev *indio_dev = pf->indio_dev;
->>     936		struct hx9023s_data *data = iio_priv(indio_dev);
->>     937		struct device *dev = regmap_get_device(data->regmap);
->>     938		int ret;
->>     939		unsigned int bit, i = 0;
->>     940	
->>     941		guard(mutex)(&data->mutex);
->>     942		ret = hx9023s_sample(data);
->>     943		if (ret) {
->>     944			dev_warn(dev, "sampling failed\n");
->>     945			goto out;
->>     946		}
->>     947	
->>     948		ret = hx9023s_get_prox_state(data);
->>     949		if (ret) {
->>     950			dev_warn(dev, "get prox failed\n");
->>     951			goto out;
->>     952		}
->>     953	
->>     954		for_each_set_bit(bit, indio_dev->active_scan_mask, indio_dev->masklength)
->>   > 955			data->buffer.channels[i++] = data->ch_data[indio_dev->channels[bit].channel].diff;
->>     956	
-> This looks very odd.  Diff is an int filled with get_unaligned_le16()
-> which you then write to a __be16 here.
->
-> It should remain little endian, if that is appropriate, throughout.
->
-> Also, very long line. Use a local variable for
-> indio_dev->channels[bit].channel.
-Hi Jonathan,
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi 
+>> b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> index 336c54242778..d964762b0532 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> @@ -4,10 +4,12 @@
+>>    */
+>>   #include <dt-bindings/clock/qcom,rpmh.h>
+>> +#include <dt-bindings/clock/qcom,sm8650-camcc.h>
+>>   #include <dt-bindings/clock/qcom,sm8650-dispcc.h>
+>>   #include <dt-bindings/clock/qcom,sm8650-gcc.h>
+>>   #include <dt-bindings/clock/qcom,sm8650-gpucc.h>
+>>   #include <dt-bindings/clock/qcom,sm8650-tcsr.h>
+>> +#include <dt-bindings/clock/qcom,sm8650-videocc.h>
+>>   #include <dt-bindings/dma/qcom-gpi.h>
+>>   #include <dt-bindings/firmware/qcom,scm.h>
+>>   #include <dt-bindings/gpio/gpio.h>
+>> @@ -3315,6 +3317,30 @@ opp-202000000 {
+>>               };
+>>           };
+>> +        videocc: clock-controller@aaf0000 {
+>> +            compatible = "qcom,sm8650-videocc";
+>> +            reg = <0 0x0aaf0000 0 0x10000>;
+>> +            clocks = <&bi_tcxo_div2>,
+>> +                 <&gcc GCC_VIDEO_AHB_CLK>;
+>> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
+>> +            #clock-cells = <1>;
+>> +            #reset-cells = <1>;
+>> +            #power-domain-cells = <1>;
+>> +        };
+>> +
+>> +        camcc: clock-controller@ade0000 {
+>> +            compatible = "qcom,sm8650-camcc";
+>> +            reg = <0 0x0ade0000 0 0x20000>;
+>> +            clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+>> +                 <&bi_tcxo_div2>,
+>> +                 <&bi_tcxo_ao_div2>,
+>> +                 <&sleep_clk>;
+>> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
+> 
+> When you test the change on a particular board, do you get here any build
+> time warning messages like this one?
+> 
+>    clock-controller@ade0000: 'required-opps' is a required property
+>        from schema $id: 
+> http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
+> 
+> I believe it's a valid warning, which has to be fixes, and as it says it
+> corresponds to the required property exactly.
+> 
 
-I reviewed the code and saw that data->buffer.channels[i] needs to be 
-filled with the MSB and LSB of the diff data register. I can read the 
-two bytes of diff data using regmap_bulk_read and fill 
-data->buffer.channels[i]. However, the diff data register in this chip 
-is multiplexed with the low pass data register. Thus, in some cases, 
-diff data can't be directly read and must be calculated as the 
-difference between low pass data and baseline data. Therefore, I can't 
-directly store the register value in data->buffer.channels[i]. I plan to 
-make the following changes to the code. Do you think this is feasible?
+Thanks Vladimir for pointing this issue. I will check about this warning 
+and will fix this.
 
-@@ -141,7 +141,7 @@ struct hx9023s_data {
-         bool trigger_enabled;
-
-         struct {
--               __be16 channels[HX9023S_CH_NUM];
-+               __le16 channels[HX9023S_CH_NUM];
-                 s64 ts __aligned(8);
-         } buffer;
-
-@@ -936,7 +936,7 @@ static irqreturn_t hx9023s_trigger_handler(int irq, 
-void *private)
-         struct hx9023s_data *data = iio_priv(indio_dev);
-         struct device *dev = regmap_get_device(data->regmap);
-         int ret;
--       unsigned int bit, i = 0;
-+       unsigned int bit, index, i = 0;
-
-         guard(mutex)(&data->mutex);
-         ret = hx9023s_sample(data);
-@@ -951,8 +951,10 @@ static irqreturn_t hx9023s_trigger_handler(int irq, 
-void *private)
-                 goto out;
-         }
-
--       for_each_set_bit(bit, indio_dev->active_scan_mask, 
-indio_dev->masklength)
--               data->buffer.channels[i++] = 
-data->ch_data[indio_dev->channels[bit].channel].diff;
-+       for_each_set_bit(bit, indio_dev->active_scan_mask, 
-indio_dev->masklength) {
-+               index = indio_dev->channels[bit].channel;
-+               data->buffer.channels[i++] = 
-cpu_to_le16(data->ch_data[index].diff);
-+       }
-
-         iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer, 
-pf->timestamp);
-
-Best regards,
-Yasin Lee
->>     957		iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer, pf->timestamp);
->>     958	
->>     959	out:
->>     960		iio_trigger_notify_done(indio_dev->trig);
->>     961	
->>     962		return IRQ_HANDLED;
->>     963	}
->>     964	
->>
+Thanks,
+Jagadeesh
 
