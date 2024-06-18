@@ -1,132 +1,145 @@
-Return-Path: <linux-kernel+bounces-219147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C0990CA6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:53:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F32990CA85
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F921F24155
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86C9282F3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 11:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E9A14F9D4;
-	Tue, 18 Jun 2024 11:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51781153575;
+	Tue, 18 Jun 2024 11:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6jb7TK4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UI8qinO7"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4674F383BD
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C657A13AA22
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718710512; cv=none; b=Vcv1Z16Yg5pVpKoxXGsS/oRbGsHGwUvXQwkm6pjfRugg9PdhGWsoiBx0RmLf1nwV+tZ/9//nO0BMuhT503mxBsWvKEs2zXeuzk7e2i6kdoZG7XIjqSBCopHehDTxX4CDI86IzS+ht0/NS5vtG8l3byxjzqvlcxk3eCEsIUF+MLA=
+	t=1718710680; cv=none; b=Dq/SFO99UjHVrtWXlmzybOmkScrpQXgzp5bYWyG29WdiKyCV1th27fbK1RPGSVyXuTEtBITzwT7x7Eh2fUzFGTKgJmRPM/AEIi7adHUTw8M4pt6YJeDYGb7DZB/WukAoaFnUJawfpbBNdj7OF8IjjU+Bf9bSvRkrwKADo7pqoPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718710512; c=relaxed/simple;
-	bh=M4pnuz8cNuPU8c1HstU6mEYOGHH4rhaGZOnyxFYYFMo=;
+	s=arc-20240116; t=1718710680; c=relaxed/simple;
+	bh=vDBnggGHduCLfhJYXpM1LddAUFFv7KUjf1LNrU4eBgo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mqEGaNlFhFDzjcvna7P1FdXHHVJ+hk32UHmDHwxs3VD6pxahGEofp+QFPcTWiIKkN3FWEVy1O8gR5TW9BFapT+WcrwzVmZ2OE1TY9cfD5vfVWKrcIM9fp3liQ07wJyvJKCHD+vf5lxdlK/lV2Kyc6aOSkgnaPFuVOsCZY2+K+8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6jb7TK4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F4BAC32786;
-	Tue, 18 Jun 2024 11:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718710512;
-	bh=M4pnuz8cNuPU8c1HstU6mEYOGHH4rhaGZOnyxFYYFMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l6jb7TK4AqUtxRSPRhtEDM4TaUnPyrlbwMYDEqbeCntG/CKNTpMISGpo6dvZ1IY05
-	 qJZpXMJJ3VRuM1wuEe4uZxHAicjpxqR6zBI1BusyqDnQRq+ZowrJWXf4vyWZCdsuxt
-	 1ldz1T5Myty+N7Gux4FdK0lJ0niiULGrKQqa8ViH8lj2TrIy7LV+GArNQkXJO+zV6x
-	 EkHlLiRCR/9E6DYPOe4Qpc3Vu2fYr7iiV9gLSRD3yA2M1W+E0Bwv29qQueIEYa5VJ8
-	 KcCWu3pAXPtNgrUzpwjmG+8XTA5zyPMi+13tV6ky+KCHhIJBfsehCABjgSSnowfhRj
-	 lO+3FoKUxyO5Q==
-Date: Tue, 18 Jun 2024 12:35:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>
-Subject: Re: Page select register restrictions in regmap core
-Message-ID: <1a62fc39-355c-4885-b5f6-b66f01a1328a@sirena.org.uk>
-References: <e3e11724-794d-423e-9326-ffe8eed5119c@roeck-us.net>
- <4b22e04f-3142-4a5a-a8d1-366c4b8bbb73@sirena.org.uk>
- <78c93d6b-af0e-4d96-b213-e1e402524361@roeck-us.net>
- <adcd5997-84ee-4c72-aa37-2940afdc83bd@sirena.org.uk>
- <c4a5fb5c-90b4-488b-8875-a0b819e24bcd@roeck-us.net>
- <19893519-20a6-47cf-bb3b-c61dada627bc@sirena.org.uk>
- <e6733f56-014e-4ea0-aaf8-059334f2b27f@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KNRllJTvwDDY3molxZ5d60TWKb93byvgrQuxwBqOYlk8WWSd+OfQkmjl1suC63GrGIjdtWbv8510YJJB0hmJfw5Ze0BM9t/VCTNIWWTI5fWxGHxr09n3M4X3JuEP22avRVFUFTnzTk54DUx5ir1FI3f2okJoVdgP7hwQ/Y6IC50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UI8qinO7; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so55627861fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 04:37:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718710677; x=1719315477; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=w1nUX/w35W7jhWMOL3MjUXKKFpQa+k5Ifppyru0Gp1E=;
+        b=UI8qinO7iZOsWo/sz6sSfgITneXR0gPir7d+PK0RCSOj1lKR+3soXntM7dVUEnVBMp
+         hxErAtcVSU6ZdqSsJWo3iKC55ZWCmBbsu/9pcXYyn4f1jiFCrROZ6IXuYBFKizUxTUD9
+         YfxZBRN1Sy7Yim6hRoQTNXN8hRWD9Ry14uTK3iM7RoIFellyMiHhBZzsShIjaBvLEw30
+         qs8a/UG5IKYVg65ZbXtjxIhSTz19P63N658IcZMOHT5Qc0qnI0HWMciBCG73oDJuOuZa
+         NZSzRRLxF0Kk8rTpeYkGIsFoI6Bv+kLxMMg2U+P+/Kfku2NmbYyB9/j12YaIAo0Aykwe
+         Ne5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718710677; x=1719315477;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w1nUX/w35W7jhWMOL3MjUXKKFpQa+k5Ifppyru0Gp1E=;
+        b=H35s6Q9xxWjS8sxvnLaYiag8HIUmbFSHxzO/2TLdBX06UjVpiiEjwb6BGYmdjzu6ur
+         b13ibQ7JUOF3C3QBX84nfm7bOWbfNyKfsdLVIPUua2RRmW7c2fnIDz1x8QP0xcUpX9rc
+         oLAnbGnzkDH8VN1l/jZhzgAHs2NaKXOxxugpvHa3ONJYDaYp1KU45pM9/LiYJ0ldEfJg
+         fA7oWoTVFphHokagwKMMzS7RvUEvW9OWfyPWta40RsfEgBr2uCjKllxQzrQyxMhg0GhA
+         cwJwUWONl0TPb1PH0SNWM6ZVQCGGkzQBdyUeAEIAP4tUF+0UtJEokY05zMGp+lZbHZ3N
+         9keA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEvbyegxoCWTWUGXy4PWqEDaib/zUsYxXdlKTZ01eVecqOt4LzbXaXOzl3DVTKN8B+fWGzsKoN42XNPmiQXSAgEP+T6lQnFmqllVNw
+X-Gm-Message-State: AOJu0Yxb+7jiL4ZUJLR7ZoOTpTgQ64MOutFgpW4t7fWX5Ddl9f7vc5Di
+	dS6to28XY1t86FYFvVAQfVPRePqzmu2g5VvWCkK9/uvFQIIR7no0asKBcYk4wT4=
+X-Google-Smtp-Source: AGHT+IHKBDNDrr5MqcJfCJ1fNOiBxzenrX3DYKCxbyPB94Mjsb6jjGhbiJQBUQAJuB6ysUQVSV7D1A==
+X-Received: by 2002:a2e:3619:0:b0:2ec:1dfc:45bf with SMTP id 38308e7fff4ca-2ec1dfc46e6mr58898761fa.42.1718710676831;
+        Tue, 18 Jun 2024 04:37:56 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870e96f9sm225384615e9.26.2024.06.18.04.37.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 04:37:56 -0700 (PDT)
+Date: Tue, 18 Jun 2024 12:37:54 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: kgdb-bugreport@lists.sourceforge.net,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Thorsten Blum <thorsten.blum@toblux.com>,
+	Yuran Pereira <yuran.pereira@hotmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/13] kdb: Remove "mdW" and "mdWcN" handling of "W" == 0
+Message-ID: <20240618113754.GD11330@aspen.lan>
+References: <20240618003546.4144638-1-dianders@chromium.org>
+ <20240617173426.6.Ia1d546061f9430a90df0e7521097040e0e939c58@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YRK1sU5hNClG7S+h"
-Content-Disposition: inline
-In-Reply-To: <e6733f56-014e-4ea0-aaf8-059334f2b27f@roeck-us.net>
-X-Cookie: If you can read this, you're too close.
-
-
---YRK1sU5hNClG7S+h
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240617173426.6.Ia1d546061f9430a90df0e7521097040e0e939c58@changeid>
 
-On Mon, Jun 17, 2024 at 04:15:33PM -0700, Guenter Roeck wrote:
-> On 6/17/24 15:47, Mark Brown wrote:
-> > On Mon, Jun 17, 2024 at 02:55:09PM -0700, Guenter Roeck wrote:
-> > > On 6/17/24 10:22, Mark Brown wrote:
+On Mon, Jun 17, 2024 at 05:34:40PM -0700, Douglas Anderson wrote:
+> The "mdW" and "mdWcN" generally lets the user control more carefully
+> what word size we display memory in and exactly how many words should
+> be displayed. Specifically, "md4" says to display memory w/ 4
+> bytes-per word and "md4c6" says to display 6 words of memory w/
+> 4-bytes-per word.
+>
+> The kdb "md" implementation has a special rule for when "W" is 0. In
+> this case:
+> * If you run with "W" == 0 and you've never run a kdb "md" command
+>   this reboot then it will pick 4 bytes-per-word, ignoring the normal
+>   default from the environment.
+> * If you run with "W" == 0 and you've run a kdb "md" command this
+>   reboot then it will pick up the bytes per word of the last command.
+>
+> As an example:
+>   [1]kdb> md2 0xffffff80c8e2b280 1
+>   0xffffff80c8e2b280 0200 0000 0000 0000 e000 8235 0000 0000   ...
+>   [1]kdb> md0 0xffffff80c8e2b280 1
+>   0xffffff80c8e2b280 0200 0000 0000 0000 e000 8235 0000 0000   ...
+>   [1]kdb> md 0xffffff80c8e2b280 1
+>   0xffffff80c8e2b280 0000000000000200 000000008235e000   ...
+>   [1]kdb> md0 0xffffff80c8e2b280 1
+>   0xffffff80c8e2b280 0000000000000200 000000008235e000   ...
+>
+> This doesn't seem like particularly useful behavior and adds a bunch
+> of complexity to the arg parsing. Remove it.
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>
+>  kernel/debug/kdb/kdb_main.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>
+> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> index c013b014a7d3..700b4e355545 100644
+> --- a/kernel/debug/kdb/kdb_main.c
+> +++ b/kernel/debug/kdb/kdb_main.c
+> @@ -1611,11 +1611,6 @@ static int kdb_md(int argc, const char **argv)
+>
+>  	if (isdigit(argv[0][2])) {
+>  		bytesperword = (int)(argv[0][2] - '0');
+> -		if (bytesperword == 0) {
+> -			bytesperword = last_bytesperword;
+> -			if (bytesperword == 0)
+> -				bytesperword = 4;
+> -		}
+>  		last_bytesperword = bytesperword;
+>  		repeat = mdcount * 16 / bytesperword;
 
-> > > each register address and then accessing, say, the revision register
-> > > not as register 0x02 but as register 0x102. I would then define the matching
-> > > range from 0x100 .. 0x17f and the window from 0x00..0x7f.
+Isn't this now a divide-by-zero?
 
-> > That would make the range exactly the same size as the window so there'd
-> > be no paging going on and the registers could be accessed directly?  I
-> > guess that's another check that should be added...
 
-> I tried to explain this before. The registers in address range 00..0x7f
-> are physical, but they are only accessible from page 0 with the exception
-> of the page select register. So, sure, the registers are not actually paged,
-> but page 0 must be selected to access them. That is the one and only reason
-> for specifying that first range and window. It ensures that page 0 is
-> selected when accessing the registers. If that wasn't the case, I could
-> define a single range for the actually paged addresses in the 0x80..0xff
-> window and be done with it.
-
-So surely this means that the entire register map is one window and
-there's no point in defining two ranges?  Those registers are paged with
-the same selector as the other registers.  At which point you can just
-sidestep the issue and be like the other current problematic drivers.
-
-> The non-regmap access all happens in the probe function before regmap is
-> initialized. It is needed for basic chip identification, to prevent someone
-> from instantiating the driver on a random nvram/eeprom and messing it up
-> with attempts to write the page select register. I would not want to be
-> held responsible for someone with, say, DDR4 DIMMs force-instantiating
-> the spd5118 driver and then complaining about bricked DIMMs.
-
-What some devices do for enumeration if the fully specified regmap won't
-work for all is create a trivial regmap used for enumeration, then throw
-that away and instantiate a new regmap based on the results of initial
-identification, though that wouldn't really work for letting you skip
-paging.  I don't see how you avoid handling paging in the probe theough,
-unless you just assume that the chip is left on page 0 by whatever came
-before.
-
---YRK1sU5hNClG7S+h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZxcOsACgkQJNaLcl1U
-h9D65Qf+IrZCCyK+pbghAZoF7jmFba59dcZHCCApvqPHF0iT7x39Ku3wsQI3svaV
-XpGqASHAFySvOLSye2tn9/1d/NzJ2uV6cvXqzYF4ii36tzn5UbAcz0kM0rkhrW2I
-sKvamqkKlJJwEQWkEULegKoeXSLwcA6ZrGIhQGkWqltqD85RjA9fX5lfb9OPeMPZ
-UQb9UFGgWQjQhLgSBF+YHGGrWr0lbAUZ8dTnOIUm/iv1sECtYBuonW9GElAsbqhF
-xdyhITWcMne+DpH4wfsGvYvF+F7n0cGUgnxDO1GkYuMdMS9ltLO0dPrT0zOyBGwA
-082ExvYULGI0aGK0Ke+M4K5pnKUG7g==
-=nBui
------END PGP SIGNATURE-----
-
---YRK1sU5hNClG7S+h--
+Daniel.
 
