@@ -1,233 +1,124 @@
-Return-Path: <linux-kernel+bounces-220186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44B290DDDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:54:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E662990DDE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE2F1C23313
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:54:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9376E1F24A78
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5700E176AB0;
-	Tue, 18 Jun 2024 20:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C5F176AB4;
+	Tue, 18 Jun 2024 20:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OB6XPpzd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="nfP/ZnBS"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D398C36AEF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A27636AEF
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718744054; cv=none; b=ZoynhPGKLTQEiikh2BW924NwURxjZeqi21WV7mE96xLHhzYarCh8sGyV1M7YEWS13ubcowOoSqeyB9SiUFcEbJsBi3NEhG1GjRFgkWYJMuNsAKEZ2VrOvTzdWiiWsGjPCvWcCIuDLM/i3pt9u+XezousjbcObUy5BxDKtiHTIEg=
+	t=1718744329; cv=none; b=EAUcrFoGpTZQgLywSZfJ0esKBQqEiXYm2E0L6CffT5EC9S4kqvq3EQNKUcnSGVVh8REMM2+Ga+ZGdcc8a8bKGlz1CYQ/3OrXtzy00LjFVMt6VP2UylMsgryeqRHdAsWeMoOO7UE3Mx7Jk3fZKEH86BTCE7zEm8NNA/zF83pCswY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718744054; c=relaxed/simple;
-	bh=OCrX4q63PJGIMkk1OE7cn8W3PWwaJkynKJIRmjgsbeI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iiL7GlE72Gnl2Q3hSGN4Ntih5XJWMEiOvOkp53BPGR4lcLOd/xvZw+Tyyi1YujZUO88NnUHQvgKjvIw8kD8NHhtiFIHCdVj1lLtsru35YdR4IqH2/aQpy2MwbHs5qagu3LsvjLdfD5DFZVQ8FcrJs+9m10S4ukFMxltJJtkR/r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OB6XPpzd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718744051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T4M1vg2KI3INTfsrYTcRbvvCZ9fFmnVg64uCWrgyPMY=;
-	b=OB6XPpzdQreQTTud8ju1z91iIkFaXR7mXksUTIq+3rvubtUQmZK/I7cWYZGM03NnJ8faKV
-	7GeRPfaPjlbvArOCydwAqpZRRagTPac7RGAK/fknWVGwfAPpXioDJw4MiGDkxsv0mslBOJ
-	h9YCs84gyEHtP53ZwwVlCIZNnn612kc=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-526-f6uhfZFrOkmKbFqR5GiibA-1; Tue, 18 Jun 2024 16:54:10 -0400
-X-MC-Unique: f6uhfZFrOkmKbFqR5GiibA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42108822a8eso968165e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:54:10 -0700 (PDT)
+	s=arc-20240116; t=1718744329; c=relaxed/simple;
+	bh=GL4WG3gGiRy5iVYQEdrg+YE9pgM649jZLwWBiNBLnAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hNiFX4FaG1k0pbaqSjCyKlG3mXsiRNmx0kIpxykY7OBGRL0qEipyJgwO12yef9QvrmNbSAmt8VHqtOTzVAb7au1f/8gYpAPn8iaaMOHUuyL9OGJhZOqLBn/iL3j/71nh5fxtdLHzJPj1nktQ2/LM6ZHjjtykf6hMkWFv8cvoy+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=nfP/ZnBS; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7eee734a668so104841839f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1718744327; x=1719349127; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V5fTw4oIChX/XVGvVrvDmot1CuQjy9wAr2Jw7V0wyH4=;
+        b=nfP/ZnBSgOuujYLsjEgZkwCqLonrPCRytasRpKRJMFmzx1AHzDuf/zM0tBcsUZt4Q2
+         HM4zvMl9KlobFjcf4CfnB1VZvbhzYm00OPpSa+auwO+7KybSi01my25uPLq1DKVOXIe8
+         v4wuwSdwNe9Z/ueHYbHFoCFH3L9EtZu9c5PkdlNAeTR/7q6Sh/FT6d1sFmZsNDM+Q32j
+         Lg18hOo3Pozmic6wbfw02piX54g6/JRhzMbKpFXpjQjurDOEVOaTgwJxxpRl/LHv70nF
+         588FmgtSpxfzi3MQRy2I1w8wzOQ3UDw4r7bR1PIMQE+cNJwcYndoPf+dhTYwJ1wESmV7
+         bigg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718744049; x=1719348849;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=T4M1vg2KI3INTfsrYTcRbvvCZ9fFmnVg64uCWrgyPMY=;
-        b=SjC+uB/OJ5fIONat0+66UZjreBu2CD1tf27xd8uvLqvGFI2MB7IQWheIaZL6pzPgTO
-         sHXCydnzfAov3+N0vdJj98xtvu4A22G32vljVfrh3Mt8haL0IMBFMPKg3wiLUpBj89tv
-         JPdnKXhJemjmrapPc2/zEgDtPVL5oUXfFXaX2E0o1qR7repgyo9zdORwIeYRNgoDW3dT
-         CmJvcQqgh1o6bhuMnb0mTJX1TAvtvRVDtSZ32kSSO+pmJBoPAlFQOH9Gn2/Y7UmXov/a
-         rsRu75agvh09Iuj8oiLIQpuYXIikkbuSzIna7WSmgLZeqDuCqsc50MLTIGA3PYNWFbrO
-         MZbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQh/KfCiwHsj12cmQCxNpv51fJH4qUqC3wXI1nKgr8NGlsLpK16f8DAJOmRwvlbrdqngRsahWlOzYlD85ldB96jKVM/QSkfo8vtwwm
-X-Gm-Message-State: AOJu0Yx1TyX9FvinEwgK3nW9LqbIoXm6exuPvk5U1WCJbfb3hhniWVeF
-	ZUiPkBTC9Idvy9CJyJYEoW6MWOZfv6RfazjieAcmCpMOPhdk15YNHaXByS5NdOY5ih1hyq7XyPk
-	Spa0Bk3cNpTiWFwo+HE2AkvKriy+BqyJBwYKkKA/t133yyWvLtmaQyU7ixPPYTw==
-X-Received: by 2002:adf:f10d:0:b0:35f:1bb0:ed8e with SMTP id ffacd0b85a97d-3609ea6c78amr3512064f8f.21.1718744049263;
-        Tue, 18 Jun 2024 13:54:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF2dQnC66MnPCev8ct4GNUIewCHJAEIIYdimrD2HDVajRPI3kf7fS3o3xuuC3od8NCHsWLEJQ==
-X-Received: by 2002:adf:f10d:0:b0:35f:1bb0:ed8e with SMTP id ffacd0b85a97d-3609ea6c78amr3512046f8f.21.1718744048694;
-        Tue, 18 Jun 2024 13:54:08 -0700 (PDT)
-Received: from [192.168.3.141] (p4ff23361.dip0.t-ipconnect.de. [79.242.51.97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f612800csm199946905e9.28.2024.06.18.13.54.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 13:54:08 -0700 (PDT)
-Message-ID: <916f5ba4-02c4-4a33-97e1-5343bde5ae54@redhat.com>
-Date: Tue, 18 Jun 2024 22:54:07 +0200
+        d=1e100.net; s=20230601; t=1718744327; x=1719349127;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V5fTw4oIChX/XVGvVrvDmot1CuQjy9wAr2Jw7V0wyH4=;
+        b=hl7Rklp64KD+6DrxomUdgh/6HpN3N+mlbTE1sy9sEgK/sgIiHGioltHhD+27Y41tNS
+         cuvfdW4O729UIQNK1l6hu0M2+OsP5if1/4DBaSfIICTTziW8Vwoo5cT5g3qnf68Lm1+G
+         VGUGTqiT8kN2i47t3HCvDxLLD0ylJu82Eb6fSi6i31Kg8d6fTgCjcOjajA+DjEttqGeM
+         77x4jRAPo4LJ3ls8mqVczEMtuxwt977P9tUzAeg4oHECmXrEjHtPbrVK0mD+6y/vEA9x
+         pVCUSCQ5Om7Ti/V5Wia/dweVFNMkePcx0nsCXM+dTTtrE3HIJfHqPYuw6gzJFRbNHFEs
+         aZAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsW3w7hQ1NgdxC77E9LqZJiAUYwRM/Jv0jeKDw/sXbGFwNRMWrMeeI47XOp5RqAaCfWAuojVMaAhN6c+gpzetETTD71NE1qV5zIFIs
+X-Gm-Message-State: AOJu0YxNyFZg49uSTBRRks9CxLda+FNABlH4Ctb/w2qNIo7h36Ij6CTP
+	lO3S84U7wF9/USrh6raO7GeL3+RmT50S/jBsyraa3kWf5/4Krn8dZxinUL9vaM0=
+X-Google-Smtp-Source: AGHT+IH+yRumAclbJinwAffvWd8nRl0WF/o33t8ouaYeI1M5L7Oo53VGMyQECDT4PGd6eSp9S8KX8Q==
+X-Received: by 2002:a05:6602:6415:b0:7eb:6a37:89ce with SMTP id ca18e2360f4ac-7f13ee875b0mr126392339f.14.1718744327667;
+        Tue, 18 Jun 2024 13:58:47 -0700 (PDT)
+Received: from kf-XE ([2607:fb91:111c:4643:b5f:d6ad:8a73:5578])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b95d3e7fd2sm3113958173.157.2024.06.18.13.58.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 13:58:47 -0700 (PDT)
+Date: Tue, 18 Jun 2024 15:58:44 -0500
+From: Aaron Rainbolt <arainbolt@kfocus.org>
+To: mario.limonciello@amd.com, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: rafael@kernel.org, lenb@kernel.org, mmikowski@kfocus.org,
+	Perry.Yuan@amd.com
+Subject: Re: [PATCH V2 RFC] acpi: Allow ignoring _OSC CPPC v2 bit via kernel
+ parameter
+Message-ID: <ZnH1BDVgo--6WEQn@kf-XE>
+References: <ZnD22b3Br1ng7alf@kf-XE>
+ <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com>
+ <ZnHSKiaYf2tIQo58@kf-XE>
+ <a7790c74-2bec-4a24-b6e5-223c4e1ed372@amd.com>
+ <ZnHXfLEwk2uRbg58@kf-XE>
+ <b4d65232-b69e-419d-9b15-d0ca64b78b26@amd.com>
+ <ZnHfNbLTgY1op3Zv@kf-XE>
+ <fb8c965a-5f1c-4975-8e7d-6f6a0eb4d02f@amd.com>
+ <ZnHtPbszYT8afOOk@kf-XE>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] selftests/mm: mseal, self_elf: fix missing
- __NR_mseal
-To: John Hubbard <jhubbard@nvidia.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
- Shuah Khan <shuah@kernel.org>
-Cc: Andrei Vagin <avagin@google.com>,
- Axel Rasmussen <axelrasmussen@google.com>,
- Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240618022422.804305-1-jhubbard@nvidia.com>
- <20240618022422.804305-2-jhubbard@nvidia.com>
- <0b152bea-ccb6-403e-9c57-08ed5e828135@redhat.com>
- <9d08f768-b9da-4a44-9d75-a16d6cde6b66@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <9d08f768-b9da-4a44-9d75-a16d6cde6b66@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnHtPbszYT8afOOk@kf-XE>
 
-On 18.06.24 22:14, John Hubbard wrote:
-> On 6/17/24 11:56 PM, David Hildenbrand wrote:
->> On 18.06.24 04:24, John Hubbard wrote:
-> ...
->>> diff --git a/tools/testing/selftests/mm/seal_elf.c b/tools/testing/selftests/mm/seal_elf.c
->>> index f2babec79bb6..27bf2f84231d 100644
->>> --- a/tools/testing/selftests/mm/seal_elf.c
->>> +++ b/tools/testing/selftests/mm/seal_elf.c
->>> @@ -2,7 +2,7 @@
->>>    #define _GNU_SOURCE
->>>    #include <sys/mman.h>
->>>    #include <stdint.h>
->>> -#include <unistd.h>
->>> +#include <asm-generic/unistd.h>
->>>    #include <string.h>
->>>    #include <sys/time.h>
->>>    #include <sys/resource.h>
->>
->> Still confused. Let's take a look at "microblaze".
->>
->> arch/microblaze/include/asm/unistd.h
->>    -> #include <uapi/asm/unistd.h>
->>
->> arch/microblaze/include/uapi/asm/unistd.h
->>    -> #include <asm/unistd_32.h>
->>     -> Generated during "make headers"
->>
->> usr/include/asm/unistd_32.h is generated via
->> arch/microblaze/kernel/syscalls/Makefile with the syshdr command.
->>
->> So we never end up including asm-generic/unistd.h directly on microblaze, but rather converts it (IIUC) to something else.
->>
+On Tue, Jun 18, 2024 at 03:25:36PM -0500, Aaron Rainbolt wrote:
+> acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
 > 
-> Yes.
->    
->> That will work as expected here?
->>
+> The _OSC is supposed to contain a bit indicating whether the hardware
+> supports CPPC v2 or not. This bit is not always set, causing CPPC v2 to
+> be considered absent. This results in severe single-core performance
+> issues with the EEVDF scheduler on heterogenous-core Intel processors.
 > 
-> No. :)
+> To work around this, provide a new kernel parameter, "ignore_osc_cppc_bit",
+> which may be used to ignore the _OSC CPPC v2 bit and act as if the bit was
+> enabled. This allows CPPC to be properly detected even if not "enabled" by
+> _OSC, allowing users with problematic hardware to obtain decent single-core
+> performance.
 > 
-> The problem, and the source of confusion here, is that for most user
-> space programs, the header file inclusion behaves as you've mentioned
-> above. However, those programs are installed on a single computer that
-> has a single set of asm and kernel headers installed.
+> Signed-off-by: Aaron Rainbolt <arainbolt@kfocus.org>
 > 
-> We are quite special here, because we are building a set of user space
-> programs that:
+> ---
 > 
->       a) Mostly avoids using the installed (distro) system header files.
+> V1 -> V2: Rewrite to work in cpc_supported_by_cpu.
 > 
->       b) Must build (and run) on all supported CPU architectures
-> 
->       c) Must occasionally use symbols that have so new that they have not
->          yet been included in the distro's header files.
-> 
-> Doing (a) creates a new problem: how to get a set of cross-platform
-> headers that works in all cases.
-> 
-> Fortunately, asm-generic headers solve that one. Which is why we need to
-> use them here.
-> 
-> The reason this hasn't really come up yet, is that until now, the
-> kselftests requirement (which I'm trying to remove) was that "make
-> headers" must first be run. That allowed the selftests to get a snapshot
-> of sufficiently new header files that looked just like (and conflict
-> with) the installed system headers.
-> 
-> I can update the commit description with some of the above, if it helps.
+> RFC: I have not yet tested this patch to ensure it functions properly,
+>  nor have I attempted to compile it against mainline. My system takes
+>  a couple of hours or so to build a kernel, and I'd like to submit this
+>  for feedback now and test once it's sent.
 
-I think it will. The main concern I had was that we could be ending up 
-including headers with *wrong* data. As long as (a) it compiles where 
-it's supposed to compile (b) it runs where it's supposed to run, we're 
-good :)
-
--- 
-Cheers,
-
-David / dhildenb
-
+I sped up my build by using a defconfig rather than a default menuconfig
+(still learning how these things work), and confirmed that the patch does
+build against 6.10~rc4. Will report back test results hopefully soon.
 
