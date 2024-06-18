@@ -1,145 +1,175 @@
-Return-Path: <linux-kernel+bounces-219323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E228F90CCE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:59:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8230B90CD31
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A5C280D8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:59:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152F81F243D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D068019F48C;
-	Tue, 18 Jun 2024 12:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285E41ABCD2;
+	Tue, 18 Jun 2024 12:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBYFTB6N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FmUqzhXL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162F815533D;
-	Tue, 18 Jun 2024 12:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D9715885A;
+	Tue, 18 Jun 2024 12:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714427; cv=none; b=Fyr7tLH8bNbAM6LhgUZaGbOqYeM8Aqou4/5dEqmxKa7Ah5Uzq9M3dCrVgOxes3OxC11ns6a+WlirR/jL6bxZvugfTyAvsNoRSjHvXofDToLcmrd75gForCuYUwLaPx4/IXy6Xz9NUpPrrUR7qggZ0BMGU2+lBTRx60Mfr0bJV6I=
+	t=1718714502; cv=none; b=G3n7xKTDxAJcln1tPD2aPI5+GLT3Hinlc7XgFHMYgLIR4m0VtQQV3DT8+Df9OFf3oFbvBnNlBQh9tU5n5pvJ4zSl3oZCDgN8JNkUfwfgbxiUmSmLffBj/cf+quYtXJEePmnfqztdckh8DaiA+6TyOZERDCuTbYfJ60fmqlnw1+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714427; c=relaxed/simple;
-	bh=PLYFcs7ICDH3FpoaefktwgaRhPxIEU6ZQGa1ScCB6cA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TXroUZMkN6ucSXe3HQes9HLDES/8WNWvnj4LEpJtmyEqmTEJDktWrwdWafQizz6qAZpfOQpbTxrmF1PbOvVd8tfdYgOC6ogrIzaOL57ZMJCvnVCfTPFT0fepGKvxeageA0NK657t/1D3LQlI2ICgDsOg13aAd/5iAy50XxCDsXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBYFTB6N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B5FC4AF49;
-	Tue, 18 Jun 2024 12:40:26 +0000 (UTC)
+	s=arc-20240116; t=1718714502; c=relaxed/simple;
+	bh=o1kRwwDvVU1rG3e8P5Z+WVP3KIo7hNw64Oqe8utbRqY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UBWL+JYmbe4vy9co3JHD5OvUUxBVeZFR9uKHmP2cx/KZai9H8om6YGJFPEztxqCHj8pFBkdw0LFff3VqH2DySL2PZFvLy6PL7Z87G1MSdxuPNgzOCCydZD1AXziQI0HaNku99XPKv/RT7XhMGZB69lTkhRaCC2SY8+zw3CUPS9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FmUqzhXL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82C8C3277B;
+	Tue, 18 Jun 2024 12:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718714426;
-	bh=PLYFcs7ICDH3FpoaefktwgaRhPxIEU6ZQGa1ScCB6cA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LBYFTB6Nmi/C+IIR/nuTMRIBuWLPz2ldfQEmQ/ZnM6HxS5xPxPdW2kIvfy7KY8ZwD
-	 28ZeQ8oXU12vEuk6qIj9szZ5eqTCATUM2PBUZtj0uiWIQtXXVYgnZQRuYBSVvUYRLU
-	 jBzfBro7TzHKgPD2CxmOzHhyb7Rl+tukcpn9zqk2iwhyPGB7gKmG9AlSS7CohtNrxS
-	 pN0B0W5ixysc4z4kUIdOAZWovfHEkQJJp4vcbQP5pfDl0ImCmGjeFCqcbWh0KXFaQq
-	 qkA6vJV5Rk8OfwUL7+DKkuE6TRWvnqXiqm5BsHRX2KY1EwqPbJnXHMLBpDu3i7BHRa
-	 XOPBm0XB5+vhw==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec3c0dada3so2594751fa.0;
-        Tue, 18 Jun 2024 05:40:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXC7nczjlSmVIgK8HFPHfz4jeRlWyG4b2LEQq7mdCLXEG23hxV8bvJRYjy/TAzgXtQQFl49lxMGUpDxqEiCOSw2HJi6y5c2ixyeX97SEBrFXdUbkcZ6D5//O1jcGN3Wvtdum6dAS71EltRnyH8MijbpUsMfdxI2ULz/Jfqfu5R/kqgZ
-X-Gm-Message-State: AOJu0YzyF2S9Sec3Nh//rOkgItDWwAltupWE3t/7fNCg4Zuho79ZPwQG
-	yaWyy7Cs1laD7lwOMJdZgkRj4YUZ37yUlWQHPtN0fQ5Ypz269iW9gETJZt9OcaBDeOoJoR8DDY3
-	MgxIk1vXv0+pz8EVFrwUmUp4HSYM=
-X-Google-Smtp-Source: AGHT+IES1HZ7KpNyPW3dWatBp5F9F7os952srDi0rQG4n/sgJkgHaQma8pvcT9JBsdMuwoondxheXbX6SpdohqLG+Zo=
-X-Received: by 2002:a2e:878f:0:b0:2ec:3565:9a6a with SMTP id
- 38308e7fff4ca-2ec35659ab0mr16207111fa.33.1718714424915; Tue, 18 Jun 2024
- 05:40:24 -0700 (PDT)
+	s=k20201202; t=1718714501;
+	bh=o1kRwwDvVU1rG3e8P5Z+WVP3KIo7hNw64Oqe8utbRqY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FmUqzhXLzYCG7NVAbld25o5kRS30UGGIDSs1NQQXihjqdZ1rULs7TnsLy2/BpzMac
+	 capqlC5ZHI3lGbUmLfrVl1L3j1j0QgyXsAyHs5/Lrr60kc7Deo1A8Zsr5kxcION9VI
+	 wb+YMVp75DTcC4f/J1GsI4VcAivhQYFL+q+C/lmmzhRCWOFBgIsVEurTgKdkrbaulh
+	 DXkfT+hTKdIS3+BOrOzLavQaebYkSYdZxhOqs0TCNTv5bi5n/Q0bPXBV9Ri/+EPojn
+	 SCirdCK59xqbnAqHlwGpzy8k5yu0kC1h2xzmdRrrnKovmch+hJPUcIbysU0Cq1ETQk
+	 zrMBcFd/5xKFg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Martin Wilck <martin.wilck@suse.com>,
+	Rajashekhar M A <rajs@netapp.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Mike Christie <michael.christie@oracle.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	James.Bottomley@HansenPartnership.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 01/21] scsi: core: alua: I/O errors for ALUA state transitions
+Date: Tue, 18 Jun 2024 08:41:00 -0400
+Message-ID: <20240618124139.3303801-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618123611.3301370-1-sashal@kernel.org> <20240618123611.3301370-7-sashal@kernel.org>
-In-Reply-To: <20240618123611.3301370-7-sashal@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 18 Jun 2024 14:40:13 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGzMCT4KQcrnD80p6ZA=-j+aAPuPbKRuYQiRjof-+dTUg@mail.gmail.com>
-Message-ID: <CAMj1kXGzMCT4KQcrnD80p6ZA=-j+aAPuPbKRuYQiRjof-+dTUg@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 6.9 07/44] efi: pstore: Return proper errors on
- UEFI failures
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Kees Cook <keescook@chromium.org>, 
-	linux-hardening@vger.kernel.org, linux-efi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.15.161
+Content-Transfer-Encoding: 8bit
 
-I already NAKed this yesterday.
+From: Martin Wilck <martin.wilck@suse.com>
 
-Please stop proposing the same patches.
+[ Upstream commit 10157b1fc1a762293381e9145041253420dfc6ad ]
 
-And in the future, please omit *any* patch from AUTOSEL that has been
-signed off by me, not only authored by me.
+When a host is configured with a few LUNs and I/O is running, injecting FC
+faults repeatedly leads to path recovery problems.  The LUNs have 4 paths
+each and 3 of them come back active after say an FC fault which makes 2 of
+the paths go down, instead of all 4. This happens after several iterations
+of continuous FC faults.
 
+Reason here is that we're returning an I/O error whenever we're
+encountering sense code 06/04/0a (LOGICAL UNIT NOT ACCESSIBLE, ASYMMETRIC
+ACCESS STATE TRANSITION) instead of retrying.
 
+[mwilck: The original patch was developed by Rajashekhar M A and Hannes
+Reinecke. I moved the code to alua_check_sense() as suggested by Mike
+Christie [1]. Evan Milne had raised the question whether pg->state should
+be set to transitioning in the UA case [2]. I believe that doing this is
+correct. SCSI_ACCESS_STATE_TRANSITIONING by itself doesn't cause I/O
+errors. Our handler schedules an RTPG, which will only result in an I/O
+error condition if the transitioning timeout expires.]
 
-On Tue, 18 Jun 2024 at 14:36, Sasha Levin <sashal@kernel.org> wrote:
->
-> From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
->
-> [ Upstream commit 7c23b186ab892088f76a3ad9dbff1685ffe2e832 ]
->
-> Right now efi-pstore either returns 0 (success) or -EIO; but we
-> do have a function to convert UEFI errors in different standard
-> error codes, helping to narrow down potential issues more accurately.
->
-> So, let's use this helper here.
->
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/firmware/efi/efi-pstore.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-pstore.c
-> index 833cbb995dd3f..194fdbd600ad1 100644
-> --- a/drivers/firmware/efi/efi-pstore.c
-> +++ b/drivers/firmware/efi/efi-pstore.c
-> @@ -136,7 +136,7 @@ static int efi_pstore_read_func(struct pstore_record *record,
->                                      &size, record->buf);
->         if (status != EFI_SUCCESS) {
->                 kfree(record->buf);
-> -               return -EIO;
-> +               return efi_status_to_err(status);
->         }
->
->         /*
-> @@ -181,7 +181,7 @@ static ssize_t efi_pstore_read(struct pstore_record *record)
->                         return 0;
->
->                 if (status != EFI_SUCCESS)
-> -                       return -EIO;
-> +                       return efi_status_to_err(status);
->
->                 /* skip variables that don't concern us */
->                 if (efi_guidcmp(guid, LINUX_EFI_CRASH_GUID))
-> @@ -219,7 +219,7 @@ static int efi_pstore_write(struct pstore_record *record)
->                                             record->size, record->psi->buf,
->                                             true);
->         efivar_unlock();
-> -       return status == EFI_SUCCESS ? 0 : -EIO;
-> +       return efi_status_to_err(status);
->  };
->
->  static int efi_pstore_erase(struct pstore_record *record)
-> @@ -230,7 +230,7 @@ static int efi_pstore_erase(struct pstore_record *record)
->                                      PSTORE_EFI_ATTRIBUTES, 0, NULL);
->
->         if (status != EFI_SUCCESS && status != EFI_NOT_FOUND)
-> -               return -EIO;
-> +               return efi_status_to_err(status);
->         return 0;
->  }
->
-> --
-> 2.43.0
->
+[1] https://lore.kernel.org/all/0bc96e82-fdda-4187-148d-5b34f81d4942@oracle.com/
+[2] https://lore.kernel.org/all/CAGtn9r=kicnTDE2o7Gt5Y=yoidHYD7tG8XdMHEBJTBraVEoOCw@mail.gmail.com/
+
+Co-developed-by: Rajashekhar M A <rajs@netapp.com>
+Co-developed-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Martin Wilck <martin.wilck@suse.com>
+Link: https://lore.kernel.org/r/20240514140344.19538-1-mwilck@suse.com
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Mike Christie <michael.christie@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/device_handler/scsi_dh_alua.c | 31 +++++++++++++++-------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index a9c4a5e2ccb90..60792f257c235 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -406,28 +406,40 @@ static char print_alua_state(unsigned char state)
+ 	}
+ }
+ 
+-static enum scsi_disposition alua_check_sense(struct scsi_device *sdev,
+-					      struct scsi_sense_hdr *sense_hdr)
++static void alua_handle_state_transition(struct scsi_device *sdev)
+ {
+ 	struct alua_dh_data *h = sdev->handler_data;
+ 	struct alua_port_group *pg;
+ 
++	rcu_read_lock();
++	pg = rcu_dereference(h->pg);
++	if (pg)
++		pg->state = SCSI_ACCESS_STATE_TRANSITIONING;
++	rcu_read_unlock();
++	alua_check(sdev, false);
++}
++
++static enum scsi_disposition alua_check_sense(struct scsi_device *sdev,
++					      struct scsi_sense_hdr *sense_hdr)
++{
+ 	switch (sense_hdr->sense_key) {
+ 	case NOT_READY:
+ 		if (sense_hdr->asc == 0x04 && sense_hdr->ascq == 0x0a) {
+ 			/*
+ 			 * LUN Not Accessible - ALUA state transition
+ 			 */
+-			rcu_read_lock();
+-			pg = rcu_dereference(h->pg);
+-			if (pg)
+-				pg->state = SCSI_ACCESS_STATE_TRANSITIONING;
+-			rcu_read_unlock();
+-			alua_check(sdev, false);
++			alua_handle_state_transition(sdev);
+ 			return NEEDS_RETRY;
+ 		}
+ 		break;
+ 	case UNIT_ATTENTION:
++		if (sense_hdr->asc == 0x04 && sense_hdr->ascq == 0x0a) {
++			/*
++			 * LUN Not Accessible - ALUA state transition
++			 */
++			alua_handle_state_transition(sdev);
++			return NEEDS_RETRY;
++		}
+ 		if (sense_hdr->asc == 0x29 && sense_hdr->ascq == 0x00) {
+ 			/*
+ 			 * Power On, Reset, or Bus Device Reset.
+@@ -494,7 +506,8 @@ static int alua_tur(struct scsi_device *sdev)
+ 
+ 	retval = scsi_test_unit_ready(sdev, ALUA_FAILOVER_TIMEOUT * HZ,
+ 				      ALUA_FAILOVER_RETRIES, &sense_hdr);
+-	if (sense_hdr.sense_key == NOT_READY &&
++	if ((sense_hdr.sense_key == NOT_READY ||
++	     sense_hdr.sense_key == UNIT_ATTENTION) &&
+ 	    sense_hdr.asc == 0x04 && sense_hdr.ascq == 0x0a)
+ 		return SCSI_DH_RETRY;
+ 	else if (retval)
+-- 
+2.43.0
+
 
