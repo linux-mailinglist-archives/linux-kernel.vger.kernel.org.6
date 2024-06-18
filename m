@@ -1,59 +1,56 @@
-Return-Path: <linux-kernel+bounces-219246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15AC290CBE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:38:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0951590CBF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 119441C23364
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:38:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43188B20F8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7CF1514C5;
-	Tue, 18 Jun 2024 12:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F399152DEB;
+	Tue, 18 Jun 2024 12:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uq/gP46q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0szao9E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE95E14F130;
-	Tue, 18 Jun 2024 12:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4292C13AD1D;
+	Tue, 18 Jun 2024 12:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718714193; cv=none; b=owqMYrY5Jl2/kAPB8am2sIitFkCMTjE2m4yhN4ubCJsLjhVvTwYfKtnP5nSAsw4wFpMgJioY13+8jsw3+4K2Ph+2AyPShnExwTjzp7SegjDSYedF4v+BxpWj+E8sv980zS0KqK6BXoPMjPAM/y+KbPIa1795EpqMKZ7ZINs66rE=
+	t=1718714194; cv=none; b=BCuPRGT2v6az603NCuB6HfM5ou9FkrOCl/IFpZfRIPtt1uQVlqfHj9BSu2Wsi0iq8Hvh5g3sOZbk/9462DXRVwsEi9huSNlnCcLwNh4EIp2v1Xp0F3yf1uWODyV5ib1dMUcs6sWKfmtr6CRcKF3k6Wr5nRxjavro15q8KWshIVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718714193; c=relaxed/simple;
-	bh=Thyw0jk39ehSKVrWbpzk6z0cIctwuMcByciNbZ10WDs=;
+	s=arc-20240116; t=1718714194; c=relaxed/simple;
+	bh=3yUnpElq9u7aPprB66sDbl2RJ/X8Tv4IQRyVXd8wZi8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UDxvHuUc+RN6cBCN9sPyQYrs/rVdZrXpo7L/1dy6Q+p7+YU80wGuKeWJ2X53wirhYPN+ug1Awphnpt8IgUClF6GiHhHcZYCoMduL00bdhrTYyWvatRPJrqJ1kWsi+KyrKhaBzQBqD7pXXZNnYRUNExdtEsD89O5/t1fXvi20L8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uq/gP46q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F571C32786;
-	Tue, 18 Jun 2024 12:36:31 +0000 (UTC)
+	 MIME-Version; b=SGQIL5g733Tt4oDy5XlFyQXcFZWkZa1crSO3oCy8Va2w766almGB8Xl5tMTj1B/Fad5i7bA9N9We0QmEhPhs4AAu72vwSFvXaTlEoKzgtwakTIOaOB0dQcfDbVh5Xl0CaJbCq7H42OpLsWu2DJ6HHn+Y3tq+OlhpTpq3NYaHPA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m0szao9E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF9FC4AF50;
+	Tue, 18 Jun 2024 12:36:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718714192;
-	bh=Thyw0jk39ehSKVrWbpzk6z0cIctwuMcByciNbZ10WDs=;
+	s=k20201202; t=1718714193;
+	bh=3yUnpElq9u7aPprB66sDbl2RJ/X8Tv4IQRyVXd8wZi8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uq/gP46qAx4Xs1K99GGZQX9JCtLgggsiVB5uhy/ZRl+q2rVYE+0+TSLoRvG1WxqEN
-	 Q3OMb+foQXPhGQTwPa75FWH9hmF5uOApyxgg9PUv1SvttG7clWDpo5OC4lCN6claLu
-	 bbMBV7DDpRtcB8bvRG1dj1tJI7RyiFXU3FxkzDqjqQTa0Fm9pbmFNRcw3k+AzDj7O4
-	 jj3SZFKY537+JFh4mCuaSBVErr1D+LI8VyQuO0YpaghS2MkxtD6vDYnRL/fiPs2aZD
-	 3AqNWE7JJG/ALvwPwjRQsMktYxT8WvkhbftuRXvoN0+oyScsCB4PwH8kD1D++OmtJS
-	 RpGksL4Ulvn1w==
+	b=m0szao9E1e9Jx7sqomOR4u2/N8kv58eACPRGj0D3azEulY5bQcWoT3fF5Hdmem65f
+	 XL2z6IrpJcuo60NE67nuenIpYwptZrxyonmk9XrC5ooqat1Zl83+OSXesObRuWj0X6
+	 wZXhd3/ItWI0klYp50gxVGZT0iSSCmEItciZ7LX2pEOs1/3qIOHwR2Qhb9m/cIW2Fl
+	 IQGuaRI2m1Ez+VGR8/K2XTk4eUIRknmo6SVogUvaHlh+IxgT0yTFNu4sacd3HJK/hb
+	 PBfiazE+CmsjtAhs542hz4HkjJ9ZmJU0KYVWIJmj/Hdcwv1mJaC1CCJDza0RIkWTlx
+	 /dybUF3Phl38w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
-	Ananth Narayan <Ananth.Narayan@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Christoph Hellwig <hch@lst.de>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
 	Sasha Levin <sashal@kernel.org>,
-	trenn@suse.com,
-	shuah@kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.9 11/44] tools/power/cpupower: Fix Pstate frequency reporting on AMD Family 1Ah CPUs
-Date: Tue, 18 Jun 2024 08:34:52 -0400
-Message-ID: <20240618123611.3301370-11-sashal@kernel.org>
+	linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.9 12/44] PNP: Hide pnp_bus_type from the non-PNP code
+Date: Tue, 18 Jun 2024 08:34:53 -0400
+Message-ID: <20240618123611.3301370-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240618123611.3301370-1-sashal@kernel.org>
 References: <20240618123611.3301370-1-sashal@kernel.org>
@@ -68,79 +65,49 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.9.5
 Content-Transfer-Encoding: 8bit
 
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-[ Upstream commit 43cad521c6d228ea0c51e248f8e5b3a6295a2849 ]
+[ Upstream commit edcde848c01eb071a91d479a6b3101d9cf48e905 ]
 
-Update cpupower's P-State frequency calculation and reporting with AMD
-Family 1Ah+ processors, when using the acpi-cpufreq driver. This is due
-to a change in the PStateDef MSR layout in AMD Family 1Ah+.
+The pnp_bus_type is defined only when CONFIG_PNP=y, while being
+not guarded by ifdeffery in the header. Moreover, it's not used
+outside of the PNP code. Move it to the internal header to make
+sure no-one will try to (ab)use it.
 
-Tested on 4th and 5th Gen AMD EPYC system
-
-Signed-off-by: Ananth Narayan <Ananth.Narayan@amd.com>
-Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/power/cpupower/utils/helpers/amd.c | 26 +++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+ drivers/pnp/base.h  | 1 +
+ include/linux/pnp.h | 2 --
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/power/cpupower/utils/helpers/amd.c b/tools/power/cpupower/utils/helpers/amd.c
-index c519cc89c97f4..0a56e22240fc8 100644
---- a/tools/power/cpupower/utils/helpers/amd.c
-+++ b/tools/power/cpupower/utils/helpers/amd.c
-@@ -41,6 +41,16 @@ union core_pstate {
- 		unsigned res1:31;
- 		unsigned en:1;
- 	} pstatedef;
-+	/* since fam 1Ah: */
-+	struct {
-+		unsigned fid:12;
-+		unsigned res1:2;
-+		unsigned vid:8;
-+		unsigned iddval:8;
-+		unsigned idddiv:2;
-+		unsigned res2:31;
-+		unsigned en:1;
-+	} pstatedef2;
- 	unsigned long long val;
- };
+diff --git a/drivers/pnp/base.h b/drivers/pnp/base.h
+index e74a0f6a31572..4e80273dfb1ec 100644
+--- a/drivers/pnp/base.h
++++ b/drivers/pnp/base.h
+@@ -6,6 +6,7 @@
  
-@@ -48,6 +58,10 @@ static int get_did(union core_pstate pstate)
- {
- 	int t;
+ extern struct mutex pnp_lock;
+ extern const struct attribute_group *pnp_dev_groups[];
++extern const struct bus_type pnp_bus_type;
  
-+	/* Fam 1Ah onward do not use did */
-+	if (cpupower_cpu_info.family >= 0x1A)
-+		return 0;
-+
- 	if (cpupower_cpu_info.caps & CPUPOWER_CAP_AMD_PSTATEDEF)
- 		t = pstate.pstatedef.did;
- 	else if (cpupower_cpu_info.family == 0x12)
-@@ -61,12 +75,18 @@ static int get_did(union core_pstate pstate)
- static int get_cof(union core_pstate pstate)
- {
- 	int t;
--	int fid, did, cof;
-+	int fid, did, cof = 0;
+ int pnp_register_protocol(struct pnp_protocol *protocol);
+ void pnp_unregister_protocol(struct pnp_protocol *protocol);
+diff --git a/include/linux/pnp.h b/include/linux/pnp.h
+index ddbe7c3ca4ce2..314892a6de8a0 100644
+--- a/include/linux/pnp.h
++++ b/include/linux/pnp.h
+@@ -435,8 +435,6 @@ struct pnp_protocol {
+ #define protocol_for_each_dev(protocol, dev)	\
+ 	list_for_each_entry(dev, &(protocol)->devices, protocol_list)
  
- 	did = get_did(pstate);
- 	if (cpupower_cpu_info.caps & CPUPOWER_CAP_AMD_PSTATEDEF) {
--		fid = pstate.pstatedef.fid;
--		cof = 200 * fid / did;
-+		if (cpupower_cpu_info.family >= 0x1A) {
-+			fid = pstate.pstatedef2.fid;
-+			if (fid > 0x0f)
-+				cof = (fid * 5);
-+		} else {
-+			fid = pstate.pstatedef.fid;
-+			cof = 200 * fid / did;
-+		}
- 	} else {
- 		t = 0x10;
- 		fid = pstate.pstate.fid;
+-extern const struct bus_type pnp_bus_type;
+-
+ #if defined(CONFIG_PNP)
+ 
+ /* device management */
 -- 
 2.43.0
 
