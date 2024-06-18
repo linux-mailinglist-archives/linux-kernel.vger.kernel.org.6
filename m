@@ -1,100 +1,113 @@
-Return-Path: <linux-kernel+bounces-218878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE5990C74D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:40:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F175A90C74F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 932C128469D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5DB92846FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 10:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6091B140A;
-	Tue, 18 Jun 2024 08:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955C61B1420;
+	Tue, 18 Jun 2024 08:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="SIfasgAL"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="awkjWf5t"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509FC14EC7A;
-	Tue, 18 Jun 2024 08:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81A51B1401
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 08:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718700281; cv=none; b=saO2XaxS/BotpdFusVGIWwpN502ID7P8QTlrsR5MKqXTsxQjcmVyuTWLQGH02FLuwJtIB4eUeq+FkkjJMoIBdL13X9XWsmL5oZnfu5Q6Sv0rYEL+T1gFfKslS0eOt0uqkB4ghw1PDmvE2Qald4SFdRBd6tFY+Gv+X4jNDA7KRWk=
+	t=1718700282; cv=none; b=fL0ZjCHesK4+A/MmCIlV4+4QsloRhH+BuEc9BTrAtNVkxgwm2VRoEeYdW80+4cGbmzb/kfdX2Rq6gx985NRXe3tphpY+oue6oZUNWMwuZFj6mmRRICKm7LVdC5gveXeYwiX2XVMJBGO8PbNM93f0VNn4I3JoKFtcXyc3x4wYzu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718700281; c=relaxed/simple;
-	bh=6wsrRJKNZP5MFzt9At7Hpo1MMh9ZUz5h5ZdQoHnGy6g=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PqCK69LvL3p6IF4EfJAlyxSk1cet1bNPQicLe2n7FGMIUX7r5a8w03jSbiuJoI19g4fAjMHn3abwMvhgEpZojeTwMX+xfrm/HAhqxiwHj+rmd9XGpBK90FRQfvz2gL3pCn6aDc59dmdXx+CbEp6cJJhkica4LHV72xyWGlI6PYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=SIfasgAL; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1718700282; c=relaxed/simple;
+	bh=mv7P4idE2zwjdwscL0C4cqMbkmN2v4Xjx6FUqbVC6iI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ut2S3kLOvFCA8KIdu9F7FVOZM06agTDhSE9c4KvojFlHm7HthlHjxbw4wSbUOfu45tMrQtwSHftL+dDhcqkxr5YnJs8DmR3cSEO+IpgYTlZ5tJnUSApK/0limgvF6olTw6PKIObSTY/ckPQdR/F4YQt4Fs3Sx7i82MZWoWtC23w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=awkjWf5t; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a63359aaaa6so773669166b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 01:44:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1718700280; x=1750236280;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version:subject;
-  bh=6wsrRJKNZP5MFzt9At7Hpo1MMh9ZUz5h5ZdQoHnGy6g=;
-  b=SIfasgAL70JBoDweG+jB+vYB9JrmnflGMZZC6lQeNA8qtMFFyDlcxfUR
-   vnCFqT/Pi6HpLgj94qMMOpR+w4WHLPeED6Jbth8xGeubwgz6EyMNw3aXJ
-   lAsG/GGNzF5Fz/y5eRTjiv2Y6d0uCj7idY+tTVx7gOJvZ10sz0dn7d985
-   A=;
-X-IronPort-AV: E=Sophos;i="6.08,247,1712620800"; 
-   d="scan'208";a="97525173"
-Subject: Re: [PATCH] perf: Timehist account sch delay for scheduled out running
-Thread-Topic: [PATCH] perf: Timehist account sch delay for scheduled out running
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 08:44:36 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.17.79:11682]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.22.205:2525] with esmtp (Farcaster)
- id ef085b91-7167-4b04-9514-55ec948feebd; Tue, 18 Jun 2024 08:44:35 +0000 (UTC)
-X-Farcaster-Flow-ID: ef085b91-7167-4b04-9514-55ec948feebd
-Received: from EX19D003EUB002.ant.amazon.com (10.252.51.90) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 18 Jun 2024 08:44:35 +0000
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19D003EUB002.ant.amazon.com (10.252.51.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 18 Jun 2024 08:44:34 +0000
-Received: from EX19D003EUB001.ant.amazon.com ([fe80::f153:3fae:905b:eb06]) by
- EX19D003EUB001.ant.amazon.com ([fe80::f153:3fae:905b:eb06%3]) with mapi id
- 15.02.1258.034; Tue, 18 Jun 2024 08:44:34 +0000
-From: "Sieber, Fernand" <sieberf@amazon.com>
-To: "20240613185906.31082-1-sieberf@amazon.com"
-	<20240613185906.31082-1-sieberf@amazon.com>
-CC: "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de
- Melo" <acme@kernel.org>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>
-Thread-Index: AQHavcPKRPBk0WtIL0Om6mdPU7kGjbHJT+uAgAPr3dQ=
-Date: Tue, 18 Jun 2024 08:44:34 +0000
-Message-ID: <e78393a53b49416088b4d3e849f75686@amazon.com>
-References: <20240613185906.31082-1-sieberf@amazon.com>,<1bb99f6f-532f-47cb-963c-c5c0262e383c@linux.ibm.com>
-In-Reply-To: <1bb99f6f-532f-47cb-963c-c5c0262e383c@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=suse.com; s=google; t=1718700279; x=1719305079; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nK2axCqPwPABo1otkncfWRRBuCN1IirP9neCmZ8cQvA=;
+        b=awkjWf5tNE5HsTJnfNSHvDeBrnZCZM4i9oU0ur+CPrY1Dkh1XDjhpiRnn8si/QWUEv
+         hJTGioQGNSLzx7PtNQp+/S/5rkER488wolEHA70EQWb64pKw/kmIpoW8t3SvZu3yUSso
+         /WUIZ9ARq89zptjnRYSTmScABqqa+QLI9/9NpL5mmAoMaGtM5rRvIAojz7l17rnab5dS
+         uj70QJJMowgGojxrrcHcbgicCOpEgRhtmyg12+yfympCPlGi7ZGy/I6ocgFExUrAtAie
+         U6a74wkmS1RaVm+IOnHwR/QtPy/UWo5VAwqegpJDDjXKzYxOOT2IWvJLqItiy+amQedt
+         pLCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718700279; x=1719305079;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nK2axCqPwPABo1otkncfWRRBuCN1IirP9neCmZ8cQvA=;
+        b=gCFnqWIrJdtTazaPUYhv2NAaau51S22X6niERdXFlnuOo+wSmFlqu0Oad5iKUqnLjE
+         oob3iHju6bnyHDCBVZzRBmPkDG6yBntTiQh/En3lKlkYRgVa742Zyf354NpGcqzYqjuZ
+         DTpDmftGMVLnKKsKMmyaK3YZr+CSx4N5MWVU33pgNf3CjVI5k3GEKSANKOGbWuVetADq
+         3Tw5Gm7fSHoRrTMY4V/RmoR1efS8f96lhabZBSAPC7KLp0dFaq7ovYGKr0j30mrm9vLu
+         J3Ux8GWTuTVy4lpF2KbKaIc6w3lJ22fYpjbjoRT2YcU+5yMBga3AwJao6y0VyY5H0umB
+         qfsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyAW7KXtJsNjk+MN/p3uUpeiZMFzAkpKec9IZrC2QN4sHV6elAWUesGUZ8cj8mZsZ+QnIWgl4TWuHNDFAqw2OymJ04lKaIjV/LU68r
+X-Gm-Message-State: AOJu0YyM52yKgfpOT5WmHgqWpI5LEPKJleiPZ3iNTERxRx0zgqNn2DX8
+	w/mFxOxVq0xejoLw5l0OhDrbLtZuE7dxLNIV0lKKwjoh0BePSSC3vdpu60XPhnbw9iuHajzkGZB
+	M
+X-Google-Smtp-Source: AGHT+IF5emwzUb/jD+T+bQNWrywKXs257shi7gLMGlWOOKmQp0n5nZ4wRATqrb51OuSZuSMcaMUNGA==
+X-Received: by 2002:a17:907:c713:b0:a6f:69ee:dcd2 with SMTP id a640c23a62f3a-a6f69eee6famr843958966b.57.1718700278043;
+        Tue, 18 Jun 2024 01:44:38 -0700 (PDT)
+Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f9bbc2136sm31093066b.123.2024.06.18.01.44.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 01:44:37 -0700 (PDT)
+Date: Tue, 18 Jun 2024 10:44:36 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Miroslav Benes <mbenes@suse.cz>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, live-patching@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] selftests: livepatch: Test atomic replace against
+ multiple modules
+Message-ID: <ZnFI4GHb4HA6BVNW@pathway.suse.cz>
+References: <20240603-lp-atomic-replace-v3-1-9f3b8ace5c9f@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603-lp-atomic-replace-v3-1-9f3b8ace5c9f@suse.com>
 
-Hi Maladi,
+On Mon 2024-06-03 14:26:19, Marcos Paulo de Souza wrote:
+> Adapt the current test-livepatch.sh script to account the number of
+> applied livepatches and ensure that an atomic replace livepatch disables
+> all previously applied livepatches.
+> 
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> ---
+> Changes since v2:
+> * Used variables to stop the name of other livepatches applied to test
+>   the atomic replace. (Joe)
 
-Ok, thanks for the feedback. I will submit another revision with the update=
-d man page then. In my opinion it makes more sense to measure the schedulin=
-g delay as the runnable delay (wakeup and pre empted), as we need to consid=
-er both cases when benchmarking scheduling policies. However if there is/wa=
-s a specific reason to restrict scheduling delay in timehist as the measure=
- of wakeup delay only please let me know.
+It might have been better to do the change in two patches. First one
+would just add the "1" suffix to the one livepatch. Second patch
+would extend the test.
 
---Fernand=
+But it is not worth another respin. I am going to push this version
+(with the typo fixed).
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+Best Regards,
+Petr
 
