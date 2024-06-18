@@ -1,114 +1,177 @@
-Return-Path: <linux-kernel+bounces-219846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B839490D97D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:41:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C2990D8D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 18:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6D86B30320
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:15:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B80F1F25A97
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 16:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D0015699E;
-	Tue, 18 Jun 2024 16:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167B414E2CD;
+	Tue, 18 Jun 2024 16:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOy5JeVs"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BF8gFfmg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8084F5EA;
-	Tue, 18 Jun 2024 16:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD07D14BF86;
+	Tue, 18 Jun 2024 16:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718727115; cv=none; b=LTXmfNXgyfHUcK4i6TaX/oBTzl1SAIqgVi8Y0rfLY2+M+E3yxkbXFQ85cwWjeSLCos3aP2Q33dZzt9CQqM1LcWO4MhtOnXhZWRnpHUkXMirZgJzMBitGH6HI8E8TAIIWNLgaQXTlYaERa/h2eZLGNSYKzQ0XoKsKPo/vP9H21E8=
+	t=1718727142; cv=none; b=tt9Y93k4nHIyVBPN1JU7d5HVQLya5kT9PLR/nb7OwSXSGyONgUrgVZoft++K9teJV5ay0/gdEJ5N4+fAPmllieut0I78q5PI3+IzFtIInGR3DgSe5PK0z2DWMIEt6wDy+m9rcErYAHXgq2NqQGTzQO+CrQc8NhrldsIrOTNnr9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718727115; c=relaxed/simple;
-	bh=2hmMSMcK/DYRjUA5lhYtRVqQYkfz7USAMb6rWWQ3auM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=a7NtX9hiKEF4CFLTZzfttGIbYAgX0RGrgk7Q6g095Xvwe71B1P9PDCBd+tWqw0iFqse6CQCKLXTCZqxKBbVyVKtQaC+Wn+Seeuw31j90Wh1HeAozCv1QrGMvZuh9eX8FgKY7qa8/d1lzOXemTfP7BHDdSSdnZCi8Re75QVeGQMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOy5JeVs; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57a4d7ba501so7011970a12.2;
-        Tue, 18 Jun 2024 09:11:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718727112; x=1719331912; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vdhfQI9T5+yxPiraAgbpmOt7qEOjgccH7WBORNtfHfE=;
-        b=XOy5JeVsltAB8Kdw6lBOYVtRkgs8gb6MTyYYSJwMrVGFF6ZebYByThmCyJoPOFvCqK
-         nQwOLQEdJRcQ6XfUgtN8ocq3TxUTBYhAob4/Itnp5bdVrvmfk1Z4XIylsRxiTct6CWm4
-         FRnBVqUPcIo5P1T1w7YOkVOw5HOYLhXLN+682YFUyIwrupDjj/u9veyRqjKod0QVuSw3
-         zzNm3KgCIxiBEl+JCMPnZq1+mqD9vRwjrayTVVu6tvEe3coRePCPiFR52yhzEjCZNiEw
-         9h37Ya/HxV+5MmX0gF15ux11Hxs5N6Q5M5eUSQpIg/0dw+wci1wmL48+I7l0IbrV1KJb
-         FEvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718727112; x=1719331912;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vdhfQI9T5+yxPiraAgbpmOt7qEOjgccH7WBORNtfHfE=;
-        b=vgQvB8qNMlyq+x7O9cf+Sgm7cOkm7DyveH8k6wbBbPTyxeMXhrts6YgpXvPhTiNjlq
-         RbuCT+OSX1HrqpTK+5/bqaVFn0aWwax5jML1bu/y8MSTi1mjCMkgdddkrwpQgyw6G8iO
-         s6zB/bXdAVMK0DcxTXNH0gDb5O4TqJNHiFAFkdsKx4vAHxybmoPel3GNdOnR0r0lRugf
-         D4X0nZkYObosrtcZm7Yo7OIstPPs+lCi9hrzKEPzYezn9bFeuaHRMzVRKx5aFPo7Urfe
-         +vUNR40DNm0vGXyESwTudOP+vUSn+i8S7PUj7HwBziMuR7R4boKJhICMhb+mHfg11TV2
-         2Ygg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBnL04FdD5yUJN2LZrIzMi+Q1fVaDUl7Zs9AXFfmZyVzlGclDxKFZMRJusPni+Bav89Va+T45RoSUCENQL1lPkPMYxVd3DQ8ff6vLF0Uw+kK8K7QhHSHiZvKW/xGUsIDWaL64MACrOquOig9pUpKIRGex9Iih3z5hD6CJX0hK7zg==
-X-Gm-Message-State: AOJu0YzYQJ0Hf6fAdSDoXJjwacG1OJKmM/x9u5NncwioGPCZuKp3ZpTi
-	fltibpkg/bYe9PMyYRr9nl7LwKAAnVq4EXkOJrbv/Pb/EBgjcVlJ
-X-Google-Smtp-Source: AGHT+IEfZ9HaFQBufIL+uJmK6fz39+P64leJ9sWW5fe/okGzJN3xQA3FngvVzo6bSVhv/MbpbmaRQA==
-X-Received: by 2002:a50:8a97:0:b0:572:7bda:1709 with SMTP id 4fb4d7f45d1cf-57cbd649655mr8559509a12.9.1718727112118;
-        Tue, 18 Jun 2024 09:11:52 -0700 (PDT)
-Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb74387ffsm7997213a12.81.2024.06.18.09.11.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 09:11:51 -0700 (PDT)
-Message-ID: <0b889b87-5442-4fd4-b26f-8d5d67695c77@gmail.com>
-Date: Tue, 18 Jun 2024 18:11:49 +0200
+	s=arc-20240116; t=1718727142; c=relaxed/simple;
+	bh=TL24mQmoCmG6JvMGnERNa9n0D2q1ckHqAKpeRsdYRPc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYnQAu//PCE1tAKeaV5fy0kkElTpHvK532h4cMvxRvk8/TI7bl1ZUgtxNjTm9xlnoR6KCrJWU37O56ZksO0n49cqEVxuxZf0glS9MZTr/ppvv/UECISXo4JFG3LwIvQN9k/JjGSiXraWhLL46qGCFcanVO0JXewpYcUfSmP4YCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BF8gFfmg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IBCqcW005312;
+	Tue, 18 Jun 2024 16:12:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=DJbPrjRaIj8/B9EpEBGXNYWr
+	h0MR43gEeBmb26KI2FE=; b=BF8gFfmgoHCOten5wPNXAOty7uz/468ZeCHERTZz
+	jCB6BDygS2mnLkLwySiz7QhXiJE9C3q0pffpRvmGhTwyn6kH1l6eSqIdum8YuKMX
+	BJVUYRcuBO71YtHghku7iqePqvdTnhDjtl7RtP0rXpB2ictbpFQ3Y2sVlPrKPu+A
+	hcPCxPUAAkfPB3Pa2uV/Bq0Db50ml1qP6L4B2mam2kKJaDe1//aim8qBJLx4xJl7
+	pPlh+1V/B0qH1nI+1VRcJeU82ObyoHFcWsHHfTu2HLyYCZ9zCokinrztmq2Gjahd
+	xhck7U/EawNceGM3f2zVZgvL/7NZsnzim9XqXyi5Rsm3Fg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu95rgt3c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 16:12:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IGC6Ig009286
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 16:12:06 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 18 Jun 2024 09:12:01 -0700
+Date: Tue, 18 Jun 2024 21:41:58 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Will Deacon <will@kernel.org>
+CC: Andrew Halaney <ahalaney@redhat.com>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul
+	<sean@poorly.run>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm/adreno: De-spaghettify the use of memory barriers
+Message-ID: <20240618161158.qpqbv77tqveo5g6l@hu-akhilpo-hyd.qualcomm.com>
+References: <20240508-topic-adreno-v1-1-1babd05c119d@linaro.org>
+ <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
+ <ae4a77wt3kc73ejshptldqx6ugzrqguyq7etbbu54y4avhbdlt@qyt4r6gma7ev>
+ <20240516145005.gdksmvxp35m45ifh@hu-akhilpo-hyd.qualcomm.com>
+ <5vyrmxvkurdstqfiatxfqcqljwyiswda2vpkea27ighb2eqbav@n24yzdykbc23>
+ <20240604144055.GE20384@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v1 0/3] cleanup arc emac
-To: heiko@sntech.de
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240604144055.GE20384@willie-the-truck>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BUNumrrajOAzsr7DX2KcvMEECRsfSlrH
+X-Proofpoint-ORIG-GUID: BUNumrrajOAzsr7DX2KcvMEECRsfSlrH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 clxscore=1011 priorityscore=1501
+ spamscore=0 phishscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406180121
 
-The Rockchip emac binding for rk3036/rk3066/rk3188 has been converted to YAML
-with the ethernet-phy node in a mdio node. This requires some driver fixes
-by someone that can do hardware testing.
+On Tue, Jun 04, 2024 at 03:40:56PM +0100, Will Deacon wrote:
+> On Thu, May 16, 2024 at 01:55:26PM -0500, Andrew Halaney wrote:
+> > On Thu, May 16, 2024 at 08:20:05PM GMT, Akhil P Oommen wrote:
+> > > On Thu, May 16, 2024 at 08:15:34AM -0500, Andrew Halaney wrote:
+> > > > If I understand correctly, you don't need any memory barrier.
+> > > > writel()/readl()'s are ordered to the same endpoint. That goes for all
+> > > > the reordering/barrier comments mentioned below too.
+> > > > 
+> > > > device-io.rst:
+> > > > 
+> > > >     The read and write functions are defined to be ordered. That is the
+> > > >     compiler is not permitted to reorder the I/O sequence. When the ordering
+> > > >     can be compiler optimised, you can use __readb() and friends to
+> > > >     indicate the relaxed ordering. Use this with care.
+> > > > 
+> > > > memory-barriers.txt:
+> > > > 
+> > > >      (*) readX(), writeX():
+> > > > 
+> > > > 	    The readX() and writeX() MMIO accessors take a pointer to the
+> > > > 	    peripheral being accessed as an __iomem * parameter. For pointers
+> > > > 	    mapped with the default I/O attributes (e.g. those returned by
+> > > > 	    ioremap()), the ordering guarantees are as follows:
+> > > > 
+> > > > 	    1. All readX() and writeX() accesses to the same peripheral are ordered
+> > > > 	       with respect to each other. This ensures that MMIO register accesses
+> > > > 	       by the same CPU thread to a particular device will arrive in program
+> > > > 	       order.
+> > > > 
+> > > 
+> > > In arm64, a writel followed by readl translates to roughly the following
+> > > sequence: dmb_wmb(), __raw_writel(), __raw_readl(), dmb_rmb(). I am not
+> > > sure what is stopping compiler from reordering  __raw_writel() and __raw_readl()
+> > > above? I am assuming iomem cookie is ignored during compilation.
+> > 
+> > It seems to me that is due to some usage of volatile there in
+> > __raw_writel() etc, but to be honest after reading about volatile and
+> > some threads from gcc mailing lists, I don't have a confident answer :)
+> > 
+> > > 
+> > > Added Will to this thread if he can throw some light on this.
+> > 
+> > Hopefully Will can school us.
+> 
+> The ordering in this case is ensured by the memory attributes used for
+> ioremap(). When an MMIO region is mapped using Device-nGnRE attributes
+> (as it the case for ioremap()), the "nR" part means "no reordering", so
+> readX() and writeX() to that region are ordered wrt each other.
 
-In order to make a future fix easier make the driver 'Rockchip only'
-by removing the obsolete part of the arc emac driver.
+But that avoids only HW reordering, doesn't it? What about *compiler reordering* in the
+case of a writel following by a readl which translates to:
+	1: dmb_wmb()
+	2: __raw_writel() -> roughly "asm volatile('str')
+	3: __raw_readl() -> roughly "asm volatile('ldr')
+	4: dmb_rmb()
 
-Johan Jonker (3):
-  ARM: dts: rockchip: rk3xxx: fix emac node
-  net: ethernet: arc: remove emac_arc driver
-  dt-bindings: net: remove arc_emac.txt
+Is the 'volatile' keyword sufficient to avoid reordering between (2) and (3)? Or
+do we need a "memory" clobber to inhibit reordering?
 
- .../devicetree/bindings/net/arc_emac.txt      | 46 ----------
- arch/arm/boot/dts/rockchip/rk3066a.dtsi       |  4 -
- arch/arm/boot/dts/rockchip/rk3xxx.dtsi        |  7 +-
- drivers/net/ethernet/arc/Kconfig              | 10 ---
- drivers/net/ethernet/arc/Makefile             |  1 -
- drivers/net/ethernet/arc/emac_arc.c           | 88 -------------------
- 6 files changed, 2 insertions(+), 154 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/net/arc_emac.txt
- delete mode 100644 drivers/net/ethernet/arc/emac_arc.c
+This is still not clear to me even after going through some compiler documentions.
 
---
-2.39.2
+-Akhil.
 
+> 
+> Note that guarantee _doesn't_ apply to other flavours of ioremap(), so
+> e.g. ioremap_wc() won't give you the ordering.
+> 
+> Hope that helps,
+> 
+> Will
 
