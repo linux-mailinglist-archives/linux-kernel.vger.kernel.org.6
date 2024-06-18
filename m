@@ -1,134 +1,146 @@
-Return-Path: <linux-kernel+bounces-218692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7E290C3E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D75A790C3EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217641C208C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:43:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBBC21C232D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5939E73441;
-	Tue, 18 Jun 2024 06:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EF973441;
+	Tue, 18 Jun 2024 06:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L0vABP1f"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="K3HCS00e";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uUUVeTmR"
+Received: from wfout2-smtp.messagingengine.com (wfout2-smtp.messagingengine.com [64.147.123.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D104D9E9;
-	Tue, 18 Jun 2024 06:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5C9210F8;
+	Tue, 18 Jun 2024 06:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718693009; cv=none; b=ndqwo70nFhbeeiZJ/NeA7X1PQ6ABSApEugC0yR3G1mKUweLTKSDWbzwAkJTgDSBmFpeoq4WRQzOxpjWxLmLA1N5/LP9N1mNyLgf6KzS7P2sUEbqKwb6E7LF9K3R7Pc3JVOeSa0PhqetAAPCgoSCBwN7IPm5oU8P/35o9rfHM2Pg=
+	t=1718693204; cv=none; b=JR5EeP4i8Q4BqSjtc9MHlnC+tN8TrOnSEJB5EPNQIWI9tXP2/pX812MsOztlI8Gk5f0YBbVfeXEu0kdPmpahfkUwPx0RWuX+sSL6I+R02nqWtFDANznNYlarbg5fVmgaW25JZ9xHgIDf7xfGM0OTCmzAL4HyCy5ClBGnlEmw6LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718693009; c=relaxed/simple;
-	bh=VpgJPad+08pstL0ZoWCCeKae7OP1hyR3SvT9SVEit8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V1S9Ml0ETnhzxiWDRsN3PDrwZJlH7MXJTuMEHFUPfFqNv7I7Z3L198yjSOTx4YBJEZWzRBCtF/Te3o5EEUNoUCCLcbzXrGZ7Prw4gqwAyf51bV0gwEnSnRYmvBnBZls8XICaBQ3nfnpuEVoP3pxEaQatAfzDRQ6/v++zoZ3BRus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L0vABP1f; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xIkCb0DXrPi2i+bQKQrhJv9RbtgOZyK9PyIWQ2EUHTE=; b=L0vABP1f825b9Xo3raJ9hulo7A
-	Uo4uoOV2vhy7muoBeOW/TB5V/l0+kHaLHQUt8KX+GAt5Yj7YUqmyxPlhKYuf2lTo2JtLbVsZ+YVsj
-	QDPFYKr34JiZXCBcVZawwjtADj1qK6BHJJ9KCkk7nauvWFPo4H28zswTZmzR+elu7xmP5o8OgPJE/
-	VXRo151WFZrse5FpNgbTZ0TUQoMKvf6i3fmi1+rDXvDP3xbW4odddxZfbMBKD4jbqRY01eGdJOaYS
-	nj5A1ODp12D2/vsnP8NnbsAW27Om+ZgazSCXtrr3rm5KnhqNG/JGBFlIPcQTcR7OWaXaJ5CJGPTqd
-	NS3QCLmQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJSYo-0000000DqmO-2M4P;
-	Tue, 18 Jun 2024 06:43:18 +0000
-Date: Mon, 17 Jun 2024 23:43:18 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Ahern <dsahern@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	Shailend Chand <shailend@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>
-Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
- custom page providers
-Message-ID: <ZnEshp0VICflc6Bg@infradead.org>
-References: <20240530201616.1316526-1-almasrymina@google.com>
- <20240530201616.1316526-3-almasrymina@google.com>
- <ZlqzER_ufrhlB28v@infradead.org>
- <CAHS8izMU_nMEr04J9kXiX6rJqK4nQKA+W-enKLhNxvK7=H2pgA@mail.gmail.com>
- <5aee4bba-ca65-443c-bd78-e5599b814a13@gmail.com>
- <ZmAgszZpSrcdHtyl@infradead.org>
- <ee9a55cd-7541-4865-ab2a-9e860b88c9e4@gmail.com>
- <Zmfv6_uWAVavYJNj@infradead.org>
- <8ca3e144-75f3-4e57-9ae0-cc88f245094e@gmail.com>
+	s=arc-20240116; t=1718693204; c=relaxed/simple;
+	bh=j06F/kFwr+kpQRTEON4VfXRMzVQHBeDN1gyaBYXRmlI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=kazKJBTgvVhTqqenzLa7cPd3LOAjww7LWvLGt7hwiyOMjJFFnZqCfQnlAHc+aVirxOZ3h72Nd34IZE0uYUamWR2Yi2FmUaxWjT5Hl8TS/IHtC0kKgkUXwiaI8PfcMfO7/80OH+IQMPkTjp4fTEvFQ3LiHDkqHgc35i2dN03s9mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=K3HCS00e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uUUVeTmR; arc=none smtp.client-ip=64.147.123.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id DEEC41C0009A;
+	Tue, 18 Jun 2024 02:46:39 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 18 Jun 2024 02:46:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1718693199; x=1718779599; bh=lxINc0kCB3
+	nKZUg8Pjgeb8a0G1bTVhsiHfqgN5vLdOo=; b=K3HCS00evMayfUwfFBnHSUAwsU
+	TG/znK14ZMvP5DL4hsl0iQyD4QETJhSufI4c2rzvJLpqtB53BaTYETkEnLNT2tKp
+	l0Z5j7DajyKcZ3K+CLyifHOoNpCF9vF2PZUGauLt3yVmgVIOjZyG14RARnDf2846
+	GeCzl+52I+xfZEh/0X7KvAFy+M0bBsFKpDNBO2YfAFUEYYVmqNj9VJt+xVeu0WMG
+	XjVZthJ9FxHv5+9ae/7rREnXWyNdYUjvgtYIF0ZVA3mnCmYtwxRjGjWOupTuoJnd
+	26kQnLo0HCxp3KMdv7OtSGoqZuOzrUiI3Bbr/QrYLV6a0EXwbQFLZSCu7mqw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1718693199; x=1718779599; bh=lxINc0kCB3nKZUg8Pjgeb8a0G1bT
+	VhsiHfqgN5vLdOo=; b=uUUVeTmRuXVF7AHPEr5LPKz+ARzDCYCBQU2tMpyj/YZ8
+	BJD23ffueXoiF60lNkXjs5gPOhuz3V3ebWOUzK9H93d0nET+kFixODe+BVoVvmPU
+	NvTm0TfPKpF+DE30Vgrg9Otr5kJM5n62A23QrQAVOrChwzfk2eX8M9Z56nXbNYCD
+	JgPYNwtVQezh0N5gzmW+2xw3KOloTe4GR/6VQppgLx9EywObZFP8HOYf9zZfi4Mz
+	WaVfir8Xfr+jTK1xskURUKl895M3NqbmNlfgH/2y3zs4Tbs7gNx6U8OpA7TMscsC
+	QphwyElmc36kG6IEfuTG8VBek9eMsPHGDmlmsCHOjQ==
+X-ME-Sender: <xms:Ti1xZkIBK-IrM9dRu8fquS6-axCA4T7fvvCfQV70PtT-cxPRKZQ0QA>
+    <xme:Ti1xZkLxPpxlJqS7ukGGuRVIJyM3jmo5z9qWtSBL4xTljdTPxTMWoU5qZN0YvOVsw
+    1btQII6fZNreJoF2D4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedviedguddufecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:Ti1xZktdxq8yTuOTsFHwMNUzIeaaTUK_n2C7V_mA7WiZ0XsdY5cDxQ>
+    <xmx:Ti1xZhaHTl_DKzBEPTT4dgt2Yl3OU1Vx_F4bYoSxIL8GDgrl2uYizg>
+    <xmx:Ti1xZrYMWfpTLXTs-ijlOmXxF4F_ynT3fUYiXYWFIGrb8JWHi8k8aQ>
+    <xmx:Ti1xZtCJBKbz-WJBjuvmDkU5IO4YJDUOBZBMoyaAOO5HeJag-_nSyg>
+    <xmx:Ty1xZvLAlOYTJf9ksrH8NMJd0Ic1xh6O66Vn0yZWULGwUSd60Ensc2F4>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7DE7EB60093; Tue, 18 Jun 2024 02:46:38 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ca3e144-75f3-4e57-9ae0-cc88f245094e@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Message-Id: <a3965437-bd7d-41cc-abb6-0311e5d933bf@app.fastmail.com>
+In-Reply-To: <202406171618.A92D064@keescook>
+References: <20240617133721.377540-1-liuyuntao12@huawei.com>
+ <ZnBbr2CAqBGDe2aN@J2N7QTR9R3> <202406171122.B5FDA6A@keescook>
+ <d0959336-4430-4062-b909-54d553238468@app.fastmail.com>
+ <202406171618.A92D064@keescook>
+Date: Tue, 18 Jun 2024 08:46:18 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Kees Cook" <kees@kernel.org>
+Cc: "Mark Rutland" <mark.rutland@arm.com>,
+ "Yuntao Liu" <liuyuntao12@huawei.com>, x86@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-hardening@vger.kernel.org,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Heiko Carstens" <hca@linux.ibm.com>, gor@linux.ibm.com,
+ "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ "Christian Borntraeger" <borntraeger@linux.ibm.com>,
+ "Sven Schnelle" <svens@linux.ibm.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ "Leonardo Bras" <leobras@redhat.com>, "Mark Brown" <broonie@kernel.org>,
+ imbrenda@linux.ibm.com, pawan.kumar.gupta@linux.intel.com
+Subject: Re: [PATCH] remove AND operation in choose_random_kstack_offset()
+Content-Type: text/plain
 
-On Mon, Jun 17, 2024 at 07:04:43PM +0100, Pavel Begunkov wrote:
-> > There should be no other memory source other than the page allocator
-> > and dmabuf.  If you need different life time control for your
-> > zero copy proposal don't mix that up with the contol of the memory
-> > source.
-> 
-> No idea how I'm mixing it up when I was explaining exactly this
-> all along as well as that the callback (and presumably the call
-> site in general) you was so eager to nack is used exactly to
-> implement the life time control.
+On Tue, Jun 18, 2024, at 01:31, Kees Cook wrote:
+> On Mon, Jun 17, 2024 at 10:33:08PM +0200, Arnd Bergmann wrote:
+>> On Mon, Jun 17, 2024, at 20:22, Kees Cook wrote:
+>
+> I'm all for more entropy, but arch maintainers had wanted specific
+> control over this value, and given the years of bikeshedding over the
+> feature, I'm not inclined dive back into that debate, but okay.
+>
+> FWIW, the here's the actual entropy (due to stack alignment enforced by
+> the compiler for the given arch ABI).
+>
+> standard cap is 0x3FF (10 bits).
+>
+> arm64: capped at 0x1FF (9 bits), 5 bits effective
+> powerpc: uncapped (10 bits), 6 or 7 bits effective
+> riscv: uncapped (10 bits), 6 bits effective
+> x86: capped at 0xFF (8 bits), 5 (x86_64) or 6 (ia32) bits effective
+> s390: capped at 0xFF (8 bits), undocumented effective entropy
 
-And that's exactly my point.  You want to use one callback to mix
-allocation source and life time control.  That's the perfect recipe
-to create an un-extensible un-composable mess.
+Thanks for the summary. 
 
+Right now of course we need to fix the bug from 9c573cd31343
+("randomize_kstack: Improve entropy diffusion") that has led to
+using full 10 bits after diffusion but put fewer bits in than
+possible on some architectures. Unless you want to revert that
+patch, we should ensure that any truncation is only done in
+KSTACK_OFFSET_MAX() rather than passed into
+choose_random_kstack_offset().
+
+     Arnd
 
