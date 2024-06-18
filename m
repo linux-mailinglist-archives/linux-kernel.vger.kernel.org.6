@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-220333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C114F90DFD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:27:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B1090DFDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FDE5285AD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:27:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BCD31F246D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 23:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F981891D4;
-	Tue, 18 Jun 2024 23:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A031E1849E1;
+	Tue, 18 Jun 2024 23:27:10 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45A11891A6
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2D61891DF
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718753227; cv=none; b=Wrpvlbs36nkGiMj8SRxYACd/y5tIV/Rx1w0Db6bMLCL/Q5PR0zFCH6whr0uR0Icsu5KQBlSHoQW+iGMqIAMvkI0S9CB8HMWn0bXo3CYTYOJddgo1XEoLAJOoGrTe7CNBYqT6FZ/kxNaPs2it+n2cbjFKlJcApmaZmBDCz/KetTw=
+	t=1718753230; cv=none; b=FxOK4EcD2cAkJ9+1jYcHeHau/WL0759nMhNoYpcy7P10IZhYzru9eR+tvw4Ja4I6uSsHdKAAY+yD+OIpu1W7xGj1fY07PXyp2juequG/Yt0o+UooDbjuv4ExOjrYOZDFNhLZL5laJjMWBntYm/LKIkrh9e+khN1EXbDqyl1CmxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718753227; c=relaxed/simple;
-	bh=oW/XrdstAv09FNMedV19nsUUJDgFoszN7+cijJf697A=;
+	s=arc-20240116; t=1718753230; c=relaxed/simple;
+	bh=Znl4Phg+yGQ/MP0Ne9Cpu0oIP0Wn8eDukS41b/ym+lM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=giLqEIz7E0iwj0BDN84HbQu6DM6iGPCTrgbkdNsYjyjWuL3NUYuBy0LaWFV12hBOYZhuBQNd4y9cvjDalyaXqUbPzhcgDvmG3+gzOy9rZqHTN7cJSAye7ibLb+I0mSzawHH8czkNkcUe9k0T5j71kJDCMTBG9aUP4hdkuyLAUBk=
+	 MIME-Version; b=pPc23c8YPA2u8sGMq6ugUKNaGuhX+/NfqjnKUXIrnXqA4t+rDKFmbppwYX/HDKD9VZbPT5EdyG2GSlqUi4CBtfZqToSXZnutYxdDU6eu8m5sEt7Mbw17rL4o892DylpnVfFE95mFHNwJV7jr7tNhBvfiSkgXq3xAoQ30eY15Wkg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AD4014BF;
-	Tue, 18 Jun 2024 16:27:30 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A856150C;
+	Tue, 18 Jun 2024 16:27:32 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECDFD3F64C;
-	Tue, 18 Jun 2024 16:27:03 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC8073F64C;
+	Tue, 18 Jun 2024 16:27:05 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Chris Li <chrisl@kernel.org>,
@@ -44,9 +44,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH v1 4/5] mm: swap: Scan for free swap entries in allocated clusters
-Date: Wed, 19 Jun 2024 00:26:44 +0100
-Message-ID: <20240618232648.4090299-5-ryan.roberts@arm.com>
+Subject: [RFC PATCH v1 5/5] mm: swap: Optimize per-order cluster scanning
+Date: Wed, 19 Jun 2024 00:26:45 +0100
+Message-ID: <20240618232648.4090299-6-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240618232648.4090299-1-ryan.roberts@arm.com>
 References: <20240618232648.4090299-1-ryan.roberts@arm.com>
@@ -58,173 +58,147 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Previously mTHP would only be swapped out if a CPU could allocate itself
-a free cluster from which to allocate mTHP-sized contiguous swap entry
-blocks. But for a system making heavy use of swap, after a while
-fragmentation ensures there are no available free clusters and therefore
-the swap entry allocation fails and forces the mTHP to be split to base
-pages which then get swap entries allocated by scanning the swap file
-for free individual pages.
+Add CLUSTER_FLAG_SKIP_SCAN cluster flag, which is applied to a cluster
+under 1 of 2 conditions. When present, the cluster will be skipped
+during a scan.
 
-But when swap entries are freed, this makes holes in the clusters, and
-often it would be possible to allocate new mTHP swap entries in those
-holes.
+- When the number of free entries is less than the number of entries
+  that would be required for a new allocation of the order that the
+  cluster serves.
 
-So if we fail to allocate a free cluster, scan through the clusters
-until we find one that is in use and contains swap entries of the order
-we require. Then scan it until we find a suitably sized and aligned
-hole. We keep a per-order "next cluster to scan" pointer so that future
-scanning can be picked up from where we last left off. And if we scan
-through all clusters without finding a suitable hole, we give up to
-prevent live lock.
+- When scanning completes for the cluster, and no further scanners are
+  active for the cluster and no swap entries were freed for the cluster
+  since the last scan began. In this case, it has been proven that there
+  are no contiguous free entries of sufficient size to allcoate the
+  order that the cluster serves. In this case the cluster is made
+  eligible for scanning again when the next entry is freed.
 
-Running the test case provided by Barry Song at the below link, I can
-see swpout fallback rate, which was previously 100% after a few
-iterations, falls to 0% and stays there for all 100 iterations. This is
-also the case when sprinkling in some non-mTHP allocations ("-s") too.
+The latter is implemented to permit multiple CPUs to scan the same
+cluster, which in turn garrantees that if there is a free block
+available in a cluster allocated for the desired order then it will be
+allocated on a first come, first served basis.
+
+As a result, the number of active scanners for a cluster must be
+tracked, costing 4 bytes per cluster.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-Link: https://lore.kernel.org/linux-mm/20240615084714.37499-1-21cnbao@gmail.com/
 ---
- include/linux/swap.h |  2 +
- mm/swapfile.c        | 90 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 92 insertions(+)
+ include/linux/swap.h |  3 +++
+ mm/swapfile.c        | 36 ++++++++++++++++++++++++++++++++++--
+ 2 files changed, 37 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 2a40fe02d281..34ec4668a5c9 100644
+index 34ec4668a5c9..40c308749e79 100644
 --- a/include/linux/swap.h
 +++ b/include/linux/swap.h
-@@ -310,6 +310,8 @@ struct swap_info_struct {
- 	unsigned int cluster_nr;	/* countdown to next cluster search */
- 	unsigned int __percpu *cluster_next_cpu; /*percpu index for next allocation */
- 	struct percpu_cluster __percpu *percpu_cluster; /* per cpu's swap location */
-+	struct swap_cluster_info *next_order_scan[SWAP_NR_ORDERS];
-+					/* Start cluster for next order-based scan */
- 	struct rb_root swap_extent_root;/* root of the swap extent rbtree */
- 	struct block_device *bdev;	/* swap device or bdev of swap file */
- 	struct file *swap_file;		/* seldom referenced */
+@@ -257,9 +257,12 @@ struct swap_cluster_info {
+ 	unsigned int data:24;
+ 	unsigned int flags:4;
+ 	unsigned int order:4;
++	unsigned int nr_scanners;
+ };
+ #define CLUSTER_FLAG_FREE 1 /* This cluster is free */
+ #define CLUSTER_FLAG_NEXT_NULL 2 /* This cluster has no next cluster */
++#define CLUSTER_FLAG_SKIP_SCAN 4 /* Skip cluster for per-order scan */
++#define CLUSTER_FLAG_DECREMENT 8 /* A swap entry was freed from cluster */
+
+ /*
+  * swap_info_struct::max is an unsigned int, so the maximum number of pages in
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 7b13f02a7ac2..24db03db8830 100644
+index 24db03db8830..caf382b4ecd3 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -644,6 +644,84 @@ static inline bool swap_range_empty(char *swap_map, unsigned int start,
- 	return true;
+@@ -574,6 +574,9 @@ static void add_cluster_info_page(struct swap_info_struct *p,
+ 	VM_BUG_ON(cluster_count(&cluster_info[idx]) + count > SWAPFILE_CLUSTER);
+ 	cluster_set_count(&cluster_info[idx],
+ 		cluster_count(&cluster_info[idx]) + count);
++
++	if (SWAPFILE_CLUSTER - cluster_count(&cluster_info[idx]) < count)
++		cluster_info[idx].flags |= CLUSTER_FLAG_SKIP_SCAN;
  }
 
-+static inline
-+struct swap_cluster_info *offset_to_cluster(struct swap_info_struct *si,
-+					    unsigned int offset)
+ /*
+@@ -595,6 +598,7 @@ static void dec_cluster_info_page(struct swap_info_struct *p,
+ 	struct swap_cluster_info *cluster_info, unsigned long page_nr)
+ {
+ 	unsigned long idx = page_nr / SWAPFILE_CLUSTER;
++	unsigned long count = 1 << cluster_info[idx].order;
+
+ 	if (!cluster_info)
+ 		return;
+@@ -603,6 +607,10 @@ static void dec_cluster_info_page(struct swap_info_struct *p,
+ 	cluster_set_count(&cluster_info[idx],
+ 		cluster_count(&cluster_info[idx]) - 1);
+
++	cluster_info[idx].flags |= CLUSTER_FLAG_DECREMENT;
++	if (SWAPFILE_CLUSTER - cluster_count(&cluster_info[idx]) >= count)
++		cluster_info[idx].flags &= ~CLUSTER_FLAG_SKIP_SCAN;
++
+ 	if (cluster_count(&cluster_info[idx]) == 0)
+ 		free_cluster(p, idx);
+ }
+@@ -708,7 +716,8 @@ static unsigned int next_cluster_for_scan(struct swap_info_struct *si,
+ 	end = offset_to_cluster(si, *stop);
+
+ 	while (ci != end) {
+-		if ((ci->flags & CLUSTER_FLAG_FREE) == 0 && ci->order == order)
++		if ((ci->flags & (CLUSTER_FLAG_SKIP_SCAN | CLUSTER_FLAG_FREE)) == 0
++		    && ci->order == order)
+ 			break;
+ 		ci = next_cluster_circular(si, ci);
+ 	}
+@@ -722,6 +731,21 @@ static unsigned int next_cluster_for_scan(struct swap_info_struct *si,
+ 	return cluster_to_offset(si, ci);
+ }
+
++static inline void cluster_inc_scanners(struct swap_cluster_info *ci)
 +{
-+	VM_WARN_ON(!si->cluster_info);
-+	return si->cluster_info + (offset / SWAPFILE_CLUSTER);
++	/* Protected by si lock. */
++	ci->nr_scanners++;
++	ci->flags &= ~CLUSTER_FLAG_DECREMENT;
 +}
 +
-+static inline
-+unsigned int cluster_to_offset(struct swap_info_struct *si,
-+			       struct swap_cluster_info *ci)
++static inline void cluster_dec_scanners(struct swap_cluster_info *ci)
 +{
-+	VM_WARN_ON(!si->cluster_info);
-+	return (ci - si->cluster_info) * SWAPFILE_CLUSTER;
-+}
-+
-+static inline
-+struct swap_cluster_info *next_cluster_circular(struct swap_info_struct *si,
-+						struct swap_cluster_info *ci)
-+{
-+	struct swap_cluster_info *last;
-+
-+	/*
-+	 * Wrap after the last whole cluster; never return the final partial
-+	 * cluster because users assume an entire cluster is accessible.
-+	 */
-+	last = offset_to_cluster(si, si->max) - 1;
-+	return ci == last ? si->cluster_info : ++ci;
-+}
-+
-+static inline
-+struct swap_cluster_info *prev_cluster_circular(struct swap_info_struct *si,
-+						struct swap_cluster_info *ci)
-+{
-+	struct swap_cluster_info *last;
-+
-+	/*
-+	 * Wrap to the last whole cluster; never return the final partial
-+	 * cluster because users assume an entire cluster is accessible.
-+	 */
-+	last = offset_to_cluster(si, si->max) - 1;
-+	return ci == si->cluster_info ? last : --ci;
-+}
-+
-+/*
-+ * Returns the offset of the next cluster, allocated to contain swap entries of
-+ * `order`, that is eligible to scan for free space. On first call, *stop should
-+ * be set to SWAP_NEXT_INVALID to indicate the clusters should be scanned all
-+ * the way back around to the returned cluster. The function updates *stop upon
-+ * first call and consumes it in subsequent calls. Returns SWAP_NEXT_INVALID if
-+ * no such clusters are available. Must be called with si lock held.
-+ */
-+static unsigned int next_cluster_for_scan(struct swap_info_struct *si,
-+					  int order, unsigned int *stop)
-+{
-+	struct swap_cluster_info *ci;
-+	struct swap_cluster_info *end;
-+
-+	ci = si->next_order_scan[order];
-+	if (*stop == SWAP_NEXT_INVALID)
-+		*stop = cluster_to_offset(si, prev_cluster_circular(si, ci));
-+	end = offset_to_cluster(si, *stop);
-+
-+	while (ci != end) {
-+		if ((ci->flags & CLUSTER_FLAG_FREE) == 0 && ci->order == order)
-+			break;
-+		ci = next_cluster_circular(si, ci);
-+	}
-+
-+	if (ci == end) {
-+		si->next_order_scan[order] = ci;
-+		return SWAP_NEXT_INVALID;
-+	}
-+
-+	si->next_order_scan[order] = next_cluster_circular(si, ci);
-+	return cluster_to_offset(si, ci);
++	/* Protected by si lock. */
++	ci->nr_scanners--;
++	if (ci->nr_scanners == 0 && (ci->flags & CLUSTER_FLAG_DECREMENT) == 0)
++		ci->flags |= CLUSTER_FLAG_SKIP_SCAN;
 +}
 +
  /*
   * Try to get swap entries with specified order from current cpu's swap entry
   * pool (a cluster). This might involve allocating a new cluster for current CPU
-@@ -656,6 +734,7 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
- 	struct percpu_cluster *cluster;
- 	struct swap_cluster_info *ci;
- 	unsigned int tmp, max;
-+	unsigned int stop = SWAP_NEXT_INVALID;
-
- new_cluster:
- 	cluster = this_cpu_ptr(si->percpu_cluster);
-@@ -674,6 +753,15 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
- 			*scan_base = this_cpu_read(*si->cluster_next_cpu);
- 			*offset = *scan_base;
- 			goto new_cluster;
-+		} else if (nr_pages < SWAPFILE_CLUSTER) {
-+			/*
-+			 * There is no point in scanning for free areas the same
-+			 * size as the cluster, since the cluster would have
-+			 * already been freed in that case.
-+			 */
-+			tmp = next_cluster_for_scan(si, order, &stop);
-+			if (tmp == SWAP_NEXT_INVALID)
-+				return false;
+@@ -764,6 +788,8 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
+ 				return false;
  		} else
  			return false;
++
++		cluster_inc_scanners(offset_to_cluster(si, tmp));
  	}
-@@ -2392,6 +2480,8 @@ static void setup_swap_info(struct swap_info_struct *p, int prio,
+
+ 	/*
+@@ -780,13 +806,19 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
  	}
- 	p->swap_map = swap_map;
- 	p->cluster_info = cluster_info;
-+	for (i = 0; i < SWAP_NR_ORDERS; i++)
-+		p->next_order_scan[i] = cluster_info;
+ 	unlock_cluster(ci);
+ 	if (tmp >= max) {
++		cluster_dec_scanners(ci);
+ 		cluster->next[order] = SWAP_NEXT_INVALID;
+ 		goto new_cluster;
+ 	}
+ 	*offset = tmp;
+ 	*scan_base = tmp;
+ 	tmp += nr_pages;
+-	cluster->next[order] = tmp < max ? tmp : SWAP_NEXT_INVALID;
++	if (tmp >= max) {
++		cluster_dec_scanners(ci);
++		cluster->next[order] = SWAP_NEXT_INVALID;
++	} else {
++		cluster->next[order] = tmp;
++	}
+ 	return true;
  }
 
- static void _enable_swap_info(struct swap_info_struct *p)
 --
 2.43.0
 
