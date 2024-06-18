@@ -1,653 +1,292 @@
-Return-Path: <linux-kernel+bounces-220286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DB890DF0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:19:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C83F890DF0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42442281B77
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:19:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7145281D25
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC2C17B41B;
-	Tue, 18 Jun 2024 22:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9B31849E5;
+	Tue, 18 Jun 2024 22:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TJvw3BmQ"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k2s9+lJ3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C3F55E58
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 22:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718749171; cv=none; b=SlEGi4DkL8Y0nmYFXWKMPZYNX6bNbXaheAA2nEDB4Xtweif7ebRN0ZGRX2R8sllBKFVjep8PNwlxvt0L+TblK9l/X2Ejhax3OjyBjyFsSAJghAR8mbeFLa6Oq8c7sNSbgOW9WRWYTOXLu15tFBdm/U0xTI+5xVTTTd/J1iXANHY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718749171; c=relaxed/simple;
-	bh=hAdBO/yivWTDHBOWCVPozJU4CsUEzoyFjQPBlAOUVNI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=O7SlvfTPUim8HtsKmPOm/neic0L01VZK14VFusNhetgiF0AAH1cFd5tRC27zBmXQU1VYmU2IAAFJkcsGYdb1Q4sfM+oyHxZCyocEyTbJVBZ88Q4D3iks7XyxPJtY3hcs64jqqDNG59xUvUths5IyjJx8O2bg0mhtBj0jWGw7u70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TJvw3BmQ; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7043a7741cfso5851745b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 15:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718749169; x=1719353969; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Kcjq+ykdAqJfPjykbJOTmi99xVf3mt3DhgPiBGFYMPE=;
-        b=TJvw3BmQ15NK90lpw2NBpXNGB8ZaczqfqIwYDXZeS7zsTR6BaUJw6yJwpzCTVl0oCV
-         mC80SiN+nPLB4JT/ZUxRmPkmmRxV9y2DBKxf2mBPk7TFn03m/aH+x1N2fyqygjJVnAoj
-         NxBcGy8CljCWfIkqkL6djW0aMN3jpauLMqysbAgpf2xjpwD7q0rXLaFmCjpoRFZq2URr
-         OcsKcIVkgew32JuAu221GD/k0nmXM7mWtRcEwQSXJH+yYRGOaG/d+EqNYXXJOFGJQP/S
-         aIjGDV3AV8CH2o+KtcYe3p35pho+q2dA1kmyee+VlbDhiE9mdyMV9IK0EflmC4bzfSdg
-         ifZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718749169; x=1719353969;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kcjq+ykdAqJfPjykbJOTmi99xVf3mt3DhgPiBGFYMPE=;
-        b=ialQmvVMyVfy0zG/bEv7TIvOaRpd7q0DTCecMENOvZafwj2zlY8xWtGfNxB6i4D0cZ
-         gSfYBMy+8woXaAFIPgZ8KqMRt/EvNZ3Ae11656beR4nyRA/NbxL3SPg0u39LARGF5T+n
-         vw/mKi19wbjPY0vdkM0K2+nL2kh8oI4ZPzpzU2OZi27WIDfN7nvxeMFdmm1eVGBJauOq
-         c21jK5V7ADCY/MdkPkV5JVbIX1fqKkNdSm0U904gQ/tyWO1Pe7dz6/PKWPD9gTEsbUBz
-         hRsyKO0sMhBVzOTA+s6adKn/9E4AKN8cfmCyB2qgfDjKMcbRfzf4qDwXma16x+iL9TLS
-         moFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUq7dCLMnajpdp3pT9csG3Cl2pxmlmsarpvv5Ag+gRb4g2R0bID18XgS4TLguHhFnS2cQi98fUmJdUNI6A9NhG/USbeq6sXoV2tbpwY
-X-Gm-Message-State: AOJu0Yx8s28Qe8EgLPk7LQLmTO5oXUwhlXl8lmXABQn7snS8IXVQGezu
-	yFrCU9EnufUAorewi3+wBp+w2baSf6fd9msxLJZzErrtAGDxSovK0fNntA/DZ51iaahgH4kDZiM
-	lQ5YJssHPT1C7+/ntOSxgqg==
-X-Google-Smtp-Source: AGHT+IEb2zhbEXVqZ3P1JYJE6Fo9diwBNUvdIA2/ywTeuyC1gOvzRYHoUH/Nh8dnn8oZVoMuwzef2s1QbqysG/7VtA==
-X-Received: from yuting.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:317f])
- (user=yutingtseng job=sendgmr) by 2002:a05:6a00:6c81:b0:705:dbf5:190a with
- SMTP id d2e1a72fcca58-70629d42c52mr20977b3a.6.1718749168549; Tue, 18 Jun 2024
- 15:19:28 -0700 (PDT)
-Date: Tue, 18 Jun 2024 15:19:08 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147E117E8FB;
+	Tue, 18 Jun 2024 22:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718749176; cv=fail; b=dpUIUG7QXGsEjfZRTrsjMILj805dxN6acHiEAufhMoEIxkoK2MdustvMG9CPsYV2/sjrtkNy49S1EtWjH+YJWsKzGIwPQEy04e9fJg8ag1Qw1a7Ln6CKo829JEqBYU26PJIQ9lyRRU5znYx5dpcwa5MWAQXpULZkyG9DnEVr+P0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718749176; c=relaxed/simple;
+	bh=X0XiCNlLmPBCNi+m66l0r5Y7k3GbtF367xDMu+0H2yM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sDkGO0UUSZane/LYZabSDXXAxIlwyKMArVOkLxUB+oPyDfKmlV84BSWDWMffh9nspLE1Ij5vGfFW6gJ28/mXQt/tLENQnzTtcEK22Qt6UPRYxd4gCp7JfzhQ2Ndkd+Wexv6s1vAfE8PBhlGPY0sA3PQClZ+rMrztethmzwyznEI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k2s9+lJ3; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718749175; x=1750285175;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=X0XiCNlLmPBCNi+m66l0r5Y7k3GbtF367xDMu+0H2yM=;
+  b=k2s9+lJ3nFDbEfvcs7+ezncd4vi9epONWfVoTCiEXPCmfN00AAk7UkwN
+   QZcS+s3Obibdqp5JvqSzgPkV9M8kiZCDGVzWSE7bN/4KSfsNbiuNUZK4x
+   G6MJ7yWtj33JPv6OGr9fYjG7wbhPNVw0nvzjuq1w7C13jSVMCRy4bq1CD
+   Pfj20a9UTyZztRjv+Z9u0M0jxZHUzcDbcB+mf/D4Tb9AsGYl2z9PMPM8g
+   ZSDGYT8SeQGbtCXYd6BkuFYpzWejA2HoEFyoiQzWev3fyotuh5ZsXzcSl
+   HmS7st0Snr+2EimuxlqKQmqpRWhCE8BPGxW8u+kwLQjoLpeeBSDXLO8np
+   Q==;
+X-CSE-ConnectionGUID: 6OfXFfDcQWSd/UOqptWrfg==
+X-CSE-MsgGUID: e6KriXIuTZmgyz4X6A6MiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15494379"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="15494379"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 15:19:34 -0700
+X-CSE-ConnectionGUID: 9ZoboJ86RbORE/XvfZa+gg==
+X-CSE-MsgGUID: YCOX+q6fQXOgDcy4T3cRKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="46651461"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Jun 2024 15:19:34 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 18 Jun 2024 15:19:33 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 18 Jun 2024 15:19:33 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 18 Jun 2024 15:19:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=W8zhazqaS86V9O7gr8SDG9R6cPvirL1wNOex/ObrA/p7iywge3woTa9xk83i+o/HPOPrrotT4HDnaDCoE3svRTYA6lXUihma5MMfBvxoeNWnf32E1QQaDlBTIzBatSOiesgppewAsfywQv/pExst/3m9cyL902shE1O30CmBqJOaY4SC43UUOP3KmgPetsDEuTl1nlMgr7I8Z3UIIXaM20RxB5WPyqVUEoHzyxRyrv12+TvqJcOKlRWSRxa5UtvJzA3NpVLYCJT6SX41bSOVGYnb6/Ua/THIj3nOYZpA2oKDutuhHP0LfdlkW0BMDE14sK46IPS6NjCj3hobREiqVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X0XiCNlLmPBCNi+m66l0r5Y7k3GbtF367xDMu+0H2yM=;
+ b=RIj7eGoxoxo8JqeqtXV7El6lytAUuCuK3sMqogGhr28JU4LH1X5yHLqW00pjlLSZRIJqroqD2uX+rBCMB1dFpMSHRQlby2iMzmmFKASa+0rZDH9hnAX3f5oyvBnllxRwZ2E5GldpJPTAqioffQ+qqDXBioyuk2TIK2GCGPpq6y/fyoA3JRkjQApLq295Zzu4lixdsgRfVKjiqOxBsxE68F4PGr5F19EHt1dqr0Gn3ljCARLxdmnqCCmvmE9cSvAvOXHzCfkbASoSlI6E2uaNSMmLlcd0RGUnzpVIh7uAosio0MFhFx0tDqZdIJPnyIopbwrZ8srHoZNVrGruuQIRKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by SA1PR11MB8492.namprd11.prod.outlook.com (2603:10b6:806:3a3::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
+ 2024 22:19:29 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%5]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
+ 22:19:29 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "seanjc@google.com" <seanjc@google.com>
+CC: "Zhang, Tina" <tina.zhang@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Yuan, Hang" <hang.yuan@intel.com>, "Chen,
+ Bo2" <chen.bo@intel.com>, "sagis@google.com" <sagis@google.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, "Aktas, Erdem"
+	<erdemaktas@google.com>, "isaku.yamahata@linux.intel.com"
+	<isaku.yamahata@linux.intel.com>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH v19 037/130] KVM: TDX: Make KVM_CAP_MAX_VCPUS backend
+ specific
+Thread-Topic: [PATCH v19 037/130] KVM: TDX: Make KVM_CAP_MAX_VCPUS backend
+ specific
+Thread-Index: AQHaaI2/dJkfmwuOl0Kzt5Q4G20a/rGPjNSAgABl+QCAAANegIAAB3kAgAAJ9QCAAO1bAIAFfyEAgBj234CAANvZgIAAtdgAgAcL1wCADwerAIABjg2AgASxLYCAAP0FgIAAfaWA
+Date: Tue, 18 Jun 2024 22:19:29 +0000
+Message-ID: <fcbc5a898c3434af98656b92a83dbba01d055e51.camel@intel.com>
+References: <20240509235522.GA480079@ls.amr.corp.intel.com>
+	 <Zj4phpnqYNoNTVeP@google.com>
+	 <50e09676-4dfc-473f-8b34-7f7a98ab5228@intel.com>
+	 <Zle29YsDN5Hff7Lo@google.com>
+	 <f2952ae37a2bdaf3eb53858e54e6cc4986c62528.camel@intel.com>
+	 <ZliUecH-I1EhN7Ke@google.com>
+	 <38210be0e7cc267a459d97d70f3aff07855b7efd.camel@intel.com>
+	 <405dd8997aaaf33419be6b0fc37974370d63fd8c.camel@intel.com>
+	 <ZmzaqRy2zjvlsDfL@google.com>
+	 <5bb2d7fc-cfe9-4abd-a291-7ad56db234b3@intel.com>
+	 <ZnGehy1JK_V0aJQR@google.com>
+In-Reply-To: <ZnGehy1JK_V0aJQR@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.50.3 (3.50.3-1.fc39) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|SA1PR11MB8492:EE_
+x-ms-office365-filtering-correlation-id: 30b4f0a1-67ee-44e0-723a-08dc8fe4b8e0
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|1800799021|376011|366013|38070700015;
+x-microsoft-antispam-message-info: =?utf-8?B?ODZ1dTRZckZVL3FzWVF1Wi8wUm5YMFI3aWhUczJ0R29GTG1RZ01BODh6Qnp0?=
+ =?utf-8?B?c3BUVTY5UEVxeDVEL3lOSU9xVzMzUVN5MVhvMVlDenNLc2Ixd1hkQ3dVeUJC?=
+ =?utf-8?B?T2NzSXdZNnQyaldwWHlPbkhrUTQzSDdSYnZjWmNOeUNGTS96UlR5SXNPSDdY?=
+ =?utf-8?B?c1h4aUVhQ2t0K1o2M1NsdUc0T1l2NE1IMmRwaFRnNUlEWElMSlA0cTd0OHBC?=
+ =?utf-8?B?a0lmTVVXZy9waC8xV24rbExBNDUrbGdqZkYvdXp5U2tOT0pSSFZwSXlVZU81?=
+ =?utf-8?B?MjI5a2p1aFNzTDE4MUxVMXNtTDJldVhsM1dCcFBMSGwyZ0J0dUhtR1NodmhL?=
+ =?utf-8?B?YTJKVVJudDloWXA5TmZqRE8xc1RyaUNEZFo1cmpyRVZ0a3Z2ak5henU0OVhW?=
+ =?utf-8?B?NUlQZW5uUFFxU1RXc3dKYVFITWo3TWJhOGVoMEF1cFJzUFB4aE8raHFHMlE1?=
+ =?utf-8?B?TFNoemszeFdiYUtaSzNscXdWdG96TGU4M0dUdmYxK2R4NFkwa3V2WGI0UzVw?=
+ =?utf-8?B?ZUdFRUVZUXBHUUlKeGZLdkhkQkx6N3JacktOK2w3WXdzMzVnZ0hXWlh0OVo2?=
+ =?utf-8?B?RkFLZWpwUGpES0pXNWRKRTcrdTFvMTdSa2ZXUGhvOXp4OTBTV00xYkRQZjJN?=
+ =?utf-8?B?ZGxNSjI5Nk1BdExzY0ZtTitkWndCY0hma0NEZVd0YzJPS1h3aDcwTmZkSzBQ?=
+ =?utf-8?B?SWw3ZWJLMDYyM2tBeWlucTdOS3pmRmFQcHQ0R3AxaVdWd3ZRRmlIRjBidHNY?=
+ =?utf-8?B?aTZyNWp6MlI0akkyUE9xcDFqa0diTkNxNzV4Q2hFUVQxRTBKQi9neklmRVNU?=
+ =?utf-8?B?RUJmRVJ6UXkwY0xsQ2NueWFvVUYzYlJRNDljZ0tXbjBrYUZsWXdDYm1sa0xp?=
+ =?utf-8?B?dEtsNUJqOUZGbngzSzAraVJZOE9iRTI5RnppNEsrZXBxNkttZ1lqUlJjMDJN?=
+ =?utf-8?B?NEVRMVBMVmY3U2JWZ25zT3RUSy9IYUdrSUs4OGJEOUhxaHgyNnBBcHpscU9X?=
+ =?utf-8?B?RUtxQ3NJdXpyUjRudlpxczZXZjdGYVBsaGhkaFJ4TTBmclNPY1dKa3h4THZv?=
+ =?utf-8?B?ekpFbEcrMGpFajNlUWFaNnJTRUloSUdyaDdRUUlmLzQ4eHhCOXM5SHRENDVC?=
+ =?utf-8?B?WWgrbkFDcXVsWi83eno1MCtwMDNNZEw4Z1lxTEh2RGFJZGhadE44Nm80dzN1?=
+ =?utf-8?B?V3RDSG1IcEdjbVN0Vi8zZkdZcmxuR3o0V1FZUGI4N3ltdFJxQXFjTTlVbDY3?=
+ =?utf-8?B?SFN0UHZ0RDhzMXJ6YWVyUzR1VFFWSjd4SUIxRmhjTFNFbVNnTjE1TXlTd3Fk?=
+ =?utf-8?B?Q1h4OTVkMkczRVlJU1d4VlpGQS9KZkpOMm1GdS8zVDRBNFVEcmVFS2dWZHNF?=
+ =?utf-8?B?OUlPMHFXRUxHSkVkVHhNQUlQOUZhWEhRWXdVNVhyS1NBVURIWkRLTGNLZ203?=
+ =?utf-8?B?MFJWNmhZb1BjVWx4bVVFZnBJb3lZSHpKKzNjcll1MUtBRU4zY3l2UG5PNW9R?=
+ =?utf-8?B?WHJKNndXYm5nRWVhNTF0QVA0SXFtV0lHbXMxemp1SUIwc0JncEhndS9wQ3h0?=
+ =?utf-8?B?S2Q1R2dwdW11Y1FtUXpEUU5kWmIvSjRiRVMwQmJDakpnTXBLVDNDU3FHSWRa?=
+ =?utf-8?B?clNTa1RLdklYSEk1NXJqWEFCZm14NmFucFNqenFkN0docFc3cEhFajBubDlq?=
+ =?utf-8?B?UFllT0dHdnc5Rm5QVnJiZ3R4TSs0OXJ3K3hFbTF5MFl2UXBHd1RCdnJodVpW?=
+ =?utf-8?B?QW5RK3d2cFVsaS9JOHMrN3lZU05DVENJN3cyNnhJbU5URHRzRGVDQmJGS29v?=
+ =?utf-8?Q?KnxyMFa7Yx9Z1gmCZdRCbMKs9iSJr1sLwNpnE=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(366013)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZEs2NDVGNlJaU1V4R3NlenVWMjg0dWgvY0RySzZMQ0dseEZRK2JCdm9GWVQ0?=
+ =?utf-8?B?cTNReG9hZG9OT0lxcjNFK0pFbEZxUk9OTVgwSFRtYUhaaTRXQmhDL1luelRq?=
+ =?utf-8?B?NG01ZmI4bVY4M0Ywdi83WktCbnA4V0hEcFQxeXg4bnZvOWpKUjVoOXVZWUxD?=
+ =?utf-8?B?akFkRnJTZnIwbk4yWHVrbHI4TVNJRmk1NytVRDE0Yk1sSitxZlhIQThKZ1pU?=
+ =?utf-8?B?RGY5ZUVBMFRHMHh2THBFS0I2RUZQbFdTajRQcDJyMllQRFRNRDRMZU9RT051?=
+ =?utf-8?B?c2dPbGMxRTEzZUV2UUNZQU12cjdXTytyazRJODQ2QzNpdldPV2ZZWDAxM1hz?=
+ =?utf-8?B?SlNNL2dvdUp0eE40bHI0bnhtOGVUT3dsT2hWdXFwV3B4TEljdkhaaERuMm9o?=
+ =?utf-8?B?cDIyY3JGUzJucG4rU0paMzRmTXdiN1NRc29teVJ4K0o1di9iaEpWRXB5Zmg4?=
+ =?utf-8?B?STFTL3VnYUxHN3pEU2p3TVFsVy8zQU4yaG1POTJkU2ZTaWJoSjZMUXkxR3Fn?=
+ =?utf-8?B?MFFlR01OdlNnSnFESkZMZVJEOWgzaFhNMWI4TmhOSW5FRHVNU0ZVc2J4YnpI?=
+ =?utf-8?B?TEFHaXgvSjN3WC81eHplaTNGSFVUR3ZWaXdSajQ5bGhNb25zUVZ4dU10MXBp?=
+ =?utf-8?B?MXhZT0w5V09TY1RDTWtiMGJrejBTZkpYSEwvbytxOWVNLzlvY3U2K2dqMC9X?=
+ =?utf-8?B?V2VvWmNGdjY3L3hLTEZCK0NFT3dGMEkvS2VlT1REeEQ5TFJqWUF4MjRRTk1O?=
+ =?utf-8?B?Y3hrNDhwd3lBQ2RRaUtQNVdGM3dsa3dKTDd2TEFXa1dSbkk0VjhoU2RMNVVW?=
+ =?utf-8?B?a2NOZmhHcmJEMHY4a2pBU2RHbWxRcGR3L1F1V3VQeWI2ZmJQRW13VWdYYmp2?=
+ =?utf-8?B?blFKNWZFbXhYN3FRbTZGa0h0OXJIWkRIUjRPMUd4dklwRUU4YTdJVkMzMzg3?=
+ =?utf-8?B?b0cvVXB3cGZTdHdoZVAxZnlDOFRET1ZzdFZSYzZvYVhieDhRTUw0T1MzV1Bk?=
+ =?utf-8?B?UlE1OVdxSmR6OUxWSys2STR1ZC9XWnFYMkJVNkdwanpKWkNEN0RhVE1PbFJQ?=
+ =?utf-8?B?MmF2UzgvVDFNZkxpWlE1ck0xeGtmYjNTVWJkWFdvRWR5V2gwS3JET3lLa2xt?=
+ =?utf-8?B?cVZjUVNSK25xYUJ5SGVGNXcveGV3UjdQTDlZNDgzQ0lzRUtFOUU2ZFVvL1lt?=
+ =?utf-8?B?YUdablRKM3F3akpyQk9iYXpSa0VpS3VucDlNd1JPcjh3UTNEN0x4d0hMVnZa?=
+ =?utf-8?B?c09zQitkUWlKVDlLLzdoVzNUSXBHdVEyZEE2V0Z2M3NQYmlVbkVrK0RJNTAr?=
+ =?utf-8?B?NnBnZkdib1hkR1lIbFVKelh6Z3VibDE5YWtGL1V1ZjBxT1Q5LzdGZ0s1ek5v?=
+ =?utf-8?B?eVI1UjllT3dBeWs5V05iSzVOMGk1TG9Pc213SjhWa1F0cW10WHA4YUQ1TGpY?=
+ =?utf-8?B?aGsyc3orR3B0SnVxejY0NHpDQVZ2RWgrTzFEZlRiazd6czVXdlk0dXBKL3hx?=
+ =?utf-8?B?enFRMktYbmxXdFRacmdqUE9XZk15SmhFZ2RhQ3JLM0I5dUNHVENaNkNFVEtF?=
+ =?utf-8?B?ZnlyZEplbjlqZ1krN2JFVEFaWlEwWCtKd09SNloxTTVvYTRQb2hDa0s1RlVk?=
+ =?utf-8?B?dDNKd1hCOTRwMWFVeXV4Z1Zpc214R21wcjZNSkpVUVNCZDdkQmlpaGdINlJy?=
+ =?utf-8?B?dWZZUDdUbFR0OEkxS0ZpMFc5a1FlaGlwMElMTUhMN1FkVkNsYjlCZXpPYjhn?=
+ =?utf-8?B?WlpqQ1pjTmorNElJSSszV1BGOTY5K1ZTdlZnU0ozYURPNkdEZ1NkaDJQRkpD?=
+ =?utf-8?B?alY3dmE4QXU4YVFHQW5QTjFtWWl6b3VHUHYvdTdIMXFMUHd0ZmxtS2YrV1Jw?=
+ =?utf-8?B?ZXgwYnRPMGZSc0dDbGUxNFNmN2lMSFpiWWNiWkl1NHB5VDR5UFRZU1B1MGFD?=
+ =?utf-8?B?RDkvMVFPM3F3VnJvbHlaY0ZIU0g5M3VYVUJFaVIwQ2VmcFE5Nm1GWk0vZEVQ?=
+ =?utf-8?B?VEhDYlhzVk1pL3krQ2RQbkFvbnpkS2pibTdEaUVpZXBNZ1FHMUlmc3d0bUVN?=
+ =?utf-8?B?SUlHTEpCOXhlL1pMKzA3YVVtaEx2QlM0UmtpeVVTamxOMWdmNXM4a0hnTm9E?=
+ =?utf-8?Q?umE4xc8KuxsM5/r8Vptm33OfK?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D55DD91D03D7274EA0918ABD2AFA62FB@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-Message-ID: <20240618221925.108173-1-yutingtseng@google.com>
-Subject: [PATCH v1] binder: frozen notification
-From: Yu-Ting Tseng <yutingtseng@google.com>
-To: cmllamas@google.com, tkjos@google.com
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Yu-Ting Tseng <yutingtseng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30b4f0a1-67ee-44e0-723a-08dc8fe4b8e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2024 22:19:29.6538
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yqfTdpjKjsdyR8bcEir+VW8MO6On+Swf265iGrfoQYQ1gONbf+Bmni1l347kdJM80h73Br+CyIbDg+BWharAqg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8492
+X-OriginatorOrg: intel.com
 
-Frozen processes present a significant challenge in binder transactions.
-When a process is frozen, it cannot, by design, accept and/or respond to
-binder transactions. As a result, the sender needs to adjust its
-behavior, such as postponing transactions until the peer process
-unfreezes. However, there is currently no way to subscribe to these
-state change events, making it impossible to implement frozen-aware
-behaviors efficiently.
-
-Introduce a binder API for subscribing to frozen state change events.
-This allows programs to react to changes in peer process state,
-mitigating issues related to binder transactions sent to frozen
-processes.
-
-Implementation details:
-For a given binder_ref, the staet of frozen notification can be one of
-the followings:
-1. Userspace doesn't want a notification. binder_ref->freeze is null.
-2. Userspace wants a notification but none is in flight.
-   list_empty(&binder_ref->freeze->work.entry) = true
-3. A notification is in flight and waiting to be read by userspace.
-   binder_ref_freeze.sent is false.
-4. A notification was read by userspace and kernel is waiting for an ack.
-   binder_ref_freeze.sent is true.
-
-When a notification is in flight, new state change events are coalesced into
-the existing binder_ref_freeze struct. If userspace hasn't picked up the
-notification yet, the driver simply rewrites the state. Otherwise, the
-notification is flagged as requiring a resend, which will be performed
-once userspace acks the original notification that's inflight.
-
-Signed-off-by: Yu-Ting Tseng <yutingtseng@google.com>
----
- drivers/android/binder.c            | 321 +++++++++++++++++++++++++++-
- drivers/android/binder_internal.h   |  21 +-
- include/uapi/linux/android/binder.h |  34 +++
- 3 files changed, 372 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index b21a7b246a0d..f237ff51b42f 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -3763,6 +3763,202 @@ static void binder_transaction(struct binder_proc *proc,
- 	}
- }
- 
-+static int
-+binder_handle_bc_request_freeze_notification(struct binder_proc *proc,
-+					     struct binder_thread *thread,
-+					     void __user **ptr)
-+{
-+	struct binder_handle_cookie handle_cookie;
-+	struct binder_ref_freeze *freeze = NULL;
-+	struct binder_ref *ref;
-+
-+	if (copy_from_user(&handle_cookie, *ptr, sizeof(handle_cookie)))
-+		return -EFAULT;
-+	*ptr += sizeof(handle_cookie);
-+
-+	/*
-+	 * Allocate memory for freeze notification
-+	 * before taking lock
-+	 */
-+	freeze = kzalloc(sizeof(*freeze), GFP_KERNEL);
-+	if (!freeze) {
-+		WARN_ON(thread->return_error.cmd !=
-+			BR_OK);
-+		thread->return_error.cmd = BR_ERROR;
-+		binder_enqueue_thread_work(thread, &thread->return_error.work);
-+		binder_debug(BINDER_DEBUG_FAILED_TRANSACTION,
-+			     "%d:%d BC_REQUEST_FREEZE_NOTIFICATION failed\n",
-+			     proc->pid, thread->pid);
-+		return 0;
-+	}
-+	freeze->sent = false;
-+	freeze->resend = false;
-+
-+	binder_proc_lock(proc);
-+	ref = binder_get_ref_olocked(proc, handle_cookie.handle, false);
-+	if (!ref) {
-+		binder_user_error("%d:%d %s invalid ref %d\n",
-+				  proc->pid, thread->pid,
-+				  "BC_REQUEST_FREEZE_NOTIFICATION",
-+				  handle_cookie.handle);
-+		binder_proc_unlock(proc);
-+		kfree(freeze);
-+		return 0;
-+	}
-+
-+	binder_node_lock(ref->node);
-+
-+	if (ref->freeze) {
-+		binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATION freeze notification already set\n",
-+				  proc->pid, thread->pid);
-+		binder_node_unlock(ref->node);
-+		binder_proc_unlock(proc);
-+		kfree(freeze);
-+		return 0;
-+	}
-+	binder_stats_created(BINDER_STAT_FREEZE);
-+	INIT_LIST_HEAD(&freeze->work.entry);
-+	freeze->cookie = handle_cookie.cookie;
-+	ref->freeze = freeze;
-+	if (ref->node->proc) {
-+		ref->freeze->work.type = ref->node->proc->is_frozen
-+		    ? BINDER_WORK_FROZEN_BINDER
-+		    : BINDER_WORK_UNFROZEN_BINDER;
-+		binder_inner_proc_lock(proc);
-+		binder_enqueue_work_ilocked(&ref->freeze->work, &proc->todo);
-+		binder_wakeup_proc_ilocked(proc);
-+		binder_inner_proc_unlock(proc);
-+	}
-+	binder_node_unlock(ref->node);
-+	binder_proc_unlock(proc);
-+	return 0;
-+}
-+
-+static int
-+binder_handle_bc_clear_freeze_notification(struct binder_proc *proc,
-+					   struct binder_thread *thread,
-+					   void __user **ptr)
-+{
-+	struct binder_handle_cookie handle_cookie;
-+	struct binder_ref_freeze *freeze = NULL;
-+	struct binder_ref *ref;
-+
-+	if (copy_from_user(&handle_cookie, *ptr, sizeof(handle_cookie)))
-+		return -EFAULT;
-+	*ptr += sizeof(handle_cookie);
-+
-+	binder_proc_lock(proc);
-+	ref = binder_get_ref_olocked(proc, handle_cookie.handle, false);
-+	if (!ref) {
-+		binder_user_error("%d:%d %s invalid ref %d\n",
-+				  proc->pid, thread->pid,
-+				  "BC_CLEAR_FREEZE_NOTIFICATION",
-+				  handle_cookie.handle);
-+		binder_proc_unlock(proc);
-+		kfree(freeze);
-+		return 0;
-+	}
-+
-+	binder_node_lock(ref->node);
-+
-+	if (!ref->freeze) {
-+		binder_user_error("%d:%d BC_CLEAR_FREEZE_NOTIFICATION freeze notification not active\n",
-+				  proc->pid, thread->pid);
-+		binder_node_unlock(ref->node);
-+		binder_proc_unlock(proc);
-+		return 0;
-+	}
-+	freeze = ref->freeze;
-+	if (freeze->cookie != handle_cookie.cookie) {
-+		binder_user_error("%d:%d BC_CLEAR_FREEZE_NOTIFICATION freeze notification cookie mismatch %016llx != %016llx\n",
-+				  proc->pid, thread->pid,
-+				  (u64)freeze->cookie,
-+				  (u64)handle_cookie.cookie);
-+		binder_node_unlock(ref->node);
-+		binder_proc_unlock(proc);
-+		return 0;
-+	}
-+	ref->freeze = NULL;
-+	binder_inner_proc_lock(proc);
-+	if (list_empty(&freeze->work.entry)) {
-+		freeze->work.type = BINDER_WORK_CLEAR_FREEZE_NOTIFICATION;
-+		if (thread->looper &
-+		    (BINDER_LOOPER_STATE_REGISTERED |
-+		     BINDER_LOOPER_STATE_ENTERED)) {
-+			binder_enqueue_thread_work_ilocked(thread,
-+							   &freeze->work);
-+		} else {
-+			binder_enqueue_work_ilocked(&freeze->work,
-+						    &proc->todo);
-+			binder_wakeup_proc_ilocked(proc);
-+		}
-+	} else {
-+		// There is already a freeze notification. Take it over and rewrite
-+		// the work type. If it was already sent, flag it for re-sending;
-+		// Otherwise it's pending and will be sent soon.
-+		WARN_ON_ONCE(freeze->work.type != BINDER_WORK_FROZEN_BINDER &&
-+			     freeze->work.type != BINDER_WORK_UNFROZEN_BINDER);
-+		freeze->work.type = BINDER_WORK_CLEAR_DEATH_NOTIFICATION;
-+		if (freeze->sent)
-+			freeze->resend = true;
-+	}
-+	binder_inner_proc_unlock(proc);
-+	binder_node_unlock(ref->node);
-+	binder_proc_unlock(proc);
-+	return 0;
-+}
-+
-+static int
-+binder_handle_bc_freeze_notification_done(struct binder_proc *proc,
-+					  struct binder_thread *thread,
-+					  void __user **ptr)
-+{
-+	struct binder_work *w;
-+	binder_uintptr_t cookie;
-+	struct binder_ref_freeze *freeze = NULL;
-+
-+	if (get_user(cookie, (binder_uintptr_t __user *)*ptr))
-+		return -EFAULT;
-+
-+	*ptr += sizeof(cookie);
-+	binder_inner_proc_lock(proc);
-+	list_for_each_entry(w, &proc->delivered_freeze,
-+			    entry) {
-+		struct binder_ref_freeze *tmp_freeze =
-+			container_of(w,
-+				     struct binder_ref_freeze,
-+				     work);
-+
-+		if (tmp_freeze->cookie == cookie) {
-+			freeze = tmp_freeze;
-+			break;
-+		}
-+	}
-+	if (!freeze) {
-+		binder_user_error("%d:%d BC_FREEZE_NOTIFICATION_DONE %016llx not found\n",
-+				  proc->pid, thread->pid, (u64)cookie);
-+		binder_inner_proc_unlock(proc);
-+		return 0;
-+	}
-+	binder_dequeue_work_ilocked(&freeze->work);
-+	freeze->sent = false;
-+	if (freeze->resend) {
-+		freeze->resend = false;
-+		if (thread->looper &
-+			(BINDER_LOOPER_STATE_REGISTERED |
-+			 BINDER_LOOPER_STATE_ENTERED)) {
-+			binder_enqueue_thread_work_ilocked(thread,
-+							   &freeze->work);
-+		} else {
-+			binder_enqueue_work_ilocked(&freeze->work,
-+						    &proc->todo);
-+			binder_wakeup_proc_ilocked(proc);
-+		}
-+	}
-+	binder_inner_proc_unlock(proc);
-+	return 0;
-+}
-+
- /**
-  * binder_free_buf() - free the specified buffer
-  * @proc:	binder proc that owns buffer
-@@ -4246,6 +4442,28 @@ static int binder_thread_write(struct binder_proc *proc,
- 			binder_inner_proc_unlock(proc);
- 		} break;
- 
-+		case BC_REQUEST_FREEZE_NOTIFICATION: {
-+			int error = binder_handle_bc_request_freeze_notification(proc, thread,
-+										 &ptr);
-+
-+			if (error)
-+				return error;
-+		} break;
-+
-+		case BC_CLEAR_FREEZE_NOTIFICATION: {
-+			int error = binder_handle_bc_clear_freeze_notification(proc, thread, &ptr);
-+
-+			if (error)
-+				return error;
-+		} break;
-+
-+		case BC_FREEZE_NOTIFICATION_DONE: {
-+			int error = binder_handle_bc_freeze_notification_done(proc, thread, &ptr);
-+
-+			if (error)
-+				return error;
-+		} break;
-+
- 		default:
- 			pr_err("%d:%d unknown command %u\n",
- 			       proc->pid, thread->pid, cmd);
-@@ -4635,6 +4853,50 @@ static int binder_thread_read(struct binder_proc *proc,
- 			if (cmd == BR_DEAD_BINDER)
- 				goto done; /* DEAD_BINDER notifications can cause transactions */
- 		} break;
-+
-+		case BINDER_WORK_FROZEN_BINDER:
-+		case BINDER_WORK_UNFROZEN_BINDER: {
-+			struct binder_ref_freeze *freeze;
-+			struct binder_frozen_state_info info;
-+
-+			freeze = container_of(w, struct binder_ref_freeze, work);
-+			info.is_frozen = w->type == BINDER_WORK_FROZEN_BINDER;
-+			info.cookie = freeze->cookie;
-+			freeze->sent = true;
-+			binder_enqueue_work_ilocked(w, &proc->delivered_freeze);
-+			binder_inner_proc_unlock(proc);
-+
-+			if (put_user(BR_FROZEN_BINDER, (uint32_t __user *)ptr))
-+				return -EFAULT;
-+			ptr += sizeof(uint32_t);
-+			if (put_user(info.cookie,
-+				     (binder_uintptr_t __user *)ptr))
-+				return -EFAULT;
-+			ptr += sizeof(binder_uintptr_t);
-+			if (put_user(info.is_frozen, (uint32_t __user *)ptr))
-+				return -EFAULT;
-+			ptr += sizeof(uint32_t);
-+			binder_stat_br(proc, thread, BR_FROZEN_BINDER);
-+			goto done; /* BR_FROZEN_BINDER notifications can cause transactions */
-+		} break;
-+
-+		case BINDER_WORK_CLEAR_FREEZE_NOTIFICATION: {
-+			struct binder_ref_freeze *freeze =
-+			    container_of(w, struct binder_ref_freeze, work);
-+			binder_uintptr_t cookie = freeze->cookie;
-+
-+			binder_inner_proc_unlock(proc);
-+			kfree(freeze);
-+			binder_stats_deleted(BINDER_STAT_FREEZE);
-+			if (put_user(BR_CLEAR_FREEZE_NOTIFICATION_DONE, (uint32_t __user *)ptr))
-+				return -EFAULT;
-+			ptr += sizeof(uint32_t);
-+			if (put_user(cookie, (binder_uintptr_t __user *)ptr))
-+				return -EFAULT;
-+			ptr += sizeof(binder_uintptr_t);
-+			binder_stat_br(proc, thread, BR_CLEAR_FREEZE_NOTIFICATION_DONE);
-+		} break;
-+
- 		default:
- 			binder_inner_proc_unlock(proc);
- 			pr_err("%d:%d: bad work type %d\n",
-@@ -5242,6 +5504,52 @@ static bool binder_txns_pending_ilocked(struct binder_proc *proc)
- 	return false;
- }
- 
-+static void binder_add_freeze_work(struct binder_proc *proc, bool is_frozen)
-+{
-+	binder_inner_proc_lock(proc);
-+	struct rb_node *n;
-+	struct binder_ref *ref;
-+	enum binder_work_type wtype;
-+
-+	for (n = rb_first(&proc->nodes); n; n = rb_next(n)) {
-+		struct binder_node *node;
-+
-+		node = rb_entry(n, struct binder_node, rb_node);
-+		binder_inner_proc_unlock(proc);
-+		binder_node_lock(node);
-+		hlist_for_each_entry(ref, &node->refs, node_entry) {
-+			/*
-+			 * Need the node lock to synchronize
-+			 * with new notification requests and the
-+			 * inner lock to synchronize with queued
-+			 * freeze notifications.
-+			 */
-+			binder_inner_proc_lock(ref->proc);
-+			if (!ref->freeze) {
-+				binder_inner_proc_unlock(ref->proc);
-+				continue;
-+			}
-+			wtype = is_frozen ? BINDER_WORK_FROZEN_BINDER : BINDER_WORK_UNFROZEN_BINDER;
-+			if (list_empty(&ref->freeze->work.entry)) {
-+				ref->freeze->work.type = wtype;
-+				binder_enqueue_work_ilocked(&ref->freeze->work,
-+							    &ref->proc->todo);
-+				binder_wakeup_proc_ilocked(ref->proc);
-+			} else {
-+				WARN_ON_ONCE(ref->freeze->work.type ==
-+					     BINDER_WORK_CLEAR_FREEZE_NOTIFICATION);
-+				if (ref->freeze->sent && ref->freeze->work.type != wtype)
-+					ref->freeze->resend = true;
-+				ref->freeze->work.type = wtype;
-+			}
-+			binder_inner_proc_unlock(ref->proc);
-+		}
-+		binder_node_unlock(node);
-+		binder_inner_proc_lock(proc);
-+	}
-+	binder_inner_proc_unlock(proc);
-+}
-+
- static int binder_ioctl_freeze(struct binder_freeze_info *info,
- 			       struct binder_proc *target_proc)
- {
-@@ -5253,6 +5561,7 @@ static int binder_ioctl_freeze(struct binder_freeze_info *info,
- 		target_proc->async_recv = false;
- 		target_proc->is_frozen = false;
- 		binder_inner_proc_unlock(target_proc);
-+		binder_add_freeze_work(target_proc, false);
- 		return 0;
- 	}
- 
-@@ -5266,6 +5575,7 @@ static int binder_ioctl_freeze(struct binder_freeze_info *info,
- 	target_proc->async_recv = false;
- 	target_proc->is_frozen = true;
- 	binder_inner_proc_unlock(target_proc);
-+	binder_add_freeze_work(target_proc, true);
- 
- 	if (info->timeout_ms > 0)
- 		ret = wait_event_interruptible_timeout(
-@@ -5658,6 +5968,7 @@ static int binder_open(struct inode *nodp, struct file *filp)
- 	binder_stats_created(BINDER_STAT_PROC);
- 	proc->pid = current->group_leader->pid;
- 	INIT_LIST_HEAD(&proc->delivered_death);
-+	INIT_LIST_HEAD(&proc->delivered_freeze);
- 	INIT_LIST_HEAD(&proc->waiting_threads);
- 	filp->private_data = proc;
- 
-@@ -6209,7 +6520,9 @@ static const char * const binder_return_strings[] = {
- 	"BR_FAILED_REPLY",
- 	"BR_FROZEN_REPLY",
- 	"BR_ONEWAY_SPAM_SUSPECT",
--	"BR_TRANSACTION_PENDING_FROZEN"
-+	"BR_TRANSACTION_PENDING_FROZEN",
-+	"BR_FROZEN_BINDER",
-+	"BR_CLEAR_FREEZE_NOTIFICATION_DONE",
- };
- 
- static const char * const binder_command_strings[] = {
-@@ -6232,6 +6545,9 @@ static const char * const binder_command_strings[] = {
- 	"BC_DEAD_BINDER_DONE",
- 	"BC_TRANSACTION_SG",
- 	"BC_REPLY_SG",
-+	"BC_REQUEST_FREEZE_NOTIFICATION",
-+	"BC_CLEAR_FREEZE_NOTIFICATION",
-+	"BC_FREEZE_NOTIFICATION_DONE",
- };
- 
- static const char * const binder_objstat_strings[] = {
-@@ -6241,7 +6557,8 @@ static const char * const binder_objstat_strings[] = {
- 	"ref",
- 	"death",
- 	"transaction",
--	"transaction_complete"
-+	"transaction_complete",
-+	"freeze",
- };
- 
- static void print_binder_stats(struct seq_file *m, const char *prefix,
-diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
-index 5b7c80b99ae8..02f9c8d9cebc 100644
---- a/drivers/android/binder_internal.h
-+++ b/drivers/android/binder_internal.h
-@@ -129,12 +129,13 @@ enum binder_stat_types {
- 	BINDER_STAT_DEATH,
- 	BINDER_STAT_TRANSACTION,
- 	BINDER_STAT_TRANSACTION_COMPLETE,
-+	BINDER_STAT_FREEZE,
- 	BINDER_STAT_COUNT
- };
- 
- struct binder_stats {
--	atomic_t br[_IOC_NR(BR_TRANSACTION_PENDING_FROZEN) + 1];
--	atomic_t bc[_IOC_NR(BC_REPLY_SG) + 1];
-+	atomic_t br[_IOC_NR(BR_CLEAR_FREEZE_NOTIFICATION_DONE) + 1];
-+	atomic_t bc[_IOC_NR(BC_FREEZE_NOTIFICATION_DONE) + 1];
- 	atomic_t obj_created[BINDER_STAT_COUNT];
- 	atomic_t obj_deleted[BINDER_STAT_COUNT];
- };
-@@ -159,6 +160,9 @@ struct binder_work {
- 		BINDER_WORK_DEAD_BINDER,
- 		BINDER_WORK_DEAD_BINDER_AND_CLEAR,
- 		BINDER_WORK_CLEAR_DEATH_NOTIFICATION,
-+		BINDER_WORK_FROZEN_BINDER,
-+		BINDER_WORK_UNFROZEN_BINDER,
-+		BINDER_WORK_CLEAR_FREEZE_NOTIFICATION,
- 	} type;
- };
- 
-@@ -275,6 +279,13 @@ struct binder_ref_death {
- 	binder_uintptr_t cookie;
- };
- 
-+struct binder_ref_freeze {
-+	struct binder_work work;
-+	binder_uintptr_t cookie;
-+	bool sent;
-+	bool resend;
-+};
-+
- /**
-  * struct binder_ref_data - binder_ref counts and id
-  * @debug_id:        unique ID for the ref
-@@ -307,6 +318,8 @@ struct binder_ref_data {
-  *               @node indicates the node must be freed
-  * @death:       pointer to death notification (ref_death) if requested
-  *               (protected by @node->lock)
-+ * @freeze:      pointer to freeze notification (ref_freeze) if requested
-+ *               (protected by @node->lock)
-  *
-  * Structure to track references from procA to target node (on procB). This
-  * structure is unsafe to access without holding @proc->outer_lock.
-@@ -323,6 +336,7 @@ struct binder_ref {
- 	struct binder_proc *proc;
- 	struct binder_node *node;
- 	struct binder_ref_death *death;
-+	struct binder_ref_freeze *freeze;
- };
- 
- /**
-@@ -374,6 +388,8 @@ struct binder_ref {
-  *                        (atomics, no lock needed)
-  * @delivered_death:      list of delivered death notification
-  *                        (protected by @inner_lock)
-+ * @delivered_freeze:     list of delivered freeze notification
-+ *                        (protected by @inner_lock)
-  * @max_threads:          cap on number of binder threads
-  *                        (protected by @inner_lock)
-  * @requested_threads:    number of binder threads requested but not
-@@ -421,6 +437,7 @@ struct binder_proc {
- 	struct list_head todo;
- 	struct binder_stats stats;
- 	struct list_head delivered_death;
-+	struct list_head delivered_freeze;
- 	u32 max_threads;
- 	int requested_threads;
- 	int requested_threads_started;
-diff --git a/include/uapi/linux/android/binder.h b/include/uapi/linux/android/binder.h
-index d44a8118b2ed..140c39fb209d 100644
---- a/include/uapi/linux/android/binder.h
-+++ b/include/uapi/linux/android/binder.h
-@@ -236,6 +236,11 @@ struct binder_frozen_status_info {
- 	__u32            async_recv;
- };
- 
-+struct binder_frozen_state_info {
-+	binder_uintptr_t cookie;
-+	__u32            is_frozen;
-+};
-+
- /* struct binder_extened_error - extended error information
-  * @id:		identifier for the failed operation
-  * @command:	command as defined by binder_driver_return_protocol
-@@ -467,6 +472,16 @@ enum binder_driver_return_protocol {
- 	/*
- 	 * The target of the last async transaction is frozen.  No parameters.
- 	 */
-+
-+	BR_FROZEN_BINDER = _IOR('r', 21, struct binder_frozen_state_info),
-+	/*
-+	 * void *: cookie
-+	 */
-+
-+	BR_CLEAR_FREEZE_NOTIFICATION_DONE = _IOR('r', 22, binder_uintptr_t),
-+	/*
-+	 * void *: cookie
-+	 */
- };
- 
- enum binder_driver_command_protocol {
-@@ -550,6 +565,25 @@ enum binder_driver_command_protocol {
- 	/*
- 	 * binder_transaction_data_sg: the sent command.
- 	 */
-+
-+	BC_REQUEST_FREEZE_NOTIFICATION =
-+			_IOW('c', 19, struct binder_handle_cookie),
-+	/*
-+	 * int: handle
-+	 * void *: cookie
-+	 */
-+
-+	BC_CLEAR_FREEZE_NOTIFICATION = _IOW('c', 20,
-+					    struct binder_handle_cookie),
-+	/*
-+	 * int: handle
-+	 * void *: cookie
-+	 */
-+
-+	BC_FREEZE_NOTIFICATION_DONE = _IOW('c', 21, binder_uintptr_t),
-+	/*
-+	 * void *: cookie
-+	 */
- };
- 
- #endif /* _UAPI_LINUX_BINDER_H */
--- 
-2.45.2.627.g7a2c4fd464-goog
-
+T24gVHVlLCAyMDI0LTA2LTE4IGF0IDA3OjQ5IC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
+b3RlOg0KPiBPbiBUdWUsIEp1biAxOCwgMjAyNCwgS2FpIEh1YW5nIHdyb3RlOg0KPiA+IE9uIDE1
+LzA2LzIwMjQgMTI6MDQgcG0sIFNlYW4gQ2hyaXN0b3BoZXJzb24gd3JvdGU6DQo+ID4gPiBPbiBG
+cmksIEp1biAxNCwgMjAyNCwgS2FpIEh1YW5nIHdyb3RlOg0KPiA+ID4gPiA+IC0gVGhlICJtYXhf
+dmNwdXNfcGVyX3RkIiBjYW4gYmUgZGlmZmVyZW50IGRlcGVuZGluZyBvbiBtb2R1bGUgdmVyc2lv
+bnMuIEluDQo+ID4gPiA+ID4gcHJhY3RpY2UgaXQgcmVmbGVjdHMgdGhlIG1heGltdW0gcGh5c2lj
+YWwgbG9naWNhbCBjcHVzIHRoYXQgYWxsIHRoZQ0KPiA+ID4gPiA+IHBsYXRmb3JtcyAodGhhdCB0
+aGUgbW9kdWxlIHN1cHBvcnRzKSBjYW4gcG9zc2libHkgaGF2ZS4NCj4gPiA+IA0KPiA+ID4gSXQn
+cyBhIHJlYXNvbmFibGUgcmVzdHJpY3Rpb24sIGUuZy4gS1ZNX0NBUF9OUl9WQ1BVUyBpcyBhbHJl
+YWR5IGNhcHBlZCBhdCBudW1iZXINCj4gPiA+IG9mIG9ubGluZSBDUFVzLCBhbHRob3VnaCB1c2Vy
+c3BhY2UgaXMgb2J2aW91c2x5IGFsbG93ZWQgdG8gY3JlYXRlIG92ZXJzdWJzY3JpYmVkDQo+ID4g
+PiBWTXMuDQo+ID4gPiANCj4gPiA+IEkgdGhpbmsgdGhlIHNhbmUgdGhpbmcgdG8gZG8gaXMgZG9j
+dW1lbnQgdGhhdCBURFggVk1zIGFyZSByZXN0cmljdGVkIHRvIHRoZSBudW1iZXINCj4gPiA+IG9m
+IGxvZ2ljYWwgQ1BVcyBpbiB0aGUgc3lzdGVtLCBoYXZlIEtWTV9DQVBfTUFYX1ZDUFVTIGVudW1l
+cmF0ZSBleGFjdGx5IHRoYXQsIGFuZA0KPiA+ID4gdGhlbiBzYW5pdHkgY2hlY2sgdGhhdCBtYXhf
+dmNwdXNfcGVyX3RkIGlzIGdyZWF0ZXIgdGhhbiBvciBlcXVhbCB0byB3aGF0IEtWTQ0KPiA+ID4g
+cmVwb3J0cyBmb3IgS1ZNX0NBUF9NQVhfVkNQVVMuID4NCj4gPiA+IFN0YXRpbmcgdGhhdCB0aGUg
+bWF4aW11bSBudW1iZXIgb2YgdkNQVXMgZGVwZW5kcyBvbiB0aGUgd2hpbXMgVERYIG1vZHVsZSBk
+b2Vzbid0DQo+ID4gPiBwcm92aWRlIGEgcHJlZGljdGFibGUgQUJJIGZvciBLVk0sIGkuZS4gSSBk
+b24ndCB3YW50IHRvIHNpbXBseSBmb3J3YXJkIFREWCdzDQo+ID4gPiBtYXhfdmNwdXNfcGVyX3Rk
+IHRvIHVzZXJzcGFjZS4NCj4gPiANCj4gPiBUaGlzIHNvdW5kcyBnb29kIHRvIG1lLiAgSSB0aGlu
+ayBpdCBzaG91bGQgYmUgYWxzbyBPSyBmb3IgY2xpZW50IHRvbywgaWYgVERYDQo+ID4gZXZlciBn
+ZXRzIHN1cHBvcnRlZCBmb3IgY2xpZW50Lg0KPiA+IA0KPiA+IElJVUMgd2UgY2FuIGNvbnN1bHQg
+dGhlIEBucl9jcHVfaWRzIG9yIG51bV9wb3NzaWJsZV9jcHVzKCkgdG8gZ2V0IHRoZQ0KPiA+ICJu
+dW1iZXIgb2YgbG9naWNhbCBDUFVzIGluIHRoZSBzeXN0ZW0iLiAgQW5kIHdlIGNhbiByZWplY3Qg
+dG8gdXNlIHRoZSBURFgNCj4gPiBtb2R1bGUgaWYgJ21heF92Y3B1c19wZXJfdGQnIHR1cm5zIHRv
+IGJlIHNtYWxsZXIuDQo+IA0KPiBJIGFzc3VtZSBURFggaXMgaW5jb21wYXRpYmxlIHdpdGggYWN0
+dWFsIHBoeXNpY2FsIENQVSBob3RwbHVnPyDCoA0KPiANCg0KQ29ycmVjdC4NCg0KPiBJZiBzbywg
+d2UgY2FuIGFuZA0KPiBzaG91bGQgdXNlIG51bV9wcmVzZW50X2NwdXMoKS4gwqANCj4gDQoNCk9u
+IFREWCBwbGF0Zm9ybSBudW1fcHJlc2VudF9jcHVzKCkgYW5kIG51bV9wb3NzaWJsZV9jcHVzKCkg
+c2hvdWxkIGJlIGp1c3QNCmlkZW50aWNhbCwgYmVjYXVzZSBURFggcmVxdWlyZXMgQklPUyB0byBt
+YXJrIGFsbCBhbGwgcGh5c2ljYWwgTFBzIHRoZQ0KcGxhdGZvcm0gYXMgZW5hYmxlZCwgYW5kIFRE
+WCBkb2Vzbid0IHN1cHBvcnQgcGh5c2ljYWwgQ1BVIGhvdHBsdWcuDQoNClVzaW5nIG51bV9wcmVz
+ZW50X2NwdXMoKSB3L28gaG9sZGluZyBDUFUgaG90cGx1ZyBsb2NrIGlzIGEgbGl0dGxlIGJpdA0K
+YW5ub3lpbmcgZnJvbSBjb2RlJ3MgcGVyc3BlY3RpdmUsIGJ1dCBpdCdzIE9LIHRvIG1lLiAgV2Ug
+Y2FuIGFkZCBhIGNvbW1lbnQNCnNheWluZyBURFggZG9lc24ndCBzdXBwb3J0IHBoeXNpY2FsIENQ
+VSBob3RwbHVnLg0KDQo+IElmICBsb2FkaW5nIHRoZSBURFggbW9kdWxlIGNvbXBsZXRlbHkgZGlz
+YWJsZXMNCj4gb25saW5pbmcgQ1BVcywgdGhlbiB3ZSBjYW4gdXNlIG51bV9vbmxpbmVfY3B1cygp
+Lg0KPiANCj4gPiBJIHRoaW5rIHRoZSByZWxldmFudCBxdWVzdGlvbiBpcyBpcyB3aGV0aGVyIHdl
+IHNob3VsZCBzdGlsbCByZXBvcnQgIm51bWJlcg0KPiA+IG9mIGxvZ2ljYWwgQ1BVcyBpbiB0aGUg
+c3lzdGVtIiB2aWEgS1ZNX0NBUF9NQVhfVkNQVVM/ICBCZWNhdXNlIGlmIGRvaW5nIHNvLA0KPiA+
+IHRoaXMgc3RpbGwgbWVhbnMgdGhlIHVzZXJzcGFjZSB3aWxsIG5lZWQgdG8gY2hlY2sgS1ZNX0NB
+UF9NQVhfVkNQVVMgdm0NCj4gPiBleHRlbnRpb24gb24gcGVyLXZtIGJhc2lzLg0KPiANCj4gWWVz
+Lg0KPiANCj4gPiBBbmQgaWYgaXQgZG9lcywgdGhlbiBmcm9tIHVzZXJzcGFjZSdzIHBlcnNwZWN0
+aXZlLCBpdCBhY3R1YWxseSBkb2Vzbid0DQo+ID4gbWF0dGVyIHdoZXRoZXIgdW5kZXJuZWF0aCB0
+aGUgcGVyLXZtIEtWTV9DQVBfTUFYX1ZDUFVTIGlzIGxpbWl0ZWQgYnkgVERYIG9yDQo+ID4gdGhl
+IHN5c3RlbSBjcHVzIChhbHNvIHNlZSBiZWxvdykuDQo+IA0KPiBJdCBtYXR0ZXJzIGJlY2F1c2Ug
+SSBkb24ndCB3YW50IEtWTSdzIEFCSSB0byBiZSB0aWVkIHRvIHRoZSB3aGltcyBvZiB0aGUgVERY
+IG1vZHVsZS4NCj4gVG9kYXksIHRoZXJlJ3Mgbm8gbGltaXRhdGlvbnMgb24gdGhlIG1heCBudW1i
+ZXIgb2YgdkNQVXMuICBUb21vcnJvdywgaXQncyBsaW1pdGVkDQo+IGJ5IHRoZSBudW1iZXIgb2Yg
+cENQVXMuICBUaHJlZSBkYXlzIGZyb20gbm93LCBJIGRvbid0IHdhbnQgdG8gZmluZCBvdXQgdGhh
+dCB0aGUNCj4gVERYIG1vZHVsZSBpcyBsaW1pdGluZyB0aGUgbnVtYmVyIG9mIHZDUFVzIGJhc2Vk
+IG9uIHNvbWUgb3RoZXIgbmV3IGNyaXRlcmlhLg0KDQpZZWFoIHVuZGVyc3Rvb2QuDQoNCj4gDQo+
+ID4gVGhlIHVzZXJzcGFjZSBjYW5ub3QgdGVsbCB0aGUgZGlmZmVyZW5jZSBhbnl3YXkuICBJdCBq
+dXN0IG5lZWRzIHRvIGNoYW5nZSB0bw0KPiA+IHF1ZXJ5IEtWTV9DQVBfTUFYX1ZDUFVTIHRvIHBl
+ci12bSBiYXNpcy4NCj4gPiANCj4gPiBPciwgd2UgY291bGQgbGltaXQgdGhpcyB0byBURFggZ3Vl
+c3QgT05MWToNCj4gPiANCj4gPiBUaGUgS1ZNX0NBUF9NQVhfVkNQVVMgaXMgc3RpbGwgZ2xvYmFs
+LiAgSG93ZXZlciBmb3IgVERYIHNwZWNpZmljYWxseSwgdGhlDQo+ID4gdXNlcnNwYWNlIHNob3Vs
+ZCB1c2Ugb3RoZXIgd2F5IHRvIHF1ZXJ5IHRoZSBudW1iZXIgb2YgTFBzIHRoZSBzeXN0ZW0NCj4g
+PiBzdXBwb3J0cyAoSSBhc3N1bWUgdGhlcmUgc2hvdWxkIGJlIGV4aXN0aW5nIEFCSSBmb3IgdGhp
+cz8pLg0KPiA+IA0KPiA+IEJ1dCBsb29rcyB0aGlzIGlzbid0IHNvbWV0aGluZyBuaWNlPw0KPiAN
+Cj4gV2hhdCdzIHdyb25nIHdpdGggcXVlcnlpbmcgS1ZNX0NBUF9NQVhfVkNQVVMgb24gdGhlIFZN
+IGZpbGUgZGVzY3JpcHRvcj8NCg0KTm90aGluZyB3cm9uZy4NCg0KSSBqdXN0IHdhbnRlZCB0byBw
+b2ludCBvdXQgaWYgd2UgcmVxdWlyZSB1c2Vyc3BhY2UgdG8gZG8gc28sIGZyb20NCnVzZXJzcGFj
+ZSdzIHBlcnNwZWN0aXZlIGl0IGNhbm5vdCB0ZWxsIGhvdyB0aGUgbnVtYmVyIGlzIGxpbWl0ZWQN
+CnVuZGVybmVhdGggYnkgS1ZNLg0KDQpXaWxsIGdvIHdpdGggdGhpcyByb3V0ZS4gIFRoYW5rcyEN
+Cg0K
 
