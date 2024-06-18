@@ -1,134 +1,204 @@
-Return-Path: <linux-kernel+bounces-219168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EF590CACC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:00:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCD790CAD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 14:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8C7290C5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 730B2291837
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 12:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF5113A864;
-	Tue, 18 Jun 2024 11:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D29A13D281;
+	Tue, 18 Jun 2024 11:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IwPsPiIp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m6+qWmnw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445B3137905
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D244613D513
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 11:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718711469; cv=none; b=XIqzQFY++W4UMxxNEJfTdgoRLLjqophUKO6ATuVo1UOEW9/81BP8JinQNR52P3F9+mQ9XOup59FQX/4oZiSBjwrzdTp4GdWqfjd8/4rJM0SulNP/56rhQkXgnssULXSX+bpxlVOLCTxQU9qCfK0BpYWirz/IOKvg9KFx3DMX9/Q=
+	t=1718711535; cv=none; b=SQBGnMkdPE02ru1HKXpm5A1eAUwTytbdIqdGlPtU7/9uVEvJTdfkBQCZB1deAFRQgjpkq53wSlTH/8HOtIoK6QNXq3wQMr0eUVlbafllx7YLTu2tHZNC5XLW08Qz5DciZkcWeaMlCso0zJuJZuS5FXCedt8oqga+S4uBxW/7QZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718711469; c=relaxed/simple;
-	bh=0OCU1F5p+RZ18ExkVkZmiDL8HQ0Vl08o3pAP2J0zteo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oTkHrxmRKIVO/3UavogpP5oBpDVXc1NAK7d46psRL5cnxu8GJBgvvEwPykgEuUSn+uTjyrWoZGity4cP2C1CzOAyFrpz9JUxvqE3bVC2Vs3DB7VPifW7KBnApgFJe3gZhaHLyoOLcMYLtShUXmcKGjnfxZfK8DTsDgq/dy/7VXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IwPsPiIp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718711467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KbEwByzdZ2FR46495vyGSwk/Ycglqttws2hwnHDj1Xw=;
-	b=IwPsPiIpeWSiskwiJFV+vKtg26cmt3IwaFOGSuG8/dJgGqwV81/5JaAlrh0Z1ek6khXgVO
-	kg0PNc/IFG2XiNxTKw91IXBlMkmNqeBjyIk9F7RGy1wKpN39er5W6cRAsWWuvmlKryKmLg
-	TmVq7jA2ksOOnG9I39Y6b+4K0ulSB9M=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-jRgKipW8Mxu-BMiVbdwb2g-1; Tue,
- 18 Jun 2024 07:51:04 -0400
-X-MC-Unique: jRgKipW8Mxu-BMiVbdwb2g-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D03FA19560A7;
-	Tue, 18 Jun 2024 11:51:02 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.152])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 98AFD19560B2;
-	Tue, 18 Jun 2024 11:50:58 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: jtornosm@redhat.com,
-	stable@vger.kernel.org
-Subject: [PATCH v2] net: usb: ax88179_178a: improve link status logs
-Date: Tue, 18 Jun 2024 13:50:40 +0200
-Message-ID: <20240618115054.101577-1-jtornosm@redhat.com>
+	s=arc-20240116; t=1718711535; c=relaxed/simple;
+	bh=OVuqINv5gFU6pixnH7ubEbf3PqOhtwcecn63nS9HWTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKQ4aWdOXKzHrXhf+K3uZfyqAxVX6CIrPZOpWt154P+Sbc+iuYNfvdsUUNddZLkRkVAcVSVL7yFbe1tHcamg61bFrMTol8sggAA5EwBHr4QUMHt9+nJWuJeD9OpTHGvZRWoekH4JkpwwatsAm4uF9UIRx2sXkVysQMGyKADljsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m6+qWmnw; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718711533; x=1750247533;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OVuqINv5gFU6pixnH7ubEbf3PqOhtwcecn63nS9HWTs=;
+  b=m6+qWmnwSGlcMn33CU0489jeK4yYq4PQNA/YD0VF97AsQ2py3m2pM2MM
+   iprL4XCiLmAyqYeC58PSOw3OHpkfgFwIEGVTEXZZOEf4k+1aC/Ra53KwV
+   ntml+IX4r+rSKWTm3Ad5cQvvITxZezFmj1cjQ6XI7N+eQAV45I8lGZCQP
+   Wm0X8/EETwAvCKDq5xy3YfztpGOskmDaavEpKC/wuKaFtvUuJWYD52nae
+   n3wC9AFZMgHsOPR/2sbmkLZpzuIUG9Ffxy6nr8lFQpnabfdxY7D0gJZHz
+   vn0rKlUDSqPekTamvGGWf4liu0khXQVEwPT6MfhuBbLPgKf/BjQyeVGL2
+   w==;
+X-CSE-ConnectionGUID: EHOpg9+FRZWi/EC9lrRkxQ==
+X-CSE-MsgGUID: m5khjJLWS0O49EgoV88NNQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="19444379"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="19444379"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 04:52:13 -0700
+X-CSE-ConnectionGUID: vn6w0t7mT4CHxUN3tBVGtg==
+X-CSE-MsgGUID: MGWREoeOR+GYUIuWVs+2Rw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="41624185"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 04:52:11 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 7690111F7E1;
+	Tue, 18 Jun 2024 14:52:08 +0300 (EEST)
+Date: Tue, 18 Jun 2024 11:52:08 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH 1/1] container_of: Document container_of_const() is
+ preferred
+Message-ID: <ZnF06GjogseJut9q@kekkonen.localdomain>
+References: <20240617100825.2510728-1-sakari.ailus@linux.intel.com>
+ <2024061702-vexingly-hypocrisy-d93d@gregkh>
+ <ZnFOrziVMDwtu1NA@kekkonen.localdomain>
+ <2024061827-revival-handwrite-5eb0@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024061827-revival-handwrite-5eb0@gregkh>
 
-Avoid spurious link status logs that may ultimately be wrong; for example,
-if the link is set to down with the cable plugged, then the cable is
-unplugged and after this the link is set to up, the last new log that is
-appearing is incorrectly telling that the link is up.
+Hi Greg,
 
-In order to avoid errors, show link status logs after link_reset
-processing, and in order to avoid spurious as much as possible, only show
-the link loss when some link status change is detected.
+On Tue, Jun 18, 2024 at 12:01:30PM +0200, Greg Kroah-Hartman wrote:
+> On Tue, Jun 18, 2024 at 09:09:03AM +0000, Sakari Ailus wrote:
+> > Hi Greg,
+> > 
+> > On Mon, Jun 17, 2024 at 12:44:55PM +0200, Greg Kroah-Hartman wrote:
+> > > On Mon, Jun 17, 2024 at 01:08:25PM +0300, Sakari Ailus wrote:
+> > > > There is a warning in kerneldoc documentation of container_of() that
+> > > > constness of @ptr is lost. While this is a suggestion container_of_const()
+> > > > should be used instead, the vast majority of new code still uses
+> > > > container_of():
+> > > > 
+> > > > $ git diff v6.8 v6.9|grep container_of\(|wc -l
+> > > > 788
+> > > > $ git diff v6.8 v6.9|grep container_of_const|wc -l
+> > > > 11
+> > > 
+> > > That is because container_of_const is new, and you don't normally go
+> > > back and change things unless you have to.  Which is what I am starting
+> > > to do for some cases now in the driver core interactions, but generally
+> > > it's rare to need this.
+> > 
+> > container_of_const() does provide a useful a useful sanity check and I
+> > think we should encourage people to use it. I'm happy to see many macros
+> > under include/ use container_of_const() already, but there seem to be more
+> > than 1000 cases where the constness qualifier of a pointer is just
+> > discarded just in the scope that got compiled with my current .config (not
+> > allyesconfig). While the vast majority are probably benign, I wouldn't be
+> > certain there aren't cases where the container of a const pointer ends up
+> > being modified.
+> > 
+> > > 
+> > > Also note that container_of_const does not work in an inline function,
+> > > which is another reason people might not want to use it.
+> > 
+> > Does not work or is less useful (compared to a macro)? _Generic() would
+> > need to be used if you'd like to have const and non-const variants of an
+> > inline function but I guess in most cases macros are just fine.
+> 
+> I could not figure out a way to make this an inline function at all.
+> Try it yourself and see, maybe I was wrong.
 
-cc: stable@vger.kernel.org
-Fixes: e2ca90c276e1 ("ax88179_178a: ASIX AX88179_178A USB 3.0/2.0 to gigabit ethernet adapter driver")
-Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
----
-v2:
-  - Fix the nits
-v1: https://lore.kernel.org/netdev/20240617103405.654567-1-jtornosm@redhat.com/
+I didn't have any issues (apart from me misspelling function names ;)) with
+GCC 12, neither in using container_of_const() in a static inline function
+nor in using a static inline function as a _Generic() expression.
 
- drivers/net/usb/ax88179_178a.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+If other compilers have issues we can update the documentation I guess? Or
+only make the check on compilers that properly support it? Or in the best
+case, fix those compilers. This does tend to take a long time though.
 
-diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
-index c2fb736f78b2..d90ceab282ff 100644
---- a/drivers/net/usb/ax88179_178a.c
-+++ b/drivers/net/usb/ax88179_178a.c
-@@ -326,7 +326,9 @@ static void ax88179_status(struct usbnet *dev, struct urb *urb)
- 
- 	if (netif_carrier_ok(dev->net) != link) {
- 		usbnet_link_change(dev, link, 1);
--		netdev_info(dev->net, "ax88179 - Link status is: %d\n", link);
-+		if (!link)
-+			netdev_info(dev->net, "ax88179 - Link status is: %d\n",
-+				    link);
- 	}
- }
- 
-@@ -1542,6 +1544,7 @@ static int ax88179_link_reset(struct usbnet *dev)
- 			 GMII_PHY_PHYSR, 2, &tmp16);
- 
- 	if (!(tmp16 & GMII_PHY_PHYSR_LINK)) {
-+		netdev_info(dev->net, "ax88179 - Link status is: 0\n");
- 		return 0;
- 	} else if (GMII_PHY_PHYSR_GIGA == (tmp16 & GMII_PHY_PHYSR_SMASK)) {
- 		mode |= AX_MEDIUM_GIGAMODE | AX_MEDIUM_EN_125MHZ;
-@@ -1579,6 +1582,8 @@ static int ax88179_link_reset(struct usbnet *dev)
- 
- 	netif_carrier_on(dev->net);
- 
-+	netdev_info(dev->net, "ax88179 - Link status is: 1\n");
-+
- 	return 0;
- }
- 
+> 
+> > > > Make an explicit recommendation to use container_of_const(), unless @ptr
+> > > > is const but its container isn't.
+> > > > 
+> > > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > > ---
+> > > >  include/linux/container_of.h | 4 +++-
+> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/include/linux/container_of.h b/include/linux/container_of.h
+> > > > index 713890c867be..7563015ff165 100644
+> > > > --- a/include/linux/container_of.h
+> > > > +++ b/include/linux/container_of.h
+> > > > @@ -13,7 +13,9 @@
+> > > >   * @type:	the type of the container struct this is embedded in.
+> > > >   * @member:	the name of the member within the struct.
+> > > >   *
+> > > > - * WARNING: any const qualifier of @ptr is lost.
+> > > > + * WARNING: any const qualifier of @ptr is lost. container_of() should only be
+> > > > + * used in cases where @ptr is const and its container is not and you know what
+> > > > + * you're doing. Otherwise always use container_of_const().
+> > > 
+> > > I know of no cases where a @ptr would be const yet the container would
+> > > not be, do you?  So why say that here?  That implies that it is a valid
+> > > thing to actually do.
+> > > 
+> > > I don't understand the goal here, do you want to just not have new
+> > > usages use container_of() at all?  Or are you trying to warn people of a
+> > > common problem that they make?  Having a const @ptr is not normal in the
+> > > kernel, so this should be ok.  If not, send patches to fix up those
+> > > users please.
+> > 
+> > My immediate goal is to encourage people to use container_of_const() for
+> > the added sanity check and stop adding technical debt (code that ignores
+> > const qualifier). Currently people also do think they should be using
+> > container_of() instead of container_of_const() because the pointer they
+> > have is not const (at the time of writing the code at least).
+> 
+> That's fine, so for new things, use container_of_const(), but generally
+> the need for a const is quite rare, outside of the driver core
+> interactions.
+
+Right, but I'm also looking to avoid drivers doing this inadvertly. Those
+instances are just as much a blocker for turning container_of() const-aware
+as anything else.
+
+> 
+> > Eventually (or hopefully?) adding that sanity check for container_of() may
+> > be possible so we'd again have just one macro for the job.
+> 
+> That would be nice, try doing that and see what blows up.
+
+Currently a lot of things but it can be done gradually, one instance at a
+time.
+
+How changing the container_of() documentation to this:
+
+ * WARNING: any const qualifier of @ptr is lost. Use container_of_const()
+ * instead.
+
 -- 
-2.45.1
+Kind regards,
 
+Sakari Ailus
 
