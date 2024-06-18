@@ -1,163 +1,302 @@
-Return-Path: <linux-kernel+bounces-220056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8A290DC1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:00:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C58C90DC22
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 21:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9AF3B22A84
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C211F23934
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 19:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F066715EFAB;
-	Tue, 18 Jun 2024 19:00:38 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA7815ECEF;
+	Tue, 18 Jun 2024 19:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FT4+enOO"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33B11BF50;
-	Tue, 18 Jun 2024 19:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECA71BF50
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718737238; cv=none; b=DqZ1jiNJIGpskrFgpiV8hFMgm2Ck9W6VQ61KDCGPbqlm+RSSuXH2YAWStoNFRN5Rsqab1y8MwbeO7ZndfVIGOIcExQtwFUXf79JXQisiJX9jIprVTqUHQS61b2JdmDAJxcFKYmcQM9FD+2RM6ldCFVse4OGeCX3IigbbHW66gU4=
+	t=1718737348; cv=none; b=LTfQ+4cRiPCfcFxErlHefRfp2XQYijOqDjuUsqjsTaQQpMh5rFl1MRlQFOy2okDDAEydQOZpWeMSapYlxg2aj4Vo9d3iznSZHmZhpoPaVHz1ifFZHZELyk2JFR+36g7cFJPQ5Cn254Zrvjg5cSOindWz9f+gijXFbX41ITW1LIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718737238; c=relaxed/simple;
-	bh=IwZ1eDfPuNfNDnk7397cPUG780kB1kbLU2g4cnIjPYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=auhao0prb2/KIJfUzlMfzw8aCLlFY8QnMkRyae7EQ4mmevHf4GW1FL0bfPqx7F21aEfHQdjB+KcRJW4BVh04zSV5gSEBUs2Rjl0KtoV3m0BDYDNG/eNQwIe1taQkchuZWpjhZ3tp2eSkyybJC1vPaNYVmlf3fpLWmaGJmLHqX9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af4b2.dynamic.kabel-deutschland.de [95.90.244.178])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 2AE2961E5FE01;
-	Tue, 18 Jun 2024 20:59:46 +0200 (CEST)
-Message-ID: <0f18ac68-97b5-4834-987c-6d86ebb49e94@molgen.mpg.de>
-Date: Tue, 18 Jun 2024 20:59:45 +0200
+	s=arc-20240116; t=1718737348; c=relaxed/simple;
+	bh=nYLha8GoaJPDwoJqKl6MxbvnkYxW0rC2ygtht8ouAdA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QMF/xvh087fjf67nUiIYeSvnqVVO4N+1yY3CjyMoXo7/txoX+A8sC1OCa+VTZJqD+oRIQF8eLJBlZ0qwJYRDCh3XfNyh/jM/tyFTgd7eEDNJiG+6/rYlCdwCCwtslwZcXnKSzUV9c0pHuILJBvOtL9/AgOe9uux/XfY3nIXTGbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FT4+enOO; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-423b89f9042so15245e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 12:02:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718737344; x=1719342144; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PGIhDvq8kB7AmaPBxDv6tkZzPu/qHBt/iZT9hxhjvmY=;
+        b=FT4+enOOlLVZVTOdNLUY4p92eu62lMG00Fb68I6D72+XX4vXozhRY+PBUfq5p7kbkK
+         59p3S2MHpkYLJWULEHdCKOL5zf/1//Wgr/36J92GH0fW8MsKgXg7/5BLWq1UOdeaRQ7Q
+         tSaNO7EVfYOCpqlrTNsXRqlo2Sjm+fSvXWqpbMFcqSWvuBigd8PBANKUvtORJT7O2GZR
+         kEnbL5tX4oKYg+uve+Vm6hptzGYyGEI/+3ArwzN7NaEfVK1d0Vi2pz085aspLwTkAxUA
+         oLosuqQ3RDiHdVXjt17xnBHH+x0ZTxCCXNfWn6l3sGE2ln173AMz8RFVYpy5YtKUBjSb
+         VWpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718737344; x=1719342144;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PGIhDvq8kB7AmaPBxDv6tkZzPu/qHBt/iZT9hxhjvmY=;
+        b=cbNaWBtl4JdNn1NKDDdV12lGeybOZbl5tX5/UtvXAGywSCHGEpQiAQlI6Nr0LWRAfG
+         62J9gDFNTpY21X53D6MB56lV6Pfdnd/7SHmojQm4x/eeXWyb9/Tzvx8gutqfXmLXJd5S
+         Gvau/Ll/QLmTdbw7C4S8e0G4QD+uOJ7+pJVGAt2bFo4Z0S/HlgV1LUjZ8oeqonHPUCJk
+         WWqdtrP9svNLHByP9Q5cwvdz9rcWnhxTueKJlbepEUA8qGGR4EBTe14dgJuZvbhQLnJs
+         sfZ5PySOzji0nnXaOe6OsPnmmpn1A7keVZtyjFkqya/LXK8amQG1h/f4Ns4/OlJwPYh2
+         v20g==
+X-Forwarded-Encrypted: i=1; AJvYcCUIfH7J5+FRanWesbUtdh4Fg20ZB0WVJ+AAKyRZqRzX421J4fZ920HGvjkUI08vGWAwq/QiAWb4ynxPWQqoz3mJxSP25qsKKHAhRkCt
+X-Gm-Message-State: AOJu0YxNVXDnJ8Nbwo09WxVvDahrsOvlri/KhSg2R5sueErByTu0GgXm
+	klBLLtyBu4CYQIVlsY3LpImK5xAf5mMgz2HyR1wMuefoD1xVqWnFVWcsfig2meuHjfa/DDWkHAQ
+	eCjMBIHiU4T/zRaa5jnTsuPrtVb7p5iHu2z4=
+X-Google-Smtp-Source: AGHT+IG0XlQwigLCdKAbnnojc3uYhNT6rEnNcv+YyyHL1+QHoXphkGVEnZp8Wmv4Z5sctICHhbU9NnFCLeJGlF9jkr0=
+X-Received: by 2002:a05:600c:1e18:b0:423:646:4f85 with SMTP id
+ 5b1f17b1804b1-42475d2b133mr192305e9.3.1718737344243; Tue, 18 Jun 2024
+ 12:02:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Armin Wolf <W_Armin@gmx.de>, Stephen Horvath <s.horvath@outlook.com.au>
-References: <20240604040237.1064024-1-linux@roeck-us.net>
- <20240604040237.1064024-6-linux@roeck-us.net>
- <a5aa120d-8497-4ca8-9752-7d800240b999@molgen.mpg.de>
- <efb77b37-30e5-48a8-b4af-eb9995a2882b@roeck-us.net>
- <33f369c1-1098-458e-9398-30037bd8c5aa@molgen.mpg.de>
- <4e09b843-3d2d-46d7-a8e1-2eabc4382dc7@roeck-us.net>
- <f20ea816-5165-401e-948f-6e77682a2d1b@molgen.mpg.de>
- <975af7e5-b1b0-400e-a1c3-6d9140421f25@roeck-us.net>
- <8719fc64-2b51-4b79-ba52-0a3b9216f2db@molgen.mpg.de>
- <f76a4d07-887b-4efb-b20e-52979db31216@roeck-us.net>
- <fd8868ef-6179-45a7-8249-ee17994a8e78@molgen.mpg.de>
- <dc73070a-d266-47ca-bb11-77c2d9d6dece@roeck-us.net>
- <5b9379f4-5ccd-402c-8502-8895acc0cdb8@molgen.mpg.de>
- <b2fe83e6-8ebc-42f7-ba14-fbc1806a90f9@roeck-us.net>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <b2fe83e6-8ebc-42f7-ba14-fbc1806a90f9@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240613015837.4132703-1-jstultz@google.com> <20240613100441.GC17707@noisy.programming.kicks-ass.net>
+ <20240613115142.kxrmlf3btmwjcprg@airbuntu> <20240614094833.GM8774@noisy.programming.kicks-ass.net>
+ <CANDhNCqcbCJNSyrKG5b7vyjmuHUm0kAJmDecqHF-QRZ_EHq=Zw@mail.gmail.com>
+ <20240618081236.GB31592@noisy.programming.kicks-ass.net> <20240618175939.GA439156@cmpxchg.org>
+In-Reply-To: <20240618175939.GA439156@cmpxchg.org>
+From: John Stultz <jstultz@google.com>
+Date: Tue, 18 Jun 2024 12:02:11 -0700
+Message-ID: <CANDhNCpaawHsY6oQd24ok86Cbno9RyBSmJhin50rV8nhGkhpxg@mail.gmail.com>
+Subject: Re: [PATCH] RFC: sched: Rework task_sched_runtime to avoid calling update_rq_clock
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Qais Yousef <qyousef@layalina.io>, 
+	LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Guenter,
+On Tue, Jun 18, 2024 at 10:59=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.or=
+g> wrote:
+>
+> On Tue, Jun 18, 2024 at 10:12:36AM +0200, Peter Zijlstra wrote:
+> > On Mon, Jun 17, 2024 at 05:42:25PM -0700, John Stultz wrote:
+> > > On Fri, Jun 14, 2024 at 2:48=E2=80=AFAM Peter Zijlstra <peterz@infrad=
+ead.org> wrote:
+> > > > Which then gets me something like the (completely untested) below..
+> > > >
+> > > > Hmm?
+> > > >
+> > > > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > > > index 0935f9d4bb7b..36aed99d6a6c 100644
+> > > > --- a/kernel/sched/core.c
+> > > > +++ b/kernel/sched/core.c
+> > > > @@ -724,7 +724,6 @@ static void update_rq_clock_task(struct rq *rq,=
+ s64 delta)
+> > > >
+> > > >         rq->prev_irq_time +=3D irq_delta;
+> > > >         delta -=3D irq_delta;
+> > > > -       psi_account_irqtime(rq->curr, irq_delta);
+> > > >         delayacct_irq(rq->curr, irq_delta);
+> > > >  #endif
+> > > >  #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+> > > > @@ -5459,6 +5458,8 @@ void sched_tick(void)
+> > > >
+> > > >         sched_clock_tick();
+> > > >
+> > > > +       psi_account_irqtime(curr, NULL, &rq->psi_irq_time);
+> > > > +
+> > > >         rq_lock(rq, &rf);
+> > > >
+> > > >         update_rq_clock(rq);
+> > > > @@ -6521,6 +6524,7 @@ static void __sched notrace __schedule(unsign=
+ed int sched_mode)
+> > > >                 ++*switch_count;
+> > > >
+> > > >                 migrate_disable_switch(rq, prev);
+> > > > +               psi_account_irqtime(prev, next, &rq->psi_irq_time);
+> > >
+> > > FYI: These references to psi_irq_time hit build issues if
+> > > CONFIG_IRQ_TIME_ACCOUNTING is disabled.
+> >
+> > Ah, well, I did say it was untested...
+> >
+> > > Also, separately, while I didn't see this earlier testing on physical
+> > > devices, when running virtualized, I can pretty easily trip over the
+> > > following:
+> > >
+> > > [   65.207340] watchdog: BUG: soft lockup - CPU#0 stuck for 26s!
+> > > [kworker/0:3:374]
+> > > [   65.211107] irq event stamp: 118664
+> > > [   65.212786] hardirqs last  enabled at (118663):
+> > > [<ffffffff97a00e46>] asm_sysvec_apic_timer_interrupt+0x16/0x20
+> > > [   65.218440] hardirqs last disabled at (118664):
+> > > [<ffffffff977fdeca>] sysvec_apic_timer_interrupt+0xa/0xc0
+> > > [   65.223074] softirqs last  enabled at (118546):
+> > > [<ffffffff9676db78>] __irq_exit_rcu+0x88/0xe0
+> > > [   65.227118] softirqs last disabled at (118541):
+> > > [<ffffffff9676db78>] __irq_exit_rcu+0x88/0xe0
+> > > [   65.231137] CPU: 0 PID: 374 Comm: kworker/0:3 Not tainted
+> > > 6.10.0-rc4-dirty #4393
+> > > [   65.234625] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > > BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> > > [   65.239089] Workqueue: events psi_avgs_work
+> > > [   65.241122] RIP: 0010:collect_percpu_times+0xff/0x310
+> > > [   65.243525] Code: b9 02 00 00 00 48 89 df e8 8e a4 01 00 48 8b b4
+> > > 24 d0 00 00 00 48 89 df e8 5e 9e 01 00 58 45 8b 34 24 41 f6 c6 01 74
+> > > 0c f3 0
+> > > [   65.252926] RSP: 0018:ffff958501263d50 EFLAGS: 00000202
+> > > [   65.255433] RAX: 0000000000017b61 RBX: ffff9585b901d848 RCX: 00000=
+00000000006
+> > > [   65.258755] RDX: ffffffff967eb6ac RSI: ffffffff9819e305 RDI: fffff=
+fff98177748
+> > > [   65.262113] RBP: ffff958501263db0 R08: 0000000000000001 R09: 00000=
+00000000000
+> > > [   65.265475] R10: 0000000000000001 R11: 0000000000000001 R12: ffff9=
+585b901d840
+> > > [   65.268785] R13: ffff9585b901d884 R14: 0000000000033d8b R15: 00000=
+00000000000
+> > > [   65.272146] FS:  0000000000000000(0000) GS:ffff9585b9000000(0000)
+> > > knlGS:0000000000000000
+> > > [   65.275908] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [   65.278629] CR2: 00005631aee8b000 CR3: 0000000116c0e001 CR4: 00000=
+00000370ef0
+> > > [   65.282002] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000=
+00000000000
+> > > [   65.285386] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000=
+00000000400
+> > > [   65.288730] Call Trace:
+> > > [   65.289958]  <IRQ>
+> > > [   65.290965]  ? watchdog_timer_fn+0x275/0x310
+> > > [   65.293185]  ? __pfx_watchdog_timer_fn+0x10/0x10
+> > > [   65.295379]  ? __hrtimer_run_queues+0x190/0x3b0
+> > > [   65.297795]  ? hrtimer_interrupt+0xf9/0x230
+> > > [   65.299782]  ? __sysvec_apic_timer_interrupt+0x82/0x210
+> > > [   65.302243]  ? sysvec_apic_timer_interrupt+0x98/0xc0
+> > > [   65.304590]  </IRQ>
+> > > [   65.305658]  <TASK>
+> > > [   65.306708]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+> > > [   65.309206]  ? psi_avgs_work+0x3c/0xb0
+> > > [   65.311001]  ? collect_percpu_times+0xff/0x310
+> > > [   65.313153]  psi_avgs_work+0x3c/0xb0
+> > > [   65.314864]  process_one_work+0x1fe/0x700
+> > > [   65.316782]  ? lock_is_held_type+0xcd/0x120
+> > > [   65.318782]  worker_thread+0x1c7/0x3b0
+> > > [   65.320571]  ? __pfx_worker_thread+0x10/0x10
+> > > [   65.322626]  kthread+0xe0/0x110
+> > > [   65.324103]  ? __pfx_kthread+0x10/0x10
+> > > [   65.325853]  ret_from_fork+0x28/0x40
+> > > [   65.327512]  ? __pfx_kthread+0x10/0x10
+> > > [   65.329255]  ret_from_fork_asm+0x1a/0x30
+> > > [   65.331073]  </TASK>
+> > > [   65.332119] Kernel panic - not syncing: softlockup: hung tasks
+> > >
+> > > Where collect_percpu_times+0xff/0x310:
+> > > __seqprop_sequence at include/linux/seqlock.h:211 (discriminator 2)
+> > > (inlined by) get_recent_times at kernel/sched/psi.c:261 (discriminato=
+r 2)
+> > > (inlined by) collect_percpu_times at kernel/sched/psi.c:359 (discrimi=
+nator 2)
+> > >
+> > > Which looks like its getting stuck in the seqlock loop, and the only
+> > > way I can see that catching right off, is if we're in some sort of
+> > > livelock where the calls to psi_account_irqtime(curr, NULL,
+> > > &rq->psi_irq_time) is coming in frequently enough to change the seqno
+> > > each iteration through the reader.  But from my initial trace_printk
+> > > debugging, it seems like from a kworker we enter the loop in
+> > > get_recent_times(), hit an irq and somehow never really come back out
+> > > of irq context. Though we continue to get ticks on the task and
+> > > continue to call psi_account_irqtime().  I was worried we were someho=
+w
+> > > getting stuck in the 'while ((group =3D group->parent));' loop in
+> > > psi_account_irqtime(), but that doesn't seem to be the case.
+> > >
+> > > [  238.297094] kworker/-798       0..... 200647713us :
+> > > collect_percpu_times: JDB: get_recent_times at top of loop 0!
+> > > [  238.301705] kworker/-798       0..... 200647767us :
+> > > collect_percpu_times: JDB: get_recent_times done with read (looped:
+> > > 1)!
+> > > [  238.306689] kworker/-798       0..... 200647768us :
+> > > collect_percpu_times: JDB: get_recent_times at top of loop 0!
+> > > [  238.311313] kworker/-798       0..... 200647769us :
+> > > collect_percpu_times: JDB: get_recent_times done with read (looped:
+> > > 1)!
+> > > [  238.316318] kworker/-798       0d..2. 200647786us :
+> > > psi_group_change: JDB: psi_group_change seqwrite
+> > > <normal behavior above>
+> > > [  238.320460] kworker/-10        0..... 200647790us :
+> > > collect_percpu_times: JDB: get_recent_times at top of loop 0!
+> > > [  238.325131] kworker/-10        0d.h.. 200648408us :
+> > > psi_account_irqtime: JDB: psi_account_irqtime seqwrite (loop count: 0=
+)
+> > > [  238.330149] kworker/-10        0d.h.. 200649406us :
+> > > psi_account_irqtime: JDB: psi_account_irqtime seqwrite (loop count: 0=
+)
+> > > [  238.335140] kworker/-10        0d.h.. 200650405us :
+> > > psi_account_irqtime: JDB: psi_account_irqtime seqwrite (loop count: 0=
+)
+> > > ...
+> > > With the psi_account_irqtime just repeating there each ms/tick.
+> > >
+> > > I'm still digging a bit here to understand what's going on. But I
+> > > wanted to share.
+> >
+> > Urgh, that's not making any sense to me either. Johannes, considering:
+> >
+> >  https://lkml.kernel.org/20240614094833.GM8774@noisy.programming.kicks-=
+ass.net
+>
+> This might be the culprit:
+>
+> @@ -5459,6 +5458,8 @@ void sched_tick(void)
+>
+>         sched_clock_tick();
+>
+> +       psi_account_irqtime(curr, NULL, &rq->psi_irq_time);
+> +
+>         rq_lock(rq, &rf);
+>
+>         update_rq_clock(rq);
+>
+> rq->lock is required for these state updates because it also
+> serializes against tasks moving between cgroups. If another CPU
+> changes the task->cgroup association during the update, AFAICS it
+> could call write_seqcount_begin() one group 1 and _end() on group 2,
+> leaving both groups' seqcounters odd.
+>
+> Can you try moving the accounting call below rq_lock()?
 
+Ah, Yeah! This very much aligns with my testing.
+Putting it under the rq_lock avoids the issue, so thank you for the
+explanation of why!
 
-Am 18.06.24 um 20:16 schrieb Guenter Roeck:
-> On 6/18/24 08:25, Paul Menzel wrote:
+The other part that was confounding to me as I was debugging this was
+what seemed like we were never returning out of irq context, but in
+fact that wasn't the case. I realize now the read_seqcount_begin()
+will internally spin if the seqno is odd, and my expectation was
+*very* dated that we always entered the loop and repeated while it was
+odd, so my debug trace message in the loop wouldn't be expected to
+print.
 
->> Am 18.06.24 um 17:10 schrieb Guenter Roeck:
->>> On 6/18/24 07:59, Paul Menzel wrote:
->>> [ ... ]
->>>
->>>> I did
->>>>
->>>>      $ tail -3 /etc/sensors3.conf
->>>>      chip "spd5118-*"
->>>>          set temp1_max 56000
->>>>          set temp1_crit 84000
->>>>
->>>> but it stays with the defaults:
->>>>
->>>> ```
->>>> $ sensors
->>>> spd5118-i2c-0-53
->>>> Adapter: SMBus I801 adapter at efa0
->>>> temp1:        +20.8°C  (low  =  +0.0°C, high = +55.0°C)
->>>>                         (crit low =  +0.0°C, crit = +85.0°C)
->>>>
->>>
->>> You'd have to write directly into the attribute files.
->>> For example, if you have
->>>
->>> $ grep . /sys/class/hwmon/*/name
->>> /sys/class/hwmon/hwmon0/name:nvme
->>> /sys/class/hwmon/hwmon1/name:nct6687
->>> /sys/class/hwmon/hwmon2/name:k10temp
->>> /sys/class/hwmon/hwmon3/name:spd5118
->>> /sys/class/hwmon/hwmon4/name:spd5118
->>> /sys/class/hwmon/hwmon5/name:spd5118
->>> /sys/class/hwmon/hwmon6/name:spd5118
->>> /sys/class/hwmon/hwmon7/name:mt7921_phy0
->>> /sys/class/hwmon/hwmon8/name:amdgpu
->>>
->>> you could run
->>>
->>> sudo bash -c 'echo 56000 > /sys/class/hwmon/hwmon3/temp1_max'
->>
->>      $ sudo bash -c 'echo 56000 > /sys/class/hwmon/hwmon3/temp1_max'
->>      bash: line 1: echo: write error: No such device or address
->>
-> 
-> Please add
-> 
->      .use_single_write = true,
-> 
-> to the regmap configuration (spd5118_regmap_config) to see if it helps.
+So that nicely resolves it.
 
-Unfortunately, it does not:
+Peter: I'll add the fix and write up the change log and send it along.
 
-     $ git log --no-decorate -p -1
-     commit c27ae51b689d7bdb7baf10c434438d501bd384aa
-     Author: Paul Menzel <pmenzel@molgen.mpg.de>
-     Date:   Tue Jun 18 20:26:17 2024 +0200
-
-         hwmon: spd5118: Use .use_single_write = true,
-
-     diff --git a/drivers/hwmon/spd5118.c b/drivers/hwmon/spd5118.c
-     index ac94a67793605..33a628840597e 100644
-     --- a/drivers/hwmon/spd5118.c
-     +++ b/drivers/hwmon/spd5118.c
-     @@ -522,6 +522,7 @@ static const struct regmap_config 
-spd5118_regmap_config = {
-             .writeable_reg = spd5118_writeable_reg,
-             .volatile_reg = spd5118_volatile_reg,
-             .cache_type = REGCACHE_MAPLE,
-     +       .use_single_write = true,
-      };
-
-      static int spd5118_probe(struct i2c_client *client)
-
-     $ uname -r
-     6.10.0-rc4.mx64.461-00048-gc27ae51b689d
-     $ sudo bash -c 'echo 56000 > /sys/class/hwmon/hwmon3/temp1_max'
-     bash: line 1: echo: write error: No such device or address
-
-
-Kind regards,
-
-Paul
+thanks
+-john
 
