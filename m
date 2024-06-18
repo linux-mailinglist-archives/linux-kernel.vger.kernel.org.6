@@ -1,248 +1,111 @@
-Return-Path: <linux-kernel+bounces-219454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-219453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A80C90D2BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:52:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EBE90D2BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 15:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B9EE1F21112
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:52:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88D6C1C23C13
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 13:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EA6146D49;
-	Tue, 18 Jun 2024 13:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25838142E80;
+	Tue, 18 Jun 2024 13:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AzO/1kPc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PzGSzlo0"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6499C145A1F
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AA513F441
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718717290; cv=none; b=kaSlq2iJ84eDYcgXKdB4RMhKf9rWss4oQufZylIcKx4mXCi8EJojDeIOQsGqYiFkthyJoP1yEvp+4TjwdmQlTy1AAervBw7b0aUMPCa6sEFYwTi2M7dT5XKcEEYVM/sa9dzW1scoaNz3S8lzrNG4uo2R6GXg2Jld+yGbvEyelkg=
+	t=1718717285; cv=none; b=HoWAfo7r3EmFjosE53BLdPSr6D9FEIvctc9v21gU50PCQI3UbF5hgi5Xh5tJpNbBXinq61n8i3kLuTZtGCONn/IyG4ji2XhBDYIKk1WGKKUME0ajjCEfi4wh6PyKXOl3Bh/jMv8Rlgx4H0IGtv+NdYvea8QsM6CzAmbMaF/yI/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718717290; c=relaxed/simple;
-	bh=w7UA21E8727CURep6Q4a3EaARXcCZGoKJ2hh9jNwujU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=R/xYelqu8EMKRHMVyeY68rXjLFIX3Pygo99PT4Ue902M+gKjgjXlcL6UjcfbBj3Nqmi5XSAdcxhsp9ODOpYkOPtOyinx1Vym6SlhtnMLpDDUiTYSnAyOCm7b8HXwmxTAK+cp289oeCzDbo2QUR/RkLU47ys8lUfRrMwJ8KhOwPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AzO/1kPc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718717287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QHQZyI1Ki5OZBByzaWYPnHf52cOaMXF9qafettPp8bg=;
-	b=AzO/1kPcvfLg/nKAH4MrHtgh4r/WTgWeEEWBXlFEieq+CP/g/EIm+kSno9ZGV+hEaSesRF
-	fRkbcCBUuNtJ4hSclyXFaZL9bR8c4pG/aLhx6bLAe199wIwvameywUZUPrRtGSLsZuuFuq
-	Z/kqBOlobgkzCr9ZhRkQkimkeuBODWk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-457-FFdFBcDHMtedj7fSzWijvQ-1; Tue,
- 18 Jun 2024 09:28:04 -0400
-X-MC-Unique: FFdFBcDHMtedj7fSzWijvQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4793F19560B9;
-	Tue, 18 Jun 2024 13:28:02 +0000 (UTC)
-Received: from RHTRH0061144 (dhcp-17-72.bos.redhat.com [10.18.17.72])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C73A619560AF;
-	Tue, 18 Jun 2024 13:27:59 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: =?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org,  echaudro@redhat.com,  horms@kernel.org,
-  i.maximets@ovn.org,  dev@openvswitch.org,  Pravin B Shelar
- <pshelar@ovn.org>,  "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
- <pabeni@redhat.com>,  Shuah Khan <shuah@kernel.org>,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 9/9] selftests: openvswitch: add emit_sample
- test
-In-Reply-To: <CAG=2xmO-mtQOMABEAXNxEoa6NH5Hgae1x5+XWU5ZnLFg2n7b=g@mail.gmail.com>
-	(=?utf-8?Q?=22Adri=C3=A1n?= Moreno"'s message of "Tue, 18 Jun 2024 09:08:14
- +0000")
-References: <20240603185647.2310748-1-amorenoz@redhat.com>
-	<20240603185647.2310748-10-amorenoz@redhat.com>
-	<f7tzfrnmp0q.fsf@redhat.com>
-	<CAG=2xmPvAfQx4jSFbBPTcEdo2Z6w93vo6-Uo5rVMLbu8qS1SOA@mail.gmail.com>
-	<CAG=2xmO-mtQOMABEAXNxEoa6NH5Hgae1x5+XWU5ZnLFg2n7b=g@mail.gmail.com>
-Date: Tue, 18 Jun 2024 09:27:58 -0400
-Message-ID: <f7tplsel6sh.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718717285; c=relaxed/simple;
+	bh=P2iR+XJO20kjFPFruIuBNlrh7wkDA2ddjm99o7r11VA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s/aNV47ixWHTbWKfl2dU7Zd6kAEItjrJ2excJgoquerEqmHMelQtX5YEEbtaGmGC1Y8An6m4QESVnewll+lAV6XitpbU+9wduNhuR4o0uNdCx4lyurtPgQ8yDKjm9lRJFtpzONmdjZh7rMkycdOe7ROjApnvHg/L+XUGC5MB3j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PzGSzlo0; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eadaac1d28so57252031fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:28:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718717282; x=1719322082; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cgj0IrDomaUjzBC0KLU+PFvHZCf8aMEd+R22qNfiYxc=;
+        b=PzGSzlo0Z7lcLsYIFQIg1tI22pHyBodDYcKzL62oZy4QhRUf6VKi7jAkbOGs12SHVc
+         zqZALJROERTqlP99kIRMpOZE2uRAFj3/y9Kqbz1eOQYyBHZLoWtRgyPt6GhAoVUXp6Sy
+         7gDwIgsO0jPuM4ryC+9GbzUHL5kPYUyszMRp9I+9GBrSkyRPuUJj3oC5j0XoyNGnWKwM
+         TKQYvFetVHzpS5r0UGqVbluXf+YjRa8ZEQOI7d8h1jrbbS3318r4fhPUqByaZwslkV6T
+         JhHlKglb0XEh7dB+9zhdmw8GtvBsj5ReBCnZUToGVsQPrku4FrIdNO85E92cp/Wj+vtY
+         u1Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718717282; x=1719322082;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cgj0IrDomaUjzBC0KLU+PFvHZCf8aMEd+R22qNfiYxc=;
+        b=ve3GBxa84JJg2GvKzhfVpo8elVXJRWX/0hqPzONuzEY08pOLqNCVxkWBo0Ntn9RbCR
+         hNZOGFuqJKJHWp/MYyMntNCt/71NNSwRobcN8gJpNAfehx7QRt2P+KLo7w2BP6cSLWCX
+         AEF00vverTwBZhtiv/ByaaPQDRzlyB0nBuaZspz7r2vxAleAT+7LCYaMj9AhiIfRGM+U
+         BHO9Q8eVwtcDmvJUzhGDTwde7gfafQl8E5kavubvVftw9MhGjSXhuyr9k+iwFwSt7DBa
+         HFSOKMBdrJR43T+gixJjZOaBuKLHslIshs2oNxE2YD7i0woIZQhYvsIN3YTlIu/FviD/
+         oTww==
+X-Forwarded-Encrypted: i=1; AJvYcCWFT18xvbIdBvyTRRsLc+q4Mh/ZyP8UgkaexdmgKvBZF58JMw5/f47QIVZWkoLlVd3TU3s/RiqbEI6Alwy/RMh2jpeay2HZ9x13N0Dr
+X-Gm-Message-State: AOJu0Ywkjs+Z/hR8rxWCMUuqEOnTj8UbA65dXsIt5DedOtlRAhOPJkgJ
+	4Qmcav+oDPowQHOKRKpL/hUzP03n/Z3nITp8DDsKDlvPpOVcTscqsmFgubqrImE=
+X-Google-Smtp-Source: AGHT+IGK2g/5pEGb2O7+YJ6KcJ8OGiwXCrOkIFFOMVK9jdv1m3RTPGFryY0YEY6iI7i+KanST2Vzzw==
+X-Received: by 2002:a2e:a306:0:b0:2ec:343d:9677 with SMTP id 38308e7fff4ca-2ec343d975amr15666551fa.39.1718717281835;
+        Tue, 18 Jun 2024 06:28:01 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05bf44e8sm17040531fa.14.2024.06.18.06.28.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 06:28:01 -0700 (PDT)
+Message-ID: <9104638a-fe7b-4503-91de-7bff3c518eb2@linaro.org>
+Date: Tue, 18 Jun 2024 15:27:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] clk: qcom: gpucc-sa8775p: Park RCG's clk source at
+ XO during disable
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Shazad Hussain <quic_shazhuss@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_jkona@quicinc.com,
+ quic_imrashai@quicinc.com
+References: <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-0-adcc756a23df@quicinc.com>
+ <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-5-adcc756a23df@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-5-adcc756a23df@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Adri=C3=A1n Moreno <amorenoz@redhat.com> writes:
 
-> On Mon, Jun 17, 2024 at 07:18:05AM GMT, Adri=C3=A1n Moreno wrote:
->> On Fri, Jun 14, 2024 at 01:07:33PM GMT, Aaron Conole wrote:
->> > Adrian Moreno <amorenoz@redhat.com> writes:
->> >
->> > > Add a test to verify sampling packets via psample works.
->> > >
->> > > In order to do that, create a subcommand in ovs-dpctl.py to listen to
->> > > on the psample multicast group and print samples.
->> > >
->> > > In order to also test simultaneous sFlow and psample actions and
->> > > packet truncation, add missing parsing support for "userspace" and
->> > > "trunc" actions.
->> >
->> > Maybe split that into a separate patch.  This has a bugfix and 3
->> > features being pushed in.  I know it's already getting long as a serie=
-s,
->> > so maybe it's okay to fold the userspace attribute bugfix with the par=
-se
->> > support (since it wasn't really usable before).
->> >
->>
->> OK. Sounds reasonable.
->>
->> > > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
->> > > ---
->> > >  .../selftests/net/openvswitch/openvswitch.sh  |  99 +++++++++++++++-
->> > >  .../selftests/net/openvswitch/ovs-dpctl.py    | 112 +++++++++++++++=
-++-
->> > >  2 files changed, 204 insertions(+), 7 deletions(-)
->> > >
->> > > diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh =
-b/tools/testing/selftests/net/openvswitch/openvswitch.sh
->> > > index 5cae53543849..f6e0ae3f6424 100755
->> > > --- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
->> > > +++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
->> > > @@ -20,7 +20,8 @@ tests=3D"
->> > >  	nat_related_v4				ip4-nat-related: ICMP related matches work with =
-SNAT
->> > >  	netlink_checks				ovsnl: validate netlink attrs and settings
->> > >  	upcall_interfaces			ovs: test the upcall interfaces
->> > > -	drop_reason				drop: test drop reasons are emitted"
->> > > +	drop_reason				drop: test drop reasons are emitted
->> > > +	emit_sample 				emit_sample: Sampling packets with psample"
->> > >
->> > >  info() {
->> > >      [ $VERBOSE =3D 0 ] || echo $*
->> > > @@ -170,6 +171,19 @@ ovs_drop_reason_count()
->> > >  	return `echo "$perf_output" | grep "$pattern" | wc -l`
->> > >  }
->> > >
->> > > +ovs_test_flow_fails () {
->> > > +	ERR_MSG=3D"Flow actions may not be safe on all matching packets"
->> > > +
->> > > +	PRE_TEST=3D$(dmesg | grep -c "${ERR_MSG}")
->> > > +	ovs_add_flow $@ &> /dev/null $@ && return 1
->> > > +	POST_TEST=3D$(dmesg | grep -c "${ERR_MSG}")
->> > > +
->> > > +	if [ "$PRE_TEST" =3D=3D "$POST_TEST" ]; then
->> > > +		return 1
->> > > +	fi
->> > > +	return 0
->> > > +}
->> > > +
->> > >  usage() {
->> > >  	echo
->> > >  	echo "$0 [OPTIONS] [TEST]..."
->> > > @@ -184,6 +198,89 @@ usage() {
->> > >  	exit 1
->> > >  }
->> > >
->> > > +
->> > > +# emit_sample test
->> > > +# - use emit_sample to observe packets
->> > > +test_emit_sample() {
->> > > +	sbx_add "test_emit_sample" || return $?
->> > > +
->> > > +	# Add a datapath with per-vport dispatching.
->> > > +	ovs_add_dp "test_emit_sample" emit_sample -V 2:1 || return 1
->> > > +
->> > > +	info "create namespaces"
->> > > +	ovs_add_netns_and_veths "test_emit_sample" "emit_sample" \
->> > > +		client c0 c1 172.31.110.10/24 -u || return 1
->> > > +	ovs_add_netns_and_veths "test_emit_sample" "emit_sample" \
->> > > +		server s0 s1 172.31.110.20/24 -u || return 1
->> > > +
->> > > +	# Check if emit_sample actions can be configured.
->> > > +	ovs_add_flow "test_emit_sample" emit_sample \
->> > > +	'in_port(1),eth(),eth_type(0x0806),arp()' 'emit_sample(group=3D1)'
->> > > +	if [ $? =3D=3D 1 ]; then
->> > > +		info "no support for emit_sample - skipping"
->> > > +		ovs_exit_sig
->> > > +		return $ksft_skip
->> > > +	fi
->> > > +
->> > > +	ovs_del_flows "test_emit_sample" emit_sample
->> > > +
->> > > +	# Allow ARP
->> > > +	ovs_add_flow "test_emit_sample" emit_sample \
->> > > +		'in_port(1),eth(),eth_type(0x0806),arp()' '2' || return 1
->> > > +	ovs_add_flow "test_emit_sample" emit_sample \
->> > > +		'in_port(2),eth(),eth_type(0x0806),arp()' '1' || return 1
->> > > +
->> > > +	# Test action verification.
->> > > +	OLDIFS=3D$IFS
->> > > +	IFS=3D'*'
->> > > +	min_key=3D'in_port(1),eth(),eth_type(0x0800),ipv4()'
->> > > +	for testcase in \
->> > > +		"cookie to large"*"emit_sample(group=3D1,cookie=3D161514131211100=
-9080706050403020100)" \
->> > > +		"no group with cookie"*"emit_sample(cookie=3Dabcd)" \
->> > > +		"no group"*"sample()";
->> > > +	do
->> > > +		set -- $testcase;
->> > > +		ovs_test_flow_fails "test_emit_sample" emit_sample $min_key $2
->> > > +		if [ $? =3D=3D 1 ]; then
->> > > +			info "failed - $1"
->> > > +			return 1
->> > > +		fi
->> > > +	done
->> > > +	IFS=3D$OLDIFS
->> > > +
->> > > +	# Sample first 14 bytes of all traffic.
->> > > +	ovs_add_flow "test_emit_sample" emit_sample \
->> > > +	"in_port(1),eth(),eth_type(0x0800),ipv4(src=3D172.31.110.10,proto=
-=3D1),icmp()" "trunc(14),emit_sample(group=3D1,cookie=3Dc0ffee),2"
->> > > +
->> > > +	# Sample all traffic. In this case, use a sample() action with both
->> > > +	# emit_sample and an upcall emulating simultaneous local sampling =
-and
->> > > +	# sFlow / IPFIX.
->> > > +	nlpid=3D$(grep -E "listening on upcall packet handler" $ovs_dir/s0=
-.out | cut -d ":" -f 2 | tr -d ' ')
->> > > +	ovs_add_flow "test_emit_sample" emit_sample \
->> > > +	"in_port(2),eth(),eth_type(0x0800),ipv4(src=3D172.31.110.20,proto=
-=3D1),icmp()" "sample(sample=3D100%,actions(emit_sample(group=3D2,cookie=3D=
-eeff0c),userspace(pid=3D${nlpid},userdata=3Deeff0c))),1"
->> > > +
->> > > +	# Record emit_sample data.
->> > > +	python3 $ovs_base/ovs-dpctl.py psample >$ovs_dir/psample.out 2>$ov=
-s_dir/psample.err &
->> > > +	pid=3D$!
->> > > +	on_exit "ovs_sbx test_emit_sample kill -TERM $pid 2>/dev/null"
->> >
->> >   Maybe ovs_netns_spawn_daemon ?
->> >
->>
->> I'll take a look at it, thanks.
->>
->
-> I've looked into ovs_netns_spawn_daemon and I think it'll not be useful
-> for this command since it needs to run in the default namespace. I can
-> add a new "ovs_spawn_daemon" so it's reusable. WDYT?
 
-Okay
+On 6/12/24 13:08, Taniya Das wrote:
+> The RCG's clk src has to be parked at XO while disabling as per the
+> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
+> Also gpu_cc_cb_clk is recommended to be kept always ON, hence use
+> clk_branch2_aon_ops to keep the clock always ON.
+> 
+> Fixes: 0afa16afc36d ("clk: qcom: add the GPUCC driver for sa8775p")
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
 
->> [...]
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
+Konrad
 
