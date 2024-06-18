@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-220156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D738190DDA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:46:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64E290DDA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 22:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3B51B22EB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:46:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53F6D285AD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 20:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB77D17A932;
-	Tue, 18 Jun 2024 20:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEC71849C0;
+	Tue, 18 Jun 2024 20:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tFfjpUMC"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F65tdRX1"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7A94D8DC
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4C2176FA8
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 20:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718743529; cv=none; b=cr/9t8WkTiAOFnIGAsQy4ZQy8+cLUhSWEsN4/rBlGDpYRtJNds8KDd/QWPaFswM3H3zIMQN1t6EPiWt3pP1E8z0Qn3eaDceR708UlL9fUB12RBhrlp2wHZMB/Q5I7ogqGxfbc1FggKob7OKs+Lt9935ccUSKO7RL7x+/Dlqe3No=
+	t=1718743529; cv=none; b=e9pqZDZZwqzn/WM5egDzRCjELOnRuCQ9oQVxWK2qtllZ9VKhdb7TVkKTh5oPQGImxDh2ATuSngkCqF1W2ZjNCw6SO0KqWEV04vyEt4+FctBs5tEAis5cHJgOh7+MQRraxZkFFW3/dpQ52SmqUmV7lZGd/V0E4A88efr85oKdQ5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718743529; c=relaxed/simple;
-	bh=sT0sL+RgnVg+AcQBnBOs3VMjWsZ2hzrqXKz/8cJCc5Q=;
+	bh=o3eOG1LnpJmTG9KLHgnK43QtqvIq3WSopLjA7R+Hozs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Wg85xIMbI0W6HOkwt/3d/qib5KSnAxcwsVRrZbq7m0E6qZmkno13x6uHIYAlTcXDG+gxcVDDmB6G6psZY4IyEqaC8wYQ7Azj2DQifbb4h+a6lfBKrm7vB8mHdgLRZephhIQrNTsiUzn+ZdhC+w2pCUS2/Z7ASLZv9YoTEZFpxns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tFfjpUMC; arc=none smtp.client-ip=209.85.210.46
+	 MIME-Version; b=qc2f6jI9xUujyNzUIVCA5pS0hwKFmcwcgYXKzedPbSgjTkP5f+11etp3FCCnvPmvTPmj56qTyvA5aQE5JyvlXfbVGRrBv81g61eFid8BGLtBXa2gJipxQIo3Q3YPALtp74nLD56gAcbuPOqzVjyUFUjNfgcJRzy2eZ2YR3NmA8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F65tdRX1; arc=none smtp.client-ip=209.85.160.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6f977acff19so2667199a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:45:27 -0700 (PDT)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-259884ef4ddso408151fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 13:45:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718743526; x=1719348326; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718743527; x=1719348327; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0aRxOAD2Qgk5Lly7g3t86NVGFyqjyCN/MyLZiIAVgHs=;
-        b=tFfjpUMCoTEIxTtYITK2ouVif7oQGDFsXuGPjH5Z2yG/pst/U9bLYzawApH1QPvjY+
-         jMH2f/umE6iK9aSiNKWSAOitylJDmkzJ4+oX+Qgd3OUhRVNVshWc0Sv352thIostt54N
-         +d1INApBiKOKOCKxVeG/Sy7A90BACt+TumHrMNxkuf+6To+2CyQS1/5iO2XkbNw5ydqG
-         rE8mF+AAo1xoil1fssubZ2Dk2XY+LJVnf0gzDUq6iGBYMyVv6hGM9OwTJuy0B8IVpVEb
-         nIq+TQ0GR4aMTEq7236TuTD5hrptq08T6dzcVpXoxvwB+4xuxnUmn+iUmOCc4I3zY2fA
-         /oVA==
+        bh=N5PSLoK5277DwTxre0IUhy89MhV1sfVHkT9GD1kskOA=;
+        b=F65tdRX12CZvBh/aL3651rs/OvEn/1FazE8eHzQMvFPHdVmHHZp7VW7WWG19ewIiVO
+         WFC61EbwUb/txN8ZoSaFkfcyrqOE4ANqGtULk/2IjudV6Ky5eQeEzU4bi7vCNLwbwwS6
+         MW/OCJwnhe1kUKli3I4nL7OGSoBo25S1mieh4EHvTAcC4moz2aYCSXoleb8e4ENY7sbI
+         gFp+lLyzwBWM/HGB/vdDpZNzKGK2t321madq8tvtDyC4Lbv8OQPqjBSVsrTeXezlqAfE
+         K8j9cQGHsOro13y2kh1QxUny86b3CCj56xMVzrqid8CU6S25P8s46R7ksG9kZoIFzmfr
+         nLYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718743526; x=1719348326;
+        d=1e100.net; s=20230601; t=1718743527; x=1719348327;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0aRxOAD2Qgk5Lly7g3t86NVGFyqjyCN/MyLZiIAVgHs=;
-        b=NTvJFMiB2lrzPOBXg+xvfwsqOTUw3KdjIKfzg4mVuZXUU+SXrBEBLNqfltFbaKt/r8
-         ljsRfCBLcRitk4tPt/ajQKEDhV4cK9jsrs2IX7b83pvD/1ERLN2MZlr8ePrKQ9Oz42eV
-         ZMg+9d09HR45A0mnzregHQjSf1ONf5dJjB73hw4O89W683Tm/7nkF8M0E50tCJ6iGZTX
-         qWmqRYNc1zSI62wJnjl7atELQ4saG+naAmiscKiCOw5zQh2Bbk4EEynw2aiLM8gv5Q2Z
-         z8JzdrbODsL+s2GtlstvYRt16wG9p8mQwTTGkIJdRDutMF4JAKZkPQpdLrz7MZeKqzN9
-         QWCw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/n/Q2Ob0f++c334Tr/X+IUyLJnYl3XeCEitsNwW1NCV5g1Bk0+F8OJQp0redijgNEUUJe6SuKvTZI+tYUEBTANIM6BPuhbR+7/s40
-X-Gm-Message-State: AOJu0YwiToa1mNWzZlKGd5VKTURF0doHTTEWMD5LeJlaxPtqdqlWdLRB
-	7u8wnZKUFrJCqoBzqZseaue1Dg8D8O8YfPl26PbPfkMy3HdaCJWx3w2mFjJhJu4=
-X-Google-Smtp-Source: AGHT+IFsyuXPTcRk/B3lUM1O8/TQZfkRs+GDfXqj2NsRA9yWpG9ZWVrUspoi5rnxH+NBKKi8Gu9VmQ==
-X-Received: by 2002:a05:6830:1d91:b0:6f9:c989:261c with SMTP id 46e09a7af769-700766349damr883708a34.33.1718743526611;
-        Tue, 18 Jun 2024 13:45:26 -0700 (PDT)
+        bh=N5PSLoK5277DwTxre0IUhy89MhV1sfVHkT9GD1kskOA=;
+        b=ONySHefpVIwUuJXo7IIAXUQzFXp4pZIeu8AddmMOhpza1u8qBLUUUQmehQ8zCfzQV1
+         Og28iLu2od9Yr6oclkJAVVcWBvcAu6m6EcA6vq0ww93UsE+zhYL1zE3pmI1+4hnkKo5i
+         mXNhwYaE57FpVzqko/1DG/tpbAp3aYZ6zgc9A7JyoPKH2OHgWiQPAL5Ng7cIXhs3Go6m
+         X0F+7NXQ2CclUBmSjldr94RG07Mn0zcja+EdlLr+Q0yZQrooAUvuNP9/8luqQWrPQsEa
+         eC5XSxbTmuqQxtgyhn7PhL25TxYqwJkXKVviW/Cgag9EXgeyj7Bb/EQDz0ubL2k8M2cH
+         G/Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVhY9J728PvxVCZ/aHXeegIB+K5yL/XplQx9sU4UWllR8NlpCz64KG5SN5dw2NWYbfckPCkozl0FmGd17IyNPOyuFZa7j39VCE6gXPv
+X-Gm-Message-State: AOJu0YxZH5QgiRQkL9qrNU04GU1FWeae96EKhIgKbssBzx4p8BOX6bs5
+	CM8r7NBVv8c2bqqCyGnd2m7veF+xzGIvUnQMT0EusKYgR9yHoRZap36Vnx5wlgs=
+X-Google-Smtp-Source: AGHT+IFDRAFXeFBv7i8uwvM6wavaDuobxVfToXwipE3qzms4/u2yGTluz+/UFCszPXir6zQE6J0cyg==
+X-Received: by 2002:a05:6871:5209:b0:254:b3cc:a6d8 with SMTP id 586e51a60fabf-25c94a200famr1057219fac.32.1718743527261;
+        Tue, 18 Jun 2024 13:45:27 -0700 (PDT)
 Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb97051e68sm1692599a34.80.2024.06.18.13.45.26
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25a6d0fd5a6sm231281fac.56.2024.06.18.13.45.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 13:45:26 -0700 (PDT)
+        Tue, 18 Jun 2024 13:45:27 -0700 (PDT)
 From: Sam Protsenko <semen.protsenko@linaro.org>
 To: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -80,9 +80,9 @@ Cc: Anand Moon <linux.amoon@gmail.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/7] hwrng: exynos: Use devm_clk_get_enabled() to get the clock
-Date: Tue, 18 Jun 2024 15:45:19 -0500
-Message-Id: <20240618204523.9563-4-semen.protsenko@linaro.org>
+Subject: [PATCH v2 4/7] hwrng: exynos: Implement bus clock control
+Date: Tue, 18 Jun 2024 15:45:20 -0500
+Message-Id: <20240618204523.9563-5-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240618204523.9563-1-semen.protsenko@linaro.org>
 References: <20240618204523.9563-1-semen.protsenko@linaro.org>
@@ -94,71 +94,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use devm_clk_get_enabled() helper instead of calling devm_clk_get() and
-then clk_prepare_enable(). It simplifies the error handling and makes
-the code more compact. Also use dev_err_probe() to handle possible
--EPROBE_DEFER errors if the clock is not available yet.
+Some SoCs like Exynos850 might require the SSS bus clock (PCLK) to be
+enabled in order to access TRNG registers. Add and handle the optional
+PCLK clock accordingly to make it possible.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
 Changes in v2:
-  - No changes (it's a new patch added in v2)
+  - Used devm_clk_get_optional_enabled() to avoid calling
+    clk_prepare_enable() for PCLK
 
- drivers/char/hw_random/exynos-trng.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+ drivers/char/hw_random/exynos-trng.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
-index 88a5088ed34d..91c210d80a3d 100644
+index 91c210d80a3d..99a0b271ffb7 100644
 --- a/drivers/char/hw_random/exynos-trng.c
 +++ b/drivers/char/hw_random/exynos-trng.c
-@@ -134,32 +134,23 @@ static int exynos_trng_probe(struct platform_device *pdev)
- 		goto err_pm_get;
- 	}
+@@ -47,7 +47,8 @@
+ struct exynos_trng_dev {
+ 	struct device	*dev;
+ 	void __iomem	*mem;
+-	struct clk	*clk;
++	struct clk	*clk;	/* operating clock */
++	struct clk	*pclk;	/* bus clock */
+ 	struct hwrng	rng;
+ };
  
--	trng->clk = devm_clk_get(&pdev->dev, "secss");
-+	trng->clk = devm_clk_get_enabled(&pdev->dev, "secss");
- 	if (IS_ERR(trng->clk)) {
--		ret = PTR_ERR(trng->clk);
--		dev_err(&pdev->dev, "Could not get clock.\n");
--		goto err_clock;
--	}
--
--	ret = clk_prepare_enable(trng->clk);
--	if (ret) {
--		dev_err(&pdev->dev, "Could not enable the clk.\n");
-+		ret = dev_err_probe(&pdev->dev, PTR_ERR(trng->clk),
-+				    "Could not get clock");
+@@ -141,6 +142,13 @@ static int exynos_trng_probe(struct platform_device *pdev)
  		goto err_clock;
  	}
  
++	trng->pclk = devm_clk_get_optional_enabled(&pdev->dev, "pclk");
++	if (IS_ERR(trng->pclk)) {
++		ret = dev_err_probe(&pdev->dev, PTR_ERR(trng->pclk),
++				    "Could not get pclk");
++		goto err_clock;
++	}
++
  	ret = devm_hwrng_register(&pdev->dev, &trng->rng);
  	if (ret) {
  		dev_err(&pdev->dev, "Could not register hwrng device.\n");
--		goto err_register;
-+		goto err_clock;
- 	}
- 
- 	dev_info(&pdev->dev, "Exynos True Random Number Generator.\n");
- 
- 	return 0;
- 
--err_register:
--	clk_disable_unprepare(trng->clk);
--
- err_clock:
- 	pm_runtime_put_noidle(&pdev->dev);
- 
-@@ -171,10 +162,6 @@ static int exynos_trng_probe(struct platform_device *pdev)
- 
- static void exynos_trng_remove(struct platform_device *pdev)
- {
--	struct exynos_trng_dev *trng = platform_get_drvdata(pdev);
--
--	clk_disable_unprepare(trng->clk);
--
- 	pm_runtime_put_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- }
 -- 
 2.39.2
 
