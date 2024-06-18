@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-218688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBEA90C3C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:40:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E51090C3CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 08:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790111F2294F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:40:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 787A8B219BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 06:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B83F4F20C;
-	Tue, 18 Jun 2024 06:40:41 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D7156B7C;
+	Tue, 18 Jun 2024 06:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="thaJkyxn"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4B8288BD
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 06:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AA8219F6;
+	Tue, 18 Jun 2024 06:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718692841; cv=none; b=IysYUMs1yB3qYZSTh5qH1h7llNDYI/b40iJuZHH2ytWQnZXDy7VDLUZlK1xESLi9txAms+VtULWSca6WbPON1mquxd6NtgG4KLzo75Csjr1/6pXxJXJCS88RsRgfLiMJukmtkgLyzINs7fXPoHDY2K8QBUDxtYmc5j8jg/JTq1o=
+	t=1718692880; cv=none; b=Xi3U7cPJTOMOT7OnqOd+wAmeG0oCAE4bneUf4WNnPPGBNJLhXhzbd20a6em7aed5CFTiSTkQRzUHPhxTTLH9r/mYgxor39IJF7fdsqKwMawlFb9mnIi7CuQ8jXhNCvgRnJzd4faXcTvcmQ31ujicD6X2Ct4FLR1YbkLNiJnJWmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718692841; c=relaxed/simple;
-	bh=62MUPhAN97fTptGdFIxSforz/slrHwceN6Mk+l2lnbU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RlGAoYP1l7Zh6+6KMQZ6WXySu+ab+ZFH6yMoADSME2YS5hueeWsPEqLdeFYDp/M5dG33oSjw4tfajW1JLNd56z0qUOJWfWnbyqZrdWgp6hVzQn/Wy6SSQFcy2LuSTKSVCcYF/vo17H3gI9aZ2nQl44S0FIZVmp33ZYQWNaxJNfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4W3HBw2GjPz1HDW6;
-	Tue, 18 Jun 2024 14:38:32 +0800 (CST)
-Received: from dggpemd200001.china.huawei.com (unknown [7.185.36.224])
-	by mail.maildlp.com (Postfix) with ESMTPS id BD7A2140123;
-	Tue, 18 Jun 2024 14:40:33 +0800 (CST)
-Received: from localhost.localdomain (10.175.112.125) by
- dggpemd200001.china.huawei.com (7.185.36.224) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 18 Jun 2024 14:40:33 +0800
-From: Wupeng Ma <mawupeng1@huawei.com>
-To: <akpm@linux-foundation.org>, <ryabinin.a.a@gmail.com>,
-	<glider@google.com>, <andreyknvl@gmail.com>, <dvyukov@google.com>,
-	<vincenzo.frascino@arm.com>
-CC: <mawupeng1@huawei.com>, <kasan-dev@googlegroups.com>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: [Question] race during kasan_populate_vmalloc_pte
-Date: Tue, 18 Jun 2024 14:40:22 +0800
-Message-ID: <20240618064022.1990814-1-mawupeng1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718692880; c=relaxed/simple;
+	bh=KEpSjas0DKfufJCEUjlBNGFZLhYMGabgaAFHrIwnukg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVgwGu2kgvYoFwm1qT6AnYO3VGce+ld4c5sz6HWS/HbXJRH6EkT4EyqK+8587i4hKStSP2rTnHJoolI6yKXNRLDrsjkyVgzp+NVz7098TOcmXHH7qYs8veR0UrMe/nN+jAuAQEogQ7C80MNiLhVg9vKznST+PNHgYyRDj0Kadr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=thaJkyxn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GahJgorngmwcktzCTAh/wUq0FM9ta9Xd5y8IYgAQh6s=; b=thaJkyxnpQhwGzniqemB+oD49i
+	FxkwJDKe7KGz3kkAnkn+3HoLFsl988LS6VFFg789HCwW3cTlNkqrt7sa9TW7tFO7TFC7EdhClhD20
+	S9ihJfJBNxk/BlRVx+SsMM242B4ZImOI+GnpwLjylwA+qrHymB6HQhl5qZcGXsVRg7/EsTfeKUljK
+	3i3QFh8FMpCL+J7U0onS7/mNaCbc3Q1wV/Zxp8qP1PuIgEMNDw4nkCYirV3FBXzhdaPAOX/jOz9Zw
+	L6g1i++l1bFIieD1W2/S61JQ6cx/f4lCFaHPR6MxwP+aoWAeDXw+FbS7GbyAO5TpmRHYWMqZOWmAB
+	fQWwkfkw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJSWq-0000000DqOx-3IHo;
+	Tue, 18 Jun 2024 06:41:16 +0000
+Date: Mon, 17 Jun 2024 23:41:16 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Li Feng <fengli@smartx.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH] scsi: sd: Keep the discard mode stable
+Message-ID: <ZnEsDHOAjODOS6HJ@infradead.org>
+References: <20240614160350.180490-1-fengli@smartx.com>
+ <Zm_U_ZA96u2K6a6S@infradead.org>
+ <44BCFE4F-AB66-4E6A-A181-E7D93847EF98@smartx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemd200001.china.huawei.com (7.185.36.224)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <44BCFE4F-AB66-4E6A-A181-E7D93847EF98@smartx.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi maintainers,
+On Mon, Jun 17, 2024 at 05:03:03PM +0800, Li Feng wrote:
+> > But more importantly this doesn't really scale to all the variations
+> > of reported / guessed at probe time vs overriden.  I think you just
+> > need an explicit override flag that skips the discard settings.
+> > 
+> I think we only need to prevent the temporary change of discard mode 
+> from UNMAP to WS16, and this patch should be enough.
+> 
+> Maybe it is a good idea to remove the call to sd_config_discard 
+> from read_capacity_16 . Because the unmap_alignment/ unmap_granularity
+> used by sd_config_discard are assigned in sd_read_block_limits. 
+> 
+> sd_read_block_limits is enough to negotiate the discard parameter. 
+> It is redundant for read_capacity to modify the discard parameter.  In this way, 
+> when the SCSI probe sends read_capacity first and then read block limits, 
+> it avoids the change of discard from DISABLE to WS16 to UNMAP.
 
-During our testing, we discovered that kasan vmalloc may trigger a false
-vmalloc-out-of-bounds warning due to a race between kasan_populate_vmalloc_pte
-and kasan_depopulate_vmalloc_pte.
+Note that in the linux-next tree for 6.11 we're not only applying
+the discard choice to the queue_limits structure and not commiting
+it in read_capacity_16.  So it will be overriden before it gets
+actually applied.  Can you check that your issue doesn't show up in
+linux-next?
 
-cpu0				cpu1				cpu2
-  kasan_populate_vmalloc_pte	kasan_populate_vmalloc_pte	kasan_depopulate_vmalloc_pte
-								spin_unlock(&init_mm.page_table_lock);
-  pte_none(ptep_get(ptep))
-  // pte is valid here, return here
-								pte_clear(&init_mm, addr, ptep);
-				pte_none(ptep_get(ptep))
-				// pte is none here try alloc new pages
-								spin_lock(&init_mm.page_table_lock);
-kasan_poison
-// memset kasan shadow region to 0
-				page = __get_free_page(GFP_KERNEL);
-				__memset((void *)page, KASAN_VMALLOC_INVALID, PAGE_SIZE);
-				pte = pfn_pte(PFN_DOWN(__pa(page)), PAGE_KERNEL);
-				spin_lock(&init_mm.page_table_lock);
-				set_pte_at(&init_mm, addr, ptep, pte);
-				spin_unlock(&init_mm.page_table_lock);
-
-
-Since kasan shadow memory in cpu0 is set to 0xf0 which means it is not
-initialized after the race in cpu1. Consequently, a false vmalloc-out-of-bounds
-warning is triggered when a user attempts to access this memory region.
-
-The root cause of this problem is the pte valid check at the start of
-kasan_populate_vmalloc_pte should be removed since it is not protected by
-page_table_lock. However, this may result in severe performance degradation
-since pages will be frequently allocated and freed.
-
-Is there have any thoughts on how to solve this issue?
-
-Thank you.
 
