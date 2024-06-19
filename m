@@ -1,164 +1,120 @@
-Return-Path: <linux-kernel+bounces-221249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2979890F0DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:38:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5CE90F0E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D091C2099B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:38:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D945F1F23CEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1978E3FB88;
-	Wed, 19 Jun 2024 14:37:11 +0000 (UTC)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF89914EC4D;
+	Wed, 19 Jun 2024 14:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EJaiHwHp"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495C34502E;
-	Wed, 19 Jun 2024 14:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5624A14B96E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718807830; cv=none; b=TccQULpCBbdHc2O8Rc2pwbVVvcZ3wfp17lMJ9zGOKzZrIc1zWFYW1BNHGGv0YV0zZdMbhD8AI2Av0OJF6CEJl8UcHq/yTFzP1fXJ1g27UVgRVXzWzFd/cJZxw4WUgJGXygmxBYkFPrrm01bpmI/GwOUN69jS8E7w5iUW5b+8JW8=
+	t=1718807874; cv=none; b=B32yfnOcUh41m5lZBIYpI0VPG3B3WjcizbX244CHOiCOLLUilQ21KFQa48d9WHhacHK2P0UA97M1b7ERpQCvqXnG8K+J/Lzjtg0KKEZH6W8UP5GnXVvEM2ExxLlNklcBBKS16E/D9vql8l1nV0RgKfAsx2e+U+0CXbSdfiE7Rys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718807830; c=relaxed/simple;
-	bh=x6NRM0Wd/dKIBRZxOMdNl8xpgje8YklE7FrB9pPbj6c=;
+	s=arc-20240116; t=1718807874; c=relaxed/simple;
+	bh=xz8466KeS3kFFR0h/8XeCqzSrxi1hZ75OsH8Tv9FjPI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qr/121nzPRZsIwwrFb0zu1aqnh+qxuwMAJ/Pc30Y6igy7vpQAzNwylOqpAGK9+aKu0nGWMULK2uil0Or0jlTe2Zk8d53/lmnJPooh9NAiqt+CrKGTG3Q1tFTgRDlHyXxyi3Mqg4rL92KmuVpInshZqbgenzQEhL2gFdFNgn98Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c2c6277ef3so5349495a91.3;
-        Wed, 19 Jun 2024 07:37:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=s4WtApZRf0WQrsnI57wQ4BBfhH8IMat+l1o4GgnSlU+wDvCE8ZPuzu82ZlLCCvtUzcqSCuqH5g7HzXXa4cns0CFZuinpkgjNyml3L8z3oFpmODM0c5/ILiEWGoPdz7DNB2Z3PrBlbydDDowt4mJ6zslNWNx2JfMYp+vL596d2MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EJaiHwHp; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so540580a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:37:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718807870; x=1719412670; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mW6qIwgaMhv1Ukx6IUSceUqe9uJpeRHrbJHiEQy9EwE=;
+        b=EJaiHwHprRqUXvGvwRBw5AcTvT/Qwd758d8F1zyOXd//VDqQphHziP4K96uf9N8337
+         q3Un43RAtXDTkVE9XbcbNo3n2e2Y5ZsTExjxncHstu2VLXiYmKOe7adTi2iSBJMkSWgL
+         VCuTLibikSimhZDssQQZCyV7XC9yFLPT1O2nkkPDY4FOg9rGGudFjwv17R7B32+FWC+h
+         8tZLRqA31RohYeZzc3CKHmLX8rhqskC9t8IjQsXqJR/S3EKR756zKwx14J7fewvUQtx9
+         ylJyCz7vk5PLewX4f+D28tNuj0qIJuXE6UAtjOUJcb3C68cZJCqYVZ3Vbb3gHYIZmaa5
+         N7IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718807828; x=1719412628;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gP1VJ7kQiJGM0n4f6UiRupEpEMSQerAYURwdrjXyXxU=;
-        b=v4tVvAfw/kt28T1BuknOuT/ShVTQ4jdpQlkEjJGtFik7yTn16C+SekeXIdXyR/EQDf
-         fzVcDJav7GhaGB073600Kzkv8gLIIOcSiFBp5/F6ii8iyO/+75OBhmp3slMXx1ym8gN1
-         Ci9nyH+TEW1qdSEfv3UJw5Y+Afv61fI7EUuLk7HcgPJtNz7Z5vTk9j1AOO+yDmqNn16w
-         Vm49SwY4bBjNnQPTJ6iVSILx4yXrY4kPaWeq4akjM66JTagmdx6DCU2Dx2sh/jCd2gmk
-         8q0u+tuuRANhpPGPHVCqvRR7MEmZkUOJmBtlWb7kP4YpzTNhGrI6Efhddb6qVqf3gSbL
-         yajA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlO2QnqsnVNQ05lpbCRklBtS9SbJP3AdgqsSRQIJsyDek8O5gAMykb9iY3XR851Akhjy4JlsY+F77O8j9MzqTdoxSvFjWylPSxurN+VlmM15LWHTUjLxCqFZofiZiltlR2AY67W97bMYo5qpryfw==
-X-Gm-Message-State: AOJu0YxYGEPrxkFx4v7I+SDs81+d0JXLva0SY8eXmNrHd6AGS83ZkAF2
-	CxkuPW231uuJ/OJJ+arwc6dK5ZFegEZajOlO0JA4CeXzlPTu+WqeGpbN95ifChIkh/oQa04KfIs
-	f4u8MgsuUQqEHx1TR3R02dKj1X9E=
-X-Google-Smtp-Source: AGHT+IHKMEXkRsal/FHOajaYC+Tv1+w8iaV1TCo8NfL/dZIwCPWlmEgiVVy4KBRduSGi34Vb0d2Zy27J6CXTPXUW1Jw=
-X-Received: by 2002:a17:90a:4ce3:b0:2c7:c306:8a69 with SMTP id
- 98e67ed59e1d1-2c7c3069ee5mr1791355a91.9.1718807828459; Wed, 19 Jun 2024
- 07:37:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718807870; x=1719412670;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mW6qIwgaMhv1Ukx6IUSceUqe9uJpeRHrbJHiEQy9EwE=;
+        b=lvSOx5p1RLFXrTIO7YHq/Ev/tvO1cRbVN7A4HWgTV2ypwrEALfYX42ooGqFRsT11lU
+         lsLfsOLD+X6SsuWMJGD1rTSH29m7F52r6rWxT2azroEh3YOM159D4SJIRZspPG9ht7lO
+         WnFgSlQPQ5SjXSXSHk2+98bSgm6eC1N1E9XUe/jtD/IrGTuw4wdXMh5kBRz/BLcTq/Pz
+         4PfEMtJCm+vG/obTC+PPeRdgvY1TeP+IkmQ1Jf7B6a+QcNbbZWFi24OOK66Ka0kOn58j
+         1q+vGrSw4F2LeYQt6v7RBKz4u7DTSKfAudh9pByDaIkw4Lx8u4Xjm7rpcWVk1R3NZ5v6
+         28AA==
+X-Forwarded-Encrypted: i=1; AJvYcCVw+Yg8Fa2FT/a3Y8jMGlDsJUy6N6gycPBiU0c9UbHsiDWOj1CgIK8zl3ZdmFCDIg1ZBDUUbiixGOw35pzyY0ZYSfNSs5i+L0vd3idp
+X-Gm-Message-State: AOJu0YxxcQIvd2MmZQJ46NrwF4LopdCdOIgpw13kCJkssNVuRZep2eRx
+	VTIcb4UM5VHXgjKWGrqyUCwCf3Dx1251j6nsjoZtzFiUXZz6NxpTPHhhR3eNtzdjm1gXdMpbbh6
+	3ze0gA1D4sOnl5NYjwn3yUYRFZ/ajCHZb/7I4Sg==
+X-Google-Smtp-Source: AGHT+IHuis2PWxnbeePb9S0U1LQ2x2sGfOwuZsNdXB0g7qlMm761qcR5dMpoqfdYtNv6UIguJ9ZLskZKA13dNPaiPkc=
+X-Received: by 2002:a50:d4da:0:b0:57c:b82e:884b with SMTP id
+ 4fb4d7f45d1cf-57d06ade10bmr1620556a12.19.1718807870558; Wed, 19 Jun 2024
+ 07:37:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619082042.4173621-1-howardchu95@gmail.com>
- <20240619082042.4173621-6-howardchu95@gmail.com> <ZnLianWCCEF6ydVO@x1>
-In-Reply-To: <ZnLianWCCEF6ydVO@x1>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 19 Jun 2024 07:36:55 -0700
-Message-ID: <CAM9d7cg7yccjLJ8p7DG3JOOmafofJB1jOjsLmfVpjk=xmNBBSw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] perf trace: Add test for enum augmentation
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Howard Chu <howardchu95@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
+References: <20240606020213.49854-1-21cnbao@gmail.com> <ZmctTwAuzkObaXLi@google.com>
+In-Reply-To: <ZmctTwAuzkObaXLi@google.com>
+From: Sumit Semwal <sumit.semwal@linaro.org>
+Date: Wed, 19 Jun 2024 20:07:38 +0530
+Message-ID: <CAO_48GE_YHFFjKBb6hhZQ4--3j3H3+AUTaPkZWfHTGgBa=b78Q@mail.gmail.com>
+Subject: Re: [PATCH] dma-buf/heaps: Correct the types of fd_flags and heap_flags
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Barry Song <21cnbao@gmail.com>, linaro-mm-sig@lists.linaro.org, 
+	linux-media@vger.kernel.org, Brian.Starkey@arm.com, 
+	benjamin.gaignard@collabora.com, christian.koenig@amd.com, 
+	dri-devel@lists.freedesktop.org, jstultz@google.com, 
+	linux-kernel@vger.kernel.org, tjmercier@google.com, v-songbaohua@oppo.com, 
+	hailong.liu@oppo.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Barry,
 
-On Wed, Jun 19, 2024 at 6:51=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
+On Mon, 10 Jun 2024 at 22:14, Carlos Llamas <cmllamas@google.com> wrote:
 >
-> On Wed, Jun 19, 2024 at 04:20:42PM +0800, Howard Chu wrote:
-> > Check for vmlinux's existence in sysfs as prerequisite.
+> On Thu, Jun 06, 2024 at 02:02:13PM +1200, Barry Song wrote:
+> > From: Barry Song <v-songbaohua@oppo.com>
 > >
-> > Add landlock_add_rule.c workload. Trace landlock_add_rule syscall to se=
-e
-> > if the output is desirable.
+> > dma_heap_allocation_data defines the UAPI as follows:
 > >
-> > Trace the non-syscall tracepoint 'timer:hrtimer_init' and
-> > 'timer:hrtimer_start', see if the 'mode' argument is augmented,
-> > the 'mode' enum argument has the prefix of 'HRTIMER_MODE_'
-> > in its name.
+> >  struct dma_heap_allocation_data {
+> >         __u64 len;
+> >         __u32 fd;
+> >         __u32 fd_flags;
+> >         __u64 heap_flags;
+> >  };
 > >
-> > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > But dma heaps are casting both fd_flags and heap_flags into
+> > unsigned long. This patch makes dma heaps - cma heap and
+> > system heap have consistent types with UAPI.
+> >
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+
+Thanks for this cleanup; pushed to drm-misc-next.
+
 > > ---
-[SNIP]
-> > diff --git a/tools/perf/tests/workloads/landlock_add_rule.c b/tools/per=
-f/tests/workloads/landlock_add_rule.c
-> > new file mode 100644
-> > index 000000000000..529b5f1ea5a7
-> > --- /dev/null
-> > +++ b/tools/perf/tests/workloads/landlock_add_rule.c
-> > @@ -0,0 +1,32 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#include <linux/compiler.h>
-> > +#include <uapi/asm-generic/unistd.h> // for __NR_landlock_add_rule
-> > +#include <unistd.h>
-> > +#include <linux/landlock.h>
 >
-> This file was introduced on linux in 2021, unsure if it will be present
-> in some of the older distros we test, I'll check with my container test
-> suite.
+> Looks good to me, thanks!
 >
-> Maybe we'll have to just define those LANDLOCK_ACCESS_FS_READ_FILE,
-> LANDLOCK_ACCESS_NET_CONNECT_TCP, etc as plain #define to make sure it
-> builds ok with uCLibc, musl libc and older glibc.
-
-Maybe we can check if the syscall number is defined first and
-include the landlock header.
-
-#ifdef __NR_landlock_add_rule
-#include <linux/landlock.h>
-...
-
-Then we need a way to skip the test if it's not defined.
-
-Thanks,
-Namhyung
+> Reviewed-by: Carlos Llamas <cmllamas@google.com>
 
 
->
-> - Arnaldo
->
-> > +#include "../tests.h"
-> > +
-> > +static int landlock_add_rule(int argc __maybe_unused, const char **arg=
-v __maybe_unused)
-> > +{
-> > +     int fd =3D 11;
-> > +     int flags =3D 45;
-> > +
-> > +     struct landlock_path_beneath_attr path_beneath_attr =3D {
-> > +         .allowed_access =3D LANDLOCK_ACCESS_FS_READ_FILE,
-> > +         .parent_fd =3D 14,
-> > +     };
-> > +
-> > +     struct landlock_net_port_attr net_port_attr =3D {
-> > +         .port =3D 19,
-> > +         .allowed_access =3D LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> > +     };
-> > +
-> > +     syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_PATH_BENEATH,
-> > +             &path_beneath_attr, flags);
-> > +
-> > +     syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_NET_PORT,
-> > +             &net_port_attr, flags);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +DEFINE_WORKLOAD(landlock_add_rule);
-> > --
-> > 2.45.2
-> >
->
+Best,
+Sumit.
 
