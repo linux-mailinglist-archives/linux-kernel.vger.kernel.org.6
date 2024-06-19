@@ -1,66 +1,73 @@
-Return-Path: <linux-kernel+bounces-221779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2AB290F871
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:22:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C26F90F86F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488372855B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:22:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34291C20D4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F93A15B103;
-	Wed, 19 Jun 2024 21:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D6215A863;
+	Wed, 19 Jun 2024 21:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="yoFLnhGZ"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6qHzpj9"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898A315A846
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 21:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898A079B84;
+	Wed, 19 Jun 2024 21:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718832144; cv=none; b=YTBpDBQG3seJNTGReARxsGS0+tfH9vAI8KxNdfRaLEg0TUmKewVJDkyFe79idjQNAo5PdNzJFnnhjfqBnLDdq0g7/YNz246rDrq1TMIDPqrlbxXBCxvuZdxjuxxx73IP6KO+Fi9Z7vpjY0w7rLPCsXe3gt+oTCUBtrL5OOJQ2N8=
+	t=1718832141; cv=none; b=uBWVVK49r8TwwbP3agVcb5sApwkobhBUL7U4YClnpr3/H4kepIQDyPHpzaefaFEMozO4wK73szEob9RYq1LoJxo9ubm4b3MlldHUMHVK2fMT2h8iHf+3jTv4eOeXgJJjaTjeltycvHqlcpvf5wVvxWNKuNlj+i6wTsLkkQULIVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718832144; c=relaxed/simple;
-	bh=zzYVYQFfqXEOVkA+vD94aEUcOi1Fnmwc5iU9M72Z8ow=;
+	s=arc-20240116; t=1718832141; c=relaxed/simple;
+	bh=2uEHebws1X9dqtvQws5gZF6eCQTI7EkV7dkk5jUUK6c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pFcjS37D5AdywTs8UwdsTztS9os+72wsJypYrM6sULgPV0UGoIRKY4Xg0+DzZr+wXaSj6QQJ9yliTG17nyLVVOsEjR5ZRek9EnpFMAHjO//1T/oydXETAX7rd/MoQfvAqJfrTrjfawyxsEXWk08/6JGVsJoNGsLo3ZL2LeN5PUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=yoFLnhGZ; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5004a.ext.cloudfilter.net ([10.0.29.221])
-	by cmsmtp with ESMTPS
-	id K18UsSqh5xs4FK2kwsRQq3; Wed, 19 Jun 2024 21:22:14 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id K2kvsNv9XGDo0K2kvsI1L4; Wed, 19 Jun 2024 21:22:14 +0000
-X-Authority-Analysis: v=2.4 cv=I+uuR8gg c=1 sm=1 tr=0 ts=66734c06
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=wYkD_t78qR0A:10 a=VwQbUJbxAAAA:8
- a=QyXUC8HyAAAA:8 a=JSiYjvY3ZUJVig6Ww4oA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eRQryqgx8VcSeVue6U01oDxjp865CzUjBYKaWQEEpV8=; b=yoFLnhGZqK9XzoBGcUoxz8P0mO
-	Yb019bvjaqlgebFuBRnZECaPKMNIuvW7TNKkYzCptKoy4TUkrLRqipa+kPoK6Yqo2hWzJ2RJtfrbC
-	0YkGaYhbHnKzFXsaBAuvH6wMB3aqoGc0azCudiewbjhWRfYFD/r0/TFnqDoFvCFIn9ZwPfwJ5E8cV
-	HvCzwnELZQxpJcayzi/Z8KPSE94P9pYK2HJWU83VlQ36DGquYBhBpOMvApKcJr/ZXVZcEABL1fUXX
-	b5dhU7pxzWQn6In2i3eU9Rvtuj07ZZEAuW/DXdZ9gyc0HF/eVJk8PbmysEccwHGXQYGFd0r4ZBawl
-	ps7H1s9g==;
-Received: from [201.172.173.139] (port=49804 helo=[192.168.99.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sK2kt-002K9z-2l;
-	Wed, 19 Jun 2024 16:22:11 -0500
-Message-ID: <202aeef9-ba5b-400b-8341-bc07fb394a19@embeddedor.com>
-Date: Wed, 19 Jun 2024 15:22:09 -0600
+	 In-Reply-To:Content-Type; b=GczwoEubZjnhoqWLwai9RGMjPnWUEgZBOWkffnhkwSM0VH5IXVIRCtwSOgIv1eRMOs33eJdSHi8/n02Xq2QDe5WLcYiKAH80OMPK+V6sO7AbKlO3XKpU3ZbRH044GU5Y0HegbInoHjj4ImR9eHXGuq/XipCpBBUiF+Bsf91IHDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6qHzpj9; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-364cdfdaf91so11483f8f.1;
+        Wed, 19 Jun 2024 14:22:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718832138; x=1719436938; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5sx3d5aukNa1OWCQombJgZHBhuiOH8rHHOJskHdIODU=;
+        b=J6qHzpj9DCAsvIXAVrChf+Ftq+0k5W9fmbtfk+QzeCHIQa2wjG4k7CVio2ZQyHRPUT
+         woXsYldCy37VJbaDKazQLZisWTlcHKTeVnVMkDfTij36WI3KpQd84wSBeokLSGdS0wZE
+         gXwlmuuv4LVpYO7TMt+/8FtPWTKxN/gXr0OimKI7vTaAWtWa2vrbI7NYYNnVdXp68tMp
+         oJtxEYlya8/5OjDryRTigRU89fm/z+UOS7XUDyS0+nJtqwYTLFi8B8G7OTm+SxyN4yif
+         ktDsXpZ07JnMngaLsYlFxPJ3WrqhxF+yBaKHCFmrLRUJ3c5zLl+rzbgWNvXEyP315suC
+         33DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718832138; x=1719436938;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5sx3d5aukNa1OWCQombJgZHBhuiOH8rHHOJskHdIODU=;
+        b=g+DuMfzayoiEnejfiyS6TQuxC9exGr4pr93RfxGjFW3Cow+8xTzh2Xk+tMkCY9g7Iz
+         i7yem7uxkT+Wpdla8YsuK5qcvdxjtfMPtZwFncdxOZEXFQbD5gRjgqIaDBIiSIbwltnJ
+         3HftI+BEn52Dbk2RKe8PJha411T7w+moqWyiETb0hOWWjyuH9CYo/fIiQnLE2WNtoKK0
+         WRxCNlywD9ON6X/uYnYoGLNtUrCeFXdcBiMoXsEF6Va+6aaFSU2mCJWTaxxGqjI+agPs
+         aap6PQbmRzGMoHjtwvbD2Q0d4PbCpmNWsj5OLiU1rBYY+PT3DlB653NzULRI/N3vBPzp
+         kVFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXAnY9z85OsnYtZt0imIARK/qCA46xluXwcVaLtJdjLT3G5TS3MVwf6+ajZMRdnnOYKP5lVxc9GWPeSv040dyRzil82+Tg2dX+MLX4wekBltBxEkOIFul7IlkT6W3TJKDOP01nWxKySyC0Gbz7Y8qa9P73PCNT2d8QAtVhOCqThZdSIlJhaAeb
+X-Gm-Message-State: AOJu0YwpFJhY6DwXe8yE1cq0tAiDjTriyizxighkufrK1l+G1wQT8mk4
+	qXBc8auGr/yDPc1vNevmTcRcyY0xkgQl1cAOQX2TKIB0Z4wYpwjy
+X-Google-Smtp-Source: AGHT+IGc3vo6EKnmbemHDWA0UdbLA6WgSAtCwiUPHbsRyCJWFZ6KrymmxNAetUE1FTKl9Na6Td20Mw==
+X-Received: by 2002:adf:a381:0:b0:362:a5b2:b62a with SMTP id ffacd0b85a97d-36317c7751amr2420976f8f.33.1718832137618;
+        Wed, 19 Jun 2024 14:22:17 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:1:6960:9f76:b012:ddc2:11de? ([2a01:e0a:1:6960:9f76:b012:ddc2:11de])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0ca0afsm2914015e9.25.2024.06.19.14.22.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 14:22:17 -0700 (PDT)
+Message-ID: <16994d97-0499-4e3b-8890-328e74adc91d@gmail.com>
+Date: Wed, 19 Jun 2024 23:22:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,158 +75,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: iwlwifi: mvm: Fix __counted_by usage in
- cfg80211_wowlan_nd_*
-To: Kees Cook <kees@kernel.org>,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
- "Gustavo A . R . Silva" <gustavoars@kernel.org>,
- Luca Coelho <luciano.coelho@intel.com>,
- Gregory Greenman <gregory.greenman@intel.com>,
- Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
- Haim Dreyfuss <haim.dreyfuss@intel.com>, linux-wireless@vger.kernel.org,
- Shaul Triebitz <shaul.triebitz@intel.com>,
- Benjamin Berg <benjamin.berg@intel.com>, Dmitry Antipov
- <dmantipov@yandex.ru>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240619211233.work.355-kees@kernel.org>
+Subject: Re: [PATCH 0/9] Add CPU-type to topology
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240619211233.work.355-kees@kernel.org>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
+ <20240619015315.3ei5f6rovzdnxovo@desk>
+From: Brice Goglin <brice.goglin@gmail.com>
+In-Reply-To: <20240619015315.3ei5f6rovzdnxovo@desk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sK2kt-002K9z-2l
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.99.44]) [201.172.173.139]:49804
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfL/MSgxCZ+ZXBAgM8X9hdnkDvlHpaxL82G975xhAKmxRrBjF5b3Uj98jeccm+Q5t7sganPa0/DK9dRGv/1+bUTxaubb0GslfPIg4v4kwUgPa03x3LoCA
- L9WSCvtwxEHOL9FbrPE3QzFu3EGT765fCKKfHMW+oH6U7HAm19KtDdBgPCGToHLvREVrvB9lG8ZZSgvDk1JYYaoacG9YN6TfgzjomJJH1vX+Fvlq07AFvXXM
+Content-Transfer-Encoding: 8bit
+
+Le 19/06/2024 à 03:53, Pawan Gupta a écrit :
+> On Tue, Jun 18, 2024 at 02:49:10PM +0200, Brice Goglin wrote:
+>> Le 17/06/2024 à 11:11, Pawan Gupta a écrit :
+>>> Hi,
+>>>
+>>> This series adds support for CPU-type (CPUID.1A.EAX[31-24] on Intel) to
+>>> differentiate between hybrid variants P+E, P-only, E-only that share the
+>>> same Family/Model/Stepping. One of the use case for CPU-type is the
+>>> affected CPU table for CPU vulnerabilities, which can now use the CPU-type
+>>> to filter the unaffected variants.
+>>>
+>>> * Patch 1 adds cpu-type to CPU topology structure and introduces
+>>>     topology_cpu_type() to get the CPU-type.
+>>>
+>>> * Patch 2-4 replaces usages of get_this_hybrid_cpu_type() with
+>>>     topology_cpu_type().
+>>>
+>>> * Patch 5-7 Updates CPU-matching infrastructure to use CPU-type.
+>>>
+>>> * Patch 8 cleans up the affected CPU list.
+>>>
+>>> * Patch 9 uses the CPU-type to exclude P-only parts from the RFDS affected
+>>>     list.
+>>
+>> Hello
+>>
+>> Is there still a plan to expose this info in sysfs?
+> Sure, if it helps userspace.
+>
+>> Userspace currently uses frequencies to guess which cores are E or P.
+>> Intel sent some patches several years ago [1], but they got abandoned
+>> nowhere as far as I know. There was also some discussion about using a
+>> "capacity" field like ARM does, but IIRC Intel didn't like the idea in
+>> the end.
+> There can be many ways to expose this information in sysfs. Like this ...
+>
+>> [1] https://lkml.org/lkml/2020/10/2/1208
+> ... exposes /sys/devices/system/cpu/types which, in hybrid parts, creates a
+> subdirectory for each type of CPU. Each subdirectory contains a CPU list
+> and a CPU map that user space can query.
+>
+> The other way is to expose the CPU-type in a file:
+>
+> 	/sys/devices/system/cpu/cpuN/type
+>
+> that could return the CPU-type of the CPU N. Is there a preference?
 
 
+I'd vote for the former.
 
-On 19/06/24 23:12, Kees Cook wrote:
-> Both struct cfg80211_wowlan_nd_match and struct cfg80211_wowlan_nd_info
-> pre-allocate space for channels and matches, but then may end up using
-> fewer that the full allocation. Shrink the associated counter
-> (n_channels and n_matches) after counting the results. This avoids
-> compile-time (and run-time) warnings from __counted_by. (The counter
-> member needs to be updated _before_ accessing the array index.)
-> 
-> Seen with coming GCC 15:
-> 
-> drivers/net/wireless/intel/iwlwifi/mvm/d3.c: In function 'iwl_mvm_query_set_freqs':
-> drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2877:66: warning: operation on 'match->n_channels' may be undefined [-Wsequence-point]
->   2877 |                                 match->channels[match->n_channels++] =
->        |                                                 ~~~~~~~~~~~~~~~~~^~
-> drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2885:66: warning: operation on 'match->n_channels' may be undefined [-Wsequence-point]
->   2885 |                                 match->channels[match->n_channels++] =
->        |                                                 ~~~~~~~~~~~~~~~~~^~
-> drivers/net/wireless/intel/iwlwifi/mvm/d3.c: In function 'iwl_mvm_query_netdetect_reasons':
-> drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2982:58: warning: operation on 'net_detect->n_matches' may be undefined [-Wsequence-point]
->   2982 |                 net_detect->matches[net_detect->n_matches++] = match;
->        |                                     ~~~~~~~~~~~~~~~~~~~~~^~
-> 
+Brice
 
-Nice catch! :)
 
-> Fixes: aa4ec06c455d ("wifi: cfg80211: use __counted_by where appropriate")
-> Signed-off-by: Kees Cook <kees@kernel.org>
-
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-
-Thanks
--- 
-Gustavo
-
-> ---
-> Cc: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-> Cc: Kalle Valo <kvalo@kernel.org>
-> Cc: Johannes Berg <johannes.berg@intel.com>
-> Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
-> Cc: Luca Coelho <luciano.coelho@intel.com>
-> Cc: Gregory Greenman <gregory.greenman@intel.com>
-> Cc: Yedidya Benshimol <yedidya.ben.shimol@intel.com>
-> Cc: Haim Dreyfuss <haim.dreyfuss@intel.com>
-> Cc: linux-wireless@vger.kernel.org
-> ---
->   drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 14 +++++++++++---
->   1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-> index 54f4acbbd05b..9cd03ea4680d 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-> @@ -2866,6 +2866,7 @@ static void iwl_mvm_query_set_freqs(struct iwl_mvm *mvm,
->   				    int idx)
->   {
->   	int i;
-> +	int n_channels = 0;
->   
->   	if (fw_has_api(&mvm->fw->ucode_capa,
->   		       IWL_UCODE_TLV_API_SCAN_OFFLOAD_CHANS)) {
-> @@ -2874,7 +2875,7 @@ static void iwl_mvm_query_set_freqs(struct iwl_mvm *mvm,
->   
->   		for (i = 0; i < SCAN_OFFLOAD_MATCHING_CHANNELS_LEN * 8; i++)
->   			if (matches[idx].matching_channels[i / 8] & (BIT(i % 8)))
-> -				match->channels[match->n_channels++] =
-> +				match->channels[n_channels++] =
->   					mvm->nd_channels[i]->center_freq;
->   	} else {
->   		struct iwl_scan_offload_profile_match_v1 *matches =
-> @@ -2882,9 +2883,11 @@ static void iwl_mvm_query_set_freqs(struct iwl_mvm *mvm,
->   
->   		for (i = 0; i < SCAN_OFFLOAD_MATCHING_CHANNELS_LEN_V1 * 8; i++)
->   			if (matches[idx].matching_channels[i / 8] & (BIT(i % 8)))
-> -				match->channels[match->n_channels++] =
-> +				match->channels[n_channels++] =
->   					mvm->nd_channels[i]->center_freq;
->   	}
-> +	/* We may have ended up with fewer channels than we allocated. */
-> +	match->n_channels = n_channels;
->   }
->   
->   /**
-> @@ -2965,6 +2968,8 @@ static void iwl_mvm_query_netdetect_reasons(struct iwl_mvm *mvm,
->   			     GFP_KERNEL);
->   	if (!net_detect || !n_matches)
->   		goto out_report_nd;
-> +	net_detect->n_matches = n_matches;
-> +	n_matches = 0;
->   
->   	for_each_set_bit(i, &matched_profiles, mvm->n_nd_match_sets) {
->   		struct cfg80211_wowlan_nd_match *match;
-> @@ -2978,8 +2983,9 @@ static void iwl_mvm_query_netdetect_reasons(struct iwl_mvm *mvm,
->   				GFP_KERNEL);
->   		if (!match)
->   			goto out_report_nd;
-> +		match->n_channels = n_channels;
->   
-> -		net_detect->matches[net_detect->n_matches++] = match;
-> +		net_detect->matches[n_matches++] = match;
->   
->   		/* We inverted the order of the SSIDs in the scan
->   		 * request, so invert the index here.
-> @@ -2994,6 +3000,8 @@ static void iwl_mvm_query_netdetect_reasons(struct iwl_mvm *mvm,
->   
->   		iwl_mvm_query_set_freqs(mvm, d3_data->nd_results, match, i);
->   	}
-> +	/* We may have fewer matches than we allocated. */
-> +	net_detect->n_matches = n_matches;
->   
->   out_report_nd:
->   	wakeup.net_detect = net_detect;
 
