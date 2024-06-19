@@ -1,170 +1,342 @@
-Return-Path: <linux-kernel+bounces-221337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7AE90F217
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C11890F212
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0BE81C20B48
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:26:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4312C1C21275
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C6C15278D;
-	Wed, 19 Jun 2024 15:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E94015099B;
+	Wed, 19 Jun 2024 15:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1z35w1e"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ytltaMUA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dats/ee+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18ECC6F303;
-	Wed, 19 Jun 2024 15:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9241419BA;
+	Wed, 19 Jun 2024 15:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718810758; cv=none; b=k6VflZ+mXzV/tQKpmTTxsMWwz31WbuF2PDv61xqoJ5RJjA6EZFl7ib9zvPXlvxLXUCAJ/HNSvv4XZbswAYDLCIfYGcibygytu14QLqCyoYPXSFYKx6mRCwcwieROgB3hQCQhyDaHFZD9j84rQd75X/xvS/wqrttUzKx6wVPDIzA=
+	t=1718810736; cv=none; b=Kh8soPd7uHEyi1GlT+kGJU32IBtVfgFKh3FvvTDrkj5B6qWWR0i9WSq07yNeaGLTUyHbFBCSsp3rQFU2pn/SPCSv7qsrAOqFNdKrvehiIKSG3BrjL9jIQIp84aR/4huKS/HU2ele3jLnATrg+Y+PM8v0KC/qu9jidJiqKmtyAOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718810758; c=relaxed/simple;
-	bh=lObePiRYmjF41juMObfnbKFWNcUSV+MtB32rdSUSagg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5oowsxzTdtVZnBM0mHNNCcg5JaLTmemPWHXx6mbo30mYKqr/pMIqhIJK3t8v/P+xE/lPxIv3Te7D/rlNYJGw8FfJX217ywhA4P4XU75imppPzk+IHqTbfeGl7y0+qR241bkV83I73XRz/qkzsgFT9nnR1b1aeQg5DCSnFaNM+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E1z35w1e; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-632843cff4fso51711927b3.3;
-        Wed, 19 Jun 2024 08:25:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718810756; x=1719415556; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=WBW1O2idp2gCEdyEFquLkwCIznqvaLy0Pot5Ug+i2Hg=;
-        b=E1z35w1eKGRB53lzx4ygd6Bq6uSn/dafo+UZIATQLzcyuf1hjgZ0mBR31c4EVFnHjy
-         Rf1POTn9xGvLNLLwg/3bu5IaN8TEb+NezRltPLixUehFkopIlQClpiPKcm+/H5dG+cEb
-         dGkhT2bPSQbLvvt8Qfqla87k/6EO5621YahlG+7iV7GXZxEXJ9e/5ZqPiHSWssDS+6RK
-         3ealh664NQoQha62GEDKej1MO0omiCWL5acAoUQjTp9dkFlgQnNh1Yqhh0o7V/E46BBi
-         nr9xBdwDX2RMFgdqfqxVmv5FEV0PUJpVYaRQswbea1fumXDB+M2Sm1RyPCNygN8HYZrg
-         3zHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718810756; x=1719415556;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WBW1O2idp2gCEdyEFquLkwCIznqvaLy0Pot5Ug+i2Hg=;
-        b=cPK/pLLmxz6Wzf2joRjAxKEzrtN6wscCIOvb0ZMMOBcKD8KeqLVpZc7coDwot1gUZB
-         9i4q+1NrQ6HhHUBsaiD9uNv4JQdCcVjz651bKX8qa/YsBAtMdLPgQYVzQtd7PUyUEGSs
-         fRN8fpmPeWSlf1wrZC2qeQAk/eBorOvlj6IpI1AVACCdHlRNKsxXbSwkeEFxqPPGn7xG
-         0BUPWc83vdiLp0lOgxEhh6SKHydxQvGKLk8e81kYbFvUD3AepN222BeBRDvWWfOMzwyP
-         MDt0HdkWkr67FvNy6Dskb9vcd50dEsPgADQGX0cbE3aDcXyjRQbkT36R+J9iKT/+Y2HZ
-         +xfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUB3dghLuiGD8UzF1Xk9PPGDN9Mig3YGUYzqDDHhLiqPsEhFesxMbxlHN6I4Tb5L1nRJJIGpe05mnWyoHH+ochlvTmnPOf8mBsVmKIZZI/RlciHW+fHKHzCPUQsOP+rf1QcDRTv
-X-Gm-Message-State: AOJu0Yyw1ene62oIQG0J2gAZrv3/hvmU6ySAfzCZLAHmFXZY+T9+EkEK
-	008E4VdDlwp3ROPOlB2YBBPJ45ScFpOmBA3mmNB/spZ9r+maidGK
-X-Google-Smtp-Source: AGHT+IGLeYLzu/pwXLZC+cishiNJ064fDhbucXwTiaDWgZCkm3UWK6+CQL7WUdWfGFifGmsdl+bLgw==
-X-Received: by 2002:a05:690c:fd5:b0:630:8fe1:b626 with SMTP id 00721157ae682-63a8ffc98b4mr31376877b3.48.1718810755915;
-        Wed, 19 Jun 2024 08:25:55 -0700 (PDT)
-Received: from [192.168.1.114] ([160.177.57.59])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5eb4835sm78723276d6.99.2024.06.19.08.25.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 08:25:31 -0700 (PDT)
-Message-ID: <b76a1dc8-f4b2-46b0-84af-b46e5cf6acab@gmail.com>
-Date: Wed, 19 Jun 2024 16:25:23 +0100
+	s=arc-20240116; t=1718810736; c=relaxed/simple;
+	bh=WzWDtNue3hRd2biGkJTRD00eZMjZrOqv7+jwWg0sAMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nt5K348J9wN4aaFXp1X0eiWhGGzoLhf5+i8ikgWbN8jdqqi5M144BgYrYjVMZwZzx2xPKgRZhuaEdi/rtfg5yt9mvKMnMbGSdngYdcYfMlr5/pQQ86yS0lpeRNE+Pnl8jI4kz6X5zfFX+hR6wz8hzgTNfEp7KV9qO8hbpEc2DGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ytltaMUA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dats/ee+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 19 Jun 2024 17:25:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718810732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=JvTd++bxqB2tzJ/1TJMkxtwR2mcwlGeOghjVO6g9sbI=;
+	b=ytltaMUAReaCQdmNEailem09qwRruemiMTzlhcuf+PDtSOi7ZmovR6kSZR8RXFrv/Hegjw
+	GfeyR1k2TPE3tAetYhK5Q2XfSkx10RqQGoZxnFERpbM2BV9Z7JSu3EKwqch5ekMehLvuQ5
+	hdItJVkB+F+JhQztX7+N8SpK31avjGI15u1Q0RYcuCekpEyhhOIxT9eCV9lyT8qF8js+gB
+	YFSUJBAnz4QMFznc9OJ83qVHqCzuqKfFpje7Yea4LYmCMtsVn60fEY7kebx/luVAvqgMsp
+	U043Vs6ti+uLBX+w+8HPoEw+eAdCgnSpJu2UAOk+QMjP8R7NPgcM8n8f4EWxZw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718810732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=JvTd++bxqB2tzJ/1TJMkxtwR2mcwlGeOghjVO6g9sbI=;
+	b=Dats/ee+iRjMNLXOHghJ77767v0dxOU7zjgYgfM1JwFGBSP+uNK6sx8PvQ5xeAMa52N10s
+	iFFLGM0LUZX6MGAw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v6.10-rc4-rt7
+Message-ID: <20240619152531.TtA4yAWo@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 net-next] net: dsa: ksz_common: Allow only up to two
- HSR HW offloaded ports for KSZ9477
-To: Lukasz Majewski <lukma@denx.de>, Vladimir Oltean <olteanv@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>, "David S. Miller"
- <davem@davemloft.net>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Tristram.Ha@microchip.com, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Simon Horman <horms@kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- "Ricardo B. Marliere" <ricardo@marliere.net>,
- Casper Andersson <casper.casan@gmail.com>, linux-kernel@vger.kernel.org,
- Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
- Andrew Lunn <andrew@lunn.ch>
-References: <20240619145809.1252915-1-lukma@denx.de>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240619145809.1252915-1-lukma@denx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
+Dear RT folks!
 
+I'm pleased to announce the v6.10-rc4-rt7 patch set. 
 
-On 6/19/2024 3:58 PM, Lukasz Majewski wrote:
-> The KSZ9477 allows HSR in-HW offloading for any of two selected ports.
-> This patch adds check if one tries to use more than two ports with
-> HSR offloading enabled.
-> 
-> The problem is with RedBox configuration (HSR-SAN) - when configuring:
-> ip link add name hsr0 type hsr slave1 lan1 slave2 lan2 interlink lan3 \
-> 	supervision 45 version 1
-> 
-> The lan1 (port0) and lan2 (port1) are correctly configured as ports, which
-> can use HSR offloading on ksz9477.
-> 
-> However, when we do already have two bits set in hsr_ports, we need to
-> return (-ENOTSUPP), so the interlink port (lan3) would be used with
-> SW based HSR RedBox support.
-> 
-> Otherwise, I do see some strange network behavior, as some HSR frames are
-> visible on non-HSR network and vice versa.
-> 
-> This causes the switch connected to interlink port (lan3) to drop frames
-> and no communication is possible.
-> 
-> Moreover, conceptually - the interlink (i.e. HSR-SAN port - lan3/port2)
-> shall be only supported in software as it is also possible to use ksz9477
-> with only SW based HSR (i.e. port0/1 -> hsr0 with offloading, port2 ->
-> HSR-SAN/interlink, port4/5 -> hsr1 with SW based HSR).
-> 
-> Fixes: 5055cccfc2d1 ("net: hsr: Provide RedBox support (HSR-SAN)")
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Changes since v6.10-rc4-rt6:
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+  - Update the net/BH series to the last version that has been posted.
+
+  - Update the i915 patches based on feedback.
+
+Known issues
+    None.
+
+The delta patch against v6.10-rc4-rt6 is appended below and can be found here:
+ 
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/incr/patch-6.10-rc4-rt6-rt7.patch.xz
+
+You can get this release via the git tree at:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.10-rc4-rt7
+
+The RT patch against v6.10-rc4 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/older/patch-6.10-rc4-rt7.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/older/patches-6.10-rc4-rt7.tar.xz
+
+Sebastian
+
+diff --git a/drivers/gpu/drm/i915/i915_utils.h b/drivers/gpu/drm/i915/i915_utils.h
+index 2ca54bc235925..12cbf04990182 100644
+--- a/drivers/gpu/drm/i915/i915_utils.h
++++ b/drivers/gpu/drm/i915/i915_utils.h
+@@ -273,7 +273,12 @@ wait_remaining_ms_from_jiffies(unsigned long timestamp_jiffies, int to_wait_ms)
+ 						   (Wmax))
+ #define wait_for(COND, MS)		_wait_for((COND), (MS) * 1000, 10, 1000)
+ 
+-/* If CONFIG_PREEMPT_COUNT is disabled, in_atomic() always reports false. */
++/*
++ * If CONFIG_PREEMPT_COUNT is disabled, in_atomic() always reports false.
++ * On PREEMPT_RT the context isn't becoming atomic because it is used in an
++ * interrupt handler or because a spinlock_t is acquired. This leads to
++ * warnings which don't occur otherwise and therefore the check is disabled.
++ */
+ #if defined(CONFIG_DRM_I915_DEBUG) && defined(CONFIG_PREEMPT_COUNT) && !defined(CONFIG_PREEMPT_RT)
+ # define _WAIT_FOR_ATOMIC_CHECK(ATOMIC) WARN_ON_ONCE((ATOMIC) && !in_atomic())
+ #else
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index f0ab89caf3cc2..883d55005362c 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -43,6 +43,7 @@
+ 
+ #include <linux/netdev_features.h>
+ #include <linux/neighbour.h>
++#include <linux/netdevice_xmit.h>
+ #include <uapi/linux/netdevice.h>
+ #include <uapi/linux/if_bonding.h>
+ #include <uapi/linux/pkt_cls.h>
+@@ -3223,15 +3224,7 @@ struct softnet_data {
+ 	struct sk_buff_head	xfrm_backlog;
+ #endif
+ 	/* written and read only by owning cpu: */
+-	struct {
+-#ifndef CONFIG_PREEMPT_RT
+-		u16 recursion;
+-#endif
+-		u8  more;
+-#ifdef CONFIG_NET_EGRESS
+-		u8  skip_txqueue;
+-#endif
+-	} xmit;
++	struct netdev_xmit xmit;
+ #ifdef CONFIG_RPS
+ 	/* input_queue_head should be written by cpu owning this struct,
+ 	 * and only read by other cpus. Worth using a cache line.
+@@ -3259,18 +3252,17 @@ struct softnet_data {
+ 
+ DECLARE_PER_CPU_ALIGNED(struct softnet_data, softnet_data);
+ 
+-#ifdef CONFIG_PREEMPT_RT
+-static inline int dev_recursion_level(void)
+-{
+-	return current->net_xmit_recursion;
+-}
+-
+-#else
+-
++#ifndef CONFIG_PREEMPT_RT
+ static inline int dev_recursion_level(void)
+ {
+ 	return this_cpu_read(softnet_data.xmit.recursion);
+ }
++#else
++static inline int dev_recursion_level(void)
++{
++	return current->net_xmit.recursion;
++}
++
+ #endif
+ 
+ void __netif_schedule(struct Qdisc *q);
+@@ -4886,18 +4878,35 @@ static inline ktime_t netdev_get_tstamp(struct net_device *dev,
+ 	return hwtstamps->hwtstamp;
+ }
+ 
+-static inline netdev_tx_t __netdev_start_xmit(const struct net_device_ops *ops,
+-					      struct sk_buff *skb, struct net_device *dev,
+-					      bool more)
++#ifndef CONFIG_PREEMPT_RT
++static inline void netdev_xmit_set_more(bool more)
+ {
+ 	__this_cpu_write(softnet_data.xmit.more, more);
+-	return ops->ndo_start_xmit(skb, dev);
+ }
+ 
+ static inline bool netdev_xmit_more(void)
+ {
+ 	return __this_cpu_read(softnet_data.xmit.more);
+ }
++#else
++static inline void netdev_xmit_set_more(bool more)
++{
++	current->net_xmit.more = more;
++}
++
++static inline bool netdev_xmit_more(void)
++{
++	return current->net_xmit.more;
++}
++#endif
++
++static inline netdev_tx_t __netdev_start_xmit(const struct net_device_ops *ops,
++					      struct sk_buff *skb, struct net_device *dev,
++					      bool more)
++{
++	netdev_xmit_set_more(more);
++	return ops->ndo_start_xmit(skb, dev);
++}
+ 
+ static inline netdev_tx_t netdev_start_xmit(struct sk_buff *skb, struct net_device *dev,
+ 					    struct netdev_queue *txq, bool more)
+diff --git a/include/linux/netdevice_xmit.h b/include/linux/netdevice_xmit.h
+new file mode 100644
+index 0000000000000..38325e0702968
+--- /dev/null
++++ b/include/linux/netdevice_xmit.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#ifndef _LINUX_NETDEVICE_XMIT_H
++#define _LINUX_NETDEVICE_XMIT_H
++
++struct netdev_xmit {
++	u16 recursion;
++	u8  more;
++#ifdef CONFIG_NET_EGRESS
++	u8  skip_txqueue;
++#endif
++};
++
++#endif
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index bd2a568b22d05..34c6169f631eb 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -36,6 +36,7 @@
+ #include <linux/signal_types.h>
+ #include <linux/syscall_user_dispatch_types.h>
+ #include <linux/mm_types_task.h>
++#include <linux/netdevice_xmit.h>
+ #include <linux/task_io_accounting.h>
+ #include <linux/posix-timers_types.h>
+ #include <linux/restart_block.h>
+@@ -977,7 +978,7 @@ struct task_struct {
+ 	unsigned                        in_thrashing:1;
+ #endif
+ #ifdef CONFIG_PREEMPT_RT
+-	u8				net_xmit_recursion;
++	struct netdev_xmit		net_xmit;
+ #endif
+ 	unsigned long			atomic_flags; /* Flags requiring atomic access. */
+ 
+diff --git a/localversion-rt b/localversion-rt
+index 8fc605d806670..045478966e9f1 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt6
++-rt7
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 85702022c5cd4..7d59afa862630 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3942,6 +3942,7 @@ netdev_tx_queue_mapping(struct net_device *dev, struct sk_buff *skb)
+ 	return netdev_get_tx_queue(dev, netdev_cap_txqueue(dev, qm));
+ }
+ 
++#ifndef CONFIG_PREEMPT_RT
+ static bool netdev_xmit_txqueue_skipped(void)
+ {
+ 	return __this_cpu_read(softnet_data.xmit.skip_txqueue);
+@@ -3952,6 +3953,19 @@ void netdev_xmit_skip_txqueue(bool skip)
+ 	__this_cpu_write(softnet_data.xmit.skip_txqueue, skip);
+ }
+ EXPORT_SYMBOL_GPL(netdev_xmit_skip_txqueue);
++
++#else
++static bool netdev_xmit_txqueue_skipped(void)
++{
++	return current->net_xmit.skip_txqueue;
++}
++
++void netdev_xmit_skip_txqueue(bool skip)
++{
++	current->net_xmit.skip_txqueue = skip;
++}
++EXPORT_SYMBOL_GPL(netdev_xmit_skip_txqueue);
++#endif
+ #endif /* CONFIG_NET_EGRESS */
+ 
+ #ifdef CONFIG_NET_XGRESS
+diff --git a/net/core/dev.h b/net/core/dev.h
+index 2f96d63053ad0..4984dd9b334bc 100644
+--- a/net/core/dev.h
++++ b/net/core/dev.h
+@@ -151,24 +151,7 @@ void kick_defer_list_purge(struct softnet_data *sd, unsigned int cpu);
+ 
+ #define XMIT_RECURSION_LIMIT	8
+ 
+-#ifdef CONFIG_PREEMPT_RT
+-static inline bool dev_xmit_recursion(void)
+-{
+-	return unlikely(current->net_xmit_recursion > XMIT_RECURSION_LIMIT);
+-}
+-
+-static inline void dev_xmit_recursion_inc(void)
+-{
+-	current->net_xmit_recursion++;
+-}
+-
+-static inline void dev_xmit_recursion_dec(void)
+-{
+-	current->net_xmit_recursion--;
+-}
+-
+-#else
+-
++#ifndef CONFIG_PREEMPT_RT
+ static inline bool dev_xmit_recursion(void)
+ {
+ 	return unlikely(__this_cpu_read(softnet_data.xmit.recursion) >
+@@ -184,6 +167,21 @@ static inline void dev_xmit_recursion_dec(void)
+ {
+ 	__this_cpu_dec(softnet_data.xmit.recursion);
+ }
++#else
++static inline bool dev_xmit_recursion(void)
++{
++	return unlikely(current->net_xmit.recursion > XMIT_RECURSION_LIMIT);
++}
++
++static inline void dev_xmit_recursion_inc(void)
++{
++	current->net_xmit.recursion++;
++}
++
++static inline void dev_xmit_recursion_dec(void)
++{
++	current->net_xmit.recursion--;
++}
+ #endif
+ 
+ #endif
 
