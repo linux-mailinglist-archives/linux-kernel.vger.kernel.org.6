@@ -1,193 +1,71 @@
-Return-Path: <linux-kernel+bounces-220695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E229290E574
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:25:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD6E90E579
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDBEB1C21791
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 793821F228E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1E179950;
-	Wed, 19 Jun 2024 08:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EYCh8ls7"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB3F7A15C;
+	Wed, 19 Jun 2024 08:27:25 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49B078C9C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D8878286;
+	Wed, 19 Jun 2024 08:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718785517; cv=none; b=uN+t1bCBTNfkXhU0e+hVi/Go9mGiN7TZd95x1GqB2MckxtQWjfc3bD6290v7YWKVDNrLxBQhDm6GMqONrVli5FBTSPmWE0MyuFdmwCHw4nCoqMlMO853Pr+NXDAtGborjRM05TJvaKszmYr9NadCJ7UU4tgshu7/7yurJbTFLKA=
+	t=1718785644; cv=none; b=o9clX2b+syZx2ccNYOQrkXZBn5GIkL4QI26Xwi4HWdkweqVyQ109MOhYJYLR2DjMWZbfd9Wb/AqWo+gT09ju5K5pkLROlHSyI5EAieyGvTi/ZkiLxGn1oqYz2XekT0POH7OTU9fzYQGTrznLaV6C9tQrFF9Sx8wS3f3BS4P/ykM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718785517; c=relaxed/simple;
-	bh=2b/kOalqvvEh0PQENNSxzh2JaUI1Y8hXPaMbFQ6OvkY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NMJZbOTYON8c32FBU23u+r0GXWwUZGiPQTq2l9hZtS7g6ubWzKZVmUHtjIbnDZsPqdBNK2daW+hY6bFsAwTk/tNLI/tix1wriwZM/AzMLsh13hlFRiE1IvgRsgi82OyZuPKFcjhoabiU2LWxwvayd3q3dClPqDvGRqchG99k3tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EYCh8ls7; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-362b32fbb3bso829265f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:25:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718785514; x=1719390314; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F55+nnwPqNHPPaJdOqugGb9tOF+zMoH4pqOyNlk1h1A=;
-        b=EYCh8ls7zKBhT7B20hMi6Jagblfxbe/K8PZzw4RzHDvhPRVQAbI6lP02d9R9K0XRTF
-         ALA2ivQu3mnvxnnulZPfV00wyvnjTFMFgEkDShaGrBxGPSywPgJ3TfoOH3/f7061AM0p
-         tft3i0bp8R05mlsO8re2rOqCJFaJUCOU23xcQJEqg8+XsuQAiOMkWtLx7a/o/HV6vXkz
-         SZEmHR/hWsZOQiW2rZrvAO/kF0gnjM69+UTLzV6fK0rnBWb0H/D1Dwiv6j/kk6lg7ycH
-         7VIL6swT8qHWAHFGsMM9qMVBbzUvlg6GN1r/Ohd0cBB767udn1mYgKggSH7E9Cg+Mscg
-         3PkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718785514; x=1719390314;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=F55+nnwPqNHPPaJdOqugGb9tOF+zMoH4pqOyNlk1h1A=;
-        b=jzFFAgREw5Bz2nLEwXipxB3WBly+ye0raFxbDNMIMKLQyDkCLF+DqAjVQcr2IJXXub
-         MvWtlkhDY0hzkuX3Yy6WJ/FQZTXqbJg0SrPEPyL5Uj/VpYavS813PoYaiWOrCQpc0g2e
-         Oe3GooRyJMoHavQbwfWBNunMetj8U5O8XBxfDBoO0a45nP1FeijF0E6QnEw7JEHVJe0t
-         JvYAgiwNfyklO0UYi8gUlNJaNRGog4xu15aG5Y/pE1RM81Ye3KjW+hRqSbYpHw/+bzd5
-         m8judKQFNzdDTTjkGXO4hHaU+7/NzJNWNLw6K5CXZA4Wv7DyD6ZvUZZF9vsP8GV3oY0K
-         JyqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhOQZL5UdEgNgJT4/0Umu3AHhSbJTi4VSwMNkBtNmWWuhgPKsTT2NC9PS8+e0tYOgtlE1DrbFE6xSqNGAK7LOQeKEnqsoKwaRZnWUK
-X-Gm-Message-State: AOJu0YzRNgGHXeUpy+kcs4lVdCy1uKbXTCEIOwMG3VhkY8Kx4GJBeIba
-	AqmyPYGHtnw2Zn3owhQ8EKCUL+zJ12BPUvak8zOJBEJLlsxD5CSXaYYGeM48oGQ=
-X-Google-Smtp-Source: AGHT+IEP+PNa8W01AM9rOTtoS+vcnvncRhzezJE0YF/DMXlpp6q+MCVB7npKy32RSW+Sv+peRt24EQ==
-X-Received: by 2002:adf:b189:0:b0:354:fc65:39d6 with SMTP id ffacd0b85a97d-363175b8055mr1515876f8f.26.1718785513489;
-        Wed, 19 Jun 2024 01:25:13 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:ed45:cb25:b4fd:b1fa? ([2a01:e0a:982:cbb0:ed45:cb25:b4fd:b1fa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36098c8c596sm6197735f8f.14.2024.06.19.01.25.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 01:25:13 -0700 (PDT)
-Message-ID: <fd49ed95-bea8-40a4-b493-377fafadcdb3@linaro.org>
-Date: Wed, 19 Jun 2024 10:25:11 +0200
+	s=arc-20240116; t=1718785644; c=relaxed/simple;
+	bh=HcKnbgCi4hLpOl0YpLIpOvB7FlpujelaZwgYAxrNWKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsvBTKDxM7QlbrMRdKpuDS4MKFldky4vxgQOL8jZkB2tYgPYHTCtBZ6484xNXNRhMzZq2yAklXPoPge9PcId+YSdKJybbWcXOk0Mqaow0sghzkP9QpU5gnpPo+HOwn6DB2Rbn2jWgv8l/FHoElp9h+PEdj3mm38ri7H4KKCv4P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id DA1B468AFE; Wed, 19 Jun 2024 10:27:18 +0200 (CEST)
+Date: Wed, 19 Jun 2024 10:27:18 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Gulam Mohamed <gulam.mohamed@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"yukuai1@huaweicloud.com" <yukuai1@huaweicloud.com>,
+	"axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [PATCH V6 for-6.11/block] loop: Fix a race between loop detach
+ and loop open
+Message-ID: <20240619082718.GA6210@lst.de>
+References: <20240618164042.343777-1-gulam.mohamed@oracle.com> <20240619081601.GA5434@lst.de> <IA1PR10MB7240896628D86A86E91DE9E798CF2@IA1PR10MB7240.namprd10.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v4 0/8] serial: qcom-geni: Overhaul TX handling to fix
- crashes/hangs
-To: Douglas Anderson <dianders@chromium.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>
-Cc: Yicong Yang <yangyicong@hisilicon.com>, Tony Lindgren <tony@atomide.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Johan Hovold <johan+linaro@kernel.org>,
- John Ogness <john.ogness@linutronix.de>, linux-arm-msm@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
-References: <20240610222515.3023730-1-dianders@chromium.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240610222515.3023730-1-dianders@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA1PR10MB7240896628D86A86E91DE9E798CF2@IA1PR10MB7240.namprd10.prod.outlook.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 11/06/2024 00:24, Douglas Anderson wrote:
-> 
-> While trying to reproduce -EBUSY errors that our lab was getting in
-> suspend/resume testing, I ended up finding a whole pile of problems
-> with the Qualcomm GENI serial driver. I've posted a fix for the -EBUSY
-> issue separately [1]. This series is fixing all of the Qualcomm GENI
-> problems that I found.
-> 
-> As far as I can tell most of the problems have been in the Qualcomm
-> GENI serial driver since inception, but it can be noted that the
-> behavior got worse with the new kfifo changes. Previously when the OS
-> took data out of the circular queue we'd just spit stale data onto the
-> serial port. Now we'll hard lockup. :-P
-> 
-> I've tried to break this series up as much as possible to make it
-> easier to understand but the final patch is still a lot of change at
-> once. Hopefully it's OK.
-> 
-> [1] https://lore.kernel.org/r/20240530084841.v2.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid
-> 
-> Changes in v4:
-> - Add GP_LENGTH field definition.
-> - Fix indentation.
-> - GENMASK(31, 0) -> GP_LENGTH.
-> - Use uart_fifo_timeout_ms() for timeout.
-> - tty: serial: Add uart_fifo_timeout_ms()
-> 
-> Changes in v3:
-> - 0xffffffff => GENMASK(31, 0)
-> - Reword commit message.
-> - Use uart_fifo_timeout() for timeout.
-> 
-> Changes in v2:
-> - Totally rework / rename patch to handle suspend while active xfer
-> - serial: qcom-geni: Fix arg types for qcom_geni_serial_poll_bit()
-> - serial: qcom-geni: Fix the timeout in qcom_geni_serial_poll_bit()
-> - serial: qcom-geni: Introduce qcom_geni_serial_poll_bitfield()
-> - serial: qcom-geni: Just set the watermark level once
-> - serial: qcom-geni: Rework TX in FIFO mode to fix hangs/lockups
-> - soc: qcom: geni-se: Add GP_LENGTH/IRQ_EN_SET/IRQ_EN_CLEAR registers
-> 
-> Douglas Anderson (8):
->    soc: qcom: geni-se: Add GP_LENGTH/IRQ_EN_SET/IRQ_EN_CLEAR registers
->    tty: serial: Add uart_fifo_timeout_ms()
->    serial: qcom-geni: Fix the timeout in qcom_geni_serial_poll_bit()
->    serial: qcom-geni: Fix arg types for qcom_geni_serial_poll_bit()
->    serial: qcom-geni: Introduce qcom_geni_serial_poll_bitfield()
->    serial: qcom-geni: Just set the watermark level once
->    serial: qcom-geni: Fix suspend while active UART xfer
->    serial: qcom-geni: Rework TX in FIFO mode to fix hangs/lockups
-> 
->   drivers/tty/serial/qcom_geni_serial.c | 322 +++++++++++++++-----------
->   include/linux/serial_core.h           |  15 +-
->   include/linux/soc/qcom/geni-se.h      |   9 +
->   3 files changed, 206 insertions(+), 140 deletions(-)
-> 
+On Wed, Jun 19, 2024 at 08:21:35AM +0000, Gulam Mohamed wrote:
+> > To: Gulam Mohamed <gulam.mohamed@oracle.com>
+> > Cc: linux-block@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > yukuai1@huaweicloud.com; hch@lst.de; axboe@kernel.dk
+> > Subject: Re: [PATCH V6 for-6.11/block] loop: Fix a race between loop detach
+> > and loop open
+> > 
+> > Do we need the re-addition of the open method to fix the ltp test case?  I
+> > kinda hate it, but if that is what it takes:
+> > 
+> I don't think its needed but I kept it because your following comment in the suggested change says " switch the state to roundown here to prevent new openers from coming in":
 
-Indeed no more lockup when killing a process on the serial debug console
+Let's keep it.  I meant to say new I/O coming in, but letting a new
+opener come in and then fail I/O isn't really nice behavior.
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
-
-Thanks !
-Neil
 
