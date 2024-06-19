@@ -1,172 +1,107 @@
-Return-Path: <linux-kernel+bounces-220804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42FB90E75E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:52:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 124C490E76A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95421C2156E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E481F21218
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA0B839E4;
-	Wed, 19 Jun 2024 09:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF838563F;
+	Wed, 19 Jun 2024 09:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJCVKjSI"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fq82Bogv"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108CB81AA3;
-	Wed, 19 Jun 2024 09:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BE084D2A;
+	Wed, 19 Jun 2024 09:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718790726; cv=none; b=smPO346rzSsV2Hu6Htlqkak6ReWBlTUBYjy5Ag8X5TPsF0VwGZaEBEfPwIrOUOkC/dmqBIpQuQDuNiby9ax+ipchIid+PNlcgcwyfgnke+a9/zxa3xfgTUA8OQORbt+/PmqRPHWVzGtFJ8HTNuARlRzZQ6CbesACTQSi2hHh/O8=
+	t=1718790792; cv=none; b=c53FdgC2qPnPD2AyOlf/q6Lqzv5ekZ59mAIcJ13ZDj3cJzBM2ewwTKjwdtOpak00RMxAVTVlbl5YtwxTehfFN2SlQ+QZZL2hMkpmTjNcEbbH1mJ/29it7FpfZPH/FXzWEGnU5o8d/mue6Kz7EyBClPD1yw6zhrnDmMrGU8jBhVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718790726; c=relaxed/simple;
-	bh=QNo5k1Xit7gstpENqR9hmPgsoLViG3k55hI7buVxfMU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRg4k6lt/RQcKt353SXPxLf/pusfkOSgKsBGb/WaauQYNws0u98KygXoDy/mXHIkcT9Afl0Y4pjkka+iJkit/CATLHdzylPjCswcILdrNuNeWRuQkjflnLMhbW02d4rdtv96OW4BD1MVYBqJzICjftLxN5HZTXb2GD7it9xyyh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJCVKjSI; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec0f3b9bb8so46987921fa.1;
-        Wed, 19 Jun 2024 02:52:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718790723; x=1719395523; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TY+TzI4NVOZe+bVmXFpZLf0ZfiG9DoMpTrEztVoxeCc=;
-        b=PJCVKjSI0llDw6J0/7YYIhUHlgxCIeHhZeBPWHvb2Iap9+UWdiM9oL7hqliWSWB+ZI
-         ZNbiARqhAtrLKbcG9CUfQF0Glc0u7AuA7cotYN6sPUvxMNXKH/nGprdQ++Pab+g4Rp11
-         o9Ln5K20t2FQp5VVp+/70TJT/ocmFdIyfBY4p7Og7d/4RTDBKhoBY3kCYTnO/Z90G1xK
-         dXlRUTFBnsZcXfS0XaJZw2HLksTm1Er8OH3kGHMUv0O+RVchjNjTk+4RLizRZDLMOeST
-         ZWAjY3BUEYCOXBL38K0ebCJSuUkXek3zeZModbf5CbnORpLA1C9EhVRmeNAvEl0fChjZ
-         x8Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718790723; x=1719395523;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TY+TzI4NVOZe+bVmXFpZLf0ZfiG9DoMpTrEztVoxeCc=;
-        b=u2frX3ctfX5QB0/GUXP8u4kztIE6Mu/NzT5io8cvJQCACyvfxdkOnOnAh1C7qs+una
-         LzEEXJBgxZW/ZmzusAjA1CZ+thIEOckX7MUVNQ1N9EZ8xTgKJFUG4hD0Ct196pqSsYNn
-         sdhPamlVBeta6Ph7txxOTs/IvUk1h514izN21CK+XLe1+uMaeIffTtx/7djXUZhIgD1S
-         DALoOX4SWqIfq54MIR2sCN303hDN3DSD6V8s5joSmpTTVJFEVkxUmjBEONX6nvWvlJ7E
-         REe7c4fDBG8Ndd2BoPslSm3YlWkyqvyC4l66JRBWTnlY3px6J9e5vZOfz66soXO9eXyD
-         78gg==
-X-Forwarded-Encrypted: i=1; AJvYcCXt087gQy52lvVoKJ5FFTKKzdiB9rz6PrGRf3GvbHmxYWXM5Inz1+MiUYqia0fSFduM5Aj0IDBnRl6v7Hotbu5O0hLTLXOeu8mNKTjWwCrxd8bbV8uOG+7exzWWQpG6APVp4dyzde9F2LQpTc7L+ylq2UW/nWbB5aEJcbzggmUbHoPOZz38ZXA9Tk7OpdyErmbGVNbo54sV72mPXqboMohDyKpkpJo2ElTHJM5xZiWDyj5H2rtSsGEV/LL/+rn9f46ueAsyZC1Lfr1owLMv6pG2TB718s4WwesMPEvlFkVe1zRP6WmVshWl2Wl8KfYEq0DO0bRu8zKlrNzjswdJDlKfPDAltodJnxjoB00du/WKHHtd1yDUndv2gJ1/vmJ2tkUH82hRk+z3/oOk0r2/tzy/Li0Wh4Agj0LZrc9b/0gDe4pAVTOeiM0E7ZUjTA==
-X-Gm-Message-State: AOJu0YyshtbobD9fp0f4Ark7RGWWXxC+xC0jk1WKeadUIrenmREXVYy1
-	vAuzJSqU+gTkzUMzYqItUmRR8e1QnU2YggsmvrusIq3njlwgMdju
-X-Google-Smtp-Source: AGHT+IH2q3ZanpQKJz2uH0N6Dyx/XhlIdcK364i+Te6PyIoIECi/nqcQmDGItl1tQkSP50785isBNw==
-X-Received: by 2002:a2e:9cc6:0:b0:2eb:e365:f191 with SMTP id 38308e7fff4ca-2ec3ce93f99mr14054151fa.15.1718790722749;
-        Wed, 19 Jun 2024 02:52:02 -0700 (PDT)
-Received: from pc636 (host-90-233-216-238.mobileonline.telia.com. [90.233.216.238])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c06068sm19506721fa.35.2024.06.19.02.52.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 02:52:02 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 19 Jun 2024 11:51:58 +0200
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <ZnKqPqlPD3Rl04DZ@pc636>
-References: <Zmo9-YGraiCj5-MI@zx2c4.com>
- <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
- <Zmrkkel0Fo4_g75a@zx2c4.com>
- <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
- <3b6fe525-626c-41fb-8625-3925ca820d8e@paulmck-laptop>
- <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
- <ZnCDgdg1EH6V7w5d@pc636>
- <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
- <ZnFT1Czb8oRb0SE7@pc636>
- <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
+	s=arc-20240116; t=1718790792; c=relaxed/simple;
+	bh=UalK4FgyHTnNoyXIEwzKYcVxWmkuOK/O7WrYkoFllRo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sI32PhWvOcxVCf/e8JQiVrbK2/4jYcTaOsFPQhbyUokqiaolRdQzT2hH2yBFL8BW3A329y3tYsDqWh5OdUN9XunSiLY9q8Irk+LH51MT75nWU5NBjkq8eieE4OjSdt1kuwIcqH3f1PRqFM9eTXPR24MHdUqHmk88Ps01MNwQ6oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fq82Bogv; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45J9qswF077162;
+	Wed, 19 Jun 2024 04:52:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718790774;
+	bh=EoejE/w5WmUZVOHtPE0B8+G2g4Xuaq7ZSJdNB5/KtMk=;
+	h=From:To:CC:Subject:Date;
+	b=fq82Bogvb87pMBQ/MUc5hwLwxF/rzzmrMTO76SF0G5L+u7DBsqhhLCyo9IMts7YGW
+	 8707m1MHd/iNqtY1NiUzmfpxNzWIB1zeMrwpu+XkLzNbnqiw5Fx1w8I5qkFObAE4Ek
+	 Jty8ajpvQ3x6636Rmzptyba4SA7mvt5nQsMPqKZc=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45J9qsis070647
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 19 Jun 2024 04:52:54 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
+ Jun 2024 04:52:54 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 19 Jun 2024 04:52:54 -0500
+Received: from localhost (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.55])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45J9qrpK089878;
+	Wed, 19 Jun 2024 04:52:54 -0500
+From: Jayesh Choudhary <j-choudhary@ti.com>
+To: <linux-kernel@vger.kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
+        <j-luthra@ti.com>, <j-choudhary@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <u-kumar1@ti.com>
+Subject: [PATCH 0/3] Enable audio for J784S4-EVM platform
+Date: Wed, 19 Jun 2024 15:22:50 +0530
+Message-ID: <20240619095253.290552-1-j-choudhary@ti.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Jun 18, 2024 at 09:48:49AM -0700, Paul E. McKenney wrote:
-> On Tue, Jun 18, 2024 at 11:31:00AM +0200, Uladzislau Rezki wrote:
-> > > On 6/17/24 8:42 PM, Uladzislau Rezki wrote:
-> > > >> +
-> > > >> +	s = container_of(work, struct kmem_cache, async_destroy_work);
-> > > >> +
-> > > >> +	// XXX use the real kmem_cache_free_barrier() or similar thing here
-> > > > It implies that we need to introduce kfree_rcu_barrier(), a new API, which i
-> > > > wanted to avoid initially.
-> > > 
-> > > I wanted to avoid new API or flags for kfree_rcu() users and this would
-> > > be achieved. The barrier is used internally so I don't consider that an
-> > > API to avoid. How difficult is the implementation is another question,
-> > > depending on how the current batching works. Once (if) we have sheaves
-> > > proven to work and move kfree_rcu() fully into SLUB, the barrier might
-> > > also look different and hopefully easier. So maybe it's not worth to
-> > > invest too much into that barrier and just go for the potentially
-> > > longer, but easier to implement?
-> > > 
-> > Right. I agree here. If the cache is not empty, OK, we just defer the
-> > work, even we can use a big 21 seconds delay, after that we just "warn"
-> > if it is still not empty and leave it as it is, i.e. emit a warning and
-> > we are done.
-> > 
-> > Destroying the cache is not something that must happen right away. 
-> 
-> OK, I have to ask...
-> 
-> Suppose that the cache is created and destroyed by a module and
-> init/cleanup time, respectively.  Suppose that this module is rmmod'ed
-> then very quickly insmod'ed.
-> 
-> Do we need to fail the insmod if the kmem_cache has not yet been fully
-> cleaned up?  If not, do we have two versions of the same kmem_cache in
-> /proc during the overlap time?
-> 
-No fail :) If same cache is created several times, its s->refcount gets
-increased, so, it does not create two entries in the "slabinfo". But i
-agree that your point is good! We need to be carefully with removing and
-simultaneous creating.
+Hello All,
 
-From the first glance, there is a refcounter and a global "slab_mutex"
-which is used to protect a critical section. Destroying is almost fully
-protected(as noted above, by a global mutex) with one exception, it is:
+These three patches enable audio on J784S4-EVM platform.
+- First patch adds the McASP nodes.
+- Second patch adds the audio_refclk1 node that is required
+  to configure the CTRL_MMR register for the external clock
+- Third patch enables the analog audio
 
-static void kmem_cache_release(struct kmem_cache *s)
-{
-	if (slab_state >= FULL) {
-		sysfs_slab_unlink(s);
-		sysfs_slab_release(s);
-	} else {
-		slab_kmem_cache_release(s);
-	}
-}
+For audio to work, the ti-dm firmware that should be picked
+for uboot is now publically available and will be shortly
+merged to the ti-linux-firmware branch:
+<https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/tree/ti-dm/j784s4/ipc_echo_testb_mcu1_0_release_strip.xer5f?h=ti-linux-firmware-next>
 
-this one can race, IMO.
+For testing, ~/.asoundrc file was created in root partition
+which can be seen in the test logs:
+<https://gist.github.com/Jayesh2000/3ca38cbac2f37842b1010af79dfe9b4c>
 
---
-Uladzislau Rezki
+
+Jayesh Choudhary (3):
+  arm64: dts: ti: k3-j784s4-main: Add McASP nodes
+  arm64: dts: ti: k3-j784s4-main: Add audio_refclk node
+  arm64: dts: ti: k3-j784s4-evm: Enable analog audio support
+
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts   | 112 +++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi |  89 ++++++++++++++++
+ 2 files changed, 201 insertions(+)
+
+-- 
+2.25.1
+
 
