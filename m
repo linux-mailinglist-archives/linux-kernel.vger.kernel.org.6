@@ -1,106 +1,124 @@
-Return-Path: <linux-kernel+bounces-221524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1187B90F4EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:21:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC7B90F4F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DCF91C223EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:21:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C2B21F22D1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D238156F25;
-	Wed, 19 Jun 2024 17:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8819A15625A;
+	Wed, 19 Jun 2024 17:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CtaLtj6K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Dor1pG4Q"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F979155C98;
-	Wed, 19 Jun 2024 17:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D1184FAD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 17:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718817690; cv=none; b=ARPvjZu84PCrJFLJDcFn0q9SCdsFX3WbZBxhR5cCCoEjvO9BpVHvhOBTgqMFpy/RznyGukdOn2vmG1wgDMAX//zjVm79xxlRlfpbK19Am8Hw4x8XhYC8iHArD7HfdxAosVUo/5a/MCzEBmYAHeOJVrPmBT/st643uD7zxRTvqoM=
+	t=1718817873; cv=none; b=UKwVoE2RRLsoF8/5oE+tQfnBAsGAFwCI7vv4I2G9+LPX/WsatTgISX1fPLgAM77/hYxEdFU1qldbBnMjSs55Zmk18bvTUqAxq7XwEVoOKa0ROD8Cw46zwV6vgGAAp+ZQmYlEJn3FiJE8V5TO2C4ZtCIDMuZ/mFdCpEYgqv2zlqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718817690; c=relaxed/simple;
-	bh=8yOFLJZ+q2dncU4RGOsYMGZ0m0prJcres5E2ecx6EnM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KXauzYgGUyGgA5i0kfqerBkAyU0+z4KMOtd9Q0GFFf5sNwe7OpIDaCl32WHUE9Eh/dZg5O7wiHcVveLu4PnvfsksLIPEZztOAIcx9463hToEtU/Zx7hCxWN4ZfJ5WXSWBVbs6/17HiuxUg6LsVQkuqtYRudumO2aI4uW5xNnrwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CtaLtj6K; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718817689; x=1750353689;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=8yOFLJZ+q2dncU4RGOsYMGZ0m0prJcres5E2ecx6EnM=;
-  b=CtaLtj6K8KbtkddCtVgLNcVAL09/WaIk46+1y/+amoEv9xyCnRzl4iXw
-   vkRSm8VnMFwiFY58gs9HHxBrECq/FVYz6cMr6A3DuJpZio94LSNterJl2
-   1be2DcjgsSAk4wfrlDr9jaQWGq9TdZGrxkx7CPnbfPKbVLh8/bwQSEkQN
-   88x9Gts0OQ1WCGILR3h3ClID8yh44+Sn3Gkqf4IPcZ6cjgr6vTFQVtZZm
-   FqC5nBVFuB+efnRm6usiPTppUR312Lp8h5fL0wUx+eMMoBxkeXlvSHwRE
-   tyuRUZPU/xiyMR/0SvAkUSUdaN3eg3CX41CgCecHeIQ9lu+AOLhf5BGz9
-   g==;
-X-CSE-ConnectionGUID: HcKTcC+RQZ2pN4CuLeacmA==
-X-CSE-MsgGUID: FIOrC/MaSrO0YXqHzpgkOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15531174"
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="15531174"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 10:21:26 -0700
-X-CSE-ConnectionGUID: HsQR7QiwSU+7I2W/bCTJ5g==
-X-CSE-MsgGUID: Ih/YiA+hSaWJpwrqzoZvKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="41840037"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by fmviesa007.fm.intel.com with ESMTP; 19 Jun 2024 10:21:26 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 3/3] thermal: intel: int340x: Enable WLT and power floor support for Lunar Lake
-Date: Wed, 19 Jun 2024 10:21:09 -0700
-Message-ID: <20240619172109.497639-4-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240619172109.497639-1-srinivas.pandruvada@linux.intel.com>
-References: <20240619172109.497639-1-srinivas.pandruvada@linux.intel.com>
+	s=arc-20240116; t=1718817873; c=relaxed/simple;
+	bh=pHGHrMlLeKjI1/up7Rrmj+CZx30fzhzHLvJvS34Vm1M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZoDbXnD+Fj4uKpiwyim1zU/3gusve84Dz08jtQ3HpEdpV0mYFIwaUQFwOQuzMRVGFZXZUExdJX8+a7TjkyEELfsfUdZvUiBFJY/ZdDzByEWXk984RGLmUgup/uqJTag8CWOa6kGlsSsoLc+c5Zv3JzetsxhbhWWGtxw0I4SCG9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Dor1pG4Q; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2547e1c7bbeso44574fac.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:24:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718817870; x=1719422670; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WW/sGpONNf0gL3cR4b4skPpNC8NQNbXJ/sZFcTqP6DY=;
+        b=Dor1pG4Qu+/1feuIJb5xH9E1dRiL/pF4P/tuzZCw02844zQYFW4t6pejHri09PnSsg
+         ZYh6A4QbVIO9g16Dt4sVW3/owtrYOfO8G9q0gaKu3Q0hcuFATbB+mL/k/bhbU+0xhKWk
+         gYpkAhSQ5dJfyhQgHPtmFafJkfXDOVqXGS1GOnY/n/5EQjW7PYxnGZ9AqZJs1R7XRcx2
+         PM+1Ja2iZ5eE0HrUe+8K3T6/qCMggorIBLkI6wrsbuBfpzKjq0MxLd65PULuFYa2UDVm
+         vrpqYZKVg21F38RWVaJjqqmU7xWJxbahWaFamP6Q6XtJoScqsoV2i8dnwZ75SgrYupD/
+         gdsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718817870; x=1719422670;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WW/sGpONNf0gL3cR4b4skPpNC8NQNbXJ/sZFcTqP6DY=;
+        b=EBE7DhFrm9vQddUeXfDywxA5kOzh7dT74DC+7sWf37eDJ1od1jV94UHaXZM1fxo1AM
+         OdV3JJ3+hM4Q5bw6ukpl6fzLQJet3Vd338q7ZfV5QWU+RH2etXyxV5BVcDf+LO+IyaJ0
+         7G/QU8USTvDhESW5h8QoY8bElcIcu0g4A5W2kJW4S3K1QOObeFdesy44XLAXL0n/kUB3
+         WttJ8uXljqkofhhp25IVREgiXlQV0c/Uhk61Cb9WncQORKB4RooYaSe7X8p7BamapQP1
+         1YAwRj8TS21KG6u12mZm9cTL1W+Yjcs1pdmzI/J1VzljV7ucBmDOVG2pYuTsYMUisYYP
+         I8ig==
+X-Forwarded-Encrypted: i=1; AJvYcCXR/jV/yEtukrZptZkhAsDDL7AdvvHpt4iOOgMrVeoz16aID0ecqHTiLlDsfwkM0QBvnVw1wx+tZUZbJBpMvA5eLUZdx3Tmhhr48i/u
+X-Gm-Message-State: AOJu0YxPmHPHCrB+pD//xAN0wT8T0Y9buXkyYk66RfyDdoazNjdiFUBM
+	KkKEvqJqTLnH0S5/UKe1axMU4+8Eaznx+gXBmGoUlSfluryw2jjy8xc3MmgYQNo=
+X-Google-Smtp-Source: AGHT+IHR54HXcr7/yjcrsiJmtUghksi74ROiI+fCbYFFhArdAwoof+CXH2w8urjUZ7OSSXvEzQS16w==
+X-Received: by 2002:a05:6870:1716:b0:258:44b7:b842 with SMTP id 586e51a60fabf-25c94991633mr3524648fac.13.1718817870065;
+        Wed, 19 Jun 2024 10:24:30 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2567a94e375sm3804185fac.4.2024.06.19.10.24.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 10:24:29 -0700 (PDT)
+Message-ID: <e3c12062-9bb3-40fd-8b55-5cecbd2fda4b@baylibre.com>
+Date: Wed, 19 Jun 2024 12:24:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI protocol
+ with MOSI idle configuration
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1718749981.git.marcelo.schmitt@analog.com>
+ <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add feature flgas for WLT and power floor for Lunar Lake.
+On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- .../intel/int340x_thermal/processor_thermal_device_pci.c       | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+...
 
-diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
-index 8c6d19fe37c0..7772bc63f64b 100644
---- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
-+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
-@@ -472,7 +472,8 @@ static const struct pci_device_id proc_thermal_pci_ids[] = {
- 	{ PCI_DEVICE_DATA(INTEL, ADL_THERMAL, PROC_THERMAL_FEATURE_RAPL |
- 	  PROC_THERMAL_FEATURE_FIVR | PROC_THERMAL_FEATURE_DVFS | PROC_THERMAL_FEATURE_WT_REQ) },
- 	{ PCI_DEVICE_DATA(INTEL, LNLM_THERMAL, PROC_THERMAL_FEATURE_MSI_SUPPORT |
--	  PROC_THERMAL_FEATURE_RAPL | PROC_THERMAL_FEATURE_DLVR) },
-+	  PROC_THERMAL_FEATURE_RAPL | PROC_THERMAL_FEATURE_DLVR |
-+	  PROC_THERMAL_FEATURE_WT_HINT | PROC_THERMAL_FEATURE_POWER_FLOOR) },
- 	{ PCI_DEVICE_DATA(INTEL, MTLP_THERMAL, PROC_THERMAL_FEATURE_RAPL |
- 	  PROC_THERMAL_FEATURE_FIVR | PROC_THERMAL_FEATURE_DVFS | PROC_THERMAL_FEATURE_DLVR |
- 	  PROC_THERMAL_FEATURE_WT_HINT | PROC_THERMAL_FEATURE_POWER_FLOOR) },
--- 
-2.40.1
+> @@ -3928,7 +3934,8 @@ int spi_setup(struct spi_device *spi)
+>  	 * so it is ignored here.
+>  	 */
+>  	bad_bits = spi->mode & ~(spi->controller->mode_bits | SPI_CS_WORD |
+> -				 SPI_NO_TX | SPI_NO_RX);
+> +				 SPI_NO_TX | SPI_NO_RX | SPI_MOSI_IDLE_LOW |
+> +				 SPI_MOSI_IDLE_HIGH);
+
+This looks wrong to me. Adding flags here causes them to be ignored
+rather than to be checked.
+
+I also did a runtime check with a random driver and a SPI controller
+that does not have the flag.
+
+	spi->mode |= SPI_MOSI_IDLE_LOW;
+	ret = spi_setup(spi);
+	if (ret)
+		return ret;
+
+It incorrectly passes when used with this change but correctly fails
+without this change.
+
+>  	ugly_bits = bad_bits &
+>  		    (SPI_TX_DUAL | SPI_TX_QUAD | SPI_TX_OCTAL |
+>  		     SPI_RX_DUAL | SPI_RX_QUAD | SPI_RX_OCTAL);
 
 
