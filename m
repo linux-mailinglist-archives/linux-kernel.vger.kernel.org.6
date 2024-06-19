@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-221107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ACCC90EE37
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:27:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8549B90EE36
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C67C51F216A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:26:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C4B289528
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA3614B96E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFBA146A85;
 	Wed, 19 Jun 2024 13:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="QCiOntyr"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="anLEQSsl"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F00147C89;
-	Wed, 19 Jun 2024 13:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6571474C8;
+	Wed, 19 Jun 2024 13:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718803604; cv=none; b=P8ubLD3kGmVEqPFTNzsyp/OoL5e13g/r9xGIleKoHYrFOdw8VshVkqsODLg/d5KzPoImQCqy4cNz6ffWkFI0OeK4FJOn30DuXMmvmo7q7KKRMW9T1fnjD+uuKGVMQNxKFvGtzNcSspSPKay0bQFa5tnLOzzJ8I1F9h5zIyoZ72Q=
+	t=1718803603; cv=none; b=L+rUGuuqXYqrbDdYcJXoysqV9YUs+v7jekt1/Au2j187m2mgTOgEjMsQH6EBn0NFeZNE6VRq0m9xLiafK+ihF0jTzplYUVSiccMbJieHj6x0WmcurxkJlR9Ay0WHYodNuIncmJu1pgHR33UDSkO4B5OUYUD3X9xDNllbPGF6gas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718803604; c=relaxed/simple;
-	bh=ZCX2362KyKiOO5p76W62RIQc7GacXvGphGwXPOlawCA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9YoPUa2IPXbPxF1dKlTaYTzWC6TDoAW2lpMMUgkyAbGgFW0yrpx5BPxITq1JDMIEnaGtG53rvN8vtajdVquDbRmrJ26+fA6hSAKWQjlcIjKqfQnXixhd6bzNIvcC84igJiv/ovz3yenHuJT65W6PRsES38gIXRp2YANXyCNFQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=QCiOntyr; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J5K7Yx006478;
-	Wed, 19 Jun 2024 08:26:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=RKdI5MFkE251YuBqA3
-	0MCnU46Leq7mZB8LDEf5R2yOM=; b=QCiOntyrbmzDX+dro0R8ERq0dCWFbclW+6
-	4EEtImMqSMVIqgiWWDmkN8CeI+JeD95dqdF6WjQK75b7WNVF9aQ7owxw8M72CPgP
-	O3vFWtwfN7GCOemLYUsTqbpi6AHK8sM2w0BpDA50G2Eyqf99cEpbtpStbZVD+sun
-	OXQ1O0FZKoc6xVEd+pqxWTv0pKA9xLSU9GiMnU2pgRXwR8jj0DMXQgBiku4R/98Z
-	h/VyRRX1me8kuk2vZq9xDulzO+53rg0hflRKtemca2Re1KTBOjWO2Sj00+zcm1Bo
-	AucxhUJo9Qa7bbBkLWy/8KKG4RtLsiTJ0HYFugP8oFKbGbTpVz+Q==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3yuj8m0pbu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 08:26:39 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
- 2024 14:26:37 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 19 Jun 2024 14:26:37 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 1E610820248;
-	Wed, 19 Jun 2024 13:26:37 +0000 (UTC)
-Date: Wed, 19 Jun 2024 14:26:36 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Mark Brown <broonie@kernel.org>
-CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH v2 1/2] spi: cs42l43: Refactor accessing the SDCA
- extension properties
-Message-ID: <ZnLcjO67FH2weX+y@opensource.cirrus.com>
-References: <20240619121703.3411989-1-ckeepax@opensource.cirrus.com>
- <171880144842.113265.13864100805243474696.b4-ty@kernel.org>
+	s=arc-20240116; t=1718803603; c=relaxed/simple;
+	bh=C6PXGPLhQ6WXKs28ePUEu19IYSvXFGFlJkjHxpNDXQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZCv81KD41FxdxIJvXLlgQm5+VQllUvpHbzCSDUhTQ/mm0oXghc/p0uLyiBbrLeJUxGCQL03hzpnfdjXU8eWNGtanfuoHIr31mo3eHSYA5JvazpxdTNa/bUUNivEzrlA7F99QMJTlR8HocS1y1Bfd/J36JuwpsaO/UP2dBKy6H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=anLEQSsl; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ADA212000F;
+	Wed, 19 Jun 2024 13:26:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718803598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bUv6jir4zxSpq9FsjWcgIlTaRYhkbm23dEzaKXrswo4=;
+	b=anLEQSsl9n3YR6eCFoQhaaww7I/37SqXyXL9rqbWpgrbPbZMicZA0bBwa/J5hvf/sC/gsk
+	QiBUJBuWLfdDYYH76dBBylJfr26oAfJagYrGFtmA9ZymCdpJ28YSbPfbp91TMYLRNXBCVB
+	Qa8mysxVnHc2eSEfSf7D0yGdIaoGp1SEaREPiYxS/23LStAqGvZEi3FX2fjpKEP0a/87+e
+	YdryoAKD40+Ny9C/2YLtF9+8Aw+E4bklS5g6157MB7HKBX+sO7BajQphEYSLtaXOjPAYdx
+	EJszuNopmt+pbMMBYZTzN9GVlVKikjg5/qswCQvN7dHJvNu6WfELEwP2qfDWxw==
+Date: Wed, 19 Jun 2024 15:26:38 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resubmit] rtc: interface: Add RTC offset to alarm after
+ fix-up
+Message-ID: <20240619132638b08dcc9d@mail.local>
+References: <20240619130115.2799118-1-csokas.bence@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <171880144842.113265.13864100805243474696.b4-ty@kernel.org>
-X-Proofpoint-GUID: lu-qZrbKPDzuQ-HeMqgjyWtLF4bOtQQ8
-X-Proofpoint-ORIG-GUID: lu-qZrbKPDzuQ-HeMqgjyWtLF4bOtQQ8
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240619130115.2799118-1-csokas.bence@prolan.hu>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Wed, Jun 19, 2024 at 01:50:48PM +0100, Mark Brown wrote:
-> On Wed, 19 Jun 2024 13:17:02 +0100, Charles Keepax wrote:
-> > Refactor accessing the SDCA extension properties to make it easier to
-> > access multiple properties to assist with future features. Return the
-> > node itself and allow the caller to read the actual properties.
-> > 
-> > 
+On 19/06/2024 15:01:16+0200, Csókás, Bence wrote:
+> `rtc_add_offset()` is called by `__rtc_read_time()`
+> and `__rtc_read_alarm()` to add the RTC's offset to
+> the raw read-outs from the device drivers. However,
+> in the latter case, a fix-up algorithm is run if
+> the RTC device does not report a full `struct rtc_time`
+> alarm value. In that case, the offset was forgot to be
+> added.
 > 
-> Applied to
+> Fixes: fd6792bb022e ("rtc: fix alarm read and set offset")
 > 
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+> ---
+>  drivers/rtc/interface.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> Thanks!
+> diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+> index 1b63111cdda2..db8dffffed91 100644
+> --- a/drivers/rtc/interface.c
+> +++ b/drivers/rtc/interface.c
+> @@ -273,12 +273,11 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+>  		if (err)
+>  			return err;
+>  
+>  		/* full-function RTCs won't have such missing fields */
+>  		if (rtc_valid_tm(&alarm->time) == 0) {
+> -			rtc_add_offset(rtc, &alarm->time);
+> -			return 0;
+> +			goto done;
+>  		}
+>  
+>  		/* get the "after" timestamp, to detect wrapped fields */
+>  		err = rtc_read_time(rtc, &now);
+>  		if (err < 0)
+> @@ -378,10 +377,12 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+>  done:
+>  	if (err && alarm->enabled)
+>  		dev_warn(&rtc->dev, "invalid alarm value: %ptR\n",
+>  			 &alarm->time);
+>  
+> +	rtc_add_offset(rtc, &alarm->time);
+> +
+
+This must not be done when the tm is invalid.
+
+>  	return err;
+>  }
+>  
+>  int rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+>  {
+> -- 
+> 2.34.1
 > 
-> [1/2] spi: cs42l43: Refactor accessing the SDCA extension properties
->       commit: 6914ee9cd1b0c91bd2fb4dbe204947c3c31259e1
-> [2/2] spi: cs42l43: Add speaker id support to the bridge configuration
->       (no commit info)
 > 
 
-Not sure all went smoothly here. This seems to have picked up v1
-of the first patch and not picked up the second one.
-
-Thanks,
-Charles
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
