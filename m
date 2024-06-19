@@ -1,87 +1,81 @@
-Return-Path: <linux-kernel+bounces-221866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C5590F9CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:32:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DE290F9D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB0961F2405F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A775B1C21AA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0177F15B543;
-	Wed, 19 Jun 2024 23:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BA015B574;
+	Wed, 19 Jun 2024 23:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLUXXsvZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxPv9RjD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB511C68F;
-	Wed, 19 Jun 2024 23:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8BFF9E8;
+	Wed, 19 Jun 2024 23:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718839934; cv=none; b=GlQVQZ0VRi10+YitiDihGYQNLpGfqzYXsVEofmNqLRdSBWmDtf6YVqVop7+tl+Co66QOyy9rbg4vbUWXcrdLYliK29u7P2wp+Lbh27woQlrFRnYUvMQqiSGaFsqz2HWeQ4zb2u/8z+ypYxGoSUiQbGV43u9IFkzbM6Eg8QWa9Ac=
+	t=1718840286; cv=none; b=YYzo1N6lZ2AXbMfjzM2hkHaNUAK7MHLgxIekJaifEvobIXtaUNl2fG1eC2T9QI9BTgIJj+QLkHLQ8k+yftxzR3oaZ1HAuTLS8tp/HgsuO4j7sCQIiYHzleHnDfiMrVLZMXHl44YOqNa7vMtgLoTW2jNrHvhkSQUE5uETMS5idQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718839934; c=relaxed/simple;
-	bh=F4CpIzNzbBUMPI+mEbkLZg02CLmFQNk66TZ/t91MMao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MIVg+vlE0UhEP7Gzokwy7xDU39NPrw7biDQ7KHeKVwl+7oSoCOjRsvVgFBcCozLnPZJ5RCmSPjFD3tcuqcm3fRDV9gY5OdcKtbGL5Ux8AwiR4/HiOAEEMzu5Unprjck3bf1M13S4dc+rmCfPLV60m8l/MN+9QAlvl2BZpIquzmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLUXXsvZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC45C4AF0C;
-	Wed, 19 Jun 2024 23:32:13 +0000 (UTC)
+	s=arc-20240116; t=1718840286; c=relaxed/simple;
+	bh=pMFC1L80r+HKtEqEtcqW/lrqNA7cATLlLk4yYdkyGaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c+vhiITl7vchbXsiE+klw89xL/fN5bcaC0Ps7/HyY5KsGvTMpn2GNLbaJVX/2kAXhvFXa7iyBRHiLkFWCZsuJmONMyA8TViGfvWxiQXwEkfvV4MPtajnBju+3/d9zWCu5Ky0oSoE4pBxU6E85hsrl7vUUbmd78aYdfTKHF/YSik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxPv9RjD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D60EFC2BBFC;
+	Wed, 19 Jun 2024 23:38:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718839933;
-	bh=F4CpIzNzbBUMPI+mEbkLZg02CLmFQNk66TZ/t91MMao=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fLUXXsvZAPE9OKsb3U0T1Wij/dHh7+TZHI6YSxmnJ31CHIL0NM1VEn2t+F9OooW7e
-	 YH1LEvqE5BltEbIzJoZEb+PJLxNBkS3j8KZeWhZmi6CubdXtB33kBy+LLmSK+Ngryr
-	 XaMRIWBR23l66F2sIo2AcL/tPysTE9P7XN8vL1rxrd0zU/hw9O7qA1qhyJI+N7hgkW
-	 v27trALBU5biyPJka64GjGcpegFsOC6t/nbhJo6FdjwuqGrX2t+wiAyQkzB8+dCacf
-	 e9ZJm2tH906glOF2cdzu6oPozbv+qiQMUmulYQh3ZiEJv4NRHanmglzAy5dIJ+C25G
-	 xnu5KsammyuBA==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5baeab9fd60so120371eaf.2;
-        Wed, 19 Jun 2024 16:32:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUj1g9tNHPxoYG0pQMAFjqa7eRQeqmgUZSgijZGUQZ/c4W6mK4HlHbkdnWE5GPjpGaXF0n76ZetPCxRKOjOVUl1qoIhtNkcz+IbDmCA/Rb+d8U9tovRqUdwc69hgnfpuqgW7K/7G/AaWw==
-X-Gm-Message-State: AOJu0YwB01wt4B2+GW1ArZzb3o5Yi6pgrcePKx3s12N1tcDUvBDuWCM0
-	bZ/TDDqePPugP4ENWfn5NvKOXDu9r6MkUVp2aLr766r0tY3ufIWVuJiKKyqnfoWhag3EPSh7dbb
-	P1CH9zHuPjVMa/QKGWfkfEl9vv90=
-X-Google-Smtp-Source: AGHT+IHztATvBmnqgF15p6/sdSBgWtaA7Pf8BZ+Y2cUp/dd+2nIxbJC+EgJkCNcFTcQIFIugOT8rEaxmZOCNLtYCLKw=
-X-Received: by 2002:a4a:91c2:0:b0:5bb:672:4067 with SMTP id
- 006d021491bc7-5c1adc0d1fcmr4011799eaf.7.1718839932856; Wed, 19 Jun 2024
- 16:32:12 -0700 (PDT)
+	s=k20201202; t=1718840285;
+	bh=pMFC1L80r+HKtEqEtcqW/lrqNA7cATLlLk4yYdkyGaM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sxPv9RjDTXneMVpxOVzgyndQCUrZbrE0mUWHgVS05kq5SGHKyYE7kkCRblm3q6wTw
+	 W3Ou1G2+P4gjCb29VZEJLppiXrNy2cwXXsRMrj74Z5MMn/Dd2sfHOVg0HUrtqKUbaK
+	 ZyEeGDSBCu6/WLOaeJjMoDvo3Mlp9dfiQgub85Pus5uiBjyMSL0vqGF6Cnm/jL/4sp
+	 VXuoHXrPkMjkBsz0t6mzkkPaX9yQ5hT497Y58WnxFP2apxVgYw1Pyw06qx1HjGjD8C
+	 TDpLUZ41JKmEnYw4yqiEfoBofShn0HcZnark8Z5qig2hf7jhCaiNFvZy4Dj4W7exxE
+	 aqqE1C0e66xNQ==
+Date: Wed, 19 Jun 2024 16:38:03 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kamil =?UTF-8?B?SG9yw6Fr?= - 2N <kamilh@axis.com>
+Cc: Conor Dooley <conor@kernel.org>, florian.fainelli@broadcom.com,
+ bcm-kernel-feedback-list@broadcom.com, andrew@lunn.ch,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 3/4] dt-bindings: ethernet-phy: add optional brr-mode
+ flag
+Message-ID: <20240619163803.6ba73ec5@kernel.org>
+In-Reply-To: <20240619-plow-audacity-8ee9d98a005e@spud>
+References: <20240619150359.311459-1-kamilh@axis.com>
+	<20240619150359.311459-4-kamilh@axis.com>
+	<20240619-plow-audacity-8ee9d98a005e@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619161753.385508-1-chenxiaosong@chenxiaosong.com>
-In-Reply-To: <20240619161753.385508-1-chenxiaosong@chenxiaosong.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 20 Jun 2024 08:32:01 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-V80sdH2uXoDe+xqf9N-gFYTjqWtERrB+-vH0s0NUMvw@mail.gmail.com>
-Message-ID: <CAKYAXd-V80sdH2uXoDe+xqf9N-gFYTjqWtERrB+-vH0s0NUMvw@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: remove duplicate SMB2 Oplock levels definitions
-To: chenxiaosong@chenxiaosong.com
-Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
-	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
-	samba-technical@lists.samba.org, chenxiaosong@kylinos.cn, 
-	liuzhengyuan@kylinos.cn, huhai@kylinos.cn, liuyun01@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-2024=EB=85=84 6=EC=9B=94 20=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 1:18, <=
-chenxiaosong@chenxiaosong.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->
-> smb/common already have SMB2 Oplock levels definitions, remove duplicate
-> definitions in server.
->
-> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-Applied it to #ksmbd-for-next-next.
-Thanks for your patch!
+On Wed, 19 Jun 2024 18:36:16 +0100 Conor Dooley wrote:
+> > Signed-off-by: Kamil Hor=C3=A1k - 2N <kamilh@axis.com> =20
+>=20
+> Please fix your SoB and from addresses via your gitconfig as I told you
+> to in response to the off-list mail you sent me. You also dropped my Ack
+> without an explanation, why?
+
++1, possibly repeating what Conor already said but the common
+format if 2N is your employer or sponsor of the work would be:
+
+  Signed-off-by: Kamil Hor=C3=A1k (2N) <kamilh@axis.com> =20
+--=20
+pw-bot: cr
 
