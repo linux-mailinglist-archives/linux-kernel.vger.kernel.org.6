@@ -1,131 +1,146 @@
-Return-Path: <linux-kernel+bounces-221645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3278F90F6B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:07:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881A490F6B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 252611C2445A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:07:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3755C2830A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02097158A36;
-	Wed, 19 Jun 2024 19:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17705158A3B;
+	Wed, 19 Jun 2024 19:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3Q41HtG"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iVtbzgag"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC945157E9F;
-	Wed, 19 Jun 2024 19:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06052157E9F;
+	Wed, 19 Jun 2024 19:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718824056; cv=none; b=dmUIPLdsaafxILF6pMlIyaxsXsJVuHvKp6N/s3QSQ+TSxq6kB/wWx47gasxkZaxQULchYccGvgqUv35vvb0Dj4cSnBFMASykyrDD/DXz5RFWeaJiy6HBhcSnG4U7Q2Mi9d21uHHXyE7vFpHiFpzQQ/eHM4o716Oc57JwfF8Cn2A=
+	t=1718824137; cv=none; b=YIfzT+BVWtKKamrOGy9GDGPSNesJ+fRiORJ8Qplw5PyNzYMBFVEjfVpmUOKsewwr/1CQw/KDAcz1sQPwD38lWMH02Oky1rgw/crtx4zuLK79czPLUlnScVYK2lEuX50/Rp5uoMxir2LxuaKlcWtcZERVFg/gfdqfop/QE/LFjXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718824056; c=relaxed/simple;
-	bh=OHTKHbgDcUuDM9WSWEkCdSCCkh+hGLUoc2e6+HLVrcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8KMsLXQ8IoyLsLON7MtDl5S30FlUOs8ymUZiGt7VpJ3y0bwQaEBT7ZPxQaO3mXkIehQ4AMsHQ4gW/6Ix8/s49AurFsWgbCUe2PSDLV23VdHTITGPsNYFpeI7CpaMvUZO+Wb6gtTTye8ajNDpMcVVqde2j/nFqP7Wzu7MeOoPeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3Q41HtG; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f9a78c6c5dso813585ad.1;
-        Wed, 19 Jun 2024 12:07:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718824054; x=1719428854; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wraK3ONwierAgU4rsIO3Kh5gYCqXGYxY/0XrGpiX86Q=;
-        b=Y3Q41HtGXzn/9nqwq6RQw5vKH7LrXYKfBXJALBkt6d9rbdEcPupMjmDkwwcs9QOSnp
-         Z1pNH9+m+GvppejgFXnVRGD7doN+r2PTfwyW8VFObLw3dpzT3OqW+xsPGhIXpdpsqF4Z
-         hWd0L6ChZuM6EPT0+anHnHusDH0GVN/Avn2NM3qTHzCb2rG4uic9kSGiy02UM465Vk1B
-         UpLAokLejkO5TOYtX5TDjSJfGZXEtb5YuT9svtjHlK4+tEp3oe6qU+Pow8O2qRj2LQHl
-         hEmNuwz5iiG3CyUQy0bJ3T/QbMuJLzb6slGHdmIA6ZhQfGdaJ00bxT1EtFy4vHBkNz0D
-         QaMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718824054; x=1719428854;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wraK3ONwierAgU4rsIO3Kh5gYCqXGYxY/0XrGpiX86Q=;
-        b=TooaMJbIVx2ETY6RjuOM7U8UmxEnrG1/alUi/NEvHm0eZWiO0xkU7yBSwbwum36QHE
-         5ylLoYSEmmJGepvMSULemJI0twDWzVAlLSWBdrB6SrOUpa3LS3q9IwsxILBqy7eHEWfx
-         jT3fKDzGvWuTo3k/h1VyemilcfU2TFyVnYXeoets4q+QxcA4aYJNW2h3MVZ62L8yu1MV
-         rk4cmj2ZOrhyTf5yd3MhLw+u3tBLrNC4RlYCj+ER0bgJhdIq6GMOWArPnhCI84Ky3DxN
-         Jds1rvrvLPXr7Q/FHogXheIuaIK0Cyj2U14J93ZkiBIK8kvmEuiXLeVoglJzJKDaeXNf
-         0oIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTaAQE2vvpz4+SiePlXyCgu5gwYmKJzWIbi6YYSHYkCVS0JNLuvOtW3OVEaBdfEWDvnbRmEJLeqTfqdLqtxVAxKKuE3e9ErpQGNR9qa0ENrUTNNp8BBo53s/e3CTjFAIRR+1tsMb4=
-X-Gm-Message-State: AOJu0YzpuY+n4/Wrzc+wW9af9jFECDUkGFJNNsLTUIvlIBSUODnXh39l
-	l+MBV25ni4JwBSc+1z6gLR2Ys9dKWqFVvSfy5pbj3FZYl89cTA6S
-X-Google-Smtp-Source: AGHT+IFbPfbQOoO+ZhzVOsj/iXop22+2lvzkY0qWIhHiXpL5mXfhLa0lgfgGaFlPCpIcgmo3lz9BgA==
-X-Received: by 2002:a17:902:d581:b0:1f9:93fe:a1ea with SMTP id d9443c01a7336-1f9aa4335cbmr37736955ad.35.1718824054152;
-        Wed, 19 Jun 2024 12:07:34 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f29011sm121227925ad.249.2024.06.19.12.07.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 12:07:33 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 19 Jun 2024 09:07:32 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-	void@manifault.com, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
-	David Vernet <dvernet@meta.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH 1/2] cpufreq_schedutil: Refactor sugov_cpu_is_busy()
-Message-ID: <ZnMrVmutooN-YwL1@slm.duckdns.org>
-References: <20240619031250.2936087-1-tj@kernel.org>
- <20240619031250.2936087-2-tj@kernel.org>
- <0c0073ef-3fe3-4c9f-9a86-5c42336b3da1@arm.com>
- <ZnMqNHzCaAmolxkK@slm.duckdns.org>
+	s=arc-20240116; t=1718824137; c=relaxed/simple;
+	bh=zRnzS9SZ+dxXGc3ihVIyUkY1xWZtFIkc0xyC6fJGY1w=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dlt5UtKYRV6rBix5P3DZjg+Wk/aQIEBu/ndBLx89U+cRx75XuBBSxfCwWIBkfr6Cv3CqJ2Kz5rwH4bQPVaEkFbi1FfboLr3HhMgqzj1hlz3OwFtOp2eEiOn0dYMUfx9lA3DDF4v73Jj54tHEBdgCQ+Cdb/B9xH7aRJWXEMuv90g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iVtbzgag; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9rQsA027119;
+	Wed, 19 Jun 2024 19:08:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ZyMEkR9BE8crvd7eINIckNo/
+	AY9lbygpGEBGCIg3TI4=; b=iVtbzgagFp1MyBjvKJsTleyh99UbIsIJAGpL0QBk
+	WjmjN2tcOwKZ4g4epCH2DWZJ+u4x18oikF6cD88ONBwFtCicRrYko++AD0SOdHQN
+	G3Ini4ujZhPmPOICTvxDyCyc5qskcTkMRVP2c++MkYI+eERM4wd8QSVswRgLwN0f
+	2FvHbThhHVetORBnmRrfGf7oskkh2M9EI07OKVAiPsRB1tm88LngJcbNY6r+Go5O
+	xYYN3Npbn2Zmh3Ajy7+Lw7zgdcH0FODxTKvZvB8Y1SH/sYg47LlUdPzd5Fe5abnZ
+	mbMbfGCOmqgthcZOqgcIQALOh1HHnGbl+gcfks6SZnddbA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9ytkst-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 19:08:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JJ8qIl015527
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 19:08:52 GMT
+Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 19 Jun 2024 12:08:51 -0700
+Date: Wed, 19 Jun 2024 12:08:50 -0700
+From: Mike Tipton <quic_mdtipton@quicinc.com>
+To: Elliot Berman <quic_eberman@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: qcom: Remove QCOM_RPMCC symbol
+Message-ID: <20240619190850.GA12720@hu-mdtipton-lv.qualcomm.com>
+References: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <ZnMqNHzCaAmolxkK@slm.duckdns.org>
+In-Reply-To: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: P62NNEpelElMNrCzTGLgfQtpLH-P68pa
+X-Proofpoint-GUID: P62NNEpelElMNrCzTGLgfQtpLH-P68pa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=814 spamscore=0 lowpriorityscore=0 mlxscore=0 adultscore=0
+ clxscore=1011 bulkscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190145
 
-On Wed, Jun 19, 2024 at 08:57:56AM -1000, Tejun Heo wrote:
-> Hello, Christian.
+On Wed, Jun 19, 2024 at 08:41:52AM -0700, Elliot Berman wrote:
+> This symbol is selected by a couple drivers, but isn't used by anyone
+> and hasn't been for years now. Drop it.
 > 
-> On Wed, Jun 19, 2024 at 03:07:32PM +0100, Christian Loehle wrote:
-> > > +	if (sugov_hold_freq(sg_cpu) && next_f < sg_policy->next_freq &&
-> > >  	    !sg_policy->need_freq_update) {
-> > >  		next_f = sg_policy->next_freq;
-> > >  
-> > 
-> > Not necessarily related to your changes, but in case you're touching this
-> > again, maybe sugov_hold_freq() could be the last condition?
+> No functional change intended.
 > 
-> I'll update the patch so that sugov_hold_freq() is the last condition.
-
-Oh, looking at the code again, this would lead to behavior change, right? It
-changes the period over which non-idleness is measured. Maybe that's okay
-but seems out-of-scope for a refactoring patch. I'll leave it as-is.
-
-> > And do we want something like
-> > #ifdef CONFIG_NO_HZ_COMMON                                                      
-> > else
-> > 	sg_cpu->saved_idle_calls = tick_nohz_get_idle_calls_cpu(sg_cpu->cpu);
-> > #endif
-> > here?
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> ---
+>  drivers/clk/qcom/Kconfig | 5 -----
+>  1 file changed, 5 deletions(-)
 > 
-> I have no idea but if something like the above is necessary, it'd probably
-> fit better in the #else definition of sugof_hold_freq() or just move the
-> #ifdef inside the function body so that the common part is outside?
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index f72838aa573b..67c9188d53cb 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -7,9 +7,6 @@ config QCOM_GDSC
+>  	bool
+>  	select PM_GENERIC_DOMAINS if PM
+>  
+> -config QCOM_RPMCC
+> -	bool
+> -
+>  menuconfig COMMON_CLK_QCOM
+>  	tristate "Support for Qualcomm's clock controllers"
+>  	depends on OF
+> @@ -122,7 +119,6 @@ config QCOM_CLK_APCS_SDX55
+>  config QCOM_CLK_RPM
+>  	tristate "RPM based Clock Controller"
+>  	depends on MFD_QCOM_RPM
+> -	select QCOM_RPMCC
+>  	help
+>  	  The RPM (Resource Power Manager) is a dedicated hardware engine for
+>  	  managing the shared SoC resources in order to keep the lowest power
+> @@ -135,7 +131,6 @@ config QCOM_CLK_RPM
+>  config QCOM_CLK_SMD_RPM
+>  	tristate "RPM over SMD based Clock Controller"
+>  	depends on QCOM_SMD_RPM
+> -	select QCOM_RPMCC
+>  	help
+>  	  The RPM (Resource Power Manager) is a dedicated hardware engine for
+>  	  managing the shared SoC resources in order to keep the lowest power
+> 
+> ---
+> base-commit: eefb5ee4b41cdb68bf6feffe0d68b5bbe038e29d
+> change-id: 20240618-drop-qcom-rpmcc-2f3d85aca0a1
+> 
+> Best regards,
+> -- 
+> Elliot Berman <quic_eberman@quicinc.com>
+> 
+> 
 
-and ->saved_idle_calls isn't even defined if !NO_HZ_COMMON and is only used
-to determine whether to hold frequency, so the above doesn't seem necessary
-either.
-
-Thanks.
-
--- 
-tejun
+Reviewed-by: Mike Tipton <quic_mdtipton@quicinc.com>
 
