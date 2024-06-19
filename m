@@ -1,165 +1,109 @@
-Return-Path: <linux-kernel+bounces-221862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD2090F9B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:15:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A3990F9B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D07E1C21FD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:15:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D79EB21DEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC3915B15B;
-	Wed, 19 Jun 2024 23:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DB615B56A;
+	Wed, 19 Jun 2024 23:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="d3M+8Hi0"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12olkn2068.outbound.protection.outlook.com [40.92.21.68])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="LKYSyWHU"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B42015ADA4;
-	Wed, 19 Jun 2024 23:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.21.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718838911; cv=fail; b=Zl4IRCLdMO+7Gd/ZqdfKaUtlTU4hDlXkAj7o/gE2Xt3rQORT6VPHqUkyfrb9vKKGmS+9nJoJ3Almv37QVSwvpfMj9SelYRfLa+40E3sQ6Drm+2zjfIZhJ68UsqCeiMXnW3y4Xn9O0hlKY7Kn1C4bZxH+2mXoqtu6CTiulBWPvPY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718838911; c=relaxed/simple;
-	bh=tIMrqqVHt9kDH3mVracyhK/P7fubOlUBMUXbo10F8DE=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=D76APhJShAflateOr/PUcYenMFlJa0KaHrsRF411A/Je9B9e90W5iTP3PVtCiNIU3B6Zt8juxwGxTg+6mPbmK1u4g5ijHJB84g+xcBH292vEObDUSvzZa099OT5e8aJ2MoMQvLwBMcdqVkp0gvEOI0gcNHcGRrMTHJ0ORAyzXV8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=d3M+8Hi0; arc=fail smtp.client-ip=40.92.21.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MB4KqPmmPI+6ASzTOAVcSVUNij9hS9UcxbNtIuNSEW+NRY5/nIPtuOLgIAUDNEiEbfhB3fnog40cr+7QW8QaN69WZPDlY2xNufAG//un2SyiCq1owd2U2cNXcVEpNW0X9s6zsdB0F841QJIyYbRTNUy1drhZx7MZqsJRTQfKfoJl80Ciz/fD5CSwnt+91ycy9OJMKNjer4dK+Api0T0ZnwWABhKJFceD4XvOqf59J0+vNlMRVTQ36MLGreP0l8P5J9Zurp1qcKx3K7n6SoX8Ty1kjYZakKChiXG6G5rQqU0lEUgZiDUuEazsLLVJH9NsLxGqM6YB3gciAdyGPZOr6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hxeXzRd5S6663KaNU9eSVpJuXPKnETHitpwkPbzzPUA=;
- b=eaPQvpAGjdXcnhTVRN7OdNWZNN0GQCYkb/S8sRMgfN5gTiFBrkgaxLDhFr+mtUqnYRCfpJ4fpuq/96EF6dMT1Mvw8d4CRjWLjY4gR2VLFiGyEJUO4Hhec3CKp6YQTg5XVhWpFVLMwZJ3GfheimZHREWexImjrl8c9E3hshAtGqt0mGVhHi1sp0YeWWoLnHQ84tHVvtCmczTkImpg+VPzBpXbQHgY64JobQ5T3r9Nd13dkznA8ZhB9TmFQqgC2BhMemHGJMGh6AF06rf32SDyJecWxgn5DP6s+TgPK/18xDTdjaOVNhBAV0D0bAcgtWjcjPa13sjTcCbfw7lxYTMmfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hxeXzRd5S6663KaNU9eSVpJuXPKnETHitpwkPbzzPUA=;
- b=d3M+8Hi03UuY4/hHGiz6qLhdMu55Hs7csKomvwefYbP+b1fs62HVnZgwAr3GGkYn4L+hxVoaort9/uBiChuDKvXAlEoJEB7Cpbbq0TvdYl2C2fXD+1c9jWUkzPjNnsE6z4dhbhv44oYbmkxbY4ZOLXk5d/GzT77CLbrhlvA2OpK0Kvh+oVXEAcQrLHzy+bN5PbSmOAyGUoKRnzlUlXNzwjX0UO0WQLzusHClxA641YLyfCB3f6HbKrzqJYYEEb4zXoF1mtibwQ4HRlTDDD69fyvG8rBIlUI74JUcBogxOyFnqeZ4wacgFDSSO7LuaIXykWzH3GOa0nYweJKQ1X2yXA==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by DM4PR20MB4602.namprd20.prod.outlook.com (2603:10b6:8:5d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Wed, 19 Jun
- 2024 23:15:07 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149%6]) with mapi id 15.20.7698.017; Wed, 19 Jun 2024
- 23:15:07 +0000
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Tony Lindgren <tony@atomide.com>
-Cc: Inochi Amaoto <inochiama@outlook.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: pinctrl: pinctrl-single: fix schmitt related properties
-Date: Thu, 20 Jun 2024 07:14:47 +0800
-Message-ID:
- <IA1PR20MB4953D5E7D7D68DDCE31C0031BBCF2@IA1PR20MB4953.namprd20.prod.outlook.com>
-X-Mailer: git-send-email 2.45.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [NAaDRh0PTPJJNj502VRUcT2cvotVMIU6q9p/B87NR7g=]
-X-ClientProxiedBy: TYCP286CA0272.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c9::18) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <20240619231448.171000-1-inochiama@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B41762C1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 23:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718839058; cv=none; b=QkKSlQwICoWxFJcZVfV6VovL+at6mMrQTnKco424oLWR9dPuMKyRntj7opzdn3TxnJpd1nfDIlyBPKchF9RL4m4H2CPL1LpgPoBCwpkiNjq7rveY3njtGPfsJNH5JUCV+fH05X+8ZSMr9Xlo0MMnazfxBszooqOvU/pUIdxccJA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718839058; c=relaxed/simple;
+	bh=/hoDkYheQkVDO56Am39e7Iec+lksxqdmJe6cBSua6/Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tY9Qicil9zGrIpS8K3t6I6GXRfyyqV9fpO1tcwspGMtA1uqDfo6qyQ9zOY24QeZcaobnAAMkogNfRh3Ffhk+/LtTW8VG/qBSsrVZK4Ab/VBIlb+Wii3kCKAKP3kkDtCakqMfVd4aVUA15k2esVD8U53ebcOx8+FuwjU7z3iPnFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=LKYSyWHU; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 70C6E2C0358;
+	Thu, 20 Jun 2024 11:17:27 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1718839047;
+	bh=/hoDkYheQkVDO56Am39e7Iec+lksxqdmJe6cBSua6/Q=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=LKYSyWHUcxEq/VJ3KH33yV62981KVdBv+/2zDISuOyYCFEFWDHpiWX5lTpd0YDKfG
+	 89ZEcfnOBcfotURqWd7wlsjqyD8PWliRg4BVGGvv2k1+SpggHudSCIHpzkNheYUg1n
+	 SGh0vpnnU+i52p0YyjifaFkwM2ftQ4xlWv1biNBKFxaTMMJ+7PbZeijqakwaEYwihn
+	 3ngtIEYkOOic4TrDgUYwJfdSR7KkIVgMV16blYhq2GG2m+oKhrLWFrx2RDZH9iar+k
+	 2tnMVcfQkC04vNYKzf5U20jiK+3DinONIw4VAE2FrXuvr6VyiyS/ij+s+X9D+/jISh
+	 GLI4kVzqYY6yg==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B667367070001>; Thu, 20 Jun 2024 11:17:27 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Thu, 20 Jun 2024 11:17:27 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.48; Thu, 20 Jun 2024 11:17:26 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Thu, 20 Jun 2024 11:17:26 +1200
+From: Aryan Srivastava <Aryan.Srivastava@alliedtelesis.co.nz>
+To: "andrew@lunn.ch" <andrew@lunn.ch>
+CC: "olteanv@gmail.com" <olteanv@gmail.com>, "davem@davemloft.net"
+	<davem@davemloft.net>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kuba@kernel.org" <kuba@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "edumazet@google.com"
+	<edumazet@google.com>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>
+Subject: Re: [PATCH v0] net: dsa: mv88e6xxx: Add FID map cache
+Thread-Topic: [PATCH v0] net: dsa: mv88e6xxx: Add FID map cache
+Thread-Index: AQHauvQhmGVs7ltcskSdPWkCQQQ/GrHAIwsAgA7blAA=
+Date: Wed, 19 Jun 2024 23:17:26 +0000
+Message-ID: <a79192718fad9e85bf336c7a6c8864c523456033.camel@alliedtelesis.co.nz>
+References: <20240610050724.2439780-1-aryan.srivastava@alliedtelesis.co.nz>
+	 <e850b74d-fac6-4680-b9d0-fc2c3e1aa848@lunn.ch>
+In-Reply-To: <e850b74d-fac6-4680-b9d0-fc2c3e1aa848@lunn.ch>
+Accept-Language: en-US, en-NZ
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <08AD3E1E2C3498468356D3A681CD15A0@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|DM4PR20MB4602:EE_
-X-MS-Office365-Filtering-Correlation-Id: c7bdfff3-417f-4c0f-365b-08dc90b5a86f
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199025|3412199022|440099025|1710799023;
-X-Microsoft-Antispam-Message-Info:
-	XFZO3azER8BcuIhQuXpsAY+PFFm6+zXrPYE192yMSwS8CnLdnJnI71KEaX0wJarZ9ORiIDEgXSBvLHagbAH00drDPJltsgRxqkCf47gJItSXfQlL9NLFlQ9JP6aeoOYCBhEfLfF/ONfmTPd5LS4MRVvONIHpkYriQ2NRXTzIc9z+jMxy9PdQZbwvXY4Hwmzl+y52y3PssACnKRXlLWH1+TxuqSX2RQJriVggbpXE3o795+CRiU3cVTnevCPJHu0hlVPLoG/qbKEtXvpqq/Frr2rBgX0JrsripluPXEMsHOvJInpwPLlJQvSiEjet4kfQ0IX1PHIVLFtR8g+lWhc6AlqKhUhde2YHlpbUzBXJqTN7EdFsPFKjBt0lOqZrSzoD6wcQl81RZeElf93RwvRW3OwQDsfFe95pkUsk439J4cavsVvmR1VDUgPOpJ/henCZxchhM4Oj/wqMINaY9Gwekldh6Aw4XKF/ud3a+YP8O2awOFc8U4yyT+9WqZsCKBZMedRjtrybf9HlBAsSnvwKnyKWjHLLu9RFwptikwjTHtMa/3ZGFZBW1dqK8F9gIhmp3FFMRkV4qrbg/2nwj8OlSSMvd3fvOaMya25gLOnP+sEQ4RVsThmcuoBQB4+Dfqmq
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tdgnJXCGkRTJ6YkZugJyypwlnhVKVPgyJMiF8CRCT6mzCBTNLq7w/DY+QoIG?=
- =?us-ascii?Q?YuAOdn7aIlyI7LR7baQejbm4pRZjazBlpNzNZtE8rNPySnu7udbiFbSl1HUG?=
- =?us-ascii?Q?nOf2R3LlW1xaRM4Wpv22/o/GHpYBYQ1PiQmiWIJyXtWMeB+qZYiBl4vsUmjb?=
- =?us-ascii?Q?iik/eFG7DNHu5osaRxpr10sIc0FQsy1vskbGSuA6GoesH8BWvIAxNj887nzy?=
- =?us-ascii?Q?9NQ27wcd84bLjakuRMmy/DRxJgsJj2+8h3R+RydWBq8nCrBbqbjbqUotUsdb?=
- =?us-ascii?Q?r5W7k1rrpD2RVNc7r35/DSg2O41WRBqCJwDjls3rlg95CuZKqTyra2vpqESu?=
- =?us-ascii?Q?BG7cjx8yUwWqbpHbBc/SnKANsMIHyLMqHccn0bX8tp4+nVX0jsnwVLVmWpqK?=
- =?us-ascii?Q?tAP31gWCcMx/C0DzTq5BbELmOzTWsSUoPe4s8/vwl1wCIM8yLywU6QfqHmms?=
- =?us-ascii?Q?gDlUSpuau8owMzZ6KC50/oFMTdcrDOzfjy9ockeskEA1MGgznFt66rwCjhjX?=
- =?us-ascii?Q?bdH5DpCadi0xatH9SjZ7dKivHB7+g284DwVEpvsPKuefZ4HGO5zqFRJV8Ogl?=
- =?us-ascii?Q?2mJWDL88/8nOg0OhGuhnG9J5EWtB8jYF0/Qdji0qX3+K/jTkqb3JuEnQfAqW?=
- =?us-ascii?Q?n93ophAMDLN3WP5eTzbjvZRUwB7w5dnyNjxo5dOlEg2qDV2QabRiQTcYu7SS?=
- =?us-ascii?Q?CmmDDPt6hd0KzxPro+UNDv9/1HkxliWLjmavVczXjKJOgsJry7NKAakE/ag/?=
- =?us-ascii?Q?CRjcWzLYUBKUJTYCc1T0YQgd+etmIXF/T+7F4e/fO9SeveRhtzlS6tWQPEsU?=
- =?us-ascii?Q?TWL7ohs2qva92QnZzlI+Tv5bK/W9ywPSZA3qQIm+9wRzXH3E2QSQcHawKHrI?=
- =?us-ascii?Q?csl6u2fvym0G22Bcg1pKllPKqMXbdOOwmjwDUJL3KhxODr2jcW6EnVJEkZMw?=
- =?us-ascii?Q?qP3hWwG0LdMB0WKZIesf2GyYZ1A6y8mLjbQnNGG//+LZtgOm/jeuB6WSsTUj?=
- =?us-ascii?Q?U23tlLATk0lea0OgSI5nDMYWIVejlXqgjf8SjXgbB1cG+VfQw056I5ZSdZYg?=
- =?us-ascii?Q?zKs8UKPpOPtFts2+EQVPO5P7kkR5xZLSqulAdKvZaakisCWfLBkiu+nBw0cz?=
- =?us-ascii?Q?yFymFIvZnOY0NCtYllcqTgy4Ans0D0MNCfMfHSPJotjhim8hT8ICbIADE+Wa?=
- =?us-ascii?Q?0MQCU4YYJIpLEZrB4khqoQQzdFvqZoVSr3gVJv9qehkQMFz9KTIVhPLcstGK?=
- =?us-ascii?Q?EQO1HX+AXqLtrUpmgGzG?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7bdfff3-417f-4c0f-365b-08dc90b5a86f
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2024 23:15:07.1340
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR20MB4602
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=66736707 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=w1vUsAckAk8A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=5_Qu5RKfSxMH2C3omnkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-The "pinctrl-single,input-schmitt" have four arguments in the bindings
-but the driver needs two. According to the meaning of other properties
-and driver, it should have "enable" suffix. Fortunately, there is no
-dts using this property, so it is safe to correct this property with the
-right name.
-
-Rename existed property "pinctrl-single,input-schmitt" to
-"pinctrl-single,input-schmitt-enable" and add the right description for
-property "pinctrl-single,input-schmitt" used by the driver.
-
-Fixes: 677a62482bd6 ("dt-bindings: pinctrl: Update pinctrl-single to use yaml")
-Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
----
- .../devicetree/bindings/pinctrl/pinctrl-single.yaml        | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
-index c11495524dd2..e8177cc1115c 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
-@@ -144,6 +144,13 @@ patternProperties:
-           - description: drive strength mask
-
-       pinctrl-single,input-schmitt:
-+        description: Optional schmitt strength configuration
-+        $ref: /schemas/types.yaml#/definitions/uint32-array
-+        items:
-+          - description: schmitt strength current
-+          - description: schmitt strength mask
-+
-+      pinctrl-single,input-schmitt-enable:
-         description: Optional input schmitt configuration
-         $ref: /schemas/types.yaml#/definitions/uint32-array
-         items:
---
-2.45.2
-
+SGkgQW5kcmV3LA0KT24gTW9uLCAyMDI0LTA2LTEwIGF0IDE0OjIzICswMjAwLCBBbmRyZXcgTHVu
+biB3cm90ZToNCj4gT24gTW9uLCBKdW4gMTAsIDIwMjQgYXQgMDU6MDc6MjNQTSArMTIwMCwgQXJ5
+YW4gU3JpdmFzdGF2YSB3cm90ZToNCj4gPiBBZGQgYSBjYWNoZWQgRklEIGJpdG1hcC4gVGhpcyBt
+aXRpZ2F0ZXMgdGhlIG5lZWQgdG8NCj4gPiB3YWxrIGFsbCBWVFUgZW50cmllcyB0byBmaW5kIHRo
+ZSBuZXh0IGZyZWUgRklELg0KPiA+IA0KPiA+IFdhbGsgVlRVIG9uY2UsIHRoZW4gc3RvcmUgcmVh
+ZCBGSUQgbWFwIGludG8gYml0bWFwLiBVc2UNCj4gPiBhbmQgbWFuaXB1bGF0ZSB0aGlzIGJpdG1h
+cCBmcm9tIG5vdyBvbiwgaW5zdGVhZCBvZiByZS1yZWFkaW5nDQo+ID4gSFcgZm9yIHRoZSBGSUQg
+bWFwLg0KPiA+IA0KPiA+IFRoZSByZXBlYXRlZGx5IFZUVSB3YWxrcyBhcmUgY29zdGx5IGNhbiBy
+ZXN1bHQgaW4gdGFraW5nIH40MCBtaW5zDQo+ID4gaWYgfjQwMDAgdmxhbnMgYXJlIGFkZGVkLiBD
+YWNoaW5nIHRoZSBGSUQgbWFwIHJlZHVjZXMgdGhpcyB0aW1lDQo+ID4gdG8gPDIgbWlucy4NCj4g
+DQo+IEhvdyBsb25nIGRvZXMgdGhlIGZpcnN0IHdhbGsgdGFrZT8gUmF0aGVyIHRoYW4gaGF2aW5n
+IGZpZF9wb3B1bGF0ZWQsDQo+IGkNCj4gd291bmRlciBpZiB0aGUgd2FsayBzaG91bGQganVzdCBi
+ZSBkb25lIGluIG12ODhlNnh4eF92dHVfc2V0dXAoKSBvcg0KPiBtdjg4ZTZ4eHhfYXR1X3NldHVw
+KCkuDQo+IA0KPiDCoMKgwqDCoMKgwqDCoMKgQW5kcmV3DQpJIGFncmVlLCB3aWxsIGltcGxlbWVu
+dCB0aGlzLiBUaGUgZmlyc3Qgd2FsayBkb2VzIG5vdCB0YWtlIGxvbmcsIGJ1dA0Kd291bGQgYmUg
+YmV0dGVyIHNlcnZlZCBpbiB0aGUgc2V0dXAuDQoNClRoYW5rcywNCkFyeWFuLg0K
 
