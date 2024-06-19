@@ -1,179 +1,95 @@
-Return-Path: <linux-kernel+bounces-221044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519F090EB24
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:31:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D22290EB43
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090161C21B5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:31:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74F61F21FAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3AD142E7C;
-	Wed, 19 Jun 2024 12:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497291422A2;
+	Wed, 19 Jun 2024 12:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lZxOR0wF"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="tr9Ckg7u"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFFE7F484;
-	Wed, 19 Jun 2024 12:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DC614262C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718800291; cv=none; b=UPB0VVOXMfkH6EuAom4t+yDE2L7jX1p7vbk44FprnpIdWChRESiRAXJO71+PYUewDLqYf6QwIPR4DPiwfA+Y1AQPAMlPgxqYaNi9oB3HTX5bTg7Ex8dXe+09IPpjj6D8LWG3BgxvDN3C+aOh4Y/bmrkMDgWsq2Z4xp214W96plk=
+	t=1718800661; cv=none; b=rIfyt6IVVPoeQTK6WRYdDl3U4/pl0OW/BZOLGEB+Ps57CO7Jd+8qiG66uX/s4S1coObLwUgMVlZ9DSv09rBlqfPYAwi+ZG2DcL6Xd5C43UyOaRWKrEh5gnBBsJ88Ji92vr6mcAZSznHUEv/IX5JANSMDko/T/MsK7+P8VDvaUkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718800291; c=relaxed/simple;
-	bh=wpMOkSoPBVIQ3ZosCdP2tRyslpQaJDB9yAagwaWj1xQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CYCO65GdX4g70xieZs9fovUnfd7EmKSNuXvXF+mH6yli3+4ngv17GINPOA/IZoXWR6gBkj0HDeSpfTHfGM2BH4GnnewPcBhQSuetj5w9QHq/li83413ZaAofedXbVPAPDNZp7Pi1gVr/IQdPv8n2j3iXEPYsfyPi8t7PzTrvODw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lZxOR0wF; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718800285; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=B5RdL+8cB/GSNge3uIMvi0Jzb3nSy+m4P9mjkS+8pFk=;
-	b=lZxOR0wFsEHkZPk9z7sYLJwIGZW+Vecin50dwXczyEb3HhMGdFCDbr5LyZQpe4iG2vVkuj8YebDnXrr1ycoWD9/IXcDu6/WEMY2njvrWntJnRuNWKoyJzrQ6eji/1xXJI2P1ZoAcGkfbMcwsEsFTUhYxE1zrQsqA/kNgeUFnKzs=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=alibuda@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W8oFJ7S_1718800283;
-Received: from 30.221.146.77(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0W8oFJ7S_1718800283)
-          by smtp.aliyun-inc.com;
-          Wed, 19 Jun 2024 20:31:24 +0800
-Message-ID: <c9446790-9bac-4541-919b-0af396349c59@linux.alibaba.com>
-Date: Wed, 19 Jun 2024 20:31:23 +0800
+	s=arc-20240116; t=1718800661; c=relaxed/simple;
+	bh=C98l63zLvMtVSAel73Q2HeZYeiWlY3niBgI2rKAn8dE=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=j7oD8buxJJ5X6SRgXm4Y9I7BZ8be0M6+Mk5ptdpifQ6u4bPYo45cGGZCYkX11vZ5UTNOJSDxQAfHq43UYRuxo0EO3cLd1BE+DY9a0zJvAxvSBsHIPYsLd2YjqE+i21YH6JmptIlVbROyinhQ9ES4ALLaGWe8DW0M0MICAYV0UZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=tr9Ckg7u; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718800347; bh=3tr1aoIrnxc7KAny8fOwZJpfb3wKnMB//QLthIi/rvs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=tr9Ckg7udf6deunTXWU0uXAB3vaNzazK5x+SMfrBGZsEr19IWHnQ52ncKnzVTh2o1
+	 TFUHCO5RTxZKdLVJop2jhhPTd93Cuv+euTdiA6rm/01hEgDoDgY5BrTES6cbvye2HT
+	 jg8W8sxRwBYV3dnPa5i5rm8wUW50GN9WQivrpxzk=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id 81982A79; Wed, 19 Jun 2024 20:32:25 +0800
+X-QQ-mid: xmsmtpt1718800345t1w2eeuva
+Message-ID: <tencent_E56D8C9494EB5EEE52CDB8797A6E742CA10A@qq.com>
+X-QQ-XMAILINFO: NDgMZBR9sMmaP+1mcOH883u0lEt9zf5/vPzK8732fT7RtFloE6aaXm4dHC87/c
+	 qPu9chOlJzfzkxjJUs9p4f6q1erIBxwcsjAYNP+jWmObeLFMMs5CHrj3cjhVhdpLYmHfU5hfXkPV
+	 JmcsPWhF7PHkFcQB6tStjNpsjPQbXfoXCECtevrIUYbGvxR1vtzgltHKMlTDZ3GUgAI3EGH5xlAp
+	 GkkwoVBgPTRphyA6cTYzgoS6d5volQxmwICuwqajXYsT5ojahPykPknfKNno6g4IpMxhZYfOTwc6
+	 XXkyZ5vbLw0EQ1gG8rRe2JaEqq10lMhvhVeZ+qhV2IIRBGIDkl6RNE83E1DraC3iP8HwdVJxCItK
+	 +9swmEjNBl36CgCLykEgiU2QsBPDWQ1zbe/epZ/SAV/AXX/wrt0pjfmgJvUCBxwG1+IVhWCCZr6a
+	 NIioEAmOVaVh4wMEiihV4LrRquN97lnFGdJLOaSIC9e54YK93KNkKqCplV59M02OKyeeIII5NpAz
+	 Ww5UOBTwe0vlgif3wJ0zUqBHqjx23LAStbmWtPtxIMFHlMGzUNiYGdUefNkFeVQ6ibQ5ahdYyzwA
+	 N/PekBFjiVM6uQeZYIkOKmkHai4e33GSKwMvRK7iQT5r1btx/ZOtZbDA9eamokVZzSsGdG1xHw5E
+	 Ant9cyweVaktSBvMAqPBkY20gvlvyjDfL+Annzj2NhmXNPut4KqKmjuazXOT4Fo+6cCrkV0dY+aw
+	 O/VWhK8yGWTjUYR6XMsIeLBNBqrP2RUJ6Sl+1sxz1w+ldDmCGiyGRVMVKfeIg3pm4La972mQ+8pt
+	 3VMpZLX4foqVdwyJC1cU854mAQtTySbA7vPnsq1f3Xbh6ysbqH0A+nMF417w4k0HzQOwdVKN1GDk
+	 5pFfHY42wgc9JCiP4we1VL7jOea70Xh2wZiNZpZkYfnrBZ/6DgWJPwmJjmeqMaXg==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: invalid-free in hci_req_sync_complete
+Date: Wed, 19 Jun 2024 20:32:26 +0800
+X-OQ-MSGID: <20240619123225.2305462-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <00000000000033a6e8061b3c6d4a@google.com>
+References: <00000000000033a6e8061b3c6d4a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3] net: do not leave a dangling sk pointer, when
- socket creation fails
-To: Ignat Korchagin <ignat@cloudflare.com>,
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Florent Revest <revest@chromium.org>, kernel-team@cloudflare.com,
- Kuniyuki Iwashima <kuniyu@amazon.com>, stable@vger.kernel.org
-References: <20240617210205.67311-1-ignat@cloudflare.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <20240617210205.67311-1-ignat@cloudflare.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+please test db free in hci_req_sync_complete
 
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 2ccbdf43d5e7
 
-On 6/18/24 5:02 AM, Ignat Korchagin wrote:
-> It is possible to trigger a use-after-free by:
->    * attaching an fentry probe to __sock_release() and the probe calling the
->      bpf_get_socket_cookie() helper
->    * running traceroute -I 1.1.1.1 on a freshly booted VM
->
-> A KASAN enabled kernel will log something like below (decoded and stripped):
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-> Read of size 8 at addr ffff888007110dd8 by task traceroute/299
->
-> CPU: 2 PID: 299 Comm: traceroute Tainted: G            E      6.10.0-rc2+ #2
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> Call Trace:
->   <TASK>
-> dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1))
-> print_report (mm/kasan/report.c:378 mm/kasan/report.c:488)
-> ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-> kasan_report (mm/kasan/report.c:603)
-> ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-> kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
-> __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
-> bpf_get_socket_ptr_cookie (./arch/x86/include/asm/preempt.h:94 ./include/linux/sock_diag.h:42 net/core/filter.c:5094 net/core/filter.c:5092)
-> bpf_prog_875642cf11f1d139___sock_release+0x6e/0x8e
-> bpf_trampoline_6442506592+0x47/0xaf
-> __sock_release (net/socket.c:652)
-> __sock_create (net/socket.c:1601)
-> ...
-> Allocated by task 299 on cpu 2 at 78.328492s:
-> kasan_save_stack (mm/kasan/common.c:48)
-> kasan_save_track (mm/kasan/common.c:68)
-> __kasan_slab_alloc (mm/kasan/common.c:312 mm/kasan/common.c:338)
-> kmem_cache_alloc_noprof (mm/slub.c:3941 mm/slub.c:4000 mm/slub.c:4007)
-> sk_prot_alloc (net/core/sock.c:2075)
-> sk_alloc (net/core/sock.c:2134)
-> inet_create (net/ipv4/af_inet.c:327 net/ipv4/af_inet.c:252)
-> __sock_create (net/socket.c:1572)
-> __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
-> __x64_sys_socket (net/socket.c:1718)
-> do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
-> entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
->
-> Freed by task 299 on cpu 2 at 78.328502s:
-> kasan_save_stack (mm/kasan/common.c:48)
-> kasan_save_track (mm/kasan/common.c:68)
-> kasan_save_free_info (mm/kasan/generic.c:582)
-> poison_slab_object (mm/kasan/common.c:242)
-> __kasan_slab_free (mm/kasan/common.c:256)
-> kmem_cache_free (mm/slub.c:4437 mm/slub.c:4511)
-> __sk_destruct (net/core/sock.c:2117 net/core/sock.c:2208)
-> inet_create (net/ipv4/af_inet.c:397 net/ipv4/af_inet.c:252)
-> __sock_create (net/socket.c:1572)
-> __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
-> __x64_sys_socket (net/socket.c:1718)
-> do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
-> entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
->
-> Fix this by clearing the struct socket reference in sk_common_release() to cover
-> all protocol families create functions, which may already attached the
-> reference to the sk object with sock_init_data().
->
-> Fixes: c5dbb89fc2ac ("bpf: Expose bpf_get_socket_cookie to tracing programs")
-> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
-> Cc: stable@vger.kernel.org
-> Link: https://lore.kernel.org/netdev/20240613194047.36478-1-kuniyu@amazon.com/T/
-> ---
-> Changes in v3:
->    * re-added KASAN repro steps to the commit message (somehow stripped in v2)
->    * stripped timestamps and thread id from the KASAN splat
->    * removed comment from the code (commit message should be enough)
->
-> Changes in v2:
->    * moved the NULL-ing of the socket reference to sk_common_release() (as
->      suggested by Kuniyuki Iwashima)
->    * trimmed down the KASAN report in the commit message to show only relevant
->      info
->
->   net/core/sock.c | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index 8629f9aecf91..100e975073ca 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -3742,6 +3742,9 @@ void sk_common_release(struct sock *sk)
->   
->   	sk->sk_prot->unhash(sk);
->   
-> +	if (sk->sk_socket)
-> +		sk->sk_socket->sk = NULL;
-> +
->   	/*
->   	 * In this point socket cannot receive new packets, but it is possible
->   	 * that some packets are in flight because some CPU runs receiver and
-
-Reviewed-by: D. Wythe <alibuda@linux.alibaba.com>
-
-
-A small tip:
-
-It seems that you might have missed CCing some maintainers, using
-scripts/get_maintainer.pl "Your patch" can help you avoid this issue
-again.
-
-
-D. Wythe
-
-
+diff --git a/net/bluetooth/hci_request.c b/net/bluetooth/hci_request.c
+index efea25eb56ce..ac27ea24844c 100644
+--- a/net/bluetooth/hci_request.c
++++ b/net/bluetooth/hci_request.c
+@@ -106,7 +106,8 @@ void hci_req_sync_complete(struct hci_dev *hdev, u8 result, u16 opcode,
+ 		hdev->req_result = result;
+ 		hdev->req_status = HCI_REQ_DONE;
+ 		if (skb) {
+-			kfree_skb(hdev->req_skb);
++			if (skb != hdev->req_skb)
++				kfree_skb(hdev->req_skb);
+ 			hdev->req_skb = skb_get(skb);
+ 		}
+ 		wake_up_interruptible(&hdev->req_wait_q);
 
 
