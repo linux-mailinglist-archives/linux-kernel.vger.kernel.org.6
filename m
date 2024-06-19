@@ -1,138 +1,137 @@
-Return-Path: <linux-kernel+bounces-221782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C4990F87B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:27:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B565290F87F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931831C219FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:27:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98CA61C21E56
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32EF79B84;
-	Wed, 19 Jun 2024 21:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A8B15A87E;
+	Wed, 19 Jun 2024 21:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="jXDFp7T9"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OwF5y7Xi"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E6777F2D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 21:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAAA1DA23;
+	Wed, 19 Jun 2024 21:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718832417; cv=none; b=M3RJ++wITtPVq/jmQhvQNmSJpl//sg9fPBzB6HCeVZimezcy7Nu9zru8W86GIQh6+GPePaRoP8mixRmOVpNtiQCumDV9pQyddc/34W9RXZZwWZgV8QD1QLeWtBxTrc0edBTrPJcijdeMnQms4pSjY7u0t60ReND0e5chtQnM1jA=
+	t=1718832484; cv=none; b=pc3MzDFE8DvstfayrzGByseNhfpwOYwdWFpM+R7s8LRRSY0jJhVNZTInIYpKiWnDO/CIwiMNyY1wHseSitB+yFEGvL0U6qmum7hwn5KRqd4alW9pYteR8gKhzQFmPVFN5kaiVraT0CRaKUFaBUnspyTyeA39AY8v8uCCLwg+3WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718832417; c=relaxed/simple;
-	bh=//iyxzZIVr6QAres699JGFf8ftXcPIb7yWo2DMzEqKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O9kaU2kkSCYWC1xXJF4ZPrMMLTY+tSD64GUMUxZhvtL3+/lbZU99JT68+BHhR8bG25/0v89TA2IxRNFdnsTdH3jtLwvKCfhrZPBHhUJh9WY2D4l2z7P912eZFIaFhIl/xJukM30nrEZcjOTBgUT0CfZ85uLcwtEo79VnarVVwRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=jXDFp7T9; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5009a.ext.cloudfilter.net ([10.0.29.176])
-	by cmsmtp with ESMTPS
-	id Jvr2s0VUgSLKxK2pTsOUNH; Wed, 19 Jun 2024 21:26:55 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id K2pRsIgl169m4K2pSsyvMK; Wed, 19 Jun 2024 21:26:54 +0000
-X-Authority-Analysis: v=2.4 cv=QONuRBLL c=1 sm=1 tr=0 ts=66734d1e
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=wYkD_t78qR0A:10 a=pGLkceISAAAA:8
- a=VwQbUJbxAAAA:8 a=JCK2di_1bi8deQwruN4A:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=i1/F0fvsqi40siO6o8D5Pzhw1FyW/BXIpxZTgXo3ZAA=; b=jXDFp7T9rL3o9tAW94e5rceoId
-	wQHGW2Pk12tmGoJ9ne4mwscdmYw3t0G7vPuMOG6gU5tpBHRF2l+EjcBx+TKNmtYmg9UNVFz/N+BYL
-	HQoxySOW1QR0a9hsYjsO8EvFG/e60KslKqTBFaModChvd/9BKGz6ZchqXuZjfFb2n7OQATgoZ+ft4
-	pY4aWE46EFbLQ2OE+wog2NNJDysXUi0ustGaoNaJInzY2QcY1y/jS9YouVWDkcY3hIyZsNF+jVHvs
-	ZQcDLeF/4apCloM0zZvmPFU2CDomf0tBtiVVOPPr7TXz2pMju+g3zVPgtwSY0+yVua/P/9OTVVgiC
-	6eS87OeQ==;
-Received: from [201.172.173.139] (port=41446 helo=[192.168.99.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sK2pR-002Nki-1R;
-	Wed, 19 Jun 2024 16:26:53 -0500
-Message-ID: <26028fee-8043-4f81-a062-bbff12f4c904@embeddedor.com>
-Date: Wed, 19 Jun 2024 15:26:51 -0600
+	s=arc-20240116; t=1718832484; c=relaxed/simple;
+	bh=7OAssoj9OLVsWv23P9hH16pO7JYZdb1nf9ARyZvLu0A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dX33k7HnG1b169yn8mIAWsFSQ+o8EaO/MvtDLGZPbCNbevyQbRluKzbbXqfGeoYEWbrqWy4dYewEUnHtBQl9jvCvDkg39Kytv4f1IZImyR2iqC3JRqr9X6knLgFnJaFhWH6pQ/+QfeE71JIVv+7PqIwbCa/w5lY+EUGsmufHQRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OwF5y7Xi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9I8GG001969;
+	Wed, 19 Jun 2024 21:27:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=22KJS395DkYRHCIqw9H8NQ
+	JIII2/9hyHBU/Ma3qGvk0=; b=OwF5y7Xib2g8dWKqzQre7H7VnJMBMSvIVh1+h7
+	QzlHUMw94EoEdmISQOO2ervPvJvlbf0NplreLcrdU44mAbR+j4AOtE/KrqnMB9Oj
+	NpJWCIk/nJiK7zYmq8JuIN4Azwb3YGLtxnqcRLsh8QvnIUM5850qhxaKnms+mQv/
+	JRRgrr7HDqPEUS8nVWJAEQWm8yMIteXIqxwJN6seiUdAxtLT0M8/8MF6CFvn0e5R
+	wguY8XhZ6zPecaljg75l6wnFI8s6nwqrizMnewABDTWxiYiTKCXUmZ6s+Pz+oqbI
+	g9v13pflGcCo3dGstoZHqyDB1J2Hp4l7ZdMAxhqwBaI8BOZw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yujag2ran-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 21:27:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JLRrvE022656
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 21:27:53 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 19 Jun 2024 14:27:53 -0700
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
+        <dan.carpenter@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm/msm/dpu: protect ctl ops calls with validity checks
+Date: Wed, 19 Jun 2024 14:27:43 -0700
+Message-ID: <20240619212743.3193985-1-quic_abhinavk@quicinc.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] Input: ims-pcu - annotate struct ims_pcu_flash_fmt
- with __counted_by
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240619-ims-pcu-counted_by-v1-0-3ee0ead2e57d@gmail.com>
- <20240619-ims-pcu-counted_by-v1-1-3ee0ead2e57d@gmail.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240619-ims-pcu-counted_by-v1-1-3ee0ead2e57d@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sK2pR-002Nki-1R
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.99.44]) [201.172.173.139]:41446
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 17
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfCgzzT7Z6LL887JpTJs9Y0xXy6Ddne/RTWHZol2MTObj33AjJMN+vGi8J2jmvG1T5ZpjvBxKHaYkIeBlZvqjJw5FlxsbaowRYofBmLq8xoWzx3hqRXrw
- aD+WTL1enQAIhWwo440XSKu5jgLnmf930ZUN4rQyAgNSFfSlG60y5OKHqn8QOIZgytq2s/SzbinmUQdH0uv3zQT3UVTRJ/0eZsQY7wQxea1gl+z4BBHyXAf4
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: W92zjECzWAQiHOK8btOVWMm52mEXTpRJ
+X-Proofpoint-ORIG-GUID: W92zjECzWAQiHOK8btOVWMm52mEXTpRJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ clxscore=1011 impostorscore=0 suspectscore=0 adultscore=0 spamscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406190163
 
+dpu_encoder_helper_phys_cleanup() calls the ctl ops without checking if
+the ops are assigned causing discrepancy between its callers where the
+checks are performed and the API itself which does not.
 
+Two approaches can be taken: either drop the checks even in the caller
+OR add the checks even in dpu_encoder_helper_phys_cleanup().
 
-On 19/06/24 23:13, Javier Carrasco wrote:
-> Use the __counted_by compiler attribute for the data[] flexible array
-> member to improve the results of array bound sanitizers.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Adopt the latter approach as ctl ops are assigned revision based so may not
+be always assigned.
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Fixes: d7d0e73f7de3 ("drm/msm/dpu: introduce the dpu_encoder_phys_* for writeback")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/464fbd84-0d1c-43c3-a40b-31656ac06456@moroto.mountain/T/
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Thanks
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index 708657598cce..7f7e6d4e974b 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -2180,9 +2180,12 @@ void dpu_encoder_helper_phys_cleanup(struct dpu_encoder_phys *phys_enc)
+ 	if (ctl->ops.reset_intf_cfg)
+ 		ctl->ops.reset_intf_cfg(ctl, &intf_cfg);
+ 
+-	ctl->ops.trigger_flush(ctl);
+-	ctl->ops.trigger_start(ctl);
+-	ctl->ops.clear_pending_flush(ctl);
++	if (ctl->ops.trigger_flush)
++		ctl->ops.trigger_flush(ctl);
++	if (ctl->ops.trigger_start)
++		ctl->ops.trigger_start(ctl);
++	if (ctl->ops.clear_pending_flush)
++		ctl->ops.clear_pending_flush(ctl);
+ }
+ 
+ void dpu_encoder_helper_phys_setup_cdm(struct dpu_encoder_phys *phys_enc,
 -- 
-Gustavo
+2.44.0
 
-> ---
->   drivers/input/misc/ims-pcu.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/misc/ims-pcu.c b/drivers/input/misc/ims-pcu.c
-> index 408a586f8c36..91f8ad826238 100644
-> --- a/drivers/input/misc/ims-pcu.c
-> +++ b/drivers/input/misc/ims-pcu.c
-> @@ -761,7 +761,7 @@ static int ims_pcu_switch_to_bootloader(struct ims_pcu *pcu)
->   struct ims_pcu_flash_fmt {
->   	__le32 addr;
->   	u8 len;
-> -	u8 data[];
-> +	u8 data[] __counted_by(len);
->   };
->   
->   static unsigned int ims_pcu_count_fw_records(const struct firmware *fw)
-> 
 
