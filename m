@@ -1,191 +1,163 @@
-Return-Path: <linux-kernel+bounces-221475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D03890F432
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:38:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C04590F443
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6153D1C20AF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:38:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50C6B1C21287
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C78215572F;
-	Wed, 19 Jun 2024 16:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27935156669;
+	Wed, 19 Jun 2024 16:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O88b1a5p"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/5JCVZ3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA631552E4;
-	Wed, 19 Jun 2024 16:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5DD153819
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 16:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718815111; cv=none; b=OgxzUFA35rq0AXg/UFbYxQLCSHXQsUr/x4F9T/DFQGkomi2PNcxIoPTQKPfR9VYHrAUpD3ztRyk79sfSJUK2gcNxbg9zNyNFc0tUZuvYrxulbosHrunLjGZ0Ku2tOuHbUekuIRc0dAu+cjquIv5y+WHz/bEPRe9lapKzYqEV838=
+	t=1718815125; cv=none; b=CVmtFFGiywtIKwP6qN6SXGofuySQq3DCQVM/eUpWigrF+hc3lYWpJpm5ch6eoK57mppRsfy5r8Fe4aMIF+8NmW2W/1I91VNSj7jMfFj4jpeJREpt5i++ziWCVPaw10WjbM/lYza5BCis5baG483BRpBWPAxo1xCrQ+x60ZAeYZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718815111; c=relaxed/simple;
-	bh=UdbBJxTG5H/XAmGhWxdvKGiRkX0+K9lYkkTsjudCe9Y=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gZ0GtiMjzC7i+j8H4s+757zfLYUUURWZY6owAfUaoQ6U6EkJ9BIeIFTSGIb1v5fN4XKIddGXMy7xUVf2v05Q/SV0gLhCpTRz2H8Y6/jBOUH8Fy+pPy7RPxOnpIZhzTnEQYV8VrqTThtLolbKv4joGRjcIkcAi5hQh9Ixn0XegAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O88b1a5p; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9ZNlk005181;
-	Wed, 19 Jun 2024 16:38:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=epno3NC8+/SM/GBEpeEQJDuT
-	59p4r0Qdcc1jjNTyCDA=; b=O88b1a5pnmBJ34udW2LbvMZxXmEDsovM6SXODRaN
-	47OLWwShcYIwnIRU8k3hnF42FDHl58mnnLpR8Jd/n34rjY+hPw49te7Unq55QTQy
-	f087TLhGQ17LhPmv2T4xppZWObQRN5ch9x3Q4t0hhHLEXPDZ9b7SFl8K5Yww3IeI
-	a+x91csjWFJJUNMNB2/DJla+sSkBqlwmwZX1pHfaxO7FkGcv81vOyXerk3VVyEJQ
-	wcrKOrB+vAKEG2PzjyISkJPqZaYCAufI3Ic5tHcLYBMrjoXwutM9nkbEWAMl0VIk
-	wh9Yb+Q98b6yTjd4ZIVj8h1hpkOSyLgPR4Pzbmq6j580wg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja7a88s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 16:38:19 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JGcHnS001798
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 16:38:17 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 09:38:14 -0700
-Date: Wed, 19 Jun 2024 22:08:10 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Komal Bajaj
-	<quic_kbajaj@quicinc.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Will
- Deacon" <will@kernel.org>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
-        Srinivas Kandagatla
-	<srinivas.kandagatla@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH] arm64: defconfig: Enable secure QFPROM driver
-Message-ID: <ZnMJcuJ0DvDHaY4S@hu-mojha-hyd.qualcomm.com>
-References: <20240619105642.18947-1-quic_kbajaj@quicinc.com>
- <5582a2a0-c772-4573-9d55-2f963cb87df1@linaro.org>
- <ZnLKwqENxC4wzrUm@hu-mojha-hyd.qualcomm.com>
- <rx4kwsdzprnblczndf4t4ditxl64dztkzooqljpvz6eehuqqgy@rv745qkxmxmq>
+	s=arc-20240116; t=1718815125; c=relaxed/simple;
+	bh=1/Deizd7VSTe2iJzo6qC6np7IrGYcl14e1WZr+sIbJg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BnqNCwmUfywWYVk/8JPHByiHzEXVPx2CeYrM98vUSgvGKg/9NgT8EfsqgVui0e3XNcl8A+Xa2fchFNGEIIZOLHb2o/CGx0Wq7kbU8h3V2EQzBeUcjoylO/f96p+6fdxlbWY8f3uQwzkj7mErk2glS6J0G7leUetTzY453N0C74E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/5JCVZ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CB0AFC2BBFC;
+	Wed, 19 Jun 2024 16:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718815124;
+	bh=1/Deizd7VSTe2iJzo6qC6np7IrGYcl14e1WZr+sIbJg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=E/5JCVZ3BXVCdiSjx9yM6gRmqvoaNrjaDAZ9UzqD54YJWOUxOuEK6HIVRNA3cb3Zq
+	 4WHOG1iCPEAQBJAoRLgnEX7YzNacY9eYqfb0xbvDWPhwFcrxdcYcOG3xSz3lKKNgaa
+	 BVzDrrkH7rehZdbmFjN6PTL1aXaUA2adXUnyrjWp0TZgF4+XMZNUQSyBaamh+F8uVU
+	 DWE5gKDxVSeCsT7DKH1Hg3e5+0DjDY+qvr3WtBH0o5UiLAH4O1ZMhQLoea8vKyCHvC
+	 OHpxkPm8+8atc0MSJoscKEDVwAeHSp2c24AFEcQqlZEP7JVaJxobdPQMiZtZ6hx39J
+	 rk6Pd6JT0/tkw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE18CC27C53;
+	Wed, 19 Jun 2024 16:38:44 +0000 (UTC)
+From: Hsiao Chien Sung via B4 Relay <devnull+shawn.sung.mediatek.com@kernel.org>
+Subject: [PATCH v3 00/14] This series fixes the errors of MediaTek display
+ driver found by IGT.
+Date: Thu, 20 Jun 2024 00:38:40 +0800
+Message-Id: <20240620-igt-v3-0-a9d62d2e2c7e@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <rx4kwsdzprnblczndf4t4ditxl64dztkzooqljpvz6eehuqqgy@rv745qkxmxmq>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TJP7JMBMUE4giihkU3MUl2wJhqV3pyCg
-X-Proofpoint-GUID: TJP7JMBMUE4giihkU3MUl2wJhqV3pyCg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- lowpriorityscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
- phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190125
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJEJc2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDM0NL3cz0El0TS0NL01QjQxMDkxQloMqCotS0zAqwKdGxtbUATts7MVU
+ AAAA=
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+ Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ CK Hu <ck.hu@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>, 
+ Daniel Kurtz <djkurtz@chromium.org>, Mao Huang <littlecvr@chromium.org>, 
+ "Nancy.Lin" <nancy.lin@mediatek.com>
+Cc: YT Shen <yt.shen@mediatek.com>, dri-devel@lists.freedesktop.org, 
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Hsiao Chien Sung <shawn.sung@mediatek.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718815123; l=3450;
+ i=shawn.sung@mediatek.com; s=20240616; h=from:subject:message-id;
+ bh=1/Deizd7VSTe2iJzo6qC6np7IrGYcl14e1WZr+sIbJg=;
+ b=jSxUNwpSULh9lrpbHUH8cTlzzmFaSiiiXN/JGo95ZbDBiwweC8/NdnathsAnu4DUUsl0rdBqS
+ W1fy/hLtNqyAnnI5vunPJ8Dp2Lr+D0ZUFHe+rnoexYNx/E+2jypPD2x
+X-Developer-Key: i=shawn.sung@mediatek.com; a=ed25519;
+ pk=lq1w8BuWDINX+4JHjGHhhbAU5ICP+cL9VCj7wn+cEDA=
+X-Endpoint-Received: by B4 Relay for shawn.sung@mediatek.com/20240616 with
+ auth_id=172
+X-Original-From: Hsiao Chien Sung <shawn.sung@mediatek.com>
+Reply-To: shawn.sung@mediatek.com
 
-On Wed, Jun 19, 2024 at 04:14:50PM +0300, Dmitry Baryshkov wrote:
-> On Wed, Jun 19, 2024 at 05:40:42PM GMT, Mukesh Ojha wrote:
-> > On Wed, Jun 19, 2024 at 01:08:48PM +0200, Krzysztof Kozlowski wrote:
-> > > On 19/06/2024 12:56, Komal Bajaj wrote:
-> > > > Enable the secure QFPROM driver which is used by QDU1000
-> > > 
-> > > Qualcomm QDU1000. You are changing kernel-wide defconfig, not some
-> > > Qualcomm downstream stuff.
-> > > 
-> > > > platform for reading the secure qfprom region to get the
-> > > > DDR channel configuration.
-> > > > 
-> > > > Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
-> > > > ---
-> > > >  arch/arm64/configs/defconfig | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> > > > index 838b4466d6f6..c940437ae1b3 100644
-> > > > --- a/arch/arm64/configs/defconfig
-> > > > +++ b/arch/arm64/configs/defconfig
-> > > > @@ -1575,6 +1575,7 @@ CONFIG_NVMEM_LAYERSCAPE_SFP=m
-> > > >  CONFIG_NVMEM_MESON_EFUSE=m
-> > > >  CONFIG_NVMEM_MTK_EFUSE=y
-> > > >  CONFIG_NVMEM_QCOM_QFPROM=y
-> > > > +CONFIG_NVMEM_QCOM_SEC_QFPROM=y
-> > > 
-> > > Module
-> > 
-> > Should not this be inline with what CONFIG_NVMEM_QCOM_QFPROM is having ?
-> > Either both CONFIG_NVMEM_QCOM_QFPROM and CONFIG_NVMEM_QCOM_SEC_QFPROM
-> > should be m or both y
-> 
-> Looking back in time, CONFIG_NVMEM_QCOM_QFPROM was enabled as built-in
-> to get TSENS to work (which makes sense, we don't want the CPUs to
-> burn). What the actual users for NVMEM_QCOM_SEC_QFPROM?
+Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
+---
+Changes in v3:
+- Modify the commit message
+- Add a patch to fix destination alpha error in OVL
+- Link to v2: https://lore.kernel.org/all/20240619-mediatek-drm-next-v2-0-abf68f46f8d2@mediatek.com
+
+---
+Changes in v2:
+- Seperate the changes that belong to another repo (driver/soc/mediatek)
+- Move the fix patches to the front of the series
+- Link to v1: https://lore.kernel.org/r/20240616-mediatek-drm-next-v1-0-7e8f9cf785d8@mediatek.com
+
+---
+Hsiao Chien Sung (14):
+      drm/mediatek: Add missing plane settings when async update
+      drm/mediatek: Disable 9-bit alpha in ETHDR
+      drm/mediatek: Fix XRGB setting error in OVL
+      drm/mediatek: Fix XRGB setting error in Mixer
+      drm/mediatek: Turn off the layers with zero width or height
+      drm/mediatek: Add OVL compatible name for MT8195
+      drm/mediatek: Add DRM_MODE_ROTATE_0 to rotation property
+      drm/mediatek: Add new color format MACROs in OVL
+      drm/mediatek: Set DRM mode configs accordingly
+      drm/mediatek: Support more 10bit formats in OVL
+      drm/mediatek: Support RGBA8888 and RGBX8888 in OVL on MT8195
+      drm/mediatek: Support DRM plane alpha in OVL
+      drm/mediatek: Support DRM plane alpha in Mixer
+      drm/mediatek: Fix XRGB setting error in OVL
+
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.h         |  6 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c         | 93 ++++++++++++++++++-------
+ drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c |  2 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c          | 24 +++++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h          |  4 ++
+ drivers/gpu/drm/mediatek/mtk_ethdr.c            | 27 +++++--
+ drivers/gpu/drm/mediatek/mtk_plane.c            |  4 +-
+ 7 files changed, 126 insertions(+), 34 deletions(-)
+---
+base-commit: 62fe4b067581d480e863191305f108bebffbc0e9
+change-id: 20240615-mediatek-drm-next-ad601b349f23
+
+Best regards,
+
+---
+Hsiao Chien Sung (14):
+      drm/mediatek: Add missing plane settings when async update
+      drm/mediatek: Use 8-bit alpha in ETHDR
+      drm/mediatek: Fix XRGB setting error in OVL
+      drm/mediatek: Fix XRGB setting error in Mixer
+      drm/mediatek: Fix destination alpha error in OVL
+      drm/mediatek: Turn off the layers with zero width or height
+      drm/mediatek: Add OVL compatible name for MT8195
+      drm/mediatek: Add DRM_MODE_ROTATE_0 to rotation property
+      drm/mediatek: Add new color format MACROs in OVL
+      drm/mediatek: Set DRM mode configs accordingly
+      drm/mediatek: Support more 10bit formats in OVL
+      drm/mediatek: Support RGBA8888 and RGBX8888 in OVL on MT8195
+      drm/mediatek: Support DRM plane alpha in OVL
+      drm/mediatek: Support DRM plane alpha in Mixer
+
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.h         |  6 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c         | 95 ++++++++++++++++++-------
+ drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c |  2 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c          | 24 +++++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h          |  4 ++
+ drivers/gpu/drm/mediatek/mtk_ethdr.c            | 27 +++++--
+ drivers/gpu/drm/mediatek/mtk_plane.c            |  4 +-
+ 7 files changed, 127 insertions(+), 35 deletions(-)
+---
+base-commit: 62fe4b067581d480e863191305f108bebffbc0e9
+change-id: 20240619-igt-49195e21404d
+
+Best regards,
+-- 
+Hsiao Chien Sung <shawn.sung@mediatek.com>
 
 
-CONFIG_NVMEM_QCOM_QFPROM and CONFIG_NVMEM_QCOM_SEC_QFPROM are similar driver
-for same device and only difference is register region lies in secure space
-for the latter;
-
-Currently, LLCC is the only client for CONFIG_NVMEM_QCOM_SEC_QFPROM, however
-if someday if the region lies in non-secure space in that case, client
-started depending on CONFIG_NVMEM_QCOM_QFPROM.
-
-It reminds me, we have not yet put depends on for LLCC on NVMEM_QCOM_SEC_QFPROM
-doing which is resulting in recursive dependency[1].
-
-It looks we need to select NVMEM_QCOM_SEC_QFPROM from QCOM_LLCC config and that
-may not need config enablement here.
-
-[1]
-fs/sysfs/Kconfig:2:error: recursive dependency detected!
-fs/sysfs/Kconfig:2:     symbol SYSFS is selected by CONFIGFS_FS
-fs/configfs/Kconfig:2:  symbol CONFIGFS_FS is selected by GPIO_SIM
-drivers/gpio/Kconfig:1884:      symbol GPIO_SIM depends on GPIOLIB
-drivers/gpio/Kconfig:6: symbol GPIOLIB is selected by I2C_MUX_LTC4306
-drivers/i2c/muxes/Kconfig:47:   symbol I2C_MUX_LTC4306 depends on I2C_MUX
-drivers/i2c/Kconfig:62: symbol I2C_MUX is selected by DRM_SII902X
-drivers/gpu/drm/bridge/Kconfig:270:     symbol DRM_SII902X depends on DRM_BRIDGE
-drivers/gpu/drm/bridge/Kconfig:2:       symbol DRM_BRIDGE is selected by DRM_MSM
-drivers/gpu/drm/msm/Kconfig:3:  symbol DRM_MSM depends on QCOM_LLCC
-drivers/soc/qcom/Kconfig:47:    symbol QCOM_LLCC depends on NVMEM_QCOM_SEC_QFPROM
-drivers/nvmem/Kconfig:230:      symbol NVMEM_QCOM_SEC_QFPROM depends on NVMEM
-drivers/nvmem/Kconfig:2:        symbol NVMEM is selected by EEPROM_AT24
-drivers/misc/eeprom/Kconfig:4:  symbol EEPROM_AT24 depends on SYSFS
-For a resolution refer to Documentation/kbuild/kconfig-language.rst
-
--Mukesh
-
-> 
-> > 
-> > -Mukesh
-> > > 
-> > > >  CONFIG_NVMEM_RMEM=m
-> > > >  CONFIG_NVMEM_ROCKCHIP_EFUSE=y
-> > > >  CONFIG_NVMEM_ROCKCHIP_OTP=y
-> > > > --
-> > > > 2.42.0
-> > > > 
-> > > 
-> > > Best regards,
-> > > Krzysztof
-> > > 
-> 
-> -- 
-> With best wishes
-> Dmitry
 
