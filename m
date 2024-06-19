@@ -1,204 +1,112 @@
-Return-Path: <linux-kernel+bounces-220971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D82290E9F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:43:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F67C90E9F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DAFF1C21D6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:43:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3B7E1F21D94
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60FE13D8BF;
-	Wed, 19 Jun 2024 11:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A5413DDC0;
+	Wed, 19 Jun 2024 11:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="VRRtD0/+"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pO8J+jiC"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FC68173C
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2A88173C;
+	Wed, 19 Jun 2024 11:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718797427; cv=none; b=TmzzPlPcBkELYmBPLYlVFfec/6L+IWEyDXEEnmiSh+SEX72e4LEQdsKu0fPowLctpWIJ2n65i9nkl9M3P7tIdGJx24c7h2KIr1oAGuKyKzRQO4YIQLARg4YyOHLYvi8SRlqfqHnNKRJ/KMG6RzIY9uwtxWY6o9jLYX+LQ6yjaAY=
+	t=1718797456; cv=none; b=TnxmUOatbXsZcWchSF/k/gDHiidPkZlbway1SHS5lyCTr6a42x+NX573mg2sMHu6QDXZNjMu000zMzW30fZe7Ac98/L19Xw5o/T8YpzvXX5vzh6zv7qTm6ez7TBE0aPlXYQOEm5O5ZFoJWq2CmNULq1znG2UX4VY0dryn5tY+IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718797427; c=relaxed/simple;
-	bh=oy1/VM1O8VGib8ShF+vmAO2orh7g2NVW3kzaz8SZj0E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A9oosl8wweR/uj3DeJFcMUJXkPLxjNyyc0otyA6VsRFez3rDHLirWqcSbocdtUEgPCWyfJUVSrV/NbjhWo3PuNtsNcnVfZvn7gPOF1bJaZatnfRCrOyIMEzTWX7WTiTz6FjrYvVEsmBnAJBa+JJnkY3tYauO7wVQ9xqazaDTHhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=VRRtD0/+; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57cb9efd8d1so1260356a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 04:43:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1718797422; x=1719402222; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2GnjH/kkjRKyzu3uDJd3BYblSPtIV4vK9xdASoNfbuQ=;
-        b=VRRtD0/+pjFZydJd9NDIx3En40Wc17ITLunq2aGaZHBh5qMBAHeFyycZZ7WmCBD6xG
-         9Ztkloltxk+po9rJz5XEm9OqZF6DbGFIKGbhQUkSrNpySrtAdxUkOkeqWaL1e1RCfhch
-         hQOlS427QhTiElDV6LZqOlw+eTTO80zTc9e08=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718797422; x=1719402222;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2GnjH/kkjRKyzu3uDJd3BYblSPtIV4vK9xdASoNfbuQ=;
-        b=P3Gt+KJpjZTTg1z0c0+lJ0XM6JVqfVDubM5pVupKW/JZVFh2MHnpLcMSXT1nO2+/vr
-         LStpTL1YmrpWDYUaG8FwN3x5TVZdu3bvGa/cav+ZKiQ+fkvndoSM+VmgjeGmioPUGEmL
-         PerbXm7VE+aeNLpTAY5njyRJtt5sGw6z3B+Ru4fpAf2dAVbFOvgfipOsr44h7MGbtiXN
-         lrK4NDH+S+T4xqRN+oBYJc3BBK6DXoQKFjNiXOdXPpCqbGhaxcizaKYiScAUz1cBHRQU
-         +50hmLo6Ph8epAcZR6tKufPRwSl3wE+K1obhAya+uc6Cp+ry8thcBEFoEg0MZYenPdYJ
-         /wRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUckfS8oNnR6J0g/LevFdD4l7yZIrER/baO3VaFKRzgIrwobaYhd/ZIT5WPViPfxr46SIbfvQnDDfVIJFf7Hj1bozzm26Td9aMrLpd
-X-Gm-Message-State: AOJu0Yw1KP19bnbrEaX01fPR4kDahg4hDRaQguXmmsUVXjEZyCujO4YI
-	9aSbU1qEyj7IovwEolmohHT6fo60apcbMFO7pZ2S5Ekbxl8xQNG3ZnVBDQcV7mK40aOoR/m2e+u
-	tm/Yt05KpyKOHjGUFz7qKTJ2O/h79TMGUuDceXg==
-X-Google-Smtp-Source: AGHT+IGplUBkcMqY8uT1JRiuzDGzVXRTpzbLVQnHZpBqUjCb4F+5Ertt8EMo+fxpvX3PCFzTSeyWlk0dbPDgVFMbMQ0=
-X-Received: by 2002:a17:907:c089:b0:a6f:b201:8530 with SMTP id
- a640c23a62f3a-a6fb2018b1emr85834466b.31.1718797422501; Wed, 19 Jun 2024
- 04:43:42 -0700 (PDT)
+	s=arc-20240116; t=1718797456; c=relaxed/simple;
+	bh=1w3e2oYWGIqXsEaywy5K0UM/APtQXpvyD45et56SETc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=hTAxgWXJj2XzsfEC/SZSMFX1TtcehkCLpjoltu9tKc7unvv7HF0omGnlzFwG7ovzHGQ49NpLVfilTGqQiG6sW1I3+GvEtzcqp8YrV3MHrKvX6AfeydP/meiQmqPv3eqAFtMR7YQ6wgNQUM5ru3A1fByWsLedKVNKxd3sXkum9iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pO8J+jiC; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718797414; x=1719402214; i=markus.elfring@web.de;
+	bh=W11j9754uQINKz/cvRsmwsZTifDgTcbludks+HYDFlg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=pO8J+jiCXwN+5H4vNiREjjvXpyPdZ8/7MQT6ekY/ML1coCAKdQ5C3PKp4l/inzkh
+	 sDpJ1k9BCUMD59DpnE9XRTQ3x7th8/fGfK1axZGRBcjUjTVTf76rq2kf1H01ggId+
+	 PDiPCxVhzD6inumFLZxfYTh49fI0Rvl2mTSEXUFemqzvT++SqtXOorHYfsNB5pHDh
+	 QOmXA+El8NcJFWKwyxbWedV7lXsibZDD3j/ly6mPT6mRDaj/atgw2jD6aBNxLta2M
+	 l2s0KZIduo08S39btfpS6RYbbt7MPTFDGsG//a80se429nWeZGlUJGBCad8vskP0m
+	 OvHOy9iewAMaan1kXg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MBB80-1sDtAe3ISs-0024N5; Wed, 19
+ Jun 2024 13:43:34 +0200
+Message-ID: <fc3045c5-d542-4a6c-906d-84f72e776e9c@web.de>
+Date: Wed, 19 Jun 2024 13:43:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619091737.669040-1-albertosecondi@gmail.com> <0e03afd6-46be-4fc7-a974-bf506d8e503c@arm.com>
-In-Reply-To: <0e03afd6-46be-4fc7-a974-bf506d8e503c@arm.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Wed, 19 Jun 2024 13:43:31 +0200
-Message-ID: <CAOf5uwkU1qCxC=OamNHLq3d3SZGVuX8_eh1_MYt6TELT4C1j5Q@mail.gmail.com>
-Subject: Re: [PATCH] New config added to handle 64-bit systems with 32-bit DMA support
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Alberto Secondi <albertosecondi@gmail.com>, hch@lst.de, m.szyprowski@samsung.com, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	alberto.secondi@abinsula.com, Davide Salaris <davide.salaris@abinsula.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Paul Cercueil <paul@crapouillou.net>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, linux-iio@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
+References: <20240618100302.72886-4-paul@crapouillou.net>
+Subject: Re: [PATCH v11 3/7] iio: core: Add new DMABUF interface
+ infrastructure
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240618100302.72886-4-paul@crapouillou.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:s/ePRc1AsDn5MbvhxB041oEonOdKZIbmxXBL6PQCyC+dACVDoLP
+ VJHdbSN/Zg3VQNXnRwO9W6VRtbQ1aTeST+rO0ofPVv51Y8FxJ2M14FGXadcALDKOguJ6bGg
+ 8FPja/Ra9tp3qe1rhAftXdBeIZhQT5/j38O2mVfYGEg56wlULJFQtMGPXKAIGHUtJvKma+y
+ nvdtZC4jpxgZj4GDXvxLQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:i7lnAXEpwn8=;/6wHovhhjAf8pHKa+TH+pZCmDYn
+ NwpRNFSWg6I6UWBIN9oXcXPNN+0TQpTdTaoxKL6lzcXekoTV337eOBnwL8p5DB7dCXCRN/ucD
+ JaspBk4OgvM80DshT4yRB1n1CfDntQFMWpEg7lDQQ3OZy16gcWh2xy0rJYi8nD/4be0eyp9pd
+ HS/l4SafQaAUhh3ax0fJg7PfArxXxFxzn9mYapAzL7qNFrk6w9S+2HKA6UMN1mR7Erh5+tBRH
+ MqGWdC7URlXxfsoYVZVwOTgZVap6ROFwS4RLTIifxQg3mar3FLLfq+RhtvbWHrXusvlIjtI6C
+ /roGVf5+bIcorP8XW456QHvDftKm4oDzFaOvpPv/JzQvU44aipe3LUGpfjeQRctzGdzGeeytp
+ EL8I5nMKRKBLvLjlqZfROhpVzIjmJSulE8skQsIYaxOh+SyP2hdhEKaz1BhF/Hc999AqkpeEe
+ bGl7/hJvX7mNJxardrIb6+l36ns+EyoKdFq7eySfdkK5YopdzFzLk9G4y4NGxRiR+wXNMek0J
+ ikYn/2qaC411MG2LZKoFPp7YUjiemvCzwHR5Z9mjVd9fcFXEMMIxkckaPuivaDXtj6xrjaTML
+ Wqjn9nDLdwN6Sq3ffQNnznDyvJdJ8caWa/YjAohNYhV41qB8+QrR9qT0TlIA2kmDf95nPwui+
+ q5s5A7QTT1hm+bd4DgydzDIxlHaVkzaIwrilFGReAUK7Y96l+yWsXbotc0El7MvhoaETns26u
+ W5HnAReuDs9KJ3zHuRwkBpW0z0JTHoo6iiOBqIzX42ezgtcSLc4yi79ZdveYZgwE1k9OF96Iz
+ go5dqUBvvQgmHHJK9Pp9f2IDPGGEgKg5kF6qqHYax9SZEc9be0jRsuPwI8SzLGmv+C
 
-Hi Robin
+=E2=80=A6
+> +++ b/drivers/iio/industrialio-buffer.c
+=E2=80=A6
+> +static void iio_buffer_dmabuf_release(struct kref *ref)
+> +{
+=E2=80=A6
+> +	dma_resv_lock(dmabuf->resv, NULL);
+> +	dma_buf_unmap_attachment(attach, priv->sgt, priv->dir);
+> +	dma_resv_unlock(dmabuf->resv);
+=E2=80=A6
 
-On Wed, Jun 19, 2024 at 12:36=E2=80=AFPM Robin Murphy <robin.murphy@arm.com=
-> wrote:
->
-> On 2024-06-19 10:17 am, Alberto Secondi wrote:
-> > ------ Tessian Warning ------
-> >
-> > Be careful, the email's sending address "albertosecondi@gmail[.]com" ha=
-s never been seen on your company's network before today
-> >
-> > This warning message will be removed if you reply to or forward this em=
-ail to a recipient outside of your organization.
-> >
-> > ---- Tessian Warning End ----
-> >
-> > From: Alberto Secondi <alberto.secondi@abinsula.com>
-> >
-> > The kernel assumes that 64-bit systems have 64-bit DMA support through
-> > CONFIG_ARCH_DMA_ADDR_T_64BIT. This is not always true; for example, sev=
-eral
-> > iMX8 systems (verified on iMX8MM and iMX8MP) have DMA with only 32-bit =
-support.
-> > This results in several drivers requesting DMA_BIT_MASK(64), which caus=
-es
-> > malfunctions, particularly when systems have more than 3GB of DRAM (ver=
-ified
-> > with the lan743x driver and iMX8 systems with 4GB of DRAM). Therefore, =
-a new
-> > config ARCH_64BIT_HAS_DMA32_ONLY was added to manage 64-bit systems wit=
-h 32-bit
-> > DMA, which adjusts DMA_BIT_MASK(n) accordingly.
->
-> No. If a system has devices naturally capable of >32-bit DMA, and memory
-> at >32-bit system physical addresses, but only a 32-bit interconnect in
-> between, that needs to be described properly in Devicetree/ACPI, not
-> hacked around with completely non-portable kernel bodges.
->
+Under which circumstances will another lock guard become applicable?
+https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/cleanup.h#=
+L179
 
-commit 4251a3ac4de9625a284a9c046cc915487e9b2a5e
-Author: Lucas Stach <l.stach@pengutronix.de>
-Date:   Tue May 4 10:20:51 2021 +0200
-
-    arm64: dts: imx8mm: specify dma-ranges
-
-    DMA addressing capabilities on i.MX8MM are limited by the interconnect,
-    same as on i.MX8MQ. Add dma-ranges to the the peripheral bus to let
-    the kernel know about this.
-
-    Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-    Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-    Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-    Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 64aa38fd2b6e0..e7648c3b83905 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -261,6 +261,7 @@ soc@0 {
-                #address-cells =3D <1>;
-                #size-cells =3D <1>;
-                ranges =3D <0x0 0x0 0x0 0x3e000000>;
-+               dma-ranges =3D <0x40000000 0x0 0x40000000 0xc0000000>;
-                nvmem-cells =3D <&imx8mm_uid>;
-                nvmem-cell-names =3D "soc_unique_id";
-
-
-Somenthing like this should already do it?
-
-Michael
-
-> Thanks,
-> Robin.
->
-> > Signed-off-by: Alberto Secondi <alberto.secondi@abinsula.com>
-> > Co-developed-by: Davide Salaris <davide.salaris@abinsula.com>
-> > ---
-> >   include/linux/dma-mapping.h | 4 ++++
-> >   kernel/dma/Kconfig          | 8 ++++++++
-> >   2 files changed, 12 insertions(+)
-> >
-> > diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-> > index f693aafe221f..629220a777e3 100644
-> > --- a/include/linux/dma-mapping.h
-> > +++ b/include/linux/dma-mapping.h
-> > @@ -74,7 +74,11 @@
-> >    */
-> >   #define DMA_MAPPING_ERROR           (~(dma_addr_t)0)
-> >
-> > +#ifdef CONFIG_ARCH_64BIT_HAS_DMA32_ONLY
-> > +#define DMA_BIT_MASK(n)      (((n) > 32) ? ((1ULL<<(32))-1) : ((1ULL<<=
-(n))-1))
-> > +#else
-> >   #define DMA_BIT_MASK(n)     (((n) =3D=3D 64) ? ~0ULL : ((1ULL<<(n))-1=
-))
-> > +#endif
-> >
-> >   #ifdef CONFIG_DMA_API_DEBUG
-> >   void debug_dma_mapping_error(struct device *dev, dma_addr_t dma_addr)=
-;
-> > diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
-> > index c06e56be0ca1..0a27eafed808 100644
-> > --- a/kernel/dma/Kconfig
-> > +++ b/kernel/dma/Kconfig
-> > @@ -36,6 +36,14 @@ config NEED_DMA_MAP_STATE
-> >   config ARCH_DMA_ADDR_T_64BIT
-> >       def_bool 64BIT || PHYS_ADDR_T_64BIT
-> >
-> > +config ARCH_64BIT_HAS_DMA32_ONLY
-> > +        bool "64bit System has DMA32 only"
-> > +        depends on ARCH_DMA_ADDR_T_64BIT
-> > +        default n
-> > +     help
-> > +       This enables forcing the maximum DMA_BIT_MASK to 32 bits for
-> > +       64-bit systems that have DMA support limited to 32 bits.
-> > +
-> >   config ARCH_HAS_DMA_SET_MASK
-> >       bool
-> >
->
+Regards,
+Markus
 
