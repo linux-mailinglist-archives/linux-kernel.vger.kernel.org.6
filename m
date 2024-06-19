@@ -1,130 +1,124 @@
-Return-Path: <linux-kernel+bounces-221420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E81A90F35A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D8F90F35E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8B9281EAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:59:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E2128131E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05CB15253D;
-	Wed, 19 Jun 2024 15:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CFA156C5B;
+	Wed, 19 Jun 2024 15:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1/JBABU"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gUNd32TU"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D6015217F;
-	Wed, 19 Jun 2024 15:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94881514FD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812101; cv=none; b=b4aROvivEECbmx5MjeMikAy8MJjKtONHb1NON2P6r0U2Nb9cy56VYS9gvRWdmdSkjtasf3KqN9Eg0jqLwAeEwOQK+VPBegiQbxavhGqzib9aku+vaSujoOw16d75/tA3ZxvRjZD+wi9H1mofzzcarQzLJgKi+r7lhligS4D+7Lk=
+	t=1718812130; cv=none; b=BV7AShFso5HYZ1X9KzjBDnjMGB0Z9XOg9WW0W9TrnMoerzoS/j6HPPZd/NC+YPK9WM+qcFg8GUiltrgt+dVh4zzYJ4NYleYVUQSLbeRJDMPzhotr5PrYgE2UqC6uvqbiyZDs6fDpfW8iC1ngo3YqMfRrc0XEaAZwA3klCEGg+0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812101; c=relaxed/simple;
-	bh=vhVm38CzOBi+DX3W3wH6ZhDs2k64WMxiCq0L2JgX9Aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DRRGvg1UnBDUDBAT0MneOuldB0N2tQCd7gCNqv8G9RQIWR+/pB1tPqg3YzaksaHsv03lid6sspK4wpF9vlQljqwlzFbi+WwSLzjZz2aTbW2qiZcGYRGe7Jen/9KO7+g2s6TVEuCgOYf4U+yd/eD/R5Xqjq/nqxBo3Yzkfo0ssaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1/JBABU; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee83so587523a12.2;
-        Wed, 19 Jun 2024 08:48:19 -0700 (PDT)
+	s=arc-20240116; t=1718812130; c=relaxed/simple;
+	bh=44tfr9Q/yxzd5k0GS5X2bOuf4cl/wNWn1fVz/zaqgb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bg4mGWx8xcFmsizFbe8OXR2A+yvFj/GvVgvY5WObrvDOIDuC/shX+nwzBINn2mjCCGUJzUOEBMmRPAOPHrqjqENp2+UuExtKZ+Y9ILNQZ8+C3k0TRzmsl+6Nw+aWNUqmVGE2vz+6UfeIfNwrDGJ4aYBjepzBNikAuPMj+lbEhjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gUNd32TU; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so80909651fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:48:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718812098; x=1719416898; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tn/b6EdxYYRJZewNjy8slWIqagVWtOTM9OXoa4qPUbk=;
-        b=I1/JBABUx0pYb4Bwx4iBxK8+GRY8kDE8Xo26EBqh54p3FXj5yrbbzXvsNgkqx7inZo
-         7cnqtqcg0dxI7Ze/2IT2EQaxaQMypaILGd1Dv+cgQUsVmlO6Y7j2D3ZEnj6DAMEIICaf
-         HmxFRnLHo6vuaoWPAJNnPlviv6edCD39rE0Q3aJOLmGbl1BWIPdiUxpO5cj78wXNncge
-         l4d/ySnDUhmCXQeTb/ji0HzQn7YxxjMv1hzHEbB4MrrxLwmMQ7kdG1jeOjMadIgppcRp
-         t9/k00oQ/8L4NF/3pb204TRt9yaBZx9zkabEKZ2LcImIMWuVkYmx8p/KqAvoTN/swmOa
-         glbA==
+        d=linux-foundation.org; s=google; t=1718812126; x=1719416926; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z8dIFFBUj8uYaau0DmFweJKWuC0Ps3w+y7afUQaxxWc=;
+        b=gUNd32TUMs1vPxcXbKaFocojq6B/mAuj7iXzO4b5V9FpOqF9P74fYSjQm8O5sWP1nf
+         fFlqgzv2VxoAzu1PxZ8K7+Qh+vFdphYBGXt8XwdrSqYmFOjOGyrMD43aygO3ENicP85z
+         fvioXxIT/nXYJl50SzmuVTd2+25ISzbL8cZw0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718812098; x=1719416898;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tn/b6EdxYYRJZewNjy8slWIqagVWtOTM9OXoa4qPUbk=;
-        b=xOjYP1SlTC4edkeyCKtGFjd3flkOAqCWoz1WLPcdsnL5TdaU09fDIJrZHEix33rXij
-         y73u1BV6OciCeiCvo6+WTA3jSJntxWAYdGBLKe81MRXLxckETbrxk5VYT3DSmu2cqeCQ
-         r/aeiA2ARB3U4oJ0M2C2lXYUcuI/Jgled3E+ehcWq+Jx6KqxZbM3rs/MWINS/bgzILPp
-         2C4YL0RcrdlPjmvF+to4XkBSzpuIpbNJWlkl44liVeo4Ll38LBmFBJb0RrwK4t+U97Hy
-         Gdjw3yL8dVz9zw3PEOFhTAYmiLuFKlkQrLCvYjFu/jzSr7WCdQOrJURHTX1ZnZiJ+oUy
-         ocww==
-X-Forwarded-Encrypted: i=1; AJvYcCVOorsvzoAXzu9gPb7ZCjxtwGx3U2q5TrT1JfcjSGmZU7/tenvmZvbiSGeQVOIwhR9yt4MjMM0AukiQF7cUjC94AilZCibI4PQ7IFEKmFcsYeSilJilB7R8NC/uYTtDWkRo6qU6
-X-Gm-Message-State: AOJu0YwmF3CXY4sfy5fo2bm7aKfFeCl/xvPeSzQ/xqoPxG+GWljulO82
-	jjOXREBtzn5V7LBV7BNQjfiptt64jMjcKlwekoadhIibFJK+f8w7
-X-Google-Smtp-Source: AGHT+IFd/+xrrtas/Y+fjfeXQNEgrD4Gr0sIfeTJaOtOkcoRiWs+EhLvawFoYXaF2hHg8qkEOBdoiA==
-X-Received: by 2002:a17:907:8025:b0:a6f:147f:7d06 with SMTP id a640c23a62f3a-a6fab7de093mr126716366b.77.1718812097563;
-        Wed, 19 Jun 2024 08:48:17 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56da3fb9sm675978066b.30.2024.06.19.08.48.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 08:48:17 -0700 (PDT)
-Date: Wed, 19 Jun 2024 18:48:14 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Oleksij Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	Casper Andersson <casper.casan@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 net-next] net: dsa: Allow only up to two HSR HW
- offloaded ports for KSZ9477
-Message-ID: <20240619154814.dvjcry7ahvtznfxb@skbuf>
-References: <20240619134248.1228443-1-lukma@denx.de>
- <20240619134248.1228443-1-lukma@denx.de>
- <20240619144243.cp6ceembrxs27tfc@skbuf>
- <20240619171057.766c657b@wsk>
+        d=1e100.net; s=20230601; t=1718812126; x=1719416926;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z8dIFFBUj8uYaau0DmFweJKWuC0Ps3w+y7afUQaxxWc=;
+        b=ciCgsVWGzYKr6gZe8mM0gfqyOffunviA5oRVcR2bSesJ7CB3ZGnP5c7lZsnpTRIH2K
+         DNd4FJ/iSbT1yzqSAppUtxPWKXvzdXcTG940lqMonxEDQKaEmpLMBFDNZeRs81FOkKMB
+         Z13jkrdcEc6CgUup9YxJ6cYYNROgyogCqzw2YzpiZHg1ipLm9GWyz27o38rDMPkjcuy+
+         HxaWf+6WqNQkk2954Hg6hyxs73aEDkduFb9GLkLqg3ndJbyP5bTpAIeURioqQxpX+ZHd
+         ZDXteKcI6SwNles5+FYNpU4V7gBvp5rHHDw/Hx0EBu9DiPr/k9pXbG2LyUYz9vKJTz/s
+         bKCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXB+/QFxgeiEg+VLNEhFRChXAuwQ8r4YOzt0prBcDQMY1EYTEMj5A2nOsxJhhhMHmeVCPjTt7JVpCAV4xgydpZUU7DYVzDuNyvqV9SJ
+X-Gm-Message-State: AOJu0YwZt4gL7OhfI5Owxk2syLpSPiExiO58JYX0I6ccAGcUTtowZSZ9
+	I9drFsGXnyRaKJGWcJ+nrSvHBcM5yZzy+KvQsEqBQy60IqqNt01O8o/zIN/FPY7okFLujB2M4Kh
+	nLmU=
+X-Google-Smtp-Source: AGHT+IGf6CpS3jJ01PR7fRTnSL8SXuh1g62NoDvQo9cNz3s9O16TJMa7Yok2PqK7eLe+J8xzeNQ3xw==
+X-Received: by 2002:a2e:3203:0:b0:2eb:de2b:940 with SMTP id 38308e7fff4ca-2ec3cff2e67mr17867081fa.41.1718812125878;
+        Wed, 19 Jun 2024 08:48:45 -0700 (PDT)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d0d9c3b7fsm593956a12.55.2024.06.19.08.48.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 08:48:45 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a63359aaaa6so1052939566b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:48:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLg6+9U9sdgWGO4ItryZOQBYI64JKHgp2wmQWEpYLUP2s4kTH/X+gkNbjBc1rgAjqHiKqE7O8hqZ+ymO9BAkzi0GlMhP75fWzOIr7p
+X-Received: by 2002:a17:906:5590:b0:a6f:5562:167 with SMTP id
+ a640c23a62f3a-a6fab648adcmr149389966b.38.1718812124564; Wed, 19 Jun 2024
+ 08:48:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619171057.766c657b@wsk>
+References: <CAJFLiB+J4mKGDOppp=1moMe2aNqeJhM9F2cD4KPTXoM6nzb5RA@mail.gmail.com>
+ <ZRFbIJH47RkQuDid@debian.me> <ZRci1L6qneuZA4mo@casper.infradead.org>
+ <91bceeda-7964-2509-a1f1-4a2be49ebc60@redhat.com> <6d3687fd-e11b-4d78-9944-536bb1d731de@redhat.com>
+ <ZnLrq4vJnfSNZ0wg@casper.infradead.org>
+In-Reply-To: <ZnLrq4vJnfSNZ0wg@casper.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 19 Jun 2024 08:48:28 -0700
+X-Gmail-Original-Message-ID: <CAHk-=who82OKiXyTiCG3rUaiicO_OB9prVvZQBzg6GDGhdp+Ew@mail.gmail.com>
+Message-ID: <CAHk-=who82OKiXyTiCG3rUaiicO_OB9prVvZQBzg6GDGhdp+Ew@mail.gmail.com>
+Subject: Re: Endless calls to xas_split_alloc() due to corrupted xarray entry
+To: Matthew Wilcox <willy@infradead.org>
+Cc: David Hildenbrand <david@redhat.com>, Gavin Shan <gshan@redhat.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Zhenyu Zhang <zhenyzha@redhat.com>, 
+	Linux XFS <linux-xfs@vger.kernel.org>, 
+	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shaoqin Huang <shahuang@redhat.com>, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 19, 2024 at 05:10:57PM +0200, Lukasz Majewski wrote:
-> > How do you know you are rejecting the offloading of the interlink
-> > port, and not of one of the ring ports?
-> 
-> It seems like iproute2 is providing the correct ordering (and assures
-> that lan3/port2 is called as a third one - please see below).
+On Wed, 19 Jun 2024 at 07:31, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> Actually, it's 11.  We can't split an order-12 folio because we'd have
+> to allocate two levels of radix tree, and I decided that was too much
+> work.  Also, I didn't know that ARM used order-13 PMD size at the time.
+>
+> I think this is the best fix (modulo s/12/11/).
 
-This is not iproute2 providing the correct ordering, but rather
-hsr_dev_finalize() in the kernel calling hsr_add_port() in a certain
-order that matches what is expected in ksz9477.
+Can we use some more descriptive thing than the magic constant 11 that
+is clearly very subtle.
 
-Granted, this isn't an actual functional problem, but given that you
-are fixing a newly developed feature for net-next, and that this is API
-that gets progressively harder to change as more devices implement
-offloads, I would expect a more obvious signaling mechanism to exist
-for this, and now seems a good time to do it, rather than opting for the
-most minimal fix.
+Is it "XA_CHUNK_SHIFT * 2 - 1"
 
-One way to make the restriction more elegantly obvious (both to the user
-and to the kernel developer) that it is about interlink ports rather
-than the number of ports in general is to carry the port type in a
-structure similar to struct netdev_lag_upper_info.
+IOW, something like
 
-You would have to make hsr_portdev_setup() call something else rather
-than netdev_upper_dev_link(), because that eats the "void *upper_info"
-argument when calling __netdev_upper_dev_link(). Possibly create a new
-netdev_upper_dev_link_info() ("link upper dev with extra info")
-function, which only HSR calls with a new info structure. Then, the DSA
-core has access to that and implicitly to the port type, and from there
-on, you can apply the proper restriction.
+   #define MAX_XAS_ORDER (XA_CHUNK_SHIFT * 2 - 1)
+   #define MAX_PAGECACHE_ORDER min(HPAGE_PMD_ORDER,12)
+
+except for the non-TRANSPARENT_HUGEPAGE case where it currently does
+
+  #define MAX_PAGECACHE_ORDER    8
+
+and I assume that "8" is just "random round value, smaller than 11"?
+
+             Linus
 
