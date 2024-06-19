@@ -1,186 +1,110 @@
-Return-Path: <linux-kernel+bounces-221605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E2890F609
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:27:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6196A90F616
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FCC6282F0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:27:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03A5A1F21759
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BAB157E84;
-	Wed, 19 Jun 2024 18:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6411581F4;
+	Wed, 19 Jun 2024 18:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxWKKm7+"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pBO03XKQ"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D05B15252C;
-	Wed, 19 Jun 2024 18:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC9D22611
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 18:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718821627; cv=none; b=sDXOpdoY85Z6wlp49nEfrnvSSgxrJwPkY3IrWLTbjOW6PxAoBTvplugdHaQMp0izMUJa5bEez/8ME8yX9BGGlggBAlo3zp7v8u2qszUL4bk2qOMzIcLds7VnmWvZbZ3uimn2k/I/T/QKY+hRbCtO+AiKM2459VqYr2PF81XsuBk=
+	t=1718821996; cv=none; b=Cbtcqh/KEKojraonJiMaU1tMjU8AYKJIGMg0ABUKwB+YRIKXBEsGfn8vSG+SgiHsLrsaDRhJK2f1fWbL72oY5A1/1NqQi7evGFUwYH5Fj4jqAnT9eqi4Z/lvevNY7EI4yEi7tJ6Pah41o9vh+Ho+T+OmeKC9kcSNX7CjLxrtGMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718821627; c=relaxed/simple;
-	bh=KABG2wuzIOaQNn7+dKSaXBK4oIWHzA/QfCI3cMYlNRs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O474cP8UGKLEGJymctXpUKJ4PrV7rVPaF+SOYQO1dwRLof+Csr8Tw2KLX2TPyRbjhmkf+KXPoFMekXeGLm2GR3npkuKKDyw6fZ+SryTgMBElGsSTyKHCH0vyokmrJromsyZu9VJE5JJq7/5EDVvXWE8P6pEwZqcqbhSpa5RohP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YxWKKm7+; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-63267c30eaaso162107b3.1;
-        Wed, 19 Jun 2024 11:27:06 -0700 (PDT)
+	s=arc-20240116; t=1718821996; c=relaxed/simple;
+	bh=92mU/xikCqLLaH2DVhreKySC6u9LEezQMALGQAdfOZg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RMnkgUUDKuM/CP32BJvRmXuqdIvGFLuXFKjMXkj253C8mSvNEMjRXFr8jD2+S3tJLnRCuTy4sEG7iHBYgwDLbsPfEI2fSp0HqyGEb2wchFxIJi51nO+F31EssqJZj2r4iS/wKS8CqMEXb7xdGoMHH0mU/L2WTvbtUtVDpZHX+TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=pBO03XKQ; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-421d32fda86so1447025e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:33:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718821625; x=1719426425; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bwDJUI/coNCTREvHUkwFtmxjLL4Y9HIlzwN2rs8t5Cg=;
-        b=YxWKKm7+dwmJEeyS08sLnHvfV/7vFa6MSX2M6SHWCRhr8KTN5fC91OmNIyQ24mYRez
-         oMGwoU1Uxf0jytb1AtJcrnnj4rSpd2n8KscH2jAQPhg6yIAjR+Obg6YeCBi332c08PWi
-         tztioTVCnzKIw6s4+OaNakgxrY0ztWi5oDKjaV8pg2/QkqltW+PCMoA4nvJwLzBhnXHv
-         vpUioLgERO6CzGl8UBEuNOsqkwQq2RpGSGEFvWFNooxV+W8gdBMC2chP9T09r+NrK9VN
-         QtQNOzsN0x72pPy5INWucCHr1fmJvZhnexWN3UUSunkGhHNsh0/8MvbYr3+mhK1QZBe+
-         IoZg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718821993; x=1719426793; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KoU88YQ9ly0f7ZJ/ZbHDiM2tCrY3AmT4ahDXIv2paYY=;
+        b=pBO03XKQL093hITRvjZoSgp+NIreIOgMhIL8TvLnVjopYiGMEIWFfyFsWjNuc+8LTt
+         RGFnGpPBV739l44pes+fkp+QDDMxStBGUVJJ29r3zCKvNH+bgEymvVcWJHl5wlkL4RgL
+         HARaR6x/jkvFBVCVLN/goyGdxQe8DEN12p3IxoCj94uLswM1aq/jxkL11ExdqqhEYi3y
+         lSZaK77fvXxvuJfw7kO8eRWo0FfRYbGb8vr07SEdvnhertQ2ktknDc3n1TiJ8C37P7Or
+         9miQy95CTCS+NEUSp9i06UccQh3AW32L4aqHUUsg9vi6GsZvX+SghZRswcOratuJDlW+
+         Sltw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718821625; x=1719426425;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bwDJUI/coNCTREvHUkwFtmxjLL4Y9HIlzwN2rs8t5Cg=;
-        b=mYUuTJsFi7Z/HIfGnZxL5Z8Hogqgddwjj6lPsP/GbMPRX+EvCYB+2RIA4ZMu+98VSQ
-         GP8vc7r2AkrEDMn8Y3E/jZvYUkdpXkNXHzChoAF59G2i5Brqhj0OCSYE6MH7wjc+MN5f
-         m6JJ31zCieMWp+jw1QVUhccQ0GiZKofHF3+pLBfKcn0v1Nq1/rJSE76JSO441fJYUGd6
-         TxnTONKYkvPEsqv22vE9woeWLd0I1t6Zmd7TI1CzxaKTotZMpSmkFLB1/8YFxl99gQ7Y
-         MkSxrzEKV/vh2w7wbbQ/JW761vgswYZdDQ7deVw69s20HRL8+P/AWThR7UZkopwHAHW8
-         b70Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUvqnsa4sZ24eZp53MIhbQVYOYOTTGdVNYvVRSnYUTPNYtVM4J/uWy++wmGXdfEkk3Py4hPjl761/1yBeVpzQCaw+CrXKDucJ6RcmpOWqT3E367fVf6OP/l1/6cyPVXb58F1KvvRhWYaOutcA9nrQ==
-X-Gm-Message-State: AOJu0Yzo60UWksn4uUbWZX0BnrD8BbtZdxiuMfWSXRLuosESP3NAW6YT
-	8XoXfXidPn6ndTwS/yti5EJmsj1c14xtJ9wDxvADOgYtEMrPv2+fgM9bmAbmVa4aXqoNNkUAPPf
-	a6RQojoKejZ4WXEVnYN+9dx/kFsU=
-X-Google-Smtp-Source: AGHT+IGL0lxlQ7j+RDA1jORWHAc/B1SokDm1CZBwo+MTUz8A6W1WHSRs91Jh4B9CH7SVzvSdCrVNv1WyelwCBZOkhlA=
-X-Received: by 2002:a81:ef11:0:b0:622:cc0d:62c3 with SMTP id
- 00721157ae682-63a8e2d1256mr35838767b3.28.1718821625320; Wed, 19 Jun 2024
- 11:27:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718821993; x=1719426793;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KoU88YQ9ly0f7ZJ/ZbHDiM2tCrY3AmT4ahDXIv2paYY=;
+        b=G8T81IfjaXs/QtsOHmPY45Wb/ojCVSslowed18hIZ/SoLKdp1dDCVhEd3z/WdeIqWO
+         Sb2T2E1/VyIK5YwzGKT8k0scBJsDSHAgTOYXonDbkyR/wKn8JhObzb6xRriHZnIF/is1
+         RmqW+Zwa8HsIjID52I/rwLMrm+si9lHK1zHoT++SW5aa2a4mv9eKcQsrPYt4fp/krsN2
+         8nMLz67Fc5mTBpOft0qD/64SSGb9tMVUTvwF4IwlyuKL36NLS79/EKrMJT+7wP80NISE
+         UyzPczds/f+oib89eB+ybkHWjh4oO5y9n/aqoez+1K1JFg66ix8EVaeBBAqgm1SqJ/Je
+         wbtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhwJh5B+it/pFxRQ1gWHs0yR67zTmizzMp8wyXEJE8SPrqk7djkxYsgCA0kWFb5lhd5+XGh9hgXyAHkxE/Jax+aXxO/qgT6fufn2KX
+X-Gm-Message-State: AOJu0YwVmi2pG1yCEXbpJ6EPLlkm88/LhJEQITnsorPtzSSEhreROt4k
+	N5YGMIZkkckRxFIkRA/HOO9EoySLllJBwunJ5FUQ3w7XG6evi3/ACu7apFjL2nM=
+X-Google-Smtp-Source: AGHT+IETG5LcNQbiEWNnEhPt09r+tCBRtoPh1Vb+eCZeeGLMwJUAbUmHsRulZ4D1s8qUlB6O94y7CQ==
+X-Received: by 2002:a5d:6945:0:b0:361:1ef3:71d7 with SMTP id ffacd0b85a97d-363170ed44bmr2922036f8f.3.1718821992776;
+        Wed, 19 Jun 2024 11:33:12 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:991f:deb8:4c5d:d73d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36262f77ad9sm4603238f8f.109.2024.06.19.11.33.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 11:33:12 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 0/2] arm64: dts: qcom: sa8775p-ride: support both board variants
+Date: Wed, 19 Jun 2024 20:32:52 +0200
+Message-ID: <20240619183255.34107-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619082042.4173621-1-howardchu95@gmail.com>
- <20240619082042.4173621-6-howardchu95@gmail.com> <ZnLianWCCEF6ydVO@x1> <CAM9d7cg7yccjLJ8p7DG3JOOmafofJB1jOjsLmfVpjk=xmNBBSw@mail.gmail.com>
-In-Reply-To: <CAM9d7cg7yccjLJ8p7DG3JOOmafofJB1jOjsLmfVpjk=xmNBBSw@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Thu, 20 Jun 2024 02:26:56 +0800
-Message-ID: <CAH0uvog-ef980ZJ5-LVZLBaogJQGCbh0QoHMZ33XtcMpJVbScA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] perf trace: Add test for enum augmentation
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 19, 2024 at 10:37=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> Hi,
->
-> On Wed, Jun 19, 2024 at 6:51=E2=80=AFAM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Wed, Jun 19, 2024 at 04:20:42PM +0800, Howard Chu wrote:
-> > > Check for vmlinux's existence in sysfs as prerequisite.
-> > >
-> > > Add landlock_add_rule.c workload. Trace landlock_add_rule syscall to =
-see
-> > > if the output is desirable.
-> > >
-> > > Trace the non-syscall tracepoint 'timer:hrtimer_init' and
-> > > 'timer:hrtimer_start', see if the 'mode' argument is augmented,
-> > > the 'mode' enum argument has the prefix of 'HRTIMER_MODE_'
-> > > in its name.
-> > >
-> > > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > > Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> > > ---
-> [SNIP]
-> > > diff --git a/tools/perf/tests/workloads/landlock_add_rule.c b/tools/p=
-erf/tests/workloads/landlock_add_rule.c
-> > > new file mode 100644
-> > > index 000000000000..529b5f1ea5a7
-> > > --- /dev/null
-> > > +++ b/tools/perf/tests/workloads/landlock_add_rule.c
-> > > @@ -0,0 +1,32 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +#include <linux/compiler.h>
-> > > +#include <uapi/asm-generic/unistd.h> // for __NR_landlock_add_rule
-> > > +#include <unistd.h>
-> > > +#include <linux/landlock.h>
-> >
-> > This file was introduced on linux in 2021, unsure if it will be present
-> > in some of the older distros we test, I'll check with my container test
-> > suite.
-> >
-> > Maybe we'll have to just define those LANDLOCK_ACCESS_FS_READ_FILE,
-> > LANDLOCK_ACCESS_NET_CONNECT_TCP, etc as plain #define to make sure it
-> > builds ok with uCLibc, musl libc and older glibc.
->
-> Maybe we can check if the syscall number is defined first and
-> include the landlock header.
->
-> #ifdef __NR_landlock_add_rule
-> #include <linux/landlock.h>
-> ...
->
-> Then we need a way to skip the test if it's not defined.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Thanks for the suggestion. I'll add this to the workload script.
+Split the current .dts into two: the existing one keeps the name and
+supports revision 2 of the board while patch 2 adds a .dts for revision 3.
 
-Thanks,
-Howard
+Bartosz Golaszewski (2):
+  arm64: dts: qcom: move common parts for sa8775p-ride variants into a
+    .dtsi
+  arm64: dts: qcom: sa8775p-ride-r3: add new board file
 
->
-> Thanks,
-> Namhyung
->
->
-> >
-> > - Arnaldo
-> >
-> > > +#include "../tests.h"
-> > > +
-> > > +static int landlock_add_rule(int argc __maybe_unused, const char **a=
-rgv __maybe_unused)
-> > > +{
-> > > +     int fd =3D 11;
-> > > +     int flags =3D 45;
-> > > +
-> > > +     struct landlock_path_beneath_attr path_beneath_attr =3D {
-> > > +         .allowed_access =3D LANDLOCK_ACCESS_FS_READ_FILE,
-> > > +         .parent_fd =3D 14,
-> > > +     };
-> > > +
-> > > +     struct landlock_net_port_attr net_port_attr =3D {
-> > > +         .port =3D 19,
-> > > +         .allowed_access =3D LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> > > +     };
-> > > +
-> > > +     syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_PATH_BENEATH,
-> > > +             &path_beneath_attr, flags);
-> > > +
-> > > +     syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_NET_PORT,
-> > > +             &net_port_attr, flags);
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +DEFINE_WORKLOAD(landlock_add_rule);
-> > > --
-> > > 2.45.2
-> > >
-> >
+ arch/arm64/boot/dts/qcom/Makefile            |   1 +
+ arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts |  42 +
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dts    | 841 +------------------
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi   | 817 ++++++++++++++++++
+ 4 files changed, 882 insertions(+), 819 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+
+-- 
+2.43.0
+
 
