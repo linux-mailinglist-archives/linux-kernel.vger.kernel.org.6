@@ -1,181 +1,177 @@
-Return-Path: <linux-kernel+bounces-220785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF1690E70F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:29:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E9C90E714
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0421F21FB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:29:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6486E1F22B57
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0FD823CD;
-	Wed, 19 Jun 2024 09:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A321580BFE;
+	Wed, 19 Jun 2024 09:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHJiy1wu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="OqRSsbuR"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C1B811E7;
-	Wed, 19 Jun 2024 09:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2188062E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718789328; cv=none; b=FJuFTVq50faH+UA2yGPe+o09fstlvBbDjjRE/l8NwFomdVAggc6SyT/AuVj1zv/ASAXJkDp7axNYcTIks1aJY4ojiC9G8Ak+oIrJLwdZT4EJ0NUrcJpX38MHbPZmsCl83QxjHbg7PmgnYaPch+HOBIXVOMEvNOCrQGvi4Emi3Bs=
+	t=1718789362; cv=none; b=pwHsIl+JbMgxPCC6STo0C19VXIGLvKsVokryNuq6p8z85jKcrElrrneBPQFTpfntRijejU83N2jYMstRSF4w9HqXhREGYk0ugUtWbDvdUcWP/thTOJVbV5JWAlifPPAKwFO7XSvgkcQ1nU67SflM2LNBurplyrM4t6dUyP3+sis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718789328; c=relaxed/simple;
-	bh=ThHgp6hwEwW+dlYQCJ8aofacS19lxqEmPznhNltdQ3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eV+h194o5/95jvkNCWG9B82omeeCeRKI+/MVlpghOEBV5/6hVv7JmH/5fAffbRw4MVZvhWJ6cBN3OR3FhNPXBWh6vVd0mj01/mozYJB/dUtwjdx0ISvigm7LtVvR4BBzk9ykynbKJbrreRXEm2Rryb0YoJTRZWPKyKEmYzOnWnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHJiy1wu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D06FC2BBFC;
-	Wed, 19 Jun 2024 09:28:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718789328;
-	bh=ThHgp6hwEwW+dlYQCJ8aofacS19lxqEmPznhNltdQ3I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cHJiy1wucl2aF2Mr2//EeHJ4UIp34xNxBQVXpmd4YhomMv/Rdx4fs9Hj18kvCjCxs
-	 mlwfyv7usGWK6NI3sMFJBWRqy5TEe363hzl4K/+XmhGYBN86zleAu8vUX4gTYJIZSp
-	 0dts4i2VtZzYd4NgcmiOjvCfC8vaEqwqkfEoXVb9FFwW0itc9d3AxeFkJ312dIHRaq
-	 2Juihf1rCjP1WvJRySEwpeB6i/qKGRgerHu3JIDSJUn/LnA5hARfI2u7bL33E3HWqB
-	 HlEafzfdwbOigYlLfEdFzeLmyQeRyO5OG4fxesglDpB/qxKpzjq89vwkHR/vqammMn
-	 e+RXpq2YVtjtw==
-Message-ID: <6d3fbd07-72a0-43fd-a1e5-c39e3a833bc1@kernel.org>
-Date: Wed, 19 Jun 2024 11:28:42 +0200
+	s=arc-20240116; t=1718789362; c=relaxed/simple;
+	bh=cv7531rMfIX0TJSEu7BFmlypNRmwdNE0oRm/RjGb3/Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iPdG1y0VV9rCiTvtfCxIUiVDgMOeXUUQWvnHxiwmpqYEwpmELc97PxhosAnUPPseUSPerOhW4mElBmQB6TRY3BioMzVcwSGaqwQaDgUzaZqP1pacsHtxU7FUhVLKFZL6Q9IZJ3paOq4IvgKUCAPxTyQ/4fwS81XIcmloaF4+DaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=OqRSsbuR; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso844745566b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 02:29:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1718789359; x=1719394159; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V60tWSEyq0vsAXnVJoNACpk/lcgOsGBfMMUaz3AVbmM=;
+        b=OqRSsbuRDJw5jBxjPZ0FKr4x0fKvRkLKlvDIAEqGzmXFysf2LiAuts6opGqaPE75ec
+         DLwWk5UkJUmW6bXdMrMlT42Booprj+xSXjNWAZy4DeTXqPEBVD2WiEV6vuwFaSkcriFk
+         jteyvBpJ4aC/4+sS/3zzZiedmCBcoHO2IQO0s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718789359; x=1719394159;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V60tWSEyq0vsAXnVJoNACpk/lcgOsGBfMMUaz3AVbmM=;
+        b=ial5t7ydJ9eozPeECBboIeXdgDi2uCir8m3FUBMG4KVLZenJv8tJCQQTic3m1DDkFw
+         n3MKMiKSewxjf/rbOrL7mJHDm/Yn0gMgzP3sm9v1TcCfRR9sL8nADISZl9zfa5feEvnR
+         nKGQk0RNbnkj1qfZqgO9i0GRkui5GWaADSx6St+K5pBKv3TMyxrct2wxsEmT5/ZBRI5d
+         3myunA48GJ1motbQo5VL2t4xMidgnLoFUjaIxYdWK1uuoKpTSKj0FlIJDb7lxbDq5rHD
+         KO/7PQUt+9wm6AwFbJoKAdlxFy49EQNJK85H+1iICqPnaZn0gve/JR6pLTVeC/wk94lj
+         UmSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZTB8xGRN0DcqnRHDRN/s9/8tDqfoodrBhcBvyoy44sbsQhmUo186wEaXbFUISMpIxUSOKWKZCD0VnXw5Qrz9MXd3mqklskwjmEH+d
+X-Gm-Message-State: AOJu0YzMtVcUSCxDfFRP/5wwuEynxiWlwgoVS6LB+h6lXtPODfzXKoG3
+	G/WQuyNEPQuzGmzNSwwsynER6I7xrvQ1KgYuvXu4lQvhw0mgkhTMYL5Jm1MA0w4ymtUJ3VUVKJZ
+	LtNFkEDAzP2yN5YCDfFxMYZ1V61CMvk1X6eS8TA==
+X-Google-Smtp-Source: AGHT+IFb76x7Pucfvd16pWEowxfrmojNsl7zxPiv/9dMvlT25uSbZQ+OJ1X3ubz+svkccGvvchtJv/7pS3EQVnBm5Bk=
+X-Received: by 2002:a17:907:a809:b0:a6f:86fe:c495 with SMTP id
+ a640c23a62f3a-a6fab7718aemr117097866b.49.1718789359465; Wed, 19 Jun 2024
+ 02:29:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] dt-bindings: mfd: Add img,boston-platform-regs
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Burton <paulburton@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20240618-boston-syscon-v3-0-c47c06647a26@flygoat.com>
- <20240618-boston-syscon-v3-7-c47c06647a26@flygoat.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240618-boston-syscon-v3-7-c47c06647a26@flygoat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240619091737.669040-1-albertosecondi@gmail.com> <CAOf5uwk_i5yA+K=riMcP9r4V9FynRBv2+=P98xUMvmvBtJr4Mg@mail.gmail.com>
+In-Reply-To: <CAOf5uwk_i5yA+K=riMcP9r4V9FynRBv2+=P98xUMvmvBtJr4Mg@mail.gmail.com>
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Wed, 19 Jun 2024 11:29:08 +0200
+Message-ID: <CAOf5uwkJxpge=JdtQv_nu7zWaN4weD43kBKqM1qAR4h5tuRjfw@mail.gmail.com>
+Subject: Re: [PATCH] New config added to handle 64-bit systems with 32-bit DMA support
+To: Alberto Secondi <albertosecondi@gmail.com>
+Cc: hch@lst.de, m.szyprowski@samsung.com, robin.murphy@arm.com, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	alberto.secondi@abinsula.com, Davide Salaris <davide.salaris@abinsula.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/06/2024 17:11, Jiaxun Yang wrote:
-> This compatible has been used in arch/mips/boot/dts/img/boston.dts
-> for a while but never documented properly.
-> 
+Hi Alberto
 
-> diff --git a/Documentation/devicetree/bindings/mfd/img,boston-platform-regs.yaml b/Documentation/devicetree/bindings/mfd/img,boston-platform-regs.yaml
-> new file mode 100644
-> index 000000000000..79cae87c6758
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/img,boston-platform-regs.yaml
-> @@ -0,0 +1,74 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/img,boston-platform-regs.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Imagination Technologies Boston Platform Registers
-> +
-> +maintainers:
-> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: img,boston-platform-regs
-> +      - const: syscon
-> +      - const: simple-mfd
+On Wed, Jun 19, 2024 at 11:23=E2=80=AFAM Michael Nazzareno Trimarchi
+<michael@amarulasolutions.com> wrote:
+>
+> Hi Alberto
+>
+> On Wed, Jun 19, 2024 at 11:20=E2=80=AFAM Alberto Secondi
+> <albertosecondi@gmail.com> wrote:
+> >
+> > From: Alberto Secondi <alberto.secondi@abinsula.com>
+> >
+> > The kernel assumes that 64-bit systems have 64-bit DMA support through
+> > CONFIG_ARCH_DMA_ADDR_T_64BIT. This is not always true; for example, sev=
+eral
+> > iMX8 systems (verified on iMX8MM and iMX8MP) have DMA with only 32-bit =
+support.
+> > This results in several drivers requesting DMA_BIT_MASK(64), which caus=
+es
+> > malfunctions, particularly when systems have more than 3GB of DRAM (ver=
+ified
+> > with the lan743x driver and iMX8 systems with 4GB of DRAM). Therefore, =
+a new
+> > config ARCH_64BIT_HAS_DMA32_ONLY was added to manage 64-bit systems wit=
+h 32-bit
+> > DMA, which adjusts DMA_BIT_MASK(n) accordingly.
+> >
+> > Signed-off-by: Alberto Secondi <alberto.secondi@abinsula.com>
+> > Co-developed-by: Davide Salaris <davide.salaris@abinsula.com>
+> > ---
+> >  include/linux/dma-mapping.h | 4 ++++
+> >  kernel/dma/Kconfig          | 8 ++++++++
+> >  2 files changed, 12 insertions(+)
+> >
+> > diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> > index f693aafe221f..629220a777e3 100644
+> > --- a/include/linux/dma-mapping.h
+> > +++ b/include/linux/dma-mapping.h
+> > @@ -74,7 +74,11 @@
+> >   */
+> >  #define DMA_MAPPING_ERROR              (~(dma_addr_t)0)
+> >
+> > +#ifdef CONFIG_ARCH_64BIT_HAS_DMA32_ONLY
+> > +#define DMA_BIT_MASK(n)        (((n) > 32) ? ((1ULL<<(32))-1) : ((1ULL=
+<<(n))-1))
+> > +#else
+> >  #define DMA_BIT_MASK(n)        (((n) =3D=3D 64) ? ~0ULL : ((1ULL<<(n))=
+-1))
+> > +#endif
+> >
+>
+> How can this fit configuration where you want to have one Kernel image
+> for several arm64 machine?
+>
+
+I'm not an expert here but:
+
+ @coherent_dma_mask: Like dma_mask, but for alloc_coherent mapping as not a=
+ll
+ *         hardware supports 64-bit addresses for consistent allocations
+ *         such descriptors.
+
+This looks more connected to what you are looking for.
+
+Michael
 
 
-Fix U-boot to populate devices instead of relying on simple-mfd.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clock-controller:
-> +    type: object
-> +
-> +    description: Boston Clock Controller Device Node
-> +      The clock consumer should specify the desired clock by having the clock
-> +      ID in its "clocks" phandle cell.
-> +      See include/dt-bindings/clock/boston-clock.h for the full list of boston
-> +      clock IDs.
-> +
-> +    properties:
-> +      "#clock-cells":
-> +        const: 1
-> +
-> +      compatible:
-> +        const: img,boston-clock
-
-Please put compatible first in the list of properties (and follow the
-same order in "required"). It's the most important piece, so we want it
-to be the first to see. It also follows the convention of DTS, where
-compatible is expected to be first.
-
-> +
-> +    required:
-> +      - "#clock-cells"
-> +      - compatible
-> +
-> +    additionalProperties: false
-> +
-> +  reboot:
-> +    $ref: /schemas/power/reset/syscon-reboot.yaml#
-
-
-Best regards,
-Krzysztof
-
+> Michael
+>
+> >  #ifdef CONFIG_DMA_API_DEBUG
+> >  void debug_dma_mapping_error(struct device *dev, dma_addr_t dma_addr);
+> > diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
+> > index c06e56be0ca1..0a27eafed808 100644
+> > --- a/kernel/dma/Kconfig
+> > +++ b/kernel/dma/Kconfig
+> > @@ -36,6 +36,14 @@ config NEED_DMA_MAP_STATE
+> >  config ARCH_DMA_ADDR_T_64BIT
+> >         def_bool 64BIT || PHYS_ADDR_T_64BIT
+> >
+> > +config ARCH_64BIT_HAS_DMA32_ONLY
+> > +        bool "64bit System has DMA32 only"
+> > +        depends on ARCH_DMA_ADDR_T_64BIT
+> > +        default n
+> > +       help
+> > +         This enables forcing the maximum DMA_BIT_MASK to 32 bits for
+> > +         64-bit systems that have DMA support limited to 32 bits.
+> > +
+> >  config ARCH_HAS_DMA_SET_MASK
+> >         bool
+> >
+> > --
+> > 2.34.1
+> >
+> >
 
