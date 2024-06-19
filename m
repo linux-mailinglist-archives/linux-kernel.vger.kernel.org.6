@@ -1,167 +1,179 @@
-Return-Path: <linux-kernel+bounces-221339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62A590F21E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:28:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA0790F229
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9777C283909
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:28:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372F61C20C0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6679B14EC4D;
-	Wed, 19 Jun 2024 15:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26F714D2AC;
+	Wed, 19 Jun 2024 15:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZL4K/yMs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="FnRnQHlO"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF697FBDF;
-	Wed, 19 Jun 2024 15:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A5B11CA1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718810903; cv=none; b=Xb19EKMCrfTZWmr0e1He1nlVBHmrB9rARGhC6cWxuLjJYdtf6duZPFbvHpzcpFJjfshn2BL3SrdM5zoh5SgnrJV3vXdc63ulyx6Jogh1Fb1vXMEan1xxZIQ9vGd12Q5YeF3D+uwOC/sikrKJSrRvTAHoD2Wl3Mut6MYjgfGKt/c=
+	t=1718810974; cv=none; b=SWCqYjCgZr9jOGJg0MpPnxw3JskXT1LzrpJyOzMP8reZRj+FPIDQ7ZEXnXCKISzmE1fMQv31kyWRYX5+u6jfV9fwJ+OxHuy3cObFvWpZol5TpeqSZ0B0C6O3AapFA+pR82jtnBDdj5DdOVdYhz4B49nfL0vNLns4OvAq0sdS49g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718810903; c=relaxed/simple;
-	bh=bv3STp8KBKC0DDs1k9/4Mh5MeA6oKIPOmMNrz9Lmxfk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JsRGYXH+HXUvLihveDx7/8TbQPE6cmYkZIJ014ziUFFA5aF0118YZ2SCcrShezH8TeeGC6h4xb8xfx9leQESux8oTyMrGzFZ05/K+U4tckooe0xQAcBAs9A38qVSxbCrcSe0fsWJ7zjXx91dnwQPvVwBlEG2OBoDiYziPzfbhXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZL4K/yMs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9MSci005118;
-	Wed, 19 Jun 2024 15:28:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=cM57tgyraaxh2Y5ZsyMDB6eD
-	2mxEf0KJUWRxrjXip9M=; b=ZL4K/yMsGTSziM3zQ8iJPQ1q7Pu+BAmPdgaL2JXF
-	6hEGWp69NO3pKwi6VDrbN8tGDd06b5RvNMs8w5990nht1lVZkCipAr4c/AThtfQe
-	5Li3+AAURaMa2wrCm+z9EDPK4k/n0ywqyxEzECAJ3cuaPttWm23lVmEc747vjgOX
-	XIqUCjeuh9Lzwb+rWphDGOivzBE31dFiyPJuyyUTaiO70EaONi+if7owKQL/Gfsf
-	l33PVBpJFEuvBIgNgk2uRtx62AFsKtPeYgsNcBdC1m+i9fNXYHDIeiL4iRJM17A7
-	eud02/hSTTWACAWp4WA0Fcagou1/X1XmKCKlxp80p78aow==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja7a36h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 15:28:09 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JFS7SD024492
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 15:28:07 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 08:28:07 -0700
-Date: Wed, 19 Jun 2024 08:28:06 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Andy Yan
-	<andy.yan@rock-chips.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        "Mark
- Rutland" <mark.rutland@arm.com>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Shivendra Pratap <quic_spratap@quicinc.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
-Message-ID: <20240619080933071-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
- <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
- <20240619135143.kr2tx4ynxayc5v3a@bogus>
+	s=arc-20240116; t=1718810974; c=relaxed/simple;
+	bh=3DOUHGeNOX9DuUmm9cMJvAgdKDoHnyXCG179JBOCf5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c/z72Fh74IIwzA08cMdDigW0NRJ3zTUj1TRNEHcVddBLmR/XUHvuofjcgoZmPthFlzJbsk1B7/CqlvxIBCGK50WxCisNyOul3ZLjWOsMBKMvvl7Mpp1qg5f7CXAfgpULe7UB7XVp/Z6Fle+xa3UxYBfQvBD8d+9oT47HrSHecuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=FnRnQHlO; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1718810947;
+ bh=3g8jW5fl7Zb/rz0sp50oVlg57OmKTGVmhH6/Ni0PVpE=;
+ b=FnRnQHlOu32EysE34JWg9sDiTktz0BnHzXRvtD0FDduz09GmJZBN0c3ekKpzfUuPNETvI9pi0
+ IetRJ/hZwWCrBMoGAYqjUUZxWkNcU5ojgHpO2snBsF5IFjIg6QJXHGrLZyf3rtL9a9zqIzEIBK5
+ xNB5tAsZ2lbSoGSGfHkxtyYiGk2Tep/nAQ+rqiYSdPuF2tvXMWyn2vfgs3Kqw9yD6oPE89NNMpy
+ /UEVjLKruZJjOqhRlR4rl/F+DjiIK6ajC1zZyGx/1N7AOVwaM7eTjIpB59aGecnG3+KTEmjuN62
+ l8H3vYI9Zri+y9jdiR6B4UZp57a70BGUkj8Gnf9ibnFQ==
+Message-ID: <6e5ddd5c-340d-4474-a490-427a82db4a97@kwiboo.se>
+Date: Wed, 19 Jun 2024 17:28:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240619135143.kr2tx4ynxayc5v3a@bogus>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: OVQtWNf157rS_leVNyegDf2H0YEELSVJ
-X-Proofpoint-GUID: OVQtWNf157rS_leVNyegDf2H0YEELSVJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- lowpriorityscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
- phishscore=0 bulkscore=0 suspectscore=0 clxscore=1011 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190116
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] arm64: dts: rockchip: Add rkvdec2 Video Decoder on
+ rk3588(s)
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, Dragan Simic
+ <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>, Andy Yan
+ <andy.yan@rock-chips.com>, Boris Brezillon
+ <boris.brezillon@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Daniel Almeida <daniel.almeida@collabora.com>, Paul Kocialkowski
+ <paul.kocialkowski@bootlin.com>, Nicolas Dufresne
+ <nicolas.dufresne@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Alex Bee <knaerzche@gmail.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240619150029.59730-1-detlev.casanova@collabora.com>
+ <20240619150029.59730-5-detlev.casanova@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20240619150029.59730-5-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 6672f93b4c60bf9a671bfbb1
 
-On Wed, Jun 19, 2024 at 02:51:43PM +0100, Sudeep Holla wrote:
-> On Mon, Jun 17, 2024 at 10:18:09AM -0700, Elliot Berman wrote:
-> > SoC vendors have different types of resets and are controlled through
-> > various registers. For instance, Qualcomm chipsets can reboot to a
-> > "download mode" that allows a RAM dump to be collected. Another example
-> > is they also support writing a cookie that can be read by bootloader
-> > during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
-> > vendor reset types to be implemented without requiring drivers for every
-> > register/cookie.
-> > 
-> > Add support in PSCI to statically map reboot mode commands from
-> > userspace to a vendor reset and cookie value using the device tree.
-> > 
-> > A separate initcall is needed to parse the devicetree, instead of using
-> > psci_dt_init because mm isn't sufficiently set up to allocate memory.
-> > 
-> > Reboot mode framework is close but doesn't quite fit with the
-> > design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
-> > be solved but doesn't seem reasonable in sum:
-> >  1. reboot mode registers against the reboot_notifier_list, which is too
-> >     early to call SYSTEM_RESET2. PSCI would need to remember the reset
-> >     type from the reboot-mode framework callback and use it
-> >     psci_sys_reset.
-> >  2. reboot mode assumes only one cookie/parameter is described in the
-> >     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
-> >     cookie.
-> >  3. psci cpuidle driver already registers a driver against the
-> >     arm,psci-1.0 compatible. Refactoring would be needed to have both a
-> >     cpuidle and reboot-mode driver.
-> >
-> 
-> I need to think through it but when you first introduced the generic
-> Documentation/devicetree/bindings/power/reset/reboot-mode.yaml bindings
-> I also looked at drivers/power/reset/reboot-mode.c
-> 
-> I assumed this extension to that binding would reuse the same and
-> PSCI would just do reboot_mode_register(). I didn't expect to see these
-> changes. I might have missing something but since the bindings is still
-> quite generic with additional cells that act as additional cookie for
-> reboot call, I still think that should be possible.
-> 
-> What am I missing here then ?
-> 
+Hi Detlev,
 
-Right, if that was only thing to "solve" to make it easy to use
-reboot-mode framework, I agree we should update reboot mode framework to
-work with the additional cells. There are a few other issues I mention
-above which, when combined, make me feel that PSCI is different enough
-from how reboot mode framework works that we shouldn't try to make PSCI
-work with the framework. Issues #1 and #2 are pretty easy to solve
-(whether they should be solved is different); I'm not sure a good
-approach to issue #3.
+On 2024-06-19 16:57, Detlev Casanova wrote:
+> Add the rkvdec2 Video Decoder to the RK3588s devicetree.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 50 +++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> index 6ac5ac8b48ab..7690632f57f1 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> @@ -2596,6 +2596,16 @@ system_sram2: sram@ff001000 {
+>  		ranges = <0x0 0x0 0xff001000 0xef000>;
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+> +
+> +		vdec0_sram: rkvdec-sram@0 {
+> +			reg = <0x0 0x78000>;
+> +			pool;
+> +		};
+> +
+> +		vdec1_sram: rkvdec-sram@1 {
+> +			reg = <0x78000 0x77000>;
+> +			pool;
+> +		};
+>  	};
+>  
+>  	pinctrl: pinctrl {
+> @@ -2665,6 +2675,46 @@ gpio4: gpio@fec50000 {
+>  			#interrupt-cells = <2>;
+>  		};
+>  	};
+> +
+> +	vdec0: video-decoder@fdc38100 {
+> +		compatible = "rockchip,rk3588-vdec";
+> +		reg = <0x0 0xfdc38100 0x0 0x500>;
+> +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, <&cru CLK_RKVDEC0_CA>,
+> +			 <&cru CLK_RKVDEC0_CORE>, <&cru CLK_RKVDEC0_HEVC_CA>;
+> +		clock-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
+> +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
+> +				  <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
+> +		assigned-clock-rates = <800000000>, <600000000>,
+> +				       <600000000>, <1000000000>;
+> +		resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>, <&cru SRST_RKVDEC0_CA>,
+> +			 <&cru SRST_RKVDEC0_CORE>, <&cru SRST_RKVDEC0_HEVC_CA>;
+> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
+> +			      "rst_core", "rst_hevc_cabac";
+> +		power-domains = <&power RK3588_PD_RKVDEC0>;
+> +		sram = <&vdec0_sram>;
+> +		status = "okay";
+> +	};
+> +
+> +	vdec1: video-decoder@fdc40100 {
+> +		compatible = "rockchip,rk3588-vdec";
+> +		reg = <0x0 0xfdc40100 0x0 0x500>;
+> +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>, <&cru CLK_RKVDEC1_CA>,
+> +			 <&cru CLK_RKVDEC1_CORE>, <&cru CLK_RKVDEC1_HEVC_CA>;
+> +		clock-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
+> +		assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru CLK_RKVDEC1_CORE>,
+> +				  <&cru CLK_RKVDEC1_CA>, <&cru CLK_RKVDEC1_HEVC_CA>;
+> +		assigned-clock-rates = <800000000>, <600000000>,
+> +				       <600000000>, <1000000000>;
+> +		resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>, <&cru SRST_RKVDEC1_CA>,
+> +			 <&cru SRST_RKVDEC1_CORE>, <&cru SRST_RKVDEC1_HEVC_CA>;
+> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
+> +			      "rst_core", "rst_hevc_cabac";
+> +		power-domains = <&power RK3588_PD_RKVDEC1>;
+> +		sram = <&vdec1_sram>;
+> +		status = "okay";
+> +	};
 
-Thanks,
-Elliot
+This is still missing the iommus, please add the iommus, they should be
+supported/same as the one used for e.g. VOP2:
+
+  compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+
+The VOP2 MMUs does have one extra mmu_cfg_mode flag in AUTO_GATING,
+compared to the VDPU381 MMUs, however only the AV1D MMU should be
+special on RK3588.
+
+Please add the iommus :-)
+
+Regards,
+Jonas
+
+>  };
+>  
+>  #include "rk3588s-pinctrl.dtsi"
 
 
